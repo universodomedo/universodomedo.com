@@ -5,7 +5,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: [self-hosted, udm]
+    runs-on: udm
 
     steps:
     - name: Checkout code
