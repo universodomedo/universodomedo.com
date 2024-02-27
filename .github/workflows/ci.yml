@@ -1,0 +1,17 @@
+on:
+  push:
+    branches:
+      - html
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, cloud]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Copy HTML to destination folder
+      run: |
+        cp -r ./ /home/ubuntu/docker/volumes/universodomedo/site
+      working-directory: ${{ github.workspace }}
