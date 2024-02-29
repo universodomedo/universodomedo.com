@@ -13,5 +13,5 @@ jobs:
 
     - name: Copy HTML to destination folder
       run: |
-        cp -r ./ /home/ubuntu/docker/volumes/universodomedo/site
+        sudo cp -r ./ /home/ubuntu/docker/volumes/universodomedo/site
       working-directory: ${{ github.workspace }}
