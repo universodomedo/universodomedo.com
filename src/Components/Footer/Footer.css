@@ -1,0 +1,41 @@
+.footer {
+    position: relative;
+}
+
+.footer-end {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    position: relative;
+    margin-top: 10vw;
+}
+
+.social-icons {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons li {
+    display: inline-block;
+}
+
+.social-icons a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.curved-corners {
+    background-color: #2e1a47;
+    height: 50px;
+}
+
+.curved-corners.left {
+    border-radius: 0 40px 0 0;
+}
+
+.curved-corners.right {
+    border-radius: 40px 0 0 0;
+}

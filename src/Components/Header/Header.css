@@ -1,0 +1,45 @@
+.navbar {
+    display: grid;
+    grid-template-columns: 10% 80% 10%;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 170px;
+}
+
+.navbar img {
+    width: 12vw;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 60px;
+    font-size: 20px;
+    justify-content: center;
+}
+
+.nav-connect {
+    font-size: 20px;
+    padding: 22px 45px;
+    border-radius: 50px;
+    background: #3b1c3f;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.nav-connect:hover {
+    transform: scale(1.05);
+}
+
+.nav-menu li {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.anchor-link {
+    text-decoration: none;
+    color: white;
+}
