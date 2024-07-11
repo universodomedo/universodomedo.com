@@ -1,34 +1,45 @@
 .section {
     display: flex;
-    align-items: center;
     flex-direction: column;
-    gap: 35px;
-    background: red;
+    align-items: center;
+    gap: 3vh;
     padding: 5vh 0;
+    min-width: 500px;
+    max-width: 90vw;
+    margin: 0 auto;
 }
 
-.section-content {
+.section div {
     text-align: center;
     white-space: pre-wrap;
-    line-height: 2.4vw;
 }
 
-.section-content h1 {
+.section .title {
+    line-height: 4.5vh;
+}
+
+.section .title p {
     color: white;
-    font-family: system-ui;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 600;
     text-transform: uppercase;
     font-size: 5vh;
     margin: 0;
-    max-width: 28vw;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-.section-content h2 {
+.section .paragraph {
+    line-height: 2.4vh;
+}
+
+
+.section .paragraph p {
     color: white;
-    font-family: cursive;
-    line-height: 1.2;
+    font-family: 'Barlow', sans-serif;
+    font-weight: 400;
     font-size: 2vh;
-    margin: 0;
-    max-width: 30vw;
+    margin: 0 auto;
 }
 
 .img1 {

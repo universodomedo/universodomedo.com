@@ -9,16 +9,16 @@ interface LandingpageTextSectionProps {
 
 interface LandingpageTextSection {
   strings: String[];
-  htmlType: React.ElementType<any>;
+  classType: string;
 }
 
 const Section = ({ sections }: LandingpageTextSectionProps) => {
   return (
     <div className='section'>
       {sections.map((textSection, textSectionIndex) => (
-        <div key={textSectionIndex} className="section-content">
+        <div key={textSectionIndex} className={textSection.classType}>
           {textSection.strings.map((string, indexString) => (
-            <textSection.htmlType key={`${textSectionIndex}-${indexString}`}>{string}</textSection.htmlType>
+            <p key={`${textSectionIndex}-${indexString}`}>{string}</p>
           ))}
         </div>
       ))}

@@ -5,7 +5,7 @@ import Footer from './Components/Footer/Footer.tsx';
 
 interface LandingpageTextSection {
   strings: String[];
-  htmlType: React.ElementType<any>;
+  classType: string;
 }
 
 
@@ -13,11 +13,11 @@ const App = () => {
   const section1content:LandingpageTextSection[] = [
     {
       strings: ["Descubra o","Paranormal"],
-      htmlType: "h1"
+      classType: "title"
     },
     {
-      strings: ["Faça parte da guerra entre a Humanidade e o Paranormal","Enfrente seus demônios internos e desvende os Segredos da Realidade"],
-      htmlType: "h2"
+      strings: ["Faça parte da guerra entre a Humanidade e o Paranormal", "Enfrente seus demônios internos e desvende os Segredos da Realidade"],
+      classType: "paragraph"
     }
   ];
 
