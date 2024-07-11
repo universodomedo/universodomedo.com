@@ -1,6 +1,6 @@
 //import React from 'react';
 import "./Section.css";
-import img1 from "../Assets/img1.svg";
+import img1 from "../../Assets/img1.svg";
 /*import img2 from "../Assets/img2.svg";*/
 
 interface LandingpageTextSectionProps {
