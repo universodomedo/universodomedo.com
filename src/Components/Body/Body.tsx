@@ -1,4 +1,3 @@
-// import React from 'react'
 import Section from "../Sections/Section/Section.tsx";
 import SectionCarroussel from "../Sections/SectionCarroussel/SectionCarroussel.tsx";
 import "./Body.css";

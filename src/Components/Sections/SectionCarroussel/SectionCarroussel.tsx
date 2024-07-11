@@ -1,4 +1,3 @@
-import React from 'react'
 import "./SectionCarroussel.css";
 import CarrosselItem from '../../SubComponents/CarrosselItem/CarrosselItem';
 
