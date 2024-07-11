@@ -3,20 +3,23 @@
     align-items: center;
     flex-direction: column;
     gap: 35px;
-    flex: 1;
+    background: red;
+    padding: 5vh 0;
 }
 
 .section-content {
     text-align: center;
+    white-space: pre-wrap;
+    line-height: 2.4vw;
 }
 
 .section-content h1 {
     color: white;
     font-family: system-ui;
     text-transform: uppercase;
-    line-height: 0.9;
     font-size: 5vh;
     margin: 0;
+    max-width: 28vw;
 }
 
 .section-content h2 {
@@ -25,6 +28,7 @@
     line-height: 1.2;
     font-size: 2vh;
     margin: 0;
+    max-width: 30vw;
 }
 
 .img1 {
