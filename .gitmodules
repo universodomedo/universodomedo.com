@@ -1,0 +1,4 @@
+[submodule "deployments/udm-deployment"]
+	path = deployments/udm-deployment
+	url = git@github.com:universodomedo/deployments.git
+	branch = udm-deployment
