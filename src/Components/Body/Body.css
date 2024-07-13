@@ -1,49 +1,9 @@
 .sections {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3vh;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 20px;
     padding: 5vh 0;
     min-width: 500px;
     max-width: 90vw;
-    margin: 0 auto;
-}
-
-.section {
-    display: flex;
-    flex-direction: column;
-    gap: 3vh;
-}
-
-.section div {
-    text-align: center;
-    white-space: pre-wrap;
-}
-
-.section .title {
-    line-height: 4.5vh;
-}
-
-.section .title p {
-    color: white;
-    font-family: 'Barlow', sans-serif;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 5vh;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.section .paragraph {
-    line-height: 2.4vh;
-}
-
-
-.section .paragraph p {
-    color: white;
-    font-family: 'Barlow', sans-serif;
-    font-weight: 400;
-    font-size: 2vh;
     margin: 0 auto;
 }

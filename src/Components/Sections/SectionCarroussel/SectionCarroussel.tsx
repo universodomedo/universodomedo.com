@@ -21,20 +21,13 @@ const SectionCarroussel = () => {
   }, []);
 
   return (
-    <div className='section'>
-        <div className='title'>
-          <p>Próximas Sessões</p>
-        </div>
+    <div className='section-content'>
+      <div className='title'>
+        <p>Próximas Sessões</p>
+      </div>
 
-        <div className='parenteCarroussel'>
-          <CarrosselItem itemTitle={"Apenas uma Prece"} imgUrl={imgCapa1} tsStart={new Date()} live={true}/>
-          <CarrosselItem itemTitle={"Black Ops"} imgUrl={imgCapa2} tsStart={new Date()} live={false}/>
-          <CarrosselItem itemTitle={"Antes do Abismo"} imgUrl={imgCapa3} tsStart={new Date()} live={false}/>
-          {/* {fetchedData.length > 0 && fetchedData.map((session:CampaignSessionWithRelations, index:number) => {
-            return <CarrosselItem key={`carrosselItem-${index}`} itemTitle={session.campaign.subtitle} imgUrl={session.campaign.artPath} tsStart={session.tsStart} live={false} />
-          })} */}
-        </div>
-  </div>    
+      
+    </div>
   )
 }
 

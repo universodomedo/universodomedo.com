@@ -12,7 +12,7 @@ interface LandingpageTextSection {
 
 const Section = ({ sections }: LandingpageTextSectionProps) => {
   return (
-    <div className='section'>
+    <div className='section-content'>
       {sections.map((textSection, textSectionIndex) => (
         <div key={textSectionIndex} className={textSection.classType}>
           {textSection.strings.map((string, indexString) => (
@@ -21,7 +21,7 @@ const Section = ({ sections }: LandingpageTextSectionProps) => {
         </div>
       ))}
 
-      <div className='section-content'>
+      <div className='img'>
         <img className='img1' src={img1} alt="" />
       </div>
     </div>
