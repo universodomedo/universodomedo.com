@@ -4,8 +4,16 @@
 
 .footer-end {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: .4fr .2fr .4fr;
     position: relative;
+}
+
+.social-media {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 10px;
+    margin: 0 auto;
+    margin-top: 3%;
 }
 
 .social-icons {
@@ -13,7 +21,7 @@
     padding: 0;
     list-style: none;
     display: flex;
-    gap: 15px;
+    gap: 58px;
 }
 
 .social-icons li {
@@ -23,7 +31,7 @@
 .social-icons a {
     color: #fff;
     text-decoration: none;
-    font-size: 20px;
+    font-size: 28px;
 }
 
 .curved-corners {
