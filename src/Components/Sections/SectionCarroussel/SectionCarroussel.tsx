@@ -13,44 +13,41 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const SectionCarroussel = () => {
-  const [fetchedData, setFetchedData] = useState<CampaignSessionWithRelations[]>([{} as CampaignSessionWithRelations]);
+  const [proximasSessoes, setProximasSessoes] = useState<CampaignSessionWithRelations[]>([{} as CampaignSessionWithRelations]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const proximasSessoes = async () => {
       const response = await useApi<CampaignSessionWithRelations[]>("session/getNextSessions");
-      setFetchedData(response);
+      setProximasSessoes(response);
     };
 
-    fetchData();
+    proximasSessoes();
   }, []);
 
-  const settings = {
-    infinite: true,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1
-  }
+  const settings = { infinite: true, speed: 500, slidesToShow: 3, slidesToScroll: 1 };
 
   return (
-    <div className='carousel-content'>
-      <div className='title'>
-        <p>Próximas Sessões</p>
-      </div>
+    <>
+      {proximasSessoes.length > 0 && (
+        <div className='carousel-content'>
+          <div className='title'>
+            <p>Próximas Sessões</p>
+          </div>
 
-      <div className="slider-container">
-      {fetchedData.length > 0 && (
-          <Slider {...settings}>
-            <CarrosselItem itemTitle={"Apenas uma Prece"} idSession={0} imgUrl={imgCapa1} tsStart={new Date("2024-07-14T01:07:00")} live={false}/>
-            <CarrosselItem itemTitle={"Black Ops"} idSession={0} imgUrl={imgCapa2} tsStart={new Date("2024-07-15T23:00:00")} live={false}/>
-            <CarrosselItem itemTitle={"Antes do Abismo"} idSession={0} imgUrl={imgCapa3} tsStart={new Date("2024-09-14T12:00:00")} live={false}/>
-            {fetchedData.map((session:CampaignSessionWithRelations, index:number) => (
-              <CarrosselItem key={`carrosselItem-${index}`} idSession={session.id} itemTitle={session.campaign?.subtitle} imgUrl={session.campaign?.artPath} tsStart={session.tsStart} live={false} />
-            ))}
-          </Slider>
-        )}
-      </div>
-    </div>
-  )
+          <div className="slider-container">
+            <Slider {...settings}>
+              <CarrosselItem itemTitle={"Apenas uma Prece"} idSession={0} imgUrl={imgCapa1} tsStart={new Date("2024-07-14T01:07:00")} live={false}/>
+              <CarrosselItem itemTitle={"Black Ops"} idSession={0} imgUrl={imgCapa2} tsStart={new Date("2024-07-15T23:00:00")} live={false}/>
+              <CarrosselItem itemTitle={"Antes do Abismo"} idSession={0} imgUrl={imgCapa3} tsStart={new Date("2024-09-14T12:00:00")} live={false}/>
+              {proximasSessoes.map((session: CampaignSessionWithRelations, index: number) => ( session.campaign && (
+                <CarrosselItem key={`carrosselItem-${index}`} idSession={session.id} itemTitle={session.campaign!.subtitle} imgUrl={session.campaign!.artPath} tsStart={session.tsStart} live={false} />
+              )))}
+            </Slider>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
 
 export default SectionCarroussel;

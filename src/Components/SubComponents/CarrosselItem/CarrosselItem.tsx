@@ -2,30 +2,26 @@ import "./CarrosselItem.css";
 import { Link } from "react-router-dom";
 
 const CarrosselItem = ({ idSession, itemTitle, imgUrl, tsStart, live }: { idSession: number, itemTitle: string, imgUrl: string, tsStart: Date, live: boolean }) => {
-
-  if (!tsStart || !(tsStart instanceof Date) || isNaN(tsStart.getTime())) { tsStart = new Date(); }
-  const getTimeRemaining = () => {
+  const getTimeRemaining = ():string => {
     const now = new Date();
 
     const difference = tsStart.getTime() - now.getTime();
 
+    const prefix = 'Próxima Sessão em ';
+
     if (difference >= 86400000) {
       const days = Math.floor(difference / 86400000);
-      return `${days} dia${days > 1 ? 's' : ''}`;
+      return `${prefix}${days} dia${days > 1 ? 's' : ''}`;
     } else if (difference >= 3600000) {
       const hours = Math.floor(difference / 3600000);
-      return `${hours} hora${hours > 1 ? 's' : ''}`;
+      return `${prefix}${hours} hora${hours > 1 ? 's' : ''}`;
     } else if (difference >= 60000) {
       const minutes = Math.floor(difference / 60000);
-      return `${minutes} minuto${minutes > 1 ? 's' : ''}`;
+      return `${prefix}${minutes} minuto${minutes > 1 ? 's' : ''}`;
     } else {
-      const seconds = Math.floor(difference / 1000);
-      return `${seconds} segundo${seconds > 1 ? 's' : ''}`;
+      return "Sessão Iniciando...";
     }
   };
-
-  const liveText = (live ? "Ao vivo" : `Próxima Sessão em ${getTimeRemaining()}`);
-  const classLive = (live ? "live" : "notLive");
 
   return (
     <Link to={`/session/${idSession}`}>
@@ -33,8 +29,8 @@ const CarrosselItem = ({ idSession, itemTitle, imgUrl, tsStart, live }: { idSess
         <img className='imgRetanguloCarroussel' src={imgUrl} alt="" />
         <div className="blackOverlay"></div>
 
-        <div className={`ItemCarrosselTop ${classLive}`}>
-          <p className='ItemCarrosselTop-p'>{liveText}</p>
+        <div className={`ItemCarrosselTop ${(live ? "live" : "notLive")}`}>
+          <p className='ItemCarrosselTop-p'>{live ? "Ao vivo" : getTimeRemaining()}</p>
         </div>
 
         <div className="ItemCarrosselBottom">
