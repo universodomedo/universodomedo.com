@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "baseUrl": "src",
-    "paths": {
-      "@pages/*": ["Pages/*"],
+    "paths": { // para adicionar novos paths, tem que adicionar no tsconfig.json e no vite.config.ts
+      "@consumer/*": ["ApiConsumer/*"],
       "@components/*": ["Components/*"],
-      "@consumer/*": ["ApiConsumer/*"]
+      "@layouts/*": ["Layouts/*"],
+      "@pages/*": ["Pages/*"],
     },
     "allowImportingTsExtensions": true,
     "noEmit": true,

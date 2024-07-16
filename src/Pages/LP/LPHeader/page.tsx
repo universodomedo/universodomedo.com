@@ -2,7 +2,7 @@ import "./style.css";
 import { Link } from "react-router-dom";
 import logo from "Components/Assets/logo.png";
 
-const LandPageHeader = () => {
+const LPHeader = () => {
   return (
     <div className='header'>
       <div className='navbar'>
@@ -16,4 +16,4 @@ const LandPageHeader = () => {
   )
 }
 
-export default LandPageHeader;
+export default LPHeader;

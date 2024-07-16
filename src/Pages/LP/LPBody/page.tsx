@@ -7,7 +7,7 @@ interface LandingpageTextSection {
     classType: string;
   }
 
-const Body = () => {
+const LPBody = () => {
     const section1content:LandingpageTextSection[] = [
         {
           strings: ["Descubra o","Paranormal"],
@@ -21,10 +21,10 @@ const Body = () => {
 
     return (
       <div className="sections">
-        <SectionCarroussel />
         <Section sections={section1content} />
+        <SectionCarroussel />
       </div>
     )
 }
 
-export default Body;
+export default LPBody;

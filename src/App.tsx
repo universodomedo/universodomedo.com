@@ -1,27 +1,9 @@
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
-import LandPage from "Pages/LandPage/page.tsx";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LP from "Pages/LP/page.tsx";
 import Sessions from "Pages/Sessions/page.tsx";
 import Ficha from "Pages/Ficha/page.tsx";
-
-const Layout1 = () => {
-  return (
-    <main className="main-layout1">
-      <Outlet />
-    </main>
-  );
-};
-
-const Layout2 = () => {
-  return (
-    <>
-      <aside></aside>
-      <main className="main-layout2">
-        <Outlet />
-      </main>
-      <aside></aside>
-    </>
-  );
-};
+import LayoutLP from "Layouts/LayoutLP/layout.tsx";
+import LayoutInterno from "Layouts/LayoutInterno/layout.tsx";
 
 const App = () => {
   return (
@@ -29,11 +11,11 @@ const App = () => {
       <BrowserRouter>
 
         <Routes>
-          <Route path="/" element={<Layout1 />}>
-            <Route index element={<LandPage />} />
+          <Route path="/" element={<LayoutLP />}>
+            <Route index element={<LP />} />
           </Route>
 
-          <Route element={<Layout2 />}>
+          <Route element={<LayoutInterno />}>
             <Route path="/session:sessionId" element={<Sessions />} />
             <Route path="/ficha:characterId" element={<Ficha />} />
           </Route>

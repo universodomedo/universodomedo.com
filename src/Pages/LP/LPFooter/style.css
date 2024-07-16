@@ -1,19 +1,17 @@
 .footer {
+    display: flex;
+    flex-direction: row;
     position: relative;
-}
-
-.footer-end {
-    display: grid;
-    grid-template-columns: .4fr .2fr .4fr;
-    position: relative;
+    min-height: 5vh;
 }
 
 .social-media {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    grid-gap: 10px;
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 0%;
     margin: 0 auto;
-    margin-top: 3%;
+    justify-content: center;
+    align-items: center;
 }
 
 .social-icons {
@@ -31,12 +29,13 @@
 .social-icons a {
     color: #fff;
     text-decoration: none;
-    font-size: 28px;
+    font-size: 1.8vw;
 }
 
 .curved-corners {
     background-color: #2e1a47;
-    height: 50px;
+    height: 100%;
+    width: 35%;
 }
 
 .curved-corners.left {

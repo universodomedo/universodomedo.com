@@ -6,10 +6,11 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      "Pages": path.resolve(__dirname, "src/Pages"),
-      "Components": path.resolve(__dirname, "src/Components"),
+    alias: { // para adicionar novos paths, tem que adicionar no tsconfig.json e no vite.config.ts
       "ApiConsumer": path.resolve(__dirname, "src/ApiConsumer"),
+      "Components": path.resolve(__dirname, "src/Components"),
+      "Layouts": path.resolve(__dirname, "src/Layouts"),
+      "Pages": path.resolve(__dirname, "src/Pages"),
     }
   }
 })
