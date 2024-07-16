@@ -33,8 +33,8 @@ function isIsoDateString(value: any): boolean {
   return isoDateRegex.test(value);
 }
 
-export async function useApi<T>(uri: string): Promise<T> {
-  const response = await apiClient.get<T>(uri);
+export async function useApi<T>(uri: string, params?: {}): Promise<T> {
+  const response = await apiClient.get<T>(uri, { params });
 
   return response.data as T;
 }

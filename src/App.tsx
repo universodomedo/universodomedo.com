@@ -4,6 +4,7 @@ import Header from './Components/Header/Header.tsx';
 import Body from './Components/Body/Body.tsx';
 import Footer from './Components/Footer/Footer.tsx';
 import Sessions from "./Components/Pages/Sessions/Sessions.tsx";
+import Ficha from './Components/Pages/Ficha/Ficha.tsx';
 
 const App = () => {
   return (
@@ -14,6 +15,9 @@ const App = () => {
           <Route path="/" element={<Body />} />
           <Route path="/session" element={<Sessions />}>
             <Route path=":sessionId" element={<Sessions />}/>
+          </Route>
+          <Route path="/ficha" element={<Ficha />}>
+            <Route path=":characterId" element={<Ficha />} />
           </Route>
         </Routes>
         <Footer />

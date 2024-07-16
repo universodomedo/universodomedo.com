@@ -2,7 +2,9 @@ import "./CarrosselItem.css";
 import { Link } from "react-router-dom";
 
 const CarrosselItem = ({ idSession, itemTitle, imgUrl, tsStart, live }: { idSession: number, itemTitle: string, imgUrl: string, tsStart: Date, live: boolean }) => {
-  const getTimeRemaining  = () => {
+
+  if (!tsStart || !(tsStart instanceof Date) || isNaN(tsStart.getTime())) { tsStart = new Date(); }
+  const getTimeRemaining = () => {
     const now = new Date();
 
     const difference = tsStart.getTime() - now.getTime();
