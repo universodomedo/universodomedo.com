@@ -13,10 +13,9 @@
 }
 
 .section-content {
-    display: grid;
-    gap: 3vh;
-    margin: 0 auto;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .title {

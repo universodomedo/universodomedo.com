@@ -1,12 +1,7 @@
 .carousel-content {
-    display: block;
+    display: flex;
+    flex-direction: column;
     width: 55%;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.carousel-content > * {
-    margin: 3vh 0;
 }
 
 .slick-slide > div {
@@ -16,11 +11,4 @@
 .slick-slider {
     width: 100%;
     height: auto;
-}
-
-.slider-container {
-    display: block;
-    height: auto;
-    grid-row: 1;
-    width: 100%; 
 }

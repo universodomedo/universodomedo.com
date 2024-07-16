@@ -29,12 +29,12 @@ const CarrosselItem = ({ idSession, itemTitle, imgUrl, tsStart, live }: { idSess
         <img className='imgRetanguloCarroussel' src={imgUrl} alt="" />
         <div className="blackOverlay"></div>
 
-        <div className={`ItemCarrosselTop ${(live ? "live" : "notLive")}`}>
-          <p className='ItemCarrosselTop-p'>{live ? "Ao vivo" : getTimeRemaining()}</p>
+        <div className={`carousel-item-top ${(live ? "live" : "notLive")}`}>
+          <p className='carousel-item-top-p'>{live ? "Ao vivo" : getTimeRemaining()}</p>
         </div>
 
-        <div className="ItemCarrosselBottom">
-          <p className='ItemCarrosselBottom-p'>{itemTitle}</p>
+        <div className="carousel-item-bottom">
+          <p className='carousel-item-bottom-p'>{itemTitle}</p>
         </div>
       </div>
     </Link>

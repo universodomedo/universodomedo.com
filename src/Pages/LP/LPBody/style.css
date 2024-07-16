@@ -1,10 +1,17 @@
 .sections {
-    display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: auto;
-    grid-gap: 20px;
-    padding: 5vh 0;
-    min-width: 500px;
-    max-width: 90vw;
-    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    gap: 2.5rem;
+}
+
+.sections > .section-content, .sections > .carousel-content {
+    gap: 3vh;
+}
+
+hr {
+    border: #333 2px solid;
+    border-radius: 100px;
+    width: 90%;
 }
