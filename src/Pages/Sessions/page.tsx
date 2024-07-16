@@ -1,10 +1,8 @@
-import "./Sessions.css";
+import "./style.css";
 import { useParams } from "react-router-dom";
-import apiClient from "../../../ApiConsumer/Consumer.tsx";
+import apiClient from "ApiConsumer/Consumer.tsx";
 import { useEffect, useState } from "react";
 import { CampaignSessionWithRelations } from "udm-types";
-
-import img1 from "../../Assets/testeCapa1.png";
 
 const Sessions = () => {
     const {idSession} = useParams();

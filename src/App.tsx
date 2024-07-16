@@ -1,26 +1,44 @@
-//import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Header from './Components/Header/Header.tsx';
-import Body from './Components/Body/Body.tsx';
-import Footer from './Components/Footer/Footer.tsx';
-import Sessions from "./Components/Pages/Sessions/Sessions.tsx";
-import Ficha from './Components/Pages/Ficha/Ficha.tsx';
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import LandPage from "Pages/LandPage/page.tsx";
+import Sessions from "Pages/Sessions/page.tsx";
+import Ficha from "Pages/Ficha/page.tsx";
+
+const Layout1 = () => {
+  return (
+    <main className="main-layout1">
+      <Outlet />
+    </main>
+  );
+};
+
+const Layout2 = () => {
+  return (
+    <>
+      <aside></aside>
+      <main className="main-layout2">
+        <Outlet />
+      </main>
+      <aside></aside>
+    </>
+  );
+};
 
 const App = () => {
   return (
     <div className='app-container'>
       <BrowserRouter>
-        <Header />
+
         <Routes>
-          <Route path="/" element={<Body />} />
-          <Route path="/session" element={<Sessions />}>
-            <Route path=":sessionId" element={<Sessions />}/>
+          <Route path="/" element={<Layout1 />}>
+            <Route index element={<LandPage />} />
           </Route>
-          <Route path="/ficha" element={<Ficha />}>
-            <Route path=":characterId" element={<Ficha />} />
+
+          <Route element={<Layout2 />}>
+            <Route path="/session:sessionId" element={<Sessions />} />
+            <Route path="/ficha:characterId" element={<Ficha />} />
           </Route>
         </Routes>
-        <Footer />
+
       </BrowserRouter>
     </div>
   )

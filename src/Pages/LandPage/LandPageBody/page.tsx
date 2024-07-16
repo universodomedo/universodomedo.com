@@ -1,6 +1,6 @@
-import Section from "../Sections/Section/Section.tsx";
-import SectionCarroussel from "../Sections/SectionCarroussel/SectionCarroussel.tsx";
-import "./Body.css";
+import "./style.css";
+import Section from "Components/Sections/Section/page.tsx";
+import SectionCarroussel from "Components/Sections/SectionCarroussel/page.tsx";
 
 interface LandingpageTextSection {
     strings: String[];

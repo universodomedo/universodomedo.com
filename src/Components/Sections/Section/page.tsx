@@ -1,5 +1,5 @@
-import "./Section.css";
-import img1 from "../../Assets/img1.svg";
+import "./style.css";
+import img1 from "Components/Assets/img1.svg";
 
 interface LandingpageTextSectionProps {
   sections: LandingpageTextSection[];

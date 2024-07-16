@@ -1,4 +1,4 @@
-import "./Footer.css";
+import "./style.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faDiscord, faSpotify, faYoutube, faTwitch } from '@fortawesome/free-brands-svg-icons'
 

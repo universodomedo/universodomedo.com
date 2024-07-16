@@ -1,4 +1,4 @@
-import "./CarrosselItem.css";
+import "./style.css";
 import { Link } from "react-router-dom";
 
 const CarrosselItem = ({ idSession, itemTitle, imgUrl, tsStart, live }: { idSession: number, itemTitle: string, imgUrl: string, tsStart: Date, live: boolean }) => {

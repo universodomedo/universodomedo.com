@@ -1,5 +1,4 @@
-import React from 'react';
-import "./Ficha.css";
+import "./style.css";
 
 const Ficha = () => {
 

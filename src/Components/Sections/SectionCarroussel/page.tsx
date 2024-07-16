@@ -1,13 +1,13 @@
-import "./SectionCarroussel.css";
-import CarrosselItem from '../../SubComponents/CarrosselItem/CarrosselItem';
-import useApi from "../../../ApiConsumer/Consumer.tsx";
+import "./style.css";
+import CarrosselItem from "Components/SubComponents/CarrosselItem/page.tsx";
+import useApi from "ApiConsumer/Consumer.tsx";
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
 import { CampaignSessionWithRelations } from "udm-types";
 
-import imgCapa1 from "../../Assets/testeCapa1.png";
-import imgCapa2 from "../../Assets/testeCapa2.png";
-import imgCapa3 from "../../Assets/testeCapa3.png";
+import imgCapa1 from "Components/Assets/testeCapa1.png";
+import imgCapa2 from "Components/Assets/testeCapa2.png";
+import imgCapa3 from "Components/Assets/testeCapa3.png";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -29,8 +29,8 @@ const SectionCarroussel = () => {
   return (
     <>
       {proximasSessoes.length > 0 && (
-        <div className='carousel-content'>
-          <div className='title'>
+        <div className="carousel-content">
+          <div className="title">
             <p>Próximas Sessões</p>
           </div>
 

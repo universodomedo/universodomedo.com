@@ -1,10 +1,8 @@
-//import React from 'react';
-import "./Header.css";
+import "./style.css";
 import { Link } from "react-router-dom";
-import logo from "../../Components/Assets/logo.png";
+import logo from "Components/Assets/logo.png";
 
-const Navbar = () => {
-
+const LandPageHeader = () => {
   return (
     <div className='header'>
       <div className='navbar'>
@@ -18,4 +16,4 @@ const Navbar = () => {
   )
 }
 
-export default Navbar;
+export default LandPageHeader;

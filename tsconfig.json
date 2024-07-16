@@ -1,11 +1,21 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@pages/*": ["Pages/*"],
+      "@components/*": ["Components/*"],
+      "@consumer/*": ["ApiConsumer/*"]
     },
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ]
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "commonjs",
+    "strict": true,
+    "traceResolution": true,
+    "types": ["node"]
+  },
+  "include": ["src"],
 }

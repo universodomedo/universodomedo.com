@@ -1,0 +1,23 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    background: linear-gradient(180deg, #000000 12%, #22153B 65%, #000000 100%);
+}
+
+.main-layout1 {
+    display: flex;
+    flex: 1 1 0%;
+    height: 100%;
+    overflow-y: auto;
+    flex-direction: column;
+    min-width: 0px;
+}
