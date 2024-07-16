@@ -25,10 +25,8 @@ const CarrosselItem = ({ idSession, itemTitle, imgUrl, tsStart, live }: { idSess
 
   return (
     <Link to={`/session/${idSession}`}>
-      <div className="retanguloCarrossel">
-        <img className='imgRetanguloCarroussel' src={imgUrl} alt="" />
-        <div className="blackOverlay"></div>
-
+      <div className="container-rect-carousel" style={{backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,${live ? 0 : 1}) 100%), url(${imgUrl})`}}>
+        
         <div className={`carousel-item-top ${(live ? "live" : "notLive")}`}>
           <p className='carousel-item-top-p'>{live ? "Ao vivo" : getTimeRemaining()}</p>
         </div>

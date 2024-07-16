@@ -1,50 +1,34 @@
-.retanguloCarrossel:hover {
+.container-rect-carousel:hover {
     scale: 1.05;
     transition: .3s ease-in-out;
 }
 
-.retanguloCarrossel {
+.container-rect-carousel {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     height: 480px;
     width: 300px;
-}
 
-.imgRetanguloCarroussel {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.blackOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 100%);
-}
-
-.blackOverlay.off {
-    opacity: 0;
+    background-size: cover;
+    background-position: center;
 }
 
 .carousel-item-top {
-    position: absolute;
-    text-align: center;
-    top: 0;
+    position: relative;
     padding: .1vh .9vw;
-
-    border-radius: 50px;
-    /* margin: 1vw; */
+    border-radius: 20px;
+    margin-top: 2vh;
 }
 
 .carousel-item-top.live {
     background: #CB0000;
+    margin: 2vh auto auto 1.5vw;
 }
 
 .carousel-item-top.notLive {
     background: #D56C00;
-    transform: translate(13%, 30%);
 }
 
 .carousel-item-top-p {
@@ -52,21 +36,22 @@
     font-family: 'Barlow', sans-serif;
     font-weight: 400;
     font-size: 2vh;
+    text-align: center;
 }
 
 .carousel-item-bottom {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 20%;
+    position: relative;
+    margin: auto 24% 13% auto;
 }
 
 .carousel-item-bottom-p {
-    padding-left: 1vw;
     text-align: left;
-
     color: white;
     font-family: 'Barlow', sans-serif;
     font-weight: 400;
     font-size: 3vh;
+}
+
+a {
+    text-decoration: none;
 }
