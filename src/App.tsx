@@ -9,21 +9,26 @@ const App = () => {
   return (
     <div className='app-container'>
       <BrowserRouter>
-
         <Routes>
           <Route path="/" element={<LayoutLP />}>
             <Route index element={<LP />} />
           </Route>
 
           <Route element={<LayoutInterno />}>
-            <Route path="/session:sessionId" element={<Sessions />} />
-            <Route path="/ficha:characterId" element={<Ficha />} />
+            <Route path="/sessions">
+              <Route index element={<Sessions />} />
+              <Route path=":sessionId" element={<Sessions />} />
+            </Route>
+            <Route path="/ficha">
+              <Route index element={<Ficha />} />
+              <Route path=":characterId" element={<Ficha />} />
+            </Route>
           </Route>
+          
         </Routes>
-
       </BrowserRouter>
     </div>
-  )
-}
+  );
+};
 
 export default App;

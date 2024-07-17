@@ -8,7 +8,11 @@ const LPHeader = () => {
       <div className='navbar'>
         <Link to="/"><img src={logo} alt="" /></Link>
         <ul className="nav-menu">
-          <li>Home</li>
+          <Link to="/"><li>Início</li></Link>
+          <Link to=""><li>Sessões</li></Link>
+          <Link to=""><li>Ao Vivo</li></Link>
+          <Link to=""><li>Sistema</li></Link>
+          <Link to=""><li>Redes Sociais</li></Link>
         </ul>
         <div className="nav-connect">Acessar</div>
       </div>

@@ -60,14 +60,11 @@ body {
 }
 
 .right-sidebar {
+    display: block;
     width: 11%;
     height: 100%;
     background-color: #1f1f1f;
     color: white;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
 /*******************/
@@ -87,6 +84,15 @@ body {
     flex: 1 1 0%;
     text-align: center;
     color: white;
+    margin: auto;
+    font-size: 60px;
+}
+
+.div-character-detalhes h2 {
+    width: 30%;
+    text-align: center;
+    color: white;
+    margin: auto;
 }
 
 .div-character-estatisticas {
@@ -94,18 +100,108 @@ body {
 }
 
 .div-character-atributos {
+    flex-direction: column;
     background: #999999;
 }
 
-.div-character-pericias {
-    background: #B2B2B2;
+.div-character-atributo {
+    text-align: center;
 }
 
-.div-character-detalhes, .div-character-estatistica, .div-character-atributo, .div-character-pericia {
+.div-character-atributo-pericia {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 2vh;
+}
+
+.div-character-pericia {
+    margin: 0 .4vw;
+}
+
+.div-character-pericia * {
+    margin: 0;
+}
+
+.div-character-detalhes, .div-character-estatistica {
     flex: 1 1 0%;
     text-align: center;
 }
 
-.div-character-pericia {
-    margin: 0 1%;
+.testeMensagem {
+    color: white;
+    font-size: 8;
+    padding: 0 7px 0 5px;
+}
+
+.messages {
+    overflow: auto;
+    height: 100%;
+    width: 100%;
+}
+
+.div-character-atributo-pericia > .div-character-pericia > button {
+    background-color: transparent;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.div-character-atributo-pericia.Agilidade > .div-character-pericia > button {
+    color: #3e9d15;
+    border: #2f7810 3px solid;
+}
+
+.div-character-atributo-pericia.Agilidade > .div-character-pericia > button:hover {
+    background-color: #7eed57;
+}
+
+.div-character-atributo-pericia.Forca > .div-character-pericia > button {
+    color: #4d2a2a;
+    border: #822f2f 3px solid;
+}
+
+.div-character-atributo-pericia.Forca > .div-character-pericia > button:hover {
+    background-color: #dc5656;
+}
+
+.div-character-atributo-pericia.Inteligencia > .div-character-pericia > button {
+    color: #1b478b;
+    border: #537cbc 3px solid;
+}
+
+.div-character-atributo-pericia.Inteligencia > .div-character-pericia > button:hover {
+    background-color: #2d70d8;
+}
+
+.div-character-atributo-pericia.Presenca > .div-character-pericia > button {
+    color: #991fe0;
+    border: #5b3bba 3px solid;
+}
+
+.div-character-atributo-pericia.Presenca > .div-character-pericia > button:hover {
+    background-color: #ad63bf;
+}
+
+.div-character-atributo-pericia.Vigor > .div-character-pericia > button {
+    color: #656325;
+    border: #625325 3px solid;
+}
+
+.div-character-atributo-pericia.Vigor > .div-character-pericia > button:hover {
+    background-color: #f3f434;
+}
+
+@keyframes fadeOut {
+    0% {
+      background-color: yellow;
+    }
+    100% {
+      background-color: rgba(0,0,0,0);
+    }
+}
+
+.fade {
+    animation: fadeOut 3s forwards;
 }
