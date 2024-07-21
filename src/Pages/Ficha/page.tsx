@@ -3,6 +3,7 @@ import NewCharacter from "./newCharacter.tsx";
 import { useEffect, useState, useRef } from "react";
 import { Character, Pericia, BonusConectado } from "./classes.tsx";
 import { TestePericia } from "Components/Functions/RollNumber.tsx";
+import Dropdown from 'Components/SubComponents/Dropdown/page.tsx';
 
 const Ficha = () => {
     // #region Variaveis Soltas
@@ -36,25 +37,37 @@ const Ficha = () => {
         character.atributos[1].pericias[1].bonusConectado.push(new BonusConectado(2));
         setState({});
     }
+
+    function checkCheckboxStatea() {
+        character.atributos[1].pericias[0].bonusConectado.push(new BonusConectado(2));
+        setState({});
+    }
   
     // #endregion
 
     return (
         <div className="teste">
             <aside className="sidebar">
-                <button onClick={checkCheckboxState}>Check Checkbox State</button>
-                {character.atributos && (
-                    <>
-                        {character.atributos[1].pericias[1].bonusConectado.map((prop, index) => (
-                            <div key={index}>
-                                <prop.componente
-                                    onChange={(checked) => {prop.handleCheckboxChange(checked);setState({});}}
-                                    checked={prop.checked}
-                                />
-                            </div>
-                        ))}
-                    </>
-                )}
+                <div className="left-top">
+                    {character.atributos && (
+                        <>
+                            {character.todosOsBonus.map((prop, index) => (
+                            // {character.atributos[1].pericias[1].bonusConectado.map((prop, index) => (
+                                <div key={index}>
+                                    <prop.componente
+                                        onChange={(checked) => {prop.handleCheckboxChange(checked);setState({});}}
+                                        checked={prop.checked}
+                                    />
+                                </div>
+                            ))}
+                        </>
+                    )}
+                </div>
+                <div className="left-bottom">
+                    <button onClick={checkCheckboxState}>Check Checkbox State</button>
+                    <button onClick={checkCheckboxStatea}>Check Checkbox State</button>
+                    <Dropdown options={["Luta", "Acrobacia"]} onSelect={() => {console.log("oi")}}/>
+                </div>
             </aside>
 
             <main className="main-content">
@@ -109,4 +122,4 @@ const Ficha = () => {
     );
 }
 
-export default Ficha
+export default Ficha;

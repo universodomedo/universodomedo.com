@@ -1,5 +1,15 @@
 import CheckboxComponent from "./customComponent.tsx";
 
+class ValoresBuffaveis {
+    public descricao: string;
+    public ref: ValorDeSistema;
+
+    constructor(descricao: string, ref:ValorDeSistema) {
+        this.descricao = descricao;
+        this.ref = ref;
+    }
+}
+
 export class BonusConectado {
     public valor: number;
     public checked: boolean;
@@ -97,5 +107,19 @@ export class Character {
         this.estatisticas = estatisticas;
         this.atributos = atributos;
         this.detalhes = detalhes;
+    }
+
+    get todosOsBonus(): BonusConectado[] {
+        let allBonus: BonusConectado[] = [];
+
+        this.atributos.forEach(atributo => {
+            allBonus = allBonus.concat(atributo.bonusConectado);
+
+            atributo.pericias.forEach(pericia => {
+                allBonus = allBonus.concat(pericia.bonusConectado);
+            });
+        });
+
+        return allBonus;
     }
 }

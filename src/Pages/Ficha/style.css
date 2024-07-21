@@ -10,14 +10,15 @@
 }
 
 .sidebar {
+    display: flex;
     width: 11%;
     height: 100%;
-    background-color: #2e2e2e;
+    background-color: #1f1f1f;
     color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     padding: 20px;
+    overflow: auto;
+    justify-content: center;
+    text-align: center;
 }
 
 .main-content {
@@ -30,13 +31,18 @@
     min-width: 0px;
 }
 
-.right-sidebar, .sidebar {
-    display: inline-block;
+.right-sidebar {
+    display: flex;
+    flex-direction: column;
     width: 11%;
     height: 100%;
     background-color: #1f1f1f;
     color: white;
-    overflow: auto;
+}
+
+.sidebar > * {
+    flex: 1;
+    padding: 20px
 }
 
 .character-section {
