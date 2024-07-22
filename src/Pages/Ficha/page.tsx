@@ -1,7 +1,7 @@
 import "./style.css";
 import NewCharacter from "./newCharacter.tsx";
 import { useEffect, useState, useRef } from "react";
-import { Character, Pericia, BonusConectado } from "./classes.tsx";
+import { Character, Pericia, BonusConectado, listaBonus, valorBuffavel } from "Types/classes.tsx";
 import { TestePericia } from "Components/Functions/RollNumber.tsx";
 import Dropdown from 'Components/SubComponents/Dropdown/page.tsx';
 
@@ -11,7 +11,9 @@ const Ficha = () => {
     const [element, setElement] = useState([] as string[]);
     const [state, setState] = useState({});
     const scrollableRef = useRef<HTMLDivElement>(null);
-
+    const dropdownRef = useRef<{ getSelectedOption: () => { id: number; descricao: string } | null }>(null);
+    const valorBuffRef = useRef<HTMLSelectElement>(null);
+    const descricaoBuffRef = useRef<HTMLInputElement>(null);
     // #endregion
 
     // #region UseEffect
@@ -34,15 +36,15 @@ const Ficha = () => {
     }
 
     function checkCheckboxState() {
-        character.atributos[1].pericias[1].bonusConectado.push(new BonusConectado(2));
-        setState({});
-    }
+        if (!dropdownRef.current) return;
 
-    function checkCheckboxStatea() {
-        character.atributos[1].pericias[0].bonusConectado.push(new BonusConectado(2));
+        const selectedOption = dropdownRef.current.getSelectedOption();
+
+        if (!selectedOption) { console.log("Nenhuma Opção Selecionada"); return; }
+
+        listaBonus.push(new BonusConectado(selectedOption.id, descricaoBuffRef.current!.value, selectedOption.descricao, parseInt(valorBuffRef.current?.value || '0', 10), ));
         setState({});
     }
-  
     // #endregion
 
     return (
@@ -51,8 +53,7 @@ const Ficha = () => {
                 <div className="left-top">
                     {character.atributos && (
                         <>
-                            {character.todosOsBonus.map((prop, index) => (
-                            // {character.atributos[1].pericias[1].bonusConectado.map((prop, index) => (
+                            {listaBonus.map((prop, index) => (
                                 <div key={index}>
                                     <prop.componente
                                         onChange={(checked) => {prop.handleCheckboxChange(checked);setState({});}}
@@ -64,9 +65,20 @@ const Ficha = () => {
                     )}
                 </div>
                 <div className="left-bottom">
-                    <button onClick={checkCheckboxState}>Check Checkbox State</button>
-                    <button onClick={checkCheckboxStatea}>Check Checkbox State</button>
-                    <Dropdown options={["Luta", "Acrobacia"]} onSelect={() => {console.log("oi")}}/>
+                    <div className="buff-refs1">
+                        <button onClick={checkCheckboxState}>+</button>
+                        <input ref={descricaoBuffRef} type="text" name="" id="" />
+                    </div>
+                    <div className="buff-refs2">
+                        <Dropdown ref={dropdownRef} options={valorBuffavel.map((valor) => ({ id: valor.id, descricao: valor.descricao}))} onSelect={() => {}} />
+                        <select ref={valorBuffRef}>
+                            {[...Array(10).keys()].map((i) => (
+                                <option key={i + 1} value={i + 1}>
+                                    {i + 1}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
             </aside>
 

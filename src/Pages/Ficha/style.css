@@ -19,6 +19,7 @@
     overflow: auto;
     justify-content: center;
     text-align: center;
+    margin-top: 3vh;
 }
 
 .main-content {
@@ -42,7 +43,6 @@
 
 .sidebar > * {
     flex: 1;
-    padding: 20px
 }
 
 .character-section {
@@ -79,6 +79,7 @@
 
 .div-character-estatisticas {
     background: #666666;
+    flex: .2;
 }
 
 .div-character-atributos {
@@ -185,21 +186,43 @@
 
 .item-inventario {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 20%;
-    border: white 2px solid;
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space items horizontally */
+    padding: 5px;
+    border: 1px solid white;
+    box-sizing: border-box;
 }
 
 .item-inventario > * {
     display: block;
 }
 
+.left-top {
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.left-bottom {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+}
+
+.buff-refs1, .buff-refs2 {
+    display: flex;
+    flex-direction: row;
+}
+
 .item-inventario.checked {
-    background: green;
+    border-color: green;
 }
 
 .item-inventario.notChecked {
-    background: red;
+    border-color: red;
+}
+
+.descricao > p {
+    margin: 0;
 }

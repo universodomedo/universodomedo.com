@@ -6,6 +6,7 @@
       "@components/*": ["Components/*"],
       "@layouts/*": ["Layouts/*"],
       "@pages/*": ["Pages/*"],
+      "@types/*": ["Types/*"],
     },
     "allowImportingTsExtensions": true,
     "noEmit": true,
