@@ -6,6 +6,7 @@
       "@components/*": ["Components/*"],
       "@layouts/*": ["Layouts/*"],
       "@pages/*": ["Pages/*"],
+      "@types/*": ["Types/*"],
     },
     "allowImportingTsExtensions": true,
     "noEmit": true,
@@ -16,7 +17,8 @@
     "module": "commonjs",
     "strict": true,
     "traceResolution": true,
-    "types": ["node"]
+    "types": ["node"],
+    "skipLibCheck": true,
   },
   "include": ["src"],
 }

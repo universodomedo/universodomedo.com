@@ -21,7 +21,7 @@
     "react-slick": "^0.30.2",
     "slick-carousel": "^1.8.1",
     "udm-dice": "^0.0.1",
-    "udm-types": "^0.0.7"
+    "udm-types": "^0.0.8"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
