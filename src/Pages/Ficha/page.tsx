@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { Character, Pericia, BonusConectado, listaBonus, valorBuffavel } from "Types/classes.tsx";
 import { TestePericia } from "Components/Functions/RollNumber.tsx";
 import Dropdown from 'Components/SubComponents/Dropdown/page.tsx';
+import { useParams } from 'react-router-dom';
 
 const Ficha = () => {
     // #region Variaveis Soltas
@@ -14,11 +15,19 @@ const Ficha = () => {
     const dropdownRef = useRef<{ getSelectedOption: () => { id: number; descricao: string } | null }>(null);
     const valorBuffRef = useRef<HTMLSelectElement>(null);
     const descricaoBuffRef = useRef<HTMLInputElement>(null);
+    const { characterId } = useParams<{ characterId: string }>();
     // #endregion
 
     // #region UseEffect
     useEffect(() => {
-        setCharacter(NewCharacter());
+        const getCharacter = async () => {
+            if (characterId) {
+                const characterData = await NewCharacter(parseInt(characterId));
+                setCharacter(characterData);
+            }
+        }
+
+        getCharacter();
     }, []);
 
     useEffect(() => {
@@ -106,9 +115,9 @@ const Ficha = () => {
                 {character.atributos && (
                 <div className="character-section div-character-atributos">
                     {character.atributos.map((atributo, key) => (
-                    <div key={`atributo-${key}`} className="div-character-atributo" style={{backgroundColor:atributo.color}}>
+                    <div key={`atributo-${key}`} className={`div-character-atributo ${atributo.nome}`}>
                         <h2>{atributo.nome} [{atributo.valorTotal}]</h2>
-                        <div className={`div-character-atributo-pericia ${atributo.nome}`}>
+                        <div className={`div-character-atributo-pericia`}>
                         {atributo.pericias?.map((pericia, key) => (
                             <div key={`pericia-${key}`} className="div-character-pericia">
                             <button onClick={() => {realizaTestePericia(pericia)}}>{pericia.nome}</button>

@@ -106,48 +106,68 @@
     text-transform: uppercase;
 }
 
-.div-character-atributo-pericia.Agilidade > .div-character-pericia > button {
-    color: #3e9d15;
-    border: #2f7810 3px solid;
+.div-character-atributo.AGI { 
+    background-color: #B6D7A8;
 }
 
-.div-character-atributo-pericia.Agilidade > .div-character-pericia > button:hover {
-    background-color: #7eed57;
+.div-character-atributo.AGI button {
+    color: #3E9D15;
+    border: #2F7810 3px solid;
 }
 
-.div-character-atributo-pericia.Forca > .div-character-pericia > button {
+.div-character-atributo.AGI button:hover {
+    background-color: #7EED57;
+}
+
+.div-character-atributo.FOR {
+    background-color: #EA9999;
+}
+
+.div-character-atributo.FOR button {
     color: #4d2a2a;
     border: #822f2f 3px solid;
 }
 
-.div-character-atributo-pericia.Forca > .div-character-pericia > button:hover {
+.div-character-atributo.FOR button:hover {
     background-color: #dc5656;
 }
 
-.div-character-atributo-pericia.Inteligencia > .div-character-pericia > button {
+.div-character-atributo.INT {
+    background-color: #6D9EEB;
+}
+
+.div-character-atributo.INT button {
     color: #1b478b;
     border: #537cbc 3px solid;
 }
 
-.div-character-atributo-pericia.Inteligencia > .div-character-pericia > button:hover {
+.div-character-atributo.INT button:hover {
     background-color: #2d70d8;
 }
 
-.div-character-atributo-pericia.Presenca > .div-character-pericia > button {
+.div-character-atributo.PRE {
+    background-color: #8E7CC3;
+}
+
+.div-character-atributo.PRE button {
     color: #991fe0;
     border: #5b3bba 3px solid;
 }
 
-.div-character-atributo-pericia.Presenca > .div-character-pericia > button:hover {
+.div-character-atributo.PRE button:hover {
     background-color: #ad63bf;
 }
 
-.div-character-atributo-pericia.Vigor > .div-character-pericia > button {
+.div-character-atributo.VIG {
+    background-color: #FFD966;
+}
+
+.div-character-atributo.VIG button {
     color: #656325;
     border: #625325 3px solid;
 }
 
-.div-character-atributo-pericia.Vigor > .div-character-pericia > button:hover {
+.div-character-atributo.VIG button:hover {
     background-color: #f3f434;
 }
 

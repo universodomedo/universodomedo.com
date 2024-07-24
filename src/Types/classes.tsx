@@ -28,11 +28,13 @@ export const listaBonus:BonusConectado[] = [];
 
 class ValorDeSistema {
     public id:number;
+    public idRefBuff:number;
     public nome:string;
     public valor:number;
 
-    constructor(id:number, nome:string, valor:number) {
+    constructor(id:number, idRefBuff:number, nome:string, valor:number) {
         this.id = id;
+        this.idRefBuff = idRefBuff;
         this.nome = nome;
         this.valor = valor;
     }
@@ -65,23 +67,21 @@ export class Estatistica {
 export class Pericia extends ValorDeSistema {
     public parentAtributo: Atributo;
 
-    constructor(id:number, nome:string, valor:number, parentAtributo: Atributo) {
-        super(id, nome, valor);
+    constructor(id:number, idRefBuff:number, nome:string, valor:number, parentAtributo: Atributo) {
+        super(id, idRefBuff, nome, valor);
         this.parentAtributo = parentAtributo;
     }
 }
 
 export class Atributo extends ValorDeSistema {
-    public color:string;
     public pericias:Pericia[] = [];
 
-    constructor(id:number, nome:string, valor:number, color:string) {
-        super(id, nome, valor);
-        this.color = color;
+    constructor(id:number, idRefBuff:number, nome:string, valor:number) {
+        super(id, idRefBuff, nome, valor);
     }
 
-    addPericia = (id:number, nome:string, valorPatente:number,) => {
-        this.pericias.push(new Pericia(id, nome, valorPatente, this));
+    addPericia = (pericia:Pericia) => {
+        this.pericias.push(pericia);
     }
 }
 
