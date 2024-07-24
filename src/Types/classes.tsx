@@ -40,7 +40,7 @@ class ValorDeSistema {
     }
 
     get bonus():number {
-        return listaBonus.filter(bonus => bonus.id === this.id).reduce((acc, cur) => {
+        return listaBonus.filter(bonus => bonus.id === this.idRefBuff).reduce((acc, cur) => {
             return (cur.checked ? acc + cur.valor : acc);
         }, 0);
     }

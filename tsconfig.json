@@ -17,7 +17,8 @@
     "module": "commonjs",
     "strict": true,
     "traceResolution": true,
-    "types": ["node"]
+    "types": ["node"],
+    "skipLibCheck": true,
   },
   "include": ["src"],
 }
