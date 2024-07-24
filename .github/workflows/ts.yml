@@ -36,8 +36,8 @@ jobs:
     - name: Prepare Docker files
       run: |
         mkdir -p docker
-        cp deployments/udm-deployment/docker/Dockerfile docker/
-        cp deployments/udm-deployment/docker/docker-compose.yml docker/
+        cp deployments/udm-deployment/docker/compose/Dockerfile docker/
+        cp deployments/udm-deployment/docker/compose/docker-compose.yml docker/
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
