@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - ts
-  pull_request:
-    branches:
-      - ts
 
 jobs:
   build:
@@ -18,24 +15,8 @@ jobs:
       with:
         submodules: true  # Ensure submodules are updated
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'  # Adjust to the version your project requires
-
-    - name: Install dependencies
-      run: |
-        npm install -g typescript  # Ensure TypeScript is installed globally
-        npm install               # Install local project dependencies
-
-    - name: Build Vite app
-      run: |
-        npx tsc -b               # Use npx to run tsc without installing it globally
-        npx vite build           # Use npx to run vite without installing it globally
-
     - name: Prepare Docker files
       run: |
-        mkdir -p docker
         cp deployments/udm-deployment/docker/compose/Dockerfile ./
         cp deployments/udm-deployment/docker/compose/docker-compose.yml ./
 
@@ -43,8 +24,6 @@ jobs:
       uses: docker/setup-buildx-action@v2
 
     - name: Build Docker images and run with Docker Compose
-      run: |
-        docker-compose build
-        docker-compose up -d
+      run: docker-compose -p universodomedo up --build -d
 
    
