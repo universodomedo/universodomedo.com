@@ -25,12 +25,13 @@ jobs:
 
     - name: Install dependencies
       run: |
-        npm install
+        npm install -g typescript  # Ensure TypeScript is installed globally
+        npm install               # Install local project dependencies
 
     - name: Build Vite app
       run: |
-        tsc -b
-        vite build
+        npx tsc -b               # Use npx to run tsc without installing it globally
+        npx vite build           # Use npx to run vite without installing it globally
 
     - name: Prepare Docker files
       run: |
@@ -52,3 +53,4 @@ jobs:
       run: |
         cd docker
         docker-compose down
+   
