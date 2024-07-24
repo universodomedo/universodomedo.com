@@ -47,9 +47,4 @@ jobs:
         docker-compose build
         docker-compose up -d
 
-    - name: Clean up Docker containers
-      if: always()
-      run: |
-        cd docker
-        docker-compose down
    
