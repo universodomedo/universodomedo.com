@@ -1,0 +1,56 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - ts
+  pull_request:
+    branches:
+      - ts
+
+jobs:
+  build:
+    runs-on: udm-oc1-a
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        submodules: true  # Ensure submodules are updated
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'  # Adjust to the version your project requires
+
+    - name: Install dependencies
+      run: |
+        npm install -g typescript  # Ensure TypeScript is installed globally
+        npm install               # Install local project dependencies
+
+    - name: Build Vite app
+      run: |
+        npx tsc -b               # Use npx to run tsc without installing it globally
+        npx vite build           # Use npx to run vite without installing it globally
+
+    - name: Prepare Docker files
+      run: |
+        mkdir -p docker
+        cp deployments/udm-deployment/docker/Dockerfile docker/
+        cp deployments/udm-deployment/docker/docker-compose.yml docker/
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker images and run with Docker Compose
+      run: |
+        cd docker
+        docker-compose build
+        docker-compose up -d
+
+    - name: Clean up Docker containers
+      if: always()
+      run: |
+        cd docker
+        docker-compose down
+   
