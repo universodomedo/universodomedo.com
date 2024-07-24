@@ -3,11 +3,11 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - ts
+      - dev 
 
 jobs:
   build:
-    runs-on: udm-oc1-a
+    runs-on: dev-udm-oc1-a
 
     steps:
     - name: Checkout code
