@@ -13,17 +13,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Install npm dependencies
-      run: npm install
+    - name: Install Docker
+      uses: actions/setup-docker@v2
 
-    - name: Install TypeScript globally
-      run: npm install -g typescript
-
-    - name: Install Vite globally
-      run: npm install -g vite
-
-    - name: Build the project
-      run: npm run build
+    - name: Build the project in a Docker container
+      run: |
+         docker run --name build-container --rm -v ${GITHUB_WORKSPACE}:/app -w /app node:18 bash -c "
+          npm install &&
+          npm install -g typescript &&
+          npm install -g vite &&
+          npm run build
+        "
 
     - name: Copy build artifacts to Docker volume
-      run: cp -r ./dist/* ~/docker/volumes/universodomedo/site
+      run: |
+        docker cp build-container:/app/dist ~/docker/volumes/universodomedo/site
