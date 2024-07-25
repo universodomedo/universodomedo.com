@@ -1,0 +1,14 @@
+.carousel-content {
+    display: flex;
+    flex-direction: column;
+    width: 55%;
+}
+
+.slick-slide > div {
+    margin: 0 10px;
+}
+
+.slick-slider {
+    width: 100%;
+    height: auto;
+}

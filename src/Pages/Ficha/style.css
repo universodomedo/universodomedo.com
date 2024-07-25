@@ -1,0 +1,248 @@
+.teste {
+    background: #171717;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar {
+    display: flex;
+    width: 11%;
+    height: 100%;
+    background-color: #1f1f1f;
+    color: white;
+    padding: 20px;
+    overflow: auto;
+    justify-content: center;
+    text-align: center;
+    margin-top: 3vh;
+}
+
+.main-content {
+    display: flex;
+    flex: 1 1 0%;
+    height: 100%;
+    background-color: #454545;
+    overflow-y: auto;
+    flex-direction: column;
+    min-width: 0px;
+}
+
+.right-sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 11%;
+    height: 100%;
+    background-color: #1f1f1f;
+    color: white;
+}
+
+.sidebar > * {
+    flex: 1;
+}
+
+.character-section {
+    display: flex;
+    width: 100%;
+    overflow: auto;
+    flex: 1;
+}
+
+.div-character-detalhes {
+    background: #222222;
+    max-height: 120px;
+}
+
+.div-character-detalhes h1 {
+    flex: 1 1 0%;
+    text-align: center;
+    color: white;
+    margin: auto;
+    font-size: 60px;
+}
+
+.div-character-detalhes h2 {
+    width: 30%;
+    text-align: center;
+    color: white;
+    margin: auto;
+}
+
+.div-character-detalhes, .div-character-estatistica {
+    flex: 1 1 0%;
+    text-align: center;
+}
+
+.div-character-estatisticas {
+    background: #666666;
+    flex: .2;
+}
+
+.div-character-atributos {
+    flex-direction: column;
+    background: #999999;
+}
+
+.div-character-atributo {
+    text-align: center;
+}
+
+.div-character-atributo-pericia {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 2vh;
+}
+
+.div-character-atributo-pericia > .div-character-pericia > button {
+    background-color: transparent;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.div-character-atributo.AGI { 
+    background-color: #B6D7A8;
+}
+
+.div-character-atributo.AGI button {
+    color: #3E9D15;
+    border: #2F7810 3px solid;
+}
+
+.div-character-atributo.AGI button:hover {
+    background-color: #7EED57;
+}
+
+.div-character-atributo.FOR {
+    background-color: #EA9999;
+}
+
+.div-character-atributo.FOR button {
+    color: #4d2a2a;
+    border: #822f2f 3px solid;
+}
+
+.div-character-atributo.FOR button:hover {
+    background-color: #dc5656;
+}
+
+.div-character-atributo.INT {
+    background-color: #6D9EEB;
+}
+
+.div-character-atributo.INT button {
+    color: #1b478b;
+    border: #537cbc 3px solid;
+}
+
+.div-character-atributo.INT button:hover {
+    background-color: #2d70d8;
+}
+
+.div-character-atributo.PRE {
+    background-color: #8E7CC3;
+}
+
+.div-character-atributo.PRE button {
+    color: #991fe0;
+    border: #5b3bba 3px solid;
+}
+
+.div-character-atributo.PRE button:hover {
+    background-color: #ad63bf;
+}
+
+.div-character-atributo.VIG {
+    background-color: #FFD966;
+}
+
+.div-character-atributo.VIG button {
+    color: #656325;
+    border: #625325 3px solid;
+}
+
+.div-character-atributo.VIG button:hover {
+    background-color: #f3f434;
+}
+
+.div-character-pericia {
+    margin: 0 .4vw;
+}
+
+.div-character-pericia * {
+    margin: 0;
+}
+
+@keyframes fadeOut {
+    0% {
+      background-color: yellow;
+    }
+    100% {
+      background-color: rgba(0,0,0,0);
+    }
+}
+
+.fade {
+    animation: fadeOut 3s forwards;
+}
+
+.testeMensagem {
+    color: white;
+    font-size: 8;
+    padding: 0 7px 0 5px;
+}
+
+.messages {
+    overflow: auto;
+    height: 100%;
+    width: 100%;
+}
+
+.item-inventario {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space items horizontally */
+    padding: 5px;
+    border: 1px solid white;
+    box-sizing: border-box;
+}
+
+.item-inventario > * {
+    display: block;
+}
+
+.left-top {
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.left-bottom {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+}
+
+.buff-refs1, .buff-refs2 {
+    display: flex;
+    flex-direction: row;
+}
+
+.item-inventario.checked {
+    border-color: green;
+}
+
+.item-inventario.notChecked {
+    border-color: red;
+}
+
+.descricao > p {
+    margin: 0;
+}

@@ -1,0 +1,17 @@
+.sections {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    gap: 2.5rem;
+}
+
+.sections > .section-content, .sections > .carousel-content {
+    gap: 3vh;
+}
+
+hr {
+    border: #333 2px solid;
+    border-radius: 100px;
+    width: 90%;
+}

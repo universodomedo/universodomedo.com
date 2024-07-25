@@ -1,26 +1,24 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
+    "baseUrl": "src",
+    "paths": { // para adicionar novos paths, tem que adicionar no tsconfig.json e no vite.config.ts
+      "@consumer/*": ["ApiConsumer/*"],
+      "@components/*": ["Components/*"],
+      "@layouts/*": ["Layouts/*"],
+      "@pages/*": ["Pages/*"],
+      "@types/*": ["Types/*"],
+    },
+    "allowImportingTsExtensions": true,
     "noEmit": true,
+    "jsx": "react-jsx",
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "commonjs",
+    "strict": true,
+    "traceResolution": true,
+    "types": ["node"],
+    "skipLibCheck": true,
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src"],
 }
