@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: dev-udm-oc1-a
     
-    ssteps:
+    steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
