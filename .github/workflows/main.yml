@@ -13,9 +13,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Install Docker
-      uses: actions/setup-docker@v2
-
     - name: Build the project in a Docker container
       run: | 
         docker run --name build-container --rm -v ${GITHUB_WORKSPACE}:/app -w /app node:18 bash -c "npm install && npm install -g typescript && npm install -g vite && npm run build"
