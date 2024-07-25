@@ -37,3 +37,7 @@ next-env.d.ts
 
 # env variables
 .env.*
+
+# dist
+./dist/
+dist/
