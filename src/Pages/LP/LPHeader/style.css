@@ -1,50 +1,44 @@
-.navbar {
-    display: grid;
-    grid-template-columns: 10% 80% 10%;
-    align-items: center;
-    justify-content: space-between;
-    margin: 20px 170px;
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  max-height: 10%;
 }
 
-.navbar a:visited {
-    color: inherit;
+.header-logo {
+  flex: 2 1 20%;
+  height: 100%;
+  text-align: center;
 }
 
-.navbar img {
-    width: 12vw;
+.header-acessar {
+  flex: 2 1 20%;
+  text-align: center;
+}
+
+.header-logo img {
+  height: 100%;
+}
+
+.header nav {
+  flex: 6 1 60%;
 }
 
 .nav-menu {
-    display: flex;
-    align-items: center;
-    list-style: none;
-    gap: 60px;
-    font-size: 20px;
-    justify-content: center;
-    color: white;
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 5%;
+  font-size: 125%;
+  justify-content: center;
 }
 
-.nav-connect {
-    font-size: 20px;
-    padding: 22px 45px;
-    border-radius: 50px;
-    background: #3b1c3f;
-    cursor: pointer;
-    transition: .3s;
+.nav-menu a {
+  color: white;
+  cursor: pointer;
 }
 
-.nav-connect:hover {
-    transform: scale(1.05);
-}
-
-.nav-menu li {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-}
-
-.anchor-link {
-    text-decoration: none;
-    color: white;
+.nav-menu a:hover {
+  color: red;
 }

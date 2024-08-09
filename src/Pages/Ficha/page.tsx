@@ -5,6 +5,8 @@ import { Character, Pericia, BonusConectado, listaBonus, valorBuffavel } from "T
 import { TestePericia } from "Components/Functions/RollNumber.tsx";
 import Dropdown from 'Components/SubComponents/Dropdown/page.tsx';
 import { useParams } from 'react-router-dom';
+import TesteGridEfeitos from "Components/SubComponents/TesteGridEfeitos/page.tsx";
+import TesteDesenhoMarca from "Components/SubComponents/TesteDesenhoMarca/page.tsx";
 
 const Ficha = () => {
     // #region Variaveis Soltas
@@ -129,6 +131,9 @@ const Ficha = () => {
                     ))}
                 </div>
                 )}
+
+                <TesteGridEfeitos lista={listaBonus}/>
+                <TesteDesenhoMarca />
 
             </main>
 

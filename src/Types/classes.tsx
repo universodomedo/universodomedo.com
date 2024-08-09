@@ -1,5 +1,37 @@
 import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
 
+export class SimboloEfeito {
+    pathData: string;
+
+    constructor(pathData: string) {
+        this.pathData = pathData;
+    }
+
+    setPathData(path: string) {
+        this.pathData = path;
+    }
+
+    getPathData() {
+        return this.pathData;
+    }
+
+    toSvg(): string {
+        const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+                <rect width="100" height="100" />
+                <path d="${this.pathData}" stroke="white" stroke-width="5" stroke-linecap="round" fill="none" />
+            </svg>
+        `.replace(/\s+/g, ' ').trim(); // Minify the SVG string
+
+        // Properly encode the SVG
+        const encodedSvg = encodeURIComponent(svg)
+            .replace(/'/g, '%27')
+            .replace(/"/g, '%22');
+
+        return `data:image/svg+xml,${encodedSvg}`;
+    }
+}
+
 export class BonusConectado {
     public id:number;
     public valor:number;
@@ -7,6 +39,7 @@ export class BonusConectado {
     public valorBuffavel:string;
     public checked:boolean;
     public componente:React.FC<{ onChange: (checked: boolean) => void; checked: boolean }>;
+    public simboloEfeito:SimboloEfeito;
 
     constructor(id:number, descricao:string, valorBuffavel:string, valor:number) {
         this.id = id;
@@ -17,6 +50,8 @@ export class BonusConectado {
         this.componente = ({ onChange, checked }) => (
             <CheckboxComponent valor={this.valor} descricao={this.descricao} valorBuffavel={this.valorBuffavel} onChange={onChange} checked={checked} />
         )
+
+        this.simboloEfeito = new SimboloEfeito("M37.8125,49 M37.8125,49 M37.8125,48 M37.8125,47 M36.8125,47 M36.8125,46 M36.8125,45 M36.8125,44 M35.8125,43 M35.8125,42 M35.8125,41 M35.8125,40 M35.8125,39 M35.8125,38 M35.8125,37 M35.8125,36 M35.8125,35 M35.8125,34 M35.8125,33 M35.8125,32 M35.8125,31 M35.8125,30 M35.8125,29 M35.8125,28 M35.8125,27 M35.8125,26 M35.8125,25 M35.8125,24 M35.8125,23 M36.8125,23 M37.8125,23 M38.8125,23 M39.8125,24 M39.8125,25 M40.8125,25 M41.8125,25 M41.8125,26 M42.8125,26 M43.8125,27 M44.8125,27 M45.8125,27 M45.8125,28 M46.8125,28 M46.8125,29 M47.8125,29 M48.8125,29 M49.8125,29 M49.8125,30 M50.8125,30 M51.8125,30 M51.8125,31 M52.8125,31 M53.8125,31 M54.8125,31 M54.8125,32 M55.8125,32 M55.8125,33 M56.8125,33 M57.8125,33 M57.8125,34 M58.8125,34 M59.8125,34 M59.8125,35 M59.8125,36 M60.8125,36 M60.8125,37 M61.8125,37 M62.8125,37 M62.8125,38 M63.8125,38 M63.8125,39 M63.8125,40 M63.8125,41 M63.8125,42 M63.8125,43 M63.8125,44 M63.8125,45 M63.8125,46 M63.8125,47 M63.8125,48 M63.8125,49 M63.8125,50 M63.8125,51 M62.8125,51 M62.8125,52 M61.8125,52 M61.8125,53 M61.8125,54 M60.8125,54 M60.8125,55 M60.8125,56 M59.8125,56 M59.8125,57 M59.8125,58 M58.8125,58 M58.8125,59 M58.8125,60 M57.8125,60 M57.8125,61 M57.8125,62 M57.8125,63 M56.8125,63 M56.8125,64 M56.8125,65 M56.8125,66 M55.8125,66 M55.8125,67 M54.8125,67 M54.8125,68 M53.8125,68 M53.8125,69 M53.8125,70 M52.8125,70 M51.8125,70 M50.8125,70 M50.8125,71 M49.8125,71 M48.8125,71 M47.8125,71 M46.8125,71 M45.8125,71 M44.8125,71 M43.8125,71 M42.8125,71 M41.8125,71 M40.8125,71 M39.8125,71 M38.8125,71 M37.8125,71 M36.8125,71 M35.8125,71 M34.8125,71 M33.8125,71 M32.8125,71 M31.8125,71 M30.8125,71 M29.8125,71 M28.8125,71 M27.8125,71 M27.8125,70 M26.8125,70 M25.8125,70 M24.8125,70 M23.8125,70 M22.8125,70 M22.8125,69 M21.8125,69 M20.8125,69 M20.8125,68 M20.8125,67 M20.8125,66 M20.8125,65 M20.8125,64 M20.8125,63 M20.8125,62 M20.8125,61 M20.8125,60");
     }
 
     handleCheckboxChange = (checked:boolean) => {
