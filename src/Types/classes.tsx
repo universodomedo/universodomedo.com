@@ -1,4 +1,152 @@
 import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
+import { MDL_TipoDano } from "udm-types";
+
+export class Estatisticas {
+    public estatisticasDanificaveis:EstatisticaDanificavel[] = [];
+    public estatisticasComuns:EstatisticaComum[] = [];
+}
+
+export class EstatisticaDanificavel {
+    public nomeVisualizacao: string;
+    public valorAtual: number;
+    public valorMaximo: number;
+
+    constructor(nomeVisualizacao: string, valorMaximo: number, valorAtual: number) {
+        this.nomeVisualizacao = nomeVisualizacao;
+        this.valorMaximo = valorMaximo;
+        this.valorAtual = valorAtual;
+    }
+
+    public aplicarDanoFinal(valor: number): void {
+        console.log(`Foram perdidos ${valor} pontos de ${this.nomeVisualizacao}!`);
+        this.valorAtual = Math.max(this.valorAtual - valor, 0);
+    }
+    public aplicarCura(valor: number): void {
+        console.log(`Foram ganhos ${valor} pontos de ${this.nomeVisualizacao}!`);
+        this.valorAtual = Math.min(this.valorAtual + valor, this.valorMaximo);
+    }
+}
+
+export class EstatisticaComum {
+    public nomeVisualizacao: string;
+    public valor: number;
+
+    constructor(nomeVisualizacao: string, valor: number) {
+        this.nomeVisualizacao = nomeVisualizacao;
+        this.valor = valor;
+    }
+
+    public getValor(): number {
+        return this.valor;
+    }
+}
+
+export class ControladorPersonagem {
+    public pv:EstatisticaDanificavel;
+    public ps:EstatisticaDanificavel;
+    public pe:EstatisticaDanificavel;
+    public rds:ReducaoDano[] = [];
+
+    constructor(pv:EstatisticaDanificavel, ps:EstatisticaDanificavel, pe:EstatisticaDanificavel, rds:ReducaoDano[]) {
+        this.pv = pv;
+        this.ps = ps;
+        this.pe = pe;
+        this.rds = rds;
+    }
+
+    reduzDano = (danoGeral:DanoGeral) => {
+        let dano:number = 0;
+        // danoGeral.listaDano.forEach(instanciaDano => {
+        //     const rd = this.rds.find(rd => rd.tipo.id === instanciaDano.tipoDano.id);
+        //     console.log(`Recebi ${instanciaDano.valor} de Dano ${instanciaDano.tipoDano.nome}, tendo ${rd!.valor} de RD`);
+        //     dano += instanciaDano.valor - rd!.valor;
+        // });
+
+        console.log("1");
+        let somaDanoNivel1 = 0;
+        listaTiposDano.filter(tipoDano => !tipoDano.idTipoDanoPertencente).map(tipoDanoNivel1 => {
+            let somaDanoNivel2 = 0;
+            listaTiposDano.filter(tipoDano => tipoDano.idTipoDanoPertencente === tipoDanoNivel1.id).map(tipoDanoNivel2 => {
+                let somaDanoNivel3 = 0;
+                listaTiposDano.filter(tipoDano => tipoDano.idTipoDanoPertencente === tipoDanoNivel2.id).map(tipoDanoNivel3 => {
+                    const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel3.id);
+                    if (danoDoTipo) somaDanoNivel3 += Math.max(danoDoTipo.valor - this.rds.find(reducaoDano => reducaoDano.tipo.id === tipoDanoNivel3.id)!.valor, 0);
+                });
+                const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel2.id);
+                somaDanoNivel2 += Math.max((somaDanoNivel3 + (danoDoTipo ? danoDoTipo.valor : 0)) - this.rds.find(reducaoDano => reducaoDano.tipo.id === tipoDanoNivel2.id)!.valor, 0);
+            });
+            const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel1.id);
+            somaDanoNivel1 += Math.max((somaDanoNivel2 + (danoDoTipo ? danoDoTipo.valor : 0)) - this.rds.find(reducaoDano => reducaoDano.tipo.id === tipoDanoNivel1.id)!.valor, 0);
+        });
+
+        this.pv.aplicarDanoFinal(somaDanoNivel1);
+    }
+}
+
+export class Personagem {
+    public estatisticas:Estatisticas;
+    public atributos:Atributo[];
+    public detalhes:CharacterDetalhes;
+    public controladorPersonagem:ControladorPersonagem;
+    public reducoesDano:ReducaoDano[];
+
+    constructor(estatisticas:Estatisticas, atributos:Atributo[], detalhes:CharacterDetalhes, reducoesDano:ReducaoDano[]) {
+        this.estatisticas = estatisticas;
+        this.atributos = atributos;
+        this.detalhes = detalhes;
+        this.reducoesDano = reducoesDano;
+
+        this.controladorPersonagem = new ControladorPersonagem(estatisticas.estatisticasDanificaveis[0], estatisticas.estatisticasDanificaveis[1], estatisticas.estatisticasDanificaveis[2], reducoesDano)
+    }
+
+    receberDanoVital = (danoGeral:DanoGeral) => {
+        this.controladorPersonagem.reduzDano(danoGeral);
+    }
+}
+
+export class DanoGeral { // traduz em 1 unico ataque
+    public listaDano:InstanciaDano[]; // são as diferentes composições dentro desse unico ataque
+
+    constructor(listaDano:InstanciaDano[]) {
+        this.listaDano = listaDano;
+    }
+}
+
+export class InstanciaDano {
+    public valor:number;
+    public tipoDano:TipoDano;
+
+    constructor(valor:number, tipoDano:TipoDano) {
+        this.valor = valor;
+        this.tipoDano = tipoDano;
+    }
+}
+
+export class ReducaoDano {
+    public tipo:TipoDano;
+    public valor:number;
+
+    constructor(tipo:TipoDano, valor:number) {
+        this.tipo = tipo;
+        this.valor = valor;
+    }
+}
+
+export class TipoDano {
+    public id:number;
+    public nome:string;
+    public danoPertencente?:TipoDano;
+    // estatistica alvo
+
+    constructor(id:number, nome:string) {
+        this.id = id;
+        this.nome = nome;
+    }
+}
+
+export const listaTiposDano:MDL_TipoDano[] = [];
+
+// export const listaTiposDano:TipoDano[] = [];
 
 export class SimboloEfeito {
     pathData: string;
@@ -85,19 +233,6 @@ class ValorDeSistema {
     }
 }
 
-export class Estatistica {
-    public nomeDisplay:string;
-    public valorMaximo:number;
-    public valorAtual:number;
-    public valorTemp:number;
-
-    constructor(nomeDisplay:string, valorMaximo:number, valorAtual:number, valorTemp:number) {
-        this.nomeDisplay = nomeDisplay;
-        this.valorMaximo = valorMaximo;
-        this.valorAtual = valorAtual;
-        this.valorTemp = valorTemp;
-    }
-}
 
 export class Pericia extends ValorDeSistema {
     public parentAtributo: Atributo;
@@ -132,17 +267,7 @@ export class CharacterDetalhes {
     }
 }
 
-export class Character {
-    public estatisticas:Estatistica[];
-    public atributos:Atributo[];
-    public detalhes:CharacterDetalhes;
 
-    constructor(estatisticas:Estatistica[], atributos:Atributo[], detalhes:CharacterDetalhes) {
-        this.estatisticas = estatisticas;
-        this.atributos = atributos;
-        this.detalhes = detalhes;
-    }
-}
 
 class ValorBuffavel {
     public id:number;

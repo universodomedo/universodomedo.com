@@ -19,10 +19,10 @@ const App = () => {
           </Route>
 
           <Route element={<LayoutInterno />}>
-            <Route path="/sessions">
+            {/* <Route path="/sessions">
               <Route index element={<Sessions />} />
               <Route path=":sessionId" element={<Sessions />} />
-            </Route>
+            </Route> */}
             <Route path="/ficha">
               <Route index element={<Ficha />} />
               <Route path=":characterId" element={<Ficha />} />
