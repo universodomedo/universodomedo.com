@@ -1,0 +1,14 @@
+.ficha_detalhes {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.detalhe_meio {
+    flex: 1;
+}
+
+.detalhe_cantos {
+    flex: .3;
+}

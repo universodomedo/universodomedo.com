@@ -246,3 +246,9 @@
 .descricao > p {
     margin: 0;
 }
+
+.react-tabs {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

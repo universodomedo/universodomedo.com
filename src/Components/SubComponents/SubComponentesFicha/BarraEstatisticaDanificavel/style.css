@@ -2,8 +2,6 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    width: 300px;
-    height: 20px;
     padding: 5px;
     background: #ddd;
     -webkit-border-radius: 5px;
@@ -33,4 +31,12 @@
     right: 5px;
 
     transition: width 0.5s linear;
+}
+
+.interno-barra {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    right: 0;
+    text-align: center;
 }

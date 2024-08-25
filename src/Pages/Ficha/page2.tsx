@@ -1,7 +1,7 @@
 import "./style.css";
 import NewCharacter from "./newCharacter.tsx";
 import { useEffect, useState, useRef } from "react";
-import { Character, Pericia, BonusConectado, listaBonus, valorBuffavel } from "Types/classes.tsx";
+import { Character, Periciaa, BonusConectado, listaBonus, valorBuffavel } from "Types/classes.tsx";
 import { TestePericia } from "Components/Functions/RollNumber.tsx";
 import Dropdown from 'Components/SubComponents/Dropdown/page.tsx';
 import { useParams } from 'react-router-dom';
@@ -40,7 +40,7 @@ const Ficha = () => {
     // #endregion
 
     // #region Functions
-    function realizaTestePericia(pericia:Pericia) {
+    function realizaTestePericia(pericia:Periciaa) {
       const message1 = `Você realizou um teste da Perícia ${pericia.nome}: ${pericia.parentAtributo.valorTotal} dados com ${pericia.bonus} de bônus.`;
       let teste = TestePericia(pericia.parentAtributo.valorTotal, pericia.valorTotal);
       setElement([...element, `${message1} ||| Você tirou ${teste}`]);

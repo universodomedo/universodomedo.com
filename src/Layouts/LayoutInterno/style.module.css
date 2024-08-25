@@ -1,0 +1,31 @@
+.header {
+    width: 100%;
+    flex: 0 0 15%;
+}
+
+.content {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+}
+
+.asides {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 13%;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    text-align: center;
+    overflow: hidden;
+    margin-bottom: 1vh;
+}
+
+.main > * {
+    color: white;
+}

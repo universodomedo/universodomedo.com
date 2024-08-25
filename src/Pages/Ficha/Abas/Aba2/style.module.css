@@ -1,0 +1,11 @@
+.estatisticas_barras {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10%;
+    padding-bottom: 2%;
+}
+
+.estatistica_barra {
+    flex: 1;
+}

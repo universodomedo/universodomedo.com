@@ -1,123 +1,50 @@
-import "./style2.css";
-import { useEffect, useState } from "react";
-import { Personagem } from "Types/classes.tsx";
-import { useParams } from 'react-router-dom';
-import NewCharacter from "./newCharacter.tsx";
-import BarraEstatisticaDanificavel from "Components/SubComponents/BarraEstatisticaDanificavel/page.tsx"
-import { DanoGeral, InstanciaDano, listaTiposDano } from "Types/classes.tsx"
+// #region Imports
+import style from "./style.module.css";
+import "./style.css";
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'Redux/store';
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import "react-tabs/style/react-tabs.css";
+import Aba1 from "Pages/Ficha/Abas/Aba1/page.tsx";
+import Aba2 from "Pages/Ficha/Abas/Aba2/page.tsx";
+import Aba3 from "Pages/Ficha/Abas/Aba3/page.tsx";
+import Aba4 from "Pages/Ficha/Abas/Aba4/page.tsx";
+import Aba5 from "Pages/Ficha/Abas/Aba5/page.tsx";
+import Aba6 from "Pages/Ficha/Abas/Aba6/page.tsx";
+import Aba7 from "Pages/Ficha/Abas/Aba7/page.tsx";
+// #endregion
 
-const Ficha = () => {
-    const [character, setCharacter] = useState<Personagem>({} as Personagem);
-    const { characterId } = useParams<{ characterId: string }>();
+const Ficha: React.FC = () => {
+    const fichaHelper = useSelector((state: RootState) => state.fichaHelper);
+    const personagem = fichaHelper.personagem;
     const [state, setState] = useState({});
-
-    useEffect(() => {
-        const getCharacter = async () => {
-            if (characterId) {
-                const characterData = await NewCharacter(parseInt(characterId));
-                setCharacter(characterData);
-            }
-        }
-
-        getCharacter();
-        setState({});
-    }, []);
 
     return (
         <>
-        {character.estatisticas ? (
-            <div className="teste">
-                <main className="main-content">
-                    <button onClick={() => {setState({});}}>Cu</button>
-                    <div className="first-child">
-                        <div className="first-child-left">
-                            <div className="left-child">
-                                <h1>Pontos de Vida</h1>
-                                <BarraEstatisticaDanificavel hp={character.controladorPersonagem.pv!.valorAtual} maxHp={character.controladorPersonagem.pv!.valorMaximo} />
-                                <button onClick={() => {character.receberDanoVital(new DanoGeral([
-                                    new InstanciaDano(4, listaTiposDano.find(tipoDano => tipoDano.id === 4)!),
-                                    new InstanciaDano(2, listaTiposDano.find(tipoDano => tipoDano.id === 7)!),
-                                    new InstanciaDano(3, listaTiposDano.find(tipoDano => tipoDano.id === 13)!)
-                                ]))}}>Receber Dano</button>
-                                {/* <button onClick={() => {character.receberDanoVital(new DanoGeral([new InstanciaDano(4, listaTiposDano.find(tipoDano => tipoDano.id === 3)!), new InstanciaDano(1)]))}}>Receber Dano</button> */}
-                            </div>
-                            <div className="left-child">
-                                <h1>Pontos de Sanidade</h1>
-                                <p>{character.controladorPersonagem.ps!.valorAtual}/{character.controladorPersonagem.ps!.valorMaximo}</p>
-                                {/* <button onClick={() => {character.receberDanoVital(1)}}>Receber Dano</button> */}
-                            </div>
-                            <div className="left-child">
-                                <h1>Pontos de Esforço</h1>
-                                <p>{character.controladorPersonagem.pe!.valorAtual}/{character.controladorPersonagem.pe!.valorMaximo}</p>
-                                {/* <button onClick={() => {character.controladorPersonagem.pe!.aplicarDano(1)}}>Receber Dano</button> */}
-                            </div>
-                        </div>
-                        <div className="first-child-right">
-                            <table>
-                                <tr><th>Classificação</th><th>Redução</th></tr>
-                                {character.reducoesDano.map((rd, index) => (
-                                    <tr>
-                                        <td>{rd.tipo.nome}</td>
-                                        <td>{rd.valor}</td>
-                                    </tr>
-                                ))}
-                            </table>
-                        </div>
+            <button onClick={() => {setState({});}}>Cu</button>
+            {personagem ? (
+                <Tabs defaultIndex={0}>
+                    <TabList>
+                        <Tab>Perícias</Tab>
+                        <Tab>Ações</Tab>
+                        <Tab>Inventário</Tab>
+                        <Tab>Habilidades</Tab>
+                        <Tab>Rituais</Tab>
+                    </TabList>
+                    <Aba1 detalhesPersonagem={personagem.detalhes}/>
+                    <Aba2 estatisticasDanificaveis={personagem.controladorPersonagem.estatisticasDanificaveis}/>
+                    <div className={style.main_wrapper}>
+                        <TabPanel><Aba3 atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias}/></TabPanel>
+                        <TabPanel><Aba4 reducoesDanoPersonage={personagem.reducoesDano}/></TabPanel>
+                        <TabPanel><Aba5/></TabPanel>
+                        <TabPanel><Aba6/></TabPanel>
+                        <TabPanel><Aba7/></TabPanel>
                     </div>
-                    <div className="second-child">
-                        <div className="second-child-child">
-                            <div className="main-child">
-                                <h1>Nome</h1>
-                                <p>{character.detalhes.nome}</p>
-                            </div>
-                        </div>
-                        <div className="second-child-child">
-                            <div className="main-child">
-                                <h1>NEX</h1>
-                                <p>{character.detalhes.nex}</p>
-                            </div>
-                        </div>
-                        <div className="second-child-child">
-                            <div className="main-child">
-                                <h1>Classe</h1>
-                                <p>{character.detalhes.classe}</p>
-                            </div>
-                        </div>
-                        <div className="second-child-child">
-                            <div className="main-child">
-                                <h1>Espaços de Inventário</h1>
-                            </div>
-                        </div>
-                        <div className="second-child-child">
-                            <div className="main-child">
-                                <h1>Moedas</h1>
-                            </div>
-                        </div>
-                    </div>
-                    {/* <div className="third-child"></div> */}
-                    <div className="main-child">
-                        <h1>Atributos</h1>
-                    </div>
-                    <div className="main-child">
-                        <h1>Perícias</h1>
-                    </div>
-                    <div className="main-child">
-                        <h1>Espaços de Categoria</h1>
-                    </div>
-                    <div className="main-child">
-                        <h1>Ações</h1>
-                    </div>
-                    <div className="main-child">
-                        <h1>Habilidades</h1>
-                    </div>
-                    <div className="main-child">
-                        <h1>Rituais</h1>
-                    </div>
-                </main>
-            </div>
-        ) : <></>}
+                </Tabs>
+            ): <></>}
         </>
     );
-}
+};
 
 export default Ficha;

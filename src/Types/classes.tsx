@@ -1,56 +1,171 @@
 import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
-import { MDL_TipoDano } from "udm-types";
+import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano } from "udm-types";
 
-export class Estatisticas {
-    public estatisticasDanificaveis:EstatisticaDanificavel[] = [];
-    public estatisticasComuns:EstatisticaComum[] = [];
+export class Personagem {
+    private _ficha!:RLJ_Ficha;
+    public reducoesDano:ReducaoDano[];
+    public atributos:Atributo[];
+    public pericias:Pericia[];
+    public buffs:Buff[];
+    public inventario:Item[];
+    // public estatisticas:Estatisticas;
+    public detalhes:CharacterDetalhes;
+    public controladorPersonagem:ControladorPersonagem;
+
+    // constructor(estatisticas:Estatisticas, atributos:Atributo[], detalhes:CharacterDetalhes, reducoesDano:ReducaoDano[], estatisticasDanificaveisPersonagem:EstatisticasDanificaveisPersonagem) {
+    constructor(db_ficha:RLJ_Ficha) {
+        this._ficha = db_ficha;
+
+        this.reducoesDano = this._ficha.reducoesDano.map(reducaoDano => new ReducaoDano(reducaoDano.valor, reducaoDano.tipoDano));
+        this.atributos = this._ficha.atributos.map(attr => new Atributo(attr.valor, attr.atributo));
+        this.pericias = this._ficha.periciasPatentes.map(periciaPatente => new Pericia(periciaPatente.pericia, periciaPatente.patente));
+        this.buffs = [new Buff(1, 2)];
+        this.inventario = [new Item("Teste", 2)];
+
+        // this.estatisticas = estatisticas;
+        this.detalhes = new CharacterDetalhes(this._ficha.detalhe.nome, this._ficha.detalhe.classe.nome, this._ficha.detalhe.nivel.nex);
+
+        const estatisticasDanificaveis = new EstatisticasDanificaveisPersonagem(
+            (() => {
+                const teste = this._ficha.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.idEstatisticaDanificavel === 1)!;
+                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor, teste.valorMaximo, teste.estatisticaDanificavel);
+            })(),
+            (() => {
+                const teste = this._ficha.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.idEstatisticaDanificavel === 2)!;
+                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor, teste.valorMaximo, teste.estatisticaDanificavel);
+            })(),
+            (() => {
+                const teste = this._ficha.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.idEstatisticaDanificavel === 3)!;
+                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor, teste.valorMaximo, teste.estatisticaDanificavel);
+            })(),
+        );
+
+        this.controladorPersonagem = new ControladorPersonagem(estatisticasDanificaveis, this.reducoesDano);
+    }
+
+    receberDanoVital = (danoGeral:DanoGeral) => {
+        this.controladorPersonagem.reduzDano(danoGeral);
+    }
 }
 
-export class EstatisticaDanificavel {
-    public nomeVisualizacao: string;
-    public valorAtual: number;
-    public valorMaximo: number;
-
-    constructor(nomeVisualizacao: string, valorMaximo: number, valorAtual: number) {
-        this.nomeVisualizacao = nomeVisualizacao;
-        this.valorMaximo = valorMaximo;
-        this.valorAtual = valorAtual;
-    }
+export class EstatisticaDanificavel implements RLJ_EstatisticasDanificaveisPersonagem_Estatistica {
+    constructor(
+        public idEstatisticaDanificavel: number,
+        public idPersonagem: number,
+        public valor: number,
+        public valorMaximo: number,
+        public estatisticaDanificavel: MDL_EstatisticaDanificavel
+    ) {}
 
     public aplicarDanoFinal(valor: number): void {
-        console.log(`Foram perdidos ${valor} pontos de ${this.nomeVisualizacao}!`);
-        this.valorAtual = Math.max(this.valorAtual - valor, 0);
+        console.log(`Foram perdidos ${valor} pontos de ${this.estatisticaDanificavel.nomeAbrev}!`);
+        this.valor = Math.max(this.valor - valor, 0);
     }
     public aplicarCura(valor: number): void {
-        console.log(`Foram ganhos ${valor} pontos de ${this.nomeVisualizacao}!`);
-        this.valorAtual = Math.min(this.valorAtual + valor, this.valorMaximo);
+        console.log(`Foram ganhos ${valor} pontos de ${this.estatisticaDanificavel.nomeAbrev}!`);
+        this.valor = Math.min(this.valor + valor, this.valorMaximo);
     }
 }
 
-export class EstatisticaComum {
-    public nomeVisualizacao: string;
-    public valor: number;
+export class ReducaoDano {
+    constructor(
+        public valor: number,
+        public tipoDano: MDL_TipoDano
+    ) {}
 
-    constructor(nomeVisualizacao: string, valor: number) {
-        this.nomeVisualizacao = nomeVisualizacao;
-        this.valor = valor;
+    get valorBonus():number {
+        return 1;
     }
 
-    public getValor(): number {
-        return this.valor;
+    get valorTotal():number {
+        return this.valor + this.valorBonus;
+    }
+}
+
+export class Atributo {
+    constructor (
+        public valor:number,
+        public atributo:MDL_Atributo,
+    ) {}
+
+    get valorBonus():number {
+        return 1;
+    }
+
+    get valorTotal():number {
+        return this.valor + this.valorBonus;
+    }
+}
+
+export class Pericia {
+    constructor (
+        public pericia:MDL_Pericia,
+        public patente:MDL_PatentePericia,
+    ) {}
+    
+    get valorBonus():number {
+        return 1;
+    }
+
+    get valorTotal():number {
+        return this.patente.valor + this.valorBonus;
+    }
+}
+
+export class Buff {
+    constructor(
+        public idRefBuff:number,
+        public valor:number
+    ) {}
+}
+
+
+// ================================================= //
+
+export class Item {
+    constructor(
+        public nome:string,
+        public peso:number
+        // public açoes
+        // public buffs
+    ) {}
+}
+
+// ================================================= //
+
+
+
+
+export class ValorBuffavel {
+    obterBonus = (idBuff:number):number => {
+        return listaBonus.filter(bonus => bonus.id === idBuff).reduce((acc, cur) => {
+            return (cur.checked ? acc + cur.valor : acc);
+        }, 0);
+    }
+}
+
+export class EstatisticasDanificaveisPersonagem {
+    public pv:EstatisticaDanificavel;
+    public ps:EstatisticaDanificavel;
+    public pe:EstatisticaDanificavel;
+
+    constructor(pv:EstatisticaDanificavel, ps:EstatisticaDanificavel, pe:EstatisticaDanificavel) {
+        this.pv = pv;
+        this.ps = ps;
+        this.pe = pe;
+    }
+
+    obterListaEstatisticasDanificaveis = ():EstatisticaDanificavel[] => {
+        return [this.pv, this.ps, this.pe];
     }
 }
 
 export class ControladorPersonagem {
-    public pv:EstatisticaDanificavel;
-    public ps:EstatisticaDanificavel;
-    public pe:EstatisticaDanificavel;
+    public estatisticasDanificaveis:EstatisticasDanificaveisPersonagem;
     public rds:ReducaoDano[] = [];
 
-    constructor(pv:EstatisticaDanificavel, ps:EstatisticaDanificavel, pe:EstatisticaDanificavel, rds:ReducaoDano[]) {
-        this.pv = pv;
-        this.ps = ps;
-        this.pe = pe;
+    constructor(estatisticasDanificaveisPersonagem:EstatisticasDanificaveisPersonagem, rds:ReducaoDano[]) {
+        this.estatisticasDanificaveis = estatisticasDanificaveisPersonagem;
         this.rds = rds;
     }
 
@@ -70,39 +185,20 @@ export class ControladorPersonagem {
                 let somaDanoNivel3 = 0;
                 listaTiposDano.filter(tipoDano => tipoDano.idTipoDanoPertencente === tipoDanoNivel2.id).map(tipoDanoNivel3 => {
                     const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel3.id);
-                    if (danoDoTipo) somaDanoNivel3 += Math.max(danoDoTipo.valor - this.rds.find(reducaoDano => reducaoDano.tipo.id === tipoDanoNivel3.id)!.valor, 0);
+                    if (danoDoTipo) somaDanoNivel3 += Math.max(danoDoTipo.valor - this.rds.find(reducaoDano => reducaoDano.tipoDano.id === tipoDanoNivel3.id)!.valor, 0);
                 });
                 const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel2.id);
-                somaDanoNivel2 += Math.max((somaDanoNivel3 + (danoDoTipo ? danoDoTipo.valor : 0)) - this.rds.find(reducaoDano => reducaoDano.tipo.id === tipoDanoNivel2.id)!.valor, 0);
+                somaDanoNivel2 += Math.max((somaDanoNivel3 + (danoDoTipo ? danoDoTipo.valor : 0)) - this.rds.find(reducaoDano => reducaoDano.tipoDano.id === tipoDanoNivel2.id)!.valor, 0);
             });
             const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel1.id);
-            somaDanoNivel1 += Math.max((somaDanoNivel2 + (danoDoTipo ? danoDoTipo.valor : 0)) - this.rds.find(reducaoDano => reducaoDano.tipo.id === tipoDanoNivel1.id)!.valor, 0);
+            somaDanoNivel1 += Math.max((somaDanoNivel2 + (danoDoTipo ? danoDoTipo.valor : 0)) - this.rds.find(reducaoDano => reducaoDano.tipoDano.id === tipoDanoNivel1.id)!.valor, 0);
         });
 
-        this.pv.aplicarDanoFinal(somaDanoNivel1);
+        this.estatisticasDanificaveis.pv.aplicarDanoFinal(somaDanoNivel1);
     }
 }
 
-export class Personagem {
-    public estatisticas:Estatisticas;
-    public atributos:Atributo[];
-    public detalhes:CharacterDetalhes;
-    public controladorPersonagem:ControladorPersonagem;
-    public reducoesDano:ReducaoDano[];
 
-    constructor(estatisticas:Estatisticas, atributos:Atributo[], detalhes:CharacterDetalhes, reducoesDano:ReducaoDano[]) {
-        this.estatisticas = estatisticas;
-        this.atributos = atributos;
-        this.detalhes = detalhes;
-        this.reducoesDano = reducoesDano;
-
-        this.controladorPersonagem = new ControladorPersonagem(estatisticas.estatisticasDanificaveis[0], estatisticas.estatisticasDanificaveis[1], estatisticas.estatisticasDanificaveis[2], reducoesDano)
-    }
-
-    receberDanoVital = (danoGeral:DanoGeral) => {
-        this.controladorPersonagem.reduzDano(danoGeral);
-    }
-}
 
 export class DanoGeral { // traduz em 1 unico ataque
     public listaDano:InstanciaDano[]; // são as diferentes composições dentro desse unico ataque
@@ -122,7 +218,9 @@ export class InstanciaDano {
     }
 }
 
-export class ReducaoDano {
+
+
+export class ReducaoDanoa {
     public tipo:TipoDano;
     public valor:number;
 
@@ -209,7 +307,7 @@ export class BonusConectado {
 
 export const listaBonus:BonusConectado[] = [];
 
-class ValorDeSistema {
+class ValorDeSistemaa {
     public id:number;
     public idRefBuff:number;
     public nome:string;
@@ -234,26 +332,7 @@ class ValorDeSistema {
 }
 
 
-export class Pericia extends ValorDeSistema {
-    public parentAtributo: Atributo;
 
-    constructor(id:number, idRefBuff:number, nome:string, valor:number, parentAtributo: Atributo) {
-        super(id, idRefBuff, nome, valor);
-        this.parentAtributo = parentAtributo;
-    }
-}
-
-export class Atributo extends ValorDeSistema {
-    public pericias:Pericia[] = [];
-
-    constructor(id:number, idRefBuff:number, nome:string, valor:number) {
-        super(id, idRefBuff, nome, valor);
-    }
-
-    addPericia = (pericia:Pericia) => {
-        this.pericias.push(pericia);
-    }
-}
 
 export class CharacterDetalhes {
     public nome:string;
@@ -269,46 +348,46 @@ export class CharacterDetalhes {
 
 
 
-class ValorBuffavel {
-    public id:number;
-    public descricao:string;
+// class ValorBuffavel {
+//     public id:number;
+//     public descricao:string;
 
-    constructor(id:number, descricao:string) {
-        this.id = id;
-        this.descricao = descricao;
-    }
-}
+//     constructor(id:number, descricao:string) {
+//         this.id = id;
+//         this.descricao = descricao;
+//     }
+// }
 
-export const valorBuffavel:ValorBuffavel[] = [
-    new ValorBuffavel(1, "Agilidade"),
-    new ValorBuffavel(2, "Força"),
-    new ValorBuffavel(3, "Inteligência"),
-    new ValorBuffavel(4, "Presença"),
-    new ValorBuffavel(5, "Vigor"),
-    new ValorBuffavel(6, "Acrobacia"),
-    new ValorBuffavel(7, "Adestramento"),
-    new ValorBuffavel(8, "Artes"),
-    new ValorBuffavel(9, "Atletismo"),
-    new ValorBuffavel(10, "Atualidades"),
-    new ValorBuffavel(11, "Ciências"),
-    new ValorBuffavel(12, "Crime"),
-    new ValorBuffavel(13, "Diplomacia"),
-    new ValorBuffavel(14, "Enganação"),
-    new ValorBuffavel(15, "Engenharia"),
-    new ValorBuffavel(16, "Fortitude"),
-    new ValorBuffavel(17, "Furtividade"),
-    new ValorBuffavel(18, "Iniciativa"),
-    new ValorBuffavel(19, "Intimidação"),
-    new ValorBuffavel(20, "Intuição"),
-    new ValorBuffavel(21, "Investigação"),
-    new ValorBuffavel(22, "Luta"),
-    new ValorBuffavel(23, "Medicina"),
-    new ValorBuffavel(24, "Ocultista"),
-    new ValorBuffavel(25, "Percepção"),
-    new ValorBuffavel(26, "Pontaria"),
-    new ValorBuffavel(27, "Reflexo"),
-    new ValorBuffavel(28, "Sobrevivência"),
-    new ValorBuffavel(29, "Tatica"),
-    new ValorBuffavel(30, "Tecnologia"),
-    new ValorBuffavel(31, "Vontade"),
-];
+// export const valorBuffavel:ValorBuffavel[] = [
+//     new ValorBuffavel(1, "Agilidade"),
+//     new ValorBuffavel(2, "Força"),
+//     new ValorBuffavel(3, "Inteligência"),
+//     new ValorBuffavel(4, "Presença"),
+//     new ValorBuffavel(5, "Vigor"),
+//     new ValorBuffavel(6, "Acrobacia"),
+//     new ValorBuffavel(7, "Adestramento"),
+//     new ValorBuffavel(8, "Artes"),
+//     new ValorBuffavel(9, "Atletismo"),
+//     new ValorBuffavel(10, "Atualidades"),
+//     new ValorBuffavel(11, "Ciências"),
+//     new ValorBuffavel(12, "Crime"),
+//     new ValorBuffavel(13, "Diplomacia"),
+//     new ValorBuffavel(14, "Enganação"),
+//     new ValorBuffavel(15, "Engenharia"),
+//     new ValorBuffavel(16, "Fortitude"),
+//     new ValorBuffavel(17, "Furtividade"),
+//     new ValorBuffavel(18, "Iniciativa"),
+//     new ValorBuffavel(19, "Intimidação"),
+//     new ValorBuffavel(20, "Intuição"),
+//     new ValorBuffavel(21, "Investigação"),
+//     new ValorBuffavel(22, "Luta"),
+//     new ValorBuffavel(23, "Medicina"),
+//     new ValorBuffavel(24, "Ocultista"),
+//     new ValorBuffavel(25, "Percepção"),
+//     new ValorBuffavel(26, "Pontaria"),
+//     new ValorBuffavel(27, "Reflexo"),
+//     new ValorBuffavel(28, "Sobrevivência"),
+//     new ValorBuffavel(29, "Tatica"),
+//     new ValorBuffavel(30, "Tecnologia"),
+//     new ValorBuffavel(31, "Vontade"),
+// ];

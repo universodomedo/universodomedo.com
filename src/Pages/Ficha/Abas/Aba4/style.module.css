@@ -1,0 +1,21 @@
+.acoes_personagem {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+.acoes_personagem > * {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: 1;
+}
+
+.reducoes_dano table {
+    margin: auto;
+}
+
+.reducoes_dano tr {
+    margin: 2px white solid;
+}

@@ -1,0 +1,9 @@
+.main_wrapper {
+    flex: 1;
+    overflow: auto;
+}
+
+.container_aba {
+    flex: 1;
+    overflow-y: auto;
+}
