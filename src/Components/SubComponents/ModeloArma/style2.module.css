@@ -1,0 +1,83 @@
+.wrapper_modal {
+    display: flex;
+    flex-direction: row;
+    width: 60vw;
+    height: 60vh;
+    padding: 1%;
+    box-sizing: border-box;
+}
+
+.conteudo_esquerda, .conteudo_direita {
+    flex: 1;
+    border: 3px black solid;
+}
+
+.conteudo_esquerda {
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+}
+
+.conteudo_direita {
+    display: flex;
+    flex-direction: column;
+}
+
+.direita_visualizador_arma {
+    flex: 0 0 40%;
+    border-bottom: 5px black solid;
+}
+
+.direita_info_arma {
+    flex: 0 0 60%;
+    display: flex;
+    flex-direction: column;
+}
+
+.info_arma {
+    display: flex;
+    flex-direction: row;
+}
+
+.info_arma_esquerda, .info_arma_direita {
+    flex: 1;
+    border: 1px black solid;
+    text-align: center;
+}
+
+
+/**/
+
+.step {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+}
+
+.step.slide_in_right {
+    left: 100%;
+    opacity: 0;
+}
+
+.step.slide_in_left {
+    left: -100%;
+    opacity: 0;
+}
+
+.step.step_active {
+    left: 0;
+    opacity: 1;
+}
+
+.step.slide_out_right {
+    left: 100%;
+    opacity: 0;
+}
+
+.step.slide_out_left {
+    left: -100%;
+    opacity: 0;
+}

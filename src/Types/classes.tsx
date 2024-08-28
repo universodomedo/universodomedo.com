@@ -1,26 +1,32 @@
 import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
-import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano } from "udm-types";
+import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma } from "udm-types";
 
 export class Personagem {
     private _ficha!:RLJ_Ficha;
     public reducoesDano:ReducaoDano[];
     public atributos:Atributo[];
     public pericias:Pericia[];
-    public buffs:Buff[];
+    public buffs:Buff[] = [];
     public inventario:Item[];
     // public estatisticas:Estatisticas;
     public detalhes:CharacterDetalhes;
     public controladorPersonagem:ControladorPersonagem;
 
+    //
+    public onUpdate: () => void = () => {};
+    carregaOnUpdate = (callback: () => void) => {
+        this.onUpdate = callback;
+    }
+    //
+
     // constructor(estatisticas:Estatisticas, atributos:Atributo[], detalhes:CharacterDetalhes, reducoesDano:ReducaoDano[], estatisticasDanificaveisPersonagem:EstatisticasDanificaveisPersonagem) {
     constructor(db_ficha:RLJ_Ficha) {
         this._ficha = db_ficha;
 
-        this.reducoesDano = this._ficha.reducoesDano.map(reducaoDano => new ReducaoDano(reducaoDano.valor, reducaoDano.tipoDano));
-        this.atributos = this._ficha.atributos.map(attr => new Atributo(attr.valor, attr.atributo));
-        this.pericias = this._ficha.periciasPatentes.map(periciaPatente => new Pericia(periciaPatente.pericia, periciaPatente.patente));
-        this.buffs = [new Buff(1, 2)];
-        this.inventario = [new Item("Teste", 2)];
+        this.reducoesDano = this._ficha.reducoesDano.map(reducaoDano => new ReducaoDano(reducaoDano.valor, reducaoDano.tipoDano, this));
+        this.atributos = this._ficha.atributos.map(attr => new Atributo(attr.valor, attr.atributo, this));
+        this.pericias = this._ficha.periciasPatentes.map(periciaPatente => new Pericia(periciaPatente.pericia, periciaPatente.patente, this));
+        this.inventario = [new Item("Teste", 2, 0)];
 
         // this.estatisticas = estatisticas;
         this.detalhes = new CharacterDetalhes(this._ficha.detalhe.nome, this._ficha.detalhe.classe.nome, this._ficha.detalhe.nivel.nex);
@@ -70,11 +76,14 @@ export class EstatisticaDanificavel implements RLJ_EstatisticasDanificaveisPerso
 export class ReducaoDano {
     constructor(
         public valor: number,
-        public tipoDano: MDL_TipoDano
+        public tipoDano: MDL_TipoDano,
+        private refPersonagem:Personagem
     ) {}
 
     get valorBonus():number {
-        return 1;
+        return this.refPersonagem.buffs.filter(buff => buff.idRefBuff === this.tipoDano.idBuff).reduce((acc, cur) => {
+            return acc + cur.valor;
+        }, 0);
     }
 
     get valorTotal():number {
@@ -86,10 +95,13 @@ export class Atributo {
     constructor (
         public valor:number,
         public atributo:MDL_Atributo,
+        private refPersonagem:Personagem
     ) {}
 
     get valorBonus():number {
-        return 1;
+        return this.refPersonagem.buffs.filter(buff => buff.idRefBuff === this.atributo.idBuff).reduce((acc, cur) => {
+            return acc + cur.valor;
+        }, 0);
     }
 
     get valorTotal():number {
@@ -101,10 +113,13 @@ export class Pericia {
     constructor (
         public pericia:MDL_Pericia,
         public patente:MDL_PatentePericia,
+        private refPersonagem:Personagem
     ) {}
     
     get valorBonus():number {
-        return 1;
+        return this.refPersonagem.buffs.filter(buff => buff.idRefBuff === this.pericia.idBuff).reduce((acc, cur) => {
+            return acc + cur.valor;
+        }, 0);
     }
 
     get valorTotal():number {
@@ -125,10 +140,23 @@ export class Buff {
 export class Item {
     constructor(
         public nome:string,
-        public peso:number
+        public peso:number,
+        public categoria:number,
         // public açoes
         // public buffs
     ) {}
+}
+
+export class Arma extends Item {
+    public dano:number;
+    public variancia:number;
+    public caracteristicas:MDL_CaracteristicaArma[] = [];
+
+    constructor(nome:string, peso:number, categoria:number, dano:number, variancia:number) {
+        super(nome, peso, categoria);
+        this.dano = dano;
+        this.variancia = variancia;
+    }
 }
 
 // ================================================= //

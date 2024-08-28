@@ -12,10 +12,7 @@
     flex: 1;
 }
 
-.reducoes_dano table {
-    margin: auto;
-}
-
-.reducoes_dano tr {
-    margin: 2px white solid;
+.reducoes_dano table, th, td {
+  border: 1px solid;
+  border-collapse: collapse;
 }

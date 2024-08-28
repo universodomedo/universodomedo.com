@@ -4,6 +4,7 @@ import Sessions from "Pages/Sessions/page.tsx";
 import ContainerFicha from "Pages/Ficha/container_page.tsx";
 import SessaoAovivo from "Pages/SessaoAovivo/page.tsx"
 import Login from "Pages/Login/page.tsx";
+import Teste from "Pages/Teste/page.tsx";
 
 import LayoutLP from "Layouts/LayoutLP/layout.tsx";
 import LayoutInterno from "Layouts/LayoutInterno/layout.tsx";
@@ -28,7 +29,10 @@ const App = () => {
               <Route path=":characterId" element={<ContainerFicha />} />
             </Route>
             <Route path="/sessao-aovivo">
-            <Route index element={<SessaoAovivo />} />
+              <Route index element={<SessaoAovivo />} />
+            </Route>
+            <Route path="/testea">
+              <Route index element={<Teste />} />
             </Route>
           </Route>
           
