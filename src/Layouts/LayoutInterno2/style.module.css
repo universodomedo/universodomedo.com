@@ -1,0 +1,26 @@
+.content {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex: 1;
+    overflow: hidden;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    text-align: center;
+    overflow: hidden;
+    margin-bottom: 1vh;
+}
+
+.main > * {
+    color: white;
+}
+
+.alpha_warning {
+    padding: 1%;
+    margin: 2vh auto;
+    border: 1px white solid;
+}

@@ -22,7 +22,6 @@ const LPBody = () => {
     return (
       <div className="sections">
         <Section sections={section1content} />
-        <hr />
         <SectionCarroussel />
       </div>
     )

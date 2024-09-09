@@ -1,0 +1,70 @@
+.componente_abas {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex: 1;
+    gap: 2%;
+}
+
+.div_botoes_abas {
+    display: flex;
+    flex-direction: row;
+    gap: 2%;
+    justify-content: center;
+}
+
+.botao_aba {
+    border-radius: 20px;
+    font-size: 1.2rem;
+    padding: .6vh .8vw;
+    cursor: pointer;
+}
+
+.botao_aba_ativa {
+    background-color: #a4dcff;
+    border-color: white;
+}
+
+.barra_superior_conteudo_aba {
+    height: 2vh;
+    background-color:deepskyblue;
+    text-align: end;
+    padding: 0 .3%;
+}
+
+.botao_fechar_aba {
+    display: inline-flex;
+    height: 90%;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.botao_fechar_aba:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-color: rgba(255, 255, 255, 0.9);
+}
+
+.wrapper_aba {
+    display: flex;
+    flex-direction: column;
+    border: 3px white solid;
+    border-radius: 5px 5px 0 0;
+}
+
+.conteudo_aba {
+    padding: 1%;
+}
+
+.conteudo_aba h1 {
+    margin: 0;
+}
+
+.wrapper_aba > * {
+    border: 2px white solid;
+}

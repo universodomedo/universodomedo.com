@@ -41,7 +41,9 @@
 
 .carousel-item-bottom {
     position: relative;
-    margin: auto 24% 13% auto;
+    margin-top: auto;
+    height: 20%;
+    width: 100%;
 }
 
 .carousel-item-bottom-p {
@@ -50,6 +52,7 @@
     font-family: 'Barlow', sans-serif;
     font-weight: 400;
     font-size: 3vh;
+    margin: 0 5%;
 }
 
 a {

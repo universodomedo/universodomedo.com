@@ -1,0 +1,21 @@
+.wrapper_conteudo_abas {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex: 1;
+    gap: .5%;
+    padding: 0 1vw;
+}
+
+/* primeiro sistema de abas */
+
+
+/* .main_wrapper {
+    flex: 1;
+    overflow: auto;
+}
+
+.container_aba {
+    flex: 1;
+    overflow-y: auto;
+} */

@@ -3,7 +3,8 @@
     flex-direction: column;
     text-align: center;
     align-items: center;
-    gap: 2.5rem;
+    gap: 4rem;
+    margin: 2% 0;
 }
 
 .sections > .section-content, .sections > .carousel-content {

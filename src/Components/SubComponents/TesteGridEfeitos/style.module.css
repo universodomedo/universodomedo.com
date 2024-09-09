@@ -1,0 +1,17 @@
+.buffs_ativos {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    justify-content: center;
+    padding: 2%;
+    gap: 1%;
+}
+
+.icone_efeito {
+    border-radius: 5px;
+    background-color: #2c7685;
+    border: 1px solid #6dc6f7;
+    box-shadow: inset 0px 0px 5px 1px black;
+    width: 40px;
+    height: 25px;
+}

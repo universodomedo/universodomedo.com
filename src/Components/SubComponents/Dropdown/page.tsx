@@ -1,11 +1,6 @@
 import React, { useState, forwardRef, useImperativeHandle } from 'react';
 
-interface DropdownProps {
-  options: { id: number; descricao: string }[];
-  onSelect?: (id: number) => void;
-}
-
-const Dropdown = forwardRef(({ options, onSelect }: DropdownProps, ref) => {
+const Dropdown = forwardRef(({ options, onSelect }: { options: { id: number; descricao: string }[], onSelect?: (id: number) => void }, ref) => {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -20,6 +15,9 @@ const Dropdown = forwardRef(({ options, onSelect }: DropdownProps, ref) => {
     getSelectedOption: () => {
       const selected = options.find(option => option.id === selectedOption);
       return selected ? { id: selected.id, descricao: selected.descricao } : null;
+    },
+    clearSelection: () => {
+      setSelectedOption(null);
     }
   }));
 

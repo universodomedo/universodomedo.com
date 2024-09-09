@@ -5,6 +5,11 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  css: {
+    modules: {
+      localsConvention: 'dashesOnly',
+    }
+  },
   resolve: {
     alias: { // para adicionar novos paths, tem que adicionar no tsconfig.json e no vite.config.ts
       "ApiConsumer": path.resolve(__dirname, "src/ApiConsumer"),
@@ -12,6 +17,7 @@ export default defineConfig({
       "Layouts": path.resolve(__dirname, "src/Layouts"),
       "Pages": path.resolve(__dirname, "src/Pages"),
       "Types": path.resolve(__dirname, "src/Types"),
+      "Redux": path.resolve(__dirname, "src/Redux"),
     }
   }
 })

@@ -1,0 +1,15 @@
+.conteudo_inventario {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
+.inventario_personagem {
+    display: flex;
+    flex-direction: column;
+}
+
+.inventario_personagem table, th, td {
+    border: 1px solid;
+    border-collapse: collapse;
+}
