@@ -12,16 +12,17 @@ const LPHeader = () => {
 
       <nav>
         <ul className="nav-menu">
-          <Link to="/"><li>Início</li></Link>
+          {/* <Link to="/"><li>Início</li></Link>
           <Link to=""><li>Sessões</li></Link>
           <Link to=""><li>Meu Acesso</li></Link>
           <Link to=""><li>Sistema</li></Link>
-          <Link to=""><li>Redes Sociais</li></Link>
+          <Link to=""><li>Redes Sociais</li></Link> */}
+          <Link to="/ficha-demo">Demo</Link>
         </ul>
       </nav>
 
       <div className="header-acessar">
-        <Link to="login"><div className="nav-connect">Acessar</div></Link>
+        {/* <Link to="login"><div className="nav-connect">Acessar</div></Link> */}
       </div>
 
     </div>

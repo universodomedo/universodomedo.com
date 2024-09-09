@@ -26,11 +26,10 @@ class ResultadoTestePericia {
     public testes:VariacaoAleatoria[] = [];
 
     constructor(testes:VariacaoAleatoria[]) {
-        console.log({testes});
         this.testes = testes;
         
         this.testes.forEach(teste => {
-            console.log(`Chance de penalizado em ${teste.variancia}: ${teste.chanceDessaVariancia}`);
+            // console.log(`Chance de penalizado em ${teste.variancia}: ${teste.chanceDessaVariancia}`);
         });
     }
 

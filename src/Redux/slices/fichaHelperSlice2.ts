@@ -3,7 +3,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { FichaHelper } from 'Types/classes_estaticas';
 import CustomApiCall from "ApiConsumer/ConsumerMiddleware.tsx";
 import { RootState } from 'Redux/store';
-import { Personagem } from "Types/classes.tsx"
 // #endregion
 
 const fichaHelper = FichaHelper.getInstance();
@@ -17,10 +16,12 @@ export const obterTiposDano = createAsyncThunk(
     }
 );
 
-export const carregaDemo = createAsyncThunk(
-    'fichaHelper/carregaDemo',
+export const obterPersonagem = createAsyncThunk(
+    'fichaHelper/obterPersonagem',
     async () => {
-        return new Personagem();
+        const teste = new CustomApiCall();
+        const teste2 = await teste.obterFichaPersonagem(1);
+        return teste2;
     }
 );
 
@@ -36,7 +37,7 @@ const fichaHelperSlice = createSlice({
             state.fichaHelper.tiposDano = action.payload;
             return state;
         })
-        .addCase(carregaDemo.fulfilled, (state, action) => {
+        .addCase(obterPersonagem.fulfilled, (state, action) => {
             state.fichaHelper.personagem = action.payload;
             state.personagemCarregado = true;
             return state;

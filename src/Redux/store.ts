@@ -1,6 +1,7 @@
 // #region Imports
 import { configureStore } from '@reduxjs/toolkit';
-import fichaHelperReducer, { obterTiposDano, obterPersonagem } from 'Redux/slices/fichaHelperSlice.ts';
+import fichaHelperReducer, { obterTiposDano, carregaDemo } from 'Redux/slices/fichaHelperSlice.ts';
+// import fichaHelperReducer, { obterTiposDano, selectPersonagemCarregado } from 'Redux/slices/fichaHelperSlice2.ts';
 // #endregion
 
 const store = configureStore({
@@ -13,8 +14,9 @@ const store = configureStore({
     }),
 });
 
-store.dispatch(obterTiposDano());
-store.dispatch(obterPersonagem());
+// store.dispatch(obterTiposDano());
+// store.dispatch(selectPersonagemCarregado());
+store.dispatch(carregaDemo());
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

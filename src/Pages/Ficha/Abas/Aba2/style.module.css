@@ -3,9 +3,15 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 10%;
-    padding-bottom: 2%;
 }
 
 .estatistica_barra {
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    gap: 1vh;
+}
+
+.estatistica_barra h2 {
+    margin: 0;
 }

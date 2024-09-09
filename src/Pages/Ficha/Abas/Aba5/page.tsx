@@ -5,10 +5,12 @@ import { Item } from "Types/classes.tsx";
 
 const page: React.FC<{inventarioPersonagem:Item[]}> = ({ inventarioPersonagem }) => {
     return (
-      <>
-        <div className={style.info_inventario}>
+      <div className={style.conteudo_inventario}>
+        <h1>Inventário</h1>
+        
+        {/* <div className={style.info_inventario}>
 
-        </div>
+        </div> */}
         <div className={style.inventario_personagem}>
           {inventarioPersonagem && (
           <table>
@@ -27,7 +29,7 @@ const page: React.FC<{inventarioPersonagem:Item[]}> = ({ inventarioPersonagem })
           </table>
           )}
         </div>
-      </>
+      </div>
     )
   };
   

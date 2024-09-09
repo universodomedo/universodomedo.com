@@ -10,12 +10,3 @@
     background: linear-gradient(#330ba4, #64305f, #330ba4);
     border-radius: 10px;
 }
-
-.layout-lp {
-    display: flex;
-    flex: 1 1 0%;
-    height: 100%;
-    overflow-y: auto;
-    flex-direction: column;
-    min-width: 0px;
-}

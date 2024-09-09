@@ -7,8 +7,10 @@
 
 .detalhe_meio {
     flex: 1;
+    margin: 0;
 }
 
 .detalhe_cantos {
     flex: .3;
+    margin: 0;
 }

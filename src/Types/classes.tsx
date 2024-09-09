@@ -1,5 +1,6 @@
 import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
-import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma } from "udm-types";
+import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma, MDL_Habilidade, MDL_Ritual, RLJ_Rituais, MDL_CirculoRitual} from "udm-types";
+import { TestePericia } from "Components/Functions/RollNumber.tsx";
 
 export class Personagem {
     private _ficha!:RLJ_Ficha;
@@ -8,6 +9,9 @@ export class Personagem {
     public pericias:Pericia[];
     public buffs:Buff[] = [];
     public inventario:Item[];
+    public acoes:Acao[] = [];
+    // public habilidades:MDL_Habilidade[] = [];
+    public rituais:Ritual[] = [];
     // public estatisticas:Estatisticas;
     public detalhes:CharacterDetalhes;
     public controladorPersonagem:ControladorPersonagem;
@@ -19,30 +23,822 @@ export class Personagem {
     }
     //
 
-    // constructor(estatisticas:Estatisticas, atributos:Atributo[], detalhes:CharacterDetalhes, reducoesDano:ReducaoDano[], estatisticasDanificaveisPersonagem:EstatisticasDanificaveisPersonagem) {
-    constructor(db_ficha:RLJ_Ficha) {
-        this._ficha = db_ficha;
+    constructor(db_ficha?:RLJ_Ficha);
 
-        this.reducoesDano = this._ficha.reducoesDano.map(reducaoDano => new ReducaoDano(reducaoDano.valor, reducaoDano.tipoDano, this));
-        this.atributos = this._ficha.atributos.map(attr => new Atributo(attr.valor, attr.atributo, this));
-        this.pericias = this._ficha.periciasPatentes.map(periciaPatente => new Pericia(periciaPatente.pericia, periciaPatente.patente, this));
-        this.inventario = [new Item("Teste", 2, 0)];
+    // constructor(estatisticas:Estatisticas, atributos:Atributo[], detalhes:CharacterDetalhes, reducoesDano:ReducaoDano[], estatisticasDanificaveisPersonagem:EstatisticasDanificaveisPersonagem) {
+    // constructor(db_ficha:RLJ_Ficha, habilidades: MDL_Habilidade[]) {
+    constructor(db_ficha?:RLJ_Ficha) {
+        if (db_ficha !== undefined && db_ficha !== null) {
+            this._ficha = db_ficha;
+        } else {
+            this._ficha = {
+                id: 0,
+                idJogador: 0,
+                dataCriacao: new Date(),
+                detalhe: {
+                    idPersonagem: 0,
+                    idNivel: 1,
+                    idClasse: 1,
+                    nome: "Demonstração",
+                    sufixoFugi: "",
+                    caminhoPortrait: "",
+                    nivel: {
+                        id: 1,
+                        nivel: 1,
+                        nex: 0,
+                    },
+                    classe: {
+                        id: 1,
+                        nome: "Mundano",
+                    },
+                },
+                atributos: [
+                    {
+                        idPersonagem: 1,
+                        idAtributo: 1,
+                        valor: 2,
+                        atributo: {
+                            id: 1,
+                            idBuff: 1,
+                            nome: "Agilidade",
+                            nomeAbrev: "AGI"
+                        },
+                    },
+                    {
+                        idPersonagem: 1,
+                        idAtributo: 2,
+                        valor: 1,
+                        atributo: {
+                            id: 2,
+                            idBuff: 2,
+                            nome: "Força",
+                            nomeAbrev: "FOR"
+                        },
+                    },
+                    {
+                        idPersonagem: 1,
+                        idAtributo: 3,
+                        valor: 2,
+                        atributo: {
+                            id: 3,
+                            idBuff: 3,
+                            nome: "Inteligência",
+                            nomeAbrev: "INT"
+                        },
+                    },
+                    {
+                        idPersonagem: 1,
+                        idAtributo: 4,
+                        valor: 1,
+                        atributo: {
+                            id: 4,
+                            idBuff: 4,
+                            nome: "Presença",
+                            nomeAbrev: "PRE"
+                        },
+                    },
+                    {
+                        idPersonagem: 1,
+                        idAtributo: 5,
+                        valor: 1,
+                        atributo: {
+                            id: 5,
+                            idBuff: 5,
+                            nome: "Vigor",
+                            nomeAbrev: "VIG"
+                        },
+                    },
+                ],
+                periciasPatentes: [
+                    {
+                        idPersonagem: 1,
+                        idPericia: 1,
+                        idPatente: 1,
+                        pericia: {
+                            id: 1,
+                            idAtributo: 1,
+                            idBuff: 6,
+                            nome: "Acrobacia",
+                            nomeAbrev: "ACRO",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 2,
+                        idPatente: 1,
+                        pericia: {
+                            id: 2,
+                            idAtributo: 1,
+                            idBuff: 12,
+                            nome: "Crime",
+                            nomeAbrev: "CRIM",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 3,
+                        idPatente: 1,
+                        pericia: {
+                            id: 3,
+                            idAtributo: 1,
+                            idBuff: 17,
+                            nome: "Furtividade",
+                            nomeAbrev: "FURT",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 4,
+                        idPatente: 1,
+                        pericia: {
+                            id: 4,
+                            idAtributo: 1,
+                            idBuff: 18,
+                            nome: "Iniciativa",
+                            nomeAbrev: "INIC",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 5,
+                        idPatente: 1,
+                        pericia: {
+                            id: 5,
+                            idAtributo: 1,
+                            idBuff: 26,
+                            nome: "Pontaria",
+                            nomeAbrev: "PONT",
+                        },
+                        patente: {
+                            id: 2,
+                            nome: "Treinado",
+                            valor: 5,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 6,
+                        idPatente: 1,
+                        pericia: {
+                            id: 6,
+                            idAtributo: 1,
+                            idBuff: 27,
+                            nome: "Reflexo",
+                            nomeAbrev: "REFL",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 7,
+                        idPatente: 1,
+                        pericia: {
+                            id: 7,
+                            idAtributo: 2,
+                            idBuff: 9,
+                            nome: "Atletismo",
+                            nomeAbrev: "ATLE",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 8,
+                        idPatente: 1,
+                        pericia: {
+                            id: 8,
+                            idAtributo: 2,
+                            idBuff: 22,
+                            nome: "Luta",
+                            nomeAbrev: "LUTA",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 9,
+                        idPatente: 1,
+                        pericia: {
+                            id: 9,
+                            idAtributo: 3,
+                            idBuff: 7,
+                            nome: "Adestramento",
+                            nomeAbrev: "ADES",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 10,
+                        idPatente: 1,
+                        pericia: {
+                            id: 10,
+                            idAtributo: 3,
+                            idBuff: 8,
+                            nome: "Artes",
+                            nomeAbrev: "ARTE",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 11,
+                        idPatente: 1,
+                        pericia: {
+                            id: 11,
+                            idAtributo: 3,
+                            idBuff: 10,
+                            nome: "Atualidades",
+                            nomeAbrev: "ATUA",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 12,
+                        idPatente: 1,
+                        pericia: {
+                            id: 12,
+                            idAtributo: 3,
+                            idBuff: 11,
+                            nome: "Ciências",
+                            nomeAbrev: "CIEN",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 13,
+                        idPatente: 1,
+                        pericia: {
+                            id: 13,
+                            idAtributo: 3,
+                            idBuff: 15,
+                            nome: "Engenharia",
+                            nomeAbrev: "ENGE",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 14,
+                        idPatente: 1,
+                        pericia: {
+                            id: 14,
+                            idAtributo: 3,
+                            idBuff: 21,
+                            nome: "Investigação",
+                            nomeAbrev: "INVE",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 15,
+                        idPatente: 1,
+                        pericia: {
+                            id: 15,
+                            idAtributo: 3,
+                            idBuff: 23,
+                            nome: "Medicina",
+                            nomeAbrev: "MEDI",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 16,
+                        idPatente: 1,
+                        pericia: {
+                            id: 16,
+                            idAtributo: 3,
+                            idBuff: 24,
+                            nome: "Ocultista",
+                            nomeAbrev: "OCUL",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 17,
+                        idPatente: 1,
+                        pericia: {
+                            id: 17,
+                            idAtributo: 3,
+                            idBuff: 28,
+                            nome: "Sobrevivência",
+                            nomeAbrev: "SOBR",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 18,
+                        idPatente: 1,
+                        pericia: {
+                            id: 18,
+                            idAtributo: 3,
+                            idBuff: 29,
+                            nome: "Tatica",
+                            nomeAbrev: "TATI",
+                        },
+                        patente: {
+                            id: 2,
+                            nome: "Treinado",
+                            valor: 5,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 19,
+                        idPatente: 1,
+                        pericia: {
+                            id: 19,
+                            idAtributo: 3,
+                            idBuff: 30,
+                            nome: "Tecnologia",
+                            nomeAbrev: "TECN",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 20,
+                        idPatente: 1,
+                        pericia: {
+                            id: 20,
+                            idAtributo: 4,
+                            idBuff: 13,
+                            nome: "Diplomacia",
+                            nomeAbrev: "DIPL",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 21,
+                        idPatente: 1,
+                        pericia: {
+                            id: 21,
+                            idAtributo: 4,
+                            idBuff: 14,
+                            nome: "Enganação",
+                            nomeAbrev: "ENGA",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 22,
+                        idPatente: 1,
+                        pericia: {
+                            id: 22,
+                            idAtributo: 4,
+                            idBuff: 19,
+                            nome: "Intimidação",
+                            nomeAbrev: "INTI",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 23,
+                        idPatente: 1,
+                        pericia: {
+                            id: 23,
+                            idAtributo: 4,
+                            idBuff: 20,
+                            nome: "Intuição",
+                            nomeAbrev: "INTU",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 24,
+                        idPatente: 1,
+                        pericia: {
+                            id: 24,
+                            idAtributo: 4,
+                            idBuff: 25,
+                            nome: "Percepção",
+                            nomeAbrev: "PERC",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 25,
+                        idPatente: 1,
+                        pericia: {
+                            id: 25,
+                            idAtributo: 4,
+                            idBuff: 31,
+                            nome: "Vontade",
+                            nomeAbrev: "VONT",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idPericia: 26,
+                        idPatente: 1,
+                        pericia: {
+                            id: 26,
+                            idAtributo: 5,
+                            idBuff: 16,
+                            nome: "Fortitude",
+                            nomeAbrev: "FORT",
+                        },
+                        patente: {
+                            id: 1,
+                            nome: "Destreinado",
+                            valor: 0,
+                        }
+                    }
+                ],
+                estatisticasDanificaveis: [
+                    {
+                        idPersonagem: 1,
+                        idEstatisticaDanificavel: 1,
+                        valor: 9,
+                        valorMaximo: 9,
+                        estatisticaDanificavel: {
+                            id: 1,
+                            nome: "Pontos de Vida",
+                            nomeAbrev: "P.V.",
+                            cor: "#FF0000",
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idEstatisticaDanificavel: 2,
+                        valor: 7,
+                        valorMaximo: 7,
+                        estatisticaDanificavel: {
+                            id: 2,
+                            nome: "Pontos de Sanidade",
+                            nomeAbrev: "P.S.",
+                            cor: "#324A99",
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idEstatisticaDanificavel: 3,
+                        valor: 2,
+                        valorMaximo: 2,
+                        estatisticaDanificavel: {
+                            id: 3,
+                            nome: "Pontos de Esforço",
+                            nomeAbrev: "P.E.",
+                            cor: "#47BA16",
+                        }
+                    },
+                ],
+                reducoesDano: [
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 1,
+                        valor: 0,
+                        tipoDano: {
+                            id: 1,
+                            idBuff: 32,
+                            idTipoDanoPertencente: null,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Vital"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 2,
+                        valor: 0,
+                        tipoDano: {
+                            id: 2,
+                            idBuff: 33,
+                            idTipoDanoPertencente: 1,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Mundano"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 3,
+                        valor: 0,
+                        tipoDano: {
+                            id: 3,
+                            idBuff: 34,
+                            idTipoDanoPertencente: 2,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Concussivo"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 4,
+                        valor: 0,
+                        tipoDano: {
+                            id: 4,
+                            idBuff: 35,
+                            idTipoDanoPertencente: 2,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Cortante"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 5,
+                        valor: 0,
+                        tipoDano: {
+                            id: 5,
+                            idBuff: 36,
+                            idTipoDanoPertencente: 2,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Perfurante"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 6,
+                        valor: 0,
+                        tipoDano: {
+                            id: 6,
+                            idBuff: 37,
+                            idTipoDanoPertencente: 1,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Natural"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 7,
+                        valor: 0,
+                        tipoDano: {
+                            id: 7,
+                            idBuff: 38,
+                            idTipoDanoPertencente: 6,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Elétrico"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 8,
+                        valor: 0,
+                        tipoDano: {
+                            id: 8,
+                            idBuff: 39,
+                            idTipoDanoPertencente: 6,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Fogo"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 9,
+                        valor: 0,
+                        tipoDano: {
+                            id: 9,
+                            idBuff: 40,
+                            idTipoDanoPertencente: 6,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Frio"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 10,
+                        valor: 0,
+                        tipoDano: {
+                            id: 10,
+                            idBuff: 41,
+                            idTipoDanoPertencente: 6,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Químico"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 11,
+                        valor: 0,
+                        tipoDano: {
+                            id: 11,
+                            idBuff: 42,
+                            idTipoDanoPertencente: 1,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Elemental"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 12,
+                        valor: 0,
+                        tipoDano: {
+                            id: 12,
+                            idBuff: 43,
+                            idTipoDanoPertencente: 11,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Conhecimento"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 13,
+                        valor: 0,
+                        tipoDano: {
+                            id: 13,
+                            idBuff: 44,
+                            idTipoDanoPertencente: 11,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Sangue"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 14,
+                        valor: 0,
+                        tipoDano: {
+                            id: 14,
+                            idBuff: 45,
+                            idTipoDanoPertencente: 11,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Energia"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 15,
+                        valor: 0,
+                        tipoDano: {
+                            id: 15,
+                            idBuff: 46,
+                            idTipoDanoPertencente: 11,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Morte"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 16,
+                        valor: 0,
+                        tipoDano: {
+                            id: 16,
+                            idBuff: 47,
+                            idTipoDanoPertencente: 11,
+                            idEstatisticaDanificavel: 1,
+                            nome: "Medo"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 17,
+                        valor: 0,
+                        tipoDano: {
+                            id: 17,
+                            idBuff: 48,
+                            idTipoDanoPertencente: null,
+                            idEstatisticaDanificavel: 2,
+                            nome: "Mental"
+                        }
+                    },
+                    {
+                        idPersonagem: 1,
+                        idTipoDano: 18,
+                        valor: 0,
+                        tipoDano: {
+                            id: 18,
+                            idBuff: 49,
+                            idTipoDanoPertencente: null,
+                            idEstatisticaDanificavel: 3,
+                            nome: "Debilitante"
+                        }
+                    }
+                ],
+                estatisticasBuffaveis: [],
+                rituais: [],
+            };
+        }
+
+        this.reducoesDano = this._ficha.reducoesDano.map(reducaoDano => new ReducaoDano(reducaoDano.valor!, reducaoDano.tipoDano, this));
+        this.atributos = this._ficha.atributos.map(attr => new Atributo(attr.valor!, attr.atributo, this));
+        this.pericias = this._ficha.periciasPatentes.map(periciaPatente => new Pericia(periciaPatente.pericia, periciaPatente.patente, this.atributos.find(atributo => atributo.atributo.id === periciaPatente.pericia.idAtributo)!, this));
+        this.inventario = [new Item("Arma Corpo-a-Corpo Leve Simples", 2, 0)];
+        // this.acoes = [new Acao("Teste", 4, this, new Buff(1, 2))];
+        // this.habilidades = habilidades;
+        this.rituais = [new Ritual("Aprimorar Acrobacia", "1° Círculo Fraco", "Energia", [])];
+        this.buffs = [new Buff(6, 2)];
+        // this.rituais = this._ficha.rituais.map(ritual => new Ritual(ritual.nome, `${ritual.circulo.tipoCirculo.numero}° ${ritual.circulo.nivel.nome}`, '',  [new Acao("Teste", 4, this, new Buff(1, 2))]));
 
         // this.estatisticas = estatisticas;
-        this.detalhes = new CharacterDetalhes(this._ficha.detalhe.nome, this._ficha.detalhe.classe.nome, this._ficha.detalhe.nivel.nex);
+        this.detalhes = new CharacterDetalhes(this._ficha.detalhe.nome, this._ficha.detalhe.classe.nome, this._ficha.detalhe.nivel.nex!);
 
         const estatisticasDanificaveis = new EstatisticasDanificaveisPersonagem(
             (() => {
                 const teste = this._ficha.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.idEstatisticaDanificavel === 1)!;
-                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor, teste.valorMaximo, teste.estatisticaDanificavel);
+                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor!, teste.valorMaximo!, teste.estatisticaDanificavel);
             })(),
             (() => {
                 const teste = this._ficha.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.idEstatisticaDanificavel === 2)!;
-                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor, teste.valorMaximo, teste.estatisticaDanificavel);
+                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor!, teste.valorMaximo!, teste.estatisticaDanificavel);
             })(),
             (() => {
                 const teste = this._ficha.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.idEstatisticaDanificavel === 3)!;
-                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor, teste.valorMaximo, teste.estatisticaDanificavel);
+                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor!, teste.valorMaximo!, teste.estatisticaDanificavel);
             })(),
         );
 
@@ -113,6 +909,7 @@ export class Pericia {
     constructor (
         public pericia:MDL_Pericia,
         public patente:MDL_PatentePericia,
+        private refAtributo:Atributo,
         private refPersonagem:Personagem
     ) {}
     
@@ -123,7 +920,11 @@ export class Pericia {
     }
 
     get valorTotal():number {
-        return this.patente.valor + this.valorBonus;
+        return this.patente.valor! + this.valorBonus;
+    }
+
+    realizarTeste = () => {
+        return `Você realizou um Teste de ${this.pericia.nome}<br />${this.refAtributo.valorTotal} de ${this.refAtributo.atributo.nome} com ${this.valorTotal} de Bônus<br />O Resultado foi ${TestePericia(this.refAtributo.valorTotal, this.valorTotal)}`;
     }
 }
 
@@ -157,6 +958,32 @@ export class Arma extends Item {
         this.dano = dano;
         this.variancia = variancia;
     }
+}
+
+export class Acao {
+    constructor(
+        public nome:string,
+        public id_efeito_acao:number,
+        private personagem:Personagem,
+        public buff?:Buff,
+    ) {}
+
+    executa = () => {
+        if (this.id_efeito_acao === 4) {
+            this.personagem.buffs.push(new Buff(this.buff!.idRefBuff, this.buff!.valor));
+        }
+
+        this.personagem.onUpdate();
+    }
+}
+
+export class Ritual {
+    constructor(
+        public nome: string,
+        public circulo: string,
+        public elemento: string,
+        public acoes:Acao[]
+    ){}
 }
 
 // ================================================= //
@@ -205,7 +1032,6 @@ export class ControladorPersonagem {
         //     dano += instanciaDano.valor - rd!.valor;
         // });
 
-        console.log("1");
         let somaDanoNivel1 = 0;
         listaTiposDano.filter(tipoDano => !tipoDano.idTipoDanoPertencente).map(tipoDanoNivel1 => {
             let somaDanoNivel2 = 0;

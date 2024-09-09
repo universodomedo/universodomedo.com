@@ -1,6 +1,7 @@
 // #region Imports
 import style from "./style.module.css";
 import { Atributo, Pericia } from "Types/classes.tsx";
+import { toast } from 'react-toastify';
 // #endregion
 
 const page: React.FC<{atributosPersonagem:Atributo[], periciasPersonagem:Pericia[]}> = ({ atributosPersonagem, periciasPersonagem }) => {
@@ -12,7 +13,7 @@ const page: React.FC<{atributosPersonagem:Atributo[], periciasPersonagem:Pericia
           <div className={style.pericias_personagem}>
             {periciasPersonagem.filter(periciaPersonagem => periciaPersonagem.pericia.idAtributo === atributoPersonagem.atributo.id)?.map((periciaPersonagem, index) => (
               <div key={`pericia-${index}`} className={style.pericia_personagem}>
-                <button onClick={() => {}}>{periciaPersonagem.pericia.nomeAbrev}</button>
+                <button onClick={() => {toast(<div dangerouslySetInnerHTML={{ __html: periciaPersonagem.realizarTeste()}} />)}}>{periciaPersonagem.pericia.nomeAbrev}</button>
                 <h3>{periciaPersonagem.valorTotal}</h3>
               </div>
             ))}

@@ -1,5 +1,5 @@
 import useApi from "./Consumer.tsx";
-import { MDL_TipoDano, RLJ_Ficha } from "udm-types";
+import { MDL_Habilidade, MDL_TipoDano, RLJ_Ficha } from "udm-types";
 // import Singleton from "Types/Manager.tsx";
 
 import { Personagem } from "Types/classes.tsx"
@@ -9,8 +9,9 @@ class CustomApiCall {
     public async obterFichaPersonagem(idPersonagem:number): Promise<Personagem> {
         let personagem = {} as Personagem;
 
-        await useApi<RLJ_Ficha>("/fichas/getFichaCharacter", { idCharacter: idPersonagem }).then((data) => {
-            personagem = new Personagem(data);
+        await useApi<{ficha: RLJ_Ficha, habilidades: MDL_Habilidade[]}>("/fichas/getFichaCharacter", { idCharacter: idPersonagem }).then((data) => {
+            personagem = new Personagem(data.ficha);
+            // personagem = new Personagem(data.ficha, data.habilidades);
         });
 
         return personagem;

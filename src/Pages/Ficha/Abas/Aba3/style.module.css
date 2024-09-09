@@ -15,9 +15,9 @@
     margin: 0;
 }
 
-.atributo_personagem.AGI { 
+/* .atributo_personagem.AGI { 
     background-color: #B6D7A8;
-}
+} */
 
 .atributo_personagem.AGI button {
     color: #3E9D15;
@@ -28,9 +28,9 @@
     background-color: #7EED57;
 }
 
-.atributo_personagem.FOR {
+/* .atributo_personagem.FOR {
     background-color: #EA9999;
-}
+} */
 
 .atributo_personagem.FOR button {
     color: #4d2a2a;
@@ -41,9 +41,9 @@
     background-color: #dc5656;
 }
 
-.atributo_personagem.INT {
+/* .atributo_personagem.INT {
     background-color: #6D9EEB;
-}
+} */
 
 .atributo_personagem.INT button {
     color: #1b478b;
@@ -54,9 +54,9 @@
     background-color: #2d70d8;
 }
 
-.atributo_personagem.PRE {
+/* .atributo_personagem.PRE {
     background-color: #8E7CC3;
-}
+} */
 
 .atributo_personagem.PRE button {
     color: #991fe0;
@@ -67,9 +67,9 @@
     background-color: #ad63bf;
 }
 
-.atributo_personagem.VIG {
+/* .atributo_personagem.VIG {
     background-color: #FFD966;
-}
+} */
 
 .atributo_personagem.VIG button {
     color: #656325;
@@ -87,7 +87,7 @@
 }
 
 .pericia_personagem > button {
-    background-color: transparent;
+    background-color: white;
     border-radius: 40px;
     font-weight: 600;
     cursor: pointer;

@@ -11,14 +11,14 @@ import "slick-carousel/slick/slick-theme.css";
 const SectionCarroussel = () => {
   const [proximasSessoes, setProximasSessoes] = useState<RLJ_SessaoAventura[]>([{} as RLJ_SessaoAventura]);
 
-  useEffect(() => {
-    const proximasSessoes = async () => {
-      const response = await useApi<RLJ_SessaoAventura[]>("sessoes/getProximasSessoes");
-      setProximasSessoes(response);
-    };
+  // useEffect(() => {
+  //   const proximasSessoes = async () => {
+  //     const response = await useApi<RLJ_SessaoAventura[]>("sessoes/getProximasSessoes");
+  //     setProximasSessoes(response);
+  //   };
 
-    proximasSessoes();
-  }, []);
+  //   proximasSessoes();
+  // }, []);
 
   const settings = { infinite: false, speed: 500, slidesToShow: 3, slidesToScroll: 1 };
 

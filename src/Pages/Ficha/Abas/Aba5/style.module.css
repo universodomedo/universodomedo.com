@@ -1,8 +1,12 @@
+.conteudo_inventario {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
 .inventario_personagem {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    flex: 1;
 }
 
 .inventario_personagem table, th, td {
