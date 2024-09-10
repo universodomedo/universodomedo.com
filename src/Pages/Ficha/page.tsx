@@ -1,146 +1,89 @@
+// #region Imports
+import style from "./style.module.css";
 import "./style.css";
-import NewCharacter from "./newCharacter.tsx";
-import { useEffect, useState, useRef } from "react";
-import { Character, Pericia, BonusConectado, listaBonus, valorBuffavel } from "Types/classes.tsx";
-import { TestePericia } from "Components/Functions/RollNumber.tsx";
-import Dropdown from 'Components/SubComponents/Dropdown/page.tsx';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'Redux/store';
+// import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import "react-tabs/style/react-tabs.css";
+import { selectPersonagemCarregado } from "Redux/slices/fichaHelperSlice.ts";
+import Aba1 from "Pages/Ficha/Abas/Aba1/page.tsx";
+import Aba2 from "Pages/Ficha/Abas/Aba2/page.tsx";
+import Aba3 from "Pages/Ficha/Abas/Aba3/page.tsx";
+import Aba4 from "Pages/Ficha/Abas/Aba4/page.tsx";
+import Aba5 from "Pages/Ficha/Abas/Aba5/page.tsx";
+import Aba6 from "Pages/Ficha/Abas/Aba6/page.tsx";
+import Aba7 from "Pages/Ficha/Abas/Aba7/page.tsx";
+import Aba8 from "Pages/Ficha/Abas/Aba8/page.tsx";
+import { Abas, ListaAbas, Aba, PainelAbas } from 'Components/LayoutAbas/page.tsx';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const Ficha = () => {
-    // #region Variaveis Soltas
-    const [character, setCharacter] = useState<Character>({} as Character);
-    const [element, setElement] = useState([] as string[]);
+// #endregion
+
+const Ficha: React.FC = () => {
+    const slice = useSelector((state: RootState) => state.fichaHelper);
+    const personagemLoaded = useSelector(selectPersonagemCarregado);
+    const personagem = slice.fichaHelper.personagem;
     const [state, setState] = useState({});
-    const scrollableRef = useRef<HTMLDivElement>(null);
-    const dropdownRef = useRef<{ getSelectedOption: () => { id: number; descricao: string } | null }>(null);
-    const valorBuffRef = useRef<HTMLSelectElement>(null);
-    const descricaoBuffRef = useRef<HTMLInputElement>(null);
-    const { characterId } = useParams<{ characterId: string }>();
-    // #endregion
-
-    // #region UseEffect
-    useEffect(() => {
-        const getCharacter = async () => {
-            if (characterId) {
-                const characterData = await NewCharacter(parseInt(characterId));
-                setCharacter(characterData);
-            }
-        }
-
-        getCharacter();
-    }, []);
 
     useEffect(() => {
-        const scrollableDiv = scrollableRef.current;
-        if (scrollableDiv) 
-          scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
-    }, [element]);
-    // #endregion
-
-    // #region Functions
-    function realizaTestePericia(pericia:Pericia) {
-      const message1 = `Você realizou um teste da Perícia ${pericia.nome}: ${pericia.parentAtributo.valorTotal} dados com ${pericia.bonus} de bônus.`;
-      let teste = TestePericia(pericia.parentAtributo.valorTotal, pericia.valorTotal);
-      setElement([...element, `${message1} ||| Você tirou ${teste}`]);
-    }
-
-    function checkCheckboxState() {
-        if (!dropdownRef.current) return;
-
-        const selectedOption = dropdownRef.current.getSelectedOption();
-
-        if (!selectedOption) { console.log("Nenhuma Opção Selecionada"); return; }
-
-        listaBonus.push(new BonusConectado(selectedOption.id, descricaoBuffRef.current!.value, selectedOption.descricao, parseInt(valorBuffRef.current?.value || '0', 10), ));
-        setState({});
-    }
-    // #endregion
+        if (personagemLoaded && personagem)
+            personagem.carregaOnUpdate(() => setState({}));
+    }, [personagemLoaded]);
 
     return (
-        <div className="teste">
-            <aside className="sidebar">
-                <div className="left-top">
-                    {character.atributos && (
-                        <>
-                            {listaBonus.map((prop, index) => (
-                                <div key={index}>
-                                    <prop.componente
-                                        onChange={(checked) => {prop.handleCheckboxChange(checked);setState({});}}
-                                        checked={prop.checked}
-                                    />
-                                </div>
-                            ))}
-                        </>
-                    )}
-                </div>
-                <div className="left-bottom">
-                    <div className="buff-refs1">
-                        <button onClick={checkCheckboxState}>+</button>
-                        <input ref={descricaoBuffRef} type="text" name="" id="" />
+        <>
+            <ToastContainer />
+            {personagem && (
+                <Abas>
+                    <ListaAbas>
+                        <Aba id="aba1">Nome</Aba>
+                        <Aba id="aba2">Estatísticas</Aba>
+                        <Aba id="aba3">Efeitos</Aba>
+                        <Aba id="aba4">Atributos</Aba>
+                        <Aba id="aba5">Reduções</Aba>
+                        <Aba id="aba6">Inventário</Aba>
+                        <Aba id="aba7">Ações</Aba>
+                        <Aba id="aba8">Rituais</Aba>
+                    </ListaAbas>
+
+                    <div className={style.wrapper_conteudo_abas}>
+                        <PainelAbas id="aba1"><Aba1 detalhesPersonagem={personagem.detalhes}/></PainelAbas>
+                        <PainelAbas id="aba2"><Aba2 estatisticasDanificaveis={personagem.controladorPersonagem.estatisticasDanificaveis}/></PainelAbas>
+                        <PainelAbas id="aba3"><Aba8 buffsPersonagem={personagem.buffs}/></PainelAbas>
+                        <PainelAbas id="aba4"><Aba3 atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias}/></PainelAbas>
+                        <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano}/></PainelAbas>
+                        <PainelAbas id="aba6"><Aba5 inventarioPersonagem={personagem.inventario}/></PainelAbas>
+                        <PainelAbas id="aba7"><Aba6 acoesPersonagem={personagem.acoes}/></PainelAbas>
+                        <PainelAbas id="aba8"><Aba7 rituaisPersonagem={personagem.rituais}/></PainelAbas>
                     </div>
-                    <div className="buff-refs2">
-                        <Dropdown ref={dropdownRef} options={valorBuffavel.map((valor) => ({ id: valor.id, descricao: valor.descricao}))} onSelect={() => {}} />
-                        <select ref={valorBuffRef}>
-                            {[...Array(10).keys()].map((i) => (
-                                <option key={i + 1} value={i + 1}>
-                                    {i + 1}
-                                </option>
-                            ))}
-                        </select>
+                </Abas>
+            )}
+            {/* {personagem ? (
+                <Tabs defaultIndex={0}>
+                    <TabList>
+                        <Tab>Perícias</Tab>
+                        <Tab>Ações</Tab>
+                        <Tab>Inventário</Tab>
+                        <Tab>Habilidades</Tab>
+                        <Tab>Rituais</Tab>
+                    </TabList>
+                    <Aba1 detalhesPersonagem={personagem.detalhes}/>
+                    <Aba2 estatisticasDanificaveis={personagem.controladorPersonagem.estatisticasDanificaveis}/>
+                    <Aba8 buffsPersonagem={personagem.buffs}/>
+                    <div className={style.main_wrapper}>
+                        </TabPanel>
+                        
+                        
+                        
+                        <TabPanel><Aba7/></TabPanel>
                     </div>
-                </div>
-            </aside>
+                </Tabs>
+            ): <></>} */}
 
-            <main className="main-content">
-
-                {character.detalhes && (
-                <div className="character-section div-character-detalhes">
-                    <h2>{character.detalhes.classe}</h2>
-                    <h1>{character.detalhes.nome}</h1>
-                    <h2>{character.detalhes.nex}%</h2>
-                </div>
-                )}
-
-                {character.estatisticas && (
-                <div className="character-section div-character-estatisticas">
-                    {character.estatisticas.map((estatistica, key) => (
-                    <div key={`estatistica-${key}`} className="div-character-estatistica">
-                        <h2>{estatistica.nomeDisplay}</h2>
-                        <h3>{estatistica.valorAtual}/{estatistica.valorAtual}</h3>
-                    </div>
-                    ))}
-                </div>
-                )}
-
-                {character.atributos && (
-                <div className="character-section div-character-atributos">
-                    {character.atributos.map((atributo, key) => (
-                    <div key={`atributo-${key}`} className={`div-character-atributo ${atributo.nome}`}>
-                        <h2>{atributo.nome} [{atributo.valorTotal}]</h2>
-                        <div className={`div-character-atributo-pericia`}>
-                        {atributo.pericias?.map((pericia, key) => (
-                            <div key={`pericia-${key}`} className="div-character-pericia">
-                            <button onClick={() => {realizaTestePericia(pericia)}}>{pericia.nome}</button>
-                            <h3>{pericia.valorTotal}</h3>
-                            </div>
-                        ))}
-                        </div>
-                    </div>
-                    ))}
-                </div>
-                )}
-
-            </main>
-
-            <aside className="right-sidebar">
-                <div ref={scrollableRef}  className="messages">
-                    {element.map((e, index) => (
-                        <p key={`message-${index}`} className="testeMensagem fade">{e}</p>
-                    ))}
-                </div>
-            </aside>
-        </div>
+        </>
     );
-}
+};
 
 export default Ficha;

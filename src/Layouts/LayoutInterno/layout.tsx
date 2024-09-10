@@ -1,14 +1,17 @@
-import "./style.css";
+import styles from "./style.module.css";
 import { Outlet } from "react-router-dom";
 
 const LayoutInterno = () => {
     return (
       <>
-        <aside></aside>
-        <main className="layout-interno">
+        <div className={styles.header}></div>
+        <div className={styles.content}>
+          <aside className={styles.asides}></aside>
+          <main className={styles.main}>
             <Outlet />
-        </main>
-        <aside></aside>
+          </main>
+          <aside className={styles.asides}></aside>
+        </div>
       </>
     );
 };

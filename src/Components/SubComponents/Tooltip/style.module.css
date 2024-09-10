@@ -1,0 +1,22 @@
+.tooltip_fixed {
+    position: fixed;
+    z-index: 9999;
+    background-color: #333;
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    transform: translate(-50%, 0);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+    max-width: 300px;
+}
+  
+.visible {
+  opacity: 1;
+}
+  
+.hidden {
+  opacity: 0;
+}

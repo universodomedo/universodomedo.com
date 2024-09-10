@@ -1,11 +1,11 @@
 import "./style.css";
 import { Link } from "react-router-dom";
 
-const CarrosselItem = ({ idSession, itemTitle, imgUrl, tsStart, live }: { idSession: number, itemTitle: string, imgUrl: string, tsStart: Date, live: boolean }) => {
+const CarrosselItem = ({ id, titulo, imgUrl, tsInicio, live }: { id: number, titulo: string, imgUrl: string, tsInicio: Date, live: boolean }) => {
   const getTimeRemaining = ():string => {
     const now = new Date();
 
-    const difference = tsStart.getTime() - now.getTime();
+    const difference = tsInicio.getTime() - now.getTime();
 
     const prefix = 'Próxima Sessão em ';
 
@@ -24,7 +24,7 @@ const CarrosselItem = ({ idSession, itemTitle, imgUrl, tsStart, live }: { idSess
   };
 
   return (
-    <Link to={`/session/${idSession}`}>
+    <Link to={`/session/${id}`}>
       <div className="container-rect-carousel" style={{backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,${live ? 0 : 1}) 100%), url(${imgUrl})`}}>
         
         <div className={`carousel-item-top ${(live ? "live" : "notLive")}`}>
@@ -32,7 +32,7 @@ const CarrosselItem = ({ idSession, itemTitle, imgUrl, tsStart, live }: { idSess
         </div>
 
         <div className="carousel-item-bottom">
-          <p className='carousel-item-bottom-p'>{itemTitle}</p>
+          <p className='carousel-item-bottom-p'>{titulo}</p>
         </div>
       </div>
     </Link>

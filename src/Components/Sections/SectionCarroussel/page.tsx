@@ -3,22 +3,22 @@ import CarrosselItem from "Components/SubComponents/CarrosselItem/page.tsx";
 import useApi from "ApiConsumer/Consumer.tsx";
 import { useEffect, useState } from "react";
 import Slider from "react-slick";
-import { CampaignSessionWithRelations } from "udm-types";
+import { RLJ_SessaoAventura } from "udm-types";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const SectionCarroussel = () => {
-  const [proximasSessoes, setProximasSessoes] = useState<CampaignSessionWithRelations[]>([{} as CampaignSessionWithRelations]);
+  const [proximasSessoes, setProximasSessoes] = useState<RLJ_SessaoAventura[]>([{} as RLJ_SessaoAventura]);
 
-  useEffect(() => {
-    const proximasSessoes = async () => {
-      const response = await useApi<CampaignSessionWithRelations[]>("session/getNextSessions");
-      setProximasSessoes(response);
-    };
+  // useEffect(() => {
+  //   const proximasSessoes = async () => {
+  //     const response = await useApi<RLJ_SessaoAventura[]>("sessoes/getProximasSessoes");
+  //     setProximasSessoes(response);
+  //   };
 
-    proximasSessoes();
-  }, []);
+  //   proximasSessoes();
+  // }, []);
 
   const settings = { infinite: false, speed: 500, slidesToShow: 3, slidesToScroll: 1 };
 
@@ -30,8 +30,8 @@ const SectionCarroussel = () => {
             <p>Próximas Sessões</p>
           </div>
           <Slider {...settings}>
-            {proximasSessoes.map((session: CampaignSessionWithRelations, index: number) => ( session.campaign && (
-              <CarrosselItem key={`carrosselItem-${index}`} idSession={session.id} itemTitle={session.campaign!.subtitle} imgUrl={session.campaign!.artPath} tsStart={session.tsStart} live={false} />
+            {proximasSessoes.map((sessao: RLJ_SessaoAventura, index: number) => ( sessao.aventura && (
+              <CarrosselItem key={`carrosselItem-${index}`} id={sessao.id} titulo={(sessao.aventura!.subtitulo === '' ? sessao.aventura!.titulo : sessao.aventura!.subtitulo)} imgUrl={sessao.aventura!.caminhoArteOficial} tsInicio={sessao.tsInicioPrevisto} live={false} />
             )))}
           </Slider>
         </div>
