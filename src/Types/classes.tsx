@@ -1,5 +1,5 @@
 import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
-import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma, MDL_Habilidade, MDL_Ritual, RLJ_Rituais, MDL_CirculoRitual} from "udm-types";
+import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma, MDL_Habilidade, MDL_Ritual, RLJ_Rituais, MDL_CirculoRitual, MDL_EfeitoAcao, MDL_Duracao } from "udm-types";
 import { TestePericia } from "Components/Functions/RollNumber.tsx";
 
 export class Personagem {
@@ -820,8 +820,12 @@ export class Personagem {
         this.inventario = [new Item("Arma Corpo-a-Corpo Leve Simples", 2, 0)];
         // this.acoes = [new Acao("Teste", 4, this, new Buff(1, 2))];
         // this.habilidades = habilidades;
-        this.rituais = [new Ritual("Aprimorar Acrobacia", "1° Círculo Fraco", "Energia", [])];
-        this.buffs = [new Buff(6, 2)];
+        this.rituais = [
+            new Ritual("Aprimorar Acrobacia", "1° Círculo Fraco", "Energia", []),
+            new Ritual("Aprimorar Investigação", "2° Círculo Fraco", "Conhecimento", []),
+            new Ritual("Aprimorar Luta", "3° Círculo Fraco", "Sangue", [])
+        ];
+        this.buffs = [new Buff(6, 2, 1, 1, 1, this)];
         // this.rituais = this._ficha.rituais.map(ritual => new Ritual(ritual.nome, `${ritual.circulo.tipoCirculo.numero}° ${ritual.circulo.nivel.nome}`, '',  [new Acao("Teste", 4, this, new Buff(1, 2))]));
 
         // this.estatisticas = estatisticas;
@@ -877,7 +881,7 @@ export class ReducaoDano {
     ) {}
 
     get valorBonus():number {
-        return this.refPersonagem.buffs.filter(buff => buff.idRefBuff === this.tipoDano.idBuff).reduce((acc, cur) => {
+        return this.refPersonagem.buffs.filter(buff => buff.idBuff === this.tipoDano.idBuff).reduce((acc, cur) => {
             return acc + cur.valor;
         }, 0);
     }
@@ -895,7 +899,7 @@ export class Atributo {
     ) {}
 
     get valorBonus():number {
-        return this.refPersonagem.buffs.filter(buff => buff.idRefBuff === this.atributo.idBuff).reduce((acc, cur) => {
+        return this.refPersonagem.buffs.filter(buff => buff.idBuff === this.atributo.idBuff).reduce((acc, cur) => {
             return acc + cur.valor;
         }, 0);
     }
@@ -914,7 +918,7 @@ export class Pericia {
     ) {}
     
     get valorBonus():number {
-        return this.refPersonagem.buffs.filter(buff => buff.idRefBuff === this.pericia.idBuff).reduce((acc, cur) => {
+        return this.refPersonagem.buffs.filter(buff => buff.idBuff === this.pericia.idBuff).reduce((acc, cur) => {
             return acc + cur.valor;
         }, 0);
     }
@@ -928,11 +932,30 @@ export class Pericia {
     }
 }
 
-export class Buff {
-    constructor(
-        public idRefBuff:number,
-        public valor:number
+// export class Buff {
+//     constructor(
+//         public idRefBuff:number,
+//         public valor:number
+//     ) {}
+// }
+
+export class Buff implements MDL_EfeitoAcao {
+    constructor (
+        public idBuff: number,
+        public valor: number,
+        public idAcao: number,
+        public idDuracao: number,
+        public quantidadeDuracao: number,
+        private refPersonagem:Personagem
     ) {}
+
+    get refAcao():Acao {
+        return this.refPersonagem.acoes.find(acao => acao.id === this.idAcao)!;
+    }
+
+    // get refDuracao():Duracao {
+
+    // }
 }
 
 
@@ -962,6 +985,7 @@ export class Arma extends Item {
 
 export class Acao {
     constructor(
+        public id:number,
         public nome:string,
         public id_efeito_acao:number,
         private personagem:Personagem,
@@ -970,7 +994,7 @@ export class Acao {
 
     executa = () => {
         if (this.id_efeito_acao === 4) {
-            this.personagem.buffs.push(new Buff(this.buff!.idRefBuff, this.buff!.valor));
+            // this.personagem.buffs.push(new Buff(this.buff!.idRefBuff, this.buff!.valor));
         }
 
         this.personagem.onUpdate();
@@ -984,6 +1008,13 @@ export class Ritual {
         public elemento: string,
         public acoes:Acao[]
     ){}
+}
+
+export class Duracao implements MDL_Duracao {
+    constructor(
+        public id: number,
+        public nome: string,
+    ) {}
 }
 
 // ================================================= //
