@@ -35,7 +35,7 @@ const page: React.FC<{ buffs:Buff[] }> = ({buffs}) => {
           {buffs.map((buff, index) => (
             <div key={index} className={style.icone_efeito} 
             data-hoverbox-content={JSON.stringify({
-              title: `Buff ${buff.idRefBuff}`,
+              title: `Buff ${buff.idBuff}`,
               description: `Valor: ${buff.valor}`,
               customField: 'Valor especial'
             })}

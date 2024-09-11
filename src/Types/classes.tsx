@@ -821,9 +821,9 @@ export class Personagem {
         // this.acoes = [new Acao("Teste", 4, this, new Buff(1, 2))];
         // this.habilidades = habilidades;
         this.rituais = [
-            new Ritual("Aprimorar Acrobacia", "1° Círculo Fraco", "Energia", []),
-            new Ritual("Aprimorar Investigação", "2° Círculo Fraco", "Conhecimento", []),
-            new Ritual("Aprimorar Luta", "3° Círculo Fraco", "Sangue", [])
+            new Ritual("Aprimorar Acrobacia", "1° Círculo Fraco", "Energia"),
+            new Ritual("Aprimorar Investigação", "2° Círculo Fraco", "Conhecimento"),
+            new Ritual("Aprimorar Luta", "3° Círculo Fraco", "Sangue")
         ];
         this.buffs = [new Buff(6, 2, 1, 1, 1, this)];
         // this.rituais = this._ficha.rituais.map(ritual => new Ritual(ritual.nome, `${ritual.circulo.tipoCirculo.numero}° ${ritual.circulo.nivel.nome}`, '',  [new Acao("Teste", 4, this, new Buff(1, 2))]));
@@ -1005,8 +1005,8 @@ export class Ritual {
     constructor(
         public nome: string,
         public circulo: string,
-        public elemento: string,
-        public acoes:Acao[]
+        public elemento: string
+        // public acoes:Acao[]
     ){}
 }
 
