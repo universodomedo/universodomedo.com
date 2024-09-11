@@ -24,6 +24,6 @@ jobs:
       uses: docker/setup-buildx-action@v2
 
     - name: Build Docker images and run with Docker Compose
-      run: docker-compose -p universodomedo up --build -d --remove-orphans
+      run: docker-compose -p universodomedo up --build -d dev-udm
 
    
