@@ -14,18 +14,18 @@ const page: React.FC<{rituaisPersonagem:Ritual[]}> = ({ rituaisPersonagem }) => 
     <div className={style.conteudo_rituais}>
       <h1>Rituais</h1>
 
-      <FiltroDinamico data={rituaisPersonagem} onFilter={setRituaisFiltrados}/>
+      <FiltroDinamico data={rituaisPersonagem} onFilter={setRituaisFiltrados} filterConfig={Ritual.getFilterConfig()} />
 
       {rituaisFiltrados.length > 0 && (
         <div className={style.rituais}>
           {rituaisFiltrados.map((ritual, index) => (
             <div
               key={index}
-              className={`${style.icone_ritual} ${style[ritual.elemento]}`}
+              className={`${style.icone_ritual} ${style[ritual.idElemento]}`}
               style={{backgroundImage: `url(${svgBase64})`}}
               data-hoverbox-content={JSON.stringify({
                 title: `${ritual.nome}`,
-                description: `${ritual.elemento} - ${ritual.circulo}`
+                description: `${ritual.idElemento} - ${ritual.idCirculo}`
               })}
             />
           ))}

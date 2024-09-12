@@ -3,6 +3,7 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 10%;
+    font-size: 3vh;
 }
 
 .estatistica_barra {
@@ -14,4 +15,6 @@
 
 .estatistica_barra h2 {
     margin: 0;
+    font-size: 1em;
+    color: white;
 }

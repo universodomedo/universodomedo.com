@@ -821,9 +821,9 @@ export class Personagem {
         // this.acoes = [new Acao("Teste", 4, this, new Buff(1, 2))];
         // this.habilidades = habilidades;
         this.rituais = [
-            new Ritual("Aprimorar Acrobacia", "1° Círculo Fraco", "Energia"),
-            new Ritual("Aprimorar Investigação", "2° Círculo Fraco", "Conhecimento"),
-            new Ritual("Aprimorar Luta", "3° Círculo Fraco", "Sangue")
+            new Ritual("Aprimorar Acrobacia", 1, 2, []),
+            new Ritual("Aprimorar Investigação", 4, 1, []),
+            new Ritual("Aprimorar Luta", 7, 5, [])
         ];
         this.buffs = [new Buff(6, 2, 1, 1, 1, this)];
         // this.rituais = this._ficha.rituais.map(ritual => new Ritual(ritual.nome, `${ritual.circulo.tipoCirculo.numero}° ${ritual.circulo.nivel.nome}`, '',  [new Acao("Teste", 4, this, new Buff(1, 2))]));
@@ -1004,11 +1004,71 @@ export class Acao {
 export class Ritual {
     constructor(
         public nome: string,
-        public circulo: string,
-        public elemento: string
-        // public acoes:Acao[]
+        public idCirculo: number,
+        public idElemento: number,
+        public acoes:Acao[]
     ){}
+
+    static getFilterConfig() {
+        return {
+            filterableFields: ['nome', 'idCirculo', 'idElemento'], // Campos que podem ser filtrados
+            filterOptions: {
+                idCirculo: [
+                    { id: 1, nome: "1º Círculo Fraco" },
+                    { id: 2, nome: "1º Círculo Médio" },
+                    { id: 3, nome: "1º Círculo Forte" },
+                    { id: 4, nome: "2º Círculo Fraco" },
+                    { id: 5, nome: "2º Círculo Médio" },
+                    { id: 6, nome: "2º Círculo Forte" },
+                    { id: 7, nome: "3º Círculo Fraco" },
+                    { id: 8, nome: "3º Círculo Médio" },
+                    { id: 9, nome: "3º Círculo Forte" },
+                ],
+                idElemento: [
+                    { id: 1, nome: "Conhecimento" },
+                    { id: 2, nome: "Energia" },
+                    { id: 3, nome: "Medo" },
+                    { id: 4, nome: "Morte" },
+                    { id: 5, nome: "Sangue" },
+                ],
+            },
+        };
+    }
 }
+
+interface FilterOption {
+    id: number;
+    nome: string;
+}
+
+interface FilterConfig {
+  filterableFields: string[];
+  filterOptions: { [key: string]: FilterOption[] };
+}
+
+export const FiltroRitual: FilterConfig = {
+    filterableFields: ["nome", "idCirculo", "idElemento"],
+    filterOptions: {
+        idCirculo: [
+            { id: 1, nome: "1º Círculo Fraco" },
+            { id: 2, nome: "1º Círculo Médio" },
+            { id: 3, nome: "1º Círculo Forte" },
+            { id: 4, nome: "2º Círculo Fraco" },
+            { id: 5, nome: "2º Círculo Médio" },
+            { id: 6, nome: "2º Círculo Forte" },
+            { id: 7, nome: "3º Círculo Fraco" },
+            { id: 8, nome: "3º Círculo Médio" },
+            { id: 9, nome: "3º Círculo Forte" },
+        ],
+        idElemento: [
+            { id: 1, nome: "Conhecimento" },
+            { id: 2, nome: "Energia" },
+            { id: 3, nome: "Medo" },
+            { id: 4, nome: "Morte" },
+            { id: 5, nome: "Sangue" },
+        ],
+    },
+};
 
 export class Duracao implements MDL_Duracao {
     constructor(
