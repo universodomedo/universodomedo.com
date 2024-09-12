@@ -9,7 +9,7 @@ export class Personagem {
     public pericias:Pericia[];
     public buffs:Buff[] = [];
     public inventario:Item[];
-    public acoes:Acao[] = []a;
+    public acoes:Acao[] = [];
     // public habilidades:MDL_Habilidade[] = [];
     public rituais:Ritual[] = [];
     // public estatisticas:Estatisticas;
