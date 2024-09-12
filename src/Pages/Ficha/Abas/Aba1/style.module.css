@@ -14,3 +14,7 @@
     flex: .3;
     margin: 0;
 }
+
+.ficha_detalhes h1, .ficha_detalhes h3 {
+    color: white;
+}

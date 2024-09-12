@@ -821,9 +821,9 @@ export class Personagem {
         // this.acoes = [new Acao("Teste", 4, this, new Buff(1, 2))];
         // this.habilidades = habilidades;
         this.rituais = [
-            new Ritual("Aprimorar Acrobacia", 1, 2),
-            new Ritual("Aprimorar Investigação", 4, 1),
-            new Ritual("Aprimorar Luta", 7, 5)
+            new Ritual("Aprimorar Acrobacia", 1, 2, []),
+            new Ritual("Aprimorar Investigação", 4, 1, []),
+            new Ritual("Aprimorar Luta", 7, 5, [])
         ];
         this.buffs = [new Buff(6, 2, 1, 1, 1, this)];
         // this.rituais = this._ficha.rituais.map(ritual => new Ritual(ritual.nome, `${ritual.circulo.tipoCirculo.numero}° ${ritual.circulo.nivel.nome}`, '',  [new Acao("Teste", 4, this, new Buff(1, 2))]));
@@ -1009,15 +1009,31 @@ export class Ritual {
         public acoes:Acao[]
     ){}
 
-    static configuracaoFiltro() {
+    static getFilterConfig() {
         return {
-            filterableFields: ["nome", "idCirculo", "idElemento"],
+            filterableFields: ['nome', 'idCirculo', 'idElemento'], // Campos que podem ser filtrados
             filterOptions: {
-                idCirculo: [{id: 1, nome: "1º Círculo Fraco"}, {id: 2, nome: "1º Círculo Médio"}, {id: 3, nome: "1º Círculo Forte"}, {id: 4, nome: "2º Círculo Fraco"}, {id: 5, nome: "2º Círculo Médio"}, {id: 6, nome: "2º Círculo Forte"}, {id: 7, nome: "3º Círculo Fraco"}, {id: 8, nome: "3º Círculo Médio"}, {id: 9, nome: "3º Círculo Forte"}],
-                idElemento: [{id: 1, nome: "Conhecimento"}, {id: 2, nome: "Energia"}, {id: 3, nome: "Medo"}, {id: 4, nome: "Morte"}, {id: 5, nome: "Sangue"}, ],
-            }
-        }
-    };
+                idCirculo: [
+                    { id: 1, nome: "1º Círculo Fraco" },
+                    { id: 2, nome: "1º Círculo Médio" },
+                    { id: 3, nome: "1º Círculo Forte" },
+                    { id: 4, nome: "2º Círculo Fraco" },
+                    { id: 5, nome: "2º Círculo Médio" },
+                    { id: 6, nome: "2º Círculo Forte" },
+                    { id: 7, nome: "3º Círculo Fraco" },
+                    { id: 8, nome: "3º Círculo Médio" },
+                    { id: 9, nome: "3º Círculo Forte" },
+                ],
+                idElemento: [
+                    { id: 1, nome: "Conhecimento" },
+                    { id: 2, nome: "Energia" },
+                    { id: 3, nome: "Medo" },
+                    { id: 4, nome: "Morte" },
+                    { id: 5, nome: "Sangue" },
+                ],
+            },
+        };
+    }
 }
 
 interface FilterOption {

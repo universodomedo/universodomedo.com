@@ -1,77 +1,75 @@
+// #region Imports
+import style from "./style.module.css";
 import React, { useState, useEffect } from "react";
+import Select from "react-select";
+// #endregion
+
+interface FilterConfig {
+  filterableFields: string[];
+  filterOptions: Record<string, { id: number; nome: string }[]>;
+}
 
 interface FiltroDinamicoProps<T> {
   data: T[];
   onFilter: (filteredData: T[]) => void;
+  filterConfig: FilterConfig;
 }
 
-interface FilterOption {
-  id: number;
-  nome: string;
-}
+const getSafeValue = <T, K extends keyof T>(obj: T, key: K): T[K] => {
+  return obj[key];
+};
 
-interface FilterConfig {
-  filterableFields: string[];
-  filterOptions: { [key: string]: FilterOption[] };
-}
-
-// Componente de Filtro Dinâmico
-const FiltroDinamico = <T extends { constructor: { getFilterConfig: () => FilterConfig } }>({
+const FiltroDinamico = <T,>({
   data,
   onFilter,
+  filterConfig,
 }: FiltroDinamicoProps<T>) => {
-  const [filtros, setFiltros] = useState<{ [key: string]: string }>({});
+  const [filtros, setFiltros] = useState<{ [key: string]: string[] }>({});
 
-  // Obtém a configuração de filtros da classe do objeto
-  const { filterableFields, filterOptions } = data[0]?.constructor.getFilterConfig() || {
-    filterableFields: [],
-    filterOptions: {},
-  };
+  const { filterableFields, filterOptions } = filterConfig;
 
-  // Efeito para aplicar os filtros quando os estados mudam
   useEffect(() => {
     const dadosFiltrados = data.filter((item) => {
       return filterableFields.every((key) => {
-        const filtroValor = filtros[key]?.toLowerCase() || "";
-        const itemValor = String(item[key]).toLowerCase() || "";
-        return filtroValor === "" || itemValor.includes(filtroValor);
+        const filtroValores = filtros[key] || [];
+        const itemValor = String(getSafeValue(item, key as keyof T)).toLowerCase();
+        return (
+          filtroValores.length === 0 ||
+          filtroValores.some((filtro) => itemValor.includes(filtro.toLowerCase()))
+        );
       });
     });
 
-    // Retorna os dados filtrados ao componente pai
     onFilter(dadosFiltrados);
   }, [filtros, data, onFilter]);
 
-  // Função para atualizar o estado dos filtros
-  const handleFilterChange = (key: string, value: string) => {
-    setFiltros((prev) => ({ ...prev, [key]: value }));
+  const handleFilterChange = (key: string, values: string[]) => {
+    setFiltros((prev) => ({ ...prev, [key]: values }));
   };
-
   return (
-    <div>
+    <div className={style.div_filtros}>
       {filterableFields.map((key) => {
         const isDropdown = filterOptions[key] !== undefined;
 
         return (
-          <div key={key}>
+          <div key={key} style={{ marginBottom: "10px" }}>
             {isDropdown ? (
-              <select
-                value={filtros[key] || ""}
-                onChange={(e) => handleFilterChange(key, e.target.value)}
-              >
-                <option value="">Todos</option>
-                {filterOptions[key]?.map((option) => (
-                  <option key={option.id} value={option.id.toString()}>
-                    {option.nome}
-                  </option>
-                ))}
-              </select>
+              <div>
+                <Select isMulti value={filterOptions[key] .filter((option) => filtros[key]?.includes(option.id.toString())) .map((option) => ({ value: option.id.toString(), label: option.nome }))}
+                  options={filterOptions[key].map((option) => ({
+                    value: option.id.toString(),
+                    label: option.nome,
+                  }))}
+                  onChange={(selectedOptions) => handleFilterChange( key, selectedOptions.map((option) => option.value) )}
+                  placeholder={`Selecione`}
+                />
+              </div>
             ) : (
               <input
                 type="text"
                 placeholder={`Filtrar por ${key}`}
-                value={filtros[key] || ""}
-                onChange={(e) => handleFilterChange(key, e.target.value)}
+                value={filtros[key]?.[0] || ""}
+                onChange={(e) => handleFilterChange(key, [e.target.value])}
               />
             )}
           </div>

@@ -15,12 +15,9 @@
     margin-bottom: 1vh;
 }
 
-.main > * {
-    color: white;
-}
-
 .alpha_warning {
     padding: 1%;
     margin: 2vh auto;
     border: 1px white solid;
+    color: white;
 }

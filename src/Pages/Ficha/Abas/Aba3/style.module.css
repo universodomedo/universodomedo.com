@@ -1,6 +1,7 @@
 .atributos_personagem {
     display: flex;
     flex-direction: column;
+    color: white;
 }
 
 .atributo_personagem {

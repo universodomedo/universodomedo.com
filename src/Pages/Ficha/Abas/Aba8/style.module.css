@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: 2vh;
+    color: white;
 }
 
 .conteudo_efeitos table {
