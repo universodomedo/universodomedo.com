@@ -2,8 +2,9 @@
     display: flex;
     flex-direction: row;
     gap: 3%;
+    justify-content: center;
 }
 
 .div_filtros input {
-    
+    border-radius: 15px;
 }

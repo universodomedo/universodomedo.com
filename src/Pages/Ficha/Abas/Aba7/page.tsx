@@ -14,7 +14,10 @@ const page: React.FC<{rituaisPersonagem:Ritual[]}> = ({ rituaisPersonagem }) => 
     <div className={style.conteudo_rituais}>
       <h1>Rituais</h1>
 
-      <FiltroDinamico data={rituaisPersonagem} onFilter={setRituaisFiltrados}/>
+      <FiltroDinamico
+        data={rituaisPersonagem}
+        onFilter={setRituaisFiltrados}
+      />
 
       {rituaisFiltrados.length > 0 && (
         <div className={style.rituais}>
