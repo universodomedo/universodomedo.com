@@ -41,7 +41,7 @@ const Ficha: React.FC = () => {
         const elemento = (document.querySelector('#elemento') as HTMLSelectElement).value;
         const circulo = (document.querySelector('#circulo') as HTMLSelectElement).value;
 
-        personagem.adicionarNovoRitual(nome, parseInt(circulo), parseInt(elemento));
+        personagem.adicionarNovoRitual(nome, parseInt(elemento), parseInt(circulo));
     }
 
     return (
@@ -56,7 +56,7 @@ const Ficha: React.FC = () => {
                 Elemento:
                 <select id="elemento">
                     {singleton.elementos.map(elemento => (
-                        <option key={elemento.id} value={elemento.nome}>
+                        <option key={elemento.id} value={elemento.id}>
                             {elemento.nome}
                         </option>
                     ))}
@@ -65,7 +65,7 @@ const Ficha: React.FC = () => {
                 Circulo:
                 <select id="circulo">
                     {singleton.circulos.map(circulo => (
-                        <option key={circulo.id} value={circulo.nome}>
+                        <option key={circulo.id} value={circulo.id}>
                             {circulo.nome}
                         </option>
                     ))}
