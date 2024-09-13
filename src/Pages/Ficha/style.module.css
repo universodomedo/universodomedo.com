@@ -7,6 +7,17 @@
     padding: 0 1vw;
 }
 
+.div_demo_acoes {
+    border: 2px white solid;
+    padding: 2%;
+    margin: .8%;
+    color: white;
+}
+
+.div_demo_acoes h1 {
+    margin: 0;
+}
+
 /* primeiro sistema de abas */
 
 

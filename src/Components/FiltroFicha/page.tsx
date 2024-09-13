@@ -52,7 +52,7 @@ const FiltroDinamico = <T,>({
         const isDropdown = filterOptions[key] !== undefined;
 
         return (
-          <div key={key} style={{ marginBottom: "10px" }}>
+          <div key={key}>
             {isDropdown ? (
               <div>
                 <Select isMulti value={filterOptions[key] .filter((option) => filtros[key]?.includes(option.id.toString())) .map((option) => ({ value: option.id.toString(), label: option.nome }))}

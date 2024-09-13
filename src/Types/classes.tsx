@@ -1,5 +1,5 @@
 import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
-import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma, MDL_Habilidade, MDL_Ritual, RLJ_Rituais, MDL_CirculoRitual, MDL_EfeitoAcao, MDL_Duracao } from "udm-types";
+import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma, MDL_Habilidade, MDL_Ritual, RLJ_Rituais, MDL_CirculoRitual, MDL_EfeitoAcao, MDL_Duracao, MDL_Elemento } from "udm-types";
 import { TestePericia } from "Components/Functions/RollNumber.tsx";
 
 export class Personagem {
@@ -852,6 +852,11 @@ export class Personagem {
     receberDanoVital = (danoGeral:DanoGeral) => {
         this.controladorPersonagem.reduzDano(danoGeral);
     }
+
+    adicionarNovoRitual = (nome:string, idElemento:number, idCirculo:number) => {
+        this.rituais.push(new Ritual(nome, idCirculo, idElemento, []));
+        // this.onUpdate();
+    }
 }
 
 export class EstatisticaDanificavel implements RLJ_EstatisticasDanificaveisPersonagem_Estatistica {
@@ -1044,6 +1049,21 @@ interface FilterOption {
 interface FilterConfig {
   filterableFields: string[];
   filterOptions: { [key: string]: FilterOption[] };
+}
+
+export class Elemento implements MDL_Elemento {
+    constructor (
+        public id: number,
+        public nome: string,
+    ) {}
+}
+
+export class Circulo {
+// export class Circulo implements MDL_CirculoRitual {
+    constructor (
+        public id: number,
+        public nome: string,
+    ) {}
 }
 
 export const FiltroRitual: FilterConfig = {
