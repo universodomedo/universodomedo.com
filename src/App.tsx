@@ -20,7 +20,7 @@ const App = () => {
       <TooltipManager />
 
       <BrowserRouter>
-        <PageTracker />
+        {/* <PageTracker /> */}
         <Routes>
           <Route element={<LayoutLP />}>
             <Route path="/" element={<LP />} />
@@ -46,9 +46,9 @@ const App = () => {
           </Route>
 
           <Route element={<LayoutInterno2 />}>
-              <Route path="/ficha-demo">
-                <Route index element={<FichaDemo />} />
-              </Route>
+            <Route path="/ficha-demo">
+              <Route index element={<FichaDemo />} />
+            </Route>
           </Route>
           
         </Routes>

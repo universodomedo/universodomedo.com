@@ -1,7 +1,7 @@
 // #region Imports
 import style from "./style.module.css";
 import "./style.css";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'Redux/store';
 // import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -25,6 +25,10 @@ const Ficha: React.FC = () => {
     const slice = useSelector((state: RootState) => state.fichaHelper);
     const personagemLoaded = useSelector(selectPersonagemCarregado);
     const personagem = slice.fichaHelper.personagem;
+
+    const slice2 = useSelector((state: RootState) => state.singletonHelper);
+    const singleton = slice2.singletonHelper;
+
     const [state, setState] = useState({});
 
     useEffect(() => {
@@ -32,9 +36,44 @@ const Ficha: React.FC = () => {
             personagem.carregaOnUpdate(() => setState({}));
     }, [personagemLoaded]);
 
+    function adicionarNovoRitual() {
+        const nome = (document.querySelector('#nome') as HTMLInputElement).value;
+        const elemento = (document.querySelector('#elemento') as HTMLSelectElement).value;
+        const circulo = (document.querySelector('#circulo') as HTMLSelectElement).value;
+
+        personagem.adicionarNovoRitual(nome, parseInt(elemento), parseInt(circulo));
+    }
+
     return (
         <>
             <ToastContainer />
+
+            <div className={style.div_demo_acoes}>
+                <h1>Adicionar novo Ritual</h1>
+
+                Nome: <input id="nome" type="text" />
+
+                Elemento:
+                <select id="elemento">
+                    {singleton.elementos.map(elemento => (
+                        <option key={elemento.id} value={elemento.id}>
+                            {elemento.nome}
+                        </option>
+                    ))}
+                </select>
+
+                Circulo:
+                <select id="circulo">
+                    {singleton.circulos.map(circulo => (
+                        <option key={circulo.id} value={circulo.id}>
+                            {circulo.nome}
+                        </option>
+                    ))}
+                </select>
+
+                <button onClick={adicionarNovoRitual}>Adicionar</button>
+            </div>
+
             {personagem && (
                 <Abas>
                     <ListaAbas>
@@ -60,28 +99,6 @@ const Ficha: React.FC = () => {
                     </div>
                 </Abas>
             )}
-            {/* {personagem ? (
-                <Tabs defaultIndex={0}>
-                    <TabList>
-                        <Tab>Perícias</Tab>
-                        <Tab>Ações</Tab>
-                        <Tab>Inventário</Tab>
-                        <Tab>Habilidades</Tab>
-                        <Tab>Rituais</Tab>
-                    </TabList>
-                    <Aba1 detalhesPersonagem={personagem.detalhes}/>
-                    <Aba2 estatisticasDanificaveis={personagem.controladorPersonagem.estatisticasDanificaveis}/>
-                    <Aba8 buffsPersonagem={personagem.buffs}/>
-                    <div className={style.main_wrapper}>
-                        </TabPanel>
-                        
-                        
-                        
-                        <TabPanel><Aba7/></TabPanel>
-                    </div>
-                </Tabs>
-            ): <></>} */}
-
         </>
     );
 };
