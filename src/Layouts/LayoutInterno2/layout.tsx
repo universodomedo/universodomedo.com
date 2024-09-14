@@ -14,7 +14,7 @@ const LayoutInterno2 = () => {
             <Outlet />
 
             <div className={styles.alpha_warning}>
-              v0.0.4
+              v0.0.5
             </div>
           </main>
         </div>

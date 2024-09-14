@@ -4,3 +4,26 @@
     gap: 2vh;
     color: white;
 }
+
+.div_acoes {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 2%;
+}
+
+.icone_habilidade {
+    border-radius: 5px;
+    border: 1px antiquewhite solid;
+    box-shadow: inset 0px 0px 5px 1px black;
+    width: 40px;
+    height: 25px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgb(236, 235, 235);
+}
+
+.acao_bloqueada {
+    border: 1px red solid;
+}

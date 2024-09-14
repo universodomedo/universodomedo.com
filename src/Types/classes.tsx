@@ -1,6 +1,10 @@
+// #region Imports
 import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
 import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma, MDL_Habilidade, MDL_Ritual, RLJ_Rituais, MDL_CirculoRitual, MDL_EfeitoAcao, MDL_Duracao, MDL_Elemento } from "udm-types";
 import { TestePericia } from "Components/Functions/RollNumber.tsx";
+import { SingletonHelper } from "Types/classes_estaticas.tsx";
+import singletonHelperSlice from "@redux/slices/singletonHelperSlice";
+// #endregion
 
 export class Personagem {
     private _ficha!:RLJ_Ficha;
@@ -9,12 +13,17 @@ export class Personagem {
     public pericias:Pericia[];
     public buffs:Buff[] = [];
     public inventario:Item[];
-    public acoes:Acao[] = [];
     // public habilidades:MDL_Habilidade[] = [];
     public rituais:Ritual[] = [];
     // public estatisticas:Estatisticas;
     public detalhes:CharacterDetalhes;
     public controladorPersonagem:ControladorPersonagem;
+
+    public get acoes(): Acao[] {
+        return this.rituais.reduce((acc: Acao[], ritual) => {
+            return acc.concat(ritual.acoes);
+        }, []);
+    }
 
     //
     public onUpdate: () => void = () => {};
@@ -818,16 +827,20 @@ export class Personagem {
         this.atributos = this._ficha.atributos.map(attr => new Atributo(attr.valor!, attr.atributo, this));
         this.pericias = this._ficha.periciasPatentes.map(periciaPatente => new Pericia(periciaPatente.pericia, periciaPatente.patente, this.atributos.find(atributo => atributo.atributo.id === periciaPatente.pericia.idAtributo)!, this));
         this.inventario = [new Item("Arma Corpo-a-Corpo Leve Simples", 2, 0)];
-        // this.acoes = [new Acao("Teste", 4, this, new Buff(1, 2))];
         // this.habilidades = habilidades;
-        this.rituais = [
-            new Ritual("Aprimorar Acrobacia", 1, 2, []),
-            new Ritual("Aprimorar Investigação", 4, 1, []),
-            new Ritual("Aprimorar Luta", 7, 5, [])
-        ];
-        this.buffs = [new Buff(6, 2, 1, 1, 1, this)];
-        // this.rituais = this._ficha.rituais.map(ritual => new Ritual(ritual.nome, `${ritual.circulo.tipoCirculo.numero}° ${ritual.circulo.nivel.nome}`, '',  [new Acao("Teste", 4, this, new Buff(1, 2))]));
 
+        const ritual1 = new Ritual("Aprimorar Acrobacia", new CirculoNivelRitual(1, 1), 2, []);
+        const listaAcaoRitual1 = [new Acao(1, "Teste1", 4, this, ritual1, new Buff(6, 2, 1, 3, 1, this), new Custo(1, 2))];
+        ritual1.acoes = listaAcaoRitual1;
+
+        const ritual2 = new Ritual("Aprimorar Investigação", new CirculoNivelRitual(2, 1), 1, []);
+        const listaAcaoRitual2 = [new Acao(2, "Teste2", 4, this, ritual1, new Buff(21, 5, 1, 3, 1, this), new Custo(1, 7))];
+        ritual2.acoes = listaAcaoRitual2;
+
+        const ritual3 = new Ritual("Aprimorar Luta", new CirculoNivelRitual(3, 1), 5, []);
+        const listaAcaoRitual3 = [new Acao(2, "Teste3", 4, this, ritual1, new Buff(22, 9, 1, 3, 1, this), new Custo(1, 13))];
+        ritual3.acoes = listaAcaoRitual3;
+        this.rituais = [ritual1, ritual2, ritual3]
         // this.estatisticas = estatisticas;
         this.detalhes = new CharacterDetalhes(this._ficha.detalhe.nome, this._ficha.detalhe.classe.nome, this._ficha.detalhe.nivel.nex!);
 
@@ -854,8 +867,30 @@ export class Personagem {
     }
 
     adicionarNovoRitual = (nome:string, idElemento:number, idCirculo:number) => {
-        this.rituais.push(new Ritual(nome, idCirculo, idElemento, []));
+        // this.rituais.push(new Ritual(nome, idCirculo, idElemento, []));
         // this.onUpdate();
+    }
+
+    rodaDuracao = (idDuracao: number) => {
+        console.log(`rodando duração de id ${idDuracao}`);
+
+        this.buffs = this.buffs.filter((buff) => {
+            if (buff.idDuracao === idDuracao) {
+                console.log(`o buff ${buff.refAcao.nome} vai ser reduzido, de ${buff.quantidadeDuracaoAtual} para ${buff.quantidadeDuracaoAtual-1}`);
+                buff.quantidadeDuracaoAtual--;
+            }
+    
+            // return buff.quantidadeDuracaoAtual > 0;
+            if (buff.quantidadeDuracaoAtual > 0) {
+                console.log("maior que 0");
+                return true;
+            } else {
+                console.log("menor ou igual a 0")
+                return false;
+            }
+        });
+
+        this.onUpdate();
     }
 }
 
@@ -944,23 +979,31 @@ export class Pericia {
 //     ) {}
 // }
 
-export class Buff implements MDL_EfeitoAcao {
+export class Buff {
+    public quantidadeDuracaoAtual: number;
+
     constructor (
         public idBuff: number,
         public valor: number,
         public idAcao: number,
         public idDuracao: number,
-        public quantidadeDuracao: number,
+        public quantidadeDuracaoMaxima: number,
         private refPersonagem:Personagem
-    ) {}
+    ) {
+        this.quantidadeDuracaoAtual = this.quantidadeDuracaoMaxima;
+    }
+
+    get refBuff():BuffRef {
+        return SingletonHelper.getInstance().buffs.find(buff => buff.id === this.idBuff)!;
+    }
 
     get refAcao():Acao {
         return this.refPersonagem.acoes.find(acao => acao.id === this.idAcao)!;
     }
 
-    // get refDuracao():Duracao {
-
-    // }
+    get refDuracao():Duracao {
+        return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === this.idDuracao)!;
+    }
 }
 
 
@@ -994,25 +1037,42 @@ export class Acao {
         public nome:string,
         public id_efeito_acao:number,
         private personagem:Personagem,
+        public ritual: Ritual | null,
         public buff?:Buff,
+        public custo?:Custo
     ) {}
 
     executa = () => {
+        if (!this.verificaCustoPodeSerPagado) return;
+
         if (this.id_efeito_acao === 4) {
-            // this.personagem.buffs.push(new Buff(this.buff!.idRefBuff, this.buff!.valor));
+            this.personagem.controladorPersonagem.estatisticasDanificaveis.pe.aplicarDanoFinal(this.custo!.valor);
+            this.personagem.buffs.push(this.buff!);
+        } else {
+            console.log("Não Implementado");
         }
 
         this.personagem.onUpdate();
+    }
+
+    get verificaCustoPodeSerPagado():boolean {
+        return this.custo!.valor <= this.personagem.controladorPersonagem.estatisticasDanificaveis.pe.valor;
     }
 }
 
 export class Ritual {
     constructor(
         public nome: string,
-        public idCirculo: number,
+        public circuloNivelRitual: CirculoNivelRitual,
         public idElemento: number,
         public acoes:Acao[]
     ){}
+
+    get refElemento():Elemento {
+        return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this.idElemento)!;
+    }
+
+
 
     static getFilterConfig() {
         return {
@@ -1089,13 +1149,6 @@ export const FiltroRitual: FilterConfig = {
         ],
     },
 };
-
-export class Duracao implements MDL_Duracao {
-    constructor(
-        public id: number,
-        public nome: string,
-    ) {}
-}
 
 // ================================================= //
 
@@ -1195,21 +1248,19 @@ export class ReducaoDanoa {
     }
 }
 
-export class TipoDano {
-    public id:number;
-    public nome:string;
-    public danoPertencente?:TipoDano;
-    // estatistica alvo
+// export class TipoDano {
+//     public id:number;
+//     public nome:string;
+//     public danoPertencente?:TipoDano;
+//     // estatistica alvo
 
-    constructor(id:number, nome:string) {
-        this.id = id;
-        this.nome = nome;
-    }
-}
+//     constructor(id:number, nome:string) {
+//         this.id = id;
+//         this.nome = nome;
+//     }
+// }
 
 export const listaTiposDano:MDL_TipoDano[] = [];
-
-// export const listaTiposDano:TipoDano[] = [];
 
 export class SimboloEfeito {
     pathData: string;
@@ -1311,48 +1362,86 @@ export class CharacterDetalhes {
     }
 }
 
+export class Custo {
+    constructor(
+        public idTipoCusto:number,
+        public valor:number,
+    ) {}
+}
 
+export class NivelRitual {
+    constructor(
+        public id:number,
+        public nome:string,
+    ) {}
+}
+export class CirculoRitual {
+    constructor(
+        public id:number,
+        public nome:string,
+    ) {}
+}
+export class CirculoNivelRitual {
+    constructor(
+        public idCirculo:number,
+        public idNivel:number,
+    ) {}
 
-// class ValorBuffavel {
-//     public id:number;
-//     public descricao:string;
-
-//     constructor(id:number, descricao:string) {
-//         this.id = id;
-//         this.descricao = descricao;
-//     }
-// }
-
-// export const valorBuffavel:ValorBuffavel[] = [
-//     new ValorBuffavel(1, "Agilidade"),
-//     new ValorBuffavel(2, "Força"),
-//     new ValorBuffavel(3, "Inteligência"),
-//     new ValorBuffavel(4, "Presença"),
-//     new ValorBuffavel(5, "Vigor"),
-//     new ValorBuffavel(6, "Acrobacia"),
-//     new ValorBuffavel(7, "Adestramento"),
-//     new ValorBuffavel(8, "Artes"),
-//     new ValorBuffavel(9, "Atletismo"),
-//     new ValorBuffavel(10, "Atualidades"),
-//     new ValorBuffavel(11, "Ciências"),
-//     new ValorBuffavel(12, "Crime"),
-//     new ValorBuffavel(13, "Diplomacia"),
-//     new ValorBuffavel(14, "Enganação"),
-//     new ValorBuffavel(15, "Engenharia"),
-//     new ValorBuffavel(16, "Fortitude"),
-//     new ValorBuffavel(17, "Furtividade"),
-//     new ValorBuffavel(18, "Iniciativa"),
-//     new ValorBuffavel(19, "Intimidação"),
-//     new ValorBuffavel(20, "Intuição"),
-//     new ValorBuffavel(21, "Investigação"),
-//     new ValorBuffavel(22, "Luta"),
-//     new ValorBuffavel(23, "Medicina"),
-//     new ValorBuffavel(24, "Ocultista"),
-//     new ValorBuffavel(25, "Percepção"),
-//     new ValorBuffavel(26, "Pontaria"),
-//     new ValorBuffavel(27, "Reflexo"),
-//     new ValorBuffavel(28, "Sobrevivência"),
-//     new ValorBuffavel(29, "Tatica"),
-//     new ValorBuffavel(30, "Tecnologia"),
-//     new ValorBuffavel(31, "Vontade"),
-// ];
+    get nome():string {
+        return `${SingletonHelper.getInstance().circulos_ritual.find(circulo_ritual => circulo_ritual.id === this.idCirculo)!.nome}º Círculo ${SingletonHelper.getInstance().niveis_ritual.find(nivel_ritual => nivel_ritual.id === this.idNivel)!.nome}`;
+    }
+}
+export class BuffRef {
+    constructor(
+        public id:number,
+        public nome:string,
+    ) {}
+}
+export class Alcance {
+    constructor(
+        public id:number,
+        public nome:string,
+    ) {}
+}
+export class FormatoAlcance {
+    constructor(
+        public id:number,
+        public nome:string,
+    ) {}
+}
+export class Duracao {
+    constructor(
+        public id:number,
+        public nome:string,
+    ) {}
+}
+export class Execucao {
+    constructor(
+        public id:number,
+        public nome:string,
+    ) {}
+}
+export class TipoAcao {
+    constructor(
+        public id:number,
+        public nome:string,
+    ) {}
+}
+export class TipoAlvo {
+    constructor(
+        public id:number,
+        public nome:string,
+    ) {}
+}
+export class TipoCusto {
+    constructor(
+        public id:number,
+        public nome:string,
+    ) {}
+}
+export class TipoDano {
+    constructor(
+        public id:number,
+        public nome:string,
+    ) {}
+}

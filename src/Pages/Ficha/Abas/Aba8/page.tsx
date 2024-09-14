@@ -21,11 +21,11 @@ const page: React.FC<{buffsPersonagem:Buff[]}> = ({ buffsPersonagem }) => {
           <th>Duração</th>
         </tr></thead>
         <tbody>
-          {buffsPersonagem.map(buff => (
-            <tr>
-              <td>Aprimorar Acrobacia</td>
-              <td>+2 ACRO</td>
-              <td>1 Cena</td>
+          {buffsPersonagem.map((buff, index) => (
+            <tr key={index}>
+              <td>{buff.refAcao.nome}</td>
+              <td>+{buff.valor} {buff.refBuff.nome}</td>
+              <td>{buff.quantidadeDuracaoAtual} {buff.refDuracao.nome}</td>
             </tr>
           ))}
         </tbody>
