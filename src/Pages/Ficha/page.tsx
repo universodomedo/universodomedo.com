@@ -50,28 +50,21 @@ const Ficha: React.FC = () => {
 
             <div className={style.div_demo_acoes}>
                 <h1>Adicionar novo Ritual</h1>
+                <div>
+                    Nome: <input id="nome" type="text" />
 
-                Nome: <input id="nome" type="text" />
+                    Elemento: <select id="elemento"> {singleton.elementos.map(elemento => ( <option key={elemento.id} value={elemento.id}> {elemento.nome} </option> ))} </select>
+                    Circulo: <select id="circulo"> {singleton.circulos_ritual.map(circulo_ritual => ( <option key={circulo_ritual.id} value={circulo_ritual.id}> {circulo_ritual.nome} </option> ))} </select>
+                    Nivel: <select id="nivel"> {singleton.niveis_ritual.map(nivel_ritual => ( <option key={nivel_ritual.id} value={nivel_ritual.id}> {nivel_ritual.nome} </option> ))} </select>
+                    <button onClick={adicionarNovoRitual}>Adicionar</button>
+                </div>
 
-                Elemento:
-                <select id="elemento">
-                    {singleton.elementos.map(elemento => (
-                        <option key={elemento.id} value={elemento.id}>
-                            {elemento.nome}
-                        </option>
+                <h1>Passar Durações</h1>
+                <div>
+                    {singleton.duracoes.filter(duracao => duracao.id !== 5).map((duracao, index) => (
+                        <button key={index} onClick={() => {personagem.rodaDuracao(duracao.id)}} >{duracao.nome}</button>
                     ))}
-                </select>
-
-                Circulo:
-                <select id="circulo">
-                    {singleton.circulos.map(circulo => (
-                        <option key={circulo.id} value={circulo.id}>
-                            {circulo.nome}
-                        </option>
-                    ))}
-                </select>
-
-                <button onClick={adicionarNovoRitual}>Adicionar</button>
+                </div>
             </div>
 
             {personagem && (

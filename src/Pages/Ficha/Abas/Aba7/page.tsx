@@ -23,17 +23,14 @@ const page: React.FC<{rituaisPersonagem:Ritual[]}> = ({ rituaisPersonagem }) => 
       {rituaisFiltrados.length > 0 && (
         <div className={style.rituais}>
           {rituaisFiltrados.map((ritual, index) => {
-            const elemento = singleton.elementos.find(elemento => elemento.id === ritual.idElemento);
-            const circulo = singleton.circulos.find(circulo => circulo.id === ritual.idCirculo);
-
             return (
               <div
                 key={index}
-                className={`${style.icone_ritual} ${style[elemento!.nome]}`}
+                className={`${style.icone_ritual} ${style[ritual.refElemento.nome]}`}
                 style={{backgroundImage: `url(${svgBase64})`}}
                 data-hoverbox-content={JSON.stringify({
                   title: `${ritual.nome}`,
-                  description: `${elemento!.nome} - ${circulo!.nome}`
+                  description: `${ritual.refElemento.nome} - ${ritual.circuloNivelRitual.nome}`
                 })}
               />
               )
