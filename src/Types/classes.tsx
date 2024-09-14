@@ -3,7 +3,6 @@ import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
 import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma, MDL_Habilidade, MDL_Ritual, RLJ_Rituais, MDL_CirculoRitual, MDL_EfeitoAcao, MDL_Duracao, MDL_Elemento } from "udm-types";
 import { TestePericia } from "Components/Functions/RollNumber.tsx";
 import { SingletonHelper } from "Types/classes_estaticas.tsx";
-import singletonHelperSlice from "@redux/slices/singletonHelperSlice";
 // #endregion
 
 export class Personagem {
@@ -15,9 +14,8 @@ export class Personagem {
     public inventario:Item[];
     // public habilidades:MDL_Habilidade[] = [];
     public rituais:Ritual[] = [];
-    // public estatisticas:Estatisticas;
+    public estatisticasDanificaveis:EstatisticaDanificavel[] = [];
     public detalhes:CharacterDetalhes;
-    public controladorPersonagem:ControladorPersonagem;
 
     public get acoes(): Acao[] {
         return this.rituais.reduce((acc: Acao[], ritual) => {
@@ -841,63 +839,38 @@ export class Personagem {
         const listaAcaoRitual3 = [new Acao(2, "Teste3", 4, this, ritual1, new Buff(22, 9, 1, 3, 1, this), new Custo(1, 13))];
         ritual3.acoes = listaAcaoRitual3;
         this.rituais = [ritual1, ritual2, ritual3]
-        // this.estatisticas = estatisticas;
         this.detalhes = new CharacterDetalhes(this._ficha.detalhe.nome, this._ficha.detalhe.classe.nome, this._ficha.detalhe.nivel.nex!);
-
-        const estatisticasDanificaveis = new EstatisticasDanificaveisPersonagem(
-            (() => {
-                const teste = this._ficha.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.idEstatisticaDanificavel === 1)!;
-                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor!, teste.valorMaximo!, teste.estatisticaDanificavel);
-            })(),
-            (() => {
-                const teste = this._ficha.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.idEstatisticaDanificavel === 2)!;
-                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor!, teste.valorMaximo!, teste.estatisticaDanificavel);
-            })(),
-            (() => {
-                const teste = this._ficha.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.idEstatisticaDanificavel === 3)!;
-                return new EstatisticaDanificavel(teste.idEstatisticaDanificavel, teste.idPersonagem, teste.valor!, teste.valorMaximo!, teste.estatisticaDanificavel);
-            })(),
-        );
-
-        this.controladorPersonagem = new ControladorPersonagem(estatisticasDanificaveis, this.reducoesDano);
+        this.estatisticasDanificaveis = this._ficha.estatisticasDanificaveis.map(estatisticaDanificavel => {
+            return new EstatisticaDanificavel(estatisticaDanificavel.estatisticaDanificavel.id, estatisticaDanificavel.valor!, estatisticaDanificavel.valorMaximo!, estatisticaDanificavel.estatisticaDanificavel )
+        });
     }
 
-    receberDanoVital = (danoGeral:DanoGeral) => {
-        this.controladorPersonagem.reduzDano(danoGeral);
-    }
+    // receberDanoVital = (danoGeral:DanoGeral) => {
+    //     this.controladorPersonagem.reduzDano(danoGeral);
+    // }
 
-    adicionarNovoRitual = (nome:string, idElemento:number, idCirculo:number) => {
-        // this.rituais.push(new Ritual(nome, idCirculo, idElemento, []));
-        // this.onUpdate();
+    adicionarNovoRitual = (nome:string, idCirculo:number, idNivel:number, idElemento:number) => {
+        this.rituais.push(new Ritual(nome, new CirculoNivelRitual(idCirculo, idNivel), idElemento, []));
+        this.rituais = [...this.rituais, new Ritual(nome, new CirculoNivelRitual(idCirculo, idNivel), idElemento, [])];
+        this.onUpdate();
     }
 
     rodaDuracao = (idDuracao: number) => {
-        console.log(`rodando duração de id ${idDuracao}`);
-
         this.buffs = this.buffs.filter((buff) => {
             if (buff.idDuracao === idDuracao) {
-                console.log(`o buff ${buff.refAcao.nome} vai ser reduzido, de ${buff.quantidadeDuracaoAtual} para ${buff.quantidadeDuracaoAtual-1}`);
                 buff.quantidadeDuracaoAtual--;
             }
     
-            // return buff.quantidadeDuracaoAtual > 0;
-            if (buff.quantidadeDuracaoAtual > 0) {
-                console.log("maior que 0");
-                return true;
-            } else {
-                console.log("menor ou igual a 0")
-                return false;
-            }
+            return (buff.quantidadeDuracaoAtual > 0 && buff.idDuracao >= idDuracao);
         });
 
         this.onUpdate();
     }
 }
 
-export class EstatisticaDanificavel implements RLJ_EstatisticasDanificaveisPersonagem_Estatistica {
+export class EstatisticaDanificavel {
     constructor(
         public idEstatisticaDanificavel: number,
-        public idPersonagem: number,
         public valor: number,
         public valorMaximo: number,
         public estatisticaDanificavel: MDL_EstatisticaDanificavel
@@ -972,13 +945,6 @@ export class Pericia {
     }
 }
 
-// export class Buff {
-//     constructor(
-//         public idRefBuff:number,
-//         public valor:number
-//     ) {}
-// }
-
 export class Buff {
     public quantidadeDuracaoAtual: number;
 
@@ -1046,7 +1012,7 @@ export class Acao {
         if (!this.verificaCustoPodeSerPagado) return;
 
         if (this.id_efeito_acao === 4) {
-            this.personagem.controladorPersonagem.estatisticasDanificaveis.pe.aplicarDanoFinal(this.custo!.valor);
+            this.personagem.estatisticasDanificaveis.find(estatistica => estatistica.idEstatisticaDanificavel === 3)!.aplicarDanoFinal(this.custo!.valor);
             this.personagem.buffs.push(this.buff!);
         } else {
             console.log("Não Implementado");
@@ -1056,7 +1022,7 @@ export class Acao {
     }
 
     get verificaCustoPodeSerPagado():boolean {
-        return this.custo!.valor <= this.personagem.controladorPersonagem.estatisticasDanificaveis.pe.valor;
+        return this.custo!.valor <= this.personagem.estatisticasDanificaveis.find(estatistica => estatistica.idEstatisticaDanificavel === 3)!.valor;
     }
 }
 
@@ -1089,13 +1055,7 @@ export class Ritual {
                     { id: 8, nome: "3º Círculo Médio" },
                     { id: 9, nome: "3º Círculo Forte" },
                 ],
-                idElemento: [
-                    { id: 1, nome: "Conhecimento" },
-                    { id: 2, nome: "Energia" },
-                    { id: 3, nome: "Medo" },
-                    { id: 4, nome: "Morte" },
-                    { id: 5, nome: "Sangue" },
-                ],
+                idElemento: SingletonHelper.getInstance().elementos
             },
         };
     }
@@ -1162,60 +1122,6 @@ export class ValorBuffavel {
         }, 0);
     }
 }
-
-export class EstatisticasDanificaveisPersonagem {
-    public pv:EstatisticaDanificavel;
-    public ps:EstatisticaDanificavel;
-    public pe:EstatisticaDanificavel;
-
-    constructor(pv:EstatisticaDanificavel, ps:EstatisticaDanificavel, pe:EstatisticaDanificavel) {
-        this.pv = pv;
-        this.ps = ps;
-        this.pe = pe;
-    }
-
-    obterListaEstatisticasDanificaveis = ():EstatisticaDanificavel[] => {
-        return [this.pv, this.ps, this.pe];
-    }
-}
-
-export class ControladorPersonagem {
-    public estatisticasDanificaveis:EstatisticasDanificaveisPersonagem;
-    public rds:ReducaoDano[] = [];
-
-    constructor(estatisticasDanificaveisPersonagem:EstatisticasDanificaveisPersonagem, rds:ReducaoDano[]) {
-        this.estatisticasDanificaveis = estatisticasDanificaveisPersonagem;
-        this.rds = rds;
-    }
-
-    reduzDano = (danoGeral:DanoGeral) => {
-        let dano:number = 0;
-        // danoGeral.listaDano.forEach(instanciaDano => {
-        //     const rd = this.rds.find(rd => rd.tipo.id === instanciaDano.tipoDano.id);
-        //     console.log(`Recebi ${instanciaDano.valor} de Dano ${instanciaDano.tipoDano.nome}, tendo ${rd!.valor} de RD`);
-        //     dano += instanciaDano.valor - rd!.valor;
-        // });
-
-        let somaDanoNivel1 = 0;
-        listaTiposDano.filter(tipoDano => !tipoDano.idTipoDanoPertencente).map(tipoDanoNivel1 => {
-            let somaDanoNivel2 = 0;
-            listaTiposDano.filter(tipoDano => tipoDano.idTipoDanoPertencente === tipoDanoNivel1.id).map(tipoDanoNivel2 => {
-                let somaDanoNivel3 = 0;
-                listaTiposDano.filter(tipoDano => tipoDano.idTipoDanoPertencente === tipoDanoNivel2.id).map(tipoDanoNivel3 => {
-                    const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel3.id);
-                    if (danoDoTipo) somaDanoNivel3 += Math.max(danoDoTipo.valor - this.rds.find(reducaoDano => reducaoDano.tipoDano.id === tipoDanoNivel3.id)!.valor, 0);
-                });
-                const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel2.id);
-                somaDanoNivel2 += Math.max((somaDanoNivel3 + (danoDoTipo ? danoDoTipo.valor : 0)) - this.rds.find(reducaoDano => reducaoDano.tipoDano.id === tipoDanoNivel2.id)!.valor, 0);
-            });
-            const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel1.id);
-            somaDanoNivel1 += Math.max((somaDanoNivel2 + (danoDoTipo ? danoDoTipo.valor : 0)) - this.rds.find(reducaoDano => reducaoDano.tipoDano.id === tipoDanoNivel1.id)!.valor, 0);
-        });
-
-        this.estatisticasDanificaveis.pv.aplicarDanoFinal(somaDanoNivel1);
-    }
-}
-
 
 
 export class DanoGeral { // traduz em 1 unico ataque
@@ -1445,3 +1351,31 @@ export class TipoDano {
         public nome:string,
     ) {}
 }
+
+
+// reduzDano = (danoGeral:DanoGeral) => {
+//     let dano:number = 0;
+//     // danoGeral.listaDano.forEach(instanciaDano => {
+//     //     const rd = this.rds.find(rd => rd.tipo.id === instanciaDano.tipoDano.id);
+//     //     console.log(`Recebi ${instanciaDano.valor} de Dano ${instanciaDano.tipoDano.nome}, tendo ${rd!.valor} de RD`);
+//     //     dano += instanciaDano.valor - rd!.valor;
+//     // });
+
+//     let somaDanoNivel1 = 0;
+//     listaTiposDano.filter(tipoDano => !tipoDano.idTipoDanoPertencente).map(tipoDanoNivel1 => {
+//         let somaDanoNivel2 = 0;
+//         listaTiposDano.filter(tipoDano => tipoDano.idTipoDanoPertencente === tipoDanoNivel1.id).map(tipoDanoNivel2 => {
+//             let somaDanoNivel3 = 0;
+//             listaTiposDano.filter(tipoDano => tipoDano.idTipoDanoPertencente === tipoDanoNivel2.id).map(tipoDanoNivel3 => {
+//                 const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel3.id);
+//                 if (danoDoTipo) somaDanoNivel3 += Math.max(danoDoTipo.valor - this.rds.find(reducaoDano => reducaoDano.tipoDano.id === tipoDanoNivel3.id)!.valor, 0);
+//             });
+//             const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel2.id);
+//             somaDanoNivel2 += Math.max((somaDanoNivel3 + (danoDoTipo ? danoDoTipo.valor : 0)) - this.rds.find(reducaoDano => reducaoDano.tipoDano.id === tipoDanoNivel2.id)!.valor, 0);
+//         });
+//         const danoDoTipo = danoGeral.listaDano.find(tipoDano => tipoDano.tipoDano.id === tipoDanoNivel1.id);
+//         somaDanoNivel1 += Math.max((somaDanoNivel2 + (danoDoTipo ? danoDoTipo.valor : 0)) - this.rds.find(reducaoDano => reducaoDano.tipoDano.id === tipoDanoNivel1.id)!.valor, 0);
+//     });
+
+//     this.estatisticasDanificaveis.pv.aplicarDanoFinal(somaDanoNivel1);
+// }

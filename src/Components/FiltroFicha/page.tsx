@@ -52,18 +52,16 @@ const FiltroDinamico = <T,>({
         const isDropdown = filterOptions[key] !== undefined;
 
         return (
-          <div key={key}>
+          <div key={key} className={style.div_filtro}>
             {isDropdown ? (
-              <div>
-                <Select isMulti value={filterOptions[key] .filter((option) => filtros[key]?.includes(option.id.toString())) .map((option) => ({ value: option.id.toString(), label: option.nome }))}
-                  options={filterOptions[key].map((option) => ({
-                    value: option.id.toString(),
-                    label: option.nome,
-                  }))}
-                  onChange={(selectedOptions) => handleFilterChange( key, selectedOptions.map((option) => option.value) )}
-                  placeholder={`Selecione`}
-                />
-              </div>
+              <Select isMulti value={filterOptions[key] .filter((option) => filtros[key]?.includes(option.id.toString())) .map((option) => ({ value: option.id.toString(), label: option.nome }))}
+                options={filterOptions[key].map((option) => ({
+                  value: option.id.toString(),
+                  label: option.nome,
+                }))}
+                onChange={(selectedOptions) => handleFilterChange( key, selectedOptions.map((option) => option.value) )}
+                placeholder={`Selecione`}
+              />
             ) : (
               <input
                 type="text"
