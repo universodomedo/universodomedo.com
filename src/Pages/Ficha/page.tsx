@@ -40,8 +40,9 @@ const Ficha: React.FC = () => {
         const nome = (document.querySelector('#nome') as HTMLInputElement).value;
         const elemento = (document.querySelector('#elemento') as HTMLSelectElement).value;
         const circulo = (document.querySelector('#circulo') as HTMLSelectElement).value;
+        const nivel = (document.querySelector('#nivel') as HTMLSelectElement).value;
 
-        personagem.adicionarNovoRitual(nome, parseInt(elemento), parseInt(circulo));
+        personagem.adicionarNovoRitual(nome, parseInt(circulo), parseInt(nivel), parseInt(elemento));
     }
 
     return (
@@ -56,7 +57,7 @@ const Ficha: React.FC = () => {
                     Elemento: <select id="elemento"> {singleton.elementos.map(elemento => ( <option key={elemento.id} value={elemento.id}> {elemento.nome} </option> ))} </select>
                     Circulo: <select id="circulo"> {singleton.circulos_ritual.map(circulo_ritual => ( <option key={circulo_ritual.id} value={circulo_ritual.id}> {circulo_ritual.nome} </option> ))} </select>
                     Nivel: <select id="nivel"> {singleton.niveis_ritual.map(nivel_ritual => ( <option key={nivel_ritual.id} value={nivel_ritual.id}> {nivel_ritual.nome} </option> ))} </select>
-                    <button onClick={adicionarNovoRitual}>Adicionar</button>
+                    <button onClick={() => {adicionarNovoRitual()}}>Adicionar</button>
                 </div>
 
                 <h1>Passar Durações</h1>
@@ -82,7 +83,7 @@ const Ficha: React.FC = () => {
 
                     <div className={style.wrapper_conteudo_abas}>
                         <PainelAbas id="aba1"><Aba1 detalhesPersonagem={personagem.detalhes}/></PainelAbas>
-                        <PainelAbas id="aba2"><Aba2 estatisticasDanificaveis={personagem.controladorPersonagem.estatisticasDanificaveis}/></PainelAbas>
+                        <PainelAbas id="aba2"><Aba2 estatisticasDanificaveis={personagem.estatisticasDanificaveis}/></PainelAbas>
                         <PainelAbas id="aba3"><Aba8 buffsPersonagem={personagem.buffs}/></PainelAbas>
                         <PainelAbas id="aba4"><Aba3 atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias}/></PainelAbas>
                         <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano}/></PainelAbas>
