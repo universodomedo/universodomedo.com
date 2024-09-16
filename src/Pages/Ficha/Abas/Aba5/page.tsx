@@ -8,9 +8,10 @@ const page: React.FC<{inventarioPersonagem:Item[]}> = ({ inventarioPersonagem })
       <div className={style.conteudo_inventario}>
         <h1>Inventário</h1>
         
-        {/* <div className={style.info_inventario}>
-
-        </div> */}
+        <div className={style.info_inventario}>
+          <span>Espaços 2/10</span>
+          <button>Adicionar Item</button>
+        </div>
         <div className={style.inventario_personagem}>
           {inventarioPersonagem && (
           <table>

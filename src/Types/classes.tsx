@@ -827,15 +827,15 @@ export class Personagem {
         this.inventario = [new Item("Arma Corpo-a-Corpo Leve Simples", 2, 0)];
         // this.habilidades = habilidades;
 
-        const ritual1 = new Ritual("Aprimorar Acrobacia", new CirculoNivelRitual(1, 1), 2, []);
+        const ritual1 = new Ritual("Aprimorar Acrobacia", SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.idCirculo === 1 && circulo_nivel_ritual.idNivel === 1)!, 1, []);
         const listaAcaoRitual1 = [new Acao(1, "Teste1", 4, this, ritual1, new Buff(6, 2, 1, 3, 1, this), new Custo(1, 2))];
         ritual1.acoes = listaAcaoRitual1;
 
-        const ritual2 = new Ritual("Aprimorar Investigação", new CirculoNivelRitual(2, 1), 1, []);
+        const ritual2 = new Ritual("Aprimorar Investigação", SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.idCirculo === 2 && circulo_nivel_ritual.idNivel === 1)!, 2, []);
         const listaAcaoRitual2 = [new Acao(2, "Teste2", 4, this, ritual1, new Buff(21, 5, 1, 3, 1, this), new Custo(1, 7))];
         ritual2.acoes = listaAcaoRitual2;
 
-        const ritual3 = new Ritual("Aprimorar Luta", new CirculoNivelRitual(3, 1), 5, []);
+        const ritual3 = new Ritual("Aprimorar Luta", SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.idCirculo === 3 && circulo_nivel_ritual.idNivel === 1)!, 5, []);
         const listaAcaoRitual3 = [new Acao(2, "Teste3", 4, this, ritual1, new Buff(22, 9, 1, 3, 1, this), new Custo(1, 13))];
         ritual3.acoes = listaAcaoRitual3;
         this.rituais = [ritual1, ritual2, ritual3]
@@ -850,8 +850,8 @@ export class Personagem {
     // }
 
     adicionarNovoRitual = (nome:string, idCirculo:number, idNivel:number, idElemento:number) => {
-        this.rituais.push(new Ritual(nome, new CirculoNivelRitual(idCirculo, idNivel), idElemento, []));
-        this.rituais = [...this.rituais, new Ritual(nome, new CirculoNivelRitual(idCirculo, idNivel), idElemento, [])];
+        this.rituais = [...this.rituais, new Ritual(nome, SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.idCirculo === idCirculo && circulo_nivel_ritual.idNivel === idNivel)!, idElemento, [])];
+        console.log(this.rituais);
         this.onUpdate();
     }
 
@@ -866,6 +866,12 @@ export class Personagem {
 
         this.onUpdate();
     }
+}
+
+export class EstatisticaBuffavel {
+    constructor(
+        public idEstatisticaBuffavel: number,
+    ) {}
 }
 
 export class EstatisticaDanificavel {
@@ -1038,13 +1044,20 @@ export class Ritual {
         return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this.idElemento)!;
     }
 
-
-
-    static getFilterConfig() {
-        return {
-            filterableFields: ['nome', 'idCirculo', 'idElemento'], // Campos que podem ser filtrados
-            filterOptions: {
-                idCirculo: [
+    static obterFiltroOrdenacao():ConfiguracaoFiltroOrdenacao<Ritual>[] {
+        return [
+            new ConfiguracaoFiltroOrdenacao<Ritual>(
+                (ritual) => ritual.nome,
+                'Nome do Ritual',
+                'text',
+                true
+            ),
+            new ConfiguracaoFiltroOrdenacao<Ritual>(
+                (ritual) => ritual.circuloNivelRitual.id,
+                'Círculo',
+                'select',
+                true,
+                [
                     { id: 1, nome: "1º Círculo Fraco" },
                     { id: 2, nome: "1º Círculo Médio" },
                     { id: 3, nome: "1º Círculo Forte" },
@@ -1053,11 +1066,17 @@ export class Ritual {
                     { id: 6, nome: "2º Círculo Forte" },
                     { id: 7, nome: "3º Círculo Fraco" },
                     { id: 8, nome: "3º Círculo Médio" },
-                    { id: 9, nome: "3º Círculo Forte" },
-                ],
-                idElemento: SingletonHelper.getInstance().elementos
-            },
-        };
+                    { id: 9, nome: "3º Círculo Forte" }
+                ]
+            ),
+            new ConfiguracaoFiltroOrdenacao<Ritual>(
+                (ritual) => ritual.idElemento,
+                'Elemento',
+                'select',
+                true,
+                SingletonHelper.getInstance().elementos.map(elemento => ({ id: elemento.id, nome: elemento.nome }))
+            ),
+        ];
     }
 }
 
@@ -1085,30 +1104,6 @@ export class Circulo {
         public nome: string,
     ) {}
 }
-
-export const FiltroRitual: FilterConfig = {
-    filterableFields: ["nome", "idCirculo", "idElemento"],
-    filterOptions: {
-        idCirculo: [
-            { id: 1, nome: "1º Círculo Fraco" },
-            { id: 2, nome: "1º Círculo Médio" },
-            { id: 3, nome: "1º Círculo Forte" },
-            { id: 4, nome: "2º Círculo Fraco" },
-            { id: 5, nome: "2º Círculo Médio" },
-            { id: 6, nome: "2º Círculo Forte" },
-            { id: 7, nome: "3º Círculo Fraco" },
-            { id: 8, nome: "3º Círculo Médio" },
-            { id: 9, nome: "3º Círculo Forte" },
-        ],
-        idElemento: [
-            { id: 1, nome: "Conhecimento" },
-            { id: 2, nome: "Energia" },
-            { id: 3, nome: "Medo" },
-            { id: 4, nome: "Morte" },
-            { id: 5, nome: "Sangue" },
-        ],
-    },
-};
 
 // ================================================= //
 
@@ -1289,6 +1284,7 @@ export class CirculoRitual {
 }
 export class CirculoNivelRitual {
     constructor(
+        public id:number,
         public idCirculo:number,
         public idNivel:number,
     ) {}
@@ -1352,6 +1348,19 @@ export class TipoDano {
     ) {}
 }
 
+export class ConfiguracaoFiltroOrdenacao<T> {
+    constructor(
+        public key: keyof T | ((item: T) => any),
+        public label: string,
+        public filterType: 'text' | 'select' | 'number',
+        public sortEnabled: boolean,
+        public options?: Array<{ id: number; nome: string }>,
+    ) {}
+  
+    hasOptions(): boolean {
+      return this.options !== undefined;
+    }
+}
 
 // reduzDano = (danoGeral:DanoGeral) => {
 //     let dano:number = 0;

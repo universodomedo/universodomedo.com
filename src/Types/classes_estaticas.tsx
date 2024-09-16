@@ -1,6 +1,6 @@
 // #region Imports
 import { MDL_Elemento, MDL_TipoDano } from "udm-types";
-import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano } from "Types/classes.tsx";
+import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual } from "Types/classes.tsx";
 import { Personagem } from "Types/classes.tsx";
 // #endregion
 
@@ -33,6 +33,7 @@ export class SingletonHelper {
   private _elementos:Elemento[] = [];
   private _niveis_ritual:NivelRitual[] = [];
   private _circulos_ritual:CirculoRitual[] = [];
+  private _circulos_niveis_ritual:CirculoNivelRitual[] = [];
   private _buffs:BuffRef[] = [];
   private _alcances:Alcance[] = [];
   private _formatos_alcance:FormatoAlcance[] = [];
@@ -59,6 +60,9 @@ export class SingletonHelper {
 
   public set circulos_ritual(value:CirculoRitual[]) { this._circulos_ritual = value }
   public get circulos_ritual():CirculoRitual[] { return this._circulos_ritual }
+
+  public set circulos_niveis_ritual(value:CirculoNivelRitual[]) { this._circulos_niveis_ritual = value }
+  public get circulos_niveis_ritual():CirculoNivelRitual[] { return this._circulos_niveis_ritual }
 
   public set buffs(value:BuffRef[]) { this._buffs = value }
   public get buffs():BuffRef[] { return this._buffs }
