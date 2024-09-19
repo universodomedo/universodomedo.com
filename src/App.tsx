@@ -11,13 +11,16 @@ import LayoutLP from "Layouts/LayoutLP/layout.tsx";
 import LayoutInterno from "Layouts/LayoutInterno/layout.tsx";
 
 import LayoutInterno2 from "Layouts/LayoutInterno2/layout.tsx";
-import FichaDemo from "Pages/FichaDemo/container_page.tsx";
+import Ficha from 'Pages/Ficha/page.tsx';
 import PageTracker from "Components/PageTracker/page_tracker.tsx";
+import TooltipContainer from "Components/SubComponents/Tooltip/TooltipContainer.tsx";
 
 const App = () => {
   return (
     <div className='app-container'>
-      <TooltipManager />
+      {/* <TooltipManager /> */}
+
+      <TooltipContainer />
 
       <BrowserRouter>
         {/* <PageTracker /> */}
@@ -47,12 +50,14 @@ const App = () => {
 
           <Route element={<LayoutInterno2 />}>
             <Route path="/ficha-demo">
-              <Route index element={<FichaDemo />} />
+              <Route index element={<Ficha />} />
             </Route>
           </Route>
           
         </Routes>
       </BrowserRouter>
+
+      {/* <TooltipContainer /> */}
     </div>
   );
 };

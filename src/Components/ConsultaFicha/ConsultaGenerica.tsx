@@ -35,13 +35,7 @@ const ConsultaGenerica = <T,>({ data, filterSortConfig, renderItem }: { data: T[
             <FiltroGenerico data={data} filterSortConfig={filterSortConfig} onFilter={handleFilter} onSort={handleSort} sortConfig={sortConfig} />
 
             <div className={style.registros}>
-            {filteredData.length > 0 ? (
-                <>
-                    {filteredData.map((item, index) => renderItem(item, index))}
-                </>
-            ) : (
-                <p>Nenhum item encontrado</p>
-            )}
+                {filteredData.map((item, index) => renderItem(item, index))}
             </div>
 
             <div className={style.total_exibidos}>

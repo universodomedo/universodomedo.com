@@ -3,9 +3,7 @@ import style from "./style.module.css";
 import "./style.css";
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from 'Redux/store';
-// import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import "react-tabs/style/react-tabs.css";
+import { RootState } from 'Redux/store.ts';
 import { selectPersonagemCarregado } from "Redux/slices/fichaHelperSlice.ts";
 import Aba1 from "Pages/Ficha/Abas/Aba1/page.tsx";
 import Aba2 from "Pages/Ficha/Abas/Aba2/page.tsx";
@@ -18,16 +16,13 @@ import Aba8 from "Pages/Ficha/Abas/Aba8/page.tsx";
 import { Abas, ListaAbas, Aba, PainelAbas } from 'Components/LayoutAbas/page.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 // #endregion
 
 const Ficha: React.FC = () => {
-    const slice = useSelector((state: RootState) => state.fichaHelper);
-    const personagemLoaded = useSelector(selectPersonagemCarregado);
-    const personagem = slice.fichaHelper.personagem;
+    const personagem = useSelector((state: RootState) => state.fichaHelper.fichaHelper.personagem);
+    const singleton = useSelector((state: RootState) => state.singletonHelper.singletonHelper);
 
-    const slice2 = useSelector((state: RootState) => state.singletonHelper);
-    const singleton = slice2.singletonHelper;
+    const personagemLoaded = useSelector(selectPersonagemCarregado);
 
     const [state, setState] = useState({});
 
@@ -35,15 +30,6 @@ const Ficha: React.FC = () => {
         if (personagemLoaded && personagem)
             personagem.carregaOnUpdate(() => setState({}));
     }, [personagemLoaded]);
-
-    function adicionarNovoRitual() {
-        const nome = (document.querySelector('#nome') as HTMLInputElement).value;
-        const elemento = (document.querySelector('#elemento') as HTMLSelectElement).value;
-        const circulo = (document.querySelector('#circulo') as HTMLSelectElement).value;
-        const nivel = (document.querySelector('#nivel') as HTMLSelectElement).value;
-
-        personagem.adicionarNovoRitual(nome, parseInt(circulo), parseInt(nivel), parseInt(elemento));
-    }
 
     return (
         <>
@@ -57,7 +43,7 @@ const Ficha: React.FC = () => {
                     Elemento: <select id="elemento"> {singleton.elementos.map(elemento => ( <option key={elemento.id} value={elemento.id}> {elemento.nome} </option> ))} </select>
                     Circulo: <select id="circulo"> {singleton.circulos_ritual.map(circulo_ritual => ( <option key={circulo_ritual.id} value={circulo_ritual.id}> {circulo_ritual.nome} </option> ))} </select>
                     Nivel: <select id="nivel"> {singleton.niveis_ritual.map(nivel_ritual => ( <option key={nivel_ritual.id} value={nivel_ritual.id}> {nivel_ritual.nome} </option> ))} </select>
-                    <button onClick={() => {adicionarNovoRitual()}}>Adicionar</button>
+                    <button onClick={() => {personagem.adicionarNovoRitual((document.querySelector('#nome') as HTMLInputElement).value, parseInt((document.querySelector('#elemento') as HTMLSelectElement).value), parseInt((document.querySelector('#circulo') as HTMLSelectElement).value), parseInt((document.querySelector('#nivel') as HTMLSelectElement).value))}}>Adicionar</button>
                 </div>
 
                 <h1>Passar Durações</h1>

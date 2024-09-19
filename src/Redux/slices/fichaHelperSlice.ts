@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { FichaHelper } from 'Types/classes_estaticas';
 import CustomApiCall from "ApiConsumer/ConsumerMiddleware.tsx";
-import { RootState } from 'Redux/store';
+import { RootState } from 'Redux/store.ts';
 import { Personagem } from "Types/classes.tsx"
 // #endregion
 

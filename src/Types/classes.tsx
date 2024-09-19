@@ -1045,6 +1045,24 @@ export class Ritual {
         return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this.idElemento)!;
     }
 
+    get tooltipProps(): TooltipProps {
+        return {
+            caixaInformacao: {
+                cabecalho: [this.nome],
+                corpo: ["Ritual", this.circuloNivelRitual.nome, `Elemento: ${this.refElemento.nome}`]
+            },
+            iconeCustomizado: {
+                circuloNivelNome: this.circuloNivelRitual.nome,
+                elementoNome: this.refElemento.nome,
+                titulo: this.nome,
+                svg: this.svg
+            },
+            corTooltip: {
+                cor: this.refElemento.cor
+            },
+        }
+    }
+
     static obterFiltroOrdenacao():ConfiguracaoFiltroOrdenacao<Ritual>[] {
         return [
             new ConfiguracaoFiltroOrdenacao<Ritual>(
@@ -1095,6 +1113,7 @@ export class Elemento implements MDL_Elemento {
     constructor (
         public id: number,
         public nome: string,
+        public cor: string,
     ) {}
 }
 
@@ -1361,6 +1380,28 @@ export class ConfiguracaoFiltroOrdenacao<T> {
     hasOptions(): boolean {
       return this.options !== undefined;
     }
+}
+
+export interface CaixaInformacaoProps {
+    cabecalho: string[],
+    corpo: string[],
+}
+
+export interface IconeCustomizadoProps {
+    elementoNome:string,
+    titulo:string,
+    circuloNivelNome:string,
+    svg:string
+}
+
+export interface CorTooltip {
+    cor:string
+}
+
+export interface TooltipProps {
+    caixaInformacao: CaixaInformacaoProps,
+    iconeCustomizado: IconeCustomizadoProps,
+    corTooltip: CorTooltip,
 }
 
 // reduzDano = (danoGeral:DanoGeral) => {

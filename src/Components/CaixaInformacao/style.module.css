@@ -1,29 +1,33 @@
-.container_caixa_informacaco {
+.container_caixa_informacao {
     display: inline-flex;
     flex-direction: column;
-    height: 300px;
     margin: auto;
-    padding: .3%;
+    padding: .3% 0 2vh 0;
     font-family: 'Crimson Pro', serif;
     font-variant: small-caps;
     min-width: 20vw;
-    border: 2px purple solid;
     background: #090909a8;
     color: white;
-    gap: 8%;
+    gap: 2vh;
+    align-items: center;
+}
+
+.container_caixa_informacao > * {
+    align-items: center;
 }
 
 .cabecalho_caixa_informacao {
     padding: 1%;
     font-size: 1.5em;
-    background: linear-gradient(0deg, #e05cff, #ad38ff, #e05cff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: 0.3px #ce52ff;
 }
 
 .corpo_caixa_informacao {
     display: flex;
     flex-direction: column;
     gap: .7vh;
+}
+
+.rodape_caixa_informacao {
+    display: flex;
+    flex-direction: column;
 }
