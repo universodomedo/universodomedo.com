@@ -1064,7 +1064,7 @@ export class Ritual {
         return {
             caixaInformacao: {
                 cabecalho: [this.nome],
-                corpo: ["Ritual", this.circuloNivelRitual.nome, `Elemento: ${this.refElemento.nome}`]
+                corpo: [`Ritual de ${this.refElemento.nome}`, this.circuloNivelRitual.nome]
             },
             iconeCustomizado: {
                 circuloNivelNome: this.circuloNivelRitual.nome,
@@ -1072,7 +1072,7 @@ export class Ritual {
                 titulo: this.nome,
                 svg: this.svg
             },
-            corTooltip: new CorTooltip(this.refElemento.cores.corPrimaria).cores
+            corTooltip: new CorTooltip(this.refElemento.cores.corPrimaria, this.refElemento.cores.corSecundaria, this.refElemento.cores.corTerciaria).cores
         }
     }
 

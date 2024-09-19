@@ -7,8 +7,8 @@ import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaToolti
 
 const page: React.FC<{ rituaisPersonagem: Ritual[] }> = ({ rituaisPersonagem }) => {
   const renderRitualItem = (ritual: Ritual, index:number) => (
-    <ReferenciaTooltip objeto={ritual.tooltipProps}>
-      <IconeCustomizado key={index} props={ritual.tooltipProps.iconeCustomizado}/>
+    <ReferenciaTooltip key={index} objeto={ritual.tooltipProps}>
+      <IconeCustomizado props={ritual.tooltipProps.iconeCustomizado}/>
     </ReferenciaTooltip>
   );
 

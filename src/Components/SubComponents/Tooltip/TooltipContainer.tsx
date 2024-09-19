@@ -1,8 +1,9 @@
 // #region Imports
 import style from './style.module.css';
-import React, { useRef, useEffect, useState } from 'react';import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { RootState } from 'Redux/store.ts';
-import CaixaInformacao from "Components/CaixaInformacao/page.tsx";
+import Tooltip from "Components/SubComponents/Tooltip/page.tsx";
 // #endregion
 
 const TooltipContainer: React.FC = () => {
@@ -15,10 +16,8 @@ const TooltipContainer: React.FC = () => {
   return (
     <div className={style.tooltip_container}>
       {visibleTooltips.map((tooltip, index) => (
-        <div key={index} style={{position: 'absolute', top: tooltip.position.top, left: tooltip.position.left}}>
-          <CaixaInformacao props={tooltip.conteudo} />
-        </div>
-      ))};
+        <Tooltip key={index} index={index} tooltip={tooltip}/>
+      ))}
     </div>
   );
 };

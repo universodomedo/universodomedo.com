@@ -1,47 +1,35 @@
 // #region Imports
-import style from './style.module.css';
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import style from "./style.module.css";
+import React, { useRef, useEffect, useState } from 'react';
 import CaixaInformacao from "Components/CaixaInformacao/page.tsx";
-import { CaixaInformacaoProps, IconeCustomizadoProps } from "Types/classes.tsx";
+import { TooltipState } from "Redux/slices/tooltipHelperSlice";
 // #endregion
 
-const TooltipManager: React.FC = () => {
-  const [tooltipContent, setTooltipContent] = useState<CaixaInformacaoProps | null>(null);
-  const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+const page = ({index, tooltip}:{index:number, tooltip:TooltipState}) => {
+  const divRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ top: tooltip.position.top, left: tooltip.position.left });
+  const [visible, setVisible] = useState(false);
+  const padding = 4;
 
   useEffect(() => {
-    const handleMouseEnter = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (target && target instanceof HTMLElement) {
-        const contentString = target.getAttribute('data-hoverbox-content');
-        if (contentString) {
-          const content: CaixaInformacaoProps = JSON.parse(contentString);
-          const rect = target.getBoundingClientRect();
-          setTooltipContent(content);
-          setTooltipPosition({ top: rect.bottom + window.scrollY, left: rect.left + rect.width / 2 + window.scrollX });
-        }
-      }
-    };
+    if (divRef.current) {
+      const rect = divRef.current.getBoundingClientRect();
+      setPosition({
+        top: tooltip.position.top + padding,
+        left: (tooltip.position.left - rect.width / 2 + tooltip.dimensoesReferencia.width / 2),
+      });
 
-    const handleMouseLeave = () => {
-      setTooltipContent(null);
-    };
+      setVisible(true);
+    }
+  }, [tooltip, divRef.current]);
 
-    document.addEventListener('mouseenter', handleMouseEnter, true);
-    document.addEventListener('mouseleave', handleMouseLeave, true);
+  return (
+    <>
+      <div ref={divRef} key={index} style={{position: 'absolute', top: position.top, left: position.left, visibility: visible ? 'visible' : 'hidden'}}>
+        <CaixaInformacao props={tooltip.conteudo} />
+      </div>
+    </>
+  );
+}
 
-    return () => {
-      document.removeEventListener('mouseenter', handleMouseEnter, true);
-      document.removeEventListener('mouseleave', handleMouseLeave, true);
-    };
-  }, []);
-
-  return ReactDOM.createPortal(
-    <div className={`${style.tooltip_fixed} ${tooltipContent ? style.visible : style.hidden}`} style={{ top: tooltipPosition.top, left: tooltipPosition.left }}>
-      <CaixaInformacao props={tooltipContent!}/>
-    </div>
-  , document.body);
-};
-
-export default TooltipManager;
+export default page;
