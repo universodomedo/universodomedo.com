@@ -2,13 +2,15 @@
 import { configureStore } from '@reduxjs/toolkit';
 import fichaHelperReducer, { obterTiposDano, carregaDemo } from 'Redux/slices/fichaHelperSlice.ts';
 import singletonHelperReducer from 'Redux/slices/singletonHelperSlice.ts';
+import tooltipHelperReducer from './slices/tooltipHelperSlice';
 // import fichaHelperReducer, { obterTiposDano, selectPersonagemCarregado } from 'Redux/slices/fichaHelperSlice2.ts';
 // #endregion
 
 const store = configureStore({
     reducer: {
-        singletonHelper: singletonHelperReducer,
         fichaHelper: fichaHelperReducer,
+        singletonHelper: singletonHelperReducer,
+        tooltipHelper: tooltipHelperReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false,

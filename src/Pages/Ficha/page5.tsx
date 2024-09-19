@@ -3,7 +3,7 @@ import style from "./style.module.css";
 import "./style.css";
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from 'Redux/store';
+import { RootState } from 'Redux/store.ts';
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import { selectPersonagemCarregado } from "Redux/slices/fichaHelperSlice.ts";

@@ -1037,11 +1037,30 @@ export class Ritual {
         public nome: string,
         public circuloNivelRitual: CirculoNivelRitual,
         public idElemento: number,
-        public acoes:Acao[]
+        public acoes:Acao[],
+        public svg:string = 'PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Zz4KICAgIDx0aXRsZT5MYXllciAxPC90aXRsZT4KICAgIDx0ZXh0IGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMCIgeD0iMzQxIiB5PSIyOTEiIGlkPSJzdmdfMiIgc3Ryb2tlLXdpZHRoPSIwIiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIHhtbDpzcGFjZT0icHJlc2VydmUiPlRlc3RlIDE8L3RleHQ+CiAgICA8dGV4dCBmaWxsPSIjMDAwMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMCIgeD0iNjMiIHk9IjExMCIgaWQ9InN2Z18zIiBmb250LXNpemU9IjE0MCIgZm9udC1mYW1pbHk9Ik5vdG8gU2FucyBKUCIgdGV4dC1hbmNob3I9InN0YXJ0IiB4bWw6c3BhY2U9InByZXNlcnZlIj5SPC90ZXh0PgogIDwvZz4KPC9zdmc+',
     ){}
 
     get refElemento():Elemento {
         return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this.idElemento)!;
+    }
+
+    get tooltipProps(): TooltipProps {
+        return {
+            caixaInformacao: {
+                cabecalho: [this.nome],
+                corpo: ["Ritual", this.circuloNivelRitual.nome, `Elemento: ${this.refElemento.nome}`]
+            },
+            iconeCustomizado: {
+                circuloNivelNome: this.circuloNivelRitual.nome,
+                elementoNome: this.refElemento.nome,
+                titulo: this.nome,
+                svg: this.svg
+            },
+            corTooltip: {
+                cor: this.refElemento.cor
+            },
+        }
     }
 
     static obterFiltroOrdenacao():ConfiguracaoFiltroOrdenacao<Ritual>[] {
@@ -1094,6 +1113,7 @@ export class Elemento implements MDL_Elemento {
     constructor (
         public id: number,
         public nome: string,
+        public cor: string,
     ) {}
 }
 
@@ -1360,6 +1380,28 @@ export class ConfiguracaoFiltroOrdenacao<T> {
     hasOptions(): boolean {
       return this.options !== undefined;
     }
+}
+
+export interface CaixaInformacaoProps {
+    cabecalho: string[],
+    corpo: string[],
+}
+
+export interface IconeCustomizadoProps {
+    elementoNome:string,
+    titulo:string,
+    circuloNivelNome:string,
+    svg:string
+}
+
+export interface CorTooltip {
+    cor:string
+}
+
+export interface TooltipProps {
+    caixaInformacao: CaixaInformacaoProps,
+    iconeCustomizado: IconeCustomizadoProps,
+    corTooltip: CorTooltip,
 }
 
 // reduzDano = (danoGeral:DanoGeral) => {

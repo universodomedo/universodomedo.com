@@ -23,8 +23,6 @@ const FiltroGenerico = <T,>({ data, filterSortConfig, onFilter, onSort, sortConf
         });
 
         onFilter(dadosFiltrados);
-        
-        console.log(filtros);
     }, [filtros, data]);
 
     const handleFilterChange = (key: keyof T | ((item: T) => any), values: string[]) => {

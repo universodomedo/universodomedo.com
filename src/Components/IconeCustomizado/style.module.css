@@ -1,0 +1,36 @@
+.icone_ritual {
+    border-radius: 5px;
+    border: 1px antiquewhite solid;
+    box-shadow: inset 0px 0px 5px 1px black;
+    width: 40px;
+    height: 25px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.icone_ritual.Conhecimento{
+    background-color: rgb(226, 184, 47);
+}
+
+.icone_ritual.Energia{
+    background-color: rgb(226, 56, 226);
+}
+
+.icone_ritual.Medo{
+    background-color: rgb(192, 192, 192);
+}
+
+.icone_ritual.Morte{
+    background-color: rgb(53, 50, 50);
+}
+
+.icone_ritual.Sangue{
+    background-color: rgb(212, 21, 21);
+}
+
+.icone_ritual.grande {
+    width: 80px;
+    height: 50px;
+    margin: auto;
+}

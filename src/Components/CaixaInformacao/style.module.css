@@ -1,0 +1,33 @@
+.container_caixa_informacao {
+    display: inline-flex;
+    flex-direction: column;
+    margin: auto;
+    padding: .3% 0 2vh 0;
+    font-family: 'Crimson Pro', serif;
+    font-variant: small-caps;
+    min-width: 20vw;
+    background: #090909a8;
+    color: white;
+    gap: 2vh;
+    align-items: center;
+}
+
+.container_caixa_informacao > * {
+    align-items: center;
+}
+
+.cabecalho_caixa_informacao {
+    padding: 1%;
+    font-size: 1.5em;
+}
+
+.corpo_caixa_informacao {
+    display: flex;
+    flex-direction: column;
+    gap: .7vh;
+}
+
+.rodape_caixa_informacao {
+    display: flex;
+    flex-direction: column;
+}
