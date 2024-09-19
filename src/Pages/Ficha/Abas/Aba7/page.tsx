@@ -2,11 +2,14 @@
 import ConsultaGenerica from "Components/ConsultaFicha/ConsultaGenerica";
 import { Ritual } from "Types/classes.tsx";
 import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
+import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaTooltip.tsx";
 // #endregion
 
 const page: React.FC<{ rituaisPersonagem: Ritual[] }> = ({ rituaisPersonagem }) => {
   const renderRitualItem = (ritual: Ritual, index:number) => (
-    <IconeCustomizado key={index} props={ritual.tooltipProps} />
+    <ReferenciaTooltip objeto={ritual.tooltipProps}>
+      <IconeCustomizado key={index} props={ritual.tooltipProps.iconeCustomizado}/>
+    </ReferenciaTooltip>
   );
 
   return (

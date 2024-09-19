@@ -1,4 +1,5 @@
 // #region Imports
+import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaTooltip";
 import style from "./style.module.css";
 import { Acao } from "Types/classes.tsx";
 // #endregion
@@ -12,15 +13,17 @@ const page: React.FC<{acoesPersonagem:Acao[]}> = ({ acoesPersonagem }) => {
         
       <div className={style.div_acoes}>
         {acoesPersonagem.map((acao, index) => (
-          <div
-            key={index}
-            className={`${style.icone_habilidade} ${!acao.verificaCustoPodeSerPagado ? style.acao_bloqueada : ''}`}
-            style={{backgroundImage: `url(${svgBase64})`}}
-            data-hoverbox-content={JSON.stringify({
-              title: `${acao.nome}`
-            })}
-            onClick={() => {acao.executa()}}
-          />
+          <ReferenciaTooltip objeto={acao.tooltipProps}>
+            <div
+              key={index}
+              className={`${style.icone_habilidade} ${!acao.verificaCustoPodeSerPagado ? style.acao_bloqueada : ''}`}
+              style={{backgroundImage: `url(${svgBase64})`}}
+              data-hoverbox-content={JSON.stringify({
+                title: `${acao.nome}`
+              })}
+              onClick={() => {acao.executa()}}
+            />
+          </ReferenciaTooltip>
         ))}
       </div>
     </div>

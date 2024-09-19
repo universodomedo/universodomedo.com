@@ -8,16 +8,17 @@ import CaixaInformacao from "Components/CaixaInformacao/page.tsx";
 const TooltipContainer: React.FC = () => {
   const tooltips = useSelector((state: RootState) => state.tooltipHelper);
 
+  const visibleTooltips = React.useMemo(() => {
+    return tooltips.filter(tooltip => tooltip.visible === true);
+  }, [tooltips]);
+
   return (
     <div className={style.tooltip_container}>
-      {tooltips.filter(tooltip => tooltip.visible === true).map((tooltip, index) => {
-
-        return (
-          <div key={index} style={{position: 'absolute', top: tooltip.position.top, left: tooltip.position.left}}>
-            <CaixaInformacao props={tooltip.conteudo} />
-          </div>
-        );
-      })};
+      {visibleTooltips.map((tooltip, index) => (
+        <div key={index} style={{position: 'absolute', top: tooltip.position.top, left: tooltip.position.left}}>
+          <CaixaInformacao props={tooltip.conteudo} />
+        </div>
+      ))};
     </div>
   );
 };

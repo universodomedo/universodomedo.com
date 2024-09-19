@@ -3,12 +3,12 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { SingletonHelper } from 'Types/classes_estaticas';
 import { RootState } from 'Redux/store.ts';
 import { MDL_Elemento, MDL_TipoDano } from "udm-types";
-import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual } from "Types/classes.tsx";
+import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CorTooltip, PaletaCores} from "Types/classes.tsx";
 // #endregion
 
 const singletonHelper = SingletonHelper.getInstance();
 
-singletonHelper.elementos = [ new Elemento(1, "Energia", "#CD23EA"), new Elemento(2, "Conhecimento", "#F7F157"), new Elemento(3, "Medo", "#8F8F8F"), new Elemento(4, "Morte", "#0E0D0D"), new Elemento(5, "Sangue", "#B92324") ];
+singletonHelper.elementos = [ new Elemento(1, "Energia", {corPrimaria: "#CD23EA"}), new Elemento(2, "Conhecimento", {corPrimaria: "#F7F157"}), new Elemento(3, "Medo", {corPrimaria: "#8F8F8F"}), new Elemento(4, "Morte", {corPrimaria: "#0E0D0D"}), new Elemento(5, "Sangue", {corPrimaria: "#B92324"}) ];
 singletonHelper.niveis_ritual = [ new NivelRitual(1, "Fraco"), new NivelRitual(2, "Médio"), new NivelRitual(3, "Forte") ];
 singletonHelper.circulos_ritual = [ new CirculoRitual(1, "1"), new CirculoRitual(2, "2"), new CirculoRitual(3, "3") ];
 singletonHelper.circulos_niveis_ritual = [ new CirculoNivelRitual(1, 1, 1), new CirculoNivelRitual(2, 1, 2), new CirculoNivelRitual(3, 1, 3), new CirculoNivelRitual(4, 2, 1), new CirculoNivelRitual(5, 2, 2), new CirculoNivelRitual(6, 2, 3), new CirculoNivelRitual(7, 3, 1), new CirculoNivelRitual(8, 3, 2), new CirculoNivelRitual(9, 3, 3) ];

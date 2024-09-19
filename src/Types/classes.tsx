@@ -851,7 +851,6 @@ export class Personagem {
 
     adicionarNovoRitual = (nome:string, idCirculo:number, idNivel:number, idElemento:number) => {
         this.rituais = [...this.rituais, new Ritual(nome, SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.idCirculo === idCirculo && circulo_nivel_ritual.idNivel === idNivel)!, idElemento, [])];
-        console.log(this.rituais);
         this.onUpdate();
     }
 
@@ -1030,6 +1029,22 @@ export class Acao {
     get verificaCustoPodeSerPagado():boolean {
         return this.custo!.valor <= this.personagem.estatisticasDanificaveis.find(estatistica => estatistica.idEstatisticaDanificavel === 3)!.valor;
     }
+
+    get tooltipProps(): TooltipProps {
+        return {
+            caixaInformacao: {
+                cabecalho: [this.nome],
+                corpo: []
+            },
+            iconeCustomizado: {
+                elementoNome: '',
+                circuloNivelNome: '',
+                svg: '',
+                titulo: '',
+            },
+            corTooltip: new CorTooltip('#FFFFFF').cores,
+        }
+    }
 }
 
 export class Ritual {
@@ -1057,9 +1072,7 @@ export class Ritual {
                 titulo: this.nome,
                 svg: this.svg
             },
-            corTooltip: {
-                cor: this.refElemento.cor
-            },
+            corTooltip: new CorTooltip(this.refElemento.cores.corPrimaria).cores
         }
     }
 
@@ -1113,7 +1126,7 @@ export class Elemento implements MDL_Elemento {
     constructor (
         public id: number,
         public nome: string,
-        public cor: string,
+        public cores: PaletaCores,
     ) {}
 }
 
@@ -1394,14 +1407,32 @@ export interface IconeCustomizadoProps {
     svg:string
 }
 
-export interface CorTooltip {
-    cor:string
+export class CorTooltip {
+    constructor(
+        private _corPrimaria:string,
+        private _corSecundaria?:string,
+        private _corTerciaria?:string,
+    ) {}
+
+    get cores():PaletaCores {
+        return {
+            corPrimaria: this._corPrimaria,
+            corSecundaria: this._corSecundaria ? this._corSecundaria : this._corPrimaria,
+            corTerciaria: this._corTerciaria ? this._corTerciaria: this._corPrimaria,
+        }
+    }
 }
 
 export interface TooltipProps {
     caixaInformacao: CaixaInformacaoProps,
     iconeCustomizado: IconeCustomizadoProps,
-    corTooltip: CorTooltip,
+    corTooltip: PaletaCores,
+}
+
+export interface PaletaCores {
+    corPrimaria: string,
+    corSecundaria?: string,
+    corTerciaria?: string
 }
 
 // reduzDano = (danoGeral:DanoGeral) => {
