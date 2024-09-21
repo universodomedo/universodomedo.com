@@ -49,7 +49,7 @@ const FiltroGenerico = <T,>({ data, filterSortConfig, onFilter, onSort, sortConf
                     </span>
 
                     {config.filterType === 'select' && config.options ? (
-                        <Select isMulti
+                        <Select isMulti 
                             value={config.options.filter((option) => filtros[config.key as string]?.includes(option.id.toString())).map((option) => ({ value: option.id.toString(), label: option.nome }))}
                             options={config.options.map((option) => ({
                                 value: option.id.toString(),
@@ -57,6 +57,12 @@ const FiltroGenerico = <T,>({ data, filterSortConfig, onFilter, onSort, sortConf
                             }))}
                             onChange={(selectedOptions) => handleFilterChange(config.key, selectedOptions.map((option) => option.value))}
                             placeholder={`Selecione`}
+                            styles={{
+                                control: (provided) => ({...provided, flexGrow: 1, minWidth: 0, maxWidth: '100%', overflow: 'hidden', whiteSpace: 'nowrap'}),
+                                multiValue: (provided) => ({...provided, maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }),
+                                valueContainer: (provided) => ({...provided, display: 'flex', flexWrap: 'nowrap', overflow: 'hidden', whiteSpace: 'nowrap'}),
+                                multiValueLabel: (provided) => ({...provided, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'})
+                            }}
                         />
                     ) : (
                         <input type={config.filterType} placeholder={`Filtrar por ${config.label}`} value={filtros[config.key as string]?.[0] || ""} onChange={(e) => handleFilterChange(config.key, [e.target.value])}/>

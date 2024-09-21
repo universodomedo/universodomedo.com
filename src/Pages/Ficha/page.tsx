@@ -1,7 +1,7 @@
 // #region Imports
 import style from "./style.module.css";
 import "./style.css";
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'Redux/store.ts';
 import { selectPersonagemCarregado } from "Redux/slices/fichaHelperSlice.ts";
@@ -72,8 +72,8 @@ const Ficha: React.FC = () => {
                         <PainelAbas id="aba2"><Aba2 estatisticasDanificaveis={personagem.estatisticasDanificaveis}/></PainelAbas>
                         <PainelAbas id="aba3"><Aba8 buffsPersonagem={personagem.buffs}/></PainelAbas>
                         <PainelAbas id="aba4"><Aba3 atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias}/></PainelAbas>
-                        <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano}/></PainelAbas>
-                        <PainelAbas id="aba6"><Aba5 inventarioPersonagem={personagem.inventario}/></PainelAbas>
+                        <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
+                        <PainelAbas id="aba6"><Aba5 inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
                         <PainelAbas id="aba7"><Aba6 acoesPersonagem={personagem.acoes}/></PainelAbas>
                         <PainelAbas id="aba8"><Aba7 rituaisPersonagem={personagem.rituais}/></PainelAbas>
                     </div>

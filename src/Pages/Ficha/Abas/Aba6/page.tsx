@@ -13,7 +13,7 @@ const page: React.FC<{acoesPersonagem:Acao[]}> = ({ acoesPersonagem }) => {
         
       <div className={style.div_acoes}>
         {acoesPersonagem.map((acao, index) => (
-          <ReferenciaTooltip objeto={acao.tooltipProps}>
+          <ReferenciaTooltip key={index} objeto={acao.tooltipProps}>
             <div
               key={index}
               className={`${style.icone_habilidade} ${!acao.verificaCustoPodeSerPagado ? style.acao_bloqueada : ''}`}

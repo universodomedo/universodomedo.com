@@ -5,7 +5,6 @@ import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
 // #endregion
 
 const page = ({props} : {props: TooltipProps}) => {
-    console.log(props);
     return (
         <div className={style.container_caixa_informacao} style={{border:`2px ${props.corTooltip.corPrimaria} solid`}}>
             <div className={style.cabecalho_caixa_informacao}

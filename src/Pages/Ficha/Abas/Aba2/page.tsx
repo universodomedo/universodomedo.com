@@ -9,8 +9,8 @@ const page: React.FC<{estatisticasDanificaveis:EstatisticaDanificavel[]}> = ({ e
     <div className={style.estatisticas_barras}>
       {estatisticasDanificaveis.map((estatistica, index) => (
         <div key={index} className={style.estatistica_barra}>
-          <h2>{estatistica.estatisticaDanificavel.nomeAbrev}</h2>
-          <BarraEstatisticaDanificavel pvAtual={estatistica.valor} pvMaximo={estatistica.valorMaximo} corBarra={estatistica.estatisticaDanificavel.cor}></BarraEstatisticaDanificavel>
+          <h2>{estatistica.refEstatisticaDanificavel.nomeAbrev}</h2>
+          <BarraEstatisticaDanificavel pvAtual={estatistica.valor} pvMaximo={estatistica.valorMaximo} corBarra={estatistica.refEstatisticaDanificavel.cor}></BarraEstatisticaDanificavel>
         </div>
       ))}
     </div>

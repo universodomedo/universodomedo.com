@@ -1,6 +1,6 @@
 // #region Imports
 import { MDL_Elemento, MDL_TipoDano } from "udm-types";
-import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual } from "Types/classes.tsx";
+import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel } from "Types/classes.tsx";
 import { Personagem } from "Types/classes.tsx";
 // #endregion
 
@@ -30,6 +30,8 @@ export class FichaHelper {
 
 export class SingletonHelper {
   static instance: SingletonHelper;
+  private _tipo_estatistica_danificavel:TipoEstatisticaDanificavel[] = [];
+  private _tipo_estatistica_buffavel:TipoEstatisticaBuffavel[] = [];
   private _elementos:Elemento[] = [];
   private _niveis_ritual:NivelRitual[] = [];
   private _circulos_ritual:CirculoRitual[] = [];
@@ -39,6 +41,7 @@ export class SingletonHelper {
   private _formatos_alcance:FormatoAlcance[] = [];
   private _duracoes:Duracao[] = [];
   private _execucoes:Execucao[] = [];
+  private _categorias_acao:CategoriaAcao[] = [];
   private _tipos_acao:TipoAcao[] = [];
   private _tipos_alvo:TipoAlvo[] = [];
   private _tipos_custo:TipoCusto[] = [];
@@ -51,6 +54,12 @@ export class SingletonHelper {
 
     return SingletonHelper.instance;
   }
+
+  public set tipo_estatistica_danificavel(value:TipoEstatisticaDanificavel[]) { this._tipo_estatistica_danificavel = value }
+  public get tipo_estatistica_danificavel():TipoEstatisticaDanificavel[] { return this._tipo_estatistica_danificavel }
+
+  public set tipo_estatistica_buffavel(value:TipoEstatisticaBuffavel[]) { this._tipo_estatistica_buffavel = value }
+  public get tipo_estatistica_buffavel():TipoEstatisticaBuffavel[] { return this._tipo_estatistica_buffavel }
 
   public set elementos(value:Elemento[]) { this._elementos = value }
   public get elementos():Elemento[] { return this._elementos }
@@ -78,6 +87,9 @@ export class SingletonHelper {
 
   public set execucoes(value:Execucao[]) { this._execucoes = value }
   public get execucoes():Execucao[] { return this._execucoes }
+
+  public set categorias_acao(value:CategoriaAcao[]) { this._categorias_acao = value }
+  public get categorias_acao():CategoriaAcao[] { return this._categorias_acao }
 
   public set tipos_acao(value:TipoAcao[]) { this._tipos_acao = value }
   public get tipos_acao():TipoAcao[] { return this._tipos_acao }

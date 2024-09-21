@@ -3,11 +3,32 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { SingletonHelper } from 'Types/classes_estaticas';
 import { RootState } from 'Redux/store.ts';
 import { MDL_Elemento, MDL_TipoDano } from "udm-types";
-import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CorTooltip, PaletaCores} from "Types/classes.tsx";
+import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CorTooltip, PaletaCores, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel } from "Types/classes.tsx";
 // #endregion
 
 const singletonHelper = SingletonHelper.getInstance();
 
+singletonHelper.tipo_estatistica_danificavel = [ new TipoEstatisticaDanificavel(1, "Pontos de Vida", "P.V.", "#FF0000"), new TipoEstatisticaDanificavel(2, "Pontos de Sanidade", "P.S.", "#324A99"), new TipoEstatisticaDanificavel(3, "Pontos de Esforço", "P.E.", "#47BA16") ];
+singletonHelper.tipo_estatistica_buffavel = [ 
+    new TipoEstatisticaBuffavel(1, "Defesa"),
+    new TipoEstatisticaBuffavel(2, "Defesa Adicional por Agilidade"),
+    new TipoEstatisticaBuffavel(3, "Defesa Adicional por Força"),
+    new TipoEstatisticaBuffavel(4, "Defesa Adicional por Vigor"),
+    new TipoEstatisticaBuffavel(5, "Resistência Paranormal"),
+    new TipoEstatisticaBuffavel(6, "Deslocamento"),
+    new TipoEstatisticaBuffavel(7, "Número de Ações Padrões"),
+    new TipoEstatisticaBuffavel(8, "Número de Ações de Movimento"),
+    new TipoEstatisticaBuffavel(9, "Número de Reações"),
+    new TipoEstatisticaBuffavel(10, "Número de Ações Ritualísticas"),
+    new TipoEstatisticaBuffavel(11, "Número de Ações Investigativas"),
+    new TipoEstatisticaBuffavel(12, "Espaço de Inventário"),
+    new TipoEstatisticaBuffavel(13, "Espaço de Inventário Adicional por Força"),
+    new TipoEstatisticaBuffavel(14, "Espaços de Categoria 1"),
+    new TipoEstatisticaBuffavel(15, "Espaços de Categoria 2"),
+    new TipoEstatisticaBuffavel(16, "Espaços de Categoria 3"),
+    new TipoEstatisticaBuffavel(17, "Espaços de Categoria 4"),
+    new TipoEstatisticaBuffavel(18, "Número de Extremidades"),
+];
 singletonHelper.elementos = [ new Elemento(1, "Energia", {corPrimaria: "#CD23EA", corSecundaria: "#5C1767", corTerciaria: "#D84Ef5"}), new Elemento(2, "Conhecimento", {corPrimaria: "#F7F157"}), new Elemento(3, "Medo", {corPrimaria: "#8F8F8F"}), new Elemento(4, "Morte", {corPrimaria: "#0E0D0D"}), new Elemento(5, "Sangue", {corPrimaria: "#B92324"}) ];
 singletonHelper.niveis_ritual = [ new NivelRitual(1, "Fraco"), new NivelRitual(2, "Médio"), new NivelRitual(3, "Forte") ];
 singletonHelper.circulos_ritual = [ new CirculoRitual(1, "1"), new CirculoRitual(2, "2"), new CirculoRitual(3, "3") ];
@@ -17,6 +38,7 @@ singletonHelper.alcances = [ new Alcance(1, "Adjacente"), new Alcance(2, "Próxi
 singletonHelper.formatos_alcance = [ new FormatoAlcance(1, "Selecionado"), new FormatoAlcance(2, "Linha Reta"), new FormatoAlcance(3, "Cone"), new FormatoAlcance(4, "Área") ];
 singletonHelper.duracoes = [ new Duracao(1, "Ação"), new Duracao(2, "Turno"), new Duracao(3, "Cena"), new Duracao(4, "Dia"), new Duracao(5, "Intermitente") ];
 singletonHelper.execucoes = [ new Execucao(1, "Ação Livre"), new Execucao(2, "Ação Padrão"), new Execucao(3, "Ação de Movimento"), new Execucao(4, "Reação"), new Execucao(5, "Ação Ritualística"), new Execucao(6, "Ação Investigativa"), new Execucao(7, "Comando Doméstico") ];
+singletonHelper.categorias_acao = [ new CategoriaAcao(1, "Ativo"), new CategoriaAcao(2, "Passiva") ];
 singletonHelper.tipos_acao = [ new TipoAcao(1, "Danificar"), new TipoAcao(2, "Recuperar"), new TipoAcao(3, "Sacrificar"), new TipoAcao(4, "Aplicar Efeito Positivo"), new TipoAcao(5, "Aplicar EEfeito Negativo") ];
 singletonHelper.tipos_alvo = [ new TipoAlvo(1, "Pessoal"), new TipoAlvo(2, "Ser"), new TipoAlvo(3, "Objeto"), new TipoAlvo(4, "Ponto"), new TipoAlvo(5, "Direção") ];
 singletonHelper.tipos_custo = [ new TipoCusto(1, "Gasto de P.E.") ];
