@@ -1187,32 +1187,22 @@ export class Ritual {
         }
     }
 
-    static obterFiltroOrdenacao():ConfiguracaoFiltroOrdenacao<Ritual>[] {
+    static get filtroProps():FiltroProps<Ritual>[] {
         return [
-            new ConfiguracaoFiltroOrdenacao<Ritual>(
+            new FiltroProps<Ritual>(
                 (ritual) => ritual.nome,
                 'Nome do Ritual',
                 'text',
                 true
             ),
-            new ConfiguracaoFiltroOrdenacao<Ritual>(
+            new FiltroProps<Ritual>(
                 (ritual) => ritual.refCirculoNivelRitual.id,
                 'Círculo',
                 'select',
                 true,
-                [
-                    { id: 1, nome: "1º Círculo Fraco" },
-                    { id: 2, nome: "1º Círculo Médio" },
-                    { id: 3, nome: "1º Círculo Forte" },
-                    { id: 4, nome: "2º Círculo Fraco" },
-                    { id: 5, nome: "2º Círculo Médio" },
-                    { id: 6, nome: "2º Círculo Forte" },
-                    { id: 7, nome: "3º Círculo Fraco" },
-                    { id: 8, nome: "3º Círculo Médio" },
-                    { id: 9, nome: "3º Círculo Forte" }
-                ]
+                SingletonHelper.getInstance().circulos_niveis_ritual.map(circulo_nivel => ({ id: circulo_nivel.id, nome: circulo_nivel.nome }))
             ),
-            new ConfiguracaoFiltroOrdenacao<Ritual>(
+            new FiltroProps<Ritual>(
                 (ritual) => ritual.idElemento,
                 'Elemento',
                 'select',
@@ -1611,7 +1601,7 @@ export class Extremidade {
     }
 }
 
-export class ConfiguracaoFiltroOrdenacao<T> {
+export class FiltroProps<T> {
     constructor(
         public key: keyof T | ((item: T) => any),
         public label: string,

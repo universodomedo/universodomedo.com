@@ -16,7 +16,7 @@ const page: React.FC<{ rituaisPersonagem: Ritual[] }> = ({ rituaisPersonagem }) 
     <>
       <ConsultaGenerica
         data={rituaisPersonagem}
-        filterSortConfig={Ritual.obterFiltroOrdenacao()}
+        filterSortConfig={Ritual.filtroProps}
         renderItem={renderRitualItem}
       />
     </>
