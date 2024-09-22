@@ -40,18 +40,25 @@ const Ficha: React.FC = () => {
                 <div>
                     Nome: <input id="nome" type="text" />
 
-                    Elemento: <select id="elemento"> {singleton.elementos.map(elemento => ( <option key={elemento.id} value={elemento.id}> {elemento.nome} </option> ))} </select>
-                    Circulo: <select id="circulo"> {singleton.circulos_ritual.map(circulo_ritual => ( <option key={circulo_ritual.id} value={circulo_ritual.id}> {circulo_ritual.nome} </option> ))} </select>
-                    Nivel: <select id="nivel"> {singleton.niveis_ritual.map(nivel_ritual => ( <option key={nivel_ritual.id} value={nivel_ritual.id}> {nivel_ritual.nome} </option> ))} </select>
-                    <button onClick={() => {personagem.adicionarNovoRitual((document.querySelector('#nome') as HTMLInputElement).value, parseInt((document.querySelector('#elemento') as HTMLSelectElement).value), parseInt((document.querySelector('#circulo') as HTMLSelectElement).value), parseInt((document.querySelector('#nivel') as HTMLSelectElement).value))}}>Adicionar</button>
+                    Elemento: <select id="elemento"> {singleton.elementos.map(elemento => (<option key={elemento.id} value={elemento.id}> {elemento.nome} </option>))} </select>
+                    Circulo: <select id="circulo"> {singleton.circulos_ritual.map(circulo_ritual => (<option key={circulo_ritual.id} value={circulo_ritual.id}> {circulo_ritual.nome} </option>))} </select>
+                    Nivel: <select id="nivel"> {singleton.niveis_ritual.map(nivel_ritual => (<option key={nivel_ritual.id} value={nivel_ritual.id}> {nivel_ritual.nome} </option>))} </select>
+                    <button onClick={() => { personagem.adicionarNovoRitual((document.querySelector('#nome') as HTMLInputElement).value, parseInt((document.querySelector('#elemento') as HTMLSelectElement).value), parseInt((document.querySelector('#circulo') as HTMLSelectElement).value), parseInt((document.querySelector('#nivel') as HTMLSelectElement).value)) }}>Adicionar</button>
                 </div>
 
                 <h1>Passar Durações</h1>
                 <div>
                     {singleton.duracoes.filter(duracao => duracao.id !== 5).map((duracao, index) => (
-                        <button key={index} onClick={() => {personagem.rodaDuracao(duracao.id)}} >{duracao.nome}</button>
+                        <button key={index} onClick={() => { personagem.rodaDuracao(duracao.id) }} >{duracao.nome}</button>
                     ))}
                 </div>
+
+                {/* <h1>Danificar/Recuperar</h1>
+                <div>
+                    {personagem.estatisticasDanificaveis.map(estatistica_danificavel => {
+                        
+                    })}
+                </div> */}
             </div>
 
             {personagem && (
@@ -68,14 +75,14 @@ const Ficha: React.FC = () => {
                     </ListaAbas>
 
                     <div className={style.wrapper_conteudo_abas}>
-                        <PainelAbas id="aba1"><Aba1 detalhesPersonagem={personagem.detalhes}/></PainelAbas>
-                        <PainelAbas id="aba2"><Aba2 estatisticasDanificaveis={personagem.estatisticasDanificaveis}/></PainelAbas>
-                        <PainelAbas id="aba3"><Aba8 buffsPersonagem={personagem.buffs}/></PainelAbas>
-                        <PainelAbas id="aba4"><Aba3 atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias}/></PainelAbas>
-                        <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
-                        <PainelAbas id="aba6"><Aba5 inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
-                        <PainelAbas id="aba7"><Aba6 acoesPersonagem={personagem.acoes}/></PainelAbas>
-                        <PainelAbas id="aba8"><Aba7 rituaisPersonagem={personagem.rituais}/></PainelAbas>
+                        <PainelAbas id="aba1"><Aba1 detalhesPersonagem={personagem.detalhes} abaId={"aba1"} /></PainelAbas>
+                        <PainelAbas id="aba2"><Aba2 estatisticasDanificaveis={personagem.estatisticasDanificaveis} abaId={"aba2"} /></PainelAbas>
+                        <PainelAbas id="aba3"><Aba8 buffsPersonagem={personagem.buffs} abaId={"aba3"} /></PainelAbas>
+                        <PainelAbas id="aba4"><Aba3 atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias} abaId={"aba4"} /></PainelAbas>
+                        <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis} abaId={"aba5"} /></PainelAbas>
+                        <PainelAbas id="aba6"><Aba5 inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis} abaId={"aba6"} /></PainelAbas>
+                        <PainelAbas id="aba7"><Aba6 acoesPersonagem={personagem.acoes} abaId={"aba7"} /></PainelAbas>
+                        <PainelAbas id="aba8"><Aba7 rituaisPersonagem={personagem.rituais} abaId={"aba8"} /></PainelAbas>
                     </div>
                 </Abas>
             )}

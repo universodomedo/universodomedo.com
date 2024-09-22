@@ -1095,10 +1095,10 @@ export class Acao {
         private idTipoAcao:number,
         private idCategoriaAcao:number,
         private personagem:Personagem,
-        // public ritual: Ritual | null,
         public refPai: Ritual | Acao | Item,
         public buffs:Buff[],
-        public custo?:Custo
+        public custo?:Custo,
+        public svg:string = 'PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KIDxnPgogIDx0aXRsZT5MYXllciAxPC90aXRsZT4KICA8dGV4dCBmaWxsPSIjMDAwMDAwIiBzdHJva2U9IiMwMDAiIHg9IjM0MSIgeT0iMjkxIiBpZD0ic3ZnXzIiIHN0cm9rZS13aWR0aD0iMCIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9Ik5vdG8gU2FucyBKUCIgdGV4dC1hbmNob3I9InN0YXJ0IiB4bWw6c3BhY2U9InByZXNlcnZlIj5UZXN0ZSAxPC90ZXh0PgogIDx0ZXh0IGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIwIiB4PSI1MyIgeT0iMTA5IiBpZD0ic3ZnXzMiIGZvbnQtc2l6ZT0iMTQwIiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIHhtbDpzcGFjZT0icHJlc2VydmUiPkE8L3RleHQ+CjwvZz4KPC9zdmc+',
     ) {
         this.id = Acao.nextId++;
 
@@ -1120,7 +1120,7 @@ export class Acao {
     executa = () => {
         if (!this.verificaCustoPodeSerPagado) return;
 
-        if (this.idTipoAcao === 4) {
+        if (this.refTipoAcao.id === 3) {
             this.personagem.estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.aplicarDanoFinal(this.custo!.valor);
 
             this.buffs.map(buff => {buff.ativaBuff()});
@@ -1144,13 +1144,32 @@ export class Acao {
                 corpo: []
             },
             iconeCustomizado: {
-                elementoNome: '',
-                circuloNivelNome: '',
-                svg: '',
-                titulo: '',
+                corDeFundo: '#FFFFFF',
+                svg: this.svg,
             },
             corTooltip: new CorTooltip('#FFFFFF').cores,
         }
+    }
+
+    static get filtroProps():FiltroProps<Acao> {
+        return new FiltroProps<Acao>(
+            "Ações",
+            [
+                new FiltroPropsItems<Acao>(
+                    (acao) => acao.nome,
+                    'Nome da Ação',
+                    'text',
+                    true
+                ),
+                new FiltroPropsItems<Acao>(
+                    (acao) => acao.idCategoriaAcao,
+                    'Tipo de Ação',
+                    'select',
+                    true,
+                    SingletonHelper.getInstance().tipos_acao.map(tipo_acao => ({ id: tipo_acao.id, nome: tipo_acao.nome }))
+                ),
+            ]
+        )
     }
 }
 
@@ -1178,38 +1197,39 @@ export class Ritual {
                 corpo: [`Ritual de ${this.refElemento.nome}`, this.refCirculoNivelRitual.nome]
             },
             iconeCustomizado: {
-                circuloNivelNome: this.refCirculoNivelRitual.nome,
-                elementoNome: this.refElemento.nome,
-                titulo: this.nome,
+                corDeFundo: this.refElemento.cores.corPrimaria,
                 svg: this.svg
             },
             corTooltip: new CorTooltip(this.refElemento.cores.corPrimaria, this.refElemento.cores.corSecundaria, this.refElemento.cores.corTerciaria).cores
         }
     }
 
-    static get filtroProps():FiltroProps<Ritual>[] {
-        return [
-            new FiltroProps<Ritual>(
-                (ritual) => ritual.nome,
-                'Nome do Ritual',
-                'text',
-                true
-            ),
-            new FiltroProps<Ritual>(
-                (ritual) => ritual.refCirculoNivelRitual.id,
-                'Círculo',
-                'select',
-                true,
-                SingletonHelper.getInstance().circulos_niveis_ritual.map(circulo_nivel => ({ id: circulo_nivel.id, nome: circulo_nivel.nome }))
-            ),
-            new FiltroProps<Ritual>(
-                (ritual) => ritual.idElemento,
-                'Elemento',
-                'select',
-                true,
-                SingletonHelper.getInstance().elementos.map(elemento => ({ id: elemento.id, nome: elemento.nome }))
-            ),
-        ];
+    static get filtroProps():FiltroProps<Ritual> {
+        return new FiltroProps<Ritual>(
+            "Rituais",
+            [
+                new FiltroPropsItems<Ritual>(
+                    (ritual) => ritual.nome,
+                    'Nome do Ritual',
+                    'text',
+                    true
+                ),
+                new FiltroPropsItems<Ritual>(
+                    (ritual) => ritual.refCirculoNivelRitual.id,
+                    'Círculo',
+                    'select',
+                    true,
+                    SingletonHelper.getInstance().circulos_niveis_ritual.map(circulo_nivel => ({ id: circulo_nivel.id, nome: circulo_nivel.nome }))
+                ),
+                new FiltroPropsItems<Ritual>(
+                    (ritual) => ritual.idElemento,
+                    'Elemento',
+                    'select',
+                    true,
+                    SingletonHelper.getInstance().elementos.map(elemento => ({ id: elemento.id, nome: elemento.nome }))
+                ),
+            ]
+        )
     }
 }
 
@@ -1603,6 +1623,13 @@ export class Extremidade {
 
 export class FiltroProps<T> {
     constructor(
+        public titulo: string,
+        public items: FiltroPropsItems<T>[]
+    ) {}
+}
+
+export class FiltroPropsItems<T> {
+    constructor(
         public key: keyof T | ((item: T) => any),
         public label: string,
         public filterType: 'text' | 'select' | 'number',
@@ -1621,9 +1648,7 @@ export interface CaixaInformacaoProps {
 }
 
 export interface IconeCustomizadoProps {
-    elementoNome:string,
-    titulo:string,
-    circuloNivelNome:string,
+    corDeFundo:string,
     svg:string
 }
 

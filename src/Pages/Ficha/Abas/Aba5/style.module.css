@@ -23,9 +23,6 @@
 
 .info_inventario {
     display: flex;
-    flex-direction: row;
-}
-
-.item_empunhado {
-    border: 5px red solid;
+    flex-direction: column;
+    gap: 1.5vh
 }
