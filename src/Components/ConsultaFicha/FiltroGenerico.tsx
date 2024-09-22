@@ -8,9 +8,9 @@ import { RootState } from 'Redux/store.ts';
 import { setCacheFiltros } from "Redux/slices/abasHelperSlice.ts";
 // #endregion
 
-interface FiltroGenericoProps<T> { abaId: string; data: T[]; filtroPropsItems: FiltroPropsItems<T>[]; onFilter: (filteredData: T[]) => void; onSort: (key: keyof T | ((item: T) => any), direction: 'asc' | 'desc') => void; sortConfig: { key: keyof T | ((item: T) => any); direction: 'asc' | 'desc' } | null; onLoadingComplete: () => void; }
+interface FiltroGenericoProps<T> { abaId: string; data: T[]; filtroPropsItems: FiltroPropsItems<T>[]; onFilter: (filteredData: T[]) => void; onSort: (key: keyof T | ((item: T) => any), direction: 'asc' | 'desc') => void; sortConfig: { key: keyof T | ((item: T) => any); direction: 'asc' | 'desc' } | null; onLoadComplete: () => void; }
 
-const FiltroGenerico = <T,>({ abaId, data, filtroPropsItems, onFilter, onSort, sortConfig, onLoadingComplete }: FiltroGenericoProps<T>) => {
+const FiltroGenerico = <T,>({ abaId, data, filtroPropsItems, onFilter, onSort, sortConfig, onLoadComplete }: FiltroGenericoProps<T>) => {
     const dispatch = useDispatch();
     const abaState = useSelector((state: RootState) => state.abasHelper[abaId]);
 
@@ -30,7 +30,7 @@ const FiltroGenerico = <T,>({ abaId, data, filtroPropsItems, onFilter, onSort, s
             setFiltros(abaState.filtros);
         }
 
-        onLoadingComplete();
+        onLoadComplete();
     }, []);
 
     useEffect(() => {

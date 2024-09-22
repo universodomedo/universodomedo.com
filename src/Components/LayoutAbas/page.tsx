@@ -1,6 +1,7 @@
 // #region Imports
 import style from "./style.module.css";
-import React, { useState, ReactNode, createContext, useContext } from 'react';
+import React, { useState, ReactNode, createContext, useContext, useEffect } from 'react';
+import { LoadingContext } from "Components/LayoutAbas/hooks.ts";
 // #endregion
 
 const ContextoAba = createContext<{ abasAbertas: string[]; alternaAba: (idAba: string) => void; } | undefined>(undefined);
@@ -53,17 +54,26 @@ const PainelAbas: React.FC<{ id: string; children: ReactNode; }> = ({ id, childr
 const JanelaConteudoAba: React.FC<{ id: string; children: ReactNode }> = ({ id, children }):ReactNode => {
     const context = useContext(ContextoAba);
     if (!context) throw new Error("A Janela precisa estar contido na organização de Abas");
-
     const { alternaAba } = context;
 
-    return <div className={style.wrapper_aba}>
-        <div className={style.barra_superior_conteudo_aba}>
-            <button className={style.botao_fechar_aba} onClick={() => alternaAba(id)}>x</button>
-        </div>
-        <div className={style.conteudo_aba}>
-            {children}
-        </div>
-    </div>
+    const [loading, setLoading] = useState(true);
+
+    const stopLoading = () => {
+        setLoading(false);
+    };
+
+    return (
+        <LoadingContext.Provider value={{ loading, stopLoading }}>
+            <div className={`${style.wrapper_aba}`}>
+                <div className={style.barra_superior_conteudo_aba}>
+                    <button className={style.botao_fechar_aba} onClick={() => alternaAba(id)}>x</button>
+                </div>
+                <div className={style.conteudo_aba}>
+                    {children}
+                </div>
+            </div>
+        </LoadingContext.Provider>
+    );
 }
 
 export { Abas, ListaAbas, Aba, PainelAbas };

@@ -11,7 +11,7 @@ import Aba3 from "Pages/Ficha/Abas/Aba3/page.tsx";
 import Aba4 from "Pages/Ficha/Abas/Aba4/page.tsx";
 import Aba5 from "Pages/Ficha/Abas/Aba5/page.tsx";
 import Aba6 from "Pages/Ficha/Abas/Aba6/page.tsx";
-import Aba7 from "Pages/Ficha/Abas/Aba7/page.tsx";
+import SubPaginaRitual from 'Pages/Ficha/SubPaginasFicha/SubPaginaRitual/page.tsx';
 import Aba8 from "Pages/Ficha/Abas/Aba8/page.tsx";
 import { Abas, ListaAbas, Aba, PainelAbas } from 'Components/LayoutAbas/page.tsx';
 import { ToastContainer } from 'react-toastify';
@@ -82,7 +82,7 @@ const Ficha: React.FC = () => {
                         <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis} abaId={"aba5"} /></PainelAbas>
                         <PainelAbas id="aba6"><Aba5 inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis} abaId={"aba6"} /></PainelAbas>
                         <PainelAbas id="aba7"><Aba6 acoesPersonagem={personagem.acoes} abaId={"aba7"} /></PainelAbas>
-                        <PainelAbas id="aba8"><Aba7 rituaisPersonagem={personagem.rituais} abaId={"aba8"} /></PainelAbas>
+                        <PainelAbas id="aba8"><SubPaginaRitual rituaisPersonagem={personagem.rituais} abaId={"aba8"} /></PainelAbas>
                     </div>
                 </Abas>
             )}
