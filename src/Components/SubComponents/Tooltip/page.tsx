@@ -5,7 +5,7 @@ import CaixaInformacao from "Components/CaixaInformacao/page.tsx";
 import { TooltipState } from "Redux/slices/tooltipHelperSlice";
 // #endregion
 
-const page = ({index, tooltip}:{index:number, tooltip:TooltipState}) => {
+const page = ({tooltip}:{tooltip:TooltipState}) => {
   const divRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: tooltip.position.top, left: tooltip.position.left });
   const [visible, setVisible] = useState(false);
@@ -25,7 +25,7 @@ const page = ({index, tooltip}:{index:number, tooltip:TooltipState}) => {
 
   return (
     <>
-      <div ref={divRef} key={index} style={{position: 'absolute', top: position.top, left: position.left, visibility: visible ? 'visible' : 'hidden'}}>
+      <div ref={divRef} style={{position: 'absolute', top: position.top, left: position.left, visibility: visible ? 'visible' : 'hidden'}}>
         <CaixaInformacao props={tooltip.conteudo} />
       </div>
     </>
