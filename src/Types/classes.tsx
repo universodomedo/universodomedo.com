@@ -1144,7 +1144,7 @@ export class Acao {
                 corpo: []
             },
             iconeCustomizado: {
-                corDeFundo: '#FFFFFF',
+                corDeFundo: (this.verificaCustoPodeSerPagado ? '#FFFFFF' : '#BB0000'),
                 svg: this.svg,
             },
             corTooltip: new CorTooltip('#FFFFFF').cores,

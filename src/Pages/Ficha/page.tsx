@@ -10,8 +10,8 @@ import Aba2 from "Pages/Ficha/Abas/Aba2/page.tsx";
 import Aba3 from "Pages/Ficha/Abas/Aba3/page.tsx";
 import Aba4 from "Pages/Ficha/Abas/Aba4/page.tsx";
 import Aba5 from "Pages/Ficha/Abas/Aba5/page.tsx";
-import Aba6 from "Pages/Ficha/Abas/Aba6/page.tsx";
-import SubPaginaRitual from 'Pages/Ficha/SubPaginasFicha/SubPaginaRitual/page.tsx';
+import SubPaginaAcoes from "Pages/Ficha/SubPaginasFicha/SubPaginaAcoes/page.tsx"
+import SubPaginaRituais from 'Pages/Ficha/SubPaginasFicha/SubPaginaRituais/page.tsx';
 import Aba8 from "Pages/Ficha/Abas/Aba8/page.tsx";
 import { Abas, ListaAbas, Aba, PainelAbas } from 'Components/LayoutAbas/page.tsx';
 import { ToastContainer } from 'react-toastify';
@@ -53,12 +53,22 @@ const Ficha: React.FC = () => {
                     ))}
                 </div>
 
-                {/* <h1>Danificar/Recuperar</h1>
+                <h1>Sofrer Ação</h1>
                 <div>
-                    {personagem.estatisticasDanificaveis.map(estatistica_danificavel => {
-                        
-                    })}
-                </div> */}
+
+                </div>
+
+                <h1>Recuperar</h1>
+                <div>
+                    <select id="estatistica">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
+                    <select id="valorRecuperar">{Array.from({length:100}, (_, index) => (index + 1) * 10).map((option) => (<option key={option} value={option}>{option}</option>))}</select>
+                    <button onClick={() => {}}>Recuperar</button>
+                </div>
+
+                <h1>Shopping</h1>
+                <div>
+                    
+                </div>
             </div>
 
             {personagem && (
@@ -75,14 +85,14 @@ const Ficha: React.FC = () => {
                     </ListaAbas>
 
                     <div className={style.wrapper_conteudo_abas}>
-                        <PainelAbas id="aba1"><Aba1 detalhesPersonagem={personagem.detalhes} abaId={"aba1"} /></PainelAbas>
-                        <PainelAbas id="aba2"><Aba2 estatisticasDanificaveis={personagem.estatisticasDanificaveis} abaId={"aba2"} /></PainelAbas>
-                        <PainelAbas id="aba3"><Aba8 buffsPersonagem={personagem.buffs} abaId={"aba3"} /></PainelAbas>
-                        <PainelAbas id="aba4"><Aba3 atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias} abaId={"aba4"} /></PainelAbas>
-                        <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis} abaId={"aba5"} /></PainelAbas>
-                        <PainelAbas id="aba6"><Aba5 inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis} abaId={"aba6"} /></PainelAbas>
-                        <PainelAbas id="aba7"><Aba6 acoesPersonagem={personagem.acoes} abaId={"aba7"} /></PainelAbas>
-                        <PainelAbas id="aba8"><SubPaginaRitual rituaisPersonagem={personagem.rituais} abaId={"aba8"} /></PainelAbas>
+                        <PainelAbas id="aba1"><Aba1 detalhesPersonagem={personagem.detalhes}/></PainelAbas>
+                        <PainelAbas id="aba2"><Aba2 estatisticasDanificaveis={personagem.estatisticasDanificaveis}/></PainelAbas>
+                        <PainelAbas id="aba3"><Aba8 buffsPersonagem={personagem.buffs}/></PainelAbas>
+                        <PainelAbas id="aba4"><Aba3 atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias}/></PainelAbas>
+                        <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
+                        <PainelAbas id="aba6"><Aba5 inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
+                        <PainelAbas id="aba7"><SubPaginaAcoes acoesPersonagem={personagem.acoes} abaId={"aba7"} /></PainelAbas>
+                        <PainelAbas id="aba8"><SubPaginaRituais rituaisPersonagem={personagem.rituais} abaId={"aba8"} /></PainelAbas>
                     </div>
                 </Abas>
             )}
