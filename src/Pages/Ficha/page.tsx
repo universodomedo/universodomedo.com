@@ -10,7 +10,7 @@ import Aba2 from "Pages/Ficha/Abas/Aba2/page.tsx";
 import Aba3 from "Pages/Ficha/Abas/Aba3/page.tsx";
 import Aba4 from "Pages/Ficha/Abas/Aba4/page.tsx";
 import Aba5 from "Pages/Ficha/Abas/Aba5/page.tsx";
-import SubPaginaAcoes from "Pages/Ficha/SubPaginasFicha/SubPaginaAcoes/page.tsx"
+import SubPaginaAcoes from "Pages/Ficha/SubPaginasFicha/SubPaginaAcoes/page"
 import SubPaginaRituais from 'Pages/Ficha/SubPaginasFicha/SubPaginaRituais/page.tsx';
 import Aba8 from "Pages/Ficha/Abas/Aba8/page.tsx";
 import { Abas, ListaAbas, Aba, PainelAbas } from 'Components/LayoutAbas/page.tsx';

@@ -12,7 +12,7 @@ const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, aco
 
   const renderAcaoItem = (acao: Acao, index: number) => (
     <ReferenciaTooltip key={index} objeto={acao.tooltipProps}>
-      <IconeCustomizado props={acao.tooltipProps.iconeCustomizado} />
+      <IconeCustomizado onClick={() => {acao.executa()}} props={acao.tooltipProps.iconeCustomizado} />
     </ReferenciaTooltip>
   );
 

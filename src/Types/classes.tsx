@@ -851,15 +851,15 @@ export class Personagem {
         // this.habilidades = habilidades;
 
         const ritual1 = new Ritual("Aprimorar Acrobacia", 1, 1, []);
-        const listaAcaoRitual1 = [new Acao("Teste1", 4, 1, this, ritual1, [new Buff(6, 2, 1, 3, 1, this)], new Custo(1, 2))];
+        const listaAcaoRitual1 = [new Acao("Teste1", 3, 1, this, ritual1, [new Buff(6, 2, 1, 3, 1, this)], new Custo(1, 2))];
         ritual1.acoes = listaAcaoRitual1;
 
         const ritual2 = new Ritual("Aprimorar Investigação", 4, 2, []);
-        const listaAcaoRitual2 = [new Acao("Teste2", 4, 1, this, ritual1, [new Buff(21, 5, 1, 3, 1, this)], new Custo(1, 7))];
+        const listaAcaoRitual2 = [new Acao("Teste2", 3, 1, this, ritual1, [new Buff(21, 5, 1, 3, 1, this)], new Custo(1, 7))];
         ritual2.acoes = listaAcaoRitual2;
 
         const ritual3 = new Ritual("Aprimorar Luta", 7, 5, []);
-        const listaAcaoRitual3 = [new Acao("Teste3", 4, 1, this, ritual1, [new Buff(22, 9, 1, 3, 1, this)], new Custo(1, 13))];
+        const listaAcaoRitual3 = [new Acao("Teste3", 3, 1, this, ritual1, [new Buff(22, 9, 1, 3, 1, this)], new Custo(1, 13))];
         ritual3.acoes = listaAcaoRitual3;
         this.rituais = [ritual1, ritual2, ritual3];
     }
@@ -1095,7 +1095,7 @@ export class Acao {
         private idTipoAcao:number,
         private idCategoriaAcao:number,
         private personagem:Personagem,
-        public refPai: Ritual | Acao | Item,
+        public refPai: Ritual | Item,
         public buffs:Buff[],
         public custo?:Custo,
         public svg:string = 'PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KIDxnPgogIDx0aXRsZT5MYXllciAxPC90aXRsZT4KICA8dGV4dCBmaWxsPSIjMDAwMDAwIiBzdHJva2U9IiMwMDAiIHg9IjM0MSIgeT0iMjkxIiBpZD0ic3ZnXzIiIHN0cm9rZS13aWR0aD0iMCIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9Ik5vdG8gU2FucyBKUCIgdGV4dC1hbmNob3I9InN0YXJ0IiB4bWw6c3BhY2U9InByZXNlcnZlIj5UZXN0ZSAxPC90ZXh0PgogIDx0ZXh0IGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIwIiB4PSI1MyIgeT0iMTA5IiBpZD0ic3ZnXzMiIGZvbnQtc2l6ZT0iMTQwIiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIHhtbDpzcGFjZT0icHJlc2VydmUiPkE8L3RleHQ+CjwvZz4KPC9zdmc+',
@@ -1115,6 +1115,13 @@ export class Acao {
 
     get refCategoriaAcao():CategoriaAcao {
         return SingletonHelper.getInstance().categorias_acao.find(categoria_acao => categoria_acao.id === this.idCategoriaAcao)!;
+    }
+
+    get refTipoPai(): 'Ritual' | 'Item' | undefined {
+        if (this.refPai instanceof Ritual) return "Ritual";
+        if (this.refPai instanceof Item) return "Item";
+    
+        return undefined;
     }
 
     executa = () => {
@@ -1166,21 +1173,38 @@ export class Acao {
                     'Tipo de Ação',
                     'select',
                     true,
-                    SingletonHelper.getInstance().tipos_acao.map(tipo_acao => ({ id: tipo_acao.id, nome: tipo_acao.nome }))
+                    new OpcoesFiltro(SingletonHelper.getInstance().tipos_acao.map(tipo_acao => ({ id: tipo_acao.id, nome: tipo_acao.nome })))
                 ),
-            ]
-        )
+                new FiltroPropsItems<Acao>(
+                    (acao) => acao.refTipoPai,
+                    'Fonte da Ação',
+                    'select',
+                    true,
+                    new OpcoesFiltrosCategorizadas(
+                        [
+                            { categoria: "Rituais", opcoes: new OpcoesFiltro(FichaHelper.getInstance().personagem.rituais.map(ritual => ({ id: ritual.id, nome: ritual.nome}) )) },
+                            { categoria: "Items", opcoes: new OpcoesFiltro(FichaHelper.getInstance().personagem.inventario.items.map(item => ({ id: item.id, nome: item.nome} ))) }
+                        ]
+                    )
+                ),
+            ],
+        );
     }
 }
 
 export class Ritual {
+    private static nextId = 1;
+    public id:number;
+
     constructor(
         public nome: string,
         private idCirculoNivel: number,
         public idElemento: number,
         public acoes:Acao[],
         public svg:string = 'PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Zz4KICAgIDx0aXRsZT5MYXllciAxPC90aXRsZT4KICAgIDx0ZXh0IGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMCIgeD0iMzQxIiB5PSIyOTEiIGlkPSJzdmdfMiIgc3Ryb2tlLXdpZHRoPSIwIiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIHhtbDpzcGFjZT0icHJlc2VydmUiPlRlc3RlIDE8L3RleHQ+CiAgICA8dGV4dCBmaWxsPSIjMDAwMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMCIgeD0iNjMiIHk9IjExMCIgaWQ9InN2Z18zIiBmb250LXNpemU9IjE0MCIgZm9udC1mYW1pbHk9Ik5vdG8gU2FucyBKUCIgdGV4dC1hbmNob3I9InN0YXJ0IiB4bWw6c3BhY2U9InByZXNlcnZlIj5SPC90ZXh0PgogIDwvZz4KPC9zdmc+',
-    ){}
+    ){
+        this.id = Ritual.nextId++;
+    }
 
     get refElemento():Elemento {
         return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this.idElemento)!;
@@ -1219,14 +1243,14 @@ export class Ritual {
                     'Círculo',
                     'select',
                     true,
-                    SingletonHelper.getInstance().circulos_niveis_ritual.map(circulo_nivel => ({ id: circulo_nivel.id, nome: circulo_nivel.nome }))
+                    new OpcoesFiltro(SingletonHelper.getInstance().circulos_niveis_ritual.map(circulo_nivel => ({ id: circulo_nivel.id, nome: circulo_nivel.nome }))),
                 ),
                 new FiltroPropsItems<Ritual>(
                     (ritual) => ritual.idElemento,
                     'Elemento',
                     'select',
                     true,
-                    SingletonHelper.getInstance().elementos.map(elemento => ({ id: elemento.id, nome: elemento.nome }))
+                    new OpcoesFiltro(SingletonHelper.getInstance().elementos.map(elemento => ({ id: elemento.id, nome: elemento.nome }))),
                 ),
             ]
         )
@@ -1545,6 +1569,9 @@ export class Inventario {
 }
 
 export class Item {
+    private static nextId = 1;
+    public id:number;
+
     private idExtremidade?: number;
     public refExtremidade?: Extremidade;
 
@@ -1556,6 +1583,8 @@ export class Item {
         public buffs:Buff[],
         public precisaEstarEmpunhado:boolean,
     ) {
+        this.id = Item.nextId++;
+
         if (!this.precisaEstarEmpunhado) {
             this.buffs.map(buff => {
                 buff.ativaBuff();
@@ -1628,17 +1657,74 @@ export class FiltroProps<T> {
     ) {}
 }
 
+type OpcaoFiltro = { id:number | string; nome: string; };
+type OpcaoFormatada = { value: string; label: string; };
+
+type CategoriaFiltro = { categoria: string; opcoes: OpcoesFiltro; }[];
+type CategoriaFormatada = { label: string; options: OpcaoFormatada[]; };
+
+class OpcoesFiltro {
+    constructor(
+        private _opcoes: OpcaoFiltro[]
+    ) {}
+
+    get opcoes(): OpcaoFormatada[] {
+        return this._opcoes.reduce((acc, opcao) => {
+            acc.push({ value: opcao.id.toString(), label: opcao.nome })
+
+            return acc;
+        }, [] as OpcaoFormatada[]);
+    }
+}
+
+class OpcoesFiltrosCategorizadas {
+    constructor(
+        private _categorias: CategoriaFiltro
+    ) {}
+
+    get categorias(): CategoriaFormatada[] {
+        return this._categorias.reduce((acc, categoria) => {
+            acc.push({ label: categoria.categoria, options: categoria.opcoes.opcoes });
+
+            return acc;
+        }, [] as CategoriaFormatada[]);
+    }
+}
+
 export class FiltroPropsItems<T> {
     constructor(
         public key: keyof T | ((item: T) => any),
         public label: string,
         public filterType: 'text' | 'select' | 'number',
         public sortEnabled: boolean,
-        public options?: Array<{ id: number; nome: string }>,
+        private _options?: OpcoesFiltro | OpcoesFiltrosCategorizadas,
     ) {}
   
     hasOptions(): boolean {
-      return this.options !== undefined;
+      return this._options !== undefined;
+    }
+
+    get options() : OpcaoFormatada[] | CategoriaFormatada[] | undefined {
+        if (this._options instanceof OpcoesFiltro) {
+            return this._options.opcoes;
+        }
+        if (this._options instanceof OpcoesFiltrosCategorizadas) {
+            return this._options.categorias;
+        }
+    }
+
+    public opcoesFiltradas(filtros: Record<string, string[]>): { value: string; label: string }[] {
+        if (!this.options) return [];
+
+        return this.options.flatMap((option) => {
+            if ('value' in option && 'label' in option) {
+                return filtros[this.key as string]?.includes(option.value) ? [{ value: option.value, label: option.label }] : [];
+            } else {
+                return option.options
+                    .filter(opcao => filtros[this.key as string]?.includes(opcao.value))
+                    .map(opcao => ({ value: opcao.value, label: opcao.label }));
+            }
+        });
     }
 }
 

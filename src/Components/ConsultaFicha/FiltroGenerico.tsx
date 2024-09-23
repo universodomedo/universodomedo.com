@@ -45,6 +45,7 @@ const FiltroGenerico = <T,>({ abaId, data, filtroPropsItems, onFilter, onSort, s
             });
         });
 
+        console.log(filtros);
         onFilter(dadosFiltrados);
 
         return () => {
@@ -77,11 +78,8 @@ const FiltroGenerico = <T,>({ abaId, data, filtroPropsItems, onFilter, onSort, s
 
                     {config.filterType === 'select' && config.options ? (
                         <Select isMulti
-                            value={config.options.filter((option) => filtros[config.key as string]?.includes(option.id.toString())).map((option) => ({ value: option.id.toString(), label: option.nome }))}
-                            options={config.options.map((option) => ({
-                                value: option.id.toString(),
-                                label: option.nome,
-                            }))}
+                            value={config.opcoesFiltradas(filtros)}
+                            options={config.options}
                             onChange={(selectedOptions) => handleFilterChange(config.key, selectedOptions.map((option) => option.value))}
                             placeholder={`Selecione`}
                             styles={{
