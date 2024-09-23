@@ -2,10 +2,10 @@
 import style from "./style.module.css";
 import React, { useState } from "react";
 import FiltroGenerico from "./FiltroGenerico";
-import { ConfiguracaoFiltroOrdenacao } from "Types/classes.tsx";
+import { FiltroProps } from "Types/classes.tsx";
 // #endregion
 
-const ConsultaGenerica = <T,>({ data, filterSortConfig, renderItem }: { data: T[]; filterSortConfig: ConfiguracaoFiltroOrdenacao<T>[]; renderItem: (item: T, index: number) => React.ReactNode;}) => {
+const ConsultaGenerica = <T,>({ abaId, data, filtroProps, renderItem, onLoadComplete }: { abaId: string; data: T[]; filtroProps: FiltroProps<T>; renderItem: (item: T, index: number) => React.ReactNode; onLoadComplete: () => void }) => {
     const [filteredData, setFilteredData] = useState<T[]>(data);
     const [sortConfig, setSortConfig] = useState<{ key: keyof T | ((item: T) => any); direction: 'asc' | 'desc' } | null>(null);
 
@@ -22,6 +22,7 @@ const ConsultaGenerica = <T,>({ data, filterSortConfig, renderItem }: { data: T[
 
             if (aValue < bValue) return direction === "asc" ? -1 : 1;
             if (aValue > bValue) return direction === "asc" ? 1 : -1;
+            
             return 0;
         });
 
@@ -30,9 +31,9 @@ const ConsultaGenerica = <T,>({ data, filterSortConfig, renderItem }: { data: T[
 
     return (
         <div className={style.conteudo_consulta}>
-            <h1>Rituais [{data.length}]</h1>
+            <h1>{filtroProps.titulo} [{data.length}]</h1>
 
-            <FiltroGenerico data={data} filterSortConfig={filterSortConfig} onFilter={handleFilter} onSort={handleSort} sortConfig={sortConfig} />
+            <FiltroGenerico abaId={abaId} data={data} filtroPropsItems={filtroProps.items} onFilter={handleFilter} onSort={handleSort} sortConfig={sortConfig} onLoadComplete={onLoadComplete} />
 
             <div className={style.registros}>
                 {filteredData.map((item, index) => renderItem(item, index))}

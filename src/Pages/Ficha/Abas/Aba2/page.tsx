@@ -4,13 +4,13 @@ import BarraEstatisticaDanificavel from "Components/SubComponents/SubComponentes
 import { EstatisticaDanificavel } from "Types/classes.tsx";
 // #endregion
 
-const page: React.FC<{estatisticasDanificaveis:EstatisticaDanificavel[]}> = ({ estatisticasDanificaveis }) => {
+const page: React.FC<{ estatisticasDanificaveis: EstatisticaDanificavel[] }> = ({ estatisticasDanificaveis }) => {
   return (
     <div className={style.estatisticas_barras}>
       {estatisticasDanificaveis.map((estatistica, index) => (
         <div key={index} className={style.estatistica_barra}>
-          <h2>{estatistica.estatisticaDanificavel.nomeAbrev}</h2>
-          <BarraEstatisticaDanificavel pvAtual={estatistica.valor} pvMaximo={estatistica.valorMaximo} corBarra={estatistica.estatisticaDanificavel.cor}></BarraEstatisticaDanificavel>
+          <h2>{estatistica.refEstatisticaDanificavel.nomeAbrev}</h2>
+          <BarraEstatisticaDanificavel valorAtual={estatistica.valor} valorMaximo={estatistica.valorMaximo} corBarra={estatistica.refEstatisticaDanificavel.cor}></BarraEstatisticaDanificavel>
         </div>
       ))}
     </div>

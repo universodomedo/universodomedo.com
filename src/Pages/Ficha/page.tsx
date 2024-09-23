@@ -1,7 +1,7 @@
 // #region Imports
 import style from "./style.module.css";
 import "./style.css";
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'Redux/store.ts';
 import { selectPersonagemCarregado } from "Redux/slices/fichaHelperSlice.ts";
@@ -10,8 +10,8 @@ import Aba2 from "Pages/Ficha/Abas/Aba2/page.tsx";
 import Aba3 from "Pages/Ficha/Abas/Aba3/page.tsx";
 import Aba4 from "Pages/Ficha/Abas/Aba4/page.tsx";
 import Aba5 from "Pages/Ficha/Abas/Aba5/page.tsx";
-import Aba6 from "Pages/Ficha/Abas/Aba6/page.tsx";
-import Aba7 from "Pages/Ficha/Abas/Aba7/page.tsx";
+import SubPaginaAcoes from "Pages/Ficha/SubPaginasFicha/SubPaginaAcoes/page.tsx"
+import SubPaginaRituais from 'Pages/Ficha/SubPaginasFicha/SubPaginaRituais/page.tsx';
 import Aba8 from "Pages/Ficha/Abas/Aba8/page.tsx";
 import { Abas, ListaAbas, Aba, PainelAbas } from 'Components/LayoutAbas/page.tsx';
 import { ToastContainer } from 'react-toastify';
@@ -40,17 +40,34 @@ const Ficha: React.FC = () => {
                 <div>
                     Nome: <input id="nome" type="text" />
 
-                    Elemento: <select id="elemento"> {singleton.elementos.map(elemento => ( <option key={elemento.id} value={elemento.id}> {elemento.nome} </option> ))} </select>
-                    Circulo: <select id="circulo"> {singleton.circulos_ritual.map(circulo_ritual => ( <option key={circulo_ritual.id} value={circulo_ritual.id}> {circulo_ritual.nome} </option> ))} </select>
-                    Nivel: <select id="nivel"> {singleton.niveis_ritual.map(nivel_ritual => ( <option key={nivel_ritual.id} value={nivel_ritual.id}> {nivel_ritual.nome} </option> ))} </select>
-                    <button onClick={() => {personagem.adicionarNovoRitual((document.querySelector('#nome') as HTMLInputElement).value, parseInt((document.querySelector('#elemento') as HTMLSelectElement).value), parseInt((document.querySelector('#circulo') as HTMLSelectElement).value), parseInt((document.querySelector('#nivel') as HTMLSelectElement).value))}}>Adicionar</button>
+                    Elemento: <select id="elemento"> {singleton.elementos.map(elemento => (<option key={elemento.id} value={elemento.id}> {elemento.nome} </option>))} </select>
+                    Circulo: <select id="circulo"> {singleton.circulos_ritual.map(circulo_ritual => (<option key={circulo_ritual.id} value={circulo_ritual.id}> {circulo_ritual.nome} </option>))} </select>
+                    Nivel: <select id="nivel"> {singleton.niveis_ritual.map(nivel_ritual => (<option key={nivel_ritual.id} value={nivel_ritual.id}> {nivel_ritual.nome} </option>))} </select>
+                    <button onClick={() => { personagem.adicionarNovoRitual((document.querySelector('#nome') as HTMLInputElement).value, parseInt((document.querySelector('#elemento') as HTMLSelectElement).value), parseInt((document.querySelector('#circulo') as HTMLSelectElement).value), parseInt((document.querySelector('#nivel') as HTMLSelectElement).value)) }}>Adicionar</button>
                 </div>
 
                 <h1>Passar Durações</h1>
                 <div>
                     {singleton.duracoes.filter(duracao => duracao.id !== 5).map((duracao, index) => (
-                        <button key={index} onClick={() => {personagem.rodaDuracao(duracao.id)}} >{duracao.nome}</button>
+                        <button key={index} onClick={() => { personagem.rodaDuracao(duracao.id) }} >{duracao.nome}</button>
                     ))}
+                </div>
+
+                <h1>Sofrer Ação</h1>
+                <div>
+
+                </div>
+
+                <h1>Recuperar</h1>
+                <div>
+                    <select id="estatistica">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
+                    <select id="valorRecuperar">{Array.from({length:100}, (_, index) => (index + 1) * 10).map((option) => (<option key={option} value={option}>{option}</option>))}</select>
+                    <button onClick={() => {}}>Recuperar</button>
+                </div>
+
+                <h1>Shopping</h1>
+                <div>
+                    
                 </div>
             </div>
 
@@ -72,10 +89,10 @@ const Ficha: React.FC = () => {
                         <PainelAbas id="aba2"><Aba2 estatisticasDanificaveis={personagem.estatisticasDanificaveis}/></PainelAbas>
                         <PainelAbas id="aba3"><Aba8 buffsPersonagem={personagem.buffs}/></PainelAbas>
                         <PainelAbas id="aba4"><Aba3 atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias}/></PainelAbas>
-                        <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano}/></PainelAbas>
-                        <PainelAbas id="aba6"><Aba5 inventarioPersonagem={personagem.inventario}/></PainelAbas>
-                        <PainelAbas id="aba7"><Aba6 acoesPersonagem={personagem.acoes}/></PainelAbas>
-                        <PainelAbas id="aba8"><Aba7 rituaisPersonagem={personagem.rituais}/></PainelAbas>
+                        <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
+                        <PainelAbas id="aba6"><Aba5 inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
+                        <PainelAbas id="aba7"><SubPaginaAcoes acoesPersonagem={personagem.acoes} abaId={"aba7"} /></PainelAbas>
+                        <PainelAbas id="aba8"><SubPaginaRituais rituaisPersonagem={personagem.rituais} abaId={"aba8"} /></PainelAbas>
                     </div>
                 </Abas>
             )}

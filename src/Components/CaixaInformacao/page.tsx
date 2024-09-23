@@ -6,9 +6,9 @@ import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
 
 const page = ({props} : {props: TooltipProps}) => {
     return (
-        <div className={style.container_caixa_informacao} style={{border:`2px ${props.corTooltip.cor} solid`}}>
+        <div className={style.container_caixa_informacao} style={{border:`2px ${props.corTooltip.corPrimaria} solid`}}>
             <div className={style.cabecalho_caixa_informacao}
-                style={{background: `linear-gradient(0deg, ${props.corTooltip.cor}, ${props.corTooltip.cor}, ${props.corTooltip.cor})`, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
+                style={{background: `linear-gradient(0deg, ${props.corTooltip.corSecundaria}, ${props.corTooltip.corPrimaria}, ${props.corTooltip.corSecundaria}) text`, WebkitTextFillColor: 'transparent', WebkitTextStroke: `.4px ${props.corTooltip.corTerciaria}`}}>
                 {props.caixaInformacao.cabecalho.map((item, index) => (
                     <span key={index}>{item}</span>
                 ))}

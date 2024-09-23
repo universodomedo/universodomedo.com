@@ -1,14 +1,11 @@
 // #region Imports
 import style from "./style.module.css";
-import { TooltipProps } from "Types/classes.tsx";
-import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaTooltip.tsx";
+import { IconeCustomizadoProps } from "Types/classes.tsx";
 // #endregion
 
-const page = ({props, tamanho="pequeno"}: {props:TooltipProps, tamanho?: "pequeno" | "grande"}) => {
+const page = ({ props }: { props: IconeCustomizadoProps }) => {
     return (
-        <ReferenciaTooltip objeto={props}>
-            <div className={`${style.icone_ritual} ${style[tamanho]} ${style[props.iconeCustomizado.elementoNome]}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${props.iconeCustomizado.svg})` }}/>
-        </ReferenciaTooltip>
+        <div className={`${style.icone_ritual}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${props.svg})`, backgroundColor: props.corDeFundo }} />
     );
 }
 
