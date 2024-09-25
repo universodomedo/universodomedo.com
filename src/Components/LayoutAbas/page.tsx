@@ -1,20 +1,20 @@
 // #region Imports
 import style from "./style.module.css";
-import React, { useState, ReactNode, createContext, useContext, useEffect } from 'react';
+import React, { useState, ReactNode, createContext, useContext, forwardRef, useImperativeHandle } from 'react';
 import { LoadingContext } from "Components/LayoutAbas/hooks.ts";
 // #endregion
 
 const ContextoAba = createContext<{ abasAbertas: string[]; alternaAba: (idAba: string) => void; } | undefined>(undefined);
 const Abas: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [abasAbertas, setAbasAbertas] = useState<string[]>([]);
+    const [abasAbertas, setAbasAbertas] = useState<string[]>([]);
 
-  const alternaAba = (idAba: string) => {
-    setAbasAbertas((abasAbertasAnteriormente) =>
-      abasAbertasAnteriormente.includes(idAba)
-        ? abasAbertasAnteriormente.filter((id) => id !== idAba)
-        : [...abasAbertasAnteriormente, idAba]
-    );
-  };
+    const alternaAba = (idAba: string) => {
+        setAbasAbertas((abasAbertasAnteriormente) =>
+            abasAbertasAnteriormente.includes(idAba)
+                ? abasAbertasAnteriormente.filter((id) => id !== idAba)
+                : [...abasAbertasAnteriormente, idAba]
+        );
+    };
 
     return (
         <ContextoAba.Provider value={{ abasAbertas, alternaAba }}>
@@ -51,7 +51,7 @@ const PainelAbas: React.FC<{ id: string; children: ReactNode; }> = ({ id, childr
         : null;
 };
 
-const JanelaConteudoAba: React.FC<{ id: string; children: ReactNode }> = ({ id, children }):ReactNode => {
+const JanelaConteudoAba: React.FC<{ id: string; children: ReactNode }> = ({ id, children }): ReactNode => {
     const context = useContext(ContextoAba);
     if (!context) throw new Error("A Janela precisa estar contido na organização de Abas");
     const { alternaAba } = context;
@@ -76,4 +76,28 @@ const JanelaConteudoAba: React.FC<{ id: string; children: ReactNode }> = ({ id, 
     );
 }
 
-export { Abas, ListaAbas, Aba, PainelAbas };
+const ControleAbasExternas = forwardRef((_, ref) => {
+    const contextoAba = useContext(ContextoAba);
+
+    if (!contextoAba) {
+        throw new Error('O ControleAbasExternas precisa estar dentro de um Abas Provider');
+    }
+
+    const { alternaAba, abasAbertas } = contextoAba;
+
+    const abreAba = (idAba: string) => {
+        if (!abasAbertas.includes(idAba)) {
+            alternaAba(idAba);
+        }
+    };
+
+    const fechaTodasAbas = () => {
+        abasAbertas.forEach((aba) => alternaAba(aba));
+    };
+
+    useImperativeHandle(ref, () => ({ abreAba, fechaTodasAbas }));
+
+    return null;
+});
+
+export { Abas, ListaAbas, Aba, PainelAbas, ControleAbasExternas };

@@ -1,5 +1,4 @@
 // #region Imports
-import style from "./style.module.css";
 import { Acao } from "Types/classes.tsx";
 import ConsultaGenerica from "Components/ConsultaFicha/ConsultaGenerica";
 import IconeCustomizado from "Components/IconeCustomizado/page.tsx";

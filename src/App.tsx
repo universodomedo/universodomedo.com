@@ -15,6 +15,8 @@ import Ficha from 'Pages/Ficha/page.tsx';
 import PageTracker from "Components/PageTracker/page_tracker.tsx";
 import TooltipContainer from "Components/SubComponents/Tooltip/TooltipContainer.tsx";
 
+import FichaTeste from "Pages/Teste2/page.tsx";
+
 const App = () => {
   return (
     <div className='app-container'>
@@ -51,6 +53,9 @@ const App = () => {
           <Route element={<LayoutInterno2 />}>
             <Route path="/ficha-demo">
               <Route index element={<Ficha />} />
+            </Route>
+            <Route path="/ficha-teste">
+              <Route index element={<FichaTeste />} />
             </Route>
           </Route>
           

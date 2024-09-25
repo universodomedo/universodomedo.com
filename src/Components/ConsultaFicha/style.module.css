@@ -1,3 +1,9 @@
+.filtros_selecionados {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
 .conteudo_consulta {
     display: flex;
     flex-direction: column;

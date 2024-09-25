@@ -9,7 +9,7 @@ import "react-tabs/style/react-tabs.css";
 import { selectPersonagemCarregado } from "Redux/slices/fichaHelperSlice.ts";
 import Aba1 from "Pages/Ficha/Abas/Aba1/page.tsx";
 import Aba2 from "Pages/Ficha/Abas/Aba2/page.tsx";
-import Aba3 from "Pages/Ficha/Abas/Aba3/page.tsx";
+import Aba3 from "@pages/Ficha/SubPaginasFicha/SubPaginaAtributoPericia/page";
 import Aba4 from "Pages/Ficha/Abas/Aba4/page.tsx";
 import Aba5 from "Pages/Ficha/Abas/Aba5/page.tsx";
 import Aba6 from "Pages/Ficha/Abas/Aba6/page.tsx";
