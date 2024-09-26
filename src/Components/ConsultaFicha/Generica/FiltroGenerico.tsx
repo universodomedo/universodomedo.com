@@ -1,7 +1,6 @@
 // #region Imports
 import React, { useState, useEffect, useRef } from "react";
 import Select from "react-select";
-import style from "./style.module.css";
 import { FiltroPropsItems, OpcaoFormatada, CategoriaFormatada } from "Types/classes.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from 'Redux/store.ts';

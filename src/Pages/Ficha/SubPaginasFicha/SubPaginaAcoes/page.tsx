@@ -1,6 +1,6 @@
 // #region Imports
 import { Acao } from "Types/classes.tsx";
-import ConsultaGenerica from "Components/ConsultaFicha/ConsultaGenerica";
+import ConsultaGenerica from "Components/ConsultaFicha/Generica/ConsultaGenerica";
 import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
 import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaTooltip";
 import { useLoading } from "Components/LayoutAbas/hooks.ts";

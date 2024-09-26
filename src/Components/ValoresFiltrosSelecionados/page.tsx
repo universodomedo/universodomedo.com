@@ -1,22 +1,53 @@
 // #region Imports
 import style from "./style.module.css";
+import { useConsultaContext } from "Components/ConsultaFicha/page.tsx";
+import { OpcaoFormatada, CategoriaFormatada } from "Types/classes.tsx";
 // #endregion
 
-const page = ({ valoresSelecionados } : { valoresSelecionados:string[] }) => {
+const page = <T,>() => {
+    const { valoresFiltrosSelecionados, filtroProps, handleFiltro } = useConsultaContext<T>();
+
+    const handleRemoveValue = (key: string, valorSelecionado: string) => {
+        const valoresAtualizados = valoresFiltrosSelecionados[key].filter(valor => valor !== valorSelecionado);
+        handleFiltro(key, valoresAtualizados);
+    };
+
+    // Função para buscar o label pelo valor selecionado
+    const getLabelByValue = (key: string, valorSelecionado: string) => {
+        const filtroConfig = filtroProps.items.find(f => f.key === key);
+        
+        if (!filtroConfig || !filtroConfig.options) {
+            return valorSelecionado; // Retorna o próprio valor se não houver label correspondente
+        }
+
+        // Procura o label correspondente ao valor
+        const opcaoEncontrada = filtroConfig.temCategorias()
+            ? (filtroConfig.options as CategoriaFormatada[]).flatMap(categoria => categoria.options)
+                  .find(opcao => opcao.value === valorSelecionado)
+            : (filtroConfig.options as OpcaoFormatada[]).find(opcao => opcao.value === valorSelecionado);
+
+        return opcaoEncontrada ? opcaoEncontrada.label : valorSelecionado;
+    };
+
     return (
         <div className={style.div_teste}>
-            {valoresSelecionados.map((valorSelecionado, index) => (
-                <ValorSelecionado key={index} valorSelecionado={valorSelecionado}/>
+            {/* {valoresFiltrosSelecionados.map((valorSelecionado: {key: string}, index:number) => (
+                <ValorSelecionado key={index} valorSelecionado={valorSelecionado.key}/>
+            ))} */}
+            {Object.entries(valoresFiltrosSelecionados).map(([key, valoresSelecionados]) => (
+                valoresSelecionados.map(valorSelecionado => (
+                    <ValorSelecionado key={key} valorSelecionado={getLabelByValue(key, valorSelecionado)} handleRemoveValue={() => handleRemoveValue(key, valorSelecionado)}/>
+                ))
             ))}
         </div>
     );
 }
 
-const ValorSelecionado = ({ valorSelecionado, handleRemoveValue }: { valorSelecionado:string, handleRemoveValue?: (e: React.MouseEvent<HTMLDivElement>) => void }) => {
+const ValorSelecionado = ({ valorSelecionado, handleRemoveValue }: { valorSelecionado:string, handleRemoveValue: () => void }) => {
     return (
         <div className={style.value_container}>
             <div className={style.value}>{valorSelecionado}</div>
-            <BotaoFechar />
+            <BotaoFechar onClick={handleRemoveValue}/>
         </div>
     )
 }

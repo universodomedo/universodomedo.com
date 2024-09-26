@@ -1,11 +1,13 @@
 // #region Imports
-import { Ritual, Acao } from "Types/classes.tsx";
-import ConsultaGenerica from "Components/ConsultaFicha/ConsultaGenerica";
-import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
-import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaTooltip.tsx";
+import { Ritual } from "Types/classes.tsx";
+import ConsultaRituais from "Components/ConsultaFicha/Rituais/ConsultaRituais.tsx";
 import { useLoading } from "Components/LayoutAbas/hooks.ts";
+import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
+
 import { useDispatch } from "react-redux";
 import { setCacheFiltros } from "Redux/slices/abasHelperSlice.ts";
+import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
+import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaTooltip.tsx";
 // #endregion
 
 const page: React.FC<{ abaId: string; rituaisPersonagem: Ritual[], abrirAbaAcao: () => void }> = ({ abaId, rituaisPersonagem, abrirAbaAcao }) => {
@@ -13,28 +15,22 @@ const page: React.FC<{ abaId: string; rituaisPersonagem: Ritual[], abrirAbaAcao:
   const dispatch = useDispatch();
 
   const clickIcone = () => {
-    abrirAbaAcao();
-    
-    dispatch(setCacheFiltros({ abaId: 'aba7', filtros: {['(acao:Acao) => acao.refPai.nome']: ['Aprimorar Acrobacia2']} }));
+      // abrirAbaAcao();
+
+      dispatch(setCacheFiltros({ abaId: 'aba7', filtros: { ['(acao:Acao) => acao.refPai.nome']: ['Aprimorar Acrobacia2'] } }));
   }
 
   const renderRitualItem = (ritual: Ritual, index: number) => (
-    <ReferenciaTooltip key={index} objeto={ritual.tooltipProps}>
-      <IconeCustomizado onClick={clickIcone} props={ritual.tooltipProps.iconeCustomizado} />
-    </ReferenciaTooltip>
+      <ReferenciaTooltip key={index} objeto={ritual.tooltipProps}>
+          <IconeCustomizado onClick={clickIcone} props={ritual.tooltipProps.iconeCustomizado} />
+      </ReferenciaTooltip>
   );
 
   return (
-    <>
-      <ConsultaGenerica<Ritual>
-        abaId={abaId}
-        data={rituaisPersonagem}
-        filtroProps={Ritual.filtroProps}
-        renderItem={renderRitualItem}
-        onLoadComplete={stopLoading}
-      />
-    </>
-  );
+    <ConsultaProvider<Ritual> abaId={abaId} registros={rituaisPersonagem} filtroProps={Ritual.filtroProps} onLoadComplete={stopLoading}>
+        <Consulta renderItem={renderRitualItem} />
+    </ConsultaProvider>
+);
 };
 
 export default page;
