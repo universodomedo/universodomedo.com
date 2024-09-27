@@ -1,6 +1,6 @@
 // #region Imports
 import { MDL_Elemento, MDL_TipoDano } from "udm-types";
-import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel } from "Types/classes.tsx";
+import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia } from "Types/classes.tsx";
 import { Personagem } from "Types/classes.tsx";
 // #endregion
 
@@ -46,6 +46,10 @@ export class SingletonHelper {
   private _tipos_alvo:TipoAlvo[] = [];
   private _tipos_custo:TipoCusto[] = [];
   private _tipos_dano:TipoDano[] = [];
+  private _tipos_buff:TipoBuff[] = [];
+  private _atributos:Atributo[] = [];
+  private _pericias:Pericia[] = [];
+  private _patentes_pericia:PatentePericia[] = [];
 
   static getInstance() {
     if (!SingletonHelper.instance) {
@@ -102,4 +106,16 @@ export class SingletonHelper {
 
   public set tipos_dano(value:TipoDano[]) { this._tipos_dano = value }
   public get tipos_dano():TipoDano[] { return this._tipos_dano }
+
+  public set tipos_buff(value:TipoBuff[]) { this._tipos_buff = value }
+  public get tipos_buff():TipoBuff[] { return this._tipos_buff }
+
+  public set atributos(value:Atributo[]) { this._atributos = value }
+  public get atributos():Atributo[] { return this._atributos }
+
+  public set pericias(value:Pericia[]) { this._pericias = value }
+  public get pericias():Pericia[] { return this._pericias }
+
+  public set patentes_pericia(value:PatentePericia[]) { this._patentes_pericia = value }
+  public get patentes_pericia():PatentePericia[] { return this._patentes_pericia }
 }

@@ -4,12 +4,12 @@ import ReactDOM from 'react-dom';
 import style from './style.module.css';
 // #endregion
 
-const Modal: React.FC<{isOpen: boolean; onClose: () => void; children: ReactNode;}> = ({ isOpen, onClose, children }) => {
+const Modal: React.FC<{ isOpen: boolean; onClose: () => void; children: ReactNode; }> = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
     <>
-      <div className={style.modal_overlay}/>
+      <div className={style.modal_overlay} />
       {/* <div className={style.modal_overlay} onClick={onClose} /> */}
       <div className={style.modal_content}>
         <button className={style.modal_close} onClick={onClose}>

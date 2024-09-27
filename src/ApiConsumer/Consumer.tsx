@@ -1,4 +1,6 @@
+// #region Imports
 import axios from 'axios';
+// #endregion
 
 const apiClient = axios.create({
   baseURL: 'http://localhost:3030/api/',
@@ -21,7 +23,7 @@ function convertDates(data: any): any {
   if (typeof data === 'object') {
     const newData: any = {};
     for (const key of Object.keys(data)) { newData[key] = convertDates(data[key]); }
-    
+
     return newData;
   }
 

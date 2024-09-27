@@ -1,7 +1,7 @@
 // #region Imports
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { SingletonHelper } from 'Types/classes_estaticas';
-import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CorTooltip, PaletaCores, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel } from "Types/classes.tsx";
+import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CorTooltip, PaletaCores, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia } from "Types/classes.tsx";
 // #endregion
 
 const singletonHelper = SingletonHelper.getInstance();
@@ -27,7 +27,7 @@ singletonHelper.tipo_estatistica_buffavel = [
     new TipoEstatisticaBuffavel(17, "Espaços de Categoria 4"),
     new TipoEstatisticaBuffavel(18, "Número de Extremidades"),
 ];
-singletonHelper.elementos = [new Elemento(1, "Energia", { corPrimaria: "#CD23EA", corSecundaria: "#5C1767", corTerciaria: "#D84Ef5" }), new Elemento(2, "Conhecimento", { corPrimaria: "#F7F157" }), new Elemento(3, "Medo", { corPrimaria: "#8F8F8F" }), new Elemento(4, "Morte", { corPrimaria: "#0E0D0D" }), new Elemento(5, "Sangue", { corPrimaria: "#B92324" })];
+singletonHelper.elementos = [new Elemento(1, "Conhecimento", { corPrimaria: "#F7F157" }), new Elemento(2, "Energia", { corPrimaria: "#CD23EA", corSecundaria: "#5C1767", corTerciaria: "#D84Ef5" }), new Elemento(3, "Medo", { corPrimaria: "#8F8F8F" }), new Elemento(4, "Morte", { corPrimaria: "#0E0D0D" }), new Elemento(5, "Sangue", { corPrimaria: "#B92324" })];
 singletonHelper.niveis_ritual = [new NivelRitual(1, "Fraco"), new NivelRitual(2, "Médio"), new NivelRitual(3, "Forte")];
 singletonHelper.circulos_ritual = [new CirculoRitual(1, "1"), new CirculoRitual(2, "2"), new CirculoRitual(3, "3")];
 singletonHelper.circulos_niveis_ritual = [new CirculoNivelRitual(1, 1, 1), new CirculoNivelRitual(2, 1, 2), new CirculoNivelRitual(3, 1, 3), new CirculoNivelRitual(4, 2, 1), new CirculoNivelRitual(5, 2, 2), new CirculoNivelRitual(6, 2, 3), new CirculoNivelRitual(7, 3, 1), new CirculoNivelRitual(8, 3, 2), new CirculoNivelRitual(9, 3, 3)];
@@ -41,6 +41,10 @@ singletonHelper.tipos_acao = [new TipoAcao(1, "Ação Direta Pacifica"), new Tip
 singletonHelper.tipos_alvo = [new TipoAlvo(1, "Pessoal"), new TipoAlvo(2, "Ser"), new TipoAlvo(3, "Objeto"), new TipoAlvo(4, "Ponto"), new TipoAlvo(5, "Direção")];
 singletonHelper.tipos_custo = [new TipoCusto(1, "Gasto de P.E.")];
 singletonHelper.tipos_dano = [new TipoDano(1, "Vital"), new TipoDano(2, "Mundano"), new TipoDano(3, "Concussivo"), new TipoDano(4, "Cortante"), new TipoDano(5, "Perfurante"), new TipoDano(6, "Natural"), new TipoDano(7, "Elétrico"), new TipoDano(8, "Fogo"), new TipoDano(9, "Frio"), new TipoDano(10, "Químico"), new TipoDano(11, "Elemental"), new TipoDano(12, "Conhecimento"), new TipoDano(13, "Sangue"), new TipoDano(14, "Energia"), new TipoDano(15, "Morte"), new TipoDano(16, "Medo"), new TipoDano(17, "Mental"), new TipoDano(18, "Debilitante")];
+singletonHelper.tipos_buff = [new TipoBuff(1, "Equipamento"), new TipoBuff(2, "Químico"), new TipoBuff(3, "Paranormal"), new TipoBuff(4, "Especial")];
+singletonHelper.atributos = [new Atributo(1, 1, "Agilidade", "AGI"), new Atributo(2, 2, "Força", "FOR"), new Atributo(3, 3, "Inteligência", "INT"), new Atributo(4, 4, "Presença", "PRE"), new Atributo(5, 5, "Vigor", "VIG")];
+singletonHelper.pericias = [new Pericia(1, 6, 1, 'Acrobacia', 'ACRO'), new Pericia(2, 12, 1, 'Crime', 'CRIM'), new Pericia(3, 17, 1, 'Furtividade', 'FURT'), new Pericia(4, 18, 1, 'Iniciativa', 'INIC'), new Pericia(5, 26, 1, 'Pontaria', 'PONT'), new Pericia(6, 27, 1, 'Reflexo', 'REFL'), new Pericia(7, 9, 2, 'Atletismo', 'ATLE'), new Pericia(8, 22, 2, 'Luta', 'LUTA'), new Pericia(9, 7, 3, 'Adestramento', 'ADES'), new Pericia(10, 8, 3, 'Artes', 'ARTE'), new Pericia(11, 10, 3, 'Atualidades', 'ATUA'), new Pericia(12, 11, 3, 'Ciências', 'CIEN'), new Pericia(13, 15, 3, 'Engenharia', 'ENGE'), new Pericia(14, 21, 3, 'Investigação', 'INVE'), new Pericia(15, 23, 3, 'Medicina', 'MEDI'), new Pericia(16, 24, 3, 'Ocultista', 'OCUL'), new Pericia(17, 28, 3, 'Sobrevivência', 'SOBR'), new Pericia(18, 29, 3, 'Tatica', 'TATI'), new Pericia(19, 30, 3, 'Tecnologia', 'TECN'), new Pericia(20, 13, 4, 'Diplomacia', 'DIPL'), new Pericia(21, 14, 4, 'Enganação', 'ENGA'), new Pericia(22, 19, 4, 'Intimidação', 'INTI'), new Pericia(23, 20, 4, 'Intuição', 'INTU'), new Pericia(24, 25, 4, 'Percepção', 'PERC'), new Pericia(25, 31, 4, 'Vontade', 'VONT'), new Pericia(26, 16, 5, 'Fortitude', 'FORT')];
+singletonHelper.patentes_pericia = [new PatentePericia(1, "Destreinado", 0), new PatentePericia(2, "Treinado", 5), new PatentePericia(3, "Veterano", 10), new PatentePericia(4, "Expert", 15)];
 
 const singletonHelperSlice = createSlice({
     name: 'singletonHelper',

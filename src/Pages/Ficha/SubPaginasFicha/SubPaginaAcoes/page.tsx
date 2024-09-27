@@ -1,10 +1,10 @@
 // #region Imports
-import style from "./style.module.css";
 import { Acao } from "Types/classes.tsx";
-import ConsultaGenerica from "Components/ConsultaFicha/ConsultaGenerica";
+import { useLoading } from "Components/LayoutAbas/hooks.ts";
+import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
+
 import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
 import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaTooltip";
-import { useLoading } from "Components/LayoutAbas/hooks.ts";
 // #endregion
 
 const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, acoesPersonagem }) => {
@@ -12,20 +12,14 @@ const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, aco
 
   const renderAcaoItem = (acao: Acao, index: number) => (
     <ReferenciaTooltip key={index} objeto={acao.tooltipProps}>
-      <IconeCustomizado props={acao.tooltipProps.iconeCustomizado} />
+      <IconeCustomizado onClick={() => {acao.executa()}} props={acao.tooltipProps.iconeCustomizado} />
     </ReferenciaTooltip>
   );
 
   return (
-    <>
-      <ConsultaGenerica<Acao>
-        abaId={abaId}
-        data={acoesPersonagem}
-        filtroProps={Acao.filtroProps}
-        renderItem={renderAcaoItem}
-        onLoadComplete={stopLoading}
-      />
-    </>
+    <ConsultaProvider<Acao> abaId={abaId} registros={acoesPersonagem} filtroProps={Acao.filtroProps} onLoadComplete={stopLoading}>
+      <Consulta renderItem={renderAcaoItem} />
+    </ConsultaProvider>
   );
 };
 
