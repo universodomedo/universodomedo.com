@@ -913,15 +913,15 @@ export class Personagem {
         this.inventario.adicionarItemNoInventario(item1);
         // this.habilidades = habilidades;
 
-        const ritual1 = new Ritual("Aprimorar Acrobacia", 1, 1, []);
+        const ritual1 = new Ritual("Aprimorar Acrobacia", 1, 2, []);
         const listaAcaoRitual1 = [new Acao("Usar Ritual Aprimorar Acrobacia", 3, 1, this, ritual1, [new Buff(6, 2, 1, 3, 1, this, 3)], new Custo(1, 2))];
         ritual1.acoes = listaAcaoRitual1;
 
-        const ritual4 = new Ritual("Aprimorar Acrobacia2", 1, 1, []);
+        const ritual4 = new Ritual("Aprimorar Acrobacia2", 1, 2, []);
         const listaAcaoRitual4 = [new Acao("Usar Ritual Aprimorar Acrobacia2", 3, 1, this, ritual4, [new Buff(6, 1, 1, 3, 1, this, 3)], new Custo(1, 1))];
         ritual4.acoes = listaAcaoRitual4;
 
-        const ritual2 = new Ritual("Aprimorar Investigação", 4, 2, []);
+        const ritual2 = new Ritual("Aprimorar Investigação", 4, 1, []);
         const listaAcaoRitual2 = [new Acao("Usar Ritual Aprimorar Investigação", 3, 1, this, ritual2, [new Buff(21, 5, 1, 3, 1, this, 3)], new Custo(1, 7))];
         ritual2.acoes = listaAcaoRitual2;
 
@@ -1285,12 +1285,14 @@ export class Acao {
                 new FiltroPropsItems<Acao>(
                     (acao) => acao.nome,
                     'Nome da Ação',
+                    'Procure pela Ação',
                     'text',
                     true
                 ),
                 new FiltroPropsItems<Acao>(
                     (acao) => acao.refTipoAcao.id,
                     'Tipo de Ação',
+                    'Selecione o Tipo de Ação',
                     'select',
                     true,
                     new OpcoesFiltro(SingletonHelper.getInstance().tipos_acao.map(tipo_acao => ({ id: tipo_acao.id, nome: tipo_acao.nome })))
@@ -1298,6 +1300,7 @@ export class Acao {
                 new FiltroPropsItems<Acao>(
                     (acao) => acao.refPai.nome,
                     'Fonte da Ação',
+                    'Selecione a Fonte da Ação',
                     'select',
                     true,
                     new OpcoesFiltrosCategorizadas(
@@ -1355,12 +1358,14 @@ export class Ritual {
                 new FiltroPropsItems<Ritual>(
                     (ritual) => ritual.nome,
                     'Nome do Ritual',
+                    'Procure pelo Ritual',
                     'text',
                     true
                 ),
                 new FiltroPropsItems<Ritual>(
                     (ritual) => ritual.refCirculoNivelRitual.id,
                     'Círculo',
+                    'Selecione o Círculo do Ritual',
                     'select',
                     true,
                     new OpcoesFiltro(SingletonHelper.getInstance().circulos_niveis_ritual.map(circulo_nivel => ({ id: circulo_nivel.id, nome: circulo_nivel.nome }))),
@@ -1368,6 +1373,7 @@ export class Ritual {
                 new FiltroPropsItems<Ritual>(
                     (ritual) => ritual.idElemento,
                     'Elemento',
+                    'Selecione o Elemento do Ritual',
                     'select',
                     true,
                     new OpcoesFiltro(SingletonHelper.getInstance().elementos.map(elemento => ({ id: elemento.id, nome: elemento.nome }))),
@@ -1861,6 +1867,7 @@ export class FiltroPropsItems<T> {
     constructor(
         public key: keyof T | ((item: T) => any),
         public label: string,
+        public placeholder: string,
         public filterType: 'text' | 'select' | 'number',
         public sortEnabled: boolean,
         private _options?: OpcoesFiltro | OpcoesFiltrosCategorizadas,

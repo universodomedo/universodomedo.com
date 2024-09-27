@@ -1,7 +1,7 @@
 // #region Imports
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 import style from "./style.module.css";
-import Select, { ActionMeta, MultiValue } from "react-select";
+import Select, { ActionMeta, components, MultiValue, PlaceholderProps, ValueContainerProps } from "react-select";
 import { FiltroProps, OpcaoFormatada, CategoriaFormatada, FiltroPropsItems } from "Types/classes.tsx";
 import ValoresFiltrosSelecionados from "Components/ValoresFiltrosSelecionados/page.tsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,12 +15,11 @@ interface ConsultaContextProps<T> {
     registros: T[];
     registrosFiltrados: T[];
     filtroProps: FiltroProps<T>;
-    // ordenacao: { idFiltro: number, direction: 'asc' | 'desc' } | null;
     valoresFiltrosSelecionados: OpcoesSelecionadas[];
+    ordenacao: { key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc' } | null;
     handleFiltro: (opcoesSelecionadas: OpcoesSelecionadas[]) => void;
     removeFiltro: (idFiltro: number, idOpcao: string) => void;
-    // handleOrdenacao: (key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc') => void;
-    // setValoresFiltrosSelecionados: 
+    handleOrdenacao: (key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc') => void;
 };
 
 const ConsultaContext = createContext<ConsultaContextProps<any> | undefined>(undefined);
@@ -37,13 +36,17 @@ export const useConsultaContext = <T,>(): ConsultaContextProps<T> => {
 
 export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, onLoadComplete }: { abaId: string; children: React.ReactNode; registros: T[]; filtroProps: FiltroProps<T>; onLoadComplete: () => void; }) => {
     const [registrosFiltrados, setRegistrosFiltrados] = useState<T[]>(registros);
-    const [ordenacao, setOrdenacao] = useState<{ idFiltro: number, direction: 'asc' | 'desc' } | null>(null);
+    const [ordenacao, setOrdenacao] = useState<{ key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc' } | null>(null);
     const [valoresFiltrosSelecionados, setValoresFiltrosSelecionados] = useState<OpcoesSelecionadas[]>([]);
 
     const dispatch = useDispatch();
     const abaState = useSelector((state: RootState) => state.abasHelper[abaId]);
 
     const filtrosRef = useRef(valoresFiltrosSelecionados);
+
+    const updateFilteredDataRedux = () => {
+        dispatch(setCacheFiltros({ abaId, filtro: valoresFiltrosSelecionados }))
+    }
 
     const getKeyValue = (item: T, key: keyof T | ((item: T) => any)) => {
         return typeof key === 'function' ? key(item) : item[key];
@@ -54,53 +57,50 @@ export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, 
             const filtrosSemOAtualizado = prevState.filter(
                 (filtro) => filtro.idFiltro !== opcoesSelecionadas[0].idFiltro
             );
-    
+
             return [...filtrosSemOAtualizado, ...opcoesSelecionadas];
         });
     };
 
     const removeFiltro = (idFiltro: number, idOpcao: string) => {
         setValoresFiltrosSelecionados((prevValores) => {
-            // Copia o estado anterior
             const novoEstado = prevValores.map((filtro) => {
-                // Verifica se o filtro atual é o que queremos modificar
                 if (filtro.idFiltro === idFiltro) {
-                    // Remove a opção específica do idOpcao
                     const novasOpcoes = filtro.idOpcao.filter((opcao) => opcao !== idOpcao);
-                    
-                    // Retorna o filtro atualizado, ou seja, com a nova lista de opções
+
                     return { ...filtro, idOpcao: novasOpcoes };
                 }
+
                 return filtro;
-            }).filter(filtro => filtro.idOpcao.length > 0); // Remove filtros sem opções
-    
+            }).filter(filtro => filtro.idOpcao.length > 0);
+
             return novoEstado;
         });
     };
 
-    // const handleOrdenacao = (key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc') => {
-    //     setOrdenacao({ key, direction });
+    const handleOrdenacao = (key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc') => {
+        setOrdenacao({ key, direction });
 
-    //     const sortedData = [...registrosFiltrados].sort((a, b) => {
-    //         const aValue = typeof key === "function" ? key(a) : (a[key as keyof T] as any);
-    //         const bValue = typeof key === "function" ? key(b) : (b[key as keyof T] as any);
+        const sortedData = [...registrosFiltrados].sort((a, b) => {
+            const aValue = typeof key === "function" ? key(a) : (a[key as keyof T] as any);
+            const bValue = typeof key === "function" ? key(b) : (b[key as keyof T] as any);
 
-    //         if (aValue < bValue) return direction === "asc" ? -1 : 1;
-    //         if (aValue > bValue) return direction === "asc" ? 1 : -1;
+            if (aValue < bValue) return direction === "asc" ? -1 : 1;
+            if (aValue > bValue) return direction === "asc" ? 1 : -1;
 
-    //         return 0;
-    //     });
+            return 0;
+        });
 
-    //     setRegistrosFiltrados(sortedData);
-    // };
+        setRegistrosFiltrados(sortedData);
+    };
 
-    // useEffect(() => {
-    //     if (abaState && abaState.filtros) {
-    //         setValoresFiltrosSelecionados(abaState.filtros);
-    //     }
+    useEffect(() => {
+        if (abaState) {
+            setValoresFiltrosSelecionados(abaState);
+        }
 
-    //     onLoadComplete();
-    // }, []);
+        onLoadComplete();
+    }, []);
 
     useEffect(() => {
         filtrosRef.current = valoresFiltrosSelecionados;
@@ -118,17 +118,20 @@ export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, 
 
                 if (filtroConfig.filterType === "select")
                     return (opcoesSelecionadas.length === 0 || opcoesSelecionadas.some((opcaoId) => itemValor === opcaoId.toLowerCase()));
-                else 
+                else
                     return (opcoesSelecionadas.length === 0 || opcoesSelecionadas.some((opcaoId) => itemValor.includes(opcaoId.toLowerCase())));
             });
         });
 
         setRegistrosFiltrados(dadosFiltrados);
+
+        return () => {
+            updateFilteredDataRedux();
+        };
     }, [valoresFiltrosSelecionados]);
 
     return (
-        <ConsultaContext.Provider value={{ registros, registrosFiltrados, filtroProps, valoresFiltrosSelecionados, handleFiltro, removeFiltro }}>
-            {/* <ConsultaContext.Provider value={{ registros, registrosFiltrados, filtroProps, ordenacao, valoresFiltrosSelecionados, handleFiltro, handleOrdenacao }}> */}
+        <ConsultaContext.Provider value={{ registros, registrosFiltrados, filtroProps, valoresFiltrosSelecionados, ordenacao, handleFiltro, removeFiltro, handleOrdenacao }}>
             {children}
         </ConsultaContext.Provider>
     );
@@ -145,9 +148,11 @@ export const Consulta = <T,>({ renderItem }: { renderItem: (item: T, index: numb
 
             <ValoresFiltrosSelecionados />
 
-            <div className={style.registros}>
-                {registrosFiltrados.map((item, index) => renderItem(item, index))}
-            </div>
+            {registrosFiltrados.length > 0 && (
+                <div className={style.registros}>
+                    {registrosFiltrados.map((item, index) => renderItem(item, index))}
+                </div>
+            )}
 
             <div className={style.total_exibidos}>
                 <p>Registros exibidos: {registrosFiltrados.length}</p>
@@ -169,24 +174,23 @@ const Filtro = <T,>() => {
 };
 
 const FiltroItem = <T,>({ idFiltro, config }: { idFiltro: number, config: FiltroPropsItems<T> }) => {
-    // const { ordenacao, handleOrdenacao } = useConsultaContext<T>();
+    const { ordenacao, handleOrdenacao } = useConsultaContext<T>();
 
-    // const handleClickOrdenacao = (key: keyof T | ((item: T) => any)) => {
-    //     if (ordenacao?.key === key) {
-    //         handleOrdenacao(key, ordenacao.direction === 'asc' ? 'desc' : 'asc');
-    //     } else {
-    //         handleOrdenacao(key, 'asc');
-    //     }
-    // };
+    const handleClickOrdenacao = (key: keyof T | ((item: T) => any)) => {
+        if (ordenacao?.key === key) {
+            handleOrdenacao(key, ordenacao.direction === 'asc' ? 'desc' : 'asc');
+        } else {
+            handleOrdenacao(key, 'asc');
+        }
+    };
 
     return (
         <div className={style.div_filtro}>
-            {/* <span onClick={() => config.sortEnabled && handleClickOrdenacao(config.key)}> */}
-            <span>
+            <span onClick={() => config.sortEnabled && handleClickOrdenacao(config.key)}>
                 {config.label}
-                {/* {ordenacao?.key === config.key && (
+                {ordenacao?.key === config.key && (
                     <span>{ordenacao!.direction === 'asc' ? ' ↑' : ' ↓'}</span>
-                )} */}
+                )}
             </span>
 
             <CaixaFiltroItem idFiltro={idFiltro} config={config} />
@@ -195,7 +199,7 @@ const FiltroItem = <T,>({ idFiltro, config }: { idFiltro: number, config: Filtro
 }
 
 const CaixaFiltroItem = <T,>({ idFiltro, config }: { idFiltro: number, config: FiltroPropsItems<T> }) => {
-    const { filtroProps, valoresFiltrosSelecionados, handleFiltro } = useConsultaContext<T>();
+    const { valoresFiltrosSelecionados, handleFiltro } = useConsultaContext<T>();
 
     const filtroAtual = valoresFiltrosSelecionados.find((filtro) => filtro.idFiltro === idFiltro);
 
@@ -203,7 +207,7 @@ const CaixaFiltroItem = <T,>({ idFiltro, config }: { idFiltro: number, config: F
 
     const handleChangeMulti = (selectedOptions: MultiValue<{ value: string; label: string }>, actionMeta: ActionMeta<{ value: string; label: string }>) => {
         const opcoesMapeadas = selectedOptions.map((option) => option.value);
-        
+
         const objetoFiltro = { idFiltro, idOpcao: opcoesMapeadas };
 
         handleFiltro([objetoFiltro]);
@@ -212,7 +216,7 @@ const CaixaFiltroItem = <T,>({ idFiltro, config }: { idFiltro: number, config: F
     const handleChangeText = (event: React.ChangeEvent<HTMLInputElement>) => {
         const currentText = event.target.value;
 
-        handleFiltro([{idFiltro, idOpcao: [currentText]}]);
+        handleFiltro([{ idFiltro, idOpcao: [currentText] }]);
     }
 
     return (
@@ -232,43 +236,35 @@ const CaixaFiltroItem = <T,>({ idFiltro, config }: { idFiltro: number, config: F
                     }
                     options={
                         config.temCategorias()
-                            ? (config.options as CategoriaFormatada[]).flatMap((categoria) => categoria.options)
+                            ? (config.options as CategoriaFormatada[])
                             : (config.options as OpcaoFormatada[])
                     }
-                    // onChange={(selectedOptions) =>
-                    //     handleFiltro([{ idFiltro, idOpcao: selectedOptions.map((option) => String(option.value)) }])
-                    // }
                     onChange={handleChangeMulti}
-                    placeholder={`Selecione`}
-                    styles={{
-                        control: (provided) => ({
-                            ...provided,
-                            flexGrow: 1,
-                            minWidth: 0,
-                            maxWidth: '100%',
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
-                        }),
-                        multiValue: (provided) => ({ ...provided, maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis' }),
-                        valueContainer: (provided) => ({
-                            ...provided,
-                            display: 'flex',
-                            flexWrap: 'nowrap',
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
-                        }),
-                        multiValueLabel: (provided) => ({ ...provided, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }),
-                    }}
+                    placeholder={config.placeholder}
                     controlShouldRenderValue={false}
+                    components={{ Placeholder: CustomPlaceholder }}
                 />
             ) : (
                 <input
                     type={config.filterType}
-                    placeholder={`Filtrar por ${config.label}`}
+                    placeholder={config.placeholder}
                     value={opcoesSelecionadas[0] || ""}
                     onChange={handleChangeText}
                 />
             )}
         </>
     );
+};
+
+const CustomPlaceholder = (props: PlaceholderProps<{ value: string, label: string }, true>) => {
+    const selectedValues = props.getValue() as { value: string, label: string }[];
+    const contador = selectedValues.length;
+
+    const mensagem = `${contador} ${(contador === 1 ? 'Opção Selecionada' : 'Opções Selecionadas')}`;
+
+    return (
+        <components.Placeholder {...props}>
+          {contador > 0 ? `${mensagem}` : props.children}
+        </components.Placeholder>
+      );
 };

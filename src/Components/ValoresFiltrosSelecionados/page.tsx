@@ -10,30 +10,56 @@ const page = <T,>() => {
     const handleRemoveValue = (idFiltro: number, idOpcao: string) => {
         removeFiltro(idFiltro, idOpcao);
     };
-
+    
     const obtemOpcoesSelecionadas = (): { valorSelecionado: string, idFiltro: number, idOpcao: string }[] => {
         return valoresFiltrosSelecionados.flatMap((valorSelecionado) => {
-            const opcoesFiltro = filtroProps.items.filter(op => op.temOpcoes)[valorSelecionado.idFiltro].options as OpcaoFormatada[];
-
-            if (!opcoesFiltro) return [];
+            const props = filtroProps.items.filter(op => op.temOpcoes)[valorSelecionado.idFiltro];
     
-            return valorSelecionado.idOpcao.flatMap((opcaoSelecionada) => {
-                const opcao = opcoesFiltro.find(op => op.value === opcaoSelecionada);
-                return opcao ? [{
-                    valorSelecionado: opcao.label || opcao.value,
-                    idFiltro: valorSelecionado.idFiltro,
-                    idOpcao: opcaoSelecionada
-                }] : [];
-            });
+            if (props.temCategorias()) {
+                const opcoesCategoriasFiltro = props.options as CategoriaFormatada[] | undefined;
+    
+                if (!opcoesCategoriasFiltro) return [];
+    
+                return valorSelecionado.idOpcao.flatMap((opcaoSelecionada) => {
+                    return opcoesCategoriasFiltro.flatMap(categoria => {
+                        const opcao = categoria.options.find(op => op.value === opcaoSelecionada);
+                        return opcao ? [{
+                            valorSelecionado: opcao.label || opcao.value,
+                            idFiltro: valorSelecionado.idFiltro,
+                            idOpcao: opcaoSelecionada
+                        }] : [];
+                    });
+                });
+    
+            } else {
+                const opcoesFiltro = props.options as OpcaoFormatada[] | undefined;
+    
+                if (!opcoesFiltro) return [];
+    
+                return valorSelecionado.idOpcao.flatMap((opcaoSelecionada) => {
+                    const opcao = opcoesFiltro.find(op => op.value === opcaoSelecionada);
+                    return opcao ? [{
+                        valorSelecionado: opcao.label || opcao.value,
+                        idFiltro: valorSelecionado.idFiltro,
+                        idOpcao: opcaoSelecionada
+                    }] : [];
+                });
+            }
         });
     };
+    
+    const opcoesSelecionadas = obtemOpcoesSelecionadas(); 
 
     return (
-        <div className={style.div_teste}>
-            {obtemOpcoesSelecionadas().map(({ valorSelecionado, idFiltro, idOpcao }, index) => (
-                <ValorSelecionado key={index} valorSelecionado={valorSelecionado} idFiltro={idFiltro} idOpcao={idOpcao} handleRemoveValue={handleRemoveValue}/>
-            ))}
-        </div>
+        <>
+            {opcoesSelecionadas.length > 0 && (
+                <div className={style.valores_filtrados}>
+                    {opcoesSelecionadas.map(({ valorSelecionado, idFiltro, idOpcao }, index) => (
+                        <ValorSelecionado key={index} valorSelecionado={valorSelecionado} idFiltro={idFiltro} idOpcao={idOpcao} handleRemoveValue={handleRemoveValue}/>
+                    ))}
+                </div>
+            )}
+        </>
     );
 };
 
@@ -43,7 +69,7 @@ const ValorSelecionado = ({ valorSelecionado, idFiltro, idOpcao, handleRemoveVal
             <div className={style.value}>{valorSelecionado}</div>
             <BotaoFechar onClick={() => handleRemoveValue(idFiltro, idOpcao)} />
         </div>
-    )
+    );
 };
 
 const BotaoFechar = ({ onClick }: {onClick?: (e: React.MouseEvent<HTMLDivElement>) => void }) => {
