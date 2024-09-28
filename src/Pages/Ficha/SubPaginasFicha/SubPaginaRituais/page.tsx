@@ -10,19 +10,19 @@ import { useDispatch } from "react-redux";
 import { setCacheFiltros } from "Redux/slices/abasHelperSlice.ts";
 // #endregion
 
-const page: React.FC<{ abaId: string; rituaisPersonagem: Ritual[], abrirAbaAcao: () => void }> = ({ abaId, rituaisPersonagem, abrirAbaAcao }) => {
+const page: React.FC<{ abaId: string; rituaisPersonagem: Ritual[], abrirAbaAcao: () => void; }> = ({ abaId, rituaisPersonagem, abrirAbaAcao }) => {
   const { stopLoading } = useLoading();
   const dispatch = useDispatch();
 
-  const clickIcone = () => {
-    // abrirAbaAcao();
+  const clickIcone = (ritual: Ritual) => {
+    abrirAbaAcao();
 
-    //   dispatch(setCacheFiltros({ abaId: 'aba7', filtros: { ['(acao:Acao) => acao.refPai.nome']: ['Aprimorar Acrobacia2'] } }));
+    dispatch(setCacheFiltros({ abaId: 'aba7', filtro: [ { idFiltro: 1, idOpcao: [ritual.nome] } ], updateExterno: true }));
   }
 
   const renderRitualItem = (ritual: Ritual, index: number) => (
     <ReferenciaTooltip key={index} objeto={ritual.tooltipProps}>
-      <IconeCustomizado onClick={clickIcone} props={ritual.tooltipProps.iconeCustomizado} />
+      <IconeCustomizado onClick={() => clickIcone(ritual)} props={ritual.tooltipProps.iconeCustomizado} />
     </ReferenciaTooltip>
   );
 

@@ -1,6 +1,6 @@
 // #region Imports
 import style from "./style.module.css";
-import { IconeCustomizadoProps } from "Types/classes.tsx";
+import { Ritual, IconeCustomizadoProps } from "Types/classes.tsx";
 // #endregion
 
 const page = ({ props, onClick }: { props: IconeCustomizadoProps, onClick?: () => void }) => {

@@ -6,7 +6,8 @@ import { FiltroProps, OpcaoFormatada, CategoriaFormatada, FiltroPropsItems } fro
 import ValoresFiltrosSelecionados from "Components/ValoresFiltrosSelecionados/page.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from 'Redux/store.ts';
-import { setCacheFiltros } from "Redux/slices/abasHelperSlice.ts";
+import { setCacheFiltros, setUpdated } from "Redux/slices/abasHelperSlice.ts";
+import InputLimpavel from "Components/SubComponents/InputLimpavel/page.tsx";
 // #endregion
 
 interface OpcoesSelecionadas { idFiltro: number, idOpcao: string[] }
@@ -96,11 +97,18 @@ export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, 
 
     useEffect(() => {
         if (abaState) {
-            setValoresFiltrosSelecionados(abaState);
+            setValoresFiltrosSelecionados(abaState.opcoesSelecionadas);
         }
 
         onLoadComplete();
     }, []);
+
+    useEffect(() => {
+        if (abaState && abaState.updateExterno) {
+            setValoresFiltrosSelecionados(abaState.opcoesSelecionadas);
+            dispatch(setUpdated({ abaId }));
+        }
+    }, [abaState])
 
     useEffect(() => {
         filtrosRef.current = valoresFiltrosSelecionados;
@@ -128,7 +136,7 @@ export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, 
         return () => {
             updateFilteredDataRedux();
         };
-    }, [valoresFiltrosSelecionados]);
+    }, [registros, valoresFiltrosSelecionados]);
 
     return (
         <ConsultaContext.Provider value={{ registros, registrosFiltrados, filtroProps, valoresFiltrosSelecionados, ordenacao, handleFiltro, removeFiltro, handleOrdenacao }}>
@@ -244,14 +252,9 @@ const CaixaFiltroItem = <T,>({ idFiltro, config }: { idFiltro: number, config: F
                     controlShouldRenderValue={false}
                     components={{ Placeholder: CustomPlaceholder }}
                 />
-            ) : (
-                <input
-                    type={config.filterType}
-                    placeholder={config.placeholder}
-                    value={opcoesSelecionadas[0] || ""}
-                    onChange={handleChangeText}
-                />
-            )}
+            ) : config.filterType === 'text' ? (
+                <InputLimpavel type={config.filterType} placeholder={config.placeholder} value={opcoesSelecionadas[0]} onChange={handleChangeText} />
+            ) : ''}
         </>
     );
 };
