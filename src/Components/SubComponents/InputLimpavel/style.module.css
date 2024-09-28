@@ -1,0 +1,62 @@
+.wrapper_input_limpavel {
+    -webkit-box-align: center;
+    align-items: center;
+    cursor: default;
+    display: flex;
+    flex-wrap: wrap;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    min-height: 38px;
+    outline: 0 !important;
+    position: relative;
+    transition: all 100ms;
+    background-color: hsl(0, 0%, 100%);
+    border-color: hsl(0, 0%, 80%);
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    box-sizing: border-box;
+    padding-left: 3.5%;
+}
+
+.wrapper_input_limpavel:focus-within  {
+    border-color: #2684FF;
+    box-shadow: 0 0 0 1px #2684FF;
+}
+
+.div_input {
+    flex: 1;
+}
+
+.input {
+    color: inherit;
+    background: 0px center;
+    opacity: 1;
+    width: 100%;
+    grid-area: 1 / 2;
+    font: inherit;
+    min-width: 2px;
+    border: 0px;
+    margin: 0px;
+    outline: 0px;
+    padding: 0px;
+}
+
+.div_botao_limpar {
+    transition: color 150ms;
+    color: hsl(0, 0%, 80%);
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.div_botao_limpar:hover {
+    color: hsl(0, 0%, 60%);
+}
+
+.svg_botao_limpar {
+    display: inline-block;
+    fill: currentColor;
+    line-height: 1;
+    stroke: currentColor;
+    stroke-width: 0;
+}

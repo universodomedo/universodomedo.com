@@ -4,18 +4,24 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface OpcoesSelecionadas { idFiltro: number, idOpcao: string[] }
 
-const initialState: { [key: string]: OpcoesSelecionadas[] } = {};
+const initialState: { [key: string]: {opcoesSelecionadas: OpcoesSelecionadas[], updateExterno: boolean} } = {};
 
 export const abasSlice = createSlice({
   name: 'abas',
   initialState,
   reducers: {
-    setCacheFiltros: (state, action: PayloadAction<{ abaId:string, filtro: OpcoesSelecionadas[] }>) => {
-      state[action.payload.abaId] = action.payload.filtro;
+    setCacheFiltros: (state, action: PayloadAction<{ abaId:string, filtro: OpcoesSelecionadas[], updateExterno?: boolean }>) => {
+      state[action.payload.abaId] = {
+        opcoesSelecionadas: action.payload.filtro,
+        updateExterno: action.payload.updateExterno ?? false
+      }
     },
+    setUpdated: (state, action: PayloadAction<{ abaId:string }>) => {
+      state[action.payload.abaId].updateExterno = false;
+    }
   },
 });
 
-export const { setCacheFiltros } = abasSlice.actions;
+export const { setCacheFiltros, setUpdated } = abasSlice.actions;
 
 export default abasSlice.reducer;

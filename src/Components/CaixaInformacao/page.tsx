@@ -13,9 +13,12 @@ const page = ({ props }: { props: TooltipProps }) => {
             </div>
 
             <div className={style.corpo_caixa_informacao}>
-                {props.caixaInformacao.corpo.map((item, index) => (
-                    <span key={index}>{item}</span>
-                ))}
+                {props.caixaInformacao.corpo.map((item, index) => {
+                    if (item.tipo === 'texto')
+                        return (<span key={index}>{item.conteudo}</span>);
+                    if (item.tipo === 'separacao')
+                        return (<hr key={index} />);
+                })}
             </div>
         </div>
     );

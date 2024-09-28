@@ -91,11 +91,13 @@ const ControleAbasExternas = forwardRef((_, ref) => {
         }
     };
 
-    const fechaTodasAbas = () => {
-        abasAbertas.forEach((aba) => alternaAba(aba));
-    };
+    const fechaAba = (idAba: string) => {
+        if (abasAbertas.includes(idAba)) {
+            alternaAba(idAba);
+        }
+    }
 
-    useImperativeHandle(ref, () => ({ abreAba, fechaTodasAbas }));
+    useImperativeHandle(ref, () => ({ abreAba, fechaAba }));
 
     return null;
 });
