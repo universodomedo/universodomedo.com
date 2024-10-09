@@ -1,0 +1,6 @@
+.acao_emexecucao {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    gap: .8vh;
+}
