@@ -1,4 +1,5 @@
 // #region Imports
+import style from "./style.module.css";
 import React, { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'Redux/store.ts';
@@ -26,7 +27,7 @@ const ReferenciaTooltip: React.FC<{ children: React.ReactNode; objeto: TooltipPr
       ref={activatorRef}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      style={{ cursor: 'pointer' }}
+      className={style.referencia_tooltip}
     >
       {children}
     </span>

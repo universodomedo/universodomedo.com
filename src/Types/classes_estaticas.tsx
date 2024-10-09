@@ -1,6 +1,6 @@
 // #region Imports
 import { MDL_Elemento, MDL_TipoDano } from "udm-types";
-import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, Execucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia } from "Types/classes.tsx";
+import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, TipoItem, NivelComponente, TipoRequisito, Habilidade } from "Types/classes.tsx";
 import { Personagem } from "Types/classes.tsx";
 // #endregion
 
@@ -40,7 +40,7 @@ export class SingletonHelper {
   private _alcances:Alcance[] = [];
   private _formatos_alcance:FormatoAlcance[] = [];
   private _duracoes:Duracao[] = [];
-  private _execucoes:Execucao[] = [];
+  private _tipos_execucao:TipoExecucao[] = [];
   private _categorias_acao:CategoriaAcao[] = [];
   private _tipos_acao:TipoAcao[] = [];
   private _tipos_alvo:TipoAlvo[] = [];
@@ -50,6 +50,10 @@ export class SingletonHelper {
   private _atributos:Atributo[] = [];
   private _pericias:Pericia[] = [];
   private _patentes_pericia:PatentePericia[] = [];
+  private _tipos_items:TipoItem[] = [];
+  private _niveis_componente:NivelComponente[] = [];
+  private _tipos_requisitos:TipoRequisito[] = [];
+  private _lista_geral_habilidades:Habilidade[] = [];
 
   static getInstance() {
     if (!SingletonHelper.instance) {
@@ -89,8 +93,8 @@ export class SingletonHelper {
   public set duracoes(value:Duracao[]) { this._duracoes = value }
   public get duracoes():Duracao[] { return this._duracoes }
 
-  public set execucoes(value:Execucao[]) { this._execucoes = value }
-  public get execucoes():Execucao[] { return this._execucoes }
+  public set tipos_execucao(value:TipoExecucao[]) { this._tipos_execucao = value }
+  public get tipos_execucao():TipoExecucao[] { return this._tipos_execucao }
 
   public set categorias_acao(value:CategoriaAcao[]) { this._categorias_acao = value }
   public get categorias_acao():CategoriaAcao[] { return this._categorias_acao }
@@ -118,4 +122,16 @@ export class SingletonHelper {
 
   public set patentes_pericia(value:PatentePericia[]) { this._patentes_pericia = value }
   public get patentes_pericia():PatentePericia[] { return this._patentes_pericia }
+
+  public set tipos_items(value:TipoItem[]) { this._tipos_items = value }
+  public get tipos_items():TipoItem[] { return this._tipos_items }
+
+  public set niveis_componente(value:NivelComponente[]) { this._niveis_componente = value }
+  public get niveis_componente():NivelComponente[] { return this._niveis_componente }
+
+  public set tipos_requisitos(value:TipoRequisito[]) { this._tipos_requisitos = value }
+  public get tipos_requisitos():TipoRequisito[] { return this._tipos_requisitos }
+
+  public set lista_geral_habilidades(value:Habilidade[]) { this._lista_geral_habilidades = value }
+  public get lista_geral_habilidades():Habilidade[] { return this._lista_geral_habilidades }
 }

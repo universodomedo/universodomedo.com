@@ -1,12 +1,12 @@
 // #region Imports
 import style from "./style.module.css";
-import { Ritual, IconeCustomizadoProps } from "Types/classes.tsx";
+import { IconeCustomizadoProps } from "Types/classes.tsx";
 // #endregion
 
 const page = ({ props, onClick }: { props: IconeCustomizadoProps, onClick?: () => void }) => {
     return (
         <div
-            className={`${style.icone_ritual}`}
+            className={`${style.icone}`}
             style={{ backgroundImage: `url(data:image/svg+xml;base64,${props.svg})`, backgroundColor: props.corDeFundo }}
             onClick={onClick}
         />

@@ -8,6 +8,7 @@ import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaToolti
 
 import { useDispatch } from "react-redux";
 import { setCacheFiltros } from "Redux/slices/abasHelperSlice.ts";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 // #endregion
 
 const page: React.FC<{ abaId: string; rituaisPersonagem: Ritual[], abrirAbaAcao: () => void; }> = ({ abaId, rituaisPersonagem, abrirAbaAcao }) => {
@@ -27,7 +28,7 @@ const page: React.FC<{ abaId: string; rituaisPersonagem: Ritual[], abrirAbaAcao:
   );
 
   return (
-    <ConsultaProvider<Ritual> abaId={abaId} registros={rituaisPersonagem} filtroProps={Ritual.filtroProps} onLoadComplete={stopLoading}>
+    <ConsultaProvider<Ritual> abaId={abaId} registros={[rituaisPersonagem]} filtroProps={Ritual.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={ { usaSubtitulos: false, divisoes: [''] } }>
       <Consulta renderItem={renderRitualItem} />
     </ConsultaProvider>
   );

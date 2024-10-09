@@ -17,7 +17,7 @@ const LPHeader = () => {
           <Link to=""><li>Meu Acesso</li></Link>
           <Link to=""><li>Sistema</li></Link>
           <Link to=""><li>Redes Sociais</li></Link> */}
-          <Link to="/ficha-demo">Demo</Link>
+          <Link to="/ficha-demo" className="link-demo">Demonstração</Link>
         </ul>
       </nav>
 

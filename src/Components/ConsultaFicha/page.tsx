@@ -13,14 +13,15 @@ import InputLimpavel from "Components/SubComponents/InputLimpavel/page.tsx";
 interface OpcoesSelecionadas { idFiltro: number, idOpcao: string[] }
 
 interface ConsultaContextProps<T> {
-    registros: T[];
-    registrosFiltrados: T[];
+    registros: T[][];
+    registrosFiltrados: T[][];
     filtroProps: FiltroProps<T>;
     valoresFiltrosSelecionados: OpcoesSelecionadas[];
     ordenacao: { key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc' } | null;
     handleFiltro: (opcoesSelecionadas: OpcoesSelecionadas[]) => void;
     removeFiltro: (idFiltro: number, idOpcao: string) => void;
     handleOrdenacao: (key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc') => void;
+    tituloDivisoesConsulta: { usaSubtitulos:boolean, divisoes:string[] };
 };
 
 const ConsultaContext = createContext<ConsultaContextProps<any> | undefined>(undefined);
@@ -35,8 +36,8 @@ export const useConsultaContext = <T,>(): ConsultaContextProps<T> => {
     return context;
 };
 
-export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, onLoadComplete }: { abaId: string; children: React.ReactNode; registros: T[]; filtroProps: FiltroProps<T>; onLoadComplete: () => void; }) => {
-    const [registrosFiltrados, setRegistrosFiltrados] = useState<T[]>(registros);
+export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, onLoadComplete, tituloDivisoesConsulta }: { abaId: string; children: React.ReactNode; registros: T[][]; filtroProps: FiltroProps<T>; onLoadComplete: () => void; tituloDivisoesConsulta: { usaSubtitulos:boolean, divisoes:string[] }; }) => {
+    const [registrosFiltrados, setRegistrosFiltrados] = useState<T[][]>(registros);
     const [ordenacao, setOrdenacao] = useState<{ key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc' } | null>(null);
     const [valoresFiltrosSelecionados, setValoresFiltrosSelecionados] = useState<OpcoesSelecionadas[]>([]);
 
@@ -82,14 +83,14 @@ export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, 
     const handleOrdenacao = (key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc') => {
         setOrdenacao({ key, direction });
 
-        const sortedData = [...registrosFiltrados].sort((a, b) => {
-            const aValue = typeof key === "function" ? key(a) : (a[key as keyof T] as any);
-            const bValue = typeof key === "function" ? key(b) : (b[key as keyof T] as any);
-
-            if (aValue < bValue) return direction === "asc" ? -1 : 1;
-            if (aValue > bValue) return direction === "asc" ? 1 : -1;
-
-            return 0;
+        const sortedData = registros.map((registros) => {
+            return [...registros].sort((a, b) => {
+                const aValue = typeof key === "function" ? key(a) : (a[key as keyof T] as any);
+                const bValue = typeof key === "function" ? key(b) : (b[key as keyof T] as any);
+                if (aValue < bValue) return direction === 'asc' ? -1 : 1;
+                if (aValue > bValue) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
         });
 
         setRegistrosFiltrados(sortedData);
@@ -113,25 +114,26 @@ export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, 
     useEffect(() => {
         filtrosRef.current = valoresFiltrosSelecionados;
 
-        const dadosFiltrados = registros.filter((item) => {
-            return valoresFiltrosSelecionados.every((filtro) => {
-                const idFiltro = filtro.idFiltro;
-                const opcoesSelecionadas = filtro.idOpcao;
+        const listaDeListaDeRegistros = registros.map((listaRegistros) => {
+            return listaRegistros.filter((registros) => {
+                return valoresFiltrosSelecionados.every((filtro) => {
+                    const idFiltro = filtro.idFiltro;
+                    const opcoesSelecionadas = filtro.idOpcao;
 
-                const filtroConfig = filtroProps.items[idFiltro];
+                    const filtroConfig = filtroProps.items[idFiltro];
 
-                if (!filtroConfig) return true;
+                    if (!filtroConfig) return true;
 
-                const itemValor = String(getKeyValue(item, filtroConfig.key)).toLowerCase();
+                    const itemValor = String(getKeyValue(registros, filtroConfig.key)).toLowerCase();
 
-                if (filtroConfig.filterType === "select")
-                    return (opcoesSelecionadas.length === 0 || opcoesSelecionadas.some((opcaoId) => itemValor === opcaoId.toLowerCase()));
-                else
+                    if (filtroConfig.filterType === 'select')
+                        return (opcoesSelecionadas.length === 0 || opcoesSelecionadas.some((opcaoId) => itemValor === opcaoId.toLowerCase()));
                     return (opcoesSelecionadas.length === 0 || opcoesSelecionadas.some((opcaoId) => itemValor.includes(opcaoId.toLowerCase())));
-            });
-        });
+                })
+            })
+        })
 
-        setRegistrosFiltrados(dadosFiltrados);
+        setRegistrosFiltrados(listaDeListaDeRegistros);
 
         return () => {
             updateFilteredDataRedux();
@@ -139,31 +141,40 @@ export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, 
     }, [registros, valoresFiltrosSelecionados]);
 
     return (
-        <ConsultaContext.Provider value={{ registros, registrosFiltrados, filtroProps, valoresFiltrosSelecionados, ordenacao, handleFiltro, removeFiltro, handleOrdenacao }}>
+        <ConsultaContext.Provider value={{ registros, registrosFiltrados, filtroProps, valoresFiltrosSelecionados, ordenacao, handleFiltro, removeFiltro, handleOrdenacao, tituloDivisoesConsulta }}>
             {children}
         </ConsultaContext.Provider>
     );
 };
 
 export const Consulta = <T,>({ renderItem }: { renderItem: (item: T, index: number) => React.ReactNode }) => {
-    const { filtroProps, registros, registrosFiltrados } = useConsultaContext<T>();
+    const { filtroProps, registros, registrosFiltrados, tituloDivisoesConsulta } = useConsultaContext<T>();
 
     return (
         <div className={style.conteudo_consulta}>
-            <h1>{filtroProps.titulo} [{registros.length}]</h1>
+            <h1>{filtroProps.titulo} [{registros.reduce((total, registros) => total + registros.length, 0)}]</h1>
 
             <Filtro />
 
             <ValoresFiltrosSelecionados />
 
             {registrosFiltrados.length > 0 && (
-                <div className={style.registros}>
-                    {registrosFiltrados.map((item, index) => renderItem(item, index))}
-                </div>
+                registrosFiltrados.map((registros, index) => (
+                    registros.length > 0 && (
+                        <div key={index} className={style.divisao_registros}>
+                            {tituloDivisoesConsulta.usaSubtitulos && tituloDivisoesConsulta.divisoes[index] && (
+                                <h2>{tituloDivisoesConsulta.divisoes[index]}</h2>
+                            )}
+                            <div className={style.registros}>
+                                {registros.map((item, index) => renderItem(item, index))}
+                            </div>
+                        </div>
+                    )
+                ))
             )}
 
             <div className={style.total_exibidos}>
-                <p>Registros exibidos: {registrosFiltrados.length}</p>
+                <p>Registros exibidos: {registrosFiltrados.reduce((total, registrosFiltrados) => total + registrosFiltrados.length, 0)}</p>
             </div>
         </div>
     );
@@ -173,11 +184,15 @@ const Filtro = <T,>() => {
     const { filtroProps } = useConsultaContext<T>();
 
     return (
-        <div className={style.div_filtros}>
-            {filtroProps.items.map((config, index) => (
-                <FiltroItem key={index} idFiltro={index} config={config as FiltroPropsItems<T>} />
-            ))}
-        </div>
+        <>
+            {filtroProps.items.length > 0 && (
+                <div className={style.div_filtros}>
+                    {filtroProps.items.map((config, index) => (
+                        <FiltroItem key={index} idFiltro={index} config={config as FiltroPropsItems<T>} />
+                    ))}
+                </div>
+            )}
+        </>
     );
 };
 
@@ -267,7 +282,7 @@ const CustomPlaceholder = (props: PlaceholderProps<{ value: string, label: strin
 
     return (
         <components.Placeholder {...props}>
-          {contador > 0 ? `${mensagem}` : props.children}
+            {contador > 0 ? `${mensagem}` : props.children}
         </components.Placeholder>
-      );
+    );
 };

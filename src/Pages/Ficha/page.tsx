@@ -9,20 +9,23 @@ import Aba1 from "Pages/Ficha/Abas/Aba1/page.tsx";
 import Aba2 from "Pages/Ficha/Abas/Aba2/page.tsx";
 import SubPaginaAtributosPericias from "Pages/Ficha/SubPaginasFicha/SubPaginaAtributosPericias/page.tsx";
 import Aba4 from "Pages/Ficha/Abas/Aba4/page.tsx";
-import Aba5 from "Pages/Ficha/Abas/Aba5/page.tsx";
+import SubPaginaInventario from "Pages/Ficha/SubPaginasFicha/SubPaginaInventario/page.tsx";
 import SubPaginaAcoes from "Pages/Ficha/SubPaginasFicha/SubPaginaAcoes/page.tsx"
 import SubPaginaRituais from 'Pages/Ficha/SubPaginasFicha/SubPaginaRituais/page.tsx';
 import SubPaginaEfeitos from "Pages/Ficha/SubPaginasFicha/SubPaginaEfeitos/page.tsx";
 import { Abas, ListaAbas, Aba, PainelAbas, ControleAbasExternas } from 'Components/LayoutAbas/page.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Personagem } from "Types/classes.tsx"
+
+import Modal from "Components/Modal/page.tsx";
+import TesteShop from "Pages/TesteShop/page.tsx";
 // #endregion
 
 const Ficha: React.FC = () => {
     const personagem = useSelector((state: RootState) => state.fichaHelper.fichaHelper.personagem);
     const singleton = useSelector((state: RootState) => state.singletonHelper.singletonHelper);
     const personagemLoaded = useSelector(selectPersonagemCarregado);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [state, setState] = useState({});
 
@@ -33,11 +36,23 @@ const Ficha: React.FC = () => {
             personagem.carregaOnUpdate(() => setState({}));
     }, [personagemLoaded]);
 
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
     return (
         <>
             <ToastContainer />
 
+            <Modal isOpen={isModalOpen} onClose={closeModal}>
+                <TesteShop />
+            </Modal>
+
             <div className={style.div_demo_acoes}>
+                <h1>Teste</h1>
+                <div>
+                <button onClick={() => {console.log(personagem)}}>Alterar</button>
+                </div>
+
                 <h1>Alterar Estatísticas Máximas</h1>
                 <div>
                     <select id="estatisticaMaxima">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
@@ -76,7 +91,7 @@ const Ficha: React.FC = () => {
 
                 <h1>Shopping</h1>
                 <div>
-                    
+                <button onClick={(e) => { e.preventDefault(); openModal(); }}>Abrir Shopping</button>
                 </div>
             </div>
 
@@ -101,9 +116,9 @@ const Ficha: React.FC = () => {
                         <PainelAbas id="aba3"><SubPaginaEfeitos buffsPersonagem={personagem.buffsAplicados} abaId={"aba3"}/></PainelAbas>
                         <PainelAbas id="aba4"><SubPaginaAtributosPericias atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias}/></PainelAbas>
                         <PainelAbas id="aba5"><Aba4 reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
-                        <PainelAbas id="aba6"><Aba5 inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
-                        <PainelAbas id="aba7"><SubPaginaAcoes acoesPersonagem={personagem.acoes} abaId={"aba7"} /></PainelAbas>
-                        <PainelAbas id="aba8"><SubPaginaRituais rituaisPersonagem={personagem.rituais} abaId={"aba8"} abrirAbaAcao={() => {controleRef.current?.abreAba("aba7")}}/></PainelAbas>
+                        <PainelAbas id="aba6"><SubPaginaInventario abaId={"aba6"} inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis} abrirAbaAcao={() => {controleRef.current?.abreAba("aba7")}}/></PainelAbas>
+                        <PainelAbas id="aba7"><SubPaginaAcoes abaId={"aba7"} acoesPersonagem={personagem.acoes} /></PainelAbas>
+                        <PainelAbas id="aba8"><SubPaginaRituais abaId={"aba8"} rituaisPersonagem={personagem.rituais} abrirAbaAcao={() => {controleRef.current?.abreAba("aba7")}}/></PainelAbas>
                     </div>
                 </Abas>
             )}

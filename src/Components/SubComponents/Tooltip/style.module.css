@@ -7,3 +7,7 @@
   pointer-events: none;
   z-index: 1000;
 }
+
+.referencia_tooltip {
+  cursor: pointer;
+}
