@@ -24,6 +24,9 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
   const dispatch = useDispatch();
   const [contextMenu, setContextMenu] = useState(initialContextMenu);
 
+  const itensEmpunhados = inventarioPersonagem.agrupamento.filter(item => item.refExtremidade);
+  const itensGuardados = inventarioPersonagem.agrupamento.filter(item => !item.refExtremidade);
+
   const clickItem = (item: Item) => {
     if (item.acoes.length === 0) return;
     
@@ -64,7 +67,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
         </div>
       )}
 
-      <ConsultaProvider<Item> abaId={abaId} registros={[inventarioPersonagem.agrupamento]} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={ { usaSubtitulos: false, divisoes: [''] } }>
+      <ConsultaProvider<Item> abaId={abaId} registros={[itensEmpunhados, itensGuardados]} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={ { usaSubtitulos: true, divisoes: ['Itens Empunhados', 'Itens Guardados'] } }>
         <Consulta renderItem={renderItem} />
       </ConsultaProvider>
     </>

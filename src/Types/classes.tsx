@@ -3,6 +3,7 @@ import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
 import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma, MDL_Habilidade, MDL_Ritual, RLJ_Rituais, MDL_CirculoRitual, MDL_EfeitoAcao, MDL_Duracao, MDL_Elemento } from "udm-types";
 import { TestePericia } from "Components/Functions/RollNumber.tsx";
 import { FichaHelper, SingletonHelper } from "Types/classes_estaticas.tsx";
+import { create } from "domain";
 // #endregion
 
 export const pluralize = (count: number, singular: string, plural?: string): string => {
@@ -10,7 +11,7 @@ export const pluralize = (count: number, singular: string, plural?: string): str
     return count === 1 ? singular : pluralForm;
 };
 
-function adicionarAcoesUtil<T>(instancia:T, acoes: Acao[], acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): void {
+function adicionarAcoesUtil<T>(instancia: T, acoes: Acao[], acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): void {
     acaoParams.forEach(([AcaoClass, params, configurarAcao]) => {
         const acao = new AcaoClass(...params, instancia);
 
@@ -18,6 +19,10 @@ function adicionarAcoesUtil<T>(instancia:T, acoes: Acao[], acaoParams: [new (...
 
         acoes.push(acao);
     });
+}
+
+function classeComArgumentos<T extends new (...args: any[]) => any>(Ctor: T, ...params: ConstructorParameters<T>) {
+    return [Ctor, params] as [T, ConstructorParameters<T>];
 }
 
 export class Historico {
@@ -54,7 +59,7 @@ export class Personagem {
     public pericias: PericiaPatentePersonagem[];
     public inventario: Inventario = new Inventario();
     public buffsExternos: Buff[] = [];
-    public habilidades:Habilidade[] = [];
+    public habilidades: Habilidade[] = [];
     public rituais: Ritual[] = [];
     public receptor: Receptor = new Receptor(this);
 
@@ -919,7 +924,7 @@ export class Personagem {
             new Defesa(5, 1, 1, 1),
             10,
             0,
-            [new Execucao(1, 1)],
+            [new Execucao(2, 1), new Execucao(3, 1), new Execucao(4, 1), new Execucao(6, 1)],
             new EspacoInventario(5, 5),
             new EspacoCategoria(2, 0, 0, 0),
             [new Extremidade(), new Extremidade()],
@@ -942,21 +947,9 @@ export class Personagem {
         // const item3 = new ItemComponente(new NomeItem("Componente de Energia Simples"), 1, 0, new DetalhesItemComponente(2, 1, 2));
         // this.inventario.adicionarItemNoInventario(item3);
 
-        const item4 = new ItemEquipamento(new NomeItem("Vestimenta Simples de Vontade"), 3, 1, [], [new BuffExterno(31, 'Melhoria Simples por Equipamento', 2, 1, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-        this.inventario.adicionarItemNoInventario(item4);
+        // const item4 = new ItemEquipamento(new NomeItem("Vestimenta Simples de Vontade"), 3, 1, [], [new BuffExterno(31, 'Melhoria Simples por Equipamento', 2, 1, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        // this.inventario.adicionarItemNoInventario(item4);
         // this.habilidades = habilidades;
-
-        // const ritual1 = new Ritual("Aprimorar Acrobacia", 1, 2, []);
-        // const custoComponenteAcao1Ritual1 = new CustoComponente(2, 1);
-        // const acao1ritual1 = new Acao("Usar Ritual", 3, 1, ritual1, [], [new CustoPE(2), custoComponenteAcao1Ritual1], [], [], () => {});
-        // const requisitoAcao1Ritual1 = new RequisitoComponente(acao1ritual1.id, custoComponenteAcao1Ritual1.refElemento.id, custoComponenteAcao1Ritual1.refNivelComponente.id, true);
-        // acao1ritual1.requisitos = [requisitoAcao1Ritual1];
-        // const listaBuffAcao1 = [new BuffExterno(6, 'Acrobacia Aprimorada', 2, acao1ritual1.id, 3, 1, 3)];
-        // acao1ritual1.buffs = listaBuffAcao1;
-        // ritual1.acoes = [acao1ritual1];
-
-
-
 
         const novoRitual1 = new Ritual("Aprimorar Acrobacia", 1, 2)
             .adicionarAcoes([
@@ -964,55 +957,112 @@ export class Personagem {
                     AcaoRitual,
                     ['Usar Ritual', 3, 1],
                     (acao) => {
-                        acao.adicionarCustos([ [CustoPE, [2]], [CustoComponente, []], [CustoExecucao, [2, 1]], ]);
-                        acao.adicionarBuffs([ [BuffInterno, [6, 'Aprimorar Acrobacia', 2, 3, 1, 3]] ]);
-                        acao.adicionarRequisitos([ [RequisitoComponente, [true]] ]);
+                        acao.adicionarCustos([
+                            classeComArgumentos(CustoPE, 2), classeComArgumentos(CustoExecucao, 2, 1), classeComArgumentos(CustoComponente)
+                        ]);
+                        acao.adicionarBuffs([
+                            classeComArgumentos(BuffInterno, 6, 'Aprimorar Acrobacia', 2, 3, 1, 3)
+                        ]);
+                        acao.adicionarRequisitos([
+                            classeComArgumentos(RequisitoComponente, true)
+                        ]);
+                        acao.adicionarOpcoesExecucao([
+                            (): Opcao[] => {
+                                const acaoRitual = acao as AcaoRitual;
+
+                                return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.id).reduce((acc: {key:number; value:string}[], cur) => {
+                                    acc.push({key: cur.id, value: cur.nomeExibicaoOption});
+                                    return acc;
+                                }, [])
+                            },
+                        ]);
                         acao.adicionarLogicaExecucao((valoresSelecionados) => {
-                            (FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados[0]) as ItemComponente).gastaUso();
-                            acao.buffs.forEach(buff => {
-                                buff.ativaBuff();
-                            })
+                            // gasta PE
+                            acao.custos[0].gastaCusto();
+
+                            // gasta execucao
+                            acao.custos[1].gastaCusto();
+
+                            // gasta componente
+                            acao.custos[2].gastaCusto(valoresSelecionados[0]);
+
+                            acao.executa();
                         });
                     }
                 ]
             ]);
 
+        const novoRitual2 = new Ritual("Aprimorar Investigação", 4, 1)
+            .adicionarAcoes([
+                [
+                    AcaoRitual,
+                    ['Usar Ritual', 3, 1],
+                    (acao) => {
+                        acao.adicionarCustos([
+                            classeComArgumentos(CustoPE, 7), classeComArgumentos(CustoExecucao, 2, 1), classeComArgumentos(CustoComponente)
+                        ]);
+                        acao.adicionarBuffs([
+                            classeComArgumentos(BuffInterno, 21, 'Aprimorar Investigação', 5, 3, 1, 3)
+                        ]);
+                        acao.adicionarRequisitos([
+                            classeComArgumentos(RequisitoComponente, true)
+                        ]);
+                        acao.adicionarOpcoesExecucao([
+                            (): Opcao[] => {
+                                const acaoRitual = acao as AcaoRitual;
 
+                                return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.id).reduce((acc: {key:number; value:string}[], cur) => {
+                                    acc.push({key: cur.id, value: cur.nomeExibicaoOption});
+                                    return acc;
+                                }, [])
+                            },
+                        ]);
+                        acao.adicionarLogicaExecucao((valoresSelecionados) => {
+                            // gasta PE
+                            acao.custos[0].gastaCusto();
 
+                            // gasta execucao
+                            acao.custos[1].gastaCusto();
 
+                            // gasta componente
+                            acao.custos[2].gastaCusto(valoresSelecionados[0]);
 
+                            acao.executa();
+                        });
+                    }
+                ]
+            ]);
 
+        const novoRitual3 = new Ritual("Disparo de Corrente Elétrica", 3, 2)
+            .adicionarAcoes([
+                [
+                    AcaoRitual,
+                    ['Usar Ritual', 2, 1],
+                    (acao) => {
+                        acao.adicionarCustos([
+                            classeComArgumentos(CustoPE, 4), classeComArgumentos(CustoExecucao, 2, 1), classeComArgumentos(CustoComponente)
+                        ]);
+                        acao.adicionarRequisitos([
+                            classeComArgumentos(RequisitoComponente, true)
+                        ]);
+                        acao.adicionarOpcoesExecucao([
+                            (): Opcao[] => {
+                                const acaoRitual = acao as AcaoRitual;
 
+                                return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.id).reduce((acc: {key:number; value:string}[], cur) => {
+                                    acc.push({key: cur.id, value: cur.nomeExibicaoOption});
+                                    return acc;
+                                }, [])
+                            },
+                        ]);
+                        acao.adicionarLogicaExecucao((valoresSelecionados) => {
+                            console.log("fazer ataque");
+                        });
+                    }
+                ]
+            ]);
 
-
-
-
-        // const ritual2 = new Ritual("Aprimorar Investigação", 4, 1, []);
-        // const custoComponenteAcao1Ritual2 = new CustoComponente(1, 2);
-        // const acao1ritual2 = new Acao("Usar Ritual", 3, 1, ritual2, [], [new CustoPE(7), custoComponenteAcao1Ritual2], [], [], () => {});
-        // const requisitoAcao1Ritual2 = new RequisitoComponente(acao1ritual2.id, custoComponenteAcao1Ritual2.refElemento.id, custoComponenteAcao1Ritual2.refNivelComponente.id, false);
-        // acao1ritual2.requisitos = [requisitoAcao1Ritual2];
-        // const listaBuffAcao2 = [new BuffExterno(21, 'Investigação Aprimorada', 5, acao1ritual2.id, 3, 1, 3)];
-        // acao1ritual2.buffs = listaBuffAcao2;
-        // const listaAcaoRitual2 = [acao1ritual2];
-        // ritual2.acoes = listaAcaoRitual2;
-
-        // const ritual3 = new Ritual("Aprimorar Luta", 7, 5, []);
-        // const acao1ritual3 = new Acao("Usar Ritual", 3, 1, ritual3, [], [new CustoPE(13), new CustoComponente(5, 3, true)]);
-        // const listaBuffAcao3 = [new BuffExterno(22, 'Luta Aprimorada', 9, acao1ritual3.id, 3, 1, 3)];
-        // acao1ritual3.buffs = listaBuffAcao3;
-        // const listaAcaoRitual3 = [acao1ritual3];
-        // ritual3.acoes = listaAcaoRitual3;
-
-        // const ritual4 = new Ritual("Aprimorar Acrobacia2", 1, 2, []);
-        // const acao1ritual4 = new Acao("Usar Ritual", 3, 1, ritual4, [], [new CustoPE(1), new CustoComponente(2, 1, true)]);
-        // const listaBuffAcao4 = [new BuffExterno(6, 'Acrobacia Aprimorada', 1, acao1ritual4.id, 3, 1, 3)];
-        // acao1ritual4.buffs = listaBuffAcao4;
-        // const listaAcaoRitual4 = [acao1ritual4];
-        // ritual4.acoes = listaAcaoRitual4;
-
-        // this.rituais = [ritual1, ritual4, ritual2, ritual3];
-        this.rituais = [novoRitual1];
+        this.rituais = [novoRitual1, novoRitual2, novoRitual3];
 
         this.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha.verificaRequisitoCumprido(this));
     }
@@ -1032,17 +1082,13 @@ export class Personagem {
             }
         });
 
+        if (idDuracao > 2 ) this.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
+
         this.onUpdate();
     }
 
     public carregaOnUpdate = (callback: () => void) => {
         this.onUpdate = callback;
-    }
-
-    public adicionarNovoRitual = (nome: string, idElemento: number, idCirculo: number, idNivel: number) => {
-        // const circuloNivel = SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.idCirculo === idCirculo && circulo_nivel_ritual.idNivel === idNivel)!
-        // this.rituais = [...this.rituais, new Ritual(nome, circuloNivel.id, idElemento, [])];
-        // this.onUpdate();
     }
 
     public alterarMaximoEstatistica = (idEstatistica: number, valorMaximo: number) => {
@@ -1254,12 +1300,12 @@ export abstract class Buff {
     public id: number;
     public quantidadeDuracaoAtual: number = 0;
     public ativo: boolean = false;
+    public refAcao?: Acao;
 
     constructor(
         private _idBuff: number,
-        public nome:string,
+        public nome: string,
         public valor: number,
-        private _idAcao: number,
         private _idDuracao: number,
         public quantidadeDuracaoMaxima: number,
         private _idTipoBuff: number,
@@ -1267,8 +1313,10 @@ export abstract class Buff {
         this.id = Buff.nextId++;
     }
 
+    adicionaRefAcao(refAcao: Acao): this { return (this.refAcao = refAcao), this; }
+
     get refBuff(): BuffRef { return SingletonHelper.getInstance().buffs.find(buff => buff.id === this._idBuff)!; }
-    get refAcao(): Acao { return FichaHelper.getInstance().personagem.acoes.find(acao => acao.id === this._idAcao)!; }
+    // get refAcao(): Acao { return FichaHelper.getInstance().personagem.acoes.find(acao => acao.id === this._idAcao)!; }
     get refDuracao(): Duracao { return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === this._idDuracao)!; }
     get refTipoBuff(): TipoBuff { return SingletonHelper.getInstance().tipos_buff.find(tipo_buff => tipo_buff.id === this._idTipoBuff)!; }
 
@@ -1281,7 +1329,7 @@ export abstract class Buff {
         this.ativo = false;
     }
 
-    get textoDuracao() : string {
+    get textoDuracao(): string {
         if (this._idDuracao === 5)
             return `Duração ${this.refDuracao.nome}`;
 
@@ -1317,7 +1365,7 @@ export abstract class Buff {
             if (this.quantidadeDuracaoAtual === 2)
                 retorno += ` depois do próximo ${this.refDuracao.nome}`;
         }
-        
+
         return retorno;
     }
 
@@ -1392,8 +1440,8 @@ export abstract class Buff {
 }
 
 export class BuffInterno extends Buff {
-    constructor( _idBuff: number, nome:string, valor: number, _idAcao: number, _idDuracao: number, quantidadeDuracaoMaxima: number, idTipoBuff: number ) {
-        super(_idBuff, nome, valor, _idAcao, _idDuracao, quantidadeDuracaoMaxima, idTipoBuff);
+    constructor(_idBuff: number, nome: string, valor: number, _idDuracao: number, quantidadeDuracaoMaxima: number, idTipoBuff: number) {
+        super(_idBuff, nome, valor, _idDuracao, quantidadeDuracaoMaxima, idTipoBuff);
     }
 
     get tooltipProps(): TooltipProps {
@@ -1406,7 +1454,7 @@ export class BuffInterno extends Buff {
             },
             iconeCustomizado: {
                 corDeFundo: '#00FF00',
-                svg: this.refAcao.svg,
+                svg: this.refAcao!.svg,
             },
             corTooltip: tooltipPropsSuper.corTooltip,
             numeroUnidades: tooltipPropsSuper.numeroUnidades,
@@ -1417,8 +1465,8 @@ export class BuffInterno extends Buff {
 export class BuffExterno extends Buff {
     public svg: string = `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgdGV4dC1hbmNob3I9InN0YXJ0IiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiBmb250LXNpemU9IjE1MCIgaWQ9InN2Z18xIiB5PSIxMTQiIHg9IjU3IiBzdHJva2Utd2lkdGg9IjAiIHN0cm9rZT0iIzAwMCIgZmlsbD0iIzAwMDAwMCI+RTwvdGV4dD48L2c+PC9zdmc+`;
 
-    constructor( _idBuff: number, nome:string, valor: number, _idAcao: number, _idDuracao: number, quantidadeDuracaoMaxima: number, idTipoBuff: number ) {
-        super(_idBuff, nome, valor, _idAcao, _idDuracao, quantidadeDuracaoMaxima, idTipoBuff);
+    constructor(_idBuff: number, nome: string, valor: number, _idDuracao: number, quantidadeDuracaoMaxima: number, idTipoBuff: number) {
+        super(_idBuff, nome, valor, _idDuracao, quantidadeDuracaoMaxima, idTipoBuff);
     }
 
     get tooltipProps(): TooltipProps {
@@ -1452,14 +1500,14 @@ export class Acao {
     public custos: Custo[] = [];
     public requisitos: Requisito[] = [];
     public opcoesExecucao: OpcaoExecucao[] = [];
-    private logicaExecucao: (valoresSelecionados: { [key: number]: number | undefined }) => void = () => {};
+    private logicaExecucao: (valoresSelecionados: { [key: number]: number | undefined }) => void = () => { };
 
     constructor(
         public nome: string,
         private _idTipoAcao: number,
         private _idCategoriaAcao: number,
         protected _refPai: Ritual | Item | Habilidade,
-        
+
         public svg: string = 'PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KIDxnPgogIDx0aXRsZT5MYXllciAxPC90aXRsZT4KICA8dGV4dCBmaWxsPSIjMDAwMDAwIiBzdHJva2U9IiMwMDAiIHg9IjM0MSIgeT0iMjkxIiBpZD0ic3ZnXzIiIHN0cm9rZS13aWR0aD0iMCIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9Ik5vdG8gU2FucyBKUCIgdGV4dC1hbmNob3I9InN0YXJ0IiB4bWw6c3BhY2U9InByZXNlcnZlIj5UZXN0ZSAxPC90ZXh0PgogIDx0ZXh0IGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIwIiB4PSI1MyIgeT0iMTA5IiBpZD0ic3ZnXzMiIGZvbnQtc2l6ZT0iMTQwIiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIHhtbDpzcGFjZT0icHJlc2VydmUiPkE8L3RleHQ+CjwvZz4KPC9zdmc+',
     ) {
         this.id = Acao.nextId++;
@@ -1478,30 +1526,11 @@ export class Acao {
 
     adicionaRefPai(pai: Ritual | Item | Habilidade): this { return (this._refPai = pai), this; }
 
-    adicionarCustos(custoParams: [new (...args: any[]) => Custo, any[]][]): this { return ( custoParams.forEach(([CustoClass, params]) => { this.custos.push((CustoClass === CustoComponente && this.refPai instanceof Ritual) ? new CustoComponente(this as AcaoRitual) : new CustoClass(...params)); })), this; }
-    adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return ( buffParams.forEach(([BuffClass, params]) => { this.buffs.push(new BuffClass(...params)); }) ), this; }
-    adicionarRequisitos(requisitoParams: [new (...args: any[]) => Requisito, any[]][]): this { return (
-        requisitoParams.forEach(([RequisitoClass, params]) => {
-            this.requisitos.push(
-                (RequisitoClass === RequisitoComponente && this.refPai instanceof Ritual)
-                    ? new RequisitoComponente(this as AcaoRitual, true)
-                    : new RequisitoClass(this)
-            );
-        })
-    ), this; }
+    adicionarCustos(custoParams: [new (...args: any[]) => Custo, any[]][]): this { return (custoParams.forEach(([CustoClass, params]) => { this.custos.push((CustoClass === CustoComponente && this.refPai instanceof Ritual) ? new CustoComponente().setRefAcao(this as AcaoRitual) : new CustoClass(...params)); })), this; }
+    adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (buffParams.forEach(([BuffClass, params]) => { this.buffs.push(new BuffClass(...params).adicionaRefAcao(this)); })), this; }
+    adicionarRequisitos(requisitoParams: [new (...args: any[]) => Requisito, any[]][]): this { return ( requisitoParams.forEach(([RequisitoClass, params]) => { this.requisitos.push(new RequisitoClass(...params).setRefAcao(this as AcaoRitual)); }) ), this; }
     adicionarOpcoesExecucao(opcoesParams: (() => Opcao[])[]): this { return (opcoesParams.forEach(obterOpcoes => { this.opcoesExecucao.push(new OpcaoExecucao(obterOpcoes)); }), this); }
     adicionarLogicaExecucao(logicaExecucao: (valoresSelecionados: { [key: number]: number | undefined }) => void): this { return (this.logicaExecucao = logicaExecucao), this; }
-
-    // adicionarBuffs(buffs: Buff[]): this {
-        
-    // }
-
-    // adicionarRequisitos(): this {
-        
-    // }
-    // adicionarLogicaExecucao(): this {
-        
-    // }
 
     get refTipoPai(): 'Ritual' | 'Item' | 'Habilidade' | undefined {
         if (this.refPai instanceof Ritual) return "Ritual";
@@ -1512,15 +1541,27 @@ export class Acao {
     }
 
     executa = () => {
-        if (!this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos) return;
+        // if (!this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos) return;
 
-        this.custos?.map((custo) => {
-            custo.gastaCusto();
-        });
+        // this.custos?.map((custo) => {
+        //     custo.gastaCusto();
+        // });
 
-        if (this.refTipoAcao.id === 1) {
-            FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades[0].empunhar(1);
-        }
+        // if (this.refTipoAcao.id === 1) {
+        //     FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades[0].empunhar(1);
+        // }
+
+        // if (this.refTipoAcao.id === 3) {
+        //     this.buffs.map(buff => {
+        //         buff.ativaBuff()
+        //     });
+        // }
+
+        
+        // this.custos.forEach(custo => {
+        //     custo.gastaCusto();
+        // });
+
 
         if (this.refTipoAcao.id === 3) {
             this.buffs.map(buff => {
@@ -1529,6 +1570,7 @@ export class Acao {
         }
 
         FichaHelper.getInstance().personagem.onUpdate();
+
     }
 
     get verificaRequisitosCumpridos(): boolean {
@@ -1548,6 +1590,7 @@ export class Acao {
     }
 
     executaComOpcoes = (valoresSelecionados: { [key: number]: number | undefined }) => {
+        // colocar o pagamento do custo
         this.logicaExecucao(valoresSelecionados);
     }
 
@@ -1624,26 +1667,22 @@ export class Acao {
             ],
         );
     }
-
-    adicionaRequisito(requisito:Requisito) {
-        this.requisitos!.push(requisito);
-    }
 }
 
 export class AcaoRitual extends Acao {
-    constructor( nome: string, idTipoAcao: number, idCategoriaAcao: number, refPai: Ritual ) { super( nome, idTipoAcao, idCategoriaAcao, refPai); }
+    constructor(nome: string, idTipoAcao: number, idCategoriaAcao: number, refPai: Ritual) { super(nome, idTipoAcao, idCategoriaAcao, refPai); }
 
     override get refPai(): Ritual { return this._refPai as Ritual };
 }
 
 export class AcaoItem extends Acao {
-    constructor( nome: string, idTipoAcao: number, idCategoriaAcao: number, refPai: Item ) { super( nome, idTipoAcao, idCategoriaAcao, refPai); }
+    constructor(nome: string, idTipoAcao: number, idCategoriaAcao: number, refPai: Item) { super(nome, idTipoAcao, idCategoriaAcao, refPai); }
 
     override get refPai(): Item { return this._refPai as Item };
 }
 
 export class AcaoHabilidade extends Acao {
-    constructor( nome: string, idTipoAcao: number, idCategoriaAcao: number, refPai: Habilidade ) { super( nome, idTipoAcao, idCategoriaAcao, refPai); }
+    constructor(nome: string, idTipoAcao: number, idCategoriaAcao: number, refPai: Habilidade) { super(nome, idTipoAcao, idCategoriaAcao, refPai); }
 
     override get refPai(): Habilidade { return this._refPai as Habilidade };
 }
@@ -1665,6 +1704,7 @@ export class Ritual {
     get nomeExibicao(): string { return this.nome };
     get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
     get refCirculoNivelRitual(): CirculoNivelRitual { return SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.id === this._idCirculoNivel)!; }
+    get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this.refCirculoNivelRitual.idCirculo)! }
 
     adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }
 
@@ -1873,11 +1913,11 @@ export class CharacterDetalhes {
 export abstract class Custo {
     abstract get podeSerPago(): boolean;
     abstract get descricaoCusto(): string;
-    abstract gastaCusto(): void;
+    abstract gastaCusto(idItem?:number): void;
 }
 
 export class CustoPE extends Custo {
-    constructor( public valor: number ) { super(); }
+    constructor(public valor: number) { super(); }
 
     get podeSerPago(): boolean {
         return this.valor <= FichaHelper.getInstance().personagem.estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.valor;
@@ -1894,14 +1934,17 @@ export class CustoPE extends Custo {
 }
 
 export class CustoComponente extends Custo {
-    constructor( public refAcao: AcaoRitual ) { super(); }
+    constructor() { super(); }
 
-    get podeSerPago(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item instanceof ItemComponente && item.detalhesComponente.refElemento.id === this.refAcao.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === this.refAcao.refPai.refCirculoNivelRitual.id); }
+    public refAcao?:AcaoRitual;
+    setRefAcao(value:AcaoRitual): this { return (this.refAcao = value, this); }
 
-    get descricaoCusto(): string { return `1 Carga de Componente ${this.refAcao.refPai.refElemento.nome} ${this.refAcao.refPai.refCirculoNivelRitual.nome}`; }
+    get podeSerPago(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item instanceof ItemComponente && item.detalhesComponente.refElemento.id === this.refAcao!.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === this.refAcao!.refPai.refNivelComponente.id); }
 
-    gastaCusto(): void {
-        console.log(`Usou Componente de ${this.refAcao.refPai.nome} ${this.refAcao.refPai.refCirculoNivelRitual.nome}`);
+    get descricaoCusto(): string { return `1 Carga de Componente ${this.refAcao!.refPai.refElemento.nome} ${this.refAcao!.refPai.refNivelComponente.nome}`; }
+
+    gastaCusto(idItem:number): void {
+        console.log(`Usou Componente de ${this.refAcao!.refPai.nome} ${this.refAcao!.refPai.refNivelComponente.nome}`);
 
         // let componente:ItemComponente;
 
@@ -1929,10 +1972,10 @@ export class CustoComponente extends Custo {
 }
 
 export class CustoTestePericia extends Custo {
-    private vezesUtilizadasConsecutivo:number = 0;
-    public bloqueadoNesseTurno:boolean = false;
+    private vezesUtilizadasConsecutivo: number = 0;
+    public bloqueadoNesseTurno: boolean = false;
 
-    constructor( private _idPericia:number, public valorInicial:number, public valorConsecutivo:number ) { super(); }
+    constructor(private _idPericia: number, public valorInicial: number, public valorConsecutivo: number) { super(); }
 
     get podeSerPago(): boolean { return (this.bloqueadoNesseTurno || this.valorAtual > FichaHelper.getInstance().personagem.pericias.find(pericia => pericia.refPericia.id === this.refPericia.id)!.valorTotal + 20); }
     get descricaoCusto(): string { return `DT ${this.valorAtual} de ${this.refPericia.nomeAbrev}${this.bloqueadoNesseTurno ? ` | Falhou nesse turno` : ''}`; }
@@ -1941,24 +1984,20 @@ export class CustoTestePericia extends Custo {
     }
 
     get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this._idPericia)!; }
-    get valorAtual():number { return this.valorInicial + (this.valorConsecutivo * this.vezesUtilizadasConsecutivo) }
+    get valorAtual(): number { return this.valorInicial + (this.valorConsecutivo * this.vezesUtilizadasConsecutivo) }
 }
 
 export class CustoExecucao extends Custo {
-    
-    constructor( private _idTipoExecucao: number, public valor: number, ) { super(); }
 
-    get refTipoExecucao(): TipoExecucao {
-        return SingletonHelper.getInstance().tipos_execucao.find(execucao => execucao.id === this._idTipoExecucao)!;
-    }
+    constructor(private _idTipoExecucao: number, public valor: number,) { super(); }
 
-    get podeSerPago(): boolean {
-        return true;
-    }
+    get refTipoExecucao(): TipoExecucao { return SingletonHelper.getInstance().tipos_execucao.find(execucao => execucao.id === this._idTipoExecucao)!; }
+
+    get podeSerPago(): boolean { return FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais >= this.valor; }
+
     get descricaoCusto(): string { return `${this.valor} ${this.refTipoExecucao.nome}`; }
-    gastaCusto(): void {
-        return;
-    }
+
+    gastaCusto(): void { FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais -= this.valor; }
 }
 
 export class NivelRitual {
@@ -2019,10 +2058,17 @@ export class TipoExecucao {
     ) { }
 }
 export class Execucao {
+    public numeroAcoesAtuais: number = 0;
+    
     constructor(
-        public id: number,
-        public numeroAcoes:number
-    ) { }
+        private _idTipoExecucao: number,
+        public numeroAcoesMaximas: number
+    ) {
+        this.recarregaNumeroAcoes();
+    }
+
+    get refTipoExecucao():TipoExecucao { return SingletonHelper.getInstance().tipos_execucao.find(tipo_execucao => tipo_execucao.id === this._idTipoExecucao)!; }
+    recarregaNumeroAcoes():void { this.numeroAcoesAtuais = this.numeroAcoesMaximas; }
 }
 export class TipoAcao {
     constructor(
@@ -2132,12 +2178,12 @@ export class TipoItem {
 }
 
 export class NomeItem {
-    public customizado:string;
-    public temNomeCustomizado:boolean = false;
+    public customizado: string;
+    public temNomeCustomizado: boolean = false;
 
     constructor(
-        public padrao:string,
-        customizado?:string,
+        public padrao: string,
+        customizado?: string,
     ) {
         if (customizado) {
             this.customizado = customizado;
@@ -2180,7 +2226,7 @@ export class Item {
     get nomeExibicao(): string { return this.nome.customizado };
     get nomeExibicaoOption(): string { return this.nome.customizado };
 
-    ativarBuffs = ():void => {
+    ativarBuffs = (): void => {
         if (!this.precisaEstarEmpunhado) {
             this.buffs.map(buff => {
                 buff.ativaBuff();
@@ -2195,7 +2241,7 @@ export class Item {
         this.buffs.push(buff);
     }
 
-    get estaEmpunhado (): boolean {
+    get estaEmpunhado(): boolean {
         return !!this.idExtremidade;
     }
 
@@ -2328,7 +2374,7 @@ export class ItemArma extends Item {
                 cabecalho: tooltipPropsSuper.caixaInformacao.cabecalho,
                 corpo: [
                     { tipo: 'texto', conteudo: `Dano: ${this.detalhesArma.danoMinimo} - ${this.detalhesArma.dano}` },
-                    { tipo: 'texto', conteudo: `Empunhado com ${this.detalhesArma.numeroExtremidadesUtilizadas} ${pluralize(this.detalhesArma.numeroExtremidadesUtilizadas, 'Extremidade')}`},
+                    { tipo: 'texto', conteudo: `Empunhado com ${this.detalhesArma.numeroExtremidadesUtilizadas} ${pluralize(this.detalhesArma.numeroExtremidadesUtilizadas, 'Extremidade')}` },
                     ...tooltipPropsSuper.caixaInformacao.corpo,
                     { tipo: 'separacao' },
                     ...this.acoes?.map(acao => ({
@@ -2342,7 +2388,7 @@ export class ItemArma extends Item {
             numeroUnidades: 1,
         }
     }
-    
+
     get tooltipPropsAgrupado(): TooltipProps {
         return this.tooltipPropsSingular;
     }
@@ -2350,9 +2396,9 @@ export class ItemArma extends Item {
 
 export class DetalhesItemArma {
     constructor(
-        public dano:number,
-        public variancia:number,
-        public numeroExtremidadesUtilizadas:number,
+        public dano: number,
+        public variancia: number,
+        public numeroExtremidadesUtilizadas: number,
     ) { }
 
     get danoMinimo(): number {
@@ -2486,7 +2532,7 @@ export class ItemComponente extends Item {
     get tooltipPropsSingular(): TooltipProps {
         const tooltipPropsSuper = super.tooltipPropsGenerico;
 
-        const items:ItemComponente[] = [this];
+        const items: ItemComponente[] = [this];
 
         const caixaInformacaoProps = ItemComponente.obtemCaixaInformacaoProps(items);
 
@@ -2509,7 +2555,7 @@ export class ItemComponente extends Item {
     get tooltipPropsAgrupado(): TooltipProps {
         const tooltipPropsSuper = super.tooltipPropsGenerico;
 
-        let items:ItemComponente[] = [this];
+        let items: ItemComponente[] = [this];
         if (this.agrupavel) {
             items = FichaHelper.getInstance().personagem.inventario.items.filter(item => item instanceof ItemComponente && item.nome.padrao === this.nome.padrao && item.categoria === this.categoria && item.detalhesComponente.refElemento === this.detalhesComponente.refElemento && item.detalhesComponente.refNivelComponente) as ItemComponente[]
         }
@@ -2532,8 +2578,8 @@ export class ItemComponente extends Item {
         }
     }
 
-    static obtemCaixaInformacaoProps(items: ItemComponente[]):CaixaInformacaoProps {
-        const { pesoTotal, usosTotais} = items.reduce((acc, cur) => {
+    static obtemCaixaInformacaoProps(items: ItemComponente[]): CaixaInformacaoProps {
+        const { pesoTotal, usosTotais } = items.reduce((acc, cur) => {
             return {
                 pesoTotal: acc.pesoTotal + cur.peso,
                 usosTotais: acc.usosTotais + cur.detalhesComponente.usosAtuais
@@ -2559,7 +2605,7 @@ export class ItemComponente extends Item {
         }
     }
 
-    verificaIgual(item:ItemComponente): boolean {
+    verificaIgual(item: ItemComponente): boolean {
         return (
             this.detalhesComponente.refElemento.id === item.detalhesComponente.refElemento.id && this.detalhesComponente.refNivelComponente.id == item.detalhesComponente.refNivelComponente.id
         );
@@ -2653,18 +2699,21 @@ class BuffsPorTipo {
 }
 
 export abstract class Requisito {
-    constructor( public refAcao: AcaoRitual ) {}
+    constructor() {}
     abstract get requisitoCumprido(): boolean;
     abstract get descricaoRequisito(): string;
+
+    public refAcao?:AcaoRitual;
+    setRefAcao(value:AcaoRitual): this { return (this.refAcao = value, this); }
 }
 
 export class RequisitoComponente extends Requisito {
-    constructor( refAcao: AcaoRitual, public precisaEstarEmpunhando: boolean ) { super(refAcao); }
+    constructor(public precisaEstarEmpunhando: boolean) { super(); }
 
-    get requisitoCumprido():boolean {
+    get requisitoCumprido(): boolean {
         return (
-            FichaHelper.getInstance().personagem.inventario.items.some(item => 
-                item instanceof ItemComponente && item.detalhesComponente.refElemento.id === this.refAcao.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === this.refAcao.refPai.refCirculoNivelRitual.id
+            FichaHelper.getInstance().personagem.inventario.items.some(item =>
+                item instanceof ItemComponente && item.detalhesComponente.refElemento.id === this.refAcao!.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === this.refAcao!.refPai.refNivelComponente.id
                 && (this.precisaEstarEmpunhando && item.refExtremidade)
             )
         );
@@ -2678,8 +2727,8 @@ export class RequisitoComponente extends Requisito {
 }
 
 export class RequisitoItemEmpunhado extends Requisito {
-    constructor( refAcao: AcaoRitual ) { super(refAcao); }
-    get requisitoCumprido():boolean { return (this.refAcao.refPai instanceof Item && this.refAcao.refPai.estaEmpunhado); }
+    constructor() { super(); }
+    get requisitoCumprido(): boolean { return (this.refAcao!.refPai instanceof Item && this.refAcao!.refPai.estaEmpunhado); }
     get descricaoRequisito(): string { return 'Necessário empunhar o Item da Ação'; }
 }
 
@@ -2688,32 +2737,30 @@ export class RequisitoItemEmpunhado extends Requisito {
 // }
 
 export class RequisitoExtremidadeDisponivel extends Requisito {
-    get requisitoCumprido():boolean {
-        return FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.some(extremidade => !extremidade.refItem);
-    }
+    constructor() { super(); }
 
-    get descricaoRequisito(): string { 
-        return 'Nessário Extremidade Disponível';
-    }
+    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.some(extremidade => !extremidade.refItem); }
+
+    get descricaoRequisito(): string { return 'Nessário Extremidade Disponível'; }
 }
 
 export class RequisitoAlgumItemGuardado extends Requisito {
-    constructor( refAcao: AcaoRitual ) { super(refAcao); }
-    get requisitoCumprido():boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => !item.refExtremidade); }
-    get descricaoRequisito(): string {  return 'Necessário ter Item no Inventário'; }
+    constructor() { super(); }
+    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => !item.refExtremidade); }
+    get descricaoRequisito(): string { return 'Necessário ter Item no Inventário'; }
 }
 
 export class RequisitoAlgumItemEmpunhado extends Requisito {
-    constructor( refAcao: AcaoRitual ) { super(refAcao); }
-    get requisitoCumprido():boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item.refExtremidade); }
-    get descricaoRequisito(): string {  return 'Necessário Empunhar algum Item'; }
+    constructor() { super(); }
+    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item.refExtremidade); }
+    get descricaoRequisito(): string { return 'Necessário Empunhar algum Item'; }
 }
 
 export class TipoRequisito {
     constructor(
-        public id:number,
-        public nome:string,
-    ) {}
+        public id: number,
+        public nome: string,
+    ) { }
 }
 
 export class FiltroProps<T> {
@@ -2863,12 +2910,13 @@ export interface PaletaCores {
 // }
 
 export class Habilidade {
+    public acoes: Acao[] = [];
+
     constructor(
-        public id:number,
-        public nome:string,
-        public acoes:Acao[],
-        public requisitoFicha:RequisitoFicha,
-    ) {}
+        public id: number,
+        public nome: string,
+        public requisitoFicha: RequisitoFicha,
+    ) { }
 
     adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }
 
@@ -2877,39 +2925,42 @@ export class Habilidade {
 
 export class RequisitoFicha {
     constructor(
-        private condicao: (personagem:Personagem) => boolean
-    ) {}
+        private condicao: (personagem: Personagem) => boolean
+    ) { }
 
-    verificaRequisitoCumprido(personagem:Personagem): boolean {
+    verificaRequisitoCumprido(personagem: Personagem): boolean {
         return this.condicao(personagem)
     }
 }
 
-export const lista_geral_habilidades = ():Habilidade[] => {
-    const retorno:Habilidade[] = [];
+export const lista_geral_habilidades = (): Habilidade[] => {
+    const retorno: Habilidade[] = [];
 
-
-    const habilidade1 = new Habilidade(1, 'Sacar Item', [], new RequisitoFicha((personagem:Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
+    const habilidade1 = new Habilidade(1, 'Sacar Item', new RequisitoFicha((personagem: Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
         .adicionarAcoes([
             [
                 AcaoHabilidade,
                 ['Sacar Item', 1, 1],
                 (acao) => {
-                    acao.adicionarCustos([ [CustoExecucao, [3, 1]]]);
-                    acao.adicionarRequisitos([ [RequisitoExtremidadeDisponivel, []], [RequisitoAlgumItemGuardado, []] ]);
+                    acao.adicionarCustos([
+                        classeComArgumentos(CustoExecucao, 3, 1)
+                    ]);
+                    acao.adicionarRequisitos([
+                        classeComArgumentos(RequisitoExtremidadeDisponivel), classeComArgumentos(RequisitoAlgumItemGuardado)
+                    ]);
                     acao.adicionarOpcoesExecucao([
                         (): Opcao[] => {
-                            return FichaHelper.getInstance().personagem.inventario.items.filter(item => !item.refExtremidade).reduce((acc: {key:number; value:string}[], cur) => {
-                                acc.push({key: cur.id, value: cur.nomeExibicaoOption});
+                            return FichaHelper.getInstance().personagem.inventario.items.filter(item => !item.refExtremidade).reduce((acc: { key: number; value: string }[], cur) => {
+                                acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
                                 return acc;
                             }, [])
                         },
                         (): Opcao[] => {
-                            return FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.filter(extremidade => !extremidade.refItem).reduce((acc: {key:number; value:string}[], cur) => {
-                                acc.push({key: cur.id, value: `Extremidade ${cur.id}`});
+                            return FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.filter(extremidade => !extremidade.refItem).reduce((acc: { key: number; value: string }[], cur) => {
+                                acc.push({ key: cur.id, value: `Extremidade ${cur.id}` });
                                 return acc;
                             }, [])
-                        }
+                        },
                     ]);
                     acao.adicionarLogicaExecucao((valoresSelecionados) => {
                         const extremidadeSelecionada = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => extremidade.id === valoresSelecionados[1]!)!;
@@ -2917,29 +2968,39 @@ export const lista_geral_habilidades = ():Habilidade[] => {
                         extremidadeSelecionada.empunhar(valoresSelecionados[0]!);
                     });
                 }
-            ],
+            ]
         ]);
     retorno.push(habilidade1);
 
-    // /* */
+    const habilidade2 = new Habilidade(2, 'Guardar Item', new RequisitoFicha((personagem:Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
+        .adicionarAcoes([
+            [
+                AcaoHabilidade,
+                ['Guardar Item', 1, 1],
+                (acao) => {
+                    acao.adicionarCustos([
+                        classeComArgumentos(CustoExecucao, 3, 1)
+                    ]);
+                    acao.adicionarRequisitos([
+                        classeComArgumentos(RequisitoAlgumItemEmpunhado)
+                    ]);
+                    acao.adicionarOpcoesExecucao([
+                        (): Opcao[] => {
+                            return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade).reduce((acc: {key:number; value:string}[], cur) => {
+                                acc.push({key: cur.id, value: cur.nomeExibicaoOption});
+                                return acc;
+                            }, [])
+                        },
+                    ]);
+                    acao.adicionarLogicaExecucao((valoresSelecionados) => {
+                        const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados[0]);
 
-    // const opcoes1Acao1Habilidade2 = (): Opcao[] => {
-    //     return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade).reduce((acc: {key:number; value:string}[], cur) => {
-    //         acc.push({key: cur.id, value: cur.nomeExibicaoOption});
-    //         return acc;
-    //     }, [])
-    // }
-
-    // const habilidade2 = new Habilidade(2, 'Guardar Item', [], new RequisitoFicha((personagem:Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0));
-    // const acao1Habilidade2 = new Acao('Guardar Item', 1, 1, habilidade2, [], [new CustoExecucao(3, 1)], [], [new OpcaoExecucao(opcoes1Acao1Habilidade2)], (valoresSelecionados) => {
-    //     const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados[0]);
-
-    //     itemSelecionado?.refExtremidade?.guardar();
-    // });
-    // const requisito1Acao1Habilidade2 = new RequisitoAlgumItemEmpunhado(acao1Habilidade2.id);
-    // acao1Habilidade2.requisitos = [requisito1Acao1Habilidade2];
-    // habilidade2.acoes = [acao1Habilidade2];
-    // retorno.push(habilidade2);
+                        itemSelecionado?.refExtremidade?.guardar();
+                    });
+                }
+            ]
+        ])
+    retorno.push(habilidade2);
 
     return retorno;
 }
@@ -2947,7 +3008,7 @@ export const lista_geral_habilidades = ():Habilidade[] => {
 export class OpcaoExecucao {
     private obterOpcoes: () => Opcao[];
 
-    constructor( obterOpcoes: () => Opcao[] ) {
+    constructor(obterOpcoes: () => Opcao[]) {
         this.obterOpcoes = obterOpcoes;
     }
 

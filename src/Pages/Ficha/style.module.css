@@ -9,7 +9,7 @@
 
 .div_demo_acoes {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 1vh;
     border: 2px white solid;
     padding: 2%;
@@ -17,6 +17,7 @@
     color: white;
     max-height: 8vh;
     overflow-y: auto;
+    justify-content: space-evenly;
 }
 
 .div_demo_acoes h1 {

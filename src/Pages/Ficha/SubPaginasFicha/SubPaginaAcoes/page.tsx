@@ -16,6 +16,9 @@ const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, aco
   const { stopLoading } = useLoading();
   const dispatch = useDispatch();
 
+  const acoesRealizaveis = acoesPersonagem.filter(acao => acao.verificaCustosPodemSerPagos && acao.verificaRequisitosCumpridos);
+  const acoesBloqueadas = acoesPersonagem.filter(acao => !(acao.verificaCustosPodemSerPagos && acao.verificaRequisitosCumpridos));
+
   const renderAcaoItem = (acao: Acao, index: number) => (
     <ReferenciaTooltip key={index} objeto={acao.tooltipProps}>
       <IconeCustomizado onClick={() => {
@@ -33,7 +36,7 @@ const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, aco
   return (
     <>
       <ExecutadorAcoes />
-      <ConsultaProvider<Acao> abaId={abaId} registros={[acoesPersonagem]} filtroProps={Acao.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={ { usaSubtitulos: false, divisoes: [''] } }>
+      <ConsultaProvider<Acao> abaId={abaId} registros={[acoesRealizaveis, acoesBloqueadas]} filtroProps={Acao.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={ { usaSubtitulos: true, divisoes: ['Ações Realizáveis', 'Ações Bloqueadas'] } }>
         <Consulta renderItem={renderAcaoItem} />
       </ConsultaProvider>
     </>
