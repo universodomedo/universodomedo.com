@@ -3,7 +3,6 @@ import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
 import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma, MDL_Habilidade, MDL_Ritual, RLJ_Rituais, MDL_CirculoRitual, MDL_EfeitoAcao, MDL_Duracao, MDL_Elemento } from "udm-types";
 import { TestePericia } from "Components/Functions/RollNumber.tsx";
 import { FichaHelper, SingletonHelper } from "Types/classes_estaticas.tsx";
-import { create } from "domain";
 // #endregion
 
 export const pluralize = (count: number, singular: string, plural?: string): string => {
@@ -19,6 +18,14 @@ function adicionarAcoesUtil<T>(instancia: T, acoes: Acao[], acaoParams: [new (..
 
         acoes.push(acao);
     });
+}
+
+function adicionarBuffsUtil<T extends Acao | Item>(instancia: T, buffs: Buff[], buffParams: [new (...args: any[]) => Buff, any[]][]): void {
+	buffParams.forEach(([BuffClass, params]) => {
+		const buff = new BuffClass(...params, instancia).adicionaRefPai(instancia);
+
+		buffs.push(buff);
+	});
 }
 
 function classeComArgumentos<T extends new (...args: any[]) => any>(Ctor: T, ...params: ConstructorParameters<T>) {
@@ -58,8 +65,8 @@ export class Personagem {
     public atributos: AtributoPersonagem[];
     public pericias: PericiaPatentePersonagem[];
     public inventario: Inventario = new Inventario();
-    public buffsExternos: Buff[] = [];
     public habilidades: Habilidade[] = [];
+    public buffsExternos: Buff[] = [];
     public rituais: Ritual[] = [];
     public receptor: Receptor = new Receptor(this);
 
@@ -934,22 +941,54 @@ export class Personagem {
         this.atributos = this._ficha.atributos.map(attr => new AtributoPersonagem(attr.idAtributo, attr.valor!));
         this.pericias = this._ficha.periciasPatentes.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente));
 
-        // const item1 = new ItemArma(new NomeItem("Arma Corpo-a-Corpo Leve Simples", "Gorge"), 2, 0, [], [], true, new DetalhesItemArma(4, 3, 1));
-        // const acaoItem1 = new Acao("Realizar Ataque", 2, 1, item1, [], [new CustoExecucao(2, 1)], []);
-        // const requisitoAcao1Item1 = new RequisitoItemEmpunhado(1, acaoItem1.id);
-        // acaoItem1.adicionaRequisito(requisitoAcao1Item1);
-        // item1.acoes = [acaoItem1];
-        // this.inventario.adicionarItemNoInventario(item1);
-
         const item2 = new ItemComponente(new NomeItem("Componente de Energia Simples"), 1, 0, new DetalhesItemComponente(2, 1, 2));
         this.inventario.adicionarItemNoInventario(item2);
 
-        // const item3 = new ItemComponente(new NomeItem("Componente de Energia Simples"), 1, 0, new DetalhesItemComponente(2, 1, 2));
-        // this.inventario.adicionarItemNoInventario(item3);
+        const item3 = new ItemComponente(new NomeItem("Componente de Energia Simples"), 1, 0, new DetalhesItemComponente(2, 1, 2));
+        this.inventario.adicionarItemNoInventario(item3);
 
-        // const item4 = new ItemEquipamento(new NomeItem("Vestimenta Simples de Vontade"), 3, 1, [], [new BuffExterno(31, 'Melhoria Simples por Equipamento', 2, 1, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-        // this.inventario.adicionarItemNoInventario(item4);
-        // this.habilidades = habilidades;
+        const item4 = new ItemEquipamento(new NomeItem('Vestimenta Simples de Vontade'), 3, 1, false, new DetalhesItemEquipamento())
+            .adicionarBuffs([
+                classeComArgumentos(BuffExterno, 31, 'Melhoria Simples por Equipamento', 2, 5, 1, 1)
+            ]);
+        this.inventario.adicionarItemNoInventario(item4);
+
+        const item5 = new ItemEquipamento(new NomeItem('Utensilio Simples de Atletismo'), 3, 1, true, new DetalhesItemEquipamento())
+            .adicionarBuffs([
+                classeComArgumentos(BuffExterno, 9, 'Melhoria Simples por Equipamento', 2, 5, 1, 1)
+            ]);
+        this.inventario.adicionarItemNoInventario(item5);
+        
+        
+        
+        const item6 = new ItemArma(new NomeItem('Arma Corpo-a-Corpo Leve Simples', "Gorge"), 2, 0, true, new DetalhesItemArma(4, 3, 1))
+            .adicionarAcoes([
+                [
+                    AcaoItem,
+                    ['Realizar Ataque', 2, 1],
+                    (acao) => {
+                        acao.adicionarCustos([
+                            classeComArgumentos(CustoExecucao, 2, 1),
+                        ]);
+                        acao.adicionarRequisitos([
+                            classeComArgumentos(RequisitoItemEmpunhado),
+                        ]);
+                        acao.adicionarOpcoesExecucao([
+                            {
+                                key: 'alvo',
+                                obterOpcoes: (): Opcao[] => {
+                                    return [{key: 1, value: 'Alguem bem atrás de você'}];
+                                }
+                            },
+                        ]);
+                        acao.adicionarLogicaExecucao((valoresSelecionados) => {
+                            console.log("atacou");
+                        });
+                    }
+                ]
+                
+            ])
+        this.inventario.adicionarItemNoInventario(item6);
 
         const novoRitual1 = new Ritual("Aprimorar Acrobacia", 1, 2)
             .adicionarAcoes([
@@ -967,26 +1006,20 @@ export class Personagem {
                             classeComArgumentos(RequisitoComponente, true)
                         ]);
                         acao.adicionarOpcoesExecucao([
-                            (): Opcao[] => {
-                                const acaoRitual = acao as AcaoRitual;
+                            {
+                                key: 'custoComponente',
+                                obterOpcoes: (): Opcao[] => {
+                                    const acaoRitual = acao as AcaoRitual;
 
-                                return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.id).reduce((acc: {key:number; value:string}[], cur) => {
-                                    acc.push({key: cur.id, value: cur.nomeExibicaoOption});
-                                    return acc;
-                                }, [])
+                                    return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.id).reduce((acc: {key:number; value:string}[], cur) => {
+                                        acc.push({key: cur.id, value: cur.nomeExibicaoOption});
+                                        return acc;
+                                    }, [])
+                                }
                             },
                         ]);
                         acao.adicionarLogicaExecucao((valoresSelecionados) => {
-                            // gasta PE
-                            acao.custos[0].gastaCusto();
-
-                            // gasta execucao
-                            acao.custos[1].gastaCusto();
-
-                            // gasta componente
-                            acao.custos[2].gastaCusto(valoresSelecionados[0]);
-
-                            acao.executa();
+                            acao.ativaBuffs();
                         });
                     }
                 ]
@@ -1008,26 +1041,20 @@ export class Personagem {
                             classeComArgumentos(RequisitoComponente, true)
                         ]);
                         acao.adicionarOpcoesExecucao([
-                            (): Opcao[] => {
-                                const acaoRitual = acao as AcaoRitual;
-
-                                return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.id).reduce((acc: {key:number; value:string}[], cur) => {
-                                    acc.push({key: cur.id, value: cur.nomeExibicaoOption});
-                                    return acc;
-                                }, [])
+                            {
+                                key: 'custoComponente',
+                                obterOpcoes: (): Opcao[] => {
+                                    const acaoRitual = acao as AcaoRitual;
+    
+                                    return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.id).reduce((acc: {key:number; value:string}[], cur) => {
+                                        acc.push({key: cur.id, value: cur.nomeExibicaoOption});
+                                        return acc;
+                                    }, [])
+                                }
                             },
                         ]);
                         acao.adicionarLogicaExecucao((valoresSelecionados) => {
-                            // gasta PE
-                            acao.custos[0].gastaCusto();
-
-                            // gasta execucao
-                            acao.custos[1].gastaCusto();
-
-                            // gasta componente
-                            acao.custos[2].gastaCusto(valoresSelecionados[0]);
-
-                            acao.executa();
+                            acao.ativaBuffs();
                         });
                     }
                 ]
@@ -1046,14 +1073,23 @@ export class Personagem {
                             classeComArgumentos(RequisitoComponente, true)
                         ]);
                         acao.adicionarOpcoesExecucao([
-                            (): Opcao[] => {
-                                const acaoRitual = acao as AcaoRitual;
-
-                                return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.id).reduce((acc: {key:number; value:string}[], cur) => {
-                                    acc.push({key: cur.id, value: cur.nomeExibicaoOption});
-                                    return acc;
-                                }, [])
+                            {
+                                key: 'custoComponente',
+                                obterOpcoes: (): Opcao[] => {
+                                    const acaoRitual = acao as AcaoRitual;
+    
+                                    return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.id).reduce((acc: {key:number; value:string}[], cur) => {
+                                        acc.push({key: cur.id, value: cur.nomeExibicaoOption});
+                                        return acc;
+                                    }, [])
+                                }
                             },
+                            // {
+                            //     key: 'alvoRitual',
+                            //     obterOpcoes: (): Opcao[] => {
+
+                            //     }
+                            // }
                         ]);
                         acao.adicionarLogicaExecucao((valoresSelecionados) => {
                             console.log("fazer ataque");
@@ -1082,7 +1118,7 @@ export class Personagem {
             }
         });
 
-        if (idDuracao > 2 ) this.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
+        if (idDuracao >= 2 ) this.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
 
         this.onUpdate();
     }
@@ -1299,8 +1335,8 @@ export abstract class Buff {
     private static nextId = 1;
     public id: number;
     public quantidadeDuracaoAtual: number = 0;
-    public ativo: boolean = false;
-    public refAcao?: Acao;
+    protected _ativo: boolean = false;
+    public refPai?: Acao | Item;
 
     constructor(
         private _idBuff: number,
@@ -1313,20 +1349,21 @@ export abstract class Buff {
         this.id = Buff.nextId++;
     }
 
-    adicionaRefAcao(refAcao: Acao): this { return (this.refAcao = refAcao), this; }
+    adicionaRefPai(refPai: Acao | Item): this { return (this.refPai = refPai), this; }
 
+
+    get ativo(): boolean { return this._ativo; }
     get refBuff(): BuffRef { return SingletonHelper.getInstance().buffs.find(buff => buff.id === this._idBuff)!; }
-    // get refAcao(): Acao { return FichaHelper.getInstance().personagem.acoes.find(acao => acao.id === this._idAcao)!; }
     get refDuracao(): Duracao { return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === this._idDuracao)!; }
     get refTipoBuff(): TipoBuff { return SingletonHelper.getInstance().tipos_buff.find(tipo_buff => tipo_buff.id === this._idTipoBuff)!; }
 
     ativaBuff = (): void => {
-        this.ativo = true;
+        this._ativo = true;
         this.quantidadeDuracaoAtual = this.quantidadeDuracaoMaxima;
     }
 
     desativaBuff = (): void => {
-        this.ativo = false;
+        this._ativo = false;
     }
 
     get textoDuracao(): string {
@@ -1454,7 +1491,7 @@ export class BuffInterno extends Buff {
             },
             iconeCustomizado: {
                 corDeFundo: '#00FF00',
-                svg: this.refAcao!.svg,
+                svg: this.refPai!.svg,
             },
             corTooltip: tooltipPropsSuper.corTooltip,
             numeroUnidades: tooltipPropsSuper.numeroUnidades,
@@ -1464,10 +1501,16 @@ export class BuffInterno extends Buff {
 
 export class BuffExterno extends Buff {
     public svg: string = `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgdGV4dC1hbmNob3I9InN0YXJ0IiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiBmb250LXNpemU9IjE1MCIgaWQ9InN2Z18xIiB5PSIxMTQiIHg9IjU3IiBzdHJva2Utd2lkdGg9IjAiIHN0cm9rZT0iIzAwMCIgZmlsbD0iIzAwMDAwMCI+RTwvdGV4dD48L2c+PC9zdmc+`;
+    public refPai?: ItemEquipamento;
+    public get ativo(): boolean {
+        return (!this.refPai?.precisaEstarEmpunhado || (this.refPai.precisaEstarEmpunhado && this.refPai.estaEmpunhado));
+    }
 
     constructor(_idBuff: number, nome: string, valor: number, _idDuracao: number, quantidadeDuracaoMaxima: number, idTipoBuff: number) {
         super(_idBuff, nome, valor, _idDuracao, quantidadeDuracaoMaxima, idTipoBuff);
     }
+
+    adicionaRefPai(refPai: ItemEquipamento): this { return (this.refPai = refPai), this; }
 
     get tooltipProps(): TooltipProps {
         const tooltipPropsSuper = super.tooltipPropsSuper;
@@ -1499,7 +1542,7 @@ export class Acao {
     public buffs: Buff[] = [];
     public custos: Custo[] = [];
     public requisitos: Requisito[] = [];
-    public opcoesExecucao: OpcaoExecucao[] = [];
+    public opcoesExecucoes: OpcoesExecucao[] = [];
     private logicaExecucao: (valoresSelecionados: { [key: number]: number | undefined }) => void = () => { };
 
     constructor(
@@ -1527,10 +1570,10 @@ export class Acao {
     adicionaRefPai(pai: Ritual | Item | Habilidade): this { return (this._refPai = pai), this; }
 
     adicionarCustos(custoParams: [new (...args: any[]) => Custo, any[]][]): this { return (custoParams.forEach(([CustoClass, params]) => { this.custos.push((CustoClass === CustoComponente && this.refPai instanceof Ritual) ? new CustoComponente().setRefAcao(this as AcaoRitual) : new CustoClass(...params)); })), this; }
-    adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (buffParams.forEach(([BuffClass, params]) => { this.buffs.push(new BuffClass(...params).adicionaRefAcao(this)); })), this; }
+    adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this.buffs, buffParams), this) };
     adicionarRequisitos(requisitoParams: [new (...args: any[]) => Requisito, any[]][]): this { return ( requisitoParams.forEach(([RequisitoClass, params]) => { this.requisitos.push(new RequisitoClass(...params).setRefAcao(this as AcaoRitual)); }) ), this; }
-    adicionarOpcoesExecucao(opcoesParams: (() => Opcao[])[]): this { return (opcoesParams.forEach(obterOpcoes => { this.opcoesExecucao.push(new OpcaoExecucao(obterOpcoes)); }), this); }
-    adicionarLogicaExecucao(logicaExecucao: (valoresSelecionados: { [key: number]: number | undefined }) => void): this { return (this.logicaExecucao = logicaExecucao), this; }
+    adicionarOpcoesExecucao(opcoesParams: { key: string, obterOpcoes: () => Opcao[] }[]): this { return ( opcoesParams.forEach(param => { this.opcoesExecucoes.push(new OpcoesExecucao(param.key, param.obterOpcoes)); }) ), this };
+    adicionarLogicaExecucao(logicaExecucao: (valoresSelecionados: { [key: string]: number | undefined }) => void): this { return (this.logicaExecucao = logicaExecucao), this; }
 
     get refTipoPai(): 'Ritual' | 'Item' | 'Habilidade' | undefined {
         if (this.refPai instanceof Ritual) return "Ritual";
@@ -1538,39 +1581,6 @@ export class Acao {
         if (this.refPai instanceof Habilidade) return "Habilidade";
 
         return undefined;
-    }
-
-    executa = () => {
-        // if (!this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos) return;
-
-        // this.custos?.map((custo) => {
-        //     custo.gastaCusto();
-        // });
-
-        // if (this.refTipoAcao.id === 1) {
-        //     FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades[0].empunhar(1);
-        // }
-
-        // if (this.refTipoAcao.id === 3) {
-        //     this.buffs.map(buff => {
-        //         buff.ativaBuff()
-        //     });
-        // }
-
-        
-        // this.custos.forEach(custo => {
-        //     custo.gastaCusto();
-        // });
-
-
-        if (this.refTipoAcao.id === 3) {
-            this.buffs.map(buff => {
-                buff.ativaBuff()
-            });
-        }
-
-        FichaHelper.getInstance().personagem.onUpdate();
-
     }
 
     get verificaRequisitosCumpridos(): boolean {
@@ -1589,9 +1599,29 @@ export class Acao {
         );
     }
 
-    executaComOpcoes = (valoresSelecionados: { [key: number]: number | undefined }) => {
-        // colocar o pagamento do custo
+    aplicaGastos = (valoresSelecionados: { [key: string]: number | undefined }) : boolean => {
+        this.custos.forEach(custo => {
+            if (custo instanceof CustoComponente) {
+                custo.gastaCusto(valoresSelecionados['custoComponente']!);
+            } else {
+                custo.gastaCusto();
+            }
+        });
+
+        return true;
+    }
+
+    ativaBuffs = ():void => {
+        this.buffs.map(buff => {
+            buff.ativaBuff()
+        });
+    }
+
+    executaComOpcoes = (valoresSelecionados: { [key: string]: number | undefined }) => {
+        this.aplicaGastos(valoresSelecionados);
         this.logicaExecucao(valoresSelecionados);
+
+        FichaHelper.getInstance().personagem.onUpdate();
     }
 
     get tooltipProps(): TooltipProps {
@@ -1946,28 +1976,7 @@ export class CustoComponente extends Custo {
     gastaCusto(idItem:number): void {
         console.log(`Usou Componente de ${this.refAcao!.refPai.nome} ${this.refAcao!.refPai.refNivelComponente.nome}`);
 
-        // let componente:ItemComponente;
-
-        // if (this.precisaEstarEmpunhado) {
-        //     componente = FichaHelper.getInstance().personagem.inventario.items.find()
-        // } else {
-
-        // }
-
-        // const componente = (FichaHelper.getInstance().personagem.inventario.items
-        //     .filter(item =>
-        //         item instanceof ItemComponente &&
-        //         item.detalhesComponente.refElemento.id === this.refElemento.id &&
-        //         item.detalhesComponente.refNivelComponente.id === this.refNivelComponente.id
-        //     ) as ItemComponente[]
-        // )
-        //     .reduce((menor, itemAtual) => {
-        //         return (menor.detalhesComponente.usosAtuais < itemAtual.detalhesComponente.usosAtuais)
-        //             ? menor
-        //             : itemAtual;
-        //     });
-
-        // componente.gastaUso();
+        (FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === idItem) as ItemComponente).gastaUso();
     }
 }
 
@@ -1993,11 +2002,23 @@ export class CustoExecucao extends Custo {
 
     get refTipoExecucao(): TipoExecucao { return SingletonHelper.getInstance().tipos_execucao.find(execucao => execucao.id === this._idTipoExecucao)!; }
 
-    get podeSerPago(): boolean { return FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais >= this.valor; }
+    get podeSerPago(): boolean {
+        if (this.refTipoExecucao.id === 1) return true;
 
-    get descricaoCusto(): string { return `${this.valor} ${this.refTipoExecucao.nome}`; }
+        return FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais >= this.valor;
+    }
 
-    gastaCusto(): void { FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais -= this.valor; }
+    get descricaoCusto(): string {
+        if (this.refTipoExecucao.id === 1) return this.refTipoExecucao.nome;
+        
+        return `${this.valor} ${this.refTipoExecucao.nome}`;
+    }
+
+    gastaCusto(): void {
+        if (this.refTipoExecucao.id === 1) return;
+
+        FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais -= this.valor;
+    }
 }
 
 export class NivelRitual {
@@ -2129,15 +2150,16 @@ export class Inventario {
 
     get agrupamento(): Item[] {
         return [
-            ...(this.items.filter(item => !item.agrupavel)),
+            ...(this.items.filter(item => item.idTipoItem === ItemArma.idTipoStatic)),
+            ...(this.items.filter(item => item.idTipoItem === ItemEquipamento.idTipoStatic)),
             ...(this.items.filter(item => item.idTipoItem === ItemConsumivel.idTipoStatic).reduce((itemUnico, itemAtual) => {
-                if (!itemUnico.some(item => item.nome.customizado === itemAtual.nome.customizado)) {
+                if (!itemAtual.agrupavel || !itemUnico.some(item => item.agrupavel && item.nome.customizado === itemAtual.nome.customizado)) {
                     itemUnico.push(itemAtual);
                 }
                 return itemUnico;
             }, [] as typeof this.items)),
             ...(this.items.filter(item => item.idTipoItem === ItemComponente.idTipoStatic).reduce((itemUnico, itemAtual) => {
-                if (!itemUnico.some(item => item.nome.customizado === itemAtual.nome.customizado)) {
+                if (!itemAtual.agrupavel || !itemUnico.some(item => item.agrupavel && item.nome.customizado === itemAtual.nome.customizado)) {
                     itemUnico.push(itemAtual);
                 }
                 return itemUnico;
@@ -2199,11 +2221,13 @@ export class Item {
     public id: number;
 
     public acoes: Acao[] = [];
-    public buffs: Buff[] = [];
+    protected _buffs: Buff[] = [];
     public precisaEstarEmpunhado: boolean = false;
 
     protected idExtremidade?: number;
     public refExtremidade?: Extremidade;
+
+    protected _agrupavel: boolean = false;
 
     public svg = `PHN2ZyB3aWR0aD0iMjU2cHgiIGhlaWdodD0iMjU2cHgiIGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMDAwMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNDQ0LjE4IDQ0NC4xOCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gICA8cGF0aCBkPSJtNDA0LjIgMjA1Ljc0Yy0wLjkxNy0wLjY1Ni0yLjA5Ni0wLjgzLTMuMTY1LTAuNDY3IDAgMC0xMTkuMDEgNDAuNDc3LTEyMi4yNiA0MS41OTgtMi43MjUgMC45MzgtNC40ODctMS40Mi00LjQ4Ny0xLjQybC0zNy40NDgtNDYuMjU0Yy0wLjkzNS0xLjE1NC0yLjQ5Mi0xLjU5Mi0zLjg5LTEuMDk4LTEuMzk2IDAuNDk0LTIuMzMyIDEuODE2LTIuMzMyIDMuMjk5djE2Ny44OWMwIDEuMTY4IDAuNTgzIDIuMjYgMS41NTYgMi45MSAwLjU4NCAwLjM5MSAxLjI2MyAwLjU5IDEuOTQ1IDAuNTkgMC40NTEgMCAwLjkwNi0wLjA4OCAxLjMzNi0wLjI2N2wxNjguMDQtNjkuNDM4YzEuMzEtMC41NDEgMi4xNjMtMS44MTggMi4xNjMtMy4yMzR2LTkxLjI2NmMwLTEuMTI2LTAuNTQ0LTIuMTg1LTEuNDYyLTIuODQ0eiIvPiA8cGF0aCBkPSJtNDQzLjQ5IDE2OC4yMi0zMi4wNy00Mi44NTljLTAuNDYtMC42MTUtMS4xMTEtMS4wNjEtMS44NTItMS4yNzBsLTE4Ni40Mi01Mi42MzZjLTAuNjIyLTAuMTc2LTEuNDY1LTAuMTI1LTIuMDk2IDAuMDQ5bC0xODYuNDIgNTIuNjM2Yy0wLjczOSAwLjIwOS0xLjM5MSAwLjY1NC0xLjg1MSAxLjI3bC0zMi4wNzEgNDIuODYwYy0wLjY3MiAwLjg5OC0wLjg3MiAyLjA2My0wLjU0MSAzLjEzMyAwLjMzMiAxLjA3MSAxLjE1NyAxLjkxOCAyLjIxOSAyLjI3OWwxNTcuNjQgNTMuNTAyYzAuMzcgMC4xMjUgMC43NDkgMC4xODcgMS4xMjUgMC4xODcgMS4wMzUgMCAyLjA0MS0wLjQ2MiAyLjcxOC0xLjI5Nmw0NC4xMjgtNTQuMzkxIDEzLjA4MiAzLjZjMC42MDcgMC4xNjggMS4yNDkgMC4xNjggMS44NTcgMCAwIDAgMC4wNjQtMC4wMTYgMC4xOTItMC4wNDFsMTMuMDgyLTMuNiA0NC4xMjkgNTQuMzkxYzAuNjc3IDAuODM0IDEuNjgzIDEuMjk1IDIuNzE4IDEuMjk1IDAuMzc2IDAgMC43NTYtMC4wNjEgMS4xMjUtMC4xODZsMTU3LjY0LTUzLjUwMmMxLjA2Mi0wLjM2MSAxLjg4Ny0xLjIwOSAyLjIxOS0yLjI3OSAwLjMzLTEuMDcyIDAuMTMtMi4yMzYtMC41NDItMy4xMzQtMC41NDItMC42NTgtMS40NjItMS4yMTgtMi44NDQtMS40NDF6bS0yMjEuMy03Ljg0LTEzMy42OS0zNi41MjUgMTMzLjY5LTM3LjUyNyAxMzMuNDkgMzcuNDc5LTEzMy40OSAzNi41NzN6Ii8+IDxwYXRoIGQ9Im0yMTEuMjQgMTk4LjE1Yy0xLjM5Ni0wLjQ5NC0yLjk1NS0wLjA1Ny0zLjg4OSAxLjA5OGwtMzcuNDQ4IDQ2LjI1NXMtMS43NjQgMi4zNTYtNC40ODggMS40MmMtMy4yNTItMS4xMjEtMTIyLjI2LTQxLjU5OC0xMjIuMjYtNDEuNTk4LTEuMDctMC4zNjMtMi4yNDgtMC4xODktMy4xNjUgMC40NjctMC45MTggMC42NTgtMS40NjIgMS43MTctMS40NjIgMi44NDZ2OTEuMjY3YzAgMS40MTYgMC44NTQgMi42OTIgMi4xNjMgMy4yMzNsMTY4LjA0IDY5LjQzOGMwLjQzIDAuMTc4IDAuODg1IDAuMjY2IDEuMzM2IDAuMjY2IDAuNjg0IDAgMS4zNjItMC4xOTkgMS45NDYtMC41OSAwLjk3Mi0wLjY1IDEuNTU1LTEuNzQyIDEuNTU1LTIuOTF2LTE2Ny44OWMwLTEuNDgyLTAuOTM1LTIuODA0LTIuMzMyLTMuMjk4eiIvPiAgPC9zdmc+`;
 
@@ -2212,9 +2236,10 @@ export class Item {
         public nome: NomeItem,
         public peso: number,
         public categoria: number,
-        public agrupavel: boolean = false,
+        agrupavel: boolean = false,
     ) {
         this.id = Item.nextId++;
+        this._agrupavel = agrupavel;
 
         if (!this.precisaEstarEmpunhado) {
             this.buffs.map(buff => {
@@ -2223,8 +2248,21 @@ export class Item {
         }
     }
 
+    get agrupavel(): boolean {
+        return this._agrupavel;
+    }
+
+    get buffs(): Buff[] {
+        return this._buffs.filter(buff => buff.ativo);
+    }
+
     get nomeExibicao(): string { return this.nome.customizado };
     get nomeExibicaoOption(): string { return this.nome.customizado };
+    get estaEmpunhado(): boolean { return !!this.idExtremidade; }
+
+    adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this._buffs, buffParams), this) };
+    adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }
+
 
     ativarBuffs = (): void => {
         if (!this.precisaEstarEmpunhado) {
@@ -2232,17 +2270,6 @@ export class Item {
                 buff.ativaBuff();
             });
         }
-    }
-
-    adicionarBuff = (buff: Buff): void => {
-        if (!this.precisaEstarEmpunhado) {
-            buff.ativaBuff();
-        }
-        this.buffs.push(buff);
-    }
-
-    get estaEmpunhado(): boolean {
-        return !!this.idExtremidade;
     }
 
     sacar = (idExtremidade: number): void => {
@@ -2268,8 +2295,8 @@ export class Item {
     }
 
     removeDoInventario(): void {
-        console.log(`Removendo ${this.nome} do Inventário`);
         FichaHelper.getInstance().personagem.inventario.removerItem(this.id);
+        this.refExtremidade?.limpa();
     }
 
     get tooltipPropsGenerico(): TooltipProps {
@@ -2354,15 +2381,11 @@ export class ItemArma extends Item {
         public nome: NomeItem,
         public peso: number,
         public categoria: number,
-        acoes: Acao[],
-        buffs: Buff[],
         precisaEstarEmpunhado: boolean,
         public detalhesArma: DetalhesItemArma,
     ) {
         super(ItemArma.idTipoStatic, nome, peso, categoria);
         this._idTipoItem = ItemArma.idTipoStatic;
-        this.acoes = acoes;
-        this.buffs = buffs;
         this.precisaEstarEmpunhado = precisaEstarEmpunhado;
     }
 
@@ -2414,19 +2437,16 @@ export class ItemEquipamento extends Item {
         public nome: NomeItem,
         public peso: number,
         public categoria: number,
-        acoes: Acao[],
-        buffs: Buff[],
         precisaEstarEmpunhado: boolean,
-        agrupar: boolean,
         public detalhesEquipamento: DetalhesItemEquipamento,
     ) {
-        super(ItemEquipamento.idTipoStatic, nome, peso, categoria, agrupar);
+        super(ItemEquipamento.idTipoStatic, nome, peso, categoria);
         this._idTipoItem = ItemEquipamento.idTipoStatic;
-        this.acoes = acoes;
-        this.buffs = buffs;
         this.precisaEstarEmpunhado = precisaEstarEmpunhado;
+    }
 
-        this.ativarBuffs();
+    get buffs(): Buff[] {
+        return this._buffs;
     }
 
     get tooltipPropsSingular(): TooltipProps {
@@ -2468,13 +2488,11 @@ export class ItemConsumivel extends Item {
         public nome: NomeItem,
         public peso: number,
         public categoria: number,
-        acoes: Acao[],
         precisaEstarEmpunhado: boolean,
         public detalhesConsumivel: DetalhesItemConsumivel,
     ) {
         super(ItemConsumivel.idTipoStatic, nome, peso, categoria, true);
         this._idTipoItem = ItemConsumivel.idTipoStatic;
-        this.acoes = acoes;
         this.precisaEstarEmpunhado = precisaEstarEmpunhado;
     }
 
@@ -2528,6 +2546,9 @@ export class ItemComponente extends Item {
     }
 
     get nomeExibicaoOption(): string { return `${this.nome.customizado} (${this.detalhesComponente.usosAtuais})` };
+    get agrupavel(): boolean {
+        return (!this.estaEmpunhado && this._agrupavel);
+    }
 
     get tooltipPropsSingular(): TooltipProps {
         const tooltipPropsSuper = super.tooltipPropsGenerico;
@@ -2557,7 +2578,7 @@ export class ItemComponente extends Item {
 
         let items: ItemComponente[] = [this];
         if (this.agrupavel) {
-            items = FichaHelper.getInstance().personagem.inventario.items.filter(item => item instanceof ItemComponente && item.nome.padrao === this.nome.padrao && item.categoria === this.categoria && item.detalhesComponente.refElemento === this.detalhesComponente.refElemento && item.detalhesComponente.refNivelComponente) as ItemComponente[]
+            items = FichaHelper.getInstance().personagem.inventario.items.filter(item => item instanceof ItemComponente && item.agrupavel && item.nome.padrao === this.nome.padrao && item.categoria === this.categoria && item.detalhesComponente.refElemento === this.detalhesComponente.refElemento && item.detalhesComponente.refNivelComponente) as ItemComponente[]
         }
 
         const caixaInformacaoProps = ItemComponente.obtemCaixaInformacaoProps(items);
@@ -2660,6 +2681,10 @@ export class Extremidade {
 
     guardar = (): void => {
         this.refItem?.guardar();
+        this.limpa();
+    }
+
+    limpa = (): void => {
         this.idItemEmpunhado = undefined;
         this.refItem = undefined;
         FichaHelper.getInstance().personagem.onUpdate();
@@ -2949,23 +2974,29 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                         classeComArgumentos(RequisitoExtremidadeDisponivel), classeComArgumentos(RequisitoAlgumItemGuardado)
                     ]);
                     acao.adicionarOpcoesExecucao([
-                        (): Opcao[] => {
-                            return FichaHelper.getInstance().personagem.inventario.items.filter(item => !item.refExtremidade).reduce((acc: { key: number; value: string }[], cur) => {
-                                acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
-                                return acc;
-                            }, [])
+                        {
+                            key: 'idItem',
+                            obterOpcoes: (): Opcao[] => {
+                                return FichaHelper.getInstance().personagem.inventario.items.filter(item => !item.refExtremidade).reduce((acc: { key: number; value: string }[], cur) => {
+                                    acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
+                                    return acc;
+                                }, [])
+                            }
                         },
-                        (): Opcao[] => {
-                            return FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.filter(extremidade => !extremidade.refItem).reduce((acc: { key: number; value: string }[], cur) => {
-                                acc.push({ key: cur.id, value: `Extremidade ${cur.id}` });
-                                return acc;
-                            }, [])
+                        {
+                            key: 'idExtremidade',
+                            obterOpcoes: (): Opcao[] => {
+                                return FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.filter(extremidade => !extremidade.refItem).reduce((acc: { key: number; value: string }[], cur) => {
+                                    acc.push({ key: cur.id, value: `Extremidade ${cur.id}` });
+                                    return acc;
+                                }, [])
+                            }
                         },
                     ]);
                     acao.adicionarLogicaExecucao((valoresSelecionados) => {
-                        const extremidadeSelecionada = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => extremidade.id === valoresSelecionados[1]!)!;
+                        const extremidadeSelecionada = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => extremidade.id === valoresSelecionados['idExtremidade']!)!;
 
-                        extremidadeSelecionada.empunhar(valoresSelecionados[0]!);
+                        extremidadeSelecionada.empunhar(valoresSelecionados['idItem']!);
                     });
                 }
             ]
@@ -2985,15 +3016,18 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                         classeComArgumentos(RequisitoAlgumItemEmpunhado)
                     ]);
                     acao.adicionarOpcoesExecucao([
-                        (): Opcao[] => {
-                            return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade).reduce((acc: {key:number; value:string}[], cur) => {
-                                acc.push({key: cur.id, value: cur.nomeExibicaoOption});
-                                return acc;
-                            }, [])
+                        {
+                            key: 'idItem',
+                            obterOpcoes: (): Opcao[] => {
+                                return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade).reduce((acc: {key:number; value:string}[], cur) => {
+                                    acc.push({key: cur.id, value: cur.nomeExibicaoOption});
+                                    return acc;
+                                }, [])
+                            },
                         },
                     ]);
                     acao.adicionarLogicaExecucao((valoresSelecionados) => {
-                        const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados[0]);
+                        const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados['idItem']);
 
                         itemSelecionado?.refExtremidade?.guardar();
                     });
@@ -3005,16 +3039,10 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     return retorno;
 }
 
-export class OpcaoExecucao {
-    private obterOpcoes: () => Opcao[];
-
-    constructor(obterOpcoes: () => Opcao[]) {
-        this.obterOpcoes = obterOpcoes;
-    }
-
-    opcoes(): Opcao[] {
-        return this.obterOpcoes();
-    }
+export class OpcoesExecucao {
+    constructor(private _key: string, private _obterOpcoes: () => Opcao[]) {}
+    get opcoes(): Opcao[] { return this._obterOpcoes(); }
+    get key(): string { return this._key; }
 }
 
 export type Opcao = { key: number, value: string };

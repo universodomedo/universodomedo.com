@@ -26,7 +26,7 @@ const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, aco
           if (acao.requisitos && acao.requisitos.length > 0) {
             dispatch(iniciaExecucaoAcao({ acao }));
           } else {
-            acao.executa();
+            acao.executaComOpcoes({});
           }
         }
       }} props={acao.tooltipProps.iconeCustomizado} />

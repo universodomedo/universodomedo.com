@@ -24,8 +24,8 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
   const dispatch = useDispatch();
   const [contextMenu, setContextMenu] = useState(initialContextMenu);
 
-  const itensEmpunhados = inventarioPersonagem.agrupamento.filter(item => item.refExtremidade);
-  const itensGuardados = inventarioPersonagem.agrupamento.filter(item => !item.refExtremidade);
+  const itensEmpunhados = inventarioPersonagem.agrupamento.filter(item => item.estaEmpunhado);
+  const itensGuardados = inventarioPersonagem.agrupamento.filter(item => !item.estaEmpunhado);
 
   const clickItem = (item: Item) => {
     if (item.acoes.length === 0) return;

@@ -49,6 +49,10 @@ const Ficha: React.FC = () => {
 
             <div className={style.div_demo_acoes}>
                 <div>
+                    <button onClick={() => {console.log(personagem)}}>teste</button>
+                </div>
+
+                <div>
                     <h1>Alterar Estatísticas Máximas</h1>
                     <select id="estatisticaMaxima">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
                     Valor Máximo: <input id="valorMaximo" type="number" min={1} />
