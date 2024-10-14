@@ -1,0 +1,22 @@
+.icones_itens {
+    display: inline-block;
+    position: relative;
+    width: 10vh;
+    border: 3px solid #7b7b7b77;
+    border-radius: 5%;
+    box-shadow: inset 0px 0px 9px 2px #85858555;
+    padding: 2%;
+}
+
+.icones_itens img {
+    width: 100%;
+}
+
+.quantidade_agrupada {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+    padding: 2%;
+    font-size: 1rem;
+}

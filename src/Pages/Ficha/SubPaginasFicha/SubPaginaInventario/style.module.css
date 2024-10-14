@@ -1,0 +1,28 @@
+.container_extremidades {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    color: white;
+}
+
+.extremidade {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    align-items: center;
+}
+
+.extremidade img {
+    filter: invert(1);
+}
+
+.icones_extremidade_vazia {
+    display: inline-block;
+    position: relative;
+    width: 10vh;
+    height: 10vh;
+    border: 3px solid #7b7b7b77;
+    border-radius: 5%;
+    box-shadow: inset 0px 0px 9px 2px #030202f2;
+    padding: 2%;
+}

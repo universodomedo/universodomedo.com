@@ -15,7 +15,8 @@ const initialState: TooltipState = {
   conteudo: {
     caixaInformacao: {cabecalho: [], corpo: []},
     iconeCustomizado: {corDeFundo: '', svg: ''},
-    corTooltip: {corPrimaria: ''}
+    corTooltip: {corPrimaria: ''},
+    numeroUnidades: 0,
   }
 };
 

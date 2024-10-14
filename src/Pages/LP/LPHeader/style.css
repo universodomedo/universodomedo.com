@@ -43,3 +43,26 @@
 .nav-menu a:hover {
   color: red;
 }
+
+.link-demo {
+  font-weight: bold;
+  animation: pulsar 1.5s ease-in-out infinite;
+}
+
+@keyframes pulsar {
+  15% {
+      color: white;
+      transform: scale(1);
+      opacity: 1;
+  }
+  50% {
+      color: red;
+      transform: scale(1.15);
+      opacity: 0.7;
+  }
+  85% {
+      color: white;
+      transform: scale(1);
+      opacity: 1;
+  }
+}

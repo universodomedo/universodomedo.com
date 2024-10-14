@@ -1,4 +1,4 @@
-.icone_ritual {
+.icone {
     border-radius: 5px;
     border: 1px antiquewhite solid;
     box-shadow: inset 0px 0px 5px 1px black;
@@ -7,4 +7,9 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.icone:hover {
+    border-color: #2684FF;
+    box-shadow: inset 0px 0px 5px 1px black, 0 0 0 1px #2684FF;
 }

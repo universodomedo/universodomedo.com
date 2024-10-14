@@ -5,7 +5,7 @@ import CaixaInformacao from "Components/CaixaInformacao/page.tsx";
 import { TooltipState } from "Redux/slices/tooltipHelperSlice";
 // #endregion
 
-const page = ({tooltip}:{tooltip:TooltipState}) => {
+const page = ({ tooltip }: { tooltip: TooltipState }) => {
   const divRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: tooltip.position.top, left: tooltip.position.left });
   const [visible, setVisible] = useState(false);
@@ -14,9 +14,16 @@ const page = ({tooltip}:{tooltip:TooltipState}) => {
   useEffect(() => {
     if (divRef.current) {
       const rect = divRef.current.getBoundingClientRect();
+      let newTop = tooltip.position.top + padding;
+      let newLeft = tooltip.position.left - rect.width / 2 + tooltip.dimensoesReferencia.width / 2;
+
+      if (newTop + rect.height > window.innerHeight) {
+        newTop = tooltip.position.top - rect.height - tooltip.dimensoesReferencia.height - padding;
+      }
+
       setPosition({
-        top: tooltip.position.top + padding,
-        left: (tooltip.position.left - rect.width / 2 + tooltip.dimensoesReferencia.width / 2),
+        top: newTop,
+        left: newLeft,
       });
 
       setVisible(true);
@@ -25,7 +32,7 @@ const page = ({tooltip}:{tooltip:TooltipState}) => {
 
   return (
     <>
-      <div ref={divRef} style={{position: 'absolute', top: position.top, left: position.left, visibility: visible ? 'visible' : 'hidden'}}>
+      <div ref={divRef} style={{ position: 'absolute', top: position.top, left: position.left, visibility: visible ? 'visible' : 'hidden' }}>
         <CaixaInformacao props={tooltip.conteudo} />
       </div>
     </>

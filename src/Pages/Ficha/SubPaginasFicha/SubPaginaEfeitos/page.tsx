@@ -22,6 +22,16 @@ const page: React.FC<{ abaId: string; buffsPersonagem:BuffsAplicados}> = ({ abaI
     return acc.concat(buffsDoTipo);
   }, [] as Buff[]);
 
+  const buffsSobreescritos = buffsPersonagem.listaObjetosBuff.reduce((acc, cur) => {
+    const buffsDoTipo = cur.tipoBuff.reduce((acc2, cur2) => {
+      acc2.push(...cur2.sobreescritos);
+
+      return acc2;
+    }, [] as Buff[]);
+
+    return acc.concat(buffsDoTipo);
+  }, [] as Buff[]);
+
   const renderBuffItem = (efeito: Buff, index: number) => (
     <ReferenciaTooltip key={index} objeto={efeito.tooltipProps}>
       <IconeCustomizado props={efeito.tooltipProps.iconeCustomizado} />
@@ -29,7 +39,7 @@ const page: React.FC<{ abaId: string; buffsPersonagem:BuffsAplicados}> = ({ abaI
   );
 
   return (
-    <ConsultaProvider<Buff> abaId={abaId} registros={buffsAplicados} filtroProps={Buff.filtroProps} onLoadComplete={stopLoading}>
+    <ConsultaProvider<Buff> abaId={abaId} registros={[buffsAplicados, buffsSobreescritos]} filtroProps={Buff.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={ { usaSubtitulos: true, divisoes: ['Efeitos Aplicados', 'Efeitos Sobrescritos'] } }>
       <Consulta renderItem={renderBuffItem} />
     </ConsultaProvider>
   );
