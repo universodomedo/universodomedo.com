@@ -933,7 +933,7 @@ export class Personagem {
             0,
             [new Execucao(2, 1), new Execucao(3, 1), new Execucao(4, 1), new Execucao(6, 1)],
             new EspacoInventario(5, 5),
-            new EspacoCategoria(2, 0, 0, 0),
+            new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2)]),
             [new Extremidade(), new Extremidade()],
         );
 
@@ -1145,18 +1145,28 @@ export class EstatisticasBuffaveisPersonagem {
         public resistenciaParanormal: number,
         public execucoes: Execucao[],
         public espacoInventario: EspacoInventario,
-        public espacoCategoria: EspacoCategoria,
+        public gerenciadorEspacoCategoria: GerenciadorEspacoCategoria,
         public extremidades: Extremidade[],
     ) { }
 }
 
+export class GerenciadorEspacoCategoria {
+    constructor(public espacosCategoria: EspacoCategoria[]) { }
+
+    numeroItensCategoria(valorCategoria: number): number {
+        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.categoria === valorCategoria).length;
+    }
+}
+
 export class EspacoCategoria {
     constructor(
-        categoria1: number,
-        categoria2: number,
-        categoria3: number,
-        categoria4: number,
-    ) { }
+        public valorCategoria: number,
+        public maximoEspacosCategoria: number,
+    ) {}
+
+    get nomeCategoria(): string {
+        return `Categoria ${this.valorCategoria}`;
+    }
 }
 
 export class EspacoInventario {

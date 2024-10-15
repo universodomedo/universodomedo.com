@@ -7,15 +7,11 @@ const LayoutInterno2 = () => {
         <div className={styles.content}>
           <main className={styles.main}>
             <div className={styles.alpha_warning}>
-              Atenção! Conteúdo em Alpha<br />
+              Versão Beta: 0.1.0<br />
               Versões posteriores podem diferir da atual
             </div>
 
             <Outlet />
-
-            <div className={styles.alpha_warning}>
-              v0.0.11
-            </div>
           </main>
         </div>
       </>

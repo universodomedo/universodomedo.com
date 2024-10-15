@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'Redux/store.ts';
 import { selectPersonagemCarregado } from "Redux/slices/fichaHelperSlice.ts";
 import Aba1 from "Pages/Ficha/Abas/Aba1/page.tsx";
-import Aba2 from "Pages/Ficha/Abas/Aba2/page.tsx";
+import SubPaginaEstatisticasDanificaveis from "Pages/Ficha/SubPaginasFicha/SubPaginaEstatisticasDanificaveis/page.tsx";
 import SubPaginaAtributosPericias from "Pages/Ficha/SubPaginasFicha/SubPaginaAtributosPericias/page.tsx";
 import SubPaginaReducoes from "Pages/Ficha/SubPaginasFicha/SubPaginaReducoes/page.tsx";
 import SubPaginaInventario from "Pages/Ficha/SubPaginasFicha/SubPaginaInventario/page.tsx";
@@ -49,28 +49,31 @@ const Ficha: React.FC = () => {
 
             <div className={style.div_demo_acoes}>
                 <div>
-                    <button onClick={() => {console.log(personagem)}}>teste</button>
+                    <h1>Aumentar Máximo</h1>
+                    <div>
+                        <select id="valorMaximo">{Array.from({length:100}, (_, index) => (index + 1) * 10).map((option) => (<option key={option} value={option}>{option}</option>))}</select>
+                        <select id="estatisticaMaxima">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
+                    </div>
+                    <div><button onClick={() => {personagem.alterarMaximoEstatistica(parseInt((document.querySelector('#estatisticaMaxima') as HTMLSelectElement).value), parseInt((document.querySelector('#valorMaximo') as HTMLInputElement).value))}}>Alterar</button></div>
                 </div>
 
                 <div>
-                    <h1>Alterar Estatísticas Máximas</h1>
-                    <select id="estatisticaMaxima">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
-                    Valor Máximo: <input id="valorMaximo" type="number" min={1} />
-                    <button onClick={() => {personagem.alterarMaximoEstatistica(parseInt((document.querySelector('#estatisticaMaxima') as HTMLSelectElement).value), parseInt((document.querySelector('#valorMaximo') as HTMLInputElement).value))}}>Alterar</button>
+                    <h1>Recuperar</h1>
+                    <div>
+                        <select id="estatistica">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
+                        <select id="valorRecuperar">{Array.from({length:100}, (_, index) => (index + 1) * 10).map((option) => (<option key={option} value={option}>{option}</option>))}</select>
+                    </div>
+                    <div>
+                        <button onClick={() => {personagem.receptor.teste(parseInt((document.querySelector('#estatistica') as HTMLSelectElement).value), parseInt((document.querySelector('#valorRecuperar') as HTMLSelectElement).value))}}>Recuperar</button>
+                    </div>
                 </div>
+
 
                 <div>
                     <h1>Passar Durações</h1>
                     {singleton.duracoes.filter(duracao => duracao.id !== 5).map((duracao, index) => (
                         <button key={index} onClick={() => { personagem.rodaDuracao(duracao.id) }} >{duracao.nome}</button>
                     ))}
-                </div>
-
-                <div>
-                    <h1>Recuperar</h1>
-                    <select id="estatistica">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
-                    <select id="valorRecuperar">{Array.from({length:100}, (_, index) => (index + 1) * 10).map((option) => (<option key={option} value={option}>{option}</option>))}</select>
-                    <button onClick={() => {personagem.receptor.teste(parseInt((document.querySelector('#estatistica') as HTMLSelectElement).value), parseInt((document.querySelector('#valorRecuperar') as HTMLSelectElement).value))}}>Recuperar</button>
                 </div>
 
                 <div>
@@ -96,7 +99,7 @@ const Ficha: React.FC = () => {
 
                     <div className={style.wrapper_conteudo_abas}>
                         <PainelAbas id="aba1"><Aba1 detalhesPersonagem={personagem.detalhes}/></PainelAbas>
-                        <PainelAbas id="aba2"><Aba2 estatisticasDanificaveis={personagem.estatisticasDanificaveis}/></PainelAbas>
+                        <PainelAbas id="aba2"><SubPaginaEstatisticasDanificaveis estatisticasDanificaveis={personagem.estatisticasDanificaveis}/></PainelAbas>
                         <PainelAbas id="aba3"><SubPaginaEfeitos buffsPersonagem={personagem.buffsAplicados} abaId={"aba3"}/></PainelAbas>
                         <PainelAbas id="aba4"><SubPaginaAtributosPericias atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias}/></PainelAbas>
                         <PainelAbas id="aba5"><SubPaginaReducoes reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>

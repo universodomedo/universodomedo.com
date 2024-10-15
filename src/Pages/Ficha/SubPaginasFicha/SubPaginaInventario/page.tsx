@@ -29,10 +29,10 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
 
   const clickItem = (item: Item) => {
     if (item.acoes.length === 0) return;
-    
+
     abrirAbaAcao();
 
-    dispatch(setCacheFiltros({ abaId: 'aba7', filtro: [ { idFiltro: 1, idOpcao: [item.nome.padrao] } ], updateExterno: true }));
+    dispatch(setCacheFiltros({ abaId: 'aba7', filtro: [{ idFiltro: 1, idOpcao: [item.nome.customizado] }], updateExterno: true }));
   }
 
   const renderItem = (item: Item, index: number) => (
@@ -45,11 +45,22 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
     e.preventDefault();
 
     const { pageX, pageY } = e;
-    setContextMenu({show: true, x: pageX, y: pageY});
+    setContextMenu({ show: true, x: pageX, y: pageY });
   }
 
   return (
-    <>
+    <div className={style.conteudo_inventario}>
+      <div className={style.inventario_maximos}>
+        <BarraEstatisticaDanificavel titulo={'Espaços'} valorAtual={inventarioPersonagem.espacosUsados} valorMaximo={estatisticasBuffaveis.espacoInventario.espacoTotal} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
+        <div className={style.inventario_categoria}>
+          {estatisticasBuffaveis.gerenciadorEspacoCategoria.espacosCategoria.map((espacoCategoria, index) => (
+            <div key={index} className={style.barra_categoria}>
+              <BarraEstatisticaDanificavel titulo={espacoCategoria.nomeCategoria} valorAtual={estatisticasBuffaveis.gerenciadorEspacoCategoria.numeroItensCategoria(espacoCategoria.valorCategoria)} valorMaximo={espacoCategoria.maximoEspacosCategoria} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {estatisticasBuffaveis.extremidades.length > 0 && (
         <div className={style.container_extremidades}>
           {estatisticasBuffaveis.extremidades.map((extremidade, index) => (
@@ -59,7 +70,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
                 <ReferenciaTooltip key={index} objeto={extremidade.refItem.tooltipPropsSingular}>
                   <IconeItem quantidadeAgrupada={extremidade.refItem.tooltipPropsSingular.numeroUnidades} props={extremidade.refItem.tooltipPropsSingular.iconeCustomizado} onClick={() => clickItem(extremidade.refItem!)} />
                 </ReferenciaTooltip>
-              ) : 
+              ) :
                 <div className={style.icones_extremidade_vazia}></div>
               }
             </div>
@@ -67,10 +78,10 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
         </div>
       )}
 
-      <ConsultaProvider<Item> abaId={abaId} registros={[itensEmpunhados, itensGuardados]} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={ { usaSubtitulos: true, divisoes: ['Itens Empunhados', 'Itens Guardados'] } }>
+      <ConsultaProvider<Item> abaId={abaId} registros={[itensEmpunhados, itensGuardados]} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Empunhados', 'Itens Guardados'] }}>
         <Consulta renderItem={renderItem} />
       </ConsultaProvider>
-    </>
+    </div>
   );
 };
 

@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'Redux/store.ts';
 import "react-tabs/style/react-tabs.css";
 import { selectPersonagemCarregado } from "Redux/slices/fichaHelperSlice.ts";
-import Aba2 from "Pages/Ficha/Abas/Aba2/page.tsx";
+import Aba2 from "@pages/Ficha/SubPaginasFicha/SubPaginaEstatisticasDanificaveis/page";
 import Aba3 from "@pages/Ficha/SubPaginasFicha/SubPaginaAtributoPericia/page";
 import Aba6 from "Pages/Ficha/Abas/Aba6/page.tsx";
 import Aba8 from "Pages/Ficha/Abas/Aba8/page.tsx";
