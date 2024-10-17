@@ -12,10 +12,9 @@
     flex-direction: row;
     gap: 1vh;
     border: 2px white solid;
-    padding: 2%;
+    padding: .4%;
     margin: .8%;
     color: white;
-    max-height: 8vh;
     overflow-y: auto;
     justify-content: space-evenly;
 }
@@ -23,16 +22,3 @@
 .div_demo_acoes h1 {
     margin: 0;
 }
-
-/* primeiro sistema de abas */
-
-
-/* .main_wrapper {
-    flex: 1;
-    overflow: auto;
-}
-
-.container_aba {
-    flex: 1;
-    overflow-y: auto;
-} */

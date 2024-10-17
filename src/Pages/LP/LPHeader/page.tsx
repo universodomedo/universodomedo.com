@@ -18,6 +18,7 @@ const LPHeader = () => {
           <Link to=""><li>Sistema</li></Link>
           <Link to=""><li>Redes Sociais</li></Link> */}
           <Link to="/ficha-demo" className="link-demo">Demonstração</Link>
+          <Link to="/tutorial-ficha" className="link-tuto">Tutorial</Link>
         </ul>
       </nav>
 

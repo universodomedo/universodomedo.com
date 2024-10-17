@@ -14,7 +14,7 @@ const store = configureStore({
         singletonHelper: singletonHelperReducer,
         tooltipHelper: tooltipHelperReducer,
         abasHelper: abasHelperReducer,
-        executadorAcao: executadorAcaoHelperReducer,
+        executadorAcaoHelper: executadorAcaoHelperReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false,

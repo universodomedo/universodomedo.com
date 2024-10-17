@@ -1,0 +1,7 @@
+.estatisticas_barras {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10%;
+    font-size: 3vh;
+}

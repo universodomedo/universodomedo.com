@@ -15,9 +15,27 @@
     margin-bottom: 1vh;
 }
 
-.alpha_warning {
-    padding: 1%;
-    margin: 2vh auto;
+.avisos {
+    display: flex;
+    flex-direction: row;
+    color: white;
+    align-items: center;
+}
+
+.voltar {
+    margin-left: 2%;
+}
+
+.voltar a {
+    color: white;
+    font-weight: bolder;
+}
+
+.aviso_beta {
+    display: flex;
+    flex-direction: row;
     border: 1px white solid;
     color: white;
+    padding: .3%;
+    margin: .5% auto 0 auto;
 }

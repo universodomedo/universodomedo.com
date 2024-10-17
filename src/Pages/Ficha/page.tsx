@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'Redux/store.ts';
 import { selectPersonagemCarregado } from "Redux/slices/fichaHelperSlice.ts";
 import Aba1 from "Pages/Ficha/Abas/Aba1/page.tsx";
-import Aba2 from "Pages/Ficha/Abas/Aba2/page.tsx";
+import SubPaginaEstatisticasDanificaveis from "Pages/Ficha/SubPaginasFicha/SubPaginaEstatisticasDanificaveis/page.tsx";
 import SubPaginaAtributosPericias from "Pages/Ficha/SubPaginasFicha/SubPaginaAtributosPericias/page.tsx";
 import SubPaginaReducoes from "Pages/Ficha/SubPaginasFicha/SubPaginaReducoes/page.tsx";
 import SubPaginaInventario from "Pages/Ficha/SubPaginasFicha/SubPaginaInventario/page.tsx";
@@ -16,6 +16,7 @@ import SubPaginaEfeitos from "Pages/Ficha/SubPaginasFicha/SubPaginaEfeitos/page.
 import { Abas, ListaAbas, Aba, PainelAbas, ControleAbasExternas } from 'Components/LayoutAbas/page.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { LoggerHelper } from 'Types/classes_estaticas.tsx';
 
 import Modal from "Components/Modal/page.tsx";
 import TesteShop from "Pages/TesteShop/page.tsx";
@@ -49,14 +50,29 @@ const Ficha: React.FC = () => {
 
             <div className={style.div_demo_acoes}>
                 <div>
-                    <button onClick={() => {console.log(personagem)}}>teste</button>
+                    <h1>Alterar Estatística</h1>
+                    <div>
+                        <select id="estatistica">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
+                        <select id="valorRecuperar">{Array.from({length:100}, (_, index) => (index + 1)).map((option) => (<option key={option} value={option}>{option}</option>))}</select>
+                    </div>
+                    <div>
+                        <select id="danificarOuRecuperar"><option key={1} value={'Danificar'}>Danificar</option><option key={2} value={'Recuperar'}>Recuperar</option></select>
+                        <button onClick={() => {personagem.receptor.teste(
+                            parseInt((document.querySelector('#estatistica') as HTMLSelectElement).value),
+                            parseInt((document.querySelector('#valorRecuperar') as HTMLSelectElement).value),
+                            (document.querySelector('#danificarOuRecuperar') as HTMLSelectElement).selectedIndex+1,
+                        );}}>Aplicar</button>
+                    </div>
                 </div>
 
+
                 <div>
-                    <h1>Alterar Estatísticas Máximas</h1>
-                    <select id="estatisticaMaxima">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
-                    Valor Máximo: <input id="valorMaximo" type="number" min={1} />
-                    <button onClick={() => {personagem.alterarMaximoEstatistica(parseInt((document.querySelector('#estatisticaMaxima') as HTMLSelectElement).value), parseInt((document.querySelector('#valorMaximo') as HTMLInputElement).value))}}>Alterar</button>
+                    <h1>Alterar Est. Máxima</h1>
+                    <div>
+                        <select id="valorMaximo">{Array.from({length:100}, (_, index) => (index + 1) * 10).map((option) => (<option key={option} value={option}>{option}</option>))}</select>
+                        <select id="estatisticaMaxima">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
+                    </div>
+                    <div><button onClick={() => {personagem.alterarMaximoEstatistica(parseInt((document.querySelector('#estatisticaMaxima') as HTMLSelectElement).value), parseInt((document.querySelector('#valorMaximo') as HTMLInputElement).value))}}>Alterar</button></div>
                 </div>
 
                 <div>
@@ -66,17 +82,10 @@ const Ficha: React.FC = () => {
                     ))}
                 </div>
 
-                <div>
-                    <h1>Recuperar</h1>
-                    <select id="estatistica">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
-                    <select id="valorRecuperar">{Array.from({length:100}, (_, index) => (index + 1) * 10).map((option) => (<option key={option} value={option}>{option}</option>))}</select>
-                    <button onClick={() => {personagem.receptor.teste(parseInt((document.querySelector('#estatistica') as HTMLSelectElement).value), parseInt((document.querySelector('#valorRecuperar') as HTMLSelectElement).value))}}>Recuperar</button>
-                </div>
-
-                <div>
+                {/* <div>
                     <h1>Shopping</h1>
                     <button onClick={(e) => { e.preventDefault(); openModal(); }}>Abrir Shopping</button>
-                </div>
+                </div> */}
             </div>
 
             {personagem && (
@@ -96,7 +105,7 @@ const Ficha: React.FC = () => {
 
                     <div className={style.wrapper_conteudo_abas}>
                         <PainelAbas id="aba1"><Aba1 detalhesPersonagem={personagem.detalhes}/></PainelAbas>
-                        <PainelAbas id="aba2"><Aba2 estatisticasDanificaveis={personagem.estatisticasDanificaveis}/></PainelAbas>
+                        <PainelAbas id="aba2"><SubPaginaEstatisticasDanificaveis estatisticasDanificaveis={personagem.estatisticasDanificaveis}/></PainelAbas>
                         <PainelAbas id="aba3"><SubPaginaEfeitos buffsPersonagem={personagem.buffsAplicados} abaId={"aba3"}/></PainelAbas>
                         <PainelAbas id="aba4"><SubPaginaAtributosPericias atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias}/></PainelAbas>
                         <PainelAbas id="aba5"><SubPaginaReducoes reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
