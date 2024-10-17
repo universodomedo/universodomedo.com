@@ -1,11 +1,11 @@
 // #region Imports
 import style from "./style.module.css";
-import React, { useState, ReactNode, createContext, useContext, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState, ReactNode, createContext, useContext, forwardRef, useImperativeHandle, useRef } from 'react';
 import { LoadingContext } from "Components/LayoutAbas/hooks.ts";
 // #endregion
 
 const ContextoAba = createContext<{ abasAbertas: string[]; alternaAba: (idAba: string) => void; } | undefined>(undefined);
-const Abas: React.FC<{ children: ReactNode }> = ({ children }) => {
+const Abas: React.FC<{ children: ReactNode; }> = ({ children }) => {
     const [abasAbertas, setAbasAbertas] = useState<string[]>([]);
 
     const alternaAba = (idAba: string) => {
@@ -34,7 +34,7 @@ const Aba: React.FC<{ id: string; children: ReactNode; }> = ({ id, children }) =
     const { abasAbertas, alternaAba } = context;
 
     return (
-        <button className={`${style.botao_aba} ${abasAbertas.includes(id) ? style.botao_aba_ativa : ''}`} onClick={() => alternaAba(id)}>
+        <button id={id} className={`${style.botao_aba} ${abasAbertas.includes(id) ? style.botao_aba_ativa : ''}`} onClick={() => alternaAba(id)}>
             {children}
         </button>
     );
@@ -45,13 +45,25 @@ const PainelAbas: React.FC<{ id: string; children: ReactNode; }> = ({ id, childr
     if (!context) throw new Error("O PainelAbas precisa estar contido na organização de Abas");
 
     const { abasAbertas } = context;
+    const abaRef = useRef<HTMLDivElement | null>(null);
+    const [abasAbertasAnteriormente, setAbasAbertasAnteriormente] = useState<string[]>([]);
+
+    useEffect(() => {
+        const abaFoiAberta = !abasAbertasAnteriormente.includes(id) && abasAbertas.includes(id);
+
+        if (abaFoiAberta && abaRef.current) {
+            abaRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        setAbasAbertasAnteriormente(abasAbertas);
+    }, [abasAbertas]);
 
     return abasAbertas.includes(id)
-        ? <JanelaConteudoAba id={id}>{children}</JanelaConteudoAba>
+        ? <JanelaConteudoAba ref={abaRef} id={id}>{children}</JanelaConteudoAba>
         : null;
 };
 
-const JanelaConteudoAba: React.FC<{ id: string; children: ReactNode }> = ({ id, children }): ReactNode => {
+const JanelaConteudoAba = React.forwardRef<HTMLDivElement, { id: string; children: ReactNode }>(({ id, children }, ref) => {
     const context = useContext(ContextoAba);
     if (!context) throw new Error("A Janela precisa estar contido na organização de Abas");
     const { alternaAba } = context;
@@ -64,7 +76,7 @@ const JanelaConteudoAba: React.FC<{ id: string; children: ReactNode }> = ({ id, 
 
     return (
         <LoadingContext.Provider value={{ loading, stopLoading }}>
-            <div className={`${style.wrapper_aba}`}>
+            <div ref={ref} className={`${style.wrapper_aba}`}>
                 <div className={style.barra_superior_conteudo_aba}>
                     <button className={style.botao_fechar_aba} onClick={() => alternaAba(id)}>x</button>
                 </div>
@@ -74,7 +86,7 @@ const JanelaConteudoAba: React.FC<{ id: string; children: ReactNode }> = ({ id, 
             </div>
         </LoadingContext.Provider>
     );
-}
+});
 
 const ControleAbasExternas = forwardRef((_, ref) => {
     const contextoAba = useContext(ContextoAba);

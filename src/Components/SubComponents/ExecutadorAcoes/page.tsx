@@ -45,17 +45,22 @@ const Page = () => {
         <>
             {acaoRequisitada && (
                 <div className={style.acao_emexecucao}>
-                    {acaoRequisitada.opcoesExecucoes.map((opcoesExecucao) => {
-                        const key = opcoesExecucao.key;
+                    <div className={style.opcoes_acao}>
+                        {acaoRequisitada.opcoesExecucoes.map((opcoesExecucao) => {
+                            const key = opcoesExecucao.key;
 
-                        return (
-                            <select key={key} value={valoresSelecionados[key] || ''} onChange={(e) => handleSelectChange(key, Number(e.target.value))}>
-                                {opcoesExecucao.opcoes.map(opcao => (
-                                    <option key={opcao.key} value={opcao.key}>{opcao.value}</option>
-                                ))}
-                            </select>
-                        );
-                    })}
+                            return (
+                                <div key={key} className={style.opcao_acao}>
+                                    <h2>{opcoesExecucao.displayName}</h2>
+                                    <select value={valoresSelecionados[key] || ''} onChange={(e) => handleSelectChange(key, Number(e.target.value))}>
+                                        {opcoesExecucao.opcoes.map(opcao => (
+                                            <option key={opcao.key} value={opcao.key}>{opcao.value}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            );
+                        })}
+                    </div>
 
                     <div>
                         <button onClick={executar}>Executar</button>

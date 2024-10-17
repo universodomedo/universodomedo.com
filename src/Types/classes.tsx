@@ -48,9 +48,14 @@ class Receptor {
         public personagem: Personagem,
     ) { }
 
-    teste = (idEstatistica: number, valorCura: number) => {
-        this.personagem.estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === idEstatistica)?.aplicarCura(valorCura);
-        this.historico.teste("Teste");
+    teste = (idEstatistica: number, valor: number, flagTipo: number) => {
+        console.log('teste');
+        console.log(flagTipo);
+        if (flagTipo === 1)
+            this.personagem.estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === idEstatistica)?.aplicarDanoFinal(valor);
+
+        if (flagTipo === 2)
+            this.personagem.estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === idEstatistica)?.aplicarCura(valor);
 
         this.personagem.onUpdate();
     }
@@ -973,13 +978,15 @@ export class Personagem {
                         acao.adicionarOpcoesExecucao([
                             {
                                 key: 'alvo',
+                                displayName: 'Alvo da Ação',
                                 obterOpcoes: (): Opcao[] => {
                                     return [{key: 1, value: 'Alguem bem atrás de você'}];
                                 }
                             },
                         ]);
                         acao.adicionarLogicaExecucao((valoresSelecionados) => {
-                            console.log("atacou");
+                            LoggerHelper.getInstance().adicionaMensagem(`Ataque: 4 de dano`);
+                            LoggerHelper.getInstance().saveLog();
                         });
                     }
                 ] 
@@ -1003,6 +1010,7 @@ export class Personagem {
                         acao.adicionarOpcoesExecucao([
                             {
                                 key: 'custoComponente',
+                                displayName: 'Componente Consumido',
                                 obterOpcoes: (): Opcao[] => {
                                     const acaoRitual = acao as AcaoRitual;
 
@@ -1037,6 +1045,7 @@ export class Personagem {
                         acao.adicionarOpcoesExecucao([
                             {
                                 key: 'custoComponente',
+                                displayName: 'Componente Consumido',
                                 obterOpcoes: (): Opcao[] => {
                                     const acaoRitual = acao as AcaoRitual;
     
@@ -1068,10 +1077,10 @@ export class Personagem {
                         acao.adicionarOpcoesExecucao([
                             {
                                 key: 'custoComponente',
+                                displayName: 'Componente Consumido',
                                 obterOpcoes: (): Opcao[] => {
                                     const acaoRitual = acao as AcaoRitual;
-    
-                                    return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.id).reduce((acc: {key:number; value:string}[], cur) => {
+                                    return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.idCirculo).reduce((acc: {key:number; value:string}[], cur) => {
                                         acc.push({key: cur.id, value: cur.nomeExibicaoOption});
                                         return acc;
                                     }, [])
@@ -1079,13 +1088,14 @@ export class Personagem {
                             },
                             {
                                 key: 'alvo',
+                                displayName: 'Alvo da Ação',
                                 obterOpcoes: (): Opcao[] => {
                                     return [{key: 1, value: 'Alguem bem atrás de você'}];
                                 }
                             },
                         ]);
                         acao.adicionarLogicaExecucao((valoresSelecionados) => {
-                            console.log("fazer ataque");
+                            // LoggerHelper.getInstance().adicionaMensagem(`Ataque: 6 de dano elétrico`);
                         });
                     }
                 ]
@@ -1127,7 +1137,7 @@ export class Personagem {
 
         const estatistica = this.estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === idEstatistica)!;
         estatistica.alterarValorMaximo(valorMaximo);
-        estatistica.aplicarCura(valorMaximo);
+        // estatistica.aplicarCura(valorMaximo);
 
         this.onUpdate();
     }
@@ -1214,16 +1224,22 @@ export class EstatisticaDanificavel {
     }
 
     public aplicarDanoFinal(valor: number): void {
-        console.log(`Foram perdidos ${valor} pontos de ${this.refEstatisticaDanificavel.nomeAbrev}!`);
+        // LoggerHelper.getInstance().adicionaMensagem(`Recebeu ${valor} de Dano`);
+        // LoggerHelper.getInstance().adicionaMensagem(`De ${this.valor} de ${this.refEstatisticaDanificavel.nomeAbrev} para ${Math.max(this.valor - valor, 0)}`, true);
+        // LoggerHelper.getInstance().fechaNivelLogMensagem();
         this.valor = Math.max(this.valor - valor, 0);
+        // LoggerHelper.getInstance().saveLog();
     }
     public aplicarCura(valor: number): void {
-        console.log(`Foram ganhos ${valor} pontos de ${this.refEstatisticaDanificavel.nomeAbrev}!`);
+        // LoggerHelper.getInstance().adicionaMensagem(`Recebeu ${valor} de Cura`);
+        // LoggerHelper.getInstance().adicionaMensagem(`De ${this.valor} de ${this.refEstatisticaDanificavel.nomeAbrev} para ${Math.min(this.valor + valor, this.valorMaximo)}`, true);
+        // LoggerHelper.getInstance().fechaNivelLogMensagem();
         this.valor = Math.min(this.valor + valor, this.valorMaximo);
+        // LoggerHelper.getInstance().saveLog();
     }
 
     public alterarValorMaximo(valorMaximo: number): void {
-        this.valorMaximo = valorMaximo;
+        this.valorMaximo = this.valor = valorMaximo;
     }
 }
 
@@ -1599,7 +1615,7 @@ export class Acao {
     adicionarCustos(custoParams: [new (...args: any[]) => Custo, any[]][]): this { return (custoParams.forEach(([CustoClass, params]) => { this.custos.push((CustoClass === CustoComponente && this.refPai instanceof Ritual) ? new CustoComponente().setRefAcao(this as AcaoRitual) : new CustoClass(...params)); })), this; }
     adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this.buffs, buffParams), this) };
     adicionarRequisitos(requisitoParams: [new (...args: any[]) => Requisito, any[]][]): this { return ( requisitoParams.forEach(([RequisitoClass, params]) => { this.requisitos.push(new RequisitoClass(...params).setRefAcao(this as AcaoRitual)); }) ), this; }
-    adicionarOpcoesExecucao(opcoesParams: { key: string, obterOpcoes: () => Opcao[] }[]): this { return ( opcoesParams.forEach(param => { this.opcoesExecucoes.push(new OpcoesExecucao(param.key, param.obterOpcoes)); }) ), this };
+    adicionarOpcoesExecucao(opcoesParams: { key: string, displayName: string, obterOpcoes: () => Opcao[] }[]): this { return ( opcoesParams.forEach(param => { this.opcoesExecucoes.push(new OpcoesExecucao(param.key, param.displayName, param.obterOpcoes)); }) ), this };
     adicionarLogicaExecucao(logicaExecucao: (valoresSelecionados: { [key: string]: number | undefined }) => void): this { return (this.logicaExecucao = logicaExecucao), this; }
 
     get refTipoPai(): 'Ritual' | 'Item' | 'Habilidade' | undefined {
@@ -2012,7 +2028,7 @@ export class CustoComponente extends Custo {
     get descricaoCusto(): string { return `1 Carga de Componente ${this.refAcao!.refPai.refElemento.nome} ${this.refAcao!.refPai.refNivelComponente.nome}`; }
 
     gastaCusto(idItem:number): void {
-        LoggerHelper.getInstance().adicionaMensagem(`Componente de ${this.refAcao!.refPai.nome} ${this.refAcao!.refPai.refNivelComponente.nome} gasto`);
+        LoggerHelper.getInstance().adicionaMensagem(`Componente de ${this.refAcao!.refPai.refElemento.nome} ${this.refAcao!.refPai.refNivelComponente.nome} gasto`);
 
         (FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === idItem) as ItemComponente).gastaUso();
     }
@@ -2313,6 +2329,8 @@ export class Item {
     }
 
     sacar = (idExtremidade: number): void => {
+        LoggerHelper.getInstance().adicionaMensagem(`${this.nome.customizado} Empunhado`);
+
         this.idExtremidade = idExtremidade;
         this.refExtremidade = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => extremidade.id === idExtremidade);
 
@@ -2324,6 +2342,8 @@ export class Item {
     }
 
     guardar = (): void => {
+        LoggerHelper.getInstance().adicionaMensagem(`${this.nome.customizado} Guardado`);
+
         this.idExtremidade = undefined;
         this.refExtremidade = undefined;
 
@@ -2714,6 +2734,8 @@ export class Extremidade {
     }
 
     empunhar = (idItem: number): void => {
+        LoggerHelper.getInstance().adicionaMensagem(`Empunhando na Extremidade ${this.id}`);
+
         this.idItemEmpunhado = idItem;
         this.refItem = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === idItem)!;
         this.refItem.sacar(this.id);
@@ -2721,6 +2743,8 @@ export class Extremidade {
     }
 
     guardar = (): void => {
+        LoggerHelper.getInstance().adicionaMensagem(`Extremidade ${this.id} livre`);
+
         this.refItem?.guardar();
         this.limpa();
     }
@@ -3016,6 +3040,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                     acao.adicionarOpcoesExecucao([
                         {
                             key: 'idItem',
+                            displayName: 'Item Alvo',
                             obterOpcoes: (): Opcao[] => {
                                 return FichaHelper.getInstance().personagem.inventario.items.filter(item => !item.refExtremidade).reduce((acc: { key: number; value: string }[], cur) => {
                                     acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
@@ -3025,6 +3050,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                         },
                         {
                             key: 'idExtremidade',
+                            displayName: 'Extremidade Alvo',
                             obterOpcoes: (): Opcao[] => {
                                 return FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.filter(extremidade => !extremidade.refItem).reduce((acc: { key: number; value: string }[], cur) => {
                                     acc.push({ key: cur.id, value: `Extremidade ${cur.id}` });
@@ -3057,6 +3083,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                     acao.adicionarOpcoesExecucao([
                         {
                             key: 'idItem',
+                            displayName: 'Item Alvo',
                             obterOpcoes: (): Opcao[] => {
                                 return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade).reduce((acc: {key:number; value:string}[], cur) => {
                                     acc.push({key: cur.id, value: cur.nomeExibicaoOption});
@@ -3079,9 +3106,10 @@ export const lista_geral_habilidades = (): Habilidade[] => {
 }
 
 export class OpcoesExecucao {
-    constructor(private _key: string, private _obterOpcoes: () => Opcao[]) {}
+    constructor(private _key: string, private _displayName: string, private _obterOpcoes: () => Opcao[]) {}
     get opcoes(): Opcao[] { return this._obterOpcoes(); }
     get key(): string { return this._key; }
+    get displayName(): string { return this._displayName; }
 }
 
 export type Opcao = { key: number, value: string };

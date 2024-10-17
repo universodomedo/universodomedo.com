@@ -3,4 +3,22 @@
     flex-direction: column;
     color: white;
     gap: .8vh;
+    align-items: center;
+}
+
+.opcoes_acao {
+    display: flex;
+    flex-direction: row;
+    gap: 5%;
+}
+
+.opcao_acao {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    white-space: nowrap;
+}
+
+.opcao_acao h2 {
+    margin: 0;
 }

@@ -1,14 +1,22 @@
+// #region Imports
 import styles from "./style.module.css";
 import { Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
+// #endregion
 
 const LayoutInterno2 = () => {
     return (
       <>
         <div className={styles.content}>
           <main className={styles.main}>
-            <div className={styles.alpha_warning}>
-              Versão Beta: 0.1.0<br />
-              Versões posteriores podem diferir da atual
+            <div className={styles.avisos}>
+              <div className={styles.voltar}>
+                <Link to="/">{'< voltar'}</Link>
+              </div>
+              <div className={styles.aviso_beta}>
+                Versão Beta: 0.1.0<br />
+                Versões posteriores podem diferir da atual
+              </div>
             </div>
 
             <Outlet />

@@ -52,4 +52,8 @@
 .conteudo_log li {
     padding: 5px 0;
     border-bottom: 1px solid #ddd;
-}  
+}
+
+.conteudo_mensagem_log summary {
+    background-color: #ddd;
+}

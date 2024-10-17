@@ -15,7 +15,23 @@
     margin-bottom: 1vh;
 }
 
-.alpha_warning {
+.avisos {
+    display: flex;
+    flex-direction: row;
+    color: white;
+    align-items: center;
+}
+
+.voltar {
+    margin-left: 2%;
+}
+
+.voltar a {
+    color: white;
+    font-weight: bolder;
+}
+
+.aviso_beta {
     display: flex;
     flex-direction: row;
     border: 1px white solid;
