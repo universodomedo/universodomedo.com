@@ -7,7 +7,7 @@ interface OpcoesSelecionadas { idFiltro: number, idOpcao: string[] }
 const initialState: { [key: string]: {opcoesSelecionadas: OpcoesSelecionadas[], updateExterno: boolean} } = {};
 
 export const abasSlice = createSlice({
-  name: 'abas',
+  name: 'abasHelper',
   initialState,
   reducers: {
     setCacheFiltros: (state, action: PayloadAction<{ abaId:string, filtro: OpcoesSelecionadas[], updateExterno?: boolean }>) => {

@@ -15,12 +15,15 @@ import Ficha from 'Pages/Ficha/page.tsx';
 import PageTracker from "Components/PageTracker/page_tracker.tsx";
 import TooltipContainer from "Components/SubComponents/Tooltip/TooltipContainer.tsx";
 
+import Log from "Components/Log/page.tsx";
+
 const App = () => {
   return (
     <div className='app-container'>
       {/* <TooltipManager /> */}
 
       <TooltipContainer />
+      <Log/>
 
       <BrowserRouter>
         {/* <PageTracker /> */}

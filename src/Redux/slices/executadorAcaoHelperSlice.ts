@@ -9,7 +9,7 @@ interface AcaoState { executadorAcao: Acao | null; }
 const initialState: AcaoState = { executadorAcao: null, };
 
 export const executadorAcaoSlice = createSlice({
-  name: 'abas',
+  name: 'executadorHelper',
   initialState,
   reducers: {
     iniciaExecucaoAcao: (state, action: PayloadAction<{ acao: Acao }>) => {
@@ -23,5 +23,5 @@ export const executadorAcaoSlice = createSlice({
 
 export const { iniciaExecucaoAcao, limparExecucaoAcao } = executadorAcaoSlice.actions;
 
-export const acaoEmExecucao = (state: RootState) => state.executadorAcao;
+export const acaoEmExecucao = (state: RootState) => state.executadorAcaoHelper;
 export default executadorAcaoSlice.reducer;

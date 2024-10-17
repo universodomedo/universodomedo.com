@@ -13,7 +13,7 @@ const page: React.FC<{atributosPersonagem:AtributoPersonagem[], periciasPersonag
           <div className={style.pericias_personagem}>
             {periciasPersonagem.filter(periciaPersonagem => periciaPersonagem.refPericia.refAtributo.id === atributoPersonagem.refAtributo.id)?.map((periciaPersonagem, index) => (
               <div key={`pericia-${index}`} className={style.pericia_personagem}>
-                <button onClick={() => {toast(<div dangerouslySetInnerHTML={{ __html: periciaPersonagem.realizarTeste()}} />)}}>{periciaPersonagem.refPericia.nomeAbrev}</button>
+                <button onClick={() => {periciaPersonagem.realizarTeste()}}>{periciaPersonagem.refPericia.nomeAbrev}</button>
                 <h3>{periciaPersonagem.valorTotal}</h3>
               </div>
             ))}
