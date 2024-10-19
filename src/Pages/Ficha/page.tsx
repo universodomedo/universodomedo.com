@@ -16,7 +16,6 @@ import SubPaginaEfeitos from "Pages/Ficha/SubPaginasFicha/SubPaginaEfeitos/page.
 import { Abas, ListaAbas, Aba, PainelAbas, ControleAbasExternas } from 'Components/LayoutAbas/page.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { LoggerHelper } from 'Types/classes_estaticas.tsx';
 
 import Modal from "Components/Modal/page.tsx";
 import TesteShop from "Pages/TesteShop/page.tsx";

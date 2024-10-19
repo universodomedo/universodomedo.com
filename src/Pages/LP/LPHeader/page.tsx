@@ -1,6 +1,9 @@
+// #region Imports
 import "./style.css";
+import style from './style.module.css';
 import { Link } from "react-router-dom";
 import logo from "Components/Assets/logo.png";
+// #endregion
 
 const LPHeader = () => {
   return (
@@ -23,7 +26,9 @@ const LPHeader = () => {
       </nav>
 
       <div className="header-acessar">
-        {/* <Link to="login"><div className="nav-connect">Acessar</div></Link> */}
+        <div className={style.div_acessar}>
+        <div className="nav-connect"><Link to="login">Acessar</Link></div>
+        </div>
       </div>
 
     </div>

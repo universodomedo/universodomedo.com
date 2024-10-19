@@ -1,7 +1,7 @@
+// #region Imports
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LP from "Pages/LP/page.tsx";
 import Sessions from "Pages/Sessions/page.tsx";
-import ContainerFicha from "Pages/Ficha/container_page.tsx";
 import SessaoAovivo from "Pages/SessaoAovivo/page.tsx"
 import Login from "Pages/Login/page.tsx";
 import Teste from "Pages/Teste/page.tsx";
@@ -13,10 +13,17 @@ import LayoutInterno from "Layouts/LayoutInterno/layout.tsx";
 import LayoutInterno2 from "Layouts/LayoutInterno2/layout.tsx";
 import Ficha from 'Pages/Ficha/page.tsx';
 import FichaTutorial from 'Pages/FichaTutorial/page.tsx';
+import MontaFicha from 'Pages/MontaFicha/page.tsx';
+import ImportaFicha from 'Pages/ImportaFicha/page.tsx';
 import PageTracker from "Components/PageTracker/page_tracker.tsx";
 import TooltipContainer from "Components/SubComponents/Tooltip/TooltipContainer.tsx";
 
 import Log from "Components/Log/page.tsx";
+
+import PaginaInternaTeste from 'Pages/PaginaInternaTeste/page.tsx';
+
+import AuthOutlet from '@auth-kit/react-router/AuthOutlet';
+// #endregion
 
 const App = () => {
   return (
@@ -31,10 +38,10 @@ const App = () => {
         <Routes>
           <Route element={<LayoutLP />}>
             <Route path="/" element={<LP />} />
-            {/* <Route path="/login" element={<Login />} /> */}
+            <Route path="/login" element={<Login />} />
           </Route>
 
-          <Route element={<LayoutInterno />}>
+          {/* <Route element={<LayoutInterno />}> */}
             {/* <Route path="/sessions">
               <Route index element={<Sessions />} />
               <Route path=":sessionId" element={<Sessions />} />
@@ -50,6 +57,14 @@ const App = () => {
             <Route path="/testea">
               <Route index element={<Teste />} />
             </Route> */}
+          {/* </Route> */}
+
+          <Route element={<AuthOutlet fallbackPath="/login" />}>
+            <Route element={<LayoutInterno />}>
+              <Route path="/pagina-interna">
+                <Route index element={<PaginaInternaTeste />} />
+              </Route>
+            </Route>
           </Route>
 
           <Route element={<LayoutInterno2 />}>
@@ -58,6 +73,12 @@ const App = () => {
             </Route>
             <Route path="/tutorial-ficha">
               <Route index element={<FichaTutorial />} />
+            </Route>
+            <Route path="/monta-ficha">
+              <Route index element={<MontaFicha />} />
+            </Route>
+            <Route path="/importa-ficha">
+              <Route index element={<ImportaFicha />} />
             </Route>
           </Route>
           

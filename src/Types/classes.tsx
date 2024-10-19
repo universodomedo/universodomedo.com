@@ -985,8 +985,7 @@ export class Personagem {
                             },
                         ]);
                         acao.adicionarLogicaExecucao((valoresSelecionados) => {
-                            LoggerHelper.getInstance().adicionaMensagem(`Ataque: 4 de dano`);
-                            LoggerHelper.getInstance().saveLog();
+
                         });
                     }
                 ] 
@@ -1095,7 +1094,7 @@ export class Personagem {
                             },
                         ]);
                         acao.adicionarLogicaExecucao((valoresSelecionados) => {
-                            // LoggerHelper.getInstance().adicionaMensagem(`Ataque: 6 de dano elétrico`);
+
                         });
                     }
                 ]
@@ -3072,7 +3071,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     const habilidade2 = new Habilidade(2, 'Guardar Item', new RequisitoFicha((personagem:Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
         .adicionarAcoes([
             [
-                ...classeComArgumentos(AcaoHabilidade, 'Sacar Item', 1, 1),
+                ...classeComArgumentos(AcaoHabilidade, 'Guardar Item', 1, 1),
                 (acao) => {
                     acao.adicionarCustos([
                         classeComArgumentos(CustoExecucao, 3, 1)

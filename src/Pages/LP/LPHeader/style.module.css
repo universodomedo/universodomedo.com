@@ -1,0 +1,9 @@
+.div_acessar {
+  display: flex;
+  height: 40%;
+  width: 60%;
+  background-color: white;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
+}
