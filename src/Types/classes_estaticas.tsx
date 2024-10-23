@@ -1,6 +1,6 @@
 // #region Imports
 import { MDL_Elemento, MDL_TipoDano } from "udm-types";
-import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, TipoItem, NivelComponente, TipoRequisito, Habilidade, MensagemLog } from "Types/classes.tsx";
+import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, TipoItem, NivelComponente, TipoRequisito, Habilidade, MensagemLog, Classe, Nivel } from "Types/classes.tsx";
 import { Personagem } from "Types/classes.tsx";
 // #endregion
 
@@ -19,6 +19,10 @@ export class FichaHelper {
     }
 
     return FichaHelper.instance;
+  }
+
+  resetaPersonagem() {
+    this._personagem = undefined;
   }
 
   public set tiposDano(tiposDano: MDL_TipoDano[]) { this._tiposDano = tiposDano }
@@ -54,6 +58,8 @@ export class SingletonHelper {
   private _niveis_componente: NivelComponente[] = [];
   private _tipos_requisitos: TipoRequisito[] = [];
   private _lista_geral_habilidades: Habilidade[] = [];
+  private _classes: Classe[] = [];
+  private _niveis: Nivel[] = [];
 
   static getInstance() {
     if (!SingletonHelper.instance) {
@@ -134,6 +140,12 @@ export class SingletonHelper {
 
   public set lista_geral_habilidades(value: Habilidade[]) { this._lista_geral_habilidades = value }
   public get lista_geral_habilidades(): Habilidade[] { return this._lista_geral_habilidades }
+
+  public set classes(value: Classe[]) { this._classes = value }
+  public get classes(): Classe[] { return this._classes }
+
+  public set niveis(value: Nivel[]) { this._niveis = value }
+  public get niveis(): Nivel[] { return this._niveis }
 }
 
 export class LoggerHelper {

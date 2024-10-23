@@ -13,12 +13,9 @@ import LayoutInterno from "Layouts/LayoutInterno/layout.tsx";
 import LayoutInterno2 from "Layouts/LayoutInterno2/layout.tsx";
 import Ficha from 'Pages/Ficha/page.tsx';
 import FichaTutorial from 'Pages/FichaTutorial/page.tsx';
-import MontaFicha from 'Pages/MontaFicha/page.tsx';
-import ImportaFicha from 'Pages/ImportaFicha/page.tsx';
+import EditaFicha from 'Pages/EditaFicha/page.tsx';
 import PageTracker from "Components/PageTracker/page_tracker.tsx";
 import TooltipContainer from "Components/SubComponents/Tooltip/TooltipContainer.tsx";
-
-import Log from "Components/Log/page.tsx";
 
 import PaginaInternaTeste from 'Pages/PaginaInternaTeste/page.tsx';
 
@@ -31,7 +28,6 @@ const App = () => {
       {/* <TooltipManager /> */}
 
       <TooltipContainer />
-      <Log/>
 
       <BrowserRouter>
         {/* <PageTracker /> */}
@@ -71,14 +67,11 @@ const App = () => {
             <Route path="/ficha-demo">
               <Route index element={<Ficha />} />
             </Route>
+            <Route path="/edita-ficha">
+              <Route index element={<EditaFicha />} />
+            </Route>
             <Route path="/tutorial-ficha">
               <Route index element={<FichaTutorial />} />
-            </Route>
-            <Route path="/monta-ficha">
-              <Route index element={<MontaFicha />} />
-            </Route>
-            <Route path="/importa-ficha">
-              <Route index element={<ImportaFicha />} />
             </Route>
           </Route>
           

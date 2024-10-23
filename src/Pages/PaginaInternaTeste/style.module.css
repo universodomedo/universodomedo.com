@@ -1,10 +1,7 @@
-.pagina {
+.teste_interno {
     display: flex;
     flex-direction: column;
+    color: white;
+    text-align: center;
     align-items: center;
-    padding: 5%;
-}
-
-.pagina textarea {
-    width: 60%;
 }

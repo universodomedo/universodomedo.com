@@ -1,0 +1,73 @@
+.editando_ficha {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    width: 60%;
+    align-items: center;
+    margin: 0 auto;
+    gap: 3vh
+}
+
+.editando_ficha h1, .editando_ficha h2 {
+    margin: 0;
+}
+
+.editando_ficha_atributos {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.div_atributos {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.editando_atributo {
+    display: flex;
+    flex-direction: column;
+    border: 1px white solid;
+    padding: .4%;
+}
+
+.editando_atributo h2 {
+    margin: 0;
+}
+
+.editando_ficha_pericias {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.div_pericias {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 3vw;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.editando_pericia {
+    display: flex;
+    flex-direction: column;
+    border: 1px white solid;
+    padding: .4%;
+}
+
+.editando_ficha_estatisticas {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+}
+
+.visualizador_estatistica {
+    display: flex;
+    flex-direction: column;
+    border: 1px white solid;
+    gap: .6vh;
+    padding: 1%;
+}

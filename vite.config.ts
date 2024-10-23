@@ -17,6 +17,7 @@ export default defineConfig({
       "Layouts": path.resolve(__dirname, "src/Layouts"),
       "Pages": path.resolve(__dirname, "src/Pages"),
       "Types": path.resolve(__dirname, "src/Types"),
+      "Utils": path.resolve(__dirname, "src/Utils"),
       "Redux": path.resolve(__dirname, "src/Redux"),
     }
   }

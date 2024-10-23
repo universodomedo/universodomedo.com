@@ -7,6 +7,7 @@
       "@layouts/*": ["Layouts/*"],
       "@pages/*": ["Pages/*"],
       "@types/*": ["Types/*"],
+      "@utils/*": ["Utils/*"],
       "@redux/*": ["Redux/*"],
     },
     "allowImportingTsExtensions": true,

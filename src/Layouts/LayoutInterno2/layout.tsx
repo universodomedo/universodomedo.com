@@ -11,10 +11,10 @@ const LayoutInterno2 = () => {
           <main className={styles.main}>
             <div className={styles.avisos}>
               <div className={styles.voltar}>
-                <Link to="/">{'< voltar'}</Link>
+                <Link to="/pagina-interna">{'< voltar'}</Link>
               </div>
               <div className={styles.aviso_beta}>
-                Versão Beta: 0.1.0<br />
+                Versão Beta: 0.1.2<br />
                 Versões posteriores podem diferir da atual
               </div>
             </div>
