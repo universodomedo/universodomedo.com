@@ -17,7 +17,7 @@ interface SalaContextProps {
 
 const SalaContext = createContext<SalaContextProps | undefined>(undefined);
 
-const socketService = new SocketIOService('http://localhost:8080');
+const socketService = new SocketIOService('http://galadriel:8080');
 
 export const SalaProvider = ({ children }: { children: ReactNode }) => {
     const [salas, setSalas] = useState<Sala[]>([]);

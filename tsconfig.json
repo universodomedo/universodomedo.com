@@ -29,5 +29,5 @@
     "typeRoots": ["./node_modules/@types", "./frontend/src"],
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["frontend/src/**/*", "backend/**/*.ts"],
+  "include": ["frontend/src/**/*", "websocket/**/*.ts"],
 }

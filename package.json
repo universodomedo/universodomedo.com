@@ -9,8 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "start": "node dist/index.js",
     "preview": "vite preview",
-    "prod": "vite --host",
-    "start:server": "node --loader ts-node/esm ./backend/server.ts"
+    "prod": "vite --host"
   },
   "dependencies": {
     "@auth-kit/react-router": "^3.1.3",
