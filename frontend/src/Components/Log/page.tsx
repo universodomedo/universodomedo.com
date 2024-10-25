@@ -42,7 +42,7 @@ const Log = () => {
                 <div ref={logContainerRef} className={style.conteudo_log}>
                     {logMensagens.length > 0 ? (
                         <>
-                            {logMensagens.map((logMensagem, logIndex) => (
+                            {logMensagens.slice().reverse().map((logMensagem, logIndex) => (
                                 <ComponenteMensagemLog key={logIndex} mensagemLog={logMensagem} nivel={0} />
                             ))}
                         </>

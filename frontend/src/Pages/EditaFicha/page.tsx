@@ -135,47 +135,49 @@ const page = () => {
         <div className={style.editando_ficha}>
             <h1>Criando Ficha - NEX 0%</h1>
 
-            <div className={style.editando_ficha_atributos}>
-                <h1>Atributos a Distribuir: {atributosRestantesDistribuir}</h1>
+            <div className={style.area_edicao}>
+                <div className={style.editando_ficha_atributos}>
+                    <h1>Atributos a Distribuir: {atributosRestantesDistribuir}</h1>
 
-                <div className={style.div_atributos}>
-                    {atributos.map((atributo, index) => (
-                        <div key={index} className={style.editando_atributo}>
-                            <h2>{atributo.nomeAbrev}</h2>
-                            <h2>{atributo.valor}</h2>
-                            <div className={style.operador_atributo}>
-                                <button onClick={() => modificarAtributo(index, -1)} disabled={limiteDiminuirAtributo(atributo.valor)}>-</button>
-                                <button onClick={() => modificarAtributo(index, 1)} disabled={limiteAumentarAtributo(atributo.valor)}>+</button>
+                    <div className={style.div_atributos}>
+                        {atributos.map((atributo, index) => (
+                            <div key={index} className={style.editando_atributo}>
+                                <h2>{atributo.nomeAbrev}</h2>
+                                <h2>{atributo.valor}</h2>
+                                <div className={style.operador_atributo}>
+                                    <button onClick={() => modificarAtributo(index, -1)} disabled={limiteDiminuirAtributo(atributo.valor)}>-</button>
+                                    <button onClick={() => modificarAtributo(index, 1)} disabled={limiteAumentarAtributo(atributo.valor)}>+</button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
+                </div>
+
+                <div className={style.editando_ficha_pericias}>
+                    <h1>Pericias Treinadas para Selecionar: {periciasTreinadasRestantesDistribuir}</h1>
+
+                    <div className={style.div_pericias}>
+                        {pericias.map((pericia, index) => (
+                            <div key={index} className={style.editando_pericia}>
+                                <h2>{pericia.nomeAbrev}</h2>
+                                <h2>{pericia.valor}</h2>
+                                <div className={style.operador_atributo}>
+                                    <button onClick={() => modificarPericia(index, -1)} disabled={limiteDiminuirPericia(pericia.valor)}>-</button>
+                                    <button onClick={() => modificarPericia(index, 1)} disabled={limiteAumentarPericia(pericia.valor)}>+</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className={style.editando_ficha_estatisticas}>
+                    <div className={style.visualizador_estatistica}><h2>P.V.</h2><h2>{totalPV}</h2></div>
+                    <div className={style.visualizador_estatistica}><h2>P.S.</h2><h2>{totalPS}</h2></div>
+                    <div className={style.visualizador_estatistica}><h2>P.E.</h2><h2>{totalPE}</h2></div>
                 </div>
             </div>
 
-            <div className={style.editando_ficha_pericias}>
-                <h1>Pericias Treinadas para Selecionar: {periciasTreinadasRestantesDistribuir}</h1>
-
-                <div className={style.div_pericias}>
-                    {pericias.map((pericia, index) => (
-                        <div key={index} className={style.editando_pericia}>
-                            <h2>{pericia.nomeAbrev}</h2>
-                            <h2>{pericia.valor}</h2>
-                            <div className={style.operador_atributo}>
-                                <button onClick={() => modificarPericia(index, -1)} disabled={limiteDiminuirPericia(pericia.valor)}>-</button>
-                                <button onClick={() => modificarPericia(index, 1)} disabled={limiteAumentarPericia(pericia.valor)}>+</button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            <div className={style.editando_ficha_estatisticas}>
-                <div className={style.visualizador_estatistica}><h2>P.V.</h2><h2>{totalPV}</h2></div>
-                <div className={style.visualizador_estatistica}><h2>P.S.</h2><h2>{totalPS}</h2></div>
-                <div className={style.visualizador_estatistica}><h2>P.E.</h2><h2>{totalPE}</h2></div>
-            </div>
-
-            <button onClick={() => prosseguir()} disabled={bloqueiaProsseguir()}>Prosseguir</button>
+            <button onClick={() => prosseguir()} disabled={bloqueiaProsseguir()} className={style.prosseguir}>Prosseguir</button>
         </div>
     );
 }

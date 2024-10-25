@@ -4,6 +4,7 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
 export const geraFicha = (dadosFicha: RLJ_Ficha2): RLJ_Ficha2 => {
+
     const ficha: RLJ_Ficha2 = {
         detalhes: {
             nome: dadosFicha.detalhes?.nome ?? 'TesteVazio',
@@ -36,10 +37,10 @@ export const geraFicha = (dadosFicha: RLJ_Ficha2): RLJ_Ficha2 => {
 
             return {
                 idPericia: pericia.id,
-                idPatente: periciaPatenteAtual?.idPatente ?? 3
+                idPatente: periciaPatenteAtual?.idPatente ?? 1
             };
         }),
     };
-    
+
     return ficha;
 };

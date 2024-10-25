@@ -12,13 +12,16 @@ export default defineConfig({
   },
   resolve: {
     alias: { // para adicionar novos paths, tem que adicionar no tsconfig.json e no vite.config.ts
-      "ApiConsumer": path.resolve(__dirname, "src/ApiConsumer"),
-      "Components": path.resolve(__dirname, "src/Components"),
-      "Layouts": path.resolve(__dirname, "src/Layouts"),
-      "Pages": path.resolve(__dirname, "src/Pages"),
-      "Types": path.resolve(__dirname, "src/Types"),
-      "Utils": path.resolve(__dirname, "src/Utils"),
-      "Redux": path.resolve(__dirname, "src/Redux"),
+      "ApiConsumer": path.resolve(__dirname, "frontend/src/ApiConsumer"),
+      "Components": path.resolve(__dirname, "frontend/src/Components"),
+      "Layouts": path.resolve(__dirname, "frontend/src/Layouts"),
+      "Pages": path.resolve(__dirname, "frontend/src/Pages"),
+      "Providers": path.resolve(__dirname, "frontend/src/Providers"),
+      "Recursos": path.resolve(__dirname, "frontend/src/Recursos"),
+      "Redux": path.resolve(__dirname, "frontend/src/Redux"),
+      "Servicos": path.resolve(__dirname, "frontend/src/Servicos"),
+      "Types": path.resolve(__dirname, "frontend/src/Types"),
+      "Utils": path.resolve(__dirname, "frontend/src/Utils"),
     }
   }
 })
