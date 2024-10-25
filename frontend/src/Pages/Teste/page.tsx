@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Modal from "Components/Modal/page.tsx";
-import ModeloArma from "Components/SubComponents/ModeloArma/page.tsx";
+// import ModeloArma from "Components/SubComponents/ModeloArma/page.tsx";
 
 const page: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,9 +42,9 @@ const page: React.FC = () => {
                 Criar Modelo
             </a>
 
-            <Modal isOpen={isModalOpen} onClose={closeModal}>
+            {/* <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <ModeloArma />
-            </Modal>
+            </Modal> */}
         </>
     )
 }

@@ -19,7 +19,13 @@ class SocketIOService {
     private handlers: Record<string, MessageHandler[]> = {};
 
     constructor(url: string) {
-        this.socket = io(url);
+        this.socket = io(url, { autoConnect: false });
+
+        try {
+            this.socket.connect();
+        } catch (error) {
+            console.warn('[SocketIOService] Não foi possível conectar ao servidor:', error);
+        }
 
         this.socket.on('connect', () => {
             console.log('[SocketIOService] Conexão estabelecida:', this.socket.id);
@@ -27,6 +33,11 @@ class SocketIOService {
 
         this.socket.on('disconnect', () => {
             console.warn('[SocketIOService] Conexão perdida');
+        });
+
+        this.socket.on('connect_error', (error) => {
+            console.warn('[SocketIOService] Falha ao conectar ao servidor. Verifique se o servidor está ativo.');
+            console.debug('[SocketIOService] Detalhes do erro de conexão:', error.message);
         });
 
         this.socket.onAny((event, data) => {

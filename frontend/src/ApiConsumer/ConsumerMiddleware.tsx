@@ -9,9 +9,9 @@ class CustomApiCall {
     public async obterFichaPersonagem(idPersonagem: number): Promise<Personagem> {
         let personagem = {} as Personagem;
 
-        await useApi<{ ficha: RLJ_Ficha, habilidades: MDL_Habilidade[] }>("/fichas/getFichaCharacter", { idCharacter: idPersonagem }).then((data) => {
-            personagem = new Personagem(data.ficha);
-        });
+        // await useApi<{ ficha: RLJ_Ficha, habilidades: MDL_Habilidade[] }>("/fichas/getFichaCharacter", { idCharacter: idPersonagem }).then((data) => {
+        //     personagem = new Personagem(data.ficha);
+        // });
 
         return personagem;
     }

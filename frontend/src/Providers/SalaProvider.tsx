@@ -1,5 +1,7 @@
+// #region Imports
 import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import SocketIOService from 'Servicos/SocketIOService.ts';
+// #endregion
 
 interface Sala {
     id: number;
@@ -19,6 +21,7 @@ const socketService = new SocketIOService('http://localhost:8080');
 
 export const SalaProvider = ({ children }: { children: ReactNode }) => {
     const [salas, setSalas] = useState<Sala[]>([]);
+    const [isConnected, setIsConnected] = useState<boolean>(false);
 
     useEffect(() => {
         socketService.addMessageHandler('salas', (data) => {

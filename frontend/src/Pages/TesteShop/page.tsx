@@ -189,531 +189,532 @@ const page = () => {
     };
 
     const showSelectedId = () => {
-        if (selectedRowId === null) return;
+        return;
+        // if (selectedRowId === null) return;
 
-        const acaoFerramenta:number = 1;
+        // const acaoFerramenta:number = 1;
 
-        let item:Item;
-        switch (selectedRowId) {
-            case 1:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Acrobacia'), 3, 1, [], [new BuffExterno(6, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 2:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Crime'), 3, 1, [], [new BuffExterno(12, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 3:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Furtividade'), 3, 1, [], [new BuffExterno(17, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 4:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Iniciativa'), 3, 1, [], [new BuffExterno(18, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 5:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Pontaria'), 3, 1, [], [new BuffExterno(26, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 6:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Reflexo'), 3, 1, [], [new BuffExterno(27, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 7:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Atletismo'), 3, 1, [], [new BuffExterno(9, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 8:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Luta'), 3, 1, [], [new BuffExterno(22, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 9:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Adestramento'), 3, 1, [], [new BuffExterno(7, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 10:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Artes'), 3, 1, [], [new BuffExterno(8, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 11:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Atualidades'), 3, 1, [], [new BuffExterno(10, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 12:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Ciências'), 3, 1, [], [new BuffExterno(11, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 13:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Engenharia'), 3, 1, [], [new BuffExterno(15, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 14:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Investigação'), 3, 1, [], [new BuffExterno(21, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 15:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Medicina'), 3, 1, [], [new BuffExterno(23, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 16:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Ocultista'), 3, 1, [], [new BuffExterno(24, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 17:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Sobrevivência'), 3, 1, [], [new BuffExterno(28, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 18:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Tatica'), 3, 1, [], [new BuffExterno(29, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 19:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Tecnologia'), 3, 1, [], [new BuffExterno(30, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 20:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Diplomacia'), 3, 1, [], [new BuffExterno(13, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 21:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Enganação'), 3, 1, [], [new BuffExterno(14, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 22:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Intimidação'), 3, 1, [], [new BuffExterno(19, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 23:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Intuição'), 3, 1, [], [new BuffExterno(20, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 24:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Percepção'), 3, 1, [], [new BuffExterno(25, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 25:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Vontade'), 3, 1, [], [new BuffExterno(31, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 26:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Fortitude'), 3, 1, [], [new BuffExterno(16, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 27:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Acrobacia'), 1, 1, [], [new BuffExterno(6, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 28:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Crime'), 1, 1, [], [new BuffExterno(12, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 29:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Furtividade'), 1, 1, [], [new BuffExterno(17, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 30:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Iniciativa'), 1, 1, [], [new BuffExterno(18, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 31:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Pontaria'), 1, 1, [], [new BuffExterno(26, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 32:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Reflexo'), 1, 1, [], [new BuffExterno(27, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 33:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Atletismo'), 1, 1, [], [new BuffExterno(9, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 34:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Luta'), 1, 1, [], [new BuffExterno(22, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 35:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Adestramento'), 1, 1, [], [new BuffExterno(7, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 36:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Artes'), 1, 1, [], [new BuffExterno(8, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 37:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Atualidades'), 1, 1, [], [new BuffExterno(10, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 38:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Ciências'), 1, 1, [], [new BuffExterno(11, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 39:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Engenharia'), 1, 1, [], [new BuffExterno(15, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 40:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Investigação'), 1, 1, [], [new BuffExterno(21, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 41:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Medicina'), 1, 1, [], [new BuffExterno(23, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 42:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Ocultista'), 1, 1, [], [new BuffExterno(24, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 43:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Sobrevivência'), 1, 1, [], [new BuffExterno(28, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 44:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Tatica'), 1, 1, [], [new BuffExterno(29, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 45:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Tecnologia'), 1, 1, [], [new BuffExterno(30, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 46:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Diplomacia'), 1, 1, [], [new BuffExterno(13, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 47:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Enganação'), 1, 1, [], [new BuffExterno(14, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 48:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Intimidação'), 1, 1, [], [new BuffExterno(19, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 49:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Intuição'), 1, 1, [], [new BuffExterno(20, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 50:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Percepção'), 1, 1, [], [new BuffExterno(25, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 51:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Vontade'), 1, 1, [], [new BuffExterno(31, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 52:
-                item = new ItemEquipamento(new NomeItem('Utensílio Simples de Fortitude'), 1, 1, [], [new BuffExterno(16, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 53:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Acrobacia'), 3, 2, [], [new BuffExterno(6, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 54:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Crime'), 3, 2, [], [new BuffExterno(12, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 55:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Furtividade'), 3, 2, [], [new BuffExterno(17, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 56:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Iniciativa'), 3, 2, [], [new BuffExterno(18, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 57:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Pontaria'), 3, 2, [], [new BuffExterno(26, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 58:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Reflexo'), 3, 2, [], [new BuffExterno(27, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 59:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Atletismo'), 3, 2, [], [new BuffExterno(9, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 60:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Luta'), 3, 2, [], [new BuffExterno(22, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 61:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Adestramento'), 3, 2, [], [new BuffExterno(7, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 62:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Artes'), 3, 2, [], [new BuffExterno(8, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 63:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Atualidades'), 3, 2, [], [new BuffExterno(10, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 64:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Ciências'), 3, 2, [], [new BuffExterno(11, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 65:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Engenharia'), 3, 2, [], [new BuffExterno(15, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 66:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Investigação'), 3, 2, [], [new BuffExterno(21, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 67:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Medicina'), 3, 2, [], [new BuffExterno(23, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 68:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Ocultista'), 3, 2, [], [new BuffExterno(24, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 69:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Sobrevivência'), 3, 2, [], [new BuffExterno(28, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 70:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Tatica'), 3, 2, [], [new BuffExterno(29, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 71:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Tecnologia'), 3, 2, [], [new BuffExterno(30, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 72:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Diplomacia'), 3, 2, [], [new BuffExterno(13, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 73:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Enganação'), 3, 2, [], [new BuffExterno(14, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 74:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Intimidação'), 3, 2, [], [new BuffExterno(19, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 75:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Intuição'), 3, 2, [], [new BuffExterno(20, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 76:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Percepção'), 3, 2, [], [new BuffExterno(25, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 77:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Vontade'), 3, 2, [], [new BuffExterno(31, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 78:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Fortitude'), 3, 2, [], [new BuffExterno(16, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 79:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Acrobacia'), 1, 2, [], [new BuffExterno(6, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 80:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Crime'), 1, 2, [], [new BuffExterno(12, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 81:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Furtividade'), 1, 2, [], [new BuffExterno(17, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 82:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Iniciativa'), 1, 2, [], [new BuffExterno(18, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 83:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Pontaria'), 1, 2, [], [new BuffExterno(26, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 84:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Reflexo'), 1, 2, [], [new BuffExterno(27, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 85:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Atletismo'), 1, 2, [], [new BuffExterno(9, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 86:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Luta'), 1, 2, [], [new BuffExterno(22, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 87:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Adestramento'), 1, 2, [], [new BuffExterno(7, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 88:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Artes'), 1, 2, [], [new BuffExterno(8, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 89:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Atualidades'), 1, 2, [], [new BuffExterno(10, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 90:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Ciências'), 1, 2, [], [new BuffExterno(11, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 91:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Engenharia'), 1, 2, [], [new BuffExterno(15, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 92:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Investigação'), 1, 2, [], [new BuffExterno(21, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 93:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Medicina'), 1, 2, [], [new BuffExterno(23, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 94:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Ocultista'), 1, 2, [], [new BuffExterno(24, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 95:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Sobrevivência'), 1, 2, [], [new BuffExterno(28, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 96:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Tatica'), 1, 2, [], [new BuffExterno(29, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 97:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Tecnologia'), 1, 2, [], [new BuffExterno(30, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 98:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Diplomacia'), 1, 2, [], [new BuffExterno(13, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 99:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Enganação'), 1, 2, [], [new BuffExterno(14, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 100:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Intimidação'), 1, 2, [], [new BuffExterno(19, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 101:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Intuição'), 1, 2, [], [new BuffExterno(20, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 102:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Percepção'), 1, 2, [], [new BuffExterno(25, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 103:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Vontade'), 1, 2, [], [new BuffExterno(31, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 104:
-                item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Fortitude'), 1, 2, [], [new BuffExterno(16, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 105:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Acrobacia'), 3, 3, [], [new BuffExterno(6, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 106:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Crime'), 3, 3, [], [new BuffExterno(12, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 107:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Furtividade'), 3, 3, [], [new BuffExterno(17, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 108:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Iniciativa'), 3, 3, [], [new BuffExterno(18, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 109:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Pontaria'), 3, 3, [], [new BuffExterno(26, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 110:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Reflexo'), 3, 3, [], [new BuffExterno(27, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 111:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Atletismo'), 3, 3, [], [new BuffExterno(9, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 112:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Luta'), 3, 3, [], [new BuffExterno(22, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 113:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Adestramento'), 3, 3, [], [new BuffExterno(7, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 114:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Artes'), 3, 3, [], [new BuffExterno(8, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 115:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Atualidades'), 3, 3, [], [new BuffExterno(10, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 116:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Ciências'), 3, 3, [], [new BuffExterno(11, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 117:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Engenharia'), 3, 3, [], [new BuffExterno(15, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 118:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Investigação'), 3, 3, [], [new BuffExterno(21, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 119:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Medicina'), 3, 3, [], [new BuffExterno(23, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 120:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Ocultista'), 3, 3, [], [new BuffExterno(24, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 121:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Sobrevivência'), 3, 3, [], [new BuffExterno(28, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 122:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Tatica'), 3, 3, [], [new BuffExterno(29, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 123:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Tecnologia'), 3, 3, [], [new BuffExterno(30, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 124:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Diplomacia'), 3, 3, [], [new BuffExterno(13, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 125:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Enganação'), 3, 3, [], [new BuffExterno(14, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 126:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Intimidação'), 3, 3, [], [new BuffExterno(19, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 127:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Intuição'), 3, 3, [], [new BuffExterno(20, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 128:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Percepção'), 3, 3, [], [new BuffExterno(25, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 129:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Vontade'), 3, 3, [], [new BuffExterno(31, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 130:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Fortitude'), 3, 3, [], [new BuffExterno(16, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-            case 131:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Acrobacia'), 1, 3, [], [new BuffExterno(6, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 132:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Crime'), 1, 3, [], [new BuffExterno(12, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 133:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Furtividade'), 1, 3, [], [new BuffExterno(17, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 134:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Iniciativa'), 1, 3, [], [new BuffExterno(18, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 135:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Pontaria'), 1, 3, [], [new BuffExterno(26, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 136:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Reflexo'), 1, 3, [], [new BuffExterno(27, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 137:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Atletismo'), 1, 3, [], [new BuffExterno(9, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 138:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Luta'), 1, 3, [], [new BuffExterno(22, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 139:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Adestramento'), 1, 3, [], [new BuffExterno(7, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 140:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Artes'), 1, 3, [], [new BuffExterno(8, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 141:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Atualidades'), 1, 3, [], [new BuffExterno(10, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 142:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Ciências'), 1, 3, [], [new BuffExterno(11, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 143:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Engenharia'), 1, 3, [], [new BuffExterno(15, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 144:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Investigação'), 1, 3, [], [new BuffExterno(21, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 145:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Medicina'), 1, 3, [], [new BuffExterno(23, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 146:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Ocultista'), 1, 3, [], [new BuffExterno(24, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 147:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Sobrevivência'), 1, 3, [], [new BuffExterno(28, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 148:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Tatica'), 1, 3, [], [new BuffExterno(29, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 149:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Tecnologia'), 1, 3, [], [new BuffExterno(30, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 150:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Diplomacia'), 1, 3, [], [new BuffExterno(13, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 151:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Enganação'), 1, 3, [], [new BuffExterno(14, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 152:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Intimidação'), 1, 3, [], [new BuffExterno(19, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 153:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Intuição'), 1, 3, [], [new BuffExterno(20, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 154:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Percepção'), 1, 3, [], [new BuffExterno(25, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 155:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Vontade'), 1, 3, [], [new BuffExterno(31, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 156:
-                item = new ItemEquipamento(new NomeItem('Utensílio Especial de Fortitude'), 1, 3, [], [new BuffExterno(16, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
-                break;
-            case 157:
-                item = new ItemComponente(new NomeItem('Componente Simples de Conhecimento'), 1, 0, new DetalhesItemComponente(1, 1, 2));
-                break;
-            case 158:
-                item = new ItemComponente(new NomeItem('Componente Simples de Energia'), 1, 0, new DetalhesItemComponente(2, 1, 2));
-                break;
-            case 159:
-                item = new ItemComponente(new NomeItem('Componente Simples de Medo'), 1, 0, new DetalhesItemComponente(3, 1, 2));
-                break;
-            case 160:
-                item = new ItemComponente(new NomeItem('Componente Simples de Morte'), 1, 0, new DetalhesItemComponente(4, 1, 2));
-                break;
-            case 161:
-                item = new ItemComponente(new NomeItem('Componente Simples de Sangue'), 1, 0, new DetalhesItemComponente(5, 1, 2));
-                break;
-            case 162:
-                item = new ItemComponente(new NomeItem('Componente Complexo de Conhecimento'), 1, 0, new DetalhesItemComponente(1, 2, 1));
-                break;
-            case 163:
-                item = new ItemComponente(new NomeItem('Componente Complexo de Energia'), 1, 0, new DetalhesItemComponente(2, 2, 1));
-                break;
-            case 164:
-                item = new ItemComponente(new NomeItem('Componente Complexo de Medo'), 1, 0, new DetalhesItemComponente(3, 2, 1));
-                break;
-            case 165:
-                item = new ItemComponente(new NomeItem('Componente Complexo de Morte'), 1, 0, new DetalhesItemComponente(4, 2, 1));
-                break;
-            case 166:
-                item = new ItemComponente(new NomeItem('Componente Complexo de Sangue'), 1, 0, new DetalhesItemComponente(5, 2, 1));
-                break;
-            case 167:
-                item = new ItemComponente(new NomeItem('Componente Especial de Conhecimento'), 1, 1, new DetalhesItemComponente(1, 3, 1));
-                break;
-            case 168:
-                item = new ItemComponente(new NomeItem('Componente Especial de Energia'), 1, 1, new DetalhesItemComponente(2, 3, 1));
-                break;
-            case 169:
-                item = new ItemComponente(new NomeItem('Componente Especial de Medo'), 1, 1, new DetalhesItemComponente(3, 3, 1));
-                break;
-            case 170:
-                item = new ItemComponente(new NomeItem('Componente Especial de Morte'), 1, 1, new DetalhesItemComponente(4, 3, 1));
-                break;
-            case 171:
-                item = new ItemComponente(new NomeItem('Componente Especial de Sangue'), 1, 1, new DetalhesItemComponente(5, 3, 1));
-                break;
-            default:
-                item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Acrobacia'), 3, 1, [], [new BuffExterno(6, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
-                break;
-        }
+        // let item:Item;
+        // switch (selectedRowId) {
+        //     case 1:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Acrobacia'), 3, 1, [], [new BuffExterno(6, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 2:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Crime'), 3, 1, [], [new BuffExterno(12, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 3:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Furtividade'), 3, 1, [], [new BuffExterno(17, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 4:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Iniciativa'), 3, 1, [], [new BuffExterno(18, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 5:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Pontaria'), 3, 1, [], [new BuffExterno(26, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 6:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Reflexo'), 3, 1, [], [new BuffExterno(27, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 7:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Atletismo'), 3, 1, [], [new BuffExterno(9, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 8:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Luta'), 3, 1, [], [new BuffExterno(22, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 9:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Adestramento'), 3, 1, [], [new BuffExterno(7, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 10:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Artes'), 3, 1, [], [new BuffExterno(8, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 11:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Atualidades'), 3, 1, [], [new BuffExterno(10, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 12:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Ciências'), 3, 1, [], [new BuffExterno(11, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 13:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Engenharia'), 3, 1, [], [new BuffExterno(15, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 14:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Investigação'), 3, 1, [], [new BuffExterno(21, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 15:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Medicina'), 3, 1, [], [new BuffExterno(23, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 16:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Ocultista'), 3, 1, [], [new BuffExterno(24, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 17:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Sobrevivência'), 3, 1, [], [new BuffExterno(28, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 18:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Tatica'), 3, 1, [], [new BuffExterno(29, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 19:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Tecnologia'), 3, 1, [], [new BuffExterno(30, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 20:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Diplomacia'), 3, 1, [], [new BuffExterno(13, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 21:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Enganação'), 3, 1, [], [new BuffExterno(14, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 22:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Intimidação'), 3, 1, [], [new BuffExterno(19, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 23:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Intuição'), 3, 1, [], [new BuffExterno(20, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 24:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Percepção'), 3, 1, [], [new BuffExterno(25, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 25:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Vontade'), 3, 1, [], [new BuffExterno(31, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 26:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Fortitude'), 3, 1, [], [new BuffExterno(16, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 27:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Acrobacia'), 1, 1, [], [new BuffExterno(6, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 28:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Crime'), 1, 1, [], [new BuffExterno(12, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 29:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Furtividade'), 1, 1, [], [new BuffExterno(17, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 30:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Iniciativa'), 1, 1, [], [new BuffExterno(18, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 31:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Pontaria'), 1, 1, [], [new BuffExterno(26, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 32:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Reflexo'), 1, 1, [], [new BuffExterno(27, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 33:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Atletismo'), 1, 1, [], [new BuffExterno(9, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 34:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Luta'), 1, 1, [], [new BuffExterno(22, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 35:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Adestramento'), 1, 1, [], [new BuffExterno(7, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 36:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Artes'), 1, 1, [], [new BuffExterno(8, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 37:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Atualidades'), 1, 1, [], [new BuffExterno(10, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 38:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Ciências'), 1, 1, [], [new BuffExterno(11, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 39:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Engenharia'), 1, 1, [], [new BuffExterno(15, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 40:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Investigação'), 1, 1, [], [new BuffExterno(21, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 41:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Medicina'), 1, 1, [], [new BuffExterno(23, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 42:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Ocultista'), 1, 1, [], [new BuffExterno(24, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 43:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Sobrevivência'), 1, 1, [], [new BuffExterno(28, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 44:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Tatica'), 1, 1, [], [new BuffExterno(29, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 45:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Tecnologia'), 1, 1, [], [new BuffExterno(30, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 46:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Diplomacia'), 1, 1, [], [new BuffExterno(13, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 47:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Enganação'), 1, 1, [], [new BuffExterno(14, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 48:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Intimidação'), 1, 1, [], [new BuffExterno(19, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 49:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Intuição'), 1, 1, [], [new BuffExterno(20, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 50:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Percepção'), 1, 1, [], [new BuffExterno(25, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 51:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Vontade'), 1, 1, [], [new BuffExterno(31, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 52:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Simples de Fortitude'), 1, 1, [], [new BuffExterno(16, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 53:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Acrobacia'), 3, 2, [], [new BuffExterno(6, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 54:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Crime'), 3, 2, [], [new BuffExterno(12, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 55:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Furtividade'), 3, 2, [], [new BuffExterno(17, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 56:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Iniciativa'), 3, 2, [], [new BuffExterno(18, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 57:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Pontaria'), 3, 2, [], [new BuffExterno(26, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 58:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Reflexo'), 3, 2, [], [new BuffExterno(27, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 59:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Atletismo'), 3, 2, [], [new BuffExterno(9, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 60:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Luta'), 3, 2, [], [new BuffExterno(22, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 61:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Adestramento'), 3, 2, [], [new BuffExterno(7, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 62:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Artes'), 3, 2, [], [new BuffExterno(8, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 63:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Atualidades'), 3, 2, [], [new BuffExterno(10, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 64:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Ciências'), 3, 2, [], [new BuffExterno(11, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 65:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Engenharia'), 3, 2, [], [new BuffExterno(15, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 66:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Investigação'), 3, 2, [], [new BuffExterno(21, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 67:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Medicina'), 3, 2, [], [new BuffExterno(23, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 68:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Ocultista'), 3, 2, [], [new BuffExterno(24, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 69:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Sobrevivência'), 3, 2, [], [new BuffExterno(28, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 70:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Tatica'), 3, 2, [], [new BuffExterno(29, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 71:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Tecnologia'), 3, 2, [], [new BuffExterno(30, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 72:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Diplomacia'), 3, 2, [], [new BuffExterno(13, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 73:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Enganação'), 3, 2, [], [new BuffExterno(14, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 74:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Intimidação'), 3, 2, [], [new BuffExterno(19, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 75:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Intuição'), 3, 2, [], [new BuffExterno(20, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 76:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Percepção'), 3, 2, [], [new BuffExterno(25, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 77:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Vontade'), 3, 2, [], [new BuffExterno(31, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 78:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Complexa de Fortitude'), 3, 2, [], [new BuffExterno(16, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 79:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Acrobacia'), 1, 2, [], [new BuffExterno(6, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 80:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Crime'), 1, 2, [], [new BuffExterno(12, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 81:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Furtividade'), 1, 2, [], [new BuffExterno(17, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 82:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Iniciativa'), 1, 2, [], [new BuffExterno(18, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 83:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Pontaria'), 1, 2, [], [new BuffExterno(26, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 84:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Reflexo'), 1, 2, [], [new BuffExterno(27, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 85:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Atletismo'), 1, 2, [], [new BuffExterno(9, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 86:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Luta'), 1, 2, [], [new BuffExterno(22, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 87:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Adestramento'), 1, 2, [], [new BuffExterno(7, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 88:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Artes'), 1, 2, [], [new BuffExterno(8, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 89:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Atualidades'), 1, 2, [], [new BuffExterno(10, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 90:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Ciências'), 1, 2, [], [new BuffExterno(11, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 91:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Engenharia'), 1, 2, [], [new BuffExterno(15, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 92:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Investigação'), 1, 2, [], [new BuffExterno(21, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 93:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Medicina'), 1, 2, [], [new BuffExterno(23, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 94:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Ocultista'), 1, 2, [], [new BuffExterno(24, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 95:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Sobrevivência'), 1, 2, [], [new BuffExterno(28, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 96:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Tatica'), 1, 2, [], [new BuffExterno(29, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 97:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Tecnologia'), 1, 2, [], [new BuffExterno(30, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 98:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Diplomacia'), 1, 2, [], [new BuffExterno(13, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 99:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Enganação'), 1, 2, [], [new BuffExterno(14, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 100:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Intimidação'), 1, 2, [], [new BuffExterno(19, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 101:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Intuição'), 1, 2, [], [new BuffExterno(20, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 102:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Percepção'), 1, 2, [], [new BuffExterno(25, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 103:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Vontade'), 1, 2, [], [new BuffExterno(31, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 104:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Complexo de Fortitude'), 1, 2, [], [new BuffExterno(16, 'Melhoria Complexa por Equipamento', 5, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 105:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Acrobacia'), 3, 3, [], [new BuffExterno(6, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 106:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Crime'), 3, 3, [], [new BuffExterno(12, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 107:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Furtividade'), 3, 3, [], [new BuffExterno(17, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 108:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Iniciativa'), 3, 3, [], [new BuffExterno(18, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 109:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Pontaria'), 3, 3, [], [new BuffExterno(26, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 110:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Reflexo'), 3, 3, [], [new BuffExterno(27, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 111:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Atletismo'), 3, 3, [], [new BuffExterno(9, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 112:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Luta'), 3, 3, [], [new BuffExterno(22, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 113:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Adestramento'), 3, 3, [], [new BuffExterno(7, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 114:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Artes'), 3, 3, [], [new BuffExterno(8, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 115:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Atualidades'), 3, 3, [], [new BuffExterno(10, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 116:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Ciências'), 3, 3, [], [new BuffExterno(11, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 117:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Engenharia'), 3, 3, [], [new BuffExterno(15, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 118:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Investigação'), 3, 3, [], [new BuffExterno(21, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 119:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Medicina'), 3, 3, [], [new BuffExterno(23, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 120:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Ocultista'), 3, 3, [], [new BuffExterno(24, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 121:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Sobrevivência'), 3, 3, [], [new BuffExterno(28, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 122:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Tatica'), 3, 3, [], [new BuffExterno(29, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 123:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Tecnologia'), 3, 3, [], [new BuffExterno(30, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 124:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Diplomacia'), 3, 3, [], [new BuffExterno(13, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 125:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Enganação'), 3, 3, [], [new BuffExterno(14, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 126:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Intimidação'), 3, 3, [], [new BuffExterno(19, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 127:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Intuição'), 3, 3, [], [new BuffExterno(20, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 128:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Percepção'), 3, 3, [], [new BuffExterno(25, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 129:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Vontade'), 3, 3, [], [new BuffExterno(31, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 130:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Especial de Fortitude'), 3, 3, [], [new BuffExterno(16, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 131:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Acrobacia'), 1, 3, [], [new BuffExterno(6, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 132:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Crime'), 1, 3, [], [new BuffExterno(12, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 133:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Furtividade'), 1, 3, [], [new BuffExterno(17, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 134:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Iniciativa'), 1, 3, [], [new BuffExterno(18, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 135:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Pontaria'), 1, 3, [], [new BuffExterno(26, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 136:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Reflexo'), 1, 3, [], [new BuffExterno(27, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 137:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Atletismo'), 1, 3, [], [new BuffExterno(9, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 138:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Luta'), 1, 3, [], [new BuffExterno(22, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 139:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Adestramento'), 1, 3, [], [new BuffExterno(7, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 140:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Artes'), 1, 3, [], [new BuffExterno(8, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 141:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Atualidades'), 1, 3, [], [new BuffExterno(10, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 142:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Ciências'), 1, 3, [], [new BuffExterno(11, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 143:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Engenharia'), 1, 3, [], [new BuffExterno(15, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 144:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Investigação'), 1, 3, [], [new BuffExterno(21, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 145:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Medicina'), 1, 3, [], [new BuffExterno(23, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 146:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Ocultista'), 1, 3, [], [new BuffExterno(24, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 147:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Sobrevivência'), 1, 3, [], [new BuffExterno(28, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 148:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Tatica'), 1, 3, [], [new BuffExterno(29, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 149:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Tecnologia'), 1, 3, [], [new BuffExterno(30, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 150:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Diplomacia'), 1, 3, [], [new BuffExterno(13, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 151:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Enganação'), 1, 3, [], [new BuffExterno(14, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 152:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Intimidação'), 1, 3, [], [new BuffExterno(19, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 153:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Intuição'), 1, 3, [], [new BuffExterno(20, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 154:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Percepção'), 1, 3, [], [new BuffExterno(25, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 155:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Vontade'), 1, 3, [], [new BuffExterno(31, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 156:
+        //         item = new ItemEquipamento(new NomeItem('Utensílio Especial de Fortitude'), 1, 3, [], [new BuffExterno(16, 'Melhoria Especial por Equipamento', 8, acaoFerramenta, 5, 1, 1)], true, false, new DetalhesItemEquipamento());
+        //         break;
+        //     case 157:
+        //         item = new ItemComponente(new NomeItem('Componente Simples de Conhecimento'), 1, 0, new DetalhesItemComponente(1, 1, 2));
+        //         break;
+        //     case 158:
+        //         item = new ItemComponente(new NomeItem('Componente Simples de Energia'), 1, 0, new DetalhesItemComponente(2, 1, 2));
+        //         break;
+        //     case 159:
+        //         item = new ItemComponente(new NomeItem('Componente Simples de Medo'), 1, 0, new DetalhesItemComponente(3, 1, 2));
+        //         break;
+        //     case 160:
+        //         item = new ItemComponente(new NomeItem('Componente Simples de Morte'), 1, 0, new DetalhesItemComponente(4, 1, 2));
+        //         break;
+        //     case 161:
+        //         item = new ItemComponente(new NomeItem('Componente Simples de Sangue'), 1, 0, new DetalhesItemComponente(5, 1, 2));
+        //         break;
+        //     case 162:
+        //         item = new ItemComponente(new NomeItem('Componente Complexo de Conhecimento'), 1, 0, new DetalhesItemComponente(1, 2, 1));
+        //         break;
+        //     case 163:
+        //         item = new ItemComponente(new NomeItem('Componente Complexo de Energia'), 1, 0, new DetalhesItemComponente(2, 2, 1));
+        //         break;
+        //     case 164:
+        //         item = new ItemComponente(new NomeItem('Componente Complexo de Medo'), 1, 0, new DetalhesItemComponente(3, 2, 1));
+        //         break;
+        //     case 165:
+        //         item = new ItemComponente(new NomeItem('Componente Complexo de Morte'), 1, 0, new DetalhesItemComponente(4, 2, 1));
+        //         break;
+        //     case 166:
+        //         item = new ItemComponente(new NomeItem('Componente Complexo de Sangue'), 1, 0, new DetalhesItemComponente(5, 2, 1));
+        //         break;
+        //     case 167:
+        //         item = new ItemComponente(new NomeItem('Componente Especial de Conhecimento'), 1, 1, new DetalhesItemComponente(1, 3, 1));
+        //         break;
+        //     case 168:
+        //         item = new ItemComponente(new NomeItem('Componente Especial de Energia'), 1, 1, new DetalhesItemComponente(2, 3, 1));
+        //         break;
+        //     case 169:
+        //         item = new ItemComponente(new NomeItem('Componente Especial de Medo'), 1, 1, new DetalhesItemComponente(3, 3, 1));
+        //         break;
+        //     case 170:
+        //         item = new ItemComponente(new NomeItem('Componente Especial de Morte'), 1, 1, new DetalhesItemComponente(4, 3, 1));
+        //         break;
+        //     case 171:
+        //         item = new ItemComponente(new NomeItem('Componente Especial de Sangue'), 1, 1, new DetalhesItemComponente(5, 3, 1));
+        //         break;
+        //     default:
+        //         item = new ItemEquipamento(new NomeItem('Vestimenta Simples de Acrobacia'), 3, 1, [], [new BuffExterno(6, 'Melhoria Simples por Equipamento', 2, acaoFerramenta, 5, 1, 1)], false, false, new DetalhesItemEquipamento());
+        //         break;
+        // }
 
-        FichaHelper.getInstance().personagem.inventario.adicionarItemNoInventario(item);
+        // FichaHelper.getInstance().personagem.inventario.adicionarItemNoInventario(item);
     };
 
     return (
