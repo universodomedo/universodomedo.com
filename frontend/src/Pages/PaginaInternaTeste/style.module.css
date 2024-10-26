@@ -4,4 +4,48 @@
     color: white;
     text-align: center;
     align-items: center;
+    gap: 2vh;
+    overflow-y: auto;
+}
+
+.ficha_existente {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    align-items: center;
+}
+
+.acesso_ficha_existente, .acesso_ficha_nova {
+    display: flex;
+    flex-direction: row;
+    border: 2px white solid;
+    border-radius: 5px;
+    gap: 1vw;
+    cursor: pointer;
+    padding: 1vh .6vw;
+    box-shadow: inset 1px;
+}
+
+.botao_ficha_existente {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+}
+
+.acesso_ficha_existente:hover, .acesso_ficha_nova:hover {
+    border: 2px rgb(120, 183, 255) solid;
+    background-color: rgb(42, 55, 58);
+}
+
+.ficha_nome, .acesso_ficha_nova {
+    font-size: 2rem;
+}
+
+.ficha_detalhes {
+    display: flex;
+    flex-direction: column;
+}
+
+.remover_ficha {
+    cursor: pointer;
 }

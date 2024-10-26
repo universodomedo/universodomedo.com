@@ -1,7 +1,7 @@
 // #region Imports
 import style from './style.module.css';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { RLJ_Ficha2 } from 'Types/classes.tsx';
@@ -13,6 +13,7 @@ const page = () => {
 
     const [atributos, setAtributos] = useState(SingletonHelper.getInstance().atributos.map((atributo) => ({ idAtributo: atributo.id, nomeAbrev: atributo.nomeAbrev, valor: 1 })));
     const [pericias, setPericias] = useState(SingletonHelper.getInstance().pericias.map((pericia) => ({ idPericia: pericia.id, nomeAbrev: pericia.nomeAbrev, valor: 1 })));
+    const [inputValue, setInputValue] = useState('');
 
     const [numeroInicialAtributos] = useState(() => atributos.reduce((acc, cur) => acc + cur.valor, 0));
     const numeroAtualAtributos = atributos.reduce((acc, cur) => acc + cur.valor, 0);
@@ -20,9 +21,9 @@ const page = () => {
     const numeroAtributosNoFinal = numeroInicialAtributos + atributosDistribuir;
     const atributosRestantesDistribuir = numeroAtributosNoFinal - numeroAtualAtributos;
     const numeroAtributosPodeDiminuir = atributos.filter(atributo => atributo.valor < 1).length;
-    
+
     //
-    
+
     const [numeroInicialPericiasTreinadas] = useState(() => pericias.filter(pericia => pericia.valor === 2).length);
     const numeroAtualPericiasTreinadas = pericias.filter(pericia => pericia.valor === 2).length;
     const periciasTreinadasDistribuir = 1 + atributos.find(atributo => atributo.idAtributo === 3)!.valor;
@@ -63,44 +64,49 @@ const page = () => {
         setPericias(novasPericiasTreinadas);
     }
 
-    const limiteDiminuirAtributo = (valorAtributo:number):boolean => {
+    const limiteDiminuirAtributo = (valorAtributo: number): boolean => {
         return (
             (valorAtributo <= 0) ||
             (numeroAtributosPodeDiminuir > 0 && valorAtributo === 1)
         );
     }
 
-    const limiteAumentarAtributo = (valorAtributo:number):boolean => {
+    const limiteAumentarAtributo = (valorAtributo: number): boolean => {
         return (
             valorAtributo >= 3 ||
             atributosRestantesDistribuir <= 0
         );
     }
 
-    const limiteDiminuirPericia = (valorPericia:number):boolean => {
+    const limiteDiminuirPericia = (valorPericia: number): boolean => {
         return (
             valorPericia < 2
         );
     }
 
-    const limiteAumentarPericia = (valorPericia:number):boolean => {
+    const limiteAumentarPericia = (valorPericia: number): boolean => {
         return (
             periciasTreinadasRestantesDistribuir <= 0 ||
             valorPericia >= 2
         );
     }
 
-    const bloqueiaProsseguir = ():boolean => {
+    const bloqueiaProsseguir = (): boolean => {
         return (
             atributosRestantesDistribuir > 0 ||
-            periciasTreinadasRestantesDistribuir !== 0
+            periciasTreinadasRestantesDistribuir !== 0 ||
+            inputValue.trim() === ''
         );
     }
 
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(event.target.value);
+    };
+
     const prosseguir = () => {
-        const teste: RLJ_Ficha2 = {
+        const ficha: RLJ_Ficha2 = {
             detalhes: {
-                nome: 'Ficha Customizada',
+                nome: inputValue,
                 idClasse: 1,
                 idNivel: 1,
             },
@@ -126,14 +132,24 @@ const page = () => {
             periciasPatentes: pericias.map(pericia => ({ idPericia: pericia.idPericia, idPatente: pericia.valor })),
         }
 
-        localStorage.setItem('dadosFicha', JSON.stringify({ dados: teste }));
+        addFichaLocalStore(ficha);
 
-        navigate('/ficha-demo');
+        navigate('/pagina-interna');
+    }
+
+    const addFichaLocalStore = (novaFicha: RLJ_Ficha2) => {
+        const data = localStorage.getItem('dadosFicha');
+        const dadosFicha = data ? JSON.parse(data) : [];
+
+        dadosFicha.push({ dados: novaFicha });
+        localStorage.setItem('dadosFicha', JSON.stringify(dadosFicha));
     }
 
     return (
         <div className={style.editando_ficha}>
             <h1>Criando Ficha - NEX 0%</h1>
+
+            <input type='text' placeholder='Nome do Personagem' value={inputValue} onChange={handleInputChange} autoFocus />
 
             <div className={style.area_edicao}>
                 <div className={style.editando_ficha_atributos}>

@@ -4,7 +4,6 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
 export const geraFicha = (dadosFicha: RLJ_Ficha2): RLJ_Ficha2 => {
-
     const ficha: RLJ_Ficha2 = {
         detalhes: {
             nome: dadosFicha.detalhes?.nome ?? 'TesteVazio',

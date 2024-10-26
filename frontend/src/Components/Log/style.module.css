@@ -2,8 +2,7 @@
     position: fixed;
     bottom: 0;
     right: 0;
-    width: 14vw;
-    transition: max-height 0.3s ease;
+    transition: height 0.3s ease, width 0.3s ease;
     display: block;
     margin-right: 1%;
     box-sizing: border-box;
@@ -16,8 +15,26 @@
 .expanded {
     display: flex;
     flex-direction: column;
-    height: 30vh;
+    resize: none;
+    overflow: hidden;
+    z-index: 9999;
 }
+
+.resize_handle {
+    position: absolute;
+    background-color: transparent;
+    z-index: 10;
+}
+
+.resize_handle.top { cursor: ns-resize; top: -5px; left: 0; right: 0; height: 10px; }
+.resize_handle.right { cursor: ew-resize; top: 0; bottom: 0; right: -5px; width: 10px; }
+.resize_handle.bottom { cursor: ns-resize; bottom: -5px; left: 0; right: 0; height: 10px; }
+.resize_handle.left { cursor: ew-resize; top: 0; bottom: 0; left: -5px; width: 10px; }
+
+.resize_handle.top_left { cursor: nwse-resize; top: -5px; left: -5px; width: 10px; height: 10px; }
+.resize_handle.top_right { cursor: nesw-resize; top: -5px; right: -5px; width: 10px; height: 10px; }
+.resize_handle.bottom_left { cursor: nesw-resize; bottom: -5px; left: -5px; width: 10px; height: 10px; }
+.resize_handle.bottom_right { cursor: nwse-resize; bottom: -5px; right: -5px; width: 10px; height: 10px; }
 
 .toolbar {
     background-color: #007bff;
@@ -36,7 +53,6 @@
     flex-direction: column;
     gap: .6vh;
     background-color: #f1f1f1;
-    border: 1px solid #ccc;
     overflow-y: auto;
     padding: 4%;
     height: 100%;

@@ -1,9 +1,9 @@
 // #region Imports
 import CheckboxComponent from "Components/SubComponents/CheckBoxValue/page.tsx";
 import { MDL_Atributo, MDL_AtributoPersonagem, MDL_EstatisticaDanificavel, MDL_PatentePericia, MDL_Pericia, MDL_Personagem, MDL_TipoDano, RLJ_AtributoPersonagem_Atributo, RLJ_EstatisticasDanificaveisPersonagem_Estatistica, RLJ_Ficha, RLJ_PericiasPatentesPersonagem_Pericia_Patente, RLJ_ReducaoDanoPersonagem_TipoDano, MDL_CaracteristicaArma, MDL_Habilidade, MDL_Ritual, RLJ_Rituais, MDL_CirculoRitual, MDL_EfeitoAcao, MDL_Duracao, MDL_Elemento } from "udm-types";
-import { TestePericia, RollNumber } from "Components/Functions/RollNumber.tsx";
 import { FichaHelper, SingletonHelper, LoggerHelper } from "Types/classes_estaticas.tsx";
 import { toast } from "react-toastify";
+import { VarianciaDaAcao, ExecutaVariacao, ExecutaTestePericia, ExecutaVariacaoGenerica } from 'Recursos/Ficha/Variacao.ts';
 // #endregion
 
 export const pluralize = (count: number, singular: string, plural?: string): string => {
@@ -431,20 +431,22 @@ export class PericiaPatentePersonagem {
     }
 
     realizarTeste = () => {
-        this.rodarTeste();
+        // ExecutaTestePericia();
+        // ExecutaAcaoComVariancia({ valorMaximo: 20, variancia: 19});
+        // this.rodarTeste();
         // LoggerHelper.getInstance().adicionaMensagem(`2 Agilidade: [14, 20]`);
         // LoggerHelper.getInstance().adicionaMensagem(`+5 Bônus: 25`);
 
         // LoggerHelper.getInstance().saveLog();
 
-        LoggerHelper.getInstance().saveLog();
+        // LoggerHelper.getInstance().saveLog();
     }
 
     rodarTeste = () => {
-        const resultadoTeste = TestePericia(this.refAtributoPersonagem.valorTotal, this.valorTotal);
+        // const resultadoTeste = TestePericia(this.refAtributoPersonagem.valorTotal, this.valorTotal);
 
-        toast(`Teste ${this.refPericia.nomeAbrev}: [${resultadoTeste}]`);
-        LoggerHelper.getInstance().adicionaMensagem(`Teste ${this.refPericia.nomeAbrev}: [${resultadoTeste}]`);
+        // toast(`Teste ${this.refPericia.nomeAbrev}: [${resultadoTeste}]`);
+        // LoggerHelper.getInstance().adicionaMensagem(`Teste ${this.refPericia.nomeAbrev}: [${resultadoTeste}]`);
     }
 }
 
@@ -874,11 +876,13 @@ export class AcaoAtaque extends Acao {
     }
 
     executaAtaque = () => {
-        this.refPai.detalhesArma.refPericiaUtilizadaArma.rodarTeste();
-        const teste2 = RollNumber(this.refPai.detalhesArma.variancia);
-        LoggerHelper.getInstance().adicionaMensagem(`${this.refPai.detalhesArma.dano - teste2.variancia} de dano`);
-        toast(`${this.refPai.detalhesArma.dano - teste2.variancia} de dano`);
-        LoggerHelper.getInstance().fechaNivelLogMensagem();
+        // this.refPai.detalhesArma.refPericiaUtilizadaArma.rodarTeste();
+        ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [ { valorMaximo: 6, variancia: 4 }, { valorMaximo: 10, variancia: 2 } ] })
+        // ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [ { valorMaximo: this.refPai.detalhesArma.dano, variancia: this.refPai.detalhesArma.variancia } ] })
+        // const teste2 = RollNumber(this.refPai.detalhesArma.variancia);
+        // LoggerHelper.getInstance().adicionaMensagem(`${this.refPai.detalhesArma.dano - teste2.variancia} de dano`);
+        // toast(`${this.refPai.detalhesArma.dano - teste2.variancia} de dano`);
+        // LoggerHelper.getInstance().fechaNivelLogMensagem();
     }
 
     override get refPai(): ItemArma { return this._refPai as ItemArma };
