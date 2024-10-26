@@ -17,7 +17,8 @@ interface SalaContextProps {
 
 const SalaContext = createContext<SalaContextProps | undefined>(undefined);
 
-const socketService = new SocketIOService('http://10.1.1.118:8085/');
+const socketService = new SocketIOService('https://galadriel.universodomedo.com');
+// const socketService = new SocketIOService('http://10.1.1.118:8085/');
 // const socketService = new SocketIOService('http://localhost:8085/');
 // const socketService = new SocketIOService('http://galadriel:8085');
 
