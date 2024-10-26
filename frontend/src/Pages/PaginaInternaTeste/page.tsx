@@ -29,6 +29,7 @@ interface Dado {
 const page = () => {
     // const {salas, criaSala} = useSalaContext();
     const [dadosFicha, setDadosFicha] = useState<Dado[]>([]);
+    // const [dadosFicha, setDadosFicha] = useState<Dado[]>([] as Dado[]);
 
     const navigate = useNavigate();
 
