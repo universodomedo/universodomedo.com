@@ -18,6 +18,12 @@
     height: 4vh;
 }
 
+.editando_ficha input {
+    width: 20%;
+    height: 4vh;
+    margin: auto;
+}
+
 .area_edicao {
     display: flex;
     flex-direction: column;

@@ -22,8 +22,7 @@ export const obterTiposDano = createAsyncThunk(
 export const carregaDemo = createAsyncThunk(
     'fichaHelper/carregaDemo',
     async () => {
-        const jsonFicha = localStorage.getItem('dadosFicha');
-
+        const jsonFicha = localStorage.getItem('fichaAtual');
         const ficha: RLJ_Ficha2 = (() => {
             if (typeof jsonFicha === 'string') {
                 try {

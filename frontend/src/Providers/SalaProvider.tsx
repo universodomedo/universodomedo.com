@@ -17,43 +17,43 @@ interface SalaContextProps {
 
 const SalaContext = createContext<SalaContextProps | undefined>(undefined);
 
-const socketService = new SocketIOService('http://galadriel:8080');
+// const socketService = new SocketIOService('http://galadriel:8080');
 
-export const SalaProvider = ({ children }: { children: ReactNode }) => {
-    const [salas, setSalas] = useState<Sala[]>([]);
-    const [isConnected, setIsConnected] = useState<boolean>(false);
+// export const SalaProvider = ({ children }: { children: ReactNode }) => {
+//     const [salas, setSalas] = useState<Sala[]>([]);
+//     const [isConnected, setIsConnected] = useState<boolean>(false);
 
-    useEffect(() => {
-        socketService.addMessageHandler('salas', (data) => {
-            setSalas(data.salas);
-        });
+//     useEffect(() => {
+//         socketService.addMessageHandler('salas', (data) => {
+//             setSalas(data.salas);
+//         });
 
-        return () => {
-            socketService.removeMessageHandler('salas', (data) => {
-                setSalas(data.salas);
-            });
-        };
-    }, []);
+//         return () => {
+//             socketService.removeMessageHandler('salas', (data) => {
+//                 setSalas(data.salas);
+//             });
+//         };
+//     }, []);
 
-    const criaSala = () => {
-        socketService.emit('cria-sala', {});
-    };
+//     const criaSala = () => {
+//         socketService.emit('cria-sala', {});
+//     };
 
-    const entraSala = (idSala: number, clientName: string) => {
-        socketService.emit('entra-sala', { idSala, clientName });
-    };
+//     const entraSala = (idSala: number, clientName: string) => {
+//         socketService.emit('entra-sala', { idSala, clientName });
+//     };
 
-    return (
-        <SalaContext.Provider value={{ salas, criaSala, entraSala }}>
-            {children}
-        </SalaContext.Provider>
-    );
-};
+//     return (
+//         <SalaContext.Provider value={{ salas, criaSala, entraSala }}>
+//             {children}
+//         </SalaContext.Provider>
+//     );
+// };
 
-export const useSalaContext = () => {
-    const context = useContext(SalaContext);
-    if (!context) {
-        throw new Error('useSalaContext must be used within a SalaProvider');
-    }
-    return context;
-};
+// export const useSalaContext = () => {
+//     const context = useContext(SalaContext);
+//     if (!context) {
+//         throw new Error('useSalaContext must be used within a SalaProvider');
+//     }
+//     return context;
+// };
