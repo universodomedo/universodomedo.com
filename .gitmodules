@@ -2,7 +2,3 @@
 	path = deployments/universodomedo.com-deployment
 	url = git@github.com:universodomedo/deployments.git
 	branch = universodomedo.com-deployment
-[submodule "galadriel"]
-	path = galadriel
-	url = git@github.com:universodomedo/galadriel.git
-	branch = main
