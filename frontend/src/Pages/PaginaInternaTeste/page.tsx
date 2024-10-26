@@ -38,6 +38,8 @@ const page = () => {
         store.dispatch(resetaDemo());
 
         const data = localStorage.getItem("dadosFicha");
+        console.log('teste');
+        console.log(data);
         if (data) {
             setDadosFicha(JSON.parse(data));
         }
@@ -81,7 +83,7 @@ const page = () => {
                 {Object.entries(dadosFicha).length < 5 ? 'Criar Nova Ficha' : 'Muitas Fichas'}
             </button>
 
-            {dadosFicha.map((ficha, index) => (
+            {dadosFicha && dadosFicha.map((ficha, index) => (
                 <div key={index} className={style.ficha_existente}>
                     <div className={style.acesso_ficha_existente} onClick={() => { abreFicha(index) }}>
                         <div className={style.ficha_nome}>{ficha.dados.detalhes.nome}</div>
