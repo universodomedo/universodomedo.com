@@ -12,6 +12,7 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { kMaxLength } from 'buffer';
 
 // import { useSalaContext } from 'Providers/SalaProvider.tsx';
 // #endregion
@@ -34,14 +35,18 @@ const page = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        localStorage.removeItem("fichaAtual")
+        localStorage.removeItem("fichaAtual");
         store.dispatch(resetaDemo());
 
         const data = localStorage.getItem("dadosFicha");
-        console.log('teste');
-        console.log(data);
         if (data) {
-            setDadosFicha(JSON.parse(data));
+            let convertedData = JSON.parse(data);
+
+            if (convertedData.dados) {
+                convertedData = [];
+                localStorage.setItem("dadosFicha", convertedData);
+            }
+            setDadosFicha(convertedData);
         }
     }, []);
 
