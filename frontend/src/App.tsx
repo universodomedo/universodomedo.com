@@ -20,7 +20,7 @@ import TooltipContainer from "Components/SubComponents/Tooltip/TooltipContainer.
 import PaginaInternaTeste from 'Pages/PaginaInternaTeste/page.tsx';
 
 import AuthOutlet from '@auth-kit/react-router/AuthOutlet';
-// import { SalaProvider } from "Providers/SalaProvider.tsx";
+import { SalaProvider } from "Providers/SalaProvider.tsx";
 // #endregion
 
 const App = () => {
@@ -69,9 +69,9 @@ const App = () => {
           <Route element={<AuthOutlet fallbackPath="/login" />}>
             <Route element={<LayoutInterno />}>
               <Route path="/pagina-interna" element={
-                // <SalaProvider>
+                <SalaProvider>
                   <PaginaInternaTeste />
-                // </SalaProvider>
+                </SalaProvider>
               } />
             </Route>
           </Route>
