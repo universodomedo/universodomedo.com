@@ -39,6 +39,7 @@ export const geraFicha = (dadosFicha: RLJ_Ficha2): RLJ_Ficha2 => {
                 idPatente: periciaPatenteAtual?.idPatente ?? 1
             };
         }),
+        rituais: dadosFicha.rituais ? dadosFicha.rituais : [],
     };
 
     return ficha;

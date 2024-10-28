@@ -75,6 +75,80 @@ export class Personagem {
     public rituais: Ritual[] = [];
     public receptor: Receptor = new Receptor(this);
 
+    constructor(private _ficha: RLJ_Ficha2) {
+        this.detalhes = new PersonagemDetalhes(this._ficha.detalhes!.nome, this._ficha.detalhes!.idClasse, this._ficha.detalhes!.idNivel);
+
+        this.estatisticasDanificaveis = this._ficha.estatisticasDanificaveis!.map(estatisticaDanificavel => {
+            return new EstatisticaDanificavel(estatisticaDanificavel.id, estatisticaDanificavel.valor!, estatisticaDanificavel.valorMaximo!)
+        });
+
+        this.estatisticasBuffaveis = new EstatisticasBuffaveisPersonagem(
+            new Defesa(5, 1, 1, 1),
+            10,
+            0,
+            [new Execucao(2, 1), new Execucao(3, 1), new Execucao(4, 1), new Execucao(6, 1)],
+            new EspacoInventario(5, 5),
+            new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2)]),
+            [new Extremidade(), new Extremidade()],
+        );
+
+        // this.reducoesDano = this._ficha.reducoesDano.map(reducaoDano => new ReducaoDano(reducaoDano.valor!, reducaoDano.tipoDano, this));
+        this.atributos = this._ficha.atributos!.map(attr => new AtributoPersonagem(attr.id, attr.valor!));
+        this.pericias = this._ficha.periciasPatentes!.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente));
+
+        this.rituais = this._ficha.rituais!.map(ritual =>
+            new Ritual(ritual.nomeRitual, ritual.idCirculoNivel, ritual.idElemento)
+            .adicionarAcoes([
+                [
+                    ...classeComArgumentos(AcaoRitual, ritual.dadosAcao.nomeAcao, ritual.dadosAcao.idTipoAcao, ritual.dadosAcao.idCateoriaAcao, ritual.dadosAcao.idMecanica),
+                    (acao) => {
+                        acao.adicionarCustos([
+                            ritual.dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, ritual.dadosAcao.custos.custoPE.valor) : null!,
+                            ...((ritual.dadosAcao.custos.custoExecucao || []).map(execucao =>
+                                execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
+                            )),
+                            ritual.dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
+                        ]);
+                        acao.adicionarBuffs([
+                            classeComArgumentos(BuffInterno, ritual.dadosAcao.buff.idBuff, ritual.dadosAcao.buff.nome, ritual.dadosAcao.buff.valor, ritual.dadosAcao.buff.duracao.idDuracao, ritual.dadosAcao.buff.duracao.valor, ritual.dadosAcao.buff.idTipoBuff)
+                        ]);
+                        acao.adicionarRequisitosEOpcoesPorId(ritual.dadosAcao.requisitos);
+                    }
+                ]
+            ])
+        );
+
+        const itemComponente = new ItemComponente(new NomeItem('Componente de Energia Simples'), 1, 0, new DetalhesItemComponente(2, 1, 2));
+        this.inventario.adicionarItemNoInventario(itemComponente);
+
+        const item6 = new ItemArma(new NomeItem('Arma Corpo-a-Corpo Leve Simples', "Gorge"), 2, 0, true, new DetalhesItemArma(4, 3, 1, 8))
+            .adicionarAcoes([
+                [
+                    ...classeComArgumentos(AcaoAtaque, 'Realizar Ataque', 2, 1, 3),
+                    (acao) => {
+                        acao.adicionarCustos([
+                            classeComArgumentos(CustoExecucao, 2, 1),
+                        ]);
+                        acao.adicionarRequisitos([
+                            classeComArgumentos(RequisitoItemEmpunhado),
+                        ]);
+                        acao.adicionarOpcoesExecucao([
+                            {
+                                key: 'alvo',
+                                displayName: 'Alvo da Ação',
+                                obterOpcoes: (): Opcao[] => {
+                                    return [{ key: 1, value: 'Alguem bem atrás de você' }];
+                                }
+                            },
+                        ]);
+                    }
+                ]
+            ]);
+        this.inventario.adicionarItemNoInventario(item6);
+
+        this.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha.verificaRequisitoCumprido(this));
+    }
+
     public get acoes(): Acao[] {
         const acoesRituais = this.rituais.reduce((acc: Acao[], ritual) => {
             return acc.concat(ritual.acoes);
@@ -134,60 +208,6 @@ export class Personagem {
     // }
 
     public onUpdate: () => void = () => { };
-
-    // constructor(db_ficha?: RLJ_Ficha);
-
-    // constructor(estatisticas:Estatisticas, atributos:Atributo[], detalhes:CharacterDetalhes, reducoesDano:ReducaoDano[], estatisticasDanificaveisPersonagem:EstatisticasDanificaveisPersonagem) {
-    // constructor(db_ficha:RLJ_Ficha, habilidades: MDL_Habilidade[]) {
-    // constructor(db_ficha?: RLJ_Ficha) {
-    constructor(private _ficha: RLJ_Ficha2) {
-        this.detalhes = new PersonagemDetalhes(this._ficha.detalhes!.nome, this._ficha.detalhes!.idClasse, this._ficha.detalhes!.idNivel);
-
-        this.estatisticasDanificaveis = this._ficha.estatisticasDanificaveis!.map(estatisticaDanificavel => {
-            return new EstatisticaDanificavel(estatisticaDanificavel.id, estatisticaDanificavel.valor!, estatisticaDanificavel.valorMaximo!)
-        });
-
-        this.estatisticasBuffaveis = new EstatisticasBuffaveisPersonagem(
-            new Defesa(5, 1, 1, 1),
-            10,
-            0,
-            [new Execucao(2, 1), new Execucao(3, 1), new Execucao(4, 1), new Execucao(6, 1)],
-            new EspacoInventario(5, 5),
-            new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2)]),
-            [new Extremidade(), new Extremidade()],
-        );
-
-        // this.reducoesDano = this._ficha.reducoesDano.map(reducaoDano => new ReducaoDano(reducaoDano.valor!, reducaoDano.tipoDano, this));
-        this.atributos = this._ficha.atributos!.map(attr => new AtributoPersonagem(attr.id, attr.valor!));
-        this.pericias = this._ficha.periciasPatentes!.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente));
-
-        const item6 = new ItemArma(new NomeItem('Arma Corpo-a-Corpo Leve Simples', "Gorge"), 2, 0, true, new DetalhesItemArma(4, 3, 1, 8))
-            .adicionarAcoes([
-                [
-                    ...classeComArgumentos(AcaoAtaque, 'Realizar Ataque', 2, 1, 3),
-                    (acao) => {
-                        acao.adicionarCustos([
-                            classeComArgumentos(CustoExecucao, 2, 1),
-                        ]);
-                        acao.adicionarRequisitos([
-                            classeComArgumentos(RequisitoItemEmpunhado),
-                        ]);
-                        acao.adicionarOpcoesExecucao([
-                            {
-                                key: 'alvo',
-                                displayName: 'Alvo da Ação',
-                                obterOpcoes: (): Opcao[] => {
-                                    return [{key: 1, value: 'Alguem bem atrás de você'}];
-                                }
-                            },
-                        ]);
-                    }
-                ] 
-            ]);
-        this.inventario.adicionarItemNoInventario(item6);
-
-        this.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha.verificaRequisitoCumprido(this));
-    }
 
     // receberDanoVital = (danoGeral:DanoGeral) => {
     //     this.controladorPersonagem.reduzDano(danoGeral);
@@ -709,6 +729,18 @@ export class Acao {
     adicionarRequisitos(requisitoParams: [new (...args: any[]) => Requisito, any[]][]): this { return (requisitoParams.forEach(([RequisitoClass, params]) => { this.requisitos.push(new RequisitoClass(...params).setRefAcao(this as AcaoRitual)); })), this; }
     adicionarOpcoesExecucao(opcoesParams: { key: string, displayName: string, obterOpcoes: () => Opcao[] }[]): this { return (opcoesParams.forEach(param => { this.opcoesExecucoes.push(new OpcoesExecucao(param.key, param.displayName, param.obterOpcoes)); })), this };
 
+    adicionarRequisitosEOpcoesPorId(ids: number[]): this {
+        ids.forEach(id => {
+            const requisitoData = RequisitoConfig.construirRequisitoEOpcoesPorId(id, this);
+            if (requisitoData) {
+                const { requisito, opcoesExecucao } = requisitoData;
+                this.requisitos.push(requisito);
+                this.opcoesExecucoes.push(...opcoesExecucao);
+            }
+        });
+        return this;
+    }
+
     get refTipoPai(): 'Ritual' | 'Item' | 'Habilidade' | undefined {
         if (this.refPai instanceof Ritual) return "Ritual";
         if (this.refPai instanceof Item) return "Item";
@@ -758,7 +790,7 @@ export class Acao {
     executaComOpcoes = (valoresSelecionados: { [key: string]: number | undefined }) => {
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeAcao} [${this.refPai.nomeExibicao}]`);
 
-        logicaMecanicas[this._idMecanica](valoresSelecionados);
+        logicaMecanicas[this._idMecanica](valoresSelecionados, this);
         this.aplicaGastos(valoresSelecionados);
 
         FichaHelper.getInstance().personagem.onUpdate();
@@ -877,7 +909,7 @@ export class AcaoAtaque extends Acao {
 
     executaAtaque = () => {
         // this.refPai.detalhesArma.refPericiaUtilizadaArma.rodarTeste();
-        ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [ { valorMaximo: 6, variancia: 4 }, { valorMaximo: 10, variancia: 2 } ] })
+        ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [{ valorMaximo: 6, variancia: 4 }, { valorMaximo: 10, variancia: 2 }] })
         // ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [ { valorMaximo: this.refPai.detalhesArma.dano, variancia: this.refPai.detalhesArma.variancia } ] })
         // const teste2 = RollNumber(this.refPai.detalhesArma.variancia);
         // LoggerHelper.getInstance().adicionaMensagem(`${this.refPai.detalhesArma.dano - teste2.variancia} de dano`);
@@ -1919,12 +1951,15 @@ export abstract class Requisito {
     abstract get requisitoCumprido(): boolean;
     abstract get descricaoRequisito(): string;
 
-    public refAcao?: AcaoRitual;
-    setRefAcao(value: AcaoRitual): this { return (this.refAcao = value, this); }
+    public refAcao?: Acao;
+    setRefAcao(value: Acao): this { return (this.refAcao = value, this); }
 }
 
 export class RequisitoComponente extends Requisito {
     constructor(public precisaEstarEmpunhando: boolean) { super(); }
+
+    public refAcao?: AcaoRitual;
+    setRefAcao(value: AcaoRitual): this { this.refAcao = value; return this; }
 
     get requisitoCumprido(): boolean {
         return (
@@ -2241,6 +2276,15 @@ export type RLJ_Ficha2 = {
     estatisticasDanificaveis?: { id: number, valorMaximo: number, valor: number }[],
     atributos?: { id: number, valor: number }[],
     periciasPatentes?: { idPericia: number, idPatente: number }[],
+    rituais?: {
+        nomeRitual: string, idCirculoNivel: number, idElemento: number,
+        dadosAcao: {
+            nomeAcao: string, idTipoAcao: number, idCateoriaAcao: number, idMecanica: number,
+            custos: { custoPE?: { valor: number }, custoExecucao?: { idExecucao: number, valor: number }[], custoComponente?: boolean },
+            buff: { idBuff: number, nome: string, valor: number, duracao: { idDuracao: number, valor: number, }, idTipoBuff: number },
+            requisitos: number[]
+        },
+    }[],
     // reducoesDano:
 }
 
@@ -2282,18 +2326,71 @@ export class Mecanica {
     ) { }
 }
 
-const logicaMecanicas: { [key: number]: (valoresSelecionados: { [key: string]: number | undefined }) => void } = {
+const logicaMecanicas: { [key: number]: (valoresSelecionados: { [key: string]: number | undefined }, acao: Acao) => void } = {
+    // Sacar
     1: (valoresSelecionados) => {
         const extremidadeSelecionada = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => extremidade.id === valoresSelecionados['idExtremidade']!)!;
 
         extremidadeSelecionada.empunhar(valoresSelecionados['idItem']!);
     },
+
+    // Guardar
     2: (valoresSelecionados) => {
         const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados['idItem']);
 
         itemSelecionado?.refExtremidade?.guardar();
     },
-    3: (valoresSelecionados) => {
-        
+
+    // Aplicar Buff
+    3: (valoresSelecionados, acao) => {
+        acao.ativaBuffs();
     }
 };
+
+type RequisitoOption = { key: string; displayName: string; obterOpcoes: (acao: Acao) => Opcao[] };
+
+class RequisitoConfig {
+    private static requisitoMap: Map<number, { 
+        requisitoClass: new (...args: any[]) => Requisito, 
+        requisitoParams: any[], // Permitir parâmetros adicionais 
+        opcoesExecucao: RequisitoOption[] 
+    }> = new Map([
+        [1, {
+            requisitoClass: RequisitoComponente,
+            requisitoParams: [true], // Parametro booleano esperado pelo RequisitoComponente
+            opcoesExecucao: [
+                {
+                    key: 'custoComponente',
+                    displayName: 'Componente',
+                    obterOpcoes: (acao: Acao) => {
+                        const acaoRitual = acao as AcaoRitual;
+                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.idCirculo).reduce((acc: { key: number; value: string }[], cur) => {
+                            acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
+                            return acc;
+                        }, []);
+                    }
+                }
+            ]
+        }],
+        // Outros requisitos podem ser adicionados aqui
+    ]);
+
+    // Método para construir requisito e opções, incluindo `setRefAcao` e parâmetros adicionais
+    static construirRequisitoEOpcoesPorId(id: number, acao: Acao) {
+        const config = this.requisitoMap.get(id);
+        if (!config) return null;
+
+        // Cria o requisito com os parâmetros e chama `setRefAcao`
+        const requisito = new config.requisitoClass(...config.requisitoParams).setRefAcao(acao as AcaoRitual);
+        const opcoesExecucao = config.opcoesExecucao.map(opcao => 
+            new OpcoesExecucao(opcao.key, opcao.displayName, () => opcao.obterOpcoes(acao))
+        );
+
+        return { requisito, opcoesExecucao };
+    }
+}
+
+type PersonagemClasse = {
+    id: number,
+    nome: string,
+}

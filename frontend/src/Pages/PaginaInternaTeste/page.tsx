@@ -125,6 +125,16 @@ const page = () => {
                 </div>
             </div>
 
+            <div className={style.ficha_existente} onClick={() => { vaiPraFicha(3) }}>
+                <div className={style.acesso_ficha_existente}>
+                    <div className={style.ficha_nome}>Ocultista</div>
+                    <div className={style.ficha_detalhes}>
+                        <div className={style.ficha_classe}>Ocultista</div>
+                        <div className={style.ficha_nex}>NEX 15%</div>
+                    </div>
+                </div>
+            </div>
+
             {/* <h1>Salas de Jogo</h1>
             <h2 onClick={criaSala}>Nova Sala</h2>
             {salas.length > 1 ? (
