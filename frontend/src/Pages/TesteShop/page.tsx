@@ -1,7 +1,7 @@
 // #region Imports
 import style from "./style.module.css";
 import { useState } from 'react';
-import { Item, ItemEquipamento, NomeItem, BuffExterno, DetalhesItemEquipamento, ItemComponente, DetalhesItemComponente } from 'Types/classes.tsx';
+import { Item, ItemEquipamento, NomeItem, BuffExterno, DetalhesItemEquipamento, ItemComponente, DetalhesItemComponente } from 'Types/classes/index.ts';
 import { FichaHelper } from "Types/classes_estaticas.tsx";
 // #endregion
 

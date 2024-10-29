@@ -1,6 +1,6 @@
 // #region Imports
 import style from "./style.module.css";
-import { PersonagemDetalhes } from "Types/classes.tsx";
+import { PersonagemDetalhes } from 'Types/classes/index.ts';
 // #endregion
 
 const page: React.FC<{ detalhesPersonagem: PersonagemDetalhes }> = ({ detalhesPersonagem }) => {

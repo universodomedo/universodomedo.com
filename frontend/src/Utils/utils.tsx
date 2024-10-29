@@ -1,5 +1,5 @@
 // #region Imports
-import { RLJ_Ficha2 } from 'Types/classes.tsx';
+import { RLJ_Ficha2 } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 

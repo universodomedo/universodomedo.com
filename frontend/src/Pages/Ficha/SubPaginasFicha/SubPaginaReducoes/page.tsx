@@ -1,6 +1,6 @@
 // #region Imports
 import style from "./style.module.css";
-import { EstatisticasBuffaveisPersonagem, ReducaoDano } from "Types/classes.tsx";
+import { EstatisticasBuffaveisPersonagem, ReducaoDano } from 'Types/classes/index.ts';
 // #endregion
 
 const page: React.FC<{ estatisticasBuffaveis: EstatisticasBuffaveisPersonagem, reducoesDanoPersonage: ReducaoDano[] }> = ({ estatisticasBuffaveis, reducoesDanoPersonage }) => {

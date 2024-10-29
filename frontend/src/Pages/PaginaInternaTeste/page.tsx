@@ -3,7 +3,7 @@ import style from './style.module.css';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { RLJ_Ficha2 } from 'Types/classes.tsx';
+import { RLJ_Ficha2 } from 'Types/classes/index.ts';
 import { getDadoFichaPorIdFake } from 'Recursos/DadosFicha.ts';
 
 import { resetaDemo } from "Redux/slices/fichaHelperSlice.ts";
@@ -12,8 +12,6 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { kMaxLength } from 'buffer';
-
 // import { useSalaContext } from 'Providers/SalaProvider.tsx';
 // #endregion
 

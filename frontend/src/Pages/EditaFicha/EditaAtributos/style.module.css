@@ -1,0 +1,45 @@
+.editando_ficha_atributos {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-y: auto;
+    gap: 2vh;
+}
+
+.atributo_referencia {
+    width: 20%;
+    margin: auto;
+}
+
+.editar_atributo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    border: 1px white solid;
+}
+
+.editar_atributo button {
+    height: 50%;
+}
+
+.corpo_atributo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.editando_ficha_estatisticas {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+    margin: auto;
+}
+
+.visualizador_estatistica {
+    display: flex;
+    flex-direction: column;
+    border: 1px white solid;
+    gap: .6vh;
+    padding: 1%;
+}

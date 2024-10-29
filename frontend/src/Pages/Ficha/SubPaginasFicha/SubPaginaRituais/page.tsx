@@ -1,5 +1,5 @@
 // #region Imports
-import { Ritual } from "Types/classes.tsx";
+import { Ritual } from 'Types/classes/index.ts';
 import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 

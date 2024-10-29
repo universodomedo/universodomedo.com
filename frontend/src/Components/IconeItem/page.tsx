@@ -1,6 +1,6 @@
 // #region Imports
 import style from "./style.module.css";
-import { IconeCustomizadoProps } from "Types/classes.tsx";
+import { IconeCustomizadoProps } from 'Types/classes/index.ts';
 // #endregion
 
 const page = ({ quantidadeAgrupada, props, onClick }: { quantidadeAgrupada:number, props: IconeCustomizadoProps, onClick?: () => void }) => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import style from "./style.module.css";
-import { MensagemLog } from "Types/classes.tsx";
+import { MensagemLog } from 'Types/classes/index.ts';
 import { LoggerHelper } from 'Types/classes_estaticas.tsx';
 
 const Log = () => {

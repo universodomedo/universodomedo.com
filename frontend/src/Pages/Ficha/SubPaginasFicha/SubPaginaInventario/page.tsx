@@ -1,7 +1,7 @@
 // #region Imports
 import style from './style.module.css';
 import React, { useState } from 'react';
-import { Inventario, EstatisticasBuffaveisPersonagem, Item } from "Types/classes.tsx";
+import { Inventario, EstatisticasBuffaveisPersonagem, Item } from 'Types/classes/index.ts';
 import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 import BarraEstatisticaDanificavel from "Components/SubComponents/SubComponentesFicha/BarraEstatisticaDanificavel/page.tsx";

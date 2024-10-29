@@ -1,7 +1,7 @@
 // #region Imports
 import style from "./style.module.css";
 import { useConsultaContext } from "Components/ConsultaFicha/page.tsx";
-import { OpcaoFormatada, CategoriaFormatada } from "Types/classes.tsx";
+import { OpcaoFormatada, CategoriaFormatada } from 'Types/classes/index.ts';
 // #endregion
 
 const page = <T,>() => {

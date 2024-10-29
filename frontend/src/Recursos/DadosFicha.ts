@@ -1,5 +1,5 @@
 // #region Imports
-import { RLJ_Ficha2 } from 'Types/classes.tsx';
+import { RLJ_Ficha2 } from 'Types/classes/index.ts';
 // #endregion
 
 const dadosFicha: { [key: number]: RLJ_Ficha2 } = {

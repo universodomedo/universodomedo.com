@@ -4,7 +4,7 @@
 // import Dropdown from 'Components/SubComponents/Dropdown/page.tsx';
 // import { MDL_BaseArma, MDL_ClassificacaoArma, MDL_DetalheBaseArma, MDL_TipoArma, RLJ_BaseArma_Patente_Alcance } from "udm-types";
 // import { useEffect, useState, useRef } from "react";
-// import { Arma } from "Types/classes.tsx";
+// import { Arma } from 'Types/classes/index.ts';
 // // #endregion
 
 // const page = () => {

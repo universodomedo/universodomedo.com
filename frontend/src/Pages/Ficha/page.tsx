@@ -22,7 +22,7 @@ import Modal from "Components/Modal/page.tsx";
 import TesteShop from "Pages/TesteShop/page.tsx";
 
 import store from 'Redux/store.ts';
-import { AcaoAtaque } from 'Types/classes.tsx';
+import { AcaoAtaque } from 'Types/classes/index.ts';
 // #endregion
 
 const Ficha: React.FC = () => {

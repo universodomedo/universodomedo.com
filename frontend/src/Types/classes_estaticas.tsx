@@ -1,7 +1,6 @@
 // #region Imports
-import { MDL_Elemento, MDL_TipoDano } from "udm-types";
-import { Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, TipoItem, NivelComponente, TipoRequisito, Habilidade, MensagemLog, Classe, Nivel } from "Types/classes.tsx";
-import { Personagem } from "Types/classes.tsx";
+import { MDL_TipoDano } from "udm-types";
+import { Personagem, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, TipoItem, NivelComponente, TipoRequisito, Habilidade, MensagemLog, Classe, Nivel, TipoGanhoNex } from 'Types/classes/index.ts';
 // #endregion
 
 export class FichaHelper {
@@ -60,6 +59,7 @@ export class SingletonHelper {
   private _lista_geral_habilidades: Habilidade[] = [];
   private _classes: Classe[] = [];
   private _niveis: Nivel[] = [];
+  private _tipos_ganho_nex: TipoGanhoNex[] = [];
 
   static getInstance() {
     if (!SingletonHelper.instance) {
@@ -146,6 +146,9 @@ export class SingletonHelper {
 
   public set niveis(value: Nivel[]) { this._niveis = value }
   public get niveis(): Nivel[] { return this._niveis }
+
+  public set tipos_ganho_nex(value: TipoGanhoNex[]) { this._tipos_ganho_nex = value }
+  public get tipos_ganho_nex(): TipoGanhoNex[] { return this._tipos_ganho_nex }
 }
 
 export class LoggerHelper {
@@ -191,7 +194,7 @@ export class LoggerHelper {
   }
 
   public limpaMensagens() {
-    this._currentLog = { titulo: '', mensagens: []};
+    this._currentLog = { titulo: '', mensagens: [] };
     this.stack = [this._currentLog];
     this.notifyListeners();
   }

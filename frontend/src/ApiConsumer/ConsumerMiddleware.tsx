@@ -3,7 +3,7 @@ import useApi from "./Consumer.tsx";
 import { MDL_Habilidade, MDL_TipoDano, RLJ_Ficha } from "udm-types";
 // #endregion
 
-import { Personagem } from "Types/classes.tsx"
+import { Personagem } from 'Types/classes/index.ts'
 
 class CustomApiCall {
     public async obterFichaPersonagem(idPersonagem: number): Promise<Personagem> {

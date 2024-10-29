@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { TooltipProps } from "Types/classes.tsx";
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { TooltipProps } from "Types/classes/index.ts";
 
 export interface TooltipState {
   visible: boolean;

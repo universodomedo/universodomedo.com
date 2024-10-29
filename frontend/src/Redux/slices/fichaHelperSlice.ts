@@ -3,9 +3,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { FichaHelper } from 'Types/classes_estaticas';
 import CustomApiCall from "ApiConsumer/ConsumerMiddleware.tsx";
 import { RootState } from 'Redux/store.ts';
-import { Personagem, RLJ_Ficha2 } from "Types/classes.tsx"
+import { Personagem, RLJ_Ficha2 } from "Types/classes/index.ts"
 import { geraFicha } from 'Utils/utils.tsx';
-
 // #endregion
 
 const fichaHelper = FichaHelper.getInstance();

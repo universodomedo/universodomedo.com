@@ -38,7 +38,7 @@
     flex-direction: column;
     width: 100%;
     overflow-y: auto;
-    gap: 1vh;
+    gap: 2vh;
 }
 
 .div_atributos {

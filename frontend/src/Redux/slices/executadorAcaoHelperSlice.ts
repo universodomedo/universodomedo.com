@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao } from 'Types/classes.tsx';
+import { Acao } from 'Types/classes/index.ts';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'Redux/store.ts';
 // #endregion

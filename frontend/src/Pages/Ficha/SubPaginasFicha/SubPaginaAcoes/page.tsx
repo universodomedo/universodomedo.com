@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao } from "Types/classes.tsx";
+import { Acao } from 'Types/classes/index.ts';
 import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 
@@ -19,17 +19,19 @@ const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, aco
   const acoesRealizaveis = acoesPersonagem.filter(acao => acao.verificaCustosPodemSerPagos && acao.verificaRequisitosCumpridos);
   const acoesBloqueadas = acoesPersonagem.filter(acao => !(acao.verificaCustosPodemSerPagos && acao.verificaRequisitosCumpridos));
 
+  const executando = (acao: Acao) => {
+    if (acao.verificaCustosPodemSerPagos && acao.verificaRequisitosCumpridos) {
+      if (acao.requisitos && acao.requisitos.length > 0) {
+        dispatch(iniciaExecucaoAcao({ acao }));
+      } else {
+        acao.executaComOpcoes({});
+      }
+    }
+  }
+
   const renderAcaoItem = (acao: Acao, index: number) => (
     <ReferenciaTooltip key={index} objeto={acao.tooltipProps}>
-      <IconeCustomizado onClick={() => {
-        if (acao.verificaCustosPodemSerPagos && acao.verificaRequisitosCumpridos) {
-          if (acao.requisitos && acao.requisitos.length > 0) {
-            dispatch(iniciaExecucaoAcao({ acao }));
-          } else {
-            acao.executaComOpcoes({});
-          }
-        }
-      }} props={acao.tooltipProps.iconeCustomizado} />
+      <IconeCustomizado onClick={() => {executando(acao)}} props={acao.tooltipProps.iconeCustomizado} />
     </ReferenciaTooltip>
   );
 

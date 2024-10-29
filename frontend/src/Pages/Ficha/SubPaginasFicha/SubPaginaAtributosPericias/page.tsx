@@ -1,6 +1,6 @@
 // #region Imports
 import style from "./style.module.css";
-import { AtributoPersonagem, PericiaPatentePersonagem } from "Types/classes.tsx";
+import { AtributoPersonagem, PericiaPatentePersonagem } from 'Types/classes/index.ts';
 import { toast } from 'react-toastify';
 // #endregion
 

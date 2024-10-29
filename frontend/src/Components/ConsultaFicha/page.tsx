@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 import style from "./style.module.css";
 import Select, { ActionMeta, components, MultiValue, PlaceholderProps, ValueContainerProps } from "react-select";
-import { FiltroProps, OpcaoFormatada, CategoriaFormatada, FiltroPropsItems } from "Types/classes.tsx";
+import { FiltroProps, OpcaoFormatada, CategoriaFormatada, FiltroPropsItems } from 'Types/classes/index.ts';
 import ValoresFiltrosSelecionados from "Components/ValoresFiltrosSelecionados/page.tsx";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from 'Redux/store.ts';

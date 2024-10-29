@@ -1,6 +1,6 @@
 // #region Imports
 import style from "./style.module.css";
-import { TooltipProps } from "Types/classes.tsx";
+import { TooltipProps } from 'Types/classes/index.ts';
 // #endregion
 
 const page = ({ props }: { props: TooltipProps }) => {
