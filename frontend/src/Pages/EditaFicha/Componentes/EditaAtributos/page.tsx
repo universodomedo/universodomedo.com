@@ -10,37 +10,37 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaTooltip";
 
+import { FichaProvider, useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-
-import { ControladorAtributos } from 'Pages/EditaFicha/page.tsx'
 // #endregion
 
-const page = ({controlador}: {controlador:ControladorAtributos}) => {
-    const [_, setRender] = useState(false);
+const page = () => {
+    const { ganhosNex, atualizarFicha } = useFicha();
 
-    const modificarAtributo = (index: number, incremento: number) => {
-        controlador.modificarAtributo(index, incremento);
-        setRender((prev) => !prev);
-    };
-
-    const limiteDiminuirAtributo = (valorAtributo: number): boolean => { return ( (valorAtributo <= 0) || (controlador.numeroAtributosPodeDiminuir > 0 && valorAtributo === 1) ); }
-    const limiteAumentarAtributo = (valorAtributo: number): boolean => { return ( valorAtributo >= 3 || controlador.pontosRestantes <= 0 ); }
+    const gastaPonto = (idAtributo:number, modificador:number) => {
+        ganhosNex.estadoGanhosNex.gastaPonto(idAtributo, modificador);
+        atualizarFicha();
+    }
 
     return (
         <div className={style.editando_ficha_atributos}>
-            <h1>Atributos a Distribuir: {controlador.pontosRestantes}</h1>
+            <div className={style.atributo_contadores}>
+                <h1>Atributos a Distribuir: {ganhosNex.estadoGanhosNex.ganhosAtributos.valorRestante}</h1>
+                <h1>Atributos a Trocar: {ganhosNex.estadoGanhosNex.trocasAtributos.valorRestante}</h1>
+            </div>
 
-            {controlador.atributosAtual.map((objAtributo, index) => (
+            {ganhosNex.estadoGanhosNex.atributos.map((atributoNexUp, index) => (
                 <div key={index} className={style.atributo_referencia}>
                     <ReferenciaTooltip objeto={ { caixaInformacao: { corpo: [{ tipo: 'texto', conteudo: '', }] }, corTooltip: { corPrimaria: '#FFFFFF' } } as TooltipProps }>
                         <div className={style.editar_atributo}>
-                            <button onClick={() => modificarAtributo(index, -1)} disabled={limiteDiminuirAtributo(objAtributo.valor)}><FontAwesomeIcon icon={faMinus} /></button>
+                            <button onClick={() => {gastaPonto(atributoNexUp.refAtributo.id, -1)}} disabled={!atributoNexUp.estaMaiorQueInicial && ganhosNex.estadoGanhosNex.trocasAtributos.finalizado}><FontAwesomeIcon icon={faMinus} /></button>
                             <div className={style.corpo_atributo}>
-                                <h2>{objAtributo.atributo.nome}</h2>
-                                <h2>{objAtributo.valor}</h2>
+                                <h2>{atributoNexUp.refAtributo.nome}</h2>
+                                <h2>{atributoNexUp.valorAtual}</h2>
                             </div>
-                            <button onClick={() => modificarAtributo(index, 1)} disabled={limiteAumentarAtributo(objAtributo.valor)}><FontAwesomeIcon icon={faPlus} /></button>
+                            <button onClick={() => {gastaPonto(atributoNexUp.refAtributo.id, +1)}} disabled={atributoNexUp.estaEmValorMaximo || ganhosNex.finalizados}><FontAwesomeIcon icon={faPlus} /></button>
                         </div>
                     </ReferenciaTooltip>
                 </div>

@@ -64,6 +64,11 @@ export class RequisitoAlgumItemEmpunhado extends Requisito {
     get descricaoRequisito(): string { return 'Necessário Empunhar algum Item'; }
 }
 
+export class RequisitoPodeSeLocomover extends Requisito {
+    get requisitoCumprido(): boolean { return true; }
+    get descricaoRequisito(): string { return 'Necessário Livre para se Locomover'; }
+}
+
 export class TipoRequisito {
     constructor(
         public id: number,

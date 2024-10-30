@@ -1,5 +1,5 @@
 // #region Imports
-import { classeComArgumentos, adicionarAcoesUtil, Acao, RequisitoFicha, Personagem, AcaoHabilidade, CustoExecucao, RequisitoExtremidadeDisponivel, RequisitoAlgumItemGuardado, Opcao, RequisitoAlgumItemEmpunhado } from 'Types/classes/index.ts';
+import { classeComArgumentos, adicionarAcoesUtil, Acao, RequisitoFicha, Personagem, AcaoHabilidade, CustoExecucao, RequisitoExtremidadeDisponivel, RequisitoAlgumItemGuardado, Opcao, RequisitoAlgumItemEmpunhado, RequisitoPodeSeLocomover, BuffInterno } from 'Types/classes/index.ts';
 import { FichaHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -7,7 +7,6 @@ export class Habilidade {
     public acoes: Acao[] = [];
 
     constructor(
-        public id: number,
         public nome: string,
         public requisitoFicha: RequisitoFicha,
     ) { }
@@ -20,7 +19,7 @@ export class Habilidade {
 export const lista_geral_habilidades = (): Habilidade[] => {
     const retorno: Habilidade[] = [];
 
-    const habilidade1 = new Habilidade(1, 'Sacar Item', new RequisitoFicha((personagem: Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
+    const habilidade1 = new Habilidade('Sacar Item', new RequisitoFicha((personagem: Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
         .adicionarAcoes([
             [
                 ...classeComArgumentos(AcaoHabilidade, 'Sacar Item', 1, 1, 1),
@@ -58,7 +57,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         ]);
     retorno.push(habilidade1);
 
-    const habilidade2 = new Habilidade(2, 'Guardar Item', new RequisitoFicha((personagem: Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
+    const habilidade2 = new Habilidade('Guardar Item', new RequisitoFicha((personagem: Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
         .adicionarAcoes([
             [
                 ...classeComArgumentos(AcaoHabilidade, 'Guardar Item', 1, 1, 2),
@@ -85,6 +84,26 @@ export const lista_geral_habilidades = (): Habilidade[] => {
             ]
         ])
     retorno.push(habilidade2);
+
+    retorno.push(
+        new Habilidade('Movimento Acrobático', new RequisitoFicha((personagem:Personagem) => personagem.pericias.some(pericia => pericia.refPericia.id === 6)))
+        .adicionarAcoes([
+            [
+                ...classeComArgumentos(AcaoHabilidade, 'Movimento Acrobático', 1, 1, 3),
+                (acao) => {
+                    acao.adicionarCustos([
+                        classeComArgumentos(CustoExecucao, 1, 1)
+                    ]);
+                    acao.adicionarRequisitos([
+                        classeComArgumentos(RequisitoPodeSeLocomover)
+                    ]);
+                    acao.adicionarBuffs([
+                        classeComArgumentos(BuffInterno, 52, 'Movimento Acrobático', 1, 4, 1, 1)
+                    ]);
+                }
+            ]
+        ])
+    )
 
     return retorno;
 }

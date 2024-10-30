@@ -1,58 +1,111 @@
 // #region Imports
+import { Atributo } from 'Types/classes/index.ts';
 import { SingletonHelper } from "Types/classes_estaticas.tsx";
 // #endregion
 
-export class GanhoIndividualNex {
-    constructor(
-        private _idTipoGanhoNex: number,
-        public valor: number
-    ) {}
+export class GanhosNex {
+    public estadoGanhosNex: EstadoGanhosNex;
 
-    get refTipoGanhoNex(): TipoGanhoNex { return SingletonHelper.getInstance().tipos_ganho_nex.find(tipo_ganho_nex => tipo_ganho_nex.id === this._idTipoGanhoNex)! }
-    get realizado(): boolean { return this.valor !== 0; }
+    constructor(
+        public ganhos: GanhoIndividualNex[],
+        public maxAtributo: number,
+        public trocas?: TrocaIndividualNex[],
+        // public ganhosClasse?: GanhoIndividualNex[],
+    ) {
+        this.estadoGanhosNex = new EstadoGanhosNex(ganhos.find(ganho => ganho.refTipoGanhoNex.id === 1)!, trocas?.find(troca => troca.refTipoGanhoNex.id === 1)!, maxAtributo)
+    }
+
+    get finalizados(): boolean {
+        return (
+            this.ganhos
+                ? this.ganhos?.every(ganho => ganho.finalizado) ?? false
+                : true
+        );
+    }
 }
 
 export class TipoGanhoNex {
     constructor(
         public id: number,
         public nome: string
-    ) {}
+    ) { }
 }
 
-export class GanhosNex {
+export class EstadoGanhosNex {
+    public atributos: AtributoNexUp[];
+
     constructor(
-        public ganhos: GanhoIndividualNex[],
-        public maxAtributo: number,
-        public ganhosClasse?: GanhoIndividualNex[],
-        public trocas?: GanhoIndividualNex[],
-    ) {}
-
-    get realizados(): boolean {
-        return (
-            this.ganhos
-                ? this.ganhos?.every(ganho => ganho.realizado) ?? false
-                : true
-        );
-    }
-}
-
-export class GanhosNex0 {
-    public numeroAtributosRestantes:number;
-    public numeroPericiasTreinadasRestantes:number = 0;
-
-    constructor (
-        public numeroAtributos: number,
-        public numeroPericiasTreinadas: number,
-        public numeroPericiasTreinadasPorInt: number,
-        public maximoAtributo: number,
+        public ganhosAtributos: GanhoIndividualNex,
+        public trocasAtributos: TrocaIndividualNex,
+        public valorMaxAtributo: number,
+        public valorMinAtributo: number = 0
     ) {
-        this.numeroAtributosRestantes = numeroAtributos;
+        this.atributos = SingletonHelper.getInstance().atributos.map(atributo => { return new AtributoNexUp(atributo, 1, valorMaxAtributo) });
     }
 
-    public atualizaPericiasTreinadasRestantes(valorInt: number): void { this.numeroPericiasTreinadasRestantes = this.numeroPericiasTreinadas + (valorInt * this.numeroPericiasTreinadasPorInt); }
-    public get realizado(): boolean { return this.numeroAtributos !== 0 && this.numeroPericiasTreinadasRestantes !== 0; }
+    gastaPonto(idAtributo: number, modificador: number) {
+        const atributo =  this.atributos.find(atributo => atributo.refAtributo.id === idAtributo)!;
+        atributo.alterarValor(modificador);
+        this.ganhosAtributos.alterarValor(modificador);
+        this.trocasAtributos.atualizaValorRestante(this.atributos.filter(atributo => atributo.menorQueInicialmente).length);
+    }
+
+    get quantidadeDeAtributosReduzidos(): number { return this.atributos.filter(atributo => atributo.menorQueInicialmente).length }
 }
 
-type GanhoClasse = { idClasse:number, ganhoPorAtributo: GanhoPorAtributo };
-type GanhoPorAtributo = { idAtributo: number, ganhoDaEstatistica: GanhoDaEstatistica };
-type GanhoDaEstatistica = { idEstatisticaDanificavel: number, valorPorPonto: number };
+export class GanhoIndividualNex {
+    public valorRestante: number;
+
+    constructor(
+        private _idTipoGanhoNex: number,
+        private _valor: number
+    ) {
+        this.valorRestante = this._valor;
+    }
+
+    alterarValor(modificador: number) {
+        console.log(`alterando valor de ${this.refTipoGanhoNex.nome}: ${modificador}`);
+        this.valorRestante -= modificador;
+    }
+
+    get refTipoGanhoNex(): TipoGanhoNex { return SingletonHelper.getInstance().tipos_ganho_nex.find(tipo_ganho_nex => tipo_ganho_nex.id === this._idTipoGanhoNex)! }
+    get finalizado(): boolean { return this.valorRestante < 1; }
+}
+
+export class TrocaIndividualNex {
+    public valorRestante: number = 0;
+
+    constructor(
+        private _idTipoGanhoNex: number,
+        private _valor: number
+    ) {
+        this.atualizaValorRestante();
+    }
+
+    atualizaValorRestante(quantidadeTrocasRealizadas:number = 0) {
+        this.valorRestante = this._valor - quantidadeTrocasRealizadas;
+    }
+
+    get refTipoGanhoNex(): TipoGanhoNex { return SingletonHelper.getInstance().tipos_ganho_nex.find(tipo_ganho_nex => tipo_ganho_nex.id === this._idTipoGanhoNex)! }
+    get finalizado(): boolean { return this.valorRestante < 1 }
+}
+
+class AtributoNexUp {
+    public valorAtual: number;
+
+    constructor(
+        public refAtributo: Atributo,
+        public valorInicial: number,
+        public valorMaximo: number
+    ) {
+        this.valorAtual = valorInicial;
+    }
+
+    alterarValor(modificador: number) {
+        this.valorAtual += modificador;
+    }
+
+    get menorQueInicialmente(): boolean { return this.valorAtual < this.valorInicial }
+    get estaEmValorMaximo(): boolean { return this.valorAtual >= this.valorMaximo }
+    get estaMaiorQueInicial(): boolean { return this.valorAtual > this.valorInicial }
+}

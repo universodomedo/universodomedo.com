@@ -6,6 +6,12 @@
     gap: 2vh;
 }
 
+.atributo_contadores {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
 .atributo_referencia {
     width: 20%;
     margin: auto;
