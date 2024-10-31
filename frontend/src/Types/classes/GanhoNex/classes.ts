@@ -1,33 +1,20 @@
 // #region Imports
+import { GanhoIndividualNexFactory, GanhoIndividualNex } from './factory.ts'
 import { Atributo, PericiaPatentePersonagem } from 'Types/classes/index.ts';
 import { SingletonHelper } from "Types/classes_estaticas.tsx";
 // #endregion
 
 export class GanhosNex {
-    public estadoGanhosNex: EstadoGanhosNex;
-    public etapa:number = 2;
-    // public etapa:number = 1;
+    public ganhos: GanhoIndividualNex[];
+    public etapa:number = 1;
 
-    constructor(
-        public ganhos: GanhoIndividualNex[],
-        public maxAtributo: number,
-        public trocas?: TrocaIndividualNex[],
-        // public ganhosClasse?: GanhoIndividualNex[],
-    ) {
-        this.estadoGanhosNex = new EstadoGanhosNex(ganhos.find(ganho => ganho.refTipoGanhoNex.id === 1)!, trocas?.find(troca => troca.refTipoGanhoNex.id === 1)!, maxAtributo)
+    constructor(dadosGanhos: { idTipoGanhoNex: number, opcoes?: any }[]) {
+        this.ganhos = dadosGanhos.map(dado => GanhoIndividualNexFactory.criarGanhoIndividual(dado.idTipoGanhoNex, dado.opcoes));
     }
 
-    get finalizados(): boolean {
-        return (
-            this.ganhos
-                ? this.ganhos?.every(ganho => ganho.finalizado) ?? false
-                : true
-        );
-    }
+    get finalizados(): boolean { return false }
 
-    proximaEtapa() {
-        this.etapa++;
-    }
+    proximaEtapa() { this.etapa++; }
 }
 
 export class TipoGanhoNex {
@@ -35,67 +22,6 @@ export class TipoGanhoNex {
         public id: number,
         public nome: string
     ) { }
-}
-
-export class EstadoGanhosNex {
-    public atributos: AtributoNexUp[];
-    public pericias: PericiaNexUp[];
-
-    constructor(
-        public ganhosAtributos: GanhoIndividualNex,
-        public trocasAtributos: TrocaIndividualNex,
-        public valorMaxAtributo: number,
-        public valorMinAtributo: number = 0
-    ) {
-        this.atributos = SingletonHelper.getInstance().atributos.map(atributo => { return new AtributoNexUp(atributo, 1, valorMaxAtributo) });
-        this.pericias = SingletonHelper.getInstance().pericias.map(pericia => { return new PericiaNexUp(new PericiaPatentePersonagem(pericia.id, 1)) });
-    }
-
-    gastaPonto(idAtributo: number, modificador: number) {
-        const atributo = this.atributos.find(atributo => atributo.refAtributo.id === idAtributo)!;
-        atributo.alterarValor(modificador);
-        this.ganhosAtributos.alterarValor(modificador);
-        this.trocasAtributos.atualizaValorRestante(this.atributos.filter(atributo => atributo.menorQueInicialmente).length);
-    }
-
-    get quantidadeDeAtributosReduzidos(): number { return this.atributos.filter(atributo => atributo.menorQueInicialmente).length }
-
-    get pvFinal(): number {
-        return Math.ceil(
-            this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(1) }, 0) + 6
-        );
-    }
-
-    get psFinal(): number {
-        return Math.ceil(
-            this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(2) }, 0) + 5
-        );
-    }
-
-    get peFinal(): number {
-        return Math.ceil(
-            this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(3) }, 0) + 1
-        );
-    }
-}
-
-export class GanhoIndividualNex {
-    public valorRestante: number;
-
-    constructor(
-        private _idTipoGanhoNex: number,
-        private _valor: number
-    ) {
-        this.valorRestante = this._valor;
-    }
-
-    alterarValor(modificador: number) {
-        console.log(`alterando valor de ${this.refTipoGanhoNex.nome}: ${modificador}`);
-        this.valorRestante -= modificador;
-    }
-
-    get refTipoGanhoNex(): TipoGanhoNex { return SingletonHelper.getInstance().tipos_ganho_nex.find(tipo_ganho_nex => tipo_ganho_nex.id === this._idTipoGanhoNex)! }
-    get finalizado(): boolean { return this.valorRestante < 1; }
 }
 
 export class TrocaIndividualNex {
@@ -116,7 +42,7 @@ export class TrocaIndividualNex {
     get finalizado(): boolean { return this.valorRestante < 1 }
 }
 
-class AtributoNexUp {
+export class AtributoNexUp {
     public valorAtual: number;
     public ganhosEstatisticas: GanhoEstatisticaPorPontoDeAtributo[];
 
@@ -185,10 +111,28 @@ class AtributoNexUp {
     get estaMaiorQueInicial(): boolean { return this.valorAtual > this.valorInicial }
 }
 
-class PericiaNexUp {
+export class PericiaNexUp {
     constructor(
         public periciaPatente: PericiaPatentePersonagem,
     ) { }
 }
 
 type GanhoEstatisticaPorPontoDeAtributo = { idEstatistica: number, valorPorPonto: number }
+
+export class ValorUtilizavel {
+    public valorAtual:number;
+    constructor(public valorInicial: number) { this.valorAtual = this.valorInicial; }
+
+    get valorZerado(): boolean { return this.valorAtual === 0 }
+    get valorAbaixoDeZero(): boolean { return this.valorAtual < 0 }
+
+    aumentaValor() { this.valorAtual++; }
+    diminuiValor() { this.valorAtual--; }
+}
+
+export class ValoresGanhoETroca {
+    constructor (
+        public ganhos: ValorUtilizavel,
+        public trocas: ValorUtilizavel,
+    ) {}
+}
