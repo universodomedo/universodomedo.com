@@ -1,0 +1,11 @@
+.visualizacao_atributos {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.div_atributo {
+    display: flex;
+    flex-direction: column; 
+}
