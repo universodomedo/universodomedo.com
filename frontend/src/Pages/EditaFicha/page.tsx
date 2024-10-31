@@ -17,7 +17,8 @@ const page = () => {
 
     useEffect(() => {
         // setGanhosNex(new GanhosNex([new GanhoIndividualNex(1, 2), new GanhoIndividualNex(2, 1)], 3, [new TrocaIndividualNex(1, 1)]));
-        setGanhosNex(new GanhosNex([{ idTipoGanhoNex: 1, opcoes: { valorGanho: 2, valorTroca: 1, } }]));
+        // setGanhosNex(new GanhosNex([{ idTipoGanhoNex: 1, opcoes: { valorGanho: 2, valorTroca: 1, } }]));
+        setGanhosNex(new GanhosNex([{ idTipoGanhoNex: 2, opcoes: { valorGanho: 1 } }]));
     }, [])
 
     const prosseguir = () => {
@@ -36,9 +37,9 @@ const page = () => {
                             {ganhosNex.etapa === 1 && (
                                 <EditaAtributos />
                             )}
-                            {/* {ganhosNex.etapa === 2 && (
+                            {ganhosNex.etapa === 2 && (
                                 <EditaPericias />
-                            )} */}
+                            )}
                         </div>
 
                         <button onClick={prosseguir} disabled={false} className={style.prosseguir}>

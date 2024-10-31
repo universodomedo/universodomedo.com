@@ -11,11 +11,9 @@ import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 const page = () => {
     const { ganhosNex, atualizarFicha } = useFicha();
 
-    const ganhoAtributo = ganhosNex.ganhos.find(ganho => ganho instanceof GanhoIndividualNexAtributo)!
+    const ganhoAtributo = ganhosNex.ganhos.find(ganho => ganho instanceof GanhoIndividualNexAtributo)!;
 
     const alteraValor = (idAtributo:number, modificador:number) => {
-        console.log('modificador');
-        console.log(modificador);
         if (modificador > 0) {
             ganhoAtributo.adicionaPonto(idAtributo);
         } else {

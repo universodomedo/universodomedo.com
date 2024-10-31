@@ -1,5 +1,6 @@
 // #region Imports
-import { ValoresGanhoETroca, ValorUtilizavel, AtributoNexUp, TipoGanhoNex } from './classes.ts';
+import { PericiaPatentePersonagem } from '../Pericia/classes.ts';
+import { ValoresGanhoETroca, ValorUtilizavel, TipoGanhoNex, AtributoNexUp, PericiaNexUp } from './classes.ts';
 import { SingletonHelper } from "Types/classes_estaticas.tsx";
 // #endregion
 
@@ -8,8 +9,8 @@ export class GanhoIndividualNexFactory {
         switch (idTipoGanhoNex) {
             case 1:
                 return new GanhoIndividualNexAtributo(idTipoGanhoNex, opcoes.valorGanho ?? 1, opcoes.valorTroca ?? 0, opcoes.valorMaxiAtributo ?? 3);
-            // case 2:
-            //     return new GanhoIndividualNexPericia(idTipoGanhoNex, valor, opcoes.bonusFixo ?? 0);
+            case 2:
+                return new GanhoIndividualNexPericia(idTipoGanhoNex, opcoes.valorGanho ?? 1, opcoes.valorTroca ?? 0);
             default:
                 return new GanhoIndividualNexAtributo(idTipoGanhoNex, opcoes.valorGanho ?? 1, opcoes.valorTroca ?? 0, opcoes.valorMaxiAtributo ?? 3);
         }
@@ -17,9 +18,10 @@ export class GanhoIndividualNexFactory {
 }
 
 export abstract class GanhoIndividualNex {
-    constructor( private _idTipoGanhoNex: number ) { }
+    constructor(private _idTipoGanhoNex: number) { }
     get refTipoGanhoNex(): TipoGanhoNex { return SingletonHelper.getInstance().tipos_ganho_nex.find(tipo_ganho_nex => tipo_ganho_nex.id === this._idTipoGanhoNex)! }
 
+    get id(): number { return this._idTipoGanhoNex; }
     abstract get finalizado(): boolean;
 }
 
@@ -50,7 +52,7 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
             // aumento normal
             this.ganhosAtributo.ganhos.diminuiValor();
         }
-        
+
         atributo.alterarValor(1);
     }
 
@@ -70,9 +72,18 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
     }
 }
 
-// class GanhoIndividualNexPericia extends GanhoIndividualNex {
-//     get finalizado(): boolean {
-//         throw new Error('Method not implemented.');
-//     }
+class GanhoIndividualNexPericia extends GanhoIndividualNex {
+    public ganhosPericiaTreinada: ValoresGanhoETroca;
+    public pericias: PericiaNexUp[];
 
-// }
+    constructor(idTipoGanhoNex: number, valorDeGanho: number, valorDeTroca: number) {
+        super(idTipoGanhoNex);
+        this.ganhosPericiaTreinada = new ValoresGanhoETroca(new ValorUtilizavel(valorDeGanho), new ValorUtilizavel(valorDeTroca));
+        this.pericias = SingletonHelper.getInstance().pericias.map(pericia => new PericiaNexUp(new PericiaPatentePersonagem(pericia.id, 1)));
+    }
+
+    get finalizado(): boolean {
+        throw new Error('Method not implemented.');
+    }
+
+}

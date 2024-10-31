@@ -6,15 +6,22 @@ import { SingletonHelper } from "Types/classes_estaticas.tsx";
 
 export class GanhosNex {
     public ganhos: GanhoIndividualNex[];
-    public etapa:number = 1;
+    public etapa:number = 0;
+    private indexAtual:number = 0;
 
     constructor(dadosGanhos: { idTipoGanhoNex: number, opcoes?: any }[]) {
         this.ganhos = dadosGanhos.map(dado => GanhoIndividualNexFactory.criarGanhoIndividual(dado.idTipoGanhoNex, dado.opcoes));
+        this.proximaEtapa();
     }
 
-    get finalizados(): boolean { return false }
+    get finalizados(): boolean { return false; }
+    // this.indexAtual++;
+    proximaEtapa() { this.etapa = this.ganhos[this.indexAtual].id; }
+    finalizar() { console.log('nex finalizado'); }
 
-    proximaEtapa() { this.etapa++; }
+    clickBotao() {
+
+    }
 }
 
 export class TipoGanhoNex {
