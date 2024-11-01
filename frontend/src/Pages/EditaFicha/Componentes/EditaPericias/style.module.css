@@ -9,3 +9,38 @@
     display: flex;
     flex-direction: column; 
 }
+
+.editando_ficha_pericias {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-y: auto;
+    gap: 2vh;
+}
+
+.pericia_contadores {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.conjunto_pericias {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 2vh;
+}
+
+.editar_pericia {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: center;
+    width: 20%;
+    margin: auto;
+}
+
+.corpo_pericia {
+
+}

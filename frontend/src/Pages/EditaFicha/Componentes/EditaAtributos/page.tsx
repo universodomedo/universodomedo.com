@@ -33,15 +33,13 @@ const page = () => {
             </div>
 
             {ganhoAtributo.atributos.map((atributo, index) => (
-                <div key={index} className={style.atributo_referencia}>
-                    <div className={style.editar_atributo}>
-                        <button onClick={() => {alteraValor(atributo.refAtributo.id, -1)}} disabled={!atributo.estaMaiorQueInicial && ganhoAtributo.ganhosAtributo.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
-                        <div className={style.corpo_atributo}>
-                            <h2>{atributo.refAtributo.nome}</h2>
-                            <h2>{atributo.valorAtual}</h2>
-                        </div>
-                        <button onClick={() => {alteraValor(atributo.refAtributo.id, +1)}} disabled={atributo.estaEmValorMaximo || ganhoAtributo.ganhosAtributo.ganhos.valorZerado}><FontAwesomeIcon icon={faPlus} /></button>
+                <div key={index} className={style.editar_atributo}>
+                    <button onClick={() => {alteraValor(atributo.refAtributo.id, -1)}} disabled={!atributo.estaMaiorQueInicial && ganhoAtributo.ganhosAtributo.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
+                    <div className={style.corpo_atributo}>
+                        <h2>{atributo.refAtributo.nome}</h2>
+                        <h2>{atributo.valorAtual}</h2>
                     </div>
+                    <button onClick={() => {alteraValor(atributo.refAtributo.id, +1)}} disabled={atributo.estaEmValorMaximo || ganhoAtributo.ganhosAtributo.ganhos.valorZerado}><FontAwesomeIcon icon={faPlus} /></button>
                 </div>
             ))}
 

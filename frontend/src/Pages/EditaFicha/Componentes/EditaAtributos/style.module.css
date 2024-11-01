@@ -12,17 +12,14 @@
     justify-content: space-evenly;
 }
 
-.atributo_referencia {
-    width: 20%;
-    margin: auto;
-}
-
 .editar_atributo {
     display: flex;
     flex-direction: row;
     align-items: center;
     text-align: center;
     border: 1px white solid;
+    width: 20%;
+    margin: auto;
 }
 
 .editar_atributo button {

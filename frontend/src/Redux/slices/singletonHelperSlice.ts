@@ -51,7 +51,8 @@ singletonHelper.tipos_requisitos = [new TipoRequisito(1, 'Empunhando Item Pai'),
 singletonHelper.lista_geral_habilidades = lista_geral_habilidades();
 singletonHelper.classes = [new Classe(1, 'Mundano'), new Classe(2, 'Combatente'), new Classe(3, 'Especialista'), new Classe(4, 'Ocultista')];
 singletonHelper.niveis = [new Nivel(1, '0'), new Nivel(2, '5'), new Nivel(3, '10'), new Nivel(4, '15'), new Nivel(5, '20'), new Nivel(6, '25'), new Nivel(7, '30'), new Nivel(8, '35'), new Nivel(9, '40'), new Nivel(10, '45'), new Nivel(11, '50'), new Nivel(12, '55'), new Nivel(13, '60'), new Nivel(14, '65'), new Nivel(15, '70'), new Nivel(16, '75'), new Nivel(17, '80'), new Nivel(18, '85'), new Nivel(19, '90'), new Nivel(20, '95'), new Nivel(21, '99')];
-singletonHelper.tipos_ganho_nex = [new TipoGanhoNex(1, 'Atributo'), new TipoGanhoNex(2, 'Pericia Treinada'), new TipoGanhoNex(3, 'Pericia Veterana'), new TipoGanhoNex(4, 'Pericia Expert'), new TipoGanhoNex(5, 'Pericia Livre'), new TipoGanhoNex(6, 'Ritual'), new TipoGanhoNex(7, 'Habilidade Especial')];
+singletonHelper.tipos_ganho_nex = [new TipoGanhoNex(1, 'Atributo'), new TipoGanhoNex(2, 'Pericia Treinada')];
+    // , new TipoGanhoNex(3, 'Pericia Veterana'), new TipoGanhoNex(4, 'Pericia Expert'), new TipoGanhoNex(5, 'Pericia Livre'), new TipoGanhoNex(6, 'Ritual'), new TipoGanhoNex(7, 'Habilidade Especial')];
 
 const singletonHelperSlice = createSlice({
     name: 'singletonHelper',
