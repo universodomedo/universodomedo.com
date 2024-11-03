@@ -14,11 +14,11 @@ const page = () => {
     const ganhoAtributo = ganhosNex.ganhos.find(ganho => ganho instanceof GanhoIndividualNexAtributo)!;
     const ganhoPericia = ganhosNex.ganhos.find(ganho => ganho instanceof GanhoIndividualNexPericia)!;
 
-    const alteraValor = (idAtributo:number, modificador:number) => {
+    const alteraValor = (idPericia:number, modificador:number) => {
         if (modificador > 0) {
-            ganhoPericia.adicionaPonto(idAtributo);
+            ganhoPericia.adicionaPonto(idPericia);
         } else {
-            ganhoPericia.subtraiPonto(idAtributo);
+            ganhoPericia.subtraiPonto(idPericia);
         }
 
         atualizarFicha();
@@ -26,32 +26,51 @@ const page = () => {
 
     return (
         <>
-            <div className={style.visualizacao_atributos}>
-                {ganhoAtributo.atributos.map((atributo, index) => (
-                    <div key={index} className={style.div_atributo}>
-                        <h1>{atributo.refAtributo.nomeAbrev}</h1>
-                        <h1>{atributo.valorAtual}</h1>
-                    </div>
-                ))}
-            </div>
-
             <div className={style.editando_ficha_pericias}>
                 <div className={style.pericia_contadores}>
-                    <h1>Pericias a Treinar: {ganhoPericia.ganhosPericias.treinadas!.ganhos.valorAtual}</h1>
-                    {ganhoPericia.ganhosPericias.treinadas!.trocas.valorInicial > 0 && (
-                        <h1>Pericias a Trocar: {ganhoPericia.ganhosPericias.treinadas!.trocas.valorInicial}</h1>
+                    {ganhoPericia.ganhosPericias.treinadas?.alterando && (
+                        <div className={style.patente_contadores}>
+                            <h1>Pericias Treinadas: {ganhoPericia.ganhosPericias.treinadas!.ganhos.valorAtual}</h1>
+                            {ganhoPericia.ganhosPericias.treinadas!.trocas.valorInicial > 0 && (
+                                <h1>Treinadas a Trocar: {ganhoPericia.ganhosPericias.treinadas!.trocas.valorAtual}</h1>
+                            )}
+                        </div>
+                    )}
+                    {ganhoPericia.ganhosPericias.veteranas?.alterando && (
+                        <div className={style.patente_contadores}>
+                            <h1>Pericias Veteranas: {ganhoPericia.ganhosPericias.veteranas!.ganhos.valorAtual}</h1>
+                            {ganhoPericia.ganhosPericias.veteranas!.trocas.valorInicial > 0 && (
+                                <h1>Veteranas a Trocar: {ganhoPericia.ganhosPericias.veteranas!.trocas.valorAtual}</h1>
+                            )}
+                        </div>
+                    )}
+                    {ganhoPericia.ganhosPericias.experts?.alterando && (
+                        <div className={style.patente_contadores}>
+                            <h1>Pericias Experts: {ganhoPericia.ganhosPericias.experts!.ganhos.valorAtual}</h1>
+                            {ganhoPericia.ganhosPericias.experts!.trocas.valorInicial > 0 && (
+                                <h1>Experts a Trocar: {ganhoPericia.ganhosPericias.experts!.trocas.valorAtual}</h1>
+                            )}
+                        </div>
+                    )}
+                    {ganhoPericia.ganhosPericias.livres?.alterando && (
+                        <div className={style.patente_contadores}>
+                            <h1>Pericias Livres: {ganhoPericia.ganhosPericias.livres!.ganhos.valorAtual}</h1>
+                            {ganhoPericia.ganhosPericias.livres!.trocas.valorInicial > 0 && (
+                                <h1>Livres a Trocar: {ganhoPericia.ganhosPericias.livres!.trocas.valorAtual}</h1>
+                            )}
+                        </div>
                     )}
                 </div>
 
                 <div className={style.conjunto_pericias}>
                     {ganhoPericia.pericias.map((pericia, index) => (
                         <div key={index} className={style.editar_pericia}>
-                            <button onClick={() => {alteraValor(pericia.refPericia.id, -1)}} disabled={pericia.estaEmValorMinimo || ganhoPericia.ganhosPericias.treinadas!.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
+                            <button onClick={() => {alteraValor(pericia.refPericia.id, -1)}} disabled={pericia.estaEmValorMinimo && (ganhoPericia.deparaPericiaPatente(pericia)?.trocas.valorZerado ?? true)}><FontAwesomeIcon icon={faMinus} /></button>
                             <div className={style.corpo_pericia}>
                                 <h2>{pericia.refPericia.nome}</h2>
                                 <h2>{pericia.refPatenteAtual.nome}</h2>
                             </div>
-                            <button onClick={() => {alteraValor(pericia.refPericia.id, +1)}} disabled={pericia.podeAumentar}><FontAwesomeIcon icon={faPlus} /></button>
+                            <button onClick={() => {alteraValor(pericia.refPericia.id, +1)}} disabled={!ganhoPericia.temPontosParaEssaPatente(pericia)}><FontAwesomeIcon icon={faPlus} /></button>
                         </div>
                     ))}
                 </div>

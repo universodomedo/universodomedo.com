@@ -1,5 +1,5 @@
 // #region Imports
-import { GanhoIndividualNexFactory, GanhoIndividualNex } from './factory.ts'
+import { GanhoIndividualNexFactory, GanhoIndividualNex, GanhoIndividualNexAtributo } from './factory.ts'
 import { RLJ_Ficha2, Atributo, PericiaPatentePersonagem, Pericia, PatentePericia } from 'Types/classes/index.ts';
 import { SingletonHelper } from "Types/classes_estaticas.tsx";
 // #endregion
@@ -7,8 +7,8 @@ import { SingletonHelper } from "Types/classes_estaticas.tsx";
 export class GanhosNex {
     public dadosFicha: RLJ_Ficha2;
     public ganhos: GanhoIndividualNex[];
-    public etapa: number = 0;
-    private indexAtual: number = 0;
+    public finalizando: boolean = false;
+    public indexEtapa: number = 0;
 
     constructor(
         dadosFicha: RLJ_Ficha2,
@@ -23,29 +23,48 @@ export class GanhosNex {
         });
 
         this.dadosFicha = dadosFicha;
-        this.proximaEtapa();
     }
 
     get finalizados(): boolean { return false; }
-    // this.indexAtual++;
-    proximaEtapa() {
-        // Itera até encontrar o próximo ganho que esteja sendo alterado
-        while (this.indexAtual < this.ganhos.length) {
-            if (this.ganhos[this.indexAtual].alterando) {
-                this.etapa = this.ganhos[this.indexAtual].id;
-                return;
-            }
-            this.indexAtual++;
-        }
 
-        // Se não houver mais etapas a percorrer, finalize o processo
-        this.etapa = 0; // ou outro valor que indique o fim das etapas
-    }
     finalizar() { console.log('nex finalizado'); }
 
     clickBotao() {
 
     }
+
+    get pvAtualizado(): number {
+        return (
+            this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 1)!.valor! +
+            this.ganhos.find(ganho => ganho instanceof GanhoIndividualNexAtributo)!.pvDeAtributos
+        );
+    }
+
+    get psAtualizado(): number {
+        return (
+            this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 2)!.valor! +
+            this.ganhos.find(ganho => ganho instanceof GanhoIndividualNexAtributo)!.psDeAtributos
+        );
+    }
+
+    get peAtualizado(): number {
+        return (
+            this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 3)!.valor! +
+            this.ganhos.find(ganho => ganho instanceof GanhoIndividualNexAtributo)!.peDeAtributos
+        );
+    }
+
+    get ganhosQueTemAlteracao(): GanhoIndividualNex[] { return this.ganhos.filter(ganho => ganho.alterando); }
+    get etapa(): GanhoIndividualNex { return this.ganhosQueTemAlteracao[this.indexEtapa]; }
+    get estaNaUltimaEtapa(): boolean { return this.indexEtapa === this.ganhosQueTemAlteracao.length - 1; }
+    get estaNaPrimeiraEtapa(): boolean { return this.indexEtapa === 0; }
+    get textoBotaoProximo(): string { return this.estaNaUltimaEtapa ? 'Finalizar' : 'Continuar'; }
+    
+    retrocedeEtapa() { (this.finalizando) ? this.finalizando = false : this.indexEtapa--; }
+    get podeRetrocederEtapa(): boolean { return !this.estaNaPrimeiraEtapa; }
+
+    avancaEtapa() { (this.estaNaUltimaEtapa) ? this.finalizando = true : this.indexEtapa++;  }
+    get podeAvancarEtapa(): boolean { return this.etapa.finalizado; }
 }
 
 export class TipoGanhoNex {
@@ -141,14 +160,21 @@ export class ValoresGanhoETroca {
     public ganhos: ValorUtilizavel;
     public trocas: ValorUtilizavel;
 
-    constructor(numeroGanhos: number, numeroTrocas: number) {
+    constructor(numeroGanhos: number = 0, numeroTrocas: number = 0) {
         this.ganhos = new ValorUtilizavel(numeroGanhos);
         this.trocas = new ValorUtilizavel(numeroTrocas);
     }
 
+    realizaGanho() { this.ganhos.diminuiValor(); }
+    desrealizaGanho() { this.ganhos.aumentaValor(); }
+
+    realizaTroca() { this.realizaGanho(); this.trocas.aumentaValor(); }
+    desrealizaTroca() { this.desrealizaGanho(); this.trocas.diminuiValor(); }
+
     get ganhoTemPontos(): boolean { return !this.ganhos.valorZerado; }
     get trocaTemPontos(): boolean { return !this.trocas.valorZerado; }
     get alterando(): boolean { return this.ganhos.valorInicial > 0 || this.trocas.valorInicial > 0; }
+    get finalizado(): boolean { return this.ganhos.valorZerado; }
 }
 
 export class AtributoEmGanho {
@@ -236,17 +262,10 @@ export class PericiaEmGanho {
     }
 
     get refPericia(): Pericia { return this._refPericia; }
-    get refPatenteInicial(): PatentePericia { return this.refPatente(this._idPatenteInicial) }
-    get refPatenteAtual(): PatentePericia { return this.refPatente(this.idPatenteAtual) }
-
-    refPatente(idPatente: number): PatentePericia {
-        return SingletonHelper.getInstance().patentes_pericia.find(patente_pericia => patente_pericia.id === idPatente)!;
-    }
-
-    alterarValor(modificador: number) {
-        this.idPatenteAtual += modificador;
-    }
-
+    get refPatenteInicial(): PatentePericia { return this._refPatente(this._idPatenteInicial); }
+    get refPatenteAtual(): PatentePericia { return this._refPatente(this.idPatenteAtual); }
     get estaEmValorMinimo(): boolean { return this.idPatenteAtual === 1; }
-    get podeAumentar(): boolean { return false; }
+
+    private _refPatente(idPatente: number): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente_pericia => patente_pericia.id === idPatente)!; }
+    alterarValor(modificador: number) { this.idPatenteAtual += modificador; }
 }

@@ -9,11 +9,19 @@ export class GanhoIndividualNexFactory {
     static criarGanhoIndividual(idTipoGanhoNex: number, refFicha: RLJ_Ficha2, opcoes: any = {}): GanhoIndividualNex {
         switch (idTipoGanhoNex) {
             case 1:
-                return new GanhoIndividualNexAtributo(idTipoGanhoNex, refFicha, opcoes.valoresGanhoETroca ? opcoes.valoresGanhoETroca[0] : [], opcoes.valorMaxiAtributo ?? 3);
-            case 2:
-                return new GanhoIndividualNexPericia(idTipoGanhoNex, refFicha, opcoes.valoresGanhoETroca ?? []);
+                return new GanhoIndividualNexAtributo(idTipoGanhoNex, refFicha, opcoes.valoresGanhoETroca ? opcoes.valoresGanhoETroca : {}, opcoes.valorMaxiAtributo ?? 3);
+            case 2: {
+                const valoresGanhoETroca = {
+                    treinadas: opcoes.valoresGanhoETroca.treinadas ?? new ValoresGanhoETroca(0, 0),
+                    veteranas: opcoes.valoresGanhoETroca.veteranas ?? new ValoresGanhoETroca(0, 0),
+                    experts: opcoes.valoresGanhoETroca.experts ?? new ValoresGanhoETroca(0, 0),
+                    livres: opcoes.valoresGanhoETroca.livres ?? new ValoresGanhoETroca(0, 0),
+                };
+
+                return new GanhoIndividualNexPericia(idTipoGanhoNex, refFicha, valoresGanhoETroca);
+            }
             default:
-                return new GanhoIndividualNexAtributo(idTipoGanhoNex, refFicha, opcoes.valoresGanhoETroca ? opcoes.valoresGanhoETroca[0] : [], opcoes.valorMaxiAtributo ?? 3);
+                return new GanhoIndividualNexAtributo(idTipoGanhoNex, refFicha, opcoes.valoresGanhoETroca ? opcoes.valoresGanhoETroca : {}, opcoes.valorMaxiAtributo ?? 3);
         }
     }
 }
@@ -44,23 +52,16 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
         this.atributos = refFicha.atributos?.map(atributoBase => new AtributoEmGanho(SingletonHelper.getInstance().atributos.find(atributo => atributo.id === atributoBase.id)!, atributoBase.valor, valorMaxAtributo))!;
     }
 
-    get finalizado(): boolean { return this.ganhosAtributo.ganhos.valorZerado; }
+    get finalizado(): boolean { return this.ganhosAtributo.finalizado; }
     get quantidadeDeAtributosReduzidos(): number { return this.atributos.filter(atributo => atributo.menorQueInicialmente).length }
-    get pvFinal(): number { return Math.ceil(this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(1) }, 0)); }
-    get psFinal(): number { return Math.ceil(this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(2) }, 0)); }
-    get peFinal(): number { return Math.ceil(this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(3) }, 0)); }
+    get pvDeAtributos(): number { return Math.ceil(this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(1) }, 0)); }
+    get psDeAtributos(): number { return Math.ceil(this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(2) }, 0)); }
+    get peDeAtributos(): number { return Math.ceil(this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(3) }, 0)); }
 
     adicionaPonto(idAtributo: number) {
         const atributo = this.atributos.find(atributo => atributo.refAtributo.id === idAtributo)!;
 
-        if (atributo.valorAtual < atributo.valorInicial) {
-            // foi um aumento de uma troca já feita
-            this.ganhosAtributo.trocas.aumentaValor();
-            this.ganhosAtributo.ganhos.diminuiValor();
-        } else {
-            // aumento normal
-            this.ganhosAtributo.ganhos.diminuiValor();
-        }
+        (atributo.valorAtual < atributo.valorInicial) ? this.ganhosAtributo.realizaTroca() : this.ganhosAtributo.realizaGanho();
 
         atributo.alterarValor(1);
     }
@@ -70,29 +71,27 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
 
         atributo.alterarValor(-1);
 
-        if (atributo.valorAtual < atributo.valorInicial) {
-            // foi uma troca
-            this.ganhosAtributo.trocas.diminuiValor();
-            this.ganhosAtributo.ganhos.aumentaValor();
-        } else {
-            // foi uma redução de um valor já colocado
-            this.ganhosAtributo.ganhos.aumentaValor();
-        }
+        (atributo.valorAtual < atributo.valorInicial) ? this.ganhosAtributo.desrealizaTroca() : this.ganhosAtributo.desrealizaGanho();
     }
 }
 
 export class GanhoIndividualNexPericia extends GanhoIndividualNex {
     public ganhosPericias: {
-        treinadas?: ValoresGanhoETroca,
-        veteranas?: ValoresGanhoETroca,
-        experts?: ValoresGanhoETroca,
-        livres?: ValoresGanhoETroca,
+        treinadas: ValoresGanhoETroca,
+        veteranas: ValoresGanhoETroca,
+        experts: ValoresGanhoETroca,
+        livres: ValoresGanhoETroca,
     };
     public pericias: PericiaEmGanho[];
 
-    constructor(idTipoGanhoNex: number, refFicha: RLJ_Ficha2, valoresGanhoETroca: ValoresGanhoETroca[]) {
-        super(idTipoGanhoNex, refFicha, valoresGanhoETroca.reduce((acc, item) => acc || item.alterando, false));
-        this.ganhosPericias = { treinadas: valoresGanhoETroca[0] };
+    constructor(idTipoGanhoNex: number, refFicha: RLJ_Ficha2, valoresGanhoETroca: { treinadas?: ValoresGanhoETroca, veteranas?: ValoresGanhoETroca, experts?: ValoresGanhoETroca, livres?: ValoresGanhoETroca } = {}) {
+        super(idTipoGanhoNex, refFicha, Object.values(valoresGanhoETroca).some(item => item?.alterando));
+        this.ganhosPericias = {
+            treinadas: valoresGanhoETroca.treinadas ?? new ValoresGanhoETroca(0, 0),
+            veteranas: valoresGanhoETroca.veteranas ?? new ValoresGanhoETroca(0, 0),
+            experts: valoresGanhoETroca.experts ?? new ValoresGanhoETroca(0, 0),
+            livres: valoresGanhoETroca.livres ?? new ValoresGanhoETroca(0, 0),
+        };
         this.pericias = refFicha.periciasPatentes?.map(pericia_patente => new PericiaEmGanho(
             SingletonHelper.getInstance().pericias.find(pericia => pericia.id === pericia_patente.idPericia)!,
             pericia_patente.idPatente
@@ -100,18 +99,51 @@ export class GanhoIndividualNexPericia extends GanhoIndividualNex {
     }
 
     get finalizado(): boolean {
-        throw new Error('Method not implemented.');
+        return Object.values(this.ganhosPericias).every(
+            (valor) => !valor.alterando || valor.finalizado
+        );
+    }
+
+    temPontosParaEssaPatente(pericia: PericiaEmGanho):boolean {
+        switch (pericia.idPatenteAtual) {
+            case 1:
+                return this.ganhosPericias.treinadas?.ganhoTemPontos!;
+            case 2:
+                return this.ganhosPericias.veteranas?.ganhoTemPontos!;
+            case 3:
+                return this.ganhosPericias.experts?.ganhoTemPontos!;
+            default:
+                return false;
+        }
+    }
+
+    deparaPericiaPatente(pericia: PericiaEmGanho): ValoresGanhoETroca | undefined {
+        switch (pericia.refPatenteAtual.id) {
+            case 2:
+                return this.ganhosPericias.treinadas!;
+            case 3:
+                return this.ganhosPericias.veteranas!;
+            case 4:
+                return this.ganhosPericias.experts!;
+        }
     }
 
     adicionaPonto(idPericia: number) {
         const pericia = this.pericias.find(pericia => pericia.refPericia.id === idPericia)!;
 
         pericia.alterarValor(1);
+
+        const valorGanhoeETrocaPatenteAtual = this.deparaPericiaPatente(pericia);
+
+        (pericia.refPatenteAtual.id < pericia.refPatenteInicial.id) ? valorGanhoeETrocaPatenteAtual!.realizaTroca() : valorGanhoeETrocaPatenteAtual!.realizaGanho();
     }
 
     subtraiPonto(idPericia: number) {
         const pericia = this.pericias.find(pericia => pericia.refPericia.id === idPericia)!;
-
+        const valorGanhoeETrocaPatenteAntesSubtrair = this.deparaPericiaPatente(pericia);
+        
         pericia.alterarValor(-1);
+                
+        valorGanhoeETrocaPatenteAntesSubtrair!.desrealizaGanho();
     }
 }

@@ -1,15 +1,3 @@
-.visualizacao_atributos {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    width: 100%;
-}
-
-.div_atributo {
-    display: flex;
-    flex-direction: column; 
-}
-
 .editando_ficha_pericias {
     display: flex;
     flex-direction: column;
@@ -19,6 +7,11 @@
 }
 
 .pericia_contadores {
+    display: flex;
+    flex-direction: column;
+}
+
+.patente_contadores {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
@@ -37,10 +30,9 @@
     flex-direction: row;
     align-items: center;
     text-align: center;
-    width: 20%;
-    margin: auto;
+    margin: 0 1%;
 }
 
 .corpo_pericia {
-
+    padding: 5%;
 }
