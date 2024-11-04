@@ -12,13 +12,20 @@ export class GanhoIndividualNexFactory {
                 return new GanhoIndividualNexAtributo(idTipoGanhoNex, refFicha, opcoes.valoresGanhoETroca ? opcoes.valoresGanhoETroca : {}, opcoes.valorMaxiAtributo ?? 3);
             case 2: {
                 const valoresGanhoETroca = {
-                    treinadas: opcoes.valoresGanhoETroca.treinadas ?? new ValoresGanhoETroca(0, 0),
-                    veteranas: opcoes.valoresGanhoETroca.veteranas ?? new ValoresGanhoETroca(0, 0),
-                    experts: opcoes.valoresGanhoETroca.experts ?? new ValoresGanhoETroca(0, 0),
-                    livres: opcoes.valoresGanhoETroca.livres ?? new ValoresGanhoETroca(0, 0),
+                    treinadas: new ValoresGanhoETroca(0, 0),
+                    veteranas: new ValoresGanhoETroca(0, 0),
+                    experts: new ValoresGanhoETroca(0, 0),
+                    livres: new ValoresGanhoETroca(0, 0),
+                    // treinadas: opcoes.valoresGanhoETroca.treinadas ?? new ValoresGanhoETroca(0, 0),
+                    // veteranas: opcoes.valoresGanhoETroca.veteranas ?? new ValoresGanhoETroca(0, 0),
+                    // experts: opcoes.valoresGanhoETroca.experts ?? new ValoresGanhoETroca(0, 0),
+                    // livres: opcoes.valoresGanhoETroca.livres ?? new ValoresGanhoETroca(0, 0),
                 };
 
                 return new GanhoIndividualNexPericia(idTipoGanhoNex, refFicha, valoresGanhoETroca);
+            }
+            case 3: {
+                return new GanhoIndividualNexEstatisticaFixa(idTipoGanhoNex, refFicha, opcoes.valores ?? []);
             }
             default:
                 return new GanhoIndividualNexAtributo(idTipoGanhoNex, refFicha, opcoes.valoresGanhoETroca ? opcoes.valoresGanhoETroca : {}, opcoes.valorMaxiAtributo ?? 3);
@@ -37,9 +44,6 @@ export abstract class GanhoIndividualNex {
     get id(): number { return this._idTipoGanhoNex; }
     get alterando(): boolean { return this._alterando; }
     abstract get finalizado(): boolean;
-
-    abstract adicionaPonto(id: number): void;
-    abstract subtraiPonto(id: number): void;
 }
 
 export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
@@ -146,4 +150,29 @@ export class GanhoIndividualNexPericia extends GanhoIndividualNex {
                 
         valorGanhoeETrocaPatenteAntesSubtrair!.desrealizaGanho();
     }
+}
+
+export class GanhoIndividualNexEstatisticaFixa extends GanhoIndividualNex {
+    public valores: number[];
+
+    constructor(idTipoGanhoNex: number, refFicha: RLJ_Ficha2, valores: number[]) {
+        super(idTipoGanhoNex, refFicha, valores.length > 0);
+        this.valores = valores;
+    }
+
+    get finalizado(): boolean { return true; }
+}
+
+export class GanhoIndividualNexEscolhaClasse extends GanhoIndividualNex {
+    constructor(idTipoGanhoNex: number, refFicha: RLJ_Ficha2) {
+        super(idTipoGanhoNex, refFicha, false);
+    }
+    get finalizado(): boolean { return true; }
+}
+
+export class GanhoIndividualNexRitual extends GanhoIndividualNex {
+    constructor(idTipoGanhoNex: number, refFicha: RLJ_Ficha2,) {
+        super(idTipoGanhoNex, refFicha, false);
+    }
+    get finalizado(): boolean { return true; }
 }

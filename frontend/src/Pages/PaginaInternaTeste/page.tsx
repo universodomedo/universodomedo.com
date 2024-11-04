@@ -12,6 +12,9 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+
+import Modal from "Components/Modal/page.tsx";
+import ModalCriarFicha from './modal.tsx';
 // import { useSalaContext } from 'Providers/SalaProvider.tsx';
 // #endregion
 
@@ -29,7 +32,6 @@ const page = () => {
     // const {salas, criaSala} = useSalaContext();
     const [dadosFicha, setDadosFicha] = useState<Dado[]>([]);
     // const [dadosFicha, setDadosFicha] = useState<Dado[]>([] as Dado[]);
-
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -78,11 +80,17 @@ const page = () => {
         localStorage.setItem('dadosFicha', jsonDadosFicha);
     };
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
     return (
         <div className={style.teste_interno}>
             <h1>Fichas Customizadas: {Object.entries(dadosFicha).length}</h1>
 
-            <button className={style.acesso_ficha_nova} onClick={criaNovaFicha} disabled={Object.entries(dadosFicha).length >= 5}>
+            <button className={style.acesso_ficha_nova} onClick={openModal} disabled={Object.entries(dadosFicha).length >= 5}>
+                {/* <button className={style.acesso_ficha_nova} onClick={criaNovaFicha} disabled={Object.entries(dadosFicha).length >= 5}> */}
                 {Object.entries(dadosFicha).length < 5 ? 'Criar Nova Ficha' : 'Muitas Fichas'}
             </button>
 
@@ -96,7 +104,7 @@ const page = () => {
                         </div>
                     </div>
                     <div className={style.ficha_acoes}>
-                        <FontAwesomeIcon className={style.remover_ficha} icon={faTrash} onClick={() => {removeFicha(index)}}/>
+                        <FontAwesomeIcon className={style.remover_ficha} icon={faTrash} onClick={() => { removeFicha(index) }} />
                     </div>
                 </div>
             ))}
@@ -144,6 +152,10 @@ const page = () => {
             ): (
                 <h2>Não há nenhuma sala disponível</h2>
             )} */}
+
+            <Modal isOpen={isModalOpen} onClose={closeModal}>
+                <ModalCriarFicha />
+            </Modal>
         </div>
     );
 }

@@ -5,24 +5,23 @@ import { SingletonHelper } from "Types/classes_estaticas.tsx";
 // #endregion
 
 export class GanhosNex {
-    public dadosFicha: RLJ_Ficha2;
-    public ganhos: GanhoIndividualNex[];
+    public ganhos: GanhoIndividualNex[] = [];
     public finalizando: boolean = false;
     public indexEtapa: number = 0;
 
-    constructor(
-        dadosFicha: RLJ_Ficha2,
-        dadosGanhos: { idTipoGanhoNex: number, opcoes?: any }[]
-    ) {
+    constructor(public dadosFicha: RLJ_Ficha2) { }
+
+    adicionarNovoGanho(dadosGanhos: { idTipoGanhoNex: number, opcoes?: any }[]) {
         this.ganhos = SingletonHelper.getInstance().tipos_ganho_nex.map(tipo => {
             const ganhoQueVaiAcontecer = dadosGanhos.find(dado => dado.idTipoGanhoNex === tipo.id);
 
             return GanhoIndividualNexFactory.criarGanhoIndividual(
-                tipo.id, dadosFicha, ganhoQueVaiAcontecer ? ganhoQueVaiAcontecer.opcoes : {}
+                tipo.id, this.dadosFicha, ganhoQueVaiAcontecer ? ganhoQueVaiAcontecer.opcoes : {}
             );
         });
 
-        this.dadosFicha = dadosFicha;
+        this.finalizando = false;
+        this.indexEtapa = 0;
     }
 
     get finalizados(): boolean { return false; }

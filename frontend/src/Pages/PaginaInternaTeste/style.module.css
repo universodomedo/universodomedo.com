@@ -49,3 +49,16 @@
 .remover_ficha {
     cursor: pointer;
 }
+
+/* */
+
+.modal_criacao_ficha {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
+.modal_criacao_ficha h1 {
+    margin: 0;
+}
