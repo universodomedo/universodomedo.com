@@ -11,17 +11,14 @@ export class GanhosNex {
 
     constructor(public dadosFicha: RLJ_Ficha2) { }
 
-    adicionarNovoGanho(dadosGanhos: { idTipoGanhoNex: number, opcoes?: any }[]) {
-        this.ganhos = SingletonHelper.getInstance().tipos_ganho_nex.map(tipo => {
-            const ganhoQueVaiAcontecer = dadosGanhos.find(dado => dado.idTipoGanhoNex === tipo.id);
-
-            return GanhoIndividualNexFactory.criarGanhoIndividual(
-                tipo.id, this.dadosFicha, ganhoQueVaiAcontecer ? ganhoQueVaiAcontecer.opcoes : {}
-            );
-        });
+    adicionarNovoGanho(ganhos: GanhoIndividualNex[]) {
+        this.ganhos = ganhos;
 
         this.finalizando = false;
         this.indexEtapa = 0;
+
+        console.log('fim do adicionar');
+        console.log(this);
     }
 
     get finalizados(): boolean { return false; }
@@ -35,21 +32,21 @@ export class GanhosNex {
     get pvAtualizado(): number {
         return (
             this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 1)!.valor! +
-            this.ganhos.find(ganho => ganho instanceof GanhoIndividualNexAtributo)!.pvDeAtributos
+            this.ganhos.reduce((acc, cur) => acc + cur.pvGanhoIndividual, 0)
         );
     }
 
     get psAtualizado(): number {
         return (
             this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 2)!.valor! +
-            this.ganhos.find(ganho => ganho instanceof GanhoIndividualNexAtributo)!.psDeAtributos
+            this.ganhos.reduce((acc, cur) => acc + cur.psGanhoIndividual, 0)
         );
     }
 
     get peAtualizado(): number {
         return (
             this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 3)!.valor! +
-            this.ganhos.find(ganho => ganho instanceof GanhoIndividualNexAtributo)!.peDeAtributos
+            this.ganhos.reduce((acc, cur) => acc + cur.peGanhoIndividual, 0)
         );
     }
 

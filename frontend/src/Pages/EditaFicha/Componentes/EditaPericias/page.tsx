@@ -28,35 +28,35 @@ const page = () => {
         <>
             <div className={style.editando_ficha_pericias}>
                 <div className={style.pericia_contadores}>
-                    {ganhoPericia.ganhosPericias.treinadas?.alterando && (
+                    {ganhoPericia.ganhosTreinadas.alterando && (
                         <div className={style.patente_contadores}>
-                            <h1>Pericias Treinadas: {ganhoPericia.ganhosPericias.treinadas!.ganhos.valorAtual}</h1>
-                            {ganhoPericia.ganhosPericias.treinadas!.trocas.valorInicial > 0 && (
-                                <h1>Treinadas a Trocar: {ganhoPericia.ganhosPericias.treinadas!.trocas.valorAtual}</h1>
+                            <h1>Pericias Treinadas: {ganhoPericia.ganhosTreinadas.ganhos.valorAtual}</h1>
+                            {ganhoPericia.ganhosTreinadas.trocas.valorInicial > 0 && (
+                                <h1>Treinadas a Trocar: {ganhoPericia.ganhosTreinadas.trocas.valorAtual}</h1>
                             )}
                         </div>
                     )}
-                    {ganhoPericia.ganhosPericias.veteranas?.alterando && (
+                    {ganhoPericia.ganhosVeteranas.alterando && (
                         <div className={style.patente_contadores}>
-                            <h1>Pericias Veteranas: {ganhoPericia.ganhosPericias.veteranas!.ganhos.valorAtual}</h1>
-                            {ganhoPericia.ganhosPericias.veteranas!.trocas.valorInicial > 0 && (
-                                <h1>Veteranas a Trocar: {ganhoPericia.ganhosPericias.veteranas!.trocas.valorAtual}</h1>
+                            <h1>Pericias Veteranas: {ganhoPericia.ganhosVeteranas.ganhos.valorAtual}</h1>
+                            {ganhoPericia.ganhosVeteranas.trocas.valorInicial > 0 && (
+                                <h1>Veteranas a Trocar: {ganhoPericia.ganhosVeteranas.trocas.valorAtual}</h1>
                             )}
                         </div>
                     )}
-                    {ganhoPericia.ganhosPericias.experts?.alterando && (
+                    {ganhoPericia.ganhosExperts.alterando && (
                         <div className={style.patente_contadores}>
-                            <h1>Pericias Experts: {ganhoPericia.ganhosPericias.experts!.ganhos.valorAtual}</h1>
-                            {ganhoPericia.ganhosPericias.experts!.trocas.valorInicial > 0 && (
-                                <h1>Experts a Trocar: {ganhoPericia.ganhosPericias.experts!.trocas.valorAtual}</h1>
+                            <h1>Pericias Experts: {ganhoPericia.ganhosExperts.ganhos.valorAtual}</h1>
+                            {ganhoPericia.ganhosExperts.trocas.valorInicial > 0 && (
+                                <h1>Experts a Trocar: {ganhoPericia.ganhosExperts.trocas.valorAtual}</h1>
                             )}
                         </div>
                     )}
-                    {ganhoPericia.ganhosPericias.livres?.alterando && (
+                    {ganhoPericia.ganhosLivres.alterando && (
                         <div className={style.patente_contadores}>
-                            <h1>Pericias Livres: {ganhoPericia.ganhosPericias.livres!.ganhos.valorAtual}</h1>
-                            {ganhoPericia.ganhosPericias.livres!.trocas.valorInicial > 0 && (
-                                <h1>Livres a Trocar: {ganhoPericia.ganhosPericias.livres!.trocas.valorAtual}</h1>
+                            <h1>Pericias Livres: {ganhoPericia.ganhosLivres.ganhos.valorAtual}</h1>
+                            {ganhoPericia.ganhosLivres.trocas.valorInicial > 0 && (
+                                <h1>Livres a Trocar: {ganhoPericia.ganhosLivres.trocas.valorAtual}</h1>
                             )}
                         </div>
                     )}

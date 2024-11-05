@@ -1,50 +1,59 @@
 // #region Imports
-import { ValoresGanhoETroca, RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { ValoresGanhoETroca, RLJ_Ficha2, GanhoIndividualNex, GanhoIndividualNexAtributo, GanhoIndividualNexPericia, GanhoIndividualNexEstatisticaFixa } from 'Types/classes/index.ts';
 // #endregion
 
+export function instanciaComArgumentos<T extends new (...args: any[]) => any>(
+    Ctor: T,
+    ...params: ConstructorParameters<T>
+) {
+    return { Ctor, params } as const;
+}
+
 class ControladorGanhos {
-    private mapaGanhos: { [nivel: number]: any } = {
+    private mapaGanhos: {
+        [nivel: number]: {
+            readonly Ctor: new (...args: any[]) => GanhoIndividualNex;
+            readonly params: any[];
+        }[];
+    } = {
         1: [
-            {
-                idTipoGanhoNex: 3,
-                opcoes: {
-                    valores: [5, 10, 5]
-                }
-            }
+            instanciaComArgumentos(GanhoIndividualNexAtributo, new ValoresGanhoETroca(2, 1), 3),
+            instanciaComArgumentos(GanhoIndividualNexPericia, new ValoresGanhoETroca(2))
         ],
-        // 1: [
-        //     {
-        //         idTipoGanhoNex: 1,
-        //         opcoes: {
-        //             valoresGanhoETroca: new ValoresGanhoETroca(2, 1)
-        //         }
-        //     },
-        //     {
-        //         idTipoGanhoNex: 2,
-        //         opcoes: {
-        //             valoresGanhoETroca: {
-        //                 treinadas: new ValoresGanhoETroca(2)
-        //             }
-        //         }
-        //     }
-        // ],
-        // 2: [
-        //     {
-        //         idTipoGanhoNex: 3,
-        //         opcoes: {
-        //             valores: [5, 10, 5]
-        //         }
-        //     }
-        // ],
-        3: [
-            {
-                idTipoGanhoNex: 4
-            }
-        ]
+        2: [
+            instanciaComArgumentos(GanhoIndividualNexEstatisticaFixa, 5, 10, 5),
+        ],
     };
 
-    obterGanhosPorNivel(nivel: number) {
-        return this.mapaGanhos[nivel] || [];
+    obterGanhosPorNivel(nivel: number): GanhoIndividualNex[] {
+        return SingletonHelper.getInstance().tipos_ganho_nex.map(tipo => {
+            // Verifica se o tipo já está definido no mapaGanhos
+            const ganhoExistente = this.mapaGanhos[nivel]?.find(dado => {
+                const instanciaTeste = new dado.Ctor(...dado.params);
+                return instanciaTeste.id === tipo.id;
+            });
+
+            if (ganhoExistente) {
+                return new ganhoExistente.Ctor(...ganhoExistente.params);
+            } else {
+                const Ctor = this.obterClassePorTipo(tipo.id);
+                return new Ctor();
+            }
+        });
+    }
+
+    private obterClassePorTipo(idTipo: number): new (...args: any[]) => GanhoIndividualNex {
+        switch (idTipo) {
+            case 1:
+                return GanhoIndividualNexAtributo;
+            case 2:
+                return GanhoIndividualNexPericia;
+            case 3:
+                return GanhoIndividualNexEstatisticaFixa;
+            default:
+                throw new Error(`Tipo de ganho não suportado: ${idTipo}`);
+        }
     }
 }
 

@@ -2,7 +2,7 @@
 import style from './style.module.css';
 import { useEffect, useState } from 'react';
 
-import { GanhoIndividualNex, GanhoIndividualNexAtributo, GanhoIndividualNexPericia, GanhosNex, RLJ_Ficha2, ValoresGanhoETroca } from 'Types/classes/index.ts';
+import { GanhoIndividualNex, GanhoIndividualNexAtributo, GanhoIndividualNexFactory, GanhoIndividualNexPericia, GanhosNex, RLJ_Ficha2, ValoresGanhoETroca } from 'Types/classes/index.ts';
 
 import EditaAtributos from 'Pages/EditaFicha/Componentes/EditaAtributos/page.tsx';
 import EditaPericias from 'Pages/EditaFicha/Componentes/EditaPericias/page.tsx';
@@ -31,7 +31,9 @@ const page = () => {
     const idNivelFazendoAgora = idNivelAtual + 1;
 
     useEffect(() => {
-        setGanhosNex(new GanhosNex(retornaFichaZerada(idNivelAtual, nome)));
+        const ficha = retornaFichaZerada(idNivelAtual, nome);
+        GanhoIndividualNexFactory.setFicha(ficha);
+        setGanhosNex(new GanhosNex(ficha));
     }, []);
 
     useEffect(() => {
