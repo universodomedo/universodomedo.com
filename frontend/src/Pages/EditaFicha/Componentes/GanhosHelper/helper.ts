@@ -1,6 +1,6 @@
 // #region Imports
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
-import { ValoresGanhoETroca, RLJ_Ficha2, GanhoIndividualNex, GanhoIndividualNexAtributo, GanhoIndividualNexPericia, GanhoIndividualNexEstatisticaFixa } from 'Types/classes/index.ts';
+import { ValoresGanhoETroca, RLJ_Ficha2, GanhoIndividualNex, GanhoIndividualNexAtributo, GanhoIndividualNexPericia, GanhoIndividualNexEstatisticaFixa, GanhoIndividualNexEscolhaClasse } from 'Types/classes/index.ts';
 // #endregion
 
 export function instanciaComArgumentos<T extends new (...args: any[]) => any>(
@@ -11,19 +11,55 @@ export function instanciaComArgumentos<T extends new (...args: any[]) => any>(
 }
 
 class ControladorGanhos {
-    private mapaGanhos: {
-        [nivel: number]: {
-            readonly Ctor: new (...args: any[]) => GanhoIndividualNex;
-            readonly params: any[];
-        }[];
-    } = {
+    private mapaValorMaximoAtributo: { [nivel: number]: { readonly maximo: number } } = {
+        1: { maximo: 3 },
+        7: { maximo: 4 },
+        11: { maximo: 5 },
+        17: { maximo: 6 },
+        21: { maximo: 7 }
+    };
+
+    public obterValorMaximoDeAtributoNoNivel(nivel: number): number {
+        const niveis = Object.keys(this.mapaValorMaximoAtributo).map(Number).sort((a, b) => a - b);
+    
+        let nivelMaisBaixo = niveis[0];
+        for (const n of niveis) {
+            if (nivel >= n) {
+                nivelMaisBaixo = n;
+            } else {
+                break;
+            }
+        }
+    
+        return this.mapaValorMaximoAtributo[nivelMaisBaixo].maximo;
+    }
+
+    private mapaGanhos: { [nivel: number]: { readonly Ctor: new (...args: any[]) => GanhoIndividualNex; readonly params: any[]; }[]; } = {
+        // 1: [
+        //     instanciaComArgumentos(GanhoIndividualNexEscolhaClasse, true)
+        // ]
         1: [
-            instanciaComArgumentos(GanhoIndividualNexAtributo, new ValoresGanhoETroca(2, 1), 3),
-            instanciaComArgumentos(GanhoIndividualNexPericia, new ValoresGanhoETroca(2))
+            instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 2, trocas: 1 }, this.obterValorMaximoDeAtributoNoNivel(1)),
+            instanciaComArgumentos(GanhoIndividualNexPericia, { ganhos: 2, trocas: 0 }, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }),
         ],
         2: [
             instanciaComArgumentos(GanhoIndividualNexEstatisticaFixa, 5, 10, 5),
         ],
+    };
+
+    private testeGanhosAtributos: { [nivel: number]: { readonly Ctor: new (...args: any[]) => GanhoIndividualNex; readonly params: any[]; }[]; } = {
+        // começa com 5
+        1: [ instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 2, trocas: 0 }) ],
+        3: [ instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 2, trocas: 0 }) ],
+        7: [ instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 1, trocas: 0 }) ],
+        9: [ instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 1, trocas: 0 }) ],
+        11: [ instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 2, trocas: 0 }) ],
+        13: [ instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 1, trocas: 0 }) ],
+        15: [ instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 1, trocas: 0 }) ],
+        17: [ instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 1, trocas: 0 }) ],
+        19: [ instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 1, trocas: 0 }) ],
+        20: [ instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 1, trocas: 0 }) ],
+        21: [ instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 1, trocas: 0 }) ],
     };
 
     obterGanhosPorNivel(nivel: number): GanhoIndividualNex[] {
@@ -51,6 +87,8 @@ class ControladorGanhos {
                 return GanhoIndividualNexPericia;
             case 3:
                 return GanhoIndividualNexEstatisticaFixa;
+            case 4:
+                return GanhoIndividualNexEscolhaClasse;
             default:
                 throw new Error(`Tipo de ganho não suportado: ${idTipo}`);
         }

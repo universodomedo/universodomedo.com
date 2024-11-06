@@ -16,9 +16,6 @@ export class GanhosNex {
 
         this.finalizando = false;
         this.indexEtapa = 0;
-
-        console.log('fim do adicionar');
-        console.log(this);
     }
 
     get finalizados(): boolean { return false; }

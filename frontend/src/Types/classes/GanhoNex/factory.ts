@@ -5,6 +5,11 @@ import { ValoresGanhoETroca, ValorUtilizavel, TipoGanhoNex, AtributoEmGanho, Per
 import { SingletonHelper } from "Types/classes_estaticas.tsx";
 // #endregion
 
+interface ValoresGanhoETrocaProps {
+    ganhos: number,
+    trocas: number,
+}
+
 export class GanhoIndividualNexFactory {
     public static ficha:RLJ_Ficha2;
 
@@ -36,9 +41,10 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
     public ganhosAtributo: ValoresGanhoETroca;
     public atributos: AtributoEmGanho[];
 
-    constructor(valoresGanhoETroca: ValoresGanhoETroca = new ValoresGanhoETroca(0), valorMaxAtributo: number = 3) {
-        super(1, valoresGanhoETroca.alterando);
-        this.ganhosAtributo = valoresGanhoETroca;
+    constructor(valoresGanhoETrocaProps: ValoresGanhoETrocaProps, valorMaxAtributo: number = 3) {
+        const ganhos = new ValoresGanhoETroca(valoresGanhoETrocaProps.ganhos, valoresGanhoETrocaProps.trocas);
+        super(1, ganhos.alterando);
+        this.ganhosAtributo = ganhos;
         this.atributos = this._refFicha.atributos?.map(atributoBase => new AtributoEmGanho(SingletonHelper.getInstance().atributos.find(atributo => atributo.id === atributoBase.id)!, atributoBase.valor, valorMaxAtributo))!;
     }
 
@@ -72,13 +78,18 @@ export class GanhoIndividualNexPericia extends GanhoIndividualNex {
     public ganhosLivres: ValoresGanhoETroca;
     public pericias: PericiaEmGanho[];
 
-    constructor(treinadas: ValoresGanhoETroca = new ValoresGanhoETroca(0), veteranas: ValoresGanhoETroca = new ValoresGanhoETroca(0), experts: ValoresGanhoETroca = new ValoresGanhoETroca(0), livres: ValoresGanhoETroca = new ValoresGanhoETroca(0)) {
-        super(2, treinadas.alterando || veteranas.alterando || experts.alterando || livres.alterando);
+    constructor(valoresGanhoETrocaPropsTreinadas: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsVeteranas: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsExperts: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsLivres: ValoresGanhoETrocaProps) {
+    // constructor(treinadas: ValoresGanhoETroca = new ValoresGanhoETroca(0), veteranas: ValoresGanhoETroca = new ValoresGanhoETroca(0), experts: ValoresGanhoETroca = new ValoresGanhoETroca(0), livres: ValoresGanhoETroca = new ValoresGanhoETroca(0)) {
+        const ganhosTreinadas = new ValoresGanhoETroca(valoresGanhoETrocaPropsTreinadas.ganhos, valoresGanhoETrocaPropsTreinadas.trocas);
+        const ganhosVeteranas = new ValoresGanhoETroca(valoresGanhoETrocaPropsVeteranas.ganhos, valoresGanhoETrocaPropsVeteranas.trocas);
+        const ganhosExperts = new ValoresGanhoETroca(valoresGanhoETrocaPropsExperts.ganhos, valoresGanhoETrocaPropsExperts.trocas);
+        const ganhosLivres = new ValoresGanhoETroca(valoresGanhoETrocaPropsLivres.ganhos, valoresGanhoETrocaPropsLivres.trocas);
+        super(2, ganhosTreinadas.alterando || ganhosVeteranas.alterando || ganhosExperts.alterando || ganhosLivres.alterando);
         
-        this.ganhosTreinadas = treinadas;
-        this.ganhosVeteranas = veteranas;
-        this.ganhosExperts = experts;
-        this.ganhosLivres = livres;
+        this.ganhosTreinadas = ganhosTreinadas;
+        this.ganhosVeteranas = ganhosVeteranas;
+        this.ganhosExperts = ganhosExperts;
+        this.ganhosLivres = ganhosLivres;
 
         this.pericias = this._refFicha.periciasPatentes?.map(pericia_patente => new PericiaEmGanho(
             SingletonHelper.getInstance().pericias.find(pericia => pericia.id === pericia_patente.idPericia)!,
@@ -162,8 +173,8 @@ export class GanhoIndividualNexEstatisticaFixa extends GanhoIndividualNex {
 }
 
 export class GanhoIndividualNexEscolhaClasse extends GanhoIndividualNex {
-    constructor() {
-        super(4, false);
+    constructor(escolha: boolean = false) {
+        super(4, escolha);
     }
 
     get finalizado(): boolean { return true; }
