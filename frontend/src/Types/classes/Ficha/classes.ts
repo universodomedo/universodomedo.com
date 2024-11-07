@@ -7,14 +7,16 @@ export type RLJ_Ficha2 = {
     estatisticasDanificaveis?: { id: number, valorMaximo: number, valor: number }[],
     atributos?: { id: number, valor: number }[],
     periciasPatentes?: { idPericia: number, idPatente: number }[],
-    rituais?: {
-        nomeRitual: string, idCirculoNivel: number, idElemento: number,
-        dadosAcao: {
-            nomeAcao: string, idTipoAcao: number, idCateoriaAcao: number, idMecanica: number,
-            custos: { custoPE?: { valor: number }, custoExecucao?: { idExecucao: number, valor: number }[], custoComponente?: boolean },
-            buff: { idBuff: number, nome: string, valor: number, duracao: { idDuracao: number, valor: number, }, idTipoBuff: number },
-            requisitos: number[]
-        },
-    }[],
+    rituais: dadosRitual[],
     // reducoesDano:
 }
+
+export type dadosRitual = {
+    nomeRitual: string, idCirculoNivel: number, idElemento: number,
+    dadosAcao: {
+        nomeAcao: string, idTipoAcao: number, idCateoriaAcao: number, idMecanica: number,
+        custos: { custoPE?: { valor: number }, custoExecucao?: { idExecucao: number, valor: number }[], custoComponente?: boolean },
+        buff: { idBuff: number, nome: string, valor: number, duracao: { idDuracao: number, valor: number, }, idTipoBuff: number },
+        requisitos: number[]
+    }[]
+};

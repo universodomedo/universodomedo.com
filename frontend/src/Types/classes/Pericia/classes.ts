@@ -14,8 +14,10 @@ export class Pericia {
         public nomeAbrev: string,
     ) { }
 
+    get idBuffRelacionado(): number { return this._idBuff; }
+
     get refBuffAtivo(): number {
-        return FichaHelper.getInstance().personagem.buffsAplicados.buffPorId(this._idBuff);
+        return FichaHelper.getInstance().personagem.buffsAplicados.buffPorId(this.idBuffRelacionado);
     }
 
     get refAtributo(): Atributo {

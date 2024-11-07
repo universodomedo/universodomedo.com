@@ -22,16 +22,7 @@ const dadosFicha: { [key: number]: RLJ_Ficha2 } = {
             { idPericia: 7, idPatente: 2, },
             { idPericia: 24, idPatente: 2, },
         ],
-        rituais: [
-            { nomeRitual: 'Ritual1', idCirculoNivel: 3, idElemento: 2, dadosAcao:
-                {
-                    nomeAcao: 'Acao1', idTipoAcao: 3, idCateoriaAcao: 1, idMecanica: 3, 
-                    custos: { custoPE: { valor: 2 }, custoExecucao: [ { idExecucao: 2, valor: 1 } ], custoComponente: true },
-                    buff: { idBuff: 6, nome: 'Aprimorar Acrobacia', valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 },
-                    requisitos: [1]
-                }
-            }
-        ],
+        rituais: [],
     }, // Rui
     2: {
         detalhes: { nome: 'Zumbi de Sangue', idClasse: 1, idNivel: 1, },
@@ -53,6 +44,7 @@ const dadosFicha: { [key: number]: RLJ_Ficha2 } = {
             { idPericia: 8, idPatente: 2, },
             { idPericia: 22, idPatente: 2, },
         ],
+        rituais: [],
     }, // Zumbi de Sangue
     3: {
         detalhes: { nome: 'Ocultista', idClasse: 4, idNivel: 4 },
@@ -79,22 +71,24 @@ const dadosFicha: { [key: number]: RLJ_Ficha2 } = {
         ],
         rituais: [
             {
-                nomeRitual: 'Aprimorar Ocultismo', idCirculoNivel: 3, idElemento: 1, dadosAcao:
-                {
-                    nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCateoriaAcao: 1, idMecanica: 3,
-                    custos: { custoPE: { valor: 5 }, custoExecucao: [ { idExecucao: 2, valor: 1 } ], custoComponente: true },
-                    buff: { idBuff: 16, nome: 'Aprimorar Ocultismo', valor: 4, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 },
-                    requisitos: [1]
-                }
+                nomeRitual: 'Aprimorar Ocultismo', idCirculoNivel: 3, idElemento: 1, dadosAcao: [
+                    {
+                        nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCateoriaAcao: 1, idMecanica: 3,
+                        custos: { custoPE: { valor: 5 }, custoExecucao: [ { idExecucao: 2, valor: 1 } ], custoComponente: true },
+                        buff: { idBuff: 16, nome: 'Aprimorar Ocultismo', valor: 4, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 },
+                        requisitos: [1]
+                    }
+                ]
             },
             {
-                nomeRitual: 'Aprimorar Investigação', idCirculoNivel: 5, idElemento: 1, dadosAcao:
-                {
-                    nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCateoriaAcao: 1, idMecanica: 3,
-                    custos: { custoPE: { valor: 9 }, custoExecucao: [ { idExecucao: 2, valor: 1 } ], custoComponente: true },
-                    buff: { idBuff: 14, nome: 'Aprimorar Ocultismo', valor: 6, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 },
-                    requisitos: [1]
-                }
+                nomeRitual: 'Aprimorar Investigação', idCirculoNivel: 5, idElemento: 1, dadosAcao: [
+                    {
+                        nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCateoriaAcao: 1, idMecanica: 3,
+                        custos: { custoPE: { valor: 9 }, custoExecucao: [ { idExecucao: 2, valor: 1 } ], custoComponente: true },
+                        buff: { idBuff: 14, nome: 'Aprimorar Ocultismo', valor: 6, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 },
+                        requisitos: [1]
+                    }
+                ]
             }
         ]
     }, // Ocultista

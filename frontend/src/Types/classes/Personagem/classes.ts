@@ -38,24 +38,42 @@ export class Personagem {
 
         this.rituais = this._ficha.rituais!.map(ritual =>
             new Ritual(ritual.nomeRitual, ritual.idCirculoNivel, ritual.idElemento)
-            .adicionarAcoes([
-                [
-                    ...classeComArgumentos(AcaoRitual, ritual.dadosAcao.nomeAcao, ritual.dadosAcao.idTipoAcao, ritual.dadosAcao.idCateoriaAcao, ritual.dadosAcao.idMecanica),
+            // .adicionarAcoes([
+            //     [
+            //         ...classeComArgumentos(AcaoRitual, ritual.dadosAcao.nomeAcao, ritual.dadosAcao.idTipoAcao, ritual.dadosAcao.idCateoriaAcao, ritual.dadosAcao.idMecanica),
+            //         (acao) => {
+            //             acao.adicionarCustos([
+            //                 ritual.dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, ritual.dadosAcao.custos.custoPE.valor) : null!,
+            //                 ...((ritual.dadosAcao.custos.custoExecucao || []).map(execucao =>
+            //                     execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
+            //                 )),
+            //                 ritual.dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
+            //             ]);
+            //             acao.adicionarBuffs([
+            //                 classeComArgumentos(BuffInterno, ritual.dadosAcao.buff.idBuff, ritual.dadosAcao.buff.nome, ritual.dadosAcao.buff.valor, ritual.dadosAcao.buff.duracao.idDuracao, ritual.dadosAcao.buff.duracao.valor, ritual.dadosAcao.buff.idTipoBuff)
+            //             ]);
+            //             acao.adicionarRequisitosEOpcoesPorId(ritual.dadosAcao.requisitos);
+            //         }
+            //     ]
+            // ])
+            .adicionarAcoes(
+                ritual.dadosAcao.map(dadoAcao => [
+                    ...classeComArgumentos(AcaoRitual, dadoAcao.nomeAcao, dadoAcao.idTipoAcao, dadoAcao.idCateoriaAcao, dadoAcao.idMecanica),
                     (acao) => {
                         acao.adicionarCustos([
-                            ritual.dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, ritual.dadosAcao.custos.custoPE.valor) : null!,
-                            ...((ritual.dadosAcao.custos.custoExecucao || []).map(execucao =>
+                            dadoAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadoAcao.custos.custoPE.valor) : null!,
+                            ...((dadoAcao.custos.custoExecucao || []).map(execucao =>
                                 execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
                             )),
-                            ritual.dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
+                            dadoAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
                         ]);
                         acao.adicionarBuffs([
-                            classeComArgumentos(BuffInterno, ritual.dadosAcao.buff.idBuff, ritual.dadosAcao.buff.nome, ritual.dadosAcao.buff.valor, ritual.dadosAcao.buff.duracao.idDuracao, ritual.dadosAcao.buff.duracao.valor, ritual.dadosAcao.buff.idTipoBuff)
+                            classeComArgumentos(BuffInterno, dadoAcao.buff.idBuff, dadoAcao.buff.nome, dadoAcao.buff.valor, dadoAcao.buff.duracao.idDuracao, dadoAcao.buff.duracao.valor, dadoAcao.buff.idTipoBuff)
                         ]);
-                        acao.adicionarRequisitosEOpcoesPorId(ritual.dadosAcao.requisitos);
+                        acao.adicionarRequisitosEOpcoesPorId(dadoAcao.requisitos);
                     }
-                ]
-            ])
+                ])
+            )
         );
 
         // const itemComponente = new ItemComponente(new NomeItem('Componente de Energia Simples'), 1, 0, new DetalhesItemComponente(2, 1, 2));

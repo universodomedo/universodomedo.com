@@ -1,5 +1,5 @@
 // #region Imports
-import { RLJ_Ficha2 } from '../Ficha/classes.ts';
+import { dadosRitual, RLJ_Ficha2 } from '../Ficha/classes.ts';
 import { PericiaPatentePersonagem } from '../Pericia/classes.ts';
 import { ValoresGanhoETroca, ValorUtilizavel, TipoGanhoNex, AtributoEmGanho, PericiaEmGanho } from './classes.ts';
 import { SingletonHelper } from "Types/classes_estaticas.tsx";
@@ -8,6 +8,16 @@ import { SingletonHelper } from "Types/classes_estaticas.tsx";
 interface ValoresGanhoETrocaProps {
     ganhos: number,
     trocas: number,
+}
+
+interface GanhosEstatisticaProps {
+    pv: number,
+    ps: number,
+    pe: number,
+}
+
+interface GanhoRitualProps {
+    numeroDeRituais: number,
 }
 
 export class GanhoIndividualNexFactory {
@@ -159,36 +169,44 @@ export class GanhoIndividualNexEstatisticaFixa extends GanhoIndividualNex {
     public ganhoPs: number;
     public ganhoPe: number;
 
-    constructor(pv:number = 0, ps:number = 0, pe:number = 0) {
-        super(3, pv > 0 || ps > 0 || pe > 0);
-        this.ganhoPv = pv;
-        this.ganhoPs = ps;
-        this.ganhoPe = pe;
+    constructor(ganhosEstatisticaProps:GanhosEstatisticaProps) {
+        super(3, ganhosEstatisticaProps.pv > 0 || ganhosEstatisticaProps.ps > 0 || ganhosEstatisticaProps.pe > 0);
+        this.ganhoPv = ganhosEstatisticaProps.pv;
+        this.ganhoPs = ganhosEstatisticaProps.ps;
+        this.ganhoPe = ganhosEstatisticaProps.pe;
     }
 
     get finalizado(): boolean { return true; }
     get pvGanhoIndividual(): number { return this.ganhoPv; }
-    get peGanhoIndividual(): number { return this.ganhoPs; }
-    get psGanhoIndividual(): number { return this.ganhoPe; }
+    get psGanhoIndividual(): number { return this.ganhoPs; }
+    get peGanhoIndividual(): number { return this.ganhoPe; }
 }
 
 export class GanhoIndividualNexEscolhaClasse extends GanhoIndividualNex {
+    public idOpcaoEscolhida: number | undefined;
+
     constructor(escolha: boolean = false) {
         super(4, escolha);
     }
 
-    get finalizado(): boolean { return true; }
+    setIdEscolhido(id:number) { this.idOpcaoEscolhida = id; }
+
+    get finalizado(): boolean { return this.idOpcaoEscolhida !== undefined && this.idOpcaoEscolhida > 1; }
     get pvGanhoIndividual(): number { return 0; }
     get peGanhoIndividual(): number { return 0; }
     get psGanhoIndividual(): number { return 0; }
 }
 
 export class GanhoIndividualNexRitual extends GanhoIndividualNex {
-    constructor() {
-        super(5, false);
+    public numeroRituais: number;
+    public dadosRituais: dadosRitual[] = [];
+
+    constructor(ganhoRitualProps:GanhoRitualProps) {
+        super(5, ganhoRitualProps.numeroDeRituais > 0);
+        this.numeroRituais = ganhoRitualProps.numeroDeRituais;
     }
 
-    get finalizado(): boolean { return true; }
+    get finalizado(): boolean { return this.numeroRituais === this.dadosRituais.length; }
     get pvGanhoIndividual(): number { return 0; }
     get peGanhoIndividual(): number { return 0; }
     get psGanhoIndividual(): number { return 0; }

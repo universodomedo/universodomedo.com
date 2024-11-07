@@ -2,7 +2,8 @@
 import style from './style.module.css';
 import { useEffect, useState } from 'react';
 
-import { GanhoIndividualNex, GanhoIndividualNexAtributo, GanhoIndividualNexFactory, GanhoIndividualNexPericia, GanhosNex, RLJ_Ficha2, ValoresGanhoETroca } from 'Types/classes/index.ts';
+import { GanhoIndividualNex, GanhoIndividualNexAtributo, GanhoIndividualNexEscolhaClasse, GanhoIndividualNexFactory, GanhoIndividualNexPericia, GanhoIndividualNexRitual, GanhosNex, RLJ_Ficha2, ValoresGanhoETroca } from 'Types/classes/index.ts';
+import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import EditaAtributos from 'Pages/EditaFicha/Componentes/EditaAtributos/page.tsx';
 import EditaPericias from 'Pages/EditaFicha/Componentes/EditaPericias/page.tsx';
@@ -16,7 +17,7 @@ import Modal from "Components/Modal/page.tsx";
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
-import { obterGanhosPorNivel, retornaFichaZerada } from './Componentes/GanhosHelper/helper.ts'
+import { obterGanhosGerais, retornaFichaZerada } from './Componentes/GanhosHelper/helper.ts'
 // #endregion
 
 const page = () => {
@@ -41,7 +42,7 @@ const page = () => {
     }, [ganhosNex, idNivelAtual]);
 
     const atualizaGanhos = () => {
-        ganhosNex?.adicionarNovoGanho(obterGanhosPorNivel(idNivelFazendoAgora));
+        ganhosNex?.adicionarNovoGanho(obterGanhosGerais(idNivelFazendoAgora, ganhosNex.dadosFicha.detalhes?.idClasse!));
         atualizarFicha();
     }
 
@@ -67,6 +68,30 @@ const page = () => {
 
             ganhosNex.dadosFicha.periciasPatentes = periciasAtuais.pericias.map(periciaAtual => ({ idPericia: periciaAtual.refPericia.id, idPatente: periciaAtual.refPatenteAtual.id }))
         }
+
+        if (ganhosNex.ganhosQueTemAlteracao.find(ganho => ganho.id === 5)) {
+            const rituaisAdicionados = ganhosNex.ganhosQueTemAlteracao.find(ganho => ganho.id === 5) as GanhoIndividualNexRitual;
+
+            ganhosNex.dadosFicha.rituais!.push(...rituaisAdicionados.dadosRituais);
+        }
+    }
+
+    const proximo = () => {
+        ganhosNex?.avancaEtapa();
+        atualizarFicha();
+
+        if (ganhosNex?.finalizando && ganhosNex.etapa.id === 4) return escolheClasse();
+        if (ganhosNex?.finalizando) closeModal();
+    };
+
+    const volta = () => {
+        ganhosNex?.retrocedeEtapa();
+        atualizarFicha();
+    };
+
+    const escolheClasse = () => {
+        ganhosNex!.dadosFicha.detalhes!.idClasse = (ganhosNex!.etapa as GanhoIndividualNexEscolhaClasse).idOpcaoEscolhida!;
+        atualizaGanhos();
     }
 
     const closeModal = () => {
@@ -87,24 +112,12 @@ const page = () => {
         localStorage.setItem('dadosFicha', JSON.stringify(dadosFicha));
     }
 
-    const proximo = () => {
-        ganhosNex?.avancaEtapa();
-        atualizarFicha();
-
-        if (ganhosNex?.finalizando) closeModal();
-    };
-
-    const volta = () => {
-        ganhosNex?.retrocedeEtapa();
-        atualizarFicha();
-    };
-
     return (
         <>
             {ganhosNex && ganhosNex.ganhos.length > 0 && (
                 <FichaProvider ganhosNex={ganhosNex} atualizarFicha={atualizarFicha}>
                     <div className={style.editando_ficha}>
-                        <h1>Criando Ficha - NEX 0%</h1>
+                        <h1>Criando Ficha - NEX {SingletonHelper.getInstance().niveis.find(nivel => nivel.id === idNivelFazendoAgora)?.nomeDisplay}</h1>
 
                         {/* {ganhosNex?.finalizando && (
                             <>

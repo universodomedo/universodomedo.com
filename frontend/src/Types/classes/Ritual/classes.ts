@@ -114,6 +114,7 @@ export class CirculoNivelRitual {
         public id: number,
         public idCirculo: number,
         public idNivel: number,
+        public psSacrificados: number,
     ) { }
 
     get nome(): string {
