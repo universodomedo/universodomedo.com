@@ -34,7 +34,18 @@ const page = () => {
     // const [dadosFicha, setDadosFicha] = useState<Dado[]>([] as Dado[]);
     const navigate = useNavigate();
 
+    const limpaLocalStorage = () => {
+        const chaveVersaoAtual = 'v2.0';
+        const chaveLimpeza = localStorage.getItem("chaveLimpeza");
+
+        if (chaveLimpeza === null || chaveLimpeza !== chaveVersaoAtual) {
+            localStorage.clear();
+            localStorage.setItem("chaveLimpeza", chaveVersaoAtual);
+        }
+    }
+
     useEffect(() => {
+        limpaLocalStorage();
         localStorage.removeItem("fichaAtual");
         store.dispatch(resetaDemo());
 

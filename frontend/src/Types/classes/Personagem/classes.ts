@@ -38,24 +38,6 @@ export class Personagem {
 
         this.rituais = this._ficha.rituais!.map(ritual =>
             new Ritual(ritual.nomeRitual, ritual.idCirculoNivel, ritual.idElemento)
-            // .adicionarAcoes([
-            //     [
-            //         ...classeComArgumentos(AcaoRitual, ritual.dadosAcao.nomeAcao, ritual.dadosAcao.idTipoAcao, ritual.dadosAcao.idCateoriaAcao, ritual.dadosAcao.idMecanica),
-            //         (acao) => {
-            //             acao.adicionarCustos([
-            //                 ritual.dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, ritual.dadosAcao.custos.custoPE.valor) : null!,
-            //                 ...((ritual.dadosAcao.custos.custoExecucao || []).map(execucao =>
-            //                     execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
-            //                 )),
-            //                 ritual.dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
-            //             ]);
-            //             acao.adicionarBuffs([
-            //                 classeComArgumentos(BuffInterno, ritual.dadosAcao.buff.idBuff, ritual.dadosAcao.buff.nome, ritual.dadosAcao.buff.valor, ritual.dadosAcao.buff.duracao.idDuracao, ritual.dadosAcao.buff.duracao.valor, ritual.dadosAcao.buff.idTipoBuff)
-            //             ]);
-            //             acao.adicionarRequisitosEOpcoesPorId(ritual.dadosAcao.requisitos);
-            //         }
-            //     ]
-            // ])
             .adicionarAcoes(
                 ritual.dadosAcao.map(dadoAcao => [
                     ...classeComArgumentos(AcaoRitual, dadoAcao.nomeAcao, dadoAcao.idTipoAcao, dadoAcao.idCateoriaAcao, dadoAcao.idMecanica),

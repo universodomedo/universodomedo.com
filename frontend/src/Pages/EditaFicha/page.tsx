@@ -2,7 +2,7 @@
 import style from './style.module.css';
 import { useEffect, useState } from 'react';
 
-import { GanhoIndividualNex, GanhoIndividualNexAtributo, GanhoIndividualNexEscolhaClasse, GanhoIndividualNexFactory, GanhoIndividualNexPericia, GanhoIndividualNexRitual, GanhosNex, RLJ_Ficha2, ValoresGanhoETroca } from 'Types/classes/index.ts';
+import { GanhoIndividualNex, GanhoIndividualNexAtributo, GanhoIndividualNexEscolhaClasse, GanhoIndividualNexFactory, GanhoIndividualNexPericia, GanhoIndividualNexRitual, GanhosNex, RLJ_Ficha2, ValoresGanhoETroca, obterGanhosGerais, retornaFichaZerada } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import EditaAtributos from 'Pages/EditaFicha/Componentes/EditaAtributos/page.tsx';
@@ -16,8 +16,6 @@ import { FichaProvider, useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx'
 import Modal from "Components/Modal/page.tsx";
 
 import { useNavigate, useLocation } from 'react-router-dom';
-
-import { obterGanhosGerais, retornaFichaZerada } from './Componentes/GanhosHelper/helper.ts'
 // #endregion
 
 const page = () => {
@@ -49,8 +47,6 @@ const page = () => {
     const atualizaGanhosParaFicha = () => {
         if (!ganhosNex) return;
 
-        ganhosNex.dadosFicha.detalhes!.idNivel = idNivelFazendoAgora;
-
         ganhosNex.dadosFicha.estatisticasDanificaveis = [
             { id: 1, valorMaximo: ganhosNex.pvAtualizado, valor: ganhosNex.pvAtualizado},
             { id: 2, valorMaximo: ganhosNex.psAtualizado, valor: ganhosNex.psAtualizado},
@@ -74,6 +70,8 @@ const page = () => {
 
             ganhosNex.dadosFicha.rituais!.push(...rituaisAdicionados.dadosRituais);
         }
+
+        ganhosNex.dadosFicha.detalhes!.idNivel = idNivelFazendoAgora;
     }
 
     const proximo = () => {

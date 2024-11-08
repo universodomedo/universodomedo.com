@@ -15,8 +15,8 @@ export const geraFicha = (dadosFicha: RLJ_Ficha2): RLJ_Ficha2 => {
 
             return {
                 id: estatistica_danificavel.id,
-                valorMaximo: estatisticaAtual?.valorMaximo ?? 1,
-                valor: estatisticaAtual?.valor ?? 1,
+                valorMaximo: Math.floor(estatisticaAtual?.valorMaximo!) ?? 1,
+                valor: Math.floor(estatisticaAtual?.valor!) ?? 1,
             };
         }),
         estatisticasBuffaveis: SingletonHelper.getInstance().tipo_estatistica_buffavel.map((estatistica_buffavel) => {
