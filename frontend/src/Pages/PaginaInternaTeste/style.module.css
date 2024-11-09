@@ -46,6 +46,12 @@
     flex-direction: column;
 }
 
+.ficha_acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8vh;
+}
+
 .remover_ficha {
     cursor: pointer;
 }

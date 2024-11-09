@@ -1,5 +1,5 @@
 // #region Imports
-import { adicionarBuffsUtil, adicionarAcoesUtil, pluralize, Acao, Buff, Extremidade, TooltipProps, CorTooltip, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, CaixaInformacaoProps, PericiaPatentePersonagem, Elemento, NivelComponente } from 'Types/classes/index.ts';
+import { adicionarBuffsUtil, adicionarAcoesUtil, pluralize, Acao, Buff, Extremidade, TooltipProps, CorTooltip, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, CaixaInformacaoProps, PericiaPatentePersonagem, Elemento, NivelComponente, AtributoPersonagem } from 'Types/classes/index.ts';
 import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -53,7 +53,7 @@ export class Item {
         this._agrupavel = agrupavel;
 
         if (!this.precisaEstarEmpunhado) {
-            this.buffs.map(buff => {
+            this.buffs.forEach(buff => {
                 buff.ativaBuff();
             });
         }
@@ -237,16 +237,13 @@ export class DetalhesItemArma {
         public dano: number,
         public variancia: number,
         public numeroExtremidadesUtilizadas: number,
-        private _idPericiaUtilizada: number
+        private _idAtributoUtilizado: number,
+        private _idPericiaUtilizada: number,
     ) { }
 
-    get danoMinimo(): number {
-        return this.dano - this.variancia;
-    }
-
-    get refPericiaUtilizadaArma(): PericiaPatentePersonagem {
-        return FichaHelper.getInstance().personagem.pericias.find(pericia => pericia.refPericia.id === this._idPericiaUtilizada)!;
-    }
+    get danoMinimo(): number { return this.dano - this.variancia; }
+    get refAtributoUtilizadoArma(): AtributoPersonagem { return FichaHelper.getInstance().personagem.atributos.find(atributo => atributo.refAtributo.id === this._idAtributoUtilizado)!; }
+    get refPericiaUtilizadaArma(): PericiaPatentePersonagem { return FichaHelper.getInstance().personagem.pericias.find(pericia => pericia.refPericia.id === this._idPericiaUtilizada)!; }
 }
 
 export class ItemEquipamento extends Item {

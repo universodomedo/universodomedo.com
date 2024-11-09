@@ -106,7 +106,7 @@ const page = () => {
         const data = localStorage.getItem('dadosFicha');
         const dadosFicha = data ? JSON.parse(data) : [];
 
-        dadosFicha.push({ dados: novaFicha });
+        dadosFicha.push(novaFicha);
         localStorage.setItem('dadosFicha', JSON.stringify(dadosFicha));
     }
 

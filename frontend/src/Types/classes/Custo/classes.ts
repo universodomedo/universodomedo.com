@@ -82,6 +82,7 @@ export class CustoExecucao extends Custo {
     }
 
     gastaCusto(): void {
+        return;
         if (this.refTipoExecucao.id === 1) return;
 
         LoggerHelper.getInstance().adicionaMensagem(`-${this.valor} ${this.refTipoExecucao.nome}`);

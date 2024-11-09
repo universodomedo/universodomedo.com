@@ -1,5 +1,5 @@
 // #region Imports
-import { RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { ItemArma, RLJ_Ficha2 } from 'Types/classes/index.ts';
 // #endregion
 
 const dadosFicha: { [key: number]: RLJ_Ficha2 } = {
@@ -23,6 +23,23 @@ const dadosFicha: { [key: number]: RLJ_Ficha2 } = {
             { idPericia: 24, idPatente: 2, },
         ],
         rituais: [],
+        inventario: [
+            {
+                idTipoItem: 1, nomeItem: { nomePadrao: 'Arma Leve 2', nomeCustomizado: 'Gorge2' }, peso: 3, categoria: 1, precisaEstarEmpunhando: true,
+                detalhesArma: { dano: 6, variancia:2, numeroExtremidadesUtilizadas: 1, idPericiaUtilizada: 8 },
+                dadosAcoes: [
+                    {
+                        nomeAcao: 'Realizar Ataque', idTipoAcao: 2, idCateoriaAcao: 1, idMecanica: 3,
+                        custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
+                        requisitos: [2]
+                    }
+                ],
+            },
+            {
+                idTipoItem: 4, nomeItem: { nomePadrao: 'Componente de Energia '}, peso: 1, categoria: 0,
+                detalhesComponente: { idElemento: 2, idNivelComponente: 1, usosMaximos: 2, usos: 2 },
+            }
+        ],
     }, // Rui
     2: {
         detalhes: { nome: 'Zumbi de Sangue', idClasse: 1, idNivel: 1, },
@@ -45,6 +62,7 @@ const dadosFicha: { [key: number]: RLJ_Ficha2 } = {
             { idPericia: 22, idPatente: 2, },
         ],
         rituais: [],
+        inventario: [],
     }, // Zumbi de Sangue
     3: {
         detalhes: { nome: 'Ocultista', idClasse: 4, idNivel: 4 },
@@ -71,26 +89,27 @@ const dadosFicha: { [key: number]: RLJ_Ficha2 } = {
         ],
         rituais: [
             {
-                nomeRitual: 'Aprimorar Ocultismo', idCirculoNivel: 3, idElemento: 1, dadosAcao: [
+                nomeRitual: 'Aprimorar Ocultismo', idCirculoNivel: 3, idElemento: 1, dadosAcoes: [
                     {
                         nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCateoriaAcao: 1, idMecanica: 3,
                         custos: { custoPE: { valor: 5 }, custoExecucao: [ { idExecucao: 2, valor: 1 } ], custoComponente: true },
-                        buff: { idBuff: 16, nome: 'Aprimorar Ocultismo', valor: 4, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 },
+                        buffs: [{ idBuff: 16, nome: 'Aprimorar Ocultismo', valor: 4, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 }],
                         requisitos: [1]
                     }
                 ]
             },
             {
-                nomeRitual: 'Aprimorar Investigação', idCirculoNivel: 5, idElemento: 1, dadosAcao: [
+                nomeRitual: 'Aprimorar Investigação', idCirculoNivel: 5, idElemento: 1, dadosAcoes: [
                     {
                         nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCateoriaAcao: 1, idMecanica: 3,
                         custos: { custoPE: { valor: 9 }, custoExecucao: [ { idExecucao: 2, valor: 1 } ], custoComponente: true },
-                        buff: { idBuff: 14, nome: 'Aprimorar Ocultismo', valor: 6, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 },
+                        buffs: [{ idBuff: 14, nome: 'Aprimorar Ocultismo', valor: 6, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 }],
                         requisitos: [1]
                     }
                 ]
             }
-        ]
+        ],
+        inventario: [],
     }, // Ocultista
 }
 

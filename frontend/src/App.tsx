@@ -18,6 +18,7 @@ import PageTracker from "Components/PageTracker/page_tracker.tsx";
 import TooltipContainer from "Components/SubComponents/Tooltip/TooltipContainer.tsx";
 
 import PaginaInternaTeste from 'Pages/PaginaInternaTeste/page.tsx';
+import Shop from 'Pages/Shop/page.tsx';
 
 import AuthOutlet from '@auth-kit/react-router/AuthOutlet';
 // import { SalaProvider } from "Providers/SalaProvider.tsx";
@@ -79,6 +80,9 @@ const App = () => {
           <Route element={<LayoutInterno2 />}>
             <Route path="/ficha-demo">
               <Route index element={<Ficha />} />
+            </Route>
+            <Route path="/shop-demo">
+              <Route index element={<Shop />} />
             </Route>
             <Route path="/edita-ficha">
               <Route index element={<EditaFicha />} />

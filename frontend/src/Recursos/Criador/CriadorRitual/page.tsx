@@ -30,11 +30,11 @@ const page = ({ onCreate }: { onCreate: (novoRitual: dadosRitual) => void; }) =>
         const valorBuff:number = { 1: 2, 2: 3, 3: 4 }[nivelSelecionado] || 0;
 
         return {
-            nomeRitual: `Aprimorar ${periciaSelecionada?.nome}`, idCirculoNivel: nivelSelecionado, idElemento: elementoSelecionado, dadosAcao: [
+            nomeRitual: `Aprimorar ${periciaSelecionada?.nome}`, idCirculoNivel: nivelSelecionado, idElemento: elementoSelecionado, dadosAcoes: [
                 {
                     nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCateoriaAcao: 1, idMecanica: 3,
                     custos: { custoPE: { valor: valorPE }, custoExecucao: [ { idExecucao: 2, valor: 1 } ], custoComponente: true },
-                    buff: { idBuff: periciaSelecionada?.idBuffRelacionado!, nome: `Aprimorar ${periciaSelecionada?.nome}`, valor: valorBuff, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 },
+                    buffs: [{ idBuff: periciaSelecionada?.idBuffRelacionado!, nome: `Aprimorar ${periciaSelecionada?.nome}`, valor: valorBuff, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 }],
                     requisitos: [1],
                 }
             ]

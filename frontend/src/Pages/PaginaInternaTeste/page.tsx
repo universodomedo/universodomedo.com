@@ -11,34 +11,25 @@ import store from 'Redux/store.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
 import Modal from "Components/Modal/page.tsx";
 import ModalCriarFicha from './modal.tsx';
 // import { useSalaContext } from 'Providers/SalaProvider.tsx';
 // #endregion
 
-interface Dado {
-    dados: {
-        detalhes: {
-            nome: string;
-            idClasse: number;
-            idNivel: number;
-        };
-    };
-}
-
 const page = () => {
     // const {salas, criaSala} = useSalaContext();
-    const [dadosFicha, setDadosFicha] = useState<Dado[]>([]);
+    const [dadosFicha, setDadosFicha] = useState<RLJ_Ficha2[]>([]);
     // const [dadosFicha, setDadosFicha] = useState<Dado[]>([] as Dado[]);
     const navigate = useNavigate();
 
     const limpaLocalStorage = () => {
-        const chaveVersaoAtual = 'v2.0';
+        const chaveVersaoAtual = 'v2.1';
         const chaveLimpeza = localStorage.getItem("chaveLimpeza");
 
         if (chaveLimpeza === null || chaveLimpeza !== chaveVersaoAtual) {
+            alert('Foram detectadas Fichas Desatualizadas. Elas estarão sendo apagadas para ajustar a versão nova (sorry)')
             localStorage.clear();
             localStorage.setItem("chaveLimpeza", chaveVersaoAtual);
         }
@@ -53,10 +44,6 @@ const page = () => {
         if (data) {
             let convertedData = JSON.parse(data);
 
-            if (convertedData.dados) {
-                convertedData = [];
-                localStorage.setItem("dadosFicha", convertedData);
-            }
             setDadosFicha(convertedData);
         }
     }, []);
@@ -68,7 +55,7 @@ const page = () => {
     const vaiPraFicha = (idFake: number) => {
         const ficha: RLJ_Ficha2 = getDadoFichaPorIdFake(idFake);
 
-        localStorage.setItem('fichaAtual', JSON.stringify({ dados: ficha }));
+        localStorage.setItem('fichaAtual', JSON.stringify(ficha));
 
         navigate('/ficha-demo');
     }
@@ -91,6 +78,10 @@ const page = () => {
         localStorage.setItem('dadosFicha', jsonDadosFicha);
     };
 
+    const abrirShop = (index: number) => {
+        navigate('/shop-demo', { state: { indexFicha: index } });
+    }
+
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const openModal = () => setIsModalOpen(true);
@@ -108,14 +99,15 @@ const page = () => {
             {dadosFicha && dadosFicha.map((ficha, index) => (
                 <div key={index} className={style.ficha_existente}>
                     <div className={style.acesso_ficha_existente} onClick={() => { abreFicha(index) }}>
-                        <div className={style.ficha_nome}>{ficha.dados.detalhes.nome}</div>
+                        <div className={style.ficha_nome}>{ficha.detalhes!.nome}</div>
                         <div className={style.ficha_detalhes}>
-                            <div className={style.ficha_classe}>{SingletonHelper.getInstance().classes.find(classe => classe.id === ficha.dados.detalhes.idClasse)!.nome}</div>
-                            <div className={style.ficha_nex}>{`NEX ${SingletonHelper.getInstance().niveis.find(nivel => nivel.id === ficha.dados.detalhes.idNivel)!.nomeDisplay}`}</div>
+                            <div className={style.ficha_classe}>{SingletonHelper.getInstance().classes.find(classe => classe.id === ficha.detalhes!.idClasse)!.nome}</div>
+                            <div className={style.ficha_nex}>{`NEX ${SingletonHelper.getInstance().niveis.find(nivel => nivel.id === ficha.detalhes!.idNivel)!.nomeDisplay}`}</div>
                         </div>
                     </div>
                     <div className={style.ficha_acoes}>
-                        <FontAwesomeIcon className={style.remover_ficha} icon={faTrash} onClick={() => { removeFicha(index) }} />
+                        <FontAwesomeIcon className={style.remover_ficha} title={'Remover Ficha'} icon={faTrash} onClick={() => { removeFicha(index) }} />
+                        <FontAwesomeIcon className={style.remover_ficha} title={'Alterar Intentário'} icon={faShoppingCart} onClick={() => { abrirShop(index) }} />
                     </div>
                 </div>
             ))}

@@ -84,12 +84,12 @@ const Ficha: React.FC = () => {
                             <div><button onClick={() => {personagem.alterarMaximoEstatistica(parseInt((document.querySelector('#estatisticaMaxima') as HTMLSelectElement).value), parseInt((document.querySelector('#valorMaximo') as HTMLInputElement).value))}}>Alterar</button></div>
                         </div> */}
 
-                        <div>
+                        {/* <div>
                             <h1>Passar Durações</h1>
                             {singleton.duracoes.filter(duracao => duracao.id !== 5).map((duracao, index) => (
                                 <button key={index} onClick={() => { personagem.rodaDuracao(duracao.id) }} >{duracao.nome}</button>
                             ))}
-                        </div>
+                        </div> */}
 
                         {/* <div>
                             <h1>Shopping</h1>

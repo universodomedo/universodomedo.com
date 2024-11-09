@@ -25,8 +25,7 @@ export const carregaDemo = createAsyncThunk(
         const ficha: RLJ_Ficha2 = (() => {
             if (typeof jsonFicha === 'string') {
                 try {
-                    const parsed = JSON.parse(jsonFicha);
-                    return parsed?.dados ?? {};
+                    return JSON.parse(jsonFicha);
                 } catch {
                     return {};
                 }

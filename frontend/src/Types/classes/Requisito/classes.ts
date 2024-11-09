@@ -81,7 +81,7 @@ type RequisitoOption = { key: string; displayName: string; obterOpcoes: (acao: A
 export class RequisitoConfig {
     private static requisitoMap: Map<number, { 
         requisitoClass: new (...args: any[]) => Requisito, 
-        requisitoParams: any[], // Permitir parâmetros adicionais 
+        requisitoParams: any[],
         opcoesExecucao: RequisitoOption[] 
     }> = new Map([
         [1, {
@@ -101,6 +101,19 @@ export class RequisitoConfig {
                 }
             ]
         }],
+        [2, {
+            requisitoClass: RequisitoItemEmpunhado,
+            requisitoParams: [],
+            opcoesExecucao: [
+                {
+                    key: 'alvo',
+                    displayName: 'Alvo da Ação',
+                    obterOpcoes: (): Opcao[] => {
+                        return [{ key: 1, value: 'Alguem bem atrás de você' }];
+                    }
+                }
+            ]
+        }]
         // Outros requisitos podem ser adicionados aqui
     ]);
 

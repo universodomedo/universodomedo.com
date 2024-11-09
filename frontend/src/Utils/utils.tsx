@@ -40,6 +40,7 @@ export const geraFicha = (dadosFicha: RLJ_Ficha2): RLJ_Ficha2 => {
             };
         }),
         rituais: dadosFicha.rituais ? dadosFicha.rituais : [],
+        inventario: dadosFicha.inventario ? dadosFicha.inventario : [],
     };
 
     return ficha;

@@ -23,7 +23,6 @@ export abstract class Buff {
 
     adicionaRefPai(refPai: Acao | Item): this { return (this.refPai = refPai), this; }
 
-
     get ativo(): boolean { return this._ativo; }
     get refBuff(): BuffRef { return SingletonHelper.getInstance().buffs.find(buff => buff.id === this._idBuff)!; }
     get refDuracao(): Duracao { return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === this._idDuracao)!; }

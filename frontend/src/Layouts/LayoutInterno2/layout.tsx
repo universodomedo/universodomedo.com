@@ -14,7 +14,7 @@ const LayoutInterno2 = () => {
                 <Link to="/pagina-interna">{'< voltar'}</Link>
               </div>
               <div className={styles.aviso_beta}>
-                Versão Beta: 0.2<br />
+                Versão Beta: 0.2.1<br />
                 Versões posteriores podem diferir da atual
               </div>
             </div>

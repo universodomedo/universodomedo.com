@@ -8,10 +8,7 @@ export class GanhosNex {
     public finalizando: boolean = false;
     public indexEtapa: number = 0;
 
-    constructor(public dadosFicha: RLJ_Ficha2) {
-
-        console.log(this.dadosFicha.detalhes);
-     }
+    constructor(public dadosFicha: RLJ_Ficha2) { }
 
     adicionarNovoGanho(ganhos: GanhoIndividualNex[]) {
         this.ganhos = ganhos;
@@ -447,6 +444,8 @@ export const retornaFichaZerada = (idNivelAtual: number, nome: string): RLJ_Fich
         atributos: [{ id: 1, valor: 1 }, { id: 2, valor: 1 }, { id: 3, valor: 1 }, { id: 4, valor: 1 }, { id: 5, valor: 1 }],
         periciasPatentes: [{ idPericia: 1, idPatente: 1 }, { idPericia: 2, idPatente: 1 }, { idPericia: 3, idPatente: 1 }, { idPericia: 4, idPatente: 1 }, { idPericia: 5, idPatente: 1 }, { idPericia: 6, idPatente: 1 }, { idPericia: 7, idPatente: 1 }, { idPericia: 8, idPatente: 1 }, { idPericia: 9, idPatente: 1 }, { idPericia: 10, idPatente: 1 }, { idPericia: 11, idPatente: 1 }, { idPericia: 12, idPatente: 1 }, { idPericia: 13, idPatente: 1 }, { idPericia: 14, idPatente: 1 }, { idPericia: 15, idPatente: 1 }, { idPericia: 16, idPatente: 1 }, { idPericia: 17, idPatente: 1 }, { idPericia: 18, idPatente: 1 }, { idPericia: 19, idPatente: 1 }, { idPericia: 20, idPatente: 1 }, { idPericia: 21, idPatente: 1 }, { idPericia: 22, idPatente: 1 }, { idPericia: 23, idPatente: 1 }, { idPericia: 24, idPatente: 1 }, { idPericia: 25, idPatente: 1 }, { idPericia: 26, idPatente: 1 }],
         rituais: [],
+        inventario: [],
+        buffs: [],
     };
 }
 
