@@ -8,6 +8,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 import Modal from "Components/Modal/page.tsx";
 import ModalAdicionarItem from './modal.tsx';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 // #endregion
 
 const page = () => {
@@ -62,23 +65,38 @@ const page = () => {
         navigate('/pagina-interna')
     };
 
+    const removeItem = (index: number) => {
+        console.log('removeItem');
+        const fichaRemovendo = fichaAtual;
+
+        fichaRemovendo?.inventario!.splice(index, 1);
+
+        setFichaAtual(fichaRemovendo);
+        setState({});
+    };
+
     return (
         <div className={style.shopping}>
             <h1>Shopping</h1>
 
             <h2>Inventário Atual</h2>
-            {fichaAtual?.inventario ? (
+            {fichaAtual?.inventario && fichaAtual.inventario.length > 0 ? (
                 <div className={style.inventario_atual}>
                     {fichaAtual.inventario.map((item, index) => (
-                        <h3 key={index}>{item.nomeItem.nomePadrao}</h3>
+                        <div key={index} className={style.linha_item}>
+                            <h3>{item.nomeItem.nomePadrao}</h3>
+                            <FontAwesomeIcon className={style.remove_item} title={'Remover Item'} icon={faTrash} onClick={() => { removeItem(index) }} />
+                        </div>
                     ))}
                 </div>
             ): (
                 <h3>Inventário Vazio!</h3>
             )}
 
-            <button onClick={openModal}>Adicionar Item</button>
-            <button onClick={salvarInventario}>Salvar</button>
+            <div className={style.linha_botoes}>
+                <button onClick={openModal}>Adicionar Item</button>
+                <button onClick={salvarInventario}>Salvar</button>
+            </div>
 
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <ModalAdicionarItem onCreate={adicionarItem} />

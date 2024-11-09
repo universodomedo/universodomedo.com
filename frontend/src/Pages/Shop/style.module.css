@@ -1,5 +1,19 @@
 .shopping {
+    display: flex;
+    flex-direction: column;
     color: white;
+}
+
+.inventario_atual {
+    display: inline-block;
+    margin: auto;
+}
+
+.linha_item {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    align-items: center;
 }
 
 .modal_inventario {
@@ -7,4 +21,8 @@
     flex-direction: column;
     align-items: center;
     gap: 1vh;
+}
+
+.remove_item {
+    cursor: pointer;
 }

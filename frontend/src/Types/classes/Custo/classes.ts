@@ -13,6 +13,34 @@ export abstract class Custo {
     }
 }
 
+export class CustoExecucao extends Custo {
+
+    constructor(private _idTipoExecucao: number, public valor: number,) { super(); }
+
+    get refTipoExecucao(): TipoExecucao { return SingletonHelper.getInstance().tipos_execucao.find(execucao => execucao.id === this._idTipoExecucao)!; }
+
+    get podeSerPago(): boolean {
+        if (this.refTipoExecucao.id === 1) return true;
+
+        return FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais >= this.valor;
+    }
+
+    get descricaoCusto(): string {
+        if (this.refTipoExecucao.id === 1) return this.refTipoExecucao.nome;
+
+        return `${this.valor} ${this.refTipoExecucao.nome}`;
+    }
+
+    gastaCusto(): void {
+        return;
+        if (this.refTipoExecucao.id === 1) return;
+
+        LoggerHelper.getInstance().adicionaMensagem(`-${this.valor} ${this.refTipoExecucao.nome}`);
+
+        FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais -= this.valor;
+    }
+}
+
 export class CustoPE extends Custo {
     constructor(public valor: number) { super(); }
 
@@ -63,32 +91,20 @@ export class CustoTestePericia extends Custo {
     get valorAtual(): number { return this.valorInicial + (this.valorConsecutivo * this.vezesUtilizadasConsecutivo) }
 }
 
-export class CustoExecucao extends Custo {
+export class CustoTestePericiaConsecutivo extends Custo {
+    private vezesUtilizadasConsecutivo: number = 0;
+    public bloqueadoNesseTurno: boolean = false;
 
-    constructor(private _idTipoExecucao: number, public valor: number,) { super(); }
+    constructor(private _idPericia: number, public valorInicial: number, public valorConsecutivo: number) { super(); }
 
-    get refTipoExecucao(): TipoExecucao { return SingletonHelper.getInstance().tipos_execucao.find(execucao => execucao.id === this._idTipoExecucao)!; }
-
-    get podeSerPago(): boolean {
-        if (this.refTipoExecucao.id === 1) return true;
-
-        return FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais >= this.valor;
-    }
-
-    get descricaoCusto(): string {
-        if (this.refTipoExecucao.id === 1) return this.refTipoExecucao.nome;
-
-        return `${this.valor} ${this.refTipoExecucao.nome}`;
-    }
-
+    get podeSerPago(): boolean { return (this.bloqueadoNesseTurno || this.valorAtual > FichaHelper.getInstance().personagem.pericias.find(pericia => pericia.refPericia.id === this.refPericia.id)!.valorTotal + 20); }
+    get descricaoCusto(): string { return `DT ${this.valorAtual} de ${this.refPericia.nomeAbrev}${this.bloqueadoNesseTurno ? ` | Falhou nesse turno` : ''}`; }
     gastaCusto(): void {
         return;
-        if (this.refTipoExecucao.id === 1) return;
-
-        LoggerHelper.getInstance().adicionaMensagem(`-${this.valor} ${this.refTipoExecucao.nome}`);
-
-        FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais -= this.valor;
     }
+
+    get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this._idPericia)!; }
+    get valorAtual(): number { return this.valorInicial + (this.valorConsecutivo * this.vezesUtilizadasConsecutivo) }
 }
 
 export class TipoCusto {
