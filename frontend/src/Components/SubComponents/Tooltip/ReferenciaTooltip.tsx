@@ -1,6 +1,7 @@
 // #region Imports
 import style from "./style.module.css";
-import React, { useRef } from 'react';
+import { useRef } from 'react';
+
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from 'Redux/store.ts';
 import { showTooltip, hideTooltip } from "Redux/slices/tooltipHelperSlice.ts";
@@ -12,10 +13,10 @@ const ReferenciaTooltip: React.FC<{ children: React.ReactNode; objeto?: TooltipP
   const activatorRef = useRef<HTMLElement>(null);
 
   const handleMouseEnter = () => {
-    if (activatorRef.current && objeto) {
-      const rect = activatorRef.current.getBoundingClientRect();
-      dispatch(showTooltip({ position: { top: rect.bottom + window.scrollY, left: rect.left }, dimensoes: { width: rect.width, height: rect.height }, conteudo: objeto}));
-    }
+    if (!activatorRef.current || !objeto) return;
+
+    const rect = activatorRef.current.getBoundingClientRect();
+    dispatch(showTooltip({ position: { top: rect.bottom + window.scrollY, left: rect.left }, dimensoes: { width: rect.width, height: rect.height }, conteudo: objeto, }));
   };
 
   const handleMouseLeave = () => {

@@ -14,6 +14,10 @@ export class Extremidade {
         this.id = Extremidade.nextId++;
     }
 
+    static resetId() {
+        Extremidade.nextId = 1;
+    }
+
     empunhar = (idItem: number): void => {
         LoggerHelper.getInstance().adicionaMensagem(`Empunhando na Extremidade ${this.id}`);
 

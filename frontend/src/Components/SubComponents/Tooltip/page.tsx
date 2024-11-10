@@ -1,6 +1,7 @@
 // #region Imports
 import style from "./style.module.css";
-import React, { useRef, useEffect, useState } from 'react';
+
+import { useRef, useEffect, useState } from 'react';
 import CaixaInformacao from "Components/CaixaInformacao/page.tsx";
 import { TooltipState } from "Redux/slices/tooltipHelperSlice";
 // #endregion
@@ -30,12 +31,20 @@ const page = ({ tooltip }: { tooltip: TooltipState }) => {
     }
   }, [tooltip, divRef.current]);
 
+  const handleMouseEnter = () => {
+    console.log('handleMouseEnter no Tooltip/page')
+    // dispatch(showTooltip(tooltip));
+  };
+
+  const handleMouseLeave = () => {
+    console.log('handleMouseLeave no Tooltip/page')
+    // dispatch(hideTooltip());
+  };
+
   return (
-    <>
-      <div ref={divRef} style={{ position: 'absolute', top: position.top, left: position.left, visibility: visible ? 'visible' : 'hidden' }}>
-        <CaixaInformacao props={tooltip.conteudo} />
-      </div>
-    </>
+    <div ref={divRef} className={style.wrapper_caixa_informacao} style={{ top: position.top, left: position.left, visibility: visible ? 'visible' : 'hidden' }} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <CaixaInformacao props={tooltip.conteudo} />
+    </div>
   );
 }
 

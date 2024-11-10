@@ -34,6 +34,9 @@ export class Personagem {
     public receptor: Receptor = new Receptor(this);
 
     constructor(private _ficha: RLJ_Ficha2) {
+        const numExtremidades = 2; // depois vai ter q mudar para alguma logica
+        Extremidade.resetId();
+
         this.detalhes = new PersonagemDetalhes(this._ficha.detalhes!.nome, this._ficha.detalhes!.idClasse, this._ficha.detalhes!.idNivel);
 
         this.estatisticasDanificaveis = this._ficha.estatisticasDanificaveis!.map(estatisticaDanificavel => {
@@ -47,7 +50,7 @@ export class Personagem {
             [new Execucao(2, 1), new Execucao(3, 1), new Execucao(4, 1), new Execucao(6, 1)],
             new EspacoInventario(5, 5),
             new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2)]),
-            [new Extremidade(), new Extremidade()],
+            numExtremidades
         );
 
         // this.reducoesDano = this._ficha.reducoesDano.map(reducaoDano => new ReducaoDano(reducaoDano.valor!, reducaoDano.tipoDano, this));

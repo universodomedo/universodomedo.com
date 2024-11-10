@@ -9,5 +9,9 @@
 }
 
 .referencia_tooltip {
-  cursor: pointer;
+  cursor: pointer;}
+
+.wrapper_caixa_informacao {
+  position: absolute;
+  pointer-events: auto;
 }

@@ -3,6 +3,8 @@ import { Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, Extremi
 // #endregion
 
 export class EstatisticasBuffaveisPersonagem {
+    public extremidades: Extremidade[];
+
     constructor(
         public defesa: Defesa,
         public deslocamento: number,
@@ -10,8 +12,10 @@ export class EstatisticasBuffaveisPersonagem {
         public execucoes: Execucao[],
         public espacoInventario: EspacoInventario,
         public gerenciadorEspacoCategoria: GerenciadorEspacoCategoria,
-        public extremidades: Extremidade[],
-    ) { }
+        numExtremidades: number,
+    ) {
+        this.extremidades = Array.from({ length: numExtremidades }, () => new Extremidade());
+    }
 }
 
 export class TipoEstatisticaBuffavel {

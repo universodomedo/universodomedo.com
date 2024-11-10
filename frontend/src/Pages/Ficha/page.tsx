@@ -18,20 +18,14 @@ import { ToastContainer } from 'react-toastify';
 import Log from "Components/Log/page.tsx";
 import 'react-toastify/dist/ReactToastify.css';
 
-import Modal from "Components/Modal/page.tsx";
-import TesteShop from "Pages/TesteShop/page.tsx";
-
 import store from 'Redux/store.ts';
-import { AcaoAtaque } from 'Types/classes/index.ts';
 // #endregion
 
-const Ficha: React.FC = () => {
+const page: React.FC = () => {
     const personagem = useSelector((state: RootState) => state.fichaHelper.fichaHelper.personagem);
-    const singleton = useSelector((state: RootState) => state.singletonHelper.singletonHelper);
     const personagemLoaded = useSelector(selectPersonagemCarregado);
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [state, setState] = useState({});
+    const [_, setState] = useState({});
 
     const controleRef = useRef<{ abreAba: (idAba: string) => void; fechaAba: (idAba: string) => void; }>(null);
 
@@ -44,9 +38,6 @@ const Ficha: React.FC = () => {
             personagem.carregaOnUpdate(() => setState({}));
     }, [personagemLoaded]);
 
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
-
     return (
         <>
             <ToastContainer />
@@ -54,10 +45,6 @@ const Ficha: React.FC = () => {
 
             {personagem && (
                 <>
-                    <Modal isOpen={isModalOpen} onClose={closeModal}>
-                        <TesteShop />
-                    </Modal>
-
                     <div className={style.div_demo_acoes}>
                         <div>
                             <h1>Alterar Estatística</h1>
@@ -130,4 +117,4 @@ const Ficha: React.FC = () => {
     );
 };
 
-export default Ficha;
+export default page;
