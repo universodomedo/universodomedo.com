@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao } from 'Types/classes/index.ts';
+import { Acao, GastaCustoProps } from 'Types/classes/index.ts';
 import { FichaHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -10,7 +10,7 @@ export class Mecanica {
     ) { }
 }
 
-export const logicaMecanicas: { [key: number]: (valoresSelecionados: { [key: string]: number | undefined }, acao: Acao) => void } = {
+export const logicaMecanicas: { [key: number]: (valoresSelecionados: GastaCustoProps, acao: Acao) => void } = {
     // Sacar
     1: (valoresSelecionados) => {
         const extremidadeSelecionada = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => extremidade.id === valoresSelecionados['idExtremidade']!)!;
@@ -28,5 +28,10 @@ export const logicaMecanicas: { [key: number]: (valoresSelecionados: { [key: str
     // Aplicar Buff
     3: (valoresSelecionados, acao) => {
         acao.ativaBuffs();
+    },
+
+    // Ganhar Coisa
+    4: () => {
+        FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === 3)!.numeroAcoesAtuais++;
     }
 };

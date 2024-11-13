@@ -86,7 +86,7 @@ export class RequisitoConfig {
     }> = new Map([
         [1, {
             requisitoClass: RequisitoComponente,
-            requisitoParams: [true], // Parametro booleano esperado pelo RequisitoComponente
+            requisitoParams: [true],
             opcoesExecucao: [
                 {
                     key: 'custoComponente',
@@ -113,8 +113,55 @@ export class RequisitoConfig {
                     }
                 }
             ]
+        }],
+        [3, {
+            requisitoClass: RequisitoExtremidadeDisponivel,
+            requisitoParams: [],
+            opcoesExecucao: [
+                {
+                    key: 'idExtremidade',
+                    displayName: 'Extremidade Alvo',
+                    obterOpcoes: (): Opcao[] => {
+                        return FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.filter(extremidade => !extremidade.refItem).reduce((acc: { key: number; value: string }[], cur) => {
+                            acc.push({ key: cur.id, value: `Extremidade ${cur.id}` });
+                            return acc;
+                        }, [])
+                    }
+                }
+            ]
+        }],
+        [4, {
+            requisitoClass: RequisitoAlgumItemGuardado,
+            requisitoParams: [],
+            opcoesExecucao: [
+                {
+                    key: 'idItem',
+                    displayName: 'Item Alvo',
+                    obterOpcoes: (): Opcao[] => {
+                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => !item.refExtremidade).reduce((acc: { key: number; value: string }[], cur) => {
+                            acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
+                            return acc;
+                        }, [])
+                    }
+                }
+            ]
+        }],
+        [5, {
+            requisitoClass: RequisitoAlgumItemEmpunhado,
+            requisitoParams: [],
+            opcoesExecucao: [
+                {
+                    key: 'idItem',
+                    displayName: 'Item Alvo',
+                    obterOpcoes: (): Opcao[] => {
+                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade).reduce((acc: { key: number; value: string }[], cur) => {
+                            acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
+                            return acc;
+                        }, [])
+                    },
+                }
+            ]
         }]
-        // Outros requisitos podem ser adicionados aqui
     ]);
 
     // Método para construir requisito e opções, incluindo `setRefAcao` e parâmetros adicionais

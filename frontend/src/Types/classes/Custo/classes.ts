@@ -1,15 +1,24 @@
 // #region Imports
-import { AcaoRitual, ItemComponente, Pericia, TipoExecucao } from 'Types/classes/index.ts';
+import { Acao, AcaoRitual, HabilidadeAtiva, ItemComponente, Pericia, TipoExecucao } from 'Types/classes/index.ts';
 import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
 export abstract class Custo {
     abstract get podeSerPago(): boolean;
     abstract get descricaoCusto(): string;
-    protected abstract gastaCusto(idItem?: number): void;
+    protected abstract gastaCusto(props: GastaCustoProps): void;
 
-    processaGastaCusto(idItem?: number): void {
-        this.gastaCusto(idItem);
+    // protected abstract gastaCusto(idItem?: number): void;
+
+    // processaGastaCusto(idItem?: number): void {
+    //     this.gastaCusto(idItem);
+    // }
+
+    public refAcao?: Acao;
+    setRefAcao(value: Acao): this { return (this.refAcao = value, this); }
+
+    processaGastaCusto(props: GastaCustoProps): void {
+        this.gastaCusto(props);
     }
 }
 
@@ -68,43 +77,13 @@ export class CustoComponente extends Custo {
 
     get descricaoCusto(): string { return `1 Carga de Componente ${this.refAcao!.refPai.refElemento.nome} ${this.refAcao!.refPai.refNivelComponente.nome}`; }
 
-    gastaCusto(idItem: number): void {
+    gastaCusto(props: GastaCustoProps): void {
+        const idItem = props['idItem'];
+        
         LoggerHelper.getInstance().adicionaMensagem(`Componente de ${this.refAcao!.refPai.refElemento.nome} ${this.refAcao!.refPai.refNivelComponente.nome} gasto`);
 
         (FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === idItem) as ItemComponente).gastaUso();
     }
-}
-
-export class CustoTestePericia extends Custo {
-    private vezesUtilizadasConsecutivo: number = 0;
-    public bloqueadoNesseTurno: boolean = false;
-
-    constructor(private _idPericia: number, public valorInicial: number, public valorConsecutivo: number) { super(); }
-
-    get podeSerPago(): boolean { return (this.bloqueadoNesseTurno || this.valorAtual > FichaHelper.getInstance().personagem.pericias.find(pericia => pericia.refPericia.id === this.refPericia.id)!.valorTotal + 20); }
-    get descricaoCusto(): string { return `DT ${this.valorAtual} de ${this.refPericia.nomeAbrev}${this.bloqueadoNesseTurno ? ` | Falhou nesse turno` : ''}`; }
-    gastaCusto(): void {
-        return;
-    }
-
-    get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this._idPericia)!; }
-    get valorAtual(): number { return this.valorInicial + (this.valorConsecutivo * this.vezesUtilizadasConsecutivo) }
-}
-
-export class CustoTestePericiaConsecutivo extends Custo {
-    private vezesUtilizadasConsecutivo: number = 0;
-    public bloqueadoNesseTurno: boolean = false;
-
-    constructor(private _idPericia: number, public valorInicial: number, public valorConsecutivo: number) { super(); }
-
-    get podeSerPago(): boolean { return (this.bloqueadoNesseTurno || this.valorAtual > FichaHelper.getInstance().personagem.pericias.find(pericia => pericia.refPericia.id === this.refPericia.id)!.valorTotal + 20); }
-    get descricaoCusto(): string { return `DT ${this.valorAtual} de ${this.refPericia.nomeAbrev}${this.bloqueadoNesseTurno ? ` | Falhou nesse turno` : ''}`; }
-    gastaCusto(): void {
-        return;
-    }
-
-    get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this._idPericia)!; }
-    get valorAtual(): number { return this.valorInicial + (this.valorConsecutivo * this.vezesUtilizadasConsecutivo) }
 }
 
 export class TipoCusto {
@@ -113,3 +92,7 @@ export class TipoCusto {
         public nome: string,
     ) { }
 }
+
+export type GastaCustoProps = {
+    [key: string]: number | undefined 
+};

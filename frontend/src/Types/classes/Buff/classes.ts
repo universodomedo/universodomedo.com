@@ -1,5 +1,5 @@
 // #region Imports
-import { pluralize, Acao, Item, Duracao, TooltipProps, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltro, OpcaoFiltro, ItemEquipamento } from 'Types/classes/index.ts';
+import { pluralize, Acao, Item, Duracao, TooltipProps, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltro, OpcaoFiltro, ItemEquipamento, Habilidade } from 'Types/classes/index.ts';
 import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -8,7 +8,7 @@ export abstract class Buff {
     public id: number;
     public quantidadeDuracaoAtual: number = 0;
     protected _ativo: boolean = false;
-    public refPai?: Acao | Item;
+    public refPai?: Acao | Item | Habilidade;
 
     constructor(
         private _idBuff: number,
@@ -21,7 +21,7 @@ export abstract class Buff {
         this.id = Buff.nextId++;
     }
 
-    adicionaRefPai(refPai: Acao | Item): this { return (this.refPai = refPai), this; }
+    adicionaRefPai(refPai: Acao | Item | Habilidade): this { return (this.refPai = refPai), this; }
 
     get ativo(): boolean { return this._ativo; }
     get refBuff(): BuffRef { return SingletonHelper.getInstance().buffs.find(buff => buff.id === this._idBuff)!; }

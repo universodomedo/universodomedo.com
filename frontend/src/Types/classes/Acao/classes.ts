@@ -1,16 +1,17 @@
 // #region Imports
-import { adicionarBuffsUtil, logicaMecanicas, Buff, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, Opcao, RequisitoConfig, CustoComponente, TooltipProps, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, ItemArma } from 'Types/classes/index.ts';
+import { adicionarBuffsUtil, logicaMecanicas, Buff, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, Opcao, RequisitoConfig, CustoComponente, TooltipProps, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, ItemArma, GastaCustoProps, HabilidadeAtiva, Dificuldade } from 'Types/classes/index.ts';
 import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 import { ExecutaVariacaoGenerica, ExecutaTestePericia } from 'Recursos/Ficha/Variacao.ts';
 import { toast } from 'react-toastify';
 // #endregion
 
-export class Acao {
+export abstract class Acao {
     private static nextId = 1;
     public id: number;
     public buffs: Buff[] = [];
     public custos: Custo[] = [];
     public requisitos: Requisito[] = [];
+    public dificuldades: Dificuldade[] = [];
     public opcoesExecucoes: OpcoesExecucao[] = [];
     protected _refPai?: Ritual | Item | Habilidade;
 
@@ -37,23 +38,9 @@ export class Acao {
     get nomeAcao(): string { return `${this.nome}`; }
 
     adicionaRefPai(pai: Ritual | Item | Habilidade): this { return (this._refPai = pai), this; }
-
-    adicionarCustos(custoParams: [new (...args: any[]) => Custo, any[]][]): this { return (custoParams.forEach(([CustoClass, params]) => { this.custos.push((CustoClass === CustoComponente && this.refPai instanceof Ritual) ? new CustoComponente().setRefAcao(this as AcaoRitual) : new CustoClass(...params)); })), this; }
+    adicionarCustos(custoParams: [new (...args: any[]) => Custo, any[]][]): this { return (custoParams.forEach(([CustoClass, params]) => { this.custos.push(new CustoClass(...params).setRefAcao(this)); })), this; }
     adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this.buffs, buffParams), this) };
-    adicionarRequisitos(requisitoParams: [new (...args: any[]) => Requisito, any[]][]): this { return (requisitoParams.forEach(([RequisitoClass, params]) => { this.requisitos.push(new RequisitoClass(...params).setRefAcao(this as AcaoRitual)); })), this; }
-    adicionarOpcoesExecucao(opcoesParams: { key: string, displayName: string, obterOpcoes: () => Opcao[] }[]): this { return (opcoesParams.forEach(param => { this.opcoesExecucoes.push(new OpcoesExecucao(param.key, param.displayName, param.obterOpcoes)); })), this };
-
-    adicionarRequisitosEOpcoesPorId(ids: number[]): this {
-        ids.forEach(id => {
-            const requisitoData = RequisitoConfig.construirRequisitoEOpcoesPorId(id, this);
-            if (requisitoData) {
-                const { requisito, opcoesExecucao } = requisitoData;
-                this.requisitos.push(requisito);
-                this.opcoesExecucoes.push(...opcoesExecucao);
-            }
-        });
-        return this;
-    }
+    adicionarRequisitosEOpcoesPorId(ids: number[]): this { return (ids.forEach(id => { const requisitoData = RequisitoConfig.construirRequisitoEOpcoesPorId(id, this); if (requisitoData) { const { requisito, opcoesExecucao } = requisitoData; this.requisitos.push(requisito); this.opcoesExecucoes.push(...opcoesExecucao); } }), this); }
 
     get refTipoPai(): 'Ritual' | 'Item' | 'Habilidade' | undefined {
         if (this.refPai instanceof Ritual) return "Ritual";
@@ -63,32 +50,27 @@ export class Acao {
         return undefined;
     }
 
-    get verificaRequisitosCumpridos(): boolean {
-        return (
-            this.requisitos
-                ? this.requisitos?.every(requisito => requisito.requisitoCumprido) ?? false
-                : true
-        );
-    }
+    get verificaRequisitosCumpridos(): boolean { return (this.requisitos ? this.requisitos?.every(requisito => requisito.requisitoCumprido) ?? false : true); }
 
-    get verificaCustosPodemSerPagos(): boolean {
-        return (
-            this.custos
-                ? this.custos?.every(custo => custo.podeSerPago) ?? false
-                : true
-        );
-    }
+    get verificaCustosPodemSerPagos(): boolean { return (this.custos ? this.custos?.every(custo => custo.podeSerPago) ?? false : true); }
 
-    aplicaGastos = (valoresSelecionados: { [key: string]: number | undefined }): boolean => {
+    processaDificuldades = (): boolean => {
+        if (!(this.dificuldades.length > 0)) return true;
+        LoggerHelper.getInstance().adicionaMensagem(`Processando dificuldades`, true);
+    
+        try {
+            for (const dificuldade of this.dificuldades) {
+                if (!dificuldade.processa()) return false;
+            }
+        } finally { LoggerHelper.getInstance().fechaNivelLogMensagem(); }
+    
+        return true;
+    };
+
+    aplicaGastos = (valoresSelecionados: GastaCustoProps): boolean => {
         LoggerHelper.getInstance().adicionaMensagem(`Custos aplicados`, true);
 
-        this.custos.forEach(custo => {
-            if (custo instanceof CustoComponente) {
-                custo.processaGastaCusto(valoresSelecionados['custoComponente']!);
-            } else {
-                custo.processaGastaCusto();
-            }
-        });
+        this.custos.forEach(custo => { custo.processaGastaCusto(valoresSelecionados); });
 
         LoggerHelper.getInstance().fechaNivelLogMensagem();
 
@@ -101,14 +83,23 @@ export class Acao {
         });
     }
 
-    executaComOpcoes = (valoresSelecionados: { [key: string]: number | undefined }) => {
-        LoggerHelper.getInstance().adicionaMensagem(`${this.nomeAcao} [${this.refPai.nomeExibicao}]`);
+    abstract get bloqueada(): boolean;
 
-        logicaMecanicas[this._idMecanica](valoresSelecionados, this);
-        this.aplicaGastos(valoresSelecionados);
+    executaComOpcoes = (valoresSelecionados: GastaCustoProps) => {
+        LoggerHelper.getInstance().adicionaMensagem(`Executado ${this.nomeAcao}`);
 
-        FichaHelper.getInstance().personagem.onUpdate();
+        if (this.processaDificuldades()) {
+            this.aplicaGastos(valoresSelecionados);
+            this.executa(valoresSelecionados);
+        }
+
+        LoggerHelper.getInstance().fechaNivelLogMensagem();
         LoggerHelper.getInstance().saveLog();
+        FichaHelper.getInstance().personagem.onUpdate();
+    }
+
+    executa = (valoresSelecionados: GastaCustoProps) => {
+        logicaMecanicas[this._idMecanica](valoresSelecionados, this);
     }
 
     get tooltipProps(): TooltipProps {
@@ -121,16 +112,7 @@ export class Acao {
                     { tipo: 'texto', conteudo: `${this.refTipoPai!} - ${this.refPai.nomeExibicao}` },
                     { tipo: 'texto', conteudo: `${this.refTipoAcao.nome}` },
 
-                    ...(this.custos ? [
-                        { tipo: 'separacao' as const, conteudo: 'Custos' },
-                        ...(this.custos.map(custo => ({
-                            tipo: 'texto' as const,
-                            conteudo: custo.descricaoCusto,
-                            cor: !custo.podeSerPago ? '#FF0000' : '',
-                        })))
-                    ] : []),
-
-                    ...(this.requisitos ? [
+                    ...(this.requisitos && this.requisitos.length > 0 ? [
                         { tipo: 'separacao' as const, conteudo: 'Requisitos' },
                         ...(this.requisitos.map(requisito => ({
                             tipo: 'texto' as const,
@@ -138,10 +120,28 @@ export class Acao {
                             cor: !requisito.requisitoCumprido ? '#FF0000' : '',
                         })))
                     ] : []),
+
+                    ...(this.dificuldades && this.dificuldades.length > 0 ? [
+                        { tipo: 'separacao' as const, conteudo: 'Dificuldade' },
+                        ...(this.dificuldades.map(dificuldade => ({
+                            tipo: 'texto' as const,
+                            conteudo: dificuldade.descricaoDificuldade,
+                            cor: this.bloqueada ? '#FF0000' : '#F49A34',
+                        })))
+                    ] : []),
+
+                    ...(this.custos && this.custos.length > 0 ? [
+                        { tipo: 'separacao' as const, conteudo: 'Custos' },
+                        ...(this.custos.map(custo => ({
+                            tipo: 'texto' as const,
+                            conteudo: custo.descricaoCusto,
+                            cor: !custo.podeSerPago ? '#FF0000' : '',
+                        })))
+                    ] : []),
                 ],
             },
             iconeCustomizado: {
-                corDeFundo: (this.verificaCustosPodemSerPagos && this.verificaRequisitosCumpridos ? '#FFFFFF' : '#BB0000'),
+                corDeFundo: (this.bloqueada ? '#BB0000' : '#FFFFFF'),
                 svg: this.svg,
             },
             corTooltip: new CorTooltip('#FFFFFF').cores,
@@ -188,46 +188,53 @@ export class Acao {
 
 export class AcaoRitual extends Acao {
     constructor(nome: string, idTipoAcao: number, idCategoriaAcao: number, idMecanica: number) { super(nome, idTipoAcao, idCategoriaAcao, idMecanica); }
-
     override get refPai(): Ritual { return this._refPai as Ritual };
+    get bloqueada(): boolean { return !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos; }
 }
 
 export class AcaoItem extends Acao {
     constructor(nome: string, idTipoAcao: number, idCategoriaAcao: number, idMecanica: number) { super(nome, idTipoAcao, idCategoriaAcao, idMecanica); }
-
     override get refPai(): Item { return this._refPai as Item };
+    get bloqueada(): boolean { return !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos; }
 }
 
 export class AcaoHabilidade extends Acao {
+    public vezesUtilizadasConsecutivo: number = 0;
+    public bloqueadoNesseTurno: boolean = false;
+    private logicaExecucao: () => void = () => { };
+
     constructor(nome: string, idTipoAcao: number, idCategoriaAcao: number, idMecanica: number) { super(nome, idTipoAcao, idCategoriaAcao, idMecanica); }
 
+    override executa = () => {
+        this.logicaExecucao();
+    }
+
     override get refPai(): Habilidade { return this._refPai as Habilidade };
+    get bloqueada(): boolean { return this.bloqueadoNesseTurno || !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos }
+
+    adicionarDificuldades(dificuldadeParams: [new (...args: any[]) => Dificuldade, any[]][]): this { return (dificuldadeParams.forEach(([DificuldadeClass, params]) => { this.dificuldades.push(new DificuldadeClass(...params).setRefAcao(this)) })), this }
+    adicionarLogicaExecucao(logicaExecucao: () => void): this { return (this.logicaExecucao = logicaExecucao), this; }
+
+    novoUso() { this.vezesUtilizadasConsecutivo++; }
+    bloqueia() { this.bloqueadoNesseTurno = true; }
+    resetaVezesUtilizadas() { this.vezesUtilizadasConsecutivo = 0; }
+    desbloqueia() { this.bloqueadoNesseTurno = false; }
 }
 
 export class AcaoAtaque extends Acao {
     constructor(nome: string, idTipoAcao: number, idCategoriaAcao: number, idMecanica: number) { super(nome, idTipoAcao, idCategoriaAcao, idMecanica); }
 
-    executaComOpcoes = (valoresSelecionados: { [key: string]: number | undefined }) => {
-        LoggerHelper.getInstance().adicionaMensagem(`${this.nomeAcao} [${this.refPai.nomeExibicao}]`);
-
-        this.executa();
-        this.aplicaGastos(valoresSelecionados);
-
-        FichaHelper.getInstance().personagem.onUpdate();
-        LoggerHelper.getInstance().saveLog();
-    }
-
-    executa = () => {
+    override executa = () => {
         this.executaAtaque();
     }
 
     executaAtaque = () => {
-        const resultadoVariacao = ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [ { valorMaximo: this.refPai.detalhesArma.dano, variancia: this.refPai.detalhesArma.variancia } ] })
+        const resultadoVariacao = ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [{ valorMaximo: this.refPai.detalhesArma.dano, variancia: this.refPai.detalhesArma.variancia }] })
 
         const resumoDano = `${resultadoVariacao.reduce((cur, acc) => { return cur + acc.valorFinal }, 0)} de dano`;
 
         this.refPai.detalhesArma.refPericiaUtilizadaArma.rodarTeste();
-        
+
         LoggerHelper.getInstance().adicionaMensagem(resumoDano);
         toast(resumoDano);
 
@@ -239,6 +246,7 @@ export class AcaoAtaque extends Acao {
     }
 
     override get refPai(): ItemArma { return this._refPai as ItemArma };
+    get bloqueada(): boolean { return !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos; }
 }
 
 export class TipoAcao {

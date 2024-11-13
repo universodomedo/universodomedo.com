@@ -6,6 +6,7 @@ export * from './Buff';
 export * from './Custo';
 export * from './Dano';
 export * from './Defesa';
+export * from './Dificuldade';
 export * from './Duracao';
 export * from './EstatisticaBuffavel';
 export * from './EstatisticaDanificavel';

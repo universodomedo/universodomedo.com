@@ -4,18 +4,13 @@ import { FichaHelper, LoggerHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
 export class Extremidade {
-    private static nextId = 1;
     public id: number;
     public idItemEmpunhado?: number;
     public bloqueado: boolean = false;
     public refItem?: Item;
 
-    constructor() {
-        this.id = Extremidade.nextId++;
-    }
-
-    static resetId() {
-        Extremidade.nextId = 1;
+    constructor(id: number) {
+        this.id = id;
     }
 
     empunhar = (idItem: number): void => {

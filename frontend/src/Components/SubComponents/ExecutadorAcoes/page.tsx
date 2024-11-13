@@ -1,4 +1,5 @@
 // #region Imports
+import { GastaCustoProps } from 'Types/classes/index.ts';
 import style from './style.module.css';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,7 +12,7 @@ const Page = () => {
     const acaoRequisitada = useSelector(acaoEmExecucao).executadorAcao;
     const dispatch = useDispatch();
 
-    const [valoresSelecionados, setValoresSelecionados] = useState<{ [key: string]: number | undefined }>({});
+    const [valoresSelecionados, setValoresSelecionados] = useState<GastaCustoProps>({});
 
     const handleSelectChange = (key: string, value: number) => {
         setValoresSelecionados((prevState) => ({
@@ -22,7 +23,7 @@ const Page = () => {
 
     useEffect(() => {
         if (acaoRequisitada) {
-            const valoresIniciais: { [key: string]: number | undefined } = {};
+            const valoresIniciais: GastaCustoProps = {};
 
             acaoRequisitada.opcoesExecucoes.forEach((opcoesExecucao) => {
                 const opcoesDisponiveis = opcoesExecucao.opcoes;

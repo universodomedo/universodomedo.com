@@ -16,8 +16,8 @@ const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, aco
   const { stopLoading } = useLoading();
   const dispatch = useDispatch();
 
-  const acoesRealizaveis = acoesPersonagem.filter(acao => acao.verificaCustosPodemSerPagos && acao.verificaRequisitosCumpridos);
-  const acoesBloqueadas = acoesPersonagem.filter(acao => !(acao.verificaCustosPodemSerPagos && acao.verificaRequisitosCumpridos));
+  const acoesRealizaveis = acoesPersonagem.filter(acao => !acao.bloqueada);
+  const acoesBloqueadas = acoesPersonagem.filter(acao => acao.bloqueada);
 
   const executando = (acao: Acao) => {
     if (acao.verificaCustosPodemSerPagos && acao.verificaRequisitosCumpridos) {

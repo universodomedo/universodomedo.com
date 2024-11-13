@@ -1,5 +1,5 @@
 // #region Imports
-import { classeComArgumentos, lista_geral_habilidades, EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Buff, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Extremidade, AcaoRitual, CustoPE, CustoExecucao, CustoComponente, BuffInterno, ItemComponente, NomeItem, DetalhesItemComponente, ItemArma, DetalhesItemArma, AcaoAtaque, RequisitoItemEmpunhado, Opcao, Acao, BuffsAplicados, BuffsPorId, BuffsPorTipo, Item, AcaoItem, ItemEquipamento, ItemConsumivel, DetalhesItemEquipamento, DetalhesItemConsumivel, BuffExterno } from 'Types/classes/index.ts';
+import { classeComArgumentos, lista_geral_habilidades, EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Buff, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Extremidade, AcaoRitual, CustoPE, CustoExecucao, CustoComponente, BuffInterno, ItemComponente, NomeItem, DetalhesItemComponente, ItemArma, DetalhesItemArma, AcaoAtaque, RequisitoItemEmpunhado, Opcao, Acao, BuffsAplicados, BuffsPorId, BuffsPorTipo, Item, AcaoItem, ItemEquipamento, ItemConsumivel, DetalhesItemEquipamento, DetalhesItemConsumivel, BuffExterno, HabilidadeAtiva } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -34,8 +34,7 @@ export class Personagem {
     public receptor: Receptor = new Receptor(this);
 
     constructor(private _ficha: RLJ_Ficha2) {
-        const numExtremidades = 2; // depois vai ter q mudar para alguma logica
-        Extremidade.resetId();
+        const numExtremidades = 2; // depois vai ter q mudar para alguma logica, colocando esse numero no RLJ_Ficha2
 
         this.detalhes = new PersonagemDetalhes(this._ficha.detalhes!.nome, this._ficha.detalhes!.idClasse, this._ficha.detalhes!.idNivel);
 
@@ -146,7 +145,7 @@ export class Personagem {
             return acc.concat(ritual.acoes);
         }, []);
 
-        const acoesHabilidades = this.habilidades.reduce((acc: Acao[], habilidade) => {
+        const acoesHabilidades = this.habilidades.filter(habilidade => habilidade instanceof HabilidadeAtiva).reduce((acc: Acao[], habilidade) => {
             return acc.concat(habilidade.acoes);
         }, [])
 

@@ -14,7 +14,7 @@ export class EstatisticasBuffaveisPersonagem {
         public gerenciadorEspacoCategoria: GerenciadorEspacoCategoria,
         numExtremidades: number,
     ) {
-        this.extremidades = Array.from({ length: numExtremidades }, () => new Extremidade());
+        this.extremidades = Array.from({ length: numExtremidades }, (_, index) => new Extremidade(index + 1));
     }
 }
 

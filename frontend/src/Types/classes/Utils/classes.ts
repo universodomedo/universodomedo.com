@@ -17,7 +17,7 @@ export function adicionarAcoesUtil<T extends Ritual | Item | Habilidade>(instanc
     });
 }
 
-export function adicionarBuffsUtil<T extends Acao | Item>(instancia: T, buffs: Buff[], buffParams: [new (...args: any[]) => Buff, any[]][]): void {
+export function adicionarBuffsUtil<T extends Acao | Item | Habilidade>(instancia: T, buffs: Buff[], buffParams: [new (...args: any[]) => Buff, any[]][]): void {
     buffParams.forEach(([BuffClass, params]) => {
         const buff = new BuffClass(...params, instancia).adicionaRefPai(instancia);
 
