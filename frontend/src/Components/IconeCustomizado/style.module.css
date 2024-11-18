@@ -7,9 +7,33 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    cursor: pointer;
 }
 
-.icone:hover {
-    border-color: #2684FF;
-    box-shadow: inset 0px 0px 5px 1px black, 0 0 0 1px #2684FF;
+.conteudo_popover {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 2vh;
+    padding: 1vh 1vw;
+}
+
+.conteudo_popover h2 {
+    margin: 0;
+}
+
+.acoes {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.corpo_caixa_informacao p {
+    font-size: 1.2rem;
+    margin: 0
+}
+
+.corpo_caixa_informacao p.separador {
+    font-size: 1.5rem;
+    margin-top: .5vh;
 }

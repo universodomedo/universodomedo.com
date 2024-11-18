@@ -34,8 +34,9 @@ const page: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (personagemLoaded && personagem)
+        if (personagemLoaded && personagem){
             personagem.carregaOnUpdate(() => setState({}));
+        }
     }, [personagemLoaded]);
 
     return (
@@ -47,8 +48,6 @@ const page: React.FC = () => {
                 <>
                     <div className={style.div_demo_acoes}>
                         <div>
-                            <button onClick={() => {console.log(personagem)}}>Teste</button>
-
                             <h1>Alterar Estatística</h1>
                             <div>
                                 <select id="estatistica">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>

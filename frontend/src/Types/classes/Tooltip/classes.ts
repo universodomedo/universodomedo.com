@@ -15,8 +15,13 @@ export interface IconeCustomizadoProps {
 }
 
 export interface CaixaInformacaoProps {
-    cabecalho?: TipoInformacaoCabecalhoCaixa[],
-    corpo?: TipoInformacaoCorpoCaixa[],
+    principal: {
+        titulo: string
+    },
+    detalhes : {
+        cabecalho?: TipoInformacaoCabecalhoCaixa[],
+        corpo?: TipoInformacaoCorpoCaixa[],
+    }
 }
 
 export interface TipoInformacaoCabecalhoCaixa {

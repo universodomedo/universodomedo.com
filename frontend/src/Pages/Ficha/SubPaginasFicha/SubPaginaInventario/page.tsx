@@ -7,7 +7,6 @@ import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 import BarraEstatisticaDanificavel from "Components/SubComponents/SubComponentesFicha/BarraEstatisticaDanificavel/page.tsx";
 
 import IconeItem from "Components/IconeItem/page.tsx";
-import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaTooltip.tsx";
 
 import { useDispatch } from "react-redux";
 import { setCacheFiltros } from "Redux/slices/abasHelperSlice.ts";
@@ -36,9 +35,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
   }
 
   const renderItem = (item: Item, index: number) => (
-    <ReferenciaTooltip key={index} objeto={item.tooltipPropsAgrupado}>
-      <IconeItem quantidadeAgrupada={item.tooltipPropsAgrupado.numeroUnidades} props={item.tooltipPropsAgrupado.iconeCustomizado} onClick={() => clickItem(item)} />
-    </ReferenciaTooltip>
+    <IconeItem quantidadeAgrupada={item.tooltipPropsAgrupado.numeroUnidades} props={item.tooltipPropsAgrupado.iconeCustomizado} onClick={() => clickItem(item)} />
   );
 
   const handleContextMenu = (e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
@@ -67,9 +64,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
             <div key={index} className={style.extremidade}>
               <h1>Extremidade {extremidade.id}</h1>
               {extremidade.refItem ? (
-                <ReferenciaTooltip key={index} objeto={extremidade.refItem.tooltipPropsSingular}>
-                  <IconeItem quantidadeAgrupada={extremidade.refItem.tooltipPropsSingular.numeroUnidades} props={extremidade.refItem.tooltipPropsSingular.iconeCustomizado} onClick={() => clickItem(extremidade.refItem!)} />
-                </ReferenciaTooltip>
+                <IconeItem key={index} quantidadeAgrupada={extremidade.refItem.tooltipPropsSingular.numeroUnidades} props={extremidade.refItem.tooltipPropsSingular.iconeCustomizado} onClick={() => clickItem(extremidade.refItem!)} />
               ) :
                 <div className={style.icones_extremidade_vazia}></div>
               }

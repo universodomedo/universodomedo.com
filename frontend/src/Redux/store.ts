@@ -4,7 +4,6 @@ import fichaHelperReducer, { obterTiposDano, carregaDemo } from 'Redux/slices/fi
 import singletonHelperReducer from 'Redux/slices/singletonHelperSlice.ts';
 import tooltipHelperReducer from './slices/tooltipHelperSlice.ts';
 import abasHelperReducer from './slices/abasHelperSlice.ts';
-import executadorAcaoHelperReducer from './slices/executadorAcaoHelperSlice.ts';
 // import fichaHelperReducer, { obterTiposDano, selectPersonagemCarregado } from 'Redux/slices/fichaHelperSlice2.ts';
 // #endregion
 
@@ -13,8 +12,7 @@ const store = configureStore({
         fichaHelper: fichaHelperReducer,
         singletonHelper: singletonHelperReducer,
         tooltipHelper: tooltipHelperReducer,
-        abasHelper: abasHelperReducer,
-        executadorAcaoHelper: executadorAcaoHelperReducer,
+        abasHelper: abasHelperReducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false,

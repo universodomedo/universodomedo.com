@@ -38,7 +38,7 @@ export class DificuldadeConsecutiva extends Dificuldade {
     ) { super(idPericia); }
 
     get valor(): number { return this.valorInicial + (this.valorConsecutivo * this.refAcao!.vezesUtilizadasConsecutivo) }
-    get descricaoDificuldade(): string { return `DT ${this.valor} de ${this.refPericiaPersonagem.refPericia.nomeAbrev}${this.refAcao!.bloqueadoNesseTurno ? ` | Falhou nesse turno` : ''}`; }
+    get descricaoDificuldade(): string { return `${this.refPericiaPersonagem.refPericia.nomeAbrev} DT ${this.valor} ${this.refAcao!.bloqueadoNesseTurno ? ` | Falhou nesse turno` : ''}`; }
 
     processa(): boolean {
         LoggerHelper.getInstance().adicionaMensagem(`Rodando ${this.refPericiaPersonagem.refPericia.nomeAbrev} DT ${this.valor}`);

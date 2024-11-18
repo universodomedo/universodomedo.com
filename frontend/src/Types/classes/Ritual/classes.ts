@@ -27,18 +27,18 @@ export class Ritual {
     get tooltipProps(): TooltipProps {
         return {
             caixaInformacao: {
-                cabecalho: [
-                    { tipo: 'titulo', conteudo: this.nome }
-                ],
-                corpo: [
-                    { tipo: 'texto', conteudo: `Ritual de ${this.refElemento.nome}` },
-                    { tipo: 'texto', conteudo: this.refCirculoNivelRitual.nome },
-                    { tipo: 'separacao', conteudo: 'Ações' },
-                    ...this.acoes?.map(acao => ({
-                        tipo: 'texto' as const,
-                        conteudo: acao.nomeAcao,
-                    })) || []
-                ],
+                principal: { titulo: this.nome },
+                detalhes: {
+                    corpo: [
+                        { tipo: 'texto', conteudo: `Ritual de ${this.refElemento.nome}` },
+                        { tipo: 'texto', conteudo: this.refCirculoNivelRitual.nome },
+                        { tipo: 'separacao', conteudo: 'Ações' },
+                        ...this.acoes?.map(acao => ({
+                            tipo: 'texto' as const,
+                            conteudo: acao.nomeAcao,
+                        })) || []
+                    ],
+                }
             },
             iconeCustomizado: {
                 corDeFundo: this.refElemento.cores.corPrimaria,

@@ -19,7 +19,7 @@ export abstract class Acao {
         public nome: string,
         private _idTipoAcao: number,
         private _idCategoriaAcao: number,
-        private _idMecanica: number,
+        protected _idMecanica: number,
 
         public svg: string = 'PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KIDxnPgogIDx0aXRsZT5MYXllciAxPC90aXRsZT4KICA8dGV4dCBmaWxsPSIjMDAwMDAwIiBzdHJva2U9IiMwMDAiIHg9IjM0MSIgeT0iMjkxIiBpZD0ic3ZnXzIiIHN0cm9rZS13aWR0aD0iMCIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9Ik5vdG8gU2FucyBKUCIgdGV4dC1hbmNob3I9InN0YXJ0IiB4bWw6c3BhY2U9InByZXNlcnZlIj5UZXN0ZSAxPC90ZXh0PgogIDx0ZXh0IGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIwIiB4PSI1MyIgeT0iMTA5IiBpZD0ic3ZnXzMiIGZvbnQtc2l6ZT0iMTQwIiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIHhtbDpzcGFjZT0icHJlc2VydmUiPkE8L3RleHQ+CjwvZz4KPC9zdmc+',
     ) {
@@ -105,40 +105,40 @@ export abstract class Acao {
     get tooltipProps(): TooltipProps {
         return {
             caixaInformacao: {
-                cabecalho: [
-                    { tipo: 'titulo', conteudo: this.nomeAcao }
-                ],
-                corpo: [
-                    { tipo: 'texto', conteudo: `${this.refTipoPai!} - ${this.refPai.nomeExibicao}` },
-                    { tipo: 'texto', conteudo: `${this.refTipoAcao.nome}` },
+                principal: { titulo: this.nomeAcao },
+                detalhes: {
+                    corpo: [
+                        { tipo: 'texto', conteudo: `${this.refPai.nomeExibicao} - ${this.refTipoPai!}` },
+                        { tipo: 'texto', conteudo: `${this.refTipoAcao.nome}` },
 
-                    ...(this.requisitos && this.requisitos.length > 0 ? [
-                        { tipo: 'separacao' as const, conteudo: 'Requisitos' },
-                        ...(this.requisitos.map(requisito => ({
-                            tipo: 'texto' as const,
-                            conteudo: requisito.descricaoRequisito,
-                            cor: !requisito.requisitoCumprido ? '#FF0000' : '',
-                        })))
-                    ] : []),
+                        ...(this.requisitos && this.requisitos.length > 0 ? [
+                            { tipo: 'separacao' as const, conteudo: 'Requisitos' },
+                            ...(this.requisitos.map(requisito => ({
+                                tipo: 'texto' as const,
+                                conteudo: requisito.descricaoRequisito,
+                                cor: !requisito.requisitoCumprido ? '#FF0000' : '',
+                            })))
+                        ] : []),
 
-                    ...(this.dificuldades && this.dificuldades.length > 0 ? [
-                        { tipo: 'separacao' as const, conteudo: 'Dificuldade' },
-                        ...(this.dificuldades.map(dificuldade => ({
-                            tipo: 'texto' as const,
-                            conteudo: dificuldade.descricaoDificuldade,
-                            cor: this.bloqueada ? '#FF0000' : '#F49A34',
-                        })))
-                    ] : []),
+                        ...(this.dificuldades && this.dificuldades.length > 0 ? [
+                            { tipo: 'separacao' as const, conteudo: 'Dificuldade' },
+                            ...(this.dificuldades.map(dificuldade => ({
+                                tipo: 'texto' as const,
+                                conteudo: dificuldade.descricaoDificuldade,
+                                cor: this.bloqueada ? '#FF0000' : '#F49A34',
+                            })))
+                        ] : []),
 
-                    ...(this.custos && this.custos.length > 0 ? [
-                        { tipo: 'separacao' as const, conteudo: 'Custos' },
-                        ...(this.custos.map(custo => ({
-                            tipo: 'texto' as const,
-                            conteudo: custo.descricaoCusto,
-                            cor: !custo.podeSerPago ? '#FF0000' : '',
-                        })))
-                    ] : []),
-                ],
+                        ...(this.custos && this.custos.length > 0 ? [
+                            { tipo: 'separacao' as const, conteudo: 'Custos' },
+                            ...(this.custos.map(custo => ({
+                                tipo: 'texto' as const,
+                                conteudo: custo.descricaoCusto,
+                                cor: !custo.podeSerPago ? '#FF0000' : '',
+                            })))
+                        ] : []),
+                    ],
+                }
             },
             iconeCustomizado: {
                 corDeFundo: (this.bloqueada ? '#BB0000' : '#FFFFFF'),
@@ -202,18 +202,23 @@ export class AcaoHabilidade extends Acao {
     public vezesUtilizadasConsecutivo: number = 0;
     public bloqueadoNesseTurno: boolean = false;
     private logicaExecucao: () => void = () => { };
+    private logicaCustomizada: boolean = false;
 
     constructor(nome: string, idTipoAcao: number, idCategoriaAcao: number, idMecanica: number) { super(nome, idTipoAcao, idCategoriaAcao, idMecanica); }
 
-    override executa = () => {
-        this.logicaExecucao();
+    override executa = (valoresSelecionados: GastaCustoProps) => {
+        if (this.logicaCustomizada) {
+            this.logicaExecucao();
+        } else {
+            logicaMecanicas[this._idMecanica](valoresSelecionados, this);
+        }
     }
 
     override get refPai(): Habilidade { return this._refPai as Habilidade };
     get bloqueada(): boolean { return this.bloqueadoNesseTurno || !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos }
 
     adicionarDificuldades(dificuldadeParams: [new (...args: any[]) => Dificuldade, any[]][]): this { return (dificuldadeParams.forEach(([DificuldadeClass, params]) => { this.dificuldades.push(new DificuldadeClass(...params).setRefAcao(this)) })), this }
-    adicionarLogicaExecucao(logicaExecucao: () => void): this { return (this.logicaExecucao = logicaExecucao), this; }
+    adicionarLogicaExecucao(logicaExecucao: () => void): this { return (this.logicaExecucao = logicaExecucao), this.logicaCustomizada = true, this; }
 
     novoUso() { this.vezesUtilizadasConsecutivo++; }
     bloqueia() { this.bloqueadoNesseTurno = true; }

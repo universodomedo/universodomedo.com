@@ -65,3 +65,12 @@
     background-color: white;
     height: 2px;
 }
+
+/**/
+
+.acoes {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10%;
+}

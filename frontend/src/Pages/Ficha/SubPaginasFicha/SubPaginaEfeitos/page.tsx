@@ -5,8 +5,6 @@ import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 
 import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
-import ReferenciaTooltip from "Components/SubComponents/Tooltip/ReferenciaTooltip.tsx";
-
 // #endregion
 
 const page: React.FC<{ abaId: string; buffsPersonagem:BuffsAplicados}> = ({ abaId, buffsPersonagem }) => {
@@ -33,9 +31,7 @@ const page: React.FC<{ abaId: string; buffsPersonagem:BuffsAplicados}> = ({ abaI
   }, [] as Buff[]);
 
   const renderBuffItem = (efeito: Buff, index: number) => (
-    <ReferenciaTooltip key={index} objeto={efeito.tooltipProps}>
-      <IconeCustomizado props={efeito.tooltipProps.iconeCustomizado} />
-    </ReferenciaTooltip>
+    <IconeCustomizado props={efeito.tooltipProps.iconeCustomizado} />
   );
 
   return (

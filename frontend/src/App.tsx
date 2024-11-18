@@ -21,6 +21,7 @@ import PaginaInternaTeste from 'Pages/PaginaInternaTeste/page.tsx';
 import Shop from 'Pages/Shop/page.tsx';
 
 import AuthOutlet from '@auth-kit/react-router/AuthOutlet';
+import { Provider as RedixTooltip} from "@radix-ui/react-tooltip";
 // import { SalaProvider } from "Providers/SalaProvider.tsx";
 // #endregion
 
@@ -30,70 +31,72 @@ const App = () => {
       {/* <TooltipManager /> */}
 
       <TooltipContainer />
+      <RedixTooltip delayDuration={200} skipDelayDuration={0}>
 
-      <BrowserRouter>
-        {/* <PageTracker /> */}
-        <Routes>
-          <Route element={<LayoutLP />}>
-            <Route path="/" element={<LP />} />
-            <Route path="/login" element={<Login />} />
-          </Route>
-
-          {/* <Route element={<LayoutInterno />}> */}
-            {/* <Route path="/sessions">
-              <Route index element={<Sessions />} />
-              <Route path=":sessionId" element={<Sessions />} />
-            </Route> */}
-            {/* <Route path="/ficha">
-              <Route index element={<ContainerFicha />} />
-              <Route path=":characterId" element={<ContainerFicha />} />
-            </Route> */}
-            {/* 
-            <Route path="/sessao-aovivo">
-              <Route index element={<SessaoAovivo />} />
+        <BrowserRouter>
+          {/* <PageTracker /> */}
+          <Routes>
+            <Route element={<LayoutLP />}>
+              <Route path="/" element={<LP />} />
+              <Route path="/login" element={<Login />} />
             </Route>
-            <Route path="/testea">
-              <Route index element={<Teste />} />
-            </Route> */}
-          {/* </Route> */}
 
-          {/* <Route element={<AuthOutlet fallbackPath="/login" />}>
-            <Route element={<LayoutInterno />}>
-              <Route path="/pagina-interna">
-                <SalaProvider>
-                  <Route index element={<PaginaInternaTeste />} />
-                </SalaProvider>
+            {/* <Route element={<LayoutInterno />}> */}
+              {/* <Route path="/sessions">
+                <Route index element={<Sessions />} />
+                <Route path=":sessionId" element={<Sessions />} />
+              </Route> */}
+              {/* <Route path="/ficha">
+                <Route index element={<ContainerFicha />} />
+                <Route path=":characterId" element={<ContainerFicha />} />
+              </Route> */}
+              {/* 
+              <Route path="/sessao-aovivo">
+                <Route index element={<SessaoAovivo />} />
+              </Route>
+              <Route path="/testea">
+                <Route index element={<Teste />} />
+              </Route> */}
+            {/* </Route> */}
+
+            {/* <Route element={<AuthOutlet fallbackPath="/login" />}>
+              <Route element={<LayoutInterno />}>
+                <Route path="/pagina-interna">
+                  <SalaProvider>
+                    <Route index element={<PaginaInternaTeste />} />
+                  </SalaProvider>
+                </Route>
+              </Route>
+            </Route> */}
+            
+            <Route element={<AuthOutlet fallbackPath="/login" />}>
+              <Route element={<LayoutInterno />}>
+                <Route path="/pagina-interna" element={
+                  // <SalaProvider>
+                    <PaginaInternaTeste />
+                  // </SalaProvider>
+                } />
               </Route>
             </Route>
-          </Route> */}
-          
-          <Route element={<AuthOutlet fallbackPath="/login" />}>
-            <Route element={<LayoutInterno />}>
-              <Route path="/pagina-interna" element={
-                // <SalaProvider>
-                  <PaginaInternaTeste />
-                // </SalaProvider>
-              } />
-            </Route>
-          </Route>
 
-          <Route element={<LayoutInterno2 />}>
-            <Route path="/ficha-demo">
-              <Route index element={<Ficha />} />
+            <Route element={<LayoutInterno2 />}>
+              <Route path="/ficha-demo">
+                <Route index element={<Ficha />} />
+              </Route>
+              <Route path="/shop-demo">
+                <Route index element={<Shop />} />
+              </Route>
+              <Route path="/edita-ficha">
+                <Route index element={<EditaFicha />} />
+              </Route>
+              <Route path="/tutorial-ficha">
+                <Route index element={<FichaTutorial />} />
+              </Route>
             </Route>
-            <Route path="/shop-demo">
-              <Route index element={<Shop />} />
-            </Route>
-            <Route path="/edita-ficha">
-              <Route index element={<EditaFicha />} />
-            </Route>
-            <Route path="/tutorial-ficha">
-              <Route index element={<FichaTutorial />} />
-            </Route>
-          </Route>
-          
-        </Routes>
-      </BrowserRouter>
+            
+          </Routes>
+        </BrowserRouter>
+      </RedixTooltip>
 
       {/* <TooltipContainer /> */}
     </div>
