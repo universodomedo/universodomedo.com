@@ -45,3 +45,8 @@ export const geraFicha = (dadosFicha: RLJ_Ficha2): RLJ_Ficha2 => {
 
     return ficha;
 };
+
+export function textoFormatadoParaVisualizacao(texto:string):string {
+    if (!texto) return "";
+    return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
+}

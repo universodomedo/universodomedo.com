@@ -11,7 +11,7 @@ interface TooltipProps {
 	onOpenChange?: any;
 }
 
-export function Tooltip({
+function Tooltip({
 	children,
 	content,
 	open,
@@ -35,3 +35,5 @@ export function Tooltip({
 		</TooltipPrimitive.Root>
 	);
 }
+
+export default Tooltip;

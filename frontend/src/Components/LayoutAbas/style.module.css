@@ -3,7 +3,7 @@
     flex-direction: column;
     overflow: hidden;
     flex: 1;
-    gap: 2%;
+    gap: 2.5vh;
 }
 
 .div_botoes_abas {

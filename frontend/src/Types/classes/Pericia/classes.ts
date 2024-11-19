@@ -12,17 +12,12 @@ export class Pericia {
         private _idAtributo: number,
         public nome: string,
         public nomeAbrev: string,
+        public descricao: string
     ) { }
 
     get idBuffRelacionado(): number { return this._idBuff; }
-
-    get refBuffAtivo(): number {
-        return FichaHelper.getInstance().personagem.buffsAplicados.buffPorId(this.idBuffRelacionado);
-    }
-
-    get refAtributo(): Atributo {
-        return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this._idAtributo)!;
-    }
+    get refBuffAtivo(): number { return FichaHelper.getInstance().personagem.buffsAplicados.buffPorId(this.idBuffRelacionado); }
+    get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this._idAtributo)!; }
 }
 
 export class PatentePericia {

@@ -21,7 +21,7 @@ interface ConsultaContextProps<T> {
     handleFiltro: (opcoesSelecionadas: OpcoesSelecionadas[]) => void;
     removeFiltro: (idFiltro: number, idOpcao: string) => void;
     handleOrdenacao: (key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc') => void;
-    tituloDivisoesConsulta: { usaSubtitulos:boolean, divisoes:string[] };
+    tituloDivisoesConsulta: { usaSubtitulos: boolean, divisoes: string[] };
 };
 
 const ConsultaContext = createContext<ConsultaContextProps<any> | undefined>(undefined);
@@ -36,7 +36,7 @@ export const useConsultaContext = <T,>(): ConsultaContextProps<T> => {
     return context;
 };
 
-export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, onLoadComplete, tituloDivisoesConsulta }: { abaId: string; children: React.ReactNode; registros: T[][]; filtroProps: FiltroProps<T>; onLoadComplete: () => void; tituloDivisoesConsulta: { usaSubtitulos:boolean, divisoes:string[] }; }) => {
+export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, onLoadComplete, tituloDivisoesConsulta }: { abaId: string; children: React.ReactNode; registros: T[][]; filtroProps: FiltroProps<T>; onLoadComplete: () => void; tituloDivisoesConsulta: { usaSubtitulos: boolean, divisoes: string[] }; }) => {
     const [registrosFiltrados, setRegistrosFiltrados] = useState<T[][]>(registros);
     const [ordenacao, setOrdenacao] = useState<{ key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc' } | null>(null);
     const [valoresFiltrosSelecionados, setValoresFiltrosSelecionados] = useState<OpcoesSelecionadas[]>([]);

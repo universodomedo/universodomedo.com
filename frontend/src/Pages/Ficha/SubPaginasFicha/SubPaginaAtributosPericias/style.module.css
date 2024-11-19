@@ -1,7 +1,9 @@
-.atributos_personagem {
+.atributos_personagem, .atributos_personagem button {
     display: flex;
     flex-direction: column;
     color: white;
+    font-family: 'Crimson Pro', serif;
+    font-variant: small-caps;
 }
 
 .atributo_personagem {
@@ -16,10 +18,6 @@
     margin: 0;
 }
 
-/* .atributo_personagem.AGI { 
-    background-color: #B6D7A8;
-} */
-
 .atributo_personagem.AGI button {
     color: #3E9D15;
     border: #2F7810 3px solid;
@@ -28,10 +26,6 @@
 .atributo_personagem.AGI button:hover {
     background-color: #7EED57;
 }
-
-/* .atributo_personagem.FOR {
-    background-color: #EA9999;
-} */
 
 .atributo_personagem.FOR button {
     color: #4d2a2a;
@@ -42,10 +36,6 @@
     background-color: #dc5656;
 }
 
-/* .atributo_personagem.INT {
-    background-color: #6D9EEB;
-} */
-
 .atributo_personagem.INT button {
     color: #1b478b;
     border: #537cbc 3px solid;
@@ -55,10 +45,6 @@
     background-color: #2d70d8;
 }
 
-/* .atributo_personagem.PRE {
-    background-color: #8E7CC3;
-} */
-
 .atributo_personagem.PRE button {
     color: #991fe0;
     border: #5b3bba 3px solid;
@@ -67,10 +53,6 @@
 .atributo_personagem.PRE button:hover {
     background-color: #ad63bf;
 }
-
-/* .atributo_personagem.VIG {
-    background-color: #FFD966;
-} */
 
 .atributo_personagem.VIG button {
     color: #656325;
@@ -92,13 +74,18 @@
     border-radius: 40px;
     font-weight: 600;
     cursor: pointer;
-    text-transform: uppercase;
 }
 
 .pericia_personagem {
     margin: 0 .4vw;
 }
 
-.pericia_personagem * {
+/* .pericia_personagem * { */
+.pericia_valor {
     margin: 0;
+}
+
+.toogle_abreviar[data-state="on"] {
+	background-color: orange;
+	color: purple;
 }

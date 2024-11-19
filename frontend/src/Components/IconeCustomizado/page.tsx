@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { GastaCustoProps, OpcoesExecucao, TooltipProps } from 'Types/classes/index.ts';
 
 import PopoverComponente from 'Recursos/Componentes/Popover/page.tsx';
-import { Tooltip } from 'Recursos/Componentes/Tooltip/page.tsx';
+import Tooltip from 'Recursos/Componentes/Tooltip/page.tsx';
 import Modal from "Recursos/Componentes/ModalDialog/page.tsx";
 // #endregion
 
@@ -38,7 +38,6 @@ const page = ({ tooltipProps, desabilitado, textoBotaoConfirmar, opcoes, exec }:
                                     </Modal.Button>
 
                                     <Modal.Content title={`Executando ${tooltipProps.caixaInformacao.principal.titulo}`}>
-                                        {/* <ConteudoExecucao props={opcoes} click={exec.func} /> */}
                                         <ConteudoExecucao props={opcoes} click={(valoresSelecionados) => {exec.func(valoresSelecionados); setOpenExec(false); close();}} />
                                     </Modal.Content>
                                 </Modal>

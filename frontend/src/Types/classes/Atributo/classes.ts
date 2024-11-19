@@ -8,6 +8,7 @@ export class Atributo {
         private _idBuff: number,
         public nome: string,
         public nomeAbrev: string,
+        public descricao: string,
     ) { }
 
     get refBuffAtivo(): number {
