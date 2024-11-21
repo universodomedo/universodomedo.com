@@ -14,6 +14,7 @@ import EditaRituais from 'Pages/EditaFicha/Componentes/EditaRituais/page.tsx';
 import { FichaProvider, useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
 
 import Modal from "Components/Modal/page.tsx";
+import JanelaNotificacao from 'Recursos/Componentes/JanelaNotificacao/page';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 // #endregion
@@ -148,6 +149,7 @@ const page = () => {
                             <button onClick={proximo} disabled={!ganhosNex.podeAvancarEtapa} className={style.prosseguir}>{ganhosNex.textoBotaoProximo}</button>
                         </div>
                     </div>
+                    <JanelaNotificacao />
                 </FichaProvider>
             )}
         </>

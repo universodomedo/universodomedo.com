@@ -9,7 +9,7 @@ const LayoutInterno2 = () => {
       <>
         <div className={styles.content}>
           <main className={styles.main}>
-            {/* <div className={styles.avisos}>
+            <div className={styles.avisos}>
               <div className={styles.voltar}>
                 <Link to="/pagina-interna">{'< voltar'}</Link>
               </div>
@@ -17,7 +17,7 @@ const LayoutInterno2 = () => {
                 Versão Beta: 0.2.2<br />
                 Versões posteriores podem diferir da atual
               </div>
-            </div> */}
+            </div>
 
             <Outlet />
           </main>

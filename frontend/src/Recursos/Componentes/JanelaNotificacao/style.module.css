@@ -1,0 +1,55 @@
+.janela_avisos {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    background: #0B0D0E;
+    color: white;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px 0 0 5px;
+    transition: transform 0.3s ease;
+}
+
+.janela_avisos.fechado {
+    transform: translateX(100%);
+}
+
+.janela_avisos_botao {
+    position: absolute;
+    top: 0;
+    left: -40px;
+    width: 40px;
+    height: 40px;
+    background: #0B0D0E;
+    border: none;
+    color: white;
+    border-radius: 5px 0 0 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.janela_avisos_conteudo {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    height: 100%;
+    gap: .7vh;
+}
+
+.janela_avisos_conteudo h1 {
+    margin: 0;
+}
+
+.mensagens_janela_avisos {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    gap: .4vh;
+}
+
+.mensagens_janela_avisos p {
+    margin: 0;
+}

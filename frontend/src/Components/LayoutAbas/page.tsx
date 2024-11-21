@@ -2,6 +2,8 @@
 import style from "./style.module.css";
 import React, { useEffect, useState, ReactNode, createContext, useContext, forwardRef, useImperativeHandle, useRef } from 'react';
 import { LoadingContext } from "Components/LayoutAbas/hooks.ts";
+
+import BarraMenu from 'Recursos/Componentes/BarraMenu/page.tsx'
 // #endregion
 
 const ContextoAba = createContext<{ abasAbertas: string[]; alternaAba: (idAba: string) => void; } | undefined>(undefined);
@@ -78,6 +80,14 @@ const JanelaConteudoAba = React.forwardRef<HTMLDivElement, { id: string; childre
         <LoadingContext.Provider value={{ loading, stopLoading }}>
             <div ref={ref} className={`${style.wrapper_aba}`}>
                 <div className={style.barra_superior_conteudo_aba}>
+                    <BarraMenu>
+                        <BarraMenu.Menu>
+                            <BarraMenu.Trigger>TesteItem</BarraMenu.Trigger>
+                            <BarraMenu.Portal>
+                                <BarraMenu.Item onSelect={() => {console.log('teste')}}>TesteMenu</BarraMenu.Item>
+                            </BarraMenu.Portal>
+                        </BarraMenu.Menu>
+                    </BarraMenu>
                     <button className={style.botao_fechar_aba} onClick={() => alternaAba(id)}>x</button>
                 </div>
                 <div className={style.conteudo_aba}>

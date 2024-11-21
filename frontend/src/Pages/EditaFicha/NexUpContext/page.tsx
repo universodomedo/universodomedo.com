@@ -1,5 +1,4 @@
 // #region Imports
-
 // #endregion
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';

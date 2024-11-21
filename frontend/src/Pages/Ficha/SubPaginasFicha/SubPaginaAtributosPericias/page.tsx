@@ -85,7 +85,7 @@ const AreaAtributo = ({ atributo, pericias }: { atributo: AtributoPersonagem, pe
     <div className={`${style.atributo_personagem} ${style[atributo.refAtributo.nomeAbrev]}`}>
       <TooltipPersistente open={openTooltip} onOpenChange={setOpenTooltip}>
         <TooltipPersistente.Trigger>
-        <h2>{atributoPorExtenso} [{atributo.valorTotal}]</h2>
+          <h3 className={style.nome_atributo}>{`${atributoPorExtenso} [${atributo.valorTotal}]`}</h3>
         </TooltipPersistente.Trigger>
 
         <TooltipPersistente.Content>

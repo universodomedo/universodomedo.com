@@ -4,18 +4,21 @@
     color: white;
     font-family: 'Crimson Pro', serif;
     font-variant: small-caps;
+    gap: 1vh;
 }
 
 .atributo_personagem {
     display: flex;
     flex-direction: column;
-    gap: 1vh;
-    padding: .8%;
+    gap: .4vh;
     text-align: center;
 }
 
-.atributo_personagem h2 {
-    margin: 0;
+.nome_atributo {
+    display: inline-block;
+    margin: 0 auto;
+    font-size: 1.8rem;
+    width: fit-content;
 }
 
 .atributo_personagem.AGI button {
@@ -88,4 +91,8 @@
 .toogle_abreviar[data-state="on"] {
 	background-color: orange;
 	color: purple;
+}
+
+.botao_pericia {
+    font-size: 1.1rem;
 }

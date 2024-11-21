@@ -34,30 +34,3 @@ function HoverCardContent({ children }: { children: ReactNode }) {
 
 TooltipPersistente.Trigger = HoverCardTrigger;
 TooltipPersistente.Content = HoverCardContent;
-
-
-
-
-
-
-
-
-// function TooltipPersistenteConteudo({ gatilho, conteudo }: { gatilho: ReactNode, conteudo: ReactNode }) {
-//     return (
-//         <>
-//             <HoverCard.Trigger asChild>
-//                 {gatilho}
-//             </HoverCard.Trigger>
-//             <HoverCard.Portal>
-//                 <HoverCard.Content className={style.hover_card_conteudo} style={{backgroundColor: 'white'}}>
-//                     {conteudo}
-//                     <HoverCard.Arrow className={style.hover_card_flecha} />
-//                 </HoverCard.Content>
-//             </HoverCard.Portal>
-//         </>
-//     );
-// }
-
-// TooltipPersistente.Gatilho = HoverCard.Trigger;
-// TooltipPersistente.Conteudo = HoverCard.Content;
-// TooltipPersistente.Content = TooltipPersistenteConteudo;
