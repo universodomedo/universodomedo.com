@@ -15,6 +15,7 @@ interface OpcoesSelecionadas { idFiltro: number, idOpcao: string[] }
 interface ConsultaContextProps<T> {
     registros: T[][];
     registrosFiltrados: T[][];
+    mostrarFiltro: boolean;
     filtroProps: FiltroProps<T>;
     valoresFiltrosSelecionados: OpcoesSelecionadas[];
     ordenacao: { key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc' } | null;
@@ -36,7 +37,7 @@ export const useConsultaContext = <T,>(): ConsultaContextProps<T> => {
     return context;
 };
 
-export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, onLoadComplete, tituloDivisoesConsulta }: { abaId: string; children: React.ReactNode; registros: T[][]; filtroProps: FiltroProps<T>; onLoadComplete: () => void; tituloDivisoesConsulta: { usaSubtitulos: boolean, divisoes: string[] }; }) => {
+export const ConsultaProvider = <T,>({ abaId, children, registros, mostrarFiltro = true, filtroProps, onLoadComplete, tituloDivisoesConsulta }: { abaId: string; children: React.ReactNode; registros: T[][]; mostrarFiltro?: boolean; filtroProps: FiltroProps<T>; onLoadComplete: () => void; tituloDivisoesConsulta: { usaSubtitulos: boolean, divisoes: string[] }; }) => {
     const [registrosFiltrados, setRegistrosFiltrados] = useState<T[][]>(registros);
     const [ordenacao, setOrdenacao] = useState<{ key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc' } | null>(null);
     const [valoresFiltrosSelecionados, setValoresFiltrosSelecionados] = useState<OpcoesSelecionadas[]>([]);
@@ -141,23 +142,26 @@ export const ConsultaProvider = <T,>({ abaId, children, registros, filtroProps, 
     }, [registros, valoresFiltrosSelecionados]);
 
     return (
-        <ConsultaContext.Provider value={{ registros, registrosFiltrados, filtroProps, valoresFiltrosSelecionados, ordenacao, handleFiltro, removeFiltro, handleOrdenacao, tituloDivisoesConsulta }}>
+        <ConsultaContext.Provider value={{ registros, registrosFiltrados, mostrarFiltro, filtroProps, valoresFiltrosSelecionados, ordenacao, handleFiltro, removeFiltro, handleOrdenacao, tituloDivisoesConsulta }}>
             {children}
         </ConsultaContext.Provider>
     );
 };
 
 export const Consulta = <T,>({ renderItem }: { renderItem: (item: T, index: number) => React.ReactNode }) => {
-    const { filtroProps, registros, registrosFiltrados, tituloDivisoesConsulta } = useConsultaContext<T>();
+    const { mostrarFiltro, filtroProps, registros, registrosFiltrados, tituloDivisoesConsulta } = useConsultaContext<T>();
 
     return (
         <div className={style.conteudo_consulta}>
             <h1>{filtroProps.titulo} [{registros.reduce((total, registros) => total + registros.length, 0)}]</h1>
 
-            <Filtro />
-
-            <ValoresFiltrosSelecionados />
-
+            {mostrarFiltro && (
+                <>
+                    <Filtro />
+                    <ValoresFiltrosSelecionados />
+                </>
+            )}
+            
             {registrosFiltrados.length > 0 && (
                 registrosFiltrados.map((registros, index) => (
                     registros.length > 0 && (

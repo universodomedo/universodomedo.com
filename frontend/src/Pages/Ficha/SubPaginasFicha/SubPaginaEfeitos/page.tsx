@@ -3,12 +3,15 @@ import { Buff, BuffsAplicados } from 'Types/classes/index.ts';
 
 import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
+import { useContextoAbaEfeitos } from './contexto.tsx';
 
 import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
 // #endregion
 
-const page: React.FC<{ abaId: string; buffsPersonagem:BuffsAplicados}> = ({ abaId, buffsPersonagem }) => {
+const page: React.FC<{ abaId: string; buffsPersonagem: BuffsAplicados }> = ({ abaId, buffsPersonagem }) => {
   const { stopLoading } = useLoading();
+
+  const { mostrarFiltros, mostrarEtiquetas } = useContextoAbaEfeitos();
 
   const buffsAplicados = buffsPersonagem.listaObjetosBuff.reduce((acc, cur) => {
     const buffsDoTipo = cur.tipoBuff.reduce((acc2, cur2) => {
@@ -16,7 +19,7 @@ const page: React.FC<{ abaId: string; buffsPersonagem:BuffsAplicados}> = ({ abaI
 
       return acc2;
     }, [] as Buff[]);
-  
+
     return acc.concat(buffsDoTipo);
   }, [] as Buff[]);
 
@@ -31,11 +34,11 @@ const page: React.FC<{ abaId: string; buffsPersonagem:BuffsAplicados}> = ({ abaI
   }, [] as Buff[]);
 
   const renderBuffItem = (efeito: Buff, index: number) => (
-    <IconeCustomizado props={efeito.tooltipProps.iconeCustomizado} />
+    <IconeCustomizado key={index} mostrarEtiquetas={mostrarEtiquetas} tooltipProps={efeito.tooltipProps} desabilitado={true} textoBotaoConfirmar={''} exec={{ executaEmModal: false, func: () => { console.log('oi') } }} />
   );
 
   return (
-    <ConsultaProvider<Buff> abaId={abaId} registros={[buffsAplicados, buffsSobreescritos]} filtroProps={Buff.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={ { usaSubtitulos: true, divisoes: ['Efeitos Aplicados', 'Efeitos Sobrescritos'] } }>
+    <ConsultaProvider<Buff> abaId={abaId} registros={[buffsAplicados, buffsSobreescritos]} mostrarFiltro={mostrarFiltros} filtroProps={Buff.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Efeitos Aplicados', 'Efeitos Sobrescritos'] }}>
       <Consulta renderItem={renderBuffItem} />
     </ConsultaProvider>
   );

@@ -31,8 +31,8 @@ export const ContextoAbaAtributoProvider = ({ children }: { children: React.Reac
 
     const listaMenus: Menu[] = [
         {
-            tituloMenu: 'Teste', itensMenu: [
-                { tituloItem: 'TesteItem', funcItem: toggleAbreviar }
+            tituloMenu: 'Configurações', itensMenu: [
+                { tituloItem: 'Abreviar', funcItem: toggleAbreviar }
             ]
         }
     ];
@@ -42,9 +42,4 @@ export const ContextoAbaAtributoProvider = ({ children }: { children: React.Reac
             {children}
         </ContextoAbaAtributo.Provider>
     );
-}
-
-export const ContextoAbaAtributoObj = {
-    Provider: ContextoAbaAtributoProvider,
-    Context: ContextoAbaAtributo
 }

@@ -1,5 +1,5 @@
 // #region Imports
-import { classeComArgumentos, adicionarAcoesUtil, Acao, RequisitoFicha, Personagem, AcaoHabilidade, CustoExecucao, Buff, adicionarBuffsUtil, DificuldadeConsecutiva } from 'Types/classes/index.ts';
+import { classeComArgumentos, adicionarAcoesUtil, Acao, RequisitoFicha, Personagem, AcaoHabilidade, CustoExecucao, Buff, adicionarBuffsUtil, DificuldadeConsecutiva, TooltipProps, FiltroProps, FiltroPropsItems, CorTooltip } from 'Types/classes/index.ts';
 import { FichaHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -12,6 +12,47 @@ export class Habilidade {
     ) { }
 
     get nomeExibicao(): string { return this.nome };
+
+    get tooltipProps(): TooltipProps {
+        return {
+            caixaInformacao: {
+                principal: { titulo: this.nome },
+                detalhes: {
+                    corpo: [
+                        { tipo: 'texto', conteudo: 'Habilidade'}
+                        // { tipo: 'texto', conteudo: `Ritual de ${this.refElemento.nome}` },
+                        // { tipo: 'texto', conteudo: this.refCirculoNivelRitual.nome },
+                        // { tipo: 'separacao', conteudo: 'Ações' },
+                        // ...this.acoes?.map(acao => ({
+                        //     tipo: 'texto' as const,
+                        //     conteudo: acao.nomeAcao,
+                        // })) || []
+                    ],
+                }
+            },
+            iconeCustomizado: {
+                corDeFundo: '#FFFFFF',
+                svg: this.svg
+            },
+            corTooltip: new CorTooltip('#FFFFFF').cores,
+            numeroUnidades: 1,
+        }
+    }
+
+    static get filtroProps(): FiltroProps<Habilidade> {
+        return new FiltroProps<Habilidade>(
+            "Habibilidades",
+            [
+                new FiltroPropsItems<Habilidade>(
+                    (habilidade) => habilidade.nome,
+                    'Nome da Habilidade',
+                    'Procure pela Habilidade',
+                    'text',
+                    true
+                ),
+            ]
+        )
+    }
 }
 
 export class HabilidadeAtiva extends Habilidade {

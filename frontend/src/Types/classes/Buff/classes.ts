@@ -96,14 +96,16 @@ export abstract class Buff {
     get tooltipPropsSuper(): TooltipProps {
         return {
             caixaInformacao: {
-                cabecalho: [
-                    { tipo: 'titulo', conteudo: this.nome }
-                ],
-                corpo: [
-                    { tipo: 'texto', conteudo: `+${this.valor} ${this.refBuff.nome}` },
-                    { tipo: 'texto', conteudo: `${this.refTipoBuff.nomeExibirTooltip}` },
-                    { tipo: 'texto', conteudo: `${this.textoDuracao}` },
-                ],
+                principal: {
+                    titulo: this.nome
+                },
+                detalhes: {
+                    corpo: [
+                        { tipo: 'texto', conteudo: `+${this.valor} ${this.refBuff.nome}` },
+                        { tipo: 'texto', conteudo: `${this.refTipoBuff.nomeExibirTooltip}` },
+                        { tipo: 'texto', conteudo: `${this.textoDuracao}` },
+                    ]
+                }
             },
             iconeCustomizado: {
                 corDeFundo: '',
@@ -173,8 +175,8 @@ export class BuffInterno extends Buff {
 
         return {
             caixaInformacao: {
-                cabecalho: tooltipPropsSuper.caixaInformacao.cabecalho,
-                corpo: tooltipPropsSuper.caixaInformacao.corpo,
+                principal: tooltipPropsSuper.caixaInformacao.principal,
+                detalhes: tooltipPropsSuper.caixaInformacao.detalhes,
             },
             iconeCustomizado: {
                 corDeFundo: '#00FF00',
@@ -204,8 +206,8 @@ export class BuffExterno extends Buff {
 
         return {
             caixaInformacao: {
-                cabecalho: tooltipPropsSuper.caixaInformacao.cabecalho,
-                corpo: tooltipPropsSuper.caixaInformacao.corpo,
+                principal: tooltipPropsSuper.caixaInformacao.principal,
+                detalhes: tooltipPropsSuper.caixaInformacao.detalhes,
             },
             iconeCustomizado: {
                 corDeFundo: '#00FF00',

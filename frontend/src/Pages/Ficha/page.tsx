@@ -8,9 +8,9 @@ import { carregaDemo, selectPersonagemCarregado } from "Redux/slices/fichaHelper
 import SubPaginaDetalhes from "Pages/Ficha/SubPaginasFicha/SubPaginaDetalhes/page.tsx";
 import SubPaginaEstatisticasDanificaveis from "Pages/Ficha/SubPaginasFicha/SubPaginaEstatisticasDanificaveis/page.tsx";
 import SubPaginaAtributosPericias from "Pages/Ficha/SubPaginasFicha/SubPaginaAtributosPericias/page.tsx";
-import SubPaginaReducoes from "Pages/Ficha/SubPaginasFicha/SubPaginaReducoes/page.tsx";
 import SubPaginaInventario from "Pages/Ficha/SubPaginasFicha/SubPaginaInventario/page.tsx";
 import SubPaginaAcoes from "Pages/Ficha/SubPaginasFicha/SubPaginaAcoes/page.tsx"
+import SubPaginaHabilidades from 'Pages/Ficha/SubPaginasFicha/SubPaginaHabilidades/page.tsx';
 import SubPaginaRituais from 'Pages/Ficha/SubPaginasFicha/SubPaginaRituais/page.tsx';
 import SubPaginaEfeitos from "Pages/Ficha/SubPaginasFicha/SubPaginaEfeitos/page.tsx";
 import { Abas, ListaAbas, Aba, PainelAbas, ControleAbasExternas } from 'Components/LayoutAbas/page.tsx';
@@ -18,7 +18,12 @@ import { ToastContainer } from 'react-toastify';
 import Log from "Components/Log/page.tsx";
 import 'react-toastify/dist/ReactToastify.css';
 
-import { ContextoAbaAtributoProvider, ContextoAbaAtributoObj } from 'Pages/Ficha/SubPaginasFicha/ContextoSubPagina/context.tsx';
+import { ContextoAbaEfeitos, ContextoAbaEfeitosProvider } from 'Pages/Ficha/SubPaginasFicha/SubPaginaEfeitos/contexto.tsx';
+import { ContextoAbaAtributo, ContextoAbaAtributoProvider } from 'Pages/Ficha/SubPaginasFicha/SubPaginaAtributosPericias/contexto.tsx';
+import { ContextoAbaInventario, ContextoAbaInventarioProvider } from 'Pages/Ficha/SubPaginasFicha/SubPaginaInventario/contexto.tsx';
+import { ContextoAbaAcoes, ContextoAbaAcoesProvider } from 'Pages/Ficha/SubPaginasFicha/SubPaginaAcoes/contexto.tsx';
+import { ContextoAbaHabilidades, ContextoAbaHabilidadesProvider } from 'Pages/Ficha/SubPaginasFicha/SubPaginaHabilidades/contexto.tsx';
+import { ContextoAbaRituais, ContextoAbaRituaisProvider } from 'Pages/Ficha/SubPaginasFicha/SubPaginaRituais/contexto.tsx';
 
 import store from 'Redux/store.ts';
 // #endregion
@@ -94,29 +99,44 @@ const page: React.FC = () => {
                     <ControleAbasExternas ref={controleRef} />
 
                     <ListaAbas>
-                        {/* <Aba id="aba1">Nome</Aba>
+                        <Aba id="aba1">Nome</Aba>
                         <Aba id="aba2">Estatísticas</Aba>
-                        <Aba id="aba3">Efeitos</Aba> */}
+                        <Aba id="aba3">Efeitos</Aba>
                         <Aba id="aba4">Atributos</Aba>
-                        {/* <Aba id="aba5">Reduções</Aba>
-                        <Aba id="aba6">Inventário</Aba>
-                        <Aba id="aba7">Ações</Aba>
-                        <Aba id="aba8">Rituais</Aba> */}
+                        <Aba id="aba5">Inventário</Aba>
+                        <Aba id="aba6">Ações</Aba>
+                        <Aba id="aba7">Habilidades</Aba>
+                        <Aba id="aba8">Rituais</Aba>
                     </ListaAbas>
 
                     <div className={style.wrapper_conteudo_abas}>
-                        {/* <PainelAbas id="aba1"><SubPaginaDetalhes detalhesPersonagem={personagem.detalhes}/></PainelAbas>
-                        <PainelAbas id="aba2"><SubPaginaEstatisticasDanificaveis estatisticasDanificaveis={personagem.estatisticasDanificaveis}/></PainelAbas>
-                        <PainelAbas id="aba3"><SubPaginaEfeitos buffsPersonagem={personagem.buffsAplicados} abaId={"aba3"}/></PainelAbas> */}
+                        <PainelAbas id="aba1"><SubPaginaDetalhes detalhesPersonagem={personagem.detalhes}/></PainelAbas>
+
+                        <PainelAbas id="aba2"><SubPaginaEstatisticasDanificaveis estatisticasDanificaveis={personagem.estatisticasDanificaveis} reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
+
+                        <ContextoAbaEfeitosProvider>
+                            <PainelAbas id="aba3" contextoMenu={ContextoAbaEfeitos}><SubPaginaEfeitos buffsPersonagem={personagem.buffsAplicados} abaId={"aba3"}/></PainelAbas>
+                        </ContextoAbaEfeitosProvider>
+
                         <ContextoAbaAtributoProvider>
-                            <PainelAbas id="aba4" contextProvider={ContextoAbaAtributoObj}>
-                                <SubPaginaAtributosPericias atributos={personagem.atributos} pericias={personagem.pericias}/>
-                            </PainelAbas>
+                            <PainelAbas id="aba4" contextoMenu={ContextoAbaAtributo}><SubPaginaAtributosPericias atributos={personagem.atributos} pericias={personagem.pericias}/></PainelAbas>
                         </ContextoAbaAtributoProvider>
-                        {/* <PainelAbas id="aba5"><SubPaginaReducoes reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
-                        <PainelAbas id="aba6"><SubPaginaInventario abaId={"aba6"} inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis} abrirAbaAcao={() => {controleRef.current?.abreAba("aba7")}}/></PainelAbas>
-                        <PainelAbas id="aba7"><SubPaginaAcoes abaId={"aba7"} acoesPersonagem={personagem.acoes} /></PainelAbas>
-                        <PainelAbas id="aba8"><SubPaginaRituais abaId={"aba8"} rituaisPersonagem={personagem.rituais} abrirAbaAcao={() => {controleRef.current?.abreAba("aba7")}}/></PainelAbas> */}
+
+                        <ContextoAbaInventarioProvider>
+                            <PainelAbas id="aba5" contextoMenu={ContextoAbaInventario}><SubPaginaInventario abaId={"aba5"} inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis} abrirAbaAcao={() => {controleRef.current?.abreAba("aba6")}}/></PainelAbas>
+                        </ContextoAbaInventarioProvider>
+
+                        <ContextoAbaAcoesProvider>
+                            <PainelAbas id="aba6" contextoMenu={ContextoAbaAcoes}><SubPaginaAcoes abaId={"aba6"} acoesPersonagem={personagem.acoes} /></PainelAbas>
+                        </ContextoAbaAcoesProvider>
+
+                        <ContextoAbaHabilidadesProvider>
+                            <PainelAbas id="aba7" contextoMenu={ContextoAbaHabilidades}><SubPaginaHabilidades abaId={"aba7"} habilidadesPersonagem={personagem.habilidades} abrirAbaAcao={() => {controleRef.current?.abreAba("aba6")}}/></PainelAbas>
+                        </ContextoAbaHabilidadesProvider>
+
+                        <ContextoAbaRituaisProvider>
+                            <PainelAbas id="aba8" contextoMenu={ContextoAbaRituais}><SubPaginaRituais abaId={"aba8"} rituaisPersonagem={personagem.rituais} abrirAbaAcao={() => {controleRef.current?.abreAba("aba6")}}/></PainelAbas>
+                        </ContextoAbaRituaisProvider>
                     </div>
                 </Abas>
             )}

@@ -1,3 +1,14 @@
+.embrulho_icone {
+    display: flex;
+    flex-direction: column;
+    gap: .5vh;
+    align-items: center;
+}
+
+.embrulho_icone h3 {
+    margin: 0
+}
+
 .icone {
     border-radius: 5px;
     border: 1px antiquewhite solid;
@@ -8,6 +19,11 @@
     background-repeat: no-repeat;
     background-position: center;
     cursor: pointer;
+}
+
+.icone:hover {
+    border-color: #2684FF;
+    box-shadow: inset 0px 0px 5px 1px black, 0 0 0 1px #2684FF;
 }
 
 .conteudo_popover {

@@ -10,17 +10,20 @@ import Modal from "Recursos/Componentes/ModalDialog/page.tsx";
 // #endregion
 
 
-const page = ({ tooltipProps, desabilitado, textoBotaoConfirmar, opcoes, exec }: { tooltipProps: TooltipProps, textoBotaoConfirmar: string, desabilitado?: boolean, opcoes?: OpcoesExecucao[], exec: { executaEmModal: boolean, func: (...args: any[]) => any } }) => {
+const page = ({ mostrarEtiquetas = true, tooltipProps, desabilitado, textoBotaoConfirmar, opcoes, exec }: { mostrarEtiquetas?: boolean, tooltipProps: TooltipProps, textoBotaoConfirmar: string, desabilitado?: boolean, opcoes?: OpcoesExecucao[], exec: { executaEmModal: boolean, func: (...args: any[]) => any } }) => {
     const [openExec, setOpenExec] = useState(false);
     const [openDetalhes, setOpenDetalhes] = useState(false);
 
     const icone = () => {
         return (
-            <button className={style.icon_button}>
-                <Tooltip content={tooltipProps.caixaInformacao.principal.titulo}>
-                    <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${tooltipProps.iconeCustomizado?.svg})`, backgroundColor: tooltipProps.iconeCustomizado?.corDeFundo }}/>
-                </Tooltip>
-            </button>
+            <div className={style.embrulho_icone}>
+                {mostrarEtiquetas && (<h3>{tooltipProps.caixaInformacao.principal.titulo}</h3>)}
+                {/* <button className={style.botao_icone}> */}
+                    <Tooltip content={tooltipProps.caixaInformacao.principal.titulo}>
+                        <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${tooltipProps.iconeCustomizado?.svg})`, backgroundColor: tooltipProps.iconeCustomizado?.corDeFundo }}/>
+                    </Tooltip>
+                {/* </button> */}
+            </div>
         );
     }
 

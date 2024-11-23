@@ -46,29 +46,21 @@ const Aba: React.FC<{ id: string; children: ReactNode; }> = ({ id, children }) =
 interface PainelAbasProps {
     id: string;
     children: ReactNode;
-    contextProvider?: {
-        Provider: React.ComponentType<{ children: React.ReactNode }>;
-        Context: React.Context<any>;
-    };
-}
-interface ContextMenu {
-    listaMenus: Menu[];
+    contextoMenu?: React.Context<any>;
 }
 
-// const PainelAbas: React.FC<{ id: string; children: ReactNode; contextProvider: ContextProvider, }> = ({ id, children, contextProvider }) => {
-const PainelAbas: React.FC<PainelAbasProps> = ({ id, children, contextProvider }) => {
-    
-    if (!contextProvider) {
-        throw new Error(`O PainelAbas "${id}" requer um contextProvider, mas ele não foi fornecido.`);
-    }
-    
-    const { Context } = contextProvider;
-    const contextoMenu = useContext(Context);
-    if (!contextoMenu) {
-        throw new Error(`O PainelAbas "${id}" precisa de um contexto válido.`);
-    }
+const PainelAbas: React.FC<PainelAbasProps> = ({ id, children, contextoMenu }) => {
+    let listaMenus: Menu[] = [];
 
-    const { listaMenus } = contextoMenu;
+    if (contextoMenu) {
+        const useContextoMenu = useContext(contextoMenu);
+    
+        if (!contextoMenu) {
+            throw new Error(`O PainelAbas "${id}" precisa de um contexto válido.`);
+        }
+    
+        listaMenus = useContextoMenu.listaMenus || [];
+    }
 
     const context = useContext(ContextoAba);
     if (!context) throw new Error("O PainelAbas precisa estar contido na organização de Abas");
@@ -111,11 +103,11 @@ const JanelaConteudoAba = React.forwardRef<HTMLDivElement, { id: string; childre
                         {listaMenu.map((menu, indexMenu) => (
                             <BarraMenu.Menu key={indexMenu}>
                                 <BarraMenu.Trigger>{menu.tituloMenu}</BarraMenu.Trigger>
-                                {menu.itensMenu.map((itemMenu, indexItem) => (
-                                    <BarraMenu.Portal key={indexItem}>
-                                        <BarraMenu.Item onSelect={itemMenu.funcItem}>{itemMenu.tituloItem}</BarraMenu.Item>
+                                    <BarraMenu.Portal>
+                                        {menu.itensMenu.map((itemMenu, indexItem) => (
+                                            <BarraMenu.Item key={indexItem} onSelect={itemMenu.funcItem}>{itemMenu.tituloItem}</BarraMenu.Item>
+                                        ))}
                                     </BarraMenu.Portal>
-                                ))}
                             </BarraMenu.Menu>
                         ))}
                     </BarraMenu>

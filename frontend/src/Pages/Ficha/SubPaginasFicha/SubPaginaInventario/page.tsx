@@ -5,6 +5,7 @@ import { Inventario, EstatisticasBuffaveisPersonagem, Item } from 'Types/classes
 import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 import BarraEstatisticaDanificavel from "Components/SubComponents/SubComponentesFicha/BarraEstatisticaDanificavel/page.tsx";
+import { useContextoAbaInventario } from './contexto.tsx';
 
 import IconeItem from "Components/IconeItem/page.tsx";
 
@@ -12,16 +13,11 @@ import { useDispatch } from "react-redux";
 import { setCacheFiltros } from "Redux/slices/abasHelperSlice.ts";
 // #endregion
 
-const initialContextMenu = {
-  show: false,
-  x: 0,
-  y: 0,
-}
-
 const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffaveisPersonagem, inventarioPersonagem: Inventario, abrirAbaAcao: () => void; }> = ({ abaId, estatisticasBuffaveis, inventarioPersonagem, abrirAbaAcao }) => {
   const { stopLoading } = useLoading();
   const dispatch = useDispatch();
-  const [contextMenu, setContextMenu] = useState(initialContextMenu);
+
+  const { mostrarFiltros, mostrarEtiquetas } = useContextoAbaInventario();
 
   const itensEmpunhados = inventarioPersonagem.agrupamento.filter(item => item.estaEmpunhado);
   const itensGuardados = inventarioPersonagem.agrupamento.filter(item => !item.estaEmpunhado);
@@ -35,15 +31,8 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
   }
 
   const renderItem = (item: Item, index: number) => (
-    <IconeItem quantidadeAgrupada={item.tooltipPropsAgrupado.numeroUnidades} props={item.tooltipPropsAgrupado.iconeCustomizado} onClick={() => clickItem(item)} />
+    <IconeItem key={index} quantidadeAgrupada={item.tooltipPropsAgrupado.numeroUnidades!} props={item.tooltipPropsAgrupado.iconeCustomizado!} onClick={() => clickItem(item)} />
   );
-
-  const handleContextMenu = (e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    e.preventDefault();
-
-    const { pageX, pageY } = e;
-    setContextMenu({ show: true, x: pageX, y: pageY });
-  }
 
   return (
     <div className={style.conteudo_inventario}>
@@ -64,7 +53,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
             <div key={index} className={style.extremidade}>
               <h1>Extremidade {extremidade.id}</h1>
               {extremidade.refItem ? (
-                <IconeItem key={index} quantidadeAgrupada={extremidade.refItem.tooltipPropsSingular.numeroUnidades} props={extremidade.refItem.tooltipPropsSingular.iconeCustomizado} onClick={() => clickItem(extremidade.refItem!)} />
+                <IconeItem key={index} quantidadeAgrupada={extremidade.refItem.tooltipPropsSingular.numeroUnidades!} props={extremidade.refItem.tooltipPropsSingular.iconeCustomizado!} onClick={() => clickItem(extremidade.refItem!)} />
               ) :
                 <div className={style.icones_extremidade_vazia}></div>
               }
@@ -73,7 +62,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
         </div>
       )}
 
-      <ConsultaProvider<Item> abaId={abaId} registros={[itensEmpunhados, itensGuardados]} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Empunhados', 'Itens Guardados'] }}>
+      <ConsultaProvider<Item> abaId={abaId} registros={[itensEmpunhados, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Empunhados', 'Itens Guardados'] }}>
         <Consulta renderItem={renderItem} />
       </ConsultaProvider>
     </div>

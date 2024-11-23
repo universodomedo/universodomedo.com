@@ -1,10 +1,10 @@
 // #region Imports
 import style from "./style.module.css";
-import { useState, createContext, useContext } from 'react';
+import { useState } from 'react';
 
 import { AtributoPersonagem, PericiaPatentePersonagem } from 'Types/classes/index.ts';
 import { textoFormatadoParaVisualizacao } from 'Utils/utils.tsx';
-import { useContextoAbaAtributo } from 'Pages/Ficha/SubPaginasFicha/ContextoSubPagina/context.tsx';
+import { useContextoAbaAtributo } from './contexto.tsx';
 
 import TooltipPersistente from 'Recursos/Componentes/HoverCard/page.tsx';
 // #endregion
