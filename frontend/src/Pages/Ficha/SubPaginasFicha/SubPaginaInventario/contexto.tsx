@@ -39,8 +39,8 @@ export const ContextoAbaInventarioProvider = ({ children }: { children: React.Re
     const listaMenus: Menu[] = [
         {
             tituloMenu: 'Configurações', itensMenu: [
-                { tituloItem: 'Mostrar Filtros', funcItem: toggleMostrarFiltros },
-                { tituloItem: 'Mostrar Nome Ações', funcItem: toggleMostrarEtiquetas }
+                { tituloItem: 'Mostrar Filtros', tipoItem: 'CheckboxItem', checked: mostrarFiltros, funcItem: toggleMostrarFiltros },
+                { tituloItem: 'Mostrar Nome Ações', tipoItem: 'CheckboxItem', checked: mostrarEtiquetas, funcItem: toggleMostrarEtiquetas }
             ]
         }
     ];

@@ -46,7 +46,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
           ))}
         </div>
       </div>
-
+{/* 
       {estatisticasBuffaveis.extremidades.length > 0 && (
         <div className={style.container_extremidades}>
           {estatisticasBuffaveis.extremidades.map((extremidade, index) => (
@@ -60,7 +60,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
             </div>
           ))}
         </div>
-      )}
+      )} */}
 
       <ConsultaProvider<Item> abaId={abaId} registros={[itensEmpunhados, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Empunhados', 'Itens Guardados'] }}>
         <Consulta renderItem={renderItem} />

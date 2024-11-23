@@ -1,9 +1,11 @@
 export type Menu = {
     tituloMenu: string,
-    itensMenu: ItemMenu[]
+    itensMenu: ItemMenu[],
 }
 
 export type ItemMenu = {
     tituloItem: string,
-    funcItem: () => void
+    tipoItem: 'Item' | 'CheckboxItem' | 'Separator',
+    checked: boolean,
+    funcItem: () => void,
 }

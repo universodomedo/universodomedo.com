@@ -61,7 +61,7 @@
 
 .objeto_menu_item,
 .MenubarSubTrigger,
-.MenubarCheckboxItem,
+.objeto_menu_checkboxitem,
 .MenubarRadioItem {
 	all: unset;
 	font-size: 13px;
@@ -78,7 +78,7 @@
 
 .objeto_menu_item.inset,
 .MenubarSubTrigger.inset,
-.MenubarCheckboxItem.inset,
+.objeto_menu_checkboxitem.inset,
 .MenubarRadioItem.inset {
 	padding-left: 20px;
 }
@@ -91,7 +91,7 @@
 
 .objeto_menu_item[data-highlighted],
 .MenubarSubTrigger[data-highlighted],
-.MenubarCheckboxItem[data-highlighted],
+.objeto_menu_checkboxitem[data-highlighted],
 .MenubarRadioItem[data-highlighted] {
 	background-image: linear-gradient(
 		135deg,
@@ -103,10 +103,16 @@
 
 .objeto_menu_item[data-disabled],
 .MenubarSubTrigger[data-disabled],
-.MenubarCheckboxItem[data-disabled],
+.objeto_menu_checkboxitem[data-disabled],
 .MenubarRadioItem[data-disabled] {
 	color: var(--mauve-8);
 	pointer-events: none;
+}
+
+.checkbox_indicator {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .objeto_menu_separador {

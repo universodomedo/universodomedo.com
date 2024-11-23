@@ -54,11 +54,11 @@ const PainelAbas: React.FC<PainelAbasProps> = ({ id, children, contextoMenu }) =
 
     if (contextoMenu) {
         const useContextoMenu = useContext(contextoMenu);
-    
+
         if (!contextoMenu) {
             throw new Error(`O PainelAbas "${id}" precisa de um contexto válido.`);
         }
-    
+
         listaMenus = useContextoMenu.listaMenus || [];
     }
 
@@ -103,11 +103,38 @@ const JanelaConteudoAba = React.forwardRef<HTMLDivElement, { id: string; childre
                         {listaMenu.map((menu, indexMenu) => (
                             <BarraMenu.Menu key={indexMenu}>
                                 <BarraMenu.Trigger>{menu.tituloMenu}</BarraMenu.Trigger>
-                                    <BarraMenu.Portal>
-                                        {menu.itensMenu.map((itemMenu, indexItem) => (
-                                            <BarraMenu.Item key={indexItem} onSelect={itemMenu.funcItem}>{itemMenu.tituloItem}</BarraMenu.Item>
-                                        ))}
-                                    </BarraMenu.Portal>
+                                <BarraMenu.Portal>
+                                    {menu.itensMenu.map((itemMenu, indexItem) => {
+                                        console.log(itemMenu);
+
+                                        if (itemMenu.tipoItem === 'CheckboxItem') {
+                                            return (
+                                                <BarraMenu.CheckboxItem key={indexItem} checked={itemMenu.checked || false} onCheckedChange={itemMenu.funcItem} >
+                                                    {itemMenu.tituloItem}
+                                                </BarraMenu.CheckboxItem>
+                                            );
+                                        } else if (itemMenu.tipoItem === 'Separator') {
+                                            return <BarraMenu.Separator key={indexItem} />;
+                                        } else {
+                                            return (
+                                                <BarraMenu.Item key={indexItem} onSelect={itemMenu.funcItem}>
+                                                    {itemMenu.tituloItem}
+                                                </BarraMenu.Item>
+                                            );
+                                        }
+                                    })}
+                                </BarraMenu.Portal>
+                                {/* <BarraMenu.Portal>
+                                        {menu.itensMenu.map((itemMenu, indexItem) => {
+                                            if (itemMenu.tipoItem === 'CheckboxItem') {
+                                                return (<BarraMenu.CheckboxItem checked={itemMenu.checked!} onCheckedChange={itemMenu.funcItem}>{itemMenu.tituloItem}</BarraMenu.CheckboxItem>);
+                                            } else if (itemMenu.tipoItem === 'Separator') {
+                                                return (<BarraMenu.Separator />);
+                                            } else {
+                                                return(<BarraMenu.Item key={indexItem} onSelect={itemMenu.funcItem}>{itemMenu.tituloItem}</BarraMenu.Item>);
+                                            }
+                                        }
+                                    </BarraMenu.Portal> */}
                             </BarraMenu.Menu>
                         ))}
                     </BarraMenu>

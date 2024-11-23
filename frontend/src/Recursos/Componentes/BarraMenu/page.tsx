@@ -3,6 +3,8 @@ import { ReactNode } from 'react';
 import style from './style.module.css';
 
 import * as Menubar from "@radix-ui/react-menubar";
+
+import { CheckIcon } from "@radix-ui/react-icons";
 // #endregion
 
 
@@ -55,6 +57,18 @@ function BarraMenuObjetoMenuSeparador() {
     );
 }
 
+function BarraMenuObjetoMenuCheckboxItem({ children, checked, onCheckedChange }: { children: ReactNode, checked: boolean, onCheckedChange: (checked:boolean) => void; }) {
+    return (
+        <Menubar.CheckboxItem className={style.objeto_menu_checkboxitem} checked={checked} onCheckedChange={onCheckedChange}>
+            {children}
+            
+            <Menubar.ItemIndicator className={style.checkbox_indicator}>
+                <CheckIcon />
+            </Menubar.ItemIndicator>
+        </Menubar.CheckboxItem>
+    )
+}
+
 // function BarraMenuObjetoMenuSubitem({ children }: { children: ReactNode }) {
 //     <Menubar.Item>
 //         {children}
@@ -65,5 +79,6 @@ BarraMenu.Menu = BarraMenuItem;
 BarraMenu.Trigger = BarraMenuObjetoItem;
 BarraMenu.Portal = BarraMenuObjetoMenu;
 BarraMenu.Item = BarraMenuObjetoMenuItem;
+BarraMenu.CheckboxItem = BarraMenuObjetoMenuCheckboxItem;
 BarraMenu.Separator = BarraMenuObjetoMenuSeparador;
 // BarraMenu.Sub
