@@ -1,7 +1,7 @@
 // #region Imports
 import style from "./style.module.css";
 import "./style.css";
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, createContext } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'Redux/store.ts';
 import { carregaDemo, selectPersonagemCarregado } from "Redux/slices/fichaHelperSlice.ts";
@@ -17,6 +17,8 @@ import { Abas, ListaAbas, Aba, PainelAbas, ControleAbasExternas } from 'Componen
 import { ToastContainer } from 'react-toastify';
 import Log from "Components/Log/page.tsx";
 import 'react-toastify/dist/ReactToastify.css';
+
+import { ContextoAbaAtributoProvider, ContextoAbaAtributoObj } from 'Pages/Ficha/SubPaginasFicha/ContextoSubPagina/context.tsx';
 
 import store from 'Redux/store.ts';
 // #endregion
@@ -92,25 +94,29 @@ const page: React.FC = () => {
                     <ControleAbasExternas ref={controleRef} />
 
                     <ListaAbas>
-                        <Aba id="aba1">Nome</Aba>
+                        {/* <Aba id="aba1">Nome</Aba>
                         <Aba id="aba2">Estatísticas</Aba>
-                        <Aba id="aba3">Efeitos</Aba>
+                        <Aba id="aba3">Efeitos</Aba> */}
                         <Aba id="aba4">Atributos</Aba>
-                        <Aba id="aba5">Reduções</Aba>
+                        {/* <Aba id="aba5">Reduções</Aba>
                         <Aba id="aba6">Inventário</Aba>
                         <Aba id="aba7">Ações</Aba>
-                        <Aba id="aba8">Rituais</Aba>
+                        <Aba id="aba8">Rituais</Aba> */}
                     </ListaAbas>
 
                     <div className={style.wrapper_conteudo_abas}>
-                        <PainelAbas id="aba1"><SubPaginaDetalhes detalhesPersonagem={personagem.detalhes}/></PainelAbas>
+                        {/* <PainelAbas id="aba1"><SubPaginaDetalhes detalhesPersonagem={personagem.detalhes}/></PainelAbas>
                         <PainelAbas id="aba2"><SubPaginaEstatisticasDanificaveis estatisticasDanificaveis={personagem.estatisticasDanificaveis}/></PainelAbas>
-                        <PainelAbas id="aba3"><SubPaginaEfeitos buffsPersonagem={personagem.buffsAplicados} abaId={"aba3"}/></PainelAbas>
-                        <PainelAbas id="aba4"><SubPaginaAtributosPericias atributosPersonagem={personagem.atributos} periciasPersonagem={personagem.pericias}/></PainelAbas>
-                        <PainelAbas id="aba5"><SubPaginaReducoes reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
+                        <PainelAbas id="aba3"><SubPaginaEfeitos buffsPersonagem={personagem.buffsAplicados} abaId={"aba3"}/></PainelAbas> */}
+                        <ContextoAbaAtributoProvider>
+                            <PainelAbas id="aba4" contextProvider={ContextoAbaAtributoObj}>
+                                <SubPaginaAtributosPericias atributos={personagem.atributos} pericias={personagem.pericias}/>
+                            </PainelAbas>
+                        </ContextoAbaAtributoProvider>
+                        {/* <PainelAbas id="aba5"><SubPaginaReducoes reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
                         <PainelAbas id="aba6"><SubPaginaInventario abaId={"aba6"} inventarioPersonagem={personagem.inventario} estatisticasBuffaveis={personagem.estatisticasBuffaveis} abrirAbaAcao={() => {controleRef.current?.abreAba("aba7")}}/></PainelAbas>
                         <PainelAbas id="aba7"><SubPaginaAcoes abaId={"aba7"} acoesPersonagem={personagem.acoes} /></PainelAbas>
-                        <PainelAbas id="aba8"><SubPaginaRituais abaId={"aba8"} rituaisPersonagem={personagem.rituais} abrirAbaAcao={() => {controleRef.current?.abreAba("aba7")}}/></PainelAbas>
+                        <PainelAbas id="aba8"><SubPaginaRituais abaId={"aba8"} rituaisPersonagem={personagem.rituais} abrirAbaAcao={() => {controleRef.current?.abreAba("aba7")}}/></PainelAbas> */}
                     </div>
                 </Abas>
             )}

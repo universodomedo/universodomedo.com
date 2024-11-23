@@ -4,66 +4,12 @@ import { useState, createContext, useContext } from 'react';
 
 import { AtributoPersonagem, PericiaPatentePersonagem } from 'Types/classes/index.ts';
 import { textoFormatadoParaVisualizacao } from 'Utils/utils.tsx';
+import { useContextoAbaAtributo } from 'Pages/Ficha/SubPaginasFicha/ContextoSubPagina/context.tsx';
 
-import * as Toggle from "@radix-ui/react-toggle";
-import { LetterSpacingIcon } from "@radix-ui/react-icons";
 import TooltipPersistente from 'Recursos/Componentes/HoverCard/page.tsx';
 // #endregion
 
-interface CustomizaveisProps {
-  abreviar: boolean;
-  toggleAbreviar: () => void;
-}
-
-const CustomizaveisContext = createContext<CustomizaveisProps | undefined>(undefined);
-
-export const useCustomizaveisContext = (): CustomizaveisProps => {
-  const context = useContext(CustomizaveisContext);
-
-  if (!context) {
-    throw new Error('useCustomizaveisContext precisa estar dentro de um CustomizaveisContext');
-  }
-
-  return context;
-};
-
-export const CustomizaveisProvider = ({ children }: { children: React.ReactNode }) => {
-  const [abreviar, setAbreviar] = useState(false);
-
-  const toggleAbreviar = () => {
-    setAbreviar(!abreviar);
-  }
-
-  return (
-    <CustomizaveisContext.Provider value={{ abreviar, toggleAbreviar }}>
-      {children}
-    </CustomizaveisContext.Provider>
-  );
-}
-
-const page: React.FC<{ atributosPersonagem: AtributoPersonagem[], periciasPersonagem: PericiaPatentePersonagem[] }> = ({ atributosPersonagem, periciasPersonagem }) => {
-  return (
-    <CustomizaveisProvider   >
-      <PageTeste1 atributosPersonagem={atributosPersonagem} periciasPersonagem={periciasPersonagem} />
-    </CustomizaveisProvider>
-  );
-}
-
-const PageTeste1: React.FC<{ atributosPersonagem: AtributoPersonagem[], periciasPersonagem: PericiaPatentePersonagem[] }> = ({ atributosPersonagem, periciasPersonagem }) => {
-  const { toggleAbreviar } = useCustomizaveisContext();
-
-  return (
-    <>
-      <Toggle.Root className={style.toogle_abreviar} onPressedChange={toggleAbreviar} >
-        <LetterSpacingIcon />
-      </Toggle.Root>
-
-      <AreaAtributosPericias atributos={atributosPersonagem} pericias={periciasPersonagem} />
-    </>
-  );
-};
-
-const AreaAtributosPericias = ({ atributos, pericias }: { atributos: AtributoPersonagem[], pericias: PericiaPatentePersonagem[] }) => {
+const page = ({ atributos, pericias }: { atributos: AtributoPersonagem[], pericias: PericiaPatentePersonagem[] }) => {
   return (
     <div className={style.atributos_personagem}>
       {atributos.map((atributo, index) => (
@@ -78,7 +24,7 @@ const AreaAtributosPericias = ({ atributos, pericias }: { atributos: AtributoPer
 
 const AreaAtributo = ({ atributo, pericias }: { atributo: AtributoPersonagem, pericias: PericiaPatentePersonagem[] }) => {
   const [openTooltip, setOpenTooltip] = useState(false);
-  const { abreviar } = useCustomizaveisContext();
+  const { abreviar } = useContextoAbaAtributo();
   const atributoPorExtenso = textoFormatadoParaVisualizacao(abreviar ? atributo.refAtributo.nomeAbrev : atributo.refAtributo.nome);
 
   return (
@@ -103,7 +49,7 @@ const AreaAtributo = ({ atributo, pericias }: { atributo: AtributoPersonagem, pe
 
 const AreaPericia = ({ pericia }: { pericia: PericiaPatentePersonagem }) => {
   const [openTooltip, setOpenTooltip] = useState(false);
-  const { abreviar } = useCustomizaveisContext();
+  const { abreviar } = useContextoAbaAtributo();
   const periciaPorExtenso = textoFormatadoParaVisualizacao(abreviar ? pericia.refPericia.nomeAbrev : pericia.refPericia.nome);
 
   return (
@@ -122,7 +68,7 @@ const AreaPericia = ({ pericia }: { pericia: PericiaPatentePersonagem }) => {
   );
 }
 
-const TooltipAtributo = ({ atributo }: { atributo: AtributoPersonagem}) => {
+const TooltipAtributo = ({ atributo }: { atributo: AtributoPersonagem }) => {
   return (
     <>
       <h2>{atributo.refAtributo.nome}</h2>
@@ -131,7 +77,7 @@ const TooltipAtributo = ({ atributo }: { atributo: AtributoPersonagem}) => {
   );
 }
 
-const TooltipPericia = ({ pericia }: { pericia: PericiaPatentePersonagem}) => {
+const TooltipPericia = ({ pericia }: { pericia: PericiaPatentePersonagem }) => {
   return (
     <>
       <h2>{pericia.refPericia.nome}</h2>

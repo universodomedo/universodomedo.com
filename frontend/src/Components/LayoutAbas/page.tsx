@@ -4,6 +4,7 @@ import React, { useEffect, useState, ReactNode, createContext, useContext, forwa
 import { LoadingContext } from "Components/LayoutAbas/hooks.ts";
 
 import BarraMenu from 'Recursos/Componentes/BarraMenu/page.tsx'
+import { Menu } from 'Types/classes/index.ts';
 // #endregion
 
 const ContextoAba = createContext<{ abasAbertas: string[]; alternaAba: (idAba: string) => void; } | undefined>(undefined);
@@ -42,7 +43,33 @@ const Aba: React.FC<{ id: string; children: ReactNode; }> = ({ id, children }) =
     );
 };
 
-const PainelAbas: React.FC<{ id: string; children: ReactNode; }> = ({ id, children }) => {
+interface PainelAbasProps {
+    id: string;
+    children: ReactNode;
+    contextProvider?: {
+        Provider: React.ComponentType<{ children: React.ReactNode }>;
+        Context: React.Context<any>;
+    };
+}
+interface ContextMenu {
+    listaMenus: Menu[];
+}
+
+// const PainelAbas: React.FC<{ id: string; children: ReactNode; contextProvider: ContextProvider, }> = ({ id, children, contextProvider }) => {
+const PainelAbas: React.FC<PainelAbasProps> = ({ id, children, contextProvider }) => {
+    
+    if (!contextProvider) {
+        throw new Error(`O PainelAbas "${id}" requer um contextProvider, mas ele não foi fornecido.`);
+    }
+    
+    const { Context } = contextProvider;
+    const contextoMenu = useContext(Context);
+    if (!contextoMenu) {
+        throw new Error(`O PainelAbas "${id}" precisa de um contexto válido.`);
+    }
+
+    const { listaMenus } = contextoMenu;
+
     const context = useContext(ContextoAba);
     if (!context) throw new Error("O PainelAbas precisa estar contido na organização de Abas");
 
@@ -61,11 +88,11 @@ const PainelAbas: React.FC<{ id: string; children: ReactNode; }> = ({ id, childr
     }, [abasAbertas]);
 
     return abasAbertas.includes(id)
-        ? <JanelaConteudoAba ref={abaRef} id={id}>{children}</JanelaConteudoAba>
+        ? <JanelaConteudoAba ref={abaRef} id={id} listaMenu={listaMenus}>{children}</JanelaConteudoAba>
         : null;
 };
 
-const JanelaConteudoAba = React.forwardRef<HTMLDivElement, { id: string; children: ReactNode }>(({ id, children }, ref) => {
+const JanelaConteudoAba = React.forwardRef<HTMLDivElement, { id: string; children: ReactNode; listaMenu: Menu[] }>(({ id, children, listaMenu }, ref) => {
     const context = useContext(ContextoAba);
     if (!context) throw new Error("A Janela precisa estar contido na organização de Abas");
     const { alternaAba } = context;
@@ -81,12 +108,16 @@ const JanelaConteudoAba = React.forwardRef<HTMLDivElement, { id: string; childre
             <div ref={ref} className={`${style.wrapper_aba}`}>
                 <div className={style.barra_superior_conteudo_aba}>
                     <BarraMenu>
-                        <BarraMenu.Menu>
-                            <BarraMenu.Trigger>TesteItem</BarraMenu.Trigger>
-                            <BarraMenu.Portal>
-                                <BarraMenu.Item onSelect={() => {console.log('teste')}}>TesteMenu</BarraMenu.Item>
-                            </BarraMenu.Portal>
-                        </BarraMenu.Menu>
+                        {listaMenu.map((menu, indexMenu) => (
+                            <BarraMenu.Menu key={indexMenu}>
+                                <BarraMenu.Trigger>{menu.tituloMenu}</BarraMenu.Trigger>
+                                {menu.itensMenu.map((itemMenu, indexItem) => (
+                                    <BarraMenu.Portal key={indexItem}>
+                                        <BarraMenu.Item onSelect={itemMenu.funcItem}>{itemMenu.tituloItem}</BarraMenu.Item>
+                                    </BarraMenu.Portal>
+                                ))}
+                            </BarraMenu.Menu>
+                        ))}
                     </BarraMenu>
                     <button className={style.botao_fechar_aba} onClick={() => alternaAba(id)}>x</button>
                 </div>
