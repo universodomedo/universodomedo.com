@@ -32,7 +32,7 @@ export const ContextoAbaAtributoProvider = ({ children }: { children: React.Reac
     const listaMenus: Menu[] = [
         {
             tituloMenu: 'Configurações', itensMenu: [
-                { tituloItem: 'Abreviar', tipoItem: 'CheckboxItem', checked: abreviar, funcItem: toggleAbreviar }
+                { tituloItem: 'Abreviar Atributos e Perícias', tipoItem: 'CheckboxItem', checked: abreviar, funcItem: toggleAbreviar }
             ]
         }
     ];

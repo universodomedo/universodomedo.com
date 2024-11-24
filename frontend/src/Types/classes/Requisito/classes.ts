@@ -117,18 +117,19 @@ export class RequisitoConfig {
         [3, {
             requisitoClass: RequisitoExtremidadeDisponivel,
             requisitoParams: [],
-            opcoesExecucao: [
-                {
-                    key: 'idExtremidade',
-                    displayName: 'Extremidade Alvo',
-                    obterOpcoes: (): Opcao[] => {
-                        return FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.filter(extremidade => !extremidade.refItem).reduce((acc: { key: number; value: string }[], cur) => {
-                            acc.push({ key: cur.id, value: `Extremidade ${cur.id}` });
-                            return acc;
-                        }, [])
-                    }
-                }
-            ]
+            opcoesExecucao: [],
+            // opcoesExecucao: [
+            //     {
+            //         key: 'idExtremidade',
+            //         displayName: 'Extremidade Alvo',
+            //         obterOpcoes: (): Opcao[] => {
+            //             return FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.filter(extremidade => !extremidade.refItem).reduce((acc: { key: number; value: string }[], cur) => {
+            //                 acc.push({ key: cur.id, value: `Extremidade ${cur.id}` });
+            //                 return acc;
+            //             }, [])
+            //         }
+            //     }
+            // ]
         }],
         [4, {
             requisitoClass: RequisitoAlgumItemGuardado,

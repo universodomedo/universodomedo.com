@@ -40,7 +40,7 @@ export const ContextoAbaAcoesProvider = ({ children }: { children: React.ReactNo
         {
             tituloMenu: 'Configurações', itensMenu: [
                 { tituloItem: 'Mostrar Filtros', tipoItem: 'CheckboxItem', checked: mostrarFiltros, funcItem: toggleMostrarFiltros },
-                { tituloItem: 'Mostrar Nome Ações', tipoItem: 'CheckboxItem', checked: mostrarEtiquetas, funcItem: toggleMostrarEtiquetas }
+                { tituloItem: 'Mostrar Nome das Ações', tipoItem: 'CheckboxItem', checked: mostrarEtiquetas, funcItem: toggleMostrarEtiquetas }
             ]
         }
     ];

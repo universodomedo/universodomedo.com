@@ -100,6 +100,7 @@ export abstract class Acao {
 
     executa = (valoresSelecionados: GastaCustoProps) => {
         logicaMecanicas[this._idMecanica](valoresSelecionados, this);
+        FichaHelper.getInstance().personagem.onUpdate();
     }
 
     get tooltipProps(): TooltipProps {

@@ -108,7 +108,7 @@ const ConteudoExecucao = ({ props, click }: { props?: OpcoesExecucao[], click: (
                     </div>
                 );
             })}
-            <button onClick={() => click(valoresSelecionados)}>Teste</button>
+            <button className={style.botao_principal} onClick={() => click(valoresSelecionados)}>Executar</button>
         </>
     )
 }

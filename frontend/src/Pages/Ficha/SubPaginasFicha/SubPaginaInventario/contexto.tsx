@@ -9,6 +9,8 @@ interface ContextoAbaInventarioProps {
     toggleMostrarFiltros: () => void;
     mostrarEtiquetas: boolean;
     toggleMostrarEtiquetas: () => void;
+    mostrarBarras: boolean;
+    toggleMostrarBarras: () => void;
     listaMenus: Menu[];
 }
 
@@ -27,6 +29,7 @@ export const useContextoAbaInventario = (): ContextoAbaInventarioProps => {
 export const ContextoAbaInventarioProvider = ({ children }: { children: React.ReactNode }) => {
     const [mostrarFiltros, setMostrarFiltros] = useState(false);
     const [mostrarEtiquetas, setMostrarEtiquetas] = useState(true);
+    const [mostrarBarras, setMostrarBarras] = useState(false);
 
     const toggleMostrarFiltros = () => {
         setMostrarFiltros(!mostrarFiltros);
@@ -36,17 +39,22 @@ export const ContextoAbaInventarioProvider = ({ children }: { children: React.Re
         setMostrarEtiquetas(!mostrarEtiquetas);
     }
 
+    const toggleMostrarBarras = () => {
+        setMostrarBarras(!mostrarBarras);
+    }
+
     const listaMenus: Menu[] = [
         {
             tituloMenu: 'Configurações', itensMenu: [
                 { tituloItem: 'Mostrar Filtros', tipoItem: 'CheckboxItem', checked: mostrarFiltros, funcItem: toggleMostrarFiltros },
-                { tituloItem: 'Mostrar Nome Ações', tipoItem: 'CheckboxItem', checked: mostrarEtiquetas, funcItem: toggleMostrarEtiquetas }
+                { tituloItem: 'Mostrar Nome dos Itens', tipoItem: 'CheckboxItem', checked: mostrarEtiquetas, funcItem: toggleMostrarEtiquetas },
+                { tituloItem: 'Mostrar Barras do Inventário', tipoItem: 'CheckboxItem', checked: mostrarBarras, funcItem: toggleMostrarBarras },
             ]
         }
     ];
 
     return (
-        <ContextoAbaInventario.Provider value={{ mostrarFiltros, toggleMostrarFiltros, mostrarEtiquetas, toggleMostrarEtiquetas, listaMenus }}>
+        <ContextoAbaInventario.Provider value={{ mostrarFiltros, toggleMostrarFiltros, mostrarEtiquetas, toggleMostrarEtiquetas, mostrarBarras, toggleMostrarBarras, listaMenus }}>
             {children}
         </ContextoAbaInventario.Provider>
     );

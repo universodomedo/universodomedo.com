@@ -13,9 +13,13 @@ export class Mecanica {
 export const logicaMecanicas: { [key: number]: (valoresSelecionados: GastaCustoProps, acao: Acao) => void } = {
     // Sacar
     1: (valoresSelecionados) => {
-        const extremidadeSelecionada = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => extremidade.id === valoresSelecionados['idExtremidade']!)!;
+        // const extremidadeSelecionada = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => extremidade.id === valoresSelecionados['idExtremidade']!)!;
 
-        extremidadeSelecionada.empunhar(valoresSelecionados['idItem']!);
+        // extremidadeSelecionada.empunhar(valoresSelecionados['idItem']!);
+
+        const extremidadeLivre = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => !extremidade.estaOcupada);
+
+        extremidadeLivre!.empunhar(valoresSelecionados['idItem']!);
     },
 
     // Guardar

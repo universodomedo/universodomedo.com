@@ -25,6 +25,8 @@ export class NomeItem {
             this.customizado = padrao;
         }
     }
+
+    get nomeExibicao(): string { return this.customizado || this.padrao }
 }
 
 export class Item {
@@ -71,9 +73,11 @@ export class Item {
     get nomeExibicaoOption(): string { return this.nome.customizado };
     get estaEmpunhado(): boolean { return !!this.idExtremidade; }
 
+    // eu n sei pq eu criei os outros
+    get nomeDisplay(): string { return this.nome.nomeExibicao }
+
     adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this._buffs, buffParams), this) };
     adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }
-
 
     ativarBuffs = (): void => {
         if (!this.precisaEstarEmpunhado) {
@@ -117,13 +121,16 @@ export class Item {
     get tooltipPropsGenerico(): TooltipProps {
         return {
             caixaInformacao: {
-                cabecalho: [
-                    { tipo: 'titulo', conteudo: this.nome.customizado },
-                    { tipo: 'subtitulo', conteudo: this.nome.temNomeCustomizado ? this.nome.padrao : '' },
-                ],
-                corpo: [
-                    { tipo: 'texto', conteudo: `Categoria ${this.categoria} | ${this.peso} ${pluralize(this.peso, 'Espaço')}` },
-                ],
+                principal: { titulo: this.nomeDisplay },
+                detalhes: {
+                    cabecalho: [
+                        { tipo: 'titulo', conteudo: this.nome.customizado },
+                        { tipo: 'subtitulo', conteudo: this.nome.temNomeCustomizado ? this.nome.padrao : '' },
+                    ],
+                    corpo: [
+                        { tipo: 'texto', conteudo: `Categoria ${this.categoria} | ${this.peso} ${pluralize(this.peso, 'Espaço')}` },
+                    ],
+                },
             },
             iconeCustomizado: {
                 corDeFundo: (this.idExtremidade ? '#00000000' : '#DDDDDD'),
@@ -209,17 +216,20 @@ export class ItemArma extends Item {
 
         return {
             caixaInformacao: {
-                cabecalho: tooltipPropsSuper.caixaInformacao.cabecalho,
-                corpo: [
-                    { tipo: 'texto', conteudo: `Dano: ${this.detalhesArma.danoMinimo} - ${this.detalhesArma.dano}` },
-                    { tipo: 'texto', conteudo: `Empunhado com ${this.detalhesArma.numeroExtremidadesUtilizadas} ${pluralize(this.detalhesArma.numeroExtremidadesUtilizadas, 'Extremidade')}` },
-                    ...tooltipPropsSuper.caixaInformacao.corpo,
-                    { tipo: 'separacao' },
-                    ...this.acoes?.map(acao => ({
-                        tipo: 'texto' as const,
-                        conteudo: acao.nomeAcao,
-                    })) || []
-                ],
+                principal: { titulo: this.nome.nomeExibicao },
+                detalhes: {
+                    cabecalho: tooltipPropsSuper.caixaInformacao.detalhes.cabecalho,
+                    corpo: [
+                        { tipo: 'texto', conteudo: `Dano: ${this.detalhesArma.danoMinimo} - ${this.detalhesArma.dano}` },
+                        { tipo: 'texto', conteudo: `Empunhado com ${this.detalhesArma.numeroExtremidadesUtilizadas} ${pluralize(this.detalhesArma.numeroExtremidadesUtilizadas, 'Extremidade')}` },
+                        ...tooltipPropsSuper.caixaInformacao.detalhes.corpo!,
+                        { tipo: 'separacao' },
+                        ...this.acoes?.map(acao => ({
+                            tipo: 'texto' as const,
+                            conteudo: acao.nomeAcao,
+                        })) || []
+                    ],
+                },
             },
             iconeCustomizado: tooltipPropsSuper.iconeCustomizado,
             corTooltip: tooltipPropsSuper.corTooltip,
@@ -271,14 +281,17 @@ export class ItemEquipamento extends Item {
 
         return {
             caixaInformacao: {
-                cabecalho: tooltipPropsSuper.caixaInformacao.cabecalho,
-                corpo: [
-                    ...this.buffs?.map(buff => ({
-                        tipo: 'texto' as const,
-                        conteudo: `+${buff.valor} ${buff.refBuff.nome}${this.precisaEstarEmpunhado ? ` enquanto Empunhado` : ''}`,
-                    })) || [],
-                    ...tooltipPropsSuper.caixaInformacao.corpo,
-                ],
+                principal: { titulo: this.nome.nomeExibicao },
+                detalhes : {
+                    cabecalho: tooltipPropsSuper.caixaInformacao.detalhes.cabecalho,
+                    corpo: [
+                        ...this.buffs?.map(buff => ({
+                            tipo: 'texto' as const,
+                            conteudo: `+${buff.valor} ${buff.refBuff.nome}${this.precisaEstarEmpunhado ? ` enquanto Empunhado` : ''}`,
+                        })) || [],
+                        ...tooltipPropsSuper.caixaInformacao.detalhes.corpo!,
+                    ],
+                },
             },
             iconeCustomizado: tooltipPropsSuper.iconeCustomizado,
             corTooltip: tooltipPropsSuper.corTooltip,
@@ -318,8 +331,11 @@ export class ItemConsumivel extends Item {
 
         return {
             caixaInformacao: {
-                cabecalho: tooltipPropsSuper.caixaInformacao.cabecalho,
-                corpo: [],
+                principal: tooltipPropsSuper.caixaInformacao.principal,
+                detalhes: {
+                    cabecalho: tooltipPropsSuper.caixaInformacao.detalhes.cabecalho,
+                    corpo: [],
+                }
             },
             iconeCustomizado: tooltipPropsSuper.iconeCustomizado,
             corTooltip: tooltipPropsSuper.corTooltip,
@@ -332,8 +348,11 @@ export class ItemConsumivel extends Item {
 
         return {
             caixaInformacao: {
-                cabecalho: tooltipPropsSuper.caixaInformacao.cabecalho,
-                corpo: [],
+                principal: tooltipPropsSuper.caixaInformacao.principal,
+                detalhes: {
+                    cabecalho: tooltipPropsSuper.caixaInformacao.detalhes.cabecalho,
+                    corpo: [],
+                },
             },
             iconeCustomizado: tooltipPropsSuper.iconeCustomizado,
             corTooltip: tooltipPropsSuper.corTooltip,
@@ -376,13 +395,16 @@ export class ItemComponente extends Item {
 
         return {
             caixaInformacao: {
-                cabecalho: [
-                    ...tooltipPropsSuper.caixaInformacao.cabecalho,
-                    ...caixaInformacaoProps.cabecalho,
-                ],
-                corpo: [
-                    ...caixaInformacaoProps.corpo,
-                ]
+                principal: tooltipPropsSuper.caixaInformacao.principal,
+                detalhes: {
+                    cabecalho: [
+                        ...tooltipPropsSuper.caixaInformacao.detalhes.cabecalho || [],
+                        ...caixaInformacaoProps.detalhes.cabecalho || [],
+                    ],
+                    corpo: [
+                        ...caixaInformacaoProps.detalhes.corpo || [],
+                    ]
+                }
             },
             iconeCustomizado: tooltipPropsSuper.iconeCustomizado,
             corTooltip: tooltipPropsSuper.corTooltip,
@@ -402,13 +424,16 @@ export class ItemComponente extends Item {
 
         return {
             caixaInformacao: {
-                cabecalho: [
-                    ...tooltipPropsSuper.caixaInformacao.cabecalho,
-                    ...caixaInformacaoProps.cabecalho,
-                ],
-                corpo: [
-                    ...caixaInformacaoProps.corpo,
-                ]
+                principal: tooltipPropsSuper.caixaInformacao.principal,
+                detalhes: {
+                    cabecalho: [
+                        ...tooltipPropsSuper.caixaInformacao.detalhes.cabecalho || [],
+                        ...caixaInformacaoProps.detalhes.cabecalho || [],
+                    ],
+                    corpo: [
+                        ...caixaInformacaoProps.detalhes.corpo || [],
+                    ],
+                }
             },
             iconeCustomizado: tooltipPropsSuper.iconeCustomizado,
             corTooltip: tooltipPropsSuper.corTooltip,
@@ -425,13 +450,16 @@ export class ItemComponente extends Item {
         }, { pesoTotal: 0, usosTotais: 0 });
 
         return {
-            cabecalho: [
-                { tipo: 'subtitulo', conteudo: `${items.length} ${pluralize(items.length, 'Unidade')}` },
-            ],
-            corpo: [
-                { tipo: 'texto', conteudo: `${usosTotais} ${pluralize(usosTotais, 'Uso')}` },
-                { tipo: 'texto', conteudo: `Categoria ${items[0].categoria} | ${pesoTotal} ${pluralize(pesoTotal, 'Espaço')}` },
-            ],
+            principal: { titulo: '' },
+            detalhes: {
+                cabecalho: [
+                    { tipo: 'subtitulo', conteudo: `${items.length} ${pluralize(items.length, 'Unidade')}` },
+                ],
+                corpo: [
+                    { tipo: 'texto', conteudo: `${usosTotais} ${pluralize(usosTotais, 'Uso')}` },
+                    { tipo: 'texto', conteudo: `Categoria ${items[0].categoria} | ${pesoTotal} ${pluralize(pesoTotal, 'Espaço')}` },
+                ],
+            }
         }
     }
 

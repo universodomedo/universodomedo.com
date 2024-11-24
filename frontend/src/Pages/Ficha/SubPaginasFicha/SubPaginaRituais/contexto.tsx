@@ -40,7 +40,7 @@ export const ContextoAbaRituaisProvider = ({ children }: { children: React.React
         {
             tituloMenu: 'Configurações', itensMenu: [
                 { tituloItem: 'Mostrar Filtros', tipoItem: 'CheckboxItem', checked: mostrarFiltros, funcItem: toggleMostrarFiltros },
-                { tituloItem: 'Mostrar Nome Ações', tipoItem: 'CheckboxItem', checked: mostrarEtiquetas, funcItem: toggleMostrarEtiquetas }
+                { tituloItem: 'Mostrar Nome dos Rituais', tipoItem: 'CheckboxItem', checked: mostrarEtiquetas, funcItem: toggleMostrarEtiquetas }
             ]
         }
     ];

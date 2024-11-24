@@ -34,4 +34,6 @@ export class Extremidade {
         this.refItem = undefined;
         FichaHelper.getInstance().personagem.onUpdate();
     }
+
+    get estaOcupada(): boolean { return this.idItemEmpunhado !== undefined; }
 }

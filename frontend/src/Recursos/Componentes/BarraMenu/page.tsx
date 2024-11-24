@@ -60,11 +60,11 @@ function BarraMenuObjetoMenuSeparador() {
 function BarraMenuObjetoMenuCheckboxItem({ children, checked, onCheckedChange }: { children: ReactNode, checked: boolean, onCheckedChange: (checked:boolean) => void; }) {
     return (
         <Menubar.CheckboxItem className={style.objeto_menu_checkboxitem} checked={checked} onCheckedChange={onCheckedChange}>
-            {children}
-            
             <Menubar.ItemIndicator className={style.checkbox_indicator}>
                 <CheckIcon />
             </Menubar.ItemIndicator>
+
+            {children}
         </Menubar.CheckboxItem>
     )
 }

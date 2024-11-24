@@ -41,7 +41,7 @@ export const ContextoAbaHabilidadesProvider = ({ children }: { children: React.R
         {
             tituloMenu: 'Configurações', itensMenu: [
                 { tituloItem: 'Mostrar Filtros', tipoItem: 'CheckboxItem', checked: mostrarFiltros, funcItem: toggleMostrarFiltros },
-                { tituloItem: 'Mostrar Nome Ações', tipoItem: 'CheckboxItem', checked: mostrarEtiquetas, funcItem: toggleMostrarEtiquetas }
+                { tituloItem: 'Mostrar Nome das Habilidades', tipoItem: 'CheckboxItem', checked: mostrarEtiquetas, funcItem: toggleMostrarEtiquetas }
             ]
         }
     ];

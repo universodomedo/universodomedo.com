@@ -1,3 +1,15 @@
+.embrulho_icone {
+    display: flex;
+    flex-direction: column;
+    gap: .5vh;
+    align-items: center;
+    pointer-events: none;
+}
+
+.embrulho_icone h3 {
+    margin: 0
+}
+
 .icones_itens {
     display: inline-block;
     position: relative;
@@ -6,6 +18,7 @@
     border-radius: 5%;
     box-shadow: inset 0px 0px 9px 2px #85858555;
     padding: 2%;
+    pointer-events: auto;
 }
 
 .icones_itens img {

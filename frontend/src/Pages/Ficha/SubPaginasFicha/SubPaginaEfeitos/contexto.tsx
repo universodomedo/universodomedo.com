@@ -40,7 +40,7 @@ export const ContextoAbaEfeitosProvider = ({ children }: { children: React.React
         {
             tituloMenu: 'Configurações', itensMenu: [
                 { tituloItem: 'Mostrar Filtros', tipoItem: 'CheckboxItem', checked: mostrarFiltros, funcItem: toggleMostrarFiltros },
-                { tituloItem: 'Mostrar Nome de Efeitos', tipoItem: 'CheckboxItem', checked: mostrarEtiquetas, funcItem: toggleMostrarEtiquetas },
+                { tituloItem: 'Mostrar Nome dos Efeitos', tipoItem: 'CheckboxItem', checked: mostrarEtiquetas, funcItem: toggleMostrarEtiquetas },
             ]
         }
     ];

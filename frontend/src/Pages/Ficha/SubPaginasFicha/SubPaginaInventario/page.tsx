@@ -17,7 +17,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
   const { stopLoading } = useLoading();
   const dispatch = useDispatch();
 
-  const { mostrarFiltros, mostrarEtiquetas } = useContextoAbaInventario();
+  const { mostrarFiltros, mostrarEtiquetas, mostrarBarras } = useContextoAbaInventario();
 
   const itensEmpunhados = inventarioPersonagem.agrupamento.filter(item => item.estaEmpunhado);
   const itensGuardados = inventarioPersonagem.agrupamento.filter(item => !item.estaEmpunhado);
@@ -31,29 +31,31 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
   }
 
   const renderItem = (item: Item, index: number) => (
-    <IconeItem key={index} quantidadeAgrupada={item.tooltipPropsAgrupado.numeroUnidades!} props={item.tooltipPropsAgrupado.iconeCustomizado!} onClick={() => clickItem(item)} />
+    <IconeItem key={index} mostrarEtiquetas={mostrarEtiquetas} quantidadeAgrupada={item.tooltipPropsAgrupado.numeroUnidades!} props={item.tooltipPropsAgrupado} onClick={() => clickItem(item)} />
   );
 
   return (
     <div className={style.conteudo_inventario}>
-      <div className={style.inventario_maximos}>
-        <BarraEstatisticaDanificavel titulo={'Espaços'} valorAtual={inventarioPersonagem.espacosUsados} valorMaximo={estatisticasBuffaveis.espacoInventario.espacoTotal} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
-        <div className={style.inventario_categoria}>
-          {estatisticasBuffaveis.gerenciadorEspacoCategoria.espacosCategoria.map((espacoCategoria, index) => (
-            <div key={index} className={style.barra_categoria}>
-              <BarraEstatisticaDanificavel titulo={espacoCategoria.nomeCategoria} valorAtual={estatisticasBuffaveis.gerenciadorEspacoCategoria.numeroItensCategoria(espacoCategoria.valorCategoria)} valorMaximo={espacoCategoria.maximoEspacosCategoria} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
-            </div>
-          ))}
+      {mostrarBarras && (
+        <div className={style.inventario_maximos}>
+          <BarraEstatisticaDanificavel titulo={'Espaços'} valorAtual={inventarioPersonagem.espacosUsados} valorMaximo={estatisticasBuffaveis.espacoInventario.espacoTotal} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
+          <div className={style.inventario_categoria}>
+            {estatisticasBuffaveis.gerenciadorEspacoCategoria.espacosCategoria.map((espacoCategoria, index) => (
+              <div key={index} className={style.barra_categoria}>
+                <BarraEstatisticaDanificavel titulo={espacoCategoria.nomeCategoria} valorAtual={estatisticasBuffaveis.gerenciadorEspacoCategoria.numeroItensCategoria(espacoCategoria.valorCategoria)} valorMaximo={espacoCategoria.maximoEspacosCategoria} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-{/* 
-      {estatisticasBuffaveis.extremidades.length > 0 && (
+      )}
+
+      {/* {estatisticasBuffaveis.extremidades.length > 0 && (
         <div className={style.container_extremidades}>
           {estatisticasBuffaveis.extremidades.map((extremidade, index) => (
             <div key={index} className={style.extremidade}>
               <h1>Extremidade {extremidade.id}</h1>
               {extremidade.refItem ? (
-                <IconeItem key={index} quantidadeAgrupada={extremidade.refItem.tooltipPropsSingular.numeroUnidades!} props={extremidade.refItem.tooltipPropsSingular.iconeCustomizado!} onClick={() => clickItem(extremidade.refItem!)} />
+                <IconeItem key={index} mostrarEtiquetas={mostrarEtiquetas} quantidadeAgrupada={extremidade.refItem.tooltipPropsSingular.numeroUnidades!} props={extremidade.refItem.tooltipPropsSingular!} onClick={() => clickItem(extremidade.refItem!)} />
               ) :
                 <div className={style.icones_extremidade_vazia}></div>
               }

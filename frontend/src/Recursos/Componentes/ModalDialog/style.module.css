@@ -35,6 +35,7 @@
 
     font-family: 'Crimson Pro', serif;
     font-variant: small-caps;
+	gap: 1vh;
 }
 
 .dialog_conteudo:focus { outline: none; }

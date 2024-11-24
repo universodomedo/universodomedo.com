@@ -55,3 +55,17 @@
     font-size: 1.5rem;
     margin-top: .5vh;
 }
+
+.opcao_acao {
+    display: flex;
+    flex-direction: column;
+}
+
+.opcao_acao h2 {
+    margin: 0 auto;
+}
+
+.botao_principal {
+    padding: 1vh .7vw;
+    align-self: center;
+}
