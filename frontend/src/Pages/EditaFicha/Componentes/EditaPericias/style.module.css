@@ -17,6 +17,18 @@
     justify-content: space-evenly;
 }
 
+.atributos_e_pericias {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+}
+
+.atributo_agrupa_pericias {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
 .conjunto_pericias {
     display: flex;
     flex-direction: row;
@@ -30,7 +42,16 @@
     flex-direction: row;
     align-items: center;
     text-align: center;
-    margin: 0 1%;
+    gap: 2vw;
+    row-gap: 2vh;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin: 0 auto;
+}
+
+.acoes_pericia {
+    display: flex;
+    flex-direction: row;
 }
 
 .corpo_pericia {

@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
 
-import { InfoCircledIcon } from '@radix-ui/react-icons'
+import { InfoCircledIcon, CheckIcon } from '@radix-ui/react-icons'
 // #endregion
 
 const JanelaAvisos = () => {
@@ -22,7 +22,10 @@ const JanelaAvisos = () => {
                 {ganhosNex.etapa.mensagensEtapa.length > 0 && (
                     <div className={style.mensagens_janela_avisos}>
                         {ganhosNex.etapa.mensagensEtapa.map((msg, index) => (
-                            <p key={index}>{`${msg}`}</p>
+                            <div className={style.mensagem_notificacao}>
+                                <CheckIcon />
+                                <p key={index}>{`${msg}`}</p>
+                            </div>
                         ))}
                     </div>
                 )}

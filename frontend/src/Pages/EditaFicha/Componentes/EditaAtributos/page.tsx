@@ -1,8 +1,11 @@
 // #region Imports
 import style from './style.module.css';
+import { useState } from 'react';
 
 import { useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
-import { GanhoIndividualNexAtributo } from 'Types/classes/index.ts';
+import { AtributoEmGanho, GanhoIndividualNexAtributo } from 'Types/classes/index.ts';
+
+import TooltipPersistente from 'Recursos/Componentes/HoverCard/page.tsx';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -35,10 +38,7 @@ const page = () => {
             {ganhoAtributo.atributos.map((atributo, index) => (
                 <div key={index} className={style.editar_atributo}>
                     <button onClick={() => {alteraValor(atributo.refAtributo.id, -1)}} disabled={!atributo.estaMaiorQueInicial && ganhoAtributo.ganhosAtributo.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
-                    <div className={style.corpo_atributo}>
-                        <h2>{atributo.refAtributo.nome}</h2>
-                        <h2>{atributo.valorAtual}</h2>
-                    </div>
+                    <CorpoAtributo atributo={atributo} />
                     <button onClick={() => {alteraValor(atributo.refAtributo.id, +1)}} disabled={atributo.estaEmValorMaximo || ganhoAtributo.ganhosAtributo.ganhos.valorZerado}><FontAwesomeIcon icon={faPlus} /></button>
                 </div>
             ))}
@@ -50,6 +50,26 @@ const page = () => {
             </div>
         </div>
     );
+}
+
+const CorpoAtributo = ({ atributo }: { atributo: AtributoEmGanho }) => {
+    const [openTooltip, setOpenTooltip] = useState(false);
+    
+    return (
+        <div className={style.corpo_atributo}>
+            <TooltipPersistente open={openTooltip} onOpenChange={setOpenTooltip}>
+                <TooltipPersistente.Trigger><h2>{atributo.refAtributo.nome}</h2></TooltipPersistente.Trigger>
+
+                <TooltipPersistente.Content>
+                    <>
+                        <h2>{atributo.refAtributo.nome}</h2>
+                        <p>{atributo.refAtributo.descricao}</p>
+                    </>
+                </TooltipPersistente.Content>
+            </TooltipPersistente>
+            <h2>{atributo.valorAtual}</h2>
+        </div>
+    )
 }
 
 export default page;

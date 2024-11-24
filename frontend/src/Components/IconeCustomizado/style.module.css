@@ -3,6 +3,7 @@
     flex-direction: column;
     gap: .5vh;
     align-items: center;
+    pointer-events: none;
 }
 
 .embrulho_icone h3 {
@@ -19,6 +20,7 @@
     background-repeat: no-repeat;
     background-position: center;
     cursor: pointer;
+    pointer-events: auto;
 }
 
 .icone:hover {

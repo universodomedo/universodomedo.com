@@ -53,3 +53,8 @@
 .mensagens_janela_avisos p {
     margin: 0;
 }
+
+.mensagem_notificacao {
+    display: flex;
+    flex-direction: row;
+}

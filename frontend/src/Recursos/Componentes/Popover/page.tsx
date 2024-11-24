@@ -18,10 +18,6 @@ const PopoverComponente: React.FC<{ trigger: () => ReactNode; content: (close: (
                 <Popover.Portal>
                     <Popover.Content className={style.popover_content} sideOffset={5}>
                         {content(() => setOpen(false))}
-                        {/* <Popover.Close className={style.popover_close} aria-label="Close">
-                            <Cross2Icon />
-                        </Popover.Close>
-                        <Popover.Arrow className={style.popover_arrow} /> */}
                     </Popover.Content>
                 </Popover.Portal>
             </div>

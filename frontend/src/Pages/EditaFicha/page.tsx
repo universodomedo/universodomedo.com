@@ -149,6 +149,7 @@ const page = () => {
                             <button onClick={proximo} disabled={!ganhosNex.podeAvancarEtapa} className={style.prosseguir}>{ganhosNex.textoBotaoProximo}</button>
                         </div>
                     </div>
+                    
                     <JanelaNotificacao />
                 </FichaProvider>
             )}

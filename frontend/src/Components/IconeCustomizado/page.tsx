@@ -18,11 +18,9 @@ const page = ({ mostrarEtiquetas = true, tooltipProps, desabilitado, textoBotaoC
         return (
             <div className={style.embrulho_icone}>
                 {mostrarEtiquetas && (<h3>{tooltipProps.caixaInformacao.principal.titulo}</h3>)}
-                {/* <button className={style.botao_icone}> */}
-                    <Tooltip content={tooltipProps.caixaInformacao.principal.titulo}>
-                        <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${tooltipProps.iconeCustomizado?.svg})`, backgroundColor: tooltipProps.iconeCustomizado?.corDeFundo }}/>
-                    </Tooltip>
-                {/* </button> */}
+                <Tooltip content={tooltipProps.caixaInformacao.principal.titulo}>
+                    <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${tooltipProps.iconeCustomizado?.svg})`, backgroundColor: tooltipProps.iconeCustomizado?.corDeFundo }}/>
+                </Tooltip>
             </div>
         );
     }
@@ -65,7 +63,7 @@ const page = ({ mostrarEtiquetas = true, tooltipProps, desabilitado, textoBotaoC
     }
 
     return (
-        <PopoverComponente trigger={icone} content={conteudo}  />
+        <PopoverComponente trigger={icone} content={conteudo} />
     );
 }
 

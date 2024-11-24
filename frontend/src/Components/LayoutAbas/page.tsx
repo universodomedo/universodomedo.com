@@ -105,8 +105,6 @@ const JanelaConteudoAba = React.forwardRef<HTMLDivElement, { id: string; childre
                                 <BarraMenu.Trigger>{menu.tituloMenu}</BarraMenu.Trigger>
                                 <BarraMenu.Portal>
                                     {menu.itensMenu.map((itemMenu, indexItem) => {
-                                        console.log(itemMenu);
-
                                         if (itemMenu.tipoItem === 'CheckboxItem') {
                                             return (
                                                 <BarraMenu.CheckboxItem key={indexItem} checked={itemMenu.checked || false} onCheckedChange={itemMenu.funcItem} >

@@ -1,8 +1,11 @@
 // #region Imports
 import style from './style.module.css';
+import { useState } from 'react';
 
 import { useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
-import { GanhoIndividualNexAtributo, GanhoIndividualNexPericia } from 'Types/classes/index.ts';
+import { Atributo, GanhoIndividualNexPericia, PericiaEmGanho } from 'Types/classes/index.ts';
+
+import TooltipPersistente from 'Recursos/Componentes/HoverCard/page.tsx';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -11,8 +14,24 @@ import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 const page = () => {
     const { ganhosNex, atualizarFicha } = useFicha();
 
-    const ganhoAtributo = ganhosNex.ganhos.find(ganho => ganho instanceof GanhoIndividualNexAtributo)!;
     const ganhoPericia = ganhosNex.ganhos.find(ganho => ganho instanceof GanhoIndividualNexPericia)!;
+
+    const periciasAgrupadas = ganhoPericia.pericias.reduce((acc, pericia) => {
+        const atributo = pericia.refPericia.refAtributo;
+        const atributoId = atributo.id;
+    
+        if (!acc.some(group => group.atributo.id === atributoId)) {
+            acc.push({
+                atributo,
+                pericias: []
+            });
+        }
+    
+        const grupo = acc.find(group => group.atributo.id === atributoId);
+        grupo!.pericias.push(pericia);
+    
+        return acc;
+    }, [] as { atributo: Atributo; pericias: PericiaEmGanho[] }[]);
 
     const alteraValor = (idPericia:number, modificador:number) => {
         if (modificador > 0) {
@@ -62,20 +81,54 @@ const page = () => {
                     )}
                 </div>
 
-                <div className={style.conjunto_pericias}>
-                    {ganhoPericia.pericias.map((pericia, index) => (
-                        <div key={index} className={style.editar_pericia}>
-                            <button onClick={() => {alteraValor(pericia.refPericia.id, -1)}} disabled={pericia.estaEmValorMinimo && (ganhoPericia.deparaPericiaPatente(pericia)?.trocas.valorZerado ?? true)}><FontAwesomeIcon icon={faMinus} /></button>
-                            <div className={style.corpo_pericia}>
-                                <h2>{pericia.refPericia.nome}</h2>
-                                <h2>{pericia.refPatenteAtual.nome}</h2>
+                <div className={style.atributos_e_pericias}>
+                    {periciasAgrupadas.map((grupo, index) => (
+                        <div className={style.atributo_agrupa_pericias}>
+                            <h1>{grupo.atributo.nome}</h1>
+                            <div key={index} className={style.editar_pericia}>
+                                {grupo.pericias.map((pericia, index) => (
+                                    <div key={index} className={style.acoes_pericia}>
+                                        <button onClick={() => {alteraValor(pericia.refPericia.id, -1)}} disabled={pericia.estaEmValorMinimo && (ganhoPericia.deparaPericiaPatente(pericia)?.trocas.valorZerado ?? true)}><FontAwesomeIcon icon={faMinus} /></button>
+                                        <CorpoPericia pericia={pericia} />
+                                        <button onClick={() => {alteraValor(pericia.refPericia.id, +1)}} disabled={!ganhoPericia.temPontosParaEssaPatente(pericia)}><FontAwesomeIcon icon={faPlus} /></button>
+                                    </div>
+                                ))}
                             </div>
-                            <button onClick={() => {alteraValor(pericia.refPericia.id, +1)}} disabled={!ganhoPericia.temPontosParaEssaPatente(pericia)}><FontAwesomeIcon icon={faPlus} /></button>
                         </div>
                     ))}
                 </div>
+
+                {/* <div className={style.conjunto_pericias}>
+                    {ganhoPericia.pericias.map((pericia, index) => (
+                        <div key={index} className={style.editar_pericia}>
+                            <button onClick={() => {alteraValor(pericia.refPericia.id, -1)}} disabled={pericia.estaEmValorMinimo && (ganhoPericia.deparaPericiaPatente(pericia)?.trocas.valorZerado ?? true)}><FontAwesomeIcon icon={faMinus} /></button>
+                            <CorpoPericia pericia={pericia} />
+                            <button onClick={() => {alteraValor(pericia.refPericia.id, +1)}} disabled={!ganhoPericia.temPontosParaEssaPatente(pericia)}><FontAwesomeIcon icon={faPlus} /></button>
+                        </div>
+                    ))}
+                </div> */}
             </div>
         </>
+    );
+}
+
+const CorpoPericia = ({ pericia }: { pericia: PericiaEmGanho }) => {
+    const [openTooltip, setOpenTooltip] = useState(false);
+    
+    return (
+        <div className={style.corpo_pericia}>
+            <TooltipPersistente open={openTooltip} onOpenChange={setOpenTooltip}>
+                <TooltipPersistente.Trigger><h2>{pericia.refPericia.nome}</h2></TooltipPersistente.Trigger>
+
+                <TooltipPersistente.Content>
+                    <>
+                        <h2>{pericia.refPericia.nome}</h2>
+                        <p>{pericia.refPericia.descricao}</p>
+                    </>
+                </TooltipPersistente.Content>
+                <h2>{pericia.refPatenteAtual.nome}</h2>
+            </TooltipPersistente>
+        </div>
     );
 }
 
