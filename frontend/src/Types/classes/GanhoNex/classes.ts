@@ -1,6 +1,6 @@
 // #region Imports
 import React from 'react';
-import { RLJ_Ficha2, Atributo, Pericia, PatentePericia, dadosRitual, AvisoGanhoNex, ValidacoesGanhoNex, CondicaoGanhoNexComOperador, RegrasCondicaoGanhoNex, OperadorCondicao, CondicaoGanhoNex } from 'Types/classes/index.ts';
+import { RLJ_Ficha2, Atributo, Pericia, PatentePericia, dadosRitual, AvisoGanhoNex, ValidacoesGanhoNex, CondicaoGanhoNexComOperador, RegrasCondicaoGanhoNex, OperadorCondicao, CondicaoGanhoNex, TipoEstatisticaDanificavel, EstatisticaDanificavel } from 'Types/classes/index.ts';
 import { SingletonHelper } from "Types/classes_estaticas.tsx";
 
 import { CircleIcon } from '@radix-ui/react-icons';
@@ -10,6 +10,7 @@ export class GanhosNex {
     public ganhos: GanhoIndividualNex[] = [];
     public finalizando: boolean = false;
     public indexEtapa: number = 0;
+    public estatisticasDanificaveis: EstatisticaDanificavel[] = [];
 
     constructor(public dadosFicha: RLJ_Ficha2) { }
 
@@ -28,27 +29,6 @@ export class GanhosNex {
 
     }
 
-    // get pvAtualizado(): number {
-    //     return (
-    //         this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 1)!.valor! +
-    //         this.ganhos.reduce((acc, cur) => acc + cur.pvGanhoIndividual, 0)
-    //     );
-    // }
-
-    // get psAtualizado(): number {
-    //     return (
-    //         this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 2)!.valor! +
-    //         this.ganhos.reduce((acc, cur) => acc + cur.psGanhoIndividual, 0)
-    //     );
-    // }
-
-    // get peAtualizado(): number {
-    //     return (
-    //         this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 3)!.valor! +
-    //         this.ganhos.reduce((acc, cur) => acc + cur.peGanhoIndividual, 0)
-    //     );
-    // }
-
     get pvAtualizado(): number {
         const valorAtualizado = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 1)!.valor! + this.ganhos.reduce((acc, cur) => acc + cur.pvGanhoIndividual, 0);
 
@@ -57,7 +37,6 @@ export class GanhosNex {
 
     get psAtualizado(): number {
         const valorAtualizado = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 2)!.valor! + this.ganhos.reduce((acc, cur) => acc + cur.psGanhoIndividual, 0);
-
 
         return (this.dadosFicha.detalhes?.idNivel === 0 ? Math.ceil(valorAtualizado) : valorAtualizado);
     }
@@ -80,7 +59,6 @@ export class GanhosNex {
     avancaEtapa() { (this.estaNaUltimaEtapa) ? this.finalizando = true : this.indexEtapa++; this.etapa.validaCondicoes(); }
 
     get podeAvancarEtapa(): boolean { return this.etapa.finalizado && this.etapa.pontosObrigatoriosValidadosGerenico; }
-    // get podeAvancarEtapa(): boolean { return this.etapa.finalizado && this.etapa.pontosObrigatoriosValidados; }
 }
 
 export class TipoGanhoNex {
@@ -90,7 +68,14 @@ export class TipoGanhoNex {
     ) { }
 }
 
-export type GanhoEstatisticaPorPontoDeAtributo = { idEstatistica: number, valorPorPonto: number }
+export class GanhoEstatisticaPorPontoDeAtributo {
+    constructor(
+        private _idEstatistica: number,
+        public valorPorPonto: number
+    ) { }
+
+    get refEstatistica(): TipoEstatisticaDanificavel { return SingletonHelper.getInstance().tipo_estatistica_danificavel.find(estatistica_danificavel => estatistica_danificavel.id === this._idEstatistica)! };
+}
 
 export class ValorUtilizavel {
     public valorAtual: number;
@@ -145,7 +130,7 @@ export class AtributoEmGanho {
     }
 
     ganhoEstatistica(idEstatistica: number): number {
-        const ganho = this.ganhosEstatisticas.find(ganhoEstatistica => ganhoEstatistica.idEstatistica === idEstatistica);
+        const ganho = this.ganhosEstatisticas.find(ganhoEstatistica => ganhoEstatistica.refEstatistica.id === idEstatistica);
 
         return ganho ? ganho.valorPorPonto * this.valorAtual : 0;
     }
@@ -456,11 +441,15 @@ export class ControladorGanhos {
 
         return Object.entries(atributosDaClasse).map(([idAtributo, estatisticas]) => ({
             idAtributo: parseInt(idAtributo),
-            ganhos: Object.entries(estatisticas).map(([idEstatistica, { valor }]) => ({
-                idEstatistica: parseInt(idEstatistica),
-                valorPorPonto: valor,
-            })),
+            ganhos: Object.entries(estatisticas).map(([idEstatistica, { valor }]) => ( new GanhoEstatisticaPorPontoDeAtributo(parseInt(idEstatistica), valor))),
         }));
+        // return Object.entries(atributosDaClasse).map(([idAtributo, estatisticas]) => ({
+        //     idAtributo: parseInt(idAtributo),
+        //     ganhos: Object.entries(estatisticas).map(([idEstatistica, { valor }]) => ({
+        //         idEstatistica: parseInt(idEstatistica),
+        //         valorPorPonto: valor,
+        //     })),
+        // }));
     }
 
     obterGanhosGerais(idNivel: number, idClasse: number): GanhoIndividualNex[] {

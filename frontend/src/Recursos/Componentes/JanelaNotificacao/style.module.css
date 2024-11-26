@@ -31,6 +31,11 @@
     justify-content: center;
 }
 
+.janela_avisos_botao_vermelho {
+    color: red;
+    animation: heartbeat 2s infinite;
+}
+
 .janela_avisos_botao svg {
     width: 100%;
     height: 100%;
@@ -74,4 +79,13 @@
 .icone_notificacao svg {
     width: 100%;
     height: 100%;
+}
+
+@keyframes heartbeat {
+    0%, 25%, 50%, 100% {
+      transform: scale(1);
+    }
+    10%, 35% {
+      transform: scale(1.3);
+    }
 }

@@ -1,6 +1,23 @@
 @import "@radix-ui/colors/black-alpha.css";
 @import "@radix-ui/colors/violet.css";
 
+.tooltip_gatilho {
+	position: relative;
+	transition: transform 0.2s ease-in-out;
+ }
+ 
+ .tooltip_gatilho:hover {
+	transform: scale(1.05);
+ }
+ 
+ .tooltip_gatilho:hover::after {
+	content: '🔍';
+	position: absolute;
+	top: -8px;
+	right: -10px;
+	font-size: 0.8rem;
+ }
+
 .hover_card_conteudo {
     display: flex;
     flex-direction: column;

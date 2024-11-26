@@ -26,6 +26,45 @@ const page = () => {
         atualizarFicha();
     }
 
+    const CorpoAtributo = ({ atributo }: { atributo: AtributoEmGanho }) => {
+        const [openTooltip, setOpenTooltip] = useState(false);
+        
+        return (
+            <div className={style.corpo_atributo}>
+                <TooltipPersistente open={openTooltip} onOpenChange={setOpenTooltip}>
+                    <TooltipPersistente.Trigger><h2>{atributo.refAtributo.nome}</h2></TooltipPersistente.Trigger>
+    
+                    <TooltipPersistente.Content>
+                        <>
+                            <h2>{atributo.refAtributo.nome}</h2>
+                            <p>{atributo.refAtributo.descricao}</p>
+                            {atributo.ganhosEstatisticas.filter(atributo => atributo.valorPorPonto > 0).map((atributo, index) => (
+                                <div key={index} className={style.atributo_ganhos_estatisticas}>
+                                    <p>+ {atributo.valorPorPonto} {atributo.refEstatistica.nomeAbrev} por Ponto Atribuído</p>
+                                </div>
+                            ))}
+                        </>
+                    </TooltipPersistente.Content>
+                </TooltipPersistente>
+                <div className={style.valor_atributo}>
+                <button onClick={() => {alteraValor(atributo.refAtributo.id, -1)}} disabled={!atributo.estaMaiorQueInicial && ganhoAtributo.ganhosAtributo.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
+                    <h2>{atributo.valorAtual}</h2>
+                    <button onClick={() => {alteraValor(atributo.refAtributo.id, +1)}} disabled={atributo.estaEmValorMaximo || ganhoAtributo.ganhosAtributo.ganhos.valorZerado}><FontAwesomeIcon icon={faPlus} /></button>
+                </div>
+            </div>
+        )
+    }
+
+    const CorpoEstatistica = ({  }: {}) => {
+    // const CorpoEstatistica = ({ tipoEstatisticaDanificavel,  }: {}) => {
+        return (
+            <div className={style.visualizador_estatistica}>
+                <h2>P.V.</h2>
+                <h2>{Math.floor(ganhosNex.pvAtualizado)}</h2>
+            </div>
+        );
+    }
+
     return (
         <div className={style.editando_ficha_atributos}>
             <div className={style.atributo_contadores}>
@@ -35,13 +74,11 @@ const page = () => {
                 )}
             </div>
 
-            {ganhoAtributo.atributos.map((atributo, index) => (
-                <div key={index} className={style.editar_atributo}>
-                    <button onClick={() => {alteraValor(atributo.refAtributo.id, -1)}} disabled={!atributo.estaMaiorQueInicial && ganhoAtributo.ganhosAtributo.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
-                    <CorpoAtributo atributo={atributo} />
-                    <button onClick={() => {alteraValor(atributo.refAtributo.id, +1)}} disabled={atributo.estaEmValorMaximo || ganhoAtributo.ganhosAtributo.ganhos.valorZerado}><FontAwesomeIcon icon={faPlus} /></button>
-                </div>
-            ))}
+            <div className={style.atributos}>
+                {ganhoAtributo.atributos.map((atributo, index) => (
+                    <CorpoAtributo key={index} atributo={atributo} />
+                ))}
+            </div>
 
             <div className={style.editando_ficha_estatisticas}>
                 <div className={style.visualizador_estatistica}><h2>P.V.</h2><h2>{Math.floor(ganhosNex.pvAtualizado)}</h2></div>
@@ -50,26 +87,6 @@ const page = () => {
             </div>
         </div>
     );
-}
-
-const CorpoAtributo = ({ atributo }: { atributo: AtributoEmGanho }) => {
-    const [openTooltip, setOpenTooltip] = useState(false);
-    
-    return (
-        <div className={style.corpo_atributo}>
-            <TooltipPersistente open={openTooltip} onOpenChange={setOpenTooltip}>
-                <TooltipPersistente.Trigger><h2>{atributo.refAtributo.nome}</h2></TooltipPersistente.Trigger>
-
-                <TooltipPersistente.Content>
-                    <>
-                        <h2>{atributo.refAtributo.nome}</h2>
-                        <p>{atributo.refAtributo.descricao}</p>
-                    </>
-                </TooltipPersistente.Content>
-            </TooltipPersistente>
-            <h2>{atributo.valorAtual}</h2>
-        </div>
-    )
 }
 
 export default page;

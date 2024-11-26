@@ -14,7 +14,7 @@ const JanelaAvisos = () => {
 
     return (
         <div className={`${style.janela_avisos} ${!isOpen ? style.fechado : ''}`}>
-            <button onClick={toggleConsole} className={style.janela_avisos_botao}>
+            <button onClick={toggleConsole} className={`${style.janela_avisos_botao} ${!ganhosNex.podeAvancarEtapa ? style.janela_avisos_botao_vermelho: ''}`}>
                 <InfoCircledIcon/>
             </button>
             <div className={style.janela_avisos_conteudo}>

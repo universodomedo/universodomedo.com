@@ -7,7 +7,7 @@ import * as HoverCard from "@radix-ui/react-hover-card";
 
 export default function TooltipPersistente({ open, onOpenChange, children }: { open: boolean, onOpenChange: (open: boolean) => void, children: ReactNode }) {
     return (
-        <HoverCard.Root open={open} onOpenChange={onOpenChange} openDelay={700}>
+        <HoverCard.Root open={open} onOpenChange={onOpenChange} openDelay={700} closeDelay={200}>
             {children}
         </HoverCard.Root>
     );
@@ -15,7 +15,7 @@ export default function TooltipPersistente({ open, onOpenChange, children }: { o
 
 function HoverCardTrigger({ children }: { children: ReactNode }) {
     return (
-        <HoverCard.Trigger asChild>
+        <HoverCard.Trigger className={style.tooltip_gatilho} asChild>
             {children}
         </HoverCard.Trigger>
     );

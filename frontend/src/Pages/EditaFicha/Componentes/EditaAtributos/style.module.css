@@ -12,6 +12,15 @@
     justify-content: space-evenly;
 }
 
+.atributos {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 4vh;
+    padding: 2% 5%;
+}
+
 .editar_atributo {
     display: flex;
     flex-direction: row;
@@ -29,7 +38,18 @@
 .corpo_atributo {
     display: flex;
     flex-direction: column;
-    flex: 1;
+    font-size: 1.5rem;
+    flex: 0 1 calc(33%);
+    align-items: center;
+}
+
+.valor_atributo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    gap: 6%;
 }
 
 .editando_ficha_estatisticas {

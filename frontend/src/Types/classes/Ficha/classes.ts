@@ -1,5 +1,4 @@
 // #region Imports
-import { DetalhesItemArma, Item, NomeItem } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
