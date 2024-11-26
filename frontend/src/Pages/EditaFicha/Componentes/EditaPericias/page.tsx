@@ -82,10 +82,10 @@ const page = () => {
                 </div>
 
                 <div className={style.atributos_e_pericias}>
-                    {periciasAgrupadas.map((grupo, index) => (
-                        <div className={style.atributo_agrupa_pericias}>
+                    {periciasAgrupadas.map((grupo, indexGrupo) => (
+                        <div key={indexGrupo} className={style.atributo_agrupa_pericias}>
                             <h1>{grupo.atributo.nome}</h1>
-                            <div key={index} className={style.editar_pericia}>
+                            <div className={style.editar_pericia}>
                                 {grupo.pericias.map((pericia, index) => (
                                     <div key={index} className={style.acoes_pericia}>
                                         <button onClick={() => {alteraValor(pericia.refPericia.id, -1)}} disabled={pericia.estaEmValorMinimo && (ganhoPericia.deparaPericiaPatente(pericia)?.trocas.valorZerado ?? true)}><FontAwesomeIcon icon={faMinus} /></button>

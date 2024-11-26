@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
 
-import { InfoCircledIcon, CheckIcon } from '@radix-ui/react-icons'
+import { InfoCircledIcon } from '@radix-ui/react-icons'
 // #endregion
 
 const JanelaAvisos = () => {
@@ -15,16 +15,16 @@ const JanelaAvisos = () => {
     return (
         <div className={`${style.janela_avisos} ${!isOpen ? style.fechado : ''}`}>
             <button onClick={toggleConsole} className={style.janela_avisos_botao}>
-                <InfoCircledIcon width={'100%'} height={'100%'} />
+                <InfoCircledIcon/>
             </button>
             <div className={style.janela_avisos_conteudo}>
                 <h1>{ganhosNex.etapa.tituloEtapa}</h1>
-                {ganhosNex.etapa.mensagensEtapa.length > 0 && (
+                {ganhosNex.etapa.avisoGanhoNex.length > 0 && (
                     <div className={style.mensagens_janela_avisos}>
-                        {ganhosNex.etapa.mensagensEtapa.map((msg, index) => (
-                            <div className={style.mensagem_notificacao}>
-                                <CheckIcon />
-                                <p key={index}>{`${msg}`}</p>
+                        {ganhosNex.etapa.avisoGanhoNex.map((msg, index) => (
+                            <div key={index} className={style.mensagem_notificacao}>
+                                <div className={style.icone_notificacao}>{msg.icone}</div>
+                                <p>{`${msg.mensagem}`}</p>
                             </div>
                         ))}
                     </div>

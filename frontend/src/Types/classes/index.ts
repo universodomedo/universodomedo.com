@@ -3,6 +3,7 @@ export * from './Alcance';
 export * from './Alvo';
 export * from './Atributo';
 export * from './Buff';
+export * from './CondicaoGanhoNex';
 export * from './Custo';
 export * from './Dano';
 export * from './Defesa';
