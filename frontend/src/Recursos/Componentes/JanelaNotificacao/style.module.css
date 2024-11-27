@@ -1,13 +1,17 @@
 .janela_avisos {
     position: absolute;
+    display: flex;
+    flex-direction: column;
     top: 0;
     right: 0;
     width: 20%;
+    max-height: 30vh;
     background: #0B0D0E;
     color: white;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 5px 0 0 5px;
+    overflow-y: visible;
     transition: transform 0.3s ease;
 }
 
@@ -42,10 +46,13 @@
 }
 
 .janela_avisos_conteudo {
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
     gap: .7vh;
+    overflow: hidden;
+    flex: 1;
 }
 
 .janela_avisos_conteudo h1 {
@@ -57,7 +64,7 @@
     flex-direction: column;
     text-align: start;
     gap: .4vh;
-    overflow: auto;
+    /* overflow: auto; */
 }
 
 .mensagens_janela_avisos p {

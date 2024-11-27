@@ -20,7 +20,7 @@
 .atributos_e_pericias {
     display: flex;
     flex-direction: column;
-    gap: 3vh;
+    gap: 4vh;
 }
 
 .atributo_agrupa_pericias {
@@ -40,20 +40,23 @@
 .editar_pericia {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    text-align: center;
-    gap: 2vw;
-    row-gap: 2vh;
     flex-wrap: wrap;
-    justify-content: flex-start;
-    margin: 0 auto;
-}
-
-.acoes_pericia {
-    display: flex;
-    flex-direction: row;
+    padding: 0 5%;
+    row-gap: 2vh;
+    justify-content: center;
 }
 
 .corpo_pericia {
-    padding: 5%;
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 calc(33%);
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.botoes_pericia {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
 }

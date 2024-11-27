@@ -22,19 +22,15 @@ export class CondicaoGanhoNex {
 
         switch (this.regra) {
             case ('maior'):
-                console.log(`verificando se ${valorAVerificar} maior ${this.valorCondicao}`);
                 valido = valorAVerificar > this.valorCondicao;
                 break;
             case ('menor'):
-                console.log(`verificando se ${valorAVerificar} menor ${this.valorCondicao}`);
                 valido = valorAVerificar < this.valorCondicao;
                 break;
             case ('igual'):
-                console.log(`verificando se ${valorAVerificar} igual ${this.valorCondicao}`);
                 valido = valorAVerificar === this.valorCondicao;
                 break;
             case ('diferente'):
-                console.log(`verificando se ${valorAVerificar} diferente ${this.valorCondicao}`);
                 valido = valorAVerificar !== this.valorCondicao;
                 break;
         }
@@ -48,7 +44,7 @@ export class CondicaoGanhoNex {
 export class ValidacoesGanhoNex {
     constructor(
         public condicao: CondicaoGanhoNexComOperador,
-        public mensagem?: string,
+        public mensagem: string,
     ) { }
 
     get valido():boolean {

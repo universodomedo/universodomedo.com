@@ -3,7 +3,7 @@ import React from 'react';
 import { RLJ_Ficha2, Atributo, Pericia, PatentePericia, dadosRitual, AvisoGanhoNex, ValidacoesGanhoNex, CondicaoGanhoNexComOperador, RegrasCondicaoGanhoNex, OperadorCondicao, CondicaoGanhoNex, TipoEstatisticaDanificavel } from 'Types/classes/index.ts';
 import { SingletonHelper } from "Types/classes_estaticas.tsx";
 
-import { CircleIcon } from '@radix-ui/react-icons';
+import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
 // #endregion
 
 export class GanhosNex {
@@ -57,7 +57,7 @@ export class GanhosNex {
 
     avancaEtapa() { (this.estaNaUltimaEtapa) ? this.finalizando = true : this.indexEtapa++; this.etapa.validaCondicoes(); }
 
-    get podeAvancarEtapa(): boolean { return this.etapa.finalizado && this.etapa.pontosObrigatoriosValidadosGerenico; }
+    get podeAvancarEtapa(): boolean { return this.etapa.finalizado && this.etapa.pontosObrigatoriosValidadosGenerico; }
 }
 
 export class TipoGanhoNex {
@@ -167,7 +167,7 @@ function instanciaComArgumentos<T extends new (...args: any[]) => any>(
 }
 
 export class ControladorGanhos {
-    private mapaGanhoObrigatorio: { [idNivel: number]: { [idClasse: number]: { [Ctor: string]: { mensagem?: string; operador?: OperadorCondicao; condicoes: { idOpcao: number; regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[] } } } = {
+    private mapaGanhoObrigatorio: { [idNivel: number]: { [idClasse: number]: { [Ctor: string]: { mensagem: string; operador?: OperadorCondicao; condicoes: { idOpcao: number; regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[] } } } = {
         1: {
             1: {
                 GanhoIndividualNexPericia: [
@@ -190,6 +190,7 @@ export class ControladorGanhos {
                             { idOpcao: 2, regra: 'maior', valorCondicao: 1 },
                             { idOpcao: 5, regra: 'maior', valorCondicao: 1 },
                         ],
+                        mensagem: 'Você precisa ter Mais de 1 em Agilidade, Força ou Vigor',
                     },
                 ],
                 GanhoIndividualNexPericia: [
@@ -199,6 +200,7 @@ export class ControladorGanhos {
                             { idOpcao: 5, regra: 'maior', valorCondicao: 1 },
                             { idOpcao: 8, regra: 'maior', valorCondicao: 1 },
                         ],
+                        mensagem: 'Você precisa ser Treinado em Pontaria ou Luta',
                     },
                     {
                         operador: 'OU',
@@ -206,6 +208,7 @@ export class ControladorGanhos {
                             { idOpcao: 6, regra: 'maior', valorCondicao: 1 },
                             { idOpcao: 26, regra: 'maior', valorCondicao: 1 },
                         ],
+                        mensagem: 'Você precisa ser Treinado em Reflexo ou Fortitude',
                     }
                 ],
             },
@@ -217,6 +220,7 @@ export class ControladorGanhos {
                             { idOpcao: 3, regra: 'maior', valorCondicao: 1 },
                             { idOpcao: 4, regra: 'maior', valorCondicao: 1 },
                         ],
+                        mensagem: 'Você precisa ter Mais de 1 em Inteligência ou Presença',
                     },
                 ],
                 GanhoIndividualNexPericia: [
@@ -224,13 +228,14 @@ export class ControladorGanhos {
                         condicoes: [
                             { idOpcao: 26, regra: 'maior', valorCondicao: 1 },
                         ],
+                        mensagem: 'Você precisa ser Treinado em Ocultismo',
                     },
                 ],
             }
         }
     }
 
-    public obterGanhoObrigatorio(idNivel: number, idClasse: number): { [Ctor: string]: { operador?: OperadorCondicao; condicoes: { idOpcao: number; regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[] } {
+    public obterGanhoObrigatorio(idNivel: number, idClasse: number): { [Ctor: string]: { mensagem: string; operador?: OperadorCondicao; condicoes: { idOpcao: number; regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[] } {
         return this.mapaGanhoObrigatorio[idNivel]?.[idClasse] || {};
     }
 
@@ -550,15 +555,14 @@ export abstract class GanhoIndividualNex {
     public abstract tituloEtapa: string;
     public abstract get avisoGanhoNex(): AvisoGanhoNex[];
     public pontosObrigatorios: ValidacoesGanhoNex[] = [];
-    public abstract get pontosObrigatoriosValidados(): boolean;
 
-    public get pontosObrigatoriosValidadosGerenico(): boolean {
+    public get pontosObrigatoriosValidadosGenerico(): boolean {
         this.validaCondicoes();
 
         return this.pontosObrigatorios.every(pontoObrigatorio => pontoObrigatorio.valido);
     }
 
-    public validaCondicoes(): void {
+    public validaCondicoes(): void {        
         this.pontosObrigatorios.forEach(pontoObrigatorio => {
             pontoObrigatorio.condicao.condicoes.forEach(condicao => condicao.validaCondicao(this.obtemOpcaoAValidar(condicao.idOpcao)))
         });
@@ -575,7 +579,23 @@ export abstract class GanhoIndividualNex {
     abstract get peGanhoIndividual(): number;
     abstract get psGanhoIndividual(): number;
 
-    abstract carregaPontosObrigatorios(pontosObrigatorios: { operador?: OperadorCondicao; condicoes: { idOpcao: number, regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[]):void;
+    carregaPontosObrigatorios(pontosObrigatorios: { mensagem: string, operador?: OperadorCondicao; condicoes: { idOpcao: number, regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[]) {
+        this.pontosObrigatorios = pontosObrigatorios.map(ponto => {
+            return new ValidacoesGanhoNex(
+                {
+                    operador: ponto.operador,
+                    condicoes: ponto.condicoes.map(condicao => {
+                        return new CondicaoGanhoNex(
+                            condicao.idOpcao,
+                            condicao.regra,
+                            condicao.valorCondicao,
+                        );
+                    }),
+                },
+                ponto.mensagem
+            );
+        });
+    }
 }
 
 export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
@@ -583,43 +603,17 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
     public atributos: AtributoEmGanho[];
     public tituloEtapa = 'Ganho de Atributos';
 
-    carregaPontosObrigatorios(pontosObrigatorios: { operador?: OperadorCondicao; condicoes: { idOpcao: number, regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[]) {
-        this.pontosObrigatorios = pontosObrigatorios.map(ponto => {
-            return new ValidacoesGanhoNex({
-                operador: ponto.operador,
-                condicoes: ponto.condicoes.map(condicao => {
-                    return new CondicaoGanhoNex(
-                        condicao.idOpcao,
-                        condicao.regra,
-                        condicao.valorCondicao
-                    );
-                }),
-            });
-        });
-    }
-
-    get pontosObrigatoriosValidados(): boolean {
-        return true;
+    constructor(valoresGanhoETrocaProps: ValoresGanhoETrocaProps, protected valorMaxAtributo: number = 3) {
+        const ganhos = new ValoresGanhoETroca(valoresGanhoETrocaProps.ganhos, valoresGanhoETrocaProps.trocas);
+        super(1, ganhos.alterando);
+        this.ganhosAtributo = ganhos;
+        this.atributos = this._refFicha.atributos?.map(atributoBase => new AtributoEmGanho(SingletonHelper.getInstance().atributos.find(atributo => atributo.id === atributoBase.id)!, atributoBase.valor, valorMaxAtributo))!;
+        this.carregaGanhosEstatisticasAtributos();
     }
 
     obtemOpcaoAValidar(idOpcao: number): number {
         return this.atributos.find(atributo => atributo.refAtributo.id === idOpcao)!.valorAtual
     }
-    
-    // public get avisoGanhoNex() {
-    //     const mensagens: string[] = [];
-
-    //     mensagens.push(`O Valor Máximo de Atributo no momento é ${this.valorMaxAtributo}`);
-    //     mensagens.push(`O Valor Mínimo de Atributo é 0`);
-
-    //     if (this.ganhosAtributo.ganhos.valorInicial > 0)
-    //         mensagens.push(`Ganho de ${this.ganhosAtributo.ganhos.valorInicial} Atributos`);
-
-    //     if (this.ganhosAtributo.trocas.valorInicial > 0)
-    //         mensagens.push(`Troca Opcional de ${this.ganhosAtributo.trocas.valorInicial} Atributo`);
-
-    //     return mensagens;
-    // }
 
     public get avisoGanhoNex():AvisoGanhoNex[] {
         return [
@@ -628,7 +622,10 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
 
             ...(
                 this.ganhosAtributo.ganhos.valorInicial > 0
-                    ? [{ mensagem: `Ganho de ${this.ganhosAtributo.ganhos.valorInicial} Atributos`, icone: '' }]
+                    ? [{
+                        mensagem: `Ganho de ${this.ganhosAtributo.ganhos.valorInicial} Atributos`,
+                        icone: (this.ganhosAtributo.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
+                    }]
                     : []
             ),
 
@@ -639,24 +636,10 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
             ),
             
             ...this.pontosObrigatorios.map(ponto => ({
-                mensagem: '',
-                // mensagem: ponto.mensagem,
+                mensagem: ponto.mensagem!,
                 icone: ponto.iconeValidacao
             }))
         ];
-    }
-
-    // public get pontosObrigatoriosValidados():boolean {
-    //     console.log('pontosObrigatoriosValidados de GanhoIndividualNexAtributo');
-    //     return false;
-    // };
-
-    constructor(valoresGanhoETrocaProps: ValoresGanhoETrocaProps, protected valorMaxAtributo: number = 3) {
-        const ganhos = new ValoresGanhoETroca(valoresGanhoETrocaProps.ganhos, valoresGanhoETrocaProps.trocas);
-        super(1, ganhos.alterando);
-        this.ganhosAtributo = ganhos;
-        this.atributos = this._refFicha.atributos?.map(atributoBase => new AtributoEmGanho(SingletonHelper.getInstance().atributos.find(atributo => atributo.id === atributoBase.id)!, atributoBase.valor, valorMaxAtributo))!;
-        this.carregaGanhosEstatisticasAtributos();
     }
 
     carregaGanhosEstatisticasAtributos() {
@@ -701,73 +684,74 @@ export class GanhoIndividualNexPericia extends GanhoIndividualNex {
     public ganhosLivres: ValoresGanhoETroca;
     public pericias: PericiaEmGanho[];
     public tituloEtapa = 'Ganho de Perícias';
-    carregaPontosObrigatorios(pontosObrigatorios: { mensagem?: string, operador?: OperadorCondicao; condicoes: { idOpcao: number, regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[]) {
-        this.pontosObrigatorios = pontosObrigatorios.map(ponto => {
-            return new ValidacoesGanhoNex(
-                {
-                    operador: ponto.operador,
-                    condicoes: ponto.condicoes.map(condicao => {
-                        return new CondicaoGanhoNex(
-                            condicao.idOpcao,
-                            condicao.regra,
-                            condicao.valorCondicao,
-                        );
-                    }),
-                },
-                ponto.mensagem
-            );
-        });
-    }
-
-    get pontosObrigatoriosValidados(): boolean {
-        return true;
-    }
 
     obtemOpcaoAValidar(idOpcao: number): number {
         return this.pericias.find(pericia => pericia.refPericia.id === idOpcao)!.refPatenteAtual.id;
     }
 
-    // public get avisoGanhoNex() {
-    //     const mensagens: string[] = [];
-
-    //     if (this.ganhosTreinadas.ganhos.valorInicial > 0)
-    //         mensagens.push(`Ganho de ${this.ganhosTreinadas.ganhos.valorInicial} Perícias Treinadas`);
-    //     if (this.ganhosTreinadas.trocas.valorInicial > 0)
-    //         mensagens.push(`Troca Opcional de ${this.ganhosTreinadas.trocas.valorInicial} Perícia Treinada`);
-    //     if (this.ganhosVeteranas.ganhos.valorInicial > 0)
-    //         mensagens.push(`Ganho de ${this.ganhosVeteranas.ganhos.valorInicial} Perícias Veteranas`);
-    //     if (this.ganhosTreinadas.trocas.valorInicial > 0)
-    //         mensagens.push(`Troca Opcional de ${this.ganhosTreinadas.trocas.valorInicial} Perícias Treinadas`);
-
-    //     return mensagens;
-    // }
-
     public get avisoGanhoNex():AvisoGanhoNex[] {
         return [
-            { mensagem: `Teste`, icone: '' },
+
+            ...(
+                this.ganhosTreinadas.ganhos.valorInicial > 0
+                    ? [{
+                        mensagem: `Ganho de ${this.ganhosTreinadas.ganhos.valorInicial} Perícias Treinadas`,
+                        icone: (this.ganhosTreinadas.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
+                    }]
+                    : []
+            ),
+            ...(
+                this.ganhosVeteranas.ganhos.valorInicial > 0
+                    ? [{
+                        mensagem: `Ganho de ${this.ganhosVeteranas.ganhos.valorInicial} Perícias Veteranas`,
+                        icone: (this.ganhosVeteranas.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
+                    }]
+                    : []
+            ),
+            ...(
+                this.ganhosExperts.ganhos.valorInicial > 0
+                    ? [{
+                        mensagem: `Ganho de ${this.ganhosExperts.ganhos.valorInicial} Perícias Experts`,
+                        icone: (this.ganhosExperts.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
+                    }]
+                    : []
+            ),
+            ...(
+                this.ganhosLivres.ganhos.valorInicial > 0
+                    ? [{
+                        mensagem: `Ganho de ${this.ganhosLivres.ganhos.valorInicial} Perícias Livres`,
+                        icone: (this.ganhosLivres.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
+                    }]
+                    : []
+            ),
+
+            ...(
+                this.ganhosTreinadas.trocas.valorInicial > 0
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosTreinadas.trocas.valorInicial} Perícia Treinada`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    : []
+            ),
+            ...(
+                this.ganhosVeteranas.trocas.valorInicial > 0
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosVeteranas.trocas.valorInicial} Perícia Veterana`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    : []
+            ),
+            ...(
+                this.ganhosExperts.trocas.valorInicial > 0
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosExperts.trocas.valorInicial} Perícia Expert`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    : []
+            ),
+            ...(
+                this.ganhosLivres.trocas.valorInicial > 0
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosLivres.trocas.valorInicial} Perícia Livre`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    : []
+            ),
+
             ...this.pontosObrigatorios.map(ponto => ({
                 mensagem: ponto.mensagem!,
                 icone: ponto.iconeValidacao
             }))
         ];
     }
-
-    // public get pontosObrigatoriosValidados():boolean {
-    //     console.log('pontosObrigatoriosValidados de GanhoIndividualNexPericia');
-    //     return false;
-    // };
-
-    // public validaPontosObrigatorios = () => {
-    //     console.log('validaPontosObrigatorios de GanhoIndividualNexPericia');
-
-    //     this.pontosObrigatorios.forEach(pontoObrigatorio => {
-    //         if (!(this.pericias.find(pericia => pericia.refPericia.id === pontoObrigatorio.condicoes[0].idOpcao)?.idPatenteAtual === 1)) {
-    //             return false;
-    //         }
-    //     });
-
-    //     return true;
-    // };
 
     constructor(valoresGanhoETrocaPropsTreinadas: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsVeteranas: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsExperts: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsLivres: ValoresGanhoETrocaProps) {
         const ganhosTreinadas = new ValoresGanhoETroca(valoresGanhoETrocaPropsTreinadas.ganhos, valoresGanhoETrocaPropsTreinadas.trocas);
@@ -855,21 +839,9 @@ export class GanhoIndividualNexEstatisticaFixa extends GanhoIndividualNex {
     public tituloEtapa = 'Ganho de Estatísticas';
     public avisoGanhoNex = [];
 
-    carregaPontosObrigatorios(pontosObrigatorios: { operador?: OperadorCondicao; condicoes: { idOpcao: number, regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[]) {
-    
-    }
-
-    get pontosObrigatoriosValidados(): boolean {
-        return true;
-    }
-
     obtemOpcaoAValidar(idOpcao: number): number {
         return 0;
     }
-    // public get pontosObrigatoriosValidados():boolean {
-    //     console.log('pontosObrigatoriosValidados de GanhoIndividualNexEstatisticaFixa');
-    //     return false;
-    // };
 
     constructor(ganhosEstatisticaProps: GanhosEstatisticaProps) {
         super(3, ganhosEstatisticaProps.pv > 0 || ganhosEstatisticaProps.ps > 0 || ganhosEstatisticaProps.pe > 0);
@@ -887,26 +859,22 @@ export class GanhoIndividualNexEstatisticaFixa extends GanhoIndividualNex {
 export class GanhoIndividualNexEscolhaClasse extends GanhoIndividualNex {
     public idOpcaoEscolhida: number | undefined;
     public tituloEtapa = 'Escolha de Classe';
-    public avisoGanhoNex = [];
 
-    carregaPontosObrigatorios(pontosObrigatorios: { operador?: OperadorCondicao; condicoes: { idOpcao: number, regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[]) {
-    
+    constructor(escolha: boolean = false) {
+        super(4, escolha);
     }
 
-    get pontosObrigatoriosValidados(): boolean {
-        return true;
+    public get avisoGanhoNex():AvisoGanhoNex[] {
+        return [
+            {
+                mensagem: `Você precisa escolher sua Classe`,
+                icone: (this.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } })),
+            },
+        ];
     }
 
     obtemOpcaoAValidar(idOpcao: number): number {
         return 0;
-    }
-    // public get pontosObrigatoriosValidados():boolean {
-    //     console.log('pontosObrigatoriosValidados de GanhoIndividualNexEscolhaClasse');
-    //     return false;
-    // };
-
-    constructor(escolha: boolean = false) {
-        super(4, escolha);
     }
 
     setIdEscolhido(id: number) { this.idOpcaoEscolhida = id; }
@@ -923,21 +891,9 @@ export class GanhoIndividualNexRitual extends GanhoIndividualNex {
     public tituloEtapa = 'Ganho de Rituais';
     public avisoGanhoNex = [];
 
-    carregaPontosObrigatorios(pontosObrigatorios: { operador?: OperadorCondicao; condicoes: { idOpcao: number, regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[]) {
-    
-    }
-
-    get pontosObrigatoriosValidados(): boolean {
-        return true;
-    }
-
     obtemOpcaoAValidar(idOpcao: number): number {
         return 0;
     }
-    // public get pontosObrigatoriosValidados():boolean {
-    //     console.log('pontosObrigatoriosValidados de GanhoIndividualNexRitual');
-    //     return false;
-    // };
 
     constructor(ganhoRitualProps: GanhoRitualProps) {
         super(5, ganhoRitualProps.numeroDeRituais > 0);

@@ -62,7 +62,10 @@
 .visualizador_estatistica {
     display: flex;
     flex-direction: column;
-    border: 1px white solid;
     gap: .6vh;
     padding: 1%;
+}
+
+.ganhos_estatistica_por_atributo {
+    margin: 0;
 }

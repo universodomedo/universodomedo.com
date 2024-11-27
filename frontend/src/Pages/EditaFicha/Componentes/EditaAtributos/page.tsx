@@ -39,16 +39,16 @@ const page = () => {
                         <>
                             <h2>{atributo.refAtributo.nome}</h2>
                             <p>{atributo.refAtributo.descricao}</p>
-                            {atributo.ganhosEstatisticas.filter(atributo => atributo.valorPorPonto > 0).map((atributo, index) => (
-                                <div key={index} className={style.atributo_ganhos_estatisticas}>
-                                    <p>+ {atributo.valorPorPonto} {atributo.refEstatistica.nomeAbrev} por Ponto Atribuído</p>
-                                </div>
-                            ))}
+                            <div>
+                                {atributo.ganhosEstatisticas.filter(atributo => atributo.valorPorPonto > 0).map((atributo, index) => (
+                                    <p key={index} className={style.ganhos_estatistica_por_atributo}>+ {atributo.valorPorPonto.toFixed(1)} {atributo.refEstatistica.nomeAbrev} por Ponto Atribuído</p>
+                                ))}
+                            </div>
                         </>
                     </TooltipPersistente.Content>
                 </TooltipPersistente>
                 <div className={style.valor_atributo}>
-                <button onClick={() => {alteraValor(atributo.refAtributo.id, -1)}} disabled={!atributo.estaMaiorQueInicial && ganhoAtributo.ganhosAtributo.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
+                    <button onClick={() => {alteraValor(atributo.refAtributo.id, -1)}} disabled={!atributo.estaMaiorQueInicial && ganhoAtributo.ganhosAtributo.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
                     <h2>{atributo.valorAtual}</h2>
                     <button onClick={() => {alteraValor(atributo.refAtributo.id, +1)}} disabled={atributo.estaEmValorMaximo || ganhoAtributo.ganhosAtributo.ganhos.valorZerado}><FontAwesomeIcon icon={faPlus} /></button>
                 </div>

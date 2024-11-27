@@ -8,7 +8,7 @@
     overflow-y: auto;
 }
 
-.editando_ficha h1, .editando_ficha h2 {
+.editando_ficha h1, .editando_ficha h2, .editando_ficha h3 {
     margin: 0;
 }
 
@@ -84,7 +84,7 @@
 .visualizador_estatistica {
     display: flex;
     flex-direction: column;
-    border: 1px white solid;
+    /* border: 1px white solid; */
     gap: .6vh;
     padding: 1%;
 }
