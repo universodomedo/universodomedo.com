@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
 import { AtributoEmGanho, GanhoIndividualNexAtributo } from 'Types/classes/index.ts';
+import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import TooltipPersistente from 'Recursos/Componentes/HoverCard/page.tsx';
 
@@ -55,12 +56,23 @@ const page = () => {
         )
     }
 
-    const CorpoEstatistica = ({  }: {}) => {
-    // const CorpoEstatistica = ({ tipoEstatisticaDanificavel,  }: {}) => {
+    const CorpoEstatistica = ({ idEstatistica, valorAtualizado }: { idEstatistica: number, valorAtualizado: number }) => {
+        const [openTooltip, setOpenTooltip] = useState(false);
+        const estatistica = SingletonHelper.getInstance().tipo_estatistica_danificavel.find(estatistica => estatistica.id === idEstatistica)!;
+
         return (
             <div className={style.visualizador_estatistica}>
-                <h2>P.V.</h2>
-                <h2>{Math.floor(ganhosNex.pvAtualizado)}</h2>
+                <TooltipPersistente open={openTooltip} onOpenChange={setOpenTooltip}>
+                    <TooltipPersistente.Trigger><h2>{estatistica?.nomeAbrev}</h2></TooltipPersistente.Trigger>
+
+                    <TooltipPersistente.Content>
+                        <>
+                            <h2>{estatistica.nome}</h2>
+                            <p>{estatistica.descricao}</p>
+                        </>
+                    </TooltipPersistente.Content>
+                </TooltipPersistente>
+                <h2>{Math.floor(valorAtualizado)}</h2>
             </div>
         );
     }
@@ -81,9 +93,9 @@ const page = () => {
             </div>
 
             <div className={style.editando_ficha_estatisticas}>
-                <div className={style.visualizador_estatistica}><h2>P.V.</h2><h2>{Math.floor(ganhosNex.pvAtualizado)}</h2></div>
-                <div className={style.visualizador_estatistica}><h2>P.S.</h2><h2>{Math.floor(ganhosNex.psAtualizado)}</h2></div>
-                <div className={style.visualizador_estatistica}><h2>P.E.</h2><h2>{Math.floor(ganhosNex.peAtualizado)}</h2></div>
+                <CorpoEstatistica idEstatistica={1} valorAtualizado={ganhosNex.pvAtualizado} />
+                <CorpoEstatistica idEstatistica={2} valorAtualizado={ganhosNex.psAtualizado} />
+                <CorpoEstatistica idEstatistica={3} valorAtualizado={ganhosNex.peAtualizado} />
             </div>
         </div>
     );

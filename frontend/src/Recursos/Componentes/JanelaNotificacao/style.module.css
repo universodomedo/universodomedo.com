@@ -18,9 +18,9 @@
 .janela_avisos_botao {
     position: absolute;
     top: 0;
-    left: -40px;
-    width: 40px;
-    height: 40px;
+    left: -4vw;
+    width: 4vw;
+    height: 8vh;
     background: #0B0D0E;
     border: none;
     color: white;
@@ -31,7 +31,7 @@
     justify-content: center;
 }
 
-.janela_avisos_botao_vermelho {
+.janela_avisos_botao_vermelho svg {
     color: red;
     animation: heartbeat 2s infinite;
 }
@@ -44,7 +44,6 @@
 .janela_avisos_conteudo {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
     height: 100%;
     gap: .7vh;
 }
@@ -58,6 +57,7 @@
     flex-direction: column;
     text-align: start;
     gap: .4vh;
+    overflow: auto;
 }
 
 .mensagens_janela_avisos p {

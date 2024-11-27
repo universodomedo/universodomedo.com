@@ -39,5 +39,6 @@ export class TipoEstatisticaDanificavel {
         public nome: string,
         public nomeAbrev: string,
         public cor: string,
+        public descricao: string,
     ) { }
 }

@@ -7,7 +7,10 @@ import { TipoGanhoNex, CorTooltip, PaletaCores, } from 'Types/classes/index.ts';
 
 const singletonHelper = SingletonHelper.getInstance();
 
-singletonHelper.tipo_estatistica_danificavel = [new TipoEstatisticaDanificavel(1, "Pontos de Vida", "P.V.", "#FF0000"), new TipoEstatisticaDanificavel(2, "Pontos de Sanidade", "P.S.", "#324A99"), new TipoEstatisticaDanificavel(3, "Pontos de Esforço", "P.E.", "#47BA16")];
+singletonHelper.tipo_estatistica_danificavel = [
+    new TipoEstatisticaDanificavel(1, "Pontos de Vida", "P.V.", "#FF0000", 'Mostram a Saúde Física e Vital do seu Personagem, traduzindo Ferimentos e Condições Físicas. Ao zerar, você automaticamente recebe a condição Morrendo'),
+    new TipoEstatisticaDanificavel(2, "Pontos de Sanidade", "P.S.", "#324A99", 'Mostram o seu Estado de Mente e Espírito, traduzindo sua proximidade com o Paranormal. Ao zerar, você automaticamente recebe a condição Enlouquecendo'),
+    new TipoEstatisticaDanificavel(3, "Pontos de Esforço", "P.E.", "#47BA16", 'Mostram a sua capacidade de agir além do seu limite habitual, como Ações Especiais e Usar o Paranormal, traduzindo o seu cansaço')];
 singletonHelper.tipo_estatistica_buffavel = [
     new TipoEstatisticaBuffavel(1, "Defesa"),
     new TipoEstatisticaBuffavel(2, "Defesa Adicional por Agilidade"),

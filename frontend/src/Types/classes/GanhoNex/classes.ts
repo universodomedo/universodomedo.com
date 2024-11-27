@@ -1,6 +1,6 @@
 // #region Imports
 import React from 'react';
-import { RLJ_Ficha2, Atributo, Pericia, PatentePericia, dadosRitual, AvisoGanhoNex, ValidacoesGanhoNex, CondicaoGanhoNexComOperador, RegrasCondicaoGanhoNex, OperadorCondicao, CondicaoGanhoNex, TipoEstatisticaDanificavel, EstatisticaDanificavel } from 'Types/classes/index.ts';
+import { RLJ_Ficha2, Atributo, Pericia, PatentePericia, dadosRitual, AvisoGanhoNex, ValidacoesGanhoNex, CondicaoGanhoNexComOperador, RegrasCondicaoGanhoNex, OperadorCondicao, CondicaoGanhoNex, TipoEstatisticaDanificavel } from 'Types/classes/index.ts';
 import { SingletonHelper } from "Types/classes_estaticas.tsx";
 
 import { CircleIcon } from '@radix-ui/react-icons';
@@ -10,7 +10,6 @@ export class GanhosNex {
     public ganhos: GanhoIndividualNex[] = [];
     public finalizando: boolean = false;
     public indexEtapa: number = 0;
-    public estatisticasDanificaveis: EstatisticaDanificavel[] = [];
 
     constructor(public dadosFicha: RLJ_Ficha2) { }
 
