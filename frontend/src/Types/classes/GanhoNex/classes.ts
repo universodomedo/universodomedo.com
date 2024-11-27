@@ -154,6 +154,7 @@ export class PericiaEmGanho {
     get refPatenteInicial(): PatentePericia { return this._refPatente(this._idPatenteInicial); }
     get refPatenteAtual(): PatentePericia { return this._refPatente(this.idPatenteAtual); }
     get estaEmValorMinimo(): boolean { return this.idPatenteAtual === 1; }
+    get estaMaiorQueInicial(): boolean { return this.idPatenteAtual > this._idPatenteInicial }
 
     private _refPatente(idPatente: number): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente_pericia => patente_pericia.id === idPatente)!; }
     alterarValor(modificador: number) { this.idPatenteAtual += modificador; }
@@ -226,7 +227,7 @@ export class ControladorGanhos {
                 GanhoIndividualNexPericia: [
                     {
                         condicoes: [
-                            { idOpcao: 26, regra: 'maior', valorCondicao: 1 },
+                            { idOpcao: 16, regra: 'maior', valorCondicao: 1 },
                         ],
                         mensagem: 'Você precisa ser Treinado em Ocultismo',
                     },
