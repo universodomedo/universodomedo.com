@@ -1,0 +1,10 @@
+.input_e_rotulo {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1vh;
+}
+
+.input_e_rotulo label {
+    font-size: 1.2rem;
+}

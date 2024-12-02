@@ -8,7 +8,7 @@ export type RLJ_Ficha2 = {
     atributos?: { id: number, valor: number }[],
     periciasPatentes?: { idPericia: number, idPatente: number }[],
     rituais: dadosRitual[],
-    inventario: dadosItens[],
+    inventario: dadosItem[],
     // reducoesDano:
 }
 
@@ -17,7 +17,7 @@ export type dadosRitual = {
     dadosAcoes: subDadosAcoes[]
 };
 
-export type dadosItens = {
+export type dadosItem = {
     idTipoItem: number, nomeItem: { nomePadrao: string, nomeCustomizado?: string }, peso: number, categoria: number, precisaEstarEmpunhando?: boolean,
     detalhesArma?: subDadosDetalhesArmas, detalhesEquipamentos?: subDadosDetalhesEquipamentos, detalhesConsumiveis?: subDadosDetalhesConsumiveis, detalhesComponente?: subDadosDetalhesComponentes,
     dadosAcoes?: subDadosAcoes[]

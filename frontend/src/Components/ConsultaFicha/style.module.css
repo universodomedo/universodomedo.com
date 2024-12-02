@@ -42,6 +42,7 @@
     flex-direction: column;
     color: white;
     gap: 2vh;
+    align-items: center;
 }
 
 .divisao_registros h2 {
@@ -54,5 +55,8 @@
     text-align: center;
     color: white;
     gap: 2%;
+    row-gap: 2vh;
     justify-content: center;
+    width: 60%;
+    flex-wrap: wrap;
 }

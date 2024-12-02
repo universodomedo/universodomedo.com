@@ -77,10 +77,7 @@ export class EspacoInventario {
         public valorAdicionalPorForca: number,
     ) { }
 
-    get espacoTotal(): number {
-        return (
-            this.valorNatural +
-            (this.valorAdicionalPorForca * FichaHelper.getInstance().personagem.atributos.find(atributo => atributo.refAtributo.id === 2)?.valorTotal!)
-        )
-    }
+    get espacoTotal(): number { return this.valorNatural + this.espacoAdicionalPorFoca + this.espacoAdicional }
+    get espacoAdicional(): number { return FichaHelper.getInstance().personagem.buffsAplicados.buffPorId(53); }
+    get espacoAdicionalPorFoca(): number { return this.valorAdicionalPorForca * FichaHelper.getInstance().personagem.atributos.find(atributo => atributo.refAtributo.id === 2)?.valorTotal! }
 }

@@ -2,13 +2,13 @@
 import style from './style.module.css';
 import { useEffect, useState } from 'react';
 
-import { dadosItens } from 'Types/classes/index.ts';
+import { dadosItem } from 'Types/classes/index.ts';
 // #endregion
 
-const page = ({ onCreate }: { onCreate: (novoRitual: dadosItens) => void; }) => {
+const page = ({ onCreate }: { onCreate: (novoRitual: dadosItem) => void; }) => {
     const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
 
-    const data: { id: number, dados: dadosItens }[] = [
+    const data: { id: number, dados: dadosItem }[] = [
         { id: 1, dados: { idTipoItem: 1, nomeItem: { nomePadrao: 'Arma Corpo a Corpo Leve Simples Ineficaz' }, peso: 2, categoria: 0, precisaEstarEmpunhando: true, detalhesArma: { dano: 4, variancia: 3, idAtributoUtilizado: 1, idPericiaUtilizada: 8, numeroExtremidadesUtilizadas: 1, }, dadosAcoes: [{ nomeAcao: 'Realizar Ataque', idTipoAcao: 2, idCateoriaAcao: 1, idMecanica: 3, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2] }], } },
         { id: 2, dados: { idTipoItem: 1, nomeItem: { nomePadrao: 'Arma Corpo a Corpo Leve Simples Refinada' }, peso: 2, categoria: 0, precisaEstarEmpunhando: true, detalhesArma: { dano: 6, variancia: 5, idAtributoUtilizado: 1, idPericiaUtilizada: 8, numeroExtremidadesUtilizadas: 1, }, dadosAcoes: [{ nomeAcao: 'Realizar Ataque', idTipoAcao: 2, idCateoriaAcao: 1, idMecanica: 3, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2] }], } },
         { id: 3, dados: { idTipoItem: 1, nomeItem: { nomePadrao: 'Arma Corpo a Corpo Leve Complexa Veloz' }, peso: 4, categoria: 1, precisaEstarEmpunhando: true, detalhesArma: { dano: 8, variancia: 6, idAtributoUtilizado: 1, idPericiaUtilizada: 8, numeroExtremidadesUtilizadas: 1, }, dadosAcoes: [{ nomeAcao: 'Realizar Ataque', idTipoAcao: 2, idCateoriaAcao: 1, idMecanica: 3, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2] }], } },
@@ -57,7 +57,7 @@ const page = ({ onCreate }: { onCreate: (novoRitual: dadosItens) => void; }) => 
         { id: 46, dados: { idTipoItem: 2, nomeItem: { nomePadrao: 'Vestimenta de Vontade Simples'}, peso: 3, categoria: 1, detalhesEquipamentos: { }, buffs: [ { idBuff: 31, nome: 'Ferramentas Simples', valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1, } ], } },
         { id: 47, dados: { idTipoItem: 2, nomeItem: { nomePadrao: 'Vestimenta de Fortitude Simples'}, peso: 3, categoria: 1, detalhesEquipamentos: { }, buffs: [ { idBuff: 16, nome: 'Ferramentas Simples', valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1, } ], } },
     ];
-    // const data: { id:number, dados: dadosItens}[] = [
+    // const data: { id:number, dados: dadosItem}[] = [
     //     { id: 1, dados: {
     //         idTipoItem: 1, nomeItem: { nomePadrao: 'Arma Teste', nomeCustomizado: 'Bea', }, peso: 5, categoria: 1, precisaEstarEmpunhando: true,
     //         detalhesArma: { dano: 6, variancia: 3, idPericiaUtilizada: 8, numeroExtremidadesUtilizadas: 1, },

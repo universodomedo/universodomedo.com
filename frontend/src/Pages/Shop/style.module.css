@@ -2,11 +2,54 @@
     display: flex;
     flex-direction: column;
     color: white;
+    height: 100%;
+    gap: 2vh;
+}
+
+.shopping h1 {
+    margin: .8% 0 0 0;
+}
+
+.div_geral {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+}
+
+.div_inventario {
+    display: flex;
+    flex-direction: column;
+    flex: .5;
+    border-right: 1px white solid;
+}
+
+.dados_inventario {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.div_shopping {
+    display: flex;
+    flex-direction: column;
+    flex: .5;
+    border-left: 1px white solid;
+    gap: 2vh;
+}
+
+.div_shopping h2 {
+    margin: 0;
+}
+
+.embrulho_inventario_atual {
+    
 }
 
 .inventario_atual {
-    display: inline-block;
-    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .6vh;
 }
 
 .linha_item {
@@ -14,6 +57,10 @@
     flex-direction: row;
     gap: 1vw;
     align-items: center;
+}
+
+.linha_item h3 {
+    margin: 0;
 }
 
 .modal_inventario {
@@ -25,4 +72,75 @@
 
 .remove_item {
     cursor: pointer;
+}
+
+.linha_botoes {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+    height: 3vh;
+    justify-content: center;
+}
+
+.area_adicionar_item {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2vh;
+}
+
+.area_tipo_item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2vh;
+    margin: 0 30%;
+}
+
+.botoes_itens {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin: 8% 35%;
+    gap: 5%;
+    row-gap: 2vh;
+}
+
+.botoes_itens_2 {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin: 0 20%;
+    gap: 5%;
+}
+
+.botao_itens_2 {
+    flex: 1 1 calc(20%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 9vh;
+    gap: 1vh;
+}
+
+.botao_itens_2 svg {
+    flex: 1;
+}
+
+.botao_adicionar {
+    width: fit-content;
+    aspect-ratio: 1/0.5;
+}
+
+.botao_categoria_iteem{
+    flex: 1 1 calc(20%);
+    aspect-ratio: 1 / .4;
+}
+
+.area_botao_tipo_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
 }
