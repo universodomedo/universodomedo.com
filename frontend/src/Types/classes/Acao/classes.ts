@@ -1,5 +1,5 @@
 // #region Imports
-import { adicionarBuffsUtil, logicaMecanicas, Buff, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, Opcao, RequisitoConfig, CustoComponente, TooltipProps, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, ItemArma, GastaCustoProps, HabilidadeAtiva, Dificuldade } from 'Types/classes/index.ts';
+import { adicionarBuffsUtil, logicaMecanicas, Buff, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, Opcao, RequisitoConfig, CustoComponente, TooltipProps, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, ItemArma, GastaCustoProps, HabilidadeAtiva, Dificuldade, ItemConsumivel } from 'Types/classes/index.ts';
 import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 import { ExecutaVariacaoGenerica, ExecutaTestePericia } from 'Recursos/Ficha/Variacao.ts';
 import { toast } from 'react-toastify';
@@ -57,13 +57,13 @@ export abstract class Acao {
     processaDificuldades = (): boolean => {
         if (!(this.dificuldades.length > 0)) return true;
         LoggerHelper.getInstance().adicionaMensagem(`Processando dificuldades`, true);
-    
+
         try {
             for (const dificuldade of this.dificuldades) {
                 if (!dificuldade.processa()) return false;
             }
         } finally { LoggerHelper.getInstance().fechaNivelLogMensagem(); }
-    
+
         return true;
     };
 
@@ -197,6 +197,11 @@ export class AcaoItem extends Acao {
     constructor(nome: string, idTipoAcao: number, idCategoriaAcao: number, idMecanica: number) { super(nome, idTipoAcao, idCategoriaAcao, idMecanica); }
     override get refPai(): Item { return this._refPai as Item };
     get bloqueada(): boolean { return !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos; }
+
+    override executa = (valoresSelecionados: GastaCustoProps) => {
+        logicaMecanicas[this._idMecanica](valoresSelecionados, this);
+        // (this.refPai as ItemConsumivel).gastaUso();
+    }
 }
 
 export class AcaoHabilidade extends Acao {
@@ -254,6 +259,13 @@ export class AcaoAtaque extends Acao {
     override get refPai(): ItemArma { return this._refPai as ItemArma };
     get bloqueada(): boolean { return !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos; }
 }
+
+export const deparaTipoAcaoParaClasse: Record<string, new (...args: any[]) => Acao> = {
+    'AcaoRitual': AcaoRitual,
+    'AcaoItem': AcaoItem,
+    'AcaoHabilidade': AcaoHabilidade,
+    'AcaoAtaque': AcaoAtaque,
+};
 
 export class TipoAcao {
     constructor(

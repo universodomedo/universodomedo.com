@@ -87,8 +87,7 @@ singletonHelper.buffs = [
     new BuffRef(49, "R.D. Debilitante"), 
     new BuffRef(50, "Dano"), 
     new BuffRef(51, "Variância"), 
-    new BuffRef(52, 'Permeabilidade'),
-    new BuffRef(53, 'Capacidade de Carga')
+    new BuffRef(52, 'Capacidade de Carga'),
 ];
 singletonHelper.alcances = [new Alcance(1, "Adjacente"), new Alcance(2, "Próximo"), new Alcance(3, "Curto"), new Alcance(4, "Médio"), new Alcance(5, "Longo"), new Alcance(6, "Ambiente"), new Alcance(7, "Ilimitado")];
 singletonHelper.formatos_alcance = [new FormatoAlcance(1, "Selecionado"), new FormatoAlcance(2, "Linha Reta"), new FormatoAlcance(3, "Cone"), new FormatoAlcance(4, "Área")];

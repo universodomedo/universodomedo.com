@@ -1,5 +1,5 @@
 // #region Imports
-import { adicionarBuffsUtil, adicionarAcoesUtil, pluralize, Acao, Buff, Extremidade, TooltipProps, CorTooltip, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, CaixaInformacaoProps, PericiaPatentePersonagem, Elemento, NivelComponente, AtributoPersonagem } from 'Types/classes/index.ts';
+import { adicionarBuffsUtil, adicionarAcoesUtil, pluralize, Acao, Buff, Extremidade, TooltipProps, CorTooltip, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, CaixaInformacaoProps, PericiaPatentePersonagem, Elemento, NivelComponente, AtributoPersonagem, AcaoItem } from 'Types/classes/index.ts';
 import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -29,13 +29,14 @@ export class NomeItem {
     get nomeExibicao(): string { return this.customizado || this.padrao }
 }
 
-export class Item {
+export abstract class Item {
     private static nextId = 1;
     public id: number;
 
     public acoes: Acao[] = [];
     protected _buffs: Buff[] = [];
     public precisaEstarEmpunhado: boolean = false;
+    public precisaEstarVestindo: boolean = false;
 
     protected idExtremidade?: number;
     public refExtremidade?: Extremidade;
@@ -61,13 +62,8 @@ export class Item {
         }
     }
 
-    get agrupavel(): boolean {
-        return this._agrupavel;
-    }
-
-    get buffs(): Buff[] {
-        return this._buffs.filter(buff => buff.ativo);
-    }
+    get agrupavel(): boolean { return this._agrupavel; }
+    get buffs(): Buff[] { return this._buffs.filter(buff => buff.ativo); }
 
     get nomeExibicao(): string { return this.nome.customizado };
     get nomeExibicaoOption(): string { return this.nome.customizado };
@@ -193,6 +189,9 @@ export class Item {
             ]
         )
     }
+
+    abstract get podeSacar(): boolean;
+    abstract get podeVestir(): boolean;
 }
 
 export class ItemArma extends Item {
@@ -237,9 +236,9 @@ export class ItemArma extends Item {
         }
     }
 
-    get tooltipPropsAgrupado(): TooltipProps {
-        return this.tooltipPropsSingular;
-    }
+    get tooltipPropsAgrupado(): TooltipProps { return this.tooltipPropsSingular; }
+    get podeSacar(): boolean { return true; }
+    get podeVestir(): boolean { return false; }
 }
 
 export class DetalhesItemArma {
@@ -272,9 +271,7 @@ export class ItemEquipamento extends Item {
         this.precisaEstarEmpunhado = precisaEstarEmpunhado;
     }
 
-    get buffs(): Buff[] {
-        return this._buffs;
-    }
+    get buffs(): Buff[] { return this._buffs; }
 
     get tooltipPropsSingular(): TooltipProps {
         const tooltipPropsSuper = super.tooltipPropsGenerico;
@@ -299,9 +296,9 @@ export class ItemEquipamento extends Item {
         }
     }
 
-    get tooltipPropsAgrupado(): TooltipProps {
-        return this.tooltipPropsSingular;
-    }
+    get tooltipPropsAgrupado(): TooltipProps { return this.tooltipPropsSingular; }
+    get podeSacar(): boolean { return true; }
+    get podeVestir(): boolean { return false; }
 }
 
 export class DetalhesItemEquipamento {
@@ -359,12 +356,29 @@ export class ItemConsumivel extends Item {
             numeroUnidades: 1,
         }
     }
+
+    gastaUso(): void {
+        this.detalhesConsumivel.usosAtuais--;
+
+        if (this.detalhesConsumivel.usosAtuais <= 0) {
+            LoggerHelper.getInstance().adicionaMensagem(`${this.nomeDisplay} Finalizado`);
+            this.removeDoInventario();
+        }
+    }
+
+    get podeSacar(): boolean { return true; }
+    get podeVestir(): boolean { return false; }
 }
 
 export class DetalhesItemConsumivel {
-    constructor(
+    public usosAtuais: number;
 
-    ) { }
+    constructor(
+        public usosMaximos: number,
+        public usos?: number,
+    ) {
+        this.usosAtuais = (usos ? usos : usosMaximos);
+    }
 }
 
 export class ItemComponente extends Item {
@@ -477,6 +491,9 @@ export class ItemComponente extends Item {
             this.detalhesComponente.refElemento.id === item.detalhesComponente.refElemento.id && this.detalhesComponente.refNivelComponente.id == item.detalhesComponente.refNivelComponente.id
         );
     }
+
+    get podeSacar(): boolean { return true; }
+    get podeVestir(): boolean { return false; }
 }
 
 export class DetalhesItemComponente {
@@ -491,11 +508,6 @@ export class DetalhesItemComponente {
         this.usosAtuais = (usos ? usos : usosMaximos);
     }
 
-    get refElemento(): Elemento {
-        return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!;
-    }
-
-    get refNivelComponente(): NivelComponente {
-        return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this._idNivelComponente)!;
-    }
+    get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
+    get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this._idNivelComponente)!; }
 }

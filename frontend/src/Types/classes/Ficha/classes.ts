@@ -25,7 +25,8 @@ export type dadosItem = {
 };
 
 export type subDadosAcoes = {
-    nomeAcao: string, idTipoAcao: number, idCateoriaAcao: number, idMecanica: number,
+    tipoAcao: 'AcaoRitual' | 'AcaoItem' | 'AcaoHabilidade' | 'AcaoAtaque',
+    nomeAcao: string, idTipoAcao: number, idCategoriaAcao: number, idMecanica: number,
     custos: subDadosCusto,
     buffs?: subDadosBuff[],
     requisitos: number[]
@@ -45,7 +46,9 @@ export type subDadosDetalhesArmas = {
 
 export type subDadosDetalhesEquipamentos = {}
 
-export type subDadosDetalhesConsumiveis = {}
+export type subDadosDetalhesConsumiveis = {
+    usosMaximos: number, usos: number
+}
 
 export type subDadosDetalhesComponentes = {
     idElemento: number, idNivelComponente: number, usosMaximos: number, usos: number

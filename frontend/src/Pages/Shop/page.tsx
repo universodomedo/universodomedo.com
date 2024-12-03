@@ -76,6 +76,7 @@ const page = () => {
             fichas[indexFicha] = fichaAtualizada;
             localStorage.setItem('dadosFicha', JSON.stringify(fichas));
             atualizaInventario();
+            voltaParaPaginaInicial();
         }
     };
 
@@ -144,11 +145,11 @@ const page = () => {
                 <h2>Adicionar Componentes</h2>
 
                 <InputComRotulo rotulo={'Elemento'}>
-                    <select value={elemento.value} onChange={handleElementoChange}> <option value="0" disabled >Selecionar Elemento</option> {SingletonHelper.getInstance().elementos.filter(elemento => elemento.id !== 3).map(elemento => (<option key={elemento.id} value={elemento.id}> {elemento.nome} </option>))} </select>
+                    <select value={elemento.value} onChange={handleElementoChange}> <option value="0" disabled >Selecionar Elemento</option> {SingletonHelper.getInstance().elementos.filter(elemento => elemento.id !== 3).map(elemento => (<option key={elemento.id} value={elemento.id}>{elemento.nome}</option>))} </select>
                 </InputComRotulo>
 
                 <InputComRotulo rotulo={'Patente'}>
-                    <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> <option key={1} value={1}> Simples </option> </select>
+                    <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> <option key={1} value={1}>Simples</option> </select>
                 </InputComRotulo>
 
                 <InputComRotulo rotulo={'Quantidade'}>
@@ -170,7 +171,7 @@ const page = () => {
 
                 <div className={style.botoes_itens_2}>
                     <button onClick={() => { setIdPaginaAberta(3) }} className={style.botao_itens_2}><FontAwesomeIcon icon={faUserAstronaut} />Vestimentas</button>
-                    {/* <button onClick={() => { setIdPaginaAberta(4) }} className={style.botao_itens_2}><FontAwesomeIcon icon={faWrench} />Utensílios</button> */}
+                    <button onClick={() => { setIdPaginaAberta(4) }} className={style.botao_itens_2}><FontAwesomeIcon icon={faWrench} />Utensílios</button>
                     <button onClick={() => { setIdPaginaAberta(5) }} className={style.botao_itens_2}><FontAwesomeIcon icon={faBagShopping} />Mochilas</button>
                 </div>
 
@@ -214,11 +215,11 @@ const page = () => {
                 <h2>Adicionar Vestimentas</h2>
 
                 <InputComRotulo rotulo={'Perícia'}>
-                    <select value={pericia.value} onChange={handlePericiaChange}> <option value="0" disabled >Selecionar Perícia</option> {SingletonHelper.getInstance().pericias.sort((a, b) => a.nome.localeCompare(b.nome)).map(pericia => (<option key={pericia.id} value={pericia.id}> {pericia.nome} </option>))} </select>
+                    <select value={pericia.value} onChange={handlePericiaChange}> <option value="0" disabled >Selecionar Perícia</option> {SingletonHelper.getInstance().pericias.sort((a, b) => a.nome.localeCompare(b.nome)).map(pericia => (<option key={pericia.id} value={pericia.id}>{pericia.nome}</option>))} </select>
                 </InputComRotulo>
 
                 <InputComRotulo rotulo={'Patente'}>
-                    <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> <option key={1} value={1}> Simples </option> </select>
+                    <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> <option key={1} value={1}>Simples</option> </select>
                 </InputComRotulo>
 
                 <div className={style.area_botao_tipo_item}>
@@ -248,9 +249,10 @@ const page = () => {
         const adicionar = () => {
             const dadosItem: dadosItem = {
                 idTipoItem: 2,
-                nomeItem: { nomePadrao: `Vestimenta de ${pericia.text} ${patente.text}` },
+                nomeItem: { nomePadrao: `Utensílio de ${pericia.text} ${patente.text}` },
                 peso: 1,
                 categoria: 1,
+                precisaEstarEmpunhando: true,
                 buffs: [ { idBuff: SingletonHelper.getInstance().pericias.find(periciaEscolhida => periciaEscolhida.id === pericia.value)!.idBuffRelacionado, nome: 'Ferramentas Simples', valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1, } ],
             }
 
@@ -262,11 +264,11 @@ const page = () => {
                 <h2>Adicionar Utensilios</h2>
 
                 <InputComRotulo rotulo={'Perícia'}>
-                    <select value={pericia.value} onChange={handlePericiaChange}> <option value="0" disabled >Selecionar Perícia</option> {SingletonHelper.getInstance().pericias.sort((a, b) => a.nome.localeCompare(b.nome)).map(pericia => (<option key={pericia.id} value={pericia.id}> {pericia.nome} </option>))} </select>
+                    <select value={pericia.value} onChange={handlePericiaChange}> <option value="0" disabled >Selecionar Perícia</option> {SingletonHelper.getInstance().pericias.sort((a, b) => a.nome.localeCompare(b.nome)).map(pericia => (<option key={pericia.id} value={pericia.id}>{pericia.nome}</option>))} </select>
                 </InputComRotulo>
 
                 <InputComRotulo rotulo={'Patente'}>
-                    <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> <option key={1} value={1}> Simples </option> </select>
+                    <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> <option key={1} value={1}>Simples</option> </select>
                 </InputComRotulo>
 
                 <div className={style.area_botao_tipo_item}>
@@ -292,7 +294,7 @@ const page = () => {
                 nomeItem: { nomePadrao: `Mochila ${patente.text}` },
                 peso: 0,
                 categoria: 1,
-                buffs: [ { idBuff: 53, nome: 'Ferramentas Simples', valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1, } ],
+                buffs: [ { idBuff: 52, nome: 'Ferramentas Simples', valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1, } ],
             }
 
             adicionarItem(dadosItem);
@@ -303,7 +305,7 @@ const page = () => {
                 <h2>Adicionar Mochilas</h2>
 
                 <InputComRotulo rotulo={'Patente'}>
-                    <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> <option key={1} value={1}> Simples </option> </select>
+                    <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> <option key={1} value={1}>Simples</option> </select>
                 </InputComRotulo>
 
                 <div className={style.area_botao_tipo_item}>
@@ -315,10 +317,83 @@ const page = () => {
     }
 
     const PaginaConsumiveis = () => {
-        return (
-            <>
+        const [consumivel, setConsumivel] = useState(0);
 
-            </>
+        const handleConsumivelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+            setConsumivel(e.target.selectedIndex);
+        };
+
+        const adicionar = () => {
+            let dadosItem: dadosItem;
+
+            switch (consumivel) {
+                case 1:
+                    dadosItem = {
+                        idTipoItem: 3,
+                        nomeItem: { nomePadrao: `Bálsamo de Arnica` },
+                        peso: 1,
+                        categoria: 0,
+                        detalhesConsumiveis: { usosMaximos: 1, usos: 1 },
+                        dadosAcoes: [ {
+                            tipoAcao: 'AcaoItem',
+                            nomeAcao: 'Consumir',
+                            idTipoAcao: 1,
+                            idCategoriaAcao: 1,
+                            idMecanica: 3,
+                            custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
+                            buffs: [ { idBuff: 33, nome: 'Bálsamo de Arnica', valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2, } ],
+                            requisitos: [2]
+                        } ],
+                    }
+                    break;
+                case 2:
+                    dadosItem = {
+                        idTipoItem: 3,
+                        nomeItem: { nomePadrao: `Gel de Babosa` },
+                        peso: 1,
+                        categoria: 0,
+                        detalhesConsumiveis: { usosMaximos: 1, usos: 1 },
+                        dadosAcoes: [ {
+                            tipoAcao: 'AcaoItem',
+                            nomeAcao: 'Consumir',
+                            idTipoAcao: 1,
+                            idCategoriaAcao: 1,
+                            idMecanica: 3,
+                            custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
+                            buffs: [ { idBuff: 37, nome: 'Gel de Babosa', valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2, } ],
+                            requisitos: [2]
+                        } ],
+                    }
+                    break;
+                case 3:
+                    dadosItem = {
+                        idTipoItem: 3,
+                        nomeItem: { nomePadrao: `Ácido Hialurônico Injetável` },
+                        peso: 1,
+                        categoria: 1,
+                        detalhesConsumiveis: { usosMaximos: 1, usos: 1 },
+                    }
+                    break;
+                default:
+                    return;
+            }
+
+            adicionarItem(dadosItem);
+        }
+
+        return (
+            <div className={style.area_tipo_item}>
+                <h2>Adicionar Consumível</h2>
+
+                <InputComRotulo rotulo={'Consumível'}>
+                    <select value={consumivel} onChange={handleConsumivelChange}> <option value="0" disabled >Selecionar Consumível</option> <option key={1} value={1}>Bálsamo de Arnica</option><option key={2} value={2}>Gel de Babosa</option><option key={3} value={3}>Ácido Hialurônico Injetável</option> </select>
+                </InputComRotulo>
+
+                <div className={style.area_botao_tipo_item}>
+                    <button onClick={voltaParaPaginaInicial}>Voltar</button>
+                    <button onClick={adicionar} disabled={consumivel === 0} className={style.botao_adicionar}>Adicionar</button>
+                </div>
+            </div>
         );
     }
 
@@ -372,9 +447,9 @@ const page = () => {
                         {idPaginaAberta === 3 && (
                             <PaginaVestimentas />
                         )}
-                        {/* {idPaginaAberta === 4 && (
+                        {idPaginaAberta === 4 && (
                             <PaginaUtensilios />
-                        )} */}
+                        )}
                         {idPaginaAberta === 5 && (
                             <PaginaMochilas />
                         )}

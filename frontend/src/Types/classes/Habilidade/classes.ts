@@ -122,6 +122,38 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     //     ])
     // );
 
+    // retorno.push(new HabilidadeAtiva('Movimento Acribático'))
+    // retorno.push(new HabilidadeAtiva('Resolver Mecanismo'))
+    // retorno.push(new HabilidadeAtiva('Surrupiar'))
+    // retorno.push(new HabilidadeAtiva('Esconder'))
+    // retorno.push(new HabilidadeAtiva('Proativo'))?
+    // retorno.push(new HabilidadePassiva('Ataque a Distância'))
+    // retorno.push(new HabilidadeAtiva('Resistir com Reflexo'))
+    // retorno.push(new HabilidadeAtiva('Manobra de Combate'))
+    // retorno.push(new HabilidadePassiva('Ataque Corpo-a-Corpo'))
+    // retorno.push(new HabilidadeAtiva('Manobra de Combate'))
+    // retorno.push(new HabilidadeAtiva('Comando'))?
+    // retorno.push(new HabilidadeAtiva('Execução Artística'))
+    // retorno.push(new HabilidadeAtiva('Sabichão'))
+    // retorno.push(new HabilidadePassiva('Manuseio de Substânncias Mundanas'))
+    // retorno.push(new HabilidadePassiva('Conhecimento Científico'))
+    // retorno.push(new HabilidadeAtiva('Manutenção'))
+    // retorno.push(new HabilidadeAtiva('Procurar Por Pistas'))
+    // retorno.push(new HabilidadeAtiva('Estancar'))
+    // retorno.push(new HabilidadeAtiva('Sentir Anomalia'))
+    // retorno.push(new HabilidadeAtiva('Improvisar Ferramenta'))
+    // retorno.push(new HabilidadeAtiva('Analisar Terreno'))
+    // retorno.push(new HabilidadeAtiva('Refugiar'))
+    // retorno.push(new HabilidadeAtiva('Manusear Maquinário'))
+    // retorno.push(new HabilidadeAtiva('Melhorar Relacionamento'))
+    // retorno.push(new HabilidadeAtiva('Esconder Informação'))
+    // retorno.push(new HabilidadeAtiva('Intimidar'))
+    // retorno.push(new HabilidadeAtiva('Julgar'))
+    // retorno.push(new HabilidadeAtiva('Analisar Arredores'))
+    // retorno.push(new HabilidadeAtiva('Mente Resistente'))
+    // retorno.push(new HabilidadeAtiva('Reagir com Fortitude'))
+    // retorno.push(new HabilidadeAtiva('Corpo Resistente'))
+
     retorno.push(
         new HabilidadeAtiva('Ação Rápida', new RequisitoFicha((personagem:Personagem) => personagem.pericias.find(pericia => pericia.refPericia.id === 7)?.refPatente.id! > 0))
         .adicionarAcoes([
