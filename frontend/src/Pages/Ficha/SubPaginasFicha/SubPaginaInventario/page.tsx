@@ -1,37 +1,39 @@
 // #region Imports
 import style from './style.module.css';
 import React, { useState } from 'react';
+
 import { Inventario, EstatisticasBuffaveisPersonagem, Item } from 'Types/classes/index.ts';
 import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 import BarraEstatisticaDanificavel from "Components/SubComponents/SubComponentesFicha/BarraEstatisticaDanificavel/page.tsx";
 import { useContextoAbaInventario } from './contexto.tsx';
 
-import IconeItem from "Components/IconeItem/page.tsx";
-
 import { useDispatch } from "react-redux";
 import { setCacheFiltros } from "Redux/slices/abasHelperSlice.ts";
+
+import RenderItem from './item.tsx';
 // #endregion
 
 const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffaveisPersonagem, inventarioPersonagem: Inventario, abrirAbaAcao: () => void; }> = ({ abaId, estatisticasBuffaveis, inventarioPersonagem, abrirAbaAcao }) => {
   const { stopLoading } = useLoading();
   const dispatch = useDispatch();
 
-  const { mostrarFiltros, mostrarEtiquetas, mostrarBarras } = useContextoAbaInventario();
+  const { mostrarFiltros, mostrarBarras } = useContextoAbaInventario();
 
-  const itensEmpunhados = inventarioPersonagem.agrupamento.filter(item => item.estaEmpunhado);
-  const itensGuardados = inventarioPersonagem.agrupamento.filter(item => !item.estaEmpunhado);
+  const itensEmpunhados = inventarioPersonagem.agrupamento.filter(item => item.comportamentoEmpunhavel.estaEmpunhado);
+  const itensGuardados = inventarioPersonagem.agrupamento.filter(item => !item.comportamentoEmpunhavel.estaEmpunhado && !item.comportamentoVestivel.estaVestido);
+  const itensVestidos = inventarioPersonagem.agrupamento.filter(item => item.comportamentoVestivel.estaVestido);
 
   const clickItem = (item: Item) => {
     if (item.acoes.length === 0) return;
 
     abrirAbaAcao();
 
-    dispatch(setCacheFiltros({ abaId: 'aba7', filtro: [{ idFiltro: 1, idOpcao: [item.nome.customizado] }], updateExterno: true }));
+    dispatch(setCacheFiltros({ abaId: 'aba7', filtro: [{ idFiltro: 1, idOpcao: [item.nomeExibicao] }], updateExterno: true }));
   }
 
   const renderItem = (item: Item, index: number) => (
-    <IconeItem key={index} mostrarEtiquetas={mostrarEtiquetas} quantidadeAgrupada={item.tooltipPropsAgrupado.numeroUnidades!} props={item.tooltipPropsAgrupado} onClick={() => clickItem(item)} />
+    <RenderItem key={index} item={item} />
   );
 
   return (
@@ -64,7 +66,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
         </div>
       )} */}
 
-      <ConsultaProvider<Item> abaId={abaId} registros={[itensEmpunhados, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Empunhados', 'Itens Guardados'] }}>
+      <ConsultaProvider<Item> abaId={abaId} registros={[itensVestidos, itensEmpunhados, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Vestidos', 'Itens Empunhados', 'Itens Guardados'] }}>
         <Consulta renderItem={renderItem} />
       </ConsultaProvider>
     </div>
@@ -72,55 +74,3 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
 };
 
 export default page;
-
-
-
-
-
-
-// const page: React.FC<{ estatisticasBuffaveis: EstatisticasBuffaveisPersonagem, inventarioPersonagem: Inventario }> = ({ estatisticasBuffaveis, inventarioPersonagem }) => {
-//   return (
-//     <div className={style.conteudo_inventario}>
-//       <h1>Inventário</h1>
-
-//       {estatisticasBuffaveis.extremidades.length > 0 ? (
-//         <div className={style.container_extremidades}>
-//           {estatisticasBuffaveis.extremidades.map((extremidade, index) => (
-//             <div key={index} className={style.extremidade}>
-//               <h1 onClick={() => { extremidade.empunhar(0); }}>Extremidade {extremidade.id}</h1>
-//               {extremidade.idItemEmpunhado !== undefined && (
-//                 <h2>{extremidade.refItem!.nome}</h2>
-//               )}
-//             </div>
-//           ))}
-//         </div>
-//       ) : <></>}
-
-//       <div className={style.info_inventario}>
-//         <h1>Espaços</h1>
-//         <BarraEstatisticaDanificavel valorAtual={inventarioPersonagem.espacosUsados} valorMaximo={estatisticasBuffaveis.espacoInventario.espacoTotal} corBarra={"#AAAAAA"}></BarraEstatisticaDanificavel>
-//       </div>
-//       <div className={style.inventario_personagem}>
-//         {inventarioPersonagem && (
-//           <table>
-//             <thead>
-//               <tr><th></th><th>Nome</th><th>Peso</th><th>Categoria</th></tr>
-//             </thead>
-//             <tbody>
-//               {inventarioPersonagem.items.map((item, index) => (
-//                 <tr key={index}>
-//                   <td width={"1%"}>{item.estaEmpunhado() ? item.refExtremidade?.id : ''}</td>
-//                   <td>{item.nome}</td>
-//                   <td>{item.peso}</td>
-//                   <td>{item.categoria}</td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//         )}
-//       </div>
-//     </div>
-//   )
-// };
-
-// export default page;

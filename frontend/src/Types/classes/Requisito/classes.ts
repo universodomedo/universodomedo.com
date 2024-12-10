@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, AcaoRitual, ItemComponente, Item, Opcao, OpcoesExecucao } from 'Types/classes/index.ts';
+import { Acao, Item, Opcao, OpcoesExecucao } from 'Types/classes/index.ts';
 import { FichaHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -15,16 +15,24 @@ export abstract class Requisito {
 export class RequisitoComponente extends Requisito {
     constructor(public precisaEstarEmpunhando: boolean) { super(); }
 
-    public refAcao?: AcaoRitual;
-    setRefAcao(value: AcaoRitual): this { this.refAcao = value; return this; }
+    public refAcao?: Acao;
+    setRefAcao(value: Acao): this { this.refAcao = value; return this; }
 
     get requisitoCumprido(): boolean {
         return (
             FichaHelper.getInstance().personagem.inventario.items.some(item =>
-                item instanceof ItemComponente && item.detalhesComponente.refElemento.id === this.refAcao!.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === this.refAcao!.refPai.refNivelComponente.id
-                && (this.precisaEstarEmpunhando && item.refExtremidade)
+                item.comportamentoGeral.temDetalhesComponente &&
+                item.comportamentoGeral.detelhesComponente.refElemento.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refElemento.id && 
+                item.comportamentoGeral.detelhesComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.id
+                && (this.precisaEstarEmpunhando && item.comportamentoEmpunhavel.estaEmpunhado)
             )
-        );
+        )
+        // return (
+        //     FichaHelper.getInstance().personagem.inventario.items.some(item =>
+        //         item instanceof ItemComponente && item.detalhesComponente.refElemento.id === this.refAcao!.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === this.refAcao!.refPai.refNivelComponente.id
+        //         && (this.precisaEstarEmpunhando && item.refExtremidade)
+        //     )
+        // );
     }
 
     get descricaoRequisito(): string {
@@ -36,7 +44,7 @@ export class RequisitoComponente extends Requisito {
 
 export class RequisitoItemEmpunhado extends Requisito {
     constructor() { super(); }
-    get requisitoCumprido(): boolean { return (this.refAcao!.refPai instanceof Item && this.refAcao!.refPai.estaEmpunhado); }
+    get requisitoCumprido(): boolean { return (this.refAcao!.refPai instanceof Item && this.refAcao!.refPai.comportamentoEmpunhavel.estaEmpunhado); }
     get descricaoRequisito(): string { return 'Necessário empunhar o Item da Ação'; }
 }
 
@@ -54,19 +62,29 @@ export class RequisitoExtremidadeDisponivel extends Requisito {
 
 export class RequisitoAlgumItemGuardado extends Requisito {
     constructor() { super(); }
-    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => !item.refExtremidade); }
+    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => !item.comportamentoEmpunhavel.estaEmpunhado); }
     get descricaoRequisito(): string { return 'Necessário ter Item no Inventário'; }
 }
 
 export class RequisitoAlgumItemEmpunhado extends Requisito {
     constructor() { super(); }
-    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item.refExtremidade); }
+    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item.comportamentoEmpunhavel.estaEmpunhado); }
     get descricaoRequisito(): string { return 'Necessário Empunhar algum Item'; }
 }
 
 export class RequisitoPodeSeLocomover extends Requisito {
     get requisitoCumprido(): boolean { return true; }
     get descricaoRequisito(): string { return 'Necessário Livre para se Locomover'; }
+}
+
+export class RequisitoAlgumItemEmpunhadoParaVestir extends Requisito {
+    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item.itemPodeSerVestido); }
+    get descricaoRequisito(): string { return 'Necessário Empunhar Item para Vestir'; }
+}
+
+export class RequisitoAlgumItemVestido extends Requisito {
+    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item.comportamentoVestivel.estaVestido); }
+    get descricaoRequisito(): string { return 'Necessário ter Item Vestido'; }
 }
 
 export class TipoRequisito {
@@ -92,11 +110,19 @@ export class RequisitoConfig {
                     key: 'custoComponente',
                     displayName: 'Componente',
                     obterOpcoes: (acao: Acao) => {
-                        const acaoRitual = acao as AcaoRitual;
-                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.idCirculo).reduce((acc: { key: number; value: string }[], cur) => {
-                            acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
+                        return FichaHelper.getInstance().personagem.inventario.items.filter(item =>
+                            item.comportamentoEmpunhavel.estaEmpunhado &&
+                            item.comportamentoGeral.temDetalhesComponente &&
+                            item.comportamentoGeral.detelhesComponente.refElemento.id === acao.refPai.comportamentoGeral.detelhesComponente.refElemento.id &&
+                            item.comportamentoGeral.detelhesComponente.refNivelComponente.id === acao.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.id
+                        ).reduce((acc: { key: number; value: string }[], cur) => {
+                            acc.push({ key: cur.id, value: cur.nomeExibicao });
                             return acc;
                         }, []);
+                        // return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.idCirculo).reduce((acc: { key: number; value: string }[], cur) => {
+                        //     acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
+                        //     return acc;
+                        // }, []);
                     }
                 }
             ]
@@ -139,8 +165,8 @@ export class RequisitoConfig {
                     key: 'idItem',
                     displayName: 'Item Alvo',
                     obterOpcoes: (): Opcao[] => {
-                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => !item.refExtremidade).reduce((acc: { key: number; value: string }[], cur) => {
-                            acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
+                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => !item.comportamentoEmpunhavel.estaEmpunhado).reduce((acc: { key: number; value: string }[], cur) => {
+                            acc.push({ key: cur.id, value: cur.nomeExibicao });
                             return acc;
                         }, [])
                     }
@@ -155,12 +181,44 @@ export class RequisitoConfig {
                     key: 'idItem',
                     displayName: 'Item Alvo',
                     obterOpcoes: (): Opcao[] => {
-                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade).reduce((acc: { key: number; value: string }[], cur) => {
-                            acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
+                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.comportamentoEmpunhavel.estaEmpunhado).reduce((acc: { key: number; value: string }[], cur) => {
+                            acc.push({ key: cur.id, value: cur.nomeExibicao });
                             return acc;
                         }, [])
                     },
                 }
+            ]
+        }],
+        [6, {
+            requisitoClass: RequisitoAlgumItemEmpunhadoParaVestir,
+            requisitoParams: [],
+            opcoesExecucao: [
+                {
+                    key: 'idItem',
+                    displayName: 'Item Alvo',
+                    obterOpcoes: (): Opcao[] => {
+                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.itemPodeSerVestido && !item.comportamentoVestivel.estaVestido).reduce((acc: { key: number; value: string }[], cur) => {
+                            acc.push({ key: cur.id, value: cur.nomeExibicao });
+                            return acc;
+                        }, [])
+                    },
+                },
+            ]
+        }],
+        [7, {
+            requisitoClass: RequisitoAlgumItemVestido,
+            requisitoParams: [],
+            opcoesExecucao: [
+                {
+                    key: 'idItem',
+                    displayName: 'Item Alvo',
+                    obterOpcoes: (): Opcao[] => {
+                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.comportamentoVestivel.estaVestido).reduce((acc: { key: number; value: string }[], cur) => {
+                            acc.push({ key: cur.id, value: cur.nomeExibicao });
+                            return acc;
+                        }, [])
+                    },
+                },
             ]
         }]
     ]);
@@ -171,7 +229,7 @@ export class RequisitoConfig {
         if (!config) return null;
 
         // Cria o requisito com os parâmetros e chama `setRefAcao`
-        const requisito = new config.requisitoClass(...config.requisitoParams).setRefAcao(acao as AcaoRitual);
+        const requisito = new config.requisitoClass(...config.requisitoParams).setRefAcao(acao);
         const opcoesExecucao = config.opcoesExecucao.map(opcao => 
             new OpcoesExecucao(opcao.key, opcao.displayName, () => opcao.obterOpcoes(acao))
         );

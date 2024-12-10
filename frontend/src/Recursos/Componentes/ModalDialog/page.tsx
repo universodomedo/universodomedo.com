@@ -25,7 +25,9 @@ function ModalContent({title, children}: {title:string, children: ReactNode}) {
                     </button>
                 </Dialog.Close>
 
-                {children}
+                <div className={style.dialog_conteudo_corpo}>
+                    {children}
+                </div>
             </Dialog.Content>
         </Dialog.Portal>
     );

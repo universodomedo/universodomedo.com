@@ -55,6 +55,11 @@ const page: React.FC = () => {
                 <>
                     <div className={style.div_demo_acoes}>
                         <div>
+                            <h1>Teste</h1>
+                            <button onClick={() => console.log(personagem)}>Teste</button>
+                        </div>
+
+                        <div>
                             <h1>Alterar Estatística</h1>
                             <div>
                                 <select id="estatistica">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>

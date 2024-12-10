@@ -1,5 +1,5 @@
 // #region Imports
-import { ItemArma, RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { RLJ_Ficha2 } from 'Types/classes/index.ts';
 // #endregion
 
 const dadosFicha: { [key: number]: RLJ_Ficha2 } = {

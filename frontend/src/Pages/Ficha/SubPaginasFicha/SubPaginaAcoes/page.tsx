@@ -1,22 +1,23 @@
 // #region Imports
 import { Acao } from 'Types/classes/index.ts';
+
 import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 import { useContextoAbaAcoes } from './contexto.tsx';
 
-import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
+import Item from './item.tsx';
 // #endregion
 
 const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, acoesPersonagem }) => {
   const { stopLoading } = useLoading();
 
-  const { mostrarFiltros, mostrarEtiquetas } = useContextoAbaAcoes();
+  const { mostrarFiltros } = useContextoAbaAcoes();
 
   const acoesRealizaveis = acoesPersonagem.filter(acao => !acao.bloqueada);
   const acoesBloqueadas = acoesPersonagem.filter(acao => acao.bloqueada);
 
   const renderAcaoItem = (acao: Acao, index: number) => (
-    <IconeCustomizado key={index} mostrarEtiquetas={mostrarEtiquetas} tooltipProps={acao.tooltipProps} desabilitado={acao.bloqueada} textoBotaoConfirmar={'Executar'} opcoes={acao.opcoesExecucoes} exec={{ executaEmModal: true, func: (valoresSelecionados: any) => acao.executaComOpcoes(valoresSelecionados) }}  />
+    <Item key={index} acao={acao} />
   );
 
   return (

@@ -1,6 +1,6 @@
 // #region Imports
 import { MDL_TipoDano } from "udm-types";
-import { Personagem, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, TipoItem, NivelComponente, TipoRequisito, Habilidade, MensagemLog, Classe, Nivel, TipoGanhoNex } from 'Types/classes/index.ts';
+import { Personagem, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, MensagemLog, Classe, Nivel, TipoGanhoNex, TipoItem } from 'Types/classes/index.ts';
 // #endregion
 
 export class FichaHelper {

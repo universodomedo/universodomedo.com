@@ -3,28 +3,9 @@ import style from './style.module.css';
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 // #endregion
 
-interface TooltipProps {
-	children: any;
-	content: any;
-	open?: any;
-	defaultOpen?: any;
-	onOpenChange?: any;
-}
-
-function Tooltip({
-	children,
-	content,
-	open,
-	defaultOpen,
-	onOpenChange,
-	...props
-}: TooltipProps) {
+function Tooltip({ children, content, open, defaultOpen, onOpenChange, ...props }: { children: any; content: any; open?: any; defaultOpen?: any; onOpenChange?: any; }) {
 	return (
-		<TooltipPrimitive.Root
-			open={open}
-			defaultOpen={defaultOpen}
-			onOpenChange={onOpenChange}
-		>
+		<TooltipPrimitive.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} >
 			<TooltipPrimitive.Trigger asChild>
 				{children}
 			</TooltipPrimitive.Trigger>

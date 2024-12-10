@@ -1,5 +1,5 @@
 // #region Imports
-import { Item, ItemArma, ItemEquipamento, ItemConsumivel, ItemComponente, Acao, Buff} from 'Types/classes/index.ts';
+import { Item, Acao, Buff} from 'Types/classes/index.ts';
 import { FichaHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -10,20 +10,12 @@ export class Inventario {
 
     get agrupamento(): Item[] {
         return [
-            ...(this.items.filter(item => item.idTipoItem === ItemArma.idTipoStatic)),
-            ...(this.items.filter(item => item.idTipoItem === ItemEquipamento.idTipoStatic)),
-            ...(this.items.filter(item => item.idTipoItem === ItemConsumivel.idTipoStatic).reduce((itemUnico, itemAtual) => {
-                if (!itemAtual.agrupavel || !itemUnico.some(item => item.agrupavel && item.nome.customizado === itemAtual.nome.customizado)) {
-                    itemUnico.push(itemAtual);
+            ...(this.items.reduce((itemAgrupado, itemAtual) => {
+                if (!itemAtual.agrupavel || !itemAgrupado.some(item => item.agrupavel && item.nomeExibicao === itemAtual.nomeExibicao && !item.comportamentoEmpunhavel.estaEmpunhado)) {
+                    itemAgrupado.push(itemAtual);
                 }
-                return itemUnico;
+                return itemAgrupado;
             }, [] as typeof this.items)),
-            ...(this.items.filter(item => item.idTipoItem === ItemComponente.idTipoStatic).reduce((itemUnico, itemAtual) => {
-                if (!itemAtual.agrupavel || !itemUnico.some(item => item.agrupavel && item.nome.customizado === itemAtual.nome.customizado)) {
-                    itemUnico.push(itemAtual);
-                }
-                return itemUnico;
-            }, [] as typeof this.items))
         ]
     }
 
@@ -44,7 +36,8 @@ export class Inventario {
     }
 
     public verificaCarregandoComponente(idElemento: number, idNivelComponente: number): boolean {
-        return this.items.some(item => item instanceof ItemComponente && item.detalhesComponente.refElemento.id === idElemento && item.detalhesComponente.refNivelComponente.id === idNivelComponente);
+        return true;
+        // return this.items.some(item => item instanceof ItemComponente && item.detalhesComponente.refElemento.id === idElemento && item.detalhesComponente.refNivelComponente.id === idNivelComponente);
     }
 
     public removerItem(idItem: number): void {

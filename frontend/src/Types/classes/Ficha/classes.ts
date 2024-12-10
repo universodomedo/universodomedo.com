@@ -1,4 +1,5 @@
 // #region Imports
+import { DetalhesItem } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -18,14 +19,14 @@ export type dadosRitual = {
 };
 
 export type dadosItem = {
-    idTipoItem: number, nomeItem: { nomePadrao: string, nomeCustomizado?: string }, peso: number, categoria: number, precisaEstarEmpunhando?: boolean,
+    idTipoItem: number, nomeItem: { nomePadrao: string, nomeCustomizado?: string }, peso: number, categoria: number,
+    detalhesItem?: DetalhesItem,
     detalhesArma?: subDadosDetalhesArmas, detalhesEquipamentos?: subDadosDetalhesEquipamentos, detalhesConsumiveis?: subDadosDetalhesConsumiveis, detalhesComponente?: subDadosDetalhesComponentes,
     dadosAcoes?: subDadosAcoes[]
     buffs?: subDadosBuff[],
 };
 
 export type subDadosAcoes = {
-    tipoAcao: 'AcaoRitual' | 'AcaoItem' | 'AcaoHabilidade' | 'AcaoAtaque',
     nomeAcao: string, idTipoAcao: number, idCategoriaAcao: number, idMecanica: number,
     custos: subDadosCusto,
     buffs?: subDadosBuff[],

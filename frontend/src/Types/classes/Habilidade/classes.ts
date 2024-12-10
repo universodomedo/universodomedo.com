@@ -1,43 +1,21 @@
 // #region Imports
-import { classeComArgumentos, adicionarAcoesUtil, Acao, RequisitoFicha, Personagem, AcaoHabilidade, CustoExecucao, Buff, adicionarBuffsUtil, DificuldadeConsecutiva, TooltipProps, FiltroProps, FiltroPropsItems, CorTooltip } from 'Types/classes/index.ts';
+import { classeComArgumentos, adicionarAcoesUtil, Acao, RequisitoFicha, Personagem, CustoExecucao, Buff, adicionarBuffsUtil, DificuldadeConsecutiva, FiltroProps, FiltroPropsItems, CorTooltip, ComportamentoGeral } from 'Types/classes/index.ts';
 import { FichaHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
 export class Habilidade {
+    public comportamentoGeral: ComportamentoGeral;
+
     public svg: string = 'PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KIDxnPgogIDx0aXRsZT5MYXllciAxPC90aXRsZT4KICA8dGV4dCBmaWxsPSIjMDAwMDAwIiBzdHJva2U9IiMwMDAiIHg9IjM0MSIgeT0iMjkxIiBpZD0ic3ZnXzIiIHN0cm9rZS13aWR0aD0iMCIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9Ik5vdG8gU2FucyBKUCIgdGV4dC1hbmNob3I9InN0YXJ0IiB4bWw6c3BhY2U9InByZXNlcnZlIj5UZXN0ZSAxPC90ZXh0PgogIDx0ZXh0IGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIwIiB4PSI1MyIgeT0iMTA5IiBpZD0ic3ZnXzMiIGZvbnQtc2l6ZT0iMTQwIiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIHhtbDpzcGFjZT0icHJlc2VydmUiPkE8L3RleHQ+CjwvZz4KPC9zdmc+';
 
     constructor(
         public nome: string,
-        public requisitoFicha: RequisitoFicha,
-    ) { }
+        public requisitoFicha?: RequisitoFicha,
+    ) {
+        this.comportamentoGeral = new ComportamentoGeral();
+    }
 
     get nomeExibicao(): string { return this.nome };
-
-    get tooltipProps(): TooltipProps {
-        return {
-            caixaInformacao: {
-                principal: { titulo: this.nome },
-                detalhes: {
-                    corpo: [
-                        { tipo: 'texto', conteudo: 'Habilidade'}
-                        // { tipo: 'texto', conteudo: `Ritual de ${this.refElemento.nome}` },
-                        // { tipo: 'texto', conteudo: this.refCirculoNivelRitual.nome },
-                        // { tipo: 'separacao', conteudo: 'Ações' },
-                        // ...this.acoes?.map(acao => ({
-                        //     tipo: 'texto' as const,
-                        //     conteudo: acao.nomeAcao,
-                        // })) || []
-                    ],
-                }
-            },
-            iconeCustomizado: {
-                corDeFundo: '#FFFFFF',
-                svg: this.svg
-            },
-            corTooltip: new CorTooltip('#FFFFFF').cores,
-            numeroUnidades: 1,
-        }
-    }
 
     static get filtroProps(): FiltroProps<Habilidade> {
         return new FiltroProps<Habilidade>(
@@ -58,7 +36,7 @@ export class Habilidade {
 export class HabilidadeAtiva extends Habilidade {
     public acoes: Acao[] = [];
 
-    constructor(nome: string, requisitoFicha: RequisitoFicha) {
+    constructor(nome: string, requisitoFicha?: RequisitoFicha) {
         super(nome, requisitoFicha);
     }
 
@@ -77,7 +55,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     const habilidade1 = new HabilidadeAtiva('Sacar Item', new RequisitoFicha((personagem: Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
         .adicionarAcoes([
             [
-                ...classeComArgumentos(AcaoHabilidade, 'Sacar Item', 1, 1, 1),
+                ...classeComArgumentos(Acao, 'Sacar Item', 1, 1, 1),
                 (acao) => {
                     acao.adicionarCustos([
                         classeComArgumentos(CustoExecucao, 3, 1)
@@ -91,7 +69,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     const habilidade2 = new HabilidadeAtiva('Guardar Item', new RequisitoFicha((personagem: Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
         .adicionarAcoes([
             [
-                ...classeComArgumentos(AcaoHabilidade, 'Guardar Item', 1, 1, 2),
+                ...classeComArgumentos(Acao, 'Guardar Item', 1, 1, 2),
                 (acao) => {
                     acao.adicionarCustos([
                         classeComArgumentos(CustoExecucao, 3, 1)
@@ -99,14 +77,42 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                     acao.adicionarRequisitosEOpcoesPorId([5]);
                 }
             ]
-        ])
+        ]);
     retorno.push(habilidade2);
+
+    const habilidade3 = new HabilidadeAtiva('Vestir Item')
+        .adicionarAcoes([
+            [
+                ...classeComArgumentos(Acao, 'Vestir Item', 1, 1, 4),
+                (acao) => {
+                    acao.adicionarCustos([
+                        classeComArgumentos(CustoExecucao, 2, 1)
+                    ]);
+                    acao.adicionarRequisitosEOpcoesPorId([6]);
+                }
+            ]
+        ]);
+    retorno.push(habilidade3);
+
+    const habilidade4 = new HabilidadeAtiva('Desvestir Item')
+        .adicionarAcoes([
+            [
+                ...classeComArgumentos(Acao, 'Desvestir Item', 1, 1, 5),
+                (acao) => {
+                    acao.adicionarCustos([
+                        classeComArgumentos(CustoExecucao, 2, 1)
+                    ]);
+                    acao.adicionarRequisitosEOpcoesPorId([3, 7]);
+                }
+            ]
+        ]);
+    retorno.push(habilidade4);
 
     // retorno.push(
     //     new Habilidade('Movimento Acrobático', new RequisitoFicha((personagem:Personagem) => personagem.pericias.some(pericia => pericia.refPericia.id === 6)))
     //     .adicionarAcoes([
     //         [
-    //             ...classeComArgumentos(AcaoHabilidade, 'Movimento Acrobático', 1, 1, 3),
+    //             ...classeComArgumentos(Acao, 'Movimento Acrobático', 1, 1, 3),
     //             (acao) => {
     //                 acao.adicionarCustos([
     //                     classeComArgumentos(CustoExecucao, 1, 1)
@@ -158,12 +164,12 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         new HabilidadeAtiva('Ação Rápida', new RequisitoFicha((personagem:Personagem) => personagem.pericias.find(pericia => pericia.refPericia.id === 7)?.refPatente.id! > 0))
         .adicionarAcoes([
             [
-                ...classeComArgumentos(AcaoHabilidade, 'Ação Rápida', 1, 1, 4),
+                ...classeComArgumentos(Acao, 'Ação Rápida', 1, 1),
                 (acao) => {
-                    (acao as AcaoHabilidade).adicionarDificuldades([
+                    acao.adicionarDificuldades([
                         classeComArgumentos(DificuldadeConsecutiva, 7, 10, 5)
                     ]);
-                    (acao as AcaoHabilidade).adicionarLogicaExecucao(() => {
+                    acao.adicionarLogicaExecucao(() => {
                         FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === 3)!.numeroAcoesAtuais++;
                     })
                 }

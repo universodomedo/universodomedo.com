@@ -46,7 +46,6 @@
 	color: var(--mauve-12);
 	font-size: 2rem;
     line-height: 1;
-    margin-bottom: 1.6vh;
 }
 
 .dialog_botao_fechar {
@@ -119,7 +118,12 @@
 	box-shadow: 0 0 0 2px var(--green-7);
 }
 
-
+.dialog_conteudo_corpo {
+	display: flex;
+	flex-direction: column;
+	gap: .4vh;
+	overflow: auto;
+}
 
 /* .Fieldset {
 	display: flex;

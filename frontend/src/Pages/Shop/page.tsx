@@ -204,6 +204,7 @@ const page = () => {
                 nomeItem: { nomePadrao: `Vestimenta de ${pericia.text} ${patente.text}` },
                 peso: 3,
                 categoria: 1,
+                detalhesItem: { podeSerVestido: true, precisaEstarVetindo: true },
                 buffs: [ { idBuff: SingletonHelper.getInstance().pericias.find(periciaEscolhida => periciaEscolhida.id === pericia.value)!.idBuffRelacionado, nome: 'Ferramentas Simples', valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1, } ],
             }
 
@@ -252,7 +253,7 @@ const page = () => {
                 nomeItem: { nomePadrao: `Utensílio de ${pericia.text} ${patente.text}` },
                 peso: 1,
                 categoria: 1,
-                precisaEstarEmpunhando: true,
+                detalhesItem: { precisaEstarEmpunhado: true },
                 buffs: [ { idBuff: SingletonHelper.getInstance().pericias.find(periciaEscolhida => periciaEscolhida.id === pericia.value)!.idBuffRelacionado, nome: 'Ferramentas Simples', valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1, } ],
             }
 
@@ -294,6 +295,7 @@ const page = () => {
                 nomeItem: { nomePadrao: `Mochila ${patente.text}` },
                 peso: 0,
                 categoria: 1,
+                detalhesItem: { podeSerVestido: true, precisaEstarVetindo: true },
                 buffs: [ { idBuff: 52, nome: 'Ferramentas Simples', valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1, } ],
             }
 
@@ -335,7 +337,6 @@ const page = () => {
                         categoria: 0,
                         detalhesConsumiveis: { usosMaximos: 1, usos: 1 },
                         dadosAcoes: [ {
-                            tipoAcao: 'AcaoItem',
                             nomeAcao: 'Consumir',
                             idTipoAcao: 1,
                             idCategoriaAcao: 1,
@@ -354,7 +355,6 @@ const page = () => {
                         categoria: 0,
                         detalhesConsumiveis: { usosMaximos: 1, usos: 1 },
                         dadosAcoes: [ {
-                            tipoAcao: 'AcaoItem',
                             nomeAcao: 'Consumir',
                             idTipoAcao: 1,
                             idCategoriaAcao: 1,

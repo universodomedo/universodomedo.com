@@ -1,5 +1,5 @@
 // #region Imports
-import { pluralize, Acao, Item, Duracao, TooltipProps, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltro, OpcaoFiltro, ItemEquipamento, Habilidade } from 'Types/classes/index.ts';
+import { pluralize, Acao, Item, Duracao, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltro, OpcaoFiltro, Habilidade, HabilidadePassiva } from 'Types/classes/index.ts';
 import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -93,31 +93,6 @@ export abstract class Buff {
         return retorno;
     }
 
-    get tooltipPropsSuper(): TooltipProps {
-        return {
-            caixaInformacao: {
-                principal: {
-                    titulo: this.nome
-                },
-                detalhes: {
-                    corpo: [
-                        { tipo: 'texto', conteudo: `+${this.valor} ${this.refBuff.nome}` },
-                        { tipo: 'texto', conteudo: `${this.refTipoBuff.nomeExibirTooltip}` },
-                        { tipo: 'texto', conteudo: `${this.textoDuracao}` },
-                    ]
-                }
-            },
-            iconeCustomizado: {
-                corDeFundo: '',
-                svg: '',
-            },
-            corTooltip: new CorTooltip('#FFFFFF').cores,
-            numeroUnidades: 1,
-        };
-    }
-
-    abstract get tooltipProps(): TooltipProps;
-
     static get filtroProps(): FiltroProps<Buff> {
         return new FiltroProps<Buff>(
             'Efeitos',
@@ -170,21 +145,24 @@ export class BuffInterno extends Buff {
         super(_idBuff, nome, valor, _idDuracao, quantidadeDuracaoMaxima, idTipoBuff);
     }
 
-    get tooltipProps(): TooltipProps {
-        const tooltipPropsSuper = super.tooltipPropsSuper;
+    public get ativo(): boolean {
+        const retorno = (
+            this.refPai instanceof HabilidadePassiva ||
+            (
+                this.refPai instanceof Item &&
+                (
+                    (this.refPai.detalhesItem.precisaEstarEmpunhado && this.refPai.comportamentoEmpunhavel.estaEmpunhado) ||
+                    (this.refPai.detalhesItem.precisaEstarVetindo && this.refPai.comportamentoVestivel.estaVestido)
+                )
+            )
+        );
+        // ||            this.refPai instanceof Acao &&
+        return retorno || false;
+        // return true;
 
-        return {
-            caixaInformacao: {
-                principal: tooltipPropsSuper.caixaInformacao.principal,
-                detalhes: tooltipPropsSuper.caixaInformacao.detalhes,
-            },
-            iconeCustomizado: {
-                corDeFundo: '#00FF00',
-                svg: this.refPai!.svg,
-            },
-            corTooltip: tooltipPropsSuper.corTooltip,
-            numeroUnidades: tooltipPropsSuper.numeroUnidades,
-        };
+
+
+        // return (!this.refPai?.precisaEstarEmpunhado || (this.refPai.precisaEstarEmpunhado && this.refPai.estaEmpunhado));
     }
 }
 
@@ -200,23 +178,6 @@ export class BuffExterno extends Buff {
     }
 
     adicionaRefPai(refPai: ItemEquipamento): this { return (this.refPai = refPai), this; }
-
-    get tooltipProps(): TooltipProps {
-        const tooltipPropsSuper = super.tooltipPropsSuper;
-
-        return {
-            caixaInformacao: {
-                principal: tooltipPropsSuper.caixaInformacao.principal,
-                detalhes: tooltipPropsSuper.caixaInformacao.detalhes,
-            },
-            iconeCustomizado: {
-                corDeFundo: '#00FF00',
-                svg: this.svg,
-            },
-            corTooltip: tooltipPropsSuper.corTooltip,
-            numeroUnidades: tooltipPropsSuper.numeroUnidades,
-        };
-    }
 }
 
 export class BuffRef {

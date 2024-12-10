@@ -1,5 +1,5 @@
 // #region Imports
-import { classeComArgumentos, lista_geral_habilidades, EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Buff, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Extremidade, AcaoRitual, CustoPE, CustoExecucao, CustoComponente, BuffInterno, ItemComponente, NomeItem, DetalhesItemComponente, ItemArma, DetalhesItemArma, AcaoAtaque, RequisitoItemEmpunhado, Opcao, Acao, BuffsAplicados, BuffsPorId, BuffsPorTipo, Item, AcaoItem, ItemEquipamento, ItemConsumivel, DetalhesItemEquipamento, DetalhesItemConsumivel, BuffExterno, HabilidadeAtiva, deparaTipoAcaoParaClasse } from 'Types/classes/index.ts';
+import { classeComArgumentos, lista_geral_habilidades, EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Buff, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Extremidade, CustoPE, CustoExecucao, CustoComponente, BuffInterno, NomeItem, RequisitoItemEmpunhado, Opcao, Acao, BuffsAplicados, BuffsPorId, BuffsPorTipo, Item, BuffExterno, HabilidadeAtiva } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -60,7 +60,7 @@ export class Personagem {
             new Ritual(ritual.nomeRitual, ritual.idCirculoNivel, ritual.idElemento)
                 .adicionarAcoes(
                     ritual.dadosAcoes.map(dadosAcao => [
-                        ...classeComArgumentos(AcaoRitual, dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica),
+                        ...classeComArgumentos(Acao, dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica),
                         (acao) => {
                             acao.adicionarCustos([
                                 dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
@@ -84,65 +84,49 @@ export class Personagem {
             let item: Item;
 
             if (dadosItem.idTipoItem === 1) {
-                item = new ItemArma(
-                    new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.precisaEstarEmpunhando ?? false,
-                    new DetalhesItemArma(dadosItem.detalhesArma!.dano, dadosItem.detalhesArma!.variancia, dadosItem.detalhesArma!.numeroExtremidadesUtilizadas, dadosItem.detalhesArma!.idAtributoUtilizado, dadosItem.detalhesArma!.idPericiaUtilizada),
-                );
+                item = new Item(1, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.detalhesItem || {})
             } else if (dadosItem.idTipoItem === 2) {
-                item = new ItemEquipamento(
-                    new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.precisaEstarEmpunhando ?? false,
-                    new DetalhesItemEquipamento(),
-                );
+                item = new Item(2, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.detalhesItem || {})
             } else if (dadosItem.idTipoItem === 3) {
-                item = new ItemConsumivel(
-                    new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.precisaEstarEmpunhando ?? false,
-                    new DetalhesItemConsumivel(dadosItem.detalhesConsumiveis!.usosMaximos, dadosItem.detalhesConsumiveis!.usos)
-                );
+                item = new Item(3, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.detalhesItem || {})
             } else if (dadosItem.idTipoItem === 4) {
-                item = new ItemComponente(
-                    new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria,
-                    new DetalhesItemComponente(dadosItem.detalhesComponente!.idElemento, dadosItem.detalhesComponente!.idNivelComponente, dadosItem.detalhesComponente!.usosMaximos, dadosItem.detalhesComponente!.usos),
-                );
+                item = new Item(4, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.detalhesItem || {})
             } else {
                 throw new Error("Tipo de item desconhecido");
             }
 
             item
                 .adicionarAcoes(
-                    (dadosItem.dadosAcoes || []).map(dadosAcao => {
-                        const tipoAcao = deparaTipoAcaoParaClasse[dadosAcao.tipoAcao];
-
-                        return [
-                            ...classeComArgumentos(tipoAcao, dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica),
-                            (acao) => {
-                                acao.adicionarCustos([
-                                    dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
-                                    ...((dadosAcao.custos.custoExecucao || []).map(execucao =>
-                                        execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
-                                    )),
-                                    dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
-                                ].filter(Boolean));
-                                acao.adicionarBuffs(
-                                    (dadosAcao.buffs || []).map(buff => [
-                                        // ...classeComArgumentos(BuffExterno, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
-                                        ...classeComArgumentos(BuffInterno, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
-                                    ])
-                                );
-                                acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
-                            }
-                        ]
-                    })
+                    (dadosItem.dadosAcoes || []).map(dadosAcao => [
+                        ...classeComArgumentos(Acao, dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica),
+                        (acao) => {
+                            acao.adicionarCustos([
+                                dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
+                                ...((dadosAcao.custos.custoExecucao || []).map(execucao =>
+                                    execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
+                                )),
+                                dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
+                            ].filter(Boolean));
+                            acao.adicionarBuffs(
+                                (dadosAcao.buffs || []).map(buff => [
+                                    // ...classeComArgumentos(BuffExterno, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
+                                    ...classeComArgumentos(BuffInterno, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
+                                ])
+                            );
+                            acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
+                        }
+                    ])
                 )
                 .adicionarBuffs(
                     (dadosItem.buffs || []).map(buff => [
-                        ...classeComArgumentos(BuffExterno, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
+                        ...classeComArgumentos(BuffInterno, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
                     ])
                 );
 
             return item;
         });
 
-        this.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha.verificaRequisitoCumprido(this));
+        this.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(this));
     }
 
     public get acoes(): Acao[] {

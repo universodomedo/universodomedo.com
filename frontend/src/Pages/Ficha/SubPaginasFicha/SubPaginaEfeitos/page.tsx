@@ -5,13 +5,13 @@ import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 import { useContextoAbaEfeitos } from './contexto.tsx';
 
-import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
+import Item from './item.tsx';
 // #endregion
 
 const page: React.FC<{ abaId: string; buffsPersonagem: BuffsAplicados }> = ({ abaId, buffsPersonagem }) => {
   const { stopLoading } = useLoading();
 
-  const { mostrarFiltros, mostrarEtiquetas } = useContextoAbaEfeitos();
+  const { mostrarFiltros } = useContextoAbaEfeitos();
 
   const buffsAplicados = buffsPersonagem.listaObjetosBuff.reduce((acc, cur) => {
     const buffsDoTipo = cur.tipoBuff.reduce((acc2, cur2) => {
@@ -34,7 +34,7 @@ const page: React.FC<{ abaId: string; buffsPersonagem: BuffsAplicados }> = ({ ab
   }, [] as Buff[]);
 
   const renderBuffItem = (efeito: Buff, index: number) => (
-    <IconeCustomizado key={index} mostrarEtiquetas={mostrarEtiquetas} tooltipProps={efeito.tooltipProps} desabilitado={true} textoBotaoConfirmar={''} exec={{ executaEmModal: false, func: () => { console.log('oi') } }} />
+    <Item key={index} efeito={efeito} />
   );
 
   return (

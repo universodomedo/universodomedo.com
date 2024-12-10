@@ -7,7 +7,8 @@ import * as HoverCard from "@radix-ui/react-hover-card";
 
 export default function TooltipPersistente({ open, onOpenChange, children }: { open: boolean, onOpenChange: (open: boolean) => void, children: ReactNode }) {
     return (
-        <HoverCard.Root open={open} onOpenChange={onOpenChange} openDelay={700} closeDelay={200}>
+        // <HoverCard.Root open={open} onOpenChange={onOpenChange} openDelay={700} closeDelay={200}> quando tem esse delay, possibilita aquele click q buga tudo
+        <HoverCard.Root open={open} onOpenChange={onOpenChange} openDelay={0} closeDelay={0}>
             {children}
         </HoverCard.Root>
     );

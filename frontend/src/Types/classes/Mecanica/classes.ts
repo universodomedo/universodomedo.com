@@ -13,20 +13,16 @@ export class Mecanica {
 export const logicaMecanicas: { [key: number]: (valoresSelecionados: GastaCustoProps, acao: Acao) => void } = {
     // Sacar
     1: (valoresSelecionados) => {
-        // const extremidadeSelecionada = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => extremidade.id === valoresSelecionados['idExtremidade']!)!;
+        const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados['idItem']);
 
-        // extremidadeSelecionada.empunhar(valoresSelecionados['idItem']!);
-
-        const extremidadeLivre = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => !extremidade.estaOcupada);
-
-        extremidadeLivre!.empunhar(valoresSelecionados['idItem']!);
+        itemSelecionado?.sacar();
     },
 
     // Guardar
     2: (valoresSelecionados) => {
         const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados['idItem']);
 
-        itemSelecionado?.refExtremidade?.guardar();
+        itemSelecionado?.guardar();
     },
 
     // Aplicar Buff
@@ -34,8 +30,17 @@ export const logicaMecanicas: { [key: number]: (valoresSelecionados: GastaCustoP
         acao.ativaBuffs();
     },
 
-    // Ganhar Coisa
-    4: () => {
-        FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === 3)!.numeroAcoesAtuais++;
-    }
+    // Vestir
+    4: (valoresSelecionados) => {
+        const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados['idItem']);
+
+        itemSelecionado?.vestir();
+    },
+
+    // Desvestir
+    5: (valoresSelecionados) => {
+        const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados['idItem']);
+
+        itemSelecionado?.desvestir();
+    },
 };

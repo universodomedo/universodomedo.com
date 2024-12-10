@@ -5,7 +5,6 @@ import Sessions from "Pages/Sessions/page.tsx";
 import SessaoAovivo from "Pages/SessaoAovivo/page.tsx"
 import Login from "Pages/Login/page.tsx";
 import Teste from "Pages/Teste/page.tsx";
-import TooltipManager from 'Components/SubComponents/Tooltip/page.tsx';
 
 import LayoutLP from "Layouts/LayoutLP/layout.tsx";
 import LayoutInterno from "Layouts/LayoutInterno/layout.tsx";
@@ -15,7 +14,6 @@ import Ficha from 'Pages/Ficha/page.tsx';
 import FichaTutorial from 'Pages/FichaTutorial/page.tsx';
 import EditaFicha from 'Pages/EditaFicha/page.tsx';
 import PageTracker from "Components/PageTracker/page_tracker.tsx";
-import TooltipContainer from "Components/SubComponents/Tooltip/TooltipContainer.tsx";
 
 import PaginaInternaTeste from 'Pages/PaginaInternaTeste/page.tsx';
 import Shop from 'Pages/Shop/page.tsx';
@@ -30,7 +28,6 @@ const App = () => {
     <div className='app-container'>
       {/* <TooltipManager /> */}
 
-      <TooltipContainer />
       <RedixTooltip delayDuration={200} skipDelayDuration={0}>
 
         <BrowserRouter>

@@ -1,8 +1,7 @@
 // #region Imports
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { SingletonHelper } from 'Types/classes_estaticas';
-import { lista_geral_habilidades, Personagem, Circulo, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, TipoItem, NivelComponente, TipoRequisito, Habilidade, RequisitoFicha, Classe, Nivel } from "Types/classes/index.ts";
-import { TipoGanhoNex, CorTooltip, PaletaCores, } from 'Types/classes/index.ts';
+import { lista_geral_habilidades, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, RequisitoFicha, Classe, Nivel, TipoGanhoNex, TipoItem } from "Types/classes/index.ts";
 // #endregion
 
 const singletonHelper = SingletonHelper.getInstance();

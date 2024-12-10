@@ -1,13 +1,14 @@
 // #region Imports
 import { Ritual } from 'Types/classes/index.ts';
+
 import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 import { useContextoAbaRituais } from './contexto.tsx';
 
-import IconeCustomizado from "Components/IconeCustomizado/page.tsx";
-
 import { useDispatch } from "react-redux";
 import { setCacheFiltros } from "Redux/slices/abasHelperSlice.ts";
+
+import Item from './item.tsx';
 // #endregion
 
 
@@ -15,7 +16,7 @@ const page = ({ abaId, rituaisPersonagem, abrirAbaAcao }: { abaId: string; ritua
   const { stopLoading } = useLoading();
   const dispatch = useDispatch();
 
-  const { mostrarFiltros, mostrarEtiquetas } = useContextoAbaRituais();
+  const { mostrarFiltros } = useContextoAbaRituais();
 
   const clickIcone = (ritual: Ritual) => {
     abrirAbaAcao();
@@ -24,7 +25,7 @@ const page = ({ abaId, rituaisPersonagem, abrirAbaAcao }: { abaId: string; ritua
   }
 
   const renderRitualItem = (ritual: Ritual, index: number) => (
-    <IconeCustomizado key={index} mostrarEtiquetas={mostrarEtiquetas} tooltipProps={ritual.tooltipProps} textoBotaoConfirmar={'Ver Ações'} exec={{executaEmModal: false, func:() => {clickIcone(ritual)} }}/>
+    <Item key={index} ritual={ritual} />
   );
 
   return (

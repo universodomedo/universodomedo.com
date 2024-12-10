@@ -1,6 +1,6 @@
 // #region Imports
-import { AcaoHabilidade, PericiaPatentePersonagem } from 'Types/classes/index.ts';
-import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { Acao, PericiaPatentePersonagem } from 'Types/classes/index.ts';
+import { FichaHelper, LoggerHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
 export abstract class Dificuldade {
@@ -8,8 +8,8 @@ export abstract class Dificuldade {
         private _idPericia: number
     ) { }
 
-    public refAcao?: AcaoHabilidade;
-    setRefAcao(value: AcaoHabilidade): this { return (this.refAcao = value, this); }
+    public refAcao?: Acao;
+    setRefAcao(value: Acao): this { return (this.refAcao = value, this); }
 
     get refPericiaPersonagem(): PericiaPatentePersonagem { return FichaHelper.getInstance().personagem.pericias.find(pericia => pericia.refPericia.id === this._idPericia)!; }
     abstract get valor(): number;
@@ -37,8 +37,8 @@ export class DificuldadeConsecutiva extends Dificuldade {
         public valorConsecutivo: number
     ) { super(idPericia); }
 
-    get valor(): number { return this.valorInicial + (this.valorConsecutivo * this.refAcao!.vezesUtilizadasConsecutivo) }
-    get descricaoDificuldade(): string { return `${this.refPericiaPersonagem.refPericia.nomeAbrev} DT ${this.valor} ${this.refAcao!.bloqueadoNesseTurno ? ` | Falhou nesse turno` : ''}`; }
+    get valor(): number { return this.valorInicial + (this.valorConsecutivo * this.refAcao!.refPai.comportamentoGeral.vezesUtilizadasConsecutivo) }
+    get descricaoDificuldade(): string { return `${this.refPericiaPersonagem.refPericia.nomeAbrev} DT ${this.valor} ${this.refAcao!.refPai.comportamentoGeral.bloqueadoNesseTurno ? ` | Falhou nesse turno` : ''}`; }
 
     processa(): boolean {
         LoggerHelper.getInstance().adicionaMensagem(`Rodando ${this.refPericiaPersonagem.refPericia.nomeAbrev} DT ${this.valor}`);
@@ -55,10 +55,10 @@ export class DificuldadeConsecutiva extends Dificuldade {
     }
 
     processaSucesso(): void {
-        this.refAcao?.novoUso();
+        this.refAcao?.refPai.comportamentoGeral.novoUso();
     }
 
     processaFalha(): void {
-        this.refAcao?.bloqueia();
+        this.refAcao?.refPai.comportamentoGeral.bloqueia();
     }
 }
