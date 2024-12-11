@@ -81,21 +81,7 @@ export class Personagem {
         );
 
         this.inventario.items = this._ficha.inventario!.map(dadosItem => {
-            let item: Item;
-
-            if (dadosItem.idTipoItem === 1) {
-                item = new Item(1, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.detalhesItem || {})
-            } else if (dadosItem.idTipoItem === 2) {
-                item = new Item(2, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.detalhesItem || {})
-            } else if (dadosItem.idTipoItem === 3) {
-                item = new Item(3, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.detalhesItem || {})
-            } else if (dadosItem.idTipoItem === 4) {
-                item = new Item(4, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.detalhesItem || {})
-            } else {
-                throw new Error("Tipo de item desconhecido");
-            }
-
-            item
+            return new Item(dadosItem.idTipoItem, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.detalhesItem || {}, dadosItem.detalhesConsumiveis?.usosMaximos)
                 .adicionarAcoes(
                     (dadosItem.dadosAcoes || []).map(dadosAcao => [
                         ...classeComArgumentos(Acao, dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica),
@@ -122,8 +108,6 @@ export class Personagem {
                         ...classeComArgumentos(BuffInterno, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
                     ])
                 );
-
-            return item;
         });
 
         this.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(this));

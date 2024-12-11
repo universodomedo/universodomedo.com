@@ -41,7 +41,9 @@ export class ComportamentoGeral {
 export class ComportamentoUtilizavel {
     public usosAtuais: number = 0;
 
-    constructor(public usosMaximo: number = 0) { this.usosAtuais = this.usosMaximo; }
+    constructor(public usosMaximo: number = 0, usosAtuais?: number) {
+        this.usosAtuais = (usosAtuais === undefined ? this.usosMaximo : usosAtuais);
+    }
 
     gastaUsoERetornaSePrecisaRemover(): boolean {
         // se não tem maximo, nunca consome, nunca remove

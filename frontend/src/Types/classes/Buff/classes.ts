@@ -151,11 +151,12 @@ export class BuffInterno extends Buff {
             (
                 this.refPai instanceof Item &&
                 (
-                    (this.refPai.detalhesItem.precisaEstarEmpunhado && this.refPai.comportamentoEmpunhavel.estaEmpunhado) ||
-                    (this.refPai.detalhesItem.precisaEstarVetindo && this.refPai.comportamentoVestivel.estaVestido)
+                    (this.refPai.detalhesItem.precisaEstarEmpunhado && this.refPai.itemEstaEmpunhado) ||
+                    (this.refPai.detalhesItem.precisaEstarVetindo && this.refPai.itemEstaVestido)
                 )
-            )
-        );
+            ) ||
+            this.refPai instanceof Acao
+        ) && this._ativo;
         // ||            this.refPai instanceof Acao &&
         return retorno || false;
         // return true;

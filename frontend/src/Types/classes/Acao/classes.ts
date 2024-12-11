@@ -90,6 +90,8 @@ export class Acao {
 
         if (!this.processaDificuldades()) return;
 
+        // logica temporaria
+        if (this.refPai instanceof Item && this.refPai.comportamentoUtilizavel.usosMaximo > 0) this.refPai.gastaUso();
         this.aplicaGastos(valoresSelecionados);
         this.executa(valoresSelecionados);
 

@@ -52,7 +52,9 @@ export class HabilidadePassiva extends Habilidade {
 export const lista_geral_habilidades = (): Habilidade[] => {
     const retorno: Habilidade[] = [];
 
-    const habilidade1 = new HabilidadeAtiva('Sacar Item', new RequisitoFicha((personagem: Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
+    const habilidade1 = new HabilidadeAtiva('Sacar Item', new RequisitoFicha((personagem: Personagem) => {
+        return personagem.estatisticasBuffaveis.extremidades.length > 0 && personagem.inventario.items.some(item => item.itemEmpunhavel)
+    }))
         .adicionarAcoes([
             [
                 ...classeComArgumentos(Acao, 'Sacar Item', 1, 1, 1),
@@ -66,7 +68,9 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         ]);
     retorno.push(habilidade1);
 
-    const habilidade2 = new HabilidadeAtiva('Guardar Item', new RequisitoFicha((personagem: Personagem) => personagem.estatisticasBuffaveis.extremidades.length > 0))
+    const habilidade2 = new HabilidadeAtiva('Guardar Item', new RequisitoFicha((personagem: Personagem) => {
+        return personagem.estatisticasBuffaveis.extremidades.length > 0 && personagem.inventario.items.some(item => item.itemEmpunhavel)
+    }))
         .adicionarAcoes([
             [
                 ...classeComArgumentos(Acao, 'Guardar Item', 1, 1, 2),
@@ -80,7 +84,9 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         ]);
     retorno.push(habilidade2);
 
-    const habilidade3 = new HabilidadeAtiva('Vestir Item')
+    const habilidade3 = new HabilidadeAtiva('Vestir Item', new RequisitoFicha((personagem: Personagem) => {
+        return personagem.inventario.items.some(item => item.itemVestivel)
+    }))
         .adicionarAcoes([
             [
                 ...classeComArgumentos(Acao, 'Vestir Item', 1, 1, 4),
@@ -94,7 +100,9 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         ]);
     retorno.push(habilidade3);
 
-    const habilidade4 = new HabilidadeAtiva('Desvestir Item')
+    const habilidade4 = new HabilidadeAtiva('Desvestir Item', new RequisitoFicha((personagem: Personagem) => {
+        return personagem.inventario.items.some(item => item.itemVestivel)
+    }))
         .adicionarAcoes([
             [
                 ...classeComArgumentos(Acao, 'Desvestir Item', 1, 1, 5),

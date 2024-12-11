@@ -20,9 +20,9 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
 
   const { mostrarFiltros, mostrarBarras } = useContextoAbaInventario();
 
-  const itensEmpunhados = inventarioPersonagem.agrupamento.filter(item => item.comportamentoEmpunhavel.estaEmpunhado);
-  const itensGuardados = inventarioPersonagem.agrupamento.filter(item => !item.comportamentoEmpunhavel.estaEmpunhado && !item.comportamentoVestivel.estaVestido);
-  const itensVestidos = inventarioPersonagem.agrupamento.filter(item => item.comportamentoVestivel.estaVestido);
+  const itensGuardados = inventarioPersonagem.agrupamento.filter(item => item.itemEstaGuardado);
+  const itensEmpunhados = inventarioPersonagem.agrupamento.filter(item => item.itemEstaEmpunhado);
+  const itensVestidos = inventarioPersonagem.agrupamento.filter(item => item.itemEstaVestido);
 
   const clickItem = (item: Item) => {
     if (item.acoes.length === 0) return;
