@@ -1,5 +1,5 @@
 // #region Imports
-import { Buff, BuffsAplicados } from 'Types/classes/index.ts';
+import { Buff, Modificadores } from 'Types/classes/index.ts';
 
 import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
@@ -8,30 +8,15 @@ import { useContextoAbaEfeitos } from './contexto.tsx';
 import Item from './item.tsx';
 // #endregion
 
-const page: React.FC<{ abaId: string; buffsPersonagem: BuffsAplicados }> = ({ abaId, buffsPersonagem }) => {
+const page: React.FC<{ abaId: string; modificadores: Modificadores }> = ({ abaId, modificadores }) => {
   const { stopLoading } = useLoading();
 
   const { mostrarFiltros } = useContextoAbaEfeitos();
 
-  const buffsAplicados = buffsPersonagem.listaObjetosBuff.reduce((acc, cur) => {
-    const buffsDoTipo = cur.tipoBuff.reduce((acc2, cur2) => {
-      acc2.push(cur2.aplicado);
+  const buffs = modificadores.buffs;
 
-      return acc2;
-    }, [] as Buff[]);
-
-    return acc.concat(buffsDoTipo);
-  }, [] as Buff[]);
-
-  const buffsSobreescritos = buffsPersonagem.listaObjetosBuff.reduce((acc, cur) => {
-    const buffsDoTipo = cur.tipoBuff.reduce((acc2, cur2) => {
-      acc2.push(...cur2.sobreescritos);
-
-      return acc2;
-    }, [] as Buff[]);
-
-    return acc.concat(buffsDoTipo);
-  }, [] as Buff[]);
+  const buffsAplicados = buffs.aplicados;
+  const buffsSobreescritos = buffs.sobreescritos;
 
   const renderBuffItem = (efeito: Buff, index: number) => (
     <Item key={index} efeito={efeito} />

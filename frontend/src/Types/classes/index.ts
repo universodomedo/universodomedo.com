@@ -23,6 +23,7 @@ export * from './Item';
 export * from './Log';
 export * from './Mecanica';
 export * from './MenuAbaFicha';
+export * from './Modificadores';
 export * from './OpcaoExecucao';
 export * from './Paleta';
 export * from './Pericia';

@@ -37,7 +37,6 @@ export class Item {
 
     get nomeExibicao(): string { return this.nome.nomeExibicao }
     get agrupavel(): boolean { return this.idTipoItem === 3 || this.idTipoItem === 4 }
-    get buffs(): Buff[] { return this._buffs.filter(buff => buff.ativo); }
 
     get itemEmpunhavel(): boolean { return this.comportamentoEmpunhavel.podeSerEmpunhado; }
     get itemVestivel(): boolean { return this.comportamentoVestivel.podeSerVestido; }
@@ -54,32 +53,52 @@ export class Item {
     adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this._buffs, buffParams), this) };
     adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }
 
+    ativaBuffsItem() {
+        this._buffs.forEach(buff => buff.ativaBuff());
+    }
+
+    desativaBuffsItem() {
+        this._buffs.forEach(buff => buff.desativaBuff());
+    }
+
     sacar = (): void => {
         this.comportamentoEmpunhavel.empunha(this.id);
+
+        if (this.detalhesItem.precisaEstarEmpunhado) this.ativaBuffsItem();
+
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Empunhado`);
     }
 
     guardar = (): void => {
         this.comportamentoEmpunhavel.desempunha();
+
+        if (this.detalhesItem.precisaEstarEmpunhado) this.desativaBuffsItem();
+        
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Guardado`);
     }
 
     vestir = (): void => {
         this.comportamentoVestivel.veste();
         this.comportamentoEmpunhavel.desempunha();
+
+        if (this.detalhesItem.precisaEstarVetindo) this.ativaBuffsItem();
+
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Vestido`);
     }
 
     desvestir = (): void => {
         this.comportamentoVestivel.desveste();
         this.sacar();
+
+        if (this.detalhesItem.precisaEstarVetindo) this.desativaBuffsItem();
+
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Desvestido`);
     }
 
     gastaUso = (): void => {
         const precisaRemover = this.comportamentoUtilizavel.gastaUsoERetornaSePrecisaRemover();
 
-        // if (precisaRemover) this.removeDoInventario();
+        if (precisaRemover) this.removeDoInventario();
     }
 
     removeDoInventario(): void {

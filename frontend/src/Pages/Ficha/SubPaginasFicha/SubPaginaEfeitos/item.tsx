@@ -23,7 +23,7 @@ const page = ({ efeito }: { efeito: Buff }) => {
                     <div
                         className={`${style.icone}`}
                         style={{
-                            backgroundImage: `url(data:image/svg+xml;base64,${efeito.refPai!.svg})`,
+                            backgroundImage: `url(data:image/svg+xml;base64,${efeito.svg})`,
                             backgroundColor: '#FFFFFF',
                         }}
                     />

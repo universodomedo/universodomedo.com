@@ -1,5 +1,5 @@
 // #region Imports
-import { classeComArgumentos, lista_geral_habilidades, EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Buff, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Extremidade, CustoPE, CustoExecucao, CustoComponente, BuffInterno, NomeItem, RequisitoItemEmpunhado, Opcao, Acao, BuffsAplicados, BuffsPorId, BuffsPorTipo, Item, BuffExterno, HabilidadeAtiva } from 'Types/classes/index.ts';
+import { classeComArgumentos, lista_geral_habilidades, EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Buff, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Extremidade, CustoPE, CustoExecucao, CustoComponente, NomeItem, RequisitoItemEmpunhado, Opcao, Acao, BuffsAplicados, BuffsPorId, BuffsPorTipo, Item, HabilidadeAtiva, Modificadores } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -30,6 +30,8 @@ export class Personagem {
     public habilidades: Habilidade[] = [];
     public buffsExternos: Buff[] = [];
     public rituais: Ritual[] = [];
+
+    public modificadores: Modificadores = new Modificadores();
 
     public receptor: Receptor = new Receptor(this);
 
@@ -71,7 +73,7 @@ export class Personagem {
                             ].filter(Boolean));
                             acao.adicionarBuffs(
                                 (dadosAcao.buffs || []).map(buff => [
-                                    ...classeComArgumentos(BuffInterno, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
+                                    ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
                                 ])
                             );
                             acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
@@ -95,8 +97,7 @@ export class Personagem {
                             ].filter(Boolean));
                             acao.adicionarBuffs(
                                 (dadosAcao.buffs || []).map(buff => [
-                                    // ...classeComArgumentos(BuffExterno, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
-                                    ...classeComArgumentos(BuffInterno, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
+                                    ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
                                 ])
                             );
                             acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
@@ -105,7 +106,7 @@ export class Personagem {
                 )
                 .adicionarBuffs(
                     (dadosItem.buffs || []).map(buff => [
-                        ...classeComArgumentos(BuffInterno, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
+                        ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
                     ])
                 );
         });
@@ -125,47 +126,51 @@ export class Personagem {
         return acoesRituais.concat(this.inventario.acoesInventario()).concat(acoesHabilidades);
     }
 
-    private obterBuffs = (): Buff[] => {
-        const buffsAcoes = this.acoes.reduce((acc: Buff[], acao) => {
-            return acc.concat(acao.buffs);
-        }, []);
+    // private obterBuffs = (): Buff[] => {
+    //     const buffsAcoes = this.acoes.reduce((acc: Buff[], acao) => {
+    //         return acc.concat(acao.buffs);
+    //     }, []);
 
-        return buffsAcoes.concat(this.inventario.buffsInventario()).concat(this.buffsExternos);
-    }
+    //     return buffsAcoes.concat(this.inventario.buffsInventario()).concat(this.buffsExternos);
+    // }
 
-    get buffsAplicados(): BuffsAplicados {
-        const buffs = this.obterBuffs().filter(buff => buff.ativo);
+    // get buffsAplicados(): BuffsAplicados {
 
-        const idsBuffs = Array.from(
-            new Set(buffs.map((buff) => buff.refBuff.id))
-        );
+    // }
 
-        const buffsPorId: BuffsPorId[] = [];
-        idsBuffs.map(idBuff => {
-            const buffsDesseId = buffs.filter(buff => buff.refBuff.id === idBuff);
+    // get buffsAplicados(): BuffsAplicados {
+    //     const buffs = this.obterBuffs().filter(buff => buff.ativo);
 
-            const tiposBuffs = Array.from(
-                new Set(buffsDesseId.map(buff => buff.refTipoBuff.id))
-            );
+    //     const idsBuffs = Array.from(
+    //         new Set(buffs.map((buff) => buff.refBuff.id))
+    //     );
 
-            const buffsPorTipo: BuffsPorTipo[] = [];
-            tiposBuffs.map(idTipoBuff => {
-                const buffsDesseTipo = buffsDesseId.filter(buff => buff.refTipoBuff.id === idTipoBuff);
+    //     const buffsPorId: BuffsPorId[] = [];
+    //     idsBuffs.map(idBuff => {
+    //         const buffsDesseId = buffs.filter(buff => buff.refBuff.id === idBuff);
 
-                const maiorBuffDesseTipo = buffsDesseTipo.reduce((maiorValor, cur) => {
-                    return cur.valor > maiorValor.valor ? cur : maiorValor;
-                }, buffsDesseTipo[0]);
+    //         const tiposBuffs = Array.from(
+    //             new Set(buffsDesseId.map(buff => buff.refTipoBuff.id))
+    //         );
 
-                const buffsSobreescritos = buffsDesseTipo.filter(buff => buff.id !== maiorBuffDesseTipo.id);
+    //         const buffsPorTipo: BuffsPorTipo[] = [];
+    //         tiposBuffs.map(idTipoBuff => {
+    //             const buffsDesseTipo = buffsDesseId.filter(buff => buff.refTipoBuff.id === idTipoBuff);
 
-                buffsPorTipo.push(new BuffsPorTipo(idTipoBuff, maiorBuffDesseTipo, buffsSobreescritos));
-            });
+    //             const maiorBuffDesseTipo = buffsDesseTipo.reduce((maiorValor, cur) => {
+    //                 return cur.valor > maiorValor.valor ? cur : maiorValor;
+    //             }, buffsDesseTipo[0]);
 
-            buffsPorId.push(new BuffsPorId(idBuff, buffsPorTipo));
-        });
+    //             const buffsSobreescritos = buffsDesseTipo.filter(buff => buff.id !== maiorBuffDesseTipo.id);
 
-        return new BuffsAplicados(buffsPorId);
-    }
+    //             buffsPorTipo.push(new BuffsPorTipo(idTipoBuff, maiorBuffDesseTipo, buffsSobreescritos));
+    //         });
+
+    //         buffsPorId.push(new BuffsPorId(idBuff, buffsPorTipo));
+    //     });
+
+    //     return new BuffsAplicados(buffsPorId);
+    // }
 
     // public get buffs(): Buff[] {
     //     return this.obterBuffs().filter(buff => buff.ativo);
@@ -177,23 +182,23 @@ export class Personagem {
     //     this.controladorPersonagem.reduzDano(danoGeral);
     // }
 
-    public rodaDuracao = (idDuracao: number) => {
-        LoggerHelper.getInstance().adicionaMensagem(`Rodou ${SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === idDuracao)?.nome}`);
+    // public rodaDuracao = (idDuracao: number) => {
+    //     LoggerHelper.getInstance().adicionaMensagem(`Rodou ${SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === idDuracao)?.nome}`);
 
-        this.obterBuffs().filter(buff => buff.ativo).map(buff => {
-            if (buff.refDuracao.id === idDuracao) {
-                buff.reduzDuracao();
-            } else if (buff.refDuracao.id < idDuracao) {
-                buff.desativaBuff();
-            }
-        });
+    //     this.obterBuffs().filter(buff => buff.ativo).map(buff => {
+    //         if (buff.refDuracao.id === idDuracao) {
+    //             buff.reduzDuracao();
+    //         } else if (buff.refDuracao.id < idDuracao) {
+    //             buff.desativaBuff();
+    //         }
+    //     });
 
-        if (idDuracao >= 2) this.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
+    //     if (idDuracao >= 2) this.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
 
-        LoggerHelper.getInstance().saveLog();
+    //     LoggerHelper.getInstance().saveLog();
 
-        this.onUpdate();
-    }
+    //     this.onUpdate();
+    // }
 
     public carregaOnUpdate = (callback: () => void) => {
         this.onUpdate = callback;

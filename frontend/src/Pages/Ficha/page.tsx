@@ -55,11 +55,6 @@ const page: React.FC = () => {
                 <>
                     <div className={style.div_demo_acoes}>
                         <div>
-                            <h1>Teste</h1>
-                            <button onClick={() => console.log(personagem)}>Teste</button>
-                        </div>
-
-                        <div>
                             <h1>Alterar Estatística</h1>
                             <div>
                                 <select id="estatistica">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
@@ -120,7 +115,7 @@ const page: React.FC = () => {
                         <PainelAbas id="aba2"><SubPaginaEstatisticasDanificaveis estatisticasDanificaveis={personagem.estatisticasDanificaveis} reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis}/></PainelAbas>
 
                         <ContextoAbaEfeitosProvider>
-                            <PainelAbas id="aba3" contextoMenu={ContextoAbaEfeitos}><SubPaginaEfeitos buffsPersonagem={personagem.buffsAplicados} abaId={"aba3"}/></PainelAbas>
+                            <PainelAbas id="aba3" contextoMenu={ContextoAbaEfeitos}><SubPaginaEfeitos modificadores={personagem.modificadores} abaId={"aba3"}/></PainelAbas>
                         </ContextoAbaEfeitosProvider>
 
                         <ContextoAbaAtributoProvider>
