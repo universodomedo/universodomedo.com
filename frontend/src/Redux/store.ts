@@ -1,14 +1,11 @@
 // #region Imports
 import { configureStore } from '@reduxjs/toolkit';
-import fichaHelperReducer, { obterTiposDano, carregaDemo } from 'Redux/slices/fichaHelperSlice.ts';
 import singletonHelperReducer from 'Redux/slices/singletonHelperSlice.ts';
 import abasHelperReducer from './slices/abasHelperSlice.ts';
-// import fichaHelperReducer, { obterTiposDano, selectPersonagemCarregado } from 'Redux/slices/fichaHelperSlice2.ts';
 // #endregion
 
 const store = configureStore({
     reducer: {
-        fichaHelper: fichaHelperReducer,
         singletonHelper: singletonHelperReducer,
         abasHelper: abasHelperReducer
     },
@@ -17,10 +14,6 @@ const store = configureStore({
         immutableCheck: false,
     }),
 });
-
-// store.dispatch(obterTiposDano());
-// store.dispatch(selectPersonagemCarregado());
-// store.dispatch(carregaDemo());
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

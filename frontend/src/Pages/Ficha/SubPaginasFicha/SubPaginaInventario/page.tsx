@@ -44,7 +44,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
           <div className={style.inventario_categoria}>
             {estatisticasBuffaveis.gerenciadorEspacoCategoria.espacosCategoria.map((espacoCategoria, index) => (
               <div key={index} className={style.barra_categoria}>
-                <BarraEstatisticaDanificavel titulo={espacoCategoria.nomeCategoria} valorAtual={estatisticasBuffaveis.gerenciadorEspacoCategoria.numeroItensCategoria(espacoCategoria.valorCategoria)} valorMaximo={espacoCategoria.maximoEspacosCategoria} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
+                <BarraEstatisticaDanificavel titulo={espacoCategoria.nomeCategoria} valorAtual={inventarioPersonagem.numeroItensCategoria(espacoCategoria.valorCategoria)} valorMaximo={espacoCategoria.maximoEspacosCategoria} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
               </div>
             ))}
           </div>

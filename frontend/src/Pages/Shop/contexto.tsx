@@ -1,7 +1,8 @@
 // #region Imports
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-import { dadosItem, RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { dadosItem, novoItemPorDadosItem } from 'Types/classes/index.ts';
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 
 import PaginaArmas from './PaginasSecundarias/Armas/page.tsx';
 import PaginaCategorias from './PaginasSecundarias/Categorias/page.tsx';
@@ -47,43 +48,39 @@ export const ContextoLojaProvider = ({ children }: { children: React.ReactNode }
     };
 
     const adicionarItem = (dadosItem: dadosItem, quantidade: number = 1) => {
-        const dadosFicha = localStorage.getItem('dadosFicha');
+        const personagem = getPersonagemFromContext();
 
-        if (dadosFicha) {
-            const fichas: RLJ_Ficha2[] = JSON.parse(dadosFicha);
-            const fichaAtualizada = fichas[indexFicha] || { inventario: [] };
+        const categoriaDosItemAdicionados = dadosItem.categoria;
+        const quantidadeDeItensDaCategoriaAtual = personagem.inventario.numeroItensCategoria(categoriaDosItemAdicionados);
+        const quantidadeDeItensDaCategoriaNova = quantidadeDeItensDaCategoriaAtual + quantidade;
 
-            const novaQuantidadeItemsCat1 = quantidadeItemsCat1 + (dadosItem.categoria * quantidade);
-
-            if (novaQuantidadeItemsCat1 > 2) {
-                alert('Limite de itens da categoria 1 excedido');
-                return;
-            }
-
-            const novaCargaInventario = cargaInventario + (dadosItem.peso * quantidade);
-
-            if (novaCargaInventario > 30) {
-                alert('Dobro do Limite de Capacidade de Carga está sendo excedido');
-                return;
-            }
-
-            if (cargaInventario <= 15 && novaCargaInventario > 15) {
-                const confirmou = window.confirm(
-                    'O Limite de Capacidade de Carga está sendo excedido, deixando o personagem em sobrepeso. Deseja continuar?'
-                );
-                if (!confirmou) return;
-            }
-
-            fichaAtualizada.inventario = [
-                ...(fichaAtualizada.inventario || []),
-                ...Array(quantidade).fill(dadosItem),
-            ];
-
-            fichas[indexFicha] = fichaAtualizada;
-            localStorage.setItem('dadosFicha', JSON.stringify(fichas));
-            atualizaInventario();
-            mudarPagina(0);
+        if (quantidadeDeItensDaCategoriaNova > personagem.estatisticasBuffaveis.gerenciadorEspacoCategoria.maximoItensCategoria(categoriaDosItemAdicionados)) {
+            alert(`Limite de Itens Categoria ${categoriaDosItemAdicionados} excedido`);
+            return;
         }
+
+        const cargaMaxima = personagem.estatisticasBuffaveis.espacoInventario.espacoTotal;
+        const cargaInventarioAtual = personagem.inventario.espacosUsados;
+        const cargaInventarioNova = cargaInventarioAtual + (dadosItem.peso * quantidade);
+
+        if (cargaInventarioNova > (cargaMaxima * 2)) {
+            alert('Dobro do Limite de Capacidade de Carga está sendo excedido');
+            return;
+        }
+
+        if (cargaInventarioAtual <= cargaMaxima && cargaInventarioNova > cargaMaxima) {
+            const confirmou = window.confirm('O Limite de Capacidade de Carga está sendo excedido, deixando o personagem em sobrepeso. Deseja continuar?');
+
+            if (!confirmou) return;
+        }
+        
+        for (let i = 0; i < quantidade; i++) {
+            personagem.inventario.adicionarItemNoInventario(
+                novoItemPorDadosItem(dadosItem, true)
+            );
+        }
+
+        mudarPagina(0);
     };
 
     const mudarPagina = (idPagina: number) => {

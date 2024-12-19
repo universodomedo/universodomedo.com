@@ -94,7 +94,23 @@
     flex-direction: column;
     align-items: center;
     gap: 2vh;
-    margin: 0 30%;
+    /* margin: 0 30%; */
+}
+
+.opcao_item {
+    width: 30%;
+}
+
+.descricao_item {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.descricao_item p {
+    font-size: .9rem;
+    font-weight: bolder;
+    margin: 0;
 }
 
 .botoes_itens {

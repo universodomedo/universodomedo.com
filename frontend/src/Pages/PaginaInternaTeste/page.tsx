@@ -6,8 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { RLJ_Ficha2 } from 'Types/classes/index.ts';
 import { getDadoFichaPorIdFake } from 'Recursos/DadosFicha.ts';
 
-import { resetaDemo } from "Redux/slices/fichaHelperSlice.ts";
-import store from 'Redux/store.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,7 +19,6 @@ import ModalCriarFicha from './modal.tsx';
 const page = () => {
     // const {salas, criaSala} = useSalaContext();
     const [dadosFicha, setDadosFicha] = useState<RLJ_Ficha2[]>([]);
-    // const [dadosFicha, setDadosFicha] = useState<Dado[]>([] as Dado[]);
     const navigate = useNavigate();
 
     const limpaLocalStorage = () => {
@@ -38,7 +35,6 @@ const page = () => {
     useEffect(() => {
         limpaLocalStorage();
         localStorage.removeItem("fichaAtual");
-        store.dispatch(resetaDemo());
 
         const data = localStorage.getItem("dadosFicha");
         if (data) {
@@ -60,9 +56,14 @@ const page = () => {
         navigate('/ficha-demo');
     }
 
-    const abreFicha = (index: number) => {
+    const abreFicha2 = (index: number) => {
         localStorage.setItem('fichaAtual', JSON.stringify(dadosFicha[index]));
         navigate('/ficha-demo');
+    }
+
+    const abreFicha = (index: number) => {
+        localStorage.setItem('fichaAtual', JSON.stringify(dadosFicha[index]));
+        navigate('/ficha-demo2', { state: { indexFicha: index } });
     }
 
     const removeFicha = (index: number) => {

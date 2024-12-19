@@ -1,6 +1,9 @@
 // #region Imports
 import { adicionarBuffsUtil, logicaMecanicas, Buff, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, Opcao, RequisitoConfig, CustoComponente, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, GastaCustoProps, HabilidadeAtiva, Dificuldade } from 'Types/classes/index.ts';
-import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
+
 import { ExecutaVariacaoGenerica, ExecutaTestePericia } from 'Recursos/Ficha/Variacao.ts';
 import { toast } from 'react-toastify';
 // #endregion
@@ -97,7 +100,8 @@ export class Acao {
 
         LoggerHelper.getInstance().fechaNivelLogMensagem();
         LoggerHelper.getInstance().saveLog();
-        FichaHelper.getInstance().personagem.onUpdate();
+        
+        getPersonagemFromContext().onUpdate();
     }
 
     executa = (valoresSelecionados: GastaCustoProps) => {
@@ -105,7 +109,7 @@ export class Acao {
 
         if (this._idMecanica) logicaMecanicas[this._idMecanica](valoresSelecionados, this);
         
-        FichaHelper.getInstance().personagem.onUpdate();
+        getPersonagemFromContext().onUpdate();
     }
 
     static get filtroProps(): FiltroProps<Acao> {
@@ -127,8 +131,8 @@ export class Acao {
                     true,
                     new OpcoesFiltrosCategorizadas(
                         [
-                            { categoria: "Rituais", opcoes: new OpcoesFiltro(FichaHelper.getInstance().personagem.rituais.filter(ritual => ritual.acoes.length > 0).map(ritual => ({ id: ritual.nome, nome: ritual.nome }))) },
-                            { categoria: "Items", opcoes: new OpcoesFiltro(FichaHelper.getInstance().personagem.inventario.items.filter(item => item.acoes.length > 0).map(item => ({ id: item.nomeExibicao, nome: item.nomeExibicao }))) }
+                            { categoria: "Rituais", opcoes: new OpcoesFiltro(getPersonagemFromContext().rituais.filter(ritual => ritual.acoes.length > 0).map(ritual => ({ id: ritual.nome, nome: ritual.nome }))) },
+                            { categoria: "Items", opcoes: new OpcoesFiltro(getPersonagemFromContext().inventario.items.filter(item => item.acoes.length > 0).map(item => ({ id: item.nomeExibicao, nome: item.nomeExibicao }))) }
                         ]
                     )
                 ),

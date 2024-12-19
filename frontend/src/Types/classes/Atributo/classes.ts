@@ -1,5 +1,7 @@
 // #region Imports
-import { FichaHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { SingletonHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export class Atributo {
@@ -11,9 +13,7 @@ export class Atributo {
         public descricao: string,
     ) { }
 
-    get refBuffAtivo(): number {
-        return FichaHelper.getInstance().personagem.buffsAplicados.buffPorId(this._idBuff);
-    }
+    get refBuffAtivo(): number { return getPersonagemFromContext().modificadores.valorBuffPorId(this._idBuff); }
 }
 
 export class AtributoPersonagem {
@@ -22,15 +22,7 @@ export class AtributoPersonagem {
         public valor: number
     ) { }
 
-    get refAtributo(): Atributo {
-        return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this._idAtributo)!;
-    }
-
-    get valorBonus(): number {
-        return this.refAtributo.refBuffAtivo;
-    }
-
-    get valorTotal(): number {
-        return this.valor + this.valorBonus;
-    }
+    get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this._idAtributo)!; }
+    get valorBonus(): number { return this.refAtributo.refBuffAtivo; }
+    get valorTotal(): number { return this.valor + this.valorBonus; }
 }

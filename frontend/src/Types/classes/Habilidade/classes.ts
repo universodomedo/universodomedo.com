@@ -1,6 +1,7 @@
 // #region Imports
 import { classeComArgumentos, adicionarAcoesUtil, Acao, RequisitoFicha, Personagem, CustoExecucao, Buff, adicionarBuffsUtil, DificuldadeConsecutiva, FiltroProps, FiltroPropsItems, CorTooltip, ComportamentoGeral } from 'Types/classes/index.ts';
-import { FichaHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export class Habilidade {
@@ -178,7 +179,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                         classeComArgumentos(DificuldadeConsecutiva, 7, 10, 5)
                     ]);
                     acao.adicionarLogicaExecucao(() => {
-                        FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === 3)!.numeroAcoesAtuais++;
+                        getPersonagemFromContext().estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === 3)!.numeroAcoesAtuais++;
                     })
                 }
             ]

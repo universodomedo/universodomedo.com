@@ -1,6 +1,7 @@
 // #region Imports
 import { Acao, GastaCustoProps } from 'Types/classes/index.ts';
-import { FichaHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export class Mecanica {
@@ -13,14 +14,14 @@ export class Mecanica {
 export const logicaMecanicas: { [key: number]: (valoresSelecionados: GastaCustoProps, acao: Acao) => void } = {
     // Sacar
     1: (valoresSelecionados) => {
-        const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados['idItem']);
+        const itemSelecionado = getPersonagemFromContext().inventario.items.find(item => item.id === valoresSelecionados['idItem']);
 
         itemSelecionado?.sacar();
     },
 
     // Guardar
     2: (valoresSelecionados) => {
-        const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados['idItem']);
+        const itemSelecionado = getPersonagemFromContext().inventario.items.find(item => item.id === valoresSelecionados['idItem']);
 
         itemSelecionado?.guardar();
     },
@@ -32,14 +33,14 @@ export const logicaMecanicas: { [key: number]: (valoresSelecionados: GastaCustoP
 
     // Vestir
     4: (valoresSelecionados) => {
-        const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados['idItem']);
+        const itemSelecionado = getPersonagemFromContext().inventario.items.find(item => item.id === valoresSelecionados['idItem']);
 
         itemSelecionado?.vestir();
     },
 
     // Desvestir
     5: (valoresSelecionados) => {
-        const itemSelecionado = FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === valoresSelecionados['idItem']);
+        const itemSelecionado = getPersonagemFromContext().inventario.items.find(item => item.id === valoresSelecionados['idItem']);
 
         itemSelecionado?.desvestir();
     },

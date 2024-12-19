@@ -1,5 +1,5 @@
 // #region Imports
-import { classeComArgumentos, lista_geral_habilidades, EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Buff, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Extremidade, CustoPE, CustoExecucao, CustoComponente, NomeItem, RequisitoItemEmpunhado, Opcao, Acao, BuffsAplicados, BuffsPorId, BuffsPorTipo, Item, HabilidadeAtiva, Modificadores } from 'Types/classes/index.ts';
+import { classeComArgumentos, lista_geral_habilidades, EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Buff, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Extremidade, CustoPE, CustoExecucao, CustoComponente, NomeItem, RequisitoItemEmpunhado, Opcao, Acao, BuffsAplicados, BuffsPorId, BuffsPorTipo, Item, HabilidadeAtiva, Modificadores, novoItemPorDadosItem } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -50,7 +50,7 @@ export class Personagem {
             0,
             [new Execucao(2, 1), new Execucao(3, 1), new Execucao(4, 1), new Execucao(6, 1)],
             new EspacoInventario(5, 5),
-            new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2)]),
+            new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2), new EspacoCategoria(2, 0), new EspacoCategoria(3, 0), new EspacoCategoria(4, 0), ]),
             numExtremidades
         );
 
@@ -82,35 +82,8 @@ export class Personagem {
                 )
         );
 
-        this.inventario.items = this._ficha.inventario!.map(dadosItem => {
-            return new Item(dadosItem.idTipoItem, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.detalhesItem || {}, dadosItem.detalhesConsumiveis?.usosMaximos)
-                .adicionarAcoes(
-                    (dadosItem.dadosAcoes || []).map(dadosAcao => [
-                        ...classeComArgumentos(Acao, dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica),
-                        (acao) => {
-                            acao.adicionarCustos([
-                                dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
-                                ...((dadosAcao.custos.custoExecucao || []).map(execucao =>
-                                    execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
-                                )),
-                                dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
-                            ].filter(Boolean));
-                            acao.adicionarBuffs(
-                                (dadosAcao.buffs || []).map(buff => [
-                                    ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
-                                ])
-                            );
-                            acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
-                        }
-                    ])
-                )
-                .adicionarBuffs(
-                    (dadosItem.buffs || []).map(buff => [
-                        ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
-                    ])
-                );
-        });
-
+        this.inventario.items = this._ficha.inventario!.map(dadosItem => novoItemPorDadosItem(dadosItem));
+        
         this.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(this));
     }
 

@@ -1,35 +1,6 @@
 // #region Imports
-import { MDL_TipoDano } from "udm-types";
-import { Personagem, Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, MensagemLog, Classe, Nivel, TipoGanhoNex, TipoItem } from 'Types/classes/index.ts';
+import { Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, MensagemLog, Classe, Nivel, TipoGanhoNex, TipoItem } from 'Types/classes/index.ts';
 // #endregion
-
-export class FichaHelper {
-  static instance: FichaHelper;
-  private _personagem?: Personagem;
-  private _tiposDano: MDL_TipoDano[] = [];
-
-  private constructor() {
-    this._tiposDano = [];
-  }
-
-  static getInstance() {
-    if (!FichaHelper.instance) {
-      FichaHelper.instance = new FichaHelper();
-    }
-
-    return FichaHelper.instance;
-  }
-
-  resetaPersonagem() {
-    this._personagem = undefined;
-  }
-
-  public set tiposDano(tiposDano: MDL_TipoDano[]) { this._tiposDano = tiposDano }
-  public get tiposDano(): MDL_TipoDano[] { return this._tiposDano }
-
-  public set personagem(personagem: Personagem) { this._personagem = personagem }
-  public get personagem(): Personagem { return this._personagem! }
-}
 
 export class SingletonHelper {
   static instance: SingletonHelper;

@@ -1,5 +1,5 @@
 // #region Imports
-import { FichaHelper } from 'Types/classes_estaticas.tsx';
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export class Defesa {
@@ -13,9 +13,9 @@ export class Defesa {
     get defesaTotal(): number {
         return (
             this.valorNatural +
-            (this.valorAdicionaPorAgilidade * FichaHelper.getInstance().personagem.atributos.find(atributo => atributo.refAtributo.id === 1)?.valorTotal!) +
-            (this.valorAdicionaPorForca * FichaHelper.getInstance().personagem.atributos.find(atributo => atributo.refAtributo.id === 2)?.valorTotal!) +
-            (this.valorAdicionaPorVigor * FichaHelper.getInstance().personagem.atributos.find(atributo => atributo.refAtributo.id === 5)?.valorTotal!)
+            (this.valorAdicionaPorAgilidade * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 1)?.valorTotal!) +
+            (this.valorAdicionaPorForca * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 2)?.valorTotal!) +
+            (this.valorAdicionaPorVigor * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 5)?.valorTotal!)
         );
     }
 }

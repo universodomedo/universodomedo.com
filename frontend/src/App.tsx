@@ -11,6 +11,7 @@ import LayoutInterno from "Layouts/LayoutInterno/layout.tsx";
 
 import LayoutInterno2 from "Layouts/LayoutInterno2/layout.tsx";
 import Ficha from 'Pages/Ficha/page.tsx';
+import Ficha2 from 'Pages/Ficha2/page.tsx';
 import FichaTutorial from 'Pages/FichaTutorial/page.tsx';
 import EditaFicha from 'Pages/EditaFicha/page.tsx';
 import PageTracker from "Components/PageTracker/page_tracker.tsx";
@@ -79,6 +80,9 @@ const App = () => {
             <Route element={<LayoutInterno2 />}>
               <Route path="/ficha-demo">
                 <Route index element={<Ficha />} />
+              </Route>
+              <Route path="/ficha-demo2">
+                <Route index element={<Ficha2 />} />
               </Route>
               <Route path="/shop-demo">
                 <Route index element={<Shop />} />

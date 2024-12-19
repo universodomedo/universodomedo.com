@@ -1,6 +1,7 @@
 // #region Imports
 import { Item, Acao, Buff} from 'Types/classes/index.ts';
-import { FichaHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export class Inventario {
@@ -11,7 +12,7 @@ export class Inventario {
     get agrupamento(): Item[] {
         return [
             ...(this.items.reduce((itemAgrupado, itemAtual) => {
-                if (!itemAtual.agrupavel || !itemAgrupado.some(item => item.agrupavel && item.nomeExibicao === itemAtual.nomeExibicao && !item.comportamentoEmpunhavel.estaEmpunhado)) {
+                if (!itemAtual.agrupavel || !itemAgrupado.some(item => item.agrupavel && item.nomeExibicao === itemAtual.nomeExibicao && !item.itemEstaEmpunhado)) {
                     itemAgrupado.push(itemAtual);
                 }
                 return itemAgrupado;
@@ -31,9 +32,9 @@ export class Inventario {
         return this.items.reduce((acc: Acao[], item) => acc.concat(item.acoes), []);
     }
 
-    public buffsInventario = (): Buff[] => {
-        return this.items.reduce((acc: Buff[], item) => acc.concat(item.buffs), []);
-    }
+    // public buffsInventario = (): Buff[] => {
+    //     return this.items.reduce((acc: Buff[], item) => acc.concat(item.buffs), []);
+    // }
 
     public verificaCarregandoComponente(idElemento: number, idNivelComponente: number): boolean {
         return true;
@@ -43,14 +44,14 @@ export class Inventario {
     public removerItem(idItem: number): void {
         this.items = this.items.filter(item => item.id !== idItem);
     }
+
+    numeroItensCategoria(valorCategoria: number): number { return this.items.filter(item => item.categoria === valorCategoria).length; }
 }
 
 export class GerenciadorEspacoCategoria {
     constructor(public espacosCategoria: EspacoCategoria[]) { }
 
-    numeroItensCategoria(valorCategoria: number): number {
-        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.categoria === valorCategoria).length;
-    }
+    maximoItensCategoria(valorCategoria: number): number { return (valorCategoria > 0 ? this.espacosCategoria.find(categoria => categoria.valorCategoria === valorCategoria)!.maximoEspacosCategoria : 999); }
 }
 
 export class EspacoCategoria {
@@ -59,9 +60,7 @@ export class EspacoCategoria {
         public maximoEspacosCategoria: number,
     ) { }
 
-    get nomeCategoria(): string {
-        return `Categoria ${this.valorCategoria}`;
-    }
+    get nomeCategoria(): string { return `Categoria ${this.valorCategoria}`; }
 }
 
 export class EspacoInventario {
@@ -71,6 +70,6 @@ export class EspacoInventario {
     ) { }
 
     get espacoTotal(): number { return this.valorNatural + this.espacoAdicionalPorFoca + this.espacoAdicional }
-    get espacoAdicional(): number { return FichaHelper.getInstance().personagem.buffsAplicados.buffPorId(52); }
-    get espacoAdicionalPorFoca(): number { return this.valorAdicionalPorForca * FichaHelper.getInstance().personagem.atributos.find(atributo => atributo.refAtributo.id === 2)?.valorTotal! }
+    get espacoAdicional(): number { return getPersonagemFromContext().modificadores.valorBuffPorId(52); }
+    get espacoAdicionalPorFoca(): number { return this.valorAdicionalPorForca * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 2)?.valorTotal! }
 }

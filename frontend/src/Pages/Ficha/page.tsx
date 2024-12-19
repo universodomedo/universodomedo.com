@@ -4,7 +4,6 @@ import "./style.css";
 import React, { useState, useEffect, useRef, createContext } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'Redux/store.ts';
-import { carregaDemo, selectPersonagemCarregado } from "Redux/slices/fichaHelperSlice.ts";
 import SubPaginaDetalhes from "Pages/Ficha/SubPaginasFicha/SubPaginaDetalhes/page.tsx";
 import SubPaginaEstatisticasDanificaveis from "Pages/Ficha/SubPaginasFicha/SubPaginaEstatisticasDanificaveis/page.tsx";
 import SubPaginaAtributosPericias from "Pages/Ficha/SubPaginasFicha/SubPaginaAtributosPericias/page.tsx";

@@ -34,4 +34,8 @@ export class Modificadores {
 
         return { aplicados, sobreescritos };
     }
+
+    valorBuffPorId(idBuff: number): number {
+        return 0;
+    }
 }

@@ -1,6 +1,8 @@
 // #region Imports
 import { Duracao, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, pluralize } from 'Types/classes/index.ts';
-import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { SingletonHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export class Buff {
@@ -24,11 +26,11 @@ export class Buff {
     get refTipoBuff(): TipoBuff { return SingletonHelper.getInstance().tipos_buff.find(tipo_buff => tipo_buff.id === this._idTipoBuff)!; }
 
     ativaBuff() {
-        FichaHelper.getInstance().personagem.modificadores.adicionaEfeito(this);
+       getPersonagemFromContext().modificadores.adicionaEfeito(this);
     }
 
     desativaBuff() {
-        FichaHelper.getInstance().personagem.modificadores.removeEfeito(this);
+       getPersonagemFromContext().modificadores.removeEfeito(this);
     }
     
     gastaDuracaoERetornaSePrecisaRemover = (): boolean => {

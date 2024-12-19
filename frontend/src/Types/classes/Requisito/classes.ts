@@ -1,6 +1,7 @@
 // #region Imports
 import { Acao, Item, Opcao, OpcoesExecucao } from 'Types/classes/index.ts';
-import { FichaHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export abstract class Requisito {
@@ -20,7 +21,7 @@ export class RequisitoComponente extends Requisito {
 
     get requisitoCumprido(): boolean {
         return (
-            FichaHelper.getInstance().personagem.inventario.items.some(item =>
+            getPersonagemFromContext().inventario.items.some(item =>
                 item.comportamentoGeral.temDetalhesComponente &&
                 item.comportamentoGeral.detelhesComponente.refElemento.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refElemento.id && 
                 item.comportamentoGeral.detelhesComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.id
@@ -28,7 +29,7 @@ export class RequisitoComponente extends Requisito {
             )
         )
         // return (
-        //     FichaHelper.getInstance().personagem.inventario.items.some(item =>
+        //     getPersonagemFromContext().inventario.items.some(item =>
         //         item instanceof ItemComponente && item.detalhesComponente.refElemento.id === this.refAcao!.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === this.refAcao!.refPai.refNivelComponente.id
         //         && (this.precisaEstarEmpunhando && item.refExtremidade)
         //     )
@@ -54,19 +55,19 @@ export class RequisitoItemEmpunhado extends Requisito {
 
 export class RequisitoExtremidadeDisponivel extends Requisito {
     constructor() { super(); }
-    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.some(extremidade => !extremidade.refItem); }
+    get requisitoCumprido(): boolean { return getPersonagemFromContext().estatisticasBuffaveis.extremidades.some(extremidade => !extremidade.refItem); }
     get descricaoRequisito(): string { return 'Nessário Extremidade Disponível'; }
 }
 
 export class RequisitoAlgumItemGuardado extends Requisito {
     constructor() { super(); }
-    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => !item.itemEstaEmpunhado); }
+    get requisitoCumprido(): boolean { return getPersonagemFromContext().inventario.items.some(item => !item.itemEstaEmpunhado); }
     get descricaoRequisito(): string { return 'Necessário ter Item no Inventário'; }
 }
 
 export class RequisitoAlgumItemEmpunhado extends Requisito {
     constructor() { super(); }
-    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item.itemEstaEmpunhado); }
+    get requisitoCumprido(): boolean { return getPersonagemFromContext().inventario.items.some(item => item.itemEstaEmpunhado); }
     get descricaoRequisito(): string { return 'Necessário Empunhar algum Item'; }
 }
 
@@ -76,12 +77,12 @@ export class RequisitoPodeSeLocomover extends Requisito {
 }
 
 export class RequisitoAlgumItemEmpunhadoParaVestir extends Requisito {
-    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item.itemPodeSerVestido); }
+    get requisitoCumprido(): boolean { return getPersonagemFromContext().inventario.items.some(item => item.itemPodeSerVestido); }
     get descricaoRequisito(): string { return 'Necessário Empunhar Item para Vestir'; }
 }
 
 export class RequisitoAlgumItemVestido extends Requisito {
-    get requisitoCumprido(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item.itemEstaVestido); }
+    get requisitoCumprido(): boolean { return getPersonagemFromContext().inventario.items.some(item => item.itemEstaVestido); }
     get descricaoRequisito(): string { return 'Necessário ter Item Vestido'; }
 }
 
@@ -108,7 +109,7 @@ export class RequisitoConfig {
                     key: 'custoComponente',
                     displayName: 'Componente',
                     obterOpcoes: (acao: Acao) => {
-                        return FichaHelper.getInstance().personagem.inventario.items.filter(item =>
+                        return getPersonagemFromContext().inventario.items.filter(item =>
                             item.itemEstaEmpunhado &&
                             item.comportamentoGeral.temDetalhesComponente &&
                             item.comportamentoGeral.detelhesComponente.refElemento.id === acao.refPai.comportamentoGeral.detelhesComponente.refElemento.id &&
@@ -117,7 +118,7 @@ export class RequisitoConfig {
                             acc.push({ key: cur.id, value: cur.nomeExibicao });
                             return acc;
                         }, []);
-                        // return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.idCirculo).reduce((acc: { key: number; value: string }[], cur) => {
+                        // return getPersonagemFromContext().inventario.items.filter(item => item.refExtremidade && item instanceof ItemComponente && item.detalhesComponente.refElemento.id === acaoRitual.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === acaoRitual.refPai.refCirculoNivelRitual.idCirculo).reduce((acc: { key: number; value: string }[], cur) => {
                         //     acc.push({ key: cur.id, value: cur.nomeExibicaoOption });
                         //     return acc;
                         // }, []);
@@ -151,7 +152,7 @@ export class RequisitoConfig {
                     key: 'idItem',
                     displayName: 'Item Alvo',
                     obterOpcoes: (): Opcao[] => {
-                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.itemEstaGuardado).reduce((acc: { key: number; value: string }[], cur) => {
+                        return getPersonagemFromContext().inventario.items.filter(item => item.itemEstaGuardado).reduce((acc: { key: number; value: string }[], cur) => {
                             acc.push({ key: cur.id, value: cur.nomeExibicao });
                             return acc;
                         }, [])
@@ -167,7 +168,7 @@ export class RequisitoConfig {
                     key: 'idItem',
                     displayName: 'Item Alvo',
                     obterOpcoes: (): Opcao[] => {
-                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.itemEstaEmpunhado).reduce((acc: { key: number; value: string }[], cur) => {
+                        return getPersonagemFromContext().inventario.items.filter(item => item.itemEstaEmpunhado).reduce((acc: { key: number; value: string }[], cur) => {
                             acc.push({ key: cur.id, value: cur.nomeExibicao });
                             return acc;
                         }, [])
@@ -183,7 +184,7 @@ export class RequisitoConfig {
                     key: 'idItem',
                     displayName: 'Item Alvo',
                     obterOpcoes: (): Opcao[] => {
-                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.itemPodeSerVestido && !item.itemEstaVestido).reduce((acc: { key: number; value: string }[], cur) => {
+                        return getPersonagemFromContext().inventario.items.filter(item => item.itemPodeSerVestido && !item.itemEstaVestido).reduce((acc: { key: number; value: string }[], cur) => {
                             acc.push({ key: cur.id, value: cur.nomeExibicao });
                             return acc;
                         }, [])
@@ -199,7 +200,7 @@ export class RequisitoConfig {
                     key: 'idItem',
                     displayName: 'Item Alvo',
                     obterOpcoes: (): Opcao[] => {
-                        return FichaHelper.getInstance().personagem.inventario.items.filter(item => item.itemEstaVestido).reduce((acc: { key: number; value: string }[], cur) => {
+                        return getPersonagemFromContext().inventario.items.filter(item => item.itemEstaVestido).reduce((acc: { key: number; value: string }[], cur) => {
                             acc.push({ key: cur.id, value: cur.nomeExibicao });
                             return acc;
                         }, [])

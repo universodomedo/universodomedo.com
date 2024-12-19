@@ -1,6 +1,8 @@
 // #region Imports
 import { AtributoPersonagem, Elemento, Extremidade, NivelComponente, PericiaPatentePersonagem } from 'Types/classes/index.ts';
-import { FichaHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { SingletonHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export type DetalhesItem = {
@@ -63,7 +65,7 @@ export class ComportamentoEmpunhavel {
     get estaEmpunhado(): boolean { return this.refExtremidade !== undefined; }
 
     empunha(idItem: number): void {
-        this.refExtremidade = FichaHelper.getInstance().personagem.estatisticasBuffaveis.extremidades.find(extremidade => !extremidade.estaOcupada);
+        this.refExtremidade = getPersonagemFromContext().estatisticasBuffaveis.extremidades.find(extremidade => !extremidade.estaOcupada);
         this.refExtremidade?.empunhar(idItem);
     }
 
@@ -93,8 +95,8 @@ class DetalhesOfensivo {
     ) { }
 
     get varianciaDeDano(): number { return this.danoMax - this.danoMin; }
-    get refAtributoUtilizadoArma(): AtributoPersonagem { return FichaHelper.getInstance().personagem.atributos.find(atributo => atributo.refAtributo.id === this._idAtributoBase)!; }
-    get refPericiaUtilizadaArma(): PericiaPatentePersonagem { return FichaHelper.getInstance().personagem.pericias.find(pericia => pericia.refPericia.id === this._idPericiaBase)!; }
+    get refAtributoUtilizadoArma(): AtributoPersonagem { return getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === this._idAtributoBase)!; }
+    get refPericiaUtilizadaArma(): PericiaPatentePersonagem { return getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === this._idPericiaBase)!; }
 }
 
 class DetalhesComponente {

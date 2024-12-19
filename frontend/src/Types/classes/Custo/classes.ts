@@ -1,6 +1,8 @@
 // #region Imports
 import { Acao, TipoExecucao } from 'Types/classes/index.ts';
-import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export abstract class Custo {
@@ -31,7 +33,7 @@ export class CustoExecucao extends Custo {
     get podeSerPago(): boolean {
         if (this.refTipoExecucao.id === 1) return true;
 
-        return FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais >= this.valor;
+        return getPersonagemFromContext().estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais >= this.valor;
     }
 
     get descricaoCusto(): string {
@@ -46,7 +48,7 @@ export class CustoExecucao extends Custo {
 
         LoggerHelper.getInstance().adicionaMensagem(`-${this.valor} ${this.refTipoExecucao.nome}`);
 
-        FichaHelper.getInstance().personagem.estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais -= this.valor;
+        getPersonagemFromContext().estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais -= this.valor;
     }
 }
 
@@ -54,7 +56,7 @@ export class CustoPE extends Custo {
     constructor(public valor: number) { super(); }
 
     get podeSerPago(): boolean {
-        return this.valor <= FichaHelper.getInstance().personagem.estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.valor;
+        return this.valor <= getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.valor;
     }
 
     get descricaoCusto(): string {
@@ -63,7 +65,7 @@ export class CustoPE extends Custo {
 
     gastaCusto(): void {
         LoggerHelper.getInstance().adicionaMensagem(`-${this.valor} P.E.`);
-        FichaHelper.getInstance().personagem.estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.aplicarDanoFinal(this.valor);
+        getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.aplicarDanoFinal(this.valor);
     }
 }
 
@@ -73,7 +75,7 @@ export class CustoComponente extends Custo {
     public refAcao?: Acao;
     setRefAcao(value: Acao): this { return (this.refAcao = value, this); }
 
-    get podeSerPago(): boolean { return FichaHelper.getInstance().personagem.inventario.items.some(item => item.comportamentoGeral.temDetalhesComponente && item.comportamentoGeral.detelhesComponente.refElemento.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refElemento.id && item.comportamentoGeral.detelhesComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.id) }
+    get podeSerPago(): boolean { return getPersonagemFromContext().inventario.items.some(item => item.comportamentoGeral.temDetalhesComponente && item.comportamentoGeral.detelhesComponente.refElemento.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refElemento.id && item.comportamentoGeral.detelhesComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.id) }
 
     get descricaoCusto(): string { return `1 Carga de Componente ${this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refElemento.nome} ${this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.nome}`; }
 
@@ -82,8 +84,8 @@ export class CustoComponente extends Custo {
         
         LoggerHelper.getInstance().adicionaMensagem(`Componente de ${this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refElemento.nome} ${this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.nome} gasto`);
 
-        FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === idItem)?.gastaUso();
-        // (FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === idItem) as ItemComponente).gastaUso();
+        getPersonagemFromContext().inventario.items.find(item => item.id === idItem)?.gastaUso();
+        // (getPersonagemFromContext().inventario.items.find(item => item.id === idItem) as ItemComponente).gastaUso();
     }
 }
 

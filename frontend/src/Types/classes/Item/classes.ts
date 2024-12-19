@@ -1,6 +1,8 @@
 // #region Imports
 import { Acao, adicionarAcoesUtil, adicionarBuffsUtil, AtributoPersonagem, Buff, ComportamentoEmpunhavel, ComportamentoGeral, ComportamentoUtilizavel, ComportamentoVestivel, CorTooltip, DetalhesItem, Elemento, Extremidade, FiltroProps, FiltroPropsItems, inicializarDetalhesItem, NivelComponente, OpcaoFiltro, OpcoesFiltro, PericiaPatentePersonagem } from 'Types/classes/index.ts';
-import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export class Item {
@@ -102,7 +104,7 @@ export class Item {
     }
 
     removeDoInventario(): void {
-        FichaHelper.getInstance().personagem.inventario.removerItem(this.id);
+        getPersonagemFromContext().inventario.removerItem(this.id);
         this.comportamentoEmpunhavel.refExtremidade?.guardar();
     }
 

@@ -1,6 +1,9 @@
 // #region Imports
 import { Atributo, AtributoPersonagem } from 'Types/classes/index.ts';
-import { FichaHelper, LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
+
 import { ExecutaTestePericia, VariacaoAleatoriaFinal } from 'Recursos/Ficha/Variacao.ts';
 import { toast } from 'react-toastify';
 // #endregion
@@ -16,7 +19,7 @@ export class Pericia {
     ) { }
 
     get idBuffRelacionado(): number { return this._idBuff; }
-    get refBuffAtivo(): number { return FichaHelper.getInstance().personagem.buffsAplicados.buffPorId(this.idBuffRelacionado); }
+    get refBuffAtivo(): number { return getPersonagemFromContext().modificadores.valorBuffPorId(this._idBuff); }
     get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this._idAtributo)!; }
 }
 
@@ -36,7 +39,7 @@ export class PericiaPatentePersonagem {
 
     get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this._idPericia)!; }
     get refPatente(): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente_pericia => patente_pericia.id === this._idPatentePericia)!; }
-    get refAtributoPersonagem(): AtributoPersonagem { return FichaHelper.getInstance().personagem.atributos.find(atributo => atributo.refAtributo.id === this.refPericia.refAtributo.id)!; }
+    get refAtributoPersonagem(): AtributoPersonagem { return getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === this.refPericia.refAtributo.id)!; }
 
     get valorNivelPatente(): number { return this.refPatente.id; }
     get valorBonusPatente(): number { return this.refPatente.valor; }

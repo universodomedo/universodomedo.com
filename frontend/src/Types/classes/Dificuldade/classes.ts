@@ -1,6 +1,8 @@
 // #region Imports
 import { Acao, PericiaPatentePersonagem } from 'Types/classes/index.ts';
-import { FichaHelper, LoggerHelper } from 'Types/classes_estaticas.tsx';
+import { LoggerHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export abstract class Dificuldade {
@@ -11,7 +13,7 @@ export abstract class Dificuldade {
     public refAcao?: Acao;
     setRefAcao(value: Acao): this { return (this.refAcao = value, this); }
 
-    get refPericiaPersonagem(): PericiaPatentePersonagem { return FichaHelper.getInstance().personagem.pericias.find(pericia => pericia.refPericia.id === this._idPericia)!; }
+    get refPericiaPersonagem(): PericiaPatentePersonagem { return getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === this._idPericia)!; }
     abstract get valor(): number;
     abstract get descricaoDificuldade(): string;
     abstract processa(): boolean;

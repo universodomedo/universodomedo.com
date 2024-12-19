@@ -1,6 +1,8 @@
 // #region Imports
 import { Item } from 'Types/classes/index.ts';
-import { FichaHelper, LoggerHelper } from 'Types/classes_estaticas.tsx';
+import { LoggerHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export class Extremidade {
@@ -25,7 +27,7 @@ export class Extremidade {
     public get refItem(): Item | undefined {
         if (this.idItemEmpunhado === undefined) return undefined;
 
-        return FichaHelper.getInstance().personagem.inventario.items.find(item => item.id === this.idItemEmpunhado);
+        return getPersonagemFromContext().inventario.items.find(item => item.id === this.idItemEmpunhado);
     }
 
     get estaOcupada(): boolean { return this.refItem !== undefined; }
