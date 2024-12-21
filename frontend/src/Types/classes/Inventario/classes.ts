@@ -22,10 +22,11 @@ export class Inventario {
 
     get espacosUsados(): number { return this.items.reduce((acc, cur) => { return acc + cur.peso }, 0) }
     public acoesInventario = (): Acao[] => { return this.items.reduce((acc: Acao[], item) => acc.concat(item.acoes), []); }
-    // public buffsInventario = (): Buff[] => { return this.items.reduce((acc: Buff[], item) => acc.concat(item.buffs), []); }
     
     public adicionarItemNoInventario = (item: Item): void => { this.items.push(item); }
     public removerItem(idItem: number): void {
+        this.items.find(item => item.id === idItem)?.desativaBuffsItem();
+
         this.items = this.items.filter(item => item.id !== idItem);
         getPersonagemFromContext().onUpdate();
     }

@@ -17,6 +17,8 @@ export class Buff {
         private _idDuracao: number,
         public quantidadeDuracaoMaxima: number,
         private _idTipoBuff: number,
+
+        public valorMultiplicador: number = 1,
     ) { }
 
     get codigoUnico(): string { return `${this.nome}_${this._idBuff}:${this.valor}`; }
@@ -25,13 +27,8 @@ export class Buff {
     get refDuracao(): Duracao { return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === this._idDuracao)!; }
     get refTipoBuff(): TipoBuff { return SingletonHelper.getInstance().tipos_buff.find(tipo_buff => tipo_buff.id === this._idTipoBuff)!; }
 
-    ativaBuff() {
-       getPersonagemFromContext().modificadores.adicionaEfeito(this);
-    }
-
-    desativaBuff() {
-       getPersonagemFromContext().modificadores.removeEfeito(this);
-    }
+    ativaBuff() { getPersonagemFromContext().modificadores.adicionaEfeito(this); }
+    desativaBuff() { getPersonagemFromContext().modificadores.removeEfeito(this); }
     
     gastaDuracaoERetornaSePrecisaRemover = (): boolean => {
         this.quantidadeDuracaoAtual--;

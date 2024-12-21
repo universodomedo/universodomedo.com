@@ -74,7 +74,7 @@ export const ContextoLojaProvider = ({ children }: { children: React.ReactNode }
         }
 
         if (cargaInventarioAtual <= cargaMaxima && cargaInventarioNova > cargaMaxima) {
-            const confirmou = window.confirm('O Limite de Capacidade de Carga está sendo excedido, deixando o personagem em sobrepeso. Deseja continuar?');
+            const confirmou = window.confirm('O Limite de Capacidade de Carga está sendo excedido, deixando o personagem em Sobrepeso. Deseja continuar?');
 
             if (!confirmou) return;
         }

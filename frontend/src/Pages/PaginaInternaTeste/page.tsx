@@ -22,7 +22,7 @@ const page = () => {
     const navigate = useNavigate();
 
     const limpaLocalStorage = () => {
-        const chaveVersaoAtual = 'v2.3';
+        const chaveVersaoAtual = 'v2.4';
         const chaveLimpeza = localStorage.getItem("chaveLimpeza");
 
         if (chaveLimpeza === null || chaveLimpeza !== chaveVersaoAtual) {
@@ -113,7 +113,7 @@ const page = () => {
                 </div>
             ))}
 
-            <h1>Fichas Modelo</h1>
+            {/* <h1>Fichas Modelo</h1>
 
             <div className={style.ficha_existente} onClick={() => { vaiPraFicha(1) }}>
                 <div className={style.acesso_ficha_existente}>
@@ -143,7 +143,7 @@ const page = () => {
                         <div className={style.ficha_nex}>NEX 15%</div>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
             {/* <h1>Salas de Jogo</h1>
             <h2 onClick={criaSala}>Nova Sala</h2>

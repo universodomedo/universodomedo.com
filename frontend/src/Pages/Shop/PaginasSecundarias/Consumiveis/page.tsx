@@ -18,7 +18,7 @@ const page = () => {
     const itens: Record<number, { nome: string; peso: number; categoria: number; usosMaximos: number; usos: number; idBuff: number; valor: number; listaDescricoes: string[]; }> = {
         1: { nome: `Bálsamo de Arnica`, peso: 1, categoria: 0, usosMaximos: 1, usos: 1, idBuff: 33, valor: 2, listaDescricoes: ['O Bálsamo de Arnica aumenta em 2 sua Resistência Mundana para o próximo Ataque Mundano', `Tem Categoria 0, Peso 1 e 1 Uso`] },
         2: { nome: `Gel de Babosa`, peso: 1, categoria: 0, usosMaximos: 1, usos: 1, idBuff: 37, valor: 2, listaDescricoes: ['O Gel de Babosa aumenta em 2 sua Resistência Natural para o próximo Ataque Natural', `Tem Categoria 0, Peso 1 e 1 Uso`] },
-        //Ácido Hialurônico Injetável
+        // 3: { nome: `Ácido Hialurônico Injetável`, peso: 1, categoria: 1, usosMaximos: 1, usos: 1, }
     }
 
     const handleItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

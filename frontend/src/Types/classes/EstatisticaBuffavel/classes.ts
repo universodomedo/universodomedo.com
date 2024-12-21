@@ -16,6 +16,19 @@ export class EstatisticasBuffaveisPersonagem {
     ) {
         this.extremidades = Array.from({ length: numExtremidades }, (_, index) => new Extremidade(index + 1));
     }
+
+    // get deslocamento():number {
+    //     return ((this._deslocamento * getPersonagemFromContext().modificadores.valorBuffPorId(53)) + 
+        
+    // }
+
+    // get deslocamentoAdicional(): {valorMultiplicador: number, valor: number} {
+
+
+    //     return {
+    //         valorMultiplicador
+    //     };
+    // }
 }
 
 export class TipoEstatisticaBuffavel {

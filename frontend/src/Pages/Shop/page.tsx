@@ -33,6 +33,12 @@ const PageComContexto = () => {
     const personagem = getPersonagemFromContext();
     personagem.carregaOnUpdate(() => setState({}));
 
+    personagem.inventario.items.forEach(item => {
+        if (item.buffs.some(buffDoItem => buffDoItem.refBuff.id === 52)) {
+            item.vestir();
+        }
+    });
+
     return (
         <div className={style.shopping}>
             <h1>Shopping</h1>

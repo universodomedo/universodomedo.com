@@ -61,13 +61,8 @@ export class Item {
     adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this._buffs, buffParams), this) };
     adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }
 
-    ativaBuffsItem() {
-        this._buffs.forEach(buff => buff.ativaBuff());
-    }
-
-    desativaBuffsItem() {
-        this._buffs.forEach(buff => buff.desativaBuff());
-    }
+    ativaBuffsItem() { this._buffs.forEach(buff => buff.ativaBuff()); }
+    desativaBuffsItem() { this._buffs.forEach(buff => buff.desativaBuff()); }
 
     sacar = (): void => {
         this.comportamentoEmpunhavel.empunha(this.id);
@@ -113,6 +108,8 @@ export class Item {
         getPersonagemFromContext().inventario.removerItem(this.id);
         this.comportamentoEmpunhavel.refExtremidade?.guardar();
     }
+
+    get buffs(): Buff[] { return this._buffs; }
 
     static get filtroProps(): FiltroProps<Item> {
         return new FiltroProps<Item>(
