@@ -9,6 +9,8 @@ export type DetalhesItem = {
     precisaEstarEmpunhado?: boolean,
     podeSerVestido?: boolean,
     precisaEstarVetindo?: boolean,
+    detalhesOfensivo?: DetalhesOfensivo,
+    detalhesComponente?: DetalhesComponente,
 }
 
 export function inicializarDetalhesItem(partial?: Partial<DetalhesItem>): DetalhesItem {
@@ -22,19 +24,22 @@ export function inicializarDetalhesItem(partial?: Partial<DetalhesItem>): Detalh
 
 export class ComportamentoGeral {
     private _detalhesOfensivo?: DetalhesOfensivo;
-    private _detelhesComponente?: DetalhesComponente;
+    private _detalhesComponente?: DetalhesComponente;
     public vezesUtilizadasConsecutivo: number = 0;
-    public bloqueadoNesseTurno: boolean = true;
+    public bloqueadoNesseTurno: boolean = false;
 
-    constructor() { }
+    constructor({ detalhesOfensivo, detalhesComponente, }: { detalhesOfensivo?: DetalhesOfensivo; detalhesComponente?: DetalhesComponente; } = {}) {
+        if (detalhesOfensivo !== undefined)
+            this._detalhesOfensivo = detalhesOfensivo;
+        if (detalhesComponente !== undefined)
+            this._detalhesComponente = detalhesComponente;
+    }
 
     get temDetalhesOfensivo(): boolean { return this._detalhesOfensivo !== undefined; }
-    set detalhesOfensivo(detalhes: { danoMin: number, danoMax: number, idAtributoBase: number, idPericiaBase: number }) { this._detalhesOfensivo = new DetalhesOfensivo(detalhes.danoMin, detalhes.danoMax, detalhes.idAtributoBase, detalhes.idPericiaBase); }
     get detalhesOfensivo(): DetalhesOfensivo { return this._detalhesOfensivo!; }
 
-    get temDetalhesComponente(): boolean { return this._detelhesComponente !== undefined; }
-    set detelhesComponente(detalhes: { idElemento: number, idNivelComponente: number }) { this._detelhesComponente = new DetalhesComponente(detalhes.idElemento, detalhes.idNivelComponente); }
-    get detelhesComponente(): DetalhesComponente { return this._detelhesComponente!; }
+    get temDetalhesComponente(): boolean { return this._detalhesComponente !== undefined; }
+    get detalhesComponente(): DetalhesComponente { return this._detalhesComponente!; }
 
     novoUso() { this.vezesUtilizadasConsecutivo++; }
     bloqueia() { this.bloqueadoNesseTurno = true; }
@@ -86,7 +91,7 @@ export class ComportamentoVestivel {
     desveste(): void { if (this.podeSerVestido) this._estaVestido = false; }
 }
 
-class DetalhesOfensivo {
+export class DetalhesOfensivo {
     constructor(
         public danoMin: number,
         public danoMax: number,
@@ -99,7 +104,7 @@ class DetalhesOfensivo {
     get refPericiaUtilizadaArma(): PericiaPatentePersonagem { return getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === this._idPericiaBase)!; }
 }
 
-class DetalhesComponente {
+export class DetalhesComponente {
     constructor(
         private _idElemento: number,
         private _idNivelComponente: number,

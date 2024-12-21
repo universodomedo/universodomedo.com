@@ -20,19 +20,11 @@ const page = ({ item }: { item: Item }) => {
             <div className={style.embrulho_icone}>
                 {mostrarEtiquetas && (<h3>{item.nomeExibicao}</h3>)}
                 <Tooltip content={item.nomeExibicao}>
-                    {/* <div
-                        className={`${style.icone_item}`}
-                        style={{
-                            backgroundImage: `url(data:image/svg+xml;base64,${item.svg})`,
-                            backgroundColor: '#FFFFFF',
-                        }}
-                    /> */}
                     <div className={`${style.icone_item}`}>
                         <img src={`data:image/svg+xml;base64,${item.svg}`} />
-                        {/* <img src={`data:image/svg+xml;base64,${props.iconeCustomizado!.svg}`} onClick={onClick} /> */}
-                        {/* {quantidadeAgrupada > 1 && (
-                            <span className={style.quantidade_agrupada}>{`x${props.numeroUnidades}`}</span>
-                        )} */}
+                        {item.quantidadeUnidadesDesseItem > 1 && (
+                            <span className={style.quantidade_agrupada}>{`x${item.quantidadeUnidadesDesseItem}`}</span>
+                        )}
                     </div>
                 </Tooltip>
             </div>

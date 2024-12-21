@@ -18,16 +18,18 @@ export class Modificadores {
         const sobreescritos: Buff[] = [];
 
         const groupedBuffs = this._buffs.reduce((acc, buff) => {
-            if (!acc[buff['_idBuff']]) {
-                acc[buff['_idBuff']] = [];
-            }
-            acc[buff['_idBuff']].push(buff);
+            const key = `${buff['_idBuff']}-${buff['_idTipoBuff']}`;
+
+            if (!acc[key]) acc[key] = [];
+
+            acc[key].push(buff);
             return acc;
-        }, {} as Record<number, Buff[]>);
+        }, {} as Record<string, Buff[]>);
 
         for (const key in groupedBuffs) {
             const buffs = groupedBuffs[key];
             const sortedBuffs = buffs.sort((a, b) => b.valor - a.valor);
+
             aplicados.push(sortedBuffs[0]);
             sobreescritos.push(...sortedBuffs.slice(1));
         }
@@ -36,6 +38,6 @@ export class Modificadores {
     }
 
     valorBuffPorId(idBuff: number): number {
-        return 0;
+        return this.buffs.aplicados.filter(buff => buff.refBuff.id === idBuff)!.reduce((acc, cur) => acc + cur.valor, 0);
     }
 }

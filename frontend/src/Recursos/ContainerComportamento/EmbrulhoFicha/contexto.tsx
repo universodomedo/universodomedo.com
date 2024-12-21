@@ -46,11 +46,13 @@ export const ContextoFichaProvider = ({ children, idFichaNoLocalStorage }: { chi
 }
 
 let getPersonagem: (() => Personagem) | null = null;
+let getIdFichaNoLocalStorage: (() => number) | null = null;
 
 export const useContextBridge = () => {
-    const { personagem } = useContextoFicha();
+    const { personagem, idFichaNoLocalStorage } = useContextoFicha();
 
     getPersonagem = () => personagem;
+    getIdFichaNoLocalStorage = () => idFichaNoLocalStorage;
 };
 
 export const getPersonagemFromContext = () => {
@@ -59,4 +61,12 @@ export const getPersonagemFromContext = () => {
     }
 
     return getPersonagem();
+};
+
+export const getIdFichaNoLocalStorageFromContext = () => {
+    if (!getIdFichaNoLocalStorage) {
+        throw new Error("ContextBridge não está inicializado neste contexto.");
+    }
+
+    return getIdFichaNoLocalStorage();
 };

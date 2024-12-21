@@ -101,7 +101,7 @@ export class Acao {
         LoggerHelper.getInstance().fechaNivelLogMensagem();
         LoggerHelper.getInstance().saveLog();
         
-        getPersonagemFromContext().onUpdate();
+        // getPersonagemFromContext().onUpdate();
     }
 
     executa = (valoresSelecionados: GastaCustoProps) => {

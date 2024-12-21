@@ -1,8 +1,8 @@
 // #region Imports
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-import { dadosItem, novoItemPorDadosItem } from 'Types/classes/index.ts';
-import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
+import { dadosItem, Item, novoItemPorDadosItem, RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { getPersonagemFromContext, getIdFichaNoLocalStorageFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 
 import PaginaArmas from './PaginasSecundarias/Armas/page.tsx';
 import PaginaCategorias from './PaginasSecundarias/Categorias/page.tsx';
@@ -18,7 +18,8 @@ interface ContextoLojaProps {
     idPaginaAberta: number;
     mudarPagina: (idPagina: number) => void;
     paginas: { [key: number]: ReactNode };
-    adicionarItem: (dadosItem: dadosItem, quantidade: number) => void;
+    adicionarItem: (dadosItem: dadosItem, quantidade?: number) => void;
+    removeItem: (item: Item, indexItem: number) => void;
 }
 
 export const ContextoLoja = createContext<ContextoLojaProps | undefined>(undefined);
@@ -45,6 +46,10 @@ export const ContextoLojaProvider = ({ children }: { children: React.ReactNode }
         5: <PaginaMochilas />,
         6: <PaginaConsumiveis />,
         7: <PaginaArmas />,
+    };
+
+    const mudarPagina = (idPagina: number) => {
+        setIdPaginaAberta(idPagina);
     };
 
     const adicionarItem = (dadosItem: dadosItem, quantidade: number = 1) => {
@@ -83,12 +88,28 @@ export const ContextoLojaProvider = ({ children }: { children: React.ReactNode }
         mudarPagina(0);
     };
 
-    const mudarPagina = (idPagina: number) => {
-        setIdPaginaAberta(idPagina);
+    const removeItem = (item: Item, indexItem: number) => {
+
+        item.removeDoInventario();
+
+        const dadosFicha = localStorage.getItem('dadosFicha');
+        const idFichaNoLocalStorage = getIdFichaNoLocalStorageFromContext();
+
+        if (dadosFicha) {
+            const fichas: RLJ_Ficha2[] = JSON.parse(dadosFicha);
+            const fichaRemovendo = fichas[idFichaNoLocalStorage] || { inventario: [] };
+
+            if (fichaRemovendo.inventario && indexItem >= 0 && indexItem < fichaRemovendo.inventario.length) {
+                fichaRemovendo.inventario.splice(indexItem, 1);
+            }
+
+            fichas[idFichaNoLocalStorage] = fichaRemovendo;
+            localStorage.setItem('dadosFicha', JSON.stringify(fichas));
+        }
     };
 
     return (
-        <ContextoLoja.Provider value={{ idPaginaAberta, mudarPagina, paginas, adicionarItem }}>
+        <ContextoLoja.Provider value={{ idPaginaAberta, mudarPagina, paginas, adicionarItem, removeItem }}>
             {children}
         </ContextoLoja.Provider>
     );

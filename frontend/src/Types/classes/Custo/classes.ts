@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, TipoExecucao } from 'Types/classes/index.ts';
+import { Acao, Ritual, TipoExecucao } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -75,14 +75,14 @@ export class CustoComponente extends Custo {
     public refAcao?: Acao;
     setRefAcao(value: Acao): this { return (this.refAcao = value, this); }
 
-    get podeSerPago(): boolean { return getPersonagemFromContext().inventario.items.some(item => item.comportamentoGeral.temDetalhesComponente && item.comportamentoGeral.detelhesComponente.refElemento.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refElemento.id && item.comportamentoGeral.detelhesComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.id) }
+    get podeSerPago(): boolean { return getPersonagemFromContext().inventario.items.some(item => item.comportamentoGeral.temDetalhesComponente && item.comportamentoGeral.detalhesComponente.refElemento.id === this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refElemento.id && item.comportamentoGeral.detalhesComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refNivelComponente.id) }
 
-    get descricaoCusto(): string { return `1 Carga de Componente ${this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refElemento.nome} ${this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.nome}`; }
+    get descricaoCusto(): string { return `1 Carga de Componente ${this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refElemento.nome} ${this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refNivelComponente.nome}`; }
 
     gastaCusto(props: GastaCustoProps): void {
         const idItem = props['idItem'];
         
-        LoggerHelper.getInstance().adicionaMensagem(`Componente de ${this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refElemento.nome} ${this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.nome} gasto`);
+        LoggerHelper.getInstance().adicionaMensagem(`Componente de ${this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refElemento.nome} ${this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refNivelComponente.nome} gasto`);
 
         getPersonagemFromContext().inventario.items.find(item => item.id === idItem)?.gastaUso();
         // (getPersonagemFromContext().inventario.items.find(item => item.id === idItem) as ItemComponente).gastaUso();

@@ -1,10 +1,9 @@
 // #region Imports
 import style from './style.module.css';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-import { RLJ_Ficha2 } from 'Types/classes/index.ts';
 import { ContextoLojaProvider, useContextoLoja } from 'Pages/Shop/contexto.tsx';
-import { ContextoFichaProvider, getPersonagemFromContext, useContextoFicha, useContextBridge } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
+import { ContextoFichaProvider, getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -14,7 +13,6 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 const page = () => {
     const location = useLocation();
-
     const indexFicha = location.state?.indexFicha;
 
     return (
@@ -27,46 +25,13 @@ const page = () => {
 }
 
 const PageComContexto = () => {
-    const location = useLocation();
+    const [_, setState] = useState({});
     const navigate = useNavigate();
+    
+    const { idPaginaAberta, paginas, removeItem } = useContextoLoja();
 
-    const { personagem } = useContextoFicha();
-
-    const indexFicha = location.state?.indexFicha;
-    const quantidadeItemsCat1 = personagem.inventario.items.filter(item => item.categoria === 1).length || 0;
-    const cargaInventario = personagem.inventario.espacosUsados;
-
-    const { idPaginaAberta, mudarPagina, paginas } = useContextoLoja();
-
-    useEffect(() => {
-        // atualizaInventario();
-    }, []);
-
-    const atualizaInventario = () => {
-        // const dadosFicha = localStorage.getItem('dadosFicha');
-
-        // if (dadosFicha) {
-        //     const fichas: RLJ_Ficha2[] = JSON.parse(dadosFicha);
-        //     setFichaAtual(fichas[indexFicha] || { inventario: [] });
-        // }
-    };
-
-    const removeItem = (index: number) => {
-        const dadosFicha = localStorage.getItem('dadosFicha');
-
-        if (dadosFicha) {
-            const fichas: RLJ_Ficha2[] = JSON.parse(dadosFicha);
-            const fichaRemovendo = fichas[indexFicha] || { inventario: [] };
-
-            if (fichaRemovendo.inventario && index >= 0 && index < fichaRemovendo.inventario.length) {
-                fichaRemovendo.inventario.splice(index, 1);
-            }
-
-            fichas[indexFicha] = fichaRemovendo;
-            localStorage.setItem('dadosFicha', JSON.stringify(fichas));
-            atualizaInventario();
-        }
-    };
+    const personagem = getPersonagemFromContext();
+    personagem.carregaOnUpdate(() => setState({}));
 
     return (
         <div className={style.shopping}>
@@ -77,7 +42,7 @@ const PageComContexto = () => {
                     <h2>Inventário Atual</h2>
 
                     <div className={style.dados_inventario}>
-                        <p>Capacidade de Carga: {cargaInventario}/{personagem.estatisticasBuffaveis.espacoInventario.espacoTotal}</p>
+                        <p>Capacidade de Carga: {personagem.inventario.espacosUsados}/{personagem.estatisticasBuffaveis.espacoInventario.espacoTotal}</p>
                         {personagem.estatisticasBuffaveis.gerenciadorEspacoCategoria.espacosCategoria.map((categoria, index) => (
                             <p key={index}>Itens {categoria.nomeCategoria}: {personagem.inventario.numeroItensCategoria(categoria.valorCategoria)}/{personagem.estatisticasBuffaveis.gerenciadorEspacoCategoria.maximoItensCategoria(categoria.valorCategoria)}</p>
                         ))}
@@ -89,7 +54,8 @@ const PageComContexto = () => {
                                 {personagem.inventario.items.map((item, index) => (
                                     <div key={index} className={style.linha_item}>
                                         <h3>{item.nomeExibicao}</h3>
-                                        <FontAwesomeIcon className={style.remove_item} title={'Remover Item'} icon={faTrash} onClick={() => { removeItem(index) }} />
+                                        {/* <FontAwesomeIcon className={style.remove_item} title={'Remover Item'} icon={faTrash} onClick={() => { item.removeDoInventario(); }} /> */}
+                                        <FontAwesomeIcon className={style.remove_item} title={'Remover Item'} icon={faTrash} onClick={() => { removeItem(item, index) }} />
                                     </div>
                                 ))}
                             </div>

@@ -34,7 +34,7 @@ export class Item {
         this.comportamentoUtilizavel = new ComportamentoUtilizavel(usosMaximo);
         this.comportamentoEmpunhavel = new ComportamentoEmpunhavel(true);
         this.comportamentoVestivel = new ComportamentoVestivel(this.detalhesItem.podeSerVestido);
-        this.comportamentoGeral = new ComportamentoGeral();
+        this.comportamentoGeral = new ComportamentoGeral({ detalhesOfensivo: this.detalhesItem.detalhesOfensivo, detalhesComponente: this.detalhesItem.detalhesComponente });
     }
 
     get nomeExibicao(): string { return this.nome.nomeExibicao }
@@ -51,6 +51,12 @@ export class Item {
     get itemPodeSerGuardado(): boolean { return this.itemEstaEmpunhado; }
     get itemPodeSerVestido(): boolean { return this.itemEstaEmpunhado && this.comportamentoVestivel.podeSerVestido; }
     get itemPodeSerDesvestido(): boolean { return this.itemEstaVestido; }
+
+    get quantidadeUnidadesDesseItem(): number {
+        if (!this.agrupavel || this.itemEstaEmpunhado) return 1;
+
+        return getPersonagemFromContext().inventario.items.filter(item => item.nomeExibicao === this.nomeExibicao).length;
+    }
 
     adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this._buffs, buffParams), this) };
     adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }

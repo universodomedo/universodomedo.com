@@ -23,17 +23,11 @@ export class RequisitoComponente extends Requisito {
         return (
             getPersonagemFromContext().inventario.items.some(item =>
                 item.comportamentoGeral.temDetalhesComponente &&
-                item.comportamentoGeral.detelhesComponente.refElemento.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refElemento.id && 
-                item.comportamentoGeral.detelhesComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.id
+                item.comportamentoGeral.detalhesComponente.refElemento.id === this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refElemento.id && 
+                item.comportamentoGeral.detalhesComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refNivelComponente.id
                 && (this.precisaEstarEmpunhando && item.itemEstaEmpunhado)
             )
         )
-        // return (
-        //     getPersonagemFromContext().inventario.items.some(item =>
-        //         item instanceof ItemComponente && item.detalhesComponente.refElemento.id === this.refAcao!.refPai.refElemento.id && item.detalhesComponente.refNivelComponente.id === this.refAcao!.refPai.refNivelComponente.id
-        //         && (this.precisaEstarEmpunhando && item.refExtremidade)
-        //     )
-        // );
     }
 
     get descricaoRequisito(): string {
@@ -112,8 +106,8 @@ export class RequisitoConfig {
                         return getPersonagemFromContext().inventario.items.filter(item =>
                             item.itemEstaEmpunhado &&
                             item.comportamentoGeral.temDetalhesComponente &&
-                            item.comportamentoGeral.detelhesComponente.refElemento.id === acao.refPai.comportamentoGeral.detelhesComponente.refElemento.id &&
-                            item.comportamentoGeral.detelhesComponente.refNivelComponente.id === acao.refPai.comportamentoGeral.detelhesComponente.refNivelComponente.id
+                            item.comportamentoGeral.detalhesComponente.refElemento.id === acao.refPai.comportamentoGeral.detalhesComponente.refElemento.id &&
+                            item.comportamentoGeral.detalhesComponente.refNivelComponente.id === acao.refPai.comportamentoGeral.detalhesComponente.refNivelComponente.id
                         ).reduce((acc: { key: number; value: string }[], cur) => {
                             acc.push({ key: cur.id, value: cur.nomeExibicao });
                             return acc;

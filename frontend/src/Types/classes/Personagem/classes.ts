@@ -50,7 +50,7 @@ export class Personagem {
             0,
             [new Execucao(2, 1), new Execucao(3, 1), new Execucao(4, 1), new Execucao(6, 1)],
             new EspacoInventario(5, 5),
-            new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2), new EspacoCategoria(2, 0), new EspacoCategoria(3, 0), new EspacoCategoria(4, 0), ]),
+            new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2), new EspacoCategoria(2, 1), new EspacoCategoria(3, 0), new EspacoCategoria(4, 0), ]),
             numExtremidades
         );
 
@@ -82,7 +82,7 @@ export class Personagem {
                 )
         );
 
-        this.inventario.items = this._ficha.inventario!.map(dadosItem => novoItemPorDadosItem(dadosItem));
+        this._ficha.inventario!.map(dadosItem => this.inventario.adicionarItemNoInventario(novoItemPorDadosItem(dadosItem)));
         
         this.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(this));
     }

@@ -42,7 +42,8 @@ export type subDadosBuff = {
 }
 
 export type subDadosDetalhesArmas = {
-    dano: number, variancia: number, numeroExtremidadesUtilizadas: number, idAtributoUtilizado: number, idPericiaUtilizada: number
+    danoMin: number, danoMax: number, numeroExtremidadesUtilizadas: number, idAtributoUtilizado: number, idPericiaUtilizada: number,
+    // variancia: number,
 }
 
 export type subDadosDetalhesEquipamentos = {}

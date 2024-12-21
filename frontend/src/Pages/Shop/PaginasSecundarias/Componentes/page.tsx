@@ -83,7 +83,7 @@ const page = () => {
             </div>
 
             <div className={style.area_botao_tipo_item}>
-                <button onClick={() => { mudarPagina(0) }}>Voltar</button>
+                <button onClick={() => {mudarPagina(0)}}>Voltar</button>
                 <button onClick={adicionar} disabled={elemento.value === 0 || patente.value === 0} className={style.botao_adicionar}>Adicionar</button>
             </div>
         </div>

@@ -66,7 +66,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
         </div>
       )} */}
 
-      <ConsultaProvider<Item> abaId={abaId} registros={[itensVestidos, itensEmpunhados, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Vestidos', 'Itens Empunhados', 'Itens Guardados'] }}>
+      <ConsultaProvider<Item> abaId={abaId} registros={[itensVestidos, itensEmpunhados, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Vestidos', 'Itens Empunhados', 'Itens Guardados'] }} calculoTotal={(item) => (item.quantidadeUnidadesDesseItem || 1)}>
         <Consulta renderItem={renderItem} />
       </ConsultaProvider>
     </div>

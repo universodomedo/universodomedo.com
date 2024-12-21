@@ -8,7 +8,7 @@ import { faUserAstronaut, faWrench, faBagShopping } from '@fortawesome/free-soli
 // #endregion
 
 const page = () => {
-    const { mudarPagina } = usePagina();
+    const { mudarPagina } = useContextoLoja();
 
     return (
         <>
@@ -21,7 +21,7 @@ const page = () => {
             </div>
 
             <div className={style.area_botao_tipo_item}>
-                <button onClick={voltaParaPaginaInicial}>Voltar</button>
+                <button onClick={() => {mudarPagina(0)}}>Voltar</button>
             </div>
         </>
     );

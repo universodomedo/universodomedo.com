@@ -2,7 +2,7 @@
 import style from "./style.module.css";
 import "./style.css";
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 
 import { RLJ_Ficha2 } from 'Types/classes/index.ts';
 
@@ -45,16 +45,64 @@ const page = () => {
 }
 
 const PaginaFicha = () => {
-    const { personagem } = useContextoFicha();
-    // const personagem = getPersonagemFromContext();
+    const [_, setState] = useState({});
     const controleRef = useRef<{ abreAba: (idAba: string) => void; fechaAba: (idAba: string) => void; }>(null);
 
-    // useContextBridge();
+    const personagem = getPersonagemFromContext();
+    personagem.carregaOnUpdate(() => setState({}));
 
     return (
         <>
             <ToastContainer />
             <Log />
+
+            {personagem && (
+                <>
+                    <div className={style.div_demo_acoes}>
+                        <div>
+                            <h1>Teste</h1>
+                            <button onClick={() => console.log(personagem)}>Teste</button>
+                        </div>
+
+                        <div>
+                            <h1>Alterar Estatística</h1>
+                            <div>
+                                <select id="estatistica">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
+                                <select id="valorRecuperar">{Array.from({length:100}, (_, index) => (index + 1)).map((option) => (<option key={option} value={option}>{option}</option>))}</select>
+                            </div>
+                            <div>
+                                <select id="danificarOuRecuperar"><option key={1} value={'Danificar'}>Danificar</option><option key={2} value={'Recuperar'}>Recuperar</option></select>
+                                <button onClick={() => {personagem.receptor.teste(
+                                    parseInt((document.querySelector('#estatistica') as HTMLSelectElement).value),
+                                    parseInt((document.querySelector('#valorRecuperar') as HTMLSelectElement).value),
+                                    (document.querySelector('#danificarOuRecuperar') as HTMLSelectElement).selectedIndex+1,
+                                );}}>Aplicar</button>
+                            </div>
+                        </div>
+{/* 
+                        <div>
+                            <h1>Alterar Est. Máxima</h1>
+                            <div>
+                                <select id="valorMaximo">{Array.from({length:100}, (_, index) => (index + 1) * 10).map((option) => (<option key={option} value={option}>{option}</option>))}</select>
+                                <select id="estatisticaMaxima">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
+                            </div>
+                            <div><button onClick={() => {personagem.alterarMaximoEstatistica(parseInt((document.querySelector('#estatisticaMaxima') as HTMLSelectElement).value), parseInt((document.querySelector('#valorMaximo') as HTMLInputElement).value))}}>Alterar</button></div>
+                        </div> */}
+
+                        {/* <div>
+                            <h1>Passar Durações</h1>
+                            {singleton.duracoes.filter(duracao => duracao.id !== 5).map((duracao, index) => (
+                                <button key={index} onClick={() => { personagem.rodaDuracao(duracao.id) }} >{duracao.nome}</button>
+                            ))}
+                        </div> */}
+
+                        {/* <div>
+                            <h1>Shopping</h1>
+                            <button onClick={(e) => { e.preventDefault(); openModal(); }}>Abrir Shopping</button>
+                        </div> */}
+                    </div>
+                </>
+            )}
 
             {personagem && (
                 <Abas>
