@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, Item, Opcao, OpcoesExecucao } from 'Types/classes/index.ts';
+import { Acao, Item, Opcao, OpcoesExecucao, Ritual } from 'Types/classes/index.ts';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
@@ -22,9 +22,9 @@ export class RequisitoComponente extends Requisito {
     get requisitoCumprido(): boolean {
         return (
             getPersonagemFromContext().inventario.items.some(item =>
-                item.comportamentoGeral.temDetalhesComponente &&
-                item.comportamentoGeral.detalhesComponente.refElemento.id === this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refElemento.id && 
-                item.comportamentoGeral.detalhesComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refNivelComponente.id
+                item.comportamentos.ehComponente && this.refAcao!.refPai instanceof Ritual &&
+                item.comportamentos.comportamentoComponente.refElemento.id === this.refAcao!.refPai.refElemento.id && 
+                item.comportamentos.comportamentoComponente.refNivelComponente.id === this.refAcao!.refPai.refNivelComponente.id
                 && (this.precisaEstarEmpunhando && item.itemEstaEmpunhado)
             )
         )
@@ -104,10 +104,10 @@ export class RequisitoConfig {
                     displayName: 'Componente',
                     obterOpcoes: (acao: Acao) => {
                         return getPersonagemFromContext().inventario.items.filter(item =>
-                            item.itemEstaEmpunhado &&
-                            item.comportamentoGeral.temDetalhesComponente &&
-                            item.comportamentoGeral.detalhesComponente.refElemento.id === acao.refPai.comportamentoGeral.detalhesComponente.refElemento.id &&
-                            item.comportamentoGeral.detalhesComponente.refNivelComponente.id === acao.refPai.comportamentoGeral.detalhesComponente.refNivelComponente.id
+                            item.itemEstaEmpunhado && acao.refPai instanceof Ritual &&
+                            item.comportamentos.ehComponente &&
+                            item.comportamentos.comportamentoComponente.refElemento.id === acao.refPai.refElemento.id &&
+                            item.comportamentos.comportamentoComponente.refNivelComponente.id === acao.refPai.refNivelComponente.id
                         ).reduce((acc: { key: number; value: string }[], cur) => {
                             acc.push({ key: cur.id, value: cur.nomeExibicao });
                             return acc;

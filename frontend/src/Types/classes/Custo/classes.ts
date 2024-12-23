@@ -75,14 +75,18 @@ export class CustoComponente extends Custo {
     public refAcao?: Acao;
     setRefAcao(value: Acao): this { return (this.refAcao = value, this); }
 
-    get podeSerPago(): boolean { return getPersonagemFromContext().inventario.items.some(item => item.comportamentoGeral.temDetalhesComponente && item.comportamentoGeral.detalhesComponente.refElemento.id === this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refElemento.id && item.comportamentoGeral.detalhesComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refNivelComponente.id) }
+    get podeSerPago(): boolean { return getPersonagemFromContext().inventario.items.some(item =>
+        item.comportamentos.ehComponente && this.refAcao!.refPai instanceof Ritual &&
+        item.comportamentos.comportamentoComponente.refElemento.id === this.refAcao!.refPai.refElemento.id &&
+        item.comportamentos.comportamentoComponente.refNivelComponente.id === this.refAcao!.refPai.refNivelComponente.id
+    )}
 
-    get descricaoCusto(): string { return `1 Carga de Componente ${this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refElemento.nome} ${this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refNivelComponente.nome}`; }
+    get descricaoCusto(): string { return `1 Carga de Componente ${(this.refAcao!.refPai as Ritual).refElemento.nome} ${(this.refAcao!.refPai as Ritual).refNivelComponente.nome}`; }
 
     gastaCusto(props: GastaCustoProps): void {
         const idItem = props['idItem'];
         
-        LoggerHelper.getInstance().adicionaMensagem(`Componente de ${this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refElemento.nome} ${this.refAcao!.refPai.comportamentoGeral.detalhesComponente.refNivelComponente.nome} gasto`);
+        LoggerHelper.getInstance().adicionaMensagem(`Componente de ${(this.refAcao!.refPai as Ritual).refElemento.nome} ${(this.refAcao!.refPai as Ritual).refNivelComponente.nome} gasto`);
 
         getPersonagemFromContext().inventario.items.find(item => item.id === idItem)?.gastaUso();
         // (getPersonagemFromContext().inventario.items.find(item => item.id === idItem) as ItemComponente).gastaUso();

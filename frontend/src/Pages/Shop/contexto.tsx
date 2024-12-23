@@ -1,7 +1,7 @@
 // #region Imports
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-import { dadosItem, Item, novoItemPorDadosItem, RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { DadosItem, Item, novoItemPorDadosItem, RLJ_Ficha2 } from 'Types/classes/index.ts';
 import { getPersonagemFromContext, getIdFichaNoLocalStorageFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 
 import PaginaArmas from './PaginasSecundarias/Armas/page.tsx';
@@ -18,7 +18,7 @@ interface ContextoLojaProps {
     idPaginaAberta: number;
     mudarPagina: (idPagina: number) => void;
     paginas: { [key: number]: ReactNode };
-    adicionarItem: (dadosItem: dadosItem, quantidade?: number) => void;
+    adicionarItem: (dadosItem: DadosItem, quantidade?: number) => void;
     removeItem: (item: Item, indexItem: number) => void;
 }
 
@@ -52,7 +52,7 @@ export const ContextoLojaProvider = ({ children }: { children: React.ReactNode }
         setIdPaginaAberta(idPagina);
     };
 
-    const adicionarItem = (dadosItem: dadosItem, quantidade: number = 1) => {
+    const adicionarItem = (dadosItem: DadosItem, quantidade: number = 1) => {
         const personagem = getPersonagemFromContext();
 
         const categoriaDosItemAdicionados = dadosItem.categoria;

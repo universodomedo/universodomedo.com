@@ -1,5 +1,5 @@
 // #region Imports
-import { DetalhesItem } from 'Types/classes/index.ts';
+import { ComportamentoAcao, ComportamentoAtributoPericia, ComportamentoComponente, ComportamentoEmpunhavel, ComportamentoUtilizavel, ComportamentoVestivel } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -9,21 +9,31 @@ export type RLJ_Ficha2 = {
     atributos?: { id: number, valor: number }[],
     periciasPatentes?: { idPericia: number, idPatente: number }[],
     rituais: dadosRitual[],
-    inventario: dadosItem[],
+    inventario: DadosItem[],
     // reducoesDano:
+}
+
+export type DadosItem = {
+    idTipoItem: number, nomeItem: { nomePadrao: string, nomeCustomizado?: string }, peso: number, categoria: number,
+
+    dadosComportamentos: DadosComportamentos;
+
+    dadosAcoes?: subDadosAcoes[];
+    buffs?: subDadosBuff[];
+}
+
+export type DadosComportamentos = {
+    dadosComportamentoUtilizavel?: ConstructorParameters<typeof ComportamentoUtilizavel>;
+    dadosComportamentoEmpunhavel?: ConstructorParameters<typeof ComportamentoEmpunhavel>;
+    dadosComportamentoVestivel?: ConstructorParameters<typeof ComportamentoVestivel>;
+    dadosComportamentoComponente?: ConstructorParameters<typeof ComportamentoComponente>;
+    dadosComportamentoAcao?: ConstructorParameters<typeof ComportamentoAcao>;
+    dadosComportamentoAtributoPericia?: ConstructorParameters<typeof ComportamentoAtributoPericia>;
 }
 
 export type dadosRitual = {
     nomeRitual: string, idCirculoNivel: number, idElemento: number,
     dadosAcoes: subDadosAcoes[]
-};
-
-export type dadosItem = {
-    idTipoItem: number, nomeItem: { nomePadrao: string, nomeCustomizado?: string }, peso: number, categoria: number,
-    detalhesItem?: DetalhesItem,
-    detalhesArma?: subDadosDetalhesArmas, detalhesEquipamentos?: subDadosDetalhesEquipamentos, detalhesConsumiveis?: subDadosDetalhesConsumiveis, detalhesComponente?: subDadosDetalhesComponentes,
-    dadosAcoes?: subDadosAcoes[]
-    buffs?: subDadosBuff[],
 };
 
 export type subDadosAcoes = {
@@ -39,19 +49,4 @@ export type subDadosCusto = {
 
 export type subDadosBuff = {
     idBuff: number, nome: string, valor: number, duracao: { idDuracao: number, valor: number, }, idTipoBuff: number
-}
-
-export type subDadosDetalhesArmas = {
-    danoMin: number, danoMax: number, numeroExtremidadesUtilizadas: number, idAtributoUtilizado: number, idPericiaUtilizada: number,
-    // variancia: number,
-}
-
-export type subDadosDetalhesEquipamentos = {}
-
-export type subDadosDetalhesConsumiveis = {
-    usosMaximos: number, usos: number
-}
-
-export type subDadosDetalhesComponentes = {
-    idElemento: number, idNivelComponente: number, usosMaximos: number, usos: number
 }
