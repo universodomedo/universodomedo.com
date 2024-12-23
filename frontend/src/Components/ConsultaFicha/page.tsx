@@ -1,7 +1,8 @@
 // #region Imports
-import { createContext, useContext, useState, useEffect, useRef } from "react";
 import style from "./style.module.css";
-import Select, { ActionMeta, components, MultiValue, PlaceholderProps, ValueContainerProps } from "react-select";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
+
+import Select, { ActionMeta, components, MultiValue, PlaceholderProps } from "react-select";
 import { FiltroProps, OpcaoFormatada, CategoriaFormatada, FiltroPropsItems } from 'Types/classes/index.ts';
 import ValoresFiltrosSelecionados from "Components/ValoresFiltrosSelecionados/page.tsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -154,7 +155,7 @@ export const Consulta = <T,>({ renderItem }: { renderItem: (item: T, index: numb
 
     return (
         <div className={style.conteudo_consulta}>
-            <h1>{filtroProps.titulo} [{registros.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0 )}]</h1>
+            <h1>{filtroProps.titulo} [{registros.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)}]</h1>
             {/* <h1>{filtroProps.titulo} [{registros.reduce((total, registros) => total + registros.length, 0)}]</h1> */}
 
             {mostrarFiltro && (
@@ -163,7 +164,7 @@ export const Consulta = <T,>({ renderItem }: { renderItem: (item: T, index: numb
                     <ValoresFiltrosSelecionados />
                 </>
             )}
-            
+
             {registrosFiltrados.length > 0 && (
                 registrosFiltrados.map((registros, index) => (
                     registros.length > 0 && (
@@ -180,7 +181,7 @@ export const Consulta = <T,>({ renderItem }: { renderItem: (item: T, index: numb
             )}
 
             <div className={style.total_exibidos}>
-                <p>Registros exibidos: {registrosFiltrados.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0 )}</p>
+                <p>Registros exibidos: {registrosFiltrados.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)}</p>
             </div>
         </div>
     );

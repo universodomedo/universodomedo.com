@@ -1,7 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+// #region Imports
 import style from "./style.module.css";
+import React, { useState, useEffect, useRef } from 'react';
+
 import { MensagemLog } from 'Types/classes/index.ts';
 import { LoggerHelper } from 'Types/classes_estaticas.tsx';
+// #endregion
 
 const Log = () => {
     const [isExpanded, setIsExpanded] = useState(false);

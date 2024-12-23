@@ -160,3 +160,20 @@
     justify-content: space-evenly;
     width: 100%;
 }
+
+.opcoes_arma {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 80%;
+    justify-content: space-evenly;
+}
+
+.info_arma {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    width: 50%;
+    gap: 5%;
+}

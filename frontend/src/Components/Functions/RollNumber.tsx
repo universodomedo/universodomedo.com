@@ -1,4 +1,6 @@
+// #region Imports
 import { getRandomVariance, VariacaoAleatoria } from "udm-dice";
+// #endregion
 
 export function RollNumber(variancia:number) {
     const rnd = getRandomVariance(variancia);

@@ -1,9 +1,12 @@
+// #region Imports
 import "./style.css";
+import { useEffect, useState } from "react";
+
 import CarrosselItem from "Components/SubComponents/CarrosselItem/page.tsx";
 import useApi from "ApiConsumer/Consumer.tsx";
-import { useEffect, useState } from "react";
 import Slider from "react-slick";
 import { RLJ_SessaoAventura } from "udm-types";
+// #endregion
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -30,7 +33,7 @@ const SectionCarroussel = () => {
             <p>Próximas Sessões</p>
           </div>
           <Slider {...settings}>
-            {proximasSessoes.map((sessao: RLJ_SessaoAventura, index: number) => ( sessao.aventura && (
+            {proximasSessoes.map((sessao: RLJ_SessaoAventura, index: number) => (sessao.aventura && (
               <CarrosselItem key={`carrosselItem-${index}`} id={sessao.id} titulo={(sessao.aventura!.subtitulo === '' ? sessao.aventura!.titulo : sessao.aventura!.subtitulo)} imgUrl={sessao.aventura!.caminhoArteOficial} tsInicio={sessao.tsInicioPrevisto} live={false} />
             )))}
           </Slider>

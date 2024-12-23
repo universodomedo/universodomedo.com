@@ -3,6 +3,7 @@ export * from './Alcance';
 export * from './Alvo';
 export * from './Atributo';
 export * from './Buff';
+export * from './CaracteristicaArma';
 export * from './Comportamento';
 export * from './CondicaoGanhoNex';
 export * from './Custo';

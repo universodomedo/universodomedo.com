@@ -1,5 +1,8 @@
+// #region Imports
 import "./style.css";
+
 import img1 from "Components/Assets/img1.svg";
+// #endregion
 
 interface LandingpageTextSectionProps {
   sections: LandingpageTextSection[];

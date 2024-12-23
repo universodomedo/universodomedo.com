@@ -106,7 +106,7 @@ export class Item {
 
     removeDoInventario(): void {
         getPersonagemFromContext().inventario.removerItem(this.id);
-        this.comportamentoEmpunhavel.refExtremidade?.guardar();
+        this.comportamentoEmpunhavel.esvaziaExtremidades();
     }
 
     get buffs(): Buff[] { return this._buffs; }

@@ -1,7 +1,8 @@
 // #region Imports
-import React, { ReactNode } from 'react';
-import ReactDOM from 'react-dom';
 import style from './style.module.css';
+import React, { ReactNode } from 'react';
+
+import ReactDOM from 'react-dom';
 // #endregion
 
 const Modal: React.FC<{ isOpen: boolean; onClose: () => void; children: ReactNode; }> = ({ isOpen, onClose, children }) => {

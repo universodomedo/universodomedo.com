@@ -63,21 +63,23 @@ export class ComportamentoUtilizavel {
 }
 
 export class ComportamentoEmpunhavel {
-    public refExtremidade?: Extremidade;
+    public refExtremidades: Extremidade[] = [];
 
-    constructor(public podeSerEmpunhado: boolean = true) { }
+    constructor(public podeSerEmpunhado: boolean = true, public extremidadesNecessarias: number = 1) { }
 
-    get estaEmpunhado(): boolean { return this.refExtremidade !== undefined; }
+    get estaEmpunhado(): boolean { return this.refExtremidades.length === this.extremidadesNecessarias; }
 
     empunha(idItem: number): void {
-        this.refExtremidade = getPersonagemFromContext().estatisticasBuffaveis.extremidades.find(extremidade => !extremidade.estaOcupada);
-        this.refExtremidade?.empunhar(idItem);
+        this.refExtremidades = getPersonagemFromContext().estatisticasBuffaveis.extremidades.filter(extremidade => !extremidade.estaOcupada).slice(0, this.extremidadesNecessarias);
+        this.refExtremidades.forEach(extremidade => extremidade.empunhar(idItem));
     }
 
     desempunha(): void {
-        this.refExtremidade?.guardar();
-        this.refExtremidade = undefined;
+        this.esvaziaExtremidades();
+        this.refExtremidades = [];
     }
+
+    esvaziaExtremidades(): void { this.refExtremidades.forEach(extremidade => extremidade.guardar()); }
 }
 
 export class ComportamentoVestivel {
@@ -102,6 +104,16 @@ export class DetalhesOfensivo {
     get varianciaDeDano(): number { return this.danoMax - this.danoMin; }
     get refAtributoUtilizadoArma(): AtributoPersonagem { return getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === this._idAtributoBase)!; }
     get refPericiaUtilizadaArma(): PericiaPatentePersonagem { return getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === this._idPericiaBase)!; }
+}
+
+export class DetalhesAcoes {
+    constructor (
+        public tipo: 'Dano' | 'Cura',
+        public valorMin: number,
+        public valorMax: number,
+    ) { }
+
+    get variancia(): number { return this.valorMax - this.valorMin; }
 }
 
 export class DetalhesComponente {

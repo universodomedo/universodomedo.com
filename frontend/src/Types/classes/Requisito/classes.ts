@@ -48,7 +48,7 @@ export class RequisitoItemEmpunhado extends Requisito {
 // }
 
 export class RequisitoExtremidadeDisponivel extends Requisito {
-    constructor() { super(); }
+    constructor(public numeroExtremidades: number = 1) { super(); }
     get requisitoCumprido(): boolean { return getPersonagemFromContext().estatisticasBuffaveis.extremidades.some(extremidade => !extremidade.refItem); }
     get descricaoRequisito(): string { return 'Nessário Extremidade Disponível'; }
 }
