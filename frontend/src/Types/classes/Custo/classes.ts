@@ -77,16 +77,16 @@ export class CustoComponente extends Custo {
 
     get podeSerPago(): boolean { return getPersonagemFromContext().inventario.items.some(item =>
         item.comportamentos.ehComponente && this.refAcao!.refPai instanceof Ritual &&
-        item.comportamentos.comportamentoComponente.refElemento.id === this.refAcao!.refPai.refElemento.id &&
-        item.comportamentos.comportamentoComponente.refNivelComponente.id === this.refAcao!.refPai.refNivelComponente.id
+        item.comportamentos.comportamentoComponente.refElemento.id === this.refAcao!.refPai.comportamentos.comportamentoRitual.refElemento.id &&
+        item.comportamentos.comportamentoComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentos.comportamentoRitual.refNivelComponente.id
     )}
 
-    get descricaoCusto(): string { return `1 Carga de Componente ${(this.refAcao!.refPai as Ritual).refElemento.nome} ${(this.refAcao!.refPai as Ritual).refNivelComponente.nome}`; }
+    get descricaoCusto(): string { return `1 Carga de Componente ${this.refAcao!.refPai.comportamentos.comportamentoRitual.refElemento.nome} ${this.refAcao!.refPai.comportamentos.comportamentoRitual.refNivelComponente.nome}`; }
 
     gastaCusto(props: GastaCustoProps): void {
-        const idItem = props['idItem'];
+        const idItem = props['idItemComponente'];
         
-        LoggerHelper.getInstance().adicionaMensagem(`Componente de ${(this.refAcao!.refPai as Ritual).refElemento.nome} ${(this.refAcao!.refPai as Ritual).refNivelComponente.nome} gasto`);
+        LoggerHelper.getInstance().adicionaMensagem(`Componente de ${this.refAcao!.refPai.comportamentos.comportamentoRitual.refElemento.nome} ${this.refAcao!.refPai.comportamentos.comportamentoRitual.refNivelComponente.nome} gasto`);
 
         getPersonagemFromContext().inventario.items.find(item => item.id === idItem)?.gastaUso();
         // (getPersonagemFromContext().inventario.items.find(item => item.id === idItem) as ItemComponente).gastaUso();

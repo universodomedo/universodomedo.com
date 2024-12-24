@@ -1,5 +1,5 @@
 // #region Imports
-import { adicionarAcoesUtil, Acao, FiltroProps, FiltroPropsItems, OpcoesFiltro, PaletaCores } from 'Types/classes/index.ts';
+import { adicionarAcoesUtil, Acao, FiltroProps, FiltroPropsItems, OpcoesFiltro, PaletaCores, Comportamentos, DadosComportamentos } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -7,21 +7,21 @@ export class Ritual {
     private static nextId = 1;
     public id: number;
     public acoes: Acao[] = [];
+    public comportamentos: Comportamentos;
 
     public svg = `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Zz4KICAgIDx0aXRsZT5MYXllciAxPC90aXRsZT4KICAgIDx0ZXh0IGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMCIgeD0iMzQxIiB5PSIyOTEiIGlkPSJzdmdfMiIgc3Ryb2tlLXdpZHRoPSIwIiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIHhtbDpzcGFjZT0icHJlc2VydmUiPlRlc3RlIDE8L3RleHQ+CiAgICA8dGV4dCBmaWxsPSIjMDAwMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMCIgeD0iNjMiIHk9IjExMCIgaWQ9InN2Z18zIiBmb250LXNpemU9IjE0MCIgZm9udC1mYW1pbHk9Ik5vdG8gU2FucyBKUCIgdGV4dC1hbmNob3I9InN0YXJ0IiB4bWw6c3BhY2U9InByZXNlcnZlIj5SPC90ZXh0PgogIDwvZz4KPC9zdmc+`;
 
     constructor(
         public nome: string,
-        private _idCirculoNivel: number,
-        private _idElemento: number,
+        dadosComportamentos: DadosComportamentos,
     ) {
         this.id = Ritual.nextId++;
+
+        this.comportamentos = new Comportamentos();
+        if (dadosComportamentos.dadosComportamentoRitual !== undefined) this.comportamentos.setComportamentoRitual(...dadosComportamentos.dadosComportamentoRitual);
     }
 
     get nomeExibicao(): string { return this.nome };
-    get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
-    get refCirculoNivelRitual(): CirculoNivelRitual { return SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.id === this._idCirculoNivel)!; }
-    get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this.refCirculoNivelRitual.idCirculo)! }
 
     adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }
 
@@ -37,7 +37,7 @@ export class Ritual {
                     true
                 ),
                 new FiltroPropsItems<Ritual>(
-                    (ritual) => ritual.refElemento.id,
+                    (ritual) => ritual.comportamentos.comportamentoRitual.refElemento.id,
                     'Elemento',
                     'Selecione o Elemento do Ritual',
                     'select',
@@ -45,7 +45,7 @@ export class Ritual {
                     new OpcoesFiltro(SingletonHelper.getInstance().elementos.map(elemento => ({ id: elemento.id, nome: elemento.nome }))),
                 ),
                 new FiltroPropsItems<Ritual>(
-                    (ritual) => ritual.refCirculoNivelRitual.id,
+                    (ritual) => ritual.comportamentos.comportamentoRitual.refCirculoNivelRitual.id,
                     'Círculo',
                     'Selecione o Círculo do Ritual',
                     'select',

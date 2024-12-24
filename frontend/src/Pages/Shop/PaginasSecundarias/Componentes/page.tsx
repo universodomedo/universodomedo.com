@@ -46,7 +46,7 @@ const page = () => {
                 dadosComportamentoUtilizavel: [patentes[patente.value].usosMaximos],
                 dadosComportamentoComponente: [elemento.value, patente.value],
             },
-        }
+        };
 
         adicionarItem(dadosItem, quantidade);
     }

@@ -1,48 +1,58 @@
 // #region Imports
-import { AtributoPersonagem, Elemento, Extremidade, NivelComponente, PericiaPatentePersonagem } from 'Types/classes/index.ts';
+import { AtributoPersonagem, CirculoNivelRitual, Elemento, Extremidade, NivelComponente, PericiaPatentePersonagem } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 export class Comportamentos {
-    public precisaEstarEmpunhado: boolean = true;
-    public precisaEstarVestido: boolean = false;
+    private _precisaEstarEmpunhando: boolean = false;
+    get precisaEstarEmpunhando(): boolean { return this._precisaEstarEmpunhando; }
+    set precisaEstarEmpunhando(value: boolean) { this._precisaEstarEmpunhando = value; }
+
+    private _precisaEstarVestindo: boolean = false;
+    get precisaEstarVestindo(): boolean { return this._precisaEstarVestindo; }
+    set precisaEstarVestindo(value: boolean) { this._precisaEstarVestindo = value; }
 
     private _comportamentoUtilizavel?: ComportamentoUtilizavel;
     get temComportamentoUtilizavel(): boolean { return Boolean(this._comportamentoUtilizavel); }
-    get comportamentoUtilizavel(): ComportamentoUtilizavel { return this._comportamentoUtilizavel! } // sempre verificar se temComportamentoUtilizavel antes
+    get comportamentoUtilizavel(): ComportamentoUtilizavel { return this._comportamentoUtilizavel!; } // sempre verificar se temComportamentoUtilizavel antes
     setComportamentoUtilizavel(...args: ConstructorParameters<typeof ComportamentoUtilizavel>): void { this._comportamentoUtilizavel = new ComportamentoUtilizavel(...args); }
 
     private _comportamentoEmpunhavel?: ComportamentoEmpunhavel;
     get temComportamentoEmpunhavel(): boolean { return Boolean(this._comportamentoEmpunhavel); }
-    get comportamentoEmpunhavel(): ComportamentoEmpunhavel { return this._comportamentoEmpunhavel! } // sempre verificar se temComportamentoEmpunhavel antes
+    get comportamentoEmpunhavel(): ComportamentoEmpunhavel { return this._comportamentoEmpunhavel!; } // sempre verificar se temComportamentoEmpunhavel antes
     setComportamentoEmpunhavel(...args: ConstructorParameters<typeof ComportamentoEmpunhavel>): void { this._comportamentoEmpunhavel = new ComportamentoEmpunhavel(...args); }
 
     private _comportamentoVestivel?: ComportamentoVestivel;
     get temComportamentoVestivel(): boolean { return Boolean(this._comportamentoVestivel); }
-    get comportamentoVestivel(): ComportamentoVestivel { return this._comportamentoVestivel! } // sempre verificar se temComportamentoVestivel antes
+    get comportamentoVestivel(): ComportamentoVestivel { return this._comportamentoVestivel!; } // sempre verificar se temComportamentoVestivel antes
     setComportamentoVestivel(...args: ConstructorParameters<typeof ComportamentoVestivel>): void { this._comportamentoVestivel = new ComportamentoVestivel(...args); }
 
     private _comportamentoComponente?: ComportamentoComponente;
     get temComportamentoComponente(): boolean { return Boolean(this._comportamentoComponente); }
-    get comportamentoComponente(): ComportamentoComponente { return this._comportamentoComponente! } // sempre verificar se temComportamentoComponente antes
+    get comportamentoComponente(): ComportamentoComponente { return this._comportamentoComponente!; } // sempre verificar se temComportamentoComponente antes
     setComportamentoComponente(...args: ConstructorParameters<typeof ComportamentoComponente>): void { this._comportamentoComponente = new ComportamentoComponente(...args); }
 
     private _comportamentoAcao?: ComportamentoAcao;
     get temComportamentoAcao(): boolean { return Boolean(this._comportamentoAcao); }
-    get comportamentoAcao(): ComportamentoAcao { return this._comportamentoAcao! } // sempre verifficar se temComportamentoAcao antes
+    get comportamentoAcao(): ComportamentoAcao { return this._comportamentoAcao!; } // sempre verifficar se temComportamentoAcao antes
     setComportamentoAcao(...args: ConstructorParameters<typeof ComportamentoAcao>): void { this._comportamentoAcao = new ComportamentoAcao(...args); }
 
     private _comportamentoAtributoPericia?: ComportamentoAtributoPericia;
     get temComportamentoAtributoPericia(): boolean { return Boolean(this._comportamentoAtributoPericia); }
-    get comportamentoAtributoPericia(): ComportamentoAtributoPericia { return this._comportamentoAtributoPericia! } // sempre verificar se temComportamentoAtributoPericia antes
+    get comportamentoAtributoPericia(): ComportamentoAtributoPericia { return this._comportamentoAtributoPericia!; } // sempre verificar se temComportamentoAtributoPericia antes
     setComportamentoAtributoPericia(...args: ConstructorParameters<typeof ComportamentoAtributoPericia>): void { this._comportamentoAtributoPericia = new ComportamentoAtributoPericia(...args); }
 
+    private _comportamentoRitual?: ComportamentoRitual;
+    get temComportamentoRitual(): boolean { return Boolean(this._comportamentoRitual); }
+    get comportamentoRitual(): ComportamentoRitual { return this._comportamentoRitual!; } // sempre verificar se temComportamentoRitual antes
+    setComportamentoRitual(...args: ConstructorParameters<typeof ComportamentoRitual>): void { this._comportamentoRitual = new ComportamentoRitual(...args); }
 
 
     get podeSerEmpunhado(): boolean { return this.temComportamentoEmpunhavel && this.comportamentoEmpunhavel.podeSerEmpunhado; }
     get podeSerVestido(): boolean { return this.temComportamentoVestivel && this.comportamentoVestivel.podeSerVestido; }
+    get podeGastarUsos(): boolean { return this.temComportamentoUtilizavel && this.comportamentoUtilizavel.usosMaximo > 0; }
 
     get estaEmpunhado(): boolean { return this.podeSerEmpunhado && this.comportamentoEmpunhavel.estaEmpunhado }
     get estaVestido(): boolean { return this.podeSerVestido && this.comportamentoVestivel.estaVestido }
@@ -113,6 +123,7 @@ export class ComportamentoAcao {
         public tipo: 'Dano' | 'Cura',
         public valorMin: number,
         public valorMax: number,
+        public precisaTestePericia: boolean = false,
     ) { }
 
     get variancia(): number { return this.valorMax - this.valorMin; }
@@ -126,4 +137,20 @@ export class ComportamentoAtributoPericia {
 
     get refAtributoUtilizadoArma(): AtributoPersonagem { return getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === this._idAtributoBase)!; }
     get refPericiaUtilizadaArma(): PericiaPatentePersonagem { return getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === this._idPericiaBase)!; }
+}
+
+export class ComportamentoRitual {
+    constructor(
+        private _idCirculoNivel: number,
+        private _idElemento: number,
+    ) { }
+
+    get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
+    get refCirculoNivelRitual(): CirculoNivelRitual { return SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.id === this._idCirculoNivel)!; }
+    get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this.refCirculoNivelRitual.idCirculo)! }
+}
+
+export type ComportamentoGeral = {
+    precisaEstarEmpunhando?: boolean,
+    precisaEstarVestindo?: boolean,
 }

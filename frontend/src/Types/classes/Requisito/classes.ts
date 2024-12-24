@@ -23,8 +23,8 @@ export class RequisitoComponente extends Requisito {
         return (
             getPersonagemFromContext().inventario.items.some(item =>
                 item.comportamentos.ehComponente && this.refAcao!.refPai instanceof Ritual &&
-                item.comportamentos.comportamentoComponente.refElemento.id === this.refAcao!.refPai.refElemento.id && 
-                item.comportamentos.comportamentoComponente.refNivelComponente.id === this.refAcao!.refPai.refNivelComponente.id
+                item.comportamentos.comportamentoComponente.refElemento.id === this.refAcao!.refPai.comportamentos.comportamentoRitual.refElemento.id && 
+                item.comportamentos.comportamentoComponente.refNivelComponente.id === this.refAcao!.refPai.comportamentos.comportamentoRitual.refNivelComponente.id
                 && (this.precisaEstarEmpunhando && item.itemEstaEmpunhado)
             )
         )
@@ -100,14 +100,14 @@ export class RequisitoConfig {
             requisitoParams: [true],
             opcoesExecucao: [
                 {
-                    key: 'custoComponente',
+                    key: 'idItemComponente',
                     displayName: 'Componente',
                     obterOpcoes: (acao: Acao) => {
                         return getPersonagemFromContext().inventario.items.filter(item =>
                             item.itemEstaEmpunhado && acao.refPai instanceof Ritual &&
                             item.comportamentos.ehComponente &&
-                            item.comportamentos.comportamentoComponente.refElemento.id === acao.refPai.refElemento.id &&
-                            item.comportamentos.comportamentoComponente.refNivelComponente.id === acao.refPai.refNivelComponente.id
+                            item.comportamentos.comportamentoComponente.refElemento.id === acao.refPai.comportamentos.comportamentoRitual.refElemento.id &&
+                            item.comportamentos.comportamentoComponente.refNivelComponente.id === acao.refPai.comportamentos.comportamentoRitual.refNivelComponente.id
                         ).reduce((acc: { key: number; value: string }[], cur) => {
                             acc.push({ key: cur.id, value: cur.nomeExibicao });
                             return acc;

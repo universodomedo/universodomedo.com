@@ -27,6 +27,9 @@ export class Item {
         
         this.comportamentos = new Comportamentos();
 
+        if (dadosComportamentos.precisaEstarEmpunhando !== undefined) this.comportamentos.precisaEstarEmpunhando = dadosComportamentos.precisaEstarEmpunhando;
+        if (dadosComportamentos.precisaEstarVestindo !== undefined) this.comportamentos.precisaEstarVestindo = dadosComportamentos.precisaEstarVestindo;
+
         if (dadosComportamentos.dadosComportamentoUtilizavel !== undefined) this.comportamentos.setComportamentoUtilizavel(...dadosComportamentos.dadosComportamentoUtilizavel);
         if (dadosComportamentos.dadosComportamentoEmpunhavel !== undefined) this.comportamentos.setComportamentoEmpunhavel(...dadosComportamentos.dadosComportamentoEmpunhavel);
         if (dadosComportamentos.dadosComportamentoVestivel !== undefined) this.comportamentos.setComportamentoVestivel(...dadosComportamentos.dadosComportamentoVestivel);
@@ -65,7 +68,7 @@ export class Item {
     sacar = (): void => {
         this.comportamentos.comportamentoEmpunhavel.empunha(this.id);
 
-        if (this.comportamentos.precisaEstarEmpunhado) this.ativaBuffsItem();
+        if (this.comportamentos.precisaEstarEmpunhando) this.ativaBuffsItem();
 
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Empunhado`);
     }
@@ -73,7 +76,7 @@ export class Item {
     guardar = (): void => {
         this.comportamentos.comportamentoEmpunhavel.desempunha();
 
-        if (this.comportamentos.precisaEstarEmpunhado) this.desativaBuffsItem();
+        if (this.comportamentos.precisaEstarEmpunhando) this.desativaBuffsItem();
         
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Guardado`);
     }
@@ -82,7 +85,7 @@ export class Item {
         this.comportamentos.comportamentoVestivel.veste();
         this.comportamentos.comportamentoEmpunhavel.desempunha();
 
-        if (this.comportamentos.precisaEstarVestido) this.ativaBuffsItem();
+        if (this.comportamentos.precisaEstarVestindo) this.ativaBuffsItem();
 
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Vestido`);
     }
@@ -91,7 +94,7 @@ export class Item {
         this.comportamentos.comportamentoVestivel.desveste();
         this.sacar();
 
-        if (this.comportamentos.precisaEstarVestido) this.desativaBuffsItem();
+        if (this.comportamentos.precisaEstarVestindo) this.desativaBuffsItem();
 
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Desvestido`);
     }
@@ -104,7 +107,8 @@ export class Item {
 
     removeDoInventario(): void {
         getPersonagemFromContext().inventario.removerItem(this.id);
-        this.comportamentos.comportamentoEmpunhavel.esvaziaExtremidades();
+
+        if (this.itemEstaEmpunhado) this.comportamentos.comportamentoEmpunhavel.esvaziaExtremidades();
     }
 
     get buffs(): Buff[] { return this._buffs; }

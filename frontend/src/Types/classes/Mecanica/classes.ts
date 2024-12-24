@@ -49,18 +49,26 @@ export const logicaMecanicas: { [key: number]: (valoresSelecionados: GastaCustoP
         itemSelecionado?.desvestir();
     },
 
-    // Realizar Ataque
+    // Realizar Ataque/Cura
     6: (valoresSelecionados, acao) => {
         // const alvoSelecionado = valoresSelecionados['alvo']
 
-        const resultadoVariacao = ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [{ valorMaximo: acao.refPai.comportamentoGeral.detalhesOfensivo.danoMax, variancia: acao.refPai.comportamentoGeral.detalhesOfensivo.varianciaDeDano }] })
+        const resultadoVariacao = ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [{ valorMaximo: acao.refPai.comportamentos.comportamentoAcao.valorMax, variancia: acao.refPai.comportamentos.comportamentoAcao.variancia }] })
 
-        const resumoDano = `${resultadoVariacao.reduce((cur, acc) => { return cur + acc.valorFinal }, 0)} de dano`;
+        const valor = resultadoVariacao.reduce((cur, acc) => { return cur + acc.valorFinal }, 0);
 
-        acao.refPai.comportamentoGeral.detalhesOfensivo.refPericiaUtilizadaArma.rodarTeste();
+        let resumo = '';
+        if (acao.refPai.comportamentos.comportamentoAcao.tipo === 'Dano') {
+            resumo = `${valor} de dano`;
+        } else {
+            resumo = `Recupera ${valor} P.V.`;
+        }
 
-        LoggerHelper.getInstance().adicionaMensagem(resumoDano);
-        toast(resumoDano);
+        if (acao.refPai.comportamentos.comportamentoAcao.precisaTestePericia)
+            acao.refPai.comportamentos.comportamentoAtributoPericia.refPericiaUtilizadaArma.rodarTeste();
+
+        LoggerHelper.getInstance().adicionaMensagem(resumo);
+        toast(resumo);
     
         resultadoVariacao.map(variacao => {
             LoggerHelper.getInstance().adicionaMensagem(`Dano de ${variacao.varianciaDaAcao.valorMaximo - variacao.varianciaDaAcao.variancia} a ${variacao.varianciaDaAcao.valorMaximo}: ${variacao.valorFinal}`, true);

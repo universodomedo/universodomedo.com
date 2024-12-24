@@ -88,13 +88,13 @@ export class Acao {
     get bloqueada(): boolean { return !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos; }
 
     executaComOpcoes = (valoresSelecionados: GastaCustoProps) => {
-        console.log(`executando ${this.nomeAcao}`);
         LoggerHelper.getInstance().adicionaMensagem(`Executado ${this.nomeAcao}`);
 
         if (!this.processaDificuldades()) return;
 
         // logica temporaria
-        if (this.refPai instanceof Item && this.refPai.comportamentoUtilizavel.usosMaximo > 0) this.refPai.gastaUso();
+        if (this.refPai instanceof Item && this.refPai.comportamentos.podeGastarUsos) this.refPai.gastaUso();
+
         this.aplicaGastos(valoresSelecionados);
         this.executa(valoresSelecionados);
 

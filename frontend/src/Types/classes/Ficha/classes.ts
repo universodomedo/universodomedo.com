@@ -1,5 +1,5 @@
 // #region Imports
-import { ComportamentoAcao, ComportamentoAtributoPericia, ComportamentoComponente, ComportamentoEmpunhavel, ComportamentoUtilizavel, ComportamentoVestivel } from 'Types/classes/index.ts';
+import { ComportamentoAcao, ComportamentoAtributoPericia, ComportamentoComponente, ComportamentoEmpunhavel, ComportamentoRitual, ComportamentoUtilizavel, ComportamentoVestivel } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -14,8 +14,8 @@ export type RLJ_Ficha2 = {
 }
 
 export type DadosItem = {
-    idTipoItem: number, nomeItem: { nomePadrao: string, nomeCustomizado?: string }, peso: number, categoria: number,
-
+    idTipoItem: number; nomeItem: { nomePadrao: string, nomeCustomizado?: string }; peso: number; categoria: number;
+    
     dadosComportamentos: DadosComportamentos;
 
     dadosAcoes?: subDadosAcoes[];
@@ -23,12 +23,15 @@ export type DadosItem = {
 }
 
 export type DadosComportamentos = {
+    precisaEstarEmpunhando?: boolean;
+    precisaEstarVestindo?: boolean;
     dadosComportamentoUtilizavel?: ConstructorParameters<typeof ComportamentoUtilizavel>;
     dadosComportamentoEmpunhavel?: ConstructorParameters<typeof ComportamentoEmpunhavel>;
     dadosComportamentoVestivel?: ConstructorParameters<typeof ComportamentoVestivel>;
     dadosComportamentoComponente?: ConstructorParameters<typeof ComportamentoComponente>;
     dadosComportamentoAcao?: ConstructorParameters<typeof ComportamentoAcao>;
     dadosComportamentoAtributoPericia?: ConstructorParameters<typeof ComportamentoAtributoPericia>;
+    dadosComportamentoRitual?: ConstructorParameters<typeof ComportamentoRitual>;
 }
 
 export type dadosRitual = {

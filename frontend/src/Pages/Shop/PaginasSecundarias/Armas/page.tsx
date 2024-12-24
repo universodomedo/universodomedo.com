@@ -3,7 +3,7 @@ import style from 'Pages/Shop/style.module.css';
 import { useState } from 'react';
 
 import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
-import { basesArma, caracteristicasArmas, classificacoesArma, patentesArma, tiposArma, dadosItem } from 'Types/classes/index.ts';
+import { basesArma, caracteristicasArmas, classificacoesArma, patentesArma, tiposArma, DadosItem } from 'Types/classes/index.ts';
 
 import InputComRotulo from 'Recursos/ElementosComponentizados/InputComRotulo/page.tsx';
 // #endregion
@@ -59,18 +59,16 @@ const page = () => {
     };
 
     const adicionar = () => {
-        const dadosItem: dadosItem = {
+        const dadosItem: DadosItem = {
             idTipoItem: 1,
             nomeItem: { nomePadrao: `${tipoArmaSelecionado} ${classificacaoArmaSelecionada} ${patenteArmaSelecionada}` },
             peso: baseArmaSelecionada.peso,
             categoria: baseArmaSelecionada.categoria,
-            detalhesItem: { precisaEstarEmpunhado: true },
-            detalhesArma: {
-                danoMin: baseArmaSelecionada.danoMin,
-                danoMax: baseArmaSelecionada.danoMax,
-                numeroExtremidadesUtilizadas: baseArmaSelecionada.numeroExtremidadesUtilizadas,
-                idAtributoUtilizado: baseArmaSelecionada.idAtributoUtilizado,
-                idPericiaUtilizada: baseArmaSelecionada.idPericiaUtilizada,
+            dadosComportamentos: {
+                precisaEstarEmpunhando: true,
+                dadosComportamentoEmpunhavel: [true, baseArmaSelecionada.numeroExtremidadesUtilizadas],
+                dadosComportamentoAtributoPericia: [baseArmaSelecionada.idAtributoUtilizado, baseArmaSelecionada.idPericiaUtilizada],
+                dadosComportamentoAcao: ['Dano', baseArmaSelecionada.danoMin, baseArmaSelecionada.danoMax, true],
             },
             dadosAcoes: [ {
                 nomeAcao: 'Realizar Ataque',

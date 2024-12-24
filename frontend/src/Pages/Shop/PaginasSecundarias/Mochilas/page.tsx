@@ -3,7 +3,7 @@ import style from 'Pages/Shop/style.module.css';
 import { useState } from 'react';
 
 import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
-import { dadosItem } from 'Types/classes/index.ts';
+import { DadosItem } from 'Types/classes/index.ts';
 
 import InputComRotulo from 'Recursos/ElementosComponentizados/InputComRotulo/page.tsx';
 // #endregion
@@ -26,14 +26,18 @@ const page = () => {
     };
 
     const adicionar = () => {
-        const dadosItem: dadosItem = {
+        const dadosItem: DadosItem = {
             idTipoItem: 2,
             nomeItem: { nomePadrao: `Mochila ${patente.text}` },
             peso: 0,
             categoria: patentes[patente.value].categoria,
-            detalhesItem: { podeSerVestido: true, precisaEstarVetindo: true },
+            dadosComportamentos: {
+                precisaEstarVestindo: true,
+                dadosComportamentoEmpunhavel: [true, 1],
+                dadosComportamentoVestivel: [true]
+            },
             buffs: [ { idBuff: 52, nome: `Ferramentas ${patente.text}`, valor: patentes[patente.value].valor, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1, } ],
-        }
+        };
 
         adicionarItem(dadosItem);
     }

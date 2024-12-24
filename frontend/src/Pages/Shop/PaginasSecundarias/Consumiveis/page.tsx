@@ -3,7 +3,7 @@ import style from 'Pages/Shop/style.module.css';
 import { useState } from 'react';
 
 import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
-import { dadosItem } from 'Types/classes/index.ts';
+import { DadosComportamentos, DadosItem, subDadosAcoes } from 'Types/classes/index.ts';
 
 import InputComRotulo from 'Recursos/ElementosComponentizados/InputComRotulo/page.tsx';
 import InputNumerico from 'Recursos/ElementosComponentizados/InputNumerico/page.tsx';
@@ -15,11 +15,68 @@ const page = () => {
 
     const { mudarPagina, adicionarItem } = useContextoLoja();
 
-    const itens: Record<number, { nome: string; peso: number; categoria: number; usosMaximos: number; usos: number; idBuff: number; valor: number; listaDescricoes: string[]; }> = {
-        1: { nome: `Bálsamo de Arnica`, peso: 1, categoria: 0, usosMaximos: 1, usos: 1, idBuff: 33, valor: 2, listaDescricoes: ['O Bálsamo de Arnica aumenta em 2 sua Resistência Mundana para o próximo Ataque Mundano', `Tem Categoria 0, Peso 1 e 1 Uso`] },
-        2: { nome: `Gel de Babosa`, peso: 1, categoria: 0, usosMaximos: 1, usos: 1, idBuff: 37, valor: 2, listaDescricoes: ['O Gel de Babosa aumenta em 2 sua Resistência Natural para o próximo Ataque Natural', `Tem Categoria 0, Peso 1 e 1 Uso`] },
-        // 3: { nome: `Ácido Hialurônico Injetável`, peso: 1, categoria: 1, usosMaximos: 1, usos: 1, }
-        // 4-7
+    const itens: Record<number, {
+        nome: string; peso: number; categoria: number;
+        // idBuff: number; valor: number;
+        dadosAcoes: subDadosAcoes[];
+        dadosComportamentos: DadosComportamentos; listaDescricoes: string[]; }> = {
+        1: {
+            nome: `Bálsamo de Arnica`, peso: 1, categoria: 0,
+            dadosAcoes: [
+                {
+                    nomeAcao: 'Consumir',
+                    idTipoAcao: 1,
+                    idCategoriaAcao: 1,
+                    idMecanica: 3,
+                    custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
+                    buffs: [ { idBuff: 33, nome: `Bálsamo de Arnica`, valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2, } ],
+                    requisitos: [2],
+                }
+            ],
+            dadosComportamentos: {
+                dadosComportamentoEmpunhavel: [true, 1],
+                dadosComportamentoUtilizavel: [1],
+            },
+            listaDescricoes: ['O Bálsamo de Arnica aumenta em 2 sua Resistência Mundana para o próximo Ataque Mundano', `Tem Categoria 0, Peso 1 e 1 Uso`],
+        },
+        2: {
+            nome: `Gel de Babosa`, peso: 1, categoria: 0,
+            dadosAcoes: [
+                {
+                    nomeAcao: 'Consumir',
+                    idTipoAcao: 1,
+                    idCategoriaAcao: 1,
+                    idMecanica: 3,
+                    custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
+                    buffs: [ { idBuff: 37, nome: `Gel de Babosa`, valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2, } ],
+                    requisitos: [2],
+                }
+            ],
+            dadosComportamentos: {
+                dadosComportamentoEmpunhavel: [true, 1],
+                dadosComportamentoUtilizavel: [1],
+            },
+            listaDescricoes: ['O Gel de Babosa aumenta em 2 sua Resistência Natural para o próximo Ataque Natural', `Tem Categoria 0, Peso 1 e 1 Uso`],
+        },
+        3: {
+            nome: `Ácido Hialurônico Injetável`, peso: 1, categoria: 1,
+            dadosAcoes: [
+                {
+                    nomeAcao: 'Injetar',
+                    idTipoAcao: 1,
+                    idCategoriaAcao: 1,
+                    idMecanica: 6,
+                    custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
+                    requisitos: [2],
+                }
+            ],
+            dadosComportamentos: {
+                dadosComportamentoEmpunhavel: [true, 1],
+                dadosComportamentoUtilizavel: [1],
+                dadosComportamentoAcao: ['Cura', 4, 7],
+            },
+            listaDescricoes: ['O Bálsamo de Arnica recupera 4-7 P.V. do Alvo', `Tem Categoria 1, Peso 1 e 1 Uso`],
+        }
     }
 
     const handleItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -27,21 +84,13 @@ const page = () => {
     };
 
     const adicionar = () => {
-        const dadosItem: dadosItem = {
+        const dadosItem: DadosItem = {
             idTipoItem: 3,
             nomeItem: { nomePadrao: itens[item].nome },
             peso: itens[item].peso,
             categoria: itens[item].categoria,
-            detalhesConsumiveis: { usosMaximos: itens[item].usosMaximos, usos: itens[item].usos },
-            dadosAcoes: [ {
-                nomeAcao: 'Consumir',
-                idTipoAcao: 1,
-                idCategoriaAcao: 1,
-                idMecanica: 3,
-                custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
-                buffs: [ { idBuff: itens[item].idBuff, nome: itens[item].nome, valor: itens[item].valor, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2, } ],
-                requisitos: [2],
-            } ],
+            dadosComportamentos: itens[item].dadosComportamentos,
+            dadosAcoes: itens[item].dadosAcoes,
         };
 
         adicionarItem(dadosItem, quantidade);
