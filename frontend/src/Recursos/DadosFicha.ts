@@ -25,7 +25,7 @@ const dadosFicha: { [key: number]: RLJ_Ficha2 } = {
         rituais: [],
         inventario: [
             {
-                idTipoItem: 1, nomeItem: { nomePadrao: 'Arma Leve 2', nomeCustomizado: 'Gorge2' }, peso: 3, categoria: 1, precisaEstarEmpunhando: true,
+                idTipoItem: 1, nomeItem: { nomePadrao: 'Arma Leve 2', nomeCustomizado: 'Gorge2' }, peso: 3, categoria: 1,
                 detalhesArma: { dano: 6, variancia:2, numeroExtremidadesUtilizadas: 1, idPericiaUtilizada: 8 },
                 dadosAcoes: [
                     {

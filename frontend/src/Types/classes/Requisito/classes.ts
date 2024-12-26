@@ -146,8 +146,13 @@ export class RequisitoConfig {
                     key: 'idItem',
                     displayName: 'Item Alvo',
                     obterOpcoes: (): Opcao[] => {
-                        return getPersonagemFromContext().inventario.items.filter(item => item.itemEstaGuardado).reduce((acc: { key: number; value: string }[], cur) => {
-                            acc.push({ key: cur.id, value: cur.nomeExibicao });
+                        const numeroExtremidadeLivres = getPersonagemFromContext().estatisticasBuffaveis.extremidadesLivres;
+
+                        return getPersonagemFromContext().inventario.items.filter(item => item.itemEstaGuardado).reduce((acc: { key: number; value: string, disabled: boolean }[], cur) => {
+                            const extremidadesNecessarias = cur.comportamentos.comportamentoEmpunhavel.extremidadesNecessarias;
+                            const opcaoDesabilitada = (extremidadesNecessarias > numeroExtremidadeLivres);
+
+                            acc.push({ key: cur.id, value: `${cur.nomeExibicao} (${extremidadesNecessarias} Extremidades)`, disabled: opcaoDesabilitada });
                             return acc;
                         }, [])
                     }

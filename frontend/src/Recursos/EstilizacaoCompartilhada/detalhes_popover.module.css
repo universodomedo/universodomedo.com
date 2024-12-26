@@ -85,6 +85,11 @@
     margin: 0 auto;
 }
 
+.opcao_acao option:disabled:not(.opcao_acao_padrao) {
+    background-color: #352525;
+    color: #DE645A;
+}
+
 .botao_principal {
     padding: 1vh .7vw;
     align-self: center;

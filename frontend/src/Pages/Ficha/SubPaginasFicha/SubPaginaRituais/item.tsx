@@ -24,7 +24,7 @@ const page = ({ ritual }: { ritual: Ritual }) => {
                         className={`${style.icone}`}
                         style={{
                             backgroundImage: `url(data:image/svg+xml;base64,${ritual.svg})`,
-                            backgroundColor: ritual.refElemento.cores.corPrimaria,
+                            backgroundColor: ritual.comportamentos.comportamentoRitual.refElemento.cores.corPrimaria,
                         }}
                     />
                 </Tooltip>

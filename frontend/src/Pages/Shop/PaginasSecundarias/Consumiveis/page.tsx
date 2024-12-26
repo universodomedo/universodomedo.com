@@ -29,7 +29,15 @@ const page = () => {
                     idCategoriaAcao: 1,
                     idMecanica: 3,
                     custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
-                    buffs: [ { idBuff: 33, nome: `Bálsamo de Arnica`, valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2, } ],
+                    buffs: [ {
+                        idBuff: 33,
+                        nome: `Bálsamo de Arnica`,
+                        valor: 2,
+                        dadosComportamentos: {
+                            dadosComportamentoAtivo: [],
+                        },
+                        duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2,
+                    } ],
                     requisitos: [2],
                 }
             ],
@@ -48,7 +56,15 @@ const page = () => {
                     idCategoriaAcao: 1,
                     idMecanica: 3,
                     custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
-                    buffs: [ { idBuff: 37, nome: `Gel de Babosa`, valor: 2, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2, } ],
+                    buffs: [ {
+                        idBuff: 37,
+                        nome: `Gel de Babosa`,
+                        valor: 2,
+                        dadosComportamentos: {
+                            dadosComportamentoAtivo: [],
+                        },
+                        duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2,
+                    } ],
                     requisitos: [2],
                 }
             ],

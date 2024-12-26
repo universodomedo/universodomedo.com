@@ -1,5 +1,5 @@
 // #region Imports
-import { Duracao, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, pluralize } from 'Types/classes/index.ts';
+import { ComportamentosBuff, DadosComportamentosBuff, Duracao, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, pluralize } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -7,6 +7,7 @@ import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/Embrul
 
 export class Buff {
     public quantidadeDuracaoAtual: number = 0;
+    public comportamentos: ComportamentosBuff = new ComportamentosBuff();
 
     public svg = `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+`;
 
@@ -18,8 +19,12 @@ export class Buff {
         public quantidadeDuracaoMaxima: number,
         private _idTipoBuff: number,
 
+        dadosComportamentos: DadosComportamentosBuff,
         public valorMultiplicador: number = 1,
-    ) { }
+    ) {
+        if (dadosComportamentos.dadosComportamentoAtivo !== undefined) this.comportamentos.setComportamentoBuffAtivo(...dadosComportamentos.dadosComportamentoAtivo);
+        if (dadosComportamentos.dadosComportamentoPassivo !== undefined) this.comportamentos.setComportamentoBuffPassivo(...dadosComportamentos.dadosComportamentoPassivo);
+    }
 
     get codigoUnico(): string { return `${this.nome}_${this._idBuff}:${this.valor}`; }
 

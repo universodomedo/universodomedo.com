@@ -5,15 +5,37 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
+export class ComportamentosAcao {
+    // precisaMunica
+        // nomeMunicao
+        // usosMunicao
+}
+
+export class ComportamentosBuff {
+    private _comportamentoBuffAtivo?: ComportamentoBuffAtivo;
+    get temComportamentoBuffAtivo(): boolean { return Boolean(this._comportamentoBuffAtivo); } 
+    setComportamentoBuffAtivo(...args: ConstructorParameters<typeof ComportamentoBuffAtivo>): void { this._comportamentoBuffAtivo = new ComportamentoBuffAtivo(...args); }
+
+    private _comportamentoPassivo?: ComportamentoBuffPassivo;
+    get temComportamentoBuffPassivo(): boolean { return Boolean(this._comportamentoPassivo); }
+    setComportamentoBuffPassivo(...args: ConstructorParameters<typeof ComportamentoBuffPassivo>): void { this._comportamentoPassivo = new ComportamentoBuffPassivo(...args); }
+
+    get ehPassivaAtivaQuandoEmpunhado(): boolean { return this.temComportamentoBuffPassivo && this._comportamentoPassivo?.precisaEstarEmpunhando!; }
+    get ehPassivaAtivaQuandoVestido(): boolean { return this.temComportamentoBuffPassivo && this._comportamentoPassivo?.precisaEstarVestindo!; }
+}
+
+export class ComportamentoBuffAtivo {
+
+}
+
+export class ComportamentoBuffPassivo {
+    constructor(
+        public precisaEstarEmpunhando: boolean = false,
+        public precisaEstarVestindo: boolean = false,
+    ) { }
+}
+
 export class Comportamentos {
-    private _precisaEstarEmpunhando: boolean = false;
-    get precisaEstarEmpunhando(): boolean { return this._precisaEstarEmpunhando; }
-    set precisaEstarEmpunhando(value: boolean) { this._precisaEstarEmpunhando = value; }
-
-    private _precisaEstarVestindo: boolean = false;
-    get precisaEstarVestindo(): boolean { return this._precisaEstarVestindo; }
-    set precisaEstarVestindo(value: boolean) { this._precisaEstarVestindo = value; }
-
     private _comportamentoUtilizavel?: ComportamentoUtilizavel;
     get temComportamentoUtilizavel(): boolean { return Boolean(this._comportamentoUtilizavel); }
     get comportamentoUtilizavel(): ComportamentoUtilizavel { return this._comportamentoUtilizavel!; } // sempre verificar se temComportamentoUtilizavel antes
@@ -141,16 +163,11 @@ export class ComportamentoAtributoPericia {
 
 export class ComportamentoRitual {
     constructor(
-        private _idCirculoNivel: number,
         private _idElemento: number,
+        private _idCirculoNivel: number,
     ) { }
 
     get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
     get refCirculoNivelRitual(): CirculoNivelRitual { return SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.id === this._idCirculoNivel)!; }
     get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this.refCirculoNivelRitual.idCirculo)! }
-}
-
-export type ComportamentoGeral = {
-    precisaEstarEmpunhando?: boolean,
-    precisaEstarVestindo?: boolean,
 }

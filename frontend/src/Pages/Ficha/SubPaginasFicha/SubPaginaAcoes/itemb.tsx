@@ -76,18 +76,18 @@ const page = ({ acao }: { acao: Acao }) => {
             }));
         };
     
-        // useEffect(() => {
-        //     const valoresIniciais: GastaCustoProps = {};
+        useEffect(() => {
+            const valoresIniciais: GastaCustoProps = {};
     
-        //     acao.opcoesExecucoes.forEach((opcoesExecucao) => {
-        //         const opcoesDisponiveis = opcoesExecucao.opcoes;
-        //         if (opcoesDisponiveis.length > 0) {
-        //             valoresIniciais[opcoesExecucao.key] = opcoesDisponiveis[0].key;
-        //         }
-        //     });
+            acao.opcoesExecucoes.forEach((opcoesExecucao) => {
+                const opcoesDisponiveis = opcoesExecucao.opcoes;
+                if (opcoesDisponiveis.length > 0) {
+                    valoresIniciais[opcoesExecucao.key] = opcoesDisponiveis[0].key;
+                }
+            });
     
-        //     setValoresSelecionados(valoresIniciais);
-        // }, []);
+            setValoresSelecionados(valoresIniciais);
+        }, []);
 
         return (
             <>
@@ -97,10 +97,9 @@ const page = ({ acao }: { acao: Acao }) => {
                     return (
                         <div key={key} className={style.opcao_acao}>
                             <h2>{opcoesExecucao.displayName}</h2>
-                            <select value={valoresSelecionados[key] || 0} onChange={(e) => handleSelectChange(key, Number(e.target.value))}>
-                                <option value="0" className={style.opcao_acao_padrao} disabled>Selecione a Opção...</option>
+                            <select value={valoresSelecionados[key] || ''} onChange={(e) => handleSelectChange(key, Number(e.target.value))}>
                                 {opcoesExecucao.opcoes.map(opcao => (
-                                    <option key={opcao.key} value={opcao.key} disabled={opcao.disabled}>{opcao.value}</option>
+                                    <option key={opcao.key} value={opcao.key}>{opcao.value}</option>
                                 ))}
                             </select>
                         </div>

@@ -16,7 +16,7 @@ export class Modificadores {
         const personagem = getPersonagemFromContext();
 
         if (personagem.inventario.espacosUsados > personagem.estatisticasBuffaveis.espacoInventario.espacoTotal) {
-            return new Buff(53, `Sobrecarga`, 0, 5, 0, 4, .5);
+            return new Buff(53, `Sobrecarga`, 0, 5, 0, 4, { dadosComportamentoAtivo: [] }, .5);
         }
     }
 

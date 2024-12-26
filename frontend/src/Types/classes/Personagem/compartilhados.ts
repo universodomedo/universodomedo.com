@@ -36,7 +36,7 @@ export function novoItemPorDadosItem(dadosItem: DadosItem, adicionaDados: boolea
                     ].filter(Boolean));
                     acao.adicionarBuffs(
                         (dadosAcao.buffs || []).map(buff => [
-                            ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
+                            ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
                         ])
                     );
                     acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
@@ -45,7 +45,7 @@ export function novoItemPorDadosItem(dadosItem: DadosItem, adicionaDados: boolea
         )
         .adicionarBuffs(
             (dadosItem.buffs || []).map(buff => [
-                ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
+                ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
             ])
         );
 }

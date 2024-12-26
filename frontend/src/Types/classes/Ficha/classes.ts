@@ -1,5 +1,5 @@
 // #region Imports
-import { ComportamentoAcao, ComportamentoAtributoPericia, ComportamentoComponente, ComportamentoEmpunhavel, ComportamentoRitual, ComportamentoUtilizavel, ComportamentoVestivel } from 'Types/classes/index.ts';
+import { ComportamentoAcao, ComportamentoAtributoPericia, ComportamentoBuffAtivo, ComportamentoBuffPassivo, ComportamentoComponente, ComportamentoEmpunhavel, ComportamentoRitual, ComportamentosBuff, ComportamentoUtilizavel, ComportamentoVestivel } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -23,8 +23,6 @@ export type DadosItem = {
 }
 
 export type DadosComportamentos = {
-    precisaEstarEmpunhando?: boolean;
-    precisaEstarVestindo?: boolean;
     dadosComportamentoUtilizavel?: ConstructorParameters<typeof ComportamentoUtilizavel>;
     dadosComportamentoEmpunhavel?: ConstructorParameters<typeof ComportamentoEmpunhavel>;
     dadosComportamentoVestivel?: ConstructorParameters<typeof ComportamentoVestivel>;
@@ -32,10 +30,16 @@ export type DadosComportamentos = {
     dadosComportamentoAcao?: ConstructorParameters<typeof ComportamentoAcao>;
     dadosComportamentoAtributoPericia?: ConstructorParameters<typeof ComportamentoAtributoPericia>;
     dadosComportamentoRitual?: ConstructorParameters<typeof ComportamentoRitual>;
-}
+};
+
+export type DadosComportamentosBuff = {
+    dadosComportamentoAtivo?: ConstructorParameters<typeof ComportamentoBuffAtivo>;
+    dadosComportamentoPassivo?: ConstructorParameters<typeof ComportamentoBuffPassivo>;
+};
 
 export type dadosRitual = {
-    nomeRitual: string, idCirculoNivel: number, idElemento: number,
+    nomeRitual: string,
+    dadosComportamentos: DadosComportamentos;
     dadosAcoes: subDadosAcoes[]
 };
 
@@ -51,5 +55,7 @@ export type subDadosCusto = {
 }
 
 export type subDadosBuff = {
-    idBuff: number, nome: string, valor: number, duracao: { idDuracao: number, valor: number, }, idTipoBuff: number
+    idBuff: number, nome: string, valor: number,
+    dadosComportamentos: DadosComportamentosBuff;
+    duracao: { idDuracao: number, valor: number, }, idTipoBuff: number
 }

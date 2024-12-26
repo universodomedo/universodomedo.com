@@ -48,10 +48,7 @@ const page = () => {
     const handleClassificacaoArmaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setClassificacaoArma(Number(e.target.value));
 
-        console.log('handleClassificacaoArmaChange');
-
-        const teste = basesArma.find(base => base.composicaoBaseArma.idTipo === tipoArma && base.composicaoBaseArma.idPatente === patenteArma && base.composicaoBaseArma.idClassificacao === Number(e.target.value))?.id;
-        console.log(`A Base selecionada foi a ${teste}`);
+        // const teste = basesArma.find(base => base.composicaoBaseArma.idTipo === tipoArma && base.composicaoBaseArma.idPatente === patenteArma && base.composicaoBaseArma.idClassificacao === Number(e.target.value))?.id;
     };
 
     const handleCaracteristicasArmaChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -65,7 +62,6 @@ const page = () => {
             peso: baseArmaSelecionada.peso,
             categoria: baseArmaSelecionada.categoria,
             dadosComportamentos: {
-                precisaEstarEmpunhando: true,
                 dadosComportamentoEmpunhavel: [true, baseArmaSelecionada.numeroExtremidadesUtilizadas],
                 dadosComportamentoAtributoPericia: [baseArmaSelecionada.idAtributoUtilizado, baseArmaSelecionada.idPericiaUtilizada],
                 dadosComportamentoAcao: ['Dano', baseArmaSelecionada.danoMin, baseArmaSelecionada.danoMax, true],

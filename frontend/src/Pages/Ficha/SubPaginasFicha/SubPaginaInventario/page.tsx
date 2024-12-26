@@ -51,20 +51,20 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
         </div>
       )}
 
-      {/* {estatisticasBuffaveis.extremidades.length > 0 && (
+      {estatisticasBuffaveis.extremidades.length > 0 && (
         <div className={style.container_extremidades}>
           {estatisticasBuffaveis.extremidades.map((extremidade, index) => (
             <div key={index} className={style.extremidade}>
-              <h1>Extremidade {extremidade.id}</h1>
-              {extremidade.refItem ? (
+              <h1>Extremidade {extremidade.id}: {extremidade.estaOcupada ? `Preenchida ${extremidade.refItem?.nomeExibicao}` : 'Livre'}</h1>
+              {/* {extremidade.refItem ? (
                 <IconeItem key={index} mostrarEtiquetas={mostrarEtiquetas} quantidadeAgrupada={extremidade.refItem.tooltipPropsSingular.numeroUnidades!} props={extremidade.refItem.tooltipPropsSingular!} onClick={() => clickItem(extremidade.refItem!)} />
               ) :
                 <div className={style.icones_extremidade_vazia}></div>
-              }
+              } */}
             </div>
           ))}
         </div>
-      )} */}
+      )}
 
       <ConsultaProvider<Item> abaId={abaId} registros={[itensVestidos, itensEmpunhados, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Vestidos', 'Itens Empunhados', 'Itens Guardados'] }} calculoTotal={(item) => (item.quantidadeUnidadesDesseItem || 1)}>
         <Consulta renderItem={renderItem} />

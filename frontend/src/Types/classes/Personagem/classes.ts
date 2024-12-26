@@ -59,7 +59,7 @@ export class Personagem {
         this.pericias = this._ficha.periciasPatentes!.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente));
 
         this.rituais = this._ficha.rituais!.map(ritual =>
-            new Ritual(ritual.nomeRitual, ritual.idCirculoNivel, ritual.idElemento)
+            new Ritual(ritual.nomeRitual, ritual.dadosComportamentos)
                 .adicionarAcoes(
                     ritual.dadosAcoes.map(dadosAcao => [
                         ...classeComArgumentos(Acao, dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica),
@@ -73,7 +73,7 @@ export class Personagem {
                             ].filter(Boolean));
                             acao.adicionarBuffs(
                                 (dadosAcao.buffs || []).map(buff => [
-                                    ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff)
+                                    ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
                                 ])
                             );
                             acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);

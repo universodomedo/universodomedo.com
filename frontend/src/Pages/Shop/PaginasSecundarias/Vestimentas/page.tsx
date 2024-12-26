@@ -40,11 +40,19 @@ const page = () => {
             peso: patentes[patente.value].peso,
             categoria: patentes[patente.value].categoria,
             dadosComportamentos: {
-                precisaEstarVestindo: true,
                 dadosComportamentoEmpunhavel: [true, 1],
                 dadosComportamentoVestivel: [true]
             },
-            buffs: [ { idBuff: SingletonHelper.getInstance().pericias.find(periciaEscolhida => periciaEscolhida.id === pericia.value)!.idBuffRelacionado, nome: `Ferramentas ${patente.text}`, valor: patentes[patente.value].valor, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1, } ],
+            buffs: [ {
+                idBuff: SingletonHelper.getInstance().pericias.find(periciaEscolhida => periciaEscolhida.id === pericia.value)!.idBuffRelacionado,
+                nome: `Ferramentas ${patente.text}`,
+                valor: patentes[patente.value].valor,
+                dadosComportamentos: {
+                    dadosComportamentoPassivo: [false, true],
+                },
+                duracao: { idDuracao: 3, valor: 1 },
+                idTipoBuff: 1,
+            } ],
         };
 
         adicionarItem(dadosItem);

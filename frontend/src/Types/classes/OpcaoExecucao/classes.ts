@@ -8,4 +8,4 @@ export class OpcoesExecucao {
     get displayName(): string { return this._displayName; }
 }
 
-export type Opcao = { key: number, value: string };
+export type Opcao = { key: number, value: string, disabled?: boolean };

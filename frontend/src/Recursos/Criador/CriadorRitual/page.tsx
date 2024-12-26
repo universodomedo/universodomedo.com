@@ -10,6 +10,7 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 const page = ({ onCreate }: { onCreate: (novoRitual: dadosRitual) => void; }) => {
     const [elementoSelecionado, setElementoSelecionado] = useState(0);
     const handleSelectChangeElemento = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        console.log(`${Number(event.target.value)} selecionado`);
         setElementoSelecionado(Number(event.target.value));
     };
 
@@ -30,14 +31,24 @@ const page = ({ onCreate }: { onCreate: (novoRitual: dadosRitual) => void; }) =>
         const valorBuff: number = { 1: 2, 2: 3, 3: 4 }[nivelSelecionado] || 0;
 
         return {
-            nomeRitual: `Aprimorar ${periciaSelecionada?.nome}`, idCirculoNivel: nivelSelecionado, idElemento: elementoSelecionado, dadosAcoes: [
-                {
-                    nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCategoriaAcao: 1, idMecanica: 3,
-                    custos: { custoPE: { valor: valorPE }, custoExecucao: [{ idExecucao: 2, valor: 1 }], custoComponente: true },
-                    buffs: [{ idBuff: periciaSelecionada?.idBuffRelacionado!, nome: `Aprimorar ${periciaSelecionada?.nome}`, valor: valorBuff, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 }],
-                    requisitos: [1],
-                }
-            ]
+            nomeRitual: `Aprimorar ${periciaSelecionada?.nome}`,
+            dadosComportamentos: {
+                dadosComportamentoRitual: [elementoSelecionado, nivelSelecionado],
+            },
+            dadosAcoes: [ {
+                nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCategoriaAcao: 1, idMecanica: 3,
+                custos: { custoPE: { valor: valorPE }, custoExecucao: [{ idExecucao: 2, valor: 1 }], custoComponente: true },
+                buffs: [ {
+                    idBuff: periciaSelecionada?.idBuffRelacionado!,
+                    nome: `Aprimorar ${periciaSelecionada?.nome}`,
+                    valor: valorBuff,
+                    dadosComportamentos: {
+                        dadosComportamentoAtivo: [],
+                    },
+                    duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3
+                }],
+                requisitos: [1],
+            } ]
         }
     }
 

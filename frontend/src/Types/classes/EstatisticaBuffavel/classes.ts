@@ -29,6 +29,8 @@ export class EstatisticasBuffaveisPersonagem {
     //         valorMultiplicador
     //     };
     // }
+
+    get extremidadesLivres(): number { return this.extremidades.filter(extremidade => !extremidade.estaOcupada).length }
 }
 
 export class TipoEstatisticaBuffavel {

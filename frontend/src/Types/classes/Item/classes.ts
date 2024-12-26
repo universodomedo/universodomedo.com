@@ -11,7 +11,7 @@ export class Item {
 
     public acoes: Acao[] = [];
     protected _buffs: Buff[] = [];
-    public comportamentos: Comportamentos;
+    public comportamentos: Comportamentos = new Comportamentos();
 
     public svg = `PHN2ZyB3aWR0aD0iMjU2cHgiIGhlaWdodD0iMjU2cHgiIGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMDAwMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNDQ0LjE4IDQ0NC4xOCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gICA8cGF0aCBkPSJtNDA0LjIgMjA1Ljc0Yy0wLjkxNy0wLjY1Ni0yLjA5Ni0wLjgzLTMuMTY1LTAuNDY3IDAgMC0xMTkuMDEgNDAuNDc3LTEyMi4yNiA0MS41OTgtMi43MjUgMC45MzgtNC40ODctMS40Mi00LjQ4Ny0xLjQybC0zNy40NDgtNDYuMjU0Yy0wLjkzNS0xLjE1NC0yLjQ5Mi0xLjU5Mi0zLjg5LTEuMDk4LTEuMzk2IDAuNDk0LTIuMzMyIDEuODE2LTIuMzMyIDMuMjk5djE2Ny44OWMwIDEuMTY4IDAuNTgzIDIuMjYgMS41NTYgMi45MSAwLjU4NCAwLjM5MSAxLjI2MyAwLjU5IDEuOTQ1IDAuNTkgMC40NTEgMCAwLjkwNi0wLjA4OCAxLjMzNi0wLjI2N2wxNjguMDQtNjkuNDM4YzEuMzEtMC41NDEgMi4xNjMtMS44MTggMi4xNjMtMy4yMzR2LTkxLjI2NmMwLTEuMTI2LTAuNTQ0LTIuMTg1LTEuNDYyLTIuODQ0eiIvPiA8cGF0aCBkPSJtNDQzLjQ5IDE2OC4yMi0zMi4wNy00Mi44NTljLTAuNDYtMC42MTUtMS4xMTEtMS4wNjEtMS44NTItMS4yNzBsLTE4Ni40Mi01Mi42MzZjLTAuNjIyLTAuMTc2LTEuNDY1LTAuMTI1LTIuMDk2IDAuMDQ5bC0xODYuNDIgNTIuNjM2Yy0wLjczOSAwLjIwOS0xLjM5MSAwLjY1NC0xLjg1MSAxLjI3bC0zMi4wNzEgNDIuODYwYy0wLjY3MiAwLjg5OC0wLjg3MiAyLjA2My0wLjU0MSAzLjEzMyAwLjMzMiAxLjA3MSAxLjE1NyAxLjkxOCAyLjIxOSAyLjI3OWwxNTcuNjQgNTMuNTAyYzAuMzcgMC4xMjUgMC43NDkgMC4xODcgMS4xMjUgMC4xODcgMS4wMzUgMCAyLjA0MS0wLjQ2MiAyLjcxOC0xLjI5Nmw0NC4xMjgtNTQuMzkxIDEzLjA4MiAzLjZjMC42MDcgMC4xNjggMS4yNDkgMC4xNjggMS44NTcgMCAwIDAgMC4wNjQtMC4wMTYgMC4xOTItMC4wNDFsMTMuMDgyLTMuNiA0NC4xMjkgNTQuMzkxYzAuNjc3IDAuODM0IDEuNjgzIDEuMjk1IDIuNzE4IDEuMjk1IDAuMzc2IDAgMC43NTYtMC4wNjEgMS4xMjUtMC4xODZsMTU3LjY0LTUzLjUwMmMxLjA2Mi0wLjM2MSAxLjg4Ny0xLjIwOSAyLjIxOS0yLjI3OSAwLjMzLTEuMDcyIDAuMTMtMi4yMzYtMC41NDItMy4xMzQtMC41NDItMC42NTgtMS40NjItMS4yMTgtMi44NDQtMS40NDF6bS0yMjEuMy03Ljg0LTEzMy42OS0zNi41MjUgMTMzLjY5LTM3LjUyNyAxMzMuNDkgMzcuNDc5LTEzMy40OSAzNi41NzN6Ii8+IDxwYXRoIGQ9Im0yMTEuMjQgMTk4LjE1Yy0xLjM5Ni0wLjQ5NC0yLjk1NS0wLjA1Ny0zLjg4OSAxLjA5OGwtMzcuNDQ4IDQ2LjI1NXMtMS43NjQgMi4zNTYtNC40ODggMS40MmMtMy4yNTItMS4xMjEtMTIyLjI2LTQxLjU5OC0xMjIuMjYtNDEuNTk4LTEuMDctMC4zNjMtMi4yNDgtMC4xODktMy4xNjUgMC40NjctMC45MTggMC42NTgtMS40NjIgMS43MTctMS40NjIgMi44NDZ2OTEuMjY3YzAgMS40MTYgMC44NTQgMi42OTIgMi4xNjMgMy4yMzNsMTY4LjA0IDY5LjQzOGMwLjQzIDAuMTc4IDAuODg1IDAuMjY2IDEuMzM2IDAuMjY2IDAuNjg0IDAgMS4zNjItMC4xOTkgMS45NDYtMC41OSAwLjk3Mi0wLjY1IDEuNTU1LTEuNzQyIDEuNTU1LTIuOTF2LTE2Ny44OWMwLTEuNDgyLTAuOTM1LTIuODA0LTIuMzMyLTMuMjk4eiIvPiAgPC9zdmc+`;
 
@@ -24,11 +24,6 @@ export class Item {
         dadosComportamentos: DadosComportamentos,
     ) {
         this.id = Item.nextId++;
-        
-        this.comportamentos = new Comportamentos();
-
-        if (dadosComportamentos.precisaEstarEmpunhando !== undefined) this.comportamentos.precisaEstarEmpunhando = dadosComportamentos.precisaEstarEmpunhando;
-        if (dadosComportamentos.precisaEstarVestindo !== undefined) this.comportamentos.precisaEstarVestindo = dadosComportamentos.precisaEstarVestindo;
 
         if (dadosComportamentos.dadosComportamentoUtilizavel !== undefined) this.comportamentos.setComportamentoUtilizavel(...dadosComportamentos.dadosComportamentoUtilizavel);
         if (dadosComportamentos.dadosComportamentoEmpunhavel !== undefined) this.comportamentos.setComportamentoEmpunhavel(...dadosComportamentos.dadosComportamentoEmpunhavel);
@@ -68,7 +63,7 @@ export class Item {
     sacar = (): void => {
         this.comportamentos.comportamentoEmpunhavel.empunha(this.id);
 
-        if (this.comportamentos.precisaEstarEmpunhando) this.ativaBuffsItem();
+        this.buffs.filter(buff => buff.comportamentos.ehPassivaAtivaQuandoEmpunhado).forEach(() => this.ativaBuffsItem());
 
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Empunhado`);
     }
@@ -76,7 +71,7 @@ export class Item {
     guardar = (): void => {
         this.comportamentos.comportamentoEmpunhavel.desempunha();
 
-        if (this.comportamentos.precisaEstarEmpunhando) this.desativaBuffsItem();
+        this.buffs.filter(buff => buff.comportamentos.ehPassivaAtivaQuandoEmpunhado).forEach(() => this.desativaBuffsItem());
         
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Guardado`);
     }
@@ -85,7 +80,7 @@ export class Item {
         this.comportamentos.comportamentoVestivel.veste();
         this.comportamentos.comportamentoEmpunhavel.desempunha();
 
-        if (this.comportamentos.precisaEstarVestindo) this.ativaBuffsItem();
+        this.buffs.filter(buff => buff.comportamentos.ehPassivaAtivaQuandoVestido).forEach(() => this.ativaBuffsItem());
 
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Vestido`);
     }
@@ -94,7 +89,7 @@ export class Item {
         this.comportamentos.comportamentoVestivel.desveste();
         this.sacar();
 
-        if (this.comportamentos.precisaEstarVestindo) this.desativaBuffsItem();
+        this.buffs.filter(buff => buff.comportamentos.ehPassivaAtivaQuandoVestido).forEach(() => this.desativaBuffsItem());
 
         LoggerHelper.getInstance().adicionaMensagem(`${this.nomeExibicao} Desvestido`);
     }
