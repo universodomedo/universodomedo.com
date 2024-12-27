@@ -52,45 +52,48 @@ const page = () => {
     }
 
     return (
-        <div className={style.area_tipo_item}>
-            <h2>Adicionar Componentes</h2>
+        <>
+            <div className={style.embrulho_area_item}>
+                <div className={style.area_tipo_item}>
+                    <h2>Adicionar Componentes</h2>
 
-            <div className={style.opcao_item}>
-                <InputComRotulo rotulo={'Elemento'}>
-                    <select value={elemento.value} onChange={handleElementoChange}> <option value="0" disabled >Selecionar Elemento</option> {SingletonHelper.getInstance().elementos.filter(elemento => elemento.id !== 3).map(elemento => (<option key={elemento.id} value={elemento.id}>{elemento.nome}</option>))} </select>
-                </InputComRotulo>
-            </div>
-
-            <div className={style.opcao_item}>
-                <InputComRotulo rotulo={'Patente'}>
-                    <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> {Object.entries(patentes).map(([id, data]) => ( <option key={id} value={id}>{data.nome}</option> ))} </select>
-                </InputComRotulo>
-            </div>
-
-            <div className={style.opcao_item}>
-                <InputComRotulo rotulo={'Quantidade'}>
-                    <InputNumerico min={1} step={1} value={quantidade} onChange={setQuantidade} />
-                </InputComRotulo>
-            </div>
-
-            <div className={style.descricao_item}>
-                <div>
-                    <p>Componentes são Itens utilizados na Execução de Rituais</p>
-                    <p>O Elemento do Componente deve ser o mesmo de seu Ritual</p>
-                </div>
-                {patente.value > 0 && (
-                    <div>
-                        <p>{`Um Componente ${patentes[patente.value].nome} é utilizado na Execução de Rituais de ${patente.value}º Círculo`}</p>
-                        <p>{`Tem Categoria ${patentes[patente.value].categoria}, Peso ${patentes[patente.value].peso} e ${patentes[patente.value].usosMaximos} Usos`}</p>
+                    <div className={style.opcao_item}>
+                        <InputComRotulo rotulo={'Elemento'}>
+                            <select value={elemento.value} onChange={handleElementoChange}> <option value="0" disabled >Selecionar Elemento</option> {SingletonHelper.getInstance().elementos.filter(elemento => elemento.id !== 3).map(elemento => (<option key={elemento.id} value={elemento.id}>{elemento.nome}</option>))} </select>
+                        </InputComRotulo>
                     </div>
-                )}
-            </div>
 
+                    <div className={style.opcao_item}>
+                        <InputComRotulo rotulo={'Patente'}>
+                            <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> {Object.entries(patentes).map(([id, data]) => ( <option key={id} value={id}>{data.nome}</option> ))} </select>
+                        </InputComRotulo>
+                    </div>
+
+                    <div className={style.opcao_item}>
+                        <InputComRotulo rotulo={'Quantidade'}>
+                            <InputNumerico min={1} step={1} value={quantidade} onChange={setQuantidade} />
+                        </InputComRotulo>
+                    </div>
+
+                    <div className={style.descricao_item}>
+                        <div>
+                            <p>Componentes são Itens utilizados na Execução de Rituais</p>
+                            <p>O Elemento do Componente deve ser o mesmo de seu Ritual</p>
+                        </div>
+                        {patente.value > 0 && (
+                            <div>
+                                <p>{`Um Componente ${patentes[patente.value].nome} é utilizado na Execução de Rituais de ${patente.value}º Círculo`}</p>
+                                <p>{`Tem Categoria ${patentes[patente.value].categoria}, Peso ${patentes[patente.value].peso} e ${patentes[patente.value].usosMaximos} Usos`}</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
             <div className={style.area_botao_tipo_item}>
                 <button onClick={() => {mudarPagina(0)}}>Voltar</button>
                 <button onClick={adicionar} disabled={elemento.value === 0 || patente.value === 0} className={style.botao_adicionar}>Adicionar</button>
             </div>
-        </div>
+        </>
     );
 }
 

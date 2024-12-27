@@ -1,12 +1,22 @@
 // #region Imports
+import { DadosCaracteristicasArmas } from 'Types/classes/index.ts';
 
 // #endregion
 
-export class CaracteristicaArma {
+export type CaracteristicaArma = {
+    id: number,
+    nome: string,
+};
+
+export class CaracteristicaArmaNaBase {
     constructor(
-        public nome: string,
-        public basesArmaPermitidas: ComposicaoBaseArma[]
+        public idBaseArma: number,
+        public idCaracteristica: number,
+        public custoCaracteristica: number,
+        public dadosCaracteristicasArmas: DadosCaracteristicasArmas,
     ) { }
+
+    get refCaracteristica(): CaracteristicaArma { return listaCaracteristicaArma.find(caracteristicaArma => caracteristicaArma.id === this.idCaracteristica)!; }
 }
 
 type TipoArma = { id: number, nome: string, }
@@ -79,6 +89,25 @@ export const basesArma: BaseArma[] = [
 
 ///////////////////
 
-export const caracteristicasArmas = [
-    new CaracteristicaArma('Ineficaz', [{ idTipo: 1, idClassificacao: 1, idPatente: 1 }, { idTipo: 1, idClassificacao: 2, idPatente: 1 }, { idTipo: 1, idClassificacao: 3, idPatente: 1 }])
+export const listaCaracteristicaArma: CaracteristicaArma[] = [
+    { id: 1, nome: 'Simplificada' },
+    { id: 2, nome: 'Refinada' },
+    { id: 3, nome: 'Estendida' },
+    { id: 4, nome: 'Consistente' },
+    { id: 5, nome: 'Compacta' },
+    { id: 6, nome: 'Projetada' },
+    { id: 7, nome: 'Anti-Proteção' },
+    { id: 8, nome: 'Fatal' },
+];
+
+export const listaCaracteristicaArmaNaBase = [
+    new CaracteristicaArmaNaBase(1, 1, 1, {}),
+    new CaracteristicaArmaNaBase(2, 1, 1, {}),
+    new CaracteristicaArmaNaBase(1, 2, 1, { modificadorDanoMaximo: 2 }),
+    // new CaracteristicaArmaNaBase(1, 3, 1, {}),
+    // new CaracteristicaArmaNaBase(1, 4, 1, {}),
+    new CaracteristicaArmaNaBase(1, 5, 1, { modificadorPeso: -1 }),
+    new CaracteristicaArmaNaBase(1, 6, 2, { buffs: [ { idBuff: 54, nome: 'Arma Projetada', valor: 2, dadosComportamentos: { dadosComportamentoPassivo: [true] }, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1 } ] }),
+    // new CaracteristicaArmaNaBase(1, 7, 1, {}),
+    // new CaracteristicaArmaNaBase(1, 8, 1, {}),
 ];

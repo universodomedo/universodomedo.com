@@ -55,7 +55,13 @@ const page = ({ ritual }: { ritual: Ritual }) => {
     const ConteudoDetalhes = () => {
         return (
             <>
+                <p className={style.texto}>Ritual de {ritual.comportamentos.comportamentoRitual.refElemento.nome}</p>
+                <p className={style.texto}>{ritual.comportamentos.comportamentoRitual.refCirculoNivelRitual.nome}</p>
 
+                <p className={style.titulo}>Ações</p>
+                {ritual.acoes.map(ritual => (
+                    <p className={style.texto}>{ritual.nomeAcao}</p>
+                ))}
             </>
         );
     }

@@ -94,7 +94,7 @@
     flex-direction: column;
     align-items: center;
     gap: 2vh;
-    /* margin: 0 30%; */
+    flex: 1;
 }
 
 .opcao_item {
@@ -176,4 +176,18 @@
     justify-content: space-evenly;
     width: 50%;
     gap: 5%;
+}
+
+.embrulho_area_item {
+    overflow: auto;
+    height: 74vh;
+}
+
+.area_caracteristicas {
+    display: flex;
+    flex-direction: row;
+    gap: 5%;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 60%;
 }

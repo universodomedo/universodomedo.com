@@ -1,5 +1,5 @@
 // #region Imports
-import { ComportamentoAcao, ComportamentoAtributoPericia, ComportamentoBuffAtivo, ComportamentoBuffPassivo, ComportamentoComponente, ComportamentoEmpunhavel, ComportamentoRitual, ComportamentosBuff, ComportamentoUtilizavel, ComportamentoVestivel } from 'Types/classes/index.ts';
+import { Acao, Buff, ComportamentoAcao, ComportamentoAtributoPericia, ComportamentoBuffAtivo, ComportamentoBuffPassivo, ComportamentoComponente, ComportamentoEmpunhavel, ComportamentoRitual, ComportamentosBuff, ComportamentoUtilizavel, ComportamentoVestivel } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -58,4 +58,13 @@ export type subDadosBuff = {
     idBuff: number, nome: string, valor: number,
     dadosComportamentos: DadosComportamentosBuff;
     duracao: { idDuracao: number, valor: number, }, idTipoBuff: number
+}
+
+export type DadosCaracteristicasArmas = {
+    modificadorPeso?: number,
+    modificadorCategoria?: number,
+    modificadorDanoMinimo?: number,
+    modificadorDanoMaximo?: number,
+    acoes?: subDadosAcoes[],
+    buffs?: subDadosBuff[],
 }

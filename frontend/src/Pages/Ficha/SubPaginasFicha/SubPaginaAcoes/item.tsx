@@ -107,7 +107,13 @@ const page = ({ acao }: { acao: Acao }) => {
                     );
                 })}
 
-                <button className={style.botao_principal} onClick={() => {acao.executaComOpcoes(valoresSelecionados); setOpenExec(false); fechaModal();}}>Executar</button>
+                <button
+                    className={style.botao_principal}
+                    onClick={() => {acao.executaComOpcoes(valoresSelecionados); setOpenExec(false); fechaModal();}}
+                    disabled={Object.values(valoresSelecionados).some(valor => valor === undefined)}
+                >
+                    Executar
+                </button>
             </>
         );
     }
