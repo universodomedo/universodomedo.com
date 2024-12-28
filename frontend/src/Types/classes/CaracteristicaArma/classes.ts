@@ -4,8 +4,9 @@ import { DadosCaracteristicasArmas } from 'Types/classes/index.ts';
 // #endregion
 
 export type CaracteristicaArma = {
-    id: number,
-    nome: string,
+    id: number;
+    nome: string;
+    basesArma: BaseArmaComDados[];
 };
 
 export class CaracteristicaArmaNaBase {
@@ -20,10 +21,11 @@ export class CaracteristicaArmaNaBase {
 }
 
 type TipoArma = { id: number, nome: string, }
-type ClassificacaoArma = { id: number; idTipoArma: number; idsPatentesArma: number[]; nome: string; }
-type PatenteArma = { id: number; nome: string; pontosCaracteristica: number; }
-type ComposicaoBaseArma = { idTipo: number; idClassificacao: number; idPatente: number; }
-type BaseArma = { id: number; composicaoBaseArma: ComposicaoBaseArma; peso: number; categoria: number; danoMin: number, danoMax: number, numeroExtremidadesUtilizadas: number, idAtributoUtilizado: number, idPericiaUtilizada: number, }
+type ClassificacaoArma = { id: number, idTipoArma: number, idsPatentesArma: number[], nome: string, }
+type PatenteArma = { id: number, nome: string, pontosCaracteristica: number, }
+type ComposicaoBaseArma = { idTipo: number, idClassificacao: number, idPatente: number, }
+type BaseArma = { id: number, composicaoBaseArma: ComposicaoBaseArma, peso: number, categoria: number, danoMin: number, danoMax: number, numeroExtremidadesUtilizadas: number, idAtributoUtilizado: number, idPericiaUtilizada: number, }
+type BaseArmaComDados = { idBaseArma: number, dadosCaracteristicaNaBase: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; }, };
 
 export const tiposArma: TipoArma[] = [
     { id: 1, nome: 'Arma Corpo-a-Corpo' },
@@ -89,25 +91,101 @@ export const basesArma: BaseArma[] = [
 
 ///////////////////
 
-export const listaCaracteristicaArma: CaracteristicaArma[] = [
-    { id: 1, nome: 'Simplificada' },
-    { id: 2, nome: 'Refinada' },
-    { id: 3, nome: 'Estendida' },
-    { id: 4, nome: 'Consistente' },
-    { id: 5, nome: 'Compacta' },
-    { id: 6, nome: 'Projetada' },
-    { id: 7, nome: 'Anti-Proteção' },
-    { id: 8, nome: 'Fatal' },
-];
+// export const listaCaracteristicaArma: CaracteristicaArma[] = [
+//     { id: 1, nome: 'Simplificada' },
+//     { id: 2, nome: 'Refinada' },
+//     { id: 3, nome: 'Estendida' },
+//     { id: 4, nome: 'Consistente' },
+//     { id: 5, nome: 'Compacta' },
+//     { id: 6, nome: 'Projetada' },
+//     { id: 7, nome: 'Anti-Proteção' },
+//     { id: 8, nome: 'Fatal' },
+// ];
 
-export const listaCaracteristicaArmaNaBase = [
-    new CaracteristicaArmaNaBase(1, 1, 1, {}),
-    new CaracteristicaArmaNaBase(2, 1, 1, {}),
-    new CaracteristicaArmaNaBase(1, 2, 1, { modificadorDanoMaximo: 2 }),
-    // new CaracteristicaArmaNaBase(1, 3, 1, {}),
-    // new CaracteristicaArmaNaBase(1, 4, 1, {}),
-    new CaracteristicaArmaNaBase(1, 5, 1, { modificadorPeso: -1 }),
-    new CaracteristicaArmaNaBase(1, 6, 2, { buffs: [ { idBuff: 54, nome: 'Arma Projetada', valor: 2, dadosComportamentos: { dadosComportamentoPassivo: [true] }, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1 } ] }),
-    // new CaracteristicaArmaNaBase(1, 7, 1, {}),
-    // new CaracteristicaArmaNaBase(1, 8, 1, {}),
+// export const listaCaracteristicaArmaNaBase = [
+//     new CaracteristicaArmaNaBase(1, 1, 1, {}),
+//     new CaracteristicaArmaNaBase(2, 1, 1, {}),
+//     new CaracteristicaArmaNaBase(1, 2, 1, { modificadorDanoMaximo: 2 }),
+//     new CaracteristicaArmaNaBase(1, 3, 1, {}),
+//     new CaracteristicaArmaNaBase(1, 4, 1, {}),
+//     new CaracteristicaArmaNaBase(1, 5, 1, { modificadorPeso: -1 }),
+//     new CaracteristicaArmaNaBase(1, 6, 2, { buffs: [ { idBuff: 54, nome: 'Arma Projetada', valor: 2, dadosComportamentos: { dadosComportamentoPassivo: [true] }, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1 } ] }),
+//     new CaracteristicaArmaNaBase(1, 7, 1, {}),
+//     new CaracteristicaArmaNaBase(1, 8, 1, {}),
+// ];
+
+export const listaCaracteristicaArma: CaracteristicaArma[] = [
+    { 
+        id: 1, 
+        nome: 'Simplificada', 
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ] 
+    },
+    { 
+        id: 2, 
+        nome: 'Refinada', 
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ] 
+    },
+    { 
+        id: 3, 
+        nome: 'Estendida', 
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { modificadorDanoMaximo: 2 } } },
+        ] 
+    },
+    { 
+        id: 4, 
+        nome: 'Consistente', 
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ] 
+    },
+    { 
+        id: 5, 
+        nome: 'Compacta', 
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { modificadorPeso: -1 } } },
+        ] 
+    },
+    { 
+        id: 6, 
+        nome: 'Projetada', 
+        basesArma: [
+            { 
+                idBaseArma: 1, 
+                dadosCaracteristicaNaBase: { 
+                    custoCaracteristica: 2, 
+                    dadosCaracteristicasArmas: { 
+                        buffs: [
+                            {
+                                idBuff: 54,
+                                nome: 'Arma Projetada',
+                                valor: 2,
+                                dadosComportamentos: { dadosComportamentoPassivo: [true] },
+                                duracao: { idDuracao: 3, valor: 1 },
+                                idTipoBuff: 1,
+                            },
+                        ],
+                    } 
+                } 
+            },
+        ] 
+    },
+    { 
+        id: 7, 
+        nome: 'Anti-Proteção', 
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ] 
+    },
+    { 
+        id: 8, 
+        nome: 'Fatal', 
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ] 
+    },
 ];

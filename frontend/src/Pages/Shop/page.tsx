@@ -60,7 +60,6 @@ const PageComContexto = () => {
                                 {personagem.inventario.items.map((item, index) => (
                                     <div key={index} className={style.linha_item}>
                                         <h3>{item.nomeExibicao}</h3>
-                                        {/* <FontAwesomeIcon className={style.remove_item} title={'Remover Item'} icon={faTrash} onClick={() => { item.removeDoInventario(); }} /> */}
                                         <FontAwesomeIcon className={style.remove_item} title={'Remover Item'} icon={faTrash} onClick={() => { removeItem(item, index) }} />
                                     </div>
                                 ))}

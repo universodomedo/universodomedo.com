@@ -48,9 +48,7 @@ export const ContextoLojaProvider = ({ children }: { children: React.ReactNode }
         7: <PaginaArmas />,
     };
 
-    const mudarPagina = (idPagina: number) => {
-        setIdPaginaAberta(idPagina);
-    };
+    const mudarPagina = (idPagina: number) => { setIdPaginaAberta(idPagina); };
 
     const adicionarItem = (dadosItem: DadosItem, quantidade: number = 1) => {
         const personagem = getPersonagemFromContext();
@@ -89,7 +87,6 @@ export const ContextoLojaProvider = ({ children }: { children: React.ReactNode }
     };
 
     const removeItem = (item: Item, indexItem: number) => {
-
         item.removeDoInventario();
 
         const dadosFicha = localStorage.getItem('dadosFicha');
