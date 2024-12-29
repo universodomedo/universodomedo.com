@@ -182,7 +182,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 13,
-        nome: 'Módulo Destruição', // Remove R.D. pelo resto do combate
+        nome: 'Destruidora', // Remove R.D. pelo resto do combate
         descricao: '',
         basesArma: [],
     },
@@ -194,7 +194,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 15,
-        nome: 'Módulo Reguardar',
+        nome: 'Resguardada',
         descricao: '',
         basesArma: [],
     },
@@ -224,25 +224,25 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 20,
-        nome: 'Módulo Degoladora',
+        nome: 'Degoladora',
         descricao: '',
         basesArma: [],
     },
     {
         id: 21,
-        nome: 'Módulo Sombra',
+        nome: 'Sombra',
         descricao: '',
         basesArma: [],
     },
     {
         id: 22,
-        nome: 'Módulo Beijo da Serpente',
+        nome: 'Beijo da Serpente',
         descricao: '',
         basesArma: [],
     },
     {
         id: 23,
-        nome: 'Módulo Sem Ponto Fraco',
+        nome: 'Sem Ponto Fraco',
         descricao: '',
         basesArma: [],
     },
@@ -266,7 +266,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 27,
-        nome: 'Módulo Quebra-Quebra',
+        nome: 'Quebra-Quebra',
         descricao: '',
         basesArma: [],
     },
@@ -278,31 +278,31 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 29,
-        nome: 'Módulo Fortaleza',
+        nome: 'Fortaleza',
         descricao: '',
         basesArma: [],
     },
     {
         id: 30,
-        nome: 'Módulo Dispersar',
+        nome: 'Dispersar',
         descricao: '',
         basesArma: [],
     },
     {
         id: 31,
-        nome: 'Módulo Protetor', // gasta ação para receber + defesa
+        nome: 'Protetora', // gasta ação para receber + defesa
         descricao: '',
         basesArma: [],
     },
     {
         id: 32,
-        nome: 'Módulo Restrição', // para agarrar com arma em mãos
+        nome: 'Constringente', // para agarrar com arma em mãos
         descricao: '',
         basesArma: [],
     },
     {
         id: 33,
-        nome: 'Módulo Engatilhar', // para travar uma munição na arma
+        nome: 'Engatilhar', // para travar uma munição na arma
         descricao: '',
         basesArma: [],
     },
@@ -350,7 +350,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 41,
-        nome: 'Módulo Armadeira', // atira no chão
+        nome: 'Munição Armadeira', // atira no chão
         descricao: '',
         basesArma: [],
     },
@@ -362,7 +362,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 43,
-        nome: 'Módulo Tensionado', // aumenta alcance
+        nome: 'Armação Tensionada', // aumenta alcance
         descricao: '',
         basesArma: [],
     },
@@ -398,13 +398,13 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 48,
-        nome: 'Módulo Franco-Atirado', // aumenta execução de saque de munição, aumenta dano e alcance
+        nome: 'Modo Franco-Atirado', // aumenta execução de saque de munição, aumenta dano e alcance
         descricao: '',
         basesArma: [],
     },
     {
         id: 49,
-        nome: 'Módulo Entrega Especial', // envia item no ataque
+        nome: 'Modo Entrega Especial', // envia item no ataque
         descricao: '',
         basesArma: [],
     },
@@ -416,7 +416,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 51,
-        nome: 'Módulo Queima-Roupa', // reduz alcance, aumenta uso de munição, dano aumentado
+        nome: 'Modo Queima-Roupa', // reduz alcance, aumenta uso de munição, dano aumentado
         descricao: '',
         basesArma: [],
     },
@@ -428,7 +428,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 53,
-        nome: 'Módulo Bumerangue',
+        nome: 'Munição Bumerangue',
         descricao: '',
         basesArma: [],
     },
@@ -446,7 +446,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 56,
-        nome: 'Módulo Estrepe', // arremessa no chão
+        nome: 'Munição Estrepe', // arremessa no chão
         descricao: '',
         basesArma: [],
     },
@@ -530,7 +530,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 70,
-        nome: 'Módulo Supressão', // mantem alvos sobre fogo continuo
+        nome: 'Supressão', // mantem alvos sobre fogo continuo
         descricao: '',
         basesArma: [],
     },
@@ -542,13 +542,13 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 72,
-        nome: 'Módulo Lanterna', // fonte de luz
+        nome: 'Fonte de Luz Embutida', // fonte de luz
         descricao: '',
         basesArma: [],
     },
     {
         id: 73,
-        nome: 'Módulo Lançador', // usa consumiveis de área de efeito como munição
+        nome: 'Modo Lançador', // usa consumiveis de área de efeito como munição
         descricao: '',
         basesArma: [],
     },

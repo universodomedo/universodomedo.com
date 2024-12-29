@@ -210,9 +210,18 @@
     box-shadow: 0 .6vh 10px rgba(0, 0, 0, 0.5);
 }
 
+.dados_arma h2 {
+    font-size: 1.2em;
+}
+
 .linha_dado_arma {
     display: flex;
     justify-content: space-between;
+}
+
+.lista_caracteristicas_selecionadas {
+    overflow: auto;
+    flex: 1 1 0;
 }
 
 .visualizador_caracteristicas_selecionadas {
@@ -227,14 +236,6 @@
     width: 80%;
 }
 
-.caracteristica_individual:nth-child(odd) {
-    background-color: rgba(100, 100, 100, 0.8);
-}
-
-.caracteristica_individual:nth-child(even) {
-    background-color: rgba(100, 100, 100, 0.65);
-}
-
 .painel_caracteristicas p {
     margin: 0;
 }
@@ -244,6 +245,15 @@
     flex-direction: column;
     padding: .3vh .6vw;
     gap: 1vh;
+    user-select: none;
+}
+
+.caracteristica_individual:nth-child(odd) {
+    background-color: rgba(100, 100, 100, 0.8);
+}
+
+.caracteristica_individual:nth-child(even) {
+    background-color: rgba(100, 100, 100, 0.65);
 }
 
 .caracteristica_individual.caracteristica_selecionada h2, .caracteristica_individual.caracteristica_selecionada .custo_caracteristica {
@@ -252,4 +262,8 @@
 
 .pontos_insuficientes {
     color: #FF6F6F;
+}
+
+.descricao_caracteristica {
+    flex: 1;
 }

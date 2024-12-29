@@ -20,7 +20,7 @@ interface ContextoArmaProps {
     caracteristicasDisponiveis: {id: number; nome: string; descricao: string; dadosCaracteristicaNaBase?: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; } }[];
     alternaCaracteristicaSelecionada: (idCaracteristica: number) => void;
     caracteristicasSelecionadas: {id: number; nome: string; descricao: string; dadosCaracteristicaNaBase?: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; } }[];
-    listaDadosArma: { nome: string, valor?: string }[];
+    listaDadosArma: { nome: string, valor: string }[];
     atualizaNomeCustomizado : (nomeCustomizado: string) => void;
 }
 
@@ -112,14 +112,13 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         }],
     };
 
-    const listaDadosArma: { nome: string, valor?: string }[] = [
+    const listaDadosArma: { nome: string, valor: string }[] = [
         { nome: 'Peso', valor: `${dadosItem.peso}` },
         { nome: 'Categoria', valor: `${dadosItem.categoria}` },
         { nome: 'Dano Base', valor: `${dadosItem.dadosComportamentos.dadosComportamentoAcao?.[1]} - ${dadosItem.dadosComportamentos.dadosComportamentoAcao?.[2]}` },
         { nome: 'Extremidades para Empunhar', valor: `${dadosItem.dadosComportamentos.dadosComportamentoEmpunhavel?.[1]}` },
         { nome: 'Atributo Base', valor: `${SingletonHelper.getInstance().atributos.find(atributo => atributo.id === dadosItem.dadosComportamentos.dadosComportamentoAtributoPericia?.[0])?.nome}` },
         { nome: 'Perícia Base', valor: `${SingletonHelper.getInstance().pericias.find(pericia => pericia.id === dadosItem.dadosComportamentos.dadosComportamentoAtributoPericia?.[1])?.nome}` },
-        ...caracteristicasSelecionadas.map(caracteristica => ({ nome: `+ ${caracteristica.nome}` })),
     ];
 
     useEffect(() => {

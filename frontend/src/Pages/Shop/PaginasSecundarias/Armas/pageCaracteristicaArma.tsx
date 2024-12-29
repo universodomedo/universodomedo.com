@@ -16,21 +16,15 @@ const page = () => {
     const PainelCaracteristicas = () => {
         return (
             <div className={style.painel_caracteristicas}>
-                {caracteristicasDisponiveis.map((caracteristica, index) => {
+                {caracteristicasDisponiveis.sort((a, b) => a.nome.localeCompare(b.nome)).map((caracteristica, index) => {
                     const pontosSuficientes = pontosCaracteristicasRestantes >= caracteristica.dadosCaracteristicaNaBase!.custoCaracteristica;
                     const jaEstaSelecionada = caracteristicasSelecionadas.some(carac => carac.id === caracteristica.id);
 
                     return (
                         <div key={index} className={`${style.caracteristica_individual} ${jaEstaSelecionada && style.caracteristica_selecionada}`} onClick={(jaEstaSelecionada || pontosSuficientes) ? () => alternaCaracteristicaSelecionada(caracteristica.id) : undefined }>
-                            <div className={style.nome_caracteristica}>
-                                <h2>{caracteristica.nome}</h2>
-                            </div>
-                            <div className={style.corpo_caracteristica}>
-                                <p>{caracteristica.descricao}</p>
-                            </div>
-                            <div className={`${style.corpo_caracteristica} ${!pontosSuficientes && !jaEstaSelecionada && style.pontos_insuficientes}`}>
-                                <p className={style.custo_caracteristica}>{`Custa ${caracteristica.dadosCaracteristicaNaBase?.custoCaracteristica} Pontos de Característica`}</p>
-                            </div>
+                            <h2>{caracteristica.nome}</h2>
+                            <p className={style.descricao_caracteristica}>{caracteristica.descricao}</p>
+                            <p className={` ${style.custo_caracteristica} ${!pontosSuficientes && !jaEstaSelecionada && style.pontos_insuficientes}`}>{`Custa ${caracteristica.dadosCaracteristicaNaBase?.custoCaracteristica} Pontos de Característica`}</p>
                         </div>
                     );
                 })}
