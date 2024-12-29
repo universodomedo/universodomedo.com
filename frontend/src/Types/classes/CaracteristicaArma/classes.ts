@@ -11,7 +11,7 @@ export type CaracteristicaArma = {
 
 type TipoArma = { id: number, nome: string, }
 type ClassificacaoArma = { id: number, idTipoArma: number, idsPatentesArma: number[], nome: string, }
-type PatenteArma = { id: number, nome: string, pontosCaracteristica: number, }
+type PatenteArma = { id: number, nome: string, pontosCaracteristica: number, idPatentePericiaRequisito: number }
 type ComposicaoBaseArma = { idTipo: number, idClassificacao: number, idPatente: number, }
 type BaseArma = { id: number, composicaoBaseArma: ComposicaoBaseArma, peso: number, categoria: number, danoMin: number, danoMax: number, numeroExtremidadesUtilizadas: number, idAtributoUtilizado: number, idPericiaUtilizada: number, }
 type BaseArmaComDados = { idBaseArma: number, dadosCaracteristicaNaBase: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; }, };
@@ -24,9 +24,9 @@ export const tiposArma: TipoArma[] = [
 ];
 
 export const patentesArma: PatenteArma[] = [
-    { id: 1, nome: 'Simples', pontosCaracteristica: 1, },
-    // { id: 2, nome: 'Complexa', pontosCaracteristica: 2, },
-    // { id: 3, nome: 'Especial', pontosCaracteristica: 4, },
+    { id: 1, nome: 'Simples', pontosCaracteristica: 1, idPatentePericiaRequisito: 2, },
+    // { id: 2, nome: 'Complexa', pontosCaracteristica: 2, idPatentePericiaRequisito: 3, },
+    // { id: 3, nome: 'Especial', pontosCaracteristica: 4, idPatentePericiaRequisito: 4, },
 ];
 
 export const classificacoesArma: ClassificacaoArma[] = [

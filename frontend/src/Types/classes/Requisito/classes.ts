@@ -80,6 +80,11 @@ export class RequisitoAlgumItemVestido extends Requisito {
     get descricaoRequisito(): string { return 'Necessário ter Item Vestido'; }
 }
 
+export class RequisitoPatentePericiaItem extends Requisito {
+    get requisitoCumprido(): boolean { return this.refAcao!.refPai.comportamentos.requisitoEstaCumprido; }
+    get descricaoRequisito(): string { return `Você precisa ser ${this.refAcao!.refPai.comportamentos.comportamentoRequisito.refPatente.nome} em ${this.refAcao!.refPai.comportamentos.comportamentoRequisito.refPericia.nomeAbrev}`; }
+}
+
 export class TipoRequisito {
     constructor(
         public id: number,
@@ -206,7 +211,12 @@ export class RequisitoConfig {
                     },
                 },
             ]
-        }]
+        }],
+        [8, {
+            requisitoClass: RequisitoPatentePericiaItem,
+            requisitoParams: [],
+            opcoesExecucao: [],
+        }],
     ]);
 
     // Método para construir requisito e opções, incluindo `setRefAcao` e parâmetros adicionais

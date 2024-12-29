@@ -31,6 +31,7 @@ export class Item {
         if (dadosComportamentos.dadosComportamentoComponente !== undefined) this.comportamentos.setComportamentoComponente(...dadosComportamentos.dadosComportamentoComponente);
         if (dadosComportamentos.dadosComportamentoAcao !== undefined) this.comportamentos.setComportamentoAcao(...dadosComportamentos.dadosComportamentoAcao);
         if (dadosComportamentos.dadosComportamentoAtributoPericia !== undefined) this.comportamentos.setComportamentoAtributoPericia(...dadosComportamentos.dadosComportamentoAtributoPericia);
+        if (dadosComportamentos.dadosComportamentoRequisito !== undefined) this.comportamentos.setComportamentoRequisito(...dadosComportamentos.dadosComportamentoRequisito);
     }
 
     get nomeExibicao(): string { return this.nome.nomeExibicao }
@@ -57,6 +58,7 @@ export class Item {
     adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this._buffs, buffParams), this) };
     adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }
 
+    // tem q dar uma olhada nisso aqui, pq teoricamente o sacar da rodando o mesmo foreach antes de chamar esse metodo, acho q da merda
     ativaBuffsItem() { this._buffs.forEach(buff => buff.ativaBuff()); }
     desativaBuffsItem() { this._buffs.forEach(buff => buff.desativaBuff()); }
 

@@ -17,11 +17,11 @@ interface ContextoArmaProps {
     idBaseArmaSelecionada: number;
     selecionarBaseArma: (idBaseArma: number) => void;
     pontosDeCaracteristicaTotais: number;
-    caracteristicasDisponiveis: {id: number; nome: string; descricao: string; dadosCaracteristicaNaBase?: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; } }[];
+    caracteristicasDisponiveis: { id: number; nome: string; descricao: string; dadosCaracteristicaNaBase?: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; } }[];
     alternaCaracteristicaSelecionada: (idCaracteristica: number) => void;
-    caracteristicasSelecionadas: {id: number; nome: string; descricao: string; dadosCaracteristicaNaBase?: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; } }[];
+    caracteristicasSelecionadas: { id: number; nome: string; descricao: string; dadosCaracteristicaNaBase?: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; } }[];
     listaDadosArma: { nome: string, valor: string }[];
-    atualizaNomeCustomizado : (nomeCustomizado: string) => void;
+    atualizaNomeCustomizado: (nomeCustomizado: string) => void;
 }
 
 export const ContextoArma = createContext<ContextoArmaProps | undefined>(undefined);
@@ -41,7 +41,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
 
     const [idPaginaArmaAberta, setIdPaginaArmaAberta] = useState(0);
     const [idBaseArmaSelecionada, setIdBaseArmaSelecionada] = useState(0);
-    const [caracteristicasDisponiveis, setCaracteristicasDisponiveis] = useState<{id: number; nome: string; descricao: string; dadosCaracteristicaNaBase: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; } }[]>([]);
+    const [caracteristicasDisponiveis, setCaracteristicasDisponiveis] = useState<{ id: number; nome: string; descricao: string; dadosCaracteristicaNaBase: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; } }[]>([]);
     const [idsCaracteristicasSelecionadas, setIdsCaracteristicasSelecionadas] = useState<number[]>([]);
     const [nomeCustomizado, setNomeCustomizado] = useState<string>('');
 
@@ -64,7 +64,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
 
     const selecionarBaseArma = (idBaseArma: number) => { setIdBaseArmaSelecionada(idBaseArma); }
 
-    const pontosDeCaracteristicaTotais:number = patenteDaBaseSelecionada?.pontosCaracteristica || 0;
+    const pontosDeCaracteristicaTotais: number = patenteDaBaseSelecionada?.pontosCaracteristica || 0;
 
     const alternaCaracteristicaSelecionada = (idCaracteristica: number) => {
         setIdsCaracteristicasSelecionadas(prevState => prevState.includes(idCaracteristica)
@@ -101,6 +101,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
                 baseSelecionada.danoMin + dadosCaracteristicasAgrupados.danoMin,
                 baseSelecionada.danoMax + dadosCaracteristicasAgrupados.danoMax,
             ],
+            dadosComportamentoRequisito: [{ idPericia: baseSelecionada.idPericiaUtilizada, idPatente: patenteDaBaseSelecionada!.idPatentePericiaRequisito }],
         } : {},
         dadosAcoes: [{
             nomeAcao: 'Realizar Ataque',
@@ -108,7 +109,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
             idCategoriaAcao: 1,
             idMecanica: 6,
             custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
-            requisitos: [2],
+            requisitos: [2, 8],
         }],
     };
 

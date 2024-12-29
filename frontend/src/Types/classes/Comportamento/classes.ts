@@ -1,5 +1,5 @@
 // #region Imports
-import { AtributoPersonagem, CirculoNivelRitual, Elemento, Extremidade, NivelComponente, PericiaPatentePersonagem } from 'Types/classes/index.ts';
+import { AtributoPersonagem, CirculoNivelRitual, Elemento, Extremidade, NivelComponente, PatentePericia, Pericia, PericiaPatentePersonagem } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -71,6 +71,10 @@ export class Comportamentos {
     get comportamentoRitual(): ComportamentoRitual { return this._comportamentoRitual!; } // sempre verificar se temComportamentoRitual antes
     setComportamentoRitual(...args: ConstructorParameters<typeof ComportamentoRitual>): void { this._comportamentoRitual = new ComportamentoRitual(...args); }
 
+    private _comportamentoRequisito?: ComportamentoRequisito;
+    get temComportamentoRequisito(): boolean { return Boolean(this._comportamentoRequisito); }
+    get comportamentoRequisito(): ComportamentoRequisito { return this._comportamentoRequisito!; } // sempre verificar se temComportamentoRequisito antes
+    setComportamentoRequisito(...args: ConstructorParameters<typeof ComportamentoRequisito>): void { this._comportamentoRequisito = new ComportamentoRequisito(...args); }
 
     get podeSerEmpunhado(): boolean { return this.temComportamentoEmpunhavel && this.comportamentoEmpunhavel.podeSerEmpunhado; }
     get podeSerVestido(): boolean { return this.temComportamentoVestivel && this.comportamentoVestivel.podeSerVestido; }
@@ -80,6 +84,8 @@ export class Comportamentos {
     get estaVestido(): boolean { return this.podeSerVestido && this.comportamentoVestivel.estaVestido }
 
     get ehComponente(): boolean { return this.temComportamentoComponente; }
+
+    get requisitoEstaCumprido(): boolean { return !this.temComportamentoRequisito || (this.temComportamentoRequisito && this.comportamentoRequisito.requisitoCumprido ); }
 }
 
 export class ComportamentoUtilizavel {
@@ -170,4 +176,15 @@ export class ComportamentoRitual {
     get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
     get refCirculoNivelRitual(): CirculoNivelRitual { return SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.id === this._idCirculoNivel)!; }
     get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this.refCirculoNivelRitual.idCirculo)! }
+}
+
+export class ComportamentoRequisito {
+    constructor(
+        public requisitoFuncionamento: { idPericia: number, idPatente: number }
+    ) { }
+
+    get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this.requisitoFuncionamento.idPericia)!; }
+    get refPatente(): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente_pericia => patente_pericia.id === this.requisitoFuncionamento.idPatente)!; }
+
+    get requisitoCumprido(): boolean { return getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === this.refPericia.id)!.refPatente.id >= this.requisitoFuncionamento.idPatente; }
 }

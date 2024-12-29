@@ -40,8 +40,8 @@ const page = ({ mostraCaracteristicas = false }: { mostraCaracteristicas?: boole
                                     <div className={style.linha_dado_arma}>
                                         <h2 className={style.nome_dado_arma}>{`+ ${caracteristicaSelecionada.nome}`}</h2>
 
-                                        {dadosCaracteristica.map(dado => (
-                                            <span>{dado}</span>
+                                        {dadosCaracteristica.map((dado, indexDado) => (
+                                            <span key={indexDado}>{dado}</span>
                                         ))}
                                     </div>
                                 </div>
@@ -52,13 +52,6 @@ const page = ({ mostraCaracteristicas = false }: { mostraCaracteristicas?: boole
             )}
         </div>
     );
-
-    function formatarNomePropriedade(nome: string): string {
-        return nome
-            .replace(/([A-Z])/g, ' $1') // Adiciona espaço antes de letras maiúsculas
-            .replace(/^./, (str) => str.toUpperCase()) // Capitaliza a primeira letra
-            .replace('Modificador ', ''); // Remove "Modificador" para simplificação (opcional)
-    }
 };
 
 export default page;
