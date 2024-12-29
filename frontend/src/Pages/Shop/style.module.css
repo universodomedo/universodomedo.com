@@ -192,10 +192,17 @@
     width: 60%;
 }
 
+.visualizador_arma {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+    justify-content: space-evenly;
+}
+
 .dados_arma {
     display: flex;
     flex-direction: column;
-    width: 30%;
+    width: 40%;
     gap: .4vh;
     color: white;
     padding: .6vw 1vh;
@@ -206,4 +213,43 @@
 .linha_dado_arma {
     display: flex;
     justify-content: space-between;
+}
+
+.visualizador_caracteristicas_selecionadas {
+    display: flex;
+    flex-direction: column;
+    background-color: red;
+}
+
+.painel_caracteristicas {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 80%;
+}
+
+.caracteristica_individual:nth-child(odd) {
+    background-color: rgba(100, 100, 100, 0.8);
+}
+
+.caracteristica_individual:nth-child(even) {
+    background-color: rgba(100, 100, 100, 0.65);
+}
+
+.painel_caracteristicas p {
+    margin: 0;
+}
+
+.caracteristica_individual {
+    display: flex;
+    flex-direction: column;
+    padding: .3vh .6vw;
+    gap: 1vh;
+}
+
+.caracteristica_individual.caracteristica_selecionada h2, .caracteristica_individual.caracteristica_selecionada .custo_caracteristica {
+    color: #9AEA9A;
+}
+
+.pontos_insuficientes {
+    color: #FF6F6F;
 }

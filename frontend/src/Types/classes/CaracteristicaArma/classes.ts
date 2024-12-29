@@ -1,24 +1,13 @@
 // #region Imports
 import { DadosCaracteristicasArmas } from 'Types/classes/index.ts';
-
 // #endregion
 
 export type CaracteristicaArma = {
     id: number;
     nome: string;
+    descricao: string;
     basesArma: BaseArmaComDados[];
 };
-
-export class CaracteristicaArmaNaBase {
-    constructor(
-        public idBaseArma: number,
-        public idCaracteristica: number,
-        public custoCaracteristica: number,
-        public dadosCaracteristicasArmas: DadosCaracteristicasArmas,
-    ) { }
-
-    get refCaracteristica(): CaracteristicaArma { return listaCaracteristicaArma.find(caracteristicaArma => caracteristicaArma.id === this.idCaracteristica)!; }
-}
 
 type TipoArma = { id: number, nome: string, }
 type ClassificacaoArma = { id: number, idTipoArma: number, idsPatentesArma: number[], nome: string, }
@@ -91,74 +80,55 @@ export const basesArma: BaseArma[] = [
 
 ///////////////////
 
-// export const listaCaracteristicaArma: CaracteristicaArma[] = [
-//     { id: 1, nome: 'Simplificada' },
-//     { id: 2, nome: 'Refinada' },
-//     { id: 3, nome: 'Estendida' },
-//     { id: 4, nome: 'Consistente' },
-//     { id: 5, nome: 'Compacta' },
-//     { id: 6, nome: 'Projetada' },
-//     { id: 7, nome: 'Anti-Proteção' },
-//     { id: 8, nome: 'Fatal' },
-// ];
-
-// export const listaCaracteristicaArmaNaBase = [
-//     new CaracteristicaArmaNaBase(1, 1, 1, {}),
-//     new CaracteristicaArmaNaBase(2, 1, 1, {}),
-//     new CaracteristicaArmaNaBase(1, 2, 1, { modificadorDanoMaximo: 2 }),
-//     new CaracteristicaArmaNaBase(1, 3, 1, {}),
-//     new CaracteristicaArmaNaBase(1, 4, 1, {}),
-//     new CaracteristicaArmaNaBase(1, 5, 1, { modificadorPeso: -1 }),
-//     new CaracteristicaArmaNaBase(1, 6, 2, { buffs: [ { idBuff: 54, nome: 'Arma Projetada', valor: 2, dadosComportamentos: { dadosComportamentoPassivo: [true] }, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 1 } ] }),
-//     new CaracteristicaArmaNaBase(1, 7, 1, {}),
-//     new CaracteristicaArmaNaBase(1, 8, 1, {}),
-// ];
-
 export const listaCaracteristicaArma: CaracteristicaArma[] = [
-    { 
-        id: 1, 
-        nome: 'Simplificada', 
+    {
+        id: 1,
+        nome: 'Simplificada',
+        descricao: 'Retira o Requisito de Treinado em LUTA',
         basesArma: [
             { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
-        ] 
+            { idBaseArma: 2, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 3, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ],
     },
-    { 
-        id: 2, 
-        nome: 'Refinada', 
-        basesArma: [
-            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
-        ] 
-    },
-    { 
-        id: 3, 
-        nome: 'Estendida', 
+    {
+        id: 2,
+        nome: 'Refinada',
+        descricao: 'Aumenta o Dano Máximo',
         basesArma: [
             { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { modificadorDanoMaximo: 2 } } },
-        ] 
+        ],
     },
-    { 
-        id: 4, 
-        nome: 'Consistente', 
-        basesArma: [
-            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
-        ] 
+    {
+        id: 3,
+        nome: 'Estendida',
+        descricao: '',
+        basesArma: [],
     },
-    { 
-        id: 5, 
-        nome: 'Compacta', 
+    {
+        id: 4,
+        nome: 'Consistente',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 5,
+        nome: 'Compacta',
+        descricao: 'Reduz o peso',
         basesArma: [
             { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { modificadorPeso: -1 } } },
-        ] 
+        ],
     },
-    { 
-        id: 6, 
-        nome: 'Projetada', 
+    {
+        id: 6,
+        nome: 'Projetada',
+        descricao: '',
         basesArma: [
-            { 
-                idBaseArma: 1, 
-                dadosCaracteristicaNaBase: { 
-                    custoCaracteristica: 2, 
-                    dadosCaracteristicasArmas: { 
+            {
+                idBaseArma: 1,
+                dadosCaracteristicaNaBase: {
+                    custoCaracteristica: 2,
+                    dadosCaracteristicasArmas: {
                         buffs: [
                             {
                                 idBuff: 54,
@@ -169,23 +139,417 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
                                 idTipoBuff: 1,
                             },
                         ],
-                    } 
-                } 
+                    }
+                }
             },
-        ] 
+        ]
     },
-    { 
-        id: 7, 
-        nome: 'Anti-Proteção', 
-        basesArma: [
-            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
-        ] 
+    {
+        id: 7,
+        nome: 'Anti-Proteção',
+        descricao: '',
+        basesArma: [],
     },
-    { 
-        id: 8, 
-        nome: 'Fatal', 
-        basesArma: [
-            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
-        ] 
+    {
+        id: 8,
+        nome: 'Fatal',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 9,
+        nome: 'Colossal',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 10,
+        nome: 'Atroz',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 11,
+        nome: 'Arremessável',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 12,
+        nome: 'Retrátil', // diminui peso
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 13,
+        nome: 'Módulo Destruição', // Remove R.D. pelo resto do combate
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 14,
+        nome: 'Sincronizada',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 15,
+        nome: 'Módulo Reguardar',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 16,
+        nome: 'Envenenada',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 17,
+        nome: 'Embainhada', // bonus no turno que saca
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 18,
+        nome: 'Reciclada',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 19,
+        nome: 'Veloz',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 20,
+        nome: 'Módulo Degoladora',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 21,
+        nome: 'Módulo Sombra',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 22,
+        nome: 'Módulo Beijo da Serpente',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 23,
+        nome: 'Módulo Sem Ponto Fraco',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 24,
+        nome: 'Acoplada',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 25,
+        nome: 'Imparável',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 26,
+        nome: 'Bastarda',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 27,
+        nome: 'Módulo Quebra-Quebra',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 28,
+        nome: 'Massiva',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 29,
+        nome: 'Módulo Fortaleza',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 30,
+        nome: 'Módulo Dispersar',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 31,
+        nome: 'Módulo Protetor', // gasta ação para receber + defesa
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 32,
+        nome: 'Módulo Restrição', // para agarrar com arma em mãos
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 33,
+        nome: 'Módulo Engatilhar', // para travar uma munição na arma
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 34,
+        nome: 'Armação Reduzida', // diminui peso
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 35,
+        nome: 'Munição Leve', // diminui peso
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 36,
+        nome: 'Munição Destruidora', // remove R.D. até o fim da cena, acumulando
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 37,
+        nome: 'Armação de Combate', // ataque corpo-a-corpo
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 38,
+        nome: 'Munição Aerodinâmica', // aumenta alcance
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 39,
+        nome: 'Lente Auxiliar', // pequeno bonus de pontaria
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 40,
+        nome: 'Munição Especializada', // outro tipo de dano
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 41,
+        nome: 'Módulo Armadeira', // atira no chão
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 42,
+        nome: 'Tiro Alfinete', // restringe movimento do alvo acertado
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 43,
+        nome: 'Módulo Tensionado', // aumenta alcance
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 44,
+        nome: 'Tiro Carpete', // ataque em área, dano reduzido
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 45,
+        nome: 'Munição Broca', // tiro em linha reta
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 45,
+        nome: 'Tiro de Cobertura', // ignora cobertura
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 46,
+        nome: 'Saque Duplo', // pega 2 munições por vez
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 47,
+        nome: 'Disparo Sequêncial', // ação com maior execução, atira várias munições em mão
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 48,
+        nome: 'Módulo Franco-Atirado', // aumenta execução de saque de munição, aumenta dano e alcance
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 49,
+        nome: 'Módulo Entrega Especial', // envia item no ataque
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 50,
+        nome: 'Correia de Disparo', // vários ataques para automático
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 51,
+        nome: 'Módulo Queima-Roupa', // reduz alcance, aumenta uso de munição, dano aumentado
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 52,
+        nome: 'Lente Falcão', // usa PERC para bonus de PONT
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 53,
+        nome: 'Módulo Bumerangue',
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 54,
+        nome: 'Luva de Arremesso', // aumenta alcance
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 55,
+        nome: 'Instância de Arremesso', // aumenta bonus de alcance por atributo
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 56,
+        nome: 'Módulo Estrepe', // arremessa no chão
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 57,
+        nome: 'Estojo de Munições', // reduz peso
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 58,
+        nome: 'Saque em Sequência', // saca com ambas as mãos em uma única ação
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 59,
+        nome: 'Munição Colosso', // reduz muito o alcance, muda atributo para força
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 60,
+        nome: 'Arremesso Duplo', // dois ataques em uma única ação, precisa estar com as munições em ambas as mãos
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 61,
+        nome: 'Pente Extendido', // aumenta munição na arma
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 62,
+        nome: 'Coronha', // ataque corpo-a-corpo
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 63,
+        nome: 'Estabilizadores', // segura arma com uma unica mão
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 64,
+        nome: 'Mira Laser', // bonus PONT
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 65,
+        nome: 'Cinto de Munição', // não precisa empunhar a munição para recarregar
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 66,
+        nome: 'Carregador Automático', // não precisa gastar ação para recarregar
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 67,
+        nome: 'Desmontável', // para FURT
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 68,
+        nome: 'Munição Bioquímica', // categoria de dano extra
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 69,
+        nome: 'Modo de Fogo Extra', // novo alcance extra
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 70,
+        nome: 'Módulo Supressão', // mantem alvos sobre fogo continuo
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 71,
+        nome: 'Munição Grande', // melhorar o nome.... aumenta gasto de munição, + dano
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 72,
+        nome: 'Módulo Lanterna', // fonte de luz
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 73,
+        nome: 'Módulo Lançador', // usa consumiveis de área de efeito como munição
+        descricao: '',
+        basesArma: [],
     },
 ];

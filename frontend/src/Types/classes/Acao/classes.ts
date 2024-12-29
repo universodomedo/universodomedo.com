@@ -88,8 +88,6 @@ export class Acao {
     get bloqueada(): boolean { return !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos; }
 
     executaComOpcoes = (valoresSelecionados: GastaCustoProps) => {
-        console.log('executaComOpcoes');
-        console.log(valoresSelecionados);
         LoggerHelper.getInstance().adicionaMensagem(`Executado ${this.nomeAcao}`);
 
         if (!this.processaDificuldades()) return;
