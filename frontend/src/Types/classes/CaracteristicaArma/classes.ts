@@ -552,4 +552,28 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
         descricao: '',
         basesArma: [],
     },
+    {
+        id: 74,
+        nome: 'Investida', // ataque com pequena movimentação para armas Corpo-a-Corpo
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 75,
+        nome: 'Ataque em Arco', // ataque em cone para armas Corpo-a-Corpo
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 76,
+        nome: 'Golpeio', // mecanicamente ataca arremessaveis corpo-a-corpo sem lançar a munição
+        descricao: '',
+        basesArma: [],
+    },
+    {
+        id: 77,
+        nome: 'Spray', // atira em cone
+        descricao: '',
+        basesArma: [],
+    },
 ];

@@ -15,7 +15,7 @@ export type RLJ_Ficha2 = {
 
 export type DadosItem = {
     idTipoItem: number; nomeItem: { nomePadrao: string, nomeCustomizado?: string }; peso: number; categoria: number;
-    
+
     dadosComportamentos: DadosComportamentos;
 
     dadosAcoes?: subDadosAcoes[];
@@ -68,3 +68,19 @@ export type DadosCaracteristicasArmas = {
     acoes?: subDadosAcoes[],
     buffs?: subDadosBuff[],
 }
+
+export const ConfiguracoesExibicaoDadosCaracteristicasArmas: { [K in keyof DadosCaracteristicasArmas]: { renderizar: boolean; renderizarValor: (dados: DadosCaracteristicasArmas) => string | null; }; } = {
+    modificadorPeso: { renderizar: true, renderizarValor: (dados) => (dados.modificadorPeso ? `Peso: ${dados.modificadorPeso}` : null), },
+    modificadorCategoria: { renderizar: true, renderizarValor: (dados) => (dados.modificadorCategoria ? `Categoria: ${dados.modificadorCategoria}` : null), },
+    modificadorDanoMinimo: { renderizar: true, renderizarValor: (dados) => (dados.modificadorDanoMinimo ? `Dano Mínimo: ${dados.modificadorDanoMinimo}` : null), },
+    modificadorDanoMaximo: { renderizar: true, renderizarValor: (dados) => (dados.modificadorDanoMaximo ? `Dano Máximo: ${dados.modificadorDanoMaximo}` : null), },
+    acoes: { renderizar: true, renderizarValor: (dados) => dados.acoes?.map(acao => `Ação: ${acao.nomeAcao}`).join(", ") || null, },
+    buffs: { renderizar: true, renderizarValor: (dados) => dados.buffs?.map(buff => `Buff: ${buff.nome}`).join(", ") || null, },
+};
+
+export const renderizarObjetoDadosCaracteristicasArmas = (dados: DadosCaracteristicasArmas): string[] => {
+    return Object.entries(ConfiguracoesExibicaoDadosCaracteristicasArmas)
+        .filter(([, config]) => config.renderizar)
+        .map(([, config]) => config.renderizarValor(dados))
+        .filter((resultado) => resultado !== null) as string[];
+};

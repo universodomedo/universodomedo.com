@@ -2,6 +2,8 @@
 import style from 'Pages/Shop/style.module.css';
 
 import { useContextoArma } from 'Pages/Shop/PaginasSecundarias/Armas/contextoArma.tsx';
+
+import { renderizarObjetoDadosCaracteristicasArmas } from 'Types/classes/index.ts';
 // #endregion
 
 const page = ({ mostraCaracteristicas = false }: { mostraCaracteristicas?: boolean }) => {
@@ -30,49 +32,24 @@ const page = ({ mostraCaracteristicas = false }: { mostraCaracteristicas?: boole
                             <h2>Selecione do painel abaixo</h2>
                         </>
                     ) : (
-                        caracteristicasSelecionadas.map((caracteristicaSelecionada, index) => (
-                            <div key={index} className={style.lista_caracteristicas_selecionadas}>
-                                <div className={style.linha_dado_arma}>
-                                    <h2 className={style.nome_dado_arma}>{`+ ${caracteristicaSelecionada.nome}`}</h2>
-                                    {caracteristicaSelecionada.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas && (
-                                        <div className={style.detalhes_dados}>
-                                            {Object.entries(caracteristicaSelecionada.dadosCaracteristicaNaBase.dadosCaracteristicasArmas)
-                                                .filter(([_, value]) => value !== undefined) // Exibe apenas valores definidos
-                                                .map(([key, value]) => (
-                                                    <h2 key={key}>
-                                                        {`${formatarNomePropriedade(key)}: ${value}`}
-                                                    </h2>
-                                                ))}
-                                        </div>
-                                    )}
+                        caracteristicasSelecionadas.map((caracteristicaSelecionada, index) => {
+                            const dadosCaracteristica = renderizarObjetoDadosCaracteristicasArmas(caracteristicaSelecionada.dadosCaracteristicaNaBase!.dadosCaracteristicasArmas);
+
+                            return (
+                                <div key={index} className={style.lista_caracteristicas_selecionadas}>
+                                    <div className={style.linha_dado_arma}>
+                                        <h2 className={style.nome_dado_arma}>{`+ ${caracteristicaSelecionada.nome}`}</h2>
+
+                                        {dadosCaracteristica.map(dado => (
+                                            <span>{dado}</span>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
             )}
-
-            {/* {mostraCaracteristicas && (
-                <div className={style.dados_arma}>
-                    {caracteristicasSelecionadas.length === 0 ? (
-                        <>
-                            <h2>Nenhuma Característica Selecionada</h2>
-                            <h2>Selecione do painel abaixo</h2>
-                        </>
-                    ) : (
-                        caracteristicasSelecionadas.map((caracteristicaSelecionada, index) => (
-                            <div className={style.lista_caracteristicas_selecionadas}>
-                                <div key={index} className={style.linha_dado_arma}>
-                                    <h2 className={style.nome_dado_arma}>{`+ ${caracteristicaSelecionada.nome}`}</h2>
-                                    {caracteristicaSelecionada.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.modificadorPeso && (
-                                        <h2>Peso: {caracteristicaSelecionada.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.modificadorPeso}</h2>
-                                    )}
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
-            )} */}
         </div>
     );
 
