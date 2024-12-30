@@ -1,5 +1,5 @@
 // #region Imports
-import { AtributoPersonagem, CirculoNivelRitual, Elemento, Extremidade, NivelComponente, PatentePericia, Pericia, PericiaPatentePersonagem } from 'Types/classes/index.ts';
+import { AtributoPersonagem, CirculoNivelRitual, Elemento, Extremidade, NivelComponente, NomeItem, PatentePericia, Pericia, PericiaPatentePersonagem } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -76,6 +76,11 @@ export class Comportamentos {
     get comportamentoRequisito(): ComportamentoRequisito { return this._comportamentoRequisito!; } // sempre verificar se temComportamentoRequisito antes
     setComportamentoRequisito(...args: ConstructorParameters<typeof ComportamentoRequisito>): void { this._comportamentoRequisito = new ComportamentoRequisito(...args); }
 
+    private _comportamentoDependendeRequisito?: ComportamentoDependendeRequisito;
+    get temComportamentoDependendeRequisito(): boolean { return Boolean(this._comportamentoDependendeRequisito); }
+    get comportamentoDependendeRequisito(): ComportamentoDependendeRequisito { return this._comportamentoDependendeRequisito!; } // sempre verificar se temComportamentoDependenteRequisito antes
+    setComportamentoDependendeRequisito(...args: ConstructorParameters<typeof ComportamentoDependendeRequisito>): void { this._comportamentoDependendeRequisito = new ComportamentoDependendeRequisito(...args); }
+
     get podeSerEmpunhado(): boolean { return this.temComportamentoEmpunhavel && this.comportamentoEmpunhavel.podeSerEmpunhado; }
     get podeSerVestido(): boolean { return this.temComportamentoVestivel && this.comportamentoVestivel.podeSerVestido; }
     get podeGastarUsos(): boolean { return this.temComportamentoUtilizavel && this.comportamentoUtilizavel.usosMaximo > 0; }
@@ -85,7 +90,7 @@ export class Comportamentos {
 
     get ehComponente(): boolean { return this.temComportamentoComponente; }
 
-    get requisitoEstaCumprido(): boolean { return !this.temComportamentoRequisito || (this.temComportamentoRequisito && this.comportamentoRequisito.requisitoCumprido ); }
+    getDadosRequisito(idPericia: number): { cumprido: boolean, mensagemRequisito: string, } { return this.comportamentoRequisito.getRequisito(idPericia); }
 }
 
 export class ComportamentoUtilizavel {
@@ -180,11 +185,54 @@ export class ComportamentoRitual {
 
 export class ComportamentoRequisito {
     constructor(
-        public requisitoFuncionamento: { idPericia: number, idPatente: number }
+        public requisitos: [{ [idPericia: number]: number }]
     ) { }
 
-    get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this.requisitoFuncionamento.idPericia)!; }
-    get refPatente(): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente_pericia => patente_pericia.id === this.requisitoFuncionamento.idPatente)!; }
+    getRequisito(idPericia: number): { cumprido: boolean, mensagemRequisito: string, } {
+        const periciaRequisitada = SingletonHelper.getInstance().pericias.find(pericia => pericia.id === idPericia)!;
 
-    get requisitoCumprido(): boolean { return getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === this.refPericia.id)!.refPatente.id >= this.requisitoFuncionamento.idPatente; }
+        for (const requisito of this.requisitos) {
+            if (idPericia in requisito) {
+                const periciaPersonagemRequisitada = getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === idPericia)!;
+                const patenteRequisitada = SingletonHelper.getInstance().patentes_pericia.find(patentePericia => patentePericia.id === requisito[idPericia])!;
+
+                return {
+                    cumprido: periciaPersonagemRequisitada.refPatente.id >= requisito[idPericia],
+                    mensagemRequisito: `Você precisa ser ${patenteRequisitada.nome} em ${periciaRequisitada.nomeAbrev}`,
+                };
+            }
+        }
+
+        return { cumprido: true, mensagemRequisito: '' };
+    }
+}
+
+export class ComportamentoDependendeRequisito {
+    constructor (
+        public idPericiaDependente: number
+    ) { }
+}
+
+export class DadosGenericosItem {
+    constructor (
+        public idTipoItem: number,
+        public nome: NomeItem,
+        public peso: number,
+        public categoria: number,
+    ) { }
+};
+
+export class DadosGenericosRitual {
+    constructor (
+        public nome: string,
+    ) { }
+}
+
+export class DadosGenericosAcao {
+    constructor (
+        public nome: string,
+        public idTipoAcao: number,
+        public idCategoriaAcao: number,
+        public idMecanica?: number,
+    ) { }
 }

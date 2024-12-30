@@ -32,21 +32,24 @@ const page = ({ mostraCaracteristicas = false }: { mostraCaracteristicas?: boole
                             <h2>Selecione do painel abaixo</h2>
                         </>
                     ) : (
-                        caracteristicasSelecionadas.map((caracteristicaSelecionada, index) => {
-                            const dadosCaracteristica = renderizarObjetoDadosCaracteristicasArmas(caracteristicaSelecionada.dadosCaracteristicaNaBase!.dadosCaracteristicasArmas);
+                        <div className={style.lista_caracteristicas_selecionadas}>
+                            {caracteristicasSelecionadas.map((caracteristicaSelecionada, index) => {
+                                const dadosCaracteristica = renderizarObjetoDadosCaracteristicasArmas(caracteristicaSelecionada.dadosCaracteristicaNaBase!.dadosCaracteristicasArmas);
 
-                            return (
-                                <div key={index} className={style.lista_caracteristicas_selecionadas}>
-                                    <div className={style.linha_dado_arma}>
-                                        <h2 className={style.nome_dado_arma}>{`+ ${caracteristicaSelecionada.nome}`}</h2>
-
-                                        {dadosCaracteristica.map((dado, indexDado) => (
-                                            <span key={indexDado}>{dado}</span>
-                                        ))}
+                                return (
+                                    <div key={index} className={style.linha_caracteristica_selecionada}>
+                                        <details>
+                                            <summary>{caracteristicaSelecionada.nome}</summary>
+                                            <ul>
+                                                {dadosCaracteristica.map((dado, indexDado) => (
+                                                    <li key={indexDado}>{dado}</li>
+                                                ))}
+                                            </ul>
+                                        </details>
                                     </div>
-                                </div>
-                            );
-                        })
+                                );
+                            })}
+                        </div>
                     )}
                 </div>
             )}

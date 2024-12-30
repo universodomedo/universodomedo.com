@@ -5,7 +5,7 @@ import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
 import PaginaBaseArma from './pageBaseArma.tsx';
 import PaginaCaracteristicaArma from './pageCaracteristicaArma.tsx';
 
-import { basesArma, classificacoesArma, DadosCaracteristicasArmas, DadosItem, listaCaracteristicaArma, patentesArma, tiposArma } from 'Types/classes/index.ts';
+import { basesArma, classificacoesArma, DadosCaracteristicasArmas, DadosItem, listaCaracteristicaArma, patentesArma, subDadosAcoes, subDadosBuff, tiposArma } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -85,8 +85,10 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
             categoria: acc.categoria + (cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.modificadorCategoria || 0),
             danoMin: acc.danoMin + (cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.modificadorDanoMinimo || 0),
             danoMax: acc.danoMax + (cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.modificadorDanoMaximo || 0),
+            acoes: [...acc.acoes, ...(cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.acoes || [])],
+            buffs: [...acc.buffs, ...(cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.buffs || [])],
         }
-    }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0 });
+    }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0, acoes: [] as subDadosAcoes[], buffs: [] as subDadosBuff[] });
 
     const dadosItem: DadosItem = {
         idTipoItem: 1,
@@ -101,16 +103,23 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
                 baseSelecionada.danoMin + dadosCaracteristicasAgrupados.danoMin,
                 baseSelecionada.danoMax + dadosCaracteristicasAgrupados.danoMax,
             ],
-            dadosComportamentoRequisito: [{ idPericia: baseSelecionada.idPericiaUtilizada, idPatente: patenteDaBaseSelecionada!.idPatentePericiaRequisito }],
+            dadosComportamentoRequisito: [
+                [
+                    { [baseSelecionada.idPericiaUtilizada]: patenteDaBaseSelecionada!.idPatentePericiaRequisito }
+                ]
+            ],
         } : {},
         dadosAcoes: [{
             nomeAcao: 'Realizar Ataque',
             idTipoAcao: 2,
             idCategoriaAcao: 1,
             idMecanica: 6,
+            dadosComportamentos: {
+                dadosComportamentoDependenteRequisito: [baseSelecionada?.idPericiaUtilizada || 0],
+            },
             custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
             requisitos: [2, 8],
-        }],
+        }, ...dadosCaracteristicasAgrupados.acoes],
     };
 
     const listaDadosArma: { nome: string, valor: string }[] = [
@@ -120,6 +129,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         { nome: 'Extremidades para Empunhar', valor: `${dadosItem.dadosComportamentos.dadosComportamentoEmpunhavel?.[1]}` },
         { nome: 'Atributo Base', valor: `${SingletonHelper.getInstance().atributos.find(atributo => atributo.id === dadosItem.dadosComportamentos.dadosComportamentoAtributoPericia?.[0])?.nome}` },
         { nome: 'Perícia Base', valor: `${SingletonHelper.getInstance().pericias.find(pericia => pericia.id === dadosItem.dadosComportamentos.dadosComportamentoAtributoPericia?.[1])?.nome}` },
+        { nome: 'Ações', valor: dadosItem.dadosAcoes!.map(acao => acao.nomeAcao).join(', ') },
     ];
 
     useEffect(() => {

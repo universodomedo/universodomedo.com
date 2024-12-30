@@ -59,10 +59,10 @@ export class Personagem {
         this.pericias = this._ficha.periciasPatentes!.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente));
 
         this.rituais = this._ficha.rituais!.map(ritual =>
-            new Ritual(ritual.nomeRitual, ritual.dadosComportamentos)
+            new Ritual([ritual.nomeRitual], ritual.dadosComportamentos)
                 .adicionarAcoes(
                     ritual.dadosAcoes.map(dadosAcao => [
-                        ...classeComArgumentos(Acao, dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica),
+                        ...classeComArgumentos(Acao, [dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica], {}),
                         (acao) => {
                             acao.adicionarCustos([
                                 dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
@@ -98,56 +98,6 @@ export class Personagem {
 
         return acoesRituais.concat(this.inventario.acoesInventario()).concat(acoesHabilidades);
     }
-
-    // private obterBuffs = (): Buff[] => {
-    //     const buffsAcoes = this.acoes.reduce((acc: Buff[], acao) => {
-    //         return acc.concat(acao.buffs);
-    //     }, []);
-
-    //     return buffsAcoes.concat(this.inventario.buffsInventario()).concat(this.buffsExternos);
-    // }
-
-    // get buffsAplicados(): BuffsAplicados {
-
-    // }
-
-    // get buffsAplicados(): BuffsAplicados {
-    //     const buffs = this.obterBuffs().filter(buff => buff.ativo);
-
-    //     const idsBuffs = Array.from(
-    //         new Set(buffs.map((buff) => buff.refBuff.id))
-    //     );
-
-    //     const buffsPorId: BuffsPorId[] = [];
-    //     idsBuffs.map(idBuff => {
-    //         const buffsDesseId = buffs.filter(buff => buff.refBuff.id === idBuff);
-
-    //         const tiposBuffs = Array.from(
-    //             new Set(buffsDesseId.map(buff => buff.refTipoBuff.id))
-    //         );
-
-    //         const buffsPorTipo: BuffsPorTipo[] = [];
-    //         tiposBuffs.map(idTipoBuff => {
-    //             const buffsDesseTipo = buffsDesseId.filter(buff => buff.refTipoBuff.id === idTipoBuff);
-
-    //             const maiorBuffDesseTipo = buffsDesseTipo.reduce((maiorValor, cur) => {
-    //                 return cur.valor > maiorValor.valor ? cur : maiorValor;
-    //             }, buffsDesseTipo[0]);
-
-    //             const buffsSobreescritos = buffsDesseTipo.filter(buff => buff.id !== maiorBuffDesseTipo.id);
-
-    //             buffsPorTipo.push(new BuffsPorTipo(idTipoBuff, maiorBuffDesseTipo, buffsSobreescritos));
-    //         });
-
-    //         buffsPorId.push(new BuffsPorId(idBuff, buffsPorTipo));
-    //     });
-
-    //     return new BuffsAplicados(buffsPorId);
-    // }
-
-    // public get buffs(): Buff[] {
-    //     return this.obterBuffs().filter(buff => buff.ativo);
-    // }
 
     public onUpdate: () => void = () => { };
 

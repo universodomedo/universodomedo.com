@@ -58,7 +58,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     }))
         .adicionarAcoes([
             [
-                ...classeComArgumentos(Acao, 'Sacar Item', 1, 1, 1),
+                ...classeComArgumentos(Acao, ['Sacar Item', 1, 1, 1], {}),
                 (acao) => {
                     acao.adicionarCustos([
                         classeComArgumentos(CustoExecucao, 3, 1)
@@ -74,7 +74,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     }))
         .adicionarAcoes([
             [
-                ...classeComArgumentos(Acao, 'Guardar Item', 1, 1, 2),
+                ...classeComArgumentos(Acao, ['Guardar Item', 1, 1, 2], {}),
                 (acao) => {
                     acao.adicionarCustos([
                         classeComArgumentos(CustoExecucao, 3, 1)
@@ -90,7 +90,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     }))
         .adicionarAcoes([
             [
-                ...classeComArgumentos(Acao, 'Vestir Item', 1, 1, 4),
+                ...classeComArgumentos(Acao, ['Vestir Item', 1, 1, 4], {}),
                 (acao) => {
                     acao.adicionarCustos([
                         classeComArgumentos(CustoExecucao, 2, 1)
@@ -106,7 +106,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     }))
         .adicionarAcoes([
             [
-                ...classeComArgumentos(Acao, 'Desvestir Item', 1, 1, 5),
+                ...classeComArgumentos(Acao, ['Desvestir Item', 1, 1, 5], {}),
                 (acao) => {
                     acao.adicionarCustos([
                         classeComArgumentos(CustoExecucao, 2, 1)
@@ -173,7 +173,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         new HabilidadeAtiva('Ação Rápida', new RequisitoFicha((personagem:Personagem) => personagem.pericias.find(pericia => pericia.refPericia.id === 7)?.refPatente.id! > 0))
         .adicionarAcoes([
             [
-                ...classeComArgumentos(Acao, 'Ação Rápida', 1, 1),
+                ...classeComArgumentos(Acao, ['Ação Rápida', 1, 1], {}),
                 (acao) => {
                     acao.adicionarDificuldades([
                         classeComArgumentos(DificuldadeConsecutiva, 7, 10, 5)

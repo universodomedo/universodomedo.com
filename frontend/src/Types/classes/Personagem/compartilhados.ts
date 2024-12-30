@@ -22,10 +22,10 @@ export function novoItemPorDadosItem(dadosItem: DadosItem, adicionaDados: boolea
         }
     }
 
-    return new Item(dadosItem.idTipoItem, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria, dadosItem.dadosComportamentos)
+    return new Item([dadosItem.idTipoItem, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria], dadosItem.dadosComportamentos)
         .adicionarAcoes(
             (dadosItem.dadosAcoes || []).map(dadosAcao => [
-                ...classeComArgumentos(Acao, dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica),
+                ...classeComArgumentos(Acao, [dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica], dadosAcao.dadosComportamentos),
                 (acao) => {
                     acao.adicionarCustos([
                         dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,

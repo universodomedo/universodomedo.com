@@ -219,6 +219,16 @@
     justify-content: space-between;
 }
 
+.linha_caracteristica_selecionada {
+    text-align: justify;
+    font-size: 1.2em;
+}
+
+.linha_caracteristica_selecionada ul {
+    margin: 0 0 0 4%;
+    padding: .3vh 0;
+}
+
 .lista_caracteristicas_selecionadas {
     overflow: auto;
     flex: 1 1 0;
