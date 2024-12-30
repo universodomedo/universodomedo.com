@@ -90,6 +90,31 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         }
     }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0, acoes: [] as subDadosAcoes[], buffs: [] as subDadosBuff[] });
 
+    const acaoPadraoBase: subDadosAcoes = {
+        nomeAcao: 'Realizar Ataque',
+        idTipoAcao: 2,
+        idCategoriaAcao: 1,
+        idMecanica: 6,
+        dadosComportamentos: baseSelecionada
+            ? {
+                dadosComportamentoDependenteRequisito: [baseSelecionada.idPericiaUtilizada || 0],
+                dadosComportamentoAtributoPericia: [baseSelecionada.idAtributoUtilizado, baseSelecionada.idPericiaUtilizada],
+                dadosComportamentoAcao: [
+                    'Dano',
+                    baseSelecionada.danoMin + dadosCaracteristicasAgrupados.danoMin,
+                    baseSelecionada.danoMax + dadosCaracteristicasAgrupados.danoMax,
+                ],
+                dadosComportamentoRequisito: [
+                    [
+                        { [baseSelecionada.idPericiaUtilizada]: patenteDaBaseSelecionada!.idPatentePericiaRequisito }
+                    ]
+                ],
+            }
+            : {},
+        custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
+        requisitos: [2, 8],
+    }
+
     const dadosItem: DadosItem = {
         idTipoItem: 1,
         nomeItem: { nomeCustomizado: nomeCustomizado.trim() || undefined, nomePadrao: `${tipoDaBaseSelecionada?.nome} ${classificacaoDaBaseSelecionada?.nome} ${patenteDaBaseSelecionada?.nome}` },
@@ -97,38 +122,17 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         categoria: (baseSelecionada?.categoria || 0) + dadosCaracteristicasAgrupados.categoria,
         dadosComportamentos: baseSelecionada ? {
             dadosComportamentoEmpunhavel: [true, baseSelecionada.numeroExtremidadesUtilizadas],
-            dadosComportamentoAtributoPericia: [baseSelecionada.idAtributoUtilizado, baseSelecionada.idPericiaUtilizada],
-            dadosComportamentoAcao: [
-                'Dano',
-                baseSelecionada.danoMin + dadosCaracteristicasAgrupados.danoMin,
-                baseSelecionada.danoMax + dadosCaracteristicasAgrupados.danoMax,
-            ],
-            dadosComportamentoRequisito: [
-                [
-                    { [baseSelecionada.idPericiaUtilizada]: patenteDaBaseSelecionada!.idPatentePericiaRequisito }
-                ]
-            ],
         } : {},
-        dadosAcoes: [{
-            nomeAcao: 'Realizar Ataque',
-            idTipoAcao: 2,
-            idCategoriaAcao: 1,
-            idMecanica: 6,
-            dadosComportamentos: {
-                dadosComportamentoDependenteRequisito: [baseSelecionada?.idPericiaUtilizada || 0],
-            },
-            custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
-            requisitos: [2, 8],
-        }, ...dadosCaracteristicasAgrupados.acoes],
+        dadosAcoes: [
+            acaoPadraoBase,
+            ...dadosCaracteristicasAgrupados.acoes
+        ],
     };
 
     const listaDadosArma: { nome: string, valor: string }[] = [
         { nome: 'Peso', valor: `${dadosItem.peso}` },
         { nome: 'Categoria', valor: `${dadosItem.categoria}` },
-        { nome: 'Dano Base', valor: `${dadosItem.dadosComportamentos.dadosComportamentoAcao?.[1]} - ${dadosItem.dadosComportamentos.dadosComportamentoAcao?.[2]}` },
         { nome: 'Extremidades para Empunhar', valor: `${dadosItem.dadosComportamentos.dadosComportamentoEmpunhavel?.[1]}` },
-        { nome: 'Atributo Base', valor: `${SingletonHelper.getInstance().atributos.find(atributo => atributo.id === dadosItem.dadosComportamentos.dadosComportamentoAtributoPericia?.[0])?.nome}` },
-        { nome: 'Perícia Base', valor: `${SingletonHelper.getInstance().pericias.find(pericia => pericia.id === dadosItem.dadosComportamentos.dadosComportamentoAtributoPericia?.[1])?.nome}` },
         { nome: 'Ações', valor: dadosItem.dadosAcoes!.map(acao => acao.nomeAcao).join(', ') },
     ];
 

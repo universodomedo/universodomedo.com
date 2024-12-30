@@ -4,7 +4,6 @@ import LP from "Pages/LP/page.tsx";
 import Sessions from "Pages/Sessions/page.tsx";
 import SessaoAovivo from "Pages/SessaoAovivo/page.tsx"
 import Login from "Pages/Login/page.tsx";
-import Teste from "Pages/Teste/page.tsx";
 
 import LayoutLP from "Layouts/LayoutLP/layout.tsx";
 import LayoutInterno from "Layouts/LayoutInterno/layout.tsx";

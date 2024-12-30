@@ -4,6 +4,10 @@ body {
     overflow: hidden;
 }
 
+button {
+    cursor: pointer;
+}
+
 .app-container {
     display: flex;
     flex-direction: column;
