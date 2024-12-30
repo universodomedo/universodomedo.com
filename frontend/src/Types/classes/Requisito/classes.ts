@@ -81,8 +81,8 @@ export class RequisitoAlgumItemVestido extends Requisito {
 }
 
 export class RequisitoPatentePericiaItem extends Requisito {
-    get requisitoCumprido(): boolean { return this.refAcao?.comportamentos.temComportamentoDependendeRequisito ? this.refAcao!.refPai.comportamentos.getDadosRequisito(this.refAcao?.comportamentos.comportamentoDependendeRequisito.idPericiaDependente!).cumprido : true; }
-    get descricaoRequisito(): string { return this.refAcao?.comportamentos.temComportamentoDependendeRequisito ? this.refAcao!.refPai.comportamentos.getDadosRequisito(this.refAcao?.comportamentos.comportamentoDependendeRequisito.idPericiaDependente!).mensagemRequisito : ''; }
+    get requisitoCumprido(): boolean { return this.refAcao?.comportamentos.requisitosCumpridos!; }
+    get descricaoRequisito(): string { return this.refAcao?.comportamentos.mensagemRequisitos!; }
 }
 
 export class TipoRequisito {

@@ -20,7 +20,7 @@ interface ContextoArmaProps {
     caracteristicasDisponiveis: { id: number; nome: string; descricao: string; dadosCaracteristicaNaBase?: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; } }[];
     alternaCaracteristicaSelecionada: (idCaracteristica: number) => void;
     caracteristicasSelecionadas: { id: number; nome: string; descricao: string; dadosCaracteristicaNaBase?: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; } }[];
-    listaDadosArma: { nome: string, valor: string }[];
+    listaDadosArma: { nome: string, valor?: string, textoGrande?: boolean }[];
     atualizaNomeCustomizado: (nomeCustomizado: string) => void;
 }
 
@@ -91,13 +91,12 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
     }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0, acoes: [] as subDadosAcoes[], buffs: [] as subDadosBuff[] });
 
     const acaoPadraoBase: subDadosAcoes = {
-        nomeAcao: 'Realizar Ataque',
+        nomeAcao: 'Ataque Padrão',
         idTipoAcao: 2,
         idCategoriaAcao: 1,
         idMecanica: 6,
         dadosComportamentos: baseSelecionada
             ? {
-                dadosComportamentoDependenteRequisito: [baseSelecionada.idPericiaUtilizada || 0],
                 dadosComportamentoAtributoPericia: [baseSelecionada.idAtributoUtilizado, baseSelecionada.idPericiaUtilizada],
                 dadosComportamentoAcao: [
                     'Dano',
@@ -105,9 +104,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
                     baseSelecionada.danoMax + dadosCaracteristicasAgrupados.danoMax,
                 ],
                 dadosComportamentoRequisito: [
-                    [
-                        { [baseSelecionada.idPericiaUtilizada]: patenteDaBaseSelecionada!.idPatentePericiaRequisito }
-                    ]
+                    [baseSelecionada.idPericiaUtilizada, patenteDaBaseSelecionada!.idPatentePericiaRequisito],
                 ],
             }
             : {},
@@ -129,11 +126,14 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         ],
     };
 
-    const listaDadosArma: { nome: string, valor: string }[] = [
+    const listaDadosArma: { nome: string, valor?: string, textoGrande?: boolean }[] = [
         { nome: 'Peso', valor: `${dadosItem.peso}` },
         { nome: 'Categoria', valor: `${dadosItem.categoria}` },
         { nome: 'Extremidades para Empunhar', valor: `${dadosItem.dadosComportamentos.dadosComportamentoEmpunhavel?.[1]}` },
-        { nome: 'Ações', valor: dadosItem.dadosAcoes!.map(acao => acao.nomeAcao).join(', ') },
+        { nome: 'Ações', textoGrande: true },
+        ...dadosItem.dadosAcoes!.map((acao: { nomeAcao: string }) => (
+            { nome: acao.nomeAcao, }
+        )),
     ];
 
     useEffect(() => {

@@ -94,7 +94,7 @@
     flex-direction: column;
     align-items: center;
     gap: 2vh;
-    flex: 1;
+    flex: 1 0 0;
 }
 
 .opcao_item {
@@ -159,6 +159,7 @@
     flex-direction: row;
     justify-content: space-evenly;
     width: 100%;
+    flex: 0 0 0;
 }
 
 .opcoes_arma {
@@ -197,6 +198,12 @@
     flex-direction: row;
     width: 80%;
     justify-content: space-evenly;
+    flex: 1 0 0;
+    overflow: hidden;
+}
+
+.visualizador_sem_crescer {
+    flex: 0 0 auto;
 }
 
 .dados_arma {
@@ -208,15 +215,26 @@
     padding: .6vw 1vh;
     background-color: rgba(100, 100, 100, 0.2);
     box-shadow: 0 .6vh 10px rgba(0, 0, 0, 0.5);
+    overflow: auto;
 }
 
 .dados_arma h2 {
     font-size: 1.2em;
 }
 
-.linha_dado_arma {
+.linha_nome_e_valor {
     display: flex;
     justify-content: space-between;
+}
+
+.linha_titulo {
+    display: flex;
+    font-size: 1.1em;
+}
+
+.texto_grande {
+    margin: .7vh 0;
+    font-size: 1.4em;
 }
 
 .linha_caracteristica_selecionada {
@@ -244,6 +262,7 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     width: 80%;
+    flex: 1;
 }
 
 .painel_caracteristicas p {

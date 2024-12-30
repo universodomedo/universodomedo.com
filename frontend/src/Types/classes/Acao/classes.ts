@@ -35,7 +35,7 @@ export class Acao {
         this.dados = new DadosGenericosAcao(...dadosGenericosAcao);
 
         this.comportamentos = new Comportamentos();
-        if (dadosComportamentos.dadosComportamentoDependenteRequisito !== undefined) this.comportamentos.setComportamentoDependendeRequisito(...dadosComportamentos.dadosComportamentoDependenteRequisito);
+        if (dadosComportamentos.dadosComportamentoRequisito !== undefined) this.comportamentos.setComportamentoRequisito(...dadosComportamentos.dadosComportamentoRequisito);
     }
 
     get refPai(): Ritual | Item | Habilidade { return this._refPai!; }

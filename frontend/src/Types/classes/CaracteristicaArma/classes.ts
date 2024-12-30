@@ -576,4 +576,22 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
         descricao: '',
         basesArma: [],
     },
+    {
+        id: 78,
+        nome: 'Teste', // ataque corpo-a-corpo
+        descricao: 'Teste Ação qualquer (excluir)',
+        basesArma: [{ idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 0, dadosCaracteristicasArmas: { acoes: [ {
+            nomeAcao: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, dadosComportamentos: {
+                dadosComportamentoAtributoPericia: [1, 5],
+                dadosComportamentoAcao: [
+                    'Dano',
+                    3,
+                    6,
+                ],
+                dadosComportamentoRequisito: [
+                    [5,2],
+                ],
+            }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2, 8],
+        } ] } } }],
+    },
 ];

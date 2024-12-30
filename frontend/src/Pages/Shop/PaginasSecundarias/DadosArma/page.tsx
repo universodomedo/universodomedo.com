@@ -10,27 +10,38 @@ const page = ({ mostraCaracteristicas = false }: { mostraCaracteristicas?: boole
     const { idBaseArmaSelecionada, listaDadosArma, caracteristicasSelecionadas } = useContextoArma();
 
     return (
-        <div className={style.visualizador_arma}>
+        <div className={`${style.visualizador_arma} ${!mostraCaracteristicas ? style.visualizador_sem_crescer : ''}`}>
             {idBaseArmaSelecionada > 0 && (
                 <div className={style.dados_arma}>
-                    {listaDadosArma.map((dadosArma, index) => (
-                        <div key={index} className={style.linha_dado_arma}>
-                            <span className={style.nome_dado_arma}>{dadosArma.nome}</span>
-                            <span className={style.valor_dado_arma}>{dadosArma.valor}</span>
-                        </div>
-                    ))}
+                    {listaDadosArma.map((dadosArma, index) => {
+                        if (dadosArma.valor !== undefined) {
+                            return (
+                                <div key={index} className={style.linha_nome_e_valor}>
+                                    <span className={style.nome_dado_arma}>{dadosArma.nome}</span>
+                                    <span className={style.valor_dado_arma}>{dadosArma.valor}</span>
+                                </div>
+                            );
+                        } else {
+                            return (
+                                <div key={index} className={`${style.linha_titulo} ${dadosArma.textoGrande ? style.texto_grande : ''}`}>
+                                    <span className={style.titulo_dado_arma}>{dadosArma.nome}</span>
+                                </div>
+                            );
+                        }
+                    })}
                 </div>
             )}
 
             {mostraCaracteristicas && (
                 <div className={style.dados_arma}>
+                    <h2>Características Selecionadas</h2>
                     {caracteristicasSelecionadas.length === 0 ? (
                         <>
-                            <h2>Nenhuma Característica Selecionada</h2>
                             <h2>Selecione do painel abaixo</h2>
                         </>
                     ) : (
                         <div className={style.lista_caracteristicas_selecionadas}>
+                            <h2>Dados da Arma</h2>
                             {caracteristicasSelecionadas.map((caracteristicaSelecionada, index) => {
                                 const dadosCaracteristica = renderizarObjetoDadosCaracteristicasArmas(caracteristicaSelecionada.dadosCaracteristicaNaBase!.dadosCaracteristicasArmas);
 

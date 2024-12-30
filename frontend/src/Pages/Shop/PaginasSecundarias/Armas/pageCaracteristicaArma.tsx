@@ -21,10 +21,10 @@ const page = () => {
                     const jaEstaSelecionada = caracteristicasSelecionadas.some(carac => carac.id === caracteristica.id);
 
                     return (
-                        <div key={index} className={`${style.caracteristica_individual} ${jaEstaSelecionada && style.caracteristica_selecionada}`} onClick={(jaEstaSelecionada || pontosSuficientes) ? () => alternaCaracteristicaSelecionada(caracteristica.id) : undefined }>
+                        <div key={index} className={`${style.caracteristica_individual} ${jaEstaSelecionada ? style.caracteristica_selecionada : ''}`} onClick={(jaEstaSelecionada || pontosSuficientes) ? () => alternaCaracteristicaSelecionada(caracteristica.id) : undefined }>
                             <h2>{caracteristica.nome}</h2>
                             <p className={style.descricao_caracteristica}>{caracteristica.descricao}</p>
-                            <p className={` ${style.custo_caracteristica} ${!pontosSuficientes && !jaEstaSelecionada && style.pontos_insuficientes}`}>{`Custa ${caracteristica.dadosCaracteristicaNaBase?.custoCaracteristica} Pontos de Característica`}</p>
+                            <p className={` ${style.custo_caracteristica} ${(!pontosSuficientes && !jaEstaSelecionada) ? style.pontos_insuficientes : ''}`}>{`Custa ${caracteristica.dadosCaracteristicaNaBase?.custoCaracteristica} Pontos de Característica`}</p>
                         </div>
                     );
                 })}

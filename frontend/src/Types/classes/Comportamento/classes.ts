@@ -7,13 +7,13 @@ import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/Embrul
 
 export class ComportamentosAcao {
     // precisaMunica
-        // nomeMunicao
-        // usosMunicao
+    // nomeMunicao
+    // usosMunicao
 }
 
 export class ComportamentosBuff {
     private _comportamentoBuffAtivo?: ComportamentoBuffAtivo;
-    get temComportamentoBuffAtivo(): boolean { return Boolean(this._comportamentoBuffAtivo); } 
+    get temComportamentoBuffAtivo(): boolean { return Boolean(this._comportamentoBuffAtivo); }
     setComportamentoBuffAtivo(...args: ConstructorParameters<typeof ComportamentoBuffAtivo>): void { this._comportamentoBuffAtivo = new ComportamentoBuffAtivo(...args); }
 
     private _comportamentoPassivo?: ComportamentoBuffPassivo;
@@ -74,12 +74,7 @@ export class Comportamentos {
     private _comportamentoRequisito?: ComportamentoRequisito;
     get temComportamentoRequisito(): boolean { return Boolean(this._comportamentoRequisito); }
     get comportamentoRequisito(): ComportamentoRequisito { return this._comportamentoRequisito!; } // sempre verificar se temComportamentoRequisito antes
-    setComportamentoRequisito(...args: ConstructorParameters<typeof ComportamentoRequisito>): void { this._comportamentoRequisito = new ComportamentoRequisito(...args); }
-
-    private _comportamentoDependendeRequisito?: ComportamentoDependendeRequisito;
-    get temComportamentoDependendeRequisito(): boolean { return Boolean(this._comportamentoDependendeRequisito); }
-    get comportamentoDependendeRequisito(): ComportamentoDependendeRequisito { return this._comportamentoDependendeRequisito!; } // sempre verificar se temComportamentoDependenteRequisito antes
-    setComportamentoDependendeRequisito(...args: ConstructorParameters<typeof ComportamentoDependendeRequisito>): void { this._comportamentoDependendeRequisito = new ComportamentoDependendeRequisito(...args); }
+    setComportamentoRequisito(...args: ConstructorParameters<typeof RequisitoUso>[]): void { this._comportamentoRequisito = new ComportamentoRequisito(args); }
 
     get podeSerEmpunhado(): boolean { return this.temComportamentoEmpunhavel && this.comportamentoEmpunhavel.podeSerEmpunhado; }
     get podeSerVestido(): boolean { return this.temComportamentoVestivel && this.comportamentoVestivel.podeSerVestido; }
@@ -90,7 +85,8 @@ export class Comportamentos {
 
     get ehComponente(): boolean { return this.temComportamentoComponente; }
 
-    getDadosRequisito(idPericia: number): { cumprido: boolean, mensagemRequisito: string, } { return this.comportamentoRequisito.getRequisito(idPericia); }
+    get mensagemRequisitos(): string { return this.temComportamentoRequisito ? this.comportamentoRequisito.mensagemRequisitos : ''; }
+    get requisitosCumpridos(): boolean { return !this.temComportamentoRequisito || (this.temComportamentoRequisito && this.comportamentoRequisito.requisitosCumprido); }
 }
 
 export class ComportamentoUtilizavel {
@@ -152,7 +148,7 @@ export class ComportamentoComponente {
 }
 
 export class ComportamentoAcao {
-    constructor (
+    constructor(
         public tipo: 'Dano' | 'Cura',
         public valorMin: number,
         public valorMax: number,
@@ -184,37 +180,33 @@ export class ComportamentoRitual {
 }
 
 export class ComportamentoRequisito {
-    constructor(
-        public requisitos: [{ [idPericia: number]: number }]
-    ) { }
+    public requisitos: RequisitoUso[];
 
-    getRequisito(idPericia: number): { cumprido: boolean, mensagemRequisito: string, } {
-        const periciaRequisitada = SingletonHelper.getInstance().pericias.find(pericia => pericia.id === idPericia)!;
-
-        for (const requisito of this.requisitos) {
-            if (idPericia in requisito) {
-                const periciaPersonagemRequisitada = getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === idPericia)!;
-                const patenteRequisitada = SingletonHelper.getInstance().patentes_pericia.find(patentePericia => patentePericia.id === requisito[idPericia])!;
-
-                return {
-                    cumprido: periciaPersonagemRequisitada.refPatente.id >= requisito[idPericia],
-                    mensagemRequisito: `Você precisa ser ${patenteRequisitada.nome} em ${periciaRequisitada.nomeAbrev}`,
-                };
-            }
-        }
-
-        return { cumprido: true, mensagemRequisito: '' };
+    constructor (
+        dadosRequisitos: ConstructorParameters<typeof RequisitoUso>[]
+    ) {
+        this.requisitos = dadosRequisitos.map(dadoRequisito => new RequisitoUso(...dadoRequisito));
     }
+
+    get requisitosCumprido(): boolean { return this.requisitos.every(requisito => requisito.requisitoCumprido); }
+    get mensagemRequisitos(): string { return this.requisitos.length > 0 ? `Você precisa ser ${this.requisitos.map(requisito => requisito.mensagemRequisito).join(' e ')}` : ''; }
 }
 
-export class ComportamentoDependendeRequisito {
+export class RequisitoUso {
     constructor (
-        public idPericiaDependente: number
+        private _idPericia: number,
+        private _idPatentePericia: number,
     ) { }
+
+    get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this._idPericia)!; }
+    get refPatente(): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente_pericia => patente_pericia.id === this._idPatentePericia)!; }
+    
+    get requisitoCumprido(): boolean { return getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === this.refPericia.id)!.refPatente.id >= this.refPatente.id; }
+    get mensagemRequisito(): string { return `${this.refPatente.nome} em ${this.refPericia.nomeAbrev}`; }
 }
 
 export class DadosGenericosItem {
-    constructor (
+    constructor(
         public idTipoItem: number,
         public nome: NomeItem,
         public peso: number,
@@ -223,13 +215,13 @@ export class DadosGenericosItem {
 };
 
 export class DadosGenericosRitual {
-    constructor (
+    constructor(
         public nome: string,
     ) { }
 }
 
 export class DadosGenericosAcao {
-    constructor (
+    constructor(
         public nome: string,
         public idTipoAcao: number,
         public idCategoriaAcao: number,

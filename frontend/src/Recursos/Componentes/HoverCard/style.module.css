@@ -1,6 +1,3 @@
-@import "@radix-ui/colors/black-alpha.css";
-@import "@radix-ui/colors/violet.css";
-
 .tooltip_gatilho {
 	position: relative;
 	transition: transform 0.2s ease-in-out;
