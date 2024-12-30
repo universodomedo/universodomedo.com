@@ -1,5 +1,5 @@
 // #region Imports
-import { adicionarAcoesUtil, Acao, FiltroProps, FiltroPropsItems, OpcoesFiltro, PaletaCores, Comportamentos, DadosComportamentos, DadosGenericosRitual } from 'Types/classes/index.ts';
+import { adicionarAcoesUtil, Acao, FiltroProps, FiltroPropsItems, OpcoesFiltro, PaletaCores, EmbrulhoComportamentoRitual, DadosComportamentos, DadosGenericosRitual } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -9,7 +9,7 @@ export class Ritual {
     public acoes: Acao[] = [];
 
     public dados: DadosGenericosRitual;
-    public comportamentos: Comportamentos;
+    public comportamentos: EmbrulhoComportamentoRitual = new EmbrulhoComportamentoRitual();;
 
     public svg = `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Zz4KICAgIDx0aXRsZT5MYXllciAxPC90aXRsZT4KICAgIDx0ZXh0IGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMCIgeD0iMzQxIiB5PSIyOTEiIGlkPSJzdmdfMiIgc3Ryb2tlLXdpZHRoPSIwIiBmb250LXNpemU9IjI0IiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIHhtbDpzcGFjZT0icHJlc2VydmUiPlRlc3RlIDE8L3RleHQ+CiAgICA8dGV4dCBmaWxsPSIjMDAwMDAwIiBzdHJva2U9IiMwMDAiIHN0cm9rZS13aWR0aD0iMCIgeD0iNjMiIHk9IjExMCIgaWQ9InN2Z18zIiBmb250LXNpemU9IjE0MCIgZm9udC1mYW1pbHk9Ik5vdG8gU2FucyBKUCIgdGV4dC1hbmNob3I9InN0YXJ0IiB4bWw6c3BhY2U9InByZXNlcnZlIj5SPC90ZXh0PgogIDwvZz4KPC9zdmc+`;
 
@@ -21,7 +21,6 @@ export class Ritual {
 
         this.dados = new DadosGenericosRitual(...dadosGenericosRitual);
 
-        this.comportamentos = new Comportamentos();
         if (dadosComportamentos.dadosComportamentoRitual !== undefined) this.comportamentos.setComportamentoRitual(...dadosComportamentos.dadosComportamentoRitual);
     }
 

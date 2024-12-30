@@ -484,7 +484,15 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
         id: 62,
         nome: 'Coronha', // ataque corpo-a-corpo
         descricao: 'Teste Coronha (mudar depois)',
-        basesArma: [{ idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 0, dadosCaracteristicasArmas: { acoes: [ { nomeAcao: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, dadosComportamentos: {}, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2, 8], } ] } } }],
+        basesArma: [{ idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 0, dadosCaracteristicasArmas: { acoes: [ {
+            nomeAcao: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, dadosComportamentos: {
+                dadosComportamentoAcao: [
+                    'Dano',
+                    1,
+                    4,
+                    { testePericia: { idAtributoTeste:2, idPericiaTeste: 8 } }
+                ],
+            }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2], } ] } } }],
     },
     {
         id: 63,
@@ -582,16 +590,16 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
         descricao: 'Teste Ação qualquer (excluir)',
         basesArma: [{ idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 0, dadosCaracteristicasArmas: { acoes: [ {
             nomeAcao: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, dadosComportamentos: {
-                dadosComportamentoAtributoPericia: [1, 5],
                 dadosComportamentoAcao: [
                     'Dano',
                     3,
                     6,
+                    { testePericia: { idAtributoTeste:1, idPericiaTeste: 5 } }
                 ],
                 dadosComportamentoRequisito: [
                     [5,2],
                 ],
-            }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2, 8],
+            }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2],
         } ] } } }],
     },
 ];

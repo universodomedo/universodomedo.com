@@ -39,6 +39,9 @@ export function novoItemPorDadosItem(dadosItem: DadosItem, adicionaDados: boolea
                             ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
                         ])
                     );
+
+                    // logica temporaria para sempre que uma acao tiver comportamentoRequisito, incluir o RequisitoPericia
+                    if (acao.comportamentos.temComportamentoRequisito && !dadosAcao.requisitos.includes(8)) dadosAcao.requisitos.push(8);
                     acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
                 }
             ])

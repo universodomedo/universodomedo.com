@@ -3,6 +3,7 @@ import { Acao, GastaCustoProps } from 'Types/classes/index.ts';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 import { ExecutaVariacaoGenerica } from 'Recursos/Ficha/Variacao';
+import { ExecutaTestePericiaGenerico } from 'Recursos/Ficha/Procedimentos';
 
 import { LoggerHelper } from 'Types/classes_estaticas.tsx';
 import { toast } from 'react-toastify';
@@ -53,23 +54,29 @@ export const logicaMecanicas: { [key: number]: (valoresSelecionados: GastaCustoP
     6: (valoresSelecionados, acao) => {
         // const alvoSelecionado = valoresSelecionados['alvo']
 
-        const resultadoVariacao = ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [{ valorMaximo: acao.refPai.comportamentos.comportamentoAcao.valorMax, variancia: acao.refPai.comportamentos.comportamentoAcao.variancia }] })
+        const resultadoVariacao = ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [{ valorMaximo: acao.comportamentos.comportamentoAcao.valorMax, variancia: acao.comportamentos.comportamentoAcao.variancia }] })
 
         const valor = resultadoVariacao.reduce((cur, acc) => { return cur + acc.valorFinal }, 0);
 
         let resumo = '';
-        if (acao.refPai.comportamentos.comportamentoAcao.tipo === 'Dano') {
+        if (acao.comportamentos.comportamentoAcao.tipo === 'Dano') {
             resumo = `${valor} de dano`;
         } else {
             resumo = `Recupera ${valor} P.V.`;
         }
 
-        if (acao.refPai.comportamentos.comportamentoAcao.precisaTestePericia)
-            acao.refPai.comportamentos.comportamentoAtributoPericia.refPericiaUtilizadaArma.rodarTeste();
+        if (acao.comportamentos.comportamentoAcao.precisaTestePericia) {
+            const { idAtributoTeste, idPericiaTeste } = acao.comportamentos.comportamentoAcao.atributoEPericiaTeste;
 
-        LoggerHelper.getInstance().adicionaMensagem(resumo);
+            const atributoPersonagem = getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === idAtributoTeste)!;
+            const periciaPersonagem = getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === idPericiaTeste)!;
+
+            ExecutaTestePericiaGenerico(atributoPersonagem, periciaPersonagem);
+        }
+
+        // LoggerHelper.getInstance().adicionaMensagem(resumo);
         toast(resumo);
-    
+
         resultadoVariacao.map(variacao => {
             LoggerHelper.getInstance().adicionaMensagem(`Dano de ${variacao.varianciaDaAcao.valorMaximo - variacao.varianciaDaAcao.variancia} a ${variacao.varianciaDaAcao.valorMaximo}: ${variacao.valorFinal}`, true);
             LoggerHelper.getInstance().adicionaMensagem(`Aproveitamento de ${variacao.variacaoAleatoria.sucessoDessaVariancia}%`);

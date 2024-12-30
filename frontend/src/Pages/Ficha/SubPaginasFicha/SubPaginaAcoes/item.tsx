@@ -1,6 +1,6 @@
 // #region Imports
 import style from 'Recursos/EstilizacaoCompartilhada/detalhes_popover.module.css';
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 import { Acao, GastaCustoProps } from 'Types/classes/index.ts';
 import { useContextoAbaAcoes } from './contexto.tsx';
@@ -40,7 +40,7 @@ const page = ({ acao }: { acao: Acao }) => {
                 <div className={style.acoes}>
                     {!acao.bloqueada && (
                         <>
-                            <Modal open={openExec} onOpenChange={(isOpen) => {setOpenExec(isOpen); if (!isOpen) close();}}>
+                            <Modal open={openExec} onOpenChange={(isOpen) => { setOpenExec(isOpen); if (!isOpen) close(); }}>
                                 <Modal.Button>
                                     Executar
                                 </Modal.Button>
@@ -51,8 +51,8 @@ const page = ({ acao }: { acao: Acao }) => {
                             </Modal>
                         </>
                     )}
-                    <Modal open={openDetalhes} onOpenChange={(isOpen) => {setOpenDetalhes(isOpen); if (!isOpen) close();}}>
-                    {/* <Modal open={openDetalhes} onOpenChange={setOpenDetalhes}> */}
+                    <Modal open={openDetalhes} onOpenChange={(isOpen) => { setOpenDetalhes(isOpen); if (!isOpen) close(); }}>
+                        {/* <Modal open={openDetalhes} onOpenChange={setOpenDetalhes}> */}
                         <Modal.Button>
                             Detalhes
                         </Modal.Button>
@@ -68,6 +68,8 @@ const page = ({ acao }: { acao: Acao }) => {
 
     const ConteudoExecucao = ({ fechaModal }: { fechaModal: () => void }) => {
         const [valoresSelecionados, setValoresSelecionados] = useState<GastaCustoProps>({});
+        const firstSelectRef = useRef<HTMLSelectElement | null>(null);
+        const buttonRef = useRef<HTMLButtonElement | null>(null);
 
         const handleSelectChange = (key: string, value: number) => {
             setValoresSelecionados((prevState) => ({
@@ -75,29 +77,27 @@ const page = ({ acao }: { acao: Acao }) => {
                 [key]: value,
             }));
         };
-    
-        // useEffect(() => {
-        //     const valoresIniciais: GastaCustoProps = {};
-    
-        //     acao.opcoesExecucoes.forEach((opcoesExecucao) => {
-        //         const opcoesDisponiveis = opcoesExecucao.opcoes;
-        //         if (opcoesDisponiveis.length > 0) {
-        //             valoresIniciais[opcoesExecucao.key] = opcoesDisponiveis[0].key;
-        //         }
-        //     });
-    
-        //     setValoresSelecionados(valoresIniciais);
-        // }, []);
+
+        useEffect(() => {
+            if (firstSelectRef.current) firstSelectRef.current.focus();
+        }, []);
+
+        const handleKeyPress = (event: React.KeyboardEvent<HTMLSelectElement>) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                buttonRef.current?.click();
+            }
+        };
 
         return (
             <>
-                {acao.opcoesExecucoes.length > 0 && acao.opcoesExecucoes.map((opcoesExecucao) => {
+                {acao.opcoesExecucoes.length > 0 && acao.opcoesExecucoes.map((opcoesExecucao, index) => {
                     const key = opcoesExecucao.key;
-    
+
                     return (
                         <div key={key} className={style.opcao_acao}>
                             <h2>{opcoesExecucao.displayName}</h2>
-                            <select value={valoresSelecionados[key] || 0} onChange={(e) => handleSelectChange(key, Number(e.target.value))}>
+                            <select ref={index === 0 ? firstSelectRef : null} value={valoresSelecionados[key] || 0} onChange={(e) => handleSelectChange(key, Number(e.target.value))} onKeyDown={handleKeyPress}>
                                 <option value="0" className={style.opcao_acao_padrao} disabled>Selecione a Opção...</option>
                                 {opcoesExecucao.opcoes.map(opcao => (
                                     <option key={opcao.key} value={opcao.key} disabled={opcao.disabled}>{opcao.value}</option>
@@ -108,9 +108,11 @@ const page = ({ acao }: { acao: Acao }) => {
                 })}
 
                 <button
+                    ref={buttonRef}
                     className={style.botao_principal}
-                    onClick={() => {acao.executaComOpcoes(valoresSelecionados); setOpenExec(false); fechaModal();}}
-                    disabled={Object.values(valoresSelecionados).some(valor => valor === undefined)}
+                    onClick={() => { acao.executaComOpcoes(valoresSelecionados); setOpenExec(false); fechaModal(); }}
+                    disabled={acao.opcoesExecucoes.length != Object.keys(valoresSelecionados).length}
+                    // disabled={Object.values(valoresSelecionados).some(valor => valor === 0 || valor === undefined)}
                 >
                     Executar
                 </button>
@@ -119,15 +121,29 @@ const page = ({ acao }: { acao: Acao }) => {
     }
 
     const ConteudoDetalhes = () => {
+        const textoDano = acao.comportamentos.temComportamentoAcao
+            ? `${acao.comportamentos.comportamentoAcao.valorMin} a ${acao.comportamentos.comportamentoAcao.valorMax} de ${acao.comportamentos.comportamentoAcao.tipo}`
+            : '';
+
+        const textoTestePericia = acao.comportamentos.temComportamentoAcao && acao.comportamentos.comportamentoAcao.precisaTestePericia
+            ? `Depende de um Teste de ${acao.comportamentos.comportamentoAcao.refPericia?.nomeAbrev} com ${acao.comportamentos.comportamentoAcao.refAtributo?.nomeAbrev}`
+            : '';
+
         return (
             <>
+                {(textoDano || textoTestePericia) && (
+                    <div className={style.bloco_texto}>
+                        {textoDano && (<p className={style.texto}>{textoDano}</p>)}
+                        {textoTestePericia && (<p className={style.texto}>{textoTestePericia}</p>)}
+                    </div>
+                )}
                 <BlocoTexto lista={acao.custos} titulo={'Custos'} corTexto={(custo) => !custo.podeSerPago ? '#FF0000' : ''} descricao={(custo) => custo.descricaoCusto} />
                 <BlocoTexto lista={acao.requisitos} titulo={'Requisitos'} corTexto={(requisito) => !requisito.requisitoCumprido ? '#FF0000' : ''} descricao={(custo) => custo.descricaoRequisito} />
                 <BlocoTexto lista={acao.dificuldades} titulo={'Dificuldades'} corTexto={(dificuldade) => false ? '#FF0000' : '#F49A34'} descricao={(custo) => custo.descricaoDificuldade} />
             </>
         );
     }
-    
+
     return (
         <PopoverComponente trigger={icone} content={conteudo} />
     );
@@ -137,7 +153,7 @@ export default page;
 
 
 
-const BlocoTexto = ({ lista, titulo, corTexto, descricao }: { lista: any[]; titulo: string; corTexto: (item: any) => string; descricao: (item: any) => string;}) => {
+const BlocoTexto = ({ lista, titulo, corTexto, descricao }: { lista: any[]; titulo: string; corTexto: (item: any) => string; descricao: (item: any) => string; }) => {
     if (lista.length === 0) return null;
 
     return (

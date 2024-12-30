@@ -1,11 +1,9 @@
 // #region Imports
 import { Atributo, AtributoPersonagem } from 'Types/classes/index.ts';
-import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
-
-import { ExecutaTestePericia, VariacaoAleatoriaFinal } from 'Recursos/Ficha/Variacao.ts';
-import { toast } from 'react-toastify';
+import { ExecutaTestePericiaGenerico } from 'Recursos/Ficha/Procedimentos';
 // #endregion
 
 export class Pericia {
@@ -47,53 +45,6 @@ export class PericiaPatentePersonagem {
     get valorTotal(): number { return this.valorBonusPatente + this.valorBonus  }
 
     realizarTeste = () => {
-        this.rodarTeste();
-
-        LoggerHelper.getInstance().saveLog();
-    }
-
-    rodarTeste = () => {
-        const resultadoVariacao = this.obterResultadoVariacao();
-
-        const resumoTeste = `Teste ${this.refPericia.nomeAbrev}: [${resultadoVariacao.resultado + this.valorTotal}]`;
-
-        LoggerHelper.getInstance().adicionaMensagem(resumoTeste);
-        toast(resumoTeste);
-
-        LoggerHelper.getInstance().adicionaMensagem(`${this.refAtributoPersonagem.valorTotal} ${this.refAtributoPersonagem.refAtributo.nomeAbrev}: [${resultadoVariacao.variacao.map(item => item.valorFinal).join(', ')}]`);
-
-        if (this.valorTotal > 0)
-            LoggerHelper.getInstance().adicionaMensagem(`+${this.valorTotal} Bônus`);
-        LoggerHelper.getInstance().fechaNivelLogMensagem();
-        // resultadoVariacao.map(variacao => {
-
-        // });
-        // ExecutaAcaoComVariancia({ valorMaximo: 20, variancia: 19});
-        // this.rodarTeste();
-        // LoggerHelper.getInstance().adicionaMensagem(`2 Agilidade: [14, 20]`);
-        // LoggerHelper.getInstance().adicionaMensagem(`+5 Bônus: 25`);
-
-        
-
-        // LoggerHelper.getInstance().saveLog();
-        // const resultadoTeste = TestePericia(this.refAtributoPersonagem.valorTotal, this.valorTotal);
-
-        // toast(`Teste ${this.refPericia.nomeAbrev}: [${resultadoTeste}]`);
-        // LoggerHelper.getInstance().adicionaMensagem(`Teste ${this.refPericia.nomeAbrev}: [${resultadoTeste}]`);
-    }
-
-    obterResultadoVariacao(): {variacao: VariacaoAleatoriaFinal[], resultado: number} {
-        //logica provisoria
-        const numeroDados = (this.refAtributoPersonagem.valorTotal > 0 ? this.refAtributoPersonagem.valorTotal : 2 + Math.abs(this.refAtributoPersonagem.valorTotal));
-
-        const variacaoAleatoriaFinal = ExecutaTestePericia({listaVarianciasDaAcao: Array.from({ length: numeroDados },() => ({ valorMaximo: 20, variancia: 19 }))});
-
-        //logica provisoria
-        const valorDoTeste = (this.refAtributoPersonagem.valorTotal > 0
-            ? variacaoAleatoriaFinal.reduce((cur, acc) => acc.valorFinal > cur ? acc.valorFinal : cur, 0)
-            : variacaoAleatoriaFinal.reduce((cur, acc) => acc.valorFinal < cur ? acc.valorFinal : cur, 20)
-        );
-
-        return { variacao: variacaoAleatoriaFinal, resultado: valorDoTeste };
+        ExecutaTestePericiaGenerico(this.refAtributoPersonagem, this);
     }
 }

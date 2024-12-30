@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, Buff, ComportamentoAcao, ComportamentoAtributoPericia, ComportamentoBuffAtivo, ComportamentoBuffPassivo, ComportamentoComponente, ComportamentoEmpunhavel, ComportamentoRequisito, ComportamentoRitual, ComportamentosBuff, ComportamentoUtilizavel, ComportamentoVestivel, RequisitoUso } from 'Types/classes/index.ts';
+import { Acao, Buff, ComportamentoAcao, ComportamentoBuffAtivo, ComportamentoBuffPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosBuff, ComportamentoUtilizavel, ComportamentoVestivel, RequisitoMunicao, RequisitoUso } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -28,9 +28,11 @@ export type DadosComportamentos = {
     dadosComportamentoVestivel?: ConstructorParameters<typeof ComportamentoVestivel>;
     dadosComportamentoComponente?: ConstructorParameters<typeof ComportamentoComponente>;
     dadosComportamentoAcao?: ConstructorParameters<typeof ComportamentoAcao>;
-    dadosComportamentoAtributoPericia?: ConstructorParameters<typeof ComportamentoAtributoPericia>;
     dadosComportamentoRitual?: ConstructorParameters<typeof ComportamentoRitual>;
     dadosComportamentoRequisito?: ConstructorParameters<typeof RequisitoUso>[];
+    dadosComportamentoMunicao?: ConstructorParameters<typeof RequisitoMunicao>[];
+    dadosComportamentoConsomeUso?: ConstructorParameters<typeof ComportamentoConsomeUso>;
+    dadosComportamentoConsomeMunicao?: ConstructorParameters<typeof ComportamentoConsomeMunicao>;
 };
 
 export type DadosComportamentosBuff = {
@@ -46,7 +48,7 @@ export type dadosRitual = {
 
 export type subDadosAcoes = {
     nomeAcao: string, idTipoAcao: number, idCategoriaAcao: number, idMecanica: number,
-    dadosComportamentos?: DadosComportamentos;
+    dadosComportamentos: DadosComportamentos;
     custos: subDadosCusto,
     buffs?: subDadosBuff[],
     requisitos: number[]

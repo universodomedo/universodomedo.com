@@ -6,7 +6,6 @@ import PaginaBaseArma from './pageBaseArma.tsx';
 import PaginaCaracteristicaArma from './pageCaracteristicaArma.tsx';
 
 import { basesArma, classificacoesArma, DadosCaracteristicasArmas, DadosItem, listaCaracteristicaArma, patentesArma, subDadosAcoes, subDadosBuff, tiposArma } from 'Types/classes/index.ts';
-import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
 interface ContextoArmaProps {
@@ -97,11 +96,11 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         idMecanica: 6,
         dadosComportamentos: baseSelecionada
             ? {
-                dadosComportamentoAtributoPericia: [baseSelecionada.idAtributoUtilizado, baseSelecionada.idPericiaUtilizada],
                 dadosComportamentoAcao: [
                     'Dano',
                     baseSelecionada.danoMin + dadosCaracteristicasAgrupados.danoMin,
                     baseSelecionada.danoMax + dadosCaracteristicasAgrupados.danoMax,
+                    { testePericia: { idAtributoTeste:baseSelecionada.idAtributoUtilizado, idPericiaTeste: baseSelecionada.idPericiaUtilizada } }
                 ],
                 dadosComportamentoRequisito: [
                     [baseSelecionada.idPericiaUtilizada, patenteDaBaseSelecionada!.idPatentePericiaRequisito],
@@ -109,7 +108,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
             }
             : {},
         custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
-        requisitos: [2, 8],
+        requisitos: [2],
     }
 
     const dadosItem: DadosItem = {

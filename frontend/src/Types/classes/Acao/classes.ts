@@ -1,11 +1,8 @@
 // #region Imports
-import { adicionarBuffsUtil, logicaMecanicas, Buff, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, RequisitoConfig, CustoComponente, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, GastaCustoProps, HabilidadeAtiva, Dificuldade, Comportamentos, DadosComportamentos, DadosGenericosAcao } from 'Types/classes/index.ts';
+import { adicionarBuffsUtil, logicaMecanicas, Buff, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, RequisitoConfig, CustoComponente, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, GastaCustoProps, HabilidadeAtiva, Dificuldade, EmbrulhoComportamentoAcao, DadosComportamentos, DadosGenericosAcao } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
-
-import { ExecutaVariacaoGenerica, ExecutaTestePericia } from 'Recursos/Ficha/Variacao.ts';
-import { toast } from 'react-toastify';
 // #endregion
 
 export class Acao {
@@ -19,7 +16,7 @@ export class Acao {
     protected _refPai?: Ritual | Item | Habilidade;
 
     public dados: DadosGenericosAcao;
-    public comportamentos: Comportamentos;
+    public comportamentos: EmbrulhoComportamentoAcao = new EmbrulhoComportamentoAcao();
 
     public logicaExecucao: () => void = () => { };
     private logicaCustomizada: boolean = false;
@@ -34,8 +31,10 @@ export class Acao {
 
         this.dados = new DadosGenericosAcao(...dadosGenericosAcao);
 
-        this.comportamentos = new Comportamentos();
+        if (dadosComportamentos.dadosComportamentoAcao !== undefined) this.comportamentos.setComportamentoAcao(...dadosComportamentos.dadosComportamentoAcao);
         if (dadosComportamentos.dadosComportamentoRequisito !== undefined) this.comportamentos.setComportamentoRequisito(...dadosComportamentos.dadosComportamentoRequisito);
+        if (dadosComportamentos.dadosComportamentoConsomeUso !== undefined) this.comportamentos.setComportamentoConsomeUso(...dadosComportamentos.dadosComportamentoConsomeUso);
+        if (dadosComportamentos.dadosComportamentoConsomeMunicao !== undefined) this.comportamentos.setComportamentoConsomeMunicao(...dadosComportamentos.dadosComportamentoConsomeMunicao);
     }
 
     get refPai(): Ritual | Item | Habilidade { return this._refPai!; }
@@ -99,7 +98,7 @@ export class Acao {
         if (!this.processaDificuldades()) return;
 
         // logica temporaria
-        if (this.refPai instanceof Item && this.refPai.comportamentos.podeGastarUsos) this.refPai.gastaUso();
+        // if (this.refPai instanceof Item && this.refPai.comportamentos.podeGastarUsos) this.refPai.gastaUso();
 
         this.aplicaGastos(valoresSelecionados);
         this.executa(valoresSelecionados);
