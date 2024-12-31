@@ -20,7 +20,7 @@ export class Inventario {
         ];
     }
 
-    get espacosUsados(): number { return this.items.reduce((acc, cur) => { return acc + cur.peso }, 0) }
+    get espacosUsados(): number { return this.items.reduce((acc, cur) => { return acc + cur.dados.peso }, 0) }
     public acoesInventario = (): Acao[] => { return this.items.reduce((acc: Acao[], item) => acc.concat(item.acoes), []); }
     
     public adicionarItemNoInventario = (item: Item): void => { this.items.push(item); }
@@ -31,7 +31,7 @@ export class Inventario {
         getPersonagemFromContext().onUpdate();
     }
 
-    numeroItensCategoria(valorCategoria: number): number { return this.items.filter(item => item.categoria === valorCategoria).length; }
+    numeroItensCategoria(valorCategoria: number): number { return this.items.filter(item => item.dados.categoria === valorCategoria).length; }
 }
 
 export class GerenciadorEspacoCategoria {
