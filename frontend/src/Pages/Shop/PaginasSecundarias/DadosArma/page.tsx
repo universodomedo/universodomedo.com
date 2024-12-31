@@ -14,17 +14,30 @@ const page = ({ mostraCaracteristicas = false }: { mostraCaracteristicas?: boole
             {idBaseArmaSelecionada > 0 && (
                 <div className={style.dados_arma}>
                     {listaDadosArma.map((dadosArma, index) => {
-                        if (dadosArma.valor !== undefined) {
+                        if (dadosArma.tipo === 'titulo') {
+                            return (
+                                <div key={index} className={style.linha_titulo}>
+                                    <span className={style.titulo_dado_arma}>{dadosArma.titulo}</span>
+                                </div>
+                            );
+                        } else if (dadosArma.tipo === 'par') {
                             return (
                                 <div key={index} className={style.linha_nome_e_valor}>
                                     <span className={style.nome_dado_arma}>{dadosArma.nome}</span>
                                     <span className={style.valor_dado_arma}>{dadosArma.valor}</span>
                                 </div>
                             );
-                        } else {
+                        } else if (dadosArma.tipo === 'details') {
                             return (
-                                <div key={index} className={`${style.linha_titulo} ${dadosArma.textoGrande ? style.texto_grande : ''}`}>
-                                    <span className={style.titulo_dado_arma}>{dadosArma.nome}</span>
+                                <div key={index} className={style.linha_details}>
+                                    <details>
+                                        <summary>{dadosArma.summary}</summary>
+                                        <ul>
+                                            {dadosArma.itens.map((itemDadoArma, indexItem) => (
+                                                <li key={indexItem}>{itemDadoArma}</li>
+                                            ))}
+                                        </ul>
+                                    </details>
                                 </div>
                             );
                         }

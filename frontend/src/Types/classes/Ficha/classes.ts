@@ -71,6 +71,8 @@ export type DadosCaracteristicasArmas = {
     modificadorDanoMaximo?: number,
     acoes?: subDadosAcoes[],
     buffs?: subDadosBuff[],
+    // temporario mas tlvz fique assim pra sempre, sim
+    reducaoPatenteSimplificada?: boolean,
 }
 
 export const ConfiguracoesExibicaoDadosCaracteristicasArmas: { [K in keyof DadosCaracteristicasArmas]: { renderizar: boolean; renderizarValor: (dados: DadosCaracteristicasArmas) => string | null; }; } = {
@@ -80,6 +82,8 @@ export const ConfiguracoesExibicaoDadosCaracteristicasArmas: { [K in keyof Dados
     modificadorDanoMaximo: { renderizar: true, renderizarValor: (dados) => (dados.modificadorDanoMaximo ? `Dano Máximo: ${dados.modificadorDanoMaximo}` : null), },
     acoes: { renderizar: true, renderizarValor: (dados) => dados.acoes?.map(acao => `Ação: ${acao.nomeAcao}`).join(", ") || null, },
     buffs: { renderizar: true, renderizarValor: (dados) => dados.buffs?.map(buff => `Buff: ${buff.nome}`).join(", ") || null, },
+
+    reducaoPatenteSimplificada: { renderizar: false, renderizarValor: (dados) => null }
 };
 
 export const renderizarObjetoDadosCaracteristicasArmas = (dados: DadosCaracteristicasArmas): string[] => {

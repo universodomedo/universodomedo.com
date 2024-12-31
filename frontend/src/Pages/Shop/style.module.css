@@ -229,12 +229,25 @@
 
 .linha_titulo {
     display: flex;
-    font-size: 1.1em;
+    font-size: 1.4em;
+    margin: .7vh 0;
 }
 
-.texto_grande {
-    margin: .7vh 0;
-    font-size: 1.4em;
+.linha_details {
+    display: flex;
+}
+
+.linha_details details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.linha_details ul {
+    margin: 0 0 0 4%;
+    padding: .3vh 0;
+    list-style-type: none;
+    width: 100%;
 }
 
 .linha_caracteristica_selecionada {
@@ -245,6 +258,7 @@
 .linha_caracteristica_selecionada ul {
     margin: 0 0 0 4%;
     padding: .3vh 0;
+    list-style-type: none;
 }
 
 .lista_caracteristicas_selecionadas {
@@ -252,17 +266,19 @@
     flex: 1 1 0;
 }
 
-.visualizador_caracteristicas_selecionadas {
-    display: flex;
-    flex-direction: column;
-    background-color: red;
+.embrulho_painel_caracteristicas {
+    width: 80%;
+    flex: 1 0 0;
+    overflow: auto;
 }
 
 .painel_caracteristicas {
+    overflow: auto;
+}
+
+.grid_caracteristicas {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    width: 80%;
-    flex: 1;
 }
 
 .painel_caracteristicas p {

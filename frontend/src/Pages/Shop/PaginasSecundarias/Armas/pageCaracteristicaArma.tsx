@@ -15,19 +15,23 @@ const page = () => {
 
     const PainelCaracteristicas = () => {
         return (
-            <div className={style.painel_caracteristicas}>
-                {caracteristicasDisponiveis.sort((a, b) => a.nome.localeCompare(b.nome)).map((caracteristica, index) => {
-                    const pontosSuficientes = pontosCaracteristicasRestantes >= caracteristica.dadosCaracteristicaNaBase!.custoCaracteristica;
-                    const jaEstaSelecionada = caracteristicasSelecionadas.some(carac => carac.id === caracteristica.id);
+            <div className={style.embrulho_painel_caracteristicas}>
+                <div className={style.painel_caracteristicas}>
+                    <div className={style.grid_caracteristicas}>
+                        {caracteristicasDisponiveis.sort((a, b) => a.nome.localeCompare(b.nome)).map((caracteristica, index) => {
+                            const pontosSuficientes = pontosCaracteristicasRestantes >= caracteristica.dadosCaracteristicaNaBase!.custoCaracteristica;
+                            const jaEstaSelecionada = caracteristicasSelecionadas.some(carac => carac.id === caracteristica.id);
 
-                    return (
-                        <div key={index} className={`${style.caracteristica_individual} ${jaEstaSelecionada ? style.caracteristica_selecionada : ''}`} onClick={(jaEstaSelecionada || pontosSuficientes) ? () => alternaCaracteristicaSelecionada(caracteristica.id) : undefined }>
-                            <h2>{caracteristica.nome}</h2>
-                            <p className={style.descricao_caracteristica}>{caracteristica.descricao}</p>
-                            <p className={` ${style.custo_caracteristica} ${(!pontosSuficientes && !jaEstaSelecionada) ? style.pontos_insuficientes : ''}`}>{`Custa ${caracteristica.dadosCaracteristicaNaBase?.custoCaracteristica} Pontos de Característica`}</p>
-                        </div>
-                    );
-                })}
+                            return (
+                                <div key={index} className={`${style.caracteristica_individual} ${jaEstaSelecionada ? style.caracteristica_selecionada : ''}`} onClick={(jaEstaSelecionada || pontosSuficientes) ? () => alternaCaracteristicaSelecionada(caracteristica.id) : undefined }>
+                                    <h2>{caracteristica.nome}</h2>
+                                    <p className={style.descricao_caracteristica}>{caracteristica.descricao}</p>
+                                    <p className={` ${style.custo_caracteristica} ${(!pontosSuficientes && !jaEstaSelecionada) ? style.pontos_insuficientes : ''}`}>{`Custa ${caracteristica.dadosCaracteristicaNaBase?.custoCaracteristica} Pontos de Característica`}</p>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
             </div>
         );
     };

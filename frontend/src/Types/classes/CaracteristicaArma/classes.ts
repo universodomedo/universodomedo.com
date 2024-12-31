@@ -18,9 +18,9 @@ type BaseArmaComDados = { idBaseArma: number, dadosCaracteristicaNaBase: { custo
 
 export const tiposArma: TipoArma[] = [
     { id: 1, nome: 'Arma Corpo-a-Corpo' },
-    // { id: 2, nome: 'Arma de Disparo' },
-    // { id: 3, nome: 'Arma de Arremesso' },
-    // { id: 4, nome: 'Arma de Fogo' },
+    { id: 2, nome: 'Arma de Disparo' },
+    { id: 3, nome: 'Arma de Arremesso' },
+    { id: 4, nome: 'Arma de Fogo' },
 ];
 
 export const patentesArma: PatenteArma[] = [
@@ -33,21 +33,21 @@ export const classificacoesArma: ClassificacaoArma[] = [
     { id: 1, idTipoArma: 1, idsPatentesArma: [1, 2, 3], nome: 'Leve' },
     { id: 2, idTipoArma: 1, idsPatentesArma: [1, 2, 3], nome: 'de Uma Mão' },
     { id: 3, idTipoArma: 1, idsPatentesArma: [1, 2, 3], nome: 'de Duas Mãos' },
-    // { id: 4, idTipoArma: 2, idsPatentesArma: [1, 2, 3], nome: 'Disparador de Pressão' },
-    // { id: 5, idTipoArma: 2, idsPatentesArma: [3], nome: 'Disparador Automático' },
-    // { id: 6, idTipoArma: 3, idsPatentesArma: [1, 2, 3], nome: 'Arremessável Leve' },
-    // { id: 7, idTipoArma: 3, idsPatentesArma: [2, 3], nome: 'Arremessável Pesado' },
-    // { id: 8, idTipoArma: 3, idsPatentesArma: [2, 3], nome: 'Arremessável Tático' },
-    // { id: 9, idTipoArma: 4, idsPatentesArma: [1, 2, 3], nome: 'Arma de Fogo de Calibre Baixo' },
-    // { id: 10, idTipoArma: 4, idsPatentesArma: [1, 2, 3], nome: 'Arma de Fogo de Calibre Médio' },
-    // { id: 11, idTipoArma: 4, idsPatentesArma: [2, 3], nome: 'Arma de Fogo de Calibre Alto' },
-    // { id: 12, idTipoArma: 4, idsPatentesArma: [3], nome: 'Arma de Fogo de Destruição' },
+    { id: 4, idTipoArma: 2, idsPatentesArma: [1, 2, 3], nome: 'Disparador de Pressão' },
+    { id: 5, idTipoArma: 2, idsPatentesArma: [3], nome: 'Disparador Automático' },
+    { id: 6, idTipoArma: 3, idsPatentesArma: [1, 2, 3], nome: 'Arremessável Leve' },
+    { id: 7, idTipoArma: 3, idsPatentesArma: [2, 3], nome: 'Arremessável Pesado' },
+    { id: 8, idTipoArma: 3, idsPatentesArma: [2, 3], nome: 'Arremessável Tático' },
+    { id: 9, idTipoArma: 4, idsPatentesArma: [1, 2, 3], nome: 'Arma de Fogo de Calibre Baixo' },
+    { id: 10, idTipoArma: 4, idsPatentesArma: [1, 2, 3], nome: 'Arma de Fogo de Calibre Médio' },
+    { id: 11, idTipoArma: 4, idsPatentesArma: [2, 3], nome: 'Arma de Fogo de Calibre Alto' },
+    { id: 12, idTipoArma: 4, idsPatentesArma: [3], nome: 'Arma de Fogo de Destruição' },
 ];
 
 export const basesArma: BaseArma[] = [
     { id: 1, composicaoBaseArma: { idTipo: 1, idPatente: 1, idClassificacao: 1 }, peso: 2, categoria: 0, danoMin: 1, danoMax: 4, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 1, idPericiaUtilizada: 8, },
     { id: 2, composicaoBaseArma: { idTipo: 1, idPatente: 1, idClassificacao: 2 }, peso: 3, categoria: 0, danoMin: 1, danoMax: 5, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 2, idPericiaUtilizada: 8, },
-    { id: 3, composicaoBaseArma: { idTipo: 1, idPatente: 1, idClassificacao: 3 }, peso: 5, categoria: 0, danoMin: 1, danoMax: 5, numeroExtremidadesUtilizadas: 2, idAtributoUtilizado: 2, idPericiaUtilizada: 8, },
+    { id: 3, composicaoBaseArma: { idTipo: 1, idPatente: 1, idClassificacao: 3 }, peso: 6, categoria: 0, danoMin: 1, danoMax: 5, numeroExtremidadesUtilizadas: 2, idAtributoUtilizado: 2, idPericiaUtilizada: 8, },
     { id: 4, composicaoBaseArma: { idTipo: 2, idPatente: 1, idClassificacao: 4 }, peso: 4, categoria: 0, danoMin: 2, danoMax: 4, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 1, idPericiaUtilizada: 5, },
     { id: 5, composicaoBaseArma: { idTipo: 3, idPatente: 1, idClassificacao: 6 }, peso: 4, categoria: 0, danoMin: 2, danoMax: 4, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 1, idPericiaUtilizada: 5, },
     { id: 6, composicaoBaseArma: { idTipo: 4, idPatente: 1, idClassificacao: 9 }, peso: 3, categoria: 1, danoMin: 1, danoMax: 6, numeroExtremidadesUtilizadas: 2, idAtributoUtilizado: 1, idPericiaUtilizada: 5, },
@@ -84,11 +84,15 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     {
         id: 1,
         nome: 'Simplificada',
-        descricao: 'Retira o Requisito de Treinado em LUTA',
+        descricao: 'Retira o Requisito de ser Treinado na Perícia Base',
         basesArma: [
-            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
-            { idBaseArma: 2, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
-            { idBaseArma: 3, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { reducaoPatenteSimplificada: true } } },
+            { idBaseArma: 2, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { reducaoPatenteSimplificada: true } } },
+            { idBaseArma: 3, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { reducaoPatenteSimplificada: true } } },
+            { idBaseArma: 4, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { reducaoPatenteSimplificada: true } } },
+            { idBaseArma: 5, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { reducaoPatenteSimplificada: true } } },
+            { idBaseArma: 6, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: { reducaoPatenteSimplificada: true } } },
+            { idBaseArma: 7, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: { reducaoPatenteSimplificada: true } } },
         ],
     },
     {
@@ -97,19 +101,31 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
         descricao: 'Aumenta o Dano Máximo',
         basesArma: [
             { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { modificadorDanoMaximo: 2 } } },
+            { idBaseArma: 2, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { modificadorDanoMaximo: 2 } } },
+            { idBaseArma: 3, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { modificadorDanoMaximo: 2 } } },
+            { idBaseArma: 4, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { modificadorDanoMaximo: 2 } } },
+            { idBaseArma: 5, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { modificadorDanoMaximo: 2 } } },
         ],
     },
     {
         id: 3,
         nome: 'Estendida',
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 2, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 3, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 4,
         nome: 'Consistente',
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 2, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 3, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 5,
@@ -117,12 +133,13 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
         descricao: 'Reduz o peso',
         basesArma: [
             { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { modificadorPeso: -1 } } },
+            { idBaseArma: 2, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { modificadorPeso: -1 } } },
         ],
     },
     {
         id: 6,
         nome: 'Projetada',
-        descricao: '',
+        descricao: 'Aumenta a Defesa',
         basesArma: [
             {
                 idBaseArma: 1,
@@ -134,7 +151,43 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
                                 idBuff: 54,
                                 nome: 'Arma Projetada',
                                 valor: 2,
-                                dadosComportamentos: { dadosComportamentoPassivo: [true] },
+                                dadosComportamentos: { dadosComportamentoPassivo: [true] }, // implementar mesmo requisito da base
+                                duracao: { idDuracao: 3, valor: 1 },
+                                idTipoBuff: 1,
+                            },
+                        ],
+                    }
+                }
+            },
+            {
+                idBaseArma: 2,
+                dadosCaracteristicaNaBase: {
+                    custoCaracteristica: 2,
+                    dadosCaracteristicasArmas: {
+                        buffs: [
+                            {
+                                idBuff: 54,
+                                nome: 'Arma Projetada',
+                                valor: 2,
+                                dadosComportamentos: { dadosComportamentoPassivo: [true] }, // implementar mesmo requisito da base
+                                duracao: { idDuracao: 3, valor: 1 },
+                                idTipoBuff: 1,
+                            },
+                        ],
+                    }
+                }
+            },
+            {
+                idBaseArma: 3,
+                dadosCaracteristicaNaBase: {
+                    custoCaracteristica: 2,
+                    dadosCaracteristicasArmas: {
+                        buffs: [
+                            {
+                                idBuff: 54,
+                                nome: 'Arma Projetada',
+                                valor: 3,
+                                dadosComportamentos: { dadosComportamentoPassivo: [true] }, // implementar mesmo requisito da base
                                 duracao: { idDuracao: 3, valor: 1 },
                                 idTipoBuff: 1,
                             },
@@ -147,14 +200,29 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     {
         id: 7,
         nome: 'Anti-Proteção',
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 2, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 3, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 4, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 5, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 6, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 7, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 8,
         nome: 'Fatal',
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 2, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 3, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 4, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 5, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 6, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 7, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 9,
@@ -296,7 +364,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 32,
-        nome: 'Constringente', // para agarrar com arma em mãos
+        nome: 'Restringente', // arma que agarra
         descricao: '',
         basesArma: [],
     },
@@ -309,14 +377,19 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     {
         id: 34,
         nome: 'Armação Reduzida', // diminui peso
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 4, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 35,
         nome: 'Munição Leve', // diminui peso
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 4, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 5, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 36,
@@ -327,8 +400,10 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     {
         id: 37,
         nome: 'Armação de Combate', // ataque corpo-a-corpo
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 4, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 38,
@@ -387,8 +462,11 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     {
         id: 46,
         nome: 'Saque Duplo', // pega 2 munições por vez
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 4, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 5, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 47,
@@ -429,14 +507,18 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     {
         id: 53,
         nome: 'Munição Bumerangue',
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 5, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 54,
         nome: 'Luva de Arremesso', // aumenta alcance
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 5, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 55,
@@ -477,28 +559,49 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     {
         id: 61,
         nome: 'Pente Extendido', // aumenta munição na arma
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 6, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 7, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 62,
-        nome: 'Coronha', // ataque corpo-a-corpo
-        descricao: 'Teste Coronha (mudar depois)',
-        basesArma: [{ idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 0, dadosCaracteristicasArmas: { acoes: [ {
-            nomeAcao: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, dadosComportamentos: {
-                dadosComportamentoAcao: [
-                    'Dano',
-                    1,
-                    4,
-                    { testePericia: { idAtributoTeste:2, idPericiaTeste: 8 } }
-                ],
-            }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2], } ] } } }],
+        nome: 'Coronha',
+        descricao: 'Um Ataque Corpo-a-Corpo simples',
+        basesArma: [
+            {
+                idBaseArma: 6, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { acoes: [ {
+                nomeAcao: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, dadosComportamentos: {
+                    dadosComportamentoAcao: [
+                        'Dano',
+                        1,
+                        4,
+                        { testePericia: { idAtributoTeste:2, idPericiaTeste: 8 } }
+                    ],
+                }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2], } ] } } 
+            },
+            {
+                idBaseArma: 7, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { acoes: [ {
+                nomeAcao: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, dadosComportamentos: {
+                    dadosComportamentoAcao: [
+                        'Dano',
+                        1,
+                        5,
+                        { testePericia: { idAtributoTeste:2, idPericiaTeste: 8 } }
+                    ],
+                }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2], } ] } } 
+            },
+        ],
     },
     {
         id: 63,
-        nome: 'Estabilizadores', // segura arma com uma unica mão
-        descricao: '',
-        basesArma: [],
+        nome: 'Estabilizador', // segura arma com uma unica mão
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 6, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 7, dadosCaracteristicaNaBase: { custoCaracteristica: 3, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 64,
@@ -551,8 +654,11 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     {
         id: 72,
         nome: 'Fonte de Luz Embutida', // fonte de luz
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 6, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 7, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 73,
@@ -563,8 +669,12 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     {
         id: 74,
         nome: 'Investida', // ataque com pequena movimentação para armas Corpo-a-Corpo
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 2, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 3, dadosCaracteristicaNaBase: { custoCaracteristica: 3, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 75,
@@ -575,8 +685,10 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     {
         id: 76,
         nome: 'Golpeio', // mecanicamente ataca arremessaveis corpo-a-corpo sem lançar a munição
-        descricao: '',
-        basesArma: [],
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 5, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+        ],
     },
     {
         id: 77,
@@ -586,20 +698,12 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
     },
     {
         id: 78,
-        nome: 'Teste', // ataque corpo-a-corpo
-        descricao: 'Teste Ação qualquer (excluir)',
-        basesArma: [{ idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 0, dadosCaracteristicasArmas: { acoes: [ {
-            nomeAcao: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, dadosComportamentos: {
-                dadosComportamentoAcao: [
-                    'Dano',
-                    3,
-                    6,
-                    { testePericia: { idAtributoTeste:1, idPericiaTeste: 5 } }
-                ],
-                dadosComportamentoRequisito: [
-                    [5,2],
-                ],
-            }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2],
-        } ] } } }],
+        nome: 'Limitadora', // agarrar enquanto empunhando
+        descricao: '(Ainda não Implementada)',
+        basesArma: [
+            { idBaseArma: 1, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 2, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+            { idBaseArma: 5, dadosCaracteristicaNaBase: { custoCaracteristica: 2, dadosCaracteristicasArmas: {} } },
+        ],
     },
 ];
