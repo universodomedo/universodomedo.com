@@ -112,7 +112,6 @@ const page = ({ acao }: { acao: Acao }) => {
                     className={style.botao_principal}
                     onClick={() => { acao.executaComOpcoes(valoresSelecionados); setOpenExec(false); fechaModal(); }}
                     disabled={acao.opcoesExecucoes.length != Object.keys(valoresSelecionados).length}
-                    // disabled={Object.values(valoresSelecionados).some(valor => valor === 0 || valor === undefined)}
                 >
                     Executar
                 </button>

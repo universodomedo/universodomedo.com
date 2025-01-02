@@ -251,8 +251,6 @@ export class DadosGenericosItem {
     public categoria: number;
 
     constructor({ idTipoItem, nome, peso, categoria }: { idTipoItem: number; nome: ConstructorParameters<typeof NomeItem>; peso: number; categoria: number; }) {
-        console.log("Argumentos recebidos pelo construtor:", { idTipoItem, nome, peso, categoria });
-
         this.idTipoItem = idTipoItem;
         this.nome = new NomeItem(nome[0], nome[1]);
         this.peso = peso;
@@ -273,6 +271,8 @@ export class DadosGenericosAcao {
         this.idMecanica = idMecanica;
     }
 }
+
+export type DadosGenericosAcaoParams = ConstructorParameters<typeof DadosGenericosAcao>[0];
 
 export class DadosGenericosRitual {
     public nome: string;

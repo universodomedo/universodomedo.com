@@ -54,7 +54,7 @@ export class Item {
     }
 
     adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this._buffs, buffParams), this) };
-    adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }
+    adicionarAcoes(acoes: { props: ConstructorParameters<typeof Acao>, config: (acao: Acao) => void }[]): this { return (adicionarAcoesUtil(this, this.acoes, acoes), this); }
 
     // tem q dar uma olhada nisso aqui, pq teoricamente o sacar da rodando o mesmo foreach antes de chamar esse metodo, acho q da merda
     ativaBuffsItem() { this._buffs.forEach(buff => buff.ativaBuff()); }

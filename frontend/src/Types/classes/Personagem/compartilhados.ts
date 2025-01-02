@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, Buff, classeComArgumentos, CustoPE, CustoExecucao, CustoComponente, ArgsItem, Item, NomeItem, RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { Buff, classeComArgumentos, CustoPE, CustoExecucao, CustoComponente, ArgsItem, Item, RLJ_Ficha2 } from 'Types/classes/index.ts';
 import { getIdFichaNoLocalStorageFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto';
 // #endregion
 
@@ -24,31 +24,33 @@ export function novoItemPorDadosItem(argsItem: ArgsItem, adicionaDados: boolean 
 
     return new Item([argsItem.args], argsItem.dadosComportamentos)
         .adicionarAcoes(
-            (argsItem.dadosAcoes || []).map(argsAcao => [
-                ...classeComArgumentos(Acao, [argsAcao.args], argsAcao.dadosComportamentos),
-                (acao) => {
-                    acao.adicionarCustos([
-                        argsAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, argsAcao.custos.custoPE.valor) : null!,
-                        ...((argsAcao.custos.custoExecucao || []).map(execucao =>
-                            execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
-                        )),
-                        argsAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
-                    ].filter(Boolean));
-                    acao.adicionarBuffs(
-                        (argsAcao.buffs || []).map(buff => [
-                            ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
-                        ])
-                    );
+            (argsItem.dadosAcoes || []).map(argsAcao => (
+                {
+                    props: [argsAcao.args, argsAcao.dadosComportamentos],
+                    config: (acao) => {
+                        acao.adicionarCustos([
+                            argsAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, argsAcao.custos.custoPE.valor) : null!,
+                            ...((argsAcao.custos.custoExecucao || []).map(execucao =>
+                                execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
+                            )),
+                            argsAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
+                        ].filter(Boolean));
+                        acao.adicionarBuffs(
+                            (argsAcao.buffs || []).map(buff => [
+                                ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
+                            ])
+                        );
 
-                    // logica temporaria para sempre que uma acao tiver comportamentoRequisito, incluir o RequisitoPericia
-                    if (acao.comportamentos.temComportamentoRequisito && !argsAcao.requisitos.includes(8)) argsAcao.requisitos.push(8);
-                    acao.adicionarRequisitosEOpcoesPorId(argsAcao.requisitos);
+                        // logica temporaria para sempre que uma acao tiver comportamentoRequisito, incluir o RequisitoPericia
+                        if (acao.comportamentos.temComportamentoRequisito && !argsAcao.requisitos.includes(8)) argsAcao.requisitos.push(8);
+                        acao.adicionarRequisitosEOpcoesPorId(argsAcao.requisitos);
+                    }
                 }
-            ])
+            ))
         )
         .adicionarBuffs(
             (argsItem.buffs || []).map(buff => [
                 ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
             ])
-        );
+        )
 }

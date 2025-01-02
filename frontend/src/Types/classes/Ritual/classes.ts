@@ -1,5 +1,5 @@
 // #region Imports
-import { adicionarAcoesUtil, Acao, FiltroProps, FiltroPropsItems, OpcoesFiltro, PaletaCores, EmbrulhoComportamentoRitual, DadosComportamentos, DadosGenericosRitual } from 'Types/classes/index.ts';
+import { adicionarAcoesUtil, Acao, FiltroProps, FiltroPropsItems, OpcoesFiltro, PaletaCores, EmbrulhoComportamentoRitual, DadosGenericosRitual, DadosComportamentosRitual } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -15,7 +15,7 @@ export class Ritual {
 
     constructor(
         dadosGenericosRitual: ConstructorParameters<typeof DadosGenericosRitual>,
-        dadosComportamentos: DadosComportamentos,
+        dadosComportamentos: DadosComportamentosRitual,
     ) {
         this.id = Ritual.nextId++;
 
@@ -26,7 +26,7 @@ export class Ritual {
 
     get nomeExibicao(): string { return this.dados.nome };
 
-    adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }
+    adicionarAcoes(acoes: { props: ConstructorParameters<typeof Acao>, config: (acao: Acao) => void }[]): this { return (adicionarAcoesUtil(this, this.acoes, acoes), this); }
 
     static get filtroProps(): FiltroProps<Ritual> {
         return new FiltroProps<Ritual>(

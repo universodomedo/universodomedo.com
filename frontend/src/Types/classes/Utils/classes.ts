@@ -7,13 +7,13 @@ export const pluralize = (count: number, singular: string, plural?: string): str
     return count === 1 ? singular : pluralForm;
 };
 
-export function adicionarAcoesUtil<T extends Ritual | Item | Habilidade>(instancia: T, acoes: Acao[], acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): void {
-    acaoParams.forEach(([AcaoClass, params, configurarAcao]) => {
-        const acao = new AcaoClass(...params, instancia).adicionaRefPai(instancia);
+export function adicionarAcoesUtil<T extends Ritual | Item | Habilidade>(instancia: T, lista: Acao[], acoes: { props: ConstructorParameters<typeof Acao>, config: (acao: Acao) => void }[]): void {
+    acoes.forEach(({ props, config }) => {
+        const novaAcao = new Acao(...props);
 
-        if (configurarAcao) configurarAcao(acao);
+        config(novaAcao);
 
-        acoes.push(acao);
+        lista.push(novaAcao);
     });
 }
 

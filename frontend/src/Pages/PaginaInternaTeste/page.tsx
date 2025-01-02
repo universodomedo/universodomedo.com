@@ -109,7 +109,7 @@ const page = () => {
                     </div>
                     <div className={style.ficha_acoes}>
                         <FontAwesomeIcon className={style.remover_ficha} title={'Remover Ficha'} icon={faTrash} onClick={() => { removeFicha(index) }} />
-                        <FontAwesomeIcon className={style.remover_ficha} title={'Alterar Intentário'} icon={faShoppingCart} onClick={() => { abrirShop(index) }} />
+                        <FontAwesomeIcon className={style.remover_ficha} title={'Alterar Inventário'} icon={faShoppingCart} onClick={() => { abrirShop(index) }} />
                     </div>
                 </div>
             ))}

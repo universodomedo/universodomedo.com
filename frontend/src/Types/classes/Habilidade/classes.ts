@@ -39,7 +39,7 @@ export class HabilidadeAtiva extends Habilidade {
         super(nome, requisitoFicha);
     }
 
-    adicionarAcoes(acaoParams: [new (...args: any[]) => Acao, any[], (acao: Acao) => void][]): this { return (adicionarAcoesUtil(this, this.acoes, acaoParams), this) }
+    adicionarAcoes(acoes: { props: ConstructorParameters<typeof Acao>, config: (acao: Acao) => void }[]): this { return (adicionarAcoesUtil(this, this.acoes, acoes), this); }
 }
 
 export class HabilidadePassiva extends Habilidade {
@@ -55,15 +55,15 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         return personagem.estatisticasBuffaveis.extremidades.length > 0 && personagem.inventario.items.some(item => item.itemEmpunhavel)
     }))
         .adicionarAcoes([
-            [
-                ...classeComArgumentos(Acao, ['Sacar Item', 1, 1, 1], {}),
-                (acao) => {
+            {
+                props: [{ nome: 'Sacar Item', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 1 }, {}],
+                config: (acao) => {
                     acao.adicionarCustos([
                         classeComArgumentos(CustoExecucao, 3, 1)
                     ]);
                     acao.adicionarRequisitosEOpcoesPorId([3, 4]);
                 }
-            ]
+            },
         ]);
     retorno.push(habilidade1);
 
@@ -71,15 +71,15 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         return personagem.estatisticasBuffaveis.extremidades.length > 0 && personagem.inventario.items.some(item => item.itemEmpunhavel)
     }))
         .adicionarAcoes([
-            [
-                ...classeComArgumentos(Acao, ['Guardar Item', 1, 1, 2], {}),
-                (acao) => {
+            {
+                props: [{ nome: 'Guardar Item', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 2 }, {}],
+                config: (acao) => {
                     acao.adicionarCustos([
                         classeComArgumentos(CustoExecucao, 3, 1)
                     ]);
                     acao.adicionarRequisitosEOpcoesPorId([5]);
                 }
-            ]
+            },
         ]);
     retorno.push(habilidade2);
 
@@ -87,15 +87,15 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         return personagem.inventario.items.some(item => item.itemVestivel)
     }))
         .adicionarAcoes([
-            [
-                ...classeComArgumentos(Acao, ['Vestir Item', 1, 1, 4], {}),
-                (acao) => {
+            {
+                props: [{ nome: 'Vestir Item', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 4 }, {}],
+                config: (acao) => {
                     acao.adicionarCustos([
                         classeComArgumentos(CustoExecucao, 2, 1)
                     ]);
                     acao.adicionarRequisitosEOpcoesPorId([6]);
                 }
-            ]
+            },
         ]);
     retorno.push(habilidade3);
 
@@ -103,15 +103,15 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         return personagem.inventario.items.some(item => item.itemVestivel)
     }))
         .adicionarAcoes([
-            [
-                ...classeComArgumentos(Acao, ['Desvestir Item', 1, 1, 5], {}),
-                (acao) => {
+            {
+                props: [{ nome: 'Desvestir Item', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 5 }, {}],
+                config: (acao) => {
                     acao.adicionarCustos([
                         classeComArgumentos(CustoExecucao, 2, 1)
                     ]);
                     acao.adicionarRequisitosEOpcoesPorId([3, 7]);
                 }
-            ]
+            },
         ]);
     retorno.push(habilidade4);
 
@@ -167,22 +167,22 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     // retorno.push(new HabilidadeAtiva('Reagir com Fortitude'))
     // retorno.push(new HabilidadeAtiva('Corpo Resistente'))
 
-    retorno.push(
-        new HabilidadeAtiva('Ação Rápida', new RequisitoFicha((personagem:Personagem) => personagem.pericias.find(pericia => pericia.refPericia.id === 7)?.refPatente.id! > 0))
-        .adicionarAcoes([
-            [
-                ...classeComArgumentos(Acao, ['Ação Rápida', 1, 1], {}),
-                (acao) => {
-                    acao.adicionarDificuldades([
-                        classeComArgumentos(DificuldadeConsecutiva, 7, 10, 5)
-                    ]);
-                    acao.adicionarLogicaExecucao(() => {
-                        getPersonagemFromContext().estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === 3)!.numeroAcoesAtuais++;
-                    })
-                }
-            ]
-        ])
-    );
+    // retorno.push(
+    //     new HabilidadeAtiva('Ação Rápida', new RequisitoFicha((personagem: Personagem) => personagem.pericias.find(pericia => pericia.refPericia.id === 7)?.refPatente.id! > 0))
+    //         .adicionarAcoes([
+    //             [
+    //                 ...classeComArgumentos(Acao, ['Ação Rápida', 1, 1], {}),
+    //                 (acao) => {
+    //                     acao.adicionarDificuldades([
+    //                         classeComArgumentos(DificuldadeConsecutiva, 7, 10, 5)
+    //                     ]);
+    //                     acao.adicionarLogicaExecucao(() => {
+    //                         getPersonagemFromContext().estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === 3)!.numeroAcoesAtuais++;
+    //                     })
+    //                 }
+    //             ]
+    //         ])
+    // );
 
     return retorno;
 }
