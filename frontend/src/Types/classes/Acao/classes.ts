@@ -33,6 +33,7 @@ export class Acao {
 
         if (dadosComportamentos.dadosComportamentoAcao !== undefined) this.comportamentos.setComportamentoAcao(...dadosComportamentos.dadosComportamentoAcao);
         if (dadosComportamentos.dadosComportamentoRequisito !== undefined) this.comportamentos.setComportamentoRequisito(...dadosComportamentos.dadosComportamentoRequisito);
+        if (dadosComportamentos.dadosComportamentoConsomeUso !== undefined) this.comportamentos.setComportamentoConsomeUso(...dadosComportamentos.dadosComportamentoConsomeUso);
     }
 
     get refPai(): Ritual | Item | Habilidade { return this._refPai!; }
@@ -96,7 +97,7 @@ export class Acao {
         if (!this.processaDificuldades()) return;
 
         // logica temporaria
-        // if (this.refPai instanceof Item && this.refPai.comportamentos.podeGastarUsos) this.refPai.gastaUso();
+        if (this.comportamentos.temComportamentoConsomeUso && this.refPai instanceof Item && this.refPai.comportamentos.podeGastarUsos) this.refPai.gastaUso();
 
         this.aplicaGastos(valoresSelecionados);
         this.executa(valoresSelecionados);

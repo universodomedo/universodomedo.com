@@ -85,6 +85,11 @@ export class EmbrulhoComportamentoAcao {
     get comportamentoRequisito(): ComportamentoRequisito { return this._comportamentoRequisito!; } // sempre verificar se temComportamentoRequisito antes
     setComportamentoRequisito(...args: ConstructorParameters<typeof RequisitoUso>[]): void { this._comportamentoRequisito = new ComportamentoRequisito(args); }
 
+    private _comportamentoConsomeUso?: ComportamentoConsomeUso;
+    get temComportamentoConsomeUso(): boolean { return Boolean(this._comportamentoConsomeUso); }
+    get comportamentoConsomeUso(): ComportamentoConsomeUso { return this._comportamentoConsomeUso!; } // sempre verificar se temComportamentoConsomeUso antes
+    setComportamentoConsomeUso(...args: ConstructorParameters<typeof ComportamentoConsomeUso>): void { this._comportamentoConsomeUso = new ComportamentoConsomeUso(...args); }
+
     get mensagemRequisitos(): string { return this.temComportamentoRequisito ? this.comportamentoRequisito.mensagemRequisitos : ''; }
     get requisitosCumpridos(): boolean { return !this.temComportamentoRequisito || this.comportamentoRequisito.requisitosCumprido; }
 }
@@ -280,4 +285,10 @@ export class DadosGenericosRitual {
     constructor({ nome }: { nome: string } ) {
         this.nome = nome;
     }
+}
+
+export class ComportamentoConsomeUso {
+    constructor (
+        public quantidadeUso: number,
+    ) { }
 }

@@ -95,9 +95,9 @@ export class Item {
     }
 
     gastaUso = (): void => {
-        // const precisaRemover = this.comportamentos.comportamentoUtilizavel.gastaUsoERetornaSePrecisaRemover();
+        const precisaRemover = this.comportamentos.comportamentoUtilizavel.gastaUsoERetornaSePrecisaRemover();
 
-        // if (precisaRemover) this.removeDoInventario();
+        if (precisaRemover) this.removeDoInventario();
     }
 
     removeDoInventario(): void {

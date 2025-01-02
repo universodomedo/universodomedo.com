@@ -3,7 +3,7 @@ import style from 'Pages/Shop/style.module.css';
 import { useState } from 'react';
 
 import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
-import { DadosComportamentos, DadosItem, ArgsAcao } from 'Types/classes/index.ts';
+import { ArgsItem } from 'Types/classes/index.ts';
 
 import InputComRotulo from 'Recursos/ElementosComponentizados/InputComRotulo/page.tsx';
 import InputNumerico from 'Recursos/ElementosComponentizados/InputNumerico/page.tsx';
@@ -16,80 +16,83 @@ const page = () => {
     const { mudarPagina, adicionarItem } = useContextoLoja();
 
     const itens: Record<number, {
-        nome: string; peso: number; categoria: number;
-        // idBuff: number; valor: number;
-        dadosAcoes: ArgsAcao[];
-        dadosComportamentos: DadosComportamentos; listaDescricoes: string[]; }> = {
+        dados: ArgsItem, listaDescricoes: string[]; }> = {
         1: {
-            nome: `Bálsamo de Arnica`, peso: 1, categoria: 0,
-            dadosAcoes: [
-                {
-                    nomeAcao: 'Consumir',
-                    idTipoAcao: 1,
-                    idCategoriaAcao: 1,
-                    idMecanica: 3,
-                    custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
-                    buffs: [ {
-                        idBuff: 33,
-                        nome: `Bálsamo de Arnica`,
-                        valor: 2,
+            dados: {
+                args: { nome: [`Bálsamo de Arnica`], idTipoItem: 3, peso: 1, categoria: 0, },
+                dadosAcoes: [
+                    {
+                        args: { nome: 'Consumir', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 3, },
                         dadosComportamentos: {
-                            dadosComportamentoAtivo: [],
+                            dadosComportamentoConsomeUso: [1],
                         },
-                        duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2,
-                    } ],
-                    requisitos: [2],
-                }
-            ],
-            dadosComportamentos: {
-                dadosComportamentoEmpunhavel: [true, 1],
-                dadosComportamentoUtilizavel: [1],
+                        custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
+                        buffs: [ {
+                            idBuff: 33,
+                            nome: `Bálsamo de Arnica`,
+                            valor: 2,
+                            dadosComportamentos: {
+                                dadosComportamentoAtivo: [],
+                            },
+                            duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2,
+                        } ],
+                        requisitos: [2],
+                    }
+                ],
+                dadosComportamentos: {
+                    dadosComportamentoEmpunhavel: [true, 1],
+                    dadosComportamentoUtilizavel: [1],
+                },
             },
             listaDescricoes: ['O Bálsamo de Arnica aumenta em 2 sua Resistência Mundana para o próximo Ataque Mundano', `Tem Categoria 0, Peso 1 e 1 Uso`],
         },
         2: {
-            nome: `Gel de Babosa`, peso: 1, categoria: 0,
-            dadosAcoes: [
-                {
-                    nomeAcao: 'Consumir',
-                    idTipoAcao: 1,
-                    idCategoriaAcao: 1,
-                    idMecanica: 3,
-                    custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
-                    buffs: [ {
-                        idBuff: 37,
-                        nome: `Gel de Babosa`,
-                        valor: 2,
+            dados: {
+                args: { nome: [`Gel de Babosa`], idTipoItem: 3, peso: 1, categoria: 0, },
+                dadosAcoes: [
+                    {
+                        args: { nome: 'Consumir', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 3, },
                         dadosComportamentos: {
-                            dadosComportamentoAtivo: [],
+                            dadosComportamentoConsomeUso: [1],
                         },
-                        duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2,
-                    } ],
-                    requisitos: [2],
-                }
-            ],
-            dadosComportamentos: {
-                dadosComportamentoEmpunhavel: [true, 1],
-                dadosComportamentoUtilizavel: [1],
+                        custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
+                        buffs: [ {
+                            idBuff: 37,
+                            nome: `Gel de Babosa`,
+                            valor: 2,
+                            dadosComportamentos: {
+                                dadosComportamentoAtivo: [],
+                            },
+                            duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2,
+                        } ],
+                        requisitos: [2],
+                    }
+                ],
+                dadosComportamentos: {
+                    dadosComportamentoEmpunhavel: [true, 1],
+                    dadosComportamentoUtilizavel: [1],
+                },
             },
             listaDescricoes: ['O Gel de Babosa aumenta em 2 sua Resistência Natural para o próximo Ataque Natural', `Tem Categoria 0, Peso 1 e 1 Uso`],
         },
         3: {
-            nome: `Ácido Hialurônico Injetável`, peso: 1, categoria: 1,
-            dadosAcoes: [
-                {
-                    nomeAcao: 'Injetar',
-                    idTipoAcao: 1,
-                    idCategoriaAcao: 1,
-                    idMecanica: 6,
-                    custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
-                    requisitos: [2],
-                }
-            ],
-            dadosComportamentos: {
-                dadosComportamentoEmpunhavel: [true, 1],
-                dadosComportamentoUtilizavel: [1],
-                dadosComportamentoAcao: ['Cura', 4, 7],
+            dados: {
+                args: { nome: [`Ácido Hialurônico Injetável`], idTipoItem: 3, peso: 1, categoria: 1, },
+                dadosAcoes: [
+                    {
+                        args: { nome: 'Injetar', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 6, },
+                        dadosComportamentos: {
+                            dadosComportamentoAcao: ['Cura', 4, 7],
+                            dadosComportamentoConsomeUso: [1],
+                        },
+                        custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
+                        requisitos: [2],
+                    }
+                ],
+                dadosComportamentos: {
+                    dadosComportamentoEmpunhavel: [true, 1],
+                    dadosComportamentoUtilizavel: [1],
+                },
             },
             listaDescricoes: ['O Bálsamo de Arnica recupera 4-7 P.V. do Alvo', `Tem Categoria 1, Peso 1 e 1 Uso`],
         }
@@ -100,16 +103,13 @@ const page = () => {
     };
 
     const adicionar = () => {
-        const dadosItem: DadosItem = {
-            idTipoItem: 3,
-            nomeItem: { nomePadrao: itens[item].nome },
-            peso: itens[item].peso,
-            categoria: itens[item].categoria,
-            dadosComportamentos: itens[item].dadosComportamentos,
-            dadosAcoes: itens[item].dadosAcoes,
+        const argsItem: ArgsItem = {
+            args: itens[item].dados.args,
+            dadosComportamentos: itens[item].dados.dadosComportamentos,
+            dadosAcoes: itens[item].dados.dadosAcoes,
         };
 
-        adicionarItem(dadosItem, quantidade);
+        adicionarItem(argsItem, quantidade);
     }
 
     return (
@@ -118,7 +118,7 @@ const page = () => {
 
             <div className={style.opcao_item}>
                 <InputComRotulo rotulo={'Consumível'}>
-                    <select value={item} onChange={handleItemChange}> <option value="0" disabled >Selecionar Consumível</option> {Object.entries(itens).map(([id, data]) => ( <option key={id} value={id}>{data.nome}</option> ))} </select>
+                    <select value={item} onChange={handleItemChange}> <option value="0" disabled >Selecionar Consumível</option> {Object.entries(itens).map(([id, data]) => ( <option key={id} value={id}>{data.dados.args.nome}</option> ))} </select>
                 </InputComRotulo>
             </div>
 

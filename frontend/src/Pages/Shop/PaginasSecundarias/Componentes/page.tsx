@@ -3,7 +3,7 @@ import style from 'Pages/Shop/style.module.css';
 import { useState } from 'react';
 
 import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
-import { DadosItem } from 'Types/classes/index.ts';
+import { ArgsItem } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import InputComRotulo from 'Recursos/ElementosComponentizados/InputComRotulo/page.tsx';
@@ -36,11 +36,8 @@ const page = () => {
     };
 
     const adicionar = () => {
-        const dadosItem: DadosItem = {
-            idTipoItem: 4,
-            nomeItem: { nomePadrao: `Componente de ${elemento.text} ${patente.text}` },
-            peso: patentes[patente.value].peso,
-            categoria: patentes[patente.value].categoria,
+        const argsItem: ArgsItem = {
+            args: { idTipoItem: 4, nome: [`Componente de ${elemento.text} ${patente.text}`], peso: patentes[patente.value].peso, categoria: patentes[patente.value].categoria, },
             dadosComportamentos: {
                 dadosComportamentoEmpunhavel: [true, 1],
                 dadosComportamentoUtilizavel: [patentes[patente.value].usosMaximos],
@@ -48,7 +45,7 @@ const page = () => {
             },
         };
 
-        adicionarItem(dadosItem, quantidade);
+        adicionarItem(argsItem, quantidade);
     }
 
     return (

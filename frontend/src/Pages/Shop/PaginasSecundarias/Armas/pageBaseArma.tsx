@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
 import { useContextoArma } from 'Pages/Shop/PaginasSecundarias/Armas/contextoArma.tsx';
-import { basesArma, classificacoesArma, patentesArma, tiposArma, DadosItem } from 'Types/classes/index.ts';
+import { basesArma, classificacoesArma, patentesArma, tiposArma } from 'Types/classes/index.ts';
 
 import DadosArma from 'Pages/Shop/PaginasSecundarias/DadosArma/page.tsx';
 import InputComRotulo from 'Recursos/ElementosComponentizados/InputComRotulo/page.tsx';

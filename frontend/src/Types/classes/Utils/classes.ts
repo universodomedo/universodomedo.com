@@ -9,7 +9,7 @@ export const pluralize = (count: number, singular: string, plural?: string): str
 
 export function adicionarAcoesUtil<T extends Ritual | Item | Habilidade>(instancia: T, lista: Acao[], acoes: { props: ConstructorParameters<typeof Acao>, config: (acao: Acao) => void }[]): void {
     acoes.forEach(({ props, config }) => {
-        const novaAcao = new Acao(...props);
+        const novaAcao = new Acao(...props).adicionaRefPai(instancia);
 
         config(novaAcao);
 

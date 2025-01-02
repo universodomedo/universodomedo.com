@@ -571,26 +571,34 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
         descricao: 'Um Ataque Corpo-a-Corpo simples',
         basesArma: [
             {
-                idBaseArma: 6, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { acoes: [ {
-                nomeAcao: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, dadosComportamentos: {
-                    dadosComportamentoAcao: [
-                        'Dano',
-                        1,
-                        4,
-                        { testePericia: { idAtributoTeste:2, idPericiaTeste: 8 } }
-                    ],
-                }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2], } ] } } 
+                idBaseArma: 6, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {
+                    acoes: [ {
+                        args: { nome: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, },
+                        dadosComportamentos: {
+                            dadosComportamentoAcao: [
+                                'Dano',
+                                1,
+                                4,
+                                { testePericia: { idAtributoTeste:2, idPericiaTeste: 8 } }
+                            ],
+                        }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2],
+                    } ]
+                } } 
             },
             {
-                idBaseArma: 7, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: { acoes: [ {
-                nomeAcao: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, dadosComportamentos: {
-                    dadosComportamentoAcao: [
-                        'Dano',
-                        1,
-                        5,
-                        { testePericia: { idAtributoTeste:2, idPericiaTeste: 8 } }
-                    ],
-                }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2], } ] } } 
+                idBaseArma: 7, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {
+                    acoes: [ {
+                        args: { nome: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, },
+                        dadosComportamentos: {
+                            dadosComportamentoAcao: [
+                                'Dano',
+                                1,
+                                5,
+                                { testePericia: { idAtributoTeste:2, idPericiaTeste: 8 } }
+                            ],
+                        }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2],
+                    } ]
+                } } 
             },
         ],
     },

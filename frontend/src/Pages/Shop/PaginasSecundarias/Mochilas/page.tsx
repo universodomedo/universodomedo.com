@@ -3,7 +3,7 @@ import style from 'Pages/Shop/style.module.css';
 import { useState } from 'react';
 
 import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
-import { DadosItem } from 'Types/classes/index.ts';
+import { ArgsItem } from 'Types/classes/index.ts';
 
 import InputComRotulo from 'Recursos/ElementosComponentizados/InputComRotulo/page.tsx';
 // #endregion
@@ -26,11 +26,8 @@ const page = () => {
     };
 
     const adicionar = () => {
-        const dadosItem: DadosItem = {
-            idTipoItem: 2,
-            nomeItem: { nomePadrao: `Mochila ${patente.text}` },
-            peso: 0,
-            categoria: patentes[patente.value].categoria,
+        const argsItem: ArgsItem = {
+            args: { idTipoItem: 2, nome: [`Mochila ${patente.text}`], peso: 0, categoria: patentes[patente.value].categoria, },
             dadosComportamentos: {
                 dadosComportamentoEmpunhavel: [true, 1],
                 dadosComportamentoVestivel: [true]
@@ -47,7 +44,7 @@ const page = () => {
             } ],
         };
 
-        adicionarItem(dadosItem);
+        adicionarItem(argsItem);
     }
     
     return (

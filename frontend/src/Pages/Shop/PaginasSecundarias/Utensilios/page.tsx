@@ -3,7 +3,7 @@ import style from 'Pages/Shop/style.module.css';
 import { useState } from 'react';
 
 import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
-import { DadosItem } from 'Types/classes/index.ts';
+import { ArgsItem } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import InputComRotulo from 'Recursos/ElementosComponentizados/InputComRotulo/page.tsx';
@@ -34,15 +34,12 @@ const page = () => {
     };
 
     const adicionar = () => {
-        const dadosItem: DadosItem = {
-            idTipoItem: 2,
-            nomeItem: { nomePadrao: `Utensílio de ${pericia.text} ${patente.text}` },
-            peso: patentes[patente.value].peso,
-            categoria: patentes[patente.value].categoria,
+        const argsItem: ArgsItem = {
+            args: { idTipoItem: 2, nome: [`Utensílio de ${pericia.text} ${patente.text}`], peso: patentes[patente.value].peso, categoria: patentes[patente.value].categoria, },
             dadosComportamentos: {
                 dadosComportamentoEmpunhavel: [true, 1],
             },
-            buffs: [ {
+            buffs: [{
                 idBuff: SingletonHelper.getInstance().pericias.find(periciaEscolhida => periciaEscolhida.id === pericia.value)!.idBuffRelacionado,
                 nome: `Ferramentas ${patente.text}`,
                 valor: patentes[patente.value].valor,
@@ -51,10 +48,10 @@ const page = () => {
                 },
                 duracao: { idDuracao: 3, valor: 1 },
                 idTipoBuff: 1,
-            } ],
+            }],
         };
 
-        adicionarItem(dadosItem);
+        adicionarItem(argsItem);
     }
 
     return (
@@ -69,7 +66,7 @@ const page = () => {
 
             <div className={style.opcao_item}>
                 <InputComRotulo rotulo={'Patente'}>
-                    <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> {Object.entries(patentes).map(([id, data]) => ( <option key={id} value={id}>{data.nome}</option> ))} </select>
+                    <select value={patente.value} onChange={handlePatenteChange}> <option value="0" disabled >Selecionar Patente</option> {Object.entries(patentes).map(([id, data]) => (<option key={id} value={id}>{data.nome}</option>))} </select>
                 </InputComRotulo>
             </div>
 
@@ -87,7 +84,7 @@ const page = () => {
             </div>
 
             <div className={style.area_botao_tipo_item}>
-                <button onClick={() => {mudarPagina(0)}}>Voltar</button>
+                <button onClick={() => { mudarPagina(0) }}>Voltar</button>
                 <button onClick={adicionar} disabled={pericia.value === 0 || patente.value === 0} className={style.botao_adicionar}>Adicionar</button>
             </div>
         </div>
