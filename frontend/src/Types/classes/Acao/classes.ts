@@ -1,5 +1,5 @@
 // #region Imports
-import { adicionarBuffsUtil, logicaMecanicas, Buff, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, RequisitoConfig, CustoComponente, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, GastaCustoProps, HabilidadeAtiva, Dificuldade, EmbrulhoComportamentoAcao, DadosComportamentos, DadosGenericosAcao } from 'Types/classes/index.ts';
+import { adicionarBuffsUtil, logicaMecanicas, Buff, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, RequisitoConfig, CustoComponente, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, GastaCustoProps, HabilidadeAtiva, Dificuldade, EmbrulhoComportamentoAcao, DadosComportamentosAcao, DadosGenericosAcao } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -25,7 +25,7 @@ export class Acao {
 
     constructor(
         dadosGenericosAcao: ConstructorParameters<typeof DadosGenericosAcao>,
-        dadosComportamentos: DadosComportamentos,
+        dadosComportamentos: DadosComportamentosAcao,
     ) {
         this.id = Acao.nextId++;
 
@@ -33,8 +33,6 @@ export class Acao {
 
         if (dadosComportamentos.dadosComportamentoAcao !== undefined) this.comportamentos.setComportamentoAcao(...dadosComportamentos.dadosComportamentoAcao);
         if (dadosComportamentos.dadosComportamentoRequisito !== undefined) this.comportamentos.setComportamentoRequisito(...dadosComportamentos.dadosComportamentoRequisito);
-        if (dadosComportamentos.dadosComportamentoConsomeUso !== undefined) this.comportamentos.setComportamentoConsomeUso(...dadosComportamentos.dadosComportamentoConsomeUso);
-        if (dadosComportamentos.dadosComportamentoConsomeMunicao !== undefined) this.comportamentos.setComportamentoConsomeMunicao(...dadosComportamentos.dadosComportamentoConsomeMunicao);
     }
 
     get refPai(): Ritual | Item | Habilidade { return this._refPai!; }

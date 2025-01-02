@@ -3,7 +3,7 @@ import style from 'Pages/Shop/style.module.css';
 import { useState } from 'react';
 
 import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
-import { DadosComportamentos, DadosItem, subDadosAcoes } from 'Types/classes/index.ts';
+import { DadosComportamentos, DadosItem, ArgsAcao } from 'Types/classes/index.ts';
 
 import InputComRotulo from 'Recursos/ElementosComponentizados/InputComRotulo/page.tsx';
 import InputNumerico from 'Recursos/ElementosComponentizados/InputNumerico/page.tsx';
@@ -18,7 +18,7 @@ const page = () => {
     const itens: Record<number, {
         nome: string; peso: number; categoria: number;
         // idBuff: number; valor: number;
-        dadosAcoes: subDadosAcoes[];
+        dadosAcoes: ArgsAcao[];
         dadosComportamentos: DadosComportamentos; listaDescricoes: string[]; }> = {
         1: {
             nome: `Bálsamo de Arnica`, peso: 1, categoria: 0,

@@ -5,7 +5,7 @@ import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
 import PaginaBaseArma from './pageBaseArma.tsx';
 import PaginaCaracteristicaArma from './pageCaracteristicaArma.tsx';
 
-import { basesArma, classificacoesArma, DadosCaracteristicasArmas, DadosItem, listaCaracteristicaArma, patentesArma, subDadosAcoes, subDadosBuff, tiposArma } from 'Types/classes/index.ts';
+import { basesArma, classificacoesArma, DadosCaracteristicasArmas, ArgsItem, listaCaracteristicaArma, patentesArma, ArgsAcao, subDadosBuff, tiposArma } from 'Types/classes/index.ts';
 // #endregion
 
 interface ContextoArmaProps {
@@ -54,7 +54,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         1: <PaginaCaracteristicaArma />,
     }
 
-    const adicionar = () => { adicionarItem(dadosItem); }
+    const adicionar = () => { adicionarItem(argsItem); }
 
     const mudarPaginaArma = (idPagina: number) => {
         if (idPagina === 0) { setIdBaseArmaSelecionada(0); }
@@ -88,20 +88,17 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
             buffs: [...acc.buffs, ...(cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.buffs || [])],
             reducaoPatenteSimplificada: acc.reducaoPatenteSimplificada || !!cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.reducaoPatenteSimplificada,
         };
-    }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0, acoes: [] as subDadosAcoes[], buffs: [] as subDadosBuff[], reducaoPatenteSimplificada: false });
+    }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0, acoes: [] as ArgsAcao[], buffs: [] as subDadosBuff[], reducaoPatenteSimplificada: false });
 
-    const acaoPadraoBase: subDadosAcoes = {
-        nomeAcao: 'Ataque Padrão',
-        idTipoAcao: 2,
-        idCategoriaAcao: 1,
-        idMecanica: 6,
+    const acaoPadraoBase: ArgsAcao = {
+        args: { nome: 'Ataque Padrão', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, },
         dadosComportamentos: baseSelecionada
             ? {
                 dadosComportamentoAcao: [
                     'Dano',
                     baseSelecionada.danoMin + dadosCaracteristicasAgrupados.danoMin,
                     baseSelecionada.danoMax + dadosCaracteristicasAgrupados.danoMax,
-                    { testePericia: { idAtributoTeste:baseSelecionada.idAtributoUtilizado, idPericiaTeste: baseSelecionada.idPericiaUtilizada } }
+                    { testePericia: { idAtributoTeste: baseSelecionada.idAtributoUtilizado, idPericiaTeste: baseSelecionada.idPericiaUtilizada } }
                 ],
                 ...(!dadosCaracteristicasAgrupados.reducaoPatenteSimplificada && {
                     dadosComportamentoRequisito: [
@@ -114,11 +111,8 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         requisitos: [2],
     }
 
-    const dadosItem: DadosItem = {
-        idTipoItem: 1,
-        nomeItem: { nomeCustomizado: nomeCustomizado.trim() || undefined, nomePadrao: `${tipoDaBaseSelecionada?.nome} ${classificacaoDaBaseSelecionada?.nome} ${patenteDaBaseSelecionada?.nome}` },
-        peso: (baseSelecionada?.peso || 0) + dadosCaracteristicasAgrupados.peso,
-        categoria: (baseSelecionada?.categoria || 0) + dadosCaracteristicasAgrupados.categoria,
+    const argsItem: ArgsItem = {
+        args: { idTipoItem: 1, nome: [`${tipoDaBaseSelecionada?.nome} ${classificacaoDaBaseSelecionada?.nome} ${patenteDaBaseSelecionada?.nome}`, nomeCustomizado.trim() || undefined], peso: (baseSelecionada?.peso || 0) + dadosCaracteristicasAgrupados.peso, categoria: (baseSelecionada?.categoria || 0) + dadosCaracteristicasAgrupados.categoria, },
         dadosComportamentos: baseSelecionada ? {
             dadosComportamentoEmpunhavel: [true, baseSelecionada.numeroExtremidadesUtilizadas],
         } : {},
@@ -129,18 +123,18 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
     };
 
     const listaDadosArma: ({ tipo: 'titulo'; titulo: string } | { tipo: 'par'; nome: string; valor: string } | { tipo: 'details'; summary: string; itens: string[] })[] = [
-        { tipo: 'par', nome: 'Peso', valor:`${dadosItem.peso}` },
-        { tipo: 'par', nome: 'Categoria', valor: `${dadosItem.categoria}` },
-        { tipo: 'par', nome: 'Extremidades para Empunhar', valor: `${dadosItem.dadosComportamentos.dadosComportamentoEmpunhavel?.[1]}` },
+        { tipo: 'par', nome: 'Peso', valor: `${argsItem.args.peso}` },
+        { tipo: 'par', nome: 'Categoria', valor: `${argsItem.args.categoria}` },
+        { tipo: 'par', nome: 'Extremidades para Empunhar', valor: `${argsItem.dadosComportamentos.dadosComportamentoEmpunhavel?.[1]}` },
         { tipo: 'titulo', titulo: 'Ações' },
-        ...dadosItem.dadosAcoes!.map(acao => ({
+        ...argsItem.dadosAcoes!.map(acao => ({
             tipo: 'details' as const,
-            summary: acao.nomeAcao,
+            summary: acao.args.nome,
             itens: [
                 `${acao.dadosComportamentos.dadosComportamentoAcao?.[1]} - ${acao.dadosComportamentos.dadosComportamentoAcao?.[2]} de ${acao.dadosComportamentos.dadosComportamentoAcao?.[0]}`,
                 acao.dadosComportamentos.dadosComportamentoRequisito ? 'Requisito de Uso' : ''
             ],
-          })),
+        })),
     ];
 
     useEffect(() => {

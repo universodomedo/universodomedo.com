@@ -3,7 +3,7 @@ import style from './style.module.css';
 
 import { useState } from 'react';
 import { useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
-import { dadosRitual, GanhoIndividualNexRitual } from 'Types/classes/index.ts';
+import { ArgsRitual, GanhoIndividualNexRitual } from 'Types/classes/index.ts';
 
 import CriadorRitual from 'Recursos/Criador/CriadorRitual/page.tsx';
 
@@ -19,7 +19,7 @@ const page = () => {
 
     const ganhoRitual = ganhosNex.ganhos.find(ganho => ganho instanceof GanhoIndividualNexRitual)!;
 
-    const handleRitualCreated = (novoRitual: dadosRitual) => {
+    const handleRitualCreated = (novoRitual: ArgsRitual) => {
         ganhoRitual.dadosRituais.push(novoRitual);
         closeModal();
         atualizarFicha();
@@ -34,7 +34,7 @@ const page = () => {
                 <div>
                     <ul>
                         {ganhoRitual.dadosRituais.map((ritual, index) => (
-                            <li key={index}>{ritual.nomeRitual}</li>
+                            <li key={index}>{ritual.args.nome}</li>
                         ))}
                     </ul>
                 </div>

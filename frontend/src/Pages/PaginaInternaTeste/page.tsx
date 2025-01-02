@@ -64,7 +64,7 @@ const page = () => {
 
     const abreFicha = (index: number) => {
         localStorage.setItem('fichaAtual', JSON.stringify(dadosFicha[index]));
-        navigate('/ficha-demo2', { state: { indexFicha: index } });
+        navigate('/ficha-demo', { state: { indexFicha: index } });
     }
 
     const removeFicha = (index: number) => {

@@ -85,16 +85,6 @@ export class EmbrulhoComportamentoAcao {
     get comportamentoRequisito(): ComportamentoRequisito { return this._comportamentoRequisito!; } // sempre verificar se temComportamentoRequisito antes
     setComportamentoRequisito(...args: ConstructorParameters<typeof RequisitoUso>[]): void { this._comportamentoRequisito = new ComportamentoRequisito(args); }
 
-    private _comportamentoConsomeUso?: ComportamentoConsomeUso;
-    get temComportamentoConsomeUso(): boolean { return Boolean(this._comportamentoConsomeUso); }
-    get comportamentoConsomeUso(): ComportamentoConsomeUso { return this._comportamentoConsomeUso!; } // sempre verificar se temComportamentoConsomeUso antes
-    setComportamentoConsomeUso(...args: ConstructorParameters<typeof ComportamentoConsomeUso>): void { this._comportamentoConsomeUso = new ComportamentoConsomeUso(...args); }
-
-    private _comportamentoConsomeMunicao?: ComportamentoConsomeMunicao;
-    get temComportamentoConsomeMunicao(): boolean { return Boolean(this._comportamentoConsomeMunicao); }
-    get comportamentoConsomeMunicao(): ComportamentoConsomeMunicao { return this._comportamentoConsomeMunicao!; } // sempre verificar se temComportamentoConsomeMunicao antes
-    setComportamentoConsomeMunicao(...args: ConstructorParameters<typeof ComportamentoConsomeMunicao>): void { this._comportamentoConsomeMunicao = new ComportamentoConsomeMunicao(...args); }
-
     get mensagemRequisitos(): string { return this.temComportamentoRequisito ? this.comportamentoRequisito.mensagemRequisitos : ''; }
     get requisitosCumpridos(): boolean { return !this.temComportamentoRequisito || this.comportamentoRequisito.requisitosCumprido; }
 }
@@ -254,39 +244,40 @@ export class RequisitoMunicao {
     }
 }
 
-export class ComportamentoConsomeUso {
-    constructor(
-
-    ) { }
-}
-
-export class ComportamentoConsomeMunicao {
-    constructor(
-        public nomeMunicao: string,
-        public quantidadeMunicaoPorUso: number = 1,
-    ) { }
-}
-
 export class DadosGenericosItem {
-    constructor(
-        public idTipoItem: number,
-        public nome: NomeItem,
-        public peso: number,
-        public categoria: number,
-    ) { }
+    public idTipoItem: number;
+    public nome: NomeItem;
+    public peso: number;
+    public categoria: number;
+
+    constructor({ idTipoItem, nome, peso, categoria }: { idTipoItem: number; nome: ConstructorParameters<typeof NomeItem>; peso: number; categoria: number; }) {
+        console.log("Argumentos recebidos pelo construtor:", { idTipoItem, nome, peso, categoria });
+
+        this.idTipoItem = idTipoItem;
+        this.nome = new NomeItem(nome[0], nome[1]);
+        this.peso = peso;
+        this.categoria = categoria;
+    }
 };
 
-export class DadosGenericosRitual {
-    constructor(
-        public nome: string,
-    ) { }
+export class DadosGenericosAcao {
+    public nome: string;
+    public idTipoAcao: number;
+    public idCategoriaAcao: number;
+    public idMecanica?: number;
+
+    constructor({ nome, idTipoAcao, idCategoriaAcao, idMecanica }: { nome: string; idTipoAcao: number; idCategoriaAcao: number; idMecanica?: number }) {
+        this.nome = nome;
+        this.idTipoAcao = idTipoAcao;
+        this.idCategoriaAcao = idCategoriaAcao;
+        this.idMecanica = idMecanica;
+    }
 }
 
-export class DadosGenericosAcao {
-    constructor(
-        public nome: string,
-        public idTipoAcao: number,
-        public idCategoriaAcao: number,
-        public idMecanica?: number,
-    ) { }
+export class DadosGenericosRitual {
+    public nome: string;
+
+    constructor({ nome }: { nome: string } ) {
+        this.nome = nome;
+    }
 }

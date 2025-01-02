@@ -1,7 +1,7 @@
 // #region Imports
 import { createContext, ReactNode, useContext, useState } from 'react';
 
-import { DadosItem, Item, novoItemPorDadosItem, RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { ArgsItem, Item, novoItemPorDadosItem, RLJ_Ficha2 } from 'Types/classes/index.ts';
 import { getPersonagemFromContext, getIdFichaNoLocalStorageFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 
 import PaginaArmas from './PaginasSecundarias/Armas/page.tsx';
@@ -18,7 +18,7 @@ interface ContextoLojaProps {
     idPaginaAberta: number;
     mudarPagina: (idPagina: number) => void;
     paginas: { [key: number]: ReactNode };
-    adicionarItem: (dadosItem: DadosItem, quantidade?: number) => void;
+    adicionarItem: (argsItem: ArgsItem, quantidade?: number) => void;
     removeItem: (item: Item, indexItem: number) => void;
 }
 
@@ -50,10 +50,10 @@ export const ContextoLojaProvider = ({ children }: { children: React.ReactNode }
 
     const mudarPagina = (idPagina: number) => { setIdPaginaAberta(idPagina); };
 
-    const adicionarItem = (dadosItem: DadosItem, quantidade: number = 1) => {
+    const adicionarItem = (argsItem: ArgsItem, quantidade: number = 1) => {
         const personagem = getPersonagemFromContext();
 
-        const categoriaDosItemAdicionados = dadosItem.categoria;
+        const categoriaDosItemAdicionados = argsItem.args.categoria;
         const quantidadeDeItensDaCategoriaAtual = personagem.inventario.numeroItensCategoria(categoriaDosItemAdicionados);
         const quantidadeDeItensDaCategoriaNova = quantidadeDeItensDaCategoriaAtual + quantidade;
 
@@ -64,7 +64,7 @@ export const ContextoLojaProvider = ({ children }: { children: React.ReactNode }
 
         const cargaMaxima = personagem.estatisticasBuffaveis.espacoInventario.espacoTotal;
         const cargaInventarioAtual = personagem.inventario.espacosUsados;
-        const cargaInventarioNova = cargaInventarioAtual + (dadosItem.peso * quantidade);
+        const cargaInventarioNova = cargaInventarioAtual + (argsItem.args.peso * quantidade);
 
         if (cargaInventarioNova > (cargaMaxima * 2)) {
             alert('Dobro do Limite de Capacidade de Carga está sendo excedido');
@@ -79,7 +79,7 @@ export const ContextoLojaProvider = ({ children }: { children: React.ReactNode }
         
         for (let i = 0; i < quantidade; i++) {
             personagem.inventario.adicionarItemNoInventario(
-                novoItemPorDadosItem(dadosItem, true)
+                novoItemPorDadosItem(argsItem, true)
             );
         }
 

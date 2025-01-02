@@ -1,10 +1,10 @@
 // #region Imports
-import { Acao, Buff, classeComArgumentos, CustoPE, CustoExecucao, CustoComponente, DadosItem, Item, NomeItem, RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { Acao, Buff, classeComArgumentos, CustoPE, CustoExecucao, CustoComponente, ArgsItem, Item, NomeItem, RLJ_Ficha2 } from 'Types/classes/index.ts';
 import { getIdFichaNoLocalStorageFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto';
 // #endregion
 
 // quando o objeto estiver sendo adicionado pelo shopping ou no meio de sessao, deve ser enviado com adicionaDados
-export function novoItemPorDadosItem(dadosItem: DadosItem, adicionaDados: boolean = false): Item {
+export function novoItemPorDadosItem(argsItem: ArgsItem, adicionaDados: boolean = false): Item {
     if (adicionaDados) {
         const idFichaNoLocalStorage = getIdFichaNoLocalStorageFromContext();
 
@@ -16,38 +16,38 @@ export function novoItemPorDadosItem(dadosItem: DadosItem, adicionaDados: boolea
             const fichas: RLJ_Ficha2[] = JSON.parse(dadosFicha);
             const fichaAtualizada = fichas[idFichaNoLocalStorage] || { inventario: [] };
 
-            fichaAtualizada.inventario.push(dadosItem);
+            fichaAtualizada.inventario.push(argsItem);
             fichas[idFichaNoLocalStorage] = fichaAtualizada;
             localStorage.setItem('dadosFicha', JSON.stringify(fichas));
         }
     }
 
-    return new Item([dadosItem.idTipoItem, new NomeItem(dadosItem.nomeItem.nomePadrao, dadosItem.nomeItem.nomeCustomizado || ''), dadosItem.peso, dadosItem.categoria], dadosItem.dadosComportamentos)
+    return new Item([argsItem.args], argsItem.dadosComportamentos)
         .adicionarAcoes(
-            (dadosItem.dadosAcoes || []).map(dadosAcao => [
-                ...classeComArgumentos(Acao, [dadosAcao.nomeAcao, dadosAcao.idTipoAcao, dadosAcao.idCategoriaAcao, dadosAcao.idMecanica], dadosAcao.dadosComportamentos),
+            (argsItem.dadosAcoes || []).map(argsAcao => [
+                ...classeComArgumentos(Acao, [argsAcao.args], argsAcao.dadosComportamentos),
                 (acao) => {
                     acao.adicionarCustos([
-                        dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
-                        ...((dadosAcao.custos.custoExecucao || []).map(execucao =>
+                        argsAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, argsAcao.custos.custoPE.valor) : null!,
+                        ...((argsAcao.custos.custoExecucao || []).map(execucao =>
                             execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
                         )),
-                        dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
+                        argsAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
                     ].filter(Boolean));
                     acao.adicionarBuffs(
-                        (dadosAcao.buffs || []).map(buff => [
+                        (argsAcao.buffs || []).map(buff => [
                             ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
                         ])
                     );
 
                     // logica temporaria para sempre que uma acao tiver comportamentoRequisito, incluir o RequisitoPericia
-                    if (acao.comportamentos.temComportamentoRequisito && !dadosAcao.requisitos.includes(8)) dadosAcao.requisitos.push(8);
-                    acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
+                    if (acao.comportamentos.temComportamentoRequisito && !argsAcao.requisitos.includes(8)) argsAcao.requisitos.push(8);
+                    acao.adicionarRequisitosEOpcoesPorId(argsAcao.requisitos);
                 }
             ])
         )
         .adicionarBuffs(
-            (dadosItem.buffs || []).map(buff => [
+            (argsItem.buffs || []).map(buff => [
                 ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
             ])
         );

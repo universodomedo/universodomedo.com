@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, Buff, ComportamentoAcao, ComportamentoBuffAtivo, ComportamentoBuffPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosBuff, ComportamentoUtilizavel, ComportamentoVestivel, RequisitoMunicao, RequisitoUso } from 'Types/classes/index.ts';
+import { Acao, Buff, ComportamentoAcao, ComportamentoBuffAtivo, ComportamentoBuffPassivo, ComportamentoComponente, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosBuff, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, RequisitoMunicao, RequisitoUso } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -8,51 +8,72 @@ export type RLJ_Ficha2 = {
     estatisticasDanificaveis?: { id: number, valorMaximo: number, valor: number }[],
     atributos?: { id: number, valor: number }[],
     periciasPatentes?: { idPericia: number, idPatente: number }[],
-    rituais: dadosRitual[],
-    inventario: DadosItem[],
+    rituais: ArgsRitual[],
+    inventario: ArgsItem[],
     // reducoesDano:
 }
 
-export type DadosItem = {
-    idTipoItem: number; nomeItem: { nomePadrao: string, nomeCustomizado?: string }; peso: number; categoria: number;
+export type ArgsItem = {
+    args: ConstructorParameters<typeof DadosGenericosItem>[0],
+    dadosComportamentos: DadosComportamentosItem;
 
-    dadosComportamentos: DadosComportamentos;
-
-    dadosAcoes?: subDadosAcoes[];
+    dadosAcoes?: ArgsAcao[];
     buffs?: subDadosBuff[];
-}
+};
 
-export type DadosComportamentos = {
-    dadosComportamentoUtilizavel?: ConstructorParameters<typeof ComportamentoUtilizavel>;
+export type DadosComportamentosItem = {
     dadosComportamentoEmpunhavel?: ConstructorParameters<typeof ComportamentoEmpunhavel>;
     dadosComportamentoVestivel?: ConstructorParameters<typeof ComportamentoVestivel>;
     dadosComportamentoComponente?: ConstructorParameters<typeof ComportamentoComponente>;
-    dadosComportamentoAcao?: ConstructorParameters<typeof ComportamentoAcao>;
-    dadosComportamentoRitual?: ConstructorParameters<typeof ComportamentoRitual>;
-    dadosComportamentoRequisito?: ConstructorParameters<typeof RequisitoUso>[];
+    dadosComportamentoUtilizavel?: ConstructorParameters<typeof ComportamentoUtilizavel>;
     dadosComportamentoMunicao?: ConstructorParameters<typeof RequisitoMunicao>[];
-    dadosComportamentoConsomeUso?: ConstructorParameters<typeof ComportamentoConsomeUso>;
-    dadosComportamentoConsomeMunicao?: ConstructorParameters<typeof ComportamentoConsomeMunicao>;
 };
+
+export type ArgsAcao = {
+    args: ConstructorParameters<typeof DadosGenericosAcao>[0],
+    dadosComportamentos: DadosComportamentosAcao;
+    custos: subDadosCusto,
+    buffs?: subDadosBuff[],
+    requisitos: number[]
+};
+
+export type DadosComportamentosAcao = {
+    dadosComportamentoAcao?: ConstructorParameters<typeof ComportamentoAcao>;
+    dadosComportamentoRequisito?: ConstructorParameters<typeof RequisitoUso>[];
+};
+
+export type ArgsRitual = {
+    args: ConstructorParameters<typeof DadosGenericosRitual>[0],
+    dadosComportamentos: DadosComportamentosRitual;
+    dadosAcoes: ArgsAcao[]
+};
+
+export type DadosComportamentosRitual = {
+    dadosComportamentoRitual?: ConstructorParameters<typeof ComportamentoRitual>;
+};
+
+
+// --- //
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export type DadosComportamentosBuff = {
     dadosComportamentoAtivo?: ConstructorParameters<typeof ComportamentoBuffAtivo>;
     dadosComportamentoPassivo?: ConstructorParameters<typeof ComportamentoBuffPassivo>;
 };
 
-export type dadosRitual = {
-    nomeRitual: string,
-    dadosComportamentos: DadosComportamentos;
-    dadosAcoes: subDadosAcoes[]
-};
 
-export type subDadosAcoes = {
-    nomeAcao: string, idTipoAcao: number, idCategoriaAcao: number, idMecanica: number,
-    dadosComportamentos: DadosComportamentos;
-    custos: subDadosCusto,
-    buffs?: subDadosBuff[],
-    requisitos: number[]
-}
 
 export type subDadosCusto = {
     custoPE?: { valor: number }, custoExecucao?: { idExecucao: number, valor: number }[], custoComponente?: boolean
@@ -69,7 +90,7 @@ export type DadosCaracteristicasArmas = {
     modificadorCategoria?: number,
     modificadorDanoMinimo?: number,
     modificadorDanoMaximo?: number,
-    acoes?: subDadosAcoes[],
+    acoes?: ArgsAcao[],
     buffs?: subDadosBuff[],
     // temporario mas tlvz fique assim pra sempre, sim
     reducaoPatenteSimplificada?: boolean,
@@ -80,7 +101,7 @@ export const ConfiguracoesExibicaoDadosCaracteristicasArmas: { [K in keyof Dados
     modificadorCategoria: { renderizar: true, renderizarValor: (dados) => (dados.modificadorCategoria ? `Categoria: ${dados.modificadorCategoria}` : null), },
     modificadorDanoMinimo: { renderizar: true, renderizarValor: (dados) => (dados.modificadorDanoMinimo ? `Dano Mínimo: ${dados.modificadorDanoMinimo}` : null), },
     modificadorDanoMaximo: { renderizar: true, renderizarValor: (dados) => (dados.modificadorDanoMaximo ? `Dano Máximo: ${dados.modificadorDanoMaximo}` : null), },
-    acoes: { renderizar: true, renderizarValor: (dados) => dados.acoes?.map(acao => `Ação: ${acao.nomeAcao}`).join(", ") || null, },
+    acoes: { renderizar: true, renderizarValor: (dados) => dados.acoes?.map(acao => `Ação: ${acao.args.nome}`).join(", ") || null, },
     buffs: { renderizar: true, renderizarValor: (dados) => dados.buffs?.map(buff => `Buff: ${buff.nome}`).join(", ") || null, },
 
     reducaoPatenteSimplificada: { renderizar: false, renderizarValor: (dados) => null }

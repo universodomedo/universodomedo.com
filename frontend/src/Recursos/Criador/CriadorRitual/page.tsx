@@ -1,5 +1,5 @@
 // #region Imports
-import { dadosRitual, Pericia } from 'Types/classes/index.ts';
+import { ArgsRitual, Pericia } from 'Types/classes/index.ts';
 import style from './style.module.css';
 
 import { useState } from 'react';
@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
-const page = ({ onCreate }: { onCreate: (novoRitual: dadosRitual) => void; }) => {
+const page = ({ onCreate }: { onCreate: (novoRitual: ArgsRitual) => void; }) => {
     const [elementoSelecionado, setElementoSelecionado] = useState(0);
     const handleSelectChangeElemento = (event: React.ChangeEvent<HTMLSelectElement>) => {
         console.log(`${Number(event.target.value)} selecionado`);
@@ -26,17 +26,18 @@ const page = ({ onCreate }: { onCreate: (novoRitual: dadosRitual) => void; }) =>
 
     const pericias = SingletonHelper.getInstance().pericias;
 
-    const criaRitual = (): dadosRitual => {
+    const criaRitual = (): ArgsRitual => {
         const valorPE: number = { 1: 2, 2: 3, 3: 5 }[nivelSelecionado] || 0;
         const valorBuff: number = { 1: 2, 2: 3, 3: 4 }[nivelSelecionado] || 0;
 
         return {
-            nomeRitual: `Aprimorar ${periciaSelecionada?.nome}`,
+            args: { nome: `Aprimorar ${periciaSelecionada?.nome}`, },
             dadosComportamentos: {
                 dadosComportamentoRitual: [elementoSelecionado, nivelSelecionado],
             },
             dadosAcoes: [ {
-                nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCategoriaAcao: 1, idMecanica: 3,
+                args: {nome: 'Usar Ritual', idTipoAcao: 3, idCategoriaAcao: 1, idMecanica: 3,},
+                dadosComportamentos: {},
                 custos: { custoPE: { valor: valorPE }, custoExecucao: [{ idExecucao: 2, valor: 1 }], custoComponente: true },
                 buffs: [ {
                     idBuff: periciaSelecionada?.idBuffRelacionado!,

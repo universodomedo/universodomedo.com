@@ -1,5 +1,5 @@
 // #region Imports
-import { EmbrulhoComportamentoItem, Acao, adicionarAcoesUtil, adicionarBuffsUtil, Buff, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, DadosComportamentos, DadosGenericosItem } from 'Types/classes/index.ts';
+import { EmbrulhoComportamentoItem, Acao, adicionarAcoesUtil, adicionarBuffsUtil, Buff, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, DadosComportamentosItem, DadosGenericosItem } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -19,7 +19,7 @@ export class Item {
 
     constructor(
         dadosGenericosItem: ConstructorParameters<typeof DadosGenericosItem>,
-        dadosComportamentos: DadosComportamentos,
+        dadosComportamentos: DadosComportamentosItem,
     ) {
         this.id = Item.nextId++;
 

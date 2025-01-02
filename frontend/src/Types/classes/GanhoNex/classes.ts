@@ -1,6 +1,6 @@
 // #region Imports
 import React from 'react';
-import { RLJ_Ficha2, Atributo, Pericia, PatentePericia, dadosRitual, AvisoGanhoNex, ValidacoesGanhoNex, CondicaoGanhoNexComOperador, RegrasCondicaoGanhoNex, OperadorCondicao, CondicaoGanhoNex, TipoEstatisticaDanificavel } from 'Types/classes/index.ts';
+import { RLJ_Ficha2, Atributo, Pericia, PatentePericia, ArgsRitual, AvisoGanhoNex, ValidacoesGanhoNex, CondicaoGanhoNexComOperador, RegrasCondicaoGanhoNex, OperadorCondicao, CondicaoGanhoNex, TipoEstatisticaDanificavel } from 'Types/classes/index.ts';
 import { SingletonHelper } from "Types/classes_estaticas.tsx";
 
 import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
@@ -888,7 +888,7 @@ export class GanhoIndividualNexEscolhaClasse extends GanhoIndividualNex {
 
 export class GanhoIndividualNexRitual extends GanhoIndividualNex {
     public numeroRituais: number;
-    public dadosRituais: dadosRitual[] = [];
+    public dadosRituais: ArgsRitual[] = [];
     public tituloEtapa = 'Ganho de Rituais';
     public avisoGanhoNex = [];
 
