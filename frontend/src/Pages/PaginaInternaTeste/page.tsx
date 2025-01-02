@@ -23,7 +23,7 @@ const page = () => {
     const navigate = useNavigate();
 
     const limpaLocalStorage = () => {
-        const chaveVersaoAtual = 'v2.5';
+        const chaveVersaoAtual = 'v2.6';
         const chaveLimpeza = localStorage.getItem("chaveLimpeza");
 
         if (chaveLimpeza === null || chaveLimpeza !== chaveVersaoAtual) {
