@@ -1,6 +1,6 @@
 // #region Imports
-import { classeComArgumentos, lista_geral_habilidades, EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Buff, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Extremidade, CustoPE, CustoExecucao, CustoComponente, NomeItem, RequisitoItemEmpunhado, Opcao, Acao, BuffsAplicados, BuffsPorId, BuffsPorTipo, Item, HabilidadeAtiva, Modificadores, novoItemPorDadosItem } from 'Types/classes/index.ts';
-import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Buff, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Acao, HabilidadeAtiva, Modificadores, novoItemPorDadosItem, lista_geral_habilidades } from 'Types/classes/index.ts';
+import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
 class Receptor {

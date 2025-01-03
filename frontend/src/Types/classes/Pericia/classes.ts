@@ -1,6 +1,6 @@
 // #region Imports
 import { Atributo, AtributoPersonagem } from 'Types/classes/index.ts';
-import { SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 import { ExecutaTestePericiaGenerico } from 'Recursos/Ficha/Procedimentos';
@@ -46,5 +46,6 @@ export class PericiaPatentePersonagem {
 
     realizarTeste = () => {
         ExecutaTestePericiaGenerico(this.refAtributoPersonagem, this);
+        LoggerHelper.getInstance().saveLog();
     }
 }

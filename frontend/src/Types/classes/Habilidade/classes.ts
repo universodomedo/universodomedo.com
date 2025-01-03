@@ -1,7 +1,5 @@
 // #region Imports
-import { classeComArgumentos, adicionarAcoesUtil, Acao, RequisitoFicha, Personagem, CustoExecucao, Buff, adicionarBuffsUtil, DificuldadeConsecutiva, FiltroProps, FiltroPropsItems, EmbrulhoComportamentoHabilidade } from 'Types/classes/index.ts';
-
-import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
+import { classeComArgumentos, adicionarAcoesUtil, Acao, RequisitoFicha, Personagem, CustoExecucao, Buff, adicionarBuffsUtil, FiltroProps, FiltroPropsItems, EmbrulhoComportamentoHabilidade } from 'Types/classes/index.ts';
 // #endregion
 
 export class Habilidade {
@@ -11,8 +9,13 @@ export class Habilidade {
 
     constructor(
         public nome: string,
+        public descricao: string,
         public requisitoFicha?: RequisitoFicha,
     ) { }
+
+    criarRequisito(condicao: (personagem: Personagem) => boolean): RequisitoFicha {
+        return new RequisitoFicha(condicao);
+    }
 
     get nomeExibicao(): string { return this.nome };
 
@@ -35,10 +38,6 @@ export class Habilidade {
 export class HabilidadeAtiva extends Habilidade {
     public acoes: Acao[] = [];
 
-    constructor(nome: string, requisitoFicha?: RequisitoFicha) {
-        super(nome, requisitoFicha);
-    }
-
     adicionarAcoes(acoes: { props: ConstructorParameters<typeof Acao>, config: (acao: Acao) => void }[]): this { return (adicionarAcoesUtil(this, this.acoes, acoes), this); }
 }
 
@@ -49,12 +48,520 @@ export class HabilidadePassiva extends Habilidade {
 }
 
 export const lista_geral_habilidades = (): Habilidade[] => {
-    const retorno: Habilidade[] = [];
+    return [
 
-    const habilidade1 = new HabilidadeAtiva('Sacar Item', new RequisitoFicha((personagem: Personagem) => {
-        return personagem.estatisticasBuffaveis.extremidades.length > 0 && personagem.inventario.items.some(item => item.itemEmpunhavel)
-    }))
-        .adicionarAcoes([
+        // ACRO //
+
+        new HabilidadeAtiva('Movimento Acrobático', 'Seu próximo Deslocamento ultrapassa obstáculos de variadas alturas', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 1);
+        })),
+        new HabilidadePassiva('Impulso Rápido', 'A Ação Levantar se torna Ação Livre', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 1 && pericia.refPatente.id >= 2);
+        })),
+        new HabilidadePassiva('Acrobacia Aprimorada', 'Você recebe +5 ACRO na sua próxima tentativa de uma Ação Falha', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 1 && pericia.refPatente.id >= 3);
+        })),
+        new HabilidadePassiva('Movimento Frenético', 'Aumenta seu Deslocamento em +3', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 1 && pericia.refPatente.id >= 3);
+        })),
+        new HabilidadePassiva('Movimento Não Linear', 'Você ignora Penalidades de Deslocamento até o início do seu próximo turno', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 1 && pericia.refPatente.id >= 4);
+        })),
+
+        // CRIM //
+
+        new HabilidadeAtiva('Resolver Mecanismo', 'Você tenta Resolver um Mecanismo', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 2);
+        })),
+        new HabilidadeAtiva('Surrupiar', 'Você retira um Item de um Local ou do Inventário de um Ser, sem ser Percebido', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 2);
+        })),
+        new HabilidadePassiva('Olho Treinado', 'Ao falhar em um uso de Resolver Mecanismo, você sabe aproximadamente a Diferença de Dificuldade', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 2 && pericia.refPatente.id >= 2);
+        })),
+        new HabilidadePassiva('Crime Aprimorado', 'Você recebe +5 CRIM na sua próxima tentativa para essa mesma Ação', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 2 && pericia.refPatente.id >= 3);
+        })),
+        // new ('', '', new RequisitoFicha((personagem: Personagem) => { 
+        //     return personagem.pericias.some(pericia => pericia.refPericia.id === 2 && pericia.refPatente.id >= 4);
+        // })),
+
+        // FURT //
+
+        new HabilidadeAtiva('Esconder', 'Te torna Despercebido contra seres que não tem Linha de Visão de você', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 3);
+        })),
+        new HabilidadePassiva('Gatuno', 'Uma vez por turno, você pode utilizar a Ação Esconder como Ação Livre', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 3 && pericia.refPatente.id >= 2);
+        })),
+        new HabilidadeAtiva('Ataque Furtivo', 'Esse ataque recebe (P.FURT * 10)% de Variância reduzida', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 3 && pericia.refPatente.id >= 3);
+        })),
+        new HabilidadePassiva('Rastejando nas Sombras', 'Anula as Penalidades de Deslocamento do estado Escondido', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 3 && pericia.refPatente.id >= 4);
+        })),
+
+        // INIC //
+
+        new Habilidade('Próativo', '', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 4);
+        })),
+        new Habilidade('Saque Rápido', '', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 4 && pericia.refPatente.id >= 2);
+        })),
+        // new Habilidade('Preparar Ação Simples', '', new RequisitoFicha((personagem: Personagem) => { 
+        //     return personagem.pericias.some(pericia => pericia.refPericia.id === 4 && pericia.refPatente.id >= 2);
+        // })),
+        new Habilidade('Iniciativa Aprimorada', '', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 4 && pericia.refPatente.id >= 3);
+        })),
+        // new Habilidade('Preparar Ação Complexa', '', new RequisitoFicha((personagem: Personagem) => { 
+        //     return personagem.pericias.some(pericia => pericia.refPericia.id === 4 && pericia.refPatente.id >= 3);
+        // })),
+        new Habilidade('Saque Súbito', '', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 4 && pericia.refPatente.id >= 4);
+        })),
+
+        // PONT //
+
+        new HabilidadePassiva('Realizar Ataque a Distância', 'Você pode executar Ataques com Armas de Ataque a Distância', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 5);
+        })),
+        new HabilidadePassiva('Proficiência com Armas a Distância Simples', 'Você pode utilizar Armas de Ataque a Distância Simples', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 5 && pericia.refPatente.id >= 2);
+        })),
+        new HabilidadePassiva('Ponto Cego', 'Você recebe 1 Vantagem quando atacando um Alvo estando em Posição de Vantagem', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 5 && pericia.refPatente.id >= 2);
+        })),
+        new HabilidadePassiva('Proficiência com Armas a Distância Complexas', 'Você pode utilizar Armas de Ataque a Distância Complexas', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 5 && pericia.refPatente.id >= 3);
+        })),
+        new HabilidadeAtiva('Mirar', 'Você remove Penalidades de Linha de Fogo em seu próximo Ataque', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 5 && pericia.refPatente.id >= 3);
+        })),
+        new HabilidadePassiva('Proficiência com Armas a Distância Especiais', 'Você pode utilizar Armas de Ataque a Distância Especiais', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 5 && pericia.refPatente.id >= 4);
+        })),
+        new HabilidadePassiva('Analista de Armas a Distância', 'Você sabe dizer a Patente de Armas a Distância na qual tem Visão', new RequisitoFicha((personagem: Personagem) => { 
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 5 && pericia.refPatente.id >= 4);
+        })),
+
+        // REFL //
+
+        new HabilidadeAtiva('Reagir com Reflexo', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 6);
+        })),
+        new HabilidadeAtiva('Pular na Frente', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 6 && pericia.refPatente.id >= 2);
+        })),
+        new HabilidadeAtiva('Reflexo Aprimorado', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 6 && pericia.refPatente.id >= 3);
+        })),
+        new HabilidadePassiva('Potencializar Esquiva', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 6 && pericia.refPatente.id >= 3);
+        })),
+        new HabilidadePassiva('Instinto de Batalha', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 6 && pericia.refPatente.id >= 4);
+        })),
+
+        // ATLE //
+
+        new Habilidade('Manobra de Combate', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 7);
+        })),
+        new Habilidade('Proficiência com Proteções Simples', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 7 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Ação Rápida', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 7 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Proficiência com Proteções Complexas', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 7 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Atletismo Aprimorado', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 7 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Explosão de Adrenalina', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 7 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Proficiência com Proteções Especiais', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 7 && pericia.refPatente.id >= 4);
+        })),
+        new Habilidade('Esforço Máximo', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 7 && pericia.refPatente.id >= 4);
+        })),
+
+        // LUTA //
+
+        new Habilidade('Realizar Ataque Corpo-a-Corpo', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 8);
+        })),
+        new Habilidade('Proficiência com Armas Corpo-a-Corpo Simples', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 8 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Flanquear', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 8 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Proficiência com Armas Corpo-a-Corpo Complexas', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 8 && pericia.refPatente.id >= 3);
+        })),
+        // new Habilidade('Parry', '', new RequisitoFicha((personagem: Personagem) => {
+        //     return personagem.pericias.some(pericia => pericia.refPericia.id === 8 && pericia.refPatente.id >= 3);
+        // })),
+        new Habilidade('Proficiência com Armas Corpo-a-Corpo Especiais', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 8 && pericia.refPatente.id >= 4);
+        })),
+        new Habilidade('Analista de Armas Corpo-a-Corpo', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 8 && pericia.refPatente.id >= 4);
+        })),
+
+        // ADES //
+
+        new Habilidade('Comunicação Instintiva', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 9);
+        })),
+        new Habilidade('Domesticar', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 9 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Comando Simples', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 9 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Adestramento Aprimorado', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 9 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Comando Avançado', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 9 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Especialidade', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 9 && pericia.refPatente.id >= 4);
+        })),
+
+        // ARTE //
+
+        new Habilidade('Execução Artística', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 10);
+        })),
+        new Habilidade('No Holofote', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 10 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Graciosidade', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 10 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Arte Acolhedora', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 10 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Criatividade Produtiva', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 10 && pericia.refPatente.id >= 4);
+        })),
+
+        // ATUA //
+
+        new Habilidade('Sabichão', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 11);
+        })),
+        new Habilidade('Por Dentro das Novidades', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 11 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Atualidades Aprimorada', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 11 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Noticia do Dia', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 11 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Procurando Respostas', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 11 && pericia.refPatente.id >= 4);
+        })),
+
+        // CIEN //
+
+        new Habilidade('Manuseio de Substâncias Mundanas', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 12);
+        })),
+        new Habilidade('Conhecimento Científico', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 12);
+        })),
+        new Habilidade('Manuseio de Substâncias Simples', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 12 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Domínio Científico', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 12 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Manuseio de Substâncias Complexas', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 12 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Laboratório de Guerra', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 12 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Manuseio de Substâncias Especiais', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 12 && pericia.refPatente.id >= 4);
+        })),
+        new Habilidade('Abundância Científica', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 12 && pericia.refPatente.id >= 4);
+        })),
+
+        // ENGE //
+
+        new Habilidade('Manutenção', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 13);
+        })),
+        new Habilidade('Confecção', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 13 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Desmantelar', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 13 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Criatividade Instável', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 13 && pericia.refPatente.id >= 4);
+        })),
+
+        // INVE //
+
+        new Habilidade('Procurar por Pistas', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 14);
+        })),
+        new Habilidade('Opinião Auxiliar', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 14 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Conhecimento Especializado', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 14 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Investigação Otimizada', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 14 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Na Pista Certa', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 14 && pericia.refPatente.id >= 4);
+        })),
+
+        // MEDI //
+
+        new Habilidade('Estancar', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 15);
+        })),
+        new Habilidade('Primeiros Socorros', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 15 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Fechar Ferida', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 15 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Medicina Aprimorada', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 15 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Tratamento Intensivo', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 15 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Cuidados Médicos', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 15 && pericia.refPatente.id >= 4);
+        })),
+        new Habilidade('Cirurgia Improvisada', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 15 && pericia.refPatente.id >= 4);
+        })),
+
+        // OCUL //
+
+        new Habilidade('Sentir Anomalia', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 16);
+        })),
+        new Habilidade('Expandir Aura', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 16 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Identificar Símbolo', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 16 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Memória do Outro Lado', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 16 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Ocultismo Aprimorado', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 16 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Fortalecer Aura', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 16 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Sentir Membrana', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 16 && pericia.refPatente.id >= 4);
+        })),
+        new Habilidade('Ação Ritualística', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 16 && pericia.refPatente.id >= 4);
+        })),
+
+        // SOBR //
+
+        new Habilidade('Improvisar Ferramenta', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 17);
+        })),
+        new Habilidade('Meios de Sobreviver', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 17 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Sobrevivência Aprimorada', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 17 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Armar Armadilha', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 17 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Instinto de Caçador', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 17 && pericia.refPatente.id >= 4);
+        })),
+        new Habilidade('Improvisar Ambiente', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 17 && pericia.refPatente.id >= 4);
+        })),
+
+        // TATI //
+
+        new Habilidade('Analisar Terreno', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 18);
+        })),
+        new Habilidade('Analisar Fraqueza', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 18 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Estrategista do Grupo', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 18 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Táticas de Combate', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 18 && pericia.refPatente.id >= 4);
+        })),
+
+        // TECN //
+
+        new Habilidade('Manusear Maquinário', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 19);
+        })),
+        new Habilidade('Hacker', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 19 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Improvisar Equipamentos', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 19 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Preparar Mecanismo', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 19 && pericia.refPatente.id >= 4);
+        })),
+
+        // DIPL //
+
+        new Habilidade('Melhorar Relacionamento', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 20);
+        })),
+        new Habilidade('Barganhar', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 20 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Voz da Paz', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 20 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Ressoar da Alma', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 20 && pericia.refPatente.id >= 4);
+        })),
+
+        // ENGA //
+
+        new Habilidade('Esconder Informação', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 21);
+        })),
+        new Habilidade('Disfarce Realista', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 21 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Ventriloquismo', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 21 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Na palma da minha mão', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 21 && pericia.refPatente.id >= 4);
+        })),
+
+        // INTI //
+
+        new Habilidade('Intimidar', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 22);
+        })),
+        new Habilidade('Alguem do seu Tamanho', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 22 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Intimidação Aprimorada', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 22 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Vai encarar', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 22 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Presença Amedrontadora', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 22 && pericia.refPatente.id >= 4);
+        })),
+
+        // INTU //
+
+        new Habilidade('Julgar', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 23);
+        })),
+        new Habilidade('Argumentação Conjunta', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 23 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Intuição Aprimorada', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 23 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Verdade à Tona', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 23 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Devorador de Mentiras', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 23 && pericia.refPatente.id >= 4);
+        })),
+
+        // PERC //
+
+        new Habilidade('Analisar Arredores', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 24);
+        })),
+        new Habilidade('Analisar Comportamento	', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 24 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Percepção Aprimorada', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 24 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Chamar por Atenção', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 24 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Olhos na Nuca', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 24 && pericia.refPatente.id >= 4);
+        })),
+        new Habilidade('Detecção Infalível', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 24 && pericia.refPatente.id >= 4);
+        })),
+
+        // VONT //
+
+        new Habilidade('Mente Resistente', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 25);
+        })),
+        new Habilidade('Afeição Paranormal', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 25 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Vontade Aprimorada', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 25 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Mente Inabalável', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 25 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Estabilidade Mental', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 25 && pericia.refPatente.id >= 4);
+        })),
+
+        // FORT //
+
+        new Habilidade('Corpo Resistente', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 26);
+        })),
+        new Habilidade('Reagir com Fortitude', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 26);
+        })),
+        new Habilidade('Aprimorar Resistência', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 26 && pericia.refPatente.id >= 2);
+        })),
+        new Habilidade('Fortitude Aprimorada', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 26 && pericia.refPatente.id >= 3);
+        })),
+        new Habilidade('Negar a Morte', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.pericias.some(pericia => pericia.refPericia.id === 26 && pericia.refPatente.id >= 4);
+        })),
+
+        // Gerais //
+
+        new HabilidadeAtiva('Sacar Item', 'Você Empunha um Item que está em seu Inventário em suas Extremidades Livres', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.estatisticasBuffaveis.extremidades.length > 0 && personagem.inventario.items.some(item => item.itemEmpunhavel)
+        })).adicionarAcoes([
             {
                 props: [{ nome: 'Sacar Item', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 1 }, {}],
                 config: (acao) => {
@@ -64,13 +571,10 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                     acao.adicionarRequisitosEOpcoesPorId([3, 4]);
                 }
             },
-        ]);
-    retorno.push(habilidade1);
-
-    const habilidade2 = new HabilidadeAtiva('Guardar Item', new RequisitoFicha((personagem: Personagem) => {
-        return personagem.estatisticasBuffaveis.extremidades.length > 0 && personagem.inventario.items.some(item => item.itemEmpunhavel)
-    }))
-        .adicionarAcoes([
+        ]),
+        new HabilidadeAtiva('Guardar Item', 'Você Guarda um Item que está em suas Extremidades em seu Inventário', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.estatisticasBuffaveis.extremidades.length > 0 && personagem.inventario.items.some(item => item.itemEmpunhavel)
+        })).adicionarAcoes([
             {
                 props: [{ nome: 'Guardar Item', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 2 }, {}],
                 config: (acao) => {
@@ -80,13 +584,10 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                     acao.adicionarRequisitosEOpcoesPorId([5]);
                 }
             },
-        ]);
-    retorno.push(habilidade2);
-
-    const habilidade3 = new HabilidadeAtiva('Vestir Item', new RequisitoFicha((personagem: Personagem) => {
-        return personagem.inventario.items.some(item => item.itemVestivel)
-    }))
-        .adicionarAcoes([
+        ]),
+        new HabilidadeAtiva('Vestir Item', 'Você Veste um Item que está em suas Extremidades', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.inventario.items.some(item => item.itemVestivel)
+        })).adicionarAcoes([
             {
                 props: [{ nome: 'Vestir Item', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 4 }, {}],
                 config: (acao) => {
@@ -96,13 +597,10 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                     acao.adicionarRequisitosEOpcoesPorId([6]);
                 }
             },
-        ]);
-    retorno.push(habilidade3);
-
-    const habilidade4 = new HabilidadeAtiva('Desvestir Item', new RequisitoFicha((personagem: Personagem) => {
-        return personagem.inventario.items.some(item => item.itemVestivel)
-    }))
-        .adicionarAcoes([
+        ]),
+        new HabilidadeAtiva('Desvestir Item', 'Você Desveste um Item e Empunha em suas Extremidades Livres', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.inventario.items.some(item => item.itemVestivel)
+        })).adicionarAcoes([
             {
                 props: [{ nome: 'Desvestir Item', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 5 }, {}],
                 config: (acao) => {
@@ -112,8 +610,10 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                     acao.adicionarRequisitosEOpcoesPorId([3, 7]);
                 }
             },
-        ]);
-    retorno.push(habilidade4);
+        ]),
+    ];
+
+
 
     // retorno.push(
     //     new Habilidade('Movimento Acrobático', new RequisitoFicha((personagem:Personagem) => personagem.pericias.some(pericia => pericia.refPericia.id === 6)))
@@ -135,8 +635,9 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     //     ])
     // );
 
-    // retorno.push(new HabilidadeAtiva('Movimento Acribático'))
-    // retorno.push(new HabilidadeAtiva('Resolver Mecanismo'))
+    // retorno.push(new HabilidadeAtiva('Resolver Mecanismo', new RequisitoFicha((personagem: Personagem) => {
+    //     return personagem.pericias.some(pericia => pericia.refPericia.id === 2)
+    // })));
     // retorno.push(new HabilidadeAtiva('Surrupiar'))
     // retorno.push(new HabilidadeAtiva('Esconder'))
     // retorno.push(new HabilidadeAtiva('Proativo'))?
@@ -183,6 +684,4 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     //             ]
     //         ])
     // );
-
-    return retorno;
 }
