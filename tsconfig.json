@@ -7,7 +7,7 @@
       "@layouts/*": ["Layouts/*"],
       "@pages/*": ["Pages/*"],
       "@providers/*": ["Providers/*"],
-      "@recuros/*": ["Recursos/*"],
+      "@recursos/*": ["Recursos/*"],
       "@redux/*": ["Redux/*"],
       "@servicos/*": ["Servicos/*"],
       "@types/*": ["Types/*"],
@@ -29,5 +29,5 @@
     "typeRoots": ["./node_modules/@types", "./frontend/src"],
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["frontend/src/**/*", "websocket/**/*.ts"],
+  "include": ["frontend/src/**/*", "websocket/**/*.ts", "frontend/src/Types/classes/Item"],
 }

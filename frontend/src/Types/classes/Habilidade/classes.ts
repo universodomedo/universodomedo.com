@@ -1,5 +1,6 @@
 // #region Imports
-import { classeComArgumentos, adicionarAcoesUtil, Acao, RequisitoFicha, Personagem, CustoExecucao, Buff, adicionarBuffsUtil, FiltroProps, FiltroPropsItems, EmbrulhoComportamentoHabilidade } from 'Types/classes/index.ts';
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto';
+import { classeComArgumentos, adicionarAcoesUtil, Acao, RequisitoFicha, Personagem, CustoExecucao, Buff, adicionarBuffsUtil, FiltroProps, FiltroPropsItems, EmbrulhoComportamentoHabilidade, DificuldadeConsecutiva } from 'Types/classes/index.ts';
 // #endregion
 
 export class Habilidade {
@@ -51,6 +52,26 @@ export const lista_geral_habilidades = (): Habilidade[] => {
     return [
 
         // ACRO //
+
+    // retorno.push(
+    //     new Habilidade('Movimento Acrobático', new RequisitoFicha((personagem:Personagem) => personagem.pericias.some(pericia => pericia.refPericia.id === 6)))
+    //     .adicionarAcoes([
+    //         [
+    //             ...classeComArgumentos(Acao, 'Movimento Acrobático', 1, 1, 3),
+    //             (acao) => {
+    //                 acao.adicionarCustos([
+    //                     classeComArgumentos(CustoExecucao, 1, 1)
+    //                 ]);
+    //                 acao.adicionarRequisitos([
+    //                     classeComArgumentos(RequisitoPodeSeLocomover)
+    //                 ]);
+    //                 acao.adicionarBuffs([
+    //                     classeComArgumentos(BuffInterno, 52, 'Movimento Acrobático', 1, 4, 1, 1)
+    //                 ]);
+    //             }
+    //         ]
+    //     ])
+    // );
 
         new HabilidadeAtiva('Movimento Acrobático', 'Seu próximo Deslocamento ultrapassa obstáculos de variadas alturas', new RequisitoFicha((personagem: Personagem) => { 
             return personagem.pericias.some(pericia => pericia.refPericia.id === 1);
@@ -172,9 +193,22 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         new Habilidade('Proficiência com Proteções Simples', '', new RequisitoFicha((personagem: Personagem) => {
             return personagem.pericias.some(pericia => pericia.refPericia.id === 7 && pericia.refPatente.id >= 2);
         })),
-        new Habilidade('Ação Rápida', '', new RequisitoFicha((personagem: Personagem) => {
+        new HabilidadeAtiva('Ação Rápida', '', new RequisitoFicha((personagem: Personagem) => {
             return personagem.pericias.some(pericia => pericia.refPericia.id === 7 && pericia.refPatente.id >= 2);
-        })),
+        })).adicionarAcoes([
+            {
+                props: [ { nome: 'Ação Rápida', idTipoAcao: 1, idCategoriaAcao: 1, }, {
+                    dadosComportamentoUsoAcao: [
+                        10, 3, [2]
+                    ],
+                } ],
+                config: (acao) => {
+                    acao.adicionarLogicaExecucao(() => {
+                        getPersonagemFromContext().estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === 3)!.numeroAcoesAtuais++;
+                    })
+                }
+            }
+        ]),
         new Habilidade('Proficiência com Proteções Complexas', '', new RequisitoFicha((personagem: Personagem) => {
             return personagem.pericias.some(pericia => pericia.refPericia.id === 7 && pericia.refPatente.id >= 3);
         })),
@@ -611,77 +645,23 @@ export const lista_geral_habilidades = (): Habilidade[] => {
                 }
             },
         ]),
+
+        // Classes //
+
+        new HabilidadePassiva('Amante de Armas', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.detalhes.refClasse.id === 2
+        })),
+        new HabilidadePassiva('O Melhor da Turma', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.detalhes.refClasse.id === 3
+        })),
+        new HabilidadePassiva('Constituição Paranormal', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.detalhes.refClasse.id === 4
+        })),
+        new HabilidadePassiva('Mente Corrompida', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.detalhes.refClasse.id === 4
+        })),
+        new HabilidadePassiva('Ocultismo Morfológico', '', new RequisitoFicha((personagem: Personagem) => {
+            return personagem.detalhes.refClasse.id === 4
+        })),
     ];
-
-
-
-    // retorno.push(
-    //     new Habilidade('Movimento Acrobático', new RequisitoFicha((personagem:Personagem) => personagem.pericias.some(pericia => pericia.refPericia.id === 6)))
-    //     .adicionarAcoes([
-    //         [
-    //             ...classeComArgumentos(Acao, 'Movimento Acrobático', 1, 1, 3),
-    //             (acao) => {
-    //                 acao.adicionarCustos([
-    //                     classeComArgumentos(CustoExecucao, 1, 1)
-    //                 ]);
-    //                 acao.adicionarRequisitos([
-    //                     classeComArgumentos(RequisitoPodeSeLocomover)
-    //                 ]);
-    //                 acao.adicionarBuffs([
-    //                     classeComArgumentos(BuffInterno, 52, 'Movimento Acrobático', 1, 4, 1, 1)
-    //                 ]);
-    //             }
-    //         ]
-    //     ])
-    // );
-
-    // retorno.push(new HabilidadeAtiva('Resolver Mecanismo', new RequisitoFicha((personagem: Personagem) => {
-    //     return personagem.pericias.some(pericia => pericia.refPericia.id === 2)
-    // })));
-    // retorno.push(new HabilidadeAtiva('Surrupiar'))
-    // retorno.push(new HabilidadeAtiva('Esconder'))
-    // retorno.push(new HabilidadeAtiva('Proativo'))?
-    // retorno.push(new HabilidadePassiva('Ataque a Distância'))
-    // retorno.push(new HabilidadeAtiva('Resistir com Reflexo'))
-    // retorno.push(new HabilidadeAtiva('Manobra de Combate'))
-    // retorno.push(new HabilidadePassiva('Ataque Corpo-a-Corpo'))
-    // retorno.push(new HabilidadeAtiva('Manobra de Combate'))
-    // retorno.push(new HabilidadeAtiva('Comando'))?
-    // retorno.push(new HabilidadeAtiva('Execução Artística'))
-    // retorno.push(new HabilidadeAtiva('Sabichão'))
-    // retorno.push(new HabilidadePassiva('Manuseio de Substânncias Mundanas'))
-    // retorno.push(new HabilidadePassiva('Conhecimento Científico'))
-    // retorno.push(new HabilidadeAtiva('Manutenção'))
-    // retorno.push(new HabilidadeAtiva('Procurar Por Pistas'))
-    // retorno.push(new HabilidadeAtiva('Estancar'))
-    // retorno.push(new HabilidadeAtiva('Sentir Anomalia'))
-    // retorno.push(new HabilidadeAtiva('Improvisar Ferramenta'))
-    // retorno.push(new HabilidadeAtiva('Analisar Terreno'))
-    // retorno.push(new HabilidadeAtiva('Refugiar'))
-    // retorno.push(new HabilidadeAtiva('Manusear Maquinário'))
-    // retorno.push(new HabilidadeAtiva('Melhorar Relacionamento'))
-    // retorno.push(new HabilidadeAtiva('Esconder Informação'))
-    // retorno.push(new HabilidadeAtiva('Intimidar'))
-    // retorno.push(new HabilidadeAtiva('Julgar'))
-    // retorno.push(new HabilidadeAtiva('Analisar Arredores'))
-    // retorno.push(new HabilidadeAtiva('Mente Resistente'))
-    // retorno.push(new HabilidadeAtiva('Reagir com Fortitude'))
-    // retorno.push(new HabilidadeAtiva('Corpo Resistente'))
-
-    // retorno.push(
-    //     new HabilidadeAtiva('Ação Rápida', new RequisitoFicha((personagem: Personagem) => personagem.pericias.find(pericia => pericia.refPericia.id === 7)?.refPatente.id! > 0))
-    //         .adicionarAcoes([
-    //             [
-    //                 ...classeComArgumentos(Acao, ['Ação Rápida', 1, 1], {}),
-    //                 (acao) => {
-    //                     acao.adicionarDificuldades([
-    //                         classeComArgumentos(DificuldadeConsecutiva, 7, 10, 5)
-    //                     ]);
-    //                     acao.adicionarLogicaExecucao(() => {
-    //                         getPersonagemFromContext().estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === 3)!.numeroAcoesAtuais++;
-    //                     })
-    //                 }
-    //             ]
-    //         ])
-    // );
 }

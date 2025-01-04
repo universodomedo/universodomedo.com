@@ -34,6 +34,8 @@ export class Acao {
         if (dadosComportamentos.dadosComportamentoAcao !== undefined) this.comportamentos.setComportamentoAcao(...dadosComportamentos.dadosComportamentoAcao);
         if (dadosComportamentos.dadosComportamentoRequisito !== undefined) this.comportamentos.setComportamentoRequisito(...dadosComportamentos.dadosComportamentoRequisito);
         if (dadosComportamentos.dadosComportamentoConsomeUso !== undefined) this.comportamentos.setComportamentoConsomeUso(...dadosComportamentos.dadosComportamentoConsomeUso);
+        if (dadosComportamentos.dadosComportamentoConsomeMunicao !== undefined) this.comportamentos.setComportamentoConsomeMunicao(...dadosComportamentos.dadosComportamentoConsomeMunicao);
+        if (dadosComportamentos.dadosComportamentoUsoAcao !== undefined) this.comportamentos.setComportamentoUsoAcao(...dadosComportamentos.dadosComportamentoUsoAcao);
     }
 
     get refPai(): Ritual | Item | Habilidade { return this._refPai!; }
@@ -61,17 +63,33 @@ export class Acao {
     get verificaCustosPodemSerPagos(): boolean { return (this.custos ? this.custos?.every(custo => custo.podeSerPago) ?? false : true); }
 
     processaDificuldades = (): boolean => {
-        if (!(this.dificuldades.length > 0)) return true;
-        LoggerHelper.getInstance().adicionaMensagem(`Processando dificuldades`, true);
+        if (!this.comportamentos.temDificuldadeDeExecucao) return true;
+        console.log(`testando dificuldade ${this.comportamentos.dificuldadeDeExecucao}`);
+        
+        const resultadoQueTireiMockado = getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === 7)!.realizarTeste();
 
-        try {
-            for (const dificuldade of this.dificuldades) {
-                if (!dificuldade.processa()) return false;
-            }
-        } finally { LoggerHelper.getInstance().fechaNivelLogMensagem(); }
+        const passou = resultadoQueTireiMockado >= this.comportamentos.dificuldadeDeExecucao;
+        // const resultadoQueTireiMockado = 12;
+        if (passou) {
+            this.comportamentos.atualizaDificuldadeDeExecucao();
+        } else {
+            this.comportamentos.travaAcao();
+        }
 
-        return true;
+        return passou;
     };
+    // processaDificuldades = (): boolean => {
+    //     if (!(this.dificuldades.length > 0)) return true;
+    //     LoggerHelper.getInstance().adicionaMensagem(`Processando dificuldades`, true);
+
+    //     try {
+    //         for (const dificuldade of this.dificuldades) {
+    //             if (!dificuldade.processa()) return false;
+    //         }
+    //     } finally { LoggerHelper.getInstance().fechaNivelLogMensagem(); }
+
+    //     return true;
+    // };
 
     aplicaGastos = (valoresSelecionados: GastaCustoProps): boolean => {
         LoggerHelper.getInstance().adicionaMensagem(`Custos aplicados`, true);
@@ -89,7 +107,7 @@ export class Acao {
         });
     }
 
-    get bloqueada(): boolean { return !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos; }
+    get bloqueada(): boolean { return !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos || this.comportamentos.acaoTravada; }
 
     executaComOpcoes = (valoresSelecionados: GastaCustoProps) => {
         LoggerHelper.getInstance().adicionaMensagem(`Executado ${this.nomeAcao}`);
@@ -109,9 +127,19 @@ export class Acao {
     }
 
     executa = (valoresSelecionados: GastaCustoProps) => {
-        if (this.logicaCustomizada) this.logicaExecucao();
+        if (this.logicaCustomizada) {
+            console.log('Tem Logica Customizada');
+            this.logicaExecucao();
+        } else {
+            console.log('Não Tem Logica Customizada');
+        }
 
-        if (this.dados.idMecanica) logicaMecanicas[this.dados.idMecanica](valoresSelecionados, this);
+        if (this.dados.idMecanica) {
+            console.log('Tem Mecanica');
+            logicaMecanicas[this.dados.idMecanica](valoresSelecionados, this);
+        } else {
+            console.log('Não Tem Mecanica');
+        }
         
         getPersonagemFromContext().onUpdate();
     }

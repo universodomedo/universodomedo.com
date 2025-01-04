@@ -27,7 +27,7 @@ const page = () => {
         const chaveLimpeza = localStorage.getItem("chaveLimpeza");
 
         if (chaveLimpeza === null || chaveLimpeza !== chaveVersaoAtual) {
-            alert('Foram detectadas Fichas Desatualizadas. Elas estarão sendo apagadas para ajustar a versão nova (sorry)')
+            alert('Versão Desatualizada Detectada. Fichas criadas previamente estarão sendo apagadas para ajustar a versão nova (sorry)');
             localStorage.clear();
             localStorage.setItem("chaveLimpeza", chaveVersaoAtual);
         }

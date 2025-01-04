@@ -7,7 +7,7 @@ import { LoggerHelper } from 'Types/classes_estaticas.tsx';
 import { toast } from 'react-toastify';
 // #endregion
 
-export function ExecutaTestePericiaGenerico(atributoPersonagem: AtributoPersonagem, periciaPersonagem: PericiaPatentePersonagem) {
+export function ExecutaTestePericiaGenerico(atributoPersonagem: AtributoPersonagem, periciaPersonagem: PericiaPatentePersonagem): number {
     const numeroTestesInternos = (atributoPersonagem.valorTotal > 0 ? atributoPersonagem.valorTotal : 2 + Math.abs(atributoPersonagem.valorTotal));
 
     const variacaoAleatoriaFinal = ExecutaTestePericia({ listaVarianciasDaAcao: Array.from({ length: numeroTestesInternos }, () => ({ valorMaximo: 20, variancia: 19 })) });
@@ -17,7 +17,9 @@ export function ExecutaTestePericiaGenerico(atributoPersonagem: AtributoPersonag
         : variacaoAleatoriaFinal.reduce((cur, acc) => acc.valorFinal < cur ? acc.valorFinal : cur, 20)
     );
 
-    const resumoTeste = `Teste ${periciaPersonagem.refPericia.nomeAbrev}: [${valorDoTeste + periciaPersonagem.valorTotal}]`;
+    const resultado = valorDoTeste + periciaPersonagem.valorTotal;
+
+    const resumoTeste = `Teste ${periciaPersonagem.refPericia.nomeAbrev}: [${resultado}]`;
 
     LoggerHelper.getInstance().adicionaMensagem(resumoTeste);
     toast(resumoTeste);
@@ -27,4 +29,6 @@ export function ExecutaTestePericiaGenerico(atributoPersonagem: AtributoPersonag
     if (periciaPersonagem.valorTotal > 0) LoggerHelper.getInstance().adicionaMensagem(`+${periciaPersonagem.valorTotal} Bônus`);
 
     LoggerHelper.getInstance().fechaNivelLogMensagem();
+
+    return resultado;
 }

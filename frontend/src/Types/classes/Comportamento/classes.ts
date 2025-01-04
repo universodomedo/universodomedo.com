@@ -75,6 +75,9 @@ export class EmbrulhoComportamentoItem {
 }
 
 export class EmbrulhoComportamentoAcao {
+    public comportamentoTrava: ComportamentoAcaoTrava = new ComportamentoAcaoTrava();
+    public comportamentoHistoricoAcao: ComportamentoHistoricoAcao = new ComportamentoHistoricoAcao();
+
     private _comportamentoAcao?: ComportamentoAcao;
     get temComportamentoAcao(): boolean { return Boolean(this._comportamentoAcao); }
     get comportamentoAcao(): ComportamentoAcao { return this._comportamentoAcao!; } // sempre verifficar se temComportamentoAcao antes
@@ -90,8 +93,25 @@ export class EmbrulhoComportamentoAcao {
     get comportamentoConsomeUso(): ComportamentoConsomeUso { return this._comportamentoConsomeUso!; } // sempre verificar se temComportamentoConsomeUso antes
     setComportamentoConsomeUso(...args: ConstructorParameters<typeof ComportamentoConsomeUso>): void { this._comportamentoConsomeUso = new ComportamentoConsomeUso(...args); }
 
+    private _comportamentoConsomeMunicao?: ComportamentoConsomeMunicao;
+    get temComportamentoConsomeMunicao(): boolean { return Boolean(this._comportamentoConsomeMunicao); }
+    get comportamentoConsomeMunicao(): ComportamentoConsomeMunicao { return this._comportamentoConsomeMunicao!; } // sempre verificar se temComportamentoConsomeMunicao antes
+    setComportamentoConsomeMunicao(...args: ConstructorParameters<typeof ComportamentoConsomeMunicao>): void { this._comportamentoConsomeMunicao = new ComportamentoConsomeMunicao(...args); }
+
+    private _comportamentoUsoAcao?: ComportamentoUsoAcao;
+    get temComportamentoUsoAcao(): Boolean { return Boolean(this._comportamentoUsoAcao); }
+    get comportamentoUsoAcao(): ComportamentoUsoAcao { return this._comportamentoUsoAcao!; } // sempre verificar se temComportamentoUsoAcao antes
+    setComportamentoUsoAcao(...args: ConstructorParameters<typeof ComportamentoUsoAcao>): void { this._comportamentoUsoAcao = new ComportamentoUsoAcao(...args); }
+
     get mensagemRequisitos(): string { return this.temComportamentoRequisito ? this.comportamentoRequisito.mensagemRequisitos : ''; }
     get requisitosCumpridos(): boolean { return !this.temComportamentoRequisito || this.comportamentoRequisito.requisitosCumprido; }
+
+    get acaoTravada(): boolean { return this.comportamentoTrava.trava; }
+    travaAcao() { this.comportamentoTrava.travaAcao('Você falhou'); }
+
+    get temDificuldadeDeExecucao(): boolean { return this.temComportamentoUsoAcao && this.comportamentoUsoAcao.dificuldadeAtual > 0; }
+    get dificuldadeDeExecucao(): number { return this.comportamentoUsoAcao.dificuldadeAtual; }
+    atualizaDificuldadeDeExecucao(): void { this.comportamentoUsoAcao.atualizaDificuldade(); }
 }
 
 export class EmbrulhoComportamentoRitual {
@@ -161,6 +181,22 @@ export class ComportamentoComponente {
 
     get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
     get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this._idNivelComponente)!; }
+}
+
+export class ComportamentoHistoricoAcao {
+    public vezesUsadoCena: number = 0;
+    public vezesUsadoTurno: number = 0;
+
+    resetUsosCena() { this.vezesUsadoCena = 0; }
+    resetUsosTurno() { this.vezesUsadoTurno = 0; }
+}
+
+export class ComportamentoAcaoTrava {
+    public trava: boolean = false;
+    public descricaoTrava: string = '';
+
+    travaAcao(descricao: string) { this.trava = true; this.descricaoTrava = descricao; }
+    destravaAcao() { this.trava = false; this.descricaoTrava = ''; }
 }
 
 export class ComportamentoAcao {
@@ -291,4 +327,39 @@ export class ComportamentoConsomeUso {
     constructor (
         public quantidadeUso: number,
     ) { }
+}
+
+export class ComportamentoConsomeMunicao {
+    constructor (
+        public nomeMunicao: string,
+        public quantidadeUso: number,
+    ) { }
+}
+
+export class ComportamentoUsoAcao {
+    public dificuldadeAtual: number;
+    public modificadorDificuldadeAtual: number;
+    private indiceListaModificadores: number = 0;
+
+    constructor(
+        private _dificuldadeInicial: number,
+        private _modificadorDificuldadeInicial: number = 0,
+        public listaModificadoresDificuldade: number[] = []
+    ) {
+        this.dificuldadeAtual = this._dificuldadeInicial;
+        this.modificadorDificuldadeAtual = _modificadorDificuldadeInicial;
+    }
+
+    atualizaDificuldade() {
+        this.dificuldadeAtual += this.modificadorDificuldadeAtual;
+
+        if (this.indiceListaModificadores < this.listaModificadoresDificuldade.length) {
+            this.modificadorDificuldadeAtual += this.listaModificadoresDificuldade[this.indiceListaModificadores];
+
+            this.indiceListaModificadores++;
+        }
+    }
+
+    resetaDificuldade() { this.dificuldadeAtual = this._dificuldadeInicial; }
+    resetaModificadorDificuldade() { this.modificadorDificuldadeAtual = this._modificadorDificuldadeInicial; this.indiceListaModificadores = 0; }
 }

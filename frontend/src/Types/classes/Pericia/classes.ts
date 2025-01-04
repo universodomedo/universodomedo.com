@@ -45,7 +45,8 @@ export class PericiaPatentePersonagem {
     get valorTotal(): number { return this.valorBonusPatente + this.valorBonus  }
 
     realizarTeste = () => {
-        ExecutaTestePericiaGenerico(this.refAtributoPersonagem, this);
+        const resultado = ExecutaTestePericiaGenerico(this.refAtributoPersonagem, this);
         LoggerHelper.getInstance().saveLog();
+        return resultado;
     }
 }

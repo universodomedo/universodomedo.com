@@ -139,6 +139,11 @@ const page = ({ acao }: { acao: Acao }) => {
                 <BlocoTexto lista={acao.custos} titulo={'Custos'} corTexto={(custo) => !custo.podeSerPago ? '#FF0000' : ''} descricao={(custo) => custo.descricaoCusto} />
                 <BlocoTexto lista={acao.requisitos} titulo={'Requisitos'} corTexto={(requisito) => !requisito.requisitoCumprido ? '#FF0000' : ''} descricao={(custo) => custo.descricaoRequisito} />
                 <BlocoTexto lista={acao.dificuldades} titulo={'Dificuldades'} corTexto={(dificuldade) => false ? '#FF0000' : '#F49A34'} descricao={(custo) => custo.descricaoDificuldade} />
+                {acao.comportamentos.acaoTravada && (
+                    <div className={style.bloco_texto}>
+                    <p className={style.texto}>{acao.comportamentos.comportamentoTrava.descricaoTrava}</p>
+                </div>
+                )}
             </>
         );
     }
