@@ -34,7 +34,7 @@ const PageComContexto = () => {
     personagem.carregaOnUpdate(() => setState({}));
 
     personagem.inventario.items.forEach(item => {
-        if (item.buffs.some(buffDoItem => buffDoItem.refBuff.id === 52)) {
+        if (item.modificadores.some(modificador => modificador.efeitos.some(efeito => efeito.refLinhaEfeito.id === 52))) {
             item.vestir();
         }
     });

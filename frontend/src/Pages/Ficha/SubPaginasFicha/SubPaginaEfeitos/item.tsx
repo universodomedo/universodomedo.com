@@ -2,7 +2,7 @@
 import style from 'Recursos/EstilizacaoCompartilhada/detalhes_popover.module.css';
 import { useState } from 'react';
 
-import { Buff } from 'Types/classes/index.ts';
+import { Modificador } from 'Types/classes/index.ts';
 import { useContextoAbaEfeitos } from './contexto.tsx';
 
 import PopoverComponente from 'Recursos/Componentes/Popover/page.tsx';
@@ -10,7 +10,7 @@ import Tooltip from 'Recursos/Componentes/Tooltip/page.tsx';
 import Modal from "Recursos/Componentes/ModalDialog/page.tsx";
 // #endregion
 
-const page = ({ efeito }: { efeito: Buff }) => {
+const page = ({ modificador }: { modificador: Modificador }) => {
     const [openDetalhes, setOpenDetalhes] = useState(false);
 
     const { mostrarEtiquetas } = useContextoAbaEfeitos();
@@ -18,12 +18,12 @@ const page = ({ efeito }: { efeito: Buff }) => {
     const icone = () => {
         return (
             <div className={style.embrulho_icone}>
-                {mostrarEtiquetas && (<h3>{efeito.nome}</h3>)}
-                <Tooltip content={efeito.nome}>
+                {mostrarEtiquetas && (<h3>{modificador.nome}</h3>)}
+                <Tooltip content={modificador.nome}>
                     <div
                         className={`${style.icone}`}
                         style={{
-                            backgroundImage: `url(data:image/svg+xml;base64,${efeito.svg})`,
+                            backgroundImage: `url(data:image/svg+xml;base64,${modificador.svg})`,
                             backgroundColor: '#FFFFFF',
                         }}
                     />
@@ -35,7 +35,7 @@ const page = ({ efeito }: { efeito: Buff }) => {
     const conteudo = (close: () => void) => {
         return (
             <div className={style.conteudo_popover}>
-                <h2>{efeito.nome}</h2>
+                <h2>{modificador.nome}</h2>
                 <div className={style.acoes}>
                     <Modal open={openDetalhes} onOpenChange={(isOpen) => {setOpenDetalhes(isOpen); if (!isOpen) close();}}>
                     {/* <Modal open={openDetalhes} onOpenChange={setOpenDetalhes}> */}
@@ -43,7 +43,7 @@ const page = ({ efeito }: { efeito: Buff }) => {
                             Detalhes
                         </Modal.Button>
 
-                        <Modal.Content title={`Detalhes - ${efeito.nome}`}>
+                        <Modal.Content title={`Detalhes - ${modificador.nome}`}>
                             <ConteudoDetalhes />
                         </Modal.Content>
                     </Modal>

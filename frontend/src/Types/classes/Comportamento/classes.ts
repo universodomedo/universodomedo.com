@@ -20,8 +20,9 @@ export class ComportamentosBuff {
     get temComportamentoBuffPassivo(): boolean { return Boolean(this._comportamentoPassivo); }
     setComportamentoBuffPassivo(...args: ConstructorParameters<typeof ComportamentoBuffPassivo>): void { this._comportamentoPassivo = new ComportamentoBuffPassivo(...args); }
 
-    get ehPassivaAtivaQuandoEmpunhado(): boolean { return this.temComportamentoBuffPassivo && this._comportamentoPassivo?.precisaEstarEmpunhando!; }
-    get ehPassivaAtivaQuandoVestido(): boolean { return this.temComportamentoBuffPassivo && this._comportamentoPassivo?.precisaEstarVestindo!; }
+    get ehPassivoSempreAtivo(): boolean { return this.temComportamentoBuffPassivo && (!this._comportamentoPassivo!.precisaEstarEmpunhando && !this._comportamentoPassivo!.precisaEstarVestindo)}
+    get ehPassivoAtivaQuandoEmpunhado(): boolean { return this.temComportamentoBuffPassivo && this._comportamentoPassivo!.precisaEstarEmpunhando; }
+    get ehPassivoAtivaQuandoVestido(): boolean { return this.temComportamentoBuffPassivo && this._comportamentoPassivo!.precisaEstarVestindo; }
 }
 
 export class ComportamentoBuffAtivo {

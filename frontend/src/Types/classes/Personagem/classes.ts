@@ -1,5 +1,5 @@
 // #region Imports
-import { EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Buff, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Acao, HabilidadeAtiva, Modificadores, novoItemPorDadosItem, lista_geral_habilidades } from 'Types/classes/index.ts';
+import { EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Acao, HabilidadeAtiva, novoItemPorDadosItem, lista_geral_habilidades, Efeito, ControladorModificadores } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -28,10 +28,10 @@ export class Personagem {
     public pericias: PericiaPatentePersonagem[];
     public inventario: Inventario = new Inventario();
     public habilidades: Habilidade[] = [];
-    public buffsExternos: Buff[] = [];
+    public buffsExternos: Efeito[] = [];
     public rituais: Ritual[] = [];
 
-    public modificadores: Modificadores = new Modificadores();
+    public controladorModificadores: ControladorModificadores = new ControladorModificadores();
 
     public receptor: Receptor = new Receptor(this);
 

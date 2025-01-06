@@ -1,5 +1,5 @@
 // #region Imports
-import { Buff, classeComArgumentos, CustoPE, CustoExecucao, CustoComponente, ArgsItem, Item, RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { classeComArgumentos, CustoPE, CustoExecucao, CustoComponente, ArgsItem, Item, RLJ_Ficha2 } from 'Types/classes/index.ts';
 import { getIdFichaNoLocalStorageFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto';
 // #endregion
 
@@ -35,11 +35,12 @@ export function novoItemPorDadosItem(argsItem: ArgsItem, adicionaDados: boolean 
                             )),
                             argsAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
                         ].filter(Boolean));
-                        acao.adicionarBuffs(
-                            (argsAcao.buffs || []).map(buff => [
-                                ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
-                            ])
-                        );
+                        acao.adicionarModificadores();
+                        // acao.adicionarBuffs(
+                        //     (argsAcao.buffs || []).map(buff => [
+                        //         ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
+                        //     ])
+                        // );
 
                         // logica temporaria para sempre que uma acao tiver comportamentoRequisito, incluir o RequisitoPericia
                         if (acao.comportamentos.temComportamentoRequisito && !argsAcao.requisitos.includes(8)) argsAcao.requisitos.push(8);
@@ -48,9 +49,10 @@ export function novoItemPorDadosItem(argsItem: ArgsItem, adicionaDados: boolean 
                 }
             ))
         )
-        .adicionarBuffs(
-            (argsItem.buffs || []).map(buff => [
-                ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
-            ])
-        )
+        .adicionarModificadores();
+        // .adicionarBuffs(
+        //     (argsItem.buffs || []).map(buff => [
+        //         ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
+        //     ])
+        // )
 }

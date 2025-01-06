@@ -17,7 +17,7 @@ export class Pericia {
     ) { }
 
     get idBuffRelacionado(): number { return this._idBuff; }
-    get refBuffAtivo(): number { return getPersonagemFromContext().modificadores.valorBuffPorId(this._idBuff); }
+    get refBuffAtivo(): number { return getPersonagemFromContext().controladorModificadores.valorPorIdLinhaEfeito(this._idBuff); }
     get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this._idAtributo)!; }
 }
 

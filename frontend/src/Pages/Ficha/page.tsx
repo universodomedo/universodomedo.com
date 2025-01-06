@@ -125,7 +125,7 @@ const PaginaFicha = () => {
                         <PainelAbas id="aba2"><SubPaginaEstatisticasDanificaveis estatisticasDanificaveis={personagem.estatisticasDanificaveis} reducoesDanoPersonage={personagem.reducoesDano} estatisticasBuffaveis={personagem.estatisticasBuffaveis} /></PainelAbas>
 
                         <ContextoAbaEfeitosProvider>
-                            <PainelAbas id="aba3" contextoMenu={ContextoAbaEfeitos}><SubPaginaEfeitos modificadores={personagem.modificadores} abaId={"aba3"} /></PainelAbas>
+                            <PainelAbas id="aba3" contextoMenu={ContextoAbaEfeitos}><SubPaginaEfeitos controladorModificadores={personagem.controladorModificadores} abaId={"aba3"} /></PainelAbas>
                         </ContextoAbaEfeitosProvider>
 
                         <ContextoAbaAtributoProvider>

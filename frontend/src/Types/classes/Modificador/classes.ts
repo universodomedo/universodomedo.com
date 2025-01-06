@@ -1,39 +1,36 @@
 // #region Imports
-import { ComportamentosBuff, DadosComportamentosBuff, Duracao, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, pluralize } from 'Types/classes/index.ts';
+import { ComportamentosBuff, DadosComportamentosBuff, Duracao, Efeito, FiltroProps, FiltroPropsItems, OpcoesFiltro, pluralize } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
-export class Buff {
+export class Modificador {
     public quantidadeDuracaoAtual: number = 0;
     public comportamentos: ComportamentosBuff = new ComportamentosBuff();
 
     public svg = `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+`;
 
     constructor(
-        private _idBuff: number,
         public nome: string,
-        public valor: number,
         private _idDuracao: number,
         public quantidadeDuracaoMaxima: number,
-        private _idTipoBuff: number,
+        public efeitos: Efeito[],
 
         dadosComportamentos: DadosComportamentosBuff,
-        public valorMultiplicador: number = 1,
     ) {
         if (dadosComportamentos.dadosComportamentoAtivo !== undefined) this.comportamentos.setComportamentoBuffAtivo(...dadosComportamentos.dadosComportamentoAtivo);
         if (dadosComportamentos.dadosComportamentoPassivo !== undefined) this.comportamentos.setComportamentoBuffPassivo(...dadosComportamentos.dadosComportamentoPassivo);
+
+        if (this.comportamentos.ehPassivoSempreAtivo) this.ativaBuff();
     }
 
-    get codigoUnico(): string { return `${this.nome}_${this._idBuff}:${this.valor}`; }
+    get codigoUnico(): string { return `a`; }
 
-    get refBuff(): BuffRef { return SingletonHelper.getInstance().buffs.find(buff => buff.id === this._idBuff)!; }
     get refDuracao(): Duracao { return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === this._idDuracao)!; }
-    get refTipoBuff(): TipoBuff { return SingletonHelper.getInstance().tipos_buff.find(tipo_buff => tipo_buff.id === this._idTipoBuff)!; }
 
-    ativaBuff() { getPersonagemFromContext().modificadores.adicionaEfeito(this); }
-    desativaBuff() { getPersonagemFromContext().modificadores.removeEfeito(this); }
+    ativaBuff() { getPersonagemFromContext().controladorModificadores.adicionaModificador(this); }
+    desativaBuff() { getPersonagemFromContext().controladorModificadores.removeModificador(this); }
     
     gastaDuracaoERetornaSePrecisaRemover = (): boolean => {
         this.quantidadeDuracaoAtual--;
@@ -86,11 +83,11 @@ export class Buff {
         return retorno;
     }
 
-    static get filtroProps(): FiltroProps<Buff> {
-        return new FiltroProps<Buff>(
+    static get filtroProps(): FiltroProps<Modificador> {
+        return new FiltroProps<Modificador>(
             'Efeitos',
             [
-                new FiltroPropsItems<Buff>(
+                new FiltroPropsItems<Modificador>(
                     (buff) => buff.nome,
                     'Nome da Fonte do Efeito',
                     'Procure pela Fonte do Efeito',
@@ -113,34 +110,23 @@ export class Buff {
                 //         })
                 //     )
                 // ),
-                new FiltroPropsItems<Buff>(
-                    (buff) => buff.refTipoBuff.id,
-                    'Tipo do Efeito',
-                    'Selecione o Tipo do Efeito Alvo',
-                    'select',
-                    true,
-                    new OpcoesFiltro(
-                        SingletonHelper.getInstance().tipos_buff.map((tipo_buff) => {
-                            return {
-                                id: tipo_buff.id,
-                                nome: tipo_buff.nome
-                            }
-                        })
-                    )
-                ),
+                // new FiltroPropsItems<Buff>(
+                //     (buff) => buff.refTipoBuff.id,
+                //     'Tipo do Efeito',
+                //     'Selecione o Tipo do Efeito Alvo',
+                //     'select',
+                //     true,
+                //     new OpcoesFiltro(
+                //         SingletonHelper.getInstance().tipos_buff.map((tipo_buff) => {
+                //             return {
+                //                 id: tipo_buff.id,
+                //                 nome: tipo_buff.nome
+                //             }
+                //         })
+                //     )
+                // ),
             ],
         )
-    }
-}
-
-export class BuffRef {
-    constructor(
-        public id: number,
-        public nome: string,
-    ) { }
-
-    static obtemBuffRefPorId(idBuff: number): string {
-        return SingletonHelper.getInstance().buffs.find(buff => buff.id === idBuff)!.nome;
     }
 }
 
@@ -171,15 +157,7 @@ export class BuffsPorId {
 export class BuffsPorTipo {
     constructor(
         public idTipoBuff: number,
-        public aplicado: Buff,
-        public sobreescritos: Buff[],
-    ) { }
-}
-
-export class TipoBuff {
-    constructor(
-        public id: number,
-        public nome: string,
-        public nomeExibirTooltip: string,
+        public aplicado: Efeito,
+        public sobreescritos: Efeito[],
     ) { }
 }

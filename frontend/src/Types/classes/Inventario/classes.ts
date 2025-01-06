@@ -56,6 +56,6 @@ export class EspacoInventario {
     ) { }
 
     get espacoTotal(): number { return this.valorNatural + this.espacoAdicionalPorFoca + this.espacoAdicional }
-    get espacoAdicional(): number { return getPersonagemFromContext().modificadores.valorBuffPorId(52); }
+    get espacoAdicional(): number { return getPersonagemFromContext().controladorModificadores.valorPorIdLinhaEfeito(52); }
     get espacoAdicionalPorFoca(): number { return this.valorAdicionalPorForca * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 2)?.valorTotal! }
 }

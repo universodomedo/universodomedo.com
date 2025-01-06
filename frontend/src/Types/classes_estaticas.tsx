@@ -1,5 +1,5 @@
 // #region Imports
-import { Elemento, NivelRitual, CirculoRitual, BuffRef, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, TipoBuff, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, MensagemLog, Classe, Nivel, TipoGanhoNex, TipoItem } from 'Types/classes/index.ts';
+import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, MensagemLog, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito } from 'Types/classes/index.ts';
 // #endregion
 
 export class SingletonHelper {
@@ -10,7 +10,7 @@ export class SingletonHelper {
   private _niveis_ritual: NivelRitual[] = [];
   private _circulos_ritual: CirculoRitual[] = [];
   private _circulos_niveis_ritual: CirculoNivelRitual[] = [];
-  private _buffs: BuffRef[] = [];
+  private _linhas_efeito: LinhaEfeito[] = [];
   private _alcances: Alcance[] = [];
   private _formatos_alcance: FormatoAlcance[] = [];
   private _duracoes: Duracao[] = [];
@@ -20,7 +20,7 @@ export class SingletonHelper {
   private _tipos_alvo: TipoAlvo[] = [];
   private _tipos_custo: TipoCusto[] = [];
   private _tipos_dano: TipoDano[] = [];
-  private _tipos_buff: TipoBuff[] = [];
+  private _tipos_efeito: TipoEfeito[] = [];
   private _atributos: Atributo[] = [];
   private _pericias: Pericia[] = [];
   private _patentes_pericia: PatentePericia[] = [];
@@ -58,8 +58,8 @@ export class SingletonHelper {
   public set circulos_niveis_ritual(value: CirculoNivelRitual[]) { this._circulos_niveis_ritual = value }
   public get circulos_niveis_ritual(): CirculoNivelRitual[] { return this._circulos_niveis_ritual }
 
-  public set buffs(value: BuffRef[]) { this._buffs = value }
-  public get buffs(): BuffRef[] { return this._buffs }
+  public set linhas_efeito(value: LinhaEfeito[]) { this._linhas_efeito = value }
+  public get linhas_efeito(): LinhaEfeito[] { return this._linhas_efeito }
 
   public set alcances(value: Alcance[]) { this._alcances = value }
   public get alcances(): Alcance[] { return this._alcances }
@@ -88,8 +88,8 @@ export class SingletonHelper {
   public set tipos_dano(value: TipoDano[]) { this._tipos_dano = value }
   public get tipos_dano(): TipoDano[] { return this._tipos_dano }
 
-  public set tipos_buff(value: TipoBuff[]) { this._tipos_buff = value }
-  public get tipos_buff(): TipoBuff[] { return this._tipos_buff }
+  public set tipos_efeito(value: TipoEfeito[]) { this._tipos_efeito = value }
+  public get tipos_efeito(): TipoEfeito[] { return this._tipos_efeito }
 
   public set atributos(value: Atributo[]) { this._atributos = value }
   public get atributos(): Atributo[] { return this._atributos }

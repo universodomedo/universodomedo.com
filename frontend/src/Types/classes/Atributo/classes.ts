@@ -7,13 +7,13 @@ import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/Embrul
 export class Atributo {
     constructor(
         public id: number,
-        private _idBuff: number,
+        private _idLinhaEfeito: number,
         public nome: string,
         public nomeAbrev: string,
         public descricao: string,
     ) { }
 
-    get refBuffAtivo(): number { return getPersonagemFromContext().modificadores.valorBuffPorId(this._idBuff); }
+    get refBuffAtivo(): number { return getPersonagemFromContext().controladorModificadores.valorPorIdLinhaEfeito(this._idLinhaEfeito); }
 }
 
 export class AtributoPersonagem {
