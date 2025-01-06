@@ -4,7 +4,7 @@ import "./style.css";
 
 import { useRef, useState } from 'react';
 
-import { RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { HabilidadePassiva, RLJ_Ficha2 } from 'Types/classes/index.ts';
 
 import SubPaginaDetalhes from "Pages/Ficha/SubPaginasFicha/SubPaginaDetalhes/page.tsx";
 import SubPaginaEstatisticasDanificaveis from "Pages/Ficha/SubPaginasFicha/SubPaginaEstatisticasDanificaveis/page.tsx";

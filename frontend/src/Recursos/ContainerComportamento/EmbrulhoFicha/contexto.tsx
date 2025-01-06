@@ -1,7 +1,7 @@
 // #region Imports
 import React, { createContext, useContext } from "react";
 
-import { Personagem } from "Types/classes/index.ts";
+import { HabilidadePassiva, Personagem } from "Types/classes/index.ts";
 import { geraFicha } from 'Utils/utils.tsx';
 // #endregion
 
@@ -30,6 +30,8 @@ export const ContextoFichaProvider = ({ children, idFichaNoLocalStorage }: { chi
 
     const PageComBridge = ({ children }: { children: React.ReactNode }) => {
         useContextBridge();
+
+        personagem.habilidades.forEach(habilidade => habilidade instanceof HabilidadePassiva && habilidade.modificadores.forEach(modificador => modificador.comportamentos.ehPassivoSempreAtivo && modificador.ativaBuff()));
 
         return (
             <>{children}</>

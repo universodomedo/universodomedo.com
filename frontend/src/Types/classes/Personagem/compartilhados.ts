@@ -16,7 +16,7 @@ export function novoItemPorDadosItem(argsItem: ArgsItem, adicionaDados: boolean 
             const fichas: RLJ_Ficha2[] = JSON.parse(dadosFicha);
             const fichaAtualizada = fichas[idFichaNoLocalStorage] || { inventario: [] };
 
-            fichaAtualizada.inventario.push(argsItem);
+            fichaAtualizada.inventario!.push(argsItem);
             fichas[idFichaNoLocalStorage] = fichaAtualizada;
             localStorage.setItem('dadosFicha', JSON.stringify(fichas));
         }
@@ -35,7 +35,7 @@ export function novoItemPorDadosItem(argsItem: ArgsItem, adicionaDados: boolean 
                             )),
                             argsAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
                         ].filter(Boolean));
-                        acao.adicionarModificadores();
+                        // acao.adicionarModificadores();
                         // acao.adicionarBuffs(
                         //     (argsAcao.buffs || []).map(buff => [
                         //         ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
@@ -49,7 +49,7 @@ export function novoItemPorDadosItem(argsItem: ArgsItem, adicionaDados: boolean 
                 }
             ))
         )
-        .adicionarModificadores();
+        // .adicionarModificadores();
         // .adicionarBuffs(
         //     (argsItem.buffs || []).map(buff => [
         //         ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)

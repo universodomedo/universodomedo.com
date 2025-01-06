@@ -1,5 +1,5 @@
 // #region Imports
-import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, MensagemLog, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito } from 'Types/classes/index.ts';
+import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, MensagemLog, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito } from 'Types/classes/index.ts';
 // #endregion
 
 export class SingletonHelper {
@@ -27,7 +27,6 @@ export class SingletonHelper {
   private _tipos_items: TipoItem[] = [];
   private _niveis_componente: NivelComponente[] = [];
   private _tipos_requisitos: TipoRequisito[] = [];
-  private _lista_geral_habilidades: Habilidade[] = [];
   private _classes: Classe[] = [];
   private _niveis: Nivel[] = [];
   private _tipos_ganho_nex: TipoGanhoNex[] = [];
@@ -108,9 +107,6 @@ export class SingletonHelper {
 
   public set tipos_requisitos(value: TipoRequisito[]) { this._tipos_requisitos = value }
   public get tipos_requisitos(): TipoRequisito[] { return this._tipos_requisitos }
-
-  public set lista_geral_habilidades(value: Habilidade[]) { this._lista_geral_habilidades = value }
-  public get lista_geral_habilidades(): Habilidade[] { return this._lista_geral_habilidades }
 
   public set classes(value: Classe[]) { this._classes = value }
   public get classes(): Classe[] { return this._classes }

@@ -22,8 +22,8 @@ const page: React.FC<{ abaId: string; controladorModificadores: ControladorModif
   );
 
   return (
-    <ConsultaProvider<Modificador> abaId={abaId} registros={[controladorModificadores.modificadores]} mostrarFiltro={mostrarFiltros} filtroProps={Modificador.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Efeitos Aplicados', 'Efeitos Sobrescritos'] }}>
-    {/* <ConsultaProvider<Modificador> abaId={abaId} registros={[buffsAplicados, buffsSobreescritos]} mostrarFiltro={mostrarFiltros} filtroProps={Modificador.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Efeitos Aplicados', 'Efeitos Sobrescritos'] }}> */}
+    // <ConsultaProvider<Modificador> abaId={abaId} registros={[buffsAplicados, buffsSobreescritos]} mostrarFiltro={mostrarFiltros} filtroProps={Modificador.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Efeitos Aplicados', 'Efeitos Sobrescritos'] }}>
+    <ConsultaProvider<Modificador> abaId={abaId} registros={[buffsAplicados, buffsSobreescritos]} mostrarFiltro={mostrarFiltros} filtroProps={Modificador.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Efeitos Aplicados', 'Efeitos Sobrescritos'] }}>
       <Consulta renderItem={renderBuffItem} />
     </ConsultaProvider>
   );

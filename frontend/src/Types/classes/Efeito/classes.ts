@@ -3,12 +3,15 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
 export class Efeito {
-    constructor(
-        private _idLinhaEfeito: number,
-        private _idTipoEfeito: number,
-        public valor: number,
-        public valorMultiplicador: number = 1,
-    ) { }
+    private _idLinhaEfeito: number;
+    private _idTipoEfeito: number;
+    public valoresEfeitos: ValoresEfeito;
+
+    constructor({ idLinhaEfeito, idTipoEfeito, dadosValoresEfeitos }: { idLinhaEfeito: number; idTipoEfeito: number; dadosValoresEfeitos: ConstructorParameters<typeof ValoresEfeito>[0] }) {
+        this._idLinhaEfeito = idLinhaEfeito;
+        this._idTipoEfeito = idTipoEfeito;
+        this.valoresEfeitos = new ValoresEfeito(dadosValoresEfeitos);
+    }
 
     get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === this._idLinhaEfeito)!; }
     get refTipoEfeito(): TipoEfeito { return SingletonHelper.getInstance().tipos_efeito.find(tipo_efeito => tipo_efeito.id === this._idTipoEfeito)!; }
@@ -31,4 +34,16 @@ export class TipoEfeito {
         public nome: string,
         public nomeExibirTooltip: string,
     ) { }
+}
+
+export class ValoresEfeito {
+    public valorBaseExtra: number;
+    public valorMultiplicador: number;
+    public valorAdicional: number;
+
+    constructor({ valorBaseExtra, valorMultiplicador, valorAdicional }: { valorBaseExtra?: number; valorMultiplicador?: number; valorAdicional?: number }) {
+        this.valorBaseExtra = valorBaseExtra ?? 0;
+        this.valorMultiplicador = valorMultiplicador ?? 1;
+        this.valorAdicional = valorAdicional ?? 0;
+    }
 }

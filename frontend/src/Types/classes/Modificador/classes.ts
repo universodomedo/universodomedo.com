@@ -6,26 +6,30 @@ import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/Embrul
 // #endregion
 
 export class Modificador {
+    private static contadorId = 0;
+    private _id: number;
+
+    public nome: string;
+    private _idDuracao: number;
+    public quantidadeDuracaoMaxima: number;
     public quantidadeDuracaoAtual: number = 0;
+    public efeitos: Efeito[] = [];
     public comportamentos: ComportamentosBuff = new ComportamentosBuff();
 
     public svg = `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+`;
 
-    constructor(
-        public nome: string,
-        private _idDuracao: number,
-        public quantidadeDuracaoMaxima: number,
-        public efeitos: Efeito[],
+    constructor({ nome, idDuracao, quantidadeDuracaoMaxima, dadosEfeitos, dadosComportamentos }: { nome: string, idDuracao: number, quantidadeDuracaoMaxima: number, dadosEfeitos: ConstructorParameters<typeof Efeito>[0][], dadosComportamentos: DadosComportamentosBuff }) {
+        this._id = Modificador.contadorId++;
+        this.nome = nome;
+        this._idDuracao = idDuracao;
+        this.efeitos = dadosEfeitos.map(dados => new Efeito(dados));
+        this.quantidadeDuracaoMaxima = quantidadeDuracaoMaxima;
 
-        dadosComportamentos: DadosComportamentosBuff,
-    ) {
         if (dadosComportamentos.dadosComportamentoAtivo !== undefined) this.comportamentos.setComportamentoBuffAtivo(...dadosComportamentos.dadosComportamentoAtivo);
         if (dadosComportamentos.dadosComportamentoPassivo !== undefined) this.comportamentos.setComportamentoBuffPassivo(...dadosComportamentos.dadosComportamentoPassivo);
-
-        if (this.comportamentos.ehPassivoSempreAtivo) this.ativaBuff();
     }
 
-    get codigoUnico(): string { return `a`; }
+    get codigoUnico(): string { return `${this._id}:${this.nome}`; }
 
     get refDuracao(): Duracao { return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === this._idDuracao)!; }
 
@@ -149,10 +153,22 @@ export class BuffsPorId {
 
     get valorParaId(): number {
         return this.tipoBuff.reduce((acc, cur) => {
-            return acc + cur.aplicado.valor;
+            return acc + 0;
         }, 0)
     }
 }
+// export class BuffsPorId {
+//     constructor(
+//         public idBuff: number,
+//         public tipoBuff: BuffsPorTipo[],
+//     ) { }
+
+//     get valorParaId(): number {
+//         return this.tipoBuff.reduce((acc, cur) => {
+//             return acc + cur.aplicado.valor;
+//         }, 0)
+//     }
+// }
 
 export class BuffsPorTipo {
     constructor(

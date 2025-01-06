@@ -53,7 +53,7 @@ export class Acao {
     // adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this._buffs, buffParams), this) };
     // adicionarAcoes(acoes: { props: ConstructorParameters<typeof Acao>, config: (acao: Acao) => void }[]): this { return (adicionarAcoesUtil(this, this.acoes, acoes), this); }
 
-    adicionarModificadores(): this { return (adicionarModificadoresUtil(this, this._modificadores), this); }
+    adicionarModificadores(propsModificador: ConstructorParameters<typeof Modificador>[0]): this { return (adicionarModificadoresUtil(this, this._modificadores, propsModificador), this); }
     // adicionarEfeitos(efeitos: { props: ConstructorParameters<typeof Efeito> }[]): this { return (adicionarEfeitosUtil(this, this.efeitos, efeitos), this); }
     // adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this.buffs, buffParams), this) };
 

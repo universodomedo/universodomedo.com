@@ -46,8 +46,7 @@ export class HabilidadePassiva extends Habilidade {
     protected _modificadores: Modificador[] = [];
     get modificadores(): Modificador[] { return this._modificadores; }
 
-    adicionarModificadores(): this { return (adicionarModificadoresUtil(this, this._modificadores), this); }
-    // adicionarBuffs(buffParams: [new (...args: any[]) => Buff, any[]][]): this { return (adicionarBuffsUtil(this, this.buffs, buffParams), this) };
+    adicionarModificadores(propsModificador: ConstructorParameters<typeof Modificador>[0]): this { return (adicionarModificadoresUtil(this, this._modificadores, propsModificador), this); }
 }
 
 export const lista_geral_habilidades = (): Habilidade[] => {
@@ -86,7 +85,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         })),
         new HabilidadePassiva('Movimento Frenético', 'Aumenta seu Deslocamento em +3', new RequisitoFicha((personagem: Personagem) => { 
             return personagem.pericias.some(pericia => pericia.refPericia.id === 1 && pericia.refPatente.id >= 3 || true);
-        })).adicionarModificadores(),
+        })).adicionarModificadores({ nome: 'Movimento Frenético', idDuracao: 3, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito:53, idTipoEfeito: 4, dadosValoresEfeitos: { valorAdicional: 3 } }], dadosComportamentos: { dadosComportamentoPassivo: [false] } }),
         new HabilidadePassiva('Movimento Não Linear', 'Você ignora Penalidades de Deslocamento até o início do seu próximo turno', new RequisitoFicha((personagem: Personagem) => { 
             return personagem.pericias.some(pericia => pericia.refPericia.id === 1 && pericia.refPatente.id >= 4);
         })), // x

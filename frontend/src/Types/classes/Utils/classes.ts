@@ -25,8 +25,9 @@ export function adicionarEfeitosUtil<T extends Acao | Item | Habilidade>(instanc
     })
 }
 
-export function adicionarModificadoresUtil<T extends Acao | Item | Habilidade>(instancia: T, lista: Modificador[]): void {
-    const novoModificador = new Modificador('teste', 3, 1, [new Efeito(1, 1, 2)], { dadosComportamentoPassivo: [false]});
+export function adicionarModificadoresUtil<T extends Acao | Item | Habilidade>(instancia: T, lista: Modificador[], propsModificador: ConstructorParameters<typeof Modificador>[0]): void {
+    console.log('adicionarModificadoresUtil');
+    const novoModificador = new Modificador(propsModificador);
 
     lista.push(novoModificador);
 }

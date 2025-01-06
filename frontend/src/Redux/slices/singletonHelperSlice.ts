@@ -1,7 +1,7 @@
 // #region Imports
 import { createSlice } from '@reduxjs/toolkit';
 import { SingletonHelper } from 'Types/classes_estaticas';
-import { lista_geral_habilidades, Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, RequisitoFicha, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito } from "Types/classes/index.ts";
+import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, RequisitoFicha, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito } from "Types/classes/index.ts";
 // #endregion
 
 const singletonHelper = SingletonHelper.getInstance();
@@ -138,11 +138,9 @@ singletonHelper.patentes_pericia = [new PatentePericia(1, "Destreinado", 0), new
 singletonHelper.tipos_items = [new TipoItem(1, "Arma"), new TipoItem(2, "Equipamento"), new TipoItem(3, "Consumível"), new TipoItem(4, "Componente Ritualístico")];
 singletonHelper.niveis_componente = [new NivelComponente(1, "Simples"), new NivelComponente(2, "Complexo"), new NivelComponente(3, "Especial")];
 singletonHelper.tipos_requisitos = [new TipoRequisito(1, 'Empunhando Item Pai'), new TipoRequisito(2, 'Empunhando Componente Ritualístico')];
-singletonHelper.lista_geral_habilidades = lista_geral_habilidades();
 singletonHelper.classes = [new Classe(1, 'Mundano'), new Classe(2, 'Combatente'), new Classe(3, 'Especialista'), new Classe(4, 'Ocultista')];
 singletonHelper.niveis = [new Nivel(1, '0'), new Nivel(2, '5'), new Nivel(3, '10'), new Nivel(4, '15'), new Nivel(5, '20'), new Nivel(6, '25'), new Nivel(7, '30'), new Nivel(8, '35'), new Nivel(9, '40'), new Nivel(10, '45'), new Nivel(11, '50'), new Nivel(12, '55'), new Nivel(13, '60'), new Nivel(14, '65'), new Nivel(15, '70'), new Nivel(16, '75'), new Nivel(17, '80'), new Nivel(18, '85'), new Nivel(19, '90'), new Nivel(20, '95'), new Nivel(21, '99')];
 singletonHelper.tipos_ganho_nex = [new TipoGanhoNex(1, 'Atributo'), new TipoGanhoNex(2, 'Pericias'), new TipoGanhoNex(3, 'Estatísticas Fixas'), new TipoGanhoNex(4, 'Escolha de Classe')];
-    // , new TipoGanhoNex(3, 'Pericia Veterana'), new TipoGanhoNex(4, 'Pericia Expert'), new TipoGanhoNex(5, 'Pericia Livre'), new TipoGanhoNex(6, 'Ritual'), new TipoGanhoNex(7, 'Habilidade Especial')];
 
 const singletonHelperSlice = createSlice({
     name: 'singletonHelper',

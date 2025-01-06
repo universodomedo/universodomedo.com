@@ -7,9 +7,13 @@ import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/Embrul
 export class ControladorModificadores {
     private _modificadores: Modificador[] = []
 
-    adicionaModificador(modificador: Modificador) { this._modificadores.push(modificador); }
+    adicionaModificador(modificador: Modificador) {
+        if (this.modificadores.some(modificadorAtual => modificadorAtual.codigoUnico === modificador.codigoUnico)) this.removeModificador(modificador);
+        this._modificadores.push(modificador);
+    }
+
     removeModificador(modificador: Modificador) { this._modificadores = this._modificadores.filter(modEquivalente => modEquivalente.codigoUnico !== modificador.codigoUnico); }
-    valorPorIdLinhaEfeito(idLinhaEfeito: number): number { return this.efeitos.aplicados.filter(efeito => efeito.refLinhaEfeito.id === idLinhaEfeito)!.reduce((acc, cur) => acc + cur.valor, 0); }
+    valorPorIdLinhaEfeito(idLinhaEfeito: number): number { return this.efeitos.aplicados.filter(efeito => efeito.refLinhaEfeito.id === idLinhaEfeito)!.reduce((acc, cur) => acc + cur.valoresEfeitos.valorAdicional, 0); }
     // valorMultiplicadorBuffPorId(idBuff: number): number { return this.buffs.aplicados }
 
     // prototipoSobrecarga():Buff|void {
@@ -27,12 +31,16 @@ export class ControladorModificadores {
         const aplicados: Efeito[] = [];
         const sobreescritos: Efeito[] = [];
 
+        //
+
         // const buffSobrecarga = this.prototipoSobrecarga();
         // if (buffSobrecarga) {
         //     aplicados.push(buffSobrecarga);
         // }
 
-        const groupedBuffs = this._modificadores.reduce((acc, modificador) => {
+        //
+
+        const groupedBuffs = this.modificadores.reduce((acc, modificador) => {
             const key = `${modificador.nome}-${modificador.codigoUnico}`;
 
             if (!acc[key]) acc[key] = [];
@@ -43,7 +51,7 @@ export class ControladorModificadores {
 
         for (const key in groupedBuffs) {
             const buffs = groupedBuffs[key];
-            const sortedBuffs = buffs.sort((a, b) => b.valor - a.valor);
+            const sortedBuffs = buffs.sort((a, b) => a.valoresEfeitos.valorAdicional - b.valoresEfeitos.valorAdicional);
 
             aplicados.push(sortedBuffs[0]);
             sobreescritos.push(...sortedBuffs.slice(1));

@@ -101,6 +101,10 @@ export class Personagem {
         return acoesRituais.concat(this.inventario.acoesInventario()).concat(acoesHabilidades);
     }
 
+    obtemValorAplicadoPorLinhaEfeito(idLinhaEfeito: number): number {
+        return this.controladorModificadores.valorPorIdLinhaEfeito(idLinhaEfeito);
+    }
+
     public onUpdate: () => void = () => { };
 
     // receberDanoVital = (danoGeral:DanoGeral) => {
