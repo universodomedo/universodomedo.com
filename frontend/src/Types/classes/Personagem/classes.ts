@@ -1,5 +1,5 @@
 // #region Imports
-import { EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Acao, HabilidadeAtiva, novoItemPorDadosItem, lista_geral_habilidades, Efeito, ControladorModificadores } from 'Types/classes/index.ts';
+import { EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Acao, HabilidadeAtiva, novoItemPorDadosItem, lista_geral_habilidades, Efeito, ControladorModificadores, ValoresEfeito } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -101,8 +101,9 @@ export class Personagem {
         return acoesRituais.concat(this.inventario.acoesInventario()).concat(acoesHabilidades);
     }
 
-    obtemValorAplicadoPorLinhaEfeito(idLinhaEfeito: number): number {
-        return this.controladorModificadores.valorPorIdLinhaEfeito(idLinhaEfeito);
+    obtemValorTotalComLinhaEfeito(valorBase: number, idLinhaEfeito: number): number {
+        const valoresLinhaEfeito = this.controladorModificadores.valoresEfeitoPorLinhaEfeito(idLinhaEfeito);
+        return Math.floor((valorBase + valoresLinhaEfeito.valorBaseExtra) * valoresLinhaEfeito.valorMultiplicador) + valoresLinhaEfeito.valorAdicional;
     }
 
     public onUpdate: () => void = () => { };

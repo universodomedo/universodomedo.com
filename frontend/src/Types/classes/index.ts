@@ -5,7 +5,7 @@ export * from './Atributo';
 export * from './CaracteristicaArma';
 export * from './Comportamento';
 export * from './CondicaoGanhoNex';
-export * from './ControladorModificador';
+export * from './ControladorModificadores';
 export * from './Custo';
 export * from './Dano';
 export * from './Defesa';

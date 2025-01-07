@@ -61,7 +61,7 @@ const PaginaFicha = () => {
                     <div className={style.div_demo_acoes}>
                         <div>
                             <h1>Teste</h1>
-                            <button onClick={() => console.log(personagem)}>Teste</button>
+                            <button onClick={() => console.log(personagem.controladorModificadores.calcularValoresPorLinha())}>Teste</button>
                         </div>
 
                         <div>

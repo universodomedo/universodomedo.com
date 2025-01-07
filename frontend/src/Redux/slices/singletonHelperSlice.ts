@@ -98,7 +98,7 @@ singletonHelper.categorias_acao = [new CategoriaAcao(1, "Ativo"), new CategoriaA
 singletonHelper.tipos_acao = [new TipoAcao(1, "Ação Direta Pacifica"), new TipoAcao(2, "Ação Direta Agressiva"), new TipoAcao(3, "Aplicação de Efeito Positivo"), new TipoAcao(4, "Aplicação de Efeito Negativo")];
 singletonHelper.tipos_alvo = [new TipoAlvo(1, "Pessoal"), new TipoAlvo(2, "Ser"), new TipoAlvo(3, "Objeto"), new TipoAlvo(4, "Ponto"), new TipoAlvo(5, "Direção")];
 singletonHelper.tipos_dano = [new TipoDano(1, "Vital"), new TipoDano(2, "Mundano"), new TipoDano(3, "Concussivo"), new TipoDano(4, "Cortante"), new TipoDano(5, "Perfurante"), new TipoDano(6, "Natural"), new TipoDano(7, "Elétrico"), new TipoDano(8, "Fogo"), new TipoDano(9, "Frio"), new TipoDano(10, "Químico"), new TipoDano(11, "Elemental"), new TipoDano(12, "Conhecimento"), new TipoDano(13, "Sangue"), new TipoDano(14, "Energia"), new TipoDano(15, "Morte"), new TipoDano(16, "Medo"), new TipoDano(17, "Mental"), new TipoDano(18, "Debilitante")];
-singletonHelper.tipos_efeito = [new TipoEfeito(1, "Equipamento", 'Efeito de Equipamento'), new TipoEfeito(2, "Químico", 'Efeito Químico'), new TipoEfeito(3, "Paranormal", 'Efeito Paranormal'), new TipoEfeito(4, "Especial", 'Efeito Especial')];
+singletonHelper.tipos_efeito = [new TipoEfeito(1, "Equipamento", 'Efeito de Equipamento'), new TipoEfeito(2, "Químico", 'Efeito Químico'), new TipoEfeito(3, "Paranormal", 'Efeito Paranormal'), new TipoEfeito(4, "Especial", 'Efeito Especial'), new TipoEfeito(5, 'Negativo', 'Efeito Negativo')];
 singletonHelper.atributos = [
     new Atributo(1, 1, "Agilidade", "AGI", 'Índice da velocidade e precisão que seu corpo responde a estímulos'),
     new Atributo(2, 2, "Força", "FOR", 'Índice da construção física de seu corpo'),

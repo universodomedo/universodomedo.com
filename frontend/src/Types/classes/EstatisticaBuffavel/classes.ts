@@ -1,5 +1,5 @@
 // #region Imports
-import { Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, Extremidade } from 'Types/classes/index.ts';
+import { Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, Extremidade, ValoresEfeito } from 'Types/classes/index.ts';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto';
 // #endregion
@@ -19,13 +19,11 @@ export class EstatisticasBuffaveisPersonagem {
         this.extremidades = Array.from({ length: numExtremidades }, (_, index) => new Extremidade(index + 1));
     }
 
-    get deslocamento(): number {
-        return this._deslocamento + getPersonagemFromContext().obtemValorAplicadoPorLinhaEfeito(53)
-    }
+    get deslocamento(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(this._deslocamento, 53); }
 
     // get deslocamento():number {
     //     return ((this._deslocamento * getPersonagemFromContext().modificadores.valorBuffPorId(53)) + 
-        
+
     // }
 
     // get deslocamentoAdicional(): {valorMultiplicador: number, valor: number} {

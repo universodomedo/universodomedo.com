@@ -5,17 +5,17 @@ import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/Embrul
 export class Defesa {
     constructor(
         public valorNatural: number,
-        public valorAdicionaPorAgilidade: number,
-        public valorAdicionaPorForca: number,
-        public valorAdicionaPorVigor: number,
+        public valorAdicionalPorAgilidade: number,
+        public valorAdicionalPorForca: number,
+        public valorAdicionalPorVigor: number,
     ) { }
 
     get defesaTotal(): number {
         return (
             this.valorNatural +
-            (this.valorAdicionaPorAgilidade * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 1)?.valorTotal!) +
-            (this.valorAdicionaPorForca * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 2)?.valorTotal!) +
-            (this.valorAdicionaPorVigor * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 5)?.valorTotal!)
+            (this.valorAdicionalPorAgilidade * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 1)?.valorTotal!) +
+            (this.valorAdicionalPorForca * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 2)?.valorTotal!) +
+            (this.valorAdicionalPorVigor * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 5)?.valorTotal!)
         );
     }
 }

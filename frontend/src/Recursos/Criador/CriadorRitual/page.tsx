@@ -10,7 +10,6 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 const page = ({ onCreate }: { onCreate: (novoRitual: ArgsRitual) => void; }) => {
     const [elementoSelecionado, setElementoSelecionado] = useState(0);
     const handleSelectChangeElemento = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        console.log(`${Number(event.target.value)} selecionado`);
         setElementoSelecionado(Number(event.target.value));
     };
 
