@@ -23,6 +23,9 @@ export class LinhaEfeito {
         public nome: string,
     ) { }
 
+    public svg = `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+`;
+
+    // acho q eeh de boa remover
     static obtemEfeitoRefPorId(idLinhaEfeito: number): string {
         return SingletonHelper.getInstance().linhas_efeito.find(linhas_efeito => linhas_efeito.id === idLinhaEfeito)!.nome;
     }
