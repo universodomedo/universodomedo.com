@@ -40,13 +40,13 @@ export class TipoEfeito {
 }
 
 export class ValoresEfeito {
-    public valorBaseExtra: number;
-    public valorMultiplicador: number;
-    public valorAdicional: number;
-
-    constructor({ valorBaseExtra, valorMultiplicador, valorAdicional }: { valorBaseExtra?: number; valorMultiplicador?: number; valorAdicional?: number }) {
-        this.valorBaseExtra = valorBaseExtra ?? 0;
-        this.valorMultiplicador = valorMultiplicador ?? 1;
-        this.valorAdicional = valorAdicional ?? 0;
+    public valorBaseAdicional: number;
+    public valorMultiplicadorAdicional: number;
+    public valorBonusAdicional: number;
+    
+    constructor({ valorBaseAdicional = 0, valorMultiplicadorAdicional = 1, valorBonusAdicional = 0 }: { valorBaseAdicional?: number; valorMultiplicadorAdicional?: number; valorBonusAdicional?: number } = {}) {
+        this.valorBaseAdicional = valorBaseAdicional;
+        this.valorMultiplicadorAdicional = valorMultiplicadorAdicional;
+        this.valorBonusAdicional = valorBonusAdicional;
     }
 }

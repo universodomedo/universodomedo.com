@@ -49,7 +49,10 @@ export function novoItemPorDadosItem(argsItem: ArgsItem, adicionaDados: boolean 
                 }
             ))
         )
-        // .adicionarModificadores();
+        .adicionarModificadores(
+            (argsItem.modificadores?.map(modificador => modificador.props) || [])
+        );
+        // .adicionarModificadores(argsItem.propsModificadores?.propsModificador!);
         // .adicionarBuffs(
         //     (argsItem.buffs || []).map(buff => [
         //         ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)

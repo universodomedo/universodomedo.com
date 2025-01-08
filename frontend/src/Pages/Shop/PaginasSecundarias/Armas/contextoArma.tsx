@@ -5,7 +5,7 @@ import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
 import PaginaBaseArma from './pageBaseArma.tsx';
 import PaginaCaracteristicaArma from './pageCaracteristicaArma.tsx';
 
-import { basesArma, classificacoesArma, DadosCaracteristicasArmas, ArgsItem, listaCaracteristicaArma, patentesArma, ArgsAcao, subDadosBuff, tiposArma } from 'Types/classes/index.ts';
+import { basesArma, classificacoesArma, DadosCaracteristicasArmas, ArgsItem, listaCaracteristicaArma, patentesArma, ArgsAcao, tiposArma, PropsModificador } from 'Types/classes/index.ts';
 // #endregion
 
 interface ContextoArmaProps {
@@ -88,7 +88,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
             buffs: [...acc.buffs, ...(cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.buffs || [])],
             reducaoPatenteSimplificada: acc.reducaoPatenteSimplificada || !!cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.reducaoPatenteSimplificada,
         };
-    }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0, acoes: [] as ArgsAcao[], buffs: [] as subDadosBuff[], reducaoPatenteSimplificada: false });
+    }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0, acoes: [] as ArgsAcao[], buffs: [] as PropsModificador[], reducaoPatenteSimplificada: false });
 
     const acaoPadraoBase: ArgsAcao = {
         args: { nome: 'Ataque Padrão', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, },

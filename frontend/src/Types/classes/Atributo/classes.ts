@@ -1,4 +1,5 @@
 // #region Imports
+import { LinhaEfeito } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -13,7 +14,7 @@ export class Atributo {
         public descricao: string,
     ) { }
 
-    get refBuffAtivo(): number { return getPersonagemFromContext().controladorModificadores.valorPorIdLinhaEfeito(this._idLinhaEfeito); }
+    get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === this._idLinhaEfeito)!; }
 }
 
 export class AtributoPersonagem {
@@ -23,6 +24,5 @@ export class AtributoPersonagem {
     ) { }
 
     get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this._idAtributo)!; }
-    get valorBonus(): number { return this.refAtributo.refBuffAtivo; }
-    get valorTotal(): number { return this.valor + this.valorBonus; }
+    get valorTotal(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(this.valor, this.refAtributo.refLinhaEfeito.id); }
 }

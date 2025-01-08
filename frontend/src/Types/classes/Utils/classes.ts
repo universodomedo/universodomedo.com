@@ -1,5 +1,5 @@
 // #region Imports
-import { Ritual, Item, Habilidade, Acao, Efeito, Modificador } from 'Types/classes/index.ts';
+import { Ritual, Item, Habilidade, Acao, Modificador, HabilidadePassiva } from 'Types/classes/index.ts';
 // #endregion
 
 export const pluralize = (count: number, singular: string, plural?: string): string => {
@@ -17,28 +17,13 @@ export function adicionarAcoesUtil<T extends Ritual | Item | Habilidade>(instanc
     });
 }
 
-export function adicionarEfeitosUtil<T extends Acao | Item | Habilidade>(instancia: T, lista: Efeito[], efeitos: { props: ConstructorParameters<typeof Efeito> }[]): void {
-    efeitos.forEach(({ props }) => {
-        const novoEfeito = new Efeito(...props);
+export function adicionarModificadoresUtil<T extends Acao | HabilidadePassiva | Item>(instancia: T, lista: Modificador[], propsModificador: ConstructorParameters<typeof Modificador>[0][]): void {
+    propsModificador.forEach(props => {
+        const novoModificador = new Modificador(props).adicionaRefPai(instancia);
 
-        lista.push(novoEfeito);
-    })
+        lista.push(novoModificador);
+    });
 }
-
-export function adicionarModificadoresUtil<T extends Acao | Item | Habilidade>(instancia: T, lista: Modificador[], propsModificador: ConstructorParameters<typeof Modificador>[0]): void {
-    console.log('adicionarModificadoresUtil');
-    const novoModificador = new Modificador(propsModificador);
-
-    lista.push(novoModificador);
-}
-
-// export function adicionarBuffsUtil<T extends Acao | Item | Habilidade>(instancia: T, buffs: Buff[], buffParams: [new (...args: any[]) => Buff, any[]][]): void {
-//     buffParams.forEach(([BuffClass, params]) => {
-//         const buff = new BuffClass(...params, instancia);
-
-//         buffs.push(buff);
-//     });
-// }
 
 export function classeComArgumentos<T extends new (...args: any[]) => any>(Ctor: T, ...params: ConstructorParameters<T>) {
     return [Ctor, params] as [T, ConstructorParameters<T>];

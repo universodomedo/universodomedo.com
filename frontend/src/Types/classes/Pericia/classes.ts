@@ -1,5 +1,5 @@
 // #region Imports
-import { Atributo, AtributoPersonagem } from 'Types/classes/index.ts';
+import { Atributo, AtributoPersonagem, LinhaEfeito } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -9,15 +9,14 @@ import { ExecutaTestePericiaGenerico } from 'Recursos/Ficha/Procedimentos';
 export class Pericia {
     constructor(
         public id: number,
-        private _idBuff: number,
+        private _idLinhaEfeito: number,
         private _idAtributo: number,
         public nome: string,
         public nomeAbrev: string,
         public descricao: string
     ) { }
 
-    get idBuffRelacionado(): number { return this._idBuff; }
-    get refBuffAtivo(): number { return getPersonagemFromContext().controladorModificadores.valorPorIdLinhaEfeito(this._idBuff); }
+    get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === this._idLinhaEfeito)!; }
     get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this._idAtributo)!; }
 }
 
@@ -41,8 +40,7 @@ export class PericiaPatentePersonagem {
 
     get valorNivelPatente(): number { return this.refPatente.id; }
     get valorBonusPatente(): number { return this.refPatente.valor; }
-    get valorBonus(): number { return this.refPericia.refBuffAtivo; }
-    get valorTotal(): number { return this.valorBonusPatente + this.valorBonus  }
+    get valorTotal(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(this.valorBonusPatente, this.refPericia.refLinhaEfeito.id); }
 
     realizarTeste = () => {
         const resultado = ExecutaTestePericiaGenerico(this.refAtributoPersonagem, this);

@@ -103,7 +103,7 @@ export class Personagem {
 
     obtemValorTotalComLinhaEfeito(valorBase: number, idLinhaEfeito: number): number {
         const valoresLinhaEfeito = this.controladorModificadores.valoresEfeitoPorLinhaEfeito(idLinhaEfeito);
-        return Math.floor((valorBase + valoresLinhaEfeito.valorBaseExtra) * valoresLinhaEfeito.valorMultiplicador) + valoresLinhaEfeito.valorAdicional;
+        return Math.floor((valorBase + valoresLinhaEfeito.valorBaseAdicional) * valoresLinhaEfeito.valorMultiplicadorAdicional) + valoresLinhaEfeito.valorBonusAdicional;
     }
 
     public onUpdate: () => void = () => { };

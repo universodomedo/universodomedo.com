@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, ComportamentoAcao, ComportamentoBuffAtivo, ComportamentoBuffPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosBuff, ComportamentoUsoAcao, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, RequisitoMunicao, RequisitoUso } from 'Types/classes/index.ts';
+import { Acao, ComportamentoAcao, ComportamentoBuffAtivo, ComportamentoBuffPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosBuff, ComportamentoUsoAcao, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -18,7 +18,7 @@ export type ArgsItem = {
     dadosComportamentos: DadosComportamentosItem;
 
     dadosAcoes?: ArgsAcao[];
-    buffs?: subDadosBuff[];
+    modificadores?: PropsModificador[];
 };
 
 export type DadosComportamentosItem = {
@@ -33,7 +33,7 @@ export type ArgsAcao = {
     args: ConstructorParameters<typeof DadosGenericosAcao>[0],
     dadosComportamentos: DadosComportamentosAcao;
     custos: subDadosCusto,
-    buffs?: subDadosBuff[],
+    modificadores?: PropsModificador[],
     requisitos: number[]
 };
 
@@ -82,10 +82,11 @@ export type subDadosCusto = {
     custoPE?: { valor: number }, custoExecucao?: { idExecucao: number, valor: number }[], custoComponente?: boolean
 }
 
-export type subDadosBuff = {
-    idBuff: number, nome: string, valor: number,
-    dadosComportamentos: DadosComportamentosBuff;
-    duracao: { idDuracao: number, valor: number, }, idTipoBuff: number
+export type PropsModificador = {
+    props: ConstructorParameters<typeof Modificador>[0]
+    // idBuff: number, nome: string, valor: number,
+    // dadosComportamentos: DadosComportamentosBuff;
+    // duracao: { idDuracao: number, valor: number, }, idTipoBuff: number
 }
 
 export type DadosCaracteristicasArmas = {
@@ -94,7 +95,7 @@ export type DadosCaracteristicasArmas = {
     modificadorDanoMinimo?: number,
     modificadorDanoMaximo?: number,
     acoes?: ArgsAcao[],
-    buffs?: subDadosBuff[],
+    modificadores?: PropsModificador[],
     // temporario mas tlvz fique assim pra sempre, sim
     reducaoPatenteSimplificada?: boolean,
 }

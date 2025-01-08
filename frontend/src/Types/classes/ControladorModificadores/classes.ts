@@ -14,8 +14,7 @@ export class ControladorModificadores {
     }
 
     removeModificador(modificador: Modificador) { this._modificadores = this._modificadores.filter(modEquivalente => modEquivalente.codigoUnico !== modificador.codigoUnico); }
-    valorPorIdLinhaEfeito(idLinhaEfeito: number): number { return this.efeitos.aplicados.filter(efeito => efeito.refLinhaEfeito.id === idLinhaEfeito)!.reduce((acc, cur) => acc + cur.valoresEfeitos.valorAdicional, 0); }
-    valoresEfeitoPorLinhaEfeito(idLinhaEfeito: number): ValoresEfeito { return this.valoresEfeitosEDetalhesPorLinhaEfeito.find(info => info.refLinhaEfeito.id === idLinhaEfeito)!.valoresEfeitos; }
+    valoresEfeitoPorLinhaEfeito(idLinhaEfeito: number): ValoresEfeito { return this.valoresEfeitosEDetalhesPorLinhaEfeito.find(info => info.refLinhaEfeito.id === idLinhaEfeito)?.valoresEfeitos || new ValoresEfeito({}); }
 
     // prototipoSobrecarga():Buff|void {
     //     const personagem = getPersonagemFromContext();
@@ -40,47 +39,47 @@ export class ControladorModificadores {
             // Grupo 1
             const efeitosGrupo1 = listaEfeitosNaLinha.filter(efeitos => [1, 2, 3].includes(efeitos.efeito.refTipoEfeito.id));
             if (efeitosGrupo1.length > 0) {
-                const maiorValorBaseExtraGrupo1 = efeitosGrupo1.reduce((maior, atual) => atual.efeito.valoresEfeitos.valorBaseExtra > maior.efeito.valoresEfeitos.valorBaseExtra ? atual : maior, efeitosGrupo1[0]);
-                if (maiorValorBaseExtraGrupo1.efeito.valoresEfeitos.valorBaseExtra > 0) textos.push(`${maiorValorBaseExtraGrupo1.nomeModificador} - Valor Base +${maiorValorBaseExtraGrupo1.efeito.valoresEfeitos.valorBaseExtra}`);
-                valorBaseExtraFinal = maiorValorBaseExtraGrupo1.efeito.valoresEfeitos.valorBaseExtra;
+                const maiorValorBaseExtraGrupo1 = efeitosGrupo1.reduce((maior, atual) => atual.efeito.valoresEfeitos.valorBaseAdicional > maior.efeito.valoresEfeitos.valorBaseAdicional ? atual : maior, efeitosGrupo1[0]);
+                if (maiorValorBaseExtraGrupo1.efeito.valoresEfeitos.valorBaseAdicional > 0) textos.push(`${maiorValorBaseExtraGrupo1.nomeModificador} - Valor Base +${maiorValorBaseExtraGrupo1.efeito.valoresEfeitos.valorBaseAdicional}`);
+                valorBaseExtraFinal = maiorValorBaseExtraGrupo1.efeito.valoresEfeitos.valorBaseAdicional;
 
-                const maiorValorMultiplicadorGrupo1 = efeitosGrupo1.reduce((maior, atual) => atual.efeito.valoresEfeitos.valorMultiplicador > maior.efeito.valoresEfeitos.valorMultiplicador ? atual : maior, efeitosGrupo1[0]);
-                if (maiorValorMultiplicadorGrupo1.efeito.valoresEfeitos.valorMultiplicador !== 1) textos.push(`${maiorValorBaseExtraGrupo1.nomeModificador} - Valor Multiplicador *${maiorValorBaseExtraGrupo1.efeito.valoresEfeitos.valorMultiplicador}`);
-                valorMultiplicadorFinal = maiorValorMultiplicadorGrupo1.efeito.valoresEfeitos.valorMultiplicador;
+                const maiorValorMultiplicadorGrupo1 = efeitosGrupo1.reduce((maior, atual) => atual.efeito.valoresEfeitos.valorMultiplicadorAdicional > maior.efeito.valoresEfeitos.valorMultiplicadorAdicional ? atual : maior, efeitosGrupo1[0]);
+                if (maiorValorMultiplicadorGrupo1.efeito.valoresEfeitos.valorMultiplicadorAdicional !== 1) textos.push(`${maiorValorBaseExtraGrupo1.nomeModificador} - Valor Multiplicador *${maiorValorBaseExtraGrupo1.efeito.valoresEfeitos.valorMultiplicadorAdicional}`);
+                valorMultiplicadorFinal = maiorValorMultiplicadorGrupo1.efeito.valoresEfeitos.valorMultiplicadorAdicional;
 
-                const maiorValorAdicionalFinalGrupo1 = efeitosGrupo1.reduce((maior, atual) => atual.efeito.valoresEfeitos.valorAdicional > maior.efeito.valoresEfeitos.valorAdicional ? atual : maior, efeitosGrupo1[0])
-                if (maiorValorAdicionalFinalGrupo1.efeito.valoresEfeitos.valorAdicional > 0) textos.push(`${maiorValorBaseExtraGrupo1.nomeModificador} - Valor Adicional +${maiorValorBaseExtraGrupo1.efeito.valoresEfeitos.valorAdicional}`);
-                valorAdicionalFinal = maiorValorAdicionalFinalGrupo1.efeito.valoresEfeitos.valorAdicional;
+                const maiorValorAdicionalFinalGrupo1 = efeitosGrupo1.reduce((maior, atual) => atual.efeito.valoresEfeitos.valorBonusAdicional > maior.efeito.valoresEfeitos.valorBonusAdicional ? atual : maior, efeitosGrupo1[0])
+                if (maiorValorAdicionalFinalGrupo1.efeito.valoresEfeitos.valorBonusAdicional > 0) textos.push(`${maiorValorBaseExtraGrupo1.nomeModificador} - Valor Adicional +${maiorValorBaseExtraGrupo1.efeito.valoresEfeitos.valorBonusAdicional}`);
+                valorAdicionalFinal = maiorValorAdicionalFinalGrupo1.efeito.valoresEfeitos.valorBonusAdicional;
             }
 
             // Grupo 2
             listaEfeitosNaLinha.filter(efeitos => efeitos.efeito.refTipoEfeito.id === 4).forEach(efeitos => {
-                valorBaseExtraFinal += efeitos.efeito.valoresEfeitos.valorBaseExtra;
-                if (efeitos.efeito.valoresEfeitos.valorBaseExtra > 0) textos.push(`${efeitos.nomeModificador} - Valor Base +${efeitos.efeito.valoresEfeitos.valorBaseExtra}`);
+                valorBaseExtraFinal += efeitos.efeito.valoresEfeitos.valorBaseAdicional;
+                if (efeitos.efeito.valoresEfeitos.valorBaseAdicional > 0) textos.push(`${efeitos.nomeModificador} - Valor Base +${efeitos.efeito.valoresEfeitos.valorBaseAdicional}`);
 
-                valorMultiplicadorFinal *= efeitos.efeito.valoresEfeitos.valorMultiplicador;
-                if (efeitos.efeito.valoresEfeitos.valorMultiplicador !== 1) textos.push(`${efeitos.nomeModificador} - Valor Multiplicador *${efeitos.efeito.valoresEfeitos.valorMultiplicador}`);
+                valorMultiplicadorFinal *= efeitos.efeito.valoresEfeitos.valorMultiplicadorAdicional;
+                if (efeitos.efeito.valoresEfeitos.valorMultiplicadorAdicional !== 1) textos.push(`${efeitos.nomeModificador} - Valor Multiplicador *${efeitos.efeito.valoresEfeitos.valorMultiplicadorAdicional}`);
 
-                valorAdicionalFinal += efeitos.efeito.valoresEfeitos.valorAdicional;
-                if (efeitos.efeito.valoresEfeitos.valorAdicional > 0) textos.push(`${efeitos.nomeModificador} - Valor Adicional +${efeitos.efeito.valoresEfeitos.valorAdicional}`);
+                valorAdicionalFinal += efeitos.efeito.valoresEfeitos.valorBonusAdicional;
+                if (efeitos.efeito.valoresEfeitos.valorBonusAdicional > 0) textos.push(`${efeitos.nomeModificador} - Valor Adicional +${efeitos.efeito.valoresEfeitos.valorBonusAdicional}`);
             });
 
             // Grupo 3
             listaEfeitosNaLinha.filter(efeitos => efeitos.efeito.refTipoEfeito.id === 5).forEach(efeitos => {
-                valorBaseExtraFinal -= efeitos.efeito.valoresEfeitos.valorBaseExtra;
-                if (efeitos.efeito.valoresEfeitos.valorBaseExtra > 0) textos.push(`${efeitos.nomeModificador} - Valor Base -${efeitos.efeito.valoresEfeitos.valorBaseExtra}`);
+                valorBaseExtraFinal -= efeitos.efeito.valoresEfeitos.valorBaseAdicional;
+                if (efeitos.efeito.valoresEfeitos.valorBaseAdicional > 0) textos.push(`${efeitos.nomeModificador} - Valor Base -${efeitos.efeito.valoresEfeitos.valorBaseAdicional}`);
                 
-                valorMultiplicadorFinal *= (1 / efeitos.efeito.valoresEfeitos.valorMultiplicador);
-                if (efeitos.efeito.valoresEfeitos.valorMultiplicador !== 1) textos.push(`${efeitos.nomeModificador} - Valor Multiplicador -*${efeitos.efeito.valoresEfeitos.valorMultiplicador}`);
+                valorMultiplicadorFinal *= (1 / efeitos.efeito.valoresEfeitos.valorMultiplicadorAdicional);
+                if (efeitos.efeito.valoresEfeitos.valorMultiplicadorAdicional !== 1) textos.push(`${efeitos.nomeModificador} - Valor Multiplicador -*${efeitos.efeito.valoresEfeitos.valorMultiplicadorAdicional}`);
                 
-                valorAdicionalFinal -= efeitos.efeito.valoresEfeitos.valorAdicional;
-                if (efeitos.efeito.valoresEfeitos.valorAdicional > 0) textos.push(`${efeitos.nomeModificador} - Valor Adicional -${efeitos.efeito.valoresEfeitos.valorAdicional}`);
+                valorAdicionalFinal -= efeitos.efeito.valoresEfeitos.valorBonusAdicional;
+                if (efeitos.efeito.valoresEfeitos.valorBonusAdicional > 0) textos.push(`${efeitos.nomeModificador} - Valor Adicional -${efeitos.efeito.valoresEfeitos.valorBonusAdicional}`);
             });
 
             const valoresDaLinha = new ValoresEfeito({
-                valorBaseExtra: valorBaseExtraFinal,
-                valorMultiplicador: Math.round(valorMultiplicadorFinal * 10) / 10,
-                valorAdicional: valorAdicionalFinal,
+                valorBaseAdicional: valorBaseExtraFinal,
+                valorMultiplicadorAdicional: Math.round(valorMultiplicadorFinal * 10) / 10,
+                valorBonusAdicional: valorAdicionalFinal,
             });
 
             valores.push(new ValoresLinhaEfeito(idLinhaEfeito, valoresDaLinha, textos));
@@ -109,39 +108,6 @@ export class ControladorModificadores {
 
         return agrupados;
     }
-
-    get efeitos(): { aplicados: Efeito[], sobreescritos: Efeito[] } {
-        const aplicados: Efeito[] = [];
-        const sobreescritos: Efeito[] = [];
-
-        //
-
-        // const buffSobrecarga = this.prototipoSobrecarga();
-        // if (buffSobrecarga) {
-        //     aplicados.push(buffSobrecarga);
-        // }
-
-        //
-
-        const groupedBuffs = this.modificadores.reduce((acc, modificador) => {
-            const key = `${modificador.nome}-${modificador.codigoUnico}`;
-
-            if (!acc[key]) acc[key] = [];
-
-            acc[key].push(...modificador.efeitos);
-            return acc;
-        }, {} as Record<string, Efeito[]>);
-
-        for (const key in groupedBuffs) {
-            const buffs = groupedBuffs[key];
-            const sortedBuffs = buffs.sort((a, b) => a.valoresEfeitos.valorAdicional - b.valoresEfeitos.valorAdicional);
-
-            aplicados.push(sortedBuffs[0]);
-            sobreescritos.push(...sortedBuffs.slice(1));
-        }
-
-        return { aplicados, sobreescritos };
-    }
 }
 
 export class ValoresLinhaEfeito {
@@ -166,8 +132,8 @@ export class ValoresLinhaEfeito {
         )
     }
 
-    get teste(): string { return `Valor Base Extra: ${this.valoresEfeitos.valorBaseExtra}; Valor Multiplicador: ${this.valoresEfeitos.valorMultiplicador}; Valor Adicional ${this.valoresEfeitos.valorAdicional}`; }
-    get valoresEstaVazio(): boolean { return (this.valoresEfeitos.valorBaseExtra === 0 && this.valoresEfeitos.valorMultiplicador === 1 && this.valoresEfeitos.valorAdicional === 0)}
+    get teste(): string { return `Valor Base Extra: ${this.valoresEfeitos.valorBaseAdicional}; Valor Multiplicador: ${this.valoresEfeitos.valorMultiplicadorAdicional}; Valor Adicional ${this.valoresEfeitos.valorBonusAdicional}`; }
+    get valoresEstaVazio(): boolean { return (this.valoresEfeitos.valorBaseAdicional === 0 && this.valoresEfeitos.valorMultiplicadorAdicional === 1 && this.valoresEfeitos.valorBonusAdicional === 0)}
 
     get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === this._idLinhaEfeito)!; }
 }

@@ -20,7 +20,7 @@ const page: React.FC<{ abaId: string; controladorModificadores: ControladorModif
   );
 
   return (
-    <ConsultaProvider<ValoresLinhaEfeito> abaId={abaId} registros={[teste]} mostrarFiltro={mostrarFiltros} filtroProps={ValoresLinhaEfeito.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Efeitos'] }}>
+    <ConsultaProvider<ValoresLinhaEfeito> abaId={abaId} registros={[teste]} mostrarFiltro={mostrarFiltros} filtroProps={ValoresLinhaEfeito.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: false, divisoes: ['Efeitos'] }}>
       <Consulta renderItem={renderBuffItem} />
     </ConsultaProvider>
   );

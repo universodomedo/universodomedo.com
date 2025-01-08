@@ -20,20 +20,6 @@ export class EstatisticasBuffaveisPersonagem {
     }
 
     get deslocamento(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(this._deslocamento, 53); }
-
-    // get deslocamento():number {
-    //     return ((this._deslocamento * getPersonagemFromContext().modificadores.valorBuffPorId(53)) + 
-
-    // }
-
-    // get deslocamentoAdicional(): {valorMultiplicador: number, valor: number} {
-
-
-    //     return {
-    //         valorMultiplicador
-    //     };
-    // }
-
     get extremidadesLivres(): number { return this.extremidades.filter(extremidade => !extremidade.estaOcupada).length }
 }
 

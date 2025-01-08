@@ -1,5 +1,5 @@
 // #region Imports
-import { ComportamentosBuff, DadosComportamentosBuff, Duracao, Efeito, FiltroProps, FiltroPropsItems, OpcoesFiltro, pluralize } from 'Types/classes/index.ts';
+import { Acao, ComportamentosBuff, DadosComportamentosBuff, Duracao, Efeito, FiltroProps, FiltroPropsItems, HabilidadePassiva, Item, OpcoesFiltro, pluralize } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -15,6 +15,8 @@ export class Modificador {
     public quantidadeDuracaoAtual: number = 0;
     public efeitos: Efeito[] = [];
     public comportamentos: ComportamentosBuff = new ComportamentosBuff();
+
+    public refPai?: Acao | HabilidadePassiva | Item;
 
     public svg = `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+`;
 
@@ -35,6 +37,7 @@ export class Modificador {
 
     ativaBuff() { getPersonagemFromContext().controladorModificadores.adicionaModificador(this); }
     desativaBuff() { getPersonagemFromContext().controladorModificadores.removeModificador(this); }
+    adicionaRefPai(pai: Acao | HabilidadePassiva | Item): this { return (this.refPai = pai), this; }
     
     gastaDuracaoERetornaSePrecisaRemover = (): boolean => {
         this.quantidadeDuracaoAtual--;
@@ -132,48 +135,4 @@ export class Modificador {
             ],
         )
     }
-}
-
-export class BuffsAplicados {
-    constructor(
-        public listaObjetosBuff: BuffsPorId[],
-    ) { }
-
-    public buffPorId = (idBuff: number): number => {
-        const buff = this.listaObjetosBuff.find(objetoBuff => objetoBuff.idBuff === idBuff);
-        return buff ? buff.valorParaId : 0;
-    }
-}
-
-export class BuffsPorId {
-    constructor(
-        public idBuff: number,
-        public tipoBuff: BuffsPorTipo[],
-    ) { }
-
-    get valorParaId(): number {
-        return this.tipoBuff.reduce((acc, cur) => {
-            return acc + 0;
-        }, 0)
-    }
-}
-// export class BuffsPorId {
-//     constructor(
-//         public idBuff: number,
-//         public tipoBuff: BuffsPorTipo[],
-//     ) { }
-
-//     get valorParaId(): number {
-//         return this.tipoBuff.reduce((acc, cur) => {
-//             return acc + cur.aplicado.valor;
-//         }, 0)
-//     }
-// }
-
-export class BuffsPorTipo {
-    constructor(
-        public idTipoBuff: number,
-        public aplicado: Efeito,
-        public sobreescritos: Efeito[],
-    ) { }
 }

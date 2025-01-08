@@ -54,12 +54,32 @@ const page = ({ valoresLinhaEfeito }: { valoresLinhaEfeito: ValoresLinhaEfeito }
 
     const ConteudoDetalhes = () => {
         return (
-            <>
-                <p className={style.texto}>{valoresLinhaEfeito.teste}</p>
-                {/* {valoresLinhaEfeito.textos.map((texto, index) => (
-                    <p key={index} className={style.texto}>{texto}</p>
-                ))} */}
-            </>
+            <div className={style.blocos_texto}>
+                <div className={style.bloco_texto}>
+                    {valoresLinhaEfeito.valoresEfeitos.valorBaseAdicional > 0 && (
+                        <details>
+                            <summary>Seu <span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome} Base</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorBaseAdicional}</summary>
+                            <p className={style.texto_details}>A Habilidade Movimento Frenético1 está aumentando seu Deslocamento Base em 2</p>
+                            <p className={style.texto_details}>A Habilidade Movimento Frenético2 está aumentando seu Deslocamento Base em 1</p>
+                        </details>
+                    )}
+                    {valoresLinhaEfeito.valoresEfeitos.valorMultiplicadorAdicional > 0 && (
+                        <details>
+                            <summary>Seu <span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome}</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorMultiplicadorAdicional}</summary>
+                            <p className={style.texto_details}>A Habilidade Movimento Frenético1 está aumentando seu Deslocamento em 25%</p>
+                            <p className={style.texto_details}>A Habilidade Movimento Frenético2 está diminuindo seu Deslocamento em 10%</p>
+                        </details>
+                    )}
+                    {valoresLinhaEfeito.valoresEfeitos.valorBonusAdicional > 0 && (
+                        <details>
+                            <summary>Seu <span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome} Adicional</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorBonusAdicional}</summary>
+                            <p className={style.texto_details}>A Habilidade Movimento Frenético1 está aumentando seu Deslocamento Adicional em 1</p>
+                            <p className={style.texto_details}>A Habilidade Movimento Frenético2 está aumentando seu Deslocamento Adicional em 4</p>
+                        </details>
+                    )}
+                </div>
+                
+            </div>
         );
     }
 
