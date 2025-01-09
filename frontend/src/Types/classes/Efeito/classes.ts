@@ -41,12 +41,40 @@ export class TipoEfeito {
 
 export class ValoresEfeito {
     public valorBaseAdicional: number;
-    public valorMultiplicadorAdicional: number;
+    public valorPorcentagemAdicional: number;
     public valorBonusAdicional: number;
     
-    constructor({ valorBaseAdicional = 0, valorMultiplicadorAdicional = 1, valorBonusAdicional = 0 }: { valorBaseAdicional?: number; valorMultiplicadorAdicional?: number; valorBonusAdicional?: number } = {}) {
+    constructor({ valorBaseAdicional = 0, valorPorcentagemAdicional = 1, valorBonusAdicional = 0 }: { valorBaseAdicional?: number; valorPorcentagemAdicional?: number; valorBonusAdicional?: number } = {}) {
         this.valorBaseAdicional = valorBaseAdicional;
-        this.valorMultiplicadorAdicional = valorMultiplicadorAdicional;
+        this.valorPorcentagemAdicional = valorPorcentagemAdicional;
         this.valorBonusAdicional = valorBonusAdicional;
     }
+}
+
+export class ValoresLinhaEfeitoAgrupados {
+    public listaValorBaseAdicional: RegistroValorEfeito[] = [];
+    public listaPorcentagemAdicional: RegistroValorEfeito[] = [];
+    public listaValorBonusAdicional: RegistroValorEfeito[] = [];
+
+    constructor({ listaValorBaseAdicional = [], listaPorcentagemAdicional = [], listaValorBonusAdicional = [] }: { listaValorBaseAdicional?: RegistroValorEfeito[]; listaPorcentagemAdicional?: RegistroValorEfeito[]; listaValorBonusAdicional?: RegistroValorEfeito[] } = {}) {
+        this.listaValorBaseAdicional = listaValorBaseAdicional;
+        this.listaPorcentagemAdicional = listaPorcentagemAdicional;
+        this.listaValorBonusAdicional = listaValorBonusAdicional;
+    }
+
+    get valorBaseAdicional(): number { return this.listaValorBaseAdicional.reduce((acc, cur) => acc + (cur.tipoValor === 'reduzindo' ? -cur.valor : cur.valor), 0); }
+    get valorBaseAdicionalPresente(): boolean { return this.listaValorBaseAdicional.length > 0; }
+
+    get valorPorcentagemAdicional(): number { return (this.listaPorcentagemAdicional.reduce((acc, cur) => acc * (cur.tipoValor === 'reduzindo' ? 1 - cur.valor / 100 : 1 + cur.valor / 100), 1) - 1) * 100; }
+    get valorPorcentagemAdicionalPresente(): boolean { return this.listaPorcentagemAdicional.length > 0; }
+
+    get valorBonusAdicional(): number { return this.listaValorBonusAdicional.reduce((acc, cur) => acc + (cur.tipoValor === 'reduzindo' ? -cur.valor : cur.valor), 0); }
+    get valorBonusAdicionalPresente(): boolean { return this.listaValorBonusAdicional.length > 0; }
+}
+
+export type RegistroValorEfeito = {
+    tipoPai: string;
+    nomeRegistro: string;
+    tipoValor: 'aumentando' | 'reduzindo';
+    valor: number;
 }
