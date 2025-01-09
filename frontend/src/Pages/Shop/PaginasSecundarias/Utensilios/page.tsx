@@ -39,16 +39,23 @@ const page = () => {
             dadosComportamentos: {
                 dadosComportamentoEmpunhavel: [true, 1],
             },
-            buffs: [{
-                idBuff: SingletonHelper.getInstance().pericias.find(periciaEscolhida => periciaEscolhida.id === pericia.value)!.idBuffRelacionado,
-                nome: `Ferramentas ${patente.text}`,
-                valor: patentes[patente.value].valor,
-                dadosComportamentos: {
-                    dadosComportamentoPassivo: [true, false],
-                },
-                duracao: { idDuracao: 3, valor: 1 },
-                idTipoBuff: 1,
-            }],
+            modificadores: [
+                {
+                    props: {
+                        nome: `Ferramentas ${patente.text}`,
+                        idDuracao: 3,
+                        quantidadeDuracaoMaxima: 1,
+                        dadosEfeitos: [
+                            {
+                                idLinhaEfeito: SingletonHelper.getInstance().pericias.find(periciaEscolhida => periciaEscolhida.id === pericia.value)!.refLinhaEfeito.id,
+                                idTipoEfeito: 1,
+                                dadosValoresEfeitos: { valorBonusAdicional: patentes[patente.value].valor },
+                            },
+                        ],
+                        dadosComportamentos: { dadosComportamentoPassivo: [true, false] },
+                    }
+                }
+            ],
         };
 
         adicionarItem(argsItem);

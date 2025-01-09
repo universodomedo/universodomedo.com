@@ -19,8 +19,8 @@ const page = ({ acao }: { acao: Acao }) => {
     const icone = () => {
         return (
             <div className={style.embrulho_icone}>
-                {mostrarEtiquetas && (<h3>{acao.nomeAcao}</h3>)}
-                <Tooltip content={acao.nomeAcao}>
+                {mostrarEtiquetas && (<h3>{acao.nomeExibicao}</h3>)}
+                <Tooltip content={acao.nomeExibicao}>
                     <div
                         className={`${style.icone}`}
                         style={{
@@ -36,7 +36,7 @@ const page = ({ acao }: { acao: Acao }) => {
     const conteudo = (close: () => void) => {
         return (
             <div className={style.conteudo_popover}>
-                <h2>{acao.nomeAcao}</h2>
+                <h2>{acao.nomeExibicao}</h2>
                 <div className={style.acoes}>
                     {!acao.bloqueada && (
                         <>
@@ -45,7 +45,7 @@ const page = ({ acao }: { acao: Acao }) => {
                                     Executar
                                 </Modal.Button>
 
-                                <Modal.Content title={`Executando ${acao.nomeAcao}`}>
+                                <Modal.Content title={`Executando ${acao.nomeExibicao}`}>
                                     <ConteudoExecucao fechaModal={close} />
                                 </Modal.Content>
                             </Modal>
@@ -57,7 +57,7 @@ const page = ({ acao }: { acao: Acao }) => {
                             Detalhes
                         </Modal.Button>
 
-                        <Modal.Content title={`Detalhes - ${acao.nomeAcao}`}>
+                        <Modal.Content title={`Detalhes - ${acao.nomeExibicao}`}>
                             <ConteudoDetalhes />
                         </Modal.Content>
                     </Modal>

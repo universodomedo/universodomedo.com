@@ -43,7 +43,7 @@ export class Acao {
     get refPai(): Ritual | Item | Habilidade { return this._refPai!; }
     get refTipoAcao(): TipoAcao { return SingletonHelper.getInstance().tipos_acao.find(tipo_acao => tipo_acao.id === this.dados.idTipoAcao)!; }
     get refCategoriaAcao(): CategoriaAcao { return SingletonHelper.getInstance().categorias_acao.find(categoria_acao => categoria_acao.id === this.dados.idCategoriaAcao)!; }
-    get nomeAcao(): string { return `${this.dados.nome}`; }
+    get nomeExibicao(): string { return `${this.dados.nome}`; }
 
     adicionaRefPai(pai: Ritual | Item | Habilidade): this { return (this._refPai = pai), this; }
     adicionarCustos(custoParams: [new (...args: any[]) => Custo, any[]][]): this { return (custoParams.forEach(([CustoClass, params]) => { this.custos.push(new CustoClass(...params).setRefAcao(this)); })), this; }
@@ -115,7 +115,7 @@ export class Acao {
     get bloqueada(): boolean { return !this.verificaCustosPodemSerPagos || !this.verificaRequisitosCumpridos || this.comportamentos.acaoTravada; }
 
     executaComOpcoes = (valoresSelecionados: GastaCustoProps) => {
-        LoggerHelper.getInstance().adicionaMensagem(`Executado ${this.nomeAcao}`);
+        LoggerHelper.getInstance().adicionaMensagem(`Executado ${this.nomeExibicao}`);
 
         if (!this.processaDificuldades()) return;
 

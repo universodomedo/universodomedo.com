@@ -85,10 +85,10 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
             danoMin: acc.danoMin + (cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.modificadorDanoMinimo || 0),
             danoMax: acc.danoMax + (cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.modificadorDanoMaximo || 0),
             acoes: [...acc.acoes, ...(cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.acoes || [])],
-            buffs: [...acc.buffs, ...(cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.buffs || [])],
+            modificadores: [...acc.modificadores, ...(cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.modificadores || [])],
             reducaoPatenteSimplificada: acc.reducaoPatenteSimplificada || !!cur.dadosCaracteristicaNaBase?.dadosCaracteristicasArmas.reducaoPatenteSimplificada,
         };
-    }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0, acoes: [] as ArgsAcao[], buffs: [] as PropsModificador[], reducaoPatenteSimplificada: false });
+    }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0, acoes: [] as ArgsAcao[], modificadores: [] as PropsModificador[], reducaoPatenteSimplificada: false });
 
     const acaoPadraoBase: ArgsAcao = {
         args: { nome: 'Ataque Padrão', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, },

@@ -106,7 +106,7 @@ export const ConfiguracoesExibicaoDadosCaracteristicasArmas: { [K in keyof Dados
     modificadorDanoMinimo: { renderizar: true, renderizarValor: (dados) => (dados.modificadorDanoMinimo ? `Dano Mínimo: ${dados.modificadorDanoMinimo}` : null), },
     modificadorDanoMaximo: { renderizar: true, renderizarValor: (dados) => (dados.modificadorDanoMaximo ? `Dano Máximo: ${dados.modificadorDanoMaximo}` : null), },
     acoes: { renderizar: true, renderizarValor: (dados) => dados.acoes?.map(acao => `Ação: ${acao.args.nome}`).join(", ") || null, },
-    buffs: { renderizar: true, renderizarValor: (dados) => dados.buffs?.map(buff => `Buff: ${buff.nome}`).join(", ") || null, },
+    modificadores: { renderizar: true, renderizarValor: (dados) => dados.modificadores?.map(modificador => `Efeito: ${modificador.props.nome}`).join(", ") || null, },
 
     reducaoPatenteSimplificada: { renderizar: false, renderizarValor: (dados) => null }
 };

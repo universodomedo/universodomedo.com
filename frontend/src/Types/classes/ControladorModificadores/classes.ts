@@ -1,5 +1,5 @@
 // #region Imports
-import { Efeito, FiltroProps, FiltroPropsItems, LinhaEfeito, Modificador, RegistroValorEfeito, ValoresEfeito, ValoresLinhaEfeitoAgrupados } from 'Types/classes/index.ts';
+import { Acao, Efeito, FiltroProps, FiltroPropsItems, HabilidadePassiva, Item, LinhaEfeito, Modificador, RegistroValorEfeito, ValoresEfeito, ValoresLinhaEfeitoAgrupados } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto';
@@ -40,28 +40,28 @@ export class ControladorModificadores {
 
                 if (agrupado.length > 0) {
                     const maiorValorBaseAdicional = agrupado.reduce((maior, atual) => atual.efeito.valoresEfeitos.valorBaseAdicional > maior.efeito.valoresEfeitos.valorBaseAdicional ? atual : maior, agrupado[0]);
-                    if (maiorValorBaseAdicional.efeito.valoresEfeitos.valorBaseAdicional > 0) listaValorBaseAdicional.push({tipoPai: 'Precisa Implementar', nomeRegistro: maiorValorBaseAdicional.nomeModificador, tipoValor: 'aumentando', valor: maiorValorBaseAdicional.efeito.valoresEfeitos.valorBaseAdicional});
+                    if (maiorValorBaseAdicional.efeito.valoresEfeitos.valorBaseAdicional > 0) listaValorBaseAdicional.push({tipoPai: maiorValorBaseAdicional.tipoPaiModificador, nomeRegistro: maiorValorBaseAdicional.nomeModificador, tipoValor: 'aumentando', valor: maiorValorBaseAdicional.efeito.valoresEfeitos.valorBaseAdicional});
     
                     const maiorPorcentagemAdicional = agrupado.reduce((maior, atual) => atual.efeito.valoresEfeitos.valorPorcentagemAdicional > maior.efeito.valoresEfeitos.valorPorcentagemAdicional ? atual : maior, agrupado[0]);
-                    if (maiorPorcentagemAdicional.efeito.valoresEfeitos.valorPorcentagemAdicional > 0) listaPorcentagemAdicional.push({tipoPai: 'Precisa Implementar', nomeRegistro: maiorPorcentagemAdicional.nomeModificador, tipoValor: 'aumentando', valor: maiorPorcentagemAdicional.efeito.valoresEfeitos.valorPorcentagemAdicional});
+                    if (maiorPorcentagemAdicional.efeito.valoresEfeitos.valorPorcentagemAdicional !== 0) listaPorcentagemAdicional.push({tipoPai: maiorPorcentagemAdicional.tipoPaiModificador, nomeRegistro: maiorPorcentagemAdicional.nomeModificador, tipoValor: 'aumentando', valor: maiorPorcentagemAdicional.efeito.valoresEfeitos.valorPorcentagemAdicional});
     
                     const maiorValorBonusAdicional = agrupado.reduce((maior, atual) => atual.efeito.valoresEfeitos.valorBonusAdicional > maior.efeito.valoresEfeitos.valorBonusAdicional ? atual : maior, agrupado[0]);
-                    if (maiorValorBonusAdicional.efeito.valoresEfeitos.valorBonusAdicional > 0) listaValorBonusAdicional.push({tipoPai: 'Precisa Implementar', nomeRegistro: maiorValorBonusAdicional.nomeModificador, tipoValor: 'aumentando', valor: maiorValorBonusAdicional.efeito.valoresEfeitos.valorBonusAdicional});
+                    if (maiorValorBonusAdicional.efeito.valoresEfeitos.valorBonusAdicional > 0) listaValorBonusAdicional.push({tipoPai: maiorValorBonusAdicional.tipoPaiModificador, nomeRegistro: maiorValorBonusAdicional.nomeModificador, tipoValor: 'aumentando', valor: maiorValorBonusAdicional.efeito.valoresEfeitos.valorBonusAdicional});
                 }
             });
 
             listaEfeitosNaLinha.filter(efeitos => efeitos.efeito.refTipoEfeito.id === 4).forEach(efeitos => {
-                if (efeitos.efeito.valoresEfeitos.valorBaseAdicional > 0) listaValorBaseAdicional.push({tipoPai: 'Precisa Implementar', nomeRegistro: efeitos.nomeModificador, tipoValor: 'aumentando', valor: efeitos.efeito.valoresEfeitos.valorBaseAdicional});
+                if (efeitos.efeito.valoresEfeitos.valorBaseAdicional > 0) listaValorBaseAdicional.push({tipoPai: efeitos.tipoPaiModificador, nomeRegistro: efeitos.nomeModificador, tipoValor: 'aumentando', valor: efeitos.efeito.valoresEfeitos.valorBaseAdicional});
 
-                if (efeitos.efeito.valoresEfeitos.valorPorcentagemAdicional !== 1) listaPorcentagemAdicional.push({tipoPai: 'Precisa Implementar', nomeRegistro: efeitos.nomeModificador, tipoValor: 'aumentando', valor: efeitos.efeito.valoresEfeitos.valorPorcentagemAdicional});
+                if (efeitos.efeito.valoresEfeitos.valorPorcentagemAdicional > 0) listaPorcentagemAdicional.push({tipoPai: efeitos.tipoPaiModificador, nomeRegistro: efeitos.nomeModificador, tipoValor: 'aumentando', valor: efeitos.efeito.valoresEfeitos.valorPorcentagemAdicional});
 
-                if (efeitos.efeito.valoresEfeitos.valorBonusAdicional > 0) listaValorBonusAdicional.push({tipoPai: 'Precisa Implementar', nomeRegistro: efeitos.nomeModificador, tipoValor: 'aumentando', valor: efeitos.efeito.valoresEfeitos.valorBonusAdicional});
+                if (efeitos.efeito.valoresEfeitos.valorBonusAdicional > 0) listaValorBonusAdicional.push({tipoPai: efeitos.tipoPaiModificador, nomeRegistro: efeitos.nomeModificador, tipoValor: 'aumentando', valor: efeitos.efeito.valoresEfeitos.valorBonusAdicional});
             });
 
             listaEfeitosNaLinha.filter(efeitos => efeitos.efeito.refTipoEfeito.id === 5).forEach(efeitos => {
-                if (efeitos.efeito.valoresEfeitos.valorBaseAdicional > 0) listaValorBaseAdicional.push({tipoPai: 'Precisa Implementar', nomeRegistro: efeitos.nomeModificador, tipoValor: 'reduzindo', valor: efeitos.efeito.valoresEfeitos.valorBaseAdicional});
-                if (efeitos.efeito.valoresEfeitos.valorPorcentagemAdicional !== 1) listaPorcentagemAdicional.push({tipoPai: 'Precisa Implementar', nomeRegistro: efeitos.nomeModificador, tipoValor: 'reduzindo', valor: efeitos.efeito.valoresEfeitos.valorPorcentagemAdicional});
-                if (efeitos.efeito.valoresEfeitos.valorBonusAdicional > 0) listaValorBonusAdicional.push({tipoPai: 'Precisa Implementar', nomeRegistro: efeitos.nomeModificador, tipoValor: 'reduzindo', valor: efeitos.efeito.valoresEfeitos.valorBonusAdicional});
+                if (efeitos.efeito.valoresEfeitos.valorBaseAdicional > 0) listaValorBaseAdicional.push({tipoPai: efeitos.tipoPaiModificador, nomeRegistro: efeitos.nomeModificador, tipoValor: 'reduzindo', valor: efeitos.efeito.valoresEfeitos.valorBaseAdicional});
+                if (efeitos.efeito.valoresEfeitos.valorPorcentagemAdicional > 0) listaPorcentagemAdicional.push({tipoPai: efeitos.tipoPaiModificador, nomeRegistro: efeitos.nomeModificador, tipoValor: 'reduzindo', valor: efeitos.efeito.valoresEfeitos.valorPorcentagemAdicional});
+                if (efeitos.efeito.valoresEfeitos.valorBonusAdicional > 0) listaValorBonusAdicional.push({tipoPai: efeitos.tipoPaiModificador, nomeRegistro: efeitos.nomeModificador, tipoValor: 'reduzindo', valor: efeitos.efeito.valoresEfeitos.valorBonusAdicional});
             });
 
             valores.push(new ValoresLinhaEfeito(idLinhaEfeito, new ValoresLinhaEfeitoAgrupados({ listaValorBaseAdicional, listaPorcentagemAdicional, listaValorBonusAdicional})));
@@ -70,8 +70,8 @@ export class ControladorModificadores {
         return valores;
     }
 
-    get agrupamentoDeEfeitosPorLinhaEfeito(): { idLinhaEfeito: number, listaEfeitosNaLinha: { nomeModificador: string, efeito: Efeito }[] }[] {
-        const agrupados: { idLinhaEfeito: number, listaEfeitosNaLinha: { nomeModificador: string, efeito: Efeito }[] }[] = [];
+    get agrupamentoDeEfeitosPorLinhaEfeito(): { idLinhaEfeito: number, listaEfeitosNaLinha: { nomeModificador: string, tipoPaiModificador: string, efeito: Efeito }[] }[] {
+        const agrupados: { idLinhaEfeito: number, listaEfeitosNaLinha: { nomeModificador: string, tipoPaiModificador: string, efeito: Efeito }[] }[] = [];
 
         this.modificadores.forEach(modificador => {
             modificador.efeitos.forEach(efeito => {
@@ -84,7 +84,12 @@ export class ControladorModificadores {
                     agrupados.push(grupo);
                 }
 
-                grupo.listaEfeitosNaLinha.push({ nomeModificador: modificador.nome, efeito: efeito });
+                let tipoPaiModificador = '';
+                if (modificador.refPai instanceof Acao) tipoPaiModificador = 'Ação';
+                if (modificador.refPai instanceof HabilidadePassiva) tipoPaiModificador = 'Habilidade';
+                if (modificador.refPai instanceof Item) tipoPaiModificador = 'Item';
+
+                grupo.listaEfeitosNaLinha.push({ nomeModificador: modificador.nome, tipoPaiModificador: tipoPaiModificador, efeito: efeito });
             });
         });
 

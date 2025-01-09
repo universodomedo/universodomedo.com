@@ -60,7 +60,7 @@ const page = ({ valoresLinhaEfeito }: { valoresLinhaEfeito: ValoresLinhaEfeito }
                         <details>
                             <summary>Seu <span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome} Base</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorBaseAdicional}</summary>
                             {valoresLinhaEfeito.valoresEfeitos.listaValorBaseAdicional.map((valor, index) => (
-                                <p key={index} className={style.texto_details}>A {valor.tipoPai} {valor.nomeRegistro} está {valor.tipoValor} seu {valoresLinhaEfeito.refLinhaEfeito.nome} em {valor.valor}</p>
+                                <p key={index} className={style.texto_details}>{valor.tipoValor} em {valor.valor} pela {valor.tipoPai} {valor.nomeRegistro}</p>
                             ))}
                         </details>
                     )}
@@ -68,7 +68,7 @@ const page = ({ valoresLinhaEfeito }: { valoresLinhaEfeito: ValoresLinhaEfeito }
                         <details>
                             <summary>Seu <span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome}</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorPorcentagemAdicional}%</summary>
                             {valoresLinhaEfeito.valoresEfeitos.listaPorcentagemAdicional.map((valor, index) => (
-                                <p key={index} className={style.texto_details}>A {valor.tipoPai} {valor.nomeRegistro} está {valor.tipoValor} seu {valoresLinhaEfeito.refLinhaEfeito.nome} em {valor.valor}%</p>
+                                <p key={index} className={style.texto_details}>{valor.tipoValor} em {valor.valor}% pela {valor.tipoPai} {valor.nomeRegistro}</p>
                             ))}
                         </details>
                     )}
@@ -76,7 +76,7 @@ const page = ({ valoresLinhaEfeito }: { valoresLinhaEfeito: ValoresLinhaEfeito }
                         <details>
                             <summary>Seu <span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome} Adicional</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorBonusAdicional}</summary>
                             {valoresLinhaEfeito.valoresEfeitos.listaValorBonusAdicional.map((valor, index) => (
-                                <p key={index} className={style.texto_details}>A {valor.tipoPai} {valor.nomeRegistro} está {valor.tipoValor} seu {valoresLinhaEfeito.refLinhaEfeito.nome} em {valor.valor}</p>
+                                <p key={index} className={style.texto_details}>{valor.tipoValor} em {valor.valor} pela {valor.tipoPai} {valor.nomeRegistro}</p>
                             ))}
                         </details>
                     )}

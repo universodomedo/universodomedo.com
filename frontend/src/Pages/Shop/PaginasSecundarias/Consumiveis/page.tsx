@@ -15,8 +15,7 @@ const page = () => {
 
     const { mudarPagina, adicionarItem } = useContextoLoja();
 
-    const itens: Record<number, {
-        dados: ArgsItem, listaDescricoes: string[]; }> = {
+    const itens: Record<number, { dados: ArgsItem, listaDescricoes: string[]; }> = {
         1: {
             dados: {
                 args: { nome: [`Bálsamo de Arnica`], idTipoItem: 3, peso: 1, categoria: 0, },
@@ -26,16 +25,24 @@ const page = () => {
                         dadosComportamentos: {
                             dadosComportamentoConsomeUso: [1],
                         },
-                        custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
-                        buffs: [ {
-                            idBuff: 33,
-                            nome: `Bálsamo de Arnica`,
-                            valor: 2,
-                            dadosComportamentos: {
-                                dadosComportamentoAtivo: [],
-                            },
-                            duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2,
-                        } ],
+                        custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
+                        modificadores: [
+                            {
+                                props: {
+                                    nome: `Bálsamo de Arnica`,
+                                    idDuracao: 3,
+                                    quantidadeDuracaoMaxima: 1,
+                                    dadosEfeitos: [
+                                        {
+                                            idLinhaEfeito: 33,
+                                            idTipoEfeito: 2,
+                                            dadosValoresEfeitos: { valorBonusAdicional: 2 },
+                                        },
+                                    ],
+                                    dadosComportamentos: { dadosComportamentoAtivo: [] },
+                                }
+                            }
+                        ],
                         requisitos: [2],
                     }
                 ],
@@ -55,16 +62,24 @@ const page = () => {
                         dadosComportamentos: {
                             dadosComportamentoConsomeUso: [1],
                         },
-                        custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
-                        buffs: [ {
-                            idBuff: 37,
-                            nome: `Gel de Babosa`,
-                            valor: 2,
-                            dadosComportamentos: {
-                                dadosComportamentoAtivo: [],
-                            },
-                            duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 2,
-                        } ],
+                        custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
+                        modificadores: [
+                            {
+                                props: {
+                                    nome: `Gel de Babosa`,
+                                    idDuracao: 3,
+                                    quantidadeDuracaoMaxima: 1,
+                                    dadosEfeitos: [
+                                        {
+                                            idLinhaEfeito: 37,
+                                            idTipoEfeito: 2,
+                                            dadosValoresEfeitos: { valorBonusAdicional: 2 },
+                                        },
+                                    ],
+                                    dadosComportamentos: { dadosComportamentoAtivo: [] },
+                                }
+                            }
+                        ],
                         requisitos: [2],
                     }
                 ],
@@ -85,7 +100,7 @@ const page = () => {
                             dadosComportamentoAcao: ['Cura', 4, 7],
                             dadosComportamentoConsomeUso: [1],
                         },
-                        custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
+                        custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
                         requisitos: [2],
                     }
                 ],
@@ -118,7 +133,7 @@ const page = () => {
 
             <div className={style.opcao_item}>
                 <InputComRotulo rotulo={'Consumível'}>
-                    <select value={item} onChange={handleItemChange}> <option value="0" disabled >Selecionar Consumível</option> {Object.entries(itens).map(([id, data]) => ( <option key={id} value={id}>{data.dados.args.nome}</option> ))} </select>
+                    <select value={item} onChange={handleItemChange}> <option value="0" disabled >Selecionar Consumível</option> {Object.entries(itens).map(([id, data]) => (<option key={id} value={id}>{data.dados.args.nome}</option>))} </select>
                 </InputComRotulo>
             </div>
 
@@ -142,7 +157,7 @@ const page = () => {
             </div>
 
             <div className={style.area_botao_tipo_item}>
-                <button onClick={() => {mudarPagina(0)}}>Voltar</button>
+                <button onClick={() => { mudarPagina(0) }}>Voltar</button>
                 <button onClick={adicionar} disabled={item === 0} className={style.botao_adicionar}>Adicionar</button>
             </div>
         </div>

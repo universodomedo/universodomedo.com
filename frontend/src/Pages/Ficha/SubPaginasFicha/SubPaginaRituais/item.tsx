@@ -60,7 +60,7 @@ const page = ({ ritual }: { ritual: Ritual }) => {
 
                 <p className={style.titulo}>Ações</p>
                 {ritual.acoes.map(ritual => (
-                    <p className={style.texto}>{ritual.nomeAcao}</p>
+                    <p className={style.texto}>{ritual.nomeExibicao}</p>
                 ))}
             </>
         );
