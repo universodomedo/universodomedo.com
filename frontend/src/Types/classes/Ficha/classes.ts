@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, ComportamentoAcao, ComportamentoBuffAtivo, ComportamentoBuffPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosBuff, ComportamentoUsoAcao, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso } from 'Types/classes/index.ts';
+import { Acao, ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUsoAcao, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -71,9 +71,9 @@ export type DadosComportamentosRitual = {
 
 
 
-export type DadosComportamentosBuff = {
-    dadosComportamentoAtivo?: ConstructorParameters<typeof ComportamentoBuffAtivo>;
-    dadosComportamentoPassivo?: ConstructorParameters<typeof ComportamentoBuffPassivo>;
+export type DadosComportamentosModificador = {
+    dadosComportamentoAtivo?: ConstructorParameters<typeof ComportamentoModificadorAtivo>;
+    dadosComportamentoPassivo?: ConstructorParameters<typeof ComportamentoModificadorPassivo>;
 };
 
 
@@ -85,7 +85,7 @@ export type subDadosCusto = {
 export type PropsModificador = {
     props: ConstructorParameters<typeof Modificador>[0]
     // idBuff: number, nome: string, valor: number,
-    // dadosComportamentos: DadosComportamentosBuff;
+    // dadosComportamentos: DadosComportamentosModificador;
     // duracao: { idDuracao: number, valor: number, }, idTipoBuff: number
 }
 

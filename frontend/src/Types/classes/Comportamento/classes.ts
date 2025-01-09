@@ -11,25 +11,25 @@ export class ComportamentosAcao {
     // usosMunicao
 }
 
-export class ComportamentosBuff {
-    private _comportamentoBuffAtivo?: ComportamentoBuffAtivo;
-    get temComportamentoBuffAtivo(): boolean { return Boolean(this._comportamentoBuffAtivo); }
-    setComportamentoBuffAtivo(...args: ConstructorParameters<typeof ComportamentoBuffAtivo>): void { this._comportamentoBuffAtivo = new ComportamentoBuffAtivo(...args); }
+export class ComportamentosModificador {
+    private _comportamentoModificadorAtivo?: ComportamentoModificadorAtivo;
+    get temComportamentoModificadorAtivo(): boolean { return Boolean(this._comportamentoModificadorAtivo); }
+    setComportamentoModificadorAtivo(...args: ConstructorParameters<typeof ComportamentoModificadorAtivo>): void { this._comportamentoModificadorAtivo = new ComportamentoModificadorAtivo(...args); }
 
-    private _comportamentoPassivo?: ComportamentoBuffPassivo;
-    get temComportamentoBuffPassivo(): boolean { return Boolean(this._comportamentoPassivo); }
-    setComportamentoBuffPassivo(...args: ConstructorParameters<typeof ComportamentoBuffPassivo>): void { this._comportamentoPassivo = new ComportamentoBuffPassivo(...args); }
+    private _comportamentoPassivo?: ComportamentoModificadorPassivo;
+    get temComportamentoModificadorPassivo(): boolean { return Boolean(this._comportamentoPassivo); }
+    setComportamentoModificadorPassivo(...args: ConstructorParameters<typeof ComportamentoModificadorPassivo>): void { this._comportamentoPassivo = new ComportamentoModificadorPassivo(...args); }
 
-    get ehPassivoSempreAtivo(): boolean { return this.temComportamentoBuffPassivo && (!this._comportamentoPassivo!.precisaEstarEmpunhando && !this._comportamentoPassivo!.precisaEstarVestindo)}
-    get ehPassivoAtivaQuandoEmpunhado(): boolean { return this.temComportamentoBuffPassivo && this._comportamentoPassivo!.precisaEstarEmpunhando; }
-    get ehPassivoAtivaQuandoVestido(): boolean { return this.temComportamentoBuffPassivo && this._comportamentoPassivo!.precisaEstarVestindo; }
+    get ehPassivoSempreAtivo(): boolean { return this.temComportamentoModificadorPassivo && (!this._comportamentoPassivo!.precisaEstarEmpunhando && !this._comportamentoPassivo!.precisaEstarVestindo)}
+    get ehPassivoAtivaQuandoEmpunhado(): boolean { return this.temComportamentoModificadorPassivo && this._comportamentoPassivo!.precisaEstarEmpunhando; }
+    get ehPassivoAtivaQuandoVestido(): boolean { return this.temComportamentoModificadorPassivo && this._comportamentoPassivo!.precisaEstarVestindo; }
 }
 
-export class ComportamentoBuffAtivo {
+export class ComportamentoModificadorAtivo {
 
 }
 
-export class ComportamentoBuffPassivo {
+export class ComportamentoModificadorPassivo {
     constructor(
         public precisaEstarEmpunhando: boolean = false,
         public precisaEstarVestindo: boolean = false,

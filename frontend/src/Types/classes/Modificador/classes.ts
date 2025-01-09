@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, ComportamentosBuff, DadosComportamentosBuff, Duracao, Efeito, FiltroProps, FiltroPropsItems, HabilidadePassiva, Item, OpcoesFiltro, pluralize } from 'Types/classes/index.ts';
+import { Acao, ComportamentosModificador, DadosComportamentosModificador, Duracao, Efeito, FiltroProps, FiltroPropsItems, HabilidadePassiva, Item, OpcoesFiltro, pluralize } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -14,21 +14,21 @@ export class Modificador {
     public quantidadeDuracaoMaxima: number;
     public quantidadeDuracaoAtual: number = 0;
     public efeitos: Efeito[] = [];
-    public comportamentos: ComportamentosBuff = new ComportamentosBuff();
+    public comportamentos: ComportamentosModificador = new ComportamentosModificador();
 
     public refPai?: Acao | HabilidadePassiva | Item;
 
     public svg = `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+`;
 
-    constructor({ nome, idDuracao, quantidadeDuracaoMaxima, dadosEfeitos, dadosComportamentos }: { nome: string, idDuracao: number, quantidadeDuracaoMaxima: number, dadosEfeitos: ConstructorParameters<typeof Efeito>[0][], dadosComportamentos: DadosComportamentosBuff }) {
+    constructor({ nome, idDuracao, quantidadeDuracaoMaxima, dadosEfeitos, dadosComportamentos }: { nome: string, idDuracao: number, quantidadeDuracaoMaxima: number, dadosEfeitos: ConstructorParameters<typeof Efeito>[0][], dadosComportamentos: DadosComportamentosModificador }) {
         this._id = Modificador.contadorId++;
         this.nome = nome;
         this._idDuracao = idDuracao;
         this.efeitos = dadosEfeitos.map(dados => new Efeito(dados));
         this.quantidadeDuracaoMaxima = quantidadeDuracaoMaxima;
 
-        if (dadosComportamentos.dadosComportamentoAtivo !== undefined) this.comportamentos.setComportamentoBuffAtivo(...dadosComportamentos.dadosComportamentoAtivo);
-        if (dadosComportamentos.dadosComportamentoPassivo !== undefined) this.comportamentos.setComportamentoBuffPassivo(...dadosComportamentos.dadosComportamentoPassivo);
+        if (dadosComportamentos.dadosComportamentoAtivo !== undefined) this.comportamentos.setComportamentoModificadorAtivo(...dadosComportamentos.dadosComportamentoAtivo);
+        if (dadosComportamentos.dadosComportamentoPassivo !== undefined) this.comportamentos.setComportamentoModificadorPassivo(...dadosComportamentos.dadosComportamentoPassivo);
     }
 
     get codigoUnico(): string { return `${this._id}:${this.nome}`; }

@@ -38,15 +38,23 @@ const page = ({ onCreate }: { onCreate: (novoRitual: ArgsRitual) => void; }) => 
                 args: {nome: 'Usar Ritual', idTipoAcao: 3, idCategoriaAcao: 1, idMecanica: 3,},
                 dadosComportamentos: {},
                 custos: { custoPE: { valor: valorPE }, custoExecucao: [{ idExecucao: 2, valor: 1 }], custoComponente: true },
-                buffs: [ {
-                    idBuff: periciaSelecionada?.idBuffRelacionado!,
-                    nome: `Aprimorar ${periciaSelecionada?.nome}`,
-                    valor: valorBuff,
-                    dadosComportamentos: {
-                        dadosComportamentoAtivo: [],
-                    },
-                    duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3
-                }],
+                modificadores: [
+                    {
+                        props: {
+                            nome: `Aprimorar ${periciaSelecionada?.nome}`,
+                            idDuracao: 3,
+                            quantidadeDuracaoMaxima: 1,
+                            dadosEfeitos: [
+                                {
+                                    idLinhaEfeito: periciaSelecionada?.refLinhaEfeito.id!,
+                                    idTipoEfeito: 3,
+                                    dadosValoresEfeitos: { valorBonusAdicional: valorBuff },
+                                },
+                            ],
+                            dadosComportamentos: { dadosComportamentoAtivo: [] },
+                        }
+                    }
+                ],
                 requisitos: [1],
             } ]
         }

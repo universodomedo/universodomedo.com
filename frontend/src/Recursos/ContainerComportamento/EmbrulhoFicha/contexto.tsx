@@ -32,6 +32,7 @@ export const ContextoFichaProvider = ({ children, idFichaNoLocalStorage }: { chi
         useContextBridge();
 
         personagem.habilidades.forEach(habilidade => habilidade instanceof HabilidadePassiva && habilidade.modificadores.forEach(modificador => modificador.comportamentos.ehPassivoSempreAtivo && modificador.ativaBuff()));
+        personagem.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
 
         return (
             <>{children}</>

@@ -89,11 +89,19 @@ singletonHelper.linhas_efeito = [
     new LinhaEfeito(52, 'Capacidade de Carga'),
     new LinhaEfeito(53, 'Deslocamento'),
     new LinhaEfeito(54, 'Defesa'),
+    new LinhaEfeito(55, 'Número de Ações Livre'),
+    new LinhaEfeito(56, 'Número de Ações Padrão'),
+    new LinhaEfeito(57, 'Número de Ações de Movimento'),
+    new LinhaEfeito(58, 'Número de Reações'),
+    new LinhaEfeito(59, 'Número de Ações Ritualística'),
+    new LinhaEfeito(60, 'Número de Ações Investigativa'),
+    new LinhaEfeito(61, 'Número de Comandos Doméstico'),
+    new LinhaEfeito(62, 'Desconto de P.E. para Rituais'),
 ];
 singletonHelper.alcances = [new Alcance(1, "Adjacente"), new Alcance(2, "Próximo"), new Alcance(3, "Curto"), new Alcance(4, "Médio"), new Alcance(5, "Longo"), new Alcance(6, "Ambiente"), new Alcance(7, "Ilimitado")];
 singletonHelper.formatos_alcance = [new FormatoAlcance(1, "Selecionado"), new FormatoAlcance(2, "Linha Reta"), new FormatoAlcance(3, "Cone"), new FormatoAlcance(4, "Área")];
 singletonHelper.duracoes = [new Duracao(1, "Ação"), new Duracao(2, "Turno"), new Duracao(3, "Cena"), new Duracao(4, "Dia"), new Duracao(5, "Intermitente")];
-singletonHelper.tipos_execucao = [new TipoExecucao(1, "Ação Livre"), new TipoExecucao(2, "Ação Padrão"), new TipoExecucao(3, "Ação de Movimento"), new TipoExecucao(4, "Reação"), new TipoExecucao(5, "Ação Ritualística"), new TipoExecucao(6, "Ação Investigativa"), new TipoExecucao(7, "Comando Doméstico")];
+singletonHelper.tipos_execucao = [new TipoExecucao(1, 55, "Ação Livre"), new TipoExecucao(2, 56, "Ação Padrão"), new TipoExecucao(3, 57, "Ação de Movimento"), new TipoExecucao(4, 58, "Reação"), new TipoExecucao(5, 59, "Ação Ritualística"), new TipoExecucao(6, 60, "Ação Investigativa"), new TipoExecucao(7, 61, "Comando Doméstico")];
 singletonHelper.categorias_acao = [new CategoriaAcao(1, "Ativo"), new CategoriaAcao(2, "Passiva")];
 singletonHelper.tipos_acao = [new TipoAcao(1, "Ação Direta Pacifica"), new TipoAcao(2, "Ação Direta Agressiva"), new TipoAcao(3, "Aplicação de Efeito Positivo"), new TipoAcao(4, "Aplicação de Efeito Negativo")];
 singletonHelper.tipos_alvo = [new TipoAlvo(1, "Pessoal"), new TipoAlvo(2, "Ser"), new TipoAlvo(3, "Objeto"), new TipoAlvo(4, "Ponto"), new TipoAlvo(5, "Direção")];

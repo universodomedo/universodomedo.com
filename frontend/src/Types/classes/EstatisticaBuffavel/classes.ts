@@ -1,5 +1,5 @@
 // #region Imports
-import { Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, Extremidade, ValoresEfeito } from 'Types/classes/index.ts';
+import { Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, Extremidade } from 'Types/classes/index.ts';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto';
 // #endregion
