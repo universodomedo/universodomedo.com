@@ -82,7 +82,7 @@ export class Personagem {
 
         this._ficha.inventario!.map(dadosItem => this.inventario.adicionarItemNoInventario(novoItemPorDadosItem(dadosItem)));
         
-        this.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(this));
+        // this.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(this));
     }
 
     public get acoes(): Acao[] {

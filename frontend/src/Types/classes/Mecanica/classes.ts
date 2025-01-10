@@ -65,15 +65,6 @@ export const logicaMecanicas: { [key: number]: (valoresSelecionados: GastaCustoP
             resumo = `Recupera ${valor} P.V.`;
         }
 
-        if (acao.comportamentos.comportamentoAcao.precisaTestePericia) {
-            const { idAtributoTeste, idPericiaTeste } = acao.comportamentos.comportamentoAcao.atributoEPericiaTeste;
-
-            const atributoPersonagem = getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === idAtributoTeste)!;
-            const periciaPersonagem = getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === idPericiaTeste)!;
-
-            ExecutaTestePericiaGenerico(atributoPersonagem, periciaPersonagem);
-        }
-
         // LoggerHelper.getInstance().adicionaMensagem(resumo);
         toast(resumo);
 

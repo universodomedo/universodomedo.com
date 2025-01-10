@@ -1,5 +1,5 @@
 // #region Imports
-import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, MensagemLog, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito } from 'Types/classes/index.ts';
+import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoCusto, TipoDano, CirculoNivelRitual, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, MensagemLog, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito } from 'Types/classes/index.ts';
 // #endregion
 
 export class SingletonHelper {
@@ -15,7 +15,6 @@ export class SingletonHelper {
   private _formatos_alcance: FormatoAlcance[] = [];
   private _duracoes: Duracao[] = [];
   private _tipos_execucao: TipoExecucao[] = [];
-  private _categorias_acao: CategoriaAcao[] = [];
   private _tipos_acao: TipoAcao[] = [];
   private _tipos_alvo: TipoAlvo[] = [];
   private _tipos_custo: TipoCusto[] = [];
@@ -71,9 +70,6 @@ export class SingletonHelper {
 
   public set tipos_execucao(value: TipoExecucao[]) { this._tipos_execucao = value }
   public get tipos_execucao(): TipoExecucao[] { return this._tipos_execucao }
-
-  public set categorias_acao(value: CategoriaAcao[]) { this._categorias_acao = value }
-  public get categorias_acao(): CategoriaAcao[] { return this._categorias_acao }
 
   public set tipos_acao(value: TipoAcao[]) { this._tipos_acao = value }
   public get tipos_acao(): TipoAcao[] { return this._tipos_acao }

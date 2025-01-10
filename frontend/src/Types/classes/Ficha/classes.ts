@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUsoAcao, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso } from 'Types/classes/index.ts';
+import { Acao, ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso, ComportamentoDificuldadeAcao } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -38,11 +38,11 @@ export type ArgsAcao = {
 };
 
 export type DadosComportamentosAcao = {
+    dadosComportamentoDificuldadeAcao?: ConstructorParameters<typeof ComportamentoDificuldadeAcao>;
     dadosComportamentoAcao?: ConstructorParameters<typeof ComportamentoAcao>;
     dadosComportamentoRequisito?: ConstructorParameters<typeof RequisitoUso>[];
     dadosComportamentoConsomeUso?: ConstructorParameters<typeof ComportamentoConsomeUso>;
     dadosComportamentoConsomeMunicao?: ConstructorParameters<typeof ComportamentoConsomeMunicao>;
-    dadosComportamentoUsoAcao?: ConstructorParameters<typeof ComportamentoUsoAcao>;
 };
 
 export type ArgsRitual = {

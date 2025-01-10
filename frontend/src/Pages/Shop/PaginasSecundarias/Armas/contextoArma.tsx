@@ -91,7 +91,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
     }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0, acoes: [] as ArgsAcao[], modificadores: [] as PropsModificador[], reducaoPatenteSimplificada: false });
 
     const acaoPadraoBase: ArgsAcao = {
-        args: { nome: 'Ataque Padrão', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, },
+        args: { nome: 'Ataque Padrão', idTipoAcao: 2, idMecanica: 6, },
         dadosComportamentos: baseSelecionada
             ? {
                 dadosComportamentoAcao: [

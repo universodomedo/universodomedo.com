@@ -38,7 +38,7 @@ export class PericiaPatentePersonagem {
     get refPatente(): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente_pericia => patente_pericia.id === this._idPatentePericia)!; }
     get refAtributoPersonagem(): AtributoPersonagem { return getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === this.refPericia.refAtributo.id)!; }
 
-    get valorNivelPatente(): number { return this.refPatente.id; }
+    get valorNivelPatente(): number { return this.refPatente.id - 1; }
     get valorBonusPatente(): number { return this.refPatente.valor; }
     get valorTotal(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(this.valorBonusPatente, this.refPericia.refLinhaEfeito.id); }
 

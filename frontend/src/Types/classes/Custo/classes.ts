@@ -55,17 +55,15 @@ export class CustoExecucao extends Custo {
 export class CustoPE extends Custo {
     constructor(public valor: number) { super(); }
 
-    get podeSerPago(): boolean {
-        return this.valor <= getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.valor;
-    }
+    get desconto(): number { return this.refAcao!.refPai instanceof Ritual ? this.refAcao!.refPai.comportamentos.comportamentoDescontosRitual.valorDesconto : 0; }
+    get valorTotal(): number { return this.valor - this.desconto; }
 
-    get descricaoCusto(): string {
-        return `${this.valor} P.E.`;
-    }
+    get podeSerPago(): boolean { return this.valorTotal <= getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.valor; }
+    get descricaoCusto(): string { return `${this.valorTotal} P.E.`; }
 
     gastaCusto(): void {
-        LoggerHelper.getInstance().adicionaMensagem(`-${this.valor} P.E.`);
-        getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.aplicarDanoFinal(this.valor);
+        LoggerHelper.getInstance().adicionaMensagem(`-${this.valorTotal} P.E.`);
+        getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.aplicarDanoFinal(this.valorTotal);
     }
 }
 

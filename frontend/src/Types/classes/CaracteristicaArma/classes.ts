@@ -573,7 +573,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
             {
                 idBaseArma: 6, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {
                     acoes: [ {
-                        args: { nome: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, },
+                        args: { nome: 'Coronhada', idTipoAcao: 2, idMecanica: 6, },
                         dadosComportamentos: {
                             dadosComportamentoAcao: [
                                 'Dano',
@@ -588,7 +588,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
             {
                 idBaseArma: 7, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {
                     acoes: [ {
-                        args: { nome: 'Coronhada', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 6, },
+                        args: { nome: 'Coronhada', idTipoAcao: 2, idMecanica: 6, },
                         dadosComportamentos: {
                             dadosComportamentoAcao: [
                                 'Dano',

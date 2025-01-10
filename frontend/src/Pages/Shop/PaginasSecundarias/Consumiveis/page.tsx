@@ -21,7 +21,7 @@ const page = () => {
                 args: { nome: [`Bálsamo de Arnica`], idTipoItem: 3, peso: 1, categoria: 0, },
                 dadosAcoes: [
                     {
-                        args: { nome: 'Consumir', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 3, },
+                        args: { nome: 'Consumir', idTipoAcao: 1, idMecanica: 3, },
                         dadosComportamentos: {
                             dadosComportamentoConsomeUso: [1],
                         },
@@ -58,7 +58,7 @@ const page = () => {
                 args: { nome: [`Gel de Babosa`], idTipoItem: 3, peso: 1, categoria: 0, },
                 dadosAcoes: [
                     {
-                        args: { nome: 'Consumir', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 3, },
+                        args: { nome: 'Consumir', idTipoAcao: 1, idMecanica: 3, },
                         dadosComportamentos: {
                             dadosComportamentoConsomeUso: [1],
                         },
@@ -95,7 +95,7 @@ const page = () => {
                 args: { nome: [`Ácido Hialurônico Injetável`], idTipoItem: 3, peso: 1, categoria: 1, },
                 dadosAcoes: [
                     {
-                        args: { nome: 'Injetar', idTipoAcao: 1, idCategoriaAcao: 1, idMecanica: 6, },
+                        args: { nome: 'Injetar', idTipoAcao: 1, idMecanica: 6, },
                         dadosComportamentos: {
                             dadosComportamentoAcao: ['Cura', 4, 7],
                             dadosComportamentoConsomeUso: [1],

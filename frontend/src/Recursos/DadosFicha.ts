@@ -29,7 +29,7 @@ const dadosFicha: { [key: number]: RLJ_Ficha2 } = {
                 detalhesArma: { dano: 6, variancia:2, numeroExtremidadesUtilizadas: 1, idPericiaUtilizada: 8 },
                 dadosAcoes: [
                     {
-                        nomeAcao: 'Realizar Ataque', idTipoAcao: 2, idCategoriaAcao: 1, idMecanica: 3,
+                        nomeAcao: 'Realizar Ataque', idTipoAcao: 2, idMecanica: 3,
                         custos: { custoExecucao: [ { idExecucao: 2, valor: 1 } ] },
                         requisitos: [2]
                     }
@@ -91,7 +91,7 @@ const dadosFicha: { [key: number]: RLJ_Ficha2 } = {
             {
                 nomeRitual: 'Aprimorar Ocultismo', idCirculoNivel: 3, idElemento: 1, dadosAcoes: [
                     {
-                        nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCategoriaAcao: 1, idMecanica: 3,
+                        nomeAcao: 'Usar Ritual', idTipoAcao: 3, idMecanica: 3,
                         custos: { custoPE: { valor: 5 }, custoExecucao: [ { idExecucao: 2, valor: 1 } ], custoComponente: true },
                         buffs: [{ idBuff: 16, nome: 'Aprimorar Ocultismo', valor: 4, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 }],
                         requisitos: [1]
@@ -101,7 +101,7 @@ const dadosFicha: { [key: number]: RLJ_Ficha2 } = {
             {
                 nomeRitual: 'Aprimorar Investigação', idCirculoNivel: 5, idElemento: 1, dadosAcoes: [
                     {
-                        nomeAcao: 'Usar Ritual', idTipoAcao: 3, idCategoriaAcao: 1, idMecanica: 3,
+                        nomeAcao: 'Usar Ritual', idTipoAcao: 3, idMecanica: 3,
                         custos: { custoPE: { valor: 9 }, custoExecucao: [ { idExecucao: 2, valor: 1 } ], custoComponente: true },
                         buffs: [{ idBuff: 14, nome: 'Aprimorar Ocultismo', valor: 6, duracao: { idDuracao: 3, valor: 1 }, idTipoBuff: 3 }],
                         requisitos: [1]

@@ -124,8 +124,8 @@ const page = ({ acao }: { acao: Acao }) => {
             ? `${acao.comportamentos.comportamentoAcao.valorMin} a ${acao.comportamentos.comportamentoAcao.valorMax} de ${acao.comportamentos.comportamentoAcao.tipo}`
             : '';
 
-        const textoTestePericia = acao.comportamentos.temComportamentoAcao && acao.comportamentos.comportamentoAcao.precisaTestePericia
-            ? `Depende de um Teste de ${acao.comportamentos.comportamentoAcao.refPericia?.nomeAbrev} com ${acao.comportamentos.comportamentoAcao.refAtributo?.nomeAbrev}`
+        const textoTestePericia = acao.comportamentos.comportamentoDificuldadeAcao
+            ? `Depende de um Teste de ${acao.comportamentos.comportamentoDificuldadeAcao.refPericia.nomeAbrev} com ${acao.comportamentos.comportamentoDificuldadeAcao.refAtributo.nomeAbrev}`
             : '';
 
         return (
@@ -138,7 +138,7 @@ const page = ({ acao }: { acao: Acao }) => {
                 )}
                 <BlocoTexto lista={acao.custos} titulo={'Custos'} corTexto={(custo) => !custo.podeSerPago ? '#FF0000' : ''} descricao={(custo) => custo.descricaoCusto} />
                 <BlocoTexto lista={acao.requisitos} titulo={'Requisitos'} corTexto={(requisito) => !requisito.requisitoCumprido ? '#FF0000' : ''} descricao={(custo) => custo.descricaoRequisito} />
-                <BlocoTexto lista={acao.dificuldades} titulo={'Dificuldades'} corTexto={(dificuldade) => false ? '#FF0000' : '#F49A34'} descricao={(custo) => custo.descricaoDificuldade} />
+                {/* <BlocoTexto lista={acao.dificuldades} titulo={'Dificuldades'} corTexto={(dificuldade) => false ? '#FF0000' : '#F49A34'} descricao={(custo) => custo.descricaoDificuldade} /> */}
                 {acao.comportamentos.acaoTravada && (
                     <div className={style.bloco_texto}>
                     <p className={style.texto}>{acao.comportamentos.comportamentoTrava.descricaoTrava}</p>

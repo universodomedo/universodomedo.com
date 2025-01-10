@@ -1,7 +1,7 @@
 // #region Imports
 import { createSlice } from '@reduxjs/toolkit';
 import { SingletonHelper } from 'Types/classes_estaticas';
-import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoDano, CirculoNivelRitual, CategoriaAcao, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, RequisitoFicha, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito } from "Types/classes/index.ts";
+import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoDano, CirculoNivelRitual, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, RequisitoFicha, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito } from "Types/classes/index.ts";
 // #endregion
 
 const singletonHelper = SingletonHelper.getInstance();
@@ -102,7 +102,6 @@ singletonHelper.alcances = [new Alcance(1, "Adjacente"), new Alcance(2, "Próxim
 singletonHelper.formatos_alcance = [new FormatoAlcance(1, "Selecionado"), new FormatoAlcance(2, "Linha Reta"), new FormatoAlcance(3, "Cone"), new FormatoAlcance(4, "Área")];
 singletonHelper.duracoes = [new Duracao(1, "Ação"), new Duracao(2, "Turno"), new Duracao(3, "Cena"), new Duracao(4, "Dia"), new Duracao(5, "Intermitente")];
 singletonHelper.tipos_execucao = [new TipoExecucao(1, 55, "Ação Livre"), new TipoExecucao(2, 56, "Ação Padrão"), new TipoExecucao(3, 57, "Ação de Movimento"), new TipoExecucao(4, 58, "Reação"), new TipoExecucao(5, 59, "Ação Ritualística"), new TipoExecucao(6, 60, "Ação Investigativa"), new TipoExecucao(7, 61, "Comando Doméstico")];
-singletonHelper.categorias_acao = [new CategoriaAcao(1, "Ativo"), new CategoriaAcao(2, "Passiva")];
 singletonHelper.tipos_acao = [new TipoAcao(1, "Ação Direta Pacifica"), new TipoAcao(2, "Ação Direta Agressiva"), new TipoAcao(3, "Aplicação de Efeito Positivo"), new TipoAcao(4, "Aplicação de Efeito Negativo")];
 singletonHelper.tipos_alvo = [new TipoAlvo(1, "Pessoal"), new TipoAlvo(2, "Ser"), new TipoAlvo(3, "Objeto"), new TipoAlvo(4, "Ponto"), new TipoAlvo(5, "Direção")];
 singletonHelper.tipos_dano = [new TipoDano(1, "Vital"), new TipoDano(2, "Mundano"), new TipoDano(3, "Concussivo"), new TipoDano(4, "Cortante"), new TipoDano(5, "Perfurante"), new TipoDano(6, "Natural"), new TipoDano(7, "Elétrico"), new TipoDano(8, "Fogo"), new TipoDano(9, "Frio"), new TipoDano(10, "Químico"), new TipoDano(11, "Elemental"), new TipoDano(12, "Conhecimento"), new TipoDano(13, "Sangue"), new TipoDano(14, "Energia"), new TipoDano(15, "Morte"), new TipoDano(16, "Medo"), new TipoDano(17, "Mental"), new TipoDano(18, "Debilitante")];

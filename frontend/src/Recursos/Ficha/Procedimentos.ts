@@ -19,7 +19,7 @@ export function ExecutaTestePericiaGenerico(atributoPersonagem: AtributoPersonag
 
     const resultado = valorDoTeste + periciaPersonagem.valorTotal;
 
-    const resumoTeste = `Teste ${periciaPersonagem.refPericia.nomeAbrev}: [${resultado}]`;
+    const resumoTeste = `${periciaPersonagem.refPericia.nomeAbrev}: [${resultado}]`;
 
     LoggerHelper.getInstance().adicionaMensagem(resumoTeste);
     toast(resumoTeste);

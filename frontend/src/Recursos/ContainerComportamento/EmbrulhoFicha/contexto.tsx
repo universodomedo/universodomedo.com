@@ -1,7 +1,7 @@
 // #region Imports
 import React, { createContext, useContext } from "react";
 
-import { HabilidadePassiva, Personagem } from "Types/classes/index.ts";
+import { HabilidadePassiva, lista_geral_habilidades, Personagem } from "Types/classes/index.ts";
 import { geraFicha } from 'Utils/utils.tsx';
 // #endregion
 
@@ -33,6 +33,7 @@ export const ContextoFichaProvider = ({ children, idFichaNoLocalStorage }: { chi
 
         personagem.habilidades.forEach(habilidade => habilidade instanceof HabilidadePassiva && habilidade.modificadores.forEach(modificador => modificador.comportamentos.ehPassivoSempreAtivo && modificador.ativaBuff()));
         personagem.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
+        personagem.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(personagem));
 
         return (
             <>{children}</>

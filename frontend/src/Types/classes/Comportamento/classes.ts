@@ -1,5 +1,5 @@
 // #region Imports
-import { Atributo, AtributoPersonagem, CirculoNivelRitual, Elemento, Extremidade, NivelComponente, NomeItem, PatentePericia, Pericia, PericiaPatentePersonagem } from 'Types/classes/index.ts';
+import { Atributo, AtributoPersonagem, CirculoNivelRitual, DificuldadeDinamica, Elemento, Extremidade, NivelComponente, NomeItem, PatentePericia, Pericia, PericiaPatentePersonagem } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -79,9 +79,14 @@ export class EmbrulhoComportamentoAcao {
     public comportamentoTrava: ComportamentoAcaoTrava = new ComportamentoAcaoTrava();
     public comportamentoHistoricoAcao: ComportamentoHistoricoAcao = new ComportamentoHistoricoAcao();
 
+    private _comportamentoDificuldadeAcao?: ComportamentoDificuldadeAcao;
+    get temComportamentoDificuldadeAcao(): boolean { return Boolean(this._comportamentoDificuldadeAcao); }
+    get comportamentoDificuldadeAcao(): ComportamentoDificuldadeAcao { return this._comportamentoDificuldadeAcao!; } // sempre verificar se temComportamentoDificuldadeAcao antes
+    setComportamentoDificuldadeAcao(...args: ConstructorParameters<typeof ComportamentoDificuldadeAcao>): void { this._comportamentoDificuldadeAcao = new ComportamentoDificuldadeAcao(...args); }
+
     private _comportamentoAcao?: ComportamentoAcao;
     get temComportamentoAcao(): boolean { return Boolean(this._comportamentoAcao); }
-    get comportamentoAcao(): ComportamentoAcao { return this._comportamentoAcao!; } // sempre verifficar se temComportamentoAcao antes
+    get comportamentoAcao(): ComportamentoAcao { return this._comportamentoAcao!; } // sempre verificar se temComportamentoAcao antes
     setComportamentoAcao(...args: ConstructorParameters<typeof ComportamentoAcao>): void { this._comportamentoAcao = new ComportamentoAcao(...args); }
 
     private _comportamentoRequisito?: ComportamentoRequisito;
@@ -99,23 +104,21 @@ export class EmbrulhoComportamentoAcao {
     get comportamentoConsomeMunicao(): ComportamentoConsomeMunicao { return this._comportamentoConsomeMunicao!; } // sempre verificar se temComportamentoConsomeMunicao antes
     setComportamentoConsomeMunicao(...args: ConstructorParameters<typeof ComportamentoConsomeMunicao>): void { this._comportamentoConsomeMunicao = new ComportamentoConsomeMunicao(...args); }
 
-    private _comportamentoUsoAcao?: ComportamentoUsoAcao;
-    get temComportamentoUsoAcao(): Boolean { return Boolean(this._comportamentoUsoAcao); }
-    get comportamentoUsoAcao(): ComportamentoUsoAcao { return this._comportamentoUsoAcao!; } // sempre verificar se temComportamentoUsoAcao antes
-    setComportamentoUsoAcao(...args: ConstructorParameters<typeof ComportamentoUsoAcao>): void { this._comportamentoUsoAcao = new ComportamentoUsoAcao(...args); }
-
     get mensagemRequisitos(): string { return this.temComportamentoRequisito ? this.comportamentoRequisito.mensagemRequisitos : ''; }
     get requisitosCumpridos(): boolean { return !this.temComportamentoRequisito || this.comportamentoRequisito.requisitosCumprido; }
 
     get acaoTravada(): boolean { return this.comportamentoTrava.trava; }
     travaAcao() { this.comportamentoTrava.travaAcao('Você falhou'); }
 
-    get temDificuldadeDeExecucao(): boolean { return this.temComportamentoUsoAcao && this.comportamentoUsoAcao.dificuldadeAtual > 0; }
-    get dificuldadeDeExecucao(): number { return this.comportamentoUsoAcao.dificuldadeAtual; }
-    atualizaDificuldadeDeExecucao(): void { this.comportamentoUsoAcao.atualizaDificuldade(); }
+    get temDificuldadeDeExecucao(): boolean { return this.temComportamentoDificuldadeAcao; }
+    get ehDificuldadeDinamica(): boolean { return this.temDificuldadeDeExecucao && this.comportamentoDificuldadeAcao.temDificuldadeDinamica; }
+    get dificuldadeDeExecucao(): number { return this.comportamentoDificuldadeAcao.dificuldadeDinamica!.dificuldadeAtual; } // sempre verificar se ehDificuldadeDinamica antes
+    atualizaDificuldadeDeExecucao(): void { this.comportamentoDificuldadeAcao.dificuldadeDinamica!.atualizaDificuldade(); }
 }
 
 export class EmbrulhoComportamentoRitual {
+    public comportamentoDescontosRitual = new ComportamentoDescontosRitual();
+
     private _comportamentoRitual?: ComportamentoRitual;
     get temComportamentoRitual(): boolean { return Boolean(this._comportamentoRitual); }
     get comportamentoRitual(): ComportamentoRitual { return this._comportamentoRitual!; } // sempre verificar se temComportamentoRitual antes
@@ -200,6 +203,24 @@ export class ComportamentoAcaoTrava {
     destravaAcao() { this.trava = false; this.descricaoTrava = ''; }
 }
 
+export class ComportamentoDificuldadeAcao {
+    public idAtributo: number;
+    public idPericia: number;
+    public dificuldadeDinamica?: DificuldadeDinamica;
+
+    constructor(dadosTeste: { idAtributo: number, idPericia: number }, dadosDificuldadeDinamica?: ConstructorParameters<typeof DificuldadeDinamica>[0]) {
+        this.idPericia = dadosTeste.idPericia;
+        this.idAtributo = dadosTeste.idAtributo;
+
+        if (dadosDificuldadeDinamica) this.dificuldadeDinamica = new DificuldadeDinamica(dadosDificuldadeDinamica);
+    }
+
+    get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this.idPericia)!; }
+    get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this.idAtributo)!; }
+
+    get temDificuldadeDinamica(): boolean { return this.dificuldadeDinamica !== undefined; }
+}
+
 export class ComportamentoAcao {
     constructor(
         public tipo: 'Dano' | 'Cura',
@@ -209,16 +230,9 @@ export class ComportamentoAcao {
     ) { }
 
     get variancia(): number { return this.valorMax - this.valorMin; }
-
-    get precisaTestePericia(): boolean { return Boolean(this.opcionais) && Boolean(this.opcionais?.testePericia); }
-    get atributoEPericiaTeste(): { idAtributoTeste: number, idPericiaTeste: number } { return { idAtributoTeste: this.opcionais.testePericia!.idAtributoTeste, idPericiaTeste: this.opcionais.testePericia!.idPericiaTeste }; }
-
-    get refPericia(): Pericia | undefined { return !this.precisaTestePericia ? undefined : SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this.opcionais?.testePericia?.idPericiaTeste)!; }
-    get refAtributo(): Atributo | undefined { return !this.precisaTestePericia ? undefined : SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this.opcionais?.testePericia?.idAtributoTeste)!; }
 }
 
 export type OpcionaisComportamentoAcao = {
-    testePericia?: { idAtributoTeste: number, idPericiaTeste: number },
     consomeUso?: { nomeUtilizavel: string },
     consomeMunicao?: { nomeMunicao: string, quantidadePorUso: number },
 }
@@ -232,6 +246,14 @@ export class ComportamentoRitual {
     get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
     get refCirculoNivelRitual(): CirculoNivelRitual { return SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.id === this._idCirculoNivel)!; }
     get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this.refCirculoNivelRitual.idCirculo)! }
+}
+
+export class ComportamentoDescontosRitual {
+    constructor(
+
+    ) { }
+
+    get valorDesconto(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(0, 62); }
 }
 
 export class ComportamentoRequisito {
@@ -303,13 +325,11 @@ export class DadosGenericosItem {
 export class DadosGenericosAcao {
     public nome: string;
     public idTipoAcao: number;
-    public idCategoriaAcao: number;
     public idMecanica?: number;
 
-    constructor({ nome, idTipoAcao, idCategoriaAcao, idMecanica }: { nome: string; idTipoAcao: number; idCategoriaAcao: number; idMecanica?: number }) {
+    constructor({ nome, idTipoAcao, idMecanica }: { nome: string; idTipoAcao: number; idMecanica?: number }) {
         this.nome = nome;
         this.idTipoAcao = idTipoAcao;
-        this.idCategoriaAcao = idCategoriaAcao;
         this.idMecanica = idMecanica;
     }
 }
@@ -335,32 +355,4 @@ export class ComportamentoConsomeMunicao {
         public nomeMunicao: string,
         public quantidadeUso: number,
     ) { }
-}
-
-export class ComportamentoUsoAcao {
-    public dificuldadeAtual: number;
-    public modificadorDificuldadeAtual: number;
-    private indiceListaModificadores: number = 0;
-
-    constructor(
-        private _dificuldadeInicial: number,
-        private _modificadorDificuldadeInicial: number = 0,
-        public listaModificadoresDificuldade: number[] = []
-    ) {
-        this.dificuldadeAtual = this._dificuldadeInicial;
-        this.modificadorDificuldadeAtual = _modificadorDificuldadeInicial;
-    }
-
-    atualizaDificuldade() {
-        this.dificuldadeAtual += this.modificadorDificuldadeAtual;
-
-        if (this.indiceListaModificadores < this.listaModificadoresDificuldade.length) {
-            this.modificadorDificuldadeAtual += this.listaModificadoresDificuldade[this.indiceListaModificadores];
-
-            this.indiceListaModificadores++;
-        }
-    }
-
-    resetaDificuldade() { this.dificuldadeAtual = this._dificuldadeInicial; }
-    resetaModificadorDificuldade() { this.modificadorDificuldadeAtual = this._modificadorDificuldadeInicial; this.indiceListaModificadores = 0; }
 }

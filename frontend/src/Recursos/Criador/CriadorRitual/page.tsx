@@ -35,7 +35,7 @@ const page = ({ onCreate }: { onCreate: (novoRitual: ArgsRitual) => void; }) => 
                 dadosComportamentoRitual: [elementoSelecionado, nivelSelecionado],
             },
             dadosAcoes: [ {
-                args: {nome: 'Usar Ritual', idTipoAcao: 3, idCategoriaAcao: 1, idMecanica: 3,},
+                args: {nome: 'Usar Ritual', idTipoAcao: 3, idMecanica: 3,},
                 dadosComportamentos: {},
                 custos: { custoPE: { valor: valorPE }, custoExecucao: [{ idExecucao: 2, valor: 1 }], custoComponente: true },
                 modificadores: [

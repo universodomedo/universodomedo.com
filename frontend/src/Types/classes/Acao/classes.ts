@@ -1,8 +1,9 @@
 // #region Imports
-import { logicaMecanicas, Efeito, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, RequisitoConfig, CustoComponente, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, GastaCustoProps, HabilidadeAtiva, Dificuldade, EmbrulhoComportamentoAcao, DadosComportamentosAcao, DadosGenericosAcao, DadosGenericosAcaoParams, Modificador, adicionarModificadoresUtil } from 'Types/classes/index.ts';
+import { logicaMecanicas, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, RequisitoConfig, CustoComponente, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, GastaCustoProps, EmbrulhoComportamentoAcao, DadosComportamentosAcao, DadosGenericosAcao, DadosGenericosAcaoParams, Modificador, adicionarModificadoresUtil } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
+import { ExecutaTestePericiaGenerico } from 'Recursos/Ficha/Procedimentos';
 // #endregion
 
 export class Acao {
@@ -11,7 +12,6 @@ export class Acao {
     protected _modificadores: Modificador[] = [];
     public custos: Custo[] = [];
     public requisitos: Requisito[] = [];
-    public dificuldades: Dificuldade[] = [];
     public opcoesExecucoes: OpcoesExecucao[] = [];
     protected _refPai?: Ritual | Item | Habilidade;
 
@@ -31,18 +31,17 @@ export class Acao {
 
         this.dados = new DadosGenericosAcao(dadosGenericosAcao);
 
+        if (dadosComportamentos.dadosComportamentoDificuldadeAcao !== undefined) this.comportamentos.setComportamentoDificuldadeAcao(...dadosComportamentos.dadosComportamentoDificuldadeAcao);
         if (dadosComportamentos.dadosComportamentoAcao !== undefined) this.comportamentos.setComportamentoAcao(...dadosComportamentos.dadosComportamentoAcao);
         if (dadosComportamentos.dadosComportamentoRequisito !== undefined) this.comportamentos.setComportamentoRequisito(...dadosComportamentos.dadosComportamentoRequisito);
         if (dadosComportamentos.dadosComportamentoConsomeUso !== undefined) this.comportamentos.setComportamentoConsomeUso(...dadosComportamentos.dadosComportamentoConsomeUso);
         if (dadosComportamentos.dadosComportamentoConsomeMunicao !== undefined) this.comportamentos.setComportamentoConsomeMunicao(...dadosComportamentos.dadosComportamentoConsomeMunicao);
-        if (dadosComportamentos.dadosComportamentoUsoAcao !== undefined) this.comportamentos.setComportamentoUsoAcao(...dadosComportamentos.dadosComportamentoUsoAcao);
     }
 
     get modificadores(): Modificador[] { return this._modificadores; }
 
     get refPai(): Ritual | Item | Habilidade { return this._refPai!; }
     get refTipoAcao(): TipoAcao { return SingletonHelper.getInstance().tipos_acao.find(tipo_acao => tipo_acao.id === this.dados.idTipoAcao)!; }
-    get refCategoriaAcao(): CategoriaAcao { return SingletonHelper.getInstance().categorias_acao.find(categoria_acao => categoria_acao.id === this.dados.idCategoriaAcao)!; }
     get nomeExibicao(): string { return `${this.dados.nome}`; }
 
     adicionaRefPai(pai: Ritual | Item | Habilidade): this { return (this._refPai = pai), this; }
@@ -52,7 +51,6 @@ export class Acao {
     adicionarModificadores(propsModificadores: ConstructorParameters<typeof Modificador>[0][]): this { return (adicionarModificadoresUtil(this, this._modificadores, propsModificadores), this); }
     
     adicionarRequisitosEOpcoesPorId(ids: number[]): this { return (ids.forEach(id => { const requisitoData = RequisitoConfig.construirRequisitoEOpcoesPorId(id, this); if (requisitoData) { const { requisito, opcoesExecucao } = requisitoData; this.requisitos.push(requisito); this.opcoesExecucoes.push(...opcoesExecucao); } }), this); }
-    adicionarDificuldades(dificuldadeParams: [new (...args: any[]) => Dificuldade, any[]][]): this { return (dificuldadeParams.forEach(([DificuldadeClass, params]) => { this.dificuldades.push(new DificuldadeClass(...params).setRefAcao(this)) })), this }
     adicionarLogicaExecucao(logicaExecucao: () => void): this { return (this.logicaExecucao = logicaExecucao), this.logicaCustomizada = true, this; }
 
     get refTipoPai(): 'Ritual' | 'Item' | 'Habilidade' | undefined {
@@ -68,13 +66,17 @@ export class Acao {
     get verificaCustosPodemSerPagos(): boolean { return (this.custos ? this.custos?.every(custo => custo.podeSerPago) ?? false : true); }
 
     processaDificuldades = (): boolean => {
-        if (!this.comportamentos.temDificuldadeDeExecucao) return true;
-        console.log(`testando dificuldade ${this.comportamentos.dificuldadeDeExecucao}`);
-        
-        const resultadoQueTireiMockado = getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === 7)!.realizarTeste();
+        const atributoPersonagem = getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === this.comportamentos.comportamentoDificuldadeAcao.idAtributo)!;
+        const periciaPersonagem = getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === this.comportamentos.comportamentoDificuldadeAcao.idPericia)!;
 
-        const passou = resultadoQueTireiMockado >= this.comportamentos.dificuldadeDeExecucao;
-        // const resultadoQueTireiMockado = 12;
+        const resultadoDificuldade = ExecutaTestePericiaGenerico(atributoPersonagem, periciaPersonagem);
+
+        // dificuldade fixa ou contra, apenas realizada o teste
+        if (!this.comportamentos.comportamentoDificuldadeAcao.temDificuldadeDinamica) return true;
+
+        // dificuldade dinamica, calcula se passou, bloqueando ou subindo a dificuldade
+        const passou = resultadoDificuldade >= this.comportamentos.dificuldadeDeExecucao;
+
         if (passou) {
             this.comportamentos.atualizaDificuldadeDeExecucao();
         } else {
@@ -83,18 +85,6 @@ export class Acao {
 
         return passou;
     };
-    // processaDificuldades = (): boolean => {
-    //     if (!(this.dificuldades.length > 0)) return true;
-    //     LoggerHelper.getInstance().adicionaMensagem(`Processando dificuldades`, true);
-
-    //     try {
-    //         for (const dificuldade of this.dificuldades) {
-    //             if (!dificuldade.processa()) return false;
-    //         }
-    //     } finally { LoggerHelper.getInstance().fechaNivelLogMensagem(); }
-
-    //     return true;
-    // };
 
     aplicaGastos = (valoresSelecionados: GastaCustoProps): boolean => {
         LoggerHelper.getInstance().adicionaMensagem(`Custos aplicados`, true);
@@ -117,7 +107,7 @@ export class Acao {
     executaComOpcoes = (valoresSelecionados: GastaCustoProps) => {
         LoggerHelper.getInstance().adicionaMensagem(`Executado ${this.nomeExibicao}`);
 
-        if (!this.processaDificuldades()) return;
+        if (this.comportamentos.temDificuldadeDeExecucao && !this.processaDificuldades()) return;
 
         // logica temporaria
         if (this.comportamentos.temComportamentoConsomeUso && this.refPai instanceof Item && this.refPai.comportamentos.podeGastarUsos) this.refPai.gastaUso();
@@ -187,13 +177,6 @@ export class Acao {
 }
 
 export class TipoAcao {
-    constructor(
-        public id: number,
-        public nome: string,
-    ) { }
-}
-
-export class CategoriaAcao {
     constructor(
         public id: number,
         public nome: string,
