@@ -146,16 +146,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
                 dadosCaracteristicaNaBase: {
                     custoCaracteristica: 2,
                     dadosCaracteristicasArmas: {
-                        buffs: [
-                            {
-                                idBuff: 54,
-                                nome: 'Arma Projetada',
-                                valor: 2,
-                                dadosComportamentos: { dadosComportamentoPassivo: [true] }, // implementar mesmo requisito da base
-                                duracao: { idDuracao: 3, valor: 1 },
-                                idTipoBuff: 1,
-                            },
-                        ],
+                        modificadores: [{ props: { nome: 'Arma Projetada', idDuracao: 5, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito: 54, idTipoEfeito: 4, dadosValoresEfeitos: { valorBonusAdicional: 2 } }], dadosComportamentos: { dadosComportamentoPassivo: [true] } } }],
                     }
                 }
             },
@@ -164,16 +155,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
                 dadosCaracteristicaNaBase: {
                     custoCaracteristica: 2,
                     dadosCaracteristicasArmas: {
-                        buffs: [
-                            {
-                                idBuff: 54,
-                                nome: 'Arma Projetada',
-                                valor: 2,
-                                dadosComportamentos: { dadosComportamentoPassivo: [true] }, // implementar mesmo requisito da base
-                                duracao: { idDuracao: 3, valor: 1 },
-                                idTipoBuff: 1,
-                            },
-                        ],
+                        modificadores: [{ props: { nome: 'Arma Projetada', idDuracao: 5, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito: 54, idTipoEfeito: 4, dadosValoresEfeitos: { valorBonusAdicional: 2 } }], dadosComportamentos: { dadosComportamentoPassivo: [true] } } }],
                     }
                 }
             },
@@ -182,16 +164,7 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
                 dadosCaracteristicaNaBase: {
                     custoCaracteristica: 2,
                     dadosCaracteristicasArmas: {
-                        buffs: [
-                            {
-                                idBuff: 54,
-                                nome: 'Arma Projetada',
-                                valor: 3,
-                                dadosComportamentos: { dadosComportamentoPassivo: [true] }, // implementar mesmo requisito da base
-                                duracao: { idDuracao: 3, valor: 1 },
-                                idTipoBuff: 1,
-                            },
-                        ],
+                        modificadores: [{ props: { nome: 'Arma Projetada', idDuracao: 5, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito: 54, idTipoEfeito: 4, dadosValoresEfeitos: { valorBonusAdicional: 3 } }], dadosComportamentos: { dadosComportamentoPassivo: [true] } } }],
                     }
                 }
             },
@@ -571,34 +544,42 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
         descricao: 'Um Ataque Corpo-a-Corpo simples',
         basesArma: [
             {
-                idBaseArma: 6, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {
-                    acoes: [ {
-                        args: { nome: 'Coronhada', idTipoAcao: 2, idMecanica: 6, },
-                        dadosComportamentos: {
-                            dadosComportamentoAcao: [
-                                'Dano',
-                                1,
-                                4,
-                                { testePericia: { idAtributoTeste:2, idPericiaTeste: 8 } }
-                            ],
-                        }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2],
-                    } ]
-                } } 
+                idBaseArma: 6, dadosCaracteristicaNaBase: {
+                    custoCaracteristica: 1, dadosCaracteristicasArmas: {
+                        acoes: [{
+                            args: { nome: 'Coronhada', idTipoAcao: 2, idMecanica: 6, },
+                            dadosComportamentos: {
+                                dadosComportamentoAcao: [
+                                    'Dano',
+                                    1,
+                                    4,
+                                ],
+                                dadosComportamentoDificuldadeAcao: [
+                                    { idAtributo: 2, idPericia: 8 }
+                                ]
+                            }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2],
+                        }]
+                    }
+                }
             },
             {
-                idBaseArma: 7, dadosCaracteristicaNaBase: { custoCaracteristica: 1, dadosCaracteristicasArmas: {
-                    acoes: [ {
-                        args: { nome: 'Coronhada', idTipoAcao: 2, idMecanica: 6, },
-                        dadosComportamentos: {
-                            dadosComportamentoAcao: [
-                                'Dano',
-                                1,
-                                5,
-                                { testePericia: { idAtributoTeste:2, idPericiaTeste: 8 } }
-                            ],
-                        }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2],
-                    } ]
-                } } 
+                idBaseArma: 7, dadosCaracteristicaNaBase: {
+                    custoCaracteristica: 1, dadosCaracteristicasArmas: {
+                        acoes: [{
+                            args: { nome: 'Coronhada', idTipoAcao: 2, idMecanica: 6, },
+                            dadosComportamentos: {
+                                dadosComportamentoAcao: [
+                                    'Dano',
+                                    1,
+                                    5,
+                                ],
+                                dadosComportamentoDificuldadeAcao: [
+                                    { idAtributo: 2, idPericia: 8 }
+                                ]
+                            }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2],
+                        }]
+                    }
+                }
             },
         ],
     },

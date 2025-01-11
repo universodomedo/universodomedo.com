@@ -37,6 +37,8 @@ export class ComportamentoModificadorPassivo {
 }
 
 export class EmbrulhoComportamentoItem {
+    public comportamentoRequisitoExtremidades: ComportamentoRequisitoExtremidades = new ComportamentoRequisitoExtremidades();
+
     private _comportamentoEmpunhavel?: ComportamentoEmpunhavel;
     get temComportamentoEmpunhavel(): boolean { return Boolean(this._comportamentoEmpunhavel); }
     get comportamentoEmpunhavel(): ComportamentoEmpunhavel { return this._comportamentoEmpunhavel!; } // sempre verificar se temComportamentoEmpunhavel antes
@@ -144,6 +146,10 @@ export class ComportamentoUtilizavel {
         // se for 0 ou menor, retorna que o item deve ser removido
         return this.usosAtuais <= 0;
     }
+}
+
+export class ComportamentoRequisitoExtremidades {
+    
 }
 
 export class ComportamentoEmpunhavel {

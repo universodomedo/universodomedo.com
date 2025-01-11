@@ -12,5 +12,5 @@ export class Defesa {
 
     get defesaAdicionaPorAtributos(): number { return (this.valorAdicionalPorAgilidade * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 1)?.valorTotal!) + (this.valorAdicionalPorForca * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 2)?.valorTotal!) + (this.valorAdicionalPorVigor * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 5)?.valorTotal!); }
 
-    get defesaTotal(): number { return this.valorNatural + this.defesaAdicionaPorAtributos; }
+    get defesaTotal(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito( this.valorNatural + this.defesaAdicionaPorAtributos, 54); }
 }

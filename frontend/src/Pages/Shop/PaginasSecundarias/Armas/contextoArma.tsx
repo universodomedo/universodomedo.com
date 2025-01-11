@@ -1,11 +1,12 @@
 // #region Imports
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
+import { basesArma, classificacoesArma, DadosCaracteristicasArmas, ArgsItem, listaCaracteristicaArma, patentesArma, ArgsAcao, tiposArma, PropsModificador } from 'Types/classes/index.ts';
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
+
 import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
 import PaginaBaseArma from './pageBaseArma.tsx';
 import PaginaCaracteristicaArma from './pageCaracteristicaArma.tsx';
-
-import { basesArma, classificacoesArma, DadosCaracteristicasArmas, ArgsItem, listaCaracteristicaArma, patentesArma, ArgsAcao, tiposArma, PropsModificador } from 'Types/classes/index.ts';
 // #endregion
 
 interface ContextoArmaProps {
@@ -63,7 +64,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
 
     const selecionarBaseArma = (idBaseArma: number) => { setIdBaseArmaSelecionada(idBaseArma); }
 
-    const pontosDeCaracteristicaTotais: number = patenteDaBaseSelecionada?.pontosCaracteristica || 0;
+    const pontosDeCaracteristicaTotais: number = getPersonagemFromContext().obtemValorTotalComLinhaEfeito(patenteDaBaseSelecionada?.pontosCaracteristica || 0, 63);
 
     const alternaCaracteristicaSelecionada = (idCaracteristica: number) => {
         setIdsCaracteristicasSelecionadas(prevState => prevState.includes(idCaracteristica)
@@ -98,13 +99,15 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
                     'Dano',
                     baseSelecionada.danoMin + dadosCaracteristicasAgrupados.danoMin,
                     baseSelecionada.danoMax + dadosCaracteristicasAgrupados.danoMax,
-                    { testePericia: { idAtributoTeste: baseSelecionada.idAtributoUtilizado, idPericiaTeste: baseSelecionada.idPericiaUtilizada } }
                 ],
                 ...(!dadosCaracteristicasAgrupados.reducaoPatenteSimplificada && {
                     dadosComportamentoRequisito: [
                         [baseSelecionada.idPericiaUtilizada, patenteDaBaseSelecionada!.idPatentePericiaRequisito],
                     ],
-                })
+                }),
+                dadosComportamentoDificuldadeAcao: [
+                    { idAtributo:baseSelecionada.idAtributoUtilizado, idPericia: baseSelecionada.idPericiaUtilizada },
+                ]
             }
             : {},
         custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
@@ -118,8 +121,11 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         } : {},
         dadosAcoes: [
             acaoPadraoBase,
-            ...dadosCaracteristicasAgrupados.acoes
+            ...dadosCaracteristicasAgrupados.acoes,
         ],
+        modificadores: [
+            ...dadosCaracteristicasAgrupados.modificadores,
+        ]
     };
 
     const listaDadosArma: ({ tipo: 'titulo'; titulo: string } | { tipo: 'par'; nome: string; valor: string } | { tipo: 'details'; summary: string; itens: string[] })[] = [

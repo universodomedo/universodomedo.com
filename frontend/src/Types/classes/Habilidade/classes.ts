@@ -660,7 +660,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
 
         new HabilidadePassiva('Amante de Armas', 'Você recebe a Patente da Perícia de sua Arma como Pontos de Características bônus', new RequisitoFicha((personagem: Personagem) => {
             return personagem.detalhes.refClasse.id === 2
-        })),
+        })).adicionarModificadores([{ nome: 'Amante de Armas', idDuracao: 5, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito: 63, idTipoEfeito: 4, dadosValoresEfeitos: { valorBonusAdicional: 1 } }], dadosComportamentos: { dadosComportamentoPassivo: [] } }]),
         new HabilidadePassiva('O Melhor da Turma', 'Você recebe o Atributo da Perícia como Bônus da Perícia', new RequisitoFicha((personagem: Personagem) => {
             return personagem.detalhes.refClasse.id === 3
         })),
@@ -673,5 +673,11 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         new HabilidadePassiva('Ocultismo Morfológico', '', new RequisitoFicha((personagem: Personagem) => {
             return personagem.detalhes.refClasse.id === 4
         })),
+
+        // Habilidades Especiais //
+
+        new HabilidadePassiva('Experiência com Armas', 'Você recebe um Ponto de Característica de Arma Bônus', new RequisitoFicha((personagem: Personagem) => {
+            return true;
+        })).adicionarModificadores([{ nome: 'Experiência com Armas', idDuracao: 5, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito: 63, idTipoEfeito: 4, dadosValoresEfeitos: { valorBonusAdicional: 1 } }], dadosComportamentos: { dadosComportamentoPassivo: [] } }]),
     ];
 }

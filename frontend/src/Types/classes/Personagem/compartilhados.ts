@@ -35,12 +35,9 @@ export function novoItemPorDadosItem(argsItem: ArgsItem, adicionaDados: boolean 
                             )),
                             argsAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
                         ].filter(Boolean));
-                        // acao.adicionarModificadores();
-                        // acao.adicionarBuffs(
-                        //     (argsAcao.buffs || []).map(buff => [
-                        //         ...classeComArgumentos(Buff, buff.idBuff, buff.nome, buff.valor, buff.duracao.idDuracao, buff.duracao.valor, buff.idTipoBuff, buff.dadosComportamentos)
-                        //     ])
-                        // );
+                        acao.adicionarModificadores(
+                            (argsAcao.modificadores?.map(modificador => modificador.props) || [])
+                        );
 
                         // logica temporaria para sempre que uma acao tiver comportamentoRequisito, incluir o RequisitoPericia
                         if (acao.comportamentos.temComportamentoRequisito && !argsAcao.requisitos.includes(8)) argsAcao.requisitos.push(8);

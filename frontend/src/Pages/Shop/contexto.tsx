@@ -51,6 +51,9 @@ export const ContextoLojaProvider = ({ children }: { children: React.ReactNode }
     const mudarPagina = (idPagina: number) => { setIdPaginaAberta(idPagina); };
 
     const adicionarItem = (argsItem: ArgsItem, quantidade: number = 1) => {
+        console.log('adicionarItem')
+        console.log(argsItem);
+
         const personagem = getPersonagemFromContext();
 
         const categoriaDosItemAdicionados = argsItem.args.categoria;
