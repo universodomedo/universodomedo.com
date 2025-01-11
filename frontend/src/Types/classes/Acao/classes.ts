@@ -1,5 +1,5 @@
 // #region Imports
-import { logicaMecanicas, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, RequisitoConfig, CustoComponente, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, GastaCustoProps, EmbrulhoComportamentoAcao, DadosComportamentosAcao, DadosGenericosAcao, DadosGenericosAcaoParams, Modificador, adicionarModificadoresUtil } from 'Types/classes/index.ts';
+import { logicaMecanicas, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, RequisitoConfig, CustoComponente, CorTooltip, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, GastaCustoProps, EmbrulhoComportamentoAcao, DadosComportamentosAcao, DadosGenericosAcao, DadosGenericosAcaoParams, Modificador, adicionarModificadoresUtil, HabilidadeAtiva } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -47,9 +47,9 @@ export class Acao {
     adicionaRefPai(pai: Ritual | Item | Habilidade): this { return (this._refPai = pai), this; }
     adicionarCustos(custoParams: [new (...args: any[]) => Custo, any[]][]): this { return (custoParams.forEach(([CustoClass, params]) => { this.custos.push(new CustoClass(...params).setRefAcao(this)); })), this; }
 
-    
+
     adicionarModificadores(propsModificadores: ConstructorParameters<typeof Modificador>[0][]): this { return (adicionarModificadoresUtil(this, this._modificadores, propsModificadores), this); }
-    
+
     adicionarRequisitosEOpcoesPorId(ids: number[]): this { return (ids.forEach(id => { const requisitoData = RequisitoConfig.construirRequisitoEOpcoesPorId(id, this); if (requisitoData) { const { requisito, opcoesExecucao } = requisitoData; this.requisitos.push(requisito); this.opcoesExecucoes.push(...opcoesExecucao); } }), this); }
     adicionarLogicaExecucao(logicaExecucao: () => void): this { return (this.logicaExecucao = logicaExecucao), this.logicaCustomizada = true, this; }
 
@@ -117,25 +117,15 @@ export class Acao {
 
         LoggerHelper.getInstance().fechaNivelLogMensagem();
         LoggerHelper.getInstance().saveLog();
-        
+
         // getPersonagemFromContext().onUpdate();
     }
 
     executa = (valoresSelecionados: GastaCustoProps) => {
-        if (this.logicaCustomizada) {
-            console.log('Tem Logica Customizada');
-            this.logicaExecucao();
-        } else {
-            console.log('Não Tem Logica Customizada');
-        }
+        if (this.logicaCustomizada) this.logicaExecucao();
 
-        if (this.dados.idMecanica) {
-            console.log('Tem Mecanica');
-            logicaMecanicas[this.dados.idMecanica](valoresSelecionados, this);
-        } else {
-            console.log('Não Tem Mecanica');
-        }
-        
+        if (this.dados.idMecanica) logicaMecanicas[this.dados.idMecanica](valoresSelecionados, this);
+
         getPersonagemFromContext().onUpdate();
     }
 
@@ -144,33 +134,34 @@ export class Acao {
             'Ações',
             [
                 new FiltroPropsItems<Acao>(
-                    (acao) => acao.dados.nome,
+                    (acao) => acao.nomeExibicao.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '').toLowerCase(),
                     'Nome da Ação',
                     'Procure pela Ação',
                     'text',
                     true
                 ),
                 new FiltroPropsItems<Acao>(
-                    (acao) => acao.refTipoPai == 'Ritual' ? acao.refPai.nomeExibicao : (acao.refPai as Item).dados.nome.customizado,
+                    (acao) => acao.refPai.nomeExibicao,
                     'Fonte da Ação',
                     'Selecione a Fonte da Ação',
                     'select',
                     true,
                     new OpcoesFiltrosCategorizadas(
                         [
-                            { categoria: "Rituais", opcoes: new OpcoesFiltro(getPersonagemFromContext().rituais.filter(ritual => ritual.acoes.length > 0).map(ritual => ({ id: ritual.dados.nome, nome: ritual.dados.nome }))) },
-                            { categoria: "Items", opcoes: new OpcoesFiltro(getPersonagemFromContext().inventario.items.filter(item => item.acoes.length > 0).map(item => ({ id: item.nomeExibicao, nome: item.nomeExibicao }))) }
+                            { categoria: "Rituais", opcoes: new OpcoesFiltro(getPersonagemFromContext().rituais.filter(ritual => ritual.acoes.length > 0).map(ritual => ({ id: ritual.nomeExibicao, nome: ritual.nomeExibicao }))) },
+                            { categoria: "Items", opcoes: new OpcoesFiltro(getPersonagemFromContext().inventario.items.filter(item => item.acoes.length > 0).map(item => ({ id: item.nomeExibicao, nome: item.nomeExibicao }))) },
+                            { categoria: 'Habilidades', opcoes: new OpcoesFiltro(getPersonagemFromContext().habilidades.filter(habilidade => habilidade instanceof HabilidadeAtiva && habilidade.acoes.length > 0).map(habilidade => ({ id: habilidade.nomeExibicao, nome: habilidade.nomeExibicao }))) },
                         ]
                     )
                 ),
-                new FiltroPropsItems<Acao>(
-                    (acao) => acao.refTipoAcao.id,
-                    'Tipo de Ação',
-                    'Selecione o Tipo de Ação',
-                    'select',
-                    true,
-                    new OpcoesFiltro(SingletonHelper.getInstance().tipos_acao.map(tipo_acao => ({ id: tipo_acao.id, nome: tipo_acao.nome })))
-                ),
+                // new FiltroPropsItems<Acao>(
+                //     (acao) => acao.refTipoAcao.id,
+                //     'Tipo de Ação',
+                //     'Selecione o Tipo de Ação',
+                //     'select',
+                //     true,
+                //     new OpcoesFiltro(SingletonHelper.getInstance().tipos_acao.map(tipo_acao => ({ id: tipo_acao.id, nome: tipo_acao.nome })))
+                // ),
             ],
         );
     }
