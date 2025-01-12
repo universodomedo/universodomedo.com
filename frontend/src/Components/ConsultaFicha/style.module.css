@@ -51,21 +51,10 @@
 
 .registros {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr)); 
+    grid-template-columns: repeat(auto-fit, minmax(17%, 1fr));
     text-align: center;
     color: white;
     width: 60%;
     gap: 1rem;
     row-gap: 2vh;
 }
-/* .registros {
-    display: flex;
-    flex-direction: row;
-    text-align: center;
-    color: white;
-    width: 60%;
-    gap: 2%;
-    row-gap: 2vh;
-    flex-wrap: wrap;
-    justify-content: center;
-} */

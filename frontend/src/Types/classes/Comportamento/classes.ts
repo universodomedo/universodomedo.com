@@ -37,8 +37,6 @@ export class ComportamentoModificadorPassivo {
 }
 
 export class EmbrulhoComportamentoItem {
-    public comportamentoRequisitoExtremidades: ComportamentoRequisitoExtremidades = new ComportamentoRequisitoExtremidades();
-
     private _comportamentoEmpunhavel?: ComportamentoEmpunhavel;
     get temComportamentoEmpunhavel(): boolean { return Boolean(this._comportamentoEmpunhavel); }
     get comportamentoEmpunhavel(): ComportamentoEmpunhavel { return this._comportamentoEmpunhavel!; } // sempre verificar se temComportamentoEmpunhavel antes
@@ -148,14 +146,12 @@ export class ComportamentoUtilizavel {
     }
 }
 
-export class ComportamentoRequisitoExtremidades {
-    
-}
-
 export class ComportamentoEmpunhavel {
     public refExtremidades: Extremidade[] = [];
 
     constructor(public podeSerEmpunhado: boolean = true, public extremidadesNecessarias: number = 1) { }
+
+    get numeroAcoesMovimentoParaSacarOuGuardar(): number { return 1; }
 
     get estaEmpunhado(): boolean { return this.refExtremidades.length === this.extremidadesNecessarias; }
 

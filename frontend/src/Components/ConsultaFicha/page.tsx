@@ -86,7 +86,7 @@ export const ConsultaProvider = <T,>({ abaId, children, registros, mostrarFiltro
     const handleOrdenacao = (key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc') => {
         setOrdenacao({ key, direction });
 
-        const sortedData = registros.map((registros) => {
+        const sortedData = registrosFiltrados.map((registros) => {
             return [...registros].sort((a, b) => {
                 const aValue = typeof key === "function" ? key(a) : (a[key as keyof T] as any);
                 const bValue = typeof key === "function" ? key(b) : (b[key as keyof T] as any);
@@ -131,7 +131,7 @@ export const ConsultaProvider = <T,>({ abaId, children, registros, mostrarFiltro
 
                     if (filtroConfig.filterType === 'select')
                         return (opcoesSelecionadas.length === 0 || opcoesSelecionadas.some((opcaoId) => itemValor === opcaoId.toLowerCase()));
-                    return (opcoesSelecionadas.length === 0 || opcoesSelecionadas.some((opcaoId) => itemValor.includes(opcaoId.toLowerCase())));
+                    return (opcoesSelecionadas.length === 0 || opcoesSelecionadas.some((opcaoId) => itemValor.includes(opcaoId.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '').toLowerCase())));
                 })
             })
         })
@@ -244,9 +244,7 @@ const CaixaFiltroItem = <T,>({ idFiltro, config }: { idFiltro: number, config: F
     };
 
     const handleChangeText = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const currentText = event.target.value;
-
-        handleFiltro([{ idFiltro, idOpcao: [currentText] }]);
+        handleFiltro([{ idFiltro, idOpcao: [event.target.value] }]);
     }
 
     return (

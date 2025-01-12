@@ -18,7 +18,7 @@ const page = () => {
             <div className={style.embrulho_painel_caracteristicas}>
                 <div className={style.painel_caracteristicas}>
                     <div className={style.grid_caracteristicas}>
-                        {caracteristicasDisponiveis.sort((a, b) => a.nome.localeCompare(b.nome)).map((caracteristica, index) => {
+                        {caracteristicasDisponiveis.sort((a, b) => { if (a.id === 1) return -1; if (b.id === 1) return 1; return a.nome.localeCompare(b.nome); }).map((caracteristica, index) => {
                             const pontosSuficientes = pontosCaracteristicasRestantes >= caracteristica.dadosCaracteristicaNaBase!.custoCaracteristica;
                             const jaEstaSelecionada = caracteristicasSelecionadas.some(carac => carac.id === caracteristica.id);
 

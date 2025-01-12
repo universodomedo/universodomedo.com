@@ -8,6 +8,7 @@ import { useContextoAbaAcoes } from './contexto.tsx';
 import PopoverComponente from 'Recursos/Componentes/Popover/page.tsx';
 import Tooltip from 'Recursos/Componentes/Tooltip/page.tsx';
 import Modal from "Recursos/Componentes/ModalDialog/page.tsx";
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 const page = ({ acao }: { acao: Acao }) => {
@@ -67,6 +68,62 @@ const page = ({ acao }: { acao: Acao }) => {
     }
 
     const ConteudoExecucao = ({ fechaModal }: { fechaModal: () => void }) => {
+        const [indexItemSelecionado, setIndexItemSelecionado] = useState<number | undefined>(undefined);
+        const listaItems = getPersonagemFromContext().inventario.items.filter(item => item.itemPodeSerSacado);
+        const itemSelecionado = indexItemSelecionado !== undefined
+          ? listaItems.find(item => item.id === indexItemSelecionado)
+          : undefined;
+
+        const handleSelectChange = (value: number) => {
+            console.log('handleSelectChange');
+
+            console.log(`Item de ID ${value}`);
+            setIndexItemSelecionado(value);
+        };
+
+        const handleKeyPress = (event: React.KeyboardEvent<HTMLSelectElement>) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+            }
+        };
+
+        const executar = () => {
+            itemSelecionado?.sacar();
+            setOpenExec(false);
+            fechaModal();
+        }
+
+        return (
+            <>
+                <div className={style.opcao_acao}>
+                    <select value={indexItemSelecionado || 0} onChange={(e) => handleSelectChange(Number(e.target.value))} onKeyDown={handleKeyPress}>
+                        <option value="0" className={style.opcao_acao_padrao} disabled>Selecione o Item...</option>
+                        {listaItems.map(item => (
+                            <option key={item.id} value={item.id}>{item.nomeExibicao}</option>
+                        ))}
+                    </select>
+
+                    {itemSelecionado !== undefined && (
+                        <>
+                            <h2>{itemSelecionado.nomeExibicao}</h2>
+                            <h2>Ações para Sacar: {itemSelecionado.comportamentos.comportamentoEmpunhavel.numeroAcoesMovimentoParaSacarOuGuardar}</h2>
+                            <h2>Extremidade para Empunhar: {itemSelecionado.comportamentos.comportamentoEmpunhavel.extremidadesNecessarias}</h2>
+                        </>
+                    )}
+                    
+                </div>
+
+                <button
+                    className={style.botao_principal}
+                    onClick={executar}
+                >
+                    Executar
+                </button>
+            </>
+        );
+    }
+
+    const ConteudoExecucaoBkp = ({ fechaModal }: { fechaModal: () => void }) => {
         const [valoresSelecionados, setValoresSelecionados] = useState<GastaCustoProps>({});
         const firstSelectRef = useRef<HTMLSelectElement | null>(null);
         const buttonRef = useRef<HTMLButtonElement | null>(null);

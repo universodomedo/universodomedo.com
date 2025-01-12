@@ -44,6 +44,7 @@
     box-shadow: inset 0px 0px 9px 2px #85858555;
     padding: 2%;
     pointer-events: auto;
+    margin: auto;
 }
 
 .icone_item img {

@@ -618,13 +618,14 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
 
     public get avisoGanhoNex():AvisoGanhoNex[] {
         return [
-            { mensagem: `O Valor Máximo de Atributo no momento é ${this.valorMaxAtributo}`, icone: '' },
-            { mensagem: 'O Valor Mínimo de Atributo é 0', icone: '' },
+            { mensagem: `O Valor Máximo de Atributo no momento é ${this.valorMaxAtributo}`, bloqueia: false, icone: '' },
+            { mensagem: 'O Valor Mínimo de Atributo é 0', bloqueia: false, icone: '' },
 
             ...(
                 this.ganhosAtributo.ganhos.valorInicial > 0
                     ? [{
                         mensagem: `Ganho de ${this.ganhosAtributo.ganhos.valorInicial} Atributos`,
+                        bloqueia: true,
                         icone: (this.ganhosAtributo.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
                     }]
                     : []
@@ -632,12 +633,16 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
 
             ...(
                 this.ganhosAtributo.ganhos.valorInicial > 0
-                    ? [{ mensagem: `Troca Opcional de ${this.ganhosAtributo.trocas.valorInicial} Atributo`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    ? [{
+                        mensagem: `Troca Opcional de ${this.ganhosAtributo.trocas.valorInicial} Atributo`,
+                        bloqueia: false,
+                        icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
                     : []
             ),
             
             ...this.pontosObrigatorios.map(ponto => ({
                 mensagem: ponto.mensagem!,
+                bloqueia: true,
                 icone: ponto.iconeValidacao
             }))
         ];
@@ -697,6 +702,7 @@ export class GanhoIndividualNexPericia extends GanhoIndividualNex {
                 this.ganhosTreinadas.ganhos.valorInicial > 0
                     ? [{
                         mensagem: `Ganho de ${this.ganhosTreinadas.ganhos.valorInicial} Perícias Treinadas`,
+                        bloqueia: true,
                         icone: (this.ganhosTreinadas.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
                     }]
                     : []
@@ -705,6 +711,7 @@ export class GanhoIndividualNexPericia extends GanhoIndividualNex {
                 this.ganhosVeteranas.ganhos.valorInicial > 0
                     ? [{
                         mensagem: `Ganho de ${this.ganhosVeteranas.ganhos.valorInicial} Perícias Veteranas`,
+                        bloqueia: true,
                         icone: (this.ganhosVeteranas.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
                     }]
                     : []
@@ -713,6 +720,7 @@ export class GanhoIndividualNexPericia extends GanhoIndividualNex {
                 this.ganhosExperts.ganhos.valorInicial > 0
                     ? [{
                         mensagem: `Ganho de ${this.ganhosExperts.ganhos.valorInicial} Perícias Experts`,
+                        bloqueia: true,
                         icone: (this.ganhosExperts.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
                     }]
                     : []
@@ -721,6 +729,7 @@ export class GanhoIndividualNexPericia extends GanhoIndividualNex {
                 this.ganhosLivres.ganhos.valorInicial > 0
                     ? [{
                         mensagem: `Ganho de ${this.ganhosLivres.ganhos.valorInicial} Perícias Livres`,
+                        bloqueia: true,
                         icone: (this.ganhosLivres.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
                     }]
                     : []
@@ -728,27 +737,28 @@ export class GanhoIndividualNexPericia extends GanhoIndividualNex {
 
             ...(
                 this.ganhosTreinadas.trocas.valorInicial > 0
-                    ? [{ mensagem: `Troca Opcional de ${this.ganhosTreinadas.trocas.valorInicial} Perícia Treinada`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosTreinadas.trocas.valorInicial} Perícia Treinada`, bloqueia: false, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
                     : []
             ),
             ...(
                 this.ganhosVeteranas.trocas.valorInicial > 0
-                    ? [{ mensagem: `Troca Opcional de ${this.ganhosVeteranas.trocas.valorInicial} Perícia Veterana`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosVeteranas.trocas.valorInicial} Perícia Veterana`, bloqueia: false, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
                     : []
             ),
             ...(
                 this.ganhosExperts.trocas.valorInicial > 0
-                    ? [{ mensagem: `Troca Opcional de ${this.ganhosExperts.trocas.valorInicial} Perícia Expert`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosExperts.trocas.valorInicial} Perícia Expert`, bloqueia: false, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
                     : []
             ),
             ...(
                 this.ganhosLivres.trocas.valorInicial > 0
-                    ? [{ mensagem: `Troca Opcional de ${this.ganhosLivres.trocas.valorInicial} Perícia Livre`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosLivres.trocas.valorInicial} Perícia Livre`, bloqueia: false, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
                     : []
             ),
 
             ...this.pontosObrigatorios.map(ponto => ({
                 mensagem: ponto.mensagem!,
+                bloqueia: true,
                 icone: ponto.iconeValidacao
             }))
         ];
@@ -869,6 +879,7 @@ export class GanhoIndividualNexEscolhaClasse extends GanhoIndividualNex {
         return [
             {
                 mensagem: `Você precisa escolher sua Classe`,
+                bloqueia: true,
                 icone: (this.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } })),
             },
         ];

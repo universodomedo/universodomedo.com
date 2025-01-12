@@ -2,6 +2,10 @@
     display: flex;
     flex-direction: row;
     margin: auto;
+    flex-wrap: wrap;
+    width: 60%;
+    align-items: center;
+    justify-content: center;
 }
 
 .value_container {

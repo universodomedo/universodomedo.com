@@ -15,6 +15,7 @@ import { FichaProvider, useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx'
 
 import Modal from "Components/Modal/page.tsx";
 import JanelaNotificacao from 'Recursos/Componentes/JanelaNotificacao/page';
+import TooltipPersistente from 'Recursos/Componentes/HoverCard/page.tsx';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 // #endregion
@@ -146,13 +147,49 @@ const page = () => {
 
                         <div className={style.botoes}>
                             <button onClick={volta} disabled={!ganhosNex.podeRetrocederEtapa} className={style.prosseguir}>Voltar</button>
-                            <button onClick={proximo} disabled={!ganhosNex.podeAvancarEtapa} className={style.prosseguir}>{ganhosNex.textoBotaoProximo}</button>
+                            <BotaoProsseguir onClick={proximo} disabled={!ganhosNex.podeAvancarEtapa} texto={ganhosNex.textoBotaoProximo} />
                         </div>
                     </div>
                     
                     <JanelaNotificacao />
                 </FichaProvider>
             )}
+        </>
+    );
+}
+
+const BotaoProsseguir = ({onClick, disabled, texto}: {onClick: React.MouseEventHandler<HTMLButtonElement>, disabled: boolean, texto: string}) => {
+    const [openTooltip, setOpenTooltip] = useState(false);
+
+    return (
+        <>
+            {disabled ? (
+                <>
+                    <TooltipPersistente open={openTooltip} onOpenChange={setOpenTooltip}>
+                        <TooltipPersistente.Trigger>
+                            <button onClick={onClick} disabled={disabled} className={style.prosseguir}>{texto}</button>
+                        </TooltipPersistente.Trigger>
+
+                        <TooltipPersistente.Content>
+                            <TooltipBotaoBloqueado />
+                        </TooltipPersistente.Content>
+                    </TooltipPersistente>
+                </>
+            ) : (
+                <button onClick={onClick} className={style.prosseguir}>{texto}</button>
+            )}
+        </>
+    );
+}
+
+const TooltipBotaoBloqueado = () => {
+    const { ganhosNex } = useFicha();
+
+    return (
+        <>
+            {ganhosNex.etapa.avisoGanhoNex.filter(aviso => aviso.bloqueia).map((aviso, index) => (
+                <h3 key={index}>{aviso.mensagem}</h3>
+            ))}
         </>
     );
 }
