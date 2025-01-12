@@ -142,7 +142,7 @@ export const lista_geral_habilidades = (): Habilidade[] => {
 
         // INIC //
 
-        new HabilidadeAtiva('Próativo', 'Define sua Ordem de Ação em Turnos de Combate', { fonte: 'Habilidade de Perícia', idPericia: 4, idPatente: 1 }).adicionarAcoes([{ props: [{ nome: 'Próativo', idTipoAcao: 1 }, { dadosComportamentoDificuldadeAcao: [{ idAtributo: 1, idPericia: 4 }] }], }]),
+        new HabilidadePassiva('Próativo', 'Define sua Ordem de Ação em Turnos de Combate', { fonte: 'Habilidade de Perícia', idPericia: 4, idPatente: 1 }),
         new HabilidadeAtiva('Saque Rápido', 'Realiza uma Ação de Sacar ou Ação de Guardar', { fonte: 'Habilidade de Perícia', idPericia: 4, idPatente: 2 }),
         // new Habilidade('Preparar Ação Simples', '', { fonte: 'Habilidade de Perícia', idPericia: 4, idPatente: 2 }),
         new HabilidadePassiva('Iniciativa Aprimorada', 'Você recebe +5 INIC na sua próxima tentativa de uma Ação Falha', { fonte: 'Habilidade de Perícia', idPericia: 4, idPatente: 3 }),
@@ -349,61 +349,6 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         new HabilidadeAtiva('Aprimorar Resistência', 'Você recebe R.D. a um Tipo de Dano Mundano até o início do seu próximo Turno', { fonte: 'Habilidade de Perícia', idPericia: 26, idPatente: 2 }),
         new HabilidadePassiva('Fortitude Aprimorada', 'Você recebe +5 FORT na sua próxima tentativa de uma Ação Falha', { fonte: 'Habilidade de Perícia', idPericia: 26, idPatente: 3 }),
         new HabilidadeAtiva('Negar a Morte', 'Você permanece com 1 P.V.', { fonte: 'Habilidade de Perícia', idPericia: 26, idPatente: 4 }).adicionarAcoes([{ props: [{ nome: 'Negar a Morte', idTipoAcao: 1 }, { dadosComportamentoDificuldadeAcao: [{ idAtributo: 5, idPericia: 26 }] }], }]),
-
-        // // Gerais //
-
-        // new HabilidadeAtiva('Sacar Item', 'Você Empunha um Item que está em seu Inventário em suas Extremidades Livres', new RequisitoFicha((personagem: Personagem) => {
-        //     return personagem.estatisticasBuffaveis.extremidades.length > 0 && personagem.inventario.items.some(item => item.itemEmpunhavel)
-        // })).adicionarAcoes([
-        //     {
-        //         props: [{ nome: 'Sacar Item', idTipoAcao: 1, idMecanica: 1 }, {}],
-        //         config: (acao) => {
-        //             acao.adicionarCustos([
-        //                 classeComArgumentos(CustoExecucao, 3, 1)
-        //             ]);
-        //             acao.adicionarRequisitosEOpcoesPorId([3, 4]);
-        //         }
-        //     },
-        // ]),
-        // new HabilidadeAtiva('Guardar Item', 'Você Guarda um Item que está em suas Extremidades em seu Inventário', new RequisitoFicha((personagem: Personagem) => {
-        //     return personagem.estatisticasBuffaveis.extremidades.length > 0 && personagem.inventario.items.some(item => item.itemEmpunhavel)
-        // })).adicionarAcoes([
-        //     {
-        //         props: [{ nome: 'Guardar Item', idTipoAcao: 1, idMecanica: 2 }, {}],
-        //         config: (acao) => {
-        //             acao.adicionarCustos([
-        //                 classeComArgumentos(CustoExecucao, 3, 1)
-        //             ]);
-        //             acao.adicionarRequisitosEOpcoesPorId([5]);
-        //         }
-        //     },
-        // ]),
-        // new HabilidadeAtiva('Vestir Item', 'Você Veste um Item que está em suas Extremidades', new RequisitoFicha((personagem: Personagem) => {
-        //     return personagem.inventario.items.some(item => item.itemVestivel)
-        // })).adicionarAcoes([
-        //     {
-        //         props: [{ nome: 'Vestir Item', idTipoAcao: 1, idMecanica: 4 }, {}],
-        //         config: (acao) => {
-        //             acao.adicionarCustos([
-        //                 classeComArgumentos(CustoExecucao, 2, 1)
-        //             ]);
-        //             acao.adicionarRequisitosEOpcoesPorId([6]);
-        //         }
-        //     },
-        // ]),
-        // new HabilidadeAtiva('Desvestir Item', 'Você Desveste um Item e Empunha em suas Extremidades Livres', new RequisitoFicha((personagem: Personagem) => {
-        //     return personagem.inventario.items.some(item => item.itemVestivel)
-        // })).adicionarAcoes([
-        //     {
-        //         props: [{ nome: 'Desvestir Item', idTipoAcao: 1, idMecanica: 5 }, {}],
-        //         config: (acao) => {
-        //             acao.adicionarCustos([
-        //                 classeComArgumentos(CustoExecucao, 2, 1)
-        //             ]);
-        //             acao.adicionarRequisitosEOpcoesPorId([3, 7]);
-        //         }
-        //     },
-        // ]),
 
         // // Classes //
 

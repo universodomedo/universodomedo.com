@@ -1,5 +1,6 @@
 // #region Imports
-import { EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Acao, HabilidadeAtiva, novoItemPorDadosItem, lista_geral_habilidades, Efeito, ControladorModificadores, ValoresEfeito, CustoPE, classeComArgumentos, CustoExecucao, CustoComponente } from 'Types/classes/index.ts';
+import { EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Acao, HabilidadeAtiva, novoItemPorDadosItem, lista_geral_habilidades, Efeito, ControladorModificadores, ValoresEfeito, CustoPE, classeComArgumentos, CustoExecucao, CustoComponente, NaturezaPersonagem } from 'Types/classes/index.ts';
+
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
@@ -30,6 +31,7 @@ export class Personagem {
     public habilidades: Habilidade[] = [];
     public buffsExternos: Efeito[] = [];
     public rituais: Ritual[] = [];
+    public natureza: NaturezaPersonagem = new NaturezaPersonagem();
 
     public controladorModificadores: ControladorModificadores = new ControladorModificadores();
 
@@ -81,20 +83,14 @@ export class Personagem {
         );
 
         this._ficha.inventario!.map(dadosItem => this.inventario.adicionarItemNoInventario(novoItemPorDadosItem(dadosItem)));
-        
-        // this.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(this));
     }
 
     public get acoes(): Acao[] {
-        const acoesRituais = this.rituais.reduce((acc: Acao[], ritual) => {
-            return acc.concat(ritual.acoes);
-        }, []);
+        const acoesRituais = this.rituais.reduce((acc: Acao[], ritual) => acc.concat(ritual.acoes), []);
 
-        const acoesHabilidades = this.habilidades.filter(habilidade => habilidade instanceof HabilidadeAtiva).reduce((acc: Acao[], habilidade) => {
-            return acc.concat(habilidade.acoes);
-        }, [])
+        const acoesHabilidades = this.habilidades.filter(habilidade => habilidade instanceof HabilidadeAtiva).reduce((acc: Acao[], habilidade) => acc.concat(habilidade.acoes), []);
 
-        return acoesRituais.concat(this.inventario.acoesInventario()).concat(acoesHabilidades);
+        return this.natureza.acoes.concat(this.inventario.acoesInventario()).concat(acoesHabilidades);
     }
 
     obtemValorTotalComLinhaEfeito(valorBase: number, idLinhaEfeito: number): number {

@@ -47,7 +47,7 @@ const page = ({ acao }: { acao: Acao }) => {
                                 </Modal.Button>
 
                                 <Modal.Content title={`Executando ${acao.nomeExibicao}`}>
-                                    <ConteudoExecucao fechaModal={close} />
+                                    <ConteudoExecucaoGenerico fechaModal={close} />
                                 </Modal.Content>
                             </Modal>
                         </>
@@ -67,7 +67,12 @@ const page = ({ acao }: { acao: Acao }) => {
         );
     }
 
-    const ConteudoExecucao = ({ fechaModal }: { fechaModal: () => void }) => {
+    const ConteudoExecucaoGenerico = ({ fechaModal }: { fechaModal: () => void }) => {
+        if (acao.idExecucaoCustomizada === 1) return (<ConteudoExecucaoSacar fechaModal={fechaModal} />)
+        else return (<ConteudoExecucao fechaModal={fechaModal} />)
+    }
+
+    const ConteudoExecucaoSacar = ({ fechaModal }: { fechaModal: () => void }) => {
         const [indexItemSelecionado, setIndexItemSelecionado] = useState<number | undefined>(undefined);
         const listaItems = getPersonagemFromContext().inventario.items.filter(item => item.itemPodeSerSacado);
         const itemSelecionado = indexItemSelecionado !== undefined
@@ -116,6 +121,7 @@ const page = ({ acao }: { acao: Acao }) => {
                 <button
                     className={style.botao_principal}
                     onClick={executar}
+                    disabled={itemSelecionado === undefined}
                 >
                     Executar
                 </button>
@@ -123,7 +129,7 @@ const page = ({ acao }: { acao: Acao }) => {
         );
     }
 
-    const ConteudoExecucaoBkp = ({ fechaModal }: { fechaModal: () => void }) => {
+    const ConteudoExecucao = ({ fechaModal }: { fechaModal: () => void }) => {
         const [valoresSelecionados, setValoresSelecionados] = useState<GastaCustoProps>({});
         const firstSelectRef = useRef<HTMLSelectElement | null>(null);
         const buttonRef = useRef<HTMLButtonElement | null>(null);
