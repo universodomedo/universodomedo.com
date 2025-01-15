@@ -1,6 +1,6 @@
 // #region Imports
 import style from './style.module.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { GanhoIndividualNex, GanhoIndividualNexAtributo, GanhoIndividualNexEscolhaClasse, GanhoIndividualNexFactory, GanhoIndividualNexPericia, GanhoIndividualNexRitual, GanhosNex, RLJ_Ficha2, ValoresGanhoETroca, obterGanhosGerais, retornaFichaZerada } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
@@ -11,11 +11,9 @@ import EditaEstatisticas from 'Pages/EditaFicha/Componentes/EditaEstatisticas/pa
 import EscolheClasse from 'Pages/EditaFicha/Componentes/EscolheClasse/page.tsx';
 import EditaRituais from 'Pages/EditaFicha/Componentes/EditaRituais/page.tsx';
 
-import { FichaProvider, useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
+import { FichaProvider } from 'Pages/EditaFicha/NexUpContext/page.tsx';
 
-import Modal from "Components/Modal/page.tsx";
 import JanelaNotificacao from 'Recursos/Componentes/JanelaNotificacao/page';
-import TooltipPersistente from 'Recursos/Componentes/HoverCard/page.tsx';
 
 import { useNavigate, useLocation } from 'react-router-dom';
 // #endregion
@@ -30,6 +28,14 @@ const page = () => {
     const nome = location.state?.nome;
     const [idNivelAtual, setIdNivelAtual] = useState(0);
     const idNivelFazendoAgora = idNivelAtual + 1;
+
+    const janelaNotificacaoRef = useRef<{ openConsole: () => void } | null>(null);
+
+    const handleAbrirJanelaBotaoDesabilitado = () => {
+        if (janelaNotificacaoRef.current) {
+            janelaNotificacaoRef.current.openConsole();
+        }
+    };
 
     useEffect(() => {
         const ficha = retornaFichaZerada(idNivelAtual, nome);
@@ -50,15 +56,15 @@ const page = () => {
         if (!ganhosNex) return;
 
         ganhosNex.dadosFicha.estatisticasDanificaveis = [
-            { id: 1, valorMaximo: ganhosNex.pvAtualizado, valor: ganhosNex.pvAtualizado},
-            { id: 2, valorMaximo: ganhosNex.psAtualizado, valor: ganhosNex.psAtualizado},
-            { id: 3, valorMaximo: ganhosNex.peAtualizado, valor: ganhosNex.peAtualizado},
+            { id: 1, valorMaximo: ganhosNex.pvAtualizado, valor: ganhosNex.pvAtualizado },
+            { id: 2, valorMaximo: ganhosNex.psAtualizado, valor: ganhosNex.psAtualizado },
+            { id: 3, valorMaximo: ganhosNex.peAtualizado, valor: ganhosNex.peAtualizado },
         ];
 
         if (ganhosNex.ganhosQueTemAlteracao.find(ganho => ganho.id === 1)) {
             const atributosAtuais = ganhosNex.ganhosQueTemAlteracao.find(ganho => ganho.id === 1) as GanhoIndividualNexAtributo;
 
-            ganhosNex.dadosFicha.atributos = atributosAtuais.atributos.map(atributoAtual => ({ id: atributoAtual.refAtributo.id, valor: atributoAtual.valorAtual}));
+            ganhosNex.dadosFicha.atributos = atributosAtuais.atributos.map(atributoAtual => ({ id: atributoAtual.refAtributo.id, valor: atributoAtual.valorAtual }));
         }
 
         if (ganhosNex.ganhosQueTemAlteracao.find(ganho => ganho.id === 2)) {
@@ -127,69 +133,41 @@ const page = () => {
                             </>
                         )} */}
 
-                        <div className={style.area_edicao}>
-                            {ganhosNex.etapa.id === 1 && (
-                                <EditaAtributos />
-                            )}
-                            {ganhosNex.etapa.id === 2 && (
-                                <EditaPericias />
-                            )}
-                            {ganhosNex.etapa.id === 3 && (
-                                <EditaEstatisticas />
-                            )}
-                            {ganhosNex.etapa.id === 4 && (
-                                <EscolheClasse />
-                            )}
-                            {ganhosNex.etapa.id === 5 && (
-                                <EditaRituais />
-                            )}
+                        <div className={style.recipiente_area_edicao}>
+                            <div className={style.area_edicao}>
+                                {ganhosNex.etapa.id === 1 && (
+                                    <EditaAtributos />
+                                )}
+                                {ganhosNex.etapa.id === 2 && (
+                                    <EditaPericias />
+                                )}
+                                {ganhosNex.etapa.id === 3 && (
+                                    <EditaEstatisticas />
+                                )}
+                                {ganhosNex.etapa.id === 4 && (
+                                    <EscolheClasse />
+                                )}
+                                {ganhosNex.etapa.id === 5 && (
+                                    <EditaRituais />
+                                )}
+                            </div>
                         </div>
 
                         <div className={style.botoes}>
                             <button onClick={volta} disabled={!ganhosNex.podeRetrocederEtapa} className={style.prosseguir}>Voltar</button>
-                            <BotaoProsseguir onClick={proximo} disabled={!ganhosNex.podeAvancarEtapa} texto={ganhosNex.textoBotaoProximo} />
+                            {!ganhosNex.podeAvancarEtapa ? (
+                                <div className={`${style.recipiente_botao_desabilitado}`} onMouseEnter={handleAbrirJanelaBotaoDesabilitado}>
+                                    <button onClick={proximo} disabled={!ganhosNex.podeAvancarEtapa}>{ganhosNex.textoBotaoProximo}</button>
+                                </div>
+                            ) : (
+                                <button onClick={proximo} disabled={!ganhosNex.podeAvancarEtapa} className={style.prosseguir}>{ganhosNex.textoBotaoProximo}</button>
+                            )}
                         </div>
                     </div>
-                    
-                    <JanelaNotificacao />
+
+                    <JanelaNotificacao ref={janelaNotificacaoRef}/>
                 </FichaProvider>
             )}
-        </>
-    );
-}
-
-const BotaoProsseguir = ({onClick, disabled, texto}: {onClick: React.MouseEventHandler<HTMLButtonElement>, disabled: boolean, texto: string}) => {
-    const [openTooltip, setOpenTooltip] = useState(false);
-
-    return (
-        <>
-            {disabled ? (
-                <>
-                    <TooltipPersistente open={openTooltip} onOpenChange={setOpenTooltip}>
-                        <TooltipPersistente.Trigger>
-                            <button onClick={onClick} disabled={disabled} className={style.prosseguir}>{texto}</button>
-                        </TooltipPersistente.Trigger>
-
-                        <TooltipPersistente.Content>
-                            <TooltipBotaoBloqueado />
-                        </TooltipPersistente.Content>
-                    </TooltipPersistente>
-                </>
-            ) : (
-                <button onClick={onClick} className={style.prosseguir}>{texto}</button>
-            )}
-        </>
-    );
-}
-
-const TooltipBotaoBloqueado = () => {
-    const { ganhosNex } = useFicha();
-
-    return (
-        <>
-            {ganhosNex.etapa.avisoGanhoNex.filter(aviso => aviso.bloqueia).map((aviso, index) => (
-                <h3 key={index}>{aviso.mensagem}</h3>
-            ))}
         </>
     );
 }

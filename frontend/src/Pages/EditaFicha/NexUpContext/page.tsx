@@ -1,7 +1,7 @@
 // #region Imports
 // #endregion
 
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { GanhosNex } from 'Types/classes/index.ts';
 
 interface FichaContextType {

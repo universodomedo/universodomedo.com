@@ -1,5 +1,5 @@
 // #region Imports
-import { DadosCaracteristicasArmas } from 'Types/classes/index.ts';
+import { DadosCaracteristicasArmas, Proficiencia } from 'Types/classes/index.ts';
 // #endregion
 
 export type CaracteristicaArma = {
@@ -13,7 +13,7 @@ type TipoArma = { id: number, nome: string, }
 type ClassificacaoArma = { id: number, idTipoArma: number, idsPatentesArma: number[], nome: string, }
 type PatenteArma = { id: number, nome: string, pontosCaracteristica: number, idPatentePericiaRequisito: number }
 type ComposicaoBaseArma = { idTipo: number, idClassificacao: number, idPatente: number, }
-type BaseArma = { id: number, composicaoBaseArma: ComposicaoBaseArma, peso: number, categoria: number, danoMin: number, danoMax: number, numeroExtremidadesUtilizadas: number, idAtributoUtilizado: number, idPericiaUtilizada: number, }
+type BaseArma = { id: number, composicaoBaseArma: ComposicaoBaseArma, peso: number, categoria: number, danoMin: number, danoMax: number, numeroExtremidadesUtilizadas: number, idAtributoUtilizado: number, idPericiaUtilizada: number, dadosRequisitoProficiencia: ConstructorParameters<typeof Proficiencia>[0] }
 type BaseArmaComDados = { idBaseArma: number, dadosCaracteristicaNaBase: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; }, };
 
 export const tiposArma: TipoArma[] = [
@@ -30,9 +30,9 @@ export const patentesArma: PatenteArma[] = [
 ];
 
 export const classificacoesArma: ClassificacaoArma[] = [
-    { id: 1, idTipoArma: 1, idsPatentesArma: [1, 2, 3], nome: 'Leve' },
-    { id: 2, idTipoArma: 1, idsPatentesArma: [1, 2, 3], nome: 'de Uma Mão' },
-    { id: 3, idTipoArma: 1, idsPatentesArma: [1, 2, 3], nome: 'de Duas Mãos' },
+    { id: 1, idTipoArma: 1, idsPatentesArma: [1, 2, 3], nome: 'Arma Corpo-a-Corpo Leve' },
+    { id: 2, idTipoArma: 1, idsPatentesArma: [1, 2, 3], nome: 'Arma Corpo-a-Corpo de Uma Mão' },
+    { id: 3, idTipoArma: 1, idsPatentesArma: [1, 2, 3], nome: 'Arma Corpo-a-Corpo de Duas Mãos' },
     { id: 4, idTipoArma: 2, idsPatentesArma: [1, 2, 3], nome: 'Disparador de Pressão' },
     { id: 5, idTipoArma: 2, idsPatentesArma: [3], nome: 'Disparador Automático' },
     { id: 6, idTipoArma: 3, idsPatentesArma: [1, 2, 3], nome: 'Arremessável Leve' },
@@ -45,13 +45,13 @@ export const classificacoesArma: ClassificacaoArma[] = [
 ];
 
 export const basesArma: BaseArma[] = [
-    { id: 1, composicaoBaseArma: { idTipo: 1, idPatente: 1, idClassificacao: 1 }, peso: 2, categoria: 0, danoMin: 1, danoMax: 4, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 1, idPericiaUtilizada: 8, },
-    { id: 2, composicaoBaseArma: { idTipo: 1, idPatente: 1, idClassificacao: 2 }, peso: 3, categoria: 0, danoMin: 1, danoMax: 5, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 2, idPericiaUtilizada: 8, },
-    { id: 3, composicaoBaseArma: { idTipo: 1, idPatente: 1, idClassificacao: 3 }, peso: 6, categoria: 0, danoMin: 1, danoMax: 5, numeroExtremidadesUtilizadas: 2, idAtributoUtilizado: 2, idPericiaUtilizada: 8, },
-    { id: 4, composicaoBaseArma: { idTipo: 2, idPatente: 1, idClassificacao: 4 }, peso: 4, categoria: 0, danoMin: 2, danoMax: 4, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 1, idPericiaUtilizada: 5, },
-    { id: 5, composicaoBaseArma: { idTipo: 3, idPatente: 1, idClassificacao: 6 }, peso: 4, categoria: 0, danoMin: 2, danoMax: 4, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 1, idPericiaUtilizada: 5, },
-    { id: 6, composicaoBaseArma: { idTipo: 4, idPatente: 1, idClassificacao: 9 }, peso: 3, categoria: 1, danoMin: 1, danoMax: 6, numeroExtremidadesUtilizadas: 2, idAtributoUtilizado: 1, idPericiaUtilizada: 5, },
-    { id: 7, composicaoBaseArma: { idTipo: 4, idPatente: 1, idClassificacao: 10 }, peso: 5, categoria: 1, danoMin: 1, danoMax: 8, numeroExtremidadesUtilizadas: 2, idAtributoUtilizado: 1, idPericiaUtilizada: 5, },
+    { id: 1, composicaoBaseArma: { idTipo: 1, idPatente: 1, idClassificacao: 1 }, peso: 2, categoria: 0, danoMin: 1, danoMax: 4, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 1, idPericiaUtilizada: 8, dadosRequisitoProficiencia: { idTipoProficiencia: 1, idNivelProficiencia: 1 } },
+    { id: 2, composicaoBaseArma: { idTipo: 1, idPatente: 1, idClassificacao: 2 }, peso: 3, categoria: 0, danoMin: 1, danoMax: 5, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 2, idPericiaUtilizada: 8, dadosRequisitoProficiencia: { idTipoProficiencia: 1, idNivelProficiencia: 1 } },
+    { id: 3, composicaoBaseArma: { idTipo: 1, idPatente: 1, idClassificacao: 3 }, peso: 6, categoria: 0, danoMin: 1, danoMax: 5, numeroExtremidadesUtilizadas: 2, idAtributoUtilizado: 2, idPericiaUtilizada: 8, dadosRequisitoProficiencia: { idTipoProficiencia: 1, idNivelProficiencia: 1 } },
+    { id: 4, composicaoBaseArma: { idTipo: 2, idPatente: 1, idClassificacao: 4 }, peso: 4, categoria: 0, danoMin: 2, danoMax: 4, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 1, idPericiaUtilizada: 5, dadosRequisitoProficiencia: { idTipoProficiencia: 2, idNivelProficiencia: 1 } },
+    { id: 5, composicaoBaseArma: { idTipo: 3, idPatente: 1, idClassificacao: 6 }, peso: 4, categoria: 0, danoMin: 2, danoMax: 4, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 1, idPericiaUtilizada: 5, dadosRequisitoProficiencia: { idTipoProficiencia: 2, idNivelProficiencia: 1 } },
+    { id: 6, composicaoBaseArma: { idTipo: 4, idPatente: 1, idClassificacao: 9 }, peso: 3, categoria: 1, danoMin: 1, danoMax: 6, numeroExtremidadesUtilizadas: 2, idAtributoUtilizado: 1, idPericiaUtilizada: 5, dadosRequisitoProficiencia: { idTipoProficiencia: 2, idNivelProficiencia: 1 } },
+    { id: 7, composicaoBaseArma: { idTipo: 4, idPatente: 1, idClassificacao: 10 }, peso: 5, categoria: 1, danoMin: 1, danoMax: 8, numeroExtremidadesUtilizadas: 2, idAtributoUtilizado: 1, idPericiaUtilizada: 5, dadosRequisitoProficiencia: { idTipoProficiencia: 2, idNivelProficiencia: 1 } },
 
     // { id: 8, composicaoBaseArma: { idTipo: 1, idPatente: 2, idClassificacao: 1 }, peso: 4, categoria: 1, danoMin: 1, danoMax: 2, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 1, idPericiaUtilizada: 8, },
     // { id: 9, composicaoBaseArma: { idTipo: 1, idPatente: 2, idClassificacao: 2 }, peso: 5, categoria: 1, danoMin: 1, danoMax: 2, numeroExtremidadesUtilizadas: 1, idAtributoUtilizado: 2, idPericiaUtilizada: 8, },
@@ -549,14 +549,8 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
                         acoes: [{
                             args: { nome: 'Coronhada', idTipoAcao: 2, idMecanica: 6, },
                             dadosComportamentos: {
-                                dadosComportamentoAcao: [
-                                    'Dano',
-                                    1,
-                                    4,
-                                ],
-                                dadosComportamentoDificuldadeAcao: [
-                                    { idAtributo: 2, idPericia: 8 }
-                                ]
+                                dadosComportamentoAcao: { tipo: 'Dano', paramsValorGenerico: { valorMin: 1, valorMax: 4 }, },
+                                dadosComportamentoDificuldadeAcao: { dadosTeste: { idAtributo: 2, idPericia: 8 } },
                             }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2],
                         }]
                     }
@@ -568,14 +562,8 @@ export const listaCaracteristicaArma: CaracteristicaArma[] = [
                         acoes: [{
                             args: { nome: 'Coronhada', idTipoAcao: 2, idMecanica: 6, },
                             dadosComportamentos: {
-                                dadosComportamentoAcao: [
-                                    'Dano',
-                                    1,
-                                    5,
-                                ],
-                                dadosComportamentoDificuldadeAcao: [
-                                    { idAtributo: 2, idPericia: 8 }
-                                ]
+                                dadosComportamentoAcao: { tipo: 'Dano', paramsValorGenerico: { valorMin: 1, valorMax: 5 }, },
+                                dadosComportamentoDificuldadeAcao: { dadosTeste: { idAtributo: 2, idPericia: 8 } },
                             }, custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] }, requisitos: [2],
                         }]
                     }

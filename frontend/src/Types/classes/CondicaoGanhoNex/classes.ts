@@ -61,6 +61,5 @@ export class ValidacoesGanhoNex {
 
 export type AvisoGanhoNex = {
     mensagem: string,
-    bloqueia: boolean,
     icone: ReactNode
 }

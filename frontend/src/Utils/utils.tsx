@@ -50,3 +50,15 @@ export function textoFormatadoParaVisualizacao(texto:string):string {
     if (!texto) return "";
     return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
 }
+
+export class ValorGenerico {
+    public valorMin: number;
+    public valorMax: number;
+
+    constructor({ valorMin, valorMax }: { valorMin: number, valorMax?: number }) {
+        this.valorMin = valorMin;
+        this.valorMax = valorMax || valorMin;
+    }
+
+    get variancia(): number { return this.valorMax - this.valorMin; }
+}

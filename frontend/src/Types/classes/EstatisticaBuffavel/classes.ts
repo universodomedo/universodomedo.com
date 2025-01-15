@@ -9,7 +9,7 @@ export class EstatisticasBuffaveisPersonagem {
 
     constructor(
         public defesa: Defesa,
-        public _deslocamento: number,
+        private _deslocamento: number,
         public resistenciaParanormal: number,
         public execucoes: Execucao[],
         public espacoInventario: EspacoInventario,

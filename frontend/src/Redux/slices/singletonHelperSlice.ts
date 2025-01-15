@@ -1,7 +1,7 @@
 // #region Imports
 import { createSlice } from '@reduxjs/toolkit';
 import { SingletonHelper } from 'Types/classes_estaticas';
-import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoDano, CirculoNivelRitual, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, RequisitoFicha, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito } from "Types/classes/index.ts";
+import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoDano, CirculoNivelRitual, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, Habilidade, RequisitoFicha, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito, TipoProficiencia, NivelProficiencia } from "Types/classes/index.ts";
 // #endregion
 
 const singletonHelper = SingletonHelper.getInstance();
@@ -102,7 +102,7 @@ singletonHelper.linhas_efeito = [
 singletonHelper.alcances = [new Alcance(1, "Adjacente"), new Alcance(2, "Próximo"), new Alcance(3, "Curto"), new Alcance(4, "Médio"), new Alcance(5, "Longo"), new Alcance(6, "Ambiente"), new Alcance(7, "Ilimitado")];
 singletonHelper.formatos_alcance = [new FormatoAlcance(1, "Selecionado"), new FormatoAlcance(2, "Linha Reta"), new FormatoAlcance(3, "Cone"), new FormatoAlcance(4, "Área")];
 singletonHelper.duracoes = [new Duracao(1, "Ação"), new Duracao(2, "Turno"), new Duracao(3, "Cena"), new Duracao(4, "Dia"), new Duracao(5, "Intermitente")];
-singletonHelper.tipos_execucao = [new TipoExecucao(1, 55, "Ação Livre"), new TipoExecucao(2, 56, "Ação Padrão"), new TipoExecucao(3, 57, "Ação de Movimento"), new TipoExecucao(4, 58, "Reação"), new TipoExecucao(5, 59, "Ação Ritualística"), new TipoExecucao(6, 60, "Ação Investigativa"), new TipoExecucao(7, 61, "Comando Doméstico")];
+singletonHelper.tipos_execucao = [new TipoExecucao(1, 55, "Livre"), new TipoExecucao(2, 56, "Padrão"), new TipoExecucao(3, 57, "de Movimento"), new TipoExecucao(4, 58, "Reativa"), new TipoExecucao(5, 59, "Ritualística"), new TipoExecucao(6, 60, "Investigativa"), new TipoExecucao(7, 61, "de Comando")];
 singletonHelper.tipos_acao = [new TipoAcao(1, "Ação Direta Pacifica"), new TipoAcao(2, "Ação Direta Agressiva"), new TipoAcao(3, "Aplicação de Efeito Positivo"), new TipoAcao(4, "Aplicação de Efeito Negativo")];
 singletonHelper.tipos_alvo = [new TipoAlvo(1, "Pessoal"), new TipoAlvo(2, "Ser"), new TipoAlvo(3, "Objeto"), new TipoAlvo(4, "Ponto"), new TipoAlvo(5, "Direção")];
 singletonHelper.tipos_dano = [new TipoDano(1, "Vital"), new TipoDano(2, "Mundano"), new TipoDano(3, "Concussivo"), new TipoDano(4, "Cortante"), new TipoDano(5, "Perfurante"), new TipoDano(6, "Natural"), new TipoDano(7, "Elétrico"), new TipoDano(8, "Fogo"), new TipoDano(9, "Frio"), new TipoDano(10, "Químico"), new TipoDano(11, "Elemental"), new TipoDano(12, "Conhecimento"), new TipoDano(13, "Sangue"), new TipoDano(14, "Energia"), new TipoDano(15, "Morte"), new TipoDano(16, "Medo"), new TipoDano(17, "Mental"), new TipoDano(18, "Debilitante")];
@@ -149,6 +149,9 @@ singletonHelper.tipos_requisitos = [new TipoRequisito(1, 'Empunhando Item Pai'),
 singletonHelper.classes = [new Classe(1, 'Mundano'), new Classe(2, 'Combatente'), new Classe(3, 'Especialista'), new Classe(4, 'Ocultista')];
 singletonHelper.niveis = [new Nivel(1, '0'), new Nivel(2, '5'), new Nivel(3, '10'), new Nivel(4, '15'), new Nivel(5, '20'), new Nivel(6, '25'), new Nivel(7, '30'), new Nivel(8, '35'), new Nivel(9, '40'), new Nivel(10, '45'), new Nivel(11, '50'), new Nivel(12, '55'), new Nivel(13, '60'), new Nivel(14, '65'), new Nivel(15, '70'), new Nivel(16, '75'), new Nivel(17, '80'), new Nivel(18, '85'), new Nivel(19, '90'), new Nivel(20, '95'), new Nivel(21, '99')];
 singletonHelper.tipos_ganho_nex = [new TipoGanhoNex(1, 'Atributo'), new TipoGanhoNex(2, 'Pericias'), new TipoGanhoNex(3, 'Estatísticas Fixas'), new TipoGanhoNex(4, 'Escolha de Classe')];
+singletonHelper.tipos_proficiencia = [new TipoProficiencia(1, 'Armas de Ataque Corpo-a-Corpo'), new TipoProficiencia(2, 'Armas de Ataque à Distância'), new TipoProficiencia(3, 'Proteções'), new TipoProficiencia(4, 'Sustâncias'), new TipoProficiencia(5, 'Confecção')];
+singletonHelper.niveis_proficiencia = [new NivelProficiencia(1, 1, 'Simples'), new NivelProficiencia(1, 2, 'Complexas'), new NivelProficiencia(1, 3, 'Especiais'), new NivelProficiencia(2, 1, 'Simples'), new NivelProficiencia(2, 2, 'Complexas'), new NivelProficiencia(2, 3, 'Especiais'), new NivelProficiencia(3, 1, 'Simples'), new NivelProficiencia(3, 2, 'Complexas'), new NivelProficiencia(3, 3, 'Especiais'), new NivelProficiencia(4, 1, 'Mundanas'), new NivelProficiencia(4, 2, 'Simples'), new NivelProficiencia(4, 3, 'Complexas'), new NivelProficiencia(4, 4, 'Especiais'), new NivelProficiencia(5, 1, 'Simples'), new NivelProficiencia(5, 2, 'Complexa'), new NivelProficiencia(5, 3, 'Especial')];
+
 
 const singletonHelperSlice = createSlice({
     name: 'singletonHelper',

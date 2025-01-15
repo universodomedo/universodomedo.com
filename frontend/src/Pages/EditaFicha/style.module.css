@@ -19,15 +19,16 @@
     margin: auto;
 }
 
-.area_edicao {
+.recipiente_area_edicao {
     display: flex;
     flex-direction: column;
-    width: 60%;
-    margin: 0 auto;
-    gap: 3vh;
     align-items: center;
     flex: 1 0 0;
-    overflow: hidden;
+    overflow: auto;
+}
+
+.area_edicao {
+    width: 60%;
 }
 
 .editando_ficha_atributos {
@@ -100,7 +101,12 @@
     flex: 0 0 0;
 }
 
-.editando_ficha .prosseguir {
+.editando_ficha .prosseguir, .recipiente_botao_desabilitado {
     width: 6%;
     height: 4vh;
+}
+
+.recipiente_botao_desabilitado button {
+    width: 100%;
+    height: 100%;
 }

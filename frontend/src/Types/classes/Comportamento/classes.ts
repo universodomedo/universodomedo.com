@@ -1,8 +1,9 @@
 // #region Imports
-import { Atributo, AtributoPersonagem, CirculoNivelRitual, DificuldadeDinamica, Elemento, Extremidade, NivelComponente, NomeItem, PatentePericia, Pericia, PericiaPatentePersonagem } from 'Types/classes/index.ts';
+import { Atributo, AtributoPersonagem, CirculoNivelRitual, CustoComponente, CustoExecucao, CustoPE, DificuldadeDinamica, Elemento, Extremidade, NivelComponente, NomeItem, PatentePericia, Pericia, PericiaPatentePersonagem, PrecoExecucao, Proficiencia } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
+import { ValorGenerico } from 'Utils/utils.tsx';
 // #endregion
 
 export class ComportamentosAcao {
@@ -20,7 +21,7 @@ export class ComportamentosModificador {
     get temComportamentoModificadorPassivo(): boolean { return Boolean(this._comportamentoPassivo); }
     setComportamentoModificadorPassivo(...args: ConstructorParameters<typeof ComportamentoModificadorPassivo>): void { this._comportamentoPassivo = new ComportamentoModificadorPassivo(...args); }
 
-    get ehPassivoSempreAtivo(): boolean { return this.temComportamentoModificadorPassivo && (!this._comportamentoPassivo!.precisaEstarEmpunhando && !this._comportamentoPassivo!.precisaEstarVestindo)}
+    get ehPassivoSempreAtivo(): boolean { return this.temComportamentoModificadorPassivo && (!this._comportamentoPassivo!.precisaEstarEmpunhando && !this._comportamentoPassivo!.precisaEstarVestindo) }
     get ehPassivoAtivaQuandoEmpunhado(): boolean { return this.temComportamentoModificadorPassivo && this._comportamentoPassivo!.precisaEstarEmpunhando; }
     get ehPassivoAtivaQuandoVestido(): boolean { return this.temComportamentoModificadorPassivo && this._comportamentoPassivo!.precisaEstarVestindo; }
 }
@@ -62,6 +63,9 @@ export class EmbrulhoComportamentoItem {
     get comportamentoMunicao(): ComportamentoMunicao { return this._comportamentoMunicao!; } // sempre verificar se temComportamentoMunicao antes
     setComportamentoMunicao(...args: ConstructorParameters<typeof RequisitoMunicao>[]): void { this._comportamentoMunicao = new ComportamentoMunicao(args); }
 
+    get custosParaSacarValidos(): boolean { return this.comportamentoEmpunhavel.extremidadeLivresSuficiente && this.comportamentoEmpunhavel.execucoesSuficientes; }
+    get mensagemExecucoesUsadasParaSacar(): string { return this.comportamentoEmpunhavel.mensagemExecucoesUsadasParaSacar; }
+
     get podeSerEmpunhado(): boolean { return this.temComportamentoEmpunhavel && this.comportamentoEmpunhavel.podeSerEmpunhado; }
     get podeSerVestido(): boolean { return this.temComportamentoVestivel && this.comportamentoVestivel.podeSerVestido; }
 
@@ -79,6 +83,9 @@ export class EmbrulhoComportamentoAcao {
     public comportamentoTrava: ComportamentoAcaoTrava = new ComportamentoAcaoTrava();
     public comportamentoHistoricoAcao: ComportamentoHistoricoAcao = new ComportamentoHistoricoAcao();
 
+    public comportamentoCustoAcao: ComportamentoCustoAcao = new ComportamentoCustoAcao();
+    setComportamentoCustoAcao(args: ConstructorParameters<typeof ComportamentoCustoAcao>[0]): void { this.comportamentoCustoAcao = new ComportamentoCustoAcao(args); }
+
     private _comportamentoDificuldadeAcao?: ComportamentoDificuldadeAcao;
     get temComportamentoDificuldadeAcao(): boolean { return Boolean(this._comportamentoDificuldadeAcao); }
     get comportamentoDificuldadeAcao(): ComportamentoDificuldadeAcao { return this._comportamentoDificuldadeAcao!; } // sempre verificar se temComportamentoDificuldadeAcao antes
@@ -92,7 +99,7 @@ export class EmbrulhoComportamentoAcao {
     private _comportamentoRequisito?: ComportamentoRequisito;
     get temComportamentoRequisito(): boolean { return Boolean(this._comportamentoRequisito); }
     get comportamentoRequisito(): ComportamentoRequisito { return this._comportamentoRequisito!; } // sempre verificar se temComportamentoRequisito antes
-    setComportamentoRequisito(...args: ConstructorParameters<typeof RequisitoUso>[]): void { this._comportamentoRequisito = new ComportamentoRequisito(args); }
+    setComportamentoRequisito(args: ConstructorParameters<typeof RequisitoUso>[0][]): void { this._comportamentoRequisito = new ComportamentoRequisito(args); }
 
     private _comportamentoConsomeUso?: ComportamentoConsomeUso;
     get temComportamentoConsomeUso(): boolean { return Boolean(this._comportamentoConsomeUso); }
@@ -151,9 +158,13 @@ export class ComportamentoEmpunhavel {
 
     constructor(public podeSerEmpunhado: boolean = true, public extremidadesNecessarias: number = 1) { }
 
-    get numeroAcoesMovimentoParaSacarOuGuardar(): number { return 1; }
+    get precoParaSacarOuGuardar(): CustoExecucao { return new CustoExecucao({ precoExecucao: { precos: [{ idTipoExecucao: 3, quantidadeExecucoes: 2 }] } }); }
 
     get estaEmpunhado(): boolean { return this.refExtremidades.length === this.extremidadesNecessarias; }
+
+    get extremidadeLivresSuficiente(): boolean { return this.extremidadesNecessarias <= getPersonagemFromContext().estatisticasBuffaveis.extremidadesLivres; }
+    get execucoesSuficientes(): boolean { return this.precoParaSacarOuGuardar.podeSerPago; }
+    get mensagemExecucoesUsadasParaSacar(): string { return this.precoParaSacarOuGuardar.precoExecucao.resumoPagamento; }
 
     empunha(idItem: number): void {
         this.refExtremidades = getPersonagemFromContext().estatisticasBuffaveis.extremidades.filter(extremidade => !extremidade.estaOcupada).slice(0, this.extremidadesNecessarias);
@@ -173,6 +184,8 @@ export class ComportamentoVestivel {
 
     constructor(public podeSerVestido: boolean = false) { }
 
+    get precoParaVestirOuDesvestir(): PrecoExecucao { return new PrecoExecucao({ precos: [{ idTipoExecucao: 3, quantidadeExecucoes: 1 }] }); }
+
     get estaVestido(): boolean { return this._estaVestido; }
 
     veste(): void { if (this.podeSerVestido) this._estaVestido = true; }
@@ -187,6 +200,41 @@ export class ComportamentoComponente {
 
     get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
     get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this._idNivelComponente)!; }
+}
+
+export class ComportamentoCustoAcao {
+    public custoExecucao: CustoExecucao;
+    public custoPE?: CustoPE;
+    public custoComponente?: CustoComponente;
+
+    constructor({ custoExecucao, custoPE, custoComponente }: { custoExecucao?: ConstructorParameters<typeof CustoExecucao>[0], custoPE?: ConstructorParameters<typeof CustoPE>[0], custoComponente?: boolean } = {}) {
+        this.custoExecucao = new CustoExecucao(custoExecucao ?? { precoExecucao: { precos: [{ idTipoExecucao: 1, quantidadeExecucoes: 0 }] } });
+        if (custoPE !== undefined) this.custoPE = new CustoPE(custoPE);
+        if (custoComponente !== undefined) this.custoComponente = custoComponente;
+    }
+
+    aplicarCustos() {
+        if (this.custoExecucao !== undefined)
+            this.aplicaCustoExecucao();
+
+        if (this.custoPE !== undefined)
+            this.aplicaCustoPE();
+
+        if (this.custoComponente !== undefined)
+            this.aplicaCustoComponente();
+    }
+
+    aplicaCustoExecucao() {
+
+    }
+
+    aplicaCustoPE() {
+
+    }
+
+    aplicaCustoComponente() {
+
+    }
 }
 
 export class ComportamentoHistoricoAcao {
@@ -210,7 +258,7 @@ export class ComportamentoDificuldadeAcao {
     public idPericia: number;
     public dificuldadeDinamica?: DificuldadeDinamica;
 
-    constructor(dadosTeste: { idAtributo: number, idPericia: number }, dadosDificuldadeDinamica?: ConstructorParameters<typeof DificuldadeDinamica>[0]) {
+    constructor({ dadosTeste, dadosDificuldadeDinamica }: { dadosTeste: { idAtributo: number, idPericia: number }, dadosDificuldadeDinamica?: ConstructorParameters<typeof DificuldadeDinamica>[0] }) {
         this.idPericia = dadosTeste.idPericia;
         this.idAtributo = dadosTeste.idAtributo;
 
@@ -224,14 +272,13 @@ export class ComportamentoDificuldadeAcao {
 }
 
 export class ComportamentoAcao {
-    constructor(
-        public tipo: 'Dano' | 'Cura',
-        public valorMin: number,
-        public valorMax: number,
-        public opcionais: OpcionaisComportamentoAcao = {},
-    ) { }
+    public tipo: 'Dano' | 'Cura';
+    public valorGenerico: ValorGenerico;
 
-    get variancia(): number { return this.valorMax - this.valorMin; }
+    constructor({ tipo, paramsValorGenerico }: { tipo: 'Dano' | 'Cura', paramsValorGenerico: ConstructorParameters<typeof ValorGenerico>[0] }) {
+        this.tipo = tipo;
+        this.valorGenerico = new ValorGenerico(paramsValorGenerico);
+    }
 }
 
 export type OpcionaisComportamentoAcao = {
@@ -262,26 +309,24 @@ export class ComportamentoRequisito {
     public requisitos: RequisitoUso[];
 
     constructor(
-        dadosRequisitos: ConstructorParameters<typeof RequisitoUso>[]
+        dadosRequisitos: ConstructorParameters<typeof RequisitoUso>[0][]
     ) {
-        this.requisitos = dadosRequisitos.map(dadosRequisito => new RequisitoUso(...dadosRequisito));
+        this.requisitos = dadosRequisitos.map(dadosRequisito => new RequisitoUso(dadosRequisito));
     }
 
     get requisitosCumprido(): boolean { return this.requisitos.every(requisito => requisito.requisitoCumprido); }
-    get mensagemRequisitos(): string { return this.requisitos.length > 0 ? `Você precisa ser ${this.requisitos.map(requisito => requisito.mensagemRequisito).join(' e ')}` : ''; }
+    get mensagemRequisitos(): string { return this.requisitos.length > 0 ? `${this.requisitos.map(requisito => requisito.mensagemRequisito).join(' e ')}` : ''; }
 }
 
 export class RequisitoUso {
-    constructor(
-        private _idPericia: number,
-        private _idPatentePericia: number,
-    ) { }
+    public requisitoProficiencia: Proficiencia;
 
-    get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this._idPericia)!; }
-    get refPatente(): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente_pericia => patente_pericia.id === this._idPatentePericia)!; }
+    constructor({ paramsProficiencia }: { paramsProficiencia:ConstructorParameters<typeof Proficiencia>[0] }) {
+        this.requisitoProficiencia = new Proficiencia(paramsProficiencia);
+    }
 
-    get requisitoCumprido(): boolean { return getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === this.refPericia.id)!.refPatente.id >= this.refPatente.id; }
-    get mensagemRequisito(): string { return `${this.refPatente.nome} em ${this.refPericia.nomeAbrev}`; }
+    get requisitoCumprido(): boolean { return getPersonagemFromContext().proficienciaPersonagem.proficiencias.some(proficiencia => proficiencia.refTipoProficiencia.id === this.requisitoProficiencia.refTipoProficiencia.id && proficiencia.refNivelProficiencia.idNivelProficiencia === this.requisitoProficiencia.refNivelProficiencia.idNivelProficiencia); }
+    get mensagemRequisito(): string { return this.requisitoProficiencia.nomeExibicao; }
 }
 
 export class ComportamentoMunicao {
@@ -341,19 +386,31 @@ export type DadosGenericosAcaoParams = ConstructorParameters<typeof DadosGeneric
 export class DadosGenericosRitual {
     public nome: string;
 
-    constructor({ nome }: { nome: string } ) {
+    constructor({ nome }: { nome: string }) {
         this.nome = nome;
     }
 }
 
+export class DadosGenericosHabilidade {
+    public nome: string;
+    public descricao: string;
+
+    constructor({ nome, descricao }: { nome: string, descricao: string }) {
+        this.nome = nome;
+        this.descricao = descricao;
+    }
+}
+
+export type DadosGenericosHabilidadeParams = ConstructorParameters<typeof DadosGenericosHabilidade>[0];
+
 export class ComportamentoConsomeUso {
-    constructor (
+    constructor(
         public quantidadeUso: number,
     ) { }
 }
 
 export class ComportamentoConsomeMunicao {
-    constructor (
+    constructor(
         public nomeMunicao: string,
         public quantidadeUso: number,
     ) { }

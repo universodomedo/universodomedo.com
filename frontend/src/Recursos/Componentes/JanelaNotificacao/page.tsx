@@ -1,21 +1,27 @@
 // #region Imports
 import style from './style.module.css';
-import { useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
 
 import { InfoCircledIcon } from '@radix-ui/react-icons'
 // #endregion
 
-const JanelaAvisos = () => {
+const JanelaNotificacao = forwardRef((props, ref) => {
     const { ganhosNex } = useFicha();
     const [isOpen, setIsOpen] = useState(false);
     const toggleConsole = () => setIsOpen(!isOpen);
 
+    const openConsole = () => setIsOpen(true);
+
+    useImperativeHandle(ref, () => ({
+        openConsole,
+    }));
+
     return (
         <div className={`${style.janela_avisos} ${!isOpen ? style.fechado : ''}`}>
-            <button onClick={toggleConsole} className={`${style.janela_avisos_botao} ${!ganhosNex.podeAvancarEtapa ? style.janela_avisos_botao_vermelho: ''}`}>
-                <InfoCircledIcon/>
+            <button onClick={toggleConsole} className={`${style.janela_avisos_botao} ${!ganhosNex.podeAvancarEtapa ? style.janela_avisos_botao_vermelho : ''}`}>
+                <InfoCircledIcon />
             </button>
             <div className={style.janela_avisos_conteudo}>
                 <h1>{ganhosNex.etapa.tituloEtapa}</h1>
@@ -32,6 +38,6 @@ const JanelaAvisos = () => {
             </div>
         </div>
     );
-};
+});
 
-export default JanelaAvisos;
+export default JanelaNotificacao;

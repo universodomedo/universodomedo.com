@@ -107,21 +107,27 @@ const page = ({ acao }: { acao: Acao }) => {
                             <option key={item.id} value={item.id}>{item.nomeExibicao}</option>
                         ))}
                     </select>
-
-                    {itemSelecionado !== undefined && (
-                        <>
-                            <h2>{itemSelecionado.nomeExibicao}</h2>
-                            <h2>Ações para Sacar: {itemSelecionado.comportamentos.comportamentoEmpunhavel.numeroAcoesMovimentoParaSacarOuGuardar}</h2>
-                            <h2>Extremidade para Empunhar: {itemSelecionado.comportamentos.comportamentoEmpunhavel.extremidadesNecessarias}</h2>
-                        </>
-                    )}
-                    
                 </div>
+
+                {itemSelecionado !== undefined && (
+                    <>
+                        <div className={style.bloco_texto}>
+                            <p className={`${style.texto} ${itemSelecionado.comportamentos.comportamentoEmpunhavel.execucoesSuficientes ? '' : style.mensagem_erro}`}>Custo para Sacar: {itemSelecionado.comportamentos.comportamentoEmpunhavel.precoParaSacarOuGuardar.descricaoCusto}</p>
+                            <p className={`${style.texto} ${itemSelecionado.comportamentos.comportamentoEmpunhavel.extremidadeLivresSuficiente ? '' : style.mensagem_erro}`}>Extremidade para Empunhar: {itemSelecionado.comportamentos.comportamentoEmpunhavel.extremidadesNecessarias}</p>
+                        </div>
+
+                        {itemSelecionado.comportamentos.custosParaSacarValidos &&
+                            <div className={style.bloco_texto}>
+                                <p className={style.texto}>Vai Gastar {itemSelecionado.comportamentos.mensagemExecucoesUsadasParaSacar}</p>
+                            </div>
+                        }
+                    </>
+                )}
 
                 <button
                     className={style.botao_principal}
                     onClick={executar}
-                    disabled={itemSelecionado === undefined}
+                    disabled={itemSelecionado === undefined || !itemSelecionado.comportamentos.custosParaSacarValidos}
                 >
                     Executar
                 </button>
@@ -184,7 +190,7 @@ const page = ({ acao }: { acao: Acao }) => {
 
     const ConteudoDetalhes = () => {
         const textoDano = acao.comportamentos.temComportamentoAcao
-            ? `${acao.comportamentos.comportamentoAcao.valorMin} a ${acao.comportamentos.comportamentoAcao.valorMax} de ${acao.comportamentos.comportamentoAcao.tipo}`
+            ? `${acao.comportamentos.comportamentoAcao.valorGenerico.valorMin} a ${acao.comportamentos.comportamentoAcao.valorGenerico.valorMax} de ${acao.comportamentos.comportamentoAcao.tipo}`
             : '';
 
         const textoTestePericia = acao.comportamentos.comportamentoDificuldadeAcao
@@ -199,9 +205,9 @@ const page = ({ acao }: { acao: Acao }) => {
                         {textoTestePericia && (<p className={style.texto}>{textoTestePericia}</p>)}
                     </div>
                 )}
-                <BlocoTexto lista={acao.custos} titulo={'Custos'} corTexto={(custo) => !custo.podeSerPago ? '#FF0000' : ''} descricao={(custo) => custo.descricaoCusto} />
-                <BlocoTexto lista={acao.requisitos} titulo={'Requisitos'} corTexto={(requisito) => !requisito.requisitoCumprido ? '#FF0000' : ''} descricao={(custo) => custo.descricaoRequisito} />
-                {/* <BlocoTexto lista={acao.dificuldades} titulo={'Dificuldades'} corTexto={(dificuldade) => false ? '#FF0000' : '#F49A34'} descricao={(custo) => custo.descricaoDificuldade} /> */}
+                {/* <BlocoTexto lista={acao.custos} titulo={'Custos'} corTexto={custo => !custo.podeSerPago ? '#FF0000' : ''} descricao={custo => custo.descricaoCusto} /> */}
+                <BlocoTexto lista={acao.requisitos} titulo={'Requisitos'} corTexto={requisito => !requisito.requisitoCumprido ? '#FF0000' : ''} descricao={requisito => requisito.descricaoRequisito} />
+                {/* <BlocoTexto lista={acao.dificuldades} titulo={'Dificuldades'} corTexto={dificuldade => false ? '#FF0000' : '#F49A34'} descricao={custo => custo.descricaoDificuldade} /> */}
                 {acao.comportamentos.acaoTravada && (
                     <div className={style.bloco_texto}>
                     <p className={style.texto}>{acao.comportamentos.comportamentoTrava.descricaoTrava}</p>

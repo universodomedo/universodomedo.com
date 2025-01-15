@@ -29,7 +29,7 @@ const page = () => {
             <input type='text' placeholder='Nome do Personagem' value={inputValue} onChange={handleInputChange} autoFocus />
             <select id="selectNex" value={nexSelecionado} onChange={handleSelectChange}>
                 <option value="" disabled >Selecionar NEX</option>
-                {SingletonHelper.getInstance().niveis.filter(nivel => nivel.id <= 3).map(nivel => (<option key={nivel.id} value={nivel.id}> {nivel.nomeDisplay} </option>))}
+                {SingletonHelper.getInstance().niveis.filter(nivel => nivel.id <= 5).map(nivel => (<option key={nivel.id} value={nivel.id}> {nivel.nomeDisplay} </option>))}
             </select>
             <button onClick={criaNovaFichaComNexEspecifico} disabled={!inputValue || !nexSelecionado}>Confirmar</button>
         </div>

@@ -4,7 +4,7 @@ import "./style.css";
 
 import { useRef, useState } from 'react';
 
-import { HabilidadePassiva, RLJ_Ficha2 } from 'Types/classes/index.ts';
+import { ControladorExecucoesPersonagem, HabilidadePassiva, PrecoExecucao, RLJ_Ficha2 } from 'Types/classes/index.ts';
 
 import SubPaginaDetalhes from "Pages/Ficha/SubPaginasFicha/SubPaginaDetalhes/page.tsx";
 import SubPaginaEstatisticasDanificaveis from "Pages/Ficha/SubPaginasFicha/SubPaginaEstatisticasDanificaveis/page.tsx";
@@ -30,6 +30,8 @@ import { useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import Log from "Components/Log/page.tsx";
 import 'react-toastify/dist/ReactToastify.css';
+
+import { SingletonHelper } from "Types/classes_estaticas";
 // #endregion
 
 const page = () => {
@@ -65,6 +67,13 @@ const PaginaFicha = () => {
                         </div>
 
                         <div>
+                            <h1>Passar Durações</h1>
+                            {SingletonHelper.getInstance().duracoes.filter(duracao => duracao.id !== 5).map((duracao, index) => (
+                                <button key={index} onClick={() => { personagem.rodaDuracao(duracao.id) }} >{duracao.nome}</button>
+                            ))}
+                        </div>
+
+                        <div>
                             <h1>Alterar Estatística</h1>
                             <div>
                                 <select id="estatistica">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
@@ -89,12 +98,6 @@ const PaginaFicha = () => {
                             <div><button onClick={() => {personagem.alterarMaximoEstatistica(parseInt((document.querySelector('#estatisticaMaxima') as HTMLSelectElement).value), parseInt((document.querySelector('#valorMaximo') as HTMLInputElement).value))}}>Alterar</button></div>
                         </div> */}
 
-                        {/* <div>
-                            <h1>Passar Durações</h1>
-                            {singleton.duracoes.filter(duracao => duracao.id !== 5).map((duracao, index) => (
-                                <button key={index} onClick={() => { personagem.rodaDuracao(duracao.id) }} >{duracao.nome}</button>
-                            ))}
-                        </div> */}
 
                         {/* <div>
                             <h1>Shopping</h1>

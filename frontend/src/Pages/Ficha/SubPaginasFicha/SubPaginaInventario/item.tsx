@@ -2,7 +2,7 @@
 import style from 'Recursos/EstilizacaoCompartilhada/detalhes_popover.module.css';
 import { useState } from 'react';
 
-import { Item } from 'Types/classes/index.ts';
+import { Item, pluralize } from 'Types/classes/index.ts';
 import { useContextoAbaInventario } from './contexto.tsx';
 
 import PopoverComponente from 'Recursos/Componentes/Popover/page.tsx';
@@ -54,7 +54,24 @@ const page = ({ item }: { item: Item }) => {
     const ConteudoDetalhes = () => {
         return (
             <>
-            
+                {item.itemEstaEmpunhado && (
+                    <div className={style.bloco_texto}>
+                        <p>Item está Empunhado!</p>
+                    </div>
+                )}
+                {item.itemEmpunhavel && (
+                    <div className={style.bloco_texto}>
+                        <p className={style.titulo}>Item Empunhavel</p>
+                        <p className={style.texto_details}>Custo do Saque: {item.comportamentos.comportamentoEmpunhavel.precoParaSacarOuGuardar.descricaoCusto}</p>
+                        <p className={style.texto_details}>Empunhado com {item.comportamentos.comportamentoEmpunhavel.extremidadesNecessarias} {pluralize(item.comportamentos.comportamentoEmpunhavel.extremidadesNecessarias, 'Extremidade')}</p>
+                    </div>
+                )}
+                {item.itemVestivel && (
+                    <div className={style.bloco_texto}>
+                        <p className={style.titulo}>Item Vestível</p>
+                        <p className={style.texto_details}>Custo de Vestir: {item.comportamentos.comportamentoVestivel.precoParaVestirOuDesvestir.descricaoListaPreco}</p>
+                    </div>
+                )}
             </>
         );
     }

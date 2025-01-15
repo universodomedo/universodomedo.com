@@ -28,13 +28,13 @@ export function novoItemPorDadosItem(argsItem: ArgsItem, adicionaDados: boolean 
                 {
                     props: [argsAcao.args, argsAcao.dadosComportamentos],
                     config: (acao) => {
-                        acao.adicionarCustos([
-                            argsAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, argsAcao.custos.custoPE.valor) : null!,
-                            ...((argsAcao.custos.custoExecucao || []).map(execucao =>
-                                execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
-                            )),
-                            argsAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
-                        ].filter(Boolean));
+                        // acao.adicionarCustos([
+                        //     argsAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, argsAcao.custos.custoPE.valor) : null!,
+                        //     ...((argsAcao.custos.custoExecucao || []).map(execucao =>
+                        //         execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
+                        //     )),
+                        //     argsAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
+                        // ].filter(Boolean));
                         acao.adicionarModificadores(
                             (argsAcao.modificadores?.map(modificador => modificador.props) || [])
                         );

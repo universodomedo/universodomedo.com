@@ -34,6 +34,7 @@ export const ContextoFichaProvider = ({ children, idFichaNoLocalStorage }: { chi
         personagem.habilidades.forEach(habilidade => habilidade instanceof HabilidadePassiva && habilidade.modificadores.forEach(modificador => modificador.comportamentos.ehPassivoSempreAtivo && modificador.ativaBuff()));
         personagem.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
         personagem.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(personagem));
+        if (personagem.proficienciaPersonagem.proficiencias.length <= 0 ) personagem.proficienciaPersonagem.adicionaProficiencia(personagem.habilidades.filter(habilidade => habilidade.dadosProficiencia !== undefined).map(habilidade => habilidade.dadosProficiencia!));
 
         return (
             <>{children}</>

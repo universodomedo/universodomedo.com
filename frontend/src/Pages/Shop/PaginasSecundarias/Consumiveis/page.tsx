@@ -97,7 +97,7 @@ const page = () => {
                     {
                         args: { nome: 'Injetar', idTipoAcao: 1, idMecanica: 6, },
                         dadosComportamentos: {
-                            dadosComportamentoAcao: ['Cura', 4, 7],
+                            dadosComportamentoAcao: { tipo: 'Cura', paramsValorGenerico: { valorMin: 4, valorMax: 7 } },
                             dadosComportamentoConsomeUso: [1],
                         },
                         custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },

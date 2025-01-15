@@ -1,5 +1,5 @@
 // #region Imports
-import { EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Acao, HabilidadeAtiva, novoItemPorDadosItem, lista_geral_habilidades, Efeito, ControladorModificadores, ValoresEfeito, CustoPE, classeComArgumentos, CustoExecucao, CustoComponente, NaturezaPersonagem } from 'Types/classes/index.ts';
+import { EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Acao, HabilidadeAtiva, novoItemPorDadosItem, lista_geral_habilidades, Efeito, ControladorModificadores, ValoresEfeito, CustoPE, classeComArgumentos, CustoExecucao, CustoComponente, NaturezaPersonagem, ProficienciaPersonagem } from 'Types/classes/index.ts';
 
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
@@ -34,6 +34,7 @@ export class Personagem {
     public natureza: NaturezaPersonagem = new NaturezaPersonagem();
 
     public controladorModificadores: ControladorModificadores = new ControladorModificadores();
+    public proficienciaPersonagem: ProficienciaPersonagem = new ProficienciaPersonagem();
 
     public receptor: Receptor = new Receptor(this);
 
@@ -50,7 +51,7 @@ export class Personagem {
             new Defesa(5, 1, 1, 1),
             10,
             0,
-            [new Execucao(2, 1), new Execucao(3, 1), new Execucao(4, 1), new Execucao(6, 1)],
+            [new Execucao(2, 1), new Execucao(3, 1), new Execucao(4, 1)],
             new EspacoInventario(5, 5),
             new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2), new EspacoCategoria(2, 1), new EspacoCategoria(3, 0), new EspacoCategoria(4, 0), ]),
             numExtremidades
@@ -67,13 +68,13 @@ export class Personagem {
                         {
                             props: [dadosAcao.args, dadosAcao.dadosComportamentos],
                             config: (acao) => {
-                                acao.adicionarCustos([
-                                    dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
-                                    ...((dadosAcao.custos.custoExecucao || []).map(execucao =>
-                                        execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
-                                    )),
-                                    dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
-                                ].filter(Boolean));
+                                // acao.adicionarCustos([
+                                //     dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
+                                //     ...((dadosAcao.custos.custoExecucao || []).map(execucao =>
+                                //         execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
+                                //     )),
+                                //     dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
+                                // ].filter(Boolean));
                                 acao.adicionarModificadores((dadosAcao.modificadores?.map(modificador => modificador.props) || []));
                                 acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
                             }
@@ -90,7 +91,7 @@ export class Personagem {
 
         const acoesHabilidades = this.habilidades.filter(habilidade => habilidade instanceof HabilidadeAtiva).reduce((acc: Acao[], habilidade) => acc.concat(habilidade.acoes), []);
 
-        return this.natureza.acoes.concat(this.inventario.acoesInventario()).concat(acoesHabilidades);
+        return this.natureza.acoes.concat(this.inventario.acoesInventario()).concat(acoesHabilidades).concat(acoesRituais);
     }
 
     obtemValorTotalComLinhaEfeito(valorBase: number, idLinhaEfeito: number): number {
@@ -104,23 +105,23 @@ export class Personagem {
     //     this.controladorPersonagem.reduzDano(danoGeral);
     // }
 
-    // public rodaDuracao = (idDuracao: number) => {
-    //     LoggerHelper.getInstance().adicionaMensagem(`Rodou ${SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === idDuracao)?.nome}`);
+    public rodaDuracao = (idDuracao: number) => {
+        // LoggerHelper.getInstance().adicionaMensagem(`Rodou ${SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === idDuracao)?.nome}`);
 
-    //     this.obterBuffs().filter(buff => buff.ativo).map(buff => {
-    //         if (buff.refDuracao.id === idDuracao) {
-    //             buff.reduzDuracao();
-    //         } else if (buff.refDuracao.id < idDuracao) {
-    //             buff.desativaBuff();
-    //         }
-    //     });
+        // this.obterBuffs().filter(buff => buff.ativo).map(buff => {
+        //     if (buff.refDuracao.id === idDuracao) {
+        //         buff.reduzDuracao();
+        //     } else if (buff.refDuracao.id < idDuracao) {
+        //         buff.desativaBuff();
+        //     }
+        // });
 
-    //     if (idDuracao >= 2) this.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
+        if (idDuracao >= 2) this.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
 
-    //     LoggerHelper.getInstance().saveLog();
+        // LoggerHelper.getInstance().saveLog();
 
-    //     this.onUpdate();
-    // }
+        this.onUpdate();
+    }
 
     public carregaOnUpdate = (callback: () => void) => {
         this.onUpdate = callback;

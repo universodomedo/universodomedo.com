@@ -54,7 +54,7 @@ export const logicaMecanicas: { [key: number]: (valoresSelecionados: GastaCustoP
     6: (valoresSelecionados, acao) => {
         // const alvoSelecionado = valoresSelecionados['alvo']
 
-        const resultadoVariacao = ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [{ valorMaximo: acao.comportamentos.comportamentoAcao.valorMax, variancia: acao.comportamentos.comportamentoAcao.variancia }] })
+        const resultadoVariacao = ExecutaVariacaoGenerica({ listaVarianciasDaAcao: [{ valorMaximo: acao.comportamentos.comportamentoAcao.valorGenerico.valorMax, variancia: acao.comportamentos.comportamentoAcao.valorGenerico.variancia }] })
 
         const valor = resultadoVariacao.reduce((cur, acc) => { return cur + acc.valorFinal }, 0);
 

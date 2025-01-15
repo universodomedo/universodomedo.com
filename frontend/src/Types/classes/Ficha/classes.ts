@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso, ComportamentoDificuldadeAcao } from 'Types/classes/index.ts';
+import { Acao, ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso, ComportamentoDificuldadeAcao, ComportamentoCustoAcao } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -38,9 +38,10 @@ export type ArgsAcao = {
 };
 
 export type DadosComportamentosAcao = {
-    dadosComportamentoDificuldadeAcao?: ConstructorParameters<typeof ComportamentoDificuldadeAcao>;
-    dadosComportamentoAcao?: ConstructorParameters<typeof ComportamentoAcao>;
-    dadosComportamentoRequisito?: ConstructorParameters<typeof RequisitoUso>[];
+    dadosComportamentoCustoAcao?: ConstructorParameters<typeof ComportamentoCustoAcao>[0];
+    dadosComportamentoDificuldadeAcao?: ConstructorParameters<typeof ComportamentoDificuldadeAcao>[0];
+    dadosComportamentoAcao?: ConstructorParameters<typeof ComportamentoAcao>[0];
+    dadosComportamentoRequisito?: ConstructorParameters<typeof RequisitoUso>[0][];
     dadosComportamentoConsomeUso?: ConstructorParameters<typeof ComportamentoConsomeUso>;
     dadosComportamentoConsomeMunicao?: ConstructorParameters<typeof ComportamentoConsomeMunicao>;
 };
@@ -83,10 +84,7 @@ export type subDadosCusto = {
 }
 
 export type PropsModificador = {
-    props: ConstructorParameters<typeof Modificador>[0]
-    // idBuff: number, nome: string, valor: number,
-    // dadosComportamentos: DadosComportamentosModificador;
-    // duracao: { idDuracao: number, valor: number, }, idTipoBuff: number
+    props: ConstructorParameters<typeof Modificador>[0],
 }
 
 export type DadosCaracteristicasArmas = {
@@ -106,7 +104,7 @@ export const ConfiguracoesExibicaoDadosCaracteristicasArmas: { [K in keyof Dados
     modificadorDanoMinimo: { renderizar: true, renderizarValor: (dados) => (dados.modificadorDanoMinimo ? `Dano Mínimo: ${dados.modificadorDanoMinimo}` : null), },
     modificadorDanoMaximo: { renderizar: true, renderizarValor: (dados) => (dados.modificadorDanoMaximo ? `Dano Máximo: ${dados.modificadorDanoMaximo}` : null), },
     acoes: { renderizar: true, renderizarValor: (dados) => dados.acoes?.map(acao => `Ação: ${acao.args.nome}`).join(", ") || null, },
-    modificadores: { renderizar: true, renderizarValor: (dados) => dados.modificadores?.map(modificador => `Efeito: ${modificador.props.nome}`).join(", ") || null, },
+    modificadores: { renderizar: true, renderizarValor: (dados) => dados.modificadores?.map(modificador => `Modificador: ${modificador.props.nome}`).join(", ") || null, },
 
     reducaoPatenteSimplificada: { renderizar: false, renderizarValor: (dados) => null }
 };

@@ -1,7 +1,7 @@
 // #region Imports
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
-import { basesArma, classificacoesArma, DadosCaracteristicasArmas, ArgsItem, listaCaracteristicaArma, patentesArma, ArgsAcao, tiposArma, PropsModificador } from 'Types/classes/index.ts';
+import { basesArma, classificacoesArma, DadosCaracteristicasArmas, ArgsItem, listaCaracteristicaArma, patentesArma, ArgsAcao, tiposArma, PropsModificador, Proficiencia, Modificador } from 'Types/classes/index.ts';
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 
 import { useContextoLoja } from 'Pages/Shop/contexto.tsx';
@@ -22,6 +22,7 @@ interface ContextoArmaProps {
     caracteristicasSelecionadas: { id: number; nome: string; descricao: string; dadosCaracteristicaNaBase?: { custoCaracteristica: number; dadosCaracteristicasArmas: DadosCaracteristicasArmas; } }[];
     listaDadosArma: ({ tipo: 'titulo'; titulo: string } | { tipo: 'par'; nome: string; valor: string } | { tipo: 'details'; summary: string; itens: string[] })[];
     atualizaNomeCustomizado: (nomeCustomizado: string) => void;
+    requisitoCumprido: boolean;
 }
 
 export const ContextoArma = createContext<ContextoArmaProps | undefined>(undefined);
@@ -55,7 +56,15 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         1: <PaginaCaracteristicaArma />,
     }
 
-    const adicionar = () => { adicionarItem(argsItem); }
+    const adicionar = () => {
+        if (!requisitoCumprido) {
+            const confirmou = window.confirm(`Foi detectado que você está adicionando um item na qual não poderá usar, devido o seguinte requisito: ${requisitoProficienciaSelecionada?.nomeExibicao}. Deseja continuar?`);
+
+            if (!confirmou) return;
+        }
+
+        adicionarItem(argsItem);
+    }
 
     const mudarPaginaArma = (idPagina: number) => {
         if (idPagina === 0) { setIdBaseArmaSelecionada(0); }
@@ -91,23 +100,20 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         };
     }, { peso: 0, categoria: 0, danoMin: 0, danoMax: 0, acoes: [] as ArgsAcao[], modificadores: [] as PropsModificador[], reducaoPatenteSimplificada: false });
 
+    const requisitoProficienciaSelecionada: Proficiencia | undefined = baseSelecionada ? new Proficiencia(baseSelecionada?.dadosRequisitoProficiencia) : undefined;
+    const requisitoCumprido: boolean = requisitoProficienciaSelecionada !== undefined && getPersonagemFromContext().proficienciaPersonagem.proficiencias.some(proficiencia => proficiencia.refTipoProficiencia.id === requisitoProficienciaSelecionada.refTipoProficiencia.id && proficiencia.refNivelProficiencia.idNivelProficiencia === requisitoProficienciaSelecionada.refNivelProficiencia.idNivelProficiencia);
+
     const acaoPadraoBase: ArgsAcao = {
         args: { nome: 'Ataque Padrão', idTipoAcao: 2, idMecanica: 6, },
         dadosComportamentos: baseSelecionada
             ? {
-                dadosComportamentoAcao: [
-                    'Dano',
-                    baseSelecionada.danoMin + dadosCaracteristicasAgrupados.danoMin,
-                    baseSelecionada.danoMax + dadosCaracteristicasAgrupados.danoMax,
-                ],
+                dadosComportamentoAcao: { tipo: 'Dano', paramsValorGenerico: { valorMin: baseSelecionada.danoMin + dadosCaracteristicasAgrupados.danoMin, valorMax: baseSelecionada.danoMax + dadosCaracteristicasAgrupados.danoMax }, },
                 ...(!dadosCaracteristicasAgrupados.reducaoPatenteSimplificada && {
                     dadosComportamentoRequisito: [
-                        [baseSelecionada.idPericiaUtilizada, patenteDaBaseSelecionada!.idPatentePericiaRequisito],
+                        { paramsProficiencia: baseSelecionada.dadosRequisitoProficiencia }
                     ],
                 }),
-                dadosComportamentoDificuldadeAcao: [
-                    { idAtributo:baseSelecionada.idAtributoUtilizado, idPericia: baseSelecionada.idPericiaUtilizada },
-                ]
+                dadosComportamentoDificuldadeAcao: { dadosTeste: { idAtributo:baseSelecionada.idAtributoUtilizado, idPericia: baseSelecionada.idPericiaUtilizada } },
             }
             : {},
         custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
@@ -115,7 +121,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
     }
 
     const argsItem: ArgsItem = {
-        args: { idTipoItem: 1, nome: [`${tipoDaBaseSelecionada?.nome} ${classificacaoDaBaseSelecionada?.nome} ${patenteDaBaseSelecionada?.nome}`, nomeCustomizado.trim() || undefined], peso: (baseSelecionada?.peso || 0) + dadosCaracteristicasAgrupados.peso, categoria: (baseSelecionada?.categoria || 0) + dadosCaracteristicasAgrupados.categoria, },
+        args: { idTipoItem: 1, nome: [`${classificacaoDaBaseSelecionada?.nome} ${patenteDaBaseSelecionada?.nome}`, nomeCustomizado.trim() || undefined], peso: (baseSelecionada?.peso || 0) + dadosCaracteristicasAgrupados.peso, categoria: (baseSelecionada?.categoria || 0) + dadosCaracteristicasAgrupados.categoria, },
         dadosComportamentos: baseSelecionada ? {
             dadosComportamentoEmpunhavel: [true, baseSelecionada.numeroExtremidadesUtilizadas],
         } : {},
@@ -132,13 +138,22 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
         { tipo: 'par', nome: 'Peso', valor: `${argsItem.args.peso}` },
         { tipo: 'par', nome: 'Categoria', valor: `${argsItem.args.categoria}` },
         { tipo: 'par', nome: 'Extremidades para Empunhar', valor: `${argsItem.dadosComportamentos.dadosComportamentoEmpunhavel?.[1]}` },
+        { tipo: 'titulo', titulo: 'Modificadores' },
+        ...argsItem.modificadores!.map(modificador => ({
+            tipo: 'details' as const,
+            summary: modificador.props.nome,
+            itens: [
+                ...new Modificador(modificador.props).efeitos.map(efeito => `${efeito.refLinhaEfeito.nome}: +${efeito.valoresEfeitos.valorBonusAdicional}`),
+                requisitoProficienciaSelecionada ? requisitoProficienciaSelecionada.nomeExibicao : ''
+            ],
+        })),
         { tipo: 'titulo', titulo: 'Ações' },
         ...argsItem.dadosAcoes!.map(acao => ({
             tipo: 'details' as const,
             summary: acao.args.nome,
             itens: [
-                `${acao.dadosComportamentos.dadosComportamentoAcao?.[1]} - ${acao.dadosComportamentos.dadosComportamentoAcao?.[2]} de ${acao.dadosComportamentos.dadosComportamentoAcao?.[0]}`,
-                acao.dadosComportamentos.dadosComportamentoRequisito ? 'Requisito de Uso' : ''
+                `${acao.dadosComportamentos.dadosComportamentoAcao?.paramsValorGenerico.valorMin} - ${acao.dadosComportamentos.dadosComportamentoAcao?.paramsValorGenerico.valorMax} de ${acao.dadosComportamentos.dadosComportamentoAcao?.tipo}`,
+                acao.dadosComportamentos.dadosComportamentoRequisito ? acao.dadosComportamentos.dadosComportamentoRequisito.map(dadoComportamentoRequisito => new Proficiencia(dadoComportamentoRequisito.paramsProficiencia).nomeExibicao).join(' e ') : '',
             ],
         })),
     ];
@@ -165,7 +180,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
     }, [caracteristicasDisponiveis]);
 
     return (
-        <ContextoArma.Provider value={{ adicionar, idPaginaArmaAberta, mudarPaginaArma, paginasArma, idBaseArmaSelecionada, selecionarBaseArma, pontosDeCaracteristicaTotais, caracteristicasDisponiveis, alternaCaracteristicaSelecionada, caracteristicasSelecionadas, listaDadosArma, atualizaNomeCustomizado }}>
+        <ContextoArma.Provider value={{ adicionar, idPaginaArmaAberta, mudarPaginaArma, paginasArma, idBaseArmaSelecionada, selecionarBaseArma, pontosDeCaracteristicaTotais, caracteristicasDisponiveis, alternaCaracteristicaSelecionada, caracteristicasSelecionadas, listaDadosArma, atualizaNomeCustomizado, requisitoCumprido}}>
             {children}
         </ContextoArma.Provider>
     );

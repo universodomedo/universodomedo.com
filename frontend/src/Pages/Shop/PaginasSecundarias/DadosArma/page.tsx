@@ -32,11 +32,13 @@ const page = ({ mostraCaracteristicas = false }: { mostraCaracteristicas?: boole
                                 <div key={index} className={style.linha_details}>
                                     <details>
                                         <summary>{dadosArma.summary}</summary>
-                                        <ul>
-                                            {dadosArma.itens.map((itemDadoArma, indexItem) => (
-                                                <li key={indexItem}>{itemDadoArma}</li>
-                                            ))}
-                                        </ul>
+                                        <div className={style.detalhes}>
+                                            <>
+                                                {dadosArma.itens.map((itemDadoArma, indexItem) => (
+                                                    <p key={indexItem}>{itemDadoArma}</p>
+                                                ))}
+                                            </>
+                                        </div>
                                     </details>
                                 </div>
                             );

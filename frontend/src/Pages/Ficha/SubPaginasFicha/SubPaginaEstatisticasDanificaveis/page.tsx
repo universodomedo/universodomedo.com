@@ -16,7 +16,7 @@ const page = ({ estatisticasDanificaveis, estatisticasBuffaveis, reducoesDanoPer
       <div className={style.estatisticas_buffaveis}>
         <div className={style.acoes_executaveis}>
           {estatisticasBuffaveis.execucoes.map((execucao, index) => (
-            <h2 key={index}>{execucao.refTipoExecucao.nome}: {execucao.numeroAcoesAtuais}/{execucao.valorTotal}</h2>
+            <h2 key={index}>{execucao.refTipoExecucao.nomeExibicao}: {execucao.numeroAcoesAtuais}/{execucao.valorTotal}</h2>
           ))}
         </div>
 

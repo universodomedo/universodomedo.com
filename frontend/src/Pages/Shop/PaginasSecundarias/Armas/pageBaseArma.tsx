@@ -41,9 +41,11 @@ const page = () => {
     };
 
     useEffect(() => {
-        if (tipoArma && patenteArma && classificacaoArma) selecionarBaseArma(
-            basesArma.find(base => base.composicaoBaseArma.idTipo === tipoArma && base.composicaoBaseArma.idClassificacao === classificacaoArma && base.composicaoBaseArma.idPatente === patenteArma)!.id
-        );
+        if (tipoArma && patenteArma && classificacaoArma) {
+            selecionarBaseArma(basesArma.find(base => base.composicaoBaseArma.idTipo === tipoArma && base.composicaoBaseArma.idClassificacao === classificacaoArma && base.composicaoBaseArma.idPatente === patenteArma)!.id);
+        } else {
+            selecionarBaseArma(0);
+        }
     }, [classificacaoArma])
 
     return (
@@ -65,12 +67,11 @@ const page = () => {
 
                 <div className={style.opcao_item}>
                     <InputComRotulo rotulo={'Classificação da Arma'}>
-                        <select value={classificacaoArma} onChange={handleClassificacaoArmaChange} disabled={patenteArma === 0}> <option value="0" disabled>Selecione a Classificação da Arma</option> {classificacoesFiltradas.map(classificacao => (<option key={classificacao.id} value={classificacao.id}>{`${tipoArmaSelecionado} ${classificacao.nome} ${patenteArmaSelecionada}`}</option>))}</select>
+                        <select value={classificacaoArma} onChange={handleClassificacaoArmaChange} disabled={patenteArma === 0}> <option value="0" disabled>Selecione a Classificação da Arma</option> {classificacoesFiltradas.map(classificacao => (<option key={classificacao.id} value={classificacao.id}>{`${classificacao.nome} ${patenteArmaSelecionada}`}</option>))}</select>
                     </InputComRotulo>
                 </div>
 
                 <DadosArma />
-
             </div>
             <div className={style.area_botao_tipo_item}>
                 <button onClick={() => { mudarPagina(0) }}>Voltar</button>

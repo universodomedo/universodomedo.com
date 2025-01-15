@@ -25,6 +25,7 @@ const page = () => {
 
     return (
         <div>
+            <h2>Seleção de Classe</h2>
             <select id="selectNex" value={classeSelecionada} onChange={handleSelectChange}>
                 <option value="0" disabled >Selecionar Classe</option>
                 {SingletonHelper.getInstance().classes.filter(classe => classe.id !== 1).map(classe => (<option key={classe.id} value={classe.id}> {classe.nome} </option>))}

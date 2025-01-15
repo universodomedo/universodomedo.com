@@ -31,6 +31,7 @@ export * from './OpcaoExecucao';
 export * from './Paleta';
 export * from './Pericia';
 export * from './Personagem';
+export * from './ProficienciaPersonagem';
 export * from './Requisito';
 export * from './RequisitoFicha';
 export * from './Ritual';

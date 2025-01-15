@@ -1,5 +1,5 @@
 // #region Imports
-import { logicaMecanicas, Custo, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, RequisitoConfig, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, GastaCustoProps, EmbrulhoComportamentoAcao, DadosComportamentosAcao, DadosGenericosAcao, DadosGenericosAcaoParams, Modificador, adicionarModificadoresUtil, HabilidadeAtiva } from 'Types/classes/index.ts';
+import { logicaMecanicas, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, RequisitoConfig, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, EmbrulhoComportamentoAcao, DadosComportamentosAcao, DadosGenericosAcao, DadosGenericosAcaoParams, Modificador, adicionarModificadoresUtil, HabilidadeAtiva, GastaCustoProps } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -10,7 +10,6 @@ export class Acao {
     private static nextId = 1;
     public id: number;
     protected _modificadores: Modificador[] = [];
-    public custos: Custo[] = [];
     public requisitos: Requisito[] = [];
     public opcoesExecucoes: OpcoesExecucao[] = [];
     protected _refPai?: Ritual | Item | Habilidade;
@@ -35,11 +34,13 @@ export class Acao {
 
         this.dados = new DadosGenericosAcao(dadosGenericosAcao);
 
-        if (dadosComportamentos.dadosComportamentoDificuldadeAcao !== undefined) this.comportamentos.setComportamentoDificuldadeAcao(...dadosComportamentos.dadosComportamentoDificuldadeAcao);
-        if (dadosComportamentos.dadosComportamentoAcao !== undefined) this.comportamentos.setComportamentoAcao(...dadosComportamentos.dadosComportamentoAcao);
-        if (dadosComportamentos.dadosComportamentoRequisito !== undefined) this.comportamentos.setComportamentoRequisito(...dadosComportamentos.dadosComportamentoRequisito);
+        if (dadosComportamentos.dadosComportamentoCustoAcao !== undefined ) this.comportamentos.setComportamentoCustoAcao(dadosComportamentos.dadosComportamentoCustoAcao);
+        if (dadosComportamentos.dadosComportamentoDificuldadeAcao !== undefined) this.comportamentos.setComportamentoDificuldadeAcao(dadosComportamentos.dadosComportamentoDificuldadeAcao);
+        if (dadosComportamentos.dadosComportamentoAcao !== undefined) this.comportamentos.setComportamentoAcao(dadosComportamentos.dadosComportamentoAcao);
+        if (dadosComportamentos.dadosComportamentoRequisito !== undefined) this.comportamentos.setComportamentoRequisito(dadosComportamentos.dadosComportamentoRequisito);
         if (dadosComportamentos.dadosComportamentoConsomeUso !== undefined) this.comportamentos.setComportamentoConsomeUso(...dadosComportamentos.dadosComportamentoConsomeUso);
         if (dadosComportamentos.dadosComportamentoConsomeMunicao !== undefined) this.comportamentos.setComportamentoConsomeMunicao(...dadosComportamentos.dadosComportamentoConsomeMunicao);
+
 
         if (dadosEmergenciaisTemporarios?.idExecucaoCustomizada !== undefined) this.idExecucaoCustomizada = dadosEmergenciaisTemporarios.idExecucaoCustomizada;
     }
@@ -51,8 +52,6 @@ export class Acao {
     get nomeExibicao(): string { return `${this.dados.nome}`; }
 
     adicionaRefPai(pai: Ritual | Item | Habilidade): this { return (this._refPai = pai), this; }
-    adicionarCustos(custoParams: [new (...args: any[]) => Custo, any[]][]): this { return (custoParams.forEach(([CustoClass, params]) => { this.custos.push(new CustoClass(...params).setRefAcao(this)); })), this; }
-
 
     adicionarModificadores(propsModificadores: ConstructorParameters<typeof Modificador>[0][]): this { return (adicionarModificadoresUtil(this, this._modificadores, propsModificadores), this); }
 
@@ -69,7 +68,8 @@ export class Acao {
 
     get verificaRequisitosCumpridos(): boolean { return (this.requisitos ? this.requisitos?.every(requisito => requisito.requisitoCumprido) ?? false : true); }
 
-    get verificaCustosPodemSerPagos(): boolean { return (this.custos ? this.custos?.every(custo => custo.podeSerPago) ?? false : true); }
+    get verificaCustosPodemSerPagos(): boolean { return true }
+    // get verificaCustosPodemSerPagos(): boolean { return (this.custos ? this.custos?.every(custo => custo.podeSerPago) ?? false : true); }
 
     processaDificuldades = (): boolean => {
         const atributoPersonagem = getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === this.comportamentos.comportamentoDificuldadeAcao.idAtributo)!;
@@ -95,7 +95,7 @@ export class Acao {
     aplicaGastos = (valoresSelecionados: GastaCustoProps): boolean => {
         LoggerHelper.getInstance().adicionaMensagem(`Custos aplicados`, true);
 
-        this.custos.forEach(custo => { custo.processaGastaCusto(valoresSelecionados); });
+        // this.custos.forEach(custo => { custo.processaGastaCusto(valoresSelecionados); });
 
         LoggerHelper.getInstance().fechaNivelLogMensagem();
 

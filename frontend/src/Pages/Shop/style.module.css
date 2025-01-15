@@ -281,6 +281,10 @@
     grid-template-columns: repeat(3, 1fr);
 }
 
+.linha_especial > :first-child {
+    grid-column: 2 / 3;
+}
+
 .painel_caracteristicas p {
     margin: 0;
 }
@@ -311,4 +315,14 @@
 
 .descricao_caracteristica {
     flex: 1;
+}
+
+.detalhes {
+    display: flex;
+    flex-direction: column;
+}
+
+.detalhes p {
+    margin: 0;
+    text-align: left;
 }
