@@ -9,7 +9,7 @@ import { getDadoFichaPorIdFake } from 'Recursos/DadosFicha.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faShoppingCart, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
 import Modal from "Components/Modal/page.tsx";
 import ModalCriarFicha from './modal.tsx';
@@ -22,7 +22,7 @@ const page = () => {
     const [dadosFicha, setDadosFicha] = useState<RLJ_Ficha2[]>([]);
     const navigate = useNavigate();
 
-    const limpaLocalStorage = () => {
+    const limpaLocalStoragePorDesatualizacao = () => {
         const chaveVersaoAtual = 'v2.6';
         const chaveLimpeza = localStorage.getItem("chaveLimpeza");
 
@@ -34,7 +34,7 @@ const page = () => {
     }
 
     useEffect(() => {
-        limpaLocalStorage();
+        limpaLocalStoragePorDesatualizacao();
         localStorage.removeItem("fichaAtual");
 
         const data = localStorage.getItem("dadosFicha");
@@ -44,23 +44,6 @@ const page = () => {
             setDadosFicha(convertedData);
         }
     }, []);
-
-    const criaNovaFicha = () => {
-        navigate('/edita-ficha');
-    }
-
-    const vaiPraFicha = (idFake: number) => {
-        const ficha: RLJ_Ficha2 = getDadoFichaPorIdFake(idFake);
-
-        localStorage.setItem('fichaAtual', JSON.stringify(ficha));
-
-        navigate('/ficha-demo');
-    }
-
-    const abreFicha2 = (index: number) => {
-        localStorage.setItem('fichaAtual', JSON.stringify(dadosFicha[index]));
-        navigate('/ficha-demo');
-    }
 
     const abreFicha = (index: number) => {
         localStorage.setItem('fichaAtual', JSON.stringify(dadosFicha[index]));
@@ -89,30 +72,42 @@ const page = () => {
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
+    const continuaEvolucao = (index: number) => {
+        navigate('/edita-ficha', { state: { indexFicha: index } });
+    }
+
     return (
         <div className={style.teste_interno}>
             <h1>Fichas Customizadas: {Object.entries(dadosFicha).length}</h1>
 
-            <button className={style.acesso_ficha_nova} onClick={openModal} disabled={Object.entries(dadosFicha).length >= 5}>
-                {/* <button className={style.acesso_ficha_nova} onClick={criaNovaFicha} disabled={Object.entries(dadosFicha).length >= 5}> */}
-                {Object.entries(dadosFicha).length < 5 ? 'Criar Nova Ficha' : 'Muitas Fichas'}
-            </button>
+            <button className={style.acesso_ficha_nova} onClick={openModal} disabled={Object.entries(dadosFicha).length >= 5}>{Object.entries(dadosFicha).length < 5 ? 'Criar Nova Ficha' : 'Muitas Fichas'}</button>
 
-            {dadosFicha && dadosFicha.map((ficha, index) => (
-                <div key={index} className={style.ficha_existente}>
-                    <div className={style.acesso_ficha_existente} onClick={() => { abreFicha(index) }}>
-                        <div className={style.ficha_nome}>{ficha.detalhes!.nome}</div>
-                        <div className={style.ficha_detalhes}>
-                            <div className={style.ficha_classe}>{SingletonHelper.getInstance().classes.find(classe => classe.id === ficha.detalhes!.idClasse)!.nome}</div>
-                            <div className={style.ficha_nex}>{`NEX ${SingletonHelper.getInstance().niveis.find(nivel => nivel.id === ficha.detalhes!.idNivel)!.nomeDisplay}`}</div>
+            {dadosFicha && dadosFicha.map((ficha, index) => {
+                const pendente: boolean = ficha.pendencias ? ficha.detalhes!.idNivel < ficha.pendencias.idNivelEsperado : false;
+
+                return (
+                    <div key={index} className={`${style.ficha_existente} ${pendente ? style.ficha_pendente : ''}`}>
+                        <div className={style.acesso_ficha_existente} onClick={() => { !pendente && abreFicha(index) }}>
+                            <div className={style.ficha_nome}>{ficha.detalhes!.nome}</div>
+                            <div className={style.ficha_detalhes}>
+                                <div className={style.ficha_classe}>{SingletonHelper.getInstance().classes.find(classe => classe.id === ficha.detalhes!.idClasse)!.nome}</div>
+                                <div className={style.ficha_nex}>{ficha.detalhes!.idNivel > 0 ? `NEX ${SingletonHelper.getInstance().niveis.find(nivel => nivel.id === ficha.detalhes!.idNivel)!.nomeDisplay}` : `-`}</div>
+                            </div>
+                        </div>
+                        <div className={style.ficha_acoes}>
+                            <div className={style.ficha_acoes_coluna}>
+                                <FontAwesomeIcon className={style.icones_ficha} title={'Remover Ficha'} icon={faTrash} onClick={() => { removeFicha(index) }} />
+                                <FontAwesomeIcon className={`${style.icones_ficha} ${style.icone_carrinho}`} title={'Alterar Inventário'} icon={faShoppingCart} onClick={() => { !pendente && abrirShop(index) }} />
+                            </div>
+                            {pendente && (
+                                <div className={style.ficha_acoes_coluna}>
+                                    <FontAwesomeIcon className={`${style.icones_ficha} ${style.icone_evolucao}`} title={'Continuar Evolução'} icon={faUserPlus} onClick={() => { continuaEvolucao(index) }} />
+                                </div>
+                            )}
                         </div>
                     </div>
-                    <div className={style.ficha_acoes}>
-                        <FontAwesomeIcon className={style.remover_ficha} title={'Remover Ficha'} icon={faTrash} onClick={() => { removeFicha(index) }} />
-                        <FontAwesomeIcon className={style.remover_ficha} title={'Alterar Inventário'} icon={faShoppingCart} onClick={() => { abrirShop(index) }} />
-                    </div>
-                </div>
-            ))}
+                );
+            })}
 
             {/* <h1>Fichas Modelo</h1>
 

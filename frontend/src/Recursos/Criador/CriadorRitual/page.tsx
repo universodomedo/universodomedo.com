@@ -8,31 +8,32 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
 const page = ({ onCreate }: { onCreate: (novoRitual: ArgsRitual) => void; }) => {
-    const [elementoSelecionado, setElementoSelecionado] = useState(0);
+    const [idElementoSelecionado, setIdElementoSelecionado] = useState(0);
     const handleSelectChangeElemento = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setElementoSelecionado(Number(event.target.value));
+        setIdElementoSelecionado(Number(event.target.value));
     };
 
-    const [nivelSelecionado, setNivelSelecionado] = useState(0);
+    const [idNivelSelecionado, setIdNivelSelecionado] = useState(0);
     const handleSelectChangeNivel = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setNivelSelecionado(Number(event.target.value));
+        setIdNivelSelecionado(Number(event.target.value));
     };
 
-    const [periciaSelecionada, setPericiaSelecionada] = useState<Pericia>();
+    const [idPericiaSelecionada, setIdPericiaSelecionada] = useState(0);
     const handleSelectChangePericia = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setPericiaSelecionada(pericias.find(pericia => pericia.id === Number(event.target.value)));
+        setIdPericiaSelecionada(Number(event.target.value));
     };
 
     const pericias = SingletonHelper.getInstance().pericias;
+    const periciaSelecionada: Pericia | undefined = idElementoSelecionado > 0 && idNivelSelecionado > 0 && idPericiaSelecionada > 0 ? pericias.find(pericia => pericia.id === idPericiaSelecionada) : undefined;
 
     const criaRitual = (): ArgsRitual => {
-        const valorPE: number = { 1: 2, 2: 3, 3: 5 }[nivelSelecionado] || 0;
-        const valorBuff: number = { 1: 2, 2: 3, 3: 4 }[nivelSelecionado] || 0;
+        const valorPE: number = { 1: 2, 2: 3, 3: 5 }[idNivelSelecionado] || 0;
+        const valorBuff: number = { 1: 2, 2: 3, 3: 4 }[idNivelSelecionado] || 0;
 
         return {
             args: { nome: `Aprimorar ${periciaSelecionada?.nome}`, },
             dadosComportamentos: {
-                dadosComportamentoRitual: [elementoSelecionado, nivelSelecionado],
+                dadosComportamentoRitual: [idElementoSelecionado, idNivelSelecionado],
             },
             dadosAcoes: [ {
                 args: {nome: 'Usar Ritual', idTipoAcao: 3, idMecanica: 3,},
@@ -70,16 +71,16 @@ const page = ({ onCreate }: { onCreate: (novoRitual: ArgsRitual) => void; }) => 
             <h1>Novo Ritual</h1>
             <div className={style.criador_ritual_particao}>
                 <h2>Elemento</h2>
-                <select value={elementoSelecionado} onChange={handleSelectChangeElemento}>
+                <select value={idElementoSelecionado} onChange={handleSelectChangeElemento}>
                     <option value={0} disabled >Selecionar Elemento</option>
-                    {SingletonHelper.getInstance().elementos.filter(elemento => elemento.id !== 3).map(elemento => (<option key={elemento.id} value={elemento.id}> {elemento.nome} </option>))}
+                    {SingletonHelper.getInstance().elementos.filter(elemento => elemento.id !== 3).map(elemento => (<option key={elemento.id} value={elemento.id}>{elemento.nome}</option>))}
                 </select>
             </div>
             <div className={style.criador_ritual_particao}>
                 <h2>Nivel</h2>
-                <select value={nivelSelecionado} onChange={handleSelectChangeNivel}>
+                <select value={idNivelSelecionado} onChange={handleSelectChangeNivel}>
                     <option value={0} disabled >Selecionar Nivel</option>
-                    {SingletonHelper.getInstance().circulos_niveis_ritual.filter(circulo_nivel_ritual => circulo_nivel_ritual.idCirculo === 1).map(circulo_nivel_ritual => (<option key={circulo_nivel_ritual.id} value={circulo_nivel_ritual.id}> {circulo_nivel_ritual.nome} </option>))}
+                    {SingletonHelper.getInstance().circulos_niveis_ritual.filter(circulo_nivel_ritual => circulo_nivel_ritual.idCirculo === 1).map(circulo_nivel_ritual => (<option key={circulo_nivel_ritual.id} value={circulo_nivel_ritual.id}>{circulo_nivel_ritual.nome}</option>))}
                 </select>
             </div>
             <div className={style.criador_ritual_particao}>
@@ -90,12 +91,13 @@ const page = ({ onCreate }: { onCreate: (novoRitual: ArgsRitual) => void; }) => 
             </div>
             <div className={style.criador_ritual_particao}>
                 <h2>Pericia</h2>
-                <select value={periciaSelecionada?.id} onChange={handleSelectChangePericia}>
-                    {pericias.map(pericia => (<option key={pericia.id} value={pericia.id}> {pericia.nome} </option>))}
+                <select value={idPericiaSelecionada} onChange={handleSelectChangePericia}>
+                    <option value={0} disabled >Selecionar Perícia</option>
+                    {pericias.map(pericia => (<option key={pericia.id} value={pericia.id}>{pericia.nome}</option>))}
                 </select>
             </div>
 
-            <button onClick={handleCreate} disabled={!(elementoSelecionado > 0 && nivelSelecionado > 0 && periciaSelecionada?.id! > 0)}>Criar</button>
+            <button onClick={handleCreate} disabled={!(idElementoSelecionado > 0 && idNivelSelecionado > 0 && idPericiaSelecionada! > 0)}>Criar</button>
         </div>
     );
 }

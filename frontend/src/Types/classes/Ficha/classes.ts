@@ -11,6 +11,7 @@ export type RLJ_Ficha2 = {
     rituais?: ArgsRitual[],
     inventario?: ArgsItem[],
     // reducoesDano:
+    pendencias: { idNivelEsperado: number },
 }
 
 export type ArgsItem = {

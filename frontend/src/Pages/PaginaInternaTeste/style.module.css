@@ -26,6 +26,11 @@
     box-shadow: inset 1px;
 }
 
+.ficha_pendente > .acesso_ficha_existente {
+    color: rgb(173, 173, 173);
+    border: 2px red solid;
+}
+
 .botao_ficha_existente {
     display: flex;
     flex-direction: row;
@@ -35,6 +40,15 @@
 .acesso_ficha_existente:hover, .acesso_ficha_nova:hover {
     border: 2px rgb(120, 183, 255) solid;
     background-color: rgb(42, 55, 58);
+}
+
+.ficha_pendente > .acesso_ficha_existente:hover {
+    border: 2px rgb(185, 53, 53) solid;
+    background-color: rgb(100, 50, 50);
+}
+
+.ficha_pendente .icone_carrinho {
+    color: rgb(173, 173, 173);
 }
 
 .ficha_nome, .acesso_ficha_nova {
@@ -48,12 +62,24 @@
 
 .ficha_acoes {
     display: flex;
-    flex-direction: column;
-    gap: 1.8vh;
+    flex-direction: row;
+    gap: 1vw;
 }
 
-.remover_ficha {
+.ficha_acoes_coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.icones_ficha {
     cursor: pointer;
+}
+
+.icone_evolucao {
+    color: red;
 }
 
 /* */

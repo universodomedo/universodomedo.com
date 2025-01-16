@@ -51,10 +51,9 @@ export class GanhosNex {
     get estaNaUltimaEtapa(): boolean { return this.indexEtapa === this.ganhosQueTemAlteracao.length - 1; }
     get estaNaPrimeiraEtapa(): boolean { return this.indexEtapa === 0; }
     get textoBotaoProximo(): string { return this.estaNaUltimaEtapa ? 'Finalizar' : 'Continuar'; }
+    get textoBotaoVoltar(): string { return this.estaNaPrimeiraEtapa ? 'Sair' : 'Voltar'; }
 
     retrocedeEtapa() { (this.finalizando) ? this.finalizando = false : this.indexEtapa--; this.etapa.validaCondicoes(); }
-    get podeRetrocederEtapa(): boolean { return !this.estaNaPrimeiraEtapa; }
-
     avancaEtapa() { (this.estaNaUltimaEtapa) ? this.finalizando = true : this.indexEtapa++; this.etapa.validaCondicoes(); }
 
     get podeAvancarEtapa(): boolean { return this.etapa.finalizado && this.etapa.pontosObrigatoriosValidadosGenerico; }
@@ -277,7 +276,7 @@ export class ControladorGanhos {
             instanciaComArgumentos(GanhoIndividualNexRitual, { numeroDeRituais: 1 }),
         ],
         5: [ // NEX 20
-            instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 1, trocas: 1 }, this.obterValorMaximoDeAtributoNoNivel(1)),
+            instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 0, trocas: 1 }, this.obterValorMaximoDeAtributoNoNivel(1)),
             instanciaComArgumentos(GanhoIndividualNexPericia, { ganhos: 1, trocas: 0 }, { ganhos: 1, trocas: 1 }, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }),
         ],
     };
@@ -465,13 +464,6 @@ export class ControladorGanhos {
             idAtributo: parseInt(idAtributo),
             ganhos: Object.entries(estatisticas).map(([idEstatistica, { valor }]) => ( new GanhoEstatisticaPorPontoDeAtributo(parseInt(idEstatistica), valor))),
         }));
-        // return Object.entries(atributosDaClasse).map(([idAtributo, estatisticas]) => ({
-        //     idAtributo: parseInt(idAtributo),
-        //     ganhos: Object.entries(estatisticas).map(([idEstatistica, { valor }]) => ({
-        //         idEstatistica: parseInt(idEstatistica),
-        //         valorPorPonto: valor,
-        //     })),
-        // }));
     }
 
     obterGanhosGerais(idNivel: number, idClasse: number): GanhoIndividualNex[] {
@@ -495,6 +487,8 @@ export class ControladorGanhos {
 
         processarGanhos(ganhosPadrao);
         processarGanhos(ganhosClasse);
+
+        if (!ganhosCombinados[GanhoIndividualNexAtributo.name] && idNivel !== 2) ganhosCombinados[GanhoIndividualNexAtributo.name] = { Ctor: GanhoIndividualNexAtributo, params: [{ ganhos: 0, trocas: 0 }] };
 
         return Object.values(ganhosCombinados).map(ganho => {
             const newClass = new ganho.Ctor(...ganho.params);
@@ -522,19 +516,6 @@ export class ControladorGanhos {
 
         return [];
     }
-}
-
-export const retornaFichaZerada = (idNivelAtual: number, nome: string): RLJ_Ficha2 => {
-    return {
-        detalhes: { idClasse: 1, idNivel: idNivelAtual, nome: nome },
-        estatisticasDanificaveis: [{ id: 1, valorMaximo: 6, valor: 6 }, { id: 2, valorMaximo: 5, valor: 5 }, { id: 3, valorMaximo: 1, valor: 1 }],
-        estatisticasBuffaveis: [],
-        atributos: [{ id: 1, valor: 1 }, { id: 2, valor: 1 }, { id: 3, valor: 1 }, { id: 4, valor: 1 }, { id: 5, valor: 1 }],
-        periciasPatentes: [{ idPericia: 1, idPatente: 1 }, { idPericia: 2, idPatente: 1 }, { idPericia: 3, idPatente: 1 }, { idPericia: 4, idPatente: 1 }, { idPericia: 5, idPatente: 1 }, { idPericia: 6, idPatente: 1 }, { idPericia: 7, idPatente: 1 }, { idPericia: 8, idPatente: 1 }, { idPericia: 9, idPatente: 1 }, { idPericia: 10, idPatente: 1 }, { idPericia: 11, idPatente: 1 }, { idPericia: 12, idPatente: 1 }, { idPericia: 13, idPatente: 1 }, { idPericia: 14, idPatente: 1 }, { idPericia: 15, idPatente: 1 }, { idPericia: 16, idPatente: 1 }, { idPericia: 17, idPatente: 1 }, { idPericia: 18, idPatente: 1 }, { idPericia: 19, idPatente: 1 }, { idPericia: 20, idPatente: 1 }, { idPericia: 21, idPatente: 1 }, { idPericia: 22, idPatente: 1 }, { idPericia: 23, idPatente: 1 }, { idPericia: 24, idPatente: 1 }, { idPericia: 25, idPatente: 1 }, { idPericia: 26, idPatente: 1 }],
-        rituais: [],
-        inventario: [],
-        // buffs: [],
-    };
 }
 
 interface ValoresGanhoETrocaProps {
