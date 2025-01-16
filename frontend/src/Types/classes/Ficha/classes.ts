@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso, ComportamentoDificuldadeAcao, ComportamentoCustoAcao } from 'Types/classes/index.ts';
+import { Acao, ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso, ComportamentoDificuldadeAcao, ComportamentoCustoAcao, Item } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -46,6 +46,11 @@ export type DadosComportamentosAcao = {
     dadosComportamentoConsomeUso?: ConstructorParameters<typeof ComportamentoConsomeUso>;
     dadosComportamentoConsomeMunicao?: ConstructorParameters<typeof ComportamentoConsomeMunicao>;
 };
+
+export type DadosAcaoCustomizada = {
+    condicaoListaItems: (item: Item) => boolean;
+    executarAcaoItem: (item: Item) => void;
+}
 
 export type ArgsRitual = {
     args: ConstructorParameters<typeof DadosGenericosRitual>[0],

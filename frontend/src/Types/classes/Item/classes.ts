@@ -1,5 +1,5 @@
 // #region Imports
-import { EmbrulhoComportamentoItem, Acao, adicionarAcoesUtil, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, DadosComportamentosItem, DadosGenericosItem, adicionarModificadoresUtil, Modificador } from 'Types/classes/index.ts';
+import { EmbrulhoComportamentoItem, Acao, adicionarAcoesUtil, FiltroProps, FiltroPropsItems, OpcaoFiltro, OpcoesFiltro, DadosComportamentosItem, DadosGenericosItem, adicionarModificadoresUtil, Modificador, CustoExecucao, ExecucaoModificada } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -63,7 +63,13 @@ export class Item {
     ativaBuffsItem() { this._modificadores.forEach(modificador => modificador.ativaBuff()); }
     desativaBuffsItem() { this._modificadores.forEach(modificador => modificador.desativaBuff()); }
 
-    sacar = (): void => {
+    sacar = (params?: ExecucaoModificada): void => {
+        // if (params && params.tipo === 'Sobreescreve') {
+        //     new CustoExecucao(params.novoGasto).gastaCusto();
+        // } else {
+        //     this.comportamentos.comportamentoEmpunhavel.precoParaSacarOuGuardar.gastaCusto();
+        // }
+        
         this.comportamentos.comportamentoEmpunhavel.empunha(this.id);
 
         this.modificadores.filter(modificador => modificador.comportamentos.ehPassivoAtivaQuandoEmpunhado).forEach(() => this.ativaBuffsItem());

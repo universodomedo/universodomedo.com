@@ -13,7 +13,8 @@ const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, aco
 
   const { mostrarFiltros } = useContextoAbaAcoes();
 
-  const acoesRealizaveis = acoesPersonagem.filter(acao => !acao.bloqueada);
+  const acoesGerais = acoesPersonagem.filter(acao => acao.dadosAcaoCustomizada !== undefined);
+  const acoesRealizaveis = acoesPersonagem.filter(acao => !acao.bloqueada && acao.dadosAcaoCustomizada === undefined);
   const acoesBloqueadas = acoesPersonagem.filter(acao => acao.bloqueada);
 
   const renderAcaoItem = (acao: Acao, index: number) => (
@@ -22,7 +23,7 @@ const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, aco
 
   return (
     <>
-      <ConsultaProvider<Acao> abaId={abaId} registros={[acoesRealizaveis, acoesBloqueadas]} mostrarFiltro={mostrarFiltros} filtroProps={Acao.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Ações Realizáveis', 'Ações Bloqueadas'] }}>
+      <ConsultaProvider<Acao> abaId={abaId} registros={[acoesGerais, acoesRealizaveis, acoesBloqueadas]} mostrarFiltro={mostrarFiltros} filtroProps={Acao.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Ações Gerais', 'Ações Realizáveis', 'Ações Bloqueadas'] }}>
         <Consulta renderItem={renderAcaoItem} />
       </ConsultaProvider>
     </>

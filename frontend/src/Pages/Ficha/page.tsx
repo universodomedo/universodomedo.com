@@ -4,8 +4,6 @@ import "./style.css";
 
 import { useRef, useState } from 'react';
 
-import { ControladorExecucoesPersonagem, HabilidadePassiva, PrecoExecucao, RLJ_Ficha2 } from 'Types/classes/index.ts';
-
 import SubPaginaDetalhes from "Pages/Ficha/SubPaginasFicha/SubPaginaDetalhes/page.tsx";
 import SubPaginaEstatisticasDanificaveis from "Pages/Ficha/SubPaginasFicha/SubPaginaEstatisticasDanificaveis/page.tsx";
 import SubPaginaAtributosPericias from "Pages/Ficha/SubPaginasFicha/SubPaginaAtributosPericias/page.tsx";
@@ -15,7 +13,7 @@ import SubPaginaHabilidades from 'Pages/Ficha/SubPaginasFicha/SubPaginaHabilidad
 import SubPaginaRituais from 'Pages/Ficha/SubPaginasFicha/SubPaginaRituais/page.tsx';
 import SubPaginaEfeitos from "Pages/Ficha/SubPaginasFicha/SubPaginaEfeitos/page.tsx";
 
-import { ContextoFichaProvider, getPersonagemFromContext, useContextoFicha, useContextBridge } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
+import { ContextoFichaProvider, getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 
 import { Abas, ListaAbas, Aba, PainelAbas, ControleAbasExternas } from 'Components/LayoutAbas/page.tsx';
 import { ContextoAbaEfeitos, ContextoAbaEfeitosProvider } from 'Pages/Ficha/SubPaginasFicha/SubPaginaEfeitos/contexto.tsx';
@@ -32,6 +30,7 @@ import Log from "Components/Log/page.tsx";
 import 'react-toastify/dist/ReactToastify.css';
 
 import { SingletonHelper } from "Types/classes_estaticas";
+import { Item } from "Types/classes/index.ts";
 // #endregion
 
 const page = () => {
@@ -61,10 +60,15 @@ const PaginaFicha = () => {
             {personagem && (
                 <>
                     <div className={style.div_demo_acoes}>
-                        <div>
+                        {/* <div>
                             <h1>Teste</h1>
                             <button onClick={() => console.log(personagem)}>Teste</button>
                         </div>
+
+                        <div>
+                            <h1>Teste2</h1>
+                            <button onClick={() => { personagem.inventario.items.find(item => item.id === 3)!.sacar({ tipo: 'Sobreescreve', novoGasto: { precoExecucao: {precos: [{ idTipoExecucao: 1, quantidadeExecucoes: 0 }]} } }); personagem.onUpdate(); }}>Teste2</button>
+                        </div> */}
 
                         <div>
                             <h1>Passar Durações</h1>

@@ -1,6 +1,6 @@
 // #region Imports
-import { LinhaEfeito, pluralize } from 'Types/classes/index.ts';
-import { SingletonHelper } from 'Types/classes_estaticas.tsx';
+import { CustoExecucao, LinhaEfeito, pluralize } from 'Types/classes/index.ts';
+import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto';
 // #endregion
@@ -76,12 +76,15 @@ export class PrecoExecucao {
     }
 
     get descricaoListaPreco(): string { return this.listaPrecos.map(preco => preco.descricaoPreco).join(' e '); }
-    get temApenasAcaoLivre(): boolean { return this.listaPrecos.some(preco => preco.refTipoExecucao.id !== 1); }
+    get temApenasAcaoLivre(): boolean { return !this.listaPrecos.some(preco => preco.refTipoExecucao.id !== 1); }
 
     get podePagar(): boolean { return ControladorExecucoesPersonagem.podePagarPreco(this); }
     get resumoPagamento(): string { return ControladorExecucoesPersonagem.resumoPagamento(this).join(' e '); }
+
     pagaExecucao() {
+        const resumoPagamento = ControladorExecucoesPersonagem.resumoPagamento(this);
         ControladorExecucoesPersonagem.pagaPrecoExecucao(this);
+        LoggerHelper.getInstance().adicionaMensagem(resumoPagamento.join(' e '));
     }
 }
 
@@ -92,7 +95,7 @@ export class ControladorExecucoesPersonagem {
         return disponivelPadrao >= totalPadraoNecessario;
     }
 
-    static pagaPrecoExecucao(precoExecucao: PrecoExecucao): string[] {
+    static pagaPrecoExecucao(precoExecucao: PrecoExecucao): void {
         const { custoPadrao, custoMovimento, deficitMovimento } = this.calculaCustos(precoExecucao);
 
         const execucoesPersonagem = getPersonagemFromContext().estatisticasBuffaveis.execucoes;
@@ -101,19 +104,6 @@ export class ControladorExecucoesPersonagem {
 
         execucaoMovimento.numeroAcoesAtuais = Math.max(0, execucaoMovimento.numeroAcoesAtuais - custoMovimento);
         execucaoPadrao.numeroAcoesAtuais -= custoPadrao + deficitMovimento;
-
-        const log: string[] = [];
-        if (custoMovimento > 0) {
-            log.push(`${Math.min(custoMovimento, execucaoMovimento.numeroAcoesAtuais + custoMovimento)} Ações de Movimento gastas`);
-            if (deficitMovimento > 0) {
-                log.push(`${deficitMovimento} Ações de Movimento pagas com Ações Padrão`);
-            }
-        }
-        if (custoPadrao > 0) {
-            log.push(`${custoPadrao} Ações Padrão gastas`);
-        }
-
-        return log;
     }
 
     private static calculaCustos(precoExecucao: PrecoExecucao) {
@@ -162,3 +152,8 @@ export class ControladorExecucoesPersonagem {
         return log;
     }
 }
+
+export type ExecucaoModificada = 
+    {tipo: 'Diminui', passo: number }
+    |
+    { tipo: 'Sobreescreve', novoGasto: ConstructorParameters<typeof CustoExecucao>[0] }

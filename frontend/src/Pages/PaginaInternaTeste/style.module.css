@@ -80,6 +80,7 @@
 
 .icone_evolucao {
     color: red;
+    animation: heartbeat 1s infinite;
 }
 
 /* */
@@ -93,4 +94,13 @@
 
 .modal_criacao_ficha h1 {
     margin: 0;
+}
+
+@keyframes heartbeat {
+    0%, 50%, 100% {
+      transform: scale(1);
+    }
+    25%, 75% {
+      transform: scale(1.4);
+    }
 }

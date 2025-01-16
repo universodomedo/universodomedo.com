@@ -68,21 +68,18 @@ const page = ({ acao }: { acao: Acao }) => {
     }
 
     const ConteudoExecucaoGenerico = ({ fechaModal }: { fechaModal: () => void }) => {
-        if (acao.idExecucaoCustomizada === 1) return (<ConteudoExecucaoSacar fechaModal={fechaModal} />)
+        if (acao.dadosAcaoCustomizada !== undefined) return (<ConteudoAcaoNaturezaParaItem fechaModal={fechaModal} />)
         else return (<ConteudoExecucao fechaModal={fechaModal} />)
     }
 
-    const ConteudoExecucaoSacar = ({ fechaModal }: { fechaModal: () => void }) => {
+    const ConteudoAcaoNaturezaParaItem = ({ fechaModal }: { fechaModal: () => void }) => {
         const [indexItemSelecionado, setIndexItemSelecionado] = useState<number | undefined>(undefined);
-        const listaItems = getPersonagemFromContext().inventario.items.filter(item => item.itemPodeSerSacado);
+        const listaItems = getPersonagemFromContext().inventario.items.filter(item => acao.dadosAcaoCustomizada!.condicaoListaItems(item));
         const itemSelecionado = indexItemSelecionado !== undefined
           ? listaItems.find(item => item.id === indexItemSelecionado)
           : undefined;
 
         const handleSelectChange = (value: number) => {
-            console.log('handleSelectChange');
-
-            console.log(`Item de ID ${value}`);
             setIndexItemSelecionado(value);
         };
 
@@ -93,7 +90,7 @@ const page = ({ acao }: { acao: Acao }) => {
         };
 
         const executar = () => {
-            itemSelecionado?.sacar();
+            acao.dadosAcaoCustomizada?.executarAcaoItem(itemSelecionado!);
             setOpenExec(false);
             fechaModal();
         }

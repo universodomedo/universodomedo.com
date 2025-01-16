@@ -23,7 +23,7 @@ const page = () => {
     const navigate = useNavigate();
 
     const limpaLocalStoragePorDesatualizacao = () => {
-        const chaveVersaoAtual = 'v2.6';
+        const chaveVersaoAtual = 'v2.7';
         const chaveLimpeza = localStorage.getItem("chaveLimpeza");
 
         if (chaveLimpeza === null || chaveLimpeza !== chaveVersaoAtual) {

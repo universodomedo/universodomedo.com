@@ -26,10 +26,6 @@ export class CustoExecucao extends Custo {
         if (this.precoExecucao.temApenasAcaoLivre) return;
 
         this.precoExecucao.pagaExecucao();
-
-        // LoggerHelper.getInstance().adicionaMensagem(`-${this.valor} ${this.refTipoExecucao.nome}`);
-
-        // getPersonagemFromContext().estatisticasBuffaveis.execucoes.find(execucao => execucao.refTipoExecucao.id === this.refTipoExecucao.id)!.numeroAcoesAtuais -= this.valor;
     }
 }
 
