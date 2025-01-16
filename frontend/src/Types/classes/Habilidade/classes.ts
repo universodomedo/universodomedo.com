@@ -382,6 +382,6 @@ export const lista_geral_habilidades = (): Habilidade[] => {
 
         // // Habilidades Especiais //
 
-        new HabilidadePassiva({ dadosGenericosHabilidade: { nome: 'Experiência com Armas', descricao: 'Você recebe um Ponto de Característica de Arma Bônus' }, fonteHabilidade: { fonte: 'Habilidade Especial', tipo: 'Mundana' }, }).adicionarModificadores([{ nome: 'Experiência com Armas', idDuracao: 5, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito: 63, idTipoEfeito: 4, dadosValoresEfeitos: { valorBonusAdicional: 1 } }], dadosComportamentos: { dadosComportamentoPassivo: [] } }]),
+        // new HabilidadePassiva({ dadosGenericosHabilidade: { nome: 'Experiência com Armas', descricao: 'Você recebe um Ponto de Característica de Arma Bônus' }, fonteHabilidade: { fonte: 'Habilidade Especial', tipo: 'Mundana' }, }).adicionarModificadores([{ nome: 'Experiência com Armas', idDuracao: 5, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito: 63, idTipoEfeito: 4, dadosValoresEfeitos: { valorBonusAdicional: 1 } }], dadosComportamentos: { dadosComportamentoPassivo: [] } }]),
     ];
 }
