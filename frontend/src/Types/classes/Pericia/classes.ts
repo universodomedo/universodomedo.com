@@ -25,6 +25,7 @@ export class PatentePericia {
         public id: number,
         public nome: string,
         public valor: number,
+        public corTexto: string,
     ) { }
 }
 
@@ -40,7 +41,11 @@ export class PericiaPatentePersonagem {
 
     get valorNivelPatente(): number { return this.refPatente.id - 1; }
     get valorBonusPatente(): number { return this.refPatente.valor; }
-    get valorTotal(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(this.valorBonusPatente, this.refPericia.refLinhaEfeito.id); }
+
+    get valorEfeito(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(0, this.refPericia.refLinhaEfeito.id); }
+    get valorTotal(): number { return this.valorEfeito + this.valorBonusPatente; }
+
+    get detalhesValor(): string[] { return ['oi', 'xau'] }
 
     realizarTeste = () => {
         const resultado = ExecutaTestePericiaGenerico(this.refAtributoPersonagem, this);

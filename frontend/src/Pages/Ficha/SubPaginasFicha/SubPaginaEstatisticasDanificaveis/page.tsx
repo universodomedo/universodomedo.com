@@ -33,7 +33,7 @@ const page = ({ estatisticasDanificaveis, estatisticasBuffaveis, reducoesDanoPer
             <tbody>
               {reducoesDanoPersonage.map((reducaoDanoPersonagem, index) => (
                 <tr key={index}>
-                  <td>{reducaoDanoPersonagem.tipoDano.nome}</td>
+                  <td>{reducaoDanoPersonagem.refTipoDano.nome}</td>
                   <td>{reducaoDanoPersonagem.valorTotal}</td>
                 </tr>
               ))}

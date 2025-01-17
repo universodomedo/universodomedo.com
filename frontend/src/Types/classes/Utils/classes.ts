@@ -7,9 +7,9 @@ export const pluralize = (count: number, singular: string, plural?: string): str
     return count === 1 ? singular : pluralForm;
 };
 
-export function adicionarAcoesUtil<T extends Ritual | Item | Habilidade>(instancia: T, lista: Acao[], acoes: { props: ConstructorParameters<typeof Acao>, config?: (acao: Acao) => void }[]): void {
+export function adicionarAcoesUtil<T extends Ritual | Item | Habilidade>(instancia: T, lista: Acao[], acoes: { props: ConstructorParameters<typeof Acao>[0], config?: (acao: Acao) => void }[]): void {
     acoes.forEach(({ props, config }) => {
-        const novaAcao = new Acao(...props).adicionaRefPai(instancia);
+        const novaAcao = new Acao(props).adicionaRefPai(instancia);
 
         if (config !== undefined) config(novaAcao);
 

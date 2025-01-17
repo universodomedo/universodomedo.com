@@ -158,7 +158,7 @@ export class ComportamentoEmpunhavel {
 
     constructor(public podeSerEmpunhado: boolean = true, public extremidadesNecessarias: number = 1) { }
 
-    get precoParaSacarOuGuardar(): CustoExecucao { return new CustoExecucao({ precoExecucao: { precos: [{ idTipoExecucao: 3, quantidadeExecucoes: 2 }] } }); }
+    get precoParaSacarOuGuardar(): CustoExecucao { return new CustoExecucao({ precoExecucao: { precos: [{ idTipoExecucao: 3, quantidadeExecucoes: 1 }] } }); }
 
     get estaEmpunhado(): boolean { return this.refExtremidades.length === this.extremidadesNecessarias; }
 
@@ -184,7 +184,7 @@ export class ComportamentoVestivel {
 
     constructor(public podeSerVestido: boolean = false) { }
 
-    get precoParaVestirOuDesvestir(): PrecoExecucao { return new PrecoExecucao({ precos: [{ idTipoExecucao: 3, quantidadeExecucoes: 1 }] }); }
+    get precoParaVestirOuDesvestir(): PrecoExecucao { return new PrecoExecucao({ precos: [{ idTipoExecucao: 2, quantidadeExecucoes: 1 }] }); }
 
     get estaVestido(): boolean { return this._estaVestido; }
 

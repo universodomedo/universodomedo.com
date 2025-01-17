@@ -97,7 +97,8 @@ singletonHelper.linhas_efeito = [
     new LinhaEfeito(60, 'Número de Ações Investigativa'),
     new LinhaEfeito(61, 'Número de Comandos Doméstico'),
     new LinhaEfeito(62, 'Desconto de P.E. para Rituais'),
-    new LinhaEfeito(63, 'Pontos de Característica de Arma'),
+    new LinhaEfeito(63, 'Pontos de Característica de Arma de Ataque Corpo-a-Corpo'),
+    new LinhaEfeito(64, 'Pontos de Característica de Arma de Ataque a Distância'),
 ];
 singletonHelper.alcances = [new Alcance(1, "Adjacente"), new Alcance(2, "Próximo"), new Alcance(3, "Curto"), new Alcance(4, "Médio"), new Alcance(5, "Longo"), new Alcance(6, "Ambiente"), new Alcance(7, "Ilimitado")];
 singletonHelper.formatos_alcance = [new FormatoAlcance(1, "Selecionado"), new FormatoAlcance(2, "Linha Reta"), new FormatoAlcance(3, "Cone"), new FormatoAlcance(4, "Área")];
@@ -105,7 +106,7 @@ singletonHelper.duracoes = [new Duracao(1, "Ação"), new Duracao(2, "Turno"), n
 singletonHelper.tipos_execucao = [new TipoExecucao(1, 55, "Livre"), new TipoExecucao(2, 56, "Padrão"), new TipoExecucao(3, 57, "de Movimento"), new TipoExecucao(4, 58, "Reativa"), new TipoExecucao(5, 59, "Ritualística"), new TipoExecucao(6, 60, "Investigativa"), new TipoExecucao(7, 61, "de Comando")];
 singletonHelper.tipos_acao = [new TipoAcao(1, "Ação Direta Pacifica"), new TipoAcao(2, "Ação Direta Agressiva"), new TipoAcao(3, "Aplicação de Efeito Positivo"), new TipoAcao(4, "Aplicação de Efeito Negativo")];
 singletonHelper.tipos_alvo = [new TipoAlvo(1, "Pessoal"), new TipoAlvo(2, "Ser"), new TipoAlvo(3, "Objeto"), new TipoAlvo(4, "Ponto"), new TipoAlvo(5, "Direção")];
-singletonHelper.tipos_dano = [new TipoDano(1, "Vital"), new TipoDano(2, "Mundano"), new TipoDano(3, "Concussivo"), new TipoDano(4, "Cortante"), new TipoDano(5, "Perfurante"), new TipoDano(6, "Natural"), new TipoDano(7, "Elétrico"), new TipoDano(8, "Fogo"), new TipoDano(9, "Frio"), new TipoDano(10, "Químico"), new TipoDano(11, "Elemental"), new TipoDano(12, "Conhecimento"), new TipoDano(13, "Sangue"), new TipoDano(14, "Energia"), new TipoDano(15, "Morte"), new TipoDano(16, "Medo"), new TipoDano(17, "Mental"), new TipoDano(18, "Debilitante")];
+singletonHelper.tipos_dano = [new TipoDano(1, "Vital", 32), new TipoDano(2, "Mundano", 33, 1), new TipoDano(3, "Concussivo", 34, 2), new TipoDano(4, "Cortante", 35, 2), new TipoDano(5, "Perfurante", 36, 2), new TipoDano(6, "Natural", 37, 1), new TipoDano(7, "Elétrico", 38, 6), new TipoDano(8, "Fogo", 39, 6), new TipoDano(9, "Frio", 40, 6), new TipoDano(10, "Químico", 41, 6), new TipoDano(11, "Elemental", 42, 1), new TipoDano(12, "Conhecimento", 43, 11), new TipoDano(13, "Sangue", 44, 11), new TipoDano(14, "Energia", 45, 11), new TipoDano(15, "Morte", 46, 11), new TipoDano(16, "Medo", 47, 11), new TipoDano(17, "Mental", 48), new TipoDano(18, "Debilitante", 49)];
 singletonHelper.tipos_efeito = [new TipoEfeito(1, "Equipamento", 'Efeito de Equipamento'), new TipoEfeito(2, "Químico", 'Efeito Químico'), new TipoEfeito(3, "Paranormal", 'Efeito Paranormal'), new TipoEfeito(4, "Especial", 'Efeito Especial'), new TipoEfeito(5, 'Negativo', 'Efeito Negativo')];
 singletonHelper.atributos = [
     new Atributo(1, 1, "Agilidade", "AGI", 'Índice da velocidade e precisão que seu corpo responde a estímulos'),
@@ -142,7 +143,7 @@ singletonHelper.pericias = [
     new Pericia(25, 31, 4, 'Vontade', 'VONT', 'Experiência em resistir a condições e danos mentais'),
     new Pericia(26, 16, 5, 'Fortitude', 'FORT', 'Experiência em resistir a condições e danos físicos, assim como danos graves'),
 ];
-singletonHelper.patentes_pericia = [new PatentePericia(1, "Destreinado", 0), new PatentePericia(2, "Treinado", 5), new PatentePericia(3, "Veterano", 10), new PatentePericia(4, "Expert", 15)];
+singletonHelper.patentes_pericia = [new PatentePericia(1, "Destreinado", 0, '#CDCDCD'), new PatentePericia(2, "Treinado", 5, '#EBEF5D'), new PatentePericia(3, "Veterano", 10, '#E59627'), new PatentePericia(4, "Expert", 15, '#FF4A24')];
 singletonHelper.tipos_items = [new TipoItem(1, "Arma"), new TipoItem(2, "Equipamento"), new TipoItem(3, "Consumível"), new TipoItem(4, "Componente Ritualístico")];
 singletonHelper.niveis_componente = [new NivelComponente(1, "Simples"), new NivelComponente(2, "Complexo"), new NivelComponente(3, "Especial")];
 singletonHelper.tipos_requisitos = [new TipoRequisito(1, 'Empunhando Item Pai'), new TipoRequisito(2, 'Empunhando Componente Ritualístico')];

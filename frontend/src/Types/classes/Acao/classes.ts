@@ -25,11 +25,7 @@ export class Acao {
 
     public dadosAcaoCustomizada?: DadosAcaoCustomizada; // temporario
 
-    constructor(
-        dadosGenericosAcao: DadosGenericosAcaoParams,
-        dadosComportamentos: DadosComportamentosAcao,
-        dadosAcaoCustomizada?: DadosAcaoCustomizada, // temporario
-    ) {
+    constructor({ dadosGenericosAcao, dadosComportamentos, dadosAcaoCustomizada }: { dadosGenericosAcao: DadosGenericosAcaoParams, dadosComportamentos: DadosComportamentosAcao, dadosAcaoCustomizada?: DadosAcaoCustomizada }) {
         this.id = Acao.nextId++;
 
         this.dados = new DadosGenericosAcao(dadosGenericosAcao);

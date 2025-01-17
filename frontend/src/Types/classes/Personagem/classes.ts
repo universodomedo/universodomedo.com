@@ -57,7 +57,7 @@ export class Personagem {
             numExtremidades
         );
 
-        // this.reducoesDano = this._ficha.reducoesDano.map(reducaoDano => new ReducaoDano(reducaoDano.valor!, reducaoDano.tipoDano, this));
+        this.reducoesDano = this._ficha.reducoesDano?.map(reducao_dano => new ReducaoDano(reducao_dano.idTipoDano, reducao_dano.valor))!;
         this.atributos = this._ficha.atributos!.map(attr => new AtributoPersonagem(attr.id, attr.valor!));
         this.pericias = this._ficha.periciasPatentes!.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente));
 
@@ -66,7 +66,7 @@ export class Personagem {
                 .adicionarAcoes(
                     (ritual.dadosAcoes || []).map(dadosAcao => (
                         {
-                            props: [dadosAcao.args, dadosAcao.dadosComportamentos],
+                            props: { dadosGenericosAcao: dadosAcao.args, dadosComportamentos: dadosAcao.dadosComportamentos },
                             config: (acao) => {
                                 // acao.adicionarCustos([
                                 //     dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
@@ -125,16 +125,6 @@ export class Personagem {
 
     public carregaOnUpdate = (callback: () => void) => {
         this.onUpdate = callback;
-    }
-
-    public alterarMaximoEstatistica = (idEstatistica: number, valorMaximo: number) => {
-        if (typeof valorMaximo !== 'number' && valorMaximo < 1) return;
-
-        const estatistica = this.estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === idEstatistica)!;
-        estatistica.alterarValorMaximo(valorMaximo);
-        // estatistica.aplicarCura(valorMaximo);
-
-        this.onUpdate();
     }
 }
 

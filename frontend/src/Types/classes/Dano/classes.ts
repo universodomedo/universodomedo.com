@@ -1,31 +1,30 @@
 // #region Imports
-import { Personagem } from 'Types/classes/index.ts';
-import { MDL_TipoDano } from 'udm-types';
+import { LinhaEfeito } from 'Types/classes/index.ts';
+import { SingletonHelper } from 'Types/classes_estaticas.tsx';
+
+import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto';
 // #endregion
 
+export class TipoDano {
+    constructor(
+        public id: number,
+        public nome: string,
+        private _idLinhaEfeito: number,
+        private _idDanoPertencente?: number,
+    ) { }
 
-
-// aqui ta tudo errado, super velho
-
+    get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === this._idLinhaEfeito)!; }
+    get refTipoDanoPertecente(): TipoDano | undefined { return SingletonHelper.getInstance().tipos_dano.find(tipo_dano => tipo_dano.id === this._idDanoPertencente); }
+}
 
 export class ReducaoDano {
     constructor(
-        public valor: number,
-        public tipoDano: MDL_TipoDano,
-        private refPersonagem: Personagem
+        private _idTipoDano: number,
+        private _valor: number,
     ) { }
 
-    get valorBonus(): number {
-        // return this.refPersonagem.buffs.filter(buff => buff.refBuff.id === this.tipoDano.idBuff).reduce((acc, cur) => {
-        //     return acc + cur.valor;
-        // }, 0);
-
-        return 0;
-    }
-
-    get valorTotal(): number {
-        return this.valor + this.valorBonus;
-    }
+    get refTipoDano(): TipoDano { return SingletonHelper.getInstance().tipos_dano.find(tipo_dano => tipo_dano.id === this._idTipoDano)!; }
+    get valorTotal(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(this._valor, this.refTipoDano.refLinhaEfeito.id); }
 }
 
 export class DanoGeral { // traduz em 1 unico ataque
@@ -44,33 +43,4 @@ export class InstanciaDano {
         this.valor = valor;
         this.tipoDano = tipoDano;
     }
-}
-
-export class ReducaoDanoa {
-    public tipo: TipoDano;
-    public valor: number;
-
-    constructor(tipo: TipoDano, valor: number) {
-        this.tipo = tipo;
-        this.valor = valor;
-    }
-}
-
-// export class TipoDano {
-//     public id:number;
-//     public nome:string;
-//     public danoPertencente?:TipoDano;
-//     // estatistica alvo
-
-//     constructor(id:number, nome:string) {
-//         this.id = id;
-//         this.nome = nome;
-//     }
-// }
-
-export class TipoDano {
-    constructor(
-        public id: number,
-        public nome: string,
-    ) { }
 }

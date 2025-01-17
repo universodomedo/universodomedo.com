@@ -63,7 +63,15 @@ const AreaPericia = ({ pericia }: { pericia: PericiaPatentePersonagem }) => {
           <TooltipPericia pericia={pericia} />
         </TooltipPersistente.Content>
       </TooltipPersistente>
-      <h3 className={style.pericia_valor}>{pericia.valorTotal}</h3>
+
+      <h3 className={style.pericia_valor}>
+        <span style={{ color: pericia.refPatente.corTexto }}>{pericia.refPatente.nome.slice(0, 1)}</span>
+        {pericia.valorEfeito !== 0 && (
+          <span style={{color: pericia.valorEfeito > 0 ? '#83EF83' : '#E98282'}}>
+            {` ${pericia.valorEfeito > 0 ? `+${pericia.valorEfeito}` : pericia.valorEfeito}`}
+          </span>
+        )}
+      </h3>
     </div>
   );
 }
@@ -82,6 +90,15 @@ const TooltipPericia = ({ pericia }: { pericia: PericiaPatentePersonagem }) => {
     <>
       <h2>{pericia.refPericia.nome}</h2>
       <p>{pericia.refPericia.descricao}</p>
+
+      {pericia.detalhesValor.length > 0 && (
+        <>
+          <h2>Detalhes do Bônus</h2>
+          {pericia.detalhesValor.map(detalheValor => (
+            <p>{detalheValor}</p>
+          ))}
+        </>
+      )}
     </>
   );
 }

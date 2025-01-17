@@ -1,5 +1,5 @@
 // #region Imports
-import { Acao, ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso, ComportamentoDificuldadeAcao, ComportamentoCustoAcao, Item } from 'Types/classes/index.ts';
+import { ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso, ComportamentoDificuldadeAcao, ComportamentoCustoAcao, Item } from 'Types/classes/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -10,7 +10,7 @@ export type RLJ_Ficha2 = {
     periciasPatentes?: { idPericia: number, idPatente: number }[],
     rituais?: ArgsRitual[],
     inventario?: ArgsItem[],
-    // reducoesDano:
+    reducoesDano?: { idTipoDano: number, valor: number }[],
     pendencias: { idNivelEsperado: number },
 }
 

@@ -26,7 +26,7 @@ export class Ritual {
 
     get nomeExibicao(): string { return this.dados.nome };
 
-    adicionarAcoes(acoes: { props: ConstructorParameters<typeof Acao>, config: (acao: Acao) => void }[]): this { return (adicionarAcoesUtil(this, this.acoes, acoes), this); }
+    adicionarAcoes(acoes: { props: ConstructorParameters<typeof Acao>[0], config: (acao: Acao) => void }[]): this { return (adicionarAcoesUtil(this, this.acoes, acoes), this); }
 
     static get filtroProps(): FiltroProps<Ritual> {
         return new FiltroProps<Ritual>(

@@ -60,11 +60,11 @@ const PaginaFicha = () => {
             {personagem && (
                 <>
                     <div className={style.div_demo_acoes}>
-                        {/* <div>
+                        <div>
                             <h1>Teste</h1>
                             <button onClick={() => console.log(personagem)}>Teste</button>
                         </div>
-
+{/* 
                         <div>
                             <h1>Teste2</h1>
                             <button onClick={() => { personagem.inventario.items.find(item => item.id === 3)!.sacar({ tipo: 'Sobreescreve', novoGasto: { precoExecucao: {precos: [{ idTipoExecucao: 1, quantidadeExecucoes: 0 }]} } }); personagem.onUpdate(); }}>Teste2</button>
@@ -92,16 +92,6 @@ const PaginaFicha = () => {
                                 );}}>Aplicar</button>
                             </div>
                         </div>
-{/* 
-                        <div>
-                            <h1>Alterar Est. Máxima</h1>
-                            <div>
-                                <select id="valorMaximo">{Array.from({length:100}, (_, index) => (index + 1) * 10).map((option) => (<option key={option} value={option}>{option}</option>))}</select>
-                                <select id="estatisticaMaxima">{personagem.estatisticasDanificaveis.map(estatistica_danificavel => (<option key={estatistica_danificavel.refEstatisticaDanificavel.id} value={estatistica_danificavel.refEstatisticaDanificavel.id}> {estatistica_danificavel.refEstatisticaDanificavel.nome} </option>))}</select>
-                            </div>
-                            <div><button onClick={() => {personagem.alterarMaximoEstatistica(parseInt((document.querySelector('#estatisticaMaxima') as HTMLSelectElement).value), parseInt((document.querySelector('#valorMaximo') as HTMLInputElement).value))}}>Alterar</button></div>
-                        </div> */}
-
 
                         {/* <div>
                             <h1>Shopping</h1>
