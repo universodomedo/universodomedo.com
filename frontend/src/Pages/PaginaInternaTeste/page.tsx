@@ -18,7 +18,7 @@ import ModalCriarFicha from './modal.tsx';
 
 const page = () => {
     // const {salas, criaSala} = useSalaContext();
-    // comitando denovo
+    // comitando denov
     const [dadosFicha, setDadosFicha] = useState<RLJ_Ficha2[]>([]);
     const navigate = useNavigate();
 
