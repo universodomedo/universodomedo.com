@@ -13,7 +13,7 @@ export class ControladorModificadores {
 
     removeModificador(modificador: Modificador) { this._modificadores = this._modificadores.filter(modEquivalente => modEquivalente.codigoUnico !== modificador.codigoUnico); }
     valoresEfeitoPorLinhaEfeito(idLinhaEfeito: number): ValoresEfeito { return this.valoresEfeitosEDetalhesPorLinhaEfeito.find(info => info.refLinhaEfeito.id === idLinhaEfeito)?.valoresEfeitos || new ValoresEfeito({}); }
-    detalhesPorLinhaEfeito(idLinhaEfeito: number): string[] { return this.valoresEfeitosEDetalhesPorLinhaEfeito.find(info => info.refLinhaEfeito.id === idLinhaEfeito)!.valoresEfeitos.listaValorBonusAdicional.map(bonus => `${bonus.nomeRegistro}: ${adicionaSinalEmNumeroParaExibicao(bonus.valor)}`); }
+    detalhesPorLinhaEfeito(idLinhaEfeito: number): string[] { return this.valoresEfeitosEDetalhesPorLinhaEfeito.find(info => info.refLinhaEfeito.id === idLinhaEfeito)?.valoresEfeitos.listaValorBonusAdicional.map(bonus => `${bonus.nomeRegistro}: ${adicionaSinalEmNumeroParaExibicao(bonus.valor)}`) || []; }
 
     // prototipoSobrecarga():Buff|void {
     //     const personagem = getPersonagemFromContext();

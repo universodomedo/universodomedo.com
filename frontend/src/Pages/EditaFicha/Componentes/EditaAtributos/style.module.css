@@ -12,6 +12,10 @@
     justify-content: space-evenly;
 }
 
+.atributo_contadores h1 {
+    margin: 0;
+}
+
 .atributos {
     display: flex;
     flex-direction: row;
@@ -43,6 +47,11 @@
     align-items: center;
 }
 
+.nome_atributo {
+    margin: 0;
+    line-height: .8;
+}
+
 .valor_atributo {
     display: flex;
     flex-direction: row;
@@ -52,11 +61,17 @@
     gap: 6%;
 }
 
+.valor_atributo h2 {
+    margin: 0;
+}
+
 .editando_ficha_estatisticas {
     display: flex;
     flex-direction: row;
     gap: 2vw;
     margin: auto;
+    width: 100%;
+    justify-content: center;
 }
 
 .visualizador_estatistica {
@@ -66,6 +81,6 @@
     padding: 1%;
 }
 
-.ganhos_estatistica_por_atributo {
+.nome_estatistica, .alteracao_valor_estatistica, .ganhos_estatistica_por_atributo {
     margin: 0;
 }

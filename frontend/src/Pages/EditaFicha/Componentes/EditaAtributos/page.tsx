@@ -31,11 +31,11 @@ const page = () => {
             <div className={style.corpo_atributo}>
                 <Tooltip>
                     <Tooltip.Trigger>
-                        <h2>{atributo.refAtributo.nome}</h2>
+                        <h2 className={style.nome_atributo}>{atributo.refAtributo.nome}</h2>
                     </Tooltip.Trigger>
 
                     <Tooltip.Content>
-                        <h2>{atributo.refAtributo.nome}</h2>
+                        <h1>{atributo.refAtributo.nome}</h1>
                         <p>{atributo.refAtributo.descricao}</p>
                         <div>
                             {atributo.ganhosEstatisticas.filter(atributo => atributo.valorPorPonto > 0).map((atributo, index) => (
@@ -53,22 +53,28 @@ const page = () => {
         )
     }
 
-    const CorpoEstatistica = ({ idEstatistica, valorAtualizado }: { idEstatistica: number, valorAtualizado: number }) => {
+    const CorpoEstatistica = ({ idEstatistica, valorEstatistica }: { idEstatistica: number, valorEstatistica: { valorAtual: number, ganhoAtual: number,  valorAtualizado: number } }) => {
         const estatistica = SingletonHelper.getInstance().tipo_estatistica_danificavel.find(estatistica => estatistica.id === idEstatistica)!;
 
         return (
             <div className={style.visualizador_estatistica}>
                 <Tooltip>
                     <Tooltip.Trigger>
-                        <h2>{estatistica?.nomeAbrev}</h2>
+                        <h2 className={style.nome_estatistica}>{estatistica?.nomeAbrev}</h2>
                     </Tooltip.Trigger>
 
                     <Tooltip.Content>
-                        <h2>{estatistica.nome}</h2>
+                        <h1>{estatistica.nome}</h1>
                         <p>{estatistica.descricao}</p>
+                        <h2>Ganhos de {estatistica.nomeAbrev}: +{valorEstatistica.ganhoAtual}</h2>
+                        {ganhoAtributo.atributos.map(atributo => (
+                            atributo.ganhosEstatisticas.filter(ganhosEstatistica => ganhosEstatistica.refEstatistica.id === idEstatistica).map(ganhoEstatistica => (
+                                <p>{`${atributo.refAtributo.nomeAbrev}: +${Number((ganhoEstatistica.valorPorPonto * atributo.valorAtual).toFixed(1))}`}</p>
+                            ))
+                        ))}
                     </Tooltip.Content>
                 </Tooltip>
-                <h2>{Math.floor(valorAtualizado)}</h2>
+                <h2 className={style.alteracao_valor_estatistica}>{`${Math.floor(valorEstatistica.valorAtual)} → ${Math.floor(valorEstatistica.valorAtualizado)}`}</h2>
             </div>
         );
     }
@@ -89,9 +95,9 @@ const page = () => {
             </div>
 
             <div className={style.editando_ficha_estatisticas}>
-                <CorpoEstatistica idEstatistica={1} valorAtualizado={ganhosNex.pvAtualizado} />
-                <CorpoEstatistica idEstatistica={2} valorAtualizado={ganhosNex.psAtualizado} />
-                <CorpoEstatistica idEstatistica={3} valorAtualizado={ganhosNex.peAtualizado} />
+                <CorpoEstatistica idEstatistica={1} valorEstatistica={ganhosNex.pv} />
+                <CorpoEstatistica idEstatistica={2} valorEstatistica={ganhosNex.ps} />
+                <CorpoEstatistica idEstatistica={3} valorEstatistica={ganhosNex.pe} />
             </div>
         </div>
     );

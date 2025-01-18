@@ -79,6 +79,16 @@ const TooltipAtributo = ({ atributo }: { atributo: AtributoPersonagem }) => {
     <>
       <h2>{atributo.refAtributo.nome}</h2>
       <p>{atributo.refAtributo.descricao}</p>
+
+      {/* verificando se existe algum bonus além do valor natural */}
+      {atributo.detalhesValor.length > 0 && (
+        <>
+          <h2>Detalhes do Total: {atributo.valorTotal}</h2>
+          {atributo.detalhesValor.map((detalheValor, index) => (
+            <p key={index}>{detalheValor}</p>
+          ))}
+        </>
+      )}
     </>
   );
 }
@@ -90,9 +100,9 @@ const TooltipPericia = ({ pericia }: { pericia: PericiaPatentePersonagem }) => {
       <p>{pericia.refPericia.descricao}</p>
 
       {/* verificando se existe algum bonus além da patente */}
-      {pericia.detalhesValor.length > 1 && (
+      {pericia.detalhesValor.length > 0 && (
         <>
-          <h2>Detalhes do Bônus: {adicionaSinalEmNumeroParaExibicao(pericia.valorTotal)}</h2>
+          <h2>Detalhes do Total: {pericia.valorTotal}</h2>
           {pericia.detalhesValor.map((detalheValor, index) => (
             <p key={index}>{detalheValor}</p>
           ))}

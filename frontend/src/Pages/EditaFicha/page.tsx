@@ -130,7 +130,7 @@ const page = () => {
             {ganhosNex && ganhosNex.ganhos.length > 0 && (
                 <FichaProvider ganhosNex={ganhosNex} atualizarFicha={atualizarFicha}>
                     <div className={style.editando_ficha}>
-                        <h1>Criando Ficha - NEX {SingletonHelper.getInstance().niveis.find(nivel => nivel.id === idNivelFazendoAgora)?.nomeDisplay}</h1>
+                        <h1 className={style.titulo_edicao_ficha}>Criando Ficha - NEX {SingletonHelper.getInstance().niveis.find(nivel => nivel.id === idNivelFazendoAgora)?.nomeDisplay}</h1>
 
                         <div className={style.recipiente_area_edicao}>
                             <div className={style.area_edicao}>

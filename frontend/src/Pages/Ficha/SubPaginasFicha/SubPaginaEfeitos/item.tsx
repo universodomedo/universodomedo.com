@@ -54,7 +54,7 @@ const page = ({ valoresLinhaEfeito }: { valoresLinhaEfeito: ValoresLinhaEfeito }
 
     const ConteudoDetalhes = () => {
         return (
-            <div className={style.blocos_texto}>
+            <>
                 <div className={style.bloco_texto}>
                     {valoresLinhaEfeito.valoresEfeitos.valorBaseAdicionalPresente && (
                         <details>
@@ -80,9 +80,9 @@ const page = ({ valoresLinhaEfeito }: { valoresLinhaEfeito: ValoresLinhaEfeito }
                             ))}
                         </details>
                     )}
+                    <p>Efeito finaliza em 2 turnos</p>
                 </div>
-
-            </div>
+            </>
         );
     }
 

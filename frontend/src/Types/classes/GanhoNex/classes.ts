@@ -28,6 +28,31 @@ export class GanhosNex {
 
     }
 
+    get pv(): { valorAtual: number, ganhoAtual: number,  valorAtualizado: number } {
+        const valorAtual = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 1)?.valor || 0;
+        const ganhoAtual = this.ganhos.reduce((acc, cur) => acc + cur.pvGanhoIndividual, 0);
+        const valorAtualizado = valorAtual + ganhoAtual;
+
+        return { valorAtual, ganhoAtual, valorAtualizado };
+    }
+
+    get ps(): { valorAtual: number, ganhoAtual: number,  valorAtualizado: number } {
+        const valorAtual = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 2)?.valor || 0;
+        const ganhoAtual = this.ganhos.reduce((acc, cur) => acc + cur.psGanhoIndividual, 0);
+        const valorAtualizado = valorAtual + ganhoAtual;
+
+        return { valorAtual, ganhoAtual, valorAtualizado };
+    }
+
+    get pe(): { valorAtual: number, ganhoAtual: number,  valorAtualizado: number } {
+        const valorAtual = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 3)?.valor || 0;
+        const ganhoAtual = this.ganhos.reduce((acc, cur) => acc + cur.peGanhoIndividual, 0);
+        const valorAtualizado = valorAtual + ganhoAtual;
+
+        return { valorAtual, ganhoAtual, valorAtualizado };
+    }
+
+
     get pvAtualizado(): number {
         const valorAtualizado = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 1)!.valor! + this.ganhos.reduce((acc, cur) => acc + cur.pvGanhoIndividual, 0);
 

@@ -48,7 +48,7 @@ const page = () => {
             <div className={style.corpo_pericia}>
                 <Tooltip>
                     <Tooltip.Trigger>
-                        <h2>{pericia.refPericia.nome}</h2>
+                        <h2 className={style.nome_pericia}>{pericia.refPericia.nome}</h2>
                     </Tooltip.Trigger>
 
                     <Tooltip.Content>
@@ -57,7 +57,7 @@ const page = () => {
                     </Tooltip.Content>
                 </Tooltip>
 
-                <h3 style={{ color: pericia.refPatenteAtual.corTexto }}>{pericia.refPatenteAtual.nome}</h3>
+                <h3 className={style.patente_pericia} style={{ color: pericia.refPatenteAtual.corTexto }}>{pericia.refPatenteAtual.nome}</h3>
                 <div className={style.botoes_pericia}>
                     <button onClick={() => { alteraValor(pericia.refPericia.id, -1) }} disabled={pericia.estaEmValorMinimo || !pericia.estaMaiorQueInicial || !ganhoPericia.deparaPericiaPatente(pericia)?.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
                     <button onClick={() => { alteraValor(pericia.refPericia.id, +1) }} disabled={!ganhoPericia.temPontosParaEssaPatente(pericia)}><FontAwesomeIcon icon={faPlus} /></button>
@@ -107,7 +107,7 @@ const page = () => {
                 <div className={style.atributos_e_pericias}>
                     {periciasAgrupadas.map((grupo, indexGrupo) => (
                         <div key={indexGrupo} className={style.atributo_agrupa_pericias}>
-                            <h1>{grupo.atributo.nome}</h1>
+                            <h1 className={style.nome_atributo_agrupa_pericias}>{grupo.atributo.nome}</h1>
                             <div className={style.editar_pericia}>
                                 {grupo.pericias.map((pericia, index) => (
                                     <CorpoPericia key={index} pericia={pericia} />

@@ -27,7 +27,7 @@ const page = () => {
 
     return (
         <div className={style.atributo_contadores}>
-            <h1>Rituais Pendentes: {ganhoRitual.numeroRituais - ganhoRitual.dadosRituais.length}</h1>
+            {/* <h1>Rituais Pendentes: {ganhoRitual.numeroRituais - ganhoRitual.dadosRituais.length}</h1>
 
             <h1>Rituais Criados:</h1>
             {ganhoRitual.dadosRituais.length > 0 ? (
@@ -46,7 +46,7 @@ const page = () => {
 
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <CriadorRitual onCreate={handleRitualCreated}/>
-            </Modal>
+            </Modal> */}
         </div>
     );
 }

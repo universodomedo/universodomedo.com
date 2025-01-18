@@ -17,6 +17,10 @@
     justify-content: space-evenly;
 }
 
+.patente_contadores h1 {
+    margin: 0;
+}
+
 .atributos_e_pericias {
     display: flex;
     flex-direction: column;
@@ -27,6 +31,10 @@
     display: flex;
     flex-direction: column;
     gap: 1vh;
+}
+
+.nome_atributo_agrupa_pericias {
+    margin: 0;
 }
 
 .conjunto_pericias {
@@ -53,6 +61,10 @@
     align-items: center;
     text-align: center;
     justify-content: center;
+}
+
+.nome_pericia, .patente_pericia {
+    margin: 0;
 }
 
 .botoes_pericia {

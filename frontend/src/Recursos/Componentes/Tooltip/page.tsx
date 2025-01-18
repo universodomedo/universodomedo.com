@@ -15,13 +15,13 @@ function Tooltip({ open, defaultOpen, onOpenChange, children, ...props }: { open
 
 Tooltip.Trigger = function TooltipTrigger({ children }: { children: ReactNode }) {
 	return (
-		<TooltipPrimitive.Trigger asChild>
+		<TooltipPrimitive.Trigger className={style.tooltip_gatilho} asChild>
 			{children}
 		</TooltipPrimitive.Trigger>
 	);
 };
 
-Tooltip.Content = function TooltipContent({ children, ...props }: { children: ReactNode;[key: string]: any; }) {
+Tooltip.Content = function TooltipContent({ children, ...props }: { children: ReactNode; [key: string]: any; }) {
 	return (
 		<TooltipPrimitive.Content className={style.tooltip_conteudo} side="top" align="center" sideOffset={5} {...props} >
 			{children}

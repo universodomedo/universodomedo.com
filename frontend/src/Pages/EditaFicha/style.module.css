@@ -9,8 +9,8 @@
     flex: 1;
 }
 
-.editando_ficha h1, .editando_ficha h2, .editando_ficha h3 {
-    margin: 0;
+.titulo_edicao_ficha {
+    margin: 0
 }
 
 .editando_ficha input {

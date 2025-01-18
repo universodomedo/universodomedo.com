@@ -1,5 +1,5 @@
 // #region Imports
-import { LinhaEfeito } from 'Types/classes/index.ts';
+import { adicionaSinalEmNumeroParaExibicao, LinhaEfeito } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -25,4 +25,6 @@ export class AtributoPersonagem {
 
     get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this._idAtributo)!; }
     get valorTotal(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(this.valor, this.refAtributo.refLinhaEfeito.id); }
+
+    get detalhesValor(): string[] { return [`Valor Natural: ${this.valor}`].concat(getPersonagemFromContext().obterDetalhesPorLinhaEfeito(this.refAtributo.refLinhaEfeito.id)); }
 }
