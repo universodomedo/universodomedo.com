@@ -1,5 +1,5 @@
 // #region Imports
-import { Atributo, AtributoPersonagem, LinhaEfeito } from 'Types/classes/index.ts';
+import { adicionaSinalEmNumeroParaExibicao, Atributo, AtributoPersonagem, LinhaEfeito } from 'Types/classes/index.ts';
 import { LoggerHelper, SingletonHelper } from 'Types/classes_estaticas.tsx';
 
 import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
@@ -45,7 +45,7 @@ export class PericiaPatentePersonagem {
     get valorEfeito(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(0, this.refPericia.refLinhaEfeito.id); }
     get valorTotal(): number { return this.valorEfeito + this.valorBonusPatente; }
 
-    get detalhesValor(): string[] { return ['oi', 'xau'] }
+    get detalhesValor(): string[] { return [`Patente ${this.refPatente.nome}: ${adicionaSinalEmNumeroParaExibicao(this.refPatente.valor)}`].concat(getPersonagemFromContext().obterDetalhesPorLinhaEfeito(this.refPericia.refLinhaEfeito.id)); }
 
     realizarTeste = () => {
         const resultado = ExecutaTestePericiaGenerico(this.refAtributoPersonagem, this);

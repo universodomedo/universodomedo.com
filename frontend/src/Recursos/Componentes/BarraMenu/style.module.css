@@ -1,7 +1,3 @@
-@import "@radix-ui/colors/black-alpha.css";
-@import "@radix-ui/colors/mauve.css";
-@import "@radix-ui/colors/violet.css";
-
 .barra_menu {
 	display: flex;
     background-color: white;
@@ -34,7 +30,7 @@
 	font-weight: 500;
 	line-height: 1;
 	border-radius: 4px;
-	color: var(--violet-11);
+	color: '#6550B9';
 	font-size: 13px;
 	display: flex;
 	align-items: center;
@@ -43,7 +39,7 @@
 } */
 
 /* .menu_item[data-highlighted], .menu_item[data-state="open"] {
-    background-color: var(--violet-4);
+    background-color: '#EBE4FF';
 } */
 
 .menu_conteudo, .menu_subconteudo {
@@ -66,7 +62,7 @@
 	all: unset;
 	font-size: 13px;
 	line-height: 1;
-	color: var(--violet-11);
+	color: '#6550B9';
 	border-radius: 4px;
 	display: flex;
 	align-items: center;
@@ -85,8 +81,8 @@
 
 .objeto_menu_item[data-state="open"],
 .MenubarSubTrigger[data-state="open"] {
-	background-color: var(--violet-4);
-	color: var(--violet-11);
+	background-color: '#EBE4FF';
+	color: '#6550B9';
 }
 
 .objeto_menu_item[data-highlighted],
@@ -95,17 +91,17 @@
 .MenubarRadioItem[data-highlighted] {
 	background-image: linear-gradient(
 		135deg,
-		var(--violet-9) 0%,
-		var(--violet-10) 100%
+		'#6E56CF' 0%,
+		'#654DC4' 100%
 	);
-	color: var(--violet-1);
+	color: '#FDFCFE';
 }
 
 .objeto_menu_item[data-disabled],
 .MenubarSubTrigger[data-disabled],
 .objeto_menu_checkboxitem[data-disabled],
 .MenubarRadioItem[data-disabled] {
-	color: var(--mauve-8);
+	color: '#BCBAC7';
 	pointer-events: none;
 }
 
@@ -117,7 +113,7 @@
 
 .objeto_menu_separador {
 	height: 1px;
-	background-color: var(--violet-6);
+	background-color: '#D4CAFE';
 	margin: 5px;
 }
 
@@ -126,5 +122,5 @@
 }
 
 [data-disabled] > .RightSlot {
-	color: var(--mauve-8);
+	color: '#BCBAC7';
 }

@@ -367,12 +367,12 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         // // Classes //
 
         new HabilidadePassiva({
-            dadosGenericosHabilidade: { nome: 'Amante de Armas', descricao: 'Suas Armas recebem o Nível de Patente da Perícia como Pontos de Característica Bônus' }, fonteHabilidade: { fonte: 'Habilidade Especial', tipo: 'Classe' }, requisitoFicha: new RequisitoFicha((personagem: Personagem) => {
+            dadosGenericosHabilidade: { nome: 'Bom de Briga', descricao: 'Suas Armas recebem 1 Ponto de Característica Bônus' }, fonteHabilidade: { fonte: 'Habilidade Especial', tipo: 'Classe' }, requisitoFicha: new RequisitoFicha((personagem: Personagem) => {
                 return personagem.detalhes.refClasse.id === 2;
             })
         }).adicionarModificadores([
-            { nome: 'Amante de Armas de Ataque Corpo-a-Corpo', idDuracao: 5, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito: 63, idTipoEfeito: 4, dadosValoresEfeitos: { valorBonusAdicional: getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === 8)!.valorNivelPatente } }], dadosComportamentos: { dadosComportamentoPassivo: [] } },
-            { nome: 'Amante de Armas de Ataque à Distância', idDuracao: 5, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito: 64, idTipoEfeito: 4, dadosValoresEfeitos: { valorBonusAdicional: getPersonagemFromContext().pericias.find(pericia => pericia.refPericia.id === 5)!.valorNivelPatente } }], dadosComportamentos: { dadosComportamentoPassivo: [] } }
+            { nome: 'Bom de Briga Corpo-a-Corpo', idDuracao: 5, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito: 63, idTipoEfeito: 4, dadosValoresEfeitos: { valorBonusAdicional: 2 } }], dadosComportamentos: { dadosComportamentoPassivo: [] } },
+            { nome: 'Bom de Briga à Distância', idDuracao: 5, quantidadeDuracaoMaxima: 1, dadosEfeitos: [{ idLinhaEfeito: 64, idTipoEfeito: 4, dadosValoresEfeitos: { valorBonusAdicional: 1 } }], dadosComportamentos: { dadosComportamentoPassivo: [] } }
         ]),
 
         new HabilidadePassiva({

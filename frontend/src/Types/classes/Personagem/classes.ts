@@ -99,6 +99,10 @@ export class Personagem {
         return Math.floor((valorBase + valoresLinhaEfeito.valorBaseAdicional) * (1 + (valoresLinhaEfeito.valorPorcentagemAdicional / 100))) + valoresLinhaEfeito.valorBonusAdicional;
     }
 
+    obterDetalhesPorLinhaEfeito(idLinhaEfeito: number): string[] {
+        return this.controladorModificadores.detalhesPorLinhaEfeito(idLinhaEfeito);
+    }
+
     public onUpdate: () => void = () => { };
 
     // receberDanoVital = (danoGeral:DanoGeral) => {

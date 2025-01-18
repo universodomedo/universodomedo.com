@@ -1,20 +1,33 @@
 // #region Imports
 import style from './style.module.css';
+import { ReactNode } from 'react';
+
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 // #endregion
 
-function Tooltip({ children, content, open, defaultOpen, onOpenChange, ...props }: { children: any; content: any; open?: any; defaultOpen?: any; onOpenChange?: any; }) {
+function Tooltip({ open, defaultOpen, onOpenChange, children, ...props }: { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void; children: ReactNode; }) {
 	return (
-		<TooltipPrimitive.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} >
-			<TooltipPrimitive.Trigger asChild>
-				{children}
-			</TooltipPrimitive.Trigger>
-			<TooltipPrimitive.Content className={style.tooltip_conteudo} side="top" align="center" {...props} sideOffset={5}>
-				{content}
-				<TooltipPrimitive.Arrow className={style.tooltip_seta} width={11} height={5} />
-			</TooltipPrimitive.Content>
+		<TooltipPrimitive.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} delayDuration={700} >
+			{children}
 		</TooltipPrimitive.Root>
 	);
 }
+
+Tooltip.Trigger = function TooltipTrigger({ children }: { children: ReactNode }) {
+	return (
+		<TooltipPrimitive.Trigger asChild>
+			{children}
+		</TooltipPrimitive.Trigger>
+	);
+};
+
+Tooltip.Content = function TooltipContent({ children, ...props }: { children: ReactNode;[key: string]: any; }) {
+	return (
+		<TooltipPrimitive.Content className={style.tooltip_conteudo} side="top" align="center" sideOffset={5} {...props} >
+			{children}
+			<TooltipPrimitive.Arrow className={style.tooltip_seta} width={11} height={5} />
+		</TooltipPrimitive.Content>
+	);
+};
 
 export default Tooltip;

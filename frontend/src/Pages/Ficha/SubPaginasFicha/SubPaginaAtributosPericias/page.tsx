@@ -1,12 +1,11 @@
 // #region Imports
 import style from "./style.module.css";
-import { useState } from 'react';
 
-import { AtributoPersonagem, PericiaPatentePersonagem } from 'Types/classes/index.ts';
+import { adicionaSinalEmNumeroParaExibicao, AtributoPersonagem, PericiaPatentePersonagem } from 'Types/classes/index.ts';
 import { textoFormatadoParaVisualizacao } from 'Utils/utils.tsx';
 import { useContextoAbaAtributo } from './contexto.tsx';
 
-import TooltipPersistente from 'Recursos/Componentes/HoverCard/page.tsx';
+import Tooltip from 'Recursos/Componentes/Tooltip/page.tsx';
 // #endregion
 
 const page = ({ atributos, pericias }: { atributos: AtributoPersonagem[], pericias: PericiaPatentePersonagem[] }) => {
@@ -23,21 +22,21 @@ const page = ({ atributos, pericias }: { atributos: AtributoPersonagem[], perici
 }
 
 const AreaAtributo = ({ atributo, pericias }: { atributo: AtributoPersonagem, pericias: PericiaPatentePersonagem[] }) => {
-  const [openTooltip, setOpenTooltip] = useState(false);
   const { abreviar } = useContextoAbaAtributo();
   const atributoPorExtenso = textoFormatadoParaVisualizacao(abreviar ? atributo.refAtributo.nomeAbrev : atributo.refAtributo.nome);
 
   return (
     <div className={`${style.atributo_personagem} ${style[atributo.refAtributo.nomeAbrev]}`}>
-      <TooltipPersistente open={openTooltip} onOpenChange={setOpenTooltip}>
-        <TooltipPersistente.Trigger>
+      <Tooltip>
+        <Tooltip.Trigger>
           <h3 className={style.nome_atributo}>{`${atributoPorExtenso} [${atributo.valorTotal}]`}</h3>
-        </TooltipPersistente.Trigger>
+        </Tooltip.Trigger>
 
-        <TooltipPersistente.Content>
+        <Tooltip.Content>
           <TooltipAtributo atributo={atributo} />
-        </TooltipPersistente.Content>
-      </TooltipPersistente>
+        </Tooltip.Content>
+      </Tooltip>
+
       <div className={style.pericias_personagem}>
         {pericias.map((pericia, index) => (
           <AreaPericia key={index} pericia={pericia} />
@@ -48,27 +47,26 @@ const AreaAtributo = ({ atributo, pericias }: { atributo: AtributoPersonagem, pe
 }
 
 const AreaPericia = ({ pericia }: { pericia: PericiaPatentePersonagem }) => {
-  const [openTooltip, setOpenTooltip] = useState(false);
   const { abreviar } = useContextoAbaAtributo();
   const periciaPorExtenso = textoFormatadoParaVisualizacao(abreviar ? pericia.refPericia.nomeAbrev : pericia.refPericia.nome);
 
   return (
     <div className={style.pericia_personagem}>
-      <TooltipPersistente open={openTooltip} onOpenChange={setOpenTooltip}>
-        <TooltipPersistente.Trigger>
+      <Tooltip>
+        <Tooltip.Trigger>
           <button className={style.botao_pericia} onClick={() => { pericia.realizarTeste(); }}>{periciaPorExtenso}</button>
-        </TooltipPersistente.Trigger>
+        </Tooltip.Trigger>
 
-        <TooltipPersistente.Content>
+        <Tooltip.Content>
           <TooltipPericia pericia={pericia} />
-        </TooltipPersistente.Content>
-      </TooltipPersistente>
+        </Tooltip.Content>
+      </Tooltip>
 
       <h3 className={style.pericia_valor}>
         <span style={{ color: pericia.refPatente.corTexto }}>{pericia.refPatente.nome.slice(0, 1)}</span>
         {pericia.valorEfeito !== 0 && (
-          <span style={{color: pericia.valorEfeito > 0 ? '#83EF83' : '#E98282'}}>
-            {` ${pericia.valorEfeito > 0 ? `+${pericia.valorEfeito}` : pericia.valorEfeito}`}
+          <span style={{ color: pericia.valorEfeito > 0 ? '#83EF83' : '#E98282' }}>
+            {` ${adicionaSinalEmNumeroParaExibicao(pericia.valorEfeito)}`}
           </span>
         )}
       </h3>
@@ -88,14 +86,15 @@ const TooltipAtributo = ({ atributo }: { atributo: AtributoPersonagem }) => {
 const TooltipPericia = ({ pericia }: { pericia: PericiaPatentePersonagem }) => {
   return (
     <>
-      <h2>{pericia.refPericia.nome}</h2>
+      <h1>{pericia.refPericia.nome}</h1>
       <p>{pericia.refPericia.descricao}</p>
 
-      {pericia.detalhesValor.length > 0 && (
+      {/* verificando se existe algum bonus além da patente */}
+      {pericia.detalhesValor.length > 1 && (
         <>
-          <h2>Detalhes do Bônus</h2>
-          {pericia.detalhesValor.map(detalheValor => (
-            <p>{detalheValor}</p>
+          <h2>Detalhes do Bônus: {adicionaSinalEmNumeroParaExibicao(pericia.valorTotal)}</h2>
+          {pericia.detalhesValor.map((detalheValor, index) => (
+            <p key={index}>{detalheValor}</p>
           ))}
         </>
       )}

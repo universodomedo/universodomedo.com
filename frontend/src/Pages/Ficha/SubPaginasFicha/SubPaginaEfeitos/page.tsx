@@ -1,5 +1,5 @@
 // #region Imports
-import { ControladorModificadores, Efeito, Modificador, ValoresLinhaEfeito } from 'Types/classes/index.ts';
+import { ControladorModificadores, ValoresLinhaEfeito } from 'Types/classes/index.ts';
 
 import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
@@ -13,15 +13,15 @@ const page: React.FC<{ abaId: string; controladorModificadores: ControladorModif
 
   const { mostrarFiltros } = useContextoAbaEfeitos();
 
-  const teste = controladorModificadores.valoresEfeitosEDetalhesPorLinhaEfeito.filter(valores => !valores.valoresEstaVazio);
+  const efeito = controladorModificadores.valoresEfeitosEDetalhesPorLinhaEfeito.filter(valores => !valores.valoresEstaVazio);
 
-  const renderBuffItem = (valoresLinhaEfeito: ValoresLinhaEfeito, index: number) => (
+  const renderEfeitoItem = (valoresLinhaEfeito: ValoresLinhaEfeito, index: number) => (
     <Item key={index} valoresLinhaEfeito={valoresLinhaEfeito} />
   );
 
   return (
-    <ConsultaProvider<ValoresLinhaEfeito> abaId={abaId} registros={[teste]} mostrarFiltro={mostrarFiltros} filtroProps={ValoresLinhaEfeito.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: false, divisoes: ['Efeitos'] }}>
-      <Consulta renderItem={renderBuffItem} />
+    <ConsultaProvider<ValoresLinhaEfeito> abaId={abaId} registros={[efeito]} mostrarFiltro={mostrarFiltros} filtroProps={ValoresLinhaEfeito.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: false, divisoes: ['Efeitos'] }}>
+      <Consulta renderItem={renderEfeitoItem} />
     </ConsultaProvider>
   );
 }

@@ -64,9 +64,9 @@
     padding: 1%;
 }
 
-.conteudo_aba h1 {
+/* .conteudo_aba h1 {
     margin: 0;
-}
+} */
 
 .wrapper_aba > * {
     border: 2px white solid;

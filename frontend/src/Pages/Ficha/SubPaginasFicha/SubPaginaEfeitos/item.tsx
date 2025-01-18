@@ -19,14 +19,14 @@ const page = ({ valoresLinhaEfeito }: { valoresLinhaEfeito: ValoresLinhaEfeito }
         return (
             <div className={style.embrulho_icone}>
                 {mostrarEtiquetas && (<h3>{valoresLinhaEfeito.refLinhaEfeito.nome}</h3>)}
-                <Tooltip content={valoresLinhaEfeito.refLinhaEfeito.nome}>
-                    <div
-                        className={`${style.icone}`}
-                        style={{
-                            backgroundImage: `url(data:image/svg+xml;base64,${valoresLinhaEfeito.refLinhaEfeito.svg})`,
-                            backgroundColor: '#FFFFFF',
-                        }}
-                    />
+                <Tooltip>
+                    <Tooltip.Trigger>
+                        <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${valoresLinhaEfeito.refLinhaEfeito.svg})`, backgroundColor: '#FFFFFF', }} />
+                    </Tooltip.Trigger>
+
+                    <Tooltip.Content>
+                        <h3>{valoresLinhaEfeito.refLinhaEfeito.nome}</h3>
+                    </Tooltip.Content>
                 </Tooltip>
             </div>
         );
@@ -37,8 +37,8 @@ const page = ({ valoresLinhaEfeito }: { valoresLinhaEfeito: ValoresLinhaEfeito }
             <div className={style.conteudo_popover}>
                 <h2>{valoresLinhaEfeito.refLinhaEfeito.nome}</h2>
                 <div className={style.acoes}>
-                    <Modal open={openDetalhes} onOpenChange={(isOpen) => {setOpenDetalhes(isOpen); if (!isOpen) close();}}>
-                    {/* <Modal open={openDetalhes} onOpenChange={setOpenDetalhes}> */}
+                    <Modal open={openDetalhes} onOpenChange={(isOpen) => { setOpenDetalhes(isOpen); if (!isOpen) close(); }}>
+                        {/* <Modal open={openDetalhes} onOpenChange={setOpenDetalhes}> */}
                         <Modal.Button>
                             Detalhes
                         </Modal.Button>
@@ -81,15 +81,15 @@ const page = ({ valoresLinhaEfeito }: { valoresLinhaEfeito: ValoresLinhaEfeito }
                         </details>
                     )}
                 </div>
-                
+
             </div>
         );
     }
 
-                {/* <p className={style.texto}>{`+${efeito.valor} ${efeito.refBuff.nome}`}</p>
+    {/* <p className={style.texto}>{`+${efeito.valor} ${efeito.refBuff.nome}`}</p>
                 <p className={style.texto}>{`${efeito.refTipoBuff.nomeExibirTooltip}`}</p>
                 <p className={style.texto}>{`${efeito.textoDuracao}`}</p> */}
-    
+
     return (
         <PopoverComponente trigger={icone} content={conteudo} />
     );

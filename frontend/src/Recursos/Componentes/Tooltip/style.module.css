@@ -1,13 +1,12 @@
-@import "@radix-ui/colors/black-alpha.css";
-@import "@radix-ui/colors/violet.css";
-
 .tooltip_conteudo {
+	display: flex;
+	flex-direction: column;
 	border-radius: 4px;
 	padding: 10px 15px;
 	font-size: 15px;
 	line-height: 1;
-	color: var(--violet-11);
 	background-color: white;
+	color: black;
 	box-shadow:
 		hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
 		hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
@@ -15,12 +14,30 @@
 	animation-duration: 400ms;
 	animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 	will-change: transform, opacity;
+	text-align: justify;
+	max-width: 17vw;
 }
 .tooltip_conteudo[data-state="delayed-open"][data-side="top"] { animation-name: slideDownAndFade; }
 .tooltip_conteudo[data-state="delayed-open"][data-side="right"] { animation-name: slideLeftAndFade; }
 .tooltip_conteudo[data-state="delayed-open"][data-side="bottom"] { animation-name: slideUpAndFade; }
 .tooltip_conteudo[data-state="delayed-open"][data-side="left"] { animation-name: slideRightAndFade; }
 .tooltip_seta { fill: white; }
+
+.tooltip_conteudo h1 {
+	margin: 0 0 1vh 0;
+}
+
+.tooltip_conteudo h2 {
+	margin: .8vh 0 .5vh 0;
+}
+
+.tooltip_conteudo p {
+	margin: 0;
+}
+
+.detalhes_tooltip {
+	background-color: red;
+}
 
 @keyframes slideUpAndFade {
 	from {

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
 import { Atributo, GanhoIndividualNexPericia, PericiaEmGanho } from 'Types/classes/index.ts';
 
-import TooltipPersistente from 'Recursos/Componentes/HoverCard/page.tsx';
+import Tooltip from 'Recursos/Componentes/Tooltip/page.tsx';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -44,25 +44,24 @@ const page = () => {
     }
 
     const CorpoPericia = ({ pericia }: { pericia: PericiaEmGanho }) => {
-        const [openTooltip, setOpenTooltip] = useState(false);
-
         return (
             <div className={style.corpo_pericia}>
-                <TooltipPersistente open={openTooltip} onOpenChange={setOpenTooltip}>
-                    <TooltipPersistente.Trigger><h2>{pericia.refPericia.nome}</h2></TooltipPersistente.Trigger>
+                <Tooltip>
+                    <Tooltip.Trigger>
+                        <h2>{pericia.refPericia.nome}</h2>
+                    </Tooltip.Trigger>
 
-                    <TooltipPersistente.Content>
-                        <>
-                            <h2>{pericia.refPericia.nome}</h2>
-                            <p>{pericia.refPericia.descricao}</p>
-                        </>
-                    </TooltipPersistente.Content>
-                    <h3 style={{color: pericia.refPatenteAtual.corTexto}}>{pericia.refPatenteAtual.nome}</h3>
-                    <div className={style.botoes_pericia}>
-                        <button onClick={() => { alteraValor(pericia.refPericia.id, -1) }} disabled={pericia.estaEmValorMinimo || !pericia.estaMaiorQueInicial || !ganhoPericia.deparaPericiaPatente(pericia)?.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
-                        <button onClick={() => { alteraValor(pericia.refPericia.id, +1) }} disabled={!ganhoPericia.temPontosParaEssaPatente(pericia)}><FontAwesomeIcon icon={faPlus} /></button>
-                    </div>
-                </TooltipPersistente>
+                    <Tooltip.Content>
+                        <h2>{pericia.refPericia.nome}</h2>
+                        <p>{pericia.refPericia.descricao}</p>
+                    </Tooltip.Content>
+                </Tooltip>
+
+                <h3 style={{ color: pericia.refPatenteAtual.corTexto }}>{pericia.refPatenteAtual.nome}</h3>
+                <div className={style.botoes_pericia}>
+                    <button onClick={() => { alteraValor(pericia.refPericia.id, -1) }} disabled={pericia.estaEmValorMinimo || !pericia.estaMaiorQueInicial || !ganhoPericia.deparaPericiaPatente(pericia)?.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
+                    <button onClick={() => { alteraValor(pericia.refPericia.id, +1) }} disabled={!ganhoPericia.temPontosParaEssaPatente(pericia)}><FontAwesomeIcon icon={faPlus} /></button>
+                </div>
             </div>
         );
     }

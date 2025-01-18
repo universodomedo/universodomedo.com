@@ -21,14 +21,13 @@ const page = ({ acao }: { acao: Acao }) => {
         return (
             <div className={style.embrulho_icone}>
                 {mostrarEtiquetas && (<h3>{acao.nomeExibicao}</h3>)}
-                <Tooltip content={acao.nomeExibicao}>
-                    <div
-                        className={`${style.icone}`}
-                        style={{
-                            backgroundImage: `url(data:image/svg+xml;base64,${acao.svg})`,
-                            backgroundColor: (acao.bloqueada ? '#BB0000' : '#FFFFFF'),
-                        }}
-                    />
+                <Tooltip>
+                    <Tooltip.Trigger>
+                        <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${acao.svg})`, backgroundColor: (acao.bloqueada ? '#BB0000' : '#FFFFFF') }} />
+                    </Tooltip.Trigger>
+                    <Tooltip.Content>
+                        <h3>{acao.nomeExibicao}</h3>
+                    </Tooltip.Content>
                 </Tooltip>
             </div>
         );
@@ -76,8 +75,8 @@ const page = ({ acao }: { acao: Acao }) => {
         const [indexItemSelecionado, setIndexItemSelecionado] = useState<number | undefined>(undefined);
         const listaItems = getPersonagemFromContext().inventario.items.filter(item => acao.dadosAcaoCustomizada!.condicaoListaItems(item));
         const itemSelecionado = indexItemSelecionado !== undefined
-          ? listaItems.find(item => item.id === indexItemSelecionado)
-          : undefined;
+            ? listaItems.find(item => item.id === indexItemSelecionado)
+            : undefined;
 
         const handleSelectChange = (value: number) => {
             setIndexItemSelecionado(value);
@@ -207,8 +206,8 @@ const page = ({ acao }: { acao: Acao }) => {
                 {/* <BlocoTexto lista={acao.dificuldades} titulo={'Dificuldades'} corTexto={dificuldade => false ? '#FF0000' : '#F49A34'} descricao={custo => custo.descricaoDificuldade} /> */}
                 {acao.comportamentos.acaoTravada && (
                     <div className={style.bloco_texto}>
-                    <p className={style.texto}>{acao.comportamentos.comportamentoTrava.descricaoTrava}</p>
-                </div>
+                        <p className={style.texto}>{acao.comportamentos.comportamentoTrava.descricaoTrava}</p>
+                    </div>
                 )}
             </>
         );

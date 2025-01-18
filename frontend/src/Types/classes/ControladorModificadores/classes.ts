@@ -1,8 +1,6 @@
 // #region Imports
-import { Acao, Efeito, FiltroProps, FiltroPropsItems, HabilidadePassiva, Item, LinhaEfeito, Modificador, RegistroValorEfeito, ValoresEfeito, ValoresLinhaEfeitoAgrupados } from 'Types/classes/index.ts';
+import { Acao, adicionaSinalEmNumeroParaExibicao, Efeito, FiltroProps, FiltroPropsItems, HabilidadePassiva, Item, LinhaEfeito, Modificador, RegistroValorEfeito, ValoresEfeito, ValoresLinhaEfeitoAgrupados } from 'Types/classes/index.ts';
 import { SingletonHelper } from 'Types/classes_estaticas';
-
-import { getPersonagemFromContext } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto';
 // #endregion
 
 export class ControladorModificadores {
@@ -15,6 +13,7 @@ export class ControladorModificadores {
 
     removeModificador(modificador: Modificador) { this._modificadores = this._modificadores.filter(modEquivalente => modEquivalente.codigoUnico !== modificador.codigoUnico); }
     valoresEfeitoPorLinhaEfeito(idLinhaEfeito: number): ValoresEfeito { return this.valoresEfeitosEDetalhesPorLinhaEfeito.find(info => info.refLinhaEfeito.id === idLinhaEfeito)?.valoresEfeitos || new ValoresEfeito({}); }
+    detalhesPorLinhaEfeito(idLinhaEfeito: number): string[] { return this.valoresEfeitosEDetalhesPorLinhaEfeito.find(info => info.refLinhaEfeito.id === idLinhaEfeito)!.valoresEfeitos.listaValorBonusAdicional.map(bonus => `${bonus.nomeRegistro}: ${adicionaSinalEmNumeroParaExibicao(bonus.valor)}`); }
 
     // prototipoSobrecarga():Buff|void {
     //     const personagem = getPersonagemFromContext();
@@ -23,7 +22,6 @@ export class ControladorModificadores {
     //         return new Buff(53, `Sobrecarga`, 0, 5, 0, 4, { dadosComportamentoAtivo: [] }, .5);
     //     }
     // }
-
 
     get modificadores(): Modificador[] { return this._modificadores; }
 
@@ -118,8 +116,8 @@ export class ValoresLinhaEfeito {
         )
     }
 
+    // depois tem que habilidade esse retorno de string para o detalhemento de bonus
     // get teste(): string { return `Valor Base Extra: ${this.valoresEfeitos.valorBaseAdicional}; Valor Multiplicador: ${this.valoresEfeitos.valorMultiplicadorAdicional}; Valor Adicional ${this.valoresEfeitos.valorBonusAdicional}`; }
-    // get valoresEstaVazio(): boolean { return (this.valoresEfeitos.valorBaseAdicional === 0 && this.valoresEfeitos.valorMultiplicadorAdicional === 1 && this.valoresEfeitos.valorBonusAdicional === 0)}
     get valoresEstaVazio(): boolean { return !this.valoresEfeitos.valorBaseAdicionalPresente && !this.valoresEfeitos.valorPorcentagemAdicionalPresente && !this.valoresEfeitos.valorBonusAdicionalPresente; }
 
     get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === this._idLinhaEfeito)!; }
