@@ -117,7 +117,6 @@ export class Item {
 
     static get filtroProps(): FiltroProps<Item> {
         return new FiltroProps<Item>(
-            "Items",
             [
                 new FiltroPropsItems<Item>(
                     (item) => item.dados.nome.padrao || item.dados.nome.customizado,

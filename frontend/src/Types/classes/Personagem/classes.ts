@@ -44,7 +44,7 @@ export class Personagem {
         this.detalhes = new PersonagemDetalhes(this._ficha.detalhes!.nome, this._ficha.detalhes!.idClasse, this._ficha.detalhes!.idNivel);
 
         this.estatisticasDanificaveis = this._ficha.estatisticasDanificaveis!.map(estatisticaDanificavel => {
-            return new EstatisticaDanificavel(estatisticaDanificavel.id, estatisticaDanificavel.valor!, estatisticaDanificavel.valorMaximo!)
+            return new EstatisticaDanificavel(estatisticaDanificavel.id, estatisticaDanificavel.valorMaximo, estatisticaDanificavel.valor)
         });
 
         this.estatisticasBuffaveis = new EstatisticasBuffaveisPersonagem(
@@ -62,7 +62,7 @@ export class Personagem {
         this.pericias = this._ficha.periciasPatentes!.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente));
 
         this.rituais = this._ficha.rituais!.map(ritual =>
-            new Ritual([ritual.args], ritual.dadosComportamentos)
+            new Ritual({ dadosGenericosRitual: ritual.args, dadosComportamentos: ritual.dadosComportamentos})
                 .adicionarAcoes(
                     (ritual.dadosAcoes || []).map(dadosAcao => (
                         {
@@ -85,6 +85,8 @@ export class Personagem {
 
         this._ficha.inventario!.map(dadosItem => this.inventario.adicionarItemNoInventario(novoItemPorDadosItem(dadosItem)));
     }
+
+    public get temPendencia(): boolean { return false; }
 
     public get acoes(): Acao[] {
         const acoesRituais = this.rituais.reduce((acc: Acao[], ritual) => acc.concat(ritual.acoes), []);

@@ -15,9 +15,22 @@ import { FichaProvider } from 'Pages/EditaFicha/NexUpContext/page.tsx';
 import JanelaNotificacao from 'Recursos/Componentes/JanelaNotificacao/page';
 
 import { useNavigate, useLocation } from 'react-router-dom';
+
+import { ContextoFichaProvider } from 'Recursos/ContainerComportamento/EmbrulhoFicha/contexto.tsx';
 // #endregion
 
 const page = () => {
+    const location = useLocation();
+    const indexFicha = location.state?.indexFicha;
+
+    return (
+        <ContextoFichaProvider idFichaNoLocalStorage={indexFicha}>
+            <PageComContexto />
+        </ContextoFichaProvider>
+    )
+}
+
+const PageComContexto = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const indexFichaLocalStorage = location.state?.indexFicha;

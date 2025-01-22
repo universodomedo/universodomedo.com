@@ -3,6 +3,8 @@ import React, { createContext, useContext } from "react";
 
 import { HabilidadePassiva, lista_geral_habilidades, Personagem } from "Types/classes/index.ts";
 import { geraFicha } from 'Utils/utils.tsx';
+
+import { obtemDadosFichaDemonstracao } from "Recursos/DadosFicha.ts";
 // #endregion
 
 interface ContextoFichaProps {
@@ -24,7 +26,8 @@ export const useContextoFicha = (): ContextoFichaProps => {
 };
 
 export const ContextoFichaProvider = ({ children, idFichaNoLocalStorage }: { children: React.ReactNode, idFichaNoLocalStorage: number }) => {
-    const data = JSON.parse(localStorage.getItem("dadosFicha")!)[idFichaNoLocalStorage];
+    // const data = JSON.parse(localStorage.getItem("dadosFicha")!)[idFichaNoLocalStorage];
+    const data = obtemDadosFichaDemonstracao();
 
     const personagem = new Personagem(geraFicha(data));
 

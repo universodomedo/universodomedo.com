@@ -311,9 +311,10 @@ export class ControladorGanhos {
     } = {
             1: { // ganho de classe do 10, quando vc ainda é mundano
                 3: [
-                    instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 0, trocas: 0 }),
-                    instanciaComArgumentos(GanhoIndividualNexPericia, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }),
-                    instanciaComArgumentos(GanhoIndividualNexEscolhaClasse, true),
+                    // instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 0, trocas: 0 }),
+                    // instanciaComArgumentos(GanhoIndividualNexPericia, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }),
+                    // instanciaComArgumentos(GanhoIndividualNexEscolhaClasse, true),
+                    instanciaComArgumentos(GanhoIndividualNexRitual, { numeroDeRituais: 1 }),
                 ],
             },
             2: {

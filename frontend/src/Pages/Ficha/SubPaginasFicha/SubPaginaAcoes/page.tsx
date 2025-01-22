@@ -1,7 +1,6 @@
 // #region Imports
 import { Acao } from 'Types/classes/index.ts';
 
-import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 import { useContextoAbaAcoes } from './contexto.tsx';
 
@@ -9,8 +8,6 @@ import Item from './item.tsx';
 // #endregion
 
 const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, acoesPersonagem }) => {
-  const { stopLoading } = useLoading();
-
   const { mostrarFiltros } = useContextoAbaAcoes();
 
   const acoesGerais = acoesPersonagem.filter(acao => acao.dadosAcaoCustomizada !== undefined);
@@ -23,7 +20,7 @@ const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, aco
 
   return (
     <>
-      <ConsultaProvider<Acao> abaId={abaId} registros={[acoesGerais, acoesRealizaveis, acoesBloqueadas]} mostrarFiltro={mostrarFiltros} filtroProps={Acao.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Ações Gerais', 'Ações Realizáveis', 'Ações Bloqueadas'] }}>
+      <ConsultaProvider<Acao> abaId={abaId} registros={[acoesGerais, acoesRealizaveis, acoesBloqueadas]} mostrarFiltro={mostrarFiltros} filtroProps={Acao.filtroProps} onLoadComplete={() => {}} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Ações Gerais', 'Ações Realizáveis', 'Ações Bloqueadas'] }}>
         <Consulta renderItem={renderAcaoItem} />
       </ConsultaProvider>
     </>

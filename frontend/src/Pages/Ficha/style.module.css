@@ -22,3 +22,233 @@
 .div_demo_acoes h1 {
     margin: 0;
 }
+
+/*  */
+
+.secao1 {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.secao2 {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    height: 27%;
+    border-image: linear-gradient(.7turn, #ffffff00, var(--cor1), #ffffff00) 1;
+    border-width: 2px;
+    border-style: solid;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+.tela_principal {
+    height: 90%;
+    aspect-ratio: 16 / 9;
+    border-radius: 10px;
+
+    background-size: cover;
+    background-position: center;
+}
+
+.swiper_direita {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    right: 0;
+    width: 40vw;
+    height: 100%;
+    background: #0B0D0E;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px 0 0 5px;
+    overflow-y: visible;
+    transition: transform 0.3s ease;
+    z-index: 101;
+}
+
+.botao_swiper_direita {
+    position: absolute;
+    top: 0;
+    left: -4vw;
+    width: 4vw;
+    height: 8vh;
+    background: #0B0D0E;
+    border: none;
+    color: white;
+    border-radius: 5px 0 0 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.swiper_direita.swiper_direita_fechado {
+    transform: translateX(100%);
+}
+
+.item_slider {
+    transform: scale(0.5);
+    transition: transform 300ms;
+    opacity: 0.5;
+    text-align: center;
+    transition: transform 300ms, opacity 300ms, flex-basis 300ms;
+}
+
+.item_slider_selecionado {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.arrow {
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+    top: 35%;
+}
+
+.arrow svg {
+    transition: color 300ms;
+}
+
+.arrow svg:hover {
+    color: #68EDFF
+}
+
+.arrow_next {
+    right: 0;
+}
+
+.arrow_prev {
+    left: 0;
+}
+
+.conteudo_swiper_direita {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    padding: 2vh 1vw;
+    flex: 1;
+}
+
+.conteudo_swiper_direita :global(.slick-list) {
+    overflow: visible;
+}
+
+.conteudo_swiper_direita :global(.slick-slide) {
+    display: flex;
+}
+
+.icone_config_pagina{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 15%;
+    transform: translate(90%, -40%);
+}
+
+.titulos_paginas_swiper_direita {
+
+}
+
+.configuracoes_pagina {
+
+}
+
+.fatia_parte_baixo_detalhes {
+    display: flex;
+    flex-direction: column;
+    width: 22%;
+    align-items: center;
+    justify-content: center;
+}
+
+.fatia_parte_baixo_atalhos {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.barras {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    height: 80%;
+    justify-content: space-around;
+}
+
+.barra_acoes {
+    display: flex;
+    flex-direction: row;
+    gap: .7vw;
+    height: 55%;
+    border: 2px solid gray;
+    background-color: gray;
+}
+
+.item_barra_acoes {
+    display: flex;
+    width: 14%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: gray;
+    box-shadow: inset 0 0 29px 7px #aaa;
+}
+
+.icone_acao {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    pointer-events: auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.barra_atalhos {
+    display: flex;
+    flex-direction: row;
+    gap: .7vw;
+    height: 30%;
+    border: 2px solid gray;
+}
+
+.item_barra_atalhos {
+    display: flex;
+    width: 14%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.fatia_parte_baixo_estatisticas_danificaveis {
+    display: flex;
+    flex-direction: column;
+    width: 22%;
+    align-items: center;
+    justify-content: center;
+    gap: 5%;
+    padding: 1vh;
+}
+
+.recipiente_estatistica_danificavel {
+    display: flex;
+    width: 90%;
+    flex: 1;
+}
+
+.slick-list {
+    padding: 0;
+}

@@ -35,7 +35,6 @@ const page = () => {
 
     useEffect(() => {
         limpaLocalStoragePorDesatualizacao();
-        localStorage.removeItem("fichaAtual");
 
         const data = localStorage.getItem("dadosFicha");
         if (data) {
@@ -46,8 +45,11 @@ const page = () => {
     }, []);
 
     const abreFicha = (index: number) => {
-        localStorage.setItem('fichaAtual', JSON.stringify(dadosFicha[index]));
-        navigate('/ficha-demo', { state: { indexFicha: index } });
+        // localStorage.setItem('fichaAtual', JSON.stringify(dadosFicha[index]));
+        const dadosFicha = '';
+
+        navigate('/ficha', { state: { indexFicha: index } });
+        // navigate('/ficha-demo', { state: { indexFicha: index } });
     }
 
     const removeFicha = (index: number) => {
@@ -87,7 +89,7 @@ const page = () => {
 
                 return (
                     <div key={index} className={`${style.ficha_existente} ${pendente ? style.ficha_pendente : ''}`}>
-                        <div className={style.acesso_ficha_existente} onClick={() => { !pendente && abreFicha(index) }}>
+                        <div className={style.acesso_ficha_existente} onClick={() => { abreFicha(index) }}>
                             <div className={style.ficha_nome}>{ficha.detalhes!.nome}</div>
                             <div className={style.ficha_detalhes}>
                                 <div className={style.ficha_classe}>{SingletonHelper.getInstance().classes.find(classe => classe.id === ficha.detalhes!.idClasse)!.nome}</div>

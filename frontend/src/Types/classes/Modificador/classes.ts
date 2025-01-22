@@ -92,7 +92,6 @@ export class Modificador {
 
     static get filtroProps(): FiltroProps<Modificador> {
         return new FiltroProps<Modificador>(
-            'Efeitos',
             [
                 new FiltroPropsItems<Modificador>(
                     (buff) => buff.nome,

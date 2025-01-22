@@ -133,7 +133,6 @@ export class Acao {
 
     static get filtroProps(): FiltroProps<Acao> {
         return new FiltroProps<Acao>(
-            'Ações',
             [
                 new FiltroPropsItems<Acao>(
                     (acao) => acao.nomeExibicao.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '').toLowerCase(),

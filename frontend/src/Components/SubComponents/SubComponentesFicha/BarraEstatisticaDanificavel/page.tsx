@@ -7,7 +7,7 @@ const page: React.FC<{ titulo?: string, valorAtual: number, valorMaximo: number,
 
     return (
         <div className={style.estatistica_barra}>
-            {titulo && (<h2>{titulo}</h2>)}
+            {titulo && (<h3>{titulo}</h3>)}
             <div className={style.barra_estatistica}>
                 {corBarraSecundaria ? (
                     <div className={style.cor_barra_secundaria_customizada} style={{ background: `${corBarraSecundaria}` }} />

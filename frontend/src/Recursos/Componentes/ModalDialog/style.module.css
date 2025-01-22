@@ -7,6 +7,7 @@
 	position: fixed;
 	inset: 0;
 	animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+	z-index: 399;
 }
 
 .dialog_conteudo {
@@ -33,6 +34,7 @@
     font-family: 'Crimson Pro', serif;
     font-variant: small-caps;
 	gap: 1vh;
+	z-index: 400;
 }
 
 .dialog_conteudo:focus { outline: none; }

@@ -151,37 +151,35 @@ export const ConsultaProvider = <T,>({ abaId, children, registros, mostrarFiltro
 };
 
 export const Consulta = <T,>({ renderItem }: { renderItem: (item: T, index: number) => React.ReactNode }) => {
-    const { mostrarFiltro, filtroProps, registros, registrosFiltrados, tituloDivisoesConsulta, calculoTotal } = useConsultaContext<T>();
+    const { mostrarFiltro, registros, registrosFiltrados, tituloDivisoesConsulta, calculoTotal } = useConsultaContext<T>();
 
     return (
-        <div className={style.conteudo_consulta}>
-            <h1>{filtroProps.titulo} [{registros.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)}]</h1>
-            {/* <h1>{filtroProps.titulo} [{registros.reduce((total, registros) => total + registros.length, 0)}]</h1> */}
+        <div className={style.recipiente_consulta}>
+            <div className={style.conteudo_consulta}>
+                {mostrarFiltro && (
+                    <>
+                        <Filtro />
+                        <ValoresFiltrosSelecionados />
+                    </>
+                )}
 
-            {mostrarFiltro && (
-                <>
-                    <Filtro />
-                    <ValoresFiltrosSelecionados />
-                </>
-            )}
-
-            {registrosFiltrados.length > 0 && (
-                registrosFiltrados.map((registros, index) => (
-                    registros.length > 0 && (
-                        <div key={index} className={style.divisao_registros}>
-                            {tituloDivisoesConsulta.usaSubtitulos && tituloDivisoesConsulta.divisoes[index] && (
-                                <h2>{tituloDivisoesConsulta.divisoes[index]}</h2>
-                            )}
-                            <div className={style.registros}>
-                                {registros.map((item, index) => renderItem(item, index))}
+                {registrosFiltrados.length > 0 && (
+                    registrosFiltrados.map((registros, index) => (
+                        registros.length > 0 && (
+                            <div key={index} className={style.divisao_registros}>
+                                {tituloDivisoesConsulta.usaSubtitulos && tituloDivisoesConsulta.divisoes[index] && (
+                                    <h2>{tituloDivisoesConsulta.divisoes[index]}</h2>
+                                )}
+                                <div className={style.registros}>
+                                    {registros.map((item, index) => renderItem(item, index))}
+                                </div>
                             </div>
-                        </div>
-                    )
-                ))
-            )}
-
+                        )
+                    ))
+                )}
+            </div>
             <div className={style.total_exibidos}>
-                <p>Registros exibidos: {registrosFiltrados.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)}</p>
+                <p className='noMargin'>Exibindo {registros.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} de {registrosFiltrados.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} Registros</p>
             </div>
         </div>
     );

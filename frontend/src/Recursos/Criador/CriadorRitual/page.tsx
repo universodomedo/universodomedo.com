@@ -1,8 +1,8 @@
 // #region Imports
-import { ArgsRitual, Pericia } from 'Types/classes/index.ts';
 import style from './style.module.css';
-
 import { useState } from 'react';
+
+import { ArgsRitual, Pericia } from 'Types/classes/index.ts';
 
 import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion

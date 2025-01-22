@@ -180,7 +180,7 @@ export const ContextoArmaProvider = ({ children }: { children: React.ReactNode }
     }, [caracteristicasDisponiveis]);
 
     return (
-        <ContextoArma.Provider value={{ adicionar, idPaginaArmaAberta, mudarPaginaArma, paginasArma, idBaseArmaSelecionada, selecionarBaseArma, pontosDeCaracteristicaTotais, caracteristicasDisponiveis, alternaCaracteristicaSelecionada, caracteristicasSelecionadas, listaDadosArma, atualizaNomeCustomizado, requisitoCumprido}}>
+        <ContextoArma.Provider value={{ adicionar, idPaginaArmaAberta, mudarPaginaArma, paginasArma, idBaseArmaSelecionada, selecionarBaseArma, pontosDeCaracteristicaTotais, caracteristicasDisponiveis, alternaCaracteristicaSelecionada, caracteristicasSelecionadas, listaDadosArma, atualizaNomeCustomizado, requisitoCumprido }}>
             {children}
         </ContextoArma.Provider>
     );

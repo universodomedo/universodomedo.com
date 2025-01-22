@@ -11,12 +11,12 @@ export const geraFicha = (dadosFicha: RLJ_Ficha2): RLJ_Ficha2 => {
             idNivel: dadosFicha.detalhes?.idNivel ?? 3,
         },
         estatisticasDanificaveis: SingletonHelper.getInstance().tipo_estatistica_danificavel.map((estatistica_danificavel) => {
-            const estatisticaAtual = dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel_atual => estatistica_danificavel_atual.id === estatistica_danificavel.id);
+            const estatisticaAtual = dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel_atual => estatistica_danificavel_atual.id === estatistica_danificavel.id)!;
 
             return {
                 id: estatistica_danificavel.id,
-                valorMaximo: Math.floor(estatisticaAtual?.valorMaximo!) ?? 1,
-                valor: Math.floor(estatisticaAtual?.valor!) ?? 1,
+                valorMaximo: Math.floor(estatisticaAtual.valorMaximo),
+                valor: estatisticaAtual.valor !== undefined ? Math.floor(estatisticaAtual.valor) : Math.floor(estatisticaAtual.valorMaximo),
             };
         }),
         estatisticasBuffaveis: SingletonHelper.getInstance().tipo_estatistica_buffavel.map((estatistica_buffavel) => {

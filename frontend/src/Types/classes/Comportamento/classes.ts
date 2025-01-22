@@ -129,7 +129,7 @@ export class EmbrulhoComportamentoRitual {
     private _comportamentoRitual?: ComportamentoRitual;
     get temComportamentoRitual(): boolean { return Boolean(this._comportamentoRitual); }
     get comportamentoRitual(): ComportamentoRitual { return this._comportamentoRitual!; } // sempre verificar se temComportamentoRitual antes
-    setComportamentoRitual(...args: ConstructorParameters<typeof ComportamentoRitual>): void { this._comportamentoRitual = new ComportamentoRitual(...args); }
+    setComportamentoRitual(args: ConstructorParameters<typeof ComportamentoRitual>[0]): void { this._comportamentoRitual = new ComportamentoRitual(args); }
 }
 
 export class EmbrulhoComportamentoHabilidade {
@@ -287,10 +287,13 @@ export type OpcionaisComportamentoAcao = {
 }
 
 export class ComportamentoRitual {
-    constructor(
-        private _idElemento: number,
-        private _idCirculoNivel: number,
-    ) { }
+    private _idElemento: number;
+    private _idCirculoNivel: number;
+
+    constructor({ idElemento, idCirculoNivel }: { idElemento: number, idCirculoNivel: number }) {
+        this._idElemento = idElemento;
+        this._idCirculoNivel = idCirculoNivel;
+    }
 
     get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
     get refCirculoNivelRitual(): CirculoNivelRitual { return SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.id === this._idCirculoNivel)!; }

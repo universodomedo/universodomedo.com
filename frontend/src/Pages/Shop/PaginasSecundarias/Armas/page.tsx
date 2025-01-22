@@ -3,8 +3,6 @@ import { ContextoArmaProvider, useContextoArma } from './contextoArma.tsx';
 // #endregion
 
 const page = () => {
-    
-
     return (
         <ContextoArmaProvider>
             <PageComContexto />

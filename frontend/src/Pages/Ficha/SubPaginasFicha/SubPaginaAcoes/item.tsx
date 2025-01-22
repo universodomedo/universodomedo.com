@@ -17,7 +17,7 @@ const page = ({ acao }: { acao: Acao }) => {
 
     const { mostrarEtiquetas } = useContextoAbaAcoes();
 
-    const icone = () => {
+    const Icone = () => {
         return (
             <div className={style.embrulho_icone}>
                 {mostrarEtiquetas && (<h3>{acao.nomeExibicao}</h3>)}
@@ -214,7 +214,16 @@ const page = ({ acao }: { acao: Acao }) => {
     }
 
     return (
-        <PopoverComponente trigger={icone} content={conteudo} />
+        // <PopoverComponente trigger={icone} content={conteudo} />
+        <Modal open={openExec} onOpenChange={(isOpen) => { setOpenExec(isOpen); if (!isOpen) close(); }}>
+            <Modal.Button>
+                <Icone />
+            </Modal.Button>
+
+            <Modal.Content title={`Executando ${acao.nomeExibicao}`}>
+                <ConteudoExecucaoGenerico fechaModal={close} />
+            </Modal.Content>
+        </Modal>
     );
 }
 

@@ -4,8 +4,8 @@ import { ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModifica
 
 export type RLJ_Ficha2 = {
     detalhes?: { nome: string, idClasse: number, idNivel: number },
+    estatisticasDanificaveis?: { id: number, valorMaximo: number, valor?: number }[],
     estatisticasBuffaveis?: { id: number, valor: number }[],
-    estatisticasDanificaveis?: { id: number, valorMaximo: number, valor: number }[],
     atributos?: { id: number, valor: number }[],
     periciasPatentes?: { idPericia: number, idPatente: number }[],
     rituais?: ArgsRitual[],
@@ -59,7 +59,7 @@ export type ArgsRitual = {
 };
 
 export type DadosComportamentosRitual = {
-    dadosComportamentoRitual?: ConstructorParameters<typeof ComportamentoRitual>;
+    dadosComportamentoRitual?: ConstructorParameters<typeof ComportamentoRitual>[0];
 };
 
 

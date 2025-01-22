@@ -3,11 +3,15 @@ import { SingletonHelper } from 'Types/classes_estaticas.tsx';
 // #endregion
 
 export class EstatisticaDanificavel {
+    public valor: number
+
     constructor(
         private _idEstatisticaDanificavel: number,
-        public valor: number,
-        public valorMaximo: number
-    ) { }
+        public valorMaximo: number,
+        valor?: number,
+    ) {
+        this.valor = valor !== undefined ? valor : valorMaximo;
+    }
 
     get refEstatisticaDanificavel(): TipoEstatisticaDanificavel {
         return SingletonHelper.getInstance().tipo_estatistica_danificavel.find(estatistica_danificavel => estatistica_danificavel.id === this._idEstatisticaDanificavel)!;

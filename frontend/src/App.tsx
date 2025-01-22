@@ -9,6 +9,7 @@ import LayoutLP from "Layouts/LayoutLP/layout.tsx";
 import LayoutInterno from "Layouts/LayoutInterno/layout.tsx";
 
 import LayoutInterno2 from "Layouts/LayoutInterno2/layout.tsx";
+import LayoutEmJogo from "Layouts/LayoutEmJogo/layout.tsx";
 import Ficha from 'Pages/Ficha/page.tsx';
 import FichaTutorial from 'Pages/FichaTutorial/page.tsx';
 import EditaFicha from 'Pages/EditaFicha/page.tsx';
@@ -18,13 +19,13 @@ import PaginaInternaTeste from 'Pages/PaginaInternaTeste/page.tsx';
 import Shop from 'Pages/Shop/page.tsx';
 
 import AuthOutlet from '@auth-kit/react-router/AuthOutlet';
-import { Provider as RedixTooltip} from "@radix-ui/react-tooltip";
+import { Provider as RedixTooltip } from "@radix-ui/react-tooltip";
 // import { SalaProvider } from "Providers/SalaProvider.tsx";
 // #endregion
 
 const App = () => {
   return (
-    <div className='app-container'>
+    <>
       {/* <TooltipManager /> */}
 
       <RedixTooltip delayDuration={200} skipDelayDuration={0}>
@@ -38,15 +39,15 @@ const App = () => {
             </Route>
 
             {/* <Route element={<LayoutInterno />}> */}
-              {/* <Route path="/sessions">
+            {/* <Route path="/sessions">
                 <Route index element={<Sessions />} />
                 <Route path=":sessionId" element={<Sessions />} />
               </Route> */}
-              {/* <Route path="/ficha">
+            {/* <Route path="/ficha">
                 <Route index element={<ContainerFicha />} />
                 <Route path=":characterId" element={<ContainerFicha />} />
               </Route> */}
-              {/* 
+            {/* 
               <Route path="/sessao-aovivo">
                 <Route index element={<SessaoAovivo />} />
               </Route>
@@ -64,12 +65,12 @@ const App = () => {
                 </Route>
               </Route>
             </Route> */}
-            
+
             <Route element={<AuthOutlet fallbackPath="/login" />}>
               <Route element={<LayoutInterno />}>
                 <Route path="/pagina-interna" element={
                   // <SalaProvider>
-                    <PaginaInternaTeste />
+                  <PaginaInternaTeste />
                   // </SalaProvider>
                 } />
               </Route>
@@ -89,13 +90,19 @@ const App = () => {
                 <Route index element={<FichaTutorial />} />
               </Route>
             </Route>
-            
+
+            <Route element={<LayoutEmJogo />} >
+              <Route path="/ficha">
+                <Route index element={<Ficha />} />
+              </Route>
+            </Route>
+
           </Routes>
         </BrowserRouter>
       </RedixTooltip>
 
       {/* <TooltipContainer /> */}
-    </div>
+    </>
   );
 };
 

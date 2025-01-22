@@ -26,7 +26,8 @@ function BarraMenuItem({ children }: { children: ReactNode }) {
 
 function BarraMenuObjetoItem({ children }: { children: ReactNode }) {
     return (
-        <Menubar.Trigger className={style.menu_item}>
+        <Menubar.Trigger>
+        {/* <Menubar.Trigger className={style.menu_item}> */}
             {children}
         </Menubar.Trigger>
     );

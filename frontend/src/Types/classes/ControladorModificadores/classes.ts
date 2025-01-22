@@ -103,7 +103,6 @@ export class ValoresLinhaEfeito {
 
     static get filtroProps(): FiltroProps<ValoresLinhaEfeito> {
         return new FiltroProps<ValoresLinhaEfeito>(
-            'Efeitos',
             [
                 new FiltroPropsItems<ValoresLinhaEfeito>(
                     (valoresLinhaEfeito) => valoresLinhaEfeito.refLinhaEfeito.nome,

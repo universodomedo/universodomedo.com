@@ -4,28 +4,38 @@
     gap: 2vh;
 }
 
+.recipiente_consulta {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2vh;
+    align-items: center;
+}
+
 .conteudo_consulta {
     display: flex;
     flex-direction: column;
     gap: 2vh;
+    flex: 1 0 0;
+    align-items: center;
+    overflow: auto;
 }
 
 .conteudo_consulta h1, .div_filtro span {
     color: white;
 }
 
-.total_registros, .total_exibidos {
+.total_exibidos {
+    flex: 0 0 0;
     font-size: 1em;
     color: white;
 }
-
 
 .div_filtros {
     display: flex;
     flex-direction: row;
     gap: 3%;
     justify-content: center;
-    margin: auto;
     height: 3.8rem;
 }
 
@@ -41,8 +51,9 @@
     display: flex;
     flex-direction: column;
     color: white;
-    gap: 2vh;
+    gap: 1vh;
     align-items: center;
+    width: 100%;
 }
 
 .divisao_registros h2 {
@@ -50,11 +61,19 @@
 }
 
 .registros {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(17%, 1fr));
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+    flex-wrap: wrap;
     text-align: center;
     color: white;
-    width: 60%;
-    gap: 1rem;
+    width: 100%;
     row-gap: 2vh;
+    justify-content: center;
+}
+
+.registros > * {
+    all: unset;
+    width: calc((100% - (3 * 2vw)) / 3);
+    flex: 0 1 auto;
 }

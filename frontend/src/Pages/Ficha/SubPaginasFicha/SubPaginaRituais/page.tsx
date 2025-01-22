@@ -1,7 +1,6 @@
 // #region Imports
 import { Ritual } from 'Types/classes/index.ts';
 
-import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 import { useContextoAbaRituais } from './contexto.tsx';
 
@@ -13,7 +12,6 @@ import Item from './item.tsx';
 
 
 const page = ({ abaId, rituaisPersonagem, abrirAbaAcao }: { abaId: string; rituaisPersonagem: Ritual[], abrirAbaAcao: () => void; }) => {
-  const { stopLoading } = useLoading();
   const dispatch = useDispatch();
 
   const { mostrarFiltros } = useContextoAbaRituais();
@@ -29,7 +27,7 @@ const page = ({ abaId, rituaisPersonagem, abrirAbaAcao }: { abaId: string; ritua
   );
 
   return (
-    <ConsultaProvider<Ritual> abaId={abaId} registros={[rituaisPersonagem]} mostrarFiltro={mostrarFiltros} filtroProps={Ritual.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={ { usaSubtitulos: false, divisoes: [''] } }>
+    <ConsultaProvider<Ritual> abaId={abaId} registros={[rituaisPersonagem]} mostrarFiltro={mostrarFiltros} filtroProps={Ritual.filtroProps} onLoadComplete={() => {}} tituloDivisoesConsulta={ { usaSubtitulos: false, divisoes: [''] } }>
       <Consulta renderItem={renderRitualItem} />
     </ConsultaProvider>
   );

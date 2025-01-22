@@ -3,7 +3,6 @@
 
 export class FiltroProps<T> {
     constructor(
-        public titulo: string,
         public items: FiltroPropsItems<T>[]
     ) { }
 }

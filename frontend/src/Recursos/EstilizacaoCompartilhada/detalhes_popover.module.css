@@ -15,6 +15,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: #CCCCCC;
 }
 
 .embrulho_icone_localizado {

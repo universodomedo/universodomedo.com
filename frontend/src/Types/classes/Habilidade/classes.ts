@@ -58,7 +58,6 @@ export abstract class Habilidade {
 
     static get filtroProps(): FiltroProps<Habilidade> {
         return new FiltroProps<Habilidade>(
-            "Habibilidades",
             [
                 new FiltroPropsItems<Habilidade>(
                     (habilidade) => habilidade.nomeExibicao.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, '').toLowerCase(),
@@ -270,14 +269,14 @@ export const lista_geral_habilidades = (): Habilidade[] => {
         // OCUL //
 
         new HabilidadeAtiva({ dadosGenericosHabilidade: { nome: 'Sentir Anomalia', descricao: 'Você recebe informações sobre Auras próximas de você' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 1 }, }).adicionarAcoes([{ props: { dadosGenericosAcao: { nome: 'Sentir Anomalia', idTipoAcao: 1 }, dadosComportamentos: { dadosComportamentoDificuldadeAcao: { dadosTeste: { idAtributo: 3, idPericia: 16 } } } }, }]),
-        new HabilidadePassiva({ dadosGenericosHabilidade: { nome: 'Ligação de Primeiro Círculo', descricao: 'Você pode criar Rituais de Primeiro Círculo' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 2 }, }),
+        new HabilidadePassiva({ dadosGenericosHabilidade: { nome: 'Ligação de Primeiro Círculo', descricao: 'Você pode criar Rituais de Primeiro Círculo' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 2 }, dadosProficiencia: { idTipoProficiencia:6, idNivelProficiencia:1 }, }),
         new HabilidadeAtiva({ dadosGenericosHabilidade: { nome: 'Expandir Aura', descricao: 'Você espande sua Aura para seus arredores' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 2 }, }),
         new HabilidadeAtiva({ dadosGenericosHabilidade: { nome: 'Identificar Símbolo', descricao: 'Você recebe informações sobre um Símbolo' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 2 }, }).adicionarAcoes([{ props: { dadosGenericosAcao: { nome: 'Identificar Símbolo', idTipoAcao: 1 }, dadosComportamentos: { dadosComportamentoDificuldadeAcao: { dadosTeste: { idAtributo: 3, idPericia: 16 } } } }, }]),
         new HabilidadeAtiva({ dadosGenericosHabilidade: { nome: 'Memória do Outro Lado', descricao: 'Você recebe informações sobre uma Criatura' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 2 }, }).adicionarAcoes([{ props: { dadosGenericosAcao: { nome: 'Memória do Outro Lado', idTipoAcao: 1 }, dadosComportamentos: { dadosComportamentoDificuldadeAcao: { dadosTeste: { idAtributo: 3, idPericia: 16 } } } }, }]),
-        new HabilidadePassiva({ dadosGenericosHabilidade: { nome: 'Ligação de Segundo Círculo', descricao: 'Você pode criar Rituais de Segundo Círculo' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 3 }, }),
+        new HabilidadePassiva({ dadosGenericosHabilidade: { nome: 'Ligação de Segundo Círculo', descricao: 'Você pode criar Rituais de Segundo Círculo' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 3 }, dadosProficiencia: { idTipoProficiencia:6, idNivelProficiencia:2 }, }),
         new HabilidadePassiva({ dadosGenericosHabilidade: { nome: 'Ocultismo Aprimorado', descricao: 'Você recebe +5 OCUL na sua próxima tentativa de uma Ação Falha' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 3 }, }),
         new HabilidadeAtiva({ dadosGenericosHabilidade: { nome: 'Fortalecer Aura', descricao: 'Você e todos os seus aliados recebem P.OCUL como resistência paranormal bônus por INT turnos' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 3 }, }),
-        new HabilidadePassiva({ dadosGenericosHabilidade: { nome: 'Ligação de Terceiro Círculo', descricao: 'Você pode criar Rituais de Terceiro Círculo' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 4 }, }),
+        new HabilidadePassiva({ dadosGenericosHabilidade: { nome: 'Ligação de Terceiro Círculo', descricao: 'Você pode criar Rituais de Terceiro Círculo' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 4 }, dadosProficiencia: { idTipoProficiencia:6, idNivelProficiencia:3 }, }),
         new HabilidadeAtiva({ dadosGenericosHabilidade: { nome: 'Sentir Membrana', descricao: 'Você recebe informações sobre a Membrana do Ambiente' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 4 }, }).adicionarAcoes([{ props: { dadosGenericosAcao: { nome: 'Sentir Membrana', idTipoAcao: 1 }, dadosComportamentos: { dadosComportamentoDificuldadeAcao: { dadosTeste: { idAtributo: 3, idPericia: 16 } } } }, }]),
         new HabilidadePassiva({ dadosGenericosHabilidade: { nome: 'Ação Ritualística', descricao: 'Você Recebe uma Ação Ritualística Bônus' }, fonteHabilidade: { fonte: 'Habilidade de Perícia', idPericia: 16, idPatente: 4 }, }),
 

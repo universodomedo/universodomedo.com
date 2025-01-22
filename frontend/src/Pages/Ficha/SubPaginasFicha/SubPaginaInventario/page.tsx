@@ -3,7 +3,6 @@ import style from './style.module.css';
 import React, { useState } from 'react';
 
 import { Inventario, EstatisticasBuffaveisPersonagem, Item } from 'Types/classes/index.ts';
-import { useLoading } from "Components/LayoutAbas/hooks.ts";
 import { Consulta, ConsultaProvider } from "Components/ConsultaFicha/page.tsx";
 import BarraEstatisticaDanificavel from "Components/SubComponents/SubComponentesFicha/BarraEstatisticaDanificavel/page.tsx";
 import { useContextoAbaInventario } from './contexto.tsx';
@@ -15,7 +14,6 @@ import RenderItem from './item.tsx';
 // #endregion
 
 const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffaveisPersonagem, inventarioPersonagem: Inventario, abrirAbaAcao: () => void; }> = ({ abaId, estatisticasBuffaveis, inventarioPersonagem, abrirAbaAcao }) => {
-  const { stopLoading } = useLoading();
   const dispatch = useDispatch();
 
   const { mostrarFiltros, mostrarBarras } = useContextoAbaInventario();
@@ -66,7 +64,7 @@ const page: React.FC<{ abaId: string; estatisticasBuffaveis: EstatisticasBuffave
         </div>
       )} */}
 
-      <ConsultaProvider<Item> abaId={abaId} registros={[itensVestidos, itensEmpunhados, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={Item.filtroProps} onLoadComplete={stopLoading} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Vestidos', 'Itens Empunhados', 'Itens Guardados'] }} calculoTotal={(item) => (item.quantidadeUnidadesDesseItem || 1)}>
+      <ConsultaProvider<Item> abaId={abaId} registros={[itensVestidos, itensEmpunhados, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={Item.filtroProps} onLoadComplete={() => {}} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Vestidos', 'Itens Empunhados', 'Itens Guardados'] }} calculoTotal={(item) => (item.quantidadeUnidadesDesseItem || 1)}>
         <Consulta renderItem={renderItem} />
       </ConsultaProvider>
     </div>
