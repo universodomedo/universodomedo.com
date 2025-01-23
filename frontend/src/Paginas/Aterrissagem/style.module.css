@@ -1,0 +1,72 @@
+#corpo {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+    align-items: center;
+    margin: 3vh 20vw;
+    overflow: auto;
+    gap: 2vh;
+}
+
+#corpo h1 {
+    font-family: 'Barlow', sans-serif;
+    text-transform: uppercase;
+    font-size: 3rem;
+    line-height: 2.8rem;
+    margin: 0;
+}
+
+#corpo p {
+    font-family: 'Barlow', sans-serif;
+    font-weight: bold;
+    font-size: 1.4rem;
+    line-height: 1.3rem;
+    margin: 0;
+}
+
+#rodape {
+    display: flex;
+    flex-direction: row;
+    flex: 0 0 0;
+}
+
+#meio_rodape {
+    display: flex;
+    flex-direction: row;
+    flex: .7 1 0%;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+}
+
+#rodape_icones_redes_sociais {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 58px;
+}
+
+#rodape_icones_redes_sociais li {
+    display: inline-block;
+}
+
+#rodape_icones_redes_sociais a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.8vw;
+}
+
+.quinas_rodape {
+    background-color: #2e1a47;
+    height: 5vh;
+    flex: 1;
+}
+
+.quinas_rodape.quina_rodape_esquerda {
+    border-radius: 0 40px 0 0;
+}
+
+.quinas_rodape.quina_rodape_direita {
+    border-radius: 40px 0 0 0;
+}

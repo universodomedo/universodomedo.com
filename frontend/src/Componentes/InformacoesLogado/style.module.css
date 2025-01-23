@@ -1,0 +1,21 @@
+#logavel {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    box-sizing: border-box;
+    justify-content: space-around;
+}
+
+#imagem_logavel {
+    background-color: plum;
+    height: 100%;
+    aspect-ratio: 1.15/1;
+    border-radius: 20px;
+}
+
+#info_logavel {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+}

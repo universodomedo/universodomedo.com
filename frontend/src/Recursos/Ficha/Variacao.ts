@@ -1,6 +1,5 @@
 // #region Imports
-import { RollNumber } from "Components/Functions/RollNumber.tsx";
-import { VariacaoAleatoria } from "udm-dice";
+import { getRandomVariance, VariacaoAleatoria } from "udm-dice";
 // #endregion
 
 // export type TipoDeAcaoComVariancia = 'Maior Valor' | 'Menor Valor' | 'Soma';
@@ -30,4 +29,12 @@ export const ExecutaVariacao = (listaVarianciasDaAcao: VarianciaDaAcao[]):Variac
             variacaoAleatoria: rollNumber,
         } as VariacaoAleatoriaFinal;
     });
+}
+
+export function RollNumber(variancia:number) {
+    const rnd = getRandomVariance(variancia);
+    // console.log(`você foi prejudicado em ${rnd.variancia}`);
+    return rnd;
+    // Teste de Pericia -> Roda os valores, pega o maior, soma bonus
+    // Aplicações -> Roda os valores, soma os valoes
 }

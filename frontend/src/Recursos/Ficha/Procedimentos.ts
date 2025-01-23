@@ -1,8 +1,8 @@
 // #region Imports
-import { AtributoPersonagem, PericiaPatentePersonagem } from 'Types/classes/index.ts';
+import { AtributoPersonagem, PericiaPatentePersonagem } from 'Classes/ClassesTipos/index.ts';
 import { ExecutaTestePericia } from 'Recursos/Ficha/Variacao.ts';
 
-import { LoggerHelper } from 'Types/classes_estaticas.tsx';
+import { LoggerHelper } from 'Classes/classes_estaticas.ts';
 
 import { toast } from 'react-toastify';
 // #endregion

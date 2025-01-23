@@ -1,0 +1,25 @@
+body {
+    background: linear-gradient(to bottom, #0b1623 0%, #1e3a5f 50%, #0b1623 100%);
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 100%;
+    /* background: radial-gradient(circle, #292b2457 0%, transparent 63%); */
+}
+
+.noMargin {
+    margin: 0;
+}
+
+:root {
+    --cor1: #2be5ff8c;
+}

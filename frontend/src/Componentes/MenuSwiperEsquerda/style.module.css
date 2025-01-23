@@ -1,0 +1,41 @@
+#overlay_swiper_esquerda {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+}
+
+#swiper_esquerda {
+    position: fixed;
+    top: 8%;
+    left: -20vw;
+    width: 20vw;
+    height: 100vh;
+    background-color: #444;
+    color: white;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(0);
+    z-index: 999;
+}
+  
+#swiper_esquerda.swiper_esquerda_aberto {
+    transform: translateX(20vw);
+}
+
+#swiper_esquerda nav ul {
+    list-style: none;
+    padding: 20px;
+}
+
+#swiper_esquerda nav ul li {
+    margin: 15px 0;
+}
+
+#swiper_esquerda nav ul li a {
+    color: white;
+    text-decoration: none;
+}
