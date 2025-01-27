@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 import { Menu } from 'Classes/ClassesTipos/index.ts';
 // #endregion
 
-interface ContextoAbaHabilidadesProps {
+interface ContextoControleHabilidadesProps {
     mostrarFiltros: boolean;
     toggleMostrarFiltros: () => void;
     mostrarEtiquetas: boolean;
@@ -12,19 +12,19 @@ interface ContextoAbaHabilidadesProps {
     listaMenus: Menu[];
 }
 
-export const ContextoAbaHabilidades = createContext<ContextoAbaHabilidadesProps | undefined>(undefined);
+export const ContextoControleHabilidades = createContext<ContextoControleHabilidadesProps | undefined>(undefined);
 
-export const useContextoAbaHabilidades = (): ContextoAbaHabilidadesProps => {
-    const context = useContext(ContextoAbaHabilidades);
+export const useContextoControleHabilidades = (): ContextoControleHabilidadesProps => {
+    const context = useContext(ContextoControleHabilidades);
 
     if (!context) {
-        throw new Error('useContextoAbaHabilidades precisa estar dentro de um ContextoAbaHabilidades');
+        throw new Error('useContextoControleHabilidades precisa estar dentro de um ContextoControleHabilidades');
     }
 
     return context;
 };
 
-export const ContextoAbaHabilidadesProvider = ({ children }: { children: React.ReactNode }) => {
+export const ContextoControleHabilidadesProvider = ({ children }: { children: React.ReactNode }) => {
     const [mostrarFiltros, setMostrarFiltros] = useState(false);
     const [mostrarEtiquetas, setMostrarEtiquetas] = useState(true);
 
@@ -48,8 +48,8 @@ export const ContextoAbaHabilidadesProvider = ({ children }: { children: React.R
 
 
     return (
-        <ContextoAbaHabilidades.Provider value={{ mostrarFiltros, toggleMostrarFiltros, mostrarEtiquetas, toggleMostrarEtiquetas, listaMenus }}>
+        <ContextoControleHabilidades.Provider value={{ mostrarFiltros, toggleMostrarFiltros, mostrarEtiquetas, toggleMostrarEtiquetas, listaMenus }}>
             {children}
-        </ContextoAbaHabilidades.Provider>
+        </ContextoControleHabilidades.Provider>
     );
 }

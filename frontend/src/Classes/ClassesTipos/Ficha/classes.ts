@@ -3,7 +3,7 @@ import { ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModifica
 // #endregion
 
 export type RLJ_Ficha2 = {
-    detalhes?: { nome: string, idClasse: number, idNivel: number },
+    detalhes: { nome: string, idClasse: number, idNivel: number },
     estatisticasDanificaveis?: { id: number, valorMaximo: number, valor?: number }[],
     estatisticasBuffaveis?: { id: number, valor: number }[],
     atributos?: { id: number, valor: number }[],

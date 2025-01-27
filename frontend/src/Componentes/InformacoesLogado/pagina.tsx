@@ -2,7 +2,7 @@
 import style from './style.module.css';
 // #endregion
 
-const page = () => {
+const pagina = () => {
     const logado: boolean = true;
 
     const InfoLogado = () => {
@@ -39,4 +39,4 @@ const page = () => {
     );
 }
 
-export default page;
+export default pagina;

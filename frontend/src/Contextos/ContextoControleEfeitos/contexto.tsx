@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 import { Menu } from 'Classes/ClassesTipos/index.ts';
 // #endregion
 
-interface ContextoAbaEfeitosProps {
+interface ContextoControleEfeitosProps {
     mostrarFiltros: boolean;
     toggleMostrarFiltros: () => void;
     mostrarEtiquetas: boolean;
@@ -12,19 +12,19 @@ interface ContextoAbaEfeitosProps {
     listaMenus: Menu[];
 }
 
-export const ContextoAbaEfeitos = createContext<ContextoAbaEfeitosProps | undefined>(undefined);
+export const ContextoControleEfeitos = createContext<ContextoControleEfeitosProps | undefined>(undefined);
 
-export const useContextoAbaEfeitos = (): ContextoAbaEfeitosProps => {
-    const context = useContext(ContextoAbaEfeitos);
+export const useContextoControleEfeitos = (): ContextoControleEfeitosProps => {
+    const context = useContext(ContextoControleEfeitos);
 
     if (!context) {
-        throw new Error('useContextoAbaEfeitos precisa estar dentro de um ContextoAbaEfeitos');
+        throw new Error('useContextoControleEfeitos precisa estar dentro de um ContextoControleEfeitos');
     }
 
     return context;
 };
 
-export const ContextoAbaEfeitosProvider = ({ children }: { children: React.ReactNode }) => {
+export const ContextoControleEfeitosProvider = ({ children }: { children: React.ReactNode }) => {
     const [mostrarFiltros, setMostrarFiltros] = useState(false);
     const [mostrarEtiquetas, setMostrarEtiquetas] = useState(true);
 
@@ -46,8 +46,8 @@ export const ContextoAbaEfeitosProvider = ({ children }: { children: React.React
     ];
 
     return (
-        <ContextoAbaEfeitos.Provider value={{ mostrarFiltros, toggleMostrarFiltros, mostrarEtiquetas, toggleMostrarEtiquetas, listaMenus }}>
+        <ContextoControleEfeitos.Provider value={{ mostrarFiltros, toggleMostrarFiltros, mostrarEtiquetas, toggleMostrarEtiquetas, listaMenus }}>
             {children}
-        </ContextoAbaEfeitos.Provider>
+        </ContextoControleEfeitos.Provider>
     );
 }

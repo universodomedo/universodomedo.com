@@ -4,7 +4,7 @@ import style from './style.module.css';
 import { useContextoMenuSwiper } from 'Contextos/ContextoMenuSwiper/contexto.tsx'
 // #endregion
 
-const page = () => {
+const pagina = () => {
     const { menuAberto, alternaMenuAberto } = useContextoMenuSwiper();
 
     return (
@@ -21,4 +21,4 @@ const page = () => {
     );
 }
 
-export default page;
+export default pagina;

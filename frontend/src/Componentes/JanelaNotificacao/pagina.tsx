@@ -2,7 +2,7 @@
 import style from './style.module.css';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { useFicha } from 'Pages/EditaFicha/NexUpContext/page.tsx';
+import { useFicha } from 'Pages/EditaFicha/NexUpContext/pagina.tsx';
 
 import { InfoCircledIcon } from '@radix-ui/react-icons'
 // #endregion

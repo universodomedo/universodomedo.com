@@ -36,7 +36,7 @@ export const useConsultaContext = <T,>(): ConsultaContextProps<T> => {
     return context;
 };
 
-export const ConsultaProvider = <T,>({ abaId, children, registros, mostrarFiltro = true, filtroProps, onLoadComplete, tituloDivisoesConsulta, calculoTotal = (item: T) => 1 }: { abaId: string; children: React.ReactNode; registros: T[][]; mostrarFiltro?: boolean; filtroProps: FiltroProps<T>; onLoadComplete: () => void; tituloDivisoesConsulta: { usaSubtitulos: boolean, divisoes: string[] }; calculoTotal?: (item: T) => number; }) => {
+export const ConsultaProvider = <T,>({ children, registros, mostrarFiltro = true, filtroProps, onLoadComplete, tituloDivisoesConsulta, calculoTotal = (item: T) => 1 }: { children: React.ReactNode; registros: T[][]; mostrarFiltro?: boolean; filtroProps: FiltroProps<T>; onLoadComplete: () => void; tituloDivisoesConsulta: { usaSubtitulos: boolean, divisoes: string[] }; calculoTotal?: (item: T) => number; }) => {
     const [registrosFiltrados, setRegistrosFiltrados] = useState<T[][]>(registros);
     const [ordenacao, setOrdenacao] = useState<{ key: string | number | symbol | ((item: T) => any), direction: 'asc' | 'desc' } | null>(null);
     const [valoresFiltrosSelecionados, setValoresFiltrosSelecionados] = useState<OpcoesSelecionadas[]>([]);
@@ -150,7 +150,7 @@ export const Consulta = <T,>({ renderItem }: { renderItem: (item: T, index: numb
                 )}
             </div>
             <div className={style.total_exibidos}>
-                <p className='noMargin'>Exibindo {registros.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} de {registrosFiltrados.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} Registros</p>
+                <p className='noMargin'>Exibindo {registrosFiltrados.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} de {registros.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} Registros</p>
             </div>
         </div>
     );

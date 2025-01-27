@@ -20,3 +20,7 @@
     font-family: 'Crimson Pro', serif;
     font-variant: small-caps;
 }
+
+:global(section h1) {
+    font-size: 2em;
+}

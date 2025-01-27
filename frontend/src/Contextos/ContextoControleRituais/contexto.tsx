@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 import { Menu } from 'Classes/ClassesTipos/index.ts';
 // #endregion
 
-interface ContextoAbaRituaisProps {
+interface ContextoControleRituaisProps {
     mostrarFiltros: boolean;
     toggleMostrarFiltros: () => void;
     mostrarEtiquetas: boolean;
@@ -12,19 +12,19 @@ interface ContextoAbaRituaisProps {
     listaMenus: Menu[];
 }
 
-export const ContextoAbaRituais = createContext<ContextoAbaRituaisProps | undefined>(undefined);
+export const ContextoControleRituais = createContext<ContextoControleRituaisProps | undefined>(undefined);
 
-export const useContextoAbaRituais = (): ContextoAbaRituaisProps => {
-    const context = useContext(ContextoAbaRituais);
+export const useContextoControleRituais = (): ContextoControleRituaisProps => {
+    const context = useContext(ContextoControleRituais);
 
     if (!context) {
-        throw new Error('useContextoAbaRituais precisa estar dentro de um ContextoAbaRituais');
+        throw new Error('useContextoControleRituais precisa estar dentro de um ContextoControleRituais');
     }
 
     return context;
 };
 
-export const ContextoAbaRituaisProvider = ({ children }: { children: React.ReactNode }) => {
+export const ContextoControleRituaisProvider = ({ children }: { children: React.ReactNode }) => {
     const [mostrarFiltros, setMostrarFiltros] = useState(false);
     const [mostrarEtiquetas, setMostrarEtiquetas] = useState(true);
 
@@ -47,8 +47,8 @@ export const ContextoAbaRituaisProvider = ({ children }: { children: React.React
 
 
     return (
-        <ContextoAbaRituais.Provider value={{ mostrarFiltros, toggleMostrarFiltros, mostrarEtiquetas, toggleMostrarEtiquetas, listaMenus }}>
+        <ContextoControleRituais.Provider value={{ mostrarFiltros, toggleMostrarFiltros, mostrarEtiquetas, toggleMostrarEtiquetas, listaMenus }}>
             {children}
-        </ContextoAbaRituais.Provider>
+        </ContextoControleRituais.Provider>
     );
 }

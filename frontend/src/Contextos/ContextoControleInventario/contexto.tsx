@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 import { Menu } from 'Classes/ClassesTipos/index.ts';
 // #endregion
 
-interface ContextoAbaInventarioProps {
+interface ContextoControleInventarioProps {
     mostrarFiltros: boolean;
     toggleMostrarFiltros: () => void;
     mostrarEtiquetas: boolean;
@@ -14,19 +14,19 @@ interface ContextoAbaInventarioProps {
     listaMenus: Menu[];
 }
 
-export const ContextoAbaInventario = createContext<ContextoAbaInventarioProps | undefined>(undefined);
+export const ContextoControleInventario = createContext<ContextoControleInventarioProps | undefined>(undefined);
 
-export const useContextoAbaInventario = (): ContextoAbaInventarioProps => {
-    const context = useContext(ContextoAbaInventario);
+export const useContextoControleInventario = (): ContextoControleInventarioProps => {
+    const context = useContext(ContextoControleInventario);
 
     if (!context) {
-        throw new Error('useContextoAbaInventario precisa estar dentro de um ContextoAbaInventario');
+        throw new Error('useContextoControleInventario precisa estar dentro de um ContextoControleInventario');
     }
 
     return context;
 };
 
-export const ContextoAbaInventarioProvider = ({ children }: { children: React.ReactNode }) => {
+export const ContextoControleInventarioProvider = ({ children }: { children: React.ReactNode }) => {
     const [mostrarFiltros, setMostrarFiltros] = useState(false);
     const [mostrarEtiquetas, setMostrarEtiquetas] = useState(true);
     const [mostrarBarras, setMostrarBarras] = useState(false);
@@ -54,8 +54,8 @@ export const ContextoAbaInventarioProvider = ({ children }: { children: React.Re
     ];
 
     return (
-        <ContextoAbaInventario.Provider value={{ mostrarFiltros, toggleMostrarFiltros, mostrarEtiquetas, toggleMostrarEtiquetas, mostrarBarras, toggleMostrarBarras, listaMenus }}>
+        <ContextoControleInventario.Provider value={{ mostrarFiltros, toggleMostrarFiltros, mostrarEtiquetas, toggleMostrarEtiquetas, mostrarBarras, toggleMostrarBarras, listaMenus }}>
             {children}
-        </ContextoAbaInventario.Provider>
+        </ContextoControleInventario.Provider>
     );
 }

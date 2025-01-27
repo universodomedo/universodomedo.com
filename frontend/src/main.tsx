@@ -1,4 +1,7 @@
 // #region Imports
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 import style from "./Assets/estilo_main.module.css";
 import "./Assets/estilo_global.css";
 

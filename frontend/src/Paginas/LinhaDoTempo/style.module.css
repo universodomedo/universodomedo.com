@@ -1,0 +1,44 @@
+.timelineContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .timeline {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 90%;
+    height: 100px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+  }
+  
+  .chapter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(100, 150, 255, 0.2);
+    border: 1px solid #aaa;
+    border-right: none;
+    text-align: center;
+    font-size: 1.2rem;
+    color: #333;
+    height: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  .chapter:last-child {
+    border-right: 1px solid #aaa;
+  }
+  
+  .chapterTitle {
+    white-space: nowrap;
+  }
+  

@@ -1,31 +1,55 @@
-.wrapper_conteudo_abas {
+.secao_unica {
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    flex: 1;
-    gap: .5%;
-    padding: 0 1vw;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    gap: 4vh;
+    padding: 1% 0;
 }
 
-.div_demo_acoes {
+.titulos_secoes_nexup {
     display: flex;
     flex-direction: row;
-    gap: 1vh;
-    border: 2px white solid;
-    padding: .4%;
-    margin: .8%;
-    color: white;
-    overflow-y: auto;
-    justify-content: space-evenly;
+    gap: 2vw;
+    align-items: center;
 }
 
-.div_demo_acoes h1 {
+.titulos_secoes_nexup h2 {
     margin: 0;
 }
 
-/*  */
+.titulos_secoes_nexup h2.secao_aberta {
+    color: #71f2ff;
+}
 
-.secao1 {
+.titulos_secoes_nexup h2:hover {
+    color: #399989;
+    cursor: pointer;
+}
+
+.secao_edicao {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+}
+
+.secao_edicao_centro {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+    overflow: auto;
+    width: 100%;
+}
+
+.recipiente_edicao {
+    width: 30%;
+    margin: 0 auto;
+    height: 100%;
+}
+
+.secao_cima {
     display: flex;
     flex-direction: row;
     flex: 1;
@@ -33,7 +57,7 @@
     justify-content: center;
 }
 
-.secao2 {
+.secao_baixo {
     position: relative;
     display: flex;
     flex-direction: row;
@@ -55,112 +79,6 @@
     background-position: center;
 }
 
-.swiper_direita {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    top: 0;
-    right: 0;
-    width: 40vw;
-    height: 100%;
-    background: #0B0D0E;
-    color: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 5px 0 0 5px;
-    overflow-y: visible;
-    transition: transform 0.3s ease;
-    z-index: 101;
-}
-
-.botao_swiper_direita {
-    position: absolute;
-    top: 0;
-    left: -4vw;
-    width: 4vw;
-    height: 8vh;
-    background: #0B0D0E;
-    border: none;
-    color: white;
-    border-radius: 5px 0 0 5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.swiper_direita.swiper_direita_fechado {
-    transform: translateX(100%);
-}
-
-.item_slider {
-    transform: scale(0.5);
-    transition: transform 300ms;
-    opacity: 0.5;
-    text-align: center;
-    transition: transform 300ms, opacity 300ms, flex-basis 300ms;
-}
-
-.item_slider_selecionado {
-    transform: scale(1.1);
-    opacity: 1;
-}
-
-.arrow {
-    position: absolute;
-    cursor: pointer;
-    z-index: 10;
-    top: 35%;
-}
-
-.arrow svg {
-    transition: color 300ms;
-}
-
-.arrow svg:hover {
-    color: #68EDFF
-}
-
-.arrow_next {
-    right: 0;
-}
-
-.arrow_prev {
-    left: 0;
-}
-
-.conteudo_swiper_direita {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    padding: 2vh 1vw;
-    flex: 1;
-}
-
-.conteudo_swiper_direita :global(.slick-list) {
-    overflow: visible;
-}
-
-.conteudo_swiper_direita :global(.slick-slide) {
-    display: flex;
-}
-
-.icone_config_pagina{
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 15%;
-    transform: translate(90%, -40%);
-}
-
-.titulos_paginas_swiper_direita {
-
-}
-
-.configuracoes_pagina {
-
-}
-
 .fatia_parte_baixo_detalhes {
     display: flex;
     flex-direction: column;
@@ -180,7 +98,7 @@
 .barras {
     display: flex;
     flex-direction: column;
-    width: 70%;
+    width: 50%;
     height: 80%;
     justify-content: space-around;
 }
@@ -189,15 +107,15 @@
     display: flex;
     flex-direction: row;
     gap: .7vw;
-    height: 55%;
+    height: 30%;
     border: 2px solid gray;
     background-color: gray;
 }
 
 .item_barra_acoes {
     display: flex;
-    width: 14%;
     height: 100%;
+    aspect-ratio: 1 / 1;
     align-items: center;
     justify-content: center;
     background-color: gray;
@@ -217,22 +135,6 @@
     justify-content: center;
 }
 
-.barra_atalhos {
-    display: flex;
-    flex-direction: row;
-    gap: .7vw;
-    height: 30%;
-    border: 2px solid gray;
-}
-
-.item_barra_atalhos {
-    display: flex;
-    width: 14%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-}
-
 .fatia_parte_baixo_estatisticas_danificaveis {
     display: flex;
     flex-direction: column;
@@ -247,8 +149,4 @@
     display: flex;
     width: 90%;
     flex: 1;
-}
-
-.slick-list {
-    padding: 0;
 }

@@ -1,0 +1,20 @@
+section#cabecalho {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    height: 8%;
+    padding: .7vh 4%;
+    box-sizing: border-box;
+    border-image: linear-gradient(.7turn, #ffffff00, var(--cor1), #ffffff00) 1;
+    border-width: 2px;
+    border-style: solid;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+section#corpo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}

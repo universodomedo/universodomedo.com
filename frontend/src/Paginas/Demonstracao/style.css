@@ -252,19 +252,3 @@
     flex-direction: column;
     height: 100%;
 }
-
-.carousel-content {
-    display: flex;
-    flex-direction: column;
-    width: 55%;
-}
-
-.slick-slide > div {
-    display: flex;
-    margin: auto;
-}
-
-.slick-slider {
-    width: 100%;
-    height: auto;
-}

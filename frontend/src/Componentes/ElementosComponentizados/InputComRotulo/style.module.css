@@ -3,6 +3,7 @@
     flex-direction: column;
     width: 100%;
     gap: 1vh;
+    align-items: center;
 }
 
 .input_e_rotulo label {

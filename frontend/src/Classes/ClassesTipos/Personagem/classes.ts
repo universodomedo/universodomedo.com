@@ -38,7 +38,7 @@ export class Personagem {
 
     public receptor: Receptor = new Receptor(this);
 
-    constructor(private _ficha: RLJ_Ficha2) {
+    constructor(public _ficha: RLJ_Ficha2) {
         const numExtremidades = 2; // depois vai ter q mudar para alguma logica, colocando esse numero no RLJ_Ficha2
 
         this.detalhes = new PersonagemDetalhes(this._ficha.detalhes!.nome, this._ficha.detalhes!.idClasse, this._ficha.detalhes!.idNivel);
@@ -86,7 +86,7 @@ export class Personagem {
         this._ficha.inventario!.map(dadosItem => this.inventario.adicionarItemNoInventario(novoItemPorDadosItem(dadosItem)));
     }
 
-    public get temPendencia(): boolean { return false; }
+    public get temPendencia(): boolean { return true; }
 
     public get acoes(): Acao[] {
         const acoesRituais = this.rituais.reduce((acc: Acao[], ritual) => acc.concat(ritual.acoes), []);

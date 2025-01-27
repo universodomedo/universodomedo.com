@@ -1,14 +1,14 @@
 // #region Imports
 import { Acao } from 'Classes/ClassesTipos/index.ts'
 
-import { Consulta, ConsultaProvider } from 'Componentes/ConsultaGenerica/page.tsx';
-import { useContextoAbaAcoes } from 'Contextos/ContextoControleAcoes/contexto.tsx'
+import { Consulta, ConsultaProvider } from 'Componentes/ConsultaGenerica/pagina.tsx';
+import { useContextoControleAcoes } from 'Contextos/ContextoControleAcoes/contexto.tsx'
 
 import Item from './item.tsx';
 // #endregion
 
-const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, acoesPersonagem }) => {
-    const { mostrarFiltros } = useContextoAbaAcoes();
+const page: React.FC<{ acoesPersonagem: Acao[] }> = ({ acoesPersonagem }) => {
+    const { mostrarFiltros } = useContextoControleAcoes();
 
     const acoesGerais = acoesPersonagem.filter(acao => acao.dadosAcaoCustomizada !== undefined);
     const acoesRealizaveis = acoesPersonagem.filter(acao => !acao.bloqueada && acao.dadosAcaoCustomizada === undefined);
@@ -20,7 +20,7 @@ const page: React.FC<{ abaId: string; acoesPersonagem: Acao[] }> = ({ abaId, aco
 
     return (
         <>
-            <ConsultaProvider<Acao> abaId={abaId} registros={[acoesGerais, acoesRealizaveis, acoesBloqueadas]} mostrarFiltro={mostrarFiltros} filtroProps={Acao.filtroProps} onLoadComplete={() => { }} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Ações Gerais', 'Ações Realizáveis', 'Ações Bloqueadas'] }}>
+            <ConsultaProvider<Acao> registros={[acoesGerais, acoesRealizaveis, acoesBloqueadas]} mostrarFiltro={mostrarFiltros} filtroProps={Acao.filtroProps} onLoadComplete={() => { }} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Ações Gerais', 'Ações Realizáveis', 'Ações Bloqueadas'] }}>
                 <Consulta renderItem={renderAcaoItem} />
             </ConsultaProvider>
         </>

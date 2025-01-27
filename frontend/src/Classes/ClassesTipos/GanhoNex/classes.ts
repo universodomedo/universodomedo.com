@@ -6,18 +6,15 @@ import { SingletonHelper } from 'Classes/classes_estaticas.ts';
 import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
 // #endregion
 
+// #region Classes
 export class GanhosNex {
     public ganhos: GanhoIndividualNex[] = [];
     public finalizando: boolean = false;
     public indexEtapa: number = 0;
 
-    constructor(public dadosFicha: RLJ_Ficha2) { }
-
-    adicionarNovoGanho(ganhos: GanhoIndividualNex[]) {
-        this.ganhos = ganhos;
-
-        this.finalizando = false;
-        this.indexEtapa = 0;
+    constructor(public dadosFicha: RLJ_Ficha2) {
+        GanhoIndividualNexFactory.setFicha(this.dadosFicha);
+        this.ganhos = obterGanhosGerais(this.dadosFicha.detalhes.idNivel, this.dadosFicha.detalhes.idClasse);
     }
 
     get finalizados(): boolean { return false; }
@@ -52,34 +49,11 @@ export class GanhosNex {
         return { valorAtual, ganhoAtual, valorAtualizado };
     }
 
-
-    get pvAtualizado(): number {
-        const valorAtualizado = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 1)!.valor! + this.ganhos.reduce((acc, cur) => acc + cur.pvGanhoIndividual, 0);
-
-        return (this.dadosFicha.detalhes?.idNivel === 0 ? Math.ceil(valorAtualizado) : valorAtualizado);
-    }
-
-    get psAtualizado(): number {
-        const valorAtualizado = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 2)!.valor! + this.ganhos.reduce((acc, cur) => acc + cur.psGanhoIndividual, 0);
-
-        return (this.dadosFicha.detalhes?.idNivel === 0 ? Math.ceil(valorAtualizado) : valorAtualizado);
-    }
-
-    get peAtualizado(): number {
-        const valorAtualizado = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 3)!.valor! + this.ganhos.reduce((acc, cur) => acc + cur.peGanhoIndividual, 0);
-
-        return (this.dadosFicha.detalhes?.idNivel === 0 ? Math.ceil(valorAtualizado) : valorAtualizado);
-    }
-
     get ganhosQueTemAlteracao(): GanhoIndividualNex[] { return this.ganhos.filter(ganho => ganho.alterando); }
+    get identificadoresSecaoNexUp(): IdentificadorSecaoNexUp[] { return this.ganhosQueTemAlteracao.map(ganho => ganho.identificador); }
     get etapa(): GanhoIndividualNex { return this.ganhosQueTemAlteracao[this.indexEtapa]; }
-    get estaNaUltimaEtapa(): boolean { return this.indexEtapa === this.ganhosQueTemAlteracao.length - 1; }
-    get estaNaPrimeiraEtapa(): boolean { return this.indexEtapa === 0; }
-    get textoBotaoProximo(): string { return this.estaNaUltimaEtapa ? 'Finalizar' : 'Continuar'; }
-    get textoBotaoVoltar(): string { return this.estaNaPrimeiraEtapa ? 'Sair' : 'Voltar'; }
 
-    retrocedeEtapa() { (this.finalizando) ? this.finalizando = false : this.indexEtapa--; this.etapa.validaCondicoes(); }
-    avancaEtapa() { (this.estaNaUltimaEtapa) ? this.finalizando = true : this.indexEtapa++; this.etapa.validaCondicoes(); }
+    get prontoParaFinalizar(): boolean { return this.ganhosQueTemAlteracao.every(ganho => ganho.finalizado); }
 
     get podeAvancarEtapa(): boolean { return this.etapa.finalizado && this.etapa.pontosObrigatoriosValidadosGenerico; }
 }
@@ -91,6 +65,391 @@ export class TipoGanhoNex {
     ) { }
 }
 
+type IdentificadorSecaoNexUp = { id: number, titulo: string };
+
+export abstract class GanhoIndividualNex {
+    protected _refFicha: RLJ_Ficha2;
+
+    constructor(
+        private _idTipoGanhoNex: number,
+        protected _alterando: boolean,
+    ) {
+        this._refFicha = GanhoIndividualNexFactory.ficha;
+    }
+
+    public abstract identificador:IdentificadorSecaoNexUp;
+    // adiado
+    // get historico(): { secao: string, numeroPontos: number, detalhesPontos: string[] }[] { return [{ secao: 'Atributos', numeroPontos: 2, detalhesPontos: [ 'Pontaria', '-' ] }]; }
+    public abstract get avisoGanhoNex(): AvisoGanhoNex[];
+    public pontosObrigatorios: ValidacoesGanhoNex[] = [];
+
+    public get pontosObrigatoriosValidadosGenerico(): boolean {
+        this.validaCondicoes();
+
+        return this.pontosObrigatorios.every(pontoObrigatorio => pontoObrigatorio.valido);
+    }
+
+    public validaCondicoes(): void {
+        this.pontosObrigatorios.forEach(pontoObrigatorio => {
+            pontoObrigatorio.condicao.condicoes.forEach(condicao => condicao.validaCondicao(this.obtemOpcaoAValidar(condicao.idOpcao)))
+        });
+    }
+
+    abstract obtemOpcaoAValidar(idOpcao: number): number;
+
+    get refTipoGanhoNex(): TipoGanhoNex { return SingletonHelper.getInstance().tipos_ganho_nex.find(tipo_ganho_nex => tipo_ganho_nex.id === this._idTipoGanhoNex)! }
+
+    get id(): number { return this._idTipoGanhoNex; }
+    get alterando(): boolean { return this._alterando; }
+    abstract get finalizado(): boolean;
+    abstract get pvGanhoIndividual(): number;
+    abstract get peGanhoIndividual(): number;
+    abstract get psGanhoIndividual(): number;
+
+    carregaPontosObrigatorios(pontosObrigatorios: { mensagem: string, operador?: OperadorCondicao; condicoes: { idOpcao: number, regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[]) {
+        this.pontosObrigatorios = pontosObrigatorios.map(ponto => {
+            return new ValidacoesGanhoNex(
+                {
+                    operador: ponto.operador,
+                    condicoes: ponto.condicoes.map(condicao => {
+                        return new CondicaoGanhoNex(
+                            condicao.idOpcao,
+                            condicao.regra,
+                            condicao.valorCondicao,
+                        );
+                    }),
+                },
+                ponto.mensagem
+            );
+        });
+    }
+}
+
+export class GanhoIndividualNexFactory {
+    public static ficha: RLJ_Ficha2;
+
+    static setFicha(ficha: RLJ_Ficha2) {
+        GanhoIndividualNexFactory.ficha = ficha;
+    }
+}
+
+export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
+    public identificador = { id: 1, titulo: 'Atributos' };
+    public ganhosAtributo: ValoresGanhoETroca;
+    public atributos: AtributoEmGanho[];
+
+    constructor(valoresGanhoETrocaProps: ValoresGanhoETrocaProps, protected valorMaxAtributo: number = 3) {
+        const ganhos = new ValoresGanhoETroca(valoresGanhoETrocaProps.ganhos, valoresGanhoETrocaProps.trocas);
+        super(1, ganhos.alterando);
+        this.ganhosAtributo = ganhos;
+        this.atributos = this._refFicha.atributos?.map(atributoBase => new AtributoEmGanho(SingletonHelper.getInstance().atributos.find(atributo => atributo.id === atributoBase.id)!, atributoBase.valor, valorMaxAtributo))!;
+        this.carregaGanhosEstatisticasAtributos();
+    }
+
+    obtemOpcaoAValidar(idOpcao: number): number {
+        return this.atributos.find(atributo => atributo.refAtributo.id === idOpcao)!.valorAtual
+    }
+
+    public get avisoGanhoNex(): AvisoGanhoNex[] {
+        return [
+            { mensagem: `O Valor Máximo de Atributo no momento é ${this.valorMaxAtributo}`, icone: '' },
+            { mensagem: 'O Valor Mínimo de Atributo é 0', icone: '' },
+
+            ...(
+                this.ganhosAtributo.ganhos.valorInicial > 0
+                    ? [{
+                        mensagem: `Ganho de ${this.ganhosAtributo.ganhos.valorInicial} Atributos`,
+                        icone: (this.ganhosAtributo.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
+                    }]
+                    : []
+            ),
+
+            ...(
+                this.ganhosAtributo.ganhos.valorInicial > 0
+                    ? [{
+                        mensagem: `Troca Opcional de ${this.ganhosAtributo.trocas.valorInicial} Atributo`,
+                        icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } })
+                    }]
+                    : []
+            ),
+
+            ...this.pontosObrigatorios.map(ponto => ({
+                mensagem: ponto.mensagem!,
+                icone: ponto.iconeValidacao
+            }))
+        ];
+    }
+
+    carregaGanhosEstatisticasAtributos() {
+        const ganhosEstatisticas = obterGanhosEstatisticas(this._refFicha.detalhes?.idClasse!);
+
+        this.atributos.forEach(atributo => {
+            atributo.ganhosEstatisticas = ganhosEstatisticas.find(ganho => ganho.idAtributo === atributo.refAtributo.id)?.ganhos!;
+        })
+    }
+
+    get finalizado(): boolean { return this.ganhosAtributo.finalizado; }
+    get quantidadeDeAtributosReduzidos(): number { return this.atributos.filter(atributo => atributo.menorQueInicialmente).length }
+    get pvGanhoIndividual(): number { return this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(1) }, 0); }
+    get psGanhoIndividual(): number { return this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(2) }, 0); }
+    get peGanhoIndividual(): number { return this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(3) }, 0); }
+
+    adicionaPonto(idAtributo: number) {
+        const atributo = this.atributos.find(atributo => atributo.refAtributo.id === idAtributo)!;
+
+        (atributo.valorAtual < atributo.valorInicial) ? this.ganhosAtributo.realizaTroca() : this.ganhosAtributo.realizaGanho();
+
+        atributo.alterarValor(1);
+
+        this.validaCondicoes();
+    }
+
+    subtraiPonto(idAtributo: number) {
+        const atributo = this.atributos.find(atributo => atributo.refAtributo.id === idAtributo)!;
+
+        atributo.alterarValor(-1);
+
+        (atributo.valorAtual < atributo.valorInicial) ? this.ganhosAtributo.desrealizaTroca() : this.ganhosAtributo.desrealizaGanho();
+
+        this.validaCondicoes();
+    }
+}
+
+export class GanhoIndividualNexPericia extends GanhoIndividualNex {
+    public identificador = { id: 2, titulo: 'Perícias' };
+    public ganhosTreinadas: ValoresGanhoETroca;
+    public ganhosVeteranas: ValoresGanhoETroca;
+    public ganhosExperts: ValoresGanhoETroca;
+    public ganhosLivres: ValoresGanhoETroca;
+    public pericias: PericiaEmGanho[];
+
+    obtemOpcaoAValidar(idOpcao: number): number {
+        return this.pericias.find(pericia => pericia.refPericia.id === idOpcao)!.refPatenteAtual.id;
+    }
+
+    public get avisoGanhoNex(): AvisoGanhoNex[] {
+        return [
+
+            ...(
+                this.ganhosTreinadas.ganhos.valorInicial > 0
+                    ? [{
+                        mensagem: `Ganho de ${this.ganhosTreinadas.ganhos.valorInicial} Perícias Treinadas`,
+                        icone: (this.ganhosTreinadas.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
+                    }]
+                    : []
+            ),
+            ...(
+                this.ganhosVeteranas.ganhos.valorInicial > 0
+                    ? [{
+                        mensagem: `Ganho de ${this.ganhosVeteranas.ganhos.valorInicial} Perícias Veteranas`,
+                        icone: (this.ganhosVeteranas.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
+                    }]
+                    : []
+            ),
+            ...(
+                this.ganhosExperts.ganhos.valorInicial > 0
+                    ? [{
+                        mensagem: `Ganho de ${this.ganhosExperts.ganhos.valorInicial} Perícias Experts`,
+                        icone: (this.ganhosExperts.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
+                    }]
+                    : []
+            ),
+            ...(
+                this.ganhosLivres.ganhos.valorInicial > 0
+                    ? [{
+                        mensagem: `Ganho de ${this.ganhosLivres.ganhos.valorInicial} Perícias Livres`,
+                        icone: (this.ganhosLivres.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
+                    }]
+                    : []
+            ),
+
+            ...(
+                this.ganhosTreinadas.trocas.valorInicial > 0
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosTreinadas.trocas.valorInicial} Perícia Treinada`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    : []
+            ),
+            ...(
+                this.ganhosVeteranas.trocas.valorInicial > 0
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosVeteranas.trocas.valorInicial} Perícia Veterana`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    : []
+            ),
+            ...(
+                this.ganhosExperts.trocas.valorInicial > 0
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosExperts.trocas.valorInicial} Perícia Expert`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    : []
+            ),
+            ...(
+                this.ganhosLivres.trocas.valorInicial > 0
+                    ? [{ mensagem: `Troca Opcional de ${this.ganhosLivres.trocas.valorInicial} Perícia Livre`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
+                    : []
+            ),
+
+            ...this.pontosObrigatorios.map(ponto => ({
+                mensagem: ponto.mensagem!,
+                icone: ponto.iconeValidacao
+            }))
+        ];
+    }
+
+    constructor(valoresGanhoETrocaPropsTreinadas: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsVeteranas: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsExperts: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsLivres: ValoresGanhoETrocaProps) {
+        const ganhosTreinadas = new ValoresGanhoETroca(valoresGanhoETrocaPropsTreinadas.ganhos, valoresGanhoETrocaPropsTreinadas.trocas);
+        const ganhosVeteranas = new ValoresGanhoETroca(valoresGanhoETrocaPropsVeteranas.ganhos, valoresGanhoETrocaPropsVeteranas.trocas);
+        const ganhosExperts = new ValoresGanhoETroca(valoresGanhoETrocaPropsExperts.ganhos, valoresGanhoETrocaPropsExperts.trocas);
+        const ganhosLivres = new ValoresGanhoETroca(valoresGanhoETrocaPropsLivres.ganhos, valoresGanhoETrocaPropsLivres.trocas);
+        super(2, ganhosTreinadas.alterando || ganhosVeteranas.alterando || ganhosExperts.alterando || ganhosLivres.alterando);
+
+        this.ganhosTreinadas = ganhosTreinadas;
+        this.ganhosVeteranas = ganhosVeteranas;
+        this.ganhosExperts = ganhosExperts;
+        this.ganhosLivres = ganhosLivres;
+
+        this.pericias = this._refFicha.periciasPatentes?.map(pericia_patente => new PericiaEmGanho(
+            SingletonHelper.getInstance().pericias.find(pericia => pericia.id === pericia_patente.idPericia)!,
+            pericia_patente.idPatente
+        ))!;
+    }
+
+    get finalizado(): boolean {
+        return (
+            this.ganhosTreinadas.finalizado &&
+            this.ganhosVeteranas.finalizado &&
+            this.ganhosExperts.finalizado &&
+            this.ganhosLivres.finalizado
+        );
+    }
+
+    temPontosParaEssaPatente(pericia: PericiaEmGanho): boolean {
+        switch (pericia.idPatenteAtual) {
+            case 1:
+                return this.ganhosTreinadas.ganhoTemPontos!;
+            case 2:
+                return this.ganhosVeteranas.ganhoTemPontos!;
+            case 3:
+                return this.ganhosExperts.ganhoTemPontos!;
+            default:
+                return false;
+        }
+    }
+
+    deparaPericiaPatente(pericia: PericiaEmGanho): ValoresGanhoETroca | undefined {
+        switch (pericia.refPatenteAtual.id) {
+            case 2:
+                return this.ganhosTreinadas;
+            case 3:
+                return this.ganhosVeteranas;
+            case 4:
+                return this.ganhosExperts;
+        }
+    }
+
+    adicionaPonto(idPericia: number) {
+        const pericia = this.pericias.find(pericia => pericia.refPericia.id === idPericia)!;
+
+        pericia.alterarValor(1);
+
+        const valorGanhoeETrocaPatenteAtual = this.deparaPericiaPatente(pericia);
+
+        (pericia.refPatenteAtual.id < pericia.refPatenteInicial.id) ? valorGanhoeETrocaPatenteAtual!.realizaTroca() : valorGanhoeETrocaPatenteAtual!.realizaGanho();
+
+        this.validaCondicoes();
+    }
+
+    subtraiPonto(idPericia: number) {
+        const pericia = this.pericias.find(pericia => pericia.refPericia.id === idPericia)!;
+        const valorGanhoeETrocaPatenteAntesSubtrair = this.deparaPericiaPatente(pericia);
+
+        pericia.alterarValor(-1);
+
+        valorGanhoeETrocaPatenteAntesSubtrair!.desrealizaGanho();
+
+        this.validaCondicoes();
+    }
+
+    get pvGanhoIndividual(): number { return 0; }
+    get peGanhoIndividual(): number { return 0; }
+    get psGanhoIndividual(): number { return 0; }
+}
+
+export class GanhoIndividualNexEstatisticaFixa extends GanhoIndividualNex {
+    public identificador = { id: 3, titulo: 'Estatísticas' };
+    public ganhoPv: number;
+    public ganhoPs: number;
+    public ganhoPe: number;
+    public avisoGanhoNex = [];
+
+    obtemOpcaoAValidar(idOpcao: number): number {
+        return 0;
+    }
+
+    constructor(ganhosEstatisticaProps: GanhosEstatisticaProps) {
+        super(3, ganhosEstatisticaProps.pv > 0 || ganhosEstatisticaProps.ps > 0 || ganhosEstatisticaProps.pe > 0);
+        this.ganhoPv = ganhosEstatisticaProps.pv;
+        this.ganhoPs = ganhosEstatisticaProps.ps;
+        this.ganhoPe = ganhosEstatisticaProps.pe;
+    }
+
+    get finalizado(): boolean { return true; }
+    get pvGanhoIndividual(): number { return this.ganhoPv; }
+    get psGanhoIndividual(): number { return this.ganhoPs; }
+    get peGanhoIndividual(): number { return this.ganhoPe; }
+}
+
+export class GanhoIndividualNexEscolhaClasse extends GanhoIndividualNex {
+    public identificador = { id: 4, titulo: 'Classe' };
+    public idOpcaoEscolhida: number | undefined;
+
+    constructor(escolha: boolean = false) {
+        super(4, escolha);
+    }
+
+    public get avisoGanhoNex(): AvisoGanhoNex[] {
+        return [
+            {
+                mensagem: `Você precisa escolher sua Classe`,
+                icone: (this.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } })),
+            },
+        ];
+    }
+
+    obtemOpcaoAValidar(idOpcao: number): number {
+        return 0;
+    }
+
+    setIdEscolhido(id: number) { this.idOpcaoEscolhida = id; }
+
+    get finalizado(): boolean { return this.idOpcaoEscolhida !== undefined && this.idOpcaoEscolhida > 1; }
+    get pvGanhoIndividual(): number { return 0; }
+    get peGanhoIndividual(): number { return 0; }
+    get psGanhoIndividual(): number { return 0; }
+}
+
+export class GanhoIndividualNexRitual extends GanhoIndividualNex {
+    public identificador = { id: 5, titulo: 'Rituais' };
+    public numeroRituais: number;
+    public dadosRituais: ArgsRitual[] = [];
+    public avisoGanhoNex = [];
+
+    obtemOpcaoAValidar(idOpcao: number): number {
+        return 0;
+    }
+
+    constructor(ganhoRitualProps: GanhoRitualProps) {
+        super(5, ganhoRitualProps.numeroDeRituais > 0);
+        this.numeroRituais = ganhoRitualProps.numeroDeRituais;
+    }
+
+    get finalizado(): boolean { return this.numeroRituais === this.dadosRituais.length; }
+    get pvGanhoIndividual(): number { return 0; }
+    get peGanhoIndividual(): number { return 0; }
+    get psGanhoIndividual(): number { return 0; }
+}
+
+// export class GanhoIndividualNexHabilidade extends GanhoIndividualNex {
+    // public identificador = { id: 6, titulo: 'Habilidades' };
+// }
+// #endregion
+
+// #region ClassesGanho
 export class GanhoEstatisticaPorPontoDeAtributo {
     constructor(
         private _idEstatistica: number,
@@ -183,14 +542,9 @@ export class PericiaEmGanho {
     private _refPatente(idPatente: number): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente_pericia => patente_pericia.id === idPatente)!; }
     alterarValor(modificador: number) { this.idPatenteAtual += modificador; }
 }
+// #endregion
 
-function instanciaComArgumentos<T extends new (...args: any[]) => any>(
-    Ctor: T,
-    ...params: ConstructorParameters<T>
-) {
-    return { Ctor, params } as const;
-}
-
+// #region LogicaDeGanho
 export class ControladorGanhos {
     private mapaGanhoObrigatorio: { [idNivel: number]: { [idClasse: number]: { [Ctor: string]: { mensagem: string; operador?: OperadorCondicao; condicoes: { idOpcao: number; regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[] } } } = {
         1: {
@@ -544,6 +898,19 @@ export class ControladorGanhos {
     }
 }
 
+const controladorGanhos = new ControladorGanhos();
+export const obterGanhosGerais = (idNivel: number, idClasse: number) => controladorGanhos.obterGanhosGerais(idNivel, idClasse);
+export const obterGanhosEstatisticas = (idNivel: number) => controladorGanhos.obterGanhosEstatisticasDoAtributoPorClasse(idNivel);
+export const obterGanhosObrigatorio = (idNivel: number, idClasse: number) => controladorGanhos.obterGanhoObrigatorio(idNivel, idClasse);
+// #endregion
+
+function instanciaComArgumentos<T extends new (...args: any[]) => any>(
+    Ctor: T,
+    ...params: ConstructorParameters<T>
+) {
+    return { Ctor, params } as const;
+}
+
 interface ValoresGanhoETrocaProps {
     ganhos: number,
     trocas: number,
@@ -558,383 +925,3 @@ interface GanhosEstatisticaProps {
 interface GanhoRitualProps {
     numeroDeRituais: number,
 }
-
-export class GanhoIndividualNexFactory {
-    public static ficha: RLJ_Ficha2;
-
-    static setFicha(ficha: RLJ_Ficha2) {
-        GanhoIndividualNexFactory.ficha = ficha;
-    }
-}
-
-export abstract class GanhoIndividualNex {
-    protected _refFicha: RLJ_Ficha2;
-
-    constructor(
-        private _idTipoGanhoNex: number,
-        protected _alterando: boolean,
-    ) {
-        this._refFicha = GanhoIndividualNexFactory.ficha;
-    }
-
-    public abstract tituloEtapa: string;
-    public abstract get avisoGanhoNex(): AvisoGanhoNex[];
-    public pontosObrigatorios: ValidacoesGanhoNex[] = [];
-
-    public get pontosObrigatoriosValidadosGenerico(): boolean {
-        this.validaCondicoes();
-
-        return this.pontosObrigatorios.every(pontoObrigatorio => pontoObrigatorio.valido);
-    }
-
-    public validaCondicoes(): void {
-        this.pontosObrigatorios.forEach(pontoObrigatorio => {
-            pontoObrigatorio.condicao.condicoes.forEach(condicao => condicao.validaCondicao(this.obtemOpcaoAValidar(condicao.idOpcao)))
-        });
-    }
-
-    abstract obtemOpcaoAValidar(idOpcao: number): number;
-
-    get refTipoGanhoNex(): TipoGanhoNex { return SingletonHelper.getInstance().tipos_ganho_nex.find(tipo_ganho_nex => tipo_ganho_nex.id === this._idTipoGanhoNex)! }
-
-    get id(): number { return this._idTipoGanhoNex; }
-    get alterando(): boolean { return this._alterando; }
-    abstract get finalizado(): boolean;
-    abstract get pvGanhoIndividual(): number;
-    abstract get peGanhoIndividual(): number;
-    abstract get psGanhoIndividual(): number;
-
-    carregaPontosObrigatorios(pontosObrigatorios: { mensagem: string, operador?: OperadorCondicao; condicoes: { idOpcao: number, regra: RegrasCondicaoGanhoNex; valorCondicao: number; }[] }[]) {
-        this.pontosObrigatorios = pontosObrigatorios.map(ponto => {
-            return new ValidacoesGanhoNex(
-                {
-                    operador: ponto.operador,
-                    condicoes: ponto.condicoes.map(condicao => {
-                        return new CondicaoGanhoNex(
-                            condicao.idOpcao,
-                            condicao.regra,
-                            condicao.valorCondicao,
-                        );
-                    }),
-                },
-                ponto.mensagem
-            );
-        });
-    }
-}
-
-export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
-    public ganhosAtributo: ValoresGanhoETroca;
-    public atributos: AtributoEmGanho[];
-    public tituloEtapa = 'Ganho de Atributos';
-
-    constructor(valoresGanhoETrocaProps: ValoresGanhoETrocaProps, protected valorMaxAtributo: number = 3) {
-        const ganhos = new ValoresGanhoETroca(valoresGanhoETrocaProps.ganhos, valoresGanhoETrocaProps.trocas);
-        super(1, ganhos.alterando);
-        this.ganhosAtributo = ganhos;
-        this.atributos = this._refFicha.atributos?.map(atributoBase => new AtributoEmGanho(SingletonHelper.getInstance().atributos.find(atributo => atributo.id === atributoBase.id)!, atributoBase.valor, valorMaxAtributo))!;
-        this.carregaGanhosEstatisticasAtributos();
-    }
-
-    obtemOpcaoAValidar(idOpcao: number): number {
-        return this.atributos.find(atributo => atributo.refAtributo.id === idOpcao)!.valorAtual
-    }
-
-    public get avisoGanhoNex(): AvisoGanhoNex[] {
-        return [
-            { mensagem: `O Valor Máximo de Atributo no momento é ${this.valorMaxAtributo}`, icone: '' },
-            { mensagem: 'O Valor Mínimo de Atributo é 0', icone: '' },
-
-            ...(
-                this.ganhosAtributo.ganhos.valorInicial > 0
-                    ? [{
-                        mensagem: `Ganho de ${this.ganhosAtributo.ganhos.valorInicial} Atributos`,
-                        icone: (this.ganhosAtributo.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
-                    }]
-                    : []
-            ),
-
-            ...(
-                this.ganhosAtributo.ganhos.valorInicial > 0
-                    ? [{
-                        mensagem: `Troca Opcional de ${this.ganhosAtributo.trocas.valorInicial} Atributo`,
-                        icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } })
-                    }]
-                    : []
-            ),
-
-            ...this.pontosObrigatorios.map(ponto => ({
-                mensagem: ponto.mensagem!,
-                icone: ponto.iconeValidacao
-            }))
-        ];
-    }
-
-    carregaGanhosEstatisticasAtributos() {
-        const ganhosEstatisticas = obterGanhosEstatisticas(this._refFicha.detalhes?.idClasse!);
-
-        this.atributos.forEach(atributo => {
-            atributo.ganhosEstatisticas = ganhosEstatisticas.find(ganho => ganho.idAtributo === atributo.refAtributo.id)?.ganhos!;
-        })
-    }
-
-    get finalizado(): boolean { return this.ganhosAtributo.finalizado; }
-    get quantidadeDeAtributosReduzidos(): number { return this.atributos.filter(atributo => atributo.menorQueInicialmente).length }
-    get pvGanhoIndividual(): number { return this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(1) }, 0); }
-    get psGanhoIndividual(): number { return this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(2) }, 0); }
-    get peGanhoIndividual(): number { return this.atributos.reduce((cur, acc) => { return cur + acc.ganhoEstatistica(3) }, 0); }
-
-    adicionaPonto(idAtributo: number) {
-        const atributo = this.atributos.find(atributo => atributo.refAtributo.id === idAtributo)!;
-
-        (atributo.valorAtual < atributo.valorInicial) ? this.ganhosAtributo.realizaTroca() : this.ganhosAtributo.realizaGanho();
-
-        atributo.alterarValor(1);
-
-        this.validaCondicoes();
-    }
-
-    subtraiPonto(idAtributo: number) {
-        const atributo = this.atributos.find(atributo => atributo.refAtributo.id === idAtributo)!;
-
-        atributo.alterarValor(-1);
-
-        (atributo.valorAtual < atributo.valorInicial) ? this.ganhosAtributo.desrealizaTroca() : this.ganhosAtributo.desrealizaGanho();
-
-        this.validaCondicoes();
-    }
-}
-
-export class GanhoIndividualNexPericia extends GanhoIndividualNex {
-    public ganhosTreinadas: ValoresGanhoETroca;
-    public ganhosVeteranas: ValoresGanhoETroca;
-    public ganhosExperts: ValoresGanhoETroca;
-    public ganhosLivres: ValoresGanhoETroca;
-    public pericias: PericiaEmGanho[];
-    public tituloEtapa = 'Ganho de Perícias';
-
-    obtemOpcaoAValidar(idOpcao: number): number {
-        return this.pericias.find(pericia => pericia.refPericia.id === idOpcao)!.refPatenteAtual.id;
-    }
-
-    public get avisoGanhoNex(): AvisoGanhoNex[] {
-        return [
-
-            ...(
-                this.ganhosTreinadas.ganhos.valorInicial > 0
-                    ? [{
-                        mensagem: `Ganho de ${this.ganhosTreinadas.ganhos.valorInicial} Perícias Treinadas`,
-                        icone: (this.ganhosTreinadas.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
-                    }]
-                    : []
-            ),
-            ...(
-                this.ganhosVeteranas.ganhos.valorInicial > 0
-                    ? [{
-                        mensagem: `Ganho de ${this.ganhosVeteranas.ganhos.valorInicial} Perícias Veteranas`,
-                        icone: (this.ganhosVeteranas.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
-                    }]
-                    : []
-            ),
-            ...(
-                this.ganhosExperts.ganhos.valorInicial > 0
-                    ? [{
-                        mensagem: `Ganho de ${this.ganhosExperts.ganhos.valorInicial} Perícias Experts`,
-                        icone: (this.ganhosExperts.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
-                    }]
-                    : []
-            ),
-            ...(
-                this.ganhosLivres.ganhos.valorInicial > 0
-                    ? [{
-                        mensagem: `Ganho de ${this.ganhosLivres.ganhos.valorInicial} Perícias Livres`,
-                        icone: (this.ganhosLivres.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
-                    }]
-                    : []
-            ),
-
-            ...(
-                this.ganhosTreinadas.trocas.valorInicial > 0
-                    ? [{ mensagem: `Troca Opcional de ${this.ganhosTreinadas.trocas.valorInicial} Perícia Treinada`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
-                    : []
-            ),
-            ...(
-                this.ganhosVeteranas.trocas.valorInicial > 0
-                    ? [{ mensagem: `Troca Opcional de ${this.ganhosVeteranas.trocas.valorInicial} Perícia Veterana`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
-                    : []
-            ),
-            ...(
-                this.ganhosExperts.trocas.valorInicial > 0
-                    ? [{ mensagem: `Troca Opcional de ${this.ganhosExperts.trocas.valorInicial} Perícia Expert`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
-                    : []
-            ),
-            ...(
-                this.ganhosLivres.trocas.valorInicial > 0
-                    ? [{ mensagem: `Troca Opcional de ${this.ganhosLivres.trocas.valorInicial} Perícia Livre`, icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }) }]
-                    : []
-            ),
-
-            ...this.pontosObrigatorios.map(ponto => ({
-                mensagem: ponto.mensagem!,
-                icone: ponto.iconeValidacao
-            }))
-        ];
-    }
-
-    constructor(valoresGanhoETrocaPropsTreinadas: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsVeteranas: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsExperts: ValoresGanhoETrocaProps, valoresGanhoETrocaPropsLivres: ValoresGanhoETrocaProps) {
-        const ganhosTreinadas = new ValoresGanhoETroca(valoresGanhoETrocaPropsTreinadas.ganhos, valoresGanhoETrocaPropsTreinadas.trocas);
-        const ganhosVeteranas = new ValoresGanhoETroca(valoresGanhoETrocaPropsVeteranas.ganhos, valoresGanhoETrocaPropsVeteranas.trocas);
-        const ganhosExperts = new ValoresGanhoETroca(valoresGanhoETrocaPropsExperts.ganhos, valoresGanhoETrocaPropsExperts.trocas);
-        const ganhosLivres = new ValoresGanhoETroca(valoresGanhoETrocaPropsLivres.ganhos, valoresGanhoETrocaPropsLivres.trocas);
-        super(2, ganhosTreinadas.alterando || ganhosVeteranas.alterando || ganhosExperts.alterando || ganhosLivres.alterando);
-
-        this.ganhosTreinadas = ganhosTreinadas;
-        this.ganhosVeteranas = ganhosVeteranas;
-        this.ganhosExperts = ganhosExperts;
-        this.ganhosLivres = ganhosLivres;
-
-        this.pericias = this._refFicha.periciasPatentes?.map(pericia_patente => new PericiaEmGanho(
-            SingletonHelper.getInstance().pericias.find(pericia => pericia.id === pericia_patente.idPericia)!,
-            pericia_patente.idPatente
-        ))!;
-    }
-
-    get finalizado(): boolean {
-        return (
-            this.ganhosTreinadas.finalizado &&
-            this.ganhosVeteranas.finalizado &&
-            this.ganhosExperts.finalizado &&
-            this.ganhosLivres.finalizado
-        );
-    }
-
-    temPontosParaEssaPatente(pericia: PericiaEmGanho): boolean {
-        switch (pericia.idPatenteAtual) {
-            case 1:
-                return this.ganhosTreinadas.ganhoTemPontos!;
-            case 2:
-                return this.ganhosVeteranas.ganhoTemPontos!;
-            case 3:
-                return this.ganhosExperts.ganhoTemPontos!;
-            default:
-                return false;
-        }
-    }
-
-    deparaPericiaPatente(pericia: PericiaEmGanho): ValoresGanhoETroca | undefined {
-        switch (pericia.refPatenteAtual.id) {
-            case 2:
-                return this.ganhosTreinadas;
-            case 3:
-                return this.ganhosVeteranas;
-            case 4:
-                return this.ganhosExperts;
-        }
-    }
-
-    adicionaPonto(idPericia: number) {
-        const pericia = this.pericias.find(pericia => pericia.refPericia.id === idPericia)!;
-
-        pericia.alterarValor(1);
-
-        const valorGanhoeETrocaPatenteAtual = this.deparaPericiaPatente(pericia);
-
-        (pericia.refPatenteAtual.id < pericia.refPatenteInicial.id) ? valorGanhoeETrocaPatenteAtual!.realizaTroca() : valorGanhoeETrocaPatenteAtual!.realizaGanho();
-
-        this.validaCondicoes();
-    }
-
-    subtraiPonto(idPericia: number) {
-        const pericia = this.pericias.find(pericia => pericia.refPericia.id === idPericia)!;
-        const valorGanhoeETrocaPatenteAntesSubtrair = this.deparaPericiaPatente(pericia);
-
-        pericia.alterarValor(-1);
-
-        valorGanhoeETrocaPatenteAntesSubtrair!.desrealizaGanho();
-
-        this.validaCondicoes();
-    }
-
-    get pvGanhoIndividual(): number { return 0; }
-    get peGanhoIndividual(): number { return 0; }
-    get psGanhoIndividual(): number { return 0; }
-}
-
-export class GanhoIndividualNexEstatisticaFixa extends GanhoIndividualNex {
-    public ganhoPv: number;
-    public ganhoPs: number;
-    public ganhoPe: number;
-    public tituloEtapa = 'Ganho de Estatísticas';
-    public avisoGanhoNex = [];
-
-    obtemOpcaoAValidar(idOpcao: number): number {
-        return 0;
-    }
-
-    constructor(ganhosEstatisticaProps: GanhosEstatisticaProps) {
-        super(3, ganhosEstatisticaProps.pv > 0 || ganhosEstatisticaProps.ps > 0 || ganhosEstatisticaProps.pe > 0);
-        this.ganhoPv = ganhosEstatisticaProps.pv;
-        this.ganhoPs = ganhosEstatisticaProps.ps;
-        this.ganhoPe = ganhosEstatisticaProps.pe;
-    }
-
-    get finalizado(): boolean { return true; }
-    get pvGanhoIndividual(): number { return this.ganhoPv; }
-    get psGanhoIndividual(): number { return this.ganhoPs; }
-    get peGanhoIndividual(): number { return this.ganhoPe; }
-}
-
-export class GanhoIndividualNexEscolhaClasse extends GanhoIndividualNex {
-    public idOpcaoEscolhida: number | undefined;
-    public tituloEtapa = 'Escolha de Classe';
-
-    constructor(escolha: boolean = false) {
-        super(4, escolha);
-    }
-
-    public get avisoGanhoNex(): AvisoGanhoNex[] {
-        return [
-            {
-                mensagem: `Você precisa escolher sua Classe`,
-                icone: (this.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } })),
-            },
-        ];
-    }
-
-    obtemOpcaoAValidar(idOpcao: number): number {
-        return 0;
-    }
-
-    setIdEscolhido(id: number) { this.idOpcaoEscolhida = id; }
-
-    get finalizado(): boolean { return this.idOpcaoEscolhida !== undefined && this.idOpcaoEscolhida > 1; }
-    get pvGanhoIndividual(): number { return 0; }
-    get peGanhoIndividual(): number { return 0; }
-    get psGanhoIndividual(): number { return 0; }
-}
-
-export class GanhoIndividualNexRitual extends GanhoIndividualNex {
-    public numeroRituais: number;
-    public dadosRituais: ArgsRitual[] = [];
-    public tituloEtapa = 'Ganho de Rituais';
-    public avisoGanhoNex = [];
-
-    obtemOpcaoAValidar(idOpcao: number): number {
-        return 0;
-    }
-
-    constructor(ganhoRitualProps: GanhoRitualProps) {
-        super(5, ganhoRitualProps.numeroDeRituais > 0);
-        this.numeroRituais = ganhoRitualProps.numeroDeRituais;
-    }
-
-    get finalizado(): boolean { return this.numeroRituais === this.dadosRituais.length; }
-    get pvGanhoIndividual(): number { return 0; }
-    get peGanhoIndividual(): number { return 0; }
-    get psGanhoIndividual(): number { return 0; }
-}
-
-const controladorGanhos = new ControladorGanhos();
-export const obterGanhosGerais = (idNivel: number, idClasse: number) => controladorGanhos.obterGanhosGerais(idNivel, idClasse);
-export const obterGanhosEstatisticas = (idNivel: number) => controladorGanhos.obterGanhosEstatisticasDoAtributoPorClasse(idNivel);
-export const obterGanhosObrigatorio = (idNivel: number, idClasse: number) => controladorGanhos.obterGanhoObrigatorio(idNivel, idClasse);

@@ -4,7 +4,7 @@ import style from './style.module.css';
 import img1 from "Assets/img1.svg";
 // #endregion
 
-const page = () => {
+const pagina = () => {
     return (
         <>
             <div className={style.titulo}>
@@ -22,4 +22,4 @@ const page = () => {
     );
 }
 
-export default page;
+export default pagina;

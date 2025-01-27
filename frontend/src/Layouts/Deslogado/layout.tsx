@@ -1,7 +1,9 @@
 // #region Imports
+import style from '../estilo_layouts.module.css';
+
 import { Outlet } from "react-router-dom";
 
-import MenuSwiperEsquerda from 'Componentes/MenuSwiperEsquerda/page.tsx';
+import MenuSwiperEsquerda from 'Componentes/MenuSwiperEsquerda/pagina';
 import SecaoTopo from 'Componentes/SecaoTopo/pagina.tsx';
 // #endregion
 
@@ -9,8 +11,12 @@ const LayoutDeslogado = () => {
     return (
         <>
             <MenuSwiperEsquerda />
-            <SecaoTopo />
-            <Outlet />
+            <section id={style.cabecalho}>
+                <SecaoTopo />
+            </section>
+            <section id={style.corpo}>
+                <Outlet />
+            </section>
         </>
     );
 };

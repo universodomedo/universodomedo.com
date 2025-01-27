@@ -3,11 +3,11 @@ import style from 'Recursos/EstilizacaoCompartilhada/detalhes_popover.module.css
 import { useState, useRef, useEffect } from 'react';
 
 import { Acao, GastaCustoProps } from 'Classes/ClassesTipos/index.ts';
-import { useContextoAbaAcoes } from 'Contextos/ContextoControleAcoes/contexto.tsx'
+import { useContextoControleAcoes } from 'Contextos/ContextoControleAcoes/contexto.tsx'
 
-import PopoverComponente from 'Componentes/Popover/page.tsx';
-import Tooltip from 'Componentes/Tooltip/page.tsx';
-import Modal from 'Componentes/ModalDialog/page.tsx';
+import PopoverComponente from 'Componentes/Popover/pagina';
+import Tooltip from 'Componentes/Tooltip/pagina';
+import Modal from 'Componentes/ModalDialog/pagina';
 import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';;
 // #endregion
 
@@ -15,7 +15,7 @@ const page = ({ acao }: { acao: Acao }) => {
     const [openExec, setOpenExec] = useState(false);
     const [openDetalhes, setOpenDetalhes] = useState(false);
 
-    const { mostrarEtiquetas } = useContextoAbaAcoes();
+    const { mostrarEtiquetas } = useContextoControleAcoes();
 
     const Icone = () => {
         return (

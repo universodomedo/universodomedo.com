@@ -4,25 +4,25 @@ import { createContext, useContext, useState } from "react";
 import { Menu } from 'Classes/ClassesTipos/index.ts';
 // #endregion
 
-interface ContextoAbaAtributoProps {
+interface ContextoControleAtributosPericiasProps {
     abreviar: boolean;
     toggleAbreviar: () => void;
     listaMenus: Menu[];
 }
 
-export const ContextoAbaAtributo = createContext<ContextoAbaAtributoProps | undefined>(undefined);
+export const ContextoControleAtributosPericias = createContext<ContextoControleAtributosPericiasProps | undefined>(undefined);
 
-export const useContextoAbaAtributo = (): ContextoAbaAtributoProps => {
-    const context = useContext(ContextoAbaAtributo);
+export const useContextoControleAtributosPericias = (): ContextoControleAtributosPericiasProps => {
+    const context = useContext(ContextoControleAtributosPericias);
 
     if (!context) {
-        throw new Error('useContextoAbaAtributo precisa estar dentro de um ContextoAbaAtributo');
+        throw new Error('useContextoControleAtributosPericias precisa estar dentro de um ContextoControleAtributosPericias');
     }
 
     return context;
 };
 
-export const ContextoAbaAtributoProvider = ({ children }: { children: React.ReactNode }) => {
+export const ContextoControleAtributosPericiasProvider = ({ children }: { children: React.ReactNode }) => {
     const [abreviar, setAbreviar] = useState(false);
 
     const toggleAbreviar = () => {
@@ -38,8 +38,8 @@ export const ContextoAbaAtributoProvider = ({ children }: { children: React.Reac
     ];
 
     return (
-        <ContextoAbaAtributo.Provider value={{ abreviar, toggleAbreviar, listaMenus }}>
+        <ContextoControleAtributosPericias.Provider value={{ abreviar, toggleAbreviar, listaMenus }}>
             {children}
-        </ContextoAbaAtributo.Provider>
+        </ContextoControleAtributosPericias.Provider>
     );
 }

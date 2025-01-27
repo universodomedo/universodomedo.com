@@ -2,7 +2,7 @@
 import style from "./style.module.css";
 
 import { OpcaoFormatada, CategoriaFormatada } from 'Classes/ClassesTipos/index';
-import { useConsultaContext } from 'Componentes/ConsultaGenerica/page.tsx';
+import { useConsultaContext } from 'Componentes/ConsultaGenerica/pagina';
 // #endregion
 
 const page = <T,>() => {

@@ -1,0 +1,71 @@
+.editando_ficha_pericias {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-y: auto;
+    gap: 2vh;
+}
+
+.patente_contadores {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.patente_contadores h1 {
+    margin: 0;
+}
+
+.atributos_e_pericias {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+    width: 80%;
+    margin: auto;
+}
+
+.atributo_agrupa_pericias {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.nome_atributo_agrupa_pericias {
+    margin: auto;
+}
+
+.conjunto_pericias {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 2vh;
+}
+
+.editar_pericia {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0 5%;
+    row-gap: 2vh;
+    justify-content: center;
+}
+
+.corpo_pericia {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 calc(14%);
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.nome_pericia, .patente_pericia {
+    margin: 0;
+}
+
+.botoes_pericia {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+}

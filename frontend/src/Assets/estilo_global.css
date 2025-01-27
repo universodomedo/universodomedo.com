@@ -20,6 +20,39 @@ body::before {
     margin: 0;
 }
 
+.carousel-content {
+    display: flex;
+    flex-direction: column;
+    width: 55%;
+}
+
+.slick-list {
+    padding: 0;
+}
+
+.slick-slide > div {
+    display: flex;
+    margin: auto;
+}
+
+.slick-slider {
+    width: 100%;
+    height: auto;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(#330ba4, #64305f, #330ba4);
+    border-radius: 10px;
+}
+
 :root {
     --cor1: #2be5ff8c;
 }

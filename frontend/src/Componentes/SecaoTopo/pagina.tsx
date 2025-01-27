@@ -11,11 +11,11 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { Link } from "react-router-dom";
 // #endregion
 
-const page = () => {
+const pagina = () => {
     const { alternaMenuAberto } = useContextoMenuSwiper();
 
     return (
-        <div id={style.cabecalho}>
+        <>
             <div id={style.conteudo_cabecalho_esquerda}>
                 <div id={style.botao_cabecalho_swiper_esquerda} onClick={alternaMenuAberto}><FontAwesomeIcon icon={faBars}/></div>
                 <div id={style.logo_cabecalho} />
@@ -26,8 +26,8 @@ const page = () => {
             <div id={style.conteudo_cabecalho_direita}>
                 <InformacoesLogado />
             </div>
-        </div>
+        </>
     );
 }
 
-export default page;
+export default pagina;
