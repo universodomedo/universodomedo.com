@@ -62,6 +62,10 @@ export type DadosComportamentosRitual = {
     dadosComportamentoRitual?: ConstructorParameters<typeof ComportamentoRitual>[0];
 };
 
+export type PropsHabilidades = {
+    
+}
+
 
 // --- //
 

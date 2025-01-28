@@ -2,13 +2,13 @@
 import style from './style.module.css';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { useFicha } from 'Pages/EditaFicha/NexUpContext/pagina.tsx';
+import { useContextoNexUp } from 'Contextos/ContextoNexUp/contexto.tsx';
 
 import { InfoCircledIcon } from '@radix-ui/react-icons'
 // #endregion
 
 const JanelaNotificacao = forwardRef((props, ref) => {
-    const { ganhosNex } = useFicha();
+    const { ganhosNex } = useContextoNexUp();
     const [isOpen, setIsOpen] = useState(false);
     const toggleConsole = () => setIsOpen(!isOpen);
 

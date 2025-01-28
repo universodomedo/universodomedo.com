@@ -51,6 +51,7 @@
 .nome_atributo {
     margin: 0;
     line-height: .8;
+    font-size: 1.3em;
 }
 
 .valor_atributo {

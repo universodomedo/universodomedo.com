@@ -1,6 +1,6 @@
 // #region Imports
 import React from 'react';
-import { RLJ_Ficha2, Atributo, Pericia, PatentePericia, ArgsRitual, AvisoGanhoNex, ValidacoesGanhoNex, CondicaoGanhoNexComOperador, RegrasCondicaoGanhoNex, OperadorCondicao, CondicaoGanhoNex, TipoEstatisticaDanificavel } from 'Classes/ClassesTipos/index.ts';
+import { RLJ_Ficha2, Atributo, Pericia, PatentePericia, ArgsRitual, AvisoGanhoNex, ValidacoesGanhoNex, CondicaoGanhoNexComOperador, RegrasCondicaoGanhoNex, OperadorCondicao, CondicaoGanhoNex, TipoEstatisticaDanificavel, pluralize, PropsHabilidades } from 'Classes/ClassesTipos/index.ts';
 import { SingletonHelper } from 'Classes/classes_estaticas.ts';
 
 import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
@@ -11,10 +11,16 @@ export class GanhosNex {
     public ganhos: GanhoIndividualNex[] = [];
     public finalizando: boolean = false;
     public indexEtapa: number = 0;
+    public idNexEmAndamento: number;
 
     constructor(public dadosFicha: RLJ_Ficha2) {
         GanhoIndividualNexFactory.setFicha(this.dadosFicha);
-        this.ganhos = obterGanhosGerais(this.dadosFicha.detalhes.idNivel, this.dadosFicha.detalhes.idClasse);
+        this.idNexEmAndamento = this.dadosFicha.detalhes.idNivel + 1;
+        this.atualizarGanhosDesseNex();
+    }
+
+    atualizarGanhosDesseNex() {
+        this.ganhos = obterGanhosGerais(this.idNexEmAndamento, this.dadosFicha.detalhes.idClasse);
     }
 
     get finalizados(): boolean { return false; }
@@ -23,6 +29,24 @@ export class GanhosNex {
 
     clickBotao() {
 
+    }
+
+    escreveNovosDadosDaEtapa() {
+        if (this.etapa instanceof GanhoIndividualNexEscolhaClasse) { 
+            this.dadosFicha.detalhes.idClasse = (this.etapa as GanhoIndividualNexEscolhaClasse).idOpcaoEscolhida!;
+            this.atualizarGanhosDesseNex();
+        }
+        // if (this.etapa instanceof GanhoIndividualNexHabilidade)
+        if (this.etapa instanceof GanhoIndividualNexAtributo) this.dadosFicha.atributos = this.etapa.atributos.map(atributo => ({ id: atributo.refAtributo.id, valor: atributo.valorAtual }));
+        // if (this.etapa instanceof GanhoIndividualNexEstatisticaFixa)
+        if (this.etapa instanceof GanhoIndividualNexPericia) this.dadosFicha.periciasPatentes = this.etapa.pericias.map(pericia => ({ idPericia: pericia.refPericia.id, idPatente: pericia.refPatenteAtual.id }));
+        // if (this.etapa instanceof GanhoIndividualNexRitual)
+    }
+
+    get tituloNexUp(): string {
+        if (this.idNexEmAndamento === 1 ) return 'Criando Ficha';
+
+        return `Evoluindo Ficha - NEX ${SingletonHelper.getInstance().niveis.find(nivel => nivel.id === this.idNexEmAndamento)?.nomeDisplay}`;
     }
 
     get pv(): { valorAtual: number, ganhoAtual: number, valorAtualizado: number } {
@@ -50,36 +74,33 @@ export class GanhosNex {
     }
 
     get ganhosQueTemAlteracao(): GanhoIndividualNex[] { return this.ganhos.filter(ganho => ganho.alterando); }
-    get identificadoresSecaoNexUp(): IdentificadorSecaoNexUp[] { return this.ganhosQueTemAlteracao.map(ganho => ganho.identificador); }
     get etapa(): GanhoIndividualNex { return this.ganhosQueTemAlteracao[this.indexEtapa]; }
 
-    get prontoParaFinalizar(): boolean { return this.ganhosQueTemAlteracao.every(ganho => ganho.finalizado); }
+    get estaNaUltimaEtapa(): boolean { return this.indexEtapa === this.ganhosQueTemAlteracao.length - 1; }
+    get estaNaPrimeiraEtapa(): boolean { return this.indexEtapa === 0; }
+    get textoBotaoProximo(): string { return this.estaNaUltimaEtapa ? 'Finalizar' : 'Continuar'; }
+    get textoBotaoVoltar(): string { return this.estaNaPrimeiraEtapa ? 'Sair' : 'Voltar'; }
+
+    avancaEtapa() { 
+        this.escreveNovosDadosDaEtapa();
+
+        (this.estaNaUltimaEtapa) ? this.finalizando = true : this.indexEtapa++;
+        this.etapa.validaCondicoes();
+    }
 
     get podeAvancarEtapa(): boolean { return this.etapa.finalizado && this.etapa.pontosObrigatoriosValidadosGenerico; }
 }
-
-export class TipoGanhoNex {
-    constructor(
-        public id: number,
-        public nome: string
-    ) { }
-}
-
-type IdentificadorSecaoNexUp = { id: number, titulo: string };
 
 export abstract class GanhoIndividualNex {
     protected _refFicha: RLJ_Ficha2;
 
     constructor(
-        private _idTipoGanhoNex: number,
         protected _alterando: boolean,
     ) {
         this._refFicha = GanhoIndividualNexFactory.ficha;
     }
 
-    public abstract identificador:IdentificadorSecaoNexUp;
-    // adiado
-    // get historico(): { secao: string, numeroPontos: number, detalhesPontos: string[] }[] { return [{ secao: 'Atributos', numeroPontos: 2, detalhesPontos: [ 'Pontaria', '-' ] }]; }
+    public abstract tituloEtapa: string;
     public abstract get avisoGanhoNex(): AvisoGanhoNex[];
     public pontosObrigatorios: ValidacoesGanhoNex[] = [];
 
@@ -97,9 +118,6 @@ export abstract class GanhoIndividualNex {
 
     abstract obtemOpcaoAValidar(idOpcao: number): number;
 
-    get refTipoGanhoNex(): TipoGanhoNex { return SingletonHelper.getInstance().tipos_ganho_nex.find(tipo_ganho_nex => tipo_ganho_nex.id === this._idTipoGanhoNex)! }
-
-    get id(): number { return this._idTipoGanhoNex; }
     get alterando(): boolean { return this._alterando; }
     abstract get finalizado(): boolean;
     abstract get pvGanhoIndividual(): number;
@@ -133,14 +151,64 @@ export class GanhoIndividualNexFactory {
     }
 }
 
+export class GanhoIndividualNexEscolhaClasse extends GanhoIndividualNex {
+    public idOpcaoEscolhida: number | undefined;
+    public tituloEtapa = 'Seleção de Classe';
+
+    constructor(escolha: boolean = false) {
+        super(escolha);
+    }
+
+    public get avisoGanhoNex(): AvisoGanhoNex[] {
+        return [
+            {
+                mensagem: `Você precisa escolher sua Classe`,
+                icone: (this.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } })),
+            },
+        ];
+    }
+
+    obtemOpcaoAValidar(idOpcao: number): number {
+        return 0;
+    }
+
+    setIdEscolhido(id: number) { this.idOpcaoEscolhida = id; }
+
+    get finalizado(): boolean { return this.idOpcaoEscolhida !== undefined && this.idOpcaoEscolhida > 1; }
+    get pvGanhoIndividual(): number { return 0; }
+    get peGanhoIndividual(): number { return 0; }
+    get psGanhoIndividual(): number { return 0; }
+}
+
+export class GanhoIndividualNexHabilidade extends GanhoIndividualNex {
+    public numeroHabilidades: number;
+    public dadosHabilidades: PropsHabilidades[] = [];
+    public avisoGanhoNex = [];
+    public tituloEtapa = 'Habilidades Especiais';
+
+    obtemOpcaoAValidar(idOpcao: number): number {
+        return 0;
+    }
+
+    constructor(ganhoHabilidadeProps: GanhoHabilidadeProps) {
+        super(ganhoHabilidadeProps.numeroDeHabilidades > 0);
+        this.numeroHabilidades = ganhoHabilidadeProps.numeroDeHabilidades;
+    }
+
+    get finalizado(): boolean { return this.numeroHabilidades === this.dadosHabilidades.length; }
+    get pvGanhoIndividual(): number { return 0; }
+    get peGanhoIndividual(): number { return 0; }
+    get psGanhoIndividual(): number { return 0; }
+}
+
 export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
-    public identificador = { id: 1, titulo: 'Atributos' };
     public ganhosAtributo: ValoresGanhoETroca;
     public atributos: AtributoEmGanho[];
+    public tituloEtapa = 'Atributos';
 
     constructor(valoresGanhoETrocaProps: ValoresGanhoETrocaProps, protected valorMaxAtributo: number = 3) {
         const ganhos = new ValoresGanhoETroca(valoresGanhoETrocaProps.ganhos, valoresGanhoETrocaProps.trocas);
-        super(1, ganhos.alterando);
+        super(ganhos.alterando);
         this.ganhosAtributo = ganhos;
         this.atributos = this._refFicha.atributos?.map(atributoBase => new AtributoEmGanho(SingletonHelper.getInstance().atributos.find(atributo => atributo.id === atributoBase.id)!, atributoBase.valor, valorMaxAtributo))!;
         this.carregaGanhosEstatisticasAtributos();
@@ -158,7 +226,7 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
             ...(
                 this.ganhosAtributo.ganhos.valorInicial > 0
                     ? [{
-                        mensagem: `Ganho de ${this.ganhosAtributo.ganhos.valorInicial} Atributos`,
+                        mensagem: `Ganho de ${this.ganhosAtributo.ganhos.valorInicial} Atributos${this.ganhosAtributo.pontosGanhoRestantes > 0 ? ` (${this.ganhosAtributo.pontosGanhoRestantes} ${pluralize(this.ganhosAtributo.pontosGanhoRestantes, 'Restante')})` : ' (Concluído)'}`,
                         icone: (this.ganhosAtributo.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
                     }]
                     : []
@@ -167,7 +235,7 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
             ...(
                 this.ganhosAtributo.ganhos.valorInicial > 0
                     ? [{
-                        mensagem: `Troca Opcional de ${this.ganhosAtributo.trocas.valorInicial} Atributo`,
+                        mensagem: `Troca Opcional de ${this.ganhosAtributo.trocas.valorInicial} Atributo${this.ganhosAtributo.pontosTrocaRestantes > 0 ? ` (${this.ganhosAtributo.pontosTrocaRestantes} ${pluralize(this.ganhosAtributo.pontosTrocaRestantes, 'Disponível', 'Disponíveis')})` : ' (Usado)'}`,
                         icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } })
                     }]
                     : []
@@ -215,13 +283,37 @@ export class GanhoIndividualNexAtributo extends GanhoIndividualNex {
     }
 }
 
+export class GanhoIndividualNexEstatisticaFixa extends GanhoIndividualNex {
+    public ganhoPv: number;
+    public ganhoPs: number;
+    public ganhoPe: number;
+    public avisoGanhoNex = [];
+    public tituloEtapa = 'Estatísticas';
+
+    obtemOpcaoAValidar(idOpcao: number): number {
+        return 0;
+    }
+
+    constructor(ganhosEstatisticaProps: GanhosEstatisticaProps) {
+        super(ganhosEstatisticaProps.pv > 0 || ganhosEstatisticaProps.ps > 0 || ganhosEstatisticaProps.pe > 0);
+        this.ganhoPv = ganhosEstatisticaProps.pv;
+        this.ganhoPs = ganhosEstatisticaProps.ps;
+        this.ganhoPe = ganhosEstatisticaProps.pe;
+    }
+
+    get finalizado(): boolean { return true; }
+    get pvGanhoIndividual(): number { return this.ganhoPv; }
+    get psGanhoIndividual(): number { return this.ganhoPs; }
+    get peGanhoIndividual(): number { return this.ganhoPe; }
+}
+
 export class GanhoIndividualNexPericia extends GanhoIndividualNex {
-    public identificador = { id: 2, titulo: 'Perícias' };
     public ganhosTreinadas: ValoresGanhoETroca;
     public ganhosVeteranas: ValoresGanhoETroca;
     public ganhosExperts: ValoresGanhoETroca;
     public ganhosLivres: ValoresGanhoETroca;
     public pericias: PericiaEmGanho[];
+    public tituloEtapa = 'Perícias';
 
     obtemOpcaoAValidar(idOpcao: number): number {
         return this.pericias.find(pericia => pericia.refPericia.id === idOpcao)!.refPatenteAtual.id;
@@ -296,7 +388,7 @@ export class GanhoIndividualNexPericia extends GanhoIndividualNex {
         const ganhosVeteranas = new ValoresGanhoETroca(valoresGanhoETrocaPropsVeteranas.ganhos, valoresGanhoETrocaPropsVeteranas.trocas);
         const ganhosExperts = new ValoresGanhoETroca(valoresGanhoETrocaPropsExperts.ganhos, valoresGanhoETrocaPropsExperts.trocas);
         const ganhosLivres = new ValoresGanhoETroca(valoresGanhoETrocaPropsLivres.ganhos, valoresGanhoETrocaPropsLivres.trocas);
-        super(2, ganhosTreinadas.alterando || ganhosVeteranas.alterando || ganhosExperts.alterando || ganhosLivres.alterando);
+        super(ganhosTreinadas.alterando || ganhosVeteranas.alterando || ganhosExperts.alterando || ganhosLivres.alterando);
 
         this.ganhosTreinadas = ganhosTreinadas;
         this.ganhosVeteranas = ganhosVeteranas;
@@ -370,71 +462,18 @@ export class GanhoIndividualNexPericia extends GanhoIndividualNex {
     get psGanhoIndividual(): number { return 0; }
 }
 
-export class GanhoIndividualNexEstatisticaFixa extends GanhoIndividualNex {
-    public identificador = { id: 3, titulo: 'Estatísticas' };
-    public ganhoPv: number;
-    public ganhoPs: number;
-    public ganhoPe: number;
-    public avisoGanhoNex = [];
-
-    obtemOpcaoAValidar(idOpcao: number): number {
-        return 0;
-    }
-
-    constructor(ganhosEstatisticaProps: GanhosEstatisticaProps) {
-        super(3, ganhosEstatisticaProps.pv > 0 || ganhosEstatisticaProps.ps > 0 || ganhosEstatisticaProps.pe > 0);
-        this.ganhoPv = ganhosEstatisticaProps.pv;
-        this.ganhoPs = ganhosEstatisticaProps.ps;
-        this.ganhoPe = ganhosEstatisticaProps.pe;
-    }
-
-    get finalizado(): boolean { return true; }
-    get pvGanhoIndividual(): number { return this.ganhoPv; }
-    get psGanhoIndividual(): number { return this.ganhoPs; }
-    get peGanhoIndividual(): number { return this.ganhoPe; }
-}
-
-export class GanhoIndividualNexEscolhaClasse extends GanhoIndividualNex {
-    public identificador = { id: 4, titulo: 'Classe' };
-    public idOpcaoEscolhida: number | undefined;
-
-    constructor(escolha: boolean = false) {
-        super(4, escolha);
-    }
-
-    public get avisoGanhoNex(): AvisoGanhoNex[] {
-        return [
-            {
-                mensagem: `Você precisa escolher sua Classe`,
-                icone: (this.finalizado ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } })),
-            },
-        ];
-    }
-
-    obtemOpcaoAValidar(idOpcao: number): number {
-        return 0;
-    }
-
-    setIdEscolhido(id: number) { this.idOpcaoEscolhida = id; }
-
-    get finalizado(): boolean { return this.idOpcaoEscolhida !== undefined && this.idOpcaoEscolhida > 1; }
-    get pvGanhoIndividual(): number { return 0; }
-    get peGanhoIndividual(): number { return 0; }
-    get psGanhoIndividual(): number { return 0; }
-}
-
 export class GanhoIndividualNexRitual extends GanhoIndividualNex {
-    public identificador = { id: 5, titulo: 'Rituais' };
     public numeroRituais: number;
     public dadosRituais: ArgsRitual[] = [];
     public avisoGanhoNex = [];
+    public tituloEtapa = 'Criação de Rituais';
 
     obtemOpcaoAValidar(idOpcao: number): number {
         return 0;
     }
 
     constructor(ganhoRitualProps: GanhoRitualProps) {
-        super(5, ganhoRitualProps.numeroDeRituais > 0);
+        super(ganhoRitualProps.numeroDeRituais > 0);
         this.numeroRituais = ganhoRitualProps.numeroDeRituais;
     }
 
@@ -444,9 +483,6 @@ export class GanhoIndividualNexRitual extends GanhoIndividualNex {
     get psGanhoIndividual(): number { return 0; }
 }
 
-// export class GanhoIndividualNexHabilidade extends GanhoIndividualNex {
-    // public identificador = { id: 6, titulo: 'Habilidades' };
-// }
 // #endregion
 
 // #region ClassesGanho
@@ -463,8 +499,8 @@ export class ValorUtilizavel {
     public valorAtual: number;
     constructor(public valorInicial: number) { this.valorAtual = this.valorInicial; }
 
-    get valorZerado(): boolean { return this.valorAtual === 0 }
-    get valorAbaixoDeZero(): boolean { return this.valorAtual < 0 }
+    get valorZerado(): boolean { return this.valorAtual === 0; }
+    get valorAbaixoDeZero(): boolean { return this.valorAtual < 0; }
 
     aumentaValor() { this.valorAtual++; }
     diminuiValor() { this.valorAtual--; }
@@ -486,7 +522,9 @@ export class ValoresGanhoETroca {
     desrealizaTroca() { this.desrealizaGanho(); this.trocas.diminuiValor(); }
 
     get ganhoTemPontos(): boolean { return !this.ganhos.valorZerado; }
+    get pontosGanhoRestantes(): number { return this.ganhos.valorAtual; }
     get trocaTemPontos(): boolean { return !this.trocas.valorZerado; }
+    get pontosTrocaRestantes(): number { return this.trocas.valorAtual; }
     get alterando(): boolean { return this.ganhos.valorInicial > 0 || this.trocas.valorInicial > 0; }
     get finalizado(): boolean { return this.ganhos.valorZerado; }
 }
@@ -924,4 +962,8 @@ interface GanhosEstatisticaProps {
 
 interface GanhoRitualProps {
     numeroDeRituais: number,
+}
+
+interface GanhoHabilidadeProps {
+    numeroDeHabilidades: number,
 }

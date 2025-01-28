@@ -5,11 +5,7 @@ import { SingletonHelper } from 'Classes/classes_estaticas.ts';
 
 export const geraFicha = (dadosFicha: RLJ_Ficha2): RLJ_Ficha2 => {
     const ficha: RLJ_Ficha2 = {
-        detalhes: {
-            nome: dadosFicha.detalhes?.nome ?? 'TesteVazio',
-            idClasse: dadosFicha.detalhes?.idClasse ?? 3,
-            idNivel: dadosFicha.detalhes?.idNivel ?? 3,
-        },
+        detalhes: dadosFicha.detalhes,
         estatisticasDanificaveis: SingletonHelper.getInstance().tipo_estatistica_danificavel.map((estatistica_danificavel) => {
             const estatisticaAtual = dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel_atual => estatistica_danificavel_atual.id === estatistica_danificavel.id)!;
 

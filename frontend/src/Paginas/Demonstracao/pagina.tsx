@@ -1,7 +1,8 @@
 // #region Imports
 import style from "./style.module.css";
+import { useEffect, useRef, useState } from 'react';
 
-import { useEffect, useState } from 'react';
+import { GanhoIndividualNexAtributo, GanhoIndividualNexEscolhaClasse, GanhoIndividualNexEstatisticaFixa, GanhoIndividualNexHabilidade, GanhoIndividualNexPericia, GanhoIndividualNexRitual } from "Classes/ClassesTipos/index.ts";
 
 import { ContextoFichaProvider, getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
 import { ContextoNexUpProvider, useContextoNexUp } from 'Contextos/ContextoNexUp/contexto.tsx';
@@ -18,6 +19,7 @@ import img from 'Assets/testeCapa1.png'
 
 import ControladorSwiperDireita from 'Componentes/ControladorSwiperDireita/pagina.tsx';
 import BarraEstatisticaDanificavel from 'Componentes/BarraEstatisticaDanificavel/pagina.tsx';
+import JanelaNotificacao from "Componentes/JanelaNotificacao/pagina";
 // #endregion
 
 const pagina = () => {
@@ -106,44 +108,80 @@ const PaginaEditaFicha = () => {
 }
 
 const PaginaEditaFichaComContexto = () => {
-    const [idEtapa, setIdEtapa] = useState(0);
-
+    const personagem = getPersonagemFromContext();
     const [_, setState] = useState({});
 
-    const { ganhosNex, registerSetState } = useContextoNexUp();
+    const { ganhosNex, registerSetState, triggerSetState } = useContextoNexUp();
 
     useEffect(() => {
         registerSetState(setState);
     }, [registerSetState]);
 
-    useEffect(() => {
-        setIdEtapa(Math.min(...ganhosNex.identificadoresSecaoNexUp.map(secao => secao.id)));
-    }, []);
+    const janelaNotificacaoRef = useRef<{ openConsole: () => void } | null>(null);
+    const handleAbrirJanelaBotaoDesabilitado = () => {
+        if (janelaNotificacaoRef.current) {
+            janelaNotificacaoRef.current.openConsole();
+        }
+    };
+
+    const proximo = () => {
+        personagem.atualizaFonteDaFicha(ganhosNex.dadosFicha);
+        personagem.carregaAtributos();
+        ganhosNex?.avancaEtapa();
+        console.log(ganhosNex.dadosFicha);
+
+        // if (ganhosNex?.finalizando) atualizaGanhosParaFicha();
+
+        triggerSetState();
+    };
+
+    const volta = () => {
+        // if (ganhosNex?.estaNaPrimeiraEtapa) {
+        //     navigate('/pagina-interna');
+        // } else {
+        //     ganhosNex?.retrocedeEtapa();
+        //     triggerSetState();
+        // }
+    };
 
     return (
         <div className={style.secao_unica}>
-            <div className={style.titulos_secoes_nexup}>
-                {ganhosNex.identificadoresSecaoNexUp.map((secao, index) => (
-                    <h2 key={index} onClick={() => setIdEtapa(secao.id)} className={`${secao.id === idEtapa ? style.secao_aberta : ''}`}>{secao.titulo}</h2>
-                ))}
-                <button disabled={!ganhosNex.prontoParaFinalizar}>Finalizar</button>
-            </div>
+            <JanelaNotificacao ref={janelaNotificacaoRef} />
+            <ControladorSwiperDireita />
+
             <div className={style.secao_edicao_centro}>
+                <h1 className={style.titulo_edicao_ficha}>{ganhosNex.tituloNexUp}</h1>
+
                 <div className={style.recipiente_edicao}>
-                    {idEtapa === 1 && (
-                        <EditaAtributos />
-                    )}
-                    {idEtapa === 2 && (
-                        <EditaPericias />
-                    )}
-                    {idEtapa === 3 && (
-                        <EditaEstatisticas />
-                    )}
-                    {idEtapa === 4 && (
+
+                    {ganhosNex.etapa instanceof GanhoIndividualNexEscolhaClasse && (
                         <EscolheClasse />
                     )}
-                    {idEtapa === 5 && (
+                    {ganhosNex.etapa instanceof GanhoIndividualNexHabilidade && (
+                        <></>
+                        // <EditaHabilidades />
+                    )}
+                    {ganhosNex.etapa instanceof GanhoIndividualNexAtributo && (
+                        <EditaAtributos />
+                    )}
+                    {ganhosNex.etapa instanceof GanhoIndividualNexEstatisticaFixa && (
+                        <EditaEstatisticas />
+                    )}
+                    {ganhosNex.etapa instanceof GanhoIndividualNexPericia && (
+                        <EditaPericias />
+                    )}
+                    {ganhosNex.etapa instanceof GanhoIndividualNexRitual && (
                         <EditaRituais />
+                    )}
+                </div>
+                <div className={style.botoes}>
+                    <button onClick={volta} className={style.prosseguir}>{ganhosNex.textoBotaoVoltar}</button>
+                    {!ganhosNex.podeAvancarEtapa ? (
+                        <div className={`${style.recipiente_botao_desabilitado}`} onMouseEnter={handleAbrirJanelaBotaoDesabilitado}>
+                            <button onClick={proximo} disabled={!ganhosNex.podeAvancarEtapa}>{ganhosNex.textoBotaoProximo}</button>
+                        </div>
+                    ) : (
+                        <button onClick={proximo} disabled={!ganhosNex.podeAvancarEtapa} className={style.prosseguir}>{ganhosNex.textoBotaoProximo}</button>
                     )}
                 </div>
             </div>

@@ -1,5 +1,5 @@
 // #region Imports
-import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoDano, CirculoNivelRitual, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, MensagemLog, Classe, Nivel, TipoGanhoNex, TipoItem, LinhaEfeito, TipoEfeito, TipoProficiencia, NivelProficiencia } from 'Classes/ClassesTipos/index.ts';
+import { Elemento, NivelRitual, CirculoRitual, Alcance, FormatoAlcance, Duracao, TipoExecucao, TipoAcao, TipoAlvo, TipoDano, CirculoNivelRitual, TipoEstatisticaDanificavel, TipoEstatisticaBuffavel, Atributo, Pericia, PatentePericia, NivelComponente, TipoRequisito, MensagemLog, Classe, Nivel, TipoItem, LinhaEfeito, TipoEfeito, TipoProficiencia, NivelProficiencia } from 'Classes/ClassesTipos/index.ts';
 // #endregion
 
 export class SingletonHelper {
@@ -27,7 +27,6 @@ export class SingletonHelper {
     private _tipos_requisitos: TipoRequisito[] = [];
     private _classes: Classe[] = [];
     private _niveis: Nivel[] = [];
-    private _tipos_ganho_nex: TipoGanhoNex[] = [];
     private _tipos_proficiencia: TipoProficiencia[] = [];
     private _niveis_proficiencia: NivelProficiencia[] = [];
 
@@ -107,9 +106,6 @@ export class SingletonHelper {
 
     public set niveis(value: Nivel[]) { this._niveis = value }
     public get niveis(): Nivel[] { return this._niveis }
-
-    public set tipos_ganho_nex(value: TipoGanhoNex[]) { this._tipos_ganho_nex = value }
-    public get tipos_ganho_nex(): TipoGanhoNex[] { return this._tipos_ganho_nex }
 
     public set tipos_proficiencia(value: TipoProficiencia[]) { this._tipos_proficiencia = value }
     public get tipos_proficiencia(): TipoProficiencia[] { return this._tipos_proficiencia }

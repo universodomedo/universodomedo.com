@@ -51,14 +51,14 @@ const pagina = () => {
 
     const listaPaginas = [
         {
-            nome: 'Efeitos',
-            componente: <PaginaControleEfeitos controladorModificadores={personagem.controladorModificadores} />,
-            contexto: useContextoControleEfeitos
-        },
-        {
             nome: 'Perícias',
             componente: <PaginaControleAtributosPericias atributos={personagem.atributos} pericias={personagem.pericias} />,
             contexto: useContextoControleAtributosPericias
+        },
+        {
+            nome: 'Efeitos',
+            componente: <PaginaControleEfeitos controladorModificadores={personagem.controladorModificadores} />,
+            contexto: useContextoControleEfeitos
         },
         {
             nome: 'Inventário',

@@ -25,8 +25,8 @@ export class Personagem {
     public estatisticasDanificaveis: EstatisticaDanificavel[] = [];
     public estatisticasBuffaveis: EstatisticasBuffaveisPersonagem;
     public reducoesDano: ReducaoDano[] = [];
-    public atributos: AtributoPersonagem[];
-    public pericias: PericiaPatentePersonagem[];
+    public atributos: AtributoPersonagem[] = [];
+    public pericias: PericiaPatentePersonagem[] = [];
     public inventario: Inventario = new Inventario();
     public habilidades: Habilidade[] = [];
     public buffsExternos: Efeito[] = [];
@@ -37,6 +37,11 @@ export class Personagem {
     public proficienciaPersonagem: ProficienciaPersonagem = new ProficienciaPersonagem();
 
     public receptor: Receptor = new Receptor(this);
+
+    // só deve ser utilizado quando estiver upando
+    public atualizaFonteDaFicha(novoDadosFicha: RLJ_Ficha2) {
+        this._ficha = novoDadosFicha;
+    }
 
     constructor(public _ficha: RLJ_Ficha2) {
         const numExtremidades = 2; // depois vai ter q mudar para alguma logica, colocando esse numero no RLJ_Ficha2
@@ -58,7 +63,7 @@ export class Personagem {
         );
 
         this.reducoesDano = this._ficha.reducoesDano?.map(reducao_dano => new ReducaoDano(reducao_dano.idTipoDano, reducao_dano.valor))!;
-        this.atributos = this._ficha.atributos!.map(attr => new AtributoPersonagem(attr.id, attr.valor!));
+        this.carregaAtributos();
         this.pericias = this._ficha.periciasPatentes!.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente));
 
         this.rituais = this._ficha.rituais!.map(ritual =>
@@ -132,7 +137,13 @@ export class Personagem {
     public carregaOnUpdate = (callback: () => void) => {
         this.onUpdate = callback;
     }
+
+    public carregaAtributos() {
+        this.atributos = this._ficha.atributos!.map(attr => new AtributoPersonagem(attr.id, attr.valor!));
+    }
 }
+
+
 
 export class PersonagemDetalhes {
     constructor(

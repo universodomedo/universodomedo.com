@@ -5,12 +5,14 @@
     font-family: 'Crimson Pro', serif;
     font-variant: small-caps;
     gap: 1vh;
+    flex: 1;
+    justify-content: space-around;
 }
 
 .atributo_personagem {
     display: flex;
     flex-direction: column;
-    gap: .4vh;
+    gap: 1vh;
     text-align: center;
 }
 
