@@ -8,7 +8,7 @@
 }
 
 #botao_cabecalho_swiper_esquerda {
-
+    cursor: pointer;
 }
 
 #botao_cabecalho_swiper_esquerda svg {
@@ -22,6 +22,12 @@
     background-size: cover;
     background-position: center;
     aspect-ratio: 2.6/1;
+}
+
+#logo_cabecalho a {
+    width: 100%;
+    height: 100%;
+    display: block;
 }
 
 #conteudo_cabecalho_centro {

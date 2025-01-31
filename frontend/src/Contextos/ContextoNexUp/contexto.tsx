@@ -1,6 +1,8 @@
 // #region Imports
 import { createContext, useContext, ReactNode, useRef } from 'react';
 import { GanhosNex, Personagem } from 'Classes/ClassesTipos/index.ts';
+
+import { useContextoFicha } from 'Contextos/ContextoPersonagem/contexto.tsx';
 // #endregion
 
 interface ContextoNexUpProps {
@@ -12,7 +14,8 @@ interface ContextoNexUpProps {
 const ContextoNexUp = createContext<ContextoNexUpProps | undefined>(undefined);
 
 export const ContextoNexUpProvider = ({ children, personagem }: { children: ReactNode, personagem: Personagem }) => {
-    const ganhosNex = new GanhosNex(personagem._ficha);
+    const { idFichaNoLocalStorage } = useContextoFicha();
+    const ganhosNex = new GanhosNex(personagem, idFichaNoLocalStorage);
 
     const registerSetState = (callback: React.Dispatch<React.SetStateAction<any>>) => {
         setStateRef.current = callback;

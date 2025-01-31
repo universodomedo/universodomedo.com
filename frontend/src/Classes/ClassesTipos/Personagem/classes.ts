@@ -38,17 +38,12 @@ export class Personagem {
 
     public receptor: Receptor = new Receptor(this);
 
-    // só deve ser utilizado quando estiver upando
-    public atualizaFonteDaFicha(novoDadosFicha: RLJ_Ficha2) {
-        this._ficha = novoDadosFicha;
-    }
-
-    constructor(public _ficha: RLJ_Ficha2) {
+    constructor(public dadosFicha: RLJ_Ficha2) {
         const numExtremidades = 2; // depois vai ter q mudar para alguma logica, colocando esse numero no RLJ_Ficha2
 
-        this.detalhes = new PersonagemDetalhes(this._ficha.detalhes!.nome, this._ficha.detalhes!.idClasse, this._ficha.detalhes!.idNivel);
+        this.detalhes = new PersonagemDetalhes(this.dadosFicha.detalhes!.nome, this.dadosFicha.detalhes!.idClasse, this.dadosFicha.detalhes!.idNivel);
 
-        this.estatisticasDanificaveis = this._ficha.estatisticasDanificaveis!.map(estatisticaDanificavel => {
+        this.estatisticasDanificaveis = this.dadosFicha.estatisticasDanificaveis!.map(estatisticaDanificavel => {
             return new EstatisticaDanificavel(estatisticaDanificavel.id, estatisticaDanificavel.valorMaximo, estatisticaDanificavel.valor)
         });
 
@@ -62,11 +57,11 @@ export class Personagem {
             numExtremidades
         );
 
-        this.reducoesDano = this._ficha.reducoesDano?.map(reducao_dano => new ReducaoDano(reducao_dano.idTipoDano, reducao_dano.valor))!;
+        this.reducoesDano = this.dadosFicha.reducoesDano?.map(reducao_dano => new ReducaoDano(reducao_dano.idTipoDano, reducao_dano.valor))!;
         this.carregaAtributos();
-        this.pericias = this._ficha.periciasPatentes!.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente));
+        this.carregaPericias();
 
-        this.rituais = this._ficha.rituais!.map(ritual =>
+        this.rituais = this.dadosFicha.rituais!.map(ritual =>
             new Ritual({ dadosGenericosRitual: ritual.args, dadosComportamentos: ritual.dadosComportamentos })
                 .adicionarAcoes(
                     (ritual.dadosAcoes || []).map(dadosAcao => (
@@ -88,10 +83,10 @@ export class Personagem {
                 )
         );
 
-        this._ficha.inventario!.map(dadosItem => this.inventario.adicionarItemNoInventario(novoItemPorDadosItem(dadosItem)));
+        this.dadosFicha.inventario!.map(dadosItem => this.inventario.adicionarItemNoInventario(novoItemPorDadosItem(dadosItem)));
     }
 
-    public get temPendencia(): boolean { return true; }
+    public get temPendencia(): boolean { return !(this.dadosFicha.detalhes.idNivel === this.dadosFicha.pendencias.idNivelEsperado); }
 
     public get acoes(): Acao[] {
         const acoesRituais = this.rituais.reduce((acc: Acao[], ritual) => acc.concat(ritual.acoes), []);
@@ -138,12 +133,9 @@ export class Personagem {
         this.onUpdate = callback;
     }
 
-    public carregaAtributos() {
-        this.atributos = this._ficha.atributos!.map(attr => new AtributoPersonagem(attr.id, attr.valor!));
-    }
+    public carregaAtributos() { this.atributos = this.dadosFicha.atributos!.map(attr => new AtributoPersonagem(attr.id, attr.valor!)); }
+    public carregaPericias() { this.pericias = this.dadosFicha.periciasPatentes!.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente)); }
 }
-
-
 
 export class PersonagemDetalhes {
     constructor(
@@ -164,6 +156,7 @@ export class Classe {
     constructor(
         public id: number,
         public nome: string,
+        public descricao: string,
     ) { }
 }
 

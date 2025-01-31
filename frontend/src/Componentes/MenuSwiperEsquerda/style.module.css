@@ -20,9 +20,25 @@
     transition: transform 0.3s ease-in-out;
     transform: translateX(0);
     z-index: 999;
+    padding: 2%;
+}
+
+#nav_swiper_esquerda {
+    display: flex;
+    flex-direction: column;
+    gap: .5vh;
+}
+
+#nav_swiper_esquerda a {
+    text-decoration: none;
+    color: inherit;
+}
+
+#nav_swiper_esquerda a:hover {
+    color: rgb(185, 252, 230)
 }
   
-#swiper_esquerda.swiper_esquerda_aberto {
+#swiper_esquerda.aberto {
     transform: translateX(20vw);
 }
 

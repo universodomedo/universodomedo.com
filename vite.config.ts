@@ -17,6 +17,7 @@ export default defineConfig({
       "Classes": path.resolve(__dirname, "frontend/src/Classes"),
       "Componentes": path.resolve(__dirname, "frontend/src/Componentes"),
       "Contextos": path.resolve(__dirname, "frontend/src/Contextos"),
+      "Dados": path.resolve(__dirname, "frontend/src/Dados"),
       "Layouts": path.resolve(__dirname, "frontend/src/Layouts"),
       "Paginas": path.resolve(__dirname, "frontend/src/Paginas"),
       "Providers": path.resolve(__dirname, "frontend/src/Providers"),

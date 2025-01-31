@@ -14,7 +14,7 @@ import EscolheClasse from 'Paginas/SubPaginas/EdicaoFicha/EscolheClasse/pagina.t
 import EditaRituais from 'Paginas/SubPaginas/EdicaoFicha/EditaRituais/pagina.tsx';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faShoppingCart, faUsers } from '@fortawesome/free-solid-svg-icons';
 import img from 'Assets/testeCapa1.png'
 
 import ControladorSwiperDireita from 'Componentes/ControladorSwiperDireita/pagina.tsx';
@@ -22,11 +22,9 @@ import BarraEstatisticaDanificavel from 'Componentes/BarraEstatisticaDanificavel
 import JanelaNotificacao from "Componentes/JanelaNotificacao/pagina";
 // #endregion
 
-const pagina = () => {
-    const indexFicha = 0;
-
+const pagina = ({ seletorFicha }: { seletorFicha: { tipo: 'ficha'; idFichaNoLocalStorage: number } | { tipo: 'fichaDemonstracao' } }) => {
     return (
-        <ContextoFichaProvider idFichaNoLocalStorage={indexFicha}>
+        <ContextoFichaProvider seletorFicha={seletorFicha}>
             <InterseccaoParaPendencia />
         </ContextoFichaProvider>
     );
@@ -70,11 +68,20 @@ const PaginaFichaBaixo = () => {
     return (
         <>
             <div className={`${style.fatia_parte_baixo_detalhes}`}>
-                <h2 className="noMargin">{personagem.detalhes.nome}</h2>
-                <h2 className="noMargin">{personagem.detalhes.refClasse.nome}</h2>
-                <h2 className="noMargin">{personagem.detalhes.refNivel.nomeDisplay}</h2>
+                <h2>{personagem.detalhes.nome}</h2>
+                <h2>{personagem.detalhes.refClasse.nome}</h2>
+                <h2>{personagem.detalhes.refNivel.nomeDisplay}</h2>
             </div>
             <div className={style.fatia_parte_baixo_atalhos}>
+                <div className={style.barra_locais}>
+                    <div className={style.barra_locais_borda_esquerda} />
+                    <div className={style.barra_locais_centro}>
+                        <FontAwesomeIcon title={'Mundo Aberto'} icon={faUsers} />
+                        <FontAwesomeIcon title={'Shopping'} icon={faShoppingCart} />
+                    </div>
+                    <div className={style.barra_locais_borda_direita} />
+                </div>
+
                 <div className={style.barras}>
                     <div className={style.barra_acoes}>
                         <div className={style.item_barra_acoes}>
@@ -108,7 +115,7 @@ const PaginaEditaFicha = () => {
 }
 
 const PaginaEditaFichaComContexto = () => {
-    const personagem = getPersonagemFromContext();
+    const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
     const [_, setState] = useState({});
 
     const { ganhosNex, registerSetState, triggerSetState } = useContextoNexUp();
@@ -124,24 +131,23 @@ const PaginaEditaFichaComContexto = () => {
         }
     };
 
-    const proximo = () => {
-        personagem.atualizaFonteDaFicha(ganhosNex.dadosFicha);
-        personagem.carregaAtributos();
-        ganhosNex?.avancaEtapa();
-        console.log(ganhosNex.dadosFicha);
-
-        // if (ganhosNex?.finalizando) atualizaGanhosParaFicha();
-
-        triggerSetState();
+    const handleMouseEnter = () => {
+        const id = setTimeout(() => {
+            handleAbrirJanelaBotaoDesabilitado();
+        }, 400);
+        setTimeoutId(id);
     };
 
-    const volta = () => {
-        // if (ganhosNex?.estaNaPrimeiraEtapa) {
-        //     navigate('/pagina-interna');
-        // } else {
-        //     ganhosNex?.retrocedeEtapa();
-        //     triggerSetState();
-        // }
+    const handleMouseLeave = () => {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+            setTimeoutId(null);
+        }
+    };
+
+    const proximo = () => {
+        ganhosNex.avancaEtapa();
+        triggerSetState();
     };
 
     return (
@@ -175,9 +181,8 @@ const PaginaEditaFichaComContexto = () => {
                     )}
                 </div>
                 <div className={style.botoes}>
-                    <button onClick={volta} className={style.prosseguir}>{ganhosNex.textoBotaoVoltar}</button>
                     {!ganhosNex.podeAvancarEtapa ? (
-                        <div className={`${style.recipiente_botao_desabilitado}`} onMouseEnter={handleAbrirJanelaBotaoDesabilitado}>
+                        <div className={`${style.recipiente_botao_desabilitado}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
                             <button onClick={proximo} disabled={!ganhosNex.podeAvancarEtapa}>{ganhosNex.textoBotaoProximo}</button>
                         </div>
                     ) : (

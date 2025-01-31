@@ -37,6 +37,7 @@
 	will-change: transform, opacity;
 	text-align: justify;
 	max-width: 17vw;
+	z-index: 200;
 }
 
 .tooltip_conteudo[data-state="delayed-open"][data-side="top"] { animation-name: slideDownAndFade; }

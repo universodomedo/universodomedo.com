@@ -6,11 +6,29 @@
     justify-content: space-around;
 }
 
+#logavel a {
+    border: 1px white solid;
+    border-radius: 99999px;
+    padding: 0 1vw;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+#logavel a:hover {
+    background-color: #42699B;
+    color: #D2F4F4;
+}
+
 #imagem_logavel {
-    background-color: plum;
     height: 100%;
     aspect-ratio: 1.15/1;
     border-radius: 20px;
+}
+
+#imagem_logavel svg {
+    width: 100%;
+    height: 100%;
 }
 
 #info_logavel {
@@ -18,4 +36,12 @@
     flex-direction: column;
     text-align: center;
     justify-content: center;
+}
+
+.icone_logout {
+    cursor: pointer;
+}
+
+.icone_logout:hover {
+    box-shadow: -3px 1px 13px 0px #68e9ff;
 }

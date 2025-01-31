@@ -19,11 +19,11 @@ function ModalContent({title, children}: {title:string, children: ReactNode}) {
             <Dialog.Overlay className={style.dialog_overlay} />
             <Dialog.Content className={style.dialog_conteudo} aria-describedby={undefined}>
                 <Dialog.Title className={style.dialog_titulo}>{title}</Dialog.Title>
-                <Dialog.Close asChild>
+                {/* <Dialog.Close asChild>
                     <button className={style.dialog_botao_fechar} aria-label="Fechar">
                         <Cross2Icon />
                     </button>
-                </Dialog.Close>
+                </Dialog.Close> */}
 
                 <div className={style.dialog_conteudo_corpo}>
                     {children}

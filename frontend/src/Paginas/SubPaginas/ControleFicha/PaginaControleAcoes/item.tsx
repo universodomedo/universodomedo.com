@@ -21,17 +21,12 @@ const page = ({ acao }: { acao: Acao }) => {
         return (
             <div className={style.embrulho_icone}>
                 {mostrarEtiquetas && (<h3>{acao.nomeExibicao}</h3>)}
-                <Tooltip>
-                    <Tooltip.Trigger>
-                        <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${acao.svg})`, backgroundColor: (acao.bloqueada ? '#BB0000' : '#FFFFFF') }} />
-                    </Tooltip.Trigger>
-                    <Tooltip.Content>
-                        <h3>{acao.nomeExibicao}</h3>
-                    </Tooltip.Content>
-                </Tooltip>
+                <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${acao.svg})`, backgroundColor: (acao.bloqueada ? '#BB0000' : '#FFFFFF') }} />
             </div>
         );
     }
+
+    
 
     const conteudo = (close: () => void) => {
         return (

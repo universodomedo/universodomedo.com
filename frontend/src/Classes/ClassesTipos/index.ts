@@ -2,6 +2,7 @@ export * from './Acao';
 export * from './Alcance';
 export * from './Alvo';
 export * from './Atributo';
+export * from './Auth';
 export * from './CaracteristicaArma';
 export * from './Comportamento';
 export * from './CondicaoGanhoNex';

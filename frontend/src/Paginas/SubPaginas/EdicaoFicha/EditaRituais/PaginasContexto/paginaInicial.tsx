@@ -23,7 +23,7 @@ const pagina = () => {
             <div className={style.rituais_existentes}>
                 <h1>Rituais Criados</h1>
                 <div className={style.recipiente_ritual_existente}>
-                    {ganhosNex.dadosFicha.rituais?.map((dadosRitual, index) => {
+                    {ganhosNex.personagem.dadosFicha.rituais?.map((dadosRitual, index) => {
                         const ritual = new Ritual({ dadosGenericosRitual: dadosRitual.args, dadosComportamentos: dadosRitual.dadosComportamentos });
                         console.log(ritual);
 

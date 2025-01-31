@@ -1,0 +1,105 @@
+.recipiente_carrossel_classes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    flex: 1 0 0;
+    width: 80%;
+}
+
+.item_carrossel_classes {
+    height: 100%;
+    background-color: red;
+}
+
+.centro{
+    background-color: green;
+}
+.lateral{}
+
+.arrow {
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+    top: 35%;
+}
+
+.arrow svg {
+    transition: color 300ms;
+}
+
+.arrow svg:hover {
+    color: #68EDFF
+}
+
+.arrow_next {
+    right: 0;
+}
+
+.arrow_prev {
+    left: 0;
+}
+
+.recipiente_carrossel_classes :global(.slick-slider) {
+    width: 100%;
+    height: 100%;
+}
+
+.recipiente_carrossel_classes :global(.slick-list) {
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.recipiente_carrossel_classes :global(.slick-track) {
+    height: 100%;
+    width: 100% !important;
+    transform: none !important;
+}
+
+.recipiente_carrossel_classes :global(.slick-slide) {
+    display: flex;
+    height: 100%;
+    width: 0;
+}
+
+.recipiente_carrossel_classes :global(.slick-slide.slick-active) {
+    width: 20%;
+}
+
+.recipiente_carrossel_classes :global(.slick-slide) > div {
+    height: 100%;
+    width: 100%;
+}
+
+.recipiente_carrossel_classes :global(.slick-slide.slick-active.slick-current) {
+    width: 50%;
+    margin: 0 5%;
+}
+
+.recipiente_carrossel_classes :global(.slick-slide.slick-active:not(.slick-current)) > div {
+    height: 40%;
+    margin: auto;
+}
+
+/* .recipiente_carrossel_classes :global(.slick-slide):has(.lateral) {
+    flex: 0 0 auto;
+    width: 100%;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 0.7;
+    transform: scale(0.5);
+}
+
+.recipiente_carrossel_classes :global(.slick-slide):has(.centro) {
+    opacity: 1;
+    transform: scale(1);
+}
+
+
+
+
+
+
+
+*/

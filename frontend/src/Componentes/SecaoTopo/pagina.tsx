@@ -17,8 +17,8 @@ const pagina = () => {
     return (
         <>
             <div id={style.conteudo_cabecalho_esquerda}>
-                <div id={style.botao_cabecalho_swiper_esquerda} onClick={alternaMenuAberto}><FontAwesomeIcon icon={faBars}/></div>
-                <div id={style.logo_cabecalho} />
+                <div id={style.botao_cabecalho_swiper_esquerda} onClick={alternaMenuAberto}><FontAwesomeIcon icon={faBars} /></div>
+                <div id={style.logo_cabecalho}><Link to='/inicio' /></div>
             </div>
             <div id={style.conteudo_cabecalho_centro}>
                 <Link to="/ficha-demonstracao" id={style.link_demonstracao}>Ficha de Demonstração</Link>

@@ -1,6 +1,6 @@
 // #region Imports
 import React from 'react';
-import { RLJ_Ficha2, Atributo, Pericia, PatentePericia, ArgsRitual, AvisoGanhoNex, ValidacoesGanhoNex, CondicaoGanhoNexComOperador, RegrasCondicaoGanhoNex, OperadorCondicao, CondicaoGanhoNex, TipoEstatisticaDanificavel, pluralize, PropsHabilidades } from 'Classes/ClassesTipos/index.ts';
+import { RLJ_Ficha2, Atributo, Pericia, PatentePericia, ArgsRitual, AvisoGanhoNex, ValidacoesGanhoNex, CondicaoGanhoNexComOperador, RegrasCondicaoGanhoNex, OperadorCondicao, CondicaoGanhoNex, TipoEstatisticaDanificavel, pluralize, PropsHabilidades, Personagem } from 'Classes/ClassesTipos/index.ts';
 import { SingletonHelper } from 'Classes/classes_estaticas.ts';
 
 import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
@@ -9,18 +9,18 @@ import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
 // #region Classes
 export class GanhosNex {
     public ganhos: GanhoIndividualNex[] = [];
-    public finalizando: boolean = false;
     public indexEtapa: number = 0;
-    public idNexEmAndamento: number;
+    public idNexEmAndamento: number = 0;
 
-    constructor(public dadosFicha: RLJ_Ficha2) {
-        GanhoIndividualNexFactory.setFicha(this.dadosFicha);
-        this.idNexEmAndamento = this.dadosFicha.detalhes.idNivel + 1;
+    constructor(public personagem: Personagem, private indexFicha: number) {
         this.atualizarGanhosDesseNex();
     }
 
     atualizarGanhosDesseNex() {
-        this.ganhos = obterGanhosGerais(this.idNexEmAndamento, this.dadosFicha.detalhes.idClasse);
+        GanhoIndividualNexFactory.setFicha(this.personagem.dadosFicha);
+        this.idNexEmAndamento = this.personagem.dadosFicha.detalhes.idNivel + 1;
+        this.indexEtapa = 0;
+        this.ganhos = obterGanhosGerais(this.idNexEmAndamento, this.personagem.dadosFicha.detalhes.idClasse);
     }
 
     get finalizados(): boolean { return false; }
@@ -31,26 +31,14 @@ export class GanhosNex {
 
     }
 
-    escreveNovosDadosDaEtapa() {
-        if (this.etapa instanceof GanhoIndividualNexEscolhaClasse) { 
-            this.dadosFicha.detalhes.idClasse = (this.etapa as GanhoIndividualNexEscolhaClasse).idOpcaoEscolhida!;
-            this.atualizarGanhosDesseNex();
-        }
-        // if (this.etapa instanceof GanhoIndividualNexHabilidade)
-        if (this.etapa instanceof GanhoIndividualNexAtributo) this.dadosFicha.atributos = this.etapa.atributos.map(atributo => ({ id: atributo.refAtributo.id, valor: atributo.valorAtual }));
-        // if (this.etapa instanceof GanhoIndividualNexEstatisticaFixa)
-        if (this.etapa instanceof GanhoIndividualNexPericia) this.dadosFicha.periciasPatentes = this.etapa.pericias.map(pericia => ({ idPericia: pericia.refPericia.id, idPatente: pericia.refPatenteAtual.id }));
-        // if (this.etapa instanceof GanhoIndividualNexRitual)
-    }
-
     get tituloNexUp(): string {
-        if (this.idNexEmAndamento === 1 ) return 'Criando Ficha';
+        if (this.idNexEmAndamento === 1) return 'Criando Ficha';
 
         return `Evoluindo Ficha - NEX ${SingletonHelper.getInstance().niveis.find(nivel => nivel.id === this.idNexEmAndamento)?.nomeDisplay}`;
     }
 
     get pv(): { valorAtual: number, ganhoAtual: number, valorAtualizado: number } {
-        const valorAtual = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 1)?.valor || 0;
+        const valorAtual = this.personagem.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 1)?.valor || 0;
         const ganhoAtual = this.ganhos.reduce((acc, cur) => acc + cur.pvGanhoIndividual, 0);
         const valorAtualizado = valorAtual + ganhoAtual;
 
@@ -58,7 +46,7 @@ export class GanhosNex {
     }
 
     get ps(): { valorAtual: number, ganhoAtual: number, valorAtualizado: number } {
-        const valorAtual = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 2)?.valor || 0;
+        const valorAtual = this.personagem.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 2)?.valor || 0;
         const ganhoAtual = this.ganhos.reduce((acc, cur) => acc + cur.psGanhoIndividual, 0);
         const valorAtualizado = valorAtual + ganhoAtual;
 
@@ -66,7 +54,7 @@ export class GanhosNex {
     }
 
     get pe(): { valorAtual: number, ganhoAtual: number, valorAtualizado: number } {
-        const valorAtual = this.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 3)?.valor || 0;
+        const valorAtual = this.personagem.dadosFicha.estatisticasDanificaveis?.find(estatistica_danificavel => estatistica_danificavel.id === 3)?.valor || 0;
         const ganhoAtual = this.ganhos.reduce((acc, cur) => acc + cur.peGanhoIndividual, 0);
         const valorAtualizado = valorAtual + ganhoAtual;
 
@@ -81,11 +69,93 @@ export class GanhosNex {
     get textoBotaoProximo(): string { return this.estaNaUltimaEtapa ? 'Finalizar' : 'Continuar'; }
     get textoBotaoVoltar(): string { return this.estaNaPrimeiraEtapa ? 'Sair' : 'Voltar'; }
 
-    avancaEtapa() { 
+    avancaEtapa() {
         this.escreveNovosDadosDaEtapa();
 
-        (this.estaNaUltimaEtapa) ? this.finalizando = true : this.indexEtapa++;
-        this.etapa.validaCondicoes();
+        if (!this.estaNaUltimaEtapa) {
+            this.indexEtapa++;
+            this.etapa.validaCondicoes();
+        } else {
+            this.salvaModificacoes();
+        }
+    }
+
+    escreveNovosDadosDaEtapa() {
+        if (this.etapa instanceof GanhoIndividualNexEscolhaClasse) {
+            this.personagem.dadosFicha.detalhes.idClasse = (this.etapa as GanhoIndividualNexEscolhaClasse).idOpcaoEscolhida!;
+            this.atualizarGanhosDesseNex();
+        }
+
+        // if (this.etapa instanceof GanhoIndividualNexHabilidade)
+
+        if (this.etapa instanceof GanhoIndividualNexAtributo) {
+            this.personagem.dadosFicha.atributos = this.etapa.atributos.map(atributo => ({ id: atributo.refAtributo.id, valor: atributo.valorAtual }));
+            this.personagem.dadosFicha.estatisticasDanificaveis = this.personagem.dadosFicha.estatisticasDanificaveis!.map(estatistica => {
+                switch (estatistica.id) {
+                    case 1:
+                        estatistica.valorMaximo += this.etapa.pvGanhoIndividual;
+                        estatistica.valor = estatistica.valorMaximo;
+                        break;
+                    case 2:
+                        estatistica.valorMaximo += this.etapa.psGanhoIndividual;
+                        break;
+                    case 3:
+                        estatistica.valorMaximo += this.etapa.peGanhoIndividual;
+                        break;
+                    default:
+                        break;
+                }
+                
+                estatistica.valor = estatistica.valorMaximo;
+                return estatistica;
+            });
+
+            this.personagem.carregaAtributos();
+        }
+
+        if (this.etapa instanceof GanhoIndividualNexEstatisticaFixa) {
+            this.personagem.dadosFicha.estatisticasDanificaveis = this.personagem.dadosFicha.estatisticasDanificaveis!.map(estatistica => {
+                switch (estatistica.id) {
+                    case 1:
+                        estatistica.valorMaximo += this.etapa.pvGanhoIndividual;
+                        break;
+                    case 2:
+                        estatistica.valorMaximo += this.etapa.psGanhoIndividual;
+                        break;
+                    case 3:
+                        estatistica.valorMaximo += this.etapa.peGanhoIndividual;
+                        break;
+                    default:
+                        break;
+                }
+                
+                estatistica.valor = estatistica.valorMaximo;
+                return estatistica;
+            });
+        }
+
+        if (this.etapa instanceof GanhoIndividualNexPericia) {
+            this.personagem.dadosFicha.periciasPatentes = this.etapa.pericias.map(pericia => ({ idPericia: pericia.refPericia.id, idPatente: pericia.refPatenteAtual.id }));
+            this.personagem.carregaPericias();
+        }
+
+        // if (this.etapa instanceof GanhoIndividualNexRitual)
+    }
+
+    salvaModificacoes() {
+        this.personagem.dadosFicha.detalhes.idNivel = this.idNexEmAndamento;
+
+        const data = localStorage.getItem('dadosFicha');
+        const dadosFichas = data ? JSON.parse(data) : [];
+
+        dadosFichas[this.indexFicha] = this.personagem.dadosFicha;
+        localStorage.setItem('dadosFicha', JSON.stringify(dadosFichas));
+
+        if (this.idNexEmAndamento < this.personagem.dadosFicha.pendencias.idNivelEsperado) {
+            this.atualizarGanhosDesseNex();
+        } else {
+            window.location.reload();
+        }
     }
 
     get podeAvancarEtapa(): boolean { return this.etapa.finalizado && this.etapa.pontosObrigatoriosValidadosGenerico; }
@@ -287,18 +357,25 @@ export class GanhoIndividualNexEstatisticaFixa extends GanhoIndividualNex {
     public ganhoPv: number;
     public ganhoPs: number;
     public ganhoPe: number;
-    public avisoGanhoNex = [];
     public tituloEtapa = 'Estatísticas';
-
-    obtemOpcaoAValidar(idOpcao: number): number {
-        return 0;
-    }
 
     constructor(ganhosEstatisticaProps: GanhosEstatisticaProps) {
         super(ganhosEstatisticaProps.pv > 0 || ganhosEstatisticaProps.ps > 0 || ganhosEstatisticaProps.pe > 0);
         this.ganhoPv = ganhosEstatisticaProps.pv;
         this.ganhoPs = ganhosEstatisticaProps.ps;
         this.ganhoPe = ganhosEstatisticaProps.pe;
+    }
+
+    obtemOpcaoAValidar(idOpcao: number): number {
+        return 0;
+    }
+
+    public get avisoGanhoNex(): AvisoGanhoNex[] {
+        return [
+            { mensagem: `Ganho de P.V.: +${this.ganhoPv}`, icone: '' },
+            { mensagem: `Ganho de P.S.: +${this.ganhoPs}`, icone: '' },
+            { mensagem: `Ganho de P.E.: +${this.ganhoPe}`, icone: '' },
+        ];
     }
 
     get finalizado(): boolean { return true; }
@@ -703,10 +780,9 @@ export class ControladorGanhos {
     } = {
             1: { // ganho de classe do 10, quando vc ainda é mundano
                 3: [
-                    // instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 0, trocas: 0 }),
-                    // instanciaComArgumentos(GanhoIndividualNexPericia, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }),
-                    // instanciaComArgumentos(GanhoIndividualNexEscolhaClasse, true),
-                    instanciaComArgumentos(GanhoIndividualNexRitual, { numeroDeRituais: 1 }),
+                    instanciaComArgumentos(GanhoIndividualNexAtributo, { ganhos: 0, trocas: 0 }),
+                    instanciaComArgumentos(GanhoIndividualNexPericia, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }, { ganhos: 0, trocas: 0 }),
+                    instanciaComArgumentos(GanhoIndividualNexEscolhaClasse, true),
                 ],
             },
             2: {

@@ -50,6 +50,9 @@
 }
 
 .recipiente_edicao {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
     margin: 0 auto;
     flex: 1 0 0;
@@ -99,7 +102,39 @@
     flex-direction: column;
     flex: 1;
     align-items: center;
-    justify-content: center;
+}
+
+.barra_locais {
+    display: flex;
+    flex-direction: row;
+    height: 10%;
+    width: 12%;
+    justify-content: space-evenly;
+}
+
+.barra_locais * {
+    background-color: rgb(184, 180, 180);
+}
+
+.barra_locais_borda_esquerda {
+    flex: .2;
+    border-radius: 0 0 0 20px;
+}
+
+.barra_locais_centro {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    align-items: center;
+}
+
+.barra_locais_centro svg {
+    margin: auto;
+}
+
+.barra_locais_borda_direita {
+    flex: .2;
+    border-radius: 0 0 20px 0;
 }
 
 .barras {

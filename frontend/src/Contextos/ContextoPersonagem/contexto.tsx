@@ -1,7 +1,7 @@
 // #region Imports
 import React, { createContext, useContext } from "react";
 
-import { HabilidadePassiva, lista_geral_habilidades, Personagem } from 'Classes/ClassesTipos/index.ts';
+import { HabilidadePassiva, lista_geral_habilidades, Personagem, RLJ_Ficha2 } from 'Classes/ClassesTipos/index.ts';
 import { geraFicha } from 'Uteis/uteis.tsx';
 
 import { obtemDadosFichaDemonstracao } from "Recursos/DadosFicha.ts";
@@ -25,9 +25,15 @@ export const useContextoFicha = (): ContextoFichaProps => {
     return context;
 };
 
-export const ContextoFichaProvider = ({ children, idFichaNoLocalStorage }: { children: React.ReactNode, idFichaNoLocalStorage: number }) => {
-    // const data = JSON.parse(localStorage.getItem("dadosFicha")!)[idFichaNoLocalStorage];
-    const data = obtemDadosFichaDemonstracao();
+export const ContextoFichaProvider = ({ children, seletorFicha }: { children: React.ReactNode; seletorFicha: { tipo: 'ficha'; idFichaNoLocalStorage: number } | { tipo: 'fichaDemonstracao' }; }) => {
+    let data: RLJ_Ficha2;
+    const idFichaNoLocalStorage = seletorFicha.tipo === 'fichaDemonstracao' ? 0 : seletorFicha.idFichaNoLocalStorage;
+
+    if (seletorFicha.tipo === 'fichaDemonstracao') {
+        data = obtemDadosFichaDemonstracao();
+    } else {
+        data = JSON.parse(localStorage.getItem("dadosFicha")!)[seletorFicha.idFichaNoLocalStorage];
+    }
 
     const personagem = new Personagem(geraFicha(data));
 

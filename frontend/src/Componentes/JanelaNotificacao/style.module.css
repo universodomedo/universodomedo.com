@@ -3,32 +3,32 @@
     display: flex;
     flex-direction: column;
     top: 8%;
-    right: 0;
+    left: 0;
     width: 20%;
     max-height: 30vh;
     background: #0B0D0E;
     color: white;
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 5px 0 0 5px;
+    border-radius: 0 5px 5px 0;
     overflow-y: visible;
     transition: transform 0.3s ease;
 }
 
 .janela_avisos.fechado {
-    transform: translateX(100%);
+    transform: translateX(-100%);
 }
 
 .janela_avisos_botao {
     position: absolute;
     top: 0;
-    left: -4vw;
+    right: -4vw;
     width: 4vw;
     height: 8vh;
     background: #0B0D0E;
     border: none;
     color: white;
-    border-radius: 5px 0 0 5px;
+    border-radius: 0 5px 5px 0;
     cursor: pointer;
     display: flex;
     align-items: center;

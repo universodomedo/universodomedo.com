@@ -150,7 +150,7 @@ export const Consulta = <T,>({ renderItem }: { renderItem: (item: T, index: numb
                 )}
             </div>
             <div className={style.total_exibidos}>
-                <p className='noMargin'>Exibindo {registrosFiltrados.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} de {registros.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} Registros</p>
+                <p >Exibindo {registrosFiltrados.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} de {registros.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} Registros</p>
             </div>
         </div>
     );
