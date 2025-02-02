@@ -91,14 +91,8 @@ const pagina = () => {
                                 </div>
                                 <div className={style.ficha_acoes}>
                                     <div className={style.ficha_acoes_coluna}>
-                                        <FontAwesomeIcon className={style.icones_ficha} title={'Remover Ficha'} icon={faTrash} onClick={() => { removeFicha(index) }} />
-                                        {/* <FontAwesomeIcon className={`${style.icones_ficha} ${style.icone_carrinho}`} title={'Alterar Inventário'} icon={faShoppingCart} onClick={() => { !pendente && abrirShop(index) }} /> */}
+                                        <FontAwesomeIcon className={style.icones_ficha} title={'Remover Ficha'} icon={faTrash} onClick={() => { removeFicha(index); }} />
                                     </div>
-                                    {/* {pendente && (
-                                        <div className={style.ficha_acoes_coluna}>
-                                            <FontAwesomeIcon className={`${style.icones_ficha} ${style.icone_evolucao}`} title={'Continuar Evolução'} icon={faUserPlus} onClick={() => { continuaEvolucao(index) }} />
-                                        </div>
-                                    )} */}
                                 </div>
                             </div>
                         );
@@ -142,7 +136,7 @@ const ModalNovoPersonagem = () => {
             <input type='text' placeholder='Nome do Personagem' value={inputValue} onChange={handleInputChange} autoFocus />
             <select id="selectNex" value={idNexSelecionado} onChange={handleSelectChange}>
                 <option value="0" disabled >Selecionar NEX</option>
-                {SingletonHelper.getInstance().niveis.filter(nivel => nivel.id <= 4).map(nivel => (<option key={nivel.id} value={nivel.id}> {nivel.nomeDisplay} </option>))}
+                {SingletonHelper.getInstance().niveis.filter(nivel => nivel.id <= 9).map(nivel => (<option key={nivel.id} value={nivel.id}>{nivel.nomeDisplay}</option>))}
             </select>
             <button onClick={criaNovaFichaComNexEspecifico} disabled={!inputValue || !idNexSelecionado}>Confirmar</button>
         </div>

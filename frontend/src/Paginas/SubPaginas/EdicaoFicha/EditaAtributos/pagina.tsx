@@ -73,7 +73,7 @@ const page = () => {
                     </Tooltip.Content>
                 </Tooltip>
                 <div className={style.valor_atributo}>
-                    <button onClick={() => { alteraValor(atributo.refAtributo.id, -1) }} disabled={!atributo.estaMaiorQueInicial && ganhoAtributo.ganhosAtributo.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
+                    <button onClick={() => { alteraValor(atributo.refAtributo.id, -1) }} disabled={atributo.estaEmValorMinimo || (!atributo.estaMaiorQueInicial && ganhoAtributo.ganhosAtributo.trocas.valorZerado)}><FontAwesomeIcon icon={faMinus} /></button>
                     <h2>{atributo.valorAtual}</h2>
                     <button onClick={() => { alteraValor(atributo.refAtributo.id, +1) }} disabled={atributo.estaEmValorMaximo || ganhoAtributo.ganhosAtributo.ganhos.valorZerado}><FontAwesomeIcon icon={faPlus} /></button>
                 </div>

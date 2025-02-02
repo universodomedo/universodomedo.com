@@ -58,7 +58,7 @@ const page = () => {
 
                 <h3 className={style.patente_pericia} style={{ color: pericia.refPatenteAtual.corTexto }}>{pericia.refPatenteAtual.nome}</h3>
                 <div className={style.botoes_pericia}>
-                    <button onClick={() => { alteraValor(pericia.refPericia.id, -1) }} disabled={pericia.estaEmValorMinimo || !pericia.estaMaiorQueInicial || !ganhoPericia.deparaPericiaPatente(pericia)?.trocas.valorZerado}><FontAwesomeIcon icon={faMinus} /></button>
+                    <button onClick={() => { alteraValor(pericia.refPericia.id, -1) }} disabled={!(!pericia.estaEmValorMinimo && (pericia.estaMaiorQueInicial || !ganhoPericia.deparaPericiaPatente(pericia)?.trocas.valorZerado))}><FontAwesomeIcon icon={faMinus} /></button>
                     <button onClick={() => { alteraValor(pericia.refPericia.id, +1) }} disabled={!ganhoPericia.temPontosParaEssaPatente(pericia)}><FontAwesomeIcon icon={faPlus} /></button>
                 </div>
             </div>

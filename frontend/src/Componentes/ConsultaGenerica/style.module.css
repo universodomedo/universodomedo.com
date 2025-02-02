@@ -20,6 +20,7 @@
     flex: 1 0 0;
     align-items: center;
     overflow: auto;
+    margin-bottom: 2vh;
 }
 
 .conteudo_consulta h1, .div_filtro span {

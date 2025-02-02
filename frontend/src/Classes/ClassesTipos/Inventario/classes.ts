@@ -35,7 +35,9 @@ export class Inventario {
 }
 
 export class GerenciadorEspacoCategoria {
-    constructor(public espacosCategoria: EspacoCategoria[]) { }
+    public espacosCategoria: EspacoCategoria[] = [];
+
+    constructor() { }
 
     maximoItensCategoria(valorCategoria: number): number { return (valorCategoria > 0 ? this.espacosCategoria.find(categoria => categoria.valorCategoria === valorCategoria)!.maximoEspacosCategoria : 999); }
 }

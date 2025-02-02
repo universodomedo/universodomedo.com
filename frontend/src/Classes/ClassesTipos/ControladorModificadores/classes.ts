@@ -24,6 +24,7 @@ export class ControladorModificadores {
     // }
 
     get modificadores(): Modificador[] { return this._modificadores; }
+    limpaModificadores() { console.log(this._modificadores); this._modificadores = []; }
 
     get valoresEfeitosEDetalhesPorLinhaEfeito(): ValoresLinhaEfeito[] {
         const valores: ValoresLinhaEfeito[] = [];

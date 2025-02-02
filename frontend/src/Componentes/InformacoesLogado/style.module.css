@@ -3,7 +3,8 @@
     flex-direction: row;
     height: 100%;
     box-sizing: border-box;
-    justify-content: space-around;
+    justify-content: center;
+    gap: 5%;
 }
 
 #logavel a {

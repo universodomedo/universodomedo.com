@@ -12,7 +12,6 @@ interface ContextoRitualPericiaProps {
     opcoesPericias: { id: number; texto: string }[];
     selecionaPericia: (idNivel: number) => void;
     periciaSelecionada: Pericia | undefined;
-    argsRitual: ArgsRitual | undefined;
 }
 
 export const ContextoRitualPericia = createContext<ContextoRitualPericiaProps | undefined>(undefined);
@@ -26,7 +25,7 @@ export const useContextoRitualPericia = (): ContextoRitualPericiaProps => {
 };
 
 export const ContextoRitualPericiaProvider = ({ children }: { children: React.ReactNode }) => {
-    const { elementoSelecionado, nivelSelecionado } = useContextoCriaRitual();
+    const { elementoSelecionado, nivelSelecionado, setDadosRitual } = useContextoCriaRitual();
 
     const valoresDesseElementoNivelCirculo = valoresRituaisPericias.find((ritual) => elementoSelecionado !== undefined && nivelSelecionado !== undefined && ritual.idElemento === elementoSelecionado.id)?.circulosNivel.find((nivel) => nivel.idCirculoNivel === nivelSelecionado?.id)?.pericias.map((pericia) => ({idPericia: pericia.idPericia, valorPE: pericia.valorPE, valorBonus: pericia.valorBonus,})) || [];
 
@@ -48,8 +47,9 @@ export const ContextoRitualPericiaProvider = ({ children }: { children: React.Re
 
     const valoresDesseElementoNivelCirculoPericia = valoresDesseElementoNivelCirculo.find(valor => valor.idPericia === periciaSelecionada?.id);
 
-    const argsRitual: ArgsRitual | undefined =
-        elementoSelecionado === undefined || nivelSelecionado === undefined || periciaSelecionada === undefined || valoresDesseElementoNivelCirculoPericia === undefined
+    useEffect(() => {
+        setDadosRitual(
+            elementoSelecionado === undefined || nivelSelecionado === undefined || periciaSelecionada === undefined || valoresDesseElementoNivelCirculoPericia === undefined
             ? undefined
             : {
                 args: { nome: `Aprimorar ${periciaSelecionada.nome}` },
@@ -80,9 +80,11 @@ export const ContextoRitualPericiaProvider = ({ children }: { children: React.Re
                     requisitos: [1],
                 } ],
             }
+        )
+    }, [periciaSelecionada])
 
     return (
-        <ContextoRitualPericia.Provider value={{ opcoesPericias, selecionaPericia, periciaSelecionada, argsRitual }}>
+        <ContextoRitualPericia.Provider value={{ opcoesPericias, selecionaPericia, periciaSelecionada }}>
             {children}
         </ContextoRitualPericia.Provider>
     );

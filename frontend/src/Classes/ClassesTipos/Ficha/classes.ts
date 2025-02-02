@@ -1,5 +1,5 @@
 // #region Imports
-import { ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso, ComportamentoDificuldadeAcao, ComportamentoCustoAcao, Item } from 'Classes/ClassesTipos/index.ts';
+import { ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso, ComportamentoDificuldadeAcao, ComportamentoCustoAcao, Item, DadosGenericosHabilidade } from 'Classes/ClassesTipos/index.ts';
 // #endregion
 
 export type RLJ_Ficha2 = {
@@ -9,6 +9,7 @@ export type RLJ_Ficha2 = {
     atributos?: { id: number, valor: number }[],
     periciasPatentes?: { idPericia: number, idPatente: number }[],
     rituais?: ArgsRitual[],
+    habilidadesEspeciais?: PropsHabilidades[],
     inventario?: ArgsItem[],
     reducoesDano?: { idTipoDano: number, valor: number }[],
     pendencias: { idNivelEsperado: number },
@@ -63,7 +64,7 @@ export type DadosComportamentosRitual = {
 };
 
 export type PropsHabilidades = {
-    
+    props: ConstructorParameters<typeof DadosGenericosHabilidade>[0],
 }
 
 

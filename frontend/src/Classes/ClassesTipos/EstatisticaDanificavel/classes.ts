@@ -4,13 +4,15 @@ import { SingletonHelper } from 'Classes/classes_estaticas.ts';
 
 export class EstatisticaDanificavel {
     public valor: number
+    get valorMaximo(): number { return this._valorMaximo };
+    // get valorMaximo(): number { return this.refEstatisticaDanificavel.id === 2 ? this._valorMaximo - getPersonagemFromContext().pontosDeSanidadeSacrificadosPorRituais : this._valorMaximo };
 
     constructor(
         private _idEstatisticaDanificavel: number,
-        public valorMaximo: number,
+        private _valorMaximo: number,
         valor?: number,
     ) {
-        this.valor = valor !== undefined ? valor : valorMaximo;
+        this.valor = valor !== undefined && valor < this.valorMaximo ? valor : this.valorMaximo;
     }
 
     get refEstatisticaDanificavel(): TipoEstatisticaDanificavel {
@@ -33,7 +35,7 @@ export class EstatisticaDanificavel {
     }
 
     public alterarValorMaximo(valorMaximo: number): void {
-        this.valorMaximo = this.valor = valorMaximo;
+        this._valorMaximo = this.valor = valorMaximo;
     }
 }
 

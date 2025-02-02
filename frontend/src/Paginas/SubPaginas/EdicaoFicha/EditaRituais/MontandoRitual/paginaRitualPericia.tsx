@@ -1,7 +1,7 @@
 // #region Imports
 import style from '../style.module.css';
-import { useState } from 'react';
 
+import { useContextoCriaRitual } from 'Contextos/ContextoCriacaoRitual/contexto';
 import { ContextoRitualPericiaProvider, useContextoRitualPericia } from 'Contextos/ContextoCriacaoRitual/SubContextos/RituaisPericia/contextoRitualPericia';
 
 import InputComRotulo from 'Componentes/ElementosComponentizados/InputComRotulo/pagina.tsx';
@@ -16,7 +16,8 @@ const page = () => {
 }
 
 const PaginaComContexto = () => {
-    const { opcoesPericias, selecionaPericia, periciaSelecionada, argsRitual } = useContextoRitualPericia();
+    const { dadosRitual } = useContextoCriaRitual();
+    const { opcoesPericias, selecionaPericia, periciaSelecionada } = useContextoRitualPericia();
 
     const handleSelectChangePericia = (event: React.ChangeEvent<HTMLSelectElement>) => {
         selecionaPericia(Number(event.target.value));
@@ -32,11 +33,11 @@ const PaginaComContexto = () => {
                 </InputComRotulo>
             </div>
 
-            {argsRitual !== undefined && (
+            {dadosRitual !== undefined && (
                 <div className={style.recipiente_detalhes_ritual}>
-                    <h2>{argsRitual.args.nome}</h2>
-                    <h3>Custo PE: {argsRitual.dadosAcoes[0].custos.custoPE?.valor}</h3>
-                    <h3>Valor do Bônus: {argsRitual.dadosAcoes[0].modificadores![0].props.dadosEfeitos[0].dadosValoresEfeitos?.valorBonusAdicional}</h3>
+                    <h2>{dadosRitual.args.nome}</h2>
+                    <h3>Custo PE: {dadosRitual.dadosAcoes[0].custos.custoPE?.valor}</h3>
+                    <h3>Valor do Bônus: {dadosRitual.dadosAcoes[0].modificadores![0].props.dadosEfeitos[0].dadosValoresEfeitos?.valorBonusAdicional}</h3>
                 </div>
             )}
         </>

@@ -10,7 +10,8 @@ import { obtemDadosFichaDemonstracao } from "Recursos/DadosFicha.ts";
 interface ContextoFichaProps {
     // dado temporario, enquanto n usa banco de dados
     idFichaNoLocalStorage: number,
-    personagem: Personagem
+    personagem: Personagem,
+    atualizaHabilidades: () => void
 }
 
 export const ContextoFicha = createContext<ContextoFichaProps | undefined>(undefined);
@@ -37,13 +38,25 @@ export const ContextoFichaProvider = ({ children, seletorFicha }: { children: Re
 
     const personagem = new Personagem(geraFicha(data));
 
+    const atualizaHabilidades = () => {
+        personagem.habilidades = [
+            ...personagem.dadosFicha.habilidadesEspeciais?.map(habilidadeEspecial => new HabilidadePassiva({ dadosGenericosHabilidade: habilidadeEspecial.props, fonteHabilidade: { tipo: 'Mundana', fonte: 'Habilidade Especial' } })) || [],
+            ...lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(personagem))
+        ];
+
+        personagem.proficienciaPersonagem.proficiencias = [];
+        if (personagem.proficienciaPersonagem.proficiencias.length <= 0) personagem.proficienciaPersonagem.adicionaProficiencia(personagem.habilidades.filter(habilidade => habilidade.dadosProficiencia !== undefined).map(habilidade => habilidade.dadosProficiencia!));
+
+        personagem.controladorModificadores.limpaModificadores();
+        personagem.habilidades.forEach(habilidade => habilidade instanceof HabilidadePassiva && habilidade.modificadores.forEach(modificador => modificador.comportamentos.ehPassivoSempreAtivo && modificador.ativaBuff()));
+    }
+
     const PageComBridge = ({ children }: { children: React.ReactNode }) => {
         useContextBridge();
 
-        personagem.habilidades.forEach(habilidade => habilidade instanceof HabilidadePassiva && habilidade.modificadores.forEach(modificador => modificador.comportamentos.ehPassivoSempreAtivo && modificador.ativaBuff()));
         personagem.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
-        personagem.habilidades = lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(personagem));
-        if (personagem.proficienciaPersonagem.proficiencias.length <= 0) personagem.proficienciaPersonagem.adicionaProficiencia(personagem.habilidades.filter(habilidade => habilidade.dadosProficiencia !== undefined).map(habilidade => habilidade.dadosProficiencia!));
+
+        atualizaHabilidades();
 
         return (
             <>{children}</>
@@ -51,7 +64,7 @@ export const ContextoFichaProvider = ({ children, seletorFicha }: { children: Re
     }
 
     return (
-        <ContextoFicha.Provider value={{ idFichaNoLocalStorage, personagem }}>
+        <ContextoFicha.Provider value={{ idFichaNoLocalStorage, personagem, atualizaHabilidades }}>
             <PageComBridge>
                 {children}
             </PageComBridge>

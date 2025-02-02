@@ -8,13 +8,17 @@
     width: 80%;
 }
 
+.recipiente_conteudo_slide {
+    height: 100%;
+}
+
 .item_carrossel_classes {
     height: 100%;
-    background-color: red;
+    background-size: cover;
+    background-position: center;
 }
 
 .centro{
-    background-color: green;
 }
 .lateral{}
 
@@ -22,7 +26,7 @@
     position: absolute;
     cursor: pointer;
     z-index: 10;
-    top: 35%;
+    top: 50%;
 }
 
 .arrow svg {
@@ -34,11 +38,11 @@
 }
 
 .arrow_next {
-    right: 0;
+    right: 22%;
 }
 
 .arrow_prev {
-    left: 0;
+    left: 22%;
 }
 
 .recipiente_carrossel_classes :global(.slick-slider) {
@@ -62,6 +66,7 @@
     display: flex;
     height: 100%;
     width: 0;
+    transition: width 0.4s ease, height 0.4s ease;
 }
 
 .recipiente_carrossel_classes :global(.slick-slide.slick-active) {
@@ -76,30 +81,23 @@
 .recipiente_carrossel_classes :global(.slick-slide.slick-active.slick-current) {
     width: 50%;
     margin: 0 5%;
+    transition: height 1s ease, margin 1s ease;
 }
 
 .recipiente_carrossel_classes :global(.slick-slide.slick-active:not(.slick-current)) > div {
     height: 40%;
     margin: auto;
+    transition: height 1s ease, margin 1s ease;
 }
 
-/* .recipiente_carrossel_classes :global(.slick-slide):has(.lateral) {
-    flex: 0 0 auto;
-    width: 100%;
-    transition: transform 0.5s ease, opacity 0.5s ease;
-    opacity: 0.7;
-    transform: scale(0.5);
+.item_carrossel_classes {
+    filter: brightness(100%);
+    transition: filter 0.8s ease;
+    transition: height 1s ease, margin 1s ease;
 }
 
-.recipiente_carrossel_classes :global(.slick-slide):has(.centro) {
-    opacity: 1;
-    transform: scale(1);
+.recipiente_carrossel_classes :global(.slick-slide.slick-active:not(.slick-current)) .item_carrossel_classes {
+    filter: brightness(20%);
+    transition: filter 0.8s ease;
+    transition: height 1s ease, margin 1s ease;
 }
-
-
-
-
-
-
-
-*/

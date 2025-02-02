@@ -3,6 +3,28 @@
     flex-direction: column;
     gap: 3vh;
     height: 100%;
+    width: 80%;
+}
+
+.recipiente_conteudo_criacao_ritual {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+    align-items: center;
+}
+
+.pagina_rituais_visualizacao {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 2vh;
+}
+
+.pagina_rituais_criacao_inicial {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    gap: 2vh;
 }
 
 .rituais_pendentes {
@@ -33,28 +55,63 @@
     margin: 0;
 }
 
-.recipiente_ritual_existente {
+.recipiente_area_rituais_existentes {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 2vh;
     justify-content: space-evenly;
+    width: 100%;
+}
+
+.recipiente_info_ritual {
+    display: flex;
+    flex-direction: row;
+    flex: 0 1 calc(40%);
+    gap: 2%;
 }
 
 .ritual_existente {
     display: flex;
     flex-direction: row;
-    flex: 0 1 calc(40%);
-    border: 2px red solid;
+    justify-content: space-around;
+    flex: 1;
+    border: 2px solid;
     border-radius: 10px;
+    padding: 2%;
+    gap: 1vw;
 }
 
 .detalhes_ritual_existente {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .recipiente_construcao_ritual {
     width: 100%;
     flex: 1;
+}
+
+.recipiente_botao_salva_ritual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 0;
+}
+
+.recipiente_botao_salva_ritual button {
+    padding: .8%;
+}
+
+.acoes_rituais_existentes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 5%;
+}
+
+.icone_lixeira {
+    cursor: pointer;
 }

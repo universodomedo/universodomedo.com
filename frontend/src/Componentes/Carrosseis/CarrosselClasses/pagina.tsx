@@ -1,14 +1,24 @@
 // #region Imports
 import style from './style.module.css';
-import { useState } from 'react';
+
+import { GanhoIndividualNexEscolhaClasse } from 'Classes/ClassesTipos/index.ts';
+import { useContextoNexUp } from 'Contextos/ContextoNexUp/contexto';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
+import imgCombatente from 'Assets/imgClasseCombatente.png';
+import imgEspecialista from 'Assets/imgClasseEspecialista.png';
+import imgOcultista from 'Assets/imgClasseOcultista.png';
+
 import Slider from "react-slick";
-// #endregigon
+// #endregion
 
 const pagina = () => {
+    const { ganhosNex, triggerSetState } = useContextoNexUp();
+    
+    const ganhoClasse = ganhosNex.ganhos.find(ganho => ganho instanceof GanhoIndividualNexEscolhaClasse)!;
+
     const NextArrow = ({ onClick }: { onClick?: React.MouseEventHandler<HTMLDivElement> }) => {
         return (
             <div className={`${style.arrow} ${style.arrow_next}`} onClick={onClick}>
@@ -26,12 +36,10 @@ const pagina = () => {
     };
 
     const classes = [
-        { id: 2, nome: 'Combatente' },
-        { id: 3, nome: 'Especialista' },
-        { id: 4, nome: 'Ocultista' },
+        { id: 2, nome: 'Combatente', img: imgCombatente },
+        { id: 3, nome: 'Especialista', img: imgEspecialista },
+        { id: 4, nome: 'Ocultista', img: imgOcultista },
     ];
-    const initialSlideIndex = classes.findIndex((classe) => classe.nome === 'Combatente');
-    const [classeSelecionada, setClasseSelecionada] = useState(initialSlideIndex);
 
     const settings = {
         variableWidth: true,
@@ -42,10 +50,14 @@ const pagina = () => {
         centerPadding: '0',
         nextArrow: <NextArrow />,
         prevArrow: <PrevArrow />,
-        // initialSlide: initialSlideIndex, // Adicionei isso para definir o slide inicial como o Combatente
+        onInit: () => {
+            if (classes.length > 0) ganhoClasse.setIdEscolhido(classes[0].id);
+            triggerSetState();
+        },
         beforeChange: (current: number, next: number) => {
-            setClasseSelecionada(next)
-            console.log(`Mudando do slide ${current} para o slide ${next}`); // Adicionei isso para depurar
+            const nextClasse = classes[next];
+            if (nextClasse) ganhoClasse.setIdEscolhido(nextClasse.id);
+            triggerSetState();
         },
     };
 
@@ -53,7 +65,9 @@ const pagina = () => {
         <div className={style.recipiente_carrossel_classes}>
             <Slider {...settings}>
                 {classes.map((classe, index) => (
-                    <div key={index} className={style.item_carrossel_classes} />
+                    <div key={index} className={style.recipiente_conteudo_slide}>
+                        <div className={style.item_carrossel_classes} style={{ backgroundImage: `url(${classe.img})` }} />
+                    </div>
                 ))}
             </Slider>
         </div>

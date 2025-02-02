@@ -10,9 +10,9 @@ import SecaoTopo from 'Componentes/SecaoTopo/pagina.tsx';
 const LayoutDeslogado = () => {
     return (
         <>
-            <MenuSwiperEsquerda />
+            <MenuSwiperEsquerda layout={'deslogado'} />
             <section id={style.cabecalho}>
-                <SecaoTopo />
+                <SecaoTopo layout={'deslogado'} />
             </section>
             <section id={style.corpo}>
                 <Outlet />

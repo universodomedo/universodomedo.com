@@ -4,13 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 
 import { GanhoIndividualNexAtributo, GanhoIndividualNexEscolhaClasse, GanhoIndividualNexEstatisticaFixa, GanhoIndividualNexHabilidade, GanhoIndividualNexPericia, GanhoIndividualNexRitual } from "Classes/ClassesTipos/index.ts";
 
-import { ContextoFichaProvider, getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
+import { ContextoFichaProvider, getPersonagemFromContext, useContextoFicha } from 'Contextos/ContextoPersonagem/contexto.tsx';
 import { ContextoNexUpProvider, useContextoNexUp } from 'Contextos/ContextoNexUp/contexto.tsx';
 
-import EditaAtributos from 'Paginas/SubPaginas/EdicaoFicha/EditaAtributos/pagina.tsx';
-import EditaPericias from 'Paginas/SubPaginas/EdicaoFicha/EditaPericias/pagina.tsx';
-import EditaEstatisticas from 'Paginas/SubPaginas/EdicaoFicha/EditaEstatisticas/pagina.tsx';
 import EscolheClasse from 'Paginas/SubPaginas/EdicaoFicha/EscolheClasse/pagina.tsx';
+import EditaHabilidades from 'Paginas/SubPaginas/EdicaoFicha/EditaHabilidades/pagina.tsx';
+import EditaAtributos from 'Paginas/SubPaginas/EdicaoFicha/EditaAtributos/pagina.tsx';
+import EditaEstatisticas from 'Paginas/SubPaginas/EdicaoFicha/EditaEstatisticas/pagina.tsx';
+import EditaPericias from 'Paginas/SubPaginas/EdicaoFicha/EditaPericias/pagina.tsx';
 import EditaRituais from 'Paginas/SubPaginas/EdicaoFicha/EditaRituais/pagina.tsx';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -118,6 +119,7 @@ const PaginaEditaFichaComContexto = () => {
     const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
     const [_, setState] = useState({});
 
+    const { atualizaHabilidades } = useContextoFicha();
     const { ganhosNex, registerSetState, triggerSetState } = useContextoNexUp();
 
     useEffect(() => {
@@ -147,6 +149,7 @@ const PaginaEditaFichaComContexto = () => {
 
     const proximo = () => {
         ganhosNex.avancaEtapa();
+        atualizaHabilidades();
         triggerSetState();
     };
 
@@ -159,13 +162,11 @@ const PaginaEditaFichaComContexto = () => {
                 <h1 className={style.titulo_edicao_ficha}>{ganhosNex.tituloNexUp}</h1>
 
                 <div className={style.recipiente_edicao}>
-
                     {ganhosNex.etapa instanceof GanhoIndividualNexEscolhaClasse && (
                         <EscolheClasse />
                     )}
                     {ganhosNex.etapa instanceof GanhoIndividualNexHabilidade && (
-                        <></>
-                        // <EditaHabilidades />
+                        <EditaHabilidades />
                     )}
                     {ganhosNex.etapa instanceof GanhoIndividualNexAtributo && (
                         <EditaAtributos />
@@ -180,6 +181,7 @@ const PaginaEditaFichaComContexto = () => {
                         <EditaRituais />
                     )}
                 </div>
+                
                 <div className={style.botoes}>
                     {!ganhosNex.podeAvancarEtapa ? (
                         <div className={`${style.recipiente_botao_desabilitado}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>

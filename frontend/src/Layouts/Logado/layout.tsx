@@ -10,9 +10,9 @@ import SecaoTopo from 'Componentes/SecaoTopo/pagina.tsx';
 const LayoutLogado = () => {
     return (
         <>
-            <MenuSwiperEsquerda />
+            <MenuSwiperEsquerda layout={'logado'} />
             <section id={style.cabecalho}>
-                <SecaoTopo />
+                <SecaoTopo layout={'logado'} />
             </section>
             <section id={style.corpo}>
                 <Outlet />

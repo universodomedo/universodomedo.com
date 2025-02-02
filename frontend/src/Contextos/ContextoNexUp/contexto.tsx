@@ -26,9 +26,10 @@ export const ContextoNexUpProvider = ({ children, personagem }: { children: Reac
     const triggerSetState = () => {
         if (setStateRef.current) {
             setStateRef.current((prev: Record<string, any>) => ({ ...prev, updated: true }));
-        } else {
-            console.warn("Nenhum setState foi registrado!");
         }
+        // else {
+        //     console.warn("Nenhum setState foi registrado!");
+        // }
     };
 
     return (

@@ -36,7 +36,7 @@ const pagina = () => {
     }, [idTipoSelecionado])
 
     return (
-        <>
+        <div className={style.pagina_rituais_criacao_inicial}>
             <div className={style.opcao_item}>
                 <InputComRotulo rotulo={'Elemento do Ritual'}>
                     <select style={{width:'100%'}} value={idElementoSelecionado} onChange={handleSelectChangeElemento}><option value={0} disabled>Selecionar Elemento</option>{SingletonHelper.getInstance().elementos.filter(elemento => elemento.id !== 3).map(elemento => (<option key={elemento.id} value={elemento.id}>{elemento.nome}</option>))}</select>
@@ -60,7 +60,7 @@ const pagina = () => {
                     {paginaTipoRitualAberta}
                 </div>
             )}
-        </>
+        </div>
     );
 }
 

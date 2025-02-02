@@ -53,35 +53,15 @@ export class Personagem {
             0,
             [new Execucao(2, 1), new Execucao(3, 1), new Execucao(4, 1)],
             new EspacoInventario(5, 5),
-            new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2), new EspacoCategoria(2, 1), new EspacoCategoria(3, 0), new EspacoCategoria(4, 0),]),
+            new GerenciadorEspacoCategoria(),
+            // new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2), new EspacoCategoria(2, 1), new EspacoCategoria(3, 0), new EspacoCategoria(4, 0),]),
             numExtremidades
         );
 
         this.reducoesDano = this.dadosFicha.reducoesDano?.map(reducao_dano => new ReducaoDano(reducao_dano.idTipoDano, reducao_dano.valor))!;
         this.carregaAtributos();
         this.carregaPericias();
-
-        this.rituais = this.dadosFicha.rituais!.map(ritual =>
-            new Ritual({ dadosGenericosRitual: ritual.args, dadosComportamentos: ritual.dadosComportamentos })
-                .adicionarAcoes(
-                    (ritual.dadosAcoes || []).map(dadosAcao => (
-                        {
-                            props: { dadosGenericosAcao: dadosAcao.args, dadosComportamentos: dadosAcao.dadosComportamentos },
-                            config: (acao) => {
-                                // acao.adicionarCustos([
-                                //     dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
-                                //     ...((dadosAcao.custos.custoExecucao || []).map(execucao =>
-                                //         execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
-                                //     )),
-                                //     dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
-                                // ].filter(Boolean));
-                                acao.adicionarModificadores((dadosAcao.modificadores?.map(modificador => modificador.props) || []));
-                                acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
-                            }
-                        }
-                    ))
-                )
-        );
+        this.carregaRituais();
 
         this.dadosFicha.inventario!.map(dadosItem => this.inventario.adicionarItemNoInventario(novoItemPorDadosItem(dadosItem)));
     }
@@ -104,6 +84,8 @@ export class Personagem {
     obterDetalhesPorLinhaEfeito(idLinhaEfeito: number): string[] {
         return this.controladorModificadores.detalhesPorLinhaEfeito(idLinhaEfeito);
     }
+
+    get pontosDeSanidadeSacrificadosPorRituais(): number { return this.rituais.reduce((acc, cur) => acc + cur.comportamentos.comportamentoRitual.refCirculoNivelRitual.psSacrificados, 0) }
 
     public onUpdate: () => void = () => { };
 
@@ -135,6 +117,29 @@ export class Personagem {
 
     public carregaAtributos() { this.atributos = this.dadosFicha.atributos!.map(attr => new AtributoPersonagem(attr.id, attr.valor!)); }
     public carregaPericias() { this.pericias = this.dadosFicha.periciasPatentes!.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente)); }
+    public carregaRituais() {
+        this.rituais = this.dadosFicha.rituais!.map(ritual =>
+            new Ritual({ dadosGenericosRitual: ritual.args, dadosComportamentos: ritual.dadosComportamentos })
+                .adicionarAcoes(
+                    (ritual.dadosAcoes || []).map(dadosAcao => (
+                        {
+                            props: { dadosGenericosAcao: dadosAcao.args, dadosComportamentos: dadosAcao.dadosComportamentos },
+                            config: (acao) => {
+                                // acao.adicionarCustos([
+                                //     dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
+                                //     ...((dadosAcao.custos.custoExecucao || []).map(execucao =>
+                                //         execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
+                                //     )),
+                                //     dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
+                                // ].filter(Boolean));
+                                acao.adicionarModificadores((dadosAcao.modificadores?.map(modificador => modificador.props) || []));
+                                acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
+                            }
+                        }
+                    ))
+                )
+        );
+    }
 }
 
 export class PersonagemDetalhes {

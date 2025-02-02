@@ -57,6 +57,7 @@
     margin: 0 auto;
     flex: 1 0 0;
     overflow: auto;
+    gap: 1vh;
 }
 
 .secao_cima {
