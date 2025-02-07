@@ -17,8 +17,8 @@ jobs:
 
     - name: Prepare Docker files
       run: |
-        cp deployments/universodomedo.com-deployment/docker/compose/Dockerfile ./
-        cp deployments/universodomedo.com-deployment/docker/compose/docker-compose.yml ./
+        cp deployments/docker/compose/Dockerfile ./
+        cp deployments/docker/compose/docker-compose.yml ./
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
