@@ -1,4 +1,0 @@
-[submodule "deployments/sandbox-deployment"]
-	path = deployments/sandbox-deployment
-	url = git@github.com:universodomedo/deployments.git
-	branch = sandbox-udm-deployment
