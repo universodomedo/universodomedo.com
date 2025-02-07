@@ -90,6 +90,10 @@
     margin-top: .5vh;
 }
 
+.recipiente_conteudo_execucao_modal {
+    flex: 1;
+}
+
 .opcao_acao {
     display: flex;
     flex-direction: column;

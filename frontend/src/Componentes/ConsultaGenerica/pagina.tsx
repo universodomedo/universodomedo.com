@@ -3,7 +3,7 @@ import style from "./style.module.css";
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 
 import Select, { ActionMeta, components, MultiValue, PlaceholderProps } from "react-select";
-import { FiltroProps, OpcaoFormatada, CategoriaFormatada, FiltroPropsItems } from 'Classes/ClassesTipos/index.ts';
+import { FiltroProps, OpcaoFormatada, CategoriaFormatada, FiltroPropsItems, pluralize } from 'Classes/ClassesTipos/index.ts';
 import ValoresFiltrosSelecionados from 'Componentes/ValoresFiltrosSelecionados/pagina.tsx';
 import InputLimpavel from 'Componentes/ElementosComponentizados/InputLimpavel/pagina';
 // #endregion
@@ -134,7 +134,7 @@ export const Consulta = <T,>({ renderItem }: { renderItem: (item: T, index: numb
                     </>
                 )}
 
-                {registrosFiltrados.length > 0 && (
+                {registrosFiltrados.some(lista => lista.length > 0) ? (
                     registrosFiltrados.map((registros, index) => (
                         registros.length > 0 && (
                             <div key={index} className={style.divisao_registros}>
@@ -147,10 +147,12 @@ export const Consulta = <T,>({ renderItem }: { renderItem: (item: T, index: numb
                             </div>
                         )
                     ))
+                ) : (
+                    <h2>Nenhum registro encontrado</h2>
                 )}
             </div>
             <div className={style.total_exibidos}>
-                <p >Exibindo {registrosFiltrados.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} de {registros.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} Registros</p>
+                <p >Exibindo {registrosFiltrados.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} de {registros.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0)} {pluralize(registros.reduce((total, grupo) => total + grupo.reduce((subtotal, item) => subtotal + calculoTotal(item), 0), 0), 'Registro')}</p>
             </div>
         </div>
     );
@@ -217,7 +219,7 @@ const CaixaFiltroItem = <T,>({ idFiltro, config }: { idFiltro: number, config: F
     }
 
     return (
-        <>
+        <div className={style.recipiente_input_filtro}>
             {config.filterType === 'select' && config.options ? (
                 <Select
                     isMulti
@@ -240,11 +242,20 @@ const CaixaFiltroItem = <T,>({ idFiltro, config }: { idFiltro: number, config: F
                     placeholder={config.placeholder}
                     controlShouldRenderValue={false}
                     components={{ Placeholder: CustomPlaceholder }}
+                    styles={{
+                        option: ( styles ) => {
+                            return {
+                                ...styles,
+                                color: 'black',
+                            }
+                        }
+                    }}
+                    
                 />
             ) : config.filterType === 'text' ? (
                 <InputLimpavel type={config.filterType} placeholder={config.placeholder} value={opcoesSelecionadas[0]} onChange={handleChangeText} />
             ) : ''}
-        </>
+        </div>
     );
 };
 

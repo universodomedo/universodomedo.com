@@ -1,55 +1,79 @@
-// #region Imports
-import { adicionaSinalEmNumeroParaExibicao, Atributo, AtributoPersonagem, LinhaEfeito } from 'Classes/ClassesTipos/index.ts';
-import { LoggerHelper, SingletonHelper } from 'Classes/classes_estaticas.ts';
+import { Atributo, AtributoPersonagem, LinhaEfeito } from 'Classes/ClassesTipos/index.ts';
 
-import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
-import { ExecutaTestePericiaGenerico } from 'Recursos/Ficha/Procedimentos.ts';
-// #endregion
+export type PericiaModelo = {
+    id: number;
+    idLinhaEfeito: number;
+    idAtributo: number;
+    nome: string;
+    descricao: string;
+};
 
-export class Pericia {
-    constructor(
-        public id: number,
-        private _idLinhaEfeito: number,
-        private _idAtributo: number,
-        public nome: string,
-        public nomeAbrev: string,
-        public descricao: string
-    ) { }
+export type Pericia = PericiaModelo & {
+    readonly nomeAbreviado: string;
+    readonly refLinhaEfeito: LinhaEfeito;
+    readonly refAtributo: Atributo;
+};
 
-    get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === this._idLinhaEfeito)!; }
-    get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this._idAtributo)!; }
+export type PatentePericiaModelo = {
+    id: number;
+    nome: string;
+    valor: number;
+    corTexto: string;
+};
+
+export type PatentePericia = PatentePericiaModelo;
+
+export type PericiaPatentePersonagem = {
+    readonly refPericia: Pericia;
+    readonly refPatente: PatentePericia;
+    readonly refAtributoPersonagem: AtributoPersonagem;
+
+    readonly valorNivelPatente: number;
+    readonly valorBonusPatente: number;
+
+    readonly valorEfeito: number;
+    readonly valorTotal: number;
+    readonly detalhesValor: string[];
+    
+    realizarTeste: () => void;
 }
 
-export class PatentePericia {
-    constructor(
-        public id: number,
-        public nome: string,
-        public valor: number,
-        public corTexto: string,
-    ) { }
+export type DadosPericiaPatentePersonagem = {
+    idPericia: number;
+    idPatentePericia: number;
 }
 
-export class PericiaPatentePersonagem {
-    constructor(
-        private _idPericia: number,
-        private _idPatentePericia: number
-    ) { }
 
-    get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this._idPericia)!; }
-    get refPatente(): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente_pericia => patente_pericia.id === this._idPatentePericia)!; }
-    get refAtributoPersonagem(): AtributoPersonagem { return getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === this.refPericia.refAtributo.id)!; }
+// export class Pericia {
+//     constructor(
+//         public id: number,
+//         private _idLinhaEfeito: number,
+//         private _idAtributo: number,
+//         public nome: string,
+//         public nomeAbrev: string,
+//         public descricao: string
+//     ) { }
 
-    get valorNivelPatente(): number { return this.refPatente.id - 1; }
-    get valorBonusPatente(): number { return this.refPatente.valor; }
+//     get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === this._idLinhaEfeito)!; }
+//     get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this._idAtributo)!; }
+// }
 
-    get valorEfeito(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(0, this.refPericia.refLinhaEfeito.id); }
-    get valorTotal(): number { return this.valorEfeito + this.valorBonusPatente; }
+// export interface IPatentePericia {
+//     id: number;
+//     nome: string;
+//     valor: number;
+//     corTexto: string;
+// }
 
-    get detalhesValor(): string[] { return [`Patente ${this.refPatente.nome}: ${this.refPatente.valor}`].concat(getPersonagemFromContext().obterDetalhesPorLinhaEfeito(this.refPericia.refLinhaEfeito.id)); }
-
-    realizarTeste = () => {
-        const resultado = ExecutaTestePericiaGenerico(this.refAtributoPersonagem, this);
-        LoggerHelper.getInstance().saveLog();
-        return resultado;
-    }
-}
+// export interface IPericiaPatentePersonagem {
+//     readonly refPericia: Pericia;
+//     readonly refPatente: IPatentePericia;
+//     readonly refAtributoPersonagem: AtributoPersonagem;
+//     readonly valorNivelPatente: number;
+//     readonly valorBonusPatente: number;
+//     readonly valorEfeito: number;
+//     readonly valorTotal: number;
+//     readonly detalhesValor: string[];
+    
+//     realizarTeste: () => void;
+// }

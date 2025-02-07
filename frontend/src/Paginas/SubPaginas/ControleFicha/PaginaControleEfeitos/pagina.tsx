@@ -1,16 +1,19 @@
 // #region Imports
-import { ControladorModificadores, ValoresLinhaEfeito } from 'Classes/ClassesTipos/index.ts'
+import { ValoresLinhaEfeito } from 'Classes/ClassesTipos/index.ts'
 
 import { Consulta, ConsultaProvider } from 'Componentes/ConsultaGenerica/pagina.tsx';
+
+import { useClasseContextualPersonagemModificadores } from 'Classes/ClassesContextuais/PersonagemModificadores.tsx';
 import { useContextoControleEfeitos } from 'Contextos/ContextoControleEfeitos/contexto.tsx';
 
 import Item from './item.tsx';
 // #endregion
 
-const page: React.FC<{ controladorModificadores: ControladorModificadores }> = ({ controladorModificadores }) => {
+const pagina = () => {
+    const { valoresEfeitosEDetalhesPorLinhaEfeito } = useClasseContextualPersonagemModificadores();
     const { mostrarFiltros } = useContextoControleEfeitos();
 
-    const efeito = controladorModificadores.valoresEfeitosEDetalhesPorLinhaEfeito.filter(valores => !valores.valoresEstaVazio);
+    const efeito = valoresEfeitosEDetalhesPorLinhaEfeito().filter(valores => !valores.valoresEstaVazio);
 
     const renderEfeitoItem = (valoresLinhaEfeito: ValoresLinhaEfeito, index: number) => (
         <Item key={index} valoresLinhaEfeito={valoresLinhaEfeito} />
@@ -23,4 +26,4 @@ const page: React.FC<{ controladorModificadores: ControladorModificadores }> = (
     );
 }
 
-export default page;
+export default pagina;

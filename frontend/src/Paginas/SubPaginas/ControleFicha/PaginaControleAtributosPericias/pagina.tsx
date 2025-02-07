@@ -1,14 +1,21 @@
 // #region Imports
 import style from "./style.module.css";
 
-import { adicionaSinalEmNumeroParaExibicao, AtributoPersonagem, PericiaPatentePersonagem } from 'Classes/ClassesTipos/index.ts'
-import { textoFormatadoParaVisualizacao } from 'Uteis/uteis.tsx';
+import { adicionaSinalEmNumeroParaExibicao, AtributoPersonagem, IPericiaPatentePersonagem } from 'Classes/ClassesTipos/index.ts'
+
 import { useContextoControleAtributosPericias } from 'Contextos/ContextoControleAtributosPericias/contexto.tsx'
+import { useClasseContextualPersonagemAtributos } from "Classes/ClassesContextuais/PersonagemAtributos";
+import { useClasseContextualPersonagemPericias } from "Classes/ClassesContextuais/PersonagemPericias";
 
 import Tooltip from 'Componentes/Tooltip/pagina.tsx';
+
+import { textoFormatadoParaVisualizacao } from 'Uteis/uteis.tsx';
 // #endregion
 
-const page = ({ atributos, pericias }: { atributos: AtributoPersonagem[], pericias: PericiaPatentePersonagem[] }) => {
+const page = () => {
+    const { atributos } = useClasseContextualPersonagemAtributos();
+    const { pericias } = useClasseContextualPersonagemPericias();
+
     return (
         <div className={style.atributos_personagem}>
             {atributos.map((atributo, index) => (
@@ -21,7 +28,7 @@ const page = ({ atributos, pericias }: { atributos: AtributoPersonagem[], perici
     );
 }
 
-const AreaAtributo = ({ atributo, pericias }: { atributo: AtributoPersonagem, pericias: PericiaPatentePersonagem[] }) => {
+const AreaAtributo = ({ atributo, pericias }: { atributo: AtributoPersonagem, pericias: IPericiaPatentePersonagem[] }) => {
     const { abreviar } = useContextoControleAtributosPericias();
     const atributoPorExtenso = textoFormatadoParaVisualizacao(abreviar ? atributo.refAtributo.nomeAbrev : atributo.refAtributo.nome);
 
@@ -46,7 +53,7 @@ const AreaAtributo = ({ atributo, pericias }: { atributo: AtributoPersonagem, pe
     );
 }
 
-const AreaPericia = ({ pericia }: { pericia: PericiaPatentePersonagem }) => {
+const AreaPericia = ({ pericia }: { pericia: IPericiaPatentePersonagem }) => {
     const { abreviar } = useContextoControleAtributosPericias();
     const periciaPorExtenso = textoFormatadoParaVisualizacao(abreviar ? pericia.refPericia.nomeAbrev : pericia.refPericia.nome);
 
@@ -93,7 +100,7 @@ const TooltipAtributo = ({ atributo }: { atributo: AtributoPersonagem }) => {
     );
 }
 
-const TooltipPericia = ({ pericia }: { pericia: PericiaPatentePersonagem }) => {
+const TooltipPericia = ({ pericia }: { pericia: IPericiaPatentePersonagem }) => {
     return (
         <>
             <h1>{pericia.refPericia.nome}</h1>

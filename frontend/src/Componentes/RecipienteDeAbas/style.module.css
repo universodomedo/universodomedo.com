@@ -1,0 +1,50 @@
+.recipiente_abas {
+    display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+.lista_abas {
+	display: flex;
+	flex-shrink: 0;
+}
+
+.aba {
+	font-family: inherit;
+	background-color: white;
+	padding: 0 20px;
+	height: 45px;
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 15px;
+	line-height: 1;
+	color: black;
+	user-select: none;
+	border: none;
+	cursor: pointer;
+	border: 1px solid black;
+}
+
+.aba:not([data-state="active"]):hover {
+	background-color: rgb(213, 235, 232);
+}
+
+.aba[data-state="active"] {
+	background-color: rgb(189, 255, 248);
+}
+
+.conteudo_aba {
+	flex: 1;
+	background-color: white;
+	outline: none;
+    border: solid black;
+    border-width: 0px 1px 1px 1px;
+	padding: 2%;
+}
+
+.conteudo_aba[data-state="active"] {
+	display: flex;
+	flex-direction: column;
+}

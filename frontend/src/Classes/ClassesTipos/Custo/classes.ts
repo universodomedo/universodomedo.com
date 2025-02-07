@@ -1,59 +1,82 @@
-// #region Imports
-import { Acao, PrecoExecucao, Ritual, TipoExecucao } from 'Classes/ClassesTipos/index.ts';
-import { LoggerHelper, SingletonHelper } from 'Classes/classes_estaticas.ts';
+// // #region Imports
+// import { useClasseContextualPersonagemEstatisticasDanificaveis } from 'Classes/ClassesContextuais/PersonagemEstatisticasDanificaveis';
+// import { Acao, Elemento, NivelComponente, PrecoExecucao, Ritual, TipoExecucao } from 'Classes/ClassesTipos/index.ts';
+// import { LoggerHelper, SingletonHelper } from 'Classes/classes_estaticas.ts';
 
-import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
-// #endregion
+// import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
+// // #endregion
 
-abstract class Custo {
-    abstract get podeSerPago(): boolean;
-    abstract get descricaoCusto(): string;
-    protected abstract gastaCusto(props: GastaCustoProps): void;
-}
+// export abstract class Custo {
+//     abstract get podeSerPago(): boolean;
+//     abstract get descricaoCusto(): string;
+//     public abstract gastaCusto(props: GastaCustoProps): void;
+// }
 
-export class CustoExecucao extends Custo {
-    public precoExecucao: PrecoExecucao;
+// export class CustoExecucao extends Custo {
+//     public precoExecucao: PrecoExecucao;
 
-    constructor({ precoExecucao }: { precoExecucao: ConstructorParameters<typeof PrecoExecucao>[0] }) {
-        super();
-        this.precoExecucao = new PrecoExecucao(precoExecucao);
-    }
+//     constructor({ precoExecucao }: { precoExecucao: ConstructorParameters<typeof PrecoExecucao>[0] }) {
+//         super();
+//         this.precoExecucao = new PrecoExecucao(precoExecucao);
+//     }
 
-    get podeSerPago(): boolean { return this.precoExecucao.podePagar; }
-    get descricaoCusto(): string { return this.precoExecucao.descricaoListaPreco; }
+//     get podeSerPago(): boolean { return this.precoExecucao.podePagar; }
+//     get descricaoCusto(): string { return this.precoExecucao.descricaoListaPreco; }
 
-    gastaCusto(): void {
-        if (this.precoExecucao.temApenasAcaoLivre) return;
+//     gastaCusto(): void {
+//         if (this.precoExecucao.temApenasAcaoLivre) return;
 
-        this.precoExecucao.pagaExecucao();
-    }
-}
+//         this.precoExecucao.pagaExecucao();
+//     }
+// }
 
-export class CustoPE extends Custo {
-    public valor: number;
+// export class CustoPE extends Custo {
+//     public valor: number;
 
-    constructor({ valor }: { valor: number }) {
-        super();
-        this.valor = valor;
-    }
+//     constructor({ valor }: { valor: number }) {
+//         super();
+//         this.valor = valor;
+//     }
 
-    get desconto(): number { return 0; }
-    // get desconto(): number { return this.refAcao!.refPai instanceof Ritual ? this.refAcao!.refPai.comportamentos.comportamentoDescontosRitual.valorDesconto : 0; }
-    get valorTotal(): number { return this.valor - this.desconto; }
+//     get desconto(): number { return 0; }
+//     // get desconto(): number { return this.refAcao!.refPai instanceof Ritual ? this.refAcao!.refPai.comportamentos.comportamentoDescontosRitual.valorDesconto : 0; }
+//     get valorTotal(): number { return Math.max(this.valor - this.desconto, 1); }
 
-    get podeSerPago(): boolean { return this.valorTotal <= getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.valor; }
-    get descricaoCusto(): string { return `${this.valorTotal} P.E.`; }
+//     get podeSerPago(): boolean {
+//         const { estatisticasDanificaveis } = useClasseContextualPersonagemEstatisticasDanificaveis();
+//         return this.valorTotal <= estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.refEstatisticaDanificavel.id === 3)!.valor;
+//     }
+//     // get podeSerPago(): boolean { return this.valorTotal <= getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.valor; }
+//     get descricaoCusto(): string { return `${this.valorTotal} P.E.`; }
 
-    gastaCusto(): void {
-        LoggerHelper.getInstance().adicionaMensagem(`-${this.valorTotal} P.E.`);
-        getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.aplicarDanoFinal(this.valorTotal);
-    }
-}
+//     gastaCusto(): void {
+//         LoggerHelper.getInstance().adicionaMensagem(`-${this.valorTotal} P.E.`);
+//         // getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.aplicarDanoFinal(this.valorTotal);
+//     }
+// }
 
-export class CustoComponente {
+// export class CustoComponente extends Custo {
+//     public numeroDeCargas: number;
+//     public componentePrecisaEstarEmpunhado: boolean;
+//     public idElemento: number;
+//     public idNivel: number;
 
-}
+//     constructor({ numeroDeCargas, componentePrecisaEstarEmpunhado, idElemento, idNivel }: { numeroDeCargas: number, componentePrecisaEstarEmpunhado: boolean, idElemento: number, idNivel: number }) {
+//         super();
+//         this.numeroDeCargas = numeroDeCargas;
+//         this.componentePrecisaEstarEmpunhado = componentePrecisaEstarEmpunhado;
+//         this.idElemento = idElemento;
+//         this.idNivel = idNivel;
+//     }
 
-export type GastaCustoProps = {
-    [key: string]: number | undefined
-};
+//     get podeSerPago(): boolean { return true; }
+//     get descricaoCusto(): string { return `${this.numeroDeCargas} Carga de Componente de ${this.refElemento.nome} ${this.refNivelComponente.nome}`; }
+//     public gastaCusto(props: GastaCustoProps): void {}
+
+//     get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this.idElemento)!; }
+//     get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this.idNivel)! }
+// }
+
+// export type GastaCustoProps = {
+//     [key: string]: number | undefined
+// };

@@ -1,62 +1,51 @@
-// #region Imports
+// // #region Imports
 import { Item, Acao } from 'Classes/ClassesTipos/index.ts';
 
-import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
-// #endregion
+// import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
+// // #endregion
 
-export class Inventario {
-    public items: Item[] = [];
+export type EspacoInventario = {
+    capacidadeNatural: number;
+    capacidadeExtraPorForca: number;
+    readonly capacidadeTotal: number;
+};
 
-    constructor() { }
+export type Inventario = {
+    items: Item[];
+    readonly agrupamento: Item[];
+    readonly espacosUsados: number;
+    readonly acoes: Acao[];
+    readonly numeroItensCategoria: (valorCategoria: number) => number;
+    adicionarItem: (item: Item) => void;
+    removerItem: (item: Item) => void;
+};
 
-    get agrupamento(): Item[] {
-        return [
-            ...(this.items.reduce((itemAgrupado, itemAtual) => {
-                if (!itemAtual.agrupavel || !itemAgrupado.some(item => item.agrupavel && item.nomeExibicao === itemAtual.nomeExibicao && !item.itemEstaEmpunhado)) {
-                    itemAgrupado.push(itemAtual);
-                }
-                return itemAgrupado;
-            }, [] as typeof this.items)),
-        ];
-    }
+// export class Inventario {
+//     public items: Item[] = [];
 
-    get espacosUsados(): number { return this.items.reduce((acc, cur) => { return acc + cur.dados.peso }, 0) }
-    public acoesInventario = (): Acao[] => { return this.items.reduce((acc: Acao[], item) => acc.concat(item.acoes), []); }
+//     constructor() { }
 
-    public adicionarItemNoInventario = (item: Item): void => { this.items.push(item); }
-    public removerItem(idItem: number): void {
-        this.items.find(item => item.id === idItem)?.desativaBuffsItem();
+//     get agrupamento(): Item[] {
+//         return [
+//             ...(this.items.reduce((itemAgrupado, itemAtual) => {
+//                 if (!itemAtual.agrupavel || !itemAgrupado.some(item => item.agrupavel && item.nomeExibicao === itemAtual.nomeExibicao && !item.itemEstaEmpunhado)) {
+//                     itemAgrupado.push(itemAtual);
+//                 }
+//                 return itemAgrupado;
+//             }, [] as typeof this.items)),
+//         ];
+//     }
 
-        this.items = this.items.filter(item => item.id !== idItem);
-        getPersonagemFromContext().onUpdate();
-    }
+//     get espacosUsados(): number { return this.items.reduce((acc, cur) => { return acc + cur.dados.peso }, 0) }
+//     public acoesInventario = (): Acao[] => { return this.items.reduce((acc: Acao[], item) => acc.concat(item.acoes), []); }
 
-    numeroItensCategoria(valorCategoria: number): number { return this.items.filter(item => item.dados.categoria === valorCategoria).length; }
-}
+//     public adicionarItemNoInventario = (item: Item): void => { this.items.push(item); }
+//     public removerItem(idItem: number): void {
+//         this.items.find(item => item.id === idItem)?.desativaBuffsItem();
 
-export class GerenciadorEspacoCategoria {
-    public espacosCategoria: EspacoCategoria[] = [];
+//         this.items = this.items.filter(item => item.id !== idItem);
+//         getPersonagemFromContext().onUpdate();
+//     }
 
-    constructor() { }
-
-    maximoItensCategoria(valorCategoria: number): number { return (valorCategoria > 0 ? this.espacosCategoria.find(categoria => categoria.valorCategoria === valorCategoria)!.maximoEspacosCategoria : 999); }
-}
-
-export class EspacoCategoria {
-    constructor(
-        public valorCategoria: number,
-        public maximoEspacosCategoria: number,
-    ) { }
-
-    get nomeCategoria(): string { return `Categoria ${this.valorCategoria}`; }
-}
-
-export class EspacoInventario {
-    constructor(
-        public valorNatural: number,
-        public valorAdicionalPorForca: number,
-    ) { }
-
-    get espacoAdicionalPorForca(): number { return this.valorAdicionalPorForca * getPersonagemFromContext().atributos.find(atributo => atributo.refAtributo.id === 2)?.valorTotal! }
-    get espacoTotal(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(this.valorNatural + this.espacoAdicionalPorForca, 52); }
-}
+//     numeroItensCategoria(valorCategoria: number): number { return this.items.filter(item => item.dados.categoria === valorCategoria).length; }
+// }
