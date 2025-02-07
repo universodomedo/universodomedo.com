@@ -2,7 +2,3 @@
 	path = deployments
 	url = git@github.com:universodomedo/deployments.git
 	branch = sandbox-udm-deployment
-[submodule ".github/workflows"]
-	path = .github/workflows
-	url = git@github.com:universodomedo/workflows.git
-	branch = sandbox-workflows
