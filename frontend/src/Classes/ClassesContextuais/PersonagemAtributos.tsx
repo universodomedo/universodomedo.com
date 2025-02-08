@@ -20,7 +20,7 @@ export const PersonagemAtributosProvider = ({ children }: { children: React.Reac
 
     const atributos = dadosFicha.atributos.map(atributo => {
         const atributoService = {
-            get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(attr => attr.id === atributo.id)!; },
+            get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(attr => attr.id === atributo.idAtributo)!; },
 
             get valor(): number { return atributo.valor; },
             get valorTotal(): number { return obtemValorTotalComLinhaEfeito(this.valor, this.refAtributo.refLinhaEfeito.id); },

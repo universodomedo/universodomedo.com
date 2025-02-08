@@ -1,11 +1,5 @@
-// #region Imports
 import { AtributoPersonagem, PericiaPatentePersonagem } from 'Classes/ClassesTipos/index.ts';
 import { ExecutaTestePericia } from 'Recursos/Ficha/Variacao.ts';
-
-// import { LoggerHelper } from 'Classes/classes_estaticas.ts';
-
-// import { toast } from 'react-toastify';
-// #endregion
 
 export function ExecutaTestePericiaGenerico(atributoPersonagem: AtributoPersonagem, periciaPersonagem: PericiaPatentePersonagem): number {
     const numeroTestesInternos = (atributoPersonagem.valorTotal > 0 ? atributoPersonagem.valorTotal : 2 + Math.abs(atributoPersonagem.valorTotal));
@@ -20,6 +14,9 @@ export function ExecutaTestePericiaGenerico(atributoPersonagem: AtributoPersonag
     const resultado = valorDoTeste + periciaPersonagem.valorTotal;
 
     const resumoTeste = `${periciaPersonagem.refPericia.nomeAbreviado}: [${resultado}]`;
+
+    console.log('resultado teste pericia');
+    console.log(resumoTeste);
 
     // LoggerHelper.getInstance().adicionaMensagem(resumoTeste);
     // toast(resumoTeste);

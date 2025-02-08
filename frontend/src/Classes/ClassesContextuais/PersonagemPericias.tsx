@@ -25,7 +25,7 @@ export const PersonagemPericiasProvider = ({ children }: { children: React.React
     const pericias = dadosFicha.periciasPatentes.map(periciaPatente => {
         return {
             get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === periciaPatente.idPericia)!; },
-            get refPatente(): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente => patente.id === periciaPatente.idPatente)!; },
+            get refPatente(): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente => patente.id === periciaPatente.idPatentePericia)!; },
             get refAtributoPersonagem(): AtributoPersonagem { return atributos.find(atributo => atributo.refAtributo.id === this.refPericia.refAtributo.id)!; },
 
             get valorNivelPatente(): number { return this.refPatente.id - 1; },
@@ -35,7 +35,7 @@ export const PersonagemPericiasProvider = ({ children }: { children: React.React
 
             get detalhesValor(): string[] { return [`Patente ${this.refPatente.nome}: ${this.refPatente.valor}`].concat(obterDetalhesPorLinhaEfeito(this.refPericia.refLinhaEfeito.id)); },
 
-            realizarTeste() { console.log('precisa implementar realizarTeste'); }
+            realizarTeste() { ExecutaTestePericiaGenerico(this.refAtributoPersonagem, this); }
         };
     });
 

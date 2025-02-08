@@ -69,7 +69,7 @@ const PaginaFichaBaixo = () => {
             <div className={style.fatia_parte_baixo_estatisticas_danificaveis}>
                 {estatisticasDanificaveis.map((estatistica, index) => (
                     <div key={index} className={style.recipiente_estatistica_danificavel}>
-                        <BarraEstatisticaDanificavel titulo={estatistica.refEstatisticaDanificavel.nomeAbrev} valorAtual={estatistica.valor} valorMaximo={estatistica.valorMaximo} corBarra={estatistica.refEstatisticaDanificavel.cor} />
+                        <BarraEstatisticaDanificavel titulo={estatistica.refEstatisticaDanificavel.nomeAbreviado} valorAtual={estatistica.valorAtual} valorMaximo={estatistica.valorMaximo} corBarra={estatistica.refEstatisticaDanificavel.cor} />
                     </div>
                 ))}
             </div>

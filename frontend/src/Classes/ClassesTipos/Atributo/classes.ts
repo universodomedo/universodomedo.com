@@ -19,7 +19,9 @@ export type AtributoPersonagem = {
     readonly detalhesValor: string[];
 }
 
-
+export type DadosAtributoPersonagem = Pick<AtributoPersonagem, 'valor'> & {
+    idAtributo: number;
+};
 
 
 

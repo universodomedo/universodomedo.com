@@ -19,9 +19,9 @@ export const PersonagemAcoes = createContext<ClasseContextualPersonagemAcoesProp
 export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNode; }) => {
     const { acoesHabilidades } = useClasseContextualPersonagemHabilidades();
     const { acoesNatureza } = useClasseContextualPersonagemNatureza();
-    const { acoesRituais } = useClasseContextualPersonagemRituais();
+    const { rituais } = useClasseContextualPersonagemRituais();
 
-    const acoes: Acao[] = [ ...acoesRituais ].map(acao => {
+    const acoes: Acao[] = [ ...rituais ].map(acao => {
         const acaoServico = {
             ...acao,
             nomeExibicao: acao.dados.nome,

@@ -1,5 +1,5 @@
 // #region Imports
-import { FiltroProps, FiltroPropsItems, IRitualServico, OpcoesFiltro } from 'Classes/ClassesTipos/index.ts'
+import { FiltroProps, FiltroPropsItems, Ritual, OpcoesFiltro } from 'Classes/ClassesTipos/index.ts'
 
 import { Consulta, ConsultaProvider } from 'Componentes/ConsultaGenerica/pagina.tsx';
 
@@ -14,28 +14,28 @@ const pagina = () => {
     const { rituais } = useClasseContextualPersonagemRituais();
     const { mostrarFiltros } = useContextoControleRituais();
 
-    const renderRitualItem = (ritual: IRitualServico, index: number) => (
+    const renderRitualItem = (ritual: Ritual, index: number) => (
         <Item key={index} ritual={ritual} />
     );
 
-    const itemsFiltro: FiltroPropsItems<IRitualServico>[] = [
-        new FiltroPropsItems<IRitualServico>(
-            (ritual) => ritual.nomeExibicao,
+    const itemsFiltro: FiltroPropsItems<Ritual>[] = [
+        new FiltroPropsItems<Ritual>(
+            (ritual) => ritual.nome.nomeExibicao,
             'Nome do Ritual',
             'Procure pelo Ritual',
             'text',
             true
         ),
-        new FiltroPropsItems<IRitualServico>(
-            (ritual) => ritual.comportamentos.comportamentoRitual.refElemento.id,
+        new FiltroPropsItems<Ritual>(
+            (ritual) => ritual.refElemento.id,
             'Elemento',
             'Selecione o Elemento do Ritual',
             'select',
             true,
             new OpcoesFiltro(SingletonHelper.getInstance().elementos.map(elemento => ({ id: elemento.id, nome: elemento.nome }))),
         ),
-        new FiltroPropsItems<IRitualServico>(
-            (ritual) => ritual.comportamentos.comportamentoRitual.refCirculoNivelRitual.id,
+        new FiltroPropsItems<Ritual>(
+            (ritual) => ritual.refCirculoNivelRitual.id,
             'Círculo',
             'Selecione o Círculo do Ritual',
             'select',
@@ -45,7 +45,7 @@ const pagina = () => {
     ];
 
     return (
-        <ConsultaProvider<IRitualServico> registros={[rituais]} mostrarFiltro={mostrarFiltros} filtroProps={new FiltroProps<IRitualServico>(itemsFiltro)} onLoadComplete={() => { }} tituloDivisoesConsulta={{ usaSubtitulos: false, divisoes: [''] }}>
+        <ConsultaProvider<Ritual> registros={[rituais]} mostrarFiltro={mostrarFiltros} filtroProps={new FiltroProps<Ritual>(itemsFiltro)} onLoadComplete={() => { }} tituloDivisoesConsulta={{ usaSubtitulos: false, divisoes: [''] }}>
             <Consulta renderItem={renderRitualItem} />
         </ConsultaProvider>
     );

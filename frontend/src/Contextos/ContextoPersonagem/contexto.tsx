@@ -1,8 +1,7 @@
 // #region Imports
 import React, { createContext, useContext } from "react";
 
-import { HabilidadePassiva, lista_geral_habilidades, Personagem, RLJ_Ficha2 } from 'Classes/ClassesTipos/index.ts';
-import { geraFicha } from 'Uteis/uteis.tsx';
+import { RLJ_Ficha2 } from 'Classes/ClassesTipos/index.ts';
 
 import { obtemDadosFichaDemonstracao } from "Recursos/DadosFicha.ts";
 

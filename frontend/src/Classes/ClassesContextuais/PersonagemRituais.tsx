@@ -2,14 +2,13 @@
 import React, { createContext, useContext } from "react";
 
 // import { EmbrulhoComportamentoRitual, IRitualServico, IAcao, OpcoesExecucao, IModificadorService, RitualModelo } from "Classes/ClassesTipos/index.ts";
-import { Acao, Ritual } from "Classes/ClassesTipos/index.ts";
+import { CirculoNivelRitual, criarNomeCustomizado, DadosAcao, Elemento, Ritual } from "Classes/ClassesTipos/index.ts";
 import { useClasseContextualPersonagem } from "./Personagem";
 import { SingletonHelper } from "Classes/classes_estaticas";
 // #endregion
 
 interface ClasseContextualPersonagemRituaisProps {
     rituais: Ritual[];
-    acoesRituais: Acao[];
 }
 
 export const PersonagemRituais = createContext<ClasseContextualPersonagemRituaisProps | undefined>(undefined);
@@ -76,11 +75,18 @@ export const PersonagemRituaisProvider = ({ children }: { children: React.ReactN
 
     // const acoesRituais: IAcao[] = rituais.flatMap(ritual => ritual.acoes);
 
-    const rituais: Ritual[] = [];
-    const acoesRituais: Acao[] = [];
+    const rituais: Ritual[] =  dadosFicha.rituais.map(dadosRitual => {
+        return {
+            nome: criarNomeCustomizado(dadosRitual.dadosNomeCustomizado),
+            svg: 'PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KIDxnPgogIDx0aXRsZT5MYXllciAxPC90aXRsZT4KICA8dGV4dCBmaWxsPSIjMDAwMDAwIiBzdHJva2U9IiMwMDAiIHg9IjM0MSIgeT0iMjkxIiBpZD0ic3ZnXzIiIHN0cm9rZS13aWR0aD0iMCIgZm9udC1zaXplPSIyNCIgZm9udC1mYW1pbHk9Ik5vdG8gU2FucyBKUCIgdGV4dC1hbmNob3I9InN0YXJ0IiB4bWw6c3BhY2U9InByZXNlcnZlIj5UZXN0ZSAxPC90ZXh0PgogIDx0ZXh0IGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIwIiB4PSI1MyIgeT0iMTA5IiBpZD0ic3ZnXzMiIGZvbnQtc2l6ZT0iMTQwIiBmb250LWZhbWlseT0iTm90byBTYW5zIEpQIiB0ZXh0LWFuY2hvcj0ic3RhcnQiIHhtbDpzcGFjZT0icHJlc2VydmUiPkE8L3RleHQ+CjwvZz4KPC9zdmc+',
+            dadosAcoes: [] as DadosAcao[],
+            get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === dadosRitual.idElemento)!; },
+            get refCirculoNivelRitual(): CirculoNivelRitual { return SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.id === dadosRitual.idCirculoNivelRitual)!; },
+        }
+    });
     
     return (
-        <PersonagemRituais.Provider value={{ rituais, acoesRituais }}>
+        <PersonagemRituais.Provider value={{ rituais }}>
             {children}
         </PersonagemRituais.Provider>
     );

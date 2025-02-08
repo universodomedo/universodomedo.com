@@ -1,6 +1,7 @@
 // #region Imports
 // import { logicaMecanicas, Requisito, OpcoesExecucao, Ritual, Item, Habilidade, RequisitoConfig, FiltroProps, FiltroPropsItems, OpcoesFiltrosCategorizadas, OpcoesFiltro, EmbrulhoComportamentoAcao, DadosComportamentosAcao, DadosGenericosAcao, DadosGenericosAcaoParams, Modificador, adicionarModificadoresUtil, HabilidadeAtiva, GastaCustoProps, PrecoExecucao, DadosAcaoCustomizada } from 'Classes/ClassesTipos/index.ts';
 // import { Modificador, adicionarModificadoresUtil, EmbrulhoComportamentoAcao, DadosGenericosAcao, DadosAcaoCustomizada, GastaCustoProps, OpcoesExecucao, IRitualServico, Item, Habilidade, IItem, IHabilidade, DadosComportamentosAcao, IModificadorService } from 'Classes/ClassesTipos/index.ts';
+import { Habilidade, Item, Ritual } from 'Classes/ClassesTipos/index.ts';
 // import { LoggerHelper, SingletonHelper } from 'Classes/classes_estaticas.ts';
 
 // import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
@@ -8,7 +9,15 @@
 // #endregion
 
 export type Acao = {
+    nome: string;
+    readonly refPai: Ritual | Item | Habilidade;
+    readonly bloqueada: boolean;
 
+    processaDificuldades: () => boolean;
+};
+
+export type DadosAcao = Pick<Acao, 'nome'> & {
+    
 };
 
 // export interface IAcao {

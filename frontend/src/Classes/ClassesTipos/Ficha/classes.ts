@@ -1,12 +1,12 @@
-import { DadosEstatisticaDanificavelPersonagem, DadosReducaoDano } from "Classes/ClassesTipos/index.ts";
+import { DadosAtributoPersonagem, DadosEstatisticaDanificavelPersonagem, DadosPericiaPatentePersonagem, DadosReducaoDano, DadosRitual } from "Classes/ClassesTipos/index.ts";
 
 export type RLJ_Ficha2 = {
     detalhes: { nome: string, idClasse: number, idNivel: number },
     estatisticasDanificaveis: DadosEstatisticaDanificavelPersonagem[],
     estatisticasBuffaveis: { id: number, valor: number }[],
-    atributos: { id: number, valor: number }[],
-    periciasPatentes: { idPericia: number, idPatente: number }[],
-    rituais: ArgsRitual[],
+    atributos: DadosAtributoPersonagem[],
+    periciasPatentes: DadosPericiaPatentePersonagem[],
+    rituais: DadosRitual[],
     habilidadesEspeciais?: PropsHabilidades[],
     inventario: ArgsItem[],
     reducoesDano: DadosReducaoDano[],

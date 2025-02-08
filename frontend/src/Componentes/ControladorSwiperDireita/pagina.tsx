@@ -17,7 +17,6 @@ import { ContextoControleInventarioProvider, useContextoControleInventario } fro
 import { ContextoControleAcoesProvider, useContextoControleAcoes } from 'Contextos/ContextoControleAcoes/contexto.tsx';
 import { ContextoControleHabilidadesProvider, useContextoControleHabilidades } from 'Contextos/ContextoControleHabilidades/contexto.tsx';
 import { ContextoControleRituaisProvider, useContextoControleRituais } from 'Contextos/ContextoControleRituais/contexto.tsx';
-import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
 
 import { combineProviders } from 'Uteis/uteis.tsx';
 // #endregion

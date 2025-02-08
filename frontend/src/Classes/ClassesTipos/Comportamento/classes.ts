@@ -159,15 +159,6 @@ export class ComportamentoModificadorPassivo {
 //     get requisitosCumpridos(): boolean { return !this.temComportamentoRequisito || this.comportamentoRequisito.requisitosCumprido; }
 // }
 
-// export class EmbrulhoComportamentoRitual {
-//     public comportamentoDescontosRitual = new ComportamentoDescontosRitual();
-//     public comportamentoRitual: ComportamentoRitual;
-
-//     constructor({ dadosComportamentoRitual }: { dadosComportamentoRitual: ConstructorParameters<typeof ComportamentoRitual>[0] }) {
-//         this.comportamentoRitual = new ComportamentoRitual(dadosComportamentoRitual);
-//     }
-// }
-
 // export class EmbrulhoComportamentoHabilidade {
 
 // }
@@ -320,28 +311,6 @@ export class ComportamentoModificadorPassivo {
 // export type OpcionaisComportamentoAcao = {
 //     consomeUso?: { nomeUtilizavel: string },
 //     consomeMunicao?: { nomeMunicao: string, quantidadePorUso: number },
-// }
-
-// export class ComportamentoRitual {
-//     private _idElemento: number;
-//     private _idCirculoNivel: number;
-
-//     constructor({ idElemento, idCirculoNivel }: { idElemento: number, idCirculoNivel: number }) {
-//         this._idElemento = idElemento;
-//         this._idCirculoNivel = idCirculoNivel;
-//     }
-
-//     get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
-//     get refCirculoNivelRitual(): CirculoNivelRitual { return SingletonHelper.getInstance().circulos_niveis_ritual.find(circulo_nivel_ritual => circulo_nivel_ritual.id === this._idCirculoNivel)!; }
-//     get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this.refCirculoNivelRitual.idCirculo)! }
-// }
-
-// export class ComportamentoDescontosRitual {
-//     constructor(
-
-//     ) { }
-
-//     get valorDesconto(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(0, 62); }
 // }
 
 // export class ComportamentoRequisito {

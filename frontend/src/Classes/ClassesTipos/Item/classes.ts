@@ -1,7 +1,11 @@
+import { NomeCustomizado } from "Classes/ClassesTipos/index.ts";
+
 export type Item = {
+    readonly nome: NomeCustomizado;
     readonly itemEstaGuardado: boolean;
     readonly itemEstaEmpunhado: boolean;
     readonly itemEstaVestido: boolean;
+    readonly quantidadeUnidadesDesseItem: number;
 };
 
 export type TipoItemModelo = {
