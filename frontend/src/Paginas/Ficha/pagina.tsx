@@ -8,6 +8,8 @@ import PaginaEditaFicha from 'Paginas/Ficha/paginaFichaEdicao';
 // #endregion
 
 const pagina = ({ seletorFicha }: { seletorFicha: { tipo: 'ficha'; idFichaNoLocalStorage: number } | { tipo: 'fichaDemonstracao' } }) => {
+    // fazendo commit para testar gpg pelo turtoise
+    
     return (
         <ContextoFichaProvider seletorFicha={seletorFicha}>
             <InterseccaoParaPendencia />
