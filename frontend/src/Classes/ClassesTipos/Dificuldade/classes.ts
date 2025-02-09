@@ -1,39 +1,102 @@
-// #region Imports
+import { Acao, AtributoPersonagem, PericiaPatentePersonagem } from "Classes/ClassesTipos/index.tsx";
 
-// #endregion
+export type DificuldadeAcao = {
+    readonly refAtributoPersonagem: AtributoPersonagem;
+    readonly refPericiaPatentePersonagem: PericiaPatentePersonagem;
 
-export class DificuldadeAberta {
+    readonly checagemDificuldade: ChecagemDificuldade;
+};
 
+export type DadosDificuldadeAcao = {
+    idAtributo: number;
+    idPericia: number;
+};
+
+export type ChecagemDificuldade = {
+    readonly valorChecagemDificuldade: number;
+
+    valorDificuldade: number;
+    dificuldadeDinamica?: DificuldadeDinamica;
+};
+
+export type DificuldadeDinamica = {
+    readonly valorDificuldadeAditivaInicial: number;
+    readonly modificadorDificuldadeInicial: number;
+    
+    valorDificuldadeAditivaAtual: number;
+    modificadorDificuldadeAtual: number;
+    listaModificadoresDificuldade: number[];
+
+    indiceListaModificadores: number;
+
+    atualizaDificuldade: () => void;
+
+    resetaDificuldade: () => void;
+
+    resetaModificadorDificuldade: () => void;
+
+    __key: "criarDificuldadeDinamica";
 }
 
-export class DificuldadeDinamica {
-    private _dificuldadeInicial: number;
-    private _modificadorDificuldadeInicial: number = 0;
-    public listaModificadoresDificuldade: number[] = [];
+export type DadosDificuldadeDinamica = Pick<DificuldadeDinamica, 'modificadorDificuldadeInicial'> & {
+    listaModificadoresDificuldade: number[];
+};
 
-    public dificuldadeAtual: number;
-    public modificadorDificuldadeAtual: number;
-    private indiceListaModificadores: number = 0;
+export const criarDificuldadeDinamica = (dadosDificuldadeDinamica: DadosDificuldadeDinamica): DificuldadeDinamica => {
+    return {
+        valorDificuldadeAditivaInicial: 0,
+        modificadorDificuldadeInicial: dadosDificuldadeDinamica.modificadorDificuldadeInicial,
 
-    constructor({ dificuldadeInicial, modificadorDificuldadeInicial = 0, listaModificadoresDificuldade = [] }: { dificuldadeInicial: number, modificadorDificuldadeInicial?: number, listaModificadoresDificuldade?: number[] }) {
-        this._dificuldadeInicial = dificuldadeInicial;
-        this._modificadorDificuldadeInicial = modificadorDificuldadeInicial;
-        this.listaModificadoresDificuldade = listaModificadoresDificuldade;
+        valorDificuldadeAditivaAtual: 0,
+        modificadorDificuldadeAtual: dadosDificuldadeDinamica.modificadorDificuldadeInicial,
+        listaModificadoresDificuldade: dadosDificuldadeDinamica.listaModificadoresDificuldade,
 
-        this.dificuldadeAtual = this._dificuldadeInicial;
-        this.modificadorDificuldadeAtual = this._modificadorDificuldadeInicial;
+        indiceListaModificadores: 0,
+
+        atualizaDificuldade: function() {
+            this.valorDificuldadeAditivaAtual += this.modificadorDificuldadeAtual;
+
+            if (this.indiceListaModificadores < this.listaModificadoresDificuldade.length) {
+                this.modificadorDificuldadeAtual += this.listaModificadoresDificuldade[this.indiceListaModificadores];
+
+                this.indiceListaModificadores++;
+            }
+        },
+
+        resetaDificuldade: function() { this.valorDificuldadeAditivaAtual = this.valorDificuldadeAditivaInicial; },
+
+        resetaModificadorDificuldade: function() {
+            this.modificadorDificuldadeAtual = this.modificadorDificuldadeInicial;
+            this.indiceListaModificadores = 0;
+        },
+
+        __key: "criarDificuldadeDinamica", // DificuldadeDinamica não deve ser criado se não usando esse metodo
     }
+};
 
-    atualizaDificuldade() {
-        this.dificuldadeAtual += this.modificadorDificuldadeAtual;
+export const realizaChecagemDificuldade = (acao: Acao): boolean => {
+    if (acao.dificuldadeAcao !== undefined) {
+        console.log(`Checagem de Dificuldade encontrada. >>>>> DT ${acao.dificuldadeAcao.checagemDificuldade.valorChecagemDificuldade}`);
 
-        if (this.indiceListaModificadores < this.listaModificadoresDificuldade.length) {
-            this.modificadorDificuldadeAtual += this.listaModificadoresDificuldade[this.indiceListaModificadores];
+        const retornoChecagemDificuldade = acao.dificuldadeAcao.refPericiaPatentePersonagem.realizarTeste();
 
-            this.indiceListaModificadores++;
+        if (retornoChecagemDificuldade >= acao.dificuldadeAcao.checagemDificuldade.valorChecagemDificuldade) {
+            console.log('passou');
+            
+            if (acao.dificuldadeAcao.checagemDificuldade.dificuldadeDinamica !== undefined) {
+                console.log('------------- atualizando dificuldade');
+
+                acao.dificuldadeAcao.checagemDificuldade.dificuldadeDinamica.atualizaDificuldade();
+            }
+
+            return true;
+        } else {
+            console.log('não passou');
+            acao.trava('Falhou na Checagem de Dificuldade');
+            return false;
         }
+    } else {
+        console.log('Não foi encontrada Checagem de Dificuldade, indo para o próximo passo');
+        return true;
     }
-
-    resetaDificuldade() { this.dificuldadeAtual = this._dificuldadeInicial; }
-    resetaModificadorDificuldade() { this.modificadorDificuldadeAtual = this._modificadorDificuldadeInicial; this.indiceListaModificadores = 0; }
-}
+};

@@ -25,32 +25,6 @@ export type DadosExecucaoPersonagem = Omit<ExecucaoPersonagem, 'refExecucao'> & 
 };
 
 
-// export interface IExecucao {
-//     idTipoExecucao: number;
-//     numeroAcoesMaximasNatural: number;
-// }
-
-// export interface IExecucaoService extends IExecucao {
-//     numeroAcoesAtuais: number;
-//     readonly numeroAcoesMaximasTotal: number;
-//     recarregaNumeroAcoes(): void;
-//     refTipoExecucao: TipoExecucao;
-// }
-
-// export class Execucao {
-//     public numeroAcoesAtuais: number = 0;
-
-//     constructor(
-//         private _idTipoExecucao: number,
-//         public numeroAcoesMaximas: number
-//     ) { }
-
-//     get refTipoExecucao(): TipoExecucao { return SingletonHelper.getInstance().tipos_execucao.find(tipo_execucao => tipo_execucao.id === this._idTipoExecucao)!; }
-//     get valorTotal(): number { return getPersonagemFromContext().obtemValorTotalComLinhaEfeito(this.numeroAcoesMaximas, this.refTipoExecucao.refLinhaEfeito.id) };
-
-//     recarregaNumeroAcoes(): void { this.numeroAcoesAtuais = this.valorTotal; }
-// }
-
 // export class TipoExecucao {
 //     constructor(
 //         public id: number,

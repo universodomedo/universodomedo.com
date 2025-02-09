@@ -10,7 +10,8 @@ export type DadosNomeCustomizado = Pick<NomeCustomizado, 'nomePadrao' | 'nomeCus
 
 export const criarNomeCustomizado = (nomeCustomizado: DadosNomeCustomizado): NomeCustomizado => {
     return {
-        ...nomeCustomizado,
+        nomePadrao: nomeCustomizado.nomePadrao,
+        nomeCustomizado: nomeCustomizado.nomeCustomizado,
         get temNomeCustomizado() { return this.nomeCustomizado !== undefined },
         get nomeExibicao() { return this.nomeCustomizado || this.nomePadrao },
         __key: "criarNomeCustomizado", // NomeCustomizado não deve ser criado se não usando esse metodo

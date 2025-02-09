@@ -13,8 +13,8 @@ export type EstatisticaDanificavelPersonagem = {
     valorAtual: number;
     valorMaximo: number;
 
-    alterarValorAtual: () => void;
-    alterarValorMaximo: () => void;
+    alterarValorAtual: (valor: number) => void;
+    alterarValorMaximo: (valor: number) => void;
 
     readonly refEstatisticaDanificavel: EstatisticaDanificavel;
 };

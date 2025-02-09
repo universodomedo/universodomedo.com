@@ -3,6 +3,7 @@ import style from "./style.module.css";
 
 import { useClasseContextualPersonagemDetalhes } from "Classes/ClassesContextuais/PersonagemDetalhes";
 import { useClasseContextualPersonagemEstatisticasDanificaveis } from "Classes/ClassesContextuais/PersonagemEstatisticasDanificaveis";
+import { useClasseContextualPersonagemEstatisticasBuffaveis } from "Classes/ClassesContextuais/PersonagemEstatisticasBuffaveis";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faShoppingCart, faUsers } from '@fortawesome/free-solid-svg-icons';
@@ -33,17 +34,16 @@ const PaginaFichaCima = () => {
 const PaginaFichaBaixo = () => {
     const { nome, classe, nivel } = useClasseContextualPersonagemDetalhes();
     const { estatisticasDanificaveis } = useClasseContextualPersonagemEstatisticasDanificaveis();
+    const { execucoes } = useClasseContextualPersonagemEstatisticasBuffaveis();
 
     return (
         <>
-            <div className={`${style.fatia_parte_baixo_detalhes}`}>
-                <div className={style.recipiente_infomacoes_personagem}>
-                    <h2>{nome}</h2>
-                    <h2>{classe.nome} - {nivel.nomeDisplay}</h2>
-                </div>
-                <div className={style.recipiente_imagem_personagem}>
-                    <div id={style.imagem_personagem} />
-                </div>
+            <div className={style.fatia_parte_baixo_estatisticas_danificaveis}>
+                {estatisticasDanificaveis.map((estatistica, index) => (
+                    <div key={index} className={style.recipiente_estatistica_danificavel}>
+                        <BarraEstatisticaDanificavel titulo={estatistica.refEstatisticaDanificavel.nomeAbreviado} valorAtual={estatistica.valorAtual} valorMaximo={estatistica.valorMaximo} corBarra={estatistica.refEstatisticaDanificavel.cor} />
+                    </div>
+                ))}
             </div>
             <div className={style.fatia_parte_baixo_atalhos}>
                 <div className={style.barra_locais}>
@@ -65,13 +65,21 @@ const PaginaFichaBaixo = () => {
                         </div>
                     </div>
                 </div>
+
+                <div style={{display: 'flex', flexDirection: 'row'}}>
+                    {execucoes.map((execucao, index) => (
+                        <h1 key={index}>{execucao.refExecucao.nomeExibicao}: {execucao.numeroAcoesAtuais}/{execucao.numeroAcoesMaximasTotal}</h1>
+                    ))}
+                </div>
             </div>
-            <div className={style.fatia_parte_baixo_estatisticas_danificaveis}>
-                {estatisticasDanificaveis.map((estatistica, index) => (
-                    <div key={index} className={style.recipiente_estatistica_danificavel}>
-                        <BarraEstatisticaDanificavel titulo={estatistica.refEstatisticaDanificavel.nomeAbreviado} valorAtual={estatistica.valorAtual} valorMaximo={estatistica.valorMaximo} corBarra={estatistica.refEstatisticaDanificavel.cor} />
-                    </div>
-                ))}
+            <div className={`${style.fatia_parte_baixo_detalhes}`}>
+                <div className={style.recipiente_informacoes_personagem}>
+                    <h2>{nome}</h2>
+                    <h2>{classe.nome} - {nivel.nomeDisplay}</h2>
+                </div>
+                <div className={style.recipiente_imagem_personagem}>
+                    <div id={style.imagem_personagem} />
+                </div>
             </div>
         </>
     );

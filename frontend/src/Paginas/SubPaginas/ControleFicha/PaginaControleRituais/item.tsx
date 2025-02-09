@@ -36,7 +36,7 @@ const ConteudoDetalhes = ({ ritual }: { ritual: Ritual }) => {
             <p className={style.texto}>{ritual.refCirculoNivelRitual.nome}</p>
 
             <p className={style.titulo}>Ações</p>
-            {ritual.acoes.map((acao, index) => (
+            {ritual.dadosAcoes.map((acao, index) => (
                 <p key={index} className={style.texto}>{acao.nome}</p>
             ))}
         </>

@@ -99,9 +99,10 @@
     gap: .4vh;
 }
 
-.recipiente_infomacoes_personagem {
+.recipiente_informacoes_personagem {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .recipiente_imagem_personagem {

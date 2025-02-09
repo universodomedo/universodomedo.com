@@ -55,14 +55,6 @@ export class ComportamentoModificadorPassivo {
 
 
 
-
-
-
-
-
-
-
-
 // export class ComportamentosAcao {
 //     // precisaMunica
 //     // nomeMunicao
@@ -111,53 +103,30 @@ export class ComportamentoModificadorPassivo {
 //     temMunicaoSuficiente(nomeMunicao: string, quantidadeMunicao: number) { return !this.temComportamentoMunicao || this.comportamentoMunicao.verificaMunicao(nomeMunicao, quantidadeMunicao) }
 // }
 
-// export class EmbrulhoComportamentoAcao {
-//     public comportamentoTrava: ComportamentoAcaoTrava = new ComportamentoAcaoTrava();
-//     public comportamentoHistoricoAcao: ComportamentoHistoricoAcao = new ComportamentoHistoricoAcao();
+class EmbrulhoComportamentoAcao {
+    private _comportamentoAcao?: ComportamentoAcao;
+    get temComportamentoAcao(): boolean { return Boolean(this._comportamentoAcao); }
+    get comportamentoAcao(): ComportamentoAcao { return this._comportamentoAcao!; } // sempre verificar se temComportamentoAcao antes
+    setComportamentoAcao(...args: ConstructorParameters<typeof ComportamentoAcao>): void { this._comportamentoAcao = new ComportamentoAcao(...args); }
 
-//     public comportamentoCustoAcao: ComportamentoCustoAcao = new ComportamentoCustoAcao();
-//     setComportamentoCustoAcao(args: ConstructorParameters<typeof ComportamentoCustoAcao>[0]): void { this.comportamentoCustoAcao = new ComportamentoCustoAcao(args); }
+    private _comportamentoRequisito?: ComportamentoRequisito;
+    get temComportamentoRequisito(): boolean { return Boolean(this._comportamentoRequisito); }
+    get comportamentoRequisito(): ComportamentoRequisito { return this._comportamentoRequisito!; } // sempre verificar se temComportamentoRequisito antes
+    setComportamentoRequisito(args: ConstructorParameters<typeof RequisitoUso>[0][]): void { this._comportamentoRequisito = new ComportamentoRequisito(args); }
 
-//     private _comportamentoDificuldadeAcao?: ComportamentoDificuldadeAcao;
-//     get temComportamentoDificuldadeAcao(): boolean { return Boolean(this._comportamentoDificuldadeAcao); }
-//     get comportamentoDificuldadeAcao(): ComportamentoDificuldadeAcao { return this._comportamentoDificuldadeAcao!; } // sempre verificar se temComportamentoDificuldadeAcao antes
-//     setComportamentoDificuldadeAcao(...args: ConstructorParameters<typeof ComportamentoDificuldadeAcao>): void { this._comportamentoDificuldadeAcao = new ComportamentoDificuldadeAcao(...args); }
+    private _comportamentoConsomeUso?: ComportamentoConsomeUso;
+    get temComportamentoConsomeUso(): boolean { return Boolean(this._comportamentoConsomeUso); }
+    get comportamentoConsomeUso(): ComportamentoConsomeUso { return this._comportamentoConsomeUso!; } // sempre verificar se temComportamentoConsomeUso antes
+    setComportamentoConsomeUso(...args: ConstructorParameters<typeof ComportamentoConsomeUso>): void { this._comportamentoConsomeUso = new ComportamentoConsomeUso(...args); }
 
-//     private _comportamentoAcao?: ComportamentoAcao;
-//     get temComportamentoAcao(): boolean { return Boolean(this._comportamentoAcao); }
-//     get comportamentoAcao(): ComportamentoAcao { return this._comportamentoAcao!; } // sempre verificar se temComportamentoAcao antes
-//     setComportamentoAcao(...args: ConstructorParameters<typeof ComportamentoAcao>): void { this._comportamentoAcao = new ComportamentoAcao(...args); }
+    private _comportamentoConsomeMunicao?: ComportamentoConsomeMunicao;
+    get temComportamentoConsomeMunicao(): boolean { return Boolean(this._comportamentoConsomeMunicao); }
+    get comportamentoConsomeMunicao(): ComportamentoConsomeMunicao { return this._comportamentoConsomeMunicao!; } // sempre verificar se temComportamentoConsomeMunicao antes
+    setComportamentoConsomeMunicao(...args: ConstructorParameters<typeof ComportamentoConsomeMunicao>): void { this._comportamentoConsomeMunicao = new ComportamentoConsomeMunicao(...args); }
 
-//     private _comportamentoRequisito?: ComportamentoRequisito;
-//     get temComportamentoRequisito(): boolean { return Boolean(this._comportamentoRequisito); }
-//     get comportamentoRequisito(): ComportamentoRequisito { return this._comportamentoRequisito!; } // sempre verificar se temComportamentoRequisito antes
-//     setComportamentoRequisito(args: ConstructorParameters<typeof RequisitoUso>[0][]): void { this._comportamentoRequisito = new ComportamentoRequisito(args); }
-
-//     private _comportamentoConsomeUso?: ComportamentoConsomeUso;
-//     get temComportamentoConsomeUso(): boolean { return Boolean(this._comportamentoConsomeUso); }
-//     get comportamentoConsomeUso(): ComportamentoConsomeUso { return this._comportamentoConsomeUso!; } // sempre verificar se temComportamentoConsomeUso antes
-//     setComportamentoConsomeUso(...args: ConstructorParameters<typeof ComportamentoConsomeUso>): void { this._comportamentoConsomeUso = new ComportamentoConsomeUso(...args); }
-
-//     private _comportamentoConsomeMunicao?: ComportamentoConsomeMunicao;
-//     get temComportamentoConsomeMunicao(): boolean { return Boolean(this._comportamentoConsomeMunicao); }
-//     get comportamentoConsomeMunicao(): ComportamentoConsomeMunicao { return this._comportamentoConsomeMunicao!; } // sempre verificar se temComportamentoConsomeMunicao antes
-//     setComportamentoConsomeMunicao(...args: ConstructorParameters<typeof ComportamentoConsomeMunicao>): void { this._comportamentoConsomeMunicao = new ComportamentoConsomeMunicao(...args); }
-
-
-//     get acaoTravada(): boolean { return this.comportamentoTrava.trava; }
-//     travaAcao() { this.comportamentoTrava.travaAcao('Você falhou'); }
-
-//     get listaCustos(): Custo[] { return this.comportamentoCustoAcao.listaCustos; }
-//     get custosPodemSerPagos(): boolean { return this.comportamentoCustoAcao.custosPodemSerPagos; }
-
-//     get temDificuldadeDeExecucao(): boolean { return this.temComportamentoDificuldadeAcao; }
-//     get ehDificuldadeDinamica(): boolean { return this.temDificuldadeDeExecucao && this.comportamentoDificuldadeAcao.temDificuldadeDinamica; }
-//     get dificuldadeDeExecucao(): number { return this.comportamentoDificuldadeAcao.dificuldadeDinamica!.dificuldadeAtual; } // sempre verificar se ehDificuldadeDinamica antes
-//     atualizaDificuldadeDeExecucao(): void { this.comportamentoDificuldadeAcao.dificuldadeDinamica!.atualizaDificuldade(); }
-
-//     get mensagemRequisitos(): string { return this.temComportamentoRequisito ? this.comportamentoRequisito.mensagemRequisitos : ''; }
-//     get requisitosCumpridos(): boolean { return !this.temComportamentoRequisito || this.comportamentoRequisito.requisitosCumprido; }
-// }
+    get mensagemRequisitos(): string { return this.temComportamentoRequisito ? this.comportamentoRequisito.mensagemRequisitos : ''; }
+    get requisitosCumpridos(): boolean { return !this.temComportamentoRequisito || this.comportamentoRequisito.requisitosCumprido; }
+}
 
 // export class EmbrulhoComportamentoHabilidade {
 
@@ -231,71 +200,6 @@ export class ComportamentoModificadorPassivo {
 
 //     get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this._idElemento)!; }
 //     get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this._idNivelComponente)!; }
-// }
-
-// export class ComportamentoCustoAcao {
-//     public custoExecucao: CustoExecucao;
-//     public custoPE?: CustoPE;
-//     public custoComponente?: CustoComponente;
-
-//     constructor({ custoExecucao, custoPE, custoComponente }: { custoExecucao?: ConstructorParameters<typeof CustoExecucao>[0], custoPE?: ConstructorParameters<typeof CustoPE>[0], custoComponente?: ConstructorParameters<typeof CustoComponente>[0] } = {}) {
-//         this.custoExecucao = new CustoExecucao(custoExecucao ?? { precoExecucao: { precos: [{ idTipoExecucao: 1, quantidadeExecucoes: 0 }] } });
-//         if (custoPE !== undefined) this.custoPE = new CustoPE(custoPE);
-//         if (custoComponente !== undefined && custoComponente) this.custoComponente = new CustoComponente(custoComponente);
-//     }
-
-//     get temCustoExecucao(): boolean { return this.custoExecucao !== undefined }
-//     get temCustoPE(): boolean { return this.custoPE !== undefined }
-//     get temCustoComponente(): boolean { return this.custoComponente !== undefined }
-//     get listaCustos(): Custo[] {
-//         const custos: Custo[] = [];
-
-//         if (this.temCustoExecucao) custos.push(this.custoExecucao);
-//         if (this.temCustoPE) custos.push(this.custoPE!);
-//         if (this.temCustoComponente) custos.push(this.custoComponente!);
-
-//         return custos;
-//     }
-
-//     get custosPodemSerPagos(): boolean { return this.listaCustos.every(custo => custo.podeSerPago); }
-
-//     aplicarCustos(props: GastaCustoProps) {
-//         this.listaCustos.map(custo => custo.gastaCusto(props))
-//     }
-// }
-
-// export class ComportamentoHistoricoAcao {
-//     public vezesUsadoCena: number = 0;
-//     public vezesUsadoTurno: number = 0;
-
-//     resetUsosCena() { this.vezesUsadoCena = 0; }
-//     resetUsosTurno() { this.vezesUsadoTurno = 0; }
-// }
-
-// export class ComportamentoAcaoTrava {
-//     public trava: boolean = false;
-//     public descricaoTrava: string = '';
-
-//     travaAcao(descricao: string) { this.trava = true; this.descricaoTrava = descricao; }
-//     destravaAcao() { this.trava = false; this.descricaoTrava = ''; }
-// }
-
-// export class ComportamentoDificuldadeAcao {
-//     public idAtributo: number;
-//     public idPericia: number;
-//     public dificuldadeDinamica?: DificuldadeDinamica;
-
-//     constructor({ dadosTeste, dadosDificuldadeDinamica }: { dadosTeste: { idAtributo: number, idPericia: number }, dadosDificuldadeDinamica?: ConstructorParameters<typeof DificuldadeDinamica>[0] }) {
-//         this.idPericia = dadosTeste.idPericia;
-//         this.idAtributo = dadosTeste.idAtributo;
-
-//         if (dadosDificuldadeDinamica) this.dificuldadeDinamica = new DificuldadeDinamica(dadosDificuldadeDinamica);
-//     }
-
-//     get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === this.idPericia)!; }
-//     get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(atributo => atributo.id === this.idAtributo)!; }
-
-//     get temDificuldadeDinamica(): boolean { return this.dificuldadeDinamica !== undefined; }
 // }
 
 // export class ComportamentoAcao {

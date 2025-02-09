@@ -47,7 +47,7 @@ const ProvidersSubInternosPersonagem = combineProviders(
 );
 
 const ProvidersJogabilidadePersonagem = combineProviders(
-    PersonagemAcoesProvider
+    PersonagemAcoesProvider,
 );
 
 const NiveisProviders = combineProviders(

@@ -35,7 +35,7 @@ export const PersonagemPericiasProvider = ({ children }: { children: React.React
 
             get detalhesValor(): string[] { return [`Patente ${this.refPatente.nome}: ${this.refPatente.valor}`].concat(obterDetalhesPorLinhaEfeito(this.refPericia.refLinhaEfeito.id)); },
 
-            realizarTeste() { ExecutaTestePericiaGenerico(this.refAtributoPersonagem, this); }
+            realizarTeste() { return ExecutaTestePericiaGenerico(this.refAtributoPersonagem, this); }
         };
     });
 

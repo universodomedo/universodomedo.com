@@ -35,7 +35,7 @@ export type PericiaPatentePersonagem = {
     readonly valorTotal: number;
     readonly detalhesValor: string[];
     
-    realizarTeste: () => void;
+    realizarTeste: () => number;
 };
 
 export type DadosPericiaPatentePersonagem = {

@@ -2,6 +2,10 @@ import { AtributoPersonagem, PericiaPatentePersonagem } from 'Classes/ClassesTip
 import { ExecutaTestePericia } from 'Recursos/Ficha/Variacao.ts';
 
 export function ExecutaTestePericiaGenerico(atributoPersonagem: AtributoPersonagem, periciaPersonagem: PericiaPatentePersonagem): number {
+    console.log('Fazendo teste de pericia');
+    console.log(`Atributo: ${atributoPersonagem.refAtributo.nomeAbreviado}`);
+    console.log(`Pericia: ${periciaPersonagem.refPericia.nomeAbreviado}`);
+    
     const numeroTestesInternos = (atributoPersonagem.valorTotal > 0 ? atributoPersonagem.valorTotal : 2 + Math.abs(atributoPersonagem.valorTotal));
 
     const variacaoAleatoriaFinal = ExecutaTestePericia({ listaVarianciasDaAcao: Array.from({ length: numeroTestesInternos }, () => ({ valorMaximo: 20, variancia: 19 })) });

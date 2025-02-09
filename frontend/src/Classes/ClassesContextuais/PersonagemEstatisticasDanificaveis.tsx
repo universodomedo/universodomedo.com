@@ -1,5 +1,5 @@
 // #region Imports
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { EstatisticaDanificavelPersonagem } from "Classes/ClassesTipos/index.ts";
 
@@ -15,18 +15,29 @@ export const PersonagemEstatisticasDanificaveis = createContext<ClasseContextual
 
 export const PersonagemEstatisticasDanificaveisProvider = ({ children }: { children: React.ReactNode; }) => {
     const { dadosFicha } = useClasseContextualPersonagem();
+    const [estatisticasDanificaveis, setEstatisticasDanificaveis] = useState<EstatisticaDanificavelPersonagem[]>([]);
 
-    const estatisticasDanificaveis: EstatisticaDanificavelPersonagem[] = dadosFicha.estatisticasDanificaveis!.map(estatisticaDanificavel => {
-        return {
-            valorAtual: estatisticaDanificavel.valorAtual,
-            valorMaximo: estatisticaDanificavel.valorMaximo,
+    useEffect(() => {
+        setEstatisticasDanificaveis(
+            dadosFicha.estatisticasDanificaveis!.map(estatisticaDanificavel => {
+                return {
+                    valorAtual: estatisticaDanificavel.valorAtual,
+                    valorMaximo: estatisticaDanificavel.valorMaximo,
+        
+                    alterarValorAtual: function (valor: number) {
+                        this.valorAtual = this.valorAtual - valor;
+                        atualizarEstatisticasDanificaveis();
+                    },
+                    alterarValorMaximo: function (valor: number) { console.log('precisa implementar alterarValorMaximo'); },
+        
+                    get refEstatisticaDanificavel() { return SingletonHelper.getInstance().estatisticas_danificavel.find(estatistica_danificavel => estatistica_danificavel.id === estatisticaDanificavel.idEstatisticaDanificavel)! },
+                }
+            })
+        );
+    }, []);
+    // }, [dadosFicha.estatisticasDanificaveis]);
 
-            alterarValorAtual: function () { console.log('precisa implementar alterarValorAtual'); },
-            alterarValorMaximo: function () { console.log('precisa implementar alterarValorMaximo'); },
-
-            get refEstatisticaDanificavel() { return SingletonHelper.getInstance().estatisticas_danificavel.find(estatistica_danificavel => estatistica_danificavel.id === estatisticaDanificavel.idEstatisticaDanificavel)! },
-        }
-    });
+    const atualizarEstatisticasDanificaveis = () => setEstatisticasDanificaveis(estatisticasAnteriores => [...estatisticasAnteriores]);
 
     return (
         <PersonagemEstatisticasDanificaveis.Provider value={{ estatisticasDanificaveis }}>

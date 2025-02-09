@@ -3,8 +3,45 @@
 // import { Acao, Elemento, NivelComponente, PrecoExecucao, Ritual, TipoExecucao } from 'Classes/ClassesTipos/index.ts';
 // import { LoggerHelper, SingletonHelper } from 'Classes/classes_estaticas.ts';
 
+
 // import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
 // // #endregion
+
+// export type CustosAcao = {
+//     custoPE?: number;
+//     custoComponente?: boolean;
+//     custoExecucao?: boolean;
+
+//     custosPodemSerPagos: boolean;
+// };
+
+export type Custos = {
+    readonly custos: Custo[];
+
+    custoAcaoExecucao: CustoAcaoExecucao;
+    custoAcaoPE?: CustoAcaoPE;
+
+    readonly custosPodemSerPagos: boolean;
+    aplicaCustos: () => void;
+};
+
+export type Custo = {
+    readonly podeSerPago: boolean;
+    aplicaCusto: () => void;
+};
+
+export type CustoPE = {
+    valor: number;
+};
+
+export type CustoAcaoPE = Custo & CustoPE;
+
+export type CustoExecucao = {
+    aplica: boolean;
+};
+
+export type CustoAcaoExecucao = Custo & CustoExecucao;
+
 
 // export abstract class Custo {
 //     abstract get podeSerPago(): boolean;
