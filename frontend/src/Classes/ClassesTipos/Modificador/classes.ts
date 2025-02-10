@@ -11,7 +11,7 @@ export type Modificador = {
     idDuracao: number;
     quantidadeDuracaoMaxima: number;
     efeitos: Efeito[];
-    readonly refPai: Acao | Habilidade | Item;
+    // readonly refPai: Acao | Habilidade | Item;
     readonly tipoRefPai: 'Ação' | 'Habilidade' | 'Item';
     svg: string;
     quantidadeDuracaoAtual: number;

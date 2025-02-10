@@ -1,22 +1,8 @@
-// // #region Imports
-// import { useClasseContextualPersonagemEstatisticasDanificaveis } from 'Classes/ClassesContextuais/PersonagemEstatisticasDanificaveis';
-// import { Acao, Elemento, NivelComponente, PrecoExecucao, Ritual, TipoExecucao } from 'Classes/ClassesTipos/index.ts';
-// import { LoggerHelper, SingletonHelper } from 'Classes/classes_estaticas.ts';
+import { PrecoExecucao } from 'Classes/ClassesTipos/index.ts';
 
-
-// import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
-// // #endregion
-
-// export type CustosAcao = {
-//     custoPE?: number;
-//     custoComponente?: boolean;
-//     custoExecucao?: boolean;
-
-//     custosPodemSerPagos: boolean;
-// };
 
 export type Custos = {
-    readonly custos: Custo[];
+    readonly listaCustos: Custo[];
 
     custoAcaoExecucao: CustoAcaoExecucao;
     custoAcaoPE?: CustoAcaoPE;
@@ -37,7 +23,12 @@ export type CustoPE = {
 export type CustoAcaoPE = Custo & CustoPE;
 
 export type CustoExecucao = {
-    aplica: boolean;
+    listaPrecosOriginal: PrecoExecucao[];
+
+    readonly listaPrecosAplicados: PrecoExecucao[];
+    readonly descricaoListaPreco: string;
+    readonly temApenasAcaoLivre: boolean;
+    readonly resumoPagamento: string;
 };
 
 export type CustoAcaoExecucao = Custo & CustoExecucao;

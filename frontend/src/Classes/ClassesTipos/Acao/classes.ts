@@ -16,7 +16,6 @@ export type Acao = {
     dadosAcaoCustomizada: undefined;
 
     dificuldadeAcao?: DificuldadeAcao;
-    // processaDificuldades: () => boolean;
 
     executa: () => void;
 };

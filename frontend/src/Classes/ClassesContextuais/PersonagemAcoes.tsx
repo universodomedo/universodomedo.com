@@ -1,17 +1,16 @@
 // #region Imports
 import React, { createContext, useContext } from "react";
 
-import { Acao, AtributoPersonagem, criarDificuldadeDinamica, Custo, PericiaPatentePersonagem } from "Classes/ClassesTipos/index.ts";
+import { Acao, AtributoPersonagem, criarDificuldadeDinamica, criarPrecoExecucao, Custo, PericiaPatentePersonagem, pluralize, PrecoExecucao } from "Classes/ClassesTipos/index.ts";
 
-import { useClasseContextualPersonagemHabilidades } from "./PersonagemHabilidades";
-import { useClasseContextualPersonagemNatureza } from "./PersonagemNatureza";
-import { useClasseContextualPersonagemRituais } from "./PersonagemRituais";
-import { useClasseContextualPersonagemAtributos } from "./PersonagemAtributos";
-import { useClasseContextualPersonagemPericias } from "./PersonagemPericias";
-import { useClasseContextualPersonagemEstatisticasDanificaveis } from "./PersonagemEstatisticasDanificaveis";
-import { useClasseContextualPersonagemEstatisticasBuffaveis } from "./PersonagemEstatisticasBuffaveis";
-
-// import { EmbrulhoComportamentoAcao, GastaCustoProps, IAcaoService } from "Classes/ClassesTipos/index.ts";
+import { useClasseContextualPersonagemHabilidades } from "Classes/ClassesContextuais/PersonagemHabilidades.tsx";
+import { useClasseContextualPersonagemNatureza } from "Classes/ClassesContextuais/PersonagemNatureza.tsx";
+import { useClasseContextualPersonagemRituais } from "Classes/ClassesContextuais/PersonagemRituais.tsx";
+import { useClasseContextualPersonagemAtributos } from "Classes/ClassesContextuais/PersonagemAtributos.tsx";
+import { useClasseContextualPersonagemPericias } from "Classes/ClassesContextuais/PersonagemPericias.tsx";
+import { useClasseContextualPersonagemEstatisticasDanificaveis } from "Classes/ClassesContextuais/PersonagemEstatisticasDanificaveis.tsx";
+import { useClasseContextualPersonagemEstatisticasBuffaveis } from "Classes/ClassesContextuais/PersonagemEstatisticasBuffaveis.tsx";
+import { useCustosExecucoes } from "Classes/ClassesContextuais/GerenciadorCustosExecucoes.tsx";
 // #endregion
 
 interface ClasseContextualPersonagemAcoesProps {
@@ -31,6 +30,8 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
     const { estatisticasDanificaveis } = useClasseContextualPersonagemEstatisticasDanificaveis();
     const { execucoes } = useClasseContextualPersonagemEstatisticasBuffaveis();
 
+    const { podePagarPreco, pagaPrecoExecucao, resumoPagamento } = useCustosExecucoes();
+
     const acoes: Acao[] = rituais.flatMap(ritual => ritual.dadosAcoes.flatMap(dadosAcao => {
         const acaoServico: Acao = {
             ...dadosAcao,
@@ -46,16 +47,41 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
 
             custos: {
                 custoAcaoExecucao: {
-                    aplica: true,
-                    podeSerPago: true,
-                    aplicaCusto: function() { console.log('aplicando custo de Execução'); execucoes.find(execucao => execucao.refExecucao.id === 2)!.numeroAcoesAtuais--; },
+                    listaPrecosOriginal: criarPrecoExecucao( [ { idExecucao: 3, quantidadeExecucoes: 1 } ] ),
+
+                    get listaPrecosAplicados(): PrecoExecucao[] {
+                        const agrupados = this.listaPrecosOriginal.reduce((map, preco) => {
+                            const id = preco.refExecucao.id;
+                            if (!map.has(id)) map.set(id, { idExecucao: id, quantidadeExecucoes: 0 });
+                            map.get(id)!.quantidadeExecucoes += preco.quantidadeExecucoes;
+                            return map;
+                        }, new Map<number, { idExecucao: number, quantidadeExecucoes: number }>());
+
+                        const agrupadosFiltrados = Array.from(agrupados.values()).filter(preco => preco.quantidadeExecucoes > 0);
+
+                        if (agrupadosFiltrados.length > 0) {
+                            return criarPrecoExecucao(agrupadosFiltrados.map(precoAgrupado => ({
+                                quantidadeExecucoes: precoAgrupado.quantidadeExecucoes,
+                                idExecucao: precoAgrupado.idExecucao,
+                            })));
+                        } else {
+                            return criarPrecoExecucao( [ { idExecucao: 1, quantidadeExecucoes: 0 } ] ); // Ação Livre
+                        }
+                    },
+
+                    get descricaoListaPreco(): string { return this.listaPrecosAplicados.map(preco => preco.descricaoPreco).join(' e ')},
+                    get temApenasAcaoLivre(): boolean { return !this.listaPrecosAplicados.some(preco => preco.refExecucao.id !== 1); },
+                    get podeSerPago(): boolean { return podePagarPreco(this.listaPrecosAplicados); },
+                    get resumoPagamento(): string { return resumoPagamento(this.listaPrecosAplicados).join(' e '); },
+
+                    aplicaCusto: function() { console.log('aplicando custo de Execução'); console.log(`pagando ${this.resumoPagamento}`); pagaPrecoExecucao(this.listaPrecosAplicados); },
                 },
                 custoAcaoPE: {
                     valor: 3,
                     get podeSerPago(): boolean { return estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.valorAtual > this.valor; },
-                    aplicaCusto: function() { console.log('aplicando custo de PE'); estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)?.alterarValorAtual(this.valor) },
+                    aplicaCusto: function() { console.log('aplicando custo de PE'); console.log(`pagando ${this.valor} P.E.`); estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)?.alterarValorAtual(this.valor) },
                 },
-                get custos(): Custo[] {
+                get listaCustos(): Custo[] {
                     const listaCustos: Custo[] = [];
 
                     listaCustos.push(this.custoAcaoExecucao);
@@ -63,10 +89,10 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
 
                     return listaCustos;
                 },
-                get custosPodemSerPagos(): boolean { return this.custos.every(custo => custo.podeSerPago) },
+                get custosPodemSerPagos(): boolean { return this.listaCustos.every(custo => custo.podeSerPago) },
                 aplicaCustos: function() {
                     console.log('aplicando Custos');
-                    this.custos.map(custo => custo.aplicaCusto());
+                    this.listaCustos.map(custo => custo.aplicaCusto());
                 },
             },
 
@@ -84,8 +110,6 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
                     }),
                 },
             },
-            // processaDificuldades: () => { console.log('precisa implementar processaDificuldades'); return true; },
-            // executaComOpcoes: (valoresSelecionados: GastaCustoProps) => {},
             
             executa: () => { console.log('precisa implementar executa'); },
         };

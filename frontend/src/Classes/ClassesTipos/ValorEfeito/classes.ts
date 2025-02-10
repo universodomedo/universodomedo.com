@@ -7,14 +7,26 @@ export type DadosEfeito = {
 };
 
 export type DadosValorEfeito = {
+    valorBaseAdicional?: number;
+    valorPorcentagemAdicional?: number;
+    valorBonusAdicional?: number;
+};
+
+export type ValoresEfeito = {
     valorBaseAdicional: number;
     valorPorcentagemAdicional: number;
     valorBonusAdicional: number;
+    __key: "criarValoresEfeito";
 };
 
-export type ValoresEfeito = DadosValorEfeito;
-
-
+export const criarValoresEfeito = (dadosValorEfeito: DadosValorEfeito): ValoresEfeito => {
+    return {
+        valorBaseAdicional: dadosValorEfeito.valorBaseAdicional || 0,
+        valorPorcentagemAdicional: dadosValorEfeito.valorPorcentagemAdicional || 0,
+        valorBonusAdicional: dadosValorEfeito.valorBonusAdicional || 0,
+        __key: "criarValoresEfeito", // ValoresEfeito não deve ser criado se não usando esse metodo
+    }
+};
 
 export class ValoresLinhaEfeito {
     constructor(

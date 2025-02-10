@@ -1,11 +1,12 @@
 // #region Imports
 import React, { createContext, useContext } from "react";
 
-import { adicionaSinalEmNumeroParaExibicao, Efeito, Modificador, RegistroValorEfeito, ValoresEfeito, ValoresLinhaEfeito, ValoresLinhaEfeitoAgrupados } from "Classes/ClassesTipos/index.ts";
+import { adicionaSinalEmNumeroParaExibicao, ComportamentosModificador, criarValoresEfeito, Duracao, Efeito, LinhaEfeito, Modificador, RegistroValorEfeito, TipoEfeito, ValoresEfeito, ValoresLinhaEfeito, ValoresLinhaEfeitoAgrupados } from "Classes/ClassesTipos/index.ts";
+import { SingletonHelper } from "Classes/classes_estaticas";
 // #endregion
 
 interface ClasseContextualPersonagemModificadoresProps {
-    modificadoresService: Modificador[];
+    modificadores: Modificador[];
     obtemValorTotalComLinhaEfeito: (valorBase: number, idLinhaEfeito: number) => number;
     obterDetalhesPorLinhaEfeito: (idLinhaEfeito: number) => string[];
     valoresEfeitosEDetalhesPorLinhaEfeito: () => ValoresLinhaEfeito[];
@@ -24,10 +25,10 @@ export const PersonagemModificadoresProvider = ({ children }: { children: React.
     //             new Efeito({ idLinhaEfeito: 1, idTipoEfeito: 1, dadosValoresEfeitos: { valorBaseAdicional: 1, valorPorcentagemAdicional: 1, valorBonusAdicional: 2 } })
     //         ],
     //         refPai: new Acao(),
-    //         svg: `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+`,
+    //         c
     //     },
     // ];
-    // let modificadoresService: Modificador[] = modificadores.map(modificador => {
+    // let modificadores: Modificador[] = modificadores.map(modificador => {
     //     const modificadorService = {
     //         ...modificador,
 
@@ -41,25 +42,32 @@ export const PersonagemModificadoresProvider = ({ children }: { children: React.
     // });
 
     // tentar arrumar uma forma de mudar a logia de removeModificador, que atribui um novo valor a essa variavel, ent eu tenho q deixar como let
-    const modificadoresService: Modificador[] = [];
-
-    const obtemValorTotalComLinhaEfeito = (valorBase: number, idLinhaEfeito: number): number => {
-        const valoresLinhaEfeito = valoresEfeitoPorLinhaEfeito(idLinhaEfeito);
-        return Math.floor((valorBase + valoresLinhaEfeito.valorBaseAdicional) * (1 + (valoresLinhaEfeito.valorPorcentagemAdicional / 100))) + valoresLinhaEfeito.valorBonusAdicional;
-    }
-
-    const obterDetalhesPorLinhaEfeito = (idLinhaEfeito: number): string[] => {
-        return detalhesPorLinhaEfeito(idLinhaEfeito);
-    }
-
-    // const removeModificador = (modificador: IModificadorService) => { modificadoresService = modificadoresService.filter(modEquivalente => modEquivalente.codigoUnico !== modificador.codigoUnico); }
-    const valoresEfeitoPorLinhaEfeito = (idLinhaEfeito: number): ValoresEfeito => { return valoresEfeitosEDetalhesPorLinhaEfeito().find(info => info.refLinhaEfeito.id === idLinhaEfeito)?.valoresEfeitos || { valorBaseAdicional: 0, valorPorcentagemAdicional: 1, valorBonusAdicional: 0 }; }
-    const detalhesPorLinhaEfeito = (idLinhaEfeito: number): string[] => { return valoresEfeitosEDetalhesPorLinhaEfeito().find(info => info.refLinhaEfeito.id === idLinhaEfeito)?.valoresEfeitos.listaValorBonusAdicional.map(bonus => `${bonus.nomeRegistro}: ${adicionaSinalEmNumeroParaExibicao(bonus.valor)}`) || []; }
+    const modificadores: Modificador[] = [
+        {
+            nome: "teste",
+            comportamentos: new ComportamentosModificador,
+            idDuracao: 3,
+            quantidadeDuracaoMaxima: 1,
+            efeitos: [
+                {
+                    get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === 16)!; },
+                    get refTipoEfeito(): TipoEfeito { return SingletonHelper.getInstance().tipos_efeito.find(tipo_efeito => tipo_efeito.id === 1)!; },
+                    valoresEfeitos: criarValoresEfeito({ valorBonusAdicional: 3 }),
+                }
+            ],
+            tipoRefPai: "Ação",
+            svg: `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+`,
+            quantidadeDuracaoAtual: 1,
+            get refDuracao(): Duracao { return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === 3)! },
+            codigoUnico: "asfasf",
+            textoDuracao: "1 turno"
+        },
+    ];
 
     const agrupamentoDeEfeitosPorLinhaEfeito = (): { idLinhaEfeito: number, listaEfeitosNaLinha: { nomeModificador: string, tipoPaiModificador: string, efeito: Efeito }[] }[] => {
         const agrupados: { idLinhaEfeito: number, listaEfeitosNaLinha: { nomeModificador: string, tipoPaiModificador: string, efeito: Efeito }[] }[] = [];
 
-        modificadoresService.forEach(modificador => {
+        modificadores.forEach(modificador => {
             modificador.efeitos.forEach(efeito => {
                 const idLinhaEfeito = efeito.refLinhaEfeito.id;
 
@@ -120,8 +128,26 @@ export const PersonagemModificadoresProvider = ({ children }: { children: React.
         return valores;
     }
 
+    // const removeModificador = (modificador: IModificadorService) => { modificadores = modificadores.filter(modEquivalente => modEquivalente.codigoUnico !== modificador.codigoUnico); }
+    const valoresEfeitoPorLinhaEfeito = (idLinhaEfeito: number): ValoresEfeito => {
+        const valores = valoresEfeitosEDetalhesPorLinhaEfeito().find(info => info.refLinhaEfeito.id === idLinhaEfeito);
+
+        return valores !== undefined ? criarValoresEfeito(valores.valoresEfeitos) : criarValoresEfeito({})
+    }
+    const detalhesPorLinhaEfeito = (idLinhaEfeito: number): string[] => { return valoresEfeitosEDetalhesPorLinhaEfeito().find(info => info.refLinhaEfeito.id === idLinhaEfeito)?.valoresEfeitos.listaValorBonusAdicional.map(bonus => `${bonus.nomeRegistro}: ${adicionaSinalEmNumeroParaExibicao(bonus.valor)}`) || []; }
+
+    const obtemValorTotalComLinhaEfeito = (valorBase: number, idLinhaEfeito: number): number => {
+        const valoresLinhaEfeito = valoresEfeitoPorLinhaEfeito(idLinhaEfeito);
+        return Math.floor(valorBase + valoresLinhaEfeito.valorBonusAdicional!);
+        // return Math.floor((valorBase + valoresLinhaEfeito.valorBaseAdicional) * (1 + (valoresLinhaEfeito.valorPorcentagemAdicional / 100))) + valoresLinhaEfeito.valorBonusAdicional;
+    }
+
+    const obterDetalhesPorLinhaEfeito = (idLinhaEfeito: number): string[] => {
+        return detalhesPorLinhaEfeito(idLinhaEfeito);
+    }
+
     return (
-        <PersonagemModificadores.Provider value={{ modificadoresService, obtemValorTotalComLinhaEfeito, obterDetalhesPorLinhaEfeito, valoresEfeitosEDetalhesPorLinhaEfeito }}>
+        <PersonagemModificadores.Provider value={{ modificadores, obtemValorTotalComLinhaEfeito, obterDetalhesPorLinhaEfeito, valoresEfeitosEDetalhesPorLinhaEfeito }}>
             {children}
         </PersonagemModificadores.Provider>
     );

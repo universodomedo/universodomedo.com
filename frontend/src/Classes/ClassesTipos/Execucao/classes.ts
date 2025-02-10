@@ -1,3 +1,4 @@
+import { SingletonHelper } from 'Classes/classes_estaticas';
 import { LinhaEfeito } from 'Classes/ClassesTipos/index.ts';
 
 export type ExecucaoModelo = {
@@ -25,17 +26,31 @@ export type DadosExecucaoPersonagem = Omit<ExecucaoPersonagem, 'refExecucao'> & 
 };
 
 
-// export class TipoExecucao {
-//     constructor(
-//         public id: number,
-//         private _idLinhaEfeito: number,
-//         public nome: string,
-//     ) { }
+export type PrecoExecucao = {
+    quantidadeExecucoes: number;
 
-//     get nomeExibicao(): string { return `Ação ${this.nome}`; }
-//     get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === this._idLinhaEfeito)!; }
-// }
+    readonly refExecucao: Execucao;
+    readonly descricaoPreco: string;
 
+    __key: "criarPrecoExecucao";
+};
+
+export type DadosPrecoExecucao = Pick<PrecoExecucao, 'quantidadeExecucoes'> & {
+    idExecucao: number;
+};
+
+export const criarPrecoExecucao = (listaDadosPrecoExecucao: DadosPrecoExecucao[]): PrecoExecucao[] => {
+    return listaDadosPrecoExecucao.map(dadosPrecoExecucao => {
+        return {
+            quantidadeExecucoes: dadosPrecoExecucao.quantidadeExecucoes,
+
+            get descricaoPreco(): string { return `${this.quantidadeExecucoes} ${this.refExecucao.nomeExibicao}`; },
+            get refExecucao(): Execucao { return SingletonHelper.getInstance().execucoes.find(execucao => execucao.id === dadosPrecoExecucao.idExecucao)!; },
+
+            __key: "criarPrecoExecucao", // PrecoExecucao não deve ser criado se não usando esse metodo
+        };
+    });
+};
 // export class PrecoTipoExecucao {
 //     private _idTipoExecucao: number;
 //     public quantidadeExecucoes: number;

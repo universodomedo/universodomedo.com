@@ -82,6 +82,52 @@ export const PersonagemEstatisticasBuffaveisProvider = ({ children }: { children
         get valorTotal(): number { return this.valorSemEfeitos; }
     };
 
+
+    // const listaPrecosAplicados = (listaPrecoTipoExecucao: PrecoExecucao[]): PrecoExecucao[] => {
+    //     const agrupados = listaPrecoTipoExecucao.reduce((map, preco) => {
+    //         const id = preco.refExecucao.id;
+    //         if (!map.has(id)) map.set(id, { idTipoExecucao: id, quantidadeExecucoes: 0 });
+    //         map.get(id)!.quantidadeExecucoes += preco.quantidadeExecucoes;
+    //         return map;
+    //     }, new Map<number, { idTipoExecucao: number, quantidadeExecucoes: number }>());
+
+    //     const agrupadosFiltrados = Array.from(agrupados.values()).filter(preco => preco.quantidadeExecucoes > 0);
+
+    //     // Cria a lista final de preços
+    //     const listaPrecos: PrecoExecucao[] = agrupadosFiltrados.length > 0
+    //         ? agrupadosFiltrados.map(({ idExecucao, quantidadeExecucoes }) => {  idExecucao, quantidadeExecucoes })
+    //         : [{ idTipoExecucao: 1, quantidadeExecucoes: 0 }];
+    
+    //     // Calcula as propriedades desejadas
+    //     const descricaoListaPreco = listaPrecos.map(preco => preco.descricaoPreco).join(' e ');
+    //     const temApenasAcaoLivre = !listaPrecos.some(preco => preco.refExecucao.id !== 1);
+    //     const podePagar = ControladorExecucoesPersonagem.podePagarPreco({ listaPrecos });
+    //     const resumoPagamento = ControladorExecucoesPersonagem.resumoPagamento({ listaPrecos }).join(' e ');
+    
+    //     // Retorna o objeto com as propriedades calculadas
+    //     return {
+    //         listaPrecos,
+    //         descricaoListaPreco,
+    //         temApenasAcaoLivre,
+    //         podePagar,
+    //         resumoPagamento,
+    //     };
+    // };
+
+
+    // const calculaCustoExecucao = (precoExecucao: PrecoGeralExecucao) => {
+    //     let custoPadrao = 0;
+    //     let custoMovimento = 0;
+    
+    //     for (const preco of precoExecucao.listaPrecos) {
+    //         if (preco.refTipoExecucao.id === 2) {
+    //             custoPadrao += preco.quantidadeExecucoes;
+    //         } else if (preco.refTipoExecucao.id === 3) {
+    //             custoMovimento += preco.quantidadeExecucoes;
+    //         }
+    //     }
+    // }
+
     return (
         <PersonagemEstatisticasBuffaveis.Provider value={{ defesa, deslocamento, espacoInventario, execucoes, extremidades, espacosCategoria, resistenciaParanormal }}>
             {children}
@@ -94,3 +140,33 @@ export const useClasseContextualPersonagemEstatisticasBuffaveis = (): ClasseCont
     if (!context) throw new Error('useClasseContextualPersonagemEstatisticasBuffaveis precisa estar dentro de uma ClasseContextual de PersonagemEstatisticasBuffaveis');
     return context;
 };
+
+
+
+
+
+// private static calculaCustos(precoExecucao: PrecoExecucao) {
+//     const { execucoes } = useClasseContextualPersonagemEstatisticasBuffaveis();
+
+//     let custoPadrao = 0;
+//     let custoMovimento = 0;
+
+//     for (const preco of precoExecucao.listaPrecos) {
+//         if (preco.refTipoExecucao.id === 2) {
+//             custoPadrao += preco.quantidadeExecucoes;
+//         } else if (preco.refTipoExecucao.id === 3) {
+//             custoMovimento += preco.quantidadeExecucoes;
+//         }
+//     }
+
+//     const execucaoPadrao = execucoes.find(exec => exec.refTipoExecucao.id === 2);
+//     const execucaoMovimento = execucoes.find(exec => exec.refTipoExecucao.id === 3);
+
+//     const disponivelPadrao = execucaoPadrao?.numeroAcoesAtuais || 0;
+//     const disponivelMovimento = execucaoMovimento?.numeroAcoesAtuais || 0;
+
+//     const deficitMovimento = Math.max(0, custoMovimento - disponivelMovimento);
+//     const totalPadraoNecessario = custoPadrao + deficitMovimento;
+
+//     return { custoPadrao, custoMovimento, deficitMovimento, totalPadraoNecessario, disponivelPadrao, disponivelMovimento };
+// }
