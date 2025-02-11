@@ -1,9 +1,6 @@
-// #region Imports
-// #endregion
+export type TipoAlvoModelo = {
+    id: number;
+    nome: string;
+};
 
-export class TipoAlvo {
-    constructor(
-        public id: number,
-        public nome: string,
-    ) { }
-}
+export type TipoAlvo = TipoAlvoModelo;

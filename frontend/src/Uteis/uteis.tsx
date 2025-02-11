@@ -60,3 +60,14 @@ export class ValorGenerico {
 
     get variancia(): number { return this.valorMax - this.valorMin; }
 }
+
+type ProviderProps = {
+    children: React.ReactNode;
+};
+
+export const combineProviders = (...providers: React.FC<ProviderProps>[]) => {
+    return ({ children }: ProviderProps) =>
+        providers.reduceRight((acc, Provider) => {
+            return <Provider>{acc}</Provider>;
+        }, children);
+};

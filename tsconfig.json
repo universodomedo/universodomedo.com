@@ -8,6 +8,7 @@
       "Componentes/*": ["Componentes/*"],
       "Contextos/*": ["Contextos/*"],
       "Dados/*": ["Dados/*"],
+      "Hooks/*": ["Hooks/*"],
       "Layouts/*": ["Layouts/*"],
       "Paginas/*": ["Paginas/*"],
       "Providers/*": ["Providers/*"],

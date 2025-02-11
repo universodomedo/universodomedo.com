@@ -1,175 +1,76 @@
-// #region Imports
-import { EstatisticaDanificavel, EstatisticasBuffaveisPersonagem, ReducaoDano, AtributoPersonagem, PericiaPatentePersonagem, Inventario, Habilidade, Ritual, RLJ_Ficha2, Defesa, Execucao, EspacoInventario, GerenciadorEspacoCategoria, EspacoCategoria, Acao, HabilidadeAtiva, novoItemPorDadosItem, lista_geral_habilidades, Efeito, ControladorModificadores, ValoresEfeito, CustoPE, classeComArgumentos, CustoExecucao, CustoComponente, NaturezaPersonagem, ProficienciaPersonagem } from 'Classes/ClassesTipos/index.ts';
+export type ClasseModelo = {
+    id: number;
+    nome: string;
+    descricao: string;
+};
 
-import { SingletonHelper } from 'Classes/classes_estaticas.ts';
-// #endregion
+export type Classe = ClasseModelo;
 
-class Receptor {
-    constructor(
-        public personagem: Personagem,
-    ) { }
+export type NivelModelo = {
+    id: number;
+    nome: string;
+};
 
-    teste = (idEstatistica: number, valor: number, flagTipo: number) => {
-        if (flagTipo === 1)
-            this.personagem.estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === idEstatistica)?.aplicarDanoFinal(valor);
+export type Nivel = NivelModelo & {
+    readonly nomeDisplay: string;
+};
 
-        if (flagTipo === 2)
-            this.personagem.estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === idEstatistica)?.aplicarCura(valor);
 
-        this.personagem.onUpdate();
-    }
-}
 
-export class Personagem {
-    public detalhes: PersonagemDetalhes;
-    public estatisticasDanificaveis: EstatisticaDanificavel[] = [];
-    public estatisticasBuffaveis: EstatisticasBuffaveisPersonagem;
-    public reducoesDano: ReducaoDano[] = [];
-    public atributos: AtributoPersonagem[] = [];
-    public pericias: PericiaPatentePersonagem[] = [];
-    public inventario: Inventario = new Inventario();
-    public habilidades: Habilidade[] = [];
-    public buffsExternos: Efeito[] = [];
-    public rituais: Ritual[] = [];
-    public natureza: NaturezaPersonagem = new NaturezaPersonagem();
 
-    public controladorModificadores: ControladorModificadores = new ControladorModificadores();
-    public proficienciaPersonagem: ProficienciaPersonagem = new ProficienciaPersonagem();
 
-    public receptor: Receptor = new Receptor(this);
+// export class Personagem {
+//     public reducoesDano: ReducaoDano[] = [];
 
-    constructor(public dadosFicha: RLJ_Ficha2) {
-        const numExtremidades = 2; // depois vai ter q mudar para alguma logica, colocando esse numero no RLJ_Ficha2
+//     constructor(public dadosFicha: RLJ_Ficha2) {
 
-        this.detalhes = new PersonagemDetalhes(this.dadosFicha.detalhes!.nome, this.dadosFicha.detalhes!.idClasse, this.dadosFicha.detalhes!.idNivel);
+//         this.reducoesDano = this.dadosFicha.reducoesDano?.map(reducao_dano => new ReducaoDano(reducao_dano.idTipoDano, reducao_dano.valor))!;
+//     }
 
-        this.estatisticasDanificaveis = this.dadosFicha.estatisticasDanificaveis!.map(estatisticaDanificavel => {
-            return new EstatisticaDanificavel(estatisticaDanificavel.id, estatisticaDanificavel.valorMaximo, estatisticaDanificavel.valor)
-        });
+//     get pontosDeSanidadeSacrificadosPorRituais(): number { return this.rituais.reduce((acc, cur) => acc + cur.comportamentos.comportamentoRitual.refCirculoNivelRitual.psSacrificados, 0) }
 
-        this.estatisticasBuffaveis = new EstatisticasBuffaveisPersonagem(
-            new Defesa(5, 1, 1, 1),
-            10,
-            0,
-            [new Execucao(2, 1), new Execucao(3, 1), new Execucao(4, 1)],
-            new EspacoInventario(5, 5),
-            new GerenciadorEspacoCategoria(),
-            // new GerenciadorEspacoCategoria([new EspacoCategoria(1, 2), new EspacoCategoria(2, 1), new EspacoCategoria(3, 0), new EspacoCategoria(4, 0),]),
-            numExtremidades
-        );
+//     public onUpdate: () => void = () => { };
 
-        this.reducoesDano = this.dadosFicha.reducoesDano?.map(reducao_dano => new ReducaoDano(reducao_dano.idTipoDano, reducao_dano.valor))!;
-        this.carregaAtributos();
-        this.carregaPericias();
-        this.carregaRituais();
+//     // receberDanoVital = (danoGeral:DanoGeral) => {
+//     //     this.controladorPersonagem.reduzDano(danoGeral);
+//     // }
 
-        this.dadosFicha.inventario!.map(dadosItem => this.inventario.adicionarItemNoInventario(novoItemPorDadosItem(dadosItem)));
-    }
+//     public rodaDuracao = (idDuracao: number) => {
+//         // LoggerHelper.getInstance().adicionaMensagem(`Rodou ${SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === idDuracao)?.nome}`);
 
-    public get temPendencia(): boolean { return !(this.dadosFicha.detalhes.idNivel === this.dadosFicha.pendencias.idNivelEsperado); }
+//         // this.obterBuffs().filter(buff => buff.ativo).map(buff => {
+//         //     if (buff.refDuracao.id === idDuracao) {
+//         //         buff.reduzDuracao();
+//         //     } else if (buff.refDuracao.id < idDuracao) {
+//         //         buff.desativaBuff();
+//         //     }
+//         // });
 
-    public get acoes(): Acao[] {
-        const acoesRituais = this.rituais.reduce((acc: Acao[], ritual) => acc.concat(ritual.acoes), []);
+//         // if (idDuracao >= 2) this.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
 
-        const acoesHabilidades = this.habilidades.filter(habilidade => habilidade instanceof HabilidadeAtiva).reduce((acc: Acao[], habilidade) => acc.concat(habilidade.acoes), []);
+//         // LoggerHelper.getInstance().saveLog();
 
-        return this.natureza.acoes.concat(this.inventario.acoesInventario()).concat(acoesHabilidades).concat(acoesRituais);
-    }
+//         this.onUpdate();
+//     }
 
-    obtemValorTotalComLinhaEfeito(valorBase: number, idLinhaEfeito: number): number {
-        const valoresLinhaEfeito = this.controladorModificadores.valoresEfeitoPorLinhaEfeito(idLinhaEfeito);
-        return Math.floor((valorBase + valoresLinhaEfeito.valorBaseAdicional) * (1 + (valoresLinhaEfeito.valorPorcentagemAdicional / 100))) + valoresLinhaEfeito.valorBonusAdicional;
-    }
+//     public carregaOnUpdate = (callback: () => void) => {
+//         this.onUpdate = callback;
+//     }
+// }
 
-    obterDetalhesPorLinhaEfeito(idLinhaEfeito: number): string[] {
-        return this.controladorModificadores.detalhesPorLinhaEfeito(idLinhaEfeito);
-    }
+// export class Classe {
+//     constructor(
+//         public id: number,
+//         public nome: string,
+//         public descricao: string,
+//     ) { }
+// }
 
-    get pontosDeSanidadeSacrificadosPorRituais(): number { return this.rituais.reduce((acc, cur) => acc + cur.comportamentos.comportamentoRitual.refCirculoNivelRitual.psSacrificados, 0) }
+// export class Nivel {
+//     constructor(
+//         public id: number,
+//         public nome: string,
+//     ) { }
 
-    public onUpdate: () => void = () => { };
-
-    // receberDanoVital = (danoGeral:DanoGeral) => {
-    //     this.controladorPersonagem.reduzDano(danoGeral);
-    // }
-
-    public rodaDuracao = (idDuracao: number) => {
-        // LoggerHelper.getInstance().adicionaMensagem(`Rodou ${SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === idDuracao)?.nome}`);
-
-        // this.obterBuffs().filter(buff => buff.ativo).map(buff => {
-        //     if (buff.refDuracao.id === idDuracao) {
-        //         buff.reduzDuracao();
-        //     } else if (buff.refDuracao.id < idDuracao) {
-        //         buff.desativaBuff();
-        //     }
-        // });
-
-        if (idDuracao >= 2) this.estatisticasBuffaveis.execucoes.forEach(execucao => execucao.recarregaNumeroAcoes());
-
-        // LoggerHelper.getInstance().saveLog();
-
-        this.onUpdate();
-    }
-
-    public carregaOnUpdate = (callback: () => void) => {
-        this.onUpdate = callback;
-    }
-
-    public carregaAtributos() { this.atributos = this.dadosFicha.atributos!.map(attr => new AtributoPersonagem(attr.id, attr.valor!)); }
-    public carregaPericias() { this.pericias = this.dadosFicha.periciasPatentes!.map(periciaPatente => new PericiaPatentePersonagem(periciaPatente.idPericia, periciaPatente.idPatente)); }
-    public carregaRituais() {
-        this.rituais = this.dadosFicha.rituais!.map(ritual =>
-            new Ritual({ dadosGenericosRitual: ritual.args, dadosComportamentos: ritual.dadosComportamentos })
-                .adicionarAcoes(
-                    (ritual.dadosAcoes || []).map(dadosAcao => (
-                        {
-                            props: { dadosGenericosAcao: dadosAcao.args, dadosComportamentos: dadosAcao.dadosComportamentos },
-                            config: (acao) => {
-                                // acao.adicionarCustos([
-                                //     dadosAcao.custos.custoPE?.valor ? classeComArgumentos(CustoPE, dadosAcao.custos.custoPE.valor) : null!,
-                                //     ...((dadosAcao.custos.custoExecucao || []).map(execucao =>
-                                //         execucao.valor ? classeComArgumentos(CustoExecucao, execucao.idExecucao, execucao.valor) : null!
-                                //     )),
-                                //     dadosAcao.custos.custoComponente ? classeComArgumentos(CustoComponente) : null!
-                                // ].filter(Boolean));
-                                acao.adicionarModificadores((dadosAcao.modificadores?.map(modificador => modificador.props) || []));
-                                acao.adicionarRequisitosEOpcoesPorId(dadosAcao.requisitos);
-                            }
-                        }
-                    ))
-                )
-        );
-    }
-}
-
-export class PersonagemDetalhes {
-    constructor(
-        public nome: string,
-        private _idClassePersonagem: number,
-        private _idNivelPersonagem: number,
-    ) { }
-
-    get refClasse(): Classe {
-        return SingletonHelper.getInstance().classes.find(classe => classe.id === this._idClassePersonagem)!;
-    }
-    get refNivel(): Nivel {
-        return SingletonHelper.getInstance().niveis.find(nivel => nivel.id === this._idNivelPersonagem)!;
-    }
-}
-
-export class Classe {
-    constructor(
-        public id: number,
-        public nome: string,
-        public descricao: string,
-    ) { }
-}
-
-export class Nivel {
-    constructor(
-        public id: number,
-        public nome: string,
-    ) { }
-
-    get nomeDisplay(): string { return `${this.nome}%` }
-}
+//     get nomeDisplay(): string { return `NEX ${this.nome}%` }
+// }

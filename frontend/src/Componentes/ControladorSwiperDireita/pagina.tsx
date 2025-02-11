@@ -17,61 +17,57 @@ import { ContextoControleInventarioProvider, useContextoControleInventario } fro
 import { ContextoControleAcoesProvider, useContextoControleAcoes } from 'Contextos/ContextoControleAcoes/contexto.tsx';
 import { ContextoControleHabilidadesProvider, useContextoControleHabilidades } from 'Contextos/ContextoControleHabilidades/contexto.tsx';
 import { ContextoControleRituaisProvider, useContextoControleRituais } from 'Contextos/ContextoControleRituais/contexto.tsx';
-import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
+
+import { combineProviders } from 'Uteis/uteis.tsx';
 // #endregion
 
-type ProviderProps = {
-    children: React.ReactNode;
-};
-
-const combineProviders = (...providers: React.FC<ProviderProps>[]) => {
-    return ({ children }: ProviderProps) =>
-        providers.reduceRight((acc, Provider) => {
-            return <Provider>{acc}</Provider>;
-        }, children);
-};
-
-const ProvidersControle = combineProviders(
-    ContextoControleEfeitosProvider,
-    ContextoControleAtributosPericiasProvider,
-    ContextoControleInventarioProvider,
-    ContextoControleAcoesProvider,
-    ContextoControleHabilidadesProvider,
-    ContextoControleRituaisProvider
-);
-
 const pagina = () => {
-    const personagem = getPersonagemFromContext();
+    const ProvidersControle = combineProviders(
+        ContextoControleEfeitosProvider,
+        ContextoControleAtributosPericiasProvider,
+        ContextoControleInventarioProvider,
+        ContextoControleAcoesProvider,
+        ContextoControleHabilidadesProvider,
+        ContextoControleRituaisProvider
+    );
 
+    return (
+        <ProvidersControle>
+            <PaginaComContexto />
+        </ProvidersControle>
+    );
+}
+
+const PaginaComContexto = () => {
     const listaPaginas = [
         {
             nome: 'Perícias',
-            componente: <PaginaControleAtributosPericias atributos={personagem.atributos} pericias={personagem.pericias} />,
+            componente: <PaginaControleAtributosPericias />,
             contexto: useContextoControleAtributosPericias
         },
         {
             nome: 'Ações',
-            componente: <PaginaControleAcoes acoesPersonagem={personagem.acoes} />,
+            componente: <PaginaControleAcoes />,
             contexto: useContextoControleAcoes
         },
         {
             nome: 'Inventário',
-            componente: <PaginaControleInventario estatisticasBuffaveis={personagem.estatisticasBuffaveis} inventarioPersonagem={personagem.inventario} />,
+            componente: <PaginaControleInventario />,
             contexto: useContextoControleInventario
         },
-        {
-            nome: 'Habilidades',
-            componente: <PaginaControleHabilidades habilidadesPersonagem={personagem.habilidades} />,
-            contexto: useContextoControleHabilidades
-        },
+        // {
+        //     nome: 'Habilidades',
+        //     componente: <PaginaControleHabilidades />,
+        //     contexto: useContextoControleHabilidades
+        // },
         {
             nome: 'Rituais',
-            componente: <PaginaControleRituais rituaisPersonagem={personagem.rituais} />,
+            componente: <PaginaControleRituais />,
             contexto: useContextoControleRituais
         },
         {
             nome: 'Efeitos',
-            componente: <PaginaControleEfeitos controladorModificadores={personagem.controladorModificadores} />,
+            componente: <PaginaControleEfeitos />,
             contexto: useContextoControleEfeitos
         },
     ];
@@ -83,18 +79,16 @@ const pagina = () => {
     const alternaSwiperDireitaAberto = () => setSwiperDireitaAberto(!swiperDireitaAberto);
 
     return (
-        <ProvidersControle>
-            <div className={`${style.swiper_direita} ${!swiperDireitaAberto ? style.swiper_direita_fechado : ''}`}>
-                <button onClick={alternaSwiperDireitaAberto} className={style.botao_swiper_direita}>o</button>
-                <div id={style.conteudo_swiper_direita}>
-                    <CarrosselSwiperDireita listaPaginas={listaPaginas} setPaginaAbertaSwiper={setPaginaAbertaSwiper} paginaAbertaSwiper={paginaAbertaSwiper} />
+        <div className={`${style.swiper_direita} ${!swiperDireitaAberto ? style.swiper_direita_fechado : ''}`}>
+            <button onClick={alternaSwiperDireitaAberto} className={style.botao_swiper_direita}>o</button>
+            <div id={style.conteudo_swiper_direita}>
+                <CarrosselSwiperDireita listaPaginas={listaPaginas} setPaginaAbertaSwiper={setPaginaAbertaSwiper} paginaAbertaSwiper={paginaAbertaSwiper} />
 
-                    <hr style={{ width: '100%' }} />
+                <hr style={{ width: '100%' }} />
 
-                    {paginaSelecionada.componente}
-                </div>
+                {paginaSelecionada.componente}
             </div>
-        </ProvidersControle>
+        </div>
     );
 }
 

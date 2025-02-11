@@ -1,17 +1,15 @@
-// #region Imports
-import { ComportamentoAcao, ComportamentoModificadorAtivo, ComportamentoModificadorPassivo, ComportamentoComponente, ComportamentoConsomeMunicao, ComportamentoConsomeUso, ComportamentoEmpunhavel, ComportamentoMunicao, ComportamentoRequisito, ComportamentoRitual, ComportamentosModificador, ComportamentoUtilizavel, ComportamentoVestivel, DadosGenericosAcao, DadosGenericosItem, DadosGenericosRitual, Modificador, RequisitoMunicao, RequisitoUso, ComportamentoDificuldadeAcao, ComportamentoCustoAcao, Item, DadosGenericosHabilidade } from 'Classes/ClassesTipos/index.ts';
-// #endregion
+import { DadosAtributoPersonagem, DadosEstatisticaDanificavelPersonagem, DadosPericiaPatentePersonagem, DadosReducaoDano, DadosRitual } from "Classes/ClassesTipos/index.ts";
 
 export type RLJ_Ficha2 = {
     detalhes: { nome: string, idClasse: number, idNivel: number },
-    estatisticasDanificaveis?: { id: number, valorMaximo: number, valor?: number }[],
-    estatisticasBuffaveis?: { id: number, valor: number }[],
-    atributos?: { id: number, valor: number }[],
-    periciasPatentes?: { idPericia: number, idPatente: number }[],
-    rituais?: ArgsRitual[],
+    estatisticasDanificaveis: DadosEstatisticaDanificavelPersonagem[],
+    estatisticasBuffaveis: { id: number, valor: number }[],
+    atributos: DadosAtributoPersonagem[],
+    periciasPatentes: DadosPericiaPatentePersonagem[],
+    rituais: DadosRitual[],
     habilidadesEspeciais?: PropsHabilidades[],
-    inventario?: ArgsItem[],
-    reducoesDano?: { idTipoDano: number, valor: number }[],
+    inventario: ArgsItem[],
+    reducoesDano: DadosReducaoDano[],
     pendencias: { idNivelEsperado: number },
 }
 
@@ -34,7 +32,7 @@ export type DadosComportamentosItem = {
 export type ArgsAcao = {
     args: ConstructorParameters<typeof DadosGenericosAcao>[0],
     dadosComportamentos: DadosComportamentosAcao;
-    custos: subDadosCusto,
+    // custos: subDadosCusto,
     modificadores?: PropsModificador[],
     requisitos: number[]
 };
@@ -54,7 +52,7 @@ export type DadosAcaoCustomizada = {
 }
 
 export type ArgsRitual = {
-    args: ConstructorParameters<typeof DadosGenericosRitual>[0],
+    // args: ConstructorParameters<typeof DadosGenericosRitual>[0],
     dadosComportamentos: DadosComportamentosRitual;
     dadosAcoes: ArgsAcao[]
 };
@@ -72,21 +70,6 @@ export type PropsHabilidades = {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-export type DadosComportamentosModificador = {
-    dadosComportamentoAtivo?: ConstructorParameters<typeof ComportamentoModificadorAtivo>;
-    dadosComportamentoPassivo?: ConstructorParameters<typeof ComportamentoModificadorPassivo>;
-};
 
 
 

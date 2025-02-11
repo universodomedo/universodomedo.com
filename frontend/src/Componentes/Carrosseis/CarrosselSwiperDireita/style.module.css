@@ -4,6 +4,7 @@
     opacity: 0.5;
     text-align: center;
     transition: transform 300ms, opacity 300ms, flex-basis 300ms;
+    cursor: pointer;
 }
 
 .item_slider_selecionado {

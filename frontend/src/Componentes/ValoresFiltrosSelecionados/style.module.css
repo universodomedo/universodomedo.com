@@ -1,7 +1,7 @@
 .valores_filtrados {
     display: flex;
     flex-direction: row;
-    margin: auto;
+    /* margin: auto; */
     flex-wrap: wrap;
     width: 60%;
     align-items: center;

@@ -5,8 +5,6 @@ import { useState } from 'react';
 import { ValoresLinhaEfeito } from 'Classes/ClassesTipos/index.ts'
 import { useContextoControleEfeitos } from 'Contextos/ContextoControleEfeitos/contexto.tsx';
 
-import PopoverComponente from 'Componentes/Popover/pagina.tsx';
-import Tooltip from 'Componentes/Tooltip/pagina.tsx';
 import Modal from 'Componentes/ModalDialog/pagina.tsx';
 // #endregion
 
@@ -15,83 +13,63 @@ const page = ({ valoresLinhaEfeito }: { valoresLinhaEfeito: ValoresLinhaEfeito }
 
     const { mostrarEtiquetas } = useContextoControleEfeitos();
 
-    const icone = () => {
-        return (
-            <div className={style.embrulho_icone}>
-                {mostrarEtiquetas && (<h3>{valoresLinhaEfeito.refLinhaEfeito.nome}</h3>)}
-                <Tooltip>
-                    <Tooltip.Trigger>
-                        <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${valoresLinhaEfeito.refLinhaEfeito.svg})`, backgroundColor: '#FFFFFF', }} />
-                    </Tooltip.Trigger>
-
-                    <Tooltip.Content>
-                        <h3>{valoresLinhaEfeito.refLinhaEfeito.nome}</h3>
-                    </Tooltip.Content>
-                </Tooltip>
-            </div>
-        );
-    }
-
-    const conteudo = (close: () => void) => {
-        return (
-            <div className={style.conteudo_popover}>
-                <h2>{valoresLinhaEfeito.refLinhaEfeito.nome}</h2>
-                <div className={style.acoes}>
-                    <Modal open={openDetalhes} onOpenChange={(isOpen) => { setOpenDetalhes(isOpen); if (!isOpen) close(); }}>
-                        {/* <Modal open={openDetalhes} onOpenChange={setOpenDetalhes}> */}
-                        <Modal.Button>
-                            Detalhes
-                        </Modal.Button>
-
-                        <Modal.Content title={`Detalhes - ${valoresLinhaEfeito.refLinhaEfeito.nome}`}>
-                            <ConteudoDetalhes />
-                        </Modal.Content>
-                    </Modal>
-                </div>
-            </div>
-        );
-    }
-
-    const ConteudoDetalhes = () => {
-        return (
-            <>
-                <div className={style.bloco_texto}>
-                    {valoresLinhaEfeito.valoresEfeitos.valorBaseAdicionalPresente && (
-                        <details>
-                            <summary>Seu <span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome} Base</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorBaseAdicional}</summary>
-                            {valoresLinhaEfeito.valoresEfeitos.listaValorBaseAdicional.map((valor, index) => (
-                                <p key={index} className={style.texto_details}>{valor.tipoValor} em {valor.valor} pela {valor.tipoPai} {valor.nomeRegistro}</p>
-                            ))}
-                        </details>
-                    )}
-                    {valoresLinhaEfeito.valoresEfeitos.valorPorcentagemAdicionalPresente && (
-                        <details>
-                            <summary>Seu <span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome}</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorPorcentagemAdicional}%</summary>
-                            {valoresLinhaEfeito.valoresEfeitos.listaPorcentagemAdicional.map((valor, index) => (
-                                <p key={index} className={style.texto_details}>{valor.tipoValor} em {valor.valor}% pela {valor.tipoPai} {valor.nomeRegistro}</p>
-                            ))}
-                        </details>
-                    )}
-                    {valoresLinhaEfeito.valoresEfeitos.valorBonusAdicionalPresente && (
-                        <details>
-                            <summary>Seu <span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome} Adicional</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorBonusAdicional}</summary>
-                            {valoresLinhaEfeito.valoresEfeitos.listaValorBonusAdicional.map((valor, index) => (
-                                <p key={index} className={style.texto_details}>{valor.tipoValor} em {valor.valor} pela {valor.tipoPai} {valor.nomeRegistro}</p>
-                            ))}
-                        </details>
-                    )}
-                    <p>Efeito finaliza em 2 turnos</p>
-                </div>
-            </>
-        );
-    }
-
     {/* <p className={style.texto}>{`+${efeito.valor} ${efeito.refBuff.nome}`}</p>
                 <p className={style.texto}>{`${efeito.refTipoBuff.nomeExibirTooltip}`}</p>
                 <p className={style.texto}>{`${efeito.textoDuracao}`}</p> */}
-
+    
     return (
-        <PopoverComponente trigger={icone} content={conteudo} />
+        <Modal open={openDetalhes} onOpenChange={setOpenDetalhes}>
+            <Modal.Button>
+                <Icone valoresLinhaEfeito={valoresLinhaEfeito} mostrarEtiquetas={mostrarEtiquetas} />
+            </Modal.Button>
+
+            <Modal.Content title={`${valoresLinhaEfeito.refLinhaEfeito.nome}`}>
+                <ConteudoDetalhes valoresLinhaEfeito={valoresLinhaEfeito} />
+            </Modal.Content>
+        </Modal>
+    );
+}
+
+const Icone = ({ valoresLinhaEfeito, mostrarEtiquetas }: { valoresLinhaEfeito: ValoresLinhaEfeito, mostrarEtiquetas: boolean }) => {
+    return (
+        <div className={style.embrulho_icone}>
+            {mostrarEtiquetas && (<h3>{valoresLinhaEfeito.refLinhaEfeito.nome}</h3>)}
+            <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+)`, backgroundColor: '#FFFFFF', }} />
+            {/* <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${valoresLinhaEfeito.refLinhaEfeito.svg})`, backgroundColor: '#FFFFFF', }} /> */}
+        </div>
+    );
+}
+
+const ConteudoDetalhes = ({ valoresLinhaEfeito }: { valoresLinhaEfeito: ValoresLinhaEfeito }) => {
+    return (
+        <>
+            <div className={style.bloco_texto}>
+                {valoresLinhaEfeito.valoresEfeitos.valorBaseAdicionalPresente && (
+                    <details>
+                        <summary><span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome} Base</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorBaseAdicional}</summary>
+                        {valoresLinhaEfeito.valoresEfeitos.listaValorBaseAdicional.map((valor, index) => (
+                            <p key={index} className={style.texto_details}>{valor.tipoValor} em {valor.valor} pela {valor.tipoPai} {valor.nomeRegistro}</p>
+                        ))}
+                    </details>
+                )}
+                {valoresLinhaEfeito.valoresEfeitos.valorPorcentagemAdicionalPresente && (
+                    <details>
+                        <summary><span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome}</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorPorcentagemAdicional}%</summary>
+                        {valoresLinhaEfeito.valoresEfeitos.listaPorcentagemAdicional.map((valor, index) => (
+                            <p key={index} className={style.texto_details}>{valor.tipoValor} em {valor.valor}% pela {valor.tipoPai} {valor.nomeRegistro}</p>
+                        ))}
+                    </details>
+                )}
+                {valoresLinhaEfeito.valoresEfeitos.valorBonusAdicionalPresente && (
+                    <details>
+                        <summary><span className={style.bold}>{valoresLinhaEfeito.refLinhaEfeito.nome} Adicional</span> está sendo aumentando em {valoresLinhaEfeito.valoresEfeitos.valorBonusAdicional}</summary>
+                        {valoresLinhaEfeito.valoresEfeitos.listaValorBonusAdicional.map((valor, index) => (
+                            <p key={index} className={style.texto_details}>{valor.tipoValor} em {valor.valor} pela {valor.tipoPai} {valor.nomeRegistro}</p>
+                        ))}
+                    </details>
+                )}
+            </div>
+        </>
     );
 }
 

@@ -13,6 +13,7 @@ import LayoutEmJogo from "Layouts/EmJogo/layout";
 
 import AuthOutlet from '@auth-kit/react-router/AuthOutlet';
 import { Provider as RadixTooltip } from "@radix-ui/react-tooltip";
+import { SingletonHelper } from "Classes/classes_estaticas";
 // import { SalaProvider } from "Providers/SalaProvider.tsx";
 // #endregion
 

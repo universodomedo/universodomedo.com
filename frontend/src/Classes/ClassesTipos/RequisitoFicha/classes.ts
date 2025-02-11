@@ -1,13 +1,13 @@
 // #region Imports
-import { Personagem } from 'Classes/ClassesTipos/index.ts';
+import { RLJ_Ficha2 } from 'Classes/ClassesTipos/index.ts';
 // #endregion
 
 export class RequisitoFicha {
     constructor(
-        private condicao: (personagem: Personagem) => boolean
+        private condicao: (dados: RLJ_Ficha2) => boolean
     ) { }
 
-    verificaRequisitoCumprido(personagem: Personagem): boolean {
-        return this.condicao(personagem)
+    verificaRequisitoCumprido(dados: RLJ_Ficha2): boolean {
+        return this.condicao(dados)
     }
 }

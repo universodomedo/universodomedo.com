@@ -22,7 +22,7 @@ const pagina = () => {
 
     return (
         <div className={style.pagina_rituais_visualizacao}>
-            <div className={style.rituais_pendentes}>
+            {/* <div className={style.rituais_pendentes}>
                 <h1>Rituais Pendentes: {ganhoRitual.numeroRituaisPendentes}</h1>
                 <button onClick={() => { mudarPaginaRitual(1) }} disabled={ganhoRitual.finalizado}>Criar Ritual</button>
             </div>
@@ -53,7 +53,7 @@ const pagina = () => {
                         );
                     })}
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }

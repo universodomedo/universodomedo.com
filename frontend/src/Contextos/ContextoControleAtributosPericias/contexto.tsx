@@ -12,16 +12,6 @@ interface ContextoControleAtributosPericiasProps {
 
 export const ContextoControleAtributosPericias = createContext<ContextoControleAtributosPericiasProps | undefined>(undefined);
 
-export const useContextoControleAtributosPericias = (): ContextoControleAtributosPericiasProps => {
-    const context = useContext(ContextoControleAtributosPericias);
-
-    if (!context) {
-        throw new Error('useContextoControleAtributosPericias precisa estar dentro de um ContextoControleAtributosPericias');
-    }
-
-    return context;
-};
-
 export const ContextoControleAtributosPericiasProvider = ({ children }: { children: React.ReactNode }) => {
     const [abreviar, setAbreviar] = useState(false);
 
@@ -43,3 +33,9 @@ export const ContextoControleAtributosPericiasProvider = ({ children }: { childr
         </ContextoControleAtributosPericias.Provider>
     );
 }
+
+export const useContextoControleAtributosPericias = (): ContextoControleAtributosPericiasProps => {
+    const context = useContext(ContextoControleAtributosPericias);
+    if (!context) throw new Error('useContextoControleAtributosPericias precisa estar dentro de um ContextoControleAtributosPericias');
+    return context;
+};

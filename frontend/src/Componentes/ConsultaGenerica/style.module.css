@@ -38,15 +38,27 @@
     flex-direction: row;
     gap: 3%;
     justify-content: center;
-    height: 3.8rem;
+    flex-wrap: wrap;
+    row-gap: 1vh;
+    width: 100%;
 }
 
 .div_filtro {
     display: flex;
     flex-direction: column;
+    flex: 0 0 calc(45%);
     gap: .5vh;
+    align-items: center;
+}
+
+.recipiente_input_filtro {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.recipiente_input_filtro > div {
     flex: 1;
-    width: 18vw;
 }
 
 .divisao_registros {
@@ -78,4 +90,5 @@
     all: unset;
     width: calc((100% - (3 * 2vw)) / 3);
     flex: 0 1 auto;
+    pointer-events: none;
 }

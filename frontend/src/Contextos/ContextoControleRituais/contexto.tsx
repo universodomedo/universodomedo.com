@@ -14,16 +14,6 @@ interface ContextoControleRituaisProps {
 
 export const ContextoControleRituais = createContext<ContextoControleRituaisProps | undefined>(undefined);
 
-export const useContextoControleRituais = (): ContextoControleRituaisProps => {
-    const context = useContext(ContextoControleRituais);
-
-    if (!context) {
-        throw new Error('useContextoControleRituais precisa estar dentro de um ContextoControleRituais');
-    }
-
-    return context;
-};
-
 export const ContextoControleRituaisProvider = ({ children }: { children: React.ReactNode }) => {
     const [mostrarFiltros, setMostrarFiltros] = useState(false);
     const [mostrarEtiquetas, setMostrarEtiquetas] = useState(true);
@@ -52,3 +42,9 @@ export const ContextoControleRituaisProvider = ({ children }: { children: React.
         </ContextoControleRituais.Provider>
     );
 }
+
+export const useContextoControleRituais = (): ContextoControleRituaisProps => {
+    const context = useContext(ContextoControleRituais);
+    if (!context) throw new Error('useContextoControleRituais precisa estar dentro de um ContextoControleRituais');
+    return context;
+};
