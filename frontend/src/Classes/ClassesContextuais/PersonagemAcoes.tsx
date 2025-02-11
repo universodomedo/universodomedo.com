@@ -90,10 +90,7 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
                     }
                 })
             }
-
-            console.log(estatisticasDanificaveis);
-            console.log(acao);
-
+            
             return acao;
         }));
     }, []);

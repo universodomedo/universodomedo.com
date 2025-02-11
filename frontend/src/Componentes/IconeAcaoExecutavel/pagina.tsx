@@ -10,7 +10,7 @@ import RecipienteDeAbas from 'Componentes/RecipienteDeAbas/pagina.tsx';
 
 const pagina = ({ acao, mostrarEtiquetas = false }: { acao: Acao, mostrarEtiquetas?: boolean }) => {
     const [openModal, setOpenModal] = useState(false);
-    
+
     return (
         <Modal open={openModal} onOpenChange={setOpenModal}>
             <Modal.Button>
@@ -63,6 +63,15 @@ const ConteudoExecucao = ({ acao, fecharModal }: { acao: Acao, fecharModal: () =
         }
     };
 
+    console.log('------------------------------------');
+    
+    console.log(acao);
+    console.log(acao.custos);
+    console.log(acao.custos.custoAcaoPE);
+    console.log(acao.custos.custoAcaoPE?.podeSerPago);
+    
+    console.log('------------------------------------');
+
     return (
         <>
             <div className={style.recipiente_conteudo_execucao_modal}>
@@ -93,8 +102,15 @@ const ConteudoExecucao = ({ acao, fecharModal }: { acao: Acao, fecharModal: () =
                         <p className={style.texto}>{acao.dificuldadeAcao.refAtributoPersonagem.refAtributo.nomeAbreviado} {acao.dificuldadeAcao.refPericiaPatentePersonagem.refPericia.nomeAbreviado} DT {acao.dificuldadeAcao.checagemDificuldade.valorChecagemDificuldade}</p>
                     </div>
                 )}
+                {acao.custos.listaCustos.length > 0 && (
+                    <div className={style.bloco_texto}>
+                        <p className={style.titulo}>Custos</p>
+                        <p className={`${style.texto} ${!acao.custos.custoAcaoExecucao.podeSerPago ? 'cor_mensagem_erro' : ''}`}>{acao.custos.custoAcaoExecucao.resumoPagamento}</p>
+                        {acao.custos.custoAcaoPE && (<p className={`${style.texto} ${!acao.custos.custoAcaoPE.podeSerPago ? 'cor_mensagem_erro' : ''}`}>{acao.custos.custoAcaoPE.valor} P.E.</p>)}
+                    </div>
+                )}
             </div>
-            <button ref={buttonRef} className={style.botao_principal} onClick={() => {  executaAcao(acao); fecharModal(); }}>Executar</button>
+            <button ref={buttonRef} className={style.botao_principal} onClick={() => { executaAcao(acao); fecharModal(); }}>Executar</button>
         </>
     );
 

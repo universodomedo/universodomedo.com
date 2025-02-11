@@ -29,6 +29,7 @@ export const criarCustos = (dadosCustos: DadosCustos, informacoesContextuais: { 
 
             get descricaoListaPreco(): string { return this.listaPrecosAplicados.map(preco => preco.descricaoPreco).join(' e ') },
             get temApenasAcaoLivre(): boolean { return !this.listaPrecosAplicados.some(preco => preco.refExecucao.id !== 1); },
+            // get podeSerPago(): boolean { return true; },
             get podeSerPago(): boolean { return podePagarPreco(this.listaPrecosAplicados); },
             get resumoPagamento(): string { return resumoPagamento(this.listaPrecosAplicados).join(' e '); },
             aplicaCusto: function () { pagaPrecoExecucao(this.listaPrecosAplicados); },
@@ -36,6 +37,7 @@ export const criarCustos = (dadosCustos: DadosCustos, informacoesContextuais: { 
         ...(dadosCustos.dadosPrecoPE && {
             custoAcaoPE: {
                 valor: dadosCustos.dadosPrecoPE.valor,
+                // get podeSerPago(): boolean { return true },
                 get podeSerPago(): boolean { return (estatisticasDanificaveis?.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)?.valorAtual ?? 0) > this.valor },
                 aplicaCusto: function () { estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)?.alterarValorAtual(this.valor); },
             }
