@@ -3,7 +3,7 @@ import { pluralize, PrecoExecucao } from "Classes/ClassesTipos/index.ts";
 import { useClasseContextualPersonagemEstatisticasBuffaveis } from "./PersonagemEstatisticasBuffaveis";
 
 export const useCustosExecucoes = () => {
-    const { execucoes } = useClasseContextualPersonagemEstatisticasBuffaveis();
+    const { execucoes, setExecucoes } = useClasseContextualPersonagemEstatisticasBuffaveis();
 
     const calculaCustos = (precoExecucao: PrecoExecucao[]) => {
         let custoPadrao = 0;
@@ -36,15 +36,23 @@ export const useCustosExecucoes = () => {
 
     const pagaPrecoExecucao = (precoExecucao: PrecoExecucao[]) => {
         const { custoPadrao, custoMovimento, deficitMovimento } = calculaCustos(precoExecucao);
+    
+        const novasExecucoes = execucoes.map(exec => {
+            if (exec.refExecucao.id === 2) {
+                return { ...exec, numeroAcoesAtuais: exec.numeroAcoesAtuais - custoPadrao - deficitMovimento, };
+            } else if (exec.refExecucao.id === 3) {
+                return { ...exec, numeroAcoesAtuais: Math.max(0, exec.numeroAcoesAtuais - custoMovimento), };
+            }
 
-        const execucaoPadrao = execucoes.find(exec => exec.refExecucao.id === 2)!;
-        const execucaoMovimento = execucoes.find(exec => exec.refExecucao.id === 3)!;
-
-        execucaoMovimento.numeroAcoesAtuais = Math.max(0, execucaoMovimento.numeroAcoesAtuais - custoMovimento);
-        execucaoPadrao.numeroAcoesAtuais -= custoPadrao + deficitMovimento;
+            return exec;
+        });
+    
+        // setExecucoes(novasExecucoes);
     };
 
     const resumoPagamento = (precoExecucao: PrecoExecucao[]) => {
+        if (!precoExecucao.some(preco => preco.refExecucao.id !== 1)) return ['Ação Livre'];
+
         const { custoPadrao, custoMovimento, deficitMovimento, disponivelMovimento } = calculaCustos(precoExecucao);
 
         const log: string[] = [];

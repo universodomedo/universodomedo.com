@@ -1,4 +1,13 @@
-import { PrecoExecucao } from 'Classes/ClassesTipos/index.ts';
+import { DadosPrecoExecucao, PrecoExecucao } from 'Classes/ClassesTipos/index.ts';
+
+export type DadosCustos = {
+    dadosPrecoExecucao: DadosPrecoExecucao[];
+    dadosPrecoPE?: DadosPrecoPE;
+};
+
+export type DadosPrecoPE = {
+    valor: number;
+};
 
 
 export type Custos = {
@@ -19,6 +28,8 @@ export type Custo = {
 export type CustoPE = {
     valor: number;
 };
+
+export type DadosCustoPE = Pick<CustoPE, 'valor'>;
 
 export type CustoAcaoPE = Custo & CustoPE;
 

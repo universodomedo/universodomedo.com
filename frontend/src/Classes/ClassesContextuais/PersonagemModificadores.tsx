@@ -1,7 +1,7 @@
 // #region Imports
 import React, { createContext, useContext } from "react";
 
-import { adicionaSinalEmNumeroParaExibicao, ComportamentosModificador, criarValoresEfeito, Duracao, Efeito, LinhaEfeito, Modificador, RegistroValorEfeito, TipoEfeito, ValoresEfeito, ValoresLinhaEfeito, ValoresLinhaEfeitoAgrupados } from "Classes/ClassesTipos/index.ts";
+import { adicionaSinalEmNumeroParaExibicao, criarValoresEfeito, Duracao, Efeito, LinhaEfeito, Modificador, RegistroValorEfeito, TipoEfeito, ValoresEfeito, ValoresLinhaEfeito, ValoresLinhaEfeitoAgrupados } from "Classes/ClassesTipos/index.ts";
 import { SingletonHelper } from "Classes/classes_estaticas";
 // #endregion
 
@@ -15,54 +15,8 @@ interface ClasseContextualPersonagemModificadoresProps {
 export const PersonagemModificadores = createContext<ClasseContextualPersonagemModificadoresProps | undefined>(undefined);
 
 export const PersonagemModificadoresProvider = ({ children }: { children: React.ReactNode; }) => {
-    // let modificadores: IModificador[] = [
-    //     {
-    //         nome: 'teste',
-    //         comportamentos: new ComportamentosModificador(),
-    //         idDuracao: 3,
-    //         quantidadeDuracaoMaxima: 1,
-    //         efeitos: [
-    //             new Efeito({ idLinhaEfeito: 1, idTipoEfeito: 1, dadosValoresEfeitos: { valorBaseAdicional: 1, valorPorcentagemAdicional: 1, valorBonusAdicional: 2 } })
-    //         ],
-    //         refPai: new Acao(),
-    //         c
-    //     },
-    // ];
-    // let modificadores: Modificador[] = modificadores.map(modificador => {
-    //     const modificadorService = {
-    //         ...modificador,
-
-    //         quantidadeDuracaoAtual: 1,
-    //         get refDuracao(): Duracao { return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id = 3)!; },
-    //         get codigoUnico(): string { return 'codigoUnico'; },
-    //         get textoDuracao(): string { return 'textoDuracao'; },
-    //     };
-
-    //     return modificadorService;
-    // });
-
     // tentar arrumar uma forma de mudar a logia de removeModificador, que atribui um novo valor a essa variavel, ent eu tenho q deixar como let
-    const modificadores: Modificador[] = [
-        {
-            nome: "teste",
-            comportamentos: new ComportamentosModificador,
-            idDuracao: 3,
-            quantidadeDuracaoMaxima: 1,
-            efeitos: [
-                {
-                    get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === 16)!; },
-                    get refTipoEfeito(): TipoEfeito { return SingletonHelper.getInstance().tipos_efeito.find(tipo_efeito => tipo_efeito.id === 1)!; },
-                    valoresEfeitos: criarValoresEfeito({ valorBonusAdicional: 3 }),
-                }
-            ],
-            tipoRefPai: "Ação",
-            svg: `PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+`,
-            quantidadeDuracaoAtual: 1,
-            get refDuracao(): Duracao { return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === 3)! },
-            codigoUnico: "asfasf",
-            textoDuracao: "1 turno"
-        },
-    ];
+    const modificadores: Modificador[] = [];
 
     const agrupamentoDeEfeitosPorLinhaEfeito = (): { idLinhaEfeito: number, listaEfeitosNaLinha: { nomeModificador: string, tipoPaiModificador: string, efeito: Efeito }[] }[] => {
         const agrupados: { idLinhaEfeito: number, listaEfeitosNaLinha: { nomeModificador: string, tipoPaiModificador: string, efeito: Efeito }[] }[] = [];

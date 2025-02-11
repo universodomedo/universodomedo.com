@@ -1,4 +1,5 @@
-import { ValoresEfeito } from "Classes/ClassesTipos/index.ts";
+import { SingletonHelper } from "Classes/classes_estaticas";
+import { criarValoresEfeito, DadosValorEfeito, ValoresEfeito } from "Classes/ClassesTipos/index.ts";
 
 export type LinhaEfeitoModelo = {
     id: number;
@@ -22,4 +23,20 @@ export type Efeito = {
     valoresEfeitos: ValoresEfeito;
     readonly refLinhaEfeito: LinhaEfeito;
     readonly refTipoEfeito: TipoEfeito;
+    __key: "criarEfeito";
+};
+
+export type DadosEfeito = {
+    dadosValorEfeito: DadosValorEfeito;
+    idLinhaEfeito: number;
+    idTipoEfeito: number;
+};
+
+export const criarEfeito = (dadosEfeito: DadosEfeito): Efeito => {
+    return {
+        valoresEfeitos: criarValoresEfeito(dadosEfeito.dadosValorEfeito),
+        get refLinhaEfeito(): LinhaEfeito { return SingletonHelper.getInstance().linhas_efeito.find(linha_efeito => linha_efeito.id === dadosEfeito.idLinhaEfeito)!; },
+        get refTipoEfeito(): TipoEfeito { return SingletonHelper.getInstance().tipos_efeito.find(tipo_efeito => tipo_efeito.id === dadosEfeito.idTipoEfeito)!; },
+        __key: "criarEfeito", // Efeito não deve ser criado se não usando esse metodo
+    }
 };

@@ -25,6 +25,10 @@ input {
     color: black;
 }
 
+.cor_mensagem_erro {
+    color: #FF0000;
+}
+
 ::-webkit-scrollbar {
     width: 10px;
 }

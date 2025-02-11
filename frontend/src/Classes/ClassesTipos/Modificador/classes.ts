@@ -1,49 +1,31 @@
-// #region Imports
-import { Acao, ComportamentosModificador, Duracao, Efeito, Habilidade, Item } from 'Classes/ClassesTipos/index.ts';
-// import { SingletonHelper } from 'Classes/classes_estaticas.ts';
-
-// import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
-// #endregion
+import { Acao, DadosEfeito, Duracao, Efeito, Habilidade, Item } from 'Classes/ClassesTipos/index.ts';
 
 export type Modificador = {
     nome: string;
-    comportamentos: ComportamentosModificador;
-    idDuracao: number;
     quantidadeDuracaoMaxima: number;
     efeitos: Efeito[];
-    // readonly refPai: Acao | Habilidade | Item;
+    readonly refPai: Acao | Habilidade | Item;
     readonly tipoRefPai: 'Ação' | 'Habilidade' | 'Item';
     svg: string;
     quantidadeDuracaoAtual: number;
     readonly refDuracao: Duracao;
     readonly codigoUnico: string;
     readonly textoDuracao: string;
-}
+    tipoModificador: { tipo: 'Ativo' } | { tipo: 'Passivo', requisito?: 'Empunhar' | 'Vestir' };
+};
+
+export type DadosModificador = Pick<Modificador, 'nome'> & {
+    idDuracao: number;
+    quantidadeDuracaoMaxima: number;
+    quantidadeDuracaoAtual: number;
+    dadosEfeitos: DadosEfeito[];
+    tipoModificador: { tipo: 'Ativo' } | { tipo: 'Passivo', requisito?: 'Empunhar' | 'Vestir' };
+};
 
 
 
 
 
-
-
-
-
-// export interface IModificador {
-//     nome: string;
-//     comportamentos: ComportamentosModificador;
-//     idDuracao: number;
-//     quantidadeDuracaoMaxima: number;
-//     efeitos: Efeito[];
-//     readonly refPai: Acao | HabilidadePassiva | Item;
-//     svg: string;
-// }
-
-// export interface IModificadorService extends IModificador {
-//     quantidadeDuracaoAtual: number;
-//     readonly refDuracao: Duracao;
-//     readonly codigoUnico: string;
-//     readonly textoDuracao: string;
-// }
 
 // export class Modificador {
 //     private static contadorId = 0;

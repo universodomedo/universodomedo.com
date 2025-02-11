@@ -4,10 +4,3 @@ export type TipoAlvoModelo = {
 };
 
 export type TipoAlvo = TipoAlvoModelo;
-
-// export class TipoAlvo {
-//     constructor(
-//         public id: number,
-//         public nome: string,
-//     ) { }
-// }

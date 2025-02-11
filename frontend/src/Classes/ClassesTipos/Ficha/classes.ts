@@ -73,21 +73,6 @@ export type PropsHabilidades = {
 
 
 
-
-
-
-
-
-
-
-
-export type DadosComportamentosModificador = {
-    dadosComportamentoAtivo?: ConstructorParameters<typeof ComportamentoModificadorAtivo>;
-    dadosComportamentoPassivo?: ConstructorParameters<typeof ComportamentoModificadorPassivo>;
-};
-
-
-
 export type subDadosCusto = {
     custoPE?: { valor: number }, custoExecucao?: { idExecucao: number, valor: number }[], custoComponente?: boolean
 }

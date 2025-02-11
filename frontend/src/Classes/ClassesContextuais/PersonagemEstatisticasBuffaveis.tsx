@@ -1,5 +1,5 @@
 // #region Imports
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { Defesa, Deslocamento, EspacoCategoria, EspacoInventario, Execucao, ExecucaoPersonagem, Extremidade, ResistenciaParanormal, TipoCategoria } from "Classes/ClassesTipos/index.ts";
 
@@ -12,6 +12,7 @@ interface ClasseContextualPersonagemEstatisticasBuffaveisProps {
     deslocamento: Deslocamento;
     espacoInventario: EspacoInventario;
     execucoes: ExecucaoPersonagem[];
+    setExecucoes: (execucoes: ExecucaoPersonagem[]) => void;
     extremidades: Extremidade[];
     espacosCategoria: EspacoCategoria[];
     resistenciaParanormal: ResistenciaParanormal;
@@ -39,22 +40,27 @@ export const PersonagemEstatisticasBuffaveisProvider = ({ children }: { children
         get capacidadeTotal(): number { return this.capacidadeNatural + (atributos.find(atributo => atributo.refAtributo.id === 2)!.valorTotal * this.capacidadeExtraPorForca) },
     };
 
-    const execucoes: ExecucaoPersonagem[] = [
-        {
-            numeroAcoesMaximasNatural: 1,
-            numeroAcoesAtuais: 1,
-            get numeroAcoesMaximasTotal(): number { return this.numeroAcoesMaximasNatural; },
-            get refExecucao(): Execucao { return SingletonHelper.getInstance().execucoes.find(execucao => execucao.id === 2)!; },
-            recarregaNumeroAcoes: () => { console.log('precisa implementar recarregaNumeroAcoes'); },
-        },
-        {
-            numeroAcoesMaximasNatural: 1,
-            numeroAcoesAtuais: 1,
-            get numeroAcoesMaximasTotal(): number { return this.numeroAcoesMaximasNatural; },
-            get refExecucao(): Execucao { return SingletonHelper.getInstance().execucoes.find(execucao => execucao.id === 3)!; },
-            recarregaNumeroAcoes: () => { console.log('precisa implementar recarregaNumeroAcoes'); },
-        },
-    ];
+    const [execucoes, setExecucoes] = useState<ExecucaoPersonagem[]>([]);
+    useEffect(() => {
+        setExecucoes(
+            [
+                {
+                    numeroAcoesMaximasNatural: 1,
+                    numeroAcoesAtuais: 1,
+                    get numeroAcoesMaximasTotal(): number { return this.numeroAcoesMaximasNatural; },
+                    get refExecucao(): Execucao { return SingletonHelper.getInstance().execucoes.find(execucao => execucao.id === 2)!; },
+                    recarregaNumeroAcoes: () => { console.log('precisa implementar recarregaNumeroAcoes'); },
+                },
+                {
+                    numeroAcoesMaximasNatural: 1,
+                    numeroAcoesAtuais: 1,
+                    get numeroAcoesMaximasTotal(): number { return this.numeroAcoesMaximasNatural; },
+                    get refExecucao(): Execucao { return SingletonHelper.getInstance().execucoes.find(execucao => execucao.id === 3)!; },
+                    recarregaNumeroAcoes: () => { console.log('precisa implementar recarregaNumeroAcoes'); },
+                },
+            ]
+        );
+    }, []);
 
     const extremidades: Extremidade[] = Array.from({ length: 2 }, (_, index) => {
         return {
@@ -129,7 +135,7 @@ export const PersonagemEstatisticasBuffaveisProvider = ({ children }: { children
     // }
 
     return (
-        <PersonagemEstatisticasBuffaveis.Provider value={{ defesa, deslocamento, espacoInventario, execucoes, extremidades, espacosCategoria, resistenciaParanormal }}>
+        <PersonagemEstatisticasBuffaveis.Provider value={{ defesa, deslocamento, espacoInventario, execucoes, setExecucoes, extremidades, espacosCategoria, resistenciaParanormal }}>
             {children}
         </PersonagemEstatisticasBuffaveis.Provider>
     );

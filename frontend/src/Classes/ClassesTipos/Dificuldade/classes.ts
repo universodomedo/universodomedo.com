@@ -10,6 +10,9 @@ export type DificuldadeAcao = {
 export type DadosDificuldadeAcao = {
     idAtributo: number;
     idPericia: number;
+    valorDificuldade: number;
+
+    dadosDificuldadeDinamica?: DadosDificuldadeDinamica;
 };
 
 export type ChecagemDificuldade = {
@@ -76,27 +79,17 @@ export const criarDificuldadeDinamica = (dadosDificuldadeDinamica: DadosDificuld
 
 export const realizaChecagemDificuldade = (acao: Acao): boolean => {
     if (acao.dificuldadeAcao !== undefined) {
-        console.log(`Checagem de Dificuldade encontrada. >>>>> DT ${acao.dificuldadeAcao.checagemDificuldade.valorChecagemDificuldade}`);
-
         const retornoChecagemDificuldade = acao.dificuldadeAcao.refPericiaPatentePersonagem.realizarTeste();
 
         if (retornoChecagemDificuldade >= acao.dificuldadeAcao.checagemDificuldade.valorChecagemDificuldade) {
-            console.log('passou');
-            
-            if (acao.dificuldadeAcao.checagemDificuldade.dificuldadeDinamica !== undefined) {
-                console.log('------------- atualizando dificuldade');
-
-                acao.dificuldadeAcao.checagemDificuldade.dificuldadeDinamica.atualizaDificuldade();
-            }
+            if (acao.dificuldadeAcao.checagemDificuldade.dificuldadeDinamica !== undefined) acao.dificuldadeAcao.checagemDificuldade.dificuldadeDinamica.atualizaDificuldade();
 
             return true;
         } else {
-            console.log('não passou');
-            acao.trava('Falhou na Checagem de Dificuldade');
+            acao.trava('Dificuldade não superada');
             return false;
         }
-    } else {
-        console.log('Não foi encontrada Checagem de Dificuldade, indo para o próximo passo');
-        return true;
     }
+
+    return true;
 };
