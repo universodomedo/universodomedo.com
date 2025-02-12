@@ -1,7 +1,21 @@
-import { NomeCustomizado } from "Classes/ClassesTipos/index.ts";
+import { DadosAcao, DadosPrecoExecucao, Elemento, Extremidade, Modificador, NivelComponente, NomeCustomizado, PrecoExecucao } from "Classes/ClassesTipos/index.ts";
 
 export type Item = {
+    idTipoItem: number;
     readonly nome: NomeCustomizado;
+    peso: number;
+    categoria: number;
+
+    readonly svg: string;
+
+    dadosAcoes: DadosAcao[];
+
+    modificadores?: Modificador[];
+
+    comportamentoEmpunhavel?: ComportamentoEmpunhavel;
+    comportamentoVestivel?: ComportamentoVestivel;
+    comportamentoComponenteRitualistico?: ComportamentoComponenteRitualistico;
+
     readonly itemEstaGuardado: boolean;
     readonly itemEstaEmpunhado: boolean;
     readonly itemEstaVestido: boolean;
@@ -15,16 +29,51 @@ export type TipoItemModelo = {
 
 export type TipoItem = TipoItemModelo;
 
+export type ComportamentoEmpunhavel = {
+    refExtremidades: Extremidade[];
 
+    readonly precoEmpunhar: PrecoExecucao;
 
+    readonly estaEmpunhado: boolean;
+    readonly extremidadeLivresSuficiente: boolean;
+    readonly execucoesSuficientes: boolean;
+    readonly mensagemExecucoesUsadasParaSacar: string;
 
+    empunha: () => void;
+    desempunha: () => void;
+};
 
+export type DadosComportamentoEmpunhavel = {
+    readonly dadosPrecoEmpunhar: DadosPrecoExecucao[];
+};
+
+export type ComportamentoVestivel = {
+    estaVestido: boolean;
+
+    readonly precoVestir: PrecoExecucao;
+
+    veste: () => void;
+    desveste: () => void;
+};
+
+export type DadosComportamentoVesivel = {
+    readonly dadosPrecoVestir: DadosPrecoExecucao[];
+}
+
+export type ComportamentoComponenteRitualistico = {
+    readonly refElemento: Elemento;
+    readonly refNivelComponente: NivelComponente;
+};
+
+export type DadosComportamentoComponenteRitualistico = {
+    idElemento: number;
+    idNivelComponente: number;
+};
 
 // export class Item {
 //     private static nextId = 1;
 //     public id: number;
 
-//     public dados: DadosGenericosItem;
 
 //     public acoes: Acao[] = [];
 //     protected _modificadores: Modificador[] = [];
@@ -33,12 +82,9 @@ export type TipoItem = TipoItemModelo;
 //     public svg = `PHN2ZyB3aWR0aD0iMjU2cHgiIGhlaWdodD0iMjU2cHgiIGZpbGw9IiMwMDAwMDAiIHN0cm9rZT0iIzAwMDAwMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNDQ0LjE4IDQ0NC4xOCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4gICA8cGF0aCBkPSJtNDA0LjIgMjA1Ljc0Yy0wLjkxNy0wLjY1Ni0yLjA5Ni0wLjgzLTMuMTY1LTAuNDY3IDAgMC0xMTkuMDEgNDAuNDc3LTEyMi4yNiA0MS41OTgtMi43MjUgMC45MzgtNC40ODctMS40Mi00LjQ4Ny0xLjQybC0zNy40NDgtNDYuMjU0Yy0wLjkzNS0xLjE1NC0yLjQ5Mi0xLjU5Mi0zLjg5LTEuMDk4LTEuMzk2IDAuNDk0LTIuMzMyIDEuODE2LTIuMzMyIDMuMjk5djE2Ny44OWMwIDEuMTY4IDAuNTgzIDIuMjYgMS41NTYgMi45MSAwLjU4NCAwLjM5MSAxLjI2MyAwLjU5IDEuOTQ1IDAuNTkgMC40NTEgMCAwLjkwNi0wLjA4OCAxLjMzNi0wLjI2N2wxNjguMDQtNjkuNDM4YzEuMzEtMC41NDEgMi4xNjMtMS44MTggMi4xNjMtMy4yMzR2LTkxLjI2NmMwLTEuMTI2LTAuNTQ0LTIuMTg1LTEuNDYyLTIuODQ0eiIvPiA8cGF0aCBkPSJtNDQzLjQ5IDE2OC4yMi0zMi4wNy00Mi44NTljLTAuNDYtMC42MTUtMS4xMTEtMS4wNjEtMS44NTItMS4yNzBsLTE4Ni40Mi01Mi42MzZjLTAuNjIyLTAuMTc2LTEuNDY1LTAuMTI1LTIuMDk2IDAuMDQ5bC0xODYuNDIgNTIuNjM2Yy0wLjczOSAwLjIwOS0xLjM5MSAwLjY1NC0xLjg1MSAxLjI3bC0zMi4wNzEgNDIuODYwYy0wLjY3MiAwLjg5OC0wLjg3MiAyLjA2My0wLjU0MSAzLjEzMyAwLjMzMiAxLjA3MSAxLjE1NyAxLjkxOCAyLjIxOSAyLjI3OWwxNTcuNjQgNTMuNTAyYzAuMzcgMC4xMjUgMC43NDkgMC4xODcgMS4xMjUgMC4xODcgMS4wMzUgMCAyLjA0MS0wLjQ2MiAyLjcxOC0xLjI5Nmw0NC4xMjgtNTQuMzkxIDEzLjA4MiAzLjZjMC42MDcgMC4xNjggMS4yNDkgMC4xNjggMS44NTcgMCAwIDAgMC4wNjQtMC4wMTYgMC4xOTItMC4wNDFsMTMuMDgyLTMuNiA0NC4xMjkgNTQuMzkxYzAuNjc3IDAuODM0IDEuNjgzIDEuMjk1IDIuNzE4IDEuMjk1IDAuMzc2IDAgMC43NTYtMC4wNjEgMS4xMjUtMC4xODZsMTU3LjY0LTUzLjUwMmMxLjA2Mi0wLjM2MSAxLjg4Ny0xLjIwOSAyLjIxOS0yLjI3OSAwLjMzLTEuMDcyIDAuMTMtMi4yMzYtMC41NDItMy4xMzQtMC41NDItMC42NTgtMS40NjItMS4yMTgtMi44NDQtMS40NDF6bS0yMjEuMy03Ljg0LTEzMy42OS0zNi41MjUgMTMzLjY5LTM3LjUyNyAxMzMuNDkgMzcuNDc5LTEzMy40OSAzNi41NzN6Ii8+IDxwYXRoIGQ9Im0yMTEuMjQgMTk4LjE1Yy0xLjM5Ni0wLjQ5NC0yLjk1NS0wLjA1Ny0zLjg4OSAxLjA5OGwtMzcuNDQ4IDQ2LjI1NXMtMS43NjQgMi4zNTYtNC40ODggMS40MmMtMy4yNTItMS4xMjEtMTIyLjI2LTQxLjU5OC0xMjIuMjYtNDEuNTk4LTEuMDctMC4zNjMtMi4yNDgtMC4xODktMy4xNjUgMC40NjctMC45MTggMC42NTgtMS40NjIgMS43MTctMS40NjIgMi44NDZ2OTEuMjY3YzAgMS40MTYgMC44NTQgMi42OTIgMi4xNjMgMy4yMzNsMTY4LjA0IDY5LjQzOGMwLjQzIDAuMTc4IDAuODg1IDAuMjY2IDEuMzM2IDAuMjY2IDAuNjg0IDAgMS4zNjItMC4xOTkgMS45NDYtMC41OSAwLjk3Mi0wLjY1IDEuNTU1LTEuNzQyIDEuNTU1LTIuOTF2LTE2Ny44OWMwLTEuNDgyLTAuOTM1LTIuODA0LTIuMzMyLTMuMjk4eiIvPiAgPC9zdmc+`;
 
 //     constructor(
-//         dadosGenericosItem: ConstructorParameters<typeof DadosGenericosItem>,
 //         dadosComportamentos: DadosComportamentosItem,
 //     ) {
 //         this.id = Item.nextId++;
-
-//         this.dados = new DadosGenericosItem(...dadosGenericosItem);
 
 //         if (dadosComportamentos.dadosComportamentoEmpunhavel !== undefined) this.comportamentos.setComportamentoEmpunhavel(...dadosComportamentos.dadosComportamentoEmpunhavel);
 //         if (dadosComportamentos.dadosComportamentoVestivel !== undefined) this.comportamentos.setComportamentoVestivel(...dadosComportamentos.dadosComportamentoVestivel);

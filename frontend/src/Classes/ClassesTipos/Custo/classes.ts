@@ -3,12 +3,16 @@ import { DadosPrecoExecucao, PrecoExecucao } from 'Classes/ClassesTipos/index.ts
 export type DadosCustos = {
     dadosPrecoExecucao: DadosPrecoExecucao[];
     dadosPrecoPE?: DadosPrecoPE;
+    dadosPrecoComponente?: DadosPrecoComponente;
 };
 
 export type DadosPrecoPE = {
     valor: number;
 };
 
+export type DadosPrecoComponente = {
+    
+};
 
 export type Custos = {
     readonly listaCustos: Custo[];

@@ -96,7 +96,12 @@ const ConteudoExecucao = ({ acao, fecharModal }: { acao: Acao, fecharModal: () =
                 {acao.custos.listaCustos.length > 0 && (
                     <div className={style.bloco_texto}>
                         <p className={style.titulo}>Custos</p>
-                        <p className={`${style.texto} ${!acao.custos.custoAcaoExecucao.podeSerPago ? 'cor_mensagem_erro' : ''}`}>{acao.custos.custoAcaoExecucao.resumoPagamento}</p>
+                        {
+                            acao.custos.custoAcaoExecucao.podeSerPago
+                                ? (<p className={style.texto}>{acao.custos.custoAcaoExecucao.resumoPagamento}</p>)
+                                : (<p className={`${style.texto} ${!acao.custos.custoAcaoExecucao.podeSerPago ? 'cor_mensagem_erro' : ''}`}>{acao.custos.custoAcaoExecucao.descricaoListaPreco}</p>)
+                        }
+                        
                         {acao.custos.custoAcaoPE && (<p className={`${style.texto} ${!acao.custos.custoAcaoPE.podeSerPago ? 'cor_mensagem_erro' : ''}`}>{acao.custos.custoAcaoPE.valor} P.E.</p>)}
                     </div>
                 )}

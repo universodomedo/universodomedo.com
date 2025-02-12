@@ -8,11 +8,10 @@ export type Ritual = {
     readonly refCirculoNivelRitual: CirculoNivelRitual;
 };
 
-export type DadosRitual = {
+export type DadosRitual = Pick<Ritual, 'dadosAcoes'> & {
     dadosNomeCustomizado: DadosNomeCustomizado;
     idElemento: number;
     idCirculoNivelRitual: number;
-    dadosAcoes: DadosAcao[];
 };
 
 export type ElementoModelo = {

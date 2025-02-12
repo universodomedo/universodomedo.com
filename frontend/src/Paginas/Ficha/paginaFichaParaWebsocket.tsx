@@ -29,6 +29,7 @@ const PaginaFichaBaixo = () => {
     return (
         <>
             <div className={style.fatia_parte_baixo_estatisticas_danificaveis}>
+                {/* isso é um map de estatisticasDanificaceis <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */}
                 <div className={style.recipiente_estatistica_danificavel}>
                     <BarraEstatisticaDanificavel titulo={'P.V.'} valorAtual={30} valorMaximo={30} corBarra={'#FF0000'} />
                 </div>
@@ -55,6 +56,7 @@ const PaginaFichaBaixo = () => {
             </div>
             <div className={`${style.fatia_parte_baixo_detalhes}`}>
                 <div className={style.recipiente_informacoes_personagem}>
+                    {/* Informações do PersonagemDetalhe <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */}
                     <h2>Ficha Demonstração</h2>
                     <h2>Combatente - NEX 20%</h2>
                 </div>

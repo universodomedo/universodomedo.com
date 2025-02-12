@@ -62,16 +62,6 @@ export class ComportamentoModificadorPassivo {
 // }
 
 // export class EmbrulhoComportamentoItem {
-//     private _comportamentoEmpunhavel?: ComportamentoEmpunhavel;
-//     get temComportamentoEmpunhavel(): boolean { return Boolean(this._comportamentoEmpunhavel); }
-//     get comportamentoEmpunhavel(): ComportamentoEmpunhavel { return this._comportamentoEmpunhavel!; } // sempre verificar se temComportamentoEmpunhavel antes
-//     setComportamentoEmpunhavel(...args: ConstructorParameters<typeof ComportamentoEmpunhavel>): void { this._comportamentoEmpunhavel = new ComportamentoEmpunhavel(...args); }
-
-//     private _comportamentoVestivel?: ComportamentoVestivel;
-//     get temComportamentoVestivel(): boolean { return Boolean(this._comportamentoVestivel); }
-//     get comportamentoVestivel(): ComportamentoVestivel { return this._comportamentoVestivel!; } // sempre verificar se temComportamentoVestivel antes
-//     setComportamentoVestivel(...args: ConstructorParameters<typeof ComportamentoVestivel>): void { this._comportamentoVestivel = new ComportamentoVestivel(...args); }
-
 //     private _comportamentoComponente?: ComportamentoComponente;
 //     get temComportamentoComponente(): boolean { return Boolean(this._comportamentoComponente); }
 //     get comportamentoComponente(): ComportamentoComponente { return this._comportamentoComponente!; } // sempre verificar se temComportamentoComponente antes
@@ -87,15 +77,6 @@ export class ComportamentoModificadorPassivo {
 //     get comportamentoMunicao(): ComportamentoMunicao { return this._comportamentoMunicao!; } // sempre verificar se temComportamentoMunicao antes
 //     setComportamentoMunicao(...args: ConstructorParameters<typeof RequisitoMunicao>[]): void { this._comportamentoMunicao = new ComportamentoMunicao(args); }
 
-//     get custosParaSacarValidos(): boolean { return this.comportamentoEmpunhavel.extremidadeLivresSuficiente && this.comportamentoEmpunhavel.execucoesSuficientes; }
-//     get mensagemExecucoesUsadasParaSacar(): string { return this.comportamentoEmpunhavel.mensagemExecucoesUsadasParaSacar; }
-
-//     get podeSerEmpunhado(): boolean { return this.temComportamentoEmpunhavel && this.comportamentoEmpunhavel.podeSerEmpunhado; }
-//     get podeSerVestido(): boolean { return this.temComportamentoVestivel && this.comportamentoVestivel.podeSerVestido; }
-
-//     get estaEmpunhado(): boolean { return this.podeSerEmpunhado && this.comportamentoEmpunhavel.estaEmpunhado }
-//     get estaVestido(): boolean { return this.podeSerVestido && this.comportamentoVestivel.estaVestido }
-
 //     get ehComponente(): boolean { return this.temComportamentoComponente; }
 
 //     get podeGastarUsos(): boolean { return this.temComportamentoUtilizavel && this.comportamentoUtilizavel.usosMaximo > 0; }
@@ -103,30 +84,30 @@ export class ComportamentoModificadorPassivo {
 //     temMunicaoSuficiente(nomeMunicao: string, quantidadeMunicao: number) { return !this.temComportamentoMunicao || this.comportamentoMunicao.verificaMunicao(nomeMunicao, quantidadeMunicao) }
 // }
 
-class EmbrulhoComportamentoAcao {
-    private _comportamentoAcao?: ComportamentoAcao;
-    get temComportamentoAcao(): boolean { return Boolean(this._comportamentoAcao); }
-    get comportamentoAcao(): ComportamentoAcao { return this._comportamentoAcao!; } // sempre verificar se temComportamentoAcao antes
-    setComportamentoAcao(...args: ConstructorParameters<typeof ComportamentoAcao>): void { this._comportamentoAcao = new ComportamentoAcao(...args); }
+// class EmbrulhoComportamentoAcao {
+//     private _comportamentoAcao?: ComportamentoAcao;
+//     get temComportamentoAcao(): boolean { return Boolean(this._comportamentoAcao); }
+//     get comportamentoAcao(): ComportamentoAcao { return this._comportamentoAcao!; } // sempre verificar se temComportamentoAcao antes
+//     setComportamentoAcao(...args: ConstructorParameters<typeof ComportamentoAcao>): void { this._comportamentoAcao = new ComportamentoAcao(...args); }
 
-    private _comportamentoRequisito?: ComportamentoRequisito;
-    get temComportamentoRequisito(): boolean { return Boolean(this._comportamentoRequisito); }
-    get comportamentoRequisito(): ComportamentoRequisito { return this._comportamentoRequisito!; } // sempre verificar se temComportamentoRequisito antes
-    setComportamentoRequisito(args: ConstructorParameters<typeof RequisitoUso>[0][]): void { this._comportamentoRequisito = new ComportamentoRequisito(args); }
+//     private _comportamentoRequisito?: ComportamentoRequisito;
+//     get temComportamentoRequisito(): boolean { return Boolean(this._comportamentoRequisito); }
+//     get comportamentoRequisito(): ComportamentoRequisito { return this._comportamentoRequisito!; } // sempre verificar se temComportamentoRequisito antes
+//     setComportamentoRequisito(args: ConstructorParameters<typeof RequisitoUso>[0][]): void { this._comportamentoRequisito = new ComportamentoRequisito(args); }
 
-    private _comportamentoConsomeUso?: ComportamentoConsomeUso;
-    get temComportamentoConsomeUso(): boolean { return Boolean(this._comportamentoConsomeUso); }
-    get comportamentoConsomeUso(): ComportamentoConsomeUso { return this._comportamentoConsomeUso!; } // sempre verificar se temComportamentoConsomeUso antes
-    setComportamentoConsomeUso(...args: ConstructorParameters<typeof ComportamentoConsomeUso>): void { this._comportamentoConsomeUso = new ComportamentoConsomeUso(...args); }
+//     private _comportamentoConsomeUso?: ComportamentoConsomeUso;
+//     get temComportamentoConsomeUso(): boolean { return Boolean(this._comportamentoConsomeUso); }
+//     get comportamentoConsomeUso(): ComportamentoConsomeUso { return this._comportamentoConsomeUso!; } // sempre verificar se temComportamentoConsomeUso antes
+//     setComportamentoConsomeUso(...args: ConstructorParameters<typeof ComportamentoConsomeUso>): void { this._comportamentoConsomeUso = new ComportamentoConsomeUso(...args); }
 
-    private _comportamentoConsomeMunicao?: ComportamentoConsomeMunicao;
-    get temComportamentoConsomeMunicao(): boolean { return Boolean(this._comportamentoConsomeMunicao); }
-    get comportamentoConsomeMunicao(): ComportamentoConsomeMunicao { return this._comportamentoConsomeMunicao!; } // sempre verificar se temComportamentoConsomeMunicao antes
-    setComportamentoConsomeMunicao(...args: ConstructorParameters<typeof ComportamentoConsomeMunicao>): void { this._comportamentoConsomeMunicao = new ComportamentoConsomeMunicao(...args); }
+//     private _comportamentoConsomeMunicao?: ComportamentoConsomeMunicao;
+//     get temComportamentoConsomeMunicao(): boolean { return Boolean(this._comportamentoConsomeMunicao); }
+//     get comportamentoConsomeMunicao(): ComportamentoConsomeMunicao { return this._comportamentoConsomeMunicao!; } // sempre verificar se temComportamentoConsomeMunicao antes
+//     setComportamentoConsomeMunicao(...args: ConstructorParameters<typeof ComportamentoConsomeMunicao>): void { this._comportamentoConsomeMunicao = new ComportamentoConsomeMunicao(...args); }
 
-    get mensagemRequisitos(): string { return this.temComportamentoRequisito ? this.comportamentoRequisito.mensagemRequisitos : ''; }
-    get requisitosCumpridos(): boolean { return !this.temComportamentoRequisito || this.comportamentoRequisito.requisitosCumprido; }
-}
+//     get mensagemRequisitos(): string { return this.temComportamentoRequisito ? this.comportamentoRequisito.mensagemRequisitos : ''; }
+//     get requisitosCumpridos(): boolean { return !this.temComportamentoRequisito || this.comportamentoRequisito.requisitosCumprido; }
+// }
 
 // export class EmbrulhoComportamentoHabilidade {
 
@@ -147,49 +128,6 @@ class EmbrulhoComportamentoAcao {
 //         // se for 0 ou menor, retorna que o item deve ser removido
 //         return this.usosAtuais <= 0;
 //     }
-// }
-
-// export class ComportamentoEmpunhavel {
-//     public refExtremidades: Extremidade[] = [];
-
-//     constructor(public podeSerEmpunhado: boolean = true, public extremidadesNecessarias: number = 1) { }
-
-//     get precoParaSacarOuGuardar(): CustoExecucao { return new CustoExecucao({ precoExecucao: { precos: [{ idTipoExecucao: 3, quantidadeExecucoes: 1 }] } }); }
-
-//     get estaEmpunhado(): boolean { return this.refExtremidades.length === this.extremidadesNecessarias; }
-
-//     get extremidadeLivresSuficiente(): boolean {
-//         const { extremidades } = useClasseContextualPersonagemEstatisticasBuffaveis();
-//         return this.extremidadesNecessarias <= extremidades.filter(extremidade => !extremidade.estaOcupada).length
-//     }
-//     get execucoesSuficientes(): boolean { return this.precoParaSacarOuGuardar.podeSerPago; }
-//     get mensagemExecucoesUsadasParaSacar(): string { return this.precoParaSacarOuGuardar.precoExecucao.resumoPagamento; }
-
-//     empunha(idItem: number): void {
-//         const { extremidades } = useClasseContextualPersonagemEstatisticasBuffaveis();
-//         this.refExtremidades = extremidades.filter(extremidade => !extremidade.estaOcupada).slice(0, this.extremidadesNecessarias);
-//         this.refExtremidades.forEach(extremidade => extremidade.empunhar(idItem));
-//     }
-
-//     desempunha(): void {
-//         this.esvaziaExtremidades();
-//         this.refExtremidades = [];
-//     }
-
-//     esvaziaExtremidades(): void { this.refExtremidades.forEach(extremidade => extremidade.guardar()); }
-// }
-
-// export class ComportamentoVestivel {
-//     private _estaVestido: boolean = false;
-
-//     constructor(public podeSerVestido: boolean = false) { }
-
-//     get precoParaVestirOuDesvestir(): PrecoExecucao { return new PrecoExecucao({ precos: [{ idTipoExecucao: 2, quantidadeExecucoes: 1 }] }); }
-
-//     get estaVestido(): boolean { return this._estaVestido; }
-
-//     veste(): void { if (this.podeSerVestido) this._estaVestido = true; }
-//     desveste(): void { if (this.podeSerVestido) this._estaVestido = false; }
 // }
 
 // export class ComportamentoComponente {
@@ -266,20 +204,6 @@ class EmbrulhoComportamentoAcao {
 //         this.quantidadeAtual = this.capacidadeMaxima;
 //     }
 // }
-
-// export class DadosGenericosItem {
-//     public idTipoItem: number;
-//     public nome: NomeItem;
-//     public peso: number;
-//     public categoria: number;
-
-//     constructor({ idTipoItem, nome, peso, categoria }: { idTipoItem: number; nome: ConstructorParameters<typeof NomeItem>; peso: number; categoria: number; }) {
-//         this.idTipoItem = idTipoItem;
-//         this.nome = new NomeItem(nome[0], nome[1]);
-//         this.peso = peso;
-//         this.categoria = categoria;
-//     }
-// };
 
 // export class DadosGenericosAcao {
 //     public nome: string;

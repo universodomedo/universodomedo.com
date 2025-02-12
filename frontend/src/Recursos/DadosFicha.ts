@@ -19,11 +19,11 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                         nome: 'Usar Ritual',
                         dadosCustos: {
                             dadosPrecoPE: {
-                                valor: 3,
+                                valor: 4,
                             },
                             dadosPrecoExecucao: [
                                 // {
-                                //     idExecucao: 2,
+                                //     idExecucao: 3,
                                 //     quantidadeExecucoes: 1,
                                 // }
                             ],
