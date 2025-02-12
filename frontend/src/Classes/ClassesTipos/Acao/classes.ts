@@ -24,7 +24,7 @@ export type Acao = {
 
 export type DadosAcao = Pick<Acao, 'nome'> & {
     dadosCustos: DadosCustos;
-    dadosDificuldade: DadosDificuldadeAcao;
+    dadosDificuldade?: DadosDificuldadeAcao;
     dadosModificadores?: DadosModificador[];
 };
 
