@@ -33,5 +33,5 @@ export const executaAcao = (acao: Acao) => {
     
     acao.custos.aplicaCustos();
 
-    // acao.executa();
+    acao.executa();
 };

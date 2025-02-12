@@ -47,7 +47,7 @@ export const useCustosExecucoes = () => {
             return exec;
         });
     
-        // setExecucoes(novasExecucoes);
+        setExecucoes(novasExecucoes);
     };
 
     const resumoPagamento = (precoExecucao: PrecoExecucao[]) => {

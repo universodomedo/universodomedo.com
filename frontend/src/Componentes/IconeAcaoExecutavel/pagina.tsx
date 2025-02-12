@@ -63,15 +63,6 @@ const ConteudoExecucao = ({ acao, fecharModal }: { acao: Acao, fecharModal: () =
         }
     };
 
-    console.log('------------------------------------');
-    
-    console.log(acao);
-    console.log(acao.custos);
-    console.log(acao.custos.custoAcaoPE);
-    console.log(acao.custos.custoAcaoPE?.podeSerPago);
-    
-    console.log('------------------------------------');
-
     return (
         <>
             <div className={style.recipiente_conteudo_execucao_modal}>

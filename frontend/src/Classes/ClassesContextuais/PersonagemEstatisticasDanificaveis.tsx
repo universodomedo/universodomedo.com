@@ -26,7 +26,7 @@ export const PersonagemEstatisticasDanificaveisProvider = ({ children }: { child
         
                     alterarValorAtual: function (valor: number) {
                         this.valorAtual = this.valorAtual - valor;
-                        // atualizarEstatisticasDanificaveis();
+                        atualizarEstatisticasDanificaveis();
                     },
                     alterarValorMaximo: function (valor: number) { console.log('precisa implementar alterarValorMaximo'); },
         
