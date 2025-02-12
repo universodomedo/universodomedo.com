@@ -3,6 +3,7 @@ import { ContextoFichaProvider } from 'Contextos/ContextoPersonagem/contexto.tsx
 import { useClasseContextualPersonagemPendenciasNexUp } from "Classes/ClassesContextuais/PersonagemPendenciasNexUp";
 
 import PaginaFicha from 'Paginas/Ficha/paginaFichaJogo.tsx';
+import PaginaFichaParaWebsocket from 'Paginas/Ficha/paginaFichaParaWebsocket.tsx';
 import PaginaEditaFicha from 'Paginas/Ficha/paginaFichaEdicao';
 
 // #endregion
@@ -26,6 +27,7 @@ const InterseccaoParaPendencia = () => {
                 <PaginaEditaFicha />
             ) : (
                 <PaginaFicha />
+                // <PaginaFichaParaWebsocket />
             )}
         </>
     );
