@@ -1,4 +1,4 @@
-import { DadosPrecoExecucao, PrecoExecucao } from 'Classes/ClassesTipos/index.ts';
+import { DadosPrecoExecucao, Elemento, NivelComponente, PrecoExecucao } from 'Classes/ClassesTipos/index.ts';
 
 export type DadosCustos = {
     dadosPrecoExecucao: DadosPrecoExecucao[];
@@ -11,7 +11,10 @@ export type DadosPrecoPE = {
 };
 
 export type DadosPrecoComponente = {
-    
+    idElemento: number;
+    idNivelComponente: number;
+    numeroCargasNoUso: number;
+    precisaEstarEmpunhado: boolean;
 };
 
 export type Custos = {
@@ -19,6 +22,7 @@ export type Custos = {
 
     custoAcaoExecucao: CustoAcaoExecucao;
     custoAcaoPE?: CustoAcaoPE;
+    custoAcaoComponente?: CustoAcaoComponente;
 
     readonly custosPodemSerPagos: boolean;
     aplicaCustos: () => void;
@@ -29,15 +33,13 @@ export type Custo = {
     aplicaCusto: () => void;
 };
 
-export type CustoPE = {
+type CustoPE = {
     valor: number;
 };
 
-export type DadosCustoPE = Pick<CustoPE, 'valor'>;
-
 export type CustoAcaoPE = Custo & CustoPE;
 
-export type CustoExecucao = {
+type CustoExecucao = {
     listaPrecosOriginal: PrecoExecucao[];
 
     readonly listaPrecosAplicados: PrecoExecucao[];
@@ -47,6 +49,15 @@ export type CustoExecucao = {
 };
 
 export type CustoAcaoExecucao = Custo & CustoExecucao;
+
+export type CustoComponente = {
+    numeroCargasNoUso: number;
+    precisaEstarEmpunhado: boolean;
+    readonly refElemento: Elemento;
+    readonly refNivelComponente: NivelComponente;
+};
+
+export type CustoAcaoComponente = Custo & CustoComponente;
 
 
 // export abstract class Custo {

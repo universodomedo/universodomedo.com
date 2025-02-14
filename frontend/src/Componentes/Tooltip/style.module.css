@@ -54,6 +54,11 @@
 	margin: .8vh 0 .5vh 0;
 }
 
+.tooltip_conteudo h3 {
+	all: unset;
+	color: black;
+}
+
 .tooltip_conteudo p {
 	margin: 0;
 }

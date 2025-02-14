@@ -9,9 +9,6 @@ import { Item } from 'Classes/ClassesTipos/index.ts';
 export type Extremidade = {
     refItem: Item | undefined;
     readonly estaOcupada: boolean;
-
-    empunhar: () => void;
-    guardar: () => void;
 };
 
 // export class Extremidade {

@@ -1,7 +1,7 @@
 // #region Imports
 import React, { createContext, useContext, useMemo } from "react";
 
-import { Acao, AtributoPersonagem, criarEfeito, Custos, DadosCustos, DadosDificuldadeAcao, DificuldadeAcao, Duracao, EstatisticaDanificavelPersonagem, Modificador, PericiaPatentePersonagem, PrecoExecucao } from "Classes/ClassesTipos/index.ts";
+import { Acao, AtributoPersonagem, criarEfeito, Custos, DadosCustos, DadosDificuldadeAcao, DificuldadeAcao, Duracao, EstatisticaDanificavelPersonagem, Modificador, OpcoesExecucaoAcao, PericiaPatentePersonagem, PrecoExecucao } from "Classes/ClassesTipos/index.ts";
 
 import { useClasseContextualPersonagemHabilidades } from "Classes/ClassesContextuais/PersonagemHabilidades.tsx";
 import { useClasseContextualPersonagemNatureza } from "Classes/ClassesContextuais/PersonagemNatureza.tsx";
@@ -16,6 +16,7 @@ import { SingletonHelper } from "Classes/classes_estaticas";
 
 import { criarCustos } from '../../Hooks/custosAcao.ts';
 import { criarDificuldades } from "Hooks/dificuldadesAcao.ts";
+import { useClasseContextualPersonagemInventario } from "./PersonagemInventario.tsx";
 // #endregion
 
 interface ClasseContextualPersonagemAcoesProps {
@@ -37,6 +38,8 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
 
     const { modificadores } = useClasseContextualPersonagemModificadores();
 
+    const { inventario } = useClasseContextualPersonagemInventario();
+
     const { podePagarPreco, pagaPrecoExecucao, resumoPagamento } = useCustosExecucoes();
 
     const acoesAnterioresRef = React.useRef<Map<string, Acao>>(new Map());
@@ -56,17 +59,35 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
                 trava: function (descricao: string) { this.travada = true; this.descricaoTravada = descricao; },
                 destrava: function () { this.travada = false; this.descricaoTravada = ''; },
 
-                get custos(): Custos { 
-                    return criarCustos(dadosAcao.dadosCustos, { 
-                        podePagarPreco, pagaPrecoExecucao, resumoPagamento, estatisticasDanificaveis 
-                    }); 
-                },
-
                 ...(dadosAcao.dadosDificuldade && {
                     get dificuldadeAcao(): DificuldadeAcao {
                         return acaoExistente?.dificuldadeAcao ?? criarDificuldades(dadosAcao.dadosDificuldade!, { atributos, pericias });
                     },
                 }),
+
+                get custos(): Custos { 
+                    return criarCustos(dadosAcao.dadosCustos, { 
+                        podePagarPreco, pagaPrecoExecucao, resumoPagamento, estatisticasDanificaveis, inventario
+                    }); 
+                },
+
+                get opcoesExecucaoAcao(): OpcoesExecucaoAcao[] {
+                    const opcoes: OpcoesExecucaoAcao[] = [];
+                
+                    if (this.custos.custoAcaoComponente !== undefined) {
+                        opcoes.push({
+                            identificador: 'custoComponente',
+                            nomeExibicao: 'Componente Ritualístico',
+                            opcoes: inventario.items.filter(item => item.itemEhComponente && item.comportamentoComponenteRitualistico!.refElemento.id === this.custos.custoAcaoComponente?.refElemento.id && item.comportamentoComponenteRitualistico!.refNivelComponente.id === this.custos.custoAcaoComponente.refNivelComponente.id && (!this.custos.custoAcaoComponente.precisaEstarEmpunhado || item.itemEstaEmpunhado)).map(item => ({
+                                key: 1,
+                                // key: item.nome.nomeExibicao,
+                                value: item.codigoUnico
+                            })),
+                        });
+                    }
+                
+                    return opcoes;
+                },
 
                 executa: function () {
                     this.modificadores?.filter(modificador => modificador.tipoModificador.tipo === 'Ativo')
@@ -98,7 +119,7 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
         acoesAnterioresRef.current = new Map(novasAcoes.map(acao => [acao.nome, acao]));
 
         return novasAcoes;
-    }, [rituais, atributos, pericias, estatisticasDanificaveis, podePagarPreco, pagaPrecoExecucao, resumoPagamento, modificadores]);
+    }, [rituais, atributos, pericias, estatisticasDanificaveis, modificadores]);
 
     return (
         <PersonagemAcoes.Provider value={{ acoes }}>

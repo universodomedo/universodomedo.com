@@ -4,9 +4,6 @@
     gap: .5vh;
     /* align-items: center; */
     pointer-events: none;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     width: 100%;
 }
 
@@ -92,6 +89,10 @@
 
 .recipiente_conteudo_execucao_modal {
     flex: 1;
+}
+
+.recipiente_conteudo_execucao_modal hr {
+    margin-top: 2%;
 }
 
 .opcao_acao {

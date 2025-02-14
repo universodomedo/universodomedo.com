@@ -1,4 +1,4 @@
-import { Custos, DadosCustos, DadosDificuldadeAcao, DadosModificador, DificuldadeAcao, Habilidade, Item, Modificador, realizaChecagemDificuldade, Ritual } from 'Classes/ClassesTipos/index.ts';
+import { Custos, DadosCustos, DadosDificuldadeAcao, DadosModificador, DificuldadeAcao, Habilidade, Item, Modificador, OpcoesExecucaoAcao, OpcoesSelecionadasExecucaoAcao, realizaChecagemDificuldade, Ritual } from 'Classes/ClassesTipos/index.ts';
 
 export type Acao = {
     nome: string;
@@ -17,6 +17,8 @@ export type Acao = {
 
     modificadores?: Modificador[];
 
+    opcoesExecucaoAcao: OpcoesExecucaoAcao[];
+
     dadosAcaoCustomizada?: undefined;
 
     executa: () => void;
@@ -28,7 +30,10 @@ export type DadosAcao = Pick<Acao, 'nome'> & {
     dadosModificadores?: DadosModificador[];
 };
 
-export const executaAcao = (acao: Acao) => {
+export const executaAcao = (acao: Acao, opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) => {
+    console.log('executaAcao');
+    console.log(opcoesSelecionadas);
+    
     if (!realizaChecagemDificuldade(acao)) return false;
     
     acao.custos.aplicaCustos();

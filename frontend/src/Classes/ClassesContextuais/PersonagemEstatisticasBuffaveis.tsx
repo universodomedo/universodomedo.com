@@ -1,7 +1,7 @@
 // #region Imports
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-import { Defesa, Deslocamento, EspacoCategoria, EspacoInventario, Execucao, ExecucaoPersonagem, Extremidade, ResistenciaParanormal, TipoCategoria } from "Classes/ClassesTipos/index.ts";
+import { Defesa, Deslocamento, EspacoCategoria, EspacoInventario, Execucao, ExecucaoPersonagem, Extremidade, Item, ResistenciaParanormal, TipoCategoria } from "Classes/ClassesTipos/index.ts";
 
 import { useClasseContextualPersonagemAtributos } from "./PersonagemAtributos";
 import { SingletonHelper } from "Classes/classes_estaticas";
@@ -14,6 +14,7 @@ interface ClasseContextualPersonagemEstatisticasBuffaveisProps {
     execucoes: ExecucaoPersonagem[];
     setExecucoes: (execucoes: ExecucaoPersonagem[]) => void;
     extremidades: Extremidade[];
+    empunhaItem: (item: Item) => void;
     espacosCategoria: EspacoCategoria[];
     resistenciaParanormal: ResistenciaParanormal;
 }
@@ -62,15 +63,14 @@ export const PersonagemEstatisticasBuffaveisProvider = ({ children }: { children
         );
     }, []);
 
-    const extremidades: Extremidade[] = Array.from({ length: 2 }, (_, index) => {
-        return {
+    const [extremidades, setExtremidades] = React.useState<Extremidade[]>(() =>
+        Array.from({ length: 2 }, () => ({
             refItem: undefined,
-            get estaOcupada(): boolean { return this.refItem !== undefined },
-
-            empunhar: () => { console.log('precisa implementar empunhar'); },
-            guardar: () => { console.log('precisa implementar guardar'); },
-        }
-    });
+            get estaOcupada(): boolean {
+                return this.refItem !== undefined;
+            },
+        }))
+    );
 
     const espacosCategoria: EspacoCategoria[] = [
         {
@@ -88,6 +88,11 @@ export const PersonagemEstatisticasBuffaveisProvider = ({ children }: { children
         get valorTotal(): number { return this.valorSemEfeitos; }
     };
 
+    const empunhaItem = (item: Item) => {
+        const novasExtremidades = [...extremidades];
+        novasExtremidades.filter(extremidade => !extremidade.estaOcupada).slice(0, item.comportamentoEmpunhavel!.extremidadesNecessarias).forEach(extremidade => extremidade.refItem = item);
+        setExtremidades(novasExtremidades);
+    }
 
     // const listaPrecosAplicados = (listaPrecoTipoExecucao: PrecoExecucao[]): PrecoExecucao[] => {
     //     const agrupados = listaPrecoTipoExecucao.reduce((map, preco) => {
@@ -135,7 +140,7 @@ export const PersonagemEstatisticasBuffaveisProvider = ({ children }: { children
     // }
 
     return (
-        <PersonagemEstatisticasBuffaveis.Provider value={{ defesa, deslocamento, espacoInventario, execucoes, setExecucoes, extremidades, espacosCategoria, resistenciaParanormal }}>
+        <PersonagemEstatisticasBuffaveis.Provider value={{ defesa, deslocamento, espacoInventario, execucoes, setExecucoes, extremidades, empunhaItem, espacosCategoria, resistenciaParanormal }}>
             {children}
         </PersonagemEstatisticasBuffaveis.Provider>
     );

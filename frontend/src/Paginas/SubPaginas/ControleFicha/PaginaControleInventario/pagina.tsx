@@ -1,15 +1,15 @@
 // #region Imports
 import style from './style.module.css';
 
-import { FiltroProps, FiltroPropsItems, Inventario, Item } from 'Classes/ClassesTipos/index.ts'
+import { FiltroProps, FiltroPropsItems, Item } from 'Classes/ClassesTipos/index.ts'
 import { Consulta, ConsultaProvider } from 'Componentes/ConsultaGenerica/pagina.tsx';
 import BarraEstatisticaDanificavel from 'Componentes/BarraEstatisticaDanificavel/pagina.tsx';
 
 import { useContextoControleInventario } from 'Contextos/ContextoControleInventario/contexto.tsx';
 import { useClasseContextualPersonagemEstatisticasBuffaveis } from 'Classes/ClassesContextuais/PersonagemEstatisticasBuffaveis.tsx';
+import { useClasseContextualPersonagemInventario } from 'Classes/ClassesContextuais/PersonagemInventario.tsx';
 
 import RenderItem from './item.tsx';
-import { useClasseContextualPersonagemInventario } from 'Classes/ClassesContextuais/PersonagemInventario.tsx';
 // #endregion
 
 const pagina = () => {
@@ -65,7 +65,7 @@ const pagina = () => {
         </div>
       )} */}
 
-      <ConsultaProvider<Item> registros={[itensVestidos, itensEmpunhados, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={new FiltroProps<Item>(itemsFiltro)} onLoadComplete={() => { }} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Vestidos', 'Itens Empunhados', 'Itens Guardados'] }} calculoTotal={(item) => (item.quantidadeUnidadesDesseItem || 1)}>
+      <ConsultaProvider<Item> registros={[itensEmpunhados, itensVestidos, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={new FiltroProps<Item>(itemsFiltro)} onLoadComplete={() => { }} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Empunhados', 'Itens Vestidos', 'Itens Guardados'] }} calculoTotal={(item) => (item.quantidadeUnidadesDesseItem || 1)}>
         <Consulta renderItem={renderItem} />
       </ConsultaProvider>
     </div>

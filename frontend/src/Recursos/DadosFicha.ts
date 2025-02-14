@@ -27,6 +27,12 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                                 //     quantidadeExecucoes: 1,
                                 // }
                             ],
+                            dadosPrecoComponente: {
+                                idElemento: 1,
+                                idNivelComponente: 2,
+                                numeroCargasNoUso: 1,
+                                precisaEstarEmpunhado: true,
+                            },
                         },
                         dadosDificuldade: {
                             idAtributo: 3,
@@ -57,7 +63,32 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                 ],
             }
         ],
-        inventario: [],
+        inventario: [
+            {
+                idTipoItem: 4,
+                dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Complexo' },
+                peso: 1,
+                categoria: 0,
+                dadosComportamentoEmpunhavel: { dadosPrecoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
+                dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1 },
+            },
+            {
+                idTipoItem: 4,
+                dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Complexo' },
+                peso: 1,
+                categoria: 0,
+                dadosComportamentoEmpunhavel: { dadosPrecoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
+                dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1 },
+            },
+            {
+                idTipoItem: 4,
+                dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Simples' },
+                peso: 1,
+                categoria: 0,
+                dadosComportamentoEmpunhavel: { dadosPrecoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
+                dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 1, numeroDeCargasMaximo: 2 },
+            },
+        ],
         reducoesDano: [],
         pendencias: { idNivelEsperado: 5 },
     };

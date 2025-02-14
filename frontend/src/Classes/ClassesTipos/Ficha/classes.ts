@@ -1,4 +1,4 @@
-import { DadosAtributoPersonagem, DadosEstatisticaDanificavelPersonagem, DadosPericiaPatentePersonagem, DadosReducaoDano, DadosRitual } from "Classes/ClassesTipos/index.ts";
+import { DadosAtributoPersonagem, DadosEstatisticaDanificavelPersonagem, DadosItem, DadosPericiaPatentePersonagem, DadosReducaoDano, DadosRitual } from "Classes/ClassesTipos/index.ts";
 
 export type RLJ_Ficha2 = {
     detalhes: { nome: string, idClasse: number, idNivel: number },
@@ -8,33 +8,14 @@ export type RLJ_Ficha2 = {
     periciasPatentes: DadosPericiaPatentePersonagem[],
     rituais: DadosRitual[],
     habilidadesEspeciais?: PropsHabilidades[],
-    inventario: ArgsItem[],
+    inventario: DadosItem[],
     reducoesDano: DadosReducaoDano[],
     pendencias: { idNivelEsperado: number },
 }
 
-export type ArgsItem = {
-    args: ConstructorParameters<typeof DadosGenericosItem>[0],
-    dadosComportamentos: DadosComportamentosItem;
-
-    dadosAcoes?: ArgsAcao[];
-    modificadores?: PropsModificador[];
-};
-
 export type DadosComportamentosItem = {
-    dadosComportamentoEmpunhavel?: ConstructorParameters<typeof ComportamentoEmpunhavel>;
-    dadosComportamentoVestivel?: ConstructorParameters<typeof ComportamentoVestivel>;
-    dadosComportamentoComponente?: ConstructorParameters<typeof ComportamentoComponente>;
     dadosComportamentoUtilizavel?: ConstructorParameters<typeof ComportamentoUtilizavel>;
     dadosComportamentoMunicao?: ConstructorParameters<typeof RequisitoMunicao>[];
-};
-
-export type ArgsAcao = {
-    args: ConstructorParameters<typeof DadosGenericosAcao>[0],
-    dadosComportamentos: DadosComportamentosAcao;
-    // custos: subDadosCusto,
-    modificadores?: PropsModificador[],
-    requisitos: number[]
 };
 
 export type DadosComportamentosAcao = {

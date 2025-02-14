@@ -9,7 +9,7 @@ import { useContextoControleRituais } from 'Contextos/ContextoControleRituais/co
 import Modal from 'Componentes/ModalDialog/pagina.tsx';
 // #endregion
 
-const page = ({ ritual }: { ritual: Ritual }) => {
+const pagina = ({ ritual }: { ritual: Ritual }) => {
     const [openDetalhes, setOpenDetalhes] = useState(false);
     const { mostrarEtiquetas } = useContextoControleRituais();
 
@@ -43,4 +43,4 @@ const ConteudoDetalhes = ({ ritual }: { ritual: Ritual }) => {
     );
 }
 
-export default page;
+export default pagina;
