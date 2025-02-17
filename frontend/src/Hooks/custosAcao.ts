@@ -1,39 +1,13 @@
-import { criarPrecoExecucao, Custo, Custos, DadosCustos, Elemento, EstatisticaDanificavelPersonagem, Inventario, NivelComponente, PrecoExecucao } from "Classes/ClassesTipos/index.ts";
+import { criarPrecoExecucao, Custo, Custos, DadosCustos, Elemento, EstatisticaDanificavelPersonagem, Inventario, NivelComponente, OpcoesSelecionadasExecucaoAcao, PrecoExecucao } from "Classes/ClassesTipos/index.ts";
 import { SingletonHelper } from "Classes/classes_estaticas";
+
+import { criarCustoAcaoExecucao } from "Hooks/custosExecucao.ts";
 
 export const criarCustos = (dadosCustos: DadosCustos, informacoesContextuais: { podePagarPreco: (precos: PrecoExecucao[]) => boolean, pagaPrecoExecucao: (precos: PrecoExecucao[]) => void, resumoPagamento: (precos: PrecoExecucao[]) => string[], estatisticasDanificaveis: EstatisticaDanificavelPersonagem[], inventario: Inventario }): Custos => {
     const { podePagarPreco, pagaPrecoExecucao, resumoPagamento, estatisticasDanificaveis, inventario } = informacoesContextuais;
 
     return {
-        custoAcaoExecucao: {
-            listaPrecosOriginal: criarPrecoExecucao(dadosCustos.dadosPrecoExecucao),
-
-            get listaPrecosAplicados(): PrecoExecucao[] {
-                const agrupados = this.listaPrecosOriginal.reduce((map, preco) => {
-                    const id = preco.refExecucao.id;
-                    if (!map.has(id)) map.set(id, { idExecucao: id, quantidadeExecucoes: 0 });
-                    map.get(id)!.quantidadeExecucoes += preco.quantidadeExecucoes;
-                    return map;
-                }, new Map<number, { idExecucao: number, quantidadeExecucoes: number }>());
-
-                const agrupadosFiltrados = Array.from(agrupados.values()).filter(preco => preco.quantidadeExecucoes > 0);
-
-                if (agrupadosFiltrados.length > 0) {
-                    return criarPrecoExecucao(agrupadosFiltrados.map(precoAgrupado => ({
-                        quantidadeExecucoes: precoAgrupado.quantidadeExecucoes,
-                        idExecucao: precoAgrupado.idExecucao,
-                    })));
-                } else {
-                    return criarPrecoExecucao([{ idExecucao: 1, quantidadeExecucoes: 1 }]); // Ação Livre
-                }
-            },
-
-            get descricaoListaPreco(): string { return this.listaPrecosAplicados.map(preco => preco.descricaoPreco).join(' e ') },
-            get temApenasAcaoLivre(): boolean { return !this.listaPrecosAplicados.some(preco => preco.refExecucao.id !== 1); },
-            get podeSerPago(): boolean { return podePagarPreco(this.listaPrecosAplicados); },
-            get resumoPagamento(): string { return resumoPagamento(this.listaPrecosAplicados).join(' e '); },
-            aplicaCusto: function () { pagaPrecoExecucao(this.listaPrecosAplicados); },
-        },
+        custoAcaoExecucao: criarCustoAcaoExecucao(dadosCustos.dadosPrecoExecucao, podePagarPreco, pagaPrecoExecucao, resumoPagamento,),
 
         ...(dadosCustos.dadosPrecoPE && {
             custoAcaoPE: {
@@ -51,8 +25,8 @@ export const criarCustos = (dadosCustos: DadosCustos, informacoesContextuais: { 
                 get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === dadosCustos.dadosPrecoComponente?.idElemento)!; },
                 get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === dadosCustos.dadosPrecoComponente?.idNivelComponente)!; },
 
-                get podeSerPago(): boolean { return inventario.items.some(item => item.itemEhComponente && item.comportamentoComponenteRitualistico?.refElemento.id === this.refElemento.id && item.comportamentoComponenteRitualistico?.refNivelComponente.id === this.refNivelComponente.id && (!this.precisaEstarEmpunhado || item.itemEstaEmpunhado)); },
-                aplicaCusto: function () { console.log('precisa implementar aplicaCusto de Componente'); },
+                get podeSerPago(): boolean { return inventario.itens.some(item => item.itemEhComponente && item.comportamentoComponenteRitualistico?.refElemento.id === this.refElemento.id && item.comportamentoComponenteRitualistico?.refNivelComponente.id === this.refNivelComponente.id && (!this.precisaEstarEmpunhado || item.itemEstaEmpunhado)); },
+                aplicaCusto: function (opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) { inventario.itens.find(item => item.codigoUnico === opcoesSelecionadas['custoComponente'])!.comportamentoComponenteRitualistico?.gastaCargaComponente(); },
             }
         }),
 
@@ -65,6 +39,6 @@ export const criarCustos = (dadosCustos: DadosCustos, informacoesContextuais: { 
         },
 
         get custosPodemSerPagos(): boolean { return this.listaCustos.every(custo => custo.podeSerPago); },
-        aplicaCustos: function () { this.listaCustos.forEach(custo => custo.aplicaCusto()); },
+        aplicaCustos: function (opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) { this.listaCustos.forEach(custo => custo.aplicaCusto(opcoesSelecionadas)); },
     };
 };

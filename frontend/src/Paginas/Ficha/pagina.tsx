@@ -5,18 +5,15 @@ import { useClasseContextualPersonagemPendenciasNexUp } from "Classes/ClassesCon
 import PaginaFicha from 'Paginas/Ficha/paginaFichaJogo.tsx';
 import PaginaFichaParaWebsocket from 'Paginas/Ficha/paginaFichaParaWebsocket.tsx';
 import PaginaEditaFicha from 'Paginas/Ficha/paginaFichaEdicao';
-
 // #endregion
 
-const pagina = ({ seletorFicha }: { seletorFicha: { tipo: 'ficha'; idFichaNoLocalStorage: number } | { tipo: 'fichaDemonstracao' } }) => {
-    // fazendo commit para testar gpg pelo turtoise
-    
+const pagina = ({ seletorFicha }: { seletorFicha: { tipo: 'ficha'; idFichaNoLocalStorage: number } | { tipo: 'fichaDemonstracao' } }) => {    
     return (
         <ContextoFichaProvider seletorFicha={seletorFicha}>
             <InterseccaoParaPendencia />
         </ContextoFichaProvider>
     );
-}
+};
 
 const InterseccaoParaPendencia = () => {
     const { temPendencias } = useClasseContextualPersonagemPendenciasNexUp();
@@ -31,7 +28,6 @@ const InterseccaoParaPendencia = () => {
             )}
         </>
     );
-}
-
+};
 
 export default pagina;

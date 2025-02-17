@@ -8,12 +8,12 @@ import { useClasseContextualPersonagem } from "Classes/ClassesContextuais/Person
 
 interface ClasseContextualPersonagemProficienciasProps {
 
-}
+};
 
 export const PersonagemProficiencias = createContext<ClasseContextualPersonagemProficienciasProps | undefined>(undefined);
 
 export const PersonagemProficienciasProvider = ({ children }: { children: React.ReactNode; }) => {
-    const { dadosFicha } = useClasseContextualPersonagem();
+    const { dadosPersonagem } = useClasseContextualPersonagem();
 
     const proficienciaPersonagem: Proficiencia[] = [];
     
@@ -22,7 +22,7 @@ export const PersonagemProficienciasProvider = ({ children }: { children: React.
             {children}
         </PersonagemProficiencias.Provider>
     );
-}
+};
 
 export const useClasseContextualPersonagemProficiencias = (): ClasseContextualPersonagemProficienciasProps => {
     const context = useContext(PersonagemProficiencias);

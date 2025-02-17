@@ -1,11 +1,6 @@
 import { SingletonHelper } from "Classes/classes_estaticas";
 import { LinhaEfeito } from "Classes/ClassesTipos/index.ts";
 
-export type DadosEfeito = {
-    dadosValoresEfeitos: DadosValorEfeito[];
-    idLinhaEfeito: number;
-};
-
 export type DadosValorEfeito = {
     valorBaseAdicional?: number;
     valorPorcentagemAdicional?: number;

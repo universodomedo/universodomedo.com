@@ -6,21 +6,21 @@ import { useClasseContextualPersonagem } from "Classes/ClassesContextuais/Person
 
 interface ClasseContextualPersonagemPendenciasNexUpProps {
     temPendencias: boolean
-}
+};
 
 export const PersonagemPendenciasNexUp = createContext<ClasseContextualPersonagemPendenciasNexUpProps | undefined>(undefined);
 
 export const PersonagemPendenciasNexUpProvider = ({ children }: { children: React.ReactNode; }) => {
-    const { dadosFicha } = useClasseContextualPersonagem();
+    const { dadosPersonagem } = useClasseContextualPersonagem();
 
-    const temPendencias: boolean = !(dadosFicha.detalhes.idNivel === dadosFicha.pendencias.idNivelEsperado)
+    const temPendencias: boolean = !(dadosPersonagem.detalhes.idNivel === dadosPersonagem.pendencias.idNivelEsperado)
     
     return (
         <PersonagemPendenciasNexUp.Provider value={{ temPendencias  }}>
             {children}
         </PersonagemPendenciasNexUp.Provider>
     );
-}
+};
 
 export const useClasseContextualPersonagemPendenciasNexUp = (): ClasseContextualPersonagemPendenciasNexUpProps => {
     const context = useContext(PersonagemPendenciasNexUp);

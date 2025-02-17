@@ -6,10 +6,23 @@ import { Acao, executaAcao, OpcoesSelecionadasExecucaoAcao } from 'Classes/Class
 
 import Modal from 'Componentes/ModalDialog/pagina';
 import RecipienteDeAbas from 'Componentes/RecipienteDeAbas/pagina.tsx';
+import { useClasseContextualPersonagemInventario } from 'Classes/ClassesContextuais/PersonagemInventario';
 // #endregion
 
 const pagina = ({ acao, mostrarEtiquetas = false }: { acao: Acao, mostrarEtiquetas?: boolean }) => {
     const [openModal, setOpenModal] = useState(false);
+
+    const ConteudoExecucao = () => {
+        return (
+            <>
+                {true ? (
+                    <ConteudoExecucaoGenerico acao={acao} fecharModal={() => setOpenModal(false)} />
+                ) : (
+                    <ConteudoExecutavelSacarEGuardar />
+                )}
+            </>
+        );
+    };
 
     return (
         <Modal open={openModal} onOpenChange={setOpenModal}>
@@ -24,7 +37,7 @@ const pagina = ({ acao, mostrarEtiquetas = false }: { acao: Acao, mostrarEtiquet
                         <RecipienteDeAbas.Gatilho titulo='Execução' codigo='abaExecucao' />
                     </RecipienteDeAbas.Aba>
                     <RecipienteDeAbas.ConteudoAba codigo='abaDetalhamento'><ConteudoDetalhes acao={acao} /></RecipienteDeAbas.ConteudoAba>
-                    <RecipienteDeAbas.ConteudoAba codigo='abaExecucao'><ConteudoExecucao acao={acao} fecharModal={() => setOpenModal(false)} /></RecipienteDeAbas.ConteudoAba>
+                    <RecipienteDeAbas.ConteudoAba codigo='abaExecucao'><ConteudoExecucao /></RecipienteDeAbas.ConteudoAba>
                 </RecipienteDeAbas>
             </Modal.Content>
         </Modal>
@@ -38,17 +51,82 @@ const Icone = ({ acao, mostrarEtiquetas }: { acao: Acao, mostrarEtiquetas: boole
             <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${acao.svg})`, backgroundColor: (acao.bloqueada ? '#BB0000' : '#FFFFFF') }} />
         </div>
     );
-}
+};
 
-const ConteudoExecucao = ({ acao, fecharModal }: { acao: Acao, fecharModal: () => void }) => {
+const ConteudoExecutavelSacarEGuardar = () => {
+    const { inventario } = useClasseContextualPersonagemInventario();
+
+    const [codigoUnicoItemSelecionado, setCodigoUnicoItemSelecionado] = useState<string | undefined>(undefined);
+
+    const itemSelecionado = codigoUnicoItemSelecionado !== undefined
+        ? inventario.itens.find(item => item.codigoUnico === codigoUnicoItemSelecionado)
+        : undefined;
+
+    const opcoes = inventario.itens.filter(item => item.itemEmpunhavel).map(item => ({
+        key: item.codigoUnico,
+        value: `${item.nome.nomeExibicao}`,
+    }));
+
+    const handleSelectChange = (codigoUnico: string) => {
+        setCodigoUnicoItemSelecionado(codigoUnico);
+    };
+
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLSelectElement>) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+        }
+    };
+
+    const executar = () => {}
+
+    return (
+        <>
+            <div className={style.opcao_acao}>
+                <select value={codigoUnicoItemSelecionado || 0} onChange={(e) => handleSelectChange(e.target.value)} onKeyDown={handleKeyPress}>
+                    <option value="0" className={style.opcao_acao_padrao} disabled>Selecione o Item...</option>
+                    {opcoes.map(item => (
+                        <option key={item.key} value={item.key}>{item.value}</option>
+                    ))}
+                </select>
+            </div>
+
+            {itemSelecionado !== undefined && (
+                <>
+                    <div className={style.bloco_texto}>
+                        <p className={`${style.texto} ${!itemSelecionado.comportamentoEmpunhavel?.custoEmpunhar.podeSerPago ? 'cor_mensagem_erro' : ''}`}>Custo para Sacar: {itemSelecionado.comportamentoEmpunhavel?.custoEmpunhar.resumoPagamento}</p>
+                        <p className={`${style.texto} ${!itemSelecionado.comportamentoEmpunhavel?.extremidadeLivresSuficiente ? 'cor_mensagem_erro' : ''}`}>Extremidade para Empunhar: {itemSelecionado.comportamentoEmpunhavel?.extremidadesNecessarias}</p>
+                    </div>
+
+                    {itemSelecionado.comportamentoEmpunhavel?.custoEmpunhar &&
+                        <div className={style.bloco_texto}>
+                            <p className={style.texto}>Vai Gastar {itemSelecionado.comportamentoEmpunhavel.custoEmpunhar.resumoPagamento}</p>
+                        </div>
+                    }
+                </>
+            )}
+
+            <button
+                className={style.botao_principal}
+                onClick={executar}
+                disabled={itemSelecionado === undefined || !itemSelecionado.comportamentoEmpunhavel?.custoEmpunhar.podeSerPago}
+            >
+                Executar
+            </button>
+        </>
+    );
+};
+
+const ConteudoExecutavelVestirEDesvestir = () => {};
+
+const ConteudoExecucaoGenerico = ({ acao, fecharModal }: { acao: Acao, fecharModal: () => void }) => {
     const [opcoesSelecionadas, setOpcoesSelecionadas] = useState<OpcoesSelecionadasExecucaoAcao>({});
     const firstSelectRef = useRef<HTMLSelectElement | null>(null);
     const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-    const handleSelectChange = (key: string, value: number) => {
+    const handleSelectChange = (identificador: string, value: string) => {
         setOpcoesSelecionadas((prevState) => ({
             ...prevState,
-            [key]: value,
+            [identificador]: value,
         }));
     };
 
@@ -69,12 +147,10 @@ const ConteudoExecucao = ({ acao, fecharModal }: { acao: Acao, fecharModal: () =
                 {!acao.bloqueada && acao.opcoesExecucaoAcao.length > 0 && (
                     <>
                         {acao.opcoesExecucaoAcao.map((opcoesExecucao, index) => {
-                            const key = opcoesExecucao.identificador;
-
                             return (
-                                <div key={key} className={style.opcao_acao}>
+                                <div key={index} className={style.opcao_acao}>
                                     <h2>{opcoesExecucao.nomeExibicao}</h2>
-                                    <select ref={index === 0 ? firstSelectRef : null} value={opcoesSelecionadas[key] || 0} onChange={(e) => handleSelectChange(key, Number(e.target.value))} onKeyDown={handleKeyPress}>
+                                    <select ref={index === 0 ? firstSelectRef : null} value={opcoesSelecionadas[index] || 0} onChange={(e) => handleSelectChange(opcoesExecucao.identificador, e.target.value)} onKeyDown={handleKeyPress}>
                                         <option value="0" className={style.opcao_acao_padrao} disabled>Selecione a Opção...</option>
                                         {opcoesExecucao.opcoes.map(opcao => (
                                             <option key={opcao.key} value={opcao.key} disabled={opcao.disabled}>{opcao.value}</option>
@@ -117,12 +193,16 @@ const ConteudoExecucao = ({ acao, fecharModal }: { acao: Acao, fecharModal: () =
             </div>
 
             {!acao.bloqueada && (
-                <button ref={buttonRef} className={style.botao_principal} onClick={() => { executaAcao(acao, opcoesSelecionadas); fecharModal(); }}>Executar</button>
+                <button
+                    ref={buttonRef}
+                    className={style.botao_principal}
+                    disabled={acao.opcoesExecucaoAcao.length != Object.keys(opcoesSelecionadas).length}
+                    onClick={() => { executaAcao(acao, opcoesSelecionadas); fecharModal(); }}>
+                        Executar
+                </button>
             )}
         </>
     );
-
-    // return (<><button onClick={() => { executaAcao(acao); }}>Teste</button></>);
 }
 
 const ConteudoDetalhes = ({ acao }: { acao: Acao }) => {

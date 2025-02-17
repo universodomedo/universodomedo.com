@@ -1,23 +1,23 @@
 // #region Imports
 import React, { createContext, useContext } from "react";
-
 import { Acao, Habilidade } from "Classes/ClassesTipos/index.ts";
-import { useClasseContextualPersonagem } from "./Personagem";
+
+import { useClasseContextualPersonagem } from "Classes/ClassesContextuais/Personagem.tsx";
 // #endregion
 
 interface ClasseContextualPersonagemHabilidadesProps {
     habilidades: Habilidade[]
     acoesHabilidades: Acao[];
-}
+};
 
 export const PersonagemHabilidades = createContext<ClasseContextualPersonagemHabilidadesProps | undefined>(undefined);
 
 export const PersonagemHabilidadesProvider = ({ children }: { children: React.ReactNode; }) => {
-    const { dadosFicha } = useClasseContextualPersonagem();
+    const { dadosPersonagem } = useClasseContextualPersonagem();
 
     const habilidades: Habilidade[] = [
-        // ...dadosFicha.habilidadesEspeciais?.map(habilidadeEspecial => new HabilidadePassiva({ dadosGenericosHabilidade: habilidadeEspecial.props, fonteHabilidade: { tipo: 'Mundana', fonte: 'Habilidade Especial' } })) || [],
-        // ...lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(dadosFicha))
+        // ...dadosPersonagem.habilidadesEspeciais?.map(habilidadeEspecial => new HabilidadePassiva({ dadosGenericosHabilidade: habilidadeEspecial.props, fonteHabilidade: { tipo: 'Mundana', fonte: 'Habilidade Especial' } })) || [],
+        // ...lista_geral_habilidades().filter(habilidade => habilidade.requisitoFicha === undefined || habilidade.requisitoFicha.verificaRequisitoCumprido(dadosPersonagem))
     ];
 
     // const acoesHabilidades: Acao[] = habilidades.filter((habilidade): habilidade is HabilidadeAtiva => habilidade instanceof HabilidadeAtiva).flatMap(habilidade => habilidade.acoes);
@@ -28,7 +28,7 @@ export const PersonagemHabilidadesProvider = ({ children }: { children: React.Re
             {children}
         </PersonagemHabilidades.Provider>
     );
-}
+};
 
 export const useClasseContextualPersonagemHabilidades = (): ClasseContextualPersonagemHabilidadesProps => {
     const context = useContext(PersonagemHabilidades);

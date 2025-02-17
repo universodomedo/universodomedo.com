@@ -9,17 +9,17 @@ import { SingletonHelper } from "Classes/classes_estaticas";
 
 interface ClasseContextualPersonagemEstatisticasDanificaveisProps {
     estatisticasDanificaveis: EstatisticaDanificavelPersonagem[];
-}
+};
 
 export const PersonagemEstatisticasDanificaveis = createContext<ClasseContextualPersonagemEstatisticasDanificaveisProps | undefined>(undefined);
 
 export const PersonagemEstatisticasDanificaveisProvider = ({ children }: { children: React.ReactNode; }) => {
-    const { dadosFicha } = useClasseContextualPersonagem();
+    const { dadosPersonagem } = useClasseContextualPersonagem();
     const [estatisticasDanificaveis, setEstatisticasDanificaveis] = useState<EstatisticaDanificavelPersonagem[]>([]);
 
     useEffect(() => {
         setEstatisticasDanificaveis(
-            dadosFicha.estatisticasDanificaveis!.map(estatisticaDanificavel => {
+            dadosPersonagem.estatisticasDanificaveis!.map(estatisticaDanificavel => {
                 return {
                     valorAtual: estatisticaDanificavel.valorAtual,
                     valorMaximo: estatisticaDanificavel.valorMaximo,
@@ -35,7 +35,7 @@ export const PersonagemEstatisticasDanificaveisProvider = ({ children }: { child
             })
         );
     }, []);
-    // }, [dadosFicha.estatisticasDanificaveis]);
+    // }, [dadosPersonagem.estatisticasDanificaveis]);
 
     const atualizarEstatisticasDanificaveis = () => setEstatisticasDanificaveis(estatisticasAnteriores => [...estatisticasAnteriores]);
 
@@ -44,7 +44,7 @@ export const PersonagemEstatisticasDanificaveisProvider = ({ children }: { child
             {children}
         </PersonagemEstatisticasDanificaveis.Provider>
     );
-}
+};
 
 export const useClasseContextualPersonagemEstatisticasDanificaveis = (): ClasseContextualPersonagemEstatisticasDanificaveisProps => {
     const context = useContext(PersonagemEstatisticasDanificaveis);

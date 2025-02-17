@@ -7,6 +7,8 @@ import { GanhoIndividualNexAtributo, GanhoIndividualNexEscolhaClasse, GanhoIndiv
 import { ContextoFichaProvider, useContextoFicha } from 'Contextos/ContextoPersonagem/contexto.tsx';
 import { ContextoNexUpProvider, useContextoNexUp } from 'Contextos/ContextoNexUp/contexto.tsx';
 
+import { useClasseContextualPersonagem } from "Classes/ClassesContextuais/Personagem";
+
 import EscolheClasse from 'Paginas/SubPaginas/EdicaoFicha/EscolheClasse/pagina.tsx';
 import EditaHabilidades from 'Paginas/SubPaginas/EdicaoFicha/EditaHabilidades/pagina.tsx';
 import EditaAtributos from 'Paginas/SubPaginas/EdicaoFicha/EditaAtributos/pagina.tsx';
@@ -16,11 +18,10 @@ import EditaRituais from 'Paginas/SubPaginas/EdicaoFicha/EditaRituais/pagina.tsx
 
 import ControladorSwiperDireita from 'Componentes/ControladorSwiperDireita/pagina.tsx';
 import JanelaNotificacao from "Componentes/JanelaNotificacao/pagina";
-import { useClasseContextualPersonagem } from "Classes/ClassesContextuais/Personagem";
 // #endregion
 
 const pagina = () => {
-    const { dadosFicha } = useClasseContextualPersonagem();
+    const { dadosPersonagem } = useClasseContextualPersonagem();
     const personagem = getPersonagemFromContext();
 
     return (
@@ -28,7 +29,7 @@ const pagina = () => {
             <PaginaEditaFichaComContexto />
         </ContextoNexUpProvider>
     );
-}
+};
 
 const PaginaEditaFichaComContexto = () => {
     const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);

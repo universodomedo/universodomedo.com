@@ -1,11 +1,14 @@
 // #region Imports
 import React, { createContext, useContext, useMemo } from "react";
 
-import { criarComportamentoComponenteRitualistico, criarComportamentoVestivel, criarNomeCustomizado, criarPrecoExecucao, Extremidade, Inventario, Item, PrecoExecucao, TipoItem } from "Classes/ClassesTipos/index.ts";
+import { criarNomeCustomizado, criarPrecoExecucao, CustoAcaoExecucao, Elemento, Extremidade, Inventario, Item, NivelComponente, PrecoExecucao, TipoItem } from "Classes/ClassesTipos/index.ts";
+import { SingletonHelper } from "Classes/classes_estaticas";
 
 import { useClasseContextualPersonagem } from "Classes/ClassesContextuais/Personagem.tsx";
-import { SingletonHelper } from "Classes/classes_estaticas";
-import { useClasseContextualPersonagemEstatisticasBuffaveis } from "./PersonagemEstatisticasBuffaveis";
+import { useClasseContextualPersonagemEstatisticasBuffaveis } from "Classes/ClassesContextuais/PersonagemEstatisticasBuffaveis.tsx";
+import { useCustosExecucoes } from "Classes/ClassesContextuais/GerenciadorCustosExecucoes.tsx";
+
+import { criarCustoAcaoExecucao } from "Hooks/custosExecucao";
 // #endregion
 
 interface ClasseContextualPersonagemInventarioProps {
@@ -15,23 +18,15 @@ interface ClasseContextualPersonagemInventarioProps {
 export const PersonagemInventario = createContext<ClasseContextualPersonagemInventarioProps | undefined>(undefined);
 
 export const PersonagemInventarioProvider = ({ children }: { children: React.ReactNode }) => {
-    const { dadosFicha } = useClasseContextualPersonagem();
+    const { dadosPersonagem, modificarItemDoInventario } = useClasseContextualPersonagem();
     const { extremidades } = useClasseContextualPersonagemEstatisticasBuffaveis();
 
-    const items = useMemo(() => {
-        const contadorNomes: Record<string, number> = {};
+    const { podePagarPreco, pagaPrecoExecucao, resumoPagamento } = useCustosExecucoes();
 
-        return dadosFicha.inventario.map((dadosItem) => {
+    const itens = useMemo(() => {
+        return dadosPersonagem.inventario.dadosItens.map(dadosItem => {
             const nome = criarNomeCustomizado(dadosItem.dadosNomeCustomizado);
-            let codigoUnico = nome.nomeExibicao;
-
-            // Se já existir um item com esse nome, adiciona um número ao final
-            if (contadorNomes[codigoUnico] !== undefined) {
-                contadorNomes[codigoUnico] += 1;
-                codigoUnico = `${codigoUnico}_${contadorNomes[codigoUnico]}`;
-            } else {
-                contadorNomes[codigoUnico] = 0;
-            }
+            let codigoUnico = nome.nomeCustomizado !== undefined ? nome.nomeExibicao : dadosItem.identificadorNomePadrao;
 
             return {
                 codigoUnico: codigoUnico,
@@ -49,19 +44,46 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
                         get refExtremidades(): Extremidade[] { return extremidades.filter(extremidade => extremidade.refItem?.codigoUnico === codigoUnico); },
 
                         extremidadesNecessarias: dadosItem.dadosComportamentoEmpunhavel.extremidadesNecessarias,
-                        get precoEmpunhar(): PrecoExecucao[] { return criarPrecoExecucao(dadosItem.dadosComportamentoEmpunhavel!.dadosPrecoEmpunhar) },
+                        get custoEmpunhar(): CustoAcaoExecucao { return criarCustoAcaoExecucao(dadosItem.dadosComportamentoEmpunhavel!.dadosCustoEmpunhar, podePagarPreco, pagaPrecoExecucao, resumoPagamento) },
 
                         get estaEmpunhado(): boolean { return this.refExtremidades.length === this.extremidadesNecessarias; },
-                        get extremidadeLivresSuficiente(): boolean { return true; },
-                        get execucoesSuficientes(): boolean { return true; },
-                        get mensagemExecucoesUsadasParaSacar(): string { return 'precisa implementar mensagemExecucoesUsadasParaSacar'; },
+                        get extremidadeLivresSuficiente(): boolean { return extremidades.filter(extremidade => !extremidade.estaOcupada).length >= this.extremidadesNecessarias; },
+                        // get execucoesSuficientes(): boolean { return true; },
+                        // get mensagemExecucoesUsadasParaSacar(): string { return 'precisa implementar mensagemExecucoesUsadasParaSacar'; },
                     }
                 }),
 
-                comportamentoVestivel: dadosItem.dadosComportamentoVestivel ? criarComportamentoVestivel(dadosItem.dadosComportamentoVestivel) : undefined,
-                comportamentoComponenteRitualistico: dadosItem.dadosComportamentoComponenteRitualistico ? criarComportamentoComponenteRitualistico(dadosItem.dadosComportamentoComponenteRitualistico) : undefined,
+                ...(dadosItem.dadosComportamentoVestivel && {
+                    comportamentoVestivel: {
+                        estaVestido: false,
 
-                get quantidadeUnidadesDesseItem(): number { return (!this.agrupavel || this.itemEstaEmpunhado) ? 1 : inventario.items.filter(item => !item.itemEstaEmpunhado && item.nome.nomeExibicao === this.nome.nomeExibicao).length },
+                        get custoVestir(): CustoAcaoExecucao { return criarCustoAcaoExecucao(dadosItem.dadosComportamentoVestivel!.dadosCustoVestir, podePagarPreco, pagaPrecoExecucao, resumoPagamento) },
+
+                        veste: function () { console.log('precisa implementar veste'); },
+                        desveste: function () { console.log('precisa implementar desveste'); },
+                    }
+                }),
+
+                ...(dadosItem.dadosComportamentoComponenteRitualistico && {
+                    comportamentoComponenteRitualistico: {
+                        numeroDeCargasMaximo: dadosItem.dadosComportamentoComponenteRitualistico!.numeroDeCargasMaximo,
+                        numeroDeCargasAtuais: dadosItem.dadosComportamentoComponenteRitualistico!.numeroDeCargasMaximo,
+
+                        get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === dadosItem.dadosComportamentoComponenteRitualistico!.idElemento)!; },
+                        get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === dadosItem.dadosComportamentoComponenteRitualistico!.idNivelComponente)!; },
+
+                        get nomeComponente(): string { return `Componente de ${this.refElemento.nome} ${this.refNivelComponente.nome}`; },
+
+                        gastaCargaComponente: function () {
+                            modificarItemDoInventario(codigoUnico, (dadosItem) => {
+                                dadosItem.dadosComportamentoComponenteRitualistico!.numeroDeCargasAtuais--;
+                                return dadosItem.dadosComportamentoComponenteRitualistico!.numeroDeCargasAtuais <= 0;
+                            })
+                        },
+                    }
+                }),
+
+                get quantidadeUnidadesDesseItem(): number { return (!this.agrupavel || this.itemEstaEmpunhado) ? 1 : inventario.itens.filter(item => !item.itemEstaEmpunhado && item.nome.nomeExibicao === this.nome.nomeExibicao).length },
 
                 get refTipoItem(): TipoItem { return SingletonHelper.getInstance().tipos_items.find(tipo_item => tipo_item.id === dadosItem.idTipoItem)!; },
 
@@ -74,21 +96,21 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
                 get itemEstaGuardado(): boolean { return !this.itemEstaEmpunhado && !this.itemEstaVestido; },
             };
         });
-    }, [extremidades]);
+    }, [dadosPersonagem, extremidades]);
 
     const agrupamento = useMemo(() => {
-        return items.reduce((itemAgrupado, itemAtual) => {
+        return itens.reduce((itemAgrupado, itemAtual) => {
             if (!itemAtual.agrupavel || !itemAgrupado.some(item => item.agrupavel && item.nome.nomeExibicao === itemAtual.nome.nomeExibicao && !item.itemEstaEmpunhado)) {
                 itemAgrupado.push(itemAtual);
             }
             return itemAgrupado;
         }, [] as Item[]);
-    }, [items]);
+    }, [itens]);
 
-    const espacosUsados = useMemo(() => items.reduce((acc, cur) => acc + cur.peso, 0), [items]);
+    const espacosUsados = useMemo(() => itens.reduce((acc, cur) => acc + cur.peso, 0), [itens]);
 
     const inventario: Inventario = {
-        items,
+        itens,
         agrupamento,
         espacosUsados,
         acoes: [],

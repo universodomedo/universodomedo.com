@@ -13,16 +13,16 @@ import { ExecutaTestePericiaGenerico } from "Recursos/Ficha/Procedimentos.ts";
 
 interface ClasseContextualPersonagemPericiasProps {
     pericias: PericiaPatentePersonagem[];
-}
+};
 
 export const PersonagemPericias = createContext<ClasseContextualPersonagemPericiasProps | undefined>(undefined);
 
 export const PersonagemPericiasProvider = ({ children }: { children: React.ReactNode; }) => {
-    const { dadosFicha } = useClasseContextualPersonagem();
+    const { dadosPersonagem } = useClasseContextualPersonagem();
     const { obtemValorTotalComLinhaEfeito, obterDetalhesPorLinhaEfeito } = useClasseContextualPersonagemModificadores();
     const { atributos } = useClasseContextualPersonagemAtributos();
 
-    const pericias = dadosFicha.periciasPatentes.map(periciaPatente => {
+    const pericias = dadosPersonagem.periciasPatentes.map(periciaPatente => {
         return {
             get refPericia(): Pericia { return SingletonHelper.getInstance().pericias.find(pericia => pericia.id === periciaPatente.idPericia)!; },
             get refPatente(): PatentePericia { return SingletonHelper.getInstance().patentes_pericia.find(patente => patente.id === periciaPatente.idPatentePericia)!; },
@@ -44,7 +44,7 @@ export const PersonagemPericiasProvider = ({ children }: { children: React.React
             {children}
         </PersonagemPericias.Provider>
     );
-}
+};
 
 export const useClasseContextualPersonagemPericias = (): ClasseContextualPersonagemPericiasProps => {
     const context = useContext(PersonagemPericias);

@@ -34,15 +34,15 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                                 precisaEstarEmpunhado: true,
                             },
                         },
-                        dadosDificuldade: {
-                            idAtributo: 3,
-                            idPericia: 15,
-                            valorDificuldade: 5,
-                            dadosDificuldadeDinamica: {
-                                modificadorDificuldadeInicial: 0,
-                                listaModificadoresDificuldade: [2, 5, 10]
-                            }
-                        },
+                        // dadosDificuldade: {
+                        //     idAtributo: 3,
+                        //     idPericia: 15,
+                        //     valorDificuldade: 5,
+                        //     dadosDificuldadeDinamica: {
+                        //         modificadorDificuldadeInicial: 0,
+                        //         listaModificadoresDificuldade: [2, 5, 10]
+                        //     }
+                        // },
                         dadosModificadores: [
                             {
                                 nome: 'Aprimorar Fortitude',
@@ -63,32 +63,38 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                 ],
             }
         ],
-        inventario: [
-            {
-                idTipoItem: 4,
-                dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Complexo' },
-                peso: 1,
-                categoria: 0,
-                dadosComportamentoEmpunhavel: { dadosPrecoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
-                dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1 },
-            },
-            {
-                idTipoItem: 4,
-                dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Complexo' },
-                peso: 1,
-                categoria: 0,
-                dadosComportamentoEmpunhavel: { dadosPrecoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
-                dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1 },
-            },
-            {
-                idTipoItem: 4,
-                dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Simples' },
-                peso: 1,
-                categoria: 0,
-                dadosComportamentoEmpunhavel: { dadosPrecoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
-                dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 1, numeroDeCargasMaximo: 2 },
-            },
-        ],
+        inventario: {
+            identificadorProximoItem: 4,
+            dadosItens: [
+                {
+                    identificadorNomePadrao: '1_Componente de Conhecimento Complexo',
+                    idTipoItem: 4,
+                    dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Complexo' },
+                    peso: 1,
+                    categoria: 0,
+                    dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
+                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1 },
+                },
+                {
+                    identificadorNomePadrao: '2_Componente de Conhecimento Complexo',
+                    idTipoItem: 4,
+                    dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Complexo' },
+                    peso: 1,
+                    categoria: 0,
+                    dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
+                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1 },
+                },
+                {
+                    identificadorNomePadrao: '3_Componente de Conhecimento Simples',
+                    idTipoItem: 4,
+                    dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Simples' },
+                    peso: 1,
+                    categoria: 0,
+                    dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
+                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 1, numeroDeCargasMaximo: 2, numeroDeCargasAtuais: 2 },
+                },
+            ]
+        },
         reducoesDano: [],
         pendencias: { idNivelEsperado: 5 },
     };

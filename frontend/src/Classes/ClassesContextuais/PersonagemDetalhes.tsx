@@ -11,23 +11,23 @@ interface ClasseContextualPersonagemDetalhesProps {
     nome: string;
     classe: Classe;
     nivel: Nivel;
-}
+};
 
 export const PersonagemDetalhes = createContext<ClasseContextualPersonagemDetalhesProps | undefined>(undefined);
 
 export const PersonagemDetalhesProvider = ({ children }: { children: React.ReactNode; }) => {
-    const { dadosFicha } = useClasseContextualPersonagem();
+    const { dadosPersonagem } = useClasseContextualPersonagem();
 
-    const nome = dadosFicha.detalhes.nome;
-    const classe: Classe = SingletonHelper.getInstance().classes.find(classe => classe.id === dadosFicha.detalhes.idClasse)!;
-    const nivel: Nivel = SingletonHelper.getInstance().niveis.find(nivel => nivel.id === dadosFicha.detalhes.idNivel)!;
+    const nome = dadosPersonagem.detalhes.nome;
+    const classe: Classe = SingletonHelper.getInstance().classes.find(classe => classe.id === dadosPersonagem.detalhes.idClasse)!;
+    const nivel: Nivel = SingletonHelper.getInstance().niveis.find(nivel => nivel.id === dadosPersonagem.detalhes.idNivel)!;
 
     return (
         <PersonagemDetalhes.Provider value={{ nome, classe, nivel }}>
             {children}
         </PersonagemDetalhes.Provider>
     );
-}
+};
 
 export const useClasseContextualPersonagemDetalhes = (): ClasseContextualPersonagemDetalhesProps => {
     const context = useContext(PersonagemDetalhes);

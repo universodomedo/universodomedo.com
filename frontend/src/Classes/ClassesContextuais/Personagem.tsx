@@ -1,7 +1,7 @@
 // #region Imports
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-import { RLJ_Ficha2 } from "Classes/ClassesTipos/index.ts";
+import { DadosItem, RLJ_Ficha2 } from "Classes/ClassesTipos/index.ts";
 
 import { PersonagemModificadoresProvider } from 'Classes/ClassesContextuais/PersonagemModificadores.tsx';
 
@@ -58,14 +58,39 @@ const NiveisProviders = combineProviders(
 );
 
 interface ClasseContextualPersonagemProps {
-    dadosFicha: RLJ_Ficha2;
+    dadosPersonagem: RLJ_Ficha2;
+    modificarItemDoInventario: (identificadorNomePadrao: string, modificador: (item: DadosItem) => boolean) => void;
 };
 
 export const Personagem = createContext<ClasseContextualPersonagemProps | undefined>(undefined);
 
 export const PersonagemProvider = ({ children, dadosFicha }: { children: React.ReactNode; dadosFicha: RLJ_Ficha2; }) => {
+    const [dadosPersonagem, setDadosPersonagem] = useState<RLJ_Ficha2>(dadosFicha);
+
+    const modificarItemDoInventario = (identificadorNomePadrao: string, callbackERemoveSeTrue: (item: DadosItem) => boolean) => {
+        setDadosPersonagem((prevState) => {
+            const novosItens = prevState.inventario.dadosItens.filter((item) => {
+                if (item.identificadorNomePadrao === identificadorNomePadrao) {
+                    const novoItem = { ...item };
+                    const remover = callbackERemoveSeTrue(novoItem); // Executa a modificação e verifica se precisa remover
+
+                    return !remover ? novoItem : false; // Se `remover` for true, o item é removido (false no filter)
+                }
+                return item;
+            }) as DadosItem[];
+
+            return {
+                ...prevState,
+                inventario: {
+                    ...prevState.inventario,
+                    dadosItens: novosItens,
+                },
+            };
+        });
+    };
+
     return (
-        <Personagem.Provider value={{ dadosFicha }}>
+        <Personagem.Provider value={{ dadosPersonagem, modificarItemDoInventario }}>
             <NiveisProviders>
                 {children}
             </NiveisProviders>

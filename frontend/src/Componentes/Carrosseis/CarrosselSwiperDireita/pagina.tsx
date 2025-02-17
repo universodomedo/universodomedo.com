@@ -1,15 +1,24 @@
-// #region Imports
+import React, { useEffect, useRef } from 'react';
 import style from './style.module.css';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
-
 import BarraMenu from 'Componentes/BarraMenu/pagina';
-
 import Slider from "react-slick";
-// #endregion
 
-const pagina = ({ listaPaginas, setPaginaAbertaSwiper, paginaAbertaSwiper }: { listaPaginas: { nome: string; componente: React.ReactNode; contexto: () => any; }[], setPaginaAbertaSwiper: React.Dispatch<React.SetStateAction<number>>, paginaAbertaSwiper: number }) => {
+const CarrosselSwiperDireita = ({ listaPaginas, setPaginaAbertaSwiper, paginaAbertaSwiper }: { 
+    listaPaginas: { nome: string; componente: React.ReactNode; contexto: () => any; }[], 
+    setPaginaAbertaSwiper: React.Dispatch<React.SetStateAction<number>>, 
+    paginaAbertaSwiper: number 
+}) => {
+    const sliderRef = useRef<Slider>(null);
+
+    // Atualiza o slide sempre que `paginaAbertaSwiper` mudar
+    useEffect(() => {
+        if (sliderRef.current) {
+            sliderRef.current.slickGoTo(paginaAbertaSwiper, true); // true para animação
+        }
+    }, [paginaAbertaSwiper]);
+
     const NextArrow = ({ onClick }: { onClick?: React.MouseEventHandler<HTMLDivElement> }) => {
         return (
             <div className={`${style.arrow} ${style.arrow_next}`} onClick={onClick}>
@@ -30,7 +39,7 @@ const pagina = ({ listaPaginas, setPaginaAbertaSwiper, paginaAbertaSwiper }: { l
 
     return (
         <div id={style.titulos_paginas_swiper_direita}>
-            <Slider {...settings}>
+            <Slider ref={sliderRef} {...settings}>
                 {listaPaginas.map((pagina, index) => (
                     <div key={index} onClick={() => setPaginaAbertaSwiper(index)} className={`${style.item_slider} ${index === paginaAbertaSwiper ? style.item_slider_selecionado : ''}`}>
                         <h1>
@@ -77,4 +86,4 @@ const AbaComIconeConfig = ({ useContextoPaginaAberta }: { useContextoPaginaAbert
     );
 }
 
-export default pagina;
+export default CarrosselSwiperDireita;

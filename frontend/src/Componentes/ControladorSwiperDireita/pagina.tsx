@@ -1,6 +1,6 @@
 // #region Imports
 import style from './style.module.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import CarrosselSwiperDireita from 'Componentes/Carrosseis/CarrosselSwiperDireita/pagina.tsx';
 
@@ -72,10 +72,25 @@ const PaginaComContexto = () => {
         },
     ];
 
-    const [paginaAbertaSwiper, setPaginaAbertaSwiper] = useState(0);
+    const [paginaAbertaSwiper, setPaginaAbertaSwiper] = useState(() => {
+        const salvo = sessionStorage.getItem('paginaAbertaSwiper');
+        return salvo ? JSON.parse(salvo) : 0;
+    });
     const paginaSelecionada = listaPaginas[paginaAbertaSwiper];
 
-    const [swiperDireitaAberto, setSwiperDireitaAberto] = useState(false);
+    useEffect(() => {
+        sessionStorage.setItem('paginaAbertaSwiper', JSON.stringify(paginaAbertaSwiper));
+    }, [paginaAbertaSwiper]);
+
+    const [swiperDireitaAberto, setSwiperDireitaAberto] = useState(() => {
+        const salvo = sessionStorage.getItem('swiperDireitaAberto');
+        return salvo ? JSON.parse(salvo) : false;
+    });
+
+    useEffect(() => {
+        sessionStorage.setItem('swiperDireitaAberto', JSON.stringify(swiperDireitaAberto));
+    }, [swiperDireitaAberto]);
+
     const alternaSwiperDireitaAberto = () => setSwiperDireitaAberto(!swiperDireitaAberto);
 
     return (

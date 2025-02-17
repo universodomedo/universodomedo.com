@@ -11,7 +11,7 @@ interface ClasseContextual<Nome>Props {
 export const <Nome> = createContext<ClasseContextual<Nome>Props | undefined>(undefined);
 
 export const <Nome>Provider = ({ children }: { children: React.ReactNode; }) => {
-    const { dadosFicha } = useClasseContextualPersonagem();
+    const { dadosPersonagem } = useClasseContextualPersonagem();
     
     return (
         <<Nome>.Provider value={{ }}>

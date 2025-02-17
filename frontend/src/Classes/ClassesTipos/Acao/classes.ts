@@ -31,12 +31,9 @@ export type DadosAcao = Pick<Acao, 'nome'> & {
 };
 
 export const executaAcao = (acao: Acao, opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) => {
-    console.log('executaAcao');
-    console.log(opcoesSelecionadas);
-    
     if (!realizaChecagemDificuldade(acao)) return false;
     
-    acao.custos.aplicaCustos();
+    acao.custos.aplicaCustos(opcoesSelecionadas);
 
     acao.executa();
 };

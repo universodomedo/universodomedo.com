@@ -1,7 +1,8 @@
 // #region Imports
 import React, { createContext, useContext, useMemo } from "react";
 
-import { Acao, AtributoPersonagem, criarEfeito, Custos, DadosCustos, DadosDificuldadeAcao, DificuldadeAcao, Duracao, EstatisticaDanificavelPersonagem, Modificador, OpcoesExecucaoAcao, PericiaPatentePersonagem, PrecoExecucao } from "Classes/ClassesTipos/index.ts";
+import { Acao, criarEfeito, Custos, DificuldadeAcao, Duracao, OpcoesExecucaoAcao } from "Classes/ClassesTipos/index.ts";
+import { SingletonHelper } from "Classes/classes_estaticas";
 
 import { useClasseContextualPersonagemHabilidades } from "Classes/ClassesContextuais/PersonagemHabilidades.tsx";
 import { useClasseContextualPersonagemNatureza } from "Classes/ClassesContextuais/PersonagemNatureza.tsx";
@@ -12,11 +13,10 @@ import { useClasseContextualPersonagemEstatisticasDanificaveis } from "Classes/C
 import { useClasseContextualPersonagemEstatisticasBuffaveis } from "Classes/ClassesContextuais/PersonagemEstatisticasBuffaveis.tsx";
 import { useCustosExecucoes } from "Classes/ClassesContextuais/GerenciadorCustosExecucoes.tsx";
 import { useClasseContextualPersonagemModificadores } from "./PersonagemModificadores";
-import { SingletonHelper } from "Classes/classes_estaticas";
-
-import { criarCustos } from '../../Hooks/custosAcao.ts';
-import { criarDificuldades } from "Hooks/dificuldadesAcao.ts";
 import { useClasseContextualPersonagemInventario } from "./PersonagemInventario.tsx";
+
+import { criarCustos } from 'Hooks/custosAcao.ts';
+import { criarDificuldades } from "Hooks/dificuldadesAcao.ts";
 // #endregion
 
 interface ClasseContextualPersonagemAcoesProps {
@@ -27,7 +27,7 @@ export const PersonagemAcoes = createContext<ClasseContextualPersonagemAcoesProp
 
 export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNode; }) => {
     const { acoesHabilidades } = useClasseContextualPersonagemHabilidades();
-    const { acoesNatureza } = useClasseContextualPersonagemNatureza();
+    const { dadosAcoesNatureza } = useClasseContextualPersonagemNatureza();
     const { rituais } = useClasseContextualPersonagemRituais();
 
     const { atributos } = useClasseContextualPersonagemAtributos();
@@ -74,14 +74,24 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
                 get opcoesExecucaoAcao(): OpcoesExecucaoAcao[] {
                     const opcoes: OpcoesExecucaoAcao[] = [];
                 
+                    if (this.nome === 'Sacar Item') {
+                        opcoes.push({
+                            identificador: 'itemGuardado',
+                            nomeExibicao: 'Item à Sacar',
+                            opcoes: inventario.itens.filter(item => item.itemEmpunhavel).map(item => ({
+                                key: item.codigoUnico,
+                                value: `${item.nome.nomeExibicao}`,
+                            })),
+                        });
+                    }
+
                     if (this.custos.custoAcaoComponente !== undefined) {
                         opcoes.push({
                             identificador: 'custoComponente',
                             nomeExibicao: 'Componente Ritualístico',
-                            opcoes: inventario.items.filter(item => item.itemEhComponente && item.comportamentoComponenteRitualistico!.refElemento.id === this.custos.custoAcaoComponente?.refElemento.id && item.comportamentoComponenteRitualistico!.refNivelComponente.id === this.custos.custoAcaoComponente.refNivelComponente.id && (!this.custos.custoAcaoComponente.precisaEstarEmpunhado || item.itemEstaEmpunhado)).map(item => ({
-                                key: 1,
-                                // key: item.nome.nomeExibicao,
-                                value: item.codigoUnico
+                            opcoes: inventario.itens.filter(item => item.itemEhComponente && item.comportamentoComponenteRitualistico!.refElemento.id === this.custos.custoAcaoComponente?.refElemento.id && item.comportamentoComponenteRitualistico!.refNivelComponente.id === this.custos.custoAcaoComponente.refNivelComponente.id && (!this.custos.custoAcaoComponente.precisaEstarEmpunhado || item.itemEstaEmpunhado)).map(item => ({
+                                key: item.codigoUnico,
+                                value: `${item.nome.nomeExibicao} (${item.comportamentoComponenteRitualistico!.numeroDeCargasAtuais})`,
                             })),
                         });
                     }

@@ -35,17 +35,17 @@ export type PrecoExecucao = {
     __key: "criarPrecoExecucao";
 };
 
-export type DadosPrecoExecucao = Pick<PrecoExecucao, 'quantidadeExecucoes'> & {
+export type DadoPrecoExecucao = Pick<PrecoExecucao, 'quantidadeExecucoes'> & {
     idExecucao: number;
 };
 
-export const criarPrecoExecucao = (listaDadosPrecoExecucao: DadosPrecoExecucao[]): PrecoExecucao[] => {
-    return listaDadosPrecoExecucao.map(dadosPrecoExecucao => {
+export const criarPrecoExecucao = (dadosPrecoExecucao: DadoPrecoExecucao[]): PrecoExecucao[] => {
+    return dadosPrecoExecucao.map(dadoPrecoExecucao => {
         return {
-            quantidadeExecucoes: dadosPrecoExecucao.quantidadeExecucoes,
+            quantidadeExecucoes: dadoPrecoExecucao.quantidadeExecucoes,
 
             get descricaoPreco(): string { return this.refExecucao.id === 1 ? 'Ação Livre' : `${this.quantidadeExecucoes} ${this.refExecucao.nomeExibicao}`; },
-            get refExecucao(): Execucao { return SingletonHelper.getInstance().execucoes.find(execucao => execucao.id === dadosPrecoExecucao.idExecucao)!; },
+            get refExecucao(): Execucao { return SingletonHelper.getInstance().execucoes.find(execucao => execucao.id === dadoPrecoExecucao.idExecucao)!; },
 
             __key: "criarPrecoExecucao", // PrecoExecucao não deve ser criado se não usando esse metodo
         };

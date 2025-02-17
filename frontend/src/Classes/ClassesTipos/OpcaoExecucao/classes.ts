@@ -5,7 +5,7 @@ export type OpcoesExecucaoAcao = {
 };
 
 export type OpcoesSelecionadasExecucaoAcao = {
-    [key: string]: number | undefined
+    [key: string]: string | undefined
 };
 
 // export class OpcoesExecucao {
@@ -15,4 +15,4 @@ export type OpcoesSelecionadasExecucaoAcao = {
 //     get displayName(): string { return this._displayName; }
 // }
 
-export type Opcao = { key: number, value: string, disabled?: boolean };
+export type Opcao = { key: string, value: string, disabled?: boolean };

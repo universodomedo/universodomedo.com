@@ -1,22 +1,27 @@
 // #region Imports
 import React, { createContext, useContext } from "react";
 
-import { Acao } from "Classes/ClassesTipos/index.ts";
+import { DadosAcao } from "Classes/ClassesTipos/index.ts";
 // #endregion
 
 interface ClasseContextualPersonagemNaturezaProps {
-    acoesNatureza: Acao[];
-}
+    dadosAcoesNatureza: DadosAcao[];
+};
 
 export const PersonagemNatureza = createContext<ClasseContextualPersonagemNaturezaProps | undefined>(undefined);
 
 export const PersonagemNaturezaProvider = ({ children }: { children: React.ReactNode; }) => {
     // const natureza: NaturezaPersonagem = new NaturezaPersonagem();
 
-    const acoesNatureza: Acao[] = [];
+    const dadosAcoesNatureza: DadosAcao[] = [
+        // {
+        //     nome: 'Sacar Item',
+
+        // }
+    ];
     
     return (
-        <PersonagemNatureza.Provider value={{ acoesNatureza }}>
+        <PersonagemNatureza.Provider value={{ dadosAcoesNatureza }}>
             {children}
         </PersonagemNatureza.Provider>
     );

@@ -7,6 +7,10 @@ import { useContextoControleInventario } from 'Contextos/ContextoControleInventa
 
 import Tooltip from 'Componentes/Tooltip/pagina.tsx';
 import Modal from 'Componentes/ModalDialog/pagina.tsx';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHandBackFist as faHandBackFistSolid, faVest, faWandSparkles } from '@fortawesome/free-solid-svg-icons';
+import { faHandBackFist as faHandBackFistRegular } from '@fortawesome/free-regular-svg-icons';
 // #endregion
 
 const pagina = ({ item }: { item: Item }) => {
@@ -51,24 +55,38 @@ const Icone = ({ item }: { item: Item }) => {
 const ConteudoDetalhes = ({ item }: { item: Item }) => {
     return (
         <>
-            {item.itemEstaEmpunhado && (
-                <div className={style.bloco_texto}>
-                    <p>Item está Empunhado!</p>
-                </div>
-            )}
+            <div className={style.recipiente_icones}>
+                {item.itemEstaEmpunhado ? (
+                    <FontAwesomeIcon icon={faHandBackFistSolid} title={'Empunhado'} style={{color: '#92D8F9'}} />
+                ) : item.itemEmpunhavel ? (
+                    <FontAwesomeIcon icon={faHandBackFistRegular} title={'Empunhavel'} />
+                ) : (
+                    <FontAwesomeIcon icon={faHandBackFistRegular} title={'Não Empunhavel'} style={{color: '#D76565'}} />
+                )}
+
+                {item.itemEstaVestido ? (
+                    <FontAwesomeIcon icon={faVest} title={'Vestido'} style={{color: '#92D8F9'}} />
+                ) : item.itemVestivel ? (
+                    <FontAwesomeIcon icon={faVest} title={'Vestivel'} />
+                ) : (
+                    <FontAwesomeIcon icon={faVest} title={'Não Vestivel'} style={{color: '#D76565'}} />
+                )}
+
+                {item.itemEhComponente && (
+                    <FontAwesomeIcon icon={faWandSparkles} title={'Componente'} style={{color: item.comportamentoComponenteRitualistico?.refElemento.cores.corPrimaria}} />
+                )}
+            </div>
+
             {item.itemEmpunhavel && (
                 <div className={style.bloco_texto}>
-                    <p className={style.titulo}>Item Empunhavel</p>
-                    <p className={style.texto_details}>Custo do Saque: precisa implementar</p>
-                    {/* <p className={style.texto_details}>Custo do Saque: {item.comportamentoEmpunhavel!.precoEmpunhar.descricaoCusto}</p> */}
+                    <p className={style.texto_details}>Custo para Sacar/Guardar: {item.comportamentoEmpunhavel!.custoEmpunhar.descricaoListaPreco}</p>
                     <p className={style.texto_details}>Empunhado com {item.comportamentoEmpunhavel!.extremidadesNecessarias} {pluralize(item.comportamentoEmpunhavel!.extremidadesNecessarias, 'Extremidade')}</p>
                 </div>
             )}
+
             {item.itemVestivel && (
                 <div className={style.bloco_texto}>
-                    <p className={style.titulo}>Item Vestível</p>
-                    <p className={style.texto_details}>Custo de Vestir: precisa implementar</p>
-                    {/* <p className={style.texto_details}>Custo de Vestir: {item.comportamentoVestivel!.precoVestir.descricaoListaPreco}</p> */}
+                    <p className={style.texto_details}>Custo para Vestir/Desvestir: {item.comportamentoVestivel!.custoVestir.descricaoListaPreco}</p>
                 </div>
             )}
         </>

@@ -1,5 +1,5 @@
 // #region Imports
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 
 import { Atributo, AtributoPersonagem } from "Classes/ClassesTipos/index.ts";
 import { SingletonHelper } from "Classes/classes_estaticas.ts";
@@ -10,33 +10,35 @@ import { useClasseContextualPersonagemModificadores } from "Classes/ClassesConte
 
 interface ClasseContextualPersonagemAtributosProps {
     atributos: AtributoPersonagem[];
-}
+};
 
 export const PersonagemAtributos = createContext<ClasseContextualPersonagemAtributosProps | undefined>(undefined);
 
 export const PersonagemAtributosProvider = ({ children }: { children: React.ReactNode; }) => {
-    const { dadosFicha } = useClasseContextualPersonagem();
+    const { dadosPersonagem } = useClasseContextualPersonagem();
     const { obtemValorTotalComLinhaEfeito, obterDetalhesPorLinhaEfeito } = useClasseContextualPersonagemModificadores();
 
-    const atributos = dadosFicha.atributos.map(atributo => {
-        const atributoService = {
-            get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(attr => attr.id === atributo.idAtributo)!; },
+    const atributos = useMemo(() => {
+        return dadosPersonagem.atributos.map(atributo => {
+            const atributoService = {
+                get refAtributo(): Atributo { return SingletonHelper.getInstance().atributos.find(attr => attr.id === atributo.idAtributo)!; },
 
-            get valor(): number { return atributo.valor; },
-            get valorTotal(): number { return obtemValorTotalComLinhaEfeito(this.valor, this.refAtributo.refLinhaEfeito.id); },
+                get valor(): number { return atributo.valor; },
+                get valorTotal(): number { return obtemValorTotalComLinhaEfeito(this.valor, this.refAtributo.refLinhaEfeito.id); },
 
-            get detalhesValor(): string[] { return [`Valor Natural: ${this.valor}`].concat(obterDetalhesPorLinhaEfeito(this.refAtributo.refLinhaEfeito.id)); },
-        };
+                get detalhesValor(): string[] { return [`Valor Natural: ${this.valor}`].concat(obterDetalhesPorLinhaEfeito(this.refAtributo.refLinhaEfeito.id)); },
+            };
 
-        return atributoService;
-    })
+            return atributoService;
+        });
+    }, [dadosPersonagem]);
     
     return (
         <PersonagemAtributos.Provider value={{ atributos }}>
             {children}
         </PersonagemAtributos.Provider>
     );
-}
+};
 
 export const useClasseContextualPersonagemAtributos = (): ClasseContextualPersonagemAtributosProps => {
     const context = useContext(PersonagemAtributos);

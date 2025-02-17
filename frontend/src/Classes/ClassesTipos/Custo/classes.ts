@@ -1,7 +1,7 @@
-import { DadosPrecoExecucao, Elemento, NivelComponente, PrecoExecucao } from 'Classes/ClassesTipos/index.ts';
+import { DadoPrecoExecucao, Elemento, NivelComponente, OpcoesSelecionadasExecucaoAcao, PrecoExecucao } from 'Classes/ClassesTipos/index.ts';
 
 export type DadosCustos = {
-    dadosPrecoExecucao: DadosPrecoExecucao[];
+    dadosPrecoExecucao: DadoPrecoExecucao[];
     dadosPrecoPE?: DadosPrecoPE;
     dadosPrecoComponente?: DadosPrecoComponente;
 };
@@ -25,12 +25,12 @@ export type Custos = {
     custoAcaoComponente?: CustoAcaoComponente;
 
     readonly custosPodemSerPagos: boolean;
-    aplicaCustos: () => void;
+    aplicaCustos: (opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) => void;
 };
 
 export type Custo = {
     readonly podeSerPago: boolean;
-    aplicaCusto: () => void;
+    aplicaCusto: (opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) => void;
 };
 
 type CustoPE = {

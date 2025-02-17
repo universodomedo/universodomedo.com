@@ -114,6 +114,18 @@
     align-self: center;
 }
 
+.recipiente_icones {
+    display: flex;
+    flex-direction: row;
+    height: 1.4em;
+    justify-content: center;
+    gap: 2%;
+}
+
+.recipiente_icones svg {
+    height: 100%;
+}
+
 .bloco_texto_espaçado {
     display: flex;
     flex-direction: column;

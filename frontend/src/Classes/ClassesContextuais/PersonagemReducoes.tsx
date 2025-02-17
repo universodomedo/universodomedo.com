@@ -2,21 +2,21 @@
 import React, { createContext, useContext } from "react";
 
 import { ReducaoDano, TipoDano } from "Classes/ClassesTipos/index.ts";
+import { SingletonHelper } from "Classes/classes_estaticas";
 
 import { useClasseContextualPersonagem } from "Classes/ClassesContextuais/Personagem.tsx";
-import { SingletonHelper } from "Classes/classes_estaticas";
 // #endregion
 
 interface ClasseContextualPersonagemReducoesProps {
     reducoes: ReducaoDano[];
-}
+};
 
 export const PersonagemReducoes = createContext<ClasseContextualPersonagemReducoesProps | undefined>(undefined);
 
 export const PersonagemReducoesProvider = ({ children }: { children: React.ReactNode; }) => {
-    const { dadosFicha } = useClasseContextualPersonagem();
+    const { dadosPersonagem } = useClasseContextualPersonagem();
 
-    const reducoes: ReducaoDano[] = dadosFicha.reducoesDano?.map(reducao_dano => {
+    const reducoes: ReducaoDano[] = dadosPersonagem.reducoesDano?.map(reducao_dano => {
         return {
             valor: reducao_dano.valor,
             get valorTotal(): number { return this.valor },
@@ -29,7 +29,7 @@ export const PersonagemReducoesProvider = ({ children }: { children: React.React
             {children}
         </PersonagemReducoes.Provider>
     );
-}
+};
 
 export const useClasseContextualPersonagemReducoes = (): ClasseContextualPersonagemReducoesProps => {
     const context = useContext(PersonagemReducoes);

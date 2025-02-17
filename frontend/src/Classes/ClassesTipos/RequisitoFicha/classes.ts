@@ -1,6 +1,4 @@
-// #region Imports
 import { RLJ_Ficha2 } from 'Classes/ClassesTipos/index.ts';
-// #endregion
 
 export class RequisitoFicha {
     constructor(
