@@ -49,7 +49,7 @@ singletonHelper.estatisticas_danificavel = DadosRecuperadosDoBanco.registrosEsta
 singletonHelper.execucoes = DadosRecuperadosDoBanco.registrosExecucaoModelo.map(registro => {
     return {
         ...registro,
-        get nomeExibicao() { return `Ação ${this.nome}`; },
+        get nomeExibicao() { return `${this.nome}`; },
         get refLinhaEfeito() { return singletonHelper.linhas_efeito.find(linhaEfeito => linhaEfeito.id === this.idLinhaEfeito)!; },
     }
 });
@@ -63,7 +63,7 @@ singletonHelper.niveis_componente = DadosRecuperadosDoBanco.registrosNivelCompon
 singletonHelper.niveis = DadosRecuperadosDoBanco.registrosNivelModelo.map(registro => {
     return {
         ...registro,
-        get nomeDisplay() { return `NEX ${this.nome}%`; },
+        get nomeDisplay() { return `${this.nome}% EX.P.`; },
     }
 });
 

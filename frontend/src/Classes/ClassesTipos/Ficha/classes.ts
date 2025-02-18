@@ -27,11 +27,6 @@ export type DadosComportamentosAcao = {
     dadosComportamentoConsomeMunicao?: ConstructorParameters<typeof ComportamentoConsomeMunicao>;
 };
 
-export type DadosAcaoCustomizada = {
-    condicaoListaItems: (item: Item) => boolean;
-    executarAcaoItem: (item: Item) => void;
-}
-
 export type ArgsRitual = {
     // args: ConstructorParameters<typeof DadosGenericosRitual>[0],
     dadosComportamentos: DadosComportamentosRitual;

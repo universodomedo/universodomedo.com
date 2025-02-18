@@ -18,13 +18,13 @@ const page = ({ habilidade }: { habilidade: Habilidade }) => {
     const icone = () => {
         return (
             <div className={style.embrulho_icone}>
-                {mostrarEtiquetas && (<h3>{habilidade.nomeExibicao}</h3>)}
+                {mostrarEtiquetas && (<h3>{habilidade.nome}</h3>)}
                 <Tooltip>
                     <Tooltip.Trigger>
                         <div className={`${style.icone}`} style={{ backgroundImage: `url(data:image/svg+xml;base64,${habilidade.svg})`, backgroundColor: '#FFFFFF', }} />
                     </Tooltip.Trigger>
                     <Tooltip.Content>
-                        <h3>{habilidade.nomeExibicao}</h3>
+                        <h3>{habilidade.nome}</h3>
                     </Tooltip.Content>
                 </Tooltip>
             </div>
@@ -34,7 +34,7 @@ const page = ({ habilidade }: { habilidade: Habilidade }) => {
     const conteudo = (close: () => void) => {
         return (
             <div className={style.conteudo_popover}>
-                <h2>{habilidade.nomeExibicao}</h2>
+                <h2>{habilidade.nome}</h2>
                 <div className={style.acoes}>
                     <Modal open={openDetalhes} onOpenChange={(isOpen) => { setOpenDetalhes(isOpen); if (!isOpen) close(); }}>
                         {/* <Modal open={openDetalhes} onOpenChange={setOpenDetalhes}> */}
@@ -42,7 +42,7 @@ const page = ({ habilidade }: { habilidade: Habilidade }) => {
                             Detalhes
                         </Modal.Button>
 
-                        <Modal.Content title={`Detalhes - ${habilidade.nomeExibicao}`}>
+                        <Modal.Content title={`Detalhes - ${habilidade.nome}`}>
                             <ConteudoDetalhes />
                         </Modal.Content>
                     </Modal>

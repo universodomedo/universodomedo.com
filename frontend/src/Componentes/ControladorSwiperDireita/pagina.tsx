@@ -55,11 +55,11 @@ const PaginaComContexto = () => {
             componente: <PaginaControleInventario />,
             contexto: useContextoControleInventario
         },
-        // {
-        //     nome: 'Habilidades',
-        //     componente: <PaginaControleHabilidades />,
-        //     contexto: useContextoControleHabilidades
-        // },
+        {
+            nome: 'Habilidades',
+            componente: <PaginaControleHabilidades />,
+            contexto: useContextoControleHabilidades
+        },
         {
             nome: 'Rituais',
             componente: <PaginaControleRituais />,

@@ -14,7 +14,7 @@ import { PersonagemEstatisticasBuffaveisProvider } from 'Classes/ClassesContextu
 import { PersonagemEstatisticasDanificaveisProvider } from 'Classes/ClassesContextuais/PersonagemEstatisticasDanificaveis.tsx';
 import { PersonagemHabilidadesProvider } from 'Classes/ClassesContextuais/PersonagemHabilidades.tsx';
 import { PersonagemInventarioProvider } from 'Classes/ClassesContextuais/PersonagemInventario.tsx';
-import { PersonagemNaturezaProvider } from 'Classes/ClassesContextuais/PersonagemNatureza.tsx';
+import { PersonagemInerenciasProvider } from 'Classes/ClassesContextuais/PersonagemInerencias.tsx';
 import { PersonagemProficienciasProvider } from 'Classes/ClassesContextuais/PersonagemProficiencias.tsx';
 import { PersonagemReducoesProvider } from 'Classes/ClassesContextuais/PersonagemReducoes.tsx';
 import { PersonagemRituaisProvider } from 'Classes/ClassesContextuais/PersonagemRituais.tsx';
@@ -40,7 +40,7 @@ const ProvidersSubInternosPersonagem = combineProviders(
     PersonagemEstatisticasDanificaveisProvider,
     PersonagemHabilidadesProvider,
     PersonagemInventarioProvider,
-    PersonagemNaturezaProvider,
+    PersonagemInerenciasProvider,
     PersonagemProficienciasProvider,
     PersonagemReducoesProvider,
     PersonagemRituaisProvider,

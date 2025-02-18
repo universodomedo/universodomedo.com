@@ -93,7 +93,7 @@
 .fatia_parte_baixo_detalhes {
     display: flex;
     flex-direction: column;
-    width: 22%;
+    width: 26%;
     align-items: center;
     padding: .6%;
     gap: .4vh;
@@ -138,27 +138,6 @@
     background-color: rgb(184, 180, 180);
 }
 
-.barra_locais_borda_esquerda {
-    flex: .2;
-    border-radius: 0 0 0 20px;
-}
-
-.barra_locais_centro {
-    display: flex;
-    flex-direction: row;
-    flex: 1;
-    align-items: center;
-}
-
-.barra_locais_centro svg {
-    margin: auto;
-}
-
-.barra_locais_borda_direita {
-    flex: .2;
-    border-radius: 0 0 20px 0;
-}
-
 .barras {
     display: flex;
     flex-direction: column;
@@ -199,19 +178,30 @@
     justify-content: center;
 }
 
+.fatia_parte_baixo_estatisticas {
+    display: flex;
+    flex-direction: row;
+    width: 26%;
+    padding: 1vh;
+}
+
 .fatia_parte_baixo_estatisticas_danificaveis {
     display: flex;
     flex-direction: column;
-    width: 22%;
-    align-items: center;
-    justify-content: center;
+    flex: 1;
     gap: 5%;
-    padding: 1vh;
+}
+
+.fatia_parte_baixo_execucoes {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    text-align: center;
+    justify-content: space-evenly;
 }
 
 .recipiente_estatistica_danificavel {
     display: flex;
-    width: 90%;
     flex: 1;
 }
 

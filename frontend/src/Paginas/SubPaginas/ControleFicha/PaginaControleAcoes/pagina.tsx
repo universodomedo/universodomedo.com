@@ -12,8 +12,10 @@ const pagina = () => {
     const { acoes } = useClasseContextualPersonagemAcoes();
     const { mostrarFiltros } = useContextoControleAcoes();
 
-    const acoesGerais = acoes.filter(acao => acao.dadosAcaoCustomizada !== undefined);
-    const acoesRealizaveis = acoes.filter(acao => !acao.bloqueada && acao.dadosAcaoCustomizada === undefined);
+    const acoesGerais = [] as Acao[];
+    // const acoesGerais = acoes.filter(acao => acao.dadosAcaoCustomizada !== undefined);
+    const acoesRealizaveis = acoes.filter(acao => !acao.bloqueada);
+    // const acoesRealizaveis = acoes.filter(acao => !acao.bloqueada && acao.dadosAcaoCustomizada === undefined);
     const acoesBloqueadas = acoes.filter(acao => acao.bloqueada);
 
     const renderAcaoItem = (acao: Acao, index: number) => (

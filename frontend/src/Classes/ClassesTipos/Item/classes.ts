@@ -8,6 +8,7 @@ export type Item = {
 
     readonly svg: string;
     readonly agrupavel: boolean;
+    readonly nomeOpcao: string;
 
     dadosAcoes?: DadosAcao[];
 
@@ -28,6 +29,9 @@ export type Item = {
     readonly itemEstaGuardado: boolean;
     readonly itemEstaEmpunhado: boolean;
     readonly itemEstaVestido: boolean;
+
+    readonly itemPodeSerEmpunhado: boolean;
+    readonly itemPodeSerGuardado: boolean;
 };
 
 export type DadosItem = Pick<Item, 'peso' | 'categoria'> & {

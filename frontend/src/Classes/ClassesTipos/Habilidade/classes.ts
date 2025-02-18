@@ -4,13 +4,17 @@
 // import { useClasseContextualPersonagemPericias } from 'Classes/ClassesContextuais/PersonagemPericias';
 // import { Acao, RequisitoFicha, Personagem, CustoExecucao, FiltroProps, FiltroPropsItems, EmbrulhoComportamentoHabilidade, Modificador, adicionarModificadoresUtil, OpcoesFiltro, OpcoesFiltrosCategorizadas, Pericia, PatentePericia, Proficiencia, DadosGenericosHabilidade, DadosGenericosHabilidadeParams, RLJ_Ficha2 } from 'Classes/ClassesTipos/index.ts';
 
+import { DadosAcao, DadosAcaoEspecifica, DadosAcaoGenerica } from "../Acao";
+
 // import { SingletonHelper } from 'Classes/classes_estaticas.ts';
 
 // import { getPersonagemFromContext } from 'Contextos/ContextoPersonagem/contexto.tsx';
 // // #endregion
 
 export type Habilidade = {
-
+    readonly nome: string;
+    readonly svg: string;
+    readonly dadosAcoes: DadosAcaoGenerica[] | DadosAcaoEspecifica[];
 };
 
 // export interface IHabilidade {

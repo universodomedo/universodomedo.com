@@ -22,10 +22,10 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                                 valor: 4,
                             },
                             dadosPrecoExecucao: [
-                                // {
-                                //     idExecucao: 3,
-                                //     quantidadeExecucoes: 1,
-                                // }
+                                {
+                                    idExecucao: 3,
+                                    quantidadeExecucoes: 1,
+                                }
                             ],
                             dadosPrecoComponente: {
                                 idElemento: 1,
@@ -73,7 +73,7 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                     peso: 1,
                     categoria: 0,
                     dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
-                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1 },
+                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1, },
                 },
                 {
                     identificadorNomePadrao: '2_Componente de Conhecimento Complexo',
@@ -81,8 +81,8 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                     dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Complexo' },
                     peso: 1,
                     categoria: 0,
-                    dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
-                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1 },
+                    dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 2 } ], extremidadesNecessarias: 1, },
+                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1, },
                 },
                 {
                     identificadorNomePadrao: '3_Componente de Conhecimento Simples',
@@ -91,7 +91,7 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                     peso: 1,
                     categoria: 0,
                     dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
-                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 1, numeroDeCargasMaximo: 2, numeroDeCargasAtuais: 2 },
+                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 1, numeroDeCargasMaximo: 2, numeroDeCargasAtuais: 2, },
                 },
             ]
         },

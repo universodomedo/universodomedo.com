@@ -15,6 +15,7 @@ interface ClasseContextualPersonagemEstatisticasBuffaveisProps {
     setExecucoes: (execucoes: ExecucaoPersonagem[]) => void;
     extremidades: Extremidade[];
     empunhaItem: (item: Item) => void;
+    desempunharItem: (item: Item) => void;
     espacosCategoria: EspacoCategoria[];
     resistenciaParanormal: ResistenciaParanormal;
 }
@@ -92,55 +93,16 @@ export const PersonagemEstatisticasBuffaveisProvider = ({ children }: { children
         const novasExtremidades = [...extremidades];
         novasExtremidades.filter(extremidade => !extremidade.estaOcupada).slice(0, item.comportamentoEmpunhavel!.extremidadesNecessarias).forEach(extremidade => extremidade.refItem = item);
         setExtremidades(novasExtremidades);
-    }
+    };
 
-    // const listaPrecosAplicados = (listaPrecoTipoExecucao: PrecoExecucao[]): PrecoExecucao[] => {
-    //     const agrupados = listaPrecoTipoExecucao.reduce((map, preco) => {
-    //         const id = preco.refExecucao.id;
-    //         if (!map.has(id)) map.set(id, { idTipoExecucao: id, quantidadeExecucoes: 0 });
-    //         map.get(id)!.quantidadeExecucoes += preco.quantidadeExecucoes;
-    //         return map;
-    //     }, new Map<number, { idTipoExecucao: number, quantidadeExecucoes: number }>());
-
-    //     const agrupadosFiltrados = Array.from(agrupados.values()).filter(preco => preco.quantidadeExecucoes > 0);
-
-    //     // Cria a lista final de preços
-    //     const listaPrecos: PrecoExecucao[] = agrupadosFiltrados.length > 0
-    //         ? agrupadosFiltrados.map(({ idExecucao, quantidadeExecucoes }) => {  idExecucao, quantidadeExecucoes })
-    //         : [{ idTipoExecucao: 1, quantidadeExecucoes: 0 }];
-    
-    //     // Calcula as propriedades desejadas
-    //     const descricaoListaPreco = listaPrecos.map(preco => preco.descricaoPreco).join(' e ');
-    //     const temApenasAcaoLivre = !listaPrecos.some(preco => preco.refExecucao.id !== 1);
-    //     const podePagar = ControladorExecucoesPersonagem.podePagarPreco({ listaPrecos });
-    //     const resumoPagamento = ControladorExecucoesPersonagem.resumoPagamento({ listaPrecos }).join(' e ');
-    
-    //     // Retorna o objeto com as propriedades calculadas
-    //     return {
-    //         listaPrecos,
-    //         descricaoListaPreco,
-    //         temApenasAcaoLivre,
-    //         podePagar,
-    //         resumoPagamento,
-    //     };
-    // };
-
-
-    // const calculaCustoExecucao = (precoExecucao: PrecoGeralExecucao) => {
-    //     let custoPadrao = 0;
-    //     let custoMovimento = 0;
-    
-    //     for (const preco of precoExecucao.listaPrecos) {
-    //         if (preco.refTipoExecucao.id === 2) {
-    //             custoPadrao += preco.quantidadeExecucoes;
-    //         } else if (preco.refTipoExecucao.id === 3) {
-    //             custoMovimento += preco.quantidadeExecucoes;
-    //         }
-    //     }
-    // }
+    const desempunharItem = (item: Item) => {
+        const novasExtremidades = [...extremidades];
+        novasExtremidades.filter(extremidade => extremidade.refItem?.codigoUnico === item.codigoUnico).forEach(extremidade => extremidade.refItem = undefined);
+        setExtremidades(novasExtremidades);
+    };
 
     return (
-        <PersonagemEstatisticasBuffaveis.Provider value={{ defesa, deslocamento, espacoInventario, execucoes, setExecucoes, extremidades, empunhaItem, espacosCategoria, resistenciaParanormal }}>
+        <PersonagemEstatisticasBuffaveis.Provider value={{ defesa, deslocamento, espacoInventario, execucoes, setExecucoes, extremidades, empunhaItem, desempunharItem, espacosCategoria, resistenciaParanormal }}>
             {children}
         </PersonagemEstatisticasBuffaveis.Provider>
     );

@@ -77,19 +77,14 @@ export const criarDificuldadeDinamica = (dadosDificuldadeDinamica: DadosDificuld
     }
 };
 
-export const realizaChecagemDificuldade = (acao: Acao): boolean => {
-    if (acao.dificuldadeAcao !== undefined) {
-        const retornoChecagemDificuldade = acao.dificuldadeAcao.refPericiaPatentePersonagem.realizarTeste();
+export const realizaChecagemDificuldade = (dificuldadeAcao: DificuldadeAcao): boolean => {
+    const retornoChecagemDificuldade = dificuldadeAcao.refPericiaPatentePersonagem.realizarTeste();
 
-        if (retornoChecagemDificuldade >= acao.dificuldadeAcao.checagemDificuldade.valorChecagemDificuldade) {
-            if (acao.dificuldadeAcao.checagemDificuldade.dificuldadeDinamica !== undefined) acao.dificuldadeAcao.checagemDificuldade.dificuldadeDinamica.atualizaDificuldade();
+    if (retornoChecagemDificuldade >= dificuldadeAcao.checagemDificuldade.valorChecagemDificuldade) {
+        if (dificuldadeAcao.checagemDificuldade.dificuldadeDinamica !== undefined) dificuldadeAcao.checagemDificuldade.dificuldadeDinamica.atualizaDificuldade();
 
-            return true;
-        } else {
-            acao.trava('Dificuldade não superada');
-            return false;
-        }
+        return true;
+    } else {
+        return false;
     }
-
-    return true;
 };

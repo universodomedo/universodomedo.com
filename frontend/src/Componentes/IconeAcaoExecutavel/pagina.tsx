@@ -2,7 +2,7 @@
 import style from 'Recursos/EstilizacaoCompartilhada/detalhes_popover.module.css';
 import { useState, useRef, useEffect } from 'react';
 
-import { Acao, executaAcao, OpcoesSelecionadasExecucaoAcao } from 'Classes/ClassesTipos/index.ts';
+import { Acao, ehAcaoEspecifica, ehAcaoGenerica, OpcoesSelecionadasExecucaoAcao } from 'Classes/ClassesTipos/index.ts';
 
 import Modal from 'Componentes/ModalDialog/pagina';
 import RecipienteDeAbas from 'Componentes/RecipienteDeAbas/pagina.tsx';
@@ -116,8 +116,6 @@ const ConteudoExecutavelSacarEGuardar = () => {
     );
 };
 
-const ConteudoExecutavelVestirEDesvestir = () => {};
-
 const ConteudoExecucaoGenerico = ({ acao, fecharModal }: { acao: Acao, fecharModal: () => void }) => {
     const [opcoesSelecionadas, setOpcoesSelecionadas] = useState<OpcoesSelecionadasExecucaoAcao>({});
     const firstSelectRef = useRef<HTMLSelectElement | null>(null);
@@ -141,68 +139,114 @@ const ConteudoExecucaoGenerico = ({ acao, fecharModal }: { acao: Acao, fecharMod
         }
     };
 
-    return (
-        <>
-            <div className={style.recipiente_conteudo_execucao_modal}>
-                {!acao.bloqueada && acao.opcoesExecucaoAcao.length > 0 && (
-                    <>
-                        {acao.opcoesExecucaoAcao.map((opcoesExecucao, index) => {
-                            return (
-                                <div key={index} className={style.opcao_acao}>
-                                    <h2>{opcoesExecucao.nomeExibicao}</h2>
-                                    <select ref={index === 0 ? firstSelectRef : null} value={opcoesSelecionadas[index] || 0} onChange={(e) => handleSelectChange(opcoesExecucao.identificador, e.target.value)} onKeyDown={handleKeyPress}>
-                                        <option value="0" className={style.opcao_acao_padrao} disabled>Selecione a Opção...</option>
-                                        {opcoesExecucao.opcoes.map(opcao => (
-                                            <option key={opcao.key} value={opcao.key} disabled={opcao.disabled}>{opcao.value}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            );
-                        })}
+    if (ehAcaoGenerica(acao)) {
+        return (
+            <>
+                <div className={style.recipiente_conteudo_execucao_modal}>
+                    {!acao.bloqueada && acao.opcoesExecucaoAcao.length > 0 && (
+                        <>
+                            {acao.opcoesExecucaoAcao.map((opcoesExecucao, index) => {
+                                return (
+                                    <div key={index} className={style.opcao_acao}>
+                                        <h2>{opcoesExecucao.nomeExibicao}</h2>
+                                        <select ref={index === 0 ? firstSelectRef : null} value={opcoesSelecionadas[opcoesExecucao.identificador] || 0} onChange={(e) => handleSelectChange(opcoesExecucao.identificador, e.target.value)} onKeyDown={handleKeyPress}>
+                                            <option value="0" className={style.opcao_acao_padrao} disabled>Selecione a Opção...</option>
+                                            {opcoesExecucao.opcoes.map(opcao => (
+                                                <option key={opcao.key} value={opcao.key} disabled={opcao.disabled}>{opcao.value}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                );
+                            })}
 
-                        <hr />
-                    </>
+                            <hr />
+                        </>
+                    )}
+
+                    {acao.travada && (
+                        <div className={style.bloco_texto}>
+                            <p className={`${style.titulo} cor_mensagem_erro`}>Ação Travada pelo Turno</p>
+                            <p className={`${style.texto} cor_mensagem_erro`}>{acao.descricaoTravada}</p>
+                        </div>
+                    )}
+                    {acao.dificuldadeAcao && (
+                        <div className={style.bloco_texto}>
+                            <p className={style.titulo}>Dificuldade de Execução</p>
+                            <p className={style.texto}>{acao.dificuldadeAcao.refAtributoPersonagem.refAtributo.nomeAbreviado} {acao.dificuldadeAcao.refPericiaPatentePersonagem.refPericia.nomeAbreviado} DT {acao.dificuldadeAcao.checagemDificuldade.valorChecagemDificuldade}</p>
+                        </div>
+                    )}
+                    {acao.custos.listaCustos.length > 0 && (
+                        <div className={style.bloco_texto}>
+                            <p className={style.titulo}>Custos</p>
+                            {
+                                acao.custos.custoAcaoExecucao.podeSerPago
+                                    ? (<p className={style.texto}>{acao.custos.custoAcaoExecucao.resumoPagamento}</p>)
+                                    : (<p className={`${style.texto} ${!acao.custos.custoAcaoExecucao.podeSerPago ? 'cor_mensagem_erro' : ''}`}>{acao.custos.custoAcaoExecucao.descricaoListaPreco}</p>)
+                            }
+
+                            {acao.custos.custoAcaoPE && (<p className={`${style.texto} ${!acao.custos.custoAcaoPE.podeSerPago ? 'cor_mensagem_erro' : ''}`}>{acao.custos.custoAcaoPE.valor} P.E.</p>)}
+
+                            {acao.custos.custoAcaoComponente && (<p className={`${style.texto} ${!acao.custos.custoAcaoComponente.podeSerPago ? 'cor_mensagem_erro' : ''}`}>{acao.custos.custoAcaoComponente.numeroCargasNoUso} Carga de Componente de {acao.custos.custoAcaoComponente.refElemento.nome} {acao.custos.custoAcaoComponente.refNivelComponente.nome}{acao.custos.custoAcaoComponente.precisaEstarEmpunhado ? ' Empunhado' : ''}</p>)}
+                        </div>
+                    )}
+                </div>
+
+                {!acao.bloqueada && (
+                    <button
+                        ref={buttonRef}
+                        className={style.botao_principal}
+                        disabled={acao.opcoesExecucaoAcao.length != Object.keys(opcoesSelecionadas).length}
+                        onClick={() => { acao.executaAcao(opcoesSelecionadas); fecharModal(); }}>
+                            Executar
+                    </button>
                 )}
+            </>
+        );
+    } else if (ehAcaoEspecifica(acao)) {
+        return (
+            <>
+                <div className={style.recipiente_conteudo_execucao_modal}>
+                    {!acao.bloqueada && acao.opcoesExecucaoAcao.length > 0 && (
+                        <>
+                            {acao.opcoesExecucaoAcao.map((opcoesExecucao, index) => {
+                                return (
+                                    <div key={index} className={style.opcao_acao}>
+                                        <h2>{opcoesExecucao.nomeExibicao}</h2>
+                                        <select ref={index === 0 ? firstSelectRef : null} value={opcoesSelecionadas[opcoesExecucao.identificador] || 0} onChange={(e) => handleSelectChange(opcoesExecucao.identificador, e.target.value)} onKeyDown={handleKeyPress}>
+                                            <option value="0" className={style.opcao_acao_padrao} disabled>Selecione a Opção...</option>
+                                            {opcoesExecucao.opcoes.map(opcao => (
+                                                <option key={opcao.key} value={opcao.key} disabled={opcao.disabled}>{opcao.value}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                );
+                            })}
 
-                {acao.travada && (
+                            <hr />
+                        </>
+                    )}
+
                     <div className={style.bloco_texto}>
-                        <p className={`${style.titulo} cor_mensagem_erro`}>Ação Travada pelo Turno</p>
-                        <p className={`${style.texto} cor_mensagem_erro`}>{acao.descricaoTravada}</p>
+                        {acao.dadosCarregadosPreviamente}
                     </div>
-                )}
-                {acao.dificuldadeAcao && (
+
                     <div className={style.bloco_texto}>
-                        <p className={style.titulo}>Dificuldade de Execução</p>
-                        <p className={style.texto}>{acao.dificuldadeAcao.refAtributoPersonagem.refAtributo.nomeAbreviado} {acao.dificuldadeAcao.refPericiaPatentePersonagem.refPericia.nomeAbreviado} DT {acao.dificuldadeAcao.checagemDificuldade.valorChecagemDificuldade}</p>
+                        {acao.dadosCarregadosNoChangeOption(opcoesSelecionadas)}
                     </div>
+                </div>
+                
+                {!acao.bloqueada && (
+                    <button
+                        ref={buttonRef}
+                        className={style.botao_principal}
+                        disabled={!acao.validaExecucao(opcoesSelecionadas)}
+                        onClick={() => { acao.executarAcaoEspecifica(opcoesSelecionadas); fecharModal(); }}>
+                            Executar
+                    </button>
                 )}
-                {acao.custos.listaCustos.length > 0 && (
-                    <div className={style.bloco_texto}>
-                        <p className={style.titulo}>Custos</p>
-                        {
-                            acao.custos.custoAcaoExecucao.podeSerPago
-                                ? (<p className={style.texto}>{acao.custos.custoAcaoExecucao.resumoPagamento}</p>)
-                                : (<p className={`${style.texto} ${!acao.custos.custoAcaoExecucao.podeSerPago ? 'cor_mensagem_erro' : ''}`}>{acao.custos.custoAcaoExecucao.descricaoListaPreco}</p>)
-                        }
-
-                        {acao.custos.custoAcaoPE && (<p className={`${style.texto} ${!acao.custos.custoAcaoPE.podeSerPago ? 'cor_mensagem_erro' : ''}`}>{acao.custos.custoAcaoPE.valor} P.E.</p>)}
-
-                        {acao.custos.custoAcaoComponente && (<p className={`${style.texto} ${!acao.custos.custoAcaoComponente.podeSerPago ? 'cor_mensagem_erro' : ''}`}>{acao.custos.custoAcaoComponente.numeroCargasNoUso} Carga de Componente de {acao.custos.custoAcaoComponente.refElemento.nome} {acao.custos.custoAcaoComponente.refNivelComponente.nome}{acao.custos.custoAcaoComponente.precisaEstarEmpunhado ? ' Empunhado' : ''}</p>)}
-                    </div>
-                )}
-            </div>
-
-            {!acao.bloqueada && (
-                <button
-                    ref={buttonRef}
-                    className={style.botao_principal}
-                    disabled={acao.opcoesExecucaoAcao.length != Object.keys(opcoesSelecionadas).length}
-                    onClick={() => { executaAcao(acao, opcoesSelecionadas); fecharModal(); }}>
-                        Executar
-                </button>
-            )}
-        </>
-    );
+            </>
+        )
+    }
 }
 
 const ConteudoDetalhes = ({ acao }: { acao: Acao }) => {

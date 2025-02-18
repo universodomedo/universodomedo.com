@@ -68,13 +68,13 @@ export const registrosEstatisticaDanificavelModelo: EstatisticaDanificavelModelo
 ];
 
 export const registrosExecucaoModelo: ExecucaoModelo[] = [
-    { id: 1, idLinhaEfeito: 55, nome: "Livre" },
-    { id: 2, idLinhaEfeito: 56, nome: "Padrão" },
-    { id: 3, idLinhaEfeito: 57, nome: "de Movimento" },
-    { id: 4, idLinhaEfeito: 58, nome: "Reativa" },
-    { id: 5, idLinhaEfeito: 59, nome: "Ritualística" },
-    { id: 6, idLinhaEfeito: 60, nome: "Investigativa" },
-    { id: 7, idLinhaEfeito: 61, nome: "de Comando" },
+    { id: 1, idLinhaEfeito: 55, nome: "Ação Livre" },
+    { id: 2, idLinhaEfeito: 56, nome: "Ação Padrão" },
+    { id: 3, idLinhaEfeito: 57, nome: "Ação de Movimento" },
+    { id: 4, idLinhaEfeito: 58, nome: "Reação" },
+    { id: 5, idLinhaEfeito: 59, nome: "Ação Ritualística" },
+    { id: 6, idLinhaEfeito: 60, nome: "Ação Investigativa" },
+    { id: 7, idLinhaEfeito: 61, nome: "Ação de Comando" },
 ];
 
 export const registrosFormatoAlcanceModelo: FormatoAlcanceModelo[] = [

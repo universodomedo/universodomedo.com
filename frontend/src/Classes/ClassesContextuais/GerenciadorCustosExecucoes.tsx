@@ -35,6 +35,8 @@ export const useCustosExecucoes = () => {
     };
 
     const pagaPrecoExecucao = (precoExecucao: PrecoExecucao[]) => {
+        return;
+        
         const { custoPadrao, custoMovimento, deficitMovimento } = calculaCustos(precoExecucao);
     
         const novasExecucoes = execucoes.map(exec => {

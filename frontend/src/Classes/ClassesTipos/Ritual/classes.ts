@@ -1,9 +1,9 @@
-import { DadosAcao, DadosNomeCustomizado, NomeCustomizado, PaletaCores, } from 'Classes/ClassesTipos/index.ts';
+import { DadosAcao, DadosAcaoGenerica, DadosNomeCustomizado, NomeCustomizado, PaletaCores, } from 'Classes/ClassesTipos/index.ts';
 
 export type Ritual = {
     readonly nome: NomeCustomizado;
     readonly svg: string;
-    readonly dadosAcoes: DadosAcao[];
+    readonly dadosAcoes: DadosAcaoGenerica[];
     readonly refElemento: Elemento;
     readonly refCirculoNivelRitual: CirculoNivelRitual;
 };
