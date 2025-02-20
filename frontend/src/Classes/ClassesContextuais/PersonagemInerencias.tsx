@@ -4,7 +4,7 @@ import { Habilidade, OpcoesSelecionadasExecucaoAcao } from "Classes/ClassesTipos
 import { useClasseContextualPersonagemInventario } from "Classes/ClassesContextuais/PersonagemInventario.tsx";
 import { useClasseContextualPersonagemEstatisticasBuffaveis } from "Classes/ClassesContextuais/PersonagemEstatisticasBuffaveis.tsx";
 
-import PaginaDadosSacar from 'Componentes/IconeAcaoExecutavel/BlocosTextoAcaoEspecifica/PaginaDadosSacar.tsx';
+import { PaginaDadosPreviosSacar, PaginaDadosDinamicosSacar } from 'Componentes/IconeAcaoExecutavel/BlocosTextoAcaoEspecifica/PaginaDadosSacar.tsx';
 import PaginaDadosGuardar from 'Componentes/IconeAcaoExecutavel/BlocosTextoAcaoEspecifica/PaginaDadosGuardar';
 
 interface ClasseContextualPersonagemInerenciasProps {
@@ -26,12 +26,12 @@ export const PersonagemInerenciasProvider = ({ children }: { children: React.Rea
                 {
                     nome: 'Sacar Item',
                     tipoAcaoEspecifica: 'Sacar Item',
-                    dadosCarregadosPreviamente: <></>,
+                    dadosCarregadosPreviamente: <PaginaDadosPreviosSacar />,
                     dadosCarregadosNoChangeOption: function(opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) {
                         if (opcoesSelecionadas['itemParaSacar'] === undefined) return <></>;
 
                         const itemSelecionado = inventario.itens.find(item => item.codigoUnico === opcoesSelecionadas['itemParaSacar'])!;
-                        return <PaginaDadosSacar item={itemSelecionado}/>;
+                        return <PaginaDadosDinamicosSacar item={itemSelecionado}/>;
                     },
                     validaExecucao: function(opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) {
                         if (opcoesSelecionadas['itemParaSacar'] === undefined) return false;

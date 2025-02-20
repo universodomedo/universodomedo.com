@@ -9,3 +9,7 @@
 .input_e_rotulo label {
     font-size: 1.2rem;
 }
+
+.input_e_rotulo select {
+    width: 100%;
+}

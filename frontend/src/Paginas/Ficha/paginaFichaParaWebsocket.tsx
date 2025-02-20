@@ -45,7 +45,7 @@ const PaginaFichaBaixo = () => {
                     <div className={style.barra_locais_borda_esquerda} />
                     <div className={style.barra_locais_centro}>
                         <FontAwesomeIcon title={'Mundo Aberto'} icon={faUsers} />
-                        <FontAwesomeIcon title={'Shopping'} icon={faShoppingCart} />
+                        <FontAwesomeIcon title={'Loja'} icon={faShoppingCart} />
                     </div>
                     <div className={style.barra_locais_borda_direita} />
                 </div>

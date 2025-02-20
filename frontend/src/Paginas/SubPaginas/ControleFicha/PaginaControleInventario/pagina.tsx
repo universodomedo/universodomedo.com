@@ -16,7 +16,7 @@ const pagina = () => {
   const { mostrarFiltros, mostrarBarras } = useContextoControleInventario();
   const { inventario } = useClasseContextualPersonagemInventario();
   const { espacoInventario, espacosCategoria } = useClasseContextualPersonagemEstatisticasBuffaveis();
-
+  
   const itensGuardados = inventario.agrupamento.filter(item => item.itemEstaGuardado);
   const itensEmpunhados = inventario.agrupamento.filter(item => item.itemEstaEmpunhado);
   const itensVestidos = inventario.agrupamento.filter(item => item.itemEstaVestido);

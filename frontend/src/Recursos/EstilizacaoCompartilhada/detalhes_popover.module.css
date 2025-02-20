@@ -88,11 +88,10 @@
 }
 
 .recipiente_conteudo_execucao_modal {
+    display: flex;
+    flex-direction: column;
     flex: 1;
-}
-
-.recipiente_conteudo_execucao_modal hr {
-    margin-top: 2%;
+    gap: 1vh;
 }
 
 .opcao_acao {
@@ -145,6 +144,8 @@ p.texto {
 p.titulo {
 	font-size: 1.5rem;
 	margin: 0;
+    font-weight: bold;
+    line-height: .9em;
 }
 
 summary {

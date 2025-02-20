@@ -2,7 +2,7 @@
 import style from 'Recursos/EstilizacaoCompartilhada/detalhes_popover.module.css';
 import { useState, useRef, useEffect } from 'react';
 
-import { Acao, ehAcaoEspecifica, ehAcaoGenerica, OpcoesSelecionadasExecucaoAcao } from 'Classes/ClassesTipos/index.ts';
+import { Acao, ehAcaoEspecifica, ehAcaoGenerica, Item, OpcoesSelecionadasExecucaoAcao } from 'Classes/ClassesTipos/index.ts';
 
 import Modal from 'Componentes/ModalDialog/pagina';
 import RecipienteDeAbas from 'Componentes/RecipienteDeAbas/pagina.tsx';
@@ -169,6 +169,14 @@ const ConteudoExecucaoGenerico = ({ acao, fecharModal }: { acao: Acao, fecharMod
                             <p className={`${style.texto} cor_mensagem_erro`}>{acao.descricaoTravada}</p>
                         </div>
                     )}
+                    {acao.requisitosParaExecutarAcao.listaValidacaoRequisitos.length > 0 && (
+                        <div className={style.bloco_texto}>
+                            <p className={style.titulo}>Requisitos</p>
+                            {acao.requisitosParaExecutarAcao.listaValidacaoRequisitos.map((requisito, index) => (
+                                <p key={index} className={`${style.texto} ${!requisito.estaValido ? 'cor_mensagem_erro' : ''}`}>{requisito.descricaoRequisito}</p>
+                            ))}
+                        </div>
+                    )}
                     {acao.dificuldadeAcao && (
                         <div className={style.bloco_texto}>
                             <p className={style.titulo}>Dificuldade de Execução</p>
@@ -205,6 +213,8 @@ const ConteudoExecucaoGenerico = ({ acao, fecharModal }: { acao: Acao, fecharMod
     } else if (ehAcaoEspecifica(acao)) {
         return (
             <>
+                {acao.dadosCarregadosPreviamente}
+                
                 <div className={style.recipiente_conteudo_execucao_modal}>
                     {!acao.bloqueada && acao.opcoesExecucaoAcao.length > 0 && (
                         <>
@@ -226,13 +236,7 @@ const ConteudoExecucaoGenerico = ({ acao, fecharModal }: { acao: Acao, fecharMod
                         </>
                     )}
 
-                    <div className={style.bloco_texto}>
-                        {acao.dadosCarregadosPreviamente}
-                    </div>
-
-                    <div className={style.bloco_texto}>
-                        {acao.dadosCarregadosNoChangeOption(opcoesSelecionadas)}
-                    </div>
+                    {acao.dadosCarregadosNoChangeOption(opcoesSelecionadas)}
                 </div>
                 
                 {!acao.bloqueada && (

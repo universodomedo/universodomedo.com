@@ -1,28 +1,14 @@
-import { DadoPrecoExecucao, Elemento, NivelComponente, OpcoesSelecionadasExecucaoAcao, PrecoExecucao } from 'Classes/ClassesTipos/index.ts';
+import { SingletonHelper } from 'Classes/classes_estaticas';
+import { Elemento, Execucao, NivelComponente, OpcoesSelecionadasExecucaoAcao } from 'Classes/ClassesTipos/index.ts';
 
-export type DadosCustos = {
-    dadosPrecoExecucao: DadoPrecoExecucao[];
-    dadosPrecoPE?: DadosPrecoPE;
-    dadosPrecoComponente?: DadosPrecoComponente;
-};
-
-export type DadosPrecoPE = {
-    valor: number;
-};
-
-export type DadosPrecoComponente = {
-    idElemento: number;
-    idNivelComponente: number;
-    numeroCargasNoUso: number;
-    precisaEstarEmpunhado: boolean;
-};
-
+// #region Dados Gerais Custos
 export type Custos = {
     readonly listaCustos: Custo[];
 
     custoAcaoExecucao: CustoAcaoExecucao;
     custoAcaoPE?: CustoAcaoPE;
     custoAcaoComponente?: CustoAcaoComponente;
+    custoAcaoUtilizavel?: CustoAcaoUtilizavel;
 
     readonly custosPodemSerPagos: boolean;
     aplicaCustos: (opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) => void;
@@ -33,12 +19,15 @@ export type Custo = {
     aplicaCusto: (opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) => void;
 };
 
-type CustoPE = {
-    valor: number;
+export type DadosCustos = {
+    dadosPrecoExecucao: DadoPrecoExecucao[];
+    dadosPrecoPE?: DadosPrecoPE;
+    dadosPrecoComponente?: DadosPrecoComponente;
+    dadosPrecoUtilizavel? : DadosPrecoUtilizavel;
 };
+// #endregion
 
-export type CustoAcaoPE = Custo & CustoPE;
-
+// #region Dados Custo Execução
 type CustoExecucao = {
     listaPrecosOriginal: PrecoExecucao[];
 
@@ -48,88 +37,71 @@ type CustoExecucao = {
     readonly resumoPagamento: string;
 };
 
+export type DadoPrecoExecucao = Pick<PrecoExecucao, 'quantidadeExecucoes'> & {
+    idExecucao: number;
+};
+
 export type CustoAcaoExecucao = Custo & CustoExecucao;
 
-export type CustoComponente = {
+export type PrecoExecucao = {
+    quantidadeExecucoes: number;
+
+    readonly refExecucao: Execucao;
+    readonly descricaoPreco: string;
+
+    __key: "criarPrecoExecucao";
+};
+
+export const criarPrecoExecucao = (dadosPrecoExecucao: DadoPrecoExecucao[]): PrecoExecucao[] => {
+    return dadosPrecoExecucao.map(dadoPrecoExecucao => {
+        return {
+            quantidadeExecucoes: dadoPrecoExecucao.quantidadeExecucoes,
+
+            get descricaoPreco(): string { return this.refExecucao.id === 1 ? 'Ação Livre' : `${this.quantidadeExecucoes} ${this.refExecucao.nomeExibicao}`; },
+            get refExecucao(): Execucao { return SingletonHelper.getInstance().execucoes.find(execucao => execucao.id === dadoPrecoExecucao.idExecucao)!; },
+
+            __key: "criarPrecoExecucao", // PrecoExecucao não deve ser criado se não usando esse metodo
+        };
+    });
+};
+// #endregion
+
+// #region Dados Custo PE
+type CustoPE = {
+    valor: number;
+};
+
+export type DadosPrecoPE = Pick<CustoPE, 'valor'>;
+
+export type CustoAcaoPE = Custo & CustoPE;
+// #endregion
+
+// #region Dados Custo Componente
+type CustoComponente = {
     numeroCargasNoUso: number;
     precisaEstarEmpunhado: boolean;
     readonly refElemento: Elemento;
     readonly refNivelComponente: NivelComponente;
 };
 
+export type DadosPrecoComponente = Pick<CustoComponente, 'numeroCargasNoUso' | 'precisaEstarEmpunhado'> & {
+    idElemento: number;
+    idNivelComponente: number;
+};
+
 export type CustoAcaoComponente = Custo & CustoComponente;
+// #endregion
 
+// #region Dados Custo Utilizavel
+export type CustoUtilizavel = {
+    nomeUtilizavel: string;
+    custoCargasUtilizavel: number;
+};
 
-// export abstract class Custo {
-//     abstract get podeSerPago(): boolean;
-//     abstract get descricaoCusto(): string;
-//     public abstract gastaCusto(props: GastaCustoProps): void;
-// }
+export type DadosPrecoUtilizavel = Pick<CustoUtilizavel, 'nomeUtilizavel' | 'custoCargasUtilizavel'>;
 
-// export class CustoExecucao extends Custo {
-//     public precoExecucao: PrecoExecucao;
-
-//     constructor({ precoExecucao }: { precoExecucao: ConstructorParameters<typeof PrecoExecucao>[0] }) {
-//         super();
-//         this.precoExecucao = new PrecoExecucao(precoExecucao);
-//     }
-
-//     get podeSerPago(): boolean { return this.precoExecucao.podePagar; }
-//     get descricaoCusto(): string { return this.precoExecucao.descricaoListaPreco; }
-
-//     gastaCusto(): void {
-//         if (this.precoExecucao.temApenasAcaoLivre) return;
-
-//         this.precoExecucao.pagaExecucao();
-//     }
-// }
-
-// export class CustoPE extends Custo {
-//     public valor: number;
-
-//     constructor({ valor }: { valor: number }) {
-//         super();
-//         this.valor = valor;
-//     }
-
-//     get desconto(): number { return 0; }
-//     // get desconto(): number { return this.refAcao!.refPai instanceof Ritual ? this.refAcao!.refPai.comportamentos.comportamentoDescontosRitual.valorDesconto : 0; }
-//     get valorTotal(): number { return Math.max(this.valor - this.desconto, 1); }
-
-//     get podeSerPago(): boolean {
-//         const { estatisticasDanificaveis } = useClasseContextualPersonagemEstatisticasDanificaveis();
-//         return this.valorTotal <= estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.refEstatisticaDanificavel.id === 3)!.valor;
-//     }
-//     // get podeSerPago(): boolean { return this.valorTotal <= getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.valor; }
-//     get descricaoCusto(): string { return `${this.valorTotal} P.E.`; }
-
-//     gastaCusto(): void {
-//         LoggerHelper.getInstance().adicionaMensagem(`-${this.valorTotal} P.E.`);
-//         // getPersonagemFromContext().estatisticasDanificaveis.find(estatistica => estatistica.refEstatisticaDanificavel.id === 3)!.aplicarDanoFinal(this.valorTotal);
-//     }
-// }
-
-// export class CustoComponente extends Custo {
-//     public numeroDeCargas: number;
-//     public componentePrecisaEstarEmpunhado: boolean;
-//     public idElemento: number;
-//     public idNivel: number;
-
-//     constructor({ numeroDeCargas, componentePrecisaEstarEmpunhado, idElemento, idNivel }: { numeroDeCargas: number, componentePrecisaEstarEmpunhado: boolean, idElemento: number, idNivel: number }) {
-//         super();
-//         this.numeroDeCargas = numeroDeCargas;
-//         this.componentePrecisaEstarEmpunhado = componentePrecisaEstarEmpunhado;
-//         this.idElemento = idElemento;
-//         this.idNivel = idNivel;
-//     }
-
-//     get podeSerPago(): boolean { return true; }
-//     get descricaoCusto(): string { return `${this.numeroDeCargas} Carga de Componente de ${this.refElemento.nome} ${this.refNivelComponente.nome}`; }
-//     public gastaCusto(props: GastaCustoProps): void {}
-
-//     get refElemento(): Elemento { return SingletonHelper.getInstance().elementos.find(elemento => elemento.id === this.idElemento)!; }
-//     get refNivelComponente(): NivelComponente { return SingletonHelper.getInstance().niveis_componente.find(nivel_componente => nivel_componente.id === this.idNivel)! }
-// }
+export type CustoAcaoUtilizavel = Custo & CustoUtilizavel;
+// #endregion
 
 // export type GastaCustoProps = {
 //     [key: string]: number | undefined

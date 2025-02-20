@@ -1,4 +1,4 @@
-import { DadosAcao, DadosModificador, DadosNomeCustomizado, DadoPrecoExecucao, Elemento, Extremidade, Modificador, NivelComponente, NomeCustomizado, PrecoExecucao, CustoAcaoExecucao } from "Classes/ClassesTipos/index.ts";
+import { DadosModificador, DadosNomeCustomizado, DadoPrecoExecucao, Elemento, Extremidade, Modificador, NivelComponente, NomeCustomizado, CustoAcaoExecucao, DadosAcaoGenerica } from "Classes/ClassesTipos/index.ts";
 
 export type Item = {
     readonly codigoUnico: string;
@@ -10,13 +10,14 @@ export type Item = {
     readonly agrupavel: boolean;
     readonly nomeOpcao: string;
 
-    dadosAcoes?: DadosAcao[];
+    dadosAcoes: DadosAcaoGenerica[];
 
     modificadores?: Modificador[];
 
     comportamentoEmpunhavel?: ComportamentoEmpunhavel;
     comportamentoVestivel?: ComportamentoVestivel;
     comportamentoComponenteRitualistico?: ComportamentoComponenteRitualistico;
+    comportamentoUtilizavel?: ComportamentoUtilizavel;
 
     quantidadeUnidadesDesseItem: number;
 
@@ -25,10 +26,11 @@ export type Item = {
     readonly itemEmpunhavel: boolean;
     readonly itemVestivel: boolean;
     readonly itemEhComponente: boolean;
-
+    
     readonly itemEstaGuardado: boolean;
     readonly itemEstaEmpunhado: boolean;
     readonly itemEstaVestido: boolean;
+    itemTemUtilizavelNecessarios: (nomeUtilizavel: string, numeroUtilizelUsado: number) => boolean;
 
     readonly itemPodeSerEmpunhado: boolean;
     readonly itemPodeSerGuardado: boolean;
@@ -40,13 +42,16 @@ export type DadosItem = Pick<Item, 'peso' | 'categoria'> & {
     idTipoItem: number;
     dadosNomeCustomizado: DadosNomeCustomizado;
 
-    dadosAcoes?: DadosAcao[];
+    dadosAcoes: DadosAcaoGenerica[];
     dadosModificadores?: DadosModificador[];
     
     dadosComportamentoEmpunhavel?: DadosComportamentoEmpunhavel;
     dadosComportamentoVestivel?: DadosComportamentoVestivel;
     dadosComportamentoComponenteRitualistico?: DadosComportamentoComponenteRitualistico;
+    dadosComportamentoUtilizavel?: DadosComportamentoUtilizavel;
 };
+
+export type DadosItemSemIdentificador = Omit<DadosItem, 'identificadorNomePadrao'>;
 
 export type TipoItemModelo = {
     id: number;
@@ -55,6 +60,8 @@ export type TipoItemModelo = {
 
 export type TipoItem = TipoItemModelo;
 
+
+// #region ComportamentoEmpunhavel
 export type ComportamentoEmpunhavel = {
     refExtremidades: Extremidade[];
 
@@ -63,14 +70,14 @@ export type ComportamentoEmpunhavel = {
 
     readonly estaEmpunhado: boolean;
     readonly extremidadeLivresSuficiente: boolean;
-    // readonly execucoesSuficientes: boolean;
-    // readonly mensagemExecucoesUsadasParaSacar: string;
 };
 
 export type DadosComportamentoEmpunhavel = Pick<ComportamentoEmpunhavel, 'extremidadesNecessarias'> & {
     readonly dadosCustoEmpunhar: DadoPrecoExecucao[];
 };
+// #endregion
 
+// #region ComportamentoVestivel
 export type ComportamentoVestivel = {
     estaVestido: boolean;
 
@@ -83,7 +90,9 @@ export type ComportamentoVestivel = {
 export type DadosComportamentoVestivel = {
     readonly dadosCustoVestir: DadoPrecoExecucao[];
 }
+// #endregion
 
+// #region ComportamentoComponenteRitualistico
 export type ComportamentoComponenteRitualistico = {
     numeroDeCargasMaximo: number;
     numeroDeCargasAtuais: number;
@@ -100,3 +109,21 @@ export type DadosComportamentoComponenteRitualistico = Pick<ComportamentoCompone
     idElemento: number;
     idNivelComponente: number;
 };
+// #endregion
+
+// #region ComportamentoUtilizavel
+export type ComportamentoUtilizavel = {
+    dadosUtilizaveis: DadosUtilizavel[];
+
+    retornaDadosUtilizavelPorNome: (nomeUtilizavel: string) => DadosUtilizavel | undefined;
+};
+
+export type DadosComportamentoUtilizavel = Pick<ComportamentoUtilizavel, 'dadosUtilizaveis'>;
+
+export type DadosUtilizavel = {
+    nomeUtilizavel: string;
+    usosMaximos: number;
+    usosAtuais: number;
+};
+// export type DadosComportamentoUtilizavel = ComportamentoUtilizavel;
+// #endregion

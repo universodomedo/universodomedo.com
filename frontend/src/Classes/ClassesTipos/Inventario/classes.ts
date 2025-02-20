@@ -1,4 +1,4 @@
-import { Item, Acao, DadosItem } from 'Classes/ClassesTipos/index.ts';
+import { Item, DadosItem } from 'Classes/ClassesTipos/index.ts';
 
 export type DadosInventario = {
     identificadorProximoItem: number;
@@ -9,7 +9,6 @@ export type Inventario = {
     itens: Item[];
     readonly agrupamento: Item[];
     readonly espacosUsados: number;
-    readonly acoes: Acao[];
     readonly numeroItensCategoria: (valorCategoria: number) => number;
     adicionarItem: (item: Item) => void;
     removerItem: (item: Item) => void;

@@ -1,5 +1,5 @@
-import { Custos, DadosCustos, DadosDificuldadeAcao, DadosModificador, DificuldadeAcao, Habilidade, Item, Modificador, OpcoesExecucaoAcao, OpcoesSelecionadasExecucaoAcao, realizaChecagemDificuldade, Ritual } from 'Classes/ClassesTipos/index.ts';
 import { ReactNode } from 'react';
+import { Custos, DadosCustos, DadosDificuldadeAcao, DadosModificador, DificuldadeAcao, Habilidade, Item, Modificador, OpcoesExecucaoAcao, OpcoesSelecionadasExecucaoAcao, realizaChecagemDificuldade, Ritual } from 'Classes/ClassesTipos/index.ts';
 
 export type Acao = {
     nome: string;
@@ -24,6 +24,8 @@ export type AcaoGenerica = Acao & {
 
     logicaExecucao: () => void;
     executaAcao: (opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) => void;
+
+    requisitosParaExecutarAcao: RequisitosParaExecutarAcao;
 };
 
 export type AcaoEspecifica = Acao & {
@@ -43,6 +45,7 @@ export type DadosAcaoGenerica = DadosAcao & {
     dadosCustos: DadosCustos;
     dadosDificuldade?: DadosDificuldadeAcao;
     dadosModificadores?: DadosModificador[];
+    dadosRequisitosParaExecutarAcao?: DadosRequisitosParaExecutarAcao;
 };
 
 export type DadosAcaoEspecifica = DadosAcao & {
@@ -69,3 +72,22 @@ export function ehAcaoEspecifica(acao: Acao): acao is AcaoEspecifica {
 export function dadosAcaoEhDeAcaoEspecifica(dadosAcao: DadosAcao): dadosAcao is DadosAcao & DadosAcaoEspecifica {
     return 'tipoAcaoEspecifica' in dadosAcao;
 }
+
+export type RequisitosParaExecutarAcao = {
+    readonly empunhaItem: ValidaRequisitoParaExecucaco;
+    // usarMunicao?: boolean;
+
+    readonly listaValidacaoRequisitos: ValidaRequisitoParaExecucaco[];
+
+    readonly requisitosCumpridos: boolean;
+};
+
+export type DadosRequisitosParaExecutarAcao = {
+    empunharItem?: true;
+};
+
+export type ValidaRequisitoParaExecucaco = {
+    precisa: boolean;
+    estaValido: boolean;
+    descricaoRequisito: string;
+};

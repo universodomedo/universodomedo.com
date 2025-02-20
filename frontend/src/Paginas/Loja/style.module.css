@@ -1,0 +1,79 @@
+.recipiente_loja {
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    height: 100%;
+    align-items: center;
+    padding: 2vh;
+    gap: 2vh;
+}
+
+.recipiente_loja h1 {
+    font-size: 2.5em;
+}
+
+.recipiente_conteudo_tipo_item {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+}
+
+.botoes_itens {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    width: 60%;
+    height: 40%;
+    gap: 10%;
+    margin: auto;
+}
+
+.botao_categoria_item{
+    flex: 1 1 calc(40%);
+}
+
+.recipiente_area_item {
+    flex: 1 0 0;
+    text-align: center;
+    width: 100%;
+}
+
+.recipiente_conteudo_tipo_item {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    align-items: center;
+}
+
+.recipiente_botoes_area_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+    flex: 0 0 0;
+}
+
+.recipiente_botoes_area_item button {
+    width: fit-content;
+    aspect-ratio: 1 / 0.5;
+}
+
+/*  */
+
+.opcao_item {
+    width: 30%;
+}
+
+.descricao_item {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.descricao_item p {
+    font-size: .9rem;
+    font-weight: bolder;
+    margin: 0;
+}

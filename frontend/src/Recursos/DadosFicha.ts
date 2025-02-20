@@ -34,15 +34,15 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                                 precisaEstarEmpunhado: true,
                             },
                         },
-                        // dadosDificuldade: {
-                        //     idAtributo: 3,
-                        //     idPericia: 15,
-                        //     valorDificuldade: 5,
-                        //     dadosDificuldadeDinamica: {
-                        //         modificadorDificuldadeInicial: 0,
-                        //         listaModificadoresDificuldade: [2, 5, 10]
-                        //     }
-                        // },
+                        dadosDificuldade: {
+                            idAtributo: 3,
+                            idPericia: 15,
+                            valorDificuldade: 5,
+                            dadosDificuldadeDinamica: {
+                                modificadorDificuldadeInicial: 0,
+                                listaModificadoresDificuldade: [2, 5, 10]
+                            }
+                        },
                         dadosModificadores: [
                             {
                                 nome: 'Aprimorar Fortitude',
@@ -74,6 +74,7 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                     categoria: 0,
                     dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
                     dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1, },
+                    dadosAcoes: [],
                 },
                 {
                     identificadorNomePadrao: '2_Componente de Conhecimento Complexo',
@@ -83,6 +84,7 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                     categoria: 0,
                     dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 2 } ], extremidadesNecessarias: 1, },
                     dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1, },
+                    dadosAcoes: [],
                 },
                 {
                     identificadorNomePadrao: '3_Componente de Conhecimento Simples',
@@ -92,7 +94,69 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
                     categoria: 0,
                     dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
                     dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 1, numeroDeCargasMaximo: 2, numeroDeCargasAtuais: 2, },
+                    dadosAcoes: [],
                 },
+                {
+                    identificadorNomePadrao: '4_B',
+                    dadosNomeCustomizado: { nomePadrao: 'Bálsamo de Arnica' },
+                    idTipoItem: 3,
+                    peso: 1,
+                    categoria: 0,
+                    dadosAcoes: [
+                        {
+                            nome: 'Consumir',
+                            dadosCustos: {
+                                dadosPrecoExecucao: [
+                                    {
+                                         idExecucao: 2,
+                                         quantidadeExecucoes: 1,
+                                    },
+                                ],
+                                dadosPrecoUtilizavel: {
+                                    nomeUtilizavel: 'Carga de Bálsamo de Arnica',
+                                    custoCargasUtilizavel: 1,
+                                },
+                            },
+                            dadosModificadores: [
+                                {
+                                    nome: 'Bálsamo de Arnica',
+                                    idDuracao: 3,
+                                    quantidadeDuracaoMaxima: 1,
+                                    quantidadeDuracaoAtual: 1,
+                                    tipoModificador: { tipo: 'Ativo' },
+                                    dadosEfeitos: [
+                                        {
+                                            idLinhaEfeito: 33,
+                                            idTipoEfeito: 2,
+                                            dadosValorEfeito: { valorBonusAdicional: 2 },
+                                        },
+                                    ],
+                                },
+                            ],
+                            dadosRequisitosParaExecutarAcao: {
+                                empunharItem: true,
+                            },
+                        },
+                    ],
+                    dadosComportamentoEmpunhavel: {
+                        dadosCustoEmpunhar: [
+                            {
+                                idExecucao: 3,
+                                quantidadeExecucoes: 1,
+                            },
+                        ],
+                        extremidadesNecessarias: 1,
+                    },
+                    dadosComportamentoUtilizavel: {
+                        dadosUtilizaveis: [
+                            {
+                                nomeUtilizavel: 'Carga de Bálsamo de Arnica',
+                                usosMaximos: 1,
+                                usosAtuais: 1,
+                            },
+                        ],
+                    },
+                }
             ]
         },
         reducoesDano: [],

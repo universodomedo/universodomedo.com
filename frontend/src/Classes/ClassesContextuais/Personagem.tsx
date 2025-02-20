@@ -1,7 +1,7 @@
 // #region Imports
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 
-import { DadosItem, RLJ_Ficha2 } from "Classes/ClassesTipos/index.ts";
+import { DadosItem, Item, RLJ_Ficha2 } from "Classes/ClassesTipos/index.ts";
 
 import { PersonagemModificadoresProvider } from 'Classes/ClassesContextuais/PersonagemModificadores.tsx';
 
@@ -87,6 +87,14 @@ export const PersonagemProvider = ({ children, dadosFicha }: { children: React.R
                 },
             };
         });
+    };
+
+    const adicionarItemNoInventario = (dadosItem: DadosItem) => {
+        console.log('adicionarItemNoInventario');
+    };
+
+    const removerItemDoInventario = (item: Item) => {
+        console.log('removerItemDoInventario');
     };
 
     return (

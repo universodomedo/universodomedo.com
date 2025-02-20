@@ -1,7 +1,7 @@
 // #region Imports
 import React, { createContext, useContext, useMemo } from "react";
 
-import { criarNomeCustomizado, criarPrecoExecucao, CustoAcaoExecucao, Elemento, Extremidade, Inventario, Item, NivelComponente, pluralize, PrecoExecucao, TipoItem } from "Classes/ClassesTipos/index.ts";
+import { criarNomeCustomizado, CustoAcaoExecucao, Elemento, Extremidade, Inventario, Item, NivelComponente, pluralize, TipoItem } from "Classes/ClassesTipos/index.ts";
 import { SingletonHelper } from "Classes/classes_estaticas";
 
 import { useClasseContextualPersonagem } from "Classes/ClassesContextuais/Personagem.tsx";
@@ -23,12 +23,12 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
 
     const { podePagarPreco, pagaPrecoExecucao, resumoPagamento } = useCustosExecucoes();
 
-    const itens = useMemo(() => {
+    const itens: Item[] = useMemo(() => {
         return dadosPersonagem.inventario.dadosItens.map(dadosItem => {
             const nome = criarNomeCustomizado(dadosItem.dadosNomeCustomizado);
             let codigoUnico = nome.nomeCustomizado !== undefined ? nome.nomeExibicao : dadosItem.identificadorNomePadrao;
 
-            return {
+            const item: Item = {
                 codigoUnico: codigoUnico,
                 nome: nome,
                 peso: dadosItem.peso,
@@ -53,8 +53,6 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
 
                         get estaEmpunhado(): boolean { return this.refExtremidades.length === this.extremidadesNecessarias; },
                         get extremidadeLivresSuficiente(): boolean { return extremidades.filter(extremidade => !extremidade.estaOcupada).length >= this.extremidadesNecessarias; },
-                        // get execucoesSuficientes(): boolean { return true; },
-                        // get mensagemExecucoesUsadasParaSacar(): string { return 'precisa implementar mensagemExecucoesUsadasParaSacar'; },
                     }
                 }),
 
@@ -88,6 +86,13 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
                     }
                 }),
 
+                ...(dadosItem.dadosComportamentoUtilizavel && {
+                    comportamentoUtilizavel: {
+                        dadosUtilizaveis: dadosItem.dadosComportamentoUtilizavel.dadosUtilizaveis,
+                        retornaDadosUtilizavelPorNome: function(nomeUtilizavel: string) { return this.dadosUtilizaveis.find(dadosUtilizavel => dadosUtilizavel.nomeUtilizavel === nomeUtilizavel) },
+                    },
+                }),
+
                 get quantidadeUnidadesDesseItem(): number { return (!this.agrupavel || this.itemEstaEmpunhado) ? 1 : inventario.itens.filter(item => !item.itemEstaEmpunhado && item.nome.nomeExibicao === this.nome.nomeExibicao).length },
 
                 get refTipoItem(): TipoItem { return SingletonHelper.getInstance().tipos_items.find(tipo_item => tipo_item.id === dadosItem.idTipoItem)!; },
@@ -99,16 +104,19 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
                 get itemEstaEmpunhado(): boolean { return this.itemEmpunhavel && this.comportamentoEmpunhavel!.estaEmpunhado; },
                 get itemEstaVestido(): boolean { return this.itemVestivel && this.comportamentoVestivel!.estaVestido },
                 get itemEstaGuardado(): boolean { return !this.itemEstaEmpunhado && !this.itemEstaVestido; },
+                itemTemUtilizavelNecessarios(nomeUtilizavel: string, numeroUtilizado: number): boolean { return (this.comportamentoUtilizavel?.retornaDadosUtilizavelPorNome(nomeUtilizavel)?.usosAtuais ?? 0) >= numeroUtilizado; },
 
                 get itemPodeSerEmpunhado(): boolean { return this.itemEmpunhavel && this.itemEstaGuardado },
                 get itemPodeSerGuardado(): boolean { return this.itemEstaEmpunhado },
             };
+
+            return item;
         });
     }, [dadosPersonagem, extremidades, execucoes]);
 
     const agrupamento = useMemo(() => {
         return itens.reduce((itemAgrupado, itemAtual) => {
-            if (!itemAtual.agrupavel || !itemAgrupado.some(item => item.agrupavel && item.nome.nomeExibicao === itemAtual.nome.nomeExibicao && !item.itemEstaEmpunhado)) {
+            if (!itemAtual.agrupavel || itemAtual.itemEstaEmpunhado || !itemAgrupado.some(item => item.agrupavel && item.nome.nomeExibicao === itemAtual.nome.nomeExibicao && !item.itemEstaEmpunhado)) {
                 itemAgrupado.push(itemAtual);
             }
             return itemAgrupado;
@@ -121,7 +129,6 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
         itens,
         agrupamento,
         espacosUsados,
-        acoes: [],
         numeroItensCategoria: (valorCategoria: number) => { console.log("precisa implementar numeroItensCategoria"); return 0; },
         adicionarItem: (item: Item) => { console.log("precisa implementar adicionarItem"); },
         removerItem: (item: Item) => { console.log("precisa implementar removerItem"); },

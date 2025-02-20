@@ -7,11 +7,14 @@ import { useClasseContextualPersonagemEstatisticasBuffaveis } from "Classes/Clas
 import { useContextoFicha } from "Contextos/ContextoPersonagem/contexto.tsx";
 
 import PaginaEmJogo from 'Paginas/Ficha/paginaFichaEmJogo.tsx';
-import PaginaShopping  from 'Paginas/Ficha/paginaFichaShopping.tsx';
+import PaginaLoja  from 'Paginas/Ficha/paginaFichaLoja.tsx';
 import PaginaLocais from 'Componentes/BarraLocaisDeJogo/PaginaLocais.tsx';
 
 import ControladorSwiperDireita from 'Componentes/ControladorSwiperDireita/pagina.tsx';
 import BarraEstatisticaDanificavel from 'Componentes/BarraEstatisticaDanificavel/pagina.tsx';
+import { useClasseContextualPersonagemInventario } from "Classes/ClassesContextuais/PersonagemInventario";
+import { useClasseContextualPersonagemModificadores } from "Classes/ClassesContextuais/PersonagemModificadores";
+import { useClasseContextualPersonagemAcoes } from "Classes/ClassesContextuais/PersonagemAcoes";
 // #endregion
 
 const pagina = () => {
@@ -29,13 +32,17 @@ const PaginaFichaCima = () => {
 
     return paginaDeJogoAberta === 1
         ? <PaginaEmJogo />
-        : <PaginaShopping />;
+        : <PaginaLoja />;
 }
 
 const PaginaFichaBaixo = () => {
     const { nome, classe, nivel } = useClasseContextualPersonagemDetalhes();
     const { estatisticasDanificaveis } = useClasseContextualPersonagemEstatisticasDanificaveis();
     const { execucoes } = useClasseContextualPersonagemEstatisticasBuffaveis();
+
+    const { inventario } = useClasseContextualPersonagemInventario();
+    const { modificadores } = useClasseContextualPersonagemModificadores();
+    const { acoes } = useClasseContextualPersonagemAcoes();
 
     return (
         <>
@@ -62,8 +69,11 @@ const PaginaFichaBaixo = () => {
                 </div>
 
                 <div className={style.barras}>
-                    {/* <div className={style.barra_acoes}>
-                        <IconeAcaoExecutavel acao={acoes[0]} />
+                    <div className={style.barra_acoes}>
+                        <div className={style.item_barra_acoes} onClick={() => { console.log(inventario); }}>inventario</div>
+                        <div className={style.item_barra_acoes} onClick={() => { console.log(modificadores); }}>modificadores</div>
+                        <div className={style.item_barra_acoes} onClick={() => { console.log(acoes); }}>acoes</div>
+                        {/* <IconeAcaoExecutavel acao={acoes[0]} />
                         <div className={style.item_barra_acoes} onClick={() => { empunhaItem(inventario.itens[0]); }}>
                             <div className={style.icone_acao}><FontAwesomeIcon icon={faPlus} style={{ width: '50%', height: '50%' }} /></div>
                         </div>
@@ -72,8 +82,8 @@ const PaginaFichaBaixo = () => {
                         </div>
                         <div className={style.item_barra_acoes}>
                             <div className={style.icone_acao}><FontAwesomeIcon icon={faPlus} style={{ width: '50%', height: '50%' }} /></div>
-                        </div>
-                    </div> */}
+                        </div> */}
+                    </div>
                 </div>
             </div>
             <div className={`${style.fatia_parte_baixo_detalhes}`}>

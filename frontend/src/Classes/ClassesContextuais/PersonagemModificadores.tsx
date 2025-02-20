@@ -1,5 +1,5 @@
 // #region Imports
-import React, { createContext, useContext } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 import { adicionaSinalEmNumeroParaExibicao, criarValoresEfeito, Duracao, Efeito, LinhaEfeito, Modificador, RegistroValorEfeito, TipoEfeito, ValoresEfeito, ValoresLinhaEfeito, ValoresLinhaEfeitoAgrupados } from "Classes/ClassesTipos/index.ts";
 import { SingletonHelper } from "Classes/classes_estaticas";
@@ -7,6 +7,7 @@ import { SingletonHelper } from "Classes/classes_estaticas";
 
 interface ClasseContextualPersonagemModificadoresProps {
     modificadores: Modificador[];
+    adicionarModificador: (modificador: Modificador) => void;
     obtemValorTotalComLinhaEfeito: (valorBase: number, idLinhaEfeito: number) => number;
     obterDetalhesPorLinhaEfeito: (idLinhaEfeito: number) => string[];
     valoresEfeitosEDetalhesPorLinhaEfeito: () => ValoresLinhaEfeito[];
@@ -16,7 +17,11 @@ export const PersonagemModificadores = createContext<ClasseContextualPersonagemM
 
 export const PersonagemModificadoresProvider = ({ children }: { children: React.ReactNode; }) => {
     // tentar arrumar uma forma de mudar a logia de removeModificador, que atribui um novo valor a essa variavel, ent eu tenho q deixar como let
-    const modificadores: Modificador[] = [];
+    const [modificadores, setModificadores] = useState<Modificador[]>([]);
+
+    const adicionarModificador = (modificador: Modificador) => {
+        setModificadores(prevModificadores => [...prevModificadores, modificador]);
+    };
 
     const agrupamentoDeEfeitosPorLinhaEfeito = (): { idLinhaEfeito: number, listaEfeitosNaLinha: { nomeModificador: string, tipoPaiModificador: string, efeito: Efeito }[] }[] => {
         const agrupados: { idLinhaEfeito: number, listaEfeitosNaLinha: { nomeModificador: string, tipoPaiModificador: string, efeito: Efeito }[] }[] = [];
@@ -101,7 +106,7 @@ export const PersonagemModificadoresProvider = ({ children }: { children: React.
     }
 
     return (
-        <PersonagemModificadores.Provider value={{ modificadores, obtemValorTotalComLinhaEfeito, obterDetalhesPorLinhaEfeito, valoresEfeitosEDetalhesPorLinhaEfeito }}>
+        <PersonagemModificadores.Provider value={{ modificadores, adicionarModificador, obtemValorTotalComLinhaEfeito, obterDetalhesPorLinhaEfeito, valoresEfeitosEDetalhesPorLinhaEfeito }}>
             {children}
         </PersonagemModificadores.Provider>
     );
