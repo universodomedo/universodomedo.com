@@ -64,102 +64,46 @@ export const obtemDadosFichaDemonstracao = (): RLJ_Ficha2 => {
             }
         ],
         inventario: {
-            identificadorProximoItem: 4,
-            dadosItens: [
-                {
-                    identificadorNomePadrao: '1_Componente de Conhecimento Complexo',
-                    idTipoItem: 4,
-                    dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Complexo' },
-                    peso: 1,
-                    categoria: 0,
-                    dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
-                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1, },
-                    dadosAcoes: [],
-                },
-                {
-                    identificadorNomePadrao: '2_Componente de Conhecimento Complexo',
-                    idTipoItem: 4,
-                    dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Complexo' },
-                    peso: 1,
-                    categoria: 0,
-                    dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 2 } ], extremidadesNecessarias: 1, },
-                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1, },
-                    dadosAcoes: [],
-                },
-                {
-                    identificadorNomePadrao: '3_Componente de Conhecimento Simples',
-                    idTipoItem: 4,
-                    dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Simples' },
-                    peso: 1,
-                    categoria: 0,
-                    dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
-                    dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 1, numeroDeCargasMaximo: 2, numeroDeCargasAtuais: 2, },
-                    dadosAcoes: [],
-                },
-                {
-                    identificadorNomePadrao: '4_B',
-                    dadosNomeCustomizado: { nomePadrao: 'Bálsamo de Arnica' },
-                    idTipoItem: 3,
-                    peso: 1,
-                    categoria: 0,
-                    dadosAcoes: [
-                        {
-                            nome: 'Consumir',
-                            dadosCustos: {
-                                dadosPrecoExecucao: [
-                                    {
-                                         idExecucao: 2,
-                                         quantidadeExecucoes: 1,
-                                    },
-                                ],
-                                dadosPrecoUtilizavel: {
-                                    nomeUtilizavel: 'Carga de Bálsamo de Arnica',
-                                    custoCargasUtilizavel: 1,
-                                },
-                            },
-                            dadosModificadores: [
-                                {
-                                    nome: 'Bálsamo de Arnica',
-                                    idDuracao: 3,
-                                    quantidadeDuracaoMaxima: 1,
-                                    quantidadeDuracaoAtual: 1,
-                                    tipoModificador: { tipo: 'Ativo' },
-                                    dadosEfeitos: [
-                                        {
-                                            idLinhaEfeito: 33,
-                                            idTipoEfeito: 2,
-                                            dadosValorEfeito: { valorBonusAdicional: 2 },
-                                        },
-                                    ],
-                                },
-                            ],
-                            dadosRequisitosParaExecutarAcao: {
-                                empunharItem: true,
-                            },
-                        },
-                    ],
-                    dadosComportamentoEmpunhavel: {
-                        dadosCustoEmpunhar: [
-                            {
-                                idExecucao: 3,
-                                quantidadeExecucoes: 1,
-                            },
-                        ],
-                        extremidadesNecessarias: 1,
-                    },
-                    dadosComportamentoUtilizavel: {
-                        dadosUtilizaveis: [
-                            {
-                                nomeUtilizavel: 'Carga de Bálsamo de Arnica',
-                                usosMaximos: 1,
-                                usosAtuais: 1,
-                            },
-                        ],
-                    },
-                }
-            ]
+            identificadorProximoItem: 1,
+            dadosItens: [],
+            // identificadorProximoItem: 4,
+            // dadosItens: [
+            //     {
+            //         identificadorNomePadrao: '1_Componente de Conhecimento Complexo',
+            //         idTipoItem: 4,
+            //         dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Complexo' },
+            //         peso: 1,
+            //         categoria: 0,
+            //         dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
+            //         dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1, },
+            //         dadosAcoes: [],
+            //     },
+            //     {
+            //         identificadorNomePadrao: '2_Componente de Conhecimento Complexo',
+            //         idTipoItem: 4,
+            //         dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Complexo' },
+            //         peso: 1,
+            //         categoria: 0,
+            //         dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 2 } ], extremidadesNecessarias: 1, },
+            //         dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 2, numeroDeCargasMaximo: 1, numeroDeCargasAtuais: 1, },
+            //         dadosAcoes: [],
+            //     },
+            //     {
+            //         identificadorNomePadrao: '3_Componente de Conhecimento Simples',
+            //         idTipoItem: 4,
+            //         dadosNomeCustomizado: { nomePadrao: 'Componente de Conhecimento Simples' },
+            //         peso: 1,
+            //         categoria: 0,
+            //         dadosComportamentoEmpunhavel: { dadosCustoEmpunhar: [ { idExecucao: 3, quantidadeExecucoes: 1 } ], extremidadesNecessarias: 1, },
+            //         dadosComportamentoComponenteRitualistico: { idElemento: 1, idNivelComponente: 1, numeroDeCargasMaximo: 2, numeroDeCargasAtuais: 2, },
+            //         dadosAcoes: [],
+            //     },
+            // ],
         },
         reducoesDano: [],
         pendencias: { idNivelEsperado: 5 },
+        dadosPersonagemEmExecucao: {
+            listaCodigoUnicoItensEquipados: [],
+        },
     };
 }

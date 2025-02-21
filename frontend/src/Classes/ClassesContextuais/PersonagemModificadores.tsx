@@ -8,6 +8,7 @@ import { SingletonHelper } from "Classes/classes_estaticas";
 interface ClasseContextualPersonagemModificadoresProps {
     modificadores: Modificador[];
     adicionarModificador: (modificador: Modificador) => void;
+    removeModificador: (modificador: Modificador) => void;
     obtemValorTotalComLinhaEfeito: (valorBase: number, idLinhaEfeito: number) => number;
     obterDetalhesPorLinhaEfeito: (idLinhaEfeito: number) => string[];
     valoresEfeitosEDetalhesPorLinhaEfeito: () => ValoresLinhaEfeito[];
@@ -16,11 +17,14 @@ interface ClasseContextualPersonagemModificadoresProps {
 export const PersonagemModificadores = createContext<ClasseContextualPersonagemModificadoresProps | undefined>(undefined);
 
 export const PersonagemModificadoresProvider = ({ children }: { children: React.ReactNode; }) => {
-    // tentar arrumar uma forma de mudar a logia de removeModificador, que atribui um novo valor a essa variavel, ent eu tenho q deixar como let
     const [modificadores, setModificadores] = useState<Modificador[]>([]);
 
     const adicionarModificador = (modificador: Modificador) => {
         setModificadores(prevModificadores => [...prevModificadores, modificador]);
+    };
+
+    const removeModificador = (modificador: Modificador) => {
+        setModificadores(prevModificadores => prevModificadores.filter(m => m.codigoUnico !== modificador.codigoUnico));
     };
 
     const agrupamentoDeEfeitosPorLinhaEfeito = (): { idLinhaEfeito: number, listaEfeitosNaLinha: { nomeModificador: string, tipoPaiModificador: string, efeito: Efeito }[] }[] => {
@@ -106,7 +110,7 @@ export const PersonagemModificadoresProvider = ({ children }: { children: React.
     }
 
     return (
-        <PersonagemModificadores.Provider value={{ modificadores, adicionarModificador, obtemValorTotalComLinhaEfeito, obterDetalhesPorLinhaEfeito, valoresEfeitosEDetalhesPorLinhaEfeito }}>
+        <PersonagemModificadores.Provider value={{ modificadores, adicionarModificador, removeModificador, obtemValorTotalComLinhaEfeito, obterDetalhesPorLinhaEfeito, valoresEfeitosEDetalhesPorLinhaEfeito }}>
             {children}
         </PersonagemModificadores.Provider>
     );

@@ -1,12 +1,13 @@
 // #region Imports
 import React, { createContext, useContext, useMemo } from "react";
 
-import { criarNomeCustomizado, CustoAcaoExecucao, Elemento, Extremidade, Inventario, Item, NivelComponente, pluralize, TipoItem } from "Classes/ClassesTipos/index.ts";
+import { criarEfeito, criarNomeCustomizado, CustoAcaoExecucao, DadosItemSemIdentificador, Duracao, Elemento, Extremidade, Inventario, Item, NivelComponente, pluralize, TipoItem } from "Classes/ClassesTipos/index.ts";
 import { SingletonHelper } from "Classes/classes_estaticas";
 
 import { useClasseContextualPersonagem } from "Classes/ClassesContextuais/Personagem.tsx";
 import { useClasseContextualPersonagemEstatisticasBuffaveis } from "Classes/ClassesContextuais/PersonagemEstatisticasBuffaveis.tsx";
 import { useCustosExecucoes } from "Classes/ClassesContextuais/GerenciadorCustosExecucoes.tsx";
+import { useClasseContextualPersonagemModificadores } from "Classes/ClassesContextuais/PersonagemModificadores.tsx";
 
 import { criarCustoAcaoExecucao } from "Hooks/custosExecucao";
 // #endregion
@@ -18,7 +19,7 @@ interface ClasseContextualPersonagemInventarioProps {
 export const PersonagemInventario = createContext<ClasseContextualPersonagemInventarioProps | undefined>(undefined);
 
 export const PersonagemInventarioProvider = ({ children }: { children: React.ReactNode }) => {
-    const { dadosPersonagem, modificarItemDoInventario } = useClasseContextualPersonagem();
+    const { dadosPersonagem, modificarItemDoInventario, adicionarItemNoInventario } = useClasseContextualPersonagem();
     const { extremidades, execucoes } = useClasseContextualPersonagemEstatisticasBuffaveis();
 
     const { podePagarPreco, pagaPrecoExecucao, resumoPagamento } = useCustosExecucoes();
@@ -37,12 +38,13 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
                 get agrupavel(): boolean { return this.refTipoItem.id === 3 || this.refTipoItem.id === 4 },
                 get nomeOpcao(): string {
                     if (this.comportamentoComponenteRitualistico !== undefined) return `${this.nome.nomeExibicao} (${this.comportamentoComponenteRitualistico.numeroDeCargasAtuais} ${pluralize(this.comportamentoComponenteRitualistico.numeroDeCargasAtuais, 'Carga')})`
-                    
+
+                    if (this.comportamentoUtilizavel !== undefined) return `${this.nome.nomeExibicao} (${this.comportamentoUtilizavel.dadosUtilizaveis.map(utilizavel => `${utilizavel.usosAtuais} ${utilizavel.nomeUtilizavel}`).join(', ')})`;
+
                     return this.nome.nomeExibicao;
                 },
 
-                dadosAcoes: dadosItem.dadosAcoes,
-                modificadores: [],
+                dadosAcoes: dadosItem.dadosAcoes || [],
 
                 ...(dadosItem.dadosComportamentoEmpunhavel && {
                     comportamentoEmpunhavel: {
@@ -56,14 +58,11 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
                     }
                 }),
 
-                ...(dadosItem.dadosComportamentoVestivel && {
-                    comportamentoVestivel: {
-                        estaVestido: false,
+                ...(dadosItem.dadosComportamentoEquipavel && {
+                    comportamentoEquipavel: {
+                        get estaEquipado(): boolean { return dadosPersonagem.dadosPersonagemEmExecucao.listaCodigoUnicoItensEquipados.some(codigoUnicoGuardado => codigoUnicoGuardado === codigoUnico); },
 
-                        get custoVestir(): CustoAcaoExecucao { return criarCustoAcaoExecucao(dadosItem.dadosComportamentoVestivel!.dadosCustoVestir, podePagarPreco, pagaPrecoExecucao, resumoPagamento) },
-
-                        veste: function () { console.log('precisa implementar veste'); },
-                        desveste: function () { console.log('precisa implementar desveste'); },
+                        get custoEquipar(): CustoAcaoExecucao { return criarCustoAcaoExecucao(dadosItem.dadosComportamentoEquipavel!.dadosCustoEquipar, podePagarPreco, pagaPrecoExecucao, resumoPagamento) },
                     }
                 }),
 
@@ -89,7 +88,7 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
                 ...(dadosItem.dadosComportamentoUtilizavel && {
                     comportamentoUtilizavel: {
                         dadosUtilizaveis: dadosItem.dadosComportamentoUtilizavel.dadosUtilizaveis,
-                        retornaDadosUtilizavelPorNome: function(nomeUtilizavel: string) { return this.dadosUtilizaveis.find(dadosUtilizavel => dadosUtilizavel.nomeUtilizavel === nomeUtilizavel) },
+                        retornaDadosUtilizavelPorNome: function (nomeUtilizavel: string) { return this.dadosUtilizaveis.find(dadosUtilizavel => dadosUtilizavel.nomeUtilizavel === nomeUtilizavel) },
                     },
                 }),
 
@@ -97,18 +96,38 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
 
                 get refTipoItem(): TipoItem { return SingletonHelper.getInstance().tipos_items.find(tipo_item => tipo_item.id === dadosItem.idTipoItem)!; },
 
-                get itemEmpunhavel(): boolean { return this.comportamentoEmpunhavel !== undefined },
-                get itemVestivel(): boolean { return this.comportamentoVestivel !== undefined },
-                get itemEhComponente(): boolean { return this.comportamentoComponenteRitualistico != undefined },
+                get itemEmpunhavel(): boolean { return this.comportamentoEmpunhavel !== undefined; },
+                get itemEquipavel(): boolean { return this.comportamentoEquipavel !== undefined; },
+                get itemEhComponente(): boolean { return this.comportamentoComponenteRitualistico != undefined; },
 
                 get itemEstaEmpunhado(): boolean { return this.itemEmpunhavel && this.comportamentoEmpunhavel!.estaEmpunhado; },
-                get itemEstaVestido(): boolean { return this.itemVestivel && this.comportamentoVestivel!.estaVestido },
-                get itemEstaGuardado(): boolean { return !this.itemEstaEmpunhado && !this.itemEstaVestido; },
+                get itemEstaEquipado(): boolean { return this.itemEquipavel && this.comportamentoEquipavel!.estaEquipado; },
+                get itemEstaGuardado(): boolean { return !this.itemEstaEmpunhado && !this.itemEstaEquipado; },
                 itemTemUtilizavelNecessarios(nomeUtilizavel: string, numeroUtilizado: number): boolean { return (this.comportamentoUtilizavel?.retornaDadosUtilizavelPorNome(nomeUtilizavel)?.usosAtuais ?? 0) >= numeroUtilizado; },
 
-                get itemPodeSerEmpunhado(): boolean { return this.itemEmpunhavel && this.itemEstaGuardado },
-                get itemPodeSerGuardado(): boolean { return this.itemEstaEmpunhado },
+                get itemPodeSerEmpunhado(): boolean { return this.itemEmpunhavel && this.itemEstaGuardado; },
+                get itemPodeSerGuardado(): boolean { return this.itemEstaEmpunhado; },
+                get itemPodeSerEquipado(): boolean { return this.itemEstaEmpunhado; },
+                get itemPodeSerDesequipado(): boolean { return this.itemEstaEquipado; },
             };
+
+            if (dadosItem.dadosModificadores) {
+                item.modificadores = dadosItem.dadosModificadores.map(dadosModificador => ({
+                    nome: dadosModificador.nome,
+                    quantidadeDuracaoMaxima: dadosModificador.quantidadeDuracaoMaxima,
+                    quantidadeDuracaoAtual: dadosModificador.quantidadeDuracaoAtual,
+                    efeitos: dadosModificador.dadosEfeitos.map(dadosEfeito => criarEfeito(dadosEfeito)),
+                    refPai: item,
+                    tipoRefPai: 'Ação',
+                    svg: 'PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+',
+                    get refDuracao(): Duracao {
+                        return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === dadosModificador.idDuracao)!
+                    },
+                    codigoUnico: 'asdgasga',
+                    textoDuracao: 'afgsaf',
+                    tipoModificador: dadosModificador.tipoModificador,
+                }));
+            }
 
             return item;
         });
@@ -129,8 +148,8 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
         itens,
         agrupamento,
         espacosUsados,
-        numeroItensCategoria: (valorCategoria: number) => { console.log("precisa implementar numeroItensCategoria"); return 0; },
-        adicionarItem: (item: Item) => { console.log("precisa implementar adicionarItem"); },
+        numeroItensCategoria: function (valorCategoria: number) { return this.itens.filter(item => item.categoria === valorCategoria).length; },
+        adicionarItem: (dadosItem: DadosItemSemIdentificador) => { adicionarItemNoInventario(dadosItem); },
         removerItem: (item: Item) => { console.log("precisa implementar removerItem"); },
     };
 

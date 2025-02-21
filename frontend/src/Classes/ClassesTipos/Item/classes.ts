@@ -12,10 +12,11 @@ export type Item = {
 
     dadosAcoes: DadosAcaoGenerica[];
 
+    // eh opcional pq ele não pode ser criado ao mesmo tempo q o objeto do pai, para obter sua referencia
     modificadores?: Modificador[];
 
     comportamentoEmpunhavel?: ComportamentoEmpunhavel;
-    comportamentoVestivel?: ComportamentoVestivel;
+    comportamentoEquipavel?: ComportamentoEquipavel;
     comportamentoComponenteRitualistico?: ComportamentoComponenteRitualistico;
     comportamentoUtilizavel?: ComportamentoUtilizavel;
 
@@ -24,16 +25,18 @@ export type Item = {
     readonly refTipoItem: TipoItem;
 
     readonly itemEmpunhavel: boolean;
-    readonly itemVestivel: boolean;
+    readonly itemEquipavel: boolean;
     readonly itemEhComponente: boolean;
     
     readonly itemEstaGuardado: boolean;
     readonly itemEstaEmpunhado: boolean;
-    readonly itemEstaVestido: boolean;
+    readonly itemEstaEquipado: boolean;
     itemTemUtilizavelNecessarios: (nomeUtilizavel: string, numeroUtilizelUsado: number) => boolean;
 
     readonly itemPodeSerEmpunhado: boolean;
     readonly itemPodeSerGuardado: boolean;
+    readonly itemPodeSerEquipado: boolean;
+    readonly itemPodeSerDesequipado: boolean;
 };
 
 export type DadosItem = Pick<Item, 'peso' | 'categoria'> & {
@@ -42,11 +45,11 @@ export type DadosItem = Pick<Item, 'peso' | 'categoria'> & {
     idTipoItem: number;
     dadosNomeCustomizado: DadosNomeCustomizado;
 
-    dadosAcoes: DadosAcaoGenerica[];
+    dadosAcoes?: DadosAcaoGenerica[];
     dadosModificadores?: DadosModificador[];
     
     dadosComportamentoEmpunhavel?: DadosComportamentoEmpunhavel;
-    dadosComportamentoVestivel?: DadosComportamentoVestivel;
+    dadosComportamentoEquipavel?: DadosComportamentoEquipavel;
     dadosComportamentoComponenteRitualistico?: DadosComportamentoComponenteRitualistico;
     dadosComportamentoUtilizavel?: DadosComportamentoUtilizavel;
 };
@@ -77,18 +80,15 @@ export type DadosComportamentoEmpunhavel = Pick<ComportamentoEmpunhavel, 'extrem
 };
 // #endregion
 
-// #region ComportamentoVestivel
-export type ComportamentoVestivel = {
-    estaVestido: boolean;
+// #region ComportamentoEquipavel
+export type ComportamentoEquipavel = {
+    estaEquipado: boolean;
 
-    readonly custoVestir: CustoAcaoExecucao;
-
-    veste: () => void;
-    desveste: () => void;
+    readonly custoEquipar: CustoAcaoExecucao;
 };
 
-export type DadosComportamentoVestivel = {
-    readonly dadosCustoVestir: DadoPrecoExecucao[];
+export type DadosComportamentoEquipavel = {
+    readonly dadosCustoEquipar: DadoPrecoExecucao[];
 }
 // #endregion
 

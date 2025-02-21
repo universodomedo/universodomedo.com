@@ -15,11 +15,11 @@ import RenderItem from './item.tsx';
 const pagina = () => {
   const { mostrarFiltros, mostrarBarras } = useContextoControleInventario();
   const { inventario } = useClasseContextualPersonagemInventario();
-  const { espacoInventario, espacosCategoria } = useClasseContextualPersonagemEstatisticasBuffaveis();
+  const { capacidadeDeCarga, espacosCategoria } = useClasseContextualPersonagemEstatisticasBuffaveis();
   
   const itensGuardados = inventario.agrupamento.filter(item => item.itemEstaGuardado);
   const itensEmpunhados = inventario.agrupamento.filter(item => item.itemEstaEmpunhado);
-  const itensVestidos = inventario.agrupamento.filter(item => item.itemEstaVestido);
+  const itensEquipados = inventario.agrupamento.filter(item => item.itemEstaEquipado);
 
   const renderItem = (item: Item, index: number) => (
     <RenderItem key={index} item={item} />
@@ -39,7 +39,7 @@ const pagina = () => {
     <div className={style.conteudo_inventario}>
       {mostrarBarras && (
         <div className={style.inventario_maximos}>
-          <BarraEstatisticaDanificavel titulo={'Espaços'} valorAtual={inventario.espacosUsados} valorMaximo={espacoInventario.capacidadeTotal} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
+          <BarraEstatisticaDanificavel titulo={'Espaços'} valorAtual={inventario.espacosUsados} valorMaximo={capacidadeDeCarga.capacidadeTotal} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
           <div className={style.inventario_categoria}>
             {espacosCategoria.map((espacoCategoria, index) => (
               <div key={index} className={style.barra_categoria}>
@@ -65,7 +65,7 @@ const pagina = () => {
         </div>
       )} */}
 
-      <ConsultaProvider<Item> registros={[itensEmpunhados, itensVestidos, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={new FiltroProps<Item>(itemsFiltro)} onLoadComplete={() => { }} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Empunhados', 'Itens Vestidos', 'Itens Guardados'] }} calculoTotal={(item) => (item.quantidadeUnidadesDesseItem || 1)}>
+      <ConsultaProvider<Item> registros={[itensEmpunhados, itensEquipados, itensGuardados]} mostrarFiltro={mostrarFiltros} filtroProps={new FiltroProps<Item>(itemsFiltro)} onLoadComplete={() => { }} tituloDivisoesConsulta={{ usaSubtitulos: true, divisoes: ['Itens Empunhados', 'Itens Equipados', 'Itens Guardados'] }} calculoTotal={(item) => (item.quantidadeUnidadesDesseItem || 1)}>
         <Consulta renderItem={renderItem} />
       </ConsultaProvider>
     </div>

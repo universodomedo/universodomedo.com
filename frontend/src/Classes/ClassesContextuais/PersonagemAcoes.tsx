@@ -1,7 +1,8 @@
 // #region Imports
-import React, { createContext, ReactNode, useContext, useMemo } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 
 import { Acao, AcaoEspecifica, AcaoGenerica, criarEfeito, Custos, dadosAcaoEhDeAcaoEspecifica, DadosAcaoEspecifica, DadosAcaoGenerica, DificuldadeAcao, Duracao, Habilidade, Item, OpcoesExecucaoAcao, OpcoesSelecionadasExecucaoAcao, realizaChecagemDificuldade, RequisitosParaExecutarAcao, Ritual, ValidaRequisitoParaExecucaco } from "Classes/ClassesTipos/index.ts";
+import { SingletonHelper } from "Classes/classes_estaticas.ts";
 
 import { useClasseContextualPersonagemHabilidades } from "Classes/ClassesContextuais/PersonagemHabilidades.tsx";
 import { useClasseContextualPersonagemInerencias } from "Classes/ClassesContextuais/PersonagemInerencias.tsx";
@@ -11,12 +12,12 @@ import { useClasseContextualPersonagemPericias } from "Classes/ClassesContextuai
 import { useClasseContextualPersonagemEstatisticasDanificaveis } from "Classes/ClassesContextuais/PersonagemEstatisticasDanificaveis.tsx";
 import { useClasseContextualPersonagemEstatisticasBuffaveis } from "Classes/ClassesContextuais/PersonagemEstatisticasBuffaveis.tsx";
 import { useCustosExecucoes } from "Classes/ClassesContextuais/GerenciadorCustosExecucoes.tsx";
-import { useClasseContextualPersonagemModificadores } from "./PersonagemModificadores";
-import { useClasseContextualPersonagemInventario } from "./PersonagemInventario.tsx";
+import { useClasseContextualPersonagemModificadores } from "Classes/ClassesContextuais/PersonagemModificadores.tsx";
+import { useClasseContextualPersonagemInventario } from "Classes/ClassesContextuais/PersonagemInventario.tsx";
+import { useClasseContextualPersonagem } from "Classes/ClassesContextuais/Personagem.tsx";
 
 import { criarCustos } from 'Hooks/custosAcao.ts';
 import { criarDificuldades } from "Hooks/dificuldadesAcao.ts";
-import { SingletonHelper } from "Classes/classes_estaticas.ts";
 // #endregion
 
 interface ClasseContextualPersonagemAcoesProps {
@@ -32,6 +33,8 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
 
     const { atributos } = useClasseContextualPersonagemAtributos();
     const { pericias } = useClasseContextualPersonagemPericias();
+
+    const { modificarItemDoInventario } = useClasseContextualPersonagem();
 
     const { estatisticasDanificaveis } = useClasseContextualPersonagemEstatisticasDanificaveis();
     const { execucoes } = useClasseContextualPersonagemEstatisticasBuffaveis();
@@ -57,16 +60,13 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
             destrava: function () { this.travada = false; this.descricaoTravada = ''; },
 
             ...(dadosAcaoGenerica.dadosDificuldade && {
-                get dificuldadeAcao(): DificuldadeAcao {
-                    return criarDificuldades(dadosAcaoGenerica.dadosDificuldade!, { atributos, pericias });
-                    // return acaoExistente?.dificuldadeAcao ?? criarDificuldades(dadosAcaoGenerica.dadosDificuldade!, { atributos, pericias });
-                },
+                get dificuldadeAcao(): DificuldadeAcao { return criarDificuldades(dadosAcaoGenerica.dadosDificuldade!, { atributos, pericias }); },
             }),
 
             get custos(): Custos {
-                return criarCustos(dadosAcaoGenerica.dadosCustos, refPai, { 
-                    podePagarPreco, pagaPrecoExecucao, resumoPagamento, estatisticasDanificaveis, inventario
-                }); 
+                return criarCustos(dadosAcaoGenerica.dadosCustos, refPai, {
+                    podePagarPreco, pagaPrecoExecucao, resumoPagamento, estatisticasDanificaveis, inventario, modificarItemDoInventario
+                });
             },
 
             get opcoesExecucaoAcao(): OpcoesExecucaoAcao[] {
@@ -82,20 +82,22 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
                         })),
                     });
                 }
-            
+
                 return opcoes;
             },
 
             requisitosParaExecutarAcao: {
-                get empunhaItem(): ValidaRequisitoParaExecucaco { return { 
-                    precisa: dadosAcaoGenerica.dadosRequisitosParaExecutarAcao?.empunharItem === true && "refTipoItem" in refPai,
-                    get estaValido(): boolean { return !this.precisa || (refPai as Item).itemEstaEmpunhado; },
-                    get descricaoRequisito(): string { return `O Item ${(refPai as Item).nome.nomeExibicao} precisa estar Empunhado`},
-                } },
+                get empunhaItem(): ValidaRequisitoParaExecucaco {
+                    return {
+                        precisa: dadosAcaoGenerica.dadosRequisitosParaExecutarAcao?.empunharItem === true && "refTipoItem" in refPai,
+                        get estaValido(): boolean { return !this.precisa || (refPai as Item).itemEstaEmpunhado; },
+                        get descricaoRequisito(): string { return `O Item ${(refPai as Item).nome.nomeExibicao} precisa estar Empunhado` },
+                    }
+                },
 
                 get listaValidacaoRequisitos(): ValidaRequisitoParaExecucaco[] {
                     const lista: ValidaRequisitoParaExecucaco[] = [];
-                    lista.push(this.empunhaItem);
+                    if (this.empunhaItem.precisa) lista.push(this.empunhaItem);
                     return lista;
                 },
 
@@ -107,7 +109,7 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
                 this.modificadores?.filter(modificador => modificador.tipoModificador.tipo === 'Ativo').forEach(modificador => adicionarModificador(modificador));
             },
 
-            executaAcao: function(opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) {
+            executaAcao: function (opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) {
                 if (this.dificuldadeAcao !== undefined) {
                     const retornoDificuldade = realizaChecagemDificuldade(this.dificuldadeAcao);
                     if (!retornoDificuldade) {
@@ -115,7 +117,7 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
                         return false;
                     }
                 }
-                
+
                 this.custos.aplicaCustos(opcoesSelecionadas);
 
                 this.logicaExecucao();
@@ -131,15 +133,15 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
                 refPai: acao,
                 tipoRefPai: 'Ação',
                 svg: 'PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEyNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Zz48dGl0bGU+TGF5ZXIgMTwvdGl0bGU+PHRleHQgZmlsbD0iIzAwMDAwMCIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjAiIHg9IjU3IiB5PSIxMTQiIGlkPSJzdmdfMSIgZm9udC1zaXplPSIxNTAiIGZvbnQtZmFtaWx5PSJOb3RvIFNhbnMgSlAiIHRleHQtYW5jaG9yPSJzdGFydCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+RTwvdGV4dD48L2c+PC9zdmc+',
-                get refDuracao(): Duracao { 
-                    return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === dadosModificador.idDuracao)! 
+                get refDuracao(): Duracao {
+                    return SingletonHelper.getInstance().duracoes.find(duracao => duracao.id === dadosModificador.idDuracao)!
                 },
                 codigoUnico: 'asdgasga',
                 textoDuracao: 'afgsaf',
                 tipoModificador: dadosModificador.tipoModificador,
             }));
         }
-        
+
         return acao;
     }
 
@@ -156,17 +158,17 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
             trava: function (descricao: string) { this.travada = true; this.descricaoTravada = descricao; },
             destrava: function () { this.travada = false; this.descricaoTravada = ''; },
 
-            tipoAcaoEspecifica: 'Sacar Item',
+            tipoAcaoEspecifica: dadosAcaoEspecifica.tipoAcaoEspecifica,
             dadosCarregadosPreviamente: dadosAcaoEspecifica.dadosCarregadosPreviamente,
             dadosCarregadosNoChangeOption: dadosAcaoEspecifica.dadosCarregadosNoChangeOption,
-            
+
             validaExecucao: dadosAcaoEspecifica.validaExecucao,
             executarAcaoEspecifica: dadosAcaoEspecifica.executarAcaoEspecifica,
 
             get opcoesExecucaoAcao(): OpcoesExecucaoAcao[] {
                 const opcoes: OpcoesExecucaoAcao[] = [];
 
-                if (this.nome === 'Sacar Item') {
+                if (this.tipoAcaoEspecifica === 'Sacar Item') {
                     opcoes.push({
                         identificador: 'itemParaSacar',
                         nomeExibicao: 'Item à Sacar',
@@ -177,11 +179,33 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
                     });
                 }
 
-                if (this.nome === 'Guardar Item') {
+                if (this.tipoAcaoEspecifica === 'Guardar Item') {
                     opcoes.push({
                         identificador: 'itemParaGuardar',
                         nomeExibicao: 'Item à Guardar',
                         opcoes: inventario.itens.filter(item => item.itemPodeSerGuardado).map(item => ({
+                            key: item.codigoUnico,
+                            value: `${item.nomeOpcao}`,
+                        })),
+                    });
+                }
+
+                if (this.tipoAcaoEspecifica === 'Equipar Item') {
+                    opcoes.push({
+                        identificador: 'itemParaEquipar',
+                        nomeExibicao: 'Item à Equipar',
+                        opcoes: inventario.itens.filter(item => item.itemPodeSerEquipado).map(item => ({
+                            key: item.codigoUnico,
+                            value: `${item.nomeOpcao}`,
+                        })),
+                    });
+                }
+
+                if (this.tipoAcaoEspecifica === 'Desequipar Item') {
+                    opcoes.push({
+                        identificador: 'itemParaDesequipar',
+                        nomeExibicao: 'Item à Desequipar',
+                        opcoes: inventario.itens.filter(item => item.itemPodeSerDesequipado).map(item => ({
                             key: item.codigoUnico,
                             value: `${item.nomeOpcao}`,
                         })),
@@ -194,10 +218,9 @@ export const PersonagemAcoesProvider = ({ children }: { children: React.ReactNod
     }
 
     const acoes: Acao[] = useMemo(() => {
-        // const todasFontes = [...habilidadesInerentes, ...rituais];
         const todasFontes = [...habilidadesInerentes, ...inventario.itens, ...rituais];
 
-        const novasAcoes = todasFontes.flatMap(paiAcao => paiAcao.dadosAcoes.flatMap(dadosAcao => {
+        const novasAcoes = todasFontes.flatMap(paiAcao => (paiAcao.dadosAcoes || []).flatMap(dadosAcao => {
             if (dadosAcaoEhDeAcaoEspecifica(dadosAcao)) {
                 return criarAcaoEspecifica(dadosAcao as DadosAcaoEspecifica, paiAcao);
             } else {

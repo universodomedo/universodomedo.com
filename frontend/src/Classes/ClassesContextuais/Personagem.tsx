@@ -1,7 +1,7 @@
 // #region Imports
 import React, { createContext, useContext, useState } from "react";
 
-import { DadosItem, Item, RLJ_Ficha2 } from "Classes/ClassesTipos/index.ts";
+import { DadosItem, DadosItemSemIdentificador, Item, RLJ_Ficha2 } from "Classes/ClassesTipos/index.ts";
 
 import { PersonagemModificadoresProvider } from 'Classes/ClassesContextuais/PersonagemModificadores.tsx';
 
@@ -60,6 +60,8 @@ const NiveisProviders = combineProviders(
 interface ClasseContextualPersonagemProps {
     dadosPersonagem: RLJ_Ficha2;
     modificarItemDoInventario: (identificadorNomePadrao: string, modificador: (item: DadosItem) => boolean) => void;
+    adicionarItemNoInventario: (dadosItem: DadosItemSemIdentificador) => void;
+    equiparItem: (item: Item) => void;
 };
 
 export const Personagem = createContext<ClasseContextualPersonagemProps | undefined>(undefined);
@@ -89,16 +91,42 @@ export const PersonagemProvider = ({ children, dadosFicha }: { children: React.R
         });
     };
 
-    const adicionarItemNoInventario = (dadosItem: DadosItem) => {
-        console.log('adicionarItemNoInventario');
+    const adicionarItemNoInventario = (dadosItem: DadosItemSemIdentificador) => {
+        setDadosPersonagem((prevState) => {
+            const identificadorDesseItem = prevState.inventario.identificadorProximoItem;
+
+            const novoItem: DadosItem = {
+                ...dadosItem,
+                identificadorNomePadrao: `${identificadorDesseItem}_${dadosItem.dadosNomeCustomizado.nomePadrao}`,
+            };
+
+            return {
+                ...prevState,
+                inventario: {
+                    identificadorProximoItem: identificadorDesseItem + 1,
+                    dadosItens: [...prevState.inventario.dadosItens, novoItem],
+                },
+            };
+        });
     };
 
     const removerItemDoInventario = (item: Item) => {
         console.log('removerItemDoInventario');
     };
 
+    const equiparItem = (item: Item) => {
+        setDadosPersonagem((prevState) => {
+            return {
+                ...prevState,
+                dadosPersonagemEmExecucao: {
+                    listaCodigoUnicoItensEquipados: [...prevState.dadosPersonagemEmExecucao.listaCodigoUnicoItensEquipados, item.codigoUnico],
+                },
+            };
+        });
+    };
+
     return (
-        <Personagem.Provider value={{ dadosPersonagem, modificarItemDoInventario }}>
+        <Personagem.Provider value={{ dadosPersonagem, modificarItemDoInventario, adicionarItemNoInventario, equiparItem }}>
             <NiveisProviders>
                 {children}
             </NiveisProviders>

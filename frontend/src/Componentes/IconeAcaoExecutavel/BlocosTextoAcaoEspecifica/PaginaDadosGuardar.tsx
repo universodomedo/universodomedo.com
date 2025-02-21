@@ -1,8 +1,7 @@
 import style from 'Recursos/EstilizacaoCompartilhada/detalhes_popover.module.css';
-
 import { Item } from 'Classes/ClassesTipos/index.ts';
 
-const PaginaDadosGuardar = ({ item }: { item: Item }) => {
+export const PaginaDadosDinamicosGuardar = ({ item }: { item: Item }) => {
     const empunhavel = item.comportamentoEmpunhavel!;
 
     return (
@@ -13,6 +12,4 @@ const PaginaDadosGuardar = ({ item }: { item: Item }) => {
             )}
         </>
     );
-}
-
-export default PaginaDadosGuardar;
+};

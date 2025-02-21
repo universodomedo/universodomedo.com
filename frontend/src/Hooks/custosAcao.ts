@@ -1,10 +1,10 @@
-import { Custo, Custos, DadosCustos, Elemento, EstatisticaDanificavelPersonagem, Habilidade, Inventario, Item, NivelComponente, OpcoesSelecionadasExecucaoAcao, PrecoExecucao, Ritual } from "Classes/ClassesTipos/index.ts";
+import { Custo, Custos, DadosCustos, DadosItem, Elemento, EstatisticaDanificavelPersonagem, Habilidade, Inventario, Item, NivelComponente, OpcoesSelecionadasExecucaoAcao, PrecoExecucao, Ritual } from "Classes/ClassesTipos/index.ts";
 import { SingletonHelper } from "Classes/classes_estaticas";
 
 import { criarCustoAcaoExecucao } from "Hooks/custosExecucao.ts";
 
-export const criarCustos = (dadosCustos: DadosCustos, refPai: Ritual | Item | Habilidade, informacoesContextuais: { podePagarPreco: (precos: PrecoExecucao[]) => boolean, pagaPrecoExecucao: (precos: PrecoExecucao[]) => void, resumoPagamento: (precos: PrecoExecucao[]) => string[], estatisticasDanificaveis: EstatisticaDanificavelPersonagem[], inventario: Inventario }): Custos => {
-    const { podePagarPreco, pagaPrecoExecucao, resumoPagamento, estatisticasDanificaveis, inventario } = informacoesContextuais;
+export const criarCustos = (dadosCustos: DadosCustos, refPai: Ritual | Item | Habilidade, informacoesContextuais: { podePagarPreco: (precos: PrecoExecucao[]) => boolean, pagaPrecoExecucao: (precos: PrecoExecucao[]) => void, resumoPagamento: (precos: PrecoExecucao[]) => string[], estatisticasDanificaveis: EstatisticaDanificavelPersonagem[], inventario: Inventario, modificarItemDoInventario: (identificadorNomePadrao: string, modificador: (item: DadosItem) => boolean) => void }): Custos => {
+    const { podePagarPreco, pagaPrecoExecucao, resumoPagamento, estatisticasDanificaveis, inventario, modificarItemDoInventario } = informacoesContextuais;
 
     return {
         custoAcaoExecucao: criarCustoAcaoExecucao(dadosCustos.dadosPrecoExecucao, podePagarPreco, pagaPrecoExecucao, resumoPagamento,),
@@ -38,11 +38,13 @@ export const criarCustos = (dadosCustos: DadosCustos, refPai: Ritual | Item | Ha
 
                 get podeSerPago(): boolean { return (refPai as Item).itemTemUtilizavelNecessarios(this.nomeUtilizavel, this.custoCargasUtilizavel); },
                 aplicaCusto: function () {
-                    const dadosUtilizavel = (refPai as Item).comportamentoUtilizavel?.retornaDadosUtilizavelPorNome(this.nomeUtilizavel);
+                    const itemUtilizavel = (refPai as Item);
 
-                    if (dadosUtilizavel) {
-                        dadosUtilizavel.usosAtuais = (dadosUtilizavel.usosAtuais ?? 0) - 1;
-                    }
+                    modificarItemDoInventario(itemUtilizavel.codigoUnico, () => {
+                        const dadosUtilizavel = itemUtilizavel.comportamentoUtilizavel?.retornaDadosUtilizavelPorNome(this.nomeUtilizavel)!;
+                        dadosUtilizavel.usosAtuais -= this.custoCargasUtilizavel;
+                        return dadosUtilizavel.usosAtuais <= 0;
+                    })
                 },
             }
         }),
@@ -52,6 +54,7 @@ export const criarCustos = (dadosCustos: DadosCustos, refPai: Ritual | Item | Ha
             listaCustos.push(this.custoAcaoExecucao);
             if (this.custoAcaoPE !== undefined) listaCustos.push(this.custoAcaoPE);
             if (this.custoAcaoComponente !== undefined) listaCustos.push(this.custoAcaoComponente);
+            if (this.custoAcaoUtilizavel !== undefined) listaCustos.push(this.custoAcaoUtilizavel);
             return listaCustos;
         },
 

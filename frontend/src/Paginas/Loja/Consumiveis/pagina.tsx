@@ -2,7 +2,7 @@
 import style from 'Paginas/Loja/style.module.css';
 import { useState } from 'react';
 
-import { DadosItemSemIdentificador } from 'Classes/ClassesTipos';
+import { DadosItemSemIdentificador } from 'Classes/ClassesTipos/index.ts';
 
 import { useContextoLoja } from 'Contextos/ContextoLoja/contexto.tsx';
 
@@ -16,7 +16,7 @@ const pagina = () => {
 
     const { mudarPagina, adicionarItem } = useContextoLoja();
 
-    const itensa: Record<number, { dadosItem: DadosItemSemIdentificador, listaDescricoes: string[]; }> = {
+    const itens: Record<number, { dadosItem: DadosItemSemIdentificador, listaDescricoes: string[]; }> = {
         1: {
             dadosItem: {
                 dadosNomeCustomizado: { nomePadrao: 'Bálsamo de Arnica' },
@@ -26,149 +26,181 @@ const pagina = () => {
                 dadosAcoes: [
                     {
                         nome: 'Consumir',
-                    },
-                ],
-                dadosModificadores: [
-                    {
-                        nome: 'Bálsamo de Arnica',
-                        idDuracao: 3,
-                        quantidadeDuracaoMaxima: 1,
-                        quantidadeDuracaoAtual: 1,
-                        tipoModificador: { tipo: 'Ativo' },
-                        dadosEfeitos: [
+                        dadosCustos: {
+                            dadosPrecoExecucao: [
+                                {
+                                    idExecucao: 2,
+                                    quantidadeExecucoes: 1,
+                                },
+                            ],
+                            dadosPrecoUtilizavel: {
+                                nomeUtilizavel: 'Carga de Bálsamo de Arnica',
+                                custoCargasUtilizavel: 1,
+                            },
+                        },
+                        dadosModificadores: [
                             {
-                                idLinhaEfeito: 33,
-                                idTipoEfeito: 2,
-                                dadosValorEfeito: { valorBonusAdicional: 2 },
+                                nome: 'Bálsamo de Arnica',
+                                idDuracao: 3,
+                                quantidadeDuracaoMaxima: 1,
+                                quantidadeDuracaoAtual: 1,
+                                tipoModificador: { tipo: 'Ativo' },
+                                dadosEfeitos: [
+                                    {
+                                        idLinhaEfeito: 33,
+                                        idTipoEfeito: 2,
+                                        dadosValorEfeito: { valorBonusAdicional: 2 },
+                                    },
+                                ],
                             },
                         ],
+                        dadosRequisitosParaExecutarAcao: {
+                            empunharItem: true,
+                        },
                     },
                 ],
                 dadosComportamentoEmpunhavel: {
                     dadosCustoEmpunhar: [
                         {
-                            idExecucao: 2,
+                            idExecucao: 3,
                             quantidadeExecucoes: 1,
                         },
                     ],
                     extremidadesNecessarias: 1,
-                }
-            },
-            listaDescricoes: ['O Bálsamo de Arnica aumenta em 2 sua Resistência Mundana para o próximo Ataque Mundano', `Tem Categoria 0, Peso 1 e 1 Uso`],
-        },
-    };
-
-    const itens: Record<number, { dados: ArgsItem, listaDescricoes: string[]; }> = {
-        1: {
-            dados: {
-                args: { nome: [`Bálsamo de Arnica`], idTipoItem: 3, peso: 1, categoria: 0, },
-                dadosAcoes: [
-                    {
-                        args: { nome: 'Consumir', idTipoAcao: 1, idMecanica: 3, },
-                        dadosComportamentos: {
-                            dadosComportamentoConsomeUso: [1],
+                },
+                dadosComportamentoUtilizavel: {
+                    dadosUtilizaveis: [
+                        {
+                            nomeUtilizavel: 'Carga de Bálsamo de Arnica',
+                            usosMaximos: 1,
+                            usosAtuais: 1,
                         },
-                        custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
-                        modificadores: [
-                            {
-                                props: {
-                                    nome: `Bálsamo de Arnica`,
-                                    idDuracao: 3,
-                                    quantidadeDuracaoMaxima: 1,
-                                    dadosEfeitos: [
-                                        {
-                                            idLinhaEfeito: 33,
-                                            idTipoEfeito: 2,
-                                            dadosValoresEfeitos: { valorBonusAdicional: 2 },
-                                        },
-                                    ],
-                                    dadosComportamentos: { dadosComportamentoAtivo: [] },
-                                }
-                            }
-                        ],
-                        requisitos: [2],
-                    }
-                ],
-                dadosComportamentos: {
-                    dadosComportamentoEmpunhavel: [true, 1],
-                    dadosComportamentoUtilizavel: [1],
+                    ],
                 },
             },
             listaDescricoes: ['O Bálsamo de Arnica aumenta em 2 sua Resistência Mundana para o próximo Ataque Mundano', `Tem Categoria 0, Peso 1 e 1 Uso`],
         },
         2: {
-            dados: {
-                args: { nome: [`Gel de Babosa`], idTipoItem: 3, peso: 1, categoria: 0, },
+            dadosItem: {
+                dadosNomeCustomizado: { nomePadrao: 'Gel de Babosa' },
+                idTipoItem: 3,
+                peso: 1,
+                categoria: 0,
                 dadosAcoes: [
                     {
-                        args: { nome: 'Consumir', idTipoAcao: 1, idMecanica: 3, },
-                        dadosComportamentos: {
-                            dadosComportamentoConsomeUso: [1],
+                        nome: 'Consumir',
+                        dadosCustos: {
+                            dadosPrecoExecucao: [
+                                {
+                                    idExecucao: 2,
+                                    quantidadeExecucoes: 1,
+                                },
+                            ],
+                            dadosPrecoUtilizavel: {
+                                nomeUtilizavel: 'Carga de Gel de Babosa',
+                                custoCargasUtilizavel: 1,
+                            },
                         },
-                        custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
-                        modificadores: [
+                        dadosModificadores: [
                             {
-                                props: {
-                                    nome: `Gel de Babosa`,
-                                    idDuracao: 3,
-                                    quantidadeDuracaoMaxima: 1,
-                                    dadosEfeitos: [
-                                        {
-                                            idLinhaEfeito: 37,
-                                            idTipoEfeito: 2,
-                                            dadosValoresEfeitos: { valorBonusAdicional: 2 },
-                                        },
-                                    ],
-                                    dadosComportamentos: { dadosComportamentoAtivo: [] },
-                                }
-                            }
+                                nome: 'Gel de Babosa',
+                                idDuracao: 3,
+                                quantidadeDuracaoMaxima: 1,
+                                quantidadeDuracaoAtual: 1,
+                                tipoModificador: { tipo: 'Ativo' },
+                                dadosEfeitos: [
+                                    {
+                                        idLinhaEfeito: 37,
+                                        idTipoEfeito: 2,
+                                        dadosValorEfeito: { valorBonusAdicional: 2 },
+                                    },
+                                ],
+                            },
                         ],
-                        requisitos: [2],
-                    }
+                        dadosRequisitosParaExecutarAcao: {
+                            empunharItem: true,
+                        },
+                    },
                 ],
-                dadosComportamentos: {
-                    dadosComportamentoEmpunhavel: [true, 1],
-                    dadosComportamentoUtilizavel: [1],
+                dadosComportamentoEmpunhavel: {
+                    dadosCustoEmpunhar: [
+                        {
+                            idExecucao: 3,
+                            quantidadeExecucoes: 1,
+                        },
+                    ],
+                    extremidadesNecessarias: 1,
+                },
+                dadosComportamentoUtilizavel: {
+                    dadosUtilizaveis: [
+                        {
+                            nomeUtilizavel: 'Carga de Gel de Babosa',
+                            usosMaximos: 1,
+                            usosAtuais: 1,
+                        },
+                    ],
                 },
             },
             listaDescricoes: ['O Gel de Babosa aumenta em 2 sua Resistência Natural para o próximo Ataque Natural', `Tem Categoria 0, Peso 1 e 1 Uso`],
         },
         3: {
-            dados: {
-                args: { nome: [`Ácido Hialurônico Injetável`], idTipoItem: 3, peso: 1, categoria: 1, },
+            dadosItem: {
+                dadosNomeCustomizado: { nomePadrao: 'Ácido Hialurônico Injetável' },
+                idTipoItem: 3,
+                peso: 1,
+                categoria: 1,
                 dadosAcoes: [
                     {
-                        args: { nome: 'Injetar', idTipoAcao: 1, idMecanica: 6, },
-                        dadosComportamentos: {
-                            dadosComportamentoAcao: { tipo: 'Cura', paramsValorGenerico: { valorMin: 4, valorMax: 7 } },
-                            dadosComportamentoConsomeUso: [1],
+                        nome: 'Injetar',
+                        dadosCustos: {
+                            dadosPrecoExecucao: [
+                                {
+                                    idExecucao: 2,
+                                    quantidadeExecucoes: 1,
+                                },
+                            ],
+                            dadosPrecoUtilizavel: {
+                                nomeUtilizavel: 'Carga de Ácido Hialurônico Injetável',
+                                custoCargasUtilizavel: 1,
+                            },
                         },
-                        custos: { custoExecucao: [{ idExecucao: 2, valor: 1 }] },
-                        requisitos: [2],
-                    }
+                        dadosRequisitosParaExecutarAcao: {
+                            empunharItem: true,
+                        },
+                    },
                 ],
-                dadosComportamentos: {
-                    dadosComportamentoEmpunhavel: [true, 1],
-                    dadosComportamentoUtilizavel: [1],
+                dadosComportamentoEmpunhavel: {
+                    dadosCustoEmpunhar: [
+                        {
+                            idExecucao: 3,
+                            quantidadeExecucoes: 1,
+                        },
+                    ],
+                    extremidadesNecessarias: 1,
+                },
+                dadosComportamentoUtilizavel: {
+                    dadosUtilizaveis: [
+                        {
+                            nomeUtilizavel: 'Carga de Ácido Hialurônico Injetável',
+                            usosMaximos: 1,
+                            usosAtuais: 1,
+                        },
+                    ],
                 },
             },
             listaDescricoes: ['O Bálsamo de Arnica recupera 4-7 P.V. do Alvo', `Tem Categoria 1, Peso 1 e 1 Uso`],
-        }
-    }
+        },
+    };
 
     const handleItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setItem(Number(e.target.value));
     };
 
     const adicionar = () => {
-        const argsItem: ArgsItem = {
-            args: itens[item].dados.args,
-            dadosComportamentos: itens[item].dados.dadosComportamentos,
-            dadosAcoes: itens[item].dados.dadosAcoes,
-        };
+        const dadosItem: DadosItemSemIdentificador = itens[item].dadosItem;
 
-        adicionarItem(argsItem, quantidade);
-    }
+        adicionarItem(dadosItem, quantidade);
+    };
 
     return (
         <>
@@ -178,7 +210,7 @@ const pagina = () => {
 
                     <div className={style.opcao_item}>
                         <InputComRotulo rotulo={'Consumível'}>
-                            <select value={item} onChange={handleItemChange}> <option value="0" disabled >Selecionar Consumível</option> {Object.entries(itens).map(([id, data]) => (<option key={id} value={id}>{data.dados.args.nome}</option>))} </select>
+                            <select value={item} onChange={handleItemChange}> <option value="0" disabled >Selecionar Consumível</option> {Object.entries(itens).map(([id, data]) => (<option key={id} value={id}>{data.dadosItem.dadosNomeCustomizado.nomePadrao}</option>))} </select>
                         </InputComRotulo>
                     </div>
 

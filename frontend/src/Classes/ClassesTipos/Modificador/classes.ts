@@ -11,15 +11,12 @@ export type Modificador = {
     readonly refDuracao: Duracao;
     readonly codigoUnico: string;
     readonly textoDuracao: string;
-    tipoModificador: { tipo: 'Ativo' } | { tipo: 'Passivo', requisito?: 'Empunhar' | 'Vestir' };
+    tipoModificador: { tipo: 'Ativo' } | { tipo: 'Passivo', requisito?: 'Empunhar' | 'Equipar' };
 };
 
-export type DadosModificador = Pick<Modificador, 'nome'> & {
+export type DadosModificador = Pick<Modificador, 'nome' | 'quantidadeDuracaoMaxima' | 'quantidadeDuracaoAtual' | 'tipoModificador'> & {
     idDuracao: number;
-    quantidadeDuracaoMaxima: number;
-    quantidadeDuracaoAtual: number;
     dadosEfeitos: DadosEfeito[];
-    tipoModificador: { tipo: 'Ativo' } | { tipo: 'Passivo', requisito?: 'Empunhar' | 'Vestir' };
 };
 
 

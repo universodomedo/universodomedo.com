@@ -20,6 +20,7 @@ export type AcaoGenerica = Acao & {
 
     readonly custos: Custos;
 
+    // eh opcional pq ele não pode ser criado ao mesmo tempo q o objeto do pai, para obter sua referencia
     modificadores?: Modificador[];
 
     logicaExecucao: () => void;
@@ -59,7 +60,7 @@ export type DadosAcaoEspecifica = DadosAcao & {
     executarAcaoEspecifica: (opcoesSelecionadas: OpcoesSelecionadasExecucaoAcao) => void;
 };
 
-export type TipoAcaoEspecifica = 'Sacar Item' | 'Guardar Item' | 'Vestir Item' | 'Desvestir Item';
+export type TipoAcaoEspecifica = 'Sacar Item' | 'Guardar Item' | 'Equipar Item' | 'Desequipar Item';
 
 export function ehAcaoGenerica(acao: Acao): acao is AcaoGenerica {
     return !("tipoAcaoEspecifica" in acao);

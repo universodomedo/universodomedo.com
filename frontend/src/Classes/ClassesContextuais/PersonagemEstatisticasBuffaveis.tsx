@@ -1,16 +1,17 @@
 // #region Imports
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-import { Defesa, Deslocamento, EspacoCategoria, EspacoInventario, Execucao, ExecucaoPersonagem, Extremidade, Item, ResistenciaParanormal, TipoCategoria } from "Classes/ClassesTipos/index.ts";
+import { Defesa, Deslocamento, EspacoCategoria, CapacidadeDeCarga, Execucao, ExecucaoPersonagem, Extremidade, Item, ResistenciaParanormal, TipoCategoria } from "Classes/ClassesTipos/index.ts";
+import { SingletonHelper } from "Classes/classes_estaticas.ts";
 
-import { useClasseContextualPersonagemAtributos } from "./PersonagemAtributos";
-import { SingletonHelper } from "Classes/classes_estaticas";
+import { useClasseContextualPersonagemAtributos } from "Classes/ClassesContextuais/PersonagemAtributos.tsx";
+import { useClasseContextualPersonagemModificadores } from "Classes/ClassesContextuais/PersonagemModificadores.tsx";
 // #endregion
 
 interface ClasseContextualPersonagemEstatisticasBuffaveisProps {
     defesa: Defesa;
     deslocamento: Deslocamento;
-    espacoInventario: EspacoInventario;
+    capacidadeDeCarga: CapacidadeDeCarga;
     execucoes: ExecucaoPersonagem[];
     setExecucoes: (execucoes: ExecucaoPersonagem[]) => void;
     extremidades: Extremidade[];
@@ -24,6 +25,7 @@ export const PersonagemEstatisticasBuffaveis = createContext<ClasseContextualPer
 
 export const PersonagemEstatisticasBuffaveisProvider = ({ children }: { children: React.ReactNode; }) => {
     const { atributos } = useClasseContextualPersonagemAtributos();
+    const { adicionarModificador, removeModificador } = useClasseContextualPersonagemModificadores();
 
     const defesa: Defesa = {
         valorSemEfeitos: 5,
@@ -36,7 +38,7 @@ export const PersonagemEstatisticasBuffaveisProvider = ({ children }: { children
         get valorTotal(): number { return this.valorSemEfeitos; }
     };
 
-    const espacoInventario: EspacoInventario = {
+    const capacidadeDeCarga: CapacidadeDeCarga = {
         capacidadeNatural: 5,
         capacidadeExtraPorForca: 5,
         get capacidadeTotal(): number { return this.capacidadeNatural + (atributos.find(atributo => atributo.refAtributo.id === 2)!.valorTotal * this.capacidadeExtraPorForca) },
@@ -93,16 +95,20 @@ export const PersonagemEstatisticasBuffaveisProvider = ({ children }: { children
         const novasExtremidades = [...extremidades];
         novasExtremidades.filter(extremidade => !extremidade.estaOcupada).slice(0, item.comportamentoEmpunhavel!.extremidadesNecessarias).forEach(extremidade => extremidade.refItem = item);
         setExtremidades(novasExtremidades);
+
+        if (item.modificadores !== undefined) item.modificadores.filter(modificador => modificador.tipoModificador.tipo === 'Passivo' && modificador.tipoModificador.requisito === 'Empunhar').forEach(modificador => adicionarModificador(modificador));
     };
 
     const desempunharItem = (item: Item) => {
         const novasExtremidades = [...extremidades];
         novasExtremidades.filter(extremidade => extremidade.refItem?.codigoUnico === item.codigoUnico).forEach(extremidade => extremidade.refItem = undefined);
         setExtremidades(novasExtremidades);
+
+        if (item.modificadores !== undefined) item.modificadores.filter(modificador => modificador.tipoModificador.tipo === 'Passivo' && modificador.tipoModificador.requisito === 'Empunhar').forEach(modificador => removeModificador(modificador));
     };
 
     return (
-        <PersonagemEstatisticasBuffaveis.Provider value={{ defesa, deslocamento, espacoInventario, execucoes, setExecucoes, extremidades, empunhaItem, desempunharItem, espacosCategoria, resistenciaParanormal }}>
+        <PersonagemEstatisticasBuffaveis.Provider value={{ defesa, deslocamento, capacidadeDeCarga, execucoes, setExecucoes, extremidades, empunhaItem, desempunharItem, espacosCategoria, resistenciaParanormal }}>
             {children}
         </PersonagemEstatisticasBuffaveis.Provider>
     );

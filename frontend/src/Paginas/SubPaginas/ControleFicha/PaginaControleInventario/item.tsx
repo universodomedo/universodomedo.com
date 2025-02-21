@@ -64,12 +64,12 @@ const ConteudoDetalhes = ({ item }: { item: Item }) => {
                     <FontAwesomeIcon icon={faHandBackFistRegular} title={'Não Empunhavel'} style={{color: '#D76565'}} />
                 )}
 
-                {item.itemEstaVestido ? (
-                    <FontAwesomeIcon icon={faVest} title={'Vestido'} style={{color: '#92D8F9'}} />
-                ) : item.itemVestivel ? (
-                    <FontAwesomeIcon icon={faVest} title={'Vestivel'} />
+                {item.itemEstaEquipado ? (
+                    <FontAwesomeIcon icon={faVest} title={'Equipado'} style={{color: '#92D8F9'}} />
+                ) : item.itemEquipavel ? (
+                    <FontAwesomeIcon icon={faVest} title={'Equipavel'} />
                 ) : (
-                    <FontAwesomeIcon icon={faVest} title={'Não Vestivel'} style={{color: '#D76565'}} />
+                    <FontAwesomeIcon icon={faVest} title={'Não Equipavel'} style={{color: '#D76565'}} />
                 )}
 
                 {item.itemEhComponente && (
@@ -84,9 +84,9 @@ const ConteudoDetalhes = ({ item }: { item: Item }) => {
                 </div>
             )}
 
-            {item.itemVestivel && (
+            {item.itemEquipavel && (
                 <div className={style.bloco_texto}>
-                    <p className={style.texto_details}>Custo para Vestir/Desvestir: {item.comportamentoVestivel!.custoVestir.descricaoListaPreco}</p>
+                    <p className={style.texto_details}>Custo para Equipar/Desequipar: {item.comportamentoEquipavel!.custoEquipar.descricaoListaPreco}</p>
                 </div>
             )}
         </>
