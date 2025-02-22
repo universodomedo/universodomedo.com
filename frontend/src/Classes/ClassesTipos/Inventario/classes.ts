@@ -1,4 +1,4 @@
-import { Item, DadosItem, DadosItemSemIdentificador } from 'Classes/ClassesTipos/index.ts';
+import { Item, DadosItem, DadosItemSemIdentificador, Particao } from 'Classes/ClassesTipos/index.ts';
 
 export type DadosInventario = {
     identificadorProximoItem: number;
@@ -6,6 +6,7 @@ export type DadosInventario = {
 };
 
 export type Inventario = {
+    particoes: Particao[];
     itens: Item[];
     readonly agrupamento: Item[];
     readonly espacosUsados: number;

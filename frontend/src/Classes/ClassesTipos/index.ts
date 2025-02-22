@@ -30,6 +30,7 @@ export * from './NaturezaPersonagem';
 export * from './NomeCustomizado';
 export * from './OpcaoExecucao';
 export * from './Paleta';
+export * from './Particao';
 export * from './Pericia';
 export * from './Personagem';
 export * from './ProficienciaPersonagem';

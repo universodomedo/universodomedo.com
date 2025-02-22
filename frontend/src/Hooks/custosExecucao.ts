@@ -30,4 +30,4 @@ export const criarCustoAcaoExecucao = (dadosPrecoExecucao: DadoPrecoExecucao[], 
         get resumoPagamento(): string { return resumoPagamento(this.listaPrecosAplicados).join(' e '); },
         aplicaCusto: function () { pagaPrecoExecucao(this.listaPrecosAplicados); },
     }
-}
+};

@@ -18,11 +18,11 @@
 export type TipoCategoriaModelo = {
     id: number;
     valorCategoria: number;
-}
+};
 
 export type TipoCategoria = TipoCategoriaModelo & {
     readonly nomeCategoria: string;
-}
+};
 
 export type EspacoCategoria = {
     maximoDeItensDessaCategoria: number;
