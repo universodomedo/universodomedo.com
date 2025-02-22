@@ -27,25 +27,37 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
         particoes: useMemo(() => {
             const particao: Particao = {
                 nome: 'Partição Principal',
-                itens: dadosPersonagem.inventario.dadosItens.map(dadosItem => criarItem(dadosItem, { dadosPersonagem, getInventario: () => inventario, extremidades, podePagarPreco, pagaPrecoExecucao, resumoPagamento, modificarItemDoInventario })),
+                itens: dadosPersonagem.inventario.dadosItens.filter(dadosItem => dadosItem.indexParticao === 0).map(dadosItem => criarItem(dadosItem, { dadosPersonagem, getInventario: () => inventario, extremidades, podePagarPreco, pagaPrecoExecucao, resumoPagamento, modificarItemDoInventario })),
                 bloqueada: false,
                 get cargaFinal(): number { return this.itens.reduce((acc, cur) => acc + cur.peso, 0)},
+
     
-                particaoLimiteCategoria: {
-                    limitesCategoria: [
-                        {
-                            tipoCategoria: SingletonHelper.getInstance().tipos_categoria.find(tipo_categoria => tipo_categoria.id === 2)!,
-                            quantidadeMaxima: 2,
-                        },
-                        {
-                            tipoCategoria: SingletonHelper.getInstance().tipos_categoria.find(tipo_categoria => tipo_categoria.id === 3)!,
-                            quantidadeMaxima: 1,
-                        },
-                    ],
-                }
+                // particaoLimiteCategoria: {
+                //     limitesCategoria: [
+                //         {
+                //             tipoCategoria: SingletonHelper.getInstance().tipos_categoria.find(tipo_categoria => tipo_categoria.id === 2)!,
+                //             quantidadeMaxima: 2,
+                //         },
+                //         {
+                //             tipoCategoria: SingletonHelper.getInstance().tipos_categoria.find(tipo_categoria => tipo_categoria.id === 3)!,
+                //             quantidadeMaxima: 1,
+                //         },
+                //     ],
+                // }
             };
+
+            const particao2: Particao = {
+                nome: 'Mochila Simples',
+                itens: dadosPersonagem.inventario.dadosItens.filter(dadosItem => dadosItem.indexParticao === 1).map(dadosItem => criarItem(dadosItem, { dadosPersonagem, getInventario: () => inventario, extremidades, podePagarPreco, pagaPrecoExecucao, resumoPagamento, modificarItemDoInventario })),
+                bloqueada: false,
+                tipoParticao: 'Desconsidera Categoria',
+                particaoLimiteCarga: {
+                    limite: 4,
+                },
+                get cargaFinal(): number { return this.tipoParticao === 'Desconsidera Carga' ? 0 : this.itens.reduce((acc, cur) => acc + cur.peso, 0)},
+            }
     
-            return [particao];
+            return [particao, particao2];
         }, [dadosPersonagem]),
         get itens(): Item[] { return this.particoes.flatMap(particao => particao.itens) },
         get agrupamento(): Item[] {
@@ -56,7 +68,7 @@ export const PersonagemInventarioProvider = ({ children }: { children: React.Rea
                 return itemAgrupado;
             }, [] as Item[]);
         },
-        get espacosUsados(): number { return 0; },
+        get espacosUsados(): number { return this.particoes.reduce((acc, cur) => acc + cur.cargaFinal, 0); },
         numeroItensCategoria: function (valorCategoria: number) { return this.itens.filter(item => item.categoria === valorCategoria).length; },
         adicionarItem: (dadosItem: DadosItemSemIdentificador) => { adicionarItemNoInventario(dadosItem); },
         removerItem: (item: Item) => { console.log("precisa implementar removerItem"); },

@@ -41,6 +41,7 @@ export type Item = {
 
 export type DadosItem = Pick<Item, 'peso' | 'categoria'> & {
     readonly identificadorNomePadrao: string;
+    indexParticao: number,
 
     idTipoItem: number;
     dadosNomeCustomizado: DadosNomeCustomizado;

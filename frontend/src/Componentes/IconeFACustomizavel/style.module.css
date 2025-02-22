@@ -1,0 +1,13 @@
+.recipiente_icone_customizavel {
+    display: inline-block;
+    position: relative;
+}
+
+.icone_customizavel_x {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    transform: translate(-100%, 30%);
+    width: 50%;
+    color: red;
+}

@@ -1,8 +1,6 @@
-// #region Import
 import style from "./style.module.css";
-// #endregion
 
-const page: React.FC<{ titulo?: string, valorAtual: number, valorMaximo: number, corBarra: string, corBarraSecundaria?: string }> = ({ titulo, valorAtual, valorMaximo, corBarra, corBarraSecundaria }) => {
+const pagina: React.FC<{ titulo?: string, valorAtual: number, valorMaximo: number, corBarra: string, corBarraSecundaria?: string }> = ({ titulo, valorAtual, valorMaximo, corBarra, corBarraSecundaria }) => {
     const barWidth = (valorAtual / valorMaximo) * 100;
 
     return (
@@ -24,4 +22,4 @@ const page: React.FC<{ titulo?: string, valorAtual: number, valorMaximo: number,
     );
 };
 
-export default page;
+export default pagina;

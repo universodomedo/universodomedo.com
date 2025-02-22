@@ -25,6 +25,17 @@ input {
     color: black;
 }
 
+details summary {
+    list-style: none; 
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+details summary::-webkit-details-marker {
+    display: none;
+}
+
 .cor_mensagem_erro {
     color: #FF0000;
 }

@@ -84,6 +84,14 @@ export const PersonagemEstatisticasBuffaveisProvider = ({ children }: { children
             maximoDeItensDessaCategoria: 1,
             get refTipoCategoria(): TipoCategoria { return SingletonHelper.getInstance().tipos_categoria.find(tipo_categoria => tipo_categoria.id === 3)!; },
         },
+        {
+            maximoDeItensDessaCategoria: 0,
+            get refTipoCategoria(): TipoCategoria { return SingletonHelper.getInstance().tipos_categoria.find(tipo_categoria => tipo_categoria.id === 4)!; },
+        },
+        {
+            maximoDeItensDessaCategoria: 0,
+            get refTipoCategoria(): TipoCategoria { return SingletonHelper.getInstance().tipos_categoria.find(tipo_categoria => tipo_categoria.id === 5)!; },
+        },
     ];
 
     const resistenciaParanormal: ResistenciaParanormal = {

@@ -16,7 +16,7 @@ const pagina = () => {
   const { mostrarFiltros, mostrarBarras } = useContextoControleInventario();
   const { inventario } = useClasseContextualPersonagemInventario();
   const { capacidadeDeCarga, espacosCategoria } = useClasseContextualPersonagemEstatisticasBuffaveis();
-  
+
   const itensGuardados = inventario.agrupamento.filter(item => item.itemEstaGuardado);
   const itensEmpunhados = inventario.agrupamento.filter(item => item.itemEstaEmpunhado);
   const itensEquipados = inventario.agrupamento.filter(item => item.itemEstaEquipado);
@@ -38,12 +38,21 @@ const pagina = () => {
   return (
     <div className={style.conteudo_inventario}>
       {mostrarBarras && (
-        <div className={style.inventario_maximos}>
-          <BarraEstatisticaDanificavel titulo={'Espaços'} valorAtual={inventario.espacosUsados} valorMaximo={capacidadeDeCarga.capacidadeTotal} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
-          <div className={style.inventario_categoria}>
-            {espacosCategoria.map((espacoCategoria, index) => (
-              <div key={index} className={style.barra_categoria}>
-                <BarraEstatisticaDanificavel titulo={espacoCategoria.refTipoCategoria.nomeCategoria} valorAtual={inventario.numeroItensCategoria(espacoCategoria.refTipoCategoria.valorCategoria)} valorMaximo={espacoCategoria.maximoDeItensDessaCategoria} corBarra={'#666666'} corBarraSecundaria={'#AAAAAA'}></BarraEstatisticaDanificavel>
+        <div className={style.inventario_barras}>
+          <div className={style.recipiente_barra_espaco}>
+            <BarraEstatisticaDanificavel titulo={'Espaços'} valorAtual={inventario.espacosUsados} valorMaximo={capacidadeDeCarga.capacidadeTotal} corBarra={'#AAAAAA'} corBarraSecundaria={'#666666'}></BarraEstatisticaDanificavel>
+          </div>
+          <div className={style.recipiente_linha_categorias}>
+            {espacosCategoria.filter(espaco_categoria => [2, 3].includes(espaco_categoria.refTipoCategoria.id)).map((espaco_categoria, index) => (
+              <div key={index} className={style.recipiente_barra_categoria}>
+                <BarraEstatisticaDanificavel titulo={espaco_categoria.refTipoCategoria.nomeCategoria} valorAtual={inventario.numeroItensCategoria(espaco_categoria.refTipoCategoria.valorCategoria)} valorMaximo={espaco_categoria.maximoDeItensDessaCategoria} corBarra={'#AAAAAA'} corBarraSecundaria={'#666666'}></BarraEstatisticaDanificavel>
+              </div>
+            ))}
+          </div>
+          <div className={style.recipiente_linha_categorias}>
+            {espacosCategoria.filter(espaco_categoria => [4, 5].includes(espaco_categoria.refTipoCategoria.id)).map((espaco_categoria, index) => (
+              <div key={index} className={style.recipiente_barra_categoria}>
+                <BarraEstatisticaDanificavel titulo={espaco_categoria.refTipoCategoria.nomeCategoria} valorAtual={inventario.numeroItensCategoria(espaco_categoria.refTipoCategoria.valorCategoria)} valorMaximo={espaco_categoria.maximoDeItensDessaCategoria} corBarra={'#AAAAAA'} corBarraSecundaria={'#666666'}></BarraEstatisticaDanificavel>
               </div>
             ))}
           </div>

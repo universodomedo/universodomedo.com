@@ -19,6 +19,64 @@
     width: 100%;
 }
 
+.recipiente_particoes {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border: 2px black solid;
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+}
+
+.particao {
+    border-bottom: 2px solid #333;
+    width: 100%;
+}
+
+.particao_header {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    align-items: center;
+    color: white;
+}
+
+.particao:nth-child(odd) .particao_header {
+    background-color: #5A5A5A;
+}
+
+.particao:nth-child(odd) .particao_conteudo {
+    background-color: #929292;
+}
+
+.particao:nth-child(even) .particao_header {
+    background-color: #707070;
+}
+
+.particao:nth-child(even) .particao_conteudo {
+    background-color: #B5B5B5;
+}
+
+.recipiente_nome_particao {
+    height: 100%;
+}
+
+.recipiente_detalhes_particao {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.particao_conteudo {
+    padding: 10px;
+}
+
 .botoes_itens {
     display: flex;
     flex-direction: row;

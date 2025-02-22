@@ -12,24 +12,36 @@
     gap: 2vh;
 }
 
-.inventario_maximos {
+.inventario_barras {
     display: flex;
     flex-direction: column;
-    width: 40%;
-    font-size: 3vh;
-    margin: auto;
+    width: 100%;
+    height: 25%;
     gap: 1vh;
 }
 
-.inventario_categoria {
+.inventario_barras :global(h3) {
+    font-size: 2vh !important;
+}
+
+.recipiente_barra_espaco {
+    display: flex;
+    flex: 1;
+}
+
+.recipiente_linha_categorias {
     display: flex;
     flex-direction: row;
     font-size: .8em;
-    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin: 0 12%;
+    gap: 5%;
+    flex: 1;
 }
 
-.barra_categoria {
-    width: 20%;
+.recipiente_barra_categoria {
+    display: flex;
+    flex: 1 1 calc(40%);
 }
 
 .extremidade {
