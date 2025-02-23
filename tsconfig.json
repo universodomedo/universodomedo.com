@@ -1,37 +1,32 @@
 {
   "compilerOptions": {
-    "baseUrl": "frontend/src",
-    "paths": { // para adicionar novos paths, tem que adicionar no tsconfig.json e no vite.config.ts
-      "ApiConsumer/*": ["ApiConsumer/*"],
-      "Assets/*": ["Assets/*"],
-      "Classes/*": ["Classes/*"],
-      "Componentes/*": ["Componentes/*"],
-      "Contextos/*": ["Contextos/*"],
-      "Dados/*": ["Dados/*"],
-      "Hooks/*": ["Hooks/*"],
-      "Layouts/*": ["Layouts/*"],
-      "Paginas/*": ["Paginas/*"],
-      "Providers/*": ["Providers/*"],
-      "Recursos/*": ["Recursos/*"],
-      "Redux/*": ["Redux/*"],
-      "Servicos/*": ["Servicos/*"],
-      "Uteis/*": ["Uteis/*"],
+    "baseUrl": "./src",
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "Componentes/*": ["componentes/*"],
+      "Helpers/*": ["helpers/*"],
+      "Uteis/*": ["uteis/*"],
     },
     "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "esModuleInterop": true,
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    // "module": "commonjs",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "strict": true,
-    "traceResolution": true,
-    "types": ["node"],
-    "skipLibCheck": true,
-    "typeRoots": ["./node_modules/@types", "./frontend/src"],
-    "forceConsistentCasingInFileNames": true
   },
-  "include": ["frontend/src/**/*", "websocket/**/*.ts", "frontend/src/Types/classes/Item"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }

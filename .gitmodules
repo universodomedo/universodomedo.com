@@ -1,4 +1,0 @@
-[submodule "deployments/universodomedo.com-deployment"]
-	path = deployments/universodomedo.com-deployment
-	url = git@github.com:universodomedo/deployments.git
-	branch = universodomedo.com-deployment
