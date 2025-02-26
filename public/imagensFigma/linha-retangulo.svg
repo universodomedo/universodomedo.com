@@ -1,0 +1,22 @@
+<svg width="1813" height="10" viewBox="0 0 1813 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_i_330_20)">
+<path d="M0 5H1813" stroke="#1C1727" stroke-width="10"/>
+<path d="M0 5H1813" stroke="url(#paint0_radial_330_20)" stroke-opacity="0.75" stroke-width="10" style="mix-blend-mode:hard-light"/>
+</g>
+<defs>
+<filter id="filter0_i_330_20" x="0" y="0" width="1813" height="14" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.7 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_330_20"/>
+</filter>
+<radialGradient id="paint0_radial_330_20" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(906.5 1487.5) rotate(90) scale(1482.5 1482.5)">
+<stop offset="0.755" stop-color="#0E0B18"/>
+<stop offset="0.999325" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>

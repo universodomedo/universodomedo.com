@@ -1,9 +1,33 @@
+:root {
+  --fonte-cinzel-decorative: 'Cinzel Decorative', serif;
+  --fonte-cinzel: 'Cinzel', serif;
+}
+
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  list-style: none;
 }
 
+html, body {
+  width: 100%;
+  scrollbar-width: none;
+}
+
+body {
+  position: static;
+  overflow: auto;
+  height: auto;
+  background-color: #000;
+}
+
+img {
+  user-select: none;
+}
+
+
+/* 
 body {
   background: linear-gradient(to bottom, #0b1623 0%, #1e3a5f 50%, #0b1623 100%);
   margin: 0;
@@ -19,7 +43,7 @@ body::before {
   left: 0;
   right: 0;
   height: 100%;
-  /* background: radial-gradient(circle, #292b2457 0%, transparent 63%); */
+  // background: radial-gradient(circle, #292b2457 0%, transparent 63%);
 }
 
 input {
@@ -61,7 +85,7 @@ details summary::-webkit-details-marker {
 
 :root {
   --cor1: #2be5ff8c;
-}
+} */
 
 
 /* coisas que vieram com o Next

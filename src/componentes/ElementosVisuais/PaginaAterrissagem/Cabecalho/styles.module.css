@@ -1,0 +1,59 @@
+#cabecalho {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    height: 13vh;
+    margin: 0 5vw;
+    align-items: center;
+    gap: 2vw;
+}
+
+#cabecalho_esquerda {
+    display: flex;
+    flex-direction: row;
+    flex: .15;
+    gap: 10%;
+    height: 100%;
+}
+
+#cabecalho_esquerda_opcoes {
+    display: flex;
+    position: relative;
+    align-items: center;
+    flex: .3;
+}
+
+#cabecalho_esquerda_logo {
+    display: flex;
+    position: relative;
+    flex: 1;
+    align-items: center;
+}
+
+#cabecalho_direita {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    align-items: center;
+    height: 100%;
+}
+
+#cabecalho_direita_linha {
+    display: flex;
+    position: relative;
+    flex: 1;
+    height: 100%;
+    align-items: center;
+}
+
+#linha_cabecalho {
+    width: 100.5% !important;
+}
+
+#cabecalho_direita_acesso {
+    display: flex;
+    position: relative;
+    flex: .23;
+    height: 100%;
+    align-items: center;
+}

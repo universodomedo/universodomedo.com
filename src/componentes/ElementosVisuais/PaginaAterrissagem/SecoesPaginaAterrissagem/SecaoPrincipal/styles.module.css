@@ -1,0 +1,99 @@
+#recipiente_secao_principal {
+    display: flex;
+    width: 95vw;
+    height: 95vh;
+    justify-content: center;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.moldura_externa {
+    width: 100%;
+    height: 100%;
+    padding: .3%;
+    border-style: solid;
+    border-color: #1E182A;
+    border-top-width: .9vh;
+    border-right-width: .6vw;
+    border-bottom-width: .9vh;
+    border-left-width: .6vw;
+}
+
+.moldura_interna {
+    display: flex;
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.moldura_lateral {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.moldura_lateral.moldura_esquerda {
+    left: 0;
+}
+
+.moldura_lateral.moldura_esquerda::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: url('/imagensFigma/modulta-lateral-completa.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: right;
+    transform: scaleX(-1);
+}
+
+.moldura_lateral.moldura_direita {
+    right: 0;
+}
+
+.moldura_lateral.moldura_direita::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: url('/imagensFigma/modulta-lateral-completa.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: right;
+}
+
+#conteudo_secao_principal {
+    margin-top: 12.4%;
+    margin-left: 5%;
+}
+
+#conteudo_secao_principal #titulo_secao_principal {
+    font-family: var(--fonte-cinzel);
+    color: #B79051;
+    font-size: 7vh;
+    margin-top: 4.5%;
+}
+
+#conteudo_textos_secao_principal {
+    display: flex;
+    flex-direction: column;
+    width: 65%;
+    margin-left: 2vw;
+    margin-top: 1.8vh;
+    gap: 3vh;
+}
+
+#conteudo_secao_principal .texto_secao_principal {
+    font-family: var(--fonte-cinzel);
+    font-size: 2.8vh;
+    font-weight: 100;
+}
+
+.titulo_sem_decorative {
+    font-family: var(--fonte-cinzel-decorative);
+}
+
+
+/* cor da fumaça #1b1d19 */
