@@ -4,6 +4,7 @@ import styles from './styles.module.css';
 import EmbrulhoSessionProvider from 'Embrulhos/EmbrulhoSessionProvider.tsx';
 import { Providers } from 'Provedores/provedores.tsx'
 import { PreloadEntities } from 'Hooks/PreloadEntities'
+import Fumaca from 'Componentes/ElementosVisuais/Fumaca/Fumaca.tsx';
 
 import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho/Cabecalho';
 
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR">
       <body>
         <EmbrulhoSessionProvider>
+          <Fumaca />
           <main id={styles.main}>
             <Providers>
               <PreloadEntities />

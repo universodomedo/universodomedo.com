@@ -8,16 +8,16 @@ export default async function SecaoCabecalho() {
         <header id={styles.cabecalho}>
             <div id={styles.cabecalho_esquerda}>
                 <div id={styles.cabecalho_esquerda_opcoes}>
-                    <Image src={"/imagensFigma/opcoes-cabecalho.svg"} alt="Menu" layout={'fill'} quality={100} />
+                    <Image src={"/imagensFigma/opcoes-cabecalho.svg"} alt="Menu" fill quality={100} />
                 </div>
                 <div id={styles.cabecalho_esquerda_logo}>
-                    <Image src={"/imagensFigma/logo-cabecalho.svg"} alt="Logo" layout={'fill'} quality={100} />
+                    <Image src={"/imagensFigma/logo-cabecalho.svg"} alt="Logo" fill quality={100} />
                 </div>
             </div>
 
             <div id={styles.cabecalho_direita}>
                 <div id={styles.cabecalho_direita_linha}>
-                    <Image id={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} alt='' layout={'fill'} quality={100} />
+                    <Image id={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} alt='' fill quality={100} />
                 </div>
                 <div id={styles.cabecalho_direita_acesso}>
                     <ComponenteBotaoAcessar />

@@ -2,9 +2,10 @@ import SecaoPrincipal from "Componentes/ElementosVisuais/PaginaAterrissagem/Seco
 
 // import Rodape from '../../componentes/secoes/secoes-pagina-aterrissagem/pagina-aterrissagem-rodape/pagina-aterrissagem-secao-rodape';
 
-export default async function Pagina() {
-
+export default function Pagina() {
   return (
-    <SecaoPrincipal />
+    <>
+      <SecaoPrincipal />
+    </>
   )
 }

@@ -21,6 +21,7 @@
 
 #botao_acessar {
     display: flex;
+    position: relative;
     z-index: 3;
     height: 100%;
 }
