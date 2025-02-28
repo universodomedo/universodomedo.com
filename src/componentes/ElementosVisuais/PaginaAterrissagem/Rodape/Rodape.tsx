@@ -1,4 +1,7 @@
 import styles from "./styles.module.css";
+import Link from 'next/link';
+
+import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-brands-svg-icons";
@@ -6,16 +9,13 @@ import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-bra
 export default function Rodape() {
     return (
         <div id={styles.rodape}>
-            <div className={`${styles.quinas_rodape} ${styles.quina_rodape_esquerda}`}></div>
-            <div id={styles.meio_rodape}>
-                <ul id={styles.rodape_icones_redes_sociais}>
-                    <li><a target="_blank" href="https://discord.universodomedo.com"><FontAwesomeIcon icon={faDiscord} /></a></li>
-                    <li><a target="_blank" href="https://open.spotify.com/show/10qzPjLpugVhzn90ufDBuN"><FontAwesomeIcon icon={faSpotify} /></a></li>
-                    <li><a target="_blank" href="https://youtube.universodomedo.com"><FontAwesomeIcon icon={faYoutube} /></a></li>
-                    <li><a target="_blank" href="https://twitch.universodomedo.com"><FontAwesomeIcon icon={faTwitch} /></a></li>
-                </ul>
+            <ElementoSVG className={styles.svg_moldura_principal} src={"/imagensFigma/rodape.svg"} />
+            <div id={styles.recipiente_redes_sociais}>
+                <Link target='_blank' href='https://discord.universodomedo.com'><FontAwesomeIcon icon={faDiscord} /></Link>
+                <Link target='_blank' href='https://open.spotify.com/show/10qzPjLpugVhzn90ufDBuN'><FontAwesomeIcon icon={faSpotify} /></Link>
+                <Link target='_blank' href='https://youtube.universodomedo.com'><FontAwesomeIcon icon={faYoutube} /></Link>
+                <Link target='_blank' href='https://twitch.universodomedo.com'><FontAwesomeIcon icon={faTwitch} /></Link>
             </div>
-            <div className={`${styles.quinas_rodape} ${styles.quina_rodape_direita}`}></div>
         </div>
     )
 };

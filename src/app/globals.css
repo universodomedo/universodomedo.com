@@ -18,12 +18,22 @@ html, body {
 body {
   position: static;
   overflow: auto;
-  height: auto;
-  background-color: #000;
+  background-color: #0E0B18;
 }
 
 img {
   user-select: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  width: 100%;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
 }
 
 /* 

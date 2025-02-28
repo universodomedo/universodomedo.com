@@ -7,10 +7,10 @@ type DefinicoesLayoutProps = {
 
 export default function DefinicoesLayout({ children }: DefinicoesLayoutProps) {
     return (
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', width: '80%', alignContent: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Breadcrumb />
 
-            <div style={{ padding: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignContent: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '4vh' }}>
                 {children}
             </div>
         </div>

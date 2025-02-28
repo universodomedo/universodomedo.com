@@ -9,17 +9,20 @@ export default function DefinicoesPage() {
     ];
 
     return (
-        <div>
-            <h1>Definições</h1>
-            <ul>
-                {definicoes.map(def => (
-                    <li key={def.tipo}>
-                        <Link href={`/definicoes/${def.tipo}`}>
-                            {def.nome}
-                        </Link>
-                    </li>
+        <>
+            <h1 style={{fontSize:'4rem', margin: 'auto'}}>Definições</h1>
+
+            <div style={{display:'flex', flexDirection: 'row', width: '60%' }}>
+                {definicoes.map((def, index) => (
+                    <div style={{ display: 'flex', flex: '1 0 0', alignContent: 'center', justifyContent: 'center' }}>
+                        <p key={index} style={{ fontSize: '2rem' }}>
+                            <Link href={`/definicoes/${def.tipo}`}>
+                                {def.nome}
+                            </Link>
+                        </p>
+                    </div>
                 ))}
-            </ul>
-        </div>
+            </div>
+        </>
     );
 }

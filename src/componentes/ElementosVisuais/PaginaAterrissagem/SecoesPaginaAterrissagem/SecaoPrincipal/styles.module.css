@@ -1,85 +1,48 @@
 #recipiente_secao_principal {
     display: flex;
+    position: relative;
     width: 95vw;
     height: 95vh;
     justify-content: center;
     align-items: center;
     margin-top: 5px;
+    user-select: none;
 }
 
-.moldura_externa {
-    width: 100%;
-    height: 100%;
-    padding: .3%;
-    border-style: solid;
-    border-color: #1E182A;
-    border-top-width: .9vh;
-    border-right-width: .6vw;
-    border-bottom-width: .9vh;
-    border-left-width: .6vw;
-}
-
-.moldura_interna {
-    display: flex;
-    position: relative;
-    height: 100%;
-    width: 100%;
-}
-
-.moldura_lateral {
+#recipiente_secao_principal > div {
     position: absolute;
-    top: 0;
-    height: 100%;
     width: 100%;
-}
-
-.moldura_lateral.moldura_esquerda {
-    left: 0;
-}
-
-.moldura_lateral.moldura_esquerda::before {
-    content: "";
-    position: absolute;
     height: 100%;
-    width: 100%;
-    background: url('/imagensFigma/modulta-lateral-completa.svg');
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: right;
-    transform: scaleX(-1);
 }
 
-.moldura_lateral.moldura_direita {
-    right: 0;
+#recipiente_secao_principal #recipiente_imagem_fundo_secao_principal {
+    width: 90%;
+    height: 90%;
+    bottom: 3%;
+    right: 3%;
+    mask-image: radial-gradient(circle at center, rgba(255, 255, 255, 1) 30%, rgba(255, 255, 255, 0) 84%);
 }
 
-.moldura_lateral.moldura_direita::before {
-    content: "";
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    background: url('/imagensFigma/modulta-lateral-completa.svg');
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: right;
+.svg_moldura_principal {
+    height: auto;
 }
 
 #conteudo_secao_principal {
-    margin-top: 12.4%;
-    margin-left: 5%;
+    margin-top: 19%;
+    margin-left: 14%;
 }
 
 #conteudo_secao_principal #titulo_secao_principal {
     font-family: var(--fonte-cinzel);
     color: #B79051;
-    font-size: 7vh;
+    font-size: 6vh;
     margin-top: 4.5%;
 }
 
 #conteudo_textos_secao_principal {
     display: flex;
     flex-direction: column;
-    width: 65%;
+    width: 33%;
     margin-left: 2vw;
     margin-top: 1.8vh;
     gap: 3vh;

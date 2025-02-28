@@ -1,28 +1,33 @@
 import styles from './styles.module.css';
-import Image from 'next/image';
+import Link from 'next/link';
 
+import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
+import ElementoSVGAnimado from 'Componentes/Elementos/ElementoSVGAnimado/ElementoSVGAnimado';
 import ComponenteBotaoAcessar from 'Componentes/ElementosVisuais/BotaoAcessar/botao-acessar';
 
-export default async function SecaoCabecalho() {
+export default function SecaoCabecalho() {
     return (
-        <header id={styles.cabecalho}>
+        <div id={styles.cabecalho}>
             <div id={styles.cabecalho_esquerda}>
                 <div id={styles.cabecalho_esquerda_opcoes}>
-                    <Image src={"/imagensFigma/opcoes-cabecalho.svg"} alt="Menu" fill quality={100} />
+                    <ElementoSVG src={"/imagensFigma/opcoes-cabecalho.svg"} />
                 </div>
                 <div id={styles.cabecalho_esquerda_logo}>
-                    <Image src={"/imagensFigma/logo-cabecalho.svg"} alt="Logo" fill quality={100} />
+                    <Link href={'/'}><ElementoSVG src={"/imagensFigma/logo-cabecalho.svg"} /></Link>
+                    {/* <Link href={'/'}><ElementoSVGAnimado src={"/imagensFigma/logo-cabecalho.svg"} animacao={{ tipoAnimacao: 'contorno-amarelo', cor: '#000', duracao: 3, intervalo: 2, fadeOutDuracao: 1 }} /></Link> */}
                 </div>
             </div>
 
             <div id={styles.cabecalho_direita}>
                 <div id={styles.cabecalho_direita_linha}>
-                    <Image id={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} alt='' fill quality={100} />
+                    <ElementoSVG className={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} />
+                    {/* <ElementoSVGAnimado className={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} /> */}
+                    {/* <Image id={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} alt='' fill quality={100} /> */}
                 </div>
                 <div id={styles.cabecalho_direita_acesso}>
-                    <ComponenteBotaoAcessar />
+                    {/* <ComponenteBotaoAcessar /> */}
                 </div>
             </div>
-        </header>
+        </div>
     );
 };

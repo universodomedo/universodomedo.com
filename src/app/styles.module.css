@@ -5,6 +5,7 @@
 
     width: 100%;
     height: 100%;
+    gap: 4vh;
     overflow: hidden;
 
     color: white;
@@ -25,7 +26,6 @@
     align-items: center;
     gap: 2vh;
     font-family: 'Barlow', sans-serif;
-    margin-bottom: 5vh;
 }
 
 #corpo p {
@@ -33,4 +33,12 @@
     font-size: 1.4rem;
     line-height: 1.3rem;
     margin: 0;
+}
+
+#recipiente_conteudo_pagina_principal {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 110vh;
+    align-items: center;
 }

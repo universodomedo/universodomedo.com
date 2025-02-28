@@ -1,47 +1,17 @@
-
 #rodape {
     display: flex;
     flex-direction: row;
     flex: 0 0 0;
+    width: 90%;
+    align-items: center;
+    justify-content: center;
 }
 
-#meio_rodape {
+#recipiente_redes_sociais {
     display: flex;
     flex-direction: row;
-    flex: .7 1 0%;
-    margin: 0 auto;
-    justify-content: center;
-    align-items: center;
-}
-
-#rodape_icones_redes_sociais {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    gap: 58px;
-}
-
-#rodape_icones_redes_sociais li {
-    display: inline-block;
-}
-
-#rodape_icones_redes_sociais a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 1.8vw;
-}
-
-.quinas_rodape {
-    background-color: #2e1a47;
-    height: 5vh;
-    flex: 1;
-}
-
-.quinas_rodape.quina_rodape_esquerda {
-    border-radius: 0 40px 0 0;
-}
-
-.quinas_rodape.quina_rodape_direita {
-    border-radius: 40px 0 0 0;
+    position: absolute;
+    bottom: 1%;
+    width: 24%;
+    gap: 4vw;
 }

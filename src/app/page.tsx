@@ -1,11 +1,15 @@
-import SecaoPrincipal from "Componentes/ElementosVisuais/PaginaAterrissagem/SecoesPaginaAterrissagem/SecaoPrincipal/SecaoPrincipal";
+import styles from './styles.module.css';
 
-// import Rodape from '../../componentes/secoes/secoes-pagina-aterrissagem/pagina-aterrissagem-rodape/pagina-aterrissagem-secao-rodape';
+import SecaoPrincipal from "Componentes/ElementosVisuais/PaginaAterrissagem/SecoesPaginaAterrissagem/SecaoPrincipal/SecaoPrincipal";
+import Rodape from 'Componentes/ElementosVisuais/PaginaAterrissagem/Rodape/Rodape.tsx'
 
 export default function Pagina() {
   return (
     <>
-      <SecaoPrincipal />
+      <div id={styles.recipiente_conteudo_pagina_principal}>
+        <SecaoPrincipal />
+      </div>
+      <Rodape />
     </>
   )
 }
