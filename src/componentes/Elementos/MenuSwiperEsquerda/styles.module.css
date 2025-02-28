@@ -1,0 +1,57 @@
+#overlay_swiper_esquerda {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+}
+
+#swiper_esquerda {
+    position: fixed;
+    top: 13%;
+    left: -20vw;
+    width: 20vw;
+    height: 100vh;
+    background-color: #444;
+    color: white;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(0);
+    z-index: 999;
+    padding: 2%;
+}
+
+#nav_swiper_esquerda {
+    display: flex;
+    flex-direction: column;
+    gap: .5vh;
+}
+
+#nav_swiper_esquerda a {
+    text-decoration: none;
+    color: inherit;
+}
+
+#nav_swiper_esquerda a:hover {
+    color: rgb(185, 252, 230)
+}
+  
+#swiper_esquerda.aberto {
+    transform: translateX(20vw);
+}
+
+#swiper_esquerda nav ul {
+    list-style: none;
+    padding: 20px;
+}
+
+#swiper_esquerda nav ul li {
+    margin: 15px 0;
+}
+
+#swiper_esquerda nav ul li a {
+    color: white;
+    text-decoration: none;
+}

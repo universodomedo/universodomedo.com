@@ -8,6 +8,8 @@ import Fumaca from 'Componentes/ElementosVisuais/Fumaca/Fumaca.tsx';
 
 import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho/Cabecalho';
 
+import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
+
 import { Cinzel, Cinzel_Decorative } from 'next/font/google';
 
 const cinzelDecorative = Cinzel_Decorative({
@@ -26,16 +28,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR">
       <body>
         <EmbrulhoSessionProvider>
-          <Fumaca />
-          <main id={styles.main}>
-            <Providers>
-              <PreloadEntities />
-              <Cabecalho />
-              <div id={styles.corpo}>
-                {children}
-              </div>
-            </Providers>
-          </main>
+          <ContextoMenuSwiperEsquerdaProvider>
+            <Fumaca />
+            <main id={styles.main}>
+              <Providers>
+                <PreloadEntities />
+                <Cabecalho />
+                <div id={styles.corpo}>
+                  {children}
+                </div>
+              </Providers>
+            </main>
+          </ContextoMenuSwiperEsquerdaProvider>
         </EmbrulhoSessionProvider>
       </body>
     </html>

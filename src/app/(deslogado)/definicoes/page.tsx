@@ -14,8 +14,8 @@ export default function DefinicoesPage() {
 
             <div style={{display:'flex', flexDirection: 'row', width: '60%' }}>
                 {definicoes.map((def, index) => (
-                    <div style={{ display: 'flex', flex: '1 0 0', alignContent: 'center', justifyContent: 'center' }}>
-                        <p key={index} style={{ fontSize: '2rem' }}>
+                    <div key={index} style={{ display: 'flex', flex: '1 0 0', alignContent: 'center', justifyContent: 'center' }}>
+                        <p style={{ fontSize: '2rem' }}>
                             <Link href={`/definicoes/${def.tipo}`}>
                                 {def.nome}
                             </Link>

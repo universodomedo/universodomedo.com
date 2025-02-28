@@ -16,13 +16,6 @@
     height: 100%;
 }
 
-#cabecalho_esquerda_opcoes {
-    display: flex;
-    position: relative;
-    align-items: center;
-    flex: .3;
-}
-
 #cabecalho_esquerda_logo {
     display: flex;
     position: relative;
