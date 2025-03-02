@@ -33,8 +33,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main id={styles.main}>
               <Providers>
                 <PreloadEntities />
-                <Cabecalho />
                 <div id={styles.corpo}>
+                  <Cabecalho />
                   {children}
                 </div>
               </Providers>

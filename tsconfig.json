@@ -24,6 +24,7 @@
       "App/*": ["app/*"],
       "Componentes/*": ["componentes/*"],
       "Contextos/*": ["contextos/*"],
+      "Dados/*": ["dados/*"],
       "Embrulhos/*": ["embrulhos/*"],
       "Helpers/*": ["helpers/*"],
       "Hooks/*": ["hooks/*"],
@@ -33,6 +34,6 @@
     },
     "allowImportingTsExtensions": true,
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/componentes/Elementos/Redirecionador"],
   "exclude": ["node_modules"]
 }

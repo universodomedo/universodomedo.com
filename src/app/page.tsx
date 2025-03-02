@@ -9,6 +9,7 @@ export default function Pagina() {
       <div id={styles.recipiente_conteudo_pagina_principal}>
         <SecaoPrincipal />
       </div>
+      
       <Rodape />
     </>
   )

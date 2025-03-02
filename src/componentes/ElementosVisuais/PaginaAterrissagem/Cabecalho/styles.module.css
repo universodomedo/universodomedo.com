@@ -2,8 +2,8 @@
     display: flex;
     flex-direction: row;
     position: relative;
+    width: 90%;
     height: 13vh;
-    margin: 0 5vw;
     align-items: center;
     gap: 2vw;
 }
