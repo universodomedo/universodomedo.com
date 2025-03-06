@@ -40,6 +40,9 @@ const pagina = () => {
         return [
             { link: '/', target: '', titulo: 'Início' },
             { link: '/definicoes', target: '', titulo: 'Definições' },
+            { link: '/em-jogo', target: '', titulo: 'Ficha de Demonstração' },
+            { link: '/minha-pagina', target: '', titulo: 'Minha Página' },
+            { link: '/linha-do-tempo', target: '', titulo: 'Linha do Tempo' },
             // { link: '/ficha-demonstracao', target: '', titulo: 'Ficha Demonstração' },
             // { link: '/login', target: '', titulo: 'Conectar' },
             // { link: '', target: '', titulo: 'Sistema' },

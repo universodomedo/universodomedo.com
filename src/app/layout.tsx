@@ -10,7 +10,12 @@ import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho
 
 import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 
-import { Cinzel, Cinzel_Decorative } from 'next/font/google';
+import { Cinzel, Cinzel_Decorative, Inter } from 'next/font/google';
+
+const cinzel = Cinzel({
+  subsets: ['latin'],
+  variable: '--fonte-cinzel',
+});
 
 const cinzelDecorative = Cinzel_Decorative({
   subsets: ['latin'],
@@ -18,10 +23,10 @@ const cinzelDecorative = Cinzel_Decorative({
   variable: '--fonte-cinzel-decorative',
 });
 
-const cinzel = Cinzel({
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--fonte-cinzel',
-});
+  variable: '--fonte-inter',
+})
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -35,7 +40,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <PreloadEntities />
                 <div id={styles.corpo}>
                   <Cabecalho />
-                  {children}
+                  <div id={styles.recipiente_conteudo_pagina}>
+                    {children}
+                  </div>
                 </div>
               </Providers>
             </main>

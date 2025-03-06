@@ -1,0 +1,134 @@
+.modal_primeiro_acesso {
+    height: 70vh;
+    font-size: 1.3rem;
+    font-family: var(--fonte-inter) !important;
+}
+
+.conteudo_modal_primeiro_acesso_confirmacao {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 10%;
+    flex: 1;
+}
+
+.conteudo_modal_primeiro_acesso_termos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: start;
+    gap: 3vh;
+}
+
+.conteudo_modal_primeiro_acesso_termos_section {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.conteudo_modal_primeiro_acesso_termos h3 {
+    text-align: center;
+}
+
+.recipiente_nome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .2vh;
+}
+
+.recipiente_nome span {
+    font-size: .9rem;
+    color: #DF8716;
+}
+
+.recipiente_nome_input {
+    width: 50%;
+    padding: 1vh;
+}
+
+.recipiente_nome_input.invalido, .recipiente_nome_input.invalido:focus {
+    border-color: red !important;
+    outline: none;
+}
+
+.confirmacao_explicacao {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 0;
+    gap: 3%;
+}
+
+.link_termo_aceite {
+    color: green;
+    cursor: pointer;
+}
+
+.link_termo_aceite.nao_aceito {
+    color: red;
+}
+
+.link_termo_aceite:hover {
+    filter: saturate(.5);
+}
+
+.confirmacao_prosseguir {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 0 0;
+    gap: 1vh;
+}
+
+.confirmacao_prosseguir button, .conteudo_modal_primeiro_acesso_termos button {
+    width: fit-content;
+    padding: 1vh;
+}
+
+.textos_disclaimer_termo {
+    display: flex;
+    flex-direction: column;
+}
+
+.disclaimer_termo {
+    font-size: .9rem;
+}
+
+.disclaimer_centralizado {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    text-align: center;
+    gap: .3vh;
+}
+
+.disclaimer_centralizado input[type='checkbox'] {
+    height: 4vh;
+    width: 3vh;
+}
+
+.recipiente_checkbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: cornflowerblue;
+    align-items: center;
+}
+
+.titulo_aviso_topicos_sensiveis {
+    font-size: 1.1rem;
+    font-weight: bolder;
+}
+
+.aviso_topicos_sensiveis {
+    font-size: 1rem;
+}
+
+.lista_topicos_sensiveis {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    font-size: 1.2rem;
+    gap: .3vh;
+}

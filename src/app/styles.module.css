@@ -38,10 +38,17 @@
     margin: 0;
 }
 
+#recipiente_conteudo_pagina {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    flex: 1;
+}
+
 #recipiente_conteudo_pagina_principal {
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-height: 110vh;
     align-items: center;
 }
