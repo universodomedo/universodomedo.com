@@ -1,0 +1,22 @@
+#barra_usuario {
+    display: flex;
+    border: 1px white solid;
+    border-radius: 10px;
+    flex: .17;
+    padding: .3% .5%;
+    gap: 2vw;
+}
+
+#barra_usuario h1 {
+    font-size: 3rem;
+}
+
+.recipiente_imagem_usuario {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    position: relative;
+}
+
+.recipiente_informacoes_usuario {
+    width: 100%;
+}

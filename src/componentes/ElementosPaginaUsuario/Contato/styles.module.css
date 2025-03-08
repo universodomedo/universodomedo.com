@@ -1,0 +1,17 @@
+.recipiente_contato {
+    display: flex;
+    flex-direction: row;
+    height: 10%;
+    position: relative;
+    gap: 1vw;
+}
+
+.recipiente_imagem_contato {
+    position: relative;
+    aspect-ratio: 1 / 1;
+}
+
+.recipiente_informacoes_contato {
+    width: 100%;
+    text-align: center;
+}

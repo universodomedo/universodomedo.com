@@ -4,23 +4,21 @@
     position: relative;
     width: 90%;
     height: 13vh;
-    align-items: center;
-    gap: 2vw;
 }
 
 #cabecalho_esquerda {
     display: flex;
     flex-direction: row;
     flex: .15;
-    gap: 10%;
     height: 100%;
 }
 
-#cabecalho_esquerda_logo {
+#recipiente_logo {
     display: flex;
     position: relative;
     flex: 1;
     align-items: center;
+    margin: 6%;
 }
 
 #cabecalho_direita {

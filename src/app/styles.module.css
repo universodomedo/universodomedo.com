@@ -1,3 +1,7 @@
+:global(section h1) {
+    font-size: 2em;
+}
+
 #main {
     display: flex;
     flex-direction: column;
@@ -16,10 +20,6 @@
 
     /* max-width: calc(100vh * 16 / 9);
     max-height: calc(100vw * 9 / 16); */
-}
-
-:global(section h1) {
-    font-size: 2em;
 }
 
 #corpo {
@@ -44,11 +44,4 @@
     align-items: center;
     width: 100%;
     flex: 1;
-}
-
-#recipiente_conteudo_pagina_principal {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    align-items: center;
 }

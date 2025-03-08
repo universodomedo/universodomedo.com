@@ -1,7 +1,0 @@
-#cabecalho_esquerda_opcoes {
-    display: flex;
-    position: relative;
-    align-items: center;
-    flex: .3;
-    cursor: pointer;
-}

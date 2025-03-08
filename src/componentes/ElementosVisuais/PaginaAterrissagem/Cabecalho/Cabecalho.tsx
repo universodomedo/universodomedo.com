@@ -2,8 +2,6 @@
 import styles from './styles.module.css';
 import Link from 'next/link';
 
-import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwiperEsquerda.tsx';
-
 import HamburgerButton from 'Componentes/ElementosVisuais/PaginaAterrissagem/HamburgerButton/HamburgerButton';
 import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
 import ElementoSVGAnimado from 'Componentes/Elementos/ElementoSVGAnimado/ElementoSVGAnimado';
@@ -13,12 +11,9 @@ import ComponenteBotaoAcessar from 'Componentes/ElementosVisuais/BotaoAcessar/bo
 export default function SecaoCabecalho() {
     return (
         <div id={styles.cabecalho}>
-            <MenuSwiperEsquerda />
             <div id={styles.cabecalho_esquerda}>
-                <HamburgerButton />
-                <div id={styles.cabecalho_esquerda_logo}>
-                    <Link href={'/'}><ElementoSVG src={"/imagensFigma/logo-cabecalho.svg"} /></Link>
-                    {/* <Link href={'/'}><ElementoSVGAnimado src={"/imagensFigma/logo-cabecalho.svg"} animacao={{ tipoAnimacao: 'contorno-amarelo', cor: '#000', duracao: 3, intervalo: 2, fadeOutDuracao: 1 }} /></Link> */}
+                <div id={styles.recipiente_logo}>
+                    <Link href={'/'}><ElementoSVG className='container_svg' src={"/imagensFigma/logo-cabecalho.svg"} /></Link>
                 </div>
             </div>
 

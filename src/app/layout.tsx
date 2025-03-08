@@ -1,34 +1,36 @@
 import './globals.css';
 import styles from './styles.module.css';
+import { ReactNode } from 'react';
 
 import EmbrulhoSessionProvider from 'Embrulhos/EmbrulhoSessionProvider.tsx';
 import { Providers } from 'Provedores/provedores.tsx'
 import { PreloadEntities } from 'Hooks/PreloadEntities'
 import Fumaca from 'Componentes/ElementosVisuais/Fumaca/Fumaca.tsx';
 
-import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho/Cabecalho';
-
 import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 
-import { Cinzel, Cinzel_Decorative, Inter } from 'next/font/google';
+import { Cinzel, Cinzel_Decorative, Junge } from 'next/font/google';
+
+import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwiperEsquerda.tsx';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
   variable: '--fonte-cinzel',
-});
+}); // precisa colocar no :root
 
 const cinzelDecorative = Cinzel_Decorative({
   subsets: ['latin'],
   weight: '700',
   variable: '--fonte-cinzel-decorative',
-});
+}); // precisa colocar no :root
 
-const inter = Inter({
+const junge = Junge({
   subsets: ['latin'],
-  variable: '--fonte-inter',
-})
+  weight: '400',
+  variable: '--fonte-junge',
+}); // precisa colocar no :root
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
@@ -39,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Providers>
                 <PreloadEntities />
                 <div id={styles.corpo}>
-                  <Cabecalho />
+                  <MenuSwiperEsquerda />
                   <div id={styles.recipiente_conteudo_pagina}>
                     {children}
                   </div>

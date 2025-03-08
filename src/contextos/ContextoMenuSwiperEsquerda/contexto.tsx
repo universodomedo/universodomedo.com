@@ -1,21 +1,30 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+
 
 interface ContextoMenuSwiperEsquerdaProps {
     menuAberto: boolean;
-    alternaMenuAberto: () => void;
+    setMenuAberto: React.Dispatch<React.SetStateAction<boolean>>;
+    tamanhoReduzido: boolean;
+    setTamanhoReduzido: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ContextoMenuSwiperEsquerda = createContext<ContextoMenuSwiperEsquerdaProps | undefined>(undefined);
 
 export const ContextoMenuSwiperEsquerdaProvider = ({ children }: { children: React.ReactNode }) => {
     const [menuAberto, setMenuAberto] = useState(false);
+    const [tamanhoReduzido, setTamanhoReduzido] = useState(false);
 
-    const alternaMenuAberto = () => setMenuAberto(prev => !prev);
+    const pathname = usePathname();
+
+    useEffect(() => {
+        if (menuAberto) setMenuAberto(false);
+    }, [pathname]);
 
     return (
-        <ContextoMenuSwiperEsquerda.Provider value={{ menuAberto, alternaMenuAberto }}>
+        <ContextoMenuSwiperEsquerda.Provider value={{ menuAberto, setMenuAberto, tamanhoReduzido, setTamanhoReduzido }}>
             {children}
         </ContextoMenuSwiperEsquerda.Provider>
     );

@@ -51,7 +51,7 @@ export default function ModalPrimeiroAcesso() {
                         <div className={styles.confirmacao_explicacao}>
                             <h3>Insira um Nome Principal para a sua conta</h3>
                             <p>
-                                Este será o <span className="negrito">nome que identificará o jogador</span> por trás de tantos personagens. Não é o nome de seu personagem, e não poderá ser alterado futuramente, então escolha com atenção
+                                Este será o <span className="negrito">nome que identificará o usuário</span> por trás de tantos personagens. Não é o nome de seu personagem, e não poderá ser alterado futuramente, então escolha com atenção
                             </p>
 
                             <div className={styles.recipiente_nome}>
@@ -177,11 +177,11 @@ function ConteudoTermoAceite({ checkTopicosSensiveis, termo1, termo2, setCheckTo
                 </p>
 
                 <p>
-                    Para preservar a qualidade da comunidade, faltas e atrasos recorrentes poderão resultar em penalidades, definidas pela Diretoria do Universo do Medo. Dependendo da gravidade e da frequência do problema, as medidas podem variar desde abandono forçado da aventura até a perda definitiva do personagem
+                    Para preservar a qualidade da comunidade, faltas e atrasos recorrentes poderão resultar em penalidades, definidas pela Direção do Universo do Medo. Dependendo da gravidade e da frequência do problema, as medidas podem variar desde abandono forçado da aventura até a perda definitiva do personagem
                 </p>
 
                 <p>
-                    Cada participante deve estar ciente do impacto que sua ausência pode causar aos demais. Nossas diretrizes visam manter um espaço organizado e respeitoso, onde o compromisso de cada jogador seja valorizado. Se surgir qualquer imprevisto que possa comprometer sua participação, comunique imediatamente a Diretoria e os demais jogadores da sua Aventura. Isso não é uma obrigação ou punição, mas uma forma de garantir o melhor ambiente possível para todos
+                    Cada participante deve estar ciente do impacto que sua ausência pode causar aos demais. Nossas diretrizes visam manter um espaço organizado e respeitoso, onde o compromisso de cada jogador seja valorizado. Se surgir qualquer imprevisto que possa comprometer sua participação, comunique imediatamente a Direção e os demais jogadores da sua aventura. Isso não é uma obrigação ou punição, mas uma forma de garantir o melhor ambiente possível para todos
                 </p>
             </div>
 
