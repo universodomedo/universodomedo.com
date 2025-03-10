@@ -30,7 +30,7 @@ const junge = Junge({
   variable: '--fonte-junge',
 }); // precisa colocar no :root
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {  
   return (
     <html lang="pt-BR">
       <body>

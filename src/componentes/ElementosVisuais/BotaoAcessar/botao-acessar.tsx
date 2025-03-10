@@ -1,30 +1,28 @@
 import styles from './styles.module.css';
-import Image from 'next/image';
 import Link from 'next/link';
 
-export default async function ComponenteBotaoAcessar() {
+import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
+
+export default function ComponenteBotaoAcessar() {
     
     return (
-        <>
-            <div className={styles.recipiente_icones_acesso}>
-                <Image src={"/imagensFigma/icone-lateral-botao-acessar.svg"} id={styles.icones_esquerda} alt='' className={styles.imagens_botao_acesso} fill quality={100} />
+        <Link href={'/acessar'}>
+            <div id={styles.recipiente_svg_botao_acesso}>
+                <ElementoSVG className={styles.linha_cabecalho} src={"/imagensFigma/botao-acesso-completo.svg"} />
             </div>
-            <div id={styles.recipiente_icones_acesso_botao} className={styles.recipiente_icones_acesso}>
-                <BotaoAcessar />            
-            </div>
-            <div id={styles.recipiente_icones_lateral_direita} className={styles.recipiente_icones_acesso}>
-                <Image src={"/imagensFigma/icone-lateral-botao-acessar.svg"} id={styles.icones_direita} alt='' className={styles.imagens_botao_acesso} fill quality={100} />
-            </div>
-        </>
-    );
-};
-
-function BotaoAcessar() {
-    return (
-        <Link id={styles.botao_acessar} href={'/acessar'}>
-            {/* <Image src={"/imagensFigma/brilho-botao-acessar.svg"} alt="Acessar" className={styles.imagens_botao_acesso} fill quality={100} /> */}
-            <Image src={"/imagensFigma/moldura-botao-acessar.svg"} alt="Acessar" className={styles.imagens_botao_acesso} fill quality={100} />
-            <Image src={"/imagensFigma/fundo-botao-acessar.svg"} alt="Acessar" className={styles.imagens_botao_acesso} fill quality={100} />
         </Link>
     );
+
+    // return (
+    //     <div id={styles.recipiente_svg_botao_acesso}>
+    //         <ElementoSVG className={styles.linha_cabecalho} src={"/imagensFigma/botao-acesso-completo.svg"} />
+    //         <ElementoSVG className={styles.linha_cabecalho} src={"/imagensFigma/botao-acesso-camada-1.svg"} />
+    //         <div id={styles.recipiente_botao_acesso}>
+    //             <ElementoSVG className={styles.linha_cabecalho} src={"/imagensFigma/botao-acesso-camada-2.svg"} />
+    //         </div>
+    //         <div id={styles.recipiente_botao_acesso_efeitos}>
+    //             <ElementoSVG className={styles.linha_cabecalho} src={"/imagensFigma/botao-acesso-camada-hover.svg"} />
+    //         </div>
+    //     </div>
+    // );
 };

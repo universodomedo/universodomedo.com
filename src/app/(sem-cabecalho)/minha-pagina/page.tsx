@@ -8,13 +8,13 @@ import Post from 'Componentes/ElementosPaginaUsuario/Post/page.tsx';
 import Contato from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
 
 export default function MinhaPagina() {
+    console.log();
+    
     if (false) {
         return (
             <ModalPrimeiroAcesso />
         );
     }
-
-    
 
     return (
         <div id={styles.portal_usuario}>

@@ -4,13 +4,13 @@ import SecaoPrincipal from "Componentes/ElementosVisuais/PaginaAterrissagem/Seco
 import Rodape from 'Componentes/ElementosVisuais/PaginaAterrissagem/Rodape/Rodape.tsx'
 
 export default function Pagina() {
-    return (
-      <>
-        <div id={styles.recipiente_conteudo_pagina_principal}>
-          {/* <SecaoPrincipal /> */}
-        </div>
-        
-        {/* <Rodape /> */}
-      </>
-    )
-  }
+  return (
+    <>
+      <div id={styles.recipiente_conteudo_pagina_principal}>
+        <SecaoPrincipal />
+      </div>
+
+      <Rodape />
+    </>
+  );
+};

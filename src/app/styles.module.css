@@ -44,4 +44,5 @@
     align-items: center;
     width: 100%;
     flex: 1;
+    gap: 3vh;
 }

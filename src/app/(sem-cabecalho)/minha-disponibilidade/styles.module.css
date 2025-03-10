@@ -1,0 +1,61 @@
+#recipiente_pagina_disponibilidades {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 3%;
+}
+
+#recipiente_disponibilidade_superior {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 20%;
+    align-items: center;
+    justify-content: center;
+}
+
+#recipiente_disponibilidade_inferior {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    width: 100%;
+}
+
+.tabela {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.linha {
+    display: flex;
+}
+
+.celula_cabecalho {
+    flex: 1;
+    border: 1px solid white;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.celula {
+    flex: 1;
+    border: 1px solid white;
+    padding: 1rem;
+    text-align: center;
+    height: 10rem;
+}
+
+/* #recipiente_disponibilidade_inferior * { 
+    text-decoration: none;
+    cursor: initial;
+    background: none !important;
+    color: #fff !important;
+    pointer-events: none;
+}
+
+.celula {
+    text-align: center;
+} */

@@ -9,11 +9,22 @@
     margin-top: 20vh;
 }
 
+#recipiente_svg_rodape {
+    position: relative;
+    width: 100%;
+}
+
 #recipiente_redes_sociais {
     display: flex;
     flex-direction: row;
     position: absolute;
-    bottom: 1%;
-    width: 24%;
-    gap: 4vw;
+    bottom: 6%;
+    width: 22%;
+    justify-content: space-between;
+}
+
+#recipiente_redes_sociais a {
+    color: #3B3844;
+    width: 14%;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
 }

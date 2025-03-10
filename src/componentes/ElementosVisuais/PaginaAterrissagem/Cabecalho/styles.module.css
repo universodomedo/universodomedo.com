@@ -37,14 +37,16 @@
     align-items: center;
 }
 
-.linha_cabecalho svg {
-    width: 100.5% !important;
-}
-
 #cabecalho_direita_acesso {
     display: flex;
     position: relative;
     flex: .23;
     height: 100%;
     align-items: center;
+}
+
+#recipiente_linha_cabecalho {
+    position: absolute;
+    width: 100.5%;
+    height: 100%;
 }

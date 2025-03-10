@@ -9,8 +9,9 @@ import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-bra
 export default function Rodape() {
     return (
         <div id={styles.rodape}>
-            {/* provavelmente tem q tirar essa classe do SVG por conta da mudança de wrapper span no ElementoSVG */}
-            <ElementoSVG className={styles.svg_moldura_principal} src={"/imagensFigma/rodape.svg"} />
+            <div id={styles.recipiente_svg_rodape}>
+                <ElementoSVG src={"/imagensFigma/rodape.svg"} />
+            </div>
             <div id={styles.recipiente_redes_sociais}>
                 <Link target='_blank' href='https://discord.universodomedo.com'><FontAwesomeIcon icon={faDiscord} /></Link>
                 <Link target='_blank' href='https://open.spotify.com/show/10qzPjLpugVhzn90ufDBuN'><FontAwesomeIcon icon={faSpotify} /></Link>

@@ -1,30 +1,28 @@
-// #region Imports
 import styles from './styles.module.css';
 import Link from 'next/link';
 
-import HamburgerButton from 'Componentes/ElementosVisuais/PaginaAterrissagem/HamburgerButton/HamburgerButton';
 import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
 import ElementoSVGAnimado from 'Componentes/Elementos/ElementoSVGAnimado/ElementoSVGAnimado';
 import ComponenteBotaoAcessar from 'Componentes/ElementosVisuais/BotaoAcessar/botao-acessar';
-// #endregion
 
 export default function SecaoCabecalho() {
     return (
         <div id={styles.cabecalho}>
             <div id={styles.cabecalho_esquerda}>
                 <div id={styles.recipiente_logo}>
-                    <Link href={'/'}><ElementoSVG className='container_svg' src={"/imagensFigma/logo-cabecalho.svg"} /></Link>
+                    <Link href={'/'}><ElementoSVG src={"/imagensFigma/logo-cabecalho.svg"} /></Link>
                 </div>
             </div>
 
             <div id={styles.cabecalho_direita}>
                 <div id={styles.cabecalho_direita_linha}>
-                    <ElementoSVG className={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} />
+                    <div id={styles.recipiente_linha_cabecalho}>
+                        <ElementoSVG className={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} />
+                    </div>
                     {/* <ElementoSVGAnimado className={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} /> */}
-                    {/* <Image id={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} alt='' fill quality={100} /> */}
                 </div>
                 <div id={styles.cabecalho_direita_acesso}>
-                    {/* <ComponenteBotaoAcessar /> */}
+                    <ComponenteBotaoAcessar />
                 </div>
             </div>
         </div>

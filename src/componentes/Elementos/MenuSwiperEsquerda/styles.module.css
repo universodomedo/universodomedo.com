@@ -5,50 +5,21 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.65);
-    z-index: calc(var(--zindex-final-swiperEsquerda) - 5);
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 6);
 }
 
 #swiper_esquerda {
     position: fixed;
     left: -21vw;
-    width: 21.4vw;
-    height: 100vh;
     color: white;
     transition: transform 0.3s ease-in-out;
     transform: translateX(-1.1vw);
-    z-index: calc(var(--zindex-final-swiperEsquerda) - 4);
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 1);
     font-family: var(--fonte-junge) !important;
 }
 
 #swiper_esquerda.aberto {
     transform: translateX(20vw);
-}
-
-#recipiente_base {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-#recipiente_base_relative {
-    position: relative;
-    height: 100%;
-}
-
-#recipiente_SVG_Borda {
-    position: absolute;
-    height: 100%;
-    width: 16.54%;
-    right: 0;
-    z-index: calc(var(--zindex-final-swiperEsquerda) - 3);
-}
-
-#recipiente_SVG_Base {
-    position: relative;
-    height: 100%;
-    width: 23vw;
-    z-index: calc(var(--zindex-final-swiperEsquerda) - 1);
 }
 
 .recipiente_botao_swiper_esquerda {
@@ -57,7 +28,8 @@
     top: 13vh;
     cursor: pointer;
     transition: right 0.3s ease-in-out;
-    z-index: calc(var(--zindex-final-swiperEsquerda) - 2);
+    will-change: right;
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 4);
 }
 
 .recipiente_botao_swiper_esquerda.tamanho_reduzido {
@@ -65,25 +37,74 @@
 }
 
 .recipiente_botao_swiper_esquerda, .recipiente_botao_swiper_esquerda.tamanho_reduzido:hover {
-    right: -3.6vw;
+    right: -4vw;
 }
 
-.recipiente_icone_botao {
+#fundo_camada_1, #fundo_camada_2, #fundo_camada_3 {
     position: absolute;
-    top: 29%;
-    right: 35%;
-    height: 47%;
+    width: 100%;
+    height: 100%;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    pointer-events: none;
+}
+
+#fundo_camada_1 {
+    background-image: url('/imagensFigma/swiper-esquerda-fundo-camada-1.svg');
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 5);
+}
+
+#fundo_camada_2 {
+    background-image: url('/imagensFigma/swiper-esquerda-fundo-camada-2.svg');
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 3);
+}
+
+#fundo_camada_3 {
+    background-image: url('/imagensFigma/swiper-esquerda-fundo-camada-3.svg');
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 2);
+}
+
+
+.recipiente_conteudo_swiper_esquerda {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 22vw;
+}
+
+.conteudo_swiper_esquerda {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 5% 20% 13% 8%;
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 0);
+}
+
+#recipiente_moldura_superior {
+    position: relative;
+    top: 0;
+    width: 100%;
+}
+
+#recipiente_moldura_inferior {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    transform: scaleY(-1);
 }
 
 #recipiente_lista_menu {
     display: flex;
     flex-direction: column;
     position: relative;
-    width: 78%;
-    top: 10%;
-    left: 10%;
-    gap: .5vh;
-    font-size: 1.45vh;
+    height: 100%;
+    margin: 20% 2% 20% 8%;
+    gap: 1vh;
+    font-size: 1.6vh;
 }
 
 #recipiente_lista_menu a {
@@ -95,31 +116,26 @@
     color: rgb(185, 252, 230)
 }
 
-.conteudo_swiper_esquerda {
-    position: relative;
-    height: 94%;
-    width: 74%;
-    top: 3vh;
-    left: 2vw;
-    z-index: calc(var(--zindex-final-swiperEsquerda) - 0);
+.recipiente_icone_link {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    transition: transform 0.3s ease-in-out;
 }
 
-.conteudo_swiper_esquerda_2 {
-    position: relative;
-    width: 100%;
-    height: 94%;
-    top: 3vh;
+.item_menu {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
-#recipiente_moldura_superior {
-    position: absolute;
-    top: 0;
+.conteudo_item_menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
 }
 
-#recipiente_moldura_inferior {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    transform: scaleY(-1);
+.item_menu:hover .recipiente_icone_link {
+    transform: translateX(-25%);
 }
