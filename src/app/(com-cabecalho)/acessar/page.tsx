@@ -6,7 +6,7 @@ import styles from './styles.module.css';
 
 export default function Acessar() {
     const handleLogin = () => {
-        window.location.href = 'https://front.universodomedo.com/auth/login';
+        window.location.href = 'https://back.universodomedo.com/auth/login';
     };
 
     return (

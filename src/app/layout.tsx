@@ -4,7 +4,6 @@ import { ReactNode } from 'react';
 
 import EmbrulhoSessionProvider from 'Embrulhos/EmbrulhoSessionProvider.tsx';
 import { Providers } from 'Provedores/provedores.tsx'
-import { PreloadEntities } from 'Hooks/PreloadEntities'
 import Fumaca from 'Componentes/ElementosVisuais/Fumaca/Fumaca.tsx';
 
 import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
@@ -30,7 +29,7 @@ const junge = Junge({
   variable: '--fonte-junge',
 }); // precisa colocar no :root
 
-export default function RootLayout({ children }: { children: ReactNode }) {  
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
@@ -39,7 +38,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Fumaca />
             <main id={styles.main}>
               <Providers>
-                <PreloadEntities />
                 <div id={styles.corpo}>
                   <MenuSwiperEsquerda />
                   <div id={styles.recipiente_conteudo_pagina}>

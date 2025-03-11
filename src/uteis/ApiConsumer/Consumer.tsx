@@ -1,9 +1,14 @@
 import axios from 'axios';
 
+export type ApiResponse<T> = { sucesso: boolean; dados?: T; erro?: string; };
+
 const url = process.env.BACKEND_URL;
 
 const apiClient = axios.create({
-  baseURL: url,
+  baseURL: 'http://localhost:3100',
+  // baseURL: 'https://back.universodomedo.com',
+  // baseURL: url,
+  withCredentials: true,
 });
 
 apiClient.interceptors.response.use(response => {
@@ -35,10 +40,16 @@ function isIsoDateString(value: any): boolean {
   return isoDateRegex.test(value);
 }
 
-export async function useApi<T>(uri: string, params?: {}): Promise<T> {
-  const response = await apiClient.get<T>(uri, { params });
+export default async function useApi<T>(uri: string, params?: {}): Promise<ApiResponse<T>> {
+  try {
+    const response = await apiClient.get<ApiResponse<T>>(uri, { params });
 
-  return response.data as T;
-}
+    return { sucesso: response.data.sucesso, dados: response.data.dados, erro: response.data.erro };
+  } catch (error) {
+    if (axios.isAxiosError(error)) return { sucesso: false, erro: error.response?.data?.message || "Erro na requisição à API." };
 
-export default useApi;
+    else if (error instanceof Error) return { sucesso: false, erro: error.message || "Erro inesperado ao fazer a requisição." };
+
+    else return { sucesso: false, erro: "Erro desconhecido ao fazer a requisição." };
+  }
+};

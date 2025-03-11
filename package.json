@@ -42,7 +42,7 @@
     "react-smoke": "^1.1.0",
     "react-svg": "^16.3.0",
     "three": "^0.173.0",
-    "types-nora-api": "^0.0.7"
+    "types-nora-api": "^0.0.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

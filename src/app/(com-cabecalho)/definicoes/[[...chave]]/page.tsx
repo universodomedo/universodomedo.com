@@ -1,27 +1,27 @@
 import styles from './styles.module.css';
 import Link from 'next/link';
 
-import { obtemConteudoDefinicaoPorIdentificadorPagina } from 'Dados/dadosDefinicoes.ts';
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
+import { obtemDadosPorPaginaDefinicao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 export default async function PaginaDefinicao({ params }: { params: { chave?: string[] } }) {
     const { chave } = await params;
     const listaChaves = chave || [];
 
-    const identificadorPagina = listaChaves.length > 0 ? listaChaves.join("/") : "";
-    const resultado = obtemConteudoDefinicaoPorIdentificadorPagina(identificadorPagina);
-
-    if (!resultado.sucesso) {
+    const identificadorPagina = listaChaves.length > 0 ? `/${listaChaves.join("/")}` : "";
+    const resultado = await obtemDadosPorPaginaDefinicao(identificadorPagina);
+    
+    if (!resultado.sucesso || resultado.dados === undefined) {
         return (
             <Redirecionador urlRedirecionar='/definicoes' />
         );
     }
 
-    const conteudo = resultado.conteudo;
+    const conteudo = resultado.dados;
 
     return (
         <div className={styles.recipiente_definicao}>
-            {listaChaves.length > 0 && <Breadcrumb listaChaves={listaChaves} />}
+            {listaChaves.length > 0 && <Breadcrumb listaChaves={listaChaves.map((chave) => decodeURIComponent(chave))} />}
 
             <div className={styles.recipiente_titulo}>
                 <h1 className={styles.definicao_titulo}>{conteudo.titulo}</h1>
@@ -44,7 +44,7 @@ export default async function PaginaDefinicao({ params }: { params: { chave?: st
                             <div key={index} className={styles.definicao_lista_opcoes}>
                                 {conteudo.itensLista.map((item, indexItemLista) => (
                                     <div key={indexItemLista} className={styles.recipiente_opcao_lista}>
-                                        <p><Link href={`/definicoes${item.subPaginaDefinicao}`}>{item.etiqueta}</Link></p>
+                                        <p><Link href={`${item.subPaginaDefinicao}`}>{item.etiqueta}</Link></p>
                                     </div>
                                 ))}
                             </div>
@@ -59,7 +59,7 @@ export default async function PaginaDefinicao({ params }: { params: { chave?: st
 
                     <div className={styles.opcoes_conteudo_conectado}>
                         {conteudo.listaItensDefinicoesConectadas.map((item, index) => (
-                            <span key={index}><Link href={`/definicoes${item.subPaginaDefinicao}`}>{item.etiqueta}</Link></span>
+                            <span key={index}><Link href={`${item.subPaginaDefinicao}`}>{item.etiqueta}</Link></span>
                         ))}
                     </div>
                 </div>
@@ -69,17 +69,20 @@ export default async function PaginaDefinicao({ params }: { params: { chave?: st
 };
 
 function Breadcrumb({ listaChaves }: { listaChaves: string[] }) {
-    const caminho = [{ label: "Início", href: "/definicoes" }, ...listaChaves.map((chave, index) => ({
-        label: chave,
-        href: listaChaves.slice(0, index + 1).join("/")
-    }))];
+    const caminho = [
+        { label: "Início", href: "/definicoes" },
+        ...listaChaves.map((chave, index) => ({
+            label: chave,
+            href: `/definicoes/${listaChaves.slice(0, index + 1).join("/")}`
+        }))
+    ];
 
     return (
-        <div className="breadcrumb">
+        <div className={styles.recipiente_breadcrumb}>
             {caminho.map((item, index) => (
                 <span key={item.href}>
                     {index < caminho.length - 1 ? (
-                        <Link href={item.href}>{item.label}</Link>
+                        <Link href={`${item.href}`}>{item.label}</Link>
                     ) : (
                         <span>{item.label}</span>
                     )}
@@ -88,4 +91,4 @@ function Breadcrumb({ listaChaves }: { listaChaves: string[] }) {
             ))}
         </div>
     );
-}
+};
