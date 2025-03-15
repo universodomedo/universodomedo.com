@@ -1,42 +1,11 @@
-'use client';
-
-import styles from "./styles.module.css";
-
-import ModalPrimeiroAcesso from "Componentes/ElementosDeJogo/ModalPrimeiroAcesso/page";
-import BarraUsuario from 'Componentes/ElementosPaginaUsuario/BarraUsuario/page.tsx';
-import Post from 'Componentes/ElementosPaginaUsuario/Post/page.tsx';
-import Contato from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
-
 import { obtemDadosMinhaPagina } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
-export default function MinhaPagina() {
-    console.log('buscando usuario');
+import MinhaPaginaComDados from './page-dados.tsx';
 
-    const teste = obtemDadosMinhaPagina();
+export default async function MinhaPagina() {
+    const respostaDadosMinhaPagina = await obtemDadosMinhaPagina();
 
-    console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Retorno do endpoint');
-    console.log(teste);
-    
-    if (false) {
-        return (
-            <ModalPrimeiroAcesso />
-        );
-    }
+    if (!respostaDadosMinhaPagina.sucesso || !respostaDadosMinhaPagina.dados) return <div>Erro ao carregar usuário</div>;
 
-    return (
-        <div id={styles.portal_usuario}>
-            <div id={styles.portal_usuario_esquerda}>
-                <BarraUsuario />
-
-                <div id={styles.recipiente_lista_posts}>
-                    <Post />
-                </div>
-            </div>
-
-            <div id={styles.portal_usuario_direita}>
-                <Contato />
-                <Contato />
-            </div>
-        </div>
-    );
+    return <MinhaPaginaComDados dadosMinhaPagina={respostaDadosMinhaPagina.dados} />
 };

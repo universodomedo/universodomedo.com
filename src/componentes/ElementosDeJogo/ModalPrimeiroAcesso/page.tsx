@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import Link from "next/link";
 
-import Modal from "Componentes/Elementos/Modal/page.tsx";
+import Modal from "Componentes/Elementos/Modal/Modal";
 
 export default function ModalPrimeiroAcesso() {
     const [mostrarTermos, setMostrarTermos] = useState(false);
@@ -43,6 +43,10 @@ export default function ModalPrimeiroAcesso() {
         setPodeProsseguir(apelidoValido && termosAceitos);
     }, [apelido, termo1, termo2]);
 
+    const completarRegistroUsuario = () => {
+        
+    }
+
     return (
         <Modal open={true} onOpenChange={() => { }}>
             <Modal.Content title={mostrarTermos ? "Termos de Aceite" : "Bem Vindo ao Universo do Medo!"} className={styles.modal_primeiro_acesso} temBotaoFechar={false}>
@@ -70,7 +74,7 @@ export default function ModalPrimeiroAcesso() {
                                 <span>Seguir para os <span className={`${styles.link_termo_aceite} ${!termoAceito() ? styles.nao_aceito : ''}`} onClick={() => setMostrarTermos(true)}>Termos de Aceite</span></span>
                             </div>
 
-                            <button disabled={!podeProsseguir}>Prosseguir</button>
+                            <button disabled={!podeProsseguir} onClick={completarRegistroUsuario}>Prosseguir</button>
                         </div>
                     </div>
                 ) : (

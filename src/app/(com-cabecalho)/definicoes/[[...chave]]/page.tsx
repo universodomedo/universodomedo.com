@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
 import { obtemDadosPorPaginaDefinicao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import TextoGlitado from 'Componentes/ElementosVisuais/TextoGlitado/TextoGlitado';
 
 export default async function PaginaDefinicao({ params }: { params: { chave?: string[] } }) {
     const { chave } = await params;
@@ -10,7 +11,7 @@ export default async function PaginaDefinicao({ params }: { params: { chave?: st
 
     const identificadorPagina = listaChaves.length > 0 ? `/${listaChaves.join("/")}` : "";
     const resultado = await obtemDadosPorPaginaDefinicao(identificadorPagina);
-    
+
     if (!resultado.sucesso || resultado.dados === undefined) {
         return (
             <Redirecionador urlRedirecionar='/definicoes' />
@@ -33,23 +34,58 @@ export default async function PaginaDefinicao({ params }: { params: { chave?: st
                     if (conteudo.tipo === 'Definicao') {
                         return (
                             <div key={index} className={styles.definicao_conteudo}>
-                                {conteudo.paragrafos.map((item, indexParagrafo) => (
-                                    <p key={indexParagrafo}>{item}</p>
-                                ))}
+                                {conteudo.elementos.map((item, indexParagrafo) => {
+                                    if (item.tipo === 'Paragrafo') {
+                                        return (
+                                            <p key={indexParagrafo}>{item.conteudo}</p>
+                                        )
+                                    }
+                                    if (item.tipo === 'ParagrafoSecreto') {
+                                        return (
+                                            <TextoGlitado chaveRequisito='123' key={indexParagrafo} tamanho='grande' />
+                                        )
+                                    }
+                                })}
                             </div>
                         );
                     }
                     if (conteudo.tipo === 'Lista') {
                         return (
-                            <div key={index} className={styles.definicao_lista_opcoes}>
-                                {conteudo.itensLista.map((item, indexItemLista) => (
-                                    <div key={indexItemLista} className={styles.recipiente_opcao_lista}>
-                                        <p><Link href={`${item.subPaginaDefinicao}`}>{item.etiqueta}</Link></p>
-                                    </div>
-                                ))}
+                            <div key={index} className={styles.recipiente_lista}>
+                                <div className={styles.definicao_lista_opcoes}>
+                                    {conteudo.itensLista.map((item, indexItemLista) => {
+                                        if (item.tipo === 'ItemLista') {
+                                            return (
+                                                <div key={indexItemLista} className={styles.recipiente_opcao_lista}>
+                                                    <p><Link href={`${item.subPaginaDefinicao}`}>{item.etiqueta}</Link></p>
+                                                </div>
+                                            )
+                                        }
+                                        if (item.tipo === 'ItemListaSecreto') {
+                                            return (
+                                                <div key={indexItemLista} className={styles.recipiente_opcao_lista}>
+                                                    <TextoGlitado chaveRequisito='234' tamanho='pequeno' />
+                                                </div>
+                                            )
+                                        }
+                                    })}
+                                </div>
                             </div>
-                        );
+                        )
                     }
+                    // if (conteudo.tipo === 'Lista') {
+                    //     return (
+                    //         <div key={index} className={styles.recipiente_lista}>
+                    //             <div className={styles.definicao_lista_opcoes}>
+                    //                 {conteudo.itensLista.map((item, indexItemLista) => (
+                    //                     <div key={indexItemLista} className={styles.recipiente_opcao_lista}>
+                    //                         <p><Link href={`${item.subPaginaDefinicao}`}>{item.etiqueta}</Link></p>
+                    //                     </div>
+                    //                 ))}
+                    //             </div>
+                    //         </div>
+                    //     );
+                    // }
                 })}
             </div>
 

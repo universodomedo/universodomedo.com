@@ -21,6 +21,7 @@
     bottom: 6%;
     width: 22%;
     justify-content: space-between;
+    align-items: center;
 }
 
 #recipiente_redes_sociais a {

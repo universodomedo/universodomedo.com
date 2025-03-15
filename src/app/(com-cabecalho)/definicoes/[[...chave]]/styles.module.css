@@ -40,21 +40,33 @@
     display: flex;
     flex-direction: column;
     gap: 2vh;
+    text-align: justify;
+    width: fit-content;
+    margin: 0 auto;
+    /* align-items: center; */
+    /* text-align: center; */
+}
+
+.recipiente_lista {
+    width: 50%;
+    margin: 0 auto;
 }
 
 .definicao_lista_opcoes {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    row-gap: 2vh;
+    gap: 2vh 4%;
+    width: fit-content;
+    margin: 0 auto;
 }
 
 .recipiente_opcao_lista {
     display: flex;
     flex-direction: row;
-    flex: 1 0 40%;
     justify-content: center;
-    row-gap: 1vh;
+    flex: 0 0 48%;
+    text-align: center;
 }
 
 .recipiente_opcao_lista p {
@@ -76,9 +88,9 @@
 .opcoes_conteudo_conectado {
     display: flex;
     flex-direction: row;
-    align-items: center;
-    gap: 3vw;
+    justify-content: center;
     width: 100%;
+    gap: 3vw;
 }
 
 .recipiente_breadcrumb {

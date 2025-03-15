@@ -1,5 +1,7 @@
 #barra_usuario {
     display: flex;
+    flex-direction: row;
+    position: relative;
     border: 1px white solid;
     border-radius: 10px;
     flex: .17;
@@ -18,5 +20,19 @@
 }
 
 .recipiente_informacoes_usuario {
-    width: 100%;
+    width: 40%;
+}
+
+.recipiente_conquistas_usuario {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    width: 40%;
+    align-items: center;
+}
+
+.recipiente_conquista {
+    position: relative;
+    height: 80%;
+    aspect-ratio: 1;
 }

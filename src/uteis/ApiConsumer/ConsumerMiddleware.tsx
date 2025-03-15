@@ -1,19 +1,23 @@
-export type EstruturaPaginaDefinicao = { titulo: string; subtitulo?: string; listaConteudo: { itens: ConteudoItem[]; }; listaItensDefinicoesConectadas?: { etiqueta: string; subPaginaDefinicao: string; }[]; };
+import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-export type ConteudoItem = { tipo: "Definicao"; paragrafos: string[]; } | { tipo: "Lista"; itensLista: { etiqueta: string; subPaginaDefinicao: string; }[]; };
+import { DadosMinhaPagina, DadosMinhasDisponibilidades, DisponibilidadeUsuario, EstruturaPaginaDefinicao } from 'types-nora-api';
 
-import useApi, { ApiResponse } from "Uteis/ApiConsumer/Consumer.tsx";
-
-
-
-export async function obtemDadosMinhaPagina(): Promise<ApiResponse<string>> {
-    const resposta = await useApi<any>('/auth/me');
-
-    return resposta.sucesso ? { sucesso: true, dados: resposta.dados } : { sucesso: false, erro: resposta.erro };
+export async function obtemDadosMinhaPagina() {
+    return await useApi<DadosMinhaPagina>({ uri: '/paginas/obtemDadosMinhaPagina', method: 'GET' });
 }
 
-export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string): Promise<ApiResponse<EstruturaPaginaDefinicao>> {
-    const resposta = await useApi<EstruturaPaginaDefinicao>('/definicoes/obtemDadosPorPaginaDefinicao', { identificadorPagina });
-    
-    return resposta.sucesso && resposta.dados !== undefined ? { sucesso: true, dados: resposta.dados } : { sucesso: false, erro: resposta.erro };
+export async function salvaPrimeiroAcessoUsuario(username: string) {
+    return await useApi<void>({ uri: '/usuarios/salvaPrimeiroAcessoUsuario', method: 'POST', data: username });
+}
+
+export async function obtemDadosMinhasDisponibilidades() {
+    return await useApi<DadosMinhasDisponibilidades>({ uri: '/paginas/obtemDadosMinhasDisponibilidades', method: 'GET' });
+}
+
+export async function salvaDisponibilidadeDeUsuario(disponibilidades: DisponibilidadeUsuario[]) {
+    return await useApi<void>({ uri: '/disponibilidadesUsuario/salvaDisponibilidadeDeUsuario', method: 'POST', data: disponibilidades });
+}
+
+export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) {
+    return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina } });
 }

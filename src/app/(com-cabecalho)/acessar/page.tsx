@@ -12,7 +12,7 @@ export default function Acessar() {
     return (
         <>
             <h1>Acessar</h1>
-            <button onClick={handleLogin}>Teste Login</button>
+            <button onClick={handleLogin} style={{padding: '.6vh'}}>Login</button>
             {/* <BotaoAcessarComDiscord /> */}
         </>
     );
