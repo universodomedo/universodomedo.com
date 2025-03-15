@@ -3,16 +3,21 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
-    padding: 3%;
+    padding: 1% 3%;
 }
 
 #recipiente_disponibilidade_superior {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 100%;
     height: 20%;
     align-items: center;
     justify-content: center;
+    gap: 2vh;
+}
+
+#botao_configurar_disponibilidades {
+    padding: .3rem;
 }
 
 #recipiente_disponibilidade_inferior {
@@ -22,14 +27,16 @@
     width: 100%;
 }
 
-.tabela {
+#recipiente_dados_disponibilidade {
     display: flex;
     flex-direction: column;
     flex: 1;
+    align-items: center;
 }
 
 .linha {
     display: flex;
+    width: 100%;
 }
 
 .celula_cabecalho {
@@ -59,3 +66,19 @@
 .celula {
     text-align: center;
 } */
+
+#recipiente_modal_disponibilidades {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+}
+
+#recipiente_disponibilidades_criadas {
+    flex: 1 0 0;
+}
+
+#recipiente_adicao_disponibilidade {
+    flex: 0 0 0;
+}

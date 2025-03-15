@@ -12,6 +12,8 @@ import { Cinzel, Cinzel_Decorative, Junge } from 'next/font/google';
 
 import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwiperEsquerda.tsx';
 
+import { Provider as RadixTooltip } from "@radix-ui/react-tooltip";
+
 const cinzel = Cinzel({
   subsets: ['latin'],
   variable: '--fonte-cinzel',
@@ -33,21 +35,23 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
-        <EmbrulhoSessionProvider>
-          <ContextoMenuSwiperEsquerdaProvider>
-            <Fumaca />
-            <main id={styles.main}>
-              <Providers>
-                <div id={styles.corpo}>
-                  <MenuSwiperEsquerda />
-                  <div id={styles.recipiente_conteudo_pagina}>
-                    {children}
+        <RadixTooltip delayDuration={200} skipDelayDuration={0}>
+          <EmbrulhoSessionProvider>
+            <ContextoMenuSwiperEsquerdaProvider>
+              <Fumaca />
+              <main id={styles.main}>
+                <Providers>
+                  <div id={styles.corpo}>
+                    <MenuSwiperEsquerda />
+                    <div id={styles.recipiente_conteudo_pagina}>
+                      {children}
+                    </div>
                   </div>
-                </div>
-              </Providers>
-            </main>
-          </ContextoMenuSwiperEsquerdaProvider>
-        </EmbrulhoSessionProvider>
+                </Providers>
+              </main>
+            </ContextoMenuSwiperEsquerdaProvider>
+          </EmbrulhoSessionProvider>
+        </RadixTooltip>
       </body>
     </html>
   );

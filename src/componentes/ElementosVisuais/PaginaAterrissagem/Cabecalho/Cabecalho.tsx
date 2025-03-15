@@ -17,7 +17,7 @@ export default function SecaoCabecalho() {
             <div id={styles.cabecalho_direita}>
                 <div id={styles.cabecalho_direita_linha}>
                     <div id={styles.recipiente_linha_cabecalho}>
-                        <ElementoSVG className={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} />
+                        <ElementoSVG src={"/imagensFigma/linha-cabecalho.svg"} />
                     </div>
                     {/* <ElementoSVGAnimado className={styles.linha_cabecalho} src={"/imagensFigma/linha-cabecalho.svg"} /> */}
                 </div>

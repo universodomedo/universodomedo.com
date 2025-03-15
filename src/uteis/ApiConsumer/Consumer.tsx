@@ -1,12 +1,14 @@
 import axios from 'axios';
-
-export type ApiResponse<T> = { sucesso: boolean; dados?: T; erro?: string; };
+// import { useRouter } from 'next/router';
+import { RespostaBackEnd } from 'types-nora-api';
 
 const url = process.env.BACKEND_URL;
 
+axios.defaults.withCredentials = true;
+
 const apiClient = axios.create({
-  baseURL: 'http://localhost:3100',
-  // baseURL: 'https://back.universodomedo.com',
+  // baseURL: 'http:///localhost:3100',
+  baseURL: 'https://back.universodomedo.com',
   // baseURL: url,
   withCredentials: true,
 });
@@ -15,6 +17,10 @@ apiClient.interceptors.response.use(response => {
   response.data = convertDates(response.data);
   return response;
 }, error => {
+  // if (error.response && error.response.status === 401) {
+  //   const router = useRouter();
+  //   router.push('/acessar');
+  // }
   return Promise.reject(error);
 });
 
@@ -40,11 +46,9 @@ function isIsoDateString(value: any): boolean {
   return isoDateRegex.test(value);
 }
 
-export default async function useApi<T>(uri: string, params?: {}): Promise<ApiResponse<T>> {
+export default async function useApi<T>({ uri, method, data, params }: { uri: string; method: 'GET' | 'POST' | 'PUT' | 'DELETE'; data?: any; params?: any; }): Promise<RespostaBackEnd<T>> {
   try {
-    const response = await apiClient.get<ApiResponse<T>>(uri, { params });
-
-    return { sucesso: response.data.sucesso, dados: response.data.dados, erro: response.data.erro };
+    return (await apiClient.request<RespostaBackEnd<T>>({ url: uri, method, data, params })).data;
   } catch (error) {
     if (axios.isAxiosError(error)) return { sucesso: false, erro: error.response?.data?.message || "Erro na requisição à API." };
 

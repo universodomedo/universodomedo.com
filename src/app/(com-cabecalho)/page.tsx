@@ -7,7 +7,6 @@ export default function Pagina() {
   return (
     <>
       <div id={styles.recipiente_conteudo_pagina_principal}>
-        <h1>CAIO</h1>
         <SecaoPrincipal />
       </div>
 

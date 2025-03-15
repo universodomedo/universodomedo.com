@@ -102,8 +102,9 @@
     flex-direction: column;
     position: relative;
     height: 100%;
-    margin: 20% 2% 20% 8%;
-    gap: 1vh;
+    margin: 3% 2% 0 8%;
+    gap: 2%;
+    align-items: center;
     font-size: 1.6vh;
 }
 
@@ -114,6 +115,38 @@
 
 #recipiente_lista_menu a:hover {
     color: rgb(185, 252, 230)
+}
+
+.recipiente_logo_swiper_esquerda {
+    width: 85%;
+    margin: 0 5% 10% 0;
+}
+
+#recipiente_lista {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1 0 0;
+    gap: 1vh;
+}
+
+#recipiente_icones_swiper_esquerda {
+    display: flex;
+    flex-direction: row;
+    flex: 0 0 0;
+    width: 78%;
+    gap: 5%;
+    margin-right: 5%;
+    align-items: center;
+}
+
+#recipiente_icones_swiper_esquerda a {
+    flex: 1;
+}
+
+#recipiente_icones_swiper_esquerda svg {
+    width: 100%;
+    height: 100%;
 }
 
 .recipiente_icone_link {

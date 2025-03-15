@@ -2,11 +2,3 @@
     width: 100%;
     height: 100%;
 }
-
-#recipiente_botao_acesso, #recipiente_botao_acesso_efeitos {
-    position: absolute;
-    height: 100%;
-    width: 60%;
-    top: 2%;
-    left: 20%;
-}

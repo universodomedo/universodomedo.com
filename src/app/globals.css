@@ -50,6 +50,10 @@ svg {
   font-weight: bolder;
 }
 
+.svg-inline--fa {
+  all: unset !important;
+}
+
 /* 
 body {
   background: linear-gradient(to bottom, #0b1623 0%, #1e3a5f 50%, #0b1623 100%);
