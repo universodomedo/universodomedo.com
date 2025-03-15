@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: oc1-a # Use a GitHub-hosted runner
+    runs-on:  dev-udm-oc1-a # Use a GitHub-hosted runner
 
     steps:
     - name: Checkout code
