@@ -1,0 +1,27 @@
+name: Deploy Sandbox Container
+
+on:
+  push:
+    branches:
+      - sandbox
+
+jobs:
+  deploy:
+    runs-on: dev-udm-oc1-a  # Self-hosted runner
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js v22.14
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22.14'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Start Next.js app
+      run: npm run run dev
+      env:
+        NODE_ENV: production
