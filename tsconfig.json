@@ -25,7 +25,6 @@
       "Componentes/*": ["componentes/*"],
       "Contextos/*": ["contextos/*"],
       "Dados/*": ["dados/*"],
-      "Embrulhos/*": ["embrulhos/*"],
       "Helpers/*": ["helpers/*"],
       "Hooks/*": ["hooks/*"],
       "Provedores/*": ["provedores/*"],

@@ -1,28 +1,56 @@
 import axios from 'axios';
 // import { useRouter } from 'next/router';
 import { RespostaBackEnd } from 'types-nora-api';
+import * as dotenv from 'dotenv';
 
 const url = process.env.BACKEND_URL;
 
 axios.defaults.withCredentials = true;
 
 const apiClient = axios.create({
-  // baseURL: 'http:///localhost:3100',
-  baseURL: 'https://back.universodomedo.com',
+  baseURL: 'http:///localhost:3100',
+  // baseURL: 'https://back.universodomedo.com',
   // baseURL: url,
   withCredentials: true,
 });
 
+apiClient.interceptors.request.use(request => {
+  console.log('Enviando Requisição:', {
+    url: request.url,
+    method: request.method,
+    data: request.data,
+    params: request.params,
+    headers: request.headers,
+  });
+  return request;
+}, error => {
+  console.error('Erro na requisição:', error);
+  return Promise.reject(error);
+});
+
+// Interceptor de resposta para logar as respostas
 apiClient.interceptors.response.use(response => {
+  console.log('Recebendo Resposta:', {
+    status: response.status,
+    data: response.data,
+  });
   response.data = convertDates(response.data);
   return response;
 }, error => {
-  // if (error.response && error.response.status === 401) {
-  //   const router = useRouter();
-  //   router.push('/acessar');
-  // }
+  // console.error('Erro na resposta:', error);
   return Promise.reject(error);
 });
+
+// apiClient.interceptors.response.use(response => {
+//   response.data = convertDates(response.data);
+//   return response;
+// }, error => {
+//   // if (error.response && error.response.status === 401) {
+//   //   const router = useRouter();
+//   //   router.push('/acessar');
+//   // }
+//   return Promise.reject(error);
+// });
 
 function convertDates(data: any): any {
   if (data === null || data === undefined) { return data; }

@@ -5,6 +5,8 @@ import MinhaPaginaComDados from './page-dados.tsx';
 export default async function MinhaPagina() {
     const respostaDadosMinhaPagina = await obtemDadosMinhaPagina();
 
+    console.log({respostaDadosMinhaPagina});
+
     if (!respostaDadosMinhaPagina.sucesso || !respostaDadosMinhaPagina.dados) return <div>Erro ao carregar usuário</div>;
 
     return <MinhaPaginaComDados dadosMinhaPagina={respostaDadosMinhaPagina.dados} />

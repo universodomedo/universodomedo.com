@@ -3,6 +3,7 @@ import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 import { DadosMinhaPagina, DadosMinhasDisponibilidades, DisponibilidadeUsuario, EstruturaPaginaDefinicao } from 'types-nora-api';
 
 export async function obtemDadosMinhaPagina() {
+    console.log('chamando endpoin obtemDadosMinhaPagina');
     return await useApi<DadosMinhaPagina>({ uri: '/paginas/obtemDadosMinhaPagina', method: 'GET' });
 }
 
@@ -20,4 +21,9 @@ export async function salvaDisponibilidadeDeUsuario(disponibilidades: Disponibil
 
 export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) {
     return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina } });
+}
+
+export async function teste() {
+    console.log('chamando endpoint teste');
+    return await useApi<DadosMinhaPagina>({ uri: '/auth/me', method: 'GET' });
 }

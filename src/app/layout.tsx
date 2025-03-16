@@ -2,7 +2,6 @@ import './globals.css';
 import styles from './styles.module.css';
 import { ReactNode } from 'react';
 
-import EmbrulhoSessionProvider from 'Embrulhos/EmbrulhoSessionProvider.tsx';
 import { Providers } from 'Provedores/provedores.tsx'
 import Fumaca from 'Componentes/ElementosVisuais/Fumaca/Fumaca.tsx';
 
@@ -13,6 +12,9 @@ import { Cinzel, Cinzel_Decorative, Junge } from 'next/font/google';
 import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwiperEsquerda.tsx';
 
 import { Provider as RadixTooltip } from "@radix-ui/react-tooltip";
+
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -36,21 +38,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="pt-BR">
       <body>
         <RadixTooltip delayDuration={200} skipDelayDuration={0}>
-          <EmbrulhoSessionProvider>
-            <ContextoMenuSwiperEsquerdaProvider>
-              <Fumaca />
-              <main id={styles.main}>
-                <Providers>
-                  <div id={styles.corpo}>
-                    <MenuSwiperEsquerda />
-                    <div id={styles.recipiente_conteudo_pagina}>
-                      {children}
-                    </div>
+          <ContextoMenuSwiperEsquerdaProvider>
+            <Fumaca />
+            <main id={styles.main}>
+              <Providers>
+                <div id={styles.corpo}>
+                  <MenuSwiperEsquerda />
+                  <div id={styles.recipiente_conteudo_pagina}>
+                    {children}
                   </div>
-                </Providers>
-              </main>
-            </ContextoMenuSwiperEsquerdaProvider>
-          </EmbrulhoSessionProvider>
+                </div>
+              </Providers>
+            </main>
+          </ContextoMenuSwiperEsquerdaProvider>
         </RadixTooltip>
       </body>
     </html>
