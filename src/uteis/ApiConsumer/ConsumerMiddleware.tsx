@@ -7,7 +7,7 @@ export async function obtemDadosMinhaPagina() {
 }
 
 export async function salvaPrimeiroAcessoUsuario(username: string) {
-    return await useApi<void>({ uri: '/usuarios/salvaPrimeiroAcessoUsuario', method: 'POST', data: username });
+    return await useApi<void>({ uri: '/usuarios/atualizaUsuarioPrimeiroAcesso', method: 'PUT', data: { username: username } });
 }
 
 export async function obtemDadosMinhasDisponibilidades() {

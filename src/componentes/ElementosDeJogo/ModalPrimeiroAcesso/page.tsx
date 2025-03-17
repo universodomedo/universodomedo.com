@@ -5,6 +5,7 @@ import styles from "./styles.module.css";
 import Link from "next/link";
 
 import Modal from "Componentes/Elementos/Modal/Modal";
+import { salvaPrimeiroAcessoUsuario } from "Uteis/ApiConsumer/ConsumerMiddleware";
 
 export default function ModalPrimeiroAcesso() {
     const [mostrarTermos, setMostrarTermos] = useState(false);
@@ -43,8 +44,9 @@ export default function ModalPrimeiroAcesso() {
         setPodeProsseguir(apelidoValido && termosAceitos);
     }, [apelido, termo1, termo2]);
 
-    const completarRegistroUsuario = () => {
-        
+    async function completarRegistroUsuario() {
+        await salvaPrimeiroAcessoUsuario(apelido);
+        window.location.reload();
     }
 
     return (
