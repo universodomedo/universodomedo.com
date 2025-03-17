@@ -1,15 +1,10 @@
 import axios from 'axios';
-// import { useRouter } from 'next/router';
 import { RespostaBackEnd } from 'types-nora-api';
-
-const url = process.env.BACKEND_URL;
-
-axios.defaults.withCredentials = true;
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 const apiClient = axios.create({
-  // baseURL: 'http:///localhost:3100',
-  baseURL: 'https://back.universodomedo.com',
-  // baseURL: url,
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   withCredentials: true,
 });
 
@@ -17,10 +12,6 @@ apiClient.interceptors.response.use(response => {
   response.data = convertDates(response.data);
   return response;
 }, error => {
-  // if (error.response && error.response.status === 401) {
-  //   const router = useRouter();
-  //   router.push('/acessar');
-  // }
   return Promise.reject(error);
 });
 
@@ -48,9 +39,18 @@ function isIsoDateString(value: any): boolean {
 
 export default async function useApi<T>({ uri, method, data, params }: { uri: string; method: 'GET' | 'POST' | 'PUT' | 'DELETE'; data?: any; params?: any; }): Promise<RespostaBackEnd<T>> {
   try {
-    return (await apiClient.request<RespostaBackEnd<T>>({ url: uri, method, data, params })).data;
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore.toString();
+
+    return (await apiClient.request<RespostaBackEnd<T>>({ url: uri, method, data, params, withCredentials: true, headers: { Cookie: cookieHeader }, })).data;
   } catch (error) {
-    if (axios.isAxiosError(error)) return { sucesso: false, erro: error.response?.data?.message || "Erro na requisição à API." };
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 401) {
+        redirect('/acessar');
+      }
+
+      return { sucesso: false, erro: error.response?.data?.message || "Erro na requisição à API." };
+    }
 
     else if (error instanceof Error) return { sucesso: false, erro: error.message || "Erro inesperado ao fazer a requisição." };
 

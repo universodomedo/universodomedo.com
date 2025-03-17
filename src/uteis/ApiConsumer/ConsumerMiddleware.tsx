@@ -3,8 +3,7 @@ import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 import { DadosMinhaPagina, DadosMinhasDisponibilidades, DisponibilidadeUsuario, EstruturaPaginaDefinicao } from 'types-nora-api';
 
 export async function obtemDadosMinhaPagina() {
-    //return await useApi<DadosMinhaPagina>({ uri: '/paginas/obtemDadosMinhaPagina', method: 'GET' });
-    return await useApi<DadosMinhaPagina>({ uri: '/auth/me', method: 'GET' });
+    return await useApi<DadosMinhaPagina>({ uri: '/paginas/obtemDadosMinhaPagina', method: 'GET' });
 }
 
 export async function salvaPrimeiroAcessoUsuario(username: string) {
