@@ -3,7 +3,8 @@
   --fonte-cinzel-decorative: 'Cinzel Decorative', serif;
   --fonte-junge: 'Junge', serif;
 
-  --zindex-final-swiperEsquerda: 999;
+  --zindex-final-swiperEsquerda: 899;
+  --zindex-final-modal: 999;
 }
 
 * {

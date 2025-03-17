@@ -1,0 +1,30 @@
+#recipiente_tela_acessar {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+#recipiente_imagem_fundo_acessar {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+#recipiente_formulario_acesso {
+    display: flex;
+    position: relative;
+    width: 37%;
+    aspect-ratio: 1.5;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 6%;
+}
+
+#recipiente_conteudo_formulario_acesso {
+    display: flex;
+    flex-direction: column;
+    z-index: 999;
+    row-gap: 5vh;
+}
