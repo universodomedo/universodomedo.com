@@ -41,7 +41,7 @@ function isIsoDateString(value: any): boolean {
   return isoDateRegex.test(value);
 }
 
-export default async function useApi<T>({ uri, method, data, params }: { uri: string; method: "GET" | "POST" | "PUT" | "DELETE"; data?: any; params?: any; }): Promise<RespostaBackEnd<T>> {
+export default async function useApi<T>({ uri, method, data, params, desativaRedirect = false }: { uri: string; method: "GET" | "POST" | "PUT" | "DELETE"; data?: any; params?: any; desativaRedirect?: boolean }): Promise<RespostaBackEnd<T>> {
   try {
     if (typeof window === "undefined") {
       // Requisição Server Side. Precisa recuperar os cookies e enviar manualmente
@@ -53,7 +53,7 @@ export default async function useApi<T>({ uri, method, data, params }: { uri: st
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 401 || error.response?.status === 403) {
+      if (!desativaRedirect && (error.response?.status === 401 || error.response?.status === 403)) {
         if (typeof window === "undefined") {
           redirect("/acessar");
         } else {

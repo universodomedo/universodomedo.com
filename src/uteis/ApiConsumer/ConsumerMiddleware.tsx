@@ -21,3 +21,10 @@ export async function salvaDisponibilidadeDeUsuario(disponibilidades: Disponibil
 export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) {
     return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina } });
 }
+
+
+//
+
+export async function healthcheck() {
+    return await useApi<string>({ uri: '/auth/me2', method: 'GET', desativaRedirect: true });
+}
