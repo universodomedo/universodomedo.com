@@ -33,7 +33,7 @@ function ConteudoSwiperEsquerda() {
             { link: '/definicoes', target: '', titulo: 'Definições' },
             { link: '/em-jogo', target: '', titulo: 'Ficha de Demonstração' },
             // { link: '/minha-pagina', target: '', titulo: 'Minha Página' },
-            // { link: '/minhas-disponibilidades', target: '', titulo: 'Minhas Disponibilidades' },
+            { link: '/minhas-disponibilidades', target: '', titulo: 'Minhas Disponibilidades' },
             // { link: '/linha-do-tempo', target: '', titulo: 'Linha do Tempo' },
         ];
     }

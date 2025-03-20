@@ -15,7 +15,7 @@ export async function obtemDadosMinhasDisponibilidades() {
 }
 
 export async function salvaDisponibilidadeDeUsuario(disponibilidades: DisponibilidadeUsuario[]) {
-    return await useApi<void>({ uri: '/disponibilidadesUsuario/salvaDisponibilidadeDeUsuario', method: 'POST', data: disponibilidades });
+    return await useApi<void>({ uri: '/disponibilidadesUsuario/salvaDisponibilidadeDeUsuario', method: 'POST', data: { disponibilidades: disponibilidades } });
 }
 
 export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) {

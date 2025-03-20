@@ -3,49 +3,10 @@
 import styles from './styles.module.css';
 import { useState } from 'react';
 
+import { DadosMinhasDisponibilidades, DisponibilidadeUsuario } from 'types-nora-api';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import { dds, obtemDiaDaSemanaPorExtendoPorDDS } from 'Helpers/diasSemana';
-
-class DadosMinhasDisponibilidades {
-    disponibilidades: DisponibilidadeUsuario[];
-
-    constructor(disponibilidades: DisponibilidadeUsuario[]) {
-        this.disponibilidades = disponibilidades;
-    }
-
-    get disponibilidadePorExtenso(): Record<number, string[]>[] {
-        const agrupadoPorDia: Record<number, string[]> = {};
-
-        // Agrupa as disponibilidades por dia da semana
-        this.disponibilidades.forEach(disponibilidade => {
-            const { diaDaSemana, horaInicio, horaFim } = disponibilidade;
-            const textoDisponibilidade = `Dísponível entre ${horaInicio} e ${horaFim}`;
-
-            if (!agrupadoPorDia[diaDaSemana]) {
-                agrupadoPorDia[diaDaSemana] = [];
-            }
-
-            agrupadoPorDia[diaDaSemana].push(textoDisponibilidade);
-        });
-
-        // Converte o objeto agrupado em uma lista de objetos
-        return Object.keys(agrupadoPorDia).map(dia => {
-            const diaNumero = Number(dia);
-            return { [diaNumero]: agrupadoPorDia[diaNumero] };
-        });
-    }
-}
-
-class DisponibilidadeUsuario {
-    diaDaSemana: number;
-    horaInicio: string;
-    horaFim: string;
-    constructor(diaDaSemana: number, horaInicio: string, horaFim: string) {
-        this.diaDaSemana = diaDaSemana;
-        this.horaInicio = horaInicio;
-        this.horaFim = horaFim;
-    }
-}
+import { salvaDisponibilidadeDeUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 export default function MinhaDisponibilidadeComDados({ listaDisponibilidades }: { listaDisponibilidades: DisponibilidadeUsuario[] }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -67,7 +28,7 @@ export default function MinhaDisponibilidadeComDados({ listaDisponibilidades }: 
 
             <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <Modal.Content title={'Configurando Disponibilidades'}>
-                    <ConteudoModal />
+                    <ConteudoModal listaDisponibilidades={listaDisponibilidades} />
                 </Modal.Content>
             </Modal>
         </div>
@@ -116,15 +77,12 @@ function CorpoDisponibilidades({ disponibilidadesPorExtenso }: { disponibilidade
     );
 };
 
-function ConteudoModal() {
-    const [disponibilidades, setDisponibilidades] = useState<DisponibilidadeUsuario[]>([
-        new DisponibilidadeUsuario(1, '01:00', '02:30'),
-    ]);
+function ConteudoModal({ listaDisponibilidades }: { listaDisponibilidades: DisponibilidadeUsuario[] }) {
+    const [disponibilidades, setDisponibilidades] = useState<DisponibilidadeUsuario[]>(listaDisponibilidades);
     const [diaDaSemana, setDiaDaSemana] = useState<number>(1);
     const [horaInicio, setHoraInicio] = useState<string>('08:00');
     const [horaFim, setHoraFim] = useState<string>('17:00');
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
 
     const adicionarDisponibilidade = () => {
         const novaDisponibilidade = new DisponibilidadeUsuario(diaDaSemana, horaInicio, horaFim);
@@ -136,29 +94,56 @@ function ConteudoModal() {
         setDisponibilidades(novasDisponibilidades);
     };
 
-    const salvarDisponibilidades = async () => {
-        setIsLoading(true);
-        try {
-            const response = await fetch('/api/salvarDisponibilidades', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(disponibilidades),
+    const trataListaDisponibilidades = () => {
+        const disponibilidadesTratadas: DisponibilidadeUsuario[] = [];
+
+        const disponibilidadesPorDia: Record<number, DisponibilidadeUsuario[]> = {};
+
+        // Agrupar disponibilidades por dia da semana
+        disponibilidades.forEach((disp) => {
+            if (!disponibilidadesPorDia[disp.diaDaSemana]) {
+                disponibilidadesPorDia[disp.diaDaSemana] = [];
+            }
+            disponibilidadesPorDia[disp.diaDaSemana].push(disp);
+        });
+
+        // Ordenar e mesclar disponibilidades para cada dia
+        Object.keys(disponibilidadesPorDia).forEach((dia) => {
+            const lista = disponibilidadesPorDia[Number(dia)];
+
+            // Ordenar pelo horário de início
+            lista.sort((a, b) => a.horaInicio.localeCompare(b.horaInicio));
+
+            const mescladas: DisponibilidadeUsuario[] = [];
+
+            lista.forEach((disp) => {
+                if (mescladas.length === 0) {
+                    mescladas.push(disp);
+                    return;
+                }
+
+                const ultima = mescladas[mescladas.length - 1];
+
+                if (disp.horaInicio <= ultima.horaFim) {
+                    // Mesclar horários sobrepostos
+                    ultima.horaFim = disp.horaFim > ultima.horaFim ? disp.horaFim : ultima.horaFim;
+                } else {
+                    mescladas.push(disp);
+                }
             });
 
-            if (response.ok) {
-                window.location.reload();
-            } else {
-                alert('Erro ao salvar disponibilidades.');
-            }
-        } catch (error) {
-            console.error('Erro ao salvar disponibilidades:', error);
-            alert('Erro ao salvar disponibilidades.');
-        } finally {
-            setIsLoading(false);
-        }
+            disponibilidadesTratadas.push(...mescladas);
+        });
+
+        return disponibilidadesTratadas;
     };
+
+    const salvarDisponibilidades = async () => {
+        console.log('vou enviar');
+        console.log(trataListaDisponibilidades());
+        await salvaDisponibilidadeDeUsuario(trataListaDisponibilidades());
+        // window.location.reload();
+    }
 
     return (
         <div id={styles.recipiente_modal_disponibilidades}>
@@ -193,35 +178,32 @@ function ConteudoModal() {
             </div>
 
             <div id={styles.recipiente_adicao_disponibilidade}>
-                <h3>Adicionar Nova Disponibilidade</h3>
-                <div>
-                    <label>
-                        Dia da Semana:
+                <h2>Adicionar Nova Disponibilidade</h2>
+                <div id={styles.recipiente_informaacoes_adicionar_disponibilidade}>
+                    <div>
+                        <h3>Dia da Semana</h3>
                         <select value={diaDaSemana} onChange={(e) => setDiaDaSemana(Number(e.target.value))}>
+                            <option value={0}>Domingo</option>
                             <option value={1}>Segunda-feira</option>
                             <option value={2}>Terça-feira</option>
                             <option value={3}>Quarta-feira</option>
                             <option value={4}>Quinta-feira</option>
                             <option value={5}>Sexta-feira</option>
                             <option value={6}>Sábado</option>
-                            <option value={7}>Domingo</option>
                         </select>
-                    </label>
-                    <br />
-                    <label>
-                        Hora Início:
+                    </div>
+                    <div>
+                        <h3>Hora Início</h3>
                         <input type="time" value={horaInicio} onChange={(e) => setHoraInicio(e.target.value)} />
-                    </label>
-                    <br />
-                    <label>
-                        Hora Fim:
+                    </div>
+                    <div>
+                        <h3>Hora Fim</h3>
                         <input type="time" value={horaFim} onChange={(e) => setHoraFim(e.target.value)} />
-                    </label>
-                    <br />
-                    <button onClick={adicionarDisponibilidade}>Adicionar</button>
+                    </div>
+                    <button id={styles.botao_adicionar_nova_disponibilidade} onClick={adicionarDisponibilidade} disabled={horaFim <= horaInicio}>Adicionar</button>
                 </div>
                 <div style={{ marginTop: '20px' }}>
-                    <button onClick={salvarDisponibilidades} disabled={isLoading}>
+                    <button onClick={salvarDisponibilidades} disabled={disponibilidades.length <= 0 || isLoading}>
                         {isLoading ? 'Salvando...' : 'Salvar'}
                     </button>
                 </div>

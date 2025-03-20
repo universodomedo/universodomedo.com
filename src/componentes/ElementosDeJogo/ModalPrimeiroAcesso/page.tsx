@@ -13,25 +13,65 @@ export default function ModalPrimeiroAcesso() {
     const [checkTopicosSensiveis, setCheckTopicosSensiveis] = useState(false);
     const [termo1, setTermo1] = useState(false);
     const [termo2, setTermo2] = useState(false);
-    const [erroApelido, setErroApelido] = useState("");
+    const [erroValidacao, setErroValidacao] = useState("");
+    const [erroTemporario, setErroTemporario] = useState("");
     const [podeProsseguir, setPodeProsseguir] = useState(false);
 
     const validarApelido = () => {
         if (apelido.trim() === "") return false;
 
         if (apelido.length < 4 || apelido.length > 25) {
-            setErroApelido("O apelido deve ter entre 4 e 25 caracteres.");
+            setErroValidacao("O apelido deve ter entre 4 e 25 caracteres.");
             return false;
         }
 
-        const regex = /^[a-zA-Z0-9 .,\/\-+]*$/;
+        const regex = /^[a-zA-Z0-9_\-@!?()\[\]\\\/|]*$/;
         if (!regex.test(apelido)) {
-            setErroApelido("Caracteres especiais não são permitidos.");
+            setErroValidacao("Caracteres especiais não permitidos.");
             return false;
         }
 
-        setErroApelido("");
+        setErroValidacao("");
         return true;
+    };
+
+    const handleApelidoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const valor = e.target.value.replace(/\s/g, ''); // Remove espaços em branco
+        const regex = /^[a-zA-Z0-9_\-@!?()\[\]\\\/|]*$/;
+        if (regex.test(valor)) {
+            setApelido(valor);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const tecla = e.key; // Captura a tecla pressionada
+    
+        // Verifica se a tecla é um espaço
+        if (tecla === " ") {
+            setErroTemporario("Não são permitidos espaços em branco.");
+            e.preventDefault(); // Impede que o espaço seja adicionado ao input
+        }
+    
+        // Remove o warning após 3 segundos
+        setTimeout(() => {
+            setErroTemporario("");
+        }, 3000);
+    };
+    
+    const handleBeforeInput = (e: React.FormEvent<HTMLInputElement>) => {
+        const inputEvent = e.nativeEvent as InputEvent; // Tipagem específica para o evento
+        const caractere = inputEvent.data; // Captura o caractere que está prestes a ser inserido
+    
+        // Verifica se o caractere é inválido
+        if (caractere && !/^[a-zA-Z0-9_\-@!?()\[\]\\\/|]$/.test(caractere)) {
+            setErroTemporario(`O caractere '${caractere}' não pode ser utilizado.`);
+            e.preventDefault(); // Impede que o caractere inválido seja adicionado ao input
+        }
+    
+        // Remove o warning após 3 segundos
+        setTimeout(() => {
+            setErroTemporario("");
+        }, 3000);
     };
 
     const termoAceito = () => {
@@ -45,8 +85,13 @@ export default function ModalPrimeiroAcesso() {
     }, [apelido, termo1, termo2]);
 
     async function completarRegistroUsuario() {
-        await salvaPrimeiroAcessoUsuario(apelido);
-        window.location.reload();
+        const retorno = await salvaPrimeiroAcessoUsuario(apelido);
+
+        if (retorno.erro) {
+            setErroValidacao(retorno.erro);
+        } else {
+            window.location.reload();
+        }
     }
 
     return (
@@ -63,8 +108,9 @@ export default function ModalPrimeiroAcesso() {
                             <div className={styles.recipiente_nome}>
                                 <span>O nome pode ser revogado caso seja considerado inapropriado</span>
 
-                                <input className={`${styles.recipiente_nome_input} ${!podeProsseguir ? styles.invalido : ''}`} type="text" value={apelido} onChange={(e) => setApelido(e.target.value)} />
-                                {erroApelido && <span className={styles.mensagem_erro}>{erroApelido}</span>}
+                                <input className={`${styles.recipiente_nome_input} ${!podeProsseguir ? styles.invalido : ''}`} type="text" value={apelido} onChange={handleApelidoChange} onBeforeInput={handleBeforeInput} onKeyDown={handleKeyDown} />
+                                {erroValidacao && <span className={styles.mensagem_erro}>{erroValidacao}</span>}
+                                {erroTemporario && <span className={styles.mensagem_erro}>{erroTemporario}</span>}
                             </div>
 
                         </div>
@@ -75,6 +121,13 @@ export default function ModalPrimeiroAcesso() {
                                 <span className={styles.disclaimer_termo}>Qualquer dúvida, procurar <Link target="_blank" href={'https://discord.universodomedo.com'}>suporte da Direção</Link></span>
                                 <span>Seguir para os <span className={`${styles.link_termo_aceite} ${!termoAceito() ? styles.nao_aceito : ''}`} onClick={() => setMostrarTermos(true)}>Termos de Aceite</span></span>
                             </div>
+
+                            {!podeProsseguir && (
+                                <div id={styles.aviso_pendencia}>
+                                    {(apelido === '' || erroValidacao !== '') && <span>Apelido não definido</span>}
+                                    {!termoAceito() && <span>Termos não aceito</span>}
+                                </div>
+                            )}
 
                             <button disabled={!podeProsseguir} onClick={completarRegistroUsuario}>Prosseguir</button>
                         </div>

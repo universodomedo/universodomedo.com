@@ -9,7 +9,6 @@ import Contato from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
 
 import { DadosMinhaPagina } from 'types-nora-api';
 
-
 export default function MinhaDisponibilidadeComDados({ dadosMinhaPagina }: { dadosMinhaPagina: DadosMinhaPagina}) {
     if (dadosMinhaPagina?.username === null) {
         return (

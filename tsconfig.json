@@ -29,7 +29,7 @@
       "Hooks/*": ["hooks/*"],
       "Provedores/*": ["provedores/*"],
       "Servicos/*": ["servicos/*"],
-      "Uteis/*": ["uteis/*"],
+      "Uteis/*": ["uteis/*"]
     },
     "allowImportingTsExtensions": true,
   },

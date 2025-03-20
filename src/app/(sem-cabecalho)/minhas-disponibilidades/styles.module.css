@@ -82,3 +82,14 @@
 #recipiente_adicao_disponibilidade {
     flex: 0 0 0;
 }
+
+#recipiente_informaacoes_adicionar_disponibilidade {
+    display: flex;
+    flex-direction: row;
+    gap: 1vh;
+    flex: 1;
+}
+
+#botao_adicionar_nova_disponibilidade {
+    padding: 1vh;
+}
