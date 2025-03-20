@@ -12,7 +12,7 @@ export default function BarraUsuario({ dadosMinhaPagina }: { dadosMinhaPagina: D
             <div className={styles.recipiente_informacoes_usuario}>
                 <h1>{dadosMinhaPagina.username}</h1>
             </div>
-            <div className={styles.recipiente_conquistas_usuario}>
+            {/* <div className={styles.recipiente_conquistas_usuario}>
                 <div className={styles.recipiente_conquista}>
                     <Image alt='' src={'/medalha.png'} fill />
                 </div>
@@ -22,7 +22,7 @@ export default function BarraUsuario({ dadosMinhaPagina }: { dadosMinhaPagina: D
                 <div className={styles.recipiente_conquista}>
                     <Image alt='' src={'/medalha.png'} fill />
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };

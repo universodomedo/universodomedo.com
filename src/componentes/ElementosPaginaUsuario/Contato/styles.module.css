@@ -1,13 +1,14 @@
 .recipiente_contato {
     display: flex;
     flex-direction: row;
-    height: 10%;
+    height: 10vh;
     position: relative;
     gap: 1vw;
 }
 
 .recipiente_imagem_contato {
     position: relative;
+    height: 100%;
     aspect-ratio: 1 / 1;
 }
 
