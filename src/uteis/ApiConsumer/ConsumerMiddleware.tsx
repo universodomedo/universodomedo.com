@@ -22,9 +22,12 @@ export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) 
     return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina } });
 }
 
-
 //
 
-export async function healthcheck() {
+export async function authCheck() {
     return await useApi<string>({ uri: '/auth/me2', method: 'GET', desativaRedirect: true });
+}
+
+export async function verificaLogado() {
+    return await useApi<string>({ uri: '/auth/loggedIn', method: 'GET' });
 }

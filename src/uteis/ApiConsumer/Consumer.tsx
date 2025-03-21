@@ -52,6 +52,7 @@ export default async function useApi<T>({ uri, method, data, params, desativaRed
       return (await apiClient.request<RespostaBackEnd<T>>({ url: uri, method, data, params, withCredentials: true })).data;
     }
   } catch (error) {
+    console.log('catch');
     if (axios.isAxiosError(error)) {
       if (!desativaRedirect && (error.response?.status === 401 || error.response?.status === 403)) {
         if (typeof window === "undefined") {

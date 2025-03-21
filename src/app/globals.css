@@ -52,7 +52,11 @@ svg {
 }
 
 .svg-inline--fa {
-  all: unset !important;
+  /* all: unset !important; */
+  display: inherit;
+  height: inherit;
+  overflow: inherit;
+  vertical-align: inherit;
 }
 
 /* 

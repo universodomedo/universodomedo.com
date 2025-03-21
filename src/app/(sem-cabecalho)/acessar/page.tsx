@@ -3,6 +3,9 @@
 import styles from './style.module.css';
 import Image from 'next/image';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDiscord } from "@fortawesome/free-brands-svg-icons";
+
 
 export default function Acessar() {
     const handleLogin = () => {
@@ -18,7 +21,11 @@ export default function Acessar() {
             <div id={styles.recipiente_formulario_acesso}>
                 <Image src={'/imagensFigma/bg-form-acesso.png'} alt='' fill quality={100} />
                 <div id={styles.recipiente_conteudo_formulario_acesso}>
-                    <button onClick={handleLogin} style={{ padding: '.6vh' }}>{process.env.NEXT_PUBLIC_ENV}</button>
+                    <h1>Acessar</h1>
+                    <div id={styles.recipiente_botao_acesso_discord}>
+                        <FontAwesomeIcon id={styles.botao_acesso_discord} icon={faDiscord} onClick={handleLogin} />
+                    </div>
+                    {/* <button onClick={handleLogin} style={{ padding: '.6vh' }}>{process.env.NEXT_PUBLIC_ENV}</button> */}
                 </div>
             </div>
         </div>

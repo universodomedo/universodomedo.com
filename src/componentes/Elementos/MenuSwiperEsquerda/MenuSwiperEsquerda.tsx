@@ -9,6 +9,7 @@ import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsque
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-brands-svg-icons";
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 export default function MenuSwiperEsquerda() {
     const { menuAberto, setMenuAberto, tamanhoReduzido } = useContextoMenuSwiperEsquerda();
@@ -28,17 +29,20 @@ export default function MenuSwiperEsquerda() {
 };
 
 function ConteudoSwiperEsquerda() {
-    const obterItensMenu = (): { link: string, target: string, titulo: string, }[] => {
+    const { estaAutenticado } = useContextoAutenticacao();
+
+    const obterItensMenu = (): { link: string, target: string, titulo: string, condicao?: boolean }[] => {
         return [
             { link: '/definicoes', target: '', titulo: 'Definições' },
+            { link: '/dicas', target: '', titulo: 'Dicas' },
             { link: '/em-jogo', target: '', titulo: 'Ficha de Demonstração' },
-            // { link: '/minha-pagina', target: '', titulo: 'Minha Página' },
-            { link: '/minhas-disponibilidades', target: '', titulo: 'Minhas Disponibilidades' },
+            { link: '/minha-pagina', target: '', titulo: 'Minha Página', condicao: estaAutenticado },
+            { link: '/minhas-disponibilidades', target: '', titulo: 'Minhas Disponibilidades', condicao: estaAutenticado },
             // { link: '/linha-do-tempo', target: '', titulo: 'Linha do Tempo' },
         ];
     }
 
-    const itensMenu = obterItensMenu();
+    const itensMenu = obterItensMenu().filter(item => item.condicao === undefined || item.condicao);
 
     return (
         <div className={styles.recipiente_conteudo_swiper_esquerda}>

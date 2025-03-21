@@ -26,5 +26,20 @@
     display: flex;
     flex-direction: column;
     z-index: 999;
-    row-gap: 5vh;
+    row-gap: 8vh;
+    margin-bottom: 11%;
+}
+
+#recipiente_conteudo_formulario_acesso h1 {
+    font-family: var(--fonte-cinzel-decorative);
+}
+
+#recipiente_botao_acesso_discord {
+    cursor: pointer;
+}
+
+#botao_acesso_discord {
+    color: #7289DA; /* Cor do ícone do Discord */
+    cursor: pointer;
+    transition: filter 0.3s ease;
 }

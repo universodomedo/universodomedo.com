@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from "react";
-import { healthcheck } from "Uteis/ApiConsumer/ConsumerMiddleware";
+import { authCheck } from "Uteis/ApiConsumer/ConsumerMiddleware";
 
-export default function PaginaHealthCheck() {
+export default function PaginaAuthCheck() {
     const [emailUser, setEmailUser] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -12,7 +12,7 @@ export default function PaginaHealthCheck() {
     };
 
     async function aplicaAuth() {
-        const response = await healthcheck();
+        const response = await authCheck();
 
         if (response.sucesso && response.dados) {
             setEmailUser(response.dados);
