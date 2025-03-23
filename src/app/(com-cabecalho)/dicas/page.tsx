@@ -17,7 +17,12 @@ export default async function PaginaDefinicao({ params }: { params: { chave?: st
                             tipo: 'ItemLista',
                             etiqueta: 'Disponibilidades',
                             subPaginaDefinicao: '/dicas/disponibilidades'
-                        }
+                        },
+                        {
+                            tipo: 'ItemLista',
+                            etiqueta: 'Termos de Aceite',
+                            subPaginaDefinicao: '/dicas/termos-de-aceite'
+                        },
                     ]
                 }
             ]

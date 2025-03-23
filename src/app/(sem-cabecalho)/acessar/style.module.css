@@ -28,6 +28,8 @@
     z-index: 999;
     row-gap: 8vh;
     margin-bottom: 11%;
+    text-align: center;
+    align-items: center;
 }
 
 #recipiente_conteudo_formulario_acesso h1 {
@@ -36,10 +38,15 @@
 
 #recipiente_botao_acesso_discord {
     cursor: pointer;
+    width: 40%;
 }
 
 #botao_acesso_discord {
     color: #7289DA; /* Cor do ícone do Discord */
     cursor: pointer;
     transition: filter 0.3s ease;
+}
+
+#botao_acesso_discord:hover {
+    filter: saturate(2);
 }
