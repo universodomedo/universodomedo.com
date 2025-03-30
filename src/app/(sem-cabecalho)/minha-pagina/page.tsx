@@ -1,5 +1,4 @@
 import { obtemDadosMinhaPagina } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
-
 import MinhaPaginaComDados from './page-dados.tsx';
 
 export default async function MinhaPagina() {

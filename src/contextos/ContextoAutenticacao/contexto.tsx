@@ -21,7 +21,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     const checkAuth = async () => {
         try {
             const response = await verificaLogado();
-            console.log({response});
+            // console.log({response});
             setEstaAutenticado(response.sucesso);
         } catch (error) {
             setEstaAutenticado(false);

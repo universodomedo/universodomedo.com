@@ -3,12 +3,12 @@
 import styles from './styles.module.css';
 import { useState } from 'react';
 
-import { DadosMinhasDisponibilidades, DisponibilidadeUsuario } from 'types-nora-api';
+import { DadosMinhasDisponibilidades, DisponibilidadeUsuarioDto } from 'types-nora-api';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
-import { dds, obtemDiaDaSemanaPorExtendoPorDDS } from 'Helpers/diasSemana';
+import { dds, obtemDiaDaSemanaPorExtensoPorDDS } from 'Helpers/diasSemana';
 import { salvaDisponibilidadeDeUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
-export default function MinhaDisponibilidadeComDados({ listaDisponibilidades }: { listaDisponibilidades: DisponibilidadeUsuario[] }) {
+export default function MinhaDisponibilidadeComDados({ listaDisponibilidades }: { listaDisponibilidades: DisponibilidadeUsuarioDto[] }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
 
@@ -77,16 +77,16 @@ function CorpoDisponibilidades({ disponibilidadesPorExtenso }: { disponibilidade
     );
 };
 
-function ConteudoModal({ listaDisponibilidades }: { listaDisponibilidades: DisponibilidadeUsuario[] }) {
-    const [disponibilidades, setDisponibilidades] = useState<DisponibilidadeUsuario[]>(listaDisponibilidades);
+function ConteudoModal({ listaDisponibilidades }: { listaDisponibilidades: DisponibilidadeUsuarioDto[] }) {
+    const [disponibilidades, setDisponibilidades] = useState<DisponibilidadeUsuarioDto[]>(listaDisponibilidades);
     const [diaDaSemana, setDiaDaSemana] = useState<number>(1);
     const [horaInicio, setHoraInicio] = useState<string>('08:00');
     const [horaFim, setHoraFim] = useState<string>('17:00');
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const adicionarDisponibilidade = () => {
-        const novaDisponibilidade = new DisponibilidadeUsuario(diaDaSemana, horaInicio, horaFim);
-        setDisponibilidades([...disponibilidades, novaDisponibilidade]);
+        // const novaDisponibilidade = new DisponibilidadeUsuario(diaDaSemana, horaInicio, horaFim);
+        // setDisponibilidades([...disponibilidades, novaDisponibilidade]);
     };
 
     const removerDisponibilidade = (index: number) => {
@@ -95,9 +95,9 @@ function ConteudoModal({ listaDisponibilidades }: { listaDisponibilidades: Dispo
     };
 
     const trataListaDisponibilidades = () => {
-        const disponibilidadesTratadas: DisponibilidadeUsuario[] = [];
+        const disponibilidadesTratadas: DisponibilidadeUsuarioDto[] = [];
 
-        const disponibilidadesPorDia: Record<number, DisponibilidadeUsuario[]> = {};
+        const disponibilidadesPorDia: Record<number, DisponibilidadeUsuarioDto[]> = {};
 
         // Agrupar disponibilidades por dia da semana
         disponibilidades.forEach((disp) => {
@@ -114,7 +114,7 @@ function ConteudoModal({ listaDisponibilidades }: { listaDisponibilidades: Dispo
             // Ordenar pelo horário de início
             lista.sort((a, b) => a.horaInicio.localeCompare(b.horaInicio));
 
-            const mescladas: DisponibilidadeUsuario[] = [];
+            const mescladas: DisponibilidadeUsuarioDto[] = [];
 
             lista.forEach((disp) => {
                 if (mescladas.length === 0) {
@@ -164,7 +164,7 @@ function ConteudoModal({ listaDisponibilidades }: { listaDisponibilidades: Dispo
                         <tbody>
                             {disponibilidades.map((disp, index) => (
                                 <tr key={index}>
-                                    <td>{obtemDiaDaSemanaPorExtendoPorDDS(disp.diaDaSemana as dds)}</td>
+                                    <td>{obtemDiaDaSemanaPorExtensoPorDDS(disp.diaDaSemana as dds)}</td>
                                     <td>{disp.horaInicio}</td>
                                     <td>{disp.horaFim}</td>
                                     <td>

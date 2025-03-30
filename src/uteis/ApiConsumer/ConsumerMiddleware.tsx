@@ -1,9 +1,9 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { DadosMinhaPagina, DadosMinhasDisponibilidades, DisponibilidadeUsuario, EstruturaPaginaDefinicao } from 'types-nora-api';
+import { AventuraDto, DadosMinhasDisponibilidades, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, PersonagemDto, UsuarioDto } from 'types-nora-api';
 
 export async function obtemDadosMinhaPagina() {
-    return await useApi<DadosMinhaPagina>({ uri: '/paginas/obtemDadosMinhaPagina', method: 'GET' });
+    return await useApi<UsuarioDto>({ uri: '/usuarios/obtemDadosMinhaPagina', method: 'GET' });
 }
 
 export async function salvaPrimeiroAcessoUsuario(username: string) {
@@ -11,15 +11,23 @@ export async function salvaPrimeiroAcessoUsuario(username: string) {
 }
 
 export async function obtemDadosMinhasDisponibilidades() {
-    return await useApi<DadosMinhasDisponibilidades>({ uri: '/paginas/obtemDadosMinhasDisponibilidades', method: 'GET' });
+    return await useApi<DadosMinhasDisponibilidades>({ uri: '/disponibilidadesUsuario/obtemDadosMinhasDisponibilidades', method: 'GET' });
 }
 
-export async function salvaDisponibilidadeDeUsuario(disponibilidades: DisponibilidadeUsuario[]) {
+export async function salvaDisponibilidadeDeUsuario(disponibilidades: DisponibilidadeUsuarioDto[]) {
     return await useApi<void>({ uri: '/disponibilidadesUsuario/salvaDisponibilidadeDeUsuario', method: 'POST', data: { disponibilidades: disponibilidades } });
 }
 
 export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) {
     return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina } });
+}
+
+export async function obtemDadosPaginaAventuras() {
+    return await useApi<AventuraDto[]>({ uri: '/aventuras/obtemListaDeAventurasComPossivelUsuario', method: 'GET' });
+}
+
+export async function obtemDadosPaginaPersonagens() {
+    return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemDadosPaginaPersonagens', method: 'GET' });
 }
 
 //

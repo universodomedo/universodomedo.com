@@ -1,0 +1,40 @@
+#recipiente_pagina_personagens {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 2% 10%;
+    align-items: center;
+    text-align: center;
+    gap: 5vh;
+    font-size: 1.3rem;
+    font-family: var(--fonte-cinzel);
+}
+
+#recipiente_lista_personagens {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 5vh 5%;
+}
+
+.recipiente_personagem {
+    display: flex;
+    flex-direction: row;
+    gap: 3vw;
+}
+
+.recipiente_avatar_personagem {
+    position: relative;
+    height: 15vh;
+    aspect-ratio: 1 / 1;
+}
+
+.recipiente_informacoes1_personagem {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+}
+
+.recipiente_nome_personagem {
+
+}

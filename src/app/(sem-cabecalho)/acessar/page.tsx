@@ -25,7 +25,6 @@ export default function Acessar() {
                     <div id={styles.recipiente_botao_acesso_discord}>
                         <FontAwesomeIcon id={styles.botao_acesso_discord} icon={faDiscord} onClick={handleLogin} />
                     </div>
-                    {/* <button onClick={handleLogin} style={{ padding: '.6vh' }}>{process.env.NEXT_PUBLIC_ENV}</button> */}
                 </div>
             </div>
         </div>

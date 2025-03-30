@@ -10,14 +10,14 @@ import BarraUsuario from 'Componentes/ElementosPaginaUsuario/BarraUsuario/page.t
 import Post from 'Componentes/ElementosPaginaUsuario/Post/page.tsx';
 import Contato from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
 
-import { DadosMinhaPagina } from 'types-nora-api';
+import { UsuarioDto } from 'types-nora-api';
 
 // Initialize socket
 const socket = io('https://api.universodomedo.com', {
     withCredentials: true,
 });
 
-export default function MinhaDisponibilidadeComDados({ dadosMinhaPagina }: { dadosMinhaPagina: DadosMinhaPagina }) {
+export default function MinhaDisponibilidadeComDados({ dadosMinhaPagina }: { dadosMinhaPagina: UsuarioDto }) {
     if (dadosMinhaPagina?.username === null) {
         return <ModalPrimeiroAcesso />;
     }

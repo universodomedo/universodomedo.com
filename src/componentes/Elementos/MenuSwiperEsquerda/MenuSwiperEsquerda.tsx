@@ -33,10 +33,12 @@ function ConteudoSwiperEsquerda() {
 
     const obterItensMenu = (): { link: string, target: string, titulo: string, condicao?: boolean }[] => {
         return [
+            { link: '/aventuras', target: '', titulo: 'Aventuras' },
             { link: '/definicoes', target: '', titulo: 'Definições' },
             { link: '/dicas', target: '', titulo: 'Dicas' },
             { link: '/em-jogo', target: '', titulo: 'Ficha de Demonstração' },
             { link: '/minha-pagina', target: '', titulo: 'Minha Página', condicao: estaAutenticado },
+            { link: '/meus-personagens', target: '', titulo: 'Meus Personagens', condicao: estaAutenticado },
             { link: '/minhas-disponibilidades', target: '', titulo: 'Minhas Disponibilidades', condicao: estaAutenticado },
             // { link: '/linha-do-tempo', target: '', titulo: 'Linha do Tempo' },
         ];
