@@ -29,7 +29,7 @@ export default function MenuSwiperEsquerda() {
 };
 
 function ConteudoSwiperEsquerda() {
-    const { estaAutenticado } = useContextoAutenticacao();
+    const { estaAutenticado, usuarioLogado } = useContextoAutenticacao();
 
     const obterItensMenu = (): { link: string, target: string, titulo: string, condicao?: boolean }[] => {
         return [
@@ -40,6 +40,7 @@ function ConteudoSwiperEsquerda() {
             { link: '/minha-pagina', target: '', titulo: 'Minha Página', condicao: estaAutenticado },
             { link: '/meus-personagens', target: '', titulo: 'Meus Personagens', condicao: estaAutenticado },
             { link: '/minhas-disponibilidades', target: '', titulo: 'Minhas Disponibilidades', condicao: estaAutenticado },
+            { link: '/uploads', target: '', titulo: 'Uploads', condicao: usuarioLogado?.perfilAdmin.id === 2 },
             // { link: '/linha-do-tempo', target: '', titulo: 'Linha do Tempo' },
         ];
     }

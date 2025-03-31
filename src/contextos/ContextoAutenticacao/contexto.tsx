@@ -1,10 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { verificaLogado } from "Uteis/ApiConsumer/ConsumerMiddleware";
+import { UsuarioDto } from 'types-nora-api';
+import { verificaLogado, obtemUsuarioLogado } from "Uteis/ApiConsumer/ConsumerMiddleware";
 
 interface ContextoAutenticacaoProps {
     estaAutenticado: boolean;
+    usuarioLogado: UsuarioDto | undefined;
 };
 
 const ContextoAutenticacao = createContext<ContextoAutenticacaoProps | undefined>(undefined);
@@ -17,23 +19,42 @@ export const useContextoAutenticacao = (): ContextoAutenticacaoProps => {
 
 export const ContextoAutenticacaoProvider = ({ children }: { children: React.ReactNode }) => {
     const [estaAutenticado, setEstaAutenticado] = useState(false);
+    const [usuarioLogado, setUsuarioLogado] = useState<UsuarioDto | undefined>(undefined);
 
     const checkAuth = async () => {
         try {
             const response = await verificaLogado();
-            // console.log({response});
             setEstaAutenticado(response.sucesso);
         } catch (error) {
             setEstaAutenticado(false);
         }
     };
 
+    const atualizaRefUsuarioLogado = async () => {
+        try {
+            const response = await obtemUsuarioLogado();
+            if (response.sucesso) {
+                setUsuarioLogado(response.dados);
+            } else {
+                setUsuarioLogado(undefined);
+            }
+        } catch (error) {
+            setUsuarioLogado(undefined);
+        }
+    }
+
     useEffect(() => {
         checkAuth();
     }, []);
 
+    useEffect(() => {
+        if (estaAutenticado) {
+            atualizaRefUsuarioLogado();
+        }
+    }, [estaAutenticado]);
+
     return (
-        <ContextoAutenticacao.Provider value={{ estaAutenticado }}>
+        <ContextoAutenticacao.Provider value={{ estaAutenticado, usuarioLogado }}>
             {children}
         </ContextoAutenticacao.Provider>
     );

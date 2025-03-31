@@ -2,8 +2,8 @@ import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
 import { AventuraDto, DadosMinhasDisponibilidades, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, PersonagemDto, UsuarioDto } from 'types-nora-api';
 
-export async function obtemDadosMinhaPagina() {
-    return await useApi<UsuarioDto>({ uri: '/usuarios/obtemDadosMinhaPagina', method: 'GET' });
+export async function obtemUsuarioLogado() {
+    return await useApi<UsuarioDto>({ uri: '/usuarios/obtemUsuarioLogado', method: 'GET' });
 }
 
 export async function salvaPrimeiroAcessoUsuario(username: string) {
@@ -28,6 +28,13 @@ export async function obtemDadosPaginaAventuras() {
 
 export async function obtemDadosPaginaPersonagens() {
     return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemDadosPaginaPersonagens', method: 'GET' });
+}
+
+export async function uploadImagem(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return await useApi<boolean>({ uri: '/imagens/upload', method: 'POST', data: formData});
 }
 
 //
