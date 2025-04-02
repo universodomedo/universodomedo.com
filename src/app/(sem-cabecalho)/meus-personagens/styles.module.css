@@ -10,10 +10,31 @@
     font-family: var(--fonte-cinzel);
 }
 
+.recipiente_avisos_convite_pendentes {
+    display: flex;
+    flex-direction: column;
+    font-size: .8rem;
+    padding: 2vh;
+    color: #8dff8d;
+    border: #8dff8d 1px solid;
+    border-radius: 1vw;
+}
+
+.recipiente_botoes_aviso_convite_pendente {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+    margin: auto;
+}
+
+.recipiente_botoes_aviso_convite_pendente button {
+    padding: 0.5rem;
+}
+
 #recipiente_lista_personagens {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 80%;
     gap: 5vh 5%;
 }
 
@@ -25,7 +46,7 @@
 
 .recipiente_avatar_personagem {
     position: relative;
-    height: 15vh;
+    height: 8.6rem;
     aspect-ratio: 1 / 1;
 }
 
@@ -33,8 +54,24 @@
     display: flex;
     flex-direction: column;
     text-align: start;
+    flex: 1;
 }
 
-.recipiente_nome_personagem {
+.recipiente_informacoes_personagem {
+    flex: 1;
+}
 
+.recipiente_pendencia {
+    flex: 0;
+    font-size: 1.2rem;
+    color: #ff596d;
+    font-weight: bold;
+}
+
+.recipiente_informacoes2_personagem {
+    display: flex;
+    flex-direction: column;
+    flex: 0;
+    justify-content: center;
+    white-space: nowrap;
 }

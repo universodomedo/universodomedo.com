@@ -22,19 +22,27 @@ export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) 
     return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina } });
 }
 
-export async function obtemDadosPaginaAventuras() {
-    return await useApi<AventuraDto[]>({ uri: '/aventuras/obtemListaDeAventurasComPossivelUsuario', method: 'GET' });
+export async function obtemTodasAventuras() {
+    return await useApi<AventuraDto[]>({ uri: '/aventuras/obtemTodasAventuras', method: 'GET' });
+}
+
+export async function obtemAventuraCompleta(idAventura: number) {
+    return await useApi<AventuraDto>({ uri: '/aventuras/obtemAventuraCompleta', method: 'GET', params: { idAventura } });
 }
 
 export async function obtemDadosPaginaPersonagens() {
     return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemDadosPaginaPersonagens', method: 'GET' });
 }
 
+export async function obtemDadosPersonagemDoUsuario(idPersonagem: number) {
+    return await useApi<PersonagemDto>({ uri: '/personagens/obtemDadosPersonagemDoUsuario', method: 'GET' });
+}
+
 export async function uploadImagem(file: File) {
     const formData = new FormData();
     formData.append('file', file);
 
-    return await useApi<boolean>({ uri: '/imagens/upload', method: 'POST', data: formData});
+    return await useApi<boolean>({ uri: '/imagens/upload', method: 'POST', data: formData });
 }
 
 //

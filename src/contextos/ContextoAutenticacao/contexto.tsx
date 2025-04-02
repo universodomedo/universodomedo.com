@@ -7,6 +7,7 @@ import { verificaLogado, obtemUsuarioLogado } from "Uteis/ApiConsumer/ConsumerMi
 interface ContextoAutenticacaoProps {
     estaAutenticado: boolean;
     usuarioLogado: UsuarioDto | undefined;
+    carregando: boolean;
 };
 
 const ContextoAutenticacao = createContext<ContextoAutenticacaoProps | undefined>(undefined);
@@ -20,6 +21,7 @@ export const useContextoAutenticacao = (): ContextoAutenticacaoProps => {
 export const ContextoAutenticacaoProvider = ({ children }: { children: React.ReactNode }) => {
     const [estaAutenticado, setEstaAutenticado] = useState(false);
     const [usuarioLogado, setUsuarioLogado] = useState<UsuarioDto | undefined>(undefined);
+    const [carregando, setCarregando] = useState(true);
 
     const checkAuth = async () => {
         try {
@@ -40,6 +42,8 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
             }
         } catch (error) {
             setUsuarioLogado(undefined);
+        } finally {
+            setCarregando(false);
         }
     }
 
@@ -54,7 +58,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     }, [estaAutenticado]);
 
     return (
-        <ContextoAutenticacao.Provider value={{ estaAutenticado, usuarioLogado }}>
+        <ContextoAutenticacao.Provider value={{ estaAutenticado, usuarioLogado, carregando }}>
             {children}
         </ContextoAutenticacao.Provider>
     );

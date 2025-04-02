@@ -39,11 +39,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <ContextoMenuSwiperEsquerdaProvider>
               <Fumaca />
               <main id={styles.main}>
-                <div id={styles.corpo}>
-                  <MenuSwiperEsquerda />
-                  <div id={styles.recipiente_conteudo_pagina}>
-                    {children}
-                  </div>
+                <MenuSwiperEsquerda />
+                <div id={styles.recipiente_conteudo_pagina}>
+                  {children}
                 </div>
               </main>
             </ContextoMenuSwiperEsquerdaProvider>

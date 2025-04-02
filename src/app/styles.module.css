@@ -22,22 +22,6 @@
     max-height: calc(100vw * 9 / 16); */
 }
 
-#corpo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2vh;
-    flex: 1;
-    font-family: 'Barlow', sans-serif;
-}
-
-#corpo p {
-    font-weight: bold;
-    font-size: 1.4rem;
-    line-height: 1.3rem;
-    margin: 0;
-}
-
 #recipiente_conteudo_pagina {
     display: flex;
     flex-direction: column;
@@ -45,4 +29,16 @@
     width: 100%;
     flex: 1;
     gap: 3vh;
+    overflow: hidden auto;
+    scrollbar-width: none;
+    scrollbar-gutter: stable;
+
+    font-family: 'Barlow', sans-serif;
 }
+
+/* #recipiente_conteudo_pagina p {
+    font-weight: bold;
+    font-size: 1.4rem;
+    line-height: 1.3rem;
+    margin: 0;
+} */
