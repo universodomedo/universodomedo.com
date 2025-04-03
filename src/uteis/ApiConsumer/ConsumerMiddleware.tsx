@@ -45,6 +45,10 @@ export async function uploadImagem(file: File) {
     return await useApi<boolean>({ uri: '/imagens/many/avatar', method: 'POST', data: formData });
 }
 
+export async function atualizaAvatarUsuario(idPersonagem: number) {
+    return await useApi<void>({ uri: '/usuarios/atualizaAvatarUsuario', method: 'PUT', data: { idPersonagem: idPersonagem } });
+}
+
 //
 
 export async function authCheck() {

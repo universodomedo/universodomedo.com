@@ -36,3 +36,44 @@
     height: 80%;
     aspect-ratio: 1;
 }
+
+#recipiente_selecao_avatares {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    row-gap: 5vh;
+    padding: 2vh 0;
+}
+
+#recipiente_selecao_avatares h2 {
+    margin: auto;
+}
+
+.recipiente_celula_avatar {
+    flex: 0 0 30%;
+    height: fit-content;
+}
+
+.recipiente_avatar {
+    position: relative;
+    aspect-ratio: 1;
+    height: 8rem;
+    margin: auto;
+}
+
+.recipiente_avatar:not(.selecionado_atual) {
+    cursor: pointer;
+}
+
+.recipiente_avatar img {
+    filter: drop-shadow(2px 4px 6px black);
+}
+
+.recipiente_avatar.selecionado_atual img {
+    filter: drop-shadow(2px 4px 6px rgb(233, 170, 55));
+}
+
+.recipiente_avatar:not(.selecionado_atual):hover img {
+    filter: drop-shadow(2px 4px 6px rgb(51, 255, 136));
+}
