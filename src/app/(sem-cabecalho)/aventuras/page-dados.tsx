@@ -60,11 +60,10 @@ export function SecaoCorpoAventuras({ dadosAventuras }: { dadosAventuras: Aventu
                     <div key={index} className={styles.recipiente_item_menu_aventuras} onClick={() => { selecionaAventura(aventura.id) }}>
                         <div className={styles.recipiente_imagem_aventura_item_menu}>
                             <Image alt='' src={`/testeCapa1.png`} fill />
-                            {/* <Image alt='' src={`${process.env.NEXT_PUBLIC_IMAGE_API_URL}${aventura.imagemCapa?.caminho}`} fill /> */}
                         </div>
                         <div className={styles.recipiente_dados_aventura}>
                             <h3>{aventura.titulo}</h3>
-                            <h3>{aventura.obtemEstadoAtual}</h3>
+                            <h3>{aventura.estadoAtual}</h3>
                         </div>
                     </div>
                 ))}

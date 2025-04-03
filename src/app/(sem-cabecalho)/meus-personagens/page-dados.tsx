@@ -41,7 +41,7 @@ export function ListaPersonagens() {
             {listaPersonagens!.map(personagem => (
                 <div key={personagem.id} className={styles.recipiente_personagem} onClick={() => selecionaPersonagem(personagem.id)}>
                     <div className={styles.recipiente_avatar_personagem}>
-                        <ElementoAvatar src={personagem.imagemAvatar?.caminho} />
+                        <ElementoAvatar src={personagem.imagemAvatar?.fullPath} />
                     </div>
                     <div className={styles.recipiente_informacoes1_personagem}>
                         <div className={styles.recipiente_informacoes_personagem}>

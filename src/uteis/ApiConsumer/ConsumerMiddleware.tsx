@@ -42,7 +42,7 @@ export async function uploadImagem(file: File) {
     const formData = new FormData();
     formData.append('file', file);
 
-    return await useApi<boolean>({ uri: '/imagens/upload', method: 'POST', data: formData });
+    return await useApi<boolean>({ uri: '/imagens/many/avatar', method: 'POST', data: formData });
 }
 
 //

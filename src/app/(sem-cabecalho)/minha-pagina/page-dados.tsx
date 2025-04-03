@@ -13,7 +13,7 @@ import Contato from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
 import { UsuarioDto } from 'types-nora-api';
 
 // Initialize socket
-const socket = io('https://api.universodomedo.com', {
+const socket = io('https://nora.universodomedo.com', {
     withCredentials: true,
 });
 
@@ -63,6 +63,9 @@ function SecaoPosts() {
             sendMessage();  // Trigger the message send when Enter key is pressed
         }
     };
+
+    // parar de mostrar enquanto n funcionando pq pessoal vai usar
+    // return <></>;
 
     return (
         <div id={styles.recipiente_lista_posts}>
