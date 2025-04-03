@@ -40,7 +40,7 @@ export async function obtemDadosPersonagemDoUsuario(idPersonagem: number) {
 
 export async function uploadImagem(file: File) {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('files', file);
 
     return await useApi<boolean>({ uri: '/imagens/many/avatar', method: 'POST', data: formData });
 }
