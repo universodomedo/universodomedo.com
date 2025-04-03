@@ -13,7 +13,7 @@ import Contato from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
 import { UsuarioDto } from 'types-nora-api';
 
 // Initialize socket
-const socket = io('https://nora.universodomedo.com', {
+const socket = io('https://ws.universodomedo.com', {
     withCredentials: true,
 });
 
