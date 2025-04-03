@@ -13,7 +13,7 @@ import Contato from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
 import { UsuarioDto } from 'types-nora-api';
 
 // Initialize socket
-const socket = io('https://ws.alef.universodomedo.com', {
+const socket = io(process.env.NEXT_PUBLIC_WEBSOCKET, {
     withCredentials: true,
 });
 
@@ -110,7 +110,7 @@ function SecaoContatos() {
         <div id={styles.portal_usuario_direita}>
             <div className={styles.secao_contatos}>
                 <div className={styles.topo_secao_contatos}>
-                    <h2>Usuários Conectados: {onlineUsers.length}</h2>
+                    <h2>Usuários Conectados:k {onlineUsers.length}</h2>
                 </div>
                 <ul className={styles.lista_usuarios}>
                     {onlineUsers.map((user, index) => (
