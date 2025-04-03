@@ -1,10 +1,11 @@
 import styles from './styles.module.css';
-import { PersonagemDto } from "types-nora-api";
+
+import { useContextoPaginaPersonagem } from 'Contextos/ContextoPaginaPersonagem/contexto.tsx';
 
 import Link from 'next/link';
 import ElementoAvatar from 'Uteis/ImagemLoader/ElementoAvatar';
 
-export default function PaginaPersonagensComDados({ dadosPersonagens }: { dadosPersonagens: PersonagemDto[] }) {
+export default function PaginaPersonagensComDados() {
     return (
         <div id={styles.recipiente_pagina_personagens}>
             <h1>Meus Personagens</h1>
@@ -16,13 +17,19 @@ export default function PaginaPersonagensComDados({ dadosPersonagens }: { dadosP
                     <button>Rejeitar</button>
                 </div>
             </div> */}
-            <ListaPersonagens dadosPersonagens={dadosPersonagens} />
+            <ListaPersonagens/>
         </div>
     );
 };
 
-export function ListaPersonagens({ dadosPersonagens }: { dadosPersonagens: PersonagemDto[] }) {
-    if (dadosPersonagens.length < 1) return (
+export function ListaPersonagens() {
+    const { listaPersonagens, buscaDadosGeraisPersonagem } = useContextoPaginaPersonagem();
+
+    function selecionaPersonagem(idPersonagem: number) {
+        buscaDadosGeraisPersonagem(idPersonagem);
+    }
+
+    if (listaPersonagens!.length < 1) return (
         <div>
             <h2>Nenhum Personagem foi encontrado</h2>
             <Link href={'/dicas/criando-um-novo-personagem'} target='_blank'><h2>Maiores informações sobre o Cadastro de Personagens</h2></Link>
@@ -31,8 +38,8 @@ export function ListaPersonagens({ dadosPersonagens }: { dadosPersonagens: Perso
 
     return (
         <div id={styles.recipiente_lista_personagens}>
-            {dadosPersonagens.map((personagem, index) => (
-                <div key={index} className={styles.recipiente_personagem}>
+            {listaPersonagens!.map(personagem => (
+                <div key={personagem.id} className={styles.recipiente_personagem} onClick={() => selecionaPersonagem(personagem.id)}>
                     <div className={styles.recipiente_avatar_personagem}>
                         <ElementoAvatar src={personagem.imagemAvatar?.caminho} />
                     </div>

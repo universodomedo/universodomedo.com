@@ -35,7 +35,7 @@ export async function obtemDadosPaginaPersonagens() {
 }
 
 export async function obtemDadosPersonagemDoUsuario(idPersonagem: number) {
-    return await useApi<PersonagemDto>({ uri: '/personagens/obtemDadosPersonagemDoUsuario', method: 'GET' });
+    return await useApi<PersonagemDto>({ uri: '/personagens/obtemDadosPersonagemDoUsuario', method: 'GET', params: { idPersonagem } });
 }
 
 export async function uploadImagem(file: File) {

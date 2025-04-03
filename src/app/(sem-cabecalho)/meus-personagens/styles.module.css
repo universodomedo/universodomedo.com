@@ -42,6 +42,12 @@
     display: flex;
     flex-direction: row;
     gap: 3vw;
+    cursor: pointer;
+    border-radius: .7vw .7vw .7vw .7vw;
+}
+
+.recipiente_personagem:hover {
+    backdrop-filter: contrast(.9);
 }
 
 .recipiente_avatar_personagem {
