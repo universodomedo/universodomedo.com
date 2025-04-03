@@ -13,7 +13,7 @@ import Contato from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
 import { UsuarioDto } from 'types-nora-api';
 
 // Initialize socket
-const socket = io('https://ws.universodomedo.com', {
+const socket = io('https://ws.alef.universodomedo.com', {
     withCredentials: true,
 });
 
@@ -93,13 +93,32 @@ function SecaoPosts() {
 }
 
 function SecaoContatos() {
+    const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+
+    useEffect(() => {
+        socket.on('updateUsers', (users: string[]) => {
+            console.log('Online users updated:', users);
+            setOnlineUsers(users);
+        });
+
+        return () => {
+            socket.off('updateUsers');
+        };
+    }, []);
+
     return (
         <div id={styles.portal_usuario_direita}>
             <div className={styles.secao_contatos}>
-                <div className={styles.topo_secao_contatos}><h2>Usuários Conectados - 0</h2></div>
-            </div>
-            <div className={styles.secao_contatos}>
-                <div className={styles.topo_secao_contatos}><h2>Usuários Desconectados - 0</h2></div>
+                <div className={styles.topo_secao_contatos}>
+                    <h2>Usuários Conectados: {onlineUsers.length}</h2>
+                </div>
+                <ul className={styles.lista_usuarios}>
+                    {onlineUsers.map((user, index) => (
+                        <li key={index} className={styles.usuario_online}>
+                            {user}
+                        </li>
+                    ))}
+                </ul>
             </div>
         </div>
     );
