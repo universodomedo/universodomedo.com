@@ -2,20 +2,17 @@
 
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-
 import styles from './styles.module.css';
-
 import ModalPrimeiroAcesso from "Componentes/ElementosDeJogo/ModalPrimeiroAcesso/page";
 import BarraUsuario from 'Componentes/ElementosPaginaUsuario/BarraUsuario/page.tsx';
-import Post from 'Componentes/ElementosPaginaUsuario/Post/page.tsx';
-import Contato from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
-
 import { UsuarioDto } from 'types-nora-api';
 
 // Initialize socket
-const socket = io(process.env.NEXT_PUBLIC_WEBSOCKET, {
+const socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL, {
     withCredentials: true,
 });
+
+console.log('socket.io client initialized' + process.env.NEXT_PUBLIC_WEBSOCKET_URL);
 
 export default function MinhaDisponibilidadeComDados({ dadosMinhaPagina }: { dadosMinhaPagina: UsuarioDto }) {
     if (dadosMinhaPagina?.username === null) {
@@ -110,7 +107,7 @@ function SecaoContatos() {
         <div id={styles.portal_usuario_direita}>
             <div className={styles.secao_contatos}>
                 <div className={styles.topo_secao_contatos}>
-                    <h2>Usuários Conectados:k {onlineUsers.length}</h2>
+                    <h2>Usuários Conectados: {onlineUsers.length}</h2>
                 </div>
                 <ul className={styles.lista_usuarios}>
                     {onlineUsers.map((user, index) => (
