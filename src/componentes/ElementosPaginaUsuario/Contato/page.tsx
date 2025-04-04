@@ -7,10 +7,12 @@ import { getSocket } from 'Libs/socket.ts';
 import { SOCKET_UsuarioContato } from 'types-nora-api';
 import ElementoAvatar from 'Uteis/ImagemLoader/ElementoAvatar';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 export default function SecaoContatos() {
     const [usuariosContato, setUsuariosContato] = useState<SOCKET_UsuarioContato[]>([]);
-    const usuariosContatoOrdenados = [...usuariosContato].sort((a, b) => {
+    const { usuarioLogado } = useContextoAutenticacao();
+    const usuariosContatoOrdenados = [...usuariosContato].filter(contato => contato.usuario.id !== usuarioLogado?.id).sort((a, b) => {
         if (a.conectado > b.conectado) return -1;
         if (a.conectado < b.conectado) return 1;
 
