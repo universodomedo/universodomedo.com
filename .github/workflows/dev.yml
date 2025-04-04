@@ -23,6 +23,7 @@ jobs:
         echo "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" >> .env
         echo "NEXT_PUBLIC_ENV=${{ secrets.NEXT_PUBLIC_ENV  }}" >> .env
         echo "NEXT_PUBLIC_WEBSOCKET_URL=${{ secrets.NEXT_PUBLIC_WEBSOCKET_URL }}" >> .env
+        echo "NEXT_PUBLIC_IMAGE_API_URL=${{ secrets.NEXT_PUBLIC_IMAGE_API_URL }}" >> .env
 
     - name: Prepare Docker files
       run: |
