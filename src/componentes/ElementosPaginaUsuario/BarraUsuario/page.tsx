@@ -36,11 +36,11 @@ export default function BarraUsuario({ dadosMinhaPagina }: { dadosMinhaPagina: U
                 </div>
             </div> */}
             </div>
-            {/* <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <Modal.Content title={'Atualizar Avatar'}>
                     <ConteudoModalAtualizaAvatar listaAvatares={dadosMinhaPagina.personagens?.filter(personagem => personagem.imagemAvatar !== null) ?? []} idPersonagemSelecinadoAtualmente={dadosMinhaPagina.customizacao.personagemAvatarPrincipal?.id} />
                 </Modal.Content>
-            </Modal> */}
+            </Modal>
         </>
     );
 };
