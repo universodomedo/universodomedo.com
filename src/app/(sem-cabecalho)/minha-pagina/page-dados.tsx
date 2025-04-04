@@ -21,7 +21,7 @@ export default function MinhaDisponibilidadeComDados({ dadosMinhaPagina }: { dad
                 <SecaoPosts />
             </div>
 
-            <SecaoContatos />
+            {/* <SecaoContatos /> */}
         </div>
     );
 }
