@@ -2,9 +2,10 @@
     display: flex;
     flex-direction: row;
     height: 100%;
-    width: 98%;
-    margin: 1%;
+    width: 100%;
+    margin: .6%;
     gap: 1vw;
+    overflow: hidden;
 }
 
 #portal_usuario_esquerda {

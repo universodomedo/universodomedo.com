@@ -59,6 +59,51 @@ svg {
   vertical-align: inherit;
 }
 
+
+/*  */
+
+/* Scrollbar Branca - Efeito de Opacidade */
+[data-scrollable] {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0) transparent; /* Branca transparente */
+  overflow-y: auto;
+}
+
+/* WebKit (Chrome, Safari) */
+[data-scrollable]::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-scrollable]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-scrollable]::-webkit-scrollbar-thumb {
+  background-color: white; /* COR BRANCA */
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* Mostrar scrollbar branca quando hover ou scrolling */
+[data-scrollable][data-scrolling="true"]::-webkit-scrollbar-thumb,
+[data-scrollable][data-hovered="true"]::-webkit-scrollbar-thumb {
+  opacity: 1;
+}
+
+/* Firefox - Scrollbar Branca */
+[data-scrollable] {
+  scrollbar-color: rgba(255, 255, 255, 0) transparent;
+}
+
+[data-scrollable][data-scrolling="true"],
+[data-scrollable][data-hovered="true"] {
+  scrollbar-color: white transparent; /* Branca sólida quando visível */
+}
+
+/*  */
+
 /* 
 body {
   background: linear-gradient(to bottom, #0b1623 0%, #1e3a5f 50%, #0b1623 100%);

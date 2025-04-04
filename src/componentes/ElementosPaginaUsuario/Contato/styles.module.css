@@ -4,32 +4,24 @@
     height: 100%;
     flex: .2;
     gap: 2vh;
+    overflow: auto;
 }
 
 .secao_contatos {
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: 1vh;
-    padding: 1vh 2%;
-    border-radius: .7vw .7vw 0 0;
-    backdrop-filter: contrast(0.6);
+    padding: .4vh .2vw;
+    border-radius: .7vw;
+    backdrop-filter: contrast(.95);
 }
 
 .recipiente_lista_contatos {
     display: flex;
     flex-direction: column;
     position: relative;
-    gap: 2vh;
+    gap: 1vh;
 }
-/* 
-.secao_contatos::before {
-    content: '';
-    display: block;
-    width: 100%;
-    height: 2vh;
-    background-color: aqua;
-} */
 
 .ficha_existente {
     display: flex;
@@ -98,13 +90,12 @@
     gap: 2vh;
 }
 
-
 /*  */
 
 .recipiente_contato {
     display: flex;
     flex-direction: row;
-    height: 10vh;
+    height: 7.3rem;
     position: relative;
     gap: 1vw;
 }
@@ -115,7 +106,12 @@
     aspect-ratio: 1 / 1;
 }
 
+.contato_desconectado img {
+    filter: brightness(0.2);
+}
+
 .recipiente_informacoes_contato {
     width: 100%;
     text-align: center;
+    padding: .6rem 0;
 }
