@@ -24,11 +24,9 @@
       "App/*": ["app/*"],
       "Componentes/*": ["componentes/*"],
       "Contextos/*": ["contextos/*"],
-      "Dados/*": ["dados/*"],
       "Helpers/*": ["helpers/*"],
       "Hooks/*": ["hooks/*"],
-      "Provedores/*": ["provedores/*"],
-      "Servicos/*": ["servicos/*"],
+      "Libs/*": ["libs/*"],
       "Uteis/*": ["uteis/*"]
     },
     "allowImportingTsExtensions": true,
