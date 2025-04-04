@@ -18,8 +18,8 @@ export default function BarraUsuario({ dadosMinhaPagina }: { dadosMinhaPagina: U
     return (
         <>
             <div id={styles.barra_usuario}>
-                <div className={styles.recipiente_imagem_usuario}>
-                    <Image alt='' src={`${process.env.NEXT_PUBLIC_IMAGE_API_URL}${dadosMinhaPagina.customizacao.caminhoAvatar}`} fill onClick={openModal} />
+                <div className={styles.recipiente_imagem_usuario} onClick={openModal}>
+                    <ElementoAvatar src={dadosMinhaPagina.customizacao.caminhoAvatar} />
                 </div>
                 <div className={styles.recipiente_informacoes_usuario}>
                     <h1>{dadosMinhaPagina.username}</h1>

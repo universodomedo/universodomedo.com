@@ -1,3 +1,106 @@
+#portal_usuario_direita {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: .2;
+    gap: 2vh;
+}
+
+.secao_contatos {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1vh;
+    padding: 1vh 2%;
+    border-radius: .7vw .7vw 0 0;
+    backdrop-filter: contrast(0.6);
+}
+
+.recipiente_lista_contatos {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    gap: 2vh;
+}
+/* 
+.secao_contatos::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2vh;
+    background-color: aqua;
+} */
+
+.ficha_existente {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    align-items: center;
+}
+
+.acesso_ficha_existente, .acesso_ficha_nova {
+    display: flex;
+    flex-direction: row;
+    border: 2px white solid;
+    border-radius: 5px;
+    gap: 1vw;
+    cursor: pointer;
+    padding: 1vh .6vw;
+}
+
+.ficha_nome, .acesso_ficha_nova {
+    font-size: 2rem;
+}
+
+.ficha_pendente > .acesso_ficha_existente {
+    color: rgb(173, 173, 173);
+    border: 2px red solid;
+}
+
+.acesso_ficha_existente:hover, .acesso_ficha_nova:hover {
+    border: 2px rgb(120, 183, 255) solid;
+    background-color: rgb(42, 55, 58);
+}
+
+.ficha_pendente > .acesso_ficha_existente:hover {
+    border: 2px rgb(185, 53, 53) solid;
+    background-color: rgb(100, 50, 50);
+}
+
+.ficha_detalhes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ficha_acoes {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+}
+
+.ficha_acoes_coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.icones_ficha {
+    cursor: pointer;
+}
+
+.modal_criacao_ficha {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
+
+/*  */
+
 .recipiente_contato {
     display: flex;
     flex-direction: row;
