@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DadosMinhasDisponibilidades, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, PersonagemDto, UsuarioDto } from 'types-nora-api';
+import { AventuraDto, DadosMinhasDisponibilidades, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, PersonagemDto, TipoImagemDto, UsuarioDto } from 'types-nora-api';
 
 export async function obtemUsuarioLogado() {
     return await useApi<UsuarioDto>({ uri: '/usuarios/obtemUsuarioLogado', method: 'GET' });
@@ -38,11 +38,15 @@ export async function obtemDadosPersonagemDoUsuario(idPersonagem: number) {
     return await useApi<PersonagemDto>({ uri: '/personagens/obtemDadosPersonagemDoUsuario', method: 'GET', params: { idPersonagem } });
 }
 
-export async function uploadImagem(file: File) {
+export async function obtemTiposImagem() {
+    return await useApi<TipoImagemDto[]>({ uri: '/tipos_imagem/obtemTiposImagem', method: 'GET' });
+}
+
+export async function uploadImagem(file: File, tipo: string) {
     const formData = new FormData();
     formData.append('files', file);
 
-    return await useApi<boolean>({ uri: '/imagens/many/avatar', method: 'POST', data: formData });
+    return await useApi<boolean>({ uri: `/imagens/many/${tipo}`, method: 'POST', data: formData });
 }
 
 export async function atualizaAvatarUsuario(idPersonagem: number) {
