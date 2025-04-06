@@ -51,9 +51,7 @@ export default function PaginaUpload() {
             if (response.sucesso) {
                 alert(`Upload de [${tipoImagemSelecionado.nome}] realizado com sucesso!`);
 
-                setFile(null);
-                setTipoImagemSelecionado(null);
-                (document.getElementById('file-input') as HTMLInputElement).value = '';
+                window.location.reload();
             } else {
                 alert(`Erro no upload: ${response.erro}`);
             }
