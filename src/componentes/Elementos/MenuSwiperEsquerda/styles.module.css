@@ -108,13 +108,17 @@
     font-size: 1.6vh;
 }
 
-#recipiente_lista_menu a {
+.recipiente_configuracao_individual {
+    cursor: pointer;
+}
+
+#recipiente_lista_menu a, .recipiente_configuracao_individual > svg {
     text-decoration: none;
     color: inherit;
 }
 
-#recipiente_lista_menu a:hover {
-    color: rgb(185, 252, 230)
+#recipiente_lista_menu a:hover, .recipiente_configuracao_individual > svg:hover {
+    color: rgb(185, 252, 230);
 }
 
 .recipiente_logo_swiper_esquerda {
@@ -132,19 +136,39 @@
 
 #recipiente_icones_swiper_esquerda {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex: 0 0 0;
     width: 78%;
-    gap: 5%;
     margin-right: 5%;
     align-items: center;
+    gap: 2vh;
 }
 
-#recipiente_icones_swiper_esquerda a {
+#recipiente_configuracoes {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 10%;
+    height: 5vh;
+    justify-content: center;
+}
+
+.recipiente_configuracao_individual {
+    height: 100%;
+}
+
+#recipiente_icones_redes_sociais {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 5%;
+}
+
+#recipiente_icones_redes_sociais a {
     flex: 1;
 }
 
-#recipiente_icones_swiper_esquerda svg {
+#recipiente_icones_redes_sociais svg {
     width: 100%;
     height: 100%;
 }

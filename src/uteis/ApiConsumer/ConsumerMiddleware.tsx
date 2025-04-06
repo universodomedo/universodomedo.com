@@ -62,3 +62,7 @@ export async function authCheck() {
 export async function verificaLogado() {
     return await useApi<string>({ uri: '/auth/loggedIn', method: 'GET' });
 }
+
+export async function desconectar() {
+    return useApi<void>({ uri: '/auth/logout', method: 'DELETE' });
+}

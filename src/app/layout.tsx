@@ -5,13 +5,14 @@ import { ReactNode } from 'react';
 import Fumaca from 'Componentes/ElementosVisuais/Fumaca/Fumaca.tsx';
 
 import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
+import { ContextoPerformanceProvider } from 'Contextos/ContextoPerformace/contexto';
+import { ContextoAutenticacaoProvider } from 'Contextos/ContextoAutenticacao/contexto';
 
 import { Cinzel, Cinzel_Decorative, Junge } from 'next/font/google';
 
 import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwiperEsquerda.tsx';
 
 import { Provider as RadixTooltip } from "@radix-ui/react-tooltip";
-import { ContextoAutenticacaoProvider } from 'Contextos/ContextoAutenticacao/contexto';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -30,27 +31,47 @@ const junge = Junge({
   variable: '--fonte-junge',
 }); // precisa colocar no :root
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
-        <ContextoAutenticacaoProvider>
-          <RadixTooltip delayDuration={200} skipDelayDuration={0}>
-            <ContextoMenuSwiperEsquerdaProvider>
-              <Fumaca />
-              <main id={styles.main}>
-                <MenuSwiperEsquerda />
-                <div id={styles.recipiente_conteudo_pagina}>
+        <ContextoPerformanceProvider>
+          <ContextoAutenticacaoProvider>
+            <RadixTooltip delayDuration={200} skipDelayDuration={0}>
+              <ContextoMenuSwiperEsquerdaProvider>
+                <ConteudoContextualizado>
                   {children}
-                </div>
-              </main>
-            </ContextoMenuSwiperEsquerdaProvider>
-          </RadixTooltip>
-        </ContextoAutenticacaoProvider>
+                </ConteudoContextualizado>
+              </ContextoMenuSwiperEsquerdaProvider>
+            </RadixTooltip>
+          </ContextoAutenticacaoProvider>
+        </ContextoPerformanceProvider>
       </body>
     </html>
   );
 };
+
+function ConteudoContextualizado({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <div id={styles.aviso_orientacao}>Por favor, gire seu dispositivo para o modo paisagem</div>
+      <div id={styles.recipiente_orientacao_correta}>
+        <Fumaca />
+        <main id={styles.main}>
+          <MenuSwiperEsquerda />
+          <div id={styles.recipiente_conteudo_pagina}>
+            {children}
+          </div>
+        </main>
+      </div>
+    </>
+  )
+}
 
 // import type { Metadata } from "next";
 

@@ -1,15 +1,19 @@
 'use client';
 
 import styles from './styles.module.css';
-import Link from 'next/link';
+import { ReactNode } from 'react';
 
 import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
+import { desconectar } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
-import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
-
+import Link from 'next/link';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-brands-svg-icons";
+import { faFireFlameCurved, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+
+import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import { useContextoPerformance } from "Contextos/ContextoPerformace/contexto";
 
 export default function MenuSwiperEsquerda() {
     const { menuAberto, setMenuAberto, tamanhoReduzido } = useContextoMenuSwiperEsquerda();
@@ -30,22 +34,36 @@ export default function MenuSwiperEsquerda() {
 
 function ConteudoSwiperEsquerda() {
     const { estaAutenticado, usuarioLogado } = useContextoAutenticacao();
+    const { animacoesHabilitadas, setAnimacoesHabilitadas } = useContextoPerformance();
+
+    function logout() {
+        desconectar();
+        window.location.href = `/`;
+    }
 
     const obterItensMenu = (): { link: string, target: string, titulo: string, condicao?: boolean }[] => {
         return [
             { link: '/aventuras', target: '', titulo: 'Aventuras' },
             { link: '/definicoes', target: '', titulo: 'Definições' },
             { link: '/dicas', target: '', titulo: 'Dicas' },
-            { link: '/em-jogo', target: '', titulo: 'Ficha de Demonstração' },
+            // { link: '/em-jogo', target: '', titulo: 'Ficha de Demonstração' },
             { link: '/minha-pagina', target: '', titulo: 'Minha Página', condicao: estaAutenticado },
             { link: '/meus-personagens', target: '', titulo: 'Meus Personagens', condicao: estaAutenticado },
-            { link: '/minhas-disponibilidades', target: '', titulo: 'Minhas Disponibilidades', condicao: estaAutenticado },
+            // { link: '/minhas-disponibilidades', target: '', titulo: 'Minhas Disponibilidades', condicao: estaAutenticado },
             { link: '/uploads', target: '', titulo: 'Uploads', condicao: usuarioLogado?.perfilAdmin.id === 2 },
             // { link: '/linha-do-tempo', target: '', titulo: 'Linha do Tempo' },
         ];
-    }
+    };
+
+    const obterItensConfiguracao = (): { elemento: ReactNode, condicao?: boolean }[] => {
+        return [
+            { elemento: <FontAwesomeIcon icon={faFireFlameCurved} onClick={() => setAnimacoesHabilitadas(!animacoesHabilitadas)} /> },
+            { elemento: <FontAwesomeIcon icon={faRightToBracket} onClick={logout} />, condicao: estaAutenticado },
+        ];
+    };
 
     const itensMenu = obterItensMenu().filter(item => item.condicao === undefined || item.condicao);
+    const itensConfiguracao = obterItensConfiguracao().filter(item => item.condicao === undefined || item.condicao);
 
     return (
         <div className={styles.recipiente_conteudo_swiper_esquerda}>
@@ -73,10 +91,17 @@ function ConteudoSwiperEsquerda() {
                         ))}
                     </div>
                     <div id={styles.recipiente_icones_swiper_esquerda}>
-                        <Link target='_blank' href='https://discord.universodomedo.com'><FontAwesomeIcon icon={faDiscord} /></Link>
-                        <Link target='_blank' href='https://open.spotify.com/show/10qzPjLpugVhzn90ufDBuN'><FontAwesomeIcon icon={faSpotify} /></Link>
-                        <Link target='_blank' href='https://youtube.universodomedo.com'><FontAwesomeIcon icon={faYoutube} /></Link>
-                        <Link target='_blank' href='https://twitch.universodomedo.com'><FontAwesomeIcon icon={faTwitch} /></Link>
+                        <div id={styles.recipiente_configuracoes}>
+                            {itensConfiguracao.map((item, index) => (
+                                <div key={index} className={styles.recipiente_configuracao_individual}>{item.elemento}</div>    
+                            ))}
+                        </div>
+                        <div id={styles.recipiente_icones_redes_sociais}>
+                            <Link target='_blank' href='https://discord.universodomedo.com'><FontAwesomeIcon icon={faDiscord} /></Link>
+                            <Link target='_blank' href='https://open.spotify.com/show/10qzPjLpugVhzn90ufDBuN'><FontAwesomeIcon icon={faSpotify} /></Link>
+                            <Link target='_blank' href='https://youtube.universodomedo.com'><FontAwesomeIcon icon={faYoutube} /></Link>
+                            <Link target='_blank' href='https://twitch.universodomedo.com'><FontAwesomeIcon icon={faTwitch} /></Link>
+                        </div>
                     </div>
                 </div>
                 <div id={styles.recipiente_moldura_inferior}>

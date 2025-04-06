@@ -58,16 +58,17 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 2vh 4%;
-    width: fit-content;
     margin: 0 auto;
+    justify-content: space-between;
 }
 
 .recipiente_opcao_lista {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    flex: 0 0 48%;
+    flex: 0 0 45%;
     text-align: center;
+    align-items: center;
 }
 
 .recipiente_opcao_lista p {

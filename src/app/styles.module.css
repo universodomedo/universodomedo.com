@@ -36,6 +36,37 @@
     font-family: 'Barlow', sans-serif;
 }
 
+#aviso_orientacao {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    color: white;
+    width: 100vw;
+    height: 100vh;
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 2rem;
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+}
+
+#recipiente_orientacao_correta {
+    height: 100vh;
+}
+  
+@media (orientation: portrait) {
+    #aviso_orientacao {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #recipiente_orientacao_correta {
+        display: none;
+    }
+}
+
 /* #recipiente_conteudo_pagina p {
     font-weight: bold;
     font-size: 1.4rem;

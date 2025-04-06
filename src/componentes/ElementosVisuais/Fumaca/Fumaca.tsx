@@ -5,6 +5,8 @@ import { useRef } from "react";
 import { Cloud, Clouds } from "@react-three/drei";
 import * as THREE from "three";
 
+import { useContextoPerformance } from "Contextos/ContextoPerformace/contexto";
+
 function FumacaElement() {
     const cloudRef = useRef<THREE.Group>(null);
 
@@ -24,6 +26,10 @@ function FumacaElement() {
 }
 
 export default function Fumaca() {
+    const { animacoesHabilitadas } = useContextoPerformance();
+  
+    if (!animacoesHabilitadas) return null;
+
     return (
         <div
             style={{

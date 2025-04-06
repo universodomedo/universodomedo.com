@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 
-
 export default function Acessar() {
     const handleLogin = () => {
         window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`;
