@@ -8,7 +8,7 @@ import { PersonagemDto, UsuarioDto } from 'types-nora-api';
 
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import Image from "next/image";
-import ElementoAvatar from 'Uteis/ImagemLoader/ElementoAvatar';
+import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 
 export default function BarraUsuario({ dadosMinhaPagina }: { dadosMinhaPagina: UsuarioDto }) {
@@ -19,7 +19,7 @@ export default function BarraUsuario({ dadosMinhaPagina }: { dadosMinhaPagina: U
         <>
             <div id={styles.barra_usuario}>
                 <div className={styles.recipiente_imagem_usuario} onClick={openModal}>
-                    <ElementoAvatar src={dadosMinhaPagina.customizacao.caminhoAvatar} />
+                    <RecipienteImagem src={dadosMinhaPagina.customizacao.caminhoAvatar} />
                 </div>
                 <div className={styles.recipiente_informacoes_usuario}>
                     <h1>{dadosMinhaPagina.username}</h1>
@@ -67,7 +67,7 @@ function ConteudoModalAtualizaAvatar({ listaAvatares, idPersonagemSelecinadoAtua
                     {listaAvatares.map(personagem => (
                         <div key={personagem.id} className={styles.recipiente_celula_avatar} onClick={() => { atualizarAvatarUsuario(personagem.id) }}>
                             <div className={`${styles.recipiente_avatar} ${idPersonagemSelecinadoAtualmente === personagem.id ? styles.selecionado_atual : ''}`}>
-                                <ElementoAvatar src={personagem.imagemAvatar?.fullPath} />
+                                <RecipienteImagem src={personagem.imagemAvatar?.fullPath} />
                             </div>
                         </div>
                     ))}

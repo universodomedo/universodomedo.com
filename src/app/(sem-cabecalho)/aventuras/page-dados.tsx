@@ -6,8 +6,8 @@ import { AventuraDto } from "types-nora-api";
 import { obtemAventuraCompleta } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 import { useContextoPaginaAventura } from 'Contextos/ContextoPaginaAventura/contexto.tsx';
 
-import Image from "next/image";
-import { useEffect } from 'react';
+import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import React from 'react';
 
 export default function PaginaAventurasComDados({ dadosAventuras }: { dadosAventuras: AventuraDto[] }) {
     return (
@@ -35,31 +35,54 @@ export function SecaoCorpoAventuras({ dadosAventuras }: { dadosAventuras: Aventu
         if (respostaDadosPaginaAventuras.sucesso) setAventuraSelecionada(respostaDadosPaginaAventuras.dados);
     };
 
-    useEffect(() => {
-        console.log('aventuraSelecionada alterado', aventuraSelecionada);
-    }, [aventuraSelecionada]);
-
     return (
         <div id={styles.recipiente_corpo_aventuras}>
-            <div id={styles.recipiente_aventura_selecionada}>
-                <div id={styles.recipiente_cabecalho_aventura_selecionada}>
-                    <div id={styles.recipiente_capa_cabecalho_aventura_selecionada}>
-                        <Image alt='' src={`/testeCapa1.png`} fill />
+            {aventuraSelecionada !== undefined ? (
+                <div id={styles.recipiente_aventura_selecionada}>
+                    <div id={styles.recipiente_cabecalho_aventura_selecionada}>
+                        <div id={styles.recipiente_capa_cabecalho_aventura_selecionada}>
+                            <RecipienteImagem src={aventuraSelecionada.imagemCapa?.fullPath} />
+                        </div>
+                        <div>
+                            <h1>{aventuraSelecionada.titulo}</h1>
+                        </div>
                     </div>
-                    <div>
-                        <h1>Apenas uma Prece</h1>
+                    <div id={styles.recipiente_corpo_aventura_selecionada}>
+                        {aventuraSelecionada.gruposAventura?.map(grupo => (
+                            <React.Fragment key={grupo.id}>
+                                <h1>{grupo.nome}</h1>
+                                <div id={styles.recipiente_personagens_participantes}>
+                                    {grupo.personagensDaAventura?.map((personagensDaAventura, index) => (
+                                        <div key={index} className={styles.recipiente_imagem_personagem_participante}>
+                                            <RecipienteImagem key={personagensDaAventura.personagem.id} src={personagensDaAventura.personagem.imagemAvatar?.fullPath} />
+                                        </div>
+                                    ))}
+                                </div>
+                            </React.Fragment>
+                        ))}
                     </div>
                 </div>
-                <div id={styles.recipiente_corpo_aventura_selecionada}>
+            ) : (
+                <div id={styles.recipiente_aventura_selecionada}>
+                    <div id={styles.recipiente_cabecalho_aventura_selecionada}>
+                        <div id={styles.recipiente_capa_cabecalho_aventura_selecionada}>
+                            <RecipienteImagem src={''} />
+                        </div>
+                        <div>
+                            <h1>Apenas uma Prece</h1>
+                        </div>
+                    </div>
+                    <div id={styles.recipiente_corpo_aventura_selecionada}>
 
+                    </div>
                 </div>
-            </div>
+            )}
 
             <div id={styles.recipiente_menu_aventuras}>
                 {dadosAventuras.map((aventura, index) => (
                     <div key={index} className={styles.recipiente_item_menu_aventuras} onClick={() => { selecionaAventura(aventura.id) }}>
                         <div className={styles.recipiente_imagem_aventura_item_menu}>
-                            <Image alt='' src={`/testeCapa1.png`} fill />
+                            <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
                         </div>
                         <div className={styles.recipiente_dados_aventura}>
                             <h3>{aventura.titulo}</h3>

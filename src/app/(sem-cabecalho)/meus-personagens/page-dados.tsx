@@ -3,7 +3,7 @@ import styles from './styles.module.css';
 import { useContextoPaginaPersonagem } from 'Contextos/ContextoPaginaPersonagem/contexto.tsx';
 
 import Link from 'next/link';
-import ElementoAvatar from 'Uteis/ImagemLoader/ElementoAvatar';
+import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 export default function PaginaPersonagensComDados() {
     return (
@@ -41,7 +41,7 @@ export function ListaPersonagens() {
             {listaPersonagens!.map(personagem => (
                 <div key={personagem.id} className={styles.recipiente_personagem} onClick={() => selecionaPersonagem(personagem.id)}>
                     <div className={styles.recipiente_avatar_personagem}>
-                        <ElementoAvatar src={personagem.imagemAvatar?.fullPath} />
+                        <RecipienteImagem src={personagem.imagemAvatar?.fullPath} />
                     </div>
                     <div className={styles.recipiente_informacoes1_personagem}>
                         <div className={styles.recipiente_informacoes_personagem}>

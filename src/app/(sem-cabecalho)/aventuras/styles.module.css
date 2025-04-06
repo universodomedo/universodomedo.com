@@ -46,6 +46,17 @@
     height: 76%;
 }
 
+#recipiente_personagens_participantes {
+    display: flex;
+    flex-direction: row;
+}
+
+.recipiente_imagem_personagem_participante {
+    position: relative;
+    height: 5vh;
+    aspect-ratio: 1;
+}
+
 #recipiente_menu_aventuras {
     display: flex;
     flex-direction: column;

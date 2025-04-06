@@ -9,6 +9,13 @@
     gap: 1vh;
 }
 
+#recipiente_mensagens {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+}
+
 /*  */
 
 

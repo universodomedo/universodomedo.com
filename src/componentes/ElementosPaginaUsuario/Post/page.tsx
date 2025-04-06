@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 import { useEffect, useState } from 'react';
 import { getSocket } from 'Libs/socket.ts';
 
-import Image from "next/image";
+import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
 export default function SecaoPosts() {
     const [messages, setMessages] = useState<string[]>([]);  // Use an array to store messages
@@ -39,8 +39,10 @@ export default function SecaoPosts() {
         }
     };
 
+    const { scrollableProps } = useScrollable();
+
     return (
-        <div id={styles.recipiente_lista_posts}>
+        <div id={styles.recipiente_lista_posts} {...scrollableProps}>
             <h1>Nenhuma postagem encontrada</h1>
 
             {/* Message input and send button */}
@@ -52,14 +54,17 @@ export default function SecaoPosts() {
                     placeholder="Type your message here"
                     className={styles.inputMessage}
                     onKeyDown={handleKeyDown}  // Listen for key press events
+                    maxLength={60}
                 />
                 <button onClick={sendMessage} className={styles.sendButton}>Send Message</button>
             </div>
 
             {/* Display all messages, with the newest on top */}
-            {messages.map((msg, index) => (
-                <p key={index}>{msg}</p>
-            ))}
+            <div id={styles.recipiente_mensagens}>
+                {messages.map((msg, index) => (
+                    <p key={index}>{msg}</p>
+                ))}
+            </div>
         </div>
     );
 };

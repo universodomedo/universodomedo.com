@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    flex: .2;
+    flex: .18 0 0;
     gap: 2vh;
     overflow: auto;
 }
@@ -114,4 +114,9 @@
     width: 100%;
     text-align: center;
     padding: .6rem 0;
+}
+
+.recipiente_cargos {
+    display: flex;
+    flex-direction: column;
 }
