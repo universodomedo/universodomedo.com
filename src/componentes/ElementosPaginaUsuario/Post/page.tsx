@@ -39,6 +39,12 @@ export default function SecaoPosts() {
         }
     };
 
+    const enviaTesteAcao = () => {
+        const socket = getSocket();
+
+        socket.emit('message-d20');
+    };
+
     const { scrollableProps } = useScrollable();
 
     return (
@@ -57,6 +63,7 @@ export default function SecaoPosts() {
                     maxLength={60}
                 />
                 <button onClick={sendMessage} className={styles.sendButton}>Send Message</button>
+                <button onClick={enviaTesteAcao} className={styles.sendButton}>Realizar Teste</button>
             </div>
 
             {/* Display all messages, with the newest on top */}
