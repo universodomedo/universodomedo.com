@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DadosMinhasDisponibilidades, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, PersonagemDto, TipoImagemDto, UsuarioDto } from 'types-nora-api';
+import { AventuraDto, DadosMinhasDisponibilidades, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, PersonagemDto, SessaoDto, TipoImagemDto, UsuarioDto } from 'types-nora-api';
 
 export async function obtemUsuarioLogado() {
     return await useApi<UsuarioDto>({ uri: '/usuarios/obtemUsuarioLogado', method: 'GET' });
@@ -51,6 +51,10 @@ export async function uploadImagem(file: File, tipo: string) {
 
 export async function atualizaAvatarUsuario(idPersonagem: number) {
     return await useApi<void>({ uri: '/usuarios/atualizaAvatarUsuario', method: 'PUT', data: { idPersonagem: idPersonagem } });
+}
+
+export async function obtemDadosSessaoEmAndamento() {
+    return await useApi<SessaoDto>({ uri: '/sessoes/obtemDadosSessaoEmAndamento', method: 'GET'});
 }
 
 //

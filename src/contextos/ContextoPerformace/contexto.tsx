@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 interface ContextoPerformanceProps {
-    animacoesHabilitadas: boolean;
+    animacoesLigadas: boolean;
     setAnimacoesHabilitadas: (enabled: boolean) => void;
 };
 
@@ -31,13 +31,16 @@ export const useContextoPerformance = (): ContextoPerformanceProps => {
 
 export function ContextoPerformanceProvider({ children }: { children: React.ReactNode }) {
     const [animacoesHabilitadas, setAnimacoesHabilitadas] = useState(true);
+    const [animacoesPossiveis, setAnimacoesPossiveis] = useState(true);
+
+    const animacoesLigadas = animacoesHabilitadas && animacoesPossiveis;
 
     useEffect(() => {
         const verificarPerformance = () => {
             const gl = getWebGLContext();
 
             if (!gl) {
-                setAnimacoesHabilitadas(false);
+                setAnimacoesPossiveis(false);
                 return;
             }
 
@@ -57,14 +60,14 @@ export function ContextoPerformanceProvider({ children }: { children: React.Reac
             }
 
             const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-            setAnimacoesHabilitadas(webglAcelerado && !prefersReducedMotion);
+            setAnimacoesPossiveis(webglAcelerado && !prefersReducedMotion);
         };
 
         verificarPerformance();
     }, []);
 
     return (
-        <ContextoPerformance.Provider value={{ animacoesHabilitadas, setAnimacoesHabilitadas }} >
+        <ContextoPerformance.Provider value={{ animacoesLigadas, setAnimacoesHabilitadas }} >
             {children}
         </ContextoPerformance.Provider>
     );

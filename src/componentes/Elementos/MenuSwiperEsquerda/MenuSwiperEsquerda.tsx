@@ -34,7 +34,7 @@ export default function MenuSwiperEsquerda() {
 
 function ConteudoSwiperEsquerda() {
     const { estaAutenticado, usuarioLogado } = useContextoAutenticacao();
-    const { animacoesHabilitadas, setAnimacoesHabilitadas } = useContextoPerformance();
+    const { animacoesLigadas, setAnimacoesHabilitadas } = useContextoPerformance();
 
     function logout() {
         desconectar();
@@ -44,6 +44,7 @@ function ConteudoSwiperEsquerda() {
     const obterItensMenu = (): { link: string, target: string, titulo: string, condicao?: boolean }[] => {
         return [
             { link: '/aventuras', target: '', titulo: 'Aventuras' },
+            { link: '/sessao', target: '', titulo: 'Sessão Ao Vivo' },
             { link: '/definicoes', target: '', titulo: 'Definições' },
             { link: '/dicas', target: '', titulo: 'Dicas' },
             // { link: '/em-jogo', target: '', titulo: 'Ficha de Demonstração' },
@@ -57,7 +58,7 @@ function ConteudoSwiperEsquerda() {
 
     const obterItensConfiguracao = (): { elemento: ReactNode, condicao?: boolean }[] => {
         return [
-            { elemento: <FontAwesomeIcon icon={faFireFlameCurved} onClick={() => setAnimacoesHabilitadas(!animacoesHabilitadas)} /> },
+            { elemento: <FontAwesomeIcon icon={faFireFlameCurved} onClick={() => setAnimacoesHabilitadas(!animacoesLigadas)} /> },
             { elemento: <FontAwesomeIcon icon={faRightToBracket} onClick={logout} />, condicao: estaAutenticado },
         ];
     };

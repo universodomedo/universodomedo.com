@@ -26,9 +26,9 @@ function FumacaElement() {
 }
 
 export default function Fumaca() {
-    const { animacoesHabilitadas } = useContextoPerformance();
+    const { animacoesLigadas } = useContextoPerformance();
   
-    if (!animacoesHabilitadas) return null;
+    if (!animacoesLigadas) return null;
 
     return (
         <div
