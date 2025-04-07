@@ -85,13 +85,14 @@ export default function ModalPrimeiroAcesso() {
     }, [apelido, termo1, termo2]);
 
     async function completarRegistroUsuario() {
-        const retorno = await salvaPrimeiroAcessoUsuario(apelido);
+        // const retorno = await salvaPrimeiroAcessoUsuario(apelido);
+        window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login?username=${apelido}`;
 
-        if (retorno.erro) {
-            setErroValidacao(retorno.erro);
-        } else {
-            window.location.reload();
-        }
+        // if (retorno.erro) {
+        //     setErroValidacao(retorno.erro);
+        // } else {
+        //     window.location.reload();
+        // }
     }
 
     return (
