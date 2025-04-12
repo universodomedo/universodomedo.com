@@ -43,11 +43,16 @@ export default function SecaoContatos() {
     useEffect(() => {
         const socket = getSocket();
 
+        console.log('antes updateUsers');
         socket.on('updateUsers', (usuarios: SOCKET_UsuarioContato[]) => {
+            console.log('updateUsers disparado');
             setUsuariosContato(usuarios);
+            console.log('depois setUsuariosContato');
         });
-
+        console.log('depois updateUsers');
+        
         return () => {
+            console.log('off');
             socket.off('updateUsers');
         };
     }, []);
