@@ -19,6 +19,7 @@ html, body {
   height: 100%;
   scrollbar-width: none;
   scrollbar-gutter: stable;
+  color: white;
 }
 
 body {

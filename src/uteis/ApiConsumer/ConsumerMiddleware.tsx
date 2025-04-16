@@ -1,9 +1,9 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, UsuarioDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao } from 'types-nora-api';
 
-export async function obtemUsuarioLogado() {
-    return await useApi<UsuarioDto | null>({ uri: '/usuarios/obtemUsuarioLogado', method: 'GET' });
+export async function obtemObjetoAutenticacao() {
+    return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET' });
 }
 
 export async function salvaPrimeiroAcessoUsuario(username: string) {
