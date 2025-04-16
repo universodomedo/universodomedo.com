@@ -26,6 +26,7 @@
       "Contextos/*": ["contextos/*"],
       "Helpers/*": ["helpers/*"],
       "Hooks/*": ["hooks/*"],
+      "Layouts/*": ["layouts/*"],
       "Libs/*": ["libs/*"],
       "Uteis/*": ["uteis/*"]
     },

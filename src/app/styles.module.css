@@ -2,6 +2,13 @@
     font-size: 2em;
 }
 
+#recipiente_conteudo_pagina_principal {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
 #main {
     display: flex;
     flex-direction: column;

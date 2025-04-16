@@ -9,7 +9,7 @@ import { desconectar } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 import Link from 'next/link';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-brands-svg-icons";
-import { faFireFlameCurved, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { faUserTie, faFireFlameCurved, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
@@ -47,11 +47,10 @@ function ConteudoSwiperEsquerda() {
             { link: '/sessao', target: '', titulo: 'Sessão Ao Vivo' },
             { link: '/definicoes', target: '', titulo: 'Definições' },
             { link: '/dicas', target: '', titulo: 'Dicas' },
-            // { link: '/em-jogo', target: '', titulo: 'Ficha de Demonstração' },
+            { link: '/em-jogo', target: '', titulo: 'Ficha de Demonstração' },
             { link: '/minha-pagina', target: '', titulo: 'Minha Página', condicao: estaAutenticado },
             { link: '/meus-personagens', target: '', titulo: 'Meus Personagens', condicao: estaAutenticado },
             // { link: '/minhas-disponibilidades', target: '', titulo: 'Minhas Disponibilidades', condicao: estaAutenticado },
-            { link: '/uploads', target: '', titulo: 'Uploads', condicao: usuarioLogado?.perfilAdmin.id === 2 },
             // { link: '/linha-do-tempo', target: '', titulo: 'Linha do Tempo' },
         ];
     };
@@ -60,6 +59,7 @@ function ConteudoSwiperEsquerda() {
         return [
             { elemento: <FontAwesomeIcon icon={faFireFlameCurved} onClick={() => setAnimacoesHabilitadas(!animacoesLigadas)} /> },
             { elemento: <FontAwesomeIcon icon={faRightToBracket} onClick={logout} />, condicao: estaAutenticado },
+            { elemento: <Link href={'/admin'}><FontAwesomeIcon icon={faUserTie} /></Link>, condicao: estaAutenticado && usuarioLogado?.perfilAdmin.id === 2 },
         ];
     };
 
@@ -94,7 +94,7 @@ function ConteudoSwiperEsquerda() {
                     <div id={styles.recipiente_icones_swiper_esquerda}>
                         <div id={styles.recipiente_configuracoes}>
                             {itensConfiguracao.map((item, index) => (
-                                <div key={index} className={styles.recipiente_configuracao_individual}>{item.elemento}</div>    
+                                <div key={index} className={styles.recipiente_configuracao_individual}>{item.elemento}</div>
                             ))}
                         </div>
                         <div id={styles.recipiente_icones_redes_sociais}>

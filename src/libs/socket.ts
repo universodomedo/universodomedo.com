@@ -1,7 +1,24 @@
 import { io, Socket } from "socket.io-client";
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_URL!;
+let socket: Socket | null = null;
 
-const socket: Socket = io(SOCKET_URL, { withCredentials: true });
+export const getSocket = (): Socket => {
+    if (typeof window === "undefined") throw new Error("getSocket() só pode ser chamado no client");
 
-export const getSocket = () => socket;
+    if (!socket) {
+        socket = io(process.env.NEXT_PUBLIC_WEBSOCKET_URL!, {
+            withCredentials: true,
+            transports: ['websocket'],
+        });
+
+        socket.on("connect", () => {
+            console.log("[socket] conectado:", socket?.id);
+        });
+
+        socket.on("disconnect", () => {
+            console.log("[socket] desconectado");
+        });
+    }
+
+    return socket;
+};

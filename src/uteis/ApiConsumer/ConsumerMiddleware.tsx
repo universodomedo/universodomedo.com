@@ -1,25 +1,29 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DadosMinhasDisponibilidades, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, PersonagemDto, SessaoDto, TipoImagemDto, UsuarioDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, UsuarioDto } from 'types-nora-api';
 
 export async function obtemUsuarioLogado() {
-    return await useApi<UsuarioDto>({ uri: '/usuarios/obtemUsuarioLogado', method: 'GET' });
+    return await useApi<UsuarioDto | null>({ uri: '/usuarios/obtemUsuarioLogado', method: 'GET' });
 }
 
 export async function salvaPrimeiroAcessoUsuario(username: string) {
-    return await useApi<void>({ uri: '/usuarios/atualizaUsuarioPrimeiroAcesso', method: 'PUT', data: { username: username } });
+    return await useApi<boolean>({ uri: '/usuarios/atualizaUsuarioPrimeiroAcesso', method: 'PUT', data: { username: username } });
 }
 
 export async function obtemDadosMinhasDisponibilidades() {
-    return await useApi<DadosMinhasDisponibilidades>({ uri: '/disponibilidadesUsuario/obtemDadosMinhasDisponibilidades', method: 'GET' });
+    return await useApi<DisponibilidadeUsuarioDto[]>({ uri: '/disponibilidadesUsuario/obtemDadosMinhasDisponibilidades', method: 'GET' });
 }
 
 export async function salvaDisponibilidadeDeUsuario(disponibilidades: DisponibilidadeUsuarioDto[]) {
-    return await useApi<void>({ uri: '/disponibilidadesUsuario/salvaDisponibilidadeDeUsuario', method: 'POST', data: { disponibilidades: disponibilidades } });
+    return await useApi<boolean>({ uri: '/disponibilidadesUsuario/salvaDisponibilidadeDeUsuario', method: 'POST', data: { disponibilidades: disponibilidades } });
 }
 
 export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) {
-    return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina } });
+    try {
+        return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina } });    
+    } catch (error) {
+        return null;   
+    }    
 }
 
 export async function obtemTodasAventuras() {
@@ -50,22 +54,14 @@ export async function uploadImagem(file: File, tipo: string) {
 }
 
 export async function atualizaAvatarUsuario(idPersonagem: number) {
-    return await useApi<void>({ uri: '/usuarios/atualizaAvatarUsuario', method: 'PUT', data: { idPersonagem: idPersonagem } });
+    return await useApi<ImagemDto[]>({ uri: '/usuarios/atualizaAvatarUsuario', method: 'PUT', data: { idPersonagem: idPersonagem } });
 }
 
-export async function obtemDadosSessaoEmAndamento() {
-    return await useApi<SessaoDto>({ uri: '/sessoes/obtemDadosSessaoEmAndamento', method: 'GET'});
+export async function obtemDadosProximaSessao() {
+    return await useApi<SessaoDto>({ uri: '/sessoes/obtemDadosProximaSessao', method: 'GET'});
 }
 
 //
-
-export async function authCheck() {
-    return await useApi<string>({ uri: '/auth/me2', method: 'GET', desativaRedirect: true });
-}
-
-export async function verificaLogado() {
-    return await useApi<string>({ uri: '/auth/loggedIn', method: 'GET' });
-}
 
 export async function desconectar() {
     return useApi<void>({ uri: '/auth/logout', method: 'DELETE' });

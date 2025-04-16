@@ -1,13 +1,15 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useEffect, useState } from 'react';
-import { getSocket } from 'Libs/socket.ts';
+import { useState } from 'react';
 
 import { SOCKET_UsuarioContato } from 'types-nora-api';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+
+import { useSocketEvent } from 'Hooks/useSocketEvent';
+import { useSocketEmit } from 'Hooks/useSocketEmit';
 
 export default function SecaoContatos() {
     const [usuariosContato, setUsuariosContato] = useState<SOCKET_UsuarioContato[]>([]);
@@ -40,17 +42,11 @@ export default function SecaoContatos() {
         return usernameA.localeCompare(usernameB);
     });
 
-    useEffect(() => {
-        const socket = getSocket();
+    useSocketEmit('obterUsuariosContato');
 
-        socket.on('updateUsers', (usuarios: SOCKET_UsuarioContato[]) => {
-            setUsuariosContato(usuarios);
-        });
-
-        return () => {
-            socket.off('updateUsers');
-        };
-    }, []);
+    useSocketEvent<SOCKET_UsuarioContato[]>('updateUsers', (dados) => {
+        setUsuariosContato(dados);
+    });
 
     const { scrollableProps } = useScrollable();
 

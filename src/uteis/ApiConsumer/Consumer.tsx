@@ -41,20 +41,22 @@ function isIsoDateString(value: any): boolean {
   return isoDateRegex.test(value);
 }
 
-export default async function useApi<T>({ uri, method, data, params, desativaRedirect = false }: { uri: string; method: "GET" | "POST" | "PUT" | "DELETE"; data?: any; params?: any; desativaRedirect?: boolean }): Promise<RespostaBackEnd<T>> {
+export default async function useApi<T>({ uri, method, data, params }: { uri: string; method: "GET" | "POST" | "PUT" | "DELETE"; data?: any; params?: any }): Promise<T> {
   try {
+    const config = { url: uri, method, data, params, withCredentials: true };
+
     if (typeof window === "undefined") {
-      // Requisição Server Side. Precisa recuperar os cookies e enviar manualmente
       const cookieHeader = await obtemCookiesNoServidor();
-      return (await apiClient.request<RespostaBackEnd<T>>({ url: uri, method, data, params, headers: { Cookie: cookieHeader }, })).data;
-    } else {
-      // Requisição Client Side. Não precisa fazer nada e deixar o axios gerenciar o envio
-      return (await apiClient.request<RespostaBackEnd<T>>({ url: uri, method, data, params, withCredentials: true })).data;
+      Object.assign(config, { headers: { Cookie: cookieHeader } });
     }
+
+    const response = await apiClient.request<T>(config);
+    return response.data;
   } catch (error) {
-    console.log('catch');
     if (axios.isAxiosError(error)) {
-      if (!desativaRedirect && (error.response?.status === 401 || error.response?.status === 403)) {
+      const status = error.response?.status;
+
+      if (status === 401 || status === 403) {
         if (typeof window === "undefined") {
           redirect("/acessar");
         } else {
@@ -62,11 +64,11 @@ export default async function useApi<T>({ uri, method, data, params, desativaRed
         }
       }
 
-      return { sucesso: false, erro: error.response?.data?.message || "Erro na requisição à API.", };
+      throw new Error(error.response?.data?.message || error.message || "Erro ao fazer a requisição à API.");
     }
 
-    else if (error instanceof Error) return { sucesso: false, erro: error.message || "Erro inesperado ao fazer a requisição.", };
+    if (error instanceof Error) throw new Error(error.message);
 
-    else return { sucesso: false, erro: "Erro desconhecido ao fazer a requisição.", };
+    throw new Error("Erro desconhecido ao fazer a requisição.");
   }
 }

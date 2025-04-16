@@ -4,25 +4,31 @@ import styles from './style.module.css';
 import { useState } from 'react';
 
 import { atualizaAvatarUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
-import { PersonagemDto, UsuarioDto } from 'types-nora-api';
+import { PersonagemDto } from 'types-nora-api';
 
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import Image from "next/image";
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto.tsx';
 
-export default function BarraUsuario({ dadosMinhaPagina }: { dadosMinhaPagina: UsuarioDto }) {
+
+export default function BarraUsuario() {
+    const { usuarioLogado } = useContextoAutenticacao();
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
+
+    if (!usuarioLogado) return;
 
     return (
         <>
             <div id={styles.barra_usuario}>
                 <div className={styles.recipiente_imagem_usuario} onClick={openModal}>
-                    <RecipienteImagem src={dadosMinhaPagina.customizacao.caminhoAvatar} />
+                    <RecipienteImagem src={usuarioLogado.customizacao.caminhoAvatar} />
                 </div>
                 <div className={styles.recipiente_informacoes_usuario}>
-                    <h1>{dadosMinhaPagina.username}</h1>
+                    <h1>{usuarioLogado.username}</h1>
                 </div>
                 {/* <div className={styles.recipiente_conquistas_usuario}>
                 <div className={styles.recipiente_conquista}>
@@ -38,7 +44,7 @@ export default function BarraUsuario({ dadosMinhaPagina }: { dadosMinhaPagina: U
             </div>
             <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <Modal.Content title={'Atualizar Avatar'}>
-                    <ConteudoModalAtualizaAvatar listaAvatares={dadosMinhaPagina.personagens?.filter(personagem => personagem.imagemAvatar !== null) ?? []} idPersonagemSelecinadoAtualmente={dadosMinhaPagina.customizacao.personagemAvatarPrincipal?.id} />
+                    <ConteudoModalAtualizaAvatar listaAvatares={usuarioLogado.personagens?.filter(personagem => personagem.imagemAvatar !== null) ?? []} idPersonagemSelecinadoAtualmente={usuarioLogado.customizacao.personagemAvatarPrincipal?.id} />
                 </Modal.Content>
             </Modal>
         </>
@@ -51,7 +57,7 @@ function ConteudoModalAtualizaAvatar({ listaAvatares, idPersonagemSelecinadoAtua
 
         const respostaDadosMinhaPagina = await atualizaAvatarUsuario(idPersonagem);
 
-        if (!respostaDadosMinhaPagina.sucesso) {
+        if (!respostaDadosMinhaPagina) {
             alert('Erro ao alterar o avatar');
         } else {
             window.location.reload();
