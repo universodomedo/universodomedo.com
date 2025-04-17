@@ -1,8 +1,11 @@
 'use client';
 
-import { ReactNode } from "react";
-import { ControladorSlot } from 'Layouts/ControladorSlot';
+import styles from './styles.module.css';
 
+import { ReactNode } from "react";
+import Link from 'next/link';
+
+import { ControladorSlot } from 'Layouts/ControladorSlot';
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
 import { verificarPermissao } from "Helpers/verificarPermissao";
 
@@ -15,7 +18,10 @@ export default function LayoutAdmin({ children }: { children: ReactNode }) {
 
     return (
         <ControladorSlot pageConfig={{ comCabecalho: false, usuarioObrigatorio: true }}>
-            {children}
+            <div id={styles.recipiente_pagina_admin}>
+                <Link href={'/admin'}><h1>Páginas ADMIN</h1></Link>
+                {children}
+            </div>
         </ControladorSlot>
     )
 };

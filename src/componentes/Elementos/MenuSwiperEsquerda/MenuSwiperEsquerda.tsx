@@ -33,7 +33,7 @@ export default function MenuSwiperEsquerda() {
 };
 
 function ConteudoSwiperEsquerda() {
-    const { estaAutenticado, usuarioLogado } = useContextoAutenticacao();
+    const { estaAutenticado, ehAdmin } = useContextoAutenticacao();
     const { animacoesLigadas, setAnimacoesHabilitadas } = useContextoPerformance();
 
     function logout() {
@@ -59,7 +59,7 @@ function ConteudoSwiperEsquerda() {
         return [
             { elemento: <FontAwesomeIcon icon={faFireFlameCurved} onClick={() => setAnimacoesHabilitadas(!animacoesLigadas)} /> },
             { elemento: <FontAwesomeIcon icon={faRightToBracket} onClick={logout} />, condicao: estaAutenticado },
-            { elemento: <Link href={'/admin'}><FontAwesomeIcon icon={faUserTie} /></Link>, condicao: estaAutenticado && usuarioLogado?.perfilAdmin.id === 2 },
+            { elemento: <Link href={'/admin'}><FontAwesomeIcon icon={faUserTie} /></Link>, condicao: ehAdmin },
         ];
     };
 

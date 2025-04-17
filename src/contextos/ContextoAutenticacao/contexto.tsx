@@ -8,8 +8,9 @@ import getValorVariavelAmbiente from 'Helpers/getValorVariavelAmbiente';
 interface ContextoAutenticacaoProps {
     usuarioLogado: UsuarioDto | null;
     carregando: boolean;
-    estaAutenticado: boolean;
     variaveisAmbiente: VariavelAmbienteDto[];
+    estaAutenticado: boolean;
+    ehAdmin: boolean;
 };
 
 const ContextoAutenticacao = createContext<ContextoAutenticacaoProps | undefined>(undefined);
@@ -24,7 +25,9 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     const [usuarioLogado, setUsuarioLogado] = useState<UsuarioDto | null>(null);
     const [variaveisAmbiente, setVariaveisAmbiente] = useState<VariavelAmbienteDto[]>([]);
     const [carregando, setCarregando] = useState(true);
+
     const estaAutenticado = !carregando && !!usuarioLogado;
+    const ehAdmin = estaAutenticado && usuarioLogado?.perfilAdmin.id === 2;
 
     const checkAuth = async () => {
         try {
@@ -43,10 +46,10 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
         checkAuth();
     }, []);
 
-    if (getValorVariavelAmbiente(variaveisAmbiente, 'ESTADO_MANUTENCAO')) return (<h1>Estamos em manutenção, entre em contato com a Direção do Universo do Medo</h1>)
+    if (!ehAdmin && getValorVariavelAmbiente(variaveisAmbiente, 'ESTADO_MANUTENCAO')) return (<h1>Estamos em manutenção, entre em contato com a Direção do Universo do Medo</h1>)
 
     return (
-        <ContextoAutenticacao.Provider value={{ usuarioLogado, carregando, estaAutenticado, variaveisAmbiente }}>
+        <ContextoAutenticacao.Provider value={{ usuarioLogado, carregando, variaveisAmbiente, estaAutenticado, ehAdmin }}>
             {children}
         </ContextoAutenticacao.Provider>
     );

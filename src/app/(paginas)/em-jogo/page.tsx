@@ -1,13 +1,18 @@
+'use client';
+
 import styles from "./styles.module.css";
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 
 import BarraEstatisticaDanificavel from 'Componentes/ElementosDeJogo/BarraEstatisticaDanificavel/page.tsx';
 import BarraLocaisDeJogo from 'Componentes/ElementosDeJogo/BarraLocaisDeJogo/page.tsx';
+import { ContextoFichaPersonagemProvider, useContextoFichaPersonagem } from "Contextos/ContextoFichaPersonagem/contexto";
 
 export default function PaginaEmJogo() {
     return (
         <ControladorSlot pageConfig={{ comCabecalho: false, usuarioObrigatorio: false }}>
-            <PaginaEmJogo_Slot />
+            <ContextoFichaPersonagemProvider>
+                <PaginaEmJogo_Slot />
+            </ContextoFichaPersonagemProvider>
         </ControladorSlot>
     );
 };
@@ -28,11 +33,13 @@ function PaginaFichaCima() {
 };
 
 function PaginaFichaBaixo() {
+    const { personagem } = useContextoFichaPersonagem();
+
     return (
         <>
             <div className={styles.fatia_parte_baixo_estatisticas}>
                 <div className={styles.fatia_parte_baixo_estatisticas_danificaveis}>
-                    <div className={styles.recipiente_estatistica_danificavel}>
+                    {/* <div className={styles.recipiente_estatistica_danificavel}>
                         <BarraEstatisticaDanificavel titulo={'P.V.'} valorAtual={30} valorMaximo={30} corBarra={'#FF0000'} />
                     </div>
                     <div className={styles.recipiente_estatistica_danificavel}>
@@ -40,7 +47,12 @@ function PaginaFichaBaixo() {
                     </div>
                     <div className={styles.recipiente_estatistica_danificavel}>
                         <BarraEstatisticaDanificavel titulo={'P.E.'} valorAtual={25} valorMaximo={25} corBarra={'#47BA16'} />
-                    </div>
+                    </div> */}
+                    {personagem?.estatisticasDanificaveisPersonagem?.map(estatisticaPersonagem => (
+                        <div key={estatisticaPersonagem.estatisticaDanificavel.id} className={styles.recipiente_estatistica_danificavel}>
+                            <BarraEstatisticaDanificavel titulo={estatisticaPersonagem.estatisticaDanificavel.nomeAbreviado} valorAtual={estatisticaPersonagem.valorAtual} valorMaximo={estatisticaPersonagem.valorMaximo} corBarra={estatisticaPersonagem.estatisticaDanificavel.cor} />
+                        </div>
+                    ))}
                 </div>
                 <div className={styles.fatia_parte_baixo_execucoes}>
                     <div className={styles.recipiente_execucao}>
@@ -59,8 +71,8 @@ function PaginaFichaBaixo() {
             </div>
             <div className={`${styles.fatia_parte_baixo_detalhes}`}>
                 <div className={styles.recipiente_informacoes_personagem}>
-                    <h2>Ficha Demonstração</h2>
-                    <h2>Combatente - 20%</h2>
+                    <h2>{personagem?.informacao?.nome}</h2>
+                    <h2>{`${personagem?.detalhe?.classe.nome} - ${personagem?.detalhe?.nivel.nomeVisualizacao}`}</h2>
                 </div>
                 <div className={styles.recipiente_imagem_personagem}>
                     <div id={styles.imagem_personagem} />

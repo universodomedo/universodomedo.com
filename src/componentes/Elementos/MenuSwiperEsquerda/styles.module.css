@@ -155,6 +155,12 @@
 
 .recipiente_configuracao_individual {
     height: 100%;
+    aspect-ratio: 1;
+}
+
+.recipiente_configuracao_individual a {
+    display: flex;
+    height: 100%;
 }
 
 #recipiente_icones_redes_sociais {

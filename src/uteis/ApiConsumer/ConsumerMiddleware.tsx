@@ -20,10 +20,10 @@ export async function salvaDisponibilidadeDeUsuario(disponibilidades: Disponibil
 
 export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) {
     try {
-        return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina } });    
+        return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina } });
     } catch (error) {
-        return null;   
-    }    
+        return null;
+    }
 }
 
 export async function obtemTodasAventuras() {
@@ -58,7 +58,11 @@ export async function atualizaAvatarUsuario(idPersonagem: number) {
 }
 
 export async function obtemDadosProximaSessao() {
-    return await useApi<SessaoDto>({ uri: '/sessoes/obtemDadosProximaSessao', method: 'GET'});
+    return await useApi<SessaoDto>({ uri: '/sessoes/obtemDadosProximaSessao', method: 'GET' });
+}
+
+export async function obtemFichaPersonagem(idPersonagem: number) {
+    return await useApi<PersonagemDto>({ uri: 'personagens/obtemFichaPersonagem', method: 'GET', data: { idPersonagem: idPersonagem } });
 }
 
 //
