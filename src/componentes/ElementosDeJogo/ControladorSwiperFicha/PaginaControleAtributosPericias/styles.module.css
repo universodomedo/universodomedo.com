@@ -17,6 +17,10 @@
     text-align: center;
 }
 
+.atributo_personagem button {
+    padding: .15vh .32vw;
+}
+
 .nome_atributo {
     display: inline-block;
     margin: 0 auto;

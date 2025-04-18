@@ -84,7 +84,6 @@
 }
 .Button.violet {
 	background-color: white;
-	color: '#6550B9';
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 .Button.violet:hover {

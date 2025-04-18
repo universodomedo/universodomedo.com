@@ -27,6 +27,21 @@ function ControladorSwiperFicha_ComContexto() {
             componente: <PaginaControleAtributosPericias />,
             contexto: useContextoControleAtributosPericias
         },
+        {
+            nome: 'Teste1',
+            componente: <><h1>oi</h1></>,
+            contexto: useContextoControleAtributosPericias
+        },
+        {
+            nome: 'Teste2',
+            componente: <><h1>oi</h1></>,
+            contexto: useContextoControleAtributosPericias
+        },
+        {
+            nome: 'Teste3',
+            componente: <><h1>oi</h1></>,
+            contexto: useContextoControleAtributosPericias
+        },
     ];
 
     const [paginaAbertaSwiper, setPaginaAbertaSwiper] = useState(0);

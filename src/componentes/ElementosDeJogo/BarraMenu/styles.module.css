@@ -66,7 +66,7 @@
 	all: unset;
 	font-size: 13px;
 	line-height: 1;
-	color: '#6550B9';
+	color: black;
 	border-radius: 4px;
 	display: flex;
 	align-items: center;
@@ -86,7 +86,7 @@
 .objeto_menu_item[data-state="open"],
 .MenubarSubTrigger[data-state="open"] {
 	background-color: '#EBE4FF';
-	color: '#6550B9';
+	color: #6550B9;
 }
 
 .objeto_menu_item[data-highlighted],

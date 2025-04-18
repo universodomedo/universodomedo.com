@@ -1,9 +1,11 @@
-import React, { useEffect, useRef } from 'react';
 import styles from './styles.module.css';
+import React, { useEffect, useRef } from 'react';
+
+import BarraMenu from 'Componentes/ElementosDeJogo/BarraMenu/BarraMenu.tsx';
+
+import Slider from "react-slick";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
-import BarraMenu from 'Componentes/ElementosDeJogo/BarraMenu/BarraMenu.tsx';
-import Slider from "react-slick";
 
 export default function CarrosselSwiperDireita({ listaPaginas, setPaginaAbertaSwiper, paginaAbertaSwiper }: {
     listaPaginas: { nome: string; componente: React.ReactNode; contexto: () => any; }[],
@@ -51,9 +53,9 @@ export default function CarrosselSwiperDireita({ listaPaginas, setPaginaAbertaSw
             </Slider>
         </div>
     );
-}
+};
 
-const AbaComIconeConfig = ({ useContextoPaginaAberta }: { useContextoPaginaAberta: () => { listaMenus: Array<{ itensMenu: any[] }> } }) => {
+function AbaComIconeConfig ({ useContextoPaginaAberta }: { useContextoPaginaAberta: () => { listaMenus: Array<{ itensMenu: any[] }> } }) {
     const { listaMenus } = useContextoPaginaAberta();
 
     return (
@@ -84,4 +86,4 @@ const AbaComIconeConfig = ({ useContextoPaginaAberta }: { useContextoPaginaAbert
             ))}
         </BarraMenu>
     );
-}
+};

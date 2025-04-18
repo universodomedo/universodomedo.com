@@ -1,11 +1,12 @@
 import styles from './styles.module.css';
 
-import { useContextoFichaPersonagem } from "Contextos/ContextoFichaPersonagem/contexto";
 import { AtributoPersonagemDto, PericiaPersonagemDto } from 'types-nora-api';
-
 import textoFormatadoParaVisualizacao from 'Uteis/UteisTexto/textoFormatadoParaVisualizacao';
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
 import adicionaSinalEmNumeroParaExibicao from 'Uteis/UteisTexto/adicionaSinalEmNumeroParaExibicao';
+
+import { useContextoFichaPersonagem } from "Contextos/ContextoFichaPersonagem/contexto";
+import { useContextoControleAtributosPericias } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAtributosPericias/contexto';
 
 export default function PaginaControleAtributosPericias() {
     const { personagem } = useContextoFichaPersonagem();
@@ -23,8 +24,7 @@ export default function PaginaControleAtributosPericias() {
 };
 
 function AreaAtributo({ atributoPersonagem, periciasPersonagem }: { atributoPersonagem: AtributoPersonagemDto, periciasPersonagem: PericiaPersonagemDto[] }) {
-    const abreviar = false;
-    // const { abreviar } = useContextoControleAtributosPericias();
+    const { abreviar } = useContextoControleAtributosPericias();
     const atributoPorExtenso = textoFormatadoParaVisualizacao(abreviar ? atributoPersonagem.atributo.nomeAbreviado : atributoPersonagem.atributo.nome);
 
     return (
@@ -49,8 +49,7 @@ function AreaAtributo({ atributoPersonagem, periciasPersonagem }: { atributoPers
 }
 
 function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaPersonagemDto }) {
-    const abreviar = false;
-    // const { abreviar } = useContextoControleAtributosPericias();
+    const { abreviar } = useContextoControleAtributosPericias();
     const periciaPorExtenso = textoFormatadoParaVisualizacao(abreviar ? periciaPersonagem.pericia.nomeAbreviado : periciaPersonagem.pericia.nome);
 
     return (
@@ -67,8 +66,7 @@ function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaPersonag
             </Tooltip>
 
             <h3 className={styles.pericia_valor}>
-                <span>{periciaPersonagem.pericia.nome.slice(0, 1)}</span>
-                {/* <span style={{ color: periciaPersonagem.pericia. }}>{periciaPersonagem.pericia.nome.slice(0, 1)}</span> */}
+                <span style={{ color: periciaPersonagem.patentePericia.cor }}>{periciaPersonagem.patentePericia.nome.slice(0, 1)}</span>
                 {periciaPersonagem.valorEfeito !== 0 && (
                     <span style={{ color: periciaPersonagem.valorEfeito > 0 ? '#83EF83' : '#E98282' }}>
                         {` ${adicionaSinalEmNumeroParaExibicao(periciaPersonagem.valorEfeito)}`}

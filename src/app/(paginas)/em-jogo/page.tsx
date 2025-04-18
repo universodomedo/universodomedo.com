@@ -2,6 +2,7 @@
 
 import styles from "./styles.module.css";
 import { ControladorSlot } from 'Layouts/ControladorSlot';
+import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 import BarraEstatisticaDanificavel from 'Componentes/ElementosDeJogo/BarraEstatisticaDanificavel/page.tsx';
 import BarraLocaisDeJogo from 'Componentes/ElementosDeJogo/BarraLocaisDeJogo/page.tsx';
@@ -49,8 +50,8 @@ function PaginaFichaBaixo() {
                 </div>
                 <div className={styles.fatia_parte_baixo_execucoes}>
                     <div className={styles.recipiente_execucao}>
-                        <p>Ação Padrão</p>
-                        <p>1/1</p>
+                        {/* <p>Ação Padrão</p>
+                        <p>1/1</p> */}
                     </div>
                 </div>
             </div>
@@ -68,7 +69,9 @@ function PaginaFichaBaixo() {
                     <h2>{`${personagem?.detalhe?.classe.nome} - ${personagem?.detalhe?.nivel.nomeVisualizacao}`}</h2>
                 </div>
                 <div className={styles.recipiente_imagem_personagem}>
-                    <div id={styles.imagem_personagem} />
+                    <div id={styles.imagem_personagem}>
+                        <RecipienteImagem src={personagem?.caminhoAvatar} />
+                    </div>
                 </div>
             </div>
         </>

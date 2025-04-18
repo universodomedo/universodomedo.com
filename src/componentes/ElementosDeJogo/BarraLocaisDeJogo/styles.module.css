@@ -13,10 +13,12 @@
     flex-direction: row;
     flex: 1;
     align-items: center;
+    justify-content: space-around;
+    border-bottom: 1px solid #979797;
 }
 
-.barra_locais_centro svg {
-    margin: auto;
+.barra_locais_borda_esquerda, .barra_locais_centro, .barra_locais_borda_direita {
+    background-color: rgb(184, 180, 180);
 }
 
 .barra_locais_borda_direita {
@@ -31,4 +33,9 @@
 
 .icone_local.local_selecionado {
     color: #AEF3FA;
+}
+
+.recipiente_icone_barra_locais {
+    height: 100%;
+    aspect-ratio: 1;
 }

@@ -6,6 +6,9 @@ import './globals.css';
 import styles from './styles.module.css';
 import { ReactNode } from 'react';
 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 import Fumaca from 'Componentes/ElementosVisuais/Fumaca/Fumaca.tsx';
 
 import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
