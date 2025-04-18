@@ -4,7 +4,7 @@ import { EstruturaPaginaDefinicao } from "types-nora-api";
 import Link from 'next/link';
 import TextoGlitado from 'Componentes/ElementosVisuais/TextoGlitado/TextoGlitado';
 
-export default function PaginaConteudoDinamico({ conteudo, listaChaves }: { conteudo: EstruturaPaginaDefinicao, listaChaves: string[] }) {
+export default function PaginaConteudoDinamico({ conteudo, listaSlug }: { conteudo: EstruturaPaginaDefinicao, listaSlug: string[] }) {
     return (
         <div className={styles.recipiente_definicao}>
             {/* {listaChaves.length > 0 && <Breadcrumb listaChaves={listaChaves.map((chave) => decodeURIComponent(chave))} />} */}

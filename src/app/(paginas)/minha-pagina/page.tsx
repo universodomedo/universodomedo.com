@@ -15,7 +15,7 @@ export default function MinhaPagina() {
     );
 };
 
-export function MinhaPagina_Slot() {
+function MinhaPagina_Slot() {
     return (
         <div id={styles.portal_usuario}>
             <div id={styles.portal_usuario_esquerda}>

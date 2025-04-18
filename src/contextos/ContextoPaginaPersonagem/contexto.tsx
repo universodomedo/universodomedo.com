@@ -30,8 +30,7 @@ export const ContextoPaginaPersonagemProvider = ({ children }: { children: React
         setCarregando(true);
 
         try {
-            const dados = await obtemDadosPaginaPersonagens();
-            setListaPersonagens(!dados.sucesso || !dados.dados ? undefined : dados.dados);
+            setListaPersonagens(await obtemDadosPaginaPersonagens());
         } catch {
             setListaPersonagens(undefined);
         } finally {
@@ -42,13 +41,8 @@ export const ContextoPaginaPersonagemProvider = ({ children }: { children: React
     async function buscaDadosGeraisPersonagem(idPersonagem: number) {
         try {
             setCarregando(true);
-            const dadosPersonangens = await obtemDadosPersonagemDoUsuario(idPersonagem);
 
-            if (!dadosPersonangens.sucesso || !dadosPersonangens.dados) {
-                setPersonagemSelecionado(undefined);
-            } else {
-                setPersonagemSelecionado(dadosPersonangens.dados);
-            }
+            setPersonagemSelecionado(await obtemDadosPersonagemDoUsuario(idPersonagem));
         } catch (error) {
             setPersonagemSelecionado(undefined);
         } finally {

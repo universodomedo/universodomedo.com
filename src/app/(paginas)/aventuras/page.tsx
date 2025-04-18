@@ -16,7 +16,7 @@ export default function PaginaAventuras() {
     );
 };
 
-export async function PaginaAventuras_Slot() {
+async function PaginaAventuras_Slot() {
     // passar os dados de todas as aventuras para um contexto
     // passar os componentes da pagina aventura para pasta de componentes
     const respostaDadosPaginaAventuras = await obtemTodasAventuras();

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { RespostaBackEnd } from "types-nora-api";
 import { redirect } from "next/navigation";
 import { obtemCookiesNoServidor } from "Uteis/ObtemCookies/ObtemCookiesNoServidor";
 

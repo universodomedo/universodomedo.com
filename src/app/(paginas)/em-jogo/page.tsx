@@ -6,6 +6,7 @@ import { ControladorSlot } from 'Layouts/ControladorSlot';
 import BarraEstatisticaDanificavel from 'Componentes/ElementosDeJogo/BarraEstatisticaDanificavel/page.tsx';
 import BarraLocaisDeJogo from 'Componentes/ElementosDeJogo/BarraLocaisDeJogo/page.tsx';
 import { ContextoFichaPersonagemProvider, useContextoFichaPersonagem } from "Contextos/ContextoFichaPersonagem/contexto";
+import ControladorSwiperFicha from "Componentes/ElementosDeJogo/ControladorSwiperFicha/CotroladorSwiperFicha";
 
 export default function PaginaEmJogo() {
     return (
@@ -19,10 +20,11 @@ export default function PaginaEmJogo() {
 
 function PaginaEmJogo_Slot() {
     return (
-        <>
+        <div id={styles.recipiente_pagina_jogo}>
             <div className={styles.secao_cima}><PaginaFichaCima /></div>
+            <ControladorSwiperFicha />
             <div className={styles.secao_baixo}><PaginaFichaBaixo /></div>
-        </>
+        </div>
     );
 };
 
@@ -39,15 +41,6 @@ function PaginaFichaBaixo() {
         <>
             <div className={styles.fatia_parte_baixo_estatisticas}>
                 <div className={styles.fatia_parte_baixo_estatisticas_danificaveis}>
-                    {/* <div className={styles.recipiente_estatistica_danificavel}>
-                        <BarraEstatisticaDanificavel titulo={'P.V.'} valorAtual={30} valorMaximo={30} corBarra={'#FF0000'} />
-                    </div>
-                    <div className={styles.recipiente_estatistica_danificavel}>
-                        <BarraEstatisticaDanificavel titulo={'P.S.'} valorAtual={20} valorMaximo={20} corBarra={'#324A99'} />
-                    </div>
-                    <div className={styles.recipiente_estatistica_danificavel}>
-                        <BarraEstatisticaDanificavel titulo={'P.E.'} valorAtual={25} valorMaximo={25} corBarra={'#47BA16'} />
-                    </div> */}
                     {personagem?.estatisticasDanificaveisPersonagem?.map(estatisticaPersonagem => (
                         <div key={estatisticaPersonagem.estatisticaDanificavel.id} className={styles.recipiente_estatistica_danificavel}>
                             <BarraEstatisticaDanificavel titulo={estatisticaPersonagem.estatisticaDanificavel.nomeAbreviado} valorAtual={estatisticaPersonagem.valorAtual} valorMaximo={estatisticaPersonagem.valorMaximo} corBarra={estatisticaPersonagem.estatisticaDanificavel.cor} />

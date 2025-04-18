@@ -18,7 +18,7 @@ export default function PaginaSessao() {
     );
 };
 
-export function PaginaSessao_Slot() {
+function PaginaSessao_Slot() {
     const [sessaoEmAndamento, setSessaoEmAndamento] = useState<SessaoDto | null>(null);
 
     const { setAnimacoesHabilitadas } = useContextoPerformance();

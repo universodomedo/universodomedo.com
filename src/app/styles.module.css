@@ -1,4 +1,4 @@
-:global(section h1) {
+#main :global(section h1) {
     font-size: 2em;
 }
 

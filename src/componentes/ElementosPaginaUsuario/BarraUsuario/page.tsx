@@ -1,6 +1,6 @@
 'use client';
 
-import styles from './style.module.css';
+import styles from './styles.module.css';
 import { useState } from 'react';
 
 import { atualizaAvatarUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';

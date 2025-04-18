@@ -1,3 +1,7 @@
+// tive que colocar isso para que o build não reclame de uso de cookie quando chamando endpoint. Não entendi muito bem o que muda e consequências
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import './globals.css';
 import styles from './styles.module.css';
 import { ReactNode } from 'react';

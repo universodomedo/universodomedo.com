@@ -1,6 +1,6 @@
 'use client';
 
-import styles from './style.module.css';
+import styles from './styles.module.css';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 
 import Image from 'next/image';
@@ -15,7 +15,7 @@ export default function PaginaAcessar() {
     );
 };
 
-export function PaginaComSlot() {
+function PaginaComSlot() {
     const handleLogin = () => {
         window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`;
     };

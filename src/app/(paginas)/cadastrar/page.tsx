@@ -12,6 +12,6 @@ export default function PaginaAcessar() {
     );
 };
 
-export function Acessar() {
+function Acessar() {
     return <ModalPrimeiroAcesso />;
 };

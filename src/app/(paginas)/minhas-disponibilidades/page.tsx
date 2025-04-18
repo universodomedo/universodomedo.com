@@ -11,7 +11,7 @@ export default function PaginaMinhaDisponibilidade() {
     );
 };
 
-export async function PaginaMinhaDisponibilidade_Slot() {    
+async function PaginaMinhaDisponibilidade_Slot() {
     const respostaDadosMinhasDisponibilidades = await obtemDadosMinhasDisponibilidades();
 
     if (!respostaDadosMinhasDisponibilidades) return <div>Erro ao carregar disponibilidades</div>;

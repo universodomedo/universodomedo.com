@@ -2,6 +2,7 @@
     height: 70vh;
     font-size: 1.3rem;
     font-family: var(--fonte-junge) !important;
+    color: black;
 }
 
 .conteudo_modal_primeiro_acesso_confirmacao {

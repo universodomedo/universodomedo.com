@@ -4,20 +4,20 @@ import { obtemDadosPersonagemDoUsuario } from 'Uteis/ApiConsumer/ConsumerMiddlew
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
 import PaginaPersonagemComDados from './page-dados.tsx';
 
-export default function PaginaPersonagem({ params }: { params: { chave?: number } }) {
+export default async function PaginaPersonagem({ params }: { params: Promise<{ slug?: number }>; }) {
+    const { slug } = await params;
+
     return (
         <ControladorSlot pageConfig={{ comCabecalho: false, usuarioObrigatorio: true }}>
-            <PaginaPersonagem_Slot params={params} />
+            <PaginaPersonagem_Slot slug={slug} />
         </ControladorSlot>
     );
 };
 
-export async function PaginaPersonagem_Slot({ params }: { params: { chave?: number } }) {
-    const { chave } = await params;
+async function PaginaPersonagem_Slot({ slug }: { slug?: number }) {
+    if (slug === undefined) return <Redirecionador urlRedirecionar='/meus-personagens' />;
 
-    if (chave === undefined) return <Redirecionador urlRedirecionar='/meus-personagens' />;
-
-    const respostaDadosPersonagem = await obtemDadosPersonagemDoUsuario(chave);
+    const respostaDadosPersonagem = await obtemDadosPersonagemDoUsuario(slug);
 
     if (!respostaDadosPersonagem) return <div>Erro ao carregar personagem</div>;
 

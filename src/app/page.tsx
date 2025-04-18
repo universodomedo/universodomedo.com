@@ -12,7 +12,7 @@ export default function PaginaAterrissagem() {
     );
 };
 
-export function PaginaAterrissagem_Slot() {
+function PaginaAterrissagem_Slot() {
   return (
     <>
       <div id={styles.recipiente_conteudo_pagina_principal}>

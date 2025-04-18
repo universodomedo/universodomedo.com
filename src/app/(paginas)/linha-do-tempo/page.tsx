@@ -10,6 +10,6 @@ export default function PaginaLinhaDoTempo() {
     );
 };
 
-export function PaginaLinhaDoTempo_Slot() {
+function PaginaLinhaDoTempo_Slot() {
     return <LinhaDoTempo />;
 };
