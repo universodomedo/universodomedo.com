@@ -20,7 +20,9 @@ export default function LayoutAdmin({ children }: { children: ReactNode }) {
         <ControladorSlot pageConfig={{ comCabecalho: false, usuarioObrigatorio: true }}>
             <div id={styles.recipiente_pagina_admin}>
                 <Link href={'/admin'}><h1>Páginas ADMIN</h1></Link>
-                {children}
+                <div id={styles.recipiente_conteudo_pagina_admin}>
+                    {children}
+                </div>
             </div>
         </ControladorSlot>
     )

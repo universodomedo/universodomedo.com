@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao() {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET' });
@@ -61,8 +61,26 @@ export async function obtemDadosProximaSessao() {
     return await useApi<SessaoDto>({ uri: '/sessoes/obtemDadosProximaSessao', method: 'GET' });
 }
 
-export async function obtemFichaPersonagem(idPersonagem: number) {
-    return await useApi<PersonagemDto>({ uri: 'personagens/obtemFichaPersonagem', method: 'GET', data: { idPersonagem: idPersonagem } });
+export async function obtemFichaDePersonagemEmNivel() {
+// export async function obtemFichaDePersonagemEmNivel(idPersonagem: number) {
+    return await useApi<FichaPersonagemDto>({ uri: 'fichas_personagem/obtemFichaDePersonagemEmNivel', method: 'GET' });
+    // return await useApi<FichaPersonagemDto>({ uri: 'fichas_personagem/obtemFichaDePersonagemEmNivel', method: 'GET', data: { idPersonagem: idPersonagem } });
+}
+
+export async function obtemPersonagensComPendencias() {
+    return await useApi<PersonagemDto[]>({ uri: 'personagens/obtemPersonagensComPendencias', method: 'GET' });
+}
+
+export async function obtemPericiasParaCriacaoFicha() {
+    return await useApi<PericiaDto[]>({ uri: 'pericias/obtemTodos', method: 'GET', params: { criandoFicha: true } });
+}
+
+export async function criaFicha(idPersonagem: number, listaIdPericiasNessaFicha: number[]) {
+    return await useApi<boolean>({ uri: 'fichas_personagem/criaFicha', method: 'POST', data: { idPersonagem: idPersonagem, listaIdPericiasNessaFicha: listaIdPericiasNessaFicha } });
+}
+
+export async function obtemPersonagensComEvolucaoPendente() {
+    return await useApi<PersonagemDto[]>({ uri: 'personagens/obtemPersonagensComEvolucaoPendente', method: 'GET' });
 }
 
 //

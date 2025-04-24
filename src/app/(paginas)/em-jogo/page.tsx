@@ -36,15 +36,15 @@ function PaginaFichaCima() {
 };
 
 function PaginaFichaBaixo() {
-    const { personagem } = useContextoFichaPersonagem();
+    const { ficha } = useContextoFichaPersonagem();
 
     return (
         <>
             <div className={styles.fatia_parte_baixo_estatisticas}>
                 <div className={styles.fatia_parte_baixo_estatisticas_danificaveis}>
-                    {personagem?.estatisticasDanificaveisPersonagem?.map(estatisticaPersonagem => (
+                    {ficha?.estatisticasDanificaveis.map(estatisticaPersonagem => (
                         <div key={estatisticaPersonagem.estatisticaDanificavel.id} className={styles.recipiente_estatistica_danificavel}>
-                            <BarraEstatisticaDanificavel titulo={estatisticaPersonagem.estatisticaDanificavel.nomeAbreviado} valorAtual={estatisticaPersonagem.valorAtual} valorMaximo={estatisticaPersonagem.valorMaximo} corBarra={estatisticaPersonagem.estatisticaDanificavel.cor} />
+                            <BarraEstatisticaDanificavel titulo={estatisticaPersonagem.estatisticaDanificavel.nomeAbreviado} valorAtual={estatisticaPersonagem.valorMaximo} valorMaximo={estatisticaPersonagem.valorMaximo} corBarra={estatisticaPersonagem.estatisticaDanificavel.cor} />
                         </div>
                     ))}
                 </div>
@@ -65,12 +65,12 @@ function PaginaFichaBaixo() {
             </div>
             <div className={`${styles.fatia_parte_baixo_detalhes}`}>
                 <div className={styles.recipiente_informacoes_personagem}>
-                    <h2>{personagem?.informacao?.nome}</h2>
-                    <h2>{`${personagem?.detalhe?.classe.nome} - ${personagem?.detalhe?.nivel.nomeVisualizacao}`}</h2>
+                    <h2>{ficha?.personagem.informacao.nome}</h2>
+                    {/* <h2>{`${ficha?.personagem.detalhe?.classe.nome} - ${personagem?.detalhe?.nivel.nomeVisualizacao}`}</h2> */}
                 </div>
                 <div className={styles.recipiente_imagem_personagem}>
                     <div id={styles.imagem_personagem}>
-                        <RecipienteImagem src={personagem?.caminhoAvatar} />
+                        <RecipienteImagem src={ficha?.personagem.caminhoAvatar} />
                     </div>
                 </div>
             </div>

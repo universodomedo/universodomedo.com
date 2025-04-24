@@ -1,6 +1,6 @@
 import styles from './styles.module.css';
 
-import { AtributoPersonagemDto, PericiaPersonagemDto } from 'types-nora-api';
+import { AtributoFichaDto, PericiaFichaDto } from 'types-nora-api';
 import textoFormatadoParaVisualizacao from 'Uteis/UteisTexto/textoFormatadoParaVisualizacao';
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
 import adicionaSinalEmNumeroParaExibicao from 'Uteis/UteisTexto/adicionaSinalEmNumeroParaExibicao';
@@ -9,21 +9,21 @@ import { useContextoFichaPersonagem } from "Contextos/ContextoFichaPersonagem/co
 import { useContextoControleAtributosPericias } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAtributosPericias/contexto';
 
 export default function PaginaControleAtributosPericias() {
-    const { personagem } = useContextoFichaPersonagem();
+    const { ficha } = useContextoFichaPersonagem();
 
     return (
         <div className={styles.atributos_personagem}>
-            {(personagem?.atributosPersonagem || []).map((atributoPersonagem, index) => (
+            {(ficha?.atributos || []).map((atributoPersonagem, index) => (
                 <AreaAtributo key={index}
                     atributoPersonagem={atributoPersonagem}
-                    periciasPersonagem={(personagem?.periciasPersonagem || []).filter(periciaPersonagem => periciaPersonagem.pericia.atributo.id === atributoPersonagem.atributo.id)}
+                    periciasPersonagem={(ficha?.pericias || []).filter(periciaPersonagem => periciaPersonagem.pericia.atributo.id === atributoPersonagem.atributo.id)}
                 />
             ))}
         </div>
     );
 };
 
-function AreaAtributo({ atributoPersonagem, periciasPersonagem }: { atributoPersonagem: AtributoPersonagemDto, periciasPersonagem: PericiaPersonagemDto[] }) {
+function AreaAtributo({ atributoPersonagem, periciasPersonagem }: { atributoPersonagem: AtributoFichaDto, periciasPersonagem: PericiaFichaDto[] }) {
     const { abreviar } = useContextoControleAtributosPericias();
     const atributoPorExtenso = textoFormatadoParaVisualizacao(abreviar ? atributoPersonagem.atributo.nomeAbreviado : atributoPersonagem.atributo.nome);
 
@@ -48,7 +48,7 @@ function AreaAtributo({ atributoPersonagem, periciasPersonagem }: { atributoPers
     );
 }
 
-function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaPersonagemDto }) {
+function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFichaDto }) {
     const { abreviar } = useContextoControleAtributosPericias();
     const periciaPorExtenso = textoFormatadoParaVisualizacao(abreviar ? periciaPersonagem.pericia.nomeAbreviado : periciaPersonagem.pericia.nome);
 
@@ -77,7 +77,7 @@ function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaPersonag
     );
 }
 
-function TooltipAtributo({ atributoPersonagem }: { atributoPersonagem: AtributoPersonagemDto }) {
+function TooltipAtributo({ atributoPersonagem }: { atributoPersonagem: AtributoFichaDto }) {
     return (
         <>
             <h2>{atributoPersonagem.atributo.nome}</h2>
@@ -96,7 +96,7 @@ function TooltipAtributo({ atributoPersonagem }: { atributoPersonagem: AtributoP
     );
 }
 
-function TooltipPericia({ periciaPersonagem }: { periciaPersonagem: PericiaPersonagemDto }) {
+function TooltipPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFichaDto }) {
     return (
         <>
             <h1>{periciaPersonagem.pericia.nome}</h1>

@@ -1,11 +1,11 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { PersonagemDto } from 'types-nora-api';
-import { obtemFichaPersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { FichaPersonagemDto } from 'types-nora-api';
+import { obtemFichaDePersonagemEmNivel } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoFichaPersonagemProps {
-    personagem: PersonagemDto | null;
+    ficha: FichaPersonagemDto | null;
 };
 
 const ContextoFichaPersonagem = createContext<ContextoFichaPersonagemProps | undefined>(undefined);
@@ -17,21 +17,21 @@ export const useContextoFichaPersonagem = (): ContextoFichaPersonagemProps => {
 };
 
 export const ContextoFichaPersonagemProvider = ({ children }: { children: React.ReactNode }) => {
-    const [personagem, setPersonagem] = useState<PersonagemDto | null>();
+    const [ficha, setFicha] = useState<FichaPersonagemDto | null>();
 
     const obtemPersonagem = async () => {
-        const retorno = await obtemFichaPersonagem(80);
-        setPersonagem(retorno);
+        const retorno = await obtemFichaDePersonagemEmNivel();
+        setFicha(retorno);
     }
 
     useEffect(() => {
         obtemPersonagem();
     }, []);
 
-    if (!personagem) return (<h1>carregando personagem...</h1>)
+    if (!ficha) return (<h1>carregando ficha...</h1>)
 
     return (
-        <ContextoFichaPersonagem.Provider value={{ personagem }}>
+        <ContextoFichaPersonagem.Provider value={{ ficha }}>
             {children}
         </ContextoFichaPersonagem.Provider>
     );

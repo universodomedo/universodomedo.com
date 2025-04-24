@@ -1,15 +1,13 @@
 'use client';
 
-import { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
 import { PersonagemDto } from 'types-nora-api';
 
 import { obtemDadosPaginaPersonagens, obtemDadosPersonagemDoUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
 interface ContextoPaginaPersonagemProps {
-    carregando: boolean;
-    listaPersonagens: PersonagemDto[] | undefined;
-    buscaTodosPersonagensUsuario: () => void;
-    personagemSelecionado: PersonagemDto | undefined;
+    listaPersonagens: PersonagemDto[] | null;
+    personagemSelecionado: PersonagemDto | null;
     buscaDadosGeraisPersonagem: (idPersonagem: number) => void;
 };
 
@@ -23,8 +21,8 @@ export const useContextoPaginaPersonagem = (): ContextoPaginaPersonagemProps => 
 
 export const ContextoPaginaPersonagemProvider = ({ children }: { children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState(true);
-    const [listaPersonagens, setListaPersonagens] = useState<PersonagemDto[] | undefined>(undefined);
-    const [personagemSelecionado, setPersonagemSelecionado] = useState<PersonagemDto | undefined>(undefined);
+    const [listaPersonagens, setListaPersonagens] = useState<PersonagemDto[] | null>(null);
+    const [personagemSelecionado, setPersonagemSelecionado] = useState<PersonagemDto | null>(null);
 
     async function buscaTodosPersonagensUsuario() {
         setCarregando(true);
@@ -32,7 +30,7 @@ export const ContextoPaginaPersonagemProvider = ({ children }: { children: React
         try {
             setListaPersonagens(await obtemDadosPaginaPersonagens());
         } catch {
-            setListaPersonagens(undefined);
+            setListaPersonagens(null);
         } finally {
             setCarregando(false);
         }
@@ -44,14 +42,20 @@ export const ContextoPaginaPersonagemProvider = ({ children }: { children: React
 
             setPersonagemSelecionado(await obtemDadosPersonagemDoUsuario(idPersonagem));
         } catch (error) {
-            setPersonagemSelecionado(undefined);
+            setPersonagemSelecionado(null);
         } finally {
             setCarregando(false);
         }
     }
 
+    useEffect(() => {
+        buscaTodosPersonagensUsuario();
+    }, []);
+
+    if (carregando) return <div>Carregando personagens</div>;
+
     return (
-        <ContextoPaginaPersonagem.Provider value={{ carregando, listaPersonagens, buscaTodosPersonagensUsuario, personagemSelecionado, buscaDadosGeraisPersonagem }}>
+        <ContextoPaginaPersonagem.Provider value={{ listaPersonagens, personagemSelecionado, buscaDadosGeraisPersonagem }}>
             {children}
         </ContextoPaginaPersonagem.Provider>
     );
