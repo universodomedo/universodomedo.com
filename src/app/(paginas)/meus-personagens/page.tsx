@@ -1,9 +1,11 @@
+'use client';
+
 import styles from './styles.module.css';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-
-import { PaginaMeusPersonagens_Slot } from './componentes.tsx';
-import { ContextoPaginaPersonagemProvider } from './contexto.tsx';
+import { ContextoPaginaPersonagemProvider, useContextoPaginaPersonagem } from './contexto.tsx';
+import { PaginaListaPersonagens } from './componentes/pagina-todos-personagens.tsx';
+import { PaginaPersonagemSelecionado } from './componentes/pagina-personagem.tsx';
 
 export default function PaginaMeusPersonagens() {
     return (
@@ -15,4 +17,10 @@ export default function PaginaMeusPersonagens() {
             </ContextoPaginaPersonagemProvider>
         </ControladorSlot>
     );
+};
+
+function PaginaMeusPersonagens_Slot() {
+    const { personagemSelecionado } = useContextoPaginaPersonagem();
+
+    return !personagemSelecionado ? <PaginaListaPersonagens /> : <PaginaPersonagemSelecionado />
 };

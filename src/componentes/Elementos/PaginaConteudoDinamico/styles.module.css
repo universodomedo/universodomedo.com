@@ -18,7 +18,7 @@
 }
 
 .definicao_titulo {
-    font-size: 4rem;
+    font-size: 3.4rem;
     line-height: 3.5rem;
 }
 
@@ -46,6 +46,10 @@
     margin: 0 auto;
     /* align-items: center; */
     /* text-align: center; */
+}
+
+.definicao_conteudo p {
+    font-size: 1.3rem;
 }
 
 .recipiente_lista {

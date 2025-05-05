@@ -2,13 +2,13 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { PersonagemDto } from 'types-nora-api';
-import { obtemPersonagensComEvolucaoPendente } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { obtemPersonagensComEvolucaoPendente, obtemPersogemEmProcessoDeEvolucao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoEvoluindoPersonagemProps {
     listaPersonagensEvolucaoPendente: PersonagemDto[] | null;
     buscaPersonagensComEvolucaoPendente: () => void;
+    selecionaPersonagemEvoluindo: (idPersonagem: number) => void;
     personagemEvoluindo: PersonagemDto | null;
-    buscaDadosParaEvoluirPersonagem: (idPersonagem: number) => void;
 };
 
 const ContextoEvoluindoPersonagem = createContext<ContextoEvoluindoPersonagemProps | undefined>(undefined);
@@ -36,12 +36,12 @@ export const ContextoEvoluindoPersonagemProvider = ({ children }: { children: Re
         }
     }
 
-    async function buscaDadosParaEvoluirPersonagem(idPersonagem: number) {
-        try {
-            setCarregando(true);
+    async function selecionaPersonagemEvoluindo(idPersonagem: number) {
+        setCarregando(true);
 
-            // setPersonagemEvoluindo(await obtemDadosPersonagemDoUsuario(idPersonagem));
-        } catch (error) {
+        try {
+            setPersonagemEvoluindo(await obtemPersogemEmProcessoDeEvolucao(idPersonagem));
+        } catch {
             setPersonagemEvoluindo(null);
         } finally {
             setCarregando(false);
@@ -55,7 +55,7 @@ export const ContextoEvoluindoPersonagemProvider = ({ children }: { children: Re
     if (carregando) return <div>Carregando personagens</div>;
 
     return (
-        <ContextoEvoluindoPersonagem.Provider value={{ listaPersonagensEvolucaoPendente, buscaPersonagensComEvolucaoPendente, personagemEvoluindo, buscaDadosParaEvoluirPersonagem }}>
+        <ContextoEvoluindoPersonagem.Provider value={{ listaPersonagensEvolucaoPendente, buscaPersonagensComEvolucaoPendente, selecionaPersonagemEvoluindo, personagemEvoluindo }}>
             {children}
         </ContextoEvoluindoPersonagem.Provider>
     );

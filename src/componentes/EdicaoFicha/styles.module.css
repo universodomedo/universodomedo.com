@@ -1,0 +1,116 @@
+#recipiente_pagina_edicao {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 2% 10%;
+    align-items: center;
+    text-align: center;
+    gap: 5vh;
+    font-size: 1.3rem;
+    font-family: var(--fonte-cinzel);
+}
+
+.recipiente_informacoes_secao_etapa_evolucao {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    width: 40%;
+    margin: 0 auto;
+}
+
+#recipiente_conteudo_edicao {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    gap: 3vh;
+}
+
+#recipiente_etapa_edicao {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-y: auto;
+    gap: 2vh;
+    flex: 1 0 0;
+}
+
+#rodape_edicao {
+    flex: 0 0 0;
+}
+
+#rodape_edicao button {
+    padding: .5rem;
+}
+
+.prosseguir, .recipiente_botao_desabilitado {
+    width: 6%;
+    height: 4vh;
+    margin: auto;
+}
+
+.recipiente_botao_desabilitado button {
+    width: 100%;
+    height: 100%;
+}
+
+.atributos {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 4vh;
+    width: 80%;
+    margin: auto;
+}
+
+.corpo_atributo {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    flex: 0 1 calc(33%);
+    align-items: center;
+}
+
+.nome_atributo {
+    margin: 0;
+    line-height: .8;
+    font-size: 1.3em;
+}
+
+.valor_atributo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    gap: 1.7rem;
+}
+
+.editando_ficha_estatisticas {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+    margin: auto;
+    width: 100%;
+    justify-content: center;
+}
+
+.visualizador_estatistica {
+    display: flex;
+    flex-direction: column;
+    gap: .6vh;
+    padding: 1%;
+    align-items: center;
+}
+
+.recipiente_botao_edicao {
+    display: flex;
+    height: 1.6rem;
+}
+
+.recipiente_botao_edicao button {
+    height: 100%;
+    padding: .3rem;
+}

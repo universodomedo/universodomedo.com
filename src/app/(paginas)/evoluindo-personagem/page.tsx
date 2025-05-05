@@ -1,6 +1,6 @@
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 
-import { ContextoEvoluindoPersonagemProvider } from './contexto.tsx';
+import { ContextoEvoluindoPersonagemProvider } from 'Contextos/ContextoEvoluindoPersonagem/contexto.tsx';
 import { PaginaEvoluindoPersonagem_Slot } from './componentes.tsx';
 
 export default function PaginaEvoluindoPersonagem() {

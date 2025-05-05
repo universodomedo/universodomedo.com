@@ -1,0 +1,44 @@
+#recipiente_pagina_evolucao {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 2% 10%;
+    align-items: center;
+    text-align: center;
+    gap: 5vh;
+    font-size: 1.3rem;
+    font-family: var(--fonte-cinzel);
+}
+
+#recipiente_lista_personagens_para_evoluir {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    gap: 5vh 5%;
+}
+
+.recipiente_personagem_para_evoluir {
+    display: flex;
+    flex-direction: row;
+    gap: 3vw;
+}
+
+.recipiente_avatar_personagem_para_evoluir {
+    position: relative;
+    height: 8.6rem;
+    aspect-ratio: 1 / 1;
+}
+
+.recipiente_informacoes_personagem_para_evoluir {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.recipiente_dados_personagem_para_evoluir {
+    flex: 1 0 0;
+}
+
+.recipiente_informacoes_personagem_para_evoluir button {
+    padding: .6rem;
+}

@@ -81,3 +81,12 @@
     justify-content: center;
     white-space: nowrap;
 }
+
+#recipiente_botao_evoluir a {
+    display: block;
+    height: 100%;
+}
+
+#recipiente_botao_evoluir button {
+    padding: .6rem;
+}

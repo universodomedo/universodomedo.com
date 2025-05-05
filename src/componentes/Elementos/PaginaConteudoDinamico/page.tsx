@@ -7,7 +7,7 @@ import TextoGlitado from 'Componentes/ElementosVisuais/TextoGlitado/TextoGlitado
 export default function PaginaConteudoDinamico({ conteudo, listaSlug }: { conteudo: EstruturaPaginaDefinicao, listaSlug: string[] }) {
     return (
         <div className={styles.recipiente_definicao}>
-            {/* {listaChaves.length > 0 && <Breadcrumb listaChaves={listaChaves.map((chave) => decodeURIComponent(chave))} />} */}
+            {listaSlug.length > 0 && <Breadcrumb listaSlug={listaSlug.map((chave) => decodeURIComponent(chave))} />}
 
             <div className={styles.recipiente_titulo}>
                 <h1 className={styles.definicao_titulo}>{conteudo.titulo}</h1>
@@ -76,27 +76,27 @@ export default function PaginaConteudoDinamico({ conteudo, listaSlug }: { conteu
     );
 }
 
-// function Breadcrumb({ listaChaves }: { listaChaves: string[] }) {
-//     const caminho = [
-//         { label: "Início", href: `/definicoes` },
-//         ...listaChaves.map((chave, index) => ({
-//             label: chave,
-//             href: `${listaChaves.slice(0, index + 1).join("/")}`
-//         }))
-//     ];
+function Breadcrumb({ listaSlug }: { listaSlug: string[] }) {
+    const caminho = [
+        { label: "Início", href: `/definicoes` },
+        ...listaSlug.map((chave, index) => ({
+            label: chave,
+            href: `/definicoes/${listaSlug.slice(0, index + 1).join("/")}`
+        }))
+    ];
 
-//     return (
-//         <div className={styles.recipiente_breadcrumb}>
-//             {caminho.map((item, index) => (
-//                 <span key={item.href}>
-//                     {index < caminho.length - 1 ? (
-//                         <Link href={`${item.href}`}>{item.label}</Link>
-//                     ) : (
-//                         <span>{item.label}</span>
-//                     )}
-//                     {index < caminho.length - 1 && " → "}
-//                 </span>
-//             ))}
-//         </div>
-//     );
-// };
+    return (
+        <div className={styles.recipiente_breadcrumb}>
+            {caminho.map((item, index) => (
+                <span key={item.href}>
+                    {index < caminho.length - 1 ? (
+                        <Link href={`${item.href}`}>{item.label}</Link>
+                    ) : (
+                        <span>{item.label}</span>
+                    )}
+                    {index < caminho.length - 1 && " → "}
+                </span>
+            ))}
+        </div>
+    );
+};

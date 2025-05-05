@@ -1,14 +1,14 @@
 'use client';
 
-import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
-import { PersonagemDto } from 'types-nora-api';
+import { createContext, useContext, useEffect, useState } from 'react';
 
-import { obtemDadosPaginaPersonagens, obtemDadosPersonagemDoUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
+import { PersonagemDto } from 'types-nora-api';
+import { obtemPersonagensDoUsuario, obtemDadosPersonagemDoUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
 interface ContextoPaginaPersonagemProps {
-    listaPersonagens: PersonagemDto[] | null;
+    personagensDoUsuario: PersonagemDto[] | null;
     personagemSelecionado: PersonagemDto | null;
-    buscaDadosGeraisPersonagem: (idPersonagem: number) => void;
+    buscaDadosPersonagemSelecionado: (idPersonagem: number) => void;
 };
 
 const ContextoPaginaPersonagem = createContext<ContextoPaginaPersonagemProps | undefined>(undefined);
@@ -21,25 +21,25 @@ export const useContextoPaginaPersonagem = (): ContextoPaginaPersonagemProps => 
 
 export const ContextoPaginaPersonagemProvider = ({ children }: { children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState(true);
-    const [listaPersonagens, setListaPersonagens] = useState<PersonagemDto[] | null>(null);
+    const [personagensDoUsuario, setPersonagensDoUsuario] = useState<PersonagemDto[] | null>(null);
     const [personagemSelecionado, setPersonagemSelecionado] = useState<PersonagemDto | null>(null);
 
     async function buscaTodosPersonagensUsuario() {
         setCarregando(true);
 
         try {
-            setListaPersonagens(await obtemDadosPaginaPersonagens());
+            setPersonagensDoUsuario(await obtemPersonagensDoUsuario());
         } catch {
-            setListaPersonagens(null);
+            setPersonagensDoUsuario(null);
         } finally {
             setCarregando(false);
         }
     }
 
-    async function buscaDadosGeraisPersonagem(idPersonagem: number) {
-        try {
-            setCarregando(true);
+    async function buscaDadosPersonagemSelecionado(idPersonagem: number) {
+        setCarregando(true);
 
+        try {
             setPersonagemSelecionado(await obtemDadosPersonagemDoUsuario(idPersonagem));
         } catch (error) {
             setPersonagemSelecionado(null);
@@ -55,7 +55,7 @@ export const ContextoPaginaPersonagemProvider = ({ children }: { children: React
     if (carregando) return <div>Carregando personagens</div>;
 
     return (
-        <ContextoPaginaPersonagem.Provider value={{ listaPersonagens, personagemSelecionado, buscaDadosGeraisPersonagem }}>
+        <ContextoPaginaPersonagem.Provider value={{ personagensDoUsuario, personagemSelecionado, buscaDadosPersonagemSelecionado }}>
             {children}
         </ContextoPaginaPersonagem.Provider>
     );

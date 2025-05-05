@@ -1,0 +1,102 @@
+.janela_avisos {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+    width: 20%;
+    max-height: 30vh;
+    background: #0B0D0E;
+    color: white;
+    padding: 1% 2%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 0 5px 5px 0;
+    overflow-y: visible;
+    transition: transform 0.3s ease;
+}
+
+.janela_avisos.fechado {
+    transform: translateX(-100%);
+}
+
+.janela_avisos_botao {
+    position: absolute;
+    top: 0;
+    right: -4vw;
+    width: 4vw;
+    height: 8vh;
+    background: #0B0D0E;
+    border: none;
+    color: white;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.janela_avisos_botao_vermelho svg {
+    color: red;
+    animation: heartbeat 2s infinite;
+}
+
+.janela_avisos_botao svg {
+    width: 100%;
+    height: 100%;
+}
+
+.janela_avisos_conteudo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: .7vh;
+    overflow: hidden;
+    flex: 1;
+}
+
+.janela_avisos_conteudo h1 {
+    margin: 0;
+}
+
+.mensagens_janela_avisos {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    gap: .4vh;
+    /* overflow: auto; */
+}
+
+.mensagens_janela_avisos p {
+    margin: 0;
+}
+
+.mensagem_notificacao {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2%;
+}
+
+.icone_notificacao {
+    height: 1rem;
+    aspect-ratio: 1;
+}
+
+.icone_notificacao svg {
+    width: 100%;
+    height: 100%;
+}
+
+.mensagem_notificacao .mensagem_notificacao_subitem {
+    margin-left: 3%;
+}
+
+@keyframes heartbeat {
+    0%, 25%, 50%, 100% {
+      transform: scale(1);
+    }
+    10%, 35% {
+      transform: scale(1.3);
+    }
+}

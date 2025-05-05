@@ -1,13 +1,9 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoEvoluiPersonagem, GanhoNivelClasseDto, ObjetoGanhosEvolucao } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao() {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET' });
-}
-
-export async function salvaPrimeiroAcessoUsuario(username: string) {
-    return await useApi<boolean>({ uri: '/usuarios/atualizaUsuarioPrimeiroAcesso', method: 'PUT', data: { username: username } });
 }
 
 export async function obtemDadosMinhasDisponibilidades() {
@@ -34,8 +30,8 @@ export async function obtemAventuraCompleta(idAventura: number) {
     return await useApi<AventuraDto>({ uri: '/aventuras/obtemAventuraCompleta', method: 'GET', params: { idAventura } });
 }
 
-export async function obtemDadosPaginaPersonagens() {
-    return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemDadosPaginaPersonagens', method: 'GET' });
+export async function obtemPersonagensDoUsuario() {
+    return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemPersonagensDoUsuario', method: 'GET' });
 }
 
 export async function obtemDadosPersonagemDoUsuario(idPersonagem: number) {
@@ -81,6 +77,14 @@ export async function criaFicha(idPersonagem: number, listaIdPericiasNessaFicha:
 
 export async function obtemPersonagensComEvolucaoPendente() {
     return await useApi<PersonagemDto[]>({ uri: 'personagens/obtemPersonagensComEvolucaoPendente', method: 'GET' });
+}
+
+export async function obtemPersogemEmProcessoDeEvolucao(idPersonagem: number) {
+    return await useApi<PersonagemDto>({ uri: 'personagens/obtemPersogemEmProcessoDeEvolucao', method: 'GET', params: { idPersonagem } });
+}
+
+export async function obtemGanhosParaEvoluir(idNivel: number, idClasse: number) {
+    return await useApi<ObjetoGanhosEvolucao>({ uri: 'ganhos_nivel_classe/obtemGanhosParaEvoluir', method: 'GET', params: { idNivel, idClasse } });
 }
 
 //
