@@ -2,12 +2,12 @@
 
 import styles from '../styles.module.css';
 
+import { EtapaGanhoEvolucao_Atributos, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 import { AtributoFichaDto, EstatisticaDanificavelFichaDto } from 'types-nora-api';
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { EtapaGanhoEvolucao_Atributos, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 
 export default function EdicaoAtributos() {
     const { ganhos } = useContextoEdicaoFicha();
@@ -47,13 +47,13 @@ function CorpoEstatistica({ estatisticaDanificavelFicha }: { estatisticaDanifica
                 <Tooltip.Content>
                     <h1>{estatisticaDanificavelFicha.estatisticaDanificavel.nome}</h1>
                     <p>{estatisticaDanificavelFicha.estatisticaDanificavel.descricao}</p>
-                    <h2>Ganhos de {estatisticaDanificavelFicha.estatisticaDanificavel.nomeAbreviado}: [+2]</h2>
+                    {/* <h2>Ganhos de {estatisticaDanificavelFicha.estatisticaDanificavel.nomeAbreviado}: [+2]</h2> */}
                     {/* {ganhoAtributo.atributos.map(atributo => (
                         atributo.ganhosEstatisticas.filter(ganhosEstatistica => ganhosEstatistica.refEstatistica.id === idEstatistica).map(ganhoEstatistica => (
                             <p>{`${atributo.refAtributo.nomeAbrev}: +${Number((ganhoEstatistica.valorPorPonto * atributo.valorAtual).toFixed(1))}`}</p>
                         ))
                     ))} */}
-                    <p>{`AGIteste: +[teste]`}</p>
+                    {/* <p>{`AGIteste: +[teste]`}</p> */}
                 </Tooltip.Content>
             </Tooltip>
             <h2 className={styles.alteracao_valor_estatistica}>{`${estatisticaEmGanho.valorAtual} → ${estatisticaEmGanho.valorTotal}`}</h2>
@@ -77,10 +77,9 @@ function CorpoAtributo({ atributoFicha }: { atributoFicha: AtributoFichaDto }) {
                     <h1>{atributoFicha.atributo.nome}</h1>
                     <p>{atributoFicha.atributo.descricao}</p>
                     <div>
-                        {/* {atributoFicha.ganhosEstatisticas.filter(atributo => atributo.valorPorPonto > 0).map((atributo, index) => (
+                        {/* {ganhos.estatisticasDanificaveisEmEdicao.filter(atributo => atributo.valorPorPonto > 0).map((atributo, index) => (
                             <p key={index} className={styles.ganhos_estatistica_por_atributo}>+ {atributo.valorPorPonto.toFixed(1)} {atributo.refEstatistica.nomeAbrev} por Ponto Atribuído</p>
                         ))} */}
-                        <p className={styles.ganhos_estatistica_por_atributo}>+ 2 [teste] por Ponto Atribuído</p>
                     </div>
                 </Tooltip.Content>
             </Tooltip>

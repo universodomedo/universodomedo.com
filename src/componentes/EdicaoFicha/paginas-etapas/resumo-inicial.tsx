@@ -3,15 +3,15 @@
 import { pluralize } from 'Uteis/UteisTexto/pluralize';
 import styles from '../styles.module.css';
 
-import { EtapaGanhoEvolucao_Atributos, EtapaGanhoEvolucao_Pericias, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_Atributos, EtapaGanhoEvolucao_Pericias, GanhosEvolucao, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 
 export default function ResumoInicial() {
     const { ganhos } = useContextoEdicaoFicha();
 
     return (
         <>
-            {ganhos.ganhos.some(etapa => etapa instanceof EtapaGanhoEvolucao_Atributos) && <SecaoAtributos />}
-            {ganhos.ganhos.some(etapa => etapa instanceof EtapaGanhoEvolucao_Pericias) && <SecaoPericias />}
+            {ganhos.etapas.some(etapa => etapa instanceof EtapaGanhoEvolucao_Atributos) && <SecaoAtributos />}
+            {ganhos.etapas.some(etapa => etapa instanceof EtapaGanhoEvolucao_Pericias) && <SecaoPericias />}
         </>
     );
 };
@@ -19,7 +19,7 @@ export default function ResumoInicial() {
 function SecaoAtributos() {
     const { ganhos } = useContextoEdicaoFicha();
 
-    const etapaAtributos = ganhos.etapaAtual as EtapaGanhoEvolucao_Atributos;
+    const etapaAtributos = ganhos.etapas.find(etapa => etapa instanceof EtapaGanhoEvolucao_Atributos)!;
 
     return (
         <>
@@ -41,11 +41,27 @@ function SecaoAtributos() {
 function SecaoPericias() {
     const { ganhos } = useContextoEdicaoFicha();
 
-    const etapaPericias = ganhos.etapaAtual as EtapaGanhoEvolucao_Pericias;
+    const etapaPericias = ganhos.etapas.find(etapa => etapa instanceof EtapaGanhoEvolucao_Pericias)!;
 
     return (
         <>
-            <h2></h2>
+            <h2>{etapaPericias.tituloEtapa}</h2>
+
+            <div className={styles.recipiente_informacoes_secao_etapa_evolucao}>
+                {GanhosEvolucao.dadosReferencia.patentes.map(patente => {
+                    const numeroPontosParaPatente = etapaPericias.obtemNumeroPontosGanhoPorPatente(patente);
+                    if (numeroPontosParaPatente === 0) return;
+                    
+                    const patenteAnteriorAoPonto = GanhosEvolucao.dadosReferencia.patentes.find(patenteAnterior => patenteAnterior.id === (patente.id - 1));
+
+                    return (
+                        <div key={patente.id} className={styles.recipiente_patente_pericia}>
+                            <h3>Perícias {pluralize(2, patente.nome)}</h3>
+                            <p>{numeroPontosParaPatente} {pluralize(numeroPontosParaPatente, 'Ponto')} para melhorar Perícias {pluralize(2, patenteAnteriorAoPonto!.nome)} para {patente.nome}</p>
+                        </div>
+                    );
+                })}
+            </div>
         </>
     );
 };

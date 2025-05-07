@@ -4,10 +4,12 @@ import styles from './styles.module.css';
 import { useEffect, useRef, useState } from 'react';
 
 import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto.tsx';
+import { useContextoEvoluindoPersonagem } from 'Contextos/ContextoEvoluindoPersonagem/contexto';
 import JanelaNotificacaoEvolucao from 'Componentes/EdicaoFicha/JanelaNotificacaoEvolucao/page.tsx';
 
 export default function PaginaEvolucaoPersonagem_ComContexto() {
-    const { paginaAberta, ganhos, registraEventoAtualizacaoPagina } = useContextoEdicaoFicha();
+    const { deselecionaPersonagemEvoluindo, salvarEvolucao } = useContextoEvoluindoPersonagem();
+    const { paginaAberta, ganhos, registraEventoAtualizacaoPagina, executaEAtualiza } = useContextoEdicaoFicha();
     const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
     const [_, setState] = useState({});
@@ -38,7 +40,7 @@ export default function PaginaEvolucaoPersonagem_ComContexto() {
 
     return (
         <>
-            <JanelaNotificacaoEvolucao ref={janelaNotificacaoRef} />
+            {!ganhos.estaEmPaginaDeResumo && (<JanelaNotificacaoEvolucao ref={janelaNotificacaoRef} />)}
             <div id={styles.recipiente_pagina_edicao}>
                 <h1>{ganhos.tituloNexUp}</h1>
                 <div id={styles.recipiente_conteudo_edicao}>
@@ -46,12 +48,13 @@ export default function PaginaEvolucaoPersonagem_ComContexto() {
                         {paginaAberta()}
                     </div>
                     <div id={styles.rodape_edicao}>
+                        <button onClick={() => executaEAtualiza(ganhos.retrocedeEtapa)} disabled={!ganhos.podeRetrocederEtapa} className={styles.prosseguir}>{ganhos.textoBotaoAnterior}</button>
                         {!ganhos.podeAvancarEtapa ? (
                             <div className={`${styles.recipiente_botao_desabilitado}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                                <button onClick={ganhos.avancaEtapa} disabled={!ganhos.podeAvancarEtapa}>{ganhos.textoBotaoProximo}</button>
+                                <button onClick={() => { ganhos.estaAbertoResumoInicial ? deselecionaPersonagemEvoluindo() : executaEAtualiza(ganhos.avancaEtapa)} } disabled={!ganhos.podeAvancarEtapa}>{ganhos.textoBotaoProximo}</button>
                             </div>
                         ) : (
-                            <button onClick={ganhos.avancaEtapa} disabled={!ganhos.podeAvancarEtapa} className={styles.prosseguir}>{ganhos.textoBotaoProximo}</button>
+                            <button onClick={() => { ganhos.estaAbertoResumoFinal ? salvarEvolucao(ganhos.refPersonagem.fichaPendente!.id, ganhos.resumoEvolucaoProvisorio) : executaEAtualiza(ganhos.avancaEtapa) }} disabled={!ganhos.podeAvancarEtapa} className={styles.prosseguir}>{ganhos.textoBotaoProximo}</button>
                         )}
                     </div>
                 </div>

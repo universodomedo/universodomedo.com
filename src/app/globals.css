@@ -43,6 +43,10 @@ a {
   text-decoration: underline;
 }
 
+html, body, h1, h2, h3, h4, h5, h6, p, span, a, li, td, th, div {
+  line-height: 1;
+}
+
 a:hover {
   color: #C5AA18;
 }

@@ -37,7 +37,11 @@
 }
 
 #rodape_edicao {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     flex: 0 0 0;
+    gap: 2vw;
 }
 
 #rodape_edicao button {
@@ -47,7 +51,6 @@
 .prosseguir, .recipiente_botao_desabilitado {
     width: 6%;
     height: 4vh;
-    margin: auto;
 }
 
 .recipiente_botao_desabilitado button {
@@ -113,4 +116,89 @@
 .recipiente_botao_edicao button {
     height: 100%;
     padding: .3rem;
+}
+
+.editando_ficha_pericias {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-y: auto;
+    gap: 2vh;
+}
+
+.patente_contadores {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.patente_contadores h1 {
+    margin: 0;
+}
+
+.atributos_e_pericias {
+    display: flex;
+    flex-direction: column;
+    gap: 4.6vh;
+    width: 100%;
+    margin: auto;
+}
+
+.atributo_agrupa_pericias {
+    display: flex;
+    flex-direction: column;
+    gap: .6vh;
+}
+
+.nome_atributo_agrupa_pericias {
+    margin: auto;
+}
+
+.conjunto_pericias {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 2vh;
+}
+
+.editar_pericia {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0 5%;
+    row-gap: 2vh;
+    justify-content: center;
+}
+
+.corpo_pericia {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 calc(14%);
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    gap: .3vh;
+}
+
+.nome_pericia, .patente_pericia {
+    margin: 0;
+}
+
+.botoes_pericia {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+}
+
+.recipiente_patente_pericia {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    width: 100%;
+}
+
+.recipiente_patente_pericia h3 {
+    margin: auto;
 }

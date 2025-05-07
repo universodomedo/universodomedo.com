@@ -1,14 +1,17 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { PersonagemDto } from 'types-nora-api';
-import { obtemPersonagensComEvolucaoPendente, obtemPersogemEmProcessoDeEvolucao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { FichaPersonagemDto, PersonagemDto } from 'types-nora-api';
+import { obtemPersonagensComEvolucaoPendente, obtemPersogemEmProcessoDeEvolucao, salvarEvolucaoDoPersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoEvoluindoPersonagemProps {
     listaPersonagensEvolucaoPendente: PersonagemDto[] | null;
     buscaPersonagensComEvolucaoPendente: () => void;
     selecionaPersonagemEvoluindo: (idPersonagem: number) => void;
+    deselecionaPersonagemEvoluindo: () => void;
     personagemEvoluindo: PersonagemDto | null;
+    salvarEvolucao: (idFichaPendente: number, resumoProvisorio: string) => void;
+    // salvarEvolucao: (ficha: FichaPersonagemDto) => void;
 };
 
 const ContextoEvoluindoPersonagem = createContext<ContextoEvoluindoPersonagemProps | undefined>(undefined);
@@ -48,6 +51,24 @@ export const ContextoEvoluindoPersonagemProvider = ({ children }: { children: Re
         }
     }
 
+    async function deselecionaPersonagemEvoluindo() {
+        setPersonagemEvoluindo(null);
+    }
+
+    async function salvarEvolucao(idFichaPendente: number, resumoProvisorio: string) {
+    // async function salvarEvolucao(ficha: FichaPersonagemDto) {
+        setCarregando(true);
+
+        try {
+            await salvarEvolucaoDoPersonagem(idFichaPendente, resumoProvisorio);
+            window.location.reload();
+        } catch {
+            setPersonagemEvoluindo(null);
+        } finally {
+            setCarregando(false);
+        }
+    }
+
     useEffect(() => {
         buscaPersonagensComEvolucaoPendente();
     }, []);
@@ -55,7 +76,7 @@ export const ContextoEvoluindoPersonagemProvider = ({ children }: { children: Re
     if (carregando) return <div>Carregando personagens</div>;
 
     return (
-        <ContextoEvoluindoPersonagem.Provider value={{ listaPersonagensEvolucaoPendente, buscaPersonagensComEvolucaoPendente, selecionaPersonagemEvoluindo, personagemEvoluindo }}>
+        <ContextoEvoluindoPersonagem.Provider value={{ listaPersonagensEvolucaoPendente, buscaPersonagensComEvolucaoPendente, selecionaPersonagemEvoluindo, deselecionaPersonagemEvoluindo, personagemEvoluindo, salvarEvolucao }}>
             {children}
         </ContextoEvoluindoPersonagem.Provider>
     );

@@ -87,6 +87,11 @@ export async function obtemGanhosParaEvoluir(idNivel: number, idClasse: number) 
     return await useApi<ObjetoGanhosEvolucao>({ uri: 'ganhos_nivel_classe/obtemGanhosParaEvoluir', method: 'GET', params: { idNivel, idClasse } });
 }
 
+export async function salvarEvolucaoDoPersonagem(idFichaPendente:number, resumoProvisorio: string) {
+// export async function salvarEvolucaoDoPersonagem(ficha: FichaPersonagemDto) {
+    return await useApi<boolean>({ uri: '/fichas_personagem/salvarEvolucaoDoPersonagem', method: 'POST', data: { idFichaPendente: idFichaPendente, resumoProvisorio: resumoProvisorio } });
+}
+
 //
 
 export async function desconectar() {
