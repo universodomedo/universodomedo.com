@@ -79,5 +79,5 @@ function DetalheFichaVigenteOuAvisoPendencia({ personagem}: { personagem: Person
 
     if (personagem.pendencias.pendeciaUsuario === EstadoPendenciaPersonagem.FICHA_PENDENTE) return (<div className={styles.recipiente_pendencia}>Evolução Pendente</div>);
 
-    return (<p>{`${personagem.fichaVigente?.detalhe.classe.nome} - ${personagem.fichaVigente?.nivel.nomeVisualizacao}`}</p>);
+    // return (<p>{`${personagem.fichaVigente?.detalhe.classe.nome} - ${personagem.fichaVigente?.nivel.nomeVisualizacao}`}</p>);
 };
