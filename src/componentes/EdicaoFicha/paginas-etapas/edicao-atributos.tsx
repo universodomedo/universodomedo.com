@@ -2,7 +2,7 @@
 
 import styles from '../styles.module.css';
 
-import { EtapaGanhoEvolucao_Atributos, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_Atributos, GanhosEvolucao, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 import { AtributoFichaDto, EstatisticaDanificavelFichaDto } from 'types-nora-api';
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
 
@@ -15,7 +15,7 @@ export default function EdicaoAtributos() {
     return (
         <div className={styles.editando_ficha_atributos}>
             <div className={styles.atributos}>
-                {ganhos.atributosEditados.sort((a, b) => a.atributo.id - b.atributo.id).map(atributoFicha => (
+                {ganhos.fichaEvoluida.atributos.sort((a, b) => a.atributo.id - b.atributo.id).map(atributoFicha => (
                     <CorpoAtributo key={atributoFicha.atributo.id} atributoFicha={atributoFicha} />
                 ))}
 
@@ -25,38 +25,6 @@ export default function EdicaoAtributos() {
                     ))}
                 </div>
             </div>
-        </div>
-    );
-};
-
-function CorpoEstatistica({ estatisticaDanificavelFicha }: { estatisticaDanificavelFicha: EstatisticaDanificavelFichaDto }) {
-    const { ganhos } = useContextoEdicaoFicha();
-
-    const estatisticaEmGanho = ganhos.estatisticasDanificaveisEmEdicao?.[estatisticaDanificavelFicha.estatisticaDanificavel.id] ?? {
-        valorAtual: 0,
-        ganhoDaEvolucao: 0
-    };
-
-    return (
-        <div className={styles.visualizador_estatistica}>
-            <Tooltip>
-                <Tooltip.Trigger>
-                    <h2 className={styles.nome_estatistica}>{estatisticaDanificavelFicha.estatisticaDanificavel.nomeAbreviado}</h2>
-                </Tooltip.Trigger>
-
-                <Tooltip.Content>
-                    <h1>{estatisticaDanificavelFicha.estatisticaDanificavel.nome}</h1>
-                    <p>{estatisticaDanificavelFicha.estatisticaDanificavel.descricao}</p>
-                    {/* <h2>Ganhos de {estatisticaDanificavelFicha.estatisticaDanificavel.nomeAbreviado}: [+2]</h2> */}
-                    {/* {ganhoAtributo.atributos.map(atributo => (
-                        atributo.ganhosEstatisticas.filter(ganhosEstatistica => ganhosEstatistica.refEstatistica.id === idEstatistica).map(ganhoEstatistica => (
-                            <p>{`${atributo.refAtributo.nomeAbrev}: +${Number((ganhoEstatistica.valorPorPonto * atributo.valorAtual).toFixed(1))}`}</p>
-                        ))
-                    ))} */}
-                    {/* <p>{`AGIteste: +[teste]`}</p> */}
-                </Tooltip.Content>
-            </Tooltip>
-            <h2 className={styles.alteracao_valor_estatistica}>{`${estatisticaEmGanho.valorAtual} → ${estatisticaEmGanho.valorTotal}`}</h2>
         </div>
     );
 };
@@ -77,9 +45,15 @@ function CorpoAtributo({ atributoFicha }: { atributoFicha: AtributoFichaDto }) {
                     <h1>{atributoFicha.atributo.nome}</h1>
                     <p>{atributoFicha.atributo.descricao}</p>
                     <div>
-                        {/* {ganhos.estatisticasDanificaveisEmEdicao.filter(atributo => atributo.valorPorPonto > 0).map((atributo, index) => (
-                            <p key={index} className={styles.ganhos_estatistica_por_atributo}>+ {atributo.valorPorPonto.toFixed(1)} {atributo.refEstatistica.nomeAbrev} por Ponto Atribuído</p>
-                        ))} */}
+                        {GanhosEvolucao.dadosReferencia.estatisticasDanificaveis.map(estatisticaDanificavel => {
+                            const valorEstatisticaPorAtributo = ganhos.ganhosEstatisticasPorAtributo.find(ganho => ganho.estatisticaDanificavel.id === estatisticaDanificavel.id && ganho.atributo.id === atributoFicha.atributo.id)!.valorPorUnidade;
+
+                            if (valorEstatisticaPorAtributo <= 0) return;
+
+                            return (
+                                <p key={estatisticaDanificavel.id} className={styles.ganhos_estatistica_por_atributo}>+ {valorEstatisticaPorAtributo} {estatisticaDanificavel.nomeAbreviado} por Ponto Atribuído</p>
+                            );
+                        })}
                     </div>
                 </Tooltip.Content>
             </Tooltip>
@@ -92,6 +66,39 @@ function CorpoAtributo({ atributoFicha }: { atributoFicha: AtributoFichaDto }) {
                     <button onClick={() => { executaEAtualiza(() => { etapaAtributos.adicionaPonto(atributoFicha.atributo) }) }} disabled={!etapaAtributos.botaoAdicionarEstaHabilitado(atributoFicha)}><FontAwesomeIcon icon={faPlus} /></button>
                 </div>
             </div>
+        </div>
+    );
+};
+
+function CorpoEstatistica({ estatisticaDanificavelFicha }: { estatisticaDanificavelFicha: EstatisticaDanificavelFichaDto }) {
+    const { ganhos } = useContextoEdicaoFicha();
+
+    const valorAnterior = ganhos.refPersonagem.fichaVigente?.estatisticasDanificaveis.find(estatisticaDanificavelFichaAnterior => estatisticaDanificavelFichaAnterior.estatisticaDanificavel.id === estatisticaDanificavelFicha.estatisticaDanificavel.id)!.valorMaximo;
+    const valorAtual = ganhos.fichaEvoluida.estatisticasDanificaveis.find(estatisticaDanificavelFichaAtual => estatisticaDanificavelFichaAtual.estatisticaDanificavel.id === estatisticaDanificavelFicha.estatisticaDanificavel.id)!.valorMaximo;
+
+    return (
+        <div className={styles.visualizador_estatistica}>
+            <Tooltip>
+                <Tooltip.Trigger>
+                    <h2 className={styles.nome_estatistica}>{estatisticaDanificavelFicha.estatisticaDanificavel.nomeAbreviado}</h2>
+                </Tooltip.Trigger>
+
+                <Tooltip.Content>
+                    <h1>{estatisticaDanificavelFicha.estatisticaDanificavel.nome}</h1>
+                    <p>{estatisticaDanificavelFicha.estatisticaDanificavel.descricao}</p>
+                    <h2>Ganhos de {estatisticaDanificavelFicha.estatisticaDanificavel.nomeAbreviado}: [+{ganhos.valorTotalGanhadoPorEstatistica(estatisticaDanificavelFicha.estatisticaDanificavel)}]</h2>
+                    {GanhosEvolucao.dadosReferencia.atributos.map(atributo => {
+                        const valorDessaEstatisticaPorEsseAtributo = ganhos.valorEstatisticaPorAtributo(estatisticaDanificavelFicha.estatisticaDanificavel, atributo);
+
+                        if (valorDessaEstatisticaPorEsseAtributo <= 0) return;
+
+                        return (
+                            <p key={atributo.id}>{`${atributo.nomeAbreviado}: +${valorDessaEstatisticaPorEsseAtributo.toFixed(1)}`}</p>
+                        );
+                    })}
+                </Tooltip.Content>
+            </Tooltip>
+            <h2 className={styles.alteracao_valor_estatistica}>{`${valorAnterior} → ${valorAtual}`}</h2>
         </div>
     );
 };

@@ -18,12 +18,12 @@ export default function EdicaoPericias() {
         <>
             <div className={styles.editando_ficha_pericias} {...scrollableProps}>
                 <div className={styles.atributos_e_pericias}>
-                    {ganhos.periciasAgrupadasEEditadas.map(periciasAgrupadas => (
+                    {ganhos.periciasEditadasEAgrupadas.map(periciasAgrupadas => (
                         <div key={periciasAgrupadas.atributo.id} className={styles.atributo_agrupa_pericias}>
                             <h1 className={styles.nome_atributo_agrupa_pericias}>{periciasAgrupadas.atributo.nome}</h1>
                             <div className={styles.editar_pericia}>
                                 {periciasAgrupadas.periciasDesseAtributo.map(periciaFicha => (
-                                    <CorpoPericia key={periciaFicha.pericia.id} pericia={periciaFicha.pericia} patente={periciaFicha.patenteAtualDaPericia} />
+                                    <CorpoPericia key={periciaFicha.pericia.id} pericia={periciaFicha.pericia} patente={periciaFicha.patentePericia} />
                                 ))}
                             </div>
                         </div>

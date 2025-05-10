@@ -8,7 +8,7 @@ import { useContextoEvoluindoPersonagem } from 'Contextos/ContextoEvoluindoPerso
 import JanelaNotificacaoEvolucao from 'Componentes/EdicaoFicha/JanelaNotificacaoEvolucao/page.tsx';
 
 export default function PaginaEvolucaoPersonagem_ComContexto() {
-    const { deselecionaPersonagemEvoluindo, salvarEvolucao } = useContextoEvoluindoPersonagem();
+    const { deselecionaPersonagemEvoluindo } = useContextoEvoluindoPersonagem();
     const { paginaAberta, ganhos, registraEventoAtualizacaoPagina, executaEAtualiza } = useContextoEdicaoFicha();
     const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
@@ -54,7 +54,7 @@ export default function PaginaEvolucaoPersonagem_ComContexto() {
                                 <button onClick={() => { ganhos.estaAbertoResumoInicial ? deselecionaPersonagemEvoluindo() : executaEAtualiza(ganhos.avancaEtapa)} } disabled={!ganhos.podeAvancarEtapa}>{ganhos.textoBotaoProximo}</button>
                             </div>
                         ) : (
-                            <button onClick={() => { ganhos.estaAbertoResumoFinal ? salvarEvolucao(ganhos.refPersonagem.fichaPendente!.id, ganhos.resumoEvolucaoProvisorio) : executaEAtualiza(ganhos.avancaEtapa) }} disabled={!ganhos.podeAvancarEtapa} className={styles.prosseguir}>{ganhos.textoBotaoProximo}</button>
+                            <button onClick={() => { executaEAtualiza(ganhos.avancaEtapa) }} disabled={!ganhos.podeAvancarEtapa} className={styles.prosseguir}>{ganhos.textoBotaoProximo}</button>
                         )}
                     </div>
                 </div>

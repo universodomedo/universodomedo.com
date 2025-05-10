@@ -24,8 +24,9 @@
 	flex-direction: column;
 	border-radius: 4px;
 	padding: 10px 15px;
-	font-size: 15px;
+	font-size: 1rem;
 	line-height: 1;
+	font-weight: 700;
 	background-color: white;
 	color: black;
 	box-shadow:

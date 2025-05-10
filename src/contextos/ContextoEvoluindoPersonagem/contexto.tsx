@@ -10,8 +10,7 @@ interface ContextoEvoluindoPersonagemProps {
     selecionaPersonagemEvoluindo: (idPersonagem: number) => void;
     deselecionaPersonagemEvoluindo: () => void;
     personagemEvoluindo: PersonagemDto | null;
-    salvarEvolucao: (idFichaPendente: number, resumoProvisorio: string) => void;
-    // salvarEvolucao: (ficha: FichaPersonagemDto) => void;
+    salvarEvolucao: (ficha: FichaPersonagemDto) => Promise<boolean>;
 };
 
 const ContextoEvoluindoPersonagem = createContext<ContextoEvoluindoPersonagemProps | undefined>(undefined);
@@ -55,13 +54,17 @@ export const ContextoEvoluindoPersonagemProvider = ({ children }: { children: Re
         setPersonagemEvoluindo(null);
     }
 
-    async function salvarEvolucao(idFichaPendente: number, resumoProvisorio: string) {
-    // async function salvarEvolucao(ficha: FichaPersonagemDto) {
+    async function salvarEvolucao(ficha: FichaPersonagemDto): Promise<boolean> {
+        console.log(`salvarEvolucao, recebendo a seguinte ficha`);
+        console.log(ficha);
+
+        return true;
+
         setCarregando(true);
 
         try {
-            await salvarEvolucaoDoPersonagem(idFichaPendente, resumoProvisorio);
-            window.location.reload();
+            // await salvarEvolucaoDoPersonagem(idFichaPendente, resumoProvisorio);
+            // window.location.reload();
         } catch {
             setPersonagemEvoluindo(null);
         } finally {
