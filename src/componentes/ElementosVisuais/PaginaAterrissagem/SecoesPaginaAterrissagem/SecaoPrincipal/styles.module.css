@@ -52,6 +52,10 @@
     gap: 3vh;
 }
 
+#conteudo_textos_secao_principal h2 {
+    line-height: normal;
+}
+
 #conteudo_secao_principal .texto_secao_principal {
     font-family: var(--fonte-cinzel);
     font-size: 2.8vh;
@@ -60,6 +64,7 @@
 
 .titulo_sem_decorative {
     font-family: var(--fonte-cinzel-decorative);
+    color: inherit;
 }
 
 

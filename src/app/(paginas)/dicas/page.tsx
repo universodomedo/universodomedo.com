@@ -16,6 +16,23 @@ export default async function PaginaDefinicao({ params }: { params: Promise<{ sl
                     itensLista: [
                         {
                             tipo: 'ItemLista',
+                            etiqueta: 'Seu primeiro Personagem',
+                            subPaginaDefinicao: '/dicas/comecando',
+                            itemDeDuasColunas: true,
+                        },
+                        {
+                            tipo: 'ItemLista',
+                            etiqueta: 'Criando e Evoluindo seu Personagem',
+                            subPaginaDefinicao: '/dicas/evoluindo',
+                            itemDeDuasColunas: true,
+                        }
+                    ]
+                },
+                {
+                    tipo: 'Lista',
+                    itensLista: [
+                        {
+                            tipo: 'ItemLista',
                             etiqueta: 'Disponibilidades',
                             subPaginaDefinicao: '/dicas/disponibilidades'
                         },
@@ -25,14 +42,14 @@ export default async function PaginaDefinicao({ params }: { params: Promise<{ sl
                             subPaginaDefinicao: '/dicas/termos-de-aceite'
                         },
                     ]
-                }
+                },
             ]
         }
     }
 
     return (
         <ControladorSlot pageConfig={{ comCabecalho: true, usuarioObrigatorio: false }}>
-            <PaginaConteudoDinamico conteudo={conteudo} listaSlug={listaSlug} />
+            <PaginaConteudoDinamico conteudo={conteudo} hrefInicio={'/dicas'} listaSlug={listaSlug} />
         </ControladorSlot>
     );
 };

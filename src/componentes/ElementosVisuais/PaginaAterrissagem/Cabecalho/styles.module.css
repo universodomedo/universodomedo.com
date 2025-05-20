@@ -21,6 +21,10 @@
     margin: 6%;
 }
 
+#recipiente_logo a {
+    width: 100%;
+}
+
 #cabecalho_direita {
     display: flex;
     flex-direction: row;

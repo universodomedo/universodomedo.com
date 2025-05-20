@@ -199,6 +199,31 @@
     width: 100%;
 }
 
+.conteudo_item_menu h3 {
+    font-family: var(--fonte-junge);
+}
+
 .item_menu:hover .recipiente_icone_link {
     transform: translateX(-25%);
+}
+
+.recipiente_item_menu_com_pendencia {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    flex: 1;
+    gap: .6em;
+}
+
+.numero_pendencias {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: red;
+    height: 100%;
+    aspect-ratio: 1;
+    font-family: sans-serif;
+    font-size: 83%;
 }

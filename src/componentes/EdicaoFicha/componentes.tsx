@@ -1,14 +1,15 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto.tsx';
-import { useContextoEvoluindoPersonagem } from 'Contextos/ContextoEvoluindoPersonagem/contexto';
 import JanelaNotificacaoEvolucao from 'Componentes/EdicaoFicha/JanelaNotificacaoEvolucao/page.tsx';
 
+import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
+import Link from 'next/link';
+
 export default function PaginaEvolucaoPersonagem_ComContexto() {
-    const { deselecionaPersonagemEvoluindo } = useContextoEvoluindoPersonagem();
     const { paginaAberta, ganhos, registraEventoAtualizacaoPagina, executaEAtualiza } = useContextoEdicaoFicha();
     const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
@@ -38,20 +39,29 @@ export default function PaginaEvolucaoPersonagem_ComContexto() {
         }
     };
 
+    const { scrollableProps } = useScrollable();
+
     return (
         <>
             {!ganhos.estaEmPaginaDeResumo && (<JanelaNotificacaoEvolucao ref={janelaNotificacaoRef} />)}
             <div id={styles.recipiente_pagina_edicao}>
-                <h1>{ganhos.tituloNexUp}</h1>
-                <div id={styles.recipiente_conteudo_edicao}>
+                <div id={styles.recipiente_cabecalho_evolucao}>
+                    <h1>{ganhos.cabecalhoEvolucao[0]}</h1>
+                    {!ganhos.estaEmPaginaDeResumo && ganhos.etapaAtual.hrefDefinicaoEtapa ? (
+                        <Link href={ganhos.etapaAtual.hrefDefinicaoEtapa} target={'_blank'}><h2>{ganhos.cabecalhoEvolucao[1]}</h2></Link>
+                    ) : (                        
+                        <h2>{ganhos.cabecalhoEvolucao[1]}</h2>
+                    )}
+                </div>
+                <div id={styles.recipiente_conteudo_edicao} {...scrollableProps}>
                     <div id={styles.recipiente_etapa_edicao}>
                         {paginaAberta()}
                     </div>
                     <div id={styles.rodape_edicao}>
-                        <button onClick={() => executaEAtualiza(ganhos.retrocedeEtapa)} disabled={!ganhos.podeRetrocederEtapa} className={styles.prosseguir}>{ganhos.textoBotaoAnterior}</button>
+                        <button onClick={() => executaEAtualiza(ganhos.retrocedeEtapa)} className={styles.prosseguir}>{ganhos.textoBotaoAnterior}</button>
                         {!ganhos.podeAvancarEtapa ? (
                             <div className={`${styles.recipiente_botao_desabilitado}`} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                                <button onClick={() => { ganhos.estaAbertoResumoInicial ? deselecionaPersonagemEvoluindo() : executaEAtualiza(ganhos.avancaEtapa)} } disabled={!ganhos.podeAvancarEtapa}>{ganhos.textoBotaoProximo}</button>
+                                <button disabled={true}>{ganhos.textoBotaoProximo}</button>
                             </div>
                         ) : (
                             <button onClick={() => { executaEAtualiza(ganhos.avancaEtapa) }} disabled={!ganhos.podeAvancarEtapa} className={styles.prosseguir}>{ganhos.textoBotaoProximo}</button>

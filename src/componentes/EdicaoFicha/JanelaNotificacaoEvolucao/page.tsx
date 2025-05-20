@@ -5,6 +5,7 @@ import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto.t
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
 import { InfoCircledIcon } from '@radix-ui/react-icons'
+import Link from 'next/link';
 
 const JanelaNotificacao = forwardRef((props, ref) => {
     const { ganhos } = useContextoEdicaoFicha();
@@ -26,7 +27,11 @@ const JanelaNotificacao = forwardRef((props, ref) => {
                 <InfoCircledIcon />
             </button>
             <div className={styles.janela_avisos_conteudo}>
-                <h1>{ganhos.etapaAtual.tituloEtapa}</h1>
+                {ganhos.etapaAtual.hrefDefinicaoEtapa ? (
+                    <Link href={ganhos.etapaAtual.hrefDefinicaoEtapa} target={'_blank'}><h1>{ganhos.etapaAtual.tituloEtapa}</h1></Link>
+                ) : (
+                    <h1>{ganhos.etapaAtual.tituloEtapa}</h1>
+                )}
                 {ganhos.etapaAtual.avisosGanhoEvolucao.length > 0 && (
                     <div className={styles.mensagens_janela_avisos} {...scrollableProps}>
                         {ganhos.etapaAtual.avisosGanhoEvolucao.map((msg, index) => (

@@ -8,7 +8,7 @@
     max-height: 30vh;
     background: #0B0D0E;
     color: white;
-    padding: 1% 2%;
+    padding: 1% .8% .5% 2%;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     border-radius: 0 5px 5px 0;
     overflow-y: visible;
@@ -64,7 +64,8 @@
     flex-direction: column;
     text-align: start;
     gap: .4vh;
-    /* overflow: auto; */
+    max-height: 20vh;
+    padding-bottom: .3vh;
 }
 
 .mensagens_janela_avisos p {
@@ -89,7 +90,11 @@
 }
 
 .mensagem_notificacao .mensagem_notificacao_subitem {
-    margin-left: 3%;
+    margin-left: 5%;
+}
+
+.mensagem_notificacao .mensagem_notificacao_subitem::before {
+    content: '— ';
 }
 
 @keyframes heartbeat {

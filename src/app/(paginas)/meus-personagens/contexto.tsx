@@ -9,6 +9,7 @@ interface ContextoPaginaPersonagemProps {
     personagensDoUsuario: PersonagemDto[] | null;
     personagemSelecionado: PersonagemDto | null;
     buscaDadosPersonagemSelecionado: (idPersonagem: number) => void;
+    deselecionaPersonagem: () => void;
 };
 
 const ContextoPaginaPersonagem = createContext<ContextoPaginaPersonagemProps | undefined>(undefined);
@@ -48,6 +49,10 @@ export const ContextoPaginaPersonagemProvider = ({ children }: { children: React
         }
     }
 
+    function deselecionaPersonagem() {
+        setPersonagemSelecionado(null);
+    };
+
     useEffect(() => {
         buscaTodosPersonagensUsuario();
     }, []);
@@ -55,7 +60,7 @@ export const ContextoPaginaPersonagemProvider = ({ children }: { children: React
     if (carregando) return <div>Carregando personagens</div>;
 
     return (
-        <ContextoPaginaPersonagem.Provider value={{ personagensDoUsuario, personagemSelecionado, buscaDadosPersonagemSelecionado }}>
+        <ContextoPaginaPersonagem.Provider value={{ personagensDoUsuario, personagemSelecionado, buscaDadosPersonagemSelecionado, deselecionaPersonagem }}>
             {children}
         </ContextoPaginaPersonagem.Provider>
     );

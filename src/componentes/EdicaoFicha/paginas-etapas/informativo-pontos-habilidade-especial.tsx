@@ -1,7 +1,5 @@
 'use client';
 
-import styles from '../styles.module.css';
-
 import { EtapaGanhoEvolucao_HabilidadesEspeciais, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 
 export default function InformativoPontosHabilidadeEspecial() {
@@ -10,6 +8,6 @@ export default function InformativoPontosHabilidadeEspecial() {
     const etapaInformativoHabilidadeEspecial = ganhos.etapaAtual as EtapaGanhoEvolucao_HabilidadesEspeciais;
 
     return (
-        <h3>Pontos de Habilidade Especial aumentados de {etapaInformativoHabilidadeEspecial.quantidadeDePontosAtual} para {etapaInformativoHabilidadeEspecial.quantidadeDePontosNova}</h3>
+        <p>Pontos de Habilidade Especial aumentados de {etapaInformativoHabilidadeEspecial.quantidadeDePontosAtual} para {etapaInformativoHabilidadeEspecial.quantidadeDePontosNova}</p>
     );
 };

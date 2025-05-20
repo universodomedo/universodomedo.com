@@ -21,5 +21,5 @@ async function PaginaDefinicao_Slot({ listaSlug }: { listaSlug: string[] }) {
 
     if (!resultado) return <Redirecionador urlRedirecionar='/definicoes' />
 
-    return <PaginaConteudoDinamico conteudo={resultado} listaSlug={listaSlug} />;
+    return <PaginaConteudoDinamico conteudo={resultado} hrefInicio={'/definicoes'} listaSlug={listaSlug} />;
 };

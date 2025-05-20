@@ -60,11 +60,27 @@
     display: flex;
     flex-direction: column;
     text-align: start;
-    flex: 1;
 }
 
 .recipiente_informacoes_personagem {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.recipiente_nome_personagem {
+    flex: 1;
+}
+
+.recipiente_classe_e_nivel_personagem {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 50%;
+    justify-content: flex-end;
+}
+
+.recipiente_classe_e_nivel_personagem h2 {
+    font-family: var(--fonte-junge);
 }
 
 .recipiente_pendencia {
@@ -77,9 +93,19 @@
 .recipiente_informacoes2_personagem {
     display: flex;
     flex-direction: column;
-    flex: 0;
-    justify-content: center;
-    white-space: nowrap;
+    justify-content: flex-end;
+    margin-left: 10%;
+}
+
+.recipiente_informacoes2_personagem h2 {
+    font-family: var(--fonte-junge);
+}
+
+#recipiente_objeto_voltar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    cursor: pointer;
 }
 
 #recipiente_botao_evoluir a {
@@ -89,4 +115,10 @@
 
 #recipiente_botao_evoluir button {
     padding: .6rem;
+}
+
+#recipiente_conteudo_pagina_personagem_selecionado {
+    position: relative;
+    width: 100%;
+    height: 100%;
 }

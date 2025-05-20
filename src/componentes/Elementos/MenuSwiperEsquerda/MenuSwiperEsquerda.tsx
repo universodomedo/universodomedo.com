@@ -33,7 +33,7 @@ export default function MenuSwiperEsquerda() {
 };
 
 function ConteudoSwiperEsquerda() {
-    const { estaAutenticado, ehAdmin } = useContextoAutenticacao();
+    const { estaAutenticado, ehAdmin, numeroPendenciasPersonagem } = useContextoAutenticacao();
     const { animacoesLigadas, setAnimacoesHabilitadas } = useContextoPerformance();
 
     function logout() {
@@ -80,16 +80,27 @@ function ConteudoSwiperEsquerda() {
                         <Link href={'/'}><ElementoSVG src={"/imagensFigma/logo-cabecalho.svg"} /></Link>
                     </div>
                     <div id={styles.recipiente_lista}>
-                        {itensMenu.map((item, index) => (
-                            <Link key={index} href={item.link} target={item.target} className={styles.item_menu}>
-                                <div className={styles.conteudo_item_menu}>
-                                    <h3>{item.titulo}</h3>
-                                    <div className={styles.recipiente_icone_link}>
-                                        <ElementoSVG src={"/imagensFigma/indicador-item-swiper-esquerda.svg"} />
+                        {itensMenu.map((item, index) => {
+                            const precisaNumeroPendencias = (item.link === '/meus-personagens' && numeroPendenciasPersonagem > 0);
+
+                            return (
+                                <Link key={index} href={item.link} target={item.target} className={styles.item_menu}>
+                                    <div className={styles.conteudo_item_menu}>
+                                        {!precisaNumeroPendencias ? (
+                                            <h3>{item.titulo}</h3>
+                                        ) : (
+                                            <div className={styles.recipiente_item_menu_com_pendencia}>
+                                                <h3>{item.titulo}</h3>
+                                                <div><span className={styles.numero_pendencias}>{numeroPendenciasPersonagem}</span></div>
+                                            </div>
+                                        )}
+                                        <div className={styles.recipiente_icone_link}>
+                                            <ElementoSVG src={"/imagensFigma/indicador-item-swiper-esquerda.svg"} />
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            )
+                        })}
                     </div>
                     <div id={styles.recipiente_icones_swiper_esquerda}>
                         <div id={styles.recipiente_configuracoes}>

@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoEvoluiPersonagem, GanhoNivelClasseDto, ObjetoGanhosEvolucao } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao() {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET' });
@@ -79,17 +79,20 @@ export async function obtemPersonagensComEvolucaoPendente() {
     return await useApi<PersonagemDto[]>({ uri: 'personagens/obtemPersonagensComEvolucaoPendente', method: 'GET' });
 }
 
-export async function obtemPersogemEmProcessoDeEvolucao(idPersonagem: number) {
-    return await useApi<PersonagemDto>({ uri: 'personagens/obtemPersogemEmProcessoDeEvolucao', method: 'GET', params: { idPersonagem } });
+export async function obtemPersonagemEmProcessoDeEvolucao(idPersonagem: number) {
+    return await useApi<PersonagemDto>({ uri: 'personagens/obtemPersonagemEmProcessoDeEvolucao', method: 'GET', params: { idPersonagem } });
 }
 
-export async function obtemGanhosParaEvoluir(idNivel: number, idClasse: number) {
-    return await useApi<ObjetoGanhosEvolucao>({ uri: 'ganhos_nivel_classe/obtemGanhosParaEvoluir', method: 'GET', params: { idNivel, idClasse } });
+export async function obtemGanhosParaEvoluir(idPersonagem: number) {
+    return await useApi<ObjetoEvolucaoCompleto>({ uri: 'ganhos_nivel_classe/obtemGanhosParaEvoluir', method: 'GET', params: { idPersonagem } });
 }
 
-export async function salvarEvolucaoDoPersonagem(idFichaPendente:number, resumoProvisorio: string) {
-// export async function salvarEvolucaoDoPersonagem(ficha: FichaPersonagemDto) {
-    return await useApi<boolean>({ uri: '/fichas_personagem/salvarEvolucaoDoPersonagem', method: 'POST', data: { idFichaPendente: idFichaPendente, resumoProvisorio: resumoProvisorio } });
+export async function obtemGanhosAposSelecaoClasse(idClasse: number) {
+    return await useApi<ObjetoGanhosEvolucao>({ uri: 'ganhos_nivel_classe/obtemGanhosAposSelecaoClasse', method: 'GET', params: { idClasse } });
+}
+
+export async function salvarEvolucaoDoPersonagem(fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/fichas_personagens/salvarEvolucaoDoPersonagem', method: 'POST', data: { fichaEvoluida: fichaEvoluida, fichaDeJogoEvoluida: fichaDeJogoEvoluida } });
 }
 
 //

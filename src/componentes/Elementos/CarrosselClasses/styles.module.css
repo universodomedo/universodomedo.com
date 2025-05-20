@@ -1,0 +1,105 @@
+.recipiente_carrossel_classes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    flex: 1 0 0;
+    width: 80%;
+}
+
+.recipiente_conteudo_slide {
+    height: 100%;
+    position: relative;
+}
+
+.item_carrossel_classes {
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+.centro{
+}
+.lateral{}
+
+.arrow {
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+    top: 50%;
+    width: 3%;
+}
+
+.arrow svg {
+    transition: color 300ms;
+}
+
+.arrow svg:hover {
+    color: #68EDFF
+}
+
+.arrow_next {
+    right: 22%;
+}
+
+.arrow_prev {
+    left: 22%;
+}
+
+.recipiente_carrossel_classes :global(.slick-slider) {
+    width: 100%;
+    height: 100%;
+}
+
+.recipiente_carrossel_classes :global(.slick-list) {
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.recipiente_carrossel_classes :global(.slick-track) {
+    height: 100%;
+    width: 100% !important;
+    transform: none !important;
+}
+
+.recipiente_carrossel_classes :global(.slick-slide) {
+    display: flex;
+    height: 100%;
+    width: 0;
+    transition: width 0.4s ease, height 0.4s ease;
+}
+
+.recipiente_carrossel_classes :global(.slick-slide.slick-active) {
+    width: 20%;
+}
+
+.recipiente_carrossel_classes :global(.slick-slide) > div {
+    height: 100%;
+    width: 100%;
+}
+
+.recipiente_carrossel_classes :global(.slick-slide.slick-active.slick-current) {
+    width: 50%;
+    margin: 0 5%;
+    transition: height 1s ease, margin 1s ease;
+}
+
+.recipiente_carrossel_classes :global(.slick-slide.slick-active:not(.slick-current)) > div {
+    height: 40%;
+    margin: auto;
+    transition: height 1s ease, margin 1s ease;
+}
+
+.item_carrossel_classes {
+    filter: brightness(100%);
+    transition: filter 0.8s ease;
+    transition: height 1s ease, margin 1s ease;
+}
+
+.recipiente_carrossel_classes :global(.slick-slide.slick-active:not(.slick-current)) .item_carrossel_classes {
+    filter: brightness(20%);
+    transition: filter 0.8s ease;
+    transition: height 1s ease, margin 1s ease;
+}

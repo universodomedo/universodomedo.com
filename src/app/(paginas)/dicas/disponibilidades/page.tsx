@@ -30,7 +30,7 @@ export default async function PaginaDefinicao({ params }: { params: Promise<{ sl
 
     return (
         <ControladorSlot pageConfig={{ comCabecalho: true, usuarioObrigatorio: false }}>
-            <PaginaConteudoDinamico conteudo={conteudo} listaSlug={listaSlug} />
+            <PaginaConteudoDinamico conteudo={conteudo} hrefInicio={'/dicas'} listaSlug={['Disponibilidades']} />
         </ControladorSlot>
     );
 };

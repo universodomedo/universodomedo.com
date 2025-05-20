@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { FichaPersonagemDto, PersonagemDto } from 'types-nora-api';
-import { obtemPersonagensComEvolucaoPendente, obtemPersogemEmProcessoDeEvolucao, salvarEvolucaoDoPersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { FichaDeJogo, FichaPersonagemDto, PersonagemDto } from 'types-nora-api';
+import { obtemPersonagensComEvolucaoPendente, obtemPersonagemEmProcessoDeEvolucao, salvarEvolucaoDoPersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoEvoluindoPersonagemProps {
     listaPersonagensEvolucaoPendente: PersonagemDto[] | null;
@@ -10,7 +10,7 @@ interface ContextoEvoluindoPersonagemProps {
     selecionaPersonagemEvoluindo: (idPersonagem: number) => void;
     deselecionaPersonagemEvoluindo: () => void;
     personagemEvoluindo: PersonagemDto | null;
-    salvarEvolucao: (ficha: FichaPersonagemDto) => Promise<boolean>;
+    salvarEvolucao: (fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo) => Promise<boolean>;
 };
 
 const ContextoEvoluindoPersonagem = createContext<ContextoEvoluindoPersonagemProps | undefined>(undefined);
@@ -22,31 +22,31 @@ export const useContextoEvoluindoPersonagem = (): ContextoEvoluindoPersonagemPro
 };
 
 export const ContextoEvoluindoPersonagemProvider = ({ children }: { children: React.ReactNode }) => {
-    const [carregando, setCarregando] = useState(true);
+    const [carregando, setCarregando] = useState<string | null>('');
     const [listaPersonagensEvolucaoPendente, setListaPersonagensEvolucaoPendente] = useState<PersonagemDto[] | null>(null);
     const [personagemEvoluindo, setPersonagemEvoluindo] = useState<PersonagemDto | null>(null);
 
     async function buscaPersonagensComEvolucaoPendente() {
-        setCarregando(true);
+        setCarregando('Buscando Personagens');
 
         try {
             setListaPersonagensEvolucaoPendente(await obtemPersonagensComEvolucaoPendente());
         } catch {
             setListaPersonagensEvolucaoPendente(null);
         } finally {
-            setCarregando(false);
+            setCarregando(null);
         }
     }
 
     async function selecionaPersonagemEvoluindo(idPersonagem: number) {
-        setCarregando(true);
+        setCarregando('Selecionando Personagem para Evoluir');
 
         try {
-            setPersonagemEvoluindo(await obtemPersogemEmProcessoDeEvolucao(idPersonagem));
+            setPersonagemEvoluindo(await obtemPersonagemEmProcessoDeEvolucao(idPersonagem));
         } catch {
             setPersonagemEvoluindo(null);
         } finally {
-            setCarregando(false);
+            setCarregando(null);
         }
     }
 
@@ -54,21 +54,13 @@ export const ContextoEvoluindoPersonagemProvider = ({ children }: { children: Re
         setPersonagemEvoluindo(null);
     }
 
-    async function salvarEvolucao(ficha: FichaPersonagemDto): Promise<boolean> {
-        console.log(`salvarEvolucao, recebendo a seguinte ficha`);
-        console.log(ficha);
-
-        return true;
-
-        setCarregando(true);
+    async function salvarEvolucao(fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo): Promise<boolean> {
+        setCarregando('Salvando Edições do Personagem');
 
         try {
-            // await salvarEvolucaoDoPersonagem(idFichaPendente, resumoProvisorio);
-            // window.location.reload();
+            return salvarEvolucaoDoPersonagem(fichaEvoluida, fichaDeJogoEvoluida);
         } catch {
-            setPersonagemEvoluindo(null);
-        } finally {
-            setCarregando(false);
+            return false;
         }
     }
 

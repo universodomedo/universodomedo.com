@@ -2,7 +2,7 @@
 
 import styles from '../styles.module.css';
 
-import { EstadoPendenciaAdministrativaPersonagem, EstadoPendenciaPersonagem, PersonagemDto } from 'types-nora-api';
+import { EstadoPendenciaAdministrativaPersonagem, EstadoPendenciaPersonagem, FichaPersonagemDto, PersonagemDto } from 'types-nora-api';
 import { useContextoPaginaPersonagem } from '../contexto.tsx';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
@@ -56,28 +56,32 @@ function ListaPersonagens() {
                     </div>
                     <div className={styles.recipiente_informacoes1_personagem}>
                         <div className={styles.recipiente_informacoes_personagem}>
-                            <h1>{personagem.informacao?.nome}</h1>
-                            <DetalheFichaVigenteOuAvisoPendencia personagem={personagem}/>
+                            <div className={styles.recipiente_nome_personagem}>
+                                <h1>{personagem.informacao?.nome}</h1>
+                                {personagem.pendencias.pendeciaUsuario !== '' && (<DetalhePendencia pendenciaUsuario={personagem.pendencias.pendeciaUsuario} />)}
+                            </div>
+                            {personagem.fichaVigente && (<div className={styles.recipiente_classe_e_nivel_personagem}><DetalheClasseENivel ficha={personagem.fichaVigente} /></div>)}
                         </div>
                     </div>
-                    {/* {personagem.tempoProximaSessaoPersonagem !== undefined && (
+                    {personagem.tempoProximaSessaoPersonagem !== undefined && (
                         <div className={styles.recipiente_informacoes2_personagem}>
-                            <h2>Próxima Sessão em</h2>
-                            <h2>3 horas</h2>
+                            <h2>{personagem.tempoProximaSessaoPersonagem}</h2>
                         </div>
-                    )} */}
+                    )}
                 </div>
             ))}
         </div>
     );
 };
 
-function DetalheFichaVigenteOuAvisoPendencia({ personagem}: { personagem: PersonagemDto}) {
-    if (personagem.pendencias.pendenciaAdmin === EstadoPendenciaAdministrativaPersonagem.SEM_CONFIGURACAO_FICHA) return (<p>Aguardando Configuração da Ficha pelo Administrador</p>);
+function DetalhePendencia({ pendenciaUsuario }: { pendenciaUsuario: EstadoPendenciaPersonagem }) {
+    if (pendenciaUsuario === EstadoPendenciaPersonagem.FICHA_NAO_CRIADA) return (<div className={styles.recipiente_pendencia_personagem}><div className={styles.recipiente_pendencia}>Criação da Ficha Pendente</div></div>);
 
-    if (personagem.pendencias.pendeciaUsuario === EstadoPendenciaPersonagem.FICHA_NAO_CRIADA) return (<div className={styles.recipiente_pendencia}>Criação da Ficha Pendente</div>);
+    if (pendenciaUsuario === EstadoPendenciaPersonagem.FICHA_PENDENTE) return (<div className={styles.recipiente_pendencia_personagem}><div className={styles.recipiente_pendencia}>Evolução Pendente</div></div>);
 
-    if (personagem.pendencias.pendeciaUsuario === EstadoPendenciaPersonagem.FICHA_PENDENTE) return (<div className={styles.recipiente_pendencia}>Evolução Pendente</div>);
+    return <></>;
+};
 
-    // return (<p>{`${personagem.fichaVigente?.detalhe.classe.nome} - ${personagem.fichaVigente?.nivel.nomeVisualizacao}`}</p>);
+function DetalheClasseENivel({ ficha }: { ficha: FichaPersonagemDto }) {
+    return (<h2>{`${ficha.fichaDeJogo.classe.nome} - ${ficha.nivel.nomeVisualizacao}`}</h2>);
 };

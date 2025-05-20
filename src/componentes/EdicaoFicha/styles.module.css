@@ -11,12 +11,22 @@
     font-family: var(--fonte-cinzel);
 }
 
+#recipiente_cabecalho_evolucao {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
 .recipiente_informacoes_secao_etapa_evolucao {
     display: flex;
     flex-direction: column;
     align-items: start;
-    width: 40%;
-    margin: 0 auto;
+    gap: .4vh;
+    width: 100%;
+}
+
+.recipiente_informacoes_secao_etapa_evolucao.etapa_com_divisoes {
+    gap: 1.3vh;
 }
 
 #recipiente_conteudo_edicao {
@@ -100,6 +110,10 @@
     justify-content: center;
 }
 
+.editando_ficha_estatisticas.tira_margem {
+    margin: 0;
+}
+
 .visualizador_estatistica {
     display: flex;
     flex-direction: column;
@@ -122,7 +136,6 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    overflow-y: auto;
     gap: 2vh;
 }
 
@@ -192,13 +205,47 @@
     gap: 1vw;
 }
 
-.recipiente_patente_pericia {
+.recipiente_elementos_etapa {
     display: flex;
     flex-direction: column;
     align-items: start;
     width: 100%;
+    gap: .4vh;
 }
 
-.recipiente_patente_pericia h3 {
-    margin: auto;
+#recipiente_resumo_inicial, #recipiente_resumo_final {
+    display: flex;
+    flex-direction: column;
+    gap: 5vh;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.recipiente_resumo_inicial_etapa, .recipiente_resumo_final_etapa {
+    flex-direction: column;
+    gap: 2vh;
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.recipiente_resumo_inicial_etapa h2, .recipiente_resumo_final_etapa h2 {
+    width: fit-content;
+}
+
+.resumo_final_subtipo {
+    margin-left: 3%;
+}
+
+#recipiente_pagina_selecao_classe {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2vh;
+    align-items: center;
+    overflow: hidden;
+}
+
+.recipiente_descricao_classe {
+    flex: 0 0 0;
 }

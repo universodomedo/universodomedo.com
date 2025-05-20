@@ -4,10 +4,10 @@ import { EstruturaPaginaDefinicao } from "types-nora-api";
 import Link from 'next/link';
 import TextoGlitado from 'Componentes/ElementosVisuais/TextoGlitado/TextoGlitado';
 
-export default function PaginaConteudoDinamico({ conteudo, listaSlug }: { conteudo: EstruturaPaginaDefinicao, listaSlug: string[] }) {
+export default function PaginaConteudoDinamico({ conteudo, hrefInicio, listaSlug }: { conteudo: EstruturaPaginaDefinicao; hrefInicio: string; listaSlug: string[]; }) {
     return (
         <div className={styles.recipiente_definicao}>
-            {listaSlug.length > 0 && <Breadcrumb listaSlug={listaSlug.map((chave) => decodeURIComponent(chave))} />}
+            {listaSlug.length > 0 && <Breadcrumb hrefInicio={hrefInicio} listaSlug={listaSlug.map((chave) => decodeURIComponent(chave))} />}
 
             <div className={styles.recipiente_titulo}>
                 <h1 className={styles.definicao_titulo}>{conteudo.titulo}</h1>
@@ -41,7 +41,7 @@ export default function PaginaConteudoDinamico({ conteudo, listaSlug }: { conteu
                                     {conteudo.itensLista.map((item, indexItemLista) => {
                                         if (item.tipo === 'ItemLista') {
                                             return (
-                                                <div key={indexItemLista} className={styles.recipiente_opcao_lista}>
+                                                <div key={indexItemLista} className={`${styles.recipiente_opcao_lista} ${item.itemDeDuasColunas ? styles.opcao_lista_duas_colunas : ''}`}>
                                                     <p><Link href={`${item.subPaginaDefinicao}`}>{item.etiqueta}</Link></p>
                                                 </div>
                                             )
@@ -76,12 +76,12 @@ export default function PaginaConteudoDinamico({ conteudo, listaSlug }: { conteu
     );
 }
 
-function Breadcrumb({ listaSlug }: { listaSlug: string[] }) {
+function Breadcrumb({ hrefInicio, listaSlug }: { hrefInicio: string; listaSlug: string[]; }) {
     const caminho = [
-        { label: "Início", href: `/definicoes` },
+        { label: "Início", href: `${hrefInicio}` },
         ...listaSlug.map((chave, index) => ({
             label: chave,
-            href: `/definicoes/${listaSlug.slice(0, index + 1).join("/")}`
+            href: `${hrefInicio}/${listaSlug.slice(0, index + 1).join("/")}`
         }))
     ];
 

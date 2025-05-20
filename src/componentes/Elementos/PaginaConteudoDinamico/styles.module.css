@@ -50,6 +50,7 @@
 
 .definicao_conteudo p {
     font-size: 1.3rem;
+    line-height: 1.2;
 }
 
 .recipiente_lista {
@@ -73,6 +74,10 @@
     flex: 0 0 45%;
     text-align: center;
     align-items: center;
+}
+
+.recipiente_opcao_lista.opcao_lista_duas_colunas {
+    flex: 0 0 100%;
 }
 
 .recipiente_opcao_lista p {

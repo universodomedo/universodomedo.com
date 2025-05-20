@@ -9,6 +9,7 @@ interface ContextoAutenticacaoProps {
     usuarioLogado: UsuarioDto | null;
     carregando: boolean;
     variaveisAmbiente: VariavelAmbienteDto[];
+    numeroPendenciasPersonagem: number;
     estaAutenticado: boolean;
     ehAdmin: boolean;
 };
@@ -24,6 +25,7 @@ export const useContextoAutenticacao = (): ContextoAutenticacaoProps => {
 export const ContextoAutenticacaoProvider = ({ children }: { children: React.ReactNode }) => {
     const [usuarioLogado, setUsuarioLogado] = useState<UsuarioDto | null>(null);
     const [variaveisAmbiente, setVariaveisAmbiente] = useState<VariavelAmbienteDto[]>([]);
+    const [numeroPendenciasPersonagem, setNumeroPendenciasPersonagem] = useState(0);
     const [carregando, setCarregando] = useState(true);
 
     const estaAutenticado = !carregando && !!usuarioLogado;
@@ -34,9 +36,11 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
             const response = await obtemObjetoAutenticacao();
             setUsuarioLogado(response.usuarioLogado);
             setVariaveisAmbiente(response.variaveisAmbiente);
+            setNumeroPendenciasPersonagem(response.pendenciasDePersonagem);
         } catch (error) {
             setUsuarioLogado(null);
             setVariaveisAmbiente([]);
+            setNumeroPendenciasPersonagem(0);
         } finally {
             setCarregando(false);
         }
@@ -49,7 +53,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     if (!ehAdmin && getValorVariavelAmbiente(variaveisAmbiente, 'ESTADO_MANUTENCAO')) return (<h1>Estamos em manutenção, entre em contato com a Direção do Universo do Medo</h1>)
 
     return (
-        <ContextoAutenticacao.Provider value={{ usuarioLogado, carregando, variaveisAmbiente, estaAutenticado, ehAdmin }}>
+        <ContextoAutenticacao.Provider value={{ usuarioLogado, carregando, variaveisAmbiente, numeroPendenciasPersonagem, estaAutenticado, ehAdmin }}>
             {children}
         </ContextoAutenticacao.Provider>
     );

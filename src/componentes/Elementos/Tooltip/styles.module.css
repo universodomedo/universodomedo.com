@@ -62,6 +62,7 @@
 
 .tooltip_conteudo p {
 	margin: 0;
+	color: #525252;
 }
 
 .detalhes_tooltip {
@@ -134,4 +135,11 @@
 	to {
 	  opacity: 0;
 	}
+}
+
+.recipiente_info_tooltip {
+    position: absolute;
+    top: 3%;
+    right: 2%;
+    width: 5%;
 }
