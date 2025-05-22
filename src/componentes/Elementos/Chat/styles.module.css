@@ -1,0 +1,36 @@
+#recipiente_chat {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    width: 30%;
+    height: 2.2rem;
+    bottom: 2%;
+    left: 2%;
+    gap: 1%;
+    background-color: #000c;
+    border: 1px solid #b79051;
+    border-radius: 1vh;
+    z-index: calc(var(--zindex-final-chat) - 0);
+    padding: .4vh .3vw;
+}
+
+#recipiente_icone_chat {
+    position: relative;
+    height: 100%;
+}
+
+#recipiente_icone_chat svg {
+    transform: scaleX(-1);
+    color: #d2C31A;
+}
+
+#recipiente_campo_texto_chat {
+    flex: 1;
+}
+
+#recipiente_campo_texto_chat input {
+    all: unset;
+    height: 100%;
+    width: 100%;
+    font-size: 1.3rem;
+}

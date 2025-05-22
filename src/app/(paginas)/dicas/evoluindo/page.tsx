@@ -21,7 +21,7 @@ export default async function PaginaDefinicao({ params }: { params: Promise<{ sl
                         },
                         {
                             tipo: 'Paragrafo',
-                            conteudo: 'Na página Evoluindo Personagens, você pode ver todos os seus Personagens que estão em proceesso de Evolução. Lembre-se que um Personagem que tenha Pendência de Evolução não pode participar de Sessões ou qualquer procedimento de jogo, como modificar Inventário, Habilidades ou se comunicar com outros personagens, estando em transe até o processo ser concluído'
+                            conteudo: 'Na página Evoluindo Personagens, você pode ver todos os seus Personagens que estão em processo de Evolução. Lembre-se que um Personagem que tenha Pendência de Evolução não pode participar de Sessões ou qualquer procedimento de jogo, como modificar Inventário, Habilidades ou se comunicar com outros personagens, estando em transe até o processo ser concluído'
                         }
                     ]
                 },

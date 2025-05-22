@@ -15,7 +15,7 @@ import EdicaoHabilidadesParanormais from 'Componentes/EdicaoFicha/paginas-etapas
 import EdicaoHabilidadesElementais from 'Componentes/EdicaoFicha/paginas-etapas/edicao-habilidades-elementais.tsx';
 
 import { obtemGanhosAposSelecaoClasse, obtemGanhosParaEvoluir } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { AtributoDto, AtributoFicha, ClasseDto, DadosDoTipoGanho, DadosGanho_Atributos, DadosGanho_Classes, DadosGanho_Estatisticas, DadosGanho_Pericias, DadosGanho_PontosHabilidadeElemental, DadosGanho_PontosHabilidadesEspeciais, DadosGanho_PontosHabilidadesParanormais, DadosGanho_PontosMelhoriaRitual, DadosGanho_Rituais, DadosGanho_ValorMaximoAtributo, DetalheFicha, EstatisticaDanificavelDto, EstatisticaDanificavelFicha, FichaDeJogo, FichaPersonagemDto, GanhoEstatisticaAtributoClasseDto, GanhoNivelClasseDto, NivelDto, ObjetoGanhosEvolucao, PatentePericiaDto, PericiaDto, PericiaFicha, PersonagemDto, TipoGanhoNivelDto } from 'types-nora-api';
+import { AtributoDto, AtributoFicha, ClasseDto, DadosDoTipoGanho, DadosGanho_Atributos, DadosGanho_Classes, DadosGanho_Estatisticas, DadosGanho_Pericias, DadosGanho_PontosHabilidadeElemental, DadosGanho_PontosHabilidadesEspeciais, DadosGanho_PontosHabilidadesParanormais, DadosGanho_ValorMaximoAtributo, DetalheFicha, EstatisticaDanificavelDto, EstatisticaDanificavelFicha, FichaDeJogo, FichaPersonagemDto, GanhoEstatisticaAtributoClasseDto, GanhoNivelClasseDto, NivelDto, ObjetoGanhosEvolucao, PatentePericiaDto, PericiaDto, PericiaFicha, PersonagemDto, TipoGanhoNivelDto } from 'types-nora-api';
 import { pluralize } from 'Uteis/UteisTexto/pluralize';
 
 import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
@@ -178,7 +178,7 @@ export class GanhosEvolucao {
                 }
                 : {
                     ...essaPericiaEmFicha,
-                    patentePericia: GanhosEvolucao.dadosReferencia.patentes.find(patente => patente.id === essaPericiaEmFicha.patentePericia.id + (etapaPericias?.pontosDeGanho.filter(pontos => pontos.pericia?.id === essaPericiaEmFicha.pericia.id).length ?? 0) )!
+                    patentePericia: GanhosEvolucao.dadosReferencia.patentes.find(patente => patente.id === essaPericiaEmFicha.patentePericia.id + (etapaPericias?.pontosDeGanho.filter(pontos => pontos.pericia?.id === essaPericiaEmFicha.pericia.id).length ?? 0))!
                 };
         }).sort((a, b) => a.pericia.id - b.pericia.id);
     }
@@ -212,12 +212,16 @@ export class GanhosEvolucao {
         if (this.nivelDoProcedimento.id === 2)
             return (estatisticaDanificavel: EstatisticaDanificavelDto) => this.valorEstatisticaFixo(estatisticaDanificavel);
 
-        return (estatisticaDanificavel: EstatisticaDanificavelDto) => Math.ceil(GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0));
+        // return (estatisticaDanificavel: EstatisticaDanificavelDto) => Math.ceil(GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0));
         // estou comentando mas precisa verificar estatisticas float
-        // if (this.nivelDoProcedimento.id === 1)
-        //     return (estatisticaDanificavel: EstatisticaDanificavelDto) => Math.ceil(GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0));
+        if (this.nivelDoProcedimento.id === 1)
+            return (estatisticaDanificavel: EstatisticaDanificavelDto) => Math.ceil(GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0));
 
-        // return (estatisticaDanificavel: EstatisticaDanificavelDto) => GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0);
+        return (estatisticaDanificavel: EstatisticaDanificavelDto) => {
+            const valor = GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0);
+            
+            return Math.round(valor * 10) / 10;
+        };
     }
 
     private get estatisticasDanificaveisEditadas(): EstatisticaDanificavelFicha[] {
@@ -782,7 +786,7 @@ export class EtapaGanhoEvolucao_HabilidadesParanormais extends EtapaGanhoEvoluca
 
     constructor(listaDadosGanho: DadosGanho_PontosHabilidadesParanormais[], public quantidadeDePontosAtual: number) {
         super();
-        
+
         this.listaDadosGanho = listaDadosGanho;
         this.dadosGanhoAgrupados = this.agrupaDadosDessaEtapa();
 

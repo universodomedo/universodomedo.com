@@ -58,7 +58,7 @@ function ListaPersonagens() {
                         <div className={styles.recipiente_informacoes_personagem}>
                             <div className={styles.recipiente_nome_personagem}>
                                 <h1>{personagem.informacao?.nome}</h1>
-                                {personagem.pendencias.pendeciaUsuario !== '' && (<DetalhePendencia pendenciaUsuario={personagem.pendencias.pendeciaUsuario} />)}
+                                {personagem.pendencias.pendeciaUsuario !== '' && (<div className={styles.recipiente_pendencia}>{personagem.pendencias.pendeciaUsuario}</div>)}
                             </div>
                             {personagem.fichaVigente && (<div className={styles.recipiente_classe_e_nivel_personagem}><DetalheClasseENivel ficha={personagem.fichaVigente} /></div>)}
                         </div>
@@ -72,14 +72,6 @@ function ListaPersonagens() {
             ))}
         </div>
     );
-};
-
-function DetalhePendencia({ pendenciaUsuario }: { pendenciaUsuario: EstadoPendenciaPersonagem }) {
-    if (pendenciaUsuario === EstadoPendenciaPersonagem.FICHA_NAO_CRIADA) return (<div className={styles.recipiente_pendencia_personagem}><div className={styles.recipiente_pendencia}>Criação da Ficha Pendente</div></div>);
-
-    if (pendenciaUsuario === EstadoPendenciaPersonagem.FICHA_PENDENTE) return (<div className={styles.recipiente_pendencia_personagem}><div className={styles.recipiente_pendencia}>Evolução Pendente</div></div>);
-
-    return <></>;
 };
 
 function DetalheClasseENivel({ ficha }: { ficha: FichaPersonagemDto }) {

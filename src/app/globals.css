@@ -4,7 +4,8 @@
   --fonte-junge: 'Junge', serif;
 
   --zindex-final-swiperEsquerda: 899;
-  --zindex-final-modal: 999;
+  --zindex-final-chat: 999;
+  --zindex-final-modal: 1099;
 }
 
 * {
