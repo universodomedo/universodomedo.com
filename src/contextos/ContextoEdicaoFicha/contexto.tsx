@@ -15,7 +15,7 @@ import EdicaoHabilidadesParanormais from 'Componentes/EdicaoFicha/paginas-etapas
 import EdicaoHabilidadesElementais from 'Componentes/EdicaoFicha/paginas-etapas/edicao-habilidades-elementais.tsx';
 
 import { obtemGanhosAposSelecaoClasse, obtemGanhosParaEvoluir } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { AtributoDto, AtributoFicha, ClasseDto, DadosDoTipoGanho, DadosGanho_Atributos, DadosGanho_Classes, DadosGanho_Estatisticas, DadosGanho_Pericias, DadosGanho_PontosHabilidadeElemental, DadosGanho_PontosHabilidadesEspeciais, DadosGanho_PontosHabilidadesParanormais, DadosGanho_ValorMaximoAtributo, DetalheFicha, EstatisticaDanificavelDto, EstatisticaDanificavelFicha, FichaDeJogo, FichaPersonagemDto, GanhoEstatisticaAtributoClasseDto, GanhoNivelClasseDto, NivelDto, ObjetoGanhosEvolucao, PatentePericiaDto, PericiaDto, PericiaFicha, PersonagemDto, TipoGanhoNivelDto } from 'types-nora-api';
+import { AtributoDto, AtributoFicha, ClasseDto, DadosDoTipoGanho, DadosGanho_Atributos, DadosGanho_Classes, DadosGanho_Estatisticas, DadosGanho_Pericias, DadosGanho_PontosHabilidadeElemental, DadosGanho_PontosHabilidadesEspeciais, DadosGanho_PontosHabilidadesParanormais, DadosGanho_ValorMaximoAtributo, DetalheEvolucao, DetalheFicha, EstatisticaDanificavelDto, EstatisticaDanificavelFicha, FichaDeJogo, FichaPersonagemDto, GanhoEstatisticaAtributoClasseDto, GanhoNivelClasseDto, NivelDto, ObjetoGanhosEvolucao, PatentePericiaDto, PericiaDto, PericiaFicha, PersonagemDto, TipoGanhoNivelDto } from 'types-nora-api';
 import { pluralize } from 'Uteis/UteisTexto/pluralize';
 
 import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
@@ -81,7 +81,7 @@ export class GanhosEvolucao {
     get cabecalhoEvolucao(): string[] {
         return [
             `${this.personagemAtual.informacao.nome} - ${!this.personagemAtual.fichaVigente?.nivel ? 'Criando Ficha' : `Evoluindo para ${this.nivelDoProcedimento.nomeVisualizacao}`}`,
-            this.estaAbertoResumoInicial ? 'Resumo Inicial' : this.estaAbertoResumoFinal ? 'Resumo Final' : this.etapaAtual instanceof EtapaGanhoEvolucao_Classes ? `${this.etapaAtual.tituloEtapa} - ${this.etapaAtual.classeEmSelecao.nome}` : this.etapaAtual.tituloEtapa,
+            this.estaAbertoResumoInicial ? 'Resumo Inicial' : this.estaAbertoResumoFinal ? 'Resumo Final' : this.etapaAtual.tituloEtapa,
         ];
     }
     get etapaAtual(): EtapaGanhoEvolucao { return this.etapas[this.indexEtapaEmAndamento]; }
@@ -134,7 +134,7 @@ export class GanhosEvolucao {
             ...this.personagemAtual.fichaVigente!,
             fkPersonagensId: this.personagemAtual.id,
             fkNiveisId: this.personagemAtual.fichaVigente ? this.personagemAtual.fichaVigente.nivel.id + 1 : 1,
-            detalhesEvolucao: JSON.stringify(this.resumoEvolucao),
+            detalhesEvolucao: this.detalhesEvolucao,
         };
     }
 
@@ -171,14 +171,14 @@ export class GanhosEvolucao {
             return !essaPericiaEmFicha
                 ? {
                     pericia: pericia,
-                    patentePericia: GanhosEvolucao.dadosReferencia.patentes.find(patente => patente.id === 1 + (etapaPericias?.pontosDeGanho.filter(pontos => pontos.pericia?.id === pericia.id).length ?? 0))!,
+                    patentePericia: GanhosEvolucao.dadosReferencia.patentes.find(patente => patente.id === 1 + (etapaPericias?.pontosDeGanho.filter(pontos => pontos.pericia?.id === pericia.id).length ?? 0) + (etapaPericias?.pontosDeTroca.filter(pontos => pontos.periciaGanhou?.id === pericia.id).length ?? 0) - (etapaPericias?.pontosDeTroca.filter(pontos => pontos.periciaPerdeu?.id === pericia.id).length ?? 0))!,
                     valorEfeito: 0,
                     valorTotal: 0,
                     detalhesValor: [],
                 }
                 : {
                     ...essaPericiaEmFicha,
-                    patentePericia: GanhosEvolucao.dadosReferencia.patentes.find(patente => patente.id === essaPericiaEmFicha.patentePericia.id + (etapaPericias?.pontosDeGanho.filter(pontos => pontos.pericia?.id === essaPericiaEmFicha.pericia.id).length ?? 0))!
+                    patentePericia: GanhosEvolucao.dadosReferencia.patentes.find(patente => patente.id === essaPericiaEmFicha.patentePericia.id + (etapaPericias?.pontosDeGanho.filter(pontos => pontos.pericia?.id === essaPericiaEmFicha.pericia.id).length ?? 0) + (etapaPericias?.pontosDeTroca.filter(pontos => pontos.periciaGanhou?.id === essaPericiaEmFicha.pericia.id).length ?? 0) - (etapaPericias?.pontosDeTroca.filter(pontos => pontos.periciaPerdeu?.id === essaPericiaEmFicha.pericia.id).length ?? 0))!
                 };
         }).sort((a, b) => a.pericia.id - b.pericia.id);
     }
@@ -212,14 +212,12 @@ export class GanhosEvolucao {
         if (this.nivelDoProcedimento.id === 2)
             return (estatisticaDanificavel: EstatisticaDanificavelDto) => this.valorEstatisticaFixo(estatisticaDanificavel);
 
-        // return (estatisticaDanificavel: EstatisticaDanificavelDto) => Math.ceil(GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0));
-        // estou comentando mas precisa verificar estatisticas float
         if (this.nivelDoProcedimento.id === 1)
             return (estatisticaDanificavel: EstatisticaDanificavelDto) => Math.ceil(GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0));
 
         return (estatisticaDanificavel: EstatisticaDanificavelDto) => {
             const valor = GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0);
-            
+
             return Math.round(valor * 10) / 10;
         };
     }
@@ -228,7 +226,7 @@ export class GanhosEvolucao {
         return this.fichaDeJogoVigente.estatisticasDanificaveis.sort((a, b) => a.estatisticaDanificavel.id - b.estatisticaDanificavel.id).map(estatisticaFicha => {
             return {
                 ...estatisticaFicha,
-                valorMaximo: estatisticaFicha.valorMaximo + this.valorTotalGanhadoPorEstatistica(estatisticaFicha.estatisticaDanificavel),
+                valorMaximo: (Math.round((estatisticaFicha.valorMaximo + this.valorTotalGanhadoPorEstatistica(estatisticaFicha.estatisticaDanificavel)) * 10) / 10),
             };
         });
     }
@@ -242,14 +240,23 @@ export class GanhosEvolucao {
         };
     }
 
-    get resumoEvolucao(): { tituloEtapa: string, avisos: { mensagem: string, tipo?: 'subitem' }[] }[] {
-        return this.etapas.map(etapa => ({
-            tituloEtapa: etapa.tituloEtapa,
-            avisos: etapa.avisosGanhoEvolucao.map(aviso => ({
-                mensagem: aviso.mensagem,
-                tipo: aviso.tipo,
+    get detalhesEvolucao(): DetalheEvolucao[] {
+        return [
+            ...(this.classeSelecionadaNessaEvolucao ? [{
+                etapa: `Seleção de Classe`,
+                detalhes: [`Você selecionou a Classe ${this.classeSelecionadaNessaEvolucao.nome}`],
+            }] : []),
+            ...this.etapas.map(etapa => ({
+                etapa: etapa.tituloEtapa,
+                detalhes: etapa.detalhesEvolucaoEtapa,
             })),
-        }));
+            {
+                etapa: 'Estatísticas Danificáveis',
+                detalhes: this.estatisticasDanificaveisEditadas.map(estatisticaDanificavelEditada => (
+                    `${estatisticaDanificavelEditada.estatisticaDanificavel.nome}: ${this.fichaDeJogoVigente.estatisticasDanificaveis.find(estatisticaDanificavelAnteriormente => estatisticaDanificavelAnteriormente.estatisticaDanificavel.id === estatisticaDanificavelEditada.estatisticaDanificavel.id)!.valorMaximo} → ${estatisticaDanificavelEditada.valorMaximo}`
+                ))
+            }
+        ];
     }
     //
     // #endregion
@@ -259,6 +266,8 @@ export class GanhosEvolucao {
     static dadosReferencia: { atributos: AtributoDto[], patentes: PatentePericiaDto[], pericias: PericiaDto[], estatisticasDanificaveis: EstatisticaDanificavelDto[], classes: ClasseDto[], tiposGanho: TipoGanhoNivelDto[] };
 
     static formataGanhos(ganhosEmJson: GanhoNivelClasseDto[], detalhesFicha: DetalheFicha): EtapaGanhoEvolucao[] {
+        console.log(`formataGanhos`);
+        console.log(ganhosEmJson);
         const retorno: EtapaGanhoEvolucao[] = [];
 
         let aumentoDeValorMaximoAtributoNessaEvolucao = detalhesFicha.valorMaxAtributo;
@@ -329,10 +338,11 @@ abstract class EtapaGanhoEvolucao {
     public abstract listaDadosGanho: DadosDoTipoGanho[];
     public abstract dadosGanhoAgrupados: DadosDoTipoGanho;
     public abstract agrupaDadosDessaEtapa: () => DadosDoTipoGanho;
+    public abstract get detalhesEvolucaoEtapa(): string[];
 }
 
 export class EtapaGanhoEvolucao_Classes extends EtapaGanhoEvolucao {
-    public tituloEtapa = 'Classes';
+    public tituloEtapa = 'Seleção de Classe';
     public hrefDefinicaoEtapa = '/definicoes/Classes';
     public idClasseEmSelecao: number = GanhosEvolucao.dadosReferencia.classes[0].id;
 
@@ -352,14 +362,9 @@ export class EtapaGanhoEvolucao_Classes extends EtapaGanhoEvolucao {
 
     get finalizado(): boolean { return true; }
 
-    public get avisosGanhoEvolucao(): AvisoGanhoEvolucao[] {
-        return [
-            {
-                mensagem: `Classe selecionada: ${this.classeEmSelecao.nome}`,
-                icone: '',
-            },
-        ];
-    }
+    public get avisosGanhoEvolucao(): AvisoGanhoEvolucao[] { return [{ mensagem: `Classe selecionada: ${this.classeEmSelecao.nome}`, icone: '', },]; }
+
+    public get detalhesEvolucaoEtapa(): string[] { return [`Classe Selecionada: ${this.classeEmSelecao.nome}`]; }
 
     get classeEmSelecao(): ClasseDto {
         return GanhosEvolucao.dadosReferencia.classes.find(classe => classe.id === this.idClasseEmSelecao)!;
@@ -397,6 +402,8 @@ export class EtapaGanhoEvolucao_ValorMaxAtributo extends EtapaGanhoEvolucao {
             { mensagem: `De ${this.valorMaximoAnterior} para ${this.valorMaximoNovo}`, icone: '', tipo: 'subitem' },
         ];
     }
+
+    public get detalhesEvolucaoEtapa(): string[] { return [`Valor Máximo de Atributo aumentado de ${this.valorMaximoAnterior} para ${this.valorMaximoNovo}`]; }
 }
 
 export class EtapaGanhoEvolucao_Estatisticas extends EtapaGanhoEvolucao {
@@ -433,14 +440,20 @@ export class EtapaGanhoEvolucao_Estatisticas extends EtapaGanhoEvolucao {
 
     public get avisosGanhoEvolucao(): AvisoGanhoEvolucao[] {
         return this.dadosGanhoAgrupados.map(ganhoEstatistica => {
-            {
-                const estatistica = GanhosEvolucao.dadosReferencia.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.id === ganhoEstatistica.idEstatistica);
+            const estatistica = GanhosEvolucao.dadosReferencia.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.id === ganhoEstatistica.idEstatistica);
 
-                return ({
-                    mensagem: `${estatistica?.nome} aumentado em ${ganhoEstatistica.valorAumento} Pontos`,
-                    icone: '',
-                })
-            }
+            return ({
+                mensagem: `${estatistica?.nome} aumentados em ${ganhoEstatistica.valorAumento} Pontos`,
+                icone: '',
+            })
+        });
+    }
+
+    public get detalhesEvolucaoEtapa(): string[] {
+        return this.dadosGanhoAgrupados.map(ganhoEstatistica => {
+            const estatistica = GanhosEvolucao.dadosReferencia.estatisticasDanificaveis.find(estatisticaDanificavel => estatisticaDanificavel.id === ganhoEstatistica.idEstatistica);
+
+            return `${estatistica?.nome} aumentado em ${ganhoEstatistica.valorAumento} Pontos`;
         });
     }
 }
@@ -474,9 +487,11 @@ export class EtapaGanhoEvolucao_HabilidadesEspeciais extends EtapaGanhoEvolucao 
     public get avisosGanhoEvolucao(): AvisoGanhoEvolucao[] {
         return [
             { mensagem: `Pontos de Habilidade Especial aumentados`, icone: '' },
-            { mensagem: ` De ${this.quantidadeDePontosAtual} para ${this.quantidadeDePontosNova} ${pluralize(this.quantidadeDePontosNova, 'Ponto')}`, icone: '', tipo: 'subitem' },
+            { mensagem: `De ${this.quantidadeDePontosAtual} para ${this.quantidadeDePontosNova} ${pluralize(this.quantidadeDePontosNova, 'Ponto')}`, icone: '', tipo: 'subitem' },
         ];
     }
+
+    public get detalhesEvolucaoEtapa(): string[] { return [`Pontos de Habilidade Especial aumentados de ${this.quantidadeDePontosAtual} para ${this.quantidadeDePontosNova}`]; }
 }
 
 export class EtapaGanhoEvolucao_Atributos extends EtapaGanhoEvolucao {
@@ -508,6 +523,8 @@ export class EtapaGanhoEvolucao_Atributos extends EtapaGanhoEvolucao {
         this.valorMaxAtributo = valorMaxAtributo;
     }
 
+    get finalizado(): boolean { return !this.temPontoGanhoLivre && this.obtemNumeroPontosTrocaEmAndamento === 0; }
+
     public get avisosGanhoEvolucao(): AvisoGanhoEvolucao[] {
         return [
             { mensagem: `Valor de Atributo pode variar entre ${this.valorMinAtributo} e ${this.valorMaxAtributo}`, icone: '' },
@@ -520,10 +537,10 @@ export class EtapaGanhoEvolucao_Atributos extends EtapaGanhoEvolucao {
                             icone: (!this.temPontoGanhoLivre ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } }))
                         },
                         ...(
-                            this.pontosDeGanho.map(registro => {
-                                return registro.atributo
+                            this.pontosDeGanho.map(ganho => {
+                                return ganho.atributo
                                     ? {
-                                        mensagem: `Aumento de ${registro.atributo.nome}`,
+                                        mensagem: `Aumento de ${ganho.atributo.nome}`,
                                         icone: ``,
                                         tipo: 'subitem' as const,
                                     }
@@ -546,15 +563,15 @@ export class EtapaGanhoEvolucao_Atributos extends EtapaGanhoEvolucao {
                             icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } })
                         },
                         ...(
-                            this.pontosDeTroca.filter(atributo => atributo.atributoPerdeu).map(atributo => {
-                                return atributo.atributoGanhou
+                            this.pontosDeTroca.filter(troca => troca.atributoPerdeu).map(troca => {
+                                return troca.atributoGanhou
                                     ? {
-                                        mensagem: `Trocado 1 Ponto de ${atributo.atributoPerdeu?.nome} para ${atributo.atributoGanhou.nome}`,
+                                        mensagem: `Trocado 1 Ponto de ${troca.atributoPerdeu?.nome} para ${troca.atributoGanhou.nome}`,
                                         icone: ``,
                                         tipo: 'subitem' as const,
                                     }
                                     : {
-                                        mensagem: `Trocando 1 Ponto de ${atributo.atributoPerdeu?.nome} (Pendente)`,
+                                        mensagem: `Trocando 1 Ponto de ${troca.atributoPerdeu?.nome} (Pendente)`,
                                         icone: React.createElement(Cross1Icon, { style: { color: '#FF0000' } }),
                                         tipo: 'subitem' as const,
                                     }
@@ -566,7 +583,17 @@ export class EtapaGanhoEvolucao_Atributos extends EtapaGanhoEvolucao {
         ];
     };
 
-    get finalizado(): boolean { return !this.temPontoGanhoLivre && this.obtemNumeroPontosTrocaEmAndamento === 0; }
+    public get detalhesEvolucaoEtapa(): string[] {
+        return GanhosEvolucao.dadosReferencia.atributos.map(atributo => {
+            const pontos = this.pontosDeGanho.filter(p => p.atributo?.id === atributo.id).length + this.pontosDeTroca.filter(t => t.atributoGanhou?.id === atributo.id).length - this.pontosDeTroca.filter(t => t.atributoPerdeu?.id === atributo.id).length;
+
+            if (pontos === 0) return null;
+
+            const delta = Math.abs(pontos);
+
+            return `${atributo.nome} ${pontos > 0 ? 'aumentou' : 'diminuiu'} em ${delta} ${pluralize(delta, 'Ponto')}`;
+        }).filter(Boolean) as string[];
+    }
 
     // #region Logica de Pontos de Ganho
     // / Simplesmente soma no valor do Atributo
@@ -614,8 +641,10 @@ export class EtapaGanhoEvolucao_Atributos extends EtapaGanhoEvolucao {
     adicionaPonto(atributo: AtributoDto) {
         // prioridade 1 para desfazer uma remoção de troca
         if (this.atributoTemPontoRemovidoEmTroca(atributo)) {
-            this.pontosDeTroca[this.pontosDeTroca.findIndex(registro => registro.atributoPerdeu?.id === atributo.id)].atributoGanhou = null;
-            this.pontosDeTroca[this.pontosDeTroca.findIndex(registro => registro.atributoPerdeu?.id === atributo.id)].atributoPerdeu = null;
+            const indexRegistroDeAtributoEmTroca = this.pontosDeTroca.findIndex(registro => registro.atributoPerdeu?.id === atributo.id);
+
+            this.pontosDeTroca[indexRegistroDeAtributoEmTroca].atributoGanhou = null;
+            this.pontosDeTroca[indexRegistroDeAtributoEmTroca].atributoPerdeu = null;
         }
 
         // prioridade 2 para completar trocas que já foram feitas
@@ -646,20 +675,35 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
     public pontosDeTroca: RegistroDeUsoDeTrocaDeMelhoriaDePatente[];
 
     public listaDadosGanho: DadosGanho_Pericias[];
-    public dadosGanhoAgrupados: DadosGanho_Pericias[];
+    public dadosGanhoAgrupados: DadosGanho_Pericias;
 
-    agrupaDadosDessaEtapa = (): DadosGanho_Pericias[] => {
-        return this.listaDadosGanho.reduce((acc, cur) => {
-            const existente = acc.find(item => item.idPatente === cur.idPatente);
+    agrupaDadosDessaEtapa = (): DadosGanho_Pericias => {
+        const livre = this.listaDadosGanho.reduce((acc, { livre }) => {
+            if (!livre) return acc;
+
+            return {
+                ganhos: (acc?.ganhos || 0) + livre.ganhos,
+                trocas: (acc?.trocas || 0) + livre.trocas
+            };
+        }, undefined as { ganhos: number; trocas: number } | undefined);
+
+        const comum = this.listaDadosGanho.flatMap(item => item.comum || []).reduce((acc, { idPatente, ganhos, trocas }) => {
+            const existente = acc.find(item => item.idPatente === idPatente);
+
             if (existente) {
-                existente.ganhos += cur.ganhos;
-                existente.trocas += cur.trocas;
+                existente.ganhos += ganhos;
+                existente.trocas += trocas;
             } else {
-                acc.push({ ...cur });
+                acc.push({ idPatente, ganhos, trocas });
             }
 
             return acc;
-        }, [] as DadosGanho_Pericias[]);
+        }, [] as { idPatente: number; ganhos: number; trocas: number }[]);
+
+        return {
+            ...(livre ? { livre } : {}),
+            ...(comum.length > 0 ? { comum } : {})
+        };
     }
 
     constructor(listaDadosGanho: DadosGanho_Pericias[]) {
@@ -668,40 +712,47 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         this.listaDadosGanho = listaDadosGanho.flat();
         this.dadosGanhoAgrupados = this.agrupaDadosDessaEtapa();
 
-        this.pontosDeGanho = this.dadosGanhoAgrupados.flatMap(dado => {
-            const patente = GanhosEvolucao.dadosReferencia.patentes.find(p => p.id === dado.idPatente)!;
+        this.pontosDeGanho = [
+            ...(this.dadosGanhoAgrupados.comum?.flatMap(dado => {
+                const patente = GanhosEvolucao.dadosReferencia.patentes.find(p => p.id === dado.idPatente)!;
+                return Array.from({ length: dado.ganhos }, () => ({
+                    patente: patente,
+                    pericia: null
+                }));
+            }) || [])
+        ];
 
-            return Array.from({ length: dado.ganhos }, () => (
-                { patente: patente, pericia: null }
-            ));
-        });
-
-        this.pontosDeTroca = this.dadosGanhoAgrupados.flatMap(dado => {
-            const patente = GanhosEvolucao.dadosReferencia.patentes.find(p => p.id === dado.idPatente)!;
-
-            return Array.from({ length: dado.trocas }, () => (
-                { patente: patente, periciaPerdeu: null, periciaGanhou: null }
-            ));
-        });
+        this.pontosDeTroca = [
+            ...(this.dadosGanhoAgrupados.comum?.flatMap(dado => {
+                const patente = GanhosEvolucao.dadosReferencia.patentes.find(p => p.id === dado.idPatente)!;
+                return Array.from({ length: dado.trocas }, () => ({
+                    patente: patente,
+                    periciaPerdeu: null,
+                    periciaGanhou: null
+                }));
+            }) || []),
+        ];
     }
+
+    get finalizado(): boolean { return !this.temQualquerPontoGanhoPendente && !this.temQualquerPontoTrocaEmAndamento; }
 
     public get avisosGanhoEvolucao(): AvisoGanhoEvolucao[] {
         return [
             ...(
                 GanhosEvolucao.dadosReferencia.patentes.map(patente => {
-                    const registros = this.pontosDeGanho.filter(registro => registro.patente.id === patente.id);
+                    const ganhos = this.pontosDeGanho.filter(registro => registro.patente.id === patente.id);
 
-                    if (registros.length === 0) return null;
+                    if (ganhos.length === 0) return null;
 
                     const itemPrincipal = {
-                        mensagem: `Ganho de ${registros.length} ${pluralize(registros.length, 'Perícia')} ${pluralize(registros.length, patente.nome)}`,
-                        icone: (!this.temQualquerPontoGanhoPendente ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } })),
+                        mensagem: `Ganho de ${ganhos.length} ${pluralize(ganhos.length, 'Perícia')} ${pluralize(ganhos.length, patente.nome)}`,
+                        icone: (!this.temPontoGanhoLivrePorPatente(patente) ? React.createElement(CheckIcon, { style: { color: '#38F938' } }) : React.createElement(Cross1Icon, { style: { color: '#FF0000' } })),
                     };
 
-                    const subitens = registros.map(registroPonto => {
-                        if (registroPonto.pericia) {
+                    const subitens = ganhos.map(registroGanho => {
+                        if (registroGanho.pericia) {
                             return {
-                                mensagem: `Melhorada Perícia ${registroPonto.pericia.nome}`,
+                                mensagem: `Melhorada Perícia ${registroGanho.pericia.nome}`,
                                 icone: '',
                                 tipo: 'subitem' as const
                             };
@@ -716,32 +767,88 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
 
                     return [itemPrincipal, ...subitens];
                 }).filter(item => item !== null).flat()
+            ),
+            ...(
+                GanhosEvolucao.dadosReferencia.patentes.map(patente => {
+                    const trocas = this.pontosDeTroca.filter(registro => registro.patente.id === patente.id);
+
+                    if (trocas.length === 0) return null;
+
+                    const itemPrincipal = {
+                        mensagem: `Troca Opcional de ${trocas.length} ${pluralize(trocas.length, 'Perícia')} ${pluralize(trocas.length, patente.nome)}`,
+                        icone: React.createElement(CircleIcon, { style: { color: '#D4AF17' } }),
+                    };
+
+                    // `Troca Opcional de ${this.obtemNumeroPontosTroca} ${pluralize(this.obtemNumeroPontosTroca, 'Atributo')} ${this.obtemNumeroPontosTrocaLivres > 0 ? `(${this.obtemNumeroPontosTrocaLivres} ${pluralize(this.obtemNumeroPontosTrocaLivres, 'Disponível', 'Disponíveis')})` : '(Usado)'}`,
+
+                    const subitens = trocas.filter(troca => troca.periciaPerdeu).map(registroTroca => {
+                        if (registroTroca.periciaGanhou) {
+                            return {
+                                mensagem: `Trocado ${patente.nome} de ${registroTroca.periciaPerdeu?.nome} para ${registroTroca.periciaGanhou.nome}`,
+                                icone: ``,
+                                tipo: 'subitem' as const,
+                            };
+                        } else {
+                            return {
+                                mensagem: `Trocando ${patente.nome} de ${registroTroca.periciaPerdeu?.nome} (Pendente)`,
+                                icone: React.createElement(Cross1Icon, { style: { color: '#FF0000' } }),
+                                tipo: 'subitem' as const,
+                            };
+                        }
+                    });
+
+                    return [itemPrincipal, ...subitens];
+                }).filter(item => item !== null).flat()
             )
         ];
     };
 
-    get finalizado(): boolean { return !this.temQualquerPontoGanhoPendente; } // implementar verificacao de troca em andamento
+    public get detalhesEvolucaoEtapa(): string[] {
+        return GanhosEvolucao.dadosReferencia.pericias.flatMap(pericia => {
+            const getExtremo = (arr: { patente: PatentePericiaDto }[], comparador: (a: number, b: number) => boolean) => arr.length ? arr.reduce((a, b) => comparador(a.patente.id, b.patente.id) ? a : b).patente : null;
+
+            const melhorPatente = getExtremo([
+                ...this.pontosDeGanho.filter(p => p.pericia?.id === pericia.id),
+                ...this.pontosDeTroca.filter(t => t.periciaGanhou?.id === pericia.id)
+            ], (a, b) => a > b);
+
+            const piorPatente = getExtremo(this.pontosDeTroca.filter(t => t.periciaPerdeu?.id === pericia.id), (a, b) => a < b);
+
+            return [
+                ...(melhorPatente ? [`${pericia.nome} melhorou para ${melhorPatente.nome}`] : []),
+                ...(piorPatente ? [`${pericia.nome} piorou para ${GanhosEvolucao.dadosReferencia.patentes.find(patente => patente.id === (piorPatente.id - 1))?.nome}`] : [])
+            ];
+        });
+    }
 
     // #region Logica de Pontos de Ganho
     // / Simplesmente aumenta o id da patente
     // / Obrigatório gastar todos os pontos recebidos
     //
     get obtemNumeroPontosGanhoPorPatente(): (patente: PatentePericiaDto) => number { return (patente: PatentePericiaDto) => this.pontosDeGanho.filter(registro => registro.patente.id === patente.id).length; }
-    get obtemNumeroPontosGanhoLivresPorPatente(): (patente: PatentePericiaDto) => number {
-        return (patente: PatentePericiaDto) => (this.pontosDeGanho.filter(registro => registro.patente.id === (patente.id + 1) && registro.pericia === null) || []).length;
-    }
+    get obtemNumeroPontosGanhoLivresPorPatente(): (patente: PatentePericiaDto) => number { return (patente: PatentePericiaDto) => (this.pontosDeGanho.filter(registro => registro.patente.id === (patente.id + 1) && registro.pericia === null) || []).length; }
     // tem q verificar o ponto referente a patente de cima
-    get pontoGanhoLivrePorPatente(): (patente: PatentePericiaDto) => number { return (patente: PatentePericiaDto) => this.pontosDeGanho.findIndex(registro => registro.patente.id === (patente.id + 1) && registro.pericia === null); }
-    get temQualquerPontoGanhoPendente(): boolean { return this.pontosDeGanho.findIndex(registro => registro.pericia === null) >= 0; }
-    get temPontoGanhoLivrePorPatente(): (patente: PatentePericiaDto) => boolean { return (patente: PatentePericiaDto) => this.pontoGanhoLivrePorPatente(patente) >= 0; }
+    get pontoGanhoLivrePorPatente(): (patente: PatentePericiaDto, verificaProxPatente?: boolean) => number { return (patente: PatentePericiaDto, verificaProxPatente?: boolean) => this.pontosDeGanho.findIndex(registro => registro.patente.id === (patente.id + (verificaProxPatente ? 1 : 0)) && registro.pericia === null); }
+
+    get temPontoGanhoLivrePorPatente(): (patente: PatentePericiaDto, verificaProxPatente?: boolean) => boolean { return (patente: PatentePericiaDto, verificaProxPatente?: boolean) => this.pontoGanhoLivrePorPatente(patente, verificaProxPatente) >= 0; }
+
+    get temQualquerPontoGanhoPendente(): boolean { return this.pontosDeGanho.some(registro => registro.pericia === null); }
     //
     // #endregion
 
     // #region Logica de Pontos de Troca
     //
-    get obtemNumeroPontosTrocaPorPatente(): (patente: PatentePericiaDto) => number { return (patente: PatentePericiaDto) => this.pontosDeTroca.filter(registro => registro.patente.id === (patente.id + 1)).length; }
+    get obtemNumeroPontosTrocaPorPatente(): (patente: PatentePericiaDto) => number { return (patente: PatentePericiaDto) => this.pontosDeTroca.filter(registro => registro.patente.id === patente.id).length; }
     get obtemNumeroPontosTrocaLivresPorPatente(): (patente: PatentePericiaDto) => number { return (patente: PatentePericiaDto) => (this.pontosDeTroca.filter(registro => registro.patente.id === (patente.id + 1) && !registro.periciaPerdeu) || []).length; }
     get obtemNumeroPontosTrocaEmAndamentoPorPatente(): (patente: PatentePericiaDto) => number { return (patente: PatentePericiaDto) => (this.pontosDeTroca.filter(registro => registro.patente.id === (patente.id + 1) && registro.periciaPerdeu && !registro.periciaGanhou) || []).length; }
+
+    get pontoTrocaRetiraLivrePorPatente(): (patente: PatentePericiaDto) => number { return (patente: PatentePericiaDto) => this.pontosDeTroca.findIndex(registro => !registro.periciaPerdeu && registro.patente.id === patente.id); }
+    get pontoTrocaGanhaLivrePorPatente(): (patente: PatentePericiaDto) => number { return (patente: PatentePericiaDto) => this.pontosDeTroca.findIndex(registro => registro.periciaPerdeu && !registro.periciaGanhou && registro.patente.id === (patente.id + 1)); }
+
+    get temPontoTrocaRetiraLivrePorPatente(): (patente: PatentePericiaDto) => boolean { return (patente: PatentePericiaDto) => this.pontoTrocaRetiraLivrePorPatente(patente) >= 0; }
+    get temPontoTrocaGanhaLivrePorPatente(): (patente: PatentePericiaDto) => boolean { return (patente: PatentePericiaDto) => this.pontoTrocaGanhaLivrePorPatente(patente) >= 0; }
+
+    get temQualquerPontoTrocaEmAndamento(): boolean { return this.pontosDeTroca.some(registro => registro.periciaPerdeu && !registro.periciaGanhou); }
     //
     // #endregion
 
@@ -749,21 +856,41 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
     //
     periciaTemPontoAdicionadoEmGanhoNessaPatente(pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean { return this.pontosDeGanho.some(registro => registro.pericia?.id === pericia.id && registro.patente.id === patenteAtual.id); }
 
-    botaoAdicionarEstaHabilitado(pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean { return (this.temPontoGanhoLivrePorPatente(patenteAtual)); }
-    botaoRemoverEstaHabilitado(pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean { return this.periciaTemPontoAdicionadoEmGanhoNessaPatente(pericia, patenteAtual); }
+    periciaTemPontoRemovidoEmTrocaNessaPatente(pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean { return this.pontosDeTroca.some(registro => registro.periciaPerdeu?.id === pericia.id && registro.patente.id === (patenteAtual.id + 1)); }
+    periciaTemPontoAdicionadoEmTrocaNessaPatente(pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean { return this.pontosDeTroca.some(registro => registro.periciaGanhou?.id === pericia.id && registro.patente.id === patenteAtual.id); }
+
+    botaoAdicionarEstaHabilitado(pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean { return this.temPontoGanhoLivrePorPatente(patenteAtual, true) || this.temPontoTrocaGanhaLivrePorPatente(patenteAtual); }
+    botaoRemoverEstaHabilitado(pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean { return this.temPontoTrocaRetiraLivrePorPatente(patenteAtual) || this.periciaTemPontoAdicionadoEmGanhoNessaPatente(pericia, patenteAtual) || this.periciaTemPontoAdicionadoEmTrocaNessaPatente(pericia, patenteAtual); }
     //
     // #endregion
 
     // #region Metodos Botões
     //
     adicionaPonto(pericia: PericiaDto, patenteAtual: PatentePericiaDto) {
+        // prioridade 1 para desfazer uma remoção de troca
+        if (this.periciaTemPontoRemovidoEmTrocaNessaPatente(pericia, patenteAtual)) {
+            const indexRegistroDePericiaEmTroca = this.pontosDeTroca.findIndex(registro => registro.periciaPerdeu?.id === pericia.id && registro.patente.id === (patenteAtual.id + 1));
+
+            this.pontosDeTroca[indexRegistroDePericiaEmTroca].periciaGanhou = null;
+            this.pontosDeTroca[indexRegistroDePericiaEmTroca].periciaPerdeu = null;
+        }
+
+        // prioridade 2 para completar trocas que já foram feitas
+        else if (this.temPontoTrocaGanhaLivrePorPatente(patenteAtual)) this.pontosDeTroca[this.pontosDeTroca.findIndex(registro => registro.periciaPerdeu && !registro.periciaGanhou && registro.patente.id === (patenteAtual.id + 1))]!.periciaGanhou = pericia;
+
         // ganho normal
-        if (this.temPontoGanhoLivrePorPatente(patenteAtual)) this.pontosDeGanho[this.pontoGanhoLivrePorPatente(patenteAtual)].pericia = pericia;
+        else if (this.temPontoGanhoLivrePorPatente(patenteAtual, true)) this.pontosDeGanho[this.pontoGanhoLivrePorPatente(patenteAtual, true)].pericia = pericia;
     }
 
     subtraiPonto(pericia: PericiaDto, patenteAtual: PatentePericiaDto) {
-        if (this.periciaTemPontoAdicionadoEmGanhoNessaPatente(pericia, patenteAtual)) this.pontosDeGanho[this.pontosDeGanho.findIndex(registro => registro.pericia?.id === pericia.id && registro.patente.id >= patenteAtual.id)].pericia = null;
+        // prioridade 1 para remover trocas que adicionaram nessa perícia
+        if (this.periciaTemPontoAdicionadoEmTrocaNessaPatente(pericia, patenteAtual)) this.pontosDeTroca[this.pontosDeTroca.findIndex(registro => registro.periciaGanhou?.id === pericia.id)].periciaGanhou = null;
 
+        // prioridade 2 para remover ganhos que adicionaram nessa perícia
+        else if (this.periciaTemPontoAdicionadoEmGanhoNessaPatente(pericia, patenteAtual)) this.pontosDeGanho[this.pontosDeGanho.findIndex(registro => registro.pericia?.id === pericia.id && registro.patente.id >= patenteAtual.id)].pericia = null;
+
+        // remover ponto que será trocado
+        else if (this.temPontoTrocaRetiraLivrePorPatente(patenteAtual)) this.pontosDeTroca[this.pontoTrocaRetiraLivrePorPatente(patenteAtual)]!.periciaPerdeu = pericia;
     }
     //
     // #endregion
@@ -798,9 +925,11 @@ export class EtapaGanhoEvolucao_HabilidadesParanormais extends EtapaGanhoEvoluca
     public get avisosGanhoEvolucao(): AvisoGanhoEvolucao[] {
         return [
             { mensagem: `Pontos de Habilidade Paranormal aumentados`, icone: '' },
-            { mensagem: ` De ${this.quantidadeDePontosAtual} para ${this.quantidadeDePontosNova} ${pluralize(this.quantidadeDePontosNova, 'Ponto')}`, icone: '', tipo: 'subitem' },
+            { mensagem: `De ${this.quantidadeDePontosAtual} para ${this.quantidadeDePontosNova} ${pluralize(this.quantidadeDePontosNova, 'Ponto')}`, icone: '', tipo: 'subitem' },
         ];
     }
+
+    public get detalhesEvolucaoEtapa(): string[] { return [`Pontos de Habilidade Paranormal aumentados de ${this.quantidadeDePontosAtual} para ${this.quantidadeDePontosNova}`]; }
 }
 
 export class EtapaGanhoEvolucao_HabilidadesElementais extends EtapaGanhoEvolucao {
@@ -826,6 +955,12 @@ export class EtapaGanhoEvolucao_HabilidadesElementais extends EtapaGanhoEvolucao
     get finalizado(): boolean { return true; }
 
     public get avisosGanhoEvolucao(): AvisoGanhoEvolucao[] { return []; }
+
+    public get detalhesEvolucaoEtapa(): string[] {
+        return [
+
+        ];
+    }
 }
 
 type AvisoGanhoEvolucao = {
@@ -869,9 +1004,9 @@ export const ContextoEdicaoFichaProvider = ({ children }: { children: React.Reac
         if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_Classes) return <SelecaoClasse />;
         if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_ValorMaxAtributo) return <InformativoAumentoMaximoAtributo />;
         if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_Estatisticas) return <EdicaoEstatisticas />;
-        if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_HabilidadesEspeciais) return <InformativoPontosHabilidadeEspecial />;
         if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_Atributos) return <EdicaoAtributos />;
         if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_Pericias) return <EdicaoPericias />;
+        if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_HabilidadesEspeciais) return <InformativoPontosHabilidadeEspecial />;
         if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_HabilidadesParanormais) return <EdicaoHabilidadesParanormais />;
         if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_HabilidadesElementais) return <EdicaoHabilidadesElementais />;
     };

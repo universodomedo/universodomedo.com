@@ -13,9 +13,9 @@ export default function ResumoInicial() {
         { tipo: EtapaGanhoEvolucao_Classes, componente: <SecaoClasses /> },
         { tipo: EtapaGanhoEvolucao_ValorMaxAtributo, componente: <SecaoValorMaxAtributo /> },
         { tipo: EtapaGanhoEvolucao_Estatisticas, componente: <SecaoEstatisticas /> },
-        { tipo: EtapaGanhoEvolucao_HabilidadesEspeciais, componente: <SecaoHabilidadesEspeciais /> },
         { tipo: EtapaGanhoEvolucao_Atributos, componente: <SecaoAtributos /> },
         { tipo: EtapaGanhoEvolucao_Pericias, componente: <SecaoPericias /> },
+        { tipo: EtapaGanhoEvolucao_HabilidadesEspeciais, componente: <SecaoHabilidadesEspeciais /> },
         { tipo: EtapaGanhoEvolucao_HabilidadesParanormais, componente: <SecaoHabilidadesParanormais /> },
         { tipo: EtapaGanhoEvolucao_HabilidadesElementais, componente: <SecaoHabilidadesElementais /> }
     ];
@@ -153,16 +153,19 @@ function SecaoPericias() {
             <Link href={'definicoes/Pericias'} target={'_blank'}><h2>{etapaPericias.tituloEtapa}</h2></Link>
 
             <div className={`${styles.recipiente_informacoes_secao_etapa_evolucao} ${styles.etapa_com_divisoes}`}>
-                {GanhosEvolucao.dadosReferencia.patentes.map(patente => {
-                    const numeroPontosParaPatente = etapaPericias.obtemNumeroPontosGanhoPorPatente(patente);
-                    if (numeroPontosParaPatente === 0) return;
+                {GanhosEvolucao.dadosReferencia.patentes.sort((a, b) => a.id - b.id).map(patente => {
+                    const numeroPontosGanhoParaPatente = etapaPericias.obtemNumeroPontosGanhoPorPatente(patente);
+                    const numeroPontosTrocaParaPatente = etapaPericias.obtemNumeroPontosTrocaPorPatente(patente);
+
+                    if (numeroPontosGanhoParaPatente === 0 && numeroPontosTrocaParaPatente === 0) return;
 
                     const patenteAnteriorAoPonto = GanhosEvolucao.dadosReferencia.patentes.find(patenteAnterior => patenteAnterior.id === (patente.id - 1));
 
                     return (
                         <div key={patente.id} className={styles.recipiente_elementos_etapa}>
                             <h4>Perícias {pluralize(2, patente.nome)}</h4>
-                            <p><strong>{numeroPontosParaPatente} {pluralize(numeroPontosParaPatente, 'Ponto')}</strong> para melhorar Perícias <strong style={{ color: patenteAnteriorAoPonto?.cor }}>{pluralize(2, patenteAnteriorAoPonto!.nome)}</strong> para <strong style={{ color: patente?.cor }}>{patente.nome}</strong></p>
+                            {numeroPontosGanhoParaPatente > 0 && (<p><strong>{numeroPontosGanhoParaPatente} {pluralize(numeroPontosGanhoParaPatente, 'Ponto')}</strong> para melhorar {pluralize(numeroPontosGanhoParaPatente, 'Perícia')} <strong style={{ color: patenteAnteriorAoPonto?.cor }}>{pluralize(numeroPontosGanhoParaPatente, patenteAnteriorAoPonto!.nome)}</strong> para <strong style={{ color: patente?.cor }}>{patente.nome}</strong></p>)}
+                            {numeroPontosTrocaParaPatente > 0 && (<p><strong>{numeroPontosTrocaParaPatente} {pluralize(numeroPontosTrocaParaPatente, 'Ponto')} {pluralize(numeroPontosTrocaParaPatente, 'Opcional', 'Opcionais')}</strong> para trocar {pluralize(numeroPontosTrocaParaPatente, 'Perícia')} <strong style={{ color: patente?.cor }}>{patente.nome}</strong></p>)}
                         </div>
                     );
                 })}

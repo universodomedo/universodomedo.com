@@ -52,6 +52,7 @@ export default function PaginaEvolucaoPersonagem_ComContexto() {
                     ) : (                        
                         <h2>{ganhos.cabecalhoEvolucao[1]}</h2>
                     )}
+                    {ganhos.estaAbertoResumoFinal && (<h4 className={styles.aviso_resumo_final}>Confira com atenção suas escolhas dessa Evolução</h4>)}
                 </div>
                 <div id={styles.recipiente_conteudo_edicao} {...scrollableProps}>
                     <div id={styles.recipiente_etapa_edicao}>

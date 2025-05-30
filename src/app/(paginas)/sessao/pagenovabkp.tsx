@@ -24,7 +24,7 @@ function PaginaSessao_Slot() {
 
 function PaginaSessao_EmEspera() {
     return (
-        <div id={styles.recipiente_sessao_em_espera}>
+        <div id={styles.recipiente_sessao_prevista}>
             
         </div>
     );

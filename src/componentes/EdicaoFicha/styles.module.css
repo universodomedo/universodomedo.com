@@ -22,11 +22,22 @@
     flex-direction: column;
     align-items: start;
     gap: .4vh;
-    width: 100%;
+    /* width: 100%; */
 }
 
 .recipiente_informacoes_secao_etapa_evolucao.etapa_com_divisoes {
     gap: 1.3vh;
+}
+
+.recipiente_informacoes_secao_etapa_evolucao {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: .4vh;
+}
+
+.recipiente_informacoes_secao_etapa_evolucao p, .recipiente_informacoes_secao_etapa_evolucao h4 {
+    text-align: center;
 }
 
 #recipiente_conteudo_edicao {
@@ -248,4 +259,8 @@
 
 .recipiente_descricao_classe {
     flex: 0 0 0;
+}
+
+.aviso_resumo_final {
+    color: #DB4747;
 }

@@ -95,6 +95,10 @@ export async function salvarEvolucaoDoPersonagem(fichaEvoluida: FichaPersonagemD
     return await useApi<boolean>({ uri: '/fichas_personagens/salvarEvolucaoDoPersonagem', method: 'POST', data: { fichaEvoluida: fichaEvoluida, fichaDeJogoEvoluida: fichaDeJogoEvoluida } });
 }
 
+export async function obtemListaProxEpisodioPrevistoPorAventuraEmAndamento() {
+    return await useApi<SessaoDto[]>({ uri: '/sessoes/obtemListaProxEpisodioPrevistoPorAventuraEmAndamento', method: 'GET' });
+}
+
 //
 
 export async function desconectar() {

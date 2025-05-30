@@ -4,6 +4,7 @@ import styles from '../styles.module.css';
 
 import { EtapaGanhoEvolucao_Classes, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 import CarrosselClasses from 'Componentes/Elementos/CarrosselClasses/CarrosselClasses';
+import Link from 'next/link';
 
 export default function SelecaoClasse() {
     const { ganhos } = useContextoEdicaoFicha();
@@ -15,8 +16,8 @@ export default function SelecaoClasse() {
             <CarrosselClasses />
 
             <div className={styles.recipiente_descricao_classe}>
-                <p>{etapaSelecaoClasse.classeEmSelecao.descricao}</p>
+                <Link href={`/definicoes/Classes/${etapaSelecaoClasse.classeEmSelecao.nome}`} target={'_blank'}><h2>{etapaSelecaoClasse.classeEmSelecao.nome}</h2></Link>
             </div>
         </div>
-    )
+    );
 };

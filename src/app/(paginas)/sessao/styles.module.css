@@ -1,7 +1,8 @@
-#recipiente_sessao_em_espera {
+#recipiente_sessao_prevista {
     width: 100%;
     height: 100%;
     padding: 2%;
+    text-align: center;
 }
 
 #recipiente_pagina_sessao {
