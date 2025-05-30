@@ -37,7 +37,7 @@ export default function EdicaoPericias() {
 function CorpoPericia({ pericia, patentePericia }: { pericia: PericiaDto, patentePericia: PatentePericiaDto }) {
     const { ganhos, executaEAtualiza } = useContextoEdicaoFicha();
 
-    const etapaAtributos = ganhos.etapaAtual as EtapaGanhoEvolucao_Pericias;
+    const etapaPericias = ganhos.etapaAtual as EtapaGanhoEvolucao_Pericias;
 
     return (
         <div className={styles.corpo_pericia}>
@@ -49,10 +49,10 @@ function CorpoPericia({ pericia, patentePericia }: { pericia: PericiaDto, patent
             </TooltipEvolucao_PatentePericia>
             <div className={styles.botoes_pericia}>
                 <div className={styles.recipiente_botao_edicao}>
-                    <button onClick={() => { executaEAtualiza(() => { etapaAtributos.subtraiPonto(pericia, patentePericia) }) }} disabled={!etapaAtributos.botaoRemoverEstaHabilitado(pericia, patentePericia)}><FontAwesomeIcon icon={faMinus} /></button>
+                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.subtraiPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.botaoRemoverEstaHabilitado(pericia, patentePericia)} className={etapaPericias.patenteAtualFoiEvoluidaPorPericiaLivre(pericia, patentePericia) ? styles.botao_usando_pericia_livre : ''}><FontAwesomeIcon icon={faMinus} /></button>
                 </div>
                 <div className={styles.recipiente_botao_edicao}>
-                    <button onClick={() => { executaEAtualiza(() => { etapaAtributos.adicionaPonto(pericia, patentePericia) }) }} disabled={!etapaAtributos.botaoAdicionarEstaHabilitado(pericia, patentePericia)}><FontAwesomeIcon icon={faPlus} /></button>
+                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.adicionaPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.botaoAdicionarEstaHabilitado(pericia, patentePericia)} className={etapaPericias.podeEvoluirComPericiaLivre(patentePericia) ? styles.botao_usando_pericia_livre : ''}><FontAwesomeIcon icon={faPlus} /></button>
                 </div>
             </div>
         </div>

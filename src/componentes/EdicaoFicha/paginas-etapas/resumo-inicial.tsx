@@ -148,6 +148,8 @@ function SecaoPericias() {
 
     const etapaPericias = ganhos.etapas.find(etapa => etapa instanceof EtapaGanhoEvolucao_Pericias)!;
 
+    const periciasLivres = etapaPericias.pontosDeGanho.filter(ganho => ganho.livre).length;
+
     return (
         <>
             <Link href={'definicoes/Pericias'} target={'_blank'}><h2>{etapaPericias.tituloEtapa}</h2></Link>
@@ -169,6 +171,12 @@ function SecaoPericias() {
                         </div>
                     );
                 })}
+                {periciasLivres > 0 && (
+                    <div className={styles.recipiente_elementos_etapa}>
+                        <h4>Perícias Livres</h4>
+                        <p><strong>{periciasLivres} {pluralize(periciasLivres, 'Ponto')} {pluralize(periciasLivres, 'Livre')}</strong> para melhor Perícias para qualquer Patente</p>
+                    </div>
+                )}
             </div>
         </>
     );
@@ -197,7 +205,11 @@ function SecaoHabilidadesElementais() {
 
     return (
         <>
-            <h2>{etapaHabilidadesElementais.tituloEtapa}</h2>
+            <Link href={'definicoes/HabilidadesParanormais'} target={'_blank'}><h2>{etapaHabilidadesElementais.tituloEtapa}</h2></Link>
+
+            <div className={styles.recipiente_informacoes_secao_etapa_evolucao}>
+                <p>Seus Pontos Disponíveis de Habilidade Elemental <strong>aumentam em {etapaHabilidadesElementais.quantidadeDePontosAumento} {pluralize(etapaHabilidadesElementais.quantidadeDePontosAumento, 'Ponto')}</strong></p>
+            </div>
         </>
     );
 };
