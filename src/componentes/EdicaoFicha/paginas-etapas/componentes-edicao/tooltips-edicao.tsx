@@ -62,7 +62,7 @@ export function TooltipEvolucao_Atributo({ atributo, infoGanhoEstatistica = fals
     );
 };
 
-export function TooltipEvolucao_Pericia({ pericia, children }: { pericia: PericiaDto, children: ReactNode }) {
+export function TooltipEvolucao_Pericia({ pericia, children, conteudoAdicional  }: { pericia: PericiaDto, children: ReactNode, conteudoAdicional?: ReactNode }) {
     return (
         <Tooltip>
             <Tooltip.Trigger>
@@ -72,6 +72,7 @@ export function TooltipEvolucao_Pericia({ pericia, children }: { pericia: Perici
             <Tooltip.Content propsLink={{ href:`definicoes/Pericias/${pericia.nome}` }}>
                 <h2>{pericia.nome}</h2>
                 <p>{pericia.descricao}</p>
+                {conteudoAdicional}
             </Tooltip.Content>
         </Tooltip>
     );

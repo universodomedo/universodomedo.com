@@ -8,6 +8,7 @@ import { EtapaGanhoEvolucao_Pericias, useContextoEdicaoFicha } from 'Contextos/C
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TooltipEvolucao_Atributo, TooltipEvolucao_PatentePericia, TooltipEvolucao_Pericia } from './componentes-edicao/tooltips-edicao';
+import { ReactNode } from 'react';
 
 export default function EdicaoPericias() {
     const { ganhos } = useContextoEdicaoFicha();
@@ -39,9 +40,39 @@ function CorpoPericia({ pericia, patentePericia }: { pericia: PericiaDto, patent
 
     const etapaPericias = ganhos.etapaAtual as EtapaGanhoEvolucao_Pericias;
 
+    console.log(ganhos.periciasEditadasEAgrupadas);
+
+    const elementoOcultismo = (): ReactNode => {
+        if (pericia.id !== 16) return <></>;
+
+        const periciaEmFichaVigente = ganhos.fichaDeJogoVigente.pericias.find(periciaFicha => periciaFicha.pericia.id === 16);
+        const periciaEmEdicao = ganhos.periciasEditadasEAgrupadas.flatMap(agrupamento => agrupamento.periciasDesseAtributo).find(periciaFicha => periciaFicha.pericia.id === 16);
+        
+        console.log(`elementoOcultismo`);
+        console.log(`teste 1`);
+        console.log(periciaEmFichaVigente);
+        console.log(`teste 2`);
+        console.log(periciaEmEdicao);
+
+        return (
+            <div>Conteúdo do elemento</div>
+        );
+    };
+
+    // const elementoOcultismo = pericia.id === 16 ? (
+    //     <>
+    //         <p className={styles.cor_aviso} style={{ marginTop: '1vh' }}>Essa Perícia não pode ser trocada</p>
+    //         {ganhos.fichaDeJogoVigente.pericias.some(periciaFicha => periciaFicha.pericia.id === 16 && periciaFicha.patentePericia.id === 1) && <p className={styles.cor_confirmacao} style={{ marginTop: '1vh' }}>Evoluir para Experiente <strong>aumenta Pontos de Habilidade Paranormal em 10</strong></p>}
+    //         {/* {ganhos.fichaDeJogoVigente.pericias.some(periciaFicha => periciaFicha.pericia.id === 16 && periciaFicha.patentePericia.id === 2) && <p className={styles.cor_confirmacao} style={{marginTop: '.4vh'}}>Evoluir para Desperta <strong>aumenta Pontos de Habilidade Paranormal em 20</strong></p>} */}
+    //         {(ganhos.fichaDeJogoVigente.pericias.some(periciaFicha => periciaFicha.pericia.id === 16 && periciaFicha.patentePericia.id === 2) || ganhos.periciasEditadasEAgrupadas.some(agrupamentoPericias => agrupamentoPericias.periciasDesseAtributo.some(periciaFicha => periciaFicha.patentePericia.id === 3))) && <p className={styles.cor_confirmacao} style={{ marginTop: '.4vh' }}>Evoluir para Desperta <strong>aumenta Pontos de Habilidade Paranormal em 20</strong></p>}
+    //         {/* {ganhos.fichaDeJogoVigente.pericias.some(periciaFicha => periciaFicha.pericia.id === 16 && periciaFicha.patentePericia.id === 3) && <p className={styles.cor_confirmacao} style={{marginTop: '.4vh'}}>Evoluir para Visionária <strong>aumenta Pontos de Habilidade Paranormal em 30</strong></p>} */}
+    //         {(ganhos.fichaDeJogoVigente.pericias.some(periciaFicha => periciaFicha.pericia.id === 16 && periciaFicha.patentePericia.id === 3) || ganhos.periciasEditadasEAgrupadas.some(agrupamentoPericias => agrupamentoPericias.periciasDesseAtributo.some(periciaFicha => periciaFicha.patentePericia.id === 4))) && <p className={styles.cor_confirmacao} style={{ marginTop: '.4vh' }}>Evoluir para Visionária <strong>aumenta Pontos de Habilidade Paranormal em 30</strong></p>}
+    //     </>
+    // ) : <></>;
+
     return (
         <div className={styles.corpo_pericia}>
-            <TooltipEvolucao_Pericia pericia={pericia}>
+            <TooltipEvolucao_Pericia pericia={pericia} conteudoAdicional={elementoOcultismo()}>
                 <h2 className={styles.nome_pericia}>{pericia.nome}</h2>
             </TooltipEvolucao_Pericia>
             <TooltipEvolucao_PatentePericia patentePericia={patentePericia}>
