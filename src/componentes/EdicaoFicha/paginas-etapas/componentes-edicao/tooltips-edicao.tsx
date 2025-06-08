@@ -17,7 +17,7 @@ export function TooltipEvolucao_EstatisticaComGanhoPorAtributo({ estatisticaDani
             <Tooltip.Content propsLink={{ href:`definicoes/EstatisticasDanificaveis/${estatisticaDanificavel.nome}` }}>
                 <h1>{estatisticaDanificavel.nome}</h1>
                 <p>{estatisticaDanificavel.descricao}</p>
-                <h2>Ganhos de {estatisticaDanificavel.nomeAbreviado}: [+{ganhos.valorTotalGanhadoPorEstatistica(estatisticaDanificavel)}]</h2>
+                <h2>Ganhos de {estatisticaDanificavel.nomeAbreviado}: [+{ganhos.valorTotalGanhadoPorEstatistica(estatisticaDanificavel).toFixed(1)}]</h2>
                 {exibeDetalhesAtributos && GanhosEvolucao.dadosReferencia.atributos.map(atributo => {
                     const valorDessaEstatisticaPorEsseAtributo = ganhos.valorEstatisticaPorAtributo(estatisticaDanificavel, atributo);
 
@@ -46,15 +46,9 @@ export function TooltipEvolucao_Atributo({ atributo, infoGanhoEstatistica = fals
                 <p>{atributo.descricao}</p>
                 {infoGanhoEstatistica && (
                     <div>
-                        {GanhosEvolucao.dadosReferencia.estatisticasDanificaveis.map(estatisticaDanificavel => {
-                            const valorEstatisticaPorAtributo = ganhos.ganhosEstatisticasPorAtributo.find(ganho => ganho.estatisticaDanificavel.id === estatisticaDanificavel.id && ganho.atributo.id === atributo.id)!.valorPorUnidade;
-
-                            if (valorEstatisticaPorAtributo <= 0) return;
-
-                            return (
-                                <p key={estatisticaDanificavel.id} className={styles.ganhos_estatistica_por_atributo}>+ {valorEstatisticaPorAtributo} {estatisticaDanificavel.nomeAbreviado} por Ponto Atribuído</p>
-                            );
-                        })}
+                        {ganhos.ganhosEstatisticasPorAtributo.map(ganhoEstatistica => ganhoEstatistica.ganhosPorAtributo.filter(ganhoPorAtributo => ganhoPorAtributo.atributo.id === atributo.id).map(ganhoPorAtributo => (
+                            <p key={`${ganhoEstatistica.estatisticaDanificavel.id}:${ganhoPorAtributo.atributo.id}`} className={styles.ganhos_estatistica_por_atributo}>+ {ganhoPorAtributo.valorPorUnidade.toFixed(1)} {ganhoEstatistica.estatisticaDanificavel.nomeAbreviado} por Ponto Atribuído</p>
+                        )))}
                     </div>
                 )}
             </Tooltip.Content>

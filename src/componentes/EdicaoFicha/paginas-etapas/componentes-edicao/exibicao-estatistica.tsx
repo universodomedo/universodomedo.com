@@ -15,7 +15,7 @@ export function CorpoEstatistica({ estatisticaDanificavel, exibeDetalhesAtributo
             <TooltipEvolucao_EstatisticaComGanhoPorAtributo estatisticaDanificavel={estatisticaDanificavel} exibeDetalhesAtributos={exibeDetalhesAtributos}>
                 <h2 className={styles.nome_estatistica}>{estatisticaDanificavel.nomeAbreviado}</h2>
             </TooltipEvolucao_EstatisticaComGanhoPorAtributo>
-            <h2 className={styles.alteracao_valor_estatistica}>{`${valorAnterior} → ${valorAtual}`}</h2>
+            <h2 className={styles.alteracao_valor_estatistica}>{`${valorAnterior.toFixed(1)} → ${valorAtual.toFixed(1)}`}</h2>
         </div>
     );
 };
