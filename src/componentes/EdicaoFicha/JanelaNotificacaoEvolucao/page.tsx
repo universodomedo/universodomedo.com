@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto.tsx';
+import { EtapaGanhoEvolucao_Pericias, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto.tsx';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
 import { InfoCircledIcon } from '@radix-ui/react-icons'
@@ -34,6 +34,15 @@ const JanelaNotificacao = forwardRef((props, ref) => {
                 )}
                 {ganhos.etapaAtual.avisosGanhoEvolucao.length > 0 && (
                     <div className={styles.mensagens_janela_avisos} {...scrollableProps}>
+                        
+                        {ganhos.etapaAtual instanceof EtapaGanhoEvolucao_Pericias && ganhos.evolucaoPericiaOcultismoNessaEvolucao.algumaMensagemParaExibir && (
+                            <>
+                                {ganhos.evolucaoPericiaOcultismoNessaEvolucao.evoluiuParaExperiente && (<div className={styles.mensagem_notificacao}><p>Ocultismo Experiente → +10 Pontos de Habilidade Paranormal</p></div>)}
+                                {ganhos.evolucaoPericiaOcultismoNessaEvolucao.evoluiuParaDesperta && (<div className={styles.mensagem_notificacao}><p>Ocultismo Desperto → +20 Pontos de Habilidade Paranormal</p></div>)}
+                                {ganhos.evolucaoPericiaOcultismoNessaEvolucao.evoluiuParaVisionaria && (<div className={styles.mensagem_notificacao}><p>Ocultismo Visionário → +30 Pontos de Habilidade Paranormal</p></div>)}
+                            </>
+                        )}
+
                         {ganhos.etapaAtual.avisosGanhoEvolucao.map((msg, index) => (
                             <div key={index} className={styles.mensagem_notificacao}>
                                 <div className={styles.icone_notificacao}>{msg.icone}</div>

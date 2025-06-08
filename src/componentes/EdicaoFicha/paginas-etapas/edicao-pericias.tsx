@@ -8,6 +8,7 @@ import { EtapaGanhoEvolucao_Pericias, useContextoEdicaoFicha } from 'Contextos/C
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TooltipEvolucao_Atributo, TooltipEvolucao_PatentePericia, TooltipEvolucao_Pericia } from './componentes-edicao/tooltips-edicao';
+import { ReactNode } from 'react';
 
 export default function EdicaoPericias() {
     const { ganhos } = useContextoEdicaoFicha();
@@ -39,9 +40,23 @@ function CorpoPericia({ pericia, patentePericia }: { pericia: PericiaDto, patent
 
     const etapaPericias = ganhos.etapaAtual as EtapaGanhoEvolucao_Pericias;
 
+    const elementoOcultismo = (): ReactNode => {
+        if (pericia.id !== 16) return <></>;
+
+        return (
+            <>
+                <p className={styles.cor_aviso} style={{ marginTop: '1vh' }}>Essa Perícia não pode ser trocada</p>
+
+                {ganhos.evolucaoPericiaOcultismoNessaEvolucao.mostraMensagemExperiente && (<p className={styles.cor_confirmacao} style={{ marginTop: '1vh' }}>Evoluir para Experiente <strong>aumenta Pontos de Habilidade Paranormal em 10</strong></p>)}
+                {ganhos.evolucaoPericiaOcultismoNessaEvolucao.mostraMensagemDesperta && (<p className={styles.cor_confirmacao} style={{ marginTop: '.4vh' }}>Evoluir para Desperta <strong>aumenta Pontos de Habilidade Paranormal em 20</strong></p>)}
+                {ganhos.evolucaoPericiaOcultismoNessaEvolucao.mostraMensagemVisionaria && (<p className={styles.cor_confirmacao} style={{ marginTop: '.4vh' }}>Evoluir para Visionária <strong>aumenta Pontos de Habilidade Paranormal em 30</strong></p>)}
+            </>
+        );
+    };
+
     return (
         <div className={styles.corpo_pericia}>
-            <TooltipEvolucao_Pericia pericia={pericia}>
+            <TooltipEvolucao_Pericia pericia={pericia} conteudoAdicional={elementoOcultismo()}>
                 <h2 className={styles.nome_pericia}>{pericia.nome}</h2>
             </TooltipEvolucao_Pericia>
             <TooltipEvolucao_PatentePericia patentePericia={patentePericia}>

@@ -6,6 +6,9 @@
   --zindex-final-swiperEsquerda: 899;
   --zindex-final-chat: 999;
   --zindex-final-modal: 1099;
+
+  --cor-aviso: #DB4747;
+  --cor-confirmacao: #3D983D;
 }
 
 * {

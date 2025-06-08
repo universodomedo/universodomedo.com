@@ -9,11 +9,14 @@ import { obtemDadosProximaSessao } from 'Uteis/ApiConsumer/ConsumerMiddleware.ts
 import { SessaoDto } from 'types-nora-api';
 
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { ContextoSessoesPrevistasProvider, useContextoSessoesPrevistas } from 'Contextos/ContextoSessoesPrevistas/contexto';
 
 export default function PaginaSessao() {
     return (
         <ControladorSlot pageConfig={{ comCabecalho: false, usuarioObrigatorio: false }}>
-            <PaginaSessao_Slot/>
+            <ContextoSessoesPrevistasProvider>
+                <PaginaSessao_Slot/>
+            </ContextoSessoesPrevistasProvider>
         </ControladorSlot>
     );
 };
@@ -23,9 +26,15 @@ function PaginaSessao_Slot() {
 };
 
 function PaginaSessao_EmEspera() {
+    const { listaEpisodiosPrevistos } = useContextoSessoesPrevistas();
+
     return (
         <div id={styles.recipiente_sessao_prevista}>
-            
+            {listaEpisodiosPrevistos.length === 0 ? (
+                <h1>Nenhuma Sessão Prevista</h1>
+            ) : (
+                <h1>Sessões</h1>
+            )}
         </div>
     );
 };

@@ -262,9 +262,17 @@
 }
 
 .aviso_resumo_final {
-    color: #DB4747;
+    color: var(--cor-aviso);
 }
 
 .botao_usando_pericia_livre {
     color: red;
+}
+
+.cor_aviso {
+    color: var(--cor-aviso) !important;
+}
+
+.cor_confirmacao {
+    color: var(--cor-confirmacao) !important;
 }
