@@ -10,7 +10,7 @@ import Link from 'next/link';
 const JanelaNotificacao = forwardRef((props, ref) => {
     const { ganhos } = useContextoEdicaoFicha();
     const [isOpen, setIsOpen] = useState(false);
-    const { scrollableProps } = useScrollable();
+    const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
     const toggleConsole = () => setIsOpen(!isOpen);
 
     const openConsole = () => setIsOpen(true);

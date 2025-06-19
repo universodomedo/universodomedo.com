@@ -39,7 +39,7 @@ export default function PaginaEvolucaoPersonagem_ComContexto() {
         }
     };
 
-    const { scrollableProps } = useScrollable();
+    const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
 
     return (
         <>

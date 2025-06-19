@@ -8,6 +8,6 @@ export default function EdicaoHabilidadesElementais() {
     const etapaInformativoHabilidadeElemental = ganhos.etapaAtual as EtapaGanhoEvolucao_HabilidadesElementais;
 
     return (
-        <p>Pontos de Habilidade Elemental aumentados de {etapaInformativoHabilidadeElemental.quantidadeDePontosAtual} para {etapaInformativoHabilidadeElemental.quantidadeDePontosNova}</p>
+        <p>Limite na quantidade de Habilidade Elemental aumentados de {etapaInformativoHabilidadeElemental.quantidadeDePontosAtual} para {etapaInformativoHabilidadeElemental.quantidadeDePontosNova}</p>
     );
 };

@@ -206,6 +206,21 @@
     gap: .3vh;
 }
 
+.recipiente_conteudo_gatilho_tooltip_patente {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+.simbolo_aviso_pericia_livre {
+    position: absolute;
+    left: 100%;
+    margin-left: .6rem;
+    color: #E34E4E;
+}
+
 .nome_pericia, .patente_pericia {
     margin: 0;
 }

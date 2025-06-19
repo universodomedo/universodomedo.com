@@ -147,8 +147,7 @@ function SecaoPericias() {
     const { ganhos } = useContextoEdicaoFicha();
 
     const etapaPericias = ganhos.etapas.find(etapa => etapa instanceof EtapaGanhoEvolucao_Pericias)!;
-
-    const periciasLivres = etapaPericias.pontosDeGanho.filter(ganho => ganho.livre).length;
+    const temPericiasLivres = etapaPericias.pontosDeGanho.filter(ganho => ganho.livre).length > 0 || etapaPericias.pontosDeTroca.filter(ganho => ganho.livre).length > 0;
 
     return (
         <>
@@ -156,8 +155,8 @@ function SecaoPericias() {
 
             <div className={`${styles.recipiente_informacoes_secao_etapa_evolucao} ${styles.etapa_com_divisoes}`}>
                 {GanhosEvolucao.dadosReferencia.patentes.sort((a, b) => a.id - b.id).map(patente => {
-                    const numeroPontosGanhoParaPatente = etapaPericias.obtemNumeroPontosGanhoPorPatente(patente);
-                    const numeroPontosTrocaParaPatente = etapaPericias.obtemNumeroPontosTrocaPorPatente(patente);
+                    const numeroPontosGanhoParaPatente = etapaPericias.obtemNumeroPontosGanhoParaPatente(patente);
+                    const numeroPontosTrocaParaPatente = etapaPericias.obtemNumeroTrocasGanhoParaPatente(patente);
 
                     if (numeroPontosGanhoParaPatente === 0 && numeroPontosTrocaParaPatente === 0) return;
 
@@ -171,12 +170,28 @@ function SecaoPericias() {
                         </div>
                     );
                 })}
-                {periciasLivres > 0 && (
-                    <div className={styles.recipiente_elementos_etapa}>
-                        <h4>Perícias Livres</h4>
-                        <p><strong>{periciasLivres} {pluralize(periciasLivres, 'Ponto')} {pluralize(periciasLivres, 'Livre')}</strong> para melhor Perícias para qualquer Patente</p>
-                    </div>
-                )}
+                {temPericiasLivres && (() => {
+                    const ganhoPericiasLivres = etapaPericias.pontosDeGanho.filter(ganho => ganho.livre).length;
+                    const trocasLivres = etapaPericias.pontosDeTroca.filter(ganho => ganho.livre).length;
+
+                    return (
+                        <>
+                            {ganhoPericiasLivres > 0 && (
+                                <div className={styles.recipiente_elementos_etapa}>
+                                    <h4>Perícias Livres</h4>
+                                    <p><strong>{ganhoPericiasLivres} {pluralize(ganhoPericiasLivres, 'Ponto')} {pluralize(ganhoPericiasLivres, 'Livre')}</strong> para melhor Perícias em uma Patente qualquer</p>
+                                </div>
+                            )}
+
+                            {trocasLivres > 0 && (
+                                <div className={styles.recipiente_elementos_etapa}>
+                                    <h4>Trocas Livres</h4>
+                                    <p><strong>{trocasLivres} {pluralize(trocasLivres, 'Troca')} {pluralize(trocasLivres, 'Livre')}</strong> entre Perícias de mesma Patente</p>
+                                </div>
+                            )}
+                        </>
+                    );
+                })()}
             </div>
         </>
     );
@@ -186,7 +201,7 @@ function SecaoHabilidadesParanormais() {
     const { ganhos } = useContextoEdicaoFicha();
 
     const etapaHabilidadesParanormais = ganhos.etapas.find(etapa => etapa instanceof EtapaGanhoEvolucao_HabilidadesParanormais)!;
-    
+
     return (
         <>
             <Link href={'definicoes/HabilidadesParanormais'} target={'_blank'}><h2>{etapaHabilidadesParanormais.tituloEtapa}</h2></Link>
