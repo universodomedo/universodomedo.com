@@ -72,7 +72,7 @@ export function TooltipEvolucao_Pericia({ pericia, children, conteudoAdicional  
     );
 };
 
-export function TooltipEvolucao_PatentePericia({ patentePericia, children, conteudoAdicional }: { patentePericia: PatentePericiaDto, children: ReactNode, conteudoAdicional?: ReactNode }) {
+export function TooltipEvolucao_PatentePericia({ patentePericia, children }: { patentePericia: PatentePericiaDto, children: ReactNode }) {
     return (
         <Tooltip>
             <Tooltip.Trigger>
@@ -82,7 +82,6 @@ export function TooltipEvolucao_PatentePericia({ patentePericia, children, conte
             <Tooltip.Content propsLink={{ href:`definicoes/PatentesPericia/${patentePericia.nome}` }}>
                 <h2>{patentePericia.nome}</h2>
                 <p>{patentePericia.descricao}</p>
-                {conteudoAdicional}
             </Tooltip.Content>
         </Tooltip>
     );

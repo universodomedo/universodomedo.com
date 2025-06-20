@@ -71,10 +71,10 @@ function CorpoPericia({ pericia, patentePericia }: { pericia: PericiaDto, patent
 
     return (
         <div className={styles.corpo_pericia}>
-            <TooltipEvolucao_Pericia pericia={pericia} conteudoAdicional={<>{elementoOcultismo()}{elementoPericiaLivre()}</>}>
+            <TooltipEvolucao_Pericia pericia={pericia} conteudoAdicional={elementoOcultismo()}>
                 <h2 className={styles.nome_pericia}>{pericia.nome}</h2>
             </TooltipEvolucao_Pericia>
-            <TooltipEvolucao_PatentePericia patentePericia={patentePericia} conteudoAdicional={elementoPericiaLivre()}>
+            <TooltipEvolucao_PatentePericia patentePericia={patentePericia}>
                 <div className={styles.recipiente_conteudo_gatilho_tooltip_patente}>
                     <h3 className={styles.patente_pericia} style={{ color: patentePericia.cor }}>{patentePericia.nome}</h3>
                     {periciasLivresParaEssaPericia.length > 0 && <h3 className={styles.simbolo_aviso_pericia_livre}>!</h3>}
@@ -82,12 +82,23 @@ function CorpoPericia({ pericia, patentePericia }: { pericia: PericiaDto, patent
             </TooltipEvolucao_PatentePericia>
             <div className={styles.botoes_pericia}>
                 <div className={styles.recipiente_botao_edicao}>
-                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.subtraiPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.obtemBotaoRemoverEstaHabilitado(pericia, patentePericia)} className={etapaPericias.obtemSePatenteAtualPericiaFoiEvoluidaPorPericiaLivre(pericia, patentePericia) ? styles.botao_usando_pericia_livre : ''}><FontAwesomeIcon icon={faMinus} /></button>
+                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.subtraiPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.obtemBotaoRemoverEstaHabilitado(pericia, patentePericia)}><FontAwesomeIcon icon={faMinus} /></button>
                 </div>
                 <div className={styles.recipiente_botao_edicao}>
-                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.adicionaPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.obtemBotaoAdicionarEstaHabilitado(pericia, patentePericia)} className={etapaPericias.obtemSeEvolucaoPatenteVaiUsarPericiaLivre(pericia, patentePericia) ? styles.botao_usando_pericia_livre : ''}><FontAwesomeIcon icon={faPlus} /></button>
+                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.adicionaPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.obtemBotaoAdicionarEstaHabilitado(pericia, patentePericia)}><FontAwesomeIcon icon={faPlus} /></button>
                 </div>
             </div>
+            {etapaPericias.desbloqueadasPericiasLivres && (
+                <div className={styles.botoes_pericia_livre}>
+                    <div className={styles.recipiente_botao_edicao}>
+                        <button onClick={() => { executaEAtualiza(() => { etapaPericias.subtraiPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.obtemBotaoRemoverLivreEstaHabilitado(pericia, patentePericia)}><FontAwesomeIcon icon={faMinus} /></button>
+                    </div>
+                    <h3>!</h3>
+                    <div className={styles.recipiente_botao_edicao}>
+                        <button onClick={() => { executaEAtualiza(() => { etapaPericias.adicionaPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.obtemBotaoAdicionarLivreEstaHabilitado(pericia, patentePericia)}><FontAwesomeIcon icon={faPlus} /></button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

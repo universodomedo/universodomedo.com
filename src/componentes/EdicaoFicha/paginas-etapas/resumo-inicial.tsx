@@ -147,7 +147,7 @@ function SecaoPericias() {
     const { ganhos } = useContextoEdicaoFicha();
 
     const etapaPericias = ganhos.etapas.find(etapa => etapa instanceof EtapaGanhoEvolucao_Pericias)!;
-    const temPericiasLivres = etapaPericias.pontosDeGanho.filter(ganho => ganho.livre).length > 0 || etapaPericias.pontosDeTroca.filter(ganho => ganho.livre).length > 0;
+    const temPericiasLivres = etapaPericias.pontosDeGanhoLivre.length > 0 || etapaPericias.pontosDeTrocaLivre.length > 0;
 
     return (
         <>
@@ -171,8 +171,8 @@ function SecaoPericias() {
                     );
                 })}
                 {temPericiasLivres && (() => {
-                    const ganhoPericiasLivres = etapaPericias.pontosDeGanho.filter(ganho => ganho.livre).length;
-                    const trocasLivres = etapaPericias.pontosDeTroca.filter(ganho => ganho.livre).length;
+                    const ganhoPericiasLivres = etapaPericias.pontosDeGanhoLivre.length;
+                    const trocasLivres = etapaPericias.pontosDeTrocaLivre.length;
 
                     return (
                         <>

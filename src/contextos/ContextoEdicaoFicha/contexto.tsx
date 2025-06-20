@@ -390,12 +390,12 @@ export class GanhosEvolucao {
 
 type RegistroDeUsoDeGanhoDeAtributo = { atributo: AtributoDto | null };
 type RegistroDeUsoDeTrocaDeAtributo = { atributoPerdeu: AtributoDto | null; atributoGanhou: AtributoDto | null };
-type RegistroDeUsoDeGanhoDeMelhoriaDePatente =
-    { readonly id: number; readonly livre: false; patente: PatentePericiaDto; pericia: PericiaDto | null; }
-    | { readonly id: number; readonly livre: true; patente: PatentePericiaDto | null; pericia: PericiaDto | null; };
-type RegistroDeUsoDeTrocaDeMelhoriaDePatente =
-    { readonly id: number; readonly livre: false; patente: PatentePericiaDto; periciaPerdeu: PericiaDto | null; periciaGanhou: PericiaDto | null; }
-    | { readonly id: number; readonly livre: true; patenteFixa?: PatentePericiaDto; patentePericiaPerdeuLivre?: PatentePericiaDto; periciaPerdeu: PericiaDto | null; patentePericiaGanhouLivre?: PatentePericiaDto; periciaGanhou: PericiaDto | null; }
+
+type RegistroDeUsoDeGanhoDeMelhoriaDePatente = { readonly id: number; patente: PatentePericiaDto; pericia: PericiaDto | null; }
+type RegistroDeUsoDeGanhoDeMelhoriaLivreDePatente = { readonly id: number; patente: PatentePericiaDto | null; pericia: PericiaDto | null; }
+
+type RegistroDeUsoDeTrocaDeMelhoriaDePatente = { readonly id: number; patente: PatentePericiaDto; periciaPerdeu: PericiaDto | null; periciaGanhou: PericiaDto | null; }
+type RegistroDeUsoDeTrocaDeMelhoriaLivreDePatente = { readonly id: number; ganhaPerdeMesmaPatente: boolean | null; patentePerdeu: PatentePericiaDto | null; periciaPerdeu: PericiaDto | null; patenteGanhou: PatentePericiaDto | null; periciaGanhou: PericiaDto | null; }
 
 abstract class EtapaGanhoEvolucao {
     public abstract tituloEtapa: string;
@@ -704,6 +704,8 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
     public hrefDefinicaoEtapa = '/definicoes/Pericias';
     public pontosDeGanho: RegistroDeUsoDeGanhoDeMelhoriaDePatente[];
     public pontosDeTroca: RegistroDeUsoDeTrocaDeMelhoriaDePatente[];
+    public pontosDeGanhoLivre: RegistroDeUsoDeGanhoDeMelhoriaLivreDePatente[];
+    public pontosDeTrocaLivre: RegistroDeUsoDeTrocaDeMelhoriaLivreDePatente[];
 
     public listaDadosGanho: DadosGanho_Pericias[];
     public dadosGanhoAgrupados: DadosGanho_Pericias;
@@ -745,76 +747,63 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
 
         let nextId = 1;
 
-        this.pontosDeGanho = [
-            ...(this.dadosGanhoAgrupados.comum?.flatMap(ganhoComum => {
-                const patente = GanhosEvolucao.dadosReferencia.patentes.find(p => p.id === ganhoComum.idPatente)!;
-                return Array.from({ length: ganhoComum.ganhos }, () => (
-                    { id: nextId++, livre: false, patente: patente, pericia: null } as const
-                ));
-            }) || []),
+        this.pontosDeGanho = this.dadosGanhoAgrupados.comum?.flatMap(ganhoComum => {
+            const patente = GanhosEvolucao.dadosReferencia.patentes.find(p => p.id === ganhoComum.idPatente)!;
+            return Array.from({ length: ganhoComum.ganhos }, () => ({ id: nextId++, patente: patente, pericia: null } as const));
+        }) || [];
 
-            ...(this.dadosGanhoAgrupados.livre?.ganhos
-                ? Array.from({ length: this.dadosGanhoAgrupados.livre.ganhos }, () => (
-                    { id: nextId++, livre: true, patente: null, pericia: null } as const
-                ))
-                : []
-            ),
-        ];
+        this.pontosDeGanhoLivre = this.dadosGanhoAgrupados.livre?.ganhos
+            ? Array.from({ length: this.dadosGanhoAgrupados.livre.ganhos }, () => ({ id: nextId++, patente: null, pericia: null } as const))
+            : [];
 
-        this.pontosDeTroca = [
-            ...(this.dadosGanhoAgrupados.comum?.flatMap(ganhoComum => {
-                const patente = GanhosEvolucao.dadosReferencia.patentes.find(p => p.id === ganhoComum.idPatente)!;
-                return Array.from({ length: ganhoComum.trocas }, () => (
-                    { id: nextId++, livre: false, patente: patente, periciaPerdeu: null, periciaGanhou: null } as const
-                ));
-            }) || []),
+        this.pontosDeTroca = this.dadosGanhoAgrupados.comum?.flatMap(ganhoComum => {
+            const patente = GanhosEvolucao.dadosReferencia.patentes.find(p => p.id === ganhoComum.idPatente)!;
+            return Array.from({ length: ganhoComum.trocas }, () => (
+                { id: nextId++, patente: patente, periciaPerdeu: null, periciaGanhou: null } as const
+            ));
+        }) || [];
 
-            ...(this.dadosGanhoAgrupados.livre?.trocas
-                ? Array.from({ length: this.dadosGanhoAgrupados.livre.trocas }, () => (
-                    { id: nextId++, livre: true, periciaPerdeu: null, periciaGanhou: null } as const
-                ))
-                : []
-            ),
-        ];
+        this.pontosDeTrocaLivre = this.dadosGanhoAgrupados.livre?.trocas
+            ? Array.from({ length: this.dadosGanhoAgrupados.livre.trocas }, () => (
+                { id: nextId++, ganhaPerdeMesmaPatente: null, patentePerdeu: null, periciaPerdeu: null, patenteGanhou: null, periciaGanhou: null, } as const
+            ))
+            : [];
     }
 
     get periciasAlteradas(): PericiaFicha[] {
         const periciasAlteradas: IPericia[] = [
             ...this.pontosDeGanho.flatMap(ganho => ganho.pericia ? [ganho.pericia] : []),
+            ...this.pontosDeGanhoLivre.flatMap(ganhoLivre => ganhoLivre.pericia ? [ganhoLivre.pericia] : []),
             ...this.pontosDeTroca.flatMap(troca => [
                 ...(troca.periciaPerdeu ? [troca.periciaPerdeu] : []),
                 ...(troca.periciaGanhou ? [troca.periciaGanhou] : []),
             ]),
+            ...this.pontosDeTrocaLivre.flatMap(trocaLivre => [
+                ...(trocaLivre.periciaPerdeu ? [trocaLivre.periciaPerdeu] : []),
+                ...(trocaLivre.periciaGanhou ? [trocaLivre.periciaGanhou] : []),
+            ]),
         ];
 
         return periciasAlteradas.map(pericia => {
-            const patentesPiorada = this.pontosDeTroca.filter(p => p.periciaPerdeu?.id === pericia.id).map(p =>
-                !p.livre ?
-                    p.patente
-                    : p.patenteFixa ?
-                        p.patenteFixa
-                        : p.patentePericiaPerdeuLivre
-            ).filter((patente): patente is PatentePericiaDto => patente !== undefined);
+            const patentesPioradas = [
+                ...this.pontosDeTroca.filter(troca => troca.periciaPerdeu?.id === pericia.id).flatMap(troca => troca.patente ? [troca.patente] : []),
+                ...this.pontosDeTrocaLivre.filter(trocaLivre => trocaLivre.periciaPerdeu?.id === pericia.id).flatMap(trocaLivre => trocaLivre.patentePerdeu ? [trocaLivre.patentePerdeu] : []),
+            ];
 
-            if (patentesPiorada.length > 0) return {
+            if (patentesPioradas.length > 0) return {
                 pericia,
-                patentePericia: GanhosEvolucao.dadosReferencia.patentes.find(patente => patente.id === (patentesPiorada.reduce((min, p) => p.id < min.id ? p : min).id - 1))!,
+                patentePericia: GanhosEvolucao.dadosReferencia.patentes.find(patente => patente.id === (patentesPioradas.reduce((min, p) => p.id < min.id ? p : min).id - 1))!,
                 valorEfeito: 0,
                 valorTotal: 0,
                 detalhesValor: []
             };
 
             const patentesGanho = [
-                ...this.pontosDeGanho.filter(p => p.pericia?.id === pericia.id).flatMap(p => p.patente ? [p.patente] : []),
-
-                ...this.pontosDeTroca.filter(p => p.periciaGanhou?.id === pericia.id).map(p =>
-                    !p.livre ?
-                        p.patente
-                        : p.patenteFixa ?
-                            p.patenteFixa
-                            : p.patentePericiaGanhouLivre
-                )
-            ].filter((p): p is PatentePericiaDto => p !== null);
+                ...this.pontosDeGanho.filter(ganho => ganho.pericia?.id === pericia.id).flatMap(ganho => ganho.patente ? [ganho.patente] : []),
+                ...this.pontosDeGanhoLivre.filter(ganhoLivre => ganhoLivre.pericia?.id === pericia.id).flatMap(ganhoLivre => ganhoLivre.patente ? [ganhoLivre.patente] : []),
+                ...this.pontosDeTroca.filter(troca => troca.periciaGanhou?.id === pericia.id).flatMap(troca => troca.patente ? [troca.patente] : []),
+                ...this.pontosDeTrocaLivre.filter(trocaLivre => trocaLivre.periciaGanhou?.id === pericia.id).flatMap(trocaLivre => trocaLivre.patenteGanhou ? [trocaLivre.patenteGanhou] : []),
+            ];
 
             return {
                 pericia,
@@ -832,7 +821,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         return [
             ...(
                 GanhosEvolucao.dadosReferencia.patentes.map(patente => {
-                    const ganhos = this.pontosDeGanho.filter(registro => !registro.livre && registro.patente.id === patente.id);
+                    const ganhos = this.pontosDeGanho.filter(registro => registro.patente.id === patente.id);
 
                     if (ganhos.length === 0) return null;
 
@@ -861,7 +850,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
                 }).filter(item => item !== null).flat()
             ),
             ...(() => {
-                const ganhosLivres = this.pontosDeGanho.filter(registro => registro.livre);
+                const ganhosLivres = this.pontosDeGanhoLivre;
 
                 if (ganhosLivres.length === 0) return [];
 
@@ -890,7 +879,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
             })(),
             ...(
                 GanhosEvolucao.dadosReferencia.patentes.map(patente => {
-                    const trocasFixas = this.pontosDeTroca.filter(registro => !registro.livre && registro.patente.id === patente.id);
+                    const trocasFixas = this.pontosDeTroca.filter(registro => registro.patente.id === patente.id);
 
                     if (trocasFixas.length === 0) return [];
 
@@ -918,7 +907,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
                 }).filter(item => item !== null).flat()
             ),
             ...(() => {
-                const trocasLivres = this.pontosDeTroca.filter(troca => troca.livre);
+                const trocasLivres = this.pontosDeTrocaLivre;
 
                 if (trocasLivres.length === 0) return [];
 
@@ -930,26 +919,26 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
                 };
 
                 const subitens = trocasLivres.filter(troca => troca.periciaPerdeu).map(registroTroca => {
-                    return registroTroca.patenteFixa
+                    return registroTroca.ganhaPerdeMesmaPatente
                         ? registroTroca.periciaGanhou
                             ? {
-                                mensagem: `Trocado ${registroTroca.patenteFixa.nome} de ${registroTroca.periciaPerdeu?.nome} para ${registroTroca.periciaGanhou.nome}`,
+                                mensagem: `Trocado ${registroTroca.patentePerdeu?.nome} de ${registroTroca.periciaPerdeu?.nome} para ${registroTroca.patenteGanhou?.nome} de ${registroTroca.periciaGanhou.nome}`,
                                 icone: ``,
                                 tipo: 'subitem' as const,
                             }
                             : {
-                                mensagem: `Trocando ${registroTroca.patenteFixa.nome} de ${registroTroca.periciaPerdeu?.nome} (Pendente)`,
+                                mensagem: `Trocando ${registroTroca.patentePerdeu?.nome} de ${registroTroca.periciaPerdeu?.nome} (Pendente)`,
                                 icone: React.createElement(Cross1Icon, { style: { color: '#FF0000' } }),
                                 tipo: 'subitem' as const,
                             }
                         : registroTroca.periciaGanhou
                             ? {
-                                mensagem: `Trocada Perícia Livre, tirando ${registroTroca.patentePericiaPerdeuLivre?.nome} de ${registroTroca.periciaPerdeu?.nome} e adicionando ${registroTroca.patentePericiaGanhouLivre?.nome} em ${registroTroca.periciaGanhou.nome}`,
+                                mensagem: `Trocada Perícia Livre, tirando ${registroTroca.patentePerdeu?.nome} de ${registroTroca.periciaPerdeu?.nome} e adicionando ${registroTroca.patenteGanhou?.nome} em ${registroTroca.periciaGanhou.nome}`,
                                 icone: ``,
                                 tipo: 'subitem' as const,
                             }
                             : {
-                                mensagem: `Trocando Perícia Livre, tirando ${registroTroca.patentePericiaPerdeuLivre?.nome} de ${registroTroca.periciaPerdeu?.nome} (Pendente)`,
+                                mensagem: `Trocando Perícia Livre, tirando ${registroTroca.patentePerdeu?.nome} de ${registroTroca.periciaPerdeu?.nome} (Pendente)`,
                                 icone: React.createElement(Cross1Icon, { style: { color: '#FF0000' } }),
                                 tipo: 'subitem' as const,
                             }
@@ -962,19 +951,19 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
 
     public get detalhesEvolucaoEtapa(): string[] {
         return GanhosEvolucao.dadosReferencia.pericias.flatMap(pericia => {
-            const pontosValidos = {
-                ganhos: this.pontosDeGanho,
-                trocas: this.pontosDeTroca,
-            };
-
             const getExtremo = (arr: { patente: PatentePericiaDto }[], comparador: (a: number, b: number) => boolean) => arr.length ? arr.reduce((a, b) => comparador(a.patente.id, b.patente.id) ? a : b).patente : null;
 
             const pontosMelhoria = [
-                ...pontosValidos.ganhos.filter(ganho => ganho.pericia?.id === pericia.id).map(p => ({ patente: p.patente! })),
-                ...pontosValidos.trocas.filter(troca => troca.periciaGanhou?.id === pericia.id).map(troca => ({ patente: !troca.livre ? troca.patente : troca.patenteFixa ? troca.patenteFixa : troca.patentePericiaGanhouLivre! }) ),
+                ...this.pontosDeGanho.filter(ganho => ganho.pericia?.id === pericia.id).map(ganho => ({ patente: ganho.patente })),
+                ...this.pontosDeTroca.filter(troca => troca.periciaGanhou?.id === pericia.id).map(troca => ({ patente: troca.patente })),
+                ...this.pontosDeGanhoLivre.filter(ganhoLivre => ganhoLivre.pericia?.id === pericia.id && ganhoLivre.patente).map(ganhoLivre => ({ patente: ganhoLivre.patente! })),
+                ...this.pontosDeTrocaLivre.filter(trocaLivre => trocaLivre.periciaGanhou?.id === pericia.id && trocaLivre.patenteGanhou).map(trocaLivre => ({ patente: trocaLivre.patenteGanhou! })),
             ];
 
-            const pontosPiora = pontosValidos.trocas.filter(t => t.periciaPerdeu?.id === pericia.id).map(troca => ({ patente: !troca.livre ? troca.patente : troca.patenteFixa ? troca.patenteFixa : troca.patentePericiaPerdeuLivre! }) );
+            const pontosPiora = [
+                ...this.pontosDeTroca.filter(troca => troca.periciaPerdeu?.id === pericia.id).map(troca => ({ patente: troca.patente })),
+                ...this.pontosDeTrocaLivre.filter(trocaLivre => trocaLivre.periciaPerdeu?.id === pericia.id && trocaLivre.patentePerdeu).map(trocaLivre => ({ patente: trocaLivre.patentePerdeu! })),
+            ]
 
             const melhorPatente = getExtremo(pontosMelhoria, (a, b) => a > b);
             const piorPatente = getExtremo(pontosPiora, (a, b) => a < b);
@@ -991,10 +980,17 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
     get registrosGanhosDisponiveis(): RegistroDeUsoDeGanhoDeMelhoriaDePatente[] { return this.pontosDeGanho.filter(ganho => !ganho.pericia); }
     get registrosGanhosRealizados(): RegistroDeUsoDeGanhoDeMelhoriaDePatente[] { return this.pontosDeGanho.filter(ganho => ganho.pericia); }
 
+    get registrosGanhosLivresDisponiveis(): RegistroDeUsoDeGanhoDeMelhoriaLivreDePatente[] { return this.pontosDeGanhoLivre.filter(ganhoLivre => !ganhoLivre.pericia); }
+
     get registrosTrocasDisponiveis(): RegistroDeUsoDeTrocaDeMelhoriaDePatente[] { return this.pontosDeTroca.filter(troca => troca.periciaPerdeu === null); }
     get registrosTrocasPerderam(): RegistroDeUsoDeTrocaDeMelhoriaDePatente[] { return this.pontosDeTroca.filter(troca => troca.periciaPerdeu !== null); }
     get registrosTrocasApenasPerderam(): RegistroDeUsoDeTrocaDeMelhoriaDePatente[] { return this.pontosDeTroca.filter(troca => troca.periciaPerdeu !== null && troca.periciaGanhou === null); }
     get registrosTrocasPerderamEGanharam(): RegistroDeUsoDeTrocaDeMelhoriaDePatente[] { return this.pontosDeTroca.filter(troca => troca.periciaPerdeu !== null && troca.periciaGanhou !== null); }
+
+    get registrosTrocasLivresDisponiveis(): RegistroDeUsoDeTrocaDeMelhoriaLivreDePatente[] { return this.pontosDeTrocaLivre.filter(trocaLivre => trocaLivre.periciaPerdeu === null); }
+    get registrosTrocasLivresPerderam(): RegistroDeUsoDeTrocaDeMelhoriaLivreDePatente[] { return this.pontosDeTrocaLivre.filter(troca => troca.periciaPerdeu !== null); }
+    get registrosTrocasLivresApenasPerderam(): RegistroDeUsoDeTrocaDeMelhoriaLivreDePatente[] { return this.pontosDeTrocaLivre.filter(troca => troca.periciaPerdeu !== null && troca.periciaGanhou === null); }
+    get registrosTrocasLivresPerderamEGanharam(): RegistroDeUsoDeTrocaDeMelhoriaLivreDePatente[] { return this.pontosDeTrocaLivre.filter(troca => troca.periciaPerdeu !== null && troca.periciaGanhou !== null); }
     //
     // #endregion
 
@@ -1008,84 +1004,101 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
     // #region Busca de Ids e suas Verificação
     //
 
-    // logica para obter index e verificar se houve devolução dessa pericia pela patente acima nesse processo
-    get obtemSeRegistroDeTrocaPerdeuAPatenteAcima() { return (registro: RegistroDeUsoDeTrocaDeMelhoriaDePatente, pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => registro.periciaPerdeu?.id === pericia.id && this.obtemSePatenteTrocaEquivale(registro, patenteAtual.id, false, 1); }
-    get obtemIdDoRegistroDePerdaDaPatenteAcima() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): number | null => this.registrosTrocasPerderam.find(troca => this.obtemSeRegistroDeTrocaPerdeuAPatenteAcima(troca, pericia, patenteAtual))?.id ?? null; }
+    // logica para obter index e verificar se houve retrocesso dessa pericia pela patente acima nesse processo
+    get obtemSeTemRegistroDeTrocaPerdeuAPatenteAcima() { return (registro: RegistroDeUsoDeTrocaDeMelhoriaDePatente, pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => registro.periciaPerdeu?.id === pericia.id && registro.patente.id === (patenteAtual.id + 1); }
+    get obtemIdDoRegistroDePerdaDaPatenteAcima() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): number | null => this.registrosTrocasPerderam.find(troca => this.obtemSeTemRegistroDeTrocaPerdeuAPatenteAcima(troca, pericia, patenteAtual))?.id ?? null; }
     //
 
     // logica para obter index e verificar se há ponto de troca que já perdeu e pode ser finalizado com ganho para patente
-    get obtemSeRegistroDeTrocaParaGanhar() { return (registro: RegistroDeUsoDeTrocaDeMelhoriaDePatente, patente: PatentePericiaDto): boolean => this.obtemSePatenteTrocaEquivale(registro, patente.id, false, 1); }
-    get obtemIdDoRegistroDeTrocaParaGanhar() { return (patente: PatentePericiaDto): number | null => this.registrosTrocasApenasPerderam.find(troca => this.obtemSeRegistroDeTrocaParaGanhar(troca, patente))?.id ?? null; }
+    get obtemSeTemRegistroDeTrocaParaGanhar() { return (registro: RegistroDeUsoDeTrocaDeMelhoriaDePatente, patente: PatentePericiaDto): boolean => registro.patente.id === (patente.id + 1); }
+    get obtemIdDoRegistroDeTrocaParaGanhar() { return (patente: PatentePericiaDto): number | null => this.registrosTrocasApenasPerderam.find(troca => this.obtemSeTemRegistroDeTrocaParaGanhar(troca, patente))?.id ?? null; }
     //
 
     // logica para obter index e vericar se há ponto de ganho disponivel para patente
-    get obtemSeRegistroDeGanhoPorPatente() { return (registro: RegistroDeUsoDeGanhoDeMelhoriaDePatente, patente: PatentePericiaDto): boolean => registro.livre || registro.patente.id === (patente.id + 1); }
-    get obtemIdDoRegistroDeGanhoParaPatente() { return (patente: PatentePericiaDto): number | null => this.registrosGanhosDisponiveis.find(ganho => this.obtemSeRegistroDeGanhoPorPatente(ganho, patente))?.id ?? null; }
-    get obtemSeProximoRegistroDeGanhoParaPatenteVaiSerLivre() { return (patente: PatentePericiaDto): boolean => this.pontosDeGanho.find(ganho => this.patenteEstaAbaixoPatenteMaxima(patente) && ganho.id === this.obtemIdDoRegistroDeGanhoParaPatente(patente))?.livre ?? false; }
-    // get obtemSeProximaEvolucaoVaiUsarPericiaLivre() return ()
+    get obtemSeTemRegistroDeGanhoPorPatente() { return (registro: RegistroDeUsoDeGanhoDeMelhoriaDePatente, patente: PatentePericiaDto): boolean => registro.patente.id === (patente.id + 1); }
+    get obtemIdDoRegistroDeGanhoParaPatente() { return (patente: PatentePericiaDto): number | null => this.registrosGanhosDisponiveis.find(ganho => this.obtemSeTemRegistroDeGanhoPorPatente(ganho, patente))?.id ?? null; }
     //
 
     // logica para obter index e verificar se houve evolução dessa pericia para essa patente por conta de troca nesse processo
-    get obtemSeRegistroDeTrocaAdicionouEssaPatente() { return (registro: RegistroDeUsoDeTrocaDeMelhoriaDePatente, pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => registro.periciaGanhou?.id === pericia.id && this.obtemSePatenteTrocaEquivale(registro, patenteAtual.id); }
-    get obtemIdDoRegistroDeTrocaAdicionouEssaPatente() { return (pericia: PericiaDto, patente: PatentePericiaDto): number | null => this.registrosTrocasPerderamEGanharam.find(troca => this.obtemSeRegistroDeTrocaAdicionouEssaPatente(troca, pericia, patente))?.id ?? null; }
+    get obtemSeTemRegistroDeTrocaAdicionouEssaPatente() { return (registro: RegistroDeUsoDeTrocaDeMelhoriaDePatente, pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => registro.periciaGanhou?.id === pericia.id && registro.patente.id === patenteAtual.id; }
+    get obtemIdDoRegistroDeTrocaAdicionouEssaPatente() { return (pericia: PericiaDto, patente: PatentePericiaDto): number | null => this.registrosTrocasPerderamEGanharam.find(troca => this.obtemSeTemRegistroDeTrocaAdicionouEssaPatente(troca, pericia, patente))?.id ?? null; }
     //
 
     // logica para obter index e verificar se houve evolução dessa pericia para essa patente por conta de ganho nesse processo
-    get obtemSeRegistroDeGanhoAdicionouEssaPatente() { return (registro: RegistroDeUsoDeGanhoDeMelhoriaDePatente, pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => registro.pericia?.id === pericia.id && registro.patente?.id === patenteAtual.id; }
-    get obtemIdDoRegistroDeGanhoAdicionouEssaPatente() { return (pericia: PericiaDto, patente: PatentePericiaDto): number | null => this.registrosGanhosRealizados.find(ganho => this.obtemSeRegistroDeGanhoAdicionouEssaPatente(ganho, pericia, patente))?.id ?? null; }
+    get obtemSeTemRegistroDeGanhoAdicionouEssaPatente() { return (registro: RegistroDeUsoDeGanhoDeMelhoriaDePatente, pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => registro.pericia?.id === pericia.id && registro.patente?.id === patenteAtual.id; }
+    get obtemIdDoRegistroDeGanhoAdicionouEssaPatente() { return (pericia: PericiaDto, patente: PatentePericiaDto): number | null => this.registrosGanhosRealizados.find(ganho => this.obtemSeTemRegistroDeGanhoAdicionouEssaPatente(ganho, pericia, patente))?.id ?? null; }
     //
 
     // logica para obter index e verificar se tem troca disponivel para retirar a patente em questao
-    get obtemSeRegistroDeTrocaPodeRetirarPatente() { return (registro: RegistroDeUsoDeTrocaDeMelhoriaDePatente, patente: PatentePericiaDto): boolean => this.obtemSePatenteTrocaEquivale(registro, patente.id); }
-    get obtemIdDoRegistroDisponivelParaRetirarPontoDeTrocaPorPatente() { return (patente: PatentePericiaDto): number | null => this.registrosTrocasDisponiveis.find(troca => this.obtemSeRegistroDeTrocaPodeRetirarPatente(troca, patente))?.id ?? null; }
+    get obtemSeTemRegistroDeTrocaPodeRetirarPatente() { return (registro: RegistroDeUsoDeTrocaDeMelhoriaDePatente, patente: PatentePericiaDto): boolean => registro.patente.id === patente.id; }
+    get obtemIdDoRegistroDisponivelParaRetirarPontoDeTrocaPorPatente() { return (patente: PatentePericiaDto): number | null => this.registrosTrocasDisponiveis.find(troca => this.obtemSeTemRegistroDeTrocaPodeRetirarPatente(troca, patente))?.id ?? null; }
+    //
+
+    // LIVRE //
+
+    // logica para obter index e verificar se tem troca livre disponivel
+    get obtemIdDoRegistroDisponivelParaRetirarPontoDeTrocaLivre() { return (): number | null => this.registrosTrocasLivresDisponiveis.find(() => true)?.id ?? null; }
+    //
+
+    // logica para obter index e verificar se houve retrocesso livre dessa pericia pela patente acima nesse processo
+    get obtemSeTemRegistroDeTrocaPerdeuLivreAPatenteAcima() { return (registro: RegistroDeUsoDeTrocaDeMelhoriaLivreDePatente, pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => registro.periciaPerdeu?.id === pericia.id && registro.patentePerdeu?.id === (patenteAtual.id + 1); }
+    get obtemIdDoRegistroDePerdaLivreDaPatenteAcima() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): number | null => this.registrosTrocasLivresPerderam.find(trocaLivre => this.obtemSeTemRegistroDeTrocaPerdeuLivreAPatenteAcima(trocaLivre, pericia, patenteAtual))?.id ?? null; }
+    //
+
+    // logica para obter index e verificar se há ponto de troca livre que já perdeu e pode ser finalizado com ganho para patente
+    get obtemSeTemRegistroDeTrocaLivreParaGanhar() { return (registro: RegistroDeUsoDeTrocaDeMelhoriaLivreDePatente, patente: PatentePericiaDto): boolean => !!registro.ganhaPerdeMesmaPatente && registro.patentePerdeu?.id === (patente.id + 1) || !registro.ganhaPerdeMesmaPatente; }
+    get obtemIdDoRegistroDeTrocaLivreParaGanhar() { return (patenteAtual: PatentePericiaDto): number | null => this.registrosTrocasLivresApenasPerderam.find(trocaLivre => this.obtemSeTemRegistroDeTrocaLivreParaGanhar(trocaLivre, patenteAtual))?.id ?? null; }
+    //
+
+    // logica para obter index e verificar se houve evolução dessa pericia para essa patente por conta de troca livre nesse processo
+    get obtemSeTemRegistroDeTrocaLivreAdicionouEssaPatente() { return (registro: RegistroDeUsoDeTrocaDeMelhoriaLivreDePatente, pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => registro.periciaGanhou?.id === pericia.id && registro.patenteGanhou?.id === patenteAtual.id; }
+    get obtemIdDoRegistroDeTrocaLivreAdicionouEssaPatente() { return (pericia: PericiaDto, patente: PatentePericiaDto): number | null => this.registrosTrocasLivresPerderamEGanharam.find(trocaLivre => this.obtemSeTemRegistroDeTrocaLivreAdicionouEssaPatente(trocaLivre, pericia, patente))?.id ?? null; }
     //
 
     //
-    // #endregion
-
-    // #region Helpers
-    get obtemSePatenteTrocaEquivale() {
-        return (registro: RegistroDeUsoDeTrocaDeMelhoriaDePatente, idPatente: number, ganhando: boolean = true, offset: number = 0): boolean => {
-            const idFinalPatente = idPatente + offset;
-
-            if (!registro.livre) return registro.patente.id === idFinalPatente;
-
-            return ganhando
-                ? (!registro.patenteFixa && !registro.patentePericiaGanhouLivre) || (!!registro.patenteFixa && registro.patenteFixa.id === idFinalPatente) || (!!registro.patentePericiaGanhouLivre && registro.patentePericiaGanhouLivre.id === idFinalPatente)
-                : (!registro.patenteFixa && !registro.patentePericiaPerdeuLivre) || (!!registro.patenteFixa && registro.patenteFixa.id === idFinalPatente) || (!!registro.patentePericiaPerdeuLivre && registro.patentePericiaPerdeuLivre.id === idFinalPatente);
-        }
-    }
     // #endregion
 
     // #region Verificação Gerais
     //
 
     // logica de verificação de pontos para alteração positiva para essa patente
-    get obtemSeTemPontoParaAdicionar() { return (patente: PatentePericiaDto): boolean => this.obtemIdDoRegistroDeGanhoParaPatente(patente) !== null || this.obtemIdDoRegistroDeTrocaParaGanhar(patente) !== null ; }
+    get obtemSeTemPontoParaAdicionar() { return (patente: PatentePericiaDto): boolean => this.obtemIdDoRegistroDeGanhoParaPatente(patente) !== null || this.obtemIdDoRegistroDeTrocaParaGanhar(patente) !== null || this.obtemIdDoRegistroDeTrocaLivreParaGanhar(patente) !== null; }
     //
 
     // logica de verificação geral de alteração positiva dessa pericia para essa patente nesse processo
-    get obtemSeEssaPatenteFoiGanhadaNesseProcesso() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => this.registrosGanhosRealizados.some(ganho => this.obtemSeRegistroDeGanhoAdicionouEssaPatente(ganho, pericia, patenteAtual) || this.registrosTrocasPerderamEGanharam.some(troca => this.obtemSeRegistroDeTrocaAdicionouEssaPatente(troca, pericia, patenteAtual))); }
+    get obtemSeEssaPatenteFoiGanhadaNesseProcesso() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => this.registrosGanhosRealizados.some(ganho => this.obtemSeTemRegistroDeGanhoAdicionouEssaPatente(ganho, pericia, patenteAtual)) || this.registrosTrocasPerderamEGanharam.some(troca => this.obtemSeTemRegistroDeTrocaAdicionouEssaPatente(troca, pericia, patenteAtual)) || this.registrosTrocasLivresPerderamEGanharam.some(trocaLivre => this.obtemSeTemRegistroDeTrocaLivreAdicionouEssaPatente(trocaLivre, pericia, patenteAtual)); }
     //
 
     // logica de verificação geral de alteração negativa dessa pericia para essa patente nesse processo
-    get obtemSeEssaPatenteFoiReduzidaNesseProcesso() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => this.registrosTrocasPerderam.some(troca => this.obtemSeRegistroDeTrocaPerdeuAPatenteAcima(troca, pericia, patenteAtual)) }
+    get obtemSeEssaPatenteFoiReduzidaNesseProcesso() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => this.registrosTrocasPerderam.some(troca => this.obtemSeTemRegistroDeTrocaPerdeuAPatenteAcima(troca, pericia, patenteAtual)) || this.registrosTrocasLivresPerderam.some(trocaLivre => this.obtemSeTemRegistroDeTrocaPerdeuLivreAPatenteAcima(trocaLivre, pericia, patenteAtual)) }
     //
 
-    //
+
+    // logica geral de ganho comum
     get obtemSeTemPontoGanhoDisponivel() { return this.registrosGanhosDisponiveis.length > 0; }
+    get obtemSeTemPontoGanhoDisponivelParaPatente() { return (patente: PatentePericiaDto) => this.registrosGanhosDisponiveis.filter(ganho => ganho.patente.id === patente.id).length; }
+    get obtemNumeroPontosGanhoParaPatente() { return (patente: PatentePericiaDto): number => this.pontosDeGanho.filter(ganho => ganho.patente.id === patente.id).length; }
+    //
+
+    // logica geral de ganho livre
+    get obtemSeTemPontoGanhoLivreDisponivel() { return this.registrosGanhosLivresDisponiveis.length > 0; }
+    //
+
+    // logica geral de troca comum
     get obtemSeTemPontoTrocaEmAndamento() { return this.registrosTrocasApenasPerderam.length > 0; }
-    get obtemSeTemPontoGanhoDisponivelParaPatente() { return (patente: PatentePericiaDto) => this.registrosGanhosDisponiveis.filter(ganho => !ganho.livre && ganho.patente.id === patente.id).length; } 
-    get obtemSeTemPontoGanhoLivreDisponivel() { return this.registrosGanhosDisponiveis.filter(ganho => ganho.livre).length > 0; }
-    get obtemNumeroDeTrocasDisponiveisParaPatente() { return (patente: PatentePericiaDto): number => this.registrosTrocasDisponiveis.filter(troca => !troca.livre && troca.patente.id === patente.id).length; }
-
-    get obtemNumeroPontosGanhoParaPatente() { return (patente: PatentePericiaDto): number => this.pontosDeGanho.filter(ganho => !ganho.livre && ganho.patente.id === patente.id).length; }
-    get obtemNumeroTrocasGanhoParaPatente() { return (patente: PatentePericiaDto): number => this.pontosDeTroca.filter(troca => !troca.livre && troca.patente.id === patente.id).length; }
+    get obtemNumeroDeTrocasDisponiveisParaPatente() { return (patente: PatentePericiaDto): number => this.registrosTrocasDisponiveis.filter(troca => troca.patente.id === patente.id).length; }
+    get obtemNumeroTrocasGanhoParaPatente() { return (patente: PatentePericiaDto): number => this.pontosDeTroca.filter(troca => troca.patente.id === patente.id).length; }
     //
 
+    // logica geral de troca livre
+
     //
-    get obtemSePatenteAtualPericiaFoiEvoluidaPorPericiaLivre() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => this.registrosGanhosRealizados.some(ganho => ganho.livre && ganho.pericia?.id === pericia.id && ganho.patente?.id === patenteAtual.id); }
-    get obtemSeEvolucaoPatenteVaiUsarPericiaLivre() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => !this.obtemSeEssaPatenteFoiReduzidaNesseProcesso(pericia, patenteAtual) && this.obtemSeProximoRegistroDeGanhoParaPatenteVaiSerLivre(patenteAtual); }
+
+
+    // logica generica
+    get desbloqueadasPericiasLivres(): boolean { return false; }
+    get obtemSePatenteAtualPericiaFoiEvoluidaPorPericiaLivre() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => false; }
+    // get obtemSePatenteAtualPericiaFoiEvoluidaPorPericiaLivre() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => this.registrosGanhosRealizados.some(ganho => ganho.livre && ganho.pericia?.id === pericia.id && ganho.patente?.id === patenteAtual.id); }
     //
 
     //
@@ -1093,63 +1106,29 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
 
     // #region Metodos Botões
     //
-    get obtemBotaoRemoverEstaHabilitado() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => this.patenteEstaAcimaPatenteMinima(patenteAtual) && (this.obtemSeEssaPatenteFoiGanhadaNesseProcesso(pericia, patenteAtual) || (pericia.id !== 16 && this.obtemIdDoRegistroDisponivelParaRetirarPontoDeTrocaPorPatente(patenteAtual) !== null)); }
+    get obtemBotaoRemoverEstaHabilitado() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => this.patenteEstaAcimaPatenteMinima(patenteAtual) && (this.obtemSeEssaPatenteFoiGanhadaNesseProcesso(pericia, patenteAtual) || (pericia.id !== 16 && (this.obtemIdDoRegistroDisponivelParaRetirarPontoDeTrocaPorPatente(patenteAtual) !== null || this.obtemIdDoRegistroDisponivelParaRetirarPontoDeTrocaLivre() !== null))); }
     get obtemBotaoAdicionarEstaHabilitado() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => this.patenteEstaAbaixoPatenteMaxima(patenteAtual) && (this.obtemSeEssaPatenteFoiReduzidaNesseProcesso(pericia, patenteAtual) || this.obtemSeTemPontoParaAdicionar(patenteAtual)); }
 
-    adicionaPonto(pericia: PericiaDto, patenteAtual: PatentePericiaDto) {
-        // prioridade 1 para desfazer uma remoção de troca
-        const idRegistroDesfazTroca = this.obtemIdDoRegistroDePerdaDaPatenteAcima(pericia, patenteAtual);
-        if (idRegistroDesfazTroca !== null) {
-            // console.log(`adicionando ponto, desfazendo troca`);
-            const registroGanhando = this.pontosDeTroca.find(troca => troca.id === idRegistroDesfazTroca)!;
-
-            registroGanhando.periciaGanhou = null;
-            registroGanhando.periciaPerdeu = null;
-
-            if (registroGanhando.livre) {
-                registroGanhando.patenteFixa = undefined;
-                registroGanhando.patentePericiaGanhouLivre = undefined;
-                registroGanhando.patentePericiaPerdeuLivre = undefined;
-            }
-
-            return;
-        }
-
-        // prioridade 2 para completar trocas que já foram feitas
-        const idRegistroFinalizarTroca = this.obtemIdDoRegistroDeTrocaParaGanhar(patenteAtual);
-        if (idRegistroFinalizarTroca !== null) {
-            // console.log(`adicionando ponto, finalizando troca`);
-            const registroGanhando = this.pontosDeTroca.find(troca => troca.id === idRegistroFinalizarTroca)!;
-
-            registroGanhando.periciaGanhou = pericia;
-
-            // if (registroGanhando.livre) {
-                
-            // }
-
-            return;
-        }
-
-        // prioridade 3 para ganho normal de patente comum
-        const idRegistroGanhoPatente = this.obtemIdDoRegistroDeGanhoParaPatente(patenteAtual);
-        if (idRegistroGanhoPatente !== null) {
-            // console.log(`adicionando ponto, ganho comum`);
-            const registroGanhando = this.pontosDeGanho.find(ganho => ganho.id === idRegistroGanhoPatente)!;
-            registroGanhando.pericia = pericia;
-
-            if (registroGanhando.livre) {
-                registroGanhando.patente = GanhosEvolucao.dadosReferencia.patentes.find(patenteNova => patenteNova.id === (patenteAtual.id + 1))!;
-            }
-
-            return;
-        }
-    }
+    get obtemBotaoRemoverLivreEstaHabilitado() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => this.patenteEstaAcimaPatenteMinima(patenteAtual) && (this.obtemSeEssaPatenteFoiGanhadaNesseProcesso(pericia, patenteAtual) || (pericia.id !== 16 && this.obtemIdDoRegistroDisponivelParaRetirarPontoDeTrocaLivre() !== null)); }
+    get obtemBotaoAdicionarLivreEstaHabilitado() { return (pericia: PericiaDto, patenteAtual: PatentePericiaDto): boolean => this.patenteEstaAbaixoPatenteMaxima(patenteAtual) && (this.obtemSeEssaPatenteFoiReduzidaNesseProcesso(pericia, patenteAtual) || this.obtemSeTemPontoParaAdicionar(patenteAtual)); }
 
     subtraiPonto(pericia: PericiaDto, patenteAtual: PatentePericiaDto) {
-        // prioridade 1 para remover trocas que adicionaram nessa perícia
+        // prioridade 1.1 para remover trocas livres que adicionaram nessa perícia
+        const idRegistroEvolucaoPorTrocaLivre = this.obtemIdDoRegistroDeTrocaLivreAdicionouEssaPatente(pericia, patenteAtual);
+        if (idRegistroEvolucaoPorTrocaLivre !== null) {
+            console.log(`subtraindo ponto livre, revertendo ganho por troca`);
+            const registroRemovendo = this.pontosDeTrocaLivre.find(troca => troca.id === idRegistroEvolucaoPorTrocaLivre)!;
+
+            registroRemovendo.periciaGanhou = null;
+            registroRemovendo.patenteGanhou = null;
+
+            return;
+        }
+
+        // prioridade 1.2 para remover trocas que adicionaram nessa perícia
         const idRegistroEvolucaoPorTroca = this.obtemIdDoRegistroDeTrocaAdicionouEssaPatente(pericia, patenteAtual);
         if (idRegistroEvolucaoPorTroca !== null) {
-            // console.log(`subtraindo ponto, revertendo ganho por troca`);
+            console.log(`subtraindo ponto comum, revertendo ganho por troca`);
             const registroRemovendo = this.pontosDeTroca.find(troca => troca.id === idRegistroEvolucaoPorTroca)!;
 
             registroRemovendo.periciaGanhou = null;
@@ -1160,7 +1139,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         // prioridade 2 para remover ganhos que adicionaram nessa perícia
         const idRegitrosEvolucaoPorGanho = this.obtemIdDoRegistroDeGanhoAdicionouEssaPatente(pericia, patenteAtual);
         if (idRegitrosEvolucaoPorGanho !== null) {
-            // console.log(`subtraindo ponto, revertendo ganho por ganho`);
+            console.log(`subtraindo ponto comum, revertendo ganho por ganho`);
             const registroRemovendo = this.pontosDeGanho.find(troca => troca.id === idRegitrosEvolucaoPorGanho)!;
 
             registroRemovendo.pericia = null;
@@ -1168,25 +1147,100 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
             return;
         }
 
-        // prioridade 3 para remover ponto que será trocado
+        // prioridade 3.1 para remover ponto que será trocado
         const idRegistroIniciaTroca = this.obtemIdDoRegistroDisponivelParaRetirarPontoDeTrocaPorPatente(patenteAtual);
         if (idRegistroIniciaTroca !== null) {
-            // console.log(`subtraindo ponto, retirando para trocar`);
+            console.log(`subtraindo ponto comum, retirando para trocar`);
             const registroRemovendo = this.pontosDeTroca.find(troca => troca.id === idRegistroIniciaTroca)!;
 
             registroRemovendo.periciaPerdeu = pericia;
 
-            if (registroRemovendo.livre) {
-                // verificar se o ponto q esta sendo tirado eh livre ou n
-                // se n for livre, tem q colocar a patenteFixa, por ser uma troca livre de ponto comum
-                registroRemovendo.patenteFixa = patenteAtual;
+            return;
+        }
 
-                // se for livre, tem q colocar a patentePericiaPerdeuLivre, por ser uma troca livre de ponto livre
-            }
+        // prioridade 3.2 para remover ponto que será trocado com troca livre
+        const idRegistroIniciaTrocaLivre = this.obtemIdDoRegistroDisponivelParaRetirarPontoDeTrocaLivre();
+        if (idRegistroIniciaTrocaLivre !== null) {
+            console.log(`subtraindo ponto livre, retirando para trocar`);
+            const registroRemovendo = this.pontosDeTrocaLivre.find(troca => troca.id === idRegistroIniciaTrocaLivre)!;
+
+            registroRemovendo.periciaPerdeu = pericia;
+            registroRemovendo.patentePerdeu = patenteAtual;
+            registroRemovendo.ganhaPerdeMesmaPatente = true;
 
             return;
         }
     }
+
+    adicionaPonto(pericia: PericiaDto, patenteAtual: PatentePericiaDto) {
+        // prioridade 1.1 para desfazer uma remoção de troca livre
+        const idRegistroDesfazTrocaLivre = this.obtemIdDoRegistroDePerdaLivreDaPatenteAcima(pericia, patenteAtual);
+        if (idRegistroDesfazTrocaLivre !== null) {
+            console.log(`adicionando ponto comum, desfazendo troca livre`);
+            const registroGanhando = this.pontosDeTrocaLivre.find(troca => troca.id === idRegistroDesfazTrocaLivre)!;
+
+            registroGanhando.periciaGanhou = null;
+            registroGanhando.periciaPerdeu = null;
+            registroGanhando.ganhaPerdeMesmaPatente = null;
+
+            return;
+        }
+
+        // prioridade 1.2 para desfazer uma remoção de troca
+        const idRegistroDesfazTroca = this.obtemIdDoRegistroDePerdaDaPatenteAcima(pericia, patenteAtual);
+        if (idRegistroDesfazTroca !== null) {
+            console.log(`adicionando ponto comum, desfazendo troca`);
+            const registroGanhando = this.pontosDeTroca.find(troca => troca.id === idRegistroDesfazTroca)!;
+
+            registroGanhando.periciaGanhou = null;
+            registroGanhando.periciaPerdeu = null;
+
+            return;
+        }
+
+        // prioridade 2.1 para completar trocas que já foram feitas (vem antes da livre para reforçar a ordem de prioridade - livre é o ultimo recurso)
+        const idRegistroFinalizarTroca = this.obtemIdDoRegistroDeTrocaParaGanhar(patenteAtual);
+        if (idRegistroFinalizarTroca !== null) {
+            console.log(`adicionando ponto comum, finalizando troca`);
+            const registroGanhando = this.pontosDeTroca.find(troca => troca.id === idRegistroFinalizarTroca)!;
+
+            registroGanhando.periciaGanhou = pericia;
+
+            return;
+        }
+
+        // prioridade 2.2 para completar trocas livres que já foram feitas
+        const idRegistroFinalizarTrocaLivre = this.obtemIdDoRegistroDeTrocaLivreParaGanhar(patenteAtual);
+        if (idRegistroFinalizarTrocaLivre !== null) {
+            console.log(`adicionando ponto livre, finalizando troca`);
+            const registroGanhando = this.pontosDeTrocaLivre.find(troca => troca.id === idRegistroFinalizarTrocaLivre)!;
+
+            registroGanhando.periciaGanhou = pericia;
+            registroGanhando.patenteGanhou = GanhosEvolucao.dadosReferencia.patentes.find(patenteReferencia => patenteReferencia.id === (patenteAtual.id + 1))!;
+
+            return;
+        }
+
+        // prioridade 3 para ganho normal de patente comum
+        const idRegistroGanhoPatente = this.obtemIdDoRegistroDeGanhoParaPatente(patenteAtual);
+        if (idRegistroGanhoPatente !== null) {
+            console.log(`adicionando ponto comum, ganho`);
+            const registroGanhando = this.pontosDeGanho.find(ganho => ganho.id === idRegistroGanhoPatente)!;
+
+            registroGanhando.pericia = pericia;
+
+            return;
+        }
+    }
+
+    subtraiPontoLivre(pericia: PericiaDto, patenteAtual: PatentePericiaDto) {
+
+    }
+
+    adicionaPontoLivre(pericia: PericiaDto, patenteAtual: PatentePericiaDto) {
+
+    }
+
     //
     // #endregion
 
@@ -1195,7 +1249,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
 
     get registrosPericiasLivres(): RegistroPericiaLivre[] {
         return [
-            ...this.registrosGanhosRealizados.filter(ganho => ganho.livre).map(ganho => ({ idPericia: ganho.pericia!.id, idPatente: ganho.patente!.id })),
+            // ...this.registrosGanhosRealizados.filter(ganho => ganho.livre).map(ganho => ({ idPericia: ganho.pericia!.id, idPatente: ganho.patente!.id })),
             // ...this.registrosTrocasPerderamEGanharam.filter(troca => 
         ];
     }
