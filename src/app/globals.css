@@ -3,6 +3,8 @@
   --fonte-cinzel-decorative: 'Cinzel Decorative', serif;
   --fonte-junge: 'Junge', serif;
 
+  --zindex-final-janelas: 699;
+  --zindex-final-tooltip: 799;
   --zindex-final-swiperEsquerda: 899;
   --zindex-final-chat: 999;
   --zindex-final-modal: 1099;

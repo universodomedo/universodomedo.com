@@ -237,6 +237,10 @@
     gap: 1vw;
 }
 
+.botoes_pericia_livre h3 {
+    margin: auto;
+}
+
 .recipiente_elementos_etapa {
     display: flex;
     flex-direction: column;
