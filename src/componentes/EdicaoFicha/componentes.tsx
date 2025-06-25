@@ -39,7 +39,7 @@ export default function PaginaEvolucaoPersonagem_ComContexto() {
         }
     };
 
-    const { scrollableProps } = useScrollable();
+    const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
 
     return (
         <>
@@ -54,8 +54,8 @@ export default function PaginaEvolucaoPersonagem_ComContexto() {
                     )}
                     {ganhos.estaAbertoResumoFinal && (<h4 className={styles.aviso_resumo_final}>Confira com atenção suas escolhas dessa Evolução</h4>)}
                 </div>
-                <div id={styles.recipiente_conteudo_edicao} {...scrollableProps}>
-                    <div id={styles.recipiente_etapa_edicao}>
+                <div id={styles.recipiente_conteudo_edicao}>
+                    <div id={styles.recipiente_etapa_edicao} {...scrollableProps}>
                         {paginaAberta()}
                     </div>
                     <div id={styles.rodape_edicao}>

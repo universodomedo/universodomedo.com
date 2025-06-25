@@ -3,6 +3,8 @@
   --fonte-cinzel-decorative: 'Cinzel Decorative', serif;
   --fonte-junge: 'Junge', serif;
 
+  --zindex-final-janelas: 699;
+  --zindex-final-tooltip: 799;
   --zindex-final-swiperEsquerda: 899;
   --zindex-final-chat: 999;
   --zindex-final-modal: 1099;
@@ -88,7 +90,7 @@ svg {
 /* Scrollbar Branca - Efeito de Opacidade */
 [data-scrollable] {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0) transparent; /* Branca transparente */
+  scrollbar-color: rgba(255, 255, 255, 0) transparent;
   overflow-y: auto;
 }
 
@@ -103,7 +105,7 @@ svg {
 }
 
 [data-scrollable]::-webkit-scrollbar-thumb {
-  background-color: white; /* COR BRANCA */
+  background-color: white;
   border-radius: 4px;
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -122,7 +124,17 @@ svg {
 
 [data-scrollable][data-scrolling="true"],
 [data-scrollable][data-hovered="true"] {
-  scrollbar-color: white transparent; /* Branca sólida quando visível */
+  scrollbar-color: white transparent;
+}
+
+/* Modo sempreVisivel: auto, mas com thumb sempre visível quando houver scrollbar */
+[data-scrollable][data-visibility-mode="sempreVisivel"] {
+  overflow-y: auto;
+  scrollbar-color: white transparent;
+}
+
+[data-scrollable][data-visibility-mode="sempreVisivel"]::-webkit-scrollbar-thumb {
+  opacity: 1;
 }
 
 /*  */

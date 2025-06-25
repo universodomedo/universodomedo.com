@@ -11,6 +11,7 @@ interface ContextoAutenticacaoProps {
     variaveisAmbiente: VariavelAmbienteDto[];
     numeroPendenciasPersonagem: number;
     estaAutenticado: boolean;
+    ehMestre: boolean;
     ehAdmin: boolean;
 };
 
@@ -29,6 +30,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     const [carregando, setCarregando] = useState(true);
 
     const estaAutenticado = !carregando && !!usuarioLogado;
+    const ehMestre = estaAutenticado && usuarioLogado?.perfilMestre.id > 1;
     const ehAdmin = estaAutenticado && usuarioLogado?.perfilAdmin.id === 2;
 
     const checkAuth = async () => {
@@ -53,7 +55,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     if (!ehAdmin && getValorVariavelAmbiente(variaveisAmbiente, 'ESTADO_MANUTENCAO')) return (<h1>Estamos em manutenção, entre em contato com a Direção do Universo do Medo</h1>)
 
     return (
-        <ContextoAutenticacao.Provider value={{ usuarioLogado, carregando, variaveisAmbiente, numeroPendenciasPersonagem, estaAutenticado, ehAdmin }}>
+        <ContextoAutenticacao.Provider value={{ usuarioLogado, carregando, variaveisAmbiente, numeroPendenciasPersonagem, estaAutenticado, ehMestre, ehAdmin }}>
             {children}
         </ContextoAutenticacao.Provider>
     );

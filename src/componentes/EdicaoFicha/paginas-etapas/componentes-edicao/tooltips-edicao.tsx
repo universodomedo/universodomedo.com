@@ -86,3 +86,19 @@ export function TooltipEvolucao_PatentePericia({ patentePericia, children }: { p
         </Tooltip>
     );
 };
+
+export function TooltipEvolucao_PontosDePericiaLivreNessaPericia({ conteudo, children }: { conteudo: ReactNode, children: ReactNode }) {
+    return (
+        <Tooltip>
+            <Tooltip.Trigger>
+                {children}
+            </Tooltip.Trigger>
+
+            <Tooltip.Content>
+                <h2>Pontos de Perícia Livre</h2>
+                <p>Esse ganho especial de Evolução de Perícia pode ser usado para evoluir entre quaisquer Patentes e só podem sofrer troca utilizando Trocas Livres</p>
+                {conteudo}
+            </Tooltip.Content>
+        </Tooltip>
+    );
+};

@@ -3,12 +3,13 @@
 import styles from '../styles.module.css';
 
 import { PatentePericiaDto, PericiaDto } from 'types-nora-api';
-import { EtapaGanhoEvolucao_Pericias, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_Pericias, GanhosEvolucao, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { TooltipEvolucao_Atributo, TooltipEvolucao_PatentePericia, TooltipEvolucao_Pericia } from './componentes-edicao/tooltips-edicao';
+import { TooltipEvolucao_Atributo, TooltipEvolucao_Pericia, TooltipEvolucao_PatentePericia, TooltipEvolucao_PontosDePericiaLivreNessaPericia } from './componentes-edicao/tooltips-edicao';
 import { ReactNode } from 'react';
+import React from 'react';
 
 export default function EdicaoPericias() {
     const { ganhos } = useContextoEdicaoFicha();
@@ -60,16 +61,53 @@ function CorpoPericia({ pericia, patentePericia }: { pericia: PericiaDto, patent
                 <h2 className={styles.nome_pericia}>{pericia.nome}</h2>
             </TooltipEvolucao_Pericia>
             <TooltipEvolucao_PatentePericia patentePericia={patentePericia}>
-                <h3 className={styles.patente_pericia} style={{ color: patentePericia.cor }}>{patentePericia.nome}</h3>
+                <div className={styles.recipiente_conteudo_gatilho_tooltip_patente}>
+                    <h3 className={styles.patente_pericia} style={{ color: patentePericia.cor }}>{patentePericia.nome}</h3>
+                </div>
             </TooltipEvolucao_PatentePericia>
             <div className={styles.botoes_pericia}>
                 <div className={styles.recipiente_botao_edicao}>
-                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.subtraiPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.botaoRemoverEstaHabilitado(pericia, patentePericia)} className={etapaPericias.patenteAtualFoiEvoluidaPorPericiaLivre(pericia, patentePericia) ? styles.botao_usando_pericia_livre : ''}><FontAwesomeIcon icon={faMinus} /></button>
+                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.subtraiPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.subtraiPonto(pericia, patentePericia, false)}><FontAwesomeIcon icon={faMinus} /></button>
                 </div>
                 <div className={styles.recipiente_botao_edicao}>
-                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.adicionaPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.botaoAdicionarEstaHabilitado(pericia, patentePericia)} className={etapaPericias.podeEvoluirComPericiaLivre(patentePericia) ? styles.botao_usando_pericia_livre : ''}><FontAwesomeIcon icon={faPlus} /></button>
+                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.adicionaPonto(pericia, patentePericia) }) }} disabled={!etapaPericias.adicionaPonto(pericia, patentePericia, false)}><FontAwesomeIcon icon={faPlus} /></button>
                 </div>
             </div>
+            {etapaPericias.registrosPericiasLivres.length > 0 && (<CorpoPontosPericiaLivre pericia={pericia} patentePericia={patentePericia} />)}
         </div>
+    );
+};
+
+function CorpoPontosPericiaLivre({ pericia, patentePericia }: { pericia: PericiaDto, patentePericia: PatentePericiaDto }) {
+    const { ganhos, executaEAtualiza } = useContextoEdicaoFicha();
+
+    const etapaPericias = ganhos.etapaAtual as EtapaGanhoEvolucao_Pericias;
+
+    const periciasLivresParaEssaPericia = ganhos.obtemPericiasLivresPresentesNessaPericia(pericia);
+
+    const elementoPericiaLivre = (): ReactNode => {
+        if (periciasLivresParaEssaPericia.length <= 0) return <></>;
+
+        return (
+            <>
+                {periciasLivresParaEssaPericia.map((registro, key) => (
+                    <p key={key} className={styles.cor_confirmacao} style={{ marginTop: '.4vh' }}>A Patente {GanhosEvolucao.dadosReferencia.patentes.find(patente => patente.id === registro.idPatente)?.nome} foi evoluída utilizando Perícia Livre</p>
+                ))}
+            </>
+        );
+    };
+
+    return (
+        <TooltipEvolucao_PontosDePericiaLivreNessaPericia conteudo={periciasLivresParaEssaPericia.length > 0 ? elementoPericiaLivre() : <></>} >
+            <div className={styles.botoes_pericia_livre}>
+                <div className={styles.recipiente_botao_edicao}>
+                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.subtraiPontoLivre(pericia, patentePericia) }) }} disabled={!etapaPericias.subtraiPontoLivre(pericia, patentePericia, false)}><FontAwesomeIcon icon={faMinus} /></button>
+                </div>
+                {periciasLivresParaEssaPericia.length > 0 && (<h3>!</h3>)}
+                <div className={styles.recipiente_botao_edicao}>
+                    <button onClick={() => { executaEAtualiza(() => { etapaPericias.adicionaPontoLivre(pericia, patentePericia) }) }} disabled={!etapaPericias.adicionaPontoLivre(pericia, patentePericia, false)}><FontAwesomeIcon icon={faPlus} /></button>
+                </div>
+            </div>
+        </TooltipEvolucao_PontosDePericiaLivreNessaPericia>
     );
 };

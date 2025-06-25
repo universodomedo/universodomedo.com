@@ -1,11 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 
-export default function useScrollable (hideTimeout = 1000) {
+interface UseScrollableOptions {
+    modo?: 'sempreVisivel' | 'visivelQuandoInteragindo';
+    hideTimeout?: number;
+}
+
+export default function useScrollable (options: UseScrollableOptions = {}) {
+    const { modo = 'visivelQuandoInteragindo', hideTimeout = 1000 } = options;
+
     const [isScrolling, setIsScrolling] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
     const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const handleScroll = () => {
+        if (modo !== 'visivelQuandoInteragindo') return;
+
         setIsScrolling(true);
 
         if (scrollTimeout.current) {
@@ -19,11 +28,16 @@ export default function useScrollable (hideTimeout = 1000) {
 
     const scrollableProps = {
         onScroll: handleScroll,
-        onMouseEnter: () => setIsHovered(true),
-        onMouseLeave: () => setIsHovered(false),
+        onMouseEnter: () => {
+            if (modo === 'visivelQuandoInteragindo') setIsHovered(true);
+        },
+        onMouseLeave: () => {
+            if (modo === 'visivelQuandoInteragindo') setIsHovered(false);
+        },
         'data-scrollable': true,
         'data-scrolling': isScrolling,
-        'data-hovered': isHovered
+        'data-hovered': isHovered,
+        'data-visibility-mode': modo
     };
 
     useEffect(() => {

@@ -9,7 +9,7 @@ import { desconectar } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 import Link from 'next/link';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-brands-svg-icons";
-import { faUserTie, faFireFlameCurved, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { faUserSecret, faUserTie, faFireFlameCurved, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
@@ -33,7 +33,7 @@ export default function MenuSwiperEsquerda() {
 };
 
 function ConteudoSwiperEsquerda() {
-    const { estaAutenticado, ehAdmin, numeroPendenciasPersonagem } = useContextoAutenticacao();
+    const { estaAutenticado, ehMestre, ehAdmin, numeroPendenciasPersonagem } = useContextoAutenticacao();
     const { animacoesLigadas, setAnimacoesHabilitadas } = useContextoPerformance();
 
     function logout() {
@@ -59,6 +59,7 @@ function ConteudoSwiperEsquerda() {
         return [
             { elemento: <FontAwesomeIcon icon={faFireFlameCurved} onClick={() => setAnimacoesHabilitadas(!animacoesLigadas)} /> },
             { elemento: <FontAwesomeIcon icon={faRightToBracket} onClick={logout} />, condicao: estaAutenticado },
+            { elemento: <Link href={'/mestre'}><FontAwesomeIcon icon={faUserSecret} /></Link>, condicao: ehMestre },
             { elemento: <Link href={'/admin'}><FontAwesomeIcon icon={faUserTie} /></Link>, condicao: ehAdmin },
         ];
     };
