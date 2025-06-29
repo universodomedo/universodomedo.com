@@ -1,24 +1,21 @@
-'use client';
-
 import { useEffect } from 'react';
-import { getSocket } from 'libs/socket';
+import { getSocket } from 'Libs/socket';
+import { EventoSocket } from 'types-nora-api';
 
-export function useSocketEvent<T = any>(event: string, handler: (data: T) => void) {
+export function useSocketEvent<T = any>(evento: EventoSocket, handler: (data: T) => void) {
     useEffect(() => {
         const socket = getSocket();
 
-        // Aguarda conexão para registrar o listener
         if (socket.connected) {
-            socket.on(event, handler);
+            socket.on(evento, handler);
         } else {
             socket.once('connect', () => {
-                socket.on(event, handler);
+                socket.on(evento, handler);
             });
         }
 
-        // Limpeza: remove o handler ao desmontar
         return () => {
-            socket.off(event, handler);
+            socket.off(evento, handler);
         };
-    }, [event, handler]);
+    }, [evento, handler]);
 }

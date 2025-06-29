@@ -2,8 +2,8 @@ import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
 import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto } from 'types-nora-api';
 
-export async function obtemObjetoAutenticacao() {
-    return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET' });
+export async function obtemObjetoAutenticacao(caminho: string) {
+    return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: { caminho } });
 }
 
 export async function obtemDadosMinhasDisponibilidades() {

@@ -1,18 +1,29 @@
-'use client';
-
 import { useEffect } from 'react';
-import { getSocket } from 'libs/socket';
+import { getSocket } from 'Libs/socket';
+import { EventoSocket } from 'types-nora-api';
 
-export function useSocketEmit<TResposta = any>(evento: string, payload?: any, onResposta?: (res: TResposta) => void) {
+type UseSocketEmitOptions<TResposta = any, TPayload = any> = {
+    payload?: TPayload;
+    somenteSeConectado?: boolean;
+    onResposta?: (resposta: TResposta) => void;
+};
+
+export function useSocketEmit<TResposta = any, TPayload = any>(evento: EventoSocket, options?: UseSocketEmitOptions<TResposta, TPayload>) {
+    const { payload, onResposta, somenteSeConectado = false } = options || {};
+
     useEffect(() => {
         const socket = getSocket();
 
-        if (socket.connected) {
+        const emitir = () => {
             socket.emit(evento, payload, onResposta);
+        };
+
+        if (somenteSeConectado && !socket.connected) return;
+
+        if (socket.connected) {
+            emitir();
         } else {
-            socket.once('connect', () => {
-                socket.emit(evento, payload, onResposta);
-            });
+            socket.once('connect', emitir);
         }
     }, [evento, JSON.stringify(payload)]);
-}
+};

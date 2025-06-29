@@ -7,7 +7,7 @@ import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
-import Chat from 'Componentes/Elementos/Chat/Chat';
+import Chat from 'Componentes/Elementos/Chat/Chat.tsx';
 
 export function ControladorSlot({ pageConfig, children, }: { pageConfig: { comCabecalho?: boolean; usuarioObrigatorio?: boolean }; children: React.ReactNode; }) {
     const { carregando, estaAutenticado } = useContextoAutenticacao();

@@ -1,11 +1,12 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { SessaoDto } from 'types-nora-api';
 import { obtemListaProxEpisodioPrevistoPorAventuraEmAndamento } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoSessoesPrevistasProps {
-    listaEpisodiosPrevistos: SessaoDto[];
+    episodioSeguinte: SessaoDto | null;
+    episodiosFuturos: SessaoDto[];
 };
 
 const ContextoSessoesPrevistas = createContext<ContextoSessoesPrevistasProps | undefined>(undefined);
@@ -32,6 +33,17 @@ export const ContextoSessoesPrevistasProvider = ({ children }: { children: React
         }
     }
 
+    const { episodioSeguinte, episodiosFuturos } = useMemo(() => {
+        if (listaEpisodiosPrevistos.length === 0) return { episodioSeguinte: null, episodiosFuturos: [] };
+
+        const ordenados = [...listaEpisodiosPrevistos].sort((a, b) => new Date(a.dataInicioPrevista || 0).getTime() - new Date(b.dataInicioPrevista || 0).getTime());
+
+        const episodioSeguinte = ordenados[0];
+        const episodiosFuturos = ordenados.slice(1);
+
+        return { episodioSeguinte, episodiosFuturos };
+    }, [listaEpisodiosPrevistos]);
+
     useEffect(() => {
         buscaListaEpisodiosPrevistos()
     }, []);
@@ -39,7 +51,7 @@ export const ContextoSessoesPrevistasProvider = ({ children }: { children: React
     if (carregando) return <div>{carregando}</div>;
 
     return (
-        <ContextoSessoesPrevistas.Provider value={{ listaEpisodiosPrevistos }}>
+        <ContextoSessoesPrevistas.Provider value={{ episodioSeguinte, episodiosFuturos }}>
             {children}
         </ContextoSessoesPrevistas.Provider>
     );

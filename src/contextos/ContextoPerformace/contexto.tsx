@@ -30,7 +30,7 @@ export const useContextoPerformance = (): ContextoPerformanceProps => {
 };
 
 export function ContextoPerformanceProvider({ children }: { children: React.ReactNode }) {
-    const [animacoesHabilitadas, setAnimacoesHabilitadas] = useState(true);
+    const [animacoesHabilitadas, setAnimacoesHabilitadas] = useState(false);
     const [animacoesPossiveis, setAnimacoesPossiveis] = useState(true);
 
     const animacoesLigadas = animacoesHabilitadas && animacoesPossiveis;

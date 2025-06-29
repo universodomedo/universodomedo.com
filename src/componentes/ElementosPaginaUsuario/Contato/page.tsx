@@ -1,52 +1,30 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { SOCKET_UsuarioContato } from 'types-nora-api';
+import { SOCKET_AcessoUsuario, SOCKET_EVENTOS } from 'types-nora-api';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 import { useSocketEvent } from 'Hooks/useSocketEvent';
 import { useSocketEmit } from 'Hooks/useSocketEmit';
 
 export default function SecaoContatos() {
-    const [usuariosContato, setUsuariosContato] = useState<SOCKET_UsuarioContato[]>([]);
-    const { usuarioLogado } = useContextoAutenticacao();
-    const usuariosContatoOrdenados = [...usuariosContato].filter(contato => contato.usuario.id !== usuarioLogado?.id).sort((a, b) => {
-        if (a.conectado && !b.conectado) return -1;
-        if (!a.conectado && b.conectado) return 1;
+    const [listaAcessosUsuarios, setListaAcessosUsuarios] = useState<SOCKET_AcessoUsuario[]>([]);
 
-        const cargoA = a.usuario.listaCargos.cargoExibicaoUsuario;
-        const cargoB = b.usuario.listaCargos.cargoExibicaoUsuario;
-
-        if (cargoA < cargoB) return -1;
-        if (cargoA > cargoB) return 1;
-
-        const hierarquiaA = a.usuario.listaCargos.hierarquiaNoCargo;
-        const hierarquiaB = b.usuario.listaCargos.hierarquiaNoCargo;
-
-        if (hierarquiaA > hierarquiaB) return -1;
-        if (hierarquiaA < hierarquiaB) return 1;
-
-        const hierarquiaTotalA = a.usuario.listaCargos.hierarquiaTotal;
-        const hierarquiaTotalB = b.usuario.listaCargos.hierarquiaTotal;
-
-        if (hierarquiaTotalA > hierarquiaTotalB) return -1;
-        if (hierarquiaTotalA < hierarquiaTotalB) return 1;
-
-        const usernameA = a.usuario.username || '';
-        const usernameB = b.usuario.username || '';
-
-        return usernameA.localeCompare(usernameB);
+    useSocketEvent(SOCKET_EVENTOS.AcessosUsuarios.receber, (dados: SOCKET_AcessoUsuario[]) => {
+        setListaAcessosUsuarios(dados);
     });
 
-    useSocketEmit('obterUsuariosContato');
+    useSocketEmit(SOCKET_EVENTOS.AcessosUsuarios.obter);
+    // useSocketEmit(SOCKET_EVENTOS.AcessosUsuarios.obter, { somenteSeConectado: true });
 
-    useSocketEvent<SOCKET_UsuarioContato[]>('updateUsers', (dados) => {
-        setUsuariosContato(dados);
-    });
+    useEffect(() => {
+        console.log(`oi`);
+        console.log(listaAcessosUsuarios);
+
+    }, [listaAcessosUsuarios]);
 
     const { scrollableProps } = useScrollable();
 
@@ -54,29 +32,36 @@ export default function SecaoContatos() {
         <div id={styles.portal_usuario_direita} {...scrollableProps}>
             <div className={styles.secao_contatos}>
                 <div className={styles.recipiente_lista_contatos}>
-                    {usuariosContatoOrdenados.map(usuarioContato => (
-                        <Contato key={usuarioContato.usuario.id} estadoUsuario={usuarioContato} />
+                    {listaAcessosUsuarios.map(acessoUsuario => (
+                        <Contato key={acessoUsuario.usuario.id} acessoUsuario={acessoUsuario} />
                     ))}
                 </div>
             </div>
         </div>
     );
-}
+};
 
-function Contato({ estadoUsuario }: { estadoUsuario: SOCKET_UsuarioContato; }) {
+function Contato({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuario }) {
     return (
-        <div className={`${styles.recipiente_contato} ${!estadoUsuario.conectado ? styles.contato_desconectado : ''}`}>
+        <div className={`${styles.recipiente_contato} ${!acessoUsuario.paginaAtual ? styles.contato_desconectado : ''}`}>
             <div className={styles.recipiente_imagem_contato}>
-                <RecipienteImagem src={estadoUsuario.usuario.customizacao.caminhoAvatar} />
+                <RecipienteImagem src={acessoUsuario.usuario.customizacao.caminhoAvatar} />
             </div>
             <div className={styles.recipiente_informacoes_contato}>
-                <h2>{estadoUsuario.usuario.username}</h2>
+                <h2>{acessoUsuario.usuario.username}</h2>
                 <div className={styles.recipiente_cargos}>
-                    {estadoUsuario.usuario.listaCargos.cargos.map((cargo, index) => (
+                    {acessoUsuario.usuario.listaCargos.cargos.map((cargo, index) => (
                         <span key={index}>{cargo}</span>
                     ))}
                 </div>
+                <div>
+                    {acessoUsuario.paginaAtual ? (
+                        <span>{acessoUsuario.paginaAtual}</span>
+                    ) : (
+                        <span>Desconectado a 5 minutos</span>
+                    )}
+                </div>
             </div>
         </div>
     );
-}
+};

@@ -15,7 +15,7 @@ import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiper
 import { ContextoPerformanceProvider } from 'Contextos/ContextoPerformace/contexto';
 import { ContextoAutenticacaoProvider } from 'Contextos/ContextoAutenticacao/contexto';
 
-import { Cinzel, Cinzel_Decorative, Junge } from 'next/font/google';
+import { Cinzel, Cinzel_Decorative, Junge, B612_Mono } from 'next/font/google';
 
 import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwiperEsquerda.tsx';
 
@@ -36,6 +36,12 @@ const junge = Junge({
   subsets: ['latin'],
   weight: '400',
   variable: '--fonte-junge',
+}); // precisa colocar no :root
+
+const mono = B612_Mono({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--fonte-B612Mono',
 }); // precisa colocar no :root
 
 export const viewport = {

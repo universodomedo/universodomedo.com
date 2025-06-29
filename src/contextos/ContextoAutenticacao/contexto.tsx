@@ -35,7 +35,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
 
     const checkAuth = async () => {
         try {
-            const response = await obtemObjetoAutenticacao();
+            const response = await obtemObjetoAutenticacao('abc');
             setUsuarioLogado(response.usuarioLogado);
             setVariaveisAmbiente(response.variaveisAmbiente);
             setNumeroPendenciasPersonagem(response.pendenciasDePersonagem);
