@@ -2,8 +2,8 @@
 
 import styles from "./styles.module.css";
 import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { PAGINAS } from 'types-nora-api';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
-
 import BarraEstatisticaDanificavel from 'Componentes/ElementosDeJogo/BarraEstatisticaDanificavel/page.tsx';
 import BarraLocaisDeJogo from 'Componentes/ElementosDeJogo/BarraLocaisDeJogo/page.tsx';
 import { ContextoFichaPersonagemProvider, useContextoFichaPersonagem } from "Contextos/ContextoFichaPersonagem/contexto";
@@ -11,7 +11,7 @@ import ControladorSwiperFicha from "Componentes/ElementosDeJogo/ControladorSwipe
 
 export default function PaginaEmJogo() {
     return (
-        <ControladorSlot pageConfig={{ comCabecalho: false, usuarioObrigatorio: false }}>
+        <ControladorSlot pageConfig={{ paginaAtual: null, comCabecalho: false, usuarioObrigatorio: false }}>
             <ContextoFichaPersonagemProvider>
                 <PaginaEmJogo_Slot />
             </ContextoFichaPersonagemProvider>

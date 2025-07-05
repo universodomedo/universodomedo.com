@@ -1,11 +1,12 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { UsuarioDto, VariavelAmbienteDto } from 'types-nora-api';
+import { createContext, useContext, useState } from 'react';
+import { PaginaObjeto, UsuarioDto, VariavelAmbienteDto } from 'types-nora-api';
 import { obtemObjetoAutenticacao } from "Uteis/ApiConsumer/ConsumerMiddleware";
 import getValorVariavelAmbiente from 'Helpers/getValorVariavelAmbiente';
 
 interface ContextoAutenticacaoProps {
+    checkAuth: (paginaAtual?: PaginaObjeto | null) => Promise<void>;
     usuarioLogado: UsuarioDto | null;
     carregando: boolean;
     variaveisAmbiente: VariavelAmbienteDto[];
@@ -33,9 +34,9 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     const ehMestre = estaAutenticado && usuarioLogado?.perfilMestre.id > 1;
     const ehAdmin = estaAutenticado && usuarioLogado?.perfilAdmin.id === 2;
 
-    const checkAuth = async () => {
+    const checkAuth = async (paginaAtual?: PaginaObjeto | null) => {
         try {
-            const response = await obtemObjetoAutenticacao('abc');
+            const response = await obtemObjetoAutenticacao(paginaAtual);
             setUsuarioLogado(response.usuarioLogado);
             setVariaveisAmbiente(response.variaveisAmbiente);
             setNumeroPendenciasPersonagem(response.pendenciasDePersonagem);
@@ -48,14 +49,10 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
         }
     };
 
-    useEffect(() => {
-        checkAuth();
-    }, []);
-
     if (!ehAdmin && getValorVariavelAmbiente(variaveisAmbiente, 'ESTADO_MANUTENCAO')) return (<h1>Estamos em manutenção, entre em contato com a Direção do Universo do Medo</h1>)
 
     return (
-        <ContextoAutenticacao.Provider value={{ usuarioLogado, carregando, variaveisAmbiente, numeroPendenciasPersonagem, estaAutenticado, ehMestre, ehAdmin }}>
+        <ContextoAutenticacao.Provider value={{ checkAuth, usuarioLogado, carregando, variaveisAmbiente, numeroPendenciasPersonagem, estaAutenticado, ehMestre, ehAdmin }}>
             {children}
         </ContextoAutenticacao.Provider>
     );

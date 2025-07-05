@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { SOCKET_AcessoUsuario, SOCKET_EVENTOS } from 'types-nora-api';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
@@ -18,13 +18,6 @@ export default function SecaoContatos() {
     });
 
     useSocketEmit(SOCKET_EVENTOS.AcessosUsuarios.obter);
-    // useSocketEmit(SOCKET_EVENTOS.AcessosUsuarios.obter, { somenteSeConectado: true });
-
-    useEffect(() => {
-        console.log(`oi`);
-        console.log(listaAcessosUsuarios);
-
-    }, [listaAcessosUsuarios]);
 
     const { scrollableProps } = useScrollable();
 
@@ -56,7 +49,7 @@ function Contato({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuario }) {
                 </div>
                 <div>
                     {acessoUsuario.paginaAtual ? (
-                        <span>{acessoUsuario.paginaAtual}</span>
+                        <span>{acessoUsuario.paginaAtual.nome}</span>
                     ) : (
                         <span>Desconectado a 5 minutos</span>
                     )}

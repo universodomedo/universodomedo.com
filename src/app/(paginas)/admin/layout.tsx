@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import Link from 'next/link';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { PAGINAS } from 'types-nora-api';
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
 import { verificarPermissao } from "Helpers/verificarPermissao";
 
@@ -17,7 +18,7 @@ export default function LayoutAdmin({ children }: { children: ReactNode }) {
     if (!usuarioComPermissao) return <Redirecionador urlRedirecionar='/' />;
 
     return (
-        <ControladorSlot pageConfig={{ comCabecalho: false, usuarioObrigatorio: true }}>
+        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.ADMIN, comCabecalho: false, usuarioObrigatorio: true }}>
             <div id={styles.recipiente_pagina_admin}>
                 <Link href={'/admin'}><h1>Páginas ADMIN</h1></Link>
                 <div id={styles.recipiente_conteudo_pagina_admin}>

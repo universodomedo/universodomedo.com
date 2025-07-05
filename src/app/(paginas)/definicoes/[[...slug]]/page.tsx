@@ -1,6 +1,6 @@
 import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { PAGINAS } from 'types-nora-api';
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
-
 import PaginaConteudoDinamico from 'Componentes/Elementos/PaginaConteudoDinamico/page';
 import { obtemDadosPorPaginaDefinicao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
@@ -9,7 +9,7 @@ export default async function PaginaDefinicao({ params }: { params: Promise<{ sl
     const listaSlug = slug || [];
 
     return (
-        <ControladorSlot pageConfig={{ comCabecalho: true, usuarioObrigatorio: false }}>
+        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.DEFINICOES, comCabecalho: true, usuarioObrigatorio: false }}>
             <PaginaDefinicao_Slot listaSlug={listaSlug} />
         </ControladorSlot>
     );

@@ -20,6 +20,7 @@ import { Cinzel, Cinzel_Decorative, Junge, B612_Mono } from 'next/font/google';
 import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwiperEsquerda.tsx';
 
 import { Provider as RadixTooltip } from "@radix-ui/react-tooltip";
+import BackgroundAudio from 'Componentes/Elementos/BackgroundAudio/BackgroundAudio';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <ContextoMenuSwiperEsquerdaProvider>
                 <ConteudoContextualizado>
                   {children}
+                  {/* <BackgroundAudio /> */}
                 </ConteudoContextualizado>
               </ContextoMenuSwiperEsquerdaProvider>
             </RadixTooltip>

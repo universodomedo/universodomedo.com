@@ -1196,7 +1196,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroEvolucaoPorTrocaLivre = this.obtemIdDoRegistroTrocaLivreQueGanhouEssaPatentePericia(pericia, patenteAtual, false);
         if (idRegistroEvolucaoPorTrocaLivre !== null) {
             if (executaAlteracoes) {
-                console.log(`subtraindo ponto livre, revertendo ganho por troca`);
+                // console.log(`subtraindo ponto livre, revertendo ganho por troca`);
                 const registroRemovendo = this.pontosDeTrocaLivre.find(troca => troca.id === idRegistroEvolucaoPorTrocaLivre)!;
 
                 registroRemovendo.periciaGanhou = null;
@@ -1212,7 +1212,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroEvolucaoPorTroca = this.obtemIdDoRegistroTrocaQueGanhouEssaPatentePericia(pericia, patenteAtual);
         if (idRegistroEvolucaoPorTroca !== null) {
             if (executaAlteracoes) {
-                console.log(`subtraindo ponto comum, revertendo ganho por troca`);
+                // console.log(`subtraindo ponto comum, revertendo ganho por troca`);
                 const registroRemovendo = this.pontosDeTroca.find(troca => troca.id === idRegistroEvolucaoPorTroca)!;
 
                 registroRemovendo.periciaGanhou = null;
@@ -1227,7 +1227,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegitrosEvolucaoPorGanho = this.obtemIdDoRegistroGanhoQueGanhouEssaPatentePericia(pericia, patenteAtual);
         if (idRegitrosEvolucaoPorGanho !== null) {
             if (executaAlteracoes) {
-                console.log(`subtraindo ponto comum, revertendo ganho por ganho`);
+                // console.log(`subtraindo ponto comum, revertendo ganho por ganho`);
                 const registroRemovendo = this.pontosDeGanho.find(troca => troca.id === idRegitrosEvolucaoPorGanho)!;
 
                 registroRemovendo.pericia = null;
@@ -1245,7 +1245,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroIniciaTroca = this.obtemIdDoRegistroTrocaQuePodeRealizarRetiradaPatente(patenteAtual);
         if (idRegistroIniciaTroca !== null) {
             if (executaAlteracoes) {
-                console.log(`subtraindo ponto comum, retirando para trocar`);
+                // console.log(`subtraindo ponto comum, retirando para trocar`);
                 const registroRemovendo = this.pontosDeTroca.find(troca => troca.id === idRegistroIniciaTroca)!;
 
                 registroRemovendo.periciaPerdeu = pericia;
@@ -1260,7 +1260,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroIniciaTrocaLivre = this.obtemIdDoRegistroTrocaLivreQuePodeRetirarPatente();
         if (idRegistroIniciaTrocaLivre !== null) {
             if (executaAlteracoes) {
-                console.log(`subtraindo ponto livre, retirando para trocar`);
+                // console.log(`subtraindo ponto livre, retirando para trocar`);
                 const registroRemovendo = this.pontosDeTrocaLivre.find(troca => troca.id === idRegistroIniciaTrocaLivre)!;
 
                 registroRemovendo.periciaPerdeu = pericia;
@@ -1283,7 +1283,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroLivreDesfezTrocaEquivalente = this.obtemIdDoRegistroTrocaLivreTirouPatenteParaGanharDenovo(pericia, patenteAtual);
         if (idRegistroLivreDesfezTrocaEquivalente !== null) {
             if (executaAlteracoes) {
-                console.log(`caso especial! adicionando ponto livre, desfazendo troca pela mesma patente`);
+                // console.log(`caso especial! adicionando ponto livre, desfazendo troca pela mesma patente`);
                 const registroGanhando = this.pontosDeTrocaLivre.find(troca => troca.id === idRegistroLivreDesfezTrocaEquivalente)!;
 
                 registroGanhando.periciaGanhou = pericia;
@@ -1298,7 +1298,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroDesfezTrocaEquivalente = this.obtemIdDoRegistroTrocaTirouPatenteParaGanharDenovo(pericia, patenteAtual);
         if (idRegistroDesfezTrocaEquivalente !== null) {
             if (executaAlteracoes) {
-                console.log(`caso especial! adicionando ponto comum, desfazendo troca pela mesma patente`);
+                // console.log(`caso especial! adicionando ponto comum, desfazendo troca pela mesma patente`);
                 const registroGanhando = this.pontosDeTroca.find(troca => troca.id === idRegistroDesfezTrocaEquivalente)!;
 
                 registroGanhando.periciaGanhou = pericia;
@@ -1313,7 +1313,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroDesfazTrocaLivre = this.obtemIdDoRegistroTrocaLivreParaReveter(pericia, patenteAtual, false);
         if (idRegistroDesfazTrocaLivre !== null) {
             if (executaAlteracoes) {
-                console.log(`adicionando ponto comum, desfazendo troca livre`);
+                // console.log(`adicionando ponto comum, desfazendo troca livre`);
                 const registroGanhando = this.pontosDeTrocaLivre.find(troca => troca.id === idRegistroDesfazTrocaLivre)!;
 
                 registroGanhando.periciaPerdeu = null;
@@ -1331,7 +1331,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroDesfazTroca = this.obtemIdDoRegistroTrocaParaReveter(pericia, patenteAtual);
         if (idRegistroDesfazTroca !== null) {
             if (executaAlteracoes) {
-                console.log(`adicionando ponto comum, desfazendo troca`);
+                // console.log(`adicionando ponto comum, desfazendo troca`);
                 const registroGanhando = this.pontosDeTroca.find(troca => troca.id === idRegistroDesfazTroca)!;
 
                 registroGanhando.periciaPerdeu = null;
@@ -1348,7 +1348,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroFinalizarTroca = this.obtemIdDoRegistroTrocaQuePodeRealizarGanhoDessaPatente(patenteAtual);
         if (idRegistroFinalizarTroca !== null) {
             if (executaAlteracoes) {
-                console.log(`adicionando ponto comum, finalizando troca`);
+                // console.log(`adicionando ponto comum, finalizando troca`);
                 const registroGanhando = this.pontosDeTroca.find(troca => troca.id === idRegistroFinalizarTroca)!;
 
                 registroGanhando.periciaGanhou = pericia;
@@ -1363,7 +1363,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroFinalizarTrocaLivre = this.obtemIdDoRegistroTrocaLivreQuePodeRealizarGanho(patenteAtual, false);
         if (idRegistroFinalizarTrocaLivre !== null) {
             if (executaAlteracoes) {
-                console.log(`adicionando ponto livre, finalizando troca`);
+                // console.log(`adicionando ponto livre, finalizando troca`);
                 const registroGanhando = this.pontosDeTrocaLivre.find(troca => troca.id === idRegistroFinalizarTrocaLivre)!;
 
                 registroGanhando.periciaGanhou = pericia;
@@ -1379,7 +1379,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroGanhoPatente = this.obtemIdDoRegistroGanhoQuePodeRealizarGanhoDessaPatente(patenteAtual);
         if (idRegistroGanhoPatente !== null) {
             if (executaAlteracoes) {
-                console.log(`adicionando ponto comum, ganho`);
+                // console.log(`adicionando ponto comum, ganho`);
                 const registroGanhando = this.pontosDeGanho.find(ganho => ganho.id === idRegistroGanhoPatente)!;
 
                 registroGanhando.pericia = pericia;
@@ -1400,7 +1400,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroTrocaGanha = this.obtemIdDoRegistroTrocaLivreQueGanhouEssaPatentePericia(pericia, patenteAtual, true);
         if (idRegistroTrocaGanha !== null) {
             if (executaAlteracoes) {
-                console.log(`subtraindo ponto livre, revertendo ganho por troca`);
+                // console.log(`subtraindo ponto livre, revertendo ganho por troca`);
                 const registroRemovendo = this.pontosDeTrocaLivre.find(trocaLivre => trocaLivre.id === idRegistroTrocaGanha)!;
 
                 registroRemovendo.periciaGanhou = null;
@@ -1417,7 +1417,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
             const idRegitroTrocaLivre = this.obtemIdDoRegistroTrocaLivreQuePodeRetirarPatente();
             if (idRegitroTrocaLivre !== null) {
                 if (executaAlteracoes) {
-                    console.log(`subtraindo ponto livre, iniciando troca de Perícia Livre`);
+                    // console.log(`subtraindo ponto livre, iniciando troca de Perícia Livre`);
                     const registroRemovendo = this.pontosDeTrocaLivre.find(trocaLivre => trocaLivre.id === idRegitroTrocaLivre)!;
 
                     registroRemovendo.periciaPerdeu = pericia;
@@ -1434,7 +1434,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegitroEvolucaoPorGanho = this.obtemIdDoRegistroGanhoLivreQueGanhouEssaPatentePericia(pericia, patenteAtual);
         if (idRegitroEvolucaoPorGanho !== null) {
             if (executaAlteracoes) {
-                console.log(`subtraindo ponto livre, revertendo ganho por ganho livre`);
+                // console.log(`subtraindo ponto livre, revertendo ganho por ganho livre`);
                 const registroRemovendo = this.pontosDeGanhoLivre.find(troca => troca.id === idRegitroEvolucaoPorGanho)!;
 
                 registroRemovendo.pericia = null;
@@ -1458,7 +1458,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroTrocaEmAndamento = this.obtemIdDoRegistroTrocaLivreParaReveter(pericia, patenteAtual, true);
         if (idRegistroTrocaEmAndamento !== null) {
             if (executaAlteracoes) {
-                console.log(`adicionando ponto livre, revertendo troca`);
+                // console.log(`adicionando ponto livre, revertendo troca`);
                 const registroGanhando = this.pontosDeTrocaLivre.find(trocaLivre => trocaLivre.id === idRegistroTrocaEmAndamento)!;
 
                 registroGanhando.periciaPerdeu = null;
@@ -1478,7 +1478,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroTrocaParaGanhar = this.obtemIdDoRegistroTrocaLivreQuePodeRealizarGanho(patenteAtual, true);
         if (idRegistroTrocaParaGanhar !== null) {
             if (executaAlteracoes) {
-                console.log(`adicionando ponto livre, ganhando troca`);
+                // console.log(`adicionando ponto livre, ganhando troca`);
                 const registroGanhando = this.pontosDeTrocaLivre.find(trocaLivre => trocaLivre.id === idRegistroTrocaParaGanhar)!;
 
                 registroGanhando.periciaGanhou = pericia;
@@ -1493,7 +1493,7 @@ export class EtapaGanhoEvolucao_Pericias extends EtapaGanhoEvolucao {
         const idRegistroGanhoLivre = this.obtemIdDoRegistroGanhoLivreQuePodeRealizarGanho();
         if (idRegistroGanhoLivre !== null) {
             if (executaAlteracoes) {
-                console.log(`adicionando ponto livre, ganho`);
+                // console.log(`adicionando ponto livre, ganho`);
                 const registroGanhando = this.pontosDeGanhoLivre.find(ganhoLivre => ganhoLivre.id === idRegistroGanhoLivre)!;
 
                 registroGanhando.pericia = pericia;

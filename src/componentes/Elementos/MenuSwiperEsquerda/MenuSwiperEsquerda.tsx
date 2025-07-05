@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 import { ReactNode } from 'react';
 
 import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
-import { desconectar } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
+import { desconectar, obtemObjetoAutenticacao } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
 import Link from 'next/link';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -36,7 +36,8 @@ function ConteudoSwiperEsquerda() {
     const { estaAutenticado, ehMestre, ehAdmin, numeroPendenciasPersonagem } = useContextoAutenticacao();
     const { animacoesLigadas, setAnimacoesHabilitadas } = useContextoPerformance();
 
-    function logout() {
+    async function logout() {
+        await obtemObjetoAutenticacao();
         desconectar();
         window.location.href = `/`;
     }

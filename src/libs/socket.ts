@@ -11,13 +11,13 @@ export const getSocket = (): Socket => {
             transports: ['websocket'],
         });
 
-        socket.on("connect", () => {
-            console.log("[socket] conectado:", socket?.id);
-        });
+        // socket.on("connect", () => {
+        //     console.log("[socket] conectado:", socket?.id);
+        // });
 
-        socket.on("disconnect", () => {
-            console.log("[socket] desconectado");
-        });
+        // socket.on("disconnect", () => {
+        //     console.log("[socket] desconectado");
+        // });
     }
 
     return socket;

@@ -2,6 +2,7 @@
 
 import styles from './styles.module.css';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { PAGINAS } from 'types-nora-api';
 
 import Image from 'next/image';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,7 +10,7 @@ import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 
 export default function PaginaAcessar() {
     return (
-        <ControladorSlot pageConfig={{ comCabecalho: false, usuarioObrigatorio: false }}>
+        <ControladorSlot pageConfig={{ paginaAtual: null, comCabecalho: false, usuarioObrigatorio: false }}>
             <PaginaComSlot />
         </ControladorSlot>
     );
