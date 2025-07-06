@@ -10,7 +10,7 @@ import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 
 export default function PaginaAcessar() {
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: null, comCabecalho: false, usuarioObrigatorio: false }}>
+        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.VAZIA, comCabecalho: false, usuarioObrigatorio: false }}>
             <PaginaComSlot />
         </ControladorSlot>
     );

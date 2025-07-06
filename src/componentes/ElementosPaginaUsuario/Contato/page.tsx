@@ -9,12 +9,15 @@ import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useSc
 
 import { useSocketEvent } from 'Hooks/useSocketEvent';
 import { useSocketEmit } from 'Hooks/useSocketEmit';
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 export default function SecaoContatos() {
+    const { usuarioLogado } = useContextoAutenticacao();
+    
     const [listaAcessosUsuarios, setListaAcessosUsuarios] = useState<SOCKET_AcessoUsuario[]>([]);
 
     useSocketEvent(SOCKET_EVENTOS.AcessosUsuarios.receber, (dados: SOCKET_AcessoUsuario[]) => {
-        setListaAcessosUsuarios(dados);
+        setListaAcessosUsuarios(dados.filter(acesso => acesso.usuario.id !== usuarioLogado?.id));
     });
 
     useSocketEmit(SOCKET_EVENTOS.AcessosUsuarios.obter);
@@ -51,7 +54,7 @@ function Contato({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuario }) {
                     {acessoUsuario.paginaAtual ? (
                         <span>{acessoUsuario.paginaAtual.nome}</span>
                     ) : (
-                        <span>Desconectado a 5 minutos</span>
+                        <span>Desconectado</span>
                     )}
                 </div>
             </div>

@@ -1,48 +1,38 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useEffect, useState } from 'react';
-import { getSocket } from 'Libs/socket.ts';
+import { useState } from 'react';
 
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
+import { useSocketEvent } from 'Hooks/useSocketEvent';
+import { SOCKET_EVENTOS } from 'types-nora-api';
+import { emitSocketEvent } from 'Libs/emitSocketEvent';
 
 export default function SecaoPosts() {
-    const [messages, setMessages] = useState<string[]>([]);  // Use an array to store messages
-    const [newMessage, setNewMessage] = useState<string>('');  // State to store the new message input
+    const [messages, setMessages] = useState<string[]>([]);
+    const [newMessage, setNewMessage] = useState<string>('');
 
-    useEffect(() => {
-        const socket = getSocket();
-
-        socket.on('message', (data) => {
-            console.log('Received:', data);
-            setMessages((prevMessages) => [data, ...prevMessages]);  // Prepend new message to the array
-        });
-
-        return () => {
-            socket.off('message');
-        };
-    }, []);
+    useSocketEvent<string>(SOCKET_EVENTOS.Chat.receberMensagem, (mensagem) => {
+        setMessages((prev) => [mensagem, ...prev]);
+    });
 
     const sendMessage = () => {
-        const socket = getSocket();
-
+        console.log(`sendMessage`);
+        console.log(newMessage);
         if (newMessage.trim()) {
-            socket.emit('message', newMessage);  // Send the new message to the server
-            setNewMessage('');  // Clear the input field
-            console.log('Message sent!');
-        }
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            sendMessage();  // Trigger the message send when Enter key is pressed
+            emitSocketEvent(SOCKET_EVENTOS.Chat.enviaMensagem, newMessage);
+            setNewMessage('');
         }
     };
 
     const enviaTesteAcao = () => {
-        const socket = getSocket();
+        emitSocketEvent(SOCKET_EVENTOS.Chat.enviaTeste);
+    };
 
-        socket.emit('message-d20');
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
     };
 
     const { scrollableProps } = useScrollable();

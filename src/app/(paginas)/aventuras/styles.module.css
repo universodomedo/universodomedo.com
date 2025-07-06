@@ -28,22 +28,19 @@
     border-radius: 1vw;
 }
 
-#recipiente_cabecalho_aventura_selecionada {
-    display: flex;
-    flex-direction: row;
-    height: 24%;
-    padding: 1% 2%;
-}
-
-#recipiente_capa_cabecalho_aventura_selecionada {
-    position: relative;
-    aspect-ratio: 16 / 9;
-}
-
 #recipiente_corpo_aventura_selecionada {
     display: flex;
     flex-direction: column;
-    height: 76%;
+    align-items: center;
+    padding: 1% 2%;
+}
+
+#recipiente_capa_aventura_selecionada {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 50%;
+    border-radius: 20px;
+    overflow: hidden;
 }
 
 #recipiente_personagens_participantes {

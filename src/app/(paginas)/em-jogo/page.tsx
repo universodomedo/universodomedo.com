@@ -11,7 +11,7 @@ import ControladorSwiperFicha from "Componentes/ElementosDeJogo/ControladorSwipe
 
 export default function PaginaEmJogo() {
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: null, comCabecalho: false, usuarioObrigatorio: false }}>
+        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.VAZIA, comCabecalho: false, usuarioObrigatorio: false }}>
             <ContextoFichaPersonagemProvider>
                 <PaginaEmJogo_Slot />
             </ContextoFichaPersonagemProvider>

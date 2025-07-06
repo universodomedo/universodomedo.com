@@ -1,7 +1,7 @@
 'use client';
 
 import styles from './styles.module.css';
-import { AventuraDto } from "types-nora-api";
+import { AventuraDto, AventuraEstado } from "types-nora-api";
 
 import { obtemAventuraCompleta } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 import { useContextoPaginaAventura } from 'Contextos/ContextoPaginaAventura/contexto.tsx';
@@ -30,47 +30,54 @@ export function SecaoCorpoAventuras({ dadosAventuras }: { dadosAventuras: Aventu
         <div id={styles.recipiente_corpo_aventuras}>
             {aventuraSelecionada !== undefined ? (
                 <div id={styles.recipiente_aventura_selecionada}>
-                    <div id={styles.recipiente_cabecalho_aventura_selecionada}>
-                        <div id={styles.recipiente_capa_cabecalho_aventura_selecionada}>
+                    <div id={styles.recipiente_corpo_aventura_selecionada}>
+                        <h1>{aventuraSelecionada.titulo}</h1>
+                        <div id={styles.recipiente_capa_aventura_selecionada}>
                             <RecipienteImagem src={aventuraSelecionada.imagemCapa?.fullPath} />
                         </div>
-                        <div>
-                            <h1>{aventuraSelecionada.titulo}</h1>
+                        <div id={styles.recipiente_grupo_aventura_selecionada}>
+                            {aventuraSelecionada.gruposAventura?.map(grupo => (
+                                <React.Fragment key={grupo.id}>
+                                    <h1>{grupo.nome}</h1>
+                                    <div id={styles.recipiente_personagens_participantes}>
+                                        {grupo.personagensDaAventura?.map((personagensDaAventura, index) => (
+                                            <div key={index} className={styles.recipiente_imagem_personagem_participante}>
+                                                <RecipienteImagem key={personagensDaAventura.personagem.id} src={personagensDaAventura.personagem.imagemAvatar?.fullPath} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </React.Fragment>
+                            ))}
                         </div>
-                    </div>
-                    <div id={styles.recipiente_corpo_aventura_selecionada}>
-                        {aventuraSelecionada.gruposAventura?.map(grupo => (
-                            <React.Fragment key={grupo.id}>
-                                <h1>{grupo.nome}</h1>
-                                <div id={styles.recipiente_personagens_participantes}>
-                                    {grupo.personagensDaAventura?.map((personagensDaAventura, index) => (
-                                        <div key={index} className={styles.recipiente_imagem_personagem_participante}>
-                                            <RecipienteImagem key={personagensDaAventura.personagem.id} src={personagensDaAventura.personagem.imagemAvatar?.fullPath} />
-                                        </div>
-                                    ))}
-                                </div>
-                            </React.Fragment>
-                        ))}
                     </div>
                 </div>
             ) : (
                 <div id={styles.recipiente_aventura_selecionada}>
-                    <div id={styles.recipiente_cabecalho_aventura_selecionada}>
-                        <div id={styles.recipiente_capa_cabecalho_aventura_selecionada}>
+                    <div id={styles.recipiente_corpo_aventura_selecionada}>
+                        <div id={styles.recipiente_capa_aventura_selecionada}>
                             <RecipienteImagem src={''} />
                         </div>
                         <div>
                             <h1>Apenas uma Prece</h1>
                         </div>
                     </div>
-                    <div id={styles.recipiente_corpo_aventura_selecionada}>
-
-                    </div>
                 </div>
             )}
 
             <div id={styles.recipiente_menu_aventuras}>
-                {dadosAventuras.map((aventura, index) => (
+                {dadosAventuras.filter(aventura => aventura.estadoAtual === AventuraEstado.EM_ANDAMENTO).sort((a, b) => new Date(a.dataCriacao).getTime() - new Date(b.dataCriacao).getTime()).map((aventura, index) => (
+                    <div key={index} className={styles.recipiente_item_menu_aventuras} onClick={() => { selecionaAventura(aventura.id) }}>
+                        <div className={styles.recipiente_imagem_aventura_item_menu}>
+                            <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
+                        </div>
+                        <div className={styles.recipiente_dados_aventura}>
+                            <h3>{aventura.titulo}</h3>
+                            <h3>{aventura.estadoAtual}</h3>
+                        </div>
+                    </div>
+                ))}
+                <hr />
+                {dadosAventuras.filter(aventura => aventura.estadoAtual === AventuraEstado.FINALIZADA).sort((a, b) => new Date(b.dataFimAventura ?? 0).getTime() - new Date(a.dataFimAventura ?? 0).getTime()).map((aventura, index) => (
                     <div key={index} className={styles.recipiente_item_menu_aventuras} onClick={() => { selecionaAventura(aventura.id) }}>
                         <div className={styles.recipiente_imagem_aventura_item_menu}>
                             <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
