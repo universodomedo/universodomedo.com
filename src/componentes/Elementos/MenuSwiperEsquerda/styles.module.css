@@ -1,0 +1,229 @@
+#overlay_swiper_esquerda {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.65);
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 6);
+}
+
+#swiper_esquerda {
+    position: fixed;
+    left: -21vw;
+    color: white;
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(-1.1vw);
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 1);
+    font-family: var(--fonte-junge) !important;
+}
+
+#swiper_esquerda.aberto {
+    transform: translateX(20vw);
+}
+
+.recipiente_botao_swiper_esquerda {
+    position: absolute;
+    height: 8.18vh;
+    top: 13vh;
+    cursor: pointer;
+    transition: right 0.3s ease-in-out;
+    will-change: right;
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 4);
+}
+
+.recipiente_botao_swiper_esquerda.tamanho_reduzido {
+    right: -1.5vw;
+}
+
+.recipiente_botao_swiper_esquerda, .recipiente_botao_swiper_esquerda.tamanho_reduzido:hover {
+    right: -4vw;
+}
+
+#fundo_camada_1, #fundo_camada_2, #fundo_camada_3 {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    pointer-events: none;
+}
+
+#fundo_camada_1 {
+    background-image: url('/imagensFigma/swiper-esquerda-fundo-camada-1.svg');
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 5);
+}
+
+#fundo_camada_2 {
+    background-image: url('/imagensFigma/swiper-esquerda-fundo-camada-2.svg');
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 3);
+}
+
+#fundo_camada_3 {
+    background-image: url('/imagensFigma/swiper-esquerda-fundo-camada-3.svg');
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 2);
+}
+
+
+.recipiente_conteudo_swiper_esquerda {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 22vw;
+}
+
+.conteudo_swiper_esquerda {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 5% 20% 13% 8%;
+    z-index: calc(var(--zindex-final-swiperEsquerda) - 0);
+}
+
+#recipiente_moldura_superior {
+    position: relative;
+    top: 0;
+    width: 100%;
+}
+
+#recipiente_moldura_inferior {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    transform: scaleY(-1);
+}
+
+#recipiente_lista_menu {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+    margin: 3% 2% 0 8%;
+    gap: 2%;
+    align-items: center;
+    font-size: 1.6vh;
+}
+
+.recipiente_configuracao_individual {
+    cursor: pointer;
+}
+
+#recipiente_lista_menu a, .recipiente_configuracao_individual > svg {
+    text-decoration: none;
+    color: inherit;
+}
+
+#recipiente_lista_menu a:hover, .recipiente_configuracao_individual > svg:hover {
+    color: rgb(185, 252, 230);
+}
+
+.recipiente_logo_swiper_esquerda {
+    width: 85%;
+    margin: 0 5% 10% 0;
+}
+
+#recipiente_lista {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1 0 0;
+    gap: 1vh;
+}
+
+#recipiente_icones_swiper_esquerda {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 0;
+    width: 78%;
+    margin-right: 5%;
+    align-items: center;
+    gap: 2vh;
+}
+
+#recipiente_configuracoes {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 10%;
+    height: 5vh;
+    justify-content: center;
+}
+
+.recipiente_configuracao_individual {
+    height: 100%;
+    aspect-ratio: 1;
+}
+
+.recipiente_configuracao_individual a {
+    display: flex;
+    height: 100%;
+}
+
+#recipiente_icones_redes_sociais {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 5%;
+}
+
+#recipiente_icones_redes_sociais a {
+    flex: 1;
+}
+
+#recipiente_icones_redes_sociais svg {
+    width: 100%;
+    height: 100%;
+}
+
+.recipiente_icone_link {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.item_menu {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.conteudo_item_menu {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.conteudo_item_menu h3 {
+    font-family: var(--fonte-junge);
+}
+
+.item_menu:hover .recipiente_icone_link {
+    transform: translateX(-25%);
+}
+
+.recipiente_item_menu_com_pendencia {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    flex: 1;
+    gap: .6em;
+}
+
+.numero_pendencias {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: red;
+    height: 100%;
+    aspect-ratio: 1;
+    font-family: sans-serif;
+    font-size: 83%;
+}

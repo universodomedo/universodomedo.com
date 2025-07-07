@@ -1,0 +1,52 @@
+#recipiente_fichas_pendentes {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
+.recipiente_informacoes_ficha {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+}
+
+.recipiente_avatar_informacoes_ficha_pendencia {
+    position: relative;
+    height: 10vh;
+    aspect-ratio: 1;
+}
+
+.recipiente_pendencias_ficha {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    justify-content: space-evenly;
+    flex: 1 0 0;
+}
+
+.pendencia_usuario {
+    color: rgb(255, 220, 65);
+}
+
+.pendencia_administrador {
+    color: rgb(160, 38, 34);
+}
+
+.recipiente_acoes_ficha {
+    display: flex;
+    width: 8vw;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.recipiente_icone_acao {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    width: 20%;
+    cursor: pointer;
+}
+
+.recipiente_icone_acao:hover {
+    color: #ABF0FF;
+}

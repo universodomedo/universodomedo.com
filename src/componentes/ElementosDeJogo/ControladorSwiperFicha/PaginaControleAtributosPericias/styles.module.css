@@ -1,0 +1,107 @@
+
+.atributos_personagem, .atributos_personagem button {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    /* font-variant: small-caps; */
+    gap: 1vh;
+    flex: 1;
+    justify-content: space-around;
+}
+
+.atributo_personagem {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    text-align: center;
+}
+
+.atributo_personagem button {
+    padding: .15vh .32vw;
+}
+
+.nome_atributo {
+    display: inline-block;
+    margin: 0 auto;
+    font-size: 1.8rem;
+    width: fit-content;
+}
+
+.atributo_personagem.AGI button {
+    color: #3E9D15;
+    border: #2F7810 3px solid;
+}
+
+.atributo_personagem.AGI button:hover {
+    background-color: #7EED57;
+}
+
+.atributo_personagem.FOR button {
+    color: #4d2a2a;
+    border: #822f2f 3px solid;
+}
+
+.atributo_personagem.FOR button:hover {
+    background-color: #dc5656;
+}
+
+.atributo_personagem.INT button {
+    color: #1b478b;
+    border: #537cbc 3px solid;
+}
+
+.atributo_personagem.INT button:hover {
+    background-color: #2d70d8;
+}
+
+.atributo_personagem.PRE button {
+    color: #991fe0;
+    border: #5b3bba 3px solid;
+}
+
+.atributo_personagem.PRE button:hover {
+    background-color: #ad63bf;
+}
+
+.atributo_personagem.VIG button {
+    color: #656325;
+    border: #625325 3px solid;
+}
+
+.atributo_personagem.VIG button:hover {
+    background-color: #f3f434;
+}
+
+.pericias_personagem {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    row-gap: .2vh;
+}
+
+.pericia_personagem > button {
+    background-color: white;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.pericia_personagem {
+    margin: 0 .4vw;
+}
+
+/* .pericia_personagem * { */
+.pericia_valor {
+    margin: 0;
+}
+
+.toogle_abreviar[data-state="on"] {
+	background-color: orange;
+	color: purple;
+}
+
+.botao_pericia {
+    font-size: 1.1rem;
+}

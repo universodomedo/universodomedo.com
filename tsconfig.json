@@ -1,26 +1,37 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
-    "paths": { // para adicionar novos paths, tem que adicionar no tsconfig.json e no vite.config.ts
-      "@consumer/*": ["ApiConsumer/*"],
-      "@components/*": ["Components/*"],
-      "@layouts/*": ["Layouts/*"],
-      "@pages/*": ["Pages/*"],
-      "@types/*": ["Types/*"],
-      "@redux/*": ["Redux/*"],
+    "baseUrl": "./src",
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "App/*": ["app/*"],
+      "Componentes/*": ["componentes/*"],
+      "Contextos/*": ["contextos/*"],
+      "Helpers/*": ["helpers/*"],
+      "Hooks/*": ["hooks/*"],
+      "Layouts/*": ["layouts/*"],
+      "Libs/*": ["libs/*"],
+      "Uteis/*": ["uteis/*"]
     },
     "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "esModuleInterop": true,
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "commonjs",
-    "strict": true,
-    "traceResolution": true,
-    "types": ["node"],
-    "skipLibCheck": true,
-    "typeRoots": ["./node_modules/@types", "./src"]
   },
-  "include": ["src/**/*"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/componentes/Elementos/Redirecionador"],
+  "exclude": ["node_modules"]
 }

@@ -1,0 +1,18 @@
+#portal_usuario {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    margin: .6%;
+    gap: 1vw;
+    overflow: hidden;
+}
+
+#portal_usuario_esquerda {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: .82;
+    width: 0;
+    gap: 2vh;
+}

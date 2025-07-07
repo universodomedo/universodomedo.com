@@ -1,0 +1,156 @@
+.modal_container button, .modal_container fieldset, .modal_container input {
+    all: unset;
+}
+
+.dialog_overlay {
+	background-color: rgba(0, 0, 0, 0.7);
+	position: fixed;
+	inset: 0;
+	animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+	z-index: calc(var(--zindex-final-modal) - 1);
+}
+
+.dialog_conteudo {
+    display: flex;
+    flex-direction: column;
+	
+	background-color: white;
+	border-radius: 6px;
+	box-shadow:
+		hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+		hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 34vw;
+	transform: translate(-50%, -50%);
+	max-height: 85vh;
+	animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+
+	gap: 1vh;
+
+    aspect-ratio: 1 / 1.2;
+
+	z-index: calc(var(--zindex-final-modal) - 0);
+	padding: 1% 0 1% 1%;
+
+	overflow-y: auto;
+	scrollbar-gutter: stable;
+}
+
+.dialog_conteudo:focus { outline: none; }
+
+.dialog_titulo {
+    margin: 0 auto;
+	font-weight: 500;
+	color: #211F26;
+	font-size: 2rem;
+    line-height: 1;
+}
+
+.dialog_botao_fechar:hover { background-color: '#EBE4FF'; }
+.dialog_botao_fechar:focus { box-shadow: 0 0 0 2px '#C2B5F5'; }
+
+@keyframes overlayShow {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes contentShow {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -48%) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}
+
+.Button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	padding: 0 15px;
+	font-size: 15px;
+	line-height: 1;
+	font-weight: 500;
+	height: 35px;
+}
+.Button.violet {
+	background-color: white;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+.Button.violet:hover {
+	background-color: '#F2EFF3';
+}
+.Button.violet:focus {
+	box-shadow: 0 0 0 2px black;
+}
+.Button.green {
+	background-color: '#D6F1DF';
+	color: '#218358';
+}
+.Button.green:hover {
+	background-color: '#C4E8D1';
+}
+.Button.green:focus {
+	box-shadow: 0 0 0 2px '#8ECEAA';
+}
+
+.dialog_conteudo_corpo {
+	display: flex;
+	flex-direction: column;
+	gap: .4vh;
+	flex: 1 0 0;
+	padding: 0 1%;
+}
+
+.dialog_rodape {
+	display: flex;
+	flex-direction: row;
+	flex: 0 0 0;
+	justify-content: center;
+	gap: 5%;
+}
+
+.dialog_rodape button {
+	padding: 2%;
+}
+
+/* .Fieldset {
+	display: flex;
+	gap: 20px;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.Label {
+	font-size: 15px;
+	color: '#6550B9';
+	width: 90px;
+	text-align: right;
+}
+
+.Input {
+	width: 100%;
+	flex: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 4px;
+	padding: 0 10px;
+	font-size: 15px;
+	line-height: 1;
+	color: '#6550B9';
+	box-shadow: 0 0 0 1px '#C2B5F5';
+	height: 35px;
+}
+.Input:focus {
+	box-shadow: 0 0 0 2px '#AA99EC';
+} */

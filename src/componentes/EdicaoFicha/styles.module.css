@@ -1,0 +1,303 @@
+#recipiente_pagina_edicao {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 2% 10%;
+    align-items: center;
+    text-align: center;
+    gap: 5vh;
+    font-size: 1.3rem;
+    font-family: var(--fonte-cinzel);
+}
+
+#recipiente_cabecalho_evolucao {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.recipiente_informacoes_secao_etapa_evolucao {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: .4vh;
+    /* width: 100%; */
+}
+
+.recipiente_informacoes_secao_etapa_evolucao.etapa_com_divisoes {
+    gap: 1.3vh;
+}
+
+.recipiente_informacoes_secao_etapa_evolucao {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: .4vh;
+}
+
+.recipiente_informacoes_secao_etapa_evolucao p, .recipiente_informacoes_secao_etapa_evolucao h4 {
+    text-align: center;
+}
+
+#recipiente_conteudo_edicao {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    gap: 3vh;
+}
+
+#recipiente_etapa_edicao {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-y: auto;
+    gap: 2vh;
+    flex: 1 0 0;
+}
+
+#rodape_edicao {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex: 0 0 0;
+    gap: 2vw;
+}
+
+#rodape_edicao button {
+    padding: .5rem;
+}
+
+.prosseguir, .recipiente_botao_desabilitado {
+    width: 6%;
+    height: 4vh;
+}
+
+.recipiente_botao_desabilitado button {
+    width: 100%;
+    height: 100%;
+}
+
+.atributos {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 4vh;
+    width: 80%;
+    margin: auto;
+}
+
+.corpo_atributo {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    flex: 0 1 calc(33%);
+    align-items: center;
+}
+
+.nome_atributo {
+    margin: 0;
+    line-height: .8;
+    font-size: 1.3em;
+}
+
+.valor_atributo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    gap: 1.7rem;
+}
+
+.editando_ficha_estatisticas {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+    margin: auto;
+    width: 100%;
+    justify-content: center;
+}
+
+.editando_ficha_estatisticas.tira_margem {
+    margin: 0;
+}
+
+.visualizador_estatistica {
+    display: flex;
+    flex-direction: column;
+    gap: .6vh;
+    padding: 1%;
+    align-items: center;
+}
+
+.recipiente_botao_edicao {
+    display: flex;
+    height: 1.6rem;
+}
+
+.recipiente_botao_edicao button {
+    height: 100%;
+    padding: .3rem;
+}
+
+.editando_ficha_pericias {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 2vh;
+}
+
+.patente_contadores {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.patente_contadores h1 {
+    margin: 0;
+}
+
+.atributos_e_pericias {
+    display: flex;
+    flex-direction: column;
+    gap: 4.6vh;
+    width: 100%;
+    margin: auto;
+}
+
+.atributo_agrupa_pericias {
+    display: flex;
+    flex-direction: column;
+    gap: .6vh;
+}
+
+.nome_atributo_agrupa_pericias {
+    margin: auto;
+}
+
+.conjunto_pericias {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    row-gap: 2vh;
+}
+
+.editar_pericia {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0 5%;
+    row-gap: 2vh;
+    justify-content: center;
+}
+
+.corpo_pericia {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 calc(14%);
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    gap: .3vh;
+}
+
+.recipiente_conteudo_gatilho_tooltip_patente {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+}
+
+.simbolo_aviso_pericia_livre {
+    position: absolute;
+    left: 100%;
+    margin-left: .6rem;
+    color: #E34E4E;
+}
+
+.nome_pericia, .patente_pericia {
+    margin: 0;
+}
+
+.botoes_pericia {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+}
+
+.botoes_pericia_livre {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+}
+
+.botoes_pericia_livre h3 {
+    margin: auto;
+}
+
+.recipiente_elementos_etapa {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    width: 100%;
+    gap: .4vh;
+}
+
+#recipiente_resumo_inicial, #recipiente_resumo_final {
+    display: flex;
+    flex-direction: column;
+    gap: 5vh;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.recipiente_resumo_inicial_etapa, .recipiente_resumo_final_etapa {
+    flex-direction: column;
+    gap: 2vh;
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.recipiente_resumo_inicial_etapa h2, .recipiente_resumo_final_etapa h2 {
+    width: fit-content;
+}
+
+.resumo_final_subtipo {
+    margin-left: 3%;
+}
+
+#recipiente_pagina_selecao_classe {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 2vh;
+    align-items: center;
+    overflow: hidden;
+}
+
+.recipiente_descricao_classe {
+    flex: 0 0 0;
+}
+
+.aviso_resumo_final {
+    color: var(--cor-aviso);
+}
+
+.botao_usando_pericia_livre {
+    color: red;
+}
+
+.cor_aviso {
+    color: var(--cor-aviso) !important;
+}
+
+.cor_confirmacao {
+    color: var(--cor-confirmacao) !important;
+}

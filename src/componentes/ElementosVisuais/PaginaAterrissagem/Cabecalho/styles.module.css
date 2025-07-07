@@ -1,0 +1,56 @@
+#cabecalho {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    width: 90%;
+    height: 13vh;
+}
+
+#cabecalho_esquerda {
+    display: flex;
+    flex-direction: row;
+    flex: .15;
+    height: 100%;
+}
+
+#recipiente_logo {
+    display: flex;
+    position: relative;
+    flex: 1;
+    align-items: center;
+    margin: 6%;
+}
+
+#recipiente_logo a {
+    width: 100%;
+}
+
+#cabecalho_direita {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    align-items: center;
+    height: 100%;
+}
+
+#cabecalho_direita_linha {
+    display: flex;
+    position: relative;
+    flex: 1;
+    height: 100%;
+    align-items: center;
+}
+
+#cabecalho_direita_acesso {
+    display: flex;
+    position: relative;
+    flex: .23;
+    height: 100%;
+    align-items: center;
+}
+
+#recipiente_linha_cabecalho {
+    position: absolute;
+    width: 100.5%;
+    height: 100%;
+}

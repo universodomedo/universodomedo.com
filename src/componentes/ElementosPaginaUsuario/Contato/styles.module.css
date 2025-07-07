@@ -1,0 +1,125 @@
+#portal_usuario_direita {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: .18 0 0;
+    gap: 2vh;
+    overflow: auto;
+}
+
+.secao_contatos {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: .4vh .2vw;
+    border-radius: .7vw;
+    backdrop-filter: contrast(.95);
+}
+
+.recipiente_lista_contatos {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    gap: 1vh;
+}
+
+.ficha_existente {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    align-items: center;
+}
+
+.acesso_ficha_existente, .acesso_ficha_nova {
+    display: flex;
+    flex-direction: row;
+    border: 2px white solid;
+    border-radius: 5px;
+    gap: 1vw;
+    cursor: pointer;
+    padding: 1vh .6vw;
+}
+
+.ficha_nome, .acesso_ficha_nova {
+    font-size: 2rem;
+}
+
+.ficha_pendente > .acesso_ficha_existente {
+    color: rgb(173, 173, 173);
+    border: 2px red solid;
+}
+
+.acesso_ficha_existente:hover, .acesso_ficha_nova:hover {
+    border: 2px rgb(120, 183, 255) solid;
+    background-color: rgb(42, 55, 58);
+}
+
+.ficha_pendente > .acesso_ficha_existente:hover {
+    border: 2px rgb(185, 53, 53) solid;
+    background-color: rgb(100, 50, 50);
+}
+
+.ficha_detalhes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ficha_acoes {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+}
+
+.ficha_acoes_coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 1.8vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.icones_ficha {
+    cursor: pointer;
+}
+
+.modal_criacao_ficha {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
+/*  */
+
+.recipiente_contato {
+    display: flex;
+    flex-direction: row;
+    height: 7.3rem;
+    position: relative;
+    gap: 1vw;
+}
+
+.recipiente_imagem_contato {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.contato_desconectado img {
+    filter: brightness(0.2);
+}
+
+.recipiente_informacoes_contato {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    padding: .6rem 0;
+}
+
+.recipiente_cargos {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}

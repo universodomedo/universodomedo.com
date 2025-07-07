@@ -1,0 +1,45 @@
+.texto_glitado {
+    white-space: nowrap;
+}
+
+/* Efeito de glitch */
+@keyframes glitch {
+    0% { opacity: 1; transform: translateX(0); }
+    50% { opacity: 0.7; transform: translateX(1px) rotate(1deg); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+.letra_glitada {
+    display: inline-block;
+    animation: glitch 0.3s infinite alternate ease-in-out;
+}
+
+@keyframes shake {
+    0%   { transform: translate(0, 0); }
+    10%  { transform: translate(-0.5px, 0.5px); }
+    20%  { transform: translate(0.5px, -0.5px); }
+    30%  { transform: translate(-1px, 1px); }
+    40%  { transform: translate(1px, -1px); }
+    50%  { transform: translate(-1.5px, 1.5px) rotate(0.5deg); } /* ápice: vibração rápida */
+    55%  { transform: translate(1.5px, -1.5px) rotate(-0.5deg); }
+    60%  { transform: translate(-1px, 1px); }
+    70%  { transform: translate(1px, -1px); }
+    80%  { transform: translate(-0.5px, 0.5px); }
+    90%  { transform: translate(0.5px, -0.5px); }
+    100% { transform: translate(0, 0); } /* volta ao normal */
+}
+
+.letra_shake {
+    display: inline-block;
+    animation: shake 0.4s ease-in-out; /* Acelera no começo, super rápido no meio e desacelera no final */
+}
+
+@keyframes sombraVerde {
+    0%   { text-shadow: 0 0 3px rgba(0, 255, 0, 0.5); }
+    50%  { text-shadow: 0 0 6px rgba(0, 255, 0, 0.8); }
+    100% { text-shadow: 0 0 3px rgba(0, 255, 0, 0.5); }
+}
+
+.letra_sombra {
+    animation: sombraVerde 1.5s infinite alternate ease-in-out;
+}
