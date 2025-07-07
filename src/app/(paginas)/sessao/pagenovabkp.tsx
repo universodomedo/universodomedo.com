@@ -1,45 +1,29 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useEffect, useState } from "react";
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-import { PAGINAS, SessaoDto } from 'types-nora-api';
-import { useContextoPerformance } from "Contextos/ContextoPerformace/contexto";
-import { obtemDadosProximaSessao } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
-
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
-import { ContextoSessoesPrevistasProvider, useContextoSessoesPrevistas } from 'Contextos/ContextoSessoesPrevistas/contexto';
+import { PAGINAS } from 'types-nora-api';
+import { ContextoSessoesPrevistasProvider } from 'Contextos/ContextoSessoesPrevistas/contexto';
+import PaginaSessao_InicioComSessaoEmAndamento from './sessao-em-andamento/page.tsx';
+import PaginaSessao_InicioSemSessaoEmAndamento from './sessao-em-espera/page.tsx';
 
 export default function PaginaSessao() {
     return (
         <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.SESSAO, comCabecalho: false, usuarioObrigatorio: false }}>
-            <ContextoSessoesPrevistasProvider>
-                <PaginaSessao_Slot/>
-            </ContextoSessoesPrevistasProvider>
+            <PaginaSessao_Slot />
         </ControladorSlot>
     );
 };
 
 function PaginaSessao_Slot() {
-    return true ? <PaginaSessao_EmEspera /> : <PaginaSessao_EmPreparo />
-};
 
-function PaginaSessao_EmEspera() {
-    const { listaEpisodiosPrevistos } = useContextoSessoesPrevistas();
-
-    return (
-        <div id={styles.recipiente_sessao_prevista}>
-            {listaEpisodiosPrevistos.length === 0 ? (
-                <h1>Nenhuma Sessão Prevista</h1>
-            ) : (
-                <h1>Sessões</h1>
-            )}
-        </div>
+    if (true) return (
+        <PaginaSessao_InicioComSessaoEmAndamento />
     );
-};
 
-function PaginaSessao_EmPreparo() {
     return (
-        <></>
+        <ContextoSessoesPrevistasProvider>
+            <PaginaSessao_InicioSemSessaoEmAndamento />
+        </ContextoSessoesPrevistasProvider>
     );
 };
