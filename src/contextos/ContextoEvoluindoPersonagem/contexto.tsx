@@ -68,7 +68,7 @@ export const ContextoEvoluindoPersonagemProvider = ({ children }: { children: Re
         buscaPersonagensComEvolucaoPendente();
     }, []);
 
-    if (carregando) return <div>Carregando personagens</div>;
+    if (carregando) return <div>{carregando}</div>;
 
     return (
         <ContextoEvoluindoPersonagem.Provider value={{ listaPersonagensEvolucaoPendente, buscaPersonagensComEvolucaoPendente, selecionaPersonagemEvoluindo, deselecionaPersonagemEvoluindo, personagemEvoluindo, salvarEvolucao }}>

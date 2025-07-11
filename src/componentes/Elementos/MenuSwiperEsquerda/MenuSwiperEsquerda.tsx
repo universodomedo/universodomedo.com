@@ -45,7 +45,7 @@ function ConteudoSwiperEsquerda() {
     const obterItensMenu = (): { link: string, target: string, titulo: string, condicao?: boolean }[] => {
         return [
             { link: '/aventuras', target: '', titulo: 'Aventuras' },
-            { link: '/sessao', target: '', titulo: 'Sessão Ao Vivo' },
+            { link: '/sessao-aovivo', target: '', titulo: 'Sessão Ao Vivo' },
             { link: '/definicoes', target: '', titulo: 'Definições' },
             { link: '/dicas', target: '', titulo: 'Dicas' },
             { link: '/em-jogo', target: '', titulo: 'Ficha de Demonstração' },

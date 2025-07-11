@@ -4,8 +4,8 @@ import { createContext, Dispatch, SetStateAction, useContext, useState } from 'r
 import { AventuraDto } from 'types-nora-api';
 
 interface ContextoPaginaAventuraProps {
-    aventuraSelecionada: AventuraDto | undefined;
-    setAventuraSelecionada: Dispatch<SetStateAction<AventuraDto | undefined>>;
+    grupoAventuraSelecionada: AventuraDto | undefined;
+    setGrupoAventuraSelecionada: Dispatch<SetStateAction<AventuraDto | undefined>>;
 };
 
 const ContextoPaginaAventura = createContext<ContextoPaginaAventuraProps | undefined>(undefined);
@@ -17,10 +17,10 @@ export const useContextoPaginaAventura = (): ContextoPaginaAventuraProps => {
 };
 
 export const ContextoPaginaAventuraProvider = ({ children }: { children: React.ReactNode }) => {
-    const [ aventuraSelecionada, setAventuraSelecionada ] = useState<AventuraDto | undefined>(undefined);
+    const [ grupoAventuraSelecionada, setGrupoAventuraSelecionada ] = useState<AventuraDto | undefined>(undefined);
 
     return (
-        <ContextoPaginaAventura.Provider value={{ aventuraSelecionada, setAventuraSelecionada }}>
+        <ContextoPaginaAventura.Provider value={{ grupoAventuraSelecionada, setGrupoAventuraSelecionada }}>
             {children}
         </ContextoPaginaAventura.Provider>
     );
