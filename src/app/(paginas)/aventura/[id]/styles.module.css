@@ -1,0 +1,68 @@
+#recipiente_pagina_assistir_aventura {
+    width: 100%;
+    height: 100%;
+    padding: .5vh .6vw;
+}
+
+#recipiente_corpo_pagina_assistir_aventura {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    gap: 1vw;
+}
+
+#recipiente_corpo_conteudo_episodio {
+    display: flex;
+    flex-direction: column;
+    flex: .88;
+    border-radius: 1vw;
+    overflow: hidden;
+    position: relative;
+}
+
+#recipiente_imagem_capa_aventura_de_fundo {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+#recipiente_foreground {
+    position: relative;
+    width: 100%;
+    height: 80%;
+    margin: auto auto 0;
+    background-color: #312246b3;
+    backdrop-filter: blur(20px) brightness(0.8);
+    border-radius: 1vw;
+    overflow: hidden;
+    z-index: 2;
+}
+
+#recipiente_menu_lateral_episodios {
+    display: flex;
+    flex-direction: column;
+    flex: .12;
+    height: 100%;
+    padding: 1vh .2vw;
+    background-color: #3122464d;
+}
+
+.recipiente_linha_episodio {
+    padding: 3% 2%;
+    border-radius: 5px;
+    user-select: none;
+
+    &:hover {
+        box-shadow: 0px 0px 9px 0px #ffffff;
+    }
+
+    &.ativo {
+        color: #FBFF95;
+        background-color: #DBB4F84D;
+    }
+
+    &:not(.ativo):hover {
+        cursor: pointer;
+    }
+}

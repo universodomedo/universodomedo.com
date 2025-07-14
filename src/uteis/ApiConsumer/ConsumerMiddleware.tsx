@@ -30,6 +30,14 @@ export async function obtemAventuraCompleta(idAventura: number) {
     return await useApi<AventuraDto>({ uri: '/aventuras/obtemAventuraCompleta', method: 'GET', params: { idAventura } });
 }
 
+export async function obtemGrupoAventuraParaAssistir(idGrupoAventura: number) {
+    return await useApi<AventuraDto | null>({ uri: '/aventuras/obtemGrupoAventuraParaAssistir', method: 'GET', params: { idGrupoAventura } });
+}
+
+export async function obtemDadosSessaoParaAssistir(idSessao: number) {
+    return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemDadosSessaoParaAssistir', method: 'GET', params: { idSessao } });
+}
+
 export async function obtemPersonagensDoUsuario() {
     return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemPersonagensDoUsuario', method: 'GET' });
 }

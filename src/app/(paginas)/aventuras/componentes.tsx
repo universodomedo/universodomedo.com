@@ -53,23 +53,24 @@ function CorpoNovidades() {
 
 function CorpoAventuraSelecionada() {
     const { aventuraSelecionada } = useContextoPaginaAventuras();
-    const aventura = aventuraSelecionada!;
-
+    
     const { scrollableProps: scrollablePropsSempreVisivel } = useScrollable({ modo: 'sempreVisivel' });
+    
+    if (!aventuraSelecionada) return <div>Aventura não encontrada</div>
 
     return (
         <div id={styles.recipiente_corpo_aventura_selecionada} {...scrollablePropsSempreVisivel}>
             <div id={styles.recipiente_cabecalho_aventura_selecionada}>
-                <h1>{aventura.titulo}</h1>
+                <h1>{aventuraSelecionada.titulo}</h1>
                 <div id={styles.recipiente_capa_aventura_selecionada}>
-                    {aventura.gruposAventura && aventura.gruposAventura.length > 0 && aventura.gruposAventura[0].linkTrailerYoutube
-                        ? <PlayerYouTube urlSufixo={aventura.gruposAventura[0].linkTrailerYoutube.sufixo} />
-                        : <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
+                    {aventuraSelecionada.gruposAventura && aventuraSelecionada.gruposAventura.length > 0 && aventuraSelecionada.gruposAventura[0].linkTrailerYoutube
+                        ? <PlayerYouTube urlSufixo={aventuraSelecionada.gruposAventura[0].linkTrailerYoutube.sufixo} />
+                        : <RecipienteImagem src={aventuraSelecionada.imagemCapa?.fullPath} />
                     }
                 </div>
             </div>
             <div id={styles.recipiente_grupos_aventura_selecionada}>
-                {aventura.gruposAventura?.sort((a, b) => a.id - b.id).map(grupo => (
+                {aventuraSelecionada.gruposAventura?.sort((a, b) => a.id - b.id).map(grupo => (
                     <div key={grupo.id} className={styles.recipiente_linha_grupo}>
                         <div className={styles.linha_grupo_esquerda}>
                             <div id={styles.recipiente_personagens_participantes}>
@@ -82,7 +83,7 @@ function CorpoAventuraSelecionada() {
                         </div>
                         <div className={styles.linha_grupo_direita}>
                             <h1><Link href={`/aventura/${grupo.id}`}>Assistir</Link></h1>
-                            {aventura.temApenasUmGrupo && (<h2>{grupo.nome}</h2>)}
+                            {aventuraSelecionada.temApenasUmGrupo && (<h2>{grupo.nome}</h2>)}
                         </div>
                     </div>
                 ))}

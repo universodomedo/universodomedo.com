@@ -31,6 +31,7 @@
     "@types/d3-selection": "^3.0.11",
     "@uiw/react-md-editor": "^4.0.5",
     "axios": "^1.7.9",
+    "classnames": "^2.5.1",
     "d3-axis": "^3.0.0",
     "d3-format": "^3.1.0",
     "d3-scale": "^4.0.2",
@@ -54,7 +55,7 @@
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.8.1",
     "three": "^0.173.0",
-    "types-nora-api": "^0.0.84"
+    "types-nora-api": "^0.0.86"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
