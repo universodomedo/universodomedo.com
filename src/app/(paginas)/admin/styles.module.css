@@ -10,6 +10,7 @@
 }
 
 #recipiente_conteudo_pagina_admin {
+    width: 38%;
     font-size: .8rem;
     font-weight: bolder;
     font-family: var(--fonte-junge) !important;

@@ -7,7 +7,7 @@ import { useContextoPaginaAventuras } from 'Contextos/ContextoPaginaAventuras/co
 import { AventuraEstado } from "types-nora-api";
 
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
-import PlayerYouTube from 'Componentes/ElementosVisuais/PlayerYouTube/PlayerYouTube';
+import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
 export function PaginaAventuras_Slot() {
@@ -83,7 +83,7 @@ function CorpoAventuraSelecionada() {
                         </div>
                         <div className={styles.linha_grupo_direita}>
                             <h1><Link href={`/aventura/${grupo.id}`}>Assistir</Link></h1>
-                            {aventuraSelecionada.temApenasUmGrupo && (<h2>{grupo.nome}</h2>)}
+                            {!aventuraSelecionada.temApenasUmGrupo && (<h2>{grupo.nome}</h2>)}
                         </div>
                     </div>
                 ))}

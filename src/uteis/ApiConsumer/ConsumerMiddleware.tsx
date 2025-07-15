@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtual?: PaginaObjeto | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtual === undefined ? {} : { idPaginaAtual: paginaAtual?.id || '' } });
@@ -32,6 +32,10 @@ export async function obtemAventuraCompleta(idAventura: number) {
 
 export async function obtemGrupoAventuraParaAssistir(idGrupoAventura: number) {
     return await useApi<AventuraDto | null>({ uri: '/aventuras/obtemGrupoAventuraParaAssistir', method: 'GET', params: { idGrupoAventura } });
+}
+
+export async function obtemDadosSessao(idSessao: number) {
+    return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemDadosSessao', method: 'GET', params: { idSessao } });
 }
 
 export async function obtemDadosSessaoParaAssistir(idSessao: number) {
@@ -105,6 +109,14 @@ export async function salvarEvolucaoDoPersonagem(fichaEvoluida: FichaPersonagemD
 
 export async function obtemListaProxEpisodioPrevistoPorAventuraEmAndamento() {
     return await useApi<SessaoDto[]>({ uri: '/sessoes/obtemListaProxEpisodioPrevistoPorAventuraEmAndamento', method: 'GET' });
+}
+
+export async function obtemTodosTiposLink() {
+    return await useApi<TipoLinkDto[]>({ uri: '/tipos_link/obtemTodosTiposLink', method: 'GET' });
+}
+
+export async function vinculaLinkDeSessao(idSessao: number, novoLink: LinkDto): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/sessoes/vinculaLinkDeSessao', method: 'POST', data: { idSessao: idSessao, novoLink: novoLink } })
 }
 
 //

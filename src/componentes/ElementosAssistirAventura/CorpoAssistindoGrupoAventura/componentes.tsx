@@ -3,7 +3,7 @@ import cn from 'classnames';
 import { ReactNode } from "react";
 
 import { useContextoPaginaAventura } from 'Contextos/ContextoPaginaAventura/contexto';
-import { TrailerGrupoAventura } from './subcomponentes';
+import { PodcastEpisodio, TrailerGrupoAventura, VideoEpisodio } from './subcomponentes';
 
 export function CabecalhoGrupoAventura() {
     const { grupoAventuraSelecionado, sessaoSelecionada } = useContextoPaginaAventura();
@@ -19,9 +19,24 @@ export function CabecalhoGrupoAventura() {
 export function CorpoGrupoAventura() {
     const { sessaoSelecionada } = useContextoPaginaAventura();
 
+    if (!sessaoSelecionada) return <CorpoPaginaInicial />
+
+    return <CorpoEpisodio />
+};
+
+function CorpoPaginaInicial() {
     return (
         <>
-            {!sessaoSelecionada && (<TrailerGrupoAventura />)}
+            <TrailerGrupoAventura />
+        </>
+    );
+};
+
+function CorpoEpisodio() {
+    return (
+        <>
+            <VideoEpisodio />
+            <PodcastEpisodio />
         </>
     );
 };

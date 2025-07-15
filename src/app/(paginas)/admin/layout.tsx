@@ -11,20 +11,28 @@ import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.
 import { verificarPermissao } from "Helpers/verificarPermissao";
 
 export default function LayoutAdmin({ children }: { children: ReactNode }) {
+    return (
+        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.ADMIN, comCabecalho: false, usuarioObrigatorio: true }}>
+            <LayoutAdmin_Slot>
+                {children}
+            </LayoutAdmin_Slot>
+        </ControladorSlot>
+    );
+};
+
+function LayoutAdmin_Slot({ children }: { children: ReactNode }) {
     const usuarioComPermissao = verificarPermissao();
 
     if (usuarioComPermissao === null) return null;
-    
+
     if (!usuarioComPermissao) return <Redirecionador urlRedirecionar='/' />;
 
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.ADMIN, comCabecalho: false, usuarioObrigatorio: true }}>
-            <div id={styles.recipiente_pagina_admin}>
-                <Link href={'/admin'}><h1>Páginas ADMIN</h1></Link>
-                <div id={styles.recipiente_conteudo_pagina_admin}>
-                    {children}
-                </div>
+        <div id={styles.recipiente_pagina_admin}>
+            <Link href={'/admin'}><h1>Páginas ADMIN</h1></Link>
+            <div id={styles.recipiente_conteudo_pagina_admin}>
+                {children}
             </div>
-        </ControladorSlot>
-    )
+        </div>
+    );
 };
