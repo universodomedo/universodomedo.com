@@ -39,11 +39,11 @@ export function PaginaPendenciasFichaComDados() {
 function SecaoAcoesFichaPendente({ personagem, abreModalConfiguracao }: { personagem: PersonagemDto; abreModalConfiguracao: () => void }) {
     return (
         <div className={styles.recipiente_acoes_ficha}>
-            {personagem.pendencias.pendenciaAdmin === EstadoPendenciaAdministrativaPersonagem.SEM_CONFIGURACAO_FICHA && (
+            {/* {personagem.pendencias.pendenciaAdmin === EstadoPendenciaAdministrativaPersonagem.SEM_CONFIGURACAO_FICHA && (
                 <div className={styles.recipiente_icone_acao} onClick={abreModalConfiguracao}>
                     <FontAwesomeIcon icon={faFile} />
                 </div>
-            )}
+            )} */}
             {personagem.pendencias.pendenciaAdmin === EstadoPendenciaAdministrativaPersonagem.SEM_AVATAR && (
                 <div className={styles.recipiente_icone_acao}>
                     <FontAwesomeIcon icon={faUser} />

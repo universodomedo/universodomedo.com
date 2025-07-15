@@ -42,11 +42,11 @@ function PaginaFichaBaixo() {
         <>
             <div className={styles.fatia_parte_baixo_estatisticas}>
                 <div className={styles.fatia_parte_baixo_estatisticas_danificaveis}>
-                    {ficha?.estatisticasDanificaveis.map(estatisticaPersonagem => (
+                    {/* {ficha?.estatisticasDanificaveis.map(estatisticaPersonagem => (
                         <div key={estatisticaPersonagem.estatisticaDanificavel.id} className={styles.recipiente_estatistica_danificavel}>
                             <BarraEstatisticaDanificavel titulo={estatisticaPersonagem.estatisticaDanificavel.nomeAbreviado} valorAtual={estatisticaPersonagem.valorMaximo} valorMaximo={estatisticaPersonagem.valorMaximo} corBarra={estatisticaPersonagem.estatisticaDanificavel.cor} />
                         </div>
-                    ))}
+                    ))} */}
                 </div>
                 <div className={styles.fatia_parte_baixo_execucoes}>
                     <div className={styles.recipiente_execucao}>
