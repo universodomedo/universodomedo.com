@@ -1,26 +1,19 @@
 'use client';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { GrupoAventuraDto } from 'types-nora-api';
 import { obtemGruposPorMestre } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
-interface OpcoesBusca {
-    ordenacao: {
-        tipo: 'dataCriacao' | null;
-        direcao: 'asc' | 'desc' | null;
-    };
-    filtro: {
-        termo: string;
-    };
+interface EstadoBusca {
+    ordenacao: { comparador: ((a: GrupoAventuraDto, b: GrupoAventuraDto) => number) | null; };
+    filtros: { predicado: (item: GrupoAventuraDto) => boolean; }[];
 }
 
 interface ContextoMestreAventurasProps {
     aventurasFiltradas: GrupoAventuraDto[];
-    opcoesBusca: OpcoesBusca;
-    atualizarFiltro: (termo: string) => void;
-    toggleOrdenacaoData: () => void;
-};
+    atualizarBusca: (tipo: 'ordenacao' | 'filtro', operacao: 'adicionar' | 'remover', valor: { comparador?: (a: GrupoAventuraDto, b: GrupoAventuraDto) => number; predicado?: (item: GrupoAventuraDto) => boolean; }) => void;
+}
 
 const ContextoMestreAventuras = createContext<ContextoMestreAventurasProps | undefined>(undefined);
 
@@ -34,51 +27,60 @@ export const ContextoMestreAventurasProvider = ({ children }: { children: React.
     const { usuarioLogado } = useContextoAutenticacao();
     const [gruposAventurasListadas, setGruposAventurasListadas] = useState<GrupoAventuraDto[] | null>(null);
 
-    const [opcoesBusca, setOpcoesBusca] = useState<OpcoesBusca>({
-        ordenacao: {
-            tipo: null,
-            direcao: null,
-        },
-        filtro: {
-            termo: '',
-        }
+    const [estadoBusca, setEstadoBusca] = useState<EstadoBusca>({
+        ordenacao: { comparador: null },
+        filtros: []
     });
 
-    const atualizarFiltro = (termo: string) => {
-        setOpcoesBusca(prev => ({
-            ...prev,
-            filtro: {
-                ...prev.filtro,
-                termo: termo.toLowerCase(),
-            },
-        }));
-    };
+    const atualizarBusca = (tipo: 'ordenacao' | 'filtro', operacao: 'adicionar' | 'remover', valor: { predicado?: (item: GrupoAventuraDto) => boolean; comparador?: (a: GrupoAventuraDto, b: GrupoAventuraDto) => number; }) => {
+        setEstadoBusca(prev => {
+            if (tipo === 'ordenacao') return {
+                ...prev,
+                ordenacao: { comparador: operacao === 'adicionar' ? valor.comparador || null : null }
+            };
 
-    const toggleOrdenacaoData = () => {
-        setOpcoesBusca(prev => {
-            const direcaoAtual = prev.ordenacao.direcao;
+            const novoPredicado = valor.predicado;
 
-            if (!direcaoAtual) return { ...prev, ordenacao: { tipo: 'dataCriacao', direcao: 'asc' } };
-            if (direcaoAtual === 'asc') return { ...prev, ordenacao: { ...prev.ordenacao, direcao: 'desc' } };
-            return { ...prev, ordenacao: { tipo: null, direcao: null } };
+            if (operacao === 'adicionar' && novoPredicado) {
+                const codigoPredicado = novoPredicado.toString();
+
+                const predicadoExistenteIndex = prev.filtros.findIndex(f => {
+                    const codigoExistente = f.predicado.toString();
+
+                    return codigoExistente.split('.includes(')[0] === codigoPredicado.split('.includes(')[0] || codigoExistente.split('===')[0] === codigoPredicado.split('===')[0];
+                });
+
+                if (predicadoExistenteIndex >= 0) {
+                    const novosFiltros = [...prev.filtros];
+                    novosFiltros[predicadoExistenteIndex] = { predicado: novoPredicado };
+
+                    return {
+                        ...prev,
+                        filtros: novosFiltros
+                    };
+                }
+
+                return {
+                    ...prev,
+                    filtros: [...prev.filtros, { predicado: novoPredicado }]
+                };
+            } else if (operacao === 'remover') {
+                return {
+                    ...prev,
+                    filtros: []
+                };
+            }
+
+            return prev;
         });
     };
 
     const aventurasFiltradas = (() => {
-        if (!gruposAventurasListadas) return [];
+        if (!gruposAventurasListadas || gruposAventurasListadas.length === 0) return [];
 
-        let resultado = gruposAventurasListadas.filter(grupo => grupo.nomeUnicoGrupoAventura.toLowerCase().includes(opcoesBusca.filtro.termo.toLowerCase()));
+        let resultado = gruposAventurasListadas.filter(item => estadoBusca.filtros.every(f => f.predicado(item)));
 
-        // 2. Aplica ordenação se existir
-        if (opcoesBusca.ordenacao.direcao) {
-            resultado = [...resultado].sort((a, b) => {
-                const dateA = new Date(a.aventura.dataCriacao).getTime();
-                const dateB = new Date(b.aventura.dataCriacao).getTime();
-                return opcoesBusca.ordenacao.direcao === 'asc'
-                    ? dateA - dateB
-                    : dateB - dateA;
-            });
-        }
+        if (estadoBusca.ordenacao.comparador) resultado = [...resultado].sort(estadoBusca.ordenacao.comparador);
 
         return resultado;
     })();
@@ -92,7 +94,7 @@ export const ContextoMestreAventurasProvider = ({ children }: { children: React.
     }, []);
 
     return (
-        <ContextoMestreAventuras.Provider value={{ aventurasFiltradas, opcoesBusca, atualizarFiltro, toggleOrdenacaoData }}>
+        <ContextoMestreAventuras.Provider value={{ aventurasFiltradas, atualizarBusca }}>
             {children}
         </ContextoMestreAventuras.Provider>
     );

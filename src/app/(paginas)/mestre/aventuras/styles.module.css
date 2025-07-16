@@ -11,8 +11,9 @@
     width: 100%;
     flex-wrap: wrap;
     white-space: nowrap;
-    gap: 3vh;
+    gap: 3vh 3vw;
     justify-content: space-evenly;
+    align-content: flex-start;
 }
 
 .recipiente_item_imagem_aventura_mestre {
