@@ -1,0 +1,55 @@
+#recipiente_layout_mestre {
+    width: 100%;
+    height: 100%;
+    padding: .5vh .6vw;
+}
+
+#recipiente_corpo_layout_mestre {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    gap: 1vw;
+}
+
+#recipiente_corpo_pagina_mestre {
+    display: flex;
+    flex-direction: column;
+    flex: .88;
+    background-color: #312246b3;
+    overflow: hidden;
+    border-radius: 1vw;
+}
+
+#recipiente_conteudo_pagina_selecionada {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1% 2%;
+    gap: 2vh;
+    align-items: center;
+}
+
+#recipiente_lista_acoes_pagina_mestre {
+    display: flex;
+    flex-direction: column;
+    flex: .12;
+    height: 100%;
+    background-color: #312246b3;
+    padding: 1vh .2vw;
+
+    & .titulo_permissao_mestre {
+        text-align: center;
+        color: #E7FFBC;
+    }
+
+    & hr {
+        margin: 1vh 0 .8vh;
+    }
+}
+
+.recipiente_linha_acao_mestre {
+    user-select: none;
+    border-radius: 5px;
+    padding: 3% 2%;
+}

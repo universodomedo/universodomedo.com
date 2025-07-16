@@ -1,0 +1,35 @@
+#recipiente_opcoes_busca {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+}
+
+#recipiente_aventuras_mestre {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    flex-wrap: wrap;
+    white-space: nowrap;
+    gap: 3vh;
+    justify-content: space-evenly;
+}
+
+.recipiente_item_imagem_aventura_mestre {
+    display: flex;
+    flex-direction: column;
+    direction: rtl;
+    text-align: center;
+    gap: .4vh;
+    width: 20%;
+}
+
+.recipiente_item_imagem_aventura_mestre h4 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recipiente_imagem_aventura_mestre {
+    position: relative;
+    aspect-ratio: 16 / 9;
+}

@@ -1,18 +1,20 @@
 'use client';
 
 import styles from './styles.module.css';
-import Link from 'next/link';
+import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 
 import { useContextoPaginaAventuras } from 'Contextos/ContextoPaginaAventuras/contexto';
-import { AventuraEstado } from "types-nora-api";
+import { AventuraDto, AventuraEstado } from "types-nora-api";
 
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
+import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 
 export function PaginaAventuras_Slot() {
     const { aventuraSelecionada } = useContextoPaginaAventuras();
 
+    const { scrollableProps: scrollablePropsSempreVisivel } = useScrollable({ modo: 'sempreVisivel' });
     const { scrollableProps: scrollablePropsInteragindo } = useScrollable({ modo: 'visivelQuandoInteragindo' });
 
     return (
@@ -20,7 +22,9 @@ export function PaginaAventuras_Slot() {
             <SecaoBarraDeBuscaDeAventuras />
             <div id={styles.recipiente_corpo_aventuras}>
                 <div id={styles.recipiente_aventura_selecionada}>
-                    {!aventuraSelecionada ? <CorpoNovidades /> : <CorpoAventuraSelecionada />}
+                    <div id={styles.recipiente_corpo_aventura_selecionada} {...scrollablePropsSempreVisivel}>
+                        {!aventuraSelecionada ? <CorpoNovidades /> : <CorpoAventuraSelecionada />}
+                    </div>
                 </div>
                 <div id={styles.recipiente_menu_aventuras} {...scrollablePropsInteragindo}>
                     <MenuLateralAventurasListadas />
@@ -40,26 +44,19 @@ function SecaoBarraDeBuscaDeAventuras() {
 
 function CorpoNovidades() {
     return (
-        <div id={styles.recipiente_corpo_aventura_selecionada}>
-            <div id={styles.recipiente_capa_aventura_selecionada}>
-                <RecipienteImagem src={''} />
-            </div>
-            <div>
-                <h1>Apenas uma Prece</h1>
-            </div>
-        </div>
+        <>
+            <h1>Selecione uma das Aventuras ao lado</h1>
+        </>
     );
 };
 
 function CorpoAventuraSelecionada() {
     const { aventuraSelecionada } = useContextoPaginaAventuras();
-    
-    const { scrollableProps: scrollablePropsSempreVisivel } = useScrollable({ modo: 'sempreVisivel' });
-    
+
     if (!aventuraSelecionada) return <div>Aventura não encontrada</div>
 
     return (
-        <div id={styles.recipiente_corpo_aventura_selecionada} {...scrollablePropsSempreVisivel}>
+        <>
             <div id={styles.recipiente_cabecalho_aventura_selecionada}>
                 <h1>{aventuraSelecionada.titulo}</h1>
                 <div id={styles.recipiente_capa_aventura_selecionada}>
@@ -82,44 +79,42 @@ function CorpoAventuraSelecionada() {
                             </div>
                         </div>
                         <div className={styles.linha_grupo_direita}>
-                            <h1><Link href={`/aventura/${grupo.id}`}>Assistir</Link></h1>
+                            <h1><CustomLink href={`/aventura/${grupo.id}`}>Assistir</CustomLink></h1>
                             {!aventuraSelecionada.temApenasUmGrupo && (<h2>{grupo.nome}</h2>)}
                         </div>
                     </div>
                 ))}
             </div>
-        </div>
+        </>
     );
 };
 
 function MenuLateralAventurasListadas() {
-    const { buscaAventuraSelecionada, aventurasListadas } = useContextoPaginaAventuras();
+    const { aventurasListadas } = useContextoPaginaAventuras();
+
+    if (!aventurasListadas) return <p>Não foram encontradas Aventuras</p>;
 
     return (
         <>
-            {(aventurasListadas ?? []).filter(aventura => aventura.estadoAtual === AventuraEstado.EM_ANDAMENTO).sort((a, b) => new Date(a.dataCriacao).getTime() - new Date(b.dataCriacao).getTime()).map((aventura, index) => (
-                <div key={index} className={styles.recipiente_item_menu_aventuras} onClick={() => { buscaAventuraSelecionada(aventura.id) }}>
-                    <div className={styles.recipiente_imagem_aventura_item_menu}>
-                        <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
-                    </div>
-                    <div className={styles.recipiente_dados_aventura}>
-                        <h3>{aventura.titulo}</h3>
-                        <h3>{aventura.estadoAtual}</h3>
-                    </div>
-                </div>
-            ))}
+            {aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.EM_ANDAMENTO).sort((a, b) => (new Date(a.gruposAventura!.find(g => g.dataInicio)?.dataInicio || '9999-12-31').getTime() - new Date(b.gruposAventura!.find(g => g.dataInicio)?.dataInicio || '9999-12-31').getTime())).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
             <hr />
-            {(aventurasListadas ?? []).filter(aventura => aventura.estadoAtual === AventuraEstado.FINALIZADA).sort((a, b) => new Date(b.dataFimAventura ?? 0).getTime() - new Date(a.dataFimAventura ?? 0).getTime()).map((aventura, index) => (
-                <div key={index} className={styles.recipiente_item_menu_aventuras} onClick={() => { buscaAventuraSelecionada(aventura.id) }}>
-                    <div className={styles.recipiente_imagem_aventura_item_menu}>
-                        <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
-                    </div>
-                    <div className={styles.recipiente_dados_aventura}>
-                        <h3>{aventura.titulo}</h3>
-                        <h3>{aventura.estadoAtual}</h3>
-                    </div>
-                </div>
-            ))}
+            {aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.FINALIZADA).sort((a, b) => new Date(b.dataFimAventura ?? 0).getTime() - new Date(a.dataFimAventura ?? 0).getTime()).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
         </>
+    );
+};
+
+function ItemAventuraLista({ aventura }: { aventura: AventuraDto }) {
+    const { buscaAventuraSelecionada, aventuraSelecionada } = useContextoPaginaAventuras();
+
+    return (
+        <DivClicavel className={styles.recipiente_item_menu_aventuras} classeParaDesabilitado={styles.ativo} desabilitado={aventura.id === aventuraSelecionada?.id} onClick={() => { buscaAventuraSelecionada(aventura.id); }}>
+            <div className={styles.recipiente_imagem_aventura_item_menu}>
+                <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
+            </div>
+            <div className={styles.recipiente_dados_aventura}>
+                <h3>{aventura.titulo}</h3>
+                <h3>{aventura.estadoAtual}</h3>
+            </div>
+        </DivClicavel>
     );
 };

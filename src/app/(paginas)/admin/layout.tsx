@@ -1,14 +1,13 @@
 'use client';
 
 import styles from './styles.module.css';
-
 import { ReactNode } from "react";
-import Link from 'next/link';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { PAGINAS } from 'types-nora-api';
-import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
 import { verificarPermissao } from "Helpers/verificarPermissao";
+import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
+import Link from 'next/link';
 
 export default function LayoutAdmin({ children }: { children: ReactNode }) {
     return (
@@ -21,7 +20,7 @@ export default function LayoutAdmin({ children }: { children: ReactNode }) {
 };
 
 function LayoutAdmin_Slot({ children }: { children: ReactNode }) {
-    const usuarioComPermissao = verificarPermissao();
+    const usuarioComPermissao = verificarPermissao(usuario => usuario.perfilAdmin.id === 2);
 
     if (usuarioComPermissao === null) return null;
 

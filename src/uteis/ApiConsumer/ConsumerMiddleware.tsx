@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtual?: PaginaObjeto | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtual === undefined ? {} : { idPaginaAtual: paginaAtual?.id || '' } });
@@ -116,7 +116,11 @@ export async function obtemTodosTiposLink() {
 }
 
 export async function vinculaLinkDeSessao(idSessao: number, novoLink: LinkDto): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/sessoes/vinculaLinkDeSessao', method: 'POST', data: { idSessao: idSessao, novoLink: novoLink } })
+    return await useApi<boolean>({ uri: '/sessoes/vinculaLinkDeSessao', method: 'POST', data: { idSessao: idSessao, novoLink: novoLink } });
+}
+
+export async function obtemGruposPorMestre(idUsuario: number): Promise<GrupoAventuraDto[]> {
+    return await useApi<GrupoAventuraDto[]>({ uri: '/grupos_aventuras/obtemGruposPorMestre', method: 'GET', params: { idUsuario } });
 }
 
 //
