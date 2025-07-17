@@ -1,13 +1,9 @@
 import Link, { LinkProps } from 'next/link';
-import { ReactNode } from 'react';
+import { ReactNode, AnchorHTMLAttributes } from 'react';
 
-interface CustomLinkProps extends LinkProps {
-    children: ReactNode;
-}
-
-export default function CustomLink({ children, ...props }: CustomLinkProps) {
+export default function CustomLink({ children, inlineBlock = true, style, ...props }: { children: ReactNode; inlineBlock?: boolean; } & LinkProps & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps>) {
     return (
-        <Link {...props} style={{ display: 'inline-block' }}>
+        <Link {...props} style={inlineBlock ? { display: 'inline-block', ...style } : style}>
             {children}
         </Link>
     );

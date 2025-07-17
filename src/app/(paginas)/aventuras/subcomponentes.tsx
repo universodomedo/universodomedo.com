@@ -1,0 +1,51 @@
+'use client';
+
+import styles from './styles.module.css';
+
+import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
+import { AventuraDto } from 'types-nora-api';
+import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { useContextoPaginaAventuras } from 'Contextos/ContextoPaginaAventuras/contexto';
+import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
+import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
+
+export function ItemAventuraLista({ aventura }: { aventura: AventuraDto }) {
+    const { buscaAventuraSelecionada, aventuraSelecionada } = useContextoPaginaAventuras();
+
+    return (
+        <DivClicavel className={styles.recipiente_item_menu_aventuras} classeParaDesabilitado={styles.ativo} desabilitado={aventura.id === aventuraSelecionada?.id} onClick={() => { buscaAventuraSelecionada(aventura.id); }}>
+            <div className={styles.recipiente_imagem_aventura_item_menu}>
+                <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
+            </div>
+            <div className={styles.recipiente_dados_aventura}>
+                <h3>{aventura.titulo}</h3>
+                <h3>{aventura.estadoAtual}</h3>
+            </div>
+        </DivClicavel>
+    );
+};
+
+export function UltimasSessoesPostadas() {
+    const { ultimasSessoesPostadas } = useContextoPaginaAventuras();
+
+    return (
+        <SecaoDeConteudo id={styles.recipiente_ultimas_sessoes_postadas}>
+            <h1>Ultimas Sessões Postadas</h1>
+
+            <div id={styles.recipiente_cartas_ultimas_sessoes_postadas}>
+                {ultimasSessoesPostadas?.map(sessao => (
+                    <CustomLink key={sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} href={`/aventura/${sessao.grupoAventura.id}?${sessao.episodio}`}>
+                        <div className={styles.recipiente_capa_carta_sessao_recente}>
+                            <RecipienteImagem src={sessao.grupoAventura.aventura.imagemCapa?.fullPath} />
+                        </div>
+                        <div className={styles.recipiente_info_carta_sessao_recente}>
+                            <h2>{sessao.grupoAventura.aventura.titulo}</h2>
+                            {sessao.grupoAventura.aventura.temApenasUmGrupo && <h4>{sessao.grupoAventura.nome}</h4>}
+                            <h3>{sessao.episodioPorExtenso}</h3>
+                        </div>
+                    </CustomLink>
+                ))}
+            </div>
+        </SecaoDeConteudo>
+    );
+};

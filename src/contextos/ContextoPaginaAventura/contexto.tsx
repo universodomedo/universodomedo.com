@@ -22,7 +22,7 @@ export const useContextoPaginaAventura = (): ContextoPaginaAventuraProps => {
     return context;
 };
 
-export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura }: { children: React.ReactNode, idGrupoAventura: number }) => {
+export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, episodioIndexInicial = null }: { children: React.ReactNode; idGrupoAventura: number; episodioIndexInicial?: number | null; }) => {
     const [carregando, setCarregando] = useState<string | null>('');
     const [grupoAventuraSelecionado, setGrupoAventuraSelecionado] = useState<AventuraDto | null>(null);
     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
@@ -89,6 +89,22 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura }: { 
     useEffect(() => {
         buscaGrupoAventuraSelecionado(idGrupoAventura);
     }, []);
+
+    useEffect(() => {
+        if (episodioIndexInicial === 0) {
+            limpaSessao();
+            return;
+        }
+
+        if (episodioIndexInicial !== null && grupoAventuraSelecionado) {
+            const sessoesOrdenadas = grupoAventuraSelecionado.gruposAventura?.[0].sessoes.sort((a, b) => a.id - b.id);
+
+            if (sessoesOrdenadas && episodioIndexInicial > 0 && episodioIndexInicial <= sessoesOrdenadas.length) {
+                const sessao = sessoesOrdenadas[episodioIndexInicial - 1]; // -1 porque arrays começam em 0
+                buscaSessao(sessao.id);
+            }
+        }
+    }, [episodioIndexInicial, grupoAventuraSelecionado]);
 
     if (carregando) return <div>{carregando}</div>;
 

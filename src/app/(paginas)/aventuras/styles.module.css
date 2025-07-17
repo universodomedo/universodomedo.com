@@ -45,6 +45,46 @@
     overflow: hidden;
 }
 
+#recipiente_ultimas_sessoes_postadas {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    text-align: center;
+    align-items: center;
+}
+
+#recipiente_cartas_ultimas_sessoes_postadas {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+    width: 86%;
+    padding-bottom: 1vh;
+}
+
+.carta_sessao_recente {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: .5%;
+    gap: .8vh;
+    background-color: #C799BE5C;
+    border-radius: 10px;
+
+    &:not(.ativo):hover {
+        box-shadow: 0px 0px 9px 0px #ffffff;
+    }
+}
+
+.recipiente_capa_carta_sessao_recente {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}
+
+.recipiente_info_carta_sessao_recente {
+
+}
+
 #recipiente_cabecalho_aventura_selecionada {
     display: flex;
     flex-direction: column;

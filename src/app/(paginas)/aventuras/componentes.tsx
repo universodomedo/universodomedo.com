@@ -4,12 +4,12 @@ import styles from './styles.module.css';
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 
 import { useContextoPaginaAventuras } from 'Contextos/ContextoPaginaAventuras/contexto';
-import { AventuraDto, AventuraEstado } from "types-nora-api";
+import { AventuraEstado } from "types-nora-api";
 
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
-import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
+import { ItemAventuraLista, UltimasSessoesPostadas } from './subcomponentes';
 
 export function PaginaAventuras_Slot() {
     const { aventuraSelecionada } = useContextoPaginaAventuras();
@@ -45,7 +45,7 @@ function SecaoBarraDeBuscaDeAventuras() {
 function CorpoNovidades() {
     return (
         <>
-            <h1>Selecione uma das Aventuras ao lado</h1>
+            <UltimasSessoesPostadas />
         </>
     );
 };
@@ -100,21 +100,5 @@ function MenuLateralAventurasListadas() {
             <hr />
             {aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.FINALIZADA).sort((a, b) => new Date(b.dataFimAventura ?? 0).getTime() - new Date(a.dataFimAventura ?? 0).getTime()).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
         </>
-    );
-};
-
-function ItemAventuraLista({ aventura }: { aventura: AventuraDto }) {
-    const { buscaAventuraSelecionada, aventuraSelecionada } = useContextoPaginaAventuras();
-
-    return (
-        <DivClicavel className={styles.recipiente_item_menu_aventuras} classeParaDesabilitado={styles.ativo} desabilitado={aventura.id === aventuraSelecionada?.id} onClick={() => { buscaAventuraSelecionada(aventura.id); }}>
-            <div className={styles.recipiente_imagem_aventura_item_menu}>
-                <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
-            </div>
-            <div className={styles.recipiente_dados_aventura}>
-                <h3>{aventura.titulo}</h3>
-                <h3>{aventura.estadoAtual}</h3>
-            </div>
-        </DivClicavel>
     );
 };

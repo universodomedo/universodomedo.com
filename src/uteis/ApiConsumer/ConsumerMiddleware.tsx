@@ -131,6 +131,10 @@ export async function encerraGrupoAventura(idGrupoAventura: number): Promise<boo
     return await useApi<boolean>({ uri: '/grupos_aventuras/encerraGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
 }
 
+export async function obtemUltimaSessoesPostadas(): Promise<SessaoDto[]> {
+    return await useApi<SessaoDto[]>({ uri: 'sessoes/obtemUltimaSessoesPostadas', method: 'GET' });
+}
+
 //
 
 export async function desconectar() {

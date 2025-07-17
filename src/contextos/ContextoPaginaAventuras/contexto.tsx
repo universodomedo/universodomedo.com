@@ -1,13 +1,14 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { AventuraDto } from 'types-nora-api';
-import { obtemAventuraCompleta, obtemTodasAventuras } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { AventuraDto, SessaoDto } from 'types-nora-api';
+import { obtemAventuraCompleta, obtemTodasAventuras, obtemUltimaSessoesPostadas } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaAventurasProps {
     aventurasListadas: AventuraDto[] | null;
     aventuraSelecionada: AventuraDto | null;
     buscaAventuraSelecionada: (idAventura: number) => void;
+    ultimasSessoesPostadas: SessaoDto[] | null;
 };
 
 const ContextoPaginaAventuras = createContext<ContextoPaginaAventurasProps | undefined>(undefined);
@@ -22,6 +23,7 @@ export const ContextoPaginaAventurasProvider = ({ children }: { children: React.
     const [carregando, setCarregando] = useState<string | null>('');
     const [aventurasListadas, setAventurasListadas] = useState<AventuraDto[] | null>(null);
     const [aventuraSelecionada, setAventuraSelecionada] = useState<AventuraDto | null>(null);
+    const [ultimasSessoesPostadas, setUltimasSessoesPostadas] = useState<SessaoDto[] | null>(null);
 
     async function buscaAventurasListadas() {
         setCarregando('Buscando Aventuras');
@@ -47,14 +49,27 @@ export const ContextoPaginaAventurasProvider = ({ children }: { children: React.
         }
     }
 
+    async function buscaUltimaSessoesPostadas() {
+        setCarregando('Buscando Últimas Sessões Postadas');
+
+        try {
+            setUltimasSessoesPostadas(await obtemUltimaSessoesPostadas());
+        } catch {
+            setUltimasSessoesPostadas(null);
+        } finally {
+            setCarregando(null);
+        }
+    }
+
     useEffect(() => {
         buscaAventurasListadas();
+        buscaUltimaSessoesPostadas();
     }, []);
 
     if (carregando) return <div>{carregando}</div>;
 
     return (
-        <ContextoPaginaAventuras.Provider value={{ aventurasListadas, aventuraSelecionada, buscaAventuraSelecionada }}>
+        <ContextoPaginaAventuras.Provider value={{ aventurasListadas, aventuraSelecionada, buscaAventuraSelecionada, ultimasSessoesPostadas }}>
             {children}
         </ContextoPaginaAventuras.Provider>
     );
