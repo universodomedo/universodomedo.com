@@ -5,6 +5,4 @@ export default function combineProviders(...providers: React.FC<ProviderProps>[]
         }, children);
 };
 
-type ProviderProps = {
-    children: React.ReactNode;
-};
+type ProviderProps = { children: React.ReactNode; };
