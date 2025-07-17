@@ -1,6 +1,6 @@
 'use client';
 
-import styles from './styles.module.css';
+import styles from '../styles.module.css';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';

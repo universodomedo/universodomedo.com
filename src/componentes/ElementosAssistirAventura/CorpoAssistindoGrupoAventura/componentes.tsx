@@ -1,18 +1,15 @@
-import styles from './styles.module.css';
-import cn from 'classnames';
-import { ReactNode } from "react";
-
 import { useContextoPaginaAventura } from 'Contextos/ContextoPaginaAventura/contexto';
 import { PodcastEpisodio, TrailerGrupoAventura, VideoEpisodio } from './subcomponentes';
+import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 
 export function CabecalhoGrupoAventura() {
     const { grupoAventuraSelecionado, sessaoSelecionada } = useContextoPaginaAventura();
 
     return (
-        <ContainerFragmentoAssistindoSessao>
+        <SecaoDeConteudo>
             <h1>{grupoAventuraSelecionado.titulo}</h1>
             {sessaoSelecionada && (<h3>{sessaoSelecionada.episodioPorExtenso}</h3>)}
-        </ContainerFragmentoAssistindoSessao>
+        </SecaoDeConteudo>
     );
 };
 
@@ -38,13 +35,5 @@ function CorpoEpisodio() {
             <VideoEpisodio />
             <PodcastEpisodio />
         </>
-    );
-};
-
-export function ContainerFragmentoAssistindoSessao({ children, className }: { children: ReactNode; className?: string }) {
-    return (
-        <div className={cn(styles.recipiente_container_info_assistindo_grupo_aventura, className)}>
-            {children}
-        </div>
     );
 };

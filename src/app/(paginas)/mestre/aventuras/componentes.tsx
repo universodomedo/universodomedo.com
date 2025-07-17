@@ -1,12 +1,13 @@
 'use client';
 
 import styles from './styles.module.css';
+import { useState } from 'react';
 
 import { useContextoMestreAventuras } from 'Contextos/ContextoMestreAventuras/contexto';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
+import Link from 'next/link';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
-import { AventuraEstado, GrupoAventuraDto } from 'types-nora-api';
-import { useState } from 'react';
+import { GrupoAventuraDto } from 'types-nora-api';
 
 export function AventurasMestre_Contexto() {
     const { aventurasFiltradas } = useContextoMestreAventuras();
@@ -21,12 +22,12 @@ export function AventurasMestre_Contexto() {
 
             <div id={styles.recipiente_aventuras_mestre} {...scrollableProps}>
                 {aventurasFiltradas!.map(grupo => (
-                    <div key={grupo.id} className={styles.recipiente_item_imagem_aventura_mestre}>
+                    <Link key={grupo.id} className={styles.recipiente_item_imagem_aventura_mestre} href={`/mestre/aventura/${grupo.id}`}>
                         <div className={styles.recipiente_imagem_aventura_mestre}>
                             <RecipienteImagem src={grupo.aventura.imagemCapa?.fullPath} />
                         </div>
                         <h4>{grupo.nomeUnicoGrupoAventura}</h4>
-                    </div>
+                    </Link>
                 ))}
             </div>
         </>

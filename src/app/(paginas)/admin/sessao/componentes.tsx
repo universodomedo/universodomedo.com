@@ -2,12 +2,12 @@
 
 import styles from './styles.module.css';
 
-import { useContextoCadastroNovoLink } from 'Contextos/ContextoCadastroNovoLink/contexto';
+import { useContextoCadastroNovoLinkSessao } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 import Link from 'next/link';
 import { LinkDto } from 'types-nora-api';
 
 export function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
-    const { iniciaProcessoVinculoLink } = useContextoCadastroNovoLink();
+    const { iniciaProcessoVinculoLinkSessao } = useContextoCadastroNovoLinkSessao();
 
     return (
         <>
@@ -15,7 +15,7 @@ export function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
                 {linkVideo ? (
                     <Link href={linkVideo.urlCompleta} target='_blank'><p>Tem Vídeo</p></Link>
                 ) : (
-                    <button onClick={() => iniciaProcessoVinculoLink(1, false)}>Configurar Vídeo</button>
+                    <button onClick={() => iniciaProcessoVinculoLinkSessao(1)}>Configurar Vídeo</button>
                 )}
             </div>
         </>
@@ -23,7 +23,7 @@ export function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
 };
 
 export function AreaPodcastSpotify({ linkPodcast }: { linkPodcast: LinkDto }) {
-    const { iniciaProcessoVinculoLink } = useContextoCadastroNovoLink();
+    const { iniciaProcessoVinculoLinkSessao } = useContextoCadastroNovoLinkSessao();
 
     return (
         <>
@@ -31,7 +31,7 @@ export function AreaPodcastSpotify({ linkPodcast }: { linkPodcast: LinkDto }) {
                 {linkPodcast ? (
                     <Link href={linkPodcast.urlCompleta} target='_blank'><p>Tem Podcast</p></Link>
                 ) : (
-                    <button onClick={() => iniciaProcessoVinculoLink(3, false)}>Configurar Podcast</button>
+                    <button onClick={() => iniciaProcessoVinculoLinkSessao(3)}>Configurar Podcast</button>
                 )}
             </div>
         </>

@@ -4,14 +4,14 @@ import styles from './styles.module.css';
 import { useState } from 'react';
 
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
-import { useContextoCadastroNovoLink } from 'Contextos/ContextoCadastroNovoLink/contexto';
-import { vinculaLinkDeSessao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { useContextoCadastroNovoLinkGrupoAventura } from 'Contextos/ContextoCadastroNovoLinkGrupoAventura/contexto';
+import { vinculaLinkDeGrupoAventura } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { LinkDto, TipoLinkDto } from 'types-nora-api';
 
-export function ModalVincularLink({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void }) {
+export function ModalVincularLinkGrupoAventura({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void }) {
     return (
         <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <Modal.Content title={'Vinculando Link'}>
+            <Modal.Content title={'Vinculando Link Trailer'}>
                 <ConteudoModal />
             </Modal.Content>
         </Modal>
@@ -19,7 +19,7 @@ export function ModalVincularLink({ isModalOpen, setIsModalOpen }: { isModalOpen
 };
 
 function ConteudoModal() {
-    const { listaTiposLink, sessao, idTipoLink, descricao } = useContextoCadastroNovoLink();
+    const { listaTiposLink, idGrupoAventura, idTipoLink, descricao } = useContextoCadastroNovoLinkGrupoAventura();
     const [sufixo, setSufixo] = useState('');
     const [erroValidacao, setErroValidacao] = useState('');
 
@@ -64,7 +64,7 @@ function ConteudoModal() {
 
         const sufixoParaEnvio = extrairSufixo(sufixo);
 
-        await vinculaLinkDeSessao(sessao.id, {
+        await vinculaLinkDeGrupoAventura(idGrupoAventura, {
             sufixo: sufixoParaEnvio,
             tipoLink: { id: idTipoLink } as TipoLinkDto,
             descricao: descricao,
@@ -72,8 +72,6 @@ function ConteudoModal() {
 
         window.location.reload();
     }
-
-    if (!idTipoLink) return <p>Houve um problema em definir o Tipo de Link</p>;
 
     return (
         <div id={styles.recipiente_corpo_modal_vincula_link}>

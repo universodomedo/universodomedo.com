@@ -9,18 +9,11 @@
     border: 3px #312246b3 solid;
 }
 
-.recipiente_container_info_assistindo_grupo_aventura {
-    width: 100%;
-    backdrop-filter: blur(50px) brightness(.3);
-    text-align: start;
-    padding: .6% 1%;
-}
-
 .recipiente_trailer_vazio {
     width: auto;
 }
 
-.recipiente_trailer {
+#recipiente_trailer {
     aspect-ratio: 16 / 9;
     width: 57%;
     box-shadow: 0px 4px 9px 4px #000000;

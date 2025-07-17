@@ -1,7 +1,7 @@
 import styles from '../styles.module.css';
 
 import { obtemDadosSessao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { ContextoCadastroNovoLinkProvider } from 'Contextos/ContextoCadastroNovoLink/contexto';
+import { ContextoCadastroNovoLinkSessaoProvider } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 import { AreaVideoYoutube, AreaPodcastSpotify } from '../componentes';
 
 export default async function AdministrarSessao({ params }: { params: Promise<{ id: string }>; }) {
@@ -11,7 +11,7 @@ export default async function AdministrarSessao({ params }: { params: Promise<{ 
     if (!sessao) return <div>Sessão não encontrada</div>
 
     return (
-        <ContextoCadastroNovoLinkProvider sessao={sessao} idGrupoAventura={sessao.grupoAventura.id}>
+        <ContextoCadastroNovoLinkSessaoProvider sessao={sessao} idGrupoAventura={sessao.grupoAventura.id}>
             <div id={styles.recipiente_acoes_aventura}>
                 <div>
                     <h1>{sessao.episodioPorExtenso}</h1>
@@ -22,6 +22,6 @@ export default async function AdministrarSessao({ params }: { params: Promise<{ 
 
                 <AreaPodcastSpotify linkPodcast={sessao.linkSessaoSpotify} />
             </div>
-        </ContextoCadastroNovoLinkProvider>
+        </ContextoCadastroNovoLinkSessaoProvider>
     );
 };

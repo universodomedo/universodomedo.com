@@ -119,8 +119,16 @@ export async function vinculaLinkDeSessao(idSessao: number, novoLink: LinkDto): 
     return await useApi<boolean>({ uri: '/sessoes/vinculaLinkDeSessao', method: 'POST', data: { idSessao: idSessao, novoLink: novoLink } });
 }
 
+export async function vinculaLinkDeGrupoAventura(idGrupoAventura: number, novoLink: LinkDto): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/grupos_aventuras/vinculaLinkDeGrupoAventura', method: 'POST', data: { idGrupoAventura: idGrupoAventura, novoLink: novoLink } });
+}
+
 export async function obtemGruposPorMestre(idUsuario: number): Promise<GrupoAventuraDto[]> {
     return await useApi<GrupoAventuraDto[]>({ uri: '/grupos_aventuras/obtemGruposPorMestre', method: 'GET', params: { idUsuario } });
+}
+
+export async function encerraGrupoAventura(idGrupoAventura: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/grupos_aventuras/encerraGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
 }
 
 //

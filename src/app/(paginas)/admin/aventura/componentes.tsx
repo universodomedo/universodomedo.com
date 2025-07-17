@@ -1,39 +1,50 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useState } from 'react';
 
+import { useContextoCadastroNovoLinkGrupoAventura } from 'Contextos/ContextoCadastroNovoLinkGrupoAventura/contexto';
 import Link from 'next/link';
 import { LinkDto, SessaoDto } from 'types-nora-api';
 
-import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
-
 export function AreaLinkTrailer({ linkTrailer }: { linkTrailer: LinkDto }) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const openModal = () => setIsModalOpen(true);
+    const { iniciaProcessoVinculoLinkGrupoAventura } = useContextoCadastroNovoLinkGrupoAventura();
 
     return (
-        <>
-            <div id={styles.recipiente_area_link_trailer}>
-                {linkTrailer ? (
-                    <Link href={linkTrailer.urlCompleta} target='_blank'><p>Tem Trailer</p></Link>
-                ) : (
-                    <button onClick={openModal}>Configurar Trailer</button>
-                )}
-            </div>
-
-            <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <Modal.Content title={'Configurando Trailer da Aventura'}>
-                    <ConteudoModalTrailer />
-                </Modal.Content>
-            </Modal>
-        </>
+        <div id={styles.recipiente_area_link_trailer}>
+            {linkTrailer ? (
+                <Link href={linkTrailer.urlCompleta} target='_blank'><p>Tem Trailer</p></Link>
+            ) : (
+                <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(1)}>Configurar Trailer</button>
+            )}
+        </div>
     );
 };
 
-function ConteudoModalTrailer() {
+export function AreaLinkPlaylist({ linkPlaylist }: { linkPlaylist: LinkDto }) {
+    const { iniciaProcessoVinculoLinkGrupoAventura } = useContextoCadastroNovoLinkGrupoAventura();
+
     return (
-        <></>
+        <div id={styles.recipiente_area_link_trailer}>
+            {linkPlaylist ? (
+                <Link href={linkPlaylist.urlCompleta} target='_blank'><p>Tem Playlist</p></Link>
+            ) : (
+                <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(2)}>Configurar Playlist</button>
+            )}
+        </div>
+    );
+};
+
+export function AreaLinkSerie({ linkSerie }: { linkSerie: LinkDto }) {
+    const { iniciaProcessoVinculoLinkGrupoAventura } = useContextoCadastroNovoLinkGrupoAventura();
+
+    return (
+        <div id={styles.recipiente_area_link_trailer}>
+            {linkSerie ? (
+                <Link href={linkSerie.urlCompleta} target='_blank'><p>Tem Série</p></Link>
+            ) : (
+                <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(4)}>Configurar Série</button>
+            )}
+        </div>
     );
 };
 

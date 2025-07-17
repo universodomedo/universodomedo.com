@@ -1,0 +1,15 @@
+.recipiente_cabecalho_pagina_aventura_mestre {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+}
+
+#recipiente_imagem_capa_pagina_aventura_mestre {
+    position: relative;
+    width: 30%;
+    aspect-ratio: 16 / 9;
+}
+
+#recipiente_dados_pagina_aventura_mestre {
+    flex: 1;
+}

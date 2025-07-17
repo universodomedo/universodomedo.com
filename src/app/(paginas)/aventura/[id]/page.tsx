@@ -4,7 +4,7 @@ import { PAGINAS } from 'types-nora-api';
 import { ContextoPaginaAventuraProvider } from 'Contextos/ContextoPaginaAventura/contexto';
 import { PaginaAventura_Slot } from './componentes';
 
-export default async function PaginaAventura ({ params }: { params: Promise<{ id: string }>; }) {
+export default async function PaginaAventura({ params }: { params: Promise<{ id: string }>; }) {
     const { id } = await params;
 
     return (

@@ -1,0 +1,6 @@
+.recipiente_container_info_assistindo_grupo_aventura {
+    width: 100%;
+    backdrop-filter: blur(50px) brightness(.3);
+    text-align: start;
+    padding: .6% 1%;
+}
