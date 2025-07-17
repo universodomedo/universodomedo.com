@@ -28,7 +28,7 @@ export function AreaLinkPlaylist({ linkPlaylist }: { linkPlaylist: LinkDto }) {
             {linkPlaylist ? (
                 <Link href={linkPlaylist.urlCompleta} target='_blank'><p>Tem Playlist</p></Link>
             ) : (
-                <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(2)}>Configurar Playlist</button>
+                <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(3)}>Configurar Playlist</button>
             )}
         </div>
     );
@@ -42,7 +42,7 @@ export function AreaLinkSerie({ linkSerie }: { linkSerie: LinkDto }) {
             {linkSerie ? (
                 <Link href={linkSerie.urlCompleta} target='_blank'><p>Tem Série</p></Link>
             ) : (
-                <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(4)}>Configurar Série</button>
+                <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(5)}>Configurar Série</button>
             )}
         </div>
     );

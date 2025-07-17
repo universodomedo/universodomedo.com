@@ -30,8 +30,8 @@ export const ContextoCadastroNovoLinkGrupoAventuraProvider = ({ children, idGrup
     const descricao: string = (() => {
         switch (idTipoLink) {
             case 1: return `Trailer do Grupo Aventura ${idGrupoAventura}`;
-            case 2: return `Playlist de Episódios do Grupo Aventura ${idGrupoAventura}`;
-            case 4: return `Série de Podcasts do Grupo Aventura ${idGrupoAventura}`;
+            case 3: return `Playlist de Episódios do Grupo Aventura ${idGrupoAventura}`;
+            case 5: return `Série de Podcasts do Grupo Aventura ${idGrupoAventura}`;
             default: return '';
         }
     })();

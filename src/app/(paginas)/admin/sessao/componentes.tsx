@@ -15,7 +15,7 @@ export function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
                 {linkVideo ? (
                     <Link href={linkVideo.urlCompleta} target='_blank'><p>Tem Vídeo</p></Link>
                 ) : (
-                    <button onClick={() => iniciaProcessoVinculoLinkSessao(1)}>Configurar Vídeo</button>
+                    <button onClick={() => iniciaProcessoVinculoLinkSessao(2)}>Configurar Vídeo</button>
                 )}
             </div>
         </>
@@ -31,7 +31,7 @@ export function AreaPodcastSpotify({ linkPodcast }: { linkPodcast: LinkDto }) {
                 {linkPodcast ? (
                     <Link href={linkPodcast.urlCompleta} target='_blank'><p>Tem Podcast</p></Link>
                 ) : (
-                    <button onClick={() => iniciaProcessoVinculoLinkSessao(3)}>Configurar Podcast</button>
+                    <button onClick={() => iniciaProcessoVinculoLinkSessao(4)}>Configurar Podcast</button>
                 )}
             </div>
         </>

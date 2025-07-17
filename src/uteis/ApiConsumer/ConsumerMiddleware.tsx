@@ -135,6 +135,14 @@ export async function obtemUltimaSessoesPostadas(): Promise<SessaoDto[]> {
     return await useApi<SessaoDto[]>({ uri: 'sessoes/obtemUltimaSessoesPostadas', method: 'GET' });
 }
 
+export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: 'sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
+}
+
+export async function salvaProximaSessaoDeGrupoAventura(idGrupoAventura: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: 'sessoes/salvaProximaSessaoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
+}
+
 //
 
 export async function desconectar() {

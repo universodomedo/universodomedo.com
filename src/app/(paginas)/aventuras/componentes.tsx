@@ -10,6 +10,7 @@ import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 import { ItemAventuraLista, UltimasSessoesPostadas } from './subcomponentes';
+import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 
 export function PaginaAventuras_Slot() {
     const { aventuraSelecionada } = useContextoPaginaAventuras();
@@ -56,7 +57,7 @@ function CorpoAventuraSelecionada() {
     if (!aventuraSelecionada) return <div>Aventura não encontrada</div>
 
     return (
-        <>
+        <SecaoDeConteudo id={styles.recipiente_conteudo_selecionado}>
             <div id={styles.recipiente_cabecalho_aventura_selecionada}>
                 <h1>{aventuraSelecionada.titulo}</h1>
                 <div id={styles.recipiente_capa_aventura_selecionada}>
@@ -85,7 +86,7 @@ function CorpoAventuraSelecionada() {
                     </div>
                 ))}
             </div>
-        </>
+        </SecaoDeConteudo>
     );
 };
 

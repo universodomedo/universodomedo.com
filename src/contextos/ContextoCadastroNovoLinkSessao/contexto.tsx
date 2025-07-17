@@ -29,8 +29,8 @@ export const ContextoCadastroNovoLinkSessaoProvider = ({ children, sessao, idGru
 
     const descricao: string = (() => {
         switch (idTipoLink) {
-            case 1: return `Video do Episódio ${sessao.episodio} do Grupo Aventura ${idGrupoAventura}`;
-            case 3: return `Podcast do Episódio ${sessao.episodio} do Grupo Aventura ${idGrupoAventura}`;
+            case 2: return `Video do Episódio ${sessao.episodio} do Grupo Aventura ${idGrupoAventura}`;
+            case 4: return `Podcast do Episódio ${sessao.episodio} do Grupo Aventura ${idGrupoAventura}`;
             default: return '';
         }
     })();
