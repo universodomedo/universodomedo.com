@@ -50,11 +50,15 @@ a {
   text-decoration: underline;
 }
 
+a.sem-decoracao {
+  text-decoration: none;
+}
+
 html, body, h1, h2, h3, h4, h5, h6, p, span, a, li, td, th, div {
   line-height: 1;
 }
 
-a:hover, a:hover svg {
+a:not(.sem-decoracao):hover, a:not(.sem-decoracao):hover svg {
   color: #C5AA18;
 }
 

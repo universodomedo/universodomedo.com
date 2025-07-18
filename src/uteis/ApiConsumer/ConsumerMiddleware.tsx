@@ -30,8 +30,8 @@ export async function obtemAventuraCompleta(idAventura: number) {
     return await useApi<AventuraDto>({ uri: '/aventuras/obtemAventuraCompleta', method: 'GET', params: { idAventura } });
 }
 
-export async function obtemGrupoAventuraParaAssistir(idGrupoAventura: number) {
-    return await useApi<AventuraDto | null>({ uri: '/aventuras/obtemGrupoAventuraParaAssistir', method: 'GET', params: { idGrupoAventura } });
+export async function buscaGrupoAventuraEspecifico(idGrupoAventura: number) {
+    return await useApi<AventuraDto | null>({ uri: '/aventuras/buscaGrupoAventuraEspecifico', method: 'GET', params: { idGrupoAventura } });
 }
 
 export async function obtemDadosSessao(idSessao: number) {
@@ -135,12 +135,8 @@ export async function obtemUltimaSessoesPostadas(): Promise<SessaoDto[]> {
     return await useApi<SessaoDto[]>({ uri: 'sessoes/obtemUltimaSessoesPostadas', method: 'GET' });
 }
 
-export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: 'sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
-}
-
-export async function salvaProximaSessaoDeGrupoAventura(idGrupoAventura: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: 'sessoes/salvaProximaSessaoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
+export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: number, criaNovaSessao: boolean): Promise<boolean> {
+    return await useApi<boolean>({ uri: 'sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura, criaNovaSessao: criaNovaSessao } })
 }
 
 //

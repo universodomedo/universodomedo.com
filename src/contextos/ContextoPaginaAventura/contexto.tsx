@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { AventuraDto, SessaoDto } from 'types-nora-api';
-import { obtemDadosSessaoParaAssistir, obtemGrupoAventuraParaAssistir } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { obtemDadosSessaoParaAssistir, buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaAventuraProps {
     grupoAventuraSelecionado: AventuraDto;
@@ -55,7 +55,7 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
         setCarregando('Buscando Episódios');
 
         try {
-            setGrupoAventuraSelecionado(await obtemGrupoAventuraParaAssistir(idGrupoAventura));
+            setGrupoAventuraSelecionado(await buscaGrupoAventuraEspecifico(idGrupoAventura));
         } catch {
             setGrupoAventuraSelecionado(null);
         } finally {

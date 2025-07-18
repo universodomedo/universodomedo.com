@@ -1,12 +1,12 @@
 import styles from '../styles.module.css';
 
 import { ContextoCadastroNovoLinkGrupoAventuraProvider } from 'Contextos/ContextoCadastroNovoLinkGrupoAventura/contexto';
-import { obtemGrupoAventuraParaAssistir } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { AreaEpisodios, AreaLinkTrailer, AreaLinkPlaylist, AreaLinkSerie } from '../componentes';
 
 export default async function AdministrarAventura({ params }: { params: Promise<{ id: string }>; }) {
     const { id } = await params;
-    const aventura = await obtemGrupoAventuraParaAssistir(Number(id));
+    const aventura = await buscaGrupoAventuraEspecifico(Number(id));
 
     if (!aventura) return <div>Aventura não encontrada</div>
 
