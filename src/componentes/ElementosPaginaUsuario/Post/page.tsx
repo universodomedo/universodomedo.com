@@ -20,13 +20,13 @@ export default function SecaoPosts() {
         console.log(`sendMessage`);
         console.log(newMessage);
         if (newMessage.trim()) {
-            emitSocketEvent(SOCKET_EVENTOS.Chat.enviaMensagem, newMessage);
+            emitSocketEvent(SOCKET_EVENTOS.Chat.enviarMensagem, newMessage);
             setNewMessage('');
         }
     };
 
     const enviaTesteAcao = () => {
-        emitSocketEvent(SOCKET_EVENTOS.Chat.enviaTeste);
+        // emitSocketEvent(SOCKET_EVENTOS.Chat.enviaTeste);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {

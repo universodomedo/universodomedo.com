@@ -55,7 +55,7 @@
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.8.1",
     "three": "^0.173.0",
-    "types-nora-api": "^0.0.91"
+    "types-nora-api": "^0.0.95"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
