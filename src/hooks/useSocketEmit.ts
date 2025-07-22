@@ -15,14 +15,20 @@ export function useSocketEmit<TResposta = any, TPayload = any>(evento: EventoSoc
         const socket = getSocket();
 
         const emitir = () => {
+            console.log(`[SocketEmit] Emitindo evento: ${evento}`);
             socket.emit(evento, payload, onResposta);
         };
 
-        if (somenteSeConectado && !socket.connected) return;
+        if (somenteSeConectado && !socket.connected) {
+            console.log(`[SocketEmit] Cancelado: socket não conectado`);
+            return;
+        }
 
         if (socket.connected) {
+            console.log(`[SocketEmit] Emitindo direto pois já está conectado`);
             emitir();
         } else {
+            console.log(`[SocketEmit] Aguardando conexão para emitir ${evento}`);
             socket.once('connect', emitir);
         }
     }, [evento, JSON.stringify(payload)]);

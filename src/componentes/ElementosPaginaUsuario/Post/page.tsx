@@ -4,9 +4,9 @@ import styles from './styles.module.css';
 import { useState } from 'react';
 
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
-import { useSocketEvent } from 'Hooks/useSocketEvent';
+import useSocketEvent from 'Hooks/useSocketEvent';
 import { SOCKET_EVENTOS } from 'types-nora-api';
-import { emitSocketEvent } from 'Libs/emitSocketEvent';
+import emitSocketEvent from 'Libs/emitSocketEvent';
 
 export default function SecaoPosts() {
     const [messages, setMessages] = useState<string[]>([]);

@@ -28,6 +28,7 @@
       "Hooks/*": ["hooks/*"],
       "Layouts/*": ["layouts/*"],
       "Libs/*": ["libs/*"],
+      "Redux/*": ["redux/*"],
       "Uteis/*": ["uteis/*"]
     },
     "allowImportingTsExtensions": true,

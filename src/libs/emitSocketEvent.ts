@@ -5,7 +5,7 @@ type EmitSocketOptions<T = any> = {
     onResposta?: (resposta: T) => void;
 };
 
-export function emitSocketEvent<TResposta = any>(evento: EventoSocket, payload?: any, options?: EmitSocketOptions<TResposta>) {
+export default function emitSocketEvent<TResposta = any>(evento: EventoSocket, payload?: any, options?: EmitSocketOptions<TResposta>) {
     const socket = getSocket();
 
     const emitir = () => {

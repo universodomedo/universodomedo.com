@@ -11,9 +11,12 @@ import "slick-carousel/slick/slick-theme.css";
 
 import Fumaca from 'Componentes/ElementosVisuais/Fumaca/Fumaca.tsx';
 
-import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
+import ReduxProvider from 'Redux/providers/ReduxProvider';
+import SocketListeners from 'listeners/SocketListeners';
+
 import { ContextoPerformanceProvider } from 'Contextos/ContextoPerformace/contexto';
 import { ContextoAutenticacaoProvider } from 'Contextos/ContextoAutenticacao/contexto';
+import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 
 import { Cinzel, Cinzel_Decorative, Junge, B612_Mono } from 'next/font/google';
 
@@ -54,18 +57,21 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
-        <ContextoPerformanceProvider>
-          <ContextoAutenticacaoProvider>
-            <RadixTooltip delayDuration={200} skipDelayDuration={0}>
-              <ContextoMenuSwiperEsquerdaProvider>
-                <ConteudoContextualizado>
-                  {children}
-                  {/* <BackgroundAudio /> */}
-                </ConteudoContextualizado>
-              </ContextoMenuSwiperEsquerdaProvider>
-            </RadixTooltip>
-          </ContextoAutenticacaoProvider>
-        </ContextoPerformanceProvider>
+        <ReduxProvider>
+          <SocketListeners />
+          <ContextoPerformanceProvider>
+            <ContextoAutenticacaoProvider>
+              <RadixTooltip delayDuration={200} skipDelayDuration={0}>
+                <ContextoMenuSwiperEsquerdaProvider>
+                  <ConteudoContextualizado>
+                    {children}
+                    {/* <BackgroundAudio /> */}
+                  </ConteudoContextualizado>
+                </ContextoMenuSwiperEsquerdaProvider>
+              </RadixTooltip>
+            </ContextoAutenticacaoProvider>
+          </ContextoPerformanceProvider>
+        </ReduxProvider>
       </body>
     </html>
   );
