@@ -19,7 +19,7 @@ export function ModalVincularLinkSessao({ isModalOpen, setIsModalOpen }: { isMod
 };
 
 function ConteudoModal() {
-    const { listaTiposLink, sessao, idTipoLink, descricao } = useContextoCadastroNovoLinkSessao();
+    const { listaTiposLink, detalheSessao, idTipoLink, descricao } = useContextoCadastroNovoLinkSessao();
     const [sufixo, setSufixo] = useState('');
     const [erroValidacao, setErroValidacao] = useState('');
 
@@ -64,7 +64,7 @@ function ConteudoModal() {
 
         const sufixoParaEnvio = extrairSufixo(sufixo);
 
-        await vinculaLinkDeSessao(sessao.id, {
+        await vinculaLinkDeSessao(detalheSessao.sessao.id, {
             sufixo: sufixoParaEnvio,
             tipoLink: { id: idTipoLink } as TipoLinkDto,
             descricao: descricao,

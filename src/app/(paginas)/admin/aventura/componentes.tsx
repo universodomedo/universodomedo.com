@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 
 import { useContextoCadastroNovoLinkGrupoAventura } from 'Contextos/ContextoCadastroNovoLinkGrupoAventura/contexto';
 import Link from 'next/link';
-import { LinkDto, SessaoDto } from 'types-nora-api';
+import { DetalheSessaoCanonicaDto, LinkDto, SessaoDto } from 'types-nora-api';
 
 export function AreaLinkTrailer({ linkTrailer }: { linkTrailer: LinkDto }) {
     const { iniciaProcessoVinculoLinkGrupoAventura } = useContextoCadastroNovoLinkGrupoAventura();
@@ -48,13 +48,13 @@ export function AreaLinkSerie({ linkSerie }: { linkSerie: LinkDto }) {
     );
 };
 
-export function AreaEpisodios({ episodios }: { episodios: SessaoDto[] }) {
+export function AreaEpisodios({ detalhesSessaoCanonica }: { detalhesSessaoCanonica: DetalheSessaoCanonicaDto[] }) {
     return (
         <div id={styles.recipiente_area_episodios}>
-            <h1>{episodios.length} Episódios</h1>
+            <h1>{detalhesSessaoCanonica.length} Episódios</h1>
             <div id={styles.recipiente_area_lista_episodios}>
-                {episodios.sort((a, b) => a.id - b.id).map(episodio => (
-                    <Link key={episodio.id} href={`/admin/sessao/${episodio.id}`}>{episodio.episodioPorExtenso}</Link>
+                {detalhesSessaoCanonica.sort((a, b) => a.episodio - b.episodio).map(detalheSessaoCanonica => (
+                    <Link key={detalheSessaoCanonica.sessao.id} href={`/admin/sessao/${detalheSessaoCanonica.sessao.id}`}>{detalheSessaoCanonica.episodioPorExtenso}</Link>
                 ))}
             </div>
         </div>

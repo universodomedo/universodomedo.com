@@ -1,13 +1,13 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { AventuraDto, SessaoDto } from 'types-nora-api';
+import { AventuraDto, DetalheSessaoCanonicaDto } from 'types-nora-api';
 import { obtemDadosSessaoParaAssistir, buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaAventuraProps {
     grupoAventuraSelecionado: AventuraDto;
     buscaGrupoAventuraSelecionado: (idGrupoAventura: number) => void;
-    sessaoSelecionada: SessaoDto | null;
+    detalheSessaoSelecionada: DetalheSessaoCanonicaDto | null;
     buscaSessao: (idSessao: number) => void;
     limpaSessao: () => void;
     podeAlterarSessaoManualmente: { podeBuscarAnterior: boolean, podeBuscarSeguinte: boolean };
@@ -25,24 +25,24 @@ export const useContextoPaginaAventura = (): ContextoPaginaAventuraProps => {
 export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, episodioIndexInicial = null }: { children: React.ReactNode; idGrupoAventura: number; episodioIndexInicial?: number | null; }) => {
     const [carregando, setCarregando] = useState<string | null>('');
     const [grupoAventuraSelecionado, setGrupoAventuraSelecionado] = useState<AventuraDto | null>(null);
-    const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
+    const [detalheSessaoSelecionada, setDetalheSessaoSelecionada] = useState<DetalheSessaoCanonicaDto | null>(null);
 
     //
-    const sessoes = !grupoAventuraSelecionado ? [] : grupoAventuraSelecionado.gruposAventura?.[0]?.sessoes || [];
-    const indexAtual = sessaoSelecionada ? sessoes.findIndex(s => s.id === sessaoSelecionada.id) : -1;
+    const detalhesSessao = !grupoAventuraSelecionado ? [] : grupoAventuraSelecionado.gruposAventura?.[0]?.detalhesSessaoesCanonicas || [];
+    const indexAtual = detalheSessaoSelecionada ? detalhesSessao.findIndex(detalheSessao => detalheSessao.sessao.id === detalheSessaoSelecionada.sessao.id) : -1;
 
     const navegacaoSessoes = {
-        idSessaoAnterior: !sessaoSelecionada
+        idSessaoAnterior: !detalheSessaoSelecionada
             ? undefined
             : indexAtual === 0
                 ? null
-                : sessoes[indexAtual - 1]?.id,
+                : detalhesSessao[indexAtual - 1]?.sessao.id,
 
-        idSessaoSeguinte: !sessaoSelecionada
-            ? sessoes[0]?.id
-            : indexAtual === sessoes.length - 1
+        idSessaoSeguinte: !detalheSessaoSelecionada
+            ? detalhesSessao[0]?.sessao.id
+            : indexAtual === detalhesSessao.length - 1
                 ? undefined
-                : sessoes[indexAtual + 1]?.id
+                : detalhesSessao[indexAtual + 1]?.sessao.id
     };
 
     const podeAlterarSessaoManualmente: { podeBuscarAnterior: boolean, podeBuscarSeguinte: boolean } = {
@@ -67,15 +67,15 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
         setCarregando('Buscando Sessão');
 
         try {
-            setSessaoSelecionada(await obtemDadosSessaoParaAssistir(idSessao));
+            setDetalheSessaoSelecionada(await obtemDadosSessaoParaAssistir(idSessao));
         } catch {
-            setSessaoSelecionada(null);
+            setDetalheSessaoSelecionada(null);
         } finally {
             setCarregando(null);
         }
     };
 
-    async function limpaSessao() { setSessaoSelecionada(null); };
+    async function limpaSessao() { setDetalheSessaoSelecionada(null); };
 
     async function alteraSessaoManualmente(direcao: 'anterior' | 'seguinte') {
         if ((direcao === 'anterior' && navegacaoSessoes.idSessaoAnterior === undefined) || (direcao === 'seguinte') && navegacaoSessoes.idSessaoSeguinte === undefined) return;
@@ -97,11 +97,11 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
         }
 
         if (episodioIndexInicial !== null && grupoAventuraSelecionado) {
-            const sessoesOrdenadas = grupoAventuraSelecionado.gruposAventura?.[0].sessoes.sort((a, b) => a.id - b.id);
+            const sessoesOrdenadas = grupoAventuraSelecionado.gruposAventura?.[0].detalhesSessaoesCanonicas.sort((a, b) => a.episodio - b.episodio);
 
             if (sessoesOrdenadas && episodioIndexInicial > 0 && episodioIndexInicial <= sessoesOrdenadas.length) {
                 const sessao = sessoesOrdenadas[episodioIndexInicial - 1]; // -1 porque arrays começam em 0
-                buscaSessao(sessao.id);
+                buscaSessao(sessao.sessao.id);
             }
         }
     }, [episodioIndexInicial, grupoAventuraSelecionado]);
@@ -113,7 +113,7 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
     if (!grupoAventuraSelecionado) return;
 
     return (
-        <ContextoPaginaAventura.Provider value={{ grupoAventuraSelecionado, buscaGrupoAventuraSelecionado, sessaoSelecionada, buscaSessao, limpaSessao, podeAlterarSessaoManualmente, alteraSessaoManualmente }}>
+        <ContextoPaginaAventura.Provider value={{ grupoAventuraSelecionado, buscaGrupoAventuraSelecionado, detalheSessaoSelecionada, buscaSessao, limpaSessao, podeAlterarSessaoManualmente, alteraSessaoManualmente }}>
             {children}
         </ContextoPaginaAventura.Provider>
     );

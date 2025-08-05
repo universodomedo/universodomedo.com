@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtual?: PaginaObjeto | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtual === undefined ? {} : { idPaginaAtual: paginaAtual?.id || '' } });
@@ -35,11 +35,11 @@ export async function buscaGrupoAventuraEspecifico(idGrupoAventura: number) {
 }
 
 export async function obtemDadosSessao(idSessao: number) {
-    return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemDadosSessao', method: 'GET', params: { idSessao } });
+    return await useApi<DetalheSessaoCanonicaDto | null>({ uri: '/detalhes_sessao_canonica/obtemDadosSessao', method: 'GET', params: { idSessao } });
 }
 
 export async function obtemDadosSessaoParaAssistir(idSessao: number) {
-    return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemDadosSessaoParaAssistir', method: 'GET', params: { idSessao } });
+    return await useApi<DetalheSessaoCanonicaDto | null>({ uri: '/detalhes_sessao_canonica/obtemDadosSessaoParaAssistir', method: 'GET', params: { idSessao } });
 }
 
 export async function obtemPersonagensDoUsuario() {
@@ -131,8 +131,8 @@ export async function encerraGrupoAventura(idGrupoAventura: number): Promise<boo
     return await useApi<boolean>({ uri: '/grupos_aventuras/encerraGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
 }
 
-export async function obtemUltimaSessoesPostadas(): Promise<SessaoDto[]> {
-    return await useApi<SessaoDto[]>({ uri: 'sessoes/obtemUltimaSessoesPostadas', method: 'GET' });
+export async function obtemUltimaSessoesPostadas(): Promise<DetalheSessaoCanonicaDto[]> {
+    return await useApi<DetalheSessaoCanonicaDto[]>({ uri: 'detalhes_sessao_canonica/obtemUltimaSessoesPostadas', method: 'GET' });
 }
 
 export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: number, criaNovaSessao: boolean): Promise<boolean> {

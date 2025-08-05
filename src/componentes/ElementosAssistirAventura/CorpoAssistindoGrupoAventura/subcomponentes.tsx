@@ -23,11 +23,11 @@ export function TrailerGrupoAventura() {
 };
 
 export function VideoEpisodio() {
-    const { sessaoSelecionada } = useContextoPaginaAventura();
+    const { detalheSessaoSelecionada } = useContextoPaginaAventura();
 
-    if (!sessaoSelecionada) return <p>Sessão não encontrada</p>;
+    if (!detalheSessaoSelecionada) return <p>Sessão não encontrada</p>;
 
-    if (!sessaoSelecionada.linkSessaoYoutube) return (
+    if (!detalheSessaoSelecionada.linkSessaoYoutube) return (
         <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
             <h3>Esse Episódio ainda não possui Vídeo</h3>
         </SecaoDeConteudo>
@@ -35,17 +35,17 @@ export function VideoEpisodio() {
 
     return (
         <SecaoDeConteudo id={styles.recipiente_video}>
-            <PlayerYouTube urlSufixo={sessaoSelecionada.linkSessaoYoutube.sufixo} />
+            <PlayerYouTube urlSufixo={detalheSessaoSelecionada.linkSessaoYoutube.sufixo} />
         </SecaoDeConteudo>
     );
 };
 
 export function PodcastEpisodio() {
-    const { sessaoSelecionada } = useContextoPaginaAventura();
+    const { detalheSessaoSelecionada } = useContextoPaginaAventura();
 
-    if (!sessaoSelecionada) return <p>Sessão não encontrada</p>;
+    if (!detalheSessaoSelecionada) return <p>Sessão não encontrada</p>;
 
-    if (!sessaoSelecionada.linkSessaoSpotify) return (
+    if (!detalheSessaoSelecionada.linkSessaoSpotify) return (
         <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
             <h3>Esse Episódio ainda não possui Podcast</h3>
         </SecaoDeConteudo>
@@ -53,7 +53,7 @@ export function PodcastEpisodio() {
 
     return (
         <SecaoDeConteudo id={styles.recipiente_podcast}>
-            <PlayerSpotify urlSufixo={sessaoSelecionada.linkSessaoSpotify.sufixo} />
+            <PlayerSpotify urlSufixo={detalheSessaoSelecionada.linkSessaoSpotify.sufixo} />
         </SecaoDeConteudo>
     );
 };

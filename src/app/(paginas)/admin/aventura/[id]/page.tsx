@@ -21,7 +21,7 @@ export default async function AdministrarAventura({ params }: { params: Promise<
 
                 <AreaLinkSerie linkSerie={aventura.gruposAventura![0].linkSerieSpotify} />
 
-                <AreaEpisodios episodios={aventura.gruposAventura![0].sessoes} />
+                <AreaEpisodios detalhesSessaoCanonica={aventura.gruposAventura![0].detalhesSessaoesCanonicas} />
             </div>
         </ContextoCadastroNovoLinkGrupoAventuraProvider>
     );

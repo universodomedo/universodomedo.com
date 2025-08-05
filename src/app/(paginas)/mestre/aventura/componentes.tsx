@@ -9,7 +9,7 @@ import { useContextoPaginaMestreAventura } from "Contextos/ContextoMestreAventur
 import SecaoDeConteudo from "Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo";
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { encerrarSessaoEmAndamentoDeGrupoAventura } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { EstadoSessao, SessaoDto } from 'types-nora-api';
+import { DetalheSessaoCanonicaDto, EstadoSessao } from 'types-nora-api';
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 
@@ -37,7 +37,7 @@ function CabecalhoMestreAventura() {
                 <h1>{aventuraSelecionada.gruposAventura![0].nomeUnicoGrupoAventura}</h1>
             </SecaoDeConteudo>
 
-            <VisualizadorUltimasSessoes ultimasSessoes={aventuraSelecionada.gruposAventura![0].sessoes.sort((a, b) => a.id - b.id).slice(-2)} />
+            <VisualizadorUltimasSessoes detalhesUltimasSessoes={aventuraSelecionada.gruposAventura![0].detalhesSessaoesCanonicas.sort((a, b) => a.sessao.id - b.sessao.id).slice(-2)} />
 
             <SecaoDeConteudo id={styles.recipiente_acoes_aventura}>
                 <button disabled={aventuraSelecionada.gruposAventura![0].sessaoMaisRecente?.estadoAtual !== EstadoSessao.EM_ANDAMENTO} onClick={openModal}>Finalizar Sessão em Aberto</button>
@@ -52,38 +52,37 @@ function CabecalhoMestreAventura() {
     );
 };
 
-function VisualizadorUltimasSessoes({ ultimasSessoes }: { ultimasSessoes: SessaoDto[] }) {
+function VisualizadorUltimasSessoes({ detalhesUltimasSessoes }: { detalhesUltimasSessoes: DetalheSessaoCanonicaDto[] }) {
     return (
         <div id={styles.recipiente_visualizador_sessoes}>
-            {ultimasSessoes.map(sessao => (
-                <VisualizacaoInformacoesSessao key={sessao.id} sessao={sessao} />
+            {detalhesUltimasSessoes.map(detalheUltimasSessoes => (
+                <VisualizacaoInformacoesSessao key={detalheUltimasSessoes.sessao.id} detalheUltimasSessoes={detalheUltimasSessoes} />
             ))}
         </div>
     );
 };
 
-function VisualizacaoInformacoesSessao({ sessao }: { sessao: SessaoDto }) {
+function VisualizacaoInformacoesSessao({ detalheUltimasSessoes }: { detalheUltimasSessoes: DetalheSessaoCanonicaDto }) {
     return (
-        <CustomLink className={styles.recipiente_link_sessao} href={`/mestre/sessao/${sessao.id}`} semDecoracao>
+        <CustomLink className={styles.recipiente_link_sessao} href={`/mestre/sessao/${detalheUltimasSessoes.sessao.id}`} semDecoracao>
             <SecaoDeConteudo className={styles.recipiente_informacoes_sessao}>
                 <div className={styles.recipiente_cabecalho_informacoes_sessao}>
-                    <h1>{sessao.episodioPorExtenso}</h1>
-                    <h4>{sessao.estadoAtual}</h4>
+                    <h1>{detalheUltimasSessoes.episodioPorExtenso}</h1>
+                    <h4>{detalheUltimasSessoes.sessao.estadoAtual}</h4>
                 </div>
 
                 <div className={styles.recipiente_par_informacao}>
                     <div className={styles.recipiente_informacoes}>
-                        <h4>Previsto: {format(new Date(sessao.dataInicioPrevista), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</h4>
-                        {sessao.dataInicioReal ? (
-                            <h4>Iniciou {format(new Date(sessao.dataInicioReal), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</h4>
+                        <h4>Previsto: {format(new Date(detalheUltimasSessoes.sessao.dataPrevisaoInicio), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</h4>
+                        {detalheUltimasSessoes.sessao.dataInicio ? (
+                            <h4>Iniciou {format(new Date(detalheUltimasSessoes.sessao.dataInicio), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</h4>
                         ) : (
                             <h4>Não Iniciado</h4>
                         )}
                     </div>
                     <div className={styles.recipiente_informacoes}>
-                        <h4>Previsto: {format(new Date(sessao.dataFimPrevista), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</h4>
-                        {sessao.dataFimReal ? (
-                            <h4>Finalizou {format(new Date(sessao.dataFimReal), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</h4>
+                        {detalheUltimasSessoes.sessao.dataFim ? (
+                            <h4>Finalizou {format(new Date(detalheUltimasSessoes.sessao.dataFim), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</h4>
                         ) : (
                             <h4>Não Finalizado</h4>
                         )}

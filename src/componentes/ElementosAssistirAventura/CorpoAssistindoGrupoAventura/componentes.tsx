@@ -3,20 +3,20 @@ import { PodcastEpisodio, TrailerGrupoAventura, VideoEpisodio } from './subcompo
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 
 export function CabecalhoGrupoAventura() {
-    const { grupoAventuraSelecionado, sessaoSelecionada } = useContextoPaginaAventura();
+    const { grupoAventuraSelecionado, detalheSessaoSelecionada } = useContextoPaginaAventura();
 
     return (
         <SecaoDeConteudo>
             <h1>{grupoAventuraSelecionado.titulo}</h1>
-            {sessaoSelecionada && (<h3>{sessaoSelecionada.episodioPorExtenso}</h3>)}
+            {detalheSessaoSelecionada && (<h3>{detalheSessaoSelecionada.episodioPorExtenso}</h3>)}
         </SecaoDeConteudo>
     );
 };
 
 export function CorpoGrupoAventura() {
-    const { sessaoSelecionada } = useContextoPaginaAventura();
+    const { detalheSessaoSelecionada } = useContextoPaginaAventura();
 
-    if (!sessaoSelecionada) return <CorpoPaginaInicial />
+    if (!detalheSessaoSelecionada) return <CorpoPaginaInicial />
 
     return <CorpoEpisodio />
 };

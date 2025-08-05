@@ -1,14 +1,14 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { AventuraDto, SessaoDto } from 'types-nora-api';
+import { AventuraDto, DetalheSessaoCanonicaDto, SessaoDto } from 'types-nora-api';
 import { obtemAventuraCompleta, obtemTodasAventuras, obtemUltimaSessoesPostadas } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaAventurasProps {
     aventurasListadas: AventuraDto[] | null;
     aventuraSelecionada: AventuraDto | null;
     buscaAventuraSelecionada: (idAventura: number) => void;
-    ultimasSessoesPostadas: SessaoDto[] | null;
+    detalhesUltimasSessoesPostadas: DetalheSessaoCanonicaDto[] | null;
 };
 
 const ContextoPaginaAventuras = createContext<ContextoPaginaAventurasProps | undefined>(undefined);
@@ -23,7 +23,7 @@ export const ContextoPaginaAventurasProvider = ({ children }: { children: React.
     const [carregando, setCarregando] = useState<string | null>('');
     const [aventurasListadas, setAventurasListadas] = useState<AventuraDto[] | null>(null);
     const [aventuraSelecionada, setAventuraSelecionada] = useState<AventuraDto | null>(null);
-    const [ultimasSessoesPostadas, setUltimasSessoesPostadas] = useState<SessaoDto[] | null>(null);
+    const [detalhesUltimasSessoesPostadas, setDetalhesUltimasSessoesPostadas] = useState<DetalheSessaoCanonicaDto[] | null>(null);
 
     async function buscaAventurasListadas() {
         setCarregando('Buscando Aventuras');
@@ -53,9 +53,9 @@ export const ContextoPaginaAventurasProvider = ({ children }: { children: React.
         setCarregando('Buscando Últimas Sessões Postadas');
 
         try {
-            setUltimasSessoesPostadas(await obtemUltimaSessoesPostadas());
+            setDetalhesUltimasSessoesPostadas(await obtemUltimaSessoesPostadas());
         } catch {
-            setUltimasSessoesPostadas(null);
+            setDetalhesUltimasSessoesPostadas(null);
         } finally {
             setCarregando(null);
         }
@@ -69,7 +69,7 @@ export const ContextoPaginaAventurasProvider = ({ children }: { children: React.
     if (carregando) return <div>{carregando}</div>;
 
     return (
-        <ContextoPaginaAventuras.Provider value={{ aventurasListadas, aventuraSelecionada, buscaAventuraSelecionada, ultimasSessoesPostadas }}>
+        <ContextoPaginaAventuras.Provider value={{ aventurasListadas, aventuraSelecionada, buscaAventuraSelecionada, detalhesUltimasSessoesPostadas }}>
             {children}
         </ContextoPaginaAventuras.Provider>
     );

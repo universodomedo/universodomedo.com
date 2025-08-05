@@ -26,22 +26,22 @@ export function ItemAventuraLista({ aventura }: { aventura: AventuraDto }) {
 };
 
 export function UltimasSessoesPostadas() {
-    const { ultimasSessoesPostadas } = useContextoPaginaAventuras();
+    const { detalhesUltimasSessoesPostadas } = useContextoPaginaAventuras();
 
     return (
         <SecaoDeConteudo id={styles.recipiente_ultimas_sessoes_postadas}>
             <h1>Ultimas Sessões Postadas</h1>
 
             <div id={styles.recipiente_cartas_ultimas_sessoes_postadas}>
-                {ultimasSessoesPostadas?.map(sessao => (
-                    <CustomLink key={sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} href={`/aventura/${sessao.grupoAventura.id}?${sessao.episodio}`}>
+                {detalhesUltimasSessoesPostadas?.map(detalheSessao => (
+                    <CustomLink key={detalheSessao.sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} href={`/aventura/${detalheSessao.grupoAventura!.id}?${detalheSessao.episodio}`}>
                         <div className={styles.recipiente_capa_carta_sessao_recente}>
-                            <RecipienteImagem src={sessao.grupoAventura.aventura.imagemCapa?.fullPath} />
+                            <RecipienteImagem src={detalheSessao.grupoAventura!.aventura.imagemCapa?.fullPath} />
                         </div>
                         <div className={styles.recipiente_info_carta_sessao_recente}>
-                            <h2>{sessao.grupoAventura.aventura.titulo}</h2>
-                            {sessao.grupoAventura.aventura.temApenasUmGrupo && <h4>{sessao.grupoAventura.nome}</h4>}
-                            <h3>{sessao.episodioPorExtenso}</h3>
+                            <h2>{detalheSessao.grupoAventura!.aventura.titulo}</h2>
+                            {detalheSessao.grupoAventura!.aventura.temApenasUmGrupo && <h4>{detalheSessao.grupoAventura!.nome}</h4>}
+                            <h3>{detalheSessao.episodioPorExtenso}</h3>
                         </div>
                     </CustomLink>
                 ))}
