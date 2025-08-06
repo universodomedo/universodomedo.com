@@ -97,7 +97,7 @@ function MenuLateralAventurasListadas() {
 
     return (
         <>
-            {aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.EM_ANDAMENTO).sort((a, b) => (new Date(a.gruposAventura!.find(g => g.dataInicio)?.dataInicio || '9999-12-31').getTime() - new Date(b.gruposAventura!.find(g => g.dataInicio)?.dataInicio || '9999-12-31').getTime())).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
+            {aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.EM_ANDAMENTO).sort((a, b) => (new Date(a.gruposAventura!.find(g => g.dataQueIniciou)?.dataQueIniciou || '9999-12-31').getTime() - new Date(b.gruposAventura!.find(g => g.dataQueIniciou)?.dataQueIniciou || '9999-12-31').getTime())).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
             <hr />
             {aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.FINALIZADA).sort((a, b) => new Date(b.dataFimAventura ?? 0).getTime() - new Date(a.dataFimAventura ?? 0).getTime()).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
         </>

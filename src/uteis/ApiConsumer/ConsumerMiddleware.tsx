@@ -116,7 +116,7 @@ export async function obtemTodosTiposLink() {
 }
 
 export async function vinculaLinkDeSessao(idSessao: number, novoLink: LinkDto): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/sessoes/vinculaLinkDeSessao', method: 'POST', data: { idSessao: idSessao, novoLink: novoLink } });
+    return await useApi<boolean>({ uri: '/detalhes_sessao_canonica/vinculaLinkDeSessao', method: 'POST', data: { idSessao: idSessao, novoLink: novoLink } });
 }
 
 export async function vinculaLinkDeGrupoAventura(idGrupoAventura: number, novoLink: LinkDto): Promise<boolean> {
