@@ -10,7 +10,7 @@ import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
 import { ItemAventuraLista, UltimasSessoesPostadas } from './subcomponentes';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
-import { useAtualizaConteudoGeral, useAtualizaConteudoMenu } from 'Contextos/ContextoLayoutVisualizacaoPadrao/hooks';
+// import { useAtualizaConteudoGeral, useAtualizaConteudoMenu } from 'Contextos/ContextoLayoutVisualizacaoPadrao/hooks';
 import { ContextoLayoutVisualizacaoPadraoProvider } from 'Contextos/ContextoLayoutVisualizacaoPadrao/contexto';
 import { useMemo } from 'react';
 import LayoutContextualizado from 'Contextos/ContextoLayoutVisualizacaoPadrao/page';
@@ -27,8 +27,8 @@ export function PaginaAventuras_Slot() {
 };
 
 export function PaginaAventuras_LayoutVisualizacao() {
-    useAtualizaConteudoGeral(useMemo(() => <ConteudoGeral />, []));
-    useAtualizaConteudoMenu(useMemo(() => <ConteudoMenu />, []));
+    // useAtualizaConteudoGeral(useMemo(() => <ConteudoGeral />, []));
+    // useAtualizaConteudoMenu(useMemo(() => <ConteudoMenu />, []));
 
     return <LayoutContextualizado />;
 };

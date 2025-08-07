@@ -21,6 +21,9 @@
     flex: .8;
     background-color: #3122464D;
     border-radius: 1vw;
+    align-items: center;
+    text-align: center;
+    padding: .5% .6%;
 }
 
 #recipiente_conteudo_menu {

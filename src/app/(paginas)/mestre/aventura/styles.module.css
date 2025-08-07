@@ -9,6 +9,15 @@
     width: auto;
 }
 
+#recipiente_aventura_selecionada {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: .5% 1%;
+    gap: 2vh;
+    align-items: center;
+}
+
 #recipiente_imagem_capa_pagina_aventura_mestre {
     position: relative;
     width: 100%;

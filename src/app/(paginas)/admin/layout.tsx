@@ -8,6 +8,8 @@ import { PAGINAS } from 'types-nora-api';
 import { verificarPermissao } from "Helpers/verificarPermissao";
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
 import Link from 'next/link';
+import { ContextoLayoutVisualizacaoPadraoProvider } from 'Contextos/ContextoLayoutVisualizacaoPadrao/contexto';
+import LayoutContextualizado from 'Contextos/ContextoLayoutVisualizacaoPadrao/page';
 
 export default function LayoutAdmin({ children }: { children: ReactNode }) {
     return (
@@ -26,12 +28,19 @@ function LayoutAdmin_Slot({ children }: { children: ReactNode }) {
 
     if (!usuarioComPermissao) return <Redirecionador urlRedirecionar='/' />;
 
+    // return (
+    //     <div id={styles.recipiente_pagina_admin}>
+    //         <Link href={'/admin'}><h1>Páginas ADMIN</h1></Link>
+    //         <div id={styles.recipiente_conteudo_pagina_admin}>
+    //             {children}
+    //         </div>
+    //     </div>
+    // );
+
     return (
-        <div id={styles.recipiente_pagina_admin}>
-            <Link href={'/admin'}><h1>Páginas ADMIN</h1></Link>
-            <div id={styles.recipiente_conteudo_pagina_admin}>
-                {children}
-            </div>
-        </div>
+        <ContextoLayoutVisualizacaoPadraoProvider>
+            {children}
+            <LayoutContextualizado />
+        </ContextoLayoutVisualizacaoPadraoProvider>
     );
 };

@@ -1,6 +1,5 @@
 'use client';
 
-import styles from './styles.module.css';
 import { ReactNode } from "react";
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
@@ -8,7 +7,8 @@ import { PAGINAS } from 'types-nora-api';
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
 import { verificarPermissao } from "Helpers/verificarPermissao";
 
-import { ListaAcoesMestre } from './componentes';
+import LayoutContextualizado from 'Contextos/ContextoLayoutVisualizacaoPadrao/page';
+import { ContextoLayoutVisualizacaoPadraoProvider } from 'Contextos/ContextoLayoutVisualizacaoPadrao/contexto';
 
 export default function LayoutMestre({ children }: { children: ReactNode }) {
     return (
@@ -28,15 +28,8 @@ function LayoutMestre_Slot({ children }: { children: ReactNode }) {
     if (!usuarioComPermissao) return <Redirecionador urlRedirecionar='/' />;
 
     return (
-        <div id={styles.recipiente_layout_mestre}>
-            <div id={styles.recipiente_corpo_layout_mestre}>
-                <div id={styles.recipiente_corpo_pagina_mestre}>
-                    <div id={styles.recipiente_conteudo_pagina_selecionada}>
-                        {children}
-                    </div>
-                </div>
-                <ListaAcoesMestre />
-            </div>
-        </div>
+        <ContextoLayoutVisualizacaoPadraoProvider>
+            {children}
+        </ContextoLayoutVisualizacaoPadraoProvider>
     );
 };

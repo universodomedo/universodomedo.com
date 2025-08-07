@@ -1,18 +1,27 @@
-import Link from "next/link";
-import { obtemTodasAventuras } from "Uteis/ApiConsumer/ConsumerMiddleware";
+'use client';
 
-export default async function AdministrarAventuras() {
-    const aventuras = await obtemTodasAventuras();
+import { obtemTodasAventuras } from "Uteis/ApiConsumer/ConsumerMiddleware";
+import { useRequisicao } from "Hooks/useRequisicao";
+import { ListaAcoesAdmin } from "../componentes";
+import { AdministrarAventuras_ConteudoGeral } from "./componentes";
+import { LayoutVisualizacaoPadrao_ConteudoGeral, LayoutVisualizacaoPadrao_ConteudoMenu } from "Contextos/ContextoLayoutVisualizacaoPadrao/hooks";
+
+export default function AdministrarAventuras() {
+    const { dados: aventuras, carregando, erro } = useRequisicao(obtemTodasAventuras);
+
+    if (carregando) return <p>Carregando...</p>;
+    if (erro) return <p>Erro: {erro.message}</p>;
+    if (!aventuras) return <></>;
 
     return (
         <>
-            {aventuras.flatMap(aventura =>
-                aventura.gruposAventura?.sort((a, b) => b.id - a.id).map(grupo => (
-                    <Link key={grupo.id} href={`/admin/aventura/${grupo.id}`}>
-                        <h1>{aventura.titulo}{!aventura.temApenasUmGrupo && ` ${grupo.nome}`}</h1>
-                    </Link>
-                )) || []
-            )}
+            <LayoutVisualizacaoPadrao_ConteudoGeral>
+                <AdministrarAventuras_ConteudoGeral aventuras={aventuras} />
+            </LayoutVisualizacaoPadrao_ConteudoGeral>
+
+            <LayoutVisualizacaoPadrao_ConteudoMenu>
+                <ListaAcoesAdmin />
+            </LayoutVisualizacaoPadrao_ConteudoMenu>
         </>
     );
 };

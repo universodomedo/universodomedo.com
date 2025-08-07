@@ -14,19 +14,13 @@ import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 
 export function PaginaMestreAventura_Slot() {
-    return (
-        <CabecalhoMestreAventura />
-    );
-};
-
-function CabecalhoMestreAventura() {
     const { aventuraSelecionada } = useContextoPaginaMestreAventura();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
 
     return (
-        <>
+        <div id={styles.recipiente_aventura_selecionada}>
             <SecaoDeConteudo id={styles.recipiente_capa_pagina_aventura_mestre}>
                 <div id={styles.recipiente_imagem_capa_pagina_aventura_mestre}>
                     <RecipienteImagem src={aventuraSelecionada.imagemCapa?.fullPath} />
@@ -48,7 +42,7 @@ function CabecalhoMestreAventura() {
                     <ConteudoModal />
                 </Modal.Content>
             </Modal>
-        </>
+        </div>
     );
 };
 
@@ -81,8 +75,8 @@ function VisualizacaoInformacoesSessao({ detalheUltimasSessoes }: { detalheUltim
                         )}
                     </div>
                     <div className={styles.recipiente_informacoes}>
-                        {detalheUltimasSessoes.sessao.dataFim ? (
-                            <h4>Finalizou {format(new Date(detalheUltimasSessoes.sessao.dataFim), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</h4>
+                        {detalheUltimasSessoes.sessao.dataQueEncerrou ? (
+                            <h4>Finalizou {format(new Date(detalheUltimasSessoes.sessao.dataQueEncerrou), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</h4>
                         ) : (
                             <h4>Não Finalizado</h4>
                         )}
