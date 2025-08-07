@@ -8,31 +8,29 @@ import { AventuraEstado } from "types-nora-api";
 
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
-import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 import { ItemAventuraLista, UltimasSessoesPostadas } from './subcomponentes';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
+import { useAtualizaConteudoGeral, useAtualizaConteudoMenu } from 'Contextos/ContextoLayoutVisualizacaoPadrao/hooks';
+import { ContextoLayoutVisualizacaoPadraoProvider } from 'Contextos/ContextoLayoutVisualizacaoPadrao/contexto';
+import { useMemo } from 'react';
+import LayoutContextualizado from 'Contextos/ContextoLayoutVisualizacaoPadrao/page';
 
 export function PaginaAventuras_Slot() {
-    const { aventuraSelecionada } = useContextoPaginaAventuras();
-
-    const { scrollableProps: scrollablePropsSempreVisivel } = useScrollable({ modo: 'sempreVisivel' });
-    const { scrollableProps: scrollablePropsInteragindo } = useScrollable({ modo: 'visivelQuandoInteragindo' });
-
     return (
-        <div id={styles.recipiente_pagina_aventuras}>
-            <SecaoBarraDeBuscaDeAventuras />
-            <div id={styles.recipiente_corpo_aventuras}>
-                <div id={styles.recipiente_aventura_selecionada}>
-                    <div id={styles.recipiente_corpo_aventura_selecionada} {...scrollablePropsSempreVisivel}>
-                        {!aventuraSelecionada ? <CorpoNovidades /> : <CorpoAventuraSelecionada />}
-                    </div>
-                </div>
-                <div id={styles.recipiente_menu_aventuras} {...scrollablePropsInteragindo}>
-                    <MenuLateralAventurasListadas />
-                </div>
-            </div>
-        </div>
-    );
+        <>
+            {/* <SecaoBarraDeBuscaDeAventuras /> */}
+            <ContextoLayoutVisualizacaoPadraoProvider>
+                <PaginaAventuras_LayoutVisualizacao />
+            </ContextoLayoutVisualizacaoPadraoProvider>
+        </>
+    )
+};
+
+export function PaginaAventuras_LayoutVisualizacao() {
+    useAtualizaConteudoGeral(useMemo(() => <ConteudoGeral />, []));
+    useAtualizaConteudoMenu(useMemo(() => <ConteudoMenu />, []));
+
+    return <LayoutContextualizado />;
 };
 
 function SecaoBarraDeBuscaDeAventuras() {
@@ -40,6 +38,22 @@ function SecaoBarraDeBuscaDeAventuras() {
         <div id={styles.recipiente_barra_busca}>
 
         </div>
+    );
+};
+
+function ConteudoGeral() {
+    const { aventuraSelecionada } = useContextoPaginaAventuras();
+
+    return (
+        <div id={styles.recipiente_corpo_aventura_selecionada}>
+            {!aventuraSelecionada ? <CorpoNovidades /> : <CorpoAventuraSelecionada />}
+        </div>
+    );
+};
+
+function ConteudoMenu() {
+    return (
+        <MenuLateralAventurasListadas />
     );
 };
 
