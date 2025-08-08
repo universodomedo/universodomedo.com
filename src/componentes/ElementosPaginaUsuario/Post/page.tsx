@@ -4,9 +4,9 @@ import styles from './styles.module.css';
 import { useState } from 'react';
 
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
-import { useSocketEvent } from 'Hooks/useSocketEvent';
+import useSocketEvent from 'Hooks/useSocketEvent';
 import { SOCKET_EVENTOS } from 'types-nora-api';
-import { emitSocketEvent } from 'Libs/emitSocketEvent';
+import emitSocketEvent from 'Libs/emitSocketEvent';
 
 export default function SecaoPosts() {
     const [messages, setMessages] = useState<string[]>([]);
@@ -20,13 +20,13 @@ export default function SecaoPosts() {
         console.log(`sendMessage`);
         console.log(newMessage);
         if (newMessage.trim()) {
-            emitSocketEvent(SOCKET_EVENTOS.Chat.enviaMensagem, newMessage);
+            emitSocketEvent(SOCKET_EVENTOS.Chat.enviarMensagem, newMessage);
             setNewMessage('');
         }
     };
 
     const enviaTesteAcao = () => {
-        emitSocketEvent(SOCKET_EVENTOS.Chat.enviaTeste);
+        emitSocketEvent(SOCKET_EVENTOS.Chat.enviarTeste);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {

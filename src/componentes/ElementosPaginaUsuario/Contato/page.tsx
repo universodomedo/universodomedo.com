@@ -7,7 +7,7 @@ import { SOCKET_AcessoUsuario, SOCKET_EVENTOS } from 'types-nora-api';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
-import { useSocketEvent } from 'Hooks/useSocketEvent';
+import useSocketEvent from 'Hooks/useSocketEvent';
 import { useSocketEmit } from 'Hooks/useSocketEmit';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 

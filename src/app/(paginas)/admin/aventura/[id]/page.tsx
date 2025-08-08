@@ -1,28 +1,16 @@
-import styles from '../styles.module.css';
-
-import { ContextoCadastroNovoLinkGrupoAventuraProvider } from 'Contextos/ContextoCadastroNovoLinkGrupoAventura/contexto';
-import { obtemGrupoAventuraParaAssistir } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { AreaEpisodios, AreaLinkTrailer, AreaLinkPlaylist, AreaLinkSerie } from '../componentes';
+import { AdministrarAventura_ConteudoGeral } from '../componentes';
+import { buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { LayoutVisualizacaoPadrao_ConteudoGeral } from 'Contextos/ContextoLayoutVisualizacaoPadrao/hooks';
 
 export default async function AdministrarAventura({ params }: { params: Promise<{ id: string }>; }) {
     const { id } = await params;
-    const aventura = await obtemGrupoAventuraParaAssistir(Number(id));
+    const aventura = await buscaGrupoAventuraEspecifico(Number(id));
 
     if (!aventura) return <div>Aventura não encontrada</div>
 
     return (
-        <ContextoCadastroNovoLinkGrupoAventuraProvider idGrupoAventura={aventura.gruposAventura![0].id}>
-            <div id={styles.recipiente_acoes_aventura}>
-                <h1>{aventura.titulo} - {aventura.gruposAventura![0].nome}</h1>
-
-                <AreaLinkTrailer linkTrailer={aventura.gruposAventura![0].linkTrailerYoutube} />
-
-                <AreaLinkPlaylist linkPlaylist={aventura.gruposAventura![0].linkPlaylistYoutube} />
-
-                <AreaLinkSerie linkSerie={aventura.gruposAventura![0].linkSerieSpotify} />
-
-                <AreaEpisodios episodios={aventura.gruposAventura![0].sessoes} />
-            </div>
-        </ContextoCadastroNovoLinkGrupoAventuraProvider>
+        <LayoutVisualizacaoPadrao_ConteudoGeral proporcaoFlex={0.9} hrefPaginaVoltar={'/admin/aventuras'}>
+            <AdministrarAventura_ConteudoGeral aventura={aventura} />
+        </LayoutVisualizacaoPadrao_ConteudoGeral>
     );
 };

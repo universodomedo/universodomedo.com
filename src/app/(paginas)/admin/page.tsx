@@ -1,17 +1,12 @@
-import { obtemPersonagensComPendencias } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
+'use client';
 
-import Link from 'next/link';
+import { LayoutVisualizacaoPadrao_ConteudoMenu } from "Contextos/ContextoLayoutVisualizacaoPadrao/hooks";
+import { ListaAcoesAdmin } from "./componentes";
 
-export default async function PaginaAdmin() {
-    const personagens = await obtemPersonagensComPendencias();
-
+export default function PaginaAdmin() {
     return (
-        <>
-            {/* antes tinha um outro objetinho, mas ainda tem q servir como verificador */}
-            {/* <Link href={'/admin/fichas-pendentes'}><h2>Fichas Pendentes - Admin [{personagens.filter(personagem => personagem.pendencias.pendenciaAdmin !== '').length}] Usuario [{personagens.filter(personagem => personagem.pendencias.pendeciaUsuario !== '').length}]</h2></Link> */}
-            <Link href={'/admin/uploads'}><h2>Upload</h2></Link>
-            <Link href={'/admin/variaveis-ambiente'}><h2>Variáveis de Ambiente</h2></Link>
-            <Link href={'/admin/aventuras'}><h2>Aventuras</h2></Link>
-        </>
+        <LayoutVisualizacaoPadrao_ConteudoMenu>
+            <ListaAcoesAdmin />
+        </LayoutVisualizacaoPadrao_ConteudoMenu>
     );
 };

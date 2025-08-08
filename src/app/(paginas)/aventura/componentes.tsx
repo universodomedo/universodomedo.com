@@ -11,7 +11,7 @@ import CorpoAssistindoGrupoAventura from 'Componentes/ElementosAssistirAventura/
 import { IconeAcaoVoltarPaginaAventuras, IconeAcaoBuscarSessaoAnterior, IconeAcaoBuscarSessaoSeguinte } from 'Componentes/ElementosAssistirAventura/IconesAcoes/componentes';
 
 export function PaginaAventura_Slot() {
-    const { grupoAventuraSelecionado, sessaoSelecionada, buscaSessao, limpaSessao } = useContextoPaginaAventura();
+    const { grupoAventuraSelecionado, detalheSessaoSelecionada, buscaSessao, limpaSessao } = useContextoPaginaAventura();
 
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
 
@@ -30,13 +30,13 @@ export function PaginaAventura_Slot() {
                     </div>
                 </div>
                 <div id={styles.recipiente_menu_lateral_episodios} {...scrollableProps}>
-                    <DivClicavel key={0} className={styles.recipiente_linha_episodio} classeParaDesabilitado={styles.ativo} desabilitado={!sessaoSelecionada} onClick={() => limpaSessao()}>
+                    <DivClicavel key={0} className={styles.recipiente_linha_episodio} classeParaDesabilitado={styles.ativo} desabilitado={!detalheSessaoSelecionada} onClick={() => limpaSessao()}>
                         <h2>Início</h2>
                     </DivClicavel>
                     <hr style={{ margin: '1vh 0 .4vh' }} />
-                    {grupoAventuraSelecionado.gruposAventura![0].sessoes.sort((a, b) => a.id - b.id).map(sessao => (
-                        <DivClicavel key={sessao.id} className={styles.recipiente_linha_episodio} classeParaDesabilitado={styles.ativo} desabilitado={sessaoSelecionada?.id === sessao.id} onClick={() => buscaSessao(sessao.id)}>
-                            <h2>{sessao.episodioPorExtenso}</h2>
+                    {grupoAventuraSelecionado.gruposAventura![0].detalhesSessaoesCanonicas.sort((a, b) => a.episodio - b.episodio).map(detalheSessaoesCanonicas => (
+                        <DivClicavel key={detalheSessaoesCanonicas.sessao.id} className={styles.recipiente_linha_episodio} classeParaDesabilitado={styles.ativo} desabilitado={detalheSessaoSelecionada?.sessao.id === detalheSessaoesCanonicas.sessao.id} onClick={() => buscaSessao(detalheSessaoesCanonicas.sessao.id)}>
+                            <h2>{detalheSessaoesCanonicas.episodioPorExtenso}</h2>
                         </DivClicavel>
                     ))}
                 </div>

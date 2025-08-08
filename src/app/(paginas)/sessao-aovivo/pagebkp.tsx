@@ -45,10 +45,10 @@ function PaginaSessao_Slot() {
                 <div id={styles.recipiente_corpo_sessao}>
                     <div id={styles.recipiente_esquerda_tela_jogo}>
                         <div id={styles.recipiente_nome_aventura}>
-                            <h1>{sessaoEmAndamento.grupoAventura.aventura.titulo}</h1>
+                            <h1>{sessaoEmAndamento.detalheSessaoCanonica.grupoAventura!.aventura.titulo}</h1>
                         </div>
                         <div id={styles.recipiente_lista_retratos}>
-                            {sessaoEmAndamento.grupoAventura.personagensDaAventura?.map(personagemDaAventura => (
+                            {sessaoEmAndamento.detalheSessaoCanonica.grupoAventura!.personagensDaAventura?.map(personagemDaAventura => (
                                 <div key={personagemDaAventura.personagem.id} className={styles.recipiente_retrato}>
                                     <RecipienteImagem src={personagemDaAventura.personagem.imagemAvatar?.fullPath} />
                                 </div>
@@ -57,7 +57,7 @@ function PaginaSessao_Slot() {
                     </div>
 
                     <div id={styles.recipiente_tela_jogo}>
-                        <RecipienteImagem src={sessaoEmAndamento.grupoAventura.aventura.imagemCapa?.fullPath} />
+                        <RecipienteImagem src={sessaoEmAndamento.detalheSessaoCanonica.grupoAventura!.aventura.imagemCapa?.fullPath} />
                     </div>
                 </div>
             </div>

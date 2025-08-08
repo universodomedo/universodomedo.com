@@ -25,3 +25,15 @@
     flex-wrap: wrap;
     white-space: nowrap;
 }
+
+.episodio_sem_nenhum_vinculo {
+    color: var(--cor-aviso);
+}
+
+.episodio_com_algum_vinculo {
+    color: var(--cor-atencao);
+}
+
+.episodio_completo_vinculo {
+    color: var(--cor-confirmacao);
+}

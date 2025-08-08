@@ -114,3 +114,24 @@
 
     overflow: hidden;
 }
+
+
+
+/* tirar */
+#recipiente_pagina_sessao_emandamento {
+    position: relative;
+    
+    border-style: solid;
+    border-color: transparent;
+    border-top-width: 1.4vh;
+    border-right-width: .63vw;
+    border-bottom-width: 1.4vh;
+    border-left-width: .63vw;
+    border-top-left-radius: 12vh;
+    border-bottom-left-radius: 12vh;
+    border-bottom-right-radius: 12vh;
+    border-top-right-radius: 12vh;
+
+    width: 100%;
+    height: 100%;
+}

@@ -2,13 +2,13 @@
 
 import { ModalVincularLinkSessao } from 'Componentes/ElementosModais/ModalVincularLinkSessao/ModalVincularLinkSessao';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { SessaoDto, TipoLinkDto } from 'types-nora-api';
+import { DetalheSessaoCanonicaDto, TipoLinkDto } from 'types-nora-api';
 import { obtemTodosTiposLink } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoCadastroNovoLinkSessaoProps {
     iniciaProcessoVinculoLinkSessao: (paramIdTipoLink: number) => void;
     listaTiposLink: TipoLinkDto[];
-    sessao: SessaoDto;
+    detalheSessao: DetalheSessaoCanonicaDto;
     idTipoLink: number | null;
     descricao: string;
 };
@@ -21,7 +21,7 @@ export const useContextoCadastroNovoLinkSessao = (): ContextoCadastroNovoLinkSes
     return context;
 };
 
-export const ContextoCadastroNovoLinkSessaoProvider = ({ children, sessao, idGrupoAventura }: { children: React.ReactNode; sessao: SessaoDto; idGrupoAventura: number; }) => {
+export const ContextoCadastroNovoLinkSessaoProvider = ({ children, detalheSessao, idGrupoAventura }: { children: React.ReactNode; detalheSessao: DetalheSessaoCanonicaDto; idGrupoAventura: number; }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [listaTiposLink, setListaTiposLink] = useState<TipoLinkDto[]>([]);
@@ -29,8 +29,8 @@ export const ContextoCadastroNovoLinkSessaoProvider = ({ children, sessao, idGru
 
     const descricao: string = (() => {
         switch (idTipoLink) {
-            case 2: return `Video do Episódio ${sessao.episodio} do Grupo Aventura ${idGrupoAventura}`;
-            case 4: return `Podcast do Episódio ${sessao.episodio} do Grupo Aventura ${idGrupoAventura}`;
+            case 2: return `Video do Episódio ${detalheSessao.episodio} do Grupo Aventura ${idGrupoAventura}`;
+            case 4: return `Podcast do Episódio ${detalheSessao.episodio} do Grupo Aventura ${idGrupoAventura}`;
             default: return '';
         }
     })();
@@ -49,7 +49,7 @@ export const ContextoCadastroNovoLinkSessaoProvider = ({ children, sessao, idGru
     }, []);
 
     return (
-        <ContextoCadastroNovoLinkSessao.Provider value={{ iniciaProcessoVinculoLinkSessao, listaTiposLink, sessao, idTipoLink, descricao }}>
+        <ContextoCadastroNovoLinkSessao.Provider value={{ iniciaProcessoVinculoLinkSessao, listaTiposLink, detalheSessao, idTipoLink, descricao }}>
             {children}
             <ModalVincularLinkSessao isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </ContextoCadastroNovoLinkSessao.Provider>
