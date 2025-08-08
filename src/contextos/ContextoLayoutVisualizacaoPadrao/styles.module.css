@@ -18,7 +18,7 @@
 #recipiente_conteudo_geral {
     display: flex;
     flex-direction: column;
-    flex: .8;
+    flex: var(--proporcao-geral, 0.8);
     background-color: #3122464D;
     border-radius: 1vw;
     align-items: center;
@@ -30,8 +30,28 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    flex: .2;
+    flex: var(--proporcao-menu, 0.2);
     padding: 1vh .5vw;
     gap: 2vh;
     background-color: #3122464D;
+}
+
+#recipiente_icone_acao_voltar_pagina_aventuras {
+    position: absolute;
+    top: 1%;
+    left: .5%;
+    padding: .2% .45% .3%;
+    backdrop-filter: brightness(.3);
+    border-radius: 100%;
+    box-shadow: 0 0 7px 0px #00000069;
+    cursor: pointer;
+    user-select: none;
+
+    & a {
+        text-decoration: none;
+    }
+
+    &:hover {
+        box-shadow: 0 0 7px 0px #ffffffff;
+    }
 }

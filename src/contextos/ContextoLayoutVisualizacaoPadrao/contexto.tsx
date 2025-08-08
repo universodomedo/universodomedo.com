@@ -4,9 +4,12 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 
 interface ContextoLayoutVisualizacaoPadraoProps {
     conteudoGeral: ReactNode;
-    setConteudoGeral: (content: ReactNode) => void;
+    setConteudoGeral: (children: ReactNode) => void;
     conteudoMenu: ReactNode;
-    setConteudoMenu: (content: ReactNode) => void;
+    setConteudoMenu: (children: ReactNode) => void;
+    setProporcaoGeral: (proporcaoGeral: number) => void;
+    hrefPaginaParaVoltar: string | null;
+    setHrefPaginaParaVoltar: (hrefPaginaParaVoltar: string | null) => void;
 };
 
 const ContextoLayoutVisualizacaoPadrao = createContext<ContextoLayoutVisualizacaoPadraoProps | undefined>(undefined);
@@ -18,11 +21,27 @@ export const useContextoLayoutVisualizacaoPadrao = (): ContextoLayoutVisualizaca
 };
 
 export const ContextoLayoutVisualizacaoPadraoProvider = ({ children }: { children: React.ReactNode }) => {
-    const [conteudoGeral, setConteudoGeral] = useState<ReactNode>(null);
+    const [conteudoGeral, setConteudoGeralState] = useState<ReactNode>(null);
     const [conteudoMenu, setConteudoMenu] = useState<ReactNode>(null);
+    const [proporcaoGeral, setProporcaoGeral] = useState<number>(0.8);
+    const [hrefPaginaParaVoltar, setHrefPaginaParaVoltar] = useState<string | null>(null);
+
+    const setConteudoGeral = (conteudo: React.ReactNode, proporcao?: number) => {
+        setConteudoGeralState(conteudo);
+        if (proporcao !== undefined) setProporcaoGeral(proporcao);
+    };
+
+    const atualizarProporcoes = () => {
+        document.documentElement.style.setProperty('--proporcao-geral', proporcaoGeral.toString());
+        document.documentElement.style.setProperty('--proporcao-menu', (1 - proporcaoGeral).toString());
+    };
+
+    useEffect(() => {
+        atualizarProporcoes();
+    }, [proporcaoGeral]);
 
     return (
-        <ContextoLayoutVisualizacaoPadrao.Provider value={{ conteudoGeral, setConteudoGeral, conteudoMenu, setConteudoMenu}}>
+        <ContextoLayoutVisualizacaoPadrao.Provider value={{ conteudoGeral, setConteudoGeral, conteudoMenu, setConteudoMenu, setProporcaoGeral, hrefPaginaParaVoltar, setHrefPaginaParaVoltar }}>
             {children}
         </ContextoLayoutVisualizacaoPadrao.Provider>
     );

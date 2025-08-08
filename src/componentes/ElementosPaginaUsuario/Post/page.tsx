@@ -26,7 +26,7 @@ export default function SecaoPosts() {
     };
 
     const enviaTesteAcao = () => {
-        // emitSocketEvent(SOCKET_EVENTOS.Chat.enviaTeste);
+        emitSocketEvent(SOCKET_EVENTOS.Chat.enviarTeste);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {

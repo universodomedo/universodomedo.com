@@ -9,7 +9,7 @@ export default async function AdministrarAventura({ params }: { params: Promise<
     if (!aventura) return <div>Aventura não encontrada</div>
 
     return (
-        <LayoutVisualizacaoPadrao_ConteudoGeral>
+        <LayoutVisualizacaoPadrao_ConteudoGeral proporcaoFlex={0.9} hrefPaginaVoltar={'/admin/aventuras'}>
             <AdministrarAventura_ConteudoGeral aventura={aventura} />
         </LayoutVisualizacaoPadrao_ConteudoGeral>
     );
