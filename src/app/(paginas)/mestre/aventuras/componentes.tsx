@@ -2,23 +2,23 @@
 
 import { useMemo } from 'react';
 
-import { ContextoLayoutVisualizacaoPadraoProvider } from 'Contextos/ContextoLayoutVisualizacaoPadrao/contexto';
 // import { useAtualizaConteudoGeral } from 'Contextos/ContextoLayoutVisualizacaoPadrao/hooks';
 import { AventurasMestre_ConteudoGeral } from './subcomponentes';
-import LayoutContextualizado from 'Contextos/ContextoLayoutVisualizacaoPadrao/page';
 
 export function AventurasMestre_Contexto() {
-    return (
-        <ContextoLayoutVisualizacaoPadraoProvider>
-            <PaginaAventuras_LayoutVisualizacao />
-        </ContextoLayoutVisualizacaoPadraoProvider>
+    return ( <></>
+        // <ContextoLayoutVisualizacaoPadraoProvider>
+        //     <PaginaAventuras_LayoutVisualizacao />
+        // </ContextoLayoutVisualizacaoPadraoProvider>
     );
 };
 
 export function PaginaAventuras_LayoutVisualizacao() {
     // useAtualizaConteudoGeral(useMemo(() => <AventurasMestre_ConteudoGeral />, []));
 
-    return <LayoutContextualizado />;
+    // return <LayoutContextualizado />;
+
+    return null;
 
     // return (
     //     <>

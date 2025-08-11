@@ -8,8 +8,6 @@ import { PAGINAS } from 'types-nora-api';
 import { verificarPermissao } from "Helpers/verificarPermissao";
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
 import Link from 'next/link';
-import { ContextoLayoutVisualizacaoPadraoProvider } from 'Contextos/ContextoLayoutVisualizacaoPadrao/contexto';
-import LayoutContextualizado from 'Contextos/ContextoLayoutVisualizacaoPadrao/page';
 
 export default function LayoutAdmin({ children }: { children: ReactNode }) {
     return (
@@ -37,10 +35,12 @@ function LayoutAdmin_Slot({ children }: { children: ReactNode }) {
     //     </div>
     // );
 
-    return (
-        <ContextoLayoutVisualizacaoPadraoProvider>
-            {children}
-            <LayoutContextualizado />
-        </ContextoLayoutVisualizacaoPadraoProvider>
-    );
+    // return (
+    //     <ContextoLayoutVisualizacaoPadraoProvider>
+    //         {children}
+    //         <LayoutContextualizado />
+    //     </ContextoLayoutVisualizacaoPadraoProvider>
+    // );
+
+    return null;
 };

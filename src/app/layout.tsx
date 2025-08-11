@@ -24,6 +24,7 @@ import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwi
 
 import { Provider as RadixTooltip } from "@radix-ui/react-tooltip";
 import BackgroundAudio from 'Componentes/Elementos/BackgroundAudio/BackgroundAudio';
+import { ConteudoLayout } from './componentes-layout';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -86,7 +87,9 @@ function ConteudoContextualizado({ children }: { children: ReactNode }) {
         <main id={styles.main}>
           <MenuSwiperEsquerda />
           <div id={styles.recipiente_conteudo_pagina}>
-            {children}
+            <ConteudoLayout>
+              {children}
+            </ConteudoLayout>
           </div>
         </main>
       </div>

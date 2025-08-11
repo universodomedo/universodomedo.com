@@ -15,7 +15,7 @@ export default function AdministrarAventuras() {
 
     return (
         <>
-            <LayoutVisualizacaoPadrao_ConteudoGeral>
+            <LayoutVisualizacaoPadrao_ConteudoGeral proporcaoFlex={0.85}>
                 <AdministrarAventuras_ConteudoGeral aventuras={aventuras} />
             </LayoutVisualizacaoPadrao_ConteudoGeral>
 

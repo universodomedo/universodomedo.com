@@ -7,9 +7,6 @@ import { PAGINAS } from 'types-nora-api';
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
 import { verificarPermissao } from "Helpers/verificarPermissao";
 
-import LayoutContextualizado from 'Contextos/ContextoLayoutVisualizacaoPadrao/page';
-import { ContextoLayoutVisualizacaoPadraoProvider } from 'Contextos/ContextoLayoutVisualizacaoPadrao/contexto';
-
 export default function LayoutMestre({ children }: { children: ReactNode }) {
     return (
         <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.MESTRE, comCabecalho: false, usuarioObrigatorio: true }}>
@@ -27,9 +24,11 @@ function LayoutMestre_Slot({ children }: { children: ReactNode }) {
 
     if (!usuarioComPermissao) return <Redirecionador urlRedirecionar='/' />;
 
-    return (
-        <ContextoLayoutVisualizacaoPadraoProvider>
-            {children}
-        </ContextoLayoutVisualizacaoPadraoProvider>
-    );
+    // return (
+    //     <ContextoLayoutVisualizacaoPadraoProvider>
+    //         {children}
+    //     </ContextoLayoutVisualizacaoPadraoProvider>
+    // );
+
+    return null;
 };

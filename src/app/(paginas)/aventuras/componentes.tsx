@@ -11,17 +11,15 @@ import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
 import { ItemAventuraLista, UltimasSessoesPostadas } from './subcomponentes';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 // import { useAtualizaConteudoGeral, useAtualizaConteudoMenu } from 'Contextos/ContextoLayoutVisualizacaoPadrao/hooks';
-import { ContextoLayoutVisualizacaoPadraoProvider } from 'Contextos/ContextoLayoutVisualizacaoPadrao/contexto';
 import { useMemo } from 'react';
-import LayoutContextualizado from 'Contextos/ContextoLayoutVisualizacaoPadrao/page';
 
 export function PaginaAventuras_Slot() {
     return (
         <>
             {/* <SecaoBarraDeBuscaDeAventuras /> */}
-            <ContextoLayoutVisualizacaoPadraoProvider>
+            {/* <ContextoLayoutVisualizacaoPadraoProvider>
                 <PaginaAventuras_LayoutVisualizacao />
-            </ContextoLayoutVisualizacaoPadraoProvider>
+            </ContextoLayoutVisualizacaoPadraoProvider> */}
         </>
     )
 };
@@ -30,7 +28,9 @@ export function PaginaAventuras_LayoutVisualizacao() {
     // useAtualizaConteudoGeral(useMemo(() => <ConteudoGeral />, []));
     // useAtualizaConteudoMenu(useMemo(() => <ConteudoMenu />, []));
 
-    return <LayoutContextualizado />;
+    // return <LayoutContextualizado />;
+
+    return null;
 };
 
 function SecaoBarraDeBuscaDeAventuras() {
