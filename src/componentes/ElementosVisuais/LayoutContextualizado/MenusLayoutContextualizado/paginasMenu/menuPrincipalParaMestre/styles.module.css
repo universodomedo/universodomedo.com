@@ -1,7 +1,6 @@
 #recipiente_lista_acoes_pagina_mestre {
     display: flex;
     flex-direction: column;
-    flex: .12;
     height: 100%;
     background-color: #312246b3;
     padding: 1vh .2vw;

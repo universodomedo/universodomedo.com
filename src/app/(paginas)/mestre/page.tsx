@@ -1,13 +1,10 @@
 'use client';
 
-import { useMemo } from "react";
-
-// import { useAtualizaConteudoMenu } from "Contextos/ContextoLayoutVisualizacaoPadrao/hooks";
-import { ListaAcoesMestre } from "./componentes";
-import LayoutContextualizado from "Contextos/ContextoLayoutVisualizacaoPadrao/page";
+import { useLayoutContextualizado } from "Hooks/useLayoutContextualizado";
+import { ListaMenusLayoutContextualizado } from 'Componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado/chavesMenu';
 
 export default function PaginaMestre() {
-    // useAtualizaConteudoMenu(useMemo(() => <ListaAcoesMestre />, []));
+    useLayoutContextualizado(ListaMenusLayoutContextualizado.menuPrincipalParaMestre);
 
-    return <LayoutContextualizado />;
+    return <></>;
 };

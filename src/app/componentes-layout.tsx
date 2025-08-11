@@ -13,4 +13,4 @@ export function ConteudoLayout({ children }: { children: React.ReactNode }) {
             {children}
         </LayoutContextualizado>
     );
-}
+};

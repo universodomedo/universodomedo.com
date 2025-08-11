@@ -1,21 +1,36 @@
 'use client';
 
-import { ReactNode } from 'react';
+import styles from './styles.module.css';
+
+import { ReactNode, useEffect } from 'react';
 
 import { useAppSelector } from 'redux/hooks/useRedux';
 import { registrosMenu } from 'componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado/registrosMenu';
 
 export default function LayoutContextualizado({ children }: { children: ReactNode }) {
     const activeKey = useAppSelector((s) => s.menu.activeKey);
+
+    useEffect(() => {
+        if (!activeKey) return;
+        const proporcaoMenu = registrosMenu[activeKey].proporcaoMenu;
+
+        document.documentElement.style.setProperty('--proporcao-menu', String(proporcaoMenu));
+        document.documentElement.style.setProperty('--proporcao-conteudo', String(1 - proporcaoMenu));
+    }, [activeKey]);
+
     if (!activeKey) return null;
 
+    const { componente } = registrosMenu[activeKey];
+
     return (
-        <div style={{ display: 'flex', flexDirection: 'row', width: '100%', height: '100%' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', flex: 0.85, alignItems: 'center' }}>
-                {children}
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', flex: 0.15 }}>
-                {registrosMenu[activeKey]}
+        <div id={styles.recipiente_layout_contextualizado}>
+            <div id={styles.recipiente_areas_layout_contextualizado}>
+                <div id={styles.recipiente_layout_contextualizado_conteudo}>
+                    {children}
+                </div>
+                <div id={styles.recipiente_layout_contextualizado_menu}>
+                    {componente}
+                </div>
             </div>
         </div>
     );

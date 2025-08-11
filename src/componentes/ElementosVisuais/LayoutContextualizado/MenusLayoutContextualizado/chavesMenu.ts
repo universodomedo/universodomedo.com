@@ -1,5 +1,5 @@
 export const ListaMenusLayoutContextualizado = {
-    menuTeste: 'menuTeste',
+    menuPrincipalParaMestre: 'menuPrincipalParaMestre',
 } as const;
 
 export type ChaveMenuLayout = typeof ListaMenusLayoutContextualizado[keyof typeof ListaMenusLayoutContextualizado];
