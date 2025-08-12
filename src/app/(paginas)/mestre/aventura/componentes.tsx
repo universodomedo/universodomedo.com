@@ -1,50 +1,63 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { DetalheSessaoCanonicaDto, EstadoSessao } from 'types-nora-api';
 
+import { useLayoutContextualizado } from "Hooks/useLayoutContextualizado";
+import { ListaMenusLayoutContextualizado } from 'Componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado/chavesMenu';
 import { useContextoPaginaMestreAventura } from "Contextos/ContextoMestreAventura/contexto";
 import SecaoDeConteudo from "Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo";
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { encerrarSessaoEmAndamentoDeGrupoAventura } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { DetalheSessaoCanonicaDto, EstadoSessao } from 'types-nora-api';
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 
 export function PaginaMestreAventura_Slot() {
-    const { aventuraSelecionada } = useContextoPaginaMestreAventura();
-
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const openModal = () => setIsModalOpen(true);
+    console.log(`teste`);
+    useLayoutContextualizado(ListaMenusLayoutContextualizado.menuPrincipalParaMestre, 'a');
 
     return (
-        <div id={styles.recipiente_aventura_selecionada}>
-            <SecaoDeConteudo id={styles.recipiente_capa_pagina_aventura_mestre}>
-                <div id={styles.recipiente_imagem_capa_pagina_aventura_mestre}>
-                    <RecipienteImagem src={aventuraSelecionada.imagemCapa?.fullPath} />
-                </div>
-            </SecaoDeConteudo>
-
-            <SecaoDeConteudo id={styles.recipiente_nome_aventura}>
-                <h1>{aventuraSelecionada.gruposAventura![0].nomeUnicoGrupoAventura}</h1>
-            </SecaoDeConteudo>
-
-            <VisualizadorUltimasSessoes detalhesUltimasSessoes={aventuraSelecionada.gruposAventura![0].detalhesSessaoesCanonicas.sort((a, b) => a.sessao.id - b.sessao.id).slice(-2)} />
-
-            <SecaoDeConteudo id={styles.recipiente_acoes_aventura}>
-                <button disabled={aventuraSelecionada.gruposAventura![0].sessaoMaisRecente?.estadoAtual !== EstadoSessao.EM_ANDAMENTO} onClick={openModal}>Finalizar Sessão em Aberto</button>
-            </SecaoDeConteudo>
-
-            <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <Modal.Content title={'Encerrar Sessão em Aberto'}>
-                    <ConteudoModal />
-                </Modal.Content>
-            </Modal>
-        </div>
+        <h1>oi</h1>
     );
 };
+// export function PaginaMestreAventura_Slot() {
+//     const { aventuraSelecionada } = useContextoPaginaMestreAventura();
+//     useLayoutContextualizado(ListaMenusLayoutContextualizado.menuPrincipalParaMestre, 'a');
+//     // useLayoutContextualizado(ListaMenusLayoutContextualizado.menuPrincipalParaMestre, aventuraSelecionada.nomeCompletoAventura);
+
+//     const [isModalOpen, setIsModalOpen] = useState(false);
+//     const openModal = () => setIsModalOpen(true);
+
+//     return (
+//         <div id={styles.recipiente_aventura_selecionada}>
+//             <SecaoDeConteudo id={styles.recipiente_capa_pagina_aventura_mestre}>
+//                 <div id={styles.recipiente_imagem_capa_pagina_aventura_mestre}>
+//                     <RecipienteImagem src={aventuraSelecionada.imagemCapa?.fullPath} />
+//                 </div>
+//             </SecaoDeConteudo>
+
+//             <SecaoDeConteudo id={styles.recipiente_nome_aventura}>
+//                 <h1>{aventuraSelecionada.gruposAventura![0].nomeUnicoGrupoAventura}</h1>
+//             </SecaoDeConteudo>
+
+//             <VisualizadorUltimasSessoes detalhesUltimasSessoes={aventuraSelecionada.gruposAventura![0].detalhesSessaoesCanonicas.sort((a, b) => a.sessao.id - b.sessao.id).slice(-2)} />
+
+//             <SecaoDeConteudo id={styles.recipiente_acoes_aventura}>
+//                 <button disabled={aventuraSelecionada.gruposAventura![0].sessaoMaisRecente?.estadoAtual !== EstadoSessao.EM_ANDAMENTO} onClick={openModal}>Finalizar Sessão em Aberto</button>
+//             </SecaoDeConteudo>
+
+//             <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
+//                 <Modal.Content title={'Encerrar Sessão em Aberto'}>
+//                     <ConteudoModal />
+//                 </Modal.Content>
+//             </Modal>
+//         </div>
+//     );
+// };
 
 function VisualizadorUltimasSessoes({ detalhesUltimasSessoes }: { detalhesUltimasSessoes: DetalheSessaoCanonicaDto[] }) {
     return (

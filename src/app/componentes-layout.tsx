@@ -4,7 +4,7 @@ import LayoutContextualizado from "Componentes/ElementosVisuais/LayoutContextual
 import { useAppSelector } from "Redux/hooks/useRedux";
 
 export function ConteudoLayout({ children }: { children: React.ReactNode }) {
-    const usaLayoutContextualizado = useAppSelector((state) => !!state.menu.activeKey);
+    const usaLayoutContextualizado = useAppSelector((state) => !!state.menu.chaveMenu);
 
     if (!usaLayoutContextualizado) return children;
 

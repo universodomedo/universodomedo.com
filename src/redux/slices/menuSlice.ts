@@ -2,11 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { ChaveMenuLayout } from 'Componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado/chavesMenu';
 
 interface MenuState {
-  activeKey: ChaveMenuLayout | null;
-}
+  chaveMenu: ChaveMenuLayout | null;
+  tituloConteudo: string | null;
+};
 
 const initialState: MenuState = {
-  activeKey: null,
+  chaveMenu: null,
+  tituloConteudo: null,
 };
 
 const menuSlice = createSlice({
@@ -14,10 +16,13 @@ const menuSlice = createSlice({
   initialState,
   reducers: {
     setMenuKey(state, action: PayloadAction<ChaveMenuLayout | null>) {
-      state.activeKey = action.payload;
+      state.chaveMenu = action.payload;
+    },
+    setTituloConteudo(state, action: PayloadAction<string | null>) {
+      state.tituloConteudo = action.payload;
     },
   },
 });
 
-export const { setMenuKey } = menuSlice.actions;
+export const { setMenuKey, setTituloConteudo } = menuSlice.actions;
 export default menuSlice.reducer;

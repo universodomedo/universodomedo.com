@@ -7,7 +7,6 @@
 #recipiente_aventuras_mestre {
     display: flex;
     flex-direction: row;
-    height: 100%;
     width: 100%;
     flex-wrap: wrap;
     white-space: nowrap;
@@ -15,27 +14,4 @@
     justify-content: space-evenly;
     align-content: flex-start;
     padding: 1vh 0;
-}
-
-.recipiente_item_imagem_aventura_mestre {
-    display: flex;
-    flex-direction: column;
-    direction: rtl;
-    text-align: center;
-    gap: .4vh;
-    width: 20%;
-
-    &:not(.ativo):hover {
-        box-shadow: 0px 0px 9px 0px #ffffff;
-    }
-}
-
-.recipiente_item_imagem_aventura_mestre h4 {
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.recipiente_imagem_aventura_mestre {
-    position: relative;
-    aspect-ratio: 16 / 9;
 }

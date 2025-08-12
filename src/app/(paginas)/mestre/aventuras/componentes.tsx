@@ -1,41 +1,19 @@
 'use client';
 
-import { useMemo } from 'react';
+import styles from './styles.module.css';
 
-// import { useAtualizaConteudoGeral } from 'Contextos/ContextoLayoutVisualizacaoPadrao/hooks';
-import { AventurasMestre_ConteudoGeral } from './subcomponentes';
+import { useContextoMestreAventuras } from 'Contextos/ContextoMestreAventuras/contexto';
+import { useLayoutContextualizado } from "Hooks/useLayoutContextualizado";
+import { ListaMenusLayoutContextualizado } from 'Componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado/chavesMenu';
+import { AventuraEmLayoutContextualizado } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AventuraEmLayoutContextualizado/page';
 
 export function AventurasMestre_Contexto() {
-    return ( <></>
-        // <ContextoLayoutVisualizacaoPadraoProvider>
-        //     <PaginaAventuras_LayoutVisualizacao />
-        // </ContextoLayoutVisualizacaoPadraoProvider>
+    const { aventurasFiltradas } = useContextoMestreAventuras();
+    useLayoutContextualizado(ListaMenusLayoutContextualizado.menuPrincipalParaMestre, 'Mestre - Minhas Aventuras');
+
+    return (
+        <div id={styles.recipiente_aventuras_mestre}>
+            {aventurasFiltradas!.map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} href={`/mestre/aventura/${grupoAventura.id}`} />)}
+        </div>
     );
-};
-
-export function PaginaAventuras_LayoutVisualizacao() {
-    // useAtualizaConteudoGeral(useMemo(() => <AventurasMestre_ConteudoGeral />, []));
-
-    // return <LayoutContextualizado />;
-
-    return null;
-
-    // return (
-    //     <>
-    //         <h1>Minhas Aventuras</h1>
-
-    //         <OpcoesBuscaAventuras />
-
-    //         <div id={styles.recipiente_aventuras_mestre} {...scrollableProps}>
-    //             {aventurasFiltradas!.map(grupo => (
-    //                 <Link key={grupo.id} className={styles.recipiente_item_imagem_aventura_mestre} href={`/mestre/aventura/${grupo.id}`}>
-    //                     <div className={styles.recipiente_imagem_aventura_mestre}>
-    //                         <RecipienteImagem src={grupo.aventura.imagemCapa?.fullPath} />
-    //                     </div>
-    //                     <h4>{grupo.nomeUnicoGrupoAventura}</h4>
-    //                 </Link>
-    //             ))}
-    //         </div>
-    //     </>
-    // );
 };
