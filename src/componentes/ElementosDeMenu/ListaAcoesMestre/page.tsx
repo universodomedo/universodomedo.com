@@ -15,8 +15,6 @@ type NivelAcao = {
 };
 
 export default function ListaAcoesMestre() {
-    console.log(`renderizando ListaAcoesMestre`);
-    
     const configAcoes: NivelAcao[] = [
         {
             labelPermissao: 'Mestre',

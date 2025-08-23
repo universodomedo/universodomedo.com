@@ -1,36 +1,28 @@
 'use client';
 
 import styles from './styles.module.css';
-import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 
-import { useContextoPaginaAventuras } from 'Contextos/ContextoPaginaAventuras/contexto';
 import { AventuraEstado } from "types-nora-api";
 
+import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
+import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
+import { useContextoPaginaAventuras } from 'Contextos/ContextoPaginaAventuras/contexto';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
 import { ItemAventuraLista, UltimasSessoesPostadas } from './subcomponentes';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
-// import { useAtualizaConteudoGeral, useAtualizaConteudoMenu } from 'Contextos/ContextoLayoutVisualizacaoPadrao/hooks';
-import { useMemo } from 'react';
 
-export function PaginaAventuras_Slot() {
+export function PaginasAventuras_Contexto() {
     return (
-        <>
-            {/* <SecaoBarraDeBuscaDeAventuras /> */}
-            {/* <ContextoLayoutVisualizacaoPadraoProvider>
-                <PaginaAventuras_LayoutVisualizacao />
-            </ContextoLayoutVisualizacaoPadraoProvider> */}
-        </>
-    )
-};
-
-export function PaginaAventuras_LayoutVisualizacao() {
-    // useAtualizaConteudoGeral(useMemo(() => <ConteudoGeral />, []));
-    // useAtualizaConteudoMenu(useMemo(() => <ConteudoMenu />, []));
-
-    // return <LayoutContextualizado />;
-
-    return null;
+        <LayoutContextualizado>
+            <LayoutContextualizado.Conteudo>
+                <PaginaAventuras_Conteudo />
+            </LayoutContextualizado.Conteudo>
+            <LayoutContextualizado.Menu>
+                <PaginaAventuras_Menu />
+            </LayoutContextualizado.Menu>
+        </LayoutContextualizado>
+    );
 };
 
 function SecaoBarraDeBuscaDeAventuras() {
@@ -41,7 +33,7 @@ function SecaoBarraDeBuscaDeAventuras() {
     );
 };
 
-function ConteudoGeral() {
+function PaginaAventuras_Conteudo() {
     const { aventuraSelecionada } = useContextoPaginaAventuras();
 
     return (
@@ -51,7 +43,7 @@ function ConteudoGeral() {
     );
 };
 
-function ConteudoMenu() {
+function PaginaAventuras_Menu() {
     return (
         <MenuLateralAventurasListadas />
     );
@@ -110,10 +102,10 @@ function MenuLateralAventurasListadas() {
     if (!aventurasListadas) return <p>Não foram encontradas Aventuras</p>;
 
     return (
-        <>
-            {aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.EM_ANDAMENTO).sort((a, b) => (new Date(a.gruposAventura!.find(g => g.dataQueIniciou)?.dataQueIniciou || '9999-12-31').getTime() - new Date(b.gruposAventura!.find(g => g.dataQueIniciou)?.dataQueIniciou || '9999-12-31').getTime())).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
+        <div id={styles.recipiente_lista_aventuras}>
+            {aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.EM_ANDAMENTO).sort((a, b) => a.id - b.id).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
             <hr />
             {aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.FINALIZADA).sort((a, b) => new Date(b.dataFimAventura ?? 0).getTime() - new Date(a.dataFimAventura ?? 0).getTime()).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
-        </>
+        </div>
     );
 };

@@ -8,6 +8,7 @@
     flex-direction: column;
     align-items: center;
     height: 100%;
+    width: 100%;
     padding: 1% 2%;
     gap: 2vh;
 }
@@ -57,7 +58,9 @@
 }
 
 .recipiente_info_carta_sessao_recente {
-
+    display: flex;
+    flex-direction: column;
+    gap: .4vh;
 }
 
 #recipiente_conteudo_selecionado {
@@ -119,6 +122,14 @@
     background-color: #3122464D;
 }
 
+#recipiente_lista_aventuras {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4vh;
+    width: 20vw;
+    padding: 0 .3vw
+}
+
 .recipiente_item_menu_aventuras {
     display: flex;
     flex-direction: row;
@@ -142,14 +153,22 @@
 .recipiente_imagem_aventura_item_menu {
     position: relative;
     aspect-ratio: 16 / 9;
-    width: 40%;
+    width: 43%;
 }
 
 .recipiente_dados_aventura {
     display: flex;
     flex-direction: column;
-    width: 60%;
-    justify-content: space-around;
+    flex: 1;
     align-items: center;
     text-align: center;
+    padding: 1.2% 0 .2%;
+}
+
+.recipiente_dados_aventura_titulo {
+    flex: 1;
+}
+
+.recipiente_dados_aventura_estado {
+
 }

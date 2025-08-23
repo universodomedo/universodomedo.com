@@ -1,8 +1,10 @@
-#recipiente_acoes_aventura {
+#recipiente_botoes_aventura {
     display: flex;
-    flex-direction: column;
-    gap: 2vh;
+    flex-direction: row;
+    width: 40%;
+    justify-content: space-between;
 }
+
 
 #recipiente_area_link_trailer {
     display: flex;
@@ -13,7 +15,9 @@
 #recipiente_area_episodios {
     display: flex;
     flex-direction: column;
+    width: 70%;
     gap: 2vh;
+    text-align: center;
 }
 
 #recipiente_area_lista_episodios {

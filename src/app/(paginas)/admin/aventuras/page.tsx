@@ -1,27 +1,26 @@
 'use client';
 
-import { obtemTodasAventuras } from "Uteis/ApiConsumer/ConsumerMiddleware";
 import { useRequisicao } from "Hooks/useRequisicao";
+import { obtemTodosGruposParaAdmin } from "Uteis/ApiConsumer/ConsumerMiddleware";
+import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import { ListaAcoesAdmin } from "../componentes";
 import { AdministrarAventuras_ConteudoGeral } from "./componentes";
-import { LayoutVisualizacaoPadrao_ConteudoGeral, LayoutVisualizacaoPadrao_ConteudoMenu } from "Contextos/ContextoLayoutVisualizacaoPadrao/hooks";
 
 export default function AdministrarAventuras() {
-    const { dados: aventuras, carregando, erro } = useRequisicao(obtemTodasAventuras);
+    const { dados: gruposAventuras, carregando, erro } = useRequisicao(obtemTodosGruposParaAdmin);
 
     if (carregando) return <p>Carregando...</p>;
     if (erro) return <p>Erro: {erro.message}</p>;
-    if (!aventuras) return <></>;
+    if (!gruposAventuras) return <></>;
 
     return (
-        <>
-            <LayoutVisualizacaoPadrao_ConteudoGeral proporcaoFlex={0.85}>
-                <AdministrarAventuras_ConteudoGeral aventuras={aventuras} />
-            </LayoutVisualizacaoPadrao_ConteudoGeral>
-
-            <LayoutVisualizacaoPadrao_ConteudoMenu>
+        <LayoutContextualizado>
+            <LayoutContextualizado.Conteudo>
+                <AdministrarAventuras_ConteudoGeral gruposAventuras={gruposAventuras} />
+            </LayoutContextualizado.Conteudo>
+            <LayoutContextualizado.Menu>
                 <ListaAcoesAdmin />
-            </LayoutVisualizacaoPadrao_ConteudoMenu>
-        </>
+            </LayoutContextualizado.Menu>
+        </LayoutContextualizado>
     );
 };

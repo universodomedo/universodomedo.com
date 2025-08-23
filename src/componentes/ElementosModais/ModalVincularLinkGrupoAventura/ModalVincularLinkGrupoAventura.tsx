@@ -77,7 +77,7 @@ function ConteudoModal() {
         <div id={styles.recipiente_corpo_modal_vincula_link}>
             <div className={styles.recipiente_label_input_modal_vincula_link}>
                 <label htmlFor="sufixo">Link Completo</label>
-                <input id="sufixo" type="text" value={sufixo} onChange={handleSufixoChange} placeholder={`${tipoLinkSelecionado?.prefixo}...`} />
+                <input id="sufixo" type="text" value={sufixo} onChange={handleSufixoChange} placeholder={`${tipoLinkSelecionado?.prefixo}...`} autoComplete={'off'} />
                 {erroValidacao && <p className={styles.erro_validacao}>{erroValidacao}</p>}
             </div>
 

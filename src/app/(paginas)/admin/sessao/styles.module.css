@@ -4,6 +4,12 @@
     gap: 2vh;
 }
 
+#recipiente_detalhes_sessao {
+    width: auto;
+    padding: 1% 2%;
+    text-align: center;
+}
+
 #recipiente_area_video_youtube {
     display: flex;
     flex-direction: row;

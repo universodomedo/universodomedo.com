@@ -1,13 +1,11 @@
 'use client';
 
-import styles from './styles.module.css';
 import { ReactNode } from "react";
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { PAGINAS } from 'types-nora-api';
 import { verificarPermissao } from "Helpers/verificarPermissao";
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
-import Link from 'next/link';
 
 export default function LayoutAdmin({ children }: { children: ReactNode }) {
     return (
@@ -26,21 +24,5 @@ function LayoutAdmin_Slot({ children }: { children: ReactNode }) {
 
     if (!usuarioComPermissao) return <Redirecionador urlRedirecionar='/' />;
 
-    // return (
-    //     <div id={styles.recipiente_pagina_admin}>
-    //         <Link href={'/admin'}><h1>Páginas ADMIN</h1></Link>
-    //         <div id={styles.recipiente_conteudo_pagina_admin}>
-    //             {children}
-    //         </div>
-    //     </div>
-    // );
-
-    // return (
-    //     <ContextoLayoutVisualizacaoPadraoProvider>
-    //         {children}
-    //         <LayoutContextualizado />
-    //     </ContextoLayoutVisualizacaoPadraoProvider>
-    // );
-
-    return null;
+    return children;
 };

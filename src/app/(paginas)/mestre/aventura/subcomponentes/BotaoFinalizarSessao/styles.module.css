@@ -1,0 +1,10 @@
+#recipiente_modal_encerramento_de_sessao_em_aberto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: black;
+}
+
+#recipiente_modal_encerramento_de_sessao_em_aberto p {   
+    color: black;
+}

@@ -1,11 +1,17 @@
 'use client';
 
-import { useLayoutContextualizado } from "Hooks/useLayoutContextualizado";
-import { ListaMenusLayoutContextualizado } from 'Componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado/chavesMenu';
+import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
+import ListaAcoesMestre from 'Componentes/ElementosDeMenu/ListaAcoesMestre/page';
 
 export default function PaginaMestre() {
-    // essa linha mudaria para passar a disponibilizar umm JSX
-    useLayoutContextualizado(ListaMenusLayoutContextualizado.menuPrincipalParaMestre);
-
-    return <></>;
+    return (
+        <LayoutContextualizado>
+            <LayoutContextualizado.Conteudo>
+                <></>
+            </LayoutContextualizado.Conteudo>
+            <LayoutContextualizado.Menu>
+                <ListaAcoesMestre />
+            </LayoutContextualizado.Menu>
+        </LayoutContextualizado>
+    );
 };

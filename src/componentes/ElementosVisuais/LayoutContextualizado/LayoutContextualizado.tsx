@@ -2,40 +2,40 @@
 
 import styles from './styles.module.css';
 
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
+import cn from 'classnames';
 
-import { useAppSelector } from 'redux/hooks/useRedux';
-import { registrosMenu } from 'componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado/registrosMenu';
 import useScrollable from '../ElementoScrollable/useScrollable';
+import FerramentaRetornoPagina from 'Componentes/Elementos/FerramentaRetornoPagina/FerramentaRetornoPagina';
 
 export default function LayoutContextualizado({ children }: { children: ReactNode }) {
-    const { chaveMenu, tituloConteudo } = useAppSelector((s) => s.menu);
-
-    useEffect(() => {
-        if (!chaveMenu) return;
-        const proporcaoMenu = registrosMenu[chaveMenu].proporcaoMenu;
-
-        document.documentElement.style.setProperty('--proporcao-menu', String(proporcaoMenu));
-        document.documentElement.style.setProperty('--proporcao-conteudo', String(1 - proporcaoMenu));
-    }, [chaveMenu]);
-
-    if (!chaveMenu) return null;
-
-    const { componente } = registrosMenu[chaveMenu];
-
-    const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
-
     return (
         <div id={styles.recipiente_layout_contextualizado}>
             <div id={styles.recipiente_areas_layout_contextualizado}>
-                <div id={styles.recipiente_layout_contextualizado_conteudo} {...scrollableProps}>
-                    {tituloConteudo && <h1 id={styles.titulo_conteudo}>{tituloConteudo}</h1>}
-                    {children}
-                </div>
-                <div id={styles.recipiente_layout_contextualizado_menu} {...scrollableProps}>
-                    {componente}
-                </div>
+                {children}
             </div>
+        </div>
+    );
+};
+
+LayoutContextualizado.Conteudo = function Conteudo({ children, escondeFundo = false, titulo, hrefPaginaRetorno }: { children: ReactNode; escondeFundo?: boolean; titulo?: string; hrefPaginaRetorno?: string }) {
+    const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
+
+    return (
+        <div id={styles.recipiente_layout_contextualizado_conteudo} className={cn(escondeFundo && styles.fundo_layout_contextualizado_conteudo)} {...scrollableProps}>
+            {hrefPaginaRetorno && <FerramentaRetornoPagina hrefPaginaRetorno={hrefPaginaRetorno} />}
+            {titulo && <h1 id={styles.titulo_conteudo}>{titulo}</h1>}
+            {children}
+        </div>
+    );
+};
+
+LayoutContextualizado.Menu = function Menu({ children }: { children: ReactNode }) {
+    const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
+
+    return (
+        <div id={styles.recipiente_layout_contextualizado_menu} {...scrollableProps}>
+            {children}
         </div>
     );
 };

@@ -1,18 +1,8 @@
-#recipiente_capa_pagina_aventura_mestre {
-    position: relative;
-    aspect-ratio: 16 / 9;
-    width: 37%;
-    box-shadow: 0 4px 9px 4px #000;
-}
-
-#recipiente_nome_aventura {
-    width: auto;
-}
-
 #recipiente_aventura_selecionada {
     display: flex;
     flex-direction: column;
     height: 100%;
+    width: 100%;
     padding: .5% 1%;
     gap: 2vh;
     align-items: center;
@@ -26,58 +16,4 @@
 
 #recipiente_dados_pagina_aventura_mestre {
     flex: 1;
-}
-
-#recipiente_visualizador_sessoes {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    gap: 2vw;
-}
-
-.recipiente_link_sessao {
-    flex: 1;
-}
-
-div.recipiente_informacoes_sessao {
-    display: flex;
-    flex-direction: column;
-    padding: 1.5% 2%;
-    gap: 2vh;
-    cursor: pointer;
-
-    &:not(.ativo):hover {
-        box-shadow: 0px 0px 9px 0px #ffffff;
-    }
-}
-
-.recipiente_cabecalho_informacoes_sessao {
-    text-align: center;
-}
-
-.recipiente_par_informacao {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-}
-
-.recipiente_informacoes {
-    display: flex;
-    flex-direction: column;
-    text-align: end;
-}
-
-#recipiente_acoes_aventura {
-    width: auto;
-}
-
-#recipiente_modal_encerramento_de_sessao_em_aberto {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: black;
-}
-
-#recipiente_modal_encerramento_de_sessao_em_aberto p {   
-    color: black;
 }

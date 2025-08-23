@@ -1,11 +1,11 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { AventuraDto } from 'types-nora-api';
+import { GrupoAventuraDto } from 'types-nora-api';
 import { buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaMestreAventuraProps {
-    aventuraSelecionada: AventuraDto;
+    grupoAventuraSelecionada: GrupoAventuraDto;
 };
 
 const ContextoPaginaMestreAventura = createContext<ContextoPaginaMestreAventuraProps | undefined>(undefined);
@@ -18,15 +18,15 @@ export const useContextoPaginaMestreAventura = (): ContextoPaginaMestreAventuraP
 
 export const ContextoPaginaMestreAventuraProvider = ({ children, idGrupoAventura }: { children: React.ReactNode; idGrupoAventura: number; }) => {
     const [carregando, setCarregando] = useState<string | null>('');
-    const [aventuraSelecionada, setAventuraSelecionada] = useState<AventuraDto | null>(null);
+    const [grupoAventuraSelecionada, setGrupoAventuraSelecionada] = useState<GrupoAventuraDto | null>(null);
 
     async function buscaGrupoAventuraSelecionado(idGrupoAventura: number) {
         setCarregando('Buscando Aventura');
 
         try {
-            setAventuraSelecionada(await buscaGrupoAventuraEspecifico(idGrupoAventura));
+            setGrupoAventuraSelecionada(await buscaGrupoAventuraEspecifico(idGrupoAventura));
         } catch {
-            setAventuraSelecionada(null);
+            setGrupoAventuraSelecionada(null);
         } finally {
             setCarregando(null);
         }
@@ -38,12 +38,12 @@ export const ContextoPaginaMestreAventuraProvider = ({ children, idGrupoAventura
 
     if (carregando) return <h2>{carregando}</h2>
 
-    if (!carregando && !aventuraSelecionada) return <p>Aventura não encontrada</p>;
+    if (!carregando && !grupoAventuraSelecionada) return <p>Aventura não encontrada</p>;
 
-    if (!aventuraSelecionada) return;
+    if (!grupoAventuraSelecionada) return;
     
     return (
-        <ContextoPaginaMestreAventura.Provider value={{ aventuraSelecionada }}>
+        <ContextoPaginaMestreAventura.Provider value={{ grupoAventuraSelecionada }}>
             {children}
         </ContextoPaginaMestreAventura.Provider>
     );

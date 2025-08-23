@@ -1,17 +1,17 @@
 'use client';
 
-import { LayoutVisualizacaoPadrao_ConteudoGeral, LayoutVisualizacaoPadrao_ConteudoMenu } from "Contextos/ContextoLayoutVisualizacaoPadrao/hooks";
+import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import { ListaAcoesAdmin } from "./componentes";
 
 export default function PaginaAdmin() {
     return (
-        <>
-            <LayoutVisualizacaoPadrao_ConteudoGeral proporcaoFlex={0.85}>
+        <LayoutContextualizado>
+            <LayoutContextualizado.Conteudo>
                 <></>
-            </LayoutVisualizacaoPadrao_ConteudoGeral>
-            <LayoutVisualizacaoPadrao_ConteudoMenu>
+            </LayoutContextualizado.Conteudo>
+            <LayoutContextualizado.Menu>
                 <ListaAcoesAdmin />
-            </LayoutVisualizacaoPadrao_ConteudoMenu>
-        </>
+            </LayoutContextualizado.Menu>
+        </LayoutContextualizado>
     );
 };

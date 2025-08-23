@@ -15,12 +15,15 @@
 #recipiente_layout_contextualizado_conteudo {
     display: flex;
     flex-direction: column;
-    flex: var(--proporcao-conteudo, 0.88);
+    flex: 1;
     gap: 1vw;
-    padding: .7% .4%;
-    background-color: #312246b3;
     border-radius: 1vw;
     align-items: center;
+}
+
+#recipiente_layout_contextualizado_conteudo:not(.fundo_layout_contextualizado_conteudo) {
+    background-color: #312246b3;
+    padding: .7% .4%;
 }
 
 #titulo_conteudo {
@@ -30,11 +33,9 @@
 #recipiente_layout_contextualizado_menu {
     display: flex;
     flex-direction: column;
-    flex: var(--proporcao-menu, 0.12);
-}
-
-.recipiente_linha_acao_mestre {
-    user-select: none;
-    border-radius: 5px;
-    padding: 3% 2%;
+    flex: 0 0 auto;
+    height: 100%;
+    padding: 1vh .2vw;
+    background-color: #312246b3;
+    overflow-x: hidden;
 }

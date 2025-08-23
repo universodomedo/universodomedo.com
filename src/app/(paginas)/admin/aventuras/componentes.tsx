@@ -1,17 +1,13 @@
-import Link from "next/link";
+import styles from './styles.module.css';
 
-import { AventuraDto } from "types-nora-api";
+import { GrupoAventuraDto } from "types-nora-api";
 
-export function AdministrarAventuras_ConteudoGeral({ aventuras }: { aventuras: AventuraDto[] }) {
+import { AventuraEmLayoutContextualizado } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AventuraEmLayoutContextualizado/page';
+
+export function AdministrarAventuras_ConteudoGeral({ gruposAventuras }: { gruposAventuras: GrupoAventuraDto[] }) {
     return (
-        <>
-            {aventuras.flatMap(aventura =>
-                aventura.gruposAventura?.sort((a, b) => b.id - a.id).map(grupo => (
-                    <Link key={grupo.id} href={`/admin/aventura/${grupo.id}`}>
-                        <h1>{aventura.titulo}{!aventura.temApenasUmGrupo && ` ${grupo.nome}`}</h1>
-                    </Link>
-                )) || []
-            )}
-        </>
+        <div id={styles.recipiente_aventuras_admin}>
+            {gruposAventuras?.sort((a, b) => b.id - a.id).map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} href={`/admin/aventura/${grupoAventura.id}`} />)}
+        </div>
     );
 };

@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { AventuraDto, DetalheSessaoCanonicaDto, SessaoDto } from 'types-nora-api';
-import { obtemAventuraCompleta, obtemTodasAventuras, obtemUltimaSessoesPostadas } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { AventuraDto, DetalheSessaoCanonicaDto } from 'types-nora-api';
+import { obtemAventuraCompleta, obtemAventurasParaAssistir, obtemUltimaSessoesPostadas } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaAventurasProps {
     aventurasListadas: AventuraDto[] | null;
@@ -29,7 +29,7 @@ export const ContextoPaginaAventurasProvider = ({ children }: { children: React.
         setCarregando('Buscando Aventuras');
 
         try {
-            setAventurasListadas(await obtemTodasAventuras());
+            setAventurasListadas(await obtemAventurasParaAssistir());
         } catch {
             setAventurasListadas(null);
         } finally {

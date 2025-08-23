@@ -5,21 +5,35 @@ import styles from './styles.module.css';
 import Link from 'next/link';
 import { DetalheSessaoCanonicaDto, LinkDto } from 'types-nora-api';
 
+import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
+import { ListaAcoesAdmin } from '../componentes';
+import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import { useContextoCadastroNovoLinkSessao } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 import { ContextoCadastroNovoLinkSessaoProvider } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
-import { LayoutVisualizacaoPadrao_ConteudoGeral } from 'Contextos/ContextoLayoutVisualizacaoPadrao/hooks';
 
-export function AdministrarSessao_ConteudoGeral({ detalheSessao }: { detalheSessao: DetalheSessaoCanonicaDto }) {
+export function AdministrarSessao_Slot({ detalheSessao }: { detalheSessao: DetalheSessaoCanonicaDto; }) {
     return (
-        <LayoutVisualizacaoPadrao_ConteudoGeral>
-            {detalheSessao.grupoAventura ? <SessaoDeAventura detalheSessao={detalheSessao} /> : <SessaoUnica detalheSessao={detalheSessao} />}
-        </LayoutVisualizacaoPadrao_ConteudoGeral>
+        <LayoutContextualizado>
+            <LayoutContextualizado.Conteudo hrefPaginaRetorno={`/admin/aventura/${detalheSessao.grupoAventura!.id}`}>
+                <AdministrarSessao_Conteudo detalheSessao={detalheSessao} />
+            </LayoutContextualizado.Conteudo>
+            <LayoutContextualizado.Menu>
+                <ListaAcoesAdmin />
+            </LayoutContextualizado.Menu>
+        </LayoutContextualizado>
+    );
+};
+
+function AdministrarSessao_Conteudo({ detalheSessao }: { detalheSessao: DetalheSessaoCanonicaDto }) {
+    return (
+        <SecaoDeConteudo id={styles.recipiente_detalhes_sessao}>
+            { detalheSessao.grupoAventura ? <SessaoDeAventura detalheSessao={detalheSessao} /> : <SessaoUnica detalheSessao={detalheSessao} /> }
+        </SecaoDeConteudo>
     );
 };
 
 function SessaoDeAventura({ detalheSessao }: { detalheSessao: DetalheSessaoCanonicaDto }) {
-    // ja verificado
-    if (!detalheSessao.grupoAventura) return <></>;
+    if (!detalheSessao.grupoAventura) return <></>; // ja verificado
 
     return (
         <ContextoCadastroNovoLinkSessaoProvider detalheSessao={detalheSessao} idGrupoAventura={detalheSessao.grupoAventura.id}>
@@ -43,7 +57,7 @@ function SessaoUnica({ detalheSessao }: { detalheSessao: DetalheSessaoCanonicaDt
     );
 };
 
-export function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
+function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
     const { iniciaProcessoVinculoLinkSessao } = useContextoCadastroNovoLinkSessao();
 
     return (
@@ -59,7 +73,7 @@ export function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
     );
 };
 
-export function AreaPodcastSpotify({ linkPodcast }: { linkPodcast: LinkDto }) {
+function AreaPodcastSpotify({ linkPodcast }: { linkPodcast: LinkDto }) {
     const { iniciaProcessoVinculoLinkSessao } = useContextoCadastroNovoLinkSessao();
 
     return (
