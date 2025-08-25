@@ -1,7 +1,17 @@
-#recipiente_chat {
+#botao_abre_janela_chat {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    bottom: 1%;
+    left: 1%;
+    width: 3vw;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: none;
+    background-color: #3b1f47;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,.6);
+    transition: transform .2s ease, opacity .2s ease;
 }
 
 #recipiente_corpo_chat {
@@ -12,11 +22,37 @@
     aspect-ratio: 1 / 1;
     gap: 1vw;
     bottom: 0;
-    left: 0;
-    padding: 1% .6%;
-    background-color: #000000ED;
+    left: 1%;
+    padding: 2% .6% .4%;
+    background-color: #000000FC;
     border-radius: 0 20px 0 0;
     z-index: calc(var(--zindex-final-chat) - 0);
+}
+
+#mensagem_chat_carregando {
+    margin: 0 auto;
+}
+
+#icone_fechar_chat {
+    position: absolute;
+    border-radius: 100%;
+    padding: .8% 1.5% 1%;
+    top: .5%;
+    right: .4%;
+    cursor: pointer;
+    user-select: none;
+    z-index: 1;
+    backdrop-filter: brightness(.3);
+    box-shadow: 0 0 7px #00000069;
+    background-color: #35133e;
+
+    & a {
+        text-decoration: none;
+    }
+
+    &:hover {
+        box-shadow: 0 0 7px 0px #ffffffff;
+    }
 }
 
 #recipiente_conteudo_conversa {
@@ -27,7 +63,38 @@
 }
 
 #recipiente_mensagens_conversa {
+    display: flex;
+    flex-direction: column;
     flex: 1;
+    gap: 1vh;
+}
+
+.agrupamento_mensagens {
+    display: flex;
+    flex-direction: row;
+    gap: 1vh;
+    padding: .6% 0;
+    border-radius: .7em;
+    background-color: #35133E;
+    box-shadow: #201433 0px 1px 9px 2px;
+}
+
+.container_avatar_agrupamento_mensagem {
+    width: 10%;
+}
+
+.recipiente_avatar_agrupamento_mensagem {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+}
+
+.recipiente_lista_mensagens_agrupadas {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: .4vh;
+    padding: .6% 0;
 }
 
 #recipiente_input_conversa input {
@@ -44,5 +111,25 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
+    gap: 2%;
     padding: 0 7%;
+}
+
+.item_sala {
+    padding: .4em;
+    border-radius: .4em;
+
+    &.item_sala_selecionada {
+        border: .1em solid #8E44AD;
+        background-color: #3B1F47;
+    }
+
+    &.item_sala_nao_selecionada {
+        cursor: pointer;
+        border: .1em solid gray;
+
+        &:hover {
+            box-shadow: 0 0 7px 0px #ffffffff;
+        }
+    }
 }

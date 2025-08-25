@@ -1,4 +1,3 @@
-// src/redux/slices/chatSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { SalaChatFront, MensagemChatRecebida } from 'types-nora-api';
 
@@ -18,10 +17,6 @@ const chatsSlice = createSlice({
     reducers: {
         setSalas(state, action: PayloadAction<SalaChatFront[]>) {
             state.salas = action.payload;
-            // se não houver sala selecionada, seleciona a primeira disponível
-            if (!state.salaSelecionadaId && action.payload.length > 0) {
-                state.salaSelecionadaId = action.payload[0].id;
-            }
         },
         adicionarMensagem(state, action: PayloadAction<MensagemChatRecebida>) {
             const msg = action.payload;
