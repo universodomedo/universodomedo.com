@@ -24,6 +24,7 @@ import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwi
 
 import { Provider as RadixTooltip } from "@radix-ui/react-tooltip";
 import BackgroundAudio from 'Componentes/Elementos/BackgroundAudio/BackgroundAudio';
+import Chat from 'Componentes/Elementos/Chat/Chat';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -58,7 +59,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="pt-BR">
       <body>
         <ReduxProvider>
-          <SocketListeners />
+          <SocketListeners /> 
           <ContextoPerformanceProvider>
             <ContextoAutenticacaoProvider>
               <RadixTooltip delayDuration={200} skipDelayDuration={0}>
@@ -87,12 +88,13 @@ function ConteudoContextualizado({ children }: { children: ReactNode }) {
           <MenuSwiperEsquerda />
           <div id={styles.recipiente_conteudo_pagina}>
             {children}
+            <Chat />
           </div>
         </main>
       </div>
     </>
-  )
-}
+  );
+};
 
 // import type { Metadata } from "next";
 

@@ -28,6 +28,7 @@
       "Hooks/*": ["hooks/*"],
       "Layouts/*": ["layouts/*"],
       "Libs/*": ["libs/*"],
+      "Listeners/*": ["listeners/*"],
       "Redux/*": ["redux/*"],
       "Uteis/*": ["uteis/*"]
     },
