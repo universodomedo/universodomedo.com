@@ -14,7 +14,7 @@ import { ContextoCadastroNovoLinkSessaoProvider } from 'Contextos/ContextoCadast
 export function AdministrarSessao_Slot({ detalheSessao }: { detalheSessao: DetalheSessaoCanonicaDto; }) {
     return (
         <LayoutContextualizado>
-            <LayoutContextualizado.Conteudo hrefPaginaRetorno={`/admin/aventura/${detalheSessao.grupoAventura!.id}`}>
+            <LayoutContextualizado.Conteudo hrefPaginaRetorno={`/minhas-paginas/admin/aventura/${detalheSessao.grupoAventura!.id}`}>
                 <AdministrarSessao_Conteudo detalheSessao={detalheSessao} />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>

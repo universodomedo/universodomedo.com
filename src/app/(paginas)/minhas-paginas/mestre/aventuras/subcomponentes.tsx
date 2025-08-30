@@ -14,7 +14,7 @@ export function AventurasMestre_ConteudoGeral() {
     return (
         <div id={styles.recipiente_aventuras_mestre}>
             {gruposAventurasListadas!.map(grupo => (
-                <Link key={grupo.id} className={styles.recipiente_item_imagem_aventura_mestre} href={`/mestre/aventura/${grupo.id}`}>
+                <Link key={grupo.id} className={styles.recipiente_item_imagem_aventura_mestre} href={`/minhas-paginas/mestre/aventura/${grupo.id}`}>
                     <div className={styles.recipiente_imagem_aventura_mestre}>
                         <RecipienteImagem src={grupo.aventura.imagemCapa?.fullPath} />
                     </div>

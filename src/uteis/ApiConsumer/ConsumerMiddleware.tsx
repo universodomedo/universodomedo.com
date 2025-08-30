@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, TiposGeralRascunho, TipoRascunhoDto } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtual?: PaginaObjeto | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtual === undefined ? {} : { idPaginaAtual: paginaAtual?.id || '' } });
@@ -145,6 +145,22 @@ export async function encerraGrupoAventura(idGrupoAventura: number): Promise<boo
 
 export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: number): Promise<boolean> {
     return await useApi<boolean>({ uri: 'sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
+}
+
+export async function obtemTiposRascunhoPorTipoGeral(tipoGeralRascunho: TiposGeralRascunho): Promise<TipoRascunhoDto[]> {
+    return await useApi<TipoRascunhoDto[]>({ uri: 'tipos_rascunho/obtemTiposRascunhoPorTipoGeral', method: 'GET', params: { tipoGeralRascunho } });
+}
+
+export async function obtemRascunhosAventuraPorMestre(idUsuario: number): Promise<RascunhoDto[]> {
+    return await useApi<RascunhoDto[]>({ uri: 'rascunhos/obtemRascunhosAventuraPorMestre', method: 'GET', params: { idUsuario } });
+}
+
+export async function obtemRascunhosSessaoUnicaPorMestre(idUsuario: number): Promise<RascunhoDto[]> {
+    return await useApi<RascunhoDto[]>({ uri: 'rascunhos/obtemRascunhosSessaoUnicaPorMestre', method: 'GET', params: { idUsuario } });
+}
+
+export async function salvarRascunho(titulo: string, idUsuario: number, idTipoRascunho: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: 'rascunhos/salvarRascunho', method: 'POST', data: { titulo: titulo, idUsuario: idUsuario, idTipoRascunho: idTipoRascunho } });
 }
 
 //

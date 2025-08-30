@@ -6,7 +6,7 @@ import { useContextoSessoesPrevistas } from 'Contextos/ContextoSessoesPrevistas/
 
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { ContadorRegressivo } from 'Componentes/Elementos/ContadorRegressivo/ContadorRegressivo';
-import { formatarDataBR } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
+import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
@@ -78,7 +78,7 @@ function PaginaSessao_EpisodiosFuturos() {
                         <div className={styles.recipiente_informacaoes_item_episodio_futuro}>
                             <h2>{ep.grupoAventura.aventura.titulo}</h2>
                             <h4>{ep.episodioPorExtenso}</h4>
-                            <h3>{formatarDataBR(ep.dataInicioPrevista)}</h3>
+                            <h3>{formataData(ep.dataInicioPrevista)}</h3>
                         </div>
                     </div>
                 ))}

@@ -1,7 +1,7 @@
 #recipiente_layout_contextualizado {
     width: 100%;
     height: 100%;
-    padding: .5vh .6vw;
+    padding: .5em .35em;
 }
 
 #recipiente_areas_layout_contextualizado {
@@ -9,7 +9,7 @@
     flex-direction: row;
     width: 100%;
     height: 100%;
-    gap: 1vw;
+    gap: .7em;
 }
 
 #recipiente_layout_contextualizado_conteudo {

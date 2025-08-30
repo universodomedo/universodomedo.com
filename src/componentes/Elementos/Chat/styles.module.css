@@ -1,16 +1,15 @@
 #botao_abre_janela_chat {
     position: absolute;
-    bottom: 1%;
-    left: 1%;
-    width: 3vw;
-    aspect-ratio: 1;
+    bottom: 1rem;
+    left: 1.5rem;
+    padding: .5rem;
     border-radius: 50%;
     border: none;
     background-color: #3b1f47;
     color: white;
     font-size: 1.5rem;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,.6);
+    box-shadow: 0 0.3rem 0.4rem 0.1rem #0009;
     transition: transform .2s ease, opacity .2s ease;
 }
 

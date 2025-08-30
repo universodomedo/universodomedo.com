@@ -7,7 +7,7 @@ import { AventuraEmLayoutContextualizado } from 'Componentes/ElementosVisuais/El
 export function AdministrarAventuras_ConteudoGeral({ gruposAventuras }: { gruposAventuras: GrupoAventuraDto[] }) {
     return (
         <div id={styles.recipiente_aventuras_admin}>
-            {gruposAventuras?.sort((a, b) => b.id - a.id).map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} href={`/admin/aventura/${grupoAventura.id}`} />)}
+            {gruposAventuras?.sort((a, b) => b.id - a.id).map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} href={`/minhas-paginas/admin/aventura/${grupoAventura.id}`} />)}
         </div>
     );
 };

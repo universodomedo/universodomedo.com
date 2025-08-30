@@ -25,7 +25,7 @@ function AventurasMestre_Conteudo() {
 
     return (
         <div id={styles.recipiente_aventuras_mestre}>
-            {gruposAventurasListadas!.map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} href={`/mestre/aventura/${grupoAventura.id}`} />)}
+            {gruposAventurasListadas!.map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} href={`/minhas-paginas/mestre/aventura/${grupoAventura.id}`} />)}
         </div>
     );
 };

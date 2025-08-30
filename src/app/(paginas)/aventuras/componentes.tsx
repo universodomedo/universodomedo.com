@@ -101,11 +101,14 @@ function MenuLateralAventurasListadas() {
 
     if (!aventurasListadas) return <p>Não foram encontradas Aventuras</p>;
 
+    const aventurarEmAndamento = aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.EM_ANDAMENTO);
+    const aventurarFinalizadas = aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.FINALIZADA);
+
     return (
         <div id={styles.recipiente_lista_aventuras}>
-            {aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.EM_ANDAMENTO).sort((a, b) => a.id - b.id).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
-            <hr />
-            {aventurasListadas.filter(aventura => aventura.estadoAtual === AventuraEstado.FINALIZADA).sort((a, b) => new Date(b.dataFimAventura ?? 0).getTime() - new Date(a.dataFimAventura ?? 0).getTime()).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
+            {aventurarEmAndamento.sort((a, b) => a.id - b.id).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
+            {(aventurarEmAndamento.length > 0 && aventurarFinalizadas.length > 0) && (<hr />)}
+            {aventurarFinalizadas.sort((a, b) => new Date(b.dataFimAventura ?? 0).getTime() - new Date(a.dataFimAventura ?? 0).getTime()).map((aventura, index) => <ItemAventuraLista key={index} aventura={aventura} />)}
         </div>
     );
 };

@@ -15,6 +15,7 @@
     flex-direction: column;
 	
 	background-color: white;
+	color: black;
 	border-radius: 6px;
 	box-shadow:
 		hsl(206 22% 7% / 35%) 0px 10px 38px -10px,

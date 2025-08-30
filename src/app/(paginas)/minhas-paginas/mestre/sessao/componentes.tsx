@@ -13,7 +13,7 @@ export function PaginaMestreSessao_Contexto() {
 
     return (
         <LayoutContextualizado>
-            <LayoutContextualizado.Conteudo hrefPaginaRetorno={`/mestre/aventura/${sessaoSelecionada.detalheSessaoCanonica.grupoAventura?.id}`}>
+            <LayoutContextualizado.Conteudo hrefPaginaRetorno={`/minhas-paginas/mestre/aventura/${sessaoSelecionada.detalheSessaoCanonica.grupoAventura?.id}`}>
                 <PaginaMestreSessao_Conteudo />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>

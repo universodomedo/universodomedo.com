@@ -14,7 +14,7 @@ import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoD
 export function AdministrarAventura_Slot({ grupoAventura }: { grupoAventura: GrupoAventuraDto; }) {
     return (
         <LayoutContextualizado>
-            <LayoutContextualizado.Conteudo hrefPaginaRetorno={'/admin/aventuras'}>
+            <LayoutContextualizado.Conteudo hrefPaginaRetorno={'/minhas-paginas/admin/aventuras'}>
                 <AdministrarAventura_Conteudo grupoAventura={grupoAventura} />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
@@ -101,7 +101,7 @@ function AreaEpisodios({ detalhesSessaoCanonica }: { detalhesSessaoCanonica: Det
 
 
                     return (
-                        <Link key={detalheSessaoCanonica.sessao.id} href={`/admin/sessao/${detalheSessaoCanonica.sessao.id}`} className={!temEpisodioYoutubeVinculado && !temEpisodioSpotifyVinculado ? styles.episodio_sem_nenhum_vinculo : temEpisodioYoutubeVinculado !== temEpisodioSpotifyVinculado ? styles.episodio_com_algum_vinculo : styles.episodio_completo_vinculo}>{detalheSessaoCanonica.episodioPorExtenso}</Link>
+                        <Link key={detalheSessaoCanonica.sessao.id} href={`/minhas-paginas/admin/sessao/${detalheSessaoCanonica.sessao.id}`} className={!temEpisodioYoutubeVinculado && !temEpisodioSpotifyVinculado ? styles.episodio_sem_nenhum_vinculo : temEpisodioYoutubeVinculado !== temEpisodioSpotifyVinculado ? styles.episodio_com_algum_vinculo : styles.episodio_completo_vinculo}>{detalheSessaoCanonica.episodioPorExtenso}</Link>
                     );
                 })}
             </div>
