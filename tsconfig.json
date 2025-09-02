@@ -30,6 +30,7 @@
       "Libs/*": ["libs/*"],
       "Listeners/*": ["listeners/*"],
       "Redux/*": ["redux/*"],
+      "Renderizaveis/*": ["renderizaveis/*"],
       "Uteis/*": ["uteis/*"]
     },
     "allowImportingTsExtensions": true,

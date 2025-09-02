@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 import { useState } from 'react';
 
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
-import InputComRotulo from 'Componentes/Elementos/InputComRotulo/InputComRotulo';
+import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
 import { TipoRascunhoDto } from 'types-nora-api';
 import { salvarRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
@@ -12,7 +12,7 @@ import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto
 export function ModalCriacaoRascunho({ isModalOpen, setIsModalOpen, tiposRascunhosParaEsseTipoGeral }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void, tiposRascunhosParaEsseTipoGeral: TipoRascunhoDto[] }) {
     return (
         <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <Modal.Content title={'Criar Rascunho'}>
+            <Modal.Content cabecalho={ { titulo: 'Criar Rascunho' } }>
                 <ConteudoModal tiposRascunhosParaEsseTipoGeral={tiposRascunhosParaEsseTipoGeral} />
             </Modal.Content>
         </Modal>

@@ -43,7 +43,7 @@ export default function BarraUsuario() {
             </div> */}
             </div>
             <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <Modal.Content title={'Atualizar Avatar'}>
+                <Modal.Content cabecalho={ { titulo: 'Atualizar Avatar' } }>
                     <ConteudoModalAtualizaAvatar listaAvatares={usuarioLogado.personagens?.filter(personagem => personagem.imagemAvatar !== null) ?? []} idPersonagemSelecinadoAtualmente={usuarioLogado.customizacao.personagemAvatarPrincipal?.id} />
                 </Modal.Content>
             </Modal>

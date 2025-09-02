@@ -1,9 +1,13 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, TiposGeralRascunho, TipoRascunhoDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, TiposGeralRascunho, TipoRascunhoDto, ObjetoCache } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtual?: PaginaObjeto | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtual === undefined ? {} : { idPaginaAtual: paginaAtual?.id || '' } });
+}
+
+export async function obtemTodosObjetosCache() {
+    return await useApi<ObjetoCache>({ uri: '/cache/obtemTodosObjetosCache', method: 'GET' });
 }
 
 export async function obtemDadosMinhasDisponibilidades() {
@@ -159,8 +163,16 @@ export async function obtemRascunhosSessaoUnicaPorMestre(idUsuario: number): Pro
     return await useApi<RascunhoDto[]>({ uri: 'rascunhos/obtemRascunhosSessaoUnicaPorMestre', method: 'GET', params: { idUsuario } });
 }
 
+export async function obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto> {
+    return await useApi<RascunhoDto>({ uri: 'rascunhos/obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
+}
+
 export async function salvarRascunho(titulo: string, idUsuario: number, idTipoRascunho: number): Promise<boolean> {
     return await useApi<boolean>({ uri: 'rascunhos/salvarRascunho', method: 'POST', data: { titulo: titulo, idUsuario: idUsuario, idTipoRascunho: idTipoRascunho } });
+}
+
+export async function editaDetalheRascunho(rascunho: RascunhoDto): Promise<boolean> {
+    return await useApi<boolean>({ uri: 'rascunhos/editaDetalheRascunho', method: 'POST', data: { rascunho: rascunho } });
 }
 
 //

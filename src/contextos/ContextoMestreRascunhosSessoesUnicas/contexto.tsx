@@ -9,6 +9,9 @@ import { obtemRascunhosSessaoUnicaPorMestre, obtemTiposRascunhoPorTipoGeral } fr
 interface ContextoMestreRascunhosSessoesUnicasProps {
     tiposRascunhosParaEsseTipoGeral: TipoRascunhoDto[];
     rascunhosSessaoUnica: RascunhoDto[];
+    limpaRascunhoSelecionado(): void;
+    selecionaRascunho(idRascunho: number): void;
+    idRascunhoSelecionado: number;
 };
 
 const ContextoMestreRascunhosSessoesUnicas = createContext<ContextoMestreRascunhosSessoesUnicasProps | undefined>(undefined);
@@ -24,6 +27,7 @@ export const ContextoMestreRascunhosSessoesUnicasProvider = ({ children }: { chi
     const [carregando, setCarregando] = useState<string | null>('');
     const [tiposRascunhosParaEsseTipoGeral, setTiposRascunhosParaEsseTipoGeral] = useState<TipoRascunhoDto[] | null>(null);
     const [rascunhosSessaoUnica, setRascunhosSessaoUnica] = useState<RascunhoDto[] | null>(null);
+    const [idRascunhoSelecionado, setIdRascunhoSelecionado] = useState(0);
 
     async function buscaTiposRascunhoPorTipoGeral() {
         setCarregando('Buscando Tipos Rascunho');
@@ -49,6 +53,9 @@ export const ContextoMestreRascunhosSessoesUnicasProvider = ({ children }: { chi
         }
     }
 
+    function limpaRascunhoSelecionado() { setIdRascunhoSelecionado(0); }
+    function selecionaRascunho(idRascunho: number) { setIdRascunhoSelecionado(idRascunho); }
+
     useEffect(() => {
         buscaTiposRascunhoPorTipoGeral();
         buscaRascunhosSessaoUnica();
@@ -61,7 +68,7 @@ export const ContextoMestreRascunhosSessoesUnicasProvider = ({ children }: { chi
     if (!tiposRascunhosParaEsseTipoGeral || !rascunhosSessaoUnica) return;
     
     return (
-        <ContextoMestreRascunhosSessoesUnicas.Provider value={{ tiposRascunhosParaEsseTipoGeral, rascunhosSessaoUnica }}>
+        <ContextoMestreRascunhosSessoesUnicas.Provider value={{ tiposRascunhosParaEsseTipoGeral, rascunhosSessaoUnica, limpaRascunhoSelecionado, selecionaRascunho, idRascunhoSelecionado }}>
             {children}
         </ContextoMestreRascunhosSessoesUnicas.Provider>
     );

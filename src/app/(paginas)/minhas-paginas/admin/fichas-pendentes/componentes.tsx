@@ -84,7 +84,7 @@ export function ModalCriacaoFicha({ modalEstaAberta, onOpenChange }: { modalEsta
 
     return (
         <Modal open={modalEstaAberta} onOpenChange={onOpenChange}>
-            <Modal.Content title={`Configurando Ficha - ${personagemConfigurando?.informacao.nome}`}>
+            <Modal.Content cabecalho={ { titulo: `Configurando Ficha - ${personagemConfigurando?.informacao.nome}`} }>
                 <Select
                     isMulti
                     options={pericias.map(pericia => ({

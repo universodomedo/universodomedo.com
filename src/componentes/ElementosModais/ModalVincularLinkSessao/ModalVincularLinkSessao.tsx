@@ -11,7 +11,7 @@ import { LinkDto, TipoLinkDto } from 'types-nora-api';
 export function ModalVincularLinkSessao({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void }) {
     return (
         <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <Modal.Content title={'Vinculando Link Sessão'}>
+            <Modal.Content cabecalho={ { titulo: 'Vinculando Link Sessão' } }>
                 <ConteudoModal />
             </Modal.Content>
         </Modal>

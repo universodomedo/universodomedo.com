@@ -19,7 +19,7 @@ export function BotaoFinalizarSessao() {
             <button disabled={grupoAventuraSelecionada.sessaoMaisRecente?.estadoAtual !== EstadoSessao.EM_ANDAMENTO} onClick={openModalFinaliza}>Finalizar Sessão em Aberto</button>
 
             <Modal open={isModalFinalizaOpen} onOpenChange={setIsModalFinalizaOpen}>
-                <Modal.Content title={'Encerrar Sessão em Aberto'}>
+                <Modal.Content cabecalho={ { titulo: 'Encerrar Sessão em Aberto' } }>
                     <ConteudoModalEncerraSessao />
                 </Modal.Content>
             </Modal>

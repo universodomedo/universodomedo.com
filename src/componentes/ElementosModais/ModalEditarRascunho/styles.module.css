@@ -1,0 +1,6 @@
+#recipiente_corpo_modal_edita_rascunho {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 3vh;
+}

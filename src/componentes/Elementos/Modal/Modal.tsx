@@ -12,12 +12,15 @@ export default function Modal({ children, open, onOpenChange }: { children: Reac
     );
 };
 
-function ModalContent({ children, title, className, temBotaoFechar = true }: { children: ReactNode, title: string, className?: string, temBotaoFechar?: boolean }) {
+function ModalContent({ children, cabecalho, className, temBotaoFechar = true }: { children: ReactNode, cabecalho: { titulo: string; subtitulo?: string }, className?: string, temBotaoFechar?: boolean }) {
     return (
         <Dialog.Portal>
             <Dialog.Overlay className={styles.dialog_overlay} />
             <Dialog.Content className={`${styles.dialog_conteudo} ${className}`} aria-describedby={undefined}>
-                <Dialog.Title className={styles.dialog_titulo}>{title}</Dialog.Title>
+                <div id={styles.recipiente_cabecalho_modal}>
+                    <Dialog.Title className={styles.dialog_titulo}>{cabecalho.titulo}</Dialog.Title>
+                    {cabecalho.subtitulo && <h4>{cabecalho.subtitulo}</h4>}
+                </div>
                 <div className={styles.dialog_conteudo_corpo}>
                     {children}
                 </div>

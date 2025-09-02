@@ -39,6 +39,12 @@
 	scrollbar-gutter: stable;
 }
 
+#recipiente_cabecalho_modal {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .dialog_conteudo:focus { outline: none; }
 
 .dialog_titulo {

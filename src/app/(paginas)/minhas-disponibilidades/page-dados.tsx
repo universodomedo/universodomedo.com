@@ -27,7 +27,7 @@ export default function MinhaDisponibilidadeComDados({ listaDisponibilidades }: 
             </div>
 
             <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <Modal.Content title={'Configurando Disponibilidades'}>
+                <Modal.Content cabecalho={ { titulo: 'Configurando Disponibilidades' } }>
                     <ConteudoModal listaDisponibilidades={listaDisponibilidades} />
                 </Modal.Content>
             </Modal>

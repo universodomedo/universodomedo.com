@@ -11,7 +11,7 @@ import { LinkDto, TipoLinkDto } from 'types-nora-api';
 export function ModalVincularLinkGrupoAventura({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void }) {
     return (
         <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <Modal.Content title={'Vinculando Link Trailer'}>
+            <Modal.Content cabecalho={ { titulo: 'Vinculando Link Trailer' } }>
                 <ConteudoModal />
             </Modal.Content>
         </Modal>

@@ -18,7 +18,7 @@ export function BotaoMarcarSessaoFinal() {
             <button disabled={grupoAventuraSelecionada.sessaoFinal !== null} onClick={openModalMarcaFim}>Marcar Episódio como Final</button>
 
             <Modal open={isModalMarcaFimOpen} onOpenChange={setIsModalMarcaFimOpen}>
-                <Modal.Content title={'Marcar Sessão como Final da Aventura'}>
+                <Modal.Content cabecalho={ { titulo: 'Marcar Sessão como Final da Aventura' } }>
                     <ConteudoModalMarcaFimAventura />
                 </Modal.Content>
             </Modal>
