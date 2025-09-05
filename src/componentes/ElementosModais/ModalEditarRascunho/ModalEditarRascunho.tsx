@@ -1,21 +1,23 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import styles from './styles.module.css';
 
 import { useContextoRascunho } from "Contextos/ContextoRascunho/contexto";
+import { useContextoEdicaoRascunhoSessaoUnicaNaoCanonica } from 'Contextos/ContextoEdicaoRascunhoSessaoUnicaNaoCanonica/contexto';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
 import InputNumerico from 'Componentes/Elementos/Inputs/InputNumerico/InputNumerico';
 import { useCache } from 'Redux/hooks/useCache';
-import { DetalheRascunhoSessaoUnicaDto, DificuldadeSessaoDto, NivelDto, RascunhoDto, TipoSessaoDto } from 'types-nora-api';
+import InputTextoTiptap from 'Componentes/Elementos/Tiptap/InputTextoTiptap/InputTextoTiptap';
+import AlternaOpcao from 'Componentes/Elementos/Inputs/AlternaOpcao/AlternaOpcao';
 
 export function ModalEditarRascunho({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void }) {
     const { rascunho } = useContextoRascunho();
+    const { handleSalvar, podeSalvar } = useContextoEdicaoRascunhoSessaoUnicaNaoCanonica();
 
     return (
         <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <Modal.Content cabecalho={ { titulo: `Editando Rascunho`, subtitulo: rascunho.titulo } }>
+            <Modal.Content cabecalho={{ titulo: `Editando Rascunho`, subtitulo: rascunho.titulo }} botaoAcaoPrincipal={{ execucao: handleSalvar, texto: 'Salvar', desabilitado: !podeSalvar }}>
                 <ConteudoModal />
             </Modal.Content>
         </Modal>
@@ -24,69 +26,58 @@ export function ModalEditarRascunho({ isModalOpen, setIsModalOpen }: { isModalOp
 
 function ConteudoModal() {
     const { niveis, dificuldadesSessao, tiposSessao } = useCache();
-    const { salvaDetalhesRascunho, rascunho } = useContextoRascunho();
+    const { seNumeroJogadoresTemLimiteMax, setSeNumeroJogadoresTemLimiteMax, numeroJogadoresMin, setNumeroJogadoresMin, numeroJogadoresMax, setNumeroJogadoresMax, idNivelSelecionado, setIdNivelSelecionado, idDificuldadeSelecionado, setIdDificuldadeSelecionada, idTipoSelecionado, setIdTipoSelecionada, descricao, setDescricao } = useContextoEdicaoRascunhoSessaoUnicaNaoCanonica();
 
-    const [numeroJogadoresMin, setNumeroJogadoresMin] = useState(1);
-    const [numeroJogadoresMax, setNumeroJogadoresMax] = useState(1);
-
-    useEffect(() => {
-        if (numeroJogadoresMax < numeroJogadoresMin) setNumeroJogadoresMax(numeroJogadoresMin);
-    }, [numeroJogadoresMin]);
-
-    const [idNivelSelecionado, setIdNivelSelecionado] = useState(0);
-    const handleNivelChange = (e: React.ChangeEvent<HTMLSelectElement>) => { setIdNivelSelecionado(Number(e.target.value)); };
-
-    const [idDificuldadeSelecionado, setIdDificuldadeSelecionada] = useState(0);
-    const handleDificuldadeChange = (e: React.ChangeEvent<HTMLSelectElement>) => { setIdDificuldadeSelecionada(Number(e.target.value)); };
-
-    const [idTipoSelecionado, setIdTipoSelecionada] = useState(0);
-    const handleTipoChange = (e: React.ChangeEvent<HTMLSelectElement>) => { setIdTipoSelecionada(Number(e.target.value)); };
-
-    const handleSalvar = () => {
-        salvaDetalhesRascunho({
-            rascunho: { id: rascunho.id } as RascunhoDto,
-            tipoSessao: { id: idTipoSelecionado } as TipoSessaoDto,
-            dificuldadeSessao: { id: idDificuldadeSelecionado } as DificuldadeSessaoDto,
-            nivelPersonagem: { id: idNivelSelecionado } as NivelDto,
-            descricao: 'AAAAAAAAteste',
-            numeroMinimoJogadores: numeroJogadoresMin,
-            numeroMaximoJogadores: numeroJogadoresMax,
-        } as DetalheRascunhoSessaoUnicaDto);
-    };
-    
     return (
         <div id={styles.recipiente_corpo_modal_edita_rascunho}>
-            <InputComRotulo rotulo={'Número de Jogadores'}>
-                <InputNumerico min={1} step={1} value={numeroJogadoresMin} onChange={setNumeroJogadoresMin} />
-                <InputNumerico min={numeroJogadoresMin} step={1} value={numeroJogadoresMax} onChange={setNumeroJogadoresMax} />
-            </InputComRotulo>
+            <div className={styles.recipiente_parametros_rascunho}>
+                <div className={styles.recipiente_maximo_jogadores_aberto}>
+                    <InputComRotulo rotulo={'Possui Máximo de Vagas?'}>
+                        <AlternaOpcao opcao={seNumeroJogadoresTemLimiteMax} onChange={setSeNumeroJogadoresTemLimiteMax} />
+                    </InputComRotulo>
+                </div>
+                <div className={styles.recipiente_inputs_numero_jogadores}>
+                    <InputComRotulo rotulo={'Mínimo'}>
+                        <InputNumerico min={1} step={1} value={numeroJogadoresMin} onChange={setNumeroJogadoresMin} />
+                    </InputComRotulo>
+                    {seNumeroJogadoresTemLimiteMax && (
+                        <InputComRotulo rotulo={'Máximo'}>
+                            <InputNumerico min={numeroJogadoresMin} step={1} value={numeroJogadoresMax} onChange={setNumeroJogadoresMax} disabled={!seNumeroJogadoresTemLimiteMax} />
+                        </InputComRotulo>
+                    )}
+                </div>
+            </div>
 
-            <InputComRotulo rotulo={'Grau de Ex.P. dos Personangens'}>
-                <select value={idNivelSelecionado} onChange={handleNivelChange}>
-                    <option value="0" disabled >Selecionar Nível dos Personagens</option>
-                    {niveis!.map(nivel => (<option key={nivel.id} value={nivel.id}>{nivel.nomeVisualizacao}</option>))}
-                </select>
-            </InputComRotulo>
+            <div className={styles.recipiente_parametros_rascunho}>
+                <InputComRotulo rotulo={'Grau de Ex.P. dos Personangens'}>
+                    <select value={idNivelSelecionado} onChange={e => setIdNivelSelecionado(Number(e.target.value))}>
+                        <option value="0" disabled >Selecionar Nível dos Personagens</option>
+                        {niveis!.map(nivel => (<option key={nivel.id} value={nivel.id}>{nivel.nomeVisualizacao}</option>))}
+                    </select>
+                </InputComRotulo>
+            </div>
 
-            <InputComRotulo rotulo={'Dificuldade da Sessão'}>
-                <select value={idDificuldadeSelecionado} onChange={handleDificuldadeChange}>
-                    <option value="0" disabled >Selecionar Dificuldade da Sessão</option>
-                    {dificuldadesSessao!.map(dificuldade => (<option key={dificuldade.id} value={dificuldade.id}>{dificuldade.descricao}</option>))}
-                </select>
-            </InputComRotulo>
+            <div className={styles.recipiente_parametros_rascunho}>
+                <InputComRotulo rotulo={'Dificuldade da Sessão'} >
+                    <select value={idDificuldadeSelecionado} onChange={e => setIdDificuldadeSelecionada(Number(e.target.value))}>
+                        <option value="0" disabled >Selecionar Dificuldade da Sessão</option>
+                        {dificuldadesSessao!.map(dificuldade => (<option key={dificuldade.id} value={dificuldade.id}>{dificuldade.descricao}</option>))}
+                    </select>
+                </InputComRotulo>
 
-            <InputComRotulo rotulo={'Tipo de Sessão'}>
-                <select value={idTipoSelecionado} onChange={handleTipoChange}>
-                    <option value="0" disabled >Selecionar Tipo de Sessão</option>
-                    {tiposSessao!.map(tipo => (<option key={tipo.id} value={tipo.id}>{tipo.descricao}</option>))}
-                </select>
-            </InputComRotulo>
+                <InputComRotulo rotulo={'Tipo de Sessão'}>
+                    <select value={idTipoSelecionado} onChange={e => setIdTipoSelecionada(Number(e.target.value))}>
+                        <option value="0" disabled >Selecionar Tipo de Sessão</option>
+                        {tiposSessao!.map(tipo => (<option key={tipo.id} value={tipo.id}>{tipo.descricao}</option>))}
+                    </select>
+                </InputComRotulo>
+            </div>
 
-            <InputComRotulo rotulo={'Descrição'}>
-                <input type={'text'} />
-            </InputComRotulo>
-
-            <button onClick={handleSalvar}>Teste</button>
+            <div className={styles.recipiente_area_texto_tiptap}>
+                <InputComRotulo rotulo={'Descrição'} classname={styles.input_com_rotulo_texto}>
+                    <InputTextoTiptap conteudo={descricao} onChange={setDescricao} />
+                </InputComRotulo>
+            </div>
         </div>
     );
 };

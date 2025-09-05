@@ -4,6 +4,7 @@ import { DetalheRascunhoSessaoUnicaDto } from 'types-nora-api';
 import styles from './styles.module.css';
 
 import { useContextoRascunho } from "Contextos/ContextoRascunho/contexto";
+import VisualizadorConteudoTiptap from 'Componentes/Elementos/Tiptap/VisualizadorConteudoTiptap/VisualizadorConteudoTiptap';
 
 export function CorpoRascunho() {
     const { rascunho } = useContextoRascunho();
@@ -25,7 +26,7 @@ function DadosResumo({ detalheRascunhoSessaoUnica }: { detalheRascunhoSessaoUnic
             <div id={styles.recipiente_opcoes_detalhes_rascunho}>
                 <div className={styles.opcao_detalhe_rascunho}>
                     <h2>Jogadores</h2>
-                    <h3>4-8</h3>
+                    <h3>{detalheRascunhoSessaoUnica.numeroMinimoJogadores}-{detalheRascunhoSessaoUnica.numeroMaximoJogadores}</h3>
                 </div>
                 <div className={styles.opcao_detalhe_rascunho}>
                     <h2>GEP</h2>
@@ -41,7 +42,7 @@ function DadosResumo({ detalheRascunhoSessaoUnica }: { detalheRascunhoSessaoUnic
                 </div>
             </div>
             <div id={styles.recipiente_descricao_detalhes_rascunho}>
-                {detalheRascunhoSessaoUnica.descricao}
+                <VisualizadorConteudoTiptap conteudo={detalheRascunhoSessaoUnica.descricao} />
             </div>
         </>
     );

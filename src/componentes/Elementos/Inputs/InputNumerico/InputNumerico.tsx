@@ -1,5 +1,14 @@
-export default function InputNumerico({ value, onChange, min, max, step }: { value: number; onChange: (value: number) => void; min?: number; max?: number; step?: number; }) {
+import React from 'react';
+
+interface InputNumericoProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange' | 'type'> {
+    value: number;
+    onChange: (value: number) => void;
+}
+
+export default function InputNumerico({ value, onChange, ...props }: InputNumericoProps) {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (props.disabled) return;
+
         const newValue = e.target.valueAsNumber;
         if (!isNaN(newValue)) {
             onChange(newValue);
@@ -7,6 +16,6 @@ export default function InputNumerico({ value, onChange, min, max, step }: { val
     };
 
     return (
-        <input type="number" value={value} onChange={handleChange} min={min} max={max} step={step} />
+        <input type="number" value={value} onChange={handleChange} {...props} />
     );
 };

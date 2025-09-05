@@ -8,6 +8,7 @@
     align-items: center;
     backdrop-filter: blur(1em) brightness(.6);
     user-select: none;
+    box-shadow: -1px 1px 7px 2px #000000;
 
     &:not(.rascunho_indisponivel) {
         cursor: pointer;

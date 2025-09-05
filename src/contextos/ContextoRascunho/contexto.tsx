@@ -2,7 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { DetalheRascunhoSessaoUnicaDto, RascunhoDto } from 'types-nora-api';
+
 import { editaDetalheRascunho, obtemDetalhesRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider } from 'Contextos/ContextoEdicaoRascunhoSessaoUnicaNaoCanonica/contexto';
 import { ModalEditarRascunho } from 'Componentes/ElementosModais/ModalEditarRascunho/ModalEditarRascunho';
 
 interface ContextoRascunhoProps {
@@ -68,7 +70,9 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
     return (
         <ContextoRascunho.Provider value={{ alteraEstadoModalEdicao, rascunho, salvaDetalhesRascunho }}>
             {children}
-            <ModalEditarRascunho isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+            <ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider>
+                <ModalEditarRascunho isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+            </ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider>
         </ContextoRascunho.Provider>
     );
 };

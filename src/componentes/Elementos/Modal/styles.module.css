@@ -33,10 +33,9 @@
     aspect-ratio: 1 / 1.2;
 
 	z-index: calc(var(--zindex-final-modal) - 0);
-	padding: 1% 0 1% 1%;
+	padding: .6em;
 
-	overflow-y: auto;
-	scrollbar-gutter: stable;
+	overflow: hidden;
 }
 
 #recipiente_cabecalho_modal {
@@ -55,8 +54,8 @@
     line-height: 1;
 }
 
-.dialog_botao_fechar:hover { background-color: '#EBE4FF'; }
-.dialog_botao_fechar:focus { box-shadow: 0 0 0 2px '#C2B5F5'; }
+.botao_modal:hover { background-color: '#EBE4FF'; }
+.botao_modal:focus { box-shadow: 0 0 0 2px '#C2B5F5'; }
 
 @keyframes overlayShow {
 	from {

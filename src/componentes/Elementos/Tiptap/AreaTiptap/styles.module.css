@@ -1,0 +1,40 @@
+.recipiente_editor_tiptap {
+    color: white;
+    font-family: var(--fonte-junge);
+    list-style: initial;
+
+
+
+    &:not(.recipiente_editor_tiptap_visualizador) {
+        flex: 1;
+        overflow: hidden;
+    }
+    
+    &.recipiente_editor_tiptap_visualizador {
+        & :global(.tiptap) { box-shadow: -1px 1px 17px 2px #000000; }
+    }
+
+    & > div {
+        height: 100%;
+    }
+
+    & :global(.tiptap) {
+        border: .1em solid #502C6E;
+        background-color: #312246B3;
+        border-radius: 1em;
+        padding: .3em .8em;
+        height: 100%;
+        scrollbar-color: white transparent;
+        overflow-y: auto;
+    }
+
+    & :global(.tiptap:focus) { outline: none; }
+    & :global(.tiptap h1) { font-size: 1.875rem; line-height: 2.25rem; margin: 0.6em 0 0.3em; font-weight: 700; }
+    & :global(.tiptap h2) { font-size: 1.5rem; line-height: 2rem; margin: 0.6em 0 0.3em; font-weight: 700; }
+    & :global(.tiptap h3) { font-size: 1.25rem; line-height: 1.75rem; margin: 0.6em 0 0.3em; font-weight: 700; }
+    & :global(.tiptap p) { margin: 0.6em 0; }
+    & :global(.tiptap ul) { padding-left: 1.25rem; margin: 0.6em 0; }
+    & :global(.tiptap ol) { padding-left: 1.25rem; margin: 0.6em 0; }
+    & :global(.tiptap blockquote) { border-left: 3px solid #e5e7eb; padding-left: 12px; color: #6b7280; margin: 0.6em 0; }
+    & :global(.tiptap code) { background: #f3f4f6; border-radius: 6px; padding: 0.2em 0.4em; }
+}
