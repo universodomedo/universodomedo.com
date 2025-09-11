@@ -34,7 +34,7 @@ export default function MenuSwiperEsquerda() {
 };
 
 function ConteudoSwiperEsquerda() {
-    const { estaAutenticado, ehMestre, ehAdmin } = useContextoAutenticacao();
+    const { estaAutenticado } = useContextoAutenticacao();
 
     async function logout() {
         await obtemObjetoAutenticacao();

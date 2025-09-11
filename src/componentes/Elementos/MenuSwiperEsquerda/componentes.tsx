@@ -23,6 +23,7 @@ export function ItensMenuSwiperEsquerda() {
             titulo: "Minhas Páginas",
             subitens: [
                 { titulo: "Jogador", link: "/minhas-paginas/jogador", condicao: estaAutenticado },
+                { titulo: "Disponibilidades", link: "/minhas-paginas/minhas-disponibilidades", condicao: estaAutenticado },
                 { titulo: "Mestre", link: "/minhas-paginas/mestre", condicao: ehMestre },
                 { titulo: "Administrador", link: "/minhas-paginas/admin", condicao: ehAdmin }
             ]

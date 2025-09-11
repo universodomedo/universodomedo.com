@@ -2,12 +2,12 @@
 
 import styles from './styles.module.css';
 
-import { useContextoMestreRascunhosSessoesUnicas } from 'Contextos/ContextoMestreRascunhosSessoesUnicas/contexto';
+import { useContextoRascunhosMestre } from 'Contextos/ContextoRascunhosMestre/contexto';
 import { useContextoRascunho } from "Contextos/ContextoRascunho/contexto";
 import { CorpoRascunho } from './componentes';
 
 export default function DetalhesRascunho_Conteudo() {
-    const { limpaRascunhoSelecionado } = useContextoMestreRascunhosSessoesUnicas();
+    const { limpaRascunhoSelecionado } = useContextoRascunhosMestre();
     const { alteraEstadoModalEdicao, rascunho } = useContextoRascunho();
 
     function fechaRascunho() {

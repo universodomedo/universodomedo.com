@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import { useContextoRascunho } from "Contextos/ContextoRascunho/contexto";
-import { useContextoEdicaoRascunhoSessaoUnicaNaoCanonica } from 'Contextos/ContextoEdicaoRascunhoSessaoUnicaNaoCanonica/contexto';
+import { useContextoEdicaoRascunhoSessaoUnicaNaoCanonica } from 'Contextos/ContextoEdicaoRascunho/ContextoEdicaoRascunhoSessaoUnicaNaoCanonica/contexto';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
 import InputNumerico from 'Componentes/Elementos/Inputs/InputNumerico/InputNumerico';
@@ -11,7 +11,7 @@ import { useCache } from 'Redux/hooks/useCache';
 import InputTextoTiptap from 'Componentes/Elementos/Tiptap/InputTextoTiptap/InputTextoTiptap';
 import AlternaOpcao from 'Componentes/Elementos/Inputs/AlternaOpcao/AlternaOpcao';
 
-export function ModalEditarRascunho({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void }) {
+export function ModalEditarRascunhoSessaoUnica({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void }) {
     const { rascunho } = useContextoRascunho();
     const { handleSalvar, podeSalvar } = useContextoEdicaoRascunhoSessaoUnicaNaoCanonica();
 

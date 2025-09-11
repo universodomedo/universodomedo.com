@@ -1,16 +1,17 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { DetalheRascunhoSessaoUnicaDto, RascunhoDto } from 'types-nora-api';
+import { DetalheRascunhoAventuraDto, DetalheRascunhoSessaoUnicaCanonicaDto, DetalheRascunhoSessaoUnicaDto, RascunhoDto } from 'types-nora-api';
 
 import { editaDetalheRascunho, obtemDetalhesRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider } from 'Contextos/ContextoEdicaoRascunhoSessaoUnicaNaoCanonica/contexto';
-import { ModalEditarRascunho } from 'Componentes/ElementosModais/ModalEditarRascunho/ModalEditarRascunho';
+import EdicaoRascunho from 'Componentes/EdicaoRascunho/page';
 
 interface ContextoRascunhoProps {
     alteraEstadoModalEdicao: (aberto: boolean) => void;
     rascunho: RascunhoDto;
-    salvaDetalhesRascunho: (detalheRascunhoSessaoUnica: DetalheRascunhoSessaoUnicaDto) => void;
+    salvaDetalhesRascunhoAventura: (detalheRascunhoAventura: DetalheRascunhoAventuraDto) => void;
+    salvaDetalhesRascunhoSessaoUnicaCanonica: (detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaDto) => void;
+    salvaDetalhesRascunhoSessaoUnica: (detalheRascunhoSessaoUnica: DetalheRascunhoSessaoUnicaDto) => void;
 };
 
 const ContextoRascunho = createContext<ContextoRascunhoProps | undefined>(undefined);
@@ -43,7 +44,35 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
         setIsModalOpen(aberto);
     }
 
-    const salvaDetalhesRascunho = async (detalheRascunhoSessaoUnica: DetalheRascunhoSessaoUnicaDto) => {
+    const salvaDetalhesRascunhoAventura = async (detalheRascunhoAventura: DetalheRascunhoAventuraDto) => {
+        try {
+            if (!await editaDetalheRascunho({
+                ...rascunho!,
+                detalheRascunhoAventura: detalheRascunhoAventura,
+            })) throw new Error("Erro ao salvar o Rascunho");
+
+            buscaDetalhesRascunho();
+            alteraEstadoModalEdicao(false);
+        } catch {
+            alert(`Erro ao salvar o Rascunho`);
+        }
+    }
+
+    const salvaDetalhesRascunhoSessaoUnicaCanonica = async (detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaDto) => {
+        try {
+            if (!await editaDetalheRascunho({
+                ...rascunho!,
+                detalheRascunhoSessaoUnicaCanonica: detalheRascunhoSessaoUnicaCanonica,
+            })) throw new Error("Erro ao salvar o Rascunho");
+
+            buscaDetalhesRascunho();
+            alteraEstadoModalEdicao(false);
+        } catch {
+            alert(`Erro ao salvar o Rascunho`);
+        }
+    }
+
+    const salvaDetalhesRascunhoSessaoUnica = async (detalheRascunhoSessaoUnica: DetalheRascunhoSessaoUnicaDto) => {
         try {
             if (!await editaDetalheRascunho({
                 ...rascunho!,
@@ -68,11 +97,9 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
     if (!rascunho) return;
 
     return (
-        <ContextoRascunho.Provider value={{ alteraEstadoModalEdicao, rascunho, salvaDetalhesRascunho }}>
+        <ContextoRascunho.Provider value={{ alteraEstadoModalEdicao, rascunho, salvaDetalhesRascunhoAventura, salvaDetalhesRascunhoSessaoUnicaCanonica, salvaDetalhesRascunhoSessaoUnica }}>
             {children}
-            <ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider>
-                <ModalEditarRascunho isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-            </ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider>
+            <EdicaoRascunho isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </ContextoRascunho.Provider>
     );
 };

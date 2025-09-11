@@ -4,13 +4,22 @@
     width: 100%;
     height: 100%;
     padding: 1% 3%;
+    gap: 5vh;
+    align-items: center;
+}
+
+#recipiente_container_disponibilidade {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    gap: 3vh;
 }
 
 #recipiente_disponibilidade_superior {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 20%;
     align-items: center;
     justify-content: center;
     gap: 2vh;
@@ -24,15 +33,29 @@
     display: flex;
     flex-direction: row;
     position: relative;
-    width: 100%;
+    align-items: center;
+
+    & > h1 {
+        margin: auto;
+    }
+}
+
+#recipiente_mensagem_disponibilidade {
+
 }
 
 #recipiente_dados_disponibilidade {
-    display: flex;
-    flex-direction: column;
     flex: 1;
+    display: flex;
+    flex-direction: row;
     align-items: center;
 }
+
+.coluna_dds {
+    flex: 1;
+}
+
+
 
 .linha {
     display: flex;
@@ -42,30 +65,18 @@
 .celula_cabecalho {
     flex: 1;
     border: 1px solid white;
-    padding: 1rem;
+    padding: .8em;
     text-align: center;
-    font-size: 1rem;
+    font-size: 1em;
 }
 
 .celula {
     flex: 1;
     border: 1px solid white;
-    padding: 1rem;
+    padding: .6rem;
     text-align: center;
     height: 10rem;
 }
-
-/* #recipiente_disponibilidade_inferior * { 
-    text-decoration: none;
-    cursor: initial;
-    background: none !important;
-    color: #fff !important;
-    pointer-events: none;
-}
-
-.celula {
-    text-align: center;
-} */
 
 #recipiente_modal_disponibilidades {
     display: flex;
@@ -77,10 +88,22 @@
 
 #recipiente_disponibilidades_criadas {
     flex: 1 0 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 5%;
+
+    & table {
+        border-collapse: separate;
+        border-spacing: 0 .4em;
+    }
 }
 
 #recipiente_adicao_disponibilidade {
     flex: 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
 }
 
 #recipiente_informaacoes_adicionar_disponibilidade {

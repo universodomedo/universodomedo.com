@@ -33,7 +33,7 @@ export const useContextoEdicaoRascunhoSessaoUnicaNaoCanonica = (): ContextoEdica
 };
 
 export const ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider = ({ children }: { children: React.ReactNode }) => {
-    const { salvaDetalhesRascunho, rascunho } = useContextoRascunho();
+    const { salvaDetalhesRascunhoSessaoUnica, rascunho } = useContextoRascunho();
 
     const [seNumeroJogadoresTemLimiteMax, setSeNumeroJogadoresTemLimiteMax] = useState<boolean>(rascunho.detalheRascunhoSessaoUnica ? rascunho.detalheRascunhoSessaoUnica.numeroMaximoJogadores === null ? false : true : true);
 
@@ -45,11 +45,8 @@ export const ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider = ({ children 
     }, [numeroJogadoresMin]);
 
     const [idNivelSelecionado, setIdNivelSelecionado] = useState(rascunho.detalheRascunhoSessaoUnica ? rascunho.detalheRascunhoSessaoUnica.nivelPersonagem.id : 0);
-
     const [idDificuldadeSelecionado, setIdDificuldadeSelecionada] = useState(rascunho.detalheRascunhoSessaoUnica ? rascunho.detalheRascunhoSessaoUnica.dificuldadeSessao.id : 0);
-
     const [idTipoSelecionado, setIdTipoSelecionada] = useState(rascunho.detalheRascunhoSessaoUnica ? rascunho.detalheRascunhoSessaoUnica.tipoSessao.id : 0);
-
     const [descricao, setDescricao] = useState(rascunho.detalheRascunhoSessaoUnica ? rascunho.detalheRascunhoSessaoUnica.descricao : null);
 
     //
@@ -98,16 +95,16 @@ export const ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider = ({ children 
         if (JSON.stringify(descricao) !== JSON.stringify(detalheInicial.descricao))
             alteracoes.push("Descrição foi alterada");
 
-        if (alteracoes.length > 0) {
-            const confirmacao = window.confirm(
-                "Tem certeza que deseja salvar as alterações?\n\n" +
-                alteracoes.map(a => `• ${a}`).join("\n")
-            );
+        if (!!alteracoes.length) return;
 
-            if (!confirmacao) return;
-        }
+        const confirmacao = window.confirm(
+            "Tem certeza que deseja salvar as alterações?\n\n" +
+            alteracoes.map(a => `• ${a}`).join("\n")
+        );
 
-        salvaDetalhesRascunho({
+        if (!confirmacao) return;
+
+        salvaDetalhesRascunhoSessaoUnica({
             rascunho: { id: rascunho.id } as RascunhoDto,
             tipoSessao: { id: idTipoSelecionado } as TipoSessaoDto,
             dificuldadeSessao: { id: idDificuldadeSelecionado } as DificuldadeSessaoDto,

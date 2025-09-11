@@ -1,10 +1,12 @@
-import { ContextoMestreRascunhosAventurasProvider } from "Contextos/ContextoMestreRascunhosAventuras/contexto";
-import { RascunhoAventuraMestre_Contexto } from "./componentes";
+import { TiposGeralRascunho } from "types-nora-api";
+
+import { ContextoRascunhosMestreProvider } from "Contextos/ContextoRascunhosMestre/contexto";
+import { RascunhosMestre_Contexto } from "../componentes";
 
 export default function RascunhoAventuraMestre() {
     return (
-        <ContextoMestreRascunhosAventurasProvider>
-            <RascunhoAventuraMestre_Contexto />
-        </ContextoMestreRascunhosAventurasProvider>
+        <ContextoRascunhosMestreProvider tipoGeralRascunho={TiposGeralRascunho.AVENTURA}>
+            <RascunhosMestre_Contexto />
+        </ContextoRascunhosMestreProvider>
     );
 };
