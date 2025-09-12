@@ -1,0 +1,11 @@
+.input_e_rotulo {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: .3vh;
+    align-items: center;
+}
+
+.input_e_rotulo label {
+    font-size: 1.2rem;
+}

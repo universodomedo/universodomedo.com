@@ -1,0 +1,17 @@
+#recipiente_opcoes_busca {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+}
+
+#recipiente_aventuras_mestre {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: wrap;
+    white-space: nowrap;
+    gap: 3vh 3vw;
+    justify-content: space-evenly;
+    align-content: flex-start;
+    padding: 1vh 0;
+}

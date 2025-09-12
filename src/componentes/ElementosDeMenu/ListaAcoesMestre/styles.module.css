@@ -1,0 +1,27 @@
+#recipiente_lista_acoes_pagina_mestre {
+    display: flex;
+    flex-direction: column;
+    width: 16vw;
+
+    & .titulo_permissao_mestre {
+        text-align: center;
+        color: #E7FFBC;
+    }
+
+    & hr {
+        margin: 1vh 0 .8vh;
+    }
+}
+
+.recipiente_item_mestre {
+    user-select: none;
+    border-radius: 5px;
+    padding: 3% 2%;
+}
+
+.recipiente_subitens_mestre {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1vw;
+    margin-top: .3vh;
+}

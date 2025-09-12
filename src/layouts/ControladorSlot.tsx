@@ -7,7 +7,6 @@ import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
-import Chat from 'Componentes/Elementos/Chat/Chat.tsx';
 import { PaginaObjeto } from 'types-nora-api';
 import useInicializarSocket from 'Hooks/useInicializarSocket';
 
@@ -33,7 +32,6 @@ export function ControladorSlot({ pageConfig, children, }: { pageConfig: { pagin
     return (
         <>
             {comCabecalho && <Cabecalho />}
-            {false && estaAutenticado && <Chat />}
             {children}
         </>
     );

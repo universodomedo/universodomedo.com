@@ -1,0 +1,11 @@
+#recipiente_aventuras_admin {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: wrap;
+    white-space: nowrap;
+    gap: 3vh 3vw;
+    justify-content: space-evenly;
+    align-content: flex-start;
+    padding: 1vh 0;
+}

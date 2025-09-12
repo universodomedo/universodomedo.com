@@ -1,17 +1,21 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, TiposGeralRascunho, TipoRascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtual?: PaginaObjeto | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtual === undefined ? {} : { idPaginaAtual: paginaAtual?.id || '' } });
 }
 
-export async function obtemDadosMinhasDisponibilidades() {
-    return await useApi<DisponibilidadeUsuarioDto[]>({ uri: '/disponibilidadesUsuario/obtemDadosMinhasDisponibilidades', method: 'GET' });
+export async function obtemTodosObjetosCache() {
+    return await useApi<ObjetoCache>({ uri: '/cache/obtemTodosObjetosCache', method: 'GET' });
 }
 
-export async function salvaDisponibilidadeDeUsuario(disponibilidades: DisponibilidadeUsuarioDto[]) {
-    return await useApi<boolean>({ uri: '/disponibilidadesUsuario/salvaDisponibilidadeDeUsuario', method: 'POST', data: { disponibilidades: disponibilidades } });
+export async function obtemDadosMinhasDisponibilidades() {
+    return await useApi<DisponibilidadeUsuarioDto>({ uri: '/disponibilidades_usuario/obtemDadosMinhasDisponibilidades', method: 'GET' });
+}
+
+export async function me_salvaDisponibilidade(listaDisponibilidadesUsuario: ListaDisponibilidadesUsuario) {
+    return await useApi<boolean>({ uri: '/disponibilidades_usuario/me/me_salvaDisponibilidade', method: 'POST', data: { listaDisponibilidadesUsuario: listaDisponibilidadesUsuario } });
 }
 
 export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) {
@@ -22,8 +26,12 @@ export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) 
     }
 }
 
-export async function obtemTodasAventuras() {
-    return await useApi<AventuraDto[]>({ uri: '/aventuras/obtemTodasAventuras', method: 'GET' });
+export async function obtemTodosGruposParaAdmin() {
+    return await useApi<GrupoAventuraDto[]>({ uri: '/grupos_aventuras/obtemTodosGruposParaAdmin', method: 'GET' });
+}
+
+export async function obtemAventurasParaAssistir() {
+    return await useApi<AventuraDto[]>({ uri: '/aventuras/obtemAventurasParaAssistir', method: 'GET' });
 }
 
 export async function obtemAventuraCompleta(idAventura: number) {
@@ -31,11 +39,15 @@ export async function obtemAventuraCompleta(idAventura: number) {
 }
 
 export async function buscaGrupoAventuraEspecifico(idGrupoAventura: number) {
-    return await useApi<AventuraDto | null>({ uri: '/aventuras/buscaGrupoAventuraEspecifico', method: 'GET', params: { idGrupoAventura } });
+    return await useApi<GrupoAventuraDto | null>({ uri: '/grupos_aventuras/buscaGrupoAventuraEspecifico', method: 'GET', params: { idGrupoAventura } });
 }
 
 export async function obtemDadosSessao(idSessao: number) {
     return await useApi<DetalheSessaoCanonicaDto | null>({ uri: '/detalhes_sessao_canonica/obtemDadosSessao', method: 'GET', params: { idSessao } });
+}
+
+export async function obtemSessaoGeral(idSessao: number) {
+    return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemSessaoGeral', method: 'GET', params: { idSessao } });
 }
 
 export async function obtemDadosSessaoParaAssistir(idSessao: number) {
@@ -127,16 +139,36 @@ export async function obtemGruposPorMestre(idUsuario: number): Promise<GrupoAven
     return await useApi<GrupoAventuraDto[]>({ uri: '/grupos_aventuras/obtemGruposPorMestre', method: 'GET', params: { idUsuario } });
 }
 
-export async function encerraGrupoAventura(idGrupoAventura: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/grupos_aventuras/encerraGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
-}
-
 export async function obtemUltimaSessoesPostadas(): Promise<DetalheSessaoCanonicaDto[]> {
     return await useApi<DetalheSessaoCanonicaDto[]>({ uri: 'detalhes_sessao_canonica/obtemUltimaSessoesPostadas', method: 'GET' });
 }
 
-export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: number, criaNovaSessao: boolean): Promise<boolean> {
-    return await useApi<boolean>({ uri: 'sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura, criaNovaSessao: criaNovaSessao } })
+export async function encerraGrupoAventura(idGrupoAventura: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/grupos_aventuras/encerraGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
+}
+
+export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: 'sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
+}
+
+export async function obtemTiposRascunhoPorTipoGeral(tipoGeralRascunho: TiposGeralRascunho): Promise<TipoRascunhoDto[]> {
+    return await useApi<TipoRascunhoDto[]>({ uri: 'tipos_rascunho/obtemTiposRascunhoPorTipoGeral', method: 'GET', params: { tipoGeralRascunho } });
+}
+
+export async function obtemRascunhosPorMestreETipo(idUsuario: number, tipoGeralRascunho: TiposGeralRascunho): Promise<RascunhoDto[]> {
+    return await useApi<RascunhoDto[]>({ uri: 'rascunhos/obtemRascunhosPorMestreETipo', method: 'GET', params: { idUsuario: idUsuario, tipoGeralRascunho: tipoGeralRascunho } });
+}
+
+export async function obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto> {
+    return await useApi<RascunhoDto>({ uri: 'rascunhos/obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
+}
+
+export async function salvarRascunho(titulo: string, idUsuario: number, idTipoRascunho: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: 'rascunhos/salvarRascunho', method: 'POST', data: { titulo: titulo, idUsuario: idUsuario, idTipoRascunho: idTipoRascunho } });
+}
+
+export async function editaDetalheRascunho(rascunho: RascunhoDto): Promise<boolean> {
+    return await useApi<boolean>({ uri: 'rascunhos/editaDetalheRascunho', method: 'POST', data: { rascunho: rascunho } });
 }
 
 //

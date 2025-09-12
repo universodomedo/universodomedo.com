@@ -7,7 +7,7 @@ export function CabecalhoGrupoAventura() {
 
     return (
         <SecaoDeConteudo>
-            <h1>{grupoAventuraSelecionado.titulo}</h1>
+            <h1>{grupoAventuraSelecionado.aventura.titulo}</h1>
             {detalheSessaoSelecionada && (<h3>{detalheSessaoSelecionada.episodioPorExtenso}</h3>)}
         </SecaoDeConteudo>
     );

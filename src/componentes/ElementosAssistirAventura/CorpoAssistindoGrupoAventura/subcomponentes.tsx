@@ -9,7 +9,7 @@ import PlayerSpotify from 'Componentes/Elementos/PlayerSpotify/PlayerSpotify';
 export function TrailerGrupoAventura() {
     const { grupoAventuraSelecionado } = useContextoPaginaAventura();
 
-    if (!grupoAventuraSelecionado.gruposAventura![0].linkTrailerYoutube) return (
+    if (!grupoAventuraSelecionado.linkTrailerYoutube) return (
         <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
             <h3>Essa Aventura ainda não possui um Trailer</h3>
         </SecaoDeConteudo>
@@ -17,7 +17,7 @@ export function TrailerGrupoAventura() {
 
     return (
         <SecaoDeConteudo id={styles.recipiente_trailer}>
-            <PlayerYouTube urlSufixo={grupoAventuraSelecionado.gruposAventura![0].linkTrailerYoutube.sufixo} />
+            <PlayerYouTube urlSufixo={grupoAventuraSelecionado.linkTrailerYoutube.sufixo} />
         </SecaoDeConteudo>
     );
 };

@@ -1,11 +1,11 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { AventuraDto, DetalheSessaoCanonicaDto } from 'types-nora-api';
+import { DetalheSessaoCanonicaDto, GrupoAventuraDto } from 'types-nora-api';
 import { obtemDadosSessaoParaAssistir, buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaAventuraProps {
-    grupoAventuraSelecionado: AventuraDto;
+    grupoAventuraSelecionado: GrupoAventuraDto;
     buscaGrupoAventuraSelecionado: (idGrupoAventura: number) => void;
     detalheSessaoSelecionada: DetalheSessaoCanonicaDto | null;
     buscaSessao: (idSessao: number) => void;
@@ -24,11 +24,11 @@ export const useContextoPaginaAventura = (): ContextoPaginaAventuraProps => {
 
 export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, episodioIndexInicial = null }: { children: React.ReactNode; idGrupoAventura: number; episodioIndexInicial?: number | null; }) => {
     const [carregando, setCarregando] = useState<string | null>('');
-    const [grupoAventuraSelecionado, setGrupoAventuraSelecionado] = useState<AventuraDto | null>(null);
+    const [grupoAventuraSelecionado, setGrupoAventuraSelecionado] = useState<GrupoAventuraDto | null>(null);
     const [detalheSessaoSelecionada, setDetalheSessaoSelecionada] = useState<DetalheSessaoCanonicaDto | null>(null);
 
     //
-    const detalhesSessao = !grupoAventuraSelecionado ? [] : grupoAventuraSelecionado.gruposAventura?.[0]?.detalhesSessaoesCanonicas || [];
+    const detalhesSessao = !grupoAventuraSelecionado ? [] : grupoAventuraSelecionado.detalhesSessoesCanonicas || [];
     const indexAtual = detalheSessaoSelecionada ? detalhesSessao.findIndex(detalheSessao => detalheSessao.sessao.id === detalheSessaoSelecionada.sessao.id) : -1;
 
     const navegacaoSessoes = {
@@ -97,7 +97,7 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
         }
 
         if (episodioIndexInicial !== null && grupoAventuraSelecionado) {
-            const sessoesOrdenadas = grupoAventuraSelecionado.gruposAventura?.[0].detalhesSessaoesCanonicas.sort((a, b) => a.episodio - b.episodio);
+            const sessoesOrdenadas = grupoAventuraSelecionado.detalhesSessoesCanonicas.sort((a, b) => a.episodio - b.episodio);
 
             if (sessoesOrdenadas && episodioIndexInicial > 0 && episodioIndexInicial <= sessoesOrdenadas.length) {
                 const sessao = sessoesOrdenadas[episodioIndexInicial - 1]; // -1 porque arrays começam em 0

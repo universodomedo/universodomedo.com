@@ -18,8 +18,8 @@ export function ItemAventuraLista({ aventura }: { aventura: AventuraDto }) {
                 <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
             </div>
             <div className={styles.recipiente_dados_aventura}>
-                <h3>{aventura.titulo}</h3>
-                <h3>{aventura.estadoAtual}</h3>
+                <h3 className={styles.recipiente_dados_aventura_titulo}>{aventura.titulo}</h3>
+                <h3 className={styles.recipiente_dados_aventura_estado}>{aventura.estadoAtual}</h3>
             </div>
         </DivClicavel>
     );
@@ -40,8 +40,7 @@ export function UltimasSessoesPostadas() {
                         </div>
                         <div className={styles.recipiente_info_carta_sessao_recente}>
                             <h2>{detalheSessao.grupoAventura!.aventura.titulo}</h2>
-                            {detalheSessao.grupoAventura!.aventura.temApenasUmGrupo && <h4>{detalheSessao.grupoAventura!.nome}</h4>}
-                            <h3>{detalheSessao.episodioPorExtenso}</h3>
+                            <h3>{!detalheSessao.grupoAventura!.aventura.temApenasUmGrupo && `${detalheSessao.grupoAventura!.nome} - `}{detalheSessao.episodioPorExtenso}</h3>
                         </div>
                     </CustomLink>
                 ))}

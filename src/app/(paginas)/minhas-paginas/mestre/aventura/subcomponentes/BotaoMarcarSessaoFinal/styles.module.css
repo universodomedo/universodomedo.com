@@ -1,0 +1,10 @@
+#recipiente_modal_marcar_sessao_como_final {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: black;
+}
+
+#recipiente_modal_marcar_sessao_como_final p {   
+    color: black;
+}

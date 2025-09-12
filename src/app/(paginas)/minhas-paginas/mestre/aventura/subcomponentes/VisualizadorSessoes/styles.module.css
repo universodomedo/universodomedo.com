@@ -1,0 +1,45 @@
+#recipiente_visualizador_sessoes {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 2vw;
+}
+
+.recipiente_link_sessao {
+    flex: 1;
+}
+
+div.recipiente_informacoes_sessao {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5% 2%;
+    gap: 2vh;
+    cursor: pointer;
+
+    &:not(.ativo):hover {
+        box-shadow: 0px 0px 9px 0px #ffffff;
+    }
+}
+
+.recipiente_cabecalho_informacoes_sessao {
+    text-align: center;
+}
+
+.recipiente_par_informacao {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.recipiente_informacoes {
+    display: flex;
+    flex-direction: column;
+    text-align: end;
+}
+
+#recipiente_acoes_aventura {
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    gap: 2vw;
+}

@@ -1,0 +1,34 @@
+#recipiente_informacoes_gerais_aventura {
+    display: flex;
+    flex-direction: row;
+    max-height: 40vh;
+    width: 100%;
+    gap: 1vw;
+}
+
+#recipiente_informacoes_aventura {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+    text-align: center;
+}
+
+#recipiente_container_informacoes_aventura {
+    display: flex;
+    flex-direction: column;
+    gap: .8vh;
+    text-align: start;
+}
+
+#recipiente_container_lista_todas_sessoes {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3vh;
+}
+
+.recipiente_linha_episodio_em_lista {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    justify-content: center;
+}

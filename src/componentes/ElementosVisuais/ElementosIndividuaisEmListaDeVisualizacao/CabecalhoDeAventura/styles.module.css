@@ -1,0 +1,10 @@
+#recipiente_capa_cabecalho_aventura {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 37%;
+    box-shadow: 0 4px 9px 4px #000;
+}
+
+#recipiente_nome_cabecalho_aventura {
+    width: auto;
+}

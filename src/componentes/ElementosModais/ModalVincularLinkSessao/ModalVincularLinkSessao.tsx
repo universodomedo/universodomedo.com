@@ -11,7 +11,7 @@ import { LinkDto, TipoLinkDto } from 'types-nora-api';
 export function ModalVincularLinkSessao({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void }) {
     return (
         <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <Modal.Content title={'Vinculando Link Sessão'}>
+            <Modal.Content cabecalho={ { titulo: 'Vinculando Link Sessão' } }>
                 <ConteudoModal />
             </Modal.Content>
         </Modal>
@@ -79,7 +79,7 @@ function ConteudoModal() {
         <div id={styles.recipiente_corpo_modal_vincula_link}>
             <div className={styles.recipiente_label_input_modal_vincula_link}>
                 <label htmlFor="sufixo">Link Completo</label>
-                <input id="sufixo" type="text" value={sufixo} onChange={handleSufixoChange} placeholder={`${tipoLinkSelecionado?.prefixo}...`} />
+                <input id="sufixo" type="text" value={sufixo} onChange={handleSufixoChange} placeholder={`${tipoLinkSelecionado?.prefixo}...`} autoComplete={'off'} />
                 {erroValidacao && <p className={styles.erro_validacao}>{erroValidacao}</p>}
             </div>
 

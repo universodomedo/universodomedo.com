@@ -6,7 +6,7 @@ export default function SecaoDeConteudo(props: { children: ReactNode } & HTMLAtt
     const { children, className, ...rest } = props;
     
     return (
-        <div className={cn(styles.recipiente_container_info_assistindo_grupo_aventura, className)} {...rest}>
+        <div className={cn(styles.recipiente_container_secao_conteudo, className)} {...rest}>
             {children}
         </div>
     );

@@ -1,0 +1,64 @@
+.container {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.etiqueta {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+}
+
+.capsula {
+    position: relative;
+    min-width: 3.75rem;
+    height: 1.875rem;
+    border-radius: 1.875rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    padding: 0.125rem;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.capsula.ativo {
+    background-color: #4CAF50;
+    justify-content: flex-end;
+}
+
+.capsula.inativo {
+    background-color: #F44336;
+    justify-content: flex-start;
+}
+
+.indicador {
+    width: 1.625rem;
+    height: 1.625rem;
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.capsula {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.capsula:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}
+
+.capsula:active {
+    transform: scale(0.98);
+}
+
+.capsula:focus-visible {
+    outline: 2px solid #0066cc;
+    outline-offset: 2px;
+}
