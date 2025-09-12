@@ -19,7 +19,7 @@
     position: absolute;
     width: 40vw;
     aspect-ratio: 1 / 1;
-    gap: 1vw;
+    gap: .2vw;
     bottom: 0;
     left: 1%;
     padding: 2% .6% .4%;
@@ -59,6 +59,7 @@
     flex-direction: column;
     flex: 1;
     gap: 1%;
+    width: 72%;
 }
 
 #recipiente_mensagens_conversa {
@@ -76,6 +77,23 @@
     border-radius: .7em;
     background-color: #35133E;
     box-shadow: #201433 0px 1px 9px 2px;
+
+    &:not(.agrupamento_mensagem_sua) {
+        padding-right: 2%;
+    }
+
+    &.agrupamento_mensagem_sua {
+        flex-direction: row-reverse;
+        padding-left: 2%;
+
+        & img {
+            transform: rotateY(180deg);
+        }
+
+        & .recipiente_lista_mensagens_agrupadas {
+            text-align: end;
+        }
+    }
 }
 
 .container_avatar_agrupamento_mensagem {
@@ -96,11 +114,27 @@
     padding: .6% 0;
 }
 
-#recipiente_input_conversa input {
-    width: 100%;
+#recipiente_input_conversa {
+    display: flex;
+    flex-direction: row;
+    gap: .5vw;
+    
+    & input {
+        flex: 1;
+
+        &:disabled::placeholder {
+            color: #ff0000;
+            opacity: 1;
+        }
+    }
+
+    & button {
+        padding: .1em .4em;
+    }
 }
 
 #recipiente_salas {
+    flex-shrink: 0;
     width: 28%;
     border-left: 1px solid white;
 }
@@ -131,4 +165,10 @@
             box-shadow: 0 0 7px 0px #ffffffff;
         }
     }
+}
+
+.item_mensagens_agrupadas {
+    word-wrap: break-word;
+    word-break: break-all;
+    hyphens: auto;
 }

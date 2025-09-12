@@ -19,7 +19,7 @@ export default async function PaginaDefinicao({ params }: { params: Promise<{ sl
                         },
                         {
                             tipo: 'Paragrafo',
-                            conteudo: 'As Disponibilidades vigentes no momento são válidas de 30/03 até 03/08. Se você não conseguir se comprometer com a rotina semanal de uma disponibilidade, você não pode participar da aventura dessa disponibilidade, tendo em vista que faltas e atrasos recorrentes podem atribuir penalidades à você, desde exclusão da aventura, remoção do personagem, até banimento da plataforma'
+                            conteudo: 'As Disponibilidades vigentes no momento são válidas de 22/09 até 07/12. Se você não conseguir se comprometer com a rotina semanal de uma disponibilidade, você não pode participar da aventura dessa disponibilidade, tendo em vista que faltas e atrasos recorrentes podem atribuir penalidades à você, desde exclusão da aventura, remoção do personagem, até banimento da plataforma'
                         }
                     ]
                 }

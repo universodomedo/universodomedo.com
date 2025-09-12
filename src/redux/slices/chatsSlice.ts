@@ -4,7 +4,7 @@ import { SalaChatFront, MensagemChatRecebida } from 'types-nora-api';
 interface ChatState {
     salas: SalaChatFront[];
     salaSelecionadaId: string | null;
-}
+};
 
 const initialState: ChatState = {
     salas: [],
