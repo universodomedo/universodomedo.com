@@ -26,6 +26,7 @@ import { Provider as RadixTooltip } from "@radix-ui/react-tooltip";
 import BackgroundAudio from 'Componentes/Elementos/BackgroundAudio/BackgroundAudio';
 import Chat from 'Componentes/Elementos/Chat/Chat';
 import InicializadorCache from 'Componentes/Elementos/InicializadorCache/InicializadorCache';
+import ContainerEscalavel from 'Componentes/ElementosVisuais/ContainerEscalavel/ContainerEscalavel';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -67,7 +68,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <ContextoMenuSwiperEsquerdaProvider>
                   <InicializadorCache>
                     <ConteudoContextualizado>
-                      {children}
+                      <ContainerEscalavel>
+                        {children}
+                      </ContainerEscalavel>
                       {/* <BackgroundAudio /> */}
                     </ConteudoContextualizado>
                   </InicializadorCache>

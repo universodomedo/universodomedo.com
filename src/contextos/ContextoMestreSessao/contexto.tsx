@@ -1,11 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { SessaoDto } from 'types-nora-api';
+import { SessaoDto, UsuarioDto } from 'types-nora-api';
 import { obtemSessaoGeral } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaMestreSessaoProps {
     sessaoSelecionada: SessaoDto;
+    mestre: UsuarioDto | null;
 };
 
 const ContextoPaginaMestreSessao = createContext<ContextoPaginaMestreSessaoProps | undefined>(undefined);
@@ -20,11 +21,17 @@ export const ContextoPaginaMestreSessaoProvider = ({ children, idSessao }: { chi
     const [carregando, setCarregando] = useState<string | null>('');
     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
 
+    const mestre: UsuarioDto | null = sessaoSelecionada?.detalheSessaoCanonica.grupoAventura?.usuarioMestre ?? null;
+    const personagens: UsuarioDto | null = sessaoSelecionada?.detalheSessaoCanonica.grupoAventura?.usuarioMestre ?? null;
+
     async function buscaGrupoAventuraSelecionado(idSessao: number) {
         setCarregando('Buscando Sessão');
 
         try {
-            setSessaoSelecionada(await obtemSessaoGeral(idSessao));
+            const teste = await obtemSessaoGeral(idSessao);
+            console.log(`teste`);
+            console.log(teste);
+            setSessaoSelecionada(teste);
         } catch {
             setSessaoSelecionada(null);
         } finally {
@@ -43,7 +50,7 @@ export const ContextoPaginaMestreSessaoProvider = ({ children, idSessao }: { chi
     if (!sessaoSelecionada) return;
     
     return (
-        <ContextoPaginaMestreSessao.Provider value={{ sessaoSelecionada }}>
+        <ContextoPaginaMestreSessao.Provider value={{ sessaoSelecionada, mestre }}>
             {children}
         </ContextoPaginaMestreSessao.Provider>
     );

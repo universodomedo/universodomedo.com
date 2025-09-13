@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { DetalheRascunhoAventuraDto, DetalheRascunhoSessaoUnicaCanonicaDto, DetalheRascunhoSessaoUnicaDto, RascunhoDto } from 'types-nora-api';
 
-import { editaDetalheRascunho, obtemDetalhesRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { me_obtemDetalhesRascunho, editaDetalheRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import EdicaoRascunho from 'Componentes/EdicaoRascunho/page';
 
 interface ContextoRascunhoProps {
@@ -32,7 +32,7 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
         setCarregando('Buscando Rascunho');
 
         try {
-            setRascunho(await obtemDetalhesRascunho(idRascunhoSelecionado));
+            setRascunho(await me_obtemDetalhesRascunho(idRascunhoSelecionado));
         } catch {
             setRascunho(null);
         } finally {

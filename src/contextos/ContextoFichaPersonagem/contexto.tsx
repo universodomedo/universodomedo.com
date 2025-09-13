@@ -1,11 +1,11 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { FichaPersonagemDto } from 'types-nora-api';
+import { FichaDeJogo } from 'types-nora-api';
 import { obtemFichaDePersonagemEmNivel } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoFichaPersonagemProps {
-    ficha: FichaPersonagemDto | null;
+    ficha: FichaDeJogo;
 };
 
 const ContextoFichaPersonagem = createContext<ContextoFichaPersonagemProps | undefined>(undefined);
@@ -17,7 +17,7 @@ export const useContextoFichaPersonagem = (): ContextoFichaPersonagemProps => {
 };
 
 export const ContextoFichaPersonagemProvider = ({ children }: { children: React.ReactNode }) => {
-    const [ficha, setFicha] = useState<FichaPersonagemDto | null>();
+    const [ficha, setFicha] = useState<FichaDeJogo>();
 
     const obtemPersonagem = async () => {
         const retorno = await obtemFichaDePersonagemEmNivel();
