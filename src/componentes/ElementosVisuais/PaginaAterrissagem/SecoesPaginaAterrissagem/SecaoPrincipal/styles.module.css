@@ -1,11 +1,10 @@
 #recipiente_secao_principal {
     display: flex;
     position: relative;
-    width: 95vw;
-    height: 95vh;
+    width: 95%;
+    aspect-ratio: 1 / .56;
     justify-content: center;
     align-items: center;
-    margin-top: 5px;
     user-select: none;
 }
 

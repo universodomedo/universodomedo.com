@@ -83,8 +83,8 @@ export async function obtemDadosProximaSessao() {
 
 export async function obtemFichaDePersonagemEmNivel() {
 // export async function obtemFichaDePersonagemEmNivel(idPersonagem: number) {
-    return await useApi<FichaPersonagemDto>({ uri: 'fichas_personagem/obtemFichaDePersonagemEmNivel', method: 'GET' });
-    // return await useApi<FichaPersonagemDto>({ uri: 'fichas_personagem/obtemFichaDePersonagemEmNivel', method: 'GET', data: { idPersonagem: idPersonagem } });
+    return await useApi<FichaDeJogo>({ uri: 'fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET' });
+    // return await useApi<FichaPersonagemDto>({ uri: 'fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET', data: { idPersonagem: idPersonagem } });
 }
 
 export async function obtemPersonagensComPendencias() {
@@ -93,10 +93,6 @@ export async function obtemPersonagensComPendencias() {
 
 export async function obtemPericiasParaCriacaoFicha() {
     return await useApi<PericiaDto[]>({ uri: 'pericias/obtemTodos', method: 'GET', params: { criandoFicha: true } });
-}
-
-export async function criaFicha(idPersonagem: number, listaIdPericiasNessaFicha: number[]) {
-    return await useApi<boolean>({ uri: 'fichas_personagem/criaFicha', method: 'POST', data: { idPersonagem: idPersonagem, listaIdPericiasNessaFicha: listaIdPericiasNessaFicha } });
 }
 
 export async function obtemPersonagensComEvolucaoPendente() {
@@ -155,16 +151,16 @@ export async function obtemTiposRascunhoPorTipoGeral(tipoGeralRascunho: TiposGer
     return await useApi<TipoRascunhoDto[]>({ uri: 'tipos_rascunho/obtemTiposRascunhoPorTipoGeral', method: 'GET', params: { tipoGeralRascunho } });
 }
 
-export async function obtemRascunhosPorMestreETipo(idUsuario: number, tipoGeralRascunho: TiposGeralRascunho): Promise<RascunhoDto[]> {
-    return await useApi<RascunhoDto[]>({ uri: 'rascunhos/obtemRascunhosPorMestreETipo', method: 'GET', params: { idUsuario: idUsuario, tipoGeralRascunho: tipoGeralRascunho } });
+export async function me_obtemRascunhosPorTipo(tipoGeralRascunho: TiposGeralRascunho): Promise<RascunhoDto[]> {
+    return await useApi<RascunhoDto[]>({ uri: 'rascunhos/me/me_obtemRascunhosPorTipo', method: 'GET', params: { tipoGeralRascunho } });
 }
 
-export async function obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto> {
-    return await useApi<RascunhoDto>({ uri: 'rascunhos/obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
+export async function me_obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto> {
+    return await useApi<RascunhoDto>({ uri: 'rascunhos/me_obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
 }
 
-export async function salvarRascunho(titulo: string, idUsuario: number, idTipoRascunho: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: 'rascunhos/salvarRascunho', method: 'POST', data: { titulo: titulo, idUsuario: idUsuario, idTipoRascunho: idTipoRascunho } });
+export async function me_salvarRascunho(titulo: string, idTipoRascunho: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: 'rascunhos/me/me_salvarRascunho', method: 'POST', data: { titulo: titulo, idTipoRascunho: idTipoRascunho } });
 }
 
 export async function editaDetalheRascunho(rascunho: RascunhoDto): Promise<boolean> {

@@ -10,12 +10,28 @@ import { ExtensoesPadraoTiptap } from 'Uteis/ExtensoesPadraoTiptap/ExtensoesPadr
 import ToolbarTiptap from 'Componentes/Elementos/Tiptap/ToolbarTiptap/ToolbarTiptap';
 import AreaTiptap from 'Componentes/Elementos/Tiptap/AreaTiptap/AreaTiptap';
 
+const MAX_LENGTH = 10;
+
 export default function InputTextoTiptap({ conteudo, onChange }: { conteudo: JSONContent | null; onChange: (content: JSONContent) => void; }) {
     const editor = useEditor({
         extensions: ExtensoesPadraoTiptap,
         content: conteudo,
         onUpdate: ({ editor }) => {
             onChange(editor.getJSON());
+
+            const text = editor.getText()
+
+            // Limitar caracteres
+            if (text.length > MAX_LENGTH) {
+                // Encontrar a posição onde excede o limite
+                const transaction = editor.state.tr
+                const docSize = editor.state.doc.content.size
+                const excess = text.length - MAX_LENGTH
+
+                // Deletar caracteres excedentes
+                transaction.delete(docSize - excess, docSize)
+                editor.view.dispatch(transaction)
+            }
         },
         immediatelyRender: false,
     });

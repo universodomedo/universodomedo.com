@@ -6,7 +6,7 @@ import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextual
 import ListaAcoesMestre from 'Componentes/ElementosDeMenu/ListaAcoesMestre/page';
 import { useContextoPaginaMestreSessao } from 'Contextos/ContextoMestreSessao/contexto';
 import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
-import { InformacoesGeraisSessao, ListaAlertasSessao } from './subcomponentes';
+import { InformacoesGeraisSessao, ListaInfracoesSessao } from './subcomponentes';
 
 export function PaginaMestreSessao_Contexto() {
     const { sessaoSelecionada } = useContextoPaginaMestreSessao();
@@ -32,7 +32,7 @@ function PaginaMestreSessao_Conteudo() {
 
             <InformacoesGeraisSessao />
             
-            <ListaAlertasSessao />
+            {/* <ListaInfracoesSessao /> */}
         </div>
     );
 };

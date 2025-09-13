@@ -1,0 +1,21 @@
+#container_escalavel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    flex: 1;
+    gap: 3vh;
+    overflow: hidden auto;
+    scrollbar-width: none;
+    scrollbar-gutter: stable;
+
+    font-family: 'Barlow', sans-serif;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1920px;
+    height: 1080px;
+    transform: translate(-50%, -50%) scale(var(--scale));
+    transform-origin: center;
+}

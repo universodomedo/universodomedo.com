@@ -30,10 +30,11 @@
 }
 
 #recipiente_disponibilidade_inferior {
+    flex: 1;
     display: flex;
     flex-direction: row;
     position: relative;
-    align-items: center;
+    align-items: start;
 
     & > h1 {
         margin: auto;
@@ -48,11 +49,12 @@
     flex: 1;
     display: flex;
     flex-direction: row;
-    align-items: center;
 }
 
 .coluna_dds {
     flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 
@@ -71,7 +73,6 @@
 }
 
 .celula {
-    flex: 1;
     border: 1px solid white;
     padding: .6rem;
     text-align: center;

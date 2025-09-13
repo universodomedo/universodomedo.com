@@ -6,8 +6,7 @@ import { useState } from 'react';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
 import { TipoRascunhoDto } from 'types-nora-api';
-import { salvarRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import { me_salvarRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 export function ModalCriacaoRascunho({ isModalOpen, setIsModalOpen, tiposRascunhosParaEsseTipoGeral }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void, tiposRascunhosParaEsseTipoGeral: TipoRascunhoDto[] }) {
     return (
@@ -20,13 +19,12 @@ export function ModalCriacaoRascunho({ isModalOpen, setIsModalOpen, tiposRascunh
 };
 
 function ConteudoModal({ tiposRascunhosParaEsseTipoGeral }: { tiposRascunhosParaEsseTipoGeral: TipoRascunhoDto[] }) {
-    const { usuarioLogado } = useContextoAutenticacao();
     const [titulo, setTitulo] = useState('');
     const [idTipoSelecionado, setIdTipoSelecionado] = useState<number>(0);
 
     async function atualizarAvatarUsuario() {
         // quando Sessão Única, pega o tipo de Sessão Única. Quando Aventura, direto Aventura
-        const respostaCriacaoRascunho = await salvarRascunho(titulo, usuarioLogado!.id, tiposRascunhosParaEsseTipoGeral.length > 1 ? idTipoSelecionado : 1);
+        const respostaCriacaoRascunho = await me_salvarRascunho(titulo, tiposRascunhosParaEsseTipoGeral.length > 1 ? idTipoSelecionado : 1);
 
         if (!respostaCriacaoRascunho) {
             alert('Erro ao criar rascunho');

@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { RascunhoDto, TipoRascunhoDto, TiposGeralRascunho } from 'types-nora-api';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
-import { obtemRascunhosPorMestreETipo, obtemTiposRascunhoPorTipoGeral } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { me_obtemRascunhosPorTipo, obtemTiposRascunhoPorTipoGeral } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoRascunhosMestreProps {
     tipoGeralRascunho: TiposGeralRascunho;
@@ -49,7 +49,7 @@ export const ContextoRascunhosMestreProvider = ({ tipoGeralRascunho, children }:
         setCarregando('Buscando Rascunhos');
 
         try {
-            setRascunhos(await obtemRascunhosPorMestreETipo(usuarioLogado!.id, tipoGeralRascunho));
+            setRascunhos(await me_obtemRascunhosPorTipo(tipoGeralRascunho));
         } catch {
             setRascunhos(null);
         } finally {
