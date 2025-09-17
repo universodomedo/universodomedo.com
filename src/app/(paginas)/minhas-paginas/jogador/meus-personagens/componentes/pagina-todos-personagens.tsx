@@ -52,7 +52,7 @@ function ListaPersonagens() {
             {personagensDoUsuario!.map(personagem => (
                 <div key={personagem.id} className={styles.recipiente_personagem} onClick={() => selecionaPersonagem(personagem.id)}>
                     <div className={styles.recipiente_avatar_personagem}>
-                        <RecipienteImagem src={personagem.imagemAvatar?.fullPath} />
+                        <RecipienteImagem src={personagem.caminhoAvatar} />
                     </div>
                     <div className={styles.recipiente_informacoes1_personagem}>
                         <div className={styles.recipiente_informacoes_personagem}>
