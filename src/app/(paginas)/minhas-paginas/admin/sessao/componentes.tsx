@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import Link from 'next/link';
-import { DetalheSessaoCanonicaDto, LinkDto } from 'types-nora-api';
+import { EstiloSessao, LinkDto, SessaoDto } from 'types-nora-api';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import { ListaAcoesAdmin } from '../componentes';
@@ -11,11 +11,11 @@ import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoD
 import { useContextoCadastroNovoLinkSessao } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 import { ContextoCadastroNovoLinkSessaoProvider } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 
-export function AdministrarSessao_Slot({ detalheSessao }: { detalheSessao: DetalheSessaoCanonicaDto; }) {
+export function AdministrarSessao_Slot({ sessao }: { sessao: SessaoDto; }) {
     return (
         <LayoutContextualizado>
-            <LayoutContextualizado.Conteudo hrefPaginaRetorno={`/minhas-paginas/admin/aventura/${detalheSessao.grupoAventura!.id}`}>
-                <AdministrarSessao_Conteudo detalheSessao={detalheSessao} />
+            <LayoutContextualizado.Conteudo hrefPaginaRetorno={`/minhas-paginas/admin/aventura/${sessao.detalheSessaoAventura.grupoAventura.id}`}>
+                <AdministrarSessao_Conteudo sessao={sessao} />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
                 <ListaAcoesAdmin />
@@ -24,34 +24,36 @@ export function AdministrarSessao_Slot({ detalheSessao }: { detalheSessao: Detal
     );
 };
 
-function AdministrarSessao_Conteudo({ detalheSessao }: { detalheSessao: DetalheSessaoCanonicaDto }) {
+function AdministrarSessao_Conteudo({ sessao }: { sessao: SessaoDto }) {
     return (
         <SecaoDeConteudo id={styles.recipiente_detalhes_sessao}>
-            { detalheSessao.grupoAventura ? <SessaoDeAventura detalheSessao={detalheSessao} /> : <SessaoUnica detalheSessao={detalheSessao} /> }
+            { sessao.estiloSessao == EstiloSessao.SESSAO_DE_AVENTURA
+                ? <SessaoDeAventura sessao={sessao} />
+                : sessao.estiloSessao == EstiloSessao.SESSAO_UNICA_CANONICA || sessao.estiloSessao == EstiloSessao.SESSAO_UNICA_NAO_CANONICA ? <SessaoUnica sessao={sessao} />
+                : <></>
+            }
         </SecaoDeConteudo>
     );
 };
 
-function SessaoDeAventura({ detalheSessao }: { detalheSessao: DetalheSessaoCanonicaDto }) {
-    if (!detalheSessao.grupoAventura) return <></>; // ja verificado
-
+function SessaoDeAventura({ sessao }: { sessao: SessaoDto }) {
     return (
-        <ContextoCadastroNovoLinkSessaoProvider detalheSessao={detalheSessao} idGrupoAventura={detalheSessao.grupoAventura.id}>
+        <ContextoCadastroNovoLinkSessaoProvider sessao={sessao}>
             <div id={styles.recipiente_acoes_aventura}>
                 <div>
-                    <h1>{detalheSessao.episodioPorExtenso}</h1>
-                    <h3>{detalheSessao.grupoAventura.aventura.titulo} - {detalheSessao.grupoAventura.nome}</h3>
+                    <h1>{sessao.detalheSessaoAventura.episodioPorExtenso}</h1>
+                    <h3>{sessao.detalheSessaoAventura.grupoAventura.aventura.titulo} - {sessao.detalheSessaoAventura.grupoAventura.nome}</h3>
                 </div>
 
-                <AreaVideoYoutube linkVideo={detalheSessao.linkSessaoYoutube} />
+                <AreaVideoYoutube linkVideo={sessao.detalheSessaoCanonica.linkSessaoYoutube} />
 
-                <AreaPodcastSpotify linkPodcast={detalheSessao.linkSessaoSpotify} />
+                <AreaPodcastSpotify linkPodcast={sessao.detalheSessaoCanonica.linkSessaoSpotify} />
             </div>
         </ContextoCadastroNovoLinkSessaoProvider>
     );
 };
 
-function SessaoUnica({ detalheSessao }: { detalheSessao: DetalheSessaoCanonicaDto }) {
+function SessaoUnica({ sessao }: { sessao: SessaoDto }) {
     return (
         <></>
     );

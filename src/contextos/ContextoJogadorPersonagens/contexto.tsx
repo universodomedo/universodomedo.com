@@ -5,22 +5,22 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { PersonagemDto } from 'types-nora-api';
 import { obtemPersonagensDoUsuario, obtemDadosPersonagemDoUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
-interface ContextoPaginaPersonagemProps {
+interface ContextoJogadorPersonagensProps {
     personagensDoUsuario: PersonagemDto[] | null;
     personagemSelecionado: PersonagemDto | null;
     buscaDadosPersonagemSelecionado: (idPersonagem: number) => void;
     deselecionaPersonagem: () => void;
 };
 
-const ContextoPaginaPersonagem = createContext<ContextoPaginaPersonagemProps | undefined>(undefined);
+const ContextoJogadorPersonagens = createContext<ContextoJogadorPersonagensProps | undefined>(undefined);
 
-export const useContextoPaginaPersonagem = (): ContextoPaginaPersonagemProps => {
-    const context = useContext(ContextoPaginaPersonagem);
-    if (!context) throw new Error('useContextoPaginaPersonagem precisa estar dentro de um ContextoPaginaPersonagem');
+export const useContextoJogadorPersonagens = (): ContextoJogadorPersonagensProps => {
+    const context = useContext(ContextoJogadorPersonagens);
+    if (!context) throw new Error('useContextoJogadorPersonagens precisa estar dentro de um ContextoJogadorPersonagens');
     return context;
 };
 
-export const ContextoPaginaPersonagemProvider = ({ children }: { children: React.ReactNode }) => {
+export const ContextoJogadorPersonagensProvider = ({ children }: { children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState(true);
     const [personagensDoUsuario, setPersonagensDoUsuario] = useState<PersonagemDto[] | null>(null);
     const [personagemSelecionado, setPersonagemSelecionado] = useState<PersonagemDto | null>(null);
@@ -60,8 +60,8 @@ export const ContextoPaginaPersonagemProvider = ({ children }: { children: React
     if (carregando) return <div>Carregando personagens</div>;
 
     return (
-        <ContextoPaginaPersonagem.Provider value={{ personagensDoUsuario, personagemSelecionado, buscaDadosPersonagemSelecionado, deselecionaPersonagem }}>
+        <ContextoJogadorPersonagens.Provider value={{ personagensDoUsuario, personagemSelecionado, buscaDadosPersonagemSelecionado, deselecionaPersonagem }}>
             {children}
-        </ContextoPaginaPersonagem.Provider>
+        </ContextoJogadorPersonagens.Provider>
     );
 };

@@ -3,13 +3,14 @@
 import styles from '../styles.module.css';
 
 import { EstadoPendenciaAdministrativaPersonagem, EstadoPendenciaPersonagem, FichaPersonagemDto, PersonagemDto } from 'types-nora-api';
-import { useContextoPaginaPersonagem } from '../contexto.tsx';
+import { useContextoJogadorPersonagens } from 'Contextos/ContextoJogadorPersonagens/contexto.tsx';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 import Link from 'next/link';
+import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 
 export function PaginaListaPersonagens() {
-    const { personagensDoUsuario } = useContextoPaginaPersonagem();
+    const { personagensDoUsuario } = useContextoJogadorPersonagens();
 
     if (!personagensDoUsuario || personagensDoUsuario.length < 1) return <div>Erro ao carregar personagens</div>;
 
@@ -19,7 +20,6 @@ export function PaginaListaPersonagens() {
 function PaginaListaPersonagensComDados() {
     return (
         <>
-            <h1>Meus Personagens</h1>
             {/* <div className={styles.recipiente_avisos_convite_pendentes}>
                 <h1>Você tem um convite pendente!</h1>
                 <h1>O Mestre Vigiani te convidou para jogar <Link href={'/aventuras'} target='_blank'>Profunda Herança</Link></h1>
@@ -34,7 +34,7 @@ function PaginaListaPersonagensComDados() {
 };
 
 function ListaPersonagens() {
-    const { personagensDoUsuario, buscaDadosPersonagemSelecionado } = useContextoPaginaPersonagem();
+    const { personagensDoUsuario, buscaDadosPersonagemSelecionado } = useContextoJogadorPersonagens();
 
     function selecionaPersonagem(idPersonagem: number) {
         buscaDadosPersonagemSelecionado(idPersonagem);

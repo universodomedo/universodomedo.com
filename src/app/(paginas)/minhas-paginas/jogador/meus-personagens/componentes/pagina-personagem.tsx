@@ -1,13 +1,13 @@
 'use client';
 
 import styles from '../styles.module.css';
-
-import { useContextoPaginaPersonagem } from '../contexto.tsx';
-
 import Link from 'next/link';
 
+import { useContextoJogadorPersonagens } from 'Contextos/ContextoJogadorPersonagens/contexto.tsx';
+
+
 export function PaginaPersonagemSelecionado() {
-    const { personagemSelecionado } = useContextoPaginaPersonagem();
+    const { personagemSelecionado } = useContextoJogadorPersonagens();
 
     if (!personagemSelecionado) return <div>Erro ao carregar personagem</div>;
 
@@ -15,7 +15,7 @@ export function PaginaPersonagemSelecionado() {
 };
 
 function PaginaPersonagemComDados() {
-    const { personagemSelecionado } = useContextoPaginaPersonagem();
+    const { personagemSelecionado } = useContextoJogadorPersonagens();
 
     return (
         <div id={styles.recipiente_conteudo_pagina_personagem_selecionado}>
@@ -53,7 +53,7 @@ function PaginaPersonagemComDados() {
 };
 
 function ObjetoDeRetorno() {
-    const { deselecionaPersonagem } = useContextoPaginaPersonagem();
+    const { deselecionaPersonagem } = useContextoJogadorPersonagens();
 
     return (
         <div id={styles.recipiente_objeto_voltar} onClick={deselecionaPersonagem}>

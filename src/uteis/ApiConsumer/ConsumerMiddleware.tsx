@@ -42,16 +42,8 @@ export async function buscaGrupoAventuraEspecifico(idGrupoAventura: number) {
     return await useApi<GrupoAventuraDto | null>({ uri: '/grupos_aventuras/buscaGrupoAventuraEspecifico', method: 'GET', params: { idGrupoAventura } });
 }
 
-export async function obtemDadosSessao(idSessao: number) {
-    return await useApi<DetalheSessaoCanonicaDto | null>({ uri: '/detalhes_sessao_canonica/obtemDadosSessao', method: 'GET', params: { idSessao } });
-}
-
 export async function obtemSessaoGeral(idSessao: number) {
     return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemSessaoGeral', method: 'GET', params: { idSessao } });
-}
-
-export async function obtemDadosSessaoParaAssistir(idSessao: number) {
-    return await useApi<DetalheSessaoCanonicaDto | null>({ uri: '/detalhes_sessao_canonica/obtemDadosSessaoParaAssistir', method: 'GET', params: { idSessao } });
 }
 
 export async function obtemPersonagensDoUsuario() {
@@ -147,12 +139,12 @@ export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: 
     return await useApi<boolean>({ uri: 'sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
 }
 
-export async function obtemTiposRascunhoPorTipoGeral(tipoGeralRascunho: TiposGeralRascunho): Promise<TipoRascunhoDto[]> {
-    return await useApi<TipoRascunhoDto[]>({ uri: 'tipos_rascunho/obtemTiposRascunhoPorTipoGeral', method: 'GET', params: { tipoGeralRascunho } });
+export async function obtemEstilosSessaoPorParam(ehSessaoUnica: boolean): Promise<EstiloSessaoMestradaDto[]> {
+    return await useApi<EstiloSessaoMestradaDto[]>({ uri: 'estilos_sessao_mestrada/obtemEstilosSessaoPorParam', method: 'GET', params: { ehSessaoUnica } });
 }
 
-export async function me_obtemRascunhosPorTipo(tipoGeralRascunho: TiposGeralRascunho): Promise<RascunhoDto[]> {
-    return await useApi<RascunhoDto[]>({ uri: 'rascunhos/me/me_obtemRascunhosPorTipo', method: 'GET', params: { tipoGeralRascunho } });
+export async function me_obtemRascunhosPorTipo(sessaoUnica: boolean): Promise<RascunhoDto[]> {
+    return await useApi<RascunhoDto[]>({ uri: 'rascunhos/me/me_obtemRascunhosPorTipo', method: 'GET', params: { sessaoUnica } });
 }
 
 export async function me_obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto> {

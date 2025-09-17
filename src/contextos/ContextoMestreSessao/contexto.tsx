@@ -1,12 +1,13 @@
 'use client';
 
+import { mapSessaoDadosGerais, SessaoDadosGerais } from 'Adaptadores/SessaoDadosGerais';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { SessaoDto, UsuarioDto } from 'types-nora-api';
 import { obtemSessaoGeral } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaMestreSessaoProps {
     sessaoSelecionada: SessaoDto;
-    mestre: UsuarioDto | null;
+    sessaoDadosGeraisSelecionado: SessaoDadosGerais | null;
 };
 
 const ContextoPaginaMestreSessao = createContext<ContextoPaginaMestreSessaoProps | undefined>(undefined);
@@ -21,17 +22,13 @@ export const ContextoPaginaMestreSessaoProvider = ({ children, idSessao }: { chi
     const [carregando, setCarregando] = useState<string | null>('');
     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
 
-    const mestre: UsuarioDto | null = sessaoSelecionada?.detalheSessaoCanonica.grupoAventura?.usuarioMestre ?? null;
-    const personagens: UsuarioDto | null = sessaoSelecionada?.detalheSessaoCanonica.grupoAventura?.usuarioMestre ?? null;
+    const sessaoDadosGeraisSelecionado: SessaoDadosGerais | null = sessaoSelecionada ? mapSessaoDadosGerais(sessaoSelecionada) : null;
 
     async function buscaGrupoAventuraSelecionado(idSessao: number) {
         setCarregando('Buscando Sessão');
 
         try {
-            const teste = await obtemSessaoGeral(idSessao);
-            console.log(`teste`);
-            console.log(teste);
-            setSessaoSelecionada(teste);
+            setSessaoSelecionada(await obtemSessaoGeral(idSessao));
         } catch {
             setSessaoSelecionada(null);
         } finally {
@@ -50,7 +47,7 @@ export const ContextoPaginaMestreSessaoProvider = ({ children, idSessao }: { chi
     if (!sessaoSelecionada) return;
     
     return (
-        <ContextoPaginaMestreSessao.Provider value={{ sessaoSelecionada, mestre }}>
+        <ContextoPaginaMestreSessao.Provider value={{ sessaoSelecionada, sessaoDadosGeraisSelecionado }}>
             {children}
         </ContextoPaginaMestreSessao.Provider>
     );

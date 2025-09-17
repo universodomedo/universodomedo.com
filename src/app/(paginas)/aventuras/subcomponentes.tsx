@@ -34,13 +34,13 @@ export function UltimasSessoesPostadas() {
 
             <div id={styles.recipiente_cartas_ultimas_sessoes_postadas}>
                 {detalhesUltimasSessoesPostadas?.map(detalheSessao => (
-                    <CustomLink key={detalheSessao.sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} href={`/aventura/${detalheSessao.grupoAventura!.id}?${detalheSessao.episodio}`}>
+                    <CustomLink key={detalheSessao.sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} href={`/aventura/${detalheSessao.sessao.detalheSessaoAventura.grupoAventura.id}?${detalheSessao.sessao.detalheSessaoAventura.episodio}`}>
                         <div className={styles.recipiente_capa_carta_sessao_recente}>
-                            <RecipienteImagem src={detalheSessao.grupoAventura!.aventura.imagemCapa?.fullPath} />
+                            <RecipienteImagem src={detalheSessao.sessao.detalheSessaoAventura.grupoAventura.aventura.imagemCapa?.fullPath} />
                         </div>
                         <div className={styles.recipiente_info_carta_sessao_recente}>
-                            <h2>{detalheSessao.grupoAventura!.aventura.titulo}</h2>
-                            <h3>{!detalheSessao.grupoAventura!.aventura.temApenasUmGrupo && `${detalheSessao.grupoAventura!.nome} - `}{detalheSessao.episodioPorExtenso}</h3>
+                            <h2>{detalheSessao.sessao.detalheSessaoAventura.grupoAventura.aventura.titulo}</h2>
+                            <h3>{!detalheSessao.sessao.detalheSessaoAventura.grupoAventura.aventura.temApenasUmGrupo && `${detalheSessao.sessao.detalheSessaoAventura.grupoAventura.nome} - `}{detalheSessao.sessao.detalheSessaoAventura.episodioPorExtenso}</h3>
                         </div>
                     </CustomLink>
                 ))}
