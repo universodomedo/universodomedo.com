@@ -27,6 +27,9 @@ function InformacoesAventura() {
 
     const sessoesFinalizadas = grupoAventuraSelecionada.detalhesSessoesCanonicas.filter(detalheSessao => detalheSessao.sessao.duracaoEmSegundos);
 
+    dasdasd
+    // verificar de trocar sessoesFinalizadas.reduce por duracaoGrupoAventuraEmSegundos
+
     return (
         <SecaoDeConteudo id={styles.recipiente_informacoes_aventura}>
             <h1>Aventura {grupoAventuraSelecionada.estadoAtual}</h1>

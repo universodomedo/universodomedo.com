@@ -3,8 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { RascunhoDto, TipoRascunhoDto, TiposGeralRascunho } from 'types-nora-api';
 
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
-import { me_obtemRascunhosPorTipo, obtemTiposRascunhoPorTipoGeral } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { me_obtemRascunhosPorTipo, obtemEstilosSessaoPorParam } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoRascunhosMestreProps {
     tipoGeralRascunho: TiposGeralRascunho;
@@ -24,20 +23,19 @@ export const useContextoRascunhosMestre = (): ContextoRascunhosMestreProps => {
     return context;
 };
 
-export const ContextoRascunhosMestreProvider = ({ tipoGeralRascunho, children }: { tipoGeralRascunho: TiposGeralRascunho; children: React.ReactNode }) => {
-    const { usuarioLogado } = useContextoAutenticacao();
+export const ContextoRascunhosMestreProvider = ({ ehSessaoUnica, children }: { ehSessaoUnica: boolean; children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState<string | null>('');
-    const [tiposRascunhosParaEsseTipoGeral, setTiposRascunhosParaEsseTipoGeral] = useState<TipoRascunhoDto[] | null>(null);
+    const [tiposRascunhosParaEsseTipoGeral, setTiposRascunhosParaEsseTipoGeral] = useState<EstiloSessaoMestradaDto[] | null>(null);
     const [rascunhos, setRascunhos] = useState<RascunhoDto[] | null>(null);
     const [idRascunhoSelecionado, setIdRascunhoSelecionado] = useState<number | null>(null);
 
-    const tituloComponenteConteudo = tipoGeralRascunho === TiposGeralRascunho.AVENTURA ? 'Mestre - Meus Rascunhos de Aventuras' : 'Mestre - Meus Rascunhos de Sessão Única';
+    const tituloComponenteConteudo = ehSessaoUnica ? 'Mestre - Meus Rascunhos de Sessão Única' : 'Mestre - Meus Rascunhos de Aventuras';
 
     async function buscaTiposRascunhoPorTipoGeral() {
         setCarregando('Buscando Tipos Rascunho');
 
         try {
-            setTiposRascunhosParaEsseTipoGeral(await obtemTiposRascunhoPorTipoGeral(tipoGeralRascunho));
+            setTiposRascunhosParaEsseTipoGeral(await obtemEstilosSessaoPorParam(ehSessaoUnica));
         } catch {
             setTiposRascunhosParaEsseTipoGeral(null);
         } finally {
@@ -49,7 +47,7 @@ export const ContextoRascunhosMestreProvider = ({ tipoGeralRascunho, children }:
         setCarregando('Buscando Rascunhos');
 
         try {
-            setRascunhos(await me_obtemRascunhosPorTipo(tipoGeralRascunho));
+            setRascunhos(await me_obtemRascunhosPorTipo(ehSessaoUnica));
         } catch {
             setRascunhos(null);
         } finally {

@@ -41,16 +41,16 @@ export function PaginaAventura_Conteudo() {
 };
 
 export function PaginaAventura_Menu() {
-    const { grupoAventuraSelecionado, detalheSessaoSelecionada, buscaSessao, limpaSessao } = useContextoPaginaAventura();
+    const { grupoAventuraSelecionado, sessaoSelecionada, buscaSessao, limpaSessao } = useContextoPaginaAventura();
 
     return (
         <div id={styles.recipiente_menu_aventura}>
-            <DivClicavel key={0} className={styles.recipiente_linha_episodio} classeParaDesabilitado={styles.ativo} desabilitado={!detalheSessaoSelecionada} onClick={() => limpaSessao()}>
+            <DivClicavel key={0} className={styles.recipiente_linha_episodio} classeParaDesabilitado={styles.ativo} desabilitado={!sessaoSelecionada} onClick={() => limpaSessao()}>
                 <h2>Início</h2>
             </DivClicavel>
             <hr style={{ margin: '1vh 0 .4vh' }} />
-            {grupoAventuraSelecionado.detalhesSessoesCanonicas.sort((a, b) => a.episodio - b.episodio).map(detalheSessaoesCanonicas => (
-                <DivClicavel key={detalheSessaoesCanonicas.sessao.id} className={styles.recipiente_linha_episodio} classeParaDesabilitado={styles.ativo} desabilitado={detalheSessaoSelecionada?.sessao.id === detalheSessaoesCanonicas.sessao.id} onClick={() => buscaSessao(detalheSessaoesCanonicas.sessao.id)}>
+            {grupoAventuraSelecionado.detalhesSessoesAventuras.sort((a, b) => a.episodio - b.episodio).map(detalheSessaoesCanonicas => (
+                <DivClicavel key={detalheSessaoesCanonicas.sessao.id} className={styles.recipiente_linha_episodio} classeParaDesabilitado={styles.ativo} desabilitado={sessaoSelecionada?.id === detalheSessaoesCanonicas.sessao.id} onClick={() => buscaSessao(detalheSessaoesCanonicas.sessao.id)}>
                     <h2>{detalheSessaoesCanonicas.episodioPorExtenso}</h2>
                 </DivClicavel>
             ))}

@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import Link from 'next/link';
-import { DetalheSessaoCanonicaDto, GrupoAventuraDto, LinkDto } from 'types-nora-api';
+import { DetalheSessaoAventuraDto, GrupoAventuraDto, LinkDto } from 'types-nora-api';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import { ListaAcoesAdmin } from '../componentes';
@@ -31,7 +31,7 @@ function AdministrarAventura_Conteudo({ grupoAventura }: { grupoAventura: GrupoA
 
             <BotoesAventura grupoAventura={grupoAventura} />
 
-            <AreaEpisodios detalhesSessaoCanonica={grupoAventura.detalhesSessoesCanonicas} />
+            <AreaEpisodios detalhesSessaoAventura={grupoAventura.detalhesSessoesAventuras} />
         </ContextoCadastroNovoLinkGrupoAventuraProvider>
     );
 };
@@ -90,18 +90,18 @@ function AreaLinkSerie({ linkSerie }: { linkSerie: LinkDto }) {
     );
 };
 
-function AreaEpisodios({ detalhesSessaoCanonica }: { detalhesSessaoCanonica: DetalheSessaoCanonicaDto[] }) {
+function AreaEpisodios({ detalhesSessaoAventura }: { detalhesSessaoAventura: DetalheSessaoAventuraDto[] }) {
     return (
         <SecaoDeConteudo id={styles.recipiente_area_episodios}>
-            <h1>{detalhesSessaoCanonica.length} Episódios</h1>
+            <h1>{detalhesSessaoAventura.length} Episódios</h1>
             <div id={styles.recipiente_area_lista_episodios}>
-                {detalhesSessaoCanonica.sort((a, b) => a.episodio - b.episodio).map(detalheSessaoCanonica => {
-                    const temEpisodioYoutubeVinculado = detalheSessaoCanonica.linkSessaoYoutube !== null;
-                    const temEpisodioSpotifyVinculado = detalheSessaoCanonica.linkSessaoSpotify !== null;
+                {detalhesSessaoAventura.sort((a, b) => a.episodio - b.episodio).map(detalheSessaoAventura => {
+                    const temEpisodioYoutubeVinculado = detalheSessaoAventura.sessao.detalheSessaoCanonica.linkSessaoYoutube !== null;
+                    const temEpisodioSpotifyVinculado = detalheSessaoAventura.sessao.detalheSessaoCanonica.linkSessaoSpotify !== null;
 
 
                     return (
-                        <Link key={detalheSessaoCanonica.sessao.id} href={`/minhas-paginas/admin/sessao/${detalheSessaoCanonica.sessao.id}`} className={!temEpisodioYoutubeVinculado && !temEpisodioSpotifyVinculado ? styles.episodio_sem_nenhum_vinculo : temEpisodioYoutubeVinculado !== temEpisodioSpotifyVinculado ? styles.episodio_com_algum_vinculo : styles.episodio_completo_vinculo}>{detalheSessaoCanonica.episodioPorExtenso}</Link>
+                        <Link key={detalheSessaoAventura.sessao.id} href={`/minhas-paginas/admin/sessao/${detalheSessaoAventura.sessao.id}`} className={!temEpisodioYoutubeVinculado && !temEpisodioSpotifyVinculado ? styles.episodio_sem_nenhum_vinculo : temEpisodioYoutubeVinculado !== temEpisodioSpotifyVinculado ? styles.episodio_com_algum_vinculo : styles.episodio_completo_vinculo}>{detalheSessaoAventura.episodioPorExtenso}</Link>
                     );
                 })}
             </div>

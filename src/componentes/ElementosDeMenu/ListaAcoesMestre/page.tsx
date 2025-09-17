@@ -1,4 +1,4 @@
-import styles from './styles.module.css';
+import styles from '../styles.module.css';
 
 import React, { JSX } from 'react';
 
@@ -82,7 +82,7 @@ export default function ListaAcoesMestre() {
         const temSubitens = item.subitens && item.subitens.length > 0;
 
         return (
-            <div key={key} className={styles.recipiente_item_mestre}>
+            <div key={key} className={styles.recipiente_item_lista_acoes}>
                 {item.link === undefined ? (
                     <h2>{item.titulo}</h2>
                 ) : (
@@ -92,7 +92,7 @@ export default function ListaAcoesMestre() {
                 )}
 
                 {temSubitens && (
-                    <div className={styles.recipiente_subitens_mestre}>
+                    <div className={styles.recipiente_subitens_lista_acoes}>
                         {item.subitens!.map((sub, idx) => renderItemMestre(sub, `${key}-${idx}`))}
                     </div>
                 )}
@@ -101,36 +101,16 @@ export default function ListaAcoesMestre() {
     };
 
     return (
-        <div id={styles.recipiente_lista_acoes_pagina_mestre}>
+        <div id={styles.recipiente_lista_acoes}>
             {permissoesMestre.filter(nivel => nivel.condicao && nivel.itens.length > 0).map((nivel, indexPermissao, arrayFiltrada) => (
                 <React.Fragment key={indexPermissao}>
-                    <h2 className={styles.titulo_permissao_mestre}>{nivel.tituloPermissao}</h2>
+                    <h2 className={styles.titulo_permissao}>{nivel.tituloPermissao}</h2>
 
                     {nivel.itens.map((item, index) => renderItemMestre(item, `${index}`))}
 
                     {indexPermissao < arrayFiltrada.length - 1 && <hr className={styles.divisor} />}
                 </React.Fragment>
             ))}
-        </div>
-    );
-
-    return (
-        <div id={styles.recipiente_lista_acoes_pagina_mestre}>
-            {permissoesMestre.filter(nivel => nivel.condicao && nivel.itens.length > 0).map((nivel, index, arrayFiltrada) => {
-                return (
-                    <React.Fragment key={index}>
-                        <h2 className={styles.titulo_permissao_mestre}>{nivel.tituloPermissao}</h2>
-                        {/* {nivel.itens.sort((a, b) => a.titulo.localeCompare(b.titulo)).map((acao) => ( */}
-                        {nivel.itens.map(item => (
-                            <div key={item.link} className={styles.recipiente_linha_acao_mestre}>
-                                <CustomLink href={`/minhas-paginas/mestre/${item.link}`}><h2>{item.titulo}</h2></CustomLink>
-                            </div>
-                        ))}
-
-                        {index < arrayFiltrada.length - 1 && <hr className={styles.divisor} />}
-                    </React.Fragment>
-                );
-            })}
         </div>
     );
 };
