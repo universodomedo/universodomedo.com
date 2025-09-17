@@ -30,18 +30,18 @@ export default function ContainerEscalavel({ children }: { children: React.React
     window.addEventListener('resize', throttledUpdateScale);
     document.addEventListener('fullscreenchange', updateScale);
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === 'f') {
-        toggleFullscreen();
-      }
-    };
+    // const handleKeyDown = (e: KeyboardEvent) => {
+    //   if (e.key.toLowerCase() === 'f') {
+    //     toggleFullscreen();
+    //   }
+    // };
 
-    window.addEventListener('keydown', handleKeyDown);
+    // window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.removeEventListener('resize', throttledUpdateScale);
       document.removeEventListener('fullscreenchange', updateScale);
-      window.removeEventListener('keydown', handleKeyDown);
+      // window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
