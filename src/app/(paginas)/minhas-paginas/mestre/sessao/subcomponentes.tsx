@@ -31,12 +31,16 @@ export function InformacoesGeraisSessao() {
             )}
 
             <SecaoDeConteudo className={styles.recipiente_avatares}>
-                <h2>Jogadores</h2>
+                <h2>Participantes</h2>
 
                 <div id={styles.recipiente_avatares_jogadores}>
-                    {sessaoDadosGeraisSelecionado?.personagens.map(personagem => (
-                        <div key={personagem.id} className={styles.recipiente_imagem_avatar}>
-                            {<RecipienteImagem src={personagem.caminhoAvatar} />}
+                    {sessaoDadosGeraisSelecionado?.participantes.map(participante => (
+                        <div key={participante.jogador.id} className={styles.recipiente_imagem_avatar}>
+                            {participante.personagem ? (
+                                <>{<RecipienteImagem src={participante.personagem.caminhoAvatar} />}</>
+                            ) : (
+                                <>{<RecipienteImagem src={participante.jogador.customizacao.caminhoAvatar} />}</>
+                            )}
                         </div>
                     ))}
                 </div>

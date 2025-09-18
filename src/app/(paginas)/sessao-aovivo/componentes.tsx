@@ -16,7 +16,7 @@ export function PaginaSessao_Slot() {
     );
 };
 
-function PaginaSessao_Mensagens() {
+export function PaginaSessao_Mensagens() {
     const [messages, setMessages] = useState<string[]>([]);
 
     useSocketEvent<string>(SOCKET_EVENTOS.GameEngine.receberMensagem, (mensagem) => {

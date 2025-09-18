@@ -1,14 +1,13 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { RascunhoDto, TipoRascunhoDto, TiposGeralRascunho } from 'types-nora-api';
+import { EstiloSessaoMestradaDto, RascunhoDto } from 'types-nora-api';
 
 import { me_obtemRascunhosPorTipo, obtemEstilosSessaoPorParam } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoRascunhosMestreProps {
-    tipoGeralRascunho: TiposGeralRascunho;
+    estilosSessaoMestrada: EstiloSessaoMestradaDto[];
     tituloComponenteConteudo: string | null;
-    tiposRascunhosParaEsseTipoGeral: TipoRascunhoDto[];
     rascunhos: RascunhoDto[];
     limpaRascunhoSelecionado(): void;
     selecionaRascunho(idRascunho: number): void;
@@ -25,19 +24,19 @@ export const useContextoRascunhosMestre = (): ContextoRascunhosMestreProps => {
 
 export const ContextoRascunhosMestreProvider = ({ ehSessaoUnica, children }: { ehSessaoUnica: boolean; children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState<string | null>('');
-    const [tiposRascunhosParaEsseTipoGeral, setTiposRascunhosParaEsseTipoGeral] = useState<EstiloSessaoMestradaDto[] | null>(null);
+    const [estilosSessaoMestrada, setEstilosSessaoMestrada] = useState<EstiloSessaoMestradaDto[] | null>(null);
     const [rascunhos, setRascunhos] = useState<RascunhoDto[] | null>(null);
     const [idRascunhoSelecionado, setIdRascunhoSelecionado] = useState<number | null>(null);
 
     const tituloComponenteConteudo = ehSessaoUnica ? 'Mestre - Meus Rascunhos de Sessão Única' : 'Mestre - Meus Rascunhos de Aventuras';
 
-    async function buscaTiposRascunhoPorTipoGeral() {
+    async function buscaEstilosSessaoMestrada() {
         setCarregando('Buscando Tipos Rascunho');
 
         try {
-            setTiposRascunhosParaEsseTipoGeral(await obtemEstilosSessaoPorParam(ehSessaoUnica));
+            setEstilosSessaoMestrada(await obtemEstilosSessaoPorParam(ehSessaoUnica));
         } catch {
-            setTiposRascunhosParaEsseTipoGeral(null);
+            setEstilosSessaoMestrada(null);
         } finally {
             setCarregando(null);
         }
@@ -59,7 +58,7 @@ export const ContextoRascunhosMestreProvider = ({ ehSessaoUnica, children }: { e
     function selecionaRascunho(idRascunho: number) { setIdRascunhoSelecionado(idRascunho); }
 
     useEffect(() => {
-        buscaTiposRascunhoPorTipoGeral();
+        buscaEstilosSessaoMestrada();
         buscaRascunhos();
     }, []);
 
@@ -67,10 +66,10 @@ export const ContextoRascunhosMestreProvider = ({ ehSessaoUnica, children }: { e
 
     if (!carregando && !rascunhos) return <p>Nenhum Rascunho encontrado</p>;
 
-    if (!tiposRascunhosParaEsseTipoGeral || !rascunhos) return;
+    if (!estilosSessaoMestrada || !rascunhos) return;
 
     return (
-        <ContextoRascunhosMestre.Provider value={{ tipoGeralRascunho, tituloComponenteConteudo, tiposRascunhosParaEsseTipoGeral, rascunhos, limpaRascunhoSelecionado, selecionaRascunho, idRascunhoSelecionado }}>
+        <ContextoRascunhosMestre.Provider value={{ estilosSessaoMestrada, tituloComponenteConteudo, rascunhos, limpaRascunhoSelecionado, selecionaRascunho, idRascunhoSelecionado }}>
             {children}
         </ContextoRascunhosMestre.Provider>
     );

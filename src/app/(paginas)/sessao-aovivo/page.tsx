@@ -9,16 +9,30 @@ import { obtemDadosProximaSessao } from 'Uteis/ApiConsumer/ConsumerMiddleware.ts
 import { SessaoDto } from 'types-nora-api';
 
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { ContextoFichaPersonagemProvider } from 'Contextos/ContextoFichaPersonagem/contexto';
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto'; // retirar depois
+import ControladorSwiperFicha from 'Componentes/ElementosDeJogo/ControladorSwiperFicha/CotroladorSwiperFicha'; // retirar depois
+import { PaginaSessao_Mensagens } from './componentes';
 
 export default function PaginaSessao() {
+    const { usuarioLogado } = useContextoAutenticacao(); // retirar depois
+
     return (
         <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.SESSAO, comCabecalho: false, usuarioObrigatorio: false }}>
             <PaginaSessao_Slot />
+
+            {usuarioLogado && (
+                <ContextoFichaPersonagemProvider>
+                    <ControladorSwiperFicha />
+                </ContextoFichaPersonagemProvider>
+            )}
         </ControladorSlot>
     );
 };
 
 function PaginaSessao_Slot() {
+    const { usuarioLogado } = useContextoAutenticacao(); // retirar depois
+
     const [sessaoEmAndamento, setSessaoEmAndamento] = useState<SessaoDto | null>(null);
 
     const { setAnimacoesHabilitadas } = useContextoPerformance();
@@ -54,6 +68,7 @@ function PaginaSessao_Slot() {
                                 </div>
                             ))}
                         </div>
+                        {usuarioLogado && (<PaginaSessao_Mensagens />)}
                     </div>
 
                     <div id={styles.recipiente_tela_jogo}>

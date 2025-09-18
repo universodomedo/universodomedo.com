@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { DetalheRascunhoAventuraDto, DetalheRascunhoSessaoUnicaCanonicaDto, DetalheRascunhoSessaoUnicaDto, RascunhoDto } from 'types-nora-api';
 
-import { me_obtemDetalhesRascunho, editaDetalheRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { me_obtemDetalhesRascunho, editaDetalheRascunho, criaBaseadoEmRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import EdicaoRascunho from 'Componentes/EdicaoRascunho/page';
 
 interface ContextoRascunhoProps {
@@ -12,6 +12,8 @@ interface ContextoRascunhoProps {
     salvaDetalhesRascunhoAventura: (detalheRascunhoAventura: DetalheRascunhoAventuraDto) => void;
     salvaDetalhesRascunhoSessaoUnicaCanonica: (detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaDto) => void;
     salvaDetalhesRascunhoSessaoUnica: (detalheRascunhoSessaoUnica: DetalheRascunhoSessaoUnicaDto) => void;
+    textoBotaoCriar: string;
+    executaCriacao: () => void;
 };
 
 const ContextoRascunho = createContext<ContextoRascunhoProps | undefined>(undefined);
@@ -43,6 +45,8 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
     const alteraEstadoModalEdicao = (aberto: boolean) => {
         setIsModalOpen(aberto);
     }
+
+    const textoBotaoCriar: string = rascunho == null ? '' : rascunho?.estiloSessaoMestrada.id === 1 ? 'Criar Aventura' : 'Criar Sessão';
 
     const salvaDetalhesRascunhoAventura = async (detalheRascunhoAventura: DetalheRascunhoAventuraDto) => {
         try {
@@ -86,6 +90,18 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
         }
     }
 
+    const executaCriacao = async() => {
+        if (!rascunho) return;
+
+        const respostaCriacaoRascunho = await criaBaseadoEmRascunho(rascunho.id);
+
+        if (!respostaCriacaoRascunho) {
+            alert('Erro ao criar rascunho');
+        } else {
+            window.location.reload();
+        }
+    };
+
     useEffect(() => {
         buscaDetalhesRascunho();
     }, []);
@@ -97,7 +113,7 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
     if (!rascunho) return;
 
     return (
-        <ContextoRascunho.Provider value={{ alteraEstadoModalEdicao, rascunho, salvaDetalhesRascunhoAventura, salvaDetalhesRascunhoSessaoUnicaCanonica, salvaDetalhesRascunhoSessaoUnica }}>
+        <ContextoRascunho.Provider value={{ textoBotaoCriar, alteraEstadoModalEdicao, rascunho, salvaDetalhesRascunhoAventura, salvaDetalhesRascunhoSessaoUnicaCanonica, salvaDetalhesRascunhoSessaoUnica, executaCriacao}}>
             {children}
             <EdicaoRascunho isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </ContextoRascunho.Provider>

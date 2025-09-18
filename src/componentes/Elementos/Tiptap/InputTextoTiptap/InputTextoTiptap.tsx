@@ -10,7 +10,7 @@ import { ExtensoesPadraoTiptap } from 'Uteis/ExtensoesPadraoTiptap/ExtensoesPadr
 import ToolbarTiptap from 'Componentes/Elementos/Tiptap/ToolbarTiptap/ToolbarTiptap';
 import AreaTiptap from 'Componentes/Elementos/Tiptap/AreaTiptap/AreaTiptap';
 
-const MAX_LENGTH = 10;
+const MAX_LENGTH = 3000;
 
 export default function InputTextoTiptap({ conteudo, onChange }: { conteudo: JSONContent | null; onChange: (content: JSONContent) => void; }) {
     const editor = useEditor({

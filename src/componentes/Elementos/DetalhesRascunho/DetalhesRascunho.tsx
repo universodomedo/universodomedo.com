@@ -8,7 +8,7 @@ import { CorpoRascunho } from './componentes';
 
 export default function DetalhesRascunho_Conteudo() {
     const { limpaRascunhoSelecionado } = useContextoRascunhosMestre();
-    const { alteraEstadoModalEdicao, rascunho } = useContextoRascunho();
+    const { alteraEstadoModalEdicao, rascunho, textoBotaoCriar, executaCriacao } = useContextoRascunho();
 
     function fechaRascunho() {
         limpaRascunhoSelecionado();
@@ -20,7 +20,7 @@ export default function DetalhesRascunho_Conteudo() {
             <CorpoRascunho />
             <div id={styles.recipiente_botoes_rascunho}>
                 <button onClick={() => alteraEstadoModalEdicao(true)}>Editar</button>
-                <button disabled={!rascunho.possuiDetalhesConfigurados} onClick={() => console.log(`implementar Criar Sessão`)}>Criar Sessão</button>
+                <button disabled={!rascunho.possuiDetalhesConfigurados} onClick={executaCriacao}>{textoBotaoCriar}</button>
                 <button onClick={fechaRascunho}>Fechar</button>
             </div>
         </div>
