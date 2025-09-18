@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, TiposGeralRascunho, TipoRascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtual?: PaginaObjeto | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtual === undefined ? {} : { idPaginaAtual: paginaAtual?.id || '' } });
@@ -148,15 +148,19 @@ export async function me_obtemRascunhosPorTipo(sessaoUnica: boolean): Promise<Ra
 }
 
 export async function me_obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto> {
-    return await useApi<RascunhoDto>({ uri: 'rascunhos/me_obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
+    return await useApi<RascunhoDto>({ uri: 'rascunhos/me/me_obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
 }
 
-export async function me_salvarRascunho(titulo: string, idTipoRascunho: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: 'rascunhos/me/me_salvarRascunho', method: 'POST', data: { titulo: titulo, idTipoRascunho: idTipoRascunho } });
+export async function me_salvarRascunho(titulo: string, idEstiloSessaoMestrada: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: 'rascunhos/me/me_salvarRascunho', method: 'POST', data: { titulo: titulo, idEstiloSessaoMestrada: idEstiloSessaoMestrada } });
 }
 
 export async function editaDetalheRascunho(rascunho: RascunhoDto): Promise<boolean> {
     return await useApi<boolean>({ uri: 'rascunhos/editaDetalheRascunho', method: 'POST', data: { rascunho: rascunho } });
+}
+
+export async function criaBaseadoEmRascunho(idRascunho: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: 'rascunhos/criaBaseadoEmRascunho', method: 'PUT', data: { idRascunho: idRascunho } });
 }
 
 //

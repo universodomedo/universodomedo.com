@@ -10,6 +10,7 @@ import DetalhesRascunho from "./DetalhesRascunho";
 import { ModalCriacaoRascunho } from 'Componentes/ElementosModais/ModalCriacaoRascunho/ModalCriacaoRascunho';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 import RascunhoEmVisualizacao from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/RascunhoEmVisualizacao/page';
+import { ContextoCriaRascunhoProvider } from 'Contextos/ContextoCriaRascunho/contexto';
 
 export function RascunhosMestre_Contexto() {
     const { tituloComponenteConteudo, idRascunhoSelecionado } = useContextoRascunhosMestre();
@@ -28,7 +29,7 @@ export function RascunhosMestre_Contexto() {
 };
 
 function ListagemRascunhos_Contexto() {
-    const { tiposRascunhosParaEsseTipoGeral, rascunhos } = useContextoRascunhosMestre();
+    const { rascunhos } = useContextoRascunhosMestre();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
@@ -37,7 +38,9 @@ function ListagemRascunhos_Contexto() {
                 <h3>Novo Rascunho</h3>
             </DivClicavel>
 
-            <ModalCriacaoRascunho isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} tiposRascunhosParaEsseTipoGeral={tiposRascunhosParaEsseTipoGeral} />
+            <ContextoCriaRascunhoProvider>
+                <ModalCriacaoRascunho isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+            </ContextoCriaRascunhoProvider>
 
             <div id={styles.recipiente_rascunhos}>
                 {rascunhos.length > 0 ? (

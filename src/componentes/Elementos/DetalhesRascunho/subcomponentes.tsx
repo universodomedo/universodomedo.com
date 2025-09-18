@@ -5,9 +5,9 @@ import { DetalheRascunhoAventuraDto, DetalheRascunhoSessaoUnicaCanonicaDto, Deta
 import VisualizadorConteudoTiptap from 'Componentes/Elementos/Tiptap/VisualizadorConteudoTiptap/VisualizadorConteudoTiptap';
 
 export function DadosResumo({ rascunho }: { rascunho: RascunhoDto }) {
-    if (rascunho.tipoRascunho.id === 1) return <DadosResumo_Aventura detalheRascunhoAventura={rascunho.detalheRascunhoAventura!} />
-    if (rascunho.tipoRascunho.id === 2) return <DadosResumo_SessaoUnicaCanonica detalheRascunhoSessaoUnicaCanonica={rascunho.detalheRascunhoSessaoUnicaCanonica!} />
-    if (rascunho.tipoRascunho.id === 3) return <DadosResumo_SessaoUnica detalheRascunhoSessaoUnica={rascunho.detalheRascunhoSessaoUnica!} />
+    if (rascunho.estiloSessaoMestrada.id === 1) return <DadosResumo_Aventura detalheRascunhoAventura={rascunho.detalheRascunhoAventura!} />
+    if (rascunho.estiloSessaoMestrada.id === 2) return <DadosResumo_SessaoUnicaCanonica detalheRascunhoSessaoUnicaCanonica={rascunho.detalheRascunhoSessaoUnicaCanonica!} />
+    if (rascunho.estiloSessaoMestrada.id === 3) return <DadosResumo_SessaoUnica detalheRascunhoSessaoUnica={rascunho.detalheRascunhoSessaoUnica!} />
     else return <></>;
 };
 

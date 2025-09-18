@@ -29,12 +29,12 @@
     }
 
     & :global(.tiptap:focus) { outline: none; }
-    & :global(.tiptap h1) { font-size: 1.875rem; line-height: 2.25rem; margin: 0.6em 0 0.3em; font-weight: 700; }
-    & :global(.tiptap h2) { font-size: 1.5rem; line-height: 2rem; margin: 0.6em 0 0.3em; font-weight: 700; }
-    & :global(.tiptap h3) { font-size: 1.25rem; line-height: 1.75rem; margin: 0.6em 0 0.3em; font-weight: 700; }
-    & :global(.tiptap p) { margin: 0.6em 0; }
-    & :global(.tiptap ul) { padding-left: 1.25rem; margin: 0.6em 0; }
-    & :global(.tiptap ol) { padding-left: 1.25rem; margin: 0.6em 0; }
+    & :global(.tiptap h1) { font-size: 1.875em; line-height: 2.25em; margin: 0.6em 0 0.3em; font-weight: 700; }
+    & :global(.tiptap h2) { font-size: 1.5em; line-height: 2em; margin: 0.6em 0 0.3em; font-weight: 700; }
+    & :global(.tiptap h3) { font-size: 1.25em; line-height: 1.75em; margin: 0.6em 0 0.3em; font-weight: 700; }
+    & :global(.tiptap p) { margin: 0.6em 0; line-height: 1.15em; }
+    & :global(.tiptap ul) { padding-left: 1.25em; margin: 0.6em 0; }
+    & :global(.tiptap ol) { padding-left: 1.25em; margin: 0.6em 0; }
     & :global(.tiptap blockquote) { border-left: 3px solid #e5e7eb; padding-left: 12px; color: #6b7280; margin: 0.6em 0; }
     & :global(.tiptap code) { background: #f3f4f6; border-radius: 6px; padding: 0.2em 0.4em; }
 }

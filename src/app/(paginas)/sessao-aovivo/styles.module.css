@@ -142,8 +142,7 @@
 
 #recipiente_pagina_game_engine {
     display: flex;
-    padding: 2em;
-    width: 50%;
+    width: 100%;
     height: 100%;
 }
 

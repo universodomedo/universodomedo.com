@@ -57,7 +57,7 @@ export const ContextoEdicaoRascunhoSessaoUnicaCanonicaProvider = ({ children }: 
         if (JSON.stringify(descricao) !== JSON.stringify(detalheInicial.descricao))
             alteracoes.push("Descrição foi alterada");
 
-        if (!!alteracoes.length) return;
+        if (alteracoes.length < 1) return;
 
         const confirmacao = window.confirm(
             "Tem certeza que deseja salvar as alterações?\n\n" +

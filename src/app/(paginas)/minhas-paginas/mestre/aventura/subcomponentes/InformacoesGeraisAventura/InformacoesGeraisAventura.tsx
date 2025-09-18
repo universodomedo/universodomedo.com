@@ -25,11 +25,6 @@ export function InformacoesGeraisAventura() {
 function InformacoesAventura() {
     const { grupoAventuraSelecionada } = useContextoPaginaMestreAventura();
 
-    const sessoesFinalizadas = grupoAventuraSelecionada.detalhesSessoesCanonicas.filter(detalheSessao => detalheSessao.sessao.duracaoEmSegundos);
-
-    dasdasd
-    // verificar de trocar sessoesFinalizadas.reduce por duracaoGrupoAventuraEmSegundos
-
     return (
         <SecaoDeConteudo id={styles.recipiente_informacoes_aventura}>
             <h1>Aventura {grupoAventuraSelecionada.estadoAtual}</h1>
@@ -41,7 +36,7 @@ function InformacoesAventura() {
 
                 {grupoAventuraSelecionada.dataQueIniciou !== null && <h4>Iniciada em {formataData(grupoAventuraSelecionada.dataQueIniciou, 'dd/MM/yyyy HH:mm')}</h4>}
                 {grupoAventuraSelecionada.dataQueEncerrou !== null && <h4>Finalizada em {formataData(grupoAventuraSelecionada.dataQueEncerrou, 'dd/MM/yyyy HH:mm')}</h4>}
-                {sessoesFinalizadas.length > 0 && <h4>{sessoesFinalizadas.length} Sessões, totalizando {formataDuracao(sessoesFinalizadas.reduce((acc, cur) => acc + cur.sessao.duracaoEmSegundos!, 0), FormatoMomento.EXTENSO)}</h4>}
+                {grupoAventuraSelecionada.duracaoGrupoAventuraEmSegundos && <h4>{grupoAventuraSelecionada.numeroSessoesFinalizadasGrupoAventura} Sessões, totalizando {formataDuracao(grupoAventuraSelecionada.duracaoGrupoAventuraEmSegundos, FormatoMomento.EXTENSO)}</h4>}
             </div>
         </SecaoDeConteudo>
     );
@@ -55,14 +50,14 @@ function ListaDeTodasAsSessoes() {
     return (
         <SecaoDeConteudo id={styles.recipiente_lista_todas_sessoes} {...scrollableProps}>
             <div id={styles.recipiente_container_lista_todas_sessoes}>
-                {grupoAventuraSelecionada.detalhesSessoesCanonicas.sort((a, b) => b.sessao.id - a.sessao.id).map(detalheSessaoCanonica => (
-                    <CustomLink key={detalheSessaoCanonica.sessao.id} href={`/minhas-paginas/mestre/sessao/${detalheSessaoCanonica.sessao.id}`}>
+                {grupoAventuraSelecionada.detalhesSessoesAventuras.sort((a, b) => b.sessao.id - a.sessao.id).map(detalheSessaoAventura => (
+                    <CustomLink key={detalheSessaoAventura.sessao.id} href={`/minhas-paginas/mestre/sessao/${detalheSessaoAventura.sessao.id}`}>
                         <div className={styles.recipiente_linha_episodio_em_lista}>
-                            <h4>{detalheSessaoCanonica.episodioPorExtenso}</h4>
-                            {detalheSessaoCanonica.sessao.estadoAtual === EstadoSessao.MARCADA
-                                ? <h4>Prevista para {formataData(detalheSessaoCanonica.sessao.dataPrevisaoInicio, 'dd/MM/yyyy HH:mm')}</h4>
-                                : detalheSessaoCanonica.sessao.estadoAtual === EstadoSessao.EM_ANDAMENTO ? <h4>Em andamento</h4>
-                                    : <h4>Ocorreu em {formataData(detalheSessaoCanonica.sessao.dataInicio!, 'dd/MM/yyyy HH:mm')}</h4>
+                            <h4>{detalheSessaoAventura.episodioPorExtenso}</h4>
+                            {detalheSessaoAventura.sessao.estadoAtual === EstadoSessao.MARCADA
+                                ? <h4>Prevista para {formataData(detalheSessaoAventura.sessao.dataPrevisaoInicio, 'dd/MM/yyyy HH:mm')}</h4>
+                                : detalheSessaoAventura.sessao.estadoAtual === EstadoSessao.EM_ANDAMENTO ? <h4>Em andamento</h4>
+                                    : <h4>Ocorreu em {formataData(detalheSessaoAventura.sessao.dataInicio!, 'dd/MM/yyyy HH:mm')}</h4>
                             }
                         </div>
                     </CustomLink>
