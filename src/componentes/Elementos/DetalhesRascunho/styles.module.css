@@ -44,7 +44,9 @@
 #recipiente_botoes_rascunho {
     display: flex;
     flex-direction: row;
+    width: 100%;
     gap: 5%;
+    justify-content: center;
 
     & button {
         padding: .6em;

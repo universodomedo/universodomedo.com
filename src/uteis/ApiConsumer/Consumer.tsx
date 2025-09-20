@@ -50,6 +50,10 @@ export default async function useApi<T>({ uri, method, data, params }: { uri: st
     }
 
     const response = await apiClient.request<T>(config);
+
+    // VALIDANDO RETORNO DE OBJETO NULL
+    if (response.data === '' || response.data === undefined) return null as T;
+
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

@@ -15,7 +15,7 @@ export function ModalEditarRascunhoSessaoUnicaCanonica({ isModalOpen, setIsModal
 
     return (
         <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <Modal.Content cabecalho={{ titulo: `Editando Rascunho`, subtitulo: rascunho.titulo }} botaoAcaoPrincipal={{ execucao: handleSalvar, texto: 'Salvar', desabilitado: !podeSalvar }}>
+            <Modal.Content cabecalho={{ titulo: `Editando Rascunho`, subtitulo: rascunho?.titulo }} botaoAcaoPrincipal={{ execucao: handleSalvar, texto: 'Salvar', desabilitado: !podeSalvar }}>
                 <ConteudoModal />
             </Modal.Content>
         </Modal>

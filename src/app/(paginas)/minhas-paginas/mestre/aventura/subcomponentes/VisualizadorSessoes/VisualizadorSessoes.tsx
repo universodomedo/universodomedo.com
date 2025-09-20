@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import { DetalheSessaoCanonicaDto } from 'types-nora-api';
+import { DetalheSessaoAventuraDto, DetalheSessaoCanonicaDto } from 'types-nora-api';
 
 import { useContextoPaginaMestreAventura } from "Contextos/ContextoMestreAventura/contexto";
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
@@ -16,23 +16,23 @@ export function VisualizadorSessoes() {
 
     return (
         <>
-            <VisualizadorUltimasSessoes detalhesUltimasSessoes={grupoAventuraSelecionada.detalhesSessoesCanonicas.sort((a, b) => a.sessao.id - b.sessao.id).slice(-2)} />
+            <VisualizadorUltimasSessoes detalhesSessoesAventuras={grupoAventuraSelecionada.detalhesSessoesAventuras.sort((a, b) => a.sessao.id - b.sessao.id).slice(-2)} />
             <AcoesSessoesRecentesDeAventurasEmAndamento />
         </>
     );
 };
 
-function VisualizadorUltimasSessoes({ detalhesUltimasSessoes }: { detalhesUltimasSessoes: DetalheSessaoCanonicaDto[] }) {
+function VisualizadorUltimasSessoes({ detalhesSessoesAventuras }: { detalhesSessoesAventuras: DetalheSessaoAventuraDto[] }) {
     return (
         <div id={styles.recipiente_visualizador_sessoes}>
-            {detalhesUltimasSessoes.map(detalheUltimasSessoes => (
+            {detalhesSessoesAventuras.map(detalheUltimasSessoes => (
                 <VisualizacaoInformacoesSessao key={detalheUltimasSessoes.sessao.id} detalheUltimasSessoes={detalheUltimasSessoes} />
             ))}
         </div>
     );
 };
 
-function VisualizacaoInformacoesSessao({ detalheUltimasSessoes }: { detalheUltimasSessoes: DetalheSessaoCanonicaDto }) {
+function VisualizacaoInformacoesSessao({ detalheUltimasSessoes }: { detalheUltimasSessoes: DetalheSessaoAventuraDto }) {
     return (
         <CustomLink className={styles.recipiente_link_sessao} href={`/minhas-paginas/mestre/sessao/${detalheUltimasSessoes.sessao.id}`} semDecoracao>
             <SecaoDeConteudo className={styles.recipiente_informacoes_sessao}>

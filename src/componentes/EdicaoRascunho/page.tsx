@@ -9,19 +9,19 @@ import { ModalEditarRascunhoSessaoUnica } from 'Componentes/ElementosModais/Moda
 export default function EdicaoRascunho({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean; setIsModalOpen: (open: boolean) => void }) {
     const { rascunho } = useContextoRascunho();
 
-    if (rascunho.estiloSessaoMestrada.id === 1) return (
+    if (rascunho?.estiloSessaoMestrada.id === 1) return (
         <ContextoEdicaoRascunhoAventuraProvider>
             <ModalEditarRascunhoAventura isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </ContextoEdicaoRascunhoAventuraProvider>
     );
 
-    else if (rascunho.estiloSessaoMestrada.id === 2) return (
+    else if (rascunho?.estiloSessaoMestrada.id === 2) return (
         <ContextoEdicaoRascunhoSessaoUnicaCanonicaProvider>
             <ModalEditarRascunhoSessaoUnicaCanonica isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </ContextoEdicaoRascunhoSessaoUnicaCanonicaProvider>
     );
 
-    else if (rascunho.estiloSessaoMestrada.id === 3) return (
+    else if (rascunho?.estiloSessaoMestrada.id === 3) return (
         <ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider>
             <ModalEditarRascunhoSessaoUnica isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider>

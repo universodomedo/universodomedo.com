@@ -147,8 +147,8 @@ export async function me_obtemRascunhosPorTipo(sessaoUnica: boolean): Promise<Ra
     return await useApi<RascunhoDto[]>({ uri: 'rascunhos/me/me_obtemRascunhosPorTipo', method: 'GET', params: { sessaoUnica } });
 }
 
-export async function me_obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto> {
-    return await useApi<RascunhoDto>({ uri: 'rascunhos/me/me_obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
+export async function me_obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto | null> {
+    return await useApi<RascunhoDto | null>({ uri: 'rascunhos/me/me_obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
 }
 
 export async function me_salvarRascunho(titulo: string, idEstiloSessaoMestrada: number): Promise<boolean> {

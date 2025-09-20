@@ -23,11 +23,11 @@ export const useContextoEdicaoRascunhoAventura = (): ContextoEdicaoRascunhoAvent
 export const ContextoEdicaoRascunhoAventuraProvider = ({ children }: { children: React.ReactNode }) => {
     const { salvaDetalhesRascunhoAventura, rascunho } = useContextoRascunho();
 
-    const [descricao, setDescricao] = useState(rascunho.detalheRascunhoSessaoUnicaCanonica ? rascunho.detalheRascunhoSessaoUnicaCanonica.descricao : null);
+    const [descricao, setDescricao] = useState(rascunho?.detalheRascunhoSessaoUnicaCanonica ? rascunho?.detalheRascunhoSessaoUnicaCanonica.descricao : null);
 
     //
 
-    const detalheInicial = { descricao: rascunho.detalheRascunhoSessaoUnica ? rascunho.detalheRascunhoSessaoUnica.descricao : null };
+    const detalheInicial = { descricao: rascunho?.detalheRascunhoSessaoUnica ? rascunho?.detalheRascunhoSessaoUnica.descricao : null };
     const houveModificacao = JSON.stringify(descricao) !== JSON.stringify(detalheInicial.descricao);
 
     //
@@ -50,7 +50,7 @@ export const ContextoEdicaoRascunhoAventuraProvider = ({ children }: { children:
         if (!confirmacao) return;
 
         salvaDetalhesRascunhoAventura({
-            rascunho: { id: rascunho.id } as RascunhoDto,
+            rascunho: { id: rascunho?.id } as RascunhoDto,
             descricao: descricao,
         } as DetalheRascunhoAventuraDto);
     };
