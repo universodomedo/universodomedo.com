@@ -5,7 +5,7 @@ import { ListaAcoesAdmin } from "./componentes";
 
 export default function PaginaAdmin() {
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo>
                 <></>
             </LayoutContextualizado.Conteudo>

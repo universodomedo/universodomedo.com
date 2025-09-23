@@ -1,7 +1,6 @@
 #recipiente_lista_acoes {
     display: flex;
     flex-direction: column;
-    width: 16vw;
 
     & .titulo_permissao {
         text-align: center;

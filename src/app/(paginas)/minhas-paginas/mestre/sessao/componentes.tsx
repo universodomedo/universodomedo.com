@@ -17,7 +17,7 @@ export function PaginaMestreSessao_Contexto() {
         : 'minhas-paginas/mestre/sessoes-unicas'
 
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo hrefPaginaRetorno={hrefPaginaRetorno}>
                 <PaginaMestreSessao_Conteudo />
             </LayoutContextualizado.Conteudo>

@@ -46,8 +46,8 @@ export async function obtemSessaoGeral(idSessao: number) {
     return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemSessaoGeral', method: 'GET', params: { idSessao } });
 }
 
-export async function obtemPersonagensDoUsuario() {
-    return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemPersonagensDoUsuario', method: 'GET' });
+export async function me_obtemPersonagens(idTipoPersonagem: number) {
+    return await useApi<PersonagemDto[]>({ uri: '/personagens/me/me_obtemPersonagens', method: 'GET', params: { idTipoPersonagem } });
 }
 
 export async function obtemDadosPersonagemDoUsuario(idPersonagem: number) {

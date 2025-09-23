@@ -9,7 +9,7 @@ import { AventuraEmLayoutContextualizado } from 'Componentes/ElementosVisuais/El
 
 export function AventurasMestre_Contexto() {
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo titulo={'Mestre - Minhas Aventuras'}>
                 <AventurasMestre_Conteudo />
             </LayoutContextualizado.Conteudo>

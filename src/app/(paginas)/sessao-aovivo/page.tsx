@@ -13,6 +13,7 @@ import { ContextoFichaPersonagemProvider } from 'Contextos/ContextoFichaPersonag
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto'; // retirar depois
 import ControladorSwiperFicha from 'Componentes/ElementosDeJogo/ControladorSwiperFicha/CotroladorSwiperFicha'; // retirar depois
 import { PaginaSessao_Mensagens } from './componentes';
+import IconeFaixaEtaria from 'Componentes/ElementosVisuais/IconeFaixaEtaria/IconeFaixaEtaria';
 
 export default function PaginaSessao() {
     const { usuarioLogado } = useContextoAutenticacao(); // retirar depois
@@ -64,7 +65,7 @@ function PaginaSessao_Slot() {
                         <div id={styles.recipiente_lista_retratos}>
                             {sessaoEmAndamento.detalheSessaoAventura.grupoAventura!.personagensDaAventura?.map(personagemDaAventura => (
                                 <div key={personagemDaAventura.personagem.id} className={styles.recipiente_retrato}>
-                                    <RecipienteImagem src={personagemDaAventura.personagem.imagemAvatar?.fullPath} />
+                                    <RecipienteImagem src={personagemDaAventura.personagem.caminhoAvatar} />
                                 </div>
                             ))}
                         </div>
@@ -76,6 +77,7 @@ function PaginaSessao_Slot() {
                     </div>
                 </div>
             </div>
+            <IconeFaixaEtaria />
         </div>
     );
 };

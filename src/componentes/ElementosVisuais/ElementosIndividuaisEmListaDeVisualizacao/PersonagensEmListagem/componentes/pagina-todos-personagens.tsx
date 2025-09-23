@@ -3,14 +3,14 @@
 import styles from '../styles.module.css';
 
 import { EstadoPendenciaAdministrativaPersonagem, EstadoPendenciaPersonagem, FichaPersonagemDto, PersonagemDto } from 'types-nora-api';
-import { useContextoJogadorPersonagens } from 'Contextos/ContextoJogadorPersonagens/contexto.tsx';
+import { useContextoListagemPersonagens } from 'Contextos/ContextoListagemPersonagens/contexto';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 import Link from 'next/link';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 
 export function PaginaListaPersonagens() {
-    const { personagensDoUsuario } = useContextoJogadorPersonagens();
+    const { personagensDoUsuario } = useContextoListagemPersonagens();
 
     if (!personagensDoUsuario || personagensDoUsuario.length < 1) return <div>Erro ao carregar personagens</div>;
 
@@ -34,7 +34,7 @@ function PaginaListaPersonagensComDados() {
 };
 
 function ListaPersonagens() {
-    const { personagensDoUsuario, buscaDadosPersonagemSelecionado } = useContextoJogadorPersonagens();
+    const { personagensDoUsuario, buscaDadosPersonagemSelecionado } = useContextoListagemPersonagens();
 
     function selecionaPersonagem(idPersonagem: number) {
         buscaDadosPersonagemSelecionado(idPersonagem);

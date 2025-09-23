@@ -13,7 +13,7 @@ import { InformacoesGeraisAventura } from './subcomponentes/InformacoesGeraisAve
 
 export function PaginaMestreAventura_Contexto() {
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo hrefPaginaRetorno={'/minhas-paginas/mestre/aventuras'}>
                 <PaginaMestreAventura_Conteudo />
             </LayoutContextualizado.Conteudo>

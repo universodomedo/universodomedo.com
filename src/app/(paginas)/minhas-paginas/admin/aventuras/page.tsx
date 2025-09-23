@@ -14,7 +14,7 @@ export default function AdministrarAventuras() {
     if (!gruposAventuras) return <></>;
 
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo>
                 <AdministrarAventuras_ConteudoGeral gruposAventuras={gruposAventuras} />
             </LayoutContextualizado.Conteudo>

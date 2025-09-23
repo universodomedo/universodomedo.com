@@ -38,7 +38,11 @@ export function ItensMenuSwiperEsquerda() {
     const renderItem = (item: ItemMenu, key: string): JSX.Element | null => {
         if (item.condicao === false) return null;
 
-        const temSubitens = item.subitens && item.subitens.length > 0;
+        const subitensPermitidos = item.subitens?.filter(subitem => subitem.condicao);
+
+        const temSubitens = subitensPermitidos && subitensPermitidos.length > 0;
+
+        if (item.link == undefined && !temSubitens) return null;
 
         return (
             <div key={key} className={styles.item_menu}>

@@ -13,7 +13,7 @@ import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoD
 
 export function AdministrarAventura_Slot({ grupoAventura }: { grupoAventura: GrupoAventuraDto; }) {
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo hrefPaginaRetorno={'/minhas-paginas/admin/aventuras'}>
                 <AdministrarAventura_Conteudo grupoAventura={grupoAventura} />
             </LayoutContextualizado.Conteudo>

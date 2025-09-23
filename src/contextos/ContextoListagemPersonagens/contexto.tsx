@@ -3,24 +3,24 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { PersonagemDto } from 'types-nora-api';
-import { obtemPersonagensDoUsuario, obtemDadosPersonagemDoUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
+import { me_obtemPersonagens, obtemDadosPersonagemDoUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
-interface ContextoJogadorPersonagensProps {
+interface ContextoListagemPersonagensProps {
     personagensDoUsuario: PersonagemDto[] | null;
     personagemSelecionado: PersonagemDto | null;
     buscaDadosPersonagemSelecionado: (idPersonagem: number) => void;
     deselecionaPersonagem: () => void;
 };
 
-const ContextoJogadorPersonagens = createContext<ContextoJogadorPersonagensProps | undefined>(undefined);
+const ContextoListagemPersonagens = createContext<ContextoListagemPersonagensProps | undefined>(undefined);
 
-export const useContextoJogadorPersonagens = (): ContextoJogadorPersonagensProps => {
-    const context = useContext(ContextoJogadorPersonagens);
-    if (!context) throw new Error('useContextoJogadorPersonagens precisa estar dentro de um ContextoJogadorPersonagens');
+export const useContextoListagemPersonagens = (): ContextoListagemPersonagensProps => {
+    const context = useContext(ContextoListagemPersonagens);
+    if (!context) throw new Error('useContextoListagemPersonagens precisa estar dentro de um ContextoListagemPersonagens');
     return context;
 };
 
-export const ContextoJogadorPersonagensProvider = ({ children }: { children: React.ReactNode }) => {
+export const ContextoListagemPersonagensProvider = ({ children, idTipoPersonagem }: { children: React.ReactNode; idTipoPersonagem: number; }) => {
     const [carregando, setCarregando] = useState(true);
     const [personagensDoUsuario, setPersonagensDoUsuario] = useState<PersonagemDto[] | null>(null);
     const [personagemSelecionado, setPersonagemSelecionado] = useState<PersonagemDto | null>(null);
@@ -29,7 +29,7 @@ export const ContextoJogadorPersonagensProvider = ({ children }: { children: Rea
         setCarregando(true);
 
         try {
-            setPersonagensDoUsuario(await obtemPersonagensDoUsuario());
+            setPersonagensDoUsuario(await me_obtemPersonagens(idTipoPersonagem));
         } catch {
             setPersonagensDoUsuario(null);
         } finally {
@@ -60,8 +60,8 @@ export const ContextoJogadorPersonagensProvider = ({ children }: { children: Rea
     if (carregando) return <div>Carregando personagens</div>;
 
     return (
-        <ContextoJogadorPersonagens.Provider value={{ personagensDoUsuario, personagemSelecionado, buscaDadosPersonagemSelecionado, deselecionaPersonagem }}>
+        <ContextoListagemPersonagens.Provider value={{ personagensDoUsuario, personagemSelecionado, buscaDadosPersonagemSelecionado, deselecionaPersonagem }}>
             {children}
-        </ContextoJogadorPersonagens.Provider>
+        </ContextoListagemPersonagens.Provider>
     );
 };

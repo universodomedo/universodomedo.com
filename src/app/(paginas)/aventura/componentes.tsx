@@ -5,7 +5,7 @@ import { PaginaAventura_Conteudo, PaginaAventura_Menu } from "./subcomponentes";
 
 export function PaginaAventura_Slot() {
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={87}>
             <LayoutContextualizado.Conteudo escondeFundo hrefPaginaRetorno={'/aventuras'}>
                 <PaginaAventura_Conteudo />
             </LayoutContextualizado.Conteudo>

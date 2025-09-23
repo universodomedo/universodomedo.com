@@ -16,7 +16,7 @@ export function RascunhosMestre_Contexto() {
     const { tituloComponenteConteudo, idRascunhoSelecionado } = useContextoRascunhosMestre();
 
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo titulo={tituloComponenteConteudo ?? undefined}>
                 {!idRascunhoSelecionado ? <ListagemRascunhos_Contexto /> : <DetalhesRascunho idRascunhoSelecionado={idRascunhoSelecionado} />}
             </LayoutContextualizado.Conteudo>
