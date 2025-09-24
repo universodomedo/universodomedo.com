@@ -1,8 +1,12 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { DetalheSessaoCanonicaDto, GrupoAventuraDto, SessaoDto } from 'types-nora-api';
+import { createContext, useContext, useEffect, useState, startTransition } from 'react';
+import { GrupoAventuraDto, SessaoDto } from 'types-nora-api';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+
 import { obtemSessaoGeral, buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+
+import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
 interface ContextoPaginaAventuraProps {
     grupoAventuraSelecionado: GrupoAventuraDto;
@@ -27,7 +31,48 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
     const [grupoAventuraSelecionado, setGrupoAventuraSelecionado] = useState<GrupoAventuraDto | null>(null);
     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
 
-    //
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const atualizarParametroURL = (episodioIndex: number | null) => {
+        const params = new URLSearchParams(searchParams.toString());
+
+        if (episodioIndex === null || episodioIndex === 0) {
+            params.delete(QUERY_PARAMS.EPISODIO);
+        } else {
+            params.set(QUERY_PARAMS.EPISODIO, episodioIndex.toString());
+        }
+
+        const novaURL = `${pathname}?${params.toString()}`;
+
+        window.history.replaceState(null, '', novaURL);
+    };
+
+    useEffect(() => {
+        if (sessaoSelecionada && sessaoSelecionada.detalheSessaoAventura?.episodio) {
+            atualizarParametroURL(sessaoSelecionada.detalheSessaoAventura.episodio);
+        } else if (sessaoSelecionada === null) {
+            atualizarParametroURL(null);
+        }
+    }, [sessaoSelecionada]);
+
+    async function buscaSessao(idSessao: number) {
+        setCarregando('Buscando Sessão');
+
+        try {
+            setSessaoSelecionada(await obtemSessaoGeral(idSessao));
+        } catch {
+            setSessaoSelecionada(null);
+        } finally {
+            setCarregando(null);
+        }
+    };
+
+    async function limpaSessao() {
+        setSessaoSelecionada(null);
+    };
+
     const detalhesSessao = !grupoAventuraSelecionado ? [] : grupoAventuraSelecionado.detalhesSessoesAventuras || [];
     const indexAtual = sessaoSelecionada ? detalhesSessao.findIndex(detalheSessao => detalheSessao.sessao.id === sessaoSelecionada.id) : -1;
 
@@ -49,7 +94,18 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
         podeBuscarAnterior: navegacaoSessoes.idSessaoAnterior !== undefined,
         podeBuscarSeguinte: navegacaoSessoes.idSessaoSeguinte !== undefined,
     };
-    //
+
+    async function alteraSessaoManualmente(direcao: 'anterior' | 'seguinte') {
+        if ((direcao === 'anterior' && navegacaoSessoes.idSessaoAnterior === undefined) || (direcao === 'seguinte') && navegacaoSessoes.idSessaoSeguinte === undefined) return;
+
+        if (direcao === 'anterior' && !navegacaoSessoes.idSessaoAnterior) {
+            limpaSessao();
+            return;
+        }
+
+        const idSessaoBuscandoManualmente = direcao === 'anterior' ? navegacaoSessoes.idSessaoAnterior! : navegacaoSessoes.idSessaoSeguinte!;
+        buscaSessao(idSessaoBuscandoManualmente);
+    };
 
     async function buscaGrupoAventuraSelecionado(idGrupoAventura: number) {
         setCarregando('Buscando Episódios');
@@ -63,32 +119,9 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
         }
     };
 
-    async function buscaSessao(idSessao: number) {
-        setCarregando('Buscando Sessão');
-
-        try {
-            setSessaoSelecionada(await obtemSessaoGeral(idSessao));
-        } catch {
-            setSessaoSelecionada(null);
-        } finally {
-            setCarregando(null);
-        }
-    };
-
-    async function limpaSessao() { setSessaoSelecionada(null); };
-
-    async function alteraSessaoManualmente(direcao: 'anterior' | 'seguinte') {
-        if ((direcao === 'anterior' && navegacaoSessoes.idSessaoAnterior === undefined) || (direcao === 'seguinte') && navegacaoSessoes.idSessaoSeguinte === undefined) return;
-
-        if (direcao === 'anterior' && !navegacaoSessoes.idSessaoAnterior) { limpaSessao(); return; }
-
-        const idSessaoBuscandoManualmente = direcao === 'anterior' ? navegacaoSessoes.idSessaoAnterior! : navegacaoSessoes.idSessaoSeguinte!;
-        buscaSessao(idSessaoBuscandoManualmente);
-    };
-
     useEffect(() => {
         buscaGrupoAventuraSelecionado(idGrupoAventura);
-    }, []);
+    }, [idGrupoAventura]);
 
     useEffect(() => {
         if (episodioIndexInicial === 0) {
@@ -100,7 +133,7 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
             const sessoesOrdenadas = grupoAventuraSelecionado.detalhesSessoesAventuras.sort((a, b) => a.episodio - b.episodio);
 
             if (sessoesOrdenadas && episodioIndexInicial > 0 && episodioIndexInicial <= sessoesOrdenadas.length) {
-                const sessao = sessoesOrdenadas[episodioIndexInicial - 1]; // -1 porque arrays começam em 0
+                const sessao = sessoesOrdenadas[episodioIndexInicial - 1];
                 buscaSessao(sessao.sessao.id);
             }
         }
@@ -113,7 +146,15 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
     if (!grupoAventuraSelecionado) return;
 
     return (
-        <ContextoPaginaAventura.Provider value={{ grupoAventuraSelecionado, buscaGrupoAventuraSelecionado, sessaoSelecionada, buscaSessao, limpaSessao, podeAlterarSessaoManualmente, alteraSessaoManualmente }}>
+        <ContextoPaginaAventura.Provider value={{
+            grupoAventuraSelecionado,
+            buscaGrupoAventuraSelecionado,
+            sessaoSelecionada,
+            buscaSessao,
+            limpaSessao,
+            podeAlterarSessaoManualmente,
+            alteraSessaoManualmente
+        }}>
             {children}
         </ContextoPaginaAventura.Provider>
     );

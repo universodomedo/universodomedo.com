@@ -9,6 +9,8 @@ import { useContextoPaginaAventuras } from 'Contextos/ContextoPaginaAventuras/co
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 
+import { QUERY_PARAMS } from 'Constantes/parametros_query';
+
 export function ItemAventuraLista({ aventura }: { aventura: AventuraDto }) {
     const { buscaAventuraSelecionada, aventuraSelecionada } = useContextoPaginaAventuras();
 
@@ -34,7 +36,7 @@ export function UltimasSessoesPostadas() {
 
             <div id={styles.recipiente_cartas_ultimas_sessoes_postadas}>
                 {detalhesUltimasSessoesPostadas?.map(detalheSessao => (
-                    <CustomLink key={detalheSessao.sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} href={`/aventura/${detalheSessao.sessao.detalheSessaoAventura.grupoAventura.id}?${detalheSessao.sessao.detalheSessaoAventura.episodio}`}>
+                    <CustomLink key={detalheSessao.sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} href={`/aventura/${detalheSessao.sessao.detalheSessaoAventura.grupoAventura.id}?${QUERY_PARAMS.EPISODIO}=${detalheSessao.sessao.detalheSessaoAventura.episodio}`}>
                         <div className={styles.recipiente_capa_carta_sessao_recente}>
                             <RecipienteImagem src={detalheSessao.sessao.detalheSessaoAventura.grupoAventura.aventura.imagemCapa?.fullPath} />
                         </div>
