@@ -1,8 +1,8 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, startTransition } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { GrupoAventuraDto, SessaoDto } from 'types-nora-api';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useSearchParams, usePathname } from 'next/navigation';
 
 import { obtemSessaoGeral, buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
@@ -32,30 +32,19 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
 
     const searchParams = useSearchParams();
-    const router = useRouter();
     const pathname = usePathname();
 
-    const atualizarParametroURL = (episodioIndex: number | null) => {
-        const params = new URLSearchParams(searchParams.toString());
+    async function buscaGrupoAventuraSelecionado(idGrupoAventura: number) {
+        setCarregando('Buscando Episódios');
 
-        if (episodioIndex === null || episodioIndex === 0) {
-            params.delete(QUERY_PARAMS.EPISODIO);
-        } else {
-            params.set(QUERY_PARAMS.EPISODIO, episodioIndex.toString());
+        try {
+            setGrupoAventuraSelecionado(await buscaGrupoAventuraEspecifico(idGrupoAventura));
+        } catch {
+            setGrupoAventuraSelecionado(null);
+        } finally {
+            setCarregando(null);
         }
-
-        const novaURL = `${pathname}?${params.toString()}`;
-
-        window.history.replaceState(null, '', novaURL);
     };
-
-    useEffect(() => {
-        if (sessaoSelecionada && sessaoSelecionada.detalheSessaoAventura?.episodio) {
-            atualizarParametroURL(sessaoSelecionada.detalheSessaoAventura.episodio);
-        } else if (sessaoSelecionada === null) {
-            atualizarParametroURL(null);
-        }
-    }, [sessaoSelecionada]);
 
     async function buscaSessao(idSessao: number) {
         setCarregando('Buscando Sessão');
@@ -69,9 +58,7 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
         }
     };
 
-    async function limpaSessao() {
-        setSessaoSelecionada(null);
-    };
+    async function limpaSessao() { setSessaoSelecionada(null); };
 
     const detalhesSessao = !grupoAventuraSelecionado ? [] : grupoAventuraSelecionado.detalhesSessoesAventuras || [];
     const indexAtual = sessaoSelecionada ? detalhesSessao.findIndex(detalheSessao => detalheSessao.sessao.id === sessaoSelecionada.id) : -1;
@@ -107,16 +94,19 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
         buscaSessao(idSessaoBuscandoManualmente);
     };
 
-    async function buscaGrupoAventuraSelecionado(idGrupoAventura: number) {
-        setCarregando('Buscando Episódios');
 
-        try {
-            setGrupoAventuraSelecionado(await buscaGrupoAventuraEspecifico(idGrupoAventura));
-        } catch {
-            setGrupoAventuraSelecionado(null);
-        } finally {
-            setCarregando(null);
+    const atualizarParametroURL = (episodioIndex: number | null) => {
+        const params = new URLSearchParams(searchParams.toString());
+
+        if (episodioIndex === null || episodioIndex === 0) {
+            params.delete(QUERY_PARAMS.EPISODIO);
+        } else {
+            params.set(QUERY_PARAMS.EPISODIO, episodioIndex.toString());
         }
+
+        const novaURL = `${pathname}?${params.toString()}`;
+
+        window.history.replaceState(null, '', novaURL);
     };
 
     useEffect(() => {
@@ -138,6 +128,14 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
             }
         }
     }, [episodioIndexInicial, grupoAventuraSelecionado]);
+
+    useEffect(() => {
+        if (sessaoSelecionada && sessaoSelecionada.detalheSessaoAventura?.episodio) {
+            atualizarParametroURL(sessaoSelecionada.detalheSessaoAventura.episodio);
+        } else if (sessaoSelecionada === null) {
+            atualizarParametroURL(null);
+        }
+    }, [sessaoSelecionada]);
 
     if (carregando) return <div>{carregando}</div>;
 

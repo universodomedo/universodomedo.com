@@ -6,10 +6,7 @@ import { PersonagemDto } from 'types-nora-api';
 import { me_obtemPersonagens, obtemDadosPersonagemDoUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
 interface ContextoListagemPersonagensProps {
-    personagensDoUsuario: PersonagemDto[] | null;
-    personagemSelecionado: PersonagemDto | null;
-    buscaDadosPersonagemSelecionado: (idPersonagem: number) => void;
-    deselecionaPersonagem: () => void;
+    personagens: PersonagemDto[] | null;
 };
 
 const ContextoListagemPersonagens = createContext<ContextoListagemPersonagensProps | undefined>(undefined);
@@ -22,36 +19,19 @@ export const useContextoListagemPersonagens = (): ContextoListagemPersonagensPro
 
 export const ContextoListagemPersonagensProvider = ({ children, idTipoPersonagem }: { children: React.ReactNode; idTipoPersonagem: number; }) => {
     const [carregando, setCarregando] = useState(true);
-    const [personagensDoUsuario, setPersonagensDoUsuario] = useState<PersonagemDto[] | null>(null);
-    const [personagemSelecionado, setPersonagemSelecionado] = useState<PersonagemDto | null>(null);
+    const [personagens, setPersonagens] = useState<PersonagemDto[] | null>(null);
 
     async function buscaTodosPersonagensUsuario() {
         setCarregando(true);
 
         try {
-            setPersonagensDoUsuario(await me_obtemPersonagens(idTipoPersonagem));
+            setPersonagens(await me_obtemPersonagens(idTipoPersonagem));
         } catch {
-            setPersonagensDoUsuario(null);
+            setPersonagens(null);
         } finally {
             setCarregando(false);
         }
     }
-
-    async function buscaDadosPersonagemSelecionado(idPersonagem: number) {
-        setCarregando(true);
-
-        try {
-            setPersonagemSelecionado(await obtemDadosPersonagemDoUsuario(idPersonagem));
-        } catch (error) {
-            setPersonagemSelecionado(null);
-        } finally {
-            setCarregando(false);
-        }
-    }
-
-    function deselecionaPersonagem() {
-        setPersonagemSelecionado(null);
-    };
 
     useEffect(() => {
         buscaTodosPersonagensUsuario();
@@ -60,7 +40,7 @@ export const ContextoListagemPersonagensProvider = ({ children, idTipoPersonagem
     if (carregando) return <div>Carregando personagens</div>;
 
     return (
-        <ContextoListagemPersonagens.Provider value={{ personagensDoUsuario, personagemSelecionado, buscaDadosPersonagemSelecionado, deselecionaPersonagem }}>
+        <ContextoListagemPersonagens.Provider value={{ personagens }}>
             {children}
         </ContextoListagemPersonagens.Provider>
     );

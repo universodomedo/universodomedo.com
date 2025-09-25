@@ -28,6 +28,7 @@ export function ItensMenuSwiperEsquerda() {
                 { titulo: "Administrador", link: "/minhas-paginas/admin", condicao: ehAdmin }
             ]
         },
+        { titulo: "Personagens", link: "/personagens" },
         { titulo: "Assistir", link: "/aventuras" },
         { titulo: "Sessão Ao Vivo", link: "/sessao-aovivo" },
         { titulo: "Hall", link: "/minha-pagina", condicao: estaAutenticado },
