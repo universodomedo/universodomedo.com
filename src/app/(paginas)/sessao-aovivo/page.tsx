@@ -77,7 +77,7 @@ function PaginaSessao_Slot() {
                     </div>
                 </div>
             </div>
-            <IconeFaixaEtaria />
+            {/* <IconeFaixaEtaria />s */}
         </div>
     );
 };
