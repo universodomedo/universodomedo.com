@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { PersonagemDto } from 'types-nora-api';
-import { me_obtemPersonagens, obtemDadosPersonagemDoUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
+import { me_obtemPersonagens } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
 interface ContextoListagemPersonagensProps {
     personagens: PersonagemDto[] | null;

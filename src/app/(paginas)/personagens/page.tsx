@@ -13,7 +13,7 @@ export default async function PaginaPersonagens({ searchParams }: { searchParams
 
     return (
         <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.AVENTURA, comCabecalho: false, usuarioObrigatorio: false }}>
-            <ContextoPaginaPersonagensProvider>
+            <ContextoPaginaPersonagensProvider idPersonagemInicial={idPersonagem}>
                 <PaginaPersonagens_Contexto />
             </ContextoPaginaPersonagensProvider>
         </ControladorSlot>

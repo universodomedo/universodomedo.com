@@ -18,7 +18,7 @@ export function PaginaMestreSessao_Contexto() {
 
     return (
         <LayoutContextualizado proporcaoConteudo={84}>
-            <LayoutContextualizado.Conteudo hrefPaginaRetorno={hrefPaginaRetorno}>
+            <LayoutContextualizado.Conteudo props={{ tipo: 'href', hrefPaginaRetorno: hrefPaginaRetorno, tituloTooltip: 'Voltar' }}>
                 <PaginaMestreSessao_Conteudo />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>

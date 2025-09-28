@@ -1,25 +1,27 @@
 'use client';
-import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 
-import { useContextoEvoluindoPersonagem } from 'Contextos/ContextoEvoluindoPersonagem/contexto.tsx';
+import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
 
-import ResumoInicial from 'Componentes/EdicaoFicha/paginas-etapas/resumo-inicial.tsx';
-import ResumoFinal from 'Componentes/EdicaoFicha/paginas-etapas/resumo-final.tsx';
-import SelecaoClasse from 'Componentes/EdicaoFicha/paginas-etapas/selecao-classe.tsx';
-import InformativoAumentoMaximoAtributo from 'Componentes/EdicaoFicha/paginas-etapas/informativo-aumento-maximo-atributo.tsx';
-import EdicaoEstatisticas from 'Componentes/EdicaoFicha/paginas-etapas/edicao-estatisticas.tsx';
-import InformativoPontosHabilidadeEspecial from 'Componentes/EdicaoFicha/paginas-etapas/informativo-pontos-habilidade-especial.tsx';
-import EdicaoAtributos from 'Componentes/EdicaoFicha/paginas-etapas/edicao-atributos.tsx';
-import EdicaoPericias from 'Componentes/EdicaoFicha/paginas-etapas/edicao-pericias.tsx';
-import EdicaoHabilidadesParanormais from 'Componentes/EdicaoFicha/paginas-etapas/informativo-aumento-habilidades-paranormais';
-import EdicaoHabilidadesElementais from 'Componentes/EdicaoFicha/paginas-etapas/informativo-aumento-habilidades-elementais';
+import { useContextoPaginaPersonagens } from 'Contextos/ContextoPaginaPersonagens/contexto'
+import { useContextoPaginaPersonagem } from 'Contextos/ContextoPaginaPersonagem/contexto';
 
-import { obtemGanhosAposSelecaoClasse, obtemGanhosParaEvoluir } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import ResumoInicial from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/paginas-etapas/resumo-inicial.tsx';
+import ResumoFinal from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/paginas-etapas/resumo-final.tsx';
+import SelecaoClasse from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/paginas-etapas/selecao-classe.tsx';
+import InformativoAumentoMaximoAtributo from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/paginas-etapas/informativo-aumento-maximo-atributo.tsx';
+import EdicaoEstatisticas from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/paginas-etapas/edicao-estatisticas.tsx';
+import InformativoPontosHabilidadeEspecial from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/paginas-etapas/informativo-pontos-habilidade-especial.tsx';
+import EdicaoAtributos from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/paginas-etapas/edicao-atributos.tsx';
+import EdicaoPericias from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/paginas-etapas/edicao-pericias.tsx';
+import EdicaoHabilidadesParanormais from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/paginas-etapas/informativo-aumento-habilidades-paranormais';
+import EdicaoHabilidadesElementais from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/paginas-etapas/informativo-aumento-habilidades-elementais';
+
+import { obtemGanhosAposSelecaoClasse, obtemGanhosParaEvoluir, salvarEvolucaoDoPersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { AtributoDto, AtributoFicha, ClasseDto, DadosDoTipoGanho, DadosGanho_Atributos, DadosGanho_Classes, DadosGanho_Estatisticas, DadosGanho_Pericias, DadosGanho_PontosHabilidadeElemental, DadosGanho_PontosHabilidadesEspeciais, DadosGanho_PontosHabilidadesParanormais, DadosGanho_ValorMaximoAtributo, DetalheEvolucao, DetalheFicha, EstatisticaDanificavelDto, EstatisticaDanificavelFicha, FichaDeJogo, FichaPersonagemDto, GanhoEstatistica, GanhoNivelClasseDto, IPericia, NivelDto, ObjetoGanhosEvolucao, PatentePericiaDto, PericiaDto, PericiaFicha, PersonagemDto, RegistroPericiaLivre, TipoGanhoNivelDto } from 'types-nora-api';
 import { pluralize } from 'Uteis/UteisTexto/pluralize';
+import { PAGINA_PERSONAGEM } from 'Componentes/PaginaPersonagem/types';
 
-import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
-import React from 'react';
 
 export class GanhosEvolucao {
     public ganhosEstatisticasPorAtributo: GanhoEstatistica[] = [];
@@ -1642,7 +1644,9 @@ export const useContextoEdicaoFicha = (): ContextoEdicaoFichaProps => {
 };
 
 export const ContextoEdicaoFichaProvider = ({ children }: { children: React.ReactNode }) => {
-    const { personagemEvoluindo, salvarEvolucao, deselecionaPersonagemEvoluindo } = useContextoEvoluindoPersonagem();
+    const [carregando, setCarregando] = useState<string | null>('');
+    const { personagemSelecionado } = useContextoPaginaPersonagens();
+    const { navegarPara } = useContextoPaginaPersonagem();
     const [personagemEmEdicao, setPersonagemEmEdicao] = useState<PersonagemDto | null>(null);
     const [ganhos, setGanhos] = useState<GanhosEvolucao | null>(null);
 
@@ -1684,7 +1688,7 @@ export const ContextoEdicaoFichaProvider = ({ children }: { children: React.Reac
 
     function criarMetodoDeselecionarPersonagem(): () => void {
         return () => {
-            deselecionaPersonagemEvoluindo();
+            navegarPara(PAGINA_PERSONAGEM.INICIAL);
         };
     }
 
@@ -1710,13 +1714,25 @@ export const ContextoEdicaoFichaProvider = ({ children }: { children: React.Reac
         }
     }
 
+    async function salvarEvolucao(fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo): Promise<boolean> {
+        setCarregando('Salvando Edições do Personagem');
+
+        try {
+            return salvarEvolucaoDoPersonagem(fichaEvoluida, fichaDeJogoEvoluida);
+        } catch {
+            return false;
+        }
+    }
+
     useEffect(() => {
-        setPersonagemEmEdicao(personagemEvoluindo);
+        setPersonagemEmEdicao(personagemSelecionado);
     }, []);
 
     useEffect(() => {
         carregaGanhos();
     }, [personagemEmEdicao]);
+
+    if (carregando) return <h2>{carregando}</h2>
 
     if (!personagemEmEdicao) return;
 

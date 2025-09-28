@@ -6,7 +6,7 @@ import { createContext, ReactNode, useContext } from 'react';
 import cn from 'classnames';
 
 import useScrollable from '../ElementoScrollable/useScrollable';
-import FerramentaRetornoPagina from 'Componentes/Elementos/FerramentaRetornoPagina/FerramentaRetornoPagina';
+import { FerramentaRetornoPagina, LayoutContextualizadoFecharProps } from 'Componentes/Elementos/FerramentaRetornoPagina/FerramentaRetornoPagina';
 
 
 interface ProporcoesContextType {
@@ -41,13 +41,13 @@ export default function LayoutContextualizado({ children, proporcaoConteudo }: {
     );
 };
 
-LayoutContextualizado.Conteudo = function Conteudo({ children, escondeFundo = false, titulo, hrefPaginaRetorno }: { children: ReactNode; escondeFundo?: boolean; titulo?: string; hrefPaginaRetorno?: string }) {
+LayoutContextualizado.Conteudo = function Conteudo({ children, escondeFundo = false, titulo, props }: { children: ReactNode; escondeFundo?: boolean; titulo?: string; props?: LayoutContextualizadoFecharProps }) {
     const { proporcaoConteudo } = useProporcoesLayout();
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
 
     return (
         <div id={styles.recipiente_layout_contextualizado_conteudo} className={cn(escondeFundo && styles.fundo_layout_contextualizado_conteudo)} style={{ width: `${proporcaoConteudo}%` }} {...scrollableProps}>
-            {hrefPaginaRetorno && <FerramentaRetornoPagina hrefPaginaRetorno={hrefPaginaRetorno} />}
+            {props != undefined && <FerramentaRetornoPagina props={props} />}
             {titulo && <h1 id={styles.titulo_conteudo}>{titulo}</h1>}
             {children}
         </div>

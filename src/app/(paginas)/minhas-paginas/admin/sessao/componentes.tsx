@@ -14,7 +14,7 @@ import { ContextoCadastroNovoLinkSessaoProvider } from 'Contextos/ContextoCadast
 export function AdministrarSessao_Slot({ sessao }: { sessao: SessaoDto; }) {
     return (
         <LayoutContextualizado proporcaoConteudo={84}>
-            <LayoutContextualizado.Conteudo hrefPaginaRetorno={`/minhas-paginas/admin/aventura/${sessao.detalheSessaoAventura.grupoAventura.id}`}>
+            <LayoutContextualizado.Conteudo props={{ tipo: 'href', hrefPaginaRetorno: `/minhas-paginas/admin/aventura/${sessao.detalheSessaoAventura.grupoAventura.id}`, tituloTooltip: 'Voltar' }}>
                 <AdministrarSessao_Conteudo sessao={sessao} />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>

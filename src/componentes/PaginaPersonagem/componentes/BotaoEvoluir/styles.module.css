@@ -1,0 +1,10 @@
+#recipiente_botao_evoluir {
+    width: fit-content;
+    margin: 1em auto;
+    padding: 1em;
+    
+    & button {
+        font-size: 1em;
+        padding: .6em;
+    }
+}

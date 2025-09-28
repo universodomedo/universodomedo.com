@@ -50,8 +50,8 @@ export async function me_obtemPersonagens(idTipoPersonagem?: number) {
     return await useApi<PersonagemDto[]>({ uri: '/personagens/me/me_obtemPersonagens', method: 'GET', params: { idTipoPersonagem } });
 }
 
-export async function obtemDadosPersonagemDoUsuario(idPersonagem: number) {
-    return await useApi<PersonagemDto>({ uri: '/personagens/obtemDadosPersonagemDoUsuario', method: 'GET', params: { idPersonagem } });
+export async function obtemDadosInteligentePersonagem(idPersonagem: number) {
+    return await useApi<PersonagemDto>({ uri: '/personagens/obtemDadosInteligentePersonagem', method: 'GET', params: { idPersonagem } });
 }
 
 export async function obtemTiposImagem() {

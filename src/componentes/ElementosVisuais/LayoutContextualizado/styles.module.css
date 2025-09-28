@@ -15,8 +15,8 @@
 #recipiente_layout_contextualizado_conteudo {
     display: flex;
     flex-direction: column;
-    gap: 1vw;
-    border-radius: 1vw;
+    gap: 2%;
+    border-radius: 1.2em;
     align-items: center;
 }
 

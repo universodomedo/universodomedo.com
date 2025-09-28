@@ -1,8 +1,8 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { GrupoAventuraDto, SessaoDto } from 'types-nora-api';
 import { useSearchParams, usePathname } from 'next/navigation';
+import { GrupoAventuraDto, SessaoDto } from 'types-nora-api';
 
 import { obtemSessaoGeral, buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
@@ -94,7 +94,6 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
         buscaSessao(idSessaoBuscandoManualmente);
     };
 
-
     const atualizarParametroURL = (episodioIndex: number | null) => {
         const params = new URLSearchParams(searchParams.toString());
 
@@ -130,11 +129,8 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
     }, [episodioIndexInicial, grupoAventuraSelecionado]);
 
     useEffect(() => {
-        if (sessaoSelecionada && sessaoSelecionada.detalheSessaoAventura?.episodio) {
-            atualizarParametroURL(sessaoSelecionada.detalheSessaoAventura.episodio);
-        } else if (sessaoSelecionada === null) {
-            atualizarParametroURL(null);
-        }
+        if (sessaoSelecionada && sessaoSelecionada.detalheSessaoAventura?.episodio) atualizarParametroURL(sessaoSelecionada.detalheSessaoAventura.episodio);
+        else atualizarParametroURL(null);
     }, [sessaoSelecionada]);
 
     if (carregando) return <div>{carregando}</div>;
@@ -144,15 +140,7 @@ export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, epis
     if (!grupoAventuraSelecionado) return;
 
     return (
-        <ContextoPaginaAventura.Provider value={{
-            grupoAventuraSelecionado,
-            buscaGrupoAventuraSelecionado,
-            sessaoSelecionada,
-            buscaSessao,
-            limpaSessao,
-            podeAlterarSessaoManualmente,
-            alteraSessaoManualmente
-        }}>
+        <ContextoPaginaAventura.Provider value={{ grupoAventuraSelecionado, buscaGrupoAventuraSelecionado, sessaoSelecionada, buscaSessao, limpaSessao, podeAlterarSessaoManualmente, alteraSessaoManualmente }}>
             {children}
         </ContextoPaginaAventura.Provider>
     );
