@@ -16,24 +16,29 @@ interface ItemMenu {
 };
 
 export function ItensMenuSwiperEsquerda() {
-    const { estaAutenticado, ehMestre, ehAdmin } = useContextoAutenticacao();
+    // const { estaAutenticado, ehMestre, ehAdmin } = useContextoAutenticacao();
+    const estaAutenticado = false;
+    const ehMestre = false;
+    const ehAdmin = false;
 
     const itensMenu: ItemMenu[] = [
-        {
-            titulo: "Minhas Páginas",
-            subitens: [
-                { titulo: "Jogador", link: "/minhas-paginas/jogador", condicao: estaAutenticado },
-                { titulo: "Disponibilidades", link: "/minhas-paginas/minhas-disponibilidades", condicao: estaAutenticado },
-                { titulo: "Mestre", link: "/minhas-paginas/mestre", condicao: ehMestre },
-                { titulo: "Administrador", link: "/minhas-paginas/admin", condicao: ehAdmin }
-            ]
-        },
-        { titulo: "Personagens", link: "/personagens" },
-        { titulo: "Assistir", link: "/aventuras" },
-        { titulo: "Sessão Ao Vivo", link: "/sessao-aovivo" },
-        { titulo: "Hall", link: "/minha-pagina", condicao: estaAutenticado },
-        { titulo: "Definições", link: "/definicoes" },
-        { titulo: "Dicas", link: "/dicas" }
+        // {
+        //     titulo: "Minhas Páginas",
+        //     subitens: [
+        //         { titulo: "Jogador", link: "/minhas-paginas/jogador", condicao: estaAutenticado },
+        //         { titulo: "Disponibilidades", link: "/minhas-paginas/minhas-disponibilidades", condicao: estaAutenticado },
+        //         { titulo: "Mestre", link: "/minhas-paginas/mestre", condicao: ehMestre },
+        //         { titulo: "Administrador", link: "/minhas-paginas/admin", condicao: ehAdmin }
+        //     ]
+        // },
+        // { titulo: "Personagens", link: "/personagens" },
+        // { titulo: "Assistir", link: "/aventuras" },
+        // { titulo: "Sessão Ao Vivo", link: "/sessao-aovivo" },
+        // { titulo: "Hall", link: "/minha-pagina", condicao: estaAutenticado },
+        // { titulo: "Definições", link: "/definicoes" },
+        // { titulo: "Dicas", link: "/dicas" }
+        // ITENS DO MENU
+        { titulo: 'Pagina 1', link: '/pagina1' }
     ];
 
     return (

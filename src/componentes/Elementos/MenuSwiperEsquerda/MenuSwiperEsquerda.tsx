@@ -12,7 +12,7 @@ import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-bra
 import { faUserSecret, faUserTie, faFireFlameCurved, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+// import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { ItensMenuSwiperEsquerda } from './componentes';
 import { DivClicavel } from '../DivClicavel/DivClicavel';
 
@@ -34,7 +34,7 @@ export default function MenuSwiperEsquerda() {
 };
 
 function ConteudoSwiperEsquerda() {
-    const { estaAutenticado } = useContextoAutenticacao();
+    // const { estaAutenticado } = useContextoAutenticacao();
 
     async function logout() {
         await obtemObjetoAutenticacao();
@@ -58,7 +58,7 @@ function ConteudoSwiperEsquerda() {
                     <ItensMenuSwiperEsquerda />
                     <div id={styles.recipiente_icones_swiper_esquerda}>
                         <div id={styles.recipiente_configuracoes}>
-                            {estaAutenticado && <DivClicavel onClick={logout}><h2>Desconectar</h2></DivClicavel>}
+                            {/* {estaAutenticado && <DivClicavel onClick={logout}><h2>Desconectar</h2></DivClicavel>} */}
                         </div>
                         <div id={styles.recipiente_icones_redes_sociais}>
                             <Link target='_blank' href='https://discord.universodomedo.com'><FontAwesomeIcon icon={faDiscord} /></Link>
