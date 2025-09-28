@@ -1,12 +1,13 @@
 import styles from './styles.module.css';
 
-import { AtributoFichaDto, PericiaFichaDto } from 'types-nora-api';
+import { AtributoFicha, PericiaFicha, SOCKET_EVENTOS } from 'types-nora-api';
 import textoFormatadoParaVisualizacao from 'Uteis/UteisTexto/textoFormatadoParaVisualizacao';
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
 import adicionaSinalEmNumeroParaExibicao from 'Uteis/UteisTexto/adicionaSinalEmNumeroParaExibicao';
 
 import { useContextoFichaPersonagem } from "Contextos/ContextoFichaPersonagem/contexto";
 import { useContextoControleAtributosPericias } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAtributosPericias/contexto';
+import emitSocketEvent from 'Libs/emitSocketEvent';
 
 export default function PaginaControleAtributosPericias() {
     const { ficha } = useContextoFichaPersonagem();
@@ -23,7 +24,7 @@ export default function PaginaControleAtributosPericias() {
     );
 };
 
-function AreaAtributo({ atributoPersonagem, periciasPersonagem }: { atributoPersonagem: AtributoFichaDto, periciasPersonagem: PericiaFichaDto[] }) {
+function AreaAtributo({ atributoPersonagem, periciasPersonagem }: { atributoPersonagem: AtributoFicha, periciasPersonagem: PericiaFicha[] }) {
     const { abreviar } = useContextoControleAtributosPericias();
     const atributoPorExtenso = textoFormatadoParaVisualizacao(abreviar ? atributoPersonagem.atributo.nomeAbreviado : atributoPersonagem.atributo.nome);
 
@@ -48,15 +49,39 @@ function AreaAtributo({ atributoPersonagem, periciasPersonagem }: { atributoPers
     );
 }
 
-function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFichaDto }) {
+function TooltipAtributo({ atributoPersonagem }: { atributoPersonagem: AtributoFicha }) {
+    return (
+        <>
+            <h2>{atributoPersonagem.atributo.nome}</h2>
+            <p>{atributoPersonagem.atributo.descricao}</p>
+
+            {/* verificando se existe algum bonus além do valor natural */}
+            {atributoPersonagem.detalhesValor.length > 0 && (
+                <>
+                    <h2>Detalhes do Total: {atributoPersonagem.valorTotal}</h2>
+                    {/* {atributoPersonagem.detalhesValor.map((detalheValor, index) => (
+                        <p key={index}>{detalheValor}</p>
+                    ))} */}
+                </>
+            )}
+        </>
+    );
+}
+
+
+function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFicha }) {
     const { abreviar } = useContextoControleAtributosPericias();
     const periciaPorExtenso = textoFormatadoParaVisualizacao(abreviar ? periciaPersonagem.pericia.nomeAbreviado : periciaPersonagem.pericia.nome);
+
+    function enviaTeste(idPericia: number) {
+        emitSocketEvent(SOCKET_EVENTOS.GameEngine.enviarMensagem, { idPericia: idPericia });
+    };
 
     return (
         <div className={styles.pericia_personagem}>
             <Tooltip>
                 <Tooltip.Trigger>
-                    <button className={styles.botao_pericia} onClick={() => {() => {console.log(`clicou para realizar teste de ${periciaPersonagem.pericia.nome}`)}}}>{periciaPorExtenso}</button>
+                    <button className={styles.botao_pericia} onClick={() => { enviaTeste(periciaPersonagem.pericia.id); }}>{periciaPorExtenso}</button>
                     {/* <button className={styles.botao_pericia} onClick={() => { periciaPersonagem.realizarTeste(); }}>{periciaPorExtenso}</button> */}
                 </Tooltip.Trigger>
 
@@ -77,26 +102,7 @@ function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFichaDto
     );
 }
 
-function TooltipAtributo({ atributoPersonagem }: { atributoPersonagem: AtributoFichaDto }) {
-    return (
-        <>
-            <h2>{atributoPersonagem.atributo.nome}</h2>
-            <p>{atributoPersonagem.atributo.descricao}</p>
-
-            {/* verificando se existe algum bonus além do valor natural */}
-            {atributoPersonagem.detalhesValor.length > 0 && (
-                <>
-                    <h2>Detalhes do Total: {atributoPersonagem.valorTotal}</h2>
-                    {atributoPersonagem.detalhesValor.map((detalheValor, index) => (
-                        <p key={index}>{detalheValor}</p>
-                    ))}
-                </>
-            )}
-        </>
-    );
-}
-
-function TooltipPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFichaDto }) {
+function TooltipPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFicha }) {
     return (
         <>
             <h1>{periciaPersonagem.pericia.nome}</h1>
@@ -106,9 +112,9 @@ function TooltipPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFicha
             {periciaPersonagem.detalhesValor.length > 0 && (
                 <>
                     <h2>Detalhes do Total: {periciaPersonagem.valorTotal}</h2>
-                    {periciaPersonagem.detalhesValor.map((detalheValor, index) => (
+                    {/* {periciaPersonagem.detalhesValor.map((detalheValor, index) => (
                         <p key={index}>{detalheValor}</p>
-                    ))}
+                    ))} */}
                 </>
             )}
         </>

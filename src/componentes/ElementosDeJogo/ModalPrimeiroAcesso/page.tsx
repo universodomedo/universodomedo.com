@@ -89,7 +89,7 @@ export default function ModalPrimeiroAcesso() {
 
     return (
         <Modal open={true} onOpenChange={() => { }}>
-            <Modal.Content title={mostrarTermos ? "Termos de Aceite" : "Bem Vindo ao Universo do Medo!"} className={styles.modal_primeiro_acesso} temBotaoFechar={false}>
+            <Modal.Content cabecalho={ { titulo: mostrarTermos ? "Termos de Aceite" : "Bem Vindo ao Universo do Medo!" } } className={styles.modal_primeiro_acesso} temBotaoFechar={false}>
                 {!mostrarTermos ? (
                     <div className={styles.conteudo_modal_primeiro_acesso_confirmacao}>
                         <div className={styles.confirmacao_explicacao}>

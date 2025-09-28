@@ -1,0 +1,32 @@
+#recipiente_sessao_selecionada {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2vh;
+    width: 100%;
+    height: 100%;
+    padding: .5% 1%;
+}
+
+div.recipiente_avatares {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: 20%;
+    gap: 1vh;
+    align-items: center;
+}
+
+.recipiente_imagem_avatar {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 1;
+}
+
+#recipiente_avatares_jogadores {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    height: 100%;
+    gap: 1vw;
+}

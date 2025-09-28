@@ -36,7 +36,7 @@ export const ContextoSessoesPrevistasProvider = ({ children }: { children: React
     const { episodioSeguinte, episodiosFuturos } = useMemo(() => {
         if (listaEpisodiosPrevistos.length === 0) return { episodioSeguinte: null, episodiosFuturos: [] };
 
-        const ordenados = [...listaEpisodiosPrevistos].sort((a, b) => new Date(a.dataInicioPrevista || 0).getTime() - new Date(b.dataInicioPrevista || 0).getTime());
+        const ordenados = [...listaEpisodiosPrevistos].sort((a, b) => new Date(a.dataPrevisaoInicio || 0).getTime() - new Date(b.dataPrevisaoInicio || 0).getTime());
 
         const episodioSeguinte = ordenados[0];
         const episodiosFuturos = ordenados.slice(1);

@@ -1,0 +1,9 @@
+.editor_wrap {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: .5em;
+    background-color: #EBEBEB;
+    padding: .2em;
+    width: 100%;
+}

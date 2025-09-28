@@ -17,13 +17,13 @@ export default async function PaginaDefinicao({ params }: { params: Promise<{ sl
                             tipo: 'ItemLista',
                             etiqueta: 'Seu primeiro Personagem',
                             subPaginaDefinicao: '/dicas/comecando',
-                            itemDeDuasColunas: true,
+                            // itemDeDuasColunas: true,
                         },
                         {
                             tipo: 'ItemLista',
                             etiqueta: 'Criando e Evoluindo seu Personagem',
                             subPaginaDefinicao: '/dicas/evoluindo',
-                            itemDeDuasColunas: true,
+                            // itemDeDuasColunas: true,
                         }
                     ]
                 },

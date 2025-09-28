@@ -1,38 +1,16 @@
-#recipiente_pagina_aventuras {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    font-family: var(--fonte-cinzel);
-}
-
 #recipiente_barra_busca {
     width: 100%;
     height: 5vh;
-}
-
-#recipiente_corpo_aventuras {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 95vh;
-    gap: 1vw;
-    padding: .5vh .6vw;
-}
-
-#recipiente_aventura_selecionada {
-    display: flex;
-    flex-direction: column;
-    flex: .8;
-    background-color: #3122464D;
-    border-radius: 1vw;
 }
 
 #recipiente_corpo_aventura_selecionada {
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100%;
+    width: 100%;
     padding: 1% 2%;
+    gap: 2vh;
 }
 
 #recipiente_capa_aventura_selecionada {
@@ -43,14 +21,94 @@
     overflow: hidden;
 }
 
-#recipiente_personagens_participantes {
+#recipiente_ultimas_sessoes_postadas {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    text-align: center;
+    align-items: center;
+}
+
+#recipiente_cartas_ultimas_sessoes_postadas {
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+    width: 86%;
+    padding-bottom: 1vh;
+}
+
+.carta_sessao_recente {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: .5%;
+    gap: .8vh;
+    background-color: #C799BE5C;
+    border-radius: 10px;
+
+    &:not(.ativo):hover {
+        box-shadow: 0px 0px 9px 0px #ffffff;
+    }
+}
+
+.recipiente_capa_carta_sessao_recente {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}
+
+.recipiente_info_carta_sessao_recente {
+    display: flex;
+    flex-direction: column;
+    gap: .4vh;
+}
+
+#recipiente_conteudo_selecionado {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    align-items: center;
+}
+
+#recipiente_cabecalho_aventura_selecionada {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 2vh;
+    text-align: center;
+    align-items: center;
+    justify-items: center;
+}
+
+#recipiente_grupos_aventura_selecionada {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    gap: 1vh;
+}
+
+.recipiente_linha_grupo {
     display: flex;
     flex-direction: row;
 }
 
+.linha_grupo_esquerda {
+    flex: 1;
+}
+
+.linha_grupo_direita {
+    align-content: center;
+}
+
+#recipiente_personagens_participantes {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
 .recipiente_imagem_personagem_participante {
     position: relative;
-    height: 5vh;
+    height: 13vh;
     aspect-ratio: 1;
 }
 
@@ -58,96 +116,59 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    overflow: auto;
     flex: .2;
     padding: 1vh .5vw;
     gap: 2vh;
     background-color: #3122464D;
-    border-radius: 1vw;
-    scrollbar-width: none;
-    scrollbar-gutter: stable;
+}
+
+#recipiente_lista_aventuras {
+    display: flex;
+    flex-direction: column;
+    gap: .6%;
+    width: 100%;
+    padding: 0 .3vw
 }
 
 .recipiente_item_menu_aventuras {
     display: flex;
     flex-direction: row;
     gap: .3vw;
-    cursor: pointer;
+    user-select: none;
+
+    &:not(.ativo):hover {
+        box-shadow: 0px 0px 9px 0px #ffffff;
+    }
+
+    &.ativo {
+        color: #FBFF95;
+        background-color: #DBB4F84D;
+    }
+
+    &:not(.ativo):hover {
+        cursor: pointer;
+    }
 }
 
 .recipiente_imagem_aventura_item_menu {
     position: relative;
     aspect-ratio: 16 / 9;
-    width: 40%;
+    width: 43%;
 }
 
 .recipiente_dados_aventura {
     display: flex;
     flex-direction: column;
-    width: 60%;
-    justify-content: space-around;
+    flex: 1;
     align-items: center;
     text-align: center;
+    padding: 1.2% 0 .2%;
 }
 
-/*  */
-/* 
-#recipiente_aventuras {
-    display: flex;
-    flex-direction: column;
-    width: 80%;
-    gap: 4vh;
+.recipiente_dados_aventura_titulo {
+    flex: 1;
 }
 
-.recipiente_geral_aventura {
-    display: flex;
-    flex-direction: column;
-    gap: .6vh;
-}
+.recipiente_dados_aventura_estado {
 
-.recipiente_aventura {
-    display: flex;
-    flex-direction: row;
-    height: 15vh;
-    gap: 2vw;
 }
-
-.recipiente_capa_aventura {
-    position: relative;
-    aspect-ratio: 16 / 9;
-}
-
-.recipiente_dados_aventura {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 1vh;
-    overflow: hidden;
-}
-
-.recipiente_dados_aventura_superior {
-    display: flex;
-    flex-direction: row;
-    gap: 3vw;
-}
-
-.recipiente_dados_aventura_superior h1 {
-    font-size: 3rem;
-    line-height: 2.8rem;
-}
-
-.recipiente_dados_aventura_inferior {
-    display: flex;
-    flex-direction: row;
-    height: 100%;
-}
-
-.recipiente_imagem_participante_aventura {
-    position: relative;
-    height: 100%;
-    aspect-ratio: 1 / 1;
-}
-
-.recipiente_grupos {
-    margin-left: 14.75vw;
-} */

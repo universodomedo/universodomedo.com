@@ -1,0 +1,25 @@
+.recipiente_item_rascunho {
+    display: flex;
+    flex-direction: column;
+    width: 13em;
+    aspect-ratio: 1 / .4;
+    padding: .4em .3em;
+    text-align: center;
+    align-items: center;
+    backdrop-filter: blur(1em) brightness(.6);
+    user-select: none;
+    box-shadow: -1px 1px 7px 2px #000000;
+
+    &:not(.rascunho_indisponivel) {
+        cursor: pointer;
+        backdrop-filter: blur(1em) brightness(.3);
+
+        &:hover {
+            box-shadow: 0px 0px 9px 0px #ffffff;
+        }
+    }
+}
+
+.recipiente_titulo_item_rascunho {
+    flex: 1;
+}

@@ -1,67 +1,14 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useState } from 'react';
 
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
-import { useSocketEvent } from 'Hooks/useSocketEvent';
-import { SOCKET_EVENTOS } from 'types-nora-api';
-import { emitSocketEvent } from 'Libs/emitSocketEvent';
-
 export default function SecaoPosts() {
-    const [messages, setMessages] = useState<string[]>([]);
-    const [newMessage, setNewMessage] = useState<string>('');
-
-    useSocketEvent<string>(SOCKET_EVENTOS.Chat.receberMensagem, (mensagem) => {
-        setMessages((prev) => [mensagem, ...prev]);
-    });
-
-    const sendMessage = () => {
-        console.log(`sendMessage`);
-        console.log(newMessage);
-        if (newMessage.trim()) {
-            emitSocketEvent(SOCKET_EVENTOS.Chat.enviaMensagem, newMessage);
-            setNewMessage('');
-        }
-    };
-
-    const enviaTesteAcao = () => {
-        emitSocketEvent(SOCKET_EVENTOS.Chat.enviaTeste);
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            sendMessage();
-        }
-    };
-
     const { scrollableProps } = useScrollable();
 
     return (
         <div id={styles.recipiente_lista_posts} {...scrollableProps}>
             <h1>Nenhuma postagem encontrada</h1>
-
-            {/* Message input and send button */}
-            <div>
-                <input
-                    type="text"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}  // Update the message state as the user types
-                    placeholder="Type your message here"
-                    className={styles.inputMessage}
-                    onKeyDown={handleKeyDown}  // Listen for key press events
-                    maxLength={60}
-                />
-                <button onClick={sendMessage} className={styles.sendButton}>Send Message</button>
-                <button onClick={enviaTesteAcao} className={styles.sendButton}>Realizar Teste</button>
-            </div>
-
-            {/* Display all messages, with the newest on top */}
-            <div id={styles.recipiente_mensagens}>
-                {messages.map((msg, index) => (
-                    <p key={index}>{msg}</p>
-                ))}
-            </div>
         </div>
     );
 };

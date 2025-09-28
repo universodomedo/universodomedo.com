@@ -41,7 +41,8 @@ export default function PaginaConteudoDinamico({ conteudo, hrefInicio, listaSlug
                                     {conteudo.itensLista.map((item, indexItemLista) => {
                                         if (item.tipo === 'ItemLista') {
                                             return (
-                                                <div key={indexItemLista} className={`${styles.recipiente_opcao_lista} ${item.itemDeDuasColunas ? styles.opcao_lista_duas_colunas : ''}`}>
+                                                <div key={indexItemLista} className={`${styles.recipiente_opcao_lista}`}>
+                                                {/* <div key={indexItemLista} className={`${styles.recipiente_opcao_lista} ${item.itemDeDuasColunas ? styles.opcao_lista_duas_colunas : ''}`}> */}
                                                     <p><Link href={`${item.subPaginaDefinicao}`}>{item.etiqueta}</Link></p>
                                                 </div>
                                             )

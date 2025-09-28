@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { getSocket } from 'Libs/socket';
 import { EventoSocket } from 'types-nora-api';
 
-export function useSocketEvent<T = any>(evento: EventoSocket, handler: (data: T) => void) {
+export default function useSocketEvent<T = any>(evento: EventoSocket, handler: (data: T) => void) {
     const handlerRef = useRef(handler);
     handlerRef.current = handler;
 

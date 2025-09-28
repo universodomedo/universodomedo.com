@@ -1,0 +1,71 @@
+.recipiente_toolbar_tiptap {
+    padding: .4em 0 .2em;
+    overflow-y: auto;
+}
+
+.toolbar_tiptap {
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+
+    & .botao_toolbar {
+        padding: .2em .7em;
+        border: .1em solid #a3a8b1d9;
+        border-radius: 10px;
+        background-color: white;
+        white-space: nowrap;
+
+        &:hover {
+            background-color: #D7EDFF;
+        }
+
+        &.active {
+            background-color: #C9E6FF;
+
+            &:hover {
+                background-color: #C0D1DE;
+            }
+        }
+
+        & .recipiente_svg_botao_toolbar_tiptap {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            & svg {
+                width: auto;
+            }
+        }
+
+        &select {
+            padding: 0 .2em;
+        }
+    }
+}
+
+.ctrl {
+    padding: 6px 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.color {
+    height: 32px;
+    width: 44px;
+    padding: 4px;
+}
+
+.json {
+    margin-top: 8px;
+
+    & pre {
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 12px;
+        max-height: 260px;
+        overflow: auto;
+    }
+}

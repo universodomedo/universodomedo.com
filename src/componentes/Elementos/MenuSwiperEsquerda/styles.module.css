@@ -149,8 +149,16 @@
     flex-direction: row;
     width: 100%;
     gap: 10%;
-    height: 5vh;
     justify-content: center;
+}
+
+#recipiente_configuracoes h2 {
+    cursor: pointer;
+    
+    &:hover {
+        transition: .7s;
+        color: rgb(255, 92, 92);
+    }
 }
 
 .recipiente_configuracao_individual {
@@ -192,6 +200,10 @@
     display: block;
 }
 
+.item_menu h3 {
+    font-family: var(--fonte-junge);
+}
+
 .conteudo_item_menu {
     display: flex;
     align-items: center;
@@ -199,11 +211,14 @@
     width: 100%;
 }
 
-.conteudo_item_menu h3 {
-    font-family: var(--fonte-junge);
+.recipiente_subitens {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1vw;
+    margin-top: .3vh;
 }
 
-.item_menu:hover .recipiente_icone_link {
+.conteudo_item_menu:hover .recipiente_icone_link {
     transform: translateX(-25%);
 }
 

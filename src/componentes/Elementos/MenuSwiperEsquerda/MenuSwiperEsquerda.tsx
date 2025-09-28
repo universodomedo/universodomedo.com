@@ -13,7 +13,8 @@ import { faUserSecret, faUserTie, faFireFlameCurved, faRightToBracket } from "@f
 
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
-import { useContextoPerformance } from "Contextos/ContextoPerformace/contexto";
+import { ItensMenuSwiperEsquerda } from './componentes';
+import { DivClicavel } from '../DivClicavel/DivClicavel';
 
 export default function MenuSwiperEsquerda() {
     const { menuAberto, setMenuAberto, tamanhoReduzido } = useContextoMenuSwiperEsquerda();
@@ -33,41 +34,14 @@ export default function MenuSwiperEsquerda() {
 };
 
 function ConteudoSwiperEsquerda() {
-    const { estaAutenticado, ehMestre, ehAdmin, numeroPendenciasPersonagem } = useContextoAutenticacao();
-    const { animacoesLigadas, setAnimacoesHabilitadas } = useContextoPerformance();
+    const { estaAutenticado } = useContextoAutenticacao();
 
     async function logout() {
         await obtemObjetoAutenticacao();
         desconectar();
         window.location.href = `/`;
     }
-
-    const obterItensMenu = (): { link: string, target: string, titulo: string, condicao?: boolean }[] => {
-        return [
-            { link: '/aventuras', target: '', titulo: 'Aventuras' },
-            { link: '/sessao', target: '', titulo: 'Sessão Ao Vivo' },
-            { link: '/definicoes', target: '', titulo: 'Definições' },
-            { link: '/dicas', target: '', titulo: 'Dicas' },
-            { link: '/em-jogo', target: '', titulo: 'Ficha de Demonstração' },
-            { link: '/minha-pagina', target: '', titulo: 'Minha Página', condicao: estaAutenticado },
-            { link: '/meus-personagens', target: '', titulo: 'Meus Personagens', condicao: estaAutenticado },
-            // { link: '/minhas-disponibilidades', target: '', titulo: 'Minhas Disponibilidades', condicao: estaAutenticado },
-            // { link: '/linha-do-tempo', target: '', titulo: 'Linha do Tempo' },
-        ];
-    };
-
-    const obterItensConfiguracao = (): { elemento: ReactNode, condicao?: boolean }[] => {
-        return [
-            { elemento: <FontAwesomeIcon icon={faFireFlameCurved} onClick={() => setAnimacoesHabilitadas(!animacoesLigadas)} /> },
-            { elemento: <FontAwesomeIcon icon={faRightToBracket} onClick={logout} />, condicao: estaAutenticado },
-            { elemento: <Link href={'/mestre'}><FontAwesomeIcon icon={faUserSecret} /></Link>, condicao: ehMestre },
-            { elemento: <Link href={'/admin'}><FontAwesomeIcon icon={faUserTie} /></Link>, condicao: ehAdmin },
-        ];
-    };
-
-    const itensMenu = obterItensMenu().filter(item => item.condicao === undefined || item.condicao);
-    const itensConfiguracao = obterItensConfiguracao().filter(item => item.condicao === undefined || item.condicao);
-
+    
     return (
         <div className={styles.recipiente_conteudo_swiper_esquerda}>
             <div id={styles.fundo_camada_1} />
@@ -81,34 +55,10 @@ function ConteudoSwiperEsquerda() {
                     <div className={styles.recipiente_logo_swiper_esquerda}>
                         <Link href={'/'}><ElementoSVG src={"/imagensFigma/logo-cabecalho.svg"} /></Link>
                     </div>
-                    <div id={styles.recipiente_lista}>
-                        {itensMenu.map((item, index) => {
-                            const precisaNumeroPendencias = (item.link === '/meus-personagens' && numeroPendenciasPersonagem > 0);
-
-                            return (
-                                <Link key={index} href={item.link} target={item.target} className={styles.item_menu}>
-                                    <div className={styles.conteudo_item_menu}>
-                                        {!precisaNumeroPendencias ? (
-                                            <h3>{item.titulo}</h3>
-                                        ) : (
-                                            <div className={styles.recipiente_item_menu_com_pendencia}>
-                                                <h3>{item.titulo}</h3>
-                                                <div><span className={styles.numero_pendencias}>{numeroPendenciasPersonagem}</span></div>
-                                            </div>
-                                        )}
-                                        <div className={styles.recipiente_icone_link}>
-                                            <ElementoSVG src={"/imagensFigma/indicador-item-swiper-esquerda.svg"} />
-                                        </div>
-                                    </div>
-                                </Link>
-                            )
-                        })}
-                    </div>
+                    <ItensMenuSwiperEsquerda />
                     <div id={styles.recipiente_icones_swiper_esquerda}>
                         <div id={styles.recipiente_configuracoes}>
-                            {itensConfiguracao.map((item, index) => (
-                                <div key={index} className={styles.recipiente_configuracao_individual}>{item.elemento}</div>
-                            ))}
+                            {estaAutenticado && <DivClicavel onClick={logout}><h2>Desconectar</h2></DivClicavel>}
                         </div>
                         <div id={styles.recipiente_icones_redes_sociais}>
                             <Link target='_blank' href='https://discord.universodomedo.com'><FontAwesomeIcon icon={faDiscord} /></Link>

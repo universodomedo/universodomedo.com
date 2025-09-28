@@ -21,17 +21,22 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "Adaptadores/*": ["adaptadores/*"],
       "App/*": ["app/*"],
       "Componentes/*": ["componentes/*"],
+      "Constantes/*": ["constantes/*"],
       "Contextos/*": ["contextos/*"],
       "Helpers/*": ["helpers/*"],
       "Hooks/*": ["hooks/*"],
       "Layouts/*": ["layouts/*"],
       "Libs/*": ["libs/*"],
+      "Listeners/*": ["listeners/*"],
+      "Redux/*": ["redux/*"],
+      "Renderizaveis/*": ["renderizaveis/*"],
       "Uteis/*": ["uteis/*"]
     },
     "allowImportingTsExtensions": true,
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/componentes/Elementos/Redirecionador"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/componentes/Elementos/Redirecionador", "src/componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado"],
   "exclude": ["node_modules"]
 }

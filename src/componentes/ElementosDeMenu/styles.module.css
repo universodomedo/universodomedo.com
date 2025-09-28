@@ -1,0 +1,42 @@
+#recipiente_lista_acoes {
+    display: flex;
+    flex-direction: column;
+
+    & .titulo_permissao {
+        text-align: center;
+        color: #E7FFBC;
+    }
+
+    & hr {
+        margin: 1vh 0 .8vh;
+    }
+}
+
+.recipiente_item_lista_acoes {
+    user-select: none;
+    border-radius: 5px;
+    padding: 3% 2%;
+}
+
+.recipiente_subitens_lista_acoes {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1vw;
+    margin-top: .3vh;
+}
+
+.recipiente_lista_avatares_personagens {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 4%;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    row-gap: .7em;
+}
+
+.recipiente_avatar_personagem {
+    position: relative;
+    width: 30%;
+    aspect-ratio: 1;
+}

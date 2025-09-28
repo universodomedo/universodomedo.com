@@ -1,0 +1,19 @@
+#recipiente_corpo_modal_vincula_link {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 3vh;
+}
+
+.recipiente_label_input_modal_vincula_link {
+    display: flex;
+    flex-direction: column;
+    color: black;
+    text-align: center;
+}
+
+.erro_validacao {
+    margin-top: .3vh;
+    color: red;
+    font-size: .8em;
+}
