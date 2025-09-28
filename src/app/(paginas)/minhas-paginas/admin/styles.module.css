@@ -19,7 +19,6 @@
 #recipiente_lista_acoes_admin {
     display: flex;
     flex-direction: column;
-    width: 16vw;
     padding: 0 0 0 2%;
     gap: 2vh;
 }

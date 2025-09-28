@@ -1,7 +1,6 @@
 #recipiente_lista_acoes {
     display: flex;
     flex-direction: column;
-    width: 16vw;
 
     & .titulo_permissao {
         text-align: center;
@@ -24,4 +23,56 @@
     flex-direction: column;
     margin-left: 1vw;
     margin-top: .3vh;
+}
+
+.recipiente_lista_avatares_personagens {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 4%;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    row-gap: .7em;
+}
+
+.recipiente_avatar_personagem {
+    position: relative;
+    width: 30%;
+    aspect-ratio: 1;
+    filter: drop-shadow(0 0 .5em #000);
+
+    &:not(.avatar_personagem_selecionado) {
+        cursor: pointer;
+
+        &:hover img {
+            filter: drop-shadow(0 0 .5em #fff);
+        }
+    }
+
+    &.avatar_personagem_selecionado {
+        filter: drop-shadow(0 0 .5em #e9aa37);
+    }
+}
+
+.recipiente_item_menu_com_pendencia {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    font-weight: bold;
+    height: 1em;
+    bottom: 0;
+    right: 0;
+}
+
+.numero_pendencias {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: red;
+    height: 100%;
+    aspect-ratio: 1;
+    font-family: sans-serif;
+    font-size: 83%;
 }

@@ -6,7 +6,8 @@ import { useEffect } from 'react';
 
 import { TextAlignLeftIcon, TextAlignCenterIcon, TextAlignRightIcon } from "@radix-ui/react-icons";
 
-export default function ToolbarTiptap({ editor, applyFontSize }: { editor: Editor; applyFontSize: (px: number | null) => void }) {
+// export default function ToolbarTiptap({ editor, applyFontSize }: { editor: Editor; applyFontSize: (px: number | null) => void }) {
+export default function ToolbarTiptap({ editor }: { editor: Editor; }) {
     // useEffect(() => {
     //     editor.chain().focus().setColor('black').run();
     // }, []);
@@ -34,7 +35,7 @@ export default function ToolbarTiptap({ editor, applyFontSize }: { editor: Edito
 
                 {/* <input type="color" onChange={(e) => editor.chain().focus().setColor(e.target.value).run()} className={cn(styles.color, styles.botao_toolbar)} title="Cor do texto" /> */}
 
-                <select className={cn(styles.ctrl, styles.botao_toolbar)} onChange={(e) => applyFontSize(e.target.value ? Number(e.target.value) : null)} defaultValue="">
+                {/* <select className={cn(styles.ctrl, styles.botao_toolbar)} onChange={(e) => applyFontSize(e.target.value ? Number(e.target.value) : null)} defaultValue="">
                     <option value="">Tamanho</option>
                     <option value="12">12</option>
                     <option value="14">14</option>
@@ -42,7 +43,7 @@ export default function ToolbarTiptap({ editor, applyFontSize }: { editor: Edito
                     <option value="18">18</option>
                     <option value="24">24</option>
                     <option value="32">32</option>
-                </select>
+                </select> */}
 
                 {/* 
                 <button type="button" className={cn(styles.botao_toolbar)} onClick={() => { const url = prompt("URL do link:"); if (url) editor.chain().focus().setLink({ href: url }).run(); }}>Link</button>

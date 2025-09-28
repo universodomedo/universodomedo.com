@@ -24,6 +24,7 @@
       "Adaptadores/*": ["adaptadores/*"],
       "App/*": ["app/*"],
       "Componentes/*": ["componentes/*"],
+      "Constantes/*": ["constantes/*"],
       "Contextos/*": ["contextos/*"],
       "Helpers/*": ["helpers/*"],
       "Hooks/*": ["hooks/*"],

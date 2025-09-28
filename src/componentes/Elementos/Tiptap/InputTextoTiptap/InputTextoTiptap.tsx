@@ -36,19 +36,20 @@ export default function InputTextoTiptap({ conteudo, onChange }: { conteudo: JSO
         immediatelyRender: false,
     });
 
-    const applyFontSize = useCallback(
-        (px: number | null) => {
-            if (!editor) return;
-            if (px) editor.chain().focus().setMark("textStyle", { fontSize: `${px}px` }).run();
-            else editor.chain().focus().setMark("textStyle", { fontSize: undefined as unknown as string }).run();
-        }, [editor]
-    );
+    // const applyFontSize = useCallback(
+    //     (px: number | null) => {
+    //         if (!editor) return;
+    //         if (px) editor.chain().focus().setMark("textStyle", { fontSize: `${px}px` }).run();
+    //         else editor.chain().focus().setMark("textStyle", { fontSize: undefined as unknown as string }).run();
+    //     }, [editor]
+    // );
 
     if (!editor) return null;
 
     return (
         <div className={styles.editor_wrap}>
-            <ToolbarTiptap editor={editor} applyFontSize={applyFontSize} />
+            {/* <ToolbarTiptap editor={editor} applyFontSize={applyFontSize} /> */}
+            <ToolbarTiptap editor={editor} />
 
             <AreaTiptap editor={editor} />
 

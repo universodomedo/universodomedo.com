@@ -5,7 +5,7 @@ import ListaAcoesJogador from 'Componentes/ElementosDeMenu/ListaAcoesJogador/pag
 
 export default function PaginaJogador() {
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo>
                 <></>
             </LayoutContextualizado.Conteudo>

@@ -1,33 +1,18 @@
 'use client';
 
-import styles from '../styles.module.css';
-import Link from 'next/link';
+import styles from 'Componentes/PaginaPersonagem/styles.module.css';
 
-import { useContextoJogadorPersonagens } from 'Contextos/ContextoJogadorPersonagens/contexto.tsx';
+import { useContextoPaginaPersonagens } from 'Contextos/ContextoPaginaPersonagens/contexto';
+import BarraPersonagem from 'Componentes/PaginaPersonagem/componentes/BarraPersonagem/BarraPersonagem'
+import BotaoEvoluir from 'Componentes/PaginaPersonagem/componentes/BotaoEvoluir/BotaoEvoluir';
 
-
-export function PaginaPersonagemSelecionado() {
-    const { personagemSelecionado } = useContextoJogadorPersonagens();
-
-    if (!personagemSelecionado) return <div>Erro ao carregar personagem</div>;
-
-    return <PaginaPersonagemComDados />
-};
-
-function PaginaPersonagemComDados() {
-    const { personagemSelecionado } = useContextoJogadorPersonagens();
+export default function PaginaEditavel_Inicial() {
+    const { personagemSelecionado } = useContextoPaginaPersonagens();
 
     return (
         <div id={styles.recipiente_conteudo_pagina_personagem_selecionado}>
-            <ObjetoDeRetorno />
-            <h1>{personagemSelecionado?.informacao?.nome}</h1>
-            {(personagemSelecionado?.temCriacaoPendente || personagemSelecionado?.temEvolucaoPendente) && (
-                <div id={styles.recipiente_botao_evoluir}>
-                    <Link href={'/evoluindo-personagem'}>
-                        <button>Evoluir</button>
-                    </Link>
-                </div>
-            )}
+            <BarraPersonagem />
+            <BotaoEvoluir />
             {personagemSelecionado?.fichaVigente && (
                 <div id={styles.recipiente_abas_fichas}>
                     <h3>Ficha Atual</h3>
@@ -48,16 +33,6 @@ function PaginaPersonagemComDados() {
                     </div>
                 </div>
             )}
-        </div>
-    );
-};
-
-function ObjetoDeRetorno() {
-    const { deselecionaPersonagem } = useContextoJogadorPersonagens();
-
-    return (
-        <div id={styles.recipiente_objeto_voltar} onClick={deselecionaPersonagem}>
-            <span>← Voltar</span>
         </div>
     );
 };

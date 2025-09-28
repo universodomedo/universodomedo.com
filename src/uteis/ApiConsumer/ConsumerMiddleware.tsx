@@ -46,12 +46,12 @@ export async function obtemSessaoGeral(idSessao: number) {
     return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemSessaoGeral', method: 'GET', params: { idSessao } });
 }
 
-export async function obtemPersonagensDoUsuario() {
-    return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemPersonagensDoUsuario', method: 'GET' });
+export async function me_obtemPersonagens(idTipoPersonagem?: number) {
+    return await useApi<PersonagemDto[]>({ uri: '/personagens/me/me_obtemPersonagens', method: 'GET', params: { idTipoPersonagem } });
 }
 
-export async function obtemDadosPersonagemDoUsuario(idPersonagem: number) {
-    return await useApi<PersonagemDto>({ uri: '/personagens/obtemDadosPersonagemDoUsuario', method: 'GET', params: { idPersonagem } });
+export async function obtemDadosInteligentePersonagem(idPersonagem: number) {
+    return await useApi<PersonagemDto>({ uri: '/personagens/obtemDadosInteligentePersonagem', method: 'GET', params: { idPersonagem } });
 }
 
 export async function obtemTiposImagem() {
@@ -147,8 +147,8 @@ export async function me_obtemRascunhosPorTipo(sessaoUnica: boolean): Promise<Ra
     return await useApi<RascunhoDto[]>({ uri: 'rascunhos/me/me_obtemRascunhosPorTipo', method: 'GET', params: { sessaoUnica } });
 }
 
-export async function me_obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto> {
-    return await useApi<RascunhoDto>({ uri: 'rascunhos/me/me_obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
+export async function me_obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto | null> {
+    return await useApi<RascunhoDto | null>({ uri: 'rascunhos/me/me_obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
 }
 
 export async function me_salvarRascunho(titulo: string, idEstiloSessaoMestrada: number): Promise<boolean> {

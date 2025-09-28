@@ -17,8 +17,8 @@ export function PaginaMestreSessao_Contexto() {
         : 'minhas-paginas/mestre/sessoes-unicas'
 
     return (
-        <LayoutContextualizado>
-            <LayoutContextualizado.Conteudo hrefPaginaRetorno={hrefPaginaRetorno}>
+        <LayoutContextualizado proporcaoConteudo={84}>
+            <LayoutContextualizado.Conteudo props={{ tipo: 'href', hrefPaginaRetorno: hrefPaginaRetorno, tituloTooltip: 'Voltar' }}>
                 <PaginaMestreSessao_Conteudo />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>

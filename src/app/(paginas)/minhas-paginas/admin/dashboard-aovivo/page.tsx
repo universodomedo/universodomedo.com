@@ -6,7 +6,7 @@ import { DashboardAovivo_Contexto } from './componentes';
 
 export default function DashboardAovivo() {
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo>
                 <DashboardAovivo_Contexto />
             </LayoutContextualizado.Conteudo>

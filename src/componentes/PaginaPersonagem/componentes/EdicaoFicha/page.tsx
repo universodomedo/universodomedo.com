@@ -1,5 +1,5 @@
 import PaginaEvolucaoPersonagem_ComContexto from './componentes';
-import { ContextoEdicaoFichaProvider } from 'Contextos/ContextoEdicaoFicha/contexto.tsx';
+import { ContextoEdicaoFichaProvider } from 'Contextos/ContextoEdicaoFicha/contexto';
 
 export default function PaginaEvolucaoPersonagem() {
     return (

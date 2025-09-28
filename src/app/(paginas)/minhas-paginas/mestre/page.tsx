@@ -5,7 +5,7 @@ import ListaAcoesMestre from 'Componentes/ElementosDeMenu/ListaAcoesMestre/page'
 
 export default function PaginaMestre() {
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo>
                 <></>
             </LayoutContextualizado.Conteudo>

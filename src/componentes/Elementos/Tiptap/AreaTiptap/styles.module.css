@@ -26,6 +26,10 @@
         height: 100%;
         scrollbar-color: white transparent;
         overflow-y: auto;
+
+        & * {
+            list-style: revert;
+        }
     }
 
     & :global(.tiptap:focus) { outline: none; }

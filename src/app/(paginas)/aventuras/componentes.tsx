@@ -14,7 +14,7 @@ import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoD
 
 export function PaginasAventuras_Contexto() {
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={80}>
             <LayoutContextualizado.Conteudo>
                 <PaginaAventuras_Conteudo />
             </LayoutContextualizado.Conteudo>

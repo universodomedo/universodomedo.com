@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
-import { EtapaGanhoEvolucao_Pericias, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto.tsx';
+import { EtapaGanhoEvolucao_Pericias, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
 import { InfoCircledIcon } from '@radix-ui/react-icons'

@@ -8,7 +8,7 @@ import EdicaoRascunho from 'Componentes/EdicaoRascunho/page';
 
 interface ContextoRascunhoProps {
     alteraEstadoModalEdicao: (aberto: boolean) => void;
-    rascunho: RascunhoDto;
+    rascunho: RascunhoDto | null;
     salvaDetalhesRascunhoAventura: (detalheRascunhoAventura: DetalheRascunhoAventuraDto) => void;
     salvaDetalhesRascunhoSessaoUnicaCanonica: (detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaDto) => void;
     salvaDetalhesRascunhoSessaoUnica: (detalheRascunhoSessaoUnica: DetalheRascunhoSessaoUnicaDto) => void;
@@ -46,7 +46,7 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
         setIsModalOpen(aberto);
     }
 
-    const textoBotaoCriar: string = rascunho == null ? '' : rascunho?.estiloSessaoMestrada.id === 1 ? 'Criar Aventura' : 'Criar Sessão';
+    const textoBotaoCriar: string = rascunho == null ? '' : rascunho.estiloSessaoMestrada.id === 1 ? 'Criar Aventura' : 'Criar Sessão';
 
     const salvaDetalhesRascunhoAventura = async (detalheRascunhoAventura: DetalheRascunhoAventuraDto) => {
         try {
@@ -106,11 +106,7 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
         buscaDetalhesRascunho();
     }, []);
 
-    if (carregando) return <h2>{carregando}</h2>
-
-    if (!carregando && !rascunho) return <p>Rascunho não encontrado</p>;
-
-    if (!rascunho) return;
+    if (carregando) return <h2>{carregando}</h2>;
 
     return (
         <ContextoRascunho.Provider value={{ textoBotaoCriar, alteraEstadoModalEdicao, rascunho, salvaDetalhesRascunhoAventura, salvaDetalhesRascunhoSessaoUnicaCanonica, salvaDetalhesRascunhoSessaoUnica, executaCriacao}}>

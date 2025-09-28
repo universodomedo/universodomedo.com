@@ -27,16 +27,16 @@ export const useContextoEdicaoRascunhoSessaoUnicaCanonica = (): ContextoEdicaoRa
 export const ContextoEdicaoRascunhoSessaoUnicaCanonicaProvider = ({ children }: { children: React.ReactNode }) => {
     const { salvaDetalhesRascunhoSessaoUnicaCanonica, rascunho } = useContextoRascunho();
 
-    const [idDificuldadeSelecionado, setIdDificuldadeSelecionada] = useState(rascunho.detalheRascunhoSessaoUnicaCanonica ? rascunho.detalheRascunhoSessaoUnicaCanonica.dificuldadeSessao.id : 0);
-    const [idTipoSelecionado, setIdTipoSelecionada] = useState(rascunho.detalheRascunhoSessaoUnicaCanonica ? rascunho.detalheRascunhoSessaoUnicaCanonica.tipoSessao.id : 0);
-    const [descricao, setDescricao] = useState(rascunho.detalheRascunhoSessaoUnicaCanonica ? rascunho.detalheRascunhoSessaoUnicaCanonica.descricao : null);
+    const [idDificuldadeSelecionado, setIdDificuldadeSelecionada] = useState(rascunho?.detalheRascunhoSessaoUnicaCanonica ? rascunho?.detalheRascunhoSessaoUnicaCanonica.dificuldadeSessao.id : 0);
+    const [idTipoSelecionado, setIdTipoSelecionada] = useState(rascunho?.detalheRascunhoSessaoUnicaCanonica ? rascunho?.detalheRascunhoSessaoUnicaCanonica.tipoSessao.id : 0);
+    const [descricao, setDescricao] = useState(rascunho?.detalheRascunhoSessaoUnicaCanonica ? rascunho?.detalheRascunhoSessaoUnicaCanonica.descricao : null);
 
     //
 
     const detalheInicial = {
-        idDificuldadeSelecionado: rascunho.detalheRascunhoSessaoUnica ? rascunho.detalheRascunhoSessaoUnica.dificuldadeSessao.id : 0,
-        idTipoSelecionado: rascunho.detalheRascunhoSessaoUnica ? rascunho.detalheRascunhoSessaoUnica.tipoSessao.id : 0,
-        descricao: rascunho.detalheRascunhoSessaoUnica ? rascunho.detalheRascunhoSessaoUnica.descricao : null,
+        idDificuldadeSelecionado: rascunho?.detalheRascunhoSessaoUnica ? rascunho?.detalheRascunhoSessaoUnica.dificuldadeSessao.id : 0,
+        idTipoSelecionado: rascunho?.detalheRascunhoSessaoUnica ? rascunho?.detalheRascunhoSessaoUnica.tipoSessao.id : 0,
+        descricao: rascunho?.detalheRascunhoSessaoUnica ? rascunho?.detalheRascunhoSessaoUnica.descricao : null,
     };
 
     const houveModificacao = idDificuldadeSelecionado !== detalheInicial.idDificuldadeSelecionado || idTipoSelecionado !== detalheInicial.idTipoSelecionado || JSON.stringify(descricao) !== JSON.stringify(detalheInicial.descricao);
@@ -67,7 +67,7 @@ export const ContextoEdicaoRascunhoSessaoUnicaCanonicaProvider = ({ children }: 
         if (!confirmacao) return;
 
         salvaDetalhesRascunhoSessaoUnicaCanonica({
-            rascunho: { id: rascunho.id } as RascunhoDto,
+            rascunho: { id: rascunho?.id } as RascunhoDto,
             tipoSessao: { id: idTipoSelecionado } as TipoSessaoDto,
             dificuldadeSessao: { id: idDificuldadeSelecionado } as DificuldadeSessaoDto,
             descricao: descricao,

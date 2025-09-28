@@ -3,16 +3,16 @@
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import ListaAcoesJogador from 'Componentes/ElementosDeMenu/ListaAcoesJogador/page';
 
-import { ContextoJogadorPersonagensProvider } from 'Contextos/ContextoJogadorPersonagens/contexto.tsx';
-import { PaginaMeusPersonagens_Contexto } from './componentes/subcomponentes';
+import { ContextoListagemPersonagensProvider } from 'Contextos/ContextoListagemPersonagens/contexto';
+import { PaginaListagemPersonagens_Contexto } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/PersonagensEmListagem/page.tsx'
 
 export default function PaginaMeusPersonagens() {
     return (
-        <LayoutContextualizado>
+        <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo titulo={'Jogador - Meus Personagens'}>
-                <ContextoJogadorPersonagensProvider>
-                    <PaginaMeusPersonagens_Contexto />
-                </ContextoJogadorPersonagensProvider>
+                <ContextoListagemPersonagensProvider idTipoPersonagem={1}>
+                    <PaginaListagemPersonagens_Contexto />
+                </ContextoListagemPersonagensProvider>
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
                 <ListaAcoesJogador />

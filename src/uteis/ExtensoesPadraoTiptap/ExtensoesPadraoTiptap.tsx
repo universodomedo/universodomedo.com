@@ -45,5 +45,5 @@ export const ExtensoesPadraoTiptap = [
         autolink: true,
         defaultProtocol: 'https',
     }),
-    FontSize,
+    // FontSize,
 ];

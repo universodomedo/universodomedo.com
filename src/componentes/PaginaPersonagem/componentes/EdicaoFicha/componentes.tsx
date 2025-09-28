@@ -3,8 +3,8 @@
 import styles from './styles.module.css';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto.tsx';
-import JanelaNotificacaoEvolucao from 'Componentes/EdicaoFicha/JanelaNotificacaoEvolucao/page.tsx';
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import JanelaNotificacaoEvolucao from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/JanelaNotificacaoEvolucao/page.tsx';
 
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 import Link from 'next/link';
