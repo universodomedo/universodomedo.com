@@ -11,6 +11,10 @@ export const getSocket = (): Socket => {
             transports: ['websocket'],
         });
 
+    socket.on('connect', () => console.log('[socket] connect -> id=', socket?.id));
+    socket.on('connect_error', (err) => console.error('[socket] connect_error', err));
+    socket.on('disconnect', (reason) => console.log('[socket] disconnect', reason));
+
         // socket.on("connect", () => {
         //     console.log("[socket] conectado:", socket?.id);
         // });

@@ -13,6 +13,7 @@ export function ListaAcoesAdmin() {
             <Link href={'/minhas-paginas/admin/uploads'}><h2>Upload</h2></Link>
             <Link href={'/minhas-paginas/admin/variaveis-ambiente'}><h2>Variáveis de Ambiente</h2></Link>
             <Link href={'/minhas-paginas/admin/aventuras'}><h2>Aventuras</h2></Link>
+            <Link href={'/minhas-paginas/admin/dashboard-aovivo'}><h2>Dashboard Aovivo</h2></Link>
         </div>
     );
 }
