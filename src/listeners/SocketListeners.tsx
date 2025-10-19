@@ -7,6 +7,7 @@ import { useUsuariosSocket } from 'listeners/usuariosSocket';
 import { useChatSocketListeners } from 'listeners/chatsSocket';
 
 function SocketHooks() {
+    return;
     useInicializarSocket(true);
     useUsuariosSocket(); // essa linha é responsável por obter todos os usuarios, q é utilizado como referencia dos avatares no chat
     useChatSocketListeners(); // socket para carregar salas e conteudo
@@ -22,5 +23,5 @@ export default function SocketListeners() {
 
     // if (!mounted) return null;
 
-    return <SocketHooks />;
+    // return <SocketHooks />;
 };

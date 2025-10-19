@@ -6,11 +6,9 @@ const socketCache = new Map<string, Socket>();
 export const getSocket = (namespace: string = '/'): Socket => {
     if (typeof window === "undefined") throw new Error("getSocket() só pode ser chamado no client");
 
-    const cacheKey = namespace;
+    if (socketCache.has(namespace)) return socketCache.get(namespace)!;
 
-    if (socketCache.has(cacheKey)) return socketCache.get(cacheKey)!;
-
-    const url = namespace === '/' ? process.env.NEXT_PUBLIC_WEBSOCKET_URL! : `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}${namespace}`;
+    const url = namespace === '/' ? process.env.NEXT_PUBLIC_WEBSOCKET_URL : `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}${namespace}`;
 
     // console.log(`[socket] Conectando em: ${url} (namespace: ${namespace})`);
 
@@ -20,27 +18,20 @@ export const getSocket = (namespace: string = '/'): Socket => {
     // socket.on('connect_error', (err) => console.error(`[socket] connect_error -> namespace=${namespace}`, err));
     // socket.on('disconnect', (reason) => console.log(`[socket] disconnect -> namespace=${namespace}`, reason));
 
-    socketCache.set(cacheKey, socket);
+    socketCache.set(namespace, socket);
 
     return socket;
 };
 
 export const clearSocketCache = (namespace?: string) => {
     if (namespace) {
-        socketCache.get(namespace)?.disconnect();
+        const socket = socketCache.get(namespace);
+        if (socket?.connected) socket.disconnect();
         socketCache.delete(namespace);
     } else {
-        socketCache.forEach((socket, ns) => { socket.disconnect(); });
+        socketCache.forEach((socket) => { if (socket.connected) socket.disconnect(); });
         socketCache.clear();
     }
 };
 
-export const getActiveConnections = () => {
-    const active: string[] = [];
-
-    socketCache.forEach((socket, namespace) => {
-        if (socket.connected) active.push(namespace);
-    });
-
-    return active;
-};
+export const getActiveConnections = () => Array.from(socketCache.entries()).filter(([_, socket]) => socket.connected).map(([ns]) => ns);

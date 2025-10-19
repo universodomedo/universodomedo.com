@@ -11,4 +11,4 @@ export default function useInicializarSocket(deveConectar: boolean) {
             socket.connect();
         }
     }, [deveConectar]);
-}
+};

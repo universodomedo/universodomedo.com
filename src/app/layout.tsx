@@ -95,7 +95,7 @@ function ConteudoContextualizado({ children }: { children: ReactNode }) {
           <MenuSwiperEsquerda />
           <div id={styles.recipiente_conteudo_pagina}>
             {children}
-            <Chat />
+            {/* <Chat /> */}
           </div>
         </main>
       </div>
