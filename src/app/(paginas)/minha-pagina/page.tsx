@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-// import { PAGINAS } from 'types-nora-api';
+import { PAGINAS } from 'types-nora-api';
 import BarraUsuario from 'Componentes/ElementosPaginaUsuario/BarraUsuario/page.tsx';
 import SecaoPosts from 'Componentes/ElementosPaginaUsuario/Post/page.tsx';
 import SecaoContatos from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
@@ -17,9 +17,9 @@ import { getSocket } from 'Libs/socket';
 
 export default function MinhaPagina() {
     return (
-        // <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.MINHA_PAGINA, comCabecalho: false, usuarioObrigatorio: true }}>
-        <MinhaPagina_Slot />
-        // </ControladorSlot>
+        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.MINHA_PAGINA, comCabecalho: false, usuarioObrigatorio: true }}>
+            <MinhaPagina_Slot />
+        </ControladorSlot>
     );
 };
 
