@@ -1,0 +1,148 @@
+.container {
+    font-family: 'JetBrains Mono', monospace;
+    background-color: #0f0f10;
+    color: #f0f0f0;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 1.4rem;
+    margin: 0;
+}
+
+.headerInfo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 0.9rem;
+    align-items: center;
+}
+
+.connected {
+    color: #4ade80;
+}
+
+.connecting {
+    color: #facc15;
+}
+
+.error, .reconnecting {
+    color: #f87171;
+}
+
+.reconnectBtn {
+    margin-left: auto;
+    background-color: #1f1f21;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 4px 10px;
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.2s ease;
+}
+
+.reconnectBtn:hover {
+    background-color: #333;
+}
+
+.main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.panel {
+    background-color: #18181a;
+    border: 1px solid #2b2b2d;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 150px);
+}
+
+.panel h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: #c0c0c0;
+}
+
+.scrollArea {
+    flex-grow: 1;
+    overflow-y: auto;
+    border-top: 1px solid #2b2b2d;
+    padding-top: 8px;
+}
+
+.card {
+    border-bottom: 1px solid #2b2b2d;
+    padding: 6px 0;
+    font-size: 0.85rem;
+}
+
+.socket {
+    color: #9ca3af;
+    font-family: monospace;
+}
+
+.event {
+    border-bottom: 1px solid #2b2b2d;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.eventHeader {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.time {
+    color: #9ca3af;
+}
+
+.direction {
+    font-weight: bold;
+}
+
+.in .direction {
+    color: #4ade80;
+}
+
+.out .direction {
+    color: #60a5fa;
+}
+
+.eventName {
+    color: #e5e7eb;
+}
+
+.username {
+    margin-left: auto;
+    color: #a78bfa;
+}
+
+.payload {
+    background-color: #111;
+    color: #e5e5e5;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    padding: 4px 8px;
+    overflow-x: auto;
+    margin-top: 4px;
+}
+
+.empty {
+    color: #6b7280;
+    text-align: center;
+    margin-top: 20px;
+}

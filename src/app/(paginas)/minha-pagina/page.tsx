@@ -27,19 +27,22 @@ function MinhaPagina_Slot() {
     const [isConnected, setIsConnected] = useState(false);
     const [messages, setMessages] = useState<string[]>([]);
 
+    console.log('🎯 [MinhaPagina_Slot] Renderizando...');
+
     const addMessage = (message: string) => {
         setMessages(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
     };
 
     useEffect(() => {
-        addMessage('🔗 Conectando com namespace /gameEngine...');
+        console.log('🎯 [useEffect] Configurando socket...');
+        addMessage('🔗 Conectando com namespace...');
 
         // ✅ Usar COM namespace
-        const socket = getSocket('/gameEngine');
+        const socket = getSocket('/');
 
         socket.on('connect', () => {
             setIsConnected(true);
-            addMessage('✅ Conectado ao namespace /gameEngine!');
+            addMessage('✅ Conectado ao namespace /!');
             addMessage(`🆔 Socket ID: ${socket.id}`);
         });
 
@@ -60,7 +63,7 @@ function MinhaPagina_Slot() {
     const testarEvento = async (evento: string, dados: any = {}) => {
         try {
             addMessage(`🔄 Enviando ${evento}...`);
-            const socket = getSocket('/gameEngine'); // ✅ Sempre usar namespace
+            const socket = getSocket('/'); // ✅ Sempre usar namespace
 
             const response = await socket.emitWithAck(evento, {
                 ...dados,
@@ -68,7 +71,7 @@ function MinhaPagina_Slot() {
                 source: 'com-namespace'
             });
 
-            addMessage(`✅ ${evento}: ${response.teste}`);
+            addMessage(`✅ ${evento}: ${response.message}`);
             return response;
         } catch (error) {
             addMessage(`❌ Erro no ${evento}: ${error}`);
@@ -88,7 +91,7 @@ function MinhaPagina_Slot() {
 
                     <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
                         <button
-                            onClick={() => testarEvento('teste', { teste: 'ping-com-namespace' })}
+                            onClick={() => testarEvento('ping', { teste: 'ping-com-namespace' })}
                             disabled={!isConnected}
                         >
                             Testar Ping
@@ -107,12 +110,6 @@ function MinhaPagina_Slot() {
                         {messages.map((msg, i) => (
                             <div key={i}>{msg}</div>
                         ))}
-                    </div>
-
-                    <div style={{ marginTop: '15px', fontSize: '12px', color: '#666' }}>
-                        <strong>Namespace:</strong> /gameEngine<br />
-                        <strong>Gateway:</strong> WebSocketTestGateway<br />
-                        <strong>Porta:</strong> 3200
                     </div>
                 </div>
             </div>
