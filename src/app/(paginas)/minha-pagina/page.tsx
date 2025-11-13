@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-import { PAGINAS } from 'types-nora-api';
+import { PAGINAS, Eventos_RecebeEnvia } from 'types-nora-api';
 import BarraUsuario from 'Componentes/ElementosPaginaUsuario/BarraUsuario/page.tsx';
 import SecaoPosts from 'Componentes/ElementosPaginaUsuario/Post/page.tsx';
 import SecaoContatos from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
@@ -32,6 +32,8 @@ function MinhaPagina_Slot() {
     const addMessage = (message: string) => {
         setMessages(prev => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
     };
+
+    Eventos_RecebeEnvia.GameEngine.eventos.testeGameEngine1
 
     useEffect(() => {
         console.log('🎯 [useEffect] Configurando socket...');
@@ -71,7 +73,7 @@ function MinhaPagina_Slot() {
                 source: 'com-namespace'
             });
 
-            addMessage(`✅ ${evento}: ${response.message}`);
+            addMessage(`✅ ${evento}: ${response.msg}`);
             return response;
         } catch (error) {
             addMessage(`❌ Erro no ${evento}: ${error}`);
@@ -94,7 +96,37 @@ function MinhaPagina_Slot() {
                             onClick={() => testarEvento('ping', { teste: 'ping-com-namespace' })}
                             disabled={!isConnected}
                         >
-                            Testar Ping
+                            Teste
+                        </button>
+                        <button
+                            onClick={() => testarEvento('GameEngine:testeGameEngine1', { teste: 'ping-com-namespace' })}
+                            disabled={!isConnected}
+                        >
+                            Teste GameEngine1
+                        </button>
+                        <button
+                            onClick={() => testarEvento('testeChat1', { teste: 'ping-com-namespace' })}
+                            disabled={!isConnected}
+                        >
+                            Teste Chat
+                        </button>
+                        <button
+                            onClick={() => testarEvento('GameEngine:testeGameEngine2', { teste: 'ping-com-namespace' })}
+                            disabled={!isConnected}
+                        >
+                            Teste GameEngine1
+                        </button>
+                        <button
+                            onClick={() => testarEvento('GameEngine:testeDuplicado', { teste: 'ping-com-namespace' })}
+                            disabled={!isConnected}
+                        >
+                            Teste GameEngine Duplicado
+                        </button>
+                        <button
+                            onClick={() => testarEvento('Chat:testeDuplicado', { teste: 'ping-com-namespace' })}
+                            disabled={!isConnected}
+                        >
+                            Teste Chat Duplicado
                         </button>
                     </div>
 
