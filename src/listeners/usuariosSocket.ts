@@ -1,14 +1,21 @@
+'use client';
+
 import { useEffect } from 'react';
 
-// import { SOCKET_EVENTOS, SOCKET_UsuarioExistente } from 'types-nora-api';
+import { Eventos_Recebe } from 'types-nora-api';
 
 import { useAppDispatch } from 'Redux/hooks/useRedux';
-import useSocketEvent from 'Hooks/useSocketEvent'
-import emitSocketEvent from 'Libs/emitSocketEvent';
 import { setUsuarios } from 'Redux/slices/usuariosSlice';
+import { useEventoWs } from 'Hooks/useEventoWs';
+
+// const { eventoWs } = useEventoWs();
 
 export function useUsuariosSocket() {
     const dispatch = useAppDispatch();
+
+    // eventoWs(Eventos_Recebe.UsuariosConectados.eventos.obtemUsuariosConectados, (usuarios) => {
+    //     console.log(`teste`);
+    // });
 
     // useSocketEvent<SOCKET_UsuarioExistente[]>(
     //     SOCKET_EVENTOS.UsuariosExistentes.obterTodos,
