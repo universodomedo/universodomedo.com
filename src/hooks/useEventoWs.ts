@@ -2,10 +2,10 @@
 
 import { io, type Socket } from "socket.io-client";
 
-type EventoWsFn = {
-    <D extends { tipo: "envia"; payload: any; fullName: string; }>(def: D, payload: D["payload"]): void;
-    <D extends { tipo: "recebe"; payload: any; fullName: string; }>(def: D, handler: (payload: D["payload"]) => void): () => void;
-    <D extends { tipo: "recebe-envia"; payload: any; response: any; fullName: string; }>(def: D, payload: D["payload"]): Promise<D["response"]>;
+export type EventoWsFn = {
+    <D extends { tipo: "envia"; payload: any; fullName: string }>(def: D, payload: D["payload"]): void;
+    <D extends { tipo: "emite"; response: any; fullName: string }>(def: D, handler: (payload: D["response"]) => void): () => void;
+    <D extends { tipo: "recebe-e-envia"; payload: any; response: any; fullName: string }>(def: D, payload: D["payload"]): Promise<D["response"]>;
 };
 
 let socketSingleton: Socket | null = null;
@@ -52,10 +52,8 @@ export const useEventoWs: EventoWsFn = ((def: any, arg2: any) => {
     if (!socket) {
         console.warn("[eventoWs] Socket ainda não disponível, evento ignorado:", def?.fullName);
 
-        if (def?.tipo === "recebe-envia") return Promise.reject(new Error("Socket não conectado ainda"));
-
-        if (def?.tipo === "recebe") return () => { };
-
+        if (def?.tipo === "recebe-e-envia") return Promise.reject(new Error("Socket não conectado ainda"));
+        if (def?.tipo === "emite") return () => { };
         return;
     }
 
@@ -66,29 +64,22 @@ export const useEventoWs: EventoWsFn = ((def: any, arg2: any) => {
         return;
     }
 
-    if (tipo === "recebe") {
+    if (tipo === "emite") {
         const handler = arg2 as (payload: unknown) => void;
 
-        const wrapped = (payload: unknown) => {
-            handler(payload);
-        };
+        const wrapped = (payload: unknown) => { handler(payload); };
 
         socket.on(fullName, wrapped);
 
-        // devolve função pra remover o listener
-        return () => {
-            socket.off(fullName, wrapped);
-        };
+        return () => { socket.off(fullName, wrapped); };
     }
 
-    if (tipo === "recebe-envia") {
+    if (tipo === "recebe-e-envia") {
         const payload = arg2;
 
         return new Promise((resolve, reject) => {
             socket.timeout(5000).emit(fullName, payload, (err: unknown, response: unknown) => {
-                if (err) {
-                    return reject(err);
-                }
+                if (err) return reject(err);
                 resolve(response);
             });
         });
