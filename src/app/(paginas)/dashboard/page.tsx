@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './style.module.css';
 import type { TelemetrySnapshot, TelemetryConnectionInfo, TelemetryEventLog } from 'types-nora-api';
+import { enIE } from 'date-fns/locale';
 
 export default function WSDashboard() {
     const [snapshot, setSnapshot] = useState<TelemetrySnapshot | null>(null);
@@ -150,7 +151,7 @@ export default function WSDashboard() {
                                         <span className={styles.time}>{new Date(e.timestamp).toLocaleTimeString()}</span>
                                         <span className={styles.direction}>{e.direction.toUpperCase()}</span>
                                         <span className={styles.eventName}>{e.event}</span>
-                                        <span className={styles.username}>{e.username ?? '??'}</span>
+                                        <span className={styles.username}>{e.audiencia.escopo === 'unico' ? e.audiencia.username : `Entregue à ${e.audiencia.socketsCount} sockets`}</span>
                                     </div>
                                     <pre className={styles.payload}>
                                         {JSON.stringify(e.payload, null, 2)}
