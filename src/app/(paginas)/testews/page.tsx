@@ -2,9 +2,9 @@
 
 import { Eventos_Envia, Eventos_Emite } from 'types-nora-api';
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./page.css";
-import { useEventoWs } from "Hooks/useEventoWs";
+import { eventoWs, useRecebeEmitWs } from "Hooks/useEventoWs";
 
 export default function Page() {
     const [inputText, setInputText] = useState("");
@@ -14,17 +14,14 @@ export default function Page() {
         'string3'
     ]);
 
-    useEventoWs(Eventos_Emite.Teste.eventos.enviaPraQuemPediu, (data) => {
+    const handleMudarTexto = () => {
+        eventoWs(Eventos_Envia.Teste.eventos.mudaTexto, { novoTexto: inputText });
+        setInputText('');
+    };
+
+    useRecebeEmitWs(Eventos_Emite.Teste.eventos.enviaPraQuemPediu, data => {
         setMessages(prev => [...prev, data.msg]);
     });
-
-    const handleMudarTexto = () => {
-        console.log(`teste`);
-
-        useEventoWs(Eventos_Envia.Teste.eventos.mudaTexto, {
-            novoTexto: "AAAc",
-        });
-    };
 
     return (
         <div className="ws-container">

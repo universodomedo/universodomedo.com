@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { io, type Socket } from "socket.io-client";
 
 export type EventoWsFn = {
@@ -14,25 +15,17 @@ export function getSocket(): Socket | null {
     if (typeof window === "undefined") return null;
 
     if (socketSingleton) {
-        console.log(`   ✅ REUTILIZANDO instância existente`);
+        // console.log("   ✅ REUTILIZANDO instância existente");
         return socketSingleton;
     }
 
-    console.log(`   🆕 CRIANDO NOVA instância`);
+    // console.log("   🆕 CRIANDO NOVA instância");
     const url = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
     const socket = io(url, { withCredentials: true, transports: ["websocket"] });
 
-    socket.on("connect", () => {
-        console.log(`   ✅ CONECTADO - ID: ${socket.id}`);
-    });
-
-    socket.on("disconnect", (reason) => {
-        console.log(`   ❌ DESCONECTADO - Motivo: ${reason}`);
-    });
-
-    socket.on("reconnect", (attempt) => {
-        console.log(`   🔄 RECONECTANDO - Tentativa: ${attempt}`);
-    });
+    // socket.on("connect", () => { console.log(`   ✅ CONECTADO - ID: ${socket.id}`); });
+    // socket.on("disconnect", reason => { console.log(`   ❌ DESCONECTADO - Motivo: ${reason}`); });
+    // socket.on("reconnect", attempt => { console.log(`   🔄 RECONECTANDO - Tentativa: ${attempt}`); });
 
     socketSingleton = socket;
 
@@ -46,14 +39,14 @@ export function clearSocketCache() {
 
 export function getActiveConnections() { return socketSingleton?.connected ? ["/"] : []; };
 
-export const useEventoWs: EventoWsFn = ((def: any, arg2: any) => {
+export const eventoWs: EventoWsFn = ((def: any, arg2: any) => {
     const socket = getSocket();
 
     if (!socket) {
         console.warn("[eventoWs] Socket ainda não disponível, evento ignorado:", def?.fullName);
 
         if (def?.tipo === "recebe-e-envia") return Promise.reject(new Error("Socket não conectado ainda"));
-        if (def?.tipo === "emite") return () => { };
+        if (def?.tipo === "emite") return () => {};
         return;
     }
 
@@ -87,3 +80,13 @@ export const useEventoWs: EventoWsFn = ((def: any, arg2: any) => {
 
     console.error("[eventoWs] Tipo de evento desconhecido:", def?.tipo ?? "?");
 }) as EventoWsFn;
+
+export function useRecebeEmitWs<D extends { tipo: "emite"; response: any; fullName: string }>(def: D, handler: (payload: D["response"]) => void): void {
+    const handlerRef = useRef(handler);
+    handlerRef.current = handler;
+
+    useEffect(() => {
+        const unsubscribe = eventoWs(def, (payload: D["response"]) => { handlerRef.current(payload); });
+        return () => { if (typeof unsubscribe === "function") { unsubscribe(); } };
+    }, [def.fullName]);
+};
