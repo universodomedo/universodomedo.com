@@ -8,7 +8,6 @@ import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 import { PaginaObjeto } from 'types-nora-api';
-import useInicializarSocket from 'Hooks/useInicializarSocket';
 
 export function ControladorSlot({ pageConfig, children, }: { pageConfig: { paginaAtual?: PaginaObjeto; comCabecalho?: boolean; usuarioObrigatorio?: boolean }; children: React.ReactNode; }) {
     const { carregando, checkAuth, estaAutenticado } = useContextoAutenticacao();
@@ -22,8 +21,6 @@ export function ControladorSlot({ pageConfig, children, }: { pageConfig: { pagin
     useEffect(() => {
         checkAuth(pageConfig.paginaAtual);
     }, []);
-
-    useInicializarSocket(estaAutenticado && !carregando);
         
     if (carregando) return (<h1>carregando....</h1>);
 
