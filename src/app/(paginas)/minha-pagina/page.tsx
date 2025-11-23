@@ -2,19 +2,20 @@
 
 import styles from './styles.module.css';
 
-import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { PAGINAS } from 'types-nora-api';
+
+import { ControladorSlot } from 'Layouts/ControladorSlot';
 import BarraUsuario from 'Componentes/ElementosPaginaUsuario/BarraUsuario/page.tsx';
 import SecaoPosts from 'Componentes/ElementosPaginaUsuario/Post/page.tsx';
-import SecaoContatos from 'Componentes/ElementosPaginaUsuario/Contato/page.tsx';
+import SecaoContatos from 'Componentes/ElementosPaginaUsuario/Contato/page';
 
 export default function MinhaPagina() {
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.MINHA_PAGINA, comCabecalho: false, usuarioObrigatorio: true }}>
+        <ControladorSlot pageConfig={{paginaAtual: PAGINAS.MINHA_PAGINA, comCabecalho: false, usuarioObrigatorio: true}}>
             <MinhaPagina_Slot />
         </ControladorSlot>
     );
-};
+}
 
 function MinhaPagina_Slot() {
     return (
@@ -27,4 +28,4 @@ function MinhaPagina_Slot() {
             <SecaoContatos />
         </div>
     );
-};
+}

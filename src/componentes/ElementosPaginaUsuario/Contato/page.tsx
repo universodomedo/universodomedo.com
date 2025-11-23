@@ -2,13 +2,12 @@
 
 import styles from './styles.module.css';
 import { useState } from 'react';
+import { Eventos_Emite, SOCKET_AcessoUsuario } from 'types-nora-api';
 
-import { SOCKET_AcessoUsuario, SOCKET_EVENTOS } from 'types-nora-api';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
-import useSocketEvent from 'Hooks/useSocketEvent';
-import { useSocketEmit } from 'Hooks/useSocketEmit';
+import { useEmitWsComDisparoInicial, useRecebeEmitWs } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 export default function SecaoContatos() {
@@ -16,11 +15,11 @@ export default function SecaoContatos() {
     
     const [listaAcessosUsuarios, setListaAcessosUsuarios] = useState<SOCKET_AcessoUsuario[]>([]);
 
-    useSocketEvent(SOCKET_EVENTOS.AcessosUsuarios.receber, (dados: SOCKET_AcessoUsuario[]) => {
-        setListaAcessosUsuarios(dados.filter(acesso => acesso.usuario.id !== usuarioLogado?.id));
+    console.log(`antes`);
+    useEmitWsComDisparoInicial(Eventos_Emite.UsuariosConectados.eventos.emitirUsuariosConectadosAgora, data => {
+        console.log(`oi`);
+        setListaAcessosUsuarios(data.usuariosConectados.filter(acesso => acesso.usuario.id !== usuarioLogado?.id));
     });
-
-    useSocketEmit(SOCKET_EVENTOS.AcessosUsuarios.obter);
 
     const { scrollableProps } = useScrollable();
 
