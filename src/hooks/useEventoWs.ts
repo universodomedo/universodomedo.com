@@ -6,7 +6,7 @@ import { io, type Socket } from "socket.io-client";
 export type EventoWsFn = {
     <D extends { tipo: "envia"; payload: any; fullName: string }>(def: D, payload: D["payload"]): void;
     <D extends { tipo: "emite"; response: any; fullName: string }>(def: D, handler: (payload: D["response"]) => void): () => void;
-    <D extends { tipo: "recebe-e-envia"; payload: any; response: any; fullName: string }>(def: D, payload: D["payload"]): Promise<D["response"]>;
+    <D extends { tipo: "envia-e-recebe"; payload?: any; response: any; fullName: string }>(def: D, payload: D["payload"], handler: (response: D["response"]) => void): void;
 };
 
 let socketSingleton: Socket | null = null;
@@ -39,14 +39,15 @@ export function clearSocketCache() {
 
 export function getActiveConnections() { return socketSingleton?.connected ? ["/"] : []; };
 
-export const eventoWs: EventoWsFn = ((def: any, arg2: any) => {
+export const eventoWs: EventoWsFn = ((def: any, arg2: any, arg3?: any) => {
     const socket = getSocket();
 
     if (!socket) {
-        console.warn("[eventoWs] Socket ainda não disponível, evento ignorado:", def?.fullName);
-
-        if (def?.tipo === "recebe-e-envia") return Promise.reject(new Error("Socket não conectado ainda"));
-        if (def?.tipo === "emite") return () => {};
+        if (def?.tipo === "envia-e-recebe") {
+            if (arg3) return;
+            return Promise.reject(new Error("Socket não conectado ainda"));
+        }
+        if (def?.tipo === "emite") return () => { };
         return;
     }
 
@@ -67,8 +68,24 @@ export const eventoWs: EventoWsFn = ((def: any, arg2: any) => {
         return () => { socket.off(fullName, wrapped); };
     }
 
-    if (tipo === "recebe-e-envia") {
+    if (tipo === "envia-e-recebe") {
         const payload = arg2;
+
+        // se veio callback (3º arg), usa callback e não retorna Promise
+        if (typeof arg3 === "function") {
+
+            socket.timeout(5000).emit(fullName, payload, (err: unknown, response: unknown) => {
+
+                if (err) {
+                    console.error(`Erro no evento envia-e-recebe {${fullName}}: [${err}]`);
+                    return;
+                }
+
+                (arg3 as (response: unknown) => void)(response);
+            });
+
+            return;
+        }
 
         return new Promise((resolve, reject) => {
             socket.timeout(5000).emit(fullName, payload, (err: unknown, response: unknown) => {
@@ -77,8 +94,6 @@ export const eventoWs: EventoWsFn = ((def: any, arg2: any) => {
             });
         });
     }
-
-    console.error("[eventoWs] Tipo de evento desconhecido:", def?.tipo ?? "?");
 }) as EventoWsFn;
 
 export function useRecebeEmitWs<D extends { tipo: "emite"; response: any; fullName: string }>(def: D, handler: (payload: D["response"]) => void): void {
@@ -88,5 +103,33 @@ export function useRecebeEmitWs<D extends { tipo: "emite"; response: any; fullNa
     useEffect(() => {
         const unsubscribe = eventoWs(def, (payload: D["response"]) => { handlerRef.current(payload); });
         return () => { if (typeof unsubscribe === "function") { unsubscribe(); } };
+    }, [def.fullName]);
+};
+
+export function useEmitWsComDisparoInicial<D extends { tipo: "emite"; payload: any; response: any; fullName: string }>(def: D, handler: (payload: D["response"]) => void, initialPayload?: D["payload"]): void {
+    const handlerRef = useRef(handler);
+    handlerRef.current = handler;
+
+    useEffect(() => {
+        // 1) Assina o evento "emite" (server -> client)
+        const unsubscribe = eventoWs(def, (payload: D["response"]) => {
+            handlerRef.current(payload);
+        });
+
+        // 2) Dispara o "agora" uma única vez, usando o MESMO evento
+        const socket = getSocket();
+
+        if (socket) {
+            const payloadToSend = (initialPayload ?? ({} as D["payload"]));
+            socket.emit(def.fullName, payloadToSend);
+        } else {
+            console.warn("[useEmitWsComDisparoInicial] Socket ainda não disponível ao montar.");
+        }
+
+        return () => {
+            if (typeof unsubscribe === "function") {
+                unsubscribe();
+            }
+        };
     }, [def.fullName]);
 };

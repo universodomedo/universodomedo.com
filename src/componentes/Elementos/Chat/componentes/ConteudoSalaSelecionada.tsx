@@ -2,15 +2,16 @@
 
 import styles from '../styles.module.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { SOCKET_EVENTOS, MensagemChatPayload } from 'types-nora-api';
+import { Eventos_Envia } from 'types-nora-api';
 
-import { RootState } from 'Redux/store/types';
 import { useAppSelector } from 'Redux/hooks/useRedux';
-import { selectSalaSelecionadaComGrupos, selectSalaSelecionadaId } from 'redux/selectors/chatsSelectors';
+import { RootState } from 'Redux/store/types';
+import { selectSalaSelecionadaComGrupos, selectSalaSelecionadaId } from 'Redux/selectors/chatsSelectors';
+
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
-import emitSocketEvent from 'Libs/emitSocketEvent';
 import AgrupamentoMensagensChat from '../subcomponentes/AgrupamentoMensagensChat';
 import useLimitaUso from 'Hooks/useLimitaUso';
+import { eventoWs } from "Hooks/useEventoWs";
 
 export default function ConteudoSalaSelecionada() {
     const salaSelecionada = useAppSelector(selectSalaSelecionadaComGrupos);
@@ -49,8 +50,7 @@ export default function ConteudoSalaSelecionada() {
 
         if (!podeUsar()) return;
 
-        const payload: MensagemChatPayload = { salaId: salaSelecionadaId, conteudo };
-        emitSocketEvent(SOCKET_EVENTOS.Chat.enviarMensagem, payload);
+        eventoWs(Eventos_Envia.Chat.eventos.enviaMensagem, { salaId: salaSelecionadaId, conteudoMensagem: conteudo });
         registrarUso();
         scrollParaBaixo();
 

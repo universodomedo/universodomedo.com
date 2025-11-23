@@ -6,13 +6,6 @@ import InicializadorSocket from 'Componentes/Elementos/InicializadorSocket/Inici
 import { useUsuariosSocket } from 'listeners/usuariosSocket';
 import { useChatSocketListeners } from 'listeners/chatsSocket';
 
-function SocketHooks() {
-    InicializadorSocket();
-    useUsuariosSocket(); // essa linha é responsável por obter todos os usuarios, q é utilizado como referencia dos avatares no chat
-    useChatSocketListeners(); // socket para carregar salas e conteudo
-    return null;
-};
-
 export default function SocketListeners() {
     const [mounted, setMounted] = useState(false);
 
@@ -23,4 +16,11 @@ export default function SocketListeners() {
     if (!mounted) return null;
 
     return <SocketHooks />;
+};
+
+function SocketHooks() {
+    InicializadorSocket();
+    useUsuariosSocket(); // essa linha é responsável por obter todos os usuarios, q é utilizado como referencia dos avatares no chat
+    useChatSocketListeners(); // socket para carregar salas e conteudo
+    return null;
 };

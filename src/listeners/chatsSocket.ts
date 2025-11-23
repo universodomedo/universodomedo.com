@@ -1,30 +1,17 @@
-import { useEffect } from 'react';
-
-// import { SOCKET_EVENTOS, SalaChatFront, MensagemChatRecebida } from 'types-nora-api';
+import { Eventos_Emite, Eventos_EnviaERecebe } from 'types-nora-api';
 
 import { useAppDispatch } from 'Redux/hooks/useRedux';
-import useSocketEvent from 'Hooks/useSocketEvent';
-import emitSocketEvent from 'Libs/emitSocketEvent';
 import { setSalas, adicionarMensagem } from 'Redux/slices/chatsSlice';
+import { eventoWs, useRecebeEmitWs } from "Hooks/useEventoWs";
 
 export function useChatSocketListeners() {
     const dispatch = useAppDispatch();
 
-    // useSocketEvent<SalaChatFront[]>(
-    //     SOCKET_EVENTOS.Chat.receberSalasDisponiveis,
-    //     (salas) => {
-    //         dispatch(setSalas(salas));
-    //     }
-    // );
+    eventoWs(Eventos_EnviaERecebe.Chat.eventos.emitirSalas, {}, data => {
+        dispatch(setSalas(data.salas));
+    });
 
-    // useSocketEvent<MensagemChatRecebida>(
-    //     SOCKET_EVENTOS.Chat.receberMensagem,
-    //     (mensagem) => {
-    //         dispatch(adicionarMensagem(mensagem));
-    //     }
-    // );
-
-    // useEffect(() => {
-    //     emitSocketEvent(SOCKET_EVENTOS.Chat.receberSalasDisponiveis);
-    // }, []);
+    useRecebeEmitWs(Eventos_Emite.Chat.eventos.emitirMensagem, data => {
+        dispatch(adicionarMensagem(data.conteudoMensagem));
+    });
 };
