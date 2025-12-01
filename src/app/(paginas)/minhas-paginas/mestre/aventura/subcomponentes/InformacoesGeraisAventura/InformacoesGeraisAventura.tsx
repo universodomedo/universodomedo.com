@@ -54,11 +54,7 @@ function ListaDeTodasAsSessoes() {
                     <CustomLink key={detalheSessaoAventura.sessao.id} href={`/minhas-paginas/mestre/sessao/${detalheSessaoAventura.sessao.id}`}>
                         <div className={styles.recipiente_linha_episodio_em_lista}>
                             <h4>{detalheSessaoAventura.episodioPorExtenso}</h4>
-                            {detalheSessaoAventura.sessao.estadoAtual === EstadoSessao.MARCADA
-                                ? <h4>Prevista para {formataData(detalheSessaoAventura.sessao.dataPrevisaoInicio, 'dd/MM/yyyy HH:mm')}</h4>
-                                : detalheSessaoAventura.sessao.estadoAtual === EstadoSessao.EM_ANDAMENTO ? <h4>Em andamento</h4>
-                                    : <h4>Ocorreu em {formataData(detalheSessaoAventura.sessao.dataInicio!, 'dd/MM/yyyy HH:mm')}</h4>
-                            }
+                            <h4>{detalheSessaoAventura.sessao.detalheData}</h4>
                         </div>
                     </CustomLink>
                 ))}

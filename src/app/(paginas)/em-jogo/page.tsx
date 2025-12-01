@@ -65,12 +65,12 @@ function PaginaFichaBaixo() {
             </div>
             <div className={`${styles.fatia_parte_baixo_detalhes}`}>
                 <div className={styles.recipiente_informacoes_personagem}>
-                    <h2>{ficha?.personagem.informacao.nome}</h2>
+                    {/* <h2>{ficha?.personagem.informacao.nome}</h2> */}
                     {/* <h2>{`${ficha?.personagem.detalhe?.classe.nome} - ${personagem?.detalhe?.nivel.nomeVisualizacao}`}</h2> */}
                 </div>
                 <div className={styles.recipiente_imagem_personagem}>
                     <div id={styles.imagem_personagem}>
-                        <RecipienteImagem src={ficha?.personagem.caminhoAvatar} />
+                        {/* <RecipienteImagem src={ficha?.personagem.caminhoAvatar} /> */}
                     </div>
                 </div>
             </div>

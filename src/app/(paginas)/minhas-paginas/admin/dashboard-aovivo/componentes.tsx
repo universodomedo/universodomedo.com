@@ -2,14 +2,14 @@
 
 import styles from './styles.module.css';
 
-import { ContextoPaginaAovivoProvider, useContextoPaginaAovivo } from "Contextos/ContextoPaginaAovivo/contexto";
+import { ContextoSessaoEmAndamentoProvider, useContextoSessaoEmAndamento } from "Contextos/ContextosPaginaAovivo/ContextoSessaoEmAndamento/contexto";
 import SecaoDeConteudo from "Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo";
 
 export function DashboardAovivo_Contexto() {
     return (
-        <ContextoPaginaAovivoProvider>
+        <ContextoSessaoEmAndamentoProvider>
             <DashboardAovivo_Conteudo />
-        </ContextoPaginaAovivoProvider>
+        </ContextoSessaoEmAndamentoProvider>
     );
 };
 
@@ -24,7 +24,7 @@ function DashboardAovivo_Conteudo() {
 };
 
 function ConteudoSessao() {
-    const { sessaoEmAndamento } = useContextoPaginaAovivo();
+    const { sessaoEmAndamento } = useContextoSessaoEmAndamento();
 
     return (
         <SecaoDeConteudo id={styles.recipiente_informacoes_sessao}>
@@ -38,13 +38,13 @@ function ConteudoSessao() {
 };
 
 function ConteudoFichas() {
-    const { sessaoEmAndamento, personagensEmSessao } = useContextoPaginaAovivo();
+    const { sessaoEmAndamento } = useContextoSessaoEmAndamento();
 
     if (!sessaoEmAndamento) return;
 
-    return (
-        <SecaoDeConteudo id={styles.recipiente_informacoes_fichas}>
-            {personagensEmSessao.map(personagem => <p>Ficha {personagem.informacao.nome}</p>)}
-        </SecaoDeConteudo>
+    return ( <></>
+        // <SecaoDeConteudo id={styles.recipiente_informacoes_fichas}>
+        //     {personagensEmSessao.map(personagem => <p>Ficha {personagem.informacao.nome}</p>)}
+        // </SecaoDeConteudo>
     );
 };

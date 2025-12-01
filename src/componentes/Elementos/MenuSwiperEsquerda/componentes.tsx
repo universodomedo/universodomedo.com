@@ -28,7 +28,8 @@ export function ItensMenuSwiperEsquerda() {
                 { titulo: "Administrador", link: "/minhas-paginas/admin", condicao: ehAdmin }
             ]
         },
-        { titulo: "Personagens", link: "/personagens" },
+        { titulo: "Personagens", link: "/personagens", }, // sempre mostra, pq antes de ser jogador, o usuário vai poder jogar Sessão Única
+        { titulo: "Jogue Agora!", link: "/play" },
         { titulo: "Assistir", link: "/aventuras" },
         { titulo: "Sessão Ao Vivo", link: "/sessao-aovivo" },
         { titulo: "Hall", link: "/minha-pagina", condicao: estaAutenticado },

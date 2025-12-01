@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import Modal from 'Componentes/Elementos/Modal/Modal';
-import { criaFicha, obtemPericiasParaCriacaoFicha } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { obtemPericiasParaCriacaoFicha } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { useContextoPaginaFichasPendentes } from './contexto';
 
 import { EstadoPendenciaAdministrativaPersonagem, PericiaDto, PersonagemDto } from 'types-nora-api';
@@ -73,13 +73,13 @@ export function ModalCriacaoFicha({ modalEstaAberta, onOpenChange }: { modalEsta
     async function executa() {
         if (!personagemConfigurando) return;
         
-        const retorno = await criaFicha(personagemConfigurando.id, selectedOptions.map(option => option.value));
+        // const retorno = await criaFicha(personagemConfigurando.id, selectedOptions.map(option => option.value));
 
-        if (retorno) {
-            window.location.reload();
-        } else {
-            alert('Houve um problema');
-        }
+        // if (retorno) {
+        //     window.location.reload();
+        // } else {
+        //     alert('Houve um problema');
+        // }
     }
 
     return (

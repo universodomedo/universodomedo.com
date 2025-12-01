@@ -5,8 +5,8 @@ export type SessaoDadosGerais = {
     participantes: ParticipanteSessao[];
 };
 
-type ParticipanteSessao = {
-    jogador: UsuarioDto;
+export type ParticipanteSessao = {
+    jogador: UsuarioDto | null;
     personagem: PersonagemDto | null;
 };
 

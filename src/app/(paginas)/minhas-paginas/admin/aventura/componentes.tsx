@@ -27,7 +27,7 @@ export function AdministrarAventura_Slot({ grupoAventura }: { grupoAventura: Gru
 function AdministrarAventura_Conteudo({ grupoAventura }: { grupoAventura: GrupoAventuraDto; }) {
     return (
         <ContextoCadastroNovoLinkGrupoAventuraProvider idGrupoAventura={grupoAventura.id}>
-            <CabecalhoDeAventura pathCapa={grupoAventura.aventura.imagemCapa!.fullPath} titulo={grupoAventura.nomeUnicoGrupoAventura} />
+            <CabecalhoDeAventura tipo={'grupoAventura'} grupoAventura={grupoAventura} />
 
             <BotoesAventura grupoAventura={grupoAventura} />
 

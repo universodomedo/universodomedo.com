@@ -42,8 +42,16 @@ export async function buscaGrupoAventuraEspecifico(idGrupoAventura: number) {
     return await useApi<GrupoAventuraDto | null>({ uri: '/grupos_aventuras/buscaGrupoAventuraEspecifico', method: 'GET', params: { idGrupoAventura } });
 }
 
+export async function obtemListagemGeralSessoes() {
+    return await useApi<SessaoDto[]>({ uri: '/sessoes/obtemListagemGeralSessoes', method: 'GET' });
+}
+
 export async function obtemSessaoGeral(idSessao: number) {
     return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemSessaoGeral', method: 'GET', params: { idSessao } });
+}
+
+export async function obtemDadosPublicosSessao(idSessao: number) {
+    return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemDadosPublicosSessao', method: 'GET', params: { idSessao } });
 }
 
 export async function me_obtemPersonagens(idTipoPersonagem?: number) {

@@ -1,13 +1,10 @@
 'use client';
 
-import styles from './styles.module.css';
-
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import ListaAcoesMestre from 'Componentes/ElementosDeMenu/ListaAcoesMestre/page';
 import { useContextoPaginaMestreSessao } from 'Contextos/ContextoMestreSessao/contexto';
-import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
-import { InformacoesGeraisSessao, ListaInfracoesSessao } from './subcomponentes';
 import { EstiloSessao } from 'types-nora-api';
+import SessaoEmVisualizacao from 'Componentes/ElementosVisuais/SessaoEmVisualizacao/page';
 
 export function PaginaMestreSessao_Contexto() {
     const { sessaoSelecionada } = useContextoPaginaMestreSessao();
@@ -32,12 +29,10 @@ function PaginaMestreSessao_Conteudo() {
     const { sessaoSelecionada } = useContextoPaginaMestreSessao();
 
     return (
-        <div id={styles.recipiente_sessao_selecionada}>
-            {sessaoSelecionada.estiloSessao == EstiloSessao.SESSAO_DE_AVENTURA && <CabecalhoDeAventura pathCapa={sessaoSelecionada.detalheSessaoAventura.grupoAventura.aventura.imagemCapa!.fullPath} titulo={sessaoSelecionada.detalheSessaoAventura.grupoAventura.nomeUnicoGrupoAventura} />}
-
-            <InformacoesGeraisSessao />
+        <>
+            <SessaoEmVisualizacao sessao={sessaoSelecionada} />
             
             {/* <ListaInfracoesSessao /> */}
-        </div>
+        </>
     );
 };
