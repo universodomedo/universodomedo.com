@@ -48,5 +48,5 @@ export default function ListaAcoesMestre() {
         },
     ];
 
-    return RenderItensPermissoes(permissoesMestre, 'mestre', false);
+    return RenderItensPermissoes(permissoesMestre, 'mestre', false, '/minhas-paginas');
 };

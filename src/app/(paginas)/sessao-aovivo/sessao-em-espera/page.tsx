@@ -47,12 +47,12 @@ function PaginaSessao_EpisodioSeguinte() {
     return (
         <div id={styles.recipiente_episodio_seguinte}>
             <div id={styles.recipiente_capa_episodio_seguinte}>
-                <RecipienteImagem src={episodioSeguinte.detalheSessaoAventura.grupoAventura.aventura.imagemCapa?.fullPath} />
+                <RecipienteImagem src={episodioSeguinte.pathCapaInteligente} />
             </div>
             <div id={styles.recipiente_informacoes_episodio_seguinte}>
                 <div id={styles.recipiente_titulo_e_subtitulo_episodio_seguinte}>
-                    <h1>{episodioSeguinte.detalheSessaoAventura.grupoAventura.aventura.titulo}</h1>
-                    <h3>{episodioSeguinte.detalheSessaoAventura.grupoAventura.nome} - {episodioSeguinte.detalheSessaoAventura.episodioPorExtenso}</h3>
+                    <h1>{episodioSeguinte.tituloInteligente.titulo}</h1>
+                    {episodioSeguinte.tituloInteligente.subtitulo && (<h3>{episodioSeguinte.tituloInteligente.subtitulo}</h3>)}
                 </div>
                 <h1 id={styles.episodio_seguinte_contagem_regressiva}>Começa em <span id={styles.episodio_seguinte_numeros_contagem_regressiva}><ContadorRegressivo dataAlvo={episodioSeguinte.dataPrevisaoInicio} /></span></h1>
                 {/* <h4 id={styles.episodio_seguinte_descricao_episodio}>Com os recursos de um novo bunker em mãos e entendendo mais sobre o Paranormal, o grupo volta à superficie e rumam novamente em direção ao Furacão na distância</h4> */}
@@ -73,11 +73,11 @@ function PaginaSessao_EpisodiosFuturos() {
                 {episodiosFuturos.map(ep => (
                     <div key={ep.id} className={styles.recipiente_item_episodio_futuro}>
                         <div className={styles.recipiente_capa_item_episodio_futuro}>
-                            <RecipienteImagem src={ep.detalheSessaoAventura.grupoAventura.aventura.imagemCapa?.fullPath} />
+                            <RecipienteImagem src={ep.pathCapaInteligente} />
                         </div>
                         <div className={styles.recipiente_informacaoes_item_episodio_futuro}>
-                            <h2>{ep.detalheSessaoAventura.grupoAventura.aventura.titulo}</h2>
-                            <h4>{ep.detalheSessaoAventura.episodioPorExtenso}</h4>
+                            <h2>{ep.tituloInteligente.titulo}</h2>
+                            {ep.tituloInteligente.subtitulo && (<h4>{ep.tituloInteligente.subtitulo}</h4>)}
                             <h3>{formataData(ep.dataPrevisaoInicio)}</h3>
                         </div>
                     </div>

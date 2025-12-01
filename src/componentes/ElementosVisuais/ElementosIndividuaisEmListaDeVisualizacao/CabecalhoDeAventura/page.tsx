@@ -1,6 +1,6 @@
 import styles from './styles.module.css';
 
-import { EstiloSessao, GrupoAventuraDto, SessaoDto } from 'types-nora-api';
+import { GrupoAventuraDto, SessaoDto } from 'types-nora-api';
 
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
@@ -9,21 +9,20 @@ type CabecalhoProps = | { tipo: 'sessao'; sessao: SessaoDto; } | { tipo: 'grupoA
 
 export function CabecalhoDeAventura(props: CabecalhoProps) {
   return props.tipo === 'sessao'
-    ? props.sessao.estiloSessao === EstiloSessao.SESSAO_DE_AVENTURA
-      ? <CabecalhoDeAventura tipo={'grupoAventura'} grupoAventura={props.sessao.detalheSessaoAventura.grupoAventura} />
-      : <RenderCabecalhoDeAventura pathCapa={''} titulo={props.sessao.detalheSessaoUnica.rascunho?.titulo ?? 'Mundo Aberto'} />
-    : <RenderCabecalhoDeAventura pathCapa={props.grupoAventura.aventura.imagemCapa!.fullPath} titulo={props.grupoAventura.nomeUnicoGrupoAventura} />
+    ? <RenderCabecalhoDeAventura sessao={props.sessao} />
+    : <CabecalhoDeAventura tipo={'grupoAventura'} grupoAventura={props.grupoAventura} />
 };
 
-function RenderCabecalhoDeAventura({ pathCapa, titulo }: { pathCapa: string; titulo: string }) {
+function RenderCabecalhoDeAventura({ sessao }: { sessao: SessaoDto; }) {
   return (
     <>
       <SecaoDeConteudo id={styles.recipiente_capa_cabecalho_aventura}>
-        <RecipienteImagem src={pathCapa} />
+        <RecipienteImagem src={sessao.pathCapaInteligente} />
       </SecaoDeConteudo>
 
       <SecaoDeConteudo id={styles.recipiente_nome_cabecalho_aventura}>
-        <h1>{titulo}</h1>
+        <h1>{sessao.tituloInteligente.titulo}</h1>
+        {sessao.tituloInteligente.subtitulo && (<h3>{sessao.tituloInteligente.titulo}</h3>)}
       </SecaoDeConteudo>
     </>
   );

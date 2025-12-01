@@ -1,7 +1,8 @@
 'use client';
 
+import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { FichaDeJogo } from 'types-nora-api';
+import { Eventos_Emite, FichaDeJogo } from 'types-nora-api';
 import { obtemFichaDePersonagemEmNivel } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoFichaPersonagemProps {
@@ -19,14 +20,18 @@ export const useContextoFichaPersonagem = (): ContextoFichaPersonagemProps => {
 export const ContextoFichaPersonagemProvider = ({ children }: { children: React.ReactNode }) => {
     const [ficha, setFicha] = useState<FichaDeJogo>();
 
-    const obtemPersonagem = async () => {
-        const retorno = await obtemFichaDePersonagemEmNivel();
-        setFicha(retorno);
-    }
+    useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirDadosParaParticipanteDeSala, data => {
+        setFicha(data.dados.fichaDeJogo);
+    });
 
-    useEffect(() => {
-        obtemPersonagem();
-    }, []);
+    // const obtemPersonagem = async () => {
+    //     const retorno = await obtemFichaDePersonagemEmNivel();
+    //     setFicha(retorno);
+    // }
+
+    // useEffect(() => {
+    //     obtemPersonagem();
+    // }, []);
 
     if (!ficha) return (<h1>carregando ficha...</h1>)
 

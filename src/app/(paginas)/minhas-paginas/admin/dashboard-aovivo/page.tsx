@@ -2,13 +2,13 @@
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import { ListaAcoesAdmin } from "../componentes";
-import { DashboardAovivo_Contexto } from './componentes';
+import { DashboardAovivo_Slot } from './componentes';
 
 export default function DashboardAovivo() {
     return (
         <LayoutContextualizado proporcaoConteudo={84}>
             <LayoutContextualizado.Conteudo>
-                <DashboardAovivo_Contexto />
+                <DashboardAovivo_Slot />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
                 <ListaAcoesAdmin />

@@ -12,5 +12,5 @@ export default function ListaAcoesJogador() {
         },
     ];
 
-    return RenderItensPermissoes(permissoesJogador, 'jogador', false);
+    return RenderItensPermissoes(permissoesJogador, 'jogador', false, '/minhas-paginas');
 };

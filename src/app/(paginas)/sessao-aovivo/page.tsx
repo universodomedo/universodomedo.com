@@ -1,7 +1,5 @@
 'use client';
 
-import styles from './styles.module.css';
-import { useEffect, useState } from "react";
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';

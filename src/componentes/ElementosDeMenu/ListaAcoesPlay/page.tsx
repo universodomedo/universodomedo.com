@@ -47,6 +47,10 @@ function SecaoJogador() {
                     titulo: 'Modo Individual',
                     link: 'individial',
                 },
+                {
+                    titulo: 'Teste',
+                    link: 'jogador',
+                },
             ],
         },
     ];
