@@ -9,23 +9,27 @@ export type EventoWsFn = {
     <D extends { tipo: "envia-e-recebe"; payload?: any; response: any; fullName: string }>(def: D, payload: D["payload"], handler: (response: D["response"]) => void): void;
 };
 
+export type WsErrorResponse = {
+    _wsErro: true;
+    mensagem: string;
+    [key: string]: any;
+};
+
+export function isWsErrorResponse(response: unknown): response is WsErrorResponse {
+    return !!response && typeof response === "object" && (response as any)._wsErro === true;
+};
+
 let socketSingleton: Socket | null = null;
 
 export function getSocket(): Socket | null {
     if (typeof window === "undefined") return null;
 
     if (socketSingleton) {
-        // console.log("   ✅ REUTILIZANDO instância existente");
         return socketSingleton;
     }
 
-    // console.log("   🆕 CRIANDO NOVA instância");
     const url = process.env.NEXT_PUBLIC_WEBSOCKET_URL;
     const socket = io(url, { withCredentials: true, transports: ["websocket"] });
-
-    // socket.on("connect", () => { console.log(`   ✅ CONECTADO - ID: ${socket.id}`); });
-    // socket.on("disconnect", reason => { console.log(`   ❌ DESCONECTADO - Motivo: ${reason}`); });
-    // socket.on("reconnect", attempt => { console.log(`   🔄 RECONECTANDO - Tentativa: ${attempt}`); });
 
     socketSingleton = socket;
 
@@ -71,11 +75,8 @@ export const eventoWs: EventoWsFn = ((def: any, arg2: any, arg3?: any) => {
     if (tipo === "envia-e-recebe") {
         const payload = arg2;
 
-        // se veio callback (3º arg), usa callback e não retorna Promise
         if (typeof arg3 === "function") {
-
             socket.timeout(5000).emit(fullName, payload, (err: unknown, response: unknown) => {
-
                 if (err) {
                     console.error(`Erro no evento envia-e-recebe {${fullName}}: [${err}]`);
                     return;
@@ -106,30 +107,56 @@ export function useRecebeEmitWs<D extends { tipo: "emite"; response: any; fullNa
     }, [def.fullName]);
 };
 
-export function useEmitWsComDisparoInicial<D extends { tipo: "emite"; payload: any; response: any; fullName: string }>(def: D, handler: (payload: D["response"]) => void, initialPayload?: D["payload"]): void {
-    const handlerRef = useRef(handler);
-    handlerRef.current = handler;
+type UseEmitWsOptions<D> = {
+    onSuccess: (payload: D extends { response: any } ? D["response"] : any) => void;
+    onError?: (error: WsErrorResponse) => void;
+};
+
+// overloads aceitam qualquer evento com fullName/response/payload (tipo pode ser "emite" ou "envia-e-recebe")
+export function useEmitWsComDisparoInicial<D extends { tipo: string; payload: any; response: any; fullName: string }>(def: D, handler: (payload: D["response"]) => void, initialPayload?: D["payload"]): void;
+export function useEmitWsComDisparoInicial<D extends { tipo: string; payload: any; response: any; fullName: string }>(def: D, options: UseEmitWsOptions<D>, initialPayload?: D["payload"]): void;
+export function useEmitWsComDisparoInicial(def: any, handlerOrOptions: any, initialPayload?: any): void {
+    const successRef = useRef<((payload: any) => void) | null>(null);
+    const errorRef = useRef<((error: WsErrorResponse) => void) | null>(null);
+
+    if (typeof handlerOrOptions === "function") {
+        successRef.current = handlerOrOptions as (payload: any) => void;
+        errorRef.current = null;
+    } else {
+        successRef.current = handlerOrOptions.onSuccess;
+        errorRef.current = handlerOrOptions.onError ?? null;
+    }
 
     useEffect(() => {
-        // 1) Assina o evento "emite" (server -> client)
-        const unsubscribe = eventoWs(def, (payload: D["response"]) => {
-            handlerRef.current(payload);
-        });
-
-        // 2) Dispara o "agora" uma única vez, usando o MESMO evento
         const socket = getSocket();
 
-        if (socket) {
-            const payloadToSend = (initialPayload ?? ({} as D["payload"]));
-            socket.emit(def.fullName, payloadToSend);
-        } else {
+        if (!socket) {
             console.warn("[useEmitWsComDisparoInicial] Socket ainda não disponível ao montar.");
+            return;
         }
 
-        return () => {
-            if (typeof unsubscribe === "function") {
-                unsubscribe();
+        const wrapped = (payload: unknown) => {
+            if (isWsErrorResponse(payload)) {
+                if (errorRef.current) {
+                    errorRef.current(payload);
+                } else {
+                    console.error(`[WS ERRO] Evento {${def.fullName}}: ${payload.mensagem}`);
+                }
+                return;
             }
+
+            if (successRef.current) {
+                successRef.current(payload);
+            }
+        };
+
+        socket.on(def.fullName, wrapped);
+
+        const payloadToSend = (initialPayload ?? {});
+        socket.emit(def.fullName, payloadToSend);
+
+        return () => {
+            socket.off(def.fullName, wrapped);
         };
     }, [def.fullName]);
 };

@@ -11,7 +11,7 @@ export async function obtemTodosObjetosCache() {
 }
 
 export async function obtemDadosMinhasDisponibilidades() {
-    return await useApi<DisponibilidadeUsuarioDto>({ uri: '/disponibilidades_usuario/obtemDadosMinhasDisponibilidades', method: 'GET' });
+    return await useApi<DisponibilidadeUsuarioDto | null>({ uri: '/disponibilidades_usuario/obtemDadosMinhasDisponibilidades', method: 'GET' });
 }
 
 export async function me_salvaDisponibilidade(listaDisponibilidadesUsuario: ListaDisponibilidadesUsuario) {
@@ -35,7 +35,7 @@ export async function obtemAventurasParaAssistir() {
 }
 
 export async function obtemAventuraCompleta(idAventura: number) {
-    return await useApi<AventuraDto>({ uri: '/aventuras/obtemAventuraCompleta', method: 'GET', params: { idAventura } });
+    return await useApi<AventuraDto | null>({ uri: '/aventuras/obtemAventuraCompleta', method: 'GET', params: { idAventura } });
 }
 
 export async function buscaGrupoAventuraEspecifico(idGrupoAventura: number) {
@@ -59,7 +59,7 @@ export async function me_obtemPersonagens(idTipoPersonagem?: number) {
 }
 
 export async function obtemDadosInteligentePersonagem(idPersonagem: number) {
-    return await useApi<PersonagemDto>({ uri: '/personagens/obtemDadosInteligentePersonagem', method: 'GET', params: { idPersonagem } });
+    return await useApi<PersonagemDto | null>({ uri: '/personagens/obtemDadosInteligentePersonagem', method: 'GET', params: { idPersonagem } });
 }
 
 export async function obtemTiposImagem() {
@@ -75,10 +75,6 @@ export async function uploadImagem(file: File, tipo: string) {
 
 export async function atualizaAvatarUsuario(idPersonagem: number) {
     return await useApi<ImagemDto[]>({ uri: '/usuarios/atualizaAvatarUsuario', method: 'PUT', data: { idPersonagem: idPersonagem } });
-}
-
-export async function obtemDadosProximaSessao() {
-    return await useApi<SessaoDto>({ uri: '/sessoes/obtemDadosProximaSessao', method: 'GET' });
 }
 
 export async function obtemFichaDePersonagemEmNivel() {
@@ -97,10 +93,6 @@ export async function obtemPericiasParaCriacaoFicha() {
 
 export async function obtemPersonagensComEvolucaoPendente() {
     return await useApi<PersonagemDto[]>({ uri: 'personagens/obtemPersonagensComEvolucaoPendente', method: 'GET' });
-}
-
-export async function obtemPersonagemEmProcessoDeEvolucao(idPersonagem: number) {
-    return await useApi<PersonagemDto>({ uri: 'personagens/obtemPersonagemEmProcessoDeEvolucao', method: 'GET', params: { idPersonagem } });
 }
 
 export async function obtemGanhosParaEvoluir(idPersonagem: number) {

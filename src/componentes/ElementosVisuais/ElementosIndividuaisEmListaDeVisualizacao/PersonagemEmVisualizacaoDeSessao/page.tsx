@@ -1,9 +1,7 @@
 import styles from './styles.module.css';
 
-import { ReactNode } from 'react';
-import { PathTokenPadrao, UsuarioDto } from 'types-nora-api';
+import { ParticipanteSessao, PathTokenPadrao, UsuarioDto } from 'types-nora-api';
 
-import { ParticipanteSessao } from "Adaptadores/SessaoDadosGerais";
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 type PersonagemEmVisualizacaoDeSessaoProps = | { tipo: 'mestre'; usuario: UsuarioDto; } | { tipo: 'participante'; participanteSessao: ParticipanteSessao; };

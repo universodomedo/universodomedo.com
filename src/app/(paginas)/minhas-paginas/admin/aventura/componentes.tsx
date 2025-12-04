@@ -53,7 +53,7 @@ function AreaLinkTrailer({ linkTrailer }: { linkTrailer: LinkDto }) {
 
     return (
         <div id={styles.recipiente_area_link_trailer}>
-            {linkTrailer ? (
+            {linkTrailer && linkTrailer.urlCompleta ? (
                 <Link href={linkTrailer.urlCompleta} target='_blank'><p>Tem Trailer</p></Link>
             ) : (
                 <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(1)}>Configurar Trailer</button>
@@ -67,7 +67,7 @@ function AreaLinkPlaylist({ linkPlaylist }: { linkPlaylist: LinkDto }) {
 
     return (
         <div id={styles.recipiente_area_link_trailer}>
-            {linkPlaylist ? (
+            {linkPlaylist && linkPlaylist.urlCompleta ? (
                 <Link href={linkPlaylist.urlCompleta} target='_blank'><p>Tem Playlist</p></Link>
             ) : (
                 <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(3)}>Configurar Playlist</button>
@@ -81,7 +81,7 @@ function AreaLinkSerie({ linkSerie }: { linkSerie: LinkDto }) {
 
     return (
         <div id={styles.recipiente_area_link_trailer}>
-            {linkSerie ? (
+            {linkSerie && linkSerie.urlCompleta ? (
                 <Link href={linkSerie.urlCompleta} target='_blank'><p>Tem Série</p></Link>
             ) : (
                 <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(5)}>Configurar Série</button>
