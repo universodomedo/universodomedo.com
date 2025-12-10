@@ -10,10 +10,28 @@ import { verificarPermissao } from 'Helpers/verificarPermissao';
 export default function ListaAcoesPlay() {
     return (
         <div id={styles.recipiente_lista_acoes}>
+            {verificarPermissao(usuario => usuario.perfilAdmin.id > 1) && (<SecaoAdmin />)}
             {verificarPermissao(usuario => usuario.perfilMestre.id > 1) && (<SecaoMestre />)}
             <SecaoJogador />
         </div>
     );
+};
+
+function SecaoAdmin() {
+    const permissoesAdmin: NivelPermissao[] = [
+        {
+            tituloPermissao: 'Administrador',
+            condicao: true,
+            itens: [
+                {
+                    titulo: 'Salas',
+                    link: 'gerenciar-salas',
+                },
+            ],
+        },
+    ];
+
+    return RenderItensPermissoes(permissoesAdmin, 'admin', false, 'jogo');
 };
 
 function SecaoMestre() {
@@ -30,7 +48,7 @@ function SecaoMestre() {
         },
     ];
 
-    return RenderItensPermissoes(permissoesMestre, 'play', false);
+    return RenderItensPermissoes(permissoesMestre, 'mestre', false, 'jogo');
 };
 
 function SecaoJogador() {
@@ -49,11 +67,11 @@ function SecaoJogador() {
                 },
                 {
                     titulo: 'Teste',
-                    link: 'jogador',
+                    link: 'teste',
                 },
             ],
         },
     ];
 
-    return RenderItensPermissoes(permissoesJogador, 'play', true);
+    return RenderItensPermissoes(permissoesJogador, 'jogador', true, 'jogo');
 };

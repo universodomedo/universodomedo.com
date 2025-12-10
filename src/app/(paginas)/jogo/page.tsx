@@ -1,7 +1,8 @@
 'use client';
 
-import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { PAGINAS } from 'types-nora-api';
+
+import { ControladorSlot } from 'Layouts/ControladorSlot';
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import ListaAcoesPlay from 'Componentes/ElementosDeMenu/ListaAcoesPlay/page';
 

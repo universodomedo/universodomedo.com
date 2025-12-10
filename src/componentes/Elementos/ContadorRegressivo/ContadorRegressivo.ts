@@ -1,50 +1,65 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 
-interface ContadorRegressivoProps {
+export interface ContadorRegressivoProps {
     dataAlvo: Date | string | number;
     onTerminou?: () => void;
-}
+};
 
 export function ContadorRegressivo({ dataAlvo, onTerminou }: ContadorRegressivoProps) {
-    const [tempoRestante, setTempoRestante] = useState<string>('--:--:--');
+    const { tempoRestante } = useContadorRegressivo({ dataAlvo, onTerminou });
+    return tempoRestante;
+};
+
+export function useContadorRegressivo({ dataAlvo, onTerminou }: ContadorRegressivoProps) {
+    const [diferencaMs, setDiferencaMs] = useState<number>(0);
+    const terminouDisparadoRef = useRef(false);
 
     const dataFinal = useMemo(() => {
         const date = new Date(dataAlvo);
-        return isNaN(date.getTime()) ? null : date;
+        return isNaN(date.getTime()) ? new Date('invalid') : date;
     }, [dataAlvo]);
 
-    useEffect(() => {
-        if (!dataFinal) {
-            setTempoRestante('Data inválida');
+    const atualizar = useCallback(() => {
+        const time = dataFinal.getTime();
+
+        if (isNaN(time)) {
+            setDiferencaMs(NaN);
             return;
         }
 
-        const atualizarContador = () => {
-            const agora = new Date();
-            const diferenca = dataFinal.getTime() - agora.getTime();
+        const agora = new Date();
+        const diferenca = time - agora.getTime();
 
-            if (diferenca <= 0) {
-                setTempoRestante('00:00:00');
-                if (onTerminou) onTerminou();
-                return;
-            }
+        setDiferencaMs(diferenca);
 
-            const horas = Math.floor(diferenca / (1000 * 60 * 60));
-            const minutos = Math.floor((diferenca % (1000 * 60 * 60)) / (1000 * 60));
-            const segundos = Math.floor((diferenca % (1000 * 60)) / 1000);
+        if (diferenca <= 0 && !terminouDisparadoRef.current) {
+            terminouDisparadoRef.current = true;
+            if (onTerminou) onTerminou();
+        }
 
-            setTempoRestante(
-                `${horas.toString().padStart(2, '0')}:` +
-                `${minutos.toString().padStart(2, '0')}:` +
-                `${segundos.toString().padStart(2, '0')}`
-            );
-        };
-
-        atualizarContador();
-        const intervalo = setInterval(atualizarContador, 1000);
-
-        return () => clearInterval(intervalo);
+        if (diferenca > 0) terminouDisparadoRef.current = false;
     }, [dataFinal, onTerminou]);
 
-    return tempoRestante;
-}
+    useEffect(() => {
+        atualizar();
+        const time = dataFinal.getTime();
+        if (isNaN(time)) return;
+        const intervalo = setInterval(atualizar, 1000);
+        return () => clearInterval(intervalo);
+    }, [atualizar, dataFinal]);
+
+    const tempoRestante = useMemo(() => formatarDiferencaParaHMS(diferencaMs), [diferencaMs]);
+
+    return { tempoRestante, diferencaMs, dataFinal };
+};
+
+function formatarDiferencaParaHMS(diferencaMs: number) {
+    if (Number.isNaN(diferencaMs)) return '--:--:--';
+
+    const ms = Math.max(diferencaMs, 0);
+    const horas = Math.floor(ms / (1000 * 60 * 60));
+    const minutos = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+    const segundos = Math.floor((ms % (1000 * 60)) / 1000);
+
+    return `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+};

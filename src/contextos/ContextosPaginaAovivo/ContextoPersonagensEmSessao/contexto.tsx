@@ -22,9 +22,9 @@ export const ContextoPersonagensEmSessaoProvider = ({ children }: { children: Re
     const { sessaoEmAndamento } = useContextoSessaoEmAndamento();
     const [personagensEmSessao, setPersonagensEmSessao] = useState<PersonagemDto[]>([]);
 
-    useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirDadosSessao, data => {
-        setPersonagensEmSessao(data.dadosSessao[0].personagens);
-    });
+    // useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirDadosSessao, data => {
+    //     setPersonagensEmSessao(data.dadosSessao[0].personagens);
+    // });
 
     return (
         <ContextoPersonagensEmSessao.Provider value={{ personagensEmSessao }}>

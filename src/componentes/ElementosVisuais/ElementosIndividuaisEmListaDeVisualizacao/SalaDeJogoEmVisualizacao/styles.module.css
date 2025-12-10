@@ -1,0 +1,103 @@
+.recipiente_item_sala {
+    width: 50%;
+    background: linear-gradient(#ffffff08, #ffffff03);
+    border: 1px solid #ffffff14;
+    border-radius: .8em;
+    transition: transform .15s, border-color .15s, box-shadow .15s;
+    overflow: hidden;
+    box-shadow: 0 10px 30px #00000040;
+}
+
+.recipiente_item_sala:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+}
+
+/* === Toolbar === */
+.toolbar {
+    display: flex;
+    flex-direction: row;
+    background: linear-gradient(#ffffff1a, #ffffff08);
+    border-bottom: 1px solid #ffffff14;
+    align-items: center;
+    padding: 10px 12px;
+}
+
+.toolbarTitle {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+
+.toolbarCode {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.toolbarRight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.statusBadge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(39, 201, 63, 0.12);
+    border: 1px solid rgba(39, 201, 63, 0.35);
+}
+
+/* === Body === */
+.body {
+    padding: 14px 14px 16px 14px;
+    display: grid;
+    gap: 14px;
+}
+
+/* === Sections === */
+.section {
+    display: grid;
+    gap: 8px;
+}
+
+.sectionTitle {
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.chipRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.recipiente_imagem_avatar {
+    position: relative;
+    height: 4em;
+    aspect-ratio: 1;
+}
+
+/* === Chips === */
+.chip {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.chip:hover {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
+}
