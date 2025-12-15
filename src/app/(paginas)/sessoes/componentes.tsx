@@ -68,7 +68,7 @@ function ListagemSessoes() {
                                     <td>{sessao.id}</td>
                                     <td>{sessao.detalheData}</td>
                                     <td>{sessao.estiloSessao}</td>
-                                    <td>{sessao.dadosGerais.mestre.username}</td>
+                                    <td>{sessao.dadosGerais!.mestre.username}</td>
                                 </tr>
                             ))}
                         </tbody>

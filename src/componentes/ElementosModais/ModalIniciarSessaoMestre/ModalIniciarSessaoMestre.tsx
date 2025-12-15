@@ -27,7 +27,7 @@ export default function ModalIniciarSessaoMestre({ isModalOpen, setIsModalOpen }
 
     const executaRequisicaoDeAberturaDeSala = async () => {
         eventoWs(Eventos_EnviaERecebe.Jogo.eventos.requisicaoDeAberturaDeSala, { idSessao: sessaoSelecionada.id }, retorno => {
-            if (!retorno.sucesso) alert(`Falha na requisição de abrir sala`);
+            
         });
     };
 

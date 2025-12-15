@@ -21,21 +21,21 @@ export const ContextoFichaPersonagemProvider = ({ children }: { children: React.
     const [erro, setErro] = useState<string | null>(null);
     const [ficha, setFicha] = useState<FichaDeJogo>();
 
-    useEmitWsComDisparoInicial(
-        Eventos_Emite.Jogo.eventos.emitirDadosParaParticipanteDeSala,
-        {
-            onSuccess: data => {
-                console.log('onSuccess');
-                setErro(null);
-                setFicha(data.dados.fichaDeJogo);
-            },
-            onError: err => {
-                console.log('onError');
-                setErro(err.mensagem);
-                setFicha(undefined);
-            }
-        }
-    );
+    // useEmitWsComDisparoInicial(
+    //     Eventos_Emite.Jogo.eventos.emitirDadosParaParticipanteDeSala,
+    //     {
+    //         onSuccess: data => {
+    //             console.log('onSuccess');
+    //             setErro(null);
+    //             setFicha(data.dados.fichaDeJogo);
+    //         },
+    //         onError: err => {
+    //             console.log('onError');
+    //             setErro(err.mensagem);
+    //             setFicha(undefined);
+    //         }
+    //     }
+    // );
 
     if (erro) return (<h1>Erro ao carregar ficha: {erro}</h1>);
 

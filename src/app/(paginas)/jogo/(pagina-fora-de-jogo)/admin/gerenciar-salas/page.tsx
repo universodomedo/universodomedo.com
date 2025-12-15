@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 import { useState } from 'react';
-import { Eventos_Emite, PAGINAS, SOCKET_SalaDeJogoDto } from 'types-nora-api';
+import { Eventos_Emite, PAGINAS, SalaDeJogoDto } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
@@ -27,13 +27,14 @@ export default function PaginaPlay_GerenciarSalas() {
 };
 
 function PaginaPlay_GerenciarSalas_Slot() {
-    const [salas, setSalas] = useState<SOCKET_SalaDeJogoDto[]>([]);
+    const [salas, setSalas] = useState<SalaDeJogoDto[]>([]);
 
     useEmitWsComDisparoInicial(
         Eventos_Emite.Jogo.eventos.emitirTodasSalas,
         {
             onSuccess: data => {
                 console.log('onSuccess');
+                console.log(data);
                 setSalas(data.salas);
             },
             onError: err => {

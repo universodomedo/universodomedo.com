@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode, useState } from "react";
-import { Eventos_Emite, PAGINAS, SOCKET_SalaDeJogoDto } from 'types-nora-api';
+import { Eventos_Emite } from 'types-nora-api';
 
 import JogoRouteGuard from "./JogoRouteGuard";
 

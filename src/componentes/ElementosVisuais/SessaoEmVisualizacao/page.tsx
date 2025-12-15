@@ -30,7 +30,7 @@ export default function SessaoEmVisualizacao({ sessao }: { sessao: SessaoDto }) 
                 <h2>Participantes</h2>
 
                 <div id={styles.recipiente_avatares_jogadores}>
-                    {sessao.dadosGerais.participantes.filter(participante => participante.jogador).sort((a, b) => Number(b.personagem !== null) - Number(a.personagem !== null)).map(participante => (
+                    {sessao.dadosGerais!.participantes.filter(participante => participante.jogador).sort((a, b) => Number(b.personagem !== null) - Number(a.personagem !== null)).map(participante => (
                         <PersonagemEmVisualizacaoDeSessao key={participante.jogador?.id} tipo={'participante'} participanteSessao={participante} />
                     ))}
                 </div>
