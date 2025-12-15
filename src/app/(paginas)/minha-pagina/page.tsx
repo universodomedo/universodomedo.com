@@ -11,11 +11,11 @@ import SecaoContatos from 'Componentes/ElementosPaginaUsuario/Contato/page';
 
 export default function MinhaPagina() {
     return (
-        <ControladorSlot pageConfig={{paginaAtual: PAGINAS.MINHA_PAGINA, comCabecalho: false, usuarioObrigatorio: true}}>
+        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.MINHA_PAGINA, comCabecalho: false, usuarioObrigatorio: true }}>
             <MinhaPagina_Slot />
         </ControladorSlot>
     );
-}
+};
 
 function MinhaPagina_Slot() {
     return (
@@ -28,4 +28,4 @@ function MinhaPagina_Slot() {
             <SecaoContatos />
         </div>
     );
-}
+};

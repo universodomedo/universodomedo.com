@@ -65,7 +65,7 @@ function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
     return (
         <>
             <div id={styles.recipiente_area_video_youtube}>
-                {linkVideo ? (
+                {linkVideo && linkVideo.urlCompleta ? (
                     <Link href={linkVideo.urlCompleta} target='_blank'><p>Tem Vídeo</p></Link>
                 ) : (
                     <button onClick={() => iniciaProcessoVinculoLinkSessao(2)}>Configurar Vídeo</button>
@@ -81,7 +81,7 @@ function AreaPodcastSpotify({ linkPodcast }: { linkPodcast: LinkDto }) {
     return (
         <>
             <div id={styles.recipiente_area_video_youtube}>
-                {linkPodcast ? (
+                {linkPodcast && linkPodcast.urlCompleta ? (
                     <Link href={linkPodcast.urlCompleta} target='_blank'><p>Tem Podcast</p></Link>
                 ) : (
                     <button onClick={() => iniciaProcessoVinculoLinkSessao(4)}>Configurar Podcast</button>

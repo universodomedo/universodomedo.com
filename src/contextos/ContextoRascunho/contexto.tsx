@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { DetalheRascunhoAventuraDto, DetalheRascunhoSessaoUnicaCanonicaDto, DetalheRascunhoSessaoUnicaDto, RascunhoDto } from 'types-nora-api';
+import { DetalheRascunhoAventuraDto, DetalheRascunhoSessaoUnicaCanonicaDto, DetalheRascunhoSessaoUnicaNaoCanonicaDto, RascunhoDto } from 'types-nora-api';
 
 import { me_obtemDetalhesRascunho, editaDetalheRascunho, criaBaseadoEmRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import EdicaoRascunho from 'Componentes/EdicaoRascunho/page';
@@ -11,7 +11,7 @@ interface ContextoRascunhoProps {
     rascunho: RascunhoDto | null;
     salvaDetalhesRascunhoAventura: (detalheRascunhoAventura: DetalheRascunhoAventuraDto) => void;
     salvaDetalhesRascunhoSessaoUnicaCanonica: (detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaDto) => void;
-    salvaDetalhesRascunhoSessaoUnica: (detalheRascunhoSessaoUnica: DetalheRascunhoSessaoUnicaDto) => void;
+    salvaDetalhesRascunhoSessaoUnica: (detalheRascunhoSessaoUnicaNaoCanonica: DetalheRascunhoSessaoUnicaNaoCanonicaDto) => void;
     textoBotaoCriar: string;
     executaCriacao: () => void;
 };
@@ -76,11 +76,11 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
         }
     }
 
-    const salvaDetalhesRascunhoSessaoUnica = async (detalheRascunhoSessaoUnica: DetalheRascunhoSessaoUnicaDto) => {
+    const salvaDetalhesRascunhoSessaoUnica = async (detalheRascunhoSessaoUnicaNaoCanonica: DetalheRascunhoSessaoUnicaNaoCanonicaDto) => {
         try {
             if (!await editaDetalheRascunho({
                 ...rascunho!,
-                detalheRascunhoSessaoUnica: detalheRascunhoSessaoUnica,
+                detalheRascunhoSessaoUnicaNaoCanonica: detalheRascunhoSessaoUnicaNaoCanonica,
             })) throw new Error("Erro ao salvar o Rascunho");
 
             buscaDetalhesRascunho();

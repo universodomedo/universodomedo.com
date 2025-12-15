@@ -29,7 +29,7 @@ function PaginaMestreAventura_Conteudo() {
 
     return (
         <div id={styles.recipiente_aventura_selecionada}>
-            <CabecalhoDeAventura pathCapa={grupoAventuraSelecionada.aventura.imagemCapa!.fullPath} titulo={grupoAventuraSelecionada.nomeUnicoGrupoAventura} />
+            <CabecalhoDeAventura tipo={'grupoAventura'} grupoAventura={grupoAventuraSelecionada} />
 
             {grupoAventuraSelecionada.estadoAtual === AventuraEstado.EM_ANDAMENTO && <VisualizadorSessoes />}
 

@@ -1,7 +1,8 @@
 'use client';
 
+import { isWsErrorResponse, useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { FichaDeJogo } from 'types-nora-api';
+import { Eventos_Emite, FichaDeJogo } from 'types-nora-api';
 import { obtemFichaDePersonagemEmNivel } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoFichaPersonagemProps {
@@ -17,16 +18,26 @@ export const useContextoFichaPersonagem = (): ContextoFichaPersonagemProps => {
 };
 
 export const ContextoFichaPersonagemProvider = ({ children }: { children: React.ReactNode }) => {
+    const [erro, setErro] = useState<string | null>(null);
     const [ficha, setFicha] = useState<FichaDeJogo>();
 
-    const obtemPersonagem = async () => {
-        const retorno = await obtemFichaDePersonagemEmNivel();
-        setFicha(retorno);
-    }
+    // useEmitWsComDisparoInicial(
+    //     Eventos_Emite.Jogo.eventos.emitirDadosParaParticipanteDeSala,
+    //     {
+    //         onSuccess: data => {
+    //             console.log('onSuccess');
+    //             setErro(null);
+    //             setFicha(data.dados.fichaDeJogo);
+    //         },
+    //         onError: err => {
+    //             console.log('onError');
+    //             setErro(err.mensagem);
+    //             setFicha(undefined);
+    //         }
+    //     }
+    // );
 
-    useEffect(() => {
-        obtemPersonagem();
-    }, []);
+    if (erro) return (<h1>Erro ao carregar ficha: {erro}</h1>);
 
     if (!ficha) return (<h1>carregando ficha...</h1>)
 

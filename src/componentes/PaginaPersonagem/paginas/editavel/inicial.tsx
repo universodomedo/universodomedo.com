@@ -13,7 +13,7 @@ export default function PaginaEditavel_Inicial() {
         <div id={styles.recipiente_conteudo_pagina_personagem_selecionado}>
             <BarraPersonagem />
             <BotaoEvoluir />
-            {personagemSelecionado?.fichaVigente && (
+            {personagemSelecionado?.fichaVigente && personagemSelecionado?.fichaVigente.fichaDeJogo && (
                 <div id={styles.recipiente_abas_fichas}>
                     <h3>Ficha Atual</h3>
                     <div id={styles.recipiente_provisorio_atributos}>

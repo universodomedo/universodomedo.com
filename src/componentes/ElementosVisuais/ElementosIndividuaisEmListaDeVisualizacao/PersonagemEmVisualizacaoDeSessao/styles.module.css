@@ -1,0 +1,10 @@
+.recipiente_imagem_avatar {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 1;
+}
+
+.avatar_usuario {
+    transform: scale(.5) translateX(60%) translateY(51%);
+    filter: brightness(.8) drop-shadow(0 0 10px rgba(0, 0, 0, 0.6));
+}

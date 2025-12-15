@@ -1,33 +1,17 @@
 'use client';
 
-import styles from './styles.module.css';
-import { useState } from 'react';
+import { useContextoSessaoEmAndamento } from "Contextos/ContextosPaginaAovivo/ContextoSessaoEmAndamento/contexto";
 
-import ControladorSwiperFicha from 'Componentes/ElementosDeJogo/ControladorSwiperFicha/CotroladorSwiperFicha';
+import { ContextoPersonagensEmSessaoProvider } from "Contextos/ContextosPaginaAovivo/ContextoPersonagensEmSessao/contexto";
+import PaginaSessao_SessaoEmAndamento from "./sessao-em-andamento/page";
 
-export function PaginaSessao_Slot() {
-    return (
-        <>
-            <PaginaSessao_Mensagens />
-            <ControladorSwiperFicha />
-        </>
-    );
-};
+import { ContextoSessoesPrevistasProvider } from "Contextos/ContextoSessoesPrevistas/contexto";
+import PaginaSessao_SessaoEmEspera from "./sessao-em-espera/page";
 
-export function PaginaSessao_Mensagens() {
-    const [messages, setMessages] = useState<string[]>([]);
+export function PaginaSessao_Contexto() {
+    const { sessaoEmAndamento } = useContextoSessaoEmAndamento();
 
-    // useSocketEvent<string>(SOCKET_EVENTOS.GameEngine.receberMensagem, (mensagem) => {
-    //     setMessages((prev) => [mensagem, ...prev]);
-    // });
-
-    return (
-        <div id={styles.recipiente_pagina_game_engine}>
-            <div id={styles.recipiente_mensagens_game_engine}>
-                {messages.map((msg, index) => (
-                    <h2 key={index}>{msg}</h2>
-                ))}
-            </div>
-        </div>
-    );
+    return sessaoEmAndamento
+        ? <ContextoPersonagensEmSessaoProvider><PaginaSessao_SessaoEmAndamento /></ContextoPersonagensEmSessaoProvider>
+        : <ContextoSessoesPrevistasProvider><PaginaSessao_SessaoEmEspera /></ContextoSessoesPrevistasProvider>
 };

@@ -11,7 +11,7 @@ export async function obtemTodosObjetosCache() {
 }
 
 export async function obtemDadosMinhasDisponibilidades() {
-    return await useApi<DisponibilidadeUsuarioDto>({ uri: '/disponibilidades_usuario/obtemDadosMinhasDisponibilidades', method: 'GET' });
+    return await useApi<DisponibilidadeUsuarioDto | null>({ uri: '/disponibilidades_usuario/obtemDadosMinhasDisponibilidades', method: 'GET' });
 }
 
 export async function me_salvaDisponibilidade(listaDisponibilidadesUsuario: ListaDisponibilidadesUsuario) {
@@ -35,15 +35,27 @@ export async function obtemAventurasParaAssistir() {
 }
 
 export async function obtemAventuraCompleta(idAventura: number) {
-    return await useApi<AventuraDto>({ uri: '/aventuras/obtemAventuraCompleta', method: 'GET', params: { idAventura } });
+    return await useApi<AventuraDto | null>({ uri: '/aventuras/obtemAventuraCompleta', method: 'GET', params: { idAventura } });
 }
 
 export async function buscaGrupoAventuraEspecifico(idGrupoAventura: number) {
     return await useApi<GrupoAventuraDto | null>({ uri: '/grupos_aventuras/buscaGrupoAventuraEspecifico', method: 'GET', params: { idGrupoAventura } });
 }
 
+export async function obtemListagemGeralSessoes() {
+    return await useApi<SessaoDto[]>({ uri: '/sessoes/obtemListagemGeralSessoes', method: 'GET' });
+}
+
 export async function obtemSessaoGeral(idSessao: number) {
     return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemSessaoGeral', method: 'GET', params: { idSessao } });
+}
+
+export async function obtemDadosPublicosSessao(idSessao: number) {
+    return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemDadosPublicosSessao', method: 'GET', params: { idSessao } });
+}
+
+export async function me_obtemMinhasSessoesEmEsperaParaMestrar() {
+    return await useApi<SessaoDto[]>({ uri: '/sessoes/me/me_obtemMinhasSessoesEmEsperaParaMestrar', method: 'GET' });
 }
 
 export async function me_obtemPersonagens(idTipoPersonagem?: number) {
@@ -51,7 +63,7 @@ export async function me_obtemPersonagens(idTipoPersonagem?: number) {
 }
 
 export async function obtemDadosInteligentePersonagem(idPersonagem: number) {
-    return await useApi<PersonagemDto>({ uri: '/personagens/obtemDadosInteligentePersonagem', method: 'GET', params: { idPersonagem } });
+    return await useApi<PersonagemDto | null>({ uri: '/personagens/obtemDadosInteligentePersonagem', method: 'GET', params: { idPersonagem } });
 }
 
 export async function obtemTiposImagem() {
@@ -67,10 +79,6 @@ export async function uploadImagem(file: File, tipo: string) {
 
 export async function atualizaAvatarUsuario(idPersonagem: number) {
     return await useApi<ImagemDto[]>({ uri: '/usuarios/atualizaAvatarUsuario', method: 'PUT', data: { idPersonagem: idPersonagem } });
-}
-
-export async function obtemDadosProximaSessao() {
-    return await useApi<SessaoDto>({ uri: '/sessoes/obtemDadosProximaSessao', method: 'GET' });
 }
 
 export async function obtemFichaDePersonagemEmNivel() {
@@ -91,10 +99,6 @@ export async function obtemPersonagensComEvolucaoPendente() {
     return await useApi<PersonagemDto[]>({ uri: 'personagens/obtemPersonagensComEvolucaoPendente', method: 'GET' });
 }
 
-export async function obtemPersonagemEmProcessoDeEvolucao(idPersonagem: number) {
-    return await useApi<PersonagemDto>({ uri: 'personagens/obtemPersonagemEmProcessoDeEvolucao', method: 'GET', params: { idPersonagem } });
-}
-
 export async function obtemGanhosParaEvoluir(idPersonagem: number) {
     return await useApi<ObjetoEvolucaoCompleto>({ uri: 'ganhos_nivel_classe/obtemGanhosParaEvoluir', method: 'GET', params: { idPersonagem } });
 }
@@ -106,6 +110,10 @@ export async function obtemGanhosAposSelecaoClasse(idClasse: number) {
 export async function salvarEvolucaoDoPersonagem(fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo): Promise<boolean> {
     return await useApi<boolean>({ uri: '/fichas_personagens/salvarEvolucaoDoPersonagem', method: 'POST', data: { fichaEvoluida: fichaEvoluida, fichaDeJogoEvoluida: fichaDeJogoEvoluida } });
 }
+
+export async function obtemListaSessoesPrevistas() {
+    return await useApi<SessaoDto[]>({ uri: '/sessoes/obtemListaSessoesPrevistas', method: 'GET' });
+};
 
 export async function obtemListaProxEpisodioPrevistoPorAventuraEmAndamento() {
     return await useApi<SessaoDto[]>({ uri: '/sessoes/obtemListaProxEpisodioPrevistoPorAventuraEmAndamento', method: 'GET' });

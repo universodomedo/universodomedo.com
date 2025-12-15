@@ -1,0 +1,155 @@
+#recipiente_sessao_prevista {
+    width: 100%;
+    height: 100%;
+    padding: 2%;
+    text-align: center;
+}
+
+#recipiente_pagina_sessao {
+    position: relative;
+    
+    border-style: solid;
+    border-color: transparent;
+    border-top-width: 1.4vh;
+    border-right-width: .63vw;
+    border-bottom-width: 1.4vh;
+    border-left-width: .63vw;
+    border-top-left-radius: 12vh;
+    border-bottom-left-radius: 12vh;
+    border-bottom-right-radius: 12vh;
+    border-top-right-radius: 12vh;
+
+    width: 100%;
+    height: 100%;
+}
+
+#recipiente_espaco_sessao {
+    display: flex;
+    flex-direction: column;
+    padding: 1.7vw 2.2vw;
+    height: 100%;
+}
+
+#recipiente_titulo_sessao {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex: 1 0 14.3%;
+    align-items: start;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+}
+
+#udm {
+    box-sizing: border-box;
+    align-items: stretch;
+    font-family: Courier New, Courier, monospace;
+    font-weight: bolder;
+    font-size: 9rem;
+    line-height: 6rem;
+    color: #0000;
+    -webkit-text-stroke: 3px #727272;
+    text-shadow: 0 0 12px #0006;
+    letter-spacing: .3vw;
+}
+
+#recipiente_corpo_sessao {
+    display: flex;
+    flex-direction: row;
+    flex: 1 0 85.7%;
+}
+
+#recipiente_esquerda_tela_jogo {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 19.1%;
+    padding: 0 1vw 0 0;
+}
+
+#recipiente_nome_aventura {
+    text-align: center;
+    color: #0000;
+    -webkit-text-stroke: 2px #727272;
+    text-shadow: 0 0 12px #0006;
+}
+
+#recipiente_lista_retratos {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-content: flex-start;
+    padding: 1vh 0;
+    gap: 1vw;
+    row-gap: 1.5vh;
+}
+
+.recipiente_retrato {
+    position: relative;
+    flex: 0 0 46%;
+    aspect-ratio: 1 / 1;
+    height: fit-content;
+
+    box-shadow: 8px 6px 10px #0000008c;
+    border-radius: 1.5vw;
+    overflow: hidden;
+}
+
+#recipiente_tela_jogo {
+    position: relative;
+    flex: 1 0 80.9%;
+
+    border-style: solid;
+    border-color: #000000;
+    border-top-width: 1vh;
+    border-right-width: .58vw;
+    border-bottom-width: 1vh;
+    border-left-width: .58vw;
+    border-top-left-radius: 6vh;
+    border-bottom-left-radius: 6vh;
+    border-bottom-right-radius: 6vh;
+    border-top-right-radius: 6vh;
+
+    overflow: hidden;
+}
+
+
+
+/* tirar */
+#recipiente_pagina_sessao_emandamento {
+    position: relative;
+    
+    border-style: solid;
+    border-color: transparent;
+    border-top-width: 1.4vh;
+    border-right-width: .63vw;
+    border-bottom-width: 1.4vh;
+    border-left-width: .63vw;
+    border-top-left-radius: 12vh;
+    border-bottom-left-radius: 12vh;
+    border-bottom-right-radius: 12vh;
+    border-top-right-radius: 12vh;
+
+    width: 100%;
+    height: 100%;
+}
+
+
+
+/*  */
+
+#recipiente_pagina_game_engine {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+#recipiente_mensagens_game_engine {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background-color: #261933;
+    overflow: hidden;
+}

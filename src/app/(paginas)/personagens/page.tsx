@@ -6,7 +6,7 @@ import { PaginaPersonagens_Contexto } from './componentes';
 
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
-export default async function PaginaPersonagens({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined }; }) {
+export default async function PaginaPersonagens({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }>; }) {
     const resolvedSearchParams = await searchParams;
     const personagemParam = resolvedSearchParams?.[QUERY_PARAMS.PERSONAGEM];
     const idPersonagem = personagemParam ? Number(personagemParam) : null;
