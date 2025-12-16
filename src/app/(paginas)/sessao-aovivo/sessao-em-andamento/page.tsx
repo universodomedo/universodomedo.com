@@ -1,16 +1,16 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useEffect, useState } from "react";
 
 import { useContextoSessaoEmAndamento } from "Contextos/ContextosPaginaAovivo/ContextoSessaoEmAndamento/contexto";
 import { useContextoPersonagensEmSessao } from "Contextos/ContextosPaginaAovivo/ContextoPersonagensEmSessao/contexto";
 
+import PersonagemEmVisualizacaoDeSessao from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/PersonagemEmVisualizacaoDeSessao/page';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 export default function PaginaSessao_SessaoEmAndamento() {
     const { sessaoEmAndamento } = useContextoSessaoEmAndamento();
-    const { personagensEmSessao } = useContextoPersonagensEmSessao();
+    // const { personagensEmSessao } = useContextoPersonagensEmSessao();
     
     return (
         <div id={styles.recipiente_pagina_sessao_emandamento}>
@@ -22,12 +22,12 @@ export default function PaginaSessao_SessaoEmAndamento() {
                 <div id={styles.recipiente_corpo_sessao}>
                     <div id={styles.recipiente_esquerda_tela_jogo}>
                         <div id={styles.recipiente_nome_aventura}>
-                            <h1>{sessaoEmAndamento!.detalheSessaoAventura.grupoAventura!.aventura.titulo}</h1>
+                            <h1>{sessaoEmAndamento!.tituloInteligente.tituloCompleto}</h1>
                         </div>
                         <div id={styles.recipiente_lista_retratos}>
-                            {personagensEmSessao.map(personagemEmSessao => (
-                                <div key={personagemEmSessao.id} className={styles.recipiente_retrato}>
-                                    <RecipienteImagem src={personagemEmSessao.caminhoAvatar} />
+                            {sessaoEmAndamento?.dadosGerais?.participantes.map(participante => (
+                                <div key={participante.jogador.id} className={styles.recipiente_retrato}>
+                                    <PersonagemEmVisualizacaoDeSessao tipo={'participante'} participanteSessao={participante} />
                                 </div>
                             ))}
                         </div>
@@ -35,7 +35,7 @@ export default function PaginaSessao_SessaoEmAndamento() {
                     </div>
 
                     <div id={styles.recipiente_tela_jogo}>
-                        <RecipienteImagem src={sessaoEmAndamento!.detalheSessaoAventura.grupoAventura!.aventura.imagemCapa?.fullPath} />
+                        <RecipienteImagem src={sessaoEmAndamento!.pathCapaInteligente} />
                     </div>
                 </div>
             </div>
