@@ -152,6 +152,34 @@ svg {
   opacity: 1;
 }
 
+@media (max-width: 1024px) and (hover: none) and (pointer: coarse) {
+  [data-scrollable] {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  [data-scrollable]::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  [data-scrollable][data-custom-scrollbar="true"] { position: relative; }
+
+  [data-scrollable][data-custom-scrollbar="true"]::after {
+    content: "";
+    position: absolute;
+    top: var(--sb-top, 0px);
+    right: 2px;
+    width: 8px;
+    height: var(--sb-height, 24px);
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, var(--sb-opacity, 0));
+    transition: background-color 0.2s ease;
+    pointer-events: none;
+    z-index: 2;
+  }
+}
+
 /*  */
 
 /* 
