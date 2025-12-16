@@ -17,7 +17,9 @@ import { ItensMenuSwiperEsquerda } from './componentes';
 import { DivClicavel } from '../DivClicavel/DivClicavel';
 
 export default function MenuSwiperEsquerda() {
-    const { menuAberto, setMenuAberto, tamanhoReduzido } = useContextoMenuSwiperEsquerda();
+    const { menuAberto, setMenuAberto, tamanhoReduzido, esconderMenu } = useContextoMenuSwiperEsquerda();
+
+    if (esconderMenu) return;
 
     return (
         <>

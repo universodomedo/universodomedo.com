@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useSearchParams, usePathname } from 'next/navigation';
 import { PersonagemDto } from 'types-nora-api';
 
-import { me_obtemPersonagens, obtemDadosInteligentePersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { me_obtemPersonagensPorTipo, obtemDadosInteligentePersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
@@ -36,7 +36,7 @@ export const ContextoPaginaPersonagensProvider = ({ children, idPersonagemInicia
         setCarregando('Buscando Personagens');
 
         try {
-            setPersonagens(await me_obtemPersonagens());
+            setPersonagens(await me_obtemPersonagensPorTipo());
         } catch {
             setPersonagens(null);
         } finally {

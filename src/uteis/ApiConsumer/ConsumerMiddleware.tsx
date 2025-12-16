@@ -58,8 +58,8 @@ export async function me_obtemMinhasSessoesEmEsperaParaMestrar() {
     return await useApi<SessaoDto[]>({ uri: '/sessoes/me/me_obtemMinhasSessoesEmEsperaParaMestrar', method: 'GET' });
 }
 
-export async function me_obtemPersonagens(idTipoPersonagem?: number) {
-    return await useApi<PersonagemDto[]>({ uri: '/personagens/me/me_obtemPersonagens', method: 'GET', params: { idTipoPersonagem } });
+export async function me_obtemPersonagensPorTipo(idTipoPersonagem?: number) {
+    return await useApi<PersonagemDto[]>({ uri: '/personagens/me/me_obtemPersonagensPorTipo', method: 'GET', params: { idTipoPersonagem } });
 }
 
 export async function obtemDadosInteligentePersonagem(idPersonagem: number) {
@@ -95,10 +95,6 @@ export async function obtemPericiasParaCriacaoFicha() {
     return await useApi<PericiaDto[]>({ uri: 'pericias/obtemTodos', method: 'GET', params: { criandoFicha: true } });
 }
 
-export async function obtemPersonagensComEvolucaoPendente() {
-    return await useApi<PersonagemDto[]>({ uri: 'personagens/obtemPersonagensComEvolucaoPendente', method: 'GET' });
-}
-
 export async function obtemGanhosParaEvoluir(idPersonagem: number) {
     return await useApi<ObjetoEvolucaoCompleto>({ uri: 'ganhos_nivel_classe/obtemGanhosParaEvoluir', method: 'GET', params: { idPersonagem } });
 }
@@ -131,8 +127,8 @@ export async function vinculaLinkDeGrupoAventura(idGrupoAventura: number, novoLi
     return await useApi<boolean>({ uri: '/grupos_aventuras/vinculaLinkDeGrupoAventura', method: 'POST', data: { idGrupoAventura: idGrupoAventura, novoLink: novoLink } });
 }
 
-export async function obtemGruposPorMestre(idUsuario: number): Promise<GrupoAventuraDto[]> {
-    return await useApi<GrupoAventuraDto[]>({ uri: '/grupos_aventuras/obtemGruposPorMestre', method: 'GET', params: { idUsuario } });
+export async function obtemGruposPorMestre(): Promise<GrupoAventuraDto[]> {
+    return await useApi<GrupoAventuraDto[]>({ uri: '/grupos_aventuras/me/me_obtemGruposPorMestre', method: 'GET' });
 }
 
 export async function obtemUltimaSessoesPostadas(): Promise<DetalheSessaoCanonicaDto[]> {

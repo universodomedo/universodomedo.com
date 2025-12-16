@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { PersonagemDto } from 'types-nora-api';
-import { me_obtemPersonagens } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
+import { me_obtemPersonagensPorTipo } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
 interface ContextoListagemPersonagensProps {
     personagens: PersonagemDto[] | null;
@@ -25,7 +25,7 @@ export const ContextoListagemPersonagensProvider = ({ children, idTipoPersonagem
         setCarregando(true);
 
         try {
-            setPersonagens(await me_obtemPersonagens(idTipoPersonagem));
+            setPersonagens(await me_obtemPersonagensPorTipo(idTipoPersonagem));
         } catch {
             setPersonagens(null);
         } finally {
