@@ -24,8 +24,10 @@ function ModalContent({ children, cabecalho, className, temBotaoFechar = true, b
                     {cabecalho.subtitulo && <h4>{cabecalho.subtitulo}</h4>}
                 </div>
                 <hr />
-                <div className={styles.dialog_conteudo_corpo} {...scrollableProps}>
-                    {children}
+                <div className={styles.dialog_conteudo_corpo}>
+                    <div className={styles.conteudo_corpo_scrollable} {...scrollableProps}>
+                        {children}
+                    </div>
                 </div>
                 <hr />
                 {(temBotaoFechar || botaoAcaoPrincipal) && (

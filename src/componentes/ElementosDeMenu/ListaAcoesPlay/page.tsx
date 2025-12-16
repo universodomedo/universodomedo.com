@@ -31,7 +31,7 @@ function SecaoAdmin() {
         },
     ];
 
-    return RenderItensPermissoes(permissoesAdmin, 'admin', false, 'jogo');
+    return RenderItensPermissoes(permissoesAdmin, 'admin', false, '/jogo');
 };
 
 function SecaoMestre() {
@@ -48,7 +48,7 @@ function SecaoMestre() {
         },
     ];
 
-    return RenderItensPermissoes(permissoesMestre, 'mestre', false, 'jogo');
+    return RenderItensPermissoes(permissoesMestre, 'mestre', false, '/jogo');
 };
 
 function SecaoJogador() {
@@ -73,5 +73,5 @@ function SecaoJogador() {
         },
     ];
 
-    return RenderItensPermissoes(permissoesJogador, 'jogador', true, 'jogo');
+    return RenderItensPermissoes(permissoesJogador, 'jogador', true, '/jogo');
 };

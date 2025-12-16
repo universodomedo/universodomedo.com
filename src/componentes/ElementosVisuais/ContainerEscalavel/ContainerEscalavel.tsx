@@ -57,7 +57,7 @@ export default function ContainerEscalavel({ children }: { children: React.React
   };
 
   return (
-    <div ref={containerRef} id={styles.container_escalavel}>
+    <div ref={containerRef} className={styles.container_escalavel}>
       {children}
     </div>
   );

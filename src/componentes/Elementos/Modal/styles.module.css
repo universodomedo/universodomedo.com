@@ -23,19 +23,23 @@
 	position: fixed;
 	top: 50%;
 	left: 50%;
-	width: 34vw;
-	transform: translate(-50%, -50%);
-	max-height: 85vh;
+	/* transform: translate(-50%, -50%); */
+    transform: translate(-50%, -50%) scale(var(--scale, 1));
+    transform-origin: center;
 	animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 
-	gap: 1vh;
+	gap: 3%;
 
-    aspect-ratio: 1 / 1.2;
+    /* aspect-ratio: 1 / 1.2; */
+    width: 1728px;
+    aspect-ratio: 16 / 9;
 
 	z-index: calc(var(--zindex-final-modal) - 0);
-	padding: .6em;
+	padding: .8em 1.5em .5em;
 
 	overflow: hidden;
+
+	font-size: 1.2em;
 }
 
 #recipiente_cabecalho_modal {
@@ -67,14 +71,8 @@
 }
 
 @keyframes contentShow {
-	from {
-		opacity: 0;
-		transform: translate(-50%, -48%) scale(0.96);
-	}
-	to {
-		opacity: 1;
-		transform: translate(-50%, -50%) scale(1);
-	}
+    from { opacity: 0; transform: translate(-50%, -48%) scale(calc(var(--scale, 1) * 0.96)); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(var(--scale, 1)); }
 }
 
 .Button {
@@ -110,11 +108,18 @@
 }
 
 .dialog_conteudo_corpo {
-	display: flex;
-	flex-direction: column;
-	gap: .4vh;
-	flex: 1 0 0;
-	padding: 0 1%;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.conteudo_corpo_scrollable {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
 }
 
 .dialog_rodape {
@@ -126,7 +131,7 @@
 }
 
 .dialog_rodape button {
-	padding: 2%;
+	padding: .8em;
 }
 
 /* .Fieldset {
