@@ -62,9 +62,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="pt-BR">
       <body>
         <ReduxProvider>
-          <SocketListeners />
           <ContextoPerformanceProvider>
             <ContextoAutenticacaoProvider>
+              <SocketListeners />
               <RadixTooltip delayDuration={200} skipDelayDuration={0}>
                 <ContextoMenuSwiperEsquerdaProvider>
                   <InicializadorCache>

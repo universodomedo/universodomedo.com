@@ -7,7 +7,7 @@ import { Eventos_Emite, SOCKET_AcessoUsuario } from 'types-nora-api';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
-import { useEmitWsComDisparoInicial, useRecebeEmitWs } from 'Hooks/useEventoWs';
+import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 export default function SecaoContatos() {
@@ -15,9 +15,7 @@ export default function SecaoContatos() {
     
     const [listaAcessosUsuarios, setListaAcessosUsuarios] = useState<SOCKET_AcessoUsuario[]>([]);
 
-    console.log(`antes`);
     useEmitWsComDisparoInicial(Eventos_Emite.UsuariosConectados.eventos.emitirUsuariosConectadosAgora, data => {
-        console.log(`oi`);
         setListaAcessosUsuarios(data.usuariosConectados.filter(acesso => acesso.usuario.id !== usuarioLogado?.id));
     });
 

@@ -29,9 +29,9 @@ export function ItensMenuSwiperEsquerda() {
             ]
         },
         { titulo: "Personagens", link: "/personagens", }, // sempre mostra, pq antes de ser jogador, o usuário vai poder jogar Sessão Única
-        { titulo: "Jogue Agora!", link: "/jogo" },
+        { titulo: "Jogue Agora!", link: "/jogo", condicao: estaAutenticado },
         { titulo: "Assistir", link: "/aventuras" },
-        { titulo: "Sessão Ao Vivo", link: "/sessao-aovivo" },
+        { titulo: "Sessão Ao Vivo", link: "/sessao-aovivo", condicao: estaAutenticado },
         { titulo: "Hall", link: "/minha-pagina", condicao: estaAutenticado },
         { titulo: "Definições", link: "/definicoes" },
         { titulo: "Dicas", link: "/dicas" }

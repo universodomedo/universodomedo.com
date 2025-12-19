@@ -11,8 +11,8 @@ export function useChatSocketListeners() {
         dispatch(setSalas(data.salas));
     });
 
-    // useRecebeEmitWs(Eventos_Emite.Chat.eventos.emitirMensagem, data => {
-        
-    //     dispatch(adicionarMensagem(data));
-    // });
+    useRecebeEmitWs(Eventos_Emite.Chat.eventos.emitirMensagem, {
+        onSuccess: data => { dispatch(adicionarMensagem(data.conteudoMensagem)); },
+        onError: err => { console.error(err); }
+    });
 };
