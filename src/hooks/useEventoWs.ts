@@ -17,11 +17,6 @@ let socketSingleton: Socket | null = null;
 let socketMode: SocketMode = "auth-only";
 let socketAuthAllowed = false;
 
-export function setSocketMode(mode: SocketMode) {
-    socketMode = mode;
-    if (socketMode === "auth-only" && !socketAuthAllowed) clearSocketCache();
-};
-
 export function setSocketAuthState(estaAutenticado: boolean) {
     socketAuthAllowed = estaAutenticado;
     if (!socketAuthAllowed && socketMode === "auth-only") clearSocketCache();

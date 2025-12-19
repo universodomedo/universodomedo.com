@@ -23,6 +23,15 @@ export default function ConteudoSalaSelecionada() {
     const mensagensContainerRef = useRef<HTMLDivElement>(null);
 
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
+    const { ref: scrollableRef, ...scrollablePropsSemRef } = scrollableProps as unknown as { ref?: React.Ref<HTMLDivElement> } & React.HTMLAttributes<HTMLDivElement>;
+    const setMensagensRef = useCallback((el: HTMLDivElement | null) => {
+        mensagensContainerRef.current = el;
+
+        if (!scrollableRef) return;
+
+        if (typeof scrollableRef === 'function') scrollableRef(el);
+        else (scrollableRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+    }, [scrollableRef]);
 
     const getUsuarioPorId = (id: number) => usuarios.find((u) => u.id === id)!;
 
@@ -73,7 +82,7 @@ export default function ConteudoSalaSelecionada() {
     const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         setMensagem(e.target.value);
     }, []);
-    
+
     useEffect(() => {
         scrollParaBaixo();
     }, [salaSelecionadaId]);
@@ -84,7 +93,7 @@ export default function ConteudoSalaSelecionada() {
                 <p>Nenhuma sala selecionada.</p>
             ) : (
                 <>
-                    <div id={styles.recipiente_mensagens_conversa} ref={mensagensContainerRef} {...scrollableProps}>
+                    <div id={styles.recipiente_mensagens_conversa} {...scrollablePropsSemRef} ref={setMensagensRef}>
                         {salaSelecionada.grupos.map((grupo, indexAgrupamentoMensagens) => <AgrupamentoMensagensChat key={indexAgrupamentoMensagens} usuario={getUsuarioPorId(grupo[0].idUsuario)} grupo={grupo} />)}
                     </div>
 

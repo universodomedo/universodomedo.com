@@ -10,8 +10,6 @@ export function useUsuariosSocket() {
     const dispatch = useAppDispatch();
 
     eventoWs(Eventos_EnviaERecebe.UsuariosExistentes.eventos.obterTodos, {}, data => {
-        console.log(`teste`);
-        console.log(data);
         dispatch(setUsuarios(data.usuariosExistentes));
     });
 };

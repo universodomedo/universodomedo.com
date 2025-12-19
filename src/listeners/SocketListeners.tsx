@@ -22,9 +22,7 @@ export default function SocketListeners() {
     const [status, setStatus] = useState<SocketStatus>('loading');
     const { carregando, estaAutenticado } = useContextoAutenticacao();
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+    useEffect(() => { setMounted(true); }, []);
 
     useEffect(() => {
         if (!mounted) return;
@@ -38,11 +36,17 @@ export default function SocketListeners() {
             return;
         }
 
+        InicializadorSocket();
+
         const socket = getSocket();
 
         if (!socket) {
             setStatus('error');
             return;
+        }
+
+        if (!socket.connected) {
+            try { socket.connect(); } catch (err) { console.error('[SocketListeners] Erro ao chamar socket.connect():', err); }
         }
 
         if (socket.connected) {
