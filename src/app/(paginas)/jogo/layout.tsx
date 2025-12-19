@@ -14,8 +14,6 @@ export default function LayoutJogo({ children }: { children: ReactNode }) {
         Eventos_Emite.Jogo.eventos.emitirEstouEmJogo,
         {
             onSuccess: data => {
-                console.log(`ALLOOOUUU`)
-                console.log(data.estouEmJogo)
                 setEstouEmJogo(data.estouEmJogo);
             },
             onError: err => {

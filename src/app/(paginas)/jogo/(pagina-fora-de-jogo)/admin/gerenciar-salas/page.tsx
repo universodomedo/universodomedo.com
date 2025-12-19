@@ -33,8 +33,6 @@ function PaginaPlay_GerenciarSalas_Slot() {
         Eventos_Emite.Jogo.eventos.emitirTodasSalas,
         {
             onSuccess: data => {
-                console.log('onSuccess');
-                console.log(data);
                 setSalas(data.salas);
             },
             onError: err => {

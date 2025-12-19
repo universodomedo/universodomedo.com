@@ -8,7 +8,7 @@ import ListaAcoesPlay from 'Componentes/ElementosDeMenu/ListaAcoesPlay/page';
 
 export default function PaginaPlay() {
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.PLAY, comCabecalho: false, usuarioObrigatorio: false }}>
+        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.PLAY, comCabecalho: false, usuarioObrigatorio: true }}>
             <LayoutContextualizado proporcaoConteudo={84}>
                 <LayoutContextualizado.Conteudo>
                     <></>
