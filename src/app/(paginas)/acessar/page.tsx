@@ -1,16 +1,16 @@
 'use client';
 
 import styles from './styles.module.css';
-import { ControladorSlot } from 'Layouts/ControladorSlot';
-import { PAGINAS } from 'types-nora-api';
-
 import Image from 'next/image';
+import { PAGINAS } from 'types-nora-api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+
 export default function PaginaAcessar() {
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.VAZIA, comCabecalho: false, usuarioObrigatorio: false }}>
+        <ControladorSlot pagina={PAGINAS.acessar}>
             <PaginaComSlot />
         </ControladorSlot>
     );

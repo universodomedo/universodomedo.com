@@ -1,7 +1,6 @@
 'use client';
 
 import styles from './styles.module.css';
-
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
@@ -11,7 +10,7 @@ import SecaoContatos from 'Componentes/ElementosPaginaUsuario/Contato/page';
 
 export default function MinhaPagina() {
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.MINHA_PAGINA, comCabecalho: false, usuarioObrigatorio: true }}>
+        <ControladorSlot pagina={PAGINAS.minhaPagina}>
             <MinhaPagina_Slot />
         </ControladorSlot>
     );

@@ -1,10 +1,11 @@
-import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { PAGINAS } from 'types-nora-api';
+
+import { ControladorSlot } from 'Layouts/ControladorSlot';
 import LinhaDoTempo from "Componentes/Elementos/LinhaDoTempo/LinhaDoTempo";
 
 export default function PaginaLinhaDoTempo() {
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.LINHA_DO_TEMPO, comCabecalho: false, usuarioObrigatorio: false }}>
+        <ControladorSlot pagina={PAGINAS.linhaDoTempo}>
             <PaginaLinhaDoTempo_Slot/>
         </ControladorSlot>
     );

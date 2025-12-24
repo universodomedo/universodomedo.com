@@ -1,9 +1,8 @@
-import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { PAGINAS } from 'types-nora-api';
 
+import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoPaginaPersonagensProvider } from 'Contextos/ContextoPaginaPersonagens/contexto';
 import { PaginaPersonagens_Contexto } from './componentes';
-
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
 export default async function PaginaPersonagens({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }>; }) {
@@ -12,7 +11,7 @@ export default async function PaginaPersonagens({ searchParams }: { searchParams
     const idPersonagem = personagemParam ? Number(personagemParam) : null;
 
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.AVENTURA, comCabecalho: false, usuarioObrigatorio: false }}>
+        <ControladorSlot pagina={PAGINAS.personagens}>
             <ContextoPaginaPersonagensProvider idPersonagemInicial={idPersonagem}>
                 <PaginaPersonagens_Contexto />
             </ContextoPaginaPersonagensProvider>

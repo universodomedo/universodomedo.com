@@ -1,16 +1,16 @@
 import styles from './styles.module.css';
+import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-import { PAGINAS } from 'types-nora-api';
 import SecaoPrincipal from "Componentes/ElementosVisuais/PaginaAterrissagem/SecoesPaginaAterrissagem/SecaoPrincipal/SecaoPrincipal";
 import Rodape from 'Componentes/ElementosVisuais/PaginaAterrissagem/Rodape/Rodape.tsx'
 
 export default function PaginaAterrissagem() {
-    return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.INICIO, comCabecalho: true, usuarioObrigatorio: false }}>
-            <PaginaAterrissagem_Slot />
-        </ControladorSlot>
-    );
+  return (
+    <ControladorSlot pagina={PAGINAS.home}>
+      <PaginaAterrissagem_Slot />
+    </ControladorSlot>
+  );
 };
 
 function PaginaAterrissagem_Slot() {

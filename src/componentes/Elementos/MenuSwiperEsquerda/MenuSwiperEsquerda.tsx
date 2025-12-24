@@ -15,6 +15,7 @@ import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsque
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { ItensMenuSwiperEsquerda } from './componentes';
 import { DivClicavel } from '../DivClicavel/DivClicavel';
+import useLogout from 'Hooks/useLogout';
 
 export default function MenuSwiperEsquerda() {
     const { menuAberto, setMenuAberto, tamanhoReduzido, esconderMenu } = useContextoMenuSwiperEsquerda();
@@ -37,12 +38,8 @@ export default function MenuSwiperEsquerda() {
 
 function ConteudoSwiperEsquerda() {
     const { estaAutenticado } = useContextoAutenticacao();
-
-    async function logout() {
-        await obtemObjetoAutenticacao();
-        desconectar();
-        window.location.href = `/`;
-    }
+    // to clicando mas agora a pagina n recarrega
+    const { logout } = useLogout({ obtemObjetoAutenticacao, desconectar });
     
     return (
         <div className={styles.recipiente_conteudo_swiper_esquerda}>

@@ -1,76 +1,82 @@
 'use client';
 
 import styles from './styles.module.css';
-import { JSX } from 'react';
+import { type JSX } from 'react';
+import { PAGINAS, type PaginaDestino, type PaginaFolha, type PaginaParams } from 'types-nora-api';
 
-import Link from 'next/link';
-
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
+import LinkInteligente from 'Componentes/Elementos/LinkInteligente/LinkInteligente';
 
-interface ItemMenu {
-    titulo: string;
-    condicao?: boolean;
-    link?: string;
-    subitens?: ItemMenu[];
-};
+type MenuParams<P extends PaginaFolha> = keyof PaginaParams<P> extends never ? never : Required<PaginaParams<P>>;
+
+type DestinoMenu<P extends PaginaFolha> = MenuParams<P> extends never ? { pagina: P; params?: never } : { pagina: P; params: MenuParams<P> };
+
+type ItemMenuGrupo = { titulo: string; subitens: readonly ItemMenu[] };
+
+type ItemMenuLink<P extends PaginaFolha> = { titulo: string; destino: DestinoMenu<P> };
+
+type ItemMenuLinkQualquer = PaginaFolha extends infer P ? P extends PaginaFolha ? ItemMenuLink<P> : never : never;
+
+type ItemMenu = ItemMenuGrupo | ItemMenuLinkQualquer;
+
+function item<P extends PaginaFolha>(titulo: string, pagina: P, ...rest: MenuParams<P> extends never ? [] : [MenuParams<P>]): ItemMenuLink<P> { return rest.length > 0 ? { titulo, destino: { pagina, params: rest[0] } as DestinoMenu<P> } : { titulo, destino: { pagina } as DestinoMenu<P> } };
+
+function grupo(titulo: string, subitens: readonly ItemMenu[]): ItemMenuGrupo { return { titulo, subitens }; };
 
 export function ItensMenuSwiperEsquerda() {
-    const { estaAutenticado, ehMestre, ehAdmin } = useContextoAutenticacao();
-
-    const itensMenu: ItemMenu[] = [
-        {
-            titulo: "Minhas Páginas",
-            subitens: [
-                { titulo: "Jogador", link: "/minhas-paginas/jogador", condicao: estaAutenticado },
-                { titulo: "Disponibilidades", link: "/minhas-paginas/minhas-disponibilidades", condicao: estaAutenticado },
-                { titulo: "Mestre", link: "/minhas-paginas/mestre", condicao: ehMestre },
-                { titulo: "Administrador", link: "/minhas-paginas/admin", condicao: ehAdmin }
-            ]
-        },
-        { titulo: "Personagens", link: "/personagens", }, // sempre mostra, pq antes de ser jogador, o usuário vai poder jogar Sessão Única
-        { titulo: "Jogue Agora!", link: "/jogo", condicao: estaAutenticado },
-        { titulo: "Assistir", link: "/aventuras" },
-        { titulo: "Sessão Ao Vivo", link: "/sessao-aovivo", condicao: estaAutenticado },
-        { titulo: "Hall", link: "/minha-pagina", condicao: estaAutenticado },
-        { titulo: "Definições", link: "/definicoes" },
-        { titulo: "Dicas", link: "/dicas" }
-    ];
+    const itensMenu = [
+        grupo('Minhas Páginas', [
+            item('Jogador', PAGINAS.minhasPaginas.jogador),
+            item('Disponibilidades', PAGINAS.minhasPaginas.minhasDisponibilidades),
+            item('Mestre', PAGINAS.minhasPaginas.mestre),
+            item('Administrador', PAGINAS.minhasPaginas.admin),
+        ]),
+        item('Personagens', PAGINAS.personagens),
+        item('Jogue Agora!', PAGINAS.jogo),
+        item('Assistir', PAGINAS.aventuras),
+        item('Sessão Ao Vivo', PAGINAS.sessaoAovivo),
+        item('Hall', PAGINAS.minhaPagina),
+        item('Definições', PAGINAS.definicoes, { slug: [] }),
+        item('Dicas', PAGINAS.dicas, { slug: [] }),
+    ] as const satisfies readonly ItemMenu[];
 
     return (
         <div id={styles.recipiente_lista}>
-            {itensMenu.map((item, index) => RenderItem(item, `${index}`))}
+            {itensMenu.map((itemMenu, index) => (<RenderItem key={`${index}`} item={itemMenu} />))}
         </div>
     );
 };
 
-function RenderItem(item: ItemMenu, key: string): JSX.Element | null {
-    if (item.condicao === false) return null;
+function ConteudoItemLink({ titulo }: { titulo: string }): JSX.Element {
+    return (
+        <>
+            <h3>{titulo}</h3>
+            <div className={styles.recipiente_icone_link}>
+                <ElementoSVG src="/imagensFigma/indicador-item-swiper-esquerda.svg" />
+            </div>
+        </>
+    );
+};
 
-    const subitensPermitidos = item.subitens?.filter(subitem => subitem.condicao);
+function RenderItem({ item }: { item: ItemMenu }): JSX.Element | null {
+    if ('subitens' in item) {
+        if (item.subitens.length === 0) return null;
 
-    const temSubitens = subitensPermitidos && subitensPermitidos.length > 0;
+        return (
+            <div className={styles.item_menu}>
+                <h3>{item.titulo}</h3>
+                <div className={styles.recipiente_subitens}>
+                    {item.subitens.map((sub, idx) => (<RenderItem key={`${item.titulo}-${idx}`} item={sub} />))}
+                </div>
+            </div>
+        );
+    }
 
-    if (item.link == undefined && !temSubitens) return null;
+    const destino = item.destino as unknown as PaginaDestino;
 
     return (
-        <div key={key} className={styles.item_menu}>
-            {!item.link ? (
-                <h3>{item.titulo}</h3>
-            ) : (
-                <Link href={item.link} className={styles.conteudo_item_menu}>
-                    <h3>{item.titulo}</h3>
-                    <div className={styles.recipiente_icone_link}>
-                        <ElementoSVG src="/imagensFigma/indicador-item-swiper-esquerda.svg" />
-                    </div>
-                </Link>
-            )}
-
-            {temSubitens && (
-                <div className={styles.recipiente_subitens}>
-                    {item.subitens!.map((sub, idx) => RenderItem(sub, `${key}-${idx}`))}
-                </div>
-            )}
+        <div className={styles.item_menu}>
+            <LinkInteligente destino={destino} className={styles.conteudo_item_menu}><ConteudoItemLink titulo={item.titulo} /></LinkInteligente>
         </div>
     );
 };

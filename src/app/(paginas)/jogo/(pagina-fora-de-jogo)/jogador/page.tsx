@@ -1,8 +1,9 @@
 'use client';
 
 import styles from "./styles.module.css";
-import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { PAGINAS } from 'types-nora-api';
+
+import { ControladorSlot } from 'Layouts/ControladorSlot';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import BarraEstatisticaDanificavel from 'Componentes/ElementosDeJogo/BarraEstatisticaDanificavel/page.tsx';
 import BarraLocaisDeJogo from 'Componentes/ElementosDeJogo/BarraLocaisDeJogo/page.tsx';
@@ -11,7 +12,7 @@ import ControladorSwiperFicha from "Componentes/ElementosDeJogo/ControladorSwipe
 
 export default function PaginaEmJogo() {
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.VAZIA, comCabecalho: false, usuarioObrigatorio: false }}>
+        <ControladorSlot pagina={PAGINAS.jogo}>
             <ContextoFichaPersonagemProvider>
                 <PaginaEmJogo_Slot />
             </ContextoFichaPersonagemProvider>

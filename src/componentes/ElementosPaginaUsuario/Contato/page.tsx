@@ -49,7 +49,7 @@ function Contato({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuario }) {
                 </div>
                 <div>
                     {acessoUsuario.paginaAtual ? (
-                        <span>{acessoUsuario.paginaAtual.nome}</span>
+                        <span>{acessoUsuario.paginaAtual}</span>
                     ) : (
                         <span>Desconectado</span>
                     )}

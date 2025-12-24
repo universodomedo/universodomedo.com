@@ -1,10 +1,10 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, GanhoNivelClasseDto, ObjetoEvolucaoCompleto, PaginaObjeto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate } from 'types-nora-api';
 
-export async function obtemObjetoAutenticacao(paginaAtual?: PaginaObjeto | null) {
-    return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtual === undefined ? {} : { idPaginaAtual: paginaAtual?.id || '' } });
-}
+export async function obtemObjetoAutenticacao(paginaAtualTemplate?: PaginaTemplate | null) {
+    return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtualTemplate == null ? {} : { templatePaginaAtual: paginaAtualTemplate } });
+};
 
 export async function obtemTodosObjetosCache() {
     return await useApi<ObjetoCache>({ uri: '/cache/obtemTodosObjetosCache', method: 'GET' });
@@ -82,7 +82,7 @@ export async function atualizaAvatarUsuario(idPersonagem: number) {
 }
 
 export async function obtemFichaDePersonagemEmNivel() {
-// export async function obtemFichaDePersonagemEmNivel(idPersonagem: number) {
+    // export async function obtemFichaDePersonagemEmNivel(idPersonagem: number) {
     return await useApi<FichaDeJogo>({ uri: 'fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET' });
     // return await useApi<FichaPersonagemDto>({ uri: 'fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET', data: { idPersonagem: idPersonagem } });
 }

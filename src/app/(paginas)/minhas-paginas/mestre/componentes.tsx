@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
+import { PAGINAS } from 'types-nora-api';
 
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
 import { verificarPermissao } from 'Helpers/verificarPermissao';
@@ -10,7 +11,7 @@ export function LayoutMestre_Slot({ children }: { children: ReactNode }) {
 
     if (usuarioComPermissao === null) return null;
 
-    if (!usuarioComPermissao) return <Redirecionador urlRedirecionar='/' />;
+    if (!usuarioComPermissao) return <Redirecionador pagina={PAGINAS.home} />;
 
     return children;
 };

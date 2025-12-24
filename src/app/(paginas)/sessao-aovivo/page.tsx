@@ -8,7 +8,7 @@ import { PaginaSessao_Contexto } from './componentes';
 
 export default function PaginaSessao() {
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.SESSAO_AOVIVO, comCabecalho: false, usuarioObrigatorio: true }}>
+        <ControladorSlot pagina={PAGINAS.sessaoAovivo}>
             <ContextoSessaoEmAndamentoProvider>
                 <PaginaSessao_Contexto />
             </ContextoSessaoEmAndamentoProvider>

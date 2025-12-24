@@ -7,13 +7,12 @@ import { Eventos_Emite, PAGINAS, SalaDeJogoDto } from 'types-nora-api';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import ListaAcoesPlay from 'Componentes/ElementosDeMenu/ListaAcoesPlay/page';
-
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { RenderItemSala } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/SalaDeJogoEmVisualizacao/page';
 
 export default function PaginaPlay_GerenciarSalas() {
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.PLAY, comCabecalho: false, usuarioObrigatorio: false }}>
+        <ControladorSlot pagina={PAGINAS.jogo}>
             <LayoutContextualizado proporcaoConteudo={84}>
                 <LayoutContextualizado.Conteudo>
                     <PaginaPlay_GerenciarSalas_Slot />

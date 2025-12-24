@@ -1,15 +1,15 @@
 'use client';
 
 import { ReactNode } from "react";
+import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-import { PAGINAS } from 'types-nora-api';
 import { verificarPermissao } from "Helpers/verificarPermissao";
 import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
 
 export default function LayoutAdmin({ children }: { children: ReactNode }) {
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.ADMIN, comCabecalho: false, usuarioObrigatorio: true }}>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.admin}>
             <LayoutAdmin_Slot>
                 {children}
             </LayoutAdmin_Slot>
@@ -22,7 +22,7 @@ function LayoutAdmin_Slot({ children }: { children: ReactNode }) {
 
     if (usuarioComPermissao === null) return null;
 
-    if (!usuarioComPermissao) return <Redirecionador urlRedirecionar='/' />;
+    if (!usuarioComPermissao) return <Redirecionador pagina={PAGINAS.home} />;
 
     return children;
 };

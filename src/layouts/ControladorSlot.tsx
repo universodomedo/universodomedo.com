@@ -1,30 +1,32 @@
 'use client';
 
 import { redirect } from 'next/navigation';
-import { useEffect } from "react";
+import { useEffect } from 'react';
+import { decidirAcessoPagina, PAGINAS, type AcessoPagina, type PaginaFolha } from 'types-nora-api';
 
 import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho/Cabecalho';
-
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
-import { PaginaObjeto } from 'types-nora-api';
 
-export function ControladorSlot({ pageConfig, children, }: { pageConfig: { paginaAtual?: PaginaObjeto; comCabecalho?: boolean; usuarioObrigatorio?: boolean }; children: React.ReactNode; }) {
-    const { carregando, checkAuth, estaAutenticado } = useContextoAutenticacao();
+export function ControladorSlot({ pagina, children }: { pagina: PaginaFolha; children: React.ReactNode; }) {
+    const { carregando, checkAuth, estaAutenticado, verificarCapacidade } = useContextoAutenticacao();
     const { setTamanhoReduzido } = useContextoMenuSwiperEsquerda();
-    const { comCabecalho = false, usuarioObrigatorio = false } = pageConfig;
+
+    const comCabecalho = pagina.comCabecalho === true;
 
     useEffect(() => {
         if (!comCabecalho) setTamanhoReduzido(true);
     }, [comCabecalho]);
 
     useEffect(() => {
-        checkAuth(pageConfig.paginaAtual);
+        checkAuth(pagina.template);
     }, []);
-        
+
     if (carregando) return (<h1>carregando....</h1>);
 
-    if (usuarioObrigatorio && !estaAutenticado) redirect('/acessar');
+    const decisao = decidirAcessoPagina(pagina.acesso, { estaAutenticado, verificarCapacidade });
+
+    if (!decisao.permitido) redirect(decisao.redirecionarPara.href);
 
     return (
         <>

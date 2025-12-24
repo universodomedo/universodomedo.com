@@ -1,9 +1,8 @@
-import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { PAGINAS } from 'types-nora-api';
 
+import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoPaginaAventuraProvider } from 'Contextos/ContextoPaginaAventura/contexto';
 import { PaginaAventura_Slot } from '../componentes';
-
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
 export default async function PaginaAventura({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
@@ -13,7 +12,7 @@ export default async function PaginaAventura({ params, searchParams }: { params:
     const indexEpisodio = episodioParam ? Number(episodioParam) : null;
 
     return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.AVENTURA, comCabecalho: false, usuarioObrigatorio: false }}>
+        <ControladorSlot pagina={PAGINAS.aventura}>
             <ContextoPaginaAventuraProvider idGrupoAventura={Number(id)} episodioIndexInicial={indexEpisodio}>
                 <PaginaAventura_Slot />
             </ContextoPaginaAventuraProvider>
