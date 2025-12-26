@@ -1,10 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { type Capacidade, CAPACIDADES, type PaginaTemplate, type UsuarioDto, type VariavelAmbienteDto } from 'types-nora-api';
 
 import { obtemObjetoAutenticacao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import getValorVariavelAmbiente from 'Helpers/getValorVariavelAmbiente';
+
+function dbgAuth(msg: string, extra?: any) { if (typeof window === "undefined") return; console.log(`[AUTH] ${new Date().toISOString()} ${msg}`, extra ?? ""); }
 
 interface ContextoAutenticacaoProps {
     checkAuth: (paginaAtualTemplate?: PaginaTemplate | null) => Promise<void>;
@@ -33,19 +35,26 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
 
     const estaAutenticado = !carregando && !!usuarioLogado;
 
+    useEffect(() => { dbgAuth(`STATE carregando=${carregando} estaAutenticado=${estaAutenticado} usuarioLogado=${usuarioLogado?.id ?? "null"}`); }, [carregando, estaAutenticado, usuarioLogado]);
+
     const checkAuth = async (paginaAtualTemplate?: PaginaTemplate | null) => {
+        dbgAuth(`checkAuth START`, { paginaAtualTemplate: paginaAtualTemplate ?? null });
+        
         try {
             const response = await obtemObjetoAutenticacao(paginaAtualTemplate ?? undefined);
+            dbgAuth(`checkAuth OK`, { usuarioId: response?.usuarioLogado?.id ?? null });
             setUsuarioLogado(response.usuarioLogado);
             setVariaveisAmbiente(response.variaveisAmbiente);
             setCapacidadesConcedidas((response.capacidadesConcedidas ?? {}) as Record<Capacidade, true>);
             setNumeroPendenciasPersonagem(response.pendenciasDePersonagem);
         } catch (_error) {
+            dbgAuth(`checkAuth ERROR`, _error);
             setUsuarioLogado(null);
             setVariaveisAmbiente([]);
             setCapacidadesConcedidas({} as Record<Capacidade, true>);
             setNumeroPendenciasPersonagem(0);
         } finally {
+            dbgAuth(`checkAuth FINALLY -> setCarregando(false)`);
             setCarregando(false);
         }
     };

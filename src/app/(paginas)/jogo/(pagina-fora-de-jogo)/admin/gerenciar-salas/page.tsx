@@ -4,7 +4,6 @@ import styles from './styles.module.css';
 import { useState } from 'react';
 import { Eventos_Emite, PAGINAS, SalaDeJogoDto } from 'types-nora-api';
 
-import { ControladorSlot } from 'Layouts/ControladorSlot';
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import ListaAcoesPlay from 'Componentes/ElementosDeMenu/ListaAcoesPlay/page';
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
@@ -12,16 +11,14 @@ import { RenderItemSala } from 'Componentes/ElementosVisuais/ElementosIndividuai
 
 export default function PaginaPlay_GerenciarSalas() {
     return (
-        <ControladorSlot pagina={PAGINAS.jogo}>
-            <LayoutContextualizado proporcaoConteudo={84}>
-                <LayoutContextualizado.Conteudo>
-                    <PaginaPlay_GerenciarSalas_Slot />
-                </LayoutContextualizado.Conteudo>
-                <LayoutContextualizado.Menu>
-                    <ListaAcoesPlay />
-                </LayoutContextualizado.Menu>
-            </LayoutContextualizado>
-        </ControladorSlot>
+        <LayoutContextualizado proporcaoConteudo={84}>
+            <LayoutContextualizado.Conteudo>
+                <PaginaPlay_GerenciarSalas_Slot />
+            </LayoutContextualizado.Conteudo>
+            <LayoutContextualizado.Menu>
+                <ListaAcoesPlay />
+            </LayoutContextualizado.Menu>
+        </LayoutContextualizado>
     );
 };
 

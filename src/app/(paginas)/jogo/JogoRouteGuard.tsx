@@ -1,9 +1,10 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { Eventos_Emite } from "types-nora-api";
 
-type JogoRouteGuardProps = { children: ReactNode; estaEmJogo: boolean };
+import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 
 const ROTA_JOGO = "/jogo";
 const ROTA_EM_JOGO = "/jogo/em-jogo";
@@ -13,22 +14,37 @@ function normalizePath(pathname: string) {
     return pathname;
 }
 
-export default function JogoRouteGuard({ children, estaEmJogo }: JogoRouteGuardProps) {
+export default function JogoRouteGuard({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
+    const [estouEmJogo, setEstouEmJogo] = useState<boolean | null>(null);
+
+    useEmitWsComDisparoInicial(
+        Eventos_Emite.Jogo.eventos.emitirEstouEmJogo,
+        {
+            onSuccess: data => {
+                setEstouEmJogo(data.estouEmJogo);
+            },
+            onError: err => {
+                alert('onError');
+            }
+        }
+    );
 
     useEffect(() => {
         if (!pathname) return;
 
         const current = normalizePath(pathname);
 
-        if (estaEmJogo) {
+        if (estouEmJogo) {
             if (current !== ROTA_EM_JOGO) router.replace(ROTA_EM_JOGO);
             return;
         }
 
         if (current === ROTA_EM_JOGO) router.replace(ROTA_JOGO);
-    }, [estaEmJogo, pathname, router]);
+    }, [estouEmJogo, pathname, router]);
+
+    if (estouEmJogo === null) return <p>Carregando...</p>;
 
     return (
         <>
