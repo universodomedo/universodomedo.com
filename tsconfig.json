@@ -37,6 +37,6 @@
     },
     "allowImportingTsExtensions": true,
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/componentes/Elementos/Redirecionador", "src/componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/componentes/Elementos/RedirecionadorInterno", "src/componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado"],
   "exclude": ["node_modules"]
 }

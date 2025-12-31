@@ -13,7 +13,7 @@ type ParamsProps<P extends PaginaDef<string>> =
     ? { params?: PaginaParams<P> }
     : { params: PaginaParams<P> };
 
-export default function Redirecionador<P extends PaginaDef<string>>({ pagina, params }: { pagina: P } & ParamsProps<P>) {
+export default function RedirecionadorInterno<P extends PaginaDef<string>>({ pagina, params }: { pagina: P } & ParamsProps<P>) {
     const router = useRouter();
 
     useEffect(() => {

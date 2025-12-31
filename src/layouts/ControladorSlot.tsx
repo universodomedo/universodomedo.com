@@ -1,12 +1,12 @@
 'use client';
 
-import { redirect } from 'next/navigation';
 import { useEffect } from 'react';
-import { decidirAcessoPagina, PAGINAS, type AcessoPagina, type PaginaFolha } from 'types-nora-api';
+import { decidirAcessoPagina, PAGINAS, resolverMenuInterno, type PaginaFolha } from 'types-nora-api';
 
 import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho/Cabecalho';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
+import RedirecionadorInterno from 'Componentes/Elementos/RedirecionadorInterno/RedirecionadorInterno';
 
 export function ControladorSlot({ pagina, children }: { pagina: PaginaFolha; children: React.ReactNode; }) {
     const { carregando, checkAuth, estaAutenticado, verificarCapacidade } = useContextoAutenticacao();
@@ -16,7 +16,7 @@ export function ControladorSlot({ pagina, children }: { pagina: PaginaFolha; chi
 
     useEffect(() => {
         if (!comCabecalho) setTamanhoReduzido(true);
-    }, [comCabecalho]);
+    }, [comCabecalho, setTamanhoReduzido]);
 
     useEffect(() => {
         checkAuth(pagina.template);
@@ -24,9 +24,9 @@ export function ControladorSlot({ pagina, children }: { pagina: PaginaFolha; chi
 
     if (carregando) return (<h1>carregando....</h1>);
 
-    const decisao = decidirAcessoPagina(pagina.acesso, { estaAutenticado, verificarCapacidade });
+    const decisao = decidirAcessoPagina(pagina, { estaAutenticado, verificarCapacidade }, { resolverMenuInterno, redirectNaoAutenticado: PAGINAS.acessar, redirectSemCapacidade: PAGINAS.home });
 
-    if (!decisao.permitido) redirect(decisao.redirecionarPara.href);
+    if (!decisao.permitido) return <RedirecionadorInterno pagina={decisao.redirecionarPara} />;
 
     return (
         <>

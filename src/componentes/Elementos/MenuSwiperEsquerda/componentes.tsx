@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 import { type JSX } from 'react';
-import { filtrarMenuPorAcesso, MENU_SWIPER_ESQUERDA, type ItemMenu } from 'types-nora-api';
+import { filtrarMenuPorAcesso, MENU_PRINCIPAL, type MenuNode } from 'types-nora-api';
 
 import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
 import LinkInteligente from 'Componentes/Elementos/LinkInteligente/LinkInteligente';
@@ -10,11 +10,11 @@ import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto
 
 export function ItensMenuSwiperEsquerda() {
     const { estaAutenticado, verificarCapacidade } = useContextoAutenticacao();
-    const itens = filtrarMenuPorAcesso(MENU_SWIPER_ESQUERDA, { estaAutenticado, verificarCapacidade });
+    const itens = filtrarMenuPorAcesso(MENU_PRINCIPAL, { estaAutenticado, verificarCapacidade });
 
     return (
         <div id={styles.recipiente_lista}>
-            {itens.map((item, index) => (<RenderItem key={`${index}`} item={item} />))}
+            {itens.map((item, index) => <RenderNode key={`${index}`} node={item} />)}
         </div>
     );
 };
@@ -30,25 +30,23 @@ function ConteudoItemLink({ titulo }: { titulo: string }): JSX.Element {
     );
 };
 
-function RenderItem({ item }: { item: ItemMenu }): JSX.Element | null {
-    const subItens = item.subItens && item.subItens.length > 0 ? item.subItens : undefined;
-    const temSubItens = subItens != null;
+function RenderNode({ node }: { node: MenuNode }): JSX.Element | null {
+    if (node.tipo === 'item') {
+        return (
+            <div className={styles.item_menu}>
+                <LinkInteligente destino={node.destino} className={styles.conteudo_item_menu}><ConteudoItemLink titulo={node.titulo} /></LinkInteligente>
+            </div>
+        );
+    }
 
-    if (!item.destino && !temSubItens) return null;
+    if (node.itens.length === 0) return null;
 
     return (
         <div className={styles.item_menu}>
-            {!item.destino ? (
-                <h3>{item.titulo}</h3>
-            ) : (
-                <LinkInteligente destino={item.destino} className={styles.conteudo_item_menu}><ConteudoItemLink titulo={item.titulo} /></LinkInteligente>
-            )}
-
-            {temSubItens && (
-                <div className={styles.recipiente_subitens}>
-                    {subItens!.map((sub, idx) => (<RenderItem key={`${item.titulo}-${idx}`} item={sub} />))}
-                </div>
-            )}
+            <h3>{node.titulo}</h3>
+            <div className={styles.recipiente_subitens}>
+                {node.itens.map((sub, idx) => (<RenderNode key={`${node.titulo}-${idx}`} node={sub} />))}
+            </div>
         </div>
     );
 };

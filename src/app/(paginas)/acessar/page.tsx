@@ -6,9 +6,15 @@ import { PAGINAS } from 'types-nora-api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 
+import RedirecionadorInterno from 'Componentes/Elementos/RedirecionadorInterno/RedirecionadorInterno';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 export default function PaginaAcessar() {
+    const { estaAutenticado } = useContextoAutenticacao();
+
+    if (estaAutenticado) return <RedirecionadorInterno pagina={PAGINAS.minhaPagina} />
+
     return (
         <ControladorSlot pagina={PAGINAS.acessar}>
             <PaginaComSlot />
