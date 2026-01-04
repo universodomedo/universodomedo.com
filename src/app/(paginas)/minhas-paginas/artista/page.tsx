@@ -1,7 +1,7 @@
 'use client';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesAdmin from 'Componentes/ElementosDeMenu/ListaAcoesAdmin/page';
+// import ListaAcoesArtista from 'Componentes/ElementosDeMenu/ListaAcoesArtista/page';
 
 export default function PaginaAdmin() {
     return (
@@ -9,8 +9,8 @@ export default function PaginaAdmin() {
             <LayoutContextualizado.Conteudo>
                 <></>
             </LayoutContextualizado.Conteudo>
-            <LayoutContextualizado.Menu>
-                <ListaAcoesAdmin />
+            <LayoutContextualizado.Menu><></>
+                {/* <ListaAcoesArtista /> */}
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );
