@@ -1,0 +1,25 @@
+.header { display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; background: white; padding: 12px 0; }
+.titulo { margin: 0; font-size: 20px; }
+.acoes { display: flex; gap: 8px; }
+.botao { padding: 8px 12px; border: 1px solid #ddd; background: #fff; border-radius: 8px; cursor: pointer; }
+.body { display: flex; flex-direction: column; gap: 8px; }
+.arvore { display: flex; flex-direction: column; gap: 6px; }
+
+.details { border: 1px solid #eee; border-radius: 10px; padding: 6px 8px; }
+.summary { list-style: none; cursor: pointer; }
+.summary::-webkit-details-marker { display: none; }
+.filhos { padding-left: 16px; display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+
+.noFolha { border: 1px solid #eee; border-radius: 10px; padding: 6px 8px; cursor: pointer; }
+
+.linha { display: flex; justify-content: space-between; gap: 12px; }
+.linhaEsquerda { display: flex; flex-direction: column; gap: 2px; }
+.linhaDireita { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+
+.codigo { font-weight: 700; }
+.descricao { font-size: 14px; opacity: 0.85; }
+.path { font-size: 12px; opacity: 0.65; }
+
+.tagTravado { font-size: 12px; padding: 3px 8px; border-radius: 999px; border: 1px solid #f2c4c4; background: #fff5f5; }
+.tagLivre { font-size: 12px; padding: 3px 8px; border-radius: 999px; border: 1px solid #cdeccd; background: #f6fff6; }
+.tagFilhos { font-size: 12px; padding: 3px 8px; border-radius: 999px; border: 1px solid #e5e5e5; background: #fafafa; }
