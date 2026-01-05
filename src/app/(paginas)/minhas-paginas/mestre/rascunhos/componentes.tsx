@@ -1,16 +1,18 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useState } from 'react';
 
-import LayoutContextualizado from "Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado";
-import ListaAcoesMestre from "Componentes/ElementosDeMenu/ListaAcoesMestre/page";
 import { useContextoRascunhosMestre } from "Contextos/ContextoRascunhosMestre/contexto";
+import LayoutContextualizado from "Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado";
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 import DetalhesRascunho from "./DetalhesRascunho";
-import { ModalCriacaoRascunho } from 'Componentes/ElementosModais/ModalCriacaoRascunho/ModalCriacaoRascunho';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
+import { ModalCriacaoRascunho } from 'Componentes/ElementosModais/ModalCriacaoRascunho/ModalCriacaoRascunho';
 import RascunhoEmVisualizacao from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/RascunhoEmVisualizacao/page';
 import { ContextoCriaRascunhoProvider } from 'Contextos/ContextoCriaRascunho/contexto';
+import { MENUS_INTERNOS } from 'types-nora-api';
 
 export function RascunhosMestre_Contexto() {
     const { tituloComponenteConteudo, idRascunhoSelecionado } = useContextoRascunhosMestre();
@@ -22,7 +24,7 @@ export function RascunhosMestre_Contexto() {
             </LayoutContextualizado.Conteudo>
 
             <LayoutContextualizado.Menu>
-                <ListaAcoesMestre />
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.mestre} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

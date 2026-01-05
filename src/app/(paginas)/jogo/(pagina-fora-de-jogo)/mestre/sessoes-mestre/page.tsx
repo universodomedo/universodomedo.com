@@ -1,11 +1,11 @@
 'use client';
 
-import { PAGINAS } from 'types-nora-api';
+import { MENUS_INTERNOS, PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesPlay from 'Componentes/ElementosDeMenu/ListaAcoesPlay/page';
 import { PaginaSessoesMestre } from './componentes';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 
 export default function PaginaPlay_SessoesMestre() {
     return (
@@ -15,7 +15,7 @@ export default function PaginaPlay_SessoesMestre() {
                     <PaginaSessoesMestre />
                 </LayoutContextualizado.Conteudo>
                 <LayoutContextualizado.Menu>
-                    <ListaAcoesPlay />
+                    <MenuInterno itens={MENUS_INTERNOS.PAGINAS.jogo} />
                 </LayoutContextualizado.Menu>
             </LayoutContextualizado>
         </ControladorSlot>

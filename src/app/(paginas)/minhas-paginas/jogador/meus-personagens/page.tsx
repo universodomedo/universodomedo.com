@@ -1,8 +1,9 @@
 'use client';
 
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesJogador from 'Componentes/ElementosDeMenu/ListaAcoesJogador/page';
+import { MENUS_INTERNOS } from 'types-nora-api';
 
+import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 import { ContextoListagemPersonagensProvider } from 'Contextos/ContextoListagemPersonagens/contexto';
 import { PaginaListagemPersonagens_Contexto } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/PersonagensEmListagem/page.tsx'
 
@@ -15,7 +16,7 @@ export default function PaginaMeusPersonagens() {
                 </ContextoListagemPersonagensProvider>
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
-                <ListaAcoesJogador />
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.jogador} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

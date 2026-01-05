@@ -2,8 +2,10 @@
 
 import styles from './styles.module.css';
 
+import { MENUS_INTERNOS } from 'types-nora-api';
+
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesMestre from 'Componentes/ElementosDeMenu/ListaAcoesMestre/page';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 import { useContextoMestreAventuras } from 'Contextos/ContextoMestreAventuras/contexto';
 import { AventuraEmLayoutContextualizado } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AventuraEmLayoutContextualizado/page';
 
@@ -14,7 +16,7 @@ export function AventurasMestre_Contexto() {
                 <AventurasMestre_Conteudo />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
-                <ListaAcoesMestre />
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.mestre} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

@@ -1,9 +1,10 @@
 'use client';
 
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesMestre from 'Componentes/ElementosDeMenu/ListaAcoesMestre/page';
+import { EstiloSessao, MENUS_INTERNOS } from 'types-nora-api';
+
 import { useContextoPaginaMestreSessao } from 'Contextos/ContextoMestreSessao/contexto';
-import { EstiloSessao } from 'types-nora-api';
+import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 import SessaoEmVisualizacao from 'Componentes/ElementosVisuais/SessaoEmVisualizacao/page';
 
 export function PaginaMestreSessao_Contexto() {
@@ -19,7 +20,7 @@ export function PaginaMestreSessao_Contexto() {
                 <PaginaMestreSessao_Conteudo />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
-                <ListaAcoesMestre />
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.mestre} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

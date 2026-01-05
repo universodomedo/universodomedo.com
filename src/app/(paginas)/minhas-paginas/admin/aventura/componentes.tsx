@@ -3,10 +3,10 @@
 import styles from './styles.module.css';
 
 import Link from 'next/link';
-import { DetalheSessaoAventuraDto, GrupoAventuraDto, LinkDto } from 'types-nora-api';
+import { DetalheSessaoAventuraDto, GrupoAventuraDto, LinkDto, MENUS_INTERNOS } from 'types-nora-api';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import { ListaAcoesAdmin } from '../componentes';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 import { ContextoCadastroNovoLinkGrupoAventuraProvider, useContextoCadastroNovoLinkGrupoAventura } from 'Contextos/ContextoCadastroNovoLinkGrupoAventura/contexto';
 import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
@@ -18,7 +18,7 @@ export function AdministrarAventura_Slot({ grupoAventura }: { grupoAventura: Gru
                 <AdministrarAventura_Conteudo grupoAventura={grupoAventura} />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
-                <ListaAcoesAdmin />
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.admin} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

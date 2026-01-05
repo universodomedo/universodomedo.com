@@ -1,7 +1,9 @@
 'use client';
 
+import { MENUS_INTERNOS } from 'types-nora-api';
+
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesJogador from 'Componentes/ElementosDeMenu/ListaAcoesJogador/page';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 
 export default function PaginaJogador() {
     return (
@@ -10,7 +12,7 @@ export default function PaginaJogador() {
                 <></>
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
-                <ListaAcoesJogador />
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.jogador} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

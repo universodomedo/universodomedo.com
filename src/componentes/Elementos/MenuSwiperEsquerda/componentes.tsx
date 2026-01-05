@@ -5,7 +5,7 @@ import { type JSX } from 'react';
 import { filtrarMenuPorAcesso, MENU_PRINCIPAL, type MenuNode } from 'types-nora-api';
 
 import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
-import LinkInteligente from 'Componentes/Elementos/LinkInteligente/LinkInteligente';
+import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 export function ItensMenuSwiperEsquerda() {
@@ -34,7 +34,7 @@ function RenderNode({ node }: { node: MenuNode }): JSX.Element | null {
     if (node.tipo === 'item') {
         return (
             <div className={styles.item_menu}>
-                <LinkInteligente destino={node.destino} className={styles.conteudo_item_menu}><ConteudoItemLink titulo={node.titulo} /></LinkInteligente>
+                <LinkInterno destino={node.destino} className={styles.conteudo_item_menu}><ConteudoItemLink titulo={node.titulo} /></LinkInterno>
             </div>
         );
     }

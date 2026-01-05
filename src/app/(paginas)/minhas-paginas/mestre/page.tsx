@@ -1,7 +1,9 @@
 'use client';
 
+import { MENUS_INTERNOS } from 'types-nora-api';
+
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesMestre from 'Componentes/ElementosDeMenu/ListaAcoesMestre/page';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 
 export default function PaginaMestre() {
     return (
@@ -10,7 +12,7 @@ export default function PaginaMestre() {
                 <></>
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
-                <ListaAcoesMestre />
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.mestre} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

@@ -3,10 +3,10 @@
 import styles from './styles.module.css';
 
 import Link from 'next/link';
-import { EstiloSessao, LinkDto, SessaoDto } from 'types-nora-api';
+import { EstiloSessao, LinkDto, MENUS_INTERNOS, SessaoDto } from 'types-nora-api';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import { ListaAcoesAdmin } from '../componentes';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import { useContextoCadastroNovoLinkSessao } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 import { ContextoCadastroNovoLinkSessaoProvider } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
@@ -18,7 +18,7 @@ export function AdministrarSessao_Slot({ sessao }: { sessao: SessaoDto; }) {
                 <AdministrarSessao_Conteudo sessao={sessao} />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
-                <ListaAcoesAdmin />
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.admin} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

@@ -2,10 +2,10 @@
 
 import styles from './styles.module.css';
 
-import { AventuraEstado } from 'types-nora-api';
+import { AventuraEstado, MENUS_INTERNOS } from 'types-nora-api';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesMestre from 'Componentes/ElementosDeMenu/ListaAcoesMestre/page';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 import { useContextoPaginaMestreAventura } from "Contextos/ContextoMestreAventura/contexto";
 import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
 import { VisualizadorSessoes } from './subcomponentes/VisualizadorSessoes/VisualizadorSessoes';
@@ -18,7 +18,7 @@ export function PaginaMestreAventura_Contexto() {
                 <PaginaMestreAventura_Conteudo />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
-                <ListaAcoesMestre />
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.mestre} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

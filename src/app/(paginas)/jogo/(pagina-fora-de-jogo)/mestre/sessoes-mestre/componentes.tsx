@@ -1,6 +1,5 @@
 'use client';
 
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import styles from './styles.module.css';
 
 import { ContextoSessoesMestreEmEsperaProvider, useContextoSessoesMestreEmEspera } from "Contextos/ContextoSessoesMestreEmEspera/contexto";

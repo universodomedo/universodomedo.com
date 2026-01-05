@@ -1,48 +1,58 @@
+'use client';
+
 import styles from './styles.module.css';
-
 import React, { JSX } from 'react';
+import { type MenuNode } from 'types-nora-api';
 
-import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
+import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 
-export type NivelPermissao = { tituloPermissao: string; condicao: boolean; itens: ItemMenu[]; };
-export type ItemMenu = { titulo: string; link?: string; subitens?: ItemMenu[]; };
+export default function MenuInterno({ itens }: { itens: readonly MenuNode[] }) {
+    const raiz = itens ?? [];
+    const idxGruposTopo = raiz.map((n, i) => (n.tipo === 'grupo' ? i : -1)).filter((i) => i >= 0);
 
-export function RenderItensPermissoes(permissoes: NivelPermissao[], url: string, divisor: boolean, prefixo?: string) {
-    return (
-        <>
-            {divisor && <hr className={styles.divisor} />}
-            
-            <div id={styles.recipiente_lista_acoes}>
-                {permissoes.filter(nivel => nivel.condicao && nivel.itens.length > 0).map((nivel, indexPermissao, arrayFiltrada) => (
-                    <React.Fragment key={indexPermissao}>
-                        <h2 className={styles.titulo_permissao}>{nivel.tituloPermissao}</h2>
-                        {nivel.itens.map((item, index) => RenderItemBase(item, `${index}`, url, prefixo))}
-                        {indexPermissao < arrayFiltrada.length - 1 && <hr className={styles.divisor} />}
-                    </React.Fragment>
-                ))}
-            </div>
-        </>
-    );
-};
-
-export function RenderItemBase(item: ItemMenu, key: string, url: string, prefixo?: string): JSX.Element {
-    const temSubitens = item.subitens && item.subitens.length > 0;
-
-    return (
-        <div key={key} className={styles.recipiente_item_lista_acoes}>
-            {item.link === undefined ? (
-                <h2>{item.titulo}</h2>
-            ) : (
-                <CustomLink href={`${prefixo ?? ''}/${url}/${item.link}`}>
-                    <h2>{item.titulo}</h2>
-                </CustomLink>
-            )}
-
-            {temSubitens && (
-                <div className={styles.recipiente_subitens_lista_acoes}>
-                    {item.subitens!.map((sub, idx) => RenderItemBase(sub, `${key}-${idx}`, url, prefixo))}
+    function RenderNode(node: MenuNode, key: string, depth: number, proximoGrupoTopoExiste: boolean): JSX.Element | null {
+        if (node.tipo === 'item') {
+            return (
+                <div key={key} className={styles.recipiente_item_lista_acoes}>
+                    <LinkInterno destino={node.destino}><h2>{node.titulo}</h2></LinkInterno>
                 </div>
-            )}
+            );
+        }
+
+        const filhos = node.itens ?? [];
+        if (filhos.length === 0) return null;
+
+        if (depth === 0) {
+            return (
+                <React.Fragment key={key}>
+                    <h2 className={styles.titulo_permissao}>{node.titulo}</h2>
+
+                    {filhos.map((sub, idx) => RenderNode(sub, `${key}-${idx}`, depth + 1, false))}
+
+                    {proximoGrupoTopoExiste && <hr className={styles.divisor} />}
+                </React.Fragment>
+            );
+        }
+
+        return (
+            <div key={key} className={styles.recipiente_item_lista_acoes}>
+                <h2>{node.titulo}</h2>
+
+                <div className={styles.recipiente_subitens_lista_acoes}>
+                    {filhos.map((sub, idx) => RenderNode(sub, `${key}-${idx}`, depth + 1, false))}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div id={styles.recipiente_lista_acoes}>
+            {raiz.map((node, index) => {
+                const ehGrupoTopo = node.tipo === 'grupo';
+                const posNoArrayDeGrupos = ehGrupoTopo ? idxGruposTopo.indexOf(index) : -1;
+                const proximoGrupoTopoExiste = ehGrupoTopo && posNoArrayDeGrupos >= 0 && posNoArrayDeGrupos < idxGruposTopo.length - 1;
+                return RenderNode(node, `${index}`, 0, proximoGrupoTopoExiste);
+            })}
         </div>
     );
 };

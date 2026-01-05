@@ -6,7 +6,10 @@ import { type Capacidade, CAPACIDADES, type PaginaTemplate, type UsuarioDto, typ
 import { obtemObjetoAutenticacao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import getValorVariavelAmbiente from 'Helpers/getValorVariavelAmbiente';
 
-function dbgAuth(msg: string, extra?: any) { if (typeof window === "undefined") return; console.log(`[AUTH] ${new Date().toISOString()} ${msg}`, extra ?? ""); }
+function dbgAuth(msg: string, extra?: any) {
+    if (typeof window === "undefined") return;
+    // console.log(`[AUTH] ${new Date().toISOString()} ${msg}`, extra ?? "");
+}
 
 interface ContextoAutenticacaoProps {
     checkAuth: (paginaAtualTemplate?: PaginaTemplate | null) => Promise<void>;

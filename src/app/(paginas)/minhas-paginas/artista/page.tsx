@@ -1,7 +1,9 @@
 'use client';
 
+import { MENUS_INTERNOS } from 'types-nora-api';
+
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-// import ListaAcoesArtista from 'Componentes/ElementosDeMenu/ListaAcoesArtista/page';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 
 export default function PaginaAdmin() {
     return (
@@ -9,8 +11,8 @@ export default function PaginaAdmin() {
             <LayoutContextualizado.Conteudo>
                 <></>
             </LayoutContextualizado.Conteudo>
-            <LayoutContextualizado.Menu><></>
-                {/* <ListaAcoesArtista /> */}
+            <LayoutContextualizado.Menu>
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.artista} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

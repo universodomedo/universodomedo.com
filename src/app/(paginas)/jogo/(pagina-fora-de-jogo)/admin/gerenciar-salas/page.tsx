@@ -2,10 +2,10 @@
 
 import styles from './styles.module.css';
 import { useState } from 'react';
-import { Eventos_Emite, PAGINAS, SalaDeJogoDto } from 'types-nora-api';
+import { Eventos_Emite, MENUS_INTERNOS, SalaDeJogoDto } from 'types-nora-api';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesPlay from 'Componentes/ElementosDeMenu/ListaAcoesPlay/page';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { RenderItemSala } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/SalaDeJogoEmVisualizacao/page';
 
@@ -16,7 +16,7 @@ export default function PaginaPlay_GerenciarSalas() {
                 <PaginaPlay_GerenciarSalas_Slot />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
-                <ListaAcoesPlay />
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.jogo} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

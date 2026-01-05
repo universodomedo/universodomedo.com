@@ -1,10 +1,12 @@
 'use client';
 
+import { MENUS_INTERNOS } from "types-nora-api";
+
 import { useRequisicao } from "Hooks/useRequisicao";
 import { obtemTodosGruposParaAdmin } from "Uteis/ApiConsumer/ConsumerMiddleware";
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import { ListaAcoesAdmin } from "../componentes";
 import { AdministrarAventuras_ConteudoGeral } from "./componentes";
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 
 export default function AdministrarAventuras() {
     const { dados: gruposAventuras, carregando, erro } = useRequisicao(obtemTodosGruposParaAdmin);
@@ -19,7 +21,7 @@ export default function AdministrarAventuras() {
                 <AdministrarAventuras_ConteudoGeral gruposAventuras={gruposAventuras} />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
-                <ListaAcoesAdmin />
+                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.admin} />
             </LayoutContextualizado.Menu>
         </LayoutContextualizado>
     );

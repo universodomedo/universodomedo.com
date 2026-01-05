@@ -1,10 +1,10 @@
 'use client';
 
-import { PAGINAS } from 'types-nora-api';
+import { MENUS_INTERNOS, PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesPlay from 'Componentes/ElementosDeMenu/ListaAcoesPlay/page';
+import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 
 export default function PaginaPlay() {
     return (
@@ -14,7 +14,7 @@ export default function PaginaPlay() {
                     <></>
                 </LayoutContextualizado.Conteudo>
                 <LayoutContextualizado.Menu>
-                    <ListaAcoesPlay />
+                    <MenuInterno itens={MENUS_INTERNOS.PAGINAS.jogo} />
                 </LayoutContextualizado.Menu>
             </LayoutContextualizado>
         </ControladorSlot>
