@@ -74,6 +74,10 @@ export async function obtemArvoreItensParaPaginaPermissoes() {
     return await useApi<ArvoreItensPermissaoDto>({ uri: '/permissoes_itens/obtemArvoreItensParaPaginaPermissoes', method: 'GET' });
 }
 
+export async function me_criaItem(parentId: number | null, codigo: string, descricao: string) {
+    return await useApi<boolean>({ uri: '/permissoes_itens/me/me_criaItem', method: 'POST', data: { parentId: parentId, codigo: codigo, descricao: descricao } });
+}
+
 export async function uploadImagem(file: File, tipo: string) {
     const formData = new FormData();
     formData.append('files', file);

@@ -1,25 +1,294 @@
-.header { display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; background: white; padding: 12px 0; }
-.titulo { margin: 0; font-size: 20px; }
-.acoes { display: flex; gap: 8px; }
-.botao { padding: 8px 12px; border: 1px solid #ddd; background: #fff; border-radius: 8px; cursor: pointer; }
-.body { display: flex; flex-direction: column; gap: 8px; }
-.arvore { display: flex; flex-direction: column; gap: 6px; }
+.recipiente {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    height: 100%;
+    gap: 0.9em;
+}
 
-.details { border: 1px solid #eee; border-radius: 10px; padding: 6px 8px; }
-.summary { list-style: none; cursor: pointer; }
-.summary::-webkit-details-marker { display: none; }
-.filhos { padding-left: 16px; display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.botao {
+    padding: 0.55em 0.85em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 0.85em;
+    cursor: pointer;
+    color: #D9D9D9;
+}
 
-.noFolha { border: 1px solid #eee; border-radius: 10px; padding: 6px 8px; cursor: pointer; }
+.botao:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
 
-.linha { display: flex; justify-content: space-between; gap: 12px; }
-.linhaEsquerda { display: flex; flex-direction: column; gap: 2px; }
-.linhaDireita { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.footer_acoes {
+    display: flex;
+    justify-content: center;
+    gap: 0.7em;
+    border-radius: 1em;
+}
 
-.codigo { font-weight: 700; }
-.descricao { font-size: 14px; opacity: 0.85; }
-.path { font-size: 12px; opacity: 0.65; }
+/* ===== Lista / janela ===== */
 
-.tagTravado { font-size: 12px; padding: 3px 8px; border-radius: 999px; border: 1px solid #f2c4c4; background: #fff5f5; }
-.tagLivre { font-size: 12px; padding: 3px 8px; border-radius: 999px; border: 1px solid #cdeccd; background: #f6fff6; }
-.tagFilhos { font-size: 12px; padding: 3px 8px; border-radius: 999px; border: 1px solid #e5e5e5; background: #fafafa; }
+.janela_lista {
+    flex: 1;
+    border: 0.08em solid rgba(255, 255, 255, 0.10);
+    border-radius: 1em;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(0.45em);
+    overflow: auto;
+    padding: 0.85em;
+}
+
+/* ===== Árvore ===== */
+
+.arvore {
+    display: flex;
+    flex-direction: column;
+    gap: .8em; /* entre raízes */
+    min-width: max-content;
+}
+
+.details {
+    border: none;
+    padding: 0;
+}
+
+.summary {
+    list-style: none;
+    cursor: default;
+}
+
+.summary::-webkit-details-marker {
+    display: none;
+}
+
+.filhos {
+    display: flex;
+    flex-direction: column;
+    gap: .4em;
+    margin-top: .4em;
+}
+
+/* ===== Item widget ===== */
+
+.item_base {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 0.85em;
+    border-radius: 1em;
+    border: 0.08em solid rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.04);
+    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    min-width: max-content;
+
+    --indent-step: 1.2em;
+    --depth: 0;
+    margin-left: calc(var(--indent-step) * var(--depth));
+}
+
+.tem_filhos {
+    cursor: pointer;
+}
+
+.tem_filhos:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.16);
+    transform: translateY(-0.06em);
+}
+
+.tem_filhos:active {
+    transform: translateY(0em);
+}
+
+/* aqui a intenção é só NÃO ter hover/cursor de linha,
+   mas NÃO pode matar o cursor do botão */
+.sem_hover_linha {
+    cursor: default;
+}
+
+.item_linha {
+    padding: 0.7em 0.85em;
+}
+
+.item_card, .item_card_destaque {
+    padding: 0.85em;
+}
+
+.item_card_destaque {
+    border-color: rgba(255, 255, 255, 0.20);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.item_conteudo {
+    display: flex;
+    gap: 0.7em;
+    align-items: flex-start;
+    min-width: 36em;
+}
+
+.item_textos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+}
+
+.item_codigo {
+    font-weight: 900;
+    white-space: nowrap;
+    color: #EAEAEA;
+}
+
+.item_descricao {
+    font-size: 0.95em;
+    opacity: 0.9;
+    white-space: nowrap;
+}
+
+.item_path {
+    font-size: 0.82em;
+    opacity: 0.75;
+    white-space: nowrap;
+}
+
+.item_acoes {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    white-space: nowrap;
+    flex: 0 0 auto;
+}
+
+.item_tags {
+    display: flex;
+    gap: 0.55em;
+    align-items: center;
+}
+
+.botao_selecionar {
+    padding: 0.45em 0.75em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 0.85em;
+    cursor: pointer;
+    font-size: 0.82em;
+    color: #D9D9D9;
+}
+
+.item_base:not(.sem_hover_linha):hover .botao_selecionar {
+    border-color: rgba(255, 255, 255, 0.20);
+}
+
+/* ===== Tags ===== */
+
+.tag_travado {
+    font-size: 0.82em;
+    padding: 0.25em 0.6em;
+    border-radius: 999em;
+    border: 0.08em solid rgba(219, 71, 71, 0.45);
+    background: rgba(219, 71, 71, 0.12);
+    color: #F0D7D7;
+}
+
+.tag_livre {
+    font-size: 0.82em;
+    padding: 0.25em 0.6em;
+    border-radius: 999em;
+    border: 0.08em solid rgba(61, 152, 61, 0.45);
+    background: rgba(61, 152, 61, 0.12);
+    color: #D7F0D7;
+}
+
+.tag_filhos {
+    font-size: 0.82em;
+    padding: 0.25em 0.6em;
+    border-radius: 999em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: #D9D9D9;
+}
+
+/* ===== Indentação por nível ===== */
+
+.depth_0 { --depth: 0; }
+.depth_1 { --depth: 1; }
+.depth_2 { --depth: 2; }
+.depth_3 { --depth: 3; }
+.depth_4 { --depth: 4; }
+.depth_5 { --depth: 5; }
+.depth_6 { --depth: 6; }
+.depth_7 { --depth: 7; }
+.depth_8 { --depth: 8; }
+.depth_9 { --depth: 9; }
+.depth_10 { --depth: 10; }
+
+/* ===== Modo foco ===== */
+
+.foco {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+}
+
+.foco_bloco {
+    border: 0.08em solid rgba(255, 255, 255, 0.10);
+    border-radius: 1em;
+    padding: 0.85em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(0.45em);
+}
+
+.foco_titulo {
+    font-weight: 800;
+    color: #EAEAEA;
+}
+
+.foco_conteudo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+}
+
+.acoes_foco {
+    display: flex;
+    gap: 0.7em;
+}
+
+.vazio {
+    opacity: 0.7;
+    font-size: 0.95em;
+}
+
+.lista_filhos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    max-height: 16em;
+    overflow: auto;
+}
+
+/* ===== Detalhes Usuários Permitidos (placeholder temporário) ===== */
+
+.detalhes_usuarios {
+    display: flex;
+    flex-direction: row;
+    gap: 0.6em;
+    padding: 0.75em 0.85em;
+    border-radius: 0.85em;
+    border: 0.08em solid rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.detalhes_usuarios_mensagem {
+    opacity: 0.85;
+    color: #D9D9D9;
+}
+
+.avatar_usuario_permitido {
+    position: relative;
+    width: 4em;
+    aspect-ratio: 1;
+}
