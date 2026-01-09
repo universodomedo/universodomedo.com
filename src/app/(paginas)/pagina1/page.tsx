@@ -1,8 +1,26 @@
 export default function Pagina1() {
     return (
         <>
-            <h2>Começando</h2>
-            <div></div>
+        <style>
+            * {
+            background-color: red;
+            margin: 0%;
+            padding:0%;
+            }
+
+            
+        </style>
+
+            <body>
+
+                <header>
+                    <div className="box"></div>
+                    <div className="box"></div>
+                    <div className="box"></div>
+                    <div className="box"></div>
+                </header>
+                
+            </body>
         </>
     );
 };
