@@ -1,0 +1,51 @@
+.recipiente {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    height: 100%;
+    gap: 0.9em;
+}
+
+.foco {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+}
+
+.lista_filhos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    max-height: 16em;
+    overflow: auto;
+}
+
+/* ===== Detalhes Usuários Permitidos ===== */
+
+.detalhes_usuarios {
+    display: flex;
+    flex-direction: row;
+    gap: 0.6em;
+    padding: 0.75em 0.85em;
+    border-radius: 0.85em;
+    border: 0.08em solid rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.detalhes_usuarios_mensagem {
+    opacity: 0.85;
+    color: #D9D9D9;
+}
+
+.avatar_usuario_permitido {
+    position: relative;
+    width: 4em;
+    aspect-ratio: 1;
+}
+
+.footer_acoes {
+    display: flex;
+    justify-content: center;
+    gap: 0.7em;
+    border-radius: 1em;
+}

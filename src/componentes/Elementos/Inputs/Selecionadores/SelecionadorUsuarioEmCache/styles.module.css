@@ -1,0 +1,162 @@
+.recipiente_interno_selecionador_usuario_emcache {
+    width: 100%;
+}
+
+/* ===== Layout interno das opções (nosso) ===== */
+
+.option_row {
+    display: flex;
+    align-items: center;
+    gap: 0.65em;
+}
+
+.option_avatar {
+    position: relative;
+    width: 2.1em;
+    aspect-ratio: 1;
+    border-radius: 999em;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.option_textos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12em;
+    line-height: 1;
+}
+
+.option_username {
+    color: #D9D9D9;
+    font-weight: 800;
+}
+
+.option_id {
+    color: rgba(217, 217, 217, 0.75);
+    font-size: 0.85em;
+}
+
+.single_row {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+}
+
+.single_avatar {
+    position: relative;
+    width: 1.7em;
+    aspect-ratio: 1;
+    border-radius: 999em;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.single_textos {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    line-height: 1;
+}
+
+.single_username {
+    color: #D9D9D9;
+    font-weight: 800;
+}
+
+.single_id {
+    color: rgba(217, 217, 217, 0.75);
+    font-size: 0.85em;
+}
+
+/* ===== React-Select em CSS (sem styles inline) ===== */
+
+.select :global(.rsu__control) {
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.85em;
+    min-height: 2.6em;
+    cursor: pointer;
+}
+
+.select :global(.rsu__control--is-focused) {
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 0 0 0.12em rgba(255, 255, 255, 0.12);
+}
+
+.select :global(.rsu__value-container) {
+    padding: 0.2em 0.7em;
+}
+
+.select :global(.rsu__placeholder) {
+    color: rgba(217, 217, 217, 0.65);
+}
+
+.select :global(.rsu__input-container) {
+    color: #D9D9D9;
+}
+
+.select :global(.rsu__single-value) {
+    color: #D9D9D9;
+}
+
+.select :global(.rsu__indicators) {
+    padding-right: 0.35em;
+}
+
+.select :global(.rsu__dropdown-indicator),
+.select :global(.rsu__clear-indicator) {
+    color: rgba(217, 217, 217, 0.8);
+}
+
+.select :global(.rsu__menu-portal) {
+    z-index: 1200;
+}
+
+.select :global(.rsu__menu) {
+    background: rgba(20, 16, 30, 0.98);
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.9em;
+    overflow: hidden;
+}
+
+.select :global(.rsu__menu-list) {
+    max-height: 16em;
+    padding: 0.4em;
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: white transparent;
+}
+
+.select :global(.rsu__menu-list::-webkit-scrollbar) {
+    width: 0.6em;
+    height: 0.6em;
+}
+
+.select :global(.rsu__menu-list::-webkit-scrollbar-track) {
+    background: transparent;
+}
+
+.select :global(.rsu__menu-list::-webkit-scrollbar-thumb) {
+    background-color: white;
+    border-radius: 0.4em;
+}
+
+.select :global(.rsu__option) {
+    color: #D9D9D9;
+    border-radius: 0.7em;
+    cursor: pointer;
+    padding: 0.55em 0.7em;
+    background: transparent;
+}
+
+.select :global(.rsu__option--is-focused) {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.select :global(.rsu__option--is-selected) {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.select :global(.rsu__indicator-separator) {
+    background: rgba(255, 255, 255, 0.12);
+}

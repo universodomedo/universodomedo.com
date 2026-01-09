@@ -1,0 +1,29 @@
+/* src/componentes/ElementosVisuais/Permissoes/ModoArvore/styles.module.css */
+
+.arvore {
+    display: flex;
+    flex-direction: column;
+    gap: .8em;
+    min-width: max-content;
+}
+
+.details {
+    border: none;
+    padding: 0;
+}
+
+.summary {
+    list-style: none;
+    cursor: default;
+}
+
+.summary::-webkit-details-marker {
+    display: none;
+}
+
+.filhos {
+    display: flex;
+    flex-direction: column;
+    gap: .4em;
+    margin-top: .4em;
+}

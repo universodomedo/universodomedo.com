@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { ItemPermissaoDto, ArvoreItensPermissaoDto } from 'types-nora-api';
+import { useContextoArvoreItensPermissoes } from 'Contextos/ContextoArvoreItensPermissoes/contexto';
 import { useContextoPaginaPermissoes } from 'Contextos/ContextoPaginaPermissoes/contexto';
 
 type NodePermissao = ArvoreItensPermissaoDto['tree'][number];
@@ -33,7 +34,8 @@ export function useContextoCriarNovoItemPermissao(): ContextoCriarNovoItemPermis
 };
 
 export function ContextoCriarNovoItemPermissaoProvider({ children, isModalOpen, parentIdCriacao }: { children: React.ReactNode; isModalOpen: boolean; parentIdCriacao: number | null }) {
-    const { criaItem, arvorePermissoes } = useContextoPaginaPermissoes();
+    const { arvorePermissoes } = useContextoArvoreItensPermissoes();
+    const { criaItem } = useContextoPaginaPermissoes();
 
     const [codigo, setCodigo] = useState('');
     const [descricao, setDescricao] = useState('');

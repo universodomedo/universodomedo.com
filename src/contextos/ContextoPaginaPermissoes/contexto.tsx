@@ -1,16 +1,16 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { ArvoreItensPermissaoDto, ItemPermissaoDto } from 'types-nora-api';
+import { createContext, useContext, useMemo, useState } from 'react';
+import { type ArvoreItensPermissaoDto, type ItemPermissaoDto } from 'types-nora-api';
 
-import { me_criaItem, obtemArvoreItensParaPaginaPermissoes } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { useToast } from 'contextos/ContextoToast/contexto';
+import { me_criaItem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { toast } from 'Hooks/useToast';
+import { useContextoArvoreItensPermissoes } from 'Contextos/ContextoArvoreItensPermissoes/contexto';
 import CriarNovoItemPermissao from 'Componentes/CriarNovoItemPermissao/page';
 
 type NodePermissao = ArvoreItensPermissaoDto['tree'][number];
 
 interface ContextoPaginaPermissoesProps {
-    arvorePermissoes: ArvoreItensPermissaoDto;
     itemSelecionado: ItemPermissaoDto | null;
     itemPaiSelecionado: ItemPermissaoDto | null;
     filhosItemSelecionado: ItemPermissaoDto[];
@@ -29,61 +29,49 @@ export const useContextoPaginaPermissoes = (): ContextoPaginaPermissoesProps => 
 };
 
 export const ContextoPaginaPermissoesProvider = ({ children }: { children: React.ReactNode }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
-    const [arvorePermissoes, setArvorePermissoes] = useState<ArvoreItensPermissaoDto | null>(null);
+    const { arvorePermissoes } = useContextoArvoreItensPermissoes();
+
     const [idItemSelecionado, setIdItemSelecionado] = useState<number | null>(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [parentIdCriacao, setParentIdCriacao] = useState<number | null>(null);
 
-    const itemSelecionado: ItemPermissaoDto | null = obtemItemSelecionado();
-    const itemPaiSelecionado: ItemPermissaoDto | null = obtemPaiDoSelecionado();
-    const filhosItemSelecionado: ItemPermissaoDto[] = itemSelecionado?.children || [];
+    const nodesById = useMemo(() => {
+        const map = new Map<number, NodePermissao>();
 
-    const toast = useToast();
+        const walk = (lista: NodePermissao[]) => {
+            for (const n of lista) {
+                map.set(n.id, n);
+                if (n.children && n.children.length) walk(n.children);
+            }
+        };
 
-    async function buscaArvorePermissoes() {
-        setCarregando('Buscando Permissões');
+        walk(arvorePermissoes.tree);
+        return map;
+    }, [arvorePermissoes]);
 
-        try {
-            setArvorePermissoes(await obtemArvoreItensParaPaginaPermissoes());
-        } catch {
-            setArvorePermissoes(null);
-        } finally {
-            setCarregando(null);
-        }
-    };
+    const itemSelecionado: ItemPermissaoDto | null = useMemo(() => {
+        if (idItemSelecionado === null) return null;
+        return nodesById.get(idItemSelecionado) ?? null;
+    }, [idItemSelecionado, nodesById]);
 
-    function selecionaIdItem(idItem: number) { setIdItemSelecionado(idItem); };
-    function deselecionaItemSelecionado() { setIdItemSelecionado(null); };
+    const itemPaiSelecionado: ItemPermissaoDto | null = useMemo(() => {
+        if (!itemSelecionado) return null;
+
+        const parentId = (arvorePermissoes.indexById as Record<string, { parentId: number | null } | undefined>)[String(itemSelecionado.id)]?.parentId ?? null;
+        if (parentId === null) return null;
+
+        return nodesById.get(parentId) ?? null;
+    }, [arvorePermissoes, itemSelecionado, nodesById]);
+
+    const filhosItemSelecionado: ItemPermissaoDto[] = useMemo(() => {
+        return itemSelecionado?.children || [];
+    }, [itemSelecionado]);
+
+    function selecionaIdItem(idItem: number) { setIdItemSelecionado(idItem); }
+    function deselecionaItemSelecionado() { setIdItemSelecionado(null); }
 
     function solicitaCriacaoDePermissao(parentId: number | null) { setParentIdCriacao(parentId); setIsModalOpen(true); }
-
-    function obtemItemPorId(id: number): NodePermissao | null {
-        if (!arvorePermissoes) return null;
-
-        function walk(lista: NodePermissao[]): NodePermissao | null {
-            for (const n of lista) {
-                if (n.id === id) return n;
-                const achou = walk(n.children || []);
-                if (achou) return achou;
-            }
-            return null;
-        }
-
-        return walk(arvorePermissoes.tree);
-    };
-
-    function obtemItemSelecionado(): NodePermissao | null { return (!arvorePermissoes || idItemSelecionado === null) ? null : obtemItemPorId(idItemSelecionado); };
-
-    function obtemPaiDoSelecionado(): NodePermissao | null {
-        if (!arvorePermissoes || !itemSelecionado) return null;
-
-        const indexById = arvorePermissoes.indexById as unknown as Record<string, { parentId: number | null }>;
-        const parentId = indexById[String(itemSelecionado.id)]?.parentId ?? null;
-
-        return (parentId === null) ? null : obtemItemPorId(parentId);
-    };
 
     async function criaItem(parentId: number | null, codigo: string, descricao: string): Promise<boolean> {
         const ok = await me_criaItem(parentId, codigo, descricao);
@@ -98,17 +86,10 @@ export const ContextoPaginaPermissoesProvider = ({ children }: { children: React
 
         await toast.sucesso('Permissão criada', 'Item criado com sucesso.', { recarregaPagina: true });
         return true;
-    };
-
-    useEffect(() => {
-        buscaArvorePermissoes();
-    }, []);
-
-    if (carregando) return <div>{carregando}</div>;
-    if (!arvorePermissoes) return <h1>Permissões não encontradas</h1>;
+    }
 
     return (
-        <ContextoPaginaPermissoes.Provider value={{ arvorePermissoes, itemSelecionado, itemPaiSelecionado, filhosItemSelecionado, selecionaIdItem, deselecionaItemSelecionado, criaItem, solicitaCriacaoDePermissao }}>
+        <ContextoPaginaPermissoes.Provider value={{ itemSelecionado, itemPaiSelecionado, filhosItemSelecionado, selecionaIdItem, deselecionaItemSelecionado, criaItem, solicitaCriacaoDePermissao }}>
             {children}
             <CriarNovoItemPermissao isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} parentIdCriacao={parentIdCriacao} />
         </ContextoPaginaPermissoes.Provider>
