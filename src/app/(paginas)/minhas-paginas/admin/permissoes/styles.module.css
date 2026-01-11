@@ -27,16 +27,6 @@
     border-radius: 1em;
 }
 
-.janela_lista {
-    flex: 1;
-    border: 0.08em solid rgba(255, 255, 255, 0.10);
-    border-radius: 1em;
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(0.45em);
-    overflow: auto;
-    padding: 0.85em;
-}
-
 /* ===== Detalhes (usado pelo renderDetalhesSelecionado) ===== */
 
 .acoes_foco {
@@ -63,4 +53,8 @@
     position: relative;
     width: 4em;
     aspect-ratio: 1;
+}
+
+.recipiente_externo_foco {
+    width: 70%;
 }

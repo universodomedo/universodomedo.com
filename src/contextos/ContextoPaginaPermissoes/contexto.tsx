@@ -10,10 +10,10 @@ import CriarNovoItemPermissao from 'Componentes/CriarNovoItemPermissao/page';
 
 type NodePermissao = ArvoreItensPermissaoDto['tree'][number];
 
+export type SecaoGalhoItemAtual = { paiItemSelecionado: ItemPermissaoDto | null; itemSelecionado: ItemPermissaoDto; filhosItemSelecionado: ItemPermissaoDto[]; };
+
 interface ContextoPaginaPermissoesProps {
-    itemSelecionado: ItemPermissaoDto | null;
-    itemPaiSelecionado: ItemPermissaoDto | null;
-    filhosItemSelecionado: ItemPermissaoDto[];
+    secaoGalhoItemAtual: SecaoGalhoItemAtual | null;
     selecionaIdItem: (idItem: number) => void;
     deselecionaItemSelecionado: () => void;
     criaItem: (parentId: number | null, codigo: string, descricao: string) => Promise<boolean>;
@@ -50,23 +50,32 @@ export const ContextoPaginaPermissoesProvider = ({ children }: { children: React
         return map;
     }, [arvorePermissoes]);
 
-    const itemSelecionado: ItemPermissaoDto | null = useMemo(() => {
+    const obtemItemSelecionado = (idItemSelecionado: number | null, nodesById: Map<number, ItemPermissaoDto>) => {
         if (idItemSelecionado === null) return null;
         return nodesById.get(idItemSelecionado) ?? null;
-    }, [idItemSelecionado, nodesById]);
+    };
 
-    const itemPaiSelecionado: ItemPermissaoDto | null = useMemo(() => {
+    function obtemPaiItemSelecionado(arvorePermissoes: { indexById: unknown }, itemSelecionado: ItemPermissaoDto | null | undefined, nodesById: Map<number, ItemPermissaoDto>) {
         if (!itemSelecionado) return null;
 
-        const parentId = (arvorePermissoes.indexById as Record<string, { parentId: number | null } | undefined>)[String(itemSelecionado.id)]?.parentId ?? null;
+        const indexById = arvorePermissoes.indexById as Record<string, { parentId: number | null } | undefined>;
+        const parentId = indexById[String(itemSelecionado.id)]?.parentId ?? null;
         if (parentId === null) return null;
 
         return nodesById.get(parentId) ?? null;
-    }, [arvorePermissoes, itemSelecionado, nodesById]);
+    };
 
-    const filhosItemSelecionado: ItemPermissaoDto[] = useMemo(() => {
-        return itemSelecionado?.children || [];
-    }, [itemSelecionado]);
+    function obtemFilhosItemSelecionado(itemSelecionado: ItemPermissaoDto | null | undefined) { return itemSelecionado?.children || []; };
+
+    const secaoGalhoItemAtual: SecaoGalhoItemAtual | null = useMemo(() => {
+        const itemSelecionado = obtemItemSelecionado(idItemSelecionado, nodesById as Map<number, ItemPermissaoDto>);
+        if (!itemSelecionado) return null;
+
+        const paiItemSelecionado = obtemPaiItemSelecionado(arvorePermissoes as { indexById: unknown }, itemSelecionado, nodesById as Map<number, ItemPermissaoDto>);
+        const filhosItemSelecionado = obtemFilhosItemSelecionado(itemSelecionado);
+
+        return { paiItemSelecionado, itemSelecionado, filhosItemSelecionado };
+    }, [arvorePermissoes, idItemSelecionado, nodesById]);
 
     function selecionaIdItem(idItem: number) { setIdItemSelecionado(idItem); }
     function deselecionaItemSelecionado() { setIdItemSelecionado(null); }
@@ -86,10 +95,10 @@ export const ContextoPaginaPermissoesProvider = ({ children }: { children: React
 
         await toast.sucesso('Permissão criada', 'Item criado com sucesso.', { recarregaPagina: true });
         return true;
-    }
+    };
 
     return (
-        <ContextoPaginaPermissoes.Provider value={{ itemSelecionado, itemPaiSelecionado, filhosItemSelecionado, selecionaIdItem, deselecionaItemSelecionado, criaItem, solicitaCriacaoDePermissao }}>
+        <ContextoPaginaPermissoes.Provider value={{ secaoGalhoItemAtual, selecionaIdItem, deselecionaItemSelecionado, criaItem, solicitaCriacaoDePermissao }}>
             {children}
             <CriarNovoItemPermissao isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} parentIdCriacao={parentIdCriacao} />
         </ContextoPaginaPermissoes.Provider>

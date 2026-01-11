@@ -144,6 +144,29 @@
     border-color: rgba(255, 255, 255, 0.20);
 }
 
+/* ===== Tag de acesso (só em folhas) ===== */
+
+.tag_acesso_base {
+    font-size: 0.82em;
+    padding: 0.25em 0.6em;
+    border-radius: 999em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: #D9D9D9;
+}
+
+.tag_acesso_sim {
+    border-color: rgba(61, 152, 61, 0.55);
+    background: rgba(61, 152, 61, 0.16);
+    color: #D7F0D7;
+}
+
+.tag_acesso_nao {
+    border-color: rgba(219, 71, 71, 0.55);
+    background: rgba(219, 71, 71, 0.16);
+    color: #F0D7D7;
+}
+
 /* ===== Tags ===== */
 
 .tag_travado {
@@ -186,3 +209,14 @@
 .depth_8 { --depth: 8; }
 .depth_9 { --depth: 9; }
 .depth_10 { --depth: 10; }
+
+
+/* subcomponentes */
+.recipiente_janela_lista {
+    flex: 1;
+    border: 0.08em solid rgba(255, 255, 255, 0.10);
+    border-radius: 1em;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(0.45em);
+    padding: 0.85em;
+}

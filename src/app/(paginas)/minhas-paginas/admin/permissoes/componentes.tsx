@@ -2,17 +2,16 @@
 
 import styles from './styles.module.css';
 
-import type { ItemPermissaoDto } from 'types-nora-api';
-
 import { useContextoPaginaPermissoes } from 'Contextos/ContextoPaginaPermissoes/contexto';
 import { useContextoArvoreItensPermissoes } from 'Contextos/ContextoArvoreItensPermissoes/contexto';
-import PermissoesModoArvore from 'Componentes/ElementosVisuais/Permissoes/ModoArvore/componentes';
+import { JanelaArvorePermissoes } from 'Componentes/ElementosVisuais/Permissoes/subcomponentes';
 import PermissoesModoFoco from 'Componentes/ElementosVisuais/Permissoes/ModoFoco/componentes';
 import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/page';
+import { BotaoTelaPermissoes } from 'Componentes/ElementosVisuais/Permissoes/componentes';
 
 export function PaginaAdmin_Permissoes_Contexto() {
-    const { itemSelecionado } = useContextoPaginaPermissoes();
-    return itemSelecionado ? <ModoFoco /> : <ModoArvoreCompleta />;
+    const { secaoGalhoItemAtual } = useContextoPaginaPermissoes();
+    return secaoGalhoItemAtual ? <ModoFoco /> : <ModoArvoreCompleta />;
 }
 
 function ModoArvoreCompleta() {
@@ -21,45 +20,39 @@ function ModoArvoreCompleta() {
 
     return (
         <div className={styles.recipiente}>
-            {/* tem q trazer useScrollable para janela_lista */}
-            <div className={styles.janela_lista}>
-                <PermissoesModoArvore tree={arvorePermissoes.tree} onFocoItem={idItem => selecionaIdItem(idItem)} />
-            </div>
+            <JanelaArvorePermissoes arvore={arvorePermissoes.tree} onFocoItem={idItem => selecionaIdItem(idItem)} />
 
             <div className={styles.footer_acoes}>
-                <button className={styles.botao} onClick={() => solicitaCriacaoDePermissao(null)}>Nova Permissão</button>
+                <BotaoTelaPermissoes className={styles.botao} onClick={() => solicitaCriacaoDePermissao(null)}>Nova Permissão</BotaoTelaPermissoes>
             </div>
+        </div>
+    );
+};
+
+function ModoFoco() {
+    const { secaoGalhoItemAtual, selecionaIdItem, deselecionaItemSelecionado, solicitaCriacaoDePermissao } = useContextoPaginaPermissoes();
+    if (!secaoGalhoItemAtual) return null;
+
+    return (
+        <div className={styles.recipiente_externo_foco}>
+            <PermissoesModoFoco secaoGalhoItemAtual={secaoGalhoItemAtual} onFocoItem={idItem => selecionaIdItem(idItem)} onVoltar={() => deselecionaItemSelecionado()} renderDetalhesSelecionado={<DetalhesItemSelecionado />} renderFooterDireita={<BotaoTelaPermissoes className={styles.botao} onClick={() => solicitaCriacaoDePermissao(null)}>Nova Permissão</BotaoTelaPermissoes>} />
         </div>
     );
 }
 
-function ModoFoco() {
-    const { itemSelecionado, itemPaiSelecionado, filhosItemSelecionado, selecionaIdItem, deselecionaItemSelecionado, solicitaCriacaoDePermissao } = useContextoPaginaPermissoes();
-    if (!itemSelecionado) return null;
-
-    return (
-        <PermissoesModoFoco
-            itemSelecionado={itemSelecionado}
-            itemPaiSelecionado={itemPaiSelecionado}
-            filhosItemSelecionado={filhosItemSelecionado}
-            onFocoItem={(idItem) => selecionaIdItem(idItem)}
-            onVoltar={() => deselecionaItemSelecionado()}
-            renderDetalhesSelecionado={<DetalhesItemSelecionado />}
-            renderFooterDireita={<button className={styles.botao} onClick={() => solicitaCriacaoDePermissao(null)}>Nova Permissão</button>}
-        />
-    );
-}
-
 function DetalhesItemSelecionado() {
-    const { itemSelecionado, solicitaCriacaoDePermissao } = useContextoPaginaPermissoes();
-    if (!itemSelecionado) return null;
+    const { secaoGalhoItemAtual } = useContextoPaginaPermissoes();
+    if (!secaoGalhoItemAtual) return null;
 
-    return (itemSelecionado.listaIdsUsuariosPermitidos || []).length > 0
-        ? <DetalhesItemSelecionado_Capacidade itemSelecionado={itemSelecionado} />
-        : <DetalhesItemSelecionado_Folha itemSelecionado={itemSelecionado} solicitaCriacaoDePermissao={solicitaCriacaoDePermissao} />;
-}
+    return (secaoGalhoItemAtual.itemSelecionado.listaIdsUsuariosPermitidos || []).length > 0 ? <DetalhesItemSelecionado_Capacidade /> : <DetalhesItemSelecionado_Folha />;
+};
 
-function DetalhesItemSelecionado_Capacidade({ itemSelecionado }: { itemSelecionado: ItemPermissaoDto }) {
+function DetalhesItemSelecionado_Capacidade() {
+    const { secaoGalhoItemAtual } = useContextoPaginaPermissoes();
+    if (!secaoGalhoItemAtual) return null;
+
+    const itemSelecionado = secaoGalhoItemAtual.itemSelecionado;
+
     return (
         <div className={styles.detalhes_usuarios}>
             {itemSelecionado.listaIdsUsuariosPermitidos.length > 0
@@ -74,10 +67,13 @@ function DetalhesItemSelecionado_Capacidade({ itemSelecionado }: { itemSeleciona
     );
 }
 
-function DetalhesItemSelecionado_Folha({ itemSelecionado, solicitaCriacaoDePermissao }: { itemSelecionado: ItemPermissaoDto; solicitaCriacaoDePermissao: (parentId: number | null) => void }) {
+function DetalhesItemSelecionado_Folha() {
+    const { secaoGalhoItemAtual, solicitaCriacaoDePermissao } = useContextoPaginaPermissoes();
+    if (!secaoGalhoItemAtual) return null;
+
     return (
         <div className={styles.acoes_foco}>
-            <button className={styles.botao} onClick={() => solicitaCriacaoDePermissao(itemSelecionado.id)}>Adicionar filho</button>
+            <BotaoTelaPermissoes className={styles.botao} onClick={() => solicitaCriacaoDePermissao(secaoGalhoItemAtual.itemSelecionado.id)}>Adicionar filho</BotaoTelaPermissoes>
         </div>
     );
 };
