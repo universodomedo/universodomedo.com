@@ -33,7 +33,10 @@ html, body {
 
 body {
   position: static;
-  background-color: #0E0B18;
+  background-image: linear-gradient(10deg, #07050c  4 5%, #0E0B18 75%, #1A0C1C );
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 html, body {

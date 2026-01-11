@@ -6,12 +6,12 @@
     width: 90%;
     align-items: center;
     justify-content: center;
-    margin-top: 20vh;
+    margin-top: 30vh;
 }
 
-#recipiente_svg_rodape {
+#recipiente_png_rodape {
     position: relative;
-    width: 100%;
+
 }
 
 #recipiente_redes_sociais {

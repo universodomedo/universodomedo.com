@@ -13,15 +13,22 @@ export default function SecaoPrincipal() {
             </div>
 
             <div id={styles.recipiente_imagem_fundo_secao_principal}>
-                <Image src={'/imagensFigma/bg-secao-principal.png'} alt='' fill quality={100} />
+
             </div>
 
             <div id={styles.conteudo_secao_principal}>
-                <h1 id={styles.titulo_secao_principal}><span className={styles.titulo_sem_decorative}>D</span>escubra o <span className={styles.titulo_sem_decorative}>P</span>aranormal</h1>
-                <div id={styles.conteudo_textos_secao_principal}>
-                    <h2 className={styles.texto_secao_principal}>Faça parte da guerra entre a Humanidade e o Paranormal</h2>
-                    <h2 className={styles.texto_secao_principal}>Enfrente seus demônios internos e desvende os segredos da Realidade</h2>
-                </div>
+                <section className={styles.recipiente_texto_secao_principal}>
+                    <h1 id={styles.titulo_secao_principal}><span className={styles.titulo_sem_decorative}>Des</span>cu<span className={styles.titulo_sem_decorative}>br</span>a <span className={styles.titulo_sem_decorative}>o</span> <span className={styles.titulo_sem_decorative}>P</span>aranor<span className={styles.titulo_sem_decorative}>m</span>al</h1>
+                    <div id={styles.conteudo_textos_secao_principal}>
+                        <h2 className={styles.texto_secao_principal}>Faça parte da guerra entre a Humanidade e o Paranormal</h2>
+                        <h2 className={styles.texto_secao_principal}>Enfrente seus demônios internos e desvende os segredos da Realidade</h2>
+                    </div>
+                    <a className={styles.recipiente_botao_papel} href="#" target="_self" rel="#">
+                        <img className={styles.fundo_botao_papel} src="/imagensFigma/botao-jogue-agora.png" alt="botão de papel" />
+                        <img className={styles.seta_botao_papel} src="/imagensFigma/seta-jogue-agora.png" alt="#"/>
+                        <p className={styles.texto_botao_papel}>Jogue Agora!</p>
+                    </a>
+                </section>
             </div>
         </div>
     );
