@@ -8,6 +8,9 @@ import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiper
 import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwiperEsquerda';
 import ContainerEscalavel from 'Componentes/ElementosVisuais/ContainerEscalavel/ContainerEscalavel';
 
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 const cinzel = Cinzel({
   subsets: ['latin'],
   variable: '--fonte-cinzel',
