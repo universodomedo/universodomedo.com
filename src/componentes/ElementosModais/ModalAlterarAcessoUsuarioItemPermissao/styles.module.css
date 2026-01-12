@@ -1,0 +1,23 @@
+.recipiente_alteracao_estado_item_permissao {
+    display: flex;
+    flex-direction: column;
+    gap: .6em;
+}
+
+.recipiente_estados_em_alteracao {
+    display: flex;
+    flex-direction: row;
+    gap: 2%;
+    width: 60%;
+    margin: 2em auto;
+}
+
+.recipiente_estado_individual_em_alteracao {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: .4em;
+    text-align: center;
+    padding: .6em;
+    background: #fafafa;
+}

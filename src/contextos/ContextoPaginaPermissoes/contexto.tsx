@@ -3,8 +3,6 @@
 import { createContext, useContext, useMemo, useState } from 'react';
 import { type ArvoreItensPermissaoDto, type ItemPermissaoDto } from 'types-nora-api';
 
-import { me_criaItem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { toast } from 'Hooks/useToast';
 import { useContextoArvoreItensPermissoes } from 'Contextos/ContextoArvoreItensPermissoes/contexto';
 import CriarNovoItemPermissao from 'Componentes/CriarNovoItemPermissao/page';
 
@@ -16,7 +14,6 @@ interface ContextoPaginaPermissoesProps {
     secaoGalhoItemAtual: SecaoGalhoItemAtual | null;
     selecionaIdItem: (idItem: number) => void;
     deselecionaItemSelecionado: () => void;
-    criaItem: (parentId: number | null, codigo: string, descricao: string) => Promise<boolean>;
     solicitaCriacaoDePermissao: (parentId: number | null) => void;
 };
 
@@ -82,23 +79,8 @@ export const ContextoPaginaPermissoesProvider = ({ children }: { children: React
 
     function solicitaCriacaoDePermissao(parentId: number | null) { setParentIdCriacao(parentId); setIsModalOpen(true); }
 
-    async function criaItem(parentId: number | null, codigo: string, descricao: string): Promise<boolean> {
-        const ok = await me_criaItem(parentId, codigo, descricao);
-
-        if (!ok) {
-            await toast.erro('Falha ao criar permissão', 'Backend rejeitou a criação');
-            return false;
-        }
-
-        setIsModalOpen(false);
-        setParentIdCriacao(null);
-
-        await toast.sucesso('Permissão criada', 'Item criado com sucesso.', { recarregaPagina: true });
-        return true;
-    };
-
     return (
-        <ContextoPaginaPermissoes.Provider value={{ secaoGalhoItemAtual, selecionaIdItem, deselecionaItemSelecionado, criaItem, solicitaCriacaoDePermissao }}>
+        <ContextoPaginaPermissoes.Provider value={{ secaoGalhoItemAtual, selecionaIdItem, deselecionaItemSelecionado, solicitaCriacaoDePermissao }}>
             {children}
             <CriarNovoItemPermissao isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} parentIdCriacao={parentIdCriacao} />
         </ContextoPaginaPermissoes.Provider>

@@ -1,12 +1,13 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { type ArvoreItensPermissaoDto } from 'types-nora-api';
+import { ItemPermissaoDto, type ArvoreItensPermissaoDto } from 'types-nora-api';
 
 import { obtemArvoreItensParaPaginaPermissoes } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoArvoreItensPermissoesProps {
     arvorePermissoes: ArvoreItensPermissaoDto;
+    obtemItemPermissaoPorId: (id: number) => ItemPermissaoDto | null;
 };
 
 const ContextoArvoreItensPermissoes = createContext<ContextoArvoreItensPermissoesProps | undefined>(undefined);
@@ -33,6 +34,18 @@ export const ContextoArvoreItensPermissoesProvider = ({ children }: { children: 
         }
     };
 
+    function obtemItemPermissaoPorId(id: number): ItemPermissaoDto | null {
+        function walk(lista: ItemPermissaoDto[]): ItemPermissaoDto | null {
+            for (const n of lista) {
+                if (n.id === id) return n;
+                const achou = walk(n.children || []);
+                if (achou) return achou;
+            }
+            return null;
+        }
+        return arvorePermissoes ? walk(arvorePermissoes.tree) : null;
+    };
+
     useEffect(() => {
         buscaArvorePermissoes();
     }, []);
@@ -41,7 +54,7 @@ export const ContextoArvoreItensPermissoesProvider = ({ children }: { children: 
     if (!arvorePermissoes) return <h1>Permissões não encontradas</h1>;
 
     return (
-        <ContextoArvoreItensPermissoes.Provider value={{ arvorePermissoes }}>
+        <ContextoArvoreItensPermissoes.Provider value={{ arvorePermissoes, obtemItemPermissaoPorId }}>
             {children}
         </ContextoArvoreItensPermissoes.Provider>
     );

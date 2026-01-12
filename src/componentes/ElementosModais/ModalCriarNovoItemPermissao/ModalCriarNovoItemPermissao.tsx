@@ -4,6 +4,7 @@ import styles from './styles.module.css';
 
 import { useContextoCriarNovoItemPermissao } from 'Contextos/ContextoCriarNovoItemPermissao/contexto';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
+import { CampoInputComDica, CampoModal, CampoPai } from 'Componentes/ElementosVisuais/Permissoes/Modais/componentes';
 
 export function ModalCriarNovoItemPermissao({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean; setIsModalOpen: (open: boolean) => void }) {
     const { podeSalvar, salvando, salvar } = useContextoCriarNovoItemPermissao();
@@ -17,36 +18,24 @@ export function ModalCriarNovoItemPermissao({ isModalOpen, setIsModalOpen }: { i
     );
 };
 
+//
+
 function ConteudoModal() {
-    const { paiCriacao, labelPaiCriacao, codigo, setCodigo, descricao, setDescricao, codigoValido, descricaoValida } = useContextoCriarNovoItemPermissao();
+    const { paiCriacao, codigo, setCodigo, descricao, setDescricao, codigoValido, descricaoValida } = useContextoCriarNovoItemPermissao();
 
     return (
-        <div className={styles.form}>
-            <div className={styles.bloco_pai}>
-                <div className={styles.bloco_pai_titulo}>Pai</div>
+        <div className={styles.recipiente_criacao_novo_item_permissao}>
+            <CampoModal label="Pai">
+                <CampoPai itemPermissao={paiCriacao} />
+            </CampoModal>
 
-                {paiCriacao ? (
-                    <div className={styles.bloco_pai_card}>
-                        <div className={styles.bloco_pai_codigo}>{paiCriacao.codigo}</div>
-                        <div className={styles.bloco_pai_descricao}>{paiCriacao.descricao}</div>
-                        <div className={styles.bloco_pai_path}>{paiCriacao.path}</div>
-                    </div>
-                ) : (
-                    <div className={styles.bloco_pai_raiz}>{labelPaiCriacao}</div>
-                )}
-            </div>
+            <CampoModal label="Código">
+                <CampoInputComDica value={codigo} onChangeValue={setCodigo} placeholder="EX: ADMINISTRADOR" valido={codigoValido} dica="Use apenas A-Z e _ (será salvo em maiúsculo)" />
+            </CampoModal>
 
-            <div className={styles.campo}>
-                <label className={styles.label}>Código</label>
-                <input className={styles.input} value={codigo} onChange={(e) => setCodigo(e.target.value)} placeholder="EX: ADMINISTRADOR" />
-                {!codigoValido ? <div className={styles.dica}>Use apenas A-Z e _ (será salvo em maiúsculo)</div> : null}
-            </div>
-
-            <div className={styles.campo}>
-                <label className={styles.label}>Descrição</label>
-                <input className={styles.input} value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descrição obrigatória" />
-                {!descricaoValida ? <div className={styles.dica}>Descrição é obrigatória</div> : null}
-            </div>
+            <CampoModal label="Descrição">
+                <CampoInputComDica value={descricao} onChangeValue={setDescricao} placeholder="Descrição obrigatória" valido={descricaoValida} dica="Descrição é obrigatória" />
+            </CampoModal>
         </div>
     );
 };

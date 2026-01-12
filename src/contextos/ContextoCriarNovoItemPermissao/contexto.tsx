@@ -1,16 +1,15 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { ItemPermissaoDto, ArvoreItensPermissaoDto } from 'types-nora-api';
-import { useContextoArvoreItensPermissoes } from 'Contextos/ContextoArvoreItensPermissoes/contexto';
-import { useContextoPaginaPermissoes } from 'Contextos/ContextoPaginaPermissoes/contexto';
+import { ItemPermissaoDto } from 'types-nora-api';
 
-type NodePermissao = ArvoreItensPermissaoDto['tree'][number];
+import { me_criaItem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { toast } from 'Hooks/useToast';
+import { useContextoArvoreItensPermissoes } from 'Contextos/ContextoArvoreItensPermissoes/contexto';
 
 interface ContextoCriarNovoItemPermissaoProps {
     parentIdCriacao: number | null;
     paiCriacao: ItemPermissaoDto | null;
-    labelPaiCriacao: string;
     codigo: string;
     setCodigo: (v: string) => void;
     descricao: string;
@@ -34,8 +33,7 @@ export function useContextoCriarNovoItemPermissao(): ContextoCriarNovoItemPermis
 };
 
 export function ContextoCriarNovoItemPermissaoProvider({ children, isModalOpen, parentIdCriacao }: { children: React.ReactNode; isModalOpen: boolean; parentIdCriacao: number | null }) {
-    const { arvorePermissoes } = useContextoArvoreItensPermissoes();
-    const { criaItem } = useContextoPaginaPermissoes();
+    const { arvorePermissoes, obtemItemPermissaoPorId } = useContextoArvoreItensPermissoes();
 
     const [codigo, setCodigo] = useState('');
     const [descricao, setDescricao] = useState('');
@@ -51,42 +49,26 @@ export function ContextoCriarNovoItemPermissaoProvider({ children, isModalOpen, 
 
     function reset() { setCodigo(''); setDescricao(''); setSalvando(false); }
 
-    function obtemItemPorId(id: number): NodePermissao | null {
-        function walk(lista: NodePermissao[]): NodePermissao | null {
-            for (const n of lista) {
-                if (n.id === id) return n;
-                const achou = walk(n.children || []);
-                if (achou) return achou;
-            }
-            return null;
-        }
-        return walk(arvorePermissoes.tree);
-    }
-
     const paiCriacao: ItemPermissaoDto | null = useMemo(() => {
         if (parentIdCriacao === null) return null;
-        return obtemItemPorId(parentIdCriacao);
+        return obtemItemPermissaoPorId(parentIdCriacao);
     }, [parentIdCriacao, arvorePermissoes]);
-
-    const labelPaiCriacao = useMemo(() => (parentIdCriacao === null ? 'RAIZ' : (paiCriacao ? paiCriacao.path : `#${parentIdCriacao}`)), [parentIdCriacao, paiCriacao]);
 
     async function salvar(): Promise<void> {
         if (!podeSalvar) return;
 
-        setSalvando(true);
-        try {
-            await criaItem(parentIdCriacao, codigoNormalizado, descricaoNormalizada);
-        } finally {
-            setSalvando(false);
-        }
-    }
+        const ok = await me_criaItem(parentIdCriacao, codigo, descricao);
+
+        if (!ok) await toast.erro('Falha ao criar permissão', 'Backend rejeitou a criação');
+        else await toast.sucesso('Permissão criada', `Item ${codigo} criado com sucesso.`, { recarregaPagina: true });
+    };
 
     useEffect(() => {
         if (isModalOpen) reset();
     }, [isModalOpen, parentIdCriacao]);
 
     return (
-        <ContextoCriarNovoItemPermissao.Provider value={{ parentIdCriacao, paiCriacao, labelPaiCriacao, codigo, setCodigo, descricao, setDescricao, codigoNormalizado, descricaoNormalizada, codigoValido, descricaoValida, podeSalvar, salvando, salvar, reset }}>
+        <ContextoCriarNovoItemPermissao.Provider value={{ parentIdCriacao, paiCriacao, codigo, setCodigo, descricao, setDescricao, codigoNormalizado, descricaoNormalizada, codigoValido, descricaoValida, podeSalvar, salvando, salvar, reset }}>
             {children}
         </ContextoCriarNovoItemPermissao.Provider>
     );

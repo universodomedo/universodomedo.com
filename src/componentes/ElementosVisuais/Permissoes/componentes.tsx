@@ -12,7 +12,7 @@ export function BotaoTelaPermissoes({ children, ...props }: React.ButtonHTMLAttr
 export function FooterAcoes({ modo, onVoltar, onNova }: { modo: 'arvore' | 'foco'; onVoltar?: () => void; onNova: () => void }) {
     return (
         <div className={styles.footer_acoes}>
-            {modo === 'foco' ? <BotaoTelaPermissoes onClick={() => onVoltar?.()}>Voltar</BotaoTelaPermissoes> : null}
+            {modo === 'foco' && <BotaoTelaPermissoes onClick={() => onVoltar?.()}>Voltar</BotaoTelaPermissoes>}
             <BotaoTelaPermissoes onClick={() => onNova()}>Nova Permissão</BotaoTelaPermissoes>
         </div>
     );
@@ -38,14 +38,12 @@ export function ItemPermissaoWidget({ item, depth, isExpandable, disableHover, s
 
             <div className={styles.item_acoes}>
                 <div className={styles.item_tags}>
-                    {mostraTagAcesso ? <span className={`${styles.tag_acesso_base} ${acessoLeaf ? styles.tag_acesso_sim : styles.tag_acesso_nao}`}>{acessoLeaf ? 'Com acesso' : 'Sem acesso'}</span> : null}
-                    {item.isLockedLeaf ? <span className={styles.tag_travado}>Travado ({item.listaIdsUsuariosPermitidos.length})</span> : <span className={styles.tag_livre}>Livre</span>}
+                    {mostraTagAcesso && <span className={`${styles.tag_acesso_base} ${acessoLeaf ? styles.tag_acesso_sim : styles.tag_acesso_nao}`}>{acessoLeaf ? 'Com acesso' : 'Sem acesso'}</span>}
+                    {leaf && (item.isLockedLeaf ? <span className={styles.tag_travado}>Travado ({item.listaIdsUsuariosPermitidos.length})</span> : <span className={styles.tag_livre}>Livre</span>)}
                     <span className={styles.tag_filhos}>Filhos: {item.childrenCount}</span>
                 </div>
 
-                {showFocoButton ? (
-                    <BotaoTelaPermissoes className={styles.botao_selecionar} onClick={(e) => { e.preventDefault(); e.stopPropagation(); onFoco(); }}>Foco</BotaoTelaPermissoes>
-                ) : null}
+                {showFocoButton && <BotaoTelaPermissoes className={styles.botao_selecionar} onClick={(e) => { e.preventDefault(); e.stopPropagation(); onFoco(); }}>Foco</BotaoTelaPermissoes>}
             </div>
         </div>
     );

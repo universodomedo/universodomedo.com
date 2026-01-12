@@ -1,11 +1,18 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+
+import { me_atualizaEstadoItem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { toast } from 'Hooks/useToast';
+import { PermissaoEstado, useContextoAcessoDeUsuarioEmItem } from 'Contextos/ContextoAcessoDeUsuarioEmItem/contexto';
+import { useContextoPaginaPermissoesUsuarios } from 'Contextos/ContextoPaginaPermissoesUsuarios/contexto';
 
 interface ContextoAlterarEstadoUsuarioItemPermissaoProps {
     podeSalvar: boolean;
     salvando: boolean;
     salvar: () => void;
+    estadoSelecionado: PermissaoEstado | null;
+    setEstadoSelecionado: (estado: PermissaoEstado | null) => void;
 };
 
 const ContextoAlterarEstadoUsuarioItemPermissao = createContext<ContextoAlterarEstadoUsuarioItemPermissaoProps | undefined>(undefined);
@@ -17,31 +24,31 @@ export const useContextoAlterarEstadoUsuarioItemPermissao = (): ContextoAlterarE
 };
 
 export const ContextoAlterarEstadoUsuarioItemPermissaoProvider = ({ children, isModalOpen, idItemPermissaoSendoAlterado }: { children: React.ReactNode; isModalOpen: boolean; idItemPermissaoSendoAlterado: number; }) => {
+    const { itemSendoAlterado, estadoAtualItemSendoAlterado } = useContextoAcessoDeUsuarioEmItem();
+    const { usuarioSelecionado } = useContextoPaginaPermissoesUsuarios();
+
     const [salvando, setSalvando] = useState(false);
+    const [estadoSelecionado, setEstadoSelecionado] = useState<PermissaoEstado | null>(null);
 
-    // const podeSalvar = useMemo(() => codigoValido && descricaoValida && !salvando, [codigoValido, descricaoValida, salvando]);
-    const podeSalvar = false;
+    const podeSalvar = useMemo(() => estadoSelecionado !== null && estadoSelecionado.id !== estadoAtualItemSendoAlterado?.id && !salvando, [estadoSelecionado, estadoAtualItemSendoAlterado, salvando]);
 
-    // function reset() { setCodigo(''); setDescricao(''); setSalvando(false); }
-    function reset() { setSalvando(false); }
+    function reset() { setEstadoSelecionado(null); setSalvando(false); };
 
     async function salvar(): Promise<void> {
         if (!podeSalvar) return;
 
-        setSalvando(true);
-        try {
-            // await criaItem(parentIdCriacao, codigoNormalizado, descricaoNormalizada);
-        } finally {
-            setSalvando(false);
-        }
-    }
+        const ok = await me_atualizaEstadoItem(itemSendoAlterado!.id, usuarioSelecionado!.id, estadoSelecionado!.id);
+
+        if (!ok) await toast.erro('Falha ao atualizar permissão', 'Backend rejeitou a atualização');
+        else await toast.sucesso('Permissão atualizada', `Usuário ${usuarioSelecionado?.username} agora tem Permissão ${estadoSelecionado?.chave} para o Item ${itemSendoAlterado?.codigo}.`, { recarregaPagina: true });
+    };
 
     useEffect(() => {
         if (isModalOpen) reset();
     }, [isModalOpen, idItemPermissaoSendoAlterado]);
 
     return (
-        <ContextoAlterarEstadoUsuarioItemPermissao.Provider value={{ podeSalvar, salvando, salvar }}>
+        <ContextoAlterarEstadoUsuarioItemPermissao.Provider value={{ podeSalvar, salvando, salvar, estadoSelecionado, setEstadoSelecionado }}>
             {children}
         </ContextoAlterarEstadoUsuarioItemPermissao.Provider>
     );

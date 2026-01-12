@@ -11,28 +11,42 @@ import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais
 
 type RenderDetalhesSelecionado = React.ReactNode | ((item: ItemPermissaoDto) => React.ReactNode);
 
-export default function PermissoesModoFoco({ secaoGalhoItemAtual, onFocoItem, onVoltar, renderDetalhesSelecionado, renderFooterDireita, getAcessoLeaf }: { secaoGalhoItemAtual: SecaoGalhoItemAtual; onFocoItem: (idItem: number) => void; onVoltar: () => void; renderDetalhesSelecionado?: RenderDetalhesSelecionado; renderFooterDireita?: React.ReactNode; getAcessoLeaf?: (item: ItemPermissaoDto) => boolean }) {
+export default function PermissoesModoFoco({ secaoGalhoItemAtual, onFocoItem, onVoltar, renderDetalhesSelecionado, renderFooterDireita, getAcessoLeaf, renderAcaoItem, getIsLeaf }: { secaoGalhoItemAtual: SecaoGalhoItemAtual; onFocoItem: (idItem: number) => void; onVoltar: () => void; renderDetalhesSelecionado?: RenderDetalhesSelecionado; renderFooterDireita?: React.ReactNode; getAcessoLeaf?: (item: ItemPermissaoDto) => boolean; renderAcaoItem?: (item: ItemPermissaoDto) => React.ReactNode; getIsLeaf?: (item: ItemPermissaoDto) => boolean }) {
     const obtemAcessoLeaf = (item: ItemPermissaoDto | null) => item && getAcessoLeaf ? getAcessoLeaf(item) : undefined;
+    const obtemIsLeaf = (item: ItemPermissaoDto) => getIsLeaf ? getIsLeaf(item) : item.childrenCount === 0;
+    const renderAcaoSeAplicavel = (item: ItemPermissaoDto) => renderAcaoItem && obtemIsLeaf(item) ? renderAcaoItem(item) : null;
 
     return (
         <div className={styles.recipiente}>
             <div className={styles.foco}>
                 <BlocoFoco titulo="Pai">
                     {secaoGalhoItemAtual.paiItemSelecionado
-                        ? <ItemPermissaoWidget item={secaoGalhoItemAtual.paiItemSelecionado} depth={0} isExpandable={false} disableHover showFocoButton onFoco={() => onFocoItem(secaoGalhoItemAtual.paiItemSelecionado!.id)} modo="card" acessoLeaf={obtemAcessoLeaf(secaoGalhoItemAtual.paiItemSelecionado)} />
+                        ? <>
+                            <ItemPermissaoWidget item={secaoGalhoItemAtual.paiItemSelecionado} depth={0} isExpandable={false} disableHover showFocoButton onFoco={() => onFocoItem(secaoGalhoItemAtual.paiItemSelecionado!.id)} modo="card" acessoLeaf={obtemAcessoLeaf(secaoGalhoItemAtual.paiItemSelecionado)} />
+                            {renderAcaoSeAplicavel(secaoGalhoItemAtual.paiItemSelecionado)}
+                        </>
                         : <TextoVazio texto="RAIZ" />
                     }
                 </BlocoFoco>
 
                 <BlocoFoco titulo="Selecionado">
                     <ItemPermissaoWidget item={secaoGalhoItemAtual.itemSelecionado} depth={0} isExpandable={false} disableHover showFocoButton={false} onFoco={() => { }} modo="card-destaque" acessoLeaf={obtemAcessoLeaf(secaoGalhoItemAtual.itemSelecionado)} />
+                    {renderAcaoSeAplicavel(secaoGalhoItemAtual.itemSelecionado)}
                     {typeof renderDetalhesSelecionado === 'function' ? renderDetalhesSelecionado(secaoGalhoItemAtual.itemSelecionado) : (renderDetalhesSelecionado ?? null)}
                 </BlocoFoco>
 
                 <BlocoFoco titulo="Filhos">
                     {secaoGalhoItemAtual.filhosItemSelecionado.length ? (
                         <div className={styles.lista_filhos} data-scrollable data-visibility-mode="sempreVisivel">
-                            {secaoGalhoItemAtual.filhosItemSelecionado.map((i) => <ItemPermissaoWidget key={i.id} item={i} depth={0} isExpandable={false} disableHover showFocoButton onFoco={() => onFocoItem(i.id)} modo="linha" acessoLeaf={obtemAcessoLeaf(i)} />)}
+                            {renderAcaoItem
+                                ? secaoGalhoItemAtual.filhosItemSelecionado.map((i) => (
+                                    <div key={i.id} className={styles.recipiente_filho}>
+                                        <ItemPermissaoWidget item={i} depth={0} isExpandable={false} disableHover showFocoButton onFoco={() => onFocoItem(i.id)} modo="linha" acessoLeaf={obtemAcessoLeaf(i)} />
+                                        {renderAcaoSeAplicavel(i)}
+                                    </div>
+                                ))
+                                : secaoGalhoItemAtual.filhosItemSelecionado.map((i) => <ItemPermissaoWidget key={i.id} item={i} depth={0} isExpandable={false} disableHover showFocoButton onFoco={() => onFocoItem(i.id)} modo="linha" acessoLeaf={obtemAcessoLeaf(i)} />)
+                            }
                         </div>
                     ) : (
                         <TextoVazio texto="(sem filhos)" />

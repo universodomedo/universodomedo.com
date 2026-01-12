@@ -7,8 +7,8 @@ import { useContextoArvoreItensPermissoes } from 'Contextos/ContextoArvoreItensP
 import { ContextoAcessoDeUsuarioEmItemProvider, useContextoAcessoDeUsuarioEmItem } from 'Contextos/ContextoAcessoDeUsuarioEmItem/contexto';
 import { JanelaArvorePermissoes } from 'Componentes/ElementosVisuais/Permissoes/subcomponentes';
 import PermissoesModoFoco from 'Componentes/ElementosVisuais/Permissoes/ModoFoco/componentes';
-import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/page';
 import { BotaoTelaPermissoes } from 'Componentes/ElementosVisuais/Permissoes/componentes';
+import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/page';
 
 export function PaginaAdmin_PermissoesUsuarios_Contexto() {
     const { usuarioSelecionado } = useContextoPaginaPermissoesUsuarios();
@@ -41,9 +41,9 @@ function ModoUsuarioSelecionado() {
             <div className={styles.conteudo_usuario_selecionado}>
                 {!secaoGalhoItemAtual
                     ? <JanelaArvorePermissoes arvore={arvorePermissoes.tree} onFocoItem={idItem => selecionaIdItem(idItem)} getAcessoLeaf={temAcessoLeaf} />
-                    : <PermissoesModoFoco secaoGalhoItemAtual={secaoGalhoItemAtual} onFocoItem={idItem => selecionaIdItem(idItem)} onVoltar={() => deselecionaItemSelecionado()} getAcessoLeaf={temAcessoLeaf} renderDetalhesSelecionado={() => (
+                    : <PermissoesModoFoco secaoGalhoItemAtual={secaoGalhoItemAtual} onFocoItem={idItem => selecionaIdItem(idItem)} onVoltar={() => deselecionaItemSelecionado()} getAcessoLeaf={temAcessoLeaf} renderAcaoItem={(item) => (
                         <div className={styles.detalhes_acesso}>
-                            <BotaoTelaPermissoes onClick={() => solicitaAlteracaoAcesso(secaoGalhoItemAtual.itemSelecionado.id)}>Alterar Acesso</BotaoTelaPermissoes>
+                            <BotaoTelaPermissoes onClick={() => solicitaAlteracaoAcesso(item.id)}>Alterar Acesso</BotaoTelaPermissoes>
                         </div>
                     )} />
                 }
@@ -52,7 +52,7 @@ function ModoUsuarioSelecionado() {
     );
 };
 
-function HeaderUsuarioSelecionado() {
+export function HeaderUsuarioSelecionado() {
     const { usuarioSelecionado, selecionaIdUsuario } = useContextoPaginaPermissoesUsuarios();
     if (!usuarioSelecionado) return null;
 

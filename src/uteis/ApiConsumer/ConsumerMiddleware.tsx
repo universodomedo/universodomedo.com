@@ -78,6 +78,10 @@ export async function me_criaItem(parentId: number | null, codigo: string, descr
     return await useApi<boolean>({ uri: '/permissoes_itens/me/me_criaItem', method: 'POST', data: { parentId: parentId, codigo: codigo, descricao: descricao } });
 }
 
+export async function me_atualizaEstadoItem(idItemPermissao: number, idUsuario: number, idEstadoPermissao: number) {
+    return await useApi<boolean>({ uri: '/permissoes_usuarios/me/me_atualizaEstadoItem', method: 'POST', data: { idItemPermissao, idUsuario, idEstadoPermissao } });
+}
+
 export async function uploadImagem(file: File, tipo: string) {
     const formData = new FormData();
     formData.append('files', file);
