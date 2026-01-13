@@ -40,11 +40,19 @@ export default function CarrosselHomepage() {
 
                     <div className={styles.recipiente_detalhe_borda}>
 
-                        <div className={styles.detalhe_borda1}></div>
+                        <div className={styles.recipiente_detalhes}>
+                            <div className={styles.detalhe_borda1}>
+                                <div className={styles.borda_interna1}></div>
+                            </div>
 
-                        <div className={styles.flex_detalhe_borda}></div>
+                            <div className={styles.flex_detalhe_borda}>
 
-                        <div className={styles.detalhe_borda2}></div>
+                            </div>
+
+                            <div className={styles.detalhe_borda2}>
+                                <div className={styles.borda_interna2}></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div className={styles.slide_principal}>
@@ -65,7 +73,6 @@ export default function CarrosselHomepage() {
 
             <div className={styles.sliderWrapper}>
                 <Slider {...settings}>
-
                     {
                         lista.map(imagem => <img src={imagem}></img>)
                     }
