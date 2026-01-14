@@ -1,8 +1,10 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useEffect } from 'react';
 
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { useContextoPaginaAventura } from 'Contextos/ContextoPaginaAventura/contexto';
 import { IconeAcaoBuscarSessaoAnterior, IconeAcaoBuscarSessaoSeguinte } from 'Componentes/ElementosAssistirAventura/IconesAcoes/componentes';
 import CorpoAssistindoGrupoAventura from 'Componentes/ElementosAssistirAventura/CorpoAssistindoGrupoAventura/page';
@@ -10,6 +12,7 @@ import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 
 export function PaginaAventura_Conteudo() {
+    useConfigurarLayoutContextualizado({ proporcaoConteudo: 87, escondeFundo: true, fecharProps: { tipo: 'href', hrefPaginaRetorno: '/aventuras', tituloTooltip: 'Voltar' } });
     const { grupoAventuraSelecionado, alteraSessaoManualmente, podeAlterarSessaoManualmente } = useContextoPaginaAventura();
 
     useEffect(() => {

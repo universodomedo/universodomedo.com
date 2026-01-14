@@ -5,8 +5,8 @@ import { PaginaAventura_Conteudo, PaginaAventura_Menu } from "./subcomponentes";
 
 export function PaginaAventura_Slot() {
     return (
-        <LayoutContextualizado proporcaoConteudo={87}>
-            <LayoutContextualizado.Conteudo escondeFundo props={{ tipo: 'href', hrefPaginaRetorno: '/aventuras', tituloTooltip: 'Voltar' }}>
+        <LayoutContextualizado>
+            <LayoutContextualizado.Conteudo>
                 <PaginaAventura_Conteudo />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>

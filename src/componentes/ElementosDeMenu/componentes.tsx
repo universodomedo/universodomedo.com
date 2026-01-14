@@ -2,12 +2,16 @@
 
 import styles from './styles.module.css';
 
-import React, { JSX } from 'react';
-import { type MenuNode } from 'types-nora-api';
+import React, { JSX, useMemo } from 'react';
+import { type MenuNode, filtrarMenuPorAcesso } from 'types-nora-api';
 
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 
 export default function MenuInterno({ itens }: { itens: readonly MenuNode[] }) {
+    const { estaAutenticado, verificarCapacidade } = useContextoAutenticacao();
+    const itensFiltrados = useMemo(() => filtrarMenuPorAcesso(itens, { estaAutenticado, verificarCapacidade }), [itens, estaAutenticado, verificarCapacidade]);
+    
     function RenderNode(node: MenuNode, key: string, depth: number): JSX.Element | null {
         if (node.tipo === 'item') {
             return (
@@ -44,11 +48,11 @@ export default function MenuInterno({ itens }: { itens: readonly MenuNode[] }) {
 
     return (
         <div id={styles.recipiente_lista_acoes}>
-            {itens.map((node, index) => {
+            {itensFiltrados.map((node, index) => {
                 const rendered = RenderNode(node, `${index}`, 0);
                 if (!rendered) return null;
 
-                const next = itens[index + 1];
+                const next = itensFiltrados[index + 1];
                 const deveDivisoria = next?.tipo === 'grupo';
 
                 return (

@@ -6,6 +6,7 @@ import { AventuraEstado, MENUS_INTERNOS } from 'types-nora-api';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { useContextoPaginaMestreAventura } from "Contextos/ContextoMestreAventura/contexto";
 import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
 import { VisualizadorSessoes } from './subcomponentes/VisualizadorSessoes/VisualizadorSessoes';
@@ -13,8 +14,8 @@ import { InformacoesGeraisAventura } from './subcomponentes/InformacoesGeraisAve
 
 export function PaginaMestreAventura_Contexto() {
     return (
-        <LayoutContextualizado proporcaoConteudo={84}>
-            <LayoutContextualizado.Conteudo props={{ tipo: 'href', hrefPaginaRetorno: '/minhas-paginas/mestre/aventuras', tituloTooltip: 'Voltar' }}>
+        <LayoutContextualizado>
+            <LayoutContextualizado.Conteudo>
                 <PaginaMestreAventura_Conteudo />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
@@ -25,12 +26,13 @@ export function PaginaMestreAventura_Contexto() {
 };
 
 function PaginaMestreAventura_Conteudo() {
+    useConfigurarLayoutContextualizado({ proporcaoConteudo: 84, fecharProps: { tipo: 'href', hrefPaginaRetorno: '/minhas-paginas/mestre/aventuras', tituloTooltip: 'Voltar' } });
     const { grupoAventuraSelecionada } = useContextoPaginaMestreAventura();
 
     return (
         <div id={styles.recipiente_aventura_selecionada}>
             <CabecalhoDeAventura tipo={'grupoAventura'} grupoAventura={grupoAventuraSelecionada} />
-
+            
             {grupoAventuraSelecionada.estadoAtual === AventuraEstado.EM_ANDAMENTO && <VisualizadorSessoes />}
 
             <InformacoesGeraisAventura />

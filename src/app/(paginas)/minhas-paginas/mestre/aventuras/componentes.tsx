@@ -6,13 +6,14 @@ import { MENUS_INTERNOS } from 'types-nora-api';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { useContextoMestreAventuras } from 'Contextos/ContextoMestreAventuras/contexto';
 import { AventuraEmLayoutContextualizado } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AventuraEmLayoutContextualizado/page';
 
 export function AventurasMestre_Contexto() {
     return (
-        <LayoutContextualizado proporcaoConteudo={84}>
-            <LayoutContextualizado.Conteudo titulo={'Mestre - Minhas Aventuras'}>
+        <LayoutContextualizado>
+            <LayoutContextualizado.Conteudo>
                 <AventurasMestre_Conteudo />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
@@ -23,6 +24,7 @@ export function AventurasMestre_Contexto() {
 };
 
 function AventurasMestre_Conteudo() {
+	useConfigurarLayoutContextualizado({ proporcaoConteudo: 84, titulo: 'Mestre - Minhas Aventuras' });
     const { gruposAventurasListadas } = useContextoMestreAventuras();
 
     return (

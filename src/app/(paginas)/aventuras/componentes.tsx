@@ -5,8 +5,9 @@ import styles from './styles.module.css';
 import { AventuraEstado } from "types-nora-api";
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { useContextoPaginaAventuras } from 'Contextos/ContextoPaginaAventuras/contexto';
+import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
 import { ItemAventuraLista, UltimasSessoesPostadas } from './subcomponentes';
@@ -14,7 +15,7 @@ import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoD
 
 export function PaginasAventuras_Contexto() {
     return (
-        <LayoutContextualizado proporcaoConteudo={80}>
+        <LayoutContextualizado>
             <LayoutContextualizado.Conteudo>
                 <PaginaAventuras_Conteudo />
             </LayoutContextualizado.Conteudo>
@@ -34,6 +35,7 @@ function SecaoBarraDeBuscaDeAventuras() {
 };
 
 function PaginaAventuras_Conteudo() {
+    useConfigurarLayoutContextualizado({ proporcaoConteudo: 80 });
     const { aventuraSelecionada } = useContextoPaginaAventuras();
 
     return (

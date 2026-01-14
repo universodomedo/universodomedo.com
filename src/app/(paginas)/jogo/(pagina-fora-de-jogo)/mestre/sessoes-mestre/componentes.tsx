@@ -2,12 +2,15 @@
 
 import styles from './styles.module.css';
 
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { ContextoSessoesMestreEmEsperaProvider, useContextoSessoesMestreEmEspera } from "Contextos/ContextoSessoesMestreEmEspera/contexto";
 import RecipienteCapa from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/RecipienteCapa/page';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 
 export function PaginaSessoesMestre() {
+    useConfigurarLayoutContextualizado({ proporcaoConteudo: 84 });
+
     return (
         <ContextoSessoesMestreEmEsperaProvider>
             <PaginaSessoesMestre_Contexto />

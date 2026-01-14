@@ -19,17 +19,6 @@ export function ItensMenuSwiperEsquerda() {
     );
 };
 
-function ConteudoItemLink({ titulo }: { titulo: string }): JSX.Element {
-    return (
-        <>
-            <h3>{titulo}</h3>
-            <div className={styles.recipiente_icone_link}>
-                <ElementoSVG src="/imagensFigma/indicador-item-swiper-esquerda.svg" />
-            </div>
-        </>
-    );
-};
-
 function RenderNode({ node }: { node: MenuNode }): JSX.Element | null {
     if (node.tipo === 'item') {
         return (
@@ -48,5 +37,16 @@ function RenderNode({ node }: { node: MenuNode }): JSX.Element | null {
                 {node.itens.map((sub, idx) => (<RenderNode key={`${node.titulo}-${idx}`} node={sub} />))}
             </div>
         </div>
+    );
+};
+
+function ConteudoItemLink({ titulo }: { titulo: string }): JSX.Element {
+    return (
+        <>
+            <h3>{titulo}</h3>
+            <div className={styles.recipiente_icone_link}>
+                <ElementoSVG src="/imagensFigma/indicador-item-swiper-esquerda.svg" />
+            </div>
+        </>
     );
 };

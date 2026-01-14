@@ -10,7 +10,7 @@ import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 export default function PaginaPlay_SessoesMestre() {
     return (
         <ControladorSlot pagina={PAGINAS.jogo}>
-            <LayoutContextualizado proporcaoConteudo={84}>
+            <LayoutContextualizado>
                 <LayoutContextualizado.Conteudo>
                     <PaginaSessoesMestre />
                 </LayoutContextualizado.Conteudo>

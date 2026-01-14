@@ -2,17 +2,16 @@
 
 import styles from './styles.module.css';
 
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import { useContextoPaginasListagemSessoes } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
+import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 import { VisualizacaoSessao } from 'Componentes/ElementosPaginaSessao/VisualizacaoSessao/page';
 
 export function PaginaSessoes_Slot() {
-    const { sessaoSelecionada, deselecionaSessao } = useContextoPaginasListagemSessoes();
-
     return (
-        <LayoutContextualizado proporcaoConteudo={100}>
-            <LayoutContextualizado.Conteudo props={ sessaoSelecionada ? { tipo: 'acao', executar: () => deselecionaSessao(), tituloTooltip: 'Voltar para Listagem' } : undefined }>
+        <LayoutContextualizado>
+            <LayoutContextualizado.Conteudo>
                 <PaginaSessoes_Conteudo />
             </LayoutContextualizado.Conteudo>
         </LayoutContextualizado>
@@ -28,7 +27,8 @@ function PaginaSessoes_Conteudo() {
 };
 
 function ListagemSessoes() {
-    const { sessoes, selecionaSessao } = useContextoPaginasListagemSessoes();
+    const { sessoes, sessaoSelecionada, selecionaSessao, deselecionaSessao } = useContextoPaginasListagemSessoes();
+    useConfigurarLayoutContextualizado({ proporcaoConteudo: 100, fecharProps: sessaoSelecionada ? { tipo: 'acao', executar: () => deselecionaSessao(), tituloTooltip: 'Voltar para Listagem' } : undefined });
 
     const sessoesOrdenadas = [...sessoes].sort((a, b) => new Date(b.dataCriacao || 0).getTime() - new Date(a.dataCriacao || 0).getTime());
 

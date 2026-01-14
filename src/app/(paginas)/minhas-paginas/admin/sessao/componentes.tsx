@@ -7,14 +7,15 @@ import { EstiloSessao, LinkDto, MENUS_INTERNOS, SessaoDto } from 'types-nora-api
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import { useContextoCadastroNovoLinkSessao } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 import { ContextoCadastroNovoLinkSessaoProvider } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 
 export function AdministrarSessao_Slot({ sessao }: { sessao: SessaoDto; }) {
     return (
-        <LayoutContextualizado proporcaoConteudo={84}>
-            <LayoutContextualizado.Conteudo props={{ tipo: 'href', hrefPaginaRetorno: `/minhas-paginas/admin/aventura/${sessao.detalheSessaoAventura.grupoAventura.id}`, tituloTooltip: 'Voltar' }}>
+        <LayoutContextualizado>
+            <LayoutContextualizado.Conteudo>
                 <AdministrarSessao_Conteudo sessao={sessao} />
             </LayoutContextualizado.Conteudo>
             <LayoutContextualizado.Menu>
@@ -25,6 +26,8 @@ export function AdministrarSessao_Slot({ sessao }: { sessao: SessaoDto; }) {
 };
 
 function AdministrarSessao_Conteudo({ sessao }: { sessao: SessaoDto }) {
+    useConfigurarLayoutContextualizado({ proporcaoConteudo: 84, escondeFundo: true, fecharProps: { tipo: 'href', hrefPaginaRetorno: `/minhas-paginas/admin/aventura/${sessao.detalheSessaoAventura.grupoAventura.id}`, tituloTooltip: 'Voltar' } });
+
     return (
         <SecaoDeConteudo id={styles.recipiente_detalhes_sessao}>
             { sessao.estiloSessao == EstiloSessao.SESSAO_DE_AVENTURA

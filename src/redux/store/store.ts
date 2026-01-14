@@ -3,6 +3,7 @@ import socketReducer from '../slices/socketSlice';
 import usuariosReducer from '../slices/usuariosSlice';
 import chatsReducer from '../slices/chatsSlice';
 import cacheReducer from '../slices/cacheSlice';
+import layoutContextualizadoReducer from '../slices/layoutContextualizadoSlice';
 
 export const store = configureStore({
     reducer: {
@@ -10,5 +11,6 @@ export const store = configureStore({
         usuarios: usuariosReducer,
         chats: chatsReducer,
         cache: cacheReducer,
+        layoutContextualizado: layoutContextualizadoReducer,
     },
 });

@@ -1,17 +1,19 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useState } from 'react';
 import { Eventos_Emite, MENUS_INTERNOS, SalaDeJogoDto } from 'types-nora-api';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { RenderItemSala } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/SalaDeJogoEmVisualizacao/page';
 
 export default function PaginaPlay_GerenciarSalas() {
     return (
-        <LayoutContextualizado proporcaoConteudo={84}>
+        <LayoutContextualizado>
             <LayoutContextualizado.Conteudo>
                 <PaginaPlay_GerenciarSalas_Slot />
             </LayoutContextualizado.Conteudo>
@@ -23,6 +25,7 @@ export default function PaginaPlay_GerenciarSalas() {
 };
 
 function PaginaPlay_GerenciarSalas_Slot() {
+	useConfigurarLayoutContextualizado({ proporcaoConteudo: 84 });
     const [salas, setSalas] = useState<SalaDeJogoDto[]>([]);
 
     useEmitWsComDisparoInicial(

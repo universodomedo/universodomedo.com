@@ -24,7 +24,11 @@ export const ContextoPaginaMestreAventuraProvider = ({ children, idGrupoAventura
         setCarregando('Buscando Aventura');
 
         try {
-            setGrupoAventuraSelecionada(await buscaGrupoAventuraEspecifico(idGrupoAventura));
+            console.log('cu');
+            const teste = await buscaGrupoAventuraEspecifico(idGrupoAventura);
+            console.log('teste');
+            console.log(teste);
+            setGrupoAventuraSelecionada(teste);
         } catch {
             setGrupoAventuraSelecionada(null);
         } finally {
