@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate, ArvoreItensPermissaoDto, UsuarioDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate, ArvoreItensPermissaoDto, UsuarioDto, RegrasUploadArquivo, TipoUpload } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtualTemplate?: PaginaTemplate | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtualTemplate == null ? {} : { templatePaginaAtual: paginaAtualTemplate } });
@@ -181,6 +181,10 @@ export async function criaBaseadoEmRascunho(idRascunho: number): Promise<boolean
 
 export async function obtemDadosEPermissoes(idUsuario: number): Promise<UsuarioDto | null> {
     return await useApi<UsuarioDto | null>({ uri: 'usuarios/obtemDadosEPermissoes', method: 'GET', params: { idUsuario: idUsuario } });
+}
+
+export async function buscaRegrasPorTipoUpload(tipo: TipoUpload): Promise<RegrasUploadArquivo> {
+    return await useApi<RegrasUploadArquivo>({ uri: 'imagens/buscaRegrasPorTipoUpload', method: 'GET', params: { tipo: tipo } });
 }
 
 //

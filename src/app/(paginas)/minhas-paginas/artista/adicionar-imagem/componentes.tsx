@@ -1,7 +1,12 @@
-import styles from './styles.module.css';
+'use client';
+
+import Uploader from 'Componentes/Elementos/Inputs/Uploader/Uploader';
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 
 export function PaginaArtista_AdicionarImagem_Contexto() {
+    useConfigurarLayoutContextualizado({ titulo: 'Adicionar Imagem' }, 'patch');
+    
     return (
-        <h1>oi</h1>
+        <Uploader />
     );
 };

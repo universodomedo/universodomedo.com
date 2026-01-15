@@ -13,9 +13,7 @@ export default function LayoutArtista({ children }: { children: ReactNode }) {
         <ControladorSlot pagina={PAGINAS.minhasPaginas.artista}>
             <LayoutContextualizado>
                 <LayoutContextualizado.Conteudo>
-                    <LayoutArtista_EmbrulhoProvisorio>
-                        {children}
-                    </LayoutArtista_EmbrulhoProvisorio>
+                    {children}
                 </LayoutContextualizado.Conteudo>
                 <LayoutContextualizado.Menu>
                     <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.artista} />
@@ -24,13 +22,12 @@ export default function LayoutArtista({ children }: { children: ReactNode }) {
         </ControladorSlot>
     );
 };
+// function LayoutArtista_EmbrulhoProvisorio({ children }: { children: ReactNode }) {
+//     useConfigurarLayoutContextualizado({ proporcaoConteudo: 84 });
 
-function LayoutArtista_EmbrulhoProvisorio({ children }: { children: ReactNode }) {
-    useConfigurarLayoutContextualizado({ proporcaoConteudo: 84 });
-
-    return (
-        <>
-            {children}
-        </>
-    );
-};
+//     return (
+//         <>
+//             {children}
+//         </>
+//     );
+// };
