@@ -2,33 +2,32 @@
 
 import styles from './styles.module.css';
 
-import { useContextoPaginasListagemSessoes } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
-import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
-import { VisualizacaoSessao } from 'Componentes/ElementosPaginaSessao/VisualizacaoSessao/page';
+import { PAGINAS } from 'types-nora-api';
 
-export function PaginaSessoes_Slot() {
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { ContextoPaginasListagemSessoesProvider } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
+import { useContextoPaginasListagemSessoes } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
+import { VisualizacaoSessao } from 'Componentes/ElementosPaginaSessao/VisualizacaoSessao/page';
+import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
+
+export function PaginaSessoes_Client() {
     return (
-        <LayoutContextualizado>
-            <LayoutContextualizado.Conteudo>
-                <PaginaSessoes_Conteudo />
-            </LayoutContextualizado.Conteudo>
-        </LayoutContextualizado>
+        <ControladorSlot pagina={PAGINAS.sessoes}>
+            <ContextoPaginasListagemSessoesProvider>
+                <PaginaSessoes_Slot />
+            </ContextoPaginasListagemSessoesProvider>
+        </ControladorSlot>
     );
 };
 
-function PaginaSessoes_Conteudo() {
+export function PaginaSessoes_Slot() {
     const { sessaoSelecionada } = useContextoPaginasListagemSessoes();
 
-    if (sessaoSelecionada) return (<VisualizacaoSessao sessaoSelecionada={sessaoSelecionada} />);
-
-    return (<ListagemSessoes />);
+    return sessaoSelecionada ? <VisualizacaoSessao /> : <ListagemSessoes />;
 };
 
 function ListagemSessoes() {
-    const { sessoes, sessaoSelecionada, selecionaSessao, deselecionaSessao } = useContextoPaginasListagemSessoes();
-    useConfigurarLayoutContextualizado({ proporcaoConteudo: 100, fecharProps: sessaoSelecionada ? { tipo: 'acao', executar: () => deselecionaSessao(), tituloTooltip: 'Voltar para Listagem' } : undefined });
+    const { sessoes, selecionaSessao } = useContextoPaginasListagemSessoes();
 
     const sessoesOrdenadas = [...sessoes].sort((a, b) => new Date(b.dataCriacao || 0).getTime() - new Date(a.dataCriacao || 0).getTime());
 
@@ -47,8 +46,6 @@ function ListagemSessoes() {
 
     return (
         <>
-            <h1>Sessões</h1>
-
             <DivClicavel onClick={handleClickTabela} className={styles.tabela_sessoes_click_wrapper}>
                 <div className={styles.tabela_sessoes_container}>
                     <table className={styles.tabela_sessoes}>

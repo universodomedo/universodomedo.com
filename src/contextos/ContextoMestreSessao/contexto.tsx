@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { SessaoDto } from 'types-nora-api';
+
 import { obtemSessaoGeral } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaMestreSessaoProps {

@@ -1,6 +1,16 @@
-import styles from './styles.module.css';
+import { PAGINAS } from "types-nora-api";
 
-export function PaginaArtista_MinhasImagens_Contexto() {
+import { ControladorSlot } from "Layouts/ControladorSlot";
+
+export function PaginaArtista_MinhasImagens_Client() {
+    return (
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.artista.minhasImagens}>
+            <PaginaArtista_MinhasImagens_Slot />
+        </ControladorSlot>
+    );
+};
+
+function PaginaArtista_MinhasImagens_Slot() {
     return (
         <h1>oi</h1>
     );

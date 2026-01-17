@@ -4,7 +4,6 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 
 import { useContextoPaginaPersonagens } from 'Contextos/ContextoPaginaPersonagens/contexto';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
-
 import { PAGINA_PERSONAGEM, TIPO_PAGINA_PERSONAGEM } from 'Componentes/PaginaPersonagem/types';
 
 interface ContextoPaginaPersonagemProps {

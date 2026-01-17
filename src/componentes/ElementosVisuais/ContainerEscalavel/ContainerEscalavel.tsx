@@ -1,6 +1,7 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useEffect, useRef } from 'react';
 
 export default function ContainerEscalavel({ children }: { children: React.ReactNode }) {

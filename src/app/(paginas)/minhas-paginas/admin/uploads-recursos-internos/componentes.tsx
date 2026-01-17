@@ -1,11 +1,21 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import { TipoImagemDto } from "types-nora-api";
+import { PAGINAS, TipoImagemDto } from "types-nora-api";
+
+import { ControladorSlot } from "Layouts/ControladorSlot";
 import { uploadImagem } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 import { obtemTiposImagem } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
-export default function PaginaUpload() {
+export function PaginaUploadRecursosInternos_Client() {
+    return (
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.admin.uploadRecursosInternos}>
+            <PaginaUploadRecursosInternos_Slot />
+        </ControladorSlot>
+    );
+};
+
+function PaginaUploadRecursosInternos_Slot() {
     const [tipoImagemSelecionado, setTipoImagemSelecionado] = useState<TipoImagemDto | null>(null);
     const [tiposImagem, setTiposImagem] = useState<TipoImagemDto[]>([]);
     const [file, setFile] = useState<File | null>(null);

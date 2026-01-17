@@ -1,7 +1,7 @@
-import { ItemPermissaoDto } from 'types-nora-api';
 import styles from './styles.module.css';
 
 import type { ChangeEvent, ReactNode } from 'react';
+import { ItemPermissaoDto } from 'types-nora-api';
 
 type CampoModalProps = { label: string; children: ReactNode };
 

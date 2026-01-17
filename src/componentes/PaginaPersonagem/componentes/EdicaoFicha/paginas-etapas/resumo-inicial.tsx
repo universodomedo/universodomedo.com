@@ -1,10 +1,12 @@
 'use client';
 
-import { pluralize } from 'Uteis/UteisTexto/pluralize';
 import styles from '../styles.module.css';
 
+import { PAGINAS } from 'types-nora-api';
+
 import { EtapaGanhoEvolucao_Classes, EtapaGanhoEvolucao_ValorMaxAtributo, EtapaGanhoEvolucao_Estatisticas, EtapaGanhoEvolucao_HabilidadesEspeciais, EtapaGanhoEvolucao_Atributos, EtapaGanhoEvolucao_Pericias, EtapaGanhoEvolucao_HabilidadesParanormais, EtapaGanhoEvolucao_HabilidadesElementais, GanhosEvolucao, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
-import Link from 'next/link';
+import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
+import { pluralize } from 'Uteis/UteisTexto/pluralize';
 
 export default function ResumoInicial() {
     const { ganhos } = useContextoEdicaoFicha();
@@ -35,7 +37,7 @@ export default function ResumoInicial() {
 
 function SecaoCriandoPersonagem() {
     return (
-        <p>Para informações, visite <Link href={'/dicas/comecando'} target={'_blank'}>Criação de Personagem</Link> e <Link href={'/dicas/evoluindo'} target={'_blank'}>Evoluindo seu Personagem</Link> </p>
+        <p>Para informações, visite <LinkInterno destino={{ pagina: PAGINAS.dicas, params: { slug: ['comecando'] } }} target={'_blank'} rel="noreferrer">Criação de Personagem</LinkInterno> e <LinkInterno destino={{ pagina: PAGINAS.dicas, params: { slug: ['evoluindo'] } }} target={'_blank'} rel="noreferrer">Evoluindo seu Personagem</LinkInterno> </p>
     );
 }
 
@@ -44,9 +46,9 @@ function SecaoClasseEscolhida() {
 
     return (
         <>
-            <Link href={'/definicoes/Classes'} target={'_blank'}><h2>Classes</h2></Link>
+            <LinkInterno destino={{ pagina: PAGINAS.definicoes, params: { slug: ['Classes'] } }} target={'_blank'} rel="noreferrer"><h2>Classes</h2></LinkInterno>
 
-            <p>Você selecionou a Classe <Link href={`/definicoes/Classes/${ganhos.classeSelecionadaNessaEvolucao?.nome}`} target={'_blank'}>{ganhos.classeSelecionadaNessaEvolucao?.nome}</Link></p>
+            <p>Você selecionou a Classe <LinkInterno destino={{ pagina: PAGINAS.definicoes, params: { slug: ['Classes', ganhos.classeSelecionadaNessaEvolucao?.nome ?? ''] } }} target={'_blank'} rel="noreferrer">{ganhos.classeSelecionadaNessaEvolucao?.nome}</LinkInterno></p>
         </>
     )
 }
@@ -58,9 +60,9 @@ function SecaoClasses() {
 
     return (
         <>
-            <Link href={'/definicoes/Classes'} target={'_blank'}><h2>{etapaClasses.tituloEtapa}</h2></Link>
+            <LinkInterno destino={{ pagina: PAGINAS.definicoes, params: { slug: ['Classes'] } }} target={'_blank'} rel="noreferrer"><h2>{etapaClasses.tituloEtapa}</h2></LinkInterno>
 
-            <p>Nessa etapa, você vai selecionar a <Link href={'/definicoes/Classes'} target={'_blank'}>Classe</Link> do seu Personagem</p>
+            <p>Nessa etapa, você vai selecionar a <LinkInterno destino={{ pagina: PAGINAS.definicoes, params: { slug: ['Classes'] } }} target={'_blank'} rel="noreferrer">Classe</LinkInterno> do seu Personagem</p>
         </>
     );
 };
@@ -86,7 +88,7 @@ function SecaoEstatisticas() {
 
     return (
         <>
-            <Link href={'definicoes/EstatisticasDanificaveis'} target={'_blank'}><h2>{etapaEstatisticas.tituloEtapa}</h2></Link>
+            <LinkInterno destino={{ pagina: PAGINAS.definicoes, params: { slug: ['EstatisticasDanificaveis'] } }} target={'_blank'} rel="noreferrer"><h2>{etapaEstatisticas.tituloEtapa}</h2></LinkInterno>
 
             {GanhosEvolucao.dadosReferencia.estatisticasDanificaveis.map(estatisticaDanificavel => {
                 const ganho = etapaEstatisticas.dadosGanhoAgrupados.find(ganhoEstatistica => ganhoEstatistica.idEstatistica === estatisticaDanificavel.id)?.valorAumento;
@@ -111,7 +113,7 @@ function SecaoHabilidadesEspeciais() {
 
     return (
         <>
-            <Link href={'definicoes/HabilidadesEspeciais'} target={'_blank'}><h2>{etapaHabilidadesEspeciais.tituloEtapa}</h2></Link>
+            <LinkInterno destino={{ pagina: PAGINAS.definicoes, params: { slug: ['HabilidadesEspeciais'] } }} target={'_blank'} rel="noreferrer"><h2>{etapaHabilidadesEspeciais.tituloEtapa}</h2></LinkInterno>
 
             <div className={styles.recipiente_informacoes_secao_etapa_evolucao}>
                 <p>Seus Pontos Disponíveis de Habilidade Especial <strong>aumentam em {etapaHabilidadesEspeciais.quantidadeDePontosAumento} Pontos</strong></p>
@@ -128,7 +130,7 @@ function SecaoAtributos() {
 
     return (
         <>
-            <Link href={'definicoes/Atributos'} target={'_blank'}><h2>{etapaAtributos.tituloEtapa}</h2></Link>
+            <LinkInterno destino={{ pagina: PAGINAS.definicoes, params: { slug: ['Atributos'] } }} target={'_blank'} rel="noreferrer"><h2>{etapaAtributos.tituloEtapa}</h2></LinkInterno>
 
             <div className={styles.recipiente_informacoes_secao_etapa_evolucao}>
                 <p>Seus Atributos podem variar de {etapaAtributos.valorMinAtributo} até {etapaAtributos.valorMaxAtributo}</p>
@@ -151,7 +153,7 @@ function SecaoPericias() {
 
     return (
         <>
-            <Link href={'definicoes/Pericias'} target={'_blank'}><h2>{etapaPericias.tituloEtapa}</h2></Link>
+            <LinkInterno destino={{ pagina: PAGINAS.definicoes, params: { slug: ['Pericias'] } }} target={'_blank'} rel="noreferrer"><h2>{etapaPericias.tituloEtapa}</h2></LinkInterno>
 
             <div className={`${styles.recipiente_informacoes_secao_etapa_evolucao} ${styles.etapa_com_divisoes}`}>
                 {GanhosEvolucao.dadosReferencia.patentes.sort((a, b) => a.id - b.id).map(patente => {
@@ -204,7 +206,7 @@ function SecaoHabilidadesParanormais() {
 
     return (
         <>
-            <Link href={'definicoes/HabilidadesParanormais'} target={'_blank'}><h2>{etapaHabilidadesParanormais.tituloEtapa}</h2></Link>
+            <LinkInterno destino={{ pagina: PAGINAS.definicoes, params: { slug: ['HabilidadesParanormais'] } }} target={'_blank'} rel="noreferrer"><h2>{etapaHabilidadesParanormais.tituloEtapa}</h2></LinkInterno>
 
             <div className={styles.recipiente_informacoes_secao_etapa_evolucao}>
                 <p>Seus Pontos Disponíveis de Habilidade Paranormal <strong>aumentam em {etapaHabilidadesParanormais.quantidadeDePontosAumento} Pontos</strong></p>
@@ -220,7 +222,7 @@ function SecaoHabilidadesElementais() {
 
     return (
         <>
-            <Link href={'definicoes/HabilidadesParanormais'} target={'_blank'}><h2>{etapaHabilidadesElementais.tituloEtapa}</h2></Link>
+            <LinkInterno destino={{ pagina: PAGINAS.definicoes, params: { slug: ['HabilidadesParanormais'] } }} target={'_blank'} rel="noreferrer"><h2>{etapaHabilidadesElementais.tituloEtapa}</h2></LinkInterno>
 
             <div className={styles.recipiente_informacoes_secao_etapa_evolucao}>
                 <p>Seus Pontos Disponíveis de Habilidade Elemental <strong>aumentam em {etapaHabilidadesElementais.quantidadeDePontosAumento} {pluralize(etapaHabilidadesElementais.quantidadeDePontosAumento, 'Ponto')}</strong></p>

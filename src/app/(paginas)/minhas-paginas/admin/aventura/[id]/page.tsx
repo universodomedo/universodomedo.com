@@ -1,15 +1,7 @@
-import { AdministrarAventura_Slot } from '../componentes';
-import { buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { AdministrarAventura_Client } from "../componentes";
 
 export default async function AdministrarAventura({ params }: { params: Promise<{ id: string }>; }) {
-    // const { id } = await params;
-    // const grupoAventura = await buscaGrupoAventuraEspecifico(Number(id));
+    const { id } = await params;
 
-    // if (!grupoAventura) return <div>Aventura não encontrada</div>
-
-    // return (
-    //     <AdministrarAventura_Slot grupoAventura={grupoAventura} />
-    // );
-
-    return <h1>oi</h1>;
+    return <AdministrarAventura_Client idGrupoAventura={Number(id)} />;
 };

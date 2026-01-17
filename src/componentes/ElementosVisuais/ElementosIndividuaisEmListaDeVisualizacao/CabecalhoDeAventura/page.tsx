@@ -7,12 +7,7 @@ import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 type CabecalhoProps = | { tipo: 'sessao'; sessao: SessaoDto; } | { tipo: 'grupoAventura'; grupoAventura: GrupoAventuraDto; };
 
-export function CabecalhoDeAventura(props: CabecalhoProps) {
-  console.log(props);
-  return props.tipo === 'sessao'
-    ? <RenderCabecalhoDeSessao sessao={props.sessao} />
-    : <RenderCabecalhoDeGrupo grupoAventura={props.grupoAventura} />
-};
+export function CabecalhoDeAventura(props: CabecalhoProps) { return props.tipo === 'sessao' ? <RenderCabecalhoDeSessao sessao={props.sessao} /> : <RenderCabecalhoDeGrupo grupoAventura={props.grupoAventura} /> };
 
 function RenderCabecalhoDeSessao({ sessao }: { sessao: SessaoDto; }) {
   return (

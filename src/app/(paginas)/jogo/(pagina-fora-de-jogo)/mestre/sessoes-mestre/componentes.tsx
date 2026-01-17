@@ -2,23 +2,25 @@
 
 import styles from './styles.module.css';
 
-import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
+import { PAGINAS } from 'types-nora-api';
+
+import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoSessoesMestreEmEsperaProvider, useContextoSessoesMestreEmEspera } from "Contextos/ContextoSessoesMestreEmEspera/contexto";
 import RecipienteCapa from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/RecipienteCapa/page';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 
-export function PaginaSessoesMestre() {
-    useConfigurarLayoutContextualizado({ proporcaoConteudo: 84 });
-
+export function PaginaPlay_SessoesMestre_Client() {
     return (
-        <ContextoSessoesMestreEmEsperaProvider>
-            <PaginaSessoesMestre_Contexto />
-        </ContextoSessoesMestreEmEsperaProvider>
+        <ControladorSlot pagina={PAGINAS.jogo.mestre.sessoesMestre}>
+            <ContextoSessoesMestreEmEsperaProvider>
+                <PaginaSessoesMestre_Contexto />
+            </ContextoSessoesMestreEmEsperaProvider>
+        </ControladorSlot>
     );
 };
 
-export function PaginaSessoesMestre_Contexto() {
+function PaginaSessoesMestre_Contexto() {
     const { sessoesEmEspera, selecionaSessao } = useContextoSessoesMestreEmEspera();
 
     if (sessoesEmEspera.length < 1) return <h1>Você não tem nenhuma Sessão em Espera</h1>

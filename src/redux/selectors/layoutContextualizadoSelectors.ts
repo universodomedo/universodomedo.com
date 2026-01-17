@@ -1,12 +1,18 @@
-import { createSelector } from '@reduxjs/toolkit';
+import type { RootState } from 'Redux/store/types';
 
-import type { RootState } from '../store/types';
+function clampPercent(valor: number) { return Math.max(0, Math.min(100, valor)); }
 
-export const selectLayoutContextualizado = (state: RootState) => state.layoutContextualizado;
+export function selectLayoutTitulo(state: RootState) { return state.layoutContextualizado.titulo; }
+export function selectLayoutEscondeFundo(state: RootState) { return state.layoutContextualizado.escondeFundo ?? false; }
+export function selectLayoutProporcaoConteudo(state: RootState) { return state.layoutContextualizado.proporcaoConteudo; }
+export function selectLayoutFecharProps(state: RootState) { return state.layoutContextualizado.fecharProps ?? undefined; }
 
-export const selectLayoutTitulo = (state: RootState) => state.layoutContextualizado.titulo ?? '';
-export const selectLayoutEscondeFundo = (state: RootState) => state.layoutContextualizado.escondeFundo ?? false;
-export const selectLayoutFecharProps = (state: RootState) => state.layoutContextualizado.fecharProps ?? undefined;
-export const selectLayoutProporcaoConteudo = (state: RootState) => state.layoutContextualizado.proporcaoConteudo ?? 100;
+export function selectLayoutProporcoes(state: RootState) {
+    const raw = state.layoutContextualizado.proporcaoConteudo;
+    const proporcaoConteudo = clampPercent(raw ?? 100);
+    const proporcaoMenu = clampPercent(100 - proporcaoConteudo);
+    return { proporcaoConteudo, proporcaoMenu };
+}
 
-export const selectLayoutProporcoes = createSelector([selectLayoutProporcaoConteudo], proporcaoConteudo => ({ proporcaoConteudo, proporcaoMenu: 100 - proporcaoConteudo }));
+export function selectMenuLayoutTipo(state: RootState) { return state.layoutContextualizado.menuTipo; }
+export function selectMenuLayoutItens(state: RootState) { return state.layoutContextualizado.menuItens; }

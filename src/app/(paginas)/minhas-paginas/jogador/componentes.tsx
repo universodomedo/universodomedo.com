@@ -1,14 +1,15 @@
-'use client';
-
-import { ReactNode } from "react";
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 
-export default function LayoutJogador({ children }: { children: ReactNode }) {
+export function PaginaJogador_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.jogador}>
-            {children}
+            <PaginaJogador_Slot />
         </ControladorSlot>
     );
+};
+
+function PaginaJogador_Slot() {
+    return (<></>);
 };

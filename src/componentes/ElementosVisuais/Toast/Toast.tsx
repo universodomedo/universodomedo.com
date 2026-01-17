@@ -1,6 +1,7 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { type ToastItem } from 'Contextos/ContextoToast/contexto';
 
 export default function ToastViewport({ visiveis, onFechar }: { visiveis: ToastItem[]; onFechar: (id: string) => void }) {

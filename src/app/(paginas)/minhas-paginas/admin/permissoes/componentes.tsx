@@ -2,17 +2,32 @@
 
 import styles from './styles.module.css';
 
-import { useContextoPaginaPermissoes } from 'Contextos/ContextoPaginaPermissoes/contexto';
-import { useContextoArvoreItensPermissoes } from 'Contextos/ContextoArvoreItensPermissoes/contexto';
+import { PAGINAS } from "types-nora-api";
+
+import { ControladorSlot } from "Layouts/ControladorSlot";
+import { ContextoArvoreItensPermissoesProvider, useContextoArvoreItensPermissoes } from "Contextos/ContextoArvoreItensPermissoes/contexto";
+import { ContextoPaginaPermissoesProvider, useContextoPaginaPermissoes } from "Contextos/ContextoPaginaPermissoes/contexto";
 import { JanelaArvorePermissoes } from 'Componentes/ElementosVisuais/Permissoes/subcomponentes';
+import { BotaoTelaPermissoes } from 'Componentes/ElementosVisuais/Permissoes/componentes';
 import PermissoesModoFoco from 'Componentes/ElementosVisuais/Permissoes/ModoFoco/componentes';
 import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/page';
-import { BotaoTelaPermissoes } from 'Componentes/ElementosVisuais/Permissoes/componentes';
 
-export function PaginaAdmin_Permissoes_Contexto() {
+export function PaginaAdmin_Permissoes_Client() {
+    return (
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.admin.dashboardPermissoes}>
+            <ContextoArvoreItensPermissoesProvider>
+                <ContextoPaginaPermissoesProvider>
+                    <PaginaAdmin_Permissoes_Contexto />
+                </ContextoPaginaPermissoesProvider>
+            </ContextoArvoreItensPermissoesProvider>
+        </ControladorSlot>
+    );
+};
+
+function PaginaAdmin_Permissoes_Contexto() {
     const { secaoGalhoItemAtual } = useContextoPaginaPermissoes();
     return secaoGalhoItemAtual ? <ModoFoco /> : <ModoArvoreCompleta />;
-}
+};
 
 function ModoArvoreCompleta() {
     const { arvorePermissoes } = useContextoArvoreItensPermissoes();

@@ -1,16 +1,16 @@
 import styles from './styles.module.css';
 
-import Link from 'next/link';
-import { UsuarioDto } from 'types-nora-api';
+import { PAGINAS, UsuarioDto } from 'types-nora-api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDoorOpen } from "@fortawesome/free-solid-svg-icons";
 
-import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
-import PersonagemEmVisualizacaoDeSessao from '../ElementosIndividuaisEmListaDeVisualizacao/PersonagemEmVisualizacaoDeSessao/page';
-import { desconectar, obtemObjetoAutenticacao } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
-import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 import useLogout from 'Hooks/useLogout';
+import { desconectar, obtemObjetoAutenticacao } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
+import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
+import PersonagemEmVisualizacaoDeSessao from '../ElementosIndividuaisEmListaDeVisualizacao/PersonagemEmVisualizacaoDeSessao/page';
+import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
+import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 
 export default function ComponenteBotaoAcessar() {
     const { usuarioLogado, estaAutenticado } = useContextoAutenticacao();
@@ -44,9 +44,9 @@ function ComponenteBotaoAcessar_NaoAutenticado() {
     return (
         <>
             <ElementoSVG className={styles.camada_1} src={"/imagensFigma/luiz/Entalhe.svg"} />
-            <Link className={styles.link_botao_acesso} href={estaAutenticado ? '/minha-pagina' : '/acessar'}>
+            <LinkInterno className={styles.link_botao_acesso} destino={estaAutenticado ? PAGINAS.minhaPagina : PAGINAS.acessar}>
                 <ElementoSVG className={styles.camada_2} src={"/imagensFigma/luiz/botao_acessar.svg"} />
-            </Link>
+            </LinkInterno>
             <ElementoSVG className={styles.camada_3} src={"/imagensFigma/luiz/acessar.svg"} />
         </>
     );

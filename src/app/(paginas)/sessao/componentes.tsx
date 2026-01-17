@@ -1,17 +1,15 @@
-'use client';
+import { PAGINAS } from 'types-nora-api';
 
-import { useContextoPaginaSessao } from 'Contextos/ContextoPaginaSessao/contexto';
-import LayoutContextualizado from "Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado";
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { ContextoPaginaSessaoProvider } from 'Contextos/ContextoPaginaSessao/contexto';
 import { VisualizacaoSessao } from "Componentes/ElementosPaginaSessao/VisualizacaoSessao/page";
 
-export function PaginaSessao_Slot() {
-    const { sessaoSelecionada } = useContextoPaginaSessao();
-
+export function PaginaSessao_Client({ idSessao }: { idSessao: number; }) {
     return (
-        <LayoutContextualizado>
-            <LayoutContextualizado.Conteudo>
-                <VisualizacaoSessao sessaoSelecionada={sessaoSelecionada} />
-            </LayoutContextualizado.Conteudo>
-        </LayoutContextualizado>
+        <ControladorSlot pagina={PAGINAS.sessao}>
+            <ContextoPaginaSessaoProvider idSessao={idSessao}>
+                <VisualizacaoSessao />
+            </ContextoPaginaSessaoProvider>
+        </ControladorSlot>
     );
 };

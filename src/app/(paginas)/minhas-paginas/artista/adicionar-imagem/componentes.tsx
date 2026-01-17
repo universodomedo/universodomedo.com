@@ -1,12 +1,17 @@
 'use client';
 
-import Uploader from 'Componentes/Elementos/Inputs/Uploader/Uploader';
-import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
+import { PAGINAS } from "types-nora-api";
 
-export function PaginaArtista_AdicionarImagem_Contexto() {
-    useConfigurarLayoutContextualizado({ titulo: 'Adicionar Imagem' }, 'patch');
-    
+import { ControladorSlot } from "Layouts/ControladorSlot";
+import { ContextoPaginaUplodImagemArtistaProvider } from 'Contextos/ContextoPaginaUplodImagemArtista/contexto';
+import Uploader from 'Componentes/Elementos/Inputs/Uploader/Uploader';
+
+export function PaginaArtista_AdicionarImagem_Client() {
     return (
-        <Uploader />
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.artista.adicionarImagem}>
+            <ContextoPaginaUplodImagemArtistaProvider>
+                <Uploader />
+            </ContextoPaginaUplodImagemArtistaProvider>
+        </ControladorSlot>
     );
 };

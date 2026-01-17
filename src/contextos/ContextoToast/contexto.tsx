@@ -1,7 +1,7 @@
 'use client';
 
-import type React from 'react';
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+
 import { useAppRefresh } from 'contextos/ContextoAppRefresh/contexto';
 import Toast from 'Componentes/ElementosVisuais/Toast/Toast';
 import { registerToast, unregisterToast } from 'Hooks/useToast';

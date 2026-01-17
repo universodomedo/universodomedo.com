@@ -1,15 +1,16 @@
 import { EstiloSessao, SessaoDto } from "types-nora-api";
 
-import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SessaoEmVisualizacao from "Componentes/ElementosVisuais/SessaoEmVisualizacao/page";
+import { useContextoPaginasListagemSessoes } from "Contextos/ContextoPaginasListagemSessoes/contexto";
+import { useConfigurarLayoutContextualizado } from "Redux/hooks/useLayoutContextualizado";
 
-export function VisualizacaoSessao({ sessaoSelecionada }: { sessaoSelecionada: SessaoDto }) {
-	useConfigurarLayoutContextualizado({ proporcaoConteudo: 100, fecharProps: { tipo: 'href', hrefPaginaRetorno: '/sessoes', tituloTooltip: 'Voltar' } });
+export function VisualizacaoSessao() {
+    const { sessaoSelecionada, deselecionaSessao } = useContextoPaginasListagemSessoes();
+    if (!sessaoSelecionada) return;
+    useConfigurarLayoutContextualizado({ titulo: `Sessão - ${sessaoSelecionada?.tituloInteligente.tituloCompleto} [#${sessaoSelecionada?.id}]`, fecharProps: { tipo: 'acao', executar: () => deselecionaSessao(), tituloTooltip: 'Voltar para Listagem' } }, 'patch');
 
     return (
         <>
-            <h1>Sessão {sessaoSelecionada.id} - {sessaoSelecionada.estiloSessao}</h1>
-
             {sessaoSelecionada.estiloSessao && sessaoSelecionada.estiloSessao !== EstiloSessao.ERRO && <SessaoEmVisualizacao sessao={sessaoSelecionada} />}
         </>
     );

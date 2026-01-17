@@ -1,15 +1,3 @@
-import { PAGINAS } from 'types-nora-api';
+import { PaginaMinhaDisponibilidade_Client } from './componentes';
 
-import { ControladorSlot } from 'Layouts/ControladorSlot';
-import { ContextoDisponibilidadeUsuarioProvider } from 'Contextos/ContextoDisponibilidadeUsuario/contexto.tsx';
-import { PaginaMinhaDisponibilidade_Contexto } from './componentes';
-
-export default function PaginaMinhaDisponibilidade() {
-    return (
-        <ControladorSlot pagina={PAGINAS.minhasPaginas.minhasDisponibilidades}>
-            <ContextoDisponibilidadeUsuarioProvider>
-                <PaginaMinhaDisponibilidade_Contexto/>
-            </ContextoDisponibilidadeUsuarioProvider>
-        </ControladorSlot>
-    );
-};
+export default function PaginaMinhaDisponibilidade() { return <PaginaMinhaDisponibilidade_Client /> };

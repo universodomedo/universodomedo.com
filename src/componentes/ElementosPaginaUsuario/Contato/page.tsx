@@ -1,14 +1,15 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useState } from 'react';
 import { Eventos_Emite, SOCKET_AcessoUsuario } from 'types-nora-api';
 
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
-import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
-
-import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
+import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
+import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+
 
 export default function SecaoContatos() {
     const { usuarioLogado } = useContextoAutenticacao();

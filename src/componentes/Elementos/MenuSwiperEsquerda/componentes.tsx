@@ -1,6 +1,7 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { type JSX } from 'react';
 import { filtrarMenuPorAcesso, MENU_PRINCIPAL, type MenuNode } from 'types-nora-api';
 

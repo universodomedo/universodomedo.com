@@ -1,6 +1,8 @@
 import styles from './styles.module.css';
-import Link from 'next/link';
 
+import { PAGINAS } from 'types-nora-api';
+
+import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
 import ComponenteBotaoAcessar from 'Componentes/ElementosVisuais/BotaoAcessar/botao-acessar';
 
@@ -9,7 +11,7 @@ export default function SecaoCabecalho() {
         <div className={styles.cabecalho}>
             <div id={styles.cabecalho_esquerda}>
                 <div id={styles.recipiente_logo}>
-                    <Link href={'/'}><ElementoSVG src={"/imagensFigma/logo-cabecalho.svg"} /></Link>
+                    <LinkInterno destino={PAGINAS.home}><ElementoSVG src={"/imagensFigma/logo-cabecalho.svg"} /></LinkInterno>
                 </div>
             </div>
 

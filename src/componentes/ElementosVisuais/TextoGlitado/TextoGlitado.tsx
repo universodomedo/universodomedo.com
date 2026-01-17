@@ -1,6 +1,7 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useEffect, useState } from "react";
 
 import Tooltip from 'componentes/Elementos/Tooltip/Tooltip.tsx';

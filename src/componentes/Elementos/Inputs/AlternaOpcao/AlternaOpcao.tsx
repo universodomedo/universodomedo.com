@@ -1,4 +1,7 @@
+'use client';
+
 import styles from './styles.module.css';
+
 import { useState, useEffect } from 'react';
 
 export default function AlternaOpcao({ opcao, onChange }: { opcao: boolean; onChange: (valor: boolean) => void; }) {

@@ -1,8 +1,8 @@
 'use client';
 
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { GrupoAventuraDto } from 'types-nora-api';
+
 import { obtemGruposPorMestre } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoMestreAventurasProps {

@@ -1,16 +1,31 @@
 import styles from './styles.module.css';
 
-import { useContextoPaginaPermissoesUsuarios } from "Contextos/ContextoPaginaPermissoesUsuarios/contexto";
+import { PAGINAS } from "types-nora-api";
+
+import { ControladorSlot } from "Layouts/ControladorSlot";
+import { ContextoArvoreItensPermissoesProvider, useContextoArvoreItensPermissoes } from "Contextos/ContextoArvoreItensPermissoes/contexto";
+import { ContextoPaginaPermissoesUsuariosProvider, useContextoPaginaPermissoesUsuarios } from "Contextos/ContextoPaginaPermissoesUsuarios/contexto";
 import { ContextoPaginaPermissoesProvider, useContextoPaginaPermissoes } from 'Contextos/ContextoPaginaPermissoes/contexto';
-import SelecionadorUsuarioEmCache from "Componentes/Elementos/Inputs/Selecionadores/SelecionadorUsuarioEmCache/SelecionadorUsuarioEmCache";
-import { useContextoArvoreItensPermissoes } from 'Contextos/ContextoArvoreItensPermissoes/contexto';
 import { ContextoAcessoDeUsuarioEmItemProvider, useContextoAcessoDeUsuarioEmItem } from 'Contextos/ContextoAcessoDeUsuarioEmItem/contexto';
+import SelecionadorUsuarioEmCache from "Componentes/Elementos/Inputs/Selecionadores/SelecionadorUsuarioEmCache/SelecionadorUsuarioEmCache";
 import { JanelaArvorePermissoes } from 'Componentes/ElementosVisuais/Permissoes/subcomponentes';
 import PermissoesModoFoco from 'Componentes/ElementosVisuais/Permissoes/ModoFoco/componentes';
 import { BotaoTelaPermissoes } from 'Componentes/ElementosVisuais/Permissoes/componentes';
 import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/page';
 
-export function PaginaAdmin_PermissoesUsuarios_Contexto() {
+export function PaginaAdmin_PermissoesUsuarios_Client() {
+    return (
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.admin.dashboardPermissoesUsuarios}>
+            <ContextoArvoreItensPermissoesProvider>
+                <ContextoPaginaPermissoesUsuariosProvider>
+                    <PaginaAdmin_PermissoesUsuarios_Contexto />
+                </ContextoPaginaPermissoesUsuariosProvider>
+            </ContextoArvoreItensPermissoesProvider>
+        </ControladorSlot>
+    );
+};
+
+function PaginaAdmin_PermissoesUsuarios_Contexto() {
     const { usuarioSelecionado } = useContextoPaginaPermissoesUsuarios();
 
     return !usuarioSelecionado

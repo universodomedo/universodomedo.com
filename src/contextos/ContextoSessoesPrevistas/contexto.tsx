@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { SessaoDto } from 'types-nora-api';
+
 import { obtemListaSessoesPrevistas } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoSessoesPrevistasProps {

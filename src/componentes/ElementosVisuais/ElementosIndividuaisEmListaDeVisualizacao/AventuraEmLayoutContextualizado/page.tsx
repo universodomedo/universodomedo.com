@@ -1,8 +1,8 @@
 import styles from './styles.module.css';
 
-import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
-
 import { GrupoAventuraDto } from 'types-nora-api';
+
+import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 export function AventuraEmLayoutContextualizado({ grupoAventura, href, escondeEstado = false }: { grupoAventura: GrupoAventuraDto; href: string; escondeEstado?: boolean }) {

@@ -1,9 +1,11 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
 import styles from './styles.module.css';
-import { useContextoUploadImagem } from 'Contextos/ContextoUploadImagem/contexto';
+
+import { useMemo, useRef, useState } from 'react';
 import type { RegrasUploadArquivo } from 'types-nora-api';
+
+import { useContextoUploadImagem } from 'Contextos/ContextoUploadImagem/contexto';
 
 function bytesParaTexto(bytes: number) {
     const kb = bytes / 1024;

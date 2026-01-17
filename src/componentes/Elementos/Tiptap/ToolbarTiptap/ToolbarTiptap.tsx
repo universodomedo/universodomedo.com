@@ -1,9 +1,7 @@
 import styles from './styles.module.css';
+
 import cn from 'classnames';
-
 import { Editor } from '@tiptap/core';
-import { useEffect } from 'react';
-
 import { TextAlignLeftIcon, TextAlignCenterIcon, TextAlignRightIcon } from "@radix-ui/react-icons";
 
 // export default function ToolbarTiptap({ editor, applyFontSize }: { editor: Editor; applyFontSize: (px: number | null) => void }) {

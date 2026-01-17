@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { UsuarioDto } from 'types-nora-api';
+
 import { obtemDadosEPermissoes } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaPermissoesUsuariosProps {

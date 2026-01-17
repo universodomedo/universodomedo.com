@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import Modal from "Componentes/Elementos/Modal/Modal";

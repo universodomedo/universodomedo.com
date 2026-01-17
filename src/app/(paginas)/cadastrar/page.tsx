@@ -1,14 +1,3 @@
-'use client';
+import { PaginaAcessar_Client } from './componentes';
 
-import { PAGINAS } from 'types-nora-api';
-
-import { ControladorSlot } from 'Layouts/ControladorSlot';
-import ModalPrimeiroAcesso from "Componentes/ElementosDeJogo/ModalPrimeiroAcesso/page";
-
-export default function PaginaAcessar() {
-    return (
-        <ControladorSlot pagina={PAGINAS.cadastrar}>
-            <ModalPrimeiroAcesso />
-        </ControladorSlot>
-    );
-};
+export default function PaginaAcessar() { return <PaginaAcessar_Client /> };

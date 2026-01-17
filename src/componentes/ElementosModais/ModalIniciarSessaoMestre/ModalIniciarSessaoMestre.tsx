@@ -1,6 +1,7 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { Eventos_EnviaERecebe, SessaoDto } from 'types-nora-api';
 
 import { useContextoSessoesMestreEmEspera } from 'Contextos/ContextoSessoesMestreEmEspera/contexto';

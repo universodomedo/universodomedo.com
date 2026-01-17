@@ -2,37 +2,34 @@
 
 import styles from './styles.module.css';
 
-import { AventuraEstado, MENUS_INTERNOS } from 'types-nora-api';
+import { AventuraEstado, PAGINAS } from 'types-nora-api';
 
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { ContextoPaginaMestreAventuraProvider } from 'Contextos/ContextoMestreAventura/contexto';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { useContextoPaginaMestreAventura } from "Contextos/ContextoMestreAventura/contexto";
 import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
 import { VisualizadorSessoes } from './subcomponentes/VisualizadorSessoes/VisualizadorSessoes';
 import { InformacoesGeraisAventura } from './subcomponentes/InformacoesGeraisAventura/InformacoesGeraisAventura';
 
-export function PaginaMestreAventura_Contexto() {
+export function PaginaMestreAventura_Client({ idGrupoAventura }: { idGrupoAventura: number; }) {
     return (
-        <LayoutContextualizado>
-            <LayoutContextualizado.Conteudo>
-                <PaginaMestreAventura_Conteudo />
-            </LayoutContextualizado.Conteudo>
-            <LayoutContextualizado.Menu>
-                <MenuInterno itens={MENUS_INTERNOS.PAGINAS.minhasPaginas.mestre} />
-            </LayoutContextualizado.Menu>
-        </LayoutContextualizado>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.mestre.aventura}>
+            <ContextoPaginaMestreAventuraProvider idGrupoAventura={idGrupoAventura}>
+                <PaginaMestreAventura_Slot />
+            </ContextoPaginaMestreAventuraProvider>
+        </ControladorSlot>
     );
 };
 
-function PaginaMestreAventura_Conteudo() {
-    useConfigurarLayoutContextualizado({ proporcaoConteudo: 84, fecharProps: { tipo: 'href', hrefPaginaRetorno: '/minhas-paginas/mestre/aventuras', tituloTooltip: 'Voltar' } });
+function PaginaMestreAventura_Slot() {
+    useConfigurarLayoutContextualizado({ titulo: `aaaav`, fecharProps: { tipo: 'href', paginaRetorno: PAGINAS.minhasPaginas.mestre.aventuras, tituloTooltip: 'Voltar' } }, 'patch');
     const { grupoAventuraSelecionada } = useContextoPaginaMestreAventura();
 
     return (
         <div id={styles.recipiente_aventura_selecionada}>
             <CabecalhoDeAventura tipo={'grupoAventura'} grupoAventura={grupoAventuraSelecionada} />
-            
+
             {grupoAventuraSelecionada.estadoAtual === AventuraEstado.EM_ANDAMENTO && <VisualizadorSessoes />}
 
             <InformacoesGeraisAventura />

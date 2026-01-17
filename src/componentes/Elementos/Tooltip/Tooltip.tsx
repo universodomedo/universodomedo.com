@@ -1,7 +1,8 @@
 import styles from './styles.module.css';
-import { ReactNode } from 'react';
 
+import { ReactNode } from 'react';
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+
 import { IconeLinkInformativo } from 'Componentes/Elementos/IconeLinkInformativo/IconeLinkInformativo';
 
 function Tooltip({ open, defaultOpen, onOpenChange, children, ...props }: { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void; children: ReactNode; }) {

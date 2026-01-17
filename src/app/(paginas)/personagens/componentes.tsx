@@ -1,39 +1,26 @@
 'use client';
 
+import { PAGINAS } from 'types-nora-api';
+
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { ContextoPaginaPersonagensProvider } from 'Contextos/ContextoPaginaPersonagens/contexto';
 import { useContextoPaginaPersonagens } from 'Contextos/ContextoPaginaPersonagens/contexto';
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesPersonagens from "Componentes/ElementosDeMenu/ListaAcoesPersonagens/page";
-import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import PaginaPersonagem from 'Componentes/PaginaPersonagem/PaginaPersonagem';
-import { ReactNode } from 'react';
 
-export function PaginaPersonagens_Contexto() {
-    const { personagemSelecionado, deselecionaPersonagem } = useContextoPaginaPersonagens();
-
+export function PaginaPersonagens_Client({ idPersonagem }: { idPersonagem: number | null; }) {
     return (
-        <LayoutContextualizado>
-            <LayoutContextualizado.Conteudo>
-                {personagemSelecionado
-                    ? <PaginaPersonagem />
-                    : <PaginaInicialPersonagens />
-                }
-            </LayoutContextualizado.Conteudo>
-            <LayoutContextualizado.Menu>
-                <ListaAcoesPersonagens />
-            </LayoutContextualizado.Menu>
-        </LayoutContextualizado>
+        <ControladorSlot pagina={PAGINAS.personagens}>
+            <ContextoPaginaPersonagensProvider idPersonagemInicial={idPersonagem}>
+                <PaginaPersonagens_Contexto />
+            </ContextoPaginaPersonagensProvider>
+        </ControladorSlot>
     );
 };
 
-function PaginaPersonagens_Contexto_EmbrulhoProvisorio({ children }: { children: ReactNode }) {
-    const { personagemSelecionado, deselecionaPersonagem } = useContextoPaginaPersonagens();
-    useConfigurarLayoutContextualizado({ proporcaoConteudo: 84, fecharProps: personagemSelecionado ? { tipo: 'acao', executar: () => deselecionaPersonagem(), tituloTooltip: 'Voltar', style: { top: '2.6%', left: '1.1%' } } : undefined });
-    
-    return (
-        <>
-            {children}
-        </>
-    );
+function PaginaPersonagens_Contexto() {
+    const { personagemSelecionado } = useContextoPaginaPersonagens();
+
+    return personagemSelecionado ? <PaginaPersonagem /> : <PaginaInicialPersonagens />;
 };
 
 function PaginaInicialPersonagens() {

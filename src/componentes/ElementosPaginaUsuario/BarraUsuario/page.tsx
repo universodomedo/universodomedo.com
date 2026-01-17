@@ -1,17 +1,14 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useState } from 'react';
 
-import { atualizaAvatarUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
+import { useState } from 'react';
 import { PersonagemDto } from 'types-nora-api';
 
-import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
-import Image from "next/image";
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
-
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto.tsx';
-
+import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
+import { atualizaAvatarUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
 export default function BarraUsuario() {
     const { usuarioLogado } = useContextoAutenticacao();

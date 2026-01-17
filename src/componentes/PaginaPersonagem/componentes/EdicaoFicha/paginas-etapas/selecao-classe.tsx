@@ -2,9 +2,11 @@
 
 import styles from '../styles.module.css';
 
+import { PAGINAS } from 'types-nora-api';
+
 import { EtapaGanhoEvolucao_Classes, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 import CarrosselClasses from 'Componentes/Elementos/CarrosselClasses/CarrosselClasses';
-import Link from 'next/link';
+import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 
 export default function SelecaoClasse() {
     const { ganhos } = useContextoEdicaoFicha();
@@ -16,7 +18,7 @@ export default function SelecaoClasse() {
             <CarrosselClasses />
 
             <div className={styles.recipiente_descricao_classe}>
-                <Link href={`/definicoes/Classes/${etapaSelecaoClasse.classeEmSelecao.nome}`} target={'_blank'}><h2>{etapaSelecaoClasse.classeEmSelecao.nome}</h2></Link>
+                <LinkInterno destino={{ pagina: PAGINAS.definicoes, params: { slug: ['Classes', etapaSelecaoClasse.classeEmSelecao.nome] } }} target={'_blank'}><h2>{etapaSelecaoClasse.classeEmSelecao.nome}</h2></LinkInterno>
             </div>
         </div>
     );

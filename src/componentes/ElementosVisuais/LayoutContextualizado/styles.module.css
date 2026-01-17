@@ -12,17 +12,31 @@
     gap: .7em;
 }
 
-#recipiente_layout_contextualizado_conteudo {
+.recipiente_layout_contextualizado_conteudo {
     display: flex;
     flex-direction: column;
-    gap: 2%;
+    gap: .7%;
     border-radius: 1.2em;
     align-items: center;
 }
 
-#recipiente_layout_contextualizado_conteudo:not(.fundo_layout_contextualizado_conteudo) {
+.recipiente_layout_contextualizado_conteudo:not(.fundo_layout_contextualizado_conteudo) {
     background-color: #312246b3;
     padding: .7% .4%;
+}
+
+.recipiente_layout_contextualizado_conteudo__header {
+    width: 100%;
+    text-align: center;
+}
+
+.recipiente_layout_contextualizado_conteudo__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1.2em;
+    align-items: center;
 }
 
 #titulo_conteudo {
