@@ -5,6 +5,7 @@ import styles from "./styles.module.css";
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
+import JogoRouteGuard from '../../JogoRouteGuard';
 import { ContextoFichaPersonagemProvider, useContextoFichaPersonagem } from "Contextos/ContextoFichaPersonagem/contexto";
 import ControladorSwiperFicha from "Componentes/ElementosDeJogo/ControladorSwiperFicha/CotroladorSwiperFicha";
 import BarraEstatisticaDanificavel from 'Componentes/ElementosDeJogo/BarraEstatisticaDanificavel/page.tsx';
@@ -12,7 +13,7 @@ import BarraLocaisDeJogo from 'Componentes/ElementosDeJogo/BarraLocaisDeJogo/pag
 
 export function PaginaEmJogo_Client() {
     return (
-        <ControladorSlot pagina={PAGINAS.jogo.jogador}>
+        <ControladorSlot pagina={PAGINAS.jogo.jogador} embrulho={JogoRouteGuard}>
             <ContextoFichaPersonagemProvider>
                 <PaginaEmJogo_Contexto />
             </ContextoFichaPersonagemProvider>

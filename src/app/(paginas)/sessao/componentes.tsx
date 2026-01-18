@@ -1,3 +1,5 @@
+'use client';
+
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';

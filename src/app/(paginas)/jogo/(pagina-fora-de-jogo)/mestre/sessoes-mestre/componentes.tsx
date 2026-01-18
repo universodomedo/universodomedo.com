@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
+import JogoRouteGuard from '../../../JogoRouteGuard';
 import { ContextoSessoesMestreEmEsperaProvider, useContextoSessoesMestreEmEspera } from "Contextos/ContextoSessoesMestreEmEspera/contexto";
 import RecipienteCapa from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/RecipienteCapa/page';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
@@ -12,7 +13,7 @@ import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 
 export function PaginaPlay_SessoesMestre_Client() {
     return (
-        <ControladorSlot pagina={PAGINAS.jogo.mestre.sessoesMestre}>
+        <ControladorSlot pagina={PAGINAS.jogo.mestre.sessoesMestre} embrulho={JogoRouteGuard}>
             <ContextoSessoesMestreEmEsperaProvider>
                 <PaginaSessoesMestre_Contexto />
             </ContextoSessoesMestreEmEsperaProvider>

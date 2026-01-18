@@ -6,12 +6,13 @@ import { useState } from 'react';
 import { Eventos_Emite, SalaDeJogoDto, PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
+import JogoRouteGuard from '../../../JogoRouteGuard';
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { RenderItemSala } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/SalaDeJogoEmVisualizacao/page';
 
 export function PaginaPlay_GerenciarSalas_Client() {
     return (
-        <ControladorSlot pagina={PAGINAS.jogo.admin.gerenciarSalas}>
+        <ControladorSlot pagina={PAGINAS.jogo.admin.gerenciarSalas} embrulho={JogoRouteGuard}>
             <PaginaPlay_GerenciarSalas_Slot />
         </ControladorSlot>
     );

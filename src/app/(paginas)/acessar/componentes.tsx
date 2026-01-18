@@ -7,9 +7,9 @@ import { PAGINAS } from 'types-nora-api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import RedirecionadorInterno from 'Componentes/Elementos/RedirecionadorInterno/RedirecionadorInterno';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 export function PaginaAcessar_Client() {
     const { estaAutenticado } = useContextoAutenticacao();
