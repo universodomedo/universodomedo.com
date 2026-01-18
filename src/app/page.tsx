@@ -5,6 +5,7 @@ import { PAGINAS } from 'types-nora-api';
 import SecaoPrincipal from "Componentes/ElementosVisuais/PaginaAterrissagem/SecoesPaginaAterrissagem/SecaoPrincipal/SecaoPrincipal";
 import Rodape from 'Componentes/ElementosVisuais/PaginaAterrissagem/Rodape/Rodape.tsx'
 import CarrosselHomepage from 'Componentes/Elementos/CarrosselHomepage/CarrosselHomepage';
+import SecaoJogoHomepage from 'Componentes/Elementos/SecaoJogoHomepage/SecaoJogoHomepage';
 
 export default function PaginaAterrissagem() {
     return (
@@ -21,6 +22,7 @@ function PaginaAterrissagem_Slot() {
         <SecaoPrincipal />
       </div>
       <CarrosselHomepage />
+      <SecaoJogoHomepage />
       <Rodape />
     </>
   );
