@@ -6,6 +6,7 @@ import SecaoPrincipal from "Componentes/ElementosVisuais/PaginaAterrissagem/Seco
 import Rodape from 'Componentes/ElementosVisuais/PaginaAterrissagem/Rodape/Rodape.tsx'
 import CarrosselHomepage from 'Componentes/Elementos/CarrosselHomepage/CarrosselHomepage';
 import SecaoJogoHomepage from 'Componentes/Elementos/SecaoJogoHomepage/SecaoJogoHomepage';
+import SecaoTags from 'Componentes/ElementosVisuais/PaginaAterrissagem/SecoesPaginaAterrissagem/SecaoTags/SecaoTags';
 
 export default function PaginaAterrissagem() {
     return (
@@ -23,6 +24,7 @@ function PaginaAterrissagem_Slot() {
       </div>
       <CarrosselHomepage />
       <SecaoJogoHomepage />
+      <SecaoTags />
       <Rodape />
     </>
   );
