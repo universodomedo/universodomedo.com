@@ -1,8 +1,10 @@
 'use client';
 
+import BotaoCarrossel from 'Componentes/ElementosVisuais/ElementosCarroseis/BotaoCarrossel/BotaoCarrossel';
 import styles from './styles.module.css';
 
 import Slider from "react-slick";
+
 
 export default function CarrosselHomepage() {
 
@@ -19,8 +21,8 @@ export default function CarrosselHomepage() {
         slidesToShow: 3,
         centerMode: true,
         centerPadding: '0',
-        //nextArrow: <NextArrow />,
-        //prevArrow: <PrevArrow />,
+        nextArrow: <BotaoCarrossel classNameExterno={styles.botao_next} imagemUrl={"/imagensFigma/slide_b_over_r.svg"}/>,
+        prevArrow: <BotaoCarrossel classNameExterno={styles.botao_prev} imagemUrl={"/imagensFigma/slide_b_over_l.svg"}/>,
 
         onInit: () => {
 
@@ -80,4 +82,6 @@ export default function CarrosselHomepage() {
             </div>
         </div>
     )
+    
 }
+

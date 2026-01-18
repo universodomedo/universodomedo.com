@@ -1,0 +1,16 @@
+.botao {
+    position: absolute;
+    top: 45%;
+    z-index: 4;
+    cursor: pointer;
+}
+
+.botao::before {
+    content: "";
+    background-image: var(--botao-imagem);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 70px;
+    height: 70px;
+    display: block;
+}
