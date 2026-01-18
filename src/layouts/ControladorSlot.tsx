@@ -46,7 +46,7 @@ function MenuArea({ leaf }: { leaf: MenuLayoutLeaf }) {
 
 export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagina: PaginaFolha; children: React.ReactNode; embrulho?: EmbrulhoSlot | undefined; }) {
     const dispatch = useAppDispatch();
-    const { carregando, checkAuth, estaAutenticado, verificarCapacidade } = useContextoAutenticacao();
+    const { carregando, checkAuth, estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
     const { setTamanhoReduzido } = useContextoMenuSwiperEsquerda();
 
     const comCabecalho = pagina.comCabecalho === true;
@@ -62,7 +62,13 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
         checkAuth(pagina.template);
     }, []);
 
-    const decisao = useMemo(() => decidirAcessoPagina(pagina, { estaAutenticado, verificarCapacidade }, { resolverMenuInterno, redirectNaoAutenticado: PAGINAS.acessar, redirectSemCapacidade: PAGINAS.home }), [pagina, estaAutenticado, verificarCapacidade]);
+    const decisao = useMemo(() => {
+        return decidirAcessoPagina(
+            pagina,
+            { estaAutenticado, verificarCapacidade, cadastroPermitido },
+            { resolverMenuInterno, redirectNaoAutenticado: PAGINAS.acessar, redirectSemCapacidade: PAGINAS.home }
+        );
+    }, [pagina, estaAutenticado, verificarCapacidade, cadastroPermitido]);
 
     useEffect(() => {
         if (!temLayout) return;

@@ -19,6 +19,7 @@ interface ContextoAutenticacaoProps {
     numeroPendenciasPersonagem: number;
     estaAutenticado: boolean;
     verificarCapacidade: (capacidade: Capacidade) => boolean;
+    cadastroPermitido: boolean;
 };
 
 const ContextoAutenticacao = createContext<ContextoAutenticacaoProps | undefined>(undefined);
@@ -35,6 +36,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     const [numeroPendenciasPersonagem, setNumeroPendenciasPersonagem] = useState(0);
     const [capacidadesConcedidas, setCapacidadesConcedidas] = useState<Record<Capacidade, true>>({} as Record<Capacidade, true>);
     const [carregando, setCarregando] = useState(true);
+    const [cadastroPermitido, setCadastroPermitido] = useState(false);
 
     const estaAutenticado = !carregando && !!usuarioLogado;
 
@@ -50,12 +52,14 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
             setVariaveisAmbiente(response.variaveisAmbiente);
             setCapacidadesConcedidas((response.capacidadesConcedidas ?? {}) as Record<Capacidade, true>);
             setNumeroPendenciasPersonagem(response.pendenciasDePersonagem);
+            setCadastroPermitido(response.cadastroPermitido === true);
         } catch (_error) {
             dbgAuth(`checkAuth ERROR`, _error);
             setUsuarioLogado(null);
             setVariaveisAmbiente([]);
             setCapacidadesConcedidas({} as Record<Capacidade, true>);
             setNumeroPendenciasPersonagem(0);
+            setCadastroPermitido(false);
         } finally {
             dbgAuth(`checkAuth FINALLY -> setCarregando(false)`);
             setCarregando(false);
@@ -67,7 +71,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     if (getValorVariavelAmbiente(variaveisAmbiente, 'ESTADO_MANUTENCAO') && !verificarCapacidade(CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_MODO_MANUTENÇÃO)) return (<h1>Estamos em manutenção, entre em contato com a Direção do Universo do Medo</h1>);
 
     return (
-        <ContextoAutenticacao.Provider value={{ checkAuth, usuarioLogado, carregando, variaveisAmbiente, numeroPendenciasPersonagem, estaAutenticado, verificarCapacidade }}>
+        <ContextoAutenticacao.Provider value={{ checkAuth, usuarioLogado, carregando, variaveisAmbiente, numeroPendenciasPersonagem, estaAutenticado, verificarCapacidade, cadastroPermitido }}>
             {children}
         </ContextoAutenticacao.Provider>
     );
