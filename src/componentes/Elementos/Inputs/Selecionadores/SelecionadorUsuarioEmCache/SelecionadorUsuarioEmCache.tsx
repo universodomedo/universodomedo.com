@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import Select, { components, SingleValue } from 'react-select';
 
 import { selectUsuarios } from 'Redux/selectors/usuariosSelectors';
-import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/page';
+import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
 
 type Option = { value: number; label: string; id: number; username: string };
 

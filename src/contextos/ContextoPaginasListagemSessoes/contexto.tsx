@@ -20,7 +20,7 @@ export const useContextoPaginasListagemSessoes = (): ContextoPaginasListagemSess
     return context;
 };
 
-export const ContextoPaginasListagemSessoesProvider = ({ children }: { children: React.ReactNode }) => {
+export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInicial }: { children: React.ReactNode; idSessaoInicial?: number; }) => {
     const [carregando, setCarregando] = useState<string | null>('');
     const [sessoes, setSessoes] = useState<SessaoDto[]>([]);
     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
@@ -29,9 +29,16 @@ export const ContextoPaginasListagemSessoesProvider = ({ children }: { children:
         setCarregando('Buscando Sessões');
 
         try {
-            setSessoes(await obtemListagemGeralSessoes());
+            const lista = await obtemListagemGeralSessoes();
+            setSessoes(lista);
+
+            if (idSessaoInicial && idSessaoInicial > 0) {
+                const encontrada = lista.find(sessao => sessao.id === idSessaoInicial) || null;
+                setSessaoSelecionada(encontrada);
+            }
         } catch {
             setSessoes([]);
+            setSessaoSelecionada(null);
         } finally {
             setCarregando(null);
         }

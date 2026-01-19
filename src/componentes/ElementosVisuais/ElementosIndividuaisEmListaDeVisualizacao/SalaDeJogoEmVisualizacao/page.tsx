@@ -2,7 +2,7 @@ import styles from './styles.module.css';
 
 import { SalaDeJogo_Mestre, SalaDeJogo_Participante, SalaDeJogo_TipoMestre, SalaDeJogo_TipoParticipante, SalaDeJogoDto } from 'types-nora-api';
 
-import { AvatarUsuarioEmVisualizacao_CACHED } from '../AvatarUsuarioEmVisualizacao/page';
+import { AvatarUsuarioEmVisualizacao_CACHED } from '../AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 export function RenderItemSala({ salaDeJogo }: { salaDeJogo: SalaDeJogoDto }) {

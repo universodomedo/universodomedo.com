@@ -13,4 +13,5 @@ export const store = configureStore({
         cache: cacheReducer,
         layoutContextualizado: layoutContextualizadoReducer,
     },
+    middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false }),
 });

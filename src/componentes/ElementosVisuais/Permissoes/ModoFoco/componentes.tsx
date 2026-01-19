@@ -7,7 +7,7 @@ import type { ItemPermissaoDto } from 'types-nora-api';
 
 import { SecaoGalhoItemAtual } from 'Contextos/ContextoPaginaPermissoes/contexto';
 import { BlocoFoco, BotaoTelaPermissoes, ItemPermissaoWidget, TextoVazio } from 'Componentes/ElementosVisuais/Permissoes/componentes';
-import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/page';
+import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
 
 type RenderDetalhesSelecionado = React.ReactNode | ((item: ItemPermissaoDto) => React.ReactNode);
 

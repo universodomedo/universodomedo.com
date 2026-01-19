@@ -10,7 +10,7 @@ import { ContextoPaginaPermissoesProvider, useContextoPaginaPermissoes } from "C
 import { JanelaArvorePermissoes } from 'Componentes/ElementosVisuais/Permissoes/subcomponentes';
 import { BotaoTelaPermissoes } from 'Componentes/ElementosVisuais/Permissoes/componentes';
 import PermissoesModoFoco from 'Componentes/ElementosVisuais/Permissoes/ModoFoco/componentes';
-import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/page';
+import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
 
 export function PaginaAdmin_Permissoes_Client() {
     return (

@@ -13,7 +13,7 @@ import SelecionadorUsuarioEmCache from "Componentes/Elementos/Inputs/Selecionado
 import { JanelaArvorePermissoes } from 'Componentes/ElementosVisuais/Permissoes/subcomponentes';
 import PermissoesModoFoco from 'Componentes/ElementosVisuais/Permissoes/ModoFoco/componentes';
 import { BotaoTelaPermissoes } from 'Componentes/ElementosVisuais/Permissoes/componentes';
-import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/page';
+import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
 
 export function PaginaAdmin_PermissoesUsuarios_Client() {
     return (
