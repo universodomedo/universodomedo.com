@@ -19,24 +19,23 @@ export default function JogoRouteGuard({ children }: { children: ReactNode }) {
     const router = useRouter();
     const [estouEmJogo, setEstouEmJogo] = useState<boolean | null>(null);
 
-    console.log(`antes useEmitWsComDisparoInicial`);
-
     useEmitWsComDisparoInicial(
         Eventos_Emite.Jogo.eventos.emitirEstouEmJogo,
         {
             onSuccess: data => {
-                console.log(`onSuccess`);
+                // console.log(`onSuccess`);
                 setEstouEmJogo(data.estouEmJogo);
             },
             onError: err => {
-                console.log(`onError`);
-                alert('onError');
+                // console.log(`onError`, err);
+                setEstouEmJogo(false);
             }
         }
     );
 
     useEffect(() => {
         if (!pathname) return;
+        if (estouEmJogo === null) return;
 
         const current = normalizePath(pathname);
 

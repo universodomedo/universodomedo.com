@@ -186,47 +186,108 @@ type UseEmitWsOptions<D> = {
 export function useEmitWsComDisparoInicial<D extends { tipo: string; payload: any; response: any; fullName: string }>(def: D, handler: (payload: D["response"]) => void, initialPayload?: D["payload"]): void;
 export function useEmitWsComDisparoInicial<D extends { tipo: string; payload: any; response: any; fullName: string }>(def: D, options: UseEmitWsOptions<D>, initialPayload?: D["payload"]): void;
 export function useEmitWsComDisparoInicial(def: any, handlerOrOptions: any, initialPayload?: any): void {
-    const successRef = useRef<((payload: unknown) => void) | null>(null);
+    const successRef = useRef<((payload: object) => void) | null>(null);
     const errorRef = useRef<((error: WsErrorResponse) => void) | null>(null);
     const epoch = useSocketEpoch();
 
+    const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const timeoutTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const attemptRef = useRef(0);
+    const resolvedRef = useRef(false);
+
     if (typeof handlerOrOptions === "function") {
-        successRef.current = handlerOrOptions as unknown as (payload: unknown) => void;
+        successRef.current = handlerOrOptions as (payload: object) => void;
         errorRef.current = null;
     } else {
-        successRef.current = handlerOrOptions.onSuccess as unknown as (payload: unknown) => void;
+        successRef.current = handlerOrOptions.onSuccess as (payload: object) => void;
         errorRef.current = (handlerOrOptions.onError ?? null) as ((error: WsErrorResponse) => void) | null;
     }
 
     useEffect(() => {
-        const socket = getSocket();
+        resolvedRef.current = false;
+        attemptRef.current = 0;
 
-        if (!socket) return;
+        const logAttempt = (motivo: string) => {
+            const n = attemptRef.current + 1;
+            // console.log(`[WS][${def.fullName}] tentativa #${n} (${motivo})`);
+        };
 
-        const wrapped = (payload: unknown) => {
-            if (isWsErrorResponse(payload)) {
-                if (errorRef.current) { errorRef.current(payload); return; }
+        const clearTimers = () => {
+            if (retryTimerRef.current) { clearTimeout(retryTimerRef.current); retryTimerRef.current = null; }
+            if (timeoutTimerRef.current) { clearTimeout(timeoutTimerRef.current); timeoutTimerRef.current = null; }
+        };
+
+        const scheduleRetry = (ms: number, motivo: string) => {
+            clearTimers();
+            if (resolvedRef.current) return;
+            // console.log(`[WS][${def.fullName}] agendando retry em ${ms}ms (${motivo})`);
+            retryTimerRef.current = setTimeout(() => { tick(); }, ms);
+        };
+
+        const startResponseTimeout = (ms: number) => {
+            if (timeoutTimerRef.current) clearTimeout(timeoutTimerRef.current);
+            timeoutTimerRef.current = setTimeout(() => {
+                if (resolvedRef.current) return;
+                scheduleRetry(Math.min(1200, 250 + attemptRef.current * 150), `timeout sem resposta em ${ms}ms`);
+            }, ms);
+        };
+
+        const tick = () => {
+            if (resolvedRef.current) return;
+
+            const socket = getSocket();
+
+            if (!socket) {
+                logAttempt("socket == null (auth/config ainda não liberou)");
+                attemptRef.current++;
+                scheduleRetry(Math.min(1200, 200 + attemptRef.current * 150), "socket null");
                 return;
             }
-            if (successRef.current) { successRef.current(payload as unknown); }
+
+            const wrapped = (payload: object) => {
+                if (resolvedRef.current) return;
+
+                if (isWsErrorResponse(payload)) {
+                    // console.log(`[WS][${def.fullName}] recebeu erro`);
+                    if (errorRef.current) { resolvedRef.current = true; clearTimers(); errorRef.current(payload); }
+                    return;
+                }
+
+                // console.log(`[WS][${def.fullName}] recebeu sucesso`);
+                if (successRef.current) { resolvedRef.current = true; clearTimers(); successRef.current(payload); }
+            };
+
+            socket.off(def.fullName, wrapped);
+            socket.on(def.fullName, wrapped);
+
+            const doEmit = () => {
+                if (resolvedRef.current) return;
+                logAttempt(socket.connected ? "emit (socket conectado)" : "emit (apos connect)");
+                attemptRef.current++;
+                const payloadToSend = (initialPayload ?? {});
+                socket.emit(def.fullName, payloadToSend);
+                startResponseTimeout(2500);
+            };
+
+            if (!socket.connected) {
+                // console.log(`[WS][${def.fullName}] socket não conectado, aguardando connect`);
+                const onConnect = () => { doEmit(); };
+                socket.once("connect", onConnect);
+                try { socket.connect(); } catch (_err) { }
+                scheduleRetry(1200, "aguardando connect / fallback");
+                return () => { socket.off(def.fullName, wrapped); socket.off("connect", onConnect); clearTimers(); };
+            }
+
+            doEmit();
+
+            return () => { socket.off(def.fullName, wrapped); clearTimers(); };
         };
 
-        socket.on(def.fullName, wrapped);
-
-        const doEmit = () => {
-            const payloadToSend = (initialPayload ?? {});
-            socket.emit(def.fullName, payloadToSend);
+        const cleanup = tick();
+        return () => {
+            resolvedRef.current = true;
+            clearTimers();
+            if (typeof cleanup === "function") cleanup();
         };
-
-        if (!socket.connected) {
-            const onConnect = () => { doEmit(); };
-            socket.once("connect", onConnect);
-            try { socket.connect(); } catch (_err) { }
-            return () => { socket.off(def.fullName, wrapped); socket.off("connect", onConnect); };
-        }
-
-        doEmit();
-
-        return () => { socket.off(def.fullName, wrapped); };
     }, [def.fullName, epoch]);
 };
