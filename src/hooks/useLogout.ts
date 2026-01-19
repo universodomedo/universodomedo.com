@@ -1,16 +1,14 @@
-import { useCallback } from "react";
+'use client';
 
-type UseLogoutArgs = {
-    obtemObjetoAutenticacao: () => Promise<unknown>;
-    desconectar: () => void | Promise<void>;
-};
+import { useCallback } from 'react';
+import { desconectar } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
-export default function useLogout({ obtemObjetoAutenticacao, desconectar }: UseLogoutArgs) {
-    const logout = useCallback(async () => {
-        await obtemObjetoAutenticacao();
-        await Promise.resolve(desconectar());
-        window.location.href = "/";
-    }, [obtemObjetoAutenticacao, desconectar]);
+export default function useLogout() {
+    const logout = useCallback(() => {
+        try { void Promise.resolve(desconectar()); } catch (_e) { }
+        if (window.location.pathname === '/') { window.location.reload(); return; }
+        window.location.href = '/';
+    }, []);
 
     return { logout };
 };

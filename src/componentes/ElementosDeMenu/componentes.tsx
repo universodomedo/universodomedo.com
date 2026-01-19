@@ -9,8 +9,8 @@ import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto
 import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 
 export default function MenuInterno({ itens }: { itens: readonly MenuNode[] }) {
-    const { estaAutenticado, verificarCapacidade } = useContextoAutenticacao();
-    const itensFiltrados = useMemo(() => filtrarMenuPorAcesso(itens, { estaAutenticado, verificarCapacidade }), [itens, estaAutenticado, verificarCapacidade]);
+    const { estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
+    const itensFiltrados = useMemo(() => filtrarMenuPorAcesso(itens, { estaAutenticado, verificarCapacidade, cadastroPermitido }), [itens, estaAutenticado, verificarCapacidade]);
     
     function RenderNode(node: MenuNode, key: string, depth: number): JSX.Element | null {
         if (node.tipo === 'item') {

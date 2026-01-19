@@ -6,7 +6,6 @@ import { faDoorOpen } from "@fortawesome/free-solid-svg-icons";
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import useLogout from 'Hooks/useLogout';
-import { desconectar, obtemObjetoAutenticacao } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
 import PersonagemEmVisualizacaoDeSessao from '../ElementosIndividuaisEmListaDeVisualizacao/PersonagemEmVisualizacaoDeSessao/page';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
@@ -23,7 +22,7 @@ export default function ComponenteBotaoAcessar() {
 };
 
 function ComponenteBotaoAcessar_Autenticado({ usuario }: { usuario: UsuarioDto }) {
-    const { logout } = useLogout({ obtemObjetoAutenticacao, desconectar });
+    const { logout } = useLogout();
 
     return (
         <>

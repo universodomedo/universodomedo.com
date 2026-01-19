@@ -58,6 +58,7 @@
     margin: 21% 52%;
     width: 10%;
     cursor: pointer;
+    z-index: calc(var(--zindex_base) + 1);
 
     &:hover {
         scale: 1.03;

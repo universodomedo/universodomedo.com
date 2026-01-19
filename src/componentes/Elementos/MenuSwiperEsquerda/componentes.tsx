@@ -10,8 +10,8 @@ import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 export function ItensMenuSwiperEsquerda() {
-    const { estaAutenticado, verificarCapacidade } = useContextoAutenticacao();
-    const itens = filtrarMenuPorAcesso(MENU_PRINCIPAL, { estaAutenticado, verificarCapacidade });
+    const { estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
+    const itens = filtrarMenuPorAcesso(MENU_PRINCIPAL, { estaAutenticado, verificarCapacidade, cadastroPermitido });
 
     return (
         <div id={styles.recipiente_lista}>

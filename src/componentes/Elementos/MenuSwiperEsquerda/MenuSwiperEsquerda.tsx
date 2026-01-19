@@ -9,7 +9,6 @@ import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-bra
 
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
-import { desconectar, obtemObjetoAutenticacao } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import useLogout from 'Hooks/useLogout';
 import LinkInterno from '../LinkInterno/LinkInterno';
@@ -37,8 +36,7 @@ export default function MenuSwiperEsquerda() {
 
 function ConteudoSwiperEsquerda() {
     const { estaAutenticado } = useContextoAutenticacao();
-    // to clicando mas agora a pagina n recarrega
-    const { logout } = useLogout({ obtemObjetoAutenticacao, desconectar });
+    const { logout } = useLogout();
 
     return (
         <div className={styles.recipiente_conteudo_swiper_esquerda}>
