@@ -132,6 +132,7 @@
     border: 0.08em solid rgba(255, 255, 255, 0.16);
     background: rgba(255, 255, 255, 0.10);
     cursor: pointer;
+    color: white;
 }
 
 .botaoPrimario:disabled {

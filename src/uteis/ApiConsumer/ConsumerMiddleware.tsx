@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate, ArvoreItensPermissaoDto, UsuarioDto, RegrasUploadArquivo, TipoUpload } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate, ArvoreItensPermissaoDto, UsuarioDto, RegrasUploadArquivo, TipoArquivoDef, ArquivoDto } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtualTemplate?: PaginaTemplate | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtualTemplate == null ? {} : { templatePaginaAtual: paginaAtualTemplate } });
@@ -82,11 +82,11 @@ export async function me_atualizaEstadoItem(idItemPermissao: number, idUsuario: 
     return await useApi<boolean>({ uri: '/permissoes_usuarios/me/me_atualizaEstadoItem', method: 'POST', data: { idItemPermissao, idUsuario, idEstadoPermissao } });
 }
 
-export async function uploadImagem(file: File, tipo: string) {
+export async function uploadArquivo(file: File, tipoArquivo: TipoArquivoDef) {
     const formData = new FormData();
-    formData.append('files', file);
+    formData.append('file', file);
 
-    return await useApi<boolean>({ uri: `/imagens/many/${tipo}`, method: 'POST', data: formData });
+    return await useApi<ArquivoDto>({ uri: `/uploads/upload/${tipoArquivo.id}`, method: 'POST', data: formData });
 }
 
 export async function atualizaAvatarUsuario(idPersonagem: number) {
@@ -183,8 +183,8 @@ export async function obtemDadosEPermissoes(idUsuario: number): Promise<UsuarioD
     return await useApi<UsuarioDto | null>({ uri: 'usuarios/obtemDadosEPermissoes', method: 'GET', params: { idUsuario: idUsuario } });
 }
 
-export async function buscaRegrasPorTipoUpload(tipo: TipoUpload): Promise<RegrasUploadArquivo> {
-    return await useApi<RegrasUploadArquivo>({ uri: 'imagens/buscaRegrasPorTipoUpload', method: 'GET', params: { tipo: tipo } });
+export async function buscaRegrasPorTipoArquivo(tipoArquivo: TipoArquivoDef): Promise<RegrasUploadArquivo> {
+    return await useApi<RegrasUploadArquivo>({ uri: 'uploads/buscaRegrasPorTipoArquivo', method: 'GET', params: { idTipoArquivo: tipoArquivo.id } });
 }
 
 //

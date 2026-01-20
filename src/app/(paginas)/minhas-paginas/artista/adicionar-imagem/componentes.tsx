@@ -1,17 +1,14 @@
 'use client';
 
-import { PAGINAS } from "types-nora-api";
+import { PAGINAS, TIPOS_ARQUIVO } from "types-nora-api";
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
-import { ContextoPaginaUplodImagemArtistaProvider } from 'Contextos/ContextoPaginaUplodImagemArtista/contexto';
-import Uploader from 'Componentes/Elementos/Inputs/Uploader/Uploader';
+import RecipienteUploader from "Contextos/ContextoUploadImagem/contexto";
 
 export function PaginaArtista_AdicionarImagem_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.artista.adicionarImagem}>
-            <ContextoPaginaUplodImagemArtistaProvider>
-                <Uploader />
-            </ContextoPaginaUplodImagemArtistaProvider>
+            <RecipienteUploader tipoArquivo={TIPOS_ARQUIVO.IMAGEM_ESPECIAL_ARTISTA} />
         </ControladorSlot>
     );
 };

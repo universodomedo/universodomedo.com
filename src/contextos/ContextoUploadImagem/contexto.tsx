@@ -1,7 +1,11 @@
 'use client';
 
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { acceptFromFormatos, FormatoUploadArquivo, isFormatoImagemBitmap, mimeFromFormato, RegrasUploadArquivo, validarRegrasUploadArquivo } from 'types-nora-api';
+import { acceptFromFormatos, FormatoUploadArquivo, isFormatoImagemBitmap, RegrasUploadArquivo, TipoArquivoDef, validarRegrasUploadArquivo } from 'types-nora-api';
+
+import { buscaRegrasPorTipoArquivo, uploadArquivo } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { toast } from 'Hooks/useToast';
+import Uploader from 'Componentes/Elementos/Inputs/Uploader/Uploader';
 
 type ContextoUploadImagemProps = {
     regras: RegrasUploadArquivo;
@@ -13,13 +17,7 @@ type ContextoUploadImagemProps = {
     isCarregando: boolean;
     selecionarArquivo: (arquivo: File) => Promise<void>;
     limpar: () => void;
-    enviar: () => Promise<void>;
-};
-
-type PropsProvider = {
-    regras: RegrasUploadArquivo;
-    onEnviar?: (arquivo: File, regras: RegrasUploadArquivo) => Promise<void>;
-    children: ReactNode;
+    enviar: () => void;
 };
 
 function formatoFromFile(file: File): FormatoUploadArquivo | null {
@@ -60,10 +58,49 @@ export const useContextoUploadImagem = (): ContextoUploadImagemProps => {
     return context;
 };
 
-export const ContextoUploadImagemProvider = ({ regras, onEnviar, children }: PropsProvider) => {
-    const validacaoRegras = useMemo(() => validarRegrasUploadArquivo(regras), [regras]);
+export default function RecipienteUploader({ tipoArquivo }: { tipoArquivo: TipoArquivoDef }) {
+    return (
+        <CarregadorRegrasUploader tipoArquivo={tipoArquivo}>
+            <Uploader />
+        </CarregadorRegrasUploader>
+    );
+};
+
+function CarregadorRegrasUploader({ tipoArquivo, children }: { tipoArquivo: TipoArquivoDef; children: ReactNode }) {
+    const [carregando, setCarregando] = useState<string | null>('');
+    const [regras, setRegras] = useState<RegrasUploadArquivo | null>(null);
+
+    async function buscaRegrasUploader() {
+        setCarregando('Buscando Regras para esse Uploader');
+
+        try {
+            setRegras(await buscaRegrasPorTipoArquivo(tipoArquivo));
+        } catch {
+            setRegras(null);
+        } finally {
+            setCarregando(null);
+        }
+    };
+
+    useEffect(() => {
+        buscaRegrasUploader();
+    }, []);
+
+    if (carregando) return <div>{carregando}</div>;
+    if (!regras) return <div>Não foi possível carregar as regras de upload</div>;
+
+    const validacaoRegras = validarRegrasUploadArquivo(regras);
     if (!validacaoRegras.ok) throw new Error(`RegrasUploadArquivo inválidas: ${validacaoRegras.erros.join(' | ')}`);
 
+    return (
+        <ContextoUploadImagemProviderInterno regras={regras} tipoArquivo={tipoArquivo}>
+            {children}
+        </ContextoUploadImagemProviderInterno>
+    );
+}
+
+// NÃO EXPORTAR. Usado internamente por RecipienteUploader
+const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: { children: React.ReactNode; tipoArquivo: TipoArquivoDef; regras: RegrasUploadArquivo; }) => {
     const accept = useMemo(() => acceptFromFormatos(regras.formatosPermitidos), [regras.formatosPermitidos]);
 
     const [arquivo, setArquivo] = useState<File | null>(null);
@@ -164,15 +201,22 @@ export const ContextoUploadImagemProvider = ({ regras, onEnviar, children }: Pro
         setIsCarregando(false);
     }, [validarArquivo, limpar]);
 
-    const enviar = useCallback(async () => {
-        if (!arquivo || !isValido || isCarregando) return;
-        setIsCarregando(true);
+    async function enviar(): Promise<void> {
+        if (!isValido) return;
 
-        if (onEnviar) await onEnviar(arquivo, regras);
-        else console.log('Upload (placeholder):', { nome: arquivo.name, tipo: arquivo.type, tamanhoBytes: arquivo.size, accept, formatos: regras.formatosPermitidos.map((f) => ({ formato: f, mime: mimeFromFormato(f) })) });
+        if (!arquivo) {
+            alert('Selecione um arquivo primeiro');
+            return;
+        }
 
-        setIsCarregando(false);
-    }, [arquivo, isValido, isCarregando, onEnviar, regras, accept]);
+        try {
+            await uploadArquivo(arquivo, tipoArquivo);
+            await toast.sucesso('Upload realizado', `Arquivo ${arquivo.name} foi importado com sucesso.`, { recarregaPagina: true });
+        } catch (e) {
+            const msg = e instanceof Error ? e.message : 'Falha ao realizar upload';
+            await toast.erro('Falha ao realizar upload', msg);
+        }
+    };
 
     const value = useMemo<ContextoUploadImagemProps>(() => {
         return { regras, accept, arquivo, previewUrl, erro, isValido, isCarregando, selecionarArquivo, limpar, enviar };
