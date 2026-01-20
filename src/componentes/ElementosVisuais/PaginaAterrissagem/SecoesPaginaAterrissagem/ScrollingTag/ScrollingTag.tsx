@@ -4,6 +4,7 @@ import styles from './styles.module.css';
 // urlImagemExterna: caminho da imagem que vai ser inserida na parte de fora do item
 // urlImagemInterna: caminho da imagem que vai ser inserida na parte de dentro do item
 // conteudoTexto: conteudo que vai ser escrito na parte de dentro do item
+//Variáveis do componente controladas por variáveis CSS externas.
 
 type ScrollingTagProps = {
 	direcao: 'esquerda-direita' | 'direita-esquerda';
@@ -28,8 +29,8 @@ export default function ScrollingTag({ direcao, urlImagem, conteudoTexto, classN
 			<a href="#">
 				<div className={styles.recipiente_marca_pagina}>
 
-					<img className={styles.marca_pagina} src="/imagensFigma/marca-pagina2.png" alt="#" />
-					
+					<img src="/imagensFigma/marca-pagina2.png" alt="#" />
+
 					<div className={styles.recipiente_textos}>
 						<h3 >{conteudoTexto.titulo}</h3>
 						<p >{conteudoTexto.texto}</p>
