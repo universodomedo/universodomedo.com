@@ -1,4 +1,5 @@
 import styles from "./styles.module.css";
+
 import Image from 'next/image';
 
 import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';

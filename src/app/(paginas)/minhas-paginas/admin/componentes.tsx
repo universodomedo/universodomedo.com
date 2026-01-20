@@ -1,19 +1,15 @@
-import styles from './styles.module.css';
+import { PAGINAS } from "types-nora-api";
 
-// import { obtemPersonagensComPendencias } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
-import Link from 'next/link';
+import { ControladorSlot } from "Layouts/ControladorSlot";
 
-export function ListaAcoesAdmin() {
-    // const personagens = await obtemPersonagensComPendencias();
-
+export function PaginaAdmin_Client() {
     return (
-        <div id={styles.recipiente_lista_acoes_admin}>
-            {/* antes tinha um outro objetinho, mas ainda tem q servir como verificador */}
-            {/* <Link href={'/admin/fichas-pendentes'}><h2>Fichas Pendentes - Admin [{personagens.filter(personagem => personagem.pendencias.pendenciaAdmin !== '').length}] Usuario [{personagens.filter(personagem => personagem.pendencias.pendeciaUsuario !== '').length}]</h2></Link> */}
-            <Link href={'/minhas-paginas/admin/uploads'}><h2>Upload</h2></Link>
-            <Link href={'/minhas-paginas/admin/variaveis-ambiente'}><h2>Variáveis de Ambiente</h2></Link>
-            <Link href={'/minhas-paginas/admin/aventuras'}><h2>Aventuras</h2></Link>
-            <Link href={'/minhas-paginas/admin/dashboard-ws'}><h2>Dashboard WebSocket</h2></Link>
-        </div>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.admin}>
+            <PaginaAdmin_Slot />
+        </ControladorSlot>
     );
+};
+
+export function PaginaAdmin_Slot() {
+    return <></>;
 };

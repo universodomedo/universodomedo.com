@@ -5,7 +5,6 @@ import { useSearchParams, usePathname } from 'next/navigation';
 import { PersonagemDto } from 'types-nora-api';
 
 import { me_obtemPersonagensPorTipo, obtemDadosInteligentePersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
 interface ContextoPaginaPersonagensProps {

@@ -10,25 +10,23 @@ import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto
 
 type SocketStatus = 'loading' | 'ready' | 'error';
 
-function SocketHooks() {
-    InicializadorSocket();
-    useUsuariosSocket();
-    useChatSocketListeners();
-    return null;
-}
-
 export default function SocketListeners() {
     const [mounted, setMounted] = useState(false);
-    const [status, setStatus] = useState<SocketStatus>('loading');
+    const [status, setStatus] = useState<SocketStatus>('ready');
     const { carregando, estaAutenticado } = useContextoAutenticacao();
 
     useEffect(() => { setMounted(true); }, []);
 
     useEffect(() => {
         if (!mounted) return;
-        if (carregando) return;
 
-        setSocketAuthState(estaAutenticado);
+        if (carregando) {
+            setSocketAuthState(false, false);
+            setStatus('ready');
+            return;
+        }
+
+        setSocketAuthState(estaAutenticado, true);
 
         if (!estaAutenticado) {
             clearSocketCache();
@@ -45,10 +43,6 @@ export default function SocketListeners() {
             return;
         }
 
-        if (!socket.connected) {
-            try { socket.connect(); } catch (err) { console.error('[SocketListeners] Erro ao chamar socket.connect():', err); }
-        }
-
         if (socket.connected) {
             setStatus('ready');
             return;
@@ -59,8 +53,10 @@ export default function SocketListeners() {
         const onConnect = () => { setStatus('ready'); };
         const onConnectError = (err: unknown) => { console.error('[SocketListeners] Erro no handshake do socket:', err); setStatus('error'); };
 
-        socket.on('connect', onConnect);
-        socket.on('connect_error', onConnectError);
+        socket.once('connect', onConnect);
+        socket.once('connect_error', onConnectError);
+
+        try { socket.connect(); } catch (err) { console.error('[SocketListeners] Erro ao chamar socket.connect():', err); setStatus('error'); }
 
         const timeoutId = window.setTimeout(() => {
             if (!socket.connected) {
@@ -78,9 +74,7 @@ export default function SocketListeners() {
 
     if (!mounted) return null;
 
-    if (!carregando && !estaAutenticado) return null;
-
-    if (status === 'loading') {
+    if (!carregando && estaAutenticado && status === 'loading') {
         return (
             <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#000', color: '#fff', fontFamily: 'sans-serif', zIndex: 9999 }}>
                 <div style={{ textAlign: 'center' }}>
@@ -91,7 +85,7 @@ export default function SocketListeners() {
         );
     }
 
-    if (status === 'error') {
+    if (!carregando && estaAutenticado && status === 'error') {
         return (
             <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#000', color: '#fff', fontFamily: 'sans-serif', zIndex: 9999 }}>
                 <div style={{ textAlign: 'center', maxWidth: 420, padding: 16 }}>
@@ -109,5 +103,14 @@ export default function SocketListeners() {
         );
     }
 
+    if (carregando) return null;
+    if (!estaAutenticado) return null;
+
     return <SocketHooks />;
+};
+
+function SocketHooks() {
+    useUsuariosSocket();
+    useChatSocketListeners();
+    return null;
 };

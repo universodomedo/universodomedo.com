@@ -1,30 +1,38 @@
 'use client';
 
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesPersonagens from "Componentes/ElementosDeMenu/ListaAcoesPersonagens/page";
-import { useContextoPaginaPersonagens } from 'Contextos/ContextoPaginaPersonagens/contexto';
-import PaginaPersonagem from 'Componentes/PaginaPersonagem/PaginaPersonagem';
+import { PAGINAS } from 'types-nora-api';
 
-export function PaginaPersonagens_Contexto() {
-    const { personagemSelecionado, deselecionaPersonagem } = useContextoPaginaPersonagens();
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { ContextoPaginaPersonagensProvider, useContextoPaginaPersonagens } from 'Contextos/ContextoPaginaPersonagens/contexto';
+import { RegistrarMenuLayoutDinamico } from 'Layouts/MenuLayoutDinamico';
+import PaginaPersonagem from 'Componentes/PaginaPersonagem/PaginaPersonagem';
+import ListaAcoesPersonagens from 'Componentes/ElementosDeMenu/ListaAcoesPersonagens/page';
+
+export function PaginaPersonagens_Client({ idPersonagem }: { idPersonagem: number | null; }) {
+    function EmbrulhoPersonagens({ children }: { children: React.ReactNode }) { return <ContextoPaginaPersonagensProvider idPersonagemInicial={idPersonagem}>{children}</ContextoPaginaPersonagensProvider>; };
 
     return (
-        <LayoutContextualizado proporcaoConteudo={84}>
-            <LayoutContextualizado.Conteudo props={ personagemSelecionado ? { tipo: 'acao', executar: () => deselecionaPersonagem(), tituloTooltip: 'Voltar', style:{top: '2.6%', left: '1.1%'} } : undefined}>
-                {personagemSelecionado
-                    ? <PaginaPersonagem />
-                    : <PaginaInicialPersonagens />
-                }
-            </LayoutContextualizado.Conteudo>
-            <LayoutContextualizado.Menu>
-                <ListaAcoesPersonagens />
-            </LayoutContextualizado.Menu>
-        </LayoutContextualizado>
+        <ControladorSlot pagina={PAGINAS.personagens} embrulho={EmbrulhoPersonagens}>
+            <PaginaPersonagens_Slot />
+        </ControladorSlot>
     );
 };
 
-function PaginaInicialPersonagens() {
+function PaginaPersonagens_Slot() {
     return (
-        <h1>Página Inicial</h1>
+        <>
+            <PaginaPersonagens_Contexto />
+            <RegistrarMenuLayoutDinamico node={<ListaAcoesPersonagens />} />
+        </>
     );
+};
+
+function PaginaPersonagens_Contexto() {
+    const { personagemSelecionado } = useContextoPaginaPersonagens();
+
+    return personagemSelecionado ? <PaginaPersonagem /> : <PaginaInicialPersonagens />;
+};
+
+function PaginaInicialPersonagens() {
+    return (<></>);
 };

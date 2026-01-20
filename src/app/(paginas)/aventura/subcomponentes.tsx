@@ -1,8 +1,11 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useEffect } from 'react';
 
+import { useEffect } from 'react';
+import { PAGINAS } from 'types-nora-api';
+
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { useContextoPaginaAventura } from 'Contextos/ContextoPaginaAventura/contexto';
 import { IconeAcaoBuscarSessaoAnterior, IconeAcaoBuscarSessaoSeguinte } from 'Componentes/ElementosAssistirAventura/IconesAcoes/componentes';
 import CorpoAssistindoGrupoAventura from 'Componentes/ElementosAssistirAventura/CorpoAssistindoGrupoAventura/page';
@@ -10,16 +13,14 @@ import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 
 export function PaginaAventura_Conteudo() {
+    useConfigurarLayoutContextualizado({ proporcaoConteudo: 87, escondeFundo: true, fecharProps: { tipo: 'href', paginaRetorno: PAGINAS.minhasPaginas.admin.aventuras, tituloTooltip: 'Voltar' } }, 'patch');
+
     const { grupoAventuraSelecionado, alteraSessaoManualmente, podeAlterarSessaoManualmente } = useContextoPaginaAventura();
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === 'ArrowLeft' && podeAlterarSessaoManualmente.podeBuscarAnterior) {
-                alteraSessaoManualmente('anterior');
-            }
-            if (e.key === 'ArrowRight' && podeAlterarSessaoManualmente.podeBuscarSeguinte) {
-                alteraSessaoManualmente('seguinte');
-            }
+            if (e.key === 'ArrowLeft' && podeAlterarSessaoManualmente.podeBuscarAnterior) alteraSessaoManualmente('anterior');
+            if (e.key === 'ArrowRight' && podeAlterarSessaoManualmente.podeBuscarSeguinte) alteraSessaoManualmente('seguinte');
         };
 
         window.addEventListener('keydown', handleKeyDown);
@@ -38,7 +39,7 @@ export function PaginaAventura_Conteudo() {
             </div>
         </div>
     );
-};
+}
 
 export function PaginaAventura_Menu() {
     const { grupoAventuraSelecionado, sessaoSelecionada, buscaSessao, limpaSessao } = useContextoPaginaAventura();
@@ -48,7 +49,9 @@ export function PaginaAventura_Menu() {
             <DivClicavel key={0} className={styles.recipiente_linha_episodio} classeParaDesabilitado={styles.ativo} desabilitado={!sessaoSelecionada} onClick={() => limpaSessao()}>
                 <h2>Início</h2>
             </DivClicavel>
+
             <hr style={{ margin: '1vh 0 .4vh' }} />
+
             {grupoAventuraSelecionado.detalhesSessoesAventuras.sort((a, b) => a.episodio - b.episodio).map(detalheSessaoesCanonicas => (
                 <DivClicavel key={detalheSessaoesCanonicas.sessao.id} className={styles.recipiente_linha_episodio} classeParaDesabilitado={styles.ativo} desabilitado={sessaoSelecionada?.id === detalheSessaoesCanonicas.sessao.id} onClick={() => buscaSessao(detalheSessaoesCanonicas.sessao.id)}>
                     <h2>{detalheSessaoesCanonicas.episodioPorExtenso}</h2>

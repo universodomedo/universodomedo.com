@@ -1,4 +1,5 @@
-// src/hooks/useLimitaUso.ts (versão alternativa)
+'use client';
+
 import { useCallback, useState, useRef, useEffect } from "react";
 
 interface UseLimitaUsoOptions {

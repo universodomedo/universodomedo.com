@@ -7,13 +7,9 @@ import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 type CabecalhoProps = | { tipo: 'sessao'; sessao: SessaoDto; } | { tipo: 'grupoAventura'; grupoAventura: GrupoAventuraDto; };
 
-export function CabecalhoDeAventura(props: CabecalhoProps) {
-  return props.tipo === 'sessao'
-    ? <RenderCabecalhoDeAventura sessao={props.sessao} />
-    : <CabecalhoDeAventura tipo={'grupoAventura'} grupoAventura={props.grupoAventura} />
-};
+export function CabecalhoDeAventura(props: CabecalhoProps) { return props.tipo === 'sessao' ? <RenderCabecalhoDeSessao sessao={props.sessao} /> : <RenderCabecalhoDeGrupo grupoAventura={props.grupoAventura} /> };
 
-function RenderCabecalhoDeAventura({ sessao }: { sessao: SessaoDto; }) {
+function RenderCabecalhoDeSessao({ sessao }: { sessao: SessaoDto; }) {
   return (
     <>
       <SecaoDeConteudo id={styles.recipiente_capa_cabecalho_aventura}>
@@ -23,6 +19,20 @@ function RenderCabecalhoDeAventura({ sessao }: { sessao: SessaoDto; }) {
       <SecaoDeConteudo id={styles.recipiente_nome_cabecalho_aventura}>
         <h1>{sessao.tituloInteligente.titulo}</h1>
         {sessao.tituloInteligente.subtitulo && (<h3>{sessao.tituloInteligente.titulo}</h3>)}
+      </SecaoDeConteudo>
+    </>
+  );
+};
+
+function RenderCabecalhoDeGrupo({ grupoAventura }: { grupoAventura: GrupoAventuraDto }) {
+  return (
+    <>
+      <SecaoDeConteudo id={styles.recipiente_capa_cabecalho_aventura}>
+        <RecipienteImagem src={grupoAventura.aventura.imagemCapa?.fullPath} />
+      </SecaoDeConteudo>
+
+      <SecaoDeConteudo id={styles.recipiente_nome_cabecalho_aventura}>
+        <h1>{grupoAventura.nomeUnicoGrupoAventura}</h1>
       </SecaoDeConteudo>
     </>
   );

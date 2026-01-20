@@ -1,8 +1,9 @@
 'use client';
 
-import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { FichaDeJogo } from 'types-nora-api';
+
+import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { obtemFichaDePersonagemEmNivel } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoFichaPersonagemProps {

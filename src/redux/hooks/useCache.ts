@@ -1,4 +1,7 @@
-import { useEffect } from 'react';
+'use client';
+
+import { useEffect } from 'react';3
+
 import { useAppDispatch, useAppSelector } from 'Redux/hooks/useRedux';
 import { fetchCacheCompleto, selectCache, selectCacheCarregando, selectCacheErro, selectCacheTimestamp, selectCacheInicializado, marcarComoInicializado, invalidarCache } from 'Redux/slices/cacheSlice';
 

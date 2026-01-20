@@ -1,15 +1,28 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useState } from 'react';
+import { PAGINAS } from 'types-nora-api';
 
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { ContextoDisponibilidadeUsuarioProvider } from 'Contextos/ContextoDisponibilidadeUsuario/contexto.tsx';
 import { useContextoDisponibilidadeUsuario } from 'Contextos/ContextoDisponibilidadeUsuario/contexto.tsx';
-import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import { ConteudoModal, ListagemMinhasDisponibilidades } from './subcomponentes';
+import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 
-export function PaginaMinhaDisponibilidade_Contexto() {
-    const { minhaDisponibilidade } = useContextoDisponibilidadeUsuario();
-    const { salvarDisponibilidades, podeSalvar } = useContextoDisponibilidadeUsuario();
+export function PaginaMinhaDisponibilidade_Client() {
+    return (
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.minhasDisponibilidades}>
+            <ContextoDisponibilidadeUsuarioProvider>
+                <PaginaMinhaDisponibilidade_Contexto />
+            </ContextoDisponibilidadeUsuarioProvider>
+        </ControladorSlot>
+    );
+};
+
+function PaginaMinhaDisponibilidade_Contexto() {
+    const { minhaDisponibilidade, podeSalvar, salvarDisponibilidades } = useContextoDisponibilidadeUsuario();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);

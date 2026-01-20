@@ -1,8 +1,9 @@
 'use client';
 
-import ModalIniciarSessaoMestre from 'Componentes/ElementosModais/ModalIniciarSessaoMestre/ModalIniciarSessaoMestre';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { SessaoDto } from 'types-nora-api';
+
+import ModalIniciarSessaoMestre from 'Componentes/ElementosModais/ModalIniciarSessaoMestre/ModalIniciarSessaoMestre';
 import { me_obtemMinhasSessoesEmEsperaParaMestrar } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoSessoesMestreEmEsperaProps {

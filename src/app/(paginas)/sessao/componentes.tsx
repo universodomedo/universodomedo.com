@@ -1,17 +1,17 @@
 'use client';
 
-import LayoutContextualizado from "Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado";
-import { useContextoPaginaSessao } from 'Contextos/ContextoPaginaSessao/contexto';
-import { VisualizacaoSessao } from "Componentes/ElementosPaginaSessao/VisualizacaoSessao/page";
+import { PAGINAS } from 'types-nora-api';
 
-export function PaginaSessao_Slot() {
-    const { sessaoSelecionada } = useContextoPaginaSessao();
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { ContextoPaginasListagemSessoesProvider } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
+import { VisualizacaoSessoes } from 'Componentes/ElementosPaginaSessao/VisualizacaoSessoes/VisualizacaoSessoes';
 
+export function PaginaSessao_Client({ idSessao }: { idSessao: number; }) {
     return (
-        <LayoutContextualizado proporcaoConteudo={100}>
-            <LayoutContextualizado.Conteudo props={{ tipo: 'href', hrefPaginaRetorno: '/sessoes', tituloTooltip: 'Voltar' }}>
-                <VisualizacaoSessao sessaoSelecionada={sessaoSelecionada} />
-            </LayoutContextualizado.Conteudo>
-        </LayoutContextualizado>
+        <ControladorSlot pagina={PAGINAS.sessao}>
+            <ContextoPaginasListagemSessoesProvider idSessaoInicial={idSessao}>
+                <VisualizacaoSessoes />
+            </ContextoPaginasListagemSessoesProvider>
+        </ControladorSlot>
     );
 };

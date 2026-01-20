@@ -1,6 +1,7 @@
 'use client';
 
 import styles from '../styles.module.css';
+
 import { JSX } from 'react';
 import { PersonagemDto } from 'types-nora-api';
 

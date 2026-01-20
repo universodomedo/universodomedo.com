@@ -1,0 +1,53 @@
+.modal_criacao__recipiente_item_permissao {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 10px;
+    background: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal_criacao__label_item_permissao {
+    font-weight: 700;
+}
+
+.modal_criacao__recipiente_descricao_item_permissao__codigo {
+    font-weight: 900;
+}
+
+.input {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+}
+
+.input:focus {
+    border-color: #cfcfcf;
+}
+
+.dica {
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+.modal_criacao__recipiente_descricao_item_permissao {
+    border: 1px solid #e5e5e5;
+    background: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.modal_criacao__recipiente_descricao_item_permissao__descricao {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.modal_criacao__recipiente_descricao_item_permissao__path {
+    font-size: 12px;
+    opacity: 0.65;
+}

@@ -1,22 +1,27 @@
 'use client';
 
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import styles from './styles.module.css';
 
+import { PAGINAS } from 'types-nora-api';
+
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import JogoRouteGuard from '../../../JogoRouteGuard';
 import { ContextoSessoesMestreEmEsperaProvider, useContextoSessoesMestreEmEspera } from "Contextos/ContextoSessoesMestreEmEspera/contexto";
 import RecipienteCapa from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/RecipienteCapa/page';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 
-export function PaginaSessoesMestre() {
+export function PaginaPlay_SessoesMestre_Client() {
     return (
-        <ContextoSessoesMestreEmEsperaProvider>
-            <PaginaSessoesMestre_Contexto />
-        </ContextoSessoesMestreEmEsperaProvider>
+        <ControladorSlot pagina={PAGINAS.jogo.mestre.sessoesMestre} embrulho={JogoRouteGuard}>
+            <ContextoSessoesMestreEmEsperaProvider>
+                <PaginaSessoesMestre_Contexto />
+            </ContextoSessoesMestreEmEsperaProvider>
+        </ControladorSlot>
     );
 };
 
-export function PaginaSessoesMestre_Contexto() {
+function PaginaSessoesMestre_Contexto() {
     const { sessoesEmEspera, selecionaSessao } = useContextoSessoesMestreEmEspera();
 
     if (sessoesEmEspera.length < 1) return <h1>Você não tem nenhuma Sessão em Espera</h1>

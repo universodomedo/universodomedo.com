@@ -2,26 +2,25 @@
 
 import styles from './styles.module.css';
 
-import { AventuraEstado } from "types-nora-api";
+import { AventuraEstado, PAGINAS } from "types-nora-api";
 
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { RegistrarMenuLayoutDinamico } from "Layouts/MenuLayoutDinamico";
+import { ContextoPaginaAventurasProvider, useContextoPaginaAventuras } from 'Contextos/ContextoPaginaAventuras/contexto';
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
-import { useContextoPaginaAventuras } from 'Contextos/ContextoPaginaAventuras/contexto';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
 import { ItemAventuraLista, UltimasSessoesPostadas } from './subcomponentes';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 
-export function PaginasAventuras_Contexto() {
+export function PaginaAventuras_Client() {
+    function EmbrulhoAventuras({ children }: { children: React.ReactNode }) { return <ContextoPaginaAventurasProvider>{children}</ContextoPaginaAventurasProvider>; };
+
     return (
-        <LayoutContextualizado proporcaoConteudo={80}>
-            <LayoutContextualizado.Conteudo>
-                <PaginaAventuras_Conteudo />
-            </LayoutContextualizado.Conteudo>
-            <LayoutContextualizado.Menu>
-                <PaginaAventuras_Menu />
-            </LayoutContextualizado.Menu>
-        </LayoutContextualizado>
+        <ControladorSlot pagina={PAGINAS.aventuras} embrulho={EmbrulhoAventuras}>
+            <PaginaAventuras_Conteudo />
+            <RegistrarMenuLayoutDinamico node={<PaginaAventuras_Menu />} />
+        </ControladorSlot>
     );
 };
 
@@ -33,7 +32,7 @@ function SecaoBarraDeBuscaDeAventuras() {
     );
 };
 
-function PaginaAventuras_Conteudo() {
+export function PaginaAventuras_Conteudo() {
     const { aventuraSelecionada } = useContextoPaginaAventuras();
 
     return (
@@ -43,7 +42,7 @@ function PaginaAventuras_Conteudo() {
     );
 };
 
-function PaginaAventuras_Menu() {
+export function PaginaAventuras_Menu() {
     return (
         <MenuLateralAventurasListadas />
     );

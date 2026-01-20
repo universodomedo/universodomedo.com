@@ -1,6 +1,7 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useEffect, useState } from 'react';
 import { DiaDaSemana, JanelaDisponibilidade, MomentoFormatado24, obtemDiaDaSemanaPorExtensoPorDDS } from 'types-nora-api';
 

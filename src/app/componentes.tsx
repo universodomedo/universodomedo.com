@@ -1,0 +1,27 @@
+import styles from './styles.module.css';
+
+import { PAGINAS } from 'types-nora-api';
+
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import SecaoPrincipal from 'Componentes/ElementosVisuais/PaginaAterrissagem/SecoesPaginaAterrissagem/SecaoPrincipal/SecaoPrincipal';
+import Rodape from 'Componentes/ElementosVisuais/PaginaAterrissagem/Rodape/Rodape.tsx';
+
+export function PaginaAterrissagem_Client() {
+    return (
+        <ControladorSlot pagina={PAGINAS.home}>
+            <PaginaAterrissagem_Slot />
+        </ControladorSlot>
+    );
+};
+
+function PaginaAterrissagem_Slot() {
+    return (
+        <>
+            <div id={styles.recipiente_conteudo_pagina_principal}>
+                <SecaoPrincipal />
+            </div>
+
+            <Rodape />
+        </>
+    );
+};

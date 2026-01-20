@@ -1,13 +1,13 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import React, { useEffect, useRef, useState } from 'react';
+import Link from 'next/link'; // pra alterar esse Link por LinkInterno, vai ter q alterar a estrutura de EtapaGanhoEvolucao para receber PAGINAS
 
 import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 import JanelaNotificacaoEvolucao from 'Componentes/PaginaPersonagem/componentes/EdicaoFicha/JanelaNotificacaoEvolucao/page.tsx';
-
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
-import Link from 'next/link';
 
 export default function PaginaEvolucaoPersonagem_ComContexto() {
     const { paginaAberta, ganhos, registraEventoAtualizacaoPagina, executaEAtualiza } = useContextoEdicaoFicha();

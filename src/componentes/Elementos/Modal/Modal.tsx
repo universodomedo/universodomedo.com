@@ -1,7 +1,8 @@
 import styles from './styles.module.css';
-import { ReactNode } from "react";
 
+import { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
 export default function Modal({ children, open, onOpenChange }: { children: ReactNode, open: boolean, onOpenChange: (open: boolean) => void }) {

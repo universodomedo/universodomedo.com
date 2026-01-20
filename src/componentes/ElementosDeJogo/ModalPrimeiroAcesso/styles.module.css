@@ -10,8 +10,11 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-top: 10%;
     flex: 1;
+
+    & p, span, a{
+        color: black;
+    }
 }
 
 .conteudo_modal_primeiro_acesso_termos {
@@ -20,12 +23,27 @@
     align-items: center;
     text-align: start;
     gap: 3vh;
+
+    & p, span, a {
+        color: black;
+    }
+
+    & .recipiente_checkbox {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        & * {
+            color: cornflowerblue;
+        }
+    }
 }
 
 .conteudo_modal_primeiro_acesso_termos_section {
     display: flex;
     flex-direction: column;
-    gap: 1vh;
+    gap: 1em;
 }
 
 .conteudo_modal_primeiro_acesso_termos h3 {
@@ -79,7 +97,7 @@
     flex-direction: column;
     align-items: center;
     flex: 0 0 0;
-    gap: 1vh;
+    gap: .6em;
 }
 
 .confirmacao_prosseguir button, .conteudo_modal_primeiro_acesso_termos button {
@@ -90,13 +108,17 @@
 .textos_disclaimer_termo {
     display: flex;
     flex-direction: column;
+    gap: .1em;
 }
 
 #aviso_pendencia {
     display: flex;
     flex-direction: column;
     font-size: .9rem;
-    color: red;
+
+    & span {
+        color: red;
+    }
 }
 
 .disclaimer_termo {
@@ -108,20 +130,12 @@
     flex-direction: column;
     margin: auto;
     text-align: center;
-    gap: .3vh;
+    gap: .5em;
 }
 
 .disclaimer_centralizado input[type='checkbox'] {
     height: 4vh;
     width: 3vh;
-}
-
-.recipiente_checkbox {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    color: cornflowerblue;
-    align-items: center;
 }
 
 .titulo_aviso_topicos_sensiveis {

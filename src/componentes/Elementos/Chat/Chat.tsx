@@ -1,14 +1,16 @@
 "use client";
 
 import styles from "./styles.module.css";
+
 import { useEffect, useState } from "react";
-import type { RootState } from "Redux/store/types";
-import { useAppSelector } from "Redux/hooks/useRedux";
+
+import { useContextoAutenticacao } from "Contextos/ContextoAutenticacao/contexto";
 import { DivClicavel } from "../DivClicavel/DivClicavel";
+import { getSocket } from "Hooks/useEventoWs";
+import { useAppSelector } from "Redux/hooks/useRedux";
+import type { RootState } from "Redux/store/types";
 import ConteudoSalaSelecionada from "./componentes/ConteudoSalaSelecionada";
 import ListaSalas from "./componentes/ListaSalas";
-import { useContextoAutenticacao } from "Contextos/ContextoAutenticacao/contexto";
-import { getSocket } from "Hooks/useEventoWs";
 
 type WsStatus = "loading" | "ready" | "error";
 

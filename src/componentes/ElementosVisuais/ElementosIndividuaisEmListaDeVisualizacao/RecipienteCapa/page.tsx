@@ -1,5 +1,6 @@
-import { SessaoDto } from 'types-nora-api';
 import styles from './styles.module.css';
+
+import { SessaoDto } from 'types-nora-api';
 
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 

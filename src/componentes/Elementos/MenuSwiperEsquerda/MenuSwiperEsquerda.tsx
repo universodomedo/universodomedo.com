@@ -1,18 +1,17 @@
 'use client';
 
 import styles from './styles.module.css';
-import { ReactNode } from 'react';
-
-import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
-import { desconectar, obtemObjetoAutenticacao } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
 import Link from 'next/link';
+import { PAGINAS } from 'types-nora-api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-brands-svg-icons";
-import { faUserSecret, faUserTie, faFireFlameCurved, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
+import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import useLogout from 'Hooks/useLogout';
+import LinkInterno from '../LinkInterno/LinkInterno';
 import { ItensMenuSwiperEsquerda } from './componentes';
 import { DivClicavel } from '../DivClicavel/DivClicavel';
 
@@ -37,13 +36,8 @@ export default function MenuSwiperEsquerda() {
 
 function ConteudoSwiperEsquerda() {
     const { estaAutenticado } = useContextoAutenticacao();
+    const { logout } = useLogout();
 
-    async function logout() {
-        await obtemObjetoAutenticacao();
-        desconectar();
-        window.location.href = `/`;
-    }
-    
     return (
         <div className={styles.recipiente_conteudo_swiper_esquerda}>
             <div id={styles.fundo_camada_1} />
@@ -55,7 +49,7 @@ function ConteudoSwiperEsquerda() {
                 </div>
                 <div id={styles.recipiente_lista_menu}>
                     <div className={styles.recipiente_logo_swiper_esquerda}>
-                        <Link href={'/'}><ElementoSVG src={"/imagensFigma/logo-cabecalho.svg"} /></Link>
+                        <LinkInterno destino={PAGINAS.home}><ElementoSVG src={"/imagensFigma/logo-cabecalho.svg"} /></LinkInterno>
                     </div>
                     <ItensMenuSwiperEsquerda />
                     <div id={styles.recipiente_icones_swiper_esquerda}>

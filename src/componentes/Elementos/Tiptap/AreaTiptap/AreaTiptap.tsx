@@ -1,6 +1,6 @@
 import styles from './styles.module.css';
-import cn from 'classnames';
 
+import cn from 'classnames';
 import { Editor } from '@tiptap/core';
 import { EditorContent } from "@tiptap/react";
 

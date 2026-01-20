@@ -1,16 +1,15 @@
-'use client';
+import { PAGINAS } from 'types-nora-api';
 
-import { ReactNode } from 'react';
+import { ControladorSlot } from 'Layouts/ControladorSlot';
 
-import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
-import { verificarPermissao } from 'Helpers/verificarPermissao';
+export function PaginaMestre_Client() {
+    return (
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.mestre}>
+            <PaginaMestre_Slot />
+        </ControladorSlot>
+    );
+};
 
-export function LayoutMestre_Slot({ children }: { children: ReactNode }) {
-    const usuarioComPermissao = verificarPermissao(usuario => usuario.perfilMestre.id > 1);
-
-    if (usuarioComPermissao === null) return null;
-
-    if (!usuarioComPermissao) return <Redirecionador urlRedirecionar='/' />;
-
-    return children;
+function PaginaMestre_Slot() {
+    return <></>;
 };

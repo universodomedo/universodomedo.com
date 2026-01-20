@@ -1,10 +1,10 @@
 import styles from "./styles.module.css";
+
 import Link from 'next/link';
-
-import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-brands-svg-icons";
+
+import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
 
 export default function Rodape() {
     return (
@@ -19,5 +19,5 @@ export default function Rodape() {
                 <Link target='_blank' href='https://twitch.universodomedo.com'><FontAwesomeIcon icon={faTwitch} /></Link>
             </div>
         </div>
-    )
+    );
 };

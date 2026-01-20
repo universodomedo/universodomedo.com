@@ -2,25 +2,24 @@
 
 import styles from './styles.module.css';
 
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesMestre from 'Componentes/ElementosDeMenu/ListaAcoesMestre/page';
+import { PAGINAS } from 'types-nora-api';
+
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { ContextoMestreAventurasProvider } from "Contextos/ContextoMestreAventuras/contexto";
 import { useContextoMestreAventuras } from 'Contextos/ContextoMestreAventuras/contexto';
 import { AventuraEmLayoutContextualizado } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AventuraEmLayoutContextualizado/page';
 
-export function AventurasMestre_Contexto() {
+export function AventurasMestre_Client() {
     return (
-        <LayoutContextualizado proporcaoConteudo={84}>
-            <LayoutContextualizado.Conteudo titulo={'Mestre - Minhas Aventuras'}>
-                <AventurasMestre_Conteudo />
-            </LayoutContextualizado.Conteudo>
-            <LayoutContextualizado.Menu>
-                <ListaAcoesMestre />
-            </LayoutContextualizado.Menu>
-        </LayoutContextualizado>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.mestre.aventuras}>
+            <ContextoMestreAventurasProvider>
+                <AventurasMestre_Slot />
+            </ContextoMestreAventurasProvider>
+        </ControladorSlot>
     );
 };
 
-function AventurasMestre_Conteudo() {
+function AventurasMestre_Slot() {
     const { gruposAventurasListadas } = useContextoMestreAventuras();
 
     return (

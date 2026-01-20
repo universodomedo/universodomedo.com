@@ -1,6 +1,6 @@
-import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { PAGINAS, EstruturaPaginaDefinicao } from 'types-nora-api';
-import PaginaConteudoDinamico from 'Componentes/Elementos/PaginaConteudoDinamico/page';
+
+import { ControladorSlot_TEMPORARIO_Dicas } from '../componentes';
 
 export default async function PaginaDefinicao({ params }: { params: Promise<{ slug: string[] }>; }) {
     const { slug } = await params;
@@ -151,9 +151,5 @@ export default async function PaginaDefinicao({ params }: { params: Promise<{ sl
         }
     }
 
-    return (
-        <ControladorSlot pageConfig={{ paginaAtual: PAGINAS.DICAS, comCabecalho: true, usuarioObrigatorio: false }}>
-            <PaginaConteudoDinamico conteudo={conteudo} hrefInicio={'/dicas'} listaSlug={['termos-de-aceite']} />
-        </ControladorSlot>
-    );
+    return <ControladorSlot_TEMPORARIO_Dicas conteudo={conteudo} inicio={{ pagina: PAGINAS.dicas }} listaSlug={listaSlug} />;
 };

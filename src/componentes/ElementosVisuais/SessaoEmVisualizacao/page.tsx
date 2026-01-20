@@ -12,7 +12,7 @@ export default function SessaoEmVisualizacao({ sessao }: { sessao: SessaoDto }) 
         <div id={styles.recipiente_sessao_selecionada}>
             <CabecalhoDeAventura tipo={'sessao'} sessao={sessao} />
 
-            <SecaoDeConteudo>
+            <SecaoDeConteudo fit>
                 {sessao.estiloSessao === EstiloSessao.SESSAO_DE_AVENTURA && <h2>{sessao.detalheSessaoAventura.episodioPorExtenso}</h2>}
 
                 {sessao.duracaoEmSegundos && (<h4>Duração: {formataDuracao(sessao.duracaoEmSegundos, FormatoMomento.HMS)}</h4>)}

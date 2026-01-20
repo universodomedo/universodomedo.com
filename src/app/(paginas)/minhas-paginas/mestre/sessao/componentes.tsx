@@ -1,37 +1,36 @@
 'use client';
 
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import ListaAcoesMestre from 'Componentes/ElementosDeMenu/ListaAcoesMestre/page';
-import { useContextoPaginaMestreSessao } from 'Contextos/ContextoMestreSessao/contexto';
-import { EstiloSessao } from 'types-nora-api';
+import { EstiloSessao, PAGINAS } from 'types-nora-api';
+
+import { ContextoPaginaMestreSessaoProvider, useContextoPaginaMestreSessao } from 'Contextos/ContextoMestreSessao/contexto';
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SessaoEmVisualizacao from 'Componentes/ElementosVisuais/SessaoEmVisualizacao/page';
+import { DestinoInput } from 'Componentes/Elementos/LinkInterno/LinkInterno';
+import { ControladorSlot } from 'Layouts/ControladorSlot';
 
-export function PaginaMestreSessao_Contexto() {
-    const { sessaoSelecionada } = useContextoPaginaMestreSessao();
-
-    const hrefPaginaRetorno = sessaoSelecionada.estiloSessao == EstiloSessao.SESSAO_DE_AVENTURA
-        ? `/minhas-paginas/mestre/aventura/${sessaoSelecionada.detalheSessaoAventura.grupoAventura.id}`
-        : 'minhas-paginas/mestre/sessoes-unicas'
-
+export function PaginaMestreSessao_Client({ idSessao }: { idSessao: number }) {
     return (
-        <LayoutContextualizado proporcaoConteudo={84}>
-            <LayoutContextualizado.Conteudo props={{ tipo: 'href', hrefPaginaRetorno: hrefPaginaRetorno, tituloTooltip: 'Voltar' }}>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.mestre.sessao}>
+            <ContextoPaginaMestreSessaoProvider idSessao={idSessao}>
                 <PaginaMestreSessao_Conteudo />
-            </LayoutContextualizado.Conteudo>
-            <LayoutContextualizado.Menu>
-                <ListaAcoesMestre />
-            </LayoutContextualizado.Menu>
-        </LayoutContextualizado>
+            </ContextoPaginaMestreSessaoProvider>
+        </ControladorSlot>
     );
 };
 
 function PaginaMestreSessao_Conteudo() {
     const { sessaoSelecionada } = useContextoPaginaMestreSessao();
 
+    const paginaRetorno: DestinoInput = sessaoSelecionada.estiloSessao == EstiloSessao.SESSAO_DE_AVENTURA
+        ? { pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: String(sessaoSelecionada.detalheSessaoAventura.grupoAventura.id) } }
+        : PAGINAS.minhasPaginas.mestre.sessoesUnicas
+
+    useConfigurarLayoutContextualizado({ fecharProps: { tipo: 'href', paginaRetorno: paginaRetorno, tituloTooltip: 'Voltar' } });
+
     return (
         <>
             <SessaoEmVisualizacao sessao={sessaoSelecionada} />
-            
+
             {/* <ListaInfracoesSessao /> */}
         </>
     );

@@ -1,0 +1,5 @@
+.recipiente_criacao_novo_item_permissao {
+    display: flex;
+    flex-direction: column;
+    gap: .6em;
+}

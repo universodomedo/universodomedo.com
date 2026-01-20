@@ -18,6 +18,7 @@ import SocketListeners from 'listeners/SocketListeners';
 import { ContextoPerformanceProvider } from 'Contextos/ContextoPerformace/contexto';
 import { ContextoAutenticacaoProvider } from 'Contextos/ContextoAutenticacao/contexto';
 import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
+import AppClientProviders from './AppClientProvider';
 
 import { Cinzel, Cinzel_Decorative, Junge, B612_Mono } from 'next/font/google';
 
@@ -66,16 +67,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <ContextoAutenticacaoProvider>
               <SocketListeners />
               <RadixTooltip delayDuration={200} skipDelayDuration={0}>
-                <ContextoMenuSwiperEsquerdaProvider>
-                  <InicializadorCache>
-                    <ConteudoContextualizado>
-                      <ContainerEscalavel>
-                        {children}
-                      </ContainerEscalavel>
-                      {/* <BackgroundAudio /> */}
-                    </ConteudoContextualizado>
-                  </InicializadorCache>
-                </ContextoMenuSwiperEsquerdaProvider>
+                <AppClientProviders>
+                  <ContextoMenuSwiperEsquerdaProvider>
+                    <InicializadorCache>
+                      <ConteudoContextualizado>
+                        <ContainerEscalavel>
+                          {children}
+                        </ContainerEscalavel>
+                        {/* <BackgroundAudio /> */}
+                      </ConteudoContextualizado>
+                    </InicializadorCache>
+                  </ContextoMenuSwiperEsquerdaProvider>
+                </AppClientProviders>
               </RadixTooltip>
             </ContextoAutenticacaoProvider>
           </ContextoPerformanceProvider>

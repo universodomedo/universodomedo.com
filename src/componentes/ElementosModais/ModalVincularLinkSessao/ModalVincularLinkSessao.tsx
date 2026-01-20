@@ -1,12 +1,13 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useState } from 'react';
+import { LinkDto, TipoLinkDto } from 'types-nora-api';
 
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import { useContextoCadastroNovoLinkSessao } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 import { vinculaLinkDeSessao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { LinkDto, TipoLinkDto } from 'types-nora-api';
 
 export function ModalVincularLinkSessao({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void }) {
     return (
