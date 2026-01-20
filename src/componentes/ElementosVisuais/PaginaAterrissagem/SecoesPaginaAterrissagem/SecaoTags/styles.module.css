@@ -1,0 +1,41 @@
+.direita_esquerda {
+    /* INICIO - CONTROLE POSIÇÃO URL IMAGEM */
+    --zoom-url-imagem: 170%;
+    --top-bottom: translateY(-5%);
+    --left-right: translateX(-15%);
+
+    /* INICIO - CONTROLE FILTRO URL IMAGEM */
+    --filter-var: grayscale(95%) contrast(150%) brightness(100%) opacity(10%);
+    --back-image: linear-gradient(to bottom, #0E0B18, transparent, #0E0B18);
+    --bg-color-effect: transparent;
+
+    /* INICIO - CONTROLE DIREÇÃO SLIDE MARCADOR DE PÁGINA */
+    --direcao-x-bmk: translateX(55%) rotateY(0);
+    --direcao-x-marcador: translateX(50%) rotateY(0);
+    --hover-position: translateX(-29.5%) translateY(-4%);
+
+    /* CONTROLE DE VARIÁVEIS DO TEXTO */
+    --centralizacao-titulo: 107.5%;
+    --altura-underline-titulo: 52.5%;
+}
+
+.esquerda_direita {
+    /* INICIO - CONTROLE POSIÇÃO URL IMAGEM */
+    --zoom-url-imagem: 170%;
+    --top-bottom: translateY(-15%);
+    --left-right: translateX(-40%);
+
+    /* INICIO - CONTROLE FILTRO URL IMAGEM */
+    --filter-var: grayscale(95%) contrast(130%) brightness(50%) opacity(20%);
+    --back-image: linear-gradient(to bottom, #0E0B18, transparent, #0E0B18);
+    --bg-color-effect: #180f2c;
+
+    /* INICIO - CONTROLE DIREÇÃO SLIDE MARCADOR DE PÁGINA */
+    --direcao-x-bmk: translateX(-180%) rotateY(180deg);
+    --direcao-x-marcador: translateX(-10%) rotateY(180deg);
+    --hover-position: translateX(29.5%) translateY(-4%);
+
+    /* CONTROLE DE VARIÁVEIS DO TEXTO */
+    --centralizacao-titulo: 32.5%;
+    --altura-underline-titulo: 48.5%;
+}
