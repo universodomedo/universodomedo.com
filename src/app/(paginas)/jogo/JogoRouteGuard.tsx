@@ -23,11 +23,9 @@ export default function JogoRouteGuard({ children }: { children: ReactNode }) {
         Eventos_Emite.Jogo.eventos.emitirEstouEmJogo,
         {
             onSuccess: data => {
-                // console.log(`onSuccess`);
                 setEstouEmJogo(data.estouEmJogo);
             },
             onError: err => {
-                // console.log(`onError`, err);
                 setEstouEmJogo(false);
             }
         }

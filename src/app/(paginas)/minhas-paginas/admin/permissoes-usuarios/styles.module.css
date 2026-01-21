@@ -75,6 +75,7 @@
 .header_usuario_textos {
     display: flex;
     flex-direction: column;
+    text-align: justify;
     gap: 0.25em;
     min-width: 0;
 }

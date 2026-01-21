@@ -5,7 +5,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.7em;
-    z-index: var(--zindex-final-chat);
+    z-index: var(--zindex-final-toast);
     pointer-events: none;
 }
 
@@ -58,15 +58,15 @@
 
 .tipo_sucesso {
     border-color: rgba(61, 152, 61, 0.45);
-    background: rgba(61, 152, 61, 0.10);
+    background: rgba(61, 152, 61, 0.55);
 }
 
 .tipo_aviso {
     border-color: rgba(190, 170, 70, 0.45);
-    background: rgba(190, 170, 70, 0.10);
+    background: rgba(190, 170, 70, 0.55);
 }
 
 .tipo_erro {
     border-color: rgba(219, 71, 71, 0.45);
-    background: rgba(219, 71, 71, 0.10);
+    background: rgba(219, 71, 71, 0.55);
 }

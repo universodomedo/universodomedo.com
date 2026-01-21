@@ -39,20 +39,25 @@ export function ContextoToastProvider({ children }: { children: React.ReactNode 
 
     const pushVisiveis = useCallback((item: ToastItem) => {
         setVisiveis((curr) => {
-            if (curr.length < maxVisiveis) return [...curr, item];
-            filaRef.current = [...filaRef.current, item];
-            return curr;
+            if (curr.length < maxVisiveis) return [item, ...curr];
+
+            const maisAntigoVisivel = curr[curr.length - 1];
+            filaRef.current = [...filaRef.current, maisAntigoVisivel];
+
+            return [item, ...curr.slice(0, maxVisiveis - 1)];
         });
     }, []);
 
     const fechar = useCallback((id: string) => {
         setVisiveis((curr) => {
             const novo = curr.filter((t) => t.id !== id);
+
             if (novo.length < maxVisiveis && filaRef.current.length > 0) {
-                const [proximo, ...resto] = filaRef.current;
-                filaRef.current = resto;
+                const proximo = filaRef.current[filaRef.current.length - 1];
+                filaRef.current = filaRef.current.slice(0, -1);
                 return [...novo, proximo];
             }
+
             return novo;
         });
     }, []);
