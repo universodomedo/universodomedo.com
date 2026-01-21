@@ -7,6 +7,7 @@ import { Eventos_EnviaERecebe, SessaoDto } from 'types-nora-api';
 import { useContextoSessoesMestreEmEspera } from 'Contextos/ContextoSessoesMestreEmEspera/contexto';
 import { useContadorRegressivo } from 'Componentes/Elementos/ContadorRegressivo/ContadorRegressivo';
 import { eventoWs } from "Hooks/useEventoWs";
+import { toast } from 'Hooks/useToast';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import RecipienteCapa from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/RecipienteCapa/page';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
@@ -27,8 +28,9 @@ export default function ModalIniciarSessaoMestre({ isModalOpen, setIsModalOpen }
     if (!sessaoSelecionada) return null;
 
     const executaRequisicaoDeAberturaDeSala = async () => {
-        eventoWs(Eventos_EnviaERecebe.Jogo.eventos.requisicaoDeAberturaDeSala, { idSessao: sessaoSelecionada.id }, retorno => {
-            
+        eventoWs(Eventos_EnviaERecebe.Jogo.eventos.requisicaoDeAberturaDeSala, { idSessao: sessaoSelecionada.id }, {
+            onSuccess: retorno => { toast.sucesso('Sala Aberta', `Sala ${retorno.codigoSala} aberta`, { recarregaPagina: true }); },
+            onError: err => { toast.erro('Falha ao abrir sala', err.mensagem); }
         });
     };
 

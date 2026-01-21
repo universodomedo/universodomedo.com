@@ -68,7 +68,8 @@
     gap: 8px;
 }
 
-.sectionTitle {
+.section_title {
+    text-align: justify;
     text-transform: uppercase;
     margin: 0;
 }

@@ -25,11 +25,12 @@
 }
 
 .foco_bloco {
+    display: flex;
+    flex-direction: column;
+    text-align: justify;
     border: 0.08em solid rgba(255, 255, 255, 0.10);
     border-radius: 1em;
     padding: 0.85em;
-    display: flex;
-    flex-direction: column;
     gap: 0.7em;
     background: rgba(255, 255, 255, 0.03);
     backdrop-filter: blur(0.45em);
@@ -95,6 +96,7 @@
 .item_textos {
     display: flex;
     flex-direction: column;
+    text-align: justify;
     gap: 0.25em;
 }
 
