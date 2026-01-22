@@ -7,6 +7,7 @@
     background-repeat: no-repeat;
     background-position: top center;
     background-size: cover;
+    background-attachment: local;
 }
 
 .recipiente_artigos {
@@ -20,7 +21,8 @@
 .titulo_jogo {
     position: absolute;
     top: 0%;
-    left: 50%; transform: translateX(-50%);
+    left: 50%;
+    transform: translateX(-50%);
     margin-top: 3%;
     z-index: 2;
     font-family: var(--fonte-cinzel);
@@ -129,3 +131,4 @@
     height: 1080px;
     aspect-ratio: 16/9;
 }
+

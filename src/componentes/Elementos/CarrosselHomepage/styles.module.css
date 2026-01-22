@@ -89,7 +89,7 @@
 }
 
 .recipiente_layout {
-    
+
     position: relative;
     width: 100%;
     height: 100%;
@@ -313,6 +313,8 @@
 
 .botao_next {
     right: 34%;
+    --largura-imagem-botao: 70px;
+    --altura-imagem-botao: 70px;
 }
 
 .botao_next:hover {
@@ -323,6 +325,8 @@
 
 .botao_prev {
     left: 33%;
+    --largura-imagem-botao: 70px;
+    --altura-imagem-botao: 70px;
 }
 
 .botao_prev:hover {

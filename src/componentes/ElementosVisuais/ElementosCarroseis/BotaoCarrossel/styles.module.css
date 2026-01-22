@@ -1,7 +1,7 @@
 .botao {
     position: absolute;
-    top: 43%;
-    z-index: 4;
+    top: 50%; transform: translateY(-50%);
+    z-index: 10;
     cursor: pointer;
 }
 
@@ -10,7 +10,7 @@
     background-image: var(--botao-imagem);
     background-size: contain;
     background-repeat: no-repeat;
-    width: 70px;
-    height: 70px;
+    width: var(--largura-imagem-botao);
+    height: var(--altura-imagem-botao);
     display: block;
 }
