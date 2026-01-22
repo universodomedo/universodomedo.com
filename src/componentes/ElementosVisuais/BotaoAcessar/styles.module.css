@@ -12,8 +12,6 @@
 }
 
 .camada_1 {
-    /* algum jeito de n tirar o cursor da portinha */
-    /* pointer-events: none; */
     position: absolute;
     width: 100%;
     margin-top: 10.14%;

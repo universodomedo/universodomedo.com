@@ -31,7 +31,7 @@ function ComponenteBotaoAcessar_Autenticado({ usuario }: { usuario: UsuarioDto }
                 <PersonagemEmVisualizacaoDeSessao tipo={'mestre'} usuario={usuario} />
             </div>
             <DivClicavel className={styles.recepiente_icone_desconectar} onClick={logout}>
-                <FontAwesomeIcon className={styles.botao_acesso_discord} icon={faDoorOpen}/>
+                <FontAwesomeIcon className={styles.botao_acesso_discord} icon={faDoorOpen} />
             </DivClicavel>
         </>
     );
@@ -42,11 +42,11 @@ function ComponenteBotaoAcessar_NaoAutenticado() {
 
     return (
         <>
-            <ElementoSVG className={styles.camada_1} src={"/imagensFigma/luiz/Entalhe.svg"} />
+            <img alt='' src={"/imagensFigma/luiz/entalhe_botao.webp"} className={styles.camada_1} />
             <LinkInterno className={styles.link_botao_acesso} destino={estaAutenticado ? PAGINAS.minhaPagina : PAGINAS.acessar}>
-                <ElementoSVG className={styles.camada_2} src={"/imagensFigma/luiz/botao_acessar.svg"} />
+                <img alt='' src={"/imagensFigma/luiz/fundo_botao.webp"} className={styles.camada_2} />
             </LinkInterno>
-            <ElementoSVG className={styles.camada_3} src={"/imagensFigma/luiz/acessar.svg"} />
+            <img alt='' src={"/imagensFigma/luiz/botao_acessar.webp"} className={styles.camada_3} />
         </>
     );
 };

@@ -21,11 +21,9 @@ type ContextoUploadImagemProps = {
 };
 
 function formatoFromFile(file: File): FormatoUploadArquivo | null {
-    if (file.type === 'image/png') return 'png';
-    if (file.type === 'image/jpeg') return 'jpg';
-    if (file.type === 'image/svg+xml') return 'svg';
+    if (file.type === 'image/webp') return 'webp';
     return null;
-}
+};
 
 async function lerDimensoesImagemBitmap(arquivo: File) {
     const url = URL.createObjectURL(arquivo);
@@ -39,7 +37,7 @@ async function lerDimensoesImagemBitmap(arquivo: File) {
     } finally {
         URL.revokeObjectURL(url);
     }
-}
+};
 
 function proporcaoValida(largura: number, altura: number, regra: { largura: number; altura: number; toleranciaPercentual?: number }) {
     const proporcaoEsperada = regra.largura / regra.altura;
@@ -48,7 +46,7 @@ function proporcaoValida(largura: number, altura: number, regra: { largura: numb
     if (tolerancia <= 0) return proporcaoAtual === proporcaoEsperada;
     const diffRelativo = Math.abs(proporcaoAtual - proporcaoEsperada) / proporcaoEsperada;
     return diffRelativo <= tolerancia;
-}
+};
 
 const ContextoUploadImagem = createContext<ContextoUploadImagemProps | undefined>(undefined);
 
