@@ -10,7 +10,6 @@ export default function CarrosselHomepage() {
 
     const lista = [
         "/capa-nahid2.png",
-        "/T3-E262.png",
         "/T3-E292.png",
         "/mathias-tiffany-capa2.png",
         "/imagensFigma/capa-nahid.png",
@@ -81,7 +80,10 @@ function RecipienteBordasLaterais() {
 function LayoutSlidePrincipal() {
     return (
         <div className={styles.slide_principal}>
-
+            
+            <div className={styles.ornamentos_carrossel}>
+                <figure className={styles.ornamento_relative} />
+            </div>
             <div className={styles.borda_slide2} />
 
             <img className={styles.side_bl} src="/imagensFigma/crystal-botao-esquerda.svg" alt="#"></img>

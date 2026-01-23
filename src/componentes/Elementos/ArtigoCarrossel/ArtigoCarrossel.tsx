@@ -17,41 +17,70 @@ export default function ArtigoCarrossel() {
             id: 1,
             fundo: '/imagensFigma/slide-investigacao-conjunta.webp',
             sobreposicao: '/imagensFigma/investigacao-conjunta.png',
-            titulo: 'Slide 1',
+            slide: 'investigacao conjunta',
+
+            titulo: (
+                <>
+                    <strong>I</strong>NVESTIGAÇÃO <strong>CO</strong>NJUNTA
+                </>
+            ),
+
             posicao: {
                 top: '-32%',
                 left: '13%',
                 scale: '0.95',
             },
+
             filtro: {
                 angle: '-20deg',
                 start: '#0E0B18 45%',
                 end: '#290d1b91'
-            }
+            },
+
+            paragrafo: 'Unindo forças, conectando descobertas e investigando o paranormal, os jogadores deixam marcas reais no mundo. Desvendando pouco a pouco o que a realidade tem de mais obscuro.',
+
         },
         {
             id: 2,
             fundo: '/imagensFigma/slide-combates-expressivos.webp',
             sobreposicao: '/imagensFigma/combates-expressivos.png',
-            titulo: 'Slide 2',
+            slide: 'combates expressivos',
+
+            titulo: (
+                <>
+                    <strong>COM</strong>BATES <strong>EXP</strong>RESSIVOS
+                </>
+            ),
+
             posicao: {
                 top: '-30%',
-                left: '40%',
+                left: '37.5%',
                 scale: '.97'
             },
+
             filtro: {
                 angle: '20deg',
                 start: '#0E0B18 45%',
                 end: '#290d1b91 70%'
-            }
+            },
+
+            paragrafo: 'Os confrontos no Universo do Medo vão além de rolagens. É possível explorar diferentes estilos de jogo, criar builds únicas e personalizar rituais que refletem quem seu personagem é — e até no que ele acredita.',
+
         },
         {
             id: 3,
             fundo: '/imagensFigma/slide-marcas-permanentes.webp',
             sobreposicao: '/imagensFigma/sobreposicao-slide-marcas.webp',
-            titulo: 'Slide 3',
+            slide: 'marcas permanentes',
+
+            titulo: (
+                <>
+                    <strong>M</strong>ARCAS <strong>P</strong>ERMANENTES
+                </>
+            ),
+
             posicao: {
-                top: '-44.5%',
+                top: '-46.75%',
                 left: '7%',
                 scale: '.97'
             },
@@ -60,38 +89,52 @@ export default function ArtigoCarrossel() {
                 angle: '-35deg',
                 start: '#0E0B18 50%',
                 end: '#290d1b91 90%'
-            }
+            },
+
+            paragrafo: 'Algumas escolhas não podem ser desfeitas. Certas decisões atravessam campanhas, redefinem eventos e ficam gravadas para sempre na história do Universo do Medo.',
+
         },
 
         {
             id: 4,
             fundo: '/imagensFigma/slide-influencia-mutua.webp',
-            sobreposicao: '/imagensFigma/sobreposicao-influencia.webp',
-            titulo: 'Slide 3',
+            sobreposicao: '/imagensFigma/sobreposicao-influencia2.webp',
+            slide: 'influencia mutua',
+
+            titulo: (
+                <>
+                    <strong>I</strong>NFLUÊNCIA <strong>M</strong>ÚTUA
+                </>
+            ),
+
             posicao: {
-                top: '-44.5%',
-                left: '7%',
-                scale: '.97'
+                top: '-185%',
+                left: '-72.5%',
+                scale: '.41'
             },
 
             filtro: {
                 angle: '-35deg',
                 start: '#0E0B18 50%',
                 end: '#290d1b91 90%'
-            }
+            },
+
+            paragrafo: 'O Universo do Medo está em constante movimento. Assim como suas ações moldam o mundo, ele também molda seus personagens — afetando decisões, relações e até a forma como o medo se manifesta.',
+
         },
     ];
 
 
     const settings: Settings = {
+        fade: true,
         dots: true,
-        dotsClass: `slick-dots ${styles.dots}`,
+        dotsClass: `slick-dots ${styles.dotsArtigo}`,
         autoplay: false,
         autoplaySpeed: 5500,
         infinite: true,
         speed: 1200,
         slidesToShow: 1,
-        centerMode: true,
+        centerMode: false,
         centerPadding: '0',
 
         nextArrow: (
@@ -142,6 +185,11 @@ export default function ArtigoCarrossel() {
 
                 </div>
 
+                <div key={slideAtivo} className={styles.recipiente_texto_artigo}>
+                    <h3 className={styles.titulo_slide}>{slideAtual.titulo}</h3>
+                    <p className={styles.paragrafo_slide}>{slideAtual.paragrafo}</p>
+                </div>
+
                 <div className={styles.overlayLayer}>
                     {lista[slideAtivo] && lista[slideAtivo].sobreposicao && (
                         <img
@@ -167,7 +215,7 @@ export default function ArtigoCarrossel() {
                                     <img
                                         className={styles.imagem_fundo_carrossel}
                                         src={item.fundo}
-                                        alt={item.titulo}
+                                        alt={item.slide}
                                     />
                                 </div>
                             </div>

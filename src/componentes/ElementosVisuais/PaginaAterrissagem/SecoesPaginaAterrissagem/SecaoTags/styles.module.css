@@ -17,6 +17,7 @@
     /* CONTROLE DE VARIÁVEIS DO TEXTO */
     --centralizacao-titulo: 107.5%;
     --altura-underline-titulo: 52.5%;
+    --posicionamento-texto: translateX(-50%) translateY(-50%) rotate(2deg);
 }
 
 .esquerda_direita {
@@ -37,5 +38,6 @@
 
     /* CONTROLE DE VARIÁVEIS DO TEXTO */
     --centralizacao-titulo: 32.5%;
-    --altura-underline-titulo: 48.5%;
+    --altura-underline-titulo: 43.5%;
+    --posicionamento-texto: translateX(-50%) translateY(-50%) rotate(-2deg);
 }
