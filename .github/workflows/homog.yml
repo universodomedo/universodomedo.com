@@ -1,4 +1,4 @@
-name: Deploy universodomedo.com
+name: Homologation for universodomedo.com
 
 on:
   workflow_run:
