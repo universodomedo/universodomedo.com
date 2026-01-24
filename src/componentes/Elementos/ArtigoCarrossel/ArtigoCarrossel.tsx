@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import BotaoCarrossel from 'Componentes/ElementosVisuais/ElementosCarroseis/BotaoCarrossel/BotaoCarrossel';
 import styles from './styles.module.css'
+import { useState } from 'react';
 import Slider, { Settings } from "react-slick";
 
 
@@ -16,7 +16,7 @@ export default function ArtigoCarrossel() {
         {
             id: 1,
             fundo: '/imagensFigma/slide-investigacao-conjunta.webp',
-            sobreposicao: '/imagensFigma/investigacao-conjunta.png',
+            sobreposicao: '/imagensFigma/investigacao-conjunta.webp',
             slide: 'investigacao conjunta',
 
             titulo: (
@@ -43,7 +43,7 @@ export default function ArtigoCarrossel() {
         {
             id: 2,
             fundo: '/imagensFigma/slide-combates-expressivos.webp',
-            sobreposicao: '/imagensFigma/combates-expressivos.png',
+            sobreposicao: '/imagensFigma/combates-expressivos.webp',
             slide: 'combates expressivos',
 
             titulo: (
@@ -140,13 +140,13 @@ export default function ArtigoCarrossel() {
         nextArrow: (
             <BotaoCarrossel
                 classNameExterno={styles.botao_next}
-                imagemUrl={"/imagensFigma/botao-next.png"}
+                imagemUrl={"/imagensFigma/botao-next.webp"}
             />
         ),
         prevArrow: (
             <BotaoCarrossel
                 classNameExterno={styles.botao_prev}
-                imagemUrl={"/imagensFigma/botao-prev.png"}
+                imagemUrl={"/imagensFigma/botao-prev.webp"}
             />
         ),
 
@@ -172,11 +172,11 @@ export default function ArtigoCarrossel() {
                     } as React.CSSProperties} >
 
                         <figure className={styles.borda_principal}>
-                            <img src="/imagensFigma/borda-artigo-carrossel.png" alt="#" />
+                            <img src="/imagensFigma/borda-artigo-carrossel.webp" alt="#" />
                         </figure>
 
                         <figure className={styles.borda_dourada}>
-                            <img src="/imagensFigma/borda-dourada-artigo-carrossel.png" alt="#" />
+                            <img src="/imagensFigma/borda-dourada-artigo-carrossel.webp" alt="#" />
                         </figure>
 
                         <div className={styles.filtro_slides}></div>
@@ -226,7 +226,7 @@ export default function ArtigoCarrossel() {
 
                     <div className={styles.recipiente_arestas}>
                         <figure className={styles.borda_arestas}>
-                            <img src="/imagensFigma/setas-fundo-carrossel.png" alt="#" />
+                            <img src="/imagensFigma/setas-fundo-carrossel.webp" alt="#" />
                         </figure>
                     </div>
 

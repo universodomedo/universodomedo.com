@@ -19,7 +19,7 @@ export default function ScrollingTag({ direcao, urlImagem, conteudoTexto, classN
 	return (
 		<div className={`${styles.recipiente_individual_scrolling_tag} ${direcao == 'esquerda-direita' ? styles.esquerda_direita : styles.direita_esquerda} ${classNameExterno ?? ''} `}>
 			<div className={styles.recipiente_porta_bmk}>
-				<img className={styles.detalhe_porta_bmk} src="/imagensFigma/detalhe-porta-bmk.png" alt="#" />
+				<img className={styles.detalhe_porta_bmk} src="/imagensFigma/detalhe-porta-bmk.webp" alt="#" />
 				<img className={styles.recipiente_porta_marcador} src="/imagensFigma/porta_marcador.png" alt="#" />
 				<div className={styles.mascara_anexo}>
 					<div className={styles.filtro_bmk}></div>
@@ -29,7 +29,7 @@ export default function ScrollingTag({ direcao, urlImagem, conteudoTexto, classN
 			<a href="#">
 				<div className={styles.recipiente_marca_pagina}>
 
-					<img src="/imagensFigma/marca-pagina2.png" alt="#" />
+					<img src="/imagensFigma/marca-pagina2.webp" alt="#" />
 
 					<div className={styles.recipiente_textos}>
 						<h3 >{conteudoTexto.titulo}</h3>

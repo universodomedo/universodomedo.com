@@ -24,8 +24,8 @@ export default function SecaoPrincipal() {
                         <h2 className={styles.texto_secao_principal}>Enfrente seus demônios internos e desvende os segredos da Realidade</h2>
                     </div>
                     <a className={styles.recipiente_botao_papel} href="#" target="_self" rel="#">
-                        <img className={styles.fundo_botao_papel} src="/imagensFigma/botao-jogue-agora.png" alt="botão de papel" />
-                        <img className={styles.seta_botao_papel} src="/imagensFigma/seta-jogue-agora.png" alt="#"/>
+                        <img className={styles.fundo_botao_papel} src="/imagensFigma/botao-jogue-agora.webp" alt="botão de papel" />
+                        <img className={styles.seta_botao_papel} src="/imagensFigma/seta-jogue-agora.webp" alt="#"/>
                         <p className={styles.texto_botao_papel}>Entre Agora!</p>
                     </a>
                 </section>

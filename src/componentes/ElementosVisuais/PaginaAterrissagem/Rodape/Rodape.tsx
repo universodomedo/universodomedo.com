@@ -10,7 +10,7 @@ export default function Rodape() {
     return (
         <div id={styles.rodape}>
             <div id={styles.recipiente_png_rodape}>
-                <img src="./imagensFigma/rodape-novo.png" alt="rodapé de temática em papel cartão." />
+                <img src="./imagensFigma/rodape-novo.webp" alt="rodapé de temática em papel cartão." />
             </div>
             <div id={styles.recipiente_redes_sociais}>
                 <Link target='_blank' href='https://discord.universodomedo.com'><FontAwesomeIcon icon={faDiscord} /></Link>
