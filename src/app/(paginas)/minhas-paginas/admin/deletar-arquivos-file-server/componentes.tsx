@@ -12,7 +12,7 @@ import RecipienteImagemPadrao from 'Uteis/ImagemLoader/RecipienteImagemPadrao';
 
 export function DeletarArquivos_Client() {
     return (
-        <ControladorSlot pagina={PAGINAS.minhasPaginas.admin.aventura}>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.admin.deletarArquivosFileServer}>
             <ContextoPaginaSUDODeletarArquivosProvider>
                 <DeletarArquivos_Contexto />
             </ContextoPaginaSUDODeletarArquivosProvider>
@@ -23,11 +23,15 @@ export function DeletarArquivos_Client() {
 function DeletarArquivos_Contexto() {
     const { arquivos } = useContextoPaginaSUDODeletarArquivos();
 
-    return (
-        <div className={styles.recipiente_lista_arquivos}>
-            {arquivos.map(arquivo => <RenderizaArquivo key={arquivo.id} arquivo={arquivo} />)}
-        </div>
-    );
+    return arquivos.length > 0
+        ? (
+            <div className={styles.recipiente_lista_arquivos}>
+                {arquivos.map(arquivo => <RenderizaArquivo key={arquivo.id} arquivo={arquivo} />)}
+            </div>
+        )
+        : (
+            <h4>Nenhum Arquivo encontrado</h4>
+        )
 };
 
 function RenderizaArquivo({ arquivo }: { arquivo: ArquivoDto }) {
