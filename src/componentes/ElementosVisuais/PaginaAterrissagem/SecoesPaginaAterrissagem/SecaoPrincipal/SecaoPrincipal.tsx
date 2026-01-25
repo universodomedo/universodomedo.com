@@ -26,7 +26,7 @@ export default function SecaoPrincipal() {
                     <a className={styles.recipiente_botao_papel} href="#" target="_self" rel="#">
                         <img className={styles.fundo_botao_papel} src="/imagensFigma/botao-jogue-agora.webp" alt="botão de papel" />
                         <img className={styles.seta_botao_papel} src="/imagensFigma/seta-jogue-agora.webp" alt="#"/>
-                        <p className={styles.texto_botao_papel}>Entre Agora!</p>
+                        <p className={styles.texto_botao_papel}>Entre com o Discord</p>
                     </a>
                 </section>
             </div>

@@ -8,7 +8,10 @@ export default function SecaoJogoHomepage() {
 
         <div className={styles.recipiente_secao_jogo}>
             <div className={styles.recipiente_artigos}>
-
+                
+                <div className={styles.recipiente_moldura_tinta}>
+                    <img src="/imagensFigma/tinta-sobreposicao.webp" alt="#" />
+                </div>
 
                 <ConteudoArtigoUm />
 
@@ -22,7 +25,7 @@ export default function SecaoJogoHomepage() {
     )
 
     function ConteudoArtigoUm() {
-        
+
         return <div className={styles.recipiente_artigo_um}>
 
             <div className={styles.moldura_tinta}>

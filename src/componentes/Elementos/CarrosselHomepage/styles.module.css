@@ -214,30 +214,26 @@
 .side_bl,
 .side_br {
     position: absolute;
-    aspect-ratio: 16/9;
-    height: 30%;
+    aspect-ratio: 1/1;
+    height: 27.5%;
     top: 38.69%;
-    opacity: 50%;
+    opacity: 100%;
     z-index: 4;
     transition: 0.3s;
+    pointer-events: none;
 
     filter: drop-shadow(0px 5px 5px rgba(0, 0, 0, 0.801));
 }
 
 .side_bl {
-    top: 35.5%;
-    left: -12.8%;
+    top: 37%;
+    left: -5.6%;
 }
 
 .side_br {
-    top: 35.5%;
-    right: -16.7%;
+    top: 37%;
+    right: -9.05%;
     scale: 0.95;
-}
-
-.side_bl:hover,
-.side_br:hover {
-    opacity: 100%;
 }
 
 .moldura_carrossel {
@@ -280,7 +276,7 @@
 }
 
 .sliderWrapper :global(.slick-slide.slick-active) {
-    transform: scale(1.1);
+    transform: scale(1);
     opacity: 1;
 }
 
@@ -452,7 +448,13 @@
 
     text-align: center;
     pointer-events: auto;
+    background-image: radial-gradient( rgba(255, 255, 255, 0.021), transparent 70%);
 }
+
+.recipiente_texto_carrossel:hover {
+    background-image: radial-gradient( rgba(255, 255, 255, 0.089), transparent 70%);
+}
+
 
 .titulo {
     font-family: var(--fonte-cinzel);
@@ -490,6 +492,7 @@
     text-decoration: none;
     pointer-events: auto;
 }
+
 
 /*Classes do Slick-Slider:
 

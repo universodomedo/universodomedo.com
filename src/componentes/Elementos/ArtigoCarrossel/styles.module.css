@@ -24,7 +24,7 @@
 
 @keyframes slideLeft {
     from {
-        transform: translateX(20%);
+        transform: translateX(15%);
         opacity: 0;
     }
 
@@ -226,7 +226,7 @@
     z-index: 2;
     pointer-events: none;
 
-    animation: slideRight 0.6s cubic-bezier(.34, 1.26, .64, 1);
+    animation: slideRight 1s cubic-bezier(.34, 1.16, .64, 1);
 }
 
 .overlayLayer {
@@ -325,7 +325,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
-    animation: slideLeft 0.6s cubic-bezier(.34, 1.26, .64, 1);
+    animation: slideLeft 1s cubic-bezier(.34, 1.26, .64, 1);
 }
 
 .titulo_slide {
