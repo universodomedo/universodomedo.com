@@ -1,4 +1,4 @@
-name: Deploy universodomedo.com
+name: Prod
 
 on:
   push:
