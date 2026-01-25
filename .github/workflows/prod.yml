@@ -1,14 +1,15 @@
-name: Deploy universodomedo.com 
+name: Deploy universodomedo.com
 
 on:
   push:
     branches:
-      - prod 
+      - prod
 
 jobs:
   deploy:
+    environment: prod
     runs-on: oc1 # Use a GitHub-hosted runner
-    
+
     env:
       NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
       NEXT_PUBLIC_ENV: ${{ secrets.NEXT_PUBLIC_ENV  }}
@@ -16,14 +17,14 @@ jobs:
       NEXT_PUBLIC_IMAGE_API_URL: ${{ secrets.NEXT_PUBLIC_IMAGE_API_URL }}
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        submodules: true  # Ensure submodules are updated
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true # Ensure submodules are updated
 
-    - name: Prepare Docker files
-      run: |
-        cp -r deployment/docker/* ./
+      - name: Prepare Docker files
+        run: |
+          cp -r deployment/docker/* ./
 
-    - name: Build and deploy containers with Docker Compose
-      run: docker compose -p universodomedo up --build -d --force-recreate
+      - name: Build and deploy containers with Docker Compose
+        run: docker compose -p universodomedo up --build -d --force-recreate
