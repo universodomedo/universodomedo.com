@@ -37,6 +37,10 @@ export const ContextoPaginaSUDODeletarArquivosProvider = ({ children }: { childr
     };
 
     async function enviaDelete(arquivo: ArquivoDto) {
+        const confirmou = window.confirm(`Deseja realmente deletar o arquivo ${arquivo.detalheArquivoInterno?.nomeInterno ? `${arquivo.detalheArquivoInterno.nomeInterno}` : `ID [#${arquivo.id}]`}?`);
+
+        if (!confirmou) return;
+
         try {
             await deleteArquivo_SUDO(arquivo);
             await toast.sucesso('Arquivo deletado', `Arquivo ${arquivo.detalheArquivoInterno ? arquivo.detalheArquivoInterno.nomeInterno : ''} foi deletado com sucesso.`, { recarregaPagina: true });
