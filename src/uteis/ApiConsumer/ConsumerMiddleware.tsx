@@ -82,11 +82,20 @@ export async function me_atualizaEstadoItem(idItemPermissao: number, idUsuario: 
     return await useApi<boolean>({ uri: '/permissoes_usuarios/me/me_atualizaEstadoItem', method: 'POST', data: { idItemPermissao, idUsuario, idEstadoPermissao } });
 }
 
+// em algum momento, tem q fazer uma normalização de operações SUDO
+export async function buscaTodosArquivos_SUDO() {
+    return await useApi<ArquivoDto[]>({ uri: '/arquivos/buscaTodosArquivos_SUDO', method: 'GET' });
+}
+
+export async function deleteArquivo_SUDO(arquivo: ArquivoDto) {
+    return await useApi<boolean>({ uri: '/arquivos/deleteArquivo_SUDO', method: 'DELETE', params: { idArquivo: String(arquivo.id) } });
+}
+
 export async function uploadArquivo(file: File, tipoArquivo: TipoArquivoDef) {
     const formData = new FormData();
     formData.append('file', file);
 
-    return await useApi<ArquivoDto>({ uri: `/uploads/upload/${tipoArquivo.id}`, method: 'POST', data: formData });
+    return await useApi<ArquivoDto>({ uri: `/arquivos/upload/${tipoArquivo.id}`, method: 'POST', data: formData });
 }
 
 export async function atualizaAvatarUsuario(idPersonagem: number) {
@@ -95,24 +104,24 @@ export async function atualizaAvatarUsuario(idPersonagem: number) {
 
 export async function obtemFichaDePersonagemEmNivel() {
     // export async function obtemFichaDePersonagemEmNivel(idPersonagem: number) {
-    return await useApi<FichaDeJogo>({ uri: 'fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET' });
-    // return await useApi<FichaPersonagemDto>({ uri: 'fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET', data: { idPersonagem: idPersonagem } });
+    return await useApi<FichaDeJogo>({ uri: '/fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET' });
+    // return await useApi<FichaPersonagemDto>({ uri: '/fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET', data: { idPersonagem: idPersonagem } });
 }
 
 export async function obtemPersonagensComPendencias() {
-    return await useApi<PersonagemDto[]>({ uri: 'personagens/obtemPersonagensComPendencias', method: 'GET' });
+    return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemPersonagensComPendencias', method: 'GET' });
 }
 
 export async function obtemPericiasParaCriacaoFicha() {
-    return await useApi<PericiaDto[]>({ uri: 'pericias/obtemTodos', method: 'GET', params: { criandoFicha: true } });
+    return await useApi<PericiaDto[]>({ uri: '/pericias/obtemTodos', method: 'GET', params: { criandoFicha: true } });
 }
 
 export async function obtemGanhosParaEvoluir(idPersonagem: number) {
-    return await useApi<ObjetoEvolucaoCompleto>({ uri: 'ganhos_nivel_classe/obtemGanhosParaEvoluir', method: 'GET', params: { idPersonagem } });
+    return await useApi<ObjetoEvolucaoCompleto>({ uri: '/ganhos_nivel_classe/obtemGanhosParaEvoluir', method: 'GET', params: { idPersonagem } });
 }
 
 export async function obtemGanhosAposSelecaoClasse(idClasse: number) {
-    return await useApi<ObjetoGanhosEvolucao>({ uri: 'ganhos_nivel_classe/obtemGanhosAposSelecaoClasse', method: 'GET', params: { idClasse } });
+    return await useApi<ObjetoGanhosEvolucao>({ uri: '/ganhos_nivel_classe/obtemGanhosAposSelecaoClasse', method: 'GET', params: { idClasse } });
 }
 
 export async function salvarEvolucaoDoPersonagem(fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo): Promise<boolean> {
@@ -144,7 +153,7 @@ export async function obtemGruposPorMestre(): Promise<GrupoAventuraDto[]> {
 }
 
 export async function obtemUltimaSessoesPostadas(): Promise<DetalheSessaoCanonicaDto[]> {
-    return await useApi<DetalheSessaoCanonicaDto[]>({ uri: 'detalhes_sessao_canonica/obtemUltimaSessoesPostadas', method: 'GET' });
+    return await useApi<DetalheSessaoCanonicaDto[]>({ uri: '/detalhes_sessao_canonica/obtemUltimaSessoesPostadas', method: 'GET' });
 }
 
 export async function encerraGrupoAventura(idGrupoAventura: number): Promise<boolean> {
@@ -152,39 +161,39 @@ export async function encerraGrupoAventura(idGrupoAventura: number): Promise<boo
 }
 
 export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: 'sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
+    return await useApi<boolean>({ uri: '/sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
 }
 
 export async function obtemEstilosSessaoPorParam(ehSessaoUnica: boolean): Promise<EstiloSessaoMestradaDto[]> {
-    return await useApi<EstiloSessaoMestradaDto[]>({ uri: 'estilos_sessao_mestrada/obtemEstilosSessaoPorParam', method: 'GET', params: { ehSessaoUnica } });
+    return await useApi<EstiloSessaoMestradaDto[]>({ uri: '/estilos_sessao_mestrada/obtemEstilosSessaoPorParam', method: 'GET', params: { ehSessaoUnica } });
 }
 
 export async function me_obtemRascunhosPorTipo(sessaoUnica: boolean): Promise<RascunhoDto[]> {
-    return await useApi<RascunhoDto[]>({ uri: 'rascunhos/me/me_obtemRascunhosPorTipo', method: 'GET', params: { sessaoUnica } });
+    return await useApi<RascunhoDto[]>({ uri: '/rascunhos/me/me_obtemRascunhosPorTipo', method: 'GET', params: { sessaoUnica } });
 }
 
 export async function me_obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto | null> {
-    return await useApi<RascunhoDto | null>({ uri: 'rascunhos/me/me_obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
+    return await useApi<RascunhoDto | null>({ uri: '/rascunhos/me/me_obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
 }
 
 export async function me_salvarRascunho(titulo: string, idEstiloSessaoMestrada: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: 'rascunhos/me/me_salvarRascunho', method: 'POST', data: { titulo: titulo, idEstiloSessaoMestrada: idEstiloSessaoMestrada } });
+    return await useApi<boolean>({ uri: '/rascunhos/me/me_salvarRascunho', method: 'POST', data: { titulo: titulo, idEstiloSessaoMestrada: idEstiloSessaoMestrada } });
 }
 
 export async function editaDetalheRascunho(rascunho: RascunhoDto): Promise<boolean> {
-    return await useApi<boolean>({ uri: 'rascunhos/editaDetalheRascunho', method: 'POST', data: { rascunho: rascunho } });
+    return await useApi<boolean>({ uri: '/rascunhos/editaDetalheRascunho', method: 'POST', data: { rascunho: rascunho } });
 }
 
 export async function criaBaseadoEmRascunho(idRascunho: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: 'rascunhos/criaBaseadoEmRascunho', method: 'PUT', data: { idRascunho: idRascunho } });
+    return await useApi<boolean>({ uri: '/rascunhos/criaBaseadoEmRascunho', method: 'PUT', data: { idRascunho: idRascunho } });
 }
 
 export async function obtemDadosEPermissoes(idUsuario: number): Promise<UsuarioDto | null> {
-    return await useApi<UsuarioDto | null>({ uri: 'usuarios/obtemDadosEPermissoes', method: 'GET', params: { idUsuario: idUsuario } });
+    return await useApi<UsuarioDto | null>({ uri: '/usuarios/obtemDadosEPermissoes', method: 'GET', params: { idUsuario: idUsuario } });
 }
 
 export async function buscaRegrasPorTipoArquivo(tipoArquivo: TipoArquivoDef): Promise<RegrasUploadArquivo> {
-    return await useApi<RegrasUploadArquivo>({ uri: 'uploads/buscaRegrasPorTipoArquivo', method: 'GET', params: { idTipoArquivo: tipoArquivo.id } });
+    return await useApi<RegrasUploadArquivo>({ uri: '/arquivos/buscaRegrasPorTipoArquivo', method: 'GET', params: { idTipoArquivo: tipoArquivo.id } });
 }
 
 //
