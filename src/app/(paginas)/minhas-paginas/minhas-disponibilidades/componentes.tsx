@@ -35,7 +35,7 @@ function PaginaMinhaDisponibilidade_Contexto() {
                     <button id={styles.botao_configurar_disponibilidades} onClick={openModal}>Configurar Disponibilidades</button>
                 </div>
                 <div id={styles.recipiente_disponibilidade_inferior}>
-                    {!minhaDisponibilidade?.estaConfigurado ? <h1>Você não possui Disponibilidades configuradas no momento</h1> : <ListagemMinhasDisponibilidades />}
+                    {!minhaDisponibilidade ? <h1>Você não possui Disponibilidades configuradas no momento</h1> : <ListagemMinhasDisponibilidades />}
                 </div>
             </div>
 
