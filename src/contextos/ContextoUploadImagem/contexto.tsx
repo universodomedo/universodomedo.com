@@ -1,20 +1,26 @@
 'use client';
 
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { acceptFromFormatos, FormatoUploadArquivo, isFormatoImagemBitmap, RegrasUploadArquivo, TipoArquivoDef, validarRegrasUploadArquivo } from 'types-nora-api';
+import { acceptFromFormatos, FormatoUploadArquivo, isFormatoImagemBitmap, RegrasUploadArquivo, TipoArquivoDef, TIPOS_ARQUIVO, validarRegrasUploadArquivo } from 'types-nora-api';
 
 import { buscaRegrasPorTipoArquivo, uploadArquivo } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { toast } from 'Hooks/useToast';
+
 import Uploader from 'Componentes/Elementos/Inputs/Uploader/Uploader';
+import UploaderRecursosInternos from 'Componentes/Elementos/Inputs/UploaderRecursosInternos/UploaderRecursosInternos';
+
+type RecursosInternosState = { nome: string; setNome: (valor: string) => void; erro: string | null; };
 
 type ContextoUploadImagemProps = {
     regras: RegrasUploadArquivo;
     accept: string;
+    tipoArquivo: TipoArquivoDef;
     arquivo: File | null;
     previewUrl: string | null;
     erro: string | null;
     isValido: boolean;
     isCarregando: boolean;
+    recursosInternos: RecursosInternosState | null;
     selecionarArquivo: (arquivo: File) => Promise<void>;
     limpar: () => void;
     enviar: () => void;
@@ -57,9 +63,11 @@ export const useContextoUploadImagem = (): ContextoUploadImagemProps => {
 };
 
 export default function RecipienteUploader({ tipoArquivo }: { tipoArquivo: TipoArquivoDef }) {
+    const ComponenteUploader = tipoArquivo.id === TIPOS_ARQUIVO.RECURSOS_INTERNOS.id ? UploaderRecursosInternos : Uploader;
+
     return (
         <CarregadorRegrasUploader tipoArquivo={tipoArquivo}>
-            <Uploader />
+            <ComponenteUploader />
         </CarregadorRegrasUploader>
     );
 };
@@ -104,17 +112,38 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
     const [arquivo, setArquivo] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const [erro, setErro] = useState<string | null>(null);
-    const [isValido, setIsValido] = useState<boolean>(false);
+    const [isArquivoValido, setIsArquivoValido] = useState<boolean>(false);
     const [isCarregando, setIsCarregando] = useState<boolean>(false);
+
+    const isRecursosInternos = tipoArquivo.id === TIPOS_ARQUIVO.RECURSOS_INTERNOS.id;
+
+    const [nomeRecursoInterno, setNomeRecursoInterno] = useState<string>('');
+    const [erroNomeRecursoInterno, setErroNomeRecursoInterno] = useState<string | null>(null);
+
+    const recursosInternos = useMemo<RecursosInternosState | null>(() => {
+        if (!isRecursosInternos) return null;
+        return { nome: nomeRecursoInterno, setNome: (v) => { setNomeRecursoInterno(v); if (erroNomeRecursoInterno) setErroNomeRecursoInterno(null); }, erro: erroNomeRecursoInterno };
+    }, [isRecursosInternos, nomeRecursoInterno, erroNomeRecursoInterno]);
+
+    const nomeRecursoInternoOk = useMemo(() => {
+        if (!isRecursosInternos) return true;
+        return nomeRecursoInterno.trim().length > 0;
+    }, [isRecursosInternos, nomeRecursoInterno]);
+
+    const isValido = useMemo(() => {
+        return isArquivoValido && nomeRecursoInternoOk;
+    }, [isArquivoValido, nomeRecursoInternoOk]);
 
     const previewUrlRef = useRef<string | null>(null);
 
     const limpar = useCallback(() => {
         setArquivo(null);
         setErro(null);
-        setIsValido(false);
+        setIsArquivoValido(false);
         setIsCarregando(false);
         setPreviewUrl(null);
+        setNomeRecursoInterno('');
+        setErroNomeRecursoInterno(null);
         if (previewUrlRef.current) {
             URL.revokeObjectURL(previewUrlRef.current);
             previewUrlRef.current = null;
@@ -176,7 +205,7 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
     const selecionarArquivo = useCallback(async (novoArquivo: File) => {
         setIsCarregando(true);
         setErro(null);
-        setIsValido(false);
+        setIsArquivoValido(false);
 
         const erroValidacao = await validarArquivo(novoArquivo);
         if (erroValidacao) {
@@ -195,12 +224,20 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
 
         setArquivo(novoArquivo);
         setPreviewUrl(url);
-        setIsValido(true);
+        setIsArquivoValido(true);
         setIsCarregando(false);
     }, [validarArquivo, limpar]);
 
+    useEffect(() => {
+        if (!isRecursosInternos) return;
+        if (erroNomeRecursoInterno && nomeRecursoInterno.trim().length > 0) setErroNomeRecursoInterno(null);
+    }, [isRecursosInternos, erroNomeRecursoInterno, nomeRecursoInterno]);
+
     async function enviar(): Promise<void> {
-        if (!isValido) return;
+        if (!isValido) {
+            if (isRecursosInternos && nomeRecursoInterno.trim().length === 0) setErroNomeRecursoInterno('Campo obrigatório.');
+            return;
+        }
 
         if (!arquivo) {
             alert('Selecione um arquivo primeiro');
@@ -208,7 +245,8 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
         }
 
         try {
-            await uploadArquivo(arquivo, tipoArquivo);
+            const nome = isRecursosInternos ? nomeRecursoInterno.trim() : undefined;
+            await uploadArquivo(arquivo, tipoArquivo, nome);
             await toast.sucesso('Upload realizado', `Arquivo ${arquivo.name} foi importado com sucesso.`, { recarregaPagina: true });
         } catch (e) {
             const msg = e instanceof Error ? e.message : 'Falha ao realizar upload';
@@ -217,8 +255,8 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
     };
 
     const value = useMemo<ContextoUploadImagemProps>(() => {
-        return { regras, accept, arquivo, previewUrl, erro, isValido, isCarregando, selecionarArquivo, limpar, enviar };
-    }, [regras, accept, arquivo, previewUrl, erro, isValido, isCarregando, selecionarArquivo, limpar, enviar]);
+        return { regras, accept, tipoArquivo, arquivo, previewUrl, erro, isValido, isCarregando, recursosInternos, selecionarArquivo, limpar, enviar };
+    }, [regras, accept, tipoArquivo, arquivo, previewUrl, erro, isValido, isCarregando, recursosInternos, selecionarArquivo, limpar, enviar]);
 
     return (
         <ContextoUploadImagem.Provider value={value}>

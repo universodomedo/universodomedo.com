@@ -1,0 +1,26 @@
+.recipiente_input_texto_recurso_interno {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+    margin: 0 0 1em 0;
+    width: 30%;
+}
+
+.label_input_recurso_interno {
+    font-size: 0.95em;
+    opacity: 0.9;
+}
+
+.input_recurso_interno {
+    width: 100%;
+    padding: 0.7em 0.8em;
+    border-radius: 0.8em;
+    border: 0.1em solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.erro_recurso_interno {
+    font-size: 0.9em;
+    opacity: 0.9;
+}

@@ -91,9 +91,10 @@ export async function deleteArquivo_SUDO(arquivo: ArquivoDto) {
     return await useApi<boolean>({ uri: '/arquivos/deleteArquivo_SUDO', method: 'DELETE', params: { idArquivo: String(arquivo.id) } });
 }
 
-export async function uploadArquivo(file: File, tipoArquivo: TipoArquivoDef) {
+export async function uploadArquivo(file: File, tipoArquivo: TipoArquivoDef, nomeRecursoInterno?: string) {
     const formData = new FormData();
     formData.append('file', file);
+    if (nomeRecursoInterno) formData.append('nomeRecursoInterno', nomeRecursoInterno);
 
     return await useApi<ArquivoDto>({ uri: `/arquivos/upload/${tipoArquivo.id}`, method: 'POST', data: formData });
 }
