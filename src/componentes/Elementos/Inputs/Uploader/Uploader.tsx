@@ -121,7 +121,7 @@ export default function Uploader() {
             {erro ? <div className={styles.erro} aria-live="polite">{erro}</div> : null}
 
             <div className={styles.acoes}>
-                <button className={styles.botaoPrimario} onClick={() => enviar()} disabled={!isValido || isCarregando}>{isCarregando ? 'Salvando...' : 'Salvar'}</button>
+                <button className={styles.botao_primario} onClick={() => enviar()} disabled={!isValido || isCarregando}>{isCarregando ? 'Salvando...' : 'Salvar'}</button>
             </div>
         </div>
     );

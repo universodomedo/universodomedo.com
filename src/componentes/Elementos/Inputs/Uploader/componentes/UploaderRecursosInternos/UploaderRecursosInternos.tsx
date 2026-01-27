@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import { useContextoUploadImagem } from 'Contextos/ContextoUploadImagem/contexto';
-import Uploader from '../Uploader/Uploader';
+import Uploader from '../../Uploader';
 
 export default function UploaderRecursosInternos() {
     const { recursosInternos, isCarregando } = useContextoUploadImagem();
