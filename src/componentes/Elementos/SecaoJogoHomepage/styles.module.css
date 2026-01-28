@@ -1,0 +1,148 @@
+.recipiente_secao_jogo {
+    margin: 0% auto 0%;
+    width: 100%;
+    height: fit-content;
+
+    background-image: url(/imagensFigma/simbolos.svg);
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: cover;
+    background-attachment: local;
+}
+
+.recipiente_artigos {
+    width: 100%;
+    height: fit-content;
+    position: relative;
+}
+
+.recipiente_moldura_tinta {
+    position: absolute;
+    top: -10%; left: 0%;
+}
+
+.titulo_jogo {
+    position: absolute;
+    top: 0%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 3%;
+    z-index: 2;
+    font-family: var(--fonte-cinzel);
+    font-size: 2.5em;
+    letter-spacing: 5px;
+    color: #B79051;
+}
+
+.titulo_jogo::before {
+    content: "";
+    background-image: url(/imagensFigma/moldura-titulo-secao-direita.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 500px;
+    height: 500px;
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translateX(25%);
+}
+
+.titulo_jogo::after {
+    content: "";
+    background-image: url(/imagensFigma/moldura-titulo-secao-esquerda.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 500px;
+    height: 500px;
+    position: absolute;
+    top: -50%;
+    right: 50%;
+    transform: translateX(-25%);
+}
+
+
+.recipiente_artigo_um {
+    margin: 15% auto 0;
+    width: 70%;
+    height: 800px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.moldura_tinta {
+    width: 31.5%;
+    aspect-ratio: 9/16;
+
+    margin-right: 5%;
+
+    position: relative;
+    overflow: hidden;
+    z-index: 3;
+
+
+    mask-image: url("/imagensFigma/tinta-moldura.svg");
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    mask-position: center;
+    -webkit-mask-image: url("/imagensFigma/tinta-moldura.svg");
+}
+
+.bg_fixed {
+    position: fixed;
+    top: 0%;
+    left: -35%;
+    z-index: 0;
+
+    height: 105%;
+    aspect-ratio: 16/9;
+    background-image: url(/imagensFigma/arte-bunker.webp);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.paragrafos_artigo_um {
+    width: 60%;
+    height: 100%;
+    margin-top: 25%;
+
+
+    display: flex;
+    flex-direction: column;
+    gap: 5%;
+}
+
+.paragrafos_artigo_um p {
+    line-height: 125%;
+    font-family: var(--fonte-junge);
+    font-size: 1.6em;
+    font-weight: 400;
+    letter-spacing: .025rem;
+    line-height: 1.8rem;
+    text-align: justify;
+}
+
+.texto_decorado {
+    font-family: var(--fonte-cinzel-decorative);
+    font-size: 2.5em;
+    color: #B79051;
+}
+
+.strong {
+    font-family: var(--fonte-cinzel-decorative);
+    letter-spacing: .1rem;
+    color: #B79051;
+}
+
+.cinzel_decorative {
+    font-family: var(--fonte-cinzel-decorative);
+    color: #B79051;
+}
+
+.recipiente_artigo_carrossel {
+    height: 1080px;
+    aspect-ratio: 16/9;
+}
+

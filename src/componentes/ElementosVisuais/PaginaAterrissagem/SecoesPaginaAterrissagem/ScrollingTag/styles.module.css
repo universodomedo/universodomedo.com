@@ -1,0 +1,133 @@
+.recipiente_individual_scrolling_tag {
+    margin: auto;
+    width: 100%;
+    height: fit-content;
+    position: relative;
+}
+
+/* INICIO  - CONFIGURAÇÕES PORTA BOOKMARK*/
+.recipiente_porta_bmk {
+    position: absolute;
+    top: -5%;
+    left: 52.5%;
+    z-index: 1;
+    transform: var(--direcao-x-bmk);
+    scale: 0.9;
+    
+}
+
+.detalhe_porta_bmk {
+    position: absolute;
+    top: 51.5%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-42.5%);
+    z-index: 3;
+}
+
+.recipiente_porta_marcador {
+    position: relative;
+}
+
+.mascara_anexo {
+    position: absolute;
+    top: 52%;
+    left: 14%;
+    transform: translateY(-50%);
+    scale: 1;
+
+    background-color: rgba(35, 22, 54, 0.26);
+
+    mask-image: url("/imagensFigma/vetor-etiqueta2.svg");
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    mask-position: center;
+
+    -webkit-mask-image: url("/imagensFigma/vetor-etiqueta2.svg");
+}
+
+.filtro_bmk {
+    width: 150%;
+    aspect-ratio: 16/9;
+    background-image: var(--back-image);
+    position: absolute;
+    background-color: var(--bg-color-effect);
+}
+
+.recipiente_imagem_anexo {
+    width: var(--zoom-url-imagem);
+    aspect-ratio: 16/9;
+
+    transform: var(--top-bottom) var(--left-right);
+    filter: var(--filter-var);
+}
+
+/* INICIO - CONFIGURAÇÕES MARCA PÁGINA*/
+.recipiente_marca_pagina {
+    position: relative;
+    top: 0%;
+    right: 20%;
+    z-index: 0;
+
+    transition: 1s;
+}
+
+.recipiente_marca_pagina:hover {
+    transform: var(--hover-position);
+    transition: 1.5s ease;
+}
+
+.recipiente_marca_pagina img {
+    transform: var(--direcao-x-marcador);
+}
+
+
+.recipiente_textos {
+    position: absolute;
+    z-index: 5;
+    top: 50%;
+    left: var(--centralizacao-titulo);
+    transform: var(--posicionamento-texto);
+
+
+    width: 37.5%;
+    aspect-ratio: 16/8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    opacity: 0;
+    transition: opacity 0.5s ease 0.5s;
+}
+
+.recipiente_textos:hover {
+    opacity: 1;
+    transition: opacity 0.5s ease 0.5s;
+}
+
+.recipiente_textos h3 {
+    margin-bottom: 3%;
+    font-family: var(--fonte-cinzel);
+    font-size: 2.7em;
+    color: #d9d9d9;
+}
+
+.recipiente_textos h3::before {
+    content: "";
+    position: absolute;
+    top: var(--altura-underline-titulo);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 4.5px;
+    background-image: linear-gradient(to right, transparent, #B79051, transparent);
+}
+
+.recipiente_textos p {
+    font-family: var(--fonte-junge);
+    width: 85%;
+    font-size: 1.5rem;
+    color: #d9d9d9;
+}

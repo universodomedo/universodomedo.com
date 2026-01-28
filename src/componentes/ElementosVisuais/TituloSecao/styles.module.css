@@ -1,0 +1,47 @@
+.recipiente_titulo {
+    width: 100%;
+    height: fit-content;
+    text-align: center;
+}
+
+.titulo_jogo {
+    margin: 0 auto 5%;
+    width: fit-content;
+    position: relative;
+    z-index: 2;
+    font-family: var(--fonte-cinzel);
+    font-size: 2.5em;
+    letter-spacing: 5px;
+    color: #B79051;
+}
+
+.cinzel_decorative {
+    font-family: var(--fonte-cinzel-decorative);
+    color: #B79051;
+}
+
+.titulo_jogo::before {
+    content: "";
+    background-image: url(/imagensFigma/moldura-titulo-secao-direita.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 500px;
+    height: 6rem;
+    position: absolute;
+    top: -50%;
+    left: 55%;
+    transform: translateX(25%);
+}
+
+.titulo_jogo::after {
+    content: "";
+    background-image: url(/imagensFigma/moldura-titulo-secao-esquerda.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 500px;
+    height: 6rem;
+    position: absolute;
+    top: -50%;
+    right: 55%;
+    transform: translateX(-25%);
+}
