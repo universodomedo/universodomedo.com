@@ -1,33 +1,25 @@
-import { functionsIn } from 'lodash'
 import styles from './styles.module.css'
+
 import ArtigoCarrossel from '../ArtigoCarrossel/ArtigoCarrossel';
 
 export default function SecaoJogoHomepage() {
-
     return (
-
         <div className={styles.recipiente_secao_jogo}>
             <div className={styles.recipiente_artigos}>
-                
                 <div className={styles.recipiente_moldura_tinta}>
                     <img src="/imagensFigma/tinta-sobreposicao.webp" alt="#" />
                 </div>
-
                 <ConteudoArtigoUm />
-
                 <h2 className={styles.titulo_jogo}><span className={styles.cinzel_decorative}>O</span> JO<span className={styles.cinzel_decorative}>G</span>O</h2>
-
                 <ArtigoCarrossel />
-
             </div>
-
         </div>
-    )
+    );
+};
 
-    function ConteudoArtigoUm() {
-
-        return <div className={styles.recipiente_artigo_um}>
-
+function ConteudoArtigoUm() {
+    return (
+        <div className={styles.recipiente_artigo_um}>
             <div className={styles.moldura_tinta}>
                 <div className={styles.bg_fixed} />
             </div>
@@ -37,7 +29,6 @@ export default function SecaoJogoHomepage() {
                 <p>Aqui, os jogadores assumem o papel de indivíduos comuns — ou quase — diante do desconhecido. Investigando mistérios, enfrentando o medo e tomando decisões que podem alterar não apenas suas próprias histórias, mas o curso da humanidade.</p>
                 <p>O Universo do Medo propõe uma nova forma de viver o RPG de mesa: mais imersiva, contínua e conectada. Cada escolha importa, cada ação deixa marcas, e o que acontece em uma mesa ecoa além dela. Este não é apenas um jogo para ser jogado. É um universo para ser explorado, enfrentado — e, para alguns, transformado.</p>
             </div>
-
-        </div>;
-    }
-}
+        </div>
+    );
+};
