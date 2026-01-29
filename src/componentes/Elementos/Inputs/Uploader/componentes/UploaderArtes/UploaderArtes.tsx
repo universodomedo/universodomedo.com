@@ -1,13 +1,11 @@
 'use client';
 
-import styles from '../../styles.module.css';
-
-import cn from 'classnames';
 import { CAPACIDADES } from 'types-nora-api';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 import Uploader from '../../Uploader';
+import RecipienteAviso from 'Componentes/ElementosVisuais/RecipienteAviso/RecipienteAviso';
 
 export default function UploaderArtes() {
     const { verificarCapacidade } = useContextoAutenticacao();
@@ -18,7 +16,7 @@ export default function UploaderArtes() {
         <>
             <Uploader />
 
-            <div className={cn(styles.caixa_aviso, precisa_aprovar ? styles.caixa_aviso_negativa : styles.caixa_aviso_positiva)}>
+            <RecipienteAviso tipo={precisa_aprovar ? 'negativo' : 'positivo'}>
                 <h2>ATENÇÃO</h2>
 
                 <p>
@@ -27,7 +25,7 @@ export default function UploaderArtes() {
                         : 'Sua imagem será aprovada automaticamente, então confira seu trabalho com atenção'
                     }
                 </p>
-            </div>
+            </RecipienteAviso>
         </>
     );
 };
