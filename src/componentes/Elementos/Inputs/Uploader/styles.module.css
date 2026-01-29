@@ -24,7 +24,7 @@
 
 .dropzone {
     display: flex;
-    width: 60%;
+    width: 100%;
     aspect-ratio: 16 / 9;
     padding: 1em;
     border-radius: 1em;
@@ -138,24 +138,4 @@
 .botao_primario:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-}
-
-.caixa_aviso {
-    display: flex;
-    flex-direction: column;
-    width: fit-content;
-    border-radius: 1em;
-    padding: .9em 1.2em;
-    gap: .6em;
-    font-weight: 600;
-
-    &.caixa_aviso_positiva {
-        background: #1761164F;
-        border: .08em solid #46C60DCC;
-    }
-
-    &.caixa_aviso_negativa {
-        background: #A595407A;
-        border: .08em solid #F1D622CC;
-    }
 }

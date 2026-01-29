@@ -197,6 +197,14 @@ export async function buscaRegrasPorTipoArquivo(tipoArquivo: TipoArquivoDef): Pr
     return await useApi<RegrasUploadArquivo>({ uri: '/arquivos/buscaRegrasPorTipoArquivo', method: 'GET', params: { idTipoArquivo: tipoArquivo.id } });
 }
 
+export async function me_obtemArquivoPendente(): Promise<ArquivoDto | null> {
+    return await useApi<ArquivoDto | null>({ uri: '/arquivos/me/me_obtemArquivoPendente', method: 'GET' });
+}
+
+export async function me_obtemTodosArquivosAprovados(): Promise<ArquivoDto[]> {
+    return await useApi<ArquivoDto[]>({ uri: '/arquivos/me/me_obtemTodosArquivosAprovados', method: 'GET' });
+}
+
 //
 
 export async function desconectar() {
