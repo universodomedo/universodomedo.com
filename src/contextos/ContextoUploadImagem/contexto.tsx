@@ -1,15 +1,32 @@
 'use client';
 
-import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { ComponentType, createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { acceptFromFormatos, FormatoUploadArquivo, isFormatoImagemBitmap, RegrasUploadArquivo, TipoArquivoDef, TIPOS_ARQUIVO, validarRegrasUploadArquivo } from 'types-nora-api';
 
-import { buscaRegrasPorTipoArquivo, uploadArquivo } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { buscaRegrasPorTipoArquivo, me_upload } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { toast } from 'Hooks/useToast';
 
 import Uploader from 'Componentes/Elementos/Inputs/Uploader/Uploader';
-import UploaderRecursosInternos from 'Componentes/Elementos/Inputs/UploaderRecursosInternos/UploaderRecursosInternos';
+import UploaderRecursosInternos from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderRecursosInternos/UploaderRecursosInternos';
+import UploaderArtes from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderArtes/UploaderArtes';
 
 type RecursosInternosState = { nome: string; setNome: (valor: string) => void; erro: string | null; };
+
+type UploaderComponent = ComponentType;
+
+type TipoArquivoId = (typeof TIPOS_ARQUIVO)[keyof typeof TIPOS_ARQUIVO]['id'];
+
+const UPLOADER_DEFAULT: UploaderComponent = Uploader;
+
+const UPLOADER_POR_TIPO: Partial<Record<TipoArquivoId, UploaderComponent>> = {
+    [TIPOS_ARQUIVO.RECURSOS_INTERNOS.id]: UploaderRecursosInternos,
+    [TIPOS_ARQUIVO.IMAGEM_ESPECIAL_ARTISTA.id]: UploaderArtes,
+    // outros tipos específicos aqui...
+};
+
+export function resolveUploaderPorTipo(tipoArquivo: TipoArquivoDef): UploaderComponent {
+    return UPLOADER_POR_TIPO[tipoArquivo.id as TipoArquivoId] ?? UPLOADER_DEFAULT;
+}
 
 type ContextoUploadImagemProps = {
     regras: RegrasUploadArquivo;
@@ -63,7 +80,7 @@ export const useContextoUploadImagem = (): ContextoUploadImagemProps => {
 };
 
 export default function RecipienteUploader({ tipoArquivo }: { tipoArquivo: TipoArquivoDef }) {
-    const ComponenteUploader = tipoArquivo.id === TIPOS_ARQUIVO.RECURSOS_INTERNOS.id ? UploaderRecursosInternos : Uploader;
+    const ComponenteUploader = resolveUploaderPorTipo(tipoArquivo);
 
     return (
         <CarregadorRegrasUploader tipoArquivo={tipoArquivo}>
@@ -246,7 +263,7 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
 
         try {
             const nome = isRecursosInternos ? nomeRecursoInterno.trim() : undefined;
-            await uploadArquivo(arquivo, tipoArquivo, nome);
+            await me_upload(arquivo, tipoArquivo, nome);
             await toast.sucesso('Upload realizado', `Arquivo ${arquivo.name} foi importado com sucesso.`, { recarregaPagina: true });
         } catch (e) {
             const msg = e instanceof Error ? e.message : 'Falha ao realizar upload';

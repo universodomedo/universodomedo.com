@@ -34,7 +34,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     const [usuarioLogado, setUsuarioLogado] = useState<UsuarioDto | null>(null);
     const [variaveisAmbiente, setVariaveisAmbiente] = useState<VariavelAmbienteDto[]>([]);
     const [numeroPendenciasPersonagem, setNumeroPendenciasPersonagem] = useState(0);
-    const [capacidadesConcedidas, setCapacidadesConcedidas] = useState<Record<Capacidade, true>>({} as Record<Capacidade, true>);
+    const [capacidadesConcedidas, setCapacidadesConcedidas] = useState<Record<number, true>>({} as Record<number, true>);
     const [carregando, setCarregando] = useState(true);
     const [cadastroPermitido, setCadastroPermitido] = useState(false);
 
@@ -50,14 +50,14 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
             dbgAuth(`checkAuth OK`, { usuarioId: response?.usuarioLogado?.id ?? null });
             setUsuarioLogado(response.usuarioLogado);
             setVariaveisAmbiente(response.variaveisAmbiente);
-            setCapacidadesConcedidas((response.capacidadesConcedidas ?? {}) as Record<Capacidade, true>);
+            setCapacidadesConcedidas((response.capacidadesConcedidas ?? {}) as Record<number, true>);
             setNumeroPendenciasPersonagem(response.pendenciasDePersonagem);
             setCadastroPermitido(response.cadastroPermitido === true);
         } catch (_error) {
             dbgAuth(`checkAuth ERROR`, _error);
             setUsuarioLogado(null);
             setVariaveisAmbiente([]);
-            setCapacidadesConcedidas({} as Record<Capacidade, true>);
+            setCapacidadesConcedidas({} as Record<number, true>);
             setNumeroPendenciasPersonagem(0);
             setCadastroPermitido(false);
         } finally {
@@ -66,7 +66,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
         }
     };
 
-    const verificarCapacidade = (capacidade: Capacidade): boolean => !carregando && !!usuarioLogado && (capacidadesConcedidas[CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_CAPACIDADES] === true || capacidadesConcedidas[capacidade] === true);
+    const verificarCapacidade = (capacidade: Capacidade): boolean => !carregando && !!usuarioLogado && (capacidadesConcedidas[CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_CAPACIDADES.id] === true || capacidadesConcedidas[capacidade.id] === true);
 
     if (getValorVariavelAmbiente(variaveisAmbiente, 'ESTADO_MANUTENCAO') && !verificarCapacidade(CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_MODO_MANUTENÇÃO)) return (<h1>Estamos em manutenção, entre em contato com a Direção do Universo do Medo</h1>);
 
