@@ -7,6 +7,7 @@ import { ContextoPaginaPersonagensProvider, useContextoPaginaPersonagens } from 
 import { RegistrarMenuLayoutDinamico } from 'Layouts/MenuLayoutDinamico';
 import PaginaPersonagem from 'Componentes/PaginaPersonagem/PaginaPersonagem';
 import ListaAcoesPersonagens from 'Componentes/ElementosDeMenu/ListaAcoesPersonagens/page';
+import { PaginaInicialPersonagens } from 'Componentes/Elementos/AvisosDePersonagensEFichas/AvisosDePersonagensEFichas';
 
 export function PaginaPersonagens_Client({ idPersonagem }: { idPersonagem: number | null; }) {
     function EmbrulhoPersonagens({ children }: { children: React.ReactNode }) { return <ContextoPaginaPersonagensProvider idPersonagemInicial={idPersonagem}>{children}</ContextoPaginaPersonagensProvider>; };
@@ -31,8 +32,4 @@ function PaginaPersonagens_Contexto() {
     const { personagemSelecionado } = useContextoPaginaPersonagens();
 
     return personagemSelecionado ? <PaginaPersonagem /> : <PaginaInicialPersonagens />;
-};
-
-function PaginaInicialPersonagens() {
-    return (<></>);
 };

@@ -9,6 +9,7 @@ import { ContextoPaginaArtistaMinhasImagensProvider, useContextoPaginaArtistaMin
 import RecipienteImagemPadrao from 'Uteis/ImagemLoader/RecipienteImagemPadrao';
 
 export function PaginaArtista_MinhasImagens_Client() {
+    console.log('?1');
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.artista.minhasImagens}>
             <ContextoPaginaArtistaMinhasImagensProvider>
@@ -24,7 +25,7 @@ function PaginaArtista_MinhasImagens_Contexto() {
     return arquivos.length > 0
         ? (
             <div className={styles.recipiente_lista_arquivos}>
-                {arquivos.map(arquivo => <RecipienteImagemPadrao src={arquivo.caminhoArquivo} />)}
+                {arquivos.map(arquivo => <RecipienteImagemPadrao key={arquivo.id} src={arquivo.caminhoArquivo} />)}
             </div>
         )
         : (

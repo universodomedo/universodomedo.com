@@ -6,6 +6,8 @@
     padding: .9em 1.2em;
     gap: .6em;
     font-weight: 600;
+    text-align: center;
+    align-items: center;
 
     &.caixa_aviso_positiva {
         background: #1761164F;
@@ -15,5 +17,10 @@
     &.caixa_aviso_negativa {
         background: #A595407A;
         border: .08em solid #F1D622CC;
+    }
+
+    & button {
+        width: fit-content;
+        padding: .4em;
     }
 }

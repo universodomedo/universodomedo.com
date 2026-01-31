@@ -1,6 +1,9 @@
+'use client';
+
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { PaginaInicialPersonagens } from 'Componentes/Elementos/AvisosDePersonagensEFichas/AvisosDePersonagensEFichas';
 
 export function PaginaJogador_Client() {
     return (
@@ -11,5 +14,5 @@ export function PaginaJogador_Client() {
 };
 
 function PaginaJogador_Slot() {
-    return (<></>);
+    return <PaginaInicialPersonagens />;
 };
