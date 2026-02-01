@@ -1,6 +1,7 @@
 import styles from './styles.module.css';
 
-import { EtapaGanhoEvolucao_Classes, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_Classes } from 'Contextos/ContextoEdicaoFicha/classes';
 
 import Image from 'next/image';
 import Slider from "react-slick";

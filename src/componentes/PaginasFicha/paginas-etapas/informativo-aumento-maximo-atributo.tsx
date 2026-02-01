@@ -1,6 +1,7 @@
 'use client';
 
-import { EtapaGanhoEvolucao_ValorMaxAtributo, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_ValorMaxAtributo } from 'Contextos/ContextoEdicaoFicha/classes';
 
 export default function InformativoAumentoMaximoAtributo() {
     const { ganhos } = useContextoEdicaoFicha();

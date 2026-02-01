@@ -44,5 +44,5 @@ export function ListaPersonagens() {
 };
 
 function DetalheClasseENivel({ ficha }: { ficha: FichaPersonagemDto }) {
-    return (<h2>{`${ficha.fichaDeJogo?.classe.nome} - ${ficha.nivel.nomeVisualizacao}`}</h2>);
+    return (<h2>{`${ficha.ficha.fichaDeJogo?.classe.nome} - ${ficha.nivel.nomeVisualizacao}`}</h2>);
 };

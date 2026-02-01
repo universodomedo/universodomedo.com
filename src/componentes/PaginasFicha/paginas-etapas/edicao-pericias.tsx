@@ -2,14 +2,14 @@
 
 import styles from '../styles.module.css';
 
-import { PatentePericiaDto, PericiaDto } from 'types-nora-api';
-import { EtapaGanhoEvolucao_Pericias, GanhosEvolucao, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
-
+import React, { ReactNode } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { PatentePericiaDto, PericiaDto } from 'types-nora-api';
+
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_Pericias, GanhosEvolucao } from 'Contextos/ContextoEdicaoFicha/classes';
 import { TooltipEvolucao_Atributo, TooltipEvolucao_Pericia, TooltipEvolucao_PatentePericia, TooltipEvolucao_PontosDePericiaLivreNessaPericia } from './componentes-edicao/tooltips-edicao';
-import { ReactNode } from 'react';
-import React from 'react';
 
 export default function EdicaoPericias() {
     const { ganhos } = useContextoEdicaoFicha();

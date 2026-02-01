@@ -2,11 +2,12 @@
 
 import styles from '../styles.module.css';
 
-import { EtapaGanhoEvolucao_Atributos, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
-import { AtributoFicha } from 'types-nora-api';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { AtributoFicha } from 'types-nora-api';
+
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_Atributos } from 'Contextos/ContextoEdicaoFicha/classes';
 import { TooltipEvolucao_Atributo } from './componentes-edicao/tooltips-edicao';
 import { CorpoEstatistica } from './componentes-edicao/exibicao-estatistica';
 

@@ -87,6 +87,10 @@ export async function buscaTodosArquivos_SUDO() {
     return await useApi<ArquivoDto[]>({ uri: '/arquivos/buscaTodosArquivos_SUDO', method: 'GET' });
 }
 
+export async function deleteArquivo_PorPath_SUDO(pathRelativo: string) {
+    return await useApi<boolean>({ uri: '/arquivos/deleteArquivo_PorPath_SUDO', method: 'DELETE', params: { pathRelativo: pathRelativo } });
+}
+
 export async function deleteArquivo_SUDO(arquivo: ArquivoDto) {
     return await useApi<boolean>({ uri: '/arquivos/deleteArquivo_SUDO', method: 'DELETE', params: { idArquivo: String(arquivo.id) } });
 }

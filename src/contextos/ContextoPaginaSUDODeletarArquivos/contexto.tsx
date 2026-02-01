@@ -44,7 +44,7 @@ export const ContextoPaginaSUDODeletarArquivosProvider = ({ children }: { childr
         try {
             await deleteArquivo_SUDO(arquivo);
             await toast.sucesso('Arquivo deletado', `Arquivo ${arquivo.detalheArquivoInterno ? arquivo.detalheArquivoInterno.nomeInterno : ''} foi deletado com sucesso.`, { recarregaPagina: true });
-        } catch (e) { await toast.erro('Falha ao realizar upload', e instanceof Error ? e.message : 'Falha ao realizar upload'); }
+        } catch (e) { await toast.erro('Falha ao deletar arquivo', e instanceof Error ? e.message : 'Falha ao deletar arquivo'); }
     };
 
     useEffect(() => {

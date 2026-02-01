@@ -1,0 +1,6 @@
+.recipiente_chaves_criacao_personagem {
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+    align-items: center;
+}

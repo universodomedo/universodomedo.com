@@ -4,7 +4,8 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 import Link from 'next/link'; // pra alterar esse Link por LinkInterno, vai ter q alterar a estrutura de EtapaGanhoEvolucao para receber PAGINAS
 import { InfoCircledIcon } from '@radix-ui/react-icons'
 
-import { EtapaGanhoEvolucao_Pericias, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_Pericias } from 'Contextos/ContextoEdicaoFicha/classes';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
 const JanelaNotificacao = forwardRef((props, ref) => {

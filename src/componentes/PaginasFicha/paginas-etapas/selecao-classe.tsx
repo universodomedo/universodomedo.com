@@ -4,7 +4,8 @@ import styles from '../styles.module.css';
 
 import { PAGINAS } from 'types-nora-api';
 
-import { EtapaGanhoEvolucao_Classes, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_Classes } from 'Contextos/ContextoEdicaoFicha/classes';
 import CarrosselClasses from 'Componentes/Elementos/CarrosselClasses/CarrosselClasses';
 import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 

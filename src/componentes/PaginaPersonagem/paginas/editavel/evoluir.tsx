@@ -1,5 +1,3 @@
-import PaginaEvolucaoPersonagem from "Componentes/PaginaPersonagem/componentes/EdicaoFicha/page";
+import EvolucaoFicha from "Componentes/PaginasFicha/EvolucaoFicha/EvolucaoFicha";
 
-export default function PaginaEditavel_Evoluir() {
-    return <PaginaEvolucaoPersonagem />;
-};
+export default function PaginaEditavel_Evoluir() { return <EvolucaoFicha /> };
