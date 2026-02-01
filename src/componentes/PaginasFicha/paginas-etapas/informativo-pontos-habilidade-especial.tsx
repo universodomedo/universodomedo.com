@@ -1,6 +1,7 @@
 'use client';
 
-import { EtapaGanhoEvolucao_HabilidadesEspeciais, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_HabilidadesEspeciais } from 'Contextos/ContextoEdicaoFicha/classes';
 
 export default function InformativoPontosHabilidadeEspecial() {
     const { ganhos } = useContextoEdicaoFicha();

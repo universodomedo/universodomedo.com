@@ -50,7 +50,7 @@ export const ContextoPaginaArtistaAdicionarImagemProvider = () => {
     if (carregando) return <div>{carregando}</div>;
 
     return (
-        <ContextoPaginaArtistaAdicionarImagem.Provider value={{ }}>
+        <ContextoPaginaArtistaAdicionarImagem.Provider value={{}}>
             {existeArquivoPendente
                 ? <ImagemPendente arquivoPendente={arquivoPendente} />
                 : <RecipienteUploader tipoArquivo={TIPOS_ARQUIVO.IMAGEM_ESPECIAL_ARTISTA} />

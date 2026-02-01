@@ -4,7 +4,8 @@ import styles from '../styles.module.css';
 
 import { PAGINAS } from 'types-nora-api';
 
-import { EtapaGanhoEvolucao_Classes, EtapaGanhoEvolucao_ValorMaxAtributo, EtapaGanhoEvolucao_Estatisticas, EtapaGanhoEvolucao_HabilidadesEspeciais, EtapaGanhoEvolucao_Atributos, EtapaGanhoEvolucao_Pericias, EtapaGanhoEvolucao_HabilidadesParanormais, EtapaGanhoEvolucao_HabilidadesElementais, GanhosEvolucao, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_Classes, EtapaGanhoEvolucao_ValorMaxAtributo, EtapaGanhoEvolucao_Estatisticas, EtapaGanhoEvolucao_HabilidadesEspeciais, EtapaGanhoEvolucao_Atributos, EtapaGanhoEvolucao_Pericias, EtapaGanhoEvolucao_HabilidadesParanormais, EtapaGanhoEvolucao_HabilidadesElementais, GanhosEvolucao } from 'Contextos/ContextoEdicaoFicha/classes';
 import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 import { pluralize } from 'Uteis/UteisTexto/pluralize';
 

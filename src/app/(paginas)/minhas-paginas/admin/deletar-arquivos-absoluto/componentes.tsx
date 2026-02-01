@@ -19,13 +19,17 @@ export function DeletarArquivosAbsoluto_Client() {
 };
 
 function DeletarArquivos_Contexto() {
-    const { } = useContextoPaginaSUDODeletarArquivosAbsoluto();
+    const { caminhoArquivo, onChangeCaminhoArquivo, podeExecutarDelete, executaDelete } = useContextoPaginaSUDODeletarArquivosAbsoluto();
 
     return (
-        <RecipienteAviso tipo={'negativo'}>
-            <h2>Atenção! Reconfirmar por conta e risco o arquivo a ser deletado</h2>
+        <>
+            <RecipienteAviso tipo={'negativo'}>
+                <h2>Atenção! Reconfirmar por conta e risco o arquivo a ser deletado</h2>
 
+                <input className={styles.input_text} type="text" value={caminhoArquivo} onChange={onChangeCaminhoArquivo} placeholder="Ex: /RecursosInternos/.webp" />
+            </RecipienteAviso>
 
-        </RecipienteAviso>
+            <button onClick={executaDelete} disabled={!podeExecutarDelete}>Deletar</button>
+        </>
     );
 };

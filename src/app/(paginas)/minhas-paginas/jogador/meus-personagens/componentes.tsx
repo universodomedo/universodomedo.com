@@ -4,7 +4,7 @@ import { PAGINAS } from "types-nora-api";
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
 import { ContextoListagemPersonagensProvider } from 'Contextos/ContextoListagemPersonagens/contexto';
-import { PaginaInicialPersonagens } from 'Componentes/Elementos/AvisosDePersonagensEFichas/AvisosDePersonagensEFichas';
+import { AvisosDePersonagensEFichas } from 'Componentes/Elementos/AvisosDePersonagensEFichas/AvisosDePersonagensEFichas';
 import { PaginaListagemPersonagens_Contexto } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/PersonagensEmListagem/page.tsx'
 
 export function PaginaMeusPersonagens_Client() {
@@ -20,7 +20,7 @@ export function PaginaMeusPersonagens_Client() {
 export function PaginaMeusPersonagens_Context() {
     return (
         <>
-            <PaginaInicialPersonagens />
+            <AvisosDePersonagensEFichas />
             <PaginaListagemPersonagens_Contexto />
         </>
     );

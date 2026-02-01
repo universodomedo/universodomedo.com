@@ -1,6 +1,7 @@
 'use client';
 
-import { EtapaGanhoEvolucao_HabilidadesElementais, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_HabilidadesElementais } from 'Contextos/ContextoEdicaoFicha/classes';
 
 export default function EdicaoHabilidadesElementais() {
     const { ganhos } = useContextoEdicaoFicha();

@@ -2,7 +2,8 @@
 
 import styles from '../styles.module.css';
 
-import { EtapaGanhoEvolucao_Estatisticas, GanhosEvolucao, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_Estatisticas, GanhosEvolucao } from 'Contextos/ContextoEdicaoFicha/classes';
 import { CorpoEstatistica } from './componentes-edicao/exibicao-estatistica';
 
 export default function EdicaoEstatisticas() {

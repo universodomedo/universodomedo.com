@@ -2,7 +2,7 @@ import styles from './styles.module.css';
 
 import RecipienteAviso from 'Componentes/ElementosVisuais/RecipienteAviso/RecipienteAviso';
 
-export function PaginaInicialPersonagens() {
+export function AvisosDePersonagensEFichas() {
 
 
     return (

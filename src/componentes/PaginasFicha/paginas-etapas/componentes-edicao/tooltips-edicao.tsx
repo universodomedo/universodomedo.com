@@ -1,6 +1,7 @@
 import styles from '../../styles.module.css';
 
-import { GanhosEvolucao, useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { GanhosEvolucao } from 'Contextos/ContextoEdicaoFicha/classes';
 import { AtributoDto, EstatisticaDanificavelDto, PatentePericiaDto, PericiaDto } from 'types-nora-api';
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
 import { ReactNode } from 'react';
