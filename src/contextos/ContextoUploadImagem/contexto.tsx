@@ -41,6 +41,7 @@ type ContextoUploadImagemProps = {
     selecionarArquivo: (arquivo: File) => Promise<void>;
     limpar: () => void;
     enviar: () => void;
+    isEnviando: boolean;
 };
 
 // deveria estar reutilizando de mimeFromFormato (types-nora-api)
@@ -134,6 +135,7 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
     const [erro, setErro] = useState<string | null>(null);
     const [isArquivoValido, setIsArquivoValido] = useState<boolean>(false);
     const [isCarregando, setIsCarregando] = useState<boolean>(false);
+    const [isEnviando, setIsEnviando] = useState<boolean>(false);
 
     const isRecursosInternos = tipoArquivo.id === TIPOS_ARQUIVO.RECURSOS_INTERNOS.id;
 
@@ -254,6 +256,8 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
     }, [isRecursosInternos, erroNomeRecursoInterno, nomeRecursoInterno]);
 
     async function enviar(): Promise<void> {
+        if (isEnviando) return;
+
         if (!isValido) {
             if (isRecursosInternos && nomeRecursoInterno.trim().length === 0) setErroNomeRecursoInterno('Campo obrigatório.');
             return;
@@ -264,6 +268,8 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
             return;
         }
 
+        setIsEnviando(true);
+
         try {
             const nome = isRecursosInternos ? nomeRecursoInterno.trim() : undefined;
             await me_upload(arquivo, tipoArquivo, nome);
@@ -271,12 +277,14 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
         } catch (e) {
             const msg = e instanceof Error ? e.message : 'Falha ao realizar upload';
             await toast.erro('Falha ao realizar upload', msg);
+        } finally {
+            setIsEnviando(false);
         }
     };
 
     const value = useMemo<ContextoUploadImagemProps>(() => {
-        return { regras, accept, tipoArquivo, arquivo, previewUrl, erro, isValido, isCarregando, recursosInternos, selecionarArquivo, limpar, enviar };
-    }, [regras, accept, tipoArquivo, arquivo, previewUrl, erro, isValido, isCarregando, recursosInternos, selecionarArquivo, limpar, enviar]);
+        return { regras, accept, tipoArquivo, arquivo, previewUrl, erro, isValido, isCarregando, recursosInternos, selecionarArquivo, limpar, enviar, isEnviando };
+    }, [regras, accept, tipoArquivo, arquivo, previewUrl, erro, isValido, isCarregando, recursosInternos, selecionarArquivo, limpar, enviar, isEnviando]);
 
     return (
         <ContextoUploadImagem.Provider value={value}>

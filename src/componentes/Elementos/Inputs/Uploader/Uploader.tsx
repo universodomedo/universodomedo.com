@@ -52,7 +52,7 @@ function gerarRegrasTexto(regras: RegrasUploadArquivo) {
 }
 
 export default function Uploader() {
-    const { regras, accept, previewUrl, erro, isValido, isCarregando, selecionarArquivo, limpar, enviar } = useContextoUploadImagem();
+    const { regras, accept, previewUrl, erro, isValido, isCarregando, selecionarArquivo, limpar, enviar, isEnviando } = useContextoUploadImagem();
     const [isDragOver, setIsDragOver] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -121,7 +121,7 @@ export default function Uploader() {
             {erro ? <div className={styles.erro} aria-live="polite">{erro}</div> : null}
 
             <div className={styles.acoes}>
-                <button className={styles.botao_primario} onClick={() => enviar()} disabled={!isValido || isCarregando}>{isCarregando ? 'Salvando...' : 'Salvar'}</button>
+                <button className={styles.botao_primario} onClick={() => enviar()} disabled={!isValido || isCarregando || isEnviando}>{isCarregando ? 'Salvando...' : 'Salvar'}</button>
             </div>
         </div>
     );
