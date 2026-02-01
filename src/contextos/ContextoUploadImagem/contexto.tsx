@@ -43,8 +43,11 @@ type ContextoUploadImagemProps = {
     enviar: () => void;
 };
 
+// deveria estar reutilizando de mimeFromFormato (types-nora-api)
 function formatoFromFile(file: File): FormatoUploadArquivo | null {
     if (file.type === 'image/webp') return 'webp';
+    if (file.type === 'image/svg+xml') return 'svg';
+    if (file.type === 'image/png') return 'png';
     return null;
 };
 
