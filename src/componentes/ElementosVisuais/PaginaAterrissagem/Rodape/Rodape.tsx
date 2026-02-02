@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-brands-svg-icons";
 
-import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
+import RecipienteArquivoInterno from "Uteis/ImagemLoader/RecipienteArquivoInterno";
 
 export default function Rodape() {
     return (
         <div id={styles.rodape}>
-            <div id={styles.recipiente_svg_rodape}>
-                <ElementoSVG src={"/imagensFigma/rodape.svg"} />
+            <div id={styles.recipiente_png_rodape}>
+                <RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__RODAPE'}/>
             </div>
             <div id={styles.recipiente_redes_sociais}>
                 <Link target='_blank' href='https://discord.universodomedo.com'><FontAwesomeIcon icon={faDiscord} /></Link>

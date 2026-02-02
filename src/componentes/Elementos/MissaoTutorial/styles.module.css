@@ -1,0 +1,166 @@
+/* nao sei qual era o objetivo aqui, mas ta dando erro no build. Troquei pro q ta no global */
+/* @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap'); */
+
+/* :root {--cinzel-decorative-regular: "Cinzel Decorative", serif;} */
+
+.recipiente_secao_tutorial {
+    width: 100%;
+    height: fit-content;
+
+    margin: auto;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    z-index: 0;
+}
+
+.recipiente_card_missao {
+    width: 100%;
+    height: fit-content;
+    position: relative;
+    top: 0%; left: 0%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.recipiente_card_tutorial {
+    width: 100%;
+    height: 50.5rem;
+    position: relative;
+}
+
+.recipiente_background_tinta {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 0;
+}
+
+.recipiente_fundo_card {
+    width: 50%;
+    height: fit-content;
+    position: absolute;
+    top: 37.5%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 1;
+
+
+    text-align: center;
+}
+
+img.fundo_card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.recipiente_fundo_card::before {
+    content: '';
+    width: 55rem;
+    height: 55rem;
+    background-image: var(--moldura);
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 76.25%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 3;
+}
+
+.recipiente_fundo_card::after {
+    content: '';
+    width: 20rem;
+    height: 20rem;
+    background-image: var(--ornamento);
+    background-size: contain;
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 35.25%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 3;
+}
+
+.recipiente_textos_tutorial {
+    position: relative;
+    top: 8%;
+    left: 50%; transform: translateX(-50%);
+    z-index: 3;
+    width: 40.5%;
+    aspect-ratio: 16/9;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+    letter-spacing: .02rem;
+    font-family: var(--fonte-cinzel);
+}
+
+.titulo_missao {
+    position: relative;
+    margin-bottom: 1em;
+    font-size: 3.75rem;
+    letter-spacing: .5rem;
+}
+
+.paragrafo_missao {
+    font-size: 2rem;
+    line-height: 125%;
+}
+
+.titulo_missao::after {
+    content: '';
+    width: 30rem;
+    height: .45rem;
+    background-image: linear-gradient(to right, #b7905100, #B79051, #b7905100);
+    background-repeat: no-repeat;
+    position: absolute;
+    bottom: -20.5%; left: 50%; transform: translateX(-50%);
+    z-index: 3;
+}
+
+.strong_titulo {
+    font-family: var(--fonte-cinzel-decorative);
+    font-weight: 700;
+}
+
+.strong {
+    font-family: var(--fonte-cinzel-decorative);
+    font-weight: 400;
+}
+
+.recipiente_botao_card {
+    position: absolute;
+    bottom: -32.5%; left: 28.5%;
+    transition: .1s ease-out;
+}
+
+.recipiente_botao_card:hover {
+    transform: scale(0.9);
+
+    transition: .2s ease-in;
+}
+
+.botao_card {
+    position: relative;
+}
+
+.texto_botao_card {
+    position: absolute;
+    top: 27.5%; left: 50%; transform: translate(-50%);
+    z-index: 3;
+
+    font-size: 2.25rem;
+}

@@ -54,7 +54,7 @@ function ConteudoSwiperEsquerda() {
                     <ItensMenuSwiperEsquerda />
                     <div id={styles.recipiente_icones_swiper_esquerda}>
                         <div id={styles.recipiente_configuracoes}>
-                            {estaAutenticado && <DivClicavel onClick={logout}><h2>Desconectar</h2></DivClicavel>}
+                            {/* {estaAutenticado && <DivClicavel onClick={logout}><h2>Desconectar</h2></DivClicavel>} */}
                         </div>
                         <div id={styles.recipiente_icones_redes_sociais}>
                             <Link target='_blank' href='https://discord.universodomedo.com'><FontAwesomeIcon icon={faDiscord} /></Link>

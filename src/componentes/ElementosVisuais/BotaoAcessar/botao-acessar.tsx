@@ -1,21 +1,22 @@
 import styles from './styles.module.css';
 
-import { PAGINAS, UsuarioDto } from 'types-nora-api';
+import { ARQUIVOS_INTERNOS, PAGINAS, UsuarioDto } from 'types-nora-api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDoorOpen } from "@fortawesome/free-solid-svg-icons";
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import useLogout from 'Hooks/useLogout';
-import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
 import PersonagemEmVisualizacaoDeSessao from '../ElementosIndividuaisEmListaDeVisualizacao/PersonagemEmVisualizacaoDeSessao/page';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
+import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
 
 export default function ComponenteBotaoAcessar() {
     const { usuarioLogado, estaAutenticado } = useContextoAutenticacao();
 
     return (
         <div className={styles.recipiente_svg_botao_acesso}>
+            <RecipienteArquivoInterno arquivo={"PAGINA_ATERRISSAGEM__BOTAO_ACESSAR__BORDA"} className={styles.camada_1} />
             {estaAutenticado ? <ComponenteBotaoAcessar_Autenticado usuario={usuarioLogado!} /> : <ComponenteBotaoAcessar_NaoAutenticado />}
         </div>
     );
@@ -26,7 +27,6 @@ function ComponenteBotaoAcessar_Autenticado({ usuario }: { usuario: UsuarioDto }
 
     return (
         <>
-            <ElementoSVG className={styles.camada_1} src={"/imagensFigma/luiz/Entalhe.svg"} />
             <div className={styles.avatar_usuario_logado}>
                 <PersonagemEmVisualizacaoDeSessao tipo={'mestre'} usuario={usuario} />
             </div>
@@ -42,11 +42,10 @@ function ComponenteBotaoAcessar_NaoAutenticado() {
 
     return (
         <>
-            <img alt='' src={"/imagensFigma/luiz/entalhe_botao.webp"} className={styles.camada_1} />
             <LinkInterno className={styles.link_botao_acesso} destino={estaAutenticado ? PAGINAS.minhaPagina : PAGINAS.acessar}>
-                <img alt='' src={"/imagensFigma/luiz/fundo_botao.webp"} className={styles.camada_2} />
+                <RecipienteArquivoInterno arquivo={"PAGINA_ATERRISSAGEM__BOTAO_ACESSAR__FUNDO"} className={styles.camada_2} />
             </LinkInterno>
-            <img alt='' src={"/imagensFigma/luiz/botao_acessar.webp"} className={styles.camada_3} />
+            <RecipienteArquivoInterno arquivo={"PAGINA_ATERRISSAGEM__BOTAO_ACESSAR__TEXTO"} className={styles.camada_3} />
         </>
     );
 };
