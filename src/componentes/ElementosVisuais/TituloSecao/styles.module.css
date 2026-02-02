@@ -22,7 +22,7 @@
 
 .titulo_jogo::before {
     content: "";
-    background-image: url(/imagensFigma/moldura-titulo-secao-direita.svg);
+    background-image: var(--moldura-direita);
     background-size: contain;
     background-repeat: no-repeat;
     width: 500px;
@@ -35,7 +35,7 @@
 
 .titulo_jogo::after {
     content: "";
-    background-image: url(/imagensFigma/moldura-titulo-secao-esquerda.svg);
+    background-image: var(--moldura-esquerda);
     background-size: contain;
     background-repeat: no-repeat;
     width: 500px;

@@ -65,7 +65,7 @@
     content: "";
     width: 100%;
     height: 3rem;
-    background-image: url("/imagensFigma/ornamento-topo-carrossel-artigo.webp");
+    background-image: var(--ornamento);
     background-repeat: no-repeat;
     background-size: contain;
     position: absolute;
@@ -144,11 +144,11 @@
     height: 35px;
     scale: 0.9;
     background-color: #644A33;
-    mask-image: url("/imagensFigma/dots-mask.svg");
+    mask-image: var(--dot-carrossel);
     mask-repeat: no-repeat;
     mask-size: contain;
     mask-position: center;
-    -webkit-mask-image: url("/imagensFigma/dots-mask.svg");
+    -webkit-mask-image: var(--dot-carrossel);
 }
 
 .dotsArtigo li button::before {
@@ -175,17 +175,17 @@
 
     animation: ease in 1s cubic-bezier(.34, 1.26, .64, 1);
 
-    mask-image: url("/imagensFigma/dots-mask.svg");
+    mask-image: var(--dot-carrossel);
     mask-repeat: no-repeat;
     mask-size: contain;
     mask-position: center;
-    -webkit-mask-image: url("/imagensFigma/dots-mask.svg");
+    -webkit-mask-image: var(--dot-carrossel);
 }
 
 
 .dotsArtigo :global(li.slick-active)::before {
     content: "";
-    background-image: url("/imagensFigma/dot-active.webp");
+    background-image: var(--dot-ativo);
     background-size: contain;
     background-repeat: no-repeat;
     width: 65px;
@@ -236,11 +236,11 @@
 }
 
 .sliderWrapper :global(.slick-list) {
-    mask-image: url("/imagensFigma/mask-carrossel.svg");
+    mask-image: var(--mascara-carrossel);
     mask-repeat: no-repeat;
     mask-size: contain;
     mask-position: center;
-    -webkit-mask-image: url("/imagensFigma/mask-carrossel.svg");
+    -webkit-mask-image: var(--mascara-carrossel);
 }
 
 
@@ -304,11 +304,11 @@
     scale: 0.85;
     z-index: 1;
 
-    mask-image: url("/imagensFigma/mask-carrossel.svg");
+    mask-image: var(--mascara-carrossel);
     mask-repeat: no-repeat;
     mask-size: contain;
     mask-position: center;
-    -webkit-mask-image: url("/imagensFigma/mask-carrossel.svg");
+    -webkit-mask-image: var(--mascara-carrossel);
 }
 
 /* TEXTOS ARTIGO CARROSSEL */

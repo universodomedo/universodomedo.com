@@ -37,12 +37,12 @@
 
     background-color: rgba(35, 22, 54, 0.26);
 
-    mask-image: url("/imagensFigma/vetor-etiqueta2.svg");
+    mask-image: var(--vetor-etiqueta);
     mask-repeat: no-repeat;
     mask-size: contain;
     mask-position: center;
 
-    -webkit-mask-image: url("/imagensFigma/vetor-etiqueta2.svg");
+    -webkit-mask-image: var(--vetor-etiqueta);
 }
 
 .filtro_bmk {

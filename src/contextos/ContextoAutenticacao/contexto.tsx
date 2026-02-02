@@ -1,15 +1,18 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { type Capacidade, CAPACIDADES, type PaginaTemplate, type UsuarioDto, type VariavelAmbienteDto } from 'types-nora-api';
+import { CAPACIDADES, type PaginaTemplate, type UsuarioDto, type VariavelAmbienteDto } from 'types-nora-api';
 
 import { obtemObjetoAutenticacao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import getValorVariavelAmbiente from 'Helpers/getValorVariavelAmbiente';
 
-function dbgAuth(msg: string, extra?: any) {
-    if (typeof window === "undefined") return;
-    // console.log(`[AUTH] ${new Date().toISOString()} ${msg}`, extra ?? "");
+function dbgAuth(msg: string, extra?: unknown) {
+    if (typeof window === 'undefined') return;
+    // console.log(`[AUTH] ${new Date().toISOString()} ${msg}`, extra ?? '');
 }
+
+type CapacidadeDef = (typeof CAPACIDADES)[keyof typeof CAPACIDADES];
+type CapacidadeNome = CapacidadeDef['nome'];
 
 interface ContextoAutenticacaoProps {
     checkAuth: (paginaAtualTemplate?: PaginaTemplate | null) => Promise<void>;
@@ -18,7 +21,7 @@ interface ContextoAutenticacaoProps {
     variaveisAmbiente: VariavelAmbienteDto[];
     numeroPendenciasPersonagem: number;
     estaAutenticado: boolean;
-    verificarCapacidade: (capacidade: Capacidade) => boolean;
+    verificarCapacidade: (capacidade: CapacidadeDef) => boolean;
     cadastroPermitido: boolean;
 };
 
@@ -34,39 +37,41 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     const [usuarioLogado, setUsuarioLogado] = useState<UsuarioDto | null>(null);
     const [variaveisAmbiente, setVariaveisAmbiente] = useState<VariavelAmbienteDto[]>([]);
     const [numeroPendenciasPersonagem, setNumeroPendenciasPersonagem] = useState(0);
-    const [capacidadesConcedidas, setCapacidadesConcedidas] = useState<Record<Capacidade, true>>({} as Record<Capacidade, true>);
+    const [capacidadesConcedidas, setCapacidadesConcedidas] = useState<Partial<Record<CapacidadeNome, true>>>({});
     const [carregando, setCarregando] = useState(true);
     const [cadastroPermitido, setCadastroPermitido] = useState(false);
 
     const estaAutenticado = !carregando && !!usuarioLogado;
 
-    useEffect(() => { dbgAuth(`STATE carregando=${carregando} estaAutenticado=${estaAutenticado} usuarioLogado=${usuarioLogado?.id ?? "null"}`); }, [carregando, estaAutenticado, usuarioLogado]);
+    useEffect(() => { dbgAuth(`STATE carregando=${carregando} estaAutenticado=${estaAutenticado} usuarioLogado=${usuarioLogado?.id ?? 'null'}`); }, [carregando, estaAutenticado, usuarioLogado]);
 
     const checkAuth = async (paginaAtualTemplate?: PaginaTemplate | null) => {
-        dbgAuth(`checkAuth START`, { paginaAtualTemplate: paginaAtualTemplate ?? null });
-        
+        dbgAuth('checkAuth START', { paginaAtualTemplate: paginaAtualTemplate ?? null });
+
         try {
             const response = await obtemObjetoAutenticacao(paginaAtualTemplate ?? undefined);
-            dbgAuth(`checkAuth OK`, { usuarioId: response?.usuarioLogado?.id ?? null });
+            dbgAuth('checkAuth OK', { usuarioId: response?.usuarioLogado?.id ?? null });
+
             setUsuarioLogado(response.usuarioLogado);
             setVariaveisAmbiente(response.variaveisAmbiente);
-            setCapacidadesConcedidas((response.capacidadesConcedidas ?? {}) as Record<Capacidade, true>);
+            setCapacidadesConcedidas((response.capacidadesConcedidas ?? {}) as Partial<Record<CapacidadeNome, true>>);
             setNumeroPendenciasPersonagem(response.pendenciasDePersonagem);
             setCadastroPermitido(response.cadastroPermitido === true);
         } catch (_error) {
-            dbgAuth(`checkAuth ERROR`, _error);
+            dbgAuth('checkAuth ERROR', _error);
+
             setUsuarioLogado(null);
             setVariaveisAmbiente([]);
-            setCapacidadesConcedidas({} as Record<Capacidade, true>);
+            setCapacidadesConcedidas({});
             setNumeroPendenciasPersonagem(0);
             setCadastroPermitido(false);
         } finally {
-            dbgAuth(`checkAuth FINALLY -> setCarregando(false)`);
+            dbgAuth('checkAuth FINALLY -> setCarregando(false)');
             setCarregando(false);
         }
     };
 
-    const verificarCapacidade = (capacidade: Capacidade): boolean => !carregando && !!usuarioLogado && (capacidadesConcedidas[CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_CAPACIDADES] === true || capacidadesConcedidas[capacidade] === true);
+    const verificarCapacidade = (capacidade: CapacidadeDef): boolean => !carregando && !!usuarioLogado && (capacidadesConcedidas[CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_CAPACIDADES.nome] === true || capacidadesConcedidas[capacidade.nome] === true);
 
     if (getValorVariavelAmbiente(variaveisAmbiente, 'ESTADO_MANUTENCAO') && !verificarCapacidade(CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_MODO_MANUTENÇÃO)) return (<h1>Estamos em manutenção, entre em contato com a Direção do Universo do Medo</h1>);
 

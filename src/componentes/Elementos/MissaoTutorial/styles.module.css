@@ -1,6 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap');
+/* nao sei qual era o objetivo aqui, mas ta dando erro no build. Troquei pro q ta no global */
+/* @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap'); */
 
-:root {--cinzel-decorative-regular: "Cinzel Decorative", serif;}
+/* :root {--cinzel-decorative-regular: "Cinzel Decorative", serif;} */
 
 .recipiente_secao_tutorial {
     width: 100%;
@@ -65,7 +66,7 @@ img.fundo_card {
     content: '';
     width: 55rem;
     height: 55rem;
-    background-image: url("/imagensFigma/moldura-interna-card.svg");
+    background-image: var(--moldura);
     background-size: contain;
     background-repeat: no-repeat;
     position: absolute;
@@ -79,7 +80,7 @@ img.fundo_card {
     content: '';
     width: 20rem;
     height: 20rem;
-    background-image: url("/imagensFigma/ornamento-card.svg");
+    background-image: var(--ornamento);
     background-size: contain;
     background-repeat: no-repeat;
     position: absolute;
@@ -131,12 +132,12 @@ img.fundo_card {
 }
 
 .strong_titulo {
-    font-family: var(--cinzel-decorative-regular);
+    font-family: var(--fonte-cinzel-decorative);
     font-weight: 700;
 }
 
 .strong {
-    font-family: var(--cinzel-decorative-regular);
+    font-family: var(--fonte-cinzel-decorative);
     font-weight: 400;
 }
 

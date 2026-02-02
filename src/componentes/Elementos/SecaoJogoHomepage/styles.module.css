@@ -3,7 +3,7 @@
     width: 100%;
     height: fit-content;
 
-    background-image: url(/imagensFigma/simbolos.svg);
+    background-image: var(--simbolos-fundo);
     background-repeat: no-repeat;
     background-position: top center;
     background-size: cover;
@@ -36,7 +36,7 @@
 
 .titulo_jogo::before {
     content: "";
-    background-image: url(/imagensFigma/moldura-titulo-secao-direita.svg);
+    background-image: var(--moldura-direita);
     background-size: contain;
     background-repeat: no-repeat;
     width: 500px;
@@ -49,7 +49,7 @@
 
 .titulo_jogo::after {
     content: "";
-    background-image: url(/imagensFigma/moldura-titulo-secao-esquerda.svg);
+    background-image: var(--moldura-esquerda);
     background-size: contain;
     background-repeat: no-repeat;
     width: 500px;
@@ -83,11 +83,11 @@
     z-index: 3;
 
 
-    mask-image: url("/imagensFigma/tinta-moldura.svg");
+    mask-image: var(--fundo-tinta);
     mask-repeat: no-repeat;
     mask-size: contain;
     mask-position: center;
-    -webkit-mask-image: url("/imagensFigma/tinta-moldura.svg");
+    -webkit-mask-image: var(--fundo-tinta);
 }
 
 .bg_fixed {
@@ -98,7 +98,7 @@
 
     height: 105%;
     aspect-ratio: 16/9;
-    background-image: url(/imagensFigma/arte-bunker.webp);
+    background-image: var(--imagem-fundo);
     background-repeat: no-repeat;
     background-size: cover;
 }

@@ -1,22 +1,34 @@
 'use client';
 
-import BotaoCarrossel from 'Componentes/ElementosVisuais/ElementosCarroseis/BotaoCarrossel/BotaoCarrossel';
 import styles from './styles.module.css'
-import { useState } from 'react';
+
+import { CSSProperties, ReactNode, useState } from 'react';
 import Slider, { Settings } from "react-slick";
+import { ArquivoInternoKey } from 'types-nora-api';
 
+import BotaoCarrossel from 'Componentes/ElementosVisuais/ElementosCarroseis/BotaoCarrossel/BotaoCarrossel';
+import { carregaArquivoInterno } from 'Uteis/ImagemLoader/ImagemLoader';
+import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
 
-
+type ArtigoCarrosselItem = {
+    id: number;
+    fundo: ArquivoInternoKey;
+    sobreposicao: ArquivoInternoKey;
+    slide: string;
+    titulo: ReactNode;
+    posicao: Pick<CSSProperties, 'top' | 'left' | 'scale'>;
+    filtro: { angle: string; start: string; end: string; };
+    paragrafo: string;
+};
 
 export default function ArtigoCarrossel() {
-
     const [slideAtivo, setSlideAtivo] = useState(0);
 
-    const lista = [
+    const lista: ArtigoCarrosselItem[] = [
         {
             id: 1,
-            fundo: '/imagensFigma/slide-investigacao-conjunta.webp',
-            sobreposicao: '/imagensFigma/investigacao-conjunta.webp',
+            fundo: 'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__ARTIGO_1__FUNDO',
+            sobreposicao: 'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__ARTIGO_1__SOBREPOSICAO',
             slide: 'investigacao conjunta',
 
             titulo: (
@@ -42,8 +54,8 @@ export default function ArtigoCarrossel() {
         },
         {
             id: 2,
-            fundo: '/imagensFigma/slide-combates-expressivos.webp',
-            sobreposicao: '/imagensFigma/combates-expressivos.webp',
+            fundo: 'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__ARTIGO_2__FUNDO',
+            sobreposicao: 'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__ARTIGO_2__SOBREPOSICAO',
             slide: 'combates expressivos',
 
             titulo: (
@@ -69,8 +81,8 @@ export default function ArtigoCarrossel() {
         },
         {
             id: 3,
-            fundo: '/imagensFigma/slide-marcas-permanentes.webp',
-            sobreposicao: '/imagensFigma/sobreposicao-slide-marcas.webp',
+            fundo: 'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__ARTIGO_3__FUNDO',
+            sobreposicao: 'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__ARTIGO_3__SOBREPOSICAO',
             slide: 'marcas permanentes',
 
             titulo: (
@@ -97,8 +109,8 @@ export default function ArtigoCarrossel() {
 
         {
             id: 4,
-            fundo: '/imagensFigma/slide-influencia-mutua.webp',
-            sobreposicao: '/imagensFigma/sobreposicao-influencia2.webp',
+            fundo: 'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__ARTIGO_4__FUNDO',
+            sobreposicao: 'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__ARTIGO_4__SOBREPOSICAO',
             slide: 'influencia mutua',
 
             titulo: (
@@ -140,13 +152,13 @@ export default function ArtigoCarrossel() {
         nextArrow: (
             <BotaoCarrossel
                 classNameExterno={styles.botao_next}
-                imagemUrl={"/imagensFigma/botao-next.webp"}
+                arquivo={'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__SETA_PROXIMO'}
             />
         ),
         prevArrow: (
             <BotaoCarrossel
                 classNameExterno={styles.botao_prev}
-                imagemUrl={"/imagensFigma/botao-prev.webp"}
+                arquivo={'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__SETA_ANTERIOR'}
             />
         ),
 
@@ -172,14 +184,14 @@ export default function ArtigoCarrossel() {
                     } as React.CSSProperties} >
 
                         <figure className={styles.borda_principal}>
-                            <img src="/imagensFigma/borda-artigo-carrossel.webp" alt="#" />
+                            <RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__BORDA'} />
                         </figure>
 
                         <figure className={styles.borda_dourada}>
-                            <img src="/imagensFigma/borda-dourada-artigo-carrossel.webp" alt="#" />
+                            <RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__BORDA_DOURADA'} />
                         </figure>
 
-                        <div className={styles.filtro_slides}></div>
+                        <div className={styles.filtro_slides} />
 
                     </div>
 
@@ -192,47 +204,29 @@ export default function ArtigoCarrossel() {
 
                 <div className={styles.overlayLayer}>
                     {lista[slideAtivo] && lista[slideAtivo].sobreposicao && (
-                        <img
-                            key={slideAtivo}
-                            className={styles.sobreposicao_slide}
-                            src={lista[slideAtivo].sobreposicao}
-                            alt="#"
-                            style={lista[slideAtivo].posicao}
-                        />
+                        <RecipienteArquivoInterno key={slideAtivo} arquivo={lista[slideAtivo].sobreposicao} className={styles.sobreposicao_slide} alt={lista[slideAtivo].slide} style={lista[slideAtivo].posicao} />
                     )}
-
                 </div>
 
-                <div className={styles.sliderWrapper}>
+                <div className={styles.sliderWrapper} style={{ ['--dot-carrossel' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__DOT' })}")`, ['--dot-ativo' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__DOT_ATIVO' })}")`, ['--mascara-carrossel' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__MASCARA_CARROSSEL' })}")` }}>
 
                     <Slider {...settings}>
                         {lista.map(item => (
-                            <div
-                                key={item.id}
-                                className={styles.recipiente_slides_carrossel}
-                            >
+                            <div key={item.id} className={styles.recipiente_slides_carrossel}>
                                 <div className={styles.recipiente_slides}>
-                                    <img
-                                        className={styles.imagem_fundo_carrossel}
-                                        src={item.fundo}
-                                        alt={item.slide}
-                                    />
+                                    <RecipienteArquivoInterno arquivo={item.fundo} className={styles.imagem_fundo_carrossel} alt={item.slide} />
                                 </div>
                             </div>
                         ))}
                     </Slider>
 
-
-
-                    <div className={styles.recipiente_arestas}>
+                    <div className={styles.recipiente_arestas} style={{ ['--ornamento' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__ORNAMENTO_TOPO" })}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__ESQUERDA" })}")`, ['--moldura-direita' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__DIREITA" })}")` }}>
                         <figure className={styles.borda_arestas}>
-                            <img src="/imagensFigma/setas-fundo-carrossel.webp" alt="#" />
+                            <RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__SETAS_FUNDO'} />
                         </figure>
                     </div>
-
                 </div>
-
             </div>
         </div>
     );
-}
+};

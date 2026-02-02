@@ -35,7 +35,7 @@
   position: absolute;
   inset: 0;
 
-  background-image: url("/imagensFigma/nora-background.webp");
+  background-image: var(--fundo);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -110,7 +110,7 @@ section h1#titulo_secao_principal {
 
 #titulo_secao_principal::after {
   content: "";
-  background-image: url('/imagensFigma/moldura-titulo.svg');
+  background-image: var(--moldura);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
