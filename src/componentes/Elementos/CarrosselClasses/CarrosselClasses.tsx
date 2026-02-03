@@ -1,12 +1,20 @@
 import styles from './styles.module.css';
 
-import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
-import { EtapaGanhoEvolucao_Classes } from 'Contextos/ContextoEdicaoFicha/classes';
 
 import Image from 'next/image';
 import Slider from "react-slick";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { ArquivoInternoKey } from 'types-nora-api';
+
+import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { EtapaGanhoEvolucao_Classes } from 'Contextos/ContextoEdicaoFicha/classes';
+
+type ItensClassesCarrossel = {
+    id: number;
+    nome: string;
+    img: ArquivoInternoKey;
+};
 
 export default function CarrosselClasses() {
     const { ganhos, executaEAtualiza } = useContextoEdicaoFicha();
@@ -29,10 +37,10 @@ export default function CarrosselClasses() {
         );
     };
 
-    const classes = [
-        { id: 2, nome: 'Dominante', img: '/imgClasseCombatente.png' },
-        { id: 3, nome: 'Versátil', img: '/imgClasseEspecialista.png' },
-        { id: 4, nome: 'Marcado', img: '/imgClasseOcultista.png' },
+    const classes: ItensClassesCarrossel[]  = [
+        { id: 2, nome: 'Dominante', img: 'IMAGENS_CLASSES__DOMINANTE' },
+        { id: 3, nome: 'Versátil', img: 'IMAGENS_CLASSES__VERSATIL' },
+        { id: 4, nome: 'Marcado', img: 'IMAGENS_CLASSES__MARCADO' },
     ];
 
     const settings = {

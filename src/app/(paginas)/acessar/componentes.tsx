@@ -10,6 +10,7 @@ import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import RedirecionadorInterno from 'Componentes/Elementos/RedirecionadorInterno/RedirecionadorInterno';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
+import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
 
 export function PaginaAcessar_Client() {
     const { estaAutenticado } = useContextoAutenticacao();
@@ -29,20 +30,16 @@ function PaginaAcessar_Slot() {
     };
 
     return (
-        <div id={styles.recipiente_tela_acessar}>
-            <div id={styles.recipiente_imagem_fundo_acessar}>
-                <Image src={'/imagensFigma/bg-acessar.png'} alt='' fill quality={100} />
-            </div>
+        <div className={styles.recipiente_tela_acessar}>
+            <RecipienteArquivoInterno arquivo={'CARD_ACESSAR'} />
 
-            <div id={styles.recipiente_formulario_acesso}>
-                <Image src={'/imagensFigma/bg-form-acesso.png'} alt='' fill quality={100} />
-                <div id={styles.recipiente_conteudo_formulario_acesso}>
-                    <h1>Acessar</h1>
-                    <div id={styles.recipiente_botao_acesso_discord}>
-                        <FontAwesomeIcon id={styles.botao_acesso_discord} icon={faDiscord} onClick={handleLogin} />
-                    </div>
+            <div className={styles.recipente_adicionais}>
+                <h1>Acessar</h1>
+
+                <div className={styles.recipiente_botao_acesso_discord}>
+                    <FontAwesomeIcon className={styles.botao_acesso_discord} icon={faDiscord} onClick={handleLogin} />
                 </div>
             </div>
         </div>
-    );
+    )
 };

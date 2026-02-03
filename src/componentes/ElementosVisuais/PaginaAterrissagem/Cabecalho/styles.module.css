@@ -70,3 +70,7 @@
     box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.527);
     border-radius: 50px;
 }
+
+.arquivo_logo {
+    width: 100%;
+}

@@ -27,17 +27,6 @@ export default function BarraUsuario() {
                 <div className={styles.recipiente_informacoes_usuario}>
                     <h1>{usuarioLogado.username}</h1>
                 </div>
-                {/* <div className={styles.recipiente_conquistas_usuario}>
-                <div className={styles.recipiente_conquista}>
-                    <Image alt='' src={'/medalha.png'} fill />
-                </div>
-                <div className={styles.recipiente_conquista}>
-                    <Image alt='' src={'/medalha.png'} fill />
-                </div>
-                <div className={styles.recipiente_conquista}>
-                    <Image alt='' src={'/medalha.png'} fill />
-                </div>
-            </div> */}
             </div>
             <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <Modal.Content cabecalho={ { titulo: 'Atualizar Avatar' } }>

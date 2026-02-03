@@ -40,12 +40,15 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     const [carregando, setCarregando] = useState(true);
     const [cadastroPermitido, setCadastroPermitido] = useState(false);
 
+    const [paginaAtualTemplate, setPaginaAtualTemplate] = useState<PaginaTemplate | null>(null);
+
     const estaAutenticado = !carregando && !!usuarioLogado;
 
     useEffect(() => { dbgAuth(`STATE carregando=${carregando} estaAutenticado=${estaAutenticado} usuarioLogado=${usuarioLogado?.id ?? 'null'}`); }, [carregando, estaAutenticado, usuarioLogado]);
 
     const checkAuth = async (paginaAtualTemplate?: PaginaTemplate | null) => {
         dbgAuth('checkAuth START', { paginaAtualTemplate: paginaAtualTemplate ?? null });
+        setPaginaAtualTemplate(paginaAtualTemplate ?? null);
 
         try {
             const response = await obtemObjetoAutenticacao(paginaAtualTemplate ?? undefined);
@@ -72,7 +75,8 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
 
     const verificarCapacidade = (capacidade: CapacidadeDef): boolean => !carregando && !!usuarioLogado && (capacidadesConcedidas[CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_CAPACIDADES.nome] === true || capacidadesConcedidas[capacidade.nome] === true);
 
-    if (getValorVariavelAmbiente(variaveisAmbiente, 'ESTADO_MANUTENCAO') && !verificarCapacidade(CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_MODO_MANUTENÇÃO)) return (<h1>Estamos em manutenção, entre em contato com a Direção do Universo do Medo</h1>);
+    // depois tem que verificar pela pagina acessada (objeto de PAGINAS)
+    if ((paginaAtualTemplate !== '/' && paginaAtualTemplate !== '/acessar') && getValorVariavelAmbiente(variaveisAmbiente, 'ESTADO_MANUTENCAO') && !verificarCapacidade(CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_MODO_MANUTENÇÃO)) return (<h1>Estamos em manutenção, entre em contato com a Direção do Universo do Medo</h1>);
 
     return (
         <ContextoAutenticacao.Provider value={{ checkAuth, usuarioLogado, carregando, variaveisAmbiente, numeroPendenciasPersonagem, estaAutenticado, verificarCapacidade, cadastroPermitido }}>

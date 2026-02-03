@@ -5,16 +5,16 @@ import styles from './styles.module.css';
 import { type JSX } from 'react';
 import { filtrarMenuPorAcesso, MENU_PRINCIPAL, type MenuNode } from 'types-nora-api';
 
-import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
-import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
+import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
 
 export function ItensMenuSwiperEsquerda() {
     const { estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
     const itens = filtrarMenuPorAcesso(MENU_PRINCIPAL, { estaAutenticado, verificarCapacidade, cadastroPermitido });
 
     return (
-        <div id={styles.recipiente_lista}>
+        <div className={styles.recipiente_lista}>
             {itens.map((item, index) => <RenderNode key={`${index}`} node={item} />)}
         </div>
     );
@@ -46,7 +46,7 @@ function ConteudoItemLink({ titulo }: { titulo: string }): JSX.Element {
         <>
             <h3>{titulo}</h3>
             <div className={styles.recipiente_icone_link}>
-                <ElementoSVG src="/imagensFigma/indicador-item-swiper-esquerda.svg" />
+                <RecipienteArquivoInterno arquivo={'SIMBOLO_ITEM_MENU'} />
             </div>
         </>
     );
