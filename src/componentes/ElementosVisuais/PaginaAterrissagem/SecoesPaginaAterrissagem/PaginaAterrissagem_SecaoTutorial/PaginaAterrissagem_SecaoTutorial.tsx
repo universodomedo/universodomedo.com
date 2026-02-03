@@ -4,7 +4,7 @@ import TituloSecao from 'Componentes/ElementosVisuais/TituloSecao/TituloSecao';
 import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
 import { carregaArquivoInterno } from 'Uteis/ImagemLoader/ImagemLoader';
 
-export default function MissaoTutorial() {
+export default function PaginaAterrissagem_SecaoTutorial() {
     return (
         <div className={styles.recipiente_secao_tutorial}>
              <TituloSecao primeiraLetra='T' corpo='UTORIA' ultimaLetra='L'/>

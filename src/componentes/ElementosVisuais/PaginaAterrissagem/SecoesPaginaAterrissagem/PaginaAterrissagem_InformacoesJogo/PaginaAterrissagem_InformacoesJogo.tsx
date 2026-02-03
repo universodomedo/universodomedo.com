@@ -1,8 +1,8 @@
 import styles from './styles.module.css'
 
-import ArtigoCarrossel from '../ArtigoCarrossel/ArtigoCarrossel';
 import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
-import { carregaArquivoInterno } from 'Uteis/ImagemLoader/ImagemLoader';
+import { carregaArquivoInterno, getImageUrlCdn } from 'Uteis/ImagemLoader/ImagemLoader';
+import PaginaAterrissagem_CarrosselArtigos from 'Componentes/ElementosVisuais/PaginaAterrissagem/SecoesPaginaAterrissagem/PaginaAterrissagem_CarrosselArtigos/PaginaAterrissagem_CarrosselArtigos';
 
 export default function SecaoJogoHomepage() {
     return (
@@ -14,11 +14,11 @@ export default function SecaoJogoHomepage() {
 
                 <ConteudoArtigoUm />
 
-                <h2 className={styles.titulo_jogo}>
+                <h2 className={styles.titulo_jogo} style={{ ['--moldura-direita' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__MOLDURA_TITULO_DIREITA" })}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__MOLDURA_TITULO_ESQUERDA" })}")` }}>
                     <span className={styles.cinzel_decorative}>O</span> JO<span className={styles.cinzel_decorative}>G</span>O
                 </h2>
 
-                <ArtigoCarrossel />
+                <PaginaAterrissagem_CarrosselArtigos />
             </div>
         </div>
     );
@@ -26,9 +26,9 @@ export default function SecaoJogoHomepage() {
 
 function ConteudoArtigoUm() {
     return (
-        <div className={styles.recipiente_artigo_um} style={{ ['--moldura-direita' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__MOLDURA_TITULO_DIREITA" })}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__MOLDURA_TITULO_ESQUERDA" })}")` }}>
+        <div className={styles.recipiente_artigo_um} >
             <div className={styles.moldura_tinta} style={{ ['--fundo-tinta' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__FUNDO_TINTA" })}")` }}>
-                <div className={styles.bg_fixed} style={{ ['--imagem-fundo' as never]: `url("https://cdn.universodomedo.com/RecursosPublicos/imagem_especial_artista/049fd99a-5185-45bf-9d9e-f6f863aaff62.webp")` }}/>
+                <div className={styles.bg_fixed} style={{ ['--imagem-fundo' as never]: `url("${getImageUrlCdn('/RecursosPublicos/imagem_especial_artista/8d0bfc82-6f28-446a-b32c-cd1d7352ceda.webp')}")` }}/>
             </div>
 
             <div className={styles.paragrafos_artigo_um}>
