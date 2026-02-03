@@ -110,7 +110,7 @@
 
 .dotsArtigo::before {
     content: "";
-    background-image: url("/imagensFigma/moldura-dots-esquerda.svg");
+    background-image: var(--moldura-esquerda);
     background-size: contain;
     background-repeat: no-repeat;
     width: 500px;
@@ -123,7 +123,7 @@
 
 .dotsArtigo::after {
     content: "";
-    background-image: url("/imagensFigma/moldura-dots-direita.svg");
+    background-image: var(--moldura-direita);
     background-size: contain;
     background-repeat: no-repeat;
     width: 500px;

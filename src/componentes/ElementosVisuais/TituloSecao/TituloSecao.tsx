@@ -8,7 +8,7 @@ type TituloSecaoProps = {
     ultimaLetra?: string;
 };
 
-export default function TituloSecao({primeiraLetra, corpo, ultimaLetra } : TituloSecaoProps) {
+export default function TituloSecao({ primeiraLetra, corpo, ultimaLetra } : TituloSecaoProps) {
     return (
         <div className={styles.recipiente_titulo}>
             <h2 className={styles.titulo_jogo} style={{ ['--moldura-direita' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__MOLDURA_TITULO_DIREITA" })}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__MOLDURA_TITULO_ESQUERDA" })}")` }}>

@@ -6,7 +6,7 @@ import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-bra
 
 import RecipienteArquivoInterno from "Uteis/ImagemLoader/RecipienteArquivoInterno";
 
-export default function Rodape() {
+export default function PaginaAterrissagem_Rodape() {
     return (
         <div id={styles.rodape}>
             <div id={styles.recipiente_png_rodape}>
