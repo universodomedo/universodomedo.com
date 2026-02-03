@@ -209,6 +209,11 @@ export async function me_obtemTodosArquivosAprovados(): Promise<ArquivoDto[]> {
     return await useApi<ArquivoDto[]>({ uri: '/arquivos/me/me_obtemTodosArquivosAprovados', method: 'GET' });
 }
 
+
+export async function rodarTesteEndPoint(): Promise<number> {
+    return await useApi<number>({ uri: '/arquivos/rodarTeste', method: 'GET' })
+}
+
 //
 
 export async function desconectar() {
