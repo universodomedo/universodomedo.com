@@ -1,6 +1,5 @@
 import styles from "./styles.module.css";
 
-import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
 import { carregaArquivoInterno } from "Uteis/ImagemLoader/ImagemLoader";
 import RecipienteArquivoInterno from "Uteis/ImagemLoader/RecipienteArquivoInterno";
 
@@ -9,7 +8,7 @@ export default function SecaoPrincipal() {
         <div id={styles.recipiente_secao_principal}>
             <div id={styles.recipiente_moldura}>
                 <div id={styles.recipiente_moldura_relative}>
-                    <ElementoSVG src={"/imagensFigma/moldura-completa.svg"} />
+                    <RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__SECAO_PRINCIPAL__MOLDURA'} className={styles.arquivo_moldura}/>
                 </div>
             </div>
 
