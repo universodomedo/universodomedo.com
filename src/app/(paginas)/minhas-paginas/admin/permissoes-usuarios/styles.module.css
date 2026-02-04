@@ -1,0 +1,109 @@
+.recipiente_busca_usuarios {
+    width: 35%;
+}
+
+.recipiente_busca_usuarios {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    width: 70%;
+}
+
+.recipiente_usuario_selecionado {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    width: 70%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.conteudo_usuario_selecionado {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    overflow: hidden;
+}
+
+.botao {
+    padding: 0.55em 0.85em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 0.85em;
+    cursor: pointer;
+    color: #D9D9D9;
+}
+
+.botao:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* ===== Header Usuário ===== */
+
+.header_usuario {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.9em;
+    padding: 0.85em;
+    border-radius: 1em;
+    border: 0.08em solid rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(0.45em);
+}
+
+.header_usuario_esquerda {
+    display: flex;
+    align-items: center;
+    gap: 0.85em;
+    min-width: 0;
+}
+
+.header_usuario_avatar {
+    position: relative;
+    width: 3.2em;
+    aspect-ratio: 1;
+    border-radius: 999em;
+    overflow: hidden;
+    border: 0.08em solid rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.05);
+    flex: 0 0 auto;
+}
+
+.header_usuario_textos {
+    display: flex;
+    flex-direction: column;
+    text-align: justify;
+    gap: 0.25em;
+    min-width: 0;
+}
+
+.header_usuario_titulo {
+    font-weight: 800;
+    color: #EAEAEA;
+    opacity: 0.9;
+}
+
+.header_usuario_nome {
+    font-weight: 900;
+    color: #EAEAEA;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 30em;
+}
+
+.header_usuario_id {
+    font-size: 0.9em;
+    opacity: 0.8;
+    color: #D9D9D9;
+}
+
+.header_usuario_direita {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    flex: 0 0 auto;
+}

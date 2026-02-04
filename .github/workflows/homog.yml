@@ -1,0 +1,40 @@
+name: Homologation for universodomedo.com
+
+on:
+  workflow_run:
+    workflows:
+      - Prod
+    types:
+      - completed
+
+concurrency:
+  group: homog-alone
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment: homog
+    runs-on: oc2 # Use a GitHub-hosted runner
+
+    env:
+      NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+      NEXT_PUBLIC_ENV: ${{ secrets.NEXT_PUBLIC_ENV  }}
+      NEXT_PUBLIC_WEBSOCKET_URL: ${{ secrets.NEXT_PUBLIC_WEBSOCKET_URL }}
+      NEXT_PUBLIC_IMAGE_API_URL: ${{ secrets.NEXT_PUBLIC_IMAGE_API_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: homog
+          submodules: recursive # Ensure submodules are updated
+
+      - name: Show environment
+        run: echo ${{ vars.ENVIRONMENT }}
+
+      - name: Prepare Docker files
+        run: |
+          cp -r deployment/docker/* ./
+
+      - name: Build and deploy containers with Docker Compose
+        run: docker compose -p homog-universodomedo up --build -d --force-recreate

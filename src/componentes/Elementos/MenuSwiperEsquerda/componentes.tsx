@@ -1,75 +1,53 @@
 'use client';
 
 import styles from './styles.module.css';
-import { JSX } from 'react';
 
-import Link from 'next/link';
+import { type JSX } from 'react';
+import { filtrarMenuPorAcesso, MENU_PRINCIPAL, type MenuNode } from 'types-nora-api';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
-import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
-
-interface ItemMenu {
-    titulo: string;
-    condicao?: boolean;
-    link?: string;
-    subitens?: ItemMenu[];
-};
+import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
+import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
 
 export function ItensMenuSwiperEsquerda() {
-    const { estaAutenticado, ehMestre, ehAdmin } = useContextoAutenticacao();
-
-    const itensMenu: ItemMenu[] = [
-        {
-            titulo: "Minhas Páginas",
-            subitens: [
-                { titulo: "Jogador", link: "/minhas-paginas/jogador", condicao: estaAutenticado },
-                { titulo: "Disponibilidades", link: "/minhas-paginas/minhas-disponibilidades", condicao: estaAutenticado },
-                { titulo: "Mestre", link: "/minhas-paginas/mestre", condicao: ehMestre },
-                { titulo: "Administrador", link: "/minhas-paginas/admin", condicao: ehAdmin }
-            ]
-        },
-        { titulo: "Personagens", link: "/personagens" },
-        { titulo: "Assistir", link: "/aventuras" },
-        { titulo: "Sessão Ao Vivo", link: "/sessao-aovivo" },
-        { titulo: "Hall", link: "/minha-pagina", condicao: estaAutenticado },
-        { titulo: "Definições", link: "/definicoes" },
-        { titulo: "Dicas", link: "/dicas" }
-    ];
-
-    const renderItem = (item: ItemMenu, key: string): JSX.Element | null => {
-        if (item.condicao === false) return null;
-
-        const subitensPermitidos = item.subitens?.filter(subitem => subitem.condicao);
-
-        const temSubitens = subitensPermitidos && subitensPermitidos.length > 0;
-
-        if (item.link == undefined && !temSubitens) return null;
-
-        return (
-            <div key={key} className={styles.item_menu}>
-                {!item.link ? (
-                    <h3>{item.titulo}</h3>
-                ) : (
-                    <Link href={item.link} className={styles.conteudo_item_menu}>
-                        <h3>{item.titulo}</h3>
-                        <div className={styles.recipiente_icone_link}>
-                            <ElementoSVG src="/imagensFigma/indicador-item-swiper-esquerda.svg" />
-                        </div>
-                    </Link>
-                )}
-
-                {temSubitens && (
-                    <div className={styles.recipiente_subitens}>
-                        {item.subitens!.map((sub, idx) => renderItem(sub, `${key}-${idx}`))}
-                    </div>
-                )}
-            </div>
-        );
-    };
+    const { estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
+    const itens = filtrarMenuPorAcesso(MENU_PRINCIPAL, { estaAutenticado, verificarCapacidade, cadastroPermitido });
 
     return (
-        <div id={styles.recipiente_lista}>
-            {itensMenu.map((item, index) => renderItem(item, `${index}`))}
+        <div className={styles.recipiente_lista}>
+            {itens.map((item, index) => <RenderNode key={`${index}`} node={item} />)}
         </div>
     );
-}
+};
+
+function RenderNode({ node }: { node: MenuNode }): JSX.Element | null {
+    if (node.tipo === 'item') {
+        return (
+            <div className={styles.item_menu}>
+                <LinkInterno destino={node.destino} className={styles.conteudo_item_menu}><ConteudoItemLink titulo={node.titulo} /></LinkInterno>
+            </div>
+        );
+    }
+
+    if (node.itens.length === 0) return null;
+
+    return (
+        <div className={styles.item_menu}>
+            <h3>{node.titulo}</h3>
+            <div className={styles.recipiente_subitens}>
+                {node.itens.map((sub, idx) => (<RenderNode key={`${node.titulo}-${idx}`} node={sub} />))}
+            </div>
+        </div>
+    );
+};
+
+function ConteudoItemLink({ titulo }: { titulo: string }): JSX.Element {
+    return (
+        <>
+            <h3>{titulo}</h3>
+            <div className={styles.recipiente_icone_link}>
+                <RecipienteArquivoInterno arquivo={'SIMBOLO_ITEM_MENU'} />
+            </div>
+        </>
+    );
+};

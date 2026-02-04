@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { AventuraDto, DetalheSessaoCanonicaDto } from 'types-nora-api';
+
 import { obtemAventuraCompleta, obtemAventurasParaAssistir, obtemUltimaSessoesPostadas } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaAventurasProps {

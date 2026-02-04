@@ -1,12 +1,13 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useState } from 'react';
+import { LinkDto, TipoLinkDto } from 'types-nora-api';
 
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import { useContextoCadastroNovoLinkGrupoAventura } from 'Contextos/ContextoCadastroNovoLinkGrupoAventura/contexto';
 import { vinculaLinkDeGrupoAventura } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { LinkDto, TipoLinkDto } from 'types-nora-api';
 
 export function ModalVincularLinkGrupoAventura({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void }) {
     return (

@@ -3,40 +3,43 @@
 import styles from './styles.module.css';
 
 import Link from 'next/link';
-import { EstiloSessao, LinkDto, SessaoDto } from 'types-nora-api';
+import { PAGINAS, EstiloSessao, LinkDto } from 'types-nora-api';
 
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import { ListaAcoesAdmin } from '../componentes';
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { ContextoPaginaAdminSessaoProvider, useContextoPaginaAdminSessao } from 'Contextos/ContextoPaginaAdminSessao/contexto';
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
-import { useContextoCadastroNovoLinkSessao } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 import { ContextoCadastroNovoLinkSessaoProvider } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
+import { useContextoCadastroNovoLinkSessao } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 
-export function AdministrarSessao_Slot({ sessao }: { sessao: SessaoDto; }) {
+export function AdministrarSessao_Client({ idSessao }: { idSessao: number; }) {
     return (
-        <LayoutContextualizado proporcaoConteudo={84}>
-            <LayoutContextualizado.Conteudo hrefPaginaRetorno={`/minhas-paginas/admin/aventura/${sessao.detalheSessaoAventura.grupoAventura.id}`}>
-                <AdministrarSessao_Conteudo sessao={sessao} />
-            </LayoutContextualizado.Conteudo>
-            <LayoutContextualizado.Menu>
-                <ListaAcoesAdmin />
-            </LayoutContextualizado.Menu>
-        </LayoutContextualizado>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.admin.sessao}>
+            <ContextoPaginaAdminSessaoProvider idSessao={idSessao}>
+                <AdministrarSessao_Conteudo />
+            </ContextoPaginaAdminSessaoProvider>
+        </ControladorSlot>
     );
 };
 
-function AdministrarSessao_Conteudo({ sessao }: { sessao: SessaoDto }) {
+function AdministrarSessao_Conteudo() {
+    const { sessao } = useContextoPaginaAdminSessao();
+    useConfigurarLayoutContextualizado({ fecharProps: { tipo: 'href', paginaRetorno: { pagina: PAGINAS.minhasPaginas.admin.aventura, params: { id: String(sessao.detalheSessaoAventura.grupoAventura.id) } }, tituloTooltip: 'Voltar' } });
+
     return (
         <SecaoDeConteudo id={styles.recipiente_detalhes_sessao}>
-            { sessao.estiloSessao == EstiloSessao.SESSAO_DE_AVENTURA
-                ? <SessaoDeAventura sessao={sessao} />
-                : sessao.estiloSessao == EstiloSessao.SESSAO_UNICA_CANONICA || sessao.estiloSessao == EstiloSessao.SESSAO_UNICA_NAO_CANONICA ? <SessaoUnica sessao={sessao} />
-                : <></>
+            {sessao.estiloSessao == EstiloSessao.SESSAO_DE_AVENTURA
+                ? <SessaoDeAventura />
+                : sessao.estiloSessao == EstiloSessao.SESSAO_UNICA_CANONICA || sessao.estiloSessao == EstiloSessao.SESSAO_UNICA_NAO_CANONICA ? <SessaoUnica />
+                    : <></>
             }
         </SecaoDeConteudo>
     );
 };
 
-function SessaoDeAventura({ sessao }: { sessao: SessaoDto }) {
+function SessaoDeAventura() {
+    const { sessao } = useContextoPaginaAdminSessao();
+
     return (
         <ContextoCadastroNovoLinkSessaoProvider sessao={sessao}>
             <div id={styles.recipiente_acoes_aventura}>
@@ -53,7 +56,7 @@ function SessaoDeAventura({ sessao }: { sessao: SessaoDto }) {
     );
 };
 
-function SessaoUnica({ sessao }: { sessao: SessaoDto }) {
+function SessaoUnica() {
     return (
         <></>
     );
@@ -65,7 +68,7 @@ function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
     return (
         <>
             <div id={styles.recipiente_area_video_youtube}>
-                {linkVideo ? (
+                {linkVideo && linkVideo.urlCompleta ? (
                     <Link href={linkVideo.urlCompleta} target='_blank'><p>Tem Vídeo</p></Link>
                 ) : (
                     <button onClick={() => iniciaProcessoVinculoLinkSessao(2)}>Configurar Vídeo</button>
@@ -81,7 +84,7 @@ function AreaPodcastSpotify({ linkPodcast }: { linkPodcast: LinkDto }) {
     return (
         <>
             <div id={styles.recipiente_area_video_youtube}>
-                {linkPodcast ? (
+                {linkPodcast && linkPodcast.urlCompleta ? (
                     <Link href={linkPodcast.urlCompleta} target='_blank'><p>Tem Podcast</p></Link>
                 ) : (
                     <button onClick={() => iniciaProcessoVinculoLinkSessao(4)}>Configurar Podcast</button>

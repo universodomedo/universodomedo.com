@@ -1,16 +1,24 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { PAGINAS } from 'types-nora-api';
 
-import Redirecionador from 'Componentes/Elementos/Redirecionador/Redirecionador.tsx';
-import { verificarPermissao } from 'Helpers/verificarPermissao';
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { ContextoGAMBIARRAProvider, useContextoGAMBIARRA } from 'Contextos/ContextoGAMBIARRA/contexto';
 
-export function LayoutMestre_Slot({ children }: { children: ReactNode }) {
-    const usuarioComPermissao = verificarPermissao(usuario => usuario.perfilMestre.id > 1);
+export function PaginaMestre_Client() {
+    return (
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.mestre}>
+            <ContextoGAMBIARRAProvider>
+                <PaginaMestre_Slot />
+            </ContextoGAMBIARRAProvider>
+        </ControladorSlot>
+    );
+};
 
-    if (usuarioComPermissao === null) return null;
+function PaginaMestre_Slot() {
+    const { rodarTeste } = useContextoGAMBIARRA();
 
-    if (!usuarioComPermissao) return <Redirecionador urlRedirecionar='/' />;
-
-    return children;
+    return (
+        <button onClick={rodarTeste}>Rodar</button>
+    );
 };

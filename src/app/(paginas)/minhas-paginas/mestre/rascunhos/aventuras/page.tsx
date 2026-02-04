@@ -1,10 +1,3 @@
-import { ContextoRascunhosMestreProvider } from "Contextos/ContextoRascunhosMestre/contexto";
-import { RascunhosMestre_Contexto } from "../componentes";
+import { RascunhoAventuraMestre_Client } from "./componentes";
 
-export default function RascunhoAventuraMestre() {
-    return (
-        <ContextoRascunhosMestreProvider ehSessaoUnica={false}>
-            <RascunhosMestre_Contexto />
-        </ContextoRascunhosMestreProvider>
-    );
-};
+export default function RascunhoAventuraMestre() { return <RascunhoAventuraMestre_Client /> };

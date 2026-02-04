@@ -34,9 +34,9 @@ export const ContextoEdicaoRascunhoSessaoUnicaCanonicaProvider = ({ children }: 
     //
 
     const detalheInicial = {
-        idDificuldadeSelecionado: rascunho?.detalheRascunhoSessaoUnica ? rascunho?.detalheRascunhoSessaoUnica.dificuldadeSessao.id : 0,
-        idTipoSelecionado: rascunho?.detalheRascunhoSessaoUnica ? rascunho?.detalheRascunhoSessaoUnica.tipoSessao.id : 0,
-        descricao: rascunho?.detalheRascunhoSessaoUnica ? rascunho?.detalheRascunhoSessaoUnica.descricao : null,
+        idDificuldadeSelecionado: rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.dificuldadeSessao.id : 0,
+        idTipoSelecionado: rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.tipoSessao.id : 0,
+        descricao: rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.descricao : null,
     };
 
     const houveModificacao = idDificuldadeSelecionado !== detalheInicial.idDificuldadeSelecionado || idTipoSelecionado !== detalheInicial.idTipoSelecionado || JSON.stringify(descricao) !== JSON.stringify(detalheInicial.descricao);

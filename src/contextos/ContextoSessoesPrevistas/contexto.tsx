@@ -2,7 +2,8 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { SessaoDto } from 'types-nora-api';
-import { obtemListaProxEpisodioPrevistoPorAventuraEmAndamento } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+
+import { obtemListaSessoesPrevistas } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoSessoesPrevistasProps {
     episodioSeguinte: SessaoDto | null;
@@ -25,7 +26,7 @@ export const ContextoSessoesPrevistasProvider = ({ children }: { children: React
         setCarregando('Buscando Sessões');
 
         try {
-            setListaEpisodiosPrevistos(await obtemListaProxEpisodioPrevistoPorAventuraEmAndamento());
+            setListaEpisodiosPrevistos(await obtemListaSessoesPrevistas());
         } catch {
             setListaEpisodiosPrevistos([]);
         } finally {

@@ -1,11 +1,13 @@
+'use client';
+
 import styles from './styles.module.css';
+
 import React, { useEffect, useRef } from 'react';
-
-import BarraMenu from 'Componentes/ElementosDeJogo/BarraMenu/BarraMenu.tsx';
-
 import Slider from "react-slick";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
+
+import BarraMenu from 'Componentes/ElementosDeJogo/BarraMenu/BarraMenu.tsx';
 
 export default function CarrosselSwiperDireita({ listaPaginas, setPaginaAbertaSwiper, paginaAbertaSwiper }: {
     listaPaginas: { nome: string; componente: React.ReactNode; contexto: () => any; }[],

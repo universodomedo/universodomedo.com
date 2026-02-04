@@ -1,0 +1,30 @@
+#rodape {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    flex: 0 0 0;
+    width: 90%;
+    align-items: center;
+    justify-content: center;
+}
+
+#recipiente_png_rodape {
+    position: relative;
+
+}
+
+#recipiente_redes_sociais {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    bottom: 6%;
+    width: 22%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#recipiente_redes_sociais a {
+    color: #3B3844;
+    width: 14%;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}

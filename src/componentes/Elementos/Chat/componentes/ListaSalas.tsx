@@ -1,10 +1,11 @@
 'use client';
 
 import styles from '../styles.module.css';
+
 import cn from 'classnames';
 
 import { useAppDispatch, useAppSelector } from 'Redux/hooks/useRedux';
-import { selectSalas, selectSalaSelecionadaId } from 'redux/selectors/chatsSelectors';
+import { selectSalas, selectSalaSelecionadaId } from 'Redux/selectors/chatsSelectors';
 import { selecionarSala } from 'Redux/slices/chatsSlice';
 
 export default function ListaSalas() {

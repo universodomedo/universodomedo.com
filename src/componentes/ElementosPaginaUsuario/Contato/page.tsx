@@ -1,26 +1,26 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useState } from 'react';
+import { Eventos_Emite, SOCKET_AcessoUsuario } from 'types-nora-api';
 
-import { SOCKET_AcessoUsuario, SOCKET_EVENTOS } from 'types-nora-api';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
-import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
-
-import useSocketEvent from 'Hooks/useSocketEvent';
-import { useSocketEmit } from 'Hooks/useSocketEmit';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
+import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
+import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+
 
 export default function SecaoContatos() {
     const { usuarioLogado } = useContextoAutenticacao();
     
     const [listaAcessosUsuarios, setListaAcessosUsuarios] = useState<SOCKET_AcessoUsuario[]>([]);
 
-    useSocketEvent(SOCKET_EVENTOS.AcessosUsuarios.receber, (dados: SOCKET_AcessoUsuario[]) => {
-        setListaAcessosUsuarios(dados.filter(acesso => acesso.usuario.id !== usuarioLogado?.id));
+    // console.log(`[CONTATOS] ${new Date().toISOString()} antes emitirUsuariosConectadosAgora`);
+    useEmitWsComDisparoInicial(Eventos_Emite.UsuariosConectados.eventos.emitirUsuariosConectadosAgora, data => {
+        // console.log(`[CONTATOS] ${new Date().toISOString()} dentro emitirUsuariosConectadosAgora`, data);
+        setListaAcessosUsuarios(data.usuariosConectados.filter(acesso => acesso.usuario.id !== usuarioLogado?.id));
     });
-
-    useSocketEmit(SOCKET_EVENTOS.AcessosUsuarios.obter);
 
     const { scrollableProps } = useScrollable();
 
@@ -52,7 +52,7 @@ function Contato({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuario }) {
                 </div>
                 <div>
                     {acessoUsuario.paginaAtual ? (
-                        <span>{acessoUsuario.paginaAtual.nome}</span>
+                        <span>{acessoUsuario.paginaAtual}</span>
                     ) : (
                         <span>Desconectado</span>
                     )}

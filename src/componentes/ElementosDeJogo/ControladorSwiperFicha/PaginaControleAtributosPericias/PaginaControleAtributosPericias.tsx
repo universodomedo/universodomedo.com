@@ -1,13 +1,13 @@
 import styles from './styles.module.css';
 
-import { AtributoFicha, PericiaFicha, SOCKET_EVENTOS } from 'types-nora-api';
+import { AtributoFicha, PericiaFicha } from 'types-nora-api';
 import textoFormatadoParaVisualizacao from 'Uteis/UteisTexto/textoFormatadoParaVisualizacao';
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
 import adicionaSinalEmNumeroParaExibicao from 'Uteis/UteisTexto/adicionaSinalEmNumeroParaExibicao';
 
 import { useContextoFichaPersonagem } from "Contextos/ContextoFichaPersonagem/contexto";
 import { useContextoControleAtributosPericias } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAtributosPericias/contexto';
-import emitSocketEvent from 'Libs/emitSocketEvent';
+// import emitSocketEvent from 'Libs/emitSocketEvent';
 
 export default function PaginaControleAtributosPericias() {
     const { ficha } = useContextoFichaPersonagem();
@@ -68,20 +68,19 @@ function TooltipAtributo({ atributoPersonagem }: { atributoPersonagem: AtributoF
     );
 }
 
-
 function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFicha }) {
     const { abreviar } = useContextoControleAtributosPericias();
     const periciaPorExtenso = textoFormatadoParaVisualizacao(abreviar ? periciaPersonagem.pericia.nomeAbreviado : periciaPersonagem.pericia.nome);
 
-    function enviaTeste(idPericia: number) {
-        emitSocketEvent(SOCKET_EVENTOS.GameEngine.enviarMensagem, { idPericia: idPericia });
-    };
+    // function enviaTeste(idPericia: number) {
+    //     emitSocketEvent(SOCKET_EVENTOS.GameEngine.enviarMensagem, { idPericia: idPericia });
+    // };
 
     return (
         <div className={styles.pericia_personagem}>
             <Tooltip>
                 <Tooltip.Trigger>
-                    <button className={styles.botao_pericia} onClick={() => { enviaTeste(periciaPersonagem.pericia.id); }}>{periciaPorExtenso}</button>
+                    <button className={styles.botao_pericia} onClick={() => { }}>{periciaPorExtenso}</button>
                     {/* <button className={styles.botao_pericia} onClick={() => { periciaPersonagem.realizarTeste(); }}>{periciaPorExtenso}</button> */}
                 </Tooltip.Trigger>
 

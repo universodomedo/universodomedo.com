@@ -1,30 +1,30 @@
 'use client';
 
 import styles from './styles.module.css';
-import { ReactNode } from 'react';
-
-import ElementoSVG from 'Componentes/Elementos/ElementoSVG/ElementoSVG.tsx';
-import { desconectar, obtemObjetoAutenticacao } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
 import Link from 'next/link';
+import { PAGINAS } from 'types-nora-api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-brands-svg-icons";
-import { faUserSecret, faUserTie, faFireFlameCurved, faRightToBracket } from "@fortawesome/free-solid-svg-icons";
 
-import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import cn from 'classnames';
+import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx'
+import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
+import { carregaArquivoInterno } from 'Uteis/ImagemLoader/ImagemLoader';
+import LinkInterno from '../LinkInterno/LinkInterno';
 import { ItensMenuSwiperEsquerda } from './componentes';
-import { DivClicavel } from '../DivClicavel/DivClicavel';
 
 export default function MenuSwiperEsquerda() {
-    const { menuAberto, setMenuAberto, tamanhoReduzido } = useContextoMenuSwiperEsquerda();
+    const { menuAberto, setMenuAberto, tamanhoReduzido, esconderMenu } = useContextoMenuSwiperEsquerda();
+
+    if (esconderMenu) return;
 
     return (
         <>
-            {menuAberto && (<div id={styles.overlay_swiper_esquerda} onClick={() => { setMenuAberto(false) }} />)}
-            <div id={styles.swiper_esquerda} className={`${menuAberto ? styles.aberto : ''}`}>
+            {menuAberto && (<div className={styles.overlay_swiper_esquerda} onClick={() => { setMenuAberto(false) }} />)}
+            <div className={cn(styles.swiper_esquerda, menuAberto && styles.aberto)}>
                 <div className={`${styles.recipiente_botao_swiper_esquerda} ${tamanhoReduzido && !menuAberto ? styles.tamanho_reduzido : ''}`} onClick={() => { setMenuAberto(!menuAberto) }}>
-                    <ElementoSVG src={"/imagensFigma/swiper-esquerda-botao.svg"} />
+                    <RecipienteArquivoInterno arquivo={'MENU_PRINCIPAL__BOTAO_ABRIR'}/>
                 </div>
 
                 <ConteudoSwiperEsquerda />
@@ -34,33 +34,26 @@ export default function MenuSwiperEsquerda() {
 };
 
 function ConteudoSwiperEsquerda() {
-    const { estaAutenticado } = useContextoAutenticacao();
-
-    async function logout() {
-        await obtemObjetoAutenticacao();
-        desconectar();
-        window.location.href = `/`;
-    }
-    
     return (
         <div className={styles.recipiente_conteudo_swiper_esquerda}>
-            <div id={styles.fundo_camada_1} />
-            <div id={styles.fundo_camada_2} />
-            <div id={styles.fundo_camada_3} />
+            <div className={styles.fundo_camada_1} style={{ ['--bg-1' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_1" })}")` }}/>
+            <div className={styles.fundo_camada_2} style={{ ['--bg-2' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_2" })}")` }}/>
+            <div className={styles.fundo_camada_3} style={{ ['--bg-3' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_3" })}")` }}/>
             <div className={styles.conteudo_swiper_esquerda}>
-                <div id={styles.recipiente_moldura_superior}>
-                    <ElementoSVG src={"/imagensFigma/swiper-esquerda-moldura-menu.svg"} />
+                <div className={styles.recipiente_moldura_superior}>
+                    <RecipienteArquivoInterno arquivo={'MENU_PRINCIPAL__MOLDURA'}/>
                 </div>
-                <div id={styles.recipiente_lista_menu}>
+                <div className={styles.recipiente_lista_menu}>
                     <div className={styles.recipiente_logo_swiper_esquerda}>
-                        <Link href={'/'}><ElementoSVG src={"/imagensFigma/logo-cabecalho.svg"} /></Link>
+                        <LinkInterno destino={PAGINAS.home}>
+                            <RecipienteArquivoInterno arquivo={'LOGO'} className={styles.recipiente_arquivo}/>
+                        </LinkInterno>
                     </div>
                     <ItensMenuSwiperEsquerda />
-                    <div id={styles.recipiente_icones_swiper_esquerda}>
-                        <div id={styles.recipiente_configuracoes}>
-                            {estaAutenticado && <DivClicavel onClick={logout}><h2>Desconectar</h2></DivClicavel>}
+                    <div className={styles.recipiente_icones_swiper_esquerda}>
+                        <div className={styles.recipiente_configuracoes}>
                         </div>
-                        <div id={styles.recipiente_icones_redes_sociais}>
+                        <div className={styles.recipiente_icones_redes_sociais}>
                             <Link target='_blank' href='https://discord.universodomedo.com'><FontAwesomeIcon icon={faDiscord} /></Link>
                             <Link target='_blank' href='https://open.spotify.com/show/10qzPjLpugVhzn90ufDBuN'><FontAwesomeIcon icon={faSpotify} /></Link>
                             <Link target='_blank' href='https://youtube.universodomedo.com'><FontAwesomeIcon icon={faYoutube} /></Link>
@@ -68,8 +61,8 @@ function ConteudoSwiperEsquerda() {
                         </div>
                     </div>
                 </div>
-                <div id={styles.recipiente_moldura_inferior}>
-                    <ElementoSVG src={"/imagensFigma/swiper-esquerda-moldura-menu.svg"} />
+                <div className={styles.recipiente_moldura_inferior}>
+                    <RecipienteArquivoInterno arquivo={'MENU_PRINCIPAL__MOLDURA'} />
                 </div>
             </div>
         </div>

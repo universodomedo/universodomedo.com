@@ -17,8 +17,8 @@ export function ListaPersonagens() {
     return (
         <div id={styles.recipiente_lista_personagens}>
             {personagens!.map(personagem => (
-                <SecaoDeConteudo key={personagem.id}>
-                    <CustomLink className={styles.recipiente_personagem} href={`/personagens?${QUERY_PARAMS.PERSONAGEM}=${personagem.id}`}>
+                <SecaoDeConteudo key={personagem.id} className={styles.secao_conteudo_recipiente_personagem}>
+                    <CustomLink className={styles.recipiente_personagem} semDecoracao inlineBlock={false} href={`/personagens?${QUERY_PARAMS.PERSONAGEM}=${personagem.id}`}>
                         <div className={styles.recipiente_avatar_personagem}>
                             <RecipienteImagem src={personagem.caminhoAvatar} />
                         </div>
@@ -44,5 +44,5 @@ export function ListaPersonagens() {
 };
 
 function DetalheClasseENivel({ ficha }: { ficha: FichaPersonagemDto }) {
-    return (<h2>{`${ficha.fichaDeJogo.classe.nome} - ${ficha.nivel.nomeVisualizacao}`}</h2>);
+    return (<h2>{`${ficha.ficha.fichaDeJogo?.classe.nome} - ${ficha.nivel.nomeVisualizacao}`}</h2>);
 };

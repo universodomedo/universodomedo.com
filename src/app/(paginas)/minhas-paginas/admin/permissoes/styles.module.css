@@ -1,0 +1,60 @@
+.recipiente {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    height: 100%;
+    gap: 0.9em;
+}
+
+.botao {
+    padding: 0.55em 0.85em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 0.85em;
+    cursor: pointer;
+    color: #D9D9D9;
+}
+
+.botao:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.footer_acoes {
+    display: flex;
+    justify-content: center;
+    gap: 0.7em;
+    border-radius: 1em;
+}
+
+/* ===== Detalhes (usado pelo renderDetalhesSelecionado) ===== */
+
+.acoes_foco {
+    display: flex;
+    gap: 0.7em;
+}
+
+.detalhes_usuarios {
+    display: flex;
+    flex-direction: row;
+    gap: 0.6em;
+    padding: 0.75em 0.85em;
+    border-radius: 0.85em;
+    border: 0.08em solid rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.detalhes_usuarios_mensagem {
+    opacity: 0.85;
+    color: #D9D9D9;
+}
+
+.avatar_usuario_permitido {
+    position: relative;
+    width: 4em;
+    aspect-ratio: 1;
+}
+
+.recipiente_externo_foco {
+    width: 70%;
+}

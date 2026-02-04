@@ -3,4 +3,8 @@
     backdrop-filter: blur(50px) brightness(.3);
     text-align: start;
     padding: .6% 1%;
+
+    &.secao_conteudo_fit {
+        width: fit-content;
+    }
 }

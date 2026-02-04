@@ -59,13 +59,14 @@ export default async function useApi<T>({ uri, method, data, params }: { uri: st
     if (axios.isAxiosError(error)) {
       const status = error.response?.status;
 
-      if (status === 401 || status === 403) {
-        if (typeof window === "undefined") {
-          redirect("/acessar");
-        } else {
-          window.location.href = "/acessar";
-        }
-      }
+      // comentando pq agora eu vou mostrar no toast as mensagens que vierem
+      // if (status === 401 || status === 403) {
+      //   if (typeof window === "undefined") {
+      //     redirect("/acessar");
+      //   } else {
+      //     window.location.href = "/acessar";
+      //   }
+      // }
 
       throw new Error(error.response?.data?.message || error.message || "Erro ao fazer a requisição à API.");
     }

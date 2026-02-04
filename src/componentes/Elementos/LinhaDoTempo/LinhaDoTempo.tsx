@@ -1,10 +1,11 @@
 'use client';
 
 import styles from './styles.module.css'
-import { useEffect, useRef } from "react";
-import { useResize } from 'Hooks/useResize';
 
+import { useEffect, useRef } from "react";
 import { select } from 'd3-selection';
+
+import { useResize } from 'Hooks/useResize';
 import desenhaElementoEstatico from 'Helpers/D3/desenhaElementoEstatico';
 
 export default function LinhaDoTempo() {

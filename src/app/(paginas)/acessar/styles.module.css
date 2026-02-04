@@ -1,4 +1,4 @@
-#recipiente_tela_acessar {
+.recipiente_tela_acessar {
     display: flex;
     width: 100%;
     height: 100%;
@@ -6,47 +6,31 @@
     justify-content: center;
 }
 
-#recipiente_imagem_fundo_acessar {
-    width: 100%;
-    height: 100%;
+.recipente_adicionais {
     position: absolute;
-}
-
-#recipiente_formulario_acesso {
-    display: flex;
-    position: relative;
-    width: 37%;
-    aspect-ratio: 1.5;
-    justify-content: center;
+    height: 26%;
     align-items: center;
-    margin-bottom: 6%;
-}
-
-#recipiente_conteudo_formulario_acesso {
-    display: flex;
-    flex-direction: column;
-    z-index: 999;
-    row-gap: 8vh;
-    margin-bottom: 11%;
     text-align: center;
-    align-items: center;
 }
 
-#recipiente_conteudo_formulario_acesso h1 {
+.recipente_adicionais h1 {
     font-family: var(--fonte-cinzel-decorative);
 }
 
-#recipiente_botao_acesso_discord {
-    cursor: pointer;
+.recipiente_botao_acesso_discord {
+    position: relative;
     width: 40%;
+    left: 31%;
+    top: 28%;
+    cursor: pointer;
 }
 
-#botao_acesso_discord {
+.botao_acesso_discord {
     color: #7289DA; /* Cor do ícone do Discord */
     cursor: pointer;
     transition: filter 0.3s ease;
 }
 
-#botao_acesso_discord:hover {
+.botao_acesso_discord:hover {
     filter: saturate(2);
 }

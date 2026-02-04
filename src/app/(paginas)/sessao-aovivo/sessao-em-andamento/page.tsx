@@ -1,31 +1,17 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useEffect, useState } from "react";
 
-import { useContextoPerformance } from "Contextos/ContextoPerformace/contexto";
-import { obtemDadosProximaSessao } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
-import { SessaoDto } from 'types-nora-api';
+import { useContextoSessaoEmAndamento } from "Contextos/ContextosPaginaAovivo/ContextoSessaoEmAndamento/contexto";
+import { useContextoPersonagensEmSessao } from "Contextos/ContextosPaginaAovivo/ContextoPersonagensEmSessao/contexto";
 
+import PersonagemEmVisualizacaoDeSessao from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/PersonagemEmVisualizacaoDeSessao/page';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
-export default function PaginaSessao_InicioComSessaoEmAndamento() {
-    const [sessaoEmAndamento, setSessaoEmAndamento] = useState<SessaoDto | null>(null);
-
-    const { setAnimacoesHabilitadas } = useContextoPerformance();
-
-    async function obtemSessaoEmAndamento() {
-        setSessaoEmAndamento(await obtemDadosProximaSessao());
-    };
-
-    useEffect(() => {
-        setAnimacoesHabilitadas(false);
-
-        obtemSessaoEmAndamento();
-    }, []);
-
-    if (!sessaoEmAndamento) return (<div>Carregando Dados Sessão</div>);
-
+export default function PaginaSessao_SessaoEmAndamento() {
+    const { sessaoEmAndamento } = useContextoSessaoEmAndamento();
+    // const { personagensEmSessao } = useContextoPersonagensEmSessao();
+    
     return (
         <div id={styles.recipiente_pagina_sessao_emandamento}>
             <div id={styles.recipiente_espaco_sessao}>
@@ -36,22 +22,24 @@ export default function PaginaSessao_InicioComSessaoEmAndamento() {
                 <div id={styles.recipiente_corpo_sessao}>
                     <div id={styles.recipiente_esquerda_tela_jogo}>
                         <div id={styles.recipiente_nome_aventura}>
-                            <h1>{sessaoEmAndamento.grupoAventura.aventura.titulo}</h1>
+                            <h1>{sessaoEmAndamento!.tituloInteligente.tituloCompleto}</h1>
                         </div>
                         <div id={styles.recipiente_lista_retratos}>
-                            {sessaoEmAndamento.grupoAventura.personagensDaAventura?.map(personagemDaAventura => (
-                                <div key={personagemDaAventura.personagem.id} className={styles.recipiente_retrato}>
-                                    <RecipienteImagem src={personagemDaAventura.personagem.imagemAvatar?.fullPath} />
+                            {sessaoEmAndamento?.dadosGerais?.participantes.map(participante => (
+                                <div key={participante.jogador.id} className={styles.recipiente_retrato}>
+                                    <PersonagemEmVisualizacaoDeSessao tipo={'participante'} participanteSessao={participante} />
                                 </div>
                             ))}
                         </div>
+                        {/* {usuarioLogado && (<PaginaSessao_Mensagens />)} */}
                     </div>
 
                     <div id={styles.recipiente_tela_jogo}>
-                        <RecipienteImagem src={sessaoEmAndamento.grupoAventura.aventura.imagemCapa?.fullPath} />
+                        <RecipienteImagem src={sessaoEmAndamento!.pathCapaInteligente} />
                     </div>
                 </div>
             </div>
+            {/* <IconeFaixaEtaria />s */}
         </div>
     );
 };

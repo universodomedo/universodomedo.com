@@ -1,8 +1,8 @@
 'use client';
 
 import styles from './styles.module.css';
-import React, { useCallback } from "react";
 
+import React from "react";
 import { useEditor } from "@tiptap/react";
 import type { JSONContent } from '@tiptap/react';
 

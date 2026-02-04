@@ -1,30 +1,23 @@
 'use client';
 
 import styles from './styles.module.css';
+
 import { useState } from 'react';
 
-import LayoutContextualizado from "Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado";
-import ListaAcoesMestre from "Componentes/ElementosDeMenu/ListaAcoesMestre/page";
 import { useContextoRascunhosMestre } from "Contextos/ContextoRascunhosMestre/contexto";
 import DetalhesRascunho from "./DetalhesRascunho";
-import { ModalCriacaoRascunho } from 'Componentes/ElementosModais/ModalCriacaoRascunho/ModalCriacaoRascunho';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
-import RascunhoEmVisualizacao from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/RascunhoEmVisualizacao/page';
 import { ContextoCriaRascunhoProvider } from 'Contextos/ContextoCriaRascunho/contexto';
+import { ModalCriacaoRascunho } from 'Componentes/ElementosModais/ModalCriacaoRascunho/ModalCriacaoRascunho';
+import RascunhoEmVisualizacao from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/RascunhoEmVisualizacao/page';
 
 export function RascunhosMestre_Contexto() {
-    const { tituloComponenteConteudo, idRascunhoSelecionado } = useContextoRascunhosMestre();
+    const { idRascunhoSelecionado } = useContextoRascunhosMestre();
 
     return (
-        <LayoutContextualizado proporcaoConteudo={84}>
-            <LayoutContextualizado.Conteudo titulo={tituloComponenteConteudo ?? undefined}>
-                {!idRascunhoSelecionado ? <ListagemRascunhos_Contexto /> : <DetalhesRascunho idRascunhoSelecionado={idRascunhoSelecionado} />}
-            </LayoutContextualizado.Conteudo>
-
-            <LayoutContextualizado.Menu>
-                <ListaAcoesMestre />
-            </LayoutContextualizado.Menu>
-        </LayoutContextualizado>
+        <>
+            {!idRascunhoSelecionado ? <ListagemRascunhos_Contexto /> : <DetalhesRascunho idRascunhoSelecionado={idRascunhoSelecionado} />}
+        </>
     );
 };
 

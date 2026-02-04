@@ -1,0 +1,6 @@
+.recipiente_lista_salas {
+    display: flex;
+    flex-direction: row;
+    width: 85%;
+    padding: 1%;
+}

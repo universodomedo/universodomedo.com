@@ -1,8 +1,8 @@
 'use client';
 
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { GrupoAventuraDto } from 'types-nora-api';
+
 import { obtemGruposPorMestre } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoMestreAventurasProps {
@@ -18,7 +18,6 @@ export const useContextoMestreAventuras = (): ContextoMestreAventurasProps => {
 };
 
 export const ContextoMestreAventurasProvider = ({ children }: { children: React.ReactNode }) => {
-    const { usuarioLogado } = useContextoAutenticacao();
     const [carregando, setCarregando] = useState<string | null>('');
     const [gruposAventurasListadas, setGruposAventurasListadas] = useState<GrupoAventuraDto[] | null>(null);
 
@@ -26,7 +25,7 @@ export const ContextoMestreAventurasProvider = ({ children }: { children: React.
         setCarregando('Buscando Aventura');
 
         try {
-            setGruposAventurasListadas(await obtemGruposPorMestre(usuarioLogado!.id));
+            setGruposAventurasListadas(await obtemGruposPorMestre());
         } catch {
             setGruposAventurasListadas(null);
         } finally {

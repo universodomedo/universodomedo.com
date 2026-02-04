@@ -3,6 +3,7 @@
 import styles from './styles.module.css';
 
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
+
 export default function SecaoPosts() {
     const { scrollableProps } = useScrollable();
 

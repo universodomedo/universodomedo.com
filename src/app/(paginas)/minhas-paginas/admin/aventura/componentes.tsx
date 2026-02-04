@@ -3,40 +3,44 @@
 import styles from './styles.module.css';
 
 import Link from 'next/link';
-import { DetalheSessaoAventuraDto, GrupoAventuraDto, LinkDto } from 'types-nora-api';
+import { DetalheSessaoAventuraDto, LinkDto, PAGINAS } from 'types-nora-api';
 
-import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
-import { ListaAcoesAdmin } from '../componentes';
+import { ControladorSlot } from "Layouts/ControladorSlot";
+import { ContextoPaginaAdminAventuraProvider, useContextoPaginaAdminAventura } from 'Contextos/ContextoPaginaAdminAventura/contexto';
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { ContextoCadastroNovoLinkGrupoAventuraProvider, useContextoCadastroNovoLinkGrupoAventura } from 'Contextos/ContextoCadastroNovoLinkGrupoAventura/contexto';
 import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
+import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 
-export function AdministrarAventura_Slot({ grupoAventura }: { grupoAventura: GrupoAventuraDto; }) {
+export function AdministrarAventura_Client({ idGrupoAventura }: { idGrupoAventura: number }) {
     return (
-        <LayoutContextualizado proporcaoConteudo={84}>
-            <LayoutContextualizado.Conteudo hrefPaginaRetorno={'/minhas-paginas/admin/aventuras'}>
-                <AdministrarAventura_Conteudo grupoAventura={grupoAventura} />
-            </LayoutContextualizado.Conteudo>
-            <LayoutContextualizado.Menu>
-                <ListaAcoesAdmin />
-            </LayoutContextualizado.Menu>
-        </LayoutContextualizado>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.admin.aventura}>
+            <ContextoPaginaAdminAventuraProvider idGrupoAventura={idGrupoAventura}>
+                <AdministrarAventura_Contexto />
+            </ContextoPaginaAdminAventuraProvider>
+        </ControladorSlot>
     );
 };
 
-function AdministrarAventura_Conteudo({ grupoAventura }: { grupoAventura: GrupoAventuraDto; }) {
+function AdministrarAventura_Contexto() {
+    const { grupoAventura } = useContextoPaginaAdminAventura();
+    useConfigurarLayoutContextualizado({ titulo: `Gerenciamento da Aventura: ${grupoAventura.nomeUnicoGrupoAventura}`, fecharProps: { tipo: 'href', paginaRetorno: PAGINAS.minhasPaginas.admin.aventuras, tituloTooltip: 'Voltar para Aventuras' } });
+
     return (
         <ContextoCadastroNovoLinkGrupoAventuraProvider idGrupoAventura={grupoAventura.id}>
-            <CabecalhoDeAventura pathCapa={grupoAventura.aventura.imagemCapa!.fullPath} titulo={grupoAventura.nomeUnicoGrupoAventura} />
+            <CabecalhoDeAventura tipo={'grupoAventura'} grupoAventura={grupoAventura} />
 
-            <BotoesAventura grupoAventura={grupoAventura} />
+            <BotoesAventura />
 
             <AreaEpisodios detalhesSessaoAventura={grupoAventura.detalhesSessoesAventuras} />
         </ContextoCadastroNovoLinkGrupoAventuraProvider>
     );
 };
 
-function BotoesAventura({ grupoAventura }: { grupoAventura: GrupoAventuraDto; }) {
+function BotoesAventura() {
+    const { grupoAventura } = useContextoPaginaAdminAventura();
+
     return (
         <SecaoDeConteudo id={styles.recipiente_botoes_aventura}>
             <AreaLinkTrailer linkTrailer={grupoAventura.linkTrailerYoutube} />
@@ -53,7 +57,7 @@ function AreaLinkTrailer({ linkTrailer }: { linkTrailer: LinkDto }) {
 
     return (
         <div id={styles.recipiente_area_link_trailer}>
-            {linkTrailer ? (
+            {linkTrailer && linkTrailer.urlCompleta ? (
                 <Link href={linkTrailer.urlCompleta} target='_blank'><p>Tem Trailer</p></Link>
             ) : (
                 <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(1)}>Configurar Trailer</button>
@@ -67,7 +71,7 @@ function AreaLinkPlaylist({ linkPlaylist }: { linkPlaylist: LinkDto }) {
 
     return (
         <div id={styles.recipiente_area_link_trailer}>
-            {linkPlaylist ? (
+            {linkPlaylist && linkPlaylist.urlCompleta ? (
                 <Link href={linkPlaylist.urlCompleta} target='_blank'><p>Tem Playlist</p></Link>
             ) : (
                 <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(3)}>Configurar Playlist</button>
@@ -81,7 +85,7 @@ function AreaLinkSerie({ linkSerie }: { linkSerie: LinkDto }) {
 
     return (
         <div id={styles.recipiente_area_link_trailer}>
-            {linkSerie ? (
+            {linkSerie && linkSerie.urlCompleta ? (
                 <Link href={linkSerie.urlCompleta} target='_blank'><p>Tem Série</p></Link>
             ) : (
                 <button onClick={() => iniciaProcessoVinculoLinkGrupoAventura(5)}>Configurar Série</button>
@@ -99,10 +103,7 @@ function AreaEpisodios({ detalhesSessaoAventura }: { detalhesSessaoAventura: Det
                     const temEpisodioYoutubeVinculado = detalheSessaoAventura.sessao.detalheSessaoCanonica.linkSessaoYoutube !== null;
                     const temEpisodioSpotifyVinculado = detalheSessaoAventura.sessao.detalheSessaoCanonica.linkSessaoSpotify !== null;
 
-
-                    return (
-                        <Link key={detalheSessaoAventura.sessao.id} href={`/minhas-paginas/admin/sessao/${detalheSessaoAventura.sessao.id}`} className={!temEpisodioYoutubeVinculado && !temEpisodioSpotifyVinculado ? styles.episodio_sem_nenhum_vinculo : temEpisodioYoutubeVinculado !== temEpisodioSpotifyVinculado ? styles.episodio_com_algum_vinculo : styles.episodio_completo_vinculo}>{detalheSessaoAventura.episodioPorExtenso}</Link>
-                    );
+                    return <LinkInterno key={detalheSessaoAventura.sessao.id} destino={{ pagina: PAGINAS.minhasPaginas.admin.sessao, params: { id: String(detalheSessaoAventura.sessao.id) } }} className={!temEpisodioYoutubeVinculado && !temEpisodioSpotifyVinculado ? styles.episodio_sem_nenhum_vinculo : temEpisodioYoutubeVinculado !== temEpisodioSpotifyVinculado ? styles.episodio_com_algum_vinculo : styles.episodio_completo_vinculo}>{detalheSessaoAventura.episodioPorExtenso}</LinkInterno>;
                 })}
             </div>
         </SecaoDeConteudo>

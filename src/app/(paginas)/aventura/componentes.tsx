@@ -1,17 +1,31 @@
 'use client';
 
-import LayoutContextualizado from "Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado";
-import { PaginaAventura_Conteudo, PaginaAventura_Menu } from "./subcomponentes";
+import { PAGINAS } from 'types-nora-api';
 
-export function PaginaAventura_Slot() {
+import { ControladorSlot } from 'Layouts/ControladorSlot';
+import { ContextoPaginaAventuraProvider, useContextoPaginaAventura } from 'Contextos/ContextoPaginaAventura/contexto';
+import { PaginaAventura_Conteudo, PaginaAventura_Menu } from "./subcomponentes";
+import { RegistrarMenuLayoutDinamico } from "Layouts/MenuLayoutDinamico";
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
+
+export function PaginaAventura_Client({ idGrupoAventura, indexEpisodio }: { idGrupoAventura: number, indexEpisodio: number | null }) {
+    function EmbrulhoAventura({ children }: { children: React.ReactNode }) { return <ContextoPaginaAventuraProvider idGrupoAventura={idGrupoAventura} episodioIndexInicial={indexEpisodio}>{children}</ContextoPaginaAventuraProvider>; };
+
     return (
-        <LayoutContextualizado proporcaoConteudo={87}>
-            <LayoutContextualizado.Conteudo escondeFundo hrefPaginaRetorno={'/aventuras'}>
-                <PaginaAventura_Conteudo />
-            </LayoutContextualizado.Conteudo>
-            <LayoutContextualizado.Menu>
-                <PaginaAventura_Menu />
-            </LayoutContextualizado.Menu>
-        </LayoutContextualizado>
+        <ControladorSlot pagina={PAGINAS.aventura} embrulho={EmbrulhoAventura}>
+            <PaginaAventura_Layout />
+        </ControladorSlot>
+    );
+};
+
+function PaginaAventura_Layout() {
+    const { grupoAventuraSelecionado } = useContextoPaginaAventura();
+    useConfigurarLayoutContextualizado({ titulo: `Assistindo: ${grupoAventuraSelecionado.nomeUnicoGrupoAventura}` }, 'patch');
+
+    return (
+        <>
+            <PaginaAventura_Conteudo />
+            <RegistrarMenuLayoutDinamico node={<PaginaAventura_Menu />} />
+        </>
     );
 };

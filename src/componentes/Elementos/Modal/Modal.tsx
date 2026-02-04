@@ -1,7 +1,8 @@
 import styles from './styles.module.css';
-import { ReactNode } from "react";
 
+import { ReactNode } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
 export default function Modal({ children, open, onOpenChange }: { children: ReactNode, open: boolean, onOpenChange: (open: boolean) => void }) {
@@ -24,8 +25,10 @@ function ModalContent({ children, cabecalho, className, temBotaoFechar = true, b
                     {cabecalho.subtitulo && <h4>{cabecalho.subtitulo}</h4>}
                 </div>
                 <hr />
-                <div className={styles.dialog_conteudo_corpo} {...scrollableProps}>
-                    {children}
+                <div className={styles.dialog_conteudo_corpo}>
+                    <div className={styles.conteudo_corpo_scrollable} {...scrollableProps}>
+                        {children}
+                    </div>
                 </div>
                 <hr />
                 {(temBotaoFechar || botaoAcaoPrincipal) && (

@@ -1,13 +1,12 @@
 'use client';
 
-import { mapSessaoDadosGerais, SessaoDadosGerais } from 'Adaptadores/SessaoDadosGerais';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { SessaoDto, UsuarioDto } from 'types-nora-api';
+import { SessaoDto } from 'types-nora-api';
+
 import { obtemSessaoGeral } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaMestreSessaoProps {
     sessaoSelecionada: SessaoDto;
-    sessaoDadosGeraisSelecionado: SessaoDadosGerais | null;
 };
 
 const ContextoPaginaMestreSessao = createContext<ContextoPaginaMestreSessaoProps | undefined>(undefined);
@@ -21,8 +20,6 @@ export const useContextoPaginaMestreSessao = (): ContextoPaginaMestreSessaoProps
 export const ContextoPaginaMestreSessaoProvider = ({ children, idSessao }: { children: React.ReactNode; idSessao: number; }) => {
     const [carregando, setCarregando] = useState<string | null>('');
     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
-
-    const sessaoDadosGeraisSelecionado: SessaoDadosGerais | null = sessaoSelecionada ? mapSessaoDadosGerais(sessaoSelecionada) : null;
 
     async function buscaGrupoAventuraSelecionado(idSessao: number) {
         setCarregando('Buscando Sessão');
@@ -47,7 +44,7 @@ export const ContextoPaginaMestreSessaoProvider = ({ children, idSessao }: { chi
     if (!sessaoSelecionada) return;
     
     return (
-        <ContextoPaginaMestreSessao.Provider value={{ sessaoSelecionada, sessaoDadosGeraisSelecionado }}>
+        <ContextoPaginaMestreSessao.Provider value={{ sessaoSelecionada }}>
             {children}
         </ContextoPaginaMestreSessao.Provider>
     );
