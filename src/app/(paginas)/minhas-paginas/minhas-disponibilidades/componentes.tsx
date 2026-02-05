@@ -10,6 +10,7 @@ import { ContextoDisponibilidadeUsuarioProvider } from 'Contextos/ContextoDispon
 import { useContextoDisponibilidadeUsuario } from 'Contextos/ContextoDisponibilidadeUsuario/contexto.tsx';
 import { ConteudoModal, ListagemMinhasDisponibilidades } from './subcomponentes';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
+import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 
 export function PaginaMinhaDisponibilidade_Client() {
     return (
@@ -35,7 +36,7 @@ function PaginaMinhaDisponibilidade_Contexto() {
                 </div>
 
                 <div className={styles.recipiente_informacoes_disponibilidades}>
-                    {minhaDisponibilidade && <h2>Essa Disponibilidade foi cadastrada em 02/02/2026 e será válida até 05/03/2026</h2>}
+                    {minhaDisponibilidade && <h2>{`Essa Disponibilidade foi cadastrada em ${formataData(minhaDisponibilidade.dataAtualizacao, 'dd/MM/yyyy')} e será válida até ${formataData(minhaDisponibilidade.dataValidade, 'dd/MM/yyyy')}`}</h2>}
                     <button className={styles.botao_configurar_disponibilidades} onClick={openModal}>{minhaDisponibilidade ? 'Revalidar Disponibilidades' : 'Configurar Disponibilidades'}</button>
                 </div>
             </div>

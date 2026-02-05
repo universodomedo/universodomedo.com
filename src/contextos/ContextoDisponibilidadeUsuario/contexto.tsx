@@ -6,6 +6,7 @@ import { DiaDaSemana, DisponibilidadesDDS, DisponibilidadeUsuarioDto, JanelaDisp
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { me_salvaDisponibilidade, obtemDadosMinhasDisponibilidades } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { adicionarDisponibilidadeComValidacao } from 'Uteis/LogicaAdicaoJanelaDisponibilidade/LogicaAdicaoJanelaDisponibilidade';
+import { toast } from 'Hooks/useToast';
 
 interface ContextoDisponibilidadeUsuarioProps {
     minhaDisponibilidade: DisponibilidadeUsuarioDto | null;
@@ -101,9 +102,10 @@ export const ContextoDisponibilidadeUsuarioProvider = ({ children }: { children:
     };
 
     async function salvarDisponibilidades() {
-        await me_salvaDisponibilidade(listaDisponibilidadeEmAtualizacao!);
-
-        window.location.reload();
+        try {
+            await me_salvaDisponibilidade(listaDisponibilidadeEmAtualizacao!);
+            await toast.sucesso('Disponibilidade salva com sucesso!', `Confira se todas as janelas foram salvas corretamente e até quando elas são válidas`, { recarregaPagina: true });
+        } catch (e) { await toast.erro('Falha ao salvar disponibilidade', e instanceof Error ? e.message : 'Falha ao salvar disponibilidade'); }
     }
 
     useEffect(() => {
