@@ -28,6 +28,8 @@ function PaginaMinhaDisponibilidade_Contexto() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
 
+    const disponibilidadeValida = minhaDisponibilidade && minhaDisponibilidade.estaValido;
+
     return (
         <>
             <div className={styles.recipiente_pagina_disponibilidades}>
@@ -36,7 +38,7 @@ function PaginaMinhaDisponibilidade_Contexto() {
                 </div>
 
                 <div className={styles.recipiente_informacoes_disponibilidades}>
-                    {minhaDisponibilidade && <h2>{`Essa Disponibilidade foi cadastrada em ${formataData(minhaDisponibilidade.dataAtualizacao, 'dd/MM/yyyy')} e será válida até ${formataData(minhaDisponibilidade.dataValidade, 'dd/MM/yyyy')}`}</h2>}
+                    {disponibilidadeValida && <h2>{`Essa Disponibilidade foi cadastrada em ${formataData(minhaDisponibilidade.dataAtualizacao, 'dd/MM/yyyy')} e será válida até ${formataData(minhaDisponibilidade.dataValidade, 'dd/MM/yyyy')}`}</h2>}
                     <button className={styles.botao_configurar_disponibilidades} onClick={openModal}>{minhaDisponibilidade ? 'Revalidar Disponibilidades' : 'Configurar Disponibilidades'}</button>
                 </div>
             </div>

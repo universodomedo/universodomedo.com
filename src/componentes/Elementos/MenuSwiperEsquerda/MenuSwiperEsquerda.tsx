@@ -24,7 +24,7 @@ export default function MenuSwiperEsquerda() {
             {menuAberto && (<div className={styles.overlay_swiper_esquerda} onClick={() => { setMenuAberto(false) }} />)}
             <div className={cn(styles.swiper_esquerda, menuAberto && styles.aberto)}>
                 <div className={`${styles.recipiente_botao_swiper_esquerda} ${tamanhoReduzido && !menuAberto ? styles.tamanho_reduzido : ''}`} onClick={() => { setMenuAberto(!menuAberto) }}>
-                    <RecipienteArquivoInterno arquivo={'MENU_PRINCIPAL__BOTAO_ABRIR'}/>
+                    <RecipienteArquivoInterno arquivo={'MENU_PRINCIPAL__BOTAO_ABRIR'} />
                 </div>
 
                 <ConteudoSwiperEsquerda />
@@ -36,17 +36,17 @@ export default function MenuSwiperEsquerda() {
 function ConteudoSwiperEsquerda() {
     return (
         <div className={styles.recipiente_conteudo_swiper_esquerda}>
-            <div className={styles.fundo_camada_1} style={{ ['--bg-1' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_1" })}")` }}/>
-            <div className={styles.fundo_camada_2} style={{ ['--bg-2' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_2" })}")` }}/>
-            <div className={styles.fundo_camada_3} style={{ ['--bg-3' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_3" })}")` }}/>
+            <div className={styles.fundo_camada_1} style={{ ['--bg-1' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_1" })}")` }} />
+            <div className={styles.fundo_camada_2} style={{ ['--bg-2' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_2" })}")` }} />
+            <div className={styles.fundo_camada_3} style={{ ['--bg-3' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_3" })}")` }} />
             <div className={styles.conteudo_swiper_esquerda}>
                 <div className={styles.recipiente_moldura_superior}>
-                    <RecipienteArquivoInterno arquivo={'MENU_PRINCIPAL__MOLDURA'}/>
+                    <RecipienteArquivoInterno arquivo={'MENU_PRINCIPAL__MOLDURA'} className={styles.moldura}/>
                 </div>
                 <div className={styles.recipiente_lista_menu}>
                     <div className={styles.recipiente_logo_swiper_esquerda}>
                         <LinkInterno destino={PAGINAS.home}>
-                            <RecipienteArquivoInterno arquivo={'LOGO'} className={styles.recipiente_arquivo}/>
+                            <RecipienteArquivoInterno arquivo={'LOGO'} className={styles.recipiente_arquivo} />
                         </LinkInterno>
                     </div>
                     <ItensMenuSwiperEsquerda />
@@ -62,7 +62,7 @@ function ConteudoSwiperEsquerda() {
                     </div>
                 </div>
                 <div className={styles.recipiente_moldura_inferior}>
-                    <RecipienteArquivoInterno arquivo={'MENU_PRINCIPAL__MOLDURA'} />
+                    <RecipienteArquivoInterno arquivo={'MENU_PRINCIPAL__MOLDURA'} className={styles.moldura}/>
                 </div>
             </div>
         </div>

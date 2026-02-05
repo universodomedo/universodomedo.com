@@ -10,6 +10,8 @@ import { useContextoDisponibilidadeUsuario } from 'Contextos/ContextoDisponibili
 export function ListagemMinhasDisponibilidades() {
     const { minhaDisponibilidade } = useContextoDisponibilidadeUsuario();
 
+    if (!minhaDisponibilidade?.estaValido) return <h1>Sua Disponibilidade está vencida! Você não está disponível para jogar enquanto não revalidar sua disponibilidade</h1>
+
     return (
         <div id={styles.recipiente_dados_disponibilidade}>
             {minhaDisponibilidade?.disponibilidades.map(disponibilidade => (
@@ -37,14 +39,6 @@ export function ConteudoModal() {
     const [diaDaSemana, setDiaDaSemana] = useState<number>(1);
     const [horaInicio, setHoraInicio] = useState<string>('08:00');
     const [horaFim, setHoraFim] = useState<string>('17:00');
-
-    const handleAdicionarDisponibilidade = (diaDaSemana: DiaDaSemana, janelaDisponibilidade: JanelaDisponibilidade) => {
-        const mensagem = adicionarDisponibilidade(diaDaSemana, janelaDisponibilidade);
-        
-        if (mensagem) {
-            alert(mensagem);
-        }
-    };
 
     useEffect(() => {
         inicializaDisponibilidadeEmAtualizacao();
@@ -101,7 +95,7 @@ export function ConteudoModal() {
                         <h3>Hora Fim</h3>
                         <input type="time" value={horaFim} onChange={(e) => setHoraFim(e.target.value)} />
                     </div>
-                    <button id={styles.botao_adicionar_nova_disponibilidade} onClick={() => handleAdicionarDisponibilidade(diaDaSemana, { horaInicio: horaInicio as MomentoFormatado24, horaFim: horaFim as MomentoFormatado24 })} disabled={horaFim <= horaInicio}>Adicionar</button>
+                    <button id={styles.botao_adicionar_nova_disponibilidade} onClick={() => adicionarDisponibilidade(diaDaSemana, { horaInicio: horaInicio as MomentoFormatado24, horaFim: horaFim as MomentoFormatado24 })} disabled={horaFim <= horaInicio}>Adicionar</button>
                 </div>
             </div>
         </div>

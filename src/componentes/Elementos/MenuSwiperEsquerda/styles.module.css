@@ -235,3 +235,9 @@
 .recipiente_arquivo {
     width: 100%;
 }
+
+.moldura {
+    display: block;
+    object-fit: contain;
+    width: 100%;
+}
