@@ -18,7 +18,6 @@ interface ContextoAutenticacaoProps {
     usuarioLogado: UsuarioDto | null;
     carregando: boolean;
     variaveisAmbiente: VariavelAmbienteDto[];
-    numeroPendenciasPersonagem: number;
     estaAutenticado: boolean;
     verificarCapacidade: (capacidade: CapacidadeDef) => boolean;
     cadastroPermitido: boolean;
@@ -35,7 +34,6 @@ export const useContextoAutenticacao = (): ContextoAutenticacaoProps => {
 export const ContextoAutenticacaoProvider = ({ children }: { children: React.ReactNode }) => {
     const [usuarioLogado, setUsuarioLogado] = useState<UsuarioDto | null>(null);
     const [variaveisAmbiente, setVariaveisAmbiente] = useState<VariavelAmbienteDto[]>([]);
-    const [numeroPendenciasPersonagem, setNumeroPendenciasPersonagem] = useState(0);
     const [capacidadesConcedidas, setCapacidadesConcedidas] = useState<Partial<Record<CapacidadeNome, true>>>({});
     const [carregando, setCarregando] = useState(true);
     const [cadastroPermitido, setCadastroPermitido] = useState(false);
@@ -48,7 +46,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
 
     const checkAuth = async (paginaAtualTemplate?: PaginaTemplate | null) => {
         dbgAuth('checkAuth START', { paginaAtualTemplate: paginaAtualTemplate ?? null });
-        // setPaginaAtualTemplate(paginaAtualTemplate ?? null);
+        setPaginaAtualTemplate(paginaAtualTemplate ?? null);
 
         try {
             const response = await obtemObjetoAutenticacao(paginaAtualTemplate ?? undefined);
@@ -57,7 +55,6 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
             setUsuarioLogado(response.usuarioLogado);
             setVariaveisAmbiente(response.variaveisAmbiente);
             setCapacidadesConcedidas((response.capacidadesConcedidas ?? {}) as Partial<Record<CapacidadeNome, true>>);
-            setNumeroPendenciasPersonagem(response.pendenciasDePersonagem);
             setCadastroPermitido(response.cadastroPermitido === true);
         } catch (_error) {
             dbgAuth('checkAuth ERROR', _error);
@@ -65,7 +62,6 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
             setUsuarioLogado(null);
             setVariaveisAmbiente([]);
             setCapacidadesConcedidas({});
-            setNumeroPendenciasPersonagem(0);
             setCadastroPermitido(false);
         } finally {
             dbgAuth('checkAuth FINALLY -> setCarregando(false)');
@@ -79,7 +75,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
     if ((paginaAtualTemplate !== '/' && paginaAtualTemplate !== '/acessar') && getValorVariavelAmbiente(variaveisAmbiente, 'ESTADO_MANUTENCAO') && !verificarCapacidade(CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_MODO_MANUTENÇÃO)) return (<h1>Estamos em manutenção, entre em contato com a Direção do Universo do Medo</h1>);
 
     return (
-        <ContextoAutenticacao.Provider value={{ checkAuth, usuarioLogado, carregando, variaveisAmbiente, numeroPendenciasPersonagem, estaAutenticado, verificarCapacidade, cadastroPermitido }}>
+        <ContextoAutenticacao.Provider value={{ checkAuth, usuarioLogado, carregando, variaveisAmbiente, estaAutenticado, verificarCapacidade, cadastroPermitido }}>
             {children}
         </ContextoAutenticacao.Provider>
     );
