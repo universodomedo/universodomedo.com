@@ -48,7 +48,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
 
     const checkAuth = async (paginaAtualTemplate?: PaginaTemplate | null) => {
         dbgAuth('checkAuth START', { paginaAtualTemplate: paginaAtualTemplate ?? null });
-        setPaginaAtualTemplate(paginaAtualTemplate ?? null);
+        // setPaginaAtualTemplate(paginaAtualTemplate ?? null);
 
         try {
             const response = await obtemObjetoAutenticacao(paginaAtualTemplate ?? undefined);
