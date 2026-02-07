@@ -18,7 +18,7 @@ import SocketListeners from 'listeners/SocketListeners';
 import { ContextoPerformanceProvider } from 'Contextos/ContextoPerformace/contexto';
 import { ContextoAutenticacaoProvider } from 'Contextos/ContextoAutenticacao/contexto';
 import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
-import AppClientProviders from './AppClientProvider';
+import AppClientProviders from '../funcionalidades/AppClientProvider';
 
 import { Cinzel, Cinzel_Decorative, Junge, B612_Mono } from 'next/font/google';
 
@@ -29,6 +29,7 @@ import BackgroundAudio from 'Componentes/Elementos/BackgroundAudio/BackgroundAud
 import Chat from 'Componentes/Elementos/Chat/Chat';
 import InicializadorCache from 'Componentes/Elementos/InicializadorCache/InicializadorCache';
 import ContainerEscalavel from 'Componentes/ElementosVisuais/ContainerEscalavel/ContainerEscalavel';
+import NavigationBridgeProvider from 'Funcionalidades/NavigationBridgeProvider';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -72,6 +73,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     <InicializadorCache>
                       <ConteudoContextualizado>
                         <ContainerEscalavel>
+                          <NavigationBridgeProvider />
                           {children}
                         </ContainerEscalavel>
                         {/* <BackgroundAudio /> */}

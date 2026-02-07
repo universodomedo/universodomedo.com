@@ -15,7 +15,7 @@ export class GanhosEvolucao {
         public personagemAtual: PersonagemDto,
         public fichaDeJogoVigente: FichaDeJogo,
         public nivelDoProcedimento: NivelDto,
-        public metodoSalvarFicha: (fichaEditada: FichaPersonagemDto, fichaDeJogoEditada: FichaDeJogo) => Promise<boolean>,
+        public metodoSalvarFicha: (fichaEditada: FichaPersonagemDto, fichaDeJogoEditada: FichaDeJogo) => void,
         public metodoDeselecionarPersonagem: () => void,
         // esse callback só é utilizado quando alterando classe no GEP 2
         public recuperaGanhosAposSelecaoClasse: (idClasse: number) => Promise<ObjetoGanhosEvolucao>,

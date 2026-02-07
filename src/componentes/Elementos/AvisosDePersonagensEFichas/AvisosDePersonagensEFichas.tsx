@@ -1,3 +1,5 @@
+import { PAGINAS } from 'types-nora-api';
+import LinkInterno from '../LinkInterno/LinkInterno';
 import styles from './styles.module.css';
 
 import RecipienteAviso from 'Componentes/ElementosVisuais/RecipienteAviso/RecipienteAviso';
@@ -27,7 +29,8 @@ function ConteudoAvisoPersonagemTemporario() {
             <h2>Fichas Temporárias</h2>
 
             <p>Usando Rituais e Habilidades desbloqueadas, crie uma Ficha para participar de Missões Individuais ou guardar rascunhos de Personagens!</p>
-            <button onClick={() => console.log(`teste`)}>Criar</button>
+            <LinkInterno destino={PAGINAS.minhasPaginas.jogador.criar.ficha}><h2>Criar</h2></LinkInterno>
+            {/* <button onClick={() => console.log(`teste`)}>Criar</button> */}
         </RecipienteAviso>
     );
 

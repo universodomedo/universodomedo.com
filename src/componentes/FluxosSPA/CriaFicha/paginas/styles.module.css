@@ -1,0 +1,46 @@
+.recipiente_criar_ficha_conteudo {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 100%;
+    align-items: center;
+}
+
+.recipiente_criar_ficha_conteudo_principal {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.recipiente_botoes_criar_ficha {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    gap: 13%;
+    margin-top: 4em;
+
+    & button {
+        height: 12em;
+        aspect-ratio: 1;
+    }
+}
+
+.recipiente_detalhes_criar_ficha {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.recipiente_botoes_acoes_criar_ficha {
+    display: flex;
+    flex-direction: row;
+    gap: 5em;
+
+    & button {
+        width: fit-content;
+        padding: .7em;
+    }
+}

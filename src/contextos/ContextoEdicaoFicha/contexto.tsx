@@ -21,6 +21,9 @@ import { obtemGanhosAposSelecaoClasse, obtemGanhosParaEvoluir, salvarEvolucaoDoP
 import { PAGINA_PERSONAGEM } from 'Componentes/PaginaPersonagem/types';
 
 import { GanhosEvolucao, EtapaGanhoEvolucao_Classes, EtapaGanhoEvolucao_ValorMaxAtributo, EtapaGanhoEvolucao_Estatisticas, EtapaGanhoEvolucao_Atributos, EtapaGanhoEvolucao_Pericias, EtapaGanhoEvolucao_HabilidadesEspeciais, EtapaGanhoEvolucao_HabilidadesParanormais, EtapaGanhoEvolucao_HabilidadesElementais } from './classes';
+import { toast } from 'Hooks/useToast';
+
+import PaginaEvolucaoPersonagem_ComContexto from 'Componentes/PaginasFicha/EvolucaoFicha/componentes';
 
 interface ContextoEdicaoFichaProps {
     registraEventoAtualizacaoPagina: (callback: React.Dispatch<React.SetStateAction<any>>) => void;
@@ -38,10 +41,10 @@ export const useContextoEdicaoFicha = (): ContextoEdicaoFichaProps => {
     return context;
 };
 
-export const ContextoEdicaoFichaProvider = ({ children }: { children: React.ReactNode }) => {
+export default function RecipienteEdicaoFicha({ personagemSelecionado }: { personagemSelecionado: PersonagemDto }) { return <ContextoEdicaoFichaProvider personagemSelecionado={personagemSelecionado}/> };
+
+export const ContextoEdicaoFichaProvider = ({ personagemSelecionado }: { personagemSelecionado: PersonagemDto }) => {
     const [carregando, setCarregando] = useState<string | null>('');
-    const { personagemSelecionado } = useContextoPaginaPersonagens();
-    const { navegarPara } = useContextoPaginaPersonagem();
     const [personagemEmEdicao, setPersonagemEmEdicao] = useState<PersonagemDto | null>(null);
     const [ganhos, setGanhos] = useState<GanhosEvolucao | null>(null);
 
@@ -67,24 +70,21 @@ export const ContextoEdicaoFichaProvider = ({ children }: { children: React.Reac
         acionaEventoAtualizacaoPagina();
     }
 
-    function criarMetodoSalvarEvolucao(salvarEvolucao: (fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo) => Promise<boolean>): (fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo) => Promise<boolean> {
+    function criarMetodoSalvarEvolucao(salvarEvolucao: (fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo) => void): (fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo) => void {
         return async (fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo) => {
-            const sucesso = await salvarEvolucao(fichaEvoluida, fichaDeJogoEvoluida);
-
-            if (!sucesso) {
-                alert("Erro ao salvar a evolução do personagem.");
-            } else {
-                window.location.reload();
-            }
-
-            return sucesso;
+            try {
+                await salvarEvolucao(fichaEvoluida, fichaDeJogoEvoluida);
+                await toast.sucesso('TO DO!', `TO DO`, { recarregaPagina: true });
+            } catch (e) { await toast.erro('Erro ao salvar a evolução do personagem.', e instanceof Error ? e.message : 'Erro ao salvar a evolução do personagem.'); }
         };
     }
 
     function criarMetodoDeselecionarPersonagem(): () => void {
-        return () => {
-            navegarPara(PAGINA_PERSONAGEM.INICIAL);
-        };
+        // to do
+        return () => {};
+        // return () => {
+        //     navegarPara(PAGINA_PERSONAGEM.INICIAL);
+        // };
     }
 
     async function recuperaGanhosAposSelecaoClasse(idClasse: number): Promise<ObjetoGanhosEvolucao> {
@@ -137,7 +137,7 @@ export const ContextoEdicaoFichaProvider = ({ children }: { children: React.Reac
 
     return (
         <ContextoEdicaoFicha.Provider value={{ registraEventoAtualizacaoPagina, executaEAtualiza, personagemEmEdicao, paginaAberta, ganhos }}>
-            {children}
+            <PaginaEvolucaoPersonagem_ComContexto />
         </ContextoEdicaoFicha.Provider>
     );
 };

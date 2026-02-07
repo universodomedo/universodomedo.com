@@ -26,6 +26,7 @@
       "Componentes/*": ["componentes/*"],
       "Constantes/*": ["constantes/*"],
       "Contextos/*": ["contextos/*"],
+      "Funcionalidades/*": ["funcionalidades/*"],
       "Helpers/*": ["helpers/*"],
       "Hooks/*": ["hooks/*"],
       "Layouts/*": ["layouts/*"],
