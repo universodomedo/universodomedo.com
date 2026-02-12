@@ -26,7 +26,7 @@ export default function RecipienteUploadArquivoImagemArtista() {
 };
 
 export const ContextoPaginaArtistaAdicionarImagemProvider = () => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [arquivoPendente, setArquivoPendente] = useState<ArquivoDto | null>(null);
 
     const existeArquivoPendente = !carregando && arquivoPendente;

@@ -27,7 +27,7 @@ export const useContextoPaginaAventura = (): ContextoPaginaAventuraProps => {
 };
 
 export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, episodioIndexInicial = null }: { children: React.ReactNode; idGrupoAventura: number; episodioIndexInicial?: number | null; }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [grupoAventuraSelecionado, setGrupoAventuraSelecionado] = useState<GrupoAventuraDto | null>(null);
     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
 

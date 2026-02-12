@@ -29,7 +29,7 @@ export const useContextoDisponibilidadeUsuario = (): ContextoDisponibilidadeUsua
 
 export const ContextoDisponibilidadeUsuarioProvider = ({ children }: { children: React.ReactNode }) => {
     const { usuarioLogado } = useContextoAutenticacao();
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [minhaDisponibilidade, setMinhaDisponibilidade] = useState<DisponibilidadeUsuarioDto | null>(null);
     const [listaDisponibilidadeEmAtualizacao, setListaDisponibilidadeEmAtualizacao] = useState<ListaDisponibilidadesUsuario | null>(null);
 

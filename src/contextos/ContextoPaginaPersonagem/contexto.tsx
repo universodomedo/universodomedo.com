@@ -1,17 +1,20 @@
 'use client';
 
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
-import { useContextoPaginaPersonagens } from 'Contextos/ContextoPaginaPersonagens/contexto';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
-import { PAGINA_PERSONAGEM, TIPO_PAGINA_PERSONAGEM } from 'Componentes/PaginaPersonagem/types';
+import { useContextoPaginaPersonagens } from 'Contextos/ContextoPaginaPersonagens/contexto';
+import { PAGINAS_VISUALIZA_PERSONAGEM, PAGINAS_SPA__VISUALIZA_PERSONAGEM, PAGINA_PERSONAGEM, TIPO_PAGINA_PERSONAGEM } from 'Componentes/FluxosSPA/VisualizaPersonagem/types';
 
 interface ContextoPaginaPersonagemProps {
     navegarPara: (pagina: PAGINA_PERSONAGEM) => void;
-    souProprietarioDoPersonagem: boolean;
-    ehPersonagemDeJogador: boolean;
-    tipoPaginaPersonagem: TIPO_PAGINA_PERSONAGEM;
-    paginaPersonagemAtual: PAGINA_PERSONAGEM;
+};
+
+function obtemPaginaAtual(tipoPaginaPersonagem: TIPO_PAGINA_PERSONAGEM, paginaPersonagemAtual: PAGINA_PERSONAGEM): PAGINAS_SPA__VISUALIZA_PERSONAGEM {
+    if (tipoPaginaPersonagem === TIPO_PAGINA_PERSONAGEM.EDITAVEL && paginaPersonagemAtual === PAGINA_PERSONAGEM.INICIAL) return 'EDITAVEL_INICIAL';
+    if (tipoPaginaPersonagem === TIPO_PAGINA_PERSONAGEM.EDITAVEL && paginaPersonagemAtual === PAGINA_PERSONAGEM.EVOLUIR) return 'EDITAVEL_EVOLUIR';
+    if (tipoPaginaPersonagem === TIPO_PAGINA_PERSONAGEM.VISUALIZACAO && paginaPersonagemAtual === PAGINA_PERSONAGEM.INICIAL) return 'VISUALIZACAO_INICIAL';
+    return 'VISUALIZACAO_INICIAL';
 };
 
 const ContextoPaginaPersonagem = createContext<ContextoPaginaPersonagemProps | undefined>(undefined);
@@ -22,7 +25,9 @@ export const useContextoPaginaPersonagem = (): ContextoPaginaPersonagemProps => 
     return context;
 };
 
-export const ContextoPaginaPersonagemProvider = ({ children }: { children: React.ReactNode }) => {
+export function SPA_PaginaPersonagem() { return <ContextoPaginaPersonagemProvider /> };
+
+const ContextoPaginaPersonagemProvider = () => {
     const { usuarioLogado } = useContextoAutenticacao();
     const { personagemSelecionado } = useContextoPaginaPersonagens();
 
@@ -33,10 +38,14 @@ export const ContextoPaginaPersonagemProvider = ({ children }: { children: React
     const [paginaPersonagemAtual, setPaginaPersonagemAtual] = useState<PAGINA_PERSONAGEM>(PAGINA_PERSONAGEM.INICIAL);
 
     function navegarPara (paginaPersonagem: PAGINA_PERSONAGEM) { setPaginaPersonagemAtual(paginaPersonagem); };
+    
+
+    const paginaAtual = useMemo(() => obtemPaginaAtual(tipoPaginaPersonagem, paginaPersonagemAtual), [tipoPaginaPersonagem, paginaPersonagemAtual]);
+    const Pagina = PAGINAS_VISUALIZA_PERSONAGEM[paginaAtual];
 
     return (
-        <ContextoPaginaPersonagem.Provider value={{ navegarPara, souProprietarioDoPersonagem, ehPersonagemDeJogador, tipoPaginaPersonagem, paginaPersonagemAtual }}>
-            {children}
+        <ContextoPaginaPersonagem.Provider value={{ navegarPara }}>
+            <Pagina />
         </ContextoPaginaPersonagem.Provider>
     );
 };

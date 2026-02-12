@@ -8,6 +8,7 @@ import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { ArquivoInternoKey } from 'types-nora-api';
 
 import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { useContextoEdicaoFicha_GanhosCarregados } from 'Contextos/ContextoEdicaoFicha_GanhosCarregados/contexto';
 import { EtapaGanhoEvolucao_Classes } from 'Contextos/ContextoEdicaoFicha/classes';
 
 type ItensClassesCarrossel = {
@@ -17,7 +18,8 @@ type ItensClassesCarrossel = {
 };
 
 export default function CarrosselClasses() {
-    const { ganhos, executaEAtualiza } = useContextoEdicaoFicha();
+    const { ganhos } = useContextoEdicaoFicha();
+    const { executaEAtualiza } = useContextoEdicaoFicha_GanhosCarregados();
 
     const etapaSelecaoClasse = ganhos.etapas.find(ganho => ganho instanceof EtapaGanhoEvolucao_Classes)!;
 

@@ -21,7 +21,7 @@ export const useContextoPaginaAventuras = (): ContextoPaginaAventurasProps => {
 };
 
 export const ContextoPaginaAventurasProvider = ({ children }: { children: React.ReactNode }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [aventurasListadas, setAventurasListadas] = useState<AventuraDto[] | null>(null);
     const [aventuraSelecionada, setAventuraSelecionada] = useState<AventuraDto | null>(null);
     const [detalhesUltimasSessoesPostadas, setDetalhesUltimasSessoesPostadas] = useState<DetalheSessaoCanonicaDto[] | null>(null);

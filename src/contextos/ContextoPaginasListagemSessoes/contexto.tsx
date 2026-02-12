@@ -21,7 +21,7 @@ export const useContextoPaginasListagemSessoes = (): ContextoPaginasListagemSess
 };
 
 export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInicial }: { children: React.ReactNode; idSessaoInicial?: number; }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [sessoes, setSessoes] = useState<SessaoDto[]>([]);
     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
 

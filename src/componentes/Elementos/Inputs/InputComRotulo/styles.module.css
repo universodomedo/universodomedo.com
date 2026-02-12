@@ -1,4 +1,4 @@
-.input_e_rotulo {
+/* .input_e_rotulo {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -8,4 +8,73 @@
 
 .input_e_rotulo label {
     font-size: 1.2rem;
+} */
+
+
+.input_e_rotulo {
+    width: min(92%, 34em);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55em;
+
+    padding: 1.05em 1.15em;
+    border-radius: 1.05em;
+
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.15));
+    border: 0.08em solid rgba(212, 175, 55, 0.22);
+    box-shadow: 0 0.6em 1.6em rgba(0, 0, 0, 0.32);
+
+    backdrop-filter: blur(0.45em);
+}
+
+.input_e_rotulo > h3 {
+    margin: 0;
+    font-size: 0.9em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.92;
+}
+
+.input_e_rotulo :is(input, textarea, select) {
+    width: 100%;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.9em;
+
+    padding: 0.85em 1em;
+    background: rgba(0, 0, 0, 0.28);
+
+    color: inherit;
+    outline: none;
+
+    transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease, transform 140ms ease;
+}
+
+.input_e_rotulo :is(input, textarea, select)::placeholder {
+    opacity: 0.55;
+}
+
+.input_e_rotulo :is(input, textarea, select):hover {
+    background: rgba(0, 0, 0, 0.22);
+    border-color: rgba(212, 175, 55, 0.30);
+}
+
+.input_e_rotulo :is(input, textarea, select):focus-visible {
+    border-color: rgba(212, 175, 55, 0.55);
+    box-shadow: 0 0 0 0.22em rgba(140, 82, 255, 0.28), 0 0.9em 2em rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.18);
+    transform: translateY(-0.03em);
+}
+
+.input_e_rotulo :is(input, textarea, select):disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .input_e_rotulo :is(input, textarea, select) {
+        transition: none;
+        transform: none;
+    }
 }

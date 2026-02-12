@@ -23,7 +23,7 @@ export const useContextoPaginaPersonagens = (): ContextoPaginaPersonagensProps =
 };
 
 export const ContextoPaginaPersonagensProvider = ({ children, idPersonagemInicial = null }: { children: React.ReactNode; idPersonagemInicial?: number | null; }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [personagens, setPersonagens] = useState<PersonagemDto[] | null>(null);
     const [idPersonagemSelecionado, setIdPersonagemSelecionado] = useState<number | null>(null);
     const [personagemSelecionado, setPersonagemSelecionado] = useState<PersonagemDto | null>(null);

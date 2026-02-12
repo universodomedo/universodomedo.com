@@ -1,6 +1,7 @@
 import styles from './styles.module.css';
 
-import LinkInterno, { type DestinoInput } from '../LinkInterno/LinkInterno';
+import LinkInterno from '../LinkInterno/LinkInterno';
+import { type DestinoInput } from 'Funcionalidades/navegacaoInterna';
 import { DivClicavel } from '../DivClicavel/DivClicavel';
 
 export type LayoutContextualizadoFecharProps =

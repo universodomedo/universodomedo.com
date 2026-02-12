@@ -20,7 +20,7 @@ export const useContextoSessoesPrevistas = (): ContextoSessoesPrevistasProps => 
 
 export const ContextoSessoesPrevistasProvider = ({ children }: { children: React.ReactNode }) => {
     const [listaEpisodiosPrevistos, setListaEpisodiosPrevistos] = useState<SessaoDto[]>([]);
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
 
     async function buscaListaEpisodiosPrevistos() {
         setCarregando('Buscando Sessões');

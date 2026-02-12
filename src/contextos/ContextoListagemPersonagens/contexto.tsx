@@ -18,18 +18,18 @@ export const useContextoListagemPersonagens = (): ContextoListagemPersonagensPro
 };
 
 export const ContextoListagemPersonagensProvider = ({ children, idTipoPersonagem }: { children: React.ReactNode; idTipoPersonagem: number; }) => {
-    const [carregando, setCarregando] = useState(true);
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [personagens, setPersonagens] = useState<PersonagemDto[]>([]);
 
     async function buscaTodosPersonagensUsuario() {
-        setCarregando(true);
+        setCarregando('Carregando personagens');
 
         try {
             setPersonagens(await me_obtemPersonagensPorTipo(idTipoPersonagem));
         } catch {
             setPersonagens([]);
         } finally {
-            setCarregando(false);
+            setCarregando(null);
         }
     }
 
@@ -37,7 +37,7 @@ export const ContextoListagemPersonagensProvider = ({ children, idTipoPersonagem
         buscaTodosPersonagensUsuario();
     }, []);
 
-    if (carregando) return <div>Carregando personagens</div>;
+    if (carregando) return <div>{carregando}</div>;
 
     return (
         <ContextoListagemPersonagens.Provider value={{ personagens }}>

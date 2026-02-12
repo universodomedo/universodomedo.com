@@ -4,27 +4,19 @@ import styles from './styles.module.css';
 
 import RecipienteAviso from 'Componentes/ElementosVisuais/RecipienteAviso/RecipienteAviso';
 
-export function AvisosDePersonagensEFichas() {
-
-
+export function AvisosDePersonagensEFichas({ naoRenderizaAvisoFichaTemporaria, naoRenderizaAvisoPersonagem }: { naoRenderizaAvisoFichaTemporaria?: boolean; naoRenderizaAvisoPersonagem?: boolean }) {
     return (
         <div className={styles.recipiente_chaves_criacao_personagem}>
-            <ConteudoAvisoPersonagemTemporario />
-
-            <RecipienteAviso tipo='negativo'>
-                <h2>Criando Personagem</h2>
-
-                <p>Nenhuma Chave de Criação Disponível!</p>
-                <p>Quando você for convidado para uma Sessão Única ou Aventura, você receberá uma Chave de Criação de Personagem</p>
-            </RecipienteAviso>
+            {!naoRenderizaAvisoFichaTemporaria && <ConteudoAvisoFichaTemporaria />}
+            {!naoRenderizaAvisoPersonagem && <ConteudoAvisoPersonagemTemporario />}
         </div>
     );
 };
 
-function ConteudoAvisoPersonagemTemporario() {
-    const jaTemPersonagemTemporario = false;
+function ConteudoAvisoFichaTemporaria() {
+    const jaTemFichaTemporario = false;
 
-    if (!jaTemPersonagemTemporario) return (
+    if (!jaTemFichaTemporario) return (
         <RecipienteAviso tipo={'positivo'}>
             <h2>Fichas Temporárias</h2>
 
@@ -40,6 +32,17 @@ function ConteudoAvisoPersonagemTemporario() {
 
             <p>Crie uma nova Ficha Temporária</p>
             <button onClick={() => console.log(`teste`)}>Criar</button>
+        </RecipienteAviso>
+    );
+};
+
+function ConteudoAvisoPersonagemTemporario() {
+    return (
+        <RecipienteAviso tipo={'negativo'}>
+            <h2>Criando Personagem</h2>
+
+            <p>Nenhuma Chave de Criação Disponível!</p>
+            <p>Quando você for convidado para uma Sessão Única ou Aventura, você receberá uma Chave de Criação de Personagem</p>
         </RecipienteAviso>
     );
 };

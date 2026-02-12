@@ -18,7 +18,7 @@ export const useContextoPaginaAdminAventuras = (): ContextoPaginaAdminAventurasP
 };
 
 export const ContextoPaginaAdminAventurasProvider = ({ children }: { children: React.ReactNode }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [gruposAventuras, setGruposAventuras] = useState<GrupoAventuraDto[]>([]);
 
     async function buscaTodosGruposParaAdmin() {

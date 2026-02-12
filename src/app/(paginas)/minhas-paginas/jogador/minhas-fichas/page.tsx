@@ -1,3 +1,3 @@
-import { MinhasFichas_Client } from './componentes';
+import { PaginaMinhasFichas_Client } from './componentes';
 
-export default function PaginaJogador() { return <MinhasFichas_Client /> };
+export default function PaginaJogador() { return <PaginaMinhasFichas_Client /> };

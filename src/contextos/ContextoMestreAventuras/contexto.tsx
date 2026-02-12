@@ -18,7 +18,7 @@ export const useContextoMestreAventuras = (): ContextoMestreAventurasProps => {
 };
 
 export const ContextoMestreAventurasProvider = ({ children }: { children: React.ReactNode }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [gruposAventurasListadas, setGruposAventurasListadas] = useState<GrupoAventuraDto[] | null>(null);
 
     async function buscaGruposAventuras() {

@@ -1,0 +1,119 @@
+.recipiente_botao_criacao {
+    display: inline-block;
+    position: relative;
+    width: 35.064rem;
+    height: 7rem;
+    margin-top: 2rem;
+    user-select: none;
+
+    &.espelhado {
+        transform: scaleX(-1);
+        
+        & p {
+            transform: scaleX(-1);
+        }
+
+        & .recipiente_conteudo {
+
+            & img {
+                transform: translateY(-70%) scaleX(-1);
+            }
+        }
+    }
+
+    &:not(.ativo) {
+        cursor: pointer;
+
+        & .imagem_botao_criacao, & .texto::before, & .texto::after {
+            filter: grayscale(100%);
+            transition: filter 900ms ease;
+        }
+
+        &:hover {
+            & .imagem_botao_criacao, & .texto::before, & .texto::after {
+                filter: grayscale(70%);
+                transition: filter 600ms ease;
+            }
+        }
+    }
+}
+
+.recipiente_conteudo {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+
+    &:hover {
+        filter: grayscale(0);
+    }
+
+    & p {
+        font-family: var(--fonte-cinzel);
+        font-size: 1.5rem;
+    }
+}
+
+.texto {
+    position: relative;
+    height: 1.5rem;
+    width: 20rem;
+    text-align: center;
+    margin-left: -27.5%; /*CONTROLE ALINHAMENTO HORIZONTAL TEXTO*/
+    margin-bottom: 0%;
+
+    &::before {
+        content: "";
+        position: absolute;
+        width: 200px;
+        height: 15.5px;
+        top: 0%;
+        left: 50%;
+        z-index: 10;
+        transform: translateY(-135%) translateX(-50%);
+
+        background-image: var(--ornamento);
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+    
+    &::after {
+        content: "";
+        position: absolute;
+        width: 200px;
+        height: 1px;
+        bottom: -40%;
+        left: 50%;
+        transform: translateX(-50%);
+
+        background-image: linear-gradient(to right, transparent, #B79051, transparent);
+        background-repeat: no-repeat;
+    }
+}
+
+.imagem_botao_criacao {
+    position: absolute;
+    height: 165px;
+    width: 165px;
+    top: 50%;
+    left: 57.5%;
+    transform: translateY(-70%);
+}
+
+.fundo_botao {
+    position: absolute;
+    object-fit: contain;
+    height: 100%;
+    width: 100%;
+    bottom: 0%;
+    left: 0%;
+}
+
+.bloqueado {
+    pointer-events: none;
+    filter: brightness(0.1);
+}

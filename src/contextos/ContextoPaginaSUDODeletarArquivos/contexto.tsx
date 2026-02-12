@@ -21,7 +21,7 @@ export const useContextoPaginaSUDODeletarArquivos = (): ContextoPaginaSUDODeleta
 };
 
 export const ContextoPaginaSUDODeletarArquivosProvider = ({ children }: { children: React.ReactNode }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [arquivos, setArquivos] = useState<ArquivoDto[]>([]);
 
     async function obtemTodosArquivos_SUDO() {

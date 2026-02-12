@@ -4,12 +4,16 @@ import { createContext, useContext, useState } from 'react';
 
 import { PAGINAS_CRIA_FICHA, PAGINAS_SPA__CRIA_FICHA } from 'Componentes/FluxosSPA/CriaFicha/types';
 
+type MODO_CRIACAO_FICHA = 'NOVA_FICHA' | 'CLONAR_FICHA_PERSONAGEM';
+
 interface ContextoPaginaJogadorCriaFichaProps {
     navegarPara: (pagina: PAGINAS_SPA__CRIA_FICHA) => void;
     nomeFicha: string;
     setNomeFicha: (v: string) => void;
     descricaoFicha: string;
     setDescricaoFicha: (v: string) => void;
+    modoCriacao: MODO_CRIACAO_FICHA;
+    selecionarModoCriacao: (modo: MODO_CRIACAO_FICHA) => void;
     podeComecarCriacao: boolean;
 };
 
@@ -21,28 +25,25 @@ export const useContextoPaginaJogadorCriaFicha = (): ContextoPaginaJogadorCriaFi
     return context;
 };
 
-export function SPA_PaginaJogadorCriaFicha() {
-    return (
-        <ContextoPaginaJogadorCriaFichaProvider />
-    );
-};
+export function SPA_PaginaJogadorCriaFicha() { return <ContextoPaginaJogadorCriaFichaProvider /> };
 
 const ContextoPaginaJogadorCriaFichaProvider = () => {
-const [paginaAtual, setPaginaAtual] = useState<PAGINAS_SPA__CRIA_FICHA>('INICIAL');
-
-    const [nomeFicha, setNomeFicha] = useState<string>('a');
-    const [descricaoFicha, setDescricaoFicha] = useState<string>('b');
+    const [paginaAtual, setPaginaAtual] = useState<PAGINAS_SPA__CRIA_FICHA>('INICIAL');
+    const [nomeFicha, setNomeFicha] = useState<string>('');
+    const [descricaoFicha, setDescricaoFicha] = useState<string>('');
+    const [modoCriacao, setModoCriacao] = useState<MODO_CRIACAO_FICHA>('NOVA_FICHA');
 
     const podeComecarCriacao: boolean = nomeFicha.trim() !== '' && descricaoFicha.trim() != '';
 
+    function selecionarModoCriacao(modo: MODO_CRIACAO_FICHA) { if (modoCriacao === modo) return; setModoCriacao(modo); }
+
     
     function navegarPara(pagina: PAGINAS_SPA__CRIA_FICHA) { setPaginaAtual(pagina); }
-    const pagina = PAGINAS_CRIA_FICHA[paginaAtual];
-    if (!pagina) throw new Error(`Página não registrada no fluxo: ${paginaAtual}`);
+    const Pagina = PAGINAS_CRIA_FICHA[paginaAtual];
 
     return (
-        <ContextoPaginaJogadorCriaFicha.Provider value={{ navegarPara, nomeFicha, setNomeFicha, descricaoFicha, setDescricaoFicha, podeComecarCriacao }}>
-            {pagina}
+        <ContextoPaginaJogadorCriaFicha.Provider value={{ navegarPara, nomeFicha, setNomeFicha, descricaoFicha, setDescricaoFicha, modoCriacao, selecionarModoCriacao, podeComecarCriacao }}>
+            <Pagina />
         </ContextoPaginaJogadorCriaFicha.Provider>
     );
 };

@@ -1,7 +1,7 @@
 .recipiente_criar_ficha_conteudo {
     display: flex;
     flex-direction: column;
-    width: 80%;
+    width: 100%;
     height: 100%;
     align-items: center;
 }
@@ -11,6 +11,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    padding: 2em 0 1em;
 }
 
 .recipiente_botoes_criar_ficha {
@@ -18,13 +19,6 @@
     flex-direction: row;
     width: 100%;
     justify-content: center;
-    gap: 13%;
-    margin-top: 4em;
-
-    & button {
-        height: 12em;
-        aspect-ratio: 1;
-    }
 }
 
 .recipiente_detalhes_criar_ficha {
@@ -32,6 +26,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    gap: 1em;
+    padding: 0 1.2em;
 }
 
 .recipiente_botoes_acoes_criar_ficha {

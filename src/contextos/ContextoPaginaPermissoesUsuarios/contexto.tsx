@@ -19,7 +19,7 @@ export const useContextoPaginaPermissoesUsuarios = (): ContextoPaginaPermissoesU
 };
 
 export const ContextoPaginaPermissoesUsuariosProvider = ({ children }: { children: React.ReactNode }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [idUsuarioSelecionado, setIdUsuarioSelecionado] = useState<number | null>(null);
     const [usuarioSelecionado, setUsuarioSelecionado] = useState<UsuarioDto | null>(null);
 

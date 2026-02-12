@@ -27,7 +27,7 @@ export const useContextoRascunho = (): ContextoRascunhoProps => {
 export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { children: React.ReactNode; idRascunhoSelecionado: number }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [rascunho, setRascunho] = useState<RascunhoDto | null>(null);
 
     async function buscaDetalhesRascunho() {

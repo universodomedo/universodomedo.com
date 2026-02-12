@@ -19,7 +19,7 @@ export const useContextoArvoreItensPermissoes = (): ContextoArvoreItensPermissoe
 };
 
 export const ContextoArvoreItensPermissoesProvider = ({ children }: { children: React.ReactNode }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [arvorePermissoes, setArvorePermissoes] = useState<ArvoreItensPermissaoDto | null>(null);
 
     async function buscaArvorePermissoes() {

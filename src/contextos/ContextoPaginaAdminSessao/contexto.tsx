@@ -18,7 +18,7 @@ export const useContextoPaginaAdminSessao = (): ContextoPaginaAdminSessaoProps =
 };
 
 export const ContextoPaginaAdminSessaoProvider = ({ children, idSessao }: { children: React.ReactNode; idSessao: number; }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [sessao, setSessao] = useState<SessaoDto | null>(null);
 
     async function buscaSessaoGeral() {

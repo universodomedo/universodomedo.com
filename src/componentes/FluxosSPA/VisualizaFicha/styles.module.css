@@ -1,0 +1,19 @@
+.recipiente_ficha {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.recipiente_dados_ficha {
+    flex: 1;
+}
+
+.recipiente_acoes_ficha {
+    flex: 0;
+
+    & button {
+        padding: .6em;
+        color: red;
+        border-color: #3e1515;
+    }
+}

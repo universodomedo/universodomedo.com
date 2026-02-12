@@ -6,17 +6,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link'; // pra alterar esse Link por LinkInterno, vai ter q alterar a estrutura de EtapaGanhoEvolucao para receber PAGINAS
 
 import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { useContextoEdicaoFicha_GanhosCarregados } from 'Contextos/ContextoEdicaoFicha_GanhosCarregados/contexto';
 import JanelaNotificacaoEvolucao from 'Componentes/PaginasFicha/JanelaNotificacaoEvolucao/page';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
-export default function PaginaEvolucaoPersonagem_ComContexto() {
-    const { paginaAberta, ganhos, registraEventoAtualizacaoPagina, executaEAtualiza } = useContextoEdicaoFicha();
+export default function RecipientePagina_SPA_EdicaoFicha({ children }: { children: React.ReactNode }) {
+    const { ganhos } = useContextoEdicaoFicha();
+    const { executaEAtualiza } = useContextoEdicaoFicha_GanhosCarregados();
     const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
-
-    const [_, setState] = useState({});
-    useEffect(() => {
-        registraEventoAtualizacaoPagina(setState);
-    }, [registraEventoAtualizacaoPagina]);
 
     const janelaNotificacaoRef = useRef<{ openConsole: () => void } | null>(null);
     const handleAbrirJanelaBotaoDesabilitado = () => {
@@ -26,9 +23,7 @@ export default function PaginaEvolucaoPersonagem_ComContexto() {
     };
 
     const handleMouseEnter = () => {
-        const id = setTimeout(() => {
-            handleAbrirJanelaBotaoDesabilitado();
-        }, 400);
+        const id = setTimeout(() => { handleAbrirJanelaBotaoDesabilitado(); }, 400);
         setTimeoutId(id);
     };
 
@@ -56,7 +51,7 @@ export default function PaginaEvolucaoPersonagem_ComContexto() {
                 </div>
                 <div id={styles.recipiente_conteudo_edicao}>
                     <div id={styles.recipiente_etapa_edicao} {...scrollableProps}>
-                        {paginaAberta()}
+                        {children}
                     </div>
                     <div id={styles.rodape_edicao}>
                         <button onClick={() => executaEAtualiza(ganhos.retrocedeEtapa)} className={styles.prosseguir}>{ganhos.textoBotaoAnterior}</button>

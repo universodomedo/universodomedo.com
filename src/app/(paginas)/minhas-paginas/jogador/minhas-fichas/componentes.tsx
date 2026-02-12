@@ -3,21 +3,27 @@
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
+import { ContextoPaginaMinhasFichasProvider, useContextoPaginaMinhasFichas } from 'Contextos/ContextoPaginaMinhasFichas/contexto';
+import { AvisosDePersonagensEFichas } from 'Componentes/Elementos/AvisosDePersonagensEFichas/AvisosDePersonagensEFichas';
+import UnificaPersonagemEFichaParaUsuario from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/UnificaPersonagemEFichaParaUsuario/UnificaPersonagemEFichaParaUsuario';
 
-export function MinhasFichas_Client() {
+export function PaginaMinhasFichas_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.jogador.minhasFichas}>
-            <MinhasPaginas_Contexto />
+            <ContextoPaginaMinhasFichasProvider>
+                <PaginaMinhasFichas_Context />
+            </ContextoPaginaMinhasFichasProvider>
         </ControladorSlot>
     );
 };
 
-function MinhasPaginas_Contexto() {
+function PaginaMinhasFichas_Context() {
+    const { fichas } = useContextoPaginaMinhasFichas();
+
     return (
         <>
-            <h1>Oi</h1>
-
-            <button onClick={() => console.log(`xau`)}>Teste</button>
+            <AvisosDePersonagensEFichas naoRenderizaAvisoPersonagem />
+            <UnificaPersonagemEFichaParaUsuario fichasTemporarias={fichas} />
         </>
     );
 };

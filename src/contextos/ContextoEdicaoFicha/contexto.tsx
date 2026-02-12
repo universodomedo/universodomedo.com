@@ -1,35 +1,19 @@
 'use client';
 
-import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
-import { FichaDeJogo, FichaPersonagemDto, ObjetoGanhosEvolucao, PersonagemDto } from 'types-nora-api';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { DadosEvolucaoFicha, DetalheEvolucao, FichaDeJogo, ObjetoGanhosEvolucao } from 'types-nora-api'
 
-import { useContextoPaginaPersonagens } from 'Contextos/ContextoPaginaPersonagens/contexto'
-import { useContextoPaginaPersonagem } from 'Contextos/ContextoPaginaPersonagem/contexto';
-
-import ResumoInicial from 'Componentes/PaginasFicha/paginas-etapas/resumo-inicial.tsx';
-import ResumoFinal from 'Componentes/PaginasFicha/paginas-etapas/resumo-final.tsx';
-import SelecaoClasse from 'Componentes/PaginasFicha/paginas-etapas/selecao-classe.tsx';
-import InformativoAumentoMaximoAtributo from 'Componentes/PaginasFicha/paginas-etapas/informativo-aumento-maximo-atributo.tsx';
-import EdicaoEstatisticas from 'Componentes/PaginasFicha/paginas-etapas/edicao-estatisticas.tsx';
-import InformativoPontosHabilidadeEspecial from 'Componentes/PaginasFicha/paginas-etapas/informativo-pontos-habilidade-especial.tsx';
-import EdicaoAtributos from 'Componentes/PaginasFicha/paginas-etapas/edicao-atributos.tsx';
-import EdicaoPericias from 'Componentes/PaginasFicha/paginas-etapas/edicao-pericias.tsx';
-import EdicaoHabilidadesParanormais from 'Componentes/PaginasFicha/paginas-etapas/informativo-aumento-habilidades-paranormais';
-import EdicaoHabilidadesElementais from 'Componentes/PaginasFicha/paginas-etapas/informativo-aumento-habilidades-elementais';
-
-import { obtemGanhosAposSelecaoClasse, obtemGanhosParaEvoluir, salvarEvolucaoDoPersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { PAGINA_PERSONAGEM } from 'Componentes/PaginaPersonagem/types';
-
-import { GanhosEvolucao, EtapaGanhoEvolucao_Classes, EtapaGanhoEvolucao_ValorMaxAtributo, EtapaGanhoEvolucao_Estatisticas, EtapaGanhoEvolucao_Atributos, EtapaGanhoEvolucao_Pericias, EtapaGanhoEvolucao_HabilidadesEspeciais, EtapaGanhoEvolucao_HabilidadesParanormais, EtapaGanhoEvolucao_HabilidadesElementais } from './classes';
+import { obtemGanhosAposSelecaoClasse, obtemGanhosParaCriarFicha_FichaTemporaria, obtemGanhosParaEvoluirPorIdFicha } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { SPA_EdicaoFicha } from 'Contextos/ContextoEdicaoFicha_GanhosCarregados/contexto';
+import { GanhosEvolucao } from './classes';
 import { toast } from 'Hooks/useToast';
 
-import PaginaEvolucaoPersonagem_ComContexto from 'Componentes/PaginasFicha/EvolucaoFicha/componentes';
+
+export type RecipienteEdicaoFichaProps =
+    { metodoSairEvolucaoFicha: () => void; metodoSalvarFicha: (dadosEvolucaoFicha: DadosEvolucaoFicha) => void; } &
+    ({ metodo: 'CRIANDO_FICHA_TEMPORARIA'; nomeFicha: string; descricaoFicha: string; } | { metodo: 'CRIANDO_PERSONAGEM'; idPersonagem: number; });
 
 interface ContextoEdicaoFichaProps {
-    registraEventoAtualizacaoPagina: (callback: React.Dispatch<React.SetStateAction<any>>) => void;
-    executaEAtualiza: (execucao: () => void) => void;
-    personagemEmEdicao: PersonagemDto;
-    paginaAberta: () => ReactNode;
     ganhos: GanhosEvolucao;
 };
 
@@ -41,103 +25,64 @@ export const useContextoEdicaoFicha = (): ContextoEdicaoFichaProps => {
     return context;
 };
 
-export default function RecipienteEdicaoFicha({ personagemSelecionado }: { personagemSelecionado: PersonagemDto }) { return <ContextoEdicaoFichaProvider personagemSelecionado={personagemSelecionado}/> };
+export function RecipienteEdicaoFicha({ recipienteEdicaoFichaProps}: { recipienteEdicaoFichaProps: RecipienteEdicaoFichaProps }) { return <ContextoEdicaoFichaProvider recipienteEdicaoFichaProps={recipienteEdicaoFichaProps} /> };
 
-export const ContextoEdicaoFichaProvider = ({ personagemSelecionado }: { personagemSelecionado: PersonagemDto }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
-    const [personagemEmEdicao, setPersonagemEmEdicao] = useState<PersonagemDto | null>(null);
+const ContextoEdicaoFichaProvider = ({ recipienteEdicaoFichaProps}: { recipienteEdicaoFichaProps: RecipienteEdicaoFichaProps }) => {
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [ganhos, setGanhos] = useState<GanhosEvolucao | null>(null);
 
-    const setStateRef = useRef<React.Dispatch<React.SetStateAction<Record<string, any>>> | null>(null);
-    const registraEventoAtualizacaoPagina = (callback: React.Dispatch<React.SetStateAction<any>>) => { setStateRef.current = callback; };
-    const acionaEventoAtualizacaoPagina = () => { if (setStateRef.current) setStateRef.current((prev: Record<string, any>) => ({ ...prev, updated: true })); };
-
-    const paginaAberta = () => {
-        if (ganhos?.estaAbertoResumoInicial) return <ResumoInicial />;
-        if (ganhos?.estaAbertoResumoFinal) return <ResumoFinal />;
-        if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_Classes) return <SelecaoClasse />;
-        if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_ValorMaxAtributo) return <InformativoAumentoMaximoAtributo />;
-        if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_Estatisticas) return <EdicaoEstatisticas />;
-        if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_Atributos) return <EdicaoAtributos />;
-        if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_Pericias) return <EdicaoPericias />;
-        if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_HabilidadesEspeciais) return <InformativoPontosHabilidadeEspecial />;
-        if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_HabilidadesParanormais) return <EdicaoHabilidadesParanormais />;
-        if (ganhos?.etapaAtual instanceof EtapaGanhoEvolucao_HabilidadesElementais) return <EdicaoHabilidadesElementais />;
-    };
-
-    async function executaEAtualiza(execucao: () => void | Promise<void>) {
-        await Promise.resolve(execucao());
-        acionaEventoAtualizacaoPagina();
-    }
-
-    function criarMetodoSalvarEvolucao(salvarEvolucao: (fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo) => void): (fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo) => void {
-        return async (fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo) => {
+    function criarMetodoSalvarEvolucao(salvarEvolucao: (dadosEvolucaoFicha: DadosEvolucaoFicha) => void): (dadosEvolucaoFicha: DadosEvolucaoFicha) => void {
+        return async (dadosEvolucaoFicha: DadosEvolucaoFicha) => {
             try {
-                await salvarEvolucao(fichaEvoluida, fichaDeJogoEvoluida);
+                await salvarEvolucao(dadosEvolucaoFicha);
                 await toast.sucesso('TO DO!', `TO DO`, { recarregaPagina: true });
             } catch (e) { await toast.erro('Erro ao salvar a evolução do personagem.', e instanceof Error ? e.message : 'Erro ao salvar a evolução do personagem.'); }
         };
     }
 
-    function criarMetodoDeselecionarPersonagem(): () => void {
-        // to do
-        return () => {};
-        // return () => {
-        //     navegarPara(PAGINA_PERSONAGEM.INICIAL);
-        // };
-    }
+    function criarMetodoDeselecionarPersonagem(): () => void { return () => { recipienteEdicaoFichaProps.metodoSairEvolucaoFicha(); }; };
 
-    async function recuperaGanhosAposSelecaoClasse(idClasse: number): Promise<ObjetoGanhosEvolucao> {
-        return await obtemGanhosAposSelecaoClasse(idClasse);
-    }
+    async function recuperaGanhosAposSelecaoClasse(idClasse: number): Promise<ObjetoGanhosEvolucao> { return await obtemGanhosAposSelecaoClasse(idClasse); };
 
     async function carregaGanhos() {
-        if (personagemEmEdicao) {
-            const ganhos = await obtemGanhosParaEvoluir(personagemEmEdicao.id);
+        const ganhos = recipienteEdicaoFichaProps.metodo === 'CRIANDO_FICHA_TEMPORARIA'
+            ? await obtemGanhosParaCriarFicha_FichaTemporaria(recipienteEdicaoFichaProps.nomeFicha)
+            : await obtemGanhosParaEvoluirPorIdFicha(1);
 
-            setGanhos(new GanhosEvolucao(
-                ganhos.personagem,
-                ganhos.fichaDeJogoVigente,
-                ganhos.nivelDoProcedimento,
-                criarMetodoSalvarEvolucao(salvarEvolucao),
-                criarMetodoDeselecionarPersonagem(),
-                recuperaGanhosAposSelecaoClasse,
-                { atributos: ganhos.listaReferenciaTodosAtributos, pericias: ganhos.listaReferenciaPericiasDisponiveis, patentes: ganhos.listaReferenciaTodasPatentes, estatisticasDanificaveis: ganhos.listaReferenciaTodasEstatisticasDanificaveis, classes: ganhos.listaReferenciaTodasClasses, tiposGanho: ganhos.listaReferenciaTodosTiposGanho },
-                ganhos.listaGanhos,
-                ganhos.listaGanhosEstatisticasPorAtributos
-            ));
-        }
+        setGanhos(new GanhosEvolucao(
+            ganhos.fichaEmProcessoDeEvolucao,
+            criarMetodoSalvarEvolucao(salvarEvolucao),
+            criarMetodoDeselecionarPersonagem(),
+            recuperaGanhosAposSelecaoClasse,
+            { atributos: ganhos.listaReferenciaTodosAtributos, pericias: ganhos.listaReferenciaPericiasDisponiveis, patentes: ganhos.listaReferenciaTodasPatentes, estatisticasDanificaveis: ganhos.listaReferenciaTodasEstatisticasDanificaveis, classes: ganhos.listaReferenciaTodasClasses, tiposGanho: ganhos.listaReferenciaTodosTiposGanho },
+            ganhos.listaGanhos,
+            ganhos.listaGanhosEstatisticasPorAtributos
+        ));
     }
 
-    async function salvarEvolucao(fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo): Promise<boolean> {
+    async function salvarEvolucao(dadosEvolucaoFicha: DadosEvolucaoFicha) {
         setCarregando('Salvando Edições do Personagem');
 
         try {
-            return salvarEvolucaoDoPersonagem(fichaEvoluida, fichaDeJogoEvoluida);
+            // return salvarEvolucaoDoPersonagem(fichaEvoluida, fichaDeJogoEvoluida);
+            // return me_criaEVinculaFicha__FichaTemporaria(fichaDeJogoEvoluida);
+            return recipienteEdicaoFichaProps.metodoSalvarFicha(dadosEvolucaoFicha);
         } catch {
-            return false;
+            
         }
     }
 
     useEffect(() => {
-        setPersonagemEmEdicao(personagemSelecionado);
+        carregaGanhos();
     }, []);
 
-    useEffect(() => {
-        carregaGanhos();
-    }, [personagemEmEdicao]);
-
     if (carregando) return <h2>{carregando}</h2>
-
-    if (!personagemEmEdicao) return;
-
-    if (!paginaAberta) return;
 
     if (ganhos === null) return;
 
     return (
-        <ContextoEdicaoFicha.Provider value={{ registraEventoAtualizacaoPagina, executaEAtualiza, personagemEmEdicao, paginaAberta, ganhos }}>
-            <PaginaEvolucaoPersonagem_ComContexto />
+        <ContextoEdicaoFicha.Provider value={{ ganhos }}>
+            <SPA_EdicaoFicha />
         </ContextoEdicaoFicha.Provider>
     );
 };

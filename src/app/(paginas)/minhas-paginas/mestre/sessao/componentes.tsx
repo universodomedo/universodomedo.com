@@ -5,7 +5,7 @@ import { EstiloSessao, PAGINAS } from 'types-nora-api';
 import { ContextoPaginaMestreSessaoProvider, useContextoPaginaMestreSessao } from 'Contextos/ContextoMestreSessao/contexto';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SessaoEmVisualizacao from 'Componentes/ElementosVisuais/SessaoEmVisualizacao/page';
-import { DestinoInput } from 'Componentes/Elementos/LinkInterno/LinkInterno';
+import { DestinoInput } from 'Funcionalidades/navegacaoInterna';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 
 export function PaginaMestreSessao_Client({ idSessao }: { idSessao: number }) {

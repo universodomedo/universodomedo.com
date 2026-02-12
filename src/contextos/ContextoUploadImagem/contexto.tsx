@@ -94,7 +94,7 @@ export default function RecipienteUploader({ tipoArquivo }: { tipoArquivo: TipoA
 };
 
 function CarregadorRegrasUploader({ tipoArquivo, children }: { tipoArquivo: TipoArquivoDef; children: ReactNode }) {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [regras, setRegras] = useState<RegrasUploadArquivo | null>(null);
 
     async function buscaRegrasUploader() {

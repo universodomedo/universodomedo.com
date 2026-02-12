@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate, ArvoreItensPermissaoDto, UsuarioDto, RegrasUploadArquivo, TipoArquivoDef, ArquivoDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate, ArvoreItensPermissaoDto, UsuarioDto, RegrasUploadArquivo, TipoArquivoDef, ArquivoDto, FichaTemporariaDto, FichaDto, DadosEvolucaoFicha } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtualTemplate?: PaginaTemplate | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtualTemplate == null ? {} : { templatePaginaAtual: paginaAtualTemplate } });
@@ -66,6 +66,10 @@ export async function obtemDadosInteligentePersonagem(idPersonagem: number) {
     return await useApi<PersonagemDto | null>({ uri: '/personagens/obtemDadosInteligentePersonagem', method: 'GET', params: { idPersonagem } });
 }
 
+export async function me_obtemDadosFicha(idFicha: number) {
+    return await useApi<FichaDto | null>({ uri: '/fichas/me/me_obtemDadosFicha', method: 'GET', params: { idFicha } });
+}
+
 export async function obtemTiposImagem() {
     return await useApi<TipoImagemDto[]>({ uri: '/tipos_imagem/obtemTiposImagem', method: 'GET' });
 }
@@ -121,8 +125,12 @@ export async function obtemPericiasParaCriacaoFicha() {
     return await useApi<PericiaDto[]>({ uri: '/pericias/obtemTodos', method: 'GET', params: { criandoFicha: true } });
 }
 
-export async function obtemGanhosParaEvoluir(idPersonagem: number) {
-    return await useApi<ObjetoEvolucaoCompleto>({ uri: '/ganhos_nivel_classe/obtemGanhosParaEvoluir', method: 'GET', params: { idPersonagem } });
+export async function obtemGanhosParaEvoluirPorIdFicha(idPersonagem: number) {
+    return await useApi<ObjetoEvolucaoCompleto>({ uri: '/fichas/obtemGanhosParaEvoluirPorIdFicha', method: 'GET', params: { idPersonagem } });
+}
+
+export async function obtemGanhosParaCriarFicha_FichaTemporaria(nomeFicha: string) {
+    return await useApi<ObjetoEvolucaoCompleto>({ uri: '/fichas/obtemGanhosParaCriarFicha_FichaTemporaria', method: 'GET', params: { nomeFicha: nomeFicha } });
 }
 
 export async function obtemGanhosAposSelecaoClasse(idClasse: number) {
@@ -213,6 +221,19 @@ export async function me_obtemTodosArquivosAprovados(): Promise<ArquivoDto[]> {
 export async function rodarTesteEndPoint(): Promise<number> {
     return await useApi<number>({ uri: '/arquivos/rodarTeste', method: 'GET' })
 }
+
+export async function me_criaEVinculaFicha__FichaTemporaria(nomeFicha: string, descricaoFicha: string, dadosEvolucaoFicha: DadosEvolucaoFicha): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/fichas_temporarias/me/me_criaEVinculaFicha__FichaTemporaria', method: 'POST', data: { nomeFicha: nomeFicha, descricaoFicha: descricaoFicha, dadosEvolucaoFicha: dadosEvolucaoFicha } });
+}
+
+export async function me_obtemFichas() {
+    return await useApi<FichaTemporariaDto[]>({ uri: '/fichas_temporarias/me/me_obtemFichas', method: 'GET' })
+}
+
+export async function me_deleteFichaTemporaria(fichaTemporaria: FichaTemporariaDto) {
+    return await useApi<boolean>({ uri: '/fichas_temporarias/me/me_deleteFichaTemporaria', method: 'DELETE', params: { idFichaTemporaria: String(fichaTemporaria.id) } });
+}
+
 
 //
 

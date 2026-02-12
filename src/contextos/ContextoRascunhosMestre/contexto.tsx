@@ -23,7 +23,7 @@ export const useContextoRascunhosMestre = (): ContextoRascunhosMestreProps => {
 };
 
 export const ContextoRascunhosMestreProvider = ({ ehSessaoUnica, children }: { ehSessaoUnica: boolean; children: React.ReactNode }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [estilosSessaoMestrada, setEstilosSessaoMestrada] = useState<EstiloSessaoMestradaDto[] | null>(null);
     const [rascunhos, setRascunhos] = useState<RascunhoDto[] | null>(null);
     const [idRascunhoSelecionado, setIdRascunhoSelecionado] = useState<number | null>(null);

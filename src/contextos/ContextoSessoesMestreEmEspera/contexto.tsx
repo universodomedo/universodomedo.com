@@ -22,7 +22,7 @@ export const useContextoSessoesMestreEmEspera = (): ContextoSessoesMestreEmEsper
 };
 
 export const ContextoSessoesMestreEmEsperaProvider = ({ children }: { children: React.ReactNode }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [sessoesEmEspera, setSessoesEmEspera] = useState<SessaoDto[]>([]);
     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
 

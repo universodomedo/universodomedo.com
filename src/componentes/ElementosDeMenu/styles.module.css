@@ -15,7 +15,7 @@
 .recipiente_item_lista_acoes {
     user-select: none;
     border-radius: 5px;
-    padding: 3% 2%;
+    padding: 3% 0;
 }
 
 .recipiente_subitens_lista_acoes {
@@ -75,4 +75,34 @@
     aspect-ratio: 1;
     font-family: sans-serif;
     font-size: 83%;
+}
+
+.recipiente_lista_fichas_temporarias {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: 2% 1%;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    row-gap: .7em;
+}
+
+.recipiente_item_ficha_temporaria {
+    width: 100%;
+    padding: 3% 2%;
+    border-radius: 5px;
+    user-select: none;
+
+    &:not(.ativo):hover {
+        box-shadow: 0px 0px 9px 0px #ffffff;
+    }
+
+    &.ativo {
+        color: #FBFF95;
+        background-color: #DBB4F84D;
+    }
+
+    &:not(.ativo):hover {
+        cursor: pointer;
+    }
 }

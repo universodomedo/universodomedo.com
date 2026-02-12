@@ -19,8 +19,6 @@ export default function ListaAcoesPersonagens() {
                 <h2 className={styles.titulo_permissao}>Buscar Personagem</h2>
             </div>
 
-            {/* <SecaoPersonagens titulo={"Personagens Temporários"} personagens={personagens.filter(personagem => personagem.tipoPersonagem.id === 1)} /> */}
-
             <SecaoPersonagens titulo={"Personagens - Jogador"} personagens={personagens.filter(personagem => personagem.tipoPersonagem.id === 1)} />
 
             {verificarPermissao(usuario => usuario.perfilMestre.id > 1) && (

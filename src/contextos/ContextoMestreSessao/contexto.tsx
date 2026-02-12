@@ -18,7 +18,7 @@ export const useContextoPaginaMestreSessao = (): ContextoPaginaMestreSessaoProps
 };
 
 export const ContextoPaginaMestreSessaoProvider = ({ children, idSessao }: { children: React.ReactNode; idSessao: number; }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
 
     async function buscaGrupoAventuraSelecionado(idSessao: number) {

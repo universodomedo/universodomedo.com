@@ -3,25 +3,27 @@
 import { PAGINAS } from "types-nora-api";
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
-import { ContextoListagemPersonagensProvider } from 'Contextos/ContextoListagemPersonagens/contexto';
+import { ContextoListagemPersonagensProvider, useContextoListagemPersonagens } from 'Contextos/ContextoListagemPersonagens/contexto';
 import { AvisosDePersonagensEFichas } from 'Componentes/Elementos/AvisosDePersonagensEFichas/AvisosDePersonagensEFichas';
-import { PaginaListagemPersonagens_Contexto } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/PersonagensEmListagem/page.tsx'
+import UnificaPersonagemEFichaParaUsuario from "Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/UnificaPersonagemEFichaParaUsuario/UnificaPersonagemEFichaParaUsuario";
 
 export function PaginaMeusPersonagens_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.jogador.meusPersonagens}>
             <ContextoListagemPersonagensProvider idTipoPersonagem={1}>
-                <PaginaMeusPersonagens_Context />
+                <PaginaMeusPersonagens_Contexto />
             </ContextoListagemPersonagensProvider>
         </ControladorSlot>
     );
 };
 
-export function PaginaMeusPersonagens_Context() {
+function PaginaMeusPersonagens_Contexto() {
+    const { personagens } = useContextoListagemPersonagens();
+    
     return (
         <>
-            <AvisosDePersonagensEFichas />
-            <PaginaListagemPersonagens_Contexto />
+            <AvisosDePersonagensEFichas naoRenderizaAvisoFichaTemporaria />
+            <UnificaPersonagemEFichaParaUsuario personagens={personagens} />
         </>
     );
 };

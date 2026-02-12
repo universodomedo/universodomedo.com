@@ -18,7 +18,7 @@ export const useContextoPaginaMestreAventura = (): ContextoPaginaMestreAventuraP
 };
 
 export const ContextoPaginaMestreAventuraProvider = ({ children, idGrupoAventura }: { children: React.ReactNode; idGrupoAventura: number; }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [grupoAventuraSelecionada, setGrupoAventuraSelecionada] = useState<GrupoAventuraDto | null>(null);
 
     async function buscaGrupoAventuraSelecionado(idGrupoAventura: number) {

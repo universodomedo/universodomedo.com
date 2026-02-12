@@ -18,7 +18,7 @@ export const useContextoPaginaAdminAventura = (): ContextoPaginaAdminAventuraPro
 };
 
 export const ContextoPaginaAdminAventuraProvider = ({ children, idGrupoAventura }: { children: React.ReactNode; idGrupoAventura: number; }) => {
-    const [carregando, setCarregando] = useState<string | null>('');
+    const [carregando, setCarregando] = useState<string | null>(null);
     const [grupoAventura, setGrupoAventura] = useState<GrupoAventuraDto | null>(null);
 
     async function obtemGrupoAventuraEspecifico() {
