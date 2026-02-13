@@ -1,13 +1,15 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 import { PAGINAS_CRIA_FICHA, PAGINAS_SPA__CRIA_FICHA } from 'Componentes/FluxosSPA/CriaFicha/types';
+import { me_temFichaTemporaria } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 type MODO_CRIACAO_FICHA = 'NOVA_FICHA' | 'CLONAR_FICHA_PERSONAGEM';
 
 interface ContextoPaginaJogadorCriaFichaProps {
     navegarPara: (pagina: PAGINAS_SPA__CRIA_FICHA) => void;
+    possuiFicha: boolean;
     nomeFicha: string;
     setNomeFicha: (v: string) => void;
     descricaoFicha: string;
@@ -28,21 +30,44 @@ export const useContextoPaginaJogadorCriaFicha = (): ContextoPaginaJogadorCriaFi
 export function SPA_PaginaJogadorCriaFicha() { return <ContextoPaginaJogadorCriaFichaProvider /> };
 
 const ContextoPaginaJogadorCriaFichaProvider = () => {
+    const [carregando, setCarregando] = useState<string | null>(null);
+
     const [paginaAtual, setPaginaAtual] = useState<PAGINAS_SPA__CRIA_FICHA>('INICIAL');
+
+    const [possuiFicha, setPossuiFicha] = useState<boolean | null>(null);
     const [nomeFicha, setNomeFicha] = useState<string>('');
     const [descricaoFicha, setDescricaoFicha] = useState<string>('');
     const [modoCriacao, setModoCriacao] = useState<MODO_CRIACAO_FICHA>('NOVA_FICHA');
 
-    const podeComecarCriacao: boolean = nomeFicha.trim() !== '' && descricaoFicha.trim() != '';
+    const podeComecarCriacao: boolean = !possuiFicha && nomeFicha.trim() !== '' && descricaoFicha.trim() != '';
 
     function selecionarModoCriacao(modo: MODO_CRIACAO_FICHA) { if (modoCriacao === modo) return; setModoCriacao(modo); }
 
+    async function obtemSeTemFicha() {
+        setCarregando('Verificando Proccesso de Criação de Ficha');
+
+        try {
+            setPossuiFicha(await me_temFichaTemporaria());
+        } catch {
+            setPossuiFicha(null);
+        } finally {
+            setCarregando(null);
+        }
+    };
+
+    useEffect(() => {
+        obtemSeTemFicha();
+    }, []);
     
     function navegarPara(pagina: PAGINAS_SPA__CRIA_FICHA) { setPaginaAtual(pagina); }
     const Pagina = PAGINAS_CRIA_FICHA[paginaAtual];
 
+    if (carregando) return <div>{carregando}</div>;
+
+    if (possuiFicha === null) return;
+
     return (
-        <ContextoPaginaJogadorCriaFicha.Provider value={{ navegarPara, nomeFicha, setNomeFicha, descricaoFicha, setDescricaoFicha, modoCriacao, selecionarModoCriacao, podeComecarCriacao }}>
+        <ContextoPaginaJogadorCriaFicha.Provider value={{ navegarPara, possuiFicha, nomeFicha, setNomeFicha, descricaoFicha, setDescricaoFicha, modoCriacao, selecionarModoCriacao, podeComecarCriacao }}>
             <Pagina />
         </ContextoPaginaJogadorCriaFicha.Provider>
     );

@@ -23,7 +23,7 @@ function AdministrarAventuras_ConteudoGeral() {
 
     return (
         <div id={styles.recipiente_aventuras_admin}>
-            {gruposAventuras?.sort((a, b) => b.id - a.id).map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} href={`/minhas-paginas/admin/aventura/${grupoAventura.id}`} />)}
+            {gruposAventuras?.sort((a, b) => b.id - a.id).map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} destino={{ pagina: PAGINAS.minhasPaginas.admin.aventura, params: { id: grupoAventura.id } }} />)}
         </div>
     );
 };

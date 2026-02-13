@@ -1,12 +1,17 @@
-import { ReactNode, AnchorHTMLAttributes } from 'react';
+'use client';
 
-import Link, { LinkProps } from 'next/link';
+import type { ComponentProps, ReactNode } from 'react';
 import cn from 'classnames';
 
-export default function CustomLink({ children, inlineBlock = true, semDecoracao = false, style, className, ...props }: { children: ReactNode; inlineBlock?: boolean; semDecoracao?: boolean; } & LinkProps & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps>) {
+import type { DestinoInput } from 'Funcionalidades/navegacaoInterna';
+import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
+
+type Props = Omit<ComponentProps<typeof LinkInterno>, 'destino' | 'children'> & { destino: DestinoInput; children: ReactNode; inlineBlock?: boolean; semDecoracao?: boolean };
+
+export default function CustomLink({ destino, children, inlineBlock = true, semDecoracao = false, style, className, ...rest }: Props) {
     return (
-        <Link {...props} style={inlineBlock ? { display: 'inline-block', ...style } : style} className={cn(className, { 'sem-decoracao': semDecoracao } )}>
+        <LinkInterno destino={destino} {...rest} style={inlineBlock ? { display: 'inline-block', ...style } : style} className={cn(className, { 'sem-decoracao': semDecoracao })}>
             {children}
-        </Link>
+        </LinkInterno>
     );
 };

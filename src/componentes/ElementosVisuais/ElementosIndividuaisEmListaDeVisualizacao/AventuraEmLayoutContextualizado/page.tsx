@@ -2,12 +2,13 @@ import styles from './styles.module.css';
 
 import { GrupoAventuraDto } from 'types-nora-api';
 
+import { DestinoInput } from 'Funcionalidades/navegacaoInterna';
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
-export function AventuraEmLayoutContextualizado({ grupoAventura, href, escondeEstado = false }: { grupoAventura: GrupoAventuraDto; href: string; escondeEstado?: boolean }) {
+export function AventuraEmLayoutContextualizado({ grupoAventura, destino, escondeEstado = false }: { grupoAventura: GrupoAventuraDto; destino: DestinoInput; escondeEstado?: boolean }) {
     return (
-        <CustomLink className={styles.recipiente_item_imagem_aventura_mestre} href={href} inlineBlock={false}>
+        <CustomLink className={styles.recipiente_item_imagem_aventura_mestre} inlineBlock={false} destino={destino}>
             <div className={styles.recipiente_imagem_aventura_mestre}>
                 <RecipienteImagem src={grupoAventura.aventura.imagemCapa?.fullPath} />
             </div>

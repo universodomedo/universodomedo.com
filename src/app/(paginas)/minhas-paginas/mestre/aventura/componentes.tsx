@@ -23,8 +23,8 @@ export function PaginaMestreAventura_Client({ idGrupoAventura }: { idGrupoAventu
 };
 
 function PaginaMestreAventura_Slot() {
-    useConfigurarLayoutContextualizado({ titulo: `aaaav`, fecharProps: { tipo: 'href', paginaRetorno: PAGINAS.minhasPaginas.mestre.aventuras, tituloTooltip: 'Voltar' } }, 'patch');
     const { grupoAventuraSelecionada } = useContextoPaginaMestreAventura();
+    useConfigurarLayoutContextualizado({ titulo: grupoAventuraSelecionada.nomeUnicoGrupoAventura, fecharProps: { tipo: 'href', paginaRetorno: PAGINAS.minhasPaginas.mestre.aventuras, tituloTooltip: 'Voltar' } }, 'patch');
 
     return (
         <div id={styles.recipiente_aventura_selecionada}>

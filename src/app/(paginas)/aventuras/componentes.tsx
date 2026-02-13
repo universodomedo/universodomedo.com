@@ -85,7 +85,7 @@ function CorpoAventuraSelecionada() {
                             </div>
                         </div>
                         <div className={styles.linha_grupo_direita}>
-                            <h1><CustomLink href={`/aventura/${grupo.id}`}>Assistir</CustomLink></h1>
+                            <h1><CustomLink destino={{ pagina: PAGINAS.aventura, params: { id: grupo.id } }}>Assistir</CustomLink></h1>
                             {!aventuraSelecionada.temApenasUmGrupo && (<h2>{grupo.nome}</h2>)}
                         </div>
                     </div>

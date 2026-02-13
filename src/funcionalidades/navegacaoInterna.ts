@@ -2,11 +2,14 @@
 
 import { montarHref, type PaginaDestino, type PaginaFolha } from 'types-nora-api';
 
-type ParamValue = string | string[] | undefined;
+type ParamValue = string | number | (string | number)[] | undefined;
 type ParamsRecord = Record<string, ParamValue>;
+type QueryValue = string | number | boolean | (string | number | boolean)[] | undefined;
+type QueryRecord = Record<string, QueryValue>;
 
 type PaginaSemParamsObrigatorios = PaginaFolha extends infer P ? P extends PaginaFolha ? (P['hrefTemplate'] extends `${string}[${string}` ? never : P) : never : never;
-export type DestinoInput = PaginaDestino | PaginaSemParamsObrigatorios;
+
+export type DestinoInput = (PaginaDestino | PaginaSemParamsObrigatorios) & { query?: QueryRecord };
 
 export function normalizePath(p: string) {
     if (!p) return '/';
@@ -21,17 +24,36 @@ function toParamsRecord(params: object): ParamsRecord {
 
     for (const k in params as Record<string, ParamValue>) {
         if (!Object.prototype.hasOwnProperty.call(params, k)) continue;
-        out[k] = (params as Record<string, ParamValue>)[k];
+        const v = (params as Record<string, ParamValue>)[k];
+        out[k] = Array.isArray(v) ? v.map(x => String(x)) : (v === undefined ? undefined : String(v));
     }
     
     return out;
 };
 
-function isPaginaDestino(destino: DestinoInput): destino is PaginaDestino { return typeof destino === 'object' && destino !== null && 'pagina' in destino; };
-function normalizarDestino(destino: DestinoInput): PaginaDestino { return isPaginaDestino(destino) ? destino : ({ pagina: destino } as PaginaDestino); };
+function buildQueryString(query?: QueryRecord) {
+    if (!query) return '';
+
+    const sp = new URLSearchParams();
+
+    for (const k in query) {
+        if (!Object.prototype.hasOwnProperty.call(query, k)) continue;
+        const v = query[k];
+        if (v === undefined) continue;
+        if (Array.isArray(v)) { v.forEach(x => sp.append(k, String(x))); continue; }
+        sp.set(k, String(v));
+    }
+
+    const qs = sp.toString();
+    return qs ? `?${qs}` : '';
+};
+
+function isPaginaDestino(destino: DestinoInput): destino is PaginaDestino & { query?: QueryRecord } { return typeof destino === 'object' && destino !== null && 'pagina' in destino; };
+function normalizarDestino(destino: DestinoInput): (PaginaDestino & { query?: QueryRecord }) { return isPaginaDestino(destino) ? destino : ({ pagina: destino } as PaginaDestino); };
 
 export function resolverHref(destino: DestinoInput) {
     const destinoNormalizado = normalizarDestino(destino);
     const paramsObj = ('params' in destinoNormalizado && destinoNormalizado.params) ? toParamsRecord(destinoNormalizado.params) : {};
-    return montarHref(destinoNormalizado.pagina.hrefTemplate, paramsObj);
+    const base = montarHref(destinoNormalizado.pagina.hrefTemplate, paramsObj);
+    return `${base}${buildQueryString(destinoNormalizado.query)}`;
 };

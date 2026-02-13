@@ -24,7 +24,7 @@ function AventurasMestre_Slot() {
 
     return (
         <div id={styles.recipiente_aventuras_mestre}>
-            {gruposAventurasListadas!.map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} href={`/minhas-paginas/mestre/aventura/${grupoAventura.id}`} />)}
+            {gruposAventurasListadas!.map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} destino={{ pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: grupoAventura.id } }} />)}
         </div>
     );
 };

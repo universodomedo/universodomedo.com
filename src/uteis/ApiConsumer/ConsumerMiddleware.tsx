@@ -234,6 +234,10 @@ export async function me_deleteFichaTemporaria(fichaTemporaria: FichaTemporariaD
     return await useApi<boolean>({ uri: '/fichas_temporarias/me/me_deleteFichaTemporaria', method: 'DELETE', params: { idFichaTemporaria: String(fichaTemporaria.id) } });
 }
 
+export async function me_temFichaTemporaria() {
+    return await useApi<boolean>({ uri: '/fichas_temporarias/me/me_temFichaTemporaria', method: 'GET' });
+}
+
 
 //
 

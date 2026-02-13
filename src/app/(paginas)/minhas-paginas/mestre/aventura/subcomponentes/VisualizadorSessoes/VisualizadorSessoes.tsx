@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import { DetalheSessaoAventuraDto, DetalheSessaoCanonicaDto } from 'types-nora-api';
+import { DetalheSessaoAventuraDto, DetalheSessaoCanonicaDto, PAGINAS } from 'types-nora-api';
 
 import { useContextoPaginaMestreAventura } from "Contextos/ContextoMestreAventura/contexto";
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
@@ -34,7 +34,7 @@ function VisualizadorUltimasSessoes({ detalhesSessoesAventuras }: { detalhesSess
 
 function VisualizacaoInformacoesSessao({ detalheUltimasSessoes }: { detalheUltimasSessoes: DetalheSessaoAventuraDto }) {
     return (
-        <CustomLink className={styles.recipiente_link_sessao} href={`/minhas-paginas/mestre/sessao/${detalheUltimasSessoes.sessao.id}`} semDecoracao>
+        <CustomLink className={styles.recipiente_link_sessao} destino={{ pagina: PAGINAS.minhasPaginas.mestre.sessao, params: { id: detalheUltimasSessoes.sessao.id } }} semDecoracao>
             <SecaoDeConteudo className={styles.recipiente_informacoes_sessao}>
                 <div className={styles.recipiente_cabecalho_informacoes_sessao}>
                     <h1>{detalheUltimasSessoes.episodioPorExtenso}</h1>

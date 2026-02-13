@@ -1,5 +1,7 @@
 'use client';
 
+import styles from './styles.module.css';
+
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
@@ -9,6 +11,9 @@ import ListaAcoesFichas from 'Componentes/ElementosDeMenu/ListaAcoesFichas/Lista
 import { SPA_PaginaFicha } from 'Contextos/ContextoPaginaFicha/contexto';
 import { AvisosDePersonagensEFichas } from 'Componentes/Elementos/AvisosDePersonagensEFichas/AvisosDePersonagensEFichas';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
+import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
+import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
+import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 
 export function PaginaFichas_Client({ idFicha }: { idFicha: number | null; }) {
     function EmbrulhoFichas({ children }: { children: React.ReactNode }) { return <ContextoPaginaFichasProvider idFichaInicial={idFicha}>{children}</ContextoPaginaFichasProvider> };
@@ -36,7 +41,34 @@ function PaginaFichas_Contexto() {
 };
 
 function SemFichaSelecionada() {
+    const { fichasTemporarias } = useContextoPaginaFichas();
     useConfigurarLayoutContextualizado({ titulo: 'Minhas Fichas', proporcaoConteudo: 84 }, 'update');
 
-    return <AvisosDePersonagensEFichas naoRenderizaAvisoPersonagem />;
+    return (
+        <div className={styles.recipiente_conteudo_pagina_fichas}>
+            <AvisosDePersonagensEFichas naoRenderizaAvisoPersonagem naoRenderizaLinkFicha />
+
+            {fichasTemporarias.length < 1 ? <ConteudoSemFicha /> : <ConteudoComFicha />}
+        </div>
+    );
+};
+
+function ConteudoSemFicha() {
+    return (
+        <div className={styles.recipiente_botao_criar_fichas}>
+            <CustomLink destino={{ pagina: PAGINAS.minhasPaginas.jogador.criar.ficha }} className={styles.botao_criar_ficha}>
+                <h2>Criar Nova Ficha</h2>
+                <RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__BOTAO_MISSAO'} />
+            </CustomLink>
+        </div>
+    );
+};
+
+function ConteudoComFicha() {
+    return (
+        <>
+            <h1>Para acessar sua Ficha, selecione no menu lateral ao lado</h1>
+            <h2>Para cadastrar uma nova, delete a anterior ou obtenha o <LinkInterno destino={{ pagina: PAGINAS.minhasPaginas.minhasConfiguracoes.passeDeJogador }}>Passe de Jogador</LinkInterno></h2>
+        </>
+    );
 };

@@ -1,0 +1,33 @@
+.recipiente_pagina_passe_de_jogador {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.recipiente_informacoes_passe_de_jogador {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+
+    & p, & li, & h3 {
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+    & ul {
+        margin: 3em 0;
+    }
+}
+
+.recipiente_botoes_passe_de_jogador {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & button {
+        font-size: 3em;
+        padding: .6em;
+    }
+}

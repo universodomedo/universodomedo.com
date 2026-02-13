@@ -25,7 +25,7 @@ function PaginaMestreSessao_Conteudo() {
         ? { pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: String(sessaoSelecionada.detalheSessaoAventura.grupoAventura.id) } }
         : PAGINAS.minhasPaginas.mestre.sessoesUnicas
 
-    useConfigurarLayoutContextualizado({ fecharProps: { tipo: 'href', paginaRetorno: paginaRetorno, tituloTooltip: 'Voltar' } });
+    useConfigurarLayoutContextualizado({ titulo: sessaoSelecionada.tituloInteligente.tituloCompleto, fecharProps: { tipo: 'href', paginaRetorno: paginaRetorno, tituloTooltip: 'Voltar' } });
 
     return (
         <>

@@ -13,7 +13,7 @@ import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 
 export function PaginaAventura_Conteudo() {
-    useConfigurarLayoutContextualizado({ proporcaoConteudo: 87, escondeFundo: true, fecharProps: { tipo: 'href', paginaRetorno: PAGINAS.minhasPaginas.admin.aventuras, tituloTooltip: 'Voltar' } }, 'patch');
+    useConfigurarLayoutContextualizado({ proporcaoConteudo: 87, escondeFundo: true, fecharProps: { tipo: 'href', paginaRetorno: PAGINAS.aventuras, tituloTooltip: 'Voltar' } }, 'patch');
 
     const { grupoAventuraSelecionado, alteraSessaoManualmente, podeAlterarSessaoManualmente } = useContextoPaginaAventura();
 

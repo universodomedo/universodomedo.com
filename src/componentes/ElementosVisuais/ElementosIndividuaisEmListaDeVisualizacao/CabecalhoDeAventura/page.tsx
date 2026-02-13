@@ -15,11 +15,6 @@ function RenderCabecalhoDeSessao({ sessao }: { sessao: SessaoDto; }) {
       <SecaoDeConteudo id={styles.recipiente_capa_cabecalho_aventura}>
         <RecipienteImagem src={sessao.pathCapaInteligente} />
       </SecaoDeConteudo>
-
-      <SecaoDeConteudo id={styles.recipiente_nome_cabecalho_aventura}>
-        <h1>{sessao.tituloInteligente.titulo}</h1>
-        {sessao.tituloInteligente.subtitulo && (<h3>{sessao.tituloInteligente.titulo}</h3>)}
-      </SecaoDeConteudo>
     </>
   );
 };
@@ -29,10 +24,6 @@ function RenderCabecalhoDeGrupo({ grupoAventura }: { grupoAventura: GrupoAventur
     <>
       <SecaoDeConteudo id={styles.recipiente_capa_cabecalho_aventura}>
         <RecipienteImagem src={grupoAventura.aventura.imagemCapa?.fullPath} />
-      </SecaoDeConteudo>
-
-      <SecaoDeConteudo id={styles.recipiente_nome_cabecalho_aventura}>
-        <h1>{grupoAventura.nomeUnicoGrupoAventura}</h1>
       </SecaoDeConteudo>
     </>
   );

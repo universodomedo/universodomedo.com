@@ -2,14 +2,9 @@ import styles from './styles.module.css';
 
 // Pra alterar esse Link, vai ter que alterar toda a estrutura de EstruturaPaginaDefinicao no backend para usar PAGINAS
 import Link from 'next/link';
-import { EstruturaPaginaDefinicao, montarHref, type PaginaDef, type PaginaParams } from 'types-nora-api';
+import { EstruturaPaginaDefinicao, montarHref, toParamsRecord, type PaginaDef, type PaginaParams, type RequiredKeys } from 'types-nora-api';
 
 import TextoGlitado from 'Componentes/ElementosVisuais/TextoGlitado/TextoGlitado';
-
-type ParamValue = string | string[] | undefined;
-type ParamsRecord = Record<string, ParamValue>;
-
-type RequiredKeys<T extends Record<string, ParamValue>> = { [K in keyof T]-?: {} extends Pick<T, K> ? never : K }[keyof T];
 
 export type InicioProps<P extends PaginaDef<string>> =
     keyof PaginaParams<P> extends never
@@ -17,15 +12,6 @@ export type InicioProps<P extends PaginaDef<string>> =
     : RequiredKeys<PaginaParams<P>> extends never
     ? { pagina: P; params?: PaginaParams<P> }
     : { pagina: P; params: PaginaParams<P> };
-
-function toParamsRecord(params: object): ParamsRecord {
-    const out: ParamsRecord = {};
-    for (const k in params as Record<string, ParamValue>) {
-        if (!Object.prototype.hasOwnProperty.call(params, k)) continue;
-        out[k] = (params as Record<string, ParamValue>)[k];
-    }
-    return out;
-}
 
 export default function PaginaConteudoDinamico<P extends PaginaDef<string>>({ conteudo, inicio, listaSlug }: { conteudo: EstruturaPaginaDefinicao; inicio: InicioProps<P>; listaSlug: string[] }) {
     const paramsObj = ('params' in inicio && inicio.params) ? toParamsRecord(inicio.params) : {};

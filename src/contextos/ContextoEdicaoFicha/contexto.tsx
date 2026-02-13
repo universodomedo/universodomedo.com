@@ -35,7 +35,7 @@ const ContextoEdicaoFichaProvider = ({ recipienteEdicaoFichaProps}: { recipiente
         return async (dadosEvolucaoFicha: DadosEvolucaoFicha) => {
             try {
                 await salvarEvolucao(dadosEvolucaoFicha);
-                await toast.sucesso('TO DO!', `TO DO`, { recarregaPagina: true });
+                await toast.sucesso('Ficha salva com sucesso!', `A Ficha foi criada`, { recarregaPagina: true });
             } catch (e) { await toast.erro('Erro ao salvar a evolução do personagem.', e instanceof Error ? e.message : 'Erro ao salvar a evolução do personagem.'); }
         };
     }

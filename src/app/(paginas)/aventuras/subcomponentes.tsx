@@ -2,8 +2,9 @@
 
 import styles from './styles.module.css';
 
+import { AventuraDto, PAGINAS } from 'types-nora-api';
+
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
-import { AventuraDto } from 'types-nora-api';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { useContextoPaginaAventuras } from 'Contextos/ContextoPaginaAventuras/contexto';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
@@ -36,7 +37,7 @@ export function UltimasSessoesPostadas() {
 
             <div id={styles.recipiente_cartas_ultimas_sessoes_postadas}>
                 {detalhesUltimasSessoesPostadas?.map(detalheSessao => (
-                    <CustomLink key={detalheSessao.sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} href={`/aventura/${detalheSessao.sessao.detalheSessaoAventura.grupoAventura.id}?${QUERY_PARAMS.EPISODIO}=${detalheSessao.sessao.detalheSessaoAventura.episodio}`}>
+                    <CustomLink key={detalheSessao.sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} destino={{ pagina: PAGINAS.aventura, params: { id: detalheSessao.sessao.detalheSessaoAventura.grupoAventura.id }, query: { [QUERY_PARAMS.EPISODIO]: detalheSessao.sessao.detalheSessaoAventura.episodio } }}>
                         <div className={styles.recipiente_capa_carta_sessao_recente}>
                             <RecipienteImagem src={detalheSessao.sessao.detalheSessaoAventura.grupoAventura.aventura.imagemCapa?.fullPath} />
                         </div>

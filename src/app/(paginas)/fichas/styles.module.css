@@ -1,0 +1,29 @@
+.recipiente_conteudo_pagina_fichas {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 1em;
+}
+
+.recipiente_botao_criar_fichas {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.botao_criar_ficha {
+    position: absolute;
+
+    & h2 {
+        position: absolute;
+        top: 34%;
+        left: 19.5%;
+    }
+
+    &:hover {
+        transition: all .2s ease-in;
+        transform: scale(.9);
+    }
+}
