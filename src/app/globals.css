@@ -10,7 +10,8 @@
   --zindex-final-chat: 899;
   --zindex-final-modal: 1099;
   --zindex-final-dialog: 1199;
-  --zindex-final-toast: 1299;
+  --zindex-final-selectMenu: 1299;
+  --zindex-final-toast: 1399;
 
   --cor-aviso: #DB4747;
   --cor-atencao: #BEAA46;

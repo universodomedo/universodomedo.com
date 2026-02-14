@@ -23,34 +23,36 @@ export const useContextoRascunhosMestre = (): ContextoRascunhosMestreProps => {
 };
 
 export const ContextoRascunhosMestreProvider = ({ ehSessaoUnica, children }: { ehSessaoUnica: boolean; children: React.ReactNode }) => {
-    const [carregando, setCarregando] = useState<string | null>(null);
+    const [carregandoEstilos, setCarregandoEstilos] = useState(false);
+    const [carregandoRascunhos, setCarregandoRascunhos] = useState(false);
+
     const [estilosSessaoMestrada, setEstilosSessaoMestrada] = useState<EstiloSessaoMestradaDto[] | null>(null);
-    const [rascunhos, setRascunhos] = useState<RascunhoDto[] | null>(null);
+    const [rascunhos, setRascunhos] = useState<RascunhoDto[]>([]);
     const [idRascunhoSelecionado, setIdRascunhoSelecionado] = useState<number | null>(null);
 
     const tituloComponenteConteudo = ehSessaoUnica ? 'Mestre - Meus Rascunhos de Sessão Única' : 'Mestre - Meus Rascunhos de Aventuras';
 
     async function buscaEstilosSessaoMestrada() {
-        setCarregando('Buscando Tipos Rascunho');
+        setCarregandoEstilos(true);
 
         try {
             setEstilosSessaoMestrada(await obtemEstilosSessaoPorParam(ehSessaoUnica));
         } catch {
             setEstilosSessaoMestrada(null);
         } finally {
-            setCarregando(null);
+            setCarregandoEstilos(false);
         }
     }
 
     async function buscaRascunhos() {
-        setCarregando('Buscando Rascunhos');
+        setCarregandoRascunhos(true);
 
         try {
             setRascunhos(await me_obtemRascunhosPorTipo(ehSessaoUnica));
         } catch {
-            setRascunhos(null);
+            setRascunhos([]);
         } finally {
-            setCarregando(null);
+            setCarregandoRascunhos(false);
         }
     }
 
@@ -62,9 +64,11 @@ export const ContextoRascunhosMestreProvider = ({ ehSessaoUnica, children }: { e
         buscaRascunhos();
     }, []);
 
-    if (carregando) return <h2>{carregando}</h2>
-
-    if (!carregando && !rascunhos) return <p>Nenhum Rascunho encontrado</p>;
+    if (carregandoEstilos || carregandoRascunhos) {
+        if (carregandoEstilos && carregandoRascunhos) return <div>Carregando tipos de rascunho e rascunhos</div>;
+        if (carregandoEstilos) return <div>Carregando tipos de rascunho</div>;
+        return <div>Buscando rascunhos</div>;
+    }
 
     if (!estilosSessaoMestrada || !rascunhos) return;
 

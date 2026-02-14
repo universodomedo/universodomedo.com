@@ -1,0 +1,100 @@
+.recipiente_pai_consultar_disponibilidades {
+    flex: 1 0 0;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.recipiente_consultar_disponibilidades {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    height: 100%;
+    align-items: center;
+    gap: 2em;
+}
+
+div.recipiente_buscador_disponibilidade {
+    display: flex;
+    flex-direction: column;
+
+    & button {
+        width: fit-content;
+        padding: .6em;
+        margin: auto;
+    }
+}
+
+div.recipiente_inputs_consultar_disponibilidades {
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+    padding: 1em;
+}
+
+.recipiente_pai_listagem_janelas {
+    width: 100%;
+    height: 100%;
+}
+
+.recipiente_listagem_janelas {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: .2em;
+    backdrop-filter: brightness(0.5);
+}
+
+.recipiente_item_individual_listagem_janelas {
+    display: flex;
+    flex-direction: row;
+    height: 5em;
+    padding: .3em;
+    gap: 1em;
+}
+
+.recipiente_avatar {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 1;
+}
+
+.recipiente_dados_usuario_listagem_janelas {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    padding: .3em 0 0;
+    gap: 1em;
+}
+
+.recipiente_dados_principais_usuario_listagem_janelas {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    gap: .3em;
+    align-items: flex-start;
+}
+
+.recipiente_copiar_discordId_usuario {
+    display: flex;
+    overflow: hidden;
+    padding: 0.3em;
+    gap: 1em;
+
+    & svg {
+        width: auto;
+    }
+}
+
+.com_foco {
+    color: green;
+}
+
+.recipiente_dados_disponibilidade_usuario_listagem_janelas {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

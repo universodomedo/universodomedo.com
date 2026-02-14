@@ -1,0 +1,27 @@
+.recipiente_interno_selecionador_dia_da_semana {
+    width: 100%;
+}
+
+.option_row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    line-height: 1;
+}
+
+.option_label {
+    color: #D9D9D9;
+    font-weight: 800;
+}
+
+.single_row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    line-height: 1;
+}
+
+.single_label {
+    color: #D9D9D9;
+    font-weight: 800;
+}

@@ -25,7 +25,7 @@ function RenderCorpo(): JSX.Element {
     return (
         <div id={styles.recipiente_corpo_detalhes_rascunho}>
             {!rascunho ? (
-                <h2>Rascunho não encotrado</h2>
+                <h2>Rascunho não encontrado</h2>
             ) : (
                 <>
                     {!rascunho.possuiDetalhesConfigurados ? (

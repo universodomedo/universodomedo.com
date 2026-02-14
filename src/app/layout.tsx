@@ -30,6 +30,8 @@ import Chat from 'Componentes/Elementos/Chat/Chat';
 import InicializadorCache from 'Componentes/Elementos/InicializadorCache/InicializadorCache';
 import ContainerEscalavel from 'Componentes/ElementosVisuais/ContainerEscalavel/ContainerEscalavel';
 import NavigationBridgeProvider from 'Funcionalidades/NavigationBridgeProvider';
+import { ContextoCopiarParaClipboardProvider } from 'Contextos/ContextoCopiarParaClipboard/contexto';
+import ClipboardToast from 'Componentes/ElementosVisuais/ClipboardToast/ClipboardToast';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -73,8 +75,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     <InicializadorCache>
                       <ConteudoContextualizado>
                         <ContainerEscalavel>
-                          <NavigationBridgeProvider />
-                          {children}
+                          <ContextoCopiarParaClipboardProvider>
+                            <NavigationBridgeProvider />
+                            {children}
+                            <ClipboardToast />
+                          </ContextoCopiarParaClipboardProvider>
                         </ContainerEscalavel>
                         {/* <BackgroundAudio /> */}
                       </ConteudoContextualizado>

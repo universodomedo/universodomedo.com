@@ -1,18 +1,47 @@
 'use client';
 
 import styles from './styles.module.css';
+import stylesBase from '../styles.module.css';
 
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import Select, { components, SingleValue } from 'react-select';
+import { components, type OptionProps, type SingleValueProps, type SingleValue } from 'react-select';
 
 import { selectUsuarios } from 'Redux/selectors/usuariosSelectors';
 import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
+import criarSelecionadorBase from '../SelecionadorBase';
 
 type Option = { value: number; label: string; id: number; username: string };
 
-function OptionUsuario(props: any) {
-    const data = props.data as Option;
+const SelecionadorUsuarioEmCacheBase = criarSelecionadorBase<Option>();
+
+export default function SelecionadorUsuarioEmCache({ onSelectIdUsuario }: { onSelectIdUsuario: (idUsuario: number | null) => void }) {
+    const usuarios = useSelector(selectUsuarios);
+
+    const options = useMemo<Option[]>(() => {
+        const lista = (usuarios || []).map((u) => ({ value: u.id, id: u.id, username: u.username, label: `${u.username} ${u.id}` }));
+        lista.sort((a, b) => a.id - b.id);
+        return lista;
+    }, [usuarios]);
+
+    function onChange(option: SingleValue<Option>) { onSelectIdUsuario(option ? option.id : null); }
+
+    return (
+        <div className={`${stylesBase.recipiente_interno_selecionador} ${styles.recipiente_interno_selecionador_usuario_emcache}`}>
+            <SelecionadorUsuarioEmCacheBase.Select
+                className={stylesBase.select}
+                classNamePrefix="rs"
+                options={options}
+                placeholder="Selecione um usuário..."
+                isClearable
+                onChange={onChange}
+            />
+        </div>
+    );
+};
+
+SelecionadorUsuarioEmCacheBase.Option = (props: OptionProps<Option, false>) => {
+    const data = props.data;
 
     return (
         <components.Option {...props}>
@@ -30,8 +59,8 @@ function OptionUsuario(props: any) {
     );
 };
 
-function SingleValueUsuario(props: any) {
-    const data = props.data as Option;
+SelecionadorUsuarioEmCacheBase.SingleValue = (props: SingleValueProps<Option, false>) => {
+    const data = props.data;
 
     return (
         <components.SingleValue {...props}>
@@ -46,31 +75,5 @@ function SingleValueUsuario(props: any) {
                 </div>
             </div>
         </components.SingleValue>
-    );
-};
-
-export default function SelecionadorUsuarioEmCache({ onSelectIdUsuario }: { onSelectIdUsuario: (idUsuario: number | null) => void }) {
-    const usuarios = useSelector(selectUsuarios);
-
-    const options = useMemo<Option[]>(() => {
-        const lista = (usuarios || []).map((u) => ({ value: u.id, id: u.id, username: u.username, label: `${u.username} ${u.id}` }));
-        lista.sort((a, b) => a.id - b.id);
-        return lista;
-    }, [usuarios]);
-
-    function onChange(option: SingleValue<Option>) { onSelectIdUsuario(option ? option.id : null); }
-
-    return (
-        <div className={styles.recipiente_interno_selecionador_usuario_emcache}>
-            <Select
-                className={styles.select}
-                classNamePrefix="rsu"
-                options={options}
-                placeholder="Selecione um usuário..."
-                isClearable
-                onChange={onChange}
-                components={{ Option: OptionUsuario, SingleValue: SingleValueUsuario }}
-            />
-        </div>
     );
 };

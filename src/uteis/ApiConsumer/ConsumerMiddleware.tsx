@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate, ArvoreItensPermissaoDto, UsuarioDto, RegrasUploadArquivo, TipoArquivoDef, ArquivoDto, FichaTemporariaDto, FichaDto, DadosEvolucaoFicha } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate, ArvoreItensPermissaoDto, UsuarioDto, RegrasUploadArquivo, TipoArquivoDef, ArquivoDto, FichaTemporariaDto, FichaDto, DadosEvolucaoFicha, DadosJanelaDisponibilidade, JanelaDisponibilidadeDto } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtualTemplate?: PaginaTemplate | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtualTemplate == null ? {} : { templatePaginaAtual: paginaAtualTemplate } });
@@ -236,6 +236,10 @@ export async function me_deleteFichaTemporaria(fichaTemporaria: FichaTemporariaD
 
 export async function me_temFichaTemporaria() {
     return await useApi<boolean>({ uri: '/fichas_temporarias/me/me_temFichaTemporaria', method: 'GET' });
+}
+
+export async function obtemJanelasDisponibilidadesPorJanela(dadosJanelaDisponibilidade: DadosJanelaDisponibilidade) {
+    return await useApi<JanelaDisponibilidadeDto[]>({ uri: '/janelas_disponibilidade/obtemJanelasDisponibilidadesPorJanela', method: 'POST', data: { dadosJanelaDisponibilidade: dadosJanelaDisponibilidade } });
 }
 
 
