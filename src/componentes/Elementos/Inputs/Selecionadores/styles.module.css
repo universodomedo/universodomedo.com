@@ -6,7 +6,6 @@
     width: 100%;
 }
 
-/* CONTROL (fica dentro do componente, pode continuar com .select ...) */
 .select :global(.rs__control) {
     background: rgba(255, 255, 255, 0.06) !important;
     border: 0.08em solid rgba(255, 255, 255, 0.14) !important;
@@ -49,11 +48,40 @@
     background: rgba(255, 255, 255, 0.12) !important;
 }
 
-/* MENU (vai pro body via portal, então TEM que ser global) */
-:global(.rs__menu-portal) {
-    z-index: var(--zindex-final-selectMenu) !important;
+/* MULTI VALUE (chips) - TEM que ser base, senão você duplica em todo multi */
+.select :global(.rs__multi-value) {
+    background: transparent !important;
+    border: 0.08em solid rgba(217, 217, 217, 0.18) !important;
+    border-radius: 0.8em !important;
+    margin: 0.2em 0.25em 0.2em 0 !important;
+    padding: 0.15em 0.35em !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
+.select :global(.rs__multi-value__label) {
+    padding: 0 !important;
+    color: inherit !important;
+}
+
+.select :global(.rs__multi-value__remove) {
+    background: transparent !important;
+    border-radius: 0.6em !important;
+    padding: 0 0.35em !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.select :global(.rs__multi-value__remove:hover) {
+    background: rgba(217, 217, 217, 0.12) !important;
+}
+
+.select :global(.rs__multi-value__remove:active) {
+    background: rgba(217, 217, 217, 0.18) !important;
+}
+
+/* MENU (vai pro body via portal, então NÃO dá pra depender de seletor local aqui) */
 :global(.rs__menu) {
     background: rgba(20, 16, 30, 0.98) !important;
     border: 0.08em solid rgba(255, 255, 255, 0.12) !important;

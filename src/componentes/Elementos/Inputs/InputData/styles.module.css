@@ -1,0 +1,162 @@
+.root {
+    position: relative;
+    width: 100%;
+}
+
+.field {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.85em;
+    min-height: 2.6em;
+
+    cursor: pointer;
+}
+
+.field:focus-within {
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 0 0 0.12em rgba(255, 255, 255, 0.12);
+}
+
+.fieldErro {
+    border-color: rgba(200, 50, 50, 0.65);
+}
+
+.fieldDisabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8em;
+
+    background: transparent;
+    border: none;
+    padding: 0.2em 0.7em;
+
+    cursor: pointer;
+    text-align: left;
+}
+
+.button:disabled {
+    cursor: not-allowed;
+}
+
+.texto {
+    font-size: 1em;
+    line-height: 1.2em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.textoAtivo {
+    color: #D9D9D9;
+}
+
+.textoPlaceholder {
+    color: rgba(217, 217, 217, 0.65);
+}
+
+.icone {
+    font-size: 1.1em;
+    opacity: 0.9;
+    color: rgba(217, 217, 217, 0.8);
+}
+
+.clear {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+
+    padding-right: 0.35em;
+    font-size: 1.1em;
+    color: rgba(217, 217, 217, 0.8);
+}
+
+.clear:hover {
+    color: rgba(217, 217, 217, 1);
+}
+
+.erro {
+    margin-top: 0.4em;
+    font-size: 0.9em;
+    color: rgba(200, 50, 50, 0.9);
+}
+
+.popover {
+    position: fixed;
+    z-index: var(--zindex-final-selectMenu);
+    width: 100%;
+
+    background: rgba(20, 16, 30, 0.98);
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.9em;
+    overflow: hidden;
+
+    padding: 0.7em;
+    box-shadow: 0 0.8em 2em rgba(0, 0, 0, 0.25);
+}
+
+/* DayPicker - força ocupar a largura toda do popover */
+.popover :global(.rdp) {
+    --rdp-accent-color: rgba(255, 255, 255, 0.12);
+    --rdp-background-color: rgba(255, 255, 255, 0.08);
+    margin: 0;
+    color: #D9D9D9;
+    width: 100%;
+}
+
+.popover :global(.rdp-months) {
+    width: 100%;
+}
+
+.popover :global(.rdp-month) {
+    width: 100%;
+}
+
+.popover :global(.rdp-table) {
+    width: 100%;
+}
+
+.popover :global(.rdp-head_cell),
+.popover :global(.rdp-cell) {
+    width: calc(100% / 7);
+}
+
+.popover :global(.rdp-caption_label) {
+    color: #D9D9D9;
+}
+
+.popover :global(.rdp-nav_button) {
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.7em;
+    color: #D9D9D9;
+}
+
+.popover :global(.rdp-day) {
+    border-radius: 0.7em;
+}
+
+.popover :global(.rdp-day:hover) {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.popover :global(.rdp-day_selected) {
+    background: rgba(255, 255, 255, 0.12);
+    color: #D9D9D9;
+}
+
+.popover :global(.rdp-day_today) {
+    outline: 0.12em solid rgba(255, 255, 255, 0.18);
+    outline-offset: 0.1em;
+}

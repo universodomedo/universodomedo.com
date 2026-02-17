@@ -10,6 +10,8 @@ import { Metadata } from 'next';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
+import 'react-day-picker/style.css';
+
 import Fumaca from 'Componentes/ElementosVisuais/Fumaca/Fumaca.tsx';
 
 import ReduxProvider from 'Redux/providers/ReduxProvider';
@@ -72,7 +74,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <RadixTooltip delayDuration={200} skipDelayDuration={0}>
                 <AppClientProviders>
                   <ContextoMenuSwiperEsquerdaProvider>
-                    {/* <InicializadorCache> */}
+                    <InicializadorCache>
                       <ConteudoContextualizado>
                         <ContainerEscalavel>
                           <ContextoCopiarParaClipboardProvider>
@@ -83,7 +85,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                         </ContainerEscalavel>
                         {/* <BackgroundAudio /> */}
                       </ConteudoContextualizado>
-                    {/* </InicializadorCache> */}
+                    </InicializadorCache>
                   </ContextoMenuSwiperEsquerdaProvider>
                 </AppClientProviders>
               </RadixTooltip>

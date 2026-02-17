@@ -5,6 +5,8 @@ import * as Dialog from "@radix-ui/react-dialog";
 
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
+export type CabecalhoModalProps = { titulo: string; subtitulo?: string };
+
 export default function Modal({ children, open, onOpenChange }: { children: ReactNode, open: boolean, onOpenChange: (open: boolean) => void }) {
     return (
         <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -13,7 +15,7 @@ export default function Modal({ children, open, onOpenChange }: { children: Reac
     );
 };
 
-function ModalContent({ children, cabecalho, className, temBotaoFechar = true, botaoAcaoPrincipal }: { children: ReactNode; cabecalho: { titulo: string; subtitulo?: string }; className?: string; temBotaoFechar?: boolean; botaoAcaoPrincipal?: { execucao: () => void; texto: string; desabilitado: boolean; } }) {
+function ModalContent({ children, cabecalho, className, temBotaoFechar = true, botaoAcaoPrincipal }: { children: ReactNode; cabecalho: CabecalhoModalProps; className?: string; temBotaoFechar?: boolean; botaoAcaoPrincipal?: { execucao: () => void; texto: string; desabilitado: boolean; } }) {
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
     
     return (

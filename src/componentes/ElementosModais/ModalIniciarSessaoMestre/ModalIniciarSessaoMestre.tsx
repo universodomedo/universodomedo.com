@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import { Eventos_EnviaERecebe, SessaoDto } from 'types-nora-api';
+import { Eventos_EnviaERecebe, minutosParaMs, SessaoDto } from 'types-nora-api';
 
 import { useContextoSessoesMestreEmEspera } from 'Contextos/ContextoSessoesMestreEmEspera/contexto';
 import { useContadorRegressivo } from 'Componentes/Elementos/ContadorRegressivo/ContadorRegressivo';
@@ -13,8 +13,8 @@ import RecipienteCapa from 'Componentes/ElementosVisuais/ElementosIndividuaisEmL
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 
 
-const dezMinMs = 10 * 60 * 1000;
-const trintaMinMs = 30 * 60 * 1000;
+const dezMinMs = minutosParaMs(10);
+const trintaMinMs = minutosParaMs(30);
 
 export default function ModalIniciarSessaoMestre({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean, setIsModalOpen: (open: boolean) => void }) {
     const { sessaoSelecionada } = useContextoSessoesMestreEmEspera();

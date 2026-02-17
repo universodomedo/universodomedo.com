@@ -1,6 +1,6 @@
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate, ArvoreItensPermissaoDto, UsuarioDto, RegrasUploadArquivo, TipoArquivoDef, ArquivoDto, FichaTemporariaDto, FichaDto, DadosEvolucaoFicha, DadosJanelaDisponibilidade, JanelaDisponibilidadeDto } from 'types-nora-api';
+import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate, ArvoreItensPermissaoDto, UsuarioDto, RegrasUploadArquivo, TipoArquivoDef, ArquivoDto, FichaTemporariaDto, FichaDto, DadosEvolucaoFicha, DadosJanelaDisponibilidade, JanelaDisponibilidadeDto, DadosCriacaoSessao } from 'types-nora-api';
 
 export async function obtemObjetoAutenticacao(paginaAtualTemplate?: PaginaTemplate | null) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtualTemplate == null ? {} : { templatePaginaAtual: paginaAtualTemplate } });
@@ -161,8 +161,12 @@ export async function vinculaLinkDeGrupoAventura(idGrupoAventura: number, novoLi
     return await useApi<boolean>({ uri: '/grupos_aventuras/vinculaLinkDeGrupoAventura', method: 'POST', data: { idGrupoAventura: idGrupoAventura, novoLink: novoLink } });
 }
 
-export async function obtemGruposPorMestre(): Promise<GrupoAventuraDto[]> {
+export async function me_obtemGruposPorMestre(): Promise<GrupoAventuraDto[]> {
     return await useApi<GrupoAventuraDto[]>({ uri: '/grupos_aventuras/me/me_obtemGruposPorMestre', method: 'GET' });
+}
+
+export async function me_obtemSessoesUnicasPorMestre(): Promise<SessaoDto[]> {
+    return await useApi<SessaoDto[]>({ uri: '/detalhes_sessao_unica/me/me_obtemSessoesUnicasPorMestre', method: 'GET' });
 }
 
 export async function obtemUltimaSessoesPostadas(): Promise<DetalheSessaoCanonicaDto[]> {
@@ -217,6 +221,9 @@ export async function me_obtemTodosArquivosAprovados(): Promise<ArquivoDto[]> {
     return await useApi<ArquivoDto[]>({ uri: '/arquivos/me/me_obtemTodosArquivosAprovados', method: 'GET' });
 }
 
+export async function obtemTodasImagensEspeciaisArtistaAprovadas(): Promise<ArquivoDto[]> {
+    return await useApi<ArquivoDto[]>({ uri: '/arquivos/obtemTodasImagensEspeciaisArtistaAprovadas', method: 'GET' });
+}
 
 export async function rodarTesteEndPoint(): Promise<number> {
     return await useApi<number>({ uri: '/arquivos/rodarTeste', method: 'GET' })
@@ -240,6 +247,18 @@ export async function me_temFichaTemporaria() {
 
 export async function obtemJanelasDisponibilidadesPorJanela(dadosJanelaDisponibilidade: DadosJanelaDisponibilidade) {
     return await useApi<JanelaDisponibilidadeDto[]>({ uri: '/janelas_disponibilidade/obtemJanelasDisponibilidadesPorJanela', method: 'POST', data: { dadosJanelaDisponibilidade: dadosJanelaDisponibilidade } });
+}
+
+export async function me_obtemRascunhosParaSessaoUnicaNaoCanonica() {
+    return await useApi<RascunhoDto[]>({ uri: '/rascunhos/me/me_obtemRascunhosParaSessaoUnicaNaoCanonica', method: 'GET' });
+}
+
+export async function me_criaSessaoUnicaNaoCanonica(dadosCriacaoSessao: DadosCriacaoSessao) {
+    return await useApi<SessaoDto>({ uri: '/sessoes/me/me_criaSessaoUnicaNaoCanonica', method: 'POST', data: { dadosCriacaoSessao: dadosCriacaoSessao } });
+}
+
+export async function me_atualizaCapaDeSessaoUnica(idSessao: number, idArquivo: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/detalhes_sessao_unica/me/me_atualizaCapaDeSessaoUnica', method: 'PATCH', data: { idSessao: idSessao, idArquivo: idArquivo } });
 }
 
 

@@ -40,7 +40,7 @@ function isIsoDateString(value: any): boolean {
   return isoDateRegex.test(value);
 }
 
-export default async function useApi<T>({ uri, method, data, params }: { uri: string; method: "GET" | "POST" | "PUT" | "DELETE"; data?: any; params?: any }): Promise<T> {
+export default async function useApi<T>({ uri, method, data, params }: { uri: string; method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE"; data?: any; params?: any }): Promise<T> {
   try {
     const config = { url: uri, method, data, params, withCredentials: true };
 

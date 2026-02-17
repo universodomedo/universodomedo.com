@@ -2,11 +2,12 @@
 
 import { EstiloSessao, PAGINAS } from 'types-nora-api';
 
+import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoPaginaMestreSessaoProvider, useContextoPaginaMestreSessao } from 'Contextos/ContextoMestreSessao/contexto';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SessaoEmVisualizacao from 'Componentes/ElementosVisuais/SessaoEmVisualizacao/page';
 import { DestinoInput } from 'Funcionalidades/navegacaoInterna';
-import { ControladorSlot } from 'Layouts/ControladorSlot';
+import ConfiguradorCapa from 'Componentes/Elementos/ConfiguradorCapa/ConfiguradorCapa';
 
 export function PaginaMestreSessao_Client({ idSessao }: { idSessao: number }) {
     return (
@@ -19,7 +20,7 @@ export function PaginaMestreSessao_Client({ idSessao }: { idSessao: number }) {
 };
 
 function PaginaMestreSessao_Conteudo() {
-    const { sessaoSelecionada } = useContextoPaginaMestreSessao();
+    const { sessaoSelecionada, callbackSelecionaArquivo } = useContextoPaginaMestreSessao();
 
     const paginaRetorno: DestinoInput = sessaoSelecionada.estiloSessao == EstiloSessao.SESSAO_DE_AVENTURA
         ? { pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: String(sessaoSelecionada.detalheSessaoAventura.grupoAventura.id) } }
@@ -30,6 +31,8 @@ function PaginaMestreSessao_Conteudo() {
     return (
         <>
             <SessaoEmVisualizacao sessao={sessaoSelecionada} />
+
+            {!sessaoSelecionada.imagemCapa.temCapaConfigurada && <ConfiguradorCapa cabecalho={{ titulo: 'Selecionando Capa', subtitulo: sessaoSelecionada.tituloInteligente.tituloCompleto }} callbackSelecionaArquivo={callbackSelecionaArquivo} />}
 
             {/* <ListaInfracoesSessao /> */}
         </>

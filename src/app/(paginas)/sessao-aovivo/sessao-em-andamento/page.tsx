@@ -35,7 +35,7 @@ export default function PaginaSessao_SessaoEmAndamento() {
                     </div>
 
                     <div id={styles.recipiente_tela_jogo}>
-                        <RecipienteImagem src={sessaoEmAndamento!.pathCapaInteligente} />
+                        <RecipienteImagem src={sessaoEmAndamento!.imagemCapa.caminhoCapa} />
                     </div>
                 </div>
             </div>

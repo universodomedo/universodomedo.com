@@ -1,27 +1,45 @@
 'use client';
 
 import { JSX, ReactNode } from 'react';
-import Select, { type GroupBase, type OptionProps, type Props as ReactSelectProps, type SingleValueProps } from 'react-select';
+import Select, { type GroupBase, type MultiValueProps, type OptionProps, type Props as ReactSelectProps, type SingleValueProps } from 'react-select';
 
-type SelectProps<Option, Group extends GroupBase<Option>> = ReactSelectProps<Option, false, Group>;
+type SelectProps<Option, IsMulti extends boolean, Group extends GroupBase<Option>> = ReactSelectProps<Option, IsMulti, Group>;
 
-export type SelecionadorComposto<Option, Group extends GroupBase<Option> = GroupBase<Option>> = {
+export type SelecionadorComposto<Option, IsMulti extends boolean, Group extends GroupBase<Option> = GroupBase<Option>> = {
     (props: { children?: ReactNode; className?: string }): JSX.Element;
-    Select: (props: SelectProps<Option, Group>) => JSX.Element;
-    Option: (props: OptionProps<Option, false, Group>) => JSX.Element;
-    SingleValue: (props: SingleValueProps<Option, false, Group>) => JSX.Element;
+    Select: (props: SelectProps<Option, IsMulti, Group>) => JSX.Element;
+    Option: (props: OptionProps<Option, IsMulti, Group>) => JSX.Element;
+    SingleValue: (props: SingleValueProps<Option, IsMulti, Group>) => JSX.Element;
+    MultiValue: (props: MultiValueProps<Option, IsMulti, Group>) => JSX.Element;
 };
 
-export default function criarSelecionadorBase<Option, Group extends GroupBase<Option> = GroupBase<Option>>() {
-    const Selecionador = (({ children, className }: { children?: ReactNode; className?: string }) => <div className={className}>{children}</div>) as SelecionadorComposto<Option, Group>;
+export default function criarSelecionadorBase<Option, IsMulti extends boolean, Group extends GroupBase<Option> = GroupBase<Option>>() {
+    const Selecionador = (({ children, className }: { children?: ReactNode; className?: string }) => <div className={className}>{children}</div>) as SelecionadorComposto<Option, IsMulti, Group>;
 
-    Selecionador.Option = (props: OptionProps<Option, false, Group>) => <div>{String(props.label)}</div>;
+    Selecionador.Option = (props: OptionProps<Option, IsMulti, Group>) => <div>{String(props.label)}</div>;
+    Selecionador.SingleValue = (props: SingleValueProps<Option, IsMulti, Group>) => <div>{String((props as SingleValueProps<Option, false, Group>).data)}</div>;
+    Selecionador.MultiValue = (props: MultiValueProps<Option, IsMulti, Group>) => <div>{String(props.data)}</div>;
 
-    Selecionador.SingleValue = (props: SingleValueProps<Option, false, Group>) => <div>{String(props.data)}</div>;
-
-    Selecionador.Select = (props: SelectProps<Option, Group>) => {
+    Selecionador.Select = (props: SelectProps<Option, IsMulti, Group>) => {
         const menuPortalTarget = typeof document === 'undefined' ? undefined : document.body;
-        return <Select<Option, false, Group> {...props} menuPortalTarget={menuPortalTarget} menuPosition="fixed" components={{ ...(props.components ?? {}), Option: Selecionador.Option, SingleValue: Selecionador.SingleValue }} />;
+
+        const styles = {
+            ...(props.styles ?? {}),
+            menuPortal: (base: Record<string, string | number>) => {
+                const merged = (props.styles?.menuPortal ? props.styles.menuPortal(base as never, {} as never) : base) as Record<string, string | number>;
+                return { ...merged, zIndex: 'var(--zindex-final-selectMenu)' };
+            },
+        };
+
+        return (
+            <Select<Option, IsMulti, Group>
+                {...props}
+                styles={styles as never}
+                menuPortalTarget={menuPortalTarget}
+                menuPosition="fixed"
+                components={{ ...(props.components ?? {}), Option: Selecionador.Option, SingleValue: Selecionador.SingleValue, MultiValue: Selecionador.MultiValue }}
+            />
+        );
     };
 
     return Selecionador;

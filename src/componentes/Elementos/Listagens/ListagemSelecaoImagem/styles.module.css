@@ -1,0 +1,30 @@
+.recipiente_listagem_imagens_especiais {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: wrap;
+    white-space: nowrap;
+    gap: 3vh 3vw;
+    justify-content: space-evenly;
+    align-content: flex-start;
+    padding: 1vh 0;
+}
+
+.recipiente_item_imagem {
+    display: flex;
+    flex-direction: column;
+    direction: rtl;
+    text-align: center;
+    gap: .4vh;
+    width: 20%;
+    position: relative;
+    aspect-ratio: 16 / 9;
+
+    &.arquivo_selecionado {
+        box-shadow: 0 0 9px #00d2ff;
+    }
+
+    &:not(.arquivo_selecionado):hover {
+        box-shadow: 0 0 9px #ffe200;
+    }
+}

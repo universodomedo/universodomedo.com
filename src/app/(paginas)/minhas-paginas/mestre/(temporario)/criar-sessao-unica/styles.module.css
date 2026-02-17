@@ -1,0 +1,44 @@
+.recipiente_pagina_criar_sessao {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 100%;
+    align-items: center;
+    gap: 1em;
+    padding: 1em;
+}
+
+.recipiente_dados_criar_sessao {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 2em;
+}
+
+.recipiente_dados_criar_sessao__esquerda {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5em;
+}
+
+.recipiente_dados_criar_sessao__direita {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3em;
+}
+
+.recipiente_pagina_criar_sessao__botoes {
+    display: flex;
+    flex-direction: row;
+
+    & button {
+        padding: .6em;
+    }
+}
+
+.recipiente_resumo_rascunho_selecionado {
+    
+}

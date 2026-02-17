@@ -2,13 +2,15 @@
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import { DestinoInput } from 'Funcionalidades/navegacaoInterna';
+import redirecionarInterno from 'Funcionalidades/redirecionarInterno';
 import { useAppRefresh } from 'contextos/ContextoAppRefresh/contexto';
 import Toast from 'Componentes/ElementosVisuais/Toast/Toast';
 import { registerToast, unregisterToast } from 'Hooks/useToast';
 
 export type ToastTipo = 'sucesso' | 'aviso' | 'erro';
 
-export type ToastOpcao = { recarregaPagina?: boolean };
+export type ToastOpcao = { recarregaPagina?: boolean } | { redirecionaLinkInterno: DestinoInput };
 
 export type ToastItem = { id: string; tipo: ToastTipo; titulo: string; mensagem?: string };
 
@@ -29,6 +31,8 @@ export function useContextoToast(): ContextoToastProps {
 };
 
 function uid(): string { return `${Date.now()}_${Math.random().toString(16).slice(2)}`; }
+
+function isOpcaoRedirect(opcoes: ToastOpcao | undefined): opcoes is { redirecionaLinkInterno: DestinoInput } { return !!opcoes && typeof opcoes === 'object' && 'redirecionaLinkInterno' in opcoes; }
 
 export function ContextoToastProvider({ children }: { children: React.ReactNode }) {
     const { recarregaPagina } = useAppRefresh();
@@ -63,7 +67,10 @@ export function ContextoToastProvider({ children }: { children: React.ReactNode 
     }, []);
 
     const add = useCallback(async (tipo: ToastTipo, titulo: string, mensagem?: string, opcoes?: ToastOpcao) => {
-        if (opcoes?.recarregaPagina) {
+        if (isOpcaoRedirect(opcoes)) {
+            redirecionarInterno(opcoes.redirecionaLinkInterno);
+            await new Promise<void>((r) => setTimeout(() => r(), 0));
+        } else if (opcoes?.recarregaPagina) {
             recarregaPagina();
             await new Promise<void>((r) => setTimeout(() => r(), 0));
         }

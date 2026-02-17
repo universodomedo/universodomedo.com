@@ -7,7 +7,7 @@ import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 export default function RecipienteCapa({ sessao, className }: { sessao: SessaoDto, className?: string }) {
     return (
         <div className={styles.recipiente_capa}>
-            <RecipienteImagem src={sessao.pathCapaInteligente} className={className} />
+            <RecipienteImagem src={sessao.imagemCapa.caminhoCapa} className={className} />
         </div>
     );
 };

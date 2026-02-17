@@ -3,9 +3,9 @@
 import styles from './styles.module.css';
 import stylesBase from '../styles.module.css';
 
-import { useMemo } from 'react';
+import { JSX, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { components, type OptionProps, type SingleValueProps, type SingleValue } from 'react-select';
+import { components, type GroupBase, type MultiValue, type MultiValueProps, type OnChangeValue, type OptionProps, type SingleValueProps } from 'react-select';
 
 import { selectUsuarios } from 'Redux/selectors/usuariosSelectors';
 import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
@@ -13,9 +13,16 @@ import criarSelecionadorBase from '../SelecionadorBase';
 
 type Option = { value: number; label: string; id: number; username: string };
 
-const SelecionadorUsuarioEmCacheBase = criarSelecionadorBase<Option>();
+const SelecionadorUsuarioEmCacheSingleBase = criarSelecionadorBase<Option, false>();
+const SelecionadorUsuarioEmCacheMultiBase = criarSelecionadorBase<Option, true>();
 
-export default function SelecionadorUsuarioEmCache({ onSelectIdUsuario }: { onSelectIdUsuario: (idUsuario: number | null) => void }) {
+type PropsSingle = { isMulti?: false; onSelectIdUsuario: (idUsuario: number | null) => void };
+type PropsMulti = { isMulti: true; onSelectIdsUsuarios: (idsUsuarios: number[]) => void };
+type Props = PropsSingle | PropsMulti;
+
+export default function SelecionadorUsuarioEmCache(props: PropsSingle): JSX.Element;
+export default function SelecionadorUsuarioEmCache(props: PropsMulti): JSX.Element;
+export default function SelecionadorUsuarioEmCache(props: Props) {
     const usuarios = useSelector(selectUsuarios);
 
     const options = useMemo<Option[]>(() => {
@@ -24,56 +31,81 @@ export default function SelecionadorUsuarioEmCache({ onSelectIdUsuario }: { onSe
         return lista;
     }, [usuarios]);
 
-    function onChange(option: SingleValue<Option>) { onSelectIdUsuario(option ? option.id : null); }
+    function onChangeSingle(option: OnChangeValue<Option, false>) { if ('onSelectIdUsuario' in props) props.onSelectIdUsuario(option ? option.id : null); }
+
+    function onChangeMulti(option: OnChangeValue<Option, true>) { if ('onSelectIdsUsuarios' in props) props.onSelectIdsUsuarios((option as MultiValue<Option>).map((o) => o.id)); }
+
+    const isMulti = props.isMulti === true;
 
     return (
         <div className={`${stylesBase.recipiente_interno_selecionador} ${styles.recipiente_interno_selecionador_usuario_emcache}`}>
-            <SelecionadorUsuarioEmCacheBase.Select
-                className={stylesBase.select}
-                classNamePrefix="rs"
-                options={options}
-                placeholder="Selecione um usuário..."
-                isClearable
-                onChange={onChange}
-            />
+            {isMulti ? (
+                <SelecionadorUsuarioEmCacheMultiBase.Select className={stylesBase.select} classNamePrefix="rs" options={options} placeholder="Selecione usuários..." isClearable onChange={onChangeMulti} isMulti />
+            ) : (
+                <SelecionadorUsuarioEmCacheSingleBase.Select className={stylesBase.select} classNamePrefix="rs" options={options} placeholder="Selecione um usuário..." isClearable onChange={onChangeSingle} />
+            )}
         </div>
     );
 };
 
-SelecionadorUsuarioEmCacheBase.Option = (props: OptionProps<Option, false>) => {
-    const data = props.data;
+function OptionRow({ data }: { data: Option }) {
+    return (
+        <div className={styles.option_row}>
+            <div className={styles.option_avatar}>
+                <AvatarUsuarioEmVisualizacao_CACHED idUsuario={data.id} />
+            </div>
 
+            <div className={styles.option_textos}>
+                <div className={styles.option_username}>{data.username}</div>
+                <div className={styles.option_id}>#{data.id}</div>
+            </div>
+        </div>
+    );
+};
+
+function ValueRow({ data }: { data: Option }) {
+    return (
+        <div className={styles.single_row}>
+            <div className={styles.single_avatar}>
+                <AvatarUsuarioEmVisualizacao_CACHED idUsuario={data.id} />
+            </div>
+
+            <div className={styles.single_textos}>
+                <div className={styles.single_username}>{data.username}</div>
+                <div className={styles.single_id}>#{data.id}</div>
+            </div>
+        </div>
+    );
+};
+
+function renderOption<IsMulti extends boolean>(props: OptionProps<Option, IsMulti, GroupBase<Option>>) {
     return (
         <components.Option {...props}>
-            <div className={styles.option_row}>
-                <div className={styles.option_avatar}>
-                    <AvatarUsuarioEmVisualizacao_CACHED idUsuario={data.id} />
-                </div>
-
-                <div className={styles.option_textos}>
-                    <div className={styles.option_username}>{data.username}</div>
-                    <div className={styles.option_id}>#{data.id}</div>
-                </div>
-            </div>
+            <OptionRow data={props.data} />
         </components.Option>
     );
 };
 
-SelecionadorUsuarioEmCacheBase.SingleValue = (props: SingleValueProps<Option, false>) => {
-    const data = props.data;
-
+function renderSingleValue<IsMulti extends boolean>(props: SingleValueProps<Option, IsMulti, GroupBase<Option>>) {
     return (
         <components.SingleValue {...props}>
-            <div className={styles.single_row}>
-                <div className={styles.single_avatar}>
-                    <AvatarUsuarioEmVisualizacao_CACHED idUsuario={data.id} />
-                </div>
-
-                <div className={styles.single_textos}>
-                    <div className={styles.single_username}>{data.username}</div>
-                    <div className={styles.single_id}>#{data.id}</div>
-                </div>
-            </div>
+            <ValueRow data={props.data} />
         </components.SingleValue>
     );
 };
+
+function renderMultiValue<IsMulti extends boolean>(props: MultiValueProps<Option, IsMulti, GroupBase<Option>>) {
+    return (
+        <components.MultiValue {...props}>
+            <ValueRow data={props.data} />
+        </components.MultiValue>
+    );
+};
+
+SelecionadorUsuarioEmCacheSingleBase.Option = (props) => renderOption<false>(props);
+SelecionadorUsuarioEmCacheMultiBase.Option = (props) => renderOption<true>(props);
+
+SelecionadorUsuarioEmCacheSingleBase.SingleValue = (props) => renderSingleValue<false>(props);
+SelecionadorUsuarioEmCacheMultiBase.SingleValue = (props) => renderSingleValue<true>(props);
+
+SelecionadorUsuarioEmCacheMultiBase.MultiValue = (props) => renderMultiValue<true>(props);

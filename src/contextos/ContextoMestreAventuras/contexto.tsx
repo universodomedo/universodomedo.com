@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { GrupoAventuraDto } from 'types-nora-api';
 
-import { obtemGruposPorMestre } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { me_obtemGruposPorMestre } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoMestreAventurasProps {
     gruposAventurasListadas: GrupoAventuraDto[];
@@ -25,7 +25,7 @@ export const ContextoMestreAventurasProvider = ({ children }: { children: React.
         setCarregando('Buscando Aventura');
 
         try {
-            setGruposAventurasListadas(await obtemGruposPorMestre());
+            setGruposAventurasListadas(await me_obtemGruposPorMestre());
         } catch {
             setGruposAventurasListadas(null);
         } finally {

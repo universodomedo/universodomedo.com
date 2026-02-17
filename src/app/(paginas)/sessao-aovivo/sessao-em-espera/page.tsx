@@ -47,7 +47,7 @@ function PaginaSessao_EpisodioSeguinte() {
     return (
         <div id={styles.recipiente_episodio_seguinte}>
             <div id={styles.recipiente_capa_episodio_seguinte}>
-                <RecipienteImagem src={episodioSeguinte.pathCapaInteligente} />
+                <RecipienteImagem src={episodioSeguinte.imagemCapa.caminhoCapa} />
             </div>
             <div id={styles.recipiente_informacoes_episodio_seguinte}>
                 <div id={styles.recipiente_titulo_e_subtitulo_episodio_seguinte}>
@@ -65,7 +65,7 @@ function PaginaSessao_EpisodiosFuturos() {
     const { episodiosFuturos } = useContextoSessoesPrevistas();
 
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
-
+    
     return (
         <div id={styles.recipiente_episodios_futuros} {...scrollableProps}>
             <div id={styles.recipiente_lista_episodios_futuros}>
@@ -73,7 +73,7 @@ function PaginaSessao_EpisodiosFuturos() {
                 {episodiosFuturos.map(ep => (
                     <div key={ep.id} className={styles.recipiente_item_episodio_futuro}>
                         <div className={styles.recipiente_capa_item_episodio_futuro}>
-                            <RecipienteImagem src={ep.pathCapaInteligente} />
+                            <RecipienteImagem src={ep.imagemCapa.caminhoCapa} />
                         </div>
                         <div className={styles.recipiente_informacaoes_item_episodio_futuro}>
                             <h2>{ep.tituloInteligente.titulo}</h2>

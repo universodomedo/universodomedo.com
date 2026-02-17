@@ -1,8 +1,7 @@
 import React, {  ReactNode } from 'react';
 import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
 
-import { AtributoDto, AtributoFicha, ClasseDto, DadosDoTipoGanho, DadosEvolucaoFicha, DadosGanho_Atributos, DadosGanho_Classes, DadosGanho_Estatisticas, DadosGanho_Pericias, DadosGanho_PontosHabilidadeElemental, DadosGanho_PontosHabilidadesEspeciais, DadosGanho_PontosHabilidadesParanormais, DadosGanho_ValorMaximoAtributo, DetalheEvolucao, DetalheFicha, EstatisticaDanificavelDto, EstatisticaDanificavelFicha, FichaDeJogo, FichaDto, FichaEmProcessoDeEvolucaoDto, FichaPersonagemDto, GanhoEstatistica, GanhoNivelClasseDto, IPericia, NivelDto, ObjetoGanhosEvolucao, PatentePericiaDto, PericiaDto, PericiaFicha, PersonagemDto, RegistroPericiaLivre, TipoGanhoNivelDto } from 'types-nora-api';
-import { pluralize } from 'Uteis/UteisTexto/pluralize';
+import { AtributoDto, AtributoFicha, ClasseDto, DadosDoTipoGanho, DadosEvolucaoFicha, DadosGanho_Atributos, DadosGanho_Classes, DadosGanho_Estatisticas, DadosGanho_Pericias, DadosGanho_PontosHabilidadeElemental, DadosGanho_PontosHabilidadesEspeciais, DadosGanho_PontosHabilidadesParanormais, DadosGanho_ValorMaximoAtributo, DetalheEvolucao, DetalheFicha, EstatisticaDanificavelDto, EstatisticaDanificavelFicha, FichaDeJogo, FichaDto, FichaEmProcessoDeEvolucaoDto, FichaPersonagemDto, GanhoEstatistica, GanhoNivelClasseDto, IPericia, NivelDto, ObjetoGanhosEvolucao, PatentePericiaDto, PericiaDto, PericiaFicha, PersonagemDto, pluralize, RegistroPericiaLivre, TipoGanhoNivelDto } from 'types-nora-api';
 
 export class GanhosEvolucao {
     public ganhosEstatisticasPorAtributo: GanhoEstatistica[] = [];

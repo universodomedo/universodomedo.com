@@ -11,7 +11,7 @@ import criarSelecionadorBase from '../SelecionadorBase';
 
 type OptionDiaDaSemana = { value: DiaDaSemana; label: string; dds: DiaDaSemana };
 
-const SelecionadorDiaDaSemanaBase = criarSelecionadorBase<OptionDiaDaSemana>();
+const SelecionadorDiaDaSemanaBase = criarSelecionadorBase<OptionDiaDaSemana, false>();
 
 export default function SelecionadorDiaDaSemana({ diaSelecionado, onSelectDiaDaSemana }: { diaSelecionado: DiaDaSemana; onSelectDiaDaSemana: (v: DiaDaSemana) => void }) {
     const options = useMemo<OptionDiaDaSemana[]>(() => {
