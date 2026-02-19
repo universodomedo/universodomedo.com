@@ -178,7 +178,7 @@ export async function encerraGrupoAventura(idGrupoAventura: number): Promise<boo
 }
 
 export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
+    return await useApi<boolean>({ uri: '/sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PATCH', data: { idGrupoAventura: idGrupoAventura } })
 }
 
 export async function obtemEstilosSessaoPorParam(ehSessaoUnica: boolean): Promise<EstiloSessaoMestradaDto[]> {

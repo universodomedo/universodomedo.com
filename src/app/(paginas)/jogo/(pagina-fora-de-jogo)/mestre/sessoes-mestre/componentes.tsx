@@ -39,7 +39,7 @@ function PaginaSessoesMestre_Contexto() {
                             </div>
 
                             <div className={styles.toolbar_direita}>
-                                <span className={styles.etiqueta}>{sessao.estiloSessao}</span>
+                                <span className={styles.etiqueta}>{sessao.tipoPorExtenso}</span>
                             </div>
                         </div>
                         <DivClicavel key={0} className={styles.corpo_sessao} onClick={() => selecionaSessao(sessao.id)}>

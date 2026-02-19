@@ -1,6 +1,6 @@
 'use client';
 
-import { EstiloSessao, PAGINAS } from 'types-nora-api';
+import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoPaginaMestreSessaoProvider, useContextoPaginaMestreSessao } from 'Contextos/ContextoMestreSessao/contexto';
@@ -22,7 +22,7 @@ export function PaginaMestreSessao_Client({ idSessao }: { idSessao: number }) {
 function PaginaMestreSessao_Conteudo() {
     const { sessaoSelecionada, callbackSelecionaArquivo } = useContextoPaginaMestreSessao();
 
-    const paginaRetorno: DestinoInput = sessaoSelecionada.estiloSessao == EstiloSessao.SESSAO_DE_AVENTURA
+    const paginaRetorno: DestinoInput = sessaoSelecionada.tipo == 'AVENTURA'
         ? { pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: String(sessaoSelecionada.detalheSessaoAventura.grupoAventura.id) } }
         : PAGINAS.minhasPaginas.mestre.sessoesUnicas
 

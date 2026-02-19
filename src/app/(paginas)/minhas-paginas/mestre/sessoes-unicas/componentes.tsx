@@ -29,6 +29,7 @@ function PaginaMestreSessoesUnicas_Contexto() {
                     destino={{ pagina: PAGINAS.minhasPaginas.mestre.sessao, params: { id: sessao.id } }}
                     imagem={sessao.imagemCapa.caminhoCapa}
                     detalhePrincipal={sessao.detalheSessaoUnica.rascunho?.titulo}
+                    detalheSecundario={sessao.estadoAtual}
                 />
             ))}
         </div>

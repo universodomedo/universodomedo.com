@@ -99,6 +99,8 @@ export function clearSocketCache() {
 
 export function getActiveConnections() { return socketSingleton?.connected ? ["/"] : []; }
 
+function ackErrorFromSocketError(err: Error): WsErrorResponse { return { _wsErro: true, mensagem: "Erro ao conectar/aguardar resposta do WebSocket", code: "SOCKET_ERROR", detalhes: { message: err.message } }; }
+
 export const eventoWs: EventoWsFn = ((def: EventoDef, arg2: object | ((payload: object | WsErrorResponse) => void), arg3?: ((response: object) => void) | EnviaERecebeOptions<object>) => {
     const socket = getSocket();
 
@@ -125,18 +127,29 @@ export const eventoWs: EventoWsFn = ((def: EventoDef, arg2: object | ((payload: 
 
     if (tipo === "envia-e-recebe") {
         const payload = arg2 as object;
-        if (!socket.connected) { try { socket.connect(); } catch (_err) { } }
 
         const timeoutMs = (typeof arg3 === "object" && arg3 && typeof (arg3 as { timeoutMs?: number }).timeoutMs === "number") ? (arg3 as { timeoutMs: number }).timeoutMs : 5000;
         const onSuccess = (typeof arg3 === "function") ? (arg3 as (r: object) => void) : (typeof arg3 === "object" && arg3 ? (arg3 as { onSuccess: (r: object) => void }).onSuccess : null);
         const onError = (typeof arg3 === "object" && arg3 && "onError" in arg3 && typeof (arg3 as { onError?: (e: WsErrorResponse) => void }).onError === "function") ? (arg3 as { onError: (e: WsErrorResponse) => void }).onError : null;
 
-        socket.timeout(timeoutMs).emit(fullName, payload, (err: Error | null, response: object) => {
-            if (err) { if (onError) onError({ _wsErro: true, mensagem: "Timeout/erro ao aguardar resposta do WebSocket", code: "TIMEOUT", detalhes: { message: err.message } }); return; }
-            if (isWsErrorResponse(response)) { if (onError) onError(response); return; }
-            if (onSuccess) onSuccess(response);
-        });
+        const doEmit = () => {
+            socket.timeout(timeoutMs).emit(fullName, payload, (err: Error | null, response: object) => {
+                if (err) { if (onError) onError({ _wsErro: true, mensagem: "Timeout/erro ao aguardar resposta do WebSocket", code: "TIMEOUT", detalhes: { message: err.message } }); return; }
+                if (isWsErrorResponse(response)) { if (onError) onError(response); return; }
+                if (onSuccess) onSuccess(response);
+            });
+        };
 
+        if (!socket.connected) {
+            const onConnect = () => { doEmit(); };
+            const onConnectError = (err: Error) => { if (onError) onError(ackErrorFromSocketError(err)); };
+            socket.once("connect", onConnect);
+            socket.once("connect_error", onConnectError);
+            try { socket.connect(); } catch (_err) { }
+            return;
+        }
+
+        doEmit();
         return;
     }
 }) as EventoWsFn;
@@ -178,7 +191,39 @@ export function useRecebeEmitWs<D extends { tipo: "emite"; response: object; ful
 type UseEmitWsEstadoOptions<D> = {
     onSuccess: (payload: WsSuccess<D extends { response: object } ? D["response"] : object>) => void;
     onError?: (error: WsErrorResponse) => void;
+    timeoutMs?: number;
 };
+
+type PendingResult<T> = { ok: true; value: T } | { ok: false; error: WsErrorResponse };
+const pendingInitialRequests = new Map<string, Promise<PendingResult<object>>>();
+
+function requestInitialWithDedupe<P extends object, R extends object>(socket: Socket, fullName: string, payload: P, timeoutMs: number): Promise<PendingResult<R>> {
+    const key = fullName;
+    const existing = pendingInitialRequests.get(key);
+    if (existing) return existing as Promise<PendingResult<R>>;
+
+    const p = new Promise<PendingResult<R>>(resolve => {
+        const doEmit = () => {
+            socket.timeout(timeoutMs).emit(fullName, payload, (err: Error | null, response: R | WsErrorResponse) => {
+                if (err) { resolve({ ok: false, error: { _wsErro: true, mensagem: "Timeout/erro ao aguardar resposta do WebSocket", code: "TIMEOUT", detalhes: { message: err.message } } }); return; }
+                if (isWsErrorResponse(response)) { resolve({ ok: false, error: response }); return; }
+                resolve({ ok: true, value: response as R });
+            });
+        };
+
+        if (socket.connected) { doEmit(); return; }
+
+        const onConnect = () => { doEmit(); };
+        const onConnectError = (err: Error) => { resolve({ ok: false, error: ackErrorFromSocketError(err) }); };
+
+        socket.once("connect", onConnect);
+        socket.once("connect_error", onConnectError);
+        try { socket.connect(); } catch (_err) { }
+    }).finally(() => { pendingInitialRequests.delete(key); }) as Promise<PendingResult<object>>;
+
+    pendingInitialRequests.set(key, p);
+    return p as Promise<PendingResult<R>>;
+}
 
 export function useEmitWsComDisparoInicial<D extends { tipo: "emite"; payload: object; response: object; fullName: string }>(def: D, handler: (payload: D["response"]) => void, initialPayload?: D["payload"]): void;
 export function useEmitWsComDisparoInicial<D extends { tipo: "emite"; payload: object; response: object; fullName: string }>(def: D, options: UseEmitWsEstadoOptions<D>, initialPayload?: D["payload"]): void;
@@ -187,8 +232,11 @@ export function useEmitWsComDisparoInicial<D extends { tipo: "emite"; payload: o
     const successRef = useRef<((payload: D["response"]) => void) | null>(null);
     const errorRef = useRef<((error: WsErrorResponse) => void) | null>(null);
     const initialPayloadRef = useRef<D["payload"]>((initialPayload ?? {}) as D["payload"]);
-    const listenerRef = useRef<((payload: D["response"] | WsErrorResponse) => void) | null>(null);
+    const timeoutMsRef = useRef<number>(5000);
     const epoch = useSocketEpoch();
+
+    // ✅ impede “onSuccess” duplicado do disparo inicial
+    const initialAppliedRef = useRef<{ fullName: string; applied: boolean }>({ fullName: "", applied: false });
 
     initialPayloadRef.current = (initialPayload ?? {}) as D["payload"];
 
@@ -196,42 +244,42 @@ export function useEmitWsComDisparoInicial<D extends { tipo: "emite"; payload: o
         handlerRef.current = handlerOrOptions;
         successRef.current = null;
         errorRef.current = null;
+        timeoutMsRef.current = 5000;
     } else {
         handlerRef.current = null;
         successRef.current = handlerOrOptions.onSuccess as (payload: D["response"]) => void;
         errorRef.current = (handlerOrOptions.onError ?? null) as ((error: WsErrorResponse) => void) | null;
+        timeoutMsRef.current = typeof handlerOrOptions.timeoutMs === "number" ? handlerOrOptions.timeoutMs : 5000;
     }
 
     useEffect(() => {
         const socket = getSocket();
         if (!socket) return;
 
-        const wrapped = (payload: D["response"] | WsErrorResponse) => {
+        if (initialAppliedRef.current.fullName !== def.fullName) initialAppliedRef.current = { fullName: def.fullName, applied: false };
+
+        const onMessage = (payload: D["response"] | WsErrorResponse) => {
             if (isWsErrorResponse(payload)) { if (errorRef.current) errorRef.current(payload); return; }
             if (successRef.current) { successRef.current(payload as D["response"]); return; }
             if (handlerRef.current) handlerRef.current(payload as D["response"]);
         };
 
-        if (listenerRef.current) socket.off(def.fullName, listenerRef.current);
-        listenerRef.current = wrapped;
-        socket.on(def.fullName, wrapped);
+        socket.on(def.fullName, onMessage);
 
-        const emitInitial = () => { socket.emit(def.fullName, initialPayloadRef.current); };
+        const runInitial = async () => {
+            const result = await requestInitialWithDedupe(socket, def.fullName, initialPayloadRef.current, timeoutMsRef.current);
 
-        if (!socket.connected) {
-            const onConnect = () => { emitInitial(); };
-            socket.once("connect", onConnect);
-            try { socket.connect(); } catch (_err) { }
-            return () => {
-                if (listenerRef.current) socket.off(def.fullName, listenerRef.current);
-                socket.off("connect", onConnect);
-            };
-        }
+            // ✅ mesmo que o effect rode 2x, só aplica 1 vez
+            if (initialAppliedRef.current.applied) return;
+            initialAppliedRef.current.applied = true;
 
-        emitInitial();
-
-        return () => {
-            if (listenerRef.current) socket.off(def.fullName, listenerRef.current);
+            if (!result.ok) { if (errorRef.current) errorRef.current(result.error); return; }
+            if (successRef.current) successRef.current(result.value as D["response"]);
+            else if (handlerRef.current) handlerRef.current(result.value as D["response"]);
         };
+
+        void runInitial();
+
+        return () => { socket.off(def.fullName, onMessage); };
     }, [def.fullName, epoch]);
 };

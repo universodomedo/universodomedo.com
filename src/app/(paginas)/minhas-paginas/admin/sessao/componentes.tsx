@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import Link from 'next/link';
-import { PAGINAS, EstiloSessao, LinkDto } from 'types-nora-api';
+import { PAGINAS, LinkDto } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoPaginaAdminSessaoProvider, useContextoPaginaAdminSessao } from 'Contextos/ContextoPaginaAdminSessao/contexto';
@@ -28,9 +28,9 @@ function AdministrarSessao_Conteudo() {
 
     return (
         <SecaoDeConteudo id={styles.recipiente_detalhes_sessao}>
-            {sessao.estiloSessao == EstiloSessao.SESSAO_DE_AVENTURA
+            {sessao.tipo == 'AVENTURA'
                 ? <SessaoDeAventura />
-                : sessao.estiloSessao == EstiloSessao.SESSAO_UNICA_CANONICA || sessao.estiloSessao == EstiloSessao.SESSAO_UNICA_NAO_CANONICA ? <SessaoUnica />
+                : sessao.tipo == 'SESSAO_UNICA_CANONICA' || sessao.tipo == 'SESSAO_UNICA_NAO_CANONICA' ? <SessaoUnica />
                     : <></>
             }
         </SecaoDeConteudo>

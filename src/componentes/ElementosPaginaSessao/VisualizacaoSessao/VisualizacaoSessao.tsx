@@ -1,5 +1,3 @@
-import { EstiloSessao, SessaoDto } from "types-nora-api";
-
 import SessaoEmVisualizacao from "Componentes/ElementosVisuais/SessaoEmVisualizacao/page";
 import { useContextoPaginasListagemSessoes } from "Contextos/ContextoPaginasListagemSessoes/contexto";
 import { useConfigurarLayoutContextualizado } from "Redux/hooks/useLayoutContextualizado";
@@ -9,9 +7,5 @@ export function VisualizacaoSessao() {
     if (!sessaoSelecionada) return;
     useConfigurarLayoutContextualizado({ titulo: `Sessão - ${sessaoSelecionada?.tituloInteligente.tituloCompleto} [#${sessaoSelecionada?.id}]`, fecharProps: { tipo: 'acao', executar: () => deselecionaSessao(), tituloTooltip: 'Voltar para Listagem' } }, 'patch');
 
-    return (
-        <>
-            {sessaoSelecionada.estiloSessao && sessaoSelecionada.estiloSessao !== EstiloSessao.ERRO && <SessaoEmVisualizacao sessao={sessaoSelecionada} />}
-        </>
-    );
+    return <SessaoEmVisualizacao sessao={sessaoSelecionada} />;
 };

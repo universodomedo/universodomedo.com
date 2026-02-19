@@ -18,10 +18,15 @@ export const useContextoSessaoEmAndamento = (): ContextoSessaoEmAndamentoProps =
 };
 
 export const ContextoSessaoEmAndamentoProvider = ({ children }: { children: React.ReactNode }) => {
-    const [ sessaoEmAndamento, setSessaoEmAndamento ] = useState<SessaoDto | null>(null);
+    const [sessaoEmAndamento, setSessaoEmAndamento] = useState<SessaoDto | null>(null);
 
-    useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirSessaoEmAndamento, data => {
-        setSessaoEmAndamento(data.sessaoEmAndamento);
+    useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirSessaoEmAndamento, {
+        onSuccess: data => {
+            setSessaoEmAndamento(data.sessaoEmAndamento);
+        },
+        onError: err => {
+            setSessaoEmAndamento(null);
+        }
     });
 
     return (
