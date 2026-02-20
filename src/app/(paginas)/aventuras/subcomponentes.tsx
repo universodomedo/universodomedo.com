@@ -36,17 +36,30 @@ export function UltimasSessoesPostadas() {
             <h1>Ultimas Sessões Postadas</h1>
 
             <div id={styles.recipiente_cartas_ultimas_sessoes_postadas}>
-                {detalhesUltimasSessoesPostadas?.map(detalheSessao => (
-                    <CustomLink key={detalheSessao.sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} destino={{ pagina: PAGINAS.aventura, params: { id: detalheSessao.sessao.detalheSessaoAventura.grupoAventura.id }, query: { [QUERY_PARAMS.EPISODIO]: detalheSessao.sessao.detalheSessaoAventura.episodio } }}>
-                        <div className={styles.recipiente_capa_carta_sessao_recente}>
-                            <RecipienteImagem src={detalheSessao.sessao.detalheSessaoAventura.grupoAventura.aventura.imagemCapa?.fullPath} />
-                        </div>
-                        <div className={styles.recipiente_info_carta_sessao_recente}>
-                            <h2>{detalheSessao.sessao.detalheSessaoAventura.grupoAventura.aventura.titulo}</h2>
-                            <h3>{!detalheSessao.sessao.detalheSessaoAventura.grupoAventura.aventura.temApenasUmGrupo && `${detalheSessao.sessao.detalheSessaoAventura.grupoAventura.nome} - `}{detalheSessao.sessao.detalheSessaoAventura.episodioPorExtenso}</h3>
-                        </div>
-                    </CustomLink>
-                ))}
+                {detalhesUltimasSessoesPostadas?.map(detalheSessao => {
+                    return detalheSessao.sessao.tipo === 'AVENTURA'
+                        ? (
+                            <CustomLink key={detalheSessao.sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} destino={{ pagina: PAGINAS.aventura, params: { id: detalheSessao.sessao.detalheSessaoAventura.grupoAventura.id }, query: { [QUERY_PARAMS.EPISODIO]: detalheSessao.sessao.detalheSessaoAventura.episodio } }}>
+                                <div className={styles.recipiente_capa_carta_sessao_recente}>
+                                    <RecipienteImagem src={detalheSessao.sessao.detalheSessaoAventura.grupoAventura.aventura.imagemCapa?.fullPath} />
+                                </div>
+                                <div className={styles.recipiente_info_carta_sessao_recente}>
+                                    <h2>{detalheSessao.sessao.detalheSessaoAventura.grupoAventura.aventura.titulo}</h2>
+                                    <h3>{!detalheSessao.sessao.detalheSessaoAventura.grupoAventura.aventura.temApenasUmGrupo && `${detalheSessao.sessao.detalheSessaoAventura.grupoAventura.nome} - `}{detalheSessao.sessao.detalheSessaoAventura.episodioPorExtenso}</h3>
+                                </div>
+                            </CustomLink>
+                        )
+                        : (
+                            <CustomLink key={detalheSessao.sessao.id} inlineBlock={false} className={styles.carta_sessao_recente} destino={{ pagina: PAGINAS.aventuras }}>
+                                <div className={styles.recipiente_capa_carta_sessao_recente}>
+                                    <RecipienteImagem src={detalheSessao.sessao.imagemCapa.caminhoCapa} />
+                                </div>
+                                <div className={styles.recipiente_info_carta_sessao_recente}>
+                                    <h2>{detalheSessao.sessao.tituloInteligente.tituloCompleto}</h2>
+                                </div>
+                            </CustomLink>
+                        )
+                })}
             </div>
         </SecaoDeConteudo>
     );

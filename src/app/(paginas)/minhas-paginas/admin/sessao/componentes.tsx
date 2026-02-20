@@ -3,14 +3,13 @@
 import styles from './styles.module.css';
 
 import Link from 'next/link';
-import { PAGINAS, LinkDto } from 'types-nora-api';
+import { PAGINAS, LinkDto, SessaoDto } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoPaginaAdminSessaoProvider, useContextoPaginaAdminSessao } from 'Contextos/ContextoPaginaAdminSessao/contexto';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
-import { ContextoCadastroNovoLinkSessaoProvider } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
-import { useContextoCadastroNovoLinkSessao } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
+import { ContextoCadastroNovoLinkSessaoProvider, useContextoCadastroNovoLinkSessao } from 'Contextos/ContextoCadastroNovoLinkSessao/contexto';
 
 export function AdministrarSessao_Client({ idSessao }: { idSessao: number; }) {
     return (
@@ -24,43 +23,42 @@ export function AdministrarSessao_Client({ idSessao }: { idSessao: number; }) {
 
 function AdministrarSessao_Conteudo() {
     const { sessao } = useContextoPaginaAdminSessao();
-    useConfigurarLayoutContextualizado({ fecharProps: { tipo: 'href', paginaRetorno: { pagina: PAGINAS.minhasPaginas.admin.aventura, params: { id: String(sessao.detalheSessaoAventura.grupoAventura.id) } }, tituloTooltip: 'Voltar' } });
+    // to do
+    // useConfigurarLayoutContextualizado({ fecharProps: { tipo: 'href', paginaRetorno: { pagina: PAGINAS.minhasPaginas.admin.aventura, params: { id: String(sessao.detalheSessaoAventura.grupoAventura.id) } }, tituloTooltip: 'Voltar' } });
 
     return (
         <SecaoDeConteudo id={styles.recipiente_detalhes_sessao}>
-            {sessao.tipo == 'AVENTURA'
-                ? <SessaoDeAventura />
-                : sessao.tipo == 'SESSAO_UNICA_CANONICA' || sessao.tipo == 'SESSAO_UNICA_NAO_CANONICA' ? <SessaoUnica />
-                    : <></>
-            }
+            <ContextoCadastroNovoLinkSessaoProvider sessao={sessao}>
+                <SessaoLayout sessao={sessao} />
+            </ContextoCadastroNovoLinkSessaoProvider>
         </SecaoDeConteudo>
     );
 };
 
-function SessaoDeAventura() {
-    const { sessao } = useContextoPaginaAdminSessao();
-
+function SessaoLayout({ sessao }: { sessao: SessaoDto; }) {
     return (
-        <ContextoCadastroNovoLinkSessaoProvider sessao={sessao}>
-            <div id={styles.recipiente_acoes_aventura}>
-                <div>
+        <div id={styles.recipiente_acoes_aventura}>
+            <div>
+                {/* to do, colocar propriedade em SessaoEntidade para obter a exibicao da sessao */}
+                {sessao.tipo === 'AVENTURA'
+                    ? <>
                     <h1>{sessao.detalheSessaoAventura.episodioPorExtenso}</h1>
                     <h3>{sessao.detalheSessaoAventura.grupoAventura.aventura.titulo} - {sessao.detalheSessaoAventura.grupoAventura.nome}</h3>
-                </div>
-
-                <AreaVideoYoutube linkVideo={sessao.detalheSessaoCanonica.linkSessaoYoutube} />
-
-                <AreaPodcastSpotify linkPodcast={sessao.detalheSessaoCanonica.linkSessaoSpotify} />
+                    </>
+                    : <h1>{sessao.tituloInteligente.tituloCompleto}</h1>
+                }
             </div>
-        </ContextoCadastroNovoLinkSessaoProvider>
-    );
-};
 
-function SessaoUnica() {
-    return (
-        <></>
+            {(sessao.tipo === 'AVENTURA' || sessao.tipo === 'SESSAO_UNICA_CANONICA') && (
+                <>
+                    <AreaVideoYoutube linkVideo={sessao.detalheSessaoCanonica.linkSessaoYoutube} />
+
+                    <AreaPodcastSpotify linkPodcast={sessao.detalheSessaoCanonica.linkSessaoSpotify} />
+                </>
+            )}
+        </div>
     );
-};
+}
 
 function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
     const { iniciaProcessoVinculoLinkSessao } = useContextoCadastroNovoLinkSessao();

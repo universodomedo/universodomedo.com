@@ -21,17 +21,14 @@ export function PaginaPlay_GerenciarSalas_Client() {
 function PaginaPlay_GerenciarSalas_Slot() {
     const [salas, setSalas] = useState<SalaDeJogoDto[]>([]);
 
-    useEmitWsComDisparoInicial(
-        Eventos_Emite.Jogo.eventos.emitirTodasSalas,
-        {
-            onSuccess: data => {
-                setSalas(data.salas);
-            },
-            onError: err => {
-                alert('onError');
-            }
+    useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirTodasSalas, {
+        onSuccess: data => {
+            setSalas(data.salas);
+        },
+        onError: err => {
+            alert('onError');
         }
-    );
+    });
 
     return (
         <>

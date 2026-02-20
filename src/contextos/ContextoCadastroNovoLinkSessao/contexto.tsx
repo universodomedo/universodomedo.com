@@ -28,11 +28,11 @@ export const ContextoCadastroNovoLinkSessaoProvider = ({ children, sessao }: { c
     const [idTipoLink, setidTipoLink] = useState<number | null>(null);
 
     const descricao: string = (() => {
-        switch (idTipoLink) {
-            case 2: return `Video do Episódio ${sessao.detalheSessaoAventura.episodio} do Grupo Aventura ${sessao.detalheSessaoAventura.grupoAventura.id}`;
-            case 4: return `Podcast do Episódio ${sessao.detalheSessaoAventura.episodio} do Grupo Aventura ${sessao.detalheSessaoAventura.grupoAventura.id}`;
-            default: return '';
-        }
+        if (sessao.tipo === 'AVENTURA' && idTipoLink === 2) return `Video do Episódio ${sessao.detalheSessaoAventura.episodio} do Grupo Aventura ${sessao.detalheSessaoAventura.grupoAventura.id}`;
+        if (sessao.tipo === 'AVENTURA' && idTipoLink === 4) return `Podcast do Episódio ${sessao.detalheSessaoAventura.episodio} do Grupo Aventura ${sessao.detalheSessaoAventura.grupoAventura.id}`;
+        if (sessao.tipo !== 'AVENTURA' && idTipoLink === 2) return `Video da Sessão ${sessao.tituloInteligente.tituloCompleto}`;
+        if (sessao.tipo !== 'AVENTURA' && idTipoLink === 4) return `Podcast da Sessão ${sessao.tituloInteligente.tituloCompleto}`;
+        return '';
     })();
 
     async function buscaTiposLink() {
