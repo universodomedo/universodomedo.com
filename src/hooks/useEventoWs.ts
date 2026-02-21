@@ -270,6 +270,7 @@ export function useEmitWsComDisparoInicial<D extends { tipo: "emite"; payload: o
             const result = await requestInitialWithDedupe(socket, def.fullName, initialPayloadRef.current, timeoutMsRef.current);
 
             // ✅ mesmo que o effect rode 2x, só aplica 1 vez
+            // subir qualquer coisa
             if (initialAppliedRef.current.applied) return;
             initialAppliedRef.current.applied = true;
 
