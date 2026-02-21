@@ -7,6 +7,7 @@ import { useContextoPersonagensEmSessao } from "Contextos/ContextosPaginaAovivo/
 
 import PersonagemEmVisualizacaoDeSessao from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/PersonagemEmVisualizacaoDeSessao/page';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import JanelaDeMensagensDeJogo from 'Componentes/ElementosDeJogo/JanelaDeMensagensDeJogo/JanelaDeMensagensDeJogo';
 
 export default function PaginaSessao_SessaoEmAndamento() {
     const { sessaoEmAndamento } = useContextoSessaoEmAndamento();
@@ -31,7 +32,9 @@ export default function PaginaSessao_SessaoEmAndamento() {
                                 </div>
                             ))}
                         </div>
-                        {/* {usuarioLogado && (<PaginaSessao_Mensagens />)} */}
+                        <div className={styles.recipiente_em_pagina_sessao_aovivo_janela_mensagens_de_jogo}>
+                            <JanelaDeMensagensDeJogo />
+                        </div>
                     </div>
 
                     <div id={styles.recipiente_tela_jogo}>

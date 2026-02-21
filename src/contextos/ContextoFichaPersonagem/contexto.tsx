@@ -1,10 +1,9 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext } from 'react';
 import { FichaDeJogo } from 'types-nora-api';
 
-import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
-import { obtemFichaDePersonagemEmNivel } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import ControladorSwiperFicha from 'Componentes/ElementosDeJogo/ControladorSwiperFicha/CotroladorSwiperFicha';
 
 interface ContextoFichaPersonagemProps {
     ficha: FichaDeJogo;
@@ -18,33 +17,12 @@ export const useContextoFichaPersonagem = (): ContextoFichaPersonagemProps => {
     return context;
 };
 
-export const ContextoFichaPersonagemProvider = ({ children }: { children: React.ReactNode }) => {
-    const [erro, setErro] = useState<string | null>(null);
-    const [ficha, setFicha] = useState<FichaDeJogo>();
+export function RecipienteFichaPersonagem({ ficha }: { ficha: FichaDeJogo; }) { return <ContextoFichaPersonagemProvider ficha={ficha} />; };
 
-    // useEmitWsComDisparoInicial(
-    //     Eventos_Emite.Jogo.eventos.emitirDadosParaParticipanteDeSala,
-    //     {
-    //         onSuccess: data => {
-    //             console.log('onSuccess');
-    //             setErro(null);
-    //             setFicha(data.dados.fichaDeJogo);
-    //         },
-    //         onError: err => {
-    //             console.log('onError');
-    //             setErro(err.mensagem);
-    //             setFicha(undefined);
-    //         }
-    //     }
-    // );
-
-    if (erro) return (<h1>Erro ao carregar ficha: {erro}</h1>);
-
-    if (!ficha) return (<h1>carregando ficha...</h1>)
-
+const ContextoFichaPersonagemProvider = ({ ficha }: { ficha: FichaDeJogo; }) => {
     return (
         <ContextoFichaPersonagem.Provider value={{ ficha }}>
-            {children}
+            <ControladorSwiperFicha />
         </ContextoFichaPersonagem.Provider>
     );
 };

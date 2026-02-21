@@ -225,10 +225,6 @@ export async function obtemTodasImagensEspeciaisArtistaAprovadas(): Promise<Arqu
     return await useApi<ArquivoDto[]>({ uri: '/arquivos/obtemTodasImagensEspeciaisArtistaAprovadas', method: 'GET' });
 }
 
-export async function rodarTesteEndPoint(): Promise<number> {
-    return await useApi<number>({ uri: '/arquivos/rodarTeste', method: 'GET' })
-}
-
 export async function me_criaEVinculaFicha__FichaTemporaria(nomeFicha: string, descricaoFicha: string, dadosEvolucaoFicha: DadosEvolucaoFicha): Promise<boolean> {
     return await useApi<boolean>({ uri: '/fichas_temporarias/me/me_criaEVinculaFicha__FichaTemporaria', method: 'POST', data: { nomeFicha: nomeFicha, descricaoFicha: descricaoFicha, dadosEvolucaoFicha: dadosEvolucaoFicha } });
 }

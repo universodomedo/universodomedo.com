@@ -1,0 +1,18 @@
+.recipiente_pagina_game_engine {
+    flex: 1;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.janela_mensagens_de_jogo {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background-color: #261933;
+    overflow: hidden;
+    padding: .3% .4%;
+}
