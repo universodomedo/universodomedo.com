@@ -1,6 +1,6 @@
 import styles from './styles.module.css';
 
-import { EstiloSessao, FormatoMomento, SessaoDto } from 'types-nora-api';
+import { FormatoMomento, SessaoDto } from 'types-nora-api';
 
 import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
 import SecaoDeConteudo from "Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo";
