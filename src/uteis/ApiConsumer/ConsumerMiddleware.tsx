@@ -11,7 +11,7 @@ export async function obtemTodosObjetosCache() {
 }
 
 export async function obtemDadosMinhasDisponibilidades() {
-    return await useApi<DisponibilidadeUsuarioDto | null>({ uri: '/disponibilidades_usuario/obtemDadosMinhasDisponibilidades', method: 'GET' });
+    return await useApi<DisponibilidadeUsuarioDto | null>({ uri: '/disponibilidades_usuario/me/me_obtemDadosMinhasDisponibilidades', method: 'GET' });
 }
 
 export async function me_salvaDisponibilidade(listaDisponibilidadesUsuario: ListaDisponibilidadesUsuario) {
