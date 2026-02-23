@@ -2,16 +2,14 @@
 
 import styles from './styles.module.css';
 
-import { useContextoSessoesPrevistas } from 'Contextos/ContextoSessoesPrevistas/contexto';
-
+import { useContextoPaginaAoVivo__EmEspera } from 'Contextos/ContextoPaginaAoVivo__EmEspera/contexto';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { ContadorRegressivo } from 'Componentes/Elementos/ContadorRegressivo/ContadorRegressivo';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
-
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
-export default function PaginaSessao_SessaoEmEspera() {
-    const { episodioSeguinte } = useContextoSessoesPrevistas();
+export default function SPA__PaginaAoVivo__EmEspera() {
+    const { episodioSeguinte } = useContextoPaginaAoVivo__EmEspera();
 
     return (
         <div id={styles.recipiente_pagina_sessao}>
@@ -29,7 +27,7 @@ function PaginaSessao_SemSessaoEmEspera() {
 };
 
 function PaginaSessao_EmPreparo() {
-    const { episodiosFuturos } = useContextoSessoesPrevistas();
+    const { episodiosFuturos } = useContextoPaginaAoVivo__EmEspera();
 
     return (
         <div id={styles.recipiente_sessoes_em_preparo}>
@@ -40,7 +38,7 @@ function PaginaSessao_EmPreparo() {
 };
 
 function PaginaSessao_EpisodioSeguinte() {
-    const { episodioSeguinte } = useContextoSessoesPrevistas();
+    const { episodioSeguinte } = useContextoPaginaAoVivo__EmEspera();
 
     if (!episodioSeguinte) return <></>;
 
@@ -62,7 +60,7 @@ function PaginaSessao_EpisodioSeguinte() {
 };
 
 function PaginaSessao_EpisodiosFuturos() {
-    const { episodiosFuturos } = useContextoSessoesPrevistas();
+    const { episodiosFuturos } = useContextoPaginaAoVivo__EmEspera();
 
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
     

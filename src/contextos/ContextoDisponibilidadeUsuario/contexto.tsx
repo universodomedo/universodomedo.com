@@ -46,6 +46,7 @@ export const ContextoDisponibilidadeUsuarioProvider = ({ children }: { children:
             setMinhaDisponibilidade(await obtemDadosMinhasDisponibilidades());
         } catch {
             setMinhaDisponibilidade(null);
+            toast.erro('Tivemos um erro no processo de Buscar Disponibilidade');
         } finally {
             setCarregando(null);
         }

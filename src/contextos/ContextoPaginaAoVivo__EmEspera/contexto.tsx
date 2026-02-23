@@ -4,23 +4,24 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { SessaoDto } from 'types-nora-api';
 
 import { obtemListaSessoesPrevistas } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import SPA__PaginaAoVivo__EmEspera from 'Conteineres/PaginaAoVivo/paginas/SPA__PaginaAoVivo__EmEspera/SPA__PaginaAoVivo__EmEspera';
 
-interface ContextoSessoesPrevistasProps {
+interface ContextoPaginaAoVivo__EmEsperaProps {
     episodioSeguinte: SessaoDto | null;
     episodiosFuturos: SessaoDto[];
 };
 
-const ContextoSessoesPrevistas = createContext<ContextoSessoesPrevistasProps | undefined>(undefined);
+const ContextoPaginaAoVivo__EmEspera = createContext<ContextoPaginaAoVivo__EmEsperaProps | undefined>(undefined);
 
-export const useContextoSessoesPrevistas = (): ContextoSessoesPrevistasProps => {
-    const context = useContext(ContextoSessoesPrevistas);
-    if (!context) throw new Error('useContextoSessoesPrevistas precisa estar dentro de um ContextoSessoesPrevistas');
+export const useContextoPaginaAoVivo__EmEspera = (): ContextoPaginaAoVivo__EmEsperaProps => {
+    const context = useContext(ContextoPaginaAoVivo__EmEspera);
+    if (!context) throw new Error('useContextoPaginaAoVivo__EmEspera precisa estar dentro de um ContextoPaginaAoVivo__EmEspera');
     return context;
 };
 
-export const ContextoSessoesPrevistasProvider = ({ children }: { children: React.ReactNode }) => {
-    const [listaEpisodiosPrevistos, setListaEpisodiosPrevistos] = useState<SessaoDto[]>([]);
+export const ContextoPaginaAoVivo__EmEsperaProvider = () => {
     const [carregando, setCarregando] = useState<string | null>(null);
+    const [listaEpisodiosPrevistos, setListaEpisodiosPrevistos] = useState<SessaoDto[]>([]);
 
     async function buscaListaEpisodiosPrevistos() {
         setCarregando('Buscando Sessões');
@@ -52,8 +53,8 @@ export const ContextoSessoesPrevistasProvider = ({ children }: { children: React
     if (carregando) return <div>{carregando}</div>;
 
     return (
-        <ContextoSessoesPrevistas.Provider value={{ episodioSeguinte, episodiosFuturos }}>
-            {children}
-        </ContextoSessoesPrevistas.Provider>
+        <ContextoPaginaAoVivo__EmEspera.Provider value={{ episodioSeguinte, episodiosFuturos }}>
+            <SPA__PaginaAoVivo__EmEspera />
+        </ContextoPaginaAoVivo__EmEspera.Provider>
     );
 };

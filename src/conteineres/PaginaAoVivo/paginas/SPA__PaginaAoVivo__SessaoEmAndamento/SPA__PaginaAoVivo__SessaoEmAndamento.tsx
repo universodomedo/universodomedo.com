@@ -2,16 +2,13 @@
 
 import styles from './styles.module.css';
 
-import { useContextoSessaoEmAndamento } from "Contextos/ContextosPaginaAovivo/ContextoSessaoEmAndamento/contexto";
-import { useContextoPersonagensEmSessao } from "Contextos/ContextosPaginaAovivo/ContextoPersonagensEmSessao/contexto";
-
+import { useContextoPaginaAoVivo__SessaoEmAndamento } from 'Contextos/ContextoPaginaAoVivo__SessaoEmAndamento/contexto';
 import PersonagemEmVisualizacaoDeSessao from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/PersonagemEmVisualizacaoDeSessao/page';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import JanelaDeMensagensDeJogo from 'Componentes/ElementosDeJogo/JanelaDeMensagensDeJogo/JanelaDeMensagensDeJogo';
 
-export default function PaginaSessao_SessaoEmAndamento() {
-    const { sessaoEmAndamento } = useContextoSessaoEmAndamento();
-    // const { personagensEmSessao } = useContextoPersonagensEmSessao();
+export default function SPA__PaginaAoVivo__SessaoEmAndamento() {
+    const { sessaoEmAndamento } = useContextoPaginaAoVivo__SessaoEmAndamento();
     
     return (
         <div id={styles.recipiente_pagina_sessao_emandamento}>

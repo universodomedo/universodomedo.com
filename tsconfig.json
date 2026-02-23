@@ -25,6 +25,7 @@
       "App/*": ["app/*"],
       "Componentes/*": ["componentes/*"],
       "Constantes/*": ["constantes/*"],
+      "Conteineres/*": ["conteineres/*"],
       "Contextos/*": ["contextos/*"],
       "Funcionalidades/*": ["funcionalidades/*"],
       "Helpers/*": ["helpers/*"],

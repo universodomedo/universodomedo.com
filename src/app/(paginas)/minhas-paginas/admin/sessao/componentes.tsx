@@ -42,8 +42,8 @@ function SessaoLayout({ sessao }: { sessao: SessaoDto; }) {
                 {/* to do, colocar propriedade em SessaoEntidade para obter a exibicao da sessao */}
                 {sessao.tipo === 'AVENTURA'
                     ? <>
-                    <h1>{sessao.detalheSessaoAventura.episodioPorExtenso}</h1>
-                    <h3>{sessao.detalheSessaoAventura.grupoAventura.aventura.titulo} - {sessao.detalheSessaoAventura.grupoAventura.nome}</h3>
+                        <h1>{sessao.detalheSessaoAventura.episodioPorExtenso}</h1>
+                        <h3>{sessao.detalheSessaoAventura.grupoAventura.aventura.titulo} - {sessao.detalheSessaoAventura.grupoAventura.nome}</h3>
                     </>
                     : <h1>{sessao.tituloInteligente.tituloCompleto}</h1>
                 }
