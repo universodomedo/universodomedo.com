@@ -2,12 +2,11 @@
 
 import styles from './styles.module.css';
 
-import { DetalheSessaoAventuraDto, DetalheSessaoCanonicaDto, PAGINAS } from 'types-nora-api';
+import { DetalheSessaoAventuraDto, PAGINAS } from 'types-nora-api';
 
 import { useContextoPaginaMestreAventura } from "Contextos/ContextoMestreAventura/contexto";
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 import SecaoDeConteudo from "Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo";
-import { BotaoFinalizarSessao } from '../BotaoFinalizarSessao/BotaoFinalizarSessao';
 import { BotaoMarcarSessaoFinal } from '../BotaoMarcarSessaoFinal/BotaoMarcarSessaoFinal';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 
@@ -67,7 +66,6 @@ function AcoesSessoesRecentesDeAventurasEmAndamento() {
     return (
         <SecaoDeConteudo id={styles.recipiente_acoes_aventura}>
             <>
-                <BotaoFinalizarSessao />
                 <BotaoMarcarSessaoFinal />
             </>
         </SecaoDeConteudo>

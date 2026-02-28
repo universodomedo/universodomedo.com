@@ -1,16 +1,17 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { DadosEvolucaoFicha, DetalheEvolucao, FichaDeJogo, ObjetoGanhosEvolucao } from 'types-nora-api'
+import { DadosEvolucaoFicha, DetalheEvolucao, FichaDeJogo, ObjetoGanhosEvolucao, PAGINAS } from 'types-nora-api'
 
 import { obtemGanhosAposSelecaoClasse, obtemGanhosParaCriarFicha_FichaTemporaria, obtemGanhosParaEvoluirPorIdFicha } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { SPA_EdicaoFicha } from 'Contextos/ContextoEdicaoFicha_GanhosCarregados/contexto';
 import { GanhosEvolucao } from './classes';
 import { toast } from 'Hooks/useToast';
+import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
 
 export type RecipienteEdicaoFichaProps =
-    { metodoSairEvolucaoFicha: () => void; metodoSalvarFicha: (dadosEvolucaoFicha: DadosEvolucaoFicha) => void; } &
+    { metodoSairEvolucaoFicha: () => void; metodoSalvarFicha: (dadosEvolucaoFicha: DadosEvolucaoFicha) => Promise<number>; } &
     ({ metodo: 'CRIANDO_FICHA_TEMPORARIA'; nomeFicha: string; descricaoFicha: string; } | { metodo: 'CRIANDO_PERSONAGEM'; idPersonagem: number; });
 
 interface ContextoEdicaoFichaProps {
@@ -25,17 +26,17 @@ export const useContextoEdicaoFicha = (): ContextoEdicaoFichaProps => {
     return context;
 };
 
-export function RecipienteEdicaoFicha({ recipienteEdicaoFichaProps}: { recipienteEdicaoFichaProps: RecipienteEdicaoFichaProps }) { return <ContextoEdicaoFichaProvider recipienteEdicaoFichaProps={recipienteEdicaoFichaProps} /> };
+export function RecipienteEdicaoFicha({ recipienteEdicaoFichaProps }: { recipienteEdicaoFichaProps: RecipienteEdicaoFichaProps }) { return <ContextoEdicaoFichaProvider recipienteEdicaoFichaProps={recipienteEdicaoFichaProps} /> };
 
-const ContextoEdicaoFichaProvider = ({ recipienteEdicaoFichaProps}: { recipienteEdicaoFichaProps: RecipienteEdicaoFichaProps }) => {
+const ContextoEdicaoFichaProvider = ({ recipienteEdicaoFichaProps }: { recipienteEdicaoFichaProps: RecipienteEdicaoFichaProps }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
     const [ganhos, setGanhos] = useState<GanhosEvolucao | null>(null);
 
-    function criarMetodoSalvarEvolucao(salvarEvolucao: (dadosEvolucaoFicha: DadosEvolucaoFicha) => void): (dadosEvolucaoFicha: DadosEvolucaoFicha) => void {
+    function criarMetodoSalvarEvolucao(salvarEvolucao: (dadosEvolucaoFicha: DadosEvolucaoFicha) => Promise<number>): (dadosEvolucaoFicha: DadosEvolucaoFicha) => Promise<void> {
         return async (dadosEvolucaoFicha: DadosEvolucaoFicha) => {
             try {
-                await salvarEvolucao(dadosEvolucaoFicha);
-                await toast.sucesso('Ficha salva com sucesso!', `A Ficha foi criada`, { recarregaPagina: true });
+                const idFichaTemporariaSala = await salvarEvolucao(dadosEvolucaoFicha);
+                await toast.sucesso('Ficha salva com sucesso!', `A Ficha foi criada`, { redirecionaLinkInterno: { pagina: PAGINAS.fichas, query: { [QUERY_PARAMS.FICHA]: idFichaTemporariaSala } } });
             } catch (e) { await toast.erro('Erro ao salvar a evolução do personagem.', e instanceof Error ? e.message : 'Erro ao salvar a evolução do personagem.'); }
         };
     }
@@ -58,19 +59,19 @@ const ContextoEdicaoFichaProvider = ({ recipienteEdicaoFichaProps}: { recipiente
             ganhos.listaGanhos,
             ganhos.listaGanhosEstatisticasPorAtributos
         ));
-    }
+    };
 
-    async function salvarEvolucao(dadosEvolucaoFicha: DadosEvolucaoFicha) {
+    async function salvarEvolucao(dadosEvolucaoFicha: DadosEvolucaoFicha): Promise<number> {
         setCarregando('Salvando Edições do Personagem');
 
         try {
             // return salvarEvolucaoDoPersonagem(fichaEvoluida, fichaDeJogoEvoluida);
             // return me_criaEVinculaFicha__FichaTemporaria(fichaDeJogoEvoluida);
             return recipienteEdicaoFichaProps.metodoSalvarFicha(dadosEvolucaoFicha);
-        } catch {
-            
+        } catch (e) {
+            throw e;
         }
-    }
+    };
 
     useEffect(() => {
         carregaGanhos();

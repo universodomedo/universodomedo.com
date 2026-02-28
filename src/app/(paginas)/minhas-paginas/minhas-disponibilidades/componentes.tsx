@@ -30,9 +30,6 @@ function PaginaMinhaDisponibilidade_Contexto() {
 
     const disponibilidadeValida = minhaDisponibilidade && minhaDisponibilidade.estaValido;
 
-    console.log(`teste`);
-    console.log(disponibilidadeValida);
-
     return (
         <>
             <div className={styles.recipiente_pagina_disponibilidades}>

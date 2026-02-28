@@ -16,8 +16,8 @@ type Option = { value: number; label: string; id: number; username: string };
 const SelecionadorUsuarioEmCacheSingleBase = criarSelecionadorBase<Option, false>();
 const SelecionadorUsuarioEmCacheMultiBase = criarSelecionadorBase<Option, true>();
 
-type PropsSingle = { isMulti?: false; onSelectIdUsuario: (idUsuario: number | null) => void };
-type PropsMulti = { isMulti: true; onSelectIdsUsuarios: (idsUsuarios: number[]) => void };
+type PropsSingle = { isMulti?: false; idSelecionado?: number | null; onSelectIdUsuario: (idUsuario: number | null) => void };
+type PropsMulti = { isMulti: true; idsSelecionados?: number[]; onSelectIdsUsuarios: (idsUsuarios: number[]) => void };
 type Props = PropsSingle | PropsMulti;
 
 export default function SelecionadorUsuarioEmCache(props: PropsSingle): JSX.Element;
@@ -31,6 +31,20 @@ export default function SelecionadorUsuarioEmCache(props: Props) {
         return lista;
     }, [usuarios]);
 
+    const valueSingle = useMemo<Option | null>(() => {
+        if ('onSelectIdsUsuarios' in props) return null;
+        const idSelecionado = props.idSelecionado ?? null;
+        if (idSelecionado === null) return null;
+        return options.find(option => option.id === idSelecionado) ?? null;
+    }, [options, props]);
+
+    const valueMulti = useMemo<MultiValue<Option>>(() => {
+        if ('onSelectIdUsuario' in props) return [];
+        const idsSelecionados = props.idsSelecionados ?? [];
+        if (idsSelecionados.length <= 0) return [];
+        return options.filter(option => idsSelecionados.includes(option.id));
+    }, [options, props]);
+
     function onChangeSingle(option: OnChangeValue<Option, false>) { if ('onSelectIdUsuario' in props) props.onSelectIdUsuario(option ? option.id : null); }
 
     function onChangeMulti(option: OnChangeValue<Option, true>) { if ('onSelectIdsUsuarios' in props) props.onSelectIdsUsuarios((option as MultiValue<Option>).map((o) => o.id)); }
@@ -40,9 +54,9 @@ export default function SelecionadorUsuarioEmCache(props: Props) {
     return (
         <div className={`${stylesBase.recipiente_interno_selecionador} ${styles.recipiente_interno_selecionador_usuario_emcache}`}>
             {isMulti ? (
-                <SelecionadorUsuarioEmCacheMultiBase.Select className={stylesBase.select} classNamePrefix="rs" options={options} placeholder="Selecione usuários..." isClearable onChange={onChangeMulti} isMulti />
+                <SelecionadorUsuarioEmCacheMultiBase.Select className={stylesBase.select} classNamePrefix="rs" options={options} value={valueMulti} placeholder="Selecione usuários..." isClearable onChange={onChangeMulti} isMulti />
             ) : (
-                <SelecionadorUsuarioEmCacheSingleBase.Select className={stylesBase.select} classNamePrefix="rs" options={options} placeholder="Selecione um usuário..." isClearable onChange={onChangeSingle} />
+                <SelecionadorUsuarioEmCacheSingleBase.Select className={stylesBase.select} classNamePrefix="rs" options={options} value={valueSingle} placeholder="Selecione um usuário..." isClearable onChange={onChangeSingle} />
             )}
         </div>
     );

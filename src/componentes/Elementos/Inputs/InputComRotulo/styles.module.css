@@ -12,11 +12,13 @@
 
 
 .input_e_rotulo {
-    width: min(92%, 34em);
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
+    width: min(92%, 34em);
+    margin: 0 auto;
     gap: 0.55em;
+    align-items: center;
+    justify-content: space-between;
 
     padding: 1.05em 1.15em;
     border-radius: 1.05em;

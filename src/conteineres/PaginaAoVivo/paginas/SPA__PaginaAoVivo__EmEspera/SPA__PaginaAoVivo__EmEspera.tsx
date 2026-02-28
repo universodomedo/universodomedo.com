@@ -5,8 +5,8 @@ import styles from './styles.module.css';
 import { useContextoPaginaAoVivo__EmEspera } from 'Contextos/ContextoPaginaAoVivo__EmEspera/contexto';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { ContadorRegressivo } from 'Componentes/Elementos/ContadorRegressivo/ContadorRegressivo';
-import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
+import ItemListagemSessaoPrevista from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/ItemListagemSessaoPrevista/ItemListagemSessaoPrevista';
 
 export default function SPA__PaginaAoVivo__EmEspera() {
     const { episodioSeguinte } = useContextoPaginaAoVivo__EmEspera();
@@ -63,23 +63,12 @@ function PaginaSessao_EpisodiosFuturos() {
     const { episodiosFuturos } = useContextoPaginaAoVivo__EmEspera();
 
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
-    
+
     return (
-        <div id={styles.recipiente_episodios_futuros} {...scrollableProps}>
-            <div id={styles.recipiente_lista_episodios_futuros}>
+        <div className={styles.recipiente_episodios_futuros} {...scrollableProps}>
+            <div className={styles.recipiente_lista_episodios_futuros}>
                 <h1>Sessões Futuras</h1>
-                {episodiosFuturos.map(ep => (
-                    <div key={ep.id} className={styles.recipiente_item_episodio_futuro}>
-                        <div className={styles.recipiente_capa_item_episodio_futuro}>
-                            <RecipienteImagem src={ep.imagemCapa.caminhoCapa} />
-                        </div>
-                        <div className={styles.recipiente_informacaoes_item_episodio_futuro}>
-                            <h2>{ep.tituloInteligente.titulo}</h2>
-                            {ep.tituloInteligente.subtitulo && (<h4>{ep.tituloInteligente.subtitulo}</h4>)}
-                            <h3>{formataData(ep.dataPrevisaoInicio)}</h3>
-                        </div>
-                    </div>
-                ))}
+                {episodiosFuturos.map(ep => <ItemListagemSessaoPrevista key={ep.id} sessao={ep} />)}
             </div>
         </div>
     );

@@ -6,6 +6,29 @@
 
 .recipiente_dados_ficha {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+}
+
+.recipiente_dados_sessao {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.recipiente_dados_sessao_unica_amarrada_nessa_ficha {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
+}
+
+.recipiente_capa_sessao_amarrada {
+    position: relative;
+    height: 20em;
+    aspect-ratio: 16 / 9;
 }
 
 .recipiente_acoes_ficha {

@@ -5,27 +5,31 @@ import stylesBase from '../styles.module.css';
 
 import { JSX, useMemo } from 'react';
 import { components, type GroupBase, type OptionProps, type SingleValueProps } from 'react-select';
-
-import criarSelecionadorBase from '../SelecionadorBase';
+import cn from 'classnames';
 import type { RascunhoDto } from 'types-nora-api';
 
-type Option = { value: number; label: string; id: number; titulo: string };
+import criarSelecionadorBase from '../SelecionadorBase';
+
+export const VALOR_MUNDO_ABERTO = 'MUNDO_ABERTO' as const;
+
+type IdSelecionadoRascunho = number | typeof VALOR_MUNDO_ABERTO;
+type Option = { value: IdSelecionadoRascunho; label: string; id: IdSelecionadoRascunho; titulo: string };
 
 const SelecionadorRascunhoBase = criarSelecionadorBase<Option, false>();
 
 type SelecionadorRascunhoProps = {
     options: RascunhoDto[];
-    idSelecionado?: number | null;
-    onSelectIdRascunho: (idRascunho: number | null) => void;
+    idSelecionado?: IdSelecionadoRascunho | null;
+    onSelectIdRascunho: (idRascunho: IdSelecionadoRascunho | null) => void;
     disabled?: boolean;
     isClearable?: boolean;
 };
 
 export default function SelecionadorRascunho(props: SelecionadorRascunhoProps): JSX.Element {
     const options = useMemo<Option[]>(() => {
-        const lista = (props.options || []).map((r) => ({ value: r.id, id: r.id, titulo: r.titulo, label: r.titulo }));
-        lista.sort((a, b) => a.id - b.id);
-        return lista;
+        const listaRascunhos = (props.options || []).map((r) => ({ value: r.id, id: r.id, titulo: r.titulo, label: r.titulo }));
+        listaRascunhos.sort((a, b) => a.id - b.id);
+        return [{ value: VALOR_MUNDO_ABERTO, id: VALOR_MUNDO_ABERTO, titulo: 'Mundo Aberto', label: 'Mundo Aberto' }, ...listaRascunhos];
     }, [props.options]);
 
     const value = useMemo<Option | null>(() => {
@@ -41,15 +45,15 @@ export default function SelecionadorRascunho(props: SelecionadorRascunhoProps): 
             <SelecionadorRascunhoBase.Select className={stylesBase.select} classNamePrefix="rs" options={options} value={value} placeholder={'Selecione um rascunho...'} isClearable={props.isClearable ?? true} isDisabled={props.disabled === true} onChange={onChange} />
         </div>
     );
-}
+};
 
 function renderOption(props: OptionProps<Option, false, GroupBase<Option>>) {
     return (
         <components.Option {...props}>
-            <div className={styles.option_texto}>{props.data.titulo}</div>
+            <div className={cn(styles.option_texto, props.data.id === VALOR_MUNDO_ABERTO && styles.option_mundo_aberto)}>{props.data.titulo}</div>
         </components.Option>
     );
-}
+};
 
 function renderSingleValue(props: SingleValueProps<Option, false, GroupBase<Option>>) {
     return (
@@ -57,7 +61,7 @@ function renderSingleValue(props: SingleValueProps<Option, false, GroupBase<Opti
             <div className={styles.single_texto}>{props.data.titulo}</div>
         </components.SingleValue>
     );
-}
+};
 
 SelecionadorRascunhoBase.Option = (props) => renderOption(props);
 SelecionadorRascunhoBase.SingleValue = (props) => renderSingleValue(props);

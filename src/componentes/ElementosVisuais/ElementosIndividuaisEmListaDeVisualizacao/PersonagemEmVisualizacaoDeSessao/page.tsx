@@ -10,7 +10,7 @@ export default function PersonagemEmVisualizacaoDeSessao(props: PersonagemEmVisu
     let render = <></>;
 
     if (props.tipo === 'mestre') render = <RecipienteImagem src={props.usuario.customizacao.caminhoAvatar} />;
-    else if (props.participanteSessao.personagem) render = <RecipienteImagem src={props.participanteSessao.personagem.caminhoAvatar} />;
+    else if (props.participanteSessao.dadosParticipanteJogo.personagem) render = <RecipienteImagem src={props.participanteSessao.dadosParticipanteJogo.personagem.caminhoAvatar} />;
     else render = (
         <>
             <RecipienteImagem src={PathTokenPadrao} />

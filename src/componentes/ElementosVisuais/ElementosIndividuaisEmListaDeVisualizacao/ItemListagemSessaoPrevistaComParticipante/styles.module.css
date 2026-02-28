@@ -1,0 +1,39 @@
+.recipiente_item_listagem_sessoes_jogador {
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+    height: 6em;
+}
+
+.recipiente_capa_item_sessoes_jogador {
+    position: relative;
+    aspect-ratio: 16 / 9;
+}
+
+.recipiente_informacaoes_sessao {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.recipiente_informacaoes_participante {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.recipiente_participante_sessao {
+    display: flex;
+    height: 100%;
+}
+
+.recipiente_avatar_personagem_participante_sessao {
+    position: relative;
+    aspect-ratio: 1;
+}
+
+.recipiente_estado_ficha_participante_sessao {
+    margin: auto;
+}

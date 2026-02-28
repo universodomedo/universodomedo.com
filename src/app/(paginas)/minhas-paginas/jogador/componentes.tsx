@@ -5,6 +5,7 @@ import { PAGINAS } from 'types-nora-api';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoPaginaInicialJogadorProvider, useContextoPaginaInicialJogador } from 'Contextos/ContextoPaginaInicialJogador/contexto';
 import { AvisosDePersonagensEFichas } from 'Componentes/Elementos/AvisosDePersonagensEFichas/AvisosDePersonagensEFichas';
+import AvisosSessoesPrevistas from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvisosSessoesPrevistas/AvisosSessoesPrevistas';
 import UnificaPersonagemEFichaParaUsuario from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/UnificaPersonagemEFichaParaUsuario/UnificaPersonagemEFichaParaUsuario';
 
 export function PaginaJogador_Client() {
@@ -18,11 +19,12 @@ export function PaginaJogador_Client() {
 };
 
 function PaginaJogador_Slot() {
-    const { personagens, fichas } = useContextoPaginaInicialJogador();
+    const { personagens, fichas, sessoes } = useContextoPaginaInicialJogador();
     
     return (
         <>
             <AvisosDePersonagensEFichas />
+            <AvisosSessoesPrevistas sessoes={sessoes} />
             <UnificaPersonagemEFichaParaUsuario personagens={personagens} fichasTemporarias={fichas} />
         </>
     );

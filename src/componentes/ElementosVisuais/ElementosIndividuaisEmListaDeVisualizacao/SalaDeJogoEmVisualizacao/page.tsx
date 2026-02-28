@@ -57,7 +57,7 @@ function RenderJogadoresSala({ jogadores }: { jogadores: SalaDeJogo_Participante
         <div className={styles.section}>
             <p className={styles.section_title}>Jogadores</p>
             <div className={styles.chipRow}>
-                {jogadores.filter(jogador => jogador.tipo === SalaDeJogo_TipoParticipante.SALA__JOGADOR).map(jogador => <div key={jogador.idUsuario} className={styles.recipiente_imagem_avatar}><RecipienteImagem src={jogador.personagem.caminhoAvatar} /></div>)}
+                {/* {jogadores.filter(jogador => jogador.tipo === SalaDeJogo_TipoParticipante.SALA__JOGADOR).map(jogador => <div key={jogador.idUsuario} className={styles.recipiente_imagem_avatar}><RecipienteImagem src={jogador.personagem.caminhoAvatar} /></div>)} */}
             </div>
         </div>
     );

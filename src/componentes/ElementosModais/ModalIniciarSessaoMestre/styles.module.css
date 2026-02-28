@@ -1,7 +1,69 @@
-#recipiente_dados_sessao {
+.recipiente_dados_sessao {
     display: flex;
     flex-direction: column;
     gap: 1em;
     text-align: center;
+    align-items: center;
     justify-content: center;
+}
+
+.recipiente_participantes_sessao_modal_sessao {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    gap: 2em;
+    
+    & * {
+        color: black;
+    }
+}
+
+.recipiente_participante_sessao_modal_sessao {
+    display: flex;
+    flex-direction: row;
+    height: 5em;
+}
+
+.recipiente_usuario_participante_sessao {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    align-items: stretch;
+    min-height: 0;
+}
+
+.recipiente_avatar_usuario_participante_sessao {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 1;
+}
+/* a */
+.recipiente_dados_usuario_participante_sessao {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.recipiente_dados_usuario_participante_sessao h3 {
+    margin: 0;
+}
+
+.recipiente_dados_usuario_inferior_participante_sessao {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.recipiente_avatar_personagem_participante_sessao {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 1;
+}
+
+.ficha_nao_configurada{
+    filter: sepia(1) hue-rotate(319deg) saturate(9);
 }

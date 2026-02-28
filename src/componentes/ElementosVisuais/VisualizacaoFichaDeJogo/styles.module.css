@@ -1,7 +1,6 @@
 .recipiente_abas_fichas {
     display: flex;
     flex-direction: column;
-    flex: 1;
     width: 100%;
     margin-top: 3vh;
     gap: 5vh;

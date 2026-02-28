@@ -11,6 +11,7 @@ import { me_deleteFichaTemporaria } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 interface ContextoPaginaFichaProps {
     navegarPara: (pagina: PAGINAS_SPA__VISUALIZA_FICHA) => void;
     fichaSelecionada: FichaDto;
+    podeDeletarFichaTemporaria: boolean;
     deletaFichaTemporaria: () => void;
 };
 
@@ -28,6 +29,8 @@ const ContextoPaginaFichaProvider = () => {
     const { fichaSelecionada } = useContextoPaginaFichas();
 
     const [paginaAtual, setPaginaAtual] = useState<PAGINAS_SPA__VISUALIZA_FICHA>('INICIAL');
+
+    const podeDeletarFichaTemporaria: boolean = fichaSelecionada?.fichaTemporaria?.detalheSessaoUnicaAmarrada === null;
 
     async function deletaFichaTemporaria() {
         const typedFichaTemporariaSelecionada = fichaSelecionada?.paiTipo === 'TEMPORARIA' ? fichaSelecionada.fichaTemporaria : null;
@@ -56,7 +59,7 @@ const ContextoPaginaFichaProvider = () => {
     if (!fichaSelecionada) return;
 
     return (
-        <ContextoPaginaFicha.Provider value={{ navegarPara, fichaSelecionada, deletaFichaTemporaria }}>
+        <ContextoPaginaFicha.Provider value={{ navegarPara, fichaSelecionada, podeDeletarFichaTemporaria, deletaFichaTemporaria }}>
             <Pagina />
         </ContextoPaginaFicha.Provider>
     );

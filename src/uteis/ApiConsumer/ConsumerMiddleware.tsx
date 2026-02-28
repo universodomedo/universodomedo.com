@@ -177,8 +177,12 @@ export async function encerraGrupoAventura(idGrupoAventura: number): Promise<boo
     return await useApi<boolean>({ uri: '/grupos_aventuras/encerraGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
 }
 
-export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PATCH', data: { idGrupoAventura: idGrupoAventura } })
+export async function me_executaIniciaSessao(idSessao: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/sessoes/me/me_executaIniciaSessao', method: 'PATCH', data: { idSessao: idSessao } });
+}
+
+export async function me_executaEncerraSessao(idSessao: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/sessoes/me/me_executaEncerraSessao', method: 'PATCH', data: { idSessao: idSessao } })
 }
 
 export async function obtemEstilosSessaoPorParam(ehSessaoUnica: boolean): Promise<EstiloSessaoMestradaDto[]> {
@@ -225,12 +229,16 @@ export async function obtemTodasImagensEspeciaisArtistaAprovadas(): Promise<Arqu
     return await useApi<ArquivoDto[]>({ uri: '/arquivos/obtemTodasImagensEspeciaisArtistaAprovadas', method: 'GET' });
 }
 
-export async function me_criaEVinculaFicha__FichaTemporaria(nomeFicha: string, descricaoFicha: string, dadosEvolucaoFicha: DadosEvolucaoFicha): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/fichas_temporarias/me/me_criaEVinculaFicha__FichaTemporaria', method: 'POST', data: { nomeFicha: nomeFicha, descricaoFicha: descricaoFicha, dadosEvolucaoFicha: dadosEvolucaoFicha } });
+export async function me_criaEVinculaFicha__FichaTemporaria(nomeFicha: string, descricaoFicha: string, dadosEvolucaoFicha: DadosEvolucaoFicha): Promise<number> {
+    return await useApi<number>({ uri: '/fichas_temporarias/me/me_criaEVinculaFicha__FichaTemporaria', method: 'POST', data: { nomeFicha: nomeFicha, descricaoFicha: descricaoFicha, dadosEvolucaoFicha: dadosEvolucaoFicha } });
 }
 
 export async function me_obtemFichas() {
     return await useApi<FichaTemporariaDto[]>({ uri: '/fichas_temporarias/me/me_obtemFichas', method: 'GET' })
+}
+
+export async function me_obtemSessoesPrevistasQueEuVouJogar() {
+    return await useApi<SessaoDto[]>({ uri: '/sessoes/me/me_obtemSessoesPrevistasQueEuVouJogar', method: 'GET' })
 }
 
 export async function me_deleteFichaTemporaria(fichaTemporaria: FichaTemporariaDto) {
@@ -249,14 +257,17 @@ export async function me_obtemRascunhosParaSessaoUnicaNaoCanonica() {
     return await useApi<RascunhoDto[]>({ uri: '/rascunhos/me/me_obtemRascunhosParaSessaoUnicaNaoCanonica', method: 'GET' });
 }
 
-export async function me_criaSessaoUnicaNaoCanonica(dadosCriacaoSessao: DadosCriacaoSessao) {
-    return await useApi<SessaoDto>({ uri: '/sessoes/me/me_criaSessaoUnicaNaoCanonica', method: 'POST', data: { dadosCriacaoSessao: dadosCriacaoSessao } });
+export async function me_criaSessaoUnica(dadosCriacaoSessao: DadosCriacaoSessao) {
+    return await useApi<SessaoDto>({ uri: '/sessoes/me/me_criaSessaoUnica', method: 'POST', data: { dadosCriacaoSessao: dadosCriacaoSessao } });
 }
 
 export async function me_atualizaCapaDeSessaoUnica(idSessao: number, idArquivo: number): Promise<boolean> {
     return await useApi<boolean>({ uri: '/detalhes_sessao_unica/me/me_atualizaCapaDeSessaoUnica', method: 'PATCH', data: { idSessao: idSessao, idArquivo: idArquivo } });
 }
 
+export async function obtemPersonagensPorUsuario(idUsuario: number): Promise<PersonagemDto[]> {
+    return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemPersonagensPorUsuario', method: 'GET', params: { idUsuario: idUsuario } });
+}
 
 //
 

@@ -4,13 +4,15 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { SessaoDto } from 'types-nora-api';
 
 import ModalIniciarSessaoMestre from 'Componentes/ElementosModais/ModalIniciarSessaoMestre/ModalIniciarSessaoMestre';
-import { me_obtemMinhasSessoesEmEsperaParaMestrar } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { me_executaIniciaSessao, me_obtemMinhasSessoesEmEsperaParaMestrar } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { toast } from 'Hooks/useToast';
 
 interface ContextoSessoesMestreEmEsperaProps {
     sessoesEmEspera: SessaoDto[];
     sessaoSelecionada: SessaoDto | null;
     selecionaSessao: (idSessao: number) => void;
     deselecionaSessao: () => void;
+    executaIniciaSessao: () => void;
 };
 
 const ContextoSessoesMestreEmEspera = createContext<ContextoSessoesMestreEmEsperaProps | undefined>(undefined);
@@ -41,6 +43,19 @@ export const ContextoSessoesMestreEmEsperaProvider = ({ children }: { children: 
     function selecionaSessao(idSessao: number) { setSessaoSelecionada(sessoesEmEspera.find(sessaoEmEspera => sessaoEmEspera.id === idSessao)!); };
     function deselecionaSessao() { setSessaoSelecionada(null); };
 
+    async function executaIniciaSessao() {
+        if (!sessaoSelecionada) return;
+        setCarregando('Iniciando Sessão');
+
+        try {
+            await me_executaIniciaSessao(sessaoSelecionada.id);
+            toast.sucesso('Sessão Iniciada!', 'A Sessão foi iniciada com sucesso!');
+        } catch (e) {
+            setCarregando(null);
+            toast.erro('Sessão não foi iniciado', e instanceof Error ? e.message : 'Erro ao salvar a evolução do personagem.');
+        }
+    };
+
     useEffect(() => {
         buscaSessoesEmEsperaDesseMestre();
     }, []);
@@ -48,7 +63,7 @@ export const ContextoSessoesMestreEmEsperaProvider = ({ children }: { children: 
     if (carregando) return <div>{carregando}</div>;
 
     return (
-        <ContextoSessoesMestreEmEspera.Provider value={{ sessoesEmEspera, sessaoSelecionada, selecionaSessao, deselecionaSessao }}>
+        <ContextoSessoesMestreEmEspera.Provider value={{ sessoesEmEspera, sessaoSelecionada, selecionaSessao, deselecionaSessao, executaIniciaSessao }}>
             {children}
             <ModalIniciarSessaoMestre isModalOpen={!!sessaoSelecionada} setIsModalOpen={deselecionaSessao} />
         </ContextoSessoesMestreEmEspera.Provider>

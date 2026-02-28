@@ -17,7 +17,6 @@ export const useContextoPaginaArtistaMinhasImagens = (): ContextoPaginaArtistaMi
 };
 
 export const ContextoPaginaArtistaMinhasImagensProvider = ({ children }: { children: React.ReactNode }) => {
-     console.log('?2');
     const [carregando, setCarregando] = useState<string | null>(null);
     const [arquivos, setArquivos] = useState<ArquivoDto[]>([]);
 

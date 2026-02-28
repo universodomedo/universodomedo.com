@@ -9,7 +9,6 @@ import { ContextoPaginaArtistaMinhasImagensProvider, useContextoPaginaArtistaMin
 import RecipienteImagemPadrao from 'Uteis/ImagemLoader/RecipienteImagemPadrao';
 
 export function PaginaArtista_MinhasImagens_Client() {
-    console.log('?1');
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.artista.minhasImagens}>
             <ContextoPaginaArtistaMinhasImagensProvider>

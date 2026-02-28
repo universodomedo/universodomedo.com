@@ -15,7 +15,7 @@ export default function SPA_PaginaJogadorCriarFicha_EvolucaoInicial() {
             nomeFicha: nomeFicha,
             descricaoFicha: descricaoFicha,
             metodoSairEvolucaoFicha: () => navegarPara("INICIAL"),
-            metodoSalvarFicha: (dadosEvolucaoFicha: DadosEvolucaoFicha) => {
+            metodoSalvarFicha: (dadosEvolucaoFicha: DadosEvolucaoFicha): Promise<number> => {
                 return me_criaEVinculaFicha__FichaTemporaria(nomeFicha, descricaoFicha, dadosEvolucaoFicha);
             },
         }} />

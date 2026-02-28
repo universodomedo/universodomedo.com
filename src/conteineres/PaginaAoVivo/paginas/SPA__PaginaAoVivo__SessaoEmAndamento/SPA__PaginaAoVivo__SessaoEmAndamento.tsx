@@ -20,10 +20,10 @@ export default function SPA__PaginaAoVivo__SessaoEmAndamento() {
                 <div id={styles.recipiente_corpo_sessao}>
                     <div id={styles.recipiente_esquerda_tela_jogo}>
                         <div id={styles.recipiente_nome_aventura}>
-                            <h1>{sessaoEmAndamento!.tituloInteligente.tituloCompleto}</h1>
+                            <h1>{sessaoEmAndamento.tituloInteligente.tituloCompleto}</h1>
                         </div>
                         <div id={styles.recipiente_lista_retratos}>
-                            {sessaoEmAndamento?.dadosGerais?.participantes.map(participante => (
+                            {sessaoEmAndamento.dadosGerais?.participantes.map(participante => (
                                 <div key={participante.jogador.id} className={styles.recipiente_retrato}>
                                     <PersonagemEmVisualizacaoDeSessao tipo={'participante'} participanteSessao={participante} />
                                 </div>
@@ -35,7 +35,7 @@ export default function SPA__PaginaAoVivo__SessaoEmAndamento() {
                     </div>
 
                     <div id={styles.recipiente_tela_jogo}>
-                        <RecipienteImagem src={sessaoEmAndamento!.imagemCapa.caminhoCapa} />
+                        <RecipienteImagem src={sessaoEmAndamento.imagemCapa.caminhoCapa} />
                     </div>
                 </div>
             </div>
