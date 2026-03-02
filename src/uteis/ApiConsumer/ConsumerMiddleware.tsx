@@ -269,6 +269,10 @@ export async function obtemPersonagensPorUsuario(idUsuario: number): Promise<Per
     return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemPersonagensPorUsuario', method: 'GET', params: { idUsuario: idUsuario } });
 }
 
+export async function me_amarraFichaTemporariaEmParticipacaoDeSessaoUnica(idSessao: number, idFichaTemporariaSelecionada: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/fichas_amarradas_participante_sessao_unica/me/me_amarraFichaTemporariaEmParticipacaoDeSessaoUnica', method: 'POST', data: { idSessao: idSessao, idFichaTemporariaSelecionada: idFichaTemporariaSelecionada } });
+}
+
 //
 
 export async function desconectar() {

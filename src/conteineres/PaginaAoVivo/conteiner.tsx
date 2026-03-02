@@ -1,25 +1,24 @@
 'use client';
 
-import { ComponentType, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Eventos_Emite, SessaoDto } from 'types-nora-api';
 
-import { criaConteiner } from 'Conteineres/_core/criaConteiner';
-import { ContextoPaginaAoVivo__EmEsperaProvider } from 'Contextos/ContextoPaginaAoVivo__EmEspera/contexto';
-import { ContextoPaginaAoVivo__SessaoEmAndamentoProvider } from 'Contextos/ContextoPaginaAoVivo__SessaoEmAndamento/contexto';
+import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 
-export const Conteiner__PaginaAoVivo = criaConteiner<PropsConteiner__PaginaAoVivo>({ useEstado, resolveComponente });
+import { ContextoPaginaAoVivo__EmEsperaProvider } from 'Contextos/ContextoPaginaAoVivo__EmEspera/contexto';
+import { ContextoPaginaAoVivo__SessaoEmAndamentoProvider } from 'Contextos/ContextoPaginaAoVivo__SessaoEmAndamento/contexto';
+
+export const Conteiner__PaginaAoVivo = criaConteiner<PropsConteiner__PaginaAoVivo>({ useEstado, resolveSaida });
 
 type PropsConteiner__PaginaAoVivo = {
     sessaoEmAndamento: SessaoDto | null;
 };
 
-function resolveComponente(props: PropsConteiner__PaginaAoVivo): ComponentType {
-    if (!props.sessaoEmAndamento) return ContextoPaginaAoVivo__EmEsperaProvider;
+function resolveSaida(props: PropsConteiner__PaginaAoVivo): SaidaConteiner {
+    if (!props.sessaoEmAndamento) return criaSaidaConteiner(ContextoPaginaAoVivo__EmEsperaProvider, {});
 
-    const sessaoEmAndamento = props.sessaoEmAndamento;
-
-    return function PaginaAoVivo__SessaoEmAndamentoParametrizada() { return <ContextoPaginaAoVivo__SessaoEmAndamentoProvider sessaoEmAndamento={sessaoEmAndamento} />; };
+    return criaSaidaConteiner(ContextoPaginaAoVivo__SessaoEmAndamentoProvider, { sessaoEmAndamento: props.sessaoEmAndamento });
 };
 
 function useEstado(): PropsConteiner__PaginaAoVivo {
@@ -34,5 +33,5 @@ function useEstado(): PropsConteiner__PaginaAoVivo {
         }
     });
 
-    return useMemo(() => ({ sessaoEmAndamento }), [sessaoEmAndamento]);
+    return { sessaoEmAndamento };
 };

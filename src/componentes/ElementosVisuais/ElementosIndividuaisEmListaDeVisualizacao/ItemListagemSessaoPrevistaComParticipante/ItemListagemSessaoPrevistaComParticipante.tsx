@@ -5,18 +5,17 @@ import { DadosParticipanteJogo, PAGINAS, SessaoDto } from 'types-nora-api';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
-import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
-import { QUERY_PARAMS } from 'Constantes/parametros_query';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
-import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
+import { useContextoPaginaJogador } from 'Contextos/ContextoPaginaJogador/contexto';
 
 export default function ItemListagemSessaoPrevistaComParticipante({ sessao }: { sessao: SessaoDto }) {
     // to do PRIORITARIO: Não receber a sessão com todos os participantes e filtrar apenas o seu
     // e sim um novo DTO de SessaoComParticipante, apenas com o objeto correto
     const { usuarioLogado } = useContextoAutenticacao();
+    const { setIdSessaoEmFoco } = useContextoPaginaJogador();
 
     return (
-        <div className={styles.recipiente_item_listagem_sessoes_jogador}>
+        <DivClicavel className={styles.recipiente_item_listagem_sessoes_jogador} onClick={() => { setIdSessaoEmFoco(sessao.id); }}>
             <div className={styles.recipiente_capa_item_sessoes_jogador}>
                 <RecipienteImagem src={sessao.imagemCapa.caminhoCapa} />
             </div>
@@ -28,7 +27,7 @@ export default function ItemListagemSessaoPrevistaComParticipante({ sessao }: { 
             <div className={styles.recipiente_informacaoes_participante}>
                 <DadosParticipanteSessao dadosParticipanteJogo={sessao.dadosGerais?.participantes.find(participante => participante.jogador.id === usuarioLogado?.id)!.dadosParticipanteJogo!} />
             </div>
-        </div>
+        </DivClicavel>
     );
 };
 
@@ -45,7 +44,6 @@ function DadosParticipanteSessao({ dadosParticipanteJogo }: { dadosParticipanteJ
                     <div className={styles.recipiente_estado_ficha_participante_sessao}>
                         {dadosParticipanteJogo.ficha ? (
                             <h4>Ficha Selecionada</h4>
-                            // <LinkInterno destino={{ pagina: PAGINAS.fichas, query: { [QUERY_PARAMS.FICHA]: 1 } }} >{'teste'}</LinkInterno>
                         ) : (
                             <h4>Nenhuma ficha selecionada</h4>
                         )}

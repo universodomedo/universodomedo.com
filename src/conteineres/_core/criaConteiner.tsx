@@ -1,48 +1,48 @@
 'use client';
 
-import { ComponentType } from 'react';
+import { ComponentType, ReactElement } from 'react';
 
 /*
 Arquitetura do pattern de Conteiner (Fluxo)
 
-Este helper existe para padronizar "conteineres" de fluxo da aplicação.
+Este helper existe para padronizar os "conteineres" de fluxo da aplicação.
 Um conteiner NÃO é uma página visual e NÃO é um contexto.
-Ele é o entrypoint de uma feature/fluxo no client, responsável por:
+Ele é o entrypoint client-side de uma feature/fluxo, responsável por:
 
-1) Obter o estado bruto da feature (via hooks, WS, API, etc.)
-2) Rotear/decidir qual branch/subfluxo deve ser renderizado
-3) Retornar um componente final (<Pagina />) já parametrizado
+1) Obter o estado bruto da feature (hooks, WS, API, etc.)
+2) Decidir qual branch/subfluxo deve ser seguido
+3) Retornar a saída final do conteiner já pronta para renderização
 
 A separação de responsabilidades esperada é:
 
 - useEstado:
   Concentra hooks e aquisição de estado bruto do fluxo.
-  Ex.: useState, hooks de websocket, chamadas de hooks customizados etc.
+  Ex.: useState, hooks de websocket, hooks customizados, etc.
 
-- resolveComponente:
-  Recebe os dados retornados por useEstado e decide qual componente React
-  será renderizado (normalmente um Provider de contexto específico de branch).
+- resolveSaida:
+  Recebe o estado bruto retornado por useEstado e decide qual branch final
+  do fluxo será renderizada.
 
 - Páginas/Contextos específicos:
-  Ficam fora do conteiner. O conteiner só orquestra o fluxo.
+  Ficam fora do conteiner. O conteiner apenas orquestra o fluxo.
 */
 
 /*
 Uso esperado (padrão obrigatório para novos conteineres)
 
-1) Defina o tipo de props/estado bruto do conteiner
+1) Defina o tipo de estado bruto do conteiner
    type PropsConteiner__X = { ... };
 
 2) Crie a função useEstado()
    - Deve retornar exatamente PropsConteiner__X
    - Deve concentrar a lógica de hooks do conteiner
 
-3) Crie a função resolveComponente(props)
+3) Crie a função resolveSaida(props)
    - Recebe PropsConteiner__X
-   - Retorna um ComponentType (branch já decidido)
+   - Deve retornar a saída final do conteiner já parametrizada
 
 4) Exporte o conteiner com criaConteiner(...)
-   export const Conteiner__X = criaConteiner<PropsConteiner__X>({ useEstado, resolveComponente });
+   export const Conteiner__X = criaConteiner<PropsConteiner__X>({ useEstado, resolveSaida });
 
 Exemplo resumido:
 
@@ -52,23 +52,30 @@ function useEstado(): PropsConteiner__Exemplo {
     return { ativo: true };
 }
 
-function resolveComponente(props: PropsConteiner__Exemplo): ComponentType {
-    return props.ativo ? ComponenteAtivo : ComponenteInativo;
+function resolveSaida(props: PropsConteiner__Exemplo) {
+    if (props.ativo) return criaSaidaConteiner(ComponenteAtivo, {});
+    return criaSaidaConteiner(ComponenteInativo, {});
 }
 
-export const Conteiner__Exemplo = criaConteiner<PropsConteiner__Exemplo>({ useEstado, resolveComponente });
+export const Conteiner__Exemplo = criaConteiner<PropsConteiner__Exemplo>({ useEstado, resolveSaida });
 */
 
-type DefinicaoConteiner<TProps> = {
-    useEstado: () => TProps;
-    resolveComponente: (props: TProps) => ComponentType;
+export type SaidaConteiner = {
+    render: () => ReactElement;
 };
 
-export function criaConteiner<TProps>({ useEstado, resolveComponente }: DefinicaoConteiner<TProps>) {
+type DefinicaoConteiner<TPropsEstado extends object> = {
+    useEstado: () => TPropsEstado;
+    resolveSaida: (props: TPropsEstado) => SaidaConteiner;
+};
+
+export function criaSaidaConteiner<TProps extends object>(Componente: ComponentType<TProps>, props: TProps): SaidaConteiner {
+    return { render: () => <Componente {...props} /> };
+};
+
+export function criaConteiner<TPropsEstado extends object>({ useEstado, resolveSaida }: DefinicaoConteiner<TPropsEstado>) {
     return function Conteiner() {
         const props = useEstado();
-        const Pagina = resolveComponente(props);
-
-        return <Pagina />;
+        return resolveSaida(props).render();
     };
 };

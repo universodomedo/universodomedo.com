@@ -32,7 +32,7 @@ export const ContextoEMJOGOProvider = ({ children }: { children: React.ReactNode
     });
 
     useEffect(() => {
-        if (objetoEmJogo && objetoEmJogo.tipoParticipante === SalaDeJogo_TipoParticipante.SALA__JOGADOR && !objetoEmJogo.fichaDeJogo) toast.erro('Você, jogador dessa sessão, não tem Ficha configurada');
+        if (objetoEmJogo && objetoEmJogo.tipoParticipante === SalaDeJogo_TipoParticipante.SALA__JOGADOR && !objetoEmJogo.ficha) toast.erro('Você, jogador dessa sessão, não tem Ficha configurada');
     }, [objetoEmJogo]);
 
     if (!objetoEmJogo) return <h2>Você não está participando de Sessões agora</h2>;

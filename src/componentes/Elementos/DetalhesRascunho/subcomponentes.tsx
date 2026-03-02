@@ -5,10 +5,15 @@ import { DetalheRascunhoAventuraDto, DetalheRascunhoSessaoUnicaCanonicaDto, Deta
 import VisualizadorConteudoTiptap from 'Componentes/Elementos/Tiptap/VisualizadorConteudoTiptap/VisualizadorConteudoTiptap';
 
 export function DadosResumo({ rascunho }: { rascunho: RascunhoDto }) {
-    if (rascunho.estiloSessaoMestrada.id === 1) return <DadosResumo_Aventura detalheRascunhoAventura={rascunho.detalheRascunhoAventura!} />
-    if (rascunho.estiloSessaoMestrada.id === 2) return <DadosResumo_SessaoUnicaCanonica detalheRascunhoSessaoUnicaCanonica={rascunho.detalheRascunhoSessaoUnicaCanonica!} />
-    if (rascunho.estiloSessaoMestrada.id === 3) return <DadosResumo_SessaoUnicaNaoCanonico detalheRascunhoSessaoUnicaNaoCanonica={rascunho.detalheRascunhoSessaoUnicaNaoCanonica!} />
-    else return <></>;
+    return (
+        <div className={styles.recipiente_dados_rascunho}>
+            {rascunho.estiloSessaoMestrada.id === 1
+                ? <DadosResumo_Aventura detalheRascunhoAventura={rascunho.detalheRascunhoAventura!} />
+                : rascunho.estiloSessaoMestrada.id === 2 ? <DadosResumo_SessaoUnicaCanonica detalheRascunhoSessaoUnicaCanonica={rascunho.detalheRascunhoSessaoUnicaCanonica!} />
+                : <DadosResumo_SessaoUnicaNaoCanonico detalheRascunhoSessaoUnicaNaoCanonica={rascunho.detalheRascunhoSessaoUnicaNaoCanonica!} />
+            }
+        </div>
+    );
 };
 
 function DadosResumo_Aventura({ detalheRascunhoAventura }: { detalheRascunhoAventura: DetalheRascunhoAventuraDto }) {

@@ -26,6 +26,8 @@ export function PaginaFichas_Client({ idFicha }: { idFicha: number | null; }) {
 };
 
 function PaginaFichas_Slot() {
+    useConfigurarLayoutContextualizado({ fecharProps: { tipo: 'href', paginaRetorno: PAGINAS.minhasPaginas.jogador, tituloTooltip: 'Voltar para Página de Jogador' } }, 'patch');
+    
     return (
         <>
             <PaginaFichas_Contexto />
@@ -42,7 +44,7 @@ function PaginaFichas_Contexto() {
 
 function SemFichaSelecionada() {
     const { fichasTemporarias } = useContextoPaginaFichas();
-    useConfigurarLayoutContextualizado({ titulo: 'Minhas Fichas', proporcaoConteudo: 84 }, 'update');
+    // useConfigurarLayoutContextualizado({ titulo: 'Minhas Fichas', proporcaoConteudo: 84 }, 'update');
 
     return (
         <div className={styles.recipiente_conteudo_pagina_fichas}>

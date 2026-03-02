@@ -1,25 +1,28 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-
 import { FichaTemporariaDto, PersonagemDto, SessaoDto } from 'types-nora-api';
+
 import { me_obtemPersonagensPorTipo, me_obtemFichas, me_obtemSessoesPrevistasQueEuVouJogar } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
-interface ContextoPaginaInicialJogadorProps {
+interface ContextoPaginaJogadorProps {
     personagens: PersonagemDto[];
     fichas: FichaTemporariaDto[];
     sessoes: SessaoDto[];
+
+    sessaoEmFoco: SessaoDto | null;
+    setIdSessaoEmFoco: (v: number | null) => void;
 };
 
-const ContextoPaginaInicialJogador = createContext<ContextoPaginaInicialJogadorProps | undefined>(undefined);
+const ContextoPaginaJogador = createContext<ContextoPaginaJogadorProps | undefined>(undefined);
 
-export const useContextoPaginaInicialJogador = (): ContextoPaginaInicialJogadorProps => {
-    const context = useContext(ContextoPaginaInicialJogador);
-    if (!context) throw new Error('useContextoPaginaInicialJogador precisa estar dentro de um ContextoPaginaInicialJogador');
+export const useContextoPaginaJogador = (): ContextoPaginaJogadorProps => {
+    const context = useContext(ContextoPaginaJogador);
+    if (!context) throw new Error('useContextoPaginaJogador precisa estar dentro de um ContextoPaginaJogador');
     return context;
 };
 
-export const ContextoPaginaInicialJogadorProvider = ({ children, idTipoPersonagem }: { children: React.ReactNode; idTipoPersonagem: number; }) => {
+export const ContextoPaginaJogadorProvider = ({ children, idTipoPersonagem }: { children: React.ReactNode; idTipoPersonagem: number; }) => {
     const [carregandoPersonagens, setCarregandoPersonagens] = useState(false);
     const [carregandoFichas, setCarregandoFichas] = useState(false);
     const [carregandoSessoes, setCarregandoSessoes] = useState(false);
@@ -28,6 +31,9 @@ export const ContextoPaginaInicialJogadorProvider = ({ children, idTipoPersonage
     const [fichas, setFichas] = useState<FichaTemporariaDto[]>([]);
     const [sessoes, setSessoes] = useState<SessaoDto[]>([]);
 
+    const [idSessaoEmFoco, setIdSessaoEmFoco] = useState<number | null>(null);
+    const sessaoEmFoco = idSessaoEmFoco !== null ? (sessoes.find(sessao => sessao.id === idSessaoEmFoco) || null) : null;
+    
     async function buscaTodosPersonagensUsuario() {
         setCarregandoPersonagens(true);
         try {
@@ -76,8 +82,8 @@ export const ContextoPaginaInicialJogadorProvider = ({ children, idTipoPersonage
     }
 
     return (
-        <ContextoPaginaInicialJogador.Provider value={{ personagens, fichas, sessoes }}>
+        <ContextoPaginaJogador.Provider value={{ personagens, fichas, sessoes, sessaoEmFoco, setIdSessaoEmFoco }}>
             {children}
-        </ContextoPaginaInicialJogador.Provider>
+        </ContextoPaginaJogador.Provider>
     );
 };
