@@ -72,7 +72,8 @@ function DadosParticipantes({ sessao }: { sessao: SessaoDto; }) {
                             <h3>{participante.jogador.username}</h3>
                             <div className={styles.recipiente_dados_usuario_inferior_participante_sessao}>
                                 <div className={styles.recipiente_avatar_personagem_participante_sessao}>
-                                    {sessao.tipo === 'AVENTURA' ? (
+                                    {/* to do */}
+                                    {/* {sessao.tipo === 'AVENTURA' ? (
                                         <RecipienteImagem src={participante.dadosParticipanteJogo.personagem?.caminhoAvatar} />
                                     ) : (
                                         <>
@@ -84,7 +85,7 @@ function DadosParticipantes({ sessao }: { sessao: SessaoDto; }) {
                                                 </>
                                             )}
                                         </>
-                                    )}
+                                    )} */}
                                 </div>
                             </div>
                         </div>

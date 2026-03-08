@@ -78,7 +78,7 @@ function PaginaEmJogo_Jogador() {
                     <JanelaDeMensagensDeJogo />
                 </div>
             </div>
-            {objetoEmJogo.ficha && <RecipienteFichaPersonagem ficha={objetoEmJogo.ficha.fichaDeJogo!} />}
+            {/* {objetoEmJogo.ficha && <RecipienteFichaPersonagem ficha={objetoEmJogo.ficha} />} to do */}
         </>
     );
 };

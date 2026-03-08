@@ -25,7 +25,8 @@ export default function ItemListagemSessaoPrevistaComParticipante({ sessao }: { 
                 <h3>{formataData(sessao.dataPrevisaoInicio)}</h3>
             </div>
             <div className={styles.recipiente_informacaoes_participante}>
-                <DadosParticipanteSessao dadosParticipanteJogo={sessao.dadosGerais?.participantes.find(participante => participante.jogador.id === usuarioLogado?.id)!.dadosParticipanteJogo!} />
+                {/* to do */}
+                {/* <DadosParticipanteSessao dadosParticipanteJogo={sessao.dadosGerais?.participantes.find(participante => participante.jogador.id === usuarioLogado?.id)!.dadosParticipanteJogo!} /> */}
             </div>
         </DivClicavel>
     );

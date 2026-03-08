@@ -17,12 +17,13 @@ import RecipienteSelecionarFichaSessaoUnica from 'Componentes/ElementosPaginaUsu
 export default function SPA__PaginaJogador__SelecionandoFichaParaSessao() {
     const { usuarioLogado } = useContextoAutenticacao();
     const { sessao } = useContextoPaginaJogador__SelecionandoFichaParaSessao();
-    const participante = sessao.dadosGerais?.participantes.find(participante => participante.jogador.id === usuarioLogado?.id)!.dadosParticipanteJogo!;
+    // to do
+    // const participante = sessao.dadosGerais?.participantes.find(participante => participante.jogador.id === usuarioLogado?.id)!.dadosParticipanteJogo!;
 
     return (
         <>
             <CabecalhoDeAventura tipo={'sessao'} sessao={sessao} />
-            <DadosDeParticipacaoDesseUsuarioNessaSessao participante={participante} />
+            {/* <DadosDeParticipacaoDesseUsuarioNessaSessao participante={participante} /> */}
             {sessao.detalheSessaoUnica && sessao.detalheSessaoUnica.rascunho && (
                 <div className={styles.recipiente_descricao_sessao}>
                     <DadosResumo rascunho={sessao.detalheSessaoUnica.rascunho} />

@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import { FichaDeJogo } from 'types-nora-api';
+import { FichaEmJogo } from 'types-nora-api';
 
 import ControladorSwiperFicha from 'Componentes/ElementosDeJogo/ControladorSwiperFicha/CotroladorSwiperFicha';
 
 interface ContextoFichaPersonagemProps {
-    ficha: FichaDeJogo;
+    ficha: FichaEmJogo;
 };
 
 const ContextoFichaPersonagem = createContext<ContextoFichaPersonagemProps | undefined>(undefined);
@@ -17,9 +17,9 @@ export const useContextoFichaPersonagem = (): ContextoFichaPersonagemProps => {
     return context;
 };
 
-export function RecipienteFichaPersonagem({ ficha }: { ficha: FichaDeJogo; }) { return <ContextoFichaPersonagemProvider ficha={ficha} />; };
+export function RecipienteFichaPersonagem({ ficha }: { ficha: FichaEmJogo; }) { return <ContextoFichaPersonagemProvider ficha={ficha} />; };
 
-const ContextoFichaPersonagemProvider = ({ ficha }: { ficha: FichaDeJogo; }) => {
+const ContextoFichaPersonagemProvider = ({ ficha }: { ficha: FichaEmJogo; }) => {
     return (
         <ContextoFichaPersonagem.Provider value={{ ficha }}>
             <ControladorSwiperFicha />
