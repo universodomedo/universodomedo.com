@@ -21,8 +21,8 @@ export function RenderItemSala({ salaDeJogo }: { salaDeJogo: SalaDeJogoDto }) {
 
             <div className={styles.body}>
                 <RenderMestreSala mestre={salaDeJogo.mestre} />
-                <RenderNarradoresSala narradores={salaDeJogo.participantes.filter(participante => participante.tipo === SalaDeJogo_TipoParticipante.SALA__NARRADOR)} />
-                <RenderJogadoresSala jogadores={salaDeJogo.participantes.filter(participante => participante.tipo === SalaDeJogo_TipoParticipante.SALA__JOGADOR)} />
+                <RenderNarradoresSala narradores={salaDeJogo.participantes.filter(participante => participante.tipo === SalaDeJogo_TipoParticipante.NARRADOR)} />
+                <RenderJogadoresSala jogadores={salaDeJogo.participantes.filter(participante => participante.tipo === SalaDeJogo_TipoParticipante.JOGADOR)} />
             </div>
         </div>
     );
@@ -35,7 +35,7 @@ function RenderMestreSala({ mestre }: { mestre: SalaDeJogo_Mestre }) {
         <div className={styles.section}>
             <p className={styles.section_title}>Mestre</p>
             <div className={styles.chipRow}>
-                <div className={styles.recipiente_imagem_avatar}><AvatarUsuarioEmVisualizacao_CACHED idUsuario={mestre.idUsuario} /></div>
+                <div className={styles.recipiente_imagem_avatar}><AvatarUsuarioEmVisualizacao_CACHED idUsuario={mestre.usuario.id} /></div>
             </div>
         </div>
     );
@@ -46,7 +46,7 @@ function RenderNarradoresSala({ narradores }: { narradores: SalaDeJogo_Participa
         <div className={styles.section}>
             <p className={styles.section_title}>Narradores</p>
             <div className={styles.chipRow}>
-                {narradores.map(narrador => <div key={narrador.idUsuario} className={styles.recipiente_imagem_avatar}><AvatarUsuarioEmVisualizacao_CACHED idUsuario={narrador.idUsuario} /></div>)}
+                {narradores.map(narrador => <div key={narrador.usuario.id} className={styles.recipiente_imagem_avatar}><AvatarUsuarioEmVisualizacao_CACHED idUsuario={narrador.usuario.id} /></div>)}
             </div>
         </div>
     );
@@ -57,7 +57,7 @@ function RenderJogadoresSala({ jogadores }: { jogadores: SalaDeJogo_Participante
         <div className={styles.section}>
             <p className={styles.section_title}>Jogadores</p>
             <div className={styles.chipRow}>
-                {/* {jogadores.filter(jogador => jogador.tipo === SalaDeJogo_TipoParticipante.SALA__JOGADOR).map(jogador => <div key={jogador.idUsuario} className={styles.recipiente_imagem_avatar}><RecipienteImagem src={jogador.personagem.caminhoAvatar} /></div>)} */}
+                {jogadores.filter(jogador => jogador.tipo === SalaDeJogo_TipoParticipante.JOGADOR).map(jogador => <div key={jogador.usuario.id} className={styles.recipiente_imagem_avatar}><RecipienteImagem src={jogador.caminhoAvatar} /></div>)}
             </div>
         </div>
     );

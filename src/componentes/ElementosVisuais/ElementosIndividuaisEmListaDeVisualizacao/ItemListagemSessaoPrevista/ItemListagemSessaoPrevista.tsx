@@ -1,11 +1,11 @@
 import styles from './styles.module.css';
 
-import { SessaoDto } from 'types-nora-api';
+import { SessaoEmVisualizacaoDto } from 'types-nora-api';
 
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 
-export default function ItemListagemSessaoPrevista({ sessao }: { sessao: SessaoDto }) {
+export default function ItemListagemSessaoPrevista({ sessao }: { sessao: SessaoEmVisualizacaoDto }) {
     return (
         <div className={styles.recipiente_item_episodio_futuro}>
             <div className={styles.recipiente_capa_item_episodio_futuro}>

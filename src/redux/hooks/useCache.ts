@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';3
+import { useEffect } from 'react';
+import { ObjetoCache } from 'types-nora-api';
 
 import { useAppDispatch, useAppSelector } from 'Redux/hooks/useRedux';
 import { fetchCacheCompleto, selectCache, selectCacheCarregando, selectCacheErro, selectCacheTimestamp, selectCacheInicializado, marcarComoInicializado, invalidarCache } from 'Redux/slices/cacheSlice';
@@ -8,9 +9,30 @@ import { fetchCacheCompleto, selectCache, selectCacheCarregando, selectCacheErro
 // Tempo de validade do cache (5 minutos)
 const CACHE_VALIDITY_MS = 5 * 60 * 1000;
 
-export const useCache = () => {
+type UseCacheBase = {
+    carregando: boolean;
+    erro: string | null;
+    timestamp: number | null;
+    inicializado: boolean;
+    refetch: () => void;
+    invalidar: () => void;
+};
+
+type UseCacheNaoPronto = UseCacheBase & {
+    pronto: false;
+    dados: null;
+};
+
+type UseCachePronto = UseCacheBase & {
+    pronto: true;
+    dados: ObjetoCache;
+} & ObjetoCache;
+
+export type UseCacheResult = UseCacheNaoPronto | UseCachePronto;
+
+export const useCache = (): UseCacheResult => {
     const dispatch = useAppDispatch();
-    const cache = useAppSelector(selectCache);
+    const dados = useAppSelector(selectCache);
     const carregando = useAppSelector(selectCacheCarregando);
     const erro = useAppSelector(selectCacheErro);
     const timestamp = useAppSelector(selectCacheTimestamp);
@@ -23,22 +45,33 @@ export const useCache = () => {
         if (deveCarregar) {
             dispatch(fetchCacheCompleto());
         } else if (!inicializado && !carregando) {
-            // Se não precisa carregar mas ainda não está marcado como inicializado
             dispatch(marcarComoInicializado());
         }
     }, [dispatch, carregando, timestamp, inicializado]);
 
-    // Verifica se os dados estão prontos para uso
-    const pronto = inicializado && !carregando && timestamp !== null;
+    const pronto = inicializado && !carregando && timestamp !== null && dados !== null;
 
-    return {
-        ...cache,
+    const base: UseCacheBase = {
         carregando,
         erro,
         timestamp,
         inicializado,
-        pronto,
-        refetch: () => dispatch(fetchCacheCompleto()),
-        invalidar: () => dispatch(invalidarCache()),
+        refetch: () => { dispatch(fetchCacheCompleto()); },
+        invalidar: () => { dispatch(invalidarCache()); },
+    };
+
+    if (!pronto) {
+        return {
+            ...base,
+            pronto: false,
+            dados: null,
+        };
+    }
+
+    return {
+        ...base,
+        pronto: true,
+        dados,
+        ...dados,
     };
 };

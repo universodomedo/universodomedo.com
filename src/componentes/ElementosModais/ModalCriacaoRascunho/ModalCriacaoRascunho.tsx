@@ -1,7 +1,5 @@
 'use client';
 
-import { EstiloSessaoMestradaDto } from 'types-nora-api';
-
 import { useContextoRascunhosMestre } from "Contextos/ContextoRascunhosMestre/contexto";
 import { useContextoCriaRascunho } from 'Contextos/ContextoCriaRascunho/contexto';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';

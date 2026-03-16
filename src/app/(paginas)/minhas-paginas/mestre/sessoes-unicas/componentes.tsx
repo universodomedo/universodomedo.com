@@ -23,7 +23,7 @@ function PaginaMestreSessoesUnicas_Contexto() {
 
     return (
         <div className={styles.recipiente_listagem_sessoes_unicas}>
-            {sessoesUnicas.map(sessao => (
+            {/* {sessoesUnicas.map(sessao => (
                 <RecipienteAventuraOuSessao__ItemListagem
                     key={sessao.id}
                     destino={{ pagina: PAGINAS.minhasPaginas.mestre.sessao, params: { id: sessao.id } }}
@@ -31,7 +31,7 @@ function PaginaMestreSessoesUnicas_Contexto() {
                     detalhePrincipal={sessao.detalheSessaoUnica.rascunho?.titulo}
                     detalheSecundario={sessao.estadoAtual}
                 />
-            ))}
+            ))} */}
         </div>
     );
 };

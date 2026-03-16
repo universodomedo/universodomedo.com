@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import { PAGINAS, PersonagemDto } from 'types-nora-api';
+import { PAGINAS, PersonagemCompletaDto } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoPaginaCriarSessaoUnicaProvider, DadosParticipanteTela, useContextoPaginaCriarSessaoUnica } from 'Contextos/ContextoPaginaCriarSessaoUnica/contexto';
@@ -88,7 +88,7 @@ function PaginaTemporariaCriarSessaoUnica_Slot() {
     );
 };
 
-function ItemDadosParticipanteSessao({ dadosParticipante, personagensDoUsuario, setParticipaComPersonagem, setIdPersonagemParticipante }: { dadosParticipante: DadosParticipanteTela; personagensDoUsuario: PersonagemDto[]; setParticipaComPersonagem: (idUsuarioParticipante: number, participaComPersonagem: boolean) => void; setIdPersonagemParticipante: (idUsuarioParticipante: number, idPersonagem: number | null) => void; }) {
+function ItemDadosParticipanteSessao({ dadosParticipante, personagensDoUsuario, setParticipaComPersonagem, setIdPersonagemParticipante }: { dadosParticipante: DadosParticipanteTela; personagensDoUsuario: PersonagemCompletaDto[]; setParticipaComPersonagem: (idUsuarioParticipante: number, participaComPersonagem: boolean) => void; setIdPersonagemParticipante: (idUsuarioParticipante: number, idPersonagem: number | null) => void; }) {
     return (
         <div className={styles.recipiente_item_listagem_participante_sessao}>
             <div className={styles.recipiente_avatar_participante_sessao}>

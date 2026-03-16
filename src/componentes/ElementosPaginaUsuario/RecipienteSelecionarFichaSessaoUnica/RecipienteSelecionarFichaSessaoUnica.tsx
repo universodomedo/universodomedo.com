@@ -2,12 +2,12 @@
 
 import styles from './styles.module.css';
 
-import { FichaTemporariaDto, SessaoDto } from 'types-nora-api';
+import { FichaTemporariaVisualizacaoDetalhadaDto, VIEW_SessaoDeJogadorDto } from 'types-nora-api';
 
 import { ContextoSelecionarFichaSessaoUnicaProvider, useContextoSelecionarFichaSessaoUnica } from 'Contextos/ContextoSelecionarFichaSessaoUnica/contexto';
 import SelecionadorFichaTemporaria from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorFichaTemporaria/SelecionadorFichaTemporaria';
 
-export default function RecipienteSelecionarFichaSessaoUnica({ sessao, fichas }: { sessao: SessaoDto; fichas: FichaTemporariaDto[] }) {
+export default function RecipienteSelecionarFichaSessaoUnica({ sessao, fichas }: { sessao: VIEW_SessaoDeJogadorDto; fichas: FichaTemporariaVisualizacaoDetalhadaDto[] }) {
     return (
         <ContextoSelecionarFichaSessaoUnicaProvider sessao={sessao} fichas={fichas}>
             <RecipienteSelecionadorFichaTemporaria/>
@@ -28,7 +28,7 @@ function RecipienteSelecionadorFichaTemporaria() {
             </div>
             {fichaSelecionada && (
                 <div className={styles.recipiente_dados_ficha_selecionada}>
-                    <h2>{fichaSelecionada.nome} | {fichaSelecionada.nivel.nomeVisualizacao}</h2> 
+                    <h2>{fichaSelecionada.nome} | {fichaSelecionada.nivel?.nomeVisualizacao}</h2> 
                     <h3>{fichaSelecionada.descricao}</h3>
                 </div>
             )}

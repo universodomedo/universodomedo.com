@@ -33,21 +33,26 @@
     min-height: 0;
 }
 
-.recipiente_avatar_usuario_participante_sessao {
-    position: relative;
-    height: 100%;
-    aspect-ratio: 1;
-}
-/* a */
 .recipiente_dados_usuario_participante_sessao {
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-height: 0;
 }
 
 .recipiente_dados_usuario_participante_sessao h3 {
     margin: 0;
+}
+
+.recipiente_container_avatar_usuario_participante_sessao {
+    min-height: 0;
+}
+
+
+.recipiente_avatar_usuario_participante_sessao {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 1;
+    margin: auto;
 }
 
 .recipiente_dados_usuario_inferior_participante_sessao {
@@ -64,6 +69,9 @@
     aspect-ratio: 1;
 }
 
-.ficha_nao_configurada{
-    filter: sepia(1) hue-rotate(319deg) saturate(9);
+.recipiente_dados_participacao {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: 45%;
 }

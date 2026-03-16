@@ -158,21 +158,3 @@
     border-radius: 1.5vw;
     overflow: hidden;
 }
-
-#recipiente_tela_jogo {
-    position: relative;
-    flex: 1 0 80.9%;
-
-    border-style: solid;
-    border-color: #000000;
-    border-top-width: 1vh;
-    border-right-width: .58vw;
-    border-bottom-width: 1vh;
-    border-left-width: .58vw;
-    border-top-left-radius: 6vh;
-    border-bottom-left-radius: 6vh;
-    border-bottom-right-radius: 6vh;
-    border-top-right-radius: 6vh;
-
-    overflow: hidden;
-}

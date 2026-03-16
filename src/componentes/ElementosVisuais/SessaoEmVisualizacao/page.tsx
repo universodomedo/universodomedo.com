@@ -1,28 +1,26 @@
 import styles from './styles.module.css';
 
-import { FormatoMomento, SessaoDto } from 'types-nora-api';
+import { FormatoMomento, SessaoCompletaDto } from 'types-nora-api';
 
 import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
 import SecaoDeConteudo from "Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo";
 import { formataDuracao } from 'Uteis/FormatadorDeMomento/FormatadorDeMomento';
 import PersonagemEmVisualizacaoDeSessao from '../ElementosIndividuaisEmListaDeVisualizacao/PersonagemEmVisualizacaoDeSessao/page';
 
-export default function SessaoEmVisualizacao({ sessao }: { sessao: SessaoDto }) {
+export default function SessaoEmVisualizacao({ sessao }: { sessao: SessaoCompletaDto }) {
     return (
         <div id={styles.recipiente_sessao_selecionada}>
-            <CabecalhoDeAventura tipo={'sessao'} sessao={sessao} />
+            <CabecalhoDeAventura tipo={'sessao'} caminhoCapaSessao={sessao.imagemCapa.caminhoCapa} />
 
             <SecaoDeConteudo fit>
                 {sessao.duracaoEmSegundos && (<h4>Duração: {formataDuracao(sessao.duracaoEmSegundos, FormatoMomento.HMS)}</h4>)}
             </SecaoDeConteudo>
 
-            {sessao.dadosGerais && (
-                <SecaoDeConteudo className={styles.recipiente_avatares}>
-                    <h2>Mestre</h2>
+            <SecaoDeConteudo className={styles.recipiente_avatares}>
+                <h2>Mestre</h2>
 
-                    <PersonagemEmVisualizacaoDeSessao tipo={'mestre'} usuario={sessao.dadosGerais.mestre} />
-                </SecaoDeConteudo>
-            )}
+                <PersonagemEmVisualizacaoDeSessao tipo={'mestre'} usuario={sessao.usuarioMestre} />
+            </SecaoDeConteudo>
 
             <SecaoDeConteudo className={styles.recipiente_avatares}>
                 <h2>Participantes</h2>

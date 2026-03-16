@@ -2,13 +2,13 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { Eventos_Emite, ObjetoEmJogoDto, SalaDeJogo_TipoParticipante } from 'types-nora-api';
+import { Eventos_Emite, LogicaJogoUsuario_ObjetoEmJogoDto } from 'types-nora-api';
 
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { toast } from 'Hooks/useToast';
 
 interface ContextoEMJOGOProps {
-    objetoEmJogo: ObjetoEmJogoDto;
+    objetoEmJogo: LogicaJogoUsuario_ObjetoEmJogoDto;
 };
 
 const ContextoEMJOGO = createContext<ContextoEMJOGOProps | undefined>(undefined);
@@ -20,7 +20,7 @@ export const useContextoEMJOGO = (): ContextoEMJOGOProps => {
 };
 
 export const ContextoEMJOGOProvider = ({ children }: { children: React.ReactNode }) => {
-    const [objetoEmJogo, setObjetoEmJogo] = useState<ObjetoEmJogoDto | null>(null)
+    const [objetoEmJogo, setObjetoEmJogo] = useState<LogicaJogoUsuario_ObjetoEmJogoDto | null>(null)
 
     useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirObjetoEmJogo, {
         onSuccess: data => {
@@ -28,14 +28,11 @@ export const ContextoEMJOGOProvider = ({ children }: { children: React.ReactNode
         },
         onError: err => {
             setObjetoEmJogo(null);
-        }
+            toast.erro('Houve um erro no carregamento da Sala de Jogo');
+        },
     });
 
-    useEffect(() => {
-        if (objetoEmJogo && objetoEmJogo.tipoParticipante === SalaDeJogo_TipoParticipante.SALA__JOGADOR && !objetoEmJogo.ficha) toast.erro('Você, jogador dessa sessão, não tem Ficha configurada');
-    }, [objetoEmJogo]);
-
-    if (!objetoEmJogo) return <h2>Você não está participando de Sessões agora</h2>;
+    if (objetoEmJogo === null) return <h2>Carregando Sala...</h2>;
 
     return (
         <ContextoEMJOGO.Provider value={{ objetoEmJogo }}>

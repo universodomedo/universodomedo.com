@@ -27,13 +27,7 @@ function RenderCorpo(): JSX.Element {
             {!rascunho ? (
                 <h2>Rascunho não encontrado</h2>
             ) : (
-                <>
-                    {!rascunho.possuiDetalhesConfigurados ? (
-                        <h3>Não existem configurações para esse Rascunho</h3>
-                    ) : (
-                        <DadosResumo rascunho={rascunho} />
-                    )}
-                </>
+                <DadosResumo rascunho={rascunho} />
             )}
         </div>
     );

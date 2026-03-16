@@ -1,16 +1,40 @@
+'use client';
+
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import JogoRouteGuard from './JogoRouteGuard';
+import { ContextoPaginaInicialJogoProvider, useContextoPaginaInicialJogo } from 'Contextos/ContextoPaginaInicialJogo/contexto';
 
-export function PaginaPlay_Client() {
+export default function PaginaJogo_Conteiner() {
     return (
         <ControladorSlot pagina={PAGINAS.jogo} embrulho={JogoRouteGuard}>
-            <PaginaPlay_Slot />
+            <ContextoPaginaInicialJogoProvider>
+                <PaginaPlay_Slot />
+            </ContextoPaginaInicialJogoProvider>
         </ControladorSlot>
     );
 };
 
-export function PaginaPlay_Slot() {
-    return (<></>);
+function PaginaPlay_Slot() {
+    const {  } = useContextoPaginaInicialJogo();
+
+    return (
+        <>
+            <PendenciasJogo />
+            <ProximasSessoes />
+        </>
+    );
+};
+
+function PendenciasJogo() {
+    return (
+        <></>
+    );
+};
+
+function ProximasSessoes() {
+    return (
+        <></>
+    );
 };

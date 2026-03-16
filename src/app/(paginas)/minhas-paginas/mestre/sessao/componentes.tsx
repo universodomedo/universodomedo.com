@@ -23,7 +23,8 @@ function PaginaMestreSessao_Conteudo() {
     const { sessaoSelecionada, callbackSelecionaArquivo } = useContextoPaginaMestreSessao();
 
     const paginaRetorno: DestinoInput = sessaoSelecionada.tipo == 'AVENTURA'
-        ? { pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: String(sessaoSelecionada.detalheSessaoAventura.grupoAventura.id) } }
+        // ? { pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: String(sessaoSelecionada.detalheSessaoAventura.grupoAventura.id) } }
+        ? { pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: 1 } }
         : PAGINAS.minhasPaginas.mestre.sessoesUnicas
 
     useConfigurarLayoutContextualizado({ titulo: sessaoSelecionada.tituloInteligente.tituloCompleto, fecharProps: { tipo: 'href', paginaRetorno: paginaRetorno, tituloTooltip: 'Voltar' } });

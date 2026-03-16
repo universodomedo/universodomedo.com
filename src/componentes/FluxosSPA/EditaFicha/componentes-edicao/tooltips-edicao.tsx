@@ -2,11 +2,11 @@ import styles from '../styles.module.css';
 
 import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 import { GanhosEvolucao } from 'Contextos/ContextoEdicaoFicha/classes';
-import { AtributoDto, EstatisticaDanificavelDto, PatentePericiaDto, PericiaDto } from 'types-nora-api';
+import { AtributoCompletaDto, EstatisticaDanificavelCompletaDto, PatentePericiaCompletaDto, PericiaCompletaDto } from 'types-nora-api';
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
 import { ReactNode } from 'react';
 
-export function TooltipEvolucao_EstatisticaComGanhoPorAtributo({ estatisticaDanificavel, exibeDetalhesAtributos = true, children }: { estatisticaDanificavel: EstatisticaDanificavelDto; exibeDetalhesAtributos?: boolean; children: ReactNode }) {
+export function TooltipEvolucao_EstatisticaComGanhoPorAtributo({ estatisticaDanificavel, exibeDetalhesAtributos = true, children }: { estatisticaDanificavel: EstatisticaDanificavelCompletaDto; exibeDetalhesAtributos?: boolean; children: ReactNode }) {
     const { ganhos } = useContextoEdicaoFicha();
 
     return (
@@ -33,7 +33,7 @@ export function TooltipEvolucao_EstatisticaComGanhoPorAtributo({ estatisticaDani
     );
 };
 
-export function TooltipEvolucao_Atributo({ atributo, infoGanhoEstatistica = false, children }: { atributo: AtributoDto; infoGanhoEstatistica?: boolean; children: ReactNode }) {
+export function TooltipEvolucao_Atributo({ atributo, infoGanhoEstatistica = false, children }: { atributo: AtributoCompletaDto; infoGanhoEstatistica?: boolean; children: ReactNode }) {
     const { ganhos } = useContextoEdicaoFicha();
 
     return (
@@ -57,7 +57,7 @@ export function TooltipEvolucao_Atributo({ atributo, infoGanhoEstatistica = fals
     );
 };
 
-export function TooltipEvolucao_Pericia({ pericia, children, conteudoAdicional  }: { pericia: PericiaDto, children: ReactNode, conteudoAdicional?: ReactNode }) {
+export function TooltipEvolucao_Pericia({ pericia, children, conteudoAdicional  }: { pericia: PericiaCompletaDto, children: ReactNode, conteudoAdicional?: ReactNode }) {
     return (
         <Tooltip>
             <Tooltip.Trigger>
@@ -73,7 +73,7 @@ export function TooltipEvolucao_Pericia({ pericia, children, conteudoAdicional  
     );
 };
 
-export function TooltipEvolucao_PatentePericia({ patentePericia, children }: { patentePericia: PatentePericiaDto, children: ReactNode }) {
+export function TooltipEvolucao_PatentePericia({ patentePericia, children }: { patentePericia: PatentePericiaCompletaDto, children: ReactNode }) {
     return (
         <Tooltip>
             <Tooltip.Trigger>

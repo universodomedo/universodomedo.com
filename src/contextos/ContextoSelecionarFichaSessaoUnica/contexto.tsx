@@ -1,16 +1,16 @@
 'use client';
 
 import { toast } from 'Hooks/useToast';
-import { createContext, useContext, useEffect, useState } from 'react';
-import { FichaTemporariaDto, SessaoDto } from 'types-nora-api';
+import { createContext, useContext, useState } from 'react';
+import { FichaTemporariaVisualizacaoDetalhadaDto, VIEW_SessaoDeJogadorDto } from 'types-nora-api';
 
 import { me_amarraFichaTemporariaEmParticipacaoDeSessaoUnica } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoSelecionarFichaSessaoUnicaProps {
-    fichas: FichaTemporariaDto[];
+    fichas: FichaTemporariaVisualizacaoDetalhadaDto[];
     idFichaTemporariaSelecionada: number | null;
     setIdFichaTemporariaSelecionada: (v: number | null) => void;
-    fichaSelecionada : FichaTemporariaDto | null;
+    fichaSelecionada : FichaTemporariaVisualizacaoDetalhadaDto | null;
     selecionarFichaTemporariaParaSessao: () => void;
     podeSalvar: boolean;
 };
@@ -23,11 +23,11 @@ export const useContextoSelecionarFichaSessaoUnica = (): ContextoSelecionarFicha
     return context;
 };
 
-export const ContextoSelecionarFichaSessaoUnicaProvider = ({ children, sessao, fichas }: { children: React.ReactNode, sessao: SessaoDto; fichas: FichaTemporariaDto[]; }) => {
+export const ContextoSelecionarFichaSessaoUnicaProvider = ({ children, sessao, fichas }: { children: React.ReactNode, sessao: VIEW_SessaoDeJogadorDto; fichas: FichaTemporariaVisualizacaoDetalhadaDto[]; }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
     const [idFichaTemporariaSelecionada, setIdFichaTemporariaSelecionada] = useState<number | null>(null);
 
-    const fichaSelecionada: FichaTemporariaDto | null = idFichaTemporariaSelecionada !== null ? (fichas.find(ficha => ficha.id === idFichaTemporariaSelecionada) || null) : null;
+    const fichaSelecionada: FichaTemporariaVisualizacaoDetalhadaDto | null = idFichaTemporariaSelecionada !== null ? (fichas.find(ficha => ficha.id === idFichaTemporariaSelecionada) || null) : null;
 
     const podeSalvar: boolean = idFichaTemporariaSelecionada !== null;
 

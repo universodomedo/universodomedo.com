@@ -1,11 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { ArquivoDto } from 'types-nora-api';
+import { ArquivoCompletaDto } from 'types-nora-api';
+
 import { obtemTodasImagensEspeciaisArtistaAprovadas } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoListagemSelecaoImagemProps {
-    arquivos: ArquivoDto[];
+    arquivos: ArquivoCompletaDto[];
     idArquivoSelecionado: number | null;
     setIdArquivoSelecionado: (v: number) => void;
     podeSalvar: boolean;
@@ -21,7 +22,7 @@ export const useContextoListagemSelecaoImagem = (): ContextoListagemSelecaoImage
 
 export const ContextoListagemSelecaoImagemProvider = ({ children }: { children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [arquivos, setArquivos] = useState<ArquivoDto[]>([]);
+    const [arquivos, setArquivos] = useState<ArquivoCompletaDto[]>([]);
     const [idArquivoSelecionado, setIdArquivoSelecionado] = useState<number | null>(null);
 
     const podeSalvar: boolean = idArquivoSelecionado !== null;

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { DiaDaSemana, JanelaDisponibilidadeDto, MomentoFormatado24 } from 'types-nora-api';
+import { DiaDaSemana, JanelaDisponibilidadeCompletaDto, MomentoFormatado24 } from 'types-nora-api';
 
 import { ContextoConsultarDisponibilidades_ListagemProvider } from 'Contextos/ContextoConsultarDisponibilidades_Listagem/contexto';
 import { obtemJanelasDisponibilidadesPorJanela } from 'Uteis/ApiConsumer/ConsumerMiddleware';
@@ -29,7 +29,7 @@ export const ContextoConsultarDisponibilidadesProvider = ({ children }: { childr
     const [filtroDiaDaSemana, setFiltroDiaDaSemana] = useState<DiaDaSemana>(() => new Date().getDay() as DiaDaSemana);
     const [filtroHoraInicio, setFiltroHoraInicio] = useState<MomentoFormatado24>('00:00');
     const [filtroHoraFim, setFiltroHoraFim] = useState<MomentoFormatado24>('23:59');
-    const [janelas, setJanelas] = useState<JanelaDisponibilidadeDto[] | null>(null);
+    const [janelas, setJanelas] = useState<JanelaDisponibilidadeCompletaDto[] | null>(null);
 
     async function buscaAventurasPorFiltro() {
         setCarregando('Buscando Lista de Janelas');

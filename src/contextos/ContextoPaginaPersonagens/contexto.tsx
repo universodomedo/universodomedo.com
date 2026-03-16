@@ -2,16 +2,16 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useSearchParams, usePathname } from 'next/navigation';
-import { PersonagemDto } from 'types-nora-api';
+import { PersonagemVisualizacaoDetalhadaDto } from 'types-nora-api';
 
 import { me_obtemPersonagensPorTipo, obtemDadosInteligentePersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
 interface ContextoPaginaPersonagensProps {
-    personagens: PersonagemDto[];
+    personagens: PersonagemVisualizacaoDetalhadaDto[];
     setIdPersonagemSelecionado: (v: number) => void;
     deselecionaPersonagem: () => void;
-    personagemSelecionado: PersonagemDto | null;
+    personagemSelecionado: PersonagemVisualizacaoDetalhadaDto | null;
 };
 
 const ContextoPaginaPersonagens = createContext<ContextoPaginaPersonagensProps | undefined>(undefined);
@@ -24,9 +24,9 @@ export const useContextoPaginaPersonagens = (): ContextoPaginaPersonagensProps =
 
 export const ContextoPaginaPersonagensProvider = ({ children, idPersonagemInicial = null }: { children: React.ReactNode; idPersonagemInicial?: number | null; }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [personagens, setPersonagens] = useState<PersonagemDto[] | null>(null);
+    const [personagens, setPersonagens] = useState<PersonagemVisualizacaoDetalhadaDto[] | null>(null);
     const [idPersonagemSelecionado, setIdPersonagemSelecionado] = useState<number | null>(null);
-    const [personagemSelecionado, setPersonagemSelecionado] = useState<PersonagemDto | null>(null);
+    const [personagemSelecionado, setPersonagemSelecionado] = useState<PersonagemVisualizacaoDetalhadaDto | null>(null);
 
     const searchParams = useSearchParams();
     const pathname = usePathname();

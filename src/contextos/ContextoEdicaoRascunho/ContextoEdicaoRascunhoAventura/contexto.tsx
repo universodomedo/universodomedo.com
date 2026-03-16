@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { useContextoRascunho } from 'Contextos/ContextoRascunho/contexto';
-import { DetalheRascunhoAventuraDto, RascunhoDto } from 'types-nora-api';
+import { DetalheRascunhoAventuraCompletaDto, RascunhoCompletaDto } from 'types-nora-api';
 
 interface ContextoEdicaoRascunhoAventuraProps {
     descricao: Record<string, any> | null;
@@ -50,9 +50,9 @@ export const ContextoEdicaoRascunhoAventuraProvider = ({ children }: { children:
         if (!confirmacao) return;
 
         salvaDetalhesRascunhoAventura({
-            rascunho: { id: rascunho?.id } as RascunhoDto,
+            rascunho: { id: rascunho?.id } as RascunhoCompletaDto,
             descricao: descricao,
-        } as DetalheRascunhoAventuraDto);
+        } as DetalheRascunhoAventuraCompletaDto);
     };
 
     return (

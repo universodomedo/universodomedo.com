@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { DadosCriacaoSessao_Participante, MomentoFormatado24, PAGINAS, PersonagemDto, RascunhoDto } from 'types-nora-api';
+import { DadosCriacaoSessao_Participante, MomentoFormatado24, PAGINAS, PersonagemCompletaDto, RascunhoCompletaDto } from 'types-nora-api';
 
 import { VALOR_MUNDO_ABERTO } from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorRascunho/SelecionadorRascunho';
 import { me_criaSessaoUnica, me_obtemRascunhosParaSessaoUnicaNaoCanonica, obtemPersonagensPorUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware';
@@ -17,17 +17,17 @@ export type DadosParticipanteTela = {
 
 type PersonagensPorUsuario = {
     idUsuario: number;
-    personagens: PersonagemDto[];
+    personagens: PersonagemCompletaDto[];
 };
 
 interface ContextoPaginaCriarSessaoUnicaProps {
-    rascunhosDoUsuario: RascunhoDto[];
+    rascunhosDoUsuario: RascunhoCompletaDto[];
     idsUsuariosSelecionados: number[];
     setIdsUsuariosSelecionados: (v: number[]) => void;
     dadosParticipantes: DadosParticipanteTela[];
     setParticipaComPersonagem: (idUsuarioParticipante: number, participaComPersonagem: boolean) => void;
     setIdPersonagemParticipante: (idUsuarioParticipante: number, idPersonagem: number | null) => void;
-    obtemListaPersonagensDoUsuario: (idUsuario: number) => PersonagemDto[];
+    obtemListaPersonagensDoUsuario: (idUsuario: number) => PersonagemCompletaDto[];
     data: Date | null;
     setData: (v: Date | null) => void;
     horaInicio: MomentoFormatado24;
@@ -38,7 +38,7 @@ interface ContextoPaginaCriarSessaoUnicaProps {
     setIdRascunhoSelecionado: (v: IdRascunhoSelecionado | null) => void;
     flagCanonico: boolean;
     setFlagCanonico: (v: boolean) => void;
-    rascunhoSelecionado: RascunhoDto | null;
+    rascunhoSelecionado: RascunhoCompletaDto | null;
     podeCriar: boolean;
     criarSessao: () => void;
 };
@@ -54,7 +54,7 @@ export const useContextoPaginaCriarSessaoUnica = (): ContextoPaginaCriarSessaoUn
 export const ContextoPaginaCriarSessaoUnicaProvider = ({ children }: { children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
 
-    const [rascunhosDoUsuario, setRascunhosDoUsuario] = useState<RascunhoDto[] | null>(null);
+    const [rascunhosDoUsuario, setRascunhosDoUsuario] = useState<RascunhoCompletaDto[] | null>(null);
 
     const [idsUsuariosSelecionados, setIdsUsuariosSelecionados] = useState<number[]>([]);
     const [dadosParticipantes, setDadosParticipantes] = useState<DadosParticipanteTela[]>([]);
@@ -65,7 +65,7 @@ export const ContextoPaginaCriarSessaoUnicaProvider = ({ children }: { children:
     const [idRascunhoSelecionado, setIdRascunhoSelecionado] = useState<IdRascunhoSelecionado | null>(null);
     const [flagCanonico, setFlagCanonico] = useState<boolean>(false);
 
-    const rascunhoSelecionado: RascunhoDto | null = typeof idRascunhoSelecionado === 'number' ? rascunhosDoUsuario?.find(rascunho => rascunho.id === idRascunhoSelecionado) ?? null : null;
+    const rascunhoSelecionado: RascunhoCompletaDto | null = typeof idRascunhoSelecionado === 'number' ? rascunhosDoUsuario?.find(rascunho => rascunho.id === idRascunhoSelecionado) ?? null : null;
 
     const participantesValidos: boolean = dadosParticipantes.length === idsUsuariosSelecionados.length && dadosParticipantes.every(dadosParticipante => !dadosParticipante.participaComPersonagem || dadosParticipante.idPersonagem !== null);
     const podeCriar: boolean = idsUsuariosSelecionados.length > 0 && participantesValidos && data !== null && horaInicio && horaFim && idRascunhoSelecionado !== null;
@@ -100,7 +100,7 @@ export const ContextoPaginaCriarSessaoUnicaProvider = ({ children }: { children:
         setDadosParticipantes(valorAtual => valorAtual.map(dadosParticipante => dadosParticipante.idUsuarioParticipante !== idUsuarioParticipante ? dadosParticipante : { ...dadosParticipante, idPersonagem }));
     };
 
-    function obtemListaPersonagensDoUsuario(idUsuario: number): PersonagemDto[] {
+    function obtemListaPersonagensDoUsuario(idUsuario: number): PersonagemCompletaDto[] {
         return personagensPorUsuario.find(item => item.idUsuario === idUsuario)?.personagens ?? [];
     };
 

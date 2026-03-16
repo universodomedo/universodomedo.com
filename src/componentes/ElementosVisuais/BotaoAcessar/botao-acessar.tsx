@@ -1,6 +1,6 @@
 import styles from './styles.module.css';
 
-import { ARQUIVOS_INTERNOS, PAGINAS, UsuarioDto } from 'types-nora-api';
+import { PAGINAS, UsuarioParaObjetoAutenticacaoDto } from 'types-nora-api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDoorOpen } from "@fortawesome/free-solid-svg-icons";
 
@@ -22,7 +22,7 @@ export default function ComponenteBotaoAcessar() {
     );
 };
 
-function ComponenteBotaoAcessar_Autenticado({ usuario }: { usuario: UsuarioDto }) {
+function ComponenteBotaoAcessar_Autenticado({ usuario }: { usuario: UsuarioParaObjetoAutenticacaoDto }) {
     const { logout } = useLogout();
 
     return (

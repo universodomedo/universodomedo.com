@@ -2,23 +2,23 @@
 
 import styles from './styles.module.css';
 
-import { useContextoPaginaPersonagens } from 'Contextos/ContextoPaginaPersonagens/contexto';
+import { PersonagemVisualizacaoDetalhadaDto } from 'types-nora-api';
+
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
 type BarraPersonagemProps = {
+    personagem: PersonagemVisualizacaoDetalhadaDto;
     ehMeuPersonagem?: boolean
 };
 
-export default function BarraPersonagem({ props }: { props?: BarraPersonagemProps }) {
-    const { personagemSelecionado } = useContextoPaginaPersonagens();
-
+export default function BarraPersonagem({ props }: { props: BarraPersonagemProps }) {
     return (
-        <div id={styles.recipiente_barra}>
-            <div id={styles.recipiente_imagem_personagem}>
-                <RecipienteImagem src={personagemSelecionado?.caminhoAvatar} />
+        <div className={styles.recipiente_barra}>
+            <div className={styles.recipiente_imagem_personagem}>
+                <RecipienteImagem src={props.personagem.caminhoAvatar} />
             </div>
             <div id={styles.recipiente_informacoes_usuario}>
-                <h1>{personagemSelecionado?.informacao.nome}</h1>
+                <h1>{props.personagem.nome}</h1>
             </div>
         </div>
     );

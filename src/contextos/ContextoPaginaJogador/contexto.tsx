@@ -1,16 +1,16 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { FichaTemporariaDto, PersonagemDto, SessaoDto } from 'types-nora-api';
+import { FichaTemporariaVisualizacaoDetalhadaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoDeJogadorDto } from 'types-nora-api';
 
 import { me_obtemPersonagensPorTipo, me_obtemFichas, me_obtemSessoesPrevistasQueEuVouJogar } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
 interface ContextoPaginaJogadorProps {
-    personagens: PersonagemDto[];
-    fichas: FichaTemporariaDto[];
-    sessoes: SessaoDto[];
+    personagens: PersonagemVisualizacaoDetalhadaDto[];
+    fichas: FichaTemporariaVisualizacaoDetalhadaDto[];
+    sessoes: VIEW_SessaoDeJogadorDto[];
 
-    sessaoEmFoco: SessaoDto | null;
+    sessaoEmFoco: VIEW_SessaoDeJogadorDto | null;
     setIdSessaoEmFoco: (v: number | null) => void;
 };
 
@@ -27,9 +27,9 @@ export const ContextoPaginaJogadorProvider = ({ children, idTipoPersonagem }: { 
     const [carregandoFichas, setCarregandoFichas] = useState(false);
     const [carregandoSessoes, setCarregandoSessoes] = useState(false);
 
-    const [personagens, setPersonagens] = useState<PersonagemDto[]>([]);
-    const [fichas, setFichas] = useState<FichaTemporariaDto[]>([]);
-    const [sessoes, setSessoes] = useState<SessaoDto[]>([]);
+    const [personagens, setPersonagens] = useState<PersonagemVisualizacaoDetalhadaDto[]>([]);
+    const [fichas, setFichas] = useState<FichaTemporariaVisualizacaoDetalhadaDto[]>([]);
+    const [sessoes, setSessoes] = useState<VIEW_SessaoDeJogadorDto[]>([]);
 
     const [idSessaoEmFoco, setIdSessaoEmFoco] = useState<number | null>(null);
     const sessaoEmFoco = idSessaoEmFoco !== null ? (sessoes.find(sessao => sessao.id === idSessaoEmFoco) || null) : null;

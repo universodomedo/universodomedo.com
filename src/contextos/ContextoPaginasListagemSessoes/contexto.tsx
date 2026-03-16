@@ -1,13 +1,13 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { SessaoDto } from 'types-nora-api';
+import { SessaoCompletaDto } from 'types-nora-api';
 
 import { obtemListagemGeralSessoes } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginasListagemSessoesProps {
-    sessoes: SessaoDto[];
-    sessaoSelecionada: SessaoDto | null;
+    sessoes: SessaoCompletaDto[];
+    sessaoSelecionada: SessaoCompletaDto | null;
     selecionaSessao: (idSessao: number) => void;
     deselecionaSessao: () => void;
 };
@@ -22,8 +22,8 @@ export const useContextoPaginasListagemSessoes = (): ContextoPaginasListagemSess
 
 export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInicial }: { children: React.ReactNode; idSessaoInicial?: number; }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [sessoes, setSessoes] = useState<SessaoDto[]>([]);
-    const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
+    const [sessoes, setSessoes] = useState<SessaoCompletaDto[]>([]);
+    const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoCompletaDto | null>(null);
 
     async function buscaListaSessoes() {
         setCarregando('Buscando Sessões');

@@ -27,15 +27,16 @@ export function VideoEpisodio() {
 
     if (!sessaoSelecionada) return <p>Sessão não encontrada</p>;
 
-    if (!sessaoSelecionada.detalheSessaoCanonica.linkSessaoYoutube) return (
-        <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
-            <h3>Esse Episódio ainda não possui Vídeo</h3>
-        </SecaoDeConteudo>
-    );
+    // if (!sessaoSelecionada.detalheSessaoCanonica.linkSessaoYoutube) return (
+    //     <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
+    //         <h3>Esse Episódio ainda não possui Vídeo</h3>
+    //     </SecaoDeConteudo>
+    // );
 
     return (
         <SecaoDeConteudo id={styles.recipiente_video}>
-            <PlayerYouTube urlSufixo={sessaoSelecionada.detalheSessaoCanonica.linkSessaoYoutube.sufixo} />
+            <></>
+            {/* <PlayerYouTube urlSufixo={sessaoSelecionada.detalheSessaoCanonica.linkSessaoYoutube.sufixo} /> */}
         </SecaoDeConteudo>
     );
 };
@@ -45,15 +46,16 @@ export function PodcastEpisodio() {
 
     if (!sessaoSelecionada) return <p>Sessão não encontrada</p>;
 
-    if (!sessaoSelecionada.detalheSessaoCanonica.linkSessaoSpotify) return (
-        <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
-            <h3>Esse Episódio ainda não possui Podcast</h3>
-        </SecaoDeConteudo>
-    );
+    // if (!sessaoSelecionada.detalheSessaoCanonica.linkSessaoSpotify) return (
+    //     <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
+    //         <h3>Esse Episódio ainda não possui Podcast</h3>
+    //     </SecaoDeConteudo>
+    // );
 
     return (
         <SecaoDeConteudo id={styles.recipiente_podcast}>
-            <PlayerSpotify urlSufixo={sessaoSelecionada.detalheSessaoCanonica.linkSessaoSpotify.sufixo} />
+            <></>
+            {/* <PlayerSpotify urlSufixo={sessaoSelecionada.detalheSessaoCanonica.linkSessaoSpotify.sufixo} /> */}
         </SecaoDeConteudo>
     );
 };

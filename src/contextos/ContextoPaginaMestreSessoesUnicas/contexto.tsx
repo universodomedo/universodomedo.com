@@ -1,11 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { SessaoDto } from 'types-nora-api';
+import { SessaoCompletaDto } from 'types-nora-api';
+
 import { me_obtemSessoesUnicasPorMestre } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaMestreSessoesUnicasProps {
-    sessoesUnicas: SessaoDto[];
+    sessoesUnicas: SessaoCompletaDto[];
 };
 
 const ContextoPaginaMestreSessoesUnicas = createContext<ContextoPaginaMestreSessoesUnicasProps | undefined>(undefined);
@@ -18,7 +19,7 @@ export const useContextoPaginaMestreSessoesUnicas = (): ContextoPaginaMestreSess
 
 export const ContextoPaginaMestreSessoesUnicasProvider = ({ children }: { children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [sessoesUnicas, setSessoesUnicas] = useState<SessaoDto[]>([]);
+    const [sessoesUnicas, setSessoesUnicas] = useState<SessaoCompletaDto[]>([]);
 
     async function buscaSessoesUnicas() {
         setCarregando('Buscando Sessões Únicas');

@@ -1,11 +1,11 @@
 import styles from './styles.module.css';
 
-import { RascunhoDto } from 'types-nora-api';
+import { RascunhoCompletaDto } from 'types-nora-api';
 
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 import { useContextoRascunhosMestre } from 'Contextos/ContextoRascunhosMestre/contexto';
 
-export default function RascunhoEmVisualizacao({ rascunho }: { rascunho: RascunhoDto }) {
+export default function RascunhoEmVisualizacao({ rascunho }: { rascunho: RascunhoCompletaDto }) {
     const { selecionaRascunho } = useContextoRascunhosMestre();
     
     return (

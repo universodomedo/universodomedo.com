@@ -6,7 +6,7 @@ import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import JogoRouteGuard from '../../JogoRouteGuard';
-import ControladorSwiperFicha from "Componentes/ElementosDeJogo/ControladorSwiperFicha/CotroladorSwiperFicha";
+// import ControladorSwiperFicha from "Componentes/ElementosDeJogo/ControladorSwiperFicha/CotroladorSwiperFicha";
 import BarraEstatisticaDanificavel from 'Componentes/ElementosDeJogo/BarraEstatisticaDanificavel/page.tsx';
 import BarraLocaisDeJogo from 'Componentes/ElementosDeJogo/BarraLocaisDeJogo/page.tsx';
 

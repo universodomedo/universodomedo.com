@@ -2,12 +2,12 @@
 
 import styles from './styles.module.css';
 
-import { SessaoDto } from 'types-nora-api';
+import { VIEW_SessaoDeJogadorDto } from 'types-nora-api';
 
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import ItemListagemSessaoPrevistaComParticipante from '../ItemListagemSessaoPrevistaComParticipante/ItemListagemSessaoPrevistaComParticipante';
 
-export default function AvisosSessoesPrevistas({ sessoes }: { sessoes: SessaoDto[] }) {
+export default function AvisosSessoesPrevistas({ sessoes }: { sessoes: VIEW_SessaoDeJogadorDto[] }) {
     return (
         <SecaoDeConteudo className={styles.recipiente_avisos_sessoes_previstas}>
             {sessoes.length < 1 ? (

@@ -53,7 +53,7 @@ function ListagemSessoes() {
                                     <td>{sessao.id}</td>
                                     <td>{sessao.detalheData}</td>
                                     <td>{sessao.tipoPorExtenso}</td>
-                                    <td>{sessao.dadosGerais!.mestre.username}</td>
+                                    <td>{sessao.usuarioMestre.username}</td>
                                 </tr>
                             ))}
                         </tbody>

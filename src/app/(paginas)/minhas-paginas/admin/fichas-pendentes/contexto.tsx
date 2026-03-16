@@ -2,14 +2,14 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 
-import { PersonagemDto } from 'types-nora-api';
+import { PersonagemCompletaDto } from 'types-nora-api';
 import { obtemPersonagensComPendencias } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 import { ModalCriacaoFicha } from './componentes';
 
 interface ContextoPaginaFichasPendentesProps {
-    listaPersonagensComPendencia: PersonagemDto[] | null;
+    listaPersonagensComPendencia: PersonagemCompletaDto[] | null;
     abreModalConfiguraFicha: (idPersonagem: number) => void;
-    personagemConfigurando: PersonagemDto | null;
+    personagemConfigurando: PersonagemCompletaDto | null;
 };
 
 const ContextoPaginaFichasPendentes = createContext<ContextoPaginaFichasPendentesProps | undefined>(undefined);
@@ -22,8 +22,8 @@ export const useContextoPaginaFichasPendentes = (): ContextoPaginaFichasPendente
 
 export const ContextoPaginaFichasPendentesProvider = ({ children }: { children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState(true);
-    const [listaPersonagensComPendencia, setListaPersonagensComPendencia] = useState<PersonagemDto[] | null>(null);
-    const [personagemConfigurando, setPersonagemConfigurando] = useState<PersonagemDto | null>(null);
+    const [listaPersonagensComPendencia, setListaPersonagensComPendencia] = useState<PersonagemCompletaDto[] | null>(null);
+    const [personagemConfigurando, setPersonagemConfigurando] = useState<PersonagemCompletaDto | null>(null);
 
     const [modalConfiguraFichaEstaAberta, setModalConfiguraFichaEstaAberta] = useState(false);
     const abreModalConfiguraFicha = (idPersonagem: number) => {

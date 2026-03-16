@@ -23,7 +23,9 @@ export function ModalEditarRascunhoSessaoUnicaCanonica({ isModalOpen, setIsModal
 };
 
 function ConteudoModal() {
-    const { dificuldadesSessao, tiposSessao } = useCache();
+    const cache = useCache();
+    if (!cache.pronto) return null;
+
     const { idDificuldadeSelecionado, setIdDificuldadeSelecionada, idTipoSelecionado, setIdTipoSelecionada, descricao, setDescricao } = useContextoEdicaoRascunhoSessaoUnicaCanonica();
 
     return (
@@ -32,14 +34,14 @@ function ConteudoModal() {
                 <InputComRotulo rotulo={'Dificuldade da Sessão'} >
                     <select value={idDificuldadeSelecionado} onChange={e => setIdDificuldadeSelecionada(Number(e.target.value))}>
                         <option value="0" disabled >Selecionar Dificuldade da Sessão</option>
-                        {dificuldadesSessao!.map(dificuldade => (<option key={dificuldade.id} value={dificuldade.id}>{dificuldade.descricao}</option>))}
+                        {cache.dificuldadesSessao.map(dificuldade => (<option key={dificuldade.id} value={dificuldade.id}>{dificuldade.descricao}</option>))}
                     </select>
                 </InputComRotulo>
 
                 <InputComRotulo rotulo={'Tipo de Sessão'}>
                     <select value={idTipoSelecionado} onChange={e => setIdTipoSelecionada(Number(e.target.value))}>
                         <option value="0" disabled >Selecionar Tipo de Sessão</option>
-                        {tiposSessao!.map(tipo => (<option key={tipo.id} value={tipo.id}>{tipo.descricao}</option>))}
+                        {cache.tiposSessao.map(tipo => (<option key={tipo.id} value={tipo.id}>{tipo.descricao}</option>))}
                     </select>
                 </InputComRotulo>
             </div>

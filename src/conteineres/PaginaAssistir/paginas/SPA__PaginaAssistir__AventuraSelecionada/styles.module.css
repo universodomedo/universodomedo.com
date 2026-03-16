@@ -1,0 +1,56 @@
+.recipiente_conteudo_selecionado {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+    align-items: center;
+}
+
+.recipiente_cabecalho_aventura_selecionada {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 2vh;
+    text-align: center;
+    align-items: center;
+    justify-items: center;
+}
+
+.recipiente_capa_aventura_selecionada {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    width: 50%;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.recipiente_grupos_aventura_selecionada {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    gap: 1vh;
+}
+
+.recipiente_linha_grupo {
+    display: flex;
+    flex-direction: row;
+}
+
+.linha_grupo_esquerda {
+    flex: 1;
+}
+
+.recipiente_personagens_participantes {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.recipiente_imagem_personagem_participante {
+    position: relative;
+    height: 13vh;
+    aspect-ratio: 1;
+}
+
+.linha_grupo_direita {
+    align-content: center;
+}

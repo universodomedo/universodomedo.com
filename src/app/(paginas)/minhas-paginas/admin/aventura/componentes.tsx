@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import Link from 'next/link';
-import { DetalheSessaoAventuraDto, LinkDto, PAGINAS } from 'types-nora-api';
+import { DetalheSessaoAventuraCompletaDto, LinkCompletaDto, PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
 import { ContextoPaginaAdminAventuraProvider, useContextoPaginaAdminAventura } from 'Contextos/ContextoPaginaAdminAventura/contexto';
@@ -43,16 +43,17 @@ function BotoesAventura() {
 
     return (
         <SecaoDeConteudo id={styles.recipiente_botoes_aventura}>
-            <AreaLinkTrailer linkTrailer={grupoAventura.linkTrailerYoutube} />
+            <></>
+            {/* <AreaLinkTrailer linkTrailer={grupoAventura.linkTrailerYoutube} />
 
             <AreaLinkPlaylist linkPlaylist={grupoAventura.linkPlaylistYoutube} />
 
-            <AreaLinkSerie linkSerie={grupoAventura.linkSerieSpotify} />
+            <AreaLinkSerie linkSerie={grupoAventura.linkSerieSpotify} /> */}
         </SecaoDeConteudo>
     );
 }
 
-function AreaLinkTrailer({ linkTrailer }: { linkTrailer: LinkDto }) {
+function AreaLinkTrailer({ linkTrailer }: { linkTrailer: LinkCompletaDto }) {
     const { iniciaProcessoVinculoLinkGrupoAventura } = useContextoCadastroNovoLinkGrupoAventura();
 
     return (
@@ -66,7 +67,7 @@ function AreaLinkTrailer({ linkTrailer }: { linkTrailer: LinkDto }) {
     );
 };
 
-function AreaLinkPlaylist({ linkPlaylist }: { linkPlaylist: LinkDto }) {
+function AreaLinkPlaylist({ linkPlaylist }: { linkPlaylist: LinkCompletaDto }) {
     const { iniciaProcessoVinculoLinkGrupoAventura } = useContextoCadastroNovoLinkGrupoAventura();
 
     return (
@@ -80,7 +81,7 @@ function AreaLinkPlaylist({ linkPlaylist }: { linkPlaylist: LinkDto }) {
     );
 };
 
-function AreaLinkSerie({ linkSerie }: { linkSerie: LinkDto }) {
+function AreaLinkSerie({ linkSerie }: { linkSerie: LinkCompletaDto }) {
     const { iniciaProcessoVinculoLinkGrupoAventura } = useContextoCadastroNovoLinkGrupoAventura();
 
     return (
@@ -94,17 +95,18 @@ function AreaLinkSerie({ linkSerie }: { linkSerie: LinkDto }) {
     );
 };
 
-function AreaEpisodios({ detalhesSessaoAventura }: { detalhesSessaoAventura: DetalheSessaoAventuraDto[] }) {
+function AreaEpisodios({ detalhesSessaoAventura }: { detalhesSessaoAventura: DetalheSessaoAventuraCompletaDto[] }) {
     return (
         <SecaoDeConteudo id={styles.recipiente_area_episodios}>
             <h1>{detalhesSessaoAventura.length} Episódios</h1>
             <div id={styles.recipiente_area_lista_episodios}>
-                {detalhesSessaoAventura.sort((a, b) => a.episodio - b.episodio).map(detalheSessaoAventura => {
+                
+                {/* {detalhesSessaoAventura.sort((a, b) => a.episodio - b.episodio).map(detalheSessaoAventura => {
                     const temEpisodioYoutubeVinculado = detalheSessaoAventura.sessao.detalheSessaoCanonica.linkSessaoYoutube !== null;
                     const temEpisodioSpotifyVinculado = detalheSessaoAventura.sessao.detalheSessaoCanonica.linkSessaoSpotify !== null;
 
                     return <LinkInterno key={detalheSessaoAventura.sessao.id} destino={{ pagina: PAGINAS.minhasPaginas.admin.sessao, params: { id: String(detalheSessaoAventura.sessao.id) } }} className={!temEpisodioYoutubeVinculado && !temEpisodioSpotifyVinculado ? styles.episodio_sem_nenhum_vinculo : temEpisodioYoutubeVinculado !== temEpisodioSpotifyVinculado ? styles.episodio_com_algum_vinculo : styles.episodio_completo_vinculo}>{detalheSessaoAventura.episodioPorExtenso}</LinkInterno>;
-                })}
+                })} */}
             </div>
         </SecaoDeConteudo>
     );

@@ -1,14 +1,14 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { SessaoDto } from 'types-nora-api';
+import { SessaoCompletaDto, SessaoEmVisualizacaoDto } from 'types-nora-api';
 
 import { obtemListaSessoesPrevistas } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import SPA__PaginaAoVivo__EmEspera from 'Conteineres/PaginaAoVivo/paginas/SPA__PaginaAoVivo__EmEspera/SPA__PaginaAoVivo__EmEspera';
 
 interface ContextoPaginaAoVivo__EmEsperaProps {
-    episodioSeguinte: SessaoDto | null;
-    episodiosFuturos: SessaoDto[];
+    episodioSeguinte: SessaoEmVisualizacaoDto | null;
+    episodiosFuturos: SessaoEmVisualizacaoDto[];
 };
 
 const ContextoPaginaAoVivo__EmEspera = createContext<ContextoPaginaAoVivo__EmEsperaProps | undefined>(undefined);
@@ -21,7 +21,7 @@ export const useContextoPaginaAoVivo__EmEspera = (): ContextoPaginaAoVivo__EmEsp
 
 export const ContextoPaginaAoVivo__EmEsperaProvider = () => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [listaEpisodiosPrevistos, setListaEpisodiosPrevistos] = useState<SessaoDto[]>([]);
+    const [listaEpisodiosPrevistos, setListaEpisodiosPrevistos] = useState<SessaoEmVisualizacaoDto[]>([]);
 
     async function buscaListaEpisodiosPrevistos() {
         setCarregando('Buscando Sessões');

@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { useContextoRascunho } from 'Contextos/ContextoRascunho/contexto';
-import { DetalheRascunhoSessaoUnicaNaoCanonicaDto, DificuldadeSessaoDto, NivelDto, RascunhoDto, TipoSessaoDto } from 'types-nora-api';
+import { DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto, DificuldadeSessaoCompletaDto, NivelCompletaDto, RascunhoCompletaDto, TipoSessaoCompletaDto } from 'types-nora-api';
 
 interface ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProps {
     seNumeroJogadoresTemLimiteMax: boolean;
@@ -105,14 +105,14 @@ export const ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider = ({ children 
         if (!confirmacao) return;
 
         salvaDetalhesRascunhoSessaoUnica({
-            rascunho: { id: rascunho?.id } as RascunhoDto,
-            tipoSessao: { id: idTipoSelecionado } as TipoSessaoDto,
-            dificuldadeSessao: { id: idDificuldadeSelecionado } as DificuldadeSessaoDto,
-            nivelPersonagem: { id: idNivelSelecionado } as NivelDto,
+            rascunho: { id: rascunho?.id } as RascunhoCompletaDto,
+            tipoSessao: { id: idTipoSelecionado } as TipoSessaoCompletaDto,
+            dificuldadeSessao: { id: idDificuldadeSelecionado } as DificuldadeSessaoCompletaDto,
+            nivelPersonagem: { id: idNivelSelecionado } as NivelCompletaDto,
             descricao: descricao,
             numeroMinimoJogadores: numeroJogadoresMin,
             numeroMaximoJogadores: seNumeroJogadoresTemLimiteMax ? numeroJogadoresMax : null,
-        } as DetalheRascunhoSessaoUnicaNaoCanonicaDto);
+        } as DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto);
     };
 
     return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { SessaoDto } from 'types-nora-api';
+import { VIEW_SessaoDeJogadorDto } from 'types-nora-api';
 
 import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 import { ContextoPaginaJogadorProvider, useContextoPaginaJogador } from 'Contextos/ContextoPaginaJogador/contexto';
@@ -19,7 +19,7 @@ export function Conteiner__PaginaJogador() {
 const Conteiner__PaginaJogador__Interno = criaConteiner<PropsConteiner__PaginaJogador>({ useEstado, resolveSaida });
 
 type PropsConteiner__PaginaJogador = {
-    sessaoEmFoco: SessaoDto | null;
+    sessaoEmFoco: VIEW_SessaoDeJogadorDto | null;
     setIdSessaoEmFoco: (v: number | null) => void;
 };
 

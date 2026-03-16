@@ -1,17 +1,17 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { DetalheRascunhoAventuraDto, DetalheRascunhoSessaoUnicaCanonicaDto, DetalheRascunhoSessaoUnicaNaoCanonicaDto, RascunhoDto } from 'types-nora-api';
+import { DetalheRascunhoAventuraCompletaDto, DetalheRascunhoSessaoUnicaCanonicaCompletaDto, DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto, RascunhoCompletaDto } from 'types-nora-api';
 
 import { me_obtemDetalhesRascunho, editaDetalheRascunho, criaBaseadoEmRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import EdicaoRascunho from 'Componentes/EdicaoRascunho/page';
 
 interface ContextoRascunhoProps {
     alteraEstadoModalEdicao: (aberto: boolean) => void;
-    rascunho: RascunhoDto | null;
-    salvaDetalhesRascunhoAventura: (detalheRascunhoAventura: DetalheRascunhoAventuraDto) => void;
-    salvaDetalhesRascunhoSessaoUnicaCanonica: (detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaDto) => void;
-    salvaDetalhesRascunhoSessaoUnica: (detalheRascunhoSessaoUnicaNaoCanonica: DetalheRascunhoSessaoUnicaNaoCanonicaDto) => void;
+    rascunho: RascunhoCompletaDto | null;
+    salvaDetalhesRascunhoAventura: (detalheRascunhoAventura: DetalheRascunhoAventuraCompletaDto) => void;
+    salvaDetalhesRascunhoSessaoUnicaCanonica: (detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaCompletaDto) => void;
+    salvaDetalhesRascunhoSessaoUnica: (detalheRascunhoSessaoUnicaNaoCanonica: DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto) => void;
     textoBotaoCriar: string;
     executaCriacao: () => void;
 };
@@ -28,7 +28,7 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [rascunho, setRascunho] = useState<RascunhoDto | null>(null);
+    const [rascunho, setRascunho] = useState<RascunhoCompletaDto | null>(null);
 
     async function buscaDetalhesRascunho() {
         setCarregando('Buscando Rascunho');
@@ -48,7 +48,7 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
 
     const textoBotaoCriar: string = rascunho == null ? '' : rascunho.estiloSessaoMestrada.id === 1 ? 'Criar Aventura' : 'Criar Sessão';
 
-    const salvaDetalhesRascunhoAventura = async (detalheRascunhoAventura: DetalheRascunhoAventuraDto) => {
+    const salvaDetalhesRascunhoAventura = async (detalheRascunhoAventura: DetalheRascunhoAventuraCompletaDto) => {
         try {
             if (!await editaDetalheRascunho({
                 ...rascunho!,
@@ -62,7 +62,7 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
         }
     }
 
-    const salvaDetalhesRascunhoSessaoUnicaCanonica = async (detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaDto) => {
+    const salvaDetalhesRascunhoSessaoUnicaCanonica = async (detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaCompletaDto) => {
         try {
             if (!await editaDetalheRascunho({
                 ...rascunho!,
@@ -76,7 +76,7 @@ export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { 
         }
     }
 
-    const salvaDetalhesRascunhoSessaoUnica = async (detalheRascunhoSessaoUnicaNaoCanonica: DetalheRascunhoSessaoUnicaNaoCanonicaDto) => {
+    const salvaDetalhesRascunhoSessaoUnica = async (detalheRascunhoSessaoUnicaNaoCanonica: DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto) => {
         try {
             if (!await editaDetalheRascunho({
                 ...rascunho!,

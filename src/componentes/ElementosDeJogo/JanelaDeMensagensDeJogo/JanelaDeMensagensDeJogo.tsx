@@ -12,7 +12,7 @@ export default function JanelaDeMensagensDeJogo() {
     const [messages, setMessages] = useState<string[]>([]);
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
 
-    useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirMensagemSalaDeJogo, {
+    useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirMensagemSalaDeJogo, { conteudoMensagem: '' }, {
         onSuccess: data => {
             setMessages((prev) => [data.conteudoMensagem, ...prev]);
         },

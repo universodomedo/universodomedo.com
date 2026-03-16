@@ -1,3 +1,3 @@
-import { PaginaPlay_Client } from './componentes';
+import PaginaJogo_Conteiner from './componentes';
 
-export default function PaginaPlay() { return <PaginaPlay_Client /> };
+export default function PaginaJogo() { return <PaginaJogo_Conteiner /> };

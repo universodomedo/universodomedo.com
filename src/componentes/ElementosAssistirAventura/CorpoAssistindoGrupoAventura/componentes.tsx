@@ -23,8 +23,8 @@ function CorpoEpisodio() {
 
     return (
         <>
-            <SecaoDeConteudo fit>
-                {sessaoSelecionada && (<h3>{sessaoSelecionada.detalheSessaoAventura.episodioPorExtenso}</h3>)}
+            <SecaoDeConteudo fit><></>
+                {/* {sessaoSelecionada && (<h3>{sessaoSelecionada.detalheSessaoAventura.episodioPorExtenso}</h3>)} */}
             </SecaoDeConteudo>
 
             <VideoEpisodio />

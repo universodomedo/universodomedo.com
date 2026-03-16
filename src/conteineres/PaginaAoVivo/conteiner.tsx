@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Eventos_Emite, SessaoDto } from 'types-nora-api';
+import { Eventos_Emite, SalaDeJogo_SessaoDto } from 'types-nora-api';
 
 import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
@@ -12,7 +12,7 @@ import { ContextoPaginaAoVivo__SessaoEmAndamentoProvider } from 'Contextos/Conte
 export const Conteiner__PaginaAoVivo = criaConteiner<PropsConteiner__PaginaAoVivo>({ useEstado, resolveSaida });
 
 type PropsConteiner__PaginaAoVivo = {
-    sessaoEmAndamento: SessaoDto | null;
+    sessaoEmAndamento: SalaDeJogo_SessaoDto | null;
 };
 
 function resolveSaida(props: PropsConteiner__PaginaAoVivo): SaidaConteiner {
@@ -22,7 +22,7 @@ function resolveSaida(props: PropsConteiner__PaginaAoVivo): SaidaConteiner {
 };
 
 function useEstado(): PropsConteiner__PaginaAoVivo {
-    const [sessaoEmAndamento, setSessaoEmAndamento] = useState<SessaoDto | null>(null);
+    const [sessaoEmAndamento, setSessaoEmAndamento] = useState<SalaDeJogo_SessaoDto | null>(null);
 
     useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirSessaoEmAndamento, {
         onSuccess: data => {

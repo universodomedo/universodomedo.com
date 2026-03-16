@@ -5,8 +5,8 @@ import stylesBase from '../styles.module.css';
 
 import { useMemo } from 'react';
 import { type SingleValue, components, type OptionProps, type SingleValueProps } from 'react-select';
-
 import { DiaDaSemana, obtemDiaDaSemanaPorExtensoPorDDS } from 'types-nora-api';
+
 import criarSelecionadorBase from '../SelecionadorBase';
 
 type OptionDiaDaSemana = { value: DiaDaSemana; label: string; dds: DiaDaSemana };

@@ -2,9 +2,10 @@
 
 import { ReactNode, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Eventos_Emite } from "types-nora-api";
+import { Eventos_Emite, LogicaJogoUsuario_EstouEmJogoDto } from "types-nora-api";
 
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
+import { toast } from 'Hooks/useToast';
 
 const ROTA_JOGO = "/jogo";
 const ROTA_EM_JOGO = "/jogo/em-jogo";
@@ -17,32 +18,33 @@ function normalizePath(pathname: string) {
 export default function JogoRouteGuard({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
-    const [estouEmJogo, setEstouEmJogo] = useState<boolean | null>(null);
+    const [objetoEstouEmJogo, setObjetoEstouEmJogo] = useState<LogicaJogoUsuario_EstouEmJogoDto | null>(null);
 
     useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirEstouEmJogo, {
         onSuccess: data => {
-            setEstouEmJogo(data.estouEmJogo);
+            setObjetoEstouEmJogo(data.objetoEstouEmJogo);
         },
         onError: err => {
-            setEstouEmJogo(false);
-        }
+            setObjetoEstouEmJogo(null);
+            toast.erro('Houve um erro na sua Página de Jogo');
+        },
     });
 
     useEffect(() => {
         if (!pathname) return;
-        if (estouEmJogo === null) return;
+        if (objetoEstouEmJogo === null) return;
 
         const current = normalizePath(pathname);
 
-        if (estouEmJogo) {
+        if (objetoEstouEmJogo.estouEmJogo) {
             if (current !== ROTA_EM_JOGO) router.replace(ROTA_EM_JOGO);
             return;
         }
 
         if (current === ROTA_EM_JOGO) router.replace(ROTA_JOGO);
-    }, [estouEmJogo, pathname, router]);
+    }, [objetoEstouEmJogo, pathname, router]);
 
-    if (estouEmJogo === null) return <p>Carregando...</p>;
+    if (objetoEstouEmJogo === null) return <p>Carregando...</p>;
 
     return (
         <>

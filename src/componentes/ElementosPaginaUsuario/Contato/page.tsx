@@ -45,11 +45,11 @@ function Contato({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuario }) {
             </div>
             <div className={styles.recipiente_informacoes_contato}>
                 <h2>{acessoUsuario.usuario.username}</h2>
-                <div className={styles.recipiente_cargos}>
+                {/* <div className={styles.recipiente_cargos}>
                     {acessoUsuario.usuario.listaCargos.cargos.map((cargo, index) => (
                         <span key={index}>{cargo}</span>
                     ))}
-                </div>
+                </div> */}
                 <div>
                     {acessoUsuario.paginaAtual ? (
                         <span>{acessoUsuario.paginaAtual}</span>

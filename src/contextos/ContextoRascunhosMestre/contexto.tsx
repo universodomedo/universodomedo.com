@@ -1,14 +1,14 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { EstiloSessaoMestradaDto, RascunhoDto } from 'types-nora-api';
+import { EstiloSessaoMestradaCompletaDto, RascunhoCompletaDto } from 'types-nora-api';
 
 import { me_obtemRascunhosPorTipo, obtemEstilosSessaoPorParam } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoRascunhosMestreProps {
-    estilosSessaoMestrada: EstiloSessaoMestradaDto[];
+    estilosSessaoMestrada: EstiloSessaoMestradaCompletaDto[];
     tituloComponenteConteudo: string | null;
-    rascunhos: RascunhoDto[];
+    rascunhos: RascunhoCompletaDto[];
     limpaRascunhoSelecionado(): void;
     selecionaRascunho(idRascunho: number): void;
     idRascunhoSelecionado: number | null;
@@ -26,8 +26,8 @@ export const ContextoRascunhosMestreProvider = ({ ehSessaoUnica, children }: { e
     const [carregandoEstilos, setCarregandoEstilos] = useState(false);
     const [carregandoRascunhos, setCarregandoRascunhos] = useState(false);
 
-    const [estilosSessaoMestrada, setEstilosSessaoMestrada] = useState<EstiloSessaoMestradaDto[] | null>(null);
-    const [rascunhos, setRascunhos] = useState<RascunhoDto[]>([]);
+    const [estilosSessaoMestrada, setEstilosSessaoMestrada] = useState<EstiloSessaoMestradaCompletaDto[] | null>(null);
+    const [rascunhos, setRascunhos] = useState<RascunhoCompletaDto[]>([]);
     const [idRascunhoSelecionado, setIdRascunhoSelecionado] = useState<number | null>(null);
 
     const tituloComponenteConteudo = ehSessaoUnica ? 'Mestre - Meus Rascunhos de Sessão Única' : 'Mestre - Meus Rascunhos de Aventuras';

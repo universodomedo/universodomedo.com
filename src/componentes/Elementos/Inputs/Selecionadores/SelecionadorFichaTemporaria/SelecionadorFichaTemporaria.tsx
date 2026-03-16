@@ -5,7 +5,7 @@ import stylesBase from '../styles.module.css';
 
 import { JSX, useMemo } from 'react';
 import { components, type GroupBase, type OptionProps, type SingleValueProps } from 'react-select';
-import { type FichaTemporariaDto } from 'types-nora-api';
+import { type FichaTemporariaVisualizacaoDetalhadaDto } from 'types-nora-api';
 
 import criarSelecionadorBase from '../SelecionadorBase';
 
@@ -14,7 +14,7 @@ type Option = { value: number; id: number; titulo: string };
 const SelecionadorFichaTemporariaBase = criarSelecionadorBase<Option, false>();
 
 type SelecionadorFichaTemporariaProps = {
-    options: FichaTemporariaDto[];
+    options: FichaTemporariaVisualizacaoDetalhadaDto[];
     idSelecionado?: number | null;
     onSelectIdFicha: (idFicha: number | null) => void;
     disabled?: boolean;

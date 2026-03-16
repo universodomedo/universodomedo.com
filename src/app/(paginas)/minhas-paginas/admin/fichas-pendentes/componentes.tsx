@@ -9,7 +9,7 @@ import Modal from 'Componentes/Elementos/Modal/Modal';
 import { obtemPericiasParaCriacaoFicha } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { useContextoPaginaFichasPendentes } from './contexto';
 
-import { EstadoPendenciaAdministrativaPersonagem, PericiaDto, PersonagemDto } from 'types-nora-api';
+import { EstadoPendenciaAdministrativaPersonagem, PericiaCompletaDto, PersonagemCompletaDto } from 'types-nora-api';
 
 import Select from "react-select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,7 +37,7 @@ export function PaginaPendenciasFichaComDados() {
     );
 };
 
-function SecaoAcoesFichaPendente({ personagem, abreModalConfiguracao }: { personagem: PersonagemDto; abreModalConfiguracao: () => void }) {
+function SecaoAcoesFichaPendente({ personagem, abreModalConfiguracao }: { personagem: PersonagemCompletaDto; abreModalConfiguracao: () => void }) {
     return (
         <div className={styles.recipiente_acoes_ficha}>
             {/* {personagem.pendencias.pendenciaAdmin === EstadoPendenciaAdministrativaPersonagem.SEM_CONFIGURACAO_FICHA && (
@@ -57,7 +57,7 @@ function SecaoAcoesFichaPendente({ personagem, abreModalConfiguracao }: { person
 export function ModalCriacaoFicha({ modalEstaAberta, onOpenChange }: { modalEstaAberta: boolean; onOpenChange: (open: boolean) => void }) {
     const { personagemConfigurando } = useContextoPaginaFichasPendentes();
 
-    const [pericias, setPericias] = useState<PericiaDto[]>([]);
+    const [pericias, setPericias] = useState<PericiaCompletaDto[]>([]);
     const [selectedOptions, setSelectedOptions] = useState<{value: number, label: string}[]>([]);
 
     async function carregaPericias() {

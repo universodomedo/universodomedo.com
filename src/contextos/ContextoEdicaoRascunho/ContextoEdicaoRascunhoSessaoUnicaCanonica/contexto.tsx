@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { useContextoRascunho } from 'Contextos/ContextoRascunho/contexto';
-import { DetalheRascunhoSessaoUnicaCanonicaDto, DificuldadeSessaoDto, RascunhoDto, TipoSessaoDto } from 'types-nora-api';
+import { DetalheRascunhoSessaoUnicaCanonicaCompletaDto, DificuldadeSessaoCompletaDto, RascunhoCompletaDto, TipoSessaoCompletaDto } from 'types-nora-api';
 
 interface ContextoEdicaoRascunhoSessaoUnicaCanonicaProps {
     idDificuldadeSelecionado: number;
@@ -67,11 +67,11 @@ export const ContextoEdicaoRascunhoSessaoUnicaCanonicaProvider = ({ children }: 
         if (!confirmacao) return;
 
         salvaDetalhesRascunhoSessaoUnicaCanonica({
-            rascunho: { id: rascunho?.id } as RascunhoDto,
-            tipoSessao: { id: idTipoSelecionado } as TipoSessaoDto,
-            dificuldadeSessao: { id: idDificuldadeSelecionado } as DificuldadeSessaoDto,
+            rascunho: { id: rascunho?.id } as RascunhoCompletaDto,
+            tipoSessao: { id: idTipoSelecionado } as TipoSessaoCompletaDto,
+            dificuldadeSessao: { id: idDificuldadeSelecionado } as DificuldadeSessaoCompletaDto,
             descricao: descricao,
-        } as DetalheRascunhoSessaoUnicaCanonicaDto);
+        } as DetalheRascunhoSessaoUnicaCanonicaCompletaDto);
     };
 
     return (

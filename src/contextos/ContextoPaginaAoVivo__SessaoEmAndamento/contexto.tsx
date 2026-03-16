@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { SessaoDto } from 'types-nora-api';
+import { SalaDeJogo_SessaoDto } from 'types-nora-api';
 
 import SPA__PaginaAoVivo__SessaoEmAndamento from 'Conteineres/PaginaAoVivo/paginas/SPA__PaginaAoVivo__SessaoEmAndamento/SPA__PaginaAoVivo__SessaoEmAndamento';
 
 interface ContextoPaginaAoVivo__SessaoEmAndamentoProps {
-    sessaoEmAndamento: SessaoDto;
+    sessaoEmAndamento: SalaDeJogo_SessaoDto;
 };
 
 const ContextoPaginaAoVivo__SessaoEmAndamento = createContext<ContextoPaginaAoVivo__SessaoEmAndamentoProps | undefined>(undefined);
@@ -17,7 +17,7 @@ export const useContextoPaginaAoVivo__SessaoEmAndamento = (): ContextoPaginaAoVi
     return context;
 };
 
-export const ContextoPaginaAoVivo__SessaoEmAndamentoProvider = ({ sessaoEmAndamento }: { sessaoEmAndamento: SessaoDto }) => {
+export const ContextoPaginaAoVivo__SessaoEmAndamentoProvider = ({ sessaoEmAndamento }: { sessaoEmAndamento: SalaDeJogo_SessaoDto }) => {
 
     return (
         <ContextoPaginaAoVivo__SessaoEmAndamento.Provider value={{ sessaoEmAndamento }}>

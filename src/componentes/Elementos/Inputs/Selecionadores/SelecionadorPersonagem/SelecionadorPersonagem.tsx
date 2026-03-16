@@ -5,7 +5,7 @@ import stylesBase from '../styles.module.css';
 
 import { JSX, useMemo } from 'react';
 import { components, type GroupBase, type OptionProps, type SingleValueProps } from 'react-select';
-import type { PersonagemDto } from 'types-nora-api';
+import type { PersonagemCompletaDto } from 'types-nora-api';
 
 import criarSelecionadorBase from '../SelecionadorBase';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
@@ -15,7 +15,7 @@ type Option = { value: number; label: string; id: number; nome: string; caminhoA
 const SelecionadorPersonagemBase = criarSelecionadorBase<Option, false>();
 
 type SelecionadorPersonagemProps = {
-    options: PersonagemDto[];
+    options: PersonagemCompletaDto[];
     idSelecionado?: number | null;
     onSelectIdPersonagem: (idPersonagem: number | null) => void;
     disabled?: boolean;

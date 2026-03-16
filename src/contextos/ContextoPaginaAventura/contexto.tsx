@@ -2,16 +2,16 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useSearchParams, usePathname } from 'next/navigation';
-import { GrupoAventuraDto, SessaoDto } from 'types-nora-api';
+import { GrupoAventuraCompletaDto, SessaoCompletaDto } from 'types-nora-api';
 
 import { obtemSessaoGeral, buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
 interface ContextoPaginaAventuraProps {
-    grupoAventuraSelecionado: GrupoAventuraDto;
+    grupoAventuraSelecionado: GrupoAventuraCompletaDto;
     buscaGrupoAventuraSelecionado: (idGrupoAventura: number) => void;
-    sessaoSelecionada: SessaoDto | null;
+    sessaoSelecionada: SessaoCompletaDto | null;
     buscaSessao: (idSessao: number) => void;
     limpaSessao: () => void;
     podeAlterarSessaoManualmente: { podeBuscarAnterior: boolean, podeBuscarSeguinte: boolean };
@@ -28,8 +28,8 @@ export const useContextoPaginaAventura = (): ContextoPaginaAventuraProps => {
 
 export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, episodioIndexInicial = null }: { children: React.ReactNode; idGrupoAventura: number; episodioIndexInicial?: number | null; }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [grupoAventuraSelecionado, setGrupoAventuraSelecionado] = useState<GrupoAventuraDto | null>(null);
-    const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
+    const [grupoAventuraSelecionado, setGrupoAventuraSelecionado] = useState<GrupoAventuraCompletaDto | null>(null);
+    const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoCompletaDto | null>(null);
 
     const searchParams = useSearchParams();
     const pathname = usePathname();

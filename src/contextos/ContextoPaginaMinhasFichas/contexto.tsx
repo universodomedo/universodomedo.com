@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { FichaTemporariaVisualizacaoDetalhadaDto } from 'types-nora-api';
 
-import { FichaTemporariaDto } from 'types-nora-api';
 import { me_obtemFichas } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaMinhasFichasProps {
-    fichas: FichaTemporariaDto[];
+    fichas: FichaTemporariaVisualizacaoDetalhadaDto[];
 };
 
 const ContextoPaginaMinhasFichas = createContext<ContextoPaginaMinhasFichasProps | undefined>(undefined);
@@ -19,7 +19,7 @@ export const useContextoPaginaMinhasFichas = (): ContextoPaginaMinhasFichasProps
 
 export const ContextoPaginaMinhasFichasProvider = ({ children }: { children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [fichas, setFichas] = useState<FichaTemporariaDto[]>([]);
+    const [fichas, setFichas] = useState<FichaTemporariaVisualizacaoDetalhadaDto[]>([]);
 
     async function buscaFichasUsuario() {
         setCarregando('Buscando Fichas');

@@ -1,13 +1,13 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import { SessaoDto } from 'types-nora-api';
+import { VIEW_SessaoDeJogadorDto } from 'types-nora-api';
 
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SPA__PaginaJogador__SelecionandoFichaParaSessao from 'Conteineres/PaginaJogador/paginas/SPA__PaginaJogador__SelecionandoFichaParaSessao/SPA__PaginaJogador__SelecionandoFichaParaSessao';
 
 interface ContextoPaginaJogador__SelecionandoFichaParaSessaoProps {
-    sessao: SessaoDto;
+    sessao: VIEW_SessaoDeJogadorDto;
 };
 
 const ContextoPaginaJogador__SelecionandoFichaParaSessao = createContext<ContextoPaginaJogador__SelecionandoFichaParaSessaoProps | undefined>(undefined);
@@ -18,7 +18,7 @@ export const useContextoPaginaJogador__SelecionandoFichaParaSessao = (): Context
     return context;
 };
 
-export const ContextoPaginaJogador__SelecionandoFichaParaSessaoProvider = ({ sessao, voltarParaPaginaInicialJogador }: { sessao: SessaoDto; voltarParaPaginaInicialJogador: () => void; }) => {
+export const ContextoPaginaJogador__SelecionandoFichaParaSessaoProvider = ({ sessao, voltarParaPaginaInicialJogador }: { sessao: VIEW_SessaoDeJogadorDto; voltarParaPaginaInicialJogador: () => void; }) => {
     useConfigurarLayoutContextualizado({ titulo: `Sua Sessão: ${sessao.tituloInteligente.tituloCompleto}`, fecharProps: { tipo: 'acao', executar: voltarParaPaginaInicialJogador, tituloTooltip: 'Voltar' } }, 'patch');
 
     return (

@@ -28,7 +28,7 @@ export default function PaginaAterrissagem_CarrosselPrincipal() {
             imagem: getImageUrlCdn('RecursosPublicos/imagem_especial_artista/7b1822c9-a109-4eea-a28d-382fa8f28f59.webp'),
             titulo: "Diferentes épocas, o mesmo Medo!",
             descricao: "Desvende o Paranormal através do tempo jogando em diferentes épocas.",
-            link: PAGINAS.aventuras.href,
+            link: PAGINAS.assistir.href,
         },
         {
             imagem: getImageUrlCdn('RecursosPublicos/imagem_especial_artista/92b771a6-a060-455a-bc40-fbd08f368f4f.webp'),

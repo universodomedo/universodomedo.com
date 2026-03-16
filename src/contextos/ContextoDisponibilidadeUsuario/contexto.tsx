@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { DiaDaSemana, DisponibilidadesDDS, DisponibilidadeUsuarioDto, JanelaDisponibilidade, ListaDisponibilidadesUsuario } from 'types-nora-api';
+import { DiaDaSemana, DisponibilidadesDDS, DisponibilidadeUsuarioCompletaDto, JanelaDisponibilidade, ListaDisponibilidadesUsuario } from 'types-nora-api';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { me_salvaDisponibilidade, obtemDadosMinhasDisponibilidades } from 'Uteis/ApiConsumer/ConsumerMiddleware';
@@ -9,7 +9,7 @@ import { adicionarDisponibilidadeComValidacao } from 'Uteis/LogicaAdicaoJanelaDi
 import { toast } from 'Hooks/useToast';
 
 interface ContextoDisponibilidadeUsuarioProps {
-    minhaDisponibilidade: DisponibilidadeUsuarioDto | null;
+    minhaDisponibilidade: DisponibilidadeUsuarioCompletaDto | null;
     listaDisponibilidadeEmAtualizacao: ListaDisponibilidadesUsuario | null;
     inicializaDisponibilidadeEmAtualizacao: () => ListaDisponibilidadesUsuario;
     limpaDisponibilidadeEmAtualizacao: () => void;
@@ -28,9 +28,8 @@ export const useContextoDisponibilidadeUsuario = (): ContextoDisponibilidadeUsua
 };
 
 export const ContextoDisponibilidadeUsuarioProvider = ({ children }: { children: React.ReactNode }) => {
-    const { usuarioLogado } = useContextoAutenticacao();
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [minhaDisponibilidade, setMinhaDisponibilidade] = useState<DisponibilidadeUsuarioDto | null>(null);
+    const [minhaDisponibilidade, setMinhaDisponibilidade] = useState<DisponibilidadeUsuarioCompletaDto | null>(null);
     const [listaDisponibilidadeEmAtualizacao, setListaDisponibilidadeEmAtualizacao] = useState<ListaDisponibilidadesUsuario | null>(null);
 
     const temElementos = listaDisponibilidadeEmAtualizacao

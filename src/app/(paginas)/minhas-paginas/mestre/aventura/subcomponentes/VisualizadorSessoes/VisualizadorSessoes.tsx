@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import { DetalheSessaoAventuraDto, PAGINAS } from 'types-nora-api';
+import { DetalheSessaoAventuraCompletaDto, PAGINAS } from 'types-nora-api';
 
 import { useContextoPaginaMestreAventura } from "Contextos/ContextoMestreAventura/contexto";
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
@@ -15,46 +15,46 @@ export function VisualizadorSessoes() {
 
     return (
         <>
-            <VisualizadorUltimasSessoes detalhesSessoesAventuras={grupoAventuraSelecionada.detalhesSessoesAventuras.sort((a, b) => a.sessao.id - b.sessao.id).slice(-2)} />
+            {/* <VisualizadorUltimasSessoes detalhesSessoesAventuras={grupoAventuraSelecionada.detalhesSessoesAventuras.sort((a, b) => a.sessao.id - b.sessao.id).slice(-2)} /> */}
             <AcoesSessoesRecentesDeAventurasEmAndamento />
         </>
     );
 };
 
-function VisualizadorUltimasSessoes({ detalhesSessoesAventuras }: { detalhesSessoesAventuras: DetalheSessaoAventuraDto[] }) {
+function VisualizadorUltimasSessoes({ detalhesSessoesAventuras }: { detalhesSessoesAventuras: DetalheSessaoAventuraCompletaDto[] }) {
     return (
         <div id={styles.recipiente_visualizador_sessoes}>
-            {detalhesSessoesAventuras.map(detalheUltimasSessoes => (
-                <VisualizacaoInformacoesSessao key={detalheUltimasSessoes.sessao.id} detalheUltimasSessoes={detalheUltimasSessoes} />
+            {detalhesSessoesAventuras.map(detalheUltimasSessoes => (<></>
+                // <VisualizacaoInformacoesSessao key={detalheUltimasSessoes.sessao.id} detalheUltimasSessoes={detalheUltimasSessoes} />
             ))}
         </div>
     );
 };
 
-function VisualizacaoInformacoesSessao({ detalheUltimasSessoes }: { detalheUltimasSessoes: DetalheSessaoAventuraDto }) {
+function VisualizacaoInformacoesSessao({ detalheUltimasSessoes }: { detalheUltimasSessoes: DetalheSessaoAventuraCompletaDto }) {
     return (
-        <CustomLink className={styles.recipiente_link_sessao} destino={{ pagina: PAGINAS.minhasPaginas.mestre.sessao, params: { id: detalheUltimasSessoes.sessao.id } }} semDecoracao>
+        <CustomLink className={styles.recipiente_link_sessao} destino={{ pagina: PAGINAS.minhasPaginas.mestre.sessao, params: { id: detalheUltimasSessoes.fkSessaoId } }} semDecoracao>
             <SecaoDeConteudo className={styles.recipiente_informacoes_sessao}>
                 <div className={styles.recipiente_cabecalho_informacoes_sessao}>
                     <h1>{detalheUltimasSessoes.episodioPorExtenso}</h1>
-                    <h4>{detalheUltimasSessoes.sessao.estadoAtual}</h4>
+                    {/* <h4>{detalheUltimasSessoes.sessao.estadoAtual}</h4> */}
                 </div>
 
                 <div className={styles.recipiente_par_informacao}>
                     <div className={styles.recipiente_informacoes}>
-                        <h4>Previsto: {formataData(detalheUltimasSessoes.sessao.dataPrevisaoInicio, 'dd/MM/yyyy HH:mm')}</h4>
-                        {detalheUltimasSessoes.sessao.dataInicio ? (
+                        {/* <h4>Previsto: {formataData(detalheUltimasSessoes.sessao.dataPrevisaoInicio, 'dd/MM/yyyy HH:mm')}</h4> */}
+                        {/* {detalheUltimasSessoes.sessao.dataInicio ? (
                             <h4>Iniciou {formataData(detalheUltimasSessoes.sessao.dataInicio, 'dd/MM/yyyy HH:mm')}</h4>
                         ) : (
                             <h4>Não Iniciado</h4>
-                        )}
+                        )} */}
                     </div>
                     <div className={styles.recipiente_informacoes}>
-                        {detalheUltimasSessoes.sessao.dataQueEncerrou ? (
+                        {/* {detalheUltimasSessoes.sessao.dataQueEncerrou ? (
                             <h4>Finalizou {formataData(detalheUltimasSessoes.sessao.dataQueEncerrou, 'dd/MM/yyyy HH:mm')}</h4>
                         ) : (
                             <h4>Não Finalizado</h4>
-                        )}
+                        )} */}
                     </div>
                 </div>
             </SecaoDeConteudo>

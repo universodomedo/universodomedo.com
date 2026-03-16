@@ -3,14 +3,15 @@
 import styles from '../styles.module.css';
 
 import { JSX } from 'react';
-import { PersonagemDto } from 'types-nora-api';
+import { CAPACIDADES, PersonagemVisualizacaoDetalhadaDto } from 'types-nora-api';
 
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useContextoPaginaPersonagens } from "Contextos/ContextoPaginaPersonagens/contexto";
-import { verificarPermissao } from 'Helpers/verificarPermissao';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 
 export default function ListaAcoesPersonagens() {
+    const { verificarCapacidade } = useContextoAutenticacao();
     const { personagens } = useContextoPaginaPersonagens();
 
     return (
@@ -19,16 +20,16 @@ export default function ListaAcoesPersonagens() {
                 <h2 className={styles.titulo_permissao}>Buscar Personagem</h2>
             </div>
 
-            <SecaoPersonagens titulo={"Personagens - Jogador"} personagens={personagens.filter(personagem => personagem.tipoPersonagem.id === 1)} />
+            <SecaoPersonagens titulo={"Personagens - Jogador"} personagens={personagens.filter(personagem => personagem.tipoPersonagem === 'PERSONAGEM_DE_JOGADOR')} />
 
-            {verificarPermissao(usuario => usuario.perfilMestre.id > 1) && (
-                <SecaoPersonagens titulo={"Personagens - Mestre"} personagens={personagens.filter(personagem => personagem.tipoPersonagem.id === 2)} />
+            {verificarCapacidade(CAPACIDADES.MESTRE__CRIACAO__SESSAO_DE_JOGO) && (
+                <SecaoPersonagens titulo={"Personagens - Mestre"} personagens={personagens.filter(personagem => personagem.tipoPersonagem === 'PERSONAGEM_DE_MESTRE')} />
             )}
         </div>
     );
 };
 
-function SecaoPersonagens({ titulo, personagens }: { titulo: string; personagens: PersonagemDto[]; }) {
+function SecaoPersonagens({ titulo, personagens }: { titulo: string; personagens: PersonagemVisualizacaoDetalhadaDto[]; }) {
     return (
         <>
             <hr className={styles.divisor} />
@@ -50,17 +51,17 @@ function SecaoPersonagens({ titulo, personagens }: { titulo: string; personagens
     );
 };
 
-function RenderPersonagem({ personagem }: { personagem: PersonagemDto }): JSX.Element {
+function RenderPersonagem({ personagem }: { personagem: PersonagemVisualizacaoDetalhadaDto }): JSX.Element {
     const { setIdPersonagemSelecionado, personagemSelecionado } = useContextoPaginaPersonagens();
 
     return (
         <DivClicavel key={personagem.id} className={styles.recipiente_avatar_personagem} classeParaDesabilitado={styles.avatar_personagem_selecionado} desabilitado={personagem.id === personagemSelecionado?.id} onClick={() => setIdPersonagemSelecionado(personagem.id)}>
             <RecipienteImagem src={personagem.caminhoAvatar} />
-            {(personagem.temCriacaoPendente || personagem.temEvolucaoPendente) && (
+            {/* {(personagem.temCriacaoPendente || personagem.temEvolucaoPendente) && (
                 <div className={styles.recipiente_item_menu_com_pendencia}>
                     <span className={styles.numero_pendencias}>!</span>
                 </div>
-            )}
+            )} */}
         </DivClicavel>
     );
 };

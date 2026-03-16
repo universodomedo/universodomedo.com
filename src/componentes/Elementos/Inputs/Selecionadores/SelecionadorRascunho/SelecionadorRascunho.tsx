@@ -6,7 +6,7 @@ import stylesBase from '../styles.module.css';
 import { JSX, useMemo } from 'react';
 import { components, type GroupBase, type OptionProps, type SingleValueProps } from 'react-select';
 import cn from 'classnames';
-import type { RascunhoDto } from 'types-nora-api';
+import type { RascunhoCompletaDto } from 'types-nora-api';
 
 import criarSelecionadorBase from '../SelecionadorBase';
 
@@ -18,7 +18,7 @@ type Option = { value: IdSelecionadoRascunho; label: string; id: IdSelecionadoRa
 const SelecionadorRascunhoBase = criarSelecionadorBase<Option, false>();
 
 type SelecionadorRascunhoProps = {
-    options: RascunhoDto[];
+    options: RascunhoCompletaDto[];
     idSelecionado?: IdSelecionadoRascunho | null;
     onSelectIdRascunho: (idRascunho: IdSelecionadoRascunho | null) => void;
     disabled?: boolean;

@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { GrupoAventuraDto } from 'types-nora-api';
+import { GrupoAventuraCompletaDto } from 'types-nora-api';
 
 import { obtemTodosGruposParaAdmin } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaAdminAventurasProps {
-    gruposAventuras: GrupoAventuraDto[];
+    gruposAventuras: GrupoAventuraCompletaDto[];
 };
 
 const ContextoPaginaAdminAventuras = createContext<ContextoPaginaAdminAventurasProps | undefined>(undefined);
@@ -19,7 +19,7 @@ export const useContextoPaginaAdminAventuras = (): ContextoPaginaAdminAventurasP
 
 export const ContextoPaginaAdminAventurasProvider = ({ children }: { children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [gruposAventuras, setGruposAventuras] = useState<GrupoAventuraDto[]>([]);
+    const [gruposAventuras, setGruposAventuras] = useState<GrupoAventuraCompletaDto[]>([]);
 
     async function buscaTodosGruposParaAdmin() {
         setCarregando('Buscando Aventuras');

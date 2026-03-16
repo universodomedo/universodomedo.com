@@ -1,13 +1,11 @@
 import styles from './styles.module.css';
 
-import { SessaoDto } from 'types-nora-api';
-
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 
-export default function RecipienteCapa({ sessao, className }: { sessao: SessaoDto, className?: string }) {
+export default function RecipienteCapa({ caminhoCapa, className }: { caminhoCapa: string, className?: string }) {
     return (
         <div className={styles.recipiente_capa}>
-            <RecipienteImagem src={sessao.imagemCapa.caminhoCapa} className={className} />
+            <RecipienteImagem src={caminhoCapa} className={className} />
         </div>
     );
 };

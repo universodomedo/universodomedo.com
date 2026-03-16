@@ -21,12 +21,12 @@ export default function ConteudoSalaSelecionada() {
 
     const [mensagem, setMensagem] = useState('');
     const inputRef = useRef<HTMLInputElement>(null);
-    const mensagensContainerRef = useRef<HTMLDivElement>(null);
+    const mensagensConteinerRef = useRef<HTMLDivElement>(null);
 
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
     const { ref: scrollableRef, ...scrollablePropsSemRef } = scrollableProps as unknown as { ref?: React.Ref<HTMLDivElement> } & React.HTMLAttributes<HTMLDivElement>;
     const setMensagensRef = useCallback((el: HTMLDivElement | null) => {
-        mensagensContainerRef.current = el;
+        mensagensConteinerRef.current = el;
 
         if (!scrollableRef) return;
 
@@ -43,7 +43,7 @@ export default function ConteudoSalaSelecionada() {
     });
 
     const scrollParaBaixo = useCallback(() => {
-        const container = mensagensContainerRef.current;
+        const container = mensagensConteinerRef.current;
 
         if (container) {
             setTimeout(() => {

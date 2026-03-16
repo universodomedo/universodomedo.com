@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { PAGINAS, VariavelAmbienteDto } from 'types-nora-api';
+import { PAGINAS, VariavelAmbienteCompletaDto } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
@@ -17,16 +17,16 @@ export function PaginaVariaveisAmbiente_Client() {
 function PaginaVariaveisAmbiente_Slot() {
     const { variaveisAmbiente } = useContextoAutenticacao();
 
-    const [variaveis, setVariaveis] = useState<VariavelAmbienteDto[]>([]);
+    const [variaveis, setVariaveis] = useState<VariavelAmbienteCompletaDto[]>([]);
     const [modalAberto, setModalAberto] = useState(false);
-    const [editando, setEditando] = useState<VariavelAmbienteDto | null>(null);
+    const [editando, setEditando] = useState<VariavelAmbienteCompletaDto | null>(null);
 
     const abrirModalCriar = () => {
         setEditando(null);
         setModalAberto(true);
     };
 
-    const abrirModalEditar = (variavel: VariavelAmbienteDto) => {
+    const abrirModalEditar = (variavel: VariavelAmbienteCompletaDto) => {
         setEditando(variavel);
         setModalAberto(true);
     };

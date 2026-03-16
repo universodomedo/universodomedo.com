@@ -1,7 +1,5 @@
 'use client';
 
-import styles from './styles.module.css';
-
 import { useContextoPaginaJogador } from 'Contextos/ContextoPaginaJogador/contexto';
 import { AvisosDePersonagensEFichas } from 'Componentes/Elementos/AvisosDePersonagensEFichas/AvisosDePersonagensEFichas';
 import AvisosSessoesPrevistas from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvisosSessoesPrevistas/AvisosSessoesPrevistas';

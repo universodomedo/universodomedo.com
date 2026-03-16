@@ -25,7 +25,9 @@ export function ModalEditarRascunhoSessaoUnica({ isModalOpen, setIsModalOpen }: 
 };
 
 function ConteudoModal() {
-    const { niveis, dificuldadesSessao, tiposSessao } = useCache();
+    const cache = useCache();
+    if (!cache.pronto) return null;
+
     const { seNumeroJogadoresTemLimiteMax, setSeNumeroJogadoresTemLimiteMax, numeroJogadoresMin, setNumeroJogadoresMin, numeroJogadoresMax, setNumeroJogadoresMax, idNivelSelecionado, setIdNivelSelecionado, idDificuldadeSelecionado, setIdDificuldadeSelecionada, idTipoSelecionado, setIdTipoSelecionada, descricao, setDescricao } = useContextoEdicaoRascunhoSessaoUnicaNaoCanonica();
 
     return (
@@ -52,7 +54,7 @@ function ConteudoModal() {
                 <InputComRotulo rotulo={'Grau de Ex.P. dos Personangens'}>
                     <select value={idNivelSelecionado} onChange={e => setIdNivelSelecionado(Number(e.target.value))}>
                         <option value="0" disabled >Selecionar Nível dos Personagens</option>
-                        {niveis!.map(nivel => (<option key={nivel.id} value={nivel.id}>{nivel.nomeVisualizacao}</option>))}
+                        {cache.niveis.map(nivel => (<option key={nivel.id} value={nivel.id}>{nivel.nomeVisualizacao}</option>))}
                     </select>
                 </InputComRotulo>
             </div>
@@ -61,14 +63,14 @@ function ConteudoModal() {
                 <InputComRotulo rotulo={'Dificuldade da Sessão'} >
                     <select value={idDificuldadeSelecionado} onChange={e => setIdDificuldadeSelecionada(Number(e.target.value))}>
                         <option value="0" disabled >Selecionar Dificuldade da Sessão</option>
-                        {dificuldadesSessao!.map(dificuldade => (<option key={dificuldade.id} value={dificuldade.id}>{dificuldade.descricao}</option>))}
+                        {cache.dificuldadesSessao.map(dificuldade => (<option key={dificuldade.id} value={dificuldade.id}>{dificuldade.descricao}</option>))}
                     </select>
                 </InputComRotulo>
 
                 <InputComRotulo rotulo={'Tipo de Sessão'}>
                     <select value={idTipoSelecionado} onChange={e => setIdTipoSelecionada(Number(e.target.value))}>
                         <option value="0" disabled >Selecionar Tipo de Sessão</option>
-                        {tiposSessao!.map(tipo => (<option key={tipo.id} value={tipo.id}>{tipo.descricao}</option>))}
+                        {cache.tiposSessao.map(tipo => (<option key={tipo.id} value={tipo.id}>{tipo.descricao}</option>))}
                     </select>
                 </InputComRotulo>
             </div>

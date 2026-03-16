@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretUp, faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import cn from 'classnames';
-import { JanelaDisponibilidadeDto, PAGINAS } from 'types-nora-api';
+import { JanelaDisponibilidadeCompletaDto, PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoConsultarDisponibilidadesProvider, useContextoConsultarDisponibilidades } from 'Contextos/ContextoConsultarDisponibilidades/contexto';
@@ -67,7 +67,7 @@ function FiltroBuscaDisponibilidades() {
     );
 };
 
-function ListagemJanelas({ janelas }: { janelas: JanelaDisponibilidadeDto[] }) {
+function ListagemJanelas({ janelas }: { janelas: JanelaDisponibilidadeCompletaDto[] }) {
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
     const { isEmFoco, toggleFoco } = useContextoConsultarDisponibilidades_Listagem();
 
