@@ -1,3 +1,3 @@
-import { RascunhoSessoesUnicasMestre_Client } from "./componentes";
+import RascunhoSessoesUnicasMestre_Conteiner from "./componentes";
 
-export default function RascunhoSessoesUnicasMestre() { return <RascunhoSessoesUnicasMestre_Client /> };
+export default function RascunhoSessoesUnicasMestre() { return <RascunhoSessoesUnicasMestre_Conteiner /> };

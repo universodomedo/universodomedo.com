@@ -3,15 +3,12 @@
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-import { ContextoPaginasListagemSessoesProvider } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
-import { VisualizacaoSessoes } from 'Componentes/ElementosPaginaSessao/VisualizacaoSessoes/VisualizacaoSessoes';
+import Conteiner__PaginaSessoes from 'Conteineres/PaginaVisualizacaoSessoes/conteiner';
 
-export function PaginaSessoes_Client() {
+export default function PaginaSessoes_Conteiner({ idSessao }: { idSessao: number | null; }) {
     return (
         <ControladorSlot pagina={PAGINAS.sessoes}>
-            <ContextoPaginasListagemSessoesProvider>
-                <VisualizacaoSessoes />
-            </ContextoPaginasListagemSessoesProvider>
+            <Conteiner__PaginaSessoes idSessaoInicial={idSessao} />
         </ControladorSlot>
     );
 };

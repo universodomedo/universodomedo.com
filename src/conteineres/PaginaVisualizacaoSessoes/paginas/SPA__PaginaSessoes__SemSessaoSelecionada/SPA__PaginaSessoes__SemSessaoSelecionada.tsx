@@ -2,20 +2,12 @@
 
 import styles from './styles.module.css';
 
-import { useContextoPaginasListagemSessoes } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
-import { VisualizacaoSessao } from 'Componentes/ElementosPaginaSessao/VisualizacaoSessao/VisualizacaoSessao';
-import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 
-export function VisualizacaoSessoes() {
-    const { sessaoSelecionada } = useContextoPaginasListagemSessoes();
+import { useContextoPaginaSessoes__SemSessaoSelecionada } from 'Contextos/ContextoPaginaSessoes__SemSessaoSelecionada/contexto';
 
-    return sessaoSelecionada ? <VisualizacaoSessao /> : <ListagemSessoes />;
-};
-
-function ListagemSessoes() {
-    const { sessoes, selecionaSessao } = useContextoPaginasListagemSessoes();
-    useConfigurarLayoutContextualizado({ titulo: 'Lista de Sessões', fecharProps: undefined }, 'patch');
+export default function SPA__PaginaSessoes__SemSessaoSelecionada() {
+    const { sessoes, selecionaSessao } = useContextoPaginaSessoes__SemSessaoSelecionada();
 
     const sessoesOrdenadas = [...sessoes].sort((a, b) => new Date(b.dataCriacao || 0).getTime() - new Date(a.dataCriacao || 0).getTime());
 
@@ -53,7 +45,7 @@ function ListagemSessoes() {
                                     <td>{sessao.id}</td>
                                     <td>{sessao.detalheData}</td>
                                     <td>{sessao.tipoPorExtenso}</td>
-                                    <td>{sessao.usuarioMestre.username}</td>
+                                    <td>{sessao.usernameUsuarioMestre}</td>
                                 </tr>
                             ))}
                         </tbody>

@@ -6,9 +6,20 @@ import { JSX } from 'react';
 
 import { useContextoRascunho } from "Contextos/ContextoRascunho/contexto";
 import { DadosResumo } from './subcomponentes';
-import { useContextoRascunhosMestre } from 'Contextos/ContextoRascunhosMestre/contexto';
+import { useContextoPaginaRascunhosMestre__ComRascunhoSelecionado } from 'Contextos/ContextoPaginaRascunhosMestre__ComRascunhoSelecionado/contexto';
 
-export function DetalhesRascunho_Conteudo_Corpo() {
+export default function DetalhesRascunho_Conteudo() {
+    return (
+        <div id={styles.recipiente_detalhes_rascunho}>
+            <DetalhesRascunho_Conteudo_Corpo />
+            <div id={styles.recipiente_botoes_rascunho}>
+                <DetalhesRascunho_Conteudo_Botoes />
+            </div>
+        </div>
+    );
+};
+
+function DetalhesRascunho_Conteudo_Corpo() {
     const { rascunho } = useContextoRascunho();
 
     return (
@@ -33,23 +44,14 @@ function RenderCorpo(): JSX.Element {
     );
 };
 
-export function DetalhesRascunho_Conteudo_Botoes() {
-    const { limpaRascunhoSelecionado } = useContextoRascunhosMestre();
-    const { alteraEstadoModalEdicao, rascunho, textoBotaoCriar, executaCriacao } = useContextoRascunho();
-
-    function fechaRascunho() {
-        limpaRascunhoSelecionado();
-    };
-
-    const botaoFechar = <button onClick={fechaRascunho}>Fechar</button>;
-
-    if (!rascunho) return botaoFechar;
+function DetalhesRascunho_Conteudo_Botoes() {
+    const { deselecionaRascunho } = useContextoPaginaRascunhosMestre__ComRascunhoSelecionado();
+    const { alteraEstadoModalEdicao } = useContextoRascunho();
 
     return (
         <>
+            <button onClick={deselecionaRascunho}>Fechar</button>
             <button onClick={() => alteraEstadoModalEdicao(true)}>Editar</button>
-            <button disabled={!rascunho.possuiDetalhesConfigurados} onClick={executaCriacao}>{textoBotaoCriar}</button>
-            {botaoFechar}
         </>
     );
 };

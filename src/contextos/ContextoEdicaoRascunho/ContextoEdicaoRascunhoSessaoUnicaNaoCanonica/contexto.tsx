@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 
 import { useContextoRascunho } from 'Contextos/ContextoRascunho/contexto';
-import { DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto, DificuldadeSessaoCompletaDto, NivelCompletaDto, RascunhoCompletaDto, TipoSessaoCompletaDto } from 'types-nora-api';
+import { DificuldadeSessaoCompletaDto, NivelDto, PAYLOAD_DetalheRascunhoSessaoUnicaNaoCanonicaEdicaoDto, RascunhoSessaoUnicaNaoCanonicaCompletaDto, TipoSessaoDto } from 'types-nora-api';
 
 interface ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProps {
     seNumeroJogadoresTemLimiteMax: boolean;
@@ -18,8 +18,8 @@ interface ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProps {
     setIdDificuldadeSelecionada: (v: number) => void;
     idTipoSelecionado: number;
     setIdTipoSelecionada: (v: number) => void;
-    descricao: Record<string, any> | null;
-    setDescricao: (v: Record<string, any> | null) => void;
+    descricao: Record<string, any>;
+    setDescricao: (v: Record<string, any>) => void;
     podeSalvar: boolean;
     handleSalvar: () => void;
 };
@@ -32,33 +32,31 @@ export const useContextoEdicaoRascunhoSessaoUnicaNaoCanonica = (): ContextoEdica
     return context;
 };
 
-export const ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider = ({ children }: { children: React.ReactNode }) => {
-    const { salvaDetalhesRascunhoSessaoUnica, rascunho } = useContextoRascunho();
+export const ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider = ({ children, rascunho }: { children: React.ReactNode; rascunho: RascunhoSessaoUnicaNaoCanonicaCompletaDto; }) => {
+    const { salvaDetalhesRascunho } = useContextoRascunho();
 
-    const [seNumeroJogadoresTemLimiteMax, setSeNumeroJogadoresTemLimiteMax] = useState<boolean>(rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.numeroMaximoJogadores === null ? false : true : true);
+    const [seNumeroJogadoresTemLimiteMax, setSeNumeroJogadoresTemLimiteMax] = useState<boolean>(rascunho.detalheRascunho ? rascunho.detalheRascunho.numeroMaximoJogadores !== null : true);
 
-    const [numeroJogadoresMin, setNumeroJogadoresMin] = useState<number>(rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.numeroMinimoJogadores : 1);
-    const [numeroJogadoresMax, setNumeroJogadoresMax] = useState<number>(rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.numeroMaximoJogadores ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.numeroMaximoJogadores : rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.numeroMinimoJogadores : 1);
+    const [numeroJogadoresMin, setNumeroJogadoresMin] = useState<number>(rascunho.detalheRascunho ? rascunho.detalheRascunho.numeroMinimoJogadores : 1);
+    const [numeroJogadoresMax, setNumeroJogadoresMax] = useState<number>(rascunho.detalheRascunho ? rascunho.detalheRascunho.numeroMaximoJogadores ?? rascunho.detalheRascunho.numeroMinimoJogadores : 1);
 
     useEffect(() => {
         if (numeroJogadoresMax && numeroJogadoresMax < numeroJogadoresMin) setNumeroJogadoresMax(numeroJogadoresMin);
-    }, [numeroJogadoresMin]);
+    }, [numeroJogadoresMin, numeroJogadoresMax]);
 
-    const [idNivelSelecionado, setIdNivelSelecionado] = useState(rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.nivelPersonagem.id : 0);
-    const [idDificuldadeSelecionado, setIdDificuldadeSelecionada] = useState(rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.dificuldadeSessao.id : 0);
-    const [idTipoSelecionado, setIdTipoSelecionada] = useState(rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.tipoSessao.id : 0);
-    const [descricao, setDescricao] = useState(rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.descricao : null);
-
-    //
+    const [idNivelSelecionado, setIdNivelSelecionado] = useState(rascunho.detalheRascunho ? rascunho.detalheRascunho.nivelPersonagem.id : 0);
+    const [idDificuldadeSelecionado, setIdDificuldadeSelecionada] = useState(rascunho.detalheRascunho ? rascunho.detalheRascunho.dificuldadeSessao.id : 0);
+    const [idTipoSelecionado, setIdTipoSelecionada] = useState(rascunho.detalheRascunho ? rascunho.detalheRascunho.tipoSessao.id : 0);
+    const [descricao, setDescricao] = useState<Record<string, any>>(rascunho.detalheRascunho ? rascunho.detalheRascunho.descricao : {});
 
     const detalheInicial = {
-        seNumeroJogadoresTemLimiteMax: rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.numeroMaximoJogadores !== null : true,
-        numeroJogadoresMin: rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.numeroMinimoJogadores : 1,
-        numeroJogadoresMax: rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.numeroMaximoJogadores ?? (rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.numeroMinimoJogadores) : 1,
-        idNivelSelecionado: rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.nivelPersonagem.id : 0,
-        idDificuldadeSelecionado: rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.dificuldadeSessao.id : 0,
-        idTipoSelecionado: rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.tipoSessao.id : 0,
-        descricao: rascunho?.detalheRascunhoSessaoUnicaNaoCanonica ? rascunho?.detalheRascunhoSessaoUnicaNaoCanonica.descricao : null,
+        seNumeroJogadoresTemLimiteMax: rascunho.detalheRascunho ? rascunho.detalheRascunho.numeroMaximoJogadores !== null : true,
+        numeroJogadoresMin: rascunho.detalheRascunho ? rascunho.detalheRascunho.numeroMinimoJogadores : 1,
+        numeroJogadoresMax: rascunho.detalheRascunho ? rascunho.detalheRascunho.numeroMaximoJogadores ?? rascunho.detalheRascunho.numeroMinimoJogadores : 1,
+        idNivelSelecionado: rascunho.detalheRascunho ? rascunho.detalheRascunho.nivelPersonagem.id : 0,
+        idDificuldadeSelecionado: rascunho.detalheRascunho ? rascunho.detalheRascunho.dificuldadeSessao.id : 0,
+        idTipoSelecionado: rascunho.detalheRascunho ? rascunho.detalheRascunho.tipoSessao.id : 0,
+        descricao: rascunho.detalheRascunho ? rascunho.detalheRascunho.descricao : {},
     };
 
     const houveModificacao =
@@ -70,49 +68,36 @@ export const ContextoEdicaoRascunhoSessaoUnicaNaoCanonicaProvider = ({ children 
         idTipoSelecionado !== detalheInicial.idTipoSelecionado ||
         JSON.stringify(descricao) !== JSON.stringify(detalheInicial.descricao);
 
-    //
-
-    const podeSalvar: boolean = (idNivelSelecionado > 0 && idDificuldadeSelecionado > 0 && idTipoSelecionado > 0 && houveModificacao);
+    const podeSalvar: boolean = idNivelSelecionado > 0 && idDificuldadeSelecionado > 0 && idTipoSelecionado > 0 && houveModificacao;
 
     const handleSalvar = () => {
         const alteracoes: string[] = [];
 
-        if (numeroJogadoresMin !== detalheInicial.numeroJogadoresMin)
-            alteracoes.push("Número mínimo de jogadores foi alterado");
-
-        if (seNumeroJogadoresTemLimiteMax !== detalheInicial.seNumeroJogadoresTemLimiteMax || numeroJogadoresMax !== detalheInicial.numeroJogadoresMax)
-            alteracoes.push("Número máximo de jogadores foi alterado");
-
-        if (idNivelSelecionado !== detalheInicial.idNivelSelecionado)
-            alteracoes.push("Nível dos personagens foi alterado");
-
-        if (idDificuldadeSelecionado !== detalheInicial.idDificuldadeSelecionado)
-            alteracoes.push("Dificuldade da sessão foi alterada");
-
-        if (idTipoSelecionado !== detalheInicial.idTipoSelecionado)
-            alteracoes.push("Tipo de sessão foi alterado");
-
-        if (JSON.stringify(descricao) !== JSON.stringify(detalheInicial.descricao))
-            alteracoes.push("Descrição foi alterada");
+        if (numeroJogadoresMin !== detalheInicial.numeroJogadoresMin) alteracoes.push('Número mínimo de jogadores foi alterado');
+        if (seNumeroJogadoresTemLimiteMax !== detalheInicial.seNumeroJogadoresTemLimiteMax || numeroJogadoresMax !== detalheInicial.numeroJogadoresMax) alteracoes.push('Número máximo de jogadores foi alterado');
+        if (idNivelSelecionado !== detalheInicial.idNivelSelecionado) alteracoes.push('Nível dos personagens foi alterado');
+        if (idDificuldadeSelecionado !== detalheInicial.idDificuldadeSelecionado) alteracoes.push('Dificuldade da sessão foi alterada');
+        if (idTipoSelecionado !== detalheInicial.idTipoSelecionado) alteracoes.push('Tipo de sessão foi alterado');
+        if (JSON.stringify(descricao) !== JSON.stringify(detalheInicial.descricao)) alteracoes.push('Descrição foi alterada');
 
         if (alteracoes.length < 1) return;
 
         const confirmacao = window.confirm(
-            "Tem certeza que deseja salvar as alterações?\n\n" +
-            alteracoes.map(a => `• ${a}`).join("\n")
+            'Tem certeza que deseja salvar as alterações?\n\n' +
+            alteracoes.map(a => `• ${a}`).join('\n')
         );
 
         if (!confirmacao) return;
 
-        salvaDetalhesRascunhoSessaoUnica({
-            rascunho: { id: rascunho?.id } as RascunhoCompletaDto,
-            tipoSessao: { id: idTipoSelecionado } as TipoSessaoCompletaDto,
+        salvaDetalhesRascunho({
+            fkRascunhoId: rascunho.id,
+            tipoSessao: { id: idTipoSelecionado } as TipoSessaoDto,
             dificuldadeSessao: { id: idDificuldadeSelecionado } as DificuldadeSessaoCompletaDto,
-            nivelPersonagem: { id: idNivelSelecionado } as NivelCompletaDto,
+            nivelPersonagem: { id: idNivelSelecionado } as NivelDto,
             descricao: descricao,
             numeroMinimoJogadores: numeroJogadoresMin,
             numeroMaximoJogadores: seNumeroJogadoresTemLimiteMax ? numeroJogadoresMax : null,
-        } as DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto);
+        } as PAYLOAD_DetalheRascunhoSessaoUnicaNaoCanonicaEdicaoDto);
     };
 
     return (

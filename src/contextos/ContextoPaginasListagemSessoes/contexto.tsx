@@ -1,14 +1,17 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { SessaoCompletaDto } from 'types-nora-api';
+import { VIEW_SessaoListagemGeralDto } from 'types-nora-api';
 
 import { obtemListagemGeralSessoes } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { toast } from 'Hooks/useToast';
+import { useSincronizarQueryParamSPA } from 'Hooks/useSincronizarQueryParamSPA';
+import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
 interface ContextoPaginasListagemSessoesProps {
-    sessoes: SessaoCompletaDto[];
-    sessaoSelecionada: SessaoCompletaDto | null;
-    selecionaSessao: (idSessao: number) => void;
+    sessoes: VIEW_SessaoListagemGeralDto[];
+    idSessaoSelecionada: number | null;
+    setIdSessaoSelecionada: (idSessao: number) => void;
     deselecionaSessao: () => void;
 };
 
@@ -20,10 +23,10 @@ export const useContextoPaginasListagemSessoes = (): ContextoPaginasListagemSess
     return context;
 };
 
-export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInicial }: { children: React.ReactNode; idSessaoInicial?: number; }) => {
+export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInicial }: { children: React.ReactNode; idSessaoInicial: number | null; }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [sessoes, setSessoes] = useState<SessaoCompletaDto[]>([]);
-    const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoCompletaDto | null>(null);
+    const [sessoes, setSessoes] = useState<VIEW_SessaoListagemGeralDto[]>([]);
+    const [idSessaoSelecionada, setIdSessaoSelecionada] = useState<number | null>(idSessaoInicial ?? null);
 
     async function buscaListaSessoes() {
         setCarregando('Buscando Sessões');
@@ -31,47 +34,26 @@ export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInici
         try {
             const lista = await obtemListagemGeralSessoes();
             setSessoes(lista);
-
-            if (idSessaoInicial && idSessaoInicial > 0) {
-                const encontrada = lista.find(sessao => sessao.id === idSessaoInicial) || null;
-                setSessaoSelecionada(encontrada);
-            }
         } catch {
             setSessoes([]);
-            setSessaoSelecionada(null);
+            toast.erro('Houve um erro recuperando as Sessões à serem listadas');
         } finally {
             setCarregando(null);
         }
     };
 
-    function selecionaSessao(idSessao: number) { setSessaoSelecionada(sessoes.find(sessao => sessao.id === idSessao)!); };
-    function deselecionaSessao() { setSessaoSelecionada(null); };
+    function deselecionaSessao() { setIdSessaoSelecionada(null); };
 
-    const atualizarParametroURL = (sessaoId: number | null) => {
-        let novoPathname: string;
-
-        if (sessaoId === null || sessaoId === 0) {
-            novoPathname = '/sessoes';
-        } else {
-            novoPathname = `/sessao/${sessaoId}`;
-        }
-
-        window.history.replaceState(null, '', novoPathname);
-    };
+    useSincronizarQueryParamSPA(QUERY_PARAMS.SESSAO, idSessaoSelecionada);
 
     useEffect(() => {
         buscaListaSessoes();
     }, []);
 
-    useEffect(() => {
-        if (sessaoSelecionada) atualizarParametroURL(sessaoSelecionada.id);
-        else atualizarParametroURL(null);
-    }, [sessaoSelecionada]);
-
     if (carregando) return <div>{carregando}</div>;
 
     return (
-        <ContextoPaginasListagemSessoes.Provider value={{ sessoes, sessaoSelecionada, selecionaSessao, deselecionaSessao }}>
+        <ContextoPaginasListagemSessoes.Provider value={{ sessoes, idSessaoSelecionada, setIdSessaoSelecionada, deselecionaSessao }}>
             {children}
         </ContextoPaginasListagemSessoes.Provider>
     );

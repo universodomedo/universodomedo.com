@@ -1,0 +1,38 @@
+.recipiente_pagina_de_jogo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 1em;
+    min-height: 0;
+}
+
+.recipiente__pagina_de_jogo__superior {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    padding: 2% 0 0;
+    gap: 1.5em;
+    min-height: 0;
+}
+
+.recipiente_container_tela_de_jogo__em_pagina_de_jogo {
+    width: 45%;
+    aspect-ratio: 16 / 9;
+    margin: auto;
+    flex: 0 0 auto;
+}
+
+.recipiente_container__janela_mensageens_de_jogo__em_pagina_de_jogo {
+    flex: 1 1 auto;
+    width: 22%;
+    margin: auto;
+    min-height: 0;
+}
+
+.recipiente_regiao_icones_narrador {
+    flex: 0 0 4em;
+    width: 100%;
+    height: 4em;
+    min-height: 4em;
+}

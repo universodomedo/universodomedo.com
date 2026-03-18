@@ -1,4 +1,4 @@
-#recipiente_area_rascunhos {
+.recipiente_area_rascunhos {
     display: flex;
     flex-direction: column;
     gap: 3em;
@@ -7,7 +7,7 @@
     align-items: center;
 }
 
-#botao_novo_rascunho {
+.botao_novo_rascunho {
     cursor: pointer;
     padding: .8em;
     backdrop-filter: blur(1em) brightness(.3);
@@ -20,7 +20,7 @@
     }
 }
 
-#recipiente_rascunhos {
+.recipiente_rascunhos {
     display: flex;
     flex-direction: row;
     width: 100%;

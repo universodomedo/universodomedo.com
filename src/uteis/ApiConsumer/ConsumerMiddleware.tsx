@@ -1,4 +1,4 @@
-import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaCompletaDto, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaCompletaDto, FichaDeJogo, FichaPersonagemCompletaDto, FichaTemporariaCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PaginaTemplate, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo } from "types-nora-api";
+import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaDeJogo, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PaginaTemplate, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto } from "types-nora-api";
 
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
@@ -45,7 +45,7 @@ export async function buscaGrupoAventuraEspecifico(idGrupoAventura: number) {
 }
 
 export async function obtemListagemGeralSessoes() {
-    return await useApi<SessaoCompletaDto[]>({ uri: '/sessoes/obtemListagemGeralSessoes', method: 'GET' });
+    return await useApi<VIEW_SessaoListagemGeralDto[]>({ uri: '/sessoes/obtemListagemGeralSessoes', method: 'GET' });
 }
 
 export async function obtemSessaoGeral(idSessao: number) {
@@ -199,12 +199,8 @@ export async function me_salvarRascunho(titulo: string, idEstiloSessaoMestrada: 
     return await useApi<boolean>({ uri: '/rascunhos/me/me_salvarRascunho', method: 'POST', data: { titulo: titulo, idEstiloSessaoMestrada: idEstiloSessaoMestrada } });
 }
 
-export async function editaDetalheRascunho(rascunho: RascunhoCompletaDto): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/rascunhos/editaDetalheRascunho', method: 'POST', data: { rascunho: rascunho } });
-}
-
-export async function criaBaseadoEmRascunho(idRascunho: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/rascunhos/criaBaseadoEmRascunho', method: 'PUT', data: { idRascunho: idRascunho } });
+export async function editaDetalheRascunho(detalheRascunho: PAYLOAD_DetalheRascunhoEdicaoDto): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/rascunhos/editaDetalheRascunho', method: 'POST', data: { detalheRascunho: detalheRascunho }});
 }
 
 export async function obtemDadosEPermissoes(idUsuario: number): Promise<UsuarioCompletaDto | null> {

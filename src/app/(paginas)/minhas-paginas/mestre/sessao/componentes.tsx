@@ -5,7 +5,7 @@ import { PAGINAS } from 'types-nora-api';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoPaginaMestreSessaoProvider, useContextoPaginaMestreSessao } from 'Contextos/ContextoMestreSessao/contexto';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
-import SessaoEmVisualizacao from 'Componentes/ElementosVisuais/SessaoEmVisualizacao/page';
+import SessaoEmVisualizacao from 'Componentes/ElementosVisuais/SessaoEmVisualizacao/SessaoEmVisualizacao';
 import { DestinoInput } from 'Funcionalidades/navegacaoInterna';
 import ConfiguradorCapa from 'Componentes/Elementos/ConfiguradorCapa/ConfiguradorCapa';
 

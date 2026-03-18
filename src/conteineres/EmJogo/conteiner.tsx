@@ -8,27 +8,27 @@ import { ContextoEMJOGOProvider, useContextoEMJOGO } from 'Contextos/ContextoEMJ
 import { ContextoSalaDeJogo__NarradorProvider } from 'Contextos/ContextoSalaDeJogo__Narrador/contexto';
 import { ContextoSalaDeJogo__JogadorProvider } from 'Contextos/ContextoSalaDeJogo__Jogador/contexto';
 
-export default function Conteiner_EmJogo() {
+export default function Conteiner__EmJogo() {
     return (
         <ContextoEMJOGOProvider>
-            <Container_EmJogo__Interno />
+            <Conteiner__EmJogo__Interno />
         </ContextoEMJOGOProvider>
     );
 };
 
-const Container_EmJogo__Interno = criaConteiner<PropsContainer_EmJogo>({ useEstado, resolveSaida });
+const Conteiner__EmJogo__Interno = criaConteiner<PropsConteiner__EmJogo>({ useEstado, resolveSaida });
 
-type PropsContainer_EmJogo = {
+type PropsConteiner__EmJogo = {
     objetoEmJogo: LogicaJogoUsuario_ObjetoEmJogoDto;
 };
 
-function resolveSaida(props: PropsContainer_EmJogo): SaidaConteiner {
+function resolveSaida(props: PropsConteiner__EmJogo): SaidaConteiner {
     if (props.objetoEmJogo.objetoInicialSala.tipoParticipante === SalaDeJogo_TipoParticipante.NARRADOR) return criaSaidaConteiner(ContextoSalaDeJogo__NarradorProvider, { objetoEmJogo: props.objetoEmJogo });
 
     return criaSaidaConteiner(ContextoSalaDeJogo__JogadorProvider, { objetoEmJogo: props.objetoEmJogo, idFicha: props.objetoEmJogo.objetoInicialSala.idFicha, caminhoAvatar: props.objetoEmJogo.objetoInicialSala.caminhoAvatar });
 };
 
-function useEstado(): PropsContainer_EmJogo {
+function useEstado(): PropsConteiner__EmJogo {
     const { objetoEmJogo } = useContextoEMJOGO();
 
     return { objetoEmJogo };

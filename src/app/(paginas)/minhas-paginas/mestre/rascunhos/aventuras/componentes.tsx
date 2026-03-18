@@ -3,15 +3,12 @@
 import { PAGINAS } from "types-nora-api";
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
-import { ContextoRascunhosMestreProvider } from "Contextos/ContextoRascunhosMestre/contexto";
-import { RascunhosMestre_Contexto } from "../componentes";
+import Conteiner__PaginaRascunhos from "Conteineres/PaginaRascunhos/conteiner";
 
-export function RascunhoAventuraMestre_Client() {
+export default function RascunhoAventuraMestre_Conteiner() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.mestre.rascunhos.aventuras}>
-            <ContextoRascunhosMestreProvider ehSessaoUnica={false}>
-                <RascunhosMestre_Contexto />
-            </ContextoRascunhosMestreProvider>
+            <Conteiner__PaginaRascunhos ehSessaoUnica={false} />
         </ControladorSlot>
     );
 };

@@ -1,0 +1,128 @@
+.recipiente_interno_selecionador {
+    width: 100%;
+}
+
+.select {
+    width: 100%;
+}
+
+.select :global(.rs__control) {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 0.08em solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 0.85em !important;
+    min-height: 2.6em !important;
+    cursor: pointer !important;
+}
+
+.select :global(.rs__control--is-focused) {
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 0 0 0.12em rgba(255, 255, 255, 0.12) !important;
+}
+
+.select :global(.rs__value-container) {
+    padding: 0.2em 0.7em !important;
+}
+
+.select :global(.rs__placeholder) {
+    color: rgba(217, 217, 217, 0.65) !important;
+}
+
+.select :global(.rs__input-container) {
+    color: #D9D9D9 !important;
+}
+
+.select :global(.rs__single-value) {
+    color: #D9D9D9 !important;
+}
+
+.select :global(.rs__indicators) {
+    padding-right: 0.35em !important;
+}
+
+.select :global(.rs__dropdown-indicator),
+.select :global(.rs__clear-indicator) {
+    color: rgba(217, 217, 217, 0.8) !important;
+}
+
+.select :global(.rs__indicator-separator) {
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* MULTI VALUE (chips) - TEM que ser base, senão você duplica em todo multi */
+.select :global(.rs__multi-value) {
+    background: transparent !important;
+    border: 0.08em solid rgba(217, 217, 217, 0.18) !important;
+    border-radius: 0.8em !important;
+    margin: 0.2em 0.25em 0.2em 0 !important;
+    padding: 0.15em 0.35em !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.select :global(.rs__multi-value__label) {
+    padding: 0 !important;
+    color: inherit !important;
+}
+
+.select :global(.rs__multi-value__remove) {
+    background: transparent !important;
+    border-radius: 0.6em !important;
+    padding: 0 0.35em !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.select :global(.rs__multi-value__remove:hover) {
+    background: rgba(217, 217, 217, 0.12) !important;
+}
+
+.select :global(.rs__multi-value__remove:active) {
+    background: rgba(217, 217, 217, 0.18) !important;
+}
+
+/* MENU (vai pro body via portal, então NÃO dá pra depender de seletor local aqui) */
+:global(.rs__menu) {
+    background: rgba(20, 16, 30, 0.98) !important;
+    border: 0.08em solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 0.9em !important;
+    overflow: hidden !important;
+}
+
+:global(.rs__menu-list) {
+    max-height: 16em !important;
+    padding: 0.4em !important;
+    overflow: auto !important;
+    scrollbar-width: thin;
+    scrollbar-color: white transparent;
+}
+
+:global(.rs__menu-list::-webkit-scrollbar) {
+    width: 0.6em;
+    height: 0.6em;
+}
+
+:global(.rs__menu-list::-webkit-scrollbar-track) {
+    background: transparent;
+}
+
+:global(.rs__menu-list::-webkit-scrollbar-thumb) {
+    background-color: white;
+    border-radius: 0.4em;
+}
+
+:global(.rs__option) {
+    color: #D9D9D9 !important;
+    border-radius: 0.7em !important;
+    cursor: pointer !important;
+    padding: 0.55em 0.7em !important;
+    background: transparent !important;
+}
+
+:global(.rs__option--is-focused) {
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+:global(.rs__option--is-selected) {
+    background: rgba(255, 255, 255, 0.12) !important;
+}

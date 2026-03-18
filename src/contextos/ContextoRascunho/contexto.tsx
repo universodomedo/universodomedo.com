@@ -1,19 +1,17 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { DetalheRascunhoAventuraCompletaDto, DetalheRascunhoSessaoUnicaCanonicaCompletaDto, DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto, RascunhoCompletaDto } from 'types-nora-api';
+import { createContext, useContext, useState } from 'react';
+import { PAYLOAD_DetalheRascunhoEdicaoDto, RascunhoCompletaDto } from 'types-nora-api';
 
-import { me_obtemDetalhesRascunho, editaDetalheRascunho, criaBaseadoEmRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import EdicaoRascunho from 'Componentes/EdicaoRascunho/page';
+import { editaDetalheRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import DetalhesRascunho_Conteudo from 'Componentes/Elementos/DetalhesRascunho/componentes';
+import EdicaoRascunho from 'Componentes/EdicaoRascunho/EdicaoRascunho';
+import { toast } from 'Hooks/useToast';
 
 interface ContextoRascunhoProps {
     alteraEstadoModalEdicao: (aberto: boolean) => void;
-    rascunho: RascunhoCompletaDto | null;
-    salvaDetalhesRascunhoAventura: (detalheRascunhoAventura: DetalheRascunhoAventuraCompletaDto) => void;
-    salvaDetalhesRascunhoSessaoUnicaCanonica: (detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaCompletaDto) => void;
-    salvaDetalhesRascunhoSessaoUnica: (detalheRascunhoSessaoUnicaNaoCanonica: DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto) => void;
-    textoBotaoCriar: string;
-    executaCriacao: () => void;
+    rascunho: RascunhoCompletaDto;
+    salvaDetalhesRascunho: (detalheRascunho: PAYLOAD_DetalheRascunhoEdicaoDto) => Promise<void>;
 };
 
 const ContextoRascunho = createContext<ContextoRascunhoProps | undefined>(undefined);
@@ -24,94 +22,26 @@ export const useContextoRascunho = (): ContextoRascunhoProps => {
     return context;
 };
 
-export const ContextoRascunhoProvider = ({ children, idRascunhoSelecionado }: { children: React.ReactNode; idRascunhoSelecionado: number }) => {
+export const ContextoRascunhoProvider = ({ rascunho }: { rascunho: RascunhoCompletaDto; }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [carregando, setCarregando] = useState<string | null>(null);
-    const [rascunho, setRascunho] = useState<RascunhoCompletaDto | null>(null);
+    const alteraEstadoModalEdicao = (aberto: boolean) => { setIsModalOpen(aberto); };
 
-    async function buscaDetalhesRascunho() {
-        setCarregando('Buscando Rascunho');
-
+    const salvaDetalhesRascunho = async (detalheRascunho: PAYLOAD_DetalheRascunhoEdicaoDto): Promise<void> => {
         try {
-            setRascunho(await me_obtemDetalhesRascunho(idRascunhoSelecionado));
-        } catch {
-            setRascunho(null);
-        } finally {
-            setCarregando(null);
-        }
-    }
-
-    const alteraEstadoModalEdicao = (aberto: boolean) => {
-        setIsModalOpen(aberto);
-    }
-
-    const textoBotaoCriar: string = rascunho == null ? '' : rascunho.estiloSessaoMestrada.id === 1 ? 'Criar Aventura' : 'Criar Sessão';
-
-    const salvaDetalhesRascunhoAventura = async (detalheRascunhoAventura: DetalheRascunhoAventuraCompletaDto) => {
-        try {
-            if (!await editaDetalheRascunho({
-                ...rascunho!,
-                detalheRascunhoAventura: detalheRascunhoAventura,
-            })) throw new Error("Erro ao salvar o Rascunho");
-
-            buscaDetalhesRascunho();
-            alteraEstadoModalEdicao(false);
-        } catch {
-            alert(`Erro ao salvar o Rascunho`);
-        }
-    }
-
-    const salvaDetalhesRascunhoSessaoUnicaCanonica = async (detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaCompletaDto) => {
-        try {
-            if (!await editaDetalheRascunho({
-                ...rascunho!,
-                detalheRascunhoSessaoUnicaCanonica: detalheRascunhoSessaoUnicaCanonica,
-            })) throw new Error("Erro ao salvar o Rascunho");
-
-            buscaDetalhesRascunho();
-            alteraEstadoModalEdicao(false);
-        } catch {
-            alert(`Erro ao salvar o Rascunho`);
-        }
-    }
-
-    const salvaDetalhesRascunhoSessaoUnica = async (detalheRascunhoSessaoUnicaNaoCanonica: DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto) => {
-        try {
-            if (!await editaDetalheRascunho({
-                ...rascunho!,
-                detalheRascunhoSessaoUnicaNaoCanonica: detalheRascunhoSessaoUnicaNaoCanonica,
-            })) throw new Error("Erro ao salvar o Rascunho");
-
-            buscaDetalhesRascunho();
-            alteraEstadoModalEdicao(false);
-        } catch {
-            alert(`Erro ao salvar o Rascunho`);
-        }
-    }
-
-    const executaCriacao = async() => {
-        if (!rascunho) return;
-
-        const respostaCriacaoRascunho = await criaBaseadoEmRascunho(rascunho.id);
-
-        if (!respostaCriacaoRascunho) {
-            alert('Erro ao criar rascunho');
-        } else {
-            window.location.reload();
+            await editaDetalheRascunho(detalheRascunho);
+            await toast.sucesso('Rascunho alterado com sucesso!', `Rascunho ${rascunho.titulo} foi editado`, { recarregaPagina: true });
+        } catch (e) {
+            await toast.erro('Falha ao alterar Rascunho', e instanceof Error ? e.message : 'Falha ao salvar Rascunho');
         }
     };
 
-    useEffect(() => {
-        buscaDetalhesRascunho();
-    }, []);
-
-    if (carregando) return <h2>{carregando}</h2>;
-
     return (
-        <ContextoRascunho.Provider value={{ textoBotaoCriar, alteraEstadoModalEdicao, rascunho, salvaDetalhesRascunhoAventura, salvaDetalhesRascunhoSessaoUnicaCanonica, salvaDetalhesRascunhoSessaoUnica, executaCriacao}}>
-            {children}
-            <EdicaoRascunho isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+        <ContextoRascunho.Provider value={{ alteraEstadoModalEdicao, rascunho, salvaDetalhesRascunho }}>
+            <>
+                <DetalhesRascunho_Conteudo />
+                <EdicaoRascunho isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+            </>
         </ContextoRascunho.Provider>
     );
 };

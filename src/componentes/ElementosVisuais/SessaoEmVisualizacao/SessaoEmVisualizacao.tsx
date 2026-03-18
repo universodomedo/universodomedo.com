@@ -1,6 +1,6 @@
 import styles from './styles.module.css';
 
-import { FormatoMomento, SessaoCompletaDto } from 'types-nora-api';
+import { FormatoMomento, ParticipanteSessao_Tipo, SessaoCompletaDto, TipoVinculoSessaoJogador } from 'types-nora-api';
 
 import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
 import SecaoDeConteudo from "Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo";
@@ -9,7 +9,7 @@ import PersonagemEmVisualizacaoDeSessao from '../ElementosIndividuaisEmListaDeVi
 
 export default function SessaoEmVisualizacao({ sessao }: { sessao: SessaoCompletaDto }) {
     return (
-        <div id={styles.recipiente_sessao_selecionada}>
+        <div className={styles.recipiente_sessao_selecionada}>
             <CabecalhoDeAventura tipo={'sessao'} caminhoCapaSessao={sessao.imagemCapa.caminhoCapa} />
 
             <SecaoDeConteudo fit>
@@ -25,13 +25,23 @@ export default function SessaoEmVisualizacao({ sessao }: { sessao: SessaoComplet
             <SecaoDeConteudo className={styles.recipiente_avatares}>
                 <h2>Participantes</h2>
 
-                <div id={styles.recipiente_avatares_jogadores}>
-                    {/* to do */}
-                    {/* {sessao.dadosGerais!.participantes.filter(participante => participante.jogador).sort((a, b) => Number(b.dadosParticipanteJogo.personagem !== null) - Number(a.dadosParticipanteJogo.personagem !== null)).map(participante => (
-                        <PersonagemEmVisualizacaoDeSessao key={participante.jogador?.id} tipo={'participante'} participanteSessao={participante} />
-                    ))} */}
+                <div className={styles.recipiente_avatares_jogadores}>
+                    {sessao.participantes.filter(participante => participante.tipoParticipante === ParticipanteSessao_Tipo.JOGADOR).sort((a, b) => obtemPrioridadeVinculoJogador(a.tipoVinculoSessaoJogador) - obtemPrioridadeVinculoJogador(b.tipoVinculoSessaoJogador)).map(participante => (
+                        <PersonagemEmVisualizacaoDeSessao key={participante.usuario.id} tipo={'participante'} participanteSessao={participante} />
+                    ))}
                 </div>
             </SecaoDeConteudo>
         </div>
     );
+};
+
+function obtemPrioridadeVinculoJogador(tipoVinculoSessaoJogador: TipoVinculoSessaoJogador): number {
+    switch (tipoVinculoSessaoJogador) {
+        case TipoVinculoSessaoJogador.PERSONAGEM:
+            return 0;
+        case TipoVinculoSessaoJogador.FICHA_TEMPORARIA:
+            return 1;
+        case TipoVinculoSessaoJogador.FICHA_TEMPORARIA_PENDENTE:
+            return 2;
+    }
 };
