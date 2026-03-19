@@ -5,14 +5,10 @@ import { JogadorSessaoDto, TipoVinculoSessaoJogador, VIEW_SessaoDeJogadorDto } f
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
-import { useContextoPaginaJogador } from 'Contextos/ContextoPaginaJogador/contexto';
 
-export default function ItemListagemSessaoPrevistaComParticipante({ sessao }: { sessao: VIEW_SessaoDeJogadorDto }) {
-
-    const { setIdSessaoEmFoco } = useContextoPaginaJogador();
-
+export default function ItemListagemSessaoPrevistaComParticipante({ sessao, selecionaSessao }: { sessao: VIEW_SessaoDeJogadorDto; selecionaSessao: (idSessao: number) => void; }) {
     return (
-        <DivClicavel className={styles.recipiente_item_listagem_sessoes_jogador} onClick={() => { setIdSessaoEmFoco(sessao.id); }}>
+        <DivClicavel className={styles.recipiente_item_listagem_sessoes_jogador} onClick={() => { selecionaSessao(sessao.id); }}>
             <div className={styles.recipiente_capa_item_sessoes_jogador}>
                 <RecipienteImagem src={sessao.imagemCapa.caminhoCapa} />
             </div>
@@ -42,7 +38,7 @@ function DadosParticipanteSessao({ jogadorSessao }: { jogadorSessao: JogadorSess
                         {jogadorSessao.tipoVinculoSessaoJogador === TipoVinculoSessaoJogador.FICHA_TEMPORARIA ? (
                             <h4>Ficha Selecionada</h4>
                         ) : (
-                            <h4>Nenhuma ficha selecionada</h4>
+                            <h4 className={styles.mensagem_de_pendencia_de_ficha}>Nenhuma ficha selecionada</h4>
                         )}
                     </div>
                 )}

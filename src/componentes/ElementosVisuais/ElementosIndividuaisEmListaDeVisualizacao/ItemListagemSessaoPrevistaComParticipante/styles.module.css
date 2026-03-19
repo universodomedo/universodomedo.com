@@ -3,6 +3,11 @@
     flex-direction: row;
     gap: 2em;
     height: 6em;
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: 0 0 9px #fff;
+    }
 }
 
 .recipiente_capa_item_sessoes_jogador {
@@ -36,4 +41,8 @@
 
 .recipiente_estado_ficha_participante_sessao {
     margin: auto;
+}
+
+.mensagem_de_pendencia_de_ficha {
+    color: #FF9090;
 }

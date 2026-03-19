@@ -4,17 +4,16 @@ import styles from './styles.module.css';
 
 import { FichaTemporariaExibicaoDto, JogadorSessaoDto, PAGINAS, PersonagemExibicaoDto, TipoSessao, TipoVinculoSessaoJogador } from 'types-nora-api';
 
-import { useContextoPaginaJogador__SelecionandoFichaParaSessao } from "Contextos/ContextoPaginaJogador__SelecionandoFichaParaSessao/contexto";
+import { useContextoVincularJogadorSessao } from "Contextos/ContextoVincularJogadorSessaoProvider/contexto";
 import { CabecalhoDeAventura } from "Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page";
 import { DadosResumo } from "Componentes/Elementos/DetalhesRascunho/subcomponentes";
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
-import { useContextoPaginaJogador } from 'Contextos/ContextoPaginaJogador/contexto';
 import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 import RecipienteSelecionarFichaSessaoUnica from 'Componentes/ElementosPaginaUsuario/RecipienteSelecionarFichaSessaoUnica/RecipienteSelecionarFichaSessaoUnica';
 
 export default function SPA__PaginaJogador__SelecionandoFichaParaSessao() {
-    const { sessao } = useContextoPaginaJogador__SelecionandoFichaParaSessao();
+    const { sessao } = useContextoVincularJogadorSessao();
 
     return (
         <>
@@ -67,15 +66,14 @@ function DadosDeParticipacaoDesseUsuarioNessaSessao__Ficha__Selecionada({ fichaT
 };
 
 function DadosDeParticipacaoDesseUsuarioNessaSessao__Ficha__Pendente() {
-    const { fichas } = useContextoPaginaJogador();
-    const { sessao } = useContextoPaginaJogador__SelecionandoFichaParaSessao();
+    const { sessao, fichasUsuario } = useContextoVincularJogadorSessao();
 
     return (
         <>
             <h1>Você ainda não selecionou nenhuma Ficha para participar dessa Sessão</h1>
 
-            {fichas.length > 0 ? (
-                <RecipienteSelecionarFichaSessaoUnica sessao={sessao} fichas={fichas} />
+            {fichasUsuario.length > 0 ? (
+                <RecipienteSelecionarFichaSessaoUnica sessao={sessao} fichas={fichasUsuario} />
             ) : (
                 <LinkInterno destino={{ pagina: PAGINAS.minhasPaginas.jogador.criar.ficha }} >
                     <>

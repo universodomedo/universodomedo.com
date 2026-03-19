@@ -6,12 +6,12 @@ import AvisosSessoesPrevistas from 'Componentes/ElementosVisuais/ElementosIndivi
 import UnificaPersonagemEFichaParaUsuario from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/UnificaPersonagemEFichaParaUsuario/UnificaPersonagemEFichaParaUsuario';
 
 export default function SPA__PaginaJogador__PaginaInicial() {
-    const { personagens, fichas, sessoes } = useContextoPaginaJogador();
+    const { personagens, fichas, sessoes, setIdSessaoEmFoco } = useContextoPaginaJogador();
     
     return (
         <>
             <AvisosDePersonagensEFichas />
-            <AvisosSessoesPrevistas sessoes={sessoes} />
+            <AvisosSessoesPrevistas sessoes={sessoes} selecionaSessao={setIdSessaoEmFoco} />
             <UnificaPersonagemEFichaParaUsuario personagens={personagens} fichasTemporarias={fichas} />
         </>
     );

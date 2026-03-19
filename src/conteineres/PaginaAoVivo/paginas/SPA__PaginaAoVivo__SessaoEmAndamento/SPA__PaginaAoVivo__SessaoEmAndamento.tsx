@@ -8,7 +8,7 @@ import JanelaDeMensagensDeJogo from 'Componentes/ElementosDeJogo/JanelaDeMensage
 import TelaDeJogo from 'Componentes/ElementosDeJogo/TelaDeJogo/TelaDeJogo';
 
 export default function SPA__PaginaAoVivo__SessaoEmAndamento() {
-    const { sessaoEmAndamento } = useContextoPaginaAoVivo__SessaoEmAndamento();
+    const { sessaoEmAndamento, souStreamer } = useContextoPaginaAoVivo__SessaoEmAndamento();
 
     return (
         <div id={styles.recipiente_pagina_sessao_emandamento}>
@@ -29,9 +29,11 @@ export default function SPA__PaginaAoVivo__SessaoEmAndamento() {
                                 </div>
                             ))}
                         </div>
-                        <div className={styles.recipiente_em_pagina_sessao_aovivo_janela_mensagens_de_jogo}>
-                            <JanelaDeMensagensDeJogo />
-                        </div>
+                        {!souStreamer && (
+                            <div className={styles.recipiente_em_pagina_sessao_aovivo_janela_mensagens_de_jogo}>
+                                <JanelaDeMensagensDeJogo />
+                            </div>
+                        )}
                     </div>
 
                     <div className={styles.recipiente_container_tela_de_jogo}>

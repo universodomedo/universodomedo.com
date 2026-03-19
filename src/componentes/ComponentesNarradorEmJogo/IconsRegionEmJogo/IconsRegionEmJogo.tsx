@@ -4,9 +4,8 @@ import styles from './styles.module.css';
 
 import { ReactNode, useMemo, useState } from 'react';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
-import { faEye, faComment, faBookmark } from '@fortawesome/free-regular-svg-icons';
 
-import DraggableWindow, { DraggableWindowPosition, DraggableWindowSize } from 'Componentes/ElementosDeJogo/DraggableWindow/DraggableWindow';
+import DraggableWindow, { DraggableWindowPosition, DraggableWindowSize, initialWindowPosition } from 'Componentes/ElementosDeJogo/DraggableWindow/DraggableWindow';
 import IconsRegion, { IconsRegionItemDto } from 'componentes/ElementosDeJogo/IconsRegion/IconsRegion/IconsRegion';
 
 type WindowContentMode = 'scroll' | 'fit';
@@ -28,7 +27,6 @@ interface BaseWindowDefinition {
     icon: IconDefinition;
     title: string;
     color: string;
-    initialPosition: DraggableWindowPosition;
     content: ReactNode;
     contentMode: WindowContentMode;
 };
@@ -43,7 +41,7 @@ interface ProportionalWindowDefinition extends BaseWindowDefinition {
     initialSize: ProportionalInitialSize;
 };
 
-type WindowDefinition = FreeSizeWindowDefinition | ProportionalWindowDefinition;
+export type WindowDefinition = FreeSizeWindowDefinition | ProportionalWindowDefinition;
 
 interface WindowState {
     isVisible: boolean;
@@ -53,6 +51,10 @@ interface WindowState {
 };
 
 type WindowsState = Record<string, WindowState>;
+
+interface IconsRegionEmJogoProps {
+    windowsDefinitions: WindowDefinition[];
+};
 
 function resolveAspectRatioHeightFromWidth(width: number, aspectRatio: number): number {
     return width / aspectRatio;
@@ -81,72 +83,25 @@ function resolveWindowInitialSize(windowDefinition: WindowDefinition): Draggable
     return windowDefinition.initialSize;
 };
 
-const WINDOWS_DEFINITIONS: WindowDefinition[] = [
-    {
-        id: 'janela1',
-        icon: faEye,
-        title: 'Mapa',
-        color: '#1f9529',
-        initialPosition: { x: 60, y: 120 },
-        initialSize: { width: 700 },
-        contentMode: 'fit',
-        contentAspectRatio: 16 / 9,
-        content: (
-            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)', color: '#fff', fontSize: '1.2em' }}>
-                <h1>Teste</h1>
-            </div>
-        ),
-    },
-    {
-        id: 'janela2',
-        icon: faComment,
-        title: 'Tabela',
-        color: '#d816ff',
-        initialPosition: { x: 120, y: 180 },
-        initialSize: { width: 480, height: 360 },
-        contentMode: 'scroll',
-        content: (
-            <div>
-                <h1>Teste</h1>
-                <div style={{ height: '60em' }} />
-            </div>
-        ),
-    },
-    {
-        id: 'janela3',
-        icon: faBookmark,
-        title: 'Painel',
-        color: '#949100',
-        initialPosition: { x: 180, y: 240 },
-        initialSize: { width: 500, height: 380 },
-        contentMode: 'fit',
-        content: (
-            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(255, 255, 255, 0.05)', color: '#fff', fontSize: '1.2em' }}>
-                <h1>Teste</h1>
-            </div>
-        ),
-    },
-];
-
-function createInitialWindowsState(): WindowsState {
-    return WINDOWS_DEFINITIONS.reduce<WindowsState>((acc, windowDefinition) => {
+function createInitialWindowsState(windowsDefinitions: WindowDefinition[]): WindowsState {
+    return windowsDefinitions.reduce<WindowsState>((acc, windowDefinition) => {
         acc[windowDefinition.id] = {
             isVisible: false,
             size: resolveWindowInitialSize(windowDefinition),
-            position: windowDefinition.initialPosition,
+            position: initialWindowPosition,
             isPinned: false,
         };
         return acc;
     }, {});
 };
 
-function createInitialWindowOrder(): string[] {
-    return WINDOWS_DEFINITIONS.map((windowDefinition) => windowDefinition.id);
+function createInitialWindowOrder(windowsDefinitions: WindowDefinition[]): string[] {
+    return windowsDefinitions.map((windowDefinition) => windowDefinition.id);
 };
 
-export default function IconsRegionEmJogo() {
-    const [windowsState, setWindowsState] = useState<WindowsState>(createInitialWindowsState);
-    const [windowOrder, setWindowOrder] = useState<string[]>(createInitialWindowOrder);
+export default function IconsRegionEmJogo({ windowsDefinitions }: IconsRegionEmJogoProps) {
+    const [windowsState, setWindowsState] = useState<WindowsState>(() => createInitialWindowsState(windowsDefinitions));
+    const [windowOrder, setWindowOrder] = useState<string[]>(() => createInitialWindowOrder(windowsDefinitions));
 
     function bringWindowToFront(windowId: string) {
         setWindowOrder((currentState) => [...currentState.filter((currentWindowId) => currentWindowId !== windowId), windowId]);
@@ -208,32 +163,32 @@ export default function IconsRegionEmJogo() {
         }));
     };
 
-    const items: IconsRegionItemDto[] = useMemo(() => WINDOWS_DEFINITIONS.map((windowDefinition) => ({
+    const items: IconsRegionItemDto[] = useMemo(() => windowsDefinitions.map((windowDefinition) => ({
         id: windowDefinition.id,
         icon: windowDefinition.icon,
         title: windowDefinition.title,
         color: windowDefinition.color,
-        isActive: windowsState[windowDefinition.id].isVisible,
+        isActive: windowsState[windowDefinition.id]?.isVisible ?? false,
         onClick: () => toggleWindow(windowDefinition.id),
-    })), [windowsState]);
+    })), [windowsDefinitions, windowsState]);
 
     return (
         <div className={styles.regiao_icones_narrador_em_jogo}>
             <IconsRegion items={items} />
 
-            {WINDOWS_DEFINITIONS.map((windowDefinition) => (
+            {windowsDefinitions.map((windowDefinition) => (
                 <DraggableWindow
                     key={windowDefinition.id}
                     id={windowDefinition.id}
                     title={windowDefinition.title}
-                    isVisible={windowsState[windowDefinition.id].isVisible}
+                    isVisible={windowsState[windowDefinition.id]?.isVisible ?? false}
                     onClose={() => closeWindow(windowDefinition.id)}
-                    position={windowsState[windowDefinition.id].position}
+                    position={windowsState[windowDefinition.id]?.position ?? initialWindowPosition}
                     onMove={(position) => moveWindow(windowDefinition.id, position)}
-                    isPinned={windowsState[windowDefinition.id].isPinned}
+                    isPinned={windowsState[windowDefinition.id]?.isPinned ?? false}
                     onPinChange={(isPinned) => pinWindow(windowDefinition.id, isPinned)}
                     headerColor={windowDefinition.color}
-                    size={windowsState[windowDefinition.id].size}
+                    size={windowsState[windowDefinition.id]?.size ?? resolveWindowInitialSize(windowDefinition)}
                     onResize={(size) => resizeWindow(windowDefinition.id, size)}
                     contentMode={windowDefinition.contentMode}
                     contentAspectRatio={windowDefinition.contentAspectRatio}

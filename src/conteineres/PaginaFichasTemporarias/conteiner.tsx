@@ -1,6 +1,6 @@
 'use client';
 
-import { FichaTemporariaVisualizacaoDetalhadaDto, PersonagemVisualizacaoDetalhadaDto } from 'types-nora-api';
+import { FichaTemporariaVisualizacaoDetalhadaDto } from 'types-nora-api';
 
 import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 

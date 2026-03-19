@@ -12,9 +12,11 @@ export default function SessaoEmVisualizacao({ sessao }: { sessao: SessaoComplet
         <div className={styles.recipiente_sessao_selecionada}>
             <CabecalhoDeAventura tipo={'sessao'} caminhoCapaSessao={sessao.imagemCapa.caminhoCapa} />
 
-            <SecaoDeConteudo fit>
-                {sessao.duracaoEmSegundos && (<h4>Duração: {formataDuracao(sessao.duracaoEmSegundos, FormatoMomento.HMS)}</h4>)}
-            </SecaoDeConteudo>
+            {sessao.duracaoEmSegundos && (
+                <SecaoDeConteudo fit>
+                    <h4>Duração: {formataDuracao(sessao.duracaoEmSegundos, FormatoMomento.HMS)}</h4>
+                </SecaoDeConteudo>
+            )}
 
             <SecaoDeConteudo className={styles.recipiente_avatares}>
                 <h2>Mestre</h2>

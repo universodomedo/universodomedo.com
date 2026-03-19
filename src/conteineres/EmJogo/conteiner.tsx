@@ -23,7 +23,7 @@ type PropsConteiner__EmJogo = {
 };
 
 function resolveSaida(props: PropsConteiner__EmJogo): SaidaConteiner {
-    if (props.objetoEmJogo.objetoInicialSala.tipoParticipante === SalaDeJogo_TipoParticipante.NARRADOR) return criaSaidaConteiner(ContextoSalaDeJogo__NarradorProvider, { objetoEmJogo: props.objetoEmJogo });
+    if (props.objetoEmJogo.objetoInicialSala.tipoParticipante === SalaDeJogo_TipoParticipante.NARRADOR) return criaSaidaConteiner(ContextoSalaDeJogo__NarradorProvider, { dadosSalaDeJogo__Narrador: props.objetoEmJogo.objetoInicialSala });
 
     return criaSaidaConteiner(ContextoSalaDeJogo__JogadorProvider, { objetoEmJogo: props.objetoEmJogo, idFicha: props.objetoEmJogo.objetoInicialSala.idFicha, caminhoAvatar: props.objetoEmJogo.objetoInicialSala.caminhoAvatar });
 };

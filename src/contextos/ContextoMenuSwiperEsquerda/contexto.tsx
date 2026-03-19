@@ -29,9 +29,7 @@ export const ContextoMenuSwiperEsquerdaProvider = ({ children }: { children: Rea
 
     const pathname = usePathname();
 
-    const funcEsconderMenu = () => {
-        setEsconderMenu(true);
-    };
+    const funcEsconderMenu = () => { setEsconderMenu(true); };
 
     useEffect(() => {
         if (menuAberto) setMenuAberto(false);

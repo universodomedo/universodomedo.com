@@ -251,8 +251,8 @@ export async function me_obtemRascunhosParaSessaoUnicaNaoCanonica() {
     return await useApi<RascunhoCompletaDto[]>({ uri: '/rascunhos/me/me_obtemRascunhosParaSessaoUnicaNaoCanonica', method: 'GET' });
 }
 
-export async function me_criaSessaoUnica(dadosCriacaoSessao: DadosCriacaoSessao) {
-    return await useApi<SessaoCompletaDto>({ uri: '/sessoes/me/me_criaSessaoUnica', method: 'POST', data: { dadosCriacaoSessao: dadosCriacaoSessao } });
+export async function me_criaSessaoUnica(dadosCriacaoSessao: DadosCriacaoSessao): Promise<number> {
+    return await useApi<number>({ uri: '/sessoes/me/me_criaSessaoUnica', method: 'POST', data: { dadosCriacaoSessao: dadosCriacaoSessao } });
 }
 
 export async function me_atualizaCapaDeSessaoUnica(idSessao: number, idArquivo: number): Promise<boolean> {

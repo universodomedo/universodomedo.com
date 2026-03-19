@@ -11,6 +11,10 @@ export interface DraggableWindowPosition {
     y: number;
 };
 
+export const initialWindowPosition: DraggableWindowPosition = { x: 630, y: 60 };
+export const windowPositionOffset = 20;
+
+
 export interface DraggableWindowSize {
     width: number;
     height: number;
@@ -419,10 +423,10 @@ export default function DraggableWindow({ id, title, isVisible, onClose, childre
         onClose();
     };
 
-    if (!isMounted || !isVisible) return null;
+    if (!isMounted) return null;
 
     return createPortal(
-        <div className={styles.windowFrame} style={{ left: `${position.x}px`, top: `${position.y}px`, width: `${size.width}px`, height: `${size.height}px`, zIndex }} onPointerDown={handlePointerDownWindow}>
+        <div className={cn(styles.windowFrame, !isVisible && styles.windowFrame__hidden)} style={{ left: `${position.x}px`, top: `${position.y}px`, width: `${size.width}px`, height: `${size.height}px`, zIndex }} onPointerDown={handlePointerDownWindow}>
             <div className={cn(styles.window, isPinned && styles.window__pinned, isResizing && styles.window__resizing)}>
                 <div
                     className={cn(styles.header, isPinned && styles.header__pinned, !isPinned && styles.header__draggable, isDragging && styles.header__dragging)}

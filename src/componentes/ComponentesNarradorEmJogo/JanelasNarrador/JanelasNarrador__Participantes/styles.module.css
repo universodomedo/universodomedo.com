@@ -1,0 +1,27 @@
+.recipiente_conteudo_janela_participantes {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.recipiente_participantes_sala_de_jogo {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.recipiente_participante_sala_de_jogo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
+    text-align: center;
+}
+
+.recipiente_avatar_participante_sala_de_jogo {
+    position: relative;
+    aspect-ratio: 1;
+    width: 8em;
+}

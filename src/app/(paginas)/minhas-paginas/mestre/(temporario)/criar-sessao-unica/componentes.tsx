@@ -27,7 +27,7 @@ export function PaginaTemporariaCriarSessaoUnica_Client() {
 };
 
 function PaginaTemporariaCriarSessaoUnica_Slot() {
-    const { rascunhosDoUsuario, idsUsuariosSelecionados, dadosParticipantes, obtemListaPersonagensDoUsuario, setIdsUsuariosSelecionados, setParticipaComPersonagem, setIdPersonagemParticipante, data, setData, horaInicio, setHoraInicio, horaFim, setHoraFim, idRascunhoSelecionado, setIdRascunhoSelecionado, flagCanonico, setFlagCanonico, rascunhoSelecionado, podeCriar, criarSessao } = useContextoPaginaCriarSessaoUnica();
+    const { rascunhosDoUsuario, idsUsuariosSelecionados, dadosParticipantes, obtemListaPersonagensDoUsuario, setIdsUsuariosSelecionados, setParticipaComPersonagem, setIdPersonagemParticipante, data, setData, horaInicio, setHoraInicio, idRascunhoSelecionado, setIdRascunhoSelecionado, flagCanonico, setFlagCanonico, rascunhoSelecionado, podeCriar, criarSessao } = useContextoPaginaCriarSessaoUnica();
 
     return (
         <div className={styles.recipiente_pagina_criar_sessao}>
@@ -39,10 +39,6 @@ function PaginaTemporariaCriarSessaoUnica_Slot() {
 
                     <InputComRotulo rotulo={'Hora Inicio'}>
                         <input type="time" value={horaInicio} onChange={e => { const v = e.target.value; if (isMomentoFormatado24(v)) setHoraInicio(v); }} />
-                    </InputComRotulo>
-
-                    <InputComRotulo rotulo={'Hora Fim'}>
-                        <input type="time" value={horaFim} onChange={e => { const v = e.target.value; if (isMomentoFormatado24(v)) setHoraFim(v); }} />
                     </InputComRotulo>
 
                     <InputComRotulo rotulo={'Sessão Canônica?'}>

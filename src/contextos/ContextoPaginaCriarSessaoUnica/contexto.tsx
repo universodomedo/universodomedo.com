@@ -32,8 +32,6 @@ interface ContextoPaginaCriarSessaoUnicaProps {
     setData: (v: Date | null) => void;
     horaInicio: MomentoFormatado24;
     setHoraInicio: (v: MomentoFormatado24) => void;
-    horaFim: MomentoFormatado24;
-    setHoraFim: (v: MomentoFormatado24) => void;
     idRascunhoSelecionado: IdRascunhoSelecionado | null;
     setIdRascunhoSelecionado: (v: IdRascunhoSelecionado | null) => void;
     flagCanonico: boolean;
@@ -61,14 +59,13 @@ export const ContextoPaginaCriarSessaoUnicaProvider = ({ children }: { children:
     const [personagensPorUsuario, setPersonagensPorUsuario] = useState<PersonagensPorUsuario[]>([]);
     const [data, setData] = useState<Date | null>(null);
     const [horaInicio, setHoraInicio] = useState<MomentoFormatado24>('00:00');
-    const [horaFim, setHoraFim] = useState<MomentoFormatado24>('23:59');
     const [idRascunhoSelecionado, setIdRascunhoSelecionado] = useState<IdRascunhoSelecionado | null>(null);
     const [flagCanonico, setFlagCanonico] = useState<boolean>(false);
 
     const rascunhoSelecionado: RascunhoCompletaDto | null = typeof idRascunhoSelecionado === 'number' ? rascunhosDoUsuario?.find(rascunho => rascunho.id === idRascunhoSelecionado) ?? null : null;
 
     const participantesValidos: boolean = dadosParticipantes.length === idsUsuariosSelecionados.length && dadosParticipantes.every(dadosParticipante => !dadosParticipante.participaComPersonagem || dadosParticipante.idPersonagem !== null);
-    const podeCriar: boolean = idsUsuariosSelecionados.length > 0 && participantesValidos && data !== null && horaInicio && horaFim && idRascunhoSelecionado !== null;
+    const podeCriar: boolean = idsUsuariosSelecionados.length > 0 && participantesValidos && data !== null && horaInicio && idRascunhoSelecionado !== null;
 
     async function buscaRascunhos() {
         setCarregando('Buscando seus Rascunhos');
@@ -110,14 +107,14 @@ export const ContextoPaginaCriarSessaoUnicaProvider = ({ children }: { children:
         setCarregando('Criando sessao');
 
         try {
-            const retorno = await me_criaSessaoUnica({
+            const idSessaoCriada = await me_criaSessaoUnica({
                 dadosParticipantes: dadosParticipantes.map((dadosParticipante): DadosCriacaoSessao_Participante => dadosParticipante.participaComPersonagem ? { idUsuarioParticipante: dadosParticipante.idUsuarioParticipante, tipoParticipante: 'PERSONAGEM', idPersonagem: dadosParticipante.idPersonagem! } : { idUsuarioParticipante: dadosParticipante.idUsuarioParticipante, tipoParticipante: 'FICHA' }),
                 idRascunho: idRascunhoSelecionado === VALOR_MUNDO_ABERTO ? null : idRascunhoSelecionado,
-                dadosDataParaSessao: { data: data!, horaInicio, horaFim },
+                dadosDataParaSessao: { data: data!, horaInicio },
                 canonica: flagCanonico
             });
 
-            await toast.sucesso('Ficha salva com sucesso!', `A Ficha foi criada`, { redirecionaLinkInterno: { pagina: PAGINAS.minhasPaginas.mestre.sessao, params: { id: retorno.id } } });
+            await toast.sucesso('Ficha salva com sucesso!', `A Ficha foi criada`, { redirecionaLinkInterno: { pagina: PAGINAS.minhasPaginas.mestre.sessao, params: { id: idSessaoCriada } } });
         } catch {
             await toast.erro('Erro ao criar a Sessão.');
         } finally {
@@ -149,7 +146,7 @@ export const ContextoPaginaCriarSessaoUnicaProvider = ({ children }: { children:
     if (!rascunhosDoUsuario) return;
 
     return (
-        <ContextoPaginaCriarSessaoUnica.Provider value={{ rascunhosDoUsuario, idsUsuariosSelecionados, setIdsUsuariosSelecionados, dadosParticipantes, setParticipaComPersonagem, setIdPersonagemParticipante, obtemListaPersonagensDoUsuario, data, setData, horaInicio, setHoraInicio, horaFim, setHoraFim, idRascunhoSelecionado, setIdRascunhoSelecionado, flagCanonico, setFlagCanonico, rascunhoSelecionado, podeCriar, criarSessao }}>
+        <ContextoPaginaCriarSessaoUnica.Provider value={{ rascunhosDoUsuario, idsUsuariosSelecionados, setIdsUsuariosSelecionados, dadosParticipantes, setParticipaComPersonagem, setIdPersonagemParticipante, obtemListaPersonagensDoUsuario, data, setData, horaInicio, setHoraInicio, idRascunhoSelecionado, setIdRascunhoSelecionado, flagCanonico, setFlagCanonico, rascunhoSelecionado, podeCriar, criarSessao }}>
             {children}
         </ContextoPaginaCriarSessaoUnica.Provider>
     );

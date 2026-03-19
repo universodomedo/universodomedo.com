@@ -7,7 +7,7 @@ import { VIEW_SessaoDeJogadorDto } from 'types-nora-api';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import ItemListagemSessaoPrevistaComParticipante from '../ItemListagemSessaoPrevistaComParticipante/ItemListagemSessaoPrevistaComParticipante';
 
-export default function AvisosSessoesPrevistas({ sessoes }: { sessoes: VIEW_SessaoDeJogadorDto[] }) {
+export default function AvisosSessoesPrevistas({ sessoes, selecionaSessao }: { sessoes: VIEW_SessaoDeJogadorDto[]; selecionaSessao: (idSessao: number) => void; }) {
     return (
         <SecaoDeConteudo className={styles.recipiente_avisos_sessoes_previstas}>
             {sessoes.length < 1 ? (
@@ -15,7 +15,7 @@ export default function AvisosSessoesPrevistas({ sessoes }: { sessoes: VIEW_Sess
             ) : (
                 <div className={styles.recipiente_listagem_sessoes_jogador}>
                     <h1>Suas Sessões</h1>
-                    {sessoes.map(sessao => <ItemListagemSessaoPrevistaComParticipante key={sessao.id} sessao={sessao} />)}
+                    {sessoes.map(sessao => <ItemListagemSessaoPrevistaComParticipante key={sessao.id} sessao={sessao} selecionaSessao={selecionaSessao} />)}
                 </div>
             )}
         </SecaoDeConteudo>

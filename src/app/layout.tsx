@@ -21,6 +21,7 @@ import { ContextoPerformanceProvider } from 'Contextos/ContextoPerformace/contex
 import { ContextoAutenticacaoProvider } from 'Contextos/ContextoAutenticacao/contexto';
 import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 import AppClientProviders from '../funcionalidades/AppClientProvider';
+import { Contexto__Chat__Provider } from 'Contextos/ContextoChat/contexto';
 
 import { Cinzel, Cinzel_Decorative, Junge, B612_Mono } from 'next/font/google';
 
@@ -73,20 +74,22 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <SocketListeners />
               <RadixTooltip delayDuration={200} skipDelayDuration={0}>
                 <AppClientProviders>
-                  <ContextoMenuSwiperEsquerdaProvider>
-                    <InicializadorCache>
-                      <ConteudoContextualizado>
-                        <ConteinerEscalavel>
-                          <ContextoCopiarParaClipboardProvider>
-                            <NavigationBridgeProvider />
-                            {children}
-                            <ClipboardToast />
-                          </ContextoCopiarParaClipboardProvider>
-                        </ConteinerEscalavel>
-                        {/* <BackgroundAudio /> */}
-                      </ConteudoContextualizado>
-                    </InicializadorCache>
-                  </ContextoMenuSwiperEsquerdaProvider>
+                  <Contexto__Chat__Provider>
+                    <ContextoMenuSwiperEsquerdaProvider>
+                      <InicializadorCache>
+                        <ConteudoContextualizado>
+                          <ConteinerEscalavel>
+                            <ContextoCopiarParaClipboardProvider>
+                              <NavigationBridgeProvider />
+                              {children}
+                              <ClipboardToast />
+                            </ContextoCopiarParaClipboardProvider>
+                          </ConteinerEscalavel>
+                          {/* <BackgroundAudio /> */}
+                        </ConteudoContextualizado>
+                      </InicializadorCache>
+                    </ContextoMenuSwiperEsquerdaProvider>
+                  </Contexto__Chat__Provider>
                 </AppClientProviders>
               </RadixTooltip>
             </ContextoAutenticacaoProvider>

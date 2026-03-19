@@ -4,6 +4,7 @@ import styles from "./styles.module.css";
 
 import { useEffect, useState } from "react";
 
+import { Contexto__Chat__Provider, useContexto__Chat } from "Contextos/ContextoChat/contexto";
 import { useContextoAutenticacao } from "Contextos/ContextoAutenticacao/contexto";
 import { DivClicavel } from "../DivClicavel/DivClicavel";
 import { getSocket } from "Hooks/useEventoWs";
@@ -14,11 +15,12 @@ import ListaSalas from "./componentes/ListaSalas";
 
 type WsStatus = "loading" | "ready" | "error";
 
-export default function ComponenteChat() {
+export default  function ComponenteChat() {
     const { estaAutenticado, carregando } = useContextoAutenticacao();
+    const { chatVisivel } = useContexto__Chat();
     const [aberto, setAberto] = useState(false);
 
-    if (!carregando && !estaAutenticado) return;
+    if (!chatVisivel || (!carregando && !estaAutenticado)) return;
 
     if (!aberto) return (<button id={styles.botao_abre_janela_chat} onClick={() => setAberto(true)}>💬</button>);
 

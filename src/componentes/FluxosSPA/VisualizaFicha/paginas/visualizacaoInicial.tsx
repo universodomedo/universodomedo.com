@@ -3,7 +3,6 @@
 import styles from '../styles.module.css';
 
 import { useContextoPaginaFichaTemporaria } from 'Contextos/ContextoPaginaFichaTemporaria/contexto';
-import VisualizacaoFichaDeJogo from 'Componentes/ElementosVisuais/VisualizacaoFichaDeJogo/VisualizacaoFichaDeJogo';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { ContadorRegressivo } from 'Componentes/Elementos/ContadorRegressivo/ContadorRegressivo';
@@ -15,7 +14,6 @@ export default function SPA__VisualizaFicha__VisualizacaoInicial() {
     return (
         <div className={styles.recipiente_ficha}>
             <div className={styles.recipiente_dados_ficha}>
-                {/* <VisualizacaoFichaDeJogo fichaDeJogo={fichaTemporaria.fichaDeJogo!} /> */}
                 {fichaTemporaria.detalheSessaoUnicaAmarrada && (
                     <div className={styles.recipiente_dados_sessao}>
                         <SecaoDeConteudo className={styles.recipiente_dados_sessao_unica_amarrada_nessa_ficha} fit>

@@ -10,7 +10,7 @@ type PersonagemEmVisualizacaoDeSessaoProps = | { tipo: 'mestre'; usuario: Usuari
 export default function PersonagemEmVisualizacaoDeSessao(props: PersonagemEmVisualizacaoDeSessaoProps) {
     let render = <></>;
 
-    if (props.tipo === 'mestre') render = <AvatarUsuarioEmVisualizacao_CACHED idUsuario={props.usuario.id} avatarUsuarioMini/>
+    if (props.tipo === 'mestre') render = <AvatarUsuarioEmVisualizacao_CACHED idUsuario={props.usuario.id}/>
     else if (props.participanteSessao.tipoVinculoSessaoJogador === TipoVinculoSessaoJogador.PERSONAGEM) render = <RecipienteImagem src={props.participanteSessao.personagemDoJogador.caminhoAvatar} />;
     else render = (
         <>

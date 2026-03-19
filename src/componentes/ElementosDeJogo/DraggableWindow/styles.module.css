@@ -3,6 +3,12 @@
     overflow: visible;
 }
 
+.windowFrame__hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
 .window {
     width: 100%;
     height: 100%;

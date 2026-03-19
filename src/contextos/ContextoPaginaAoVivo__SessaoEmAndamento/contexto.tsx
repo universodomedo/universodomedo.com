@@ -1,12 +1,16 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { SalaDeJogo_SessaoDto } from 'types-nora-api';
+import { createContext, useContext, useEffect } from 'react';
+import { CAPACIDADES, SalaDeJogo_SessaoDto } from 'types-nora-api';
 
+import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto';
+import { useContexto__Chat } from 'Contextos/ContextoChat/contexto';
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import SPA__PaginaAoVivo__SessaoEmAndamento from 'Conteineres/PaginaAoVivo/paginas/SPA__PaginaAoVivo__SessaoEmAndamento/SPA__PaginaAoVivo__SessaoEmAndamento';
 
 interface ContextoPaginaAoVivo__SessaoEmAndamentoProps {
     sessaoEmAndamento: SalaDeJogo_SessaoDto;
+    souStreamer: boolean;
 };
 
 const ContextoPaginaAoVivo__SessaoEmAndamento = createContext<ContextoPaginaAoVivo__SessaoEmAndamentoProps | undefined>(undefined);
@@ -18,9 +22,21 @@ export const useContextoPaginaAoVivo__SessaoEmAndamento = (): ContextoPaginaAoVi
 };
 
 export const ContextoPaginaAoVivo__SessaoEmAndamentoProvider = ({ sessaoEmAndamento }: { sessaoEmAndamento: SalaDeJogo_SessaoDto }) => {
+    const { funcEsconderMenu } = useContextoMenuSwiperEsquerda();
+    const { tornaChatInivisivel } = useContexto__Chat();
+    const { verificarCapacidade } = useContextoAutenticacao();
 
+    const souStreamer = verificarCapacidade(CAPACIDADES.STREAMER);
+
+    useEffect(() => {
+        if (souStreamer) {
+            funcEsconderMenu();
+            tornaChatInivisivel();
+        }
+    }, [souStreamer]);
+    
     return (
-        <ContextoPaginaAoVivo__SessaoEmAndamento.Provider value={{ sessaoEmAndamento }}>
+        <ContextoPaginaAoVivo__SessaoEmAndamento.Provider value={{ sessaoEmAndamento, souStreamer }}>
             <SPA__PaginaAoVivo__SessaoEmAndamento />
         </ContextoPaginaAoVivo__SessaoEmAndamento.Provider>
     );

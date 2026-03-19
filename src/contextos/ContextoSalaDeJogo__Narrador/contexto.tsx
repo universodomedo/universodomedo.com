@@ -1,12 +1,13 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { LogicaJogoUsuario_ObjetoEmJogoDto } from 'types-nora-api';
+import { Eventos_Envia, LogicaJogoUsuario_ObjetoInicialSalaDto__Narrador } from 'types-nora-api';
 
+import { eventoWs } from 'Hooks/useEventoWs';
 import SPA_SalaDeJogo__Narrador from 'Conteineres/EmJogo/paginas/SPA_SalaDeJogo__Narrador/SPA_SalaDeJogo__Narrador';
 
 interface ContextoSalaDeJogo__NarradorProps {
-    objetoEmJogo: LogicaJogoUsuario_ObjetoEmJogoDto;
+    dadosSalaDeJogo__Narrador: LogicaJogoUsuario_ObjetoInicialSalaDto__Narrador;
 };
 
 const ContextoSalaDeJogo__Narrador = createContext<ContextoSalaDeJogo__NarradorProps | undefined>(undefined);
@@ -17,10 +18,13 @@ export const useContextoSalaDeJogo__Narrador = (): ContextoSalaDeJogo__NarradorP
     return context;
 };
 
-export const ContextoSalaDeJogo__NarradorProvider = ({ objetoEmJogo }: { objetoEmJogo: LogicaJogoUsuario_ObjetoEmJogoDto; }) => {
+export const ContextoSalaDeJogo__NarradorProvider = ({ dadosSalaDeJogo__Narrador }: { dadosSalaDeJogo__Narrador: LogicaJogoUsuario_ObjetoInicialSalaDto__Narrador; }) => {
+    function executaAcao() {
+        eventoWs(Eventos_Envia.Jogo.eventos.executaTestePericia_PROTOTIPO, { tipo: 'TESTE_JOGADOR', valorAtributo: valorAtributo, valorPericia: valorPericia, abrevPericia: abrevPericia });
+    };
 
     return (
-        <ContextoSalaDeJogo__Narrador.Provider value={{ objetoEmJogo }}>
+        <ContextoSalaDeJogo__Narrador.Provider value={{ dadosSalaDeJogo__Narrador }}>
             <SPA_SalaDeJogo__Narrador />
         </ContextoSalaDeJogo__Narrador.Provider>
     );
