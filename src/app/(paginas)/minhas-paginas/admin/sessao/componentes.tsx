@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import Link from 'next/link';
-import { PAGINAS, LinkDto, SessaoDto } from 'types-nora-api';
+import { PAGINAS, LinkCompletaDto, SessaoCompletaDto } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoPaginaAdminSessaoProvider, useContextoPaginaAdminSessao } from 'Contextos/ContextoPaginaAdminSessao/contexto';
@@ -35,32 +35,32 @@ function AdministrarSessao_Conteudo() {
     );
 };
 
-function SessaoLayout({ sessao }: { sessao: SessaoDto; }) {
+function SessaoLayout({ sessao }: { sessao: SessaoCompletaDto; }) {
     return (
         <div id={styles.recipiente_acoes_aventura}>
             <div>
                 {/* to do, colocar propriedade em SessaoEntidade para obter a exibicao da sessao */}
-                {sessao.tipo === 'AVENTURA'
+                {/* {sessao.tipo === 'AVENTURA'
                     ? <>
-                    <h1>{sessao.detalheSessaoAventura.episodioPorExtenso}</h1>
-                    <h3>{sessao.detalheSessaoAventura.grupoAventura.aventura.titulo} - {sessao.detalheSessaoAventura.grupoAventura.nome}</h3>
+                        <h1>{sessao.detalheSessaoAventura.episodioPorExtenso}</h1>
+                        <h3>{sessao.detalheSessaoAventura.grupoAventura.aventura.titulo} - {sessao.detalheSessaoAventura.grupoAventura.nome}</h3>
                     </>
                     : <h1>{sessao.tituloInteligente.tituloCompleto}</h1>
-                }
+                } */}
             </div>
 
             {(sessao.tipo === 'AVENTURA' || sessao.tipo === 'SESSAO_UNICA_CANONICA') && (
                 <>
-                    <AreaVideoYoutube linkVideo={sessao.detalheSessaoCanonica.linkSessaoYoutube} />
+                    {/* <AreaVideoYoutube linkVideo={sessao.detalheSessaoCanonica.linkSessaoYoutube} />
 
-                    <AreaPodcastSpotify linkPodcast={sessao.detalheSessaoCanonica.linkSessaoSpotify} />
+                    <AreaPodcastSpotify linkPodcast={sessao.detalheSessaoCanonica.linkSessaoSpotify} /> */}
                 </>
             )}
         </div>
     );
 }
 
-function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
+function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkCompletaDto }) {
     const { iniciaProcessoVinculoLinkSessao } = useContextoCadastroNovoLinkSessao();
 
     return (
@@ -76,7 +76,7 @@ function AreaVideoYoutube({ linkVideo }: { linkVideo: LinkDto }) {
     );
 };
 
-function AreaPodcastSpotify({ linkPodcast }: { linkPodcast: LinkDto }) {
+function AreaPodcastSpotify({ linkPodcast }: { linkPodcast: LinkCompletaDto }) {
     const { iniciaProcessoVinculoLinkSessao } = useContextoCadastroNovoLinkSessao();
 
     return (

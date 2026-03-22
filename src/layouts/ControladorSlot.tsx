@@ -14,7 +14,7 @@ import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsque
 
 import { useAppDispatch, useAppSelector } from 'Redux/hooks/useRedux';
 import { updateLayoutContextualizado, setMenuLeaf } from 'Redux/slices/layoutContextualizadoSlice';
-import { selectMenuLayoutTipo } from 'Redux/selectors/layoutContextualizadoSelectors';
+import { selectLayoutEsconderMenu, selectMenuLayoutTipo } from 'Redux/selectors/layoutContextualizadoSelectors';
 
 import { MenuLayoutDinamicoProvider, useMenuLayoutDinamicoValor } from './MenuLayoutDinamico';
 
@@ -48,11 +48,13 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
     const dispatch = useAppDispatch();
     const { carregando, checkAuth, estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
     const { setTamanhoReduzido } = useContextoMenuSwiperEsquerda();
+    const esconderMenu = useAppSelector(selectLayoutEsconderMenu);
 
     const comCabecalho = pagina.comCabecalho === true;
     const temLayout = isPaginaComLayout(pagina);
     const menuLeaf = useMemo(() => resolverMenuLeaf(pagina), [pagina]);
-    const temMenu = useMemo(() => temMenuParaRenderizar(menuLeaf), [menuLeaf]);
+    const menuConfigurado = useMemo(() => temMenuParaRenderizar(menuLeaf), [menuLeaf]);
+    const temMenu = menuConfigurado && esconderMenu !== true;
 
     useEffect(() => {
         if (!comCabecalho) setTamanhoReduzido(true);

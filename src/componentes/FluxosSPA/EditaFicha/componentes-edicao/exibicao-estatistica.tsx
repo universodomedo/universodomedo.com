@@ -1,10 +1,10 @@
 import styles from '../styles.module.css';
 
 import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
-import { EstatisticaDanificavelDto } from 'types-nora-api';
+import { EstatisticaDanificavelCompletaDto } from 'types-nora-api';
 import { TooltipEvolucao_EstatisticaComGanhoPorAtributo } from '../componentes-edicao/tooltips-edicao';
 
-export function CorpoEstatistica({ estatisticaDanificavel, exibeDetalhesAtributos }: { estatisticaDanificavel: EstatisticaDanificavelDto; exibeDetalhesAtributos?: boolean }) {
+export function CorpoEstatistica({ estatisticaDanificavel, exibeDetalhesAtributos }: { estatisticaDanificavel: EstatisticaDanificavelCompletaDto; exibeDetalhesAtributos?: boolean }) {
     const { ganhos } = useContextoEdicaoFicha();
 
     const valorAnterior = ganhos.fichaSendoEvoluida.fichaDeJogo.estatisticasDanificaveis.find(estatisticaDanificavelFichaAnterior => estatisticaDanificavelFichaAnterior.estatisticaDanificavel.id === estatisticaDanificavel.id)!.valorMaximo;

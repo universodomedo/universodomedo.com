@@ -1,59 +1,63 @@
-import styles from './styles.module.css';
+// to do
 
-import { useContextoPaginaAventura } from 'Contextos/ContextoPaginaAventura/contexto';
+// import styles from './styles.module.css';
 
-import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
-import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
-import PlayerSpotify from 'Componentes/Elementos/PlayerSpotify/PlayerSpotify';
+// import { useContextoPaginaAventura } from 'Contextos/ContextoPaginaAventura/contexto';
 
-export function TrailerGrupoAventura() {
-    const { grupoAventuraSelecionado } = useContextoPaginaAventura();
+// import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
+// import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
+// import PlayerSpotify from 'Componentes/Elementos/PlayerSpotify/PlayerSpotify';
 
-    if (!grupoAventuraSelecionado.linkTrailerYoutube) return (
-        <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
-            <h3>Essa Aventura ainda não possui um Trailer</h3>
-        </SecaoDeConteudo>
-    );
+// export function TrailerGrupoAventura() {
+//     const { grupoAventuraSelecionado } = useContextoPaginaAventura();
 
-    return (
-        <SecaoDeConteudo id={styles.recipiente_trailer}>
-            <PlayerYouTube urlSufixo={grupoAventuraSelecionado.linkTrailerYoutube.sufixo} />
-        </SecaoDeConteudo>
-    );
-};
+//     if (!grupoAventuraSelecionado.linkTrailerYoutube) return (
+//         <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
+//             <h3>Essa Aventura ainda não possui um Trailer</h3>
+//         </SecaoDeConteudo>
+//     );
 
-export function VideoEpisodio() {
-    const { sessaoSelecionada } = useContextoPaginaAventura();
+//     return (
+//         <SecaoDeConteudo id={styles.recipiente_trailer}>
+//             <PlayerYouTube urlSufixo={grupoAventuraSelecionado.linkTrailerYoutube.sufixo} />
+//         </SecaoDeConteudo>
+//     );
+// };
 
-    if (!sessaoSelecionada) return <p>Sessão não encontrada</p>;
+// export function VideoEpisodio() {
+//     const { sessaoSelecionada } = useContextoPaginaAventura();
 
-    if (!sessaoSelecionada.detalheSessaoCanonica.linkSessaoYoutube) return (
-        <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
-            <h3>Esse Episódio ainda não possui Vídeo</h3>
-        </SecaoDeConteudo>
-    );
+//     if (!sessaoSelecionada) return <p>Sessão não encontrada</p>;
 
-    return (
-        <SecaoDeConteudo id={styles.recipiente_video}>
-            <PlayerYouTube urlSufixo={sessaoSelecionada.detalheSessaoCanonica.linkSessaoYoutube.sufixo} />
-        </SecaoDeConteudo>
-    );
-};
+//     // if (!sessaoSelecionada.detalheSessaoCanonica.linkSessaoYoutube) return (
+//     //     <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
+//     //         <h3>Esse Episódio ainda não possui Vídeo</h3>
+//     //     </SecaoDeConteudo>
+//     // );
 
-export function PodcastEpisodio() {
-    const { sessaoSelecionada } = useContextoPaginaAventura();
+//     return (
+//         <SecaoDeConteudo id={styles.recipiente_video}>
+//             <></>
+//             {/* <PlayerYouTube urlSufixo={sessaoSelecionada.detalheSessaoCanonica.linkSessaoYoutube.sufixo} /> */}
+//         </SecaoDeConteudo>
+//     );
+// };
 
-    if (!sessaoSelecionada) return <p>Sessão não encontrada</p>;
+// export function PodcastEpisodio() {
+//     const { sessaoSelecionada } = useContextoPaginaAventura();
 
-    if (!sessaoSelecionada.detalheSessaoCanonica.linkSessaoSpotify) return (
-        <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
-            <h3>Esse Episódio ainda não possui Podcast</h3>
-        </SecaoDeConteudo>
-    );
+//     if (!sessaoSelecionada) return <p>Sessão não encontrada</p>;
 
-    return (
-        <SecaoDeConteudo id={styles.recipiente_podcast}>
-            <PlayerSpotify urlSufixo={sessaoSelecionada.detalheSessaoCanonica.linkSessaoSpotify.sufixo} />
-        </SecaoDeConteudo>
-    );
-};
+//     // if (!sessaoSelecionada.detalheSessaoCanonica.linkSessaoSpotify) return (
+//     //     <SecaoDeConteudo id={styles.recipiente_trailer_vazio}>
+//     //         <h3>Esse Episódio ainda não possui Podcast</h3>
+//     //     </SecaoDeConteudo>
+//     // );
+
+//     return (
+//         <SecaoDeConteudo id={styles.recipiente_podcast}>
+//             <></>
+//             {/* <PlayerSpotify urlSufixo={sessaoSelecionada.detalheSessaoCanonica.linkSessaoSpotify.sufixo} /> */}
+//         </SecaoDeConteudo>
+//     );
+// };

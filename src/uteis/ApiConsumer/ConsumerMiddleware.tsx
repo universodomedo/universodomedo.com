@@ -1,8 +1,10 @@
+import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PaginaTemplate, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto } from "types-nora-api";
+
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
-import { AventuraDto, DisponibilidadeUsuarioDto, EstruturaPaginaDefinicao, ImagemDto, PersonagemDto, SessaoDto, TipoImagemDto, ObjetoAutenticacao, FichaPersonagemDto, PericiaDto, ObjetoGanhosEvolucao, FichaDeJogo, ObjetoEvolucaoCompleto, LinkDto, TipoLinkDto, GrupoAventuraDto, DetalheSessaoCanonicaDto, RascunhoDto, ObjetoCache, ListaDisponibilidadesUsuario, EstiloSessaoMestradaDto, PaginaTemplate, ArvoreItensPermissaoDto, UsuarioDto, RegrasUploadArquivo, TipoArquivoDef, ArquivoDto, FichaTemporariaDto, FichaDto, DadosEvolucaoFicha, DadosJanelaDisponibilidade, JanelaDisponibilidadeDto, DadosCriacaoSessao } from 'types-nora-api';
+//
 
-export async function obtemObjetoAutenticacao(paginaAtualTemplate?: PaginaTemplate | null) {
+export async function obtemObjetoAutenticacao(paginaAtualTemplate?: PaginaTemplate) {
     return await useApi<ObjetoAutenticacao>({ uri: '/paginas/obtemObjetoAutenticacao', method: 'GET', params: paginaAtualTemplate == null ? {} : { templatePaginaAtual: paginaAtualTemplate } });
 };
 
@@ -11,7 +13,7 @@ export async function obtemTodosObjetosCache() {
 }
 
 export async function obtemDadosMinhasDisponibilidades() {
-    return await useApi<DisponibilidadeUsuarioDto | null>({ uri: '/disponibilidades_usuario/me/me_obtemDadosMinhasDisponibilidades', method: 'GET' });
+    return await useApi<DisponibilidadeUsuarioCompletaDto | null>({ uri: '/disponibilidades_usuario/me/me_obtemDadosMinhasDisponibilidades', method: 'GET' });
 }
 
 export async function me_salvaDisponibilidade(listaDisponibilidadesUsuario: ListaDisponibilidadesUsuario) {
@@ -27,51 +29,47 @@ export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) 
 }
 
 export async function obtemTodosGruposParaAdmin() {
-    return await useApi<GrupoAventuraDto[]>({ uri: '/grupos_aventuras/obtemTodosGruposParaAdmin', method: 'GET' });
+    return await useApi<GrupoAventuraCompletaDto[]>({ uri: '/grupos_aventuras/obtemTodosGruposParaAdmin', method: 'GET' });
 }
 
 export async function obtemAventurasParaAssistir() {
-    return await useApi<AventuraDto[]>({ uri: '/aventuras/obtemAventurasParaAssistir', method: 'GET' });
+    return await useApi<AventuraParaAssistirDto[]>({ uri: '/aventuras/obtemAventurasParaAssistir', method: 'GET' });
 }
 
 export async function obtemAventuraCompleta(idAventura: number) {
-    return await useApi<AventuraDto | null>({ uri: '/aventuras/obtemAventuraCompleta', method: 'GET', params: { idAventura } });
+    return await useApi<AventuraCompletaDto | null>({ uri: '/aventuras/obtemAventuraCompleta', method: 'GET', params: { idAventura } });
 }
 
 export async function buscaGrupoAventuraEspecifico(idGrupoAventura: number) {
-    return await useApi<GrupoAventuraDto | null>({ uri: '/grupos_aventuras/buscaGrupoAventuraEspecifico', method: 'GET', params: { idGrupoAventura } });
+    return await useApi<GrupoAventuraCompletaDto | null>({ uri: '/grupos_aventuras/buscaGrupoAventuraEspecifico', method: 'GET', params: { idGrupoAventura } });
 }
 
 export async function obtemListagemGeralSessoes() {
-    return await useApi<SessaoDto[]>({ uri: '/sessoes/obtemListagemGeralSessoes', method: 'GET' });
+    return await useApi<VIEW_SessaoListagemGeralDto[]>({ uri: '/sessoes/obtemListagemGeralSessoes', method: 'GET' });
 }
 
 export async function obtemSessaoGeral(idSessao: number) {
-    return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemSessaoGeral', method: 'GET', params: { idSessao } });
+    return await useApi<SessaoCompletaDto | null>({ uri: '/sessoes/obtemSessaoGeral', method: 'GET', params: { idSessao } });
 }
 
 export async function obtemDadosPublicosSessao(idSessao: number) {
-    return await useApi<SessaoDto | null>({ uri: '/sessoes/obtemDadosPublicosSessao', method: 'GET', params: { idSessao } });
+    return await useApi<SessaoCompletaDto | null>({ uri: '/sessoes/obtemDadosPublicosSessao', method: 'GET', params: { idSessao } });
 }
 
-export async function me_obtemMinhasSessoesEmEsperaParaMestrar() {
-    return await useApi<SessaoDto[]>({ uri: '/sessoes/me/me_obtemMinhasSessoesEmEsperaParaMestrar', method: 'GET' });
+export async function me_obtemMinhasSessoesEmEsperaParaMestrar(): Promise<VIEW_SessaoComParticipantesDto[]> {
+    return await useApi<VIEW_SessaoComParticipantesDto[]>({ uri: '/sessoes/me/me_obtemMinhasSessoesEmEsperaParaMestrar', method: 'GET' });
 }
 
-export async function me_obtemPersonagensPorTipo(idTipoPersonagem?: number) {
-    return await useApi<PersonagemDto[]>({ uri: '/personagens/me/me_obtemPersonagensPorTipo', method: 'GET', params: { idTipoPersonagem } });
+export async function me_obtemPersonagensPorTipo(idTipoPersonagem?: number): Promise<PersonagemVisualizacaoDetalhadaDto[]> {
+    return await useApi<PersonagemVisualizacaoDetalhadaDto[]>({ uri: '/personagens/me/me_obtemPersonagensPorTipo', method: 'GET', params: { idTipoPersonagem } });
 }
 
 export async function obtemDadosInteligentePersonagem(idPersonagem: number) {
-    return await useApi<PersonagemDto | null>({ uri: '/personagens/obtemDadosInteligentePersonagem', method: 'GET', params: { idPersonagem } });
-}
-
-export async function me_obtemDadosFicha(idFicha: number) {
-    return await useApi<FichaDto | null>({ uri: '/fichas/me/me_obtemDadosFicha', method: 'GET', params: { idFicha } });
+    return await useApi<PersonagemVisualizacaoDetalhadaDto | null>({ uri: '/personagens/obtemDadosInteligentePersonagem', method: 'GET', params: { idPersonagem } });
 }
 
 export async function obtemTiposImagem() {
-    return await useApi<TipoImagemDto[]>({ uri: '/tipos_imagem/obtemTiposImagem', method: 'GET' });
+    return await useApi<TipoImagemCompletaDto[]>({ uri: '/tipos_imagem/obtemTiposImagem', method: 'GET' });
 }
 
 export async function obtemArvoreItensParaPaginaPermissoes() {
@@ -88,14 +86,14 @@ export async function me_atualizaEstadoItem(idItemPermissao: number, idUsuario: 
 
 // em algum momento, tem q fazer uma normalização de operações SUDO
 export async function buscaTodosArquivos_SUDO() {
-    return await useApi<ArquivoDto[]>({ uri: '/arquivos/buscaTodosArquivos_SUDO', method: 'GET' });
+    return await useApi<ArquivoCompletaDto[]>({ uri: '/arquivos/buscaTodosArquivos_SUDO', method: 'GET' });
 }
 
 export async function deleteArquivo_PorPath_SUDO(pathRelativo: string) {
     return await useApi<boolean>({ uri: '/arquivos/deleteArquivo_PorPath_SUDO', method: 'DELETE', params: { pathRelativo: pathRelativo } });
 }
 
-export async function deleteArquivo_SUDO(arquivo: ArquivoDto) {
+export async function deleteArquivo_SUDO(arquivo: ArquivoCompletaDto) {
     return await useApi<boolean>({ uri: '/arquivos/deleteArquivo_SUDO', method: 'DELETE', params: { idArquivo: String(arquivo.id) } });
 }
 
@@ -104,25 +102,25 @@ export async function me_upload(file: File, tipoArquivo: TipoArquivoDef, nomeRec
     formData.append('file', file);
     if (nomeRecursoInterno) formData.append('nomeRecursoInterno', nomeRecursoInterno);
 
-    return await useApi<ArquivoDto>({ uri: `/arquivos/me/me_upload/${tipoArquivo.id}`, method: 'POST', data: formData });
+    return await useApi<ArquivoCompletaDto>({ uri: `/arquivos/me/me_upload/${tipoArquivo.id}`, method: 'POST', data: formData });
 }
 
-export async function atualizaAvatarUsuario(idPersonagem: number) {
-    return await useApi<ImagemDto[]>({ uri: '/usuarios/atualizaAvatarUsuario', method: 'PUT', data: { idPersonagem: idPersonagem } });
+export async function atualizaAvatarUsuario(idPersonagem: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/usuarios/atualizaAvatarUsuario', method: 'PUT', data: { idPersonagem: idPersonagem } });
 }
 
 export async function obtemFichaDePersonagemEmNivel() {
     // export async function obtemFichaDePersonagemEmNivel(idPersonagem: number) {
-    return await useApi<FichaDeJogo>({ uri: '/fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET' });
-    // return await useApi<FichaPersonagemDto>({ uri: '/fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET', data: { idPersonagem: idPersonagem } });
+    return await useApi<FichaEmClient>({ uri: '/fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET' });
+    // return await useApi<FichaPersonagemCompletaDto>({ uri: '/fichas_personagens/obtemFichaDePersonagemEmNivel', method: 'GET', data: { idPersonagem: idPersonagem } });
 }
 
 export async function obtemPersonagensComPendencias() {
-    return await useApi<PersonagemDto[]>({ uri: '/personagens/obtemPersonagensComPendencias', method: 'GET' });
+    return await useApi<PersonagemCompletaDto[]>({ uri: '/personagens/obtemPersonagensComPendencias', method: 'GET' });
 }
 
 export async function obtemPericiasParaCriacaoFicha() {
-    return await useApi<PericiaDto[]>({ uri: '/pericias/obtemTodos', method: 'GET', params: { criandoFicha: true } });
+    return await useApi<PericiaCompletaDto[]>({ uri: '/pericias/obtemTodos', method: 'GET', params: { criandoFicha: true } });
 }
 
 export async function obtemGanhosParaEvoluirPorIdFicha(idPersonagem: number) {
@@ -137,103 +135,107 @@ export async function obtemGanhosAposSelecaoClasse(idClasse: number) {
     return await useApi<ObjetoGanhosEvolucao>({ uri: '/ganhos_nivel_classe/obtemGanhosAposSelecaoClasse', method: 'GET', params: { idClasse } });
 }
 
-export async function salvarEvolucaoDoPersonagem(fichaEvoluida: FichaPersonagemDto, fichaDeJogoEvoluida: FichaDeJogo): Promise<boolean> {
+export async function salvarEvolucaoDoPersonagem(fichaEvoluida: FichaPersonagemCompletaDto, fichaDeJogoEvoluida: FichaEmClient): Promise<boolean> {
     return await useApi<boolean>({ uri: '/fichas_personagens/salvarEvolucaoDoPersonagem', method: 'POST', data: { fichaEvoluida: fichaEvoluida, fichaDeJogoEvoluida: fichaDeJogoEvoluida } });
 }
 
-export async function obtemListaSessoesPrevistas() {
-    return await useApi<SessaoDto[]>({ uri: '/sessoes/obtemListaSessoesPrevistas', method: 'GET' });
+export async function obtemListaSessoesPrevistas(): Promise<SessaoEmVisualizacaoDto[]> {
+    return await useApi<SessaoEmVisualizacaoDto[]>({ uri: '/sessoes/obtemListaSessoesPrevistas', method: 'GET' });
 };
 
 export async function obtemListaProxEpisodioPrevistoPorAventuraEmAndamento() {
-    return await useApi<SessaoDto[]>({ uri: '/sessoes/obtemListaProxEpisodioPrevistoPorAventuraEmAndamento', method: 'GET' });
+    return await useApi<SessaoCompletaDto[]>({ uri: '/sessoes/obtemListaProxEpisodioPrevistoPorAventuraEmAndamento', method: 'GET' });
 }
 
 export async function obtemTodosTiposLink() {
-    return await useApi<TipoLinkDto[]>({ uri: '/tipos_link/obtemTodosTiposLink', method: 'GET' });
+    return await useApi<TipoLinkCompletaDto[]>({ uri: '/tipos_link/obtemTodosTiposLink', method: 'GET' });
 }
 
-export async function vinculaLinkDeSessao(idSessao: number, novoLink: LinkDto): Promise<boolean> {
+export async function vinculaLinkDeSessao(idSessao: number, novoLink: LinkCompletaDto): Promise<boolean> {
     return await useApi<boolean>({ uri: '/detalhes_sessao_canonica/vinculaLinkDeSessao', method: 'POST', data: { idSessao: idSessao, novoLink: novoLink } });
 }
 
-export async function vinculaLinkDeGrupoAventura(idGrupoAventura: number, novoLink: LinkDto): Promise<boolean> {
+export async function vinculaLinkDeGrupoAventura(idGrupoAventura: number, novoLink: LinkCompletaDto): Promise<boolean> {
     return await useApi<boolean>({ uri: '/grupos_aventuras/vinculaLinkDeGrupoAventura', method: 'POST', data: { idGrupoAventura: idGrupoAventura, novoLink: novoLink } });
 }
 
-export async function me_obtemGruposPorMestre(): Promise<GrupoAventuraDto[]> {
-    return await useApi<GrupoAventuraDto[]>({ uri: '/grupos_aventuras/me/me_obtemGruposPorMestre', method: 'GET' });
+export async function me_obtemGruposPorMestre(): Promise<GrupoAventuraCompletaDto[]> {
+    return await useApi<GrupoAventuraCompletaDto[]>({ uri: '/grupos_aventuras/me/me_obtemGruposPorMestre', method: 'GET' });
 }
 
-export async function me_obtemSessoesUnicasPorMestre(): Promise<SessaoDto[]> {
-    return await useApi<SessaoDto[]>({ uri: '/detalhes_sessao_unica/me/me_obtemSessoesUnicasPorMestre', method: 'GET' });
+export async function me_obtemSessoesUnicasPorMestre(): Promise<SessaoCompletaDto[]> {
+    return await useApi<SessaoCompletaDto[]>({ uri: '/detalhes_sessao_unica/me/me_obtemSessoesUnicasPorMestre', method: 'GET' });
 }
 
-export async function obtemUltimaSessoesPostadas(): Promise<DetalheSessaoCanonicaDto[]> {
-    return await useApi<DetalheSessaoCanonicaDto[]>({ uri: '/detalhes_sessao_canonica/obtemUltimaSessoesPostadas', method: 'GET' });
+export async function obtemUltimaSessoesPostadas(): Promise<DetalheSessaoCanonicaParaAssistirDto[]> {
+    return await useApi<DetalheSessaoCanonicaParaAssistirDto[]>({ uri: '/detalhes_sessao_canonica/obtemUltimaSessoesPostadas', method: 'GET' });
 }
 
 export async function encerraGrupoAventura(idGrupoAventura: number): Promise<boolean> {
     return await useApi<boolean>({ uri: '/grupos_aventuras/encerraGrupoAventura', method: 'PUT', data: { idGrupoAventura: idGrupoAventura } })
 }
 
-export async function encerrarSessaoEmAndamentoDeGrupoAventura(idGrupoAventura: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/sessoes/encerrarSessaoEmAndamentoDeGrupoAventura', method: 'PATCH', data: { idGrupoAventura: idGrupoAventura } })
+export async function me_executaIniciaSessao(idSessao: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/sessoes/me/me_executaIniciaSessao', method: 'PATCH', data: { idSessao: idSessao } });
+}
+
+export async function me_executaEncerraSessao(idSessao: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/sessoes/me/me_executaEncerraSessao', method: 'PATCH', data: { idSessao: idSessao } })
 }
 
 export async function obtemEstilosSessaoPorParam(ehSessaoUnica: boolean): Promise<EstiloSessaoMestradaDto[]> {
     return await useApi<EstiloSessaoMestradaDto[]>({ uri: '/estilos_sessao_mestrada/obtemEstilosSessaoPorParam', method: 'GET', params: { ehSessaoUnica } });
 }
 
-export async function me_obtemRascunhosPorTipo(sessaoUnica: boolean): Promise<RascunhoDto[]> {
-    return await useApi<RascunhoDto[]>({ uri: '/rascunhos/me/me_obtemRascunhosPorTipo', method: 'GET', params: { sessaoUnica } });
+export async function me_obtemRascunhosPorTipo(sessaoUnica: boolean): Promise<RascunhoCompletaDto[]> {
+    return await useApi<RascunhoCompletaDto[]>({ uri: '/rascunhos/me/me_obtemRascunhosPorTipo', method: 'GET', params: { sessaoUnica } });
 }
 
-export async function me_obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoDto | null> {
-    return await useApi<RascunhoDto | null>({ uri: '/rascunhos/me/me_obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
+export async function me_obtemDetalhesRascunho(idRascunho: number): Promise<RascunhoCompletaDto | null> {
+    return await useApi<RascunhoCompletaDto | null>({ uri: '/rascunhos/me/me_obtemDetalhesRascunho', method: 'GET', params: { idRascunho } });
 }
 
 export async function me_salvarRascunho(titulo: string, idEstiloSessaoMestrada: number): Promise<boolean> {
     return await useApi<boolean>({ uri: '/rascunhos/me/me_salvarRascunho', method: 'POST', data: { titulo: titulo, idEstiloSessaoMestrada: idEstiloSessaoMestrada } });
 }
 
-export async function editaDetalheRascunho(rascunho: RascunhoDto): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/rascunhos/editaDetalheRascunho', method: 'POST', data: { rascunho: rascunho } });
+export async function editaDetalheRascunho(detalheRascunho: PAYLOAD_DetalheRascunhoEdicaoDto): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/rascunhos/editaDetalheRascunho', method: 'POST', data: { detalheRascunho: detalheRascunho }});
 }
 
-export async function criaBaseadoEmRascunho(idRascunho: number): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/rascunhos/criaBaseadoEmRascunho', method: 'PUT', data: { idRascunho: idRascunho } });
-}
-
-export async function obtemDadosEPermissoes(idUsuario: number): Promise<UsuarioDto | null> {
-    return await useApi<UsuarioDto | null>({ uri: '/usuarios/obtemDadosEPermissoes', method: 'GET', params: { idUsuario: idUsuario } });
+export async function obtemDadosEPermissoes(idUsuario: number): Promise<UsuarioCompletaDto | null> {
+    return await useApi<UsuarioCompletaDto | null>({ uri: '/usuarios/obtemDadosEPermissoes', method: 'GET', params: { idUsuario: idUsuario } });
 }
 
 export async function buscaRegrasPorTipoArquivo(tipoArquivo: TipoArquivoDef): Promise<RegrasUploadArquivo> {
     return await useApi<RegrasUploadArquivo>({ uri: '/arquivos/buscaRegrasPorTipoArquivo', method: 'GET', params: { idTipoArquivo: tipoArquivo.id } });
 }
 
-export async function me_obtemArquivoPendente(): Promise<ArquivoDto | null> {
-    return await useApi<ArquivoDto | null>({ uri: '/arquivos/me/me_obtemArquivoPendente', method: 'GET' });
+export async function me_obtemArquivoPendente(): Promise<ArquivoCompletaDto | null> {
+    return await useApi<ArquivoCompletaDto | null>({ uri: '/arquivos/me/me_obtemArquivoPendente', method: 'GET' });
 }
 
-export async function me_obtemTodosArquivosAprovados(): Promise<ArquivoDto[]> {
-    return await useApi<ArquivoDto[]>({ uri: '/arquivos/me/me_obtemTodosArquivosAprovados', method: 'GET' });
+export async function me_obtemTodosArquivosAprovados(): Promise<ArquivoCompletaDto[]> {
+    return await useApi<ArquivoCompletaDto[]>({ uri: '/arquivos/me/me_obtemTodosArquivosAprovados', method: 'GET' });
 }
 
-export async function obtemTodasImagensEspeciaisArtistaAprovadas(): Promise<ArquivoDto[]> {
-    return await useApi<ArquivoDto[]>({ uri: '/arquivos/obtemTodasImagensEspeciaisArtistaAprovadas', method: 'GET' });
+export async function obtemTodasImagensEspeciaisArtistaAprovadas(): Promise<ArquivoCompletaDto[]> {
+    return await useApi<ArquivoCompletaDto[]>({ uri: '/arquivos/obtemTodasImagensEspeciaisArtistaAprovadas', method: 'GET' });
 }
 
-export async function me_criaEVinculaFicha__FichaTemporaria(nomeFicha: string, descricaoFicha: string, dadosEvolucaoFicha: DadosEvolucaoFicha): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/fichas_temporarias/me/me_criaEVinculaFicha__FichaTemporaria', method: 'POST', data: { nomeFicha: nomeFicha, descricaoFicha: descricaoFicha, dadosEvolucaoFicha: dadosEvolucaoFicha } });
+export async function me_criaEVinculaFicha__FichaTemporaria(nomeFicha: string, descricaoFicha: string, dadosEvolucaoFicha: DadosEvolucaoFicha): Promise<number> {
+    return await useApi<number>({ uri: '/fichas_temporarias/me/me_criaEVinculaFicha__FichaTemporaria', method: 'POST', data: { nomeFicha: nomeFicha, descricaoFicha: descricaoFicha, dadosEvolucaoFicha: dadosEvolucaoFicha } });
 }
 
-export async function me_obtemFichas() {
-    return await useApi<FichaTemporariaDto[]>({ uri: '/fichas_temporarias/me/me_obtemFichas', method: 'GET' })
+export async function me_obtemFichas(): Promise<FichaTemporariaVisualizacaoDetalhadaDto[]> {
+    return await useApi<FichaTemporariaVisualizacaoDetalhadaDto[]>({ uri: '/fichas_temporarias/me/me_obtemFichas', method: 'GET' })
 }
 
-export async function me_deleteFichaTemporaria(fichaTemporaria: FichaTemporariaDto) {
+export async function me_obtemSessoesPrevistasQueEuVouJogar() {
+    return await useApi<VIEW_SessaoDeJogadorDto[]>({ uri: '/sessoes/me/me_obtemSessoesPrevistasQueEuVouJogar', method: 'GET' })
+}
+
+export async function me_deleteFichaTemporaria(fichaTemporaria: FichaTemporariaVisualizacaoDetalhadaDto) {
     return await useApi<boolean>({ uri: '/fichas_temporarias/me/me_deleteFichaTemporaria', method: 'DELETE', params: { idFichaTemporaria: String(fichaTemporaria.id) } });
 }
 
@@ -242,21 +244,32 @@ export async function me_temFichaTemporaria() {
 }
 
 export async function obtemJanelasDisponibilidadesPorJanela(dadosJanelaDisponibilidade: DadosJanelaDisponibilidade) {
-    return await useApi<JanelaDisponibilidadeDto[]>({ uri: '/janelas_disponibilidade/obtemJanelasDisponibilidadesPorJanela', method: 'POST', data: { dadosJanelaDisponibilidade: dadosJanelaDisponibilidade } });
+    return await useApi<JanelaDisponibilidadeCompletaDto[]>({ uri: '/janelas_disponibilidade/obtemJanelasDisponibilidadesPorJanela', method: 'POST', data: { dadosJanelaDisponibilidade: dadosJanelaDisponibilidade } });
 }
 
 export async function me_obtemRascunhosParaSessaoUnicaNaoCanonica() {
-    return await useApi<RascunhoDto[]>({ uri: '/rascunhos/me/me_obtemRascunhosParaSessaoUnicaNaoCanonica', method: 'GET' });
+    return await useApi<RascunhoCompletaDto[]>({ uri: '/rascunhos/me/me_obtemRascunhosParaSessaoUnicaNaoCanonica', method: 'GET' });
 }
 
-export async function me_criaSessaoUnicaNaoCanonica(dadosCriacaoSessao: DadosCriacaoSessao) {
-    return await useApi<SessaoDto>({ uri: '/sessoes/me/me_criaSessaoUnicaNaoCanonica', method: 'POST', data: { dadosCriacaoSessao: dadosCriacaoSessao } });
+export async function me_criaSessaoUnica(dadosCriacaoSessao: DadosCriacaoSessao): Promise<number> {
+    return await useApi<number>({ uri: '/sessoes/me/me_criaSessaoUnica', method: 'POST', data: { dadosCriacaoSessao: dadosCriacaoSessao } });
 }
 
 export async function me_atualizaCapaDeSessaoUnica(idSessao: number, idArquivo: number): Promise<boolean> {
     return await useApi<boolean>({ uri: '/detalhes_sessao_unica/me/me_atualizaCapaDeSessaoUnica', method: 'PATCH', data: { idSessao: idSessao, idArquivo: idArquivo } });
 }
 
+export async function obtemPersonagensPorUsuario(idUsuario: number): Promise<PersonagemCompletaDto[]> {
+    return await useApi<PersonagemCompletaDto[]>({ uri: '/personagens/obtemPersonagensPorUsuario', method: 'GET', params: { idUsuario: idUsuario } });
+}
+
+export async function me_amarraFichaTemporariaEmParticipacaoDeSessaoUnica(idSessao: number, idFichaTemporariaSelecionada: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/fichas_amarradas_participante_sessao_unica/me/me_amarraFichaTemporariaEmParticipacaoDeSessaoUnica', method: 'POST', data: { idSessao: idSessao, idFichaTemporariaSelecionada: idFichaTemporariaSelecionada } });
+}
+
+export async function obtemJDadosFichaEmJogoPorIdFicha(idFicha: number): Promise<J_DadosFichaEmJogo> {
+    return await useApi<J_DadosFichaEmJogo>({ uri: '/fichas/obtemJDadosFichaEmJogoPorIdFicha', method: 'GET', params: { idFicha: idFicha } });
+}
 
 //
 

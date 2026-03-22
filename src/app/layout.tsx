@@ -21,6 +21,7 @@ import { ContextoPerformanceProvider } from 'Contextos/ContextoPerformace/contex
 import { ContextoAutenticacaoProvider } from 'Contextos/ContextoAutenticacao/contexto';
 import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 import AppClientProviders from '../funcionalidades/AppClientProvider';
+import { Contexto__Chat__Provider } from 'Contextos/ContextoChat/contexto';
 
 import { Cinzel, Cinzel_Decorative, Junge, B612_Mono } from 'next/font/google';
 
@@ -30,7 +31,7 @@ import { Provider as RadixTooltip } from "@radix-ui/react-tooltip";
 import BackgroundAudio from 'Componentes/Elementos/BackgroundAudio/BackgroundAudio';
 import Chat from 'Componentes/Elementos/Chat/Chat';
 import InicializadorCache from 'Componentes/Elementos/InicializadorCache/InicializadorCache';
-import ContainerEscalavel from 'Componentes/ElementosVisuais/ContainerEscalavel/ContainerEscalavel';
+import ConteinerEscalavel from 'Componentes/ElementosVisuais/ConteinerEscalavel/ConteinerEscalavel';
 import NavigationBridgeProvider from 'Funcionalidades/NavigationBridgeProvider';
 import { ContextoCopiarParaClipboardProvider } from 'Contextos/ContextoCopiarParaClipboard/contexto';
 import ClipboardToast from 'Componentes/ElementosVisuais/ClipboardToast/ClipboardToast';
@@ -73,20 +74,22 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <SocketListeners />
               <RadixTooltip delayDuration={200} skipDelayDuration={0}>
                 <AppClientProviders>
-                  <ContextoMenuSwiperEsquerdaProvider>
-                    <InicializadorCache>
-                      <ConteudoContextualizado>
-                        <ContainerEscalavel>
-                          <ContextoCopiarParaClipboardProvider>
-                            <NavigationBridgeProvider />
-                            {children}
-                            <ClipboardToast />
-                          </ContextoCopiarParaClipboardProvider>
-                        </ContainerEscalavel>
-                        {/* <BackgroundAudio /> */}
-                      </ConteudoContextualizado>
-                    </InicializadorCache>
-                  </ContextoMenuSwiperEsquerdaProvider>
+                  <Contexto__Chat__Provider>
+                    <ContextoMenuSwiperEsquerdaProvider>
+                      <InicializadorCache>
+                        <ConteudoContextualizado>
+                          <ConteinerEscalavel>
+                            <ContextoCopiarParaClipboardProvider>
+                              <NavigationBridgeProvider />
+                              {children}
+                              <ClipboardToast />
+                            </ContextoCopiarParaClipboardProvider>
+                          </ConteinerEscalavel>
+                          {/* <BackgroundAudio /> */}
+                        </ConteudoContextualizado>
+                      </InicializadorCache>
+                    </ContextoMenuSwiperEsquerdaProvider>
+                  </Contexto__Chat__Provider>
                 </AppClientProviders>
               </RadixTooltip>
             </ContextoAutenticacaoProvider>

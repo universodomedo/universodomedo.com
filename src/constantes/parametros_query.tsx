@@ -1,4 +1,5 @@
 export const QUERY_PARAMS = {
+    AVENTURA: 'aventura',
     EPISODIO: 'episodio',
     PERSONAGEM: 'personagem',
     SESSAO: 'sessao',

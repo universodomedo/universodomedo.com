@@ -1,0 +1,11 @@
+div.recipiente_avisos_sessoes_previstas {
+    width: 57%;
+    text-align: center;
+}
+
+.recipiente_listagem_sessoes_jogador {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    text-align: center;
+}

@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { PersonagemVisualizacaoDetalhadaDto } from 'types-nora-api';
 
-import { PersonagemDto } from 'types-nora-api';
 import { me_obtemPersonagensPorTipo } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 
 interface ContextoListagemPersonagensProps {
-    personagens: PersonagemDto[];
+    personagens: PersonagemVisualizacaoDetalhadaDto[];
 };
 
 const ContextoListagemPersonagens = createContext<ContextoListagemPersonagensProps | undefined>(undefined);
@@ -19,7 +19,7 @@ export const useContextoListagemPersonagens = (): ContextoListagemPersonagensPro
 
 export const ContextoListagemPersonagensProvider = ({ children, idTipoPersonagem }: { children: React.ReactNode; idTipoPersonagem: number; }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [personagens, setPersonagens] = useState<PersonagemDto[]>([]);
+    const [personagens, setPersonagens] = useState<PersonagemVisualizacaoDetalhadaDto[]>([]);
 
     async function buscaTodosPersonagensUsuario() {
         setCarregando('Carregando personagens');

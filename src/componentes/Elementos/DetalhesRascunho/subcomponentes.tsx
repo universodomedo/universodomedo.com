@@ -1,17 +1,24 @@
 import styles from './styles.module.css';
 
-import { DetalheRascunhoAventuraDto, DetalheRascunhoSessaoUnicaCanonicaDto, DetalheRascunhoSessaoUnicaNaoCanonicaDto, RascunhoDto } from 'types-nora-api';
+import { DetalheRascunhoAventuraCompletaDto, DetalheRascunhoSessaoUnicaCanonicaCompletaDto, DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto, ESTILOS_SESSAO_MESTRADA, RascunhoCompletaDto } from 'types-nora-api';
 
 import VisualizadorConteudoTiptap from 'Componentes/Elementos/Tiptap/VisualizadorConteudoTiptap/VisualizadorConteudoTiptap';
 
-export function DadosResumo({ rascunho }: { rascunho: RascunhoDto }) {
-    if (rascunho.estiloSessaoMestrada.id === 1) return <DadosResumo_Aventura detalheRascunhoAventura={rascunho.detalheRascunhoAventura!} />
-    if (rascunho.estiloSessaoMestrada.id === 2) return <DadosResumo_SessaoUnicaCanonica detalheRascunhoSessaoUnicaCanonica={rascunho.detalheRascunhoSessaoUnicaCanonica!} />
-    if (rascunho.estiloSessaoMestrada.id === 3) return <DadosResumo_SessaoUnicaNaoCanonico detalheRascunhoSessaoUnicaNaoCanonica={rascunho.detalheRascunhoSessaoUnicaNaoCanonica!} />
-    else return <></>;
+export function DadosResumo({ rascunho }: { rascunho: RascunhoCompletaDto }) {
+    if (!rascunho.detalheRascunho) return <h3>Não existem configurações para esse Rascunho</h3>;
+
+    return (
+        <div className={styles.recipiente_dados_rascunho}>
+            {
+                rascunho.idEstiloSessaoMestrada === ESTILOS_SESSAO_MESTRADA.AVENTURA.id ? <DadosResumo_Aventura detalheRascunhoAventura={rascunho.detalheRascunho} />
+                : rascunho.idEstiloSessaoMestrada === ESTILOS_SESSAO_MESTRADA.SESSAO_UNICA_CANONICA.id ? <DadosResumo_SessaoUnicaCanonica detalheRascunhoSessaoUnicaCanonica={rascunho.detalheRascunho} />
+                : <DadosResumo_SessaoUnicaNaoCanonico detalheRascunhoSessaoUnicaNaoCanonica={rascunho.detalheRascunho} />
+            }
+        </div>
+    );
 };
 
-function DadosResumo_Aventura({ detalheRascunhoAventura }: { detalheRascunhoAventura: DetalheRascunhoAventuraDto }) {
+function DadosResumo_Aventura({ detalheRascunhoAventura }: { detalheRascunhoAventura: DetalheRascunhoAventuraCompletaDto }) {
     return (
         <>
             <div id={styles.recipiente_opcoes_detalhes_rascunho}>
@@ -24,7 +31,7 @@ function DadosResumo_Aventura({ detalheRascunhoAventura }: { detalheRascunhoAven
     );
 };
 
-function DadosResumo_SessaoUnicaCanonica({ detalheRascunhoSessaoUnicaCanonica }: { detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaDto }) {
+function DadosResumo_SessaoUnicaCanonica({ detalheRascunhoSessaoUnicaCanonica }: { detalheRascunhoSessaoUnicaCanonica: DetalheRascunhoSessaoUnicaCanonicaCompletaDto }) {
     return (
         <>
             <div id={styles.recipiente_opcoes_detalhes_rascunho}>
@@ -44,7 +51,7 @@ function DadosResumo_SessaoUnicaCanonica({ detalheRascunhoSessaoUnicaCanonica }:
     );
 };
 
-function DadosResumo_SessaoUnicaNaoCanonico({ detalheRascunhoSessaoUnicaNaoCanonica }: { detalheRascunhoSessaoUnicaNaoCanonica: DetalheRascunhoSessaoUnicaNaoCanonicaDto }) {
+function DadosResumo_SessaoUnicaNaoCanonico({ detalheRascunhoSessaoUnicaNaoCanonica }: { detalheRascunhoSessaoUnicaNaoCanonica: DetalheRascunhoSessaoUnicaNaoCanonicaCompletaDto }) {
     return (
         <>
             <div id={styles.recipiente_opcoes_detalhes_rascunho}>

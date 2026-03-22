@@ -3,27 +3,12 @@
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-import { ContextoPaginaInicialJogadorProvider, useContextoPaginaInicialJogador } from 'Contextos/ContextoPaginaInicialJogador/contexto';
-import { AvisosDePersonagensEFichas } from 'Componentes/Elementos/AvisosDePersonagensEFichas/AvisosDePersonagensEFichas';
-import UnificaPersonagemEFichaParaUsuario from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/UnificaPersonagemEFichaParaUsuario/UnificaPersonagemEFichaParaUsuario';
+import { Conteiner__PaginaJogador } from 'Conteineres/PaginaJogador/conteiner';
 
-export function PaginaJogador_Client() {
+export default function PaginaJogador_Conteiner() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.jogador}>
-            <ContextoPaginaInicialJogadorProvider idTipoPersonagem={1}>
-                <PaginaJogador_Slot />
-            </ContextoPaginaInicialJogadorProvider>
+            <Conteiner__PaginaJogador />
         </ControladorSlot>
-    );
-};
-
-function PaginaJogador_Slot() {
-    const { personagens, fichas } = useContextoPaginaInicialJogador();
-    
-    return (
-        <>
-            <AvisosDePersonagensEFichas />
-            <UnificaPersonagemEFichaParaUsuario personagens={personagens} fichasTemporarias={fichas} />
-        </>
     );
 };

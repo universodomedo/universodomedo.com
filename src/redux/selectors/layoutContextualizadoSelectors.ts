@@ -6,6 +6,7 @@ export function selectLayoutTitulo(state: RootState) { return state.layoutContex
 export function selectLayoutEscondeFundo(state: RootState) { return state.layoutContextualizado.escondeFundo ?? false; }
 export function selectLayoutProporcaoConteudo(state: RootState) { return state.layoutContextualizado.proporcaoConteudo; }
 export function selectLayoutFecharProps(state: RootState) { return state.layoutContextualizado.fecharProps ?? undefined; }
+export const selectLayoutEsconderMenu = (state: RootState) => state.layoutContextualizado.esconderMenu;
 
 export function selectLayoutProporcoes(state: RootState) {
     const raw = state.layoutContextualizado.proporcaoConteudo;

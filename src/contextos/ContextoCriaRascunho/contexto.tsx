@@ -1,11 +1,13 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { EstiloSessaoMestradaDto } from 'types-nora-api';
 
-import { useContextoRascunhosMestre } from 'Contextos/ContextoRascunhosMestre/contexto';
 import { me_salvarRascunho } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { ModalCriacaoRascunho } from 'Componentes/ElementosModais/ModalCriacaoRascunho/ModalCriacaoRascunho';
 
 interface ContextoCriaRascunhoProps {
+    estilosSessaoMestrada: EstiloSessaoMestradaDto[];
     titulo: string;
     setTitulo: (v: string) => void;
     idEstiloSessaoSelecionado: number;
@@ -22,8 +24,7 @@ export const useContextoCriaRascunho = (): ContextoCriaRascunhoProps => {
     return context;
 };
 
-export const ContextoCriaRascunhoProvider = ({ children }: { children: React.ReactNode }) => {
-    const { estilosSessaoMestrada } = useContextoRascunhosMestre();
+export const ContextoCriaRascunhoProvider = ({ estilosSessaoMestrada, isModalOpen, setIsModalOpen }: { estilosSessaoMestrada: EstiloSessaoMestradaDto[]; isModalOpen: boolean; setIsModalOpen: (open: boolean) => void; }) => {
     const [titulo, setTitulo] = useState('');
     const [idEstiloSessaoSelecionado, setIdEstiloSessaoSelecionado] = useState<number>(estilosSessaoMestrada.length === 1 ? estilosSessaoMestrada[0].id : 0);
 
@@ -41,8 +42,8 @@ export const ContextoCriaRascunhoProvider = ({ children }: { children: React.Rea
     };
     
     return (
-        <ContextoCriaRascunho.Provider value={{ titulo, setTitulo, idEstiloSessaoSelecionado, setIdEstiloSessaoSelecionado, podeCriar, handleCriar }}>
-            {children}
+        <ContextoCriaRascunho.Provider value={{ estilosSessaoMestrada, titulo, setTitulo, idEstiloSessaoSelecionado, setIdEstiloSessaoSelecionado, podeCriar, handleCriar }}>
+            <ModalCriacaoRascunho isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </ContextoCriaRascunho.Provider>
     );
 };

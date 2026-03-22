@@ -1,8 +1,5 @@
 'use client';
 
-import { EstiloSessaoMestradaDto } from 'types-nora-api';
-
-import { useContextoRascunhosMestre } from "Contextos/ContextoRascunhosMestre/contexto";
 import { useContextoCriaRascunho } from 'Contextos/ContextoCriaRascunho/contexto';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
@@ -20,8 +17,7 @@ export function ModalCriacaoRascunho({ isModalOpen, setIsModalOpen }: { isModalO
 };
 
 function ConteudoModal() {
-    const { estilosSessaoMestrada } = useContextoRascunhosMestre();
-    const { titulo, setTitulo, idEstiloSessaoSelecionado, setIdEstiloSessaoSelecionado } = useContextoCriaRascunho();
+    const { estilosSessaoMestrada, titulo, setTitulo, idEstiloSessaoSelecionado, setIdEstiloSessaoSelecionado } = useContextoCriaRascunho();
 
     return (
         <>

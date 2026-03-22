@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import { useState } from 'react';
-import { PersonagemDto } from 'types-nora-api';
+import { PersonagemAvatarDto, PersonagemCompletaDto } from 'types-nora-api';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto.tsx';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
@@ -30,14 +30,14 @@ export default function BarraUsuario() {
             </div>
             <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <Modal.Content cabecalho={ { titulo: 'Atualizar Avatar' } }>
-                    <ConteudoModalAtualizaAvatar listaAvatares={usuarioLogado.personagens?.filter(personagem => personagem.imagemAvatar !== null) ?? []} idPersonagemSelecinadoAtualmente={usuarioLogado.customizacao.personagemAvatarPrincipal?.id} />
+                    <ConteudoModalAtualizaAvatar listaAvatares={usuarioLogado.personagens?.filter(personagem => personagem.caminhoAvatarPersonagem !== null) ?? []} idPersonagemSelecinadoAtualmente={usuarioLogado.customizacao.personagemAvatarPrincipal?.idPersonagem} />
                 </Modal.Content>
             </Modal>
         </>
     );
 };
 
-function ConteudoModalAtualizaAvatar({ listaAvatares, idPersonagemSelecinadoAtualmente }: { listaAvatares: PersonagemDto[], idPersonagemSelecinadoAtualmente: number | undefined; }) {
+function ConteudoModalAtualizaAvatar({ listaAvatares, idPersonagemSelecinadoAtualmente }: { listaAvatares: PersonagemAvatarDto[], idPersonagemSelecinadoAtualmente: number | undefined; }) {
     async function atualizarAvatarUsuario(idPersonagem: number) {
         if (idPersonagemSelecinadoAtualmente === idPersonagem) return;
 
@@ -57,9 +57,9 @@ function ConteudoModalAtualizaAvatar({ listaAvatares, idPersonagemSelecinadoAtua
             ) : (
                 <>
                     {listaAvatares.map(personagem => (
-                        <div key={personagem.id} className={styles.recipiente_celula_avatar} onClick={() => { atualizarAvatarUsuario(personagem.id) }}>
-                            <div className={`${styles.recipiente_avatar} ${idPersonagemSelecinadoAtualmente === personagem.id ? styles.selecionado_atual : ''}`}>
-                                <RecipienteImagem src={personagem.imagemAvatar?.fullPath} />
+                        <div key={personagem.idPersonagem} className={styles.recipiente_celula_avatar} onClick={() => { atualizarAvatarUsuario(personagem.idPersonagem) }}>
+                            <div className={`${styles.recipiente_avatar} ${idPersonagemSelecinadoAtualmente === personagem.idPersonagem ? styles.selecionado_atual : ''}`}>
+                                <RecipienteImagem src={personagem.caminhoAvatarPersonagem} />
                             </div>
                         </div>
                     ))}

@@ -1,34 +1,36 @@
-import { useContextoPaginaAventura } from 'Contextos/ContextoPaginaAventura/contexto';
-import { PodcastEpisodio, TrailerGrupoAventura, VideoEpisodio } from './subcomponentes';
-import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
+// to do
 
-export function CorpoGrupoAventura() {
-    const { sessaoSelecionada } = useContextoPaginaAventura();
+// import { useContextoPaginaAventura } from 'Contextos/ContextoPaginaAventura/contexto';
+// import { PodcastEpisodio, TrailerGrupoAventura, VideoEpisodio } from './subcomponentes';
+// import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 
-    if (!sessaoSelecionada) return <CorpoPaginaInicial />
+// export function CorpoGrupoAventura() {
+//     const { sessaoSelecionada } = useContextoPaginaAventura();
 
-    return <CorpoEpisodio />
-};
+//     if (!sessaoSelecionada) return <CorpoPaginaInicial />
 
-function CorpoPaginaInicial() {
-    return (
-        <>
-            <TrailerGrupoAventura />
-        </>
-    );
-};
+//     return <CorpoEpisodio />
+// };
 
-function CorpoEpisodio() {
-    const { sessaoSelecionada } = useContextoPaginaAventura();
+// function CorpoPaginaInicial() {
+//     return (
+//         <>
+//             <TrailerGrupoAventura />
+//         </>
+//     );
+// };
 
-    return (
-        <>
-            <SecaoDeConteudo fit>
-                {sessaoSelecionada && (<h3>{sessaoSelecionada.detalheSessaoAventura.episodioPorExtenso}</h3>)}
-            </SecaoDeConteudo>
+// function CorpoEpisodio() {
+//     const { sessaoSelecionada } = useContextoPaginaAventura();
 
-            <VideoEpisodio />
-            <PodcastEpisodio />
-        </>
-    );
-};
+//     return (
+//         <>
+//             <SecaoDeConteudo fit><></>
+//                 {/* {sessaoSelecionada && (<h3>{sessaoSelecionada.detalheSessaoAventura.episodioPorExtenso}</h3>)} */}
+//             </SecaoDeConteudo>
+
+//             <VideoEpisodio />
+//             <PodcastEpisodio />
+//         </>
+//     );
+// };

@@ -4,6 +4,12 @@
 
 .option_texto {
     width: 100%;
+
+    &.option_mundo_aberto {
+        padding-bottom: 0.6em;
+        margin-bottom: 0.6em;
+        border-bottom: 0.08em solid rgba(255, 255, 255, 0.2);
+    }
 }
 
 .single_texto {

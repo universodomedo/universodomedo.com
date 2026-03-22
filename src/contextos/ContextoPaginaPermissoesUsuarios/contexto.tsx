@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { UsuarioDto } from 'types-nora-api';
+import { UsuarioCompletaDto } from 'types-nora-api';
 
 import { obtemDadosEPermissoes } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaPermissoesUsuariosProps {
-    usuarioSelecionado: UsuarioDto | null;
+    usuarioSelecionado: UsuarioCompletaDto | null;
     selecionaIdUsuario: (idUsuario: number | null) => void;
 };
 
@@ -21,7 +21,7 @@ export const useContextoPaginaPermissoesUsuarios = (): ContextoPaginaPermissoesU
 export const ContextoPaginaPermissoesUsuariosProvider = ({ children }: { children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
     const [idUsuarioSelecionado, setIdUsuarioSelecionado] = useState<number | null>(null);
-    const [usuarioSelecionado, setUsuarioSelecionado] = useState<UsuarioDto | null>(null);
+    const [usuarioSelecionado, setUsuarioSelecionado] = useState<UsuarioCompletaDto | null>(null);
 
     async function buscaUsuarioComPermissoes() {
         setCarregando('Buscando Usuário e suas Permissões');

@@ -1,0 +1,80 @@
+.recipiente_interno_selecionador_personagem {
+    width: 100%;
+}
+
+.option_row {
+    display: flex;
+    align-items: center;
+    gap: 0.65em;
+}
+
+.option_avatar, .avatar_placeholder {
+    position: relative;
+    width: 2.1em;
+    aspect-ratio: 1;
+    border-radius: 999em;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.option_textos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12em;
+    line-height: 1;
+}
+
+.option_nome {
+    color: #D9D9D9;
+    font-weight: 800;
+}
+
+.option_id {
+    color: rgba(217, 217, 217, 0.75);
+    font-size: 0.85em;
+}
+
+.single_row {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+}
+
+.single_avatar, .avatar_placeholder {
+    position: relative;
+    width: 1.7em;
+    aspect-ratio: 1;
+    border-radius: 999em;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.single_textos {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    line-height: 1;
+}
+
+.single_nome {
+    color: #D9D9D9;
+    font-weight: 800;
+}
+
+.single_id {
+    color: rgba(217, 217, 217, 0.75);
+    font-size: 0.85em;
+}
+
+.option_avatar, .single_avatar {
+    object-fit: cover;
+}
+
+.avatar_placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(217, 217, 217, 0.8);
+    font-weight: 800;
+}

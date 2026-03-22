@@ -1,0 +1,24 @@
+div.recipiente_secao_participante {
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+    text-align: center;
+    align-items: center;
+}
+
+.recipiente_descricao_sessao {
+    width: 60%;
+}
+
+.recipiente_dados_participante {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5em;
+}
+
+.recipiente_avatar_seu_personagem_participante_dessa_sessao {
+    position: relative;
+    height: 5em;
+    aspect-ratio: 1;
+}

@@ -2,10 +2,34 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    align-items: center;
 }
 
 .recipiente_dados_ficha {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+}
+
+.recipiente_dados_sessao {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.recipiente_dados_sessao_unica_amarrada_nessa_ficha {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
+}
+
+.recipiente_capa_sessao_amarrada {
+    position: relative;
+    height: 20em;
+    aspect-ratio: 16 / 9;
 }
 
 .recipiente_acoes_ficha {
@@ -16,4 +40,38 @@
         color: red;
         border-color: #3e1515;
     }
+}
+
+
+.recipiente_conteudo_pagina_personagem_selecionado {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    align-items: center;
+    gap: 1em;
+}
+
+.botoes_subpaginas_personagem {
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+
+    & button {
+        cursor: pointer;
+        background-color: #fff;
+        border-radius: 1em;
+        font-weight: 600;
+        padding: .6em;
+    }
+}
+
+div.recipiente_subconteudo_pagina_personagem_selecionado {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 75%;
+    overflow: hidden;
 }

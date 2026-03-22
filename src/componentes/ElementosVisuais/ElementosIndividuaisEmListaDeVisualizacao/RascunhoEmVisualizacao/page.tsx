@@ -1,12 +1,12 @@
 import styles from './styles.module.css';
 
-import { RascunhoDto } from 'types-nora-api';
+import { RascunhoCompletaDto } from 'types-nora-api';
 
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
-import { useContextoRascunhosMestre } from 'Contextos/ContextoRascunhosMestre/contexto';
+import { useContextoPaginaRascunhosMestre__SemRascunhoSelecionado } from 'Contextos/ContextoPaginaRascunhosMestre__SemRascunhoSelecionado/contexto';
 
-export default function RascunhoEmVisualizacao({ rascunho }: { rascunho: RascunhoDto }) {
-    const { selecionaRascunho } = useContextoRascunhosMestre();
+export default function RascunhoEmVisualizacao({ rascunho }: { rascunho: RascunhoCompletaDto }) {
+    const { selecionaRascunho } = useContextoPaginaRascunhosMestre__SemRascunhoSelecionado();
     
     return (
         <DivClicavel className={styles.recipiente_item_rascunho} desabilitado={!rascunho.detalheUtilizacaoRascunho.disponivel} classeParaDesabilitado={styles.rascunho_indisponivel} onClick={() => selecionaRascunho(rascunho.id)}>

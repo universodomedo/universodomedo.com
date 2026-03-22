@@ -1,3 +1,3 @@
-import { Pagina_EmJogo_Client } from './componentes';
+import PaginaEmJogo_Conteiner from './componentes';
 
-export default function Pagina_EmJogo() { return <Pagina_EmJogo_Client /> };
+export default function Pagina_EmJogo() { return <PaginaEmJogo_Conteiner /> };

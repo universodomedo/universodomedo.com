@@ -2,13 +2,13 @@
 
 import styles from './styles.module.css';
 
-import { ArquivoDto } from "types-nora-api";
+import { ArquivoCompletaDto } from "types-nora-api";
 
 import RecipienteImagemPadrao from 'Uteis/ImagemLoader/RecipienteImagemPadrao';
 import RecipienteAviso from '../RecipienteAviso/RecipienteAviso';
 
 
-export default function ImagemPendente({ arquivoPendente }: { arquivoPendente: ArquivoDto }) {
+export default function ImagemPendente({ arquivoPendente }: { arquivoPendente: ArquivoCompletaDto }) {
     return (
         <>
             <div className={styles.recipiente_visualizador_imagem}>

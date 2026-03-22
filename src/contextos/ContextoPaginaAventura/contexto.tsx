@@ -1,147 +1,149 @@
-'use client';
+// to do
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { useSearchParams, usePathname } from 'next/navigation';
-import { GrupoAventuraDto, SessaoDto } from 'types-nora-api';
+// 'use client';
 
-import { obtemSessaoGeral, buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+// import { createContext, useContext, useEffect, useState } from 'react';
+// import { useSearchParams, usePathname } from 'next/navigation';
+// import { GrupoAventuraCompletaDto, SessaoCompletaDto } from 'types-nora-api';
 
-import { QUERY_PARAMS } from 'Constantes/parametros_query';
+// import { obtemSessaoGeral, buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
-interface ContextoPaginaAventuraProps {
-    grupoAventuraSelecionado: GrupoAventuraDto;
-    buscaGrupoAventuraSelecionado: (idGrupoAventura: number) => void;
-    sessaoSelecionada: SessaoDto | null;
-    buscaSessao: (idSessao: number) => void;
-    limpaSessao: () => void;
-    podeAlterarSessaoManualmente: { podeBuscarAnterior: boolean, podeBuscarSeguinte: boolean };
-    alteraSessaoManualmente: (direcao: 'anterior' | 'seguinte') => void;
-};
+// import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
-const ContextoPaginaAventura = createContext<ContextoPaginaAventuraProps | undefined>(undefined);
+// interface ContextoPaginaAventuraProps {
+//     grupoAventuraSelecionado: GrupoAventuraCompletaDto;
+//     buscaGrupoAventuraSelecionado: (idGrupoAventura: number) => void;
+//     sessaoSelecionada: SessaoCompletaDto | null;
+//     buscaSessao: (idSessao: number) => void;
+//     limpaSessao: () => void;
+//     podeAlterarSessaoManualmente: { podeBuscarAnterior: boolean, podeBuscarSeguinte: boolean };
+//     alteraSessaoManualmente: (direcao: 'anterior' | 'seguinte') => void;
+// };
 
-export const useContextoPaginaAventura = (): ContextoPaginaAventuraProps => {
-    const context = useContext(ContextoPaginaAventura);
-    if (!context) throw new Error('useContextoPaginaAventura precisa estar dentro de um ContextoPaginaAventura');
-    return context;
-};
+// const ContextoPaginaAventura = createContext<ContextoPaginaAventuraProps | undefined>(undefined);
 
-export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, episodioIndexInicial = null }: { children: React.ReactNode; idGrupoAventura: number; episodioIndexInicial?: number | null; }) => {
-    const [carregando, setCarregando] = useState<string | null>(null);
-    const [grupoAventuraSelecionado, setGrupoAventuraSelecionado] = useState<GrupoAventuraDto | null>(null);
-    const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
+// export const useContextoPaginaAventura = (): ContextoPaginaAventuraProps => {
+//     const context = useContext(ContextoPaginaAventura);
+//     if (!context) throw new Error('useContextoPaginaAventura precisa estar dentro de um ContextoPaginaAventura');
+//     return context;
+// };
 
-    const searchParams = useSearchParams();
-    const pathname = usePathname();
+// export const ContextoPaginaAventuraProvider = ({ children, idGrupoAventura, episodioIndexInicial = null }: { children: React.ReactNode; idGrupoAventura: number; episodioIndexInicial?: number | null; }) => {
+//     const [carregando, setCarregando] = useState<string | null>(null);
+//     const [grupoAventuraSelecionado, setGrupoAventuraSelecionado] = useState<GrupoAventuraCompletaDto | null>(null);
+//     const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoCompletaDto | null>(null);
 
-    async function buscaGrupoAventuraSelecionado(idGrupoAventura: number) {
-        setCarregando('Buscando Episódios');
+//     const searchParams = useSearchParams();
+//     const pathname = usePathname();
 
-        try {
-            setGrupoAventuraSelecionado(await buscaGrupoAventuraEspecifico(idGrupoAventura));
-        } catch {
-            setGrupoAventuraSelecionado(null);
-        } finally {
-            setCarregando(null);
-        }
-    };
+//     async function buscaGrupoAventuraSelecionado(idGrupoAventura: number) {
+//         setCarregando('Buscando Episódios');
 
-    async function buscaSessao(idSessao: number) {
-        setCarregando('Buscando Sessão');
+//         try {
+//             setGrupoAventuraSelecionado(await buscaGrupoAventuraEspecifico(idGrupoAventura));
+//         } catch {
+//             setGrupoAventuraSelecionado(null);
+//         } finally {
+//             setCarregando(null);
+//         }
+//     };
 
-        try {
-            setSessaoSelecionada(await obtemSessaoGeral(idSessao));
-        } catch {
-            setSessaoSelecionada(null);
-        } finally {
-            setCarregando(null);
-        }
-    };
+//     async function buscaSessao(idSessao: number) {
+//         setCarregando('Buscando Sessão');
 
-    async function limpaSessao() { setSessaoSelecionada(null); };
+//         try {
+//             setSessaoSelecionada(await obtemSessaoGeral(idSessao));
+//         } catch {
+//             setSessaoSelecionada(null);
+//         } finally {
+//             setCarregando(null);
+//         }
+//     };
 
-    const detalhesSessao = !grupoAventuraSelecionado ? [] : grupoAventuraSelecionado.detalhesSessoesAventuras || [];
-    const indexAtual = sessaoSelecionada ? detalhesSessao.findIndex(detalheSessao => detalheSessao.sessao.id === sessaoSelecionada.id) : -1;
+//     async function limpaSessao() { setSessaoSelecionada(null); };
 
-    const navegacaoSessoes = {
-        idSessaoAnterior: !sessaoSelecionada
-            ? undefined
-            : indexAtual === 0
-                ? null
-                : detalhesSessao[indexAtual - 1]?.sessao.id,
+//     const detalhesSessao = !grupoAventuraSelecionado ? [] : grupoAventuraSelecionado.detalhesSessoesAventuras || [];
+//     const indexAtual = sessaoSelecionada ? detalhesSessao.findIndex(detalheSessao => detalheSessao.sessao.id === sessaoSelecionada.id) : -1;
 
-        idSessaoSeguinte: !sessaoSelecionada
-            ? detalhesSessao[0]?.sessao.id
-            : indexAtual === detalhesSessao.length - 1
-                ? undefined
-                : detalhesSessao[indexAtual + 1]?.sessao.id
-    };
+//     const navegacaoSessoes = {
+//         idSessaoAnterior: !sessaoSelecionada
+//             ? undefined
+//             : indexAtual === 0
+//                 ? null
+//                 : detalhesSessao[indexAtual - 1]?.sessao.id,
 
-    const podeAlterarSessaoManualmente: { podeBuscarAnterior: boolean, podeBuscarSeguinte: boolean } = {
-        podeBuscarAnterior: navegacaoSessoes.idSessaoAnterior !== undefined,
-        podeBuscarSeguinte: navegacaoSessoes.idSessaoSeguinte !== undefined,
-    };
+//         idSessaoSeguinte: !sessaoSelecionada
+//             ? detalhesSessao[0]?.sessao.id
+//             : indexAtual === detalhesSessao.length - 1
+//                 ? undefined
+//                 : detalhesSessao[indexAtual + 1]?.sessao.id
+//     };
 
-    async function alteraSessaoManualmente(direcao: 'anterior' | 'seguinte') {
-        if ((direcao === 'anterior' && navegacaoSessoes.idSessaoAnterior === undefined) || (direcao === 'seguinte') && navegacaoSessoes.idSessaoSeguinte === undefined) return;
+//     const podeAlterarSessaoManualmente: { podeBuscarAnterior: boolean, podeBuscarSeguinte: boolean } = {
+//         podeBuscarAnterior: navegacaoSessoes.idSessaoAnterior !== undefined,
+//         podeBuscarSeguinte: navegacaoSessoes.idSessaoSeguinte !== undefined,
+//     };
 
-        if (direcao === 'anterior' && !navegacaoSessoes.idSessaoAnterior) {
-            limpaSessao();
-            return;
-        }
+//     async function alteraSessaoManualmente(direcao: 'anterior' | 'seguinte') {
+//         if ((direcao === 'anterior' && navegacaoSessoes.idSessaoAnterior === undefined) || (direcao === 'seguinte') && navegacaoSessoes.idSessaoSeguinte === undefined) return;
 
-        const idSessaoBuscandoManualmente = direcao === 'anterior' ? navegacaoSessoes.idSessaoAnterior! : navegacaoSessoes.idSessaoSeguinte!;
-        buscaSessao(idSessaoBuscandoManualmente);
-    };
+//         if (direcao === 'anterior' && !navegacaoSessoes.idSessaoAnterior) {
+//             limpaSessao();
+//             return;
+//         }
 
-    const atualizarParametroURL = (episodioIndex: number | null) => {
-        const params = new URLSearchParams(searchParams.toString());
+//         const idSessaoBuscandoManualmente = direcao === 'anterior' ? navegacaoSessoes.idSessaoAnterior! : navegacaoSessoes.idSessaoSeguinte!;
+//         buscaSessao(idSessaoBuscandoManualmente);
+//     };
 
-        if (episodioIndex === null || episodioIndex === 0) {
-            params.delete(QUERY_PARAMS.EPISODIO);
-        } else {
-            params.set(QUERY_PARAMS.EPISODIO, episodioIndex.toString());
-        }
+//     const atualizarParametroURL = (episodioIndex: number | null) => {
+//         const params = new URLSearchParams(searchParams.toString());
 
-        const novaURL = `${pathname}?${params.toString()}`;
+//         if (episodioIndex === null || episodioIndex === 0) {
+//             params.delete(QUERY_PARAMS.EPISODIO);
+//         } else {
+//             params.set(QUERY_PARAMS.EPISODIO, episodioIndex.toString());
+//         }
 
-        window.history.replaceState(null, '', novaURL);
-    };
+//         const novaURL = `${pathname}?${params.toString()}`;
 
-    useEffect(() => {
-        buscaGrupoAventuraSelecionado(idGrupoAventura);
-    }, [idGrupoAventura]);
+//         window.history.replaceState(null, '', novaURL);
+//     };
 
-    useEffect(() => {
-        if (episodioIndexInicial === 0) {
-            limpaSessao();
-            return;
-        }
+//     useEffect(() => {
+//         buscaGrupoAventuraSelecionado(idGrupoAventura);
+//     }, [idGrupoAventura]);
 
-        if (episodioIndexInicial !== null && grupoAventuraSelecionado) {
-            const sessoesOrdenadas = grupoAventuraSelecionado.detalhesSessoesAventuras.sort((a, b) => a.episodio - b.episodio);
+//     useEffect(() => {
+//         if (episodioIndexInicial === 0) {
+//             limpaSessao();
+//             return;
+//         }
 
-            if (sessoesOrdenadas && episodioIndexInicial > 0 && episodioIndexInicial <= sessoesOrdenadas.length) {
-                const sessao = sessoesOrdenadas[episodioIndexInicial - 1];
-                buscaSessao(sessao.sessao.id);
-            }
-        }
-    }, [episodioIndexInicial, grupoAventuraSelecionado]);
+//         if (episodioIndexInicial !== null && grupoAventuraSelecionado) {
+//             const sessoesOrdenadas = grupoAventuraSelecionado.detalhesSessoesAventuras.sort((a, b) => a.episodio - b.episodio);
 
-    useEffect(() => {
-        if (sessaoSelecionada && sessaoSelecionada.detalheSessaoAventura?.episodio) atualizarParametroURL(sessaoSelecionada.detalheSessaoAventura.episodio);
-        else atualizarParametroURL(null);
-    }, [sessaoSelecionada]);
+//             if (sessoesOrdenadas && episodioIndexInicial > 0 && episodioIndexInicial <= sessoesOrdenadas.length) {
+//                 const sessao = sessoesOrdenadas[episodioIndexInicial - 1];
+//                 buscaSessao(sessao.sessao.id);
+//             }
+//         }
+//     }, [episodioIndexInicial, grupoAventuraSelecionado]);
 
-    if (carregando) return <div>{carregando}</div>;
+//     useEffect(() => {
+//         if (sessaoSelecionada && sessaoSelecionada.detalheSessaoAventura?.episodio) atualizarParametroURL(sessaoSelecionada.detalheSessaoAventura.episodio);
+//         else atualizarParametroURL(null);
+//     }, [sessaoSelecionada]);
 
-    if (!carregando && !grupoAventuraSelecionado) return <div>Erro ao buscar Aventura</div>
+//     if (carregando) return <div>{carregando}</div>;
 
-    if (!grupoAventuraSelecionado) return;
+//     if (!carregando && !grupoAventuraSelecionado) return <div>Erro ao buscar Aventura</div>
 
-    return (
-        <ContextoPaginaAventura.Provider value={{ grupoAventuraSelecionado, buscaGrupoAventuraSelecionado, sessaoSelecionada, buscaSessao, limpaSessao, podeAlterarSessaoManualmente, alteraSessaoManualmente }}>
-            {children}
-        </ContextoPaginaAventura.Provider>
-    );
-};
+//     if (!grupoAventuraSelecionado) return;
+
+//     return (
+//         <ContextoPaginaAventura.Provider value={{ grupoAventuraSelecionado, buscaGrupoAventuraSelecionado, sessaoSelecionada, buscaSessao, limpaSessao, podeAlterarSessaoManualmente, alteraSessaoManualmente }}>
+//             {children}
+//         </ContextoPaginaAventura.Provider>
+//     );
+// };

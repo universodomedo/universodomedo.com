@@ -35,7 +35,7 @@ function PaginaSessoesMestre_Contexto() {
                     <div key={sessao.id} className={styles.recipiente_sessao}>
                         <div className={styles.toolbar_sessao}>
                             <div className={styles.toolbar_esquerda}>
-                                <h3>Sessão {sessao.id} — {sessao.tituloInteligente.tituloCompleto}</h3>
+                                <h3>Sessão {sessao.id} — {sessao.tituloSessao}</h3>
                             </div>
 
                             <div className={styles.toolbar_direita}>
@@ -44,7 +44,7 @@ function PaginaSessoesMestre_Contexto() {
                         </div>
                         <DivClicavel key={0} className={styles.corpo_sessao} onClick={() => selecionaSessao(sessao.id)}>
                             <>
-                                <RecipienteCapa className={styles.recipiente_capa} sessao={sessao} />
+                                <RecipienteCapa className={styles.recipiente_capa} caminhoCapa={sessao.imagemCapa.caminhoCapa} />
 
                                 <div className={styles.dados_corpo_sessao}>
                                     <h4>Prevista para {formataData(sessao.dataPrevisaoInicio, 'dd/MM/yyyy HH:mm')}</h4>

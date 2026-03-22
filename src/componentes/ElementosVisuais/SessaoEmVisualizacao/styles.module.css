@@ -1,4 +1,4 @@
-#recipiente_sessao_selecionada {
+.recipiente_sessao_selecionada {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,7 +17,7 @@ div.recipiente_avatares {
     align-items: center;
 }
 
-#recipiente_avatares_jogadores {
+.recipiente_avatares_jogadores {
     display: flex;
     flex-direction: row;
     width: fit-content;

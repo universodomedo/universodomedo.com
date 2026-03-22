@@ -1,3 +1,3 @@
-import { RascunhoAventuraMestre_Client } from "./componentes";
+import RascunhoAventuraMestre_Conteiner from "./componentes";
 
-export default function RascunhoAventuraMestre() { return <RascunhoAventuraMestre_Client /> };
+export default function RascunhoAventuraMestre() { return <RascunhoAventuraMestre_Conteiner /> };

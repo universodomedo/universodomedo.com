@@ -1,11 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { ArquivoDto } from 'types-nora-api';
+import { ArquivoCompletaDto } from 'types-nora-api';
+
 import { me_obtemTodosArquivosAprovados } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaArtistaMinhasImagensProps {
-    arquivos: ArquivoDto[];
+    arquivos: ArquivoCompletaDto[];
 };
 
 const ContextoPaginaArtistaMinhasImagens = createContext<ContextoPaginaArtistaMinhasImagensProps | undefined>(undefined);
@@ -17,9 +18,8 @@ export const useContextoPaginaArtistaMinhasImagens = (): ContextoPaginaArtistaMi
 };
 
 export const ContextoPaginaArtistaMinhasImagensProvider = ({ children }: { children: React.ReactNode }) => {
-     console.log('?2');
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [arquivos, setArquivos] = useState<ArquivoDto[]>([]);
+    const [arquivos, setArquivos] = useState<ArquivoCompletaDto[]>([]);
 
     async function buscaMeusArquivos() {
         setCarregando('Buscando Arquivos');

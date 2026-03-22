@@ -1,0 +1,17 @@
+.container {
+    height: 100%;
+    max-width: 100%;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 2em;
+    padding: .65em .85em;
+    border-radius: 999em;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.08);
+    scrollbar-width: thin;
+    margin: auto;
+}

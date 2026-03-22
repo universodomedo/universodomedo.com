@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
-import { ArquivoDto, PAGINAS } from 'types-nora-api';
+import { ArquivoCompletaDto, PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
 import { ContextoPaginaSUDODeletarArquivosProvider, useContextoPaginaSUDODeletarArquivos } from 'Contextos/ContextoPaginaSUDODeletarArquivos/contexto';
@@ -34,7 +34,7 @@ function DeletarArquivos_Contexto() {
         )
 };
 
-function RenderizaArquivo({ arquivo }: { arquivo: ArquivoDto }) {
+function RenderizaArquivo({ arquivo }: { arquivo: ArquivoCompletaDto }) {
     const { enviaDelete } = useContextoPaginaSUDODeletarArquivos();
 
     return (

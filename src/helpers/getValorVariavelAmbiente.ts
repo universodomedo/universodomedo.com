@@ -1,6 +1,6 @@
-import { VariavelAmbienteDto } from "types-nora-api";
+import { VariavelAmbienteCompletaDto } from "types-nora-api";
 
-export default function getValorVariavelAmbiente<T = any>(variaveis: VariavelAmbienteDto[], chave: string): T | undefined {
+export default function getValorVariavelAmbiente<T = any>(variaveis: VariavelAmbienteCompletaDto[], chave: string): T | undefined {
     const variavel = variaveis.find(v => v.chave === chave);
     if (!variavel) return undefined;
 

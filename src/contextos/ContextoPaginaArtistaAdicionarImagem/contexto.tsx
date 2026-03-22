@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { ArquivoDto, TIPOS_ARQUIVO } from 'types-nora-api';
+import { ArquivoCompletaDto, TIPOS_ARQUIVO } from 'types-nora-api';
 
 import RecipienteUploader from "Contextos/ContextoUploadImagem/contexto";
 import { me_obtemArquivoPendente } from 'Uteis/ApiConsumer/ConsumerMiddleware';
@@ -27,7 +27,7 @@ export default function RecipienteUploadArquivoImagemArtista() {
 
 export const ContextoPaginaArtistaAdicionarImagemProvider = () => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [arquivoPendente, setArquivoPendente] = useState<ArquivoDto | null>(null);
+    const [arquivoPendente, setArquivoPendente] = useState<ArquivoCompletaDto | null>(null);
 
     const existeArquivoPendente = !carregando && arquivoPendente;
 

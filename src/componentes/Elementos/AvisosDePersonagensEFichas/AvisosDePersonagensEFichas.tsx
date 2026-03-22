@@ -1,7 +1,8 @@
-import { PAGINAS } from 'types-nora-api';
-import LinkInterno from '../LinkInterno/LinkInterno';
 import styles from './styles.module.css';
 
+import { PAGINAS } from 'types-nora-api';
+
+import LinkInterno from '../LinkInterno/LinkInterno';
 import RecipienteAviso from 'Componentes/ElementosVisuais/RecipienteAviso/RecipienteAviso';
 
 export function AvisosDePersonagensEFichas({ naoRenderizaAvisoFichaTemporaria, naoRenderizaAvisoPersonagem, naoRenderizaLinkFicha }: { naoRenderizaAvisoFichaTemporaria?: true; naoRenderizaAvisoPersonagem?: true; naoRenderizaLinkFicha?: true }) {

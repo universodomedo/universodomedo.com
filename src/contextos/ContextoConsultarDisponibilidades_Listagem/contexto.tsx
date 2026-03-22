@@ -1,10 +1,10 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { JanelaDisponibilidadeDto } from 'types-nora-api';
+import { JanelaDisponibilidadeCompletaDto } from 'types-nora-api';
 
 interface ContextoConsultarDisponibilidades_ListagemProps {
-    janelas: JanelaDisponibilidadeDto[] | null;
+    janelas: JanelaDisponibilidadeCompletaDto[] | null;
     isEmFoco: (idJanela: number) => boolean;
     toggleFoco: (idJanela: number) => void;
 };
@@ -17,7 +17,7 @@ export const useContextoConsultarDisponibilidades_Listagem = (): ContextoConsult
     return context;
 };
 
-export const ContextoConsultarDisponibilidades_ListagemProvider = ({ children, janelas }: { children: React.ReactNode; janelas: JanelaDisponibilidadeDto[] | null }) => {
+export const ContextoConsultarDisponibilidades_ListagemProvider = ({ children, janelas }: { children: React.ReactNode; janelas: JanelaDisponibilidadeCompletaDto[] | null }) => {
     const [idsEmFoco, setIdsEmFoco] = useState<number[]>([]);
 
     useEffect(() => {
@@ -36,8 +36,8 @@ export const ContextoConsultarDisponibilidades_ListagemProvider = ({ children, j
         if (!janelas) return null;
 
         const setEmFoco = new Set<number>(idsEmFoco);
-        const foco: JanelaDisponibilidadeDto[] = [];
-        const normal: JanelaDisponibilidadeDto[] = [];
+        const foco: JanelaDisponibilidadeCompletaDto[] = [];
+        const normal: JanelaDisponibilidadeCompletaDto[] = [];
 
         for (const j of janelas) (setEmFoco.has(j.id) ? foco : normal).push(j);
 

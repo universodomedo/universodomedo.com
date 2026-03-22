@@ -1,3 +1,9 @@
+.recipiente_dados_rascunho {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
 #recipiente_detalhes_rascunho {
     display: flex;
     flex-direction: column;

@@ -1,13 +1,13 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 import { useContextoRascunho } from 'Contextos/ContextoRascunho/contexto';
-import { DetalheRascunhoAventuraDto, RascunhoDto } from 'types-nora-api';
+import { PAYLOAD_DetalheRascunhoAventuraEdicaoDto, RascunhoAventuraCompletaDto } from 'types-nora-api';
 
 interface ContextoEdicaoRascunhoAventuraProps {
     descricao: Record<string, any> | null;
-    setDescricao: (v: Record<string, any> | null) => void;
+    setDescricao: (v: Record<string, any>) => void;
     podeSalvar: boolean;
     handleSalvar: () => void;
 };
@@ -20,39 +20,34 @@ export const useContextoEdicaoRascunhoAventura = (): ContextoEdicaoRascunhoAvent
     return context;
 };
 
-export const ContextoEdicaoRascunhoAventuraProvider = ({ children }: { children: React.ReactNode }) => {
-    const { salvaDetalhesRascunhoAventura, rascunho } = useContextoRascunho();
+export const ContextoEdicaoRascunhoAventuraProvider = ({ children, rascunho }: { children: React.ReactNode; rascunho: RascunhoAventuraCompletaDto; }) => {
+    const { salvaDetalhesRascunho } = useContextoRascunho();
 
-    const [descricao, setDescricao] = useState(rascunho?.detalheRascunhoAventura ? rascunho?.detalheRascunhoAventura.descricao : null);
+    const [descricao, setDescricao] = useState<Record<string, any>>(rascunho.detalheRascunho ? rascunho.detalheRascunho.descricao : {});
 
-    //
-
-    const detalheInicial = { descricao: rascunho?.detalheRascunhoAventura ? rascunho?.detalheRascunhoAventura.descricao : null };
+    const detalheInicial = { descricao: rascunho.detalheRascunho ? rascunho.detalheRascunho.descricao : {} };
     const houveModificacao = JSON.stringify(descricao) !== JSON.stringify(detalheInicial.descricao);
 
-    //
-
-    const podeSalvar: boolean = (houveModificacao);
+    const podeSalvar: boolean = houveModificacao;
 
     const handleSalvar = () => {
         const alteracoes: string[] = [];
 
-        if (JSON.stringify(descricao) !== JSON.stringify(detalheInicial.descricao))
-            alteracoes.push("Descrição foi alterada");
+        if (JSON.stringify(descricao) !== JSON.stringify(detalheInicial.descricao)) alteracoes.push('Descrição foi alterada');
 
         if (alteracoes.length < 1) return;
 
         const confirmacao = window.confirm(
-            "Tem certeza que deseja salvar as alterações?\n\n" +
-            alteracoes.map(a => `• ${a}`).join("\n")
+            'Tem certeza que deseja salvar as alterações?\n\n' +
+            alteracoes.map(a => `• ${a}`).join('\n')
         );
 
         if (!confirmacao) return;
 
-        salvaDetalhesRascunhoAventura({
-            rascunho: { id: rascunho?.id } as RascunhoDto,
+        salvaDetalhesRascunho({
+            fkRascunhoId: rascunho.id,
             descricao: descricao,
-        } as DetalheRascunhoAventuraDto);
+        });
     };
 
     return (

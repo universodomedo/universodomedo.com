@@ -5,7 +5,7 @@ import styles from '../styles.module.css';
 import React, { ReactNode } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMinus, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { PatentePericiaDto, PericiaDto } from 'types-nora-api';
+import { PatentePericiaCompletaDto, PericiaCompletaDto } from 'types-nora-api';
 
 import { useContextoEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 import { useContextoEdicaoFicha_GanhosCarregados } from 'Contextos/ContextoEdicaoFicha_GanhosCarregados/contexto';
@@ -37,7 +37,7 @@ export default function EdicaoPericias() {
     );
 };
 
-function CorpoPericia({ pericia, patentePericia }: { pericia: PericiaDto, patentePericia: PatentePericiaDto }) {
+function CorpoPericia({ pericia, patentePericia }: { pericia: PericiaCompletaDto, patentePericia: PatentePericiaCompletaDto }) {
     const { ganhos } = useContextoEdicaoFicha();
     const { executaEAtualiza } = useContextoEdicaoFicha_GanhosCarregados();
     
@@ -81,7 +81,7 @@ function CorpoPericia({ pericia, patentePericia }: { pericia: PericiaDto, patent
     );
 };
 
-function CorpoPontosPericiaLivre({ pericia, patentePericia }: { pericia: PericiaDto, patentePericia: PatentePericiaDto }) {
+function CorpoPontosPericiaLivre({ pericia, patentePericia }: { pericia: PericiaCompletaDto, patentePericia: PatentePericiaCompletaDto }) {
     const { ganhos } = useContextoEdicaoFicha();
     const { executaEAtualiza } = useContextoEdicaoFicha_GanhosCarregados();
     

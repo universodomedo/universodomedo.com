@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import { useState } from 'react';
-import { LinkDto, TipoLinkDto } from 'types-nora-api';
+import { LinkCompletaDto, TipoLinkCompletaDto } from 'types-nora-api';
 
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import { useContextoCadastroNovoLinkGrupoAventura } from 'Contextos/ContextoCadastroNovoLinkGrupoAventura/contexto';
@@ -67,9 +67,9 @@ function ConteudoModal() {
 
         await vinculaLinkDeGrupoAventura(idGrupoAventura, {
             sufixo: sufixoParaEnvio,
-            tipoLink: { id: idTipoLink } as TipoLinkDto,
+            tipoLink: { id: idTipoLink } as TipoLinkCompletaDto,
             descricao: descricao,
-        } as LinkDto);
+        } as LinkCompletaDto);
 
         window.location.reload();
     }

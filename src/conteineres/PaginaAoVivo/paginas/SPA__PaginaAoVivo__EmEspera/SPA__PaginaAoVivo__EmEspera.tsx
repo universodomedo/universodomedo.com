@@ -1,0 +1,75 @@
+'use client';
+
+import styles from './styles.module.css';
+
+import { useContextoPaginaAoVivo__EmEspera } from 'Contextos/ContextoPaginaAoVivo__EmEspera/contexto';
+import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { ContadorRegressivo } from 'Componentes/Elementos/ContadorRegressivo/ContadorRegressivo';
+import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
+import ItemListagemSessaoPrevista from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/ItemListagemSessaoPrevista/ItemListagemSessaoPrevista';
+
+export default function SPA__PaginaAoVivo__EmEspera() {
+    const { episodioSeguinte } = useContextoPaginaAoVivo__EmEspera();
+
+    return (
+        <div id={styles.recipiente_pagina_sessao}>
+            {!episodioSeguinte ? <PaginaSessao_SemSessaoEmEspera /> : <PaginaSessao_EmPreparo />}
+        </div>
+    );
+};
+
+function PaginaSessao_SemSessaoEmEspera() {
+    return (
+        <div id={styles.recipiente_sessao_prevista}>
+            <h1>Nenhuma Sessão Prevista</h1>
+        </div>
+    );
+};
+
+function PaginaSessao_EmPreparo() {
+    const { episodiosFuturos } = useContextoPaginaAoVivo__EmEspera();
+
+    return (
+        <div id={styles.recipiente_sessoes_em_preparo}>
+            <PaginaSessao_EpisodioSeguinte />
+            {episodiosFuturos.length > 0 && <PaginaSessao_EpisodiosFuturos />}
+        </div>
+    );
+};
+
+function PaginaSessao_EpisodioSeguinte() {
+    const { episodioSeguinte } = useContextoPaginaAoVivo__EmEspera();
+
+    if (!episodioSeguinte) return <></>;
+
+    return (
+        <div id={styles.recipiente_episodio_seguinte}>
+            <div id={styles.recipiente_capa_episodio_seguinte}>
+                <RecipienteImagem src={episodioSeguinte.imagemCapa.caminhoCapa} />
+            </div>
+            <div id={styles.recipiente_informacoes_episodio_seguinte}>
+                <div id={styles.recipiente_titulo_e_subtitulo_episodio_seguinte}>
+                    <h1>{episodioSeguinte.tituloInteligente.titulo}</h1>
+                    {episodioSeguinte.tituloInteligente.subtitulo && (<h3>{episodioSeguinte.tituloInteligente.subtitulo}</h3>)}
+                </div>
+                <h1 id={styles.episodio_seguinte_contagem_regressiva}>Começa em <span id={styles.episodio_seguinte_numeros_contagem_regressiva}><ContadorRegressivo dataAlvo={episodioSeguinte.dataPrevisaoInicio} /></span></h1>
+                {/* <h4 id={styles.episodio_seguinte_descricao_episodio}>Com os recursos de um novo bunker em mãos e entendendo mais sobre o Paranormal, o grupo volta à superficie e rumam novamente em direção ao Furacão na distância</h4> */}
+            </div>
+        </div>
+    );
+};
+
+function PaginaSessao_EpisodiosFuturos() {
+    const { episodiosFuturos } = useContextoPaginaAoVivo__EmEspera();
+
+    const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
+
+    return (
+        <div className={styles.recipiente_episodios_futuros} {...scrollableProps}>
+            <div className={styles.recipiente_lista_episodios_futuros}>
+                <h1>Sessões Futuras</h1>
+                {episodiosFuturos.map(ep => <ItemListagemSessaoPrevista key={ep.id} sessao={ep} />)}
+            </div>
+        </div>
+    );
+};

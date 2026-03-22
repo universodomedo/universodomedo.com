@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { SessaoDto } from 'types-nora-api';
+import { SessaoCompletaDto } from 'types-nora-api';
 
 import { obtemSessaoGeral } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaAdminSessaoProps {
-    sessao: SessaoDto;
+    sessao: SessaoCompletaDto;
 };
 
 const ContextoPaginaAdminSessao = createContext<ContextoPaginaAdminSessaoProps | undefined>(undefined);
@@ -19,7 +19,7 @@ export const useContextoPaginaAdminSessao = (): ContextoPaginaAdminSessaoProps =
 
 export const ContextoPaginaAdminSessaoProvider = ({ children, idSessao }: { children: React.ReactNode; idSessao: number; }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [sessao, setSessao] = useState<SessaoDto | null>(null);
+    const [sessao, setSessao] = useState<SessaoCompletaDto | null>(null);
 
     async function buscaSessaoGeral() {
         setCarregando('Buscando Sessão');

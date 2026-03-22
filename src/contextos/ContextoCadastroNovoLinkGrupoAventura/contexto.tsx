@@ -2,12 +2,12 @@
 
 import { ModalVincularLinkGrupoAventura } from 'Componentes/ElementosModais/ModalVincularLinkGrupoAventura/ModalVincularLinkGrupoAventura';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { TipoLinkDto } from 'types-nora-api';
+import { TipoLinkCompletaDto } from 'types-nora-api';
 import { obtemTodosTiposLink } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoCadastroNovoLinkGrupoAventuraProps {
     iniciaProcessoVinculoLinkGrupoAventura: (paramIdTipoLink: number) => void;
-    listaTiposLink: TipoLinkDto[];
+    listaTiposLink: TipoLinkCompletaDto[];
     idGrupoAventura: number;
     idTipoLink: number | null;
     descricao: string;
@@ -24,7 +24,7 @@ export const useContextoCadastroNovoLinkGrupoAventura = (): ContextoCadastroNovo
 export const ContextoCadastroNovoLinkGrupoAventuraProvider = ({ children, idGrupoAventura }: { children: React.ReactNode; idGrupoAventura: number; }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [listaTiposLink, setListaTiposLink] = useState<TipoLinkDto[]>([]);
+    const [listaTiposLink, setListaTiposLink] = useState<TipoLinkCompletaDto[]>([]);
     const [idTipoLink, setidTipoLink] = useState<number | null>(null);
 
     const descricao: string = (() => {

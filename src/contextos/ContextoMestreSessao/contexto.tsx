@@ -1,13 +1,13 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { SessaoDto } from 'types-nora-api';
+import { SessaoCompletaDto } from 'types-nora-api';
 
 import { me_atualizaCapaDeSessaoUnica, obtemSessaoGeral } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { toast } from 'Hooks/useToast';
 
 interface ContextoPaginaMestreSessaoProps {
-    sessaoSelecionada: SessaoDto;
+    sessaoSelecionada: SessaoCompletaDto;
     callbackSelecionaArquivo: (idArquivoSelecionado: number) => void;
 };
 
@@ -21,7 +21,7 @@ export const useContextoPaginaMestreSessao = (): ContextoPaginaMestreSessaoProps
 
 export const ContextoPaginaMestreSessaoProvider = ({ children, idSessao }: { children: React.ReactNode; idSessao: number; }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoDto | null>(null);
+    const [sessaoSelecionada, setSessaoSelecionada] = useState<SessaoCompletaDto | null>(null);
 
     async function buscaGrupoAventuraSelecionado(idSessao: number) {
         setCarregando('Buscando Sessão');

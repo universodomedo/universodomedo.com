@@ -1,14 +1,16 @@
-import styles from './styles.module.css';
+// to do
 
-import { CorpoGrupoAventura } from './componentes';
-import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
+// import styles from './styles.module.css';
 
-export default function CorpoAssistindoGrupoAventura() {
-    const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
+// import { CorpoGrupoAventura } from './componentes';
+// import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 
-    return (
-        <div id={styles.recipiente_corpo_foreground} {...scrollableProps}>
-            <CorpoGrupoAventura />
-        </div>
-    );
-};
+// export default function CorpoAssistindoGrupoAventura() {
+//     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
+
+//     return (
+//         <div id={styles.recipiente_corpo_foreground} {...scrollableProps}>
+//             <CorpoGrupoAventura />
+//         </div>
+//     );
+// };

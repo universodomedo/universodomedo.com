@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { CapacidadeDef, CAPACIDADES, type PaginaTemplate, type UsuarioDto, type VariavelAmbienteDto } from 'types-nora-api';
+import { CapacidadeDef, CAPACIDADES, UsuarioParaObjetoAutenticacaoDto, type PaginaTemplate, type VariavelAmbienteCompletaDto } from 'types-nora-api';
 
 import { obtemObjetoAutenticacao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import getValorVariavelAmbiente from 'Helpers/getValorVariavelAmbiente';
@@ -15,9 +15,9 @@ type CapacidadeNome = CapacidadeDef['nome'];
 
 interface ContextoAutenticacaoProps {
     checkAuth: (paginaAtualTemplate?: PaginaTemplate | null) => Promise<void>;
-    usuarioLogado: UsuarioDto | null;
+    usuarioLogado: UsuarioParaObjetoAutenticacaoDto | null;
     carregando: boolean;
-    variaveisAmbiente: VariavelAmbienteDto[];
+    variaveisAmbiente: VariavelAmbienteCompletaDto[];
     estaAutenticado: boolean;
     verificarCapacidade: (capacidade: CapacidadeDef) => boolean;
     cadastroPermitido: boolean;
@@ -32,8 +32,8 @@ export const useContextoAutenticacao = (): ContextoAutenticacaoProps => {
 };
 
 export const ContextoAutenticacaoProvider = ({ children }: { children: React.ReactNode }) => {
-    const [usuarioLogado, setUsuarioLogado] = useState<UsuarioDto | null>(null);
-    const [variaveisAmbiente, setVariaveisAmbiente] = useState<VariavelAmbienteDto[]>([]);
+    const [usuarioLogado, setUsuarioLogado] = useState<UsuarioParaObjetoAutenticacaoDto | null>(null);
+    const [variaveisAmbiente, setVariaveisAmbiente] = useState<VariavelAmbienteCompletaDto[]>([]);
     const [capacidadesConcedidas, setCapacidadesConcedidas] = useState<Partial<Record<CapacidadeNome, true>>>({});
     const [carregando, setCarregando] = useState(true);
     const [cadastroPermitido, setCadastroPermitido] = useState(false);

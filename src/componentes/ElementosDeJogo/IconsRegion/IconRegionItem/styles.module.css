@@ -1,0 +1,33 @@
+.container {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex: 0 0 auto;
+    transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    padding: .35em;
+}
+
+.container:hover {
+    filter: brightness(1.08);
+    transform: scale(1.04);
+}
+
+.container:active {
+    transform: scale(0.97);
+}
+
+.container__active {
+    box-shadow: 0 0 0 0.12em rgba(255, 255, 255, 0.35), 0 0 0.6em rgba(255, 255, 255, 0.16);
+    filter: brightness(1.12);
+}
+
+.icon {
+    font-size: 0.78em;
+    color: #fff;
+}

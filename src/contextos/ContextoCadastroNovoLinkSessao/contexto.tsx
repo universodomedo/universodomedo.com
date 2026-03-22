@@ -2,13 +2,13 @@
 
 import { ModalVincularLinkSessao } from 'Componentes/ElementosModais/ModalVincularLinkSessao/ModalVincularLinkSessao';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { SessaoDto, TipoLinkDto } from 'types-nora-api';
+import { SessaoCompletaDto, TipoLinkCompletaDto } from 'types-nora-api';
 import { obtemTodosTiposLink } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoCadastroNovoLinkSessaoProps {
     iniciaProcessoVinculoLinkSessao: (paramIdTipoLink: number) => void;
-    listaTiposLink: TipoLinkDto[];
-    sessao: SessaoDto;
+    listaTiposLink: TipoLinkCompletaDto[];
+    sessao: SessaoCompletaDto;
     idTipoLink: number | null;
     descricao: string;
 };
@@ -21,17 +21,18 @@ export const useContextoCadastroNovoLinkSessao = (): ContextoCadastroNovoLinkSes
     return context;
 };
 
-export const ContextoCadastroNovoLinkSessaoProvider = ({ children, sessao }: { children: React.ReactNode; sessao: SessaoDto; }) => {
+export const ContextoCadastroNovoLinkSessaoProvider = ({ children, sessao }: { children: React.ReactNode; sessao: SessaoCompletaDto; }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [listaTiposLink, setListaTiposLink] = useState<TipoLinkDto[]>([]);
+    const [listaTiposLink, setListaTiposLink] = useState<TipoLinkCompletaDto[]>([]);
     const [idTipoLink, setidTipoLink] = useState<number | null>(null);
 
     const descricao: string = (() => {
-        if (sessao.tipo === 'AVENTURA' && idTipoLink === 2) return `Video do Episódio ${sessao.detalheSessaoAventura.episodio} do Grupo Aventura ${sessao.detalheSessaoAventura.grupoAventura.id}`;
-        if (sessao.tipo === 'AVENTURA' && idTipoLink === 4) return `Podcast do Episódio ${sessao.detalheSessaoAventura.episodio} do Grupo Aventura ${sessao.detalheSessaoAventura.grupoAventura.id}`;
-        if (sessao.tipo !== 'AVENTURA' && idTipoLink === 2) return `Video da Sessão ${sessao.tituloInteligente.tituloCompleto}`;
-        if (sessao.tipo !== 'AVENTURA' && idTipoLink === 4) return `Podcast da Sessão ${sessao.tituloInteligente.tituloCompleto}`;
+        // to do
+        // if (sessao.tipo === 'AVENTURA' && idTipoLink === 2) return `Video do Episódio ${sessao.detalheSessaoAventura.episodio} do Grupo Aventura ${sessao.detalheSessaoAventura.grupoAventura.id}`;
+        // if (sessao.tipo === 'AVENTURA' && idTipoLink === 4) return `Podcast do Episódio ${sessao.detalheSessaoAventura.episodio} do Grupo Aventura ${sessao.detalheSessaoAventura.grupoAventura.id}`;
+        // if (sessao.tipo !== 'AVENTURA' && idTipoLink === 2) return `Video da Sessão ${sessao.tituloInteligente.tituloCompleto}`;
+        // if (sessao.tipo !== 'AVENTURA' && idTipoLink === 4) return `Podcast da Sessão ${sessao.tituloInteligente.tituloCompleto}`;
         return '';
     })();
 

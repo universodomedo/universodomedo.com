@@ -16,11 +16,12 @@ export interface LayoutContextualizadoState {
     escondeFundo: boolean | null;
     proporcaoConteudo: number | null;
     fecharProps: LayoutContextualizadoFecharProps | null;
+    esconderMenu: boolean | null;
     menuTipo: MenuLayoutContextualizadoTipo;
     menuItens: MenuNode[];
 };
 
-const initialState: LayoutContextualizadoState = { titulo: null, escondeFundo: null, proporcaoConteudo: null, fecharProps: null, menuTipo: 'vazio', menuItens: [] };
+const initialState: LayoutContextualizadoState = { titulo: null, escondeFundo: null, proporcaoConteudo: null, fecharProps: null, esconderMenu: null, menuTipo: 'vazio', menuItens: [] };
 
 function clampPercent(valor: number) { return Math.max(0, Math.min(100, valor)); }
 
@@ -37,6 +38,7 @@ const layoutContextualizadoSlice = createSlice({
             if (Object.prototype.hasOwnProperty.call(patch, 'escondeFundo')) state.escondeFundo = patch.escondeFundo ?? null;
             if (Object.prototype.hasOwnProperty.call(patch, 'proporcaoConteudo')) state.proporcaoConteudo = patch.proporcaoConteudo !== undefined ? clampPercent(patch.proporcaoConteudo) : null;
             if (Object.prototype.hasOwnProperty.call(patch, 'fecharProps')) state.fecharProps = patch.fecharProps != null ? castDraft(patch.fecharProps) : null;
+            if (Object.prototype.hasOwnProperty.call(patch, 'esconderMenu')) state.esconderMenu = patch.esconderMenu ?? null;
         },
 
         updateLayoutContextualizado: (state, action: PayloadAction<LayoutContextualizadoInterno>) => {
@@ -46,6 +48,7 @@ const layoutContextualizadoSlice = createSlice({
             state.escondeFundo = update.escondeFundo ?? null;
             state.proporcaoConteudo = update.proporcaoConteudo !== undefined ? clampPercent(update.proporcaoConteudo) : null;
             state.fecharProps = update.fecharProps != null ? castDraft(update.fecharProps) : null;
+            state.esconderMenu = update.esconderMenu ?? null;
         },
 
         setMenuLeaf: (state, action: PayloadAction<MenuLayoutLeaf>) => {
