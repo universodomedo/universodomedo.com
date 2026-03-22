@@ -1,13 +1,13 @@
 'use client';
 
 import { useMemo } from 'react';
-import { FichaDeJogo, J_DadosFichaEmJogo } from 'types-nora-api';
+import { FichaEmClient, J_DadosFichaEmJogo } from 'types-nora-api';
 
 import { useCache } from 'Redux/hooks/useCache';
 import { remontaFichaDeJogo } from 'Helpers/remontaFichaDeJogo';
 
 export type UseFichaDeJogoResult = {
-    ficha: FichaDeJogo | null;
+    ficha: FichaEmClient | null;
     carregando: boolean;
     erro: string | null;
 };

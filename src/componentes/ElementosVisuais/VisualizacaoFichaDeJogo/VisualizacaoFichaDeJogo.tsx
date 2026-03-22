@@ -1,8 +1,8 @@
 import styles from './styles.module.css';
 
-import { FichaDeJogo } from 'types-nora-api';
+import { FichaEmClient } from 'types-nora-api';
 
-export default function VisualizacaoFichaDeJogo({ fichaDeJogo }: { fichaDeJogo: FichaDeJogo; }) {
+export default function VisualizacaoFichaDeJogo({ fichaDeJogo }: { fichaDeJogo: FichaEmClient; }) {
     return (
         <div className={styles.recipiente_abas_fichas}>
             <div className={styles.recipiente_provisorio_atributos}>

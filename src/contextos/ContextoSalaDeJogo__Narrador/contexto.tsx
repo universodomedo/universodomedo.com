@@ -20,7 +20,7 @@ export const useContextoSalaDeJogo__Narrador = (): ContextoSalaDeJogo__NarradorP
 
 export const ContextoSalaDeJogo__NarradorProvider = ({ dadosSalaDeJogo__Narrador }: { dadosSalaDeJogo__Narrador: LogicaJogoUsuario_ObjetoInicialSalaDto__Narrador; }) => {
     function executaAcao() {
-        eventoWs(Eventos_Envia.Jogo.eventos.executaTestePericia_PROTOTIPO, { tipo: 'TESTE_JOGADOR', valorAtributo: valorAtributo, valorPericia: valorPericia, abrevPericia: abrevPericia });
+        // eventoWs(Eventos_Envia.Jogo.eventos.executaTestePericia_PROTOTIPO, { tipo: 'TESTE_JOGADOR', valorAtributo: valorAtributo, valorPericia: valorPericia, abrevPericia: abrevPericia });
     };
 
     return (

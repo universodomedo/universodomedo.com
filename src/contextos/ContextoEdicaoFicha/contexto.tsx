@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { DadosEvolucaoFicha, DetalheEvolucao, FichaDeJogo, ObjetoGanhosEvolucao, PAGINAS } from 'types-nora-api'
+import { DadosEvolucaoFicha, ObjetoGanhosEvolucao, PAGINAS } from 'types-nora-api'
 
 import { obtemGanhosAposSelecaoClasse, obtemGanhosParaCriarFicha_FichaTemporaria, obtemGanhosParaEvoluirPorIdFicha } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { SPA_EdicaoFicha } from 'Contextos/ContextoEdicaoFicha_GanhosCarregados/contexto';

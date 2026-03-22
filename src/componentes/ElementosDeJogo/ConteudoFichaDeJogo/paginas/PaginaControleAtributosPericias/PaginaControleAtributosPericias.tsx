@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 
 import cn from 'classnames';
-import { AtributoFicha, Eventos_Envia, PericiaFicha } from 'types-nora-api';
+import { AtributoFicha, Eventos_Envia, PericiaFicha, SalaDeJogo_TipoParticipante } from 'types-nora-api';
 
 import textoFormatadoParaVisualizacao from 'Uteis/UteisTexto/textoFormatadoParaVisualizacao';
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
@@ -9,6 +9,7 @@ import adicionaSinalEmNumeroParaExibicao from 'Uteis/UteisTexto/adicionaSinalEmN
 import { useContextoFichaDePersonagem } from "Contextos/ContextoFichaDePersonagem/contexto";
 import { useContextoControleAtributosPericias } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAtributosPericias/contexto';
 import { eventoWs } from 'Hooks/useEventoWs';
+import { useContextoEMJOGO } from 'Contextos/ContextoEMJOGO/contexto';
 
 export default function PaginaControleAtributosPericias() {
     const { ficha } = useContextoFichaDePersonagem();
@@ -43,12 +44,12 @@ function AreaAtributo({ atributoPersonagem, periciasPersonagem }: { atributoPers
 
             <div className={styles.pericias_personagem}>
                 {periciasPersonagem.map((periciaPersonagem, index) => (
-                    <AreaPericia key={index} valorAtributo={atributoPersonagem.valorTotal} periciaPersonagem={periciaPersonagem} />
+                    <AreaPericia key={index} periciaPersonagem={periciaPersonagem} />
                 ))}
             </div>
         </div>
     );
-}
+};
 
 function TooltipAtributo({ atributoPersonagem }: { atributoPersonagem: AtributoFicha }) {
     return (
@@ -67,23 +68,26 @@ function TooltipAtributo({ atributoPersonagem }: { atributoPersonagem: AtributoF
             )}
         </>
     );
-}
+};
 
-function AreaPericia({ valorAtributo, periciaPersonagem }: { valorAtributo: number; periciaPersonagem: PericiaFicha; }) {
+function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFicha; }) {
     const { abreviar } = useContextoControleAtributosPericias();
     const periciaPorExtenso = textoFormatadoParaVisualizacao(abreviar ? periciaPersonagem.pericia.nomeAbreviado : periciaPersonagem.pericia.nome);
     const { desativarAcoes } = useContextoFichaDePersonagem();
+    const { objetoEmJogo } = useContextoEMJOGO();
 
-    function enviaTeste(valorPericia: number, abrevPericia: string) {
-        if (desativarAcoes) return;''
-        eventoWs(Eventos_Envia.Jogo.eventos.executaTestePericia_PROTOTIPO, { tipo: 'TESTE_JOGADOR', valorAtributo: valorAtributo, valorPericia: valorPericia, abrevPericia: abrevPericia });
+    function enviaTeste() {
+        if (desativarAcoes) return;
+        const obj = objetoEmJogo.objetoInicialSala;
+        if (obj.tipoParticipante !== SalaDeJogo_TipoParticipante.JOGADOR) return;
+        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.executaTestePericia, { codigoRecuperarFichaRuntime: `${objetoEmJogo.objetoInicialSala.codigoSalaDeJogo}_${obj.idFicha}`, idPericia: periciaPersonagem.pericia.id });
     };
 
     return (
         <div className={styles.pericia_personagem}>
             <Tooltip>
                 <Tooltip.Trigger>
-                    <button className={cn(styles.botao_pericia, desativarAcoes && styles.blocked)} onClick={() => { enviaTeste(periciaPersonagem.valorTotal, periciaPersonagem.pericia.nomeAbreviado); }}>{periciaPorExtenso}</button>
+                    <button className={cn(styles.botao_pericia, desativarAcoes && styles.blocked)} onClick={() => { enviaTeste(); }}>{periciaPorExtenso}</button>
                 </Tooltip.Trigger>
 
                 <Tooltip.Content>
@@ -101,7 +105,7 @@ function AreaPericia({ valorAtributo, periciaPersonagem }: { valorAtributo: numb
             </h3>
         </div>
     );
-}
+};
 
 function TooltipPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFicha }) {
     return (
@@ -120,4 +124,4 @@ function TooltipPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFicha
             )}
         </>
     );
-}
+};

@@ -1,8 +1,8 @@
 'use client';
 
-import { FichaDeJogo, J_DadosFichaEmJogo, ObjetoCache } from 'types-nora-api';
+import { FichaEmClient, J_DadosFichaEmJogo, ObjetoCache } from 'types-nora-api';
 
-export function remontaFichaDeJogo(JDadosFichaEmJogo: J_DadosFichaEmJogo, cache: ObjetoCache): FichaDeJogo {
+export function remontaFichaDeJogo(JDadosFichaEmJogo: J_DadosFichaEmJogo, cache: ObjetoCache): FichaEmClient {
     return {
         atributos: JDadosFichaEmJogo.atributos.map(atributoJ => {
             const atributo = cache.atributos.find(item => item.id === atributoJ.id);

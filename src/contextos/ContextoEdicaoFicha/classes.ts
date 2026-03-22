@@ -1,7 +1,7 @@
 import React, {  ReactNode } from 'react';
 import { CircleIcon, Cross1Icon, CheckIcon } from '@radix-ui/react-icons';
 
-import { AtributoCompletaDto, AtributoFicha, ClasseDto, DadosDoTipoGanho, DadosEvolucaoFicha, DadosGanho_Atributos, DadosGanho_Classes, DadosGanho_Estatisticas, DadosGanho_Pericias, DadosGanho_PontosHabilidadeElemental, DadosGanho_PontosHabilidadesEspeciais, DadosGanho_PontosHabilidadesParanormais, DadosGanho_ValorMaximoAtributo, DetalheEvolucao, DetalheFicha, EstatisticaDanificavelCompletaDto, EstatisticaDanificavelFicha, FichaDeJogo, FichaEmProcessoDeEvolucaoDto, GanhoEstatistica, GanhoNivelClasseCompletaDto, ObjetoGanhosEvolucao, PatentePericiaCompletaDto, PericiaCompletaDto, PericiaFicha, pluralize, RegistroPericiaLivre, TipoGanhoNivelCompletaDto } from 'types-nora-api';
+import { AtributoCompletaDto, AtributoFicha, ClasseDto, DadosDoTipoGanho, DadosEvolucaoFicha, DadosGanho_Atributos, DadosGanho_Classes, DadosGanho_Estatisticas, DadosGanho_Pericias, DadosGanho_PontosHabilidadeElemental, DadosGanho_PontosHabilidadesEspeciais, DadosGanho_PontosHabilidadesParanormais, DadosGanho_ValorMaximoAtributo, DetalheEvolucao, DetalheFicha, EstatisticaDanificavelCompletaDto, EstatisticaDanificavelFicha, FichaEmClient, FichaEmProcessoDeEvolucaoDto, GanhoEstatistica, GanhoNivelClasseCompletaDto, ObjetoGanhosEvolucao, PatentePericiaCompletaDto, PericiaCompletaDto, PericiaFicha, pluralize, RegistroPericiaLivre, TipoGanhoNivelCompletaDto } from 'types-nora-api';
 
 export class GanhosEvolucao {
     public ganhosEstatisticasPorAtributo: GanhoEstatistica[] = [];
@@ -14,7 +14,7 @@ export class GanhosEvolucao {
 
     constructor(
         public fichaSendoEvoluida: FichaEmProcessoDeEvolucaoDto,
-        // public metodoSalvarFicha: (fichaEditada: FichaPersonagemDto, fichaDeJogoEditada: FichaDeJogo) => void,
+        // public metodoSalvarFicha: (fichaEditada: FichaPersonagemDto, fichaDeJogoEditada: FichaEmClient) => void,
         public metodoSalvarFicha: (dadosEvolucaoFicha: DadosEvolucaoFicha) => void,
         public metodoDeselecionarPersonagem: () => void,
         // esse callback só é utilizado quando alterando classe no GEP 2
@@ -153,7 +153,7 @@ export class GanhosEvolucao {
     //     };
     // }
 
-    get fichaDeJogoEvoluida(): FichaDeJogo {
+    get fichaDeJogoEvoluida(): FichaEmClient {
         return {
             ...this.fichaSendoEvoluida.fichaDeJogo!,
             atributos: this.atributosEditados,
@@ -348,7 +348,7 @@ export class GanhosEvolucao {
 
     static obtemOrdenacaoAtual(): number { return GanhosEvolucao.ordenacaoAtual++; }
 
-    static formataGanhos(ganhosEmJson: GanhoNivelClasseCompletaDto[], fichaDeJogo: FichaDeJogo): EtapaGanhoEvolucao[] {
+    static formataGanhos(ganhosEmJson: GanhoNivelClasseCompletaDto[], fichaDeJogo: FichaEmClient): EtapaGanhoEvolucao[] {
         const retorno: EtapaGanhoEvolucao[] = [];
 
         let aumentoDeValorMaximoAtributoNessaEvolucao = fichaDeJogo.detalhe.valorMaxAtributo;

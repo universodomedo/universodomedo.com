@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import { FichaDeJogo, J_DadosFichaEmJogo } from 'types-nora-api';
+import { FichaEmClient, J_DadosFichaEmJogo } from 'types-nora-api';
 
 import { useFichaDeJogo } from 'Hooks/useFichaDeJogo';
 
 interface ContextoFichaDePersonagemProps {
-    ficha: FichaDeJogo;
+    ficha: FichaEmClient;
     desativarAcoes: boolean;
 };
 
