@@ -17,21 +17,21 @@ export default function InicializadorCache({ children }: { children: ReactNode }
         
     }, [dispatch, inicializado, carregando]);
 
-    if (carregando) {
-        return (
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                background: '#1a1a1a',
-                color: 'white',
-                fontSize: '1.2rem'
-            }}>
-                Carregando dados iniciais...
-            </div>
-        );
-    }
+    // if (carregando) {
+    //     return (
+    //         <div style={{
+    //             display: 'flex',
+    //             justifyContent: 'center',
+    //             alignItems: 'center',
+    //             height: '100vh',
+    //             background: '#1a1a1a',
+    //             color: 'white',
+    //             fontSize: '1.2rem'
+    //         }}>
+    //             Carregando dados iniciais...
+    //         </div>
+    //     );
+    // }
 
     // Mostra erro se ocorrer
     if (erro) {
