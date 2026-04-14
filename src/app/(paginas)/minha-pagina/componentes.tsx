@@ -19,8 +19,8 @@ export function MinhaPagina_Client() {
 
 function MinhaPagina_Slot() {
     return (
-        <div id={styles.portal_usuario}>
-            <div id={styles.portal_usuario_esquerda}>
+        <div className={styles.portal_usuario}>
+            <div className={styles.portal_usuario_esquerda}>
                 <BarraUsuario />
                 <SecaoPosts />
             </div>

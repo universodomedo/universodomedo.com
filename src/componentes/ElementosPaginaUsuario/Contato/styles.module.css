@@ -1,4 +1,4 @@
-#portal_usuario_direita {
+.portal_usuario_direita {
     display: flex;
     flex-direction: column;
     height: 100%;

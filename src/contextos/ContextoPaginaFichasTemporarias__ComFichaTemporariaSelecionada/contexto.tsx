@@ -21,7 +21,7 @@ export const useContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionada =
 export const ContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionadaProvider = ({ fichaTemporaria, acaoVoltar }: { fichaTemporaria: FichaTemporariaVisualizacaoDetalhadaDto; acaoVoltar: () => void; }) => {
     return (
         <ContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionada.Provider value={{ fichaTemporaria, acaoVoltar }}>
-            <Conteiner__PaginaFichaTemporaria />
+            <Conteiner__PaginaFichaTemporaria key={fichaTemporaria.id} />
         </ContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionada.Provider>
     );
 };

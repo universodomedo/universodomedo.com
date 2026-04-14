@@ -9,18 +9,40 @@ import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoIntern
 import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 
 export default function SPA__PaginaFichasTemporarias__SemFichaTemporariaSelecionada() {
-    const { fichasTemporarias } = useContextoPaginaFichasTemporarias__SemFichaTemporariaSelecionada();
+    const { podeCriarNovaFicha, temAlgumaFicha, consideraPasseFundador, temPasseFundador, ehColaborador } = useContextoPaginaFichasTemporarias__SemFichaTemporariaSelecionada();
 
     return (
         <div className={styles.recipiente_conteudo_pagina_fichas}>
             <AvisosDePersonagensEFichas naoRenderizaAvisoPersonagem naoRenderizaLinkFicha />
 
-            {fichasTemporarias.length < 1 ? <ConteudoSemFicha /> : <ConteudoComFicha />}
+            {/* inicio confirmação visual de teste */}
+            {/* <div>
+                <p>Pode criar ficha? <IndicadorBooleano valor={podeCriarNovaFicha} /></p>
+                <p>Tem alguma ficha? <IndicadorBooleano valor={temAlgumaFicha} /></p>
+                <p>Considerado Passe de Fundador? <IndicadorBooleano valor={consideraPasseFundador} /></p>
+                <p>É Colaborador? <IndicadorBooleano valor={ehColaborador} /></p>
+                <p>Tem Passe de Fundador? <IndicadorBooleano valor={temPasseFundador} /></p>
+            </div> */}
+            {/* fim confirmação visual de teste */}
+
+            {podeCriarNovaFicha ? <ConteudoParaCriarNovaFicha /> : <ConteudoComLimiteDeFichasAtingido />}
         </div>
     );
 };
 
-function ConteudoSemFicha() {
+// function IndicadorBooleano({ valor }: { valor: boolean }) {
+//     return valor ? <IndicadorBooleanoPositivo /> : <IndicadorBooleanoNegativo />;
+// };
+
+// function IndicadorBooleanoPositivo() {
+//     return <span className={styles.teste_positivo}>SIM</span>;
+// };
+
+// function IndicadorBooleanoNegativo() {
+//     return <span className={styles.teste_negativo}>NÃO</span>;
+// };
+
+function ConteudoParaCriarNovaFicha() {
     return (
         <div className={styles.recipiente_botao_criar_fichas}>
             <CustomLink destino={{ pagina: PAGINAS.minhasPaginas.jogador.criar.ficha }} className={styles.botao_criar_ficha}>
@@ -31,7 +53,7 @@ function ConteudoSemFicha() {
     );
 };
 
-function ConteudoComFicha() {
+function ConteudoComLimiteDeFichasAtingido() {
     return (
         <>
             <h1>Para acessar sua Ficha, selecione no menu lateral ao lado</h1>

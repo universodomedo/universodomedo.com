@@ -74,13 +74,13 @@ function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFicha; }
     const { abreviar } = useContextoControleAtributosPericias();
     const periciaPorExtenso = textoFormatadoParaVisualizacao(abreviar ? periciaPersonagem.pericia.nomeAbreviado : periciaPersonagem.pericia.nome);
     const { desativarAcoes } = useContextoFichaDePersonagem();
-    const { objetoEmJogo } = useContextoEMJOGO();
+    // const { objetoEmJogo } = useContextoEMJOGO();
 
     function enviaTeste() {
         if (desativarAcoes) return;
-        const obj = objetoEmJogo.objetoInicialSala;
-        if (obj.tipoParticipante !== SalaDeJogo_TipoParticipante.JOGADOR) return;
-        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.executaTestePericia, { codigoRecuperarFichaRuntime: `${objetoEmJogo.objetoInicialSala.codigoSalaDeJogo}_${obj.idFicha}`, idPericia: periciaPersonagem.pericia.id });
+        // const obj = objetoEmJogo.objetoInicialSala;
+        // if (obj.tipoParticipante !== SalaDeJogo_TipoParticipante.JOGADOR) return;
+        // eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.executaTestePericia, { codigoRecuperarFichaRuntime: `${objetoEmJogo.objetoInicialSala.codigoSalaDeJogo}_${obj.idFicha}`, idPericia: periciaPersonagem.pericia.id });
     };
 
     return (

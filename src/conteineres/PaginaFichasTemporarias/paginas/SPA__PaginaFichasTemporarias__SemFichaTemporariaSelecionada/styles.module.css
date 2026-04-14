@@ -1,3 +1,14 @@
+/*  */
+.teste_positivo {
+    color: var(--cor-confirmacao);
+    font-weight: bold;
+}
+.teste_negativo {
+    color: var(--cor-aviso);
+    font-weight: bold;
+}
+/*  */
+
 .recipiente_conteudo_pagina_fichas {
     display: flex;
     flex-direction: column;

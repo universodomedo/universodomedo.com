@@ -1,4 +1,4 @@
-#portal_usuario {
+.portal_usuario {
     display: flex;
     flex-direction: row;
     height: 100%;
@@ -8,7 +8,7 @@
     overflow: hidden;
 }
 
-#portal_usuario_esquerda {
+.portal_usuario_esquerda {
     display: flex;
     flex-direction: column;
     height: 100%;

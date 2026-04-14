@@ -25,7 +25,7 @@ export default function SecaoContatos() {
     const { scrollableProps } = useScrollable();
 
     return (
-        <div id={styles.portal_usuario_direita} {...scrollableProps}>
+        <div className={styles.portal_usuario_direita} {...scrollableProps}>
             <div className={styles.secao_contatos}>
                 <div className={styles.recipiente_lista_contatos}>
                     {listaAcessosUsuarios.map(acessoUsuario => (
