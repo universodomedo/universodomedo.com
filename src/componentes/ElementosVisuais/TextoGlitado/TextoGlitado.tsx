@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 
 import { useEffect, useState } from "react";
 
-import Tooltip from 'componentes/Elementos/Tooltip/Tooltip.tsx';
+import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip.tsx';
 
 export default function TextoGlitado({ chaveRequisito, tamanho = "pequeno" }: { chaveRequisito: string, tamanho?: "pequeno" | "grande" }) {
     const comprimentoTextoGlitado = tamanho === "grande" ? 90 : 20;

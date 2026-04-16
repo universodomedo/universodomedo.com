@@ -16,7 +16,7 @@ type PropsConteiner__PaginaFichaTemporaria = {
 };
 
 function resolveSaida(props: PropsConteiner__PaginaFichaTemporaria): SaidaConteiner {
-    useConfigurarLayoutContextualizado({ titulo: null, fecharProps: { tipo: 'acao', executar: props.acaoVoltar, tituloTooltip: 'Voltar para Listam de Fichas' } }, 'patch');
+    useConfigurarLayoutContextualizado({ titulo: null, fecharProps: { tipo: 'acao', executar: props.acaoVoltar, tituloTooltip: 'Voltar para Lista de Fichas' } }, 'patch');
 
     return criaSaidaConteiner(ContextoPaginaFichaTemporariaProvider, { fichaTemporaria: props.fichaTemporaria });
 };

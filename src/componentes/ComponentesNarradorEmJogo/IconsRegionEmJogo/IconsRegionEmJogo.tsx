@@ -6,7 +6,7 @@ import { ReactNode, useMemo, useState } from 'react';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 import DraggableWindow, { DraggableWindowPosition, DraggableWindowSize, initialWindowPosition } from 'Componentes/ElementosDeJogo/DraggableWindow/DraggableWindow';
-import IconsRegion, { IconsRegionItemDto } from 'componentes/ElementosDeJogo/IconsRegion/IconsRegion/IconsRegion';
+import IconsRegion, { IconsRegionItemDto } from 'Componentes/ElementosDeJogo/IconsRegion/IconsRegion/IconsRegion';
 
 type WindowContentMode = 'scroll' | 'fit';
 

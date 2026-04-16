@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
     "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -20,25 +23,66 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "Adaptadores/*": ["adaptadores/*"],
-      "App/*": ["app/*"],
-      "Componentes/*": ["componentes/*"],
-      "Constantes/*": ["constantes/*"],
-      "Conteineres/*": ["conteineres/*"],
-      "Contextos/*": ["contextos/*"],
-      "Funcionalidades/*": ["funcionalidades/*"],
-      "Helpers/*": ["helpers/*"],
-      "Hooks/*": ["hooks/*"],
-      "Layouts/*": ["layouts/*"],
-      "Libs/*": ["libs/*"],
-      "Listeners/*": ["listeners/*"],
-      "Redux/*": ["redux/*"],
-      "Renderizaveis/*": ["renderizaveis/*"],
-      "Uteis/*": ["uteis/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "Adaptadores/*": [
+        "./src/adaptadores/*"
+      ],
+      "App/*": [
+        "./src/app/*"
+      ],
+      "Componentes/*": [
+        "./src/componentes/*"
+      ],
+      "Constantes/*": [
+        "./src/constantes/*"
+      ],
+      "Conteineres/*": [
+        "./src/conteineres/*"
+      ],
+      "Contextos/*": [
+        "./src/contextos/*"
+      ],
+      "Funcionalidades/*": [
+        "./src/funcionalidades/*"
+      ],
+      "Helpers/*": [
+        "./src/helpers/*"
+      ],
+      "Hooks/*": [
+        "./src/hooks/*"
+      ],
+      "Layouts/*": [
+        "./src/layouts/*"
+      ],
+      "Libs/*": [
+        "./src/libs/*"
+      ],
+      "Listeners/*": [
+        "./src/listeners/*"
+      ],
+      "Redux/*": [
+        "./src/redux/*"
+      ],
+      "Renderizaveis/*": [
+        "./src/renderizaveis/*"
+      ],
+      "Uteis/*": [
+        "./src/uteis/*"
+      ]
     },
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/componentes/Elementos/RedirecionadorInterno", "src/componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado"],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/componentes/Elementos/RedirecionadorInterno",
+    "src/componentes/ElementosVisuais/LayoutContextualizado/MenusLayoutContextualizado"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

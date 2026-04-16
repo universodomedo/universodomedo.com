@@ -4,7 +4,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 
 import { DestinoInput } from 'Funcionalidades/navegacaoInterna';
 import redirecionarInterno from 'Funcionalidades/redirecionarInterno';
-import { useAppRefresh } from 'contextos/ContextoAppRefresh/contexto';
+import { useAppRefresh } from 'Contextos/ContextoAppRefresh/contexto';
 import Toast from 'Componentes/ElementosVisuais/Toast/Toast';
 import { registerToast, unregisterToast } from 'Hooks/useToast';
 

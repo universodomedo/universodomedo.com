@@ -1,6 +1,6 @@
 'use client';
 
-import { useContextoToast, type ContextoToastProps, type ToastOpcao } from 'contextos/ContextoToast/contexto';
+import { useContextoToast, type ContextoToastProps, type ToastOpcao } from 'Contextos/ContextoToast/contexto';
 
 export type ToastApi = ContextoToastProps;
 export type ToastOpcoes = ToastOpcao;

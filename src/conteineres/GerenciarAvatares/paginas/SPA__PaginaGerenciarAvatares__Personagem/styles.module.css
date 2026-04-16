@@ -1,0 +1,14 @@
+.recipiente_gerenciamento_avatares_do_personagem {
+    display: flex;
+    flex-direction: column;
+    gap: 2em;
+}
+
+.recipiente_avatares_do_personagem {
+
+}
+
+.recipiente_itens_avatares {
+    display: flex;
+    flex-direction: row;
+}

@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 
 import InicializadorSocket from 'Componentes/Elementos/InicializadorSocket/InicializadorSocket';
-import { useUsuariosSocket } from 'listeners/usuariosSocket';
-import { useChatSocketListeners } from 'listeners/chatsSocket';
+import { useUsuariosSocket } from 'Listeners/usuariosSocket';
+import { useChatSocketListeners } from 'Listeners/chatsSocket';
 import { getSocket, setSocketAuthState, clearSocketCache } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 

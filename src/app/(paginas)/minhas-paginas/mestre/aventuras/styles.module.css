@@ -4,7 +4,7 @@
     gap: 2vw;
 }
 
-#recipiente_aventuras_mestre {
+.recipiente_aventuras_mestre {
     display: flex;
     flex-direction: row;
     width: 100%;

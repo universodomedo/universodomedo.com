@@ -1,0 +1,33 @@
+.recipiente_listagem_personagens_e_seus_avatares {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    flex-wrap: wrap;
+    white-space: nowrap;
+    gap: 3vh 3vw;
+    justify-content: space-evenly;
+    align-content: flex-start;
+    padding: 1vh 0;
+}
+
+.recipiente_registro_personagem_e_seus_avatares {
+    display: flex;
+    flex-direction: column;
+    width: 13%;
+    gap: .4vh;
+    text-align: center;
+
+    & h4 {
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    &:hover {
+        box-shadow: 0px 0px 9px 0px #ffffff;
+    }
+}
+
+.recipiente_imagem_avatar {
+    position: relative;
+    aspect-ratio: 1;
+}

@@ -1,4 +1,4 @@
-import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PaginaTemplate, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto } from "types-nora-api";
+import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PaginaTemplate, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from "types-nora-api";
 
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
@@ -97,10 +97,14 @@ export async function deleteArquivo_SUDO(arquivo: ArquivoCompletaDto) {
     return await useApi<boolean>({ uri: '/arquivos/deleteArquivo_SUDO', method: 'DELETE', params: { idArquivo: String(arquivo.id) } });
 }
 
-export async function me_upload(file: File, tipoArquivo: TipoArquivoDef, nomeRecursoInterno?: string) {
+export async function me_upload({ arquivo, tipoArquivo, camposExtras }: { arquivo: File; tipoArquivo: TipoArquivoDef; camposExtras?: Record<string, string | number>; }) {
     const formData = new FormData();
-    formData.append('file', file);
-    if (nomeRecursoInterno) formData.append('nomeRecursoInterno', nomeRecursoInterno);
+
+    formData.append('arquivo', arquivo);
+
+    Object.entries(camposExtras ?? {}).forEach(([nomeCampo, valorCampo]) => {
+        formData.append(nomeCampo, String(valorCampo));
+    });
 
     return await useApi<ArquivoCompletaDto>({ uri: `/arquivos/me/me_upload/${tipoArquivo.id}`, method: 'POST', data: formData });
 }
@@ -200,7 +204,7 @@ export async function me_salvarRascunho(titulo: string, idEstiloSessaoMestrada: 
 }
 
 export async function editaDetalheRascunho(detalheRascunho: PAYLOAD_DetalheRascunhoEdicaoDto): Promise<boolean> {
-    return await useApi<boolean>({ uri: '/rascunhos/editaDetalheRascunho', method: 'POST', data: { detalheRascunho: detalheRascunho }});
+    return await useApi<boolean>({ uri: '/rascunhos/editaDetalheRascunho', method: 'POST', data: { detalheRascunho: detalheRascunho } });
 }
 
 export async function obtemDadosEPermissoes(idUsuario: number): Promise<UsuarioCompletaDto | null> {
@@ -269,6 +273,10 @@ export async function me_amarraFichaTemporariaEmParticipacaoDeSessaoUnica(idSess
 
 export async function obtemJDadosFichaEmJogoPorIdFicha(idFicha: number): Promise<J_DadosFichaEmJogo> {
     return await useApi<J_DadosFichaEmJogo>({ uri: '/fichas/obtemJDadosFichaEmJogoPorIdFicha', method: 'GET', params: { idFicha: idFicha } });
+}
+
+export async function obtemListagemDePersonagensComAvatares(): Promise<VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[]> {
+    return await useApi<VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[]>({ uri: '/personagens/obtemListagemDePersonagensComAvatares', method: 'GET' });
 }
 
 //

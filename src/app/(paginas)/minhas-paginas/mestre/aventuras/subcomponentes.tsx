@@ -12,13 +12,13 @@ export function AventurasMestre_ConteudoGeral() {
     const { gruposAventurasListadas } = useContextoMestreAventuras();
 
     return (
-        <div id={styles.recipiente_aventuras_mestre}>
-            {gruposAventurasListadas!.map(grupo => (
-                <LinkInterno key={grupo.id} className={styles.recipiente_item_imagem_aventura_mestre} destino={{ pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: String(grupo.id) } }}>
+        <div className={styles.recipiente_aventuras_mestre}>
+            {gruposAventurasListadas!.map(grupoAventura => (
+                <LinkInterno key={grupoAventura.id} className={styles.recipiente_item_imagem_aventura_mestre} destino={{ pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: String(grupoAventura.id) } }}>
                     <div className={styles.recipiente_imagem_aventura_mestre}>
-                        <RecipienteImagem src={grupo.aventura.imagemCapa?.fullPath} />
+                        <RecipienteImagem src={grupoAventura.imagemCapa.caminhoCapa} />
                     </div>
-                    <h4>{grupo.nomeUnicoGrupoAventura}</h4>
+                    <h4>{grupoAventura.nomeUnicoGrupoAventura}</h4>
                 </LinkInterno>
             ))}
         </div>

@@ -1,7 +1,7 @@
 'use client';
 
-import { ContextoAppRefreshProvider, useAppRefresh } from 'contextos/ContextoAppRefresh/contexto';
-import { ContextoToastProvider } from 'contextos/ContextoToast/contexto';
+import { ContextoAppRefreshProvider, useAppRefresh } from 'Contextos/ContextoAppRefresh/contexto';
+import { ContextoToastProvider } from 'Contextos/ContextoToast/contexto';
 
 function RefreshBoundary({ children }: { children: React.ReactNode }) {
     const { nonce } = useAppRefresh();

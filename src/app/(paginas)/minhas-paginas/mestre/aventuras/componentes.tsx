@@ -23,7 +23,7 @@ function AventurasMestre_Slot() {
     const { gruposAventurasListadas } = useContextoMestreAventuras();
 
     return (
-        <div id={styles.recipiente_aventuras_mestre}>
+        <div className={styles.recipiente_aventuras_mestre}>
             {gruposAventurasListadas!.map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} destino={{ pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: grupoAventura.id } }} />)}
         </div>
     );

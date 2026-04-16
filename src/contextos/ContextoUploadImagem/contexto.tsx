@@ -8,7 +8,9 @@ import { toast } from 'Hooks/useToast';
 
 import Uploader from 'Componentes/Elementos/Inputs/Uploader/Uploader';
 import UploaderRecursosInternos from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderRecursosInternos/UploaderRecursosInternos';
+import UploaderAvatar from '@/componentes/Elementos/Inputs/Uploader/componentes/UploaderAvatar/UploaderAvatar';
 import UploaderArtes from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderArtes/UploaderArtes';
+import UploaderEmblema from '@/componentes/Elementos/Inputs/Uploader/componentes/UploaderEmblema/UploaderEmblema';
 
 type RecursosInternosState = { nome: string; setNome: (valor: string) => void; erro: string | null; };
 
@@ -16,17 +18,19 @@ type UploaderComponent = ComponentType;
 
 type TipoArquivoId = (typeof TIPOS_ARQUIVO)[keyof typeof TIPOS_ARQUIVO]['id'];
 
+type CamposExtrasUpload = Record<string, string | number>;
+
 const UPLOADER_DEFAULT: UploaderComponent = Uploader;
 
 const UPLOADER_POR_TIPO: Partial<Record<TipoArquivoId, UploaderComponent>> = {
     [TIPOS_ARQUIVO.RECURSOS_INTERNOS.id]: UploaderRecursosInternos,
+    [TIPOS_ARQUIVO.AVATAR_PERSONAGEM.id]: UploaderAvatar,
     [TIPOS_ARQUIVO.IMAGEM_ESPECIAL_ARTISTA.id]: UploaderArtes,
+    [TIPOS_ARQUIVO.ITENS_EMBLEMAS.id]: UploaderEmblema,
     // outros tipos específicos aqui...
 };
 
-export function resolveUploaderPorTipo(tipoArquivo: TipoArquivoDef): UploaderComponent {
-    return UPLOADER_POR_TIPO[tipoArquivo.id as TipoArquivoId] ?? UPLOADER_DEFAULT;
-}
+export function resolveUploaderPorTipo(tipoArquivo: TipoArquivoDef): UploaderComponent { return UPLOADER_POR_TIPO[tipoArquivo.id as TipoArquivoId] ?? UPLOADER_DEFAULT; };
 
 type ContextoUploadImagemProps = {
     regras: RegrasUploadArquivo;
@@ -83,17 +87,17 @@ export const useContextoUploadImagem = (): ContextoUploadImagemProps => {
     return context;
 };
 
-export default function RecipienteUploader({ tipoArquivo }: { tipoArquivo: TipoArquivoDef }) {
+export default function RecipienteUploader({ tipoArquivo, camposExtrasFixos }: { tipoArquivo: TipoArquivoDef; camposExtrasFixos?: CamposExtrasUpload; }) {
     const ComponenteUploader = resolveUploaderPorTipo(tipoArquivo);
 
     return (
-        <CarregadorRegrasUploader tipoArquivo={tipoArquivo}>
+        <CarregadorRegrasUploader tipoArquivo={tipoArquivo} camposExtrasFixos={camposExtrasFixos}>
             <ComponenteUploader />
         </CarregadorRegrasUploader>
     );
 };
 
-function CarregadorRegrasUploader({ tipoArquivo, children }: { tipoArquivo: TipoArquivoDef; children: ReactNode }) {
+function CarregadorRegrasUploader({ tipoArquivo, camposExtrasFixos, children }: { tipoArquivo: TipoArquivoDef; camposExtrasFixos?: CamposExtrasUpload; children: ReactNode; }) {
     const [carregando, setCarregando] = useState<string | null>(null);
     const [regras, setRegras] = useState<RegrasUploadArquivo | null>(null);
 
@@ -120,14 +124,13 @@ function CarregadorRegrasUploader({ tipoArquivo, children }: { tipoArquivo: Tipo
     if (!validacaoRegras.ok) throw new Error(`RegrasUploadArquivo inválidas: ${validacaoRegras.erros.join(' | ')}`);
 
     return (
-        <ContextoUploadImagemProviderInterno regras={regras} tipoArquivo={tipoArquivo}>
+        <ContextoUploadImagemProviderInterno regras={regras} tipoArquivo={tipoArquivo} camposExtrasFixos={camposExtrasFixos}>
             {children}
         </ContextoUploadImagemProviderInterno>
     );
-}
-
+};
 // NÃO EXPORTAR. Usado internamente por RecipienteUploader
-const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: { children: React.ReactNode; tipoArquivo: TipoArquivoDef; regras: RegrasUploadArquivo; }) => {
+const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras, camposExtrasFixos }: { children: React.ReactNode; tipoArquivo: TipoArquivoDef; regras: RegrasUploadArquivo; camposExtrasFixos?: CamposExtrasUpload; }) => {
     const accept = useMemo(() => acceptFromFormatos(regras.formatosPermitidos), [regras.formatosPermitidos]);
 
     const [arquivo, setArquivo] = useState<File | null>(null);
@@ -255,6 +258,14 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
         if (erroNomeRecursoInterno && nomeRecursoInterno.trim().length > 0) setErroNomeRecursoInterno(null);
     }, [isRecursosInternos, erroNomeRecursoInterno, nomeRecursoInterno]);
 
+    function obtemCamposExtrasParaUploadAtual(): CamposExtrasUpload {
+        const camposExtrasLocais: CamposExtrasUpload = {};
+
+        if (isRecursosInternos) camposExtrasLocais.nomeRecursoInterno = nomeRecursoInterno.trim();
+
+        return { ...(camposExtrasFixos ?? {}), ...camposExtrasLocais };
+    };
+
     async function enviar(): Promise<void> {
         if (isEnviando) return;
 
@@ -271,8 +282,10 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras }: 
         setIsEnviando(true);
 
         try {
-            const nome = isRecursosInternos ? nomeRecursoInterno.trim() : undefined;
-            await me_upload(arquivo, tipoArquivo, nome);
+            const camposExtras = obtemCamposExtrasParaUploadAtual();
+
+            await me_upload({ arquivo, tipoArquivo, camposExtras });
+
             await toast.sucesso('Upload realizado', `Arquivo ${arquivo.name} foi importado com sucesso.`, { recarregaPagina: true });
         } catch (e) {
             const msg = e instanceof Error ? e.message : 'Falha ao realizar upload';
