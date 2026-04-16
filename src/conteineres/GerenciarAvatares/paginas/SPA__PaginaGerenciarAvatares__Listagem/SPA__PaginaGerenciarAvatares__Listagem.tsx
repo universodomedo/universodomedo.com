@@ -22,7 +22,7 @@ function RegistroPersonagemESeusAvatares({ personagem }: { personagem: VIEW_LIST
     return (
         <DivClicavel className={styles.recipiente_registro_personagem_e_seus_avatares} onClick={() => selecionaPersonagem(personagem.id)}>
             <div className={styles.recipiente_imagem_avatar}>
-                <RecipienteImagem src={personagem.avatares.caminhosAvatares.length > 1 ? personagem.avatares.caminhosAvatares.at(-1) : PathTokenPadrao} />
+                <RecipienteImagem src={personagem.avatares.caminhosAvatares.length > 0 ? personagem.avatares.caminhosAvatares.at(-1) : PathTokenPadrao} />
             </div>
 
             <h4>{personagem.nome}</h4>

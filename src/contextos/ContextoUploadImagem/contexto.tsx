@@ -8,9 +8,9 @@ import { toast } from 'Hooks/useToast';
 
 import Uploader from 'Componentes/Elementos/Inputs/Uploader/Uploader';
 import UploaderRecursosInternos from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderRecursosInternos/UploaderRecursosInternos';
-import UploaderAvatar from '@/componentes/Elementos/Inputs/Uploader/componentes/UploaderAvatar/UploaderAvatar';
+import UploaderAvatar from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderAvatar/UploaderAvatar';
 import UploaderArtes from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderArtes/UploaderArtes';
-import UploaderEmblema from '@/componentes/Elementos/Inputs/Uploader/componentes/UploaderEmblema/UploaderEmblema';
+import UploaderEmblema from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderEmblema/UploaderEmblema';
 
 type RecursosInternosState = { nome: string; setNome: (valor: string) => void; erro: string | null; };
 
@@ -129,6 +129,7 @@ function CarregadorRegrasUploader({ tipoArquivo, camposExtrasFixos, children }: 
         </ContextoUploadImagemProviderInterno>
     );
 };
+
 // NÃO EXPORTAR. Usado internamente por RecipienteUploader
 const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras, camposExtrasFixos }: { children: React.ReactNode; tipoArquivo: TipoArquivoDef; regras: RegrasUploadArquivo; camposExtrasFixos?: CamposExtrasUpload; }) => {
     const accept = useMemo(() => acceptFromFormatos(regras.formatosPermitidos), [regras.formatosPermitidos]);
