@@ -22,19 +22,20 @@ export const Conteiner__GerenciarAvatares__Interno = criaConteiner<PropsConteine
 
 type PropsConteiner__GerenciarAvatares = {
     personagens: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[];
+    avataresDeComparacao: string[];
     setIdPersonagemSelecionado: (v: number) => void;
     deselecionaPersonagem: () => void;
     personagemSelecionado: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto | null;
 };
 
 function resolveSaida(props: PropsConteiner__GerenciarAvatares): SaidaConteiner {
-    if (props.personagemSelecionado) return criaSaidaConteiner(ContextoGerenciarAvatares__Personagem__Provider, { personagem: props.personagemSelecionado, deselecionaPersonagem: props.deselecionaPersonagem });
+    if (props.personagemSelecionado) return criaSaidaConteiner(ContextoGerenciarAvatares__Personagem__Provider, { personagem: props.personagemSelecionado, avataresDeComparacao: props.avataresDeComparacao, deselecionaPersonagem: props.deselecionaPersonagem });
 
     return criaSaidaConteiner(ContextoGerenciarAvatares__Listagem__Provider, { personagens: props.personagens, selecionaPersonagem: props.setIdPersonagemSelecionado });
 };
 
 function useEstado(): PropsConteiner__GerenciarAvatares {
-    const { personagens, setIdPersonagemSelecionado, deselecionaPersonagem, personagemSelecionado } = useContextoGerenciarAvatares();
+    const { personagens, avataresDeComparacao, setIdPersonagemSelecionado, deselecionaPersonagem, personagemSelecionado } = useContextoGerenciarAvatares();
 
-    return { personagens, setIdPersonagemSelecionado, deselecionaPersonagem, personagemSelecionado };
+    return { personagens, avataresDeComparacao, setIdPersonagemSelecionado, deselecionaPersonagem, personagemSelecionado };
 };

@@ -1,3 +1,19 @@
+.dialog_conteudo {
+    --uploader-regras-border: rgba(0, 0, 0, 0.12);
+    --uploader-regras-bg: rgba(0, 0, 0, 0.03);
+
+    --uploader-dropzone-border: rgba(0, 0, 0, 0.2);
+    --uploader-dropzone-bg: rgba(0, 0, 0, 0.02);
+    --uploader-dropzone-hover-bg: rgba(0, 0, 0, 0.04);
+    --uploader-dropzone-active-bg: rgba(0, 0, 0, 0.06);
+    --uploader-dropzone-active-border: rgba(0, 0, 0, 0.35);
+    --uploader-dropzone-preview-border: rgba(0, 0, 0, 0.12);
+
+    --uploader-botao-border: rgba(0, 0, 0, 0.14);
+    --uploader-botao-bg: rgba(0, 0, 0, 0.06);
+    --uploader-botao-color: rgba(0, 0, 0, 0.88);
+}
+
 .modal_container button, .modal_container fieldset, .modal_container input {
     all: unset;
 }

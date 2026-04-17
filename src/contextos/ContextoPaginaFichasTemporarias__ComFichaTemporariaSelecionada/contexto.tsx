@@ -8,6 +8,9 @@ import { Conteiner__PaginaFichaTemporaria } from 'Conteineres/PaginaFichaTempora
 interface ContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionadaProps {
     fichaTemporaria: FichaTemporariaVisualizacaoDetalhadaDto;
     acaoVoltar: () => void;
+    fichaEmProcessoDeEvolucao: boolean;
+    iniciaProcessoEvolucaoFicha: () => void;
+    cancelaProcessoEvolucaoFicha: () => void;
 };
 
 const ContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionada = createContext<ContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionadaProps | undefined>(undefined);
@@ -19,8 +22,13 @@ export const useContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionada =
 };
 
 export const ContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionadaProvider = ({ fichaTemporaria, acaoVoltar }: { fichaTemporaria: FichaTemporariaVisualizacaoDetalhadaDto; acaoVoltar: () => void; }) => {
+    const [fichaEmProcessoDeEvolucao, setFichaEmProcessoDeEvolucao] = useState<boolean>(false);
+
+    function iniciaProcessoEvolucaoFicha() { setFichaEmProcessoDeEvolucao(true); };
+    function cancelaProcessoEvolucaoFicha() { setFichaEmProcessoDeEvolucao(false); };
+
     return (
-        <ContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionada.Provider value={{ fichaTemporaria, acaoVoltar }}>
+        <ContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionada.Provider value={{ fichaTemporaria, acaoVoltar, fichaEmProcessoDeEvolucao, iniciaProcessoEvolucaoFicha, cancelaProcessoEvolucaoFicha }}>
             <Conteiner__PaginaFichaTemporaria key={fichaTemporaria.id} />
         </ContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionada.Provider>
     );

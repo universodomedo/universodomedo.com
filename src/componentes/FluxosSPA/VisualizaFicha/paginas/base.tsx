@@ -1,4 +1,4 @@
-import styles from '../styles.module.css';
+import styles from './styles.module.css';
 
 import { useContextoPaginaFichaTemporaria } from 'Contextos/ContextoPaginaFichaTemporaria/contexto';
 import BarraFichaTemporaria from 'Componentes/ElementosVisuais/BarraFichaTemporaria/BarraFichaTemporaria';

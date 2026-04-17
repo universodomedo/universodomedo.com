@@ -17,16 +17,16 @@ export const useContexto__PaginaArtista_AdicionarAvatarDePersonagem = (): Contex
     return context;
 };
 
-export default function RecipienteAdicionarAvatarDePersonagem({ idPersonagem }: { idPersonagem: number }) {
+export default function RecipienteAdicionarAvatarDePersonagem({ idPersonagem, onPreviewUrlChange }: { idPersonagem: number; onPreviewUrlChange?: (previewUrl: string | null) => void; }) {
     return (
-        <Contexto__PaginaArtista_AdicionarAvatarDePersonagem__Provider idPersonagem={idPersonagem} />
+        <Contexto__PaginaArtista_AdicionarAvatarDePersonagem__Provider idPersonagem={idPersonagem} onPreviewUrlChange={onPreviewUrlChange} />
     );
 };
 
-export const Contexto__PaginaArtista_AdicionarAvatarDePersonagem__Provider = ({ idPersonagem }: { idPersonagem: number }) => {
+export const Contexto__PaginaArtista_AdicionarAvatarDePersonagem__Provider = ({ idPersonagem, onPreviewUrlChange }: { idPersonagem: number; onPreviewUrlChange?: (previewUrl: string | null) => void; }) => {
     return (
         <Contexto__PaginaArtista_AdicionarAvatarDePersonagem.Provider value={{}}>
-            <RecipienteUploader tipoArquivo={TIPOS_ARQUIVO.AVATAR_PERSONAGEM} camposExtrasFixos={{ idPersonagem: idPersonagem }} />
+            <RecipienteUploader tipoArquivo={TIPOS_ARQUIVO.AVATAR_PERSONAGEM} camposExtrasFixos={{ idPersonagem: idPersonagem }} onPreviewUrlChange={onPreviewUrlChange} />
         </Contexto__PaginaArtista_AdicionarAvatarDePersonagem.Provider>
     );
 };

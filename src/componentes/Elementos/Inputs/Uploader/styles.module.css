@@ -4,6 +4,7 @@
     width: 100%;
     gap: 1.2em;
     align-items: center;
+    text-align: center;
 }
 
 .regras {
@@ -13,8 +14,8 @@
     padding: 1em 1.2em;
     gap: 0.6em;
     border-radius: 1em;
-    border: 0.08em solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.03);
+    border: 0.08em solid var(--uploader-regras-border, rgba(255, 255, 255, 0.12));
+    background: var(--uploader-regras-bg, rgba(255, 255, 255, 0.03));
 }
 
 .regrasTitulo {
@@ -28,8 +29,8 @@
     aspect-ratio: 16 / 9;
     padding: 1em;
     border-radius: 1em;
-    border: 0.14em dashed rgba(255, 255, 255, 0.28);
-    background: rgba(255, 255, 255, 0.03);
+    border: 0.14em dashed var(--uploader-dropzone-border, rgba(255, 255, 255, 0.28));
+    background: var(--uploader-dropzone-bg, rgba(255, 255, 255, 0.03));
     cursor: pointer;
     user-select: none;
     transition: transform 0.12s ease, background 0.12s ease;
@@ -41,12 +42,12 @@
 
 .dropzone:hover {
     transform: scale(1.01);
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--uploader-dropzone-hover-bg, rgba(255, 255, 255, 0.05));
 }
 
 .dropzoneAtivo {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.5);
+    background: var(--uploader-dropzone-active-bg, rgba(255, 255, 255, 0.08));
+    border-color: var(--uploader-dropzone-active-border, rgba(255, 255, 255, 0.5));
 }
 
 .dropzoneBloqueado {
@@ -57,7 +58,7 @@
 
 .dropzoneComPreview {
     border-style: solid;
-    border-color: rgba(255, 255, 255, 0.14);
+    border-color: var(--uploader-dropzone-preview-border, rgba(255, 255, 255, 0.14));
 }
 
 .inputEscondido {
@@ -100,9 +101,9 @@
     width: 2.2em;
     height: 2.2em;
     border-radius: 999em;
-    border: 0.08em solid rgba(255, 255, 255, 0.18);
-    background: rgba(0, 0, 0, 0.45);
-    color: rgba(255, 255, 255, 0.9);
+    border: 0.08em solid var(--uploader-remover-border, rgba(255, 255, 255, 0.18));
+    background: var(--uploader-remover-bg, rgba(0, 0, 0, 0.45));
+    color: var(--uploader-remover-color, rgba(255, 255, 255, 0.9));
     cursor: pointer;
     line-height: 2.1em;
     text-align: center;
@@ -110,14 +111,14 @@
 }
 
 .botaoRemover:hover {
-    background: rgba(0, 0, 0, 0.6);
+    background: var(--uploader-remover-bg-hover, rgba(0, 0, 0, 0.6));
 }
 
 .erro {
     padding: 0.9em 1em;
     border-radius: 0.9em;
-    border: 0.08em solid rgba(255, 90, 90, 0.55);
-    background: rgba(255, 90, 90, 0.12);
+    border: 0.08em solid var(--uploader-erro-border, rgba(255, 90, 90, 0.55));
+    background: var(--uploader-erro-bg, rgba(255, 90, 90, 0.12));
     font-size: 0.98em;
 }
 
@@ -129,10 +130,10 @@
 .botao_primario {
     border-radius: 1em;
     padding: 0.9em 1.2em;
-    border: 0.08em solid rgba(255, 255, 255, 0.16);
-    background: rgba(255, 255, 255, 0.10);
+    border: 0.08em solid var(--uploader-botao-border, rgba(255, 255, 255, 0.16));
+    background: var(--uploader-botao-bg, rgba(255, 255, 255, 0.10));
     cursor: pointer;
-    color: white;
+    color: var(--uploader-botao-color, white);
 }
 
 .botao_primario:disabled {

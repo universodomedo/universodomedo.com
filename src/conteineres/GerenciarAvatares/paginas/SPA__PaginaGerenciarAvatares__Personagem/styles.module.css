@@ -7,10 +7,6 @@
     align-items: center;
 }
 
-.recipiente_uploader_avatar {
-    width: 30%;
-}
-
 .recipiente_avatares_do_personagem {
     display: flex;
     flex-direction: row;

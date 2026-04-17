@@ -87,14 +87,26 @@ export const useContextoUploadImagem = (): ContextoUploadImagemProps => {
     return context;
 };
 
-export default function RecipienteUploader({ tipoArquivo, camposExtrasFixos }: { tipoArquivo: TipoArquivoDef; camposExtrasFixos?: CamposExtrasUpload; }) {
+export default function RecipienteUploader({ tipoArquivo, camposExtrasFixos, onPreviewUrlChange }: { tipoArquivo: TipoArquivoDef; camposExtrasFixos?: CamposExtrasUpload; onPreviewUrlChange?: (previewUrl: string | null) => void; }) {
     const ComponenteUploader = resolveUploaderPorTipo(tipoArquivo);
 
     return (
         <CarregadorRegrasUploader tipoArquivo={tipoArquivo} camposExtrasFixos={camposExtrasFixos}>
+            <ObservadorPreviewUrl onPreviewUrlChange={onPreviewUrlChange} />
             <ComponenteUploader />
         </CarregadorRegrasUploader>
     );
+};
+
+function ObservadorPreviewUrl({ onPreviewUrlChange }: { onPreviewUrlChange?: (previewUrl: string | null) => void; }) {
+    const { previewUrl } = useContextoUploadImagem();
+
+    useEffect(() => {
+        if (!onPreviewUrlChange) return;
+        onPreviewUrlChange(previewUrl);
+    }, [previewUrl, onPreviewUrlChange]);
+
+    return null;
 };
 
 function CarregadorRegrasUploader({ tipoArquivo, camposExtrasFixos, children }: { tipoArquivo: TipoArquivoDef; camposExtrasFixos?: CamposExtrasUpload; children: ReactNode; }) {

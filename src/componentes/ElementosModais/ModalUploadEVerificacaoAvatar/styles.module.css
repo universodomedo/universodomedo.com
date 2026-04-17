@@ -1,0 +1,114 @@
+.recipiente_componente_de_validacao_uploader_avatar {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    gap: 2em;
+}
+
+.recipiente_uploader_avatar {
+    width: 40%;
+}
+
+.recipiente_validador_avatar {
+    flex: 1;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 20%;
+    gap: 1em;
+}
+
+.recipiente_visualizacao_validacao_avatar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    gap: 2em;
+}
+
+.recipiente_controladores_transparencia_avatares {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1em;
+    justify-content: space-evenly;
+}
+
+.recipiente_validacao_avatar {
+    height: 100%;
+    max-width: 100%;
+    aspect-ratio: 1;
+    position: relative;
+    border: 1px black solid;
+    overflow: hidden;
+    cursor: crosshair;
+}
+
+.preview_validacao_avatar {
+    height: 100%;
+    position: relative;
+}
+
+.recipiente_area_visualizao_zoom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: 1px black solid;
+}
+
+.recipiente_viewport_zoom_validacao_avatar {
+    height: 100%;
+    max-width: 100%;
+    aspect-ratio: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.recipiente_posicionamento_zoom_validacao_avatar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+}
+
+.recipiente_conteudo_zoom_validacao_avatar {
+    position: relative;
+    transform-origin: top left;
+}
+
+.recipiente_controle_transparencia_avatar {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: fit-content;
+    gap: 0.75em;
+    align-items: center;
+}
+
+.recipiente_preview_controle_avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3em;
+    min-width: 3em;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.input_controle_transparencia_avatar {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.recipiente_avatar_de_comparacao {
+    position: absolute;
+    inset: 0;
+}

@@ -12,7 +12,9 @@ interface ContextoPaginaFichaTemporariaProps {
     navegarPara: (pagina: PAGINAS_SPA__VISUALIZA_FICHA) => void;
     fichaTemporaria: FichaTemporariaVisualizacaoDetalhadaDto;
     podeDeletarFichaTemporaria: boolean;
+    podeEvoluirFichaTemporaria: boolean;
     deletaFichaTemporaria: () => void;
+    iniciaProcessoEvolucaoFicha: () => void;
 };
 
 const ContextoPaginaFichaTemporaria = createContext<ContextoPaginaFichaTemporariaProps | undefined>(undefined);
@@ -23,10 +25,12 @@ export const useContextoPaginaFichaTemporaria = (): ContextoPaginaFichaTemporari
     return context;
 };
 
-export const ContextoPaginaFichaTemporariaProvider = ({ fichaTemporaria }: { fichaTemporaria: FichaTemporariaVisualizacaoDetalhadaDto; }) => {
+export const ContextoPaginaFichaTemporariaProvider = ({ fichaTemporaria, iniciaProcessoEvolucaoFicha }: { fichaTemporaria: FichaTemporariaVisualizacaoDetalhadaDto; iniciaProcessoEvolucaoFicha: () => void; }) => {
     const [paginaAtual, setPaginaAtual] = useState<PAGINAS_SPA__VISUALIZA_FICHA>('INICIAL');
-
-    const podeDeletarFichaTemporaria: boolean = fichaTemporaria?.detalheSessaoUnicaAmarrada === null;
+    
+    const fichaEstaAmarrada: boolean = fichaTemporaria.detalheSessaoUnicaAmarrada !== null;
+    const podeDeletarFichaTemporaria: boolean = !fichaEstaAmarrada;
+    const podeEvoluirFichaTemporaria: boolean = !fichaEstaAmarrada && (fichaTemporaria.nivel.id < 3);
 
     async function deletaFichaTemporaria() {
         const confirmou = window.confirm(`Deseja realmente deletar a Ficha ${fichaTemporaria.nome}?`);
@@ -44,7 +48,7 @@ export const ContextoPaginaFichaTemporariaProvider = ({ fichaTemporaria }: { fic
     const Pagina = PAGINAS_VISUALIZA_FICHA[paginaAtual];
 
     return (
-        <ContextoPaginaFichaTemporaria.Provider value={{ navegarPara, fichaTemporaria, podeDeletarFichaTemporaria, deletaFichaTemporaria }}>
+        <ContextoPaginaFichaTemporaria.Provider value={{ navegarPara, fichaTemporaria, podeDeletarFichaTemporaria, podeEvoluirFichaTemporaria, deletaFichaTemporaria, iniciaProcessoEvolucaoFicha }}>
             <SPA__PaginaFichaTemporaria__Base>
                 <Pagina />
             </SPA__PaginaFichaTemporaria__Base>

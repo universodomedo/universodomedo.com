@@ -13,16 +13,22 @@ export const Conteiner__PaginaFichaTemporaria = criaConteiner<PropsConteiner__Pa
 type PropsConteiner__PaginaFichaTemporaria = {
     fichaTemporaria: FichaTemporariaVisualizacaoDetalhadaDto;
     acaoVoltar: () => void;
+    fichaEmProcessoDeEvolucao: boolean;
+    iniciaProcessoEvolucaoFicha: () => void;
+    cancelaProcessoEvolucaoFicha: () => void;
 };
 
 function resolveSaida(props: PropsConteiner__PaginaFichaTemporaria): SaidaConteiner {
-    useConfigurarLayoutContextualizado({ titulo: null, fecharProps: { tipo: 'acao', executar: props.acaoVoltar, tituloTooltip: 'Voltar para Lista de Fichas' } }, 'patch');
+    if (props.fichaEmProcessoDeEvolucao) {
+        return criaSaidaConteiner(ContextoPaginaFichaTemporariaProvider, { fichaTemporaria: props.fichaTemporaria });
+    };
 
-    return criaSaidaConteiner(ContextoPaginaFichaTemporariaProvider, { fichaTemporaria: props.fichaTemporaria });
+    useConfigurarLayoutContextualizado({ titulo: null, fecharProps: { tipo: 'acao', executar: props.acaoVoltar, tituloTooltip: 'Voltar para Lista de Fichas' } }, 'patch');
+    return criaSaidaConteiner(ContextoPaginaFichaTemporariaProvider, { fichaTemporaria: props.fichaTemporaria, iniciaProcessoEvolucaoFicha: props.iniciaProcessoEvolucaoFicha });
 };
 
 function useEstado(): PropsConteiner__PaginaFichaTemporaria {
-    const { fichaTemporaria, acaoVoltar } = useContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionada();
+    const { fichaTemporaria, acaoVoltar, fichaEmProcessoDeEvolucao, iniciaProcessoEvolucaoFicha, cancelaProcessoEvolucaoFicha } = useContextoPaginaFichasTemporarias__ComFichaTemporariaSelecionada();
 
-    return { fichaTemporaria, acaoVoltar };
+    return { fichaTemporaria, acaoVoltar, fichaEmProcessoDeEvolucao, iniciaProcessoEvolucaoFicha, cancelaProcessoEvolucaoFicha };
 };

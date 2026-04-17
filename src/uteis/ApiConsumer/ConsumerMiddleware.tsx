@@ -279,6 +279,10 @@ export async function obtemListagemDePersonagensComAvatares(): Promise<VIEW_LIST
     return await useApi<VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[]>({ uri: '/personagens/obtemListagemDePersonagensComAvatares', method: 'GET' });
 }
 
+export async function obtemAvataresDeComparacao(): Promise<string[]> {
+    return await useApi<string[]>({ uri: '/arquivos_tipados_avatar/obtemAvataresDeComparacao', method: 'GET' });
+}
+
 //
 
 export async function desconectar() {

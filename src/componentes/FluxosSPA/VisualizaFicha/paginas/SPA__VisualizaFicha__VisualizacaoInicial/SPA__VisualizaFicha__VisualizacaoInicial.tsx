@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '../styles.module.css';
+import styles from './styles.module.css';
 
 import { useContextoPaginaFichaTemporaria } from 'Contextos/ContextoPaginaFichaTemporaria/contexto';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
@@ -9,11 +9,12 @@ import { ContadorRegressivo } from 'Componentes/Elementos/ContadorRegressivo/Con
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
 
 export default function SPA__VisualizaFicha__VisualizacaoInicial() {
-    const { fichaTemporaria, podeDeletarFichaTemporaria, deletaFichaTemporaria } = useContextoPaginaFichaTemporaria();
+    const { fichaTemporaria, podeDeletarFichaTemporaria, podeEvoluirFichaTemporaria, deletaFichaTemporaria, iniciaProcessoEvolucaoFicha } = useContextoPaginaFichaTemporaria();
 
     return (
         <div className={styles.recipiente_ficha}>
             <div className={styles.recipiente_dados_ficha}>
+                <button onClick={() => iniciaProcessoEvolucaoFicha} disabled={!podeEvoluirFichaTemporaria}>Evoluir Ficha</button>
                 {fichaTemporaria.detalheSessaoUnicaAmarrada && (
                     <div className={styles.recipiente_dados_sessao}>
                         <SecaoDeConteudo className={styles.recipiente_dados_sessao_unica_amarrada_nessa_ficha} fit>
@@ -34,7 +35,7 @@ export default function SPA__VisualizaFicha__VisualizacaoInicial() {
                 ) : (
                     <Tooltip>
                         <Tooltip.Trigger>
-                            <button onClick={deletaFichaTemporaria} disabled={!podeDeletarFichaTemporaria}>Deletar Ficha</button>
+                            <button onClick={deletaFichaTemporaria} disabled>Deletar Ficha</button>
                         </Tooltip.Trigger>
 
                         <Tooltip.Content>
