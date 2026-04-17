@@ -48,7 +48,7 @@ function RenderizaArquivo({ arquivo }: { arquivo: ArquivoCompletaDto }) {
 
             {arquivo.detalheArquivoInterno && (
                 <div className={styles.recipiente_detalhes_arquivo}>
-                    <h4>{arquivo.detalheArquivoInterno.nomeInterno}</h4>
+                    <h4 title={arquivo.detalheArquivoInterno.nomeInterno}>{arquivo.detalheArquivoInterno.nomeInterno}</h4>
                 </div>
             )}
         </div>

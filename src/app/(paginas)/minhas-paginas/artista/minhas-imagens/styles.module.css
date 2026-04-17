@@ -1,0 +1,44 @@
+.recipiente_lista_arquivos {
+    display: flex;
+    white-space: nowrap;
+    flex-flow: wrap;
+    place-content: flex-start space-evenly;
+    gap: 3vh 3vw;
+    width: 100%;
+    padding: 1vh 0;
+}
+
+.recipiente_individual_item_arquivo {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    text-align: center;
+    direction: rtl;
+    gap: .7em;
+    width: 20%;
+    aspect-ratio: 16 / 9;
+    align-items: center;
+    padding: 1em;
+}
+
+.recipiente_area_render_arquivo {
+    display: flex;
+    width: 80%;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+    border: 1px white solid;
+    min-height: 0;
+
+    & img {
+        display: block;
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        object-position: center;
+    }
+}

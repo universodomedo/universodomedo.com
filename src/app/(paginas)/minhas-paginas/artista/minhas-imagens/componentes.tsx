@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import { PAGINAS } from "types-nora-api";
+import { ArquivoCompletaDto, PAGINAS } from "types-nora-api";
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
 import { ContextoPaginaArtistaMinhasImagensProvider, useContextoPaginaArtistaMinhasImagens } from "Contextos/ContextoPaginaArtistaMinhasImagens/contexto";
@@ -24,10 +24,20 @@ function PaginaArtista_MinhasImagens_Contexto() {
     return arquivos.length > 0
         ? (
             <div className={styles.recipiente_lista_arquivos}>
-                {arquivos.map(arquivo => <RecipienteImagemPadrao key={arquivo.id} src={arquivo.caminhoArquivo} />)}
+                {arquivos.map(arquivo => <RenderizaArquivo key={arquivo.id} arquivo={arquivo} />)}
             </div>
         )
         : (
             <h4>Nenhum Arquivo encontrado</h4>
         )
+};
+
+function RenderizaArquivo({ arquivo }: { arquivo: ArquivoCompletaDto }) {
+    return (
+        <div className={styles.recipiente_individual_item_arquivo}>
+            <div className={styles.recipiente_area_render_arquivo}>
+                <RecipienteImagemPadrao src={arquivo.caminhoArquivo} />
+            </div>
+        </div>
+    );
 };
