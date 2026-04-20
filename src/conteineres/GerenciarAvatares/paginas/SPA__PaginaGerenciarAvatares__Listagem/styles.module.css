@@ -4,7 +4,7 @@
     width: 100%;
     flex-wrap: wrap;
     white-space: nowrap;
-    gap: 3vh 3vw;
+    gap: 1.8vh 2vw;
     justify-content: space-evenly;
     align-content: flex-start;
     padding: 1vh 0;
@@ -16,14 +16,18 @@
     width: 13%;
     gap: .4vh;
     text-align: center;
-
+    
     & h4 {
         text-overflow: ellipsis;
         overflow: hidden;
     }
 
-    &:hover {
-        box-shadow: 0px 0px 9px 0px #ffffff;
+    &:not(.sem_avatares) {
+        cursor: pointer;
+
+        &:hover {
+            box-shadow: 0px 0px 9px 0px #ffffff;
+        }
     }
 }
 
@@ -31,3 +35,7 @@
     position: relative;
     aspect-ratio: 1;
 }
+
+.pendente { color: var(--cor-atencao); }
+
+.completo { color: var(--cor-confirmacao); }

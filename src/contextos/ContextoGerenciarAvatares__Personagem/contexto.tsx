@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
+import { AvatarPersonagemDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
 
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SPA__PaginaGerenciarAvatares__Personagem from 'Conteineres/GerenciarAvatares/paginas/SPA__PaginaGerenciarAvatares__Personagem/SPA__PaginaGerenciarAvatares__Personagem';
@@ -10,7 +10,7 @@ import ModalUploadEVerificacaoAvatar from '@/componentes/ElementosModais/ModalUp
 interface ContextoGerenciarAvatares__Personagem__Props {
     personagem: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto;
     avataresDeComparacao: string[];
-    abreModalUploadEVerificacaoAvatar: () => void;
+    selecionarChaveAvatarConfigurando: (idChaveAvatar: number) => void;
 };
 
 const ContextoGerenciarAvatares__Personagem = createContext<ContextoGerenciarAvatares__Personagem__Props | undefined>(undefined);
@@ -24,14 +24,17 @@ export const useContextoGerenciarAvatares__Personagem = (): ContextoGerenciarAva
 export const ContextoGerenciarAvatares__Personagem__Provider = ({ personagem, avataresDeComparacao, deselecionaPersonagem }: { personagem: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto; avataresDeComparacao: string[]; deselecionaPersonagem: () => void; }) => {
     useConfigurarLayoutContextualizado({ titulo: personagem.nome, fecharProps: { tipo: 'acao', executar: deselecionaPersonagem, tituloTooltip: 'Voltar para Lista de Personagens' } }, 'patch');
 
-    const [modalOpen, setModalOpen] = useState(false);
+    const [idChaveNovoAvatarConfigurando, setIdChaveNovoAvatarConfigurando] = useState<number | null>(null);
 
-    const abreModalUploadEVerificacaoAvatar = () => { setModalOpen(true); }
+    const selecionarChaveAvatarConfigurando = (idChaveAvatar: number) => { setIdChaveNovoAvatarConfigurando(idChaveAvatar); };
+    const chaveAvatarConfigurando: AvatarPersonagemDto | null = idChaveNovoAvatarConfigurando ? personagem.avatares.find(avatar => avatar.idChaveNovoAvatar === idChaveNovoAvatarConfigurando) ?? null : null;
+
+    const fechaModalUploadEVerificacaoAvatar = () => { setIdChaveNovoAvatarConfigurando(null); };
 
     return (
-        <ContextoGerenciarAvatares__Personagem.Provider value={{ personagem, avataresDeComparacao, abreModalUploadEVerificacaoAvatar }}>
+        <ContextoGerenciarAvatares__Personagem.Provider value={{ personagem, avataresDeComparacao, selecionarChaveAvatarConfigurando }}>
             <SPA__PaginaGerenciarAvatares__Personagem />
-            <ModalUploadEVerificacaoAvatar modalEstaAberta={modalOpen} onOpenChange={setModalOpen} />
+            {chaveAvatarConfigurando && <ModalUploadEVerificacaoAvatar modalEstaAberta={chaveAvatarConfigurando !== null} onOpenChange={(open) => { if (!open) fechaModalUploadEVerificacaoAvatar(); }} chaveAvatarConfigurando={chaveAvatarConfigurando} />}
         </ContextoGerenciarAvatares__Personagem.Provider>
     );
 };

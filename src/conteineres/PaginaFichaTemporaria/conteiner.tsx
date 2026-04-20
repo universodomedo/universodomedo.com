@@ -19,9 +19,9 @@ type PropsConteiner__PaginaFichaTemporaria = {
 };
 
 function resolveSaida(props: PropsConteiner__PaginaFichaTemporaria): SaidaConteiner {
-    if (props.fichaEmProcessoDeEvolucao) {
-        return criaSaidaConteiner(ContextoPaginaFichaTemporariaProvider, { fichaTemporaria: props.fichaTemporaria });
-    };
+    // if (props.fichaEmProcessoDeEvolucao) {
+    //     return criaSaidaConteiner(ContextoPaginaFichaTemporariaProvider, { fichaTemporaria: props.fichaTemporaria });
+    // };
 
     useConfigurarLayoutContextualizado({ titulo: null, fecharProps: { tipo: 'acao', executar: props.acaoVoltar, tituloTooltip: 'Voltar para Lista de Fichas' } }, 'patch');
     return criaSaidaConteiner(ContextoPaginaFichaTemporariaProvider, { fichaTemporaria: props.fichaTemporaria, iniciaProcessoEvolucaoFicha: props.iniciaProcessoEvolucaoFicha });

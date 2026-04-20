@@ -1,7 +1,7 @@
 .recipiente_gerenciamento_avatares_do_personagem {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 90%;
     height: 100%;
     gap: 2em;
     align-items: center;
@@ -13,14 +13,31 @@
     width: 100%;
     flex-wrap: wrap;
     white-space: nowrap;
-    gap: 3vh 3vw;
+    gap: 4vh 3vw;
     justify-content: space-evenly;
     align-content: flex-start;
     padding: 1vh 0;
 }
 
+.recipiente_chave_avatar {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    text-align: center;
+    align-items: center;
+    gap: .6vh;
+
+    &:not(.avatar_ja_configurado) {
+        cursor: pointer;
+
+        &:hover {
+            box-shadow: 0px 0px 9px 0px #ffffff;
+        }
+    }
+}
+
 .recipiente_avatar {
     position: relative;
     aspect-ratio: 1;
-    width: 12%;
+    width: 53%;
 }

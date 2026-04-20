@@ -1,37 +1,41 @@
 import styles from './styles.module.css';
 
-import { AvataresPertencentesDto } from 'types-nora-api';
+import { AvatarPersonagemDto, PathTokenPadrao } from 'types-nora-api';
 
 import { useContextoGerenciarAvatares__Personagem } from 'Contextos/ContextoGerenciarAvatares__Personagem/contexto';
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { DivClicavel } from '@/componentes/Elementos/DivClicavel/DivClicavel';
+import { formataData } from '@/uteis/FormatadorDeDatas/FormatadorDeDatas';
 
 export default function SPA__PaginaGerenciarAvatares__Personagem() {
-    const { personagem, abreModalUploadEVerificacaoAvatar } = useContextoGerenciarAvatares__Personagem();
+    const { personagem } = useContextoGerenciarAvatares__Personagem();
 
     return (
         <div className={styles.recipiente_gerenciamento_avatares_do_personagem}>
-            <button onClick={abreModalUploadEVerificacaoAvatar}>Adicionar novo Avatar</button>
             <div className={styles.recipiente_avatares_do_personagem}>
-                <AvataresPersonagem avataresPersonagem={personagem.avatares} />
+                {personagem.avatares.length < 1 ? (
+                    <h2>Nenhuma Chave de Avatar configurada para esse Personagem</h2>
+                ) : (
+                    <>
+                        {personagem.avatares.map(avatar => <VisualizarChaveDeAvatarDoPersonagem key={avatar.idChaveNovoAvatar} avatar={avatar} />)}
+                    </>
+                )}
             </div>
         </div>
     );
 };
 
-function AvataresPersonagem({ avataresPersonagem }: { avataresPersonagem: AvataresPertencentesDto }) {
-    if (avataresPersonagem.caminhosAvatares.length < 1) return <h2>Esse Personagem não tem avatares</h2>;
+function VisualizarChaveDeAvatarDoPersonagem({ avatar }: { avatar: AvatarPersonagemDto }) {
+    const { selecionarChaveAvatarConfigurando } = useContextoGerenciarAvatares__Personagem();
 
     return (
-        <>
-            {avataresPersonagem.caminhosAvatares.map((caminhoAvatar, index) => <AvatarPersonagem key={index} avatarPersonagem={caminhoAvatar} />)}
-        </>
-    );
-};
+        <DivClicavel className={styles.recipiente_chave_avatar} onClick={() => selecionarChaveAvatarConfigurando(avatar.idChaveNovoAvatar)} desabilitado={avatar.avatarEstaConfigurado} classeParaDesabilitado={styles.avatar_ja_configurado}>
+            <div className={styles.recipiente_avatar}>
+                <RecipienteImagem src={avatar.caminhoArquivo ?? PathTokenPadrao} />
+            </div>
 
-function AvatarPersonagem({ avatarPersonagem }: { avatarPersonagem: string }) {
-    return (
-        <div className={styles.recipiente_avatar}>
-            <RecipienteImagem src={avatarPersonagem} />
-        </div>
+            {avatar.dataMomentoCanonico && <h4>{formataData(avatar.dataMomentoCanonico)}</h4>}
+            <h5>{avatar.descricao}</h5>
+        </DivClicavel>
     );
 };
