@@ -1,14 +1,14 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
+import { CaminhoArquivoAvatar, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
 
 import { obtemAvataresDeComparacao, obtemListagemDePersonagensComAvatares } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { toast } from 'Hooks/useToast';
 
 interface ContextoGerenciarAvatares__Props {
     personagens: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[];
-    avataresDeComparacao: string[];
+    avataresDeComparacao: CaminhoArquivoAvatar[];
     setIdPersonagemSelecionado: (v: number) => void;
     deselecionaPersonagem: () => void;
     personagemSelecionado: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto | null;
@@ -25,7 +25,7 @@ export const useContextoGerenciarAvatares = (): ContextoGerenciarAvatares__Props
 export const ContextoGerenciarAvatares__Provider = ({ children }: { children: React.ReactNode }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
     const [personagens, setPersonagens] = useState<VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[] | null>(null);
-    const [avataresDeComparacao, setAvataresDeComparacao] = useState<string[] | null>(null);
+    const [avataresDeComparacao, setAvataresDeComparacao] = useState<CaminhoArquivoAvatar[] | null>(null);
     const [idPersonagemSelecionado, setIdPersonagemSelecionado] = useState<number | null>(null);
 
     const personagemSelecionado: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto | null = personagens && idPersonagemSelecionado ? personagens.find(personagem => personagem.id === idPersonagemSelecionado)! : null;

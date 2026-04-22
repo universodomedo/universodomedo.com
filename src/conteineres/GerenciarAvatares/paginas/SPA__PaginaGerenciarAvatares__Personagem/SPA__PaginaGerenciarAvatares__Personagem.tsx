@@ -1,9 +1,9 @@
 import styles from './styles.module.css';
 
-import { AvatarPersonagemDto, PathTokenPadrao } from 'types-nora-api';
+import { AvatarPersonagemDto, PathAvatarPadrao } from 'types-nora-api';
 
 import { useContextoGerenciarAvatares__Personagem } from 'Contextos/ContextoGerenciarAvatares__Personagem/contexto';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 import { DivClicavel } from '@/componentes/Elementos/DivClicavel/DivClicavel';
 import { formataData } from '@/uteis/FormatadorDeDatas/FormatadorDeDatas';
 
@@ -31,7 +31,7 @@ function VisualizarChaveDeAvatarDoPersonagem({ avatar }: { avatar: AvatarPersona
     return (
         <DivClicavel className={styles.recipiente_chave_avatar} onClick={() => selecionarChaveAvatarConfigurando(avatar.idChaveNovoAvatar)} desabilitado={avatar.avatarEstaConfigurado} classeParaDesabilitado={styles.avatar_ja_configurado}>
             <div className={styles.recipiente_avatar}>
-                <RecipienteImagem src={avatar.caminhoArquivo ?? PathTokenPadrao} />
+                <RenderArquivoAvatar caminhoArquivoAvatar={avatar.caminhoArquivo ?? PathAvatarPadrao} />
             </div>
 
             {avatar.dataMomentoCanonico && <h4>{formataData(avatar.dataMomentoCanonico)}</h4>}

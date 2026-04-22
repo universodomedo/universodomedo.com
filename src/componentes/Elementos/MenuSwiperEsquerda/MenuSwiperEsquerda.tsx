@@ -3,9 +3,9 @@
 import styles from './styles.module.css';
 
 import Link from 'next/link';
-import { PAGINAS } from 'types-nora-api';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDiscord, faSpotify, faYoutube, faTwitch } from "@fortawesome/free-brands-svg-icons";
+import { ARQUIVOS_INTERNOS, PAGINAS } from 'types-nora-api';
 
 import cn from 'classnames';
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx'
@@ -36,9 +36,9 @@ export default function MenuSwiperEsquerda() {
 function ConteudoSwiperEsquerda() {
     return (
         <div className={styles.recipiente_conteudo_swiper_esquerda}>
-            <div className={styles.fundo_camada_1} style={{ ['--bg-1' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_1" })}")` }} />
-            <div className={styles.fundo_camada_2} style={{ ['--bg-2' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_2" })}")` }} />
-            <div className={styles.fundo_camada_3} style={{ ['--bg-3' as never]: `url("${carregaArquivoInterno({ arquivo: "MENU_PRINCIPAL__CAMADA_3" })}")` }} />
+            <div className={styles.fundo_camada_1} style={{ ['--bg-1' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.MENU_PRINCIPAL__CAMADA_1)}")` }} />
+            <div className={styles.fundo_camada_2} style={{ ['--bg-2' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.MENU_PRINCIPAL__CAMADA_2)}")` }} />
+            <div className={styles.fundo_camada_3} style={{ ['--bg-3' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.MENU_PRINCIPAL__CAMADA_3)}")` }} />
             <div className={styles.conteudo_swiper_esquerda}>
                 <div className={styles.recipiente_moldura_superior}>
                     <RecipienteArquivoInterno arquivo={'MENU_PRINCIPAL__MOLDURA'} className={styles.moldura}/>

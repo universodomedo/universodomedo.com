@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 
 import { PersonagemVisualizacaoDetalhadaDto } from 'types-nora-api';
 
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 type BarraPersonagemProps = {
     personagem: PersonagemVisualizacaoDetalhadaDto;
@@ -15,7 +15,7 @@ export default function BarraPersonagem({ props }: { props: BarraPersonagemProps
     return (
         <div className={styles.recipiente_barra}>
             <div className={styles.recipiente_imagem_personagem}>
-                <RecipienteImagem src={props.personagem.caminhoAvatar} />
+                <RenderArquivoAvatar caminhoArquivoAvatar={props.personagem.avatarAtual} />
             </div>
             <div id={styles.recipiente_informacoes_usuario}>
                 <h1>{props.personagem.nome}</h1>

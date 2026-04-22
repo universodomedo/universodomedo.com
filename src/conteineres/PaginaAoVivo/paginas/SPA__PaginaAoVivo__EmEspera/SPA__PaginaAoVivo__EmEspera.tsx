@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import { useContextoPaginaAoVivo__EmEspera } from 'Contextos/ContextoPaginaAoVivo__EmEspera/contexto';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoArteCapa } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 import { ContadorRegressivo } from 'Componentes/Elementos/ContadorRegressivo/ContadorRegressivo';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 import ItemListagemSessaoPrevista from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/ItemListagemSessaoPrevista/ItemListagemSessaoPrevista';
@@ -45,7 +45,7 @@ function PaginaSessao_EpisodioSeguinte() {
     return (
         <div id={styles.recipiente_episodio_seguinte}>
             <div id={styles.recipiente_capa_episodio_seguinte}>
-                <RecipienteImagem src={episodioSeguinte.imagemCapa.caminhoCapa} />
+                <RenderArquivoArteCapa caminhoArquivoArte={episodioSeguinte.dadosArteCapa.caminhoArquivoArteCapa} />
             </div>
             <div id={styles.recipiente_informacoes_episodio_seguinte}>
                 <div id={styles.recipiente_titulo_e_subtitulo_episodio_seguinte}>

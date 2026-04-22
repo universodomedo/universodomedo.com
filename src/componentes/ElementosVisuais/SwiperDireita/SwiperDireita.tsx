@@ -3,7 +3,7 @@ import styles from './styles.module.css';
 import { useState } from 'react';
 
 import { useContextoSalaDeJogo__Jogador } from 'Contextos/ContextoSalaDeJogo__Jogador/contexto';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 export default function SwiperDireita({ children }: { children: React.ReactNode; }) {
     const { caminhoAvatar } = useContextoSalaDeJogo__Jogador();
@@ -15,7 +15,7 @@ export default function SwiperDireita({ children }: { children: React.ReactNode;
     return (
         <div className={`${styles.swiper_direita} ${!swiperDireitaAberto ? styles.swiper_direita_fechado : ''}`}>
             <button onClick={alternaSwiperDireitaAberto} className={styles.botao_swiper_direita}>
-                <RecipienteImagem src={caminhoAvatar} />
+                <RenderArquivoAvatar caminhoArquivoAvatar={caminhoAvatar} />
             </button>
             <div className={styles.recipiente_conteudo_swiper_direita}>
                 {children}

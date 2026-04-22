@@ -4,7 +4,7 @@ import cn from 'classnames';
 import { MensagemChatRecebida, SOCKET_UsuarioExistente } from 'types-nora-api';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderUsuario } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 export default function AgrupamentoMensagensChat({ usuario, grupo }: { usuario: SOCKET_UsuarioExistente; grupo: MensagemChatRecebida[] }) {
     const { usuarioLogado } = useContextoAutenticacao();
@@ -13,7 +13,7 @@ export default function AgrupamentoMensagensChat({ usuario, grupo }: { usuario: 
         <div className={cn(styles.agrupamento_mensagens, usuario.id === usuarioLogado?.id && styles.agrupamento_mensagem_sua)}>
             <div className={styles.container_avatar_agrupamento_mensagem}>
                 <div className={styles.recipiente_avatar_agrupamento_mensagem}>
-                    <RecipienteImagem src={usuario.avatar} />
+                    <RenderUsuario caminhoArquivoAvatar={usuario.caminhoArquivoAvatar} />
                 </div>
             </div>
             <div className={styles.recipiente_lista_mensagens_agrupadas}>

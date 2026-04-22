@@ -1,5 +1,7 @@
 import styles from './styles.module.css';
 
+import { ARQUIVOS_INTERNOS } from 'types-nora-api';
+
 import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
 import { carregaArquivoInterno } from 'Uteis/ImagemLoader/ImagemLoader';
 
@@ -22,7 +24,7 @@ export default function ScrollingTag({ direcao, urlImagem, conteudoTexto, classN
 			<div className={styles.recipiente_porta_bmk}>
 				<RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__MARCA_PAGINA__DETALHE_BORDA'} className={styles.detalhe_porta_bmk} />
 				<RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__MARCA_PAGINA__BASE'} className={styles.recipiente_porta_marcador} />
-				<div className={styles.mascara_anexo} style={{ ['--vetor-etiqueta' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__MARCA_PAGINA__VETOR' })}")` }}>
+				<div className={styles.mascara_anexo} style={{ ['--vetor-etiqueta' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__MARCA_PAGINA__VETOR)}")` }}>
 					<div className={styles.filtro_bmk}></div>
 					<img className={styles.recipiente_imagem_anexo} src={urlImagem} alt="#" />
 				</div>

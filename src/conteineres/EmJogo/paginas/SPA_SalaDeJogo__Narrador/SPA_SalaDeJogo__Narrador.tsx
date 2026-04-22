@@ -19,9 +19,9 @@ export default function SPA_SalaDeJogo__Narrador() {
     const windowsDefinitions: WindowDefinition[] = useMemo(() => [
         { id: 'Testes do Mestre', icon: faHandBackFist, title: 'Ações do Mestre', color: '#ffb14a', initialSize: { width: 480 }, contentMode: 'fit', contentAspectRatio: 16 / 9, content: <JanelasNarrador__Participantes participantesDaSessao={dadosSalaDeJogo__Narrador.participantesDaSessao} />, },
         { id: 'Mensagens', icon: faFile, title: 'Mensagens', color: '#d816ff', initialSize: { width: 480, height: 360 }, contentMode: 'scroll', content: <JanelaDeMensagensDeJogo />, },
-        { id: 'Mapa', icon: faMap, title: 'Mapa', color: '#1f9529', initialSize: { width: 700 }, contentMode: 'fit', contentAspectRatio: 16 / 9, content: <TelaDeJogo capaSessao={dadosSalaDeJogo__Narrador.capaSessao} />, },
+        { id: 'Mapa', icon: faMap, title: 'Mapa', color: '#1f9529', initialSize: { width: 700 }, contentMode: 'fit', contentAspectRatio: 16 / 9, content: <TelaDeJogo capaSessao={dadosSalaDeJogo__Narrador.caminhoArquivoArteCapa} />, },
         { id: 'Configurações da Sala', icon: faDisplay, title: 'Configurações da Sala', color: '#ff4453', initialSize: { width: 480, height: 360 }, contentMode: 'scroll', content: <JanelaNarrador_Acoes />, },
-    ], [dadosSalaDeJogo__Narrador.capaSessao]);
+    ], [dadosSalaDeJogo__Narrador.caminhoArquivoArteCapa]);
 
     return (
         <div className={styles.recipiente_pagina_de_jogo}>

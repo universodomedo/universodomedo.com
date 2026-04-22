@@ -44,7 +44,7 @@ function PaginaSessoesMestre_Contexto() {
                         </div>
                         <DivClicavel key={0} className={styles.corpo_sessao} onClick={() => selecionaSessao(sessao.id)}>
                             <>
-                                <RecipienteCapa className={styles.recipiente_capa} caminhoCapa={sessao.imagemCapa.caminhoCapa} />
+                                <RecipienteCapa className={styles.recipiente_capa} caminhoArquivoArteCapa={sessao.dadosArteCapa.caminhoArquivoArteCapa} />
 
                                 <div className={styles.dados_corpo_sessao}>
                                     <h4>Prevista para {formataData(sessao.dataPrevisaoInicio, 'dd/MM/yyyy HH:mm')}</h4>

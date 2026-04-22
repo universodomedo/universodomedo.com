@@ -5,7 +5,7 @@ import cn from 'classnames';
 
 import { useContextoGerenciarAvatares__Listagem } from 'Contextos/ContextoGerenciarAvatares__Listagem/contexto';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 export default function SPA__PaginaGerenciarAvatares__Listagem() {
     const { personagens } = useContextoGerenciarAvatares__Listagem();
@@ -25,7 +25,7 @@ function RegistroPersonagemESeusAvatares({ personagem }: { personagem: VIEW_LIST
     if (numeroTotalDeAvatares < 1) return (
         <div className={cn(styles.recipiente_registro_personagem_e_seus_avatares, styles.sem_avatares)}>
             <div className={styles.recipiente_imagem_avatar}>
-                <RecipienteImagem src={personagem.avatarAtual} />
+                <RenderArquivoAvatar caminhoArquivoAvatar={personagem.avatarAtual} />
             </div>
 
             <h4>{personagem.nome}</h4>
@@ -37,7 +37,7 @@ function RegistroPersonagemESeusAvatares({ personagem }: { personagem: VIEW_LIST
     return (
         <DivClicavel className={styles.recipiente_registro_personagem_e_seus_avatares} onClick={() => selecionaPersonagem(personagem.id)} desabilitado={personagem.avatares.length < 1} classeParaDesabilitado={styles.sem_avatares}>
             <div className={styles.recipiente_imagem_avatar}>
-                <RecipienteImagem src={personagem.avatarAtual} />
+                <RenderArquivoAvatar caminhoArquivoAvatar={personagem.avatarAtual} />
             </div>
 
             <h4>{personagem.nome}</h4>

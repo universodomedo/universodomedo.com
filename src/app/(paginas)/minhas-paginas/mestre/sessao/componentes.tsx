@@ -33,7 +33,7 @@ function PaginaMestreSessao_Conteudo() {
         <>
             <SessaoEmVisualizacao sessao={sessaoSelecionada} />
 
-            {!sessaoSelecionada.imagemCapa.temCapaConfigurada && <ConfiguradorCapa cabecalho={{ titulo: 'Selecionando Capa', subtitulo: sessaoSelecionada.tituloInteligente.tituloCompleto }} callbackSelecionaArquivo={callbackSelecionaArquivo} />}
+            {!sessaoSelecionada.dadosArteCapa.temCapaConfigurada && <ConfiguradorCapa cabecalho={{ titulo: 'Selecionando Capa', subtitulo: sessaoSelecionada.tituloInteligente.tituloCompleto }} callbackSelecionaArquivo={callbackSelecionaArquivo} />}
 
             {/* <ListaInfracoesSessao /> */}
         </>

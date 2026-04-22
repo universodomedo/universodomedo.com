@@ -8,8 +8,7 @@ import { Eventos_Emite, SOCKET_AcessoUsuario } from 'types-nora-api';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
-
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 export default function SecaoContatos() {
     const { usuarioLogado } = useContextoAutenticacao();
@@ -41,7 +40,7 @@ function Contato({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuario }) {
     return (
         <div className={`${styles.recipiente_contato} ${!acessoUsuario.paginaAtual ? styles.contato_desconectado : ''}`}>
             <div className={styles.recipiente_imagem_contato}>
-                <RecipienteImagem src={acessoUsuario.usuario.customizacao.caminhoAvatar} />
+                <RenderArquivoAvatar caminhoArquivoAvatar={acessoUsuario.usuario.customizacao.caminhoArquivoAvatar} />
             </div>
             <div className={styles.recipiente_informacoes_contato}>
                 <h2>{acessoUsuario.usuario.username}</h2>

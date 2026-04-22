@@ -3,17 +3,15 @@
 import styles from './styles.module.css';
 
 import { useEffect, useState } from 'react';
-
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
-import Modal from 'Componentes/Elementos/Modal/Modal';
-import { obtemPericiasParaCriacaoFicha } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { useContextoPaginaFichasPendentes } from './contexto';
-
-import { EstadoPendenciaAdministrativaPersonagem, PericiaCompletaDto, PersonagemCompletaDto } from 'types-nora-api';
-
 import Select from "react-select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faUser } from "@fortawesome/free-solid-svg-icons";
+import { EstadoPendenciaAdministrativaPersonagem, PericiaCompletaDto, PersonagemCompletaDto } from 'types-nora-api';
+
+import { useContextoPaginaFichasPendentes } from './contexto';
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
+import { obtemPericiasParaCriacaoFicha } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import Modal from 'Componentes/Elementos/Modal/Modal';
 
 export function PaginaPendenciasFichaComDados() {
     const { listaPersonagensComPendencia, abreModalConfiguraFicha } = useContextoPaginaFichasPendentes();
@@ -23,7 +21,7 @@ export function PaginaPendenciasFichaComDados() {
             {listaPersonagensComPendencia && listaPersonagensComPendencia.map(personagem => (
                 <div key={personagem.id} className={styles.recipiente_informacoes_ficha}>
                     <div className={styles.recipiente_avatar_informacoes_ficha_pendencia}>
-                        <RecipienteImagem src={personagem.caminhoAvatar} />
+                        <RenderArquivoAvatar caminhoArquivoAvatar={personagem.avatarAtual} />
                     </div>
                     <div className={styles.recipiente_pendencias_ficha}>
                         <h1>{personagem.informacao?.nome}</h1>

@@ -3,7 +3,7 @@ import styles from './styles.module.css';
 import { SalaDeJogo_Mestre, SalaDeJogo_Participante, SalaDeJogo_TipoMestre, SalaDeJogo_TipoParticipante, SalaDeJogoDto } from 'types-nora-api';
 
 import { AvatarUsuarioEmVisualizacao_CACHED } from '../AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 export function RenderItemSala({ salaDeJogo }: { salaDeJogo: SalaDeJogoDto }) {
     return (
@@ -57,7 +57,7 @@ function RenderJogadoresSala({ jogadores }: { jogadores: SalaDeJogo_Participante
         <div className={styles.section}>
             <p className={styles.section_title}>Jogadores</p>
             <div className={styles.chipRow}>
-                {jogadores.filter(jogador => jogador.tipo === SalaDeJogo_TipoParticipante.JOGADOR).map(jogador => <div key={jogador.usuario.id} className={styles.recipiente_imagem_avatar}><RecipienteImagem src={jogador.caminhoAvatarEmJogo} /></div>)}
+                {jogadores.filter(jogador => jogador.tipo === SalaDeJogo_TipoParticipante.JOGADOR).map(jogador => <div key={jogador.usuario.id} className={styles.recipiente_imagem_avatar}><RenderArquivoAvatar caminhoArquivoAvatar={jogador.avatarAtual} /></div>)}
             </div>
         </div>
     );

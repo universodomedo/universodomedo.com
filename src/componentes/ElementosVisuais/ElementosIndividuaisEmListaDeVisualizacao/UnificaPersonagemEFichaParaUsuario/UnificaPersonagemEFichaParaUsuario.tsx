@@ -2,11 +2,11 @@
 
 import styles from './styles.module.css';
 
-import { ClasseDto, FichaTemporariaVisualizacaoDetalhadaDto, NivelDto, PAGINAS, PersonagemVisualizacaoDetalhadaDto } from 'types-nora-api';
+import { CaminhoArquivoAvatar, ClasseDto, FichaTemporariaVisualizacaoDetalhadaDto, NivelDto, PAGINAS, PersonagemVisualizacaoDetalhadaDto } from 'types-nora-api';
+
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
-
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 import { DestinoInput } from 'Funcionalidades/navegacaoInterna';
 
@@ -29,7 +29,7 @@ export default function ListagemPersonagensEFichasTemporariasUsuario__Unificada(
 function ListagemPersonagensEFichasTemporariasUsuario__ItemPersonagem({ personagem }: { personagem: PersonagemVisualizacaoDetalhadaDto }) {
     return <ListagemPersonagensEFichasTemporariasUsuario__Molde
         destino={{ pagina: PAGINAS.personagens, query: { [QUERY_PARAMS.PERSONAGEM]: personagem.id } }}
-        caminhoAvatar={personagem.caminhoAvatar}
+        caminhoAvatar={personagem.avatarAtual}
         nome={personagem.nome}
         classe={personagem.classe}
         nivel={personagem.nivel}
@@ -47,12 +47,12 @@ function ListagemPersonagensEFichasTemporariasUsuario__ItemFichaTemporaria({ fic
     );
 };
 
-function ListagemPersonagensEFichasTemporariasUsuario__Molde({ destino, caminhoAvatar, nome, classe, nivel }: { destino: DestinoInput; caminhoAvatar?: string; nome: string; classe: ClasseDto | null, nivel: NivelDto | null }) {
+function ListagemPersonagensEFichasTemporariasUsuario__Molde({ destino, caminhoAvatar, nome, classe, nivel }: { destino: DestinoInput; caminhoAvatar?: CaminhoArquivoAvatar; nome: string; classe: ClasseDto | null, nivel: NivelDto | null }) {
     return (
         <SecaoDeConteudo className={styles.secao_conteudo_recipiente_personagem}>
             <CustomLink className={styles.recipiente_personagem} semDecoracao inlineBlock={false} destino={destino}>
                 <div className={styles.recipiente_avatar_personagem}>
-                    {caminhoAvatar && <RecipienteImagem src={caminhoAvatar} />}
+                    {caminhoAvatar && <RenderArquivoAvatar caminhoArquivoAvatar={caminhoAvatar} />}
                 </div>
                 <div className={styles.recipiente_informacoes1_personagem}>
                     <div className={styles.recipiente_informacoes_personagem}>

@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 
 import { useState } from 'react';
 import Slider, { Settings } from "react-slick";
-import { PAGINAS } from 'types-nora-api';
+import { ARQUIVOS_INTERNOS, PAGINAS } from 'types-nora-api';
 
 import BotaoCarrossel from 'Componentes/ElementosVisuais/ElementosCarroseis/BotaoCarrossel/BotaoCarrossel';
 import { carregaArquivoInterno, getImageUrlCdn, CDN_ImageUrl } from 'Uteis/ImagemLoader/ImagemLoader';
@@ -67,8 +67,8 @@ export default function PaginaAterrissagem_CarrosselPrincipal() {
         slidesToShow: 3,
         centerMode: true,
         centerPadding: '0',
-        nextArrow: <BotaoCarrossel arquivo={'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__SETA_PROXIMO'} classNameExterno={styles.botao_next} />,
-        prevArrow: <BotaoCarrossel arquivo={'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__SETA_ANTERIOR'} classNameExterno={styles.botao_prev} />,
+        nextArrow: <BotaoCarrossel arquivo={ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__SETA_PROXIMO} classNameExterno={styles.botao_next} />,
+        prevArrow: <BotaoCarrossel arquivo={ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__SETA_ANTERIOR} classNameExterno={styles.botao_prev} />,
         beforeChange: (_current, next) => {
             const indiceReal = next % lista.length;
             setSlideAtivo(indiceReal);
@@ -99,7 +99,7 @@ export default function PaginaAterrissagem_CarrosselPrincipal() {
 
             <RecipienteLayoutBordas />
 
-            <div className={styles.sliderWrapper} style={{ ['--dot-carrossel' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__DOT' })}")`, ['--dot-ativo' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__DOT_ATIVO' })}")`, ['--moldura-direita' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__DIREITA' })}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__ESQUERDA' })}")`, }}>
+            <div className={styles.sliderWrapper} style={{ ['--dot-carrossel' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__DOT)}")`, ['--dot-ativo' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__DOT_ATIVO)}")`, ['--moldura-direita' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__DIREITA)}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__ESQUERDA)}")`, }}>
                 <Slider {...settings}>
                     {lista.map((item, index) => <img key={index} src={item.imagem} alt={item.titulo} />)}
                 </Slider>
@@ -144,7 +144,7 @@ function LayoutSlidePrincipal() {
         <div className={styles.slide_principal}>
 
             <div className={styles.ornamentos_carrossel}>
-                <figure className={styles.ornamento_relative} style={{ ['--ornamento' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__ORNAMENTO_TOPO" })}")` }} />
+                <figure className={styles.ornamento_relative} style={{ ['--ornamento' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__ORNAMENTO_TOPO)}")` }} />
             </div>
 
             <div className={styles.borda_slide2} />

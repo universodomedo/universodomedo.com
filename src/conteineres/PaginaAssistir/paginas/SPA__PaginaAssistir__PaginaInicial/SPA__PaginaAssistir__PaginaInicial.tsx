@@ -8,7 +8,7 @@ import { useContextoPaginaAssistir__PaginaInicial } from 'Contextos/ContextoPagi
 import SecaoDeConteudo from "Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo"
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoArteCapa } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 export default function SPA__PaginaAssistir__PaginaInicial() {
     const { detalhesUltimasSessoesPostadas } = useContextoPaginaAssistir__PaginaInicial();
@@ -24,7 +24,7 @@ export default function SPA__PaginaAssistir__PaginaInicial() {
                             // <CustomLink key={detalheSessao.idSessao} inlineBlock={false} className={styles.carta_sessao_recente} destino={{ pagina: PAGINAS.assistir, params: { id: detalheSessao.idGrupoAventura }, query: { [QUERY_PARAMS.EPISODIO]: detalheSessao.episodio } }}>
                             <CustomLink key={detalheSessao.idSessao} inlineBlock={false} className={styles.carta_sessao_recente} destino= {{ pagina: PAGINAS.assistir }}>
                                 <div className={styles.recipiente_capa_carta_sessao_recente}>
-                                    <RecipienteImagem src={detalheSessao.capaSessao} />
+                                    <RenderArquivoArteCapa caminhoArquivoArte={detalheSessao.dadosArteCapa.caminhoArquivoArteCapa} />
                                 </div>
 
                                 <div className={styles.recipiente_info_carta_sessao_recente}>
@@ -36,7 +36,7 @@ export default function SPA__PaginaAssistir__PaginaInicial() {
                         : (
                             <CustomLink key={detalheSessao.idSessao} inlineBlock={false} className={styles.carta_sessao_recente} destino={{ pagina: PAGINAS.assistir }}>
                                 <div className={styles.recipiente_capa_carta_sessao_recente}>
-                                    <RecipienteImagem src={detalheSessao.capaSessao} />
+                                    <RenderArquivoArteCapa caminhoArquivoArte={detalheSessao.dadosArteCapa.caminhoArquivoArteCapa} />
                                 </div>
 
                                 <div className={styles.recipiente_info_carta_sessao_recente}>

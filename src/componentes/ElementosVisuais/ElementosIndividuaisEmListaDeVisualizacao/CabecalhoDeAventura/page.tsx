@@ -1,18 +1,18 @@
 import styles from './styles.module.css';
 
-import { GrupoAventuraCompletaDto } from 'types-nora-api';
+import { CaminhoArquivoArte, GrupoAventuraCompletaDto } from 'types-nora-api';
 
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoArteCapa } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
-type CabecalhoProps = | { tipo: 'sessao'; caminhoCapaSessao: string; } | { tipo: 'grupoAventura'; grupoAventura: GrupoAventuraCompletaDto; };
+type CabecalhoProps = | { tipo: 'sessao'; caminhoCapaSessao: CaminhoArquivoArte; } | { tipo: 'grupoAventura'; grupoAventura: GrupoAventuraCompletaDto; };
 
-export function CabecalhoDeAventura(props: CabecalhoProps) { return props.tipo === 'sessao' ? <RenderCabecalho caminhoImagem={props.caminhoCapaSessao} /> : <RenderCabecalho caminhoImagem={props.grupoAventura.imagemCapa.caminhoCapa} /> };
+export function CabecalhoDeAventura(props: CabecalhoProps) { return props.tipo === 'sessao' ? <RenderCabecalho caminhoArquivoArte={props.caminhoCapaSessao} /> : <RenderCabecalho caminhoArquivoArte={props.grupoAventura.dadosArteCapa.caminhoArquivoArteCapa} /> };
 
-function RenderCabecalho({ caminhoImagem }: { caminhoImagem: string }) {
+function RenderCabecalho({ caminhoArquivoArte }: { caminhoArquivoArte: CaminhoArquivoArte }) {
   return (
     <SecaoDeConteudo id={styles.recipiente_capa_cabecalho_aventura}>
-      <RecipienteImagem src={caminhoImagem} />
+      <RenderArquivoArteCapa caminhoArquivoArte={caminhoArquivoArte} />
     </SecaoDeConteudo>
   );
 };

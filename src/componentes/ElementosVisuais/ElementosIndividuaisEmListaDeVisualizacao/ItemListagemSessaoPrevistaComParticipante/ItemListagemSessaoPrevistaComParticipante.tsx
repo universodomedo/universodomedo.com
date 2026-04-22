@@ -2,7 +2,7 @@ import styles from './styles.module.css';
 
 import { JogadorSessaoDto, TipoVinculoSessaoJogador, VIEW_SessaoDeJogadorDto } from 'types-nora-api';
 
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoArteCapa, RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 
@@ -10,7 +10,7 @@ export default function ItemListagemSessaoPrevistaComParticipante({ sessao, sele
     return (
         <DivClicavel className={styles.recipiente_item_listagem_sessoes_jogador} onClick={() => { selecionaSessao(sessao.id); }}>
             <div className={styles.recipiente_capa_item_sessoes_jogador}>
-                <RecipienteImagem src={sessao.imagemCapa.caminhoCapa} />
+                <RenderArquivoArteCapa caminhoArquivoArte={sessao.dadosArteCapa.caminhoArquivoArteCapa} />
             </div>
             <div className={styles.recipiente_informacaoes_sessao}>
                 <h2>{sessao.tituloInteligente.titulo}</h2>
@@ -31,7 +31,7 @@ function DadosParticipanteSessao({ jogadorSessao }: { jogadorSessao: JogadorSess
             <div className={styles.recipiente_participante_sessao}>
                 {jogadorSessao.tipoVinculoSessaoJogador === TipoVinculoSessaoJogador.PERSONAGEM ? (
                     <div className={styles.recipiente_avatar_personagem_participante_sessao}>
-                        <RecipienteImagem src={jogadorSessao.personagemDoJogador.caminhoAvatar} />
+                        <RenderArquivoAvatar caminhoArquivoAvatar={jogadorSessao.personagemDoJogador.avatarAtual} />
                     </div>
                 ) : (
                     <div className={styles.recipiente_estado_ficha_participante_sessao}>

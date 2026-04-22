@@ -4,7 +4,7 @@ import styles from './styles.module.css'
 
 import { CSSProperties, ReactNode, useState } from 'react';
 import Slider, { Settings } from "react-slick";
-import { ArquivoInternoKey } from 'types-nora-api';
+import { ArquivoInternoKey, ARQUIVOS_INTERNOS } from 'types-nora-api';
 
 import BotaoCarrossel from 'Componentes/ElementosVisuais/ElementosCarroseis/BotaoCarrossel/BotaoCarrossel';
 import { carregaArquivoInterno } from 'Uteis/ImagemLoader/ImagemLoader';
@@ -79,8 +79,8 @@ export default function PaginaAterrissagem_CarrosselArtigos() {
         slidesToShow: 1,
         centerMode: false,
         centerPadding: '0',
-        nextArrow: <BotaoCarrossel arquivo={'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__SETA_PROXIMO'} classNameExterno={styles.botao_next}/>,
-        prevArrow: <BotaoCarrossel arquivo={'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__SETA_ANTERIOR'} classNameExterno={styles.botao_prev}/>,
+        nextArrow: <BotaoCarrossel arquivo={ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__SETA_PROXIMO} classNameExterno={styles.botao_next}/>,
+        prevArrow: <BotaoCarrossel arquivo={ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__SETA_ANTERIOR} classNameExterno={styles.botao_prev}/>,
         beforeChange: (_current, next) => {
             setSlideAtivo(next);
         }
@@ -101,7 +101,7 @@ export default function PaginaAterrissagem_CarrosselArtigos() {
                             <RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__BORDA_DOURADA'} />
                         </figure>
 
-                        <div className={styles.filtro_slides} style={{ ['--mascara-carrossel' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__MASCARA_CARROSSEL' })}")` }}/>
+                        <div className={styles.filtro_slides} style={{ ['--mascara-carrossel' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__MASCARA_CARROSSEL)}")` }}/>
                     </div>
                 </div>
 
@@ -116,7 +116,7 @@ export default function PaginaAterrissagem_CarrosselArtigos() {
                     )}
                 </div>
 
-                <div className={styles.sliderWrapper} style={{ ['--dot-carrossel' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__DOT' })}")`, ['--dot-ativo' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__DOT_ATIVO' })}")`, ['--mascara-carrossel' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__MASCARA_CARROSSEL' })}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__ESQUERDA' })}")`, ['--moldura-direita' as never]: `url("${carregaArquivoInterno({ arquivo: 'PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__DIREITA' })}")` }}>
+                <div className={styles.sliderWrapper} style={{ ['--dot-carrossel' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__DOT)}")`, ['--dot-ativo' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__DOT_ATIVO)}")`, ['--mascara-carrossel' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__MASCARA_CARROSSEL)}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__ESQUERDA)}")`, ['--moldura-direita' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__DIREITA)}")` }}>
 
                     <Slider {...settings}>
                         {lista.map(item => (
@@ -128,7 +128,7 @@ export default function PaginaAterrissagem_CarrosselArtigos() {
                         ))}
                     </Slider>
 
-                    <div className={styles.recipiente_arestas} style={{ ['--ornamento' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__ORNAMENTO_TOPO" })}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__ESQUERDA" })}")`, ['--moldura-direita' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__DIREITA" })}")` }}>
+                    <div className={styles.recipiente_arestas} style={{ ['--ornamento' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__ORNAMENTO_TOPO)}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__ESQUERDA)}")`, ['--moldura-direita' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__CARROSSEL_PRINCIPAL__MOLDURA_DOTS__DIREITA)}")` }}>
                         <figure className={styles.borda_arestas}>
                             <RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__CARROSSEL_ARTIGOS__SETAS_FUNDO'} />
                         </figure>

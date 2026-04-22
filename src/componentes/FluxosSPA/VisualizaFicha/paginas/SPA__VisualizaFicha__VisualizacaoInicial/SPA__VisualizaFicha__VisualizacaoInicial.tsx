@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 
 import { useContextoPaginaFichaTemporaria } from 'Contextos/ContextoPaginaFichaTemporaria/contexto';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoArteCapa } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 import { ContadorRegressivo } from 'Componentes/Elementos/ContadorRegressivo/ContadorRegressivo';
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
 
@@ -21,7 +21,7 @@ export default function SPA__VisualizaFicha__VisualizacaoInicial() {
                             <>
                                 <h1>{fichaTemporaria.detalheSessaoUnicaAmarrada.tituloRascunho}</h1>
                                 <div className={styles.recipiente_capa_sessao_amarrada}>
-                                    <RecipienteImagem src={fichaTemporaria.detalheSessaoUnicaAmarrada.capaSessao} />
+                                    <RenderArquivoArteCapa caminhoArquivoArte={fichaTemporaria.detalheSessaoUnicaAmarrada.caminhoArquivoArteCapa} />
                                 </div>
                                 <h3>Começa em <ContadorRegressivo dataAlvo={fichaTemporaria.detalheSessaoUnicaAmarrada.dataPrevisaoInicio} /></h3>
                             </>

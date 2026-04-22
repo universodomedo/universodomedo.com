@@ -5,12 +5,12 @@ import stylesBase from '../styles.module.css';
 
 import { JSX, useMemo } from 'react';
 import { components, type GroupBase, type OptionProps, type SingleValueProps } from 'react-select';
-import type { PersonagemCompletaDto } from 'types-nora-api';
+import type { CaminhoArquivoAvatar, PersonagemCompletaDto } from 'types-nora-api';
 
 import criarSelecionadorBase from '../SelecionadorBase';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
-type Option = { value: number; label: string; id: number; nome: string; caminhoAvatar: string };
+type Option = { value: number; label: string; id: number; nome: string; avatarAtual: CaminhoArquivoAvatar; };
 
 const SelecionadorPersonagemBase = criarSelecionadorBase<Option, false>();
 
@@ -25,7 +25,7 @@ type SelecionadorPersonagemProps = {
 
 export default function SelecionadorPersonagem(props: SelecionadorPersonagemProps): JSX.Element {
     const options = useMemo<Option[]>(() => {
-        const lista = (props.options || []).map(personagem => ({ value: personagem.id, id: personagem.id, nome: personagem.informacao.nome, caminhoAvatar: personagem.caminhoAvatar, label: `${personagem.informacao.nome} ${personagem.id}` }));
+        const lista = (props.options || []).map(personagem => ({ value: personagem.id, id: personagem.id, nome: personagem.informacao.nome, avatarAtual: personagem.avatarAtual, label: `${personagem.informacao.nome} ${personagem.id}` }));
         lista.sort((a, b) => a.id - b.id);
         return lista;
     }, [props.options]);
@@ -49,7 +49,7 @@ function OptionRow({ data }: { data: Option }) {
     return (
         <div className={styles.option_row}>
             <div className={styles.option_avatar}>
-                <RecipienteImagem src={data.caminhoAvatar} />
+                <RenderArquivoAvatar caminhoArquivoAvatar={data.avatarAtual} />
             </div>
 
             <div className={styles.option_textos}>
@@ -64,7 +64,7 @@ function ValueRow({ data }: { data: Option }) {
     return (
         <div className={styles.single_row}>
             <div className={styles.option_avatar}>
-                <RecipienteImagem src={data.caminhoAvatar} />
+                <RenderArquivoAvatar caminhoArquivoAvatar={data.avatarAtual} />
             </div>
 
             <div className={styles.single_textos}>

@@ -2,13 +2,13 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useSearchParams, usePathname } from 'next/navigation';
-import { PersonagemVisualizacaoDetalhadaDto } from 'types-nora-api';
+import { PersonagemVisualizacaoDetalhadaDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
 
-import { me_obtemPersonagensPorTipo, obtemDadosInteligentePersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { me_obtemPersonagensPorTipo__View, obtemDadosInteligentePersonagem } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
 interface ContextoPaginaPersonagensProps {
-    personagens: PersonagemVisualizacaoDetalhadaDto[];
+    personagens: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[];
     setIdPersonagemSelecionado: (v: number) => void;
     deselecionaPersonagem: () => void;
     personagemSelecionado: PersonagemVisualizacaoDetalhadaDto | null;
@@ -24,7 +24,7 @@ export const useContextoPaginaPersonagens = (): ContextoPaginaPersonagensProps =
 
 export const ContextoPaginaPersonagensProvider = ({ children, idPersonagemInicial = null }: { children: React.ReactNode; idPersonagemInicial?: number | null; }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [personagens, setPersonagens] = useState<PersonagemVisualizacaoDetalhadaDto[] | null>(null);
+    const [personagens, setPersonagens] = useState<VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[] | null>(null);
     const [idPersonagemSelecionado, setIdPersonagemSelecionado] = useState<number | null>(null);
     const [personagemSelecionado, setPersonagemSelecionado] = useState<PersonagemVisualizacaoDetalhadaDto | null>(null);
 
@@ -35,7 +35,7 @@ export const ContextoPaginaPersonagensProvider = ({ children, idPersonagemInicia
         setCarregando('Buscando Personagens');
 
         try {
-            setPersonagens(await me_obtemPersonagensPorTipo());
+            setPersonagens(await me_obtemPersonagensPorTipo__View());
         } catch {
             setPersonagens(null);
         } finally {

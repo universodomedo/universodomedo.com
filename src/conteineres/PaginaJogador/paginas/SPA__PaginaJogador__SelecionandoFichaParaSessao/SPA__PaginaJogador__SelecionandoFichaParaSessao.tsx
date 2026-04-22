@@ -8,7 +8,7 @@ import { useContextoVincularJogadorSessao } from "Contextos/ContextoVincularJoga
 import { CabecalhoDeAventura } from "Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page";
 import { DadosResumo } from "Componentes/Elementos/DetalhesRascunho/subcomponentes";
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 import RecipienteSelecionarFichaSessaoUnica from 'Componentes/ElementosPaginaUsuario/RecipienteSelecionarFichaSessaoUnica/RecipienteSelecionarFichaSessaoUnica';
 
@@ -17,7 +17,7 @@ export default function SPA__PaginaJogador__SelecionandoFichaParaSessao() {
 
     return (
         <>
-            <CabecalhoDeAventura tipo={'sessao'} caminhoCapaSessao={sessao.imagemCapa.caminhoCapa} />
+            <CabecalhoDeAventura tipo={'sessao'} caminhoCapaSessao={sessao.dadosArteCapa.caminhoArquivoArteCapa} />
             <DadosDeParticipacaoDesseUsuarioNessaSessao jogadorSessao={sessao.jogadorSessao} />
             {sessao.tipoSessao !== TipoSessao.AVENTURA && sessao.rascunhoSessaoUnica && (
                 <div className={styles.recipiente_descricao_sessao}>
@@ -47,7 +47,7 @@ function DadosDeParticipacaoDesseUsuarioNessaSessao__Personagem({ personagem }: 
             <div className={styles.recipiente_dados_participante}>
                 <h3>{personagem.nome}</h3>
                 <div className={styles.recipiente_avatar_seu_personagem_participante_dessa_sessao}>
-                    <RecipienteImagem src={personagem.caminhoAvatar} />
+                    <RenderArquivoAvatar caminhoArquivoAvatar={personagem.avatarAtual} />
                 </div>
             </div>
         </>

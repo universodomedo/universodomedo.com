@@ -7,7 +7,7 @@ import { PAGINAS } from 'types-nora-api';
 import { useContextoPaginaAssistir__AventuraSelecionada } from "Contextos/ContextoPaginaAssistir__AventuraSelecionada/contexto";
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import PlayerYouTube from 'Componentes/Elementos/PlayerYouTube/PlayerYouTube';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoArteCapa, RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
 
 export default function SPA__PaginaAssistir__AventuraSelecionada() {
@@ -20,7 +20,7 @@ export default function SPA__PaginaAssistir__AventuraSelecionada() {
                 <div className={styles.recipiente_capa_aventura_selecionada}>
                     {aventura.gruposAventura && aventura.gruposAventura.length > 0 && aventura.gruposAventura[0].linkTrailerYoutube
                         ? <PlayerYouTube urlSufixo={aventura.gruposAventura[0].linkTrailerYoutube.sufixo} />
-                        : <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
+                        : <RenderArquivoArteCapa caminhoArquivoArte={aventura.caminhoArquivoArteCapa} />
                     }
                 </div>
             </div>
@@ -31,7 +31,7 @@ export default function SPA__PaginaAssistir__AventuraSelecionada() {
                             <div className={styles.recipiente_personagens_participantes}>
                                 {grupo.personagensDaAventura?.map((personagensDaAventura, index) => (
                                     <div key={index} className={styles.recipiente_imagem_personagem_participante}>
-                                        <RecipienteImagem key={personagensDaAventura.personagem.id} src={personagensDaAventura.personagem.imagemAvatar?.fullPath} />
+                                        <RenderArquivoAvatar key={personagensDaAventura.personagem.id} caminhoArquivoAvatar={personagensDaAventura.personagem.avatarAtual} />
                                     </div>
                                 ))}
                             </div>

@@ -2,7 +2,7 @@
 
 'use client';
 
-import { VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
+import { CaminhoArquivoAvatar, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
 
 import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 
@@ -22,7 +22,7 @@ export const Conteiner__GerenciarAvatares__Interno = criaConteiner<PropsConteine
 
 type PropsConteiner__GerenciarAvatares = {
     personagens: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[];
-    avataresDeComparacao: string[];
+    avataresDeComparacao: CaminhoArquivoAvatar[];
     setIdPersonagemSelecionado: (v: number) => void;
     deselecionaPersonagem: () => void;
     personagemSelecionado: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto | null;

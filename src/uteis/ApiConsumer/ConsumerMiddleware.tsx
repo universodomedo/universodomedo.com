@@ -1,4 +1,4 @@
-import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PaginaTemplate, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from "types-nora-api";
+import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PaginaTemplate, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar } from "types-nora-api";
 
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
@@ -58,6 +58,10 @@ export async function obtemDadosPublicosSessao(idSessao: number) {
 
 export async function me_obtemMinhasSessoesEmEsperaParaMestrar(): Promise<VIEW_SessaoComParticipantesDto[]> {
     return await useApi<VIEW_SessaoComParticipantesDto[]>({ uri: '/sessoes/me/me_obtemMinhasSessoesEmEsperaParaMestrar', method: 'GET' });
+}
+
+export async function me_obtemPersonagensPorTipo__View(idTipoPersonagem?: number): Promise<VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[]> {
+    return await useApi<VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[]>({ uri: '/personagens/me/me_obtemPersonagensPorTipo__View', method: 'GET', params: { idTipoPersonagem } });
 }
 
 export async function me_obtemPersonagensPorTipo(idTipoPersonagem?: number): Promise<PersonagemVisualizacaoDetalhadaDto[]> {
@@ -279,8 +283,8 @@ export async function obtemListagemDePersonagensComAvatares(): Promise<VIEW_LIST
     return await useApi<VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[]>({ uri: '/personagens/obtemListagemDePersonagensComAvatares', method: 'GET' });
 }
 
-export async function obtemAvataresDeComparacao(): Promise<string[]> {
-    return await useApi<string[]>({ uri: '/arquivos_tipados_avatar/obtemAvataresDeComparacao', method: 'GET' });
+export async function obtemAvataresDeComparacao(): Promise<CaminhoArquivoAvatar[]> {
+    return await useApi<CaminhoArquivoAvatar[]>({ uri: '/arquivos_tipados_avatar/obtemAvataresDeComparacao', method: 'GET' });
 }
 
 //

@@ -10,7 +10,7 @@ import PersonagemEmVisualizacaoDeSessao from '../ElementosIndividuaisEmListaDeVi
 export default function SessaoEmVisualizacao({ sessao }: { sessao: SessaoCompletaDto }) {
     return (
         <div className={styles.recipiente_sessao_selecionada}>
-            <CabecalhoDeAventura tipo={'sessao'} caminhoCapaSessao={sessao.imagemCapa.caminhoCapa} />
+            <CabecalhoDeAventura tipo={'sessao'} caminhoCapaSessao={sessao.dadosArteCapa.caminhoArquivoArteCapa} />
 
             {sessao.duracaoEmSegundos && (
                 <SecaoDeConteudo fit>

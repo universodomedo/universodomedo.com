@@ -6,7 +6,7 @@ import { AventuraParaAssistirDto, AventuraEstado } from "types-nora-api";
 
 import { useContextoMenuAssistir } from "Contextos/ContextoMenuAssistir/contexto";
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoArteCapa } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 import { useContextoPaginaAssistir } from 'Contextos/ContextoPaginaAssistir/contexto';
 
 export default function SPA__MenuAssistir__MenuInicial() {
@@ -31,7 +31,7 @@ export function ItemAventuraLista({ aventura }: { aventura: AventuraParaAssistir
     return (
         <DivClicavel className={styles.recipiente_item_menu_aventuras} classeParaDesabilitado={styles.ativo} desabilitado={aventura.id === aventuraSelecionada?.id} onClick={() => { buscaAventuraSelecionada(aventura.id); }}>
             <div className={styles.recipiente_imagem_aventura_item_menu}>
-                <RecipienteImagem src={aventura.imagemCapa?.fullPath} />
+                <RenderArquivoArteCapa caminhoArquivoArte={aventura.caminhoArquivoArteCapa} />
             </div>
             <div className={styles.recipiente_dados_aventura}>
                 <h3 className={styles.recipiente_dados_aventura_titulo}>{aventura.titulo}</h3>

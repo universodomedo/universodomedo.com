@@ -3,12 +3,12 @@
 import styles from '../styles.module.css';
 
 import { JSX } from 'react';
-import { CAPACIDADES, PersonagemVisualizacaoDetalhadaDto } from 'types-nora-api';
+import { CAPACIDADES, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useContextoPaginaPersonagens } from "Contextos/ContextoPaginaPersonagens/contexto";
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 export default function ListaAcoesPersonagens() {
     const { verificarCapacidade } = useContextoAutenticacao();
@@ -29,7 +29,7 @@ export default function ListaAcoesPersonagens() {
     );
 };
 
-function SecaoPersonagens({ titulo, personagens }: { titulo: string; personagens: PersonagemVisualizacaoDetalhadaDto[]; }) {
+function SecaoPersonagens({ titulo, personagens }: { titulo: string; personagens: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[]; }) {
     return (
         <>
             <hr className={styles.divisor} />
@@ -37,12 +37,10 @@ function SecaoPersonagens({ titulo, personagens }: { titulo: string; personagens
                 <h2 className={styles.titulo_permissao}>{titulo}</h2>
                 <div className={styles.recipiente_lista_avatares_personagens}>
                     {personagens.length < 1 ? (
-                        <h3>nenhum personagem presente</h3>
+                        <h3>Nenhum personagem presente</h3>
                     ) : (
                         <>
-                            {personagens.map(personagem => (
-                                <RenderPersonagem key={personagem.id} personagem={personagem} />
-                            ))}
+                            {personagens.map(personagem => <RenderPersonagem key={personagem.id} personagem={personagem} /> )}
                         </>
                     )}
                 </div>
@@ -51,12 +49,12 @@ function SecaoPersonagens({ titulo, personagens }: { titulo: string; personagens
     );
 };
 
-function RenderPersonagem({ personagem }: { personagem: PersonagemVisualizacaoDetalhadaDto }): JSX.Element {
+function RenderPersonagem({ personagem }: { personagem: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto }): JSX.Element {
     const { setIdPersonagemSelecionado, personagemSelecionado } = useContextoPaginaPersonagens();
 
     return (
         <DivClicavel key={personagem.id} className={styles.recipiente_avatar_personagem} classeParaDesabilitado={styles.avatar_personagem_selecionado} desabilitado={personagem.id === personagemSelecionado?.id} onClick={() => setIdPersonagemSelecionado(personagem.id)}>
-            <RecipienteImagem src={personagem.caminhoAvatar} />
+            <RenderArquivoAvatar caminhoArquivoAvatar={personagem.avatarAtual} />
             {/* {(personagem.temCriacaoPendente || personagem.temEvolucaoPendente) && (
                 <div className={styles.recipiente_item_menu_com_pendencia}>
                     <span className={styles.numero_pendencias}>!</span>

@@ -6,7 +6,7 @@ import { ARQUIVOS_INTERNOS, AvatarPersonagemDto } from 'types-nora-api';
 import { useContextoGerenciarAvatares__Personagem } from 'Contextos/ContextoGerenciarAvatares__Personagem/contexto';
 import Modal from 'Componentes/Elementos/Modal/Modal';
 import RecipienteAdicionarAvatarDePersonagem from 'Contextos/Contexto__PaginaArtista_AdicionarAvatarDePersonagem/contexto';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoAvatar, RenderArquivoInterno } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 import { formataData } from '@/uteis/FormatadorDeDatas/FormatadorDeDatas';
 
 export default function ModalUploadEVerificacaoAvatar({ modalEstaAberta, onOpenChange, chaveAvatarConfigurando }: { modalEstaAberta: boolean; onOpenChange: (open: boolean) => void; chaveAvatarConfigurando: AvatarPersonagemDto; }) {
@@ -150,10 +150,10 @@ export default function ModalUploadEVerificacaoAvatar({ modalEstaAberta, onOpenC
                 {previewUrl && <img className={styles.preview_validacao_avatar} src={previewUrl} alt="Pré-visualização do avatar" />}
                 {avataresParaValidacao.map((avatarDeComparacao, index) => (
                     <div key={index} className={styles.recipiente_avatar_de_comparacao} style={{ opacity: 1 - ((transparenciasAvataresDeComparacao[index] ?? 0) / 100) }}>
-                        <RecipienteImagem src={avatarDeComparacao} />
+                        <RenderArquivoAvatar caminhoArquivoAvatar={avatarDeComparacao} />
                     </div>
                 ))}
-                <RecipienteImagem src={ARQUIVOS_INTERNOS.GUIA_AVATAR.caminhoArquivo} />
+                <RenderArquivoInterno arquivoInterno={ARQUIVOS_INTERNOS.GUIA_AVATAR} />
             </>
         );
     }
@@ -180,7 +180,7 @@ export default function ModalUploadEVerificacaoAvatar({ modalEstaAberta, onOpenC
                                 {avataresParaValidacao.map((avatarDeComparacao, index) => (
                                     <div key={index} className={styles.recipiente_controle_transparencia_avatar}>
                                         <div className={styles.recipiente_preview_controle_avatar}>
-                                            <RecipienteImagem src={avatarDeComparacao} />
+                                            <RenderArquivoAvatar caminhoArquivoAvatar={avatarDeComparacao} />
                                         </div>
                                         <input className={styles.input_controle_transparencia_avatar} type="range" min="0" max="100" step="1" value={100 - (transparenciasAvataresDeComparacao[index] ?? 0)} onChange={event => alteraTransparenciaAvatarDeComparacao(index, Number(event.target.value))} />
                                     </div>

@@ -1,5 +1,7 @@
 import styles from "./styles.module.css";
 
+import { ARQUIVOS_INTERNOS } from "types-nora-api";
+
 import { carregaArquivoInterno } from "Uteis/ImagemLoader/ImagemLoader";
 import RecipienteArquivoInterno from "Uteis/ImagemLoader/RecipienteArquivoInterno";
 
@@ -12,11 +14,11 @@ export default function SecaoPrincipal() {
                 </div>
             </div>
 
-            <div id={styles.recipiente_imagem_fundo_secao_principal} style={{ ['--fundo' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__SECAO_PRINCIPAL__FUNDO" })}")` }} />
+            <div id={styles.recipiente_imagem_fundo_secao_principal} style={{ ['--fundo' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__SECAO_PRINCIPAL__FUNDO)}")` }} />
 
             <div id={styles.conteudo_secao_principal}>
                 <section className={styles.recipiente_texto_secao_principal}>
-                    <h1 id={styles.titulo_secao_principal} style={{ ['--moldura' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__SECAO_PRINCIPAL__MOLDURA_TITULO" })}")` }}>
+                    <h1 id={styles.titulo_secao_principal} style={{ ['--moldura' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__SECAO_PRINCIPAL__MOLDURA_TITULO)}")` }}>
                         <span className={styles.titulo_sem_decorative}>Des</span>cu<span className={styles.titulo_sem_decorative}>br</span>a <span className={styles.titulo_sem_decorative}>o</span> <span className={styles.titulo_sem_decorative}>P</span>aranor<span className={styles.titulo_sem_decorative}>m</span>al
                     </h1>
 

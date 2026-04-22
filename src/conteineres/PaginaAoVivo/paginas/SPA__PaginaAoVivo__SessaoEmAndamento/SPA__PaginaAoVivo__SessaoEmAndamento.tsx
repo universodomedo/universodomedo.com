@@ -37,7 +37,7 @@ export default function SPA__PaginaAoVivo__SessaoEmAndamento() {
                     </div>
 
                     <div className={styles.recipiente_container_tela_de_jogo}>
-                        <TelaDeJogo capaSessao={sessaoEmAndamento.capaSessao} />
+                        <TelaDeJogo capaSessao={sessaoEmAndamento.caminhoArquivoArteCapa} />
                     </div>
                 </div>
             </div>

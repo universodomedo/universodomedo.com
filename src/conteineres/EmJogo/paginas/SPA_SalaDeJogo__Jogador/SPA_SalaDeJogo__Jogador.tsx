@@ -13,7 +13,7 @@ export default function SPA_SalaDeJogo__Jogador() {
         <div className={styles.recipiente_pagina_de_jogo}>
             <div className={styles.recipiente__pagina_de_jogo__superior}>
                 <div className={styles.recipiente_container_tela_de_jogo__em_pagina_de_jogo}>
-                    <TelaDeJogo capaSessao={objetoEmJogo.objetoInicialSala.capaSessao} />
+                    <TelaDeJogo capaSessao={objetoEmJogo.objetoInicialSala.caminhoArquivoArteCapa} />
                 </div>
                 <div className={styles.recipiente_container__janela_mensageens_de_jogo__em_pagina_de_jogo}>
                     <JanelaDeMensagensDeJogo />

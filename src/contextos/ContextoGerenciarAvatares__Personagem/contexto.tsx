@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { AvatarPersonagemDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
+import { AvatarPersonagemDto, CaminhoArquivoAvatar, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
 
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SPA__PaginaGerenciarAvatares__Personagem from 'Conteineres/GerenciarAvatares/paginas/SPA__PaginaGerenciarAvatares__Personagem/SPA__PaginaGerenciarAvatares__Personagem';
@@ -9,7 +9,7 @@ import ModalUploadEVerificacaoAvatar from '@/componentes/ElementosModais/ModalUp
 
 interface ContextoGerenciarAvatares__Personagem__Props {
     personagem: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto;
-    avataresDeComparacao: string[];
+    avataresDeComparacao: CaminhoArquivoAvatar[];
     selecionarChaveAvatarConfigurando: (idChaveAvatar: number) => void;
 };
 
@@ -21,7 +21,7 @@ export const useContextoGerenciarAvatares__Personagem = (): ContextoGerenciarAva
     return context;
 };
 
-export const ContextoGerenciarAvatares__Personagem__Provider = ({ personagem, avataresDeComparacao, deselecionaPersonagem }: { personagem: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto; avataresDeComparacao: string[]; deselecionaPersonagem: () => void; }) => {
+export const ContextoGerenciarAvatares__Personagem__Provider = ({ personagem, avataresDeComparacao, deselecionaPersonagem }: { personagem: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto; avataresDeComparacao: CaminhoArquivoAvatar[]; deselecionaPersonagem: () => void; }) => {
     useConfigurarLayoutContextualizado({ titulo: personagem.nome, fecharProps: { tipo: 'acao', executar: deselecionaPersonagem, tituloTooltip: 'Voltar para Lista de Personagens' } }, 'patch');
 
     const [idChaveNovoAvatarConfigurando, setIdChaveNovoAvatarConfigurando] = useState<number | null>(null);

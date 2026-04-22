@@ -2,14 +2,14 @@
 
 import styles from './styles.module.css';
 
-import { JogadorSessaoDto, minutosParaMs, ParticipanteSessao_Tipo, PathTokenPadrao, TipoVinculoSessaoJogador, UsuarioVisualizacaoSimplesDto, VIEW_SessaoComParticipantesDto } from 'types-nora-api';
+import { JogadorSessaoDto, minutosParaMs, ParticipanteSessao_Tipo, PathAvatarPadrao, TipoVinculoSessaoJogador, UsuarioVisualizacaoSimplesDto, VIEW_SessaoComParticipantesDto } from 'types-nora-api';
 
 import { useContextoSessoesMestreEmEspera } from 'Contextos/ContextoSessoesMestreEmEspera/contexto';
 import { useContadorRegressivo } from 'Componentes/Elementos/ContadorRegressivo/ContadorRegressivo';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import RecipienteCapa from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/RecipienteCapa/page';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
+import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
 
 const dezMinMs = minutosParaMs(10);
@@ -38,7 +38,7 @@ export default function ModalIniciarSessaoMestre({ isModalOpen, setIsModalOpen }
 function ConteudoModal({ sessao, diferencaMs, tempoRestante }: { sessao: VIEW_SessaoComParticipantesDto; diferencaMs: number; tempoRestante: string; }) {
     return (
         <div className={styles.recipiente_dados_sessao}>
-            <RecipienteCapa caminhoCapa={sessao.imagemCapa.caminhoCapa} />
+            <RecipienteCapa caminhoArquivoArteCapa={sessao.dadosArteCapa.caminhoArquivoArteCapa} />
             <h3>Previsão: {formataData(sessao.dataPrevisaoInicio, 'dd/MM/yyyy HH:mm')}</h3>
             <DadosPrevisao diferencaMs={diferencaMs} tempoRestante={tempoRestante} />
             <DadosParticipantes sessao={sessao} />
@@ -86,7 +86,7 @@ function ParticipanteSessao({ usuario, jogador }: { usuario: UsuarioVisualizacao
             </div>
             <div className={styles.recipiente_dados_usuario_inferior_participante_sessao}>
                 <div className={styles.recipiente_avatar_personagem_participante_sessao}>
-                    <RecipienteImagem src={jogador.tipoVinculoSessaoJogador === TipoVinculoSessaoJogador.PERSONAGEM ? jogador.personagemDoJogador.caminhoAvatar : jogador.tipoVinculoSessaoJogador === TipoVinculoSessaoJogador.FICHA_TEMPORARIA ? jogador.fichaTemporariaDoJogador.caminhoAvatar : PathTokenPadrao} />
+                    <RenderArquivoAvatar caminhoArquivoAvatar={jogador.tipoVinculoSessaoJogador === TipoVinculoSessaoJogador.PERSONAGEM ? jogador.personagemDoJogador.avatarAtual : jogador.tipoVinculoSessaoJogador === TipoVinculoSessaoJogador.FICHA_TEMPORARIA ? jogador.fichaTemporariaDoJogador.avatarAtual : PathAvatarPadrao} />
                 </div>
             </div>
         </div>

@@ -1,5 +1,7 @@
 import styles from './styles.module.css'
 
+import { ARQUIVOS_INTERNOS } from 'types-nora-api';
+
 import TituloSecao from 'Componentes/ElementosVisuais/TituloSecao/TituloSecao';
 import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
 import { carregaArquivoInterno } from 'Uteis/ImagemLoader/ImagemLoader';
@@ -22,7 +24,7 @@ export default function PaginaAterrissagem_SecaoTutorial() {
                         </a>
                     </div>
 
-                    <div className={styles.recipiente_fundo_card} style={{ ['--moldura' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__MOLDURA_MISSAO" })}")`, ['--ornamento' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__ORNAMENTO_MISSAO" })}")` }}>
+                    <div className={styles.recipiente_fundo_card} style={{ ['--moldura' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__MOLDURA_MISSAO)}")`, ['--ornamento' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__ORNAMENTO_MISSAO)}")` }}>
                         <RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__FUNDO_MISSAO'} className={styles.fundo_card}/>
                     </div>
                 </div>

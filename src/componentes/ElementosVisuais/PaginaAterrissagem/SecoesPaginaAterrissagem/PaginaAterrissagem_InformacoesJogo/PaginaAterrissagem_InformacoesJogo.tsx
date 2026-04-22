@@ -1,12 +1,14 @@
 import styles from './styles.module.css'
 
+import { ARQUIVOS_INTERNOS } from 'types-nora-api';
+
 import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
 import { carregaArquivoInterno, getImageUrlCdn } from 'Uteis/ImagemLoader/ImagemLoader';
 import PaginaAterrissagem_CarrosselArtigos from 'Componentes/ElementosVisuais/PaginaAterrissagem/SecoesPaginaAterrissagem/PaginaAterrissagem_CarrosselArtigos/PaginaAterrissagem_CarrosselArtigos';
 
 export default function SecaoJogoHomepage() {
     return (
-        <div className={styles.recipiente_secao_jogo} style={{ ['--simbolos-fundo' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__SIMBOLOS_FUNDO" })}")` }}>
+        <div className={styles.recipiente_secao_jogo} style={{ ['--simbolos-fundo' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__SIMBOLOS_FUNDO)}")` }}>
             <div className={styles.recipiente_artigos}>
                 <div className={styles.recipiente_moldura_tinta}>
                     <RecipienteArquivoInterno arquivo={'PAGINA_ATERRISSAGEM__SOBREPOSICAO_TINTA'}/>
@@ -14,7 +16,7 @@ export default function SecaoJogoHomepage() {
 
                 <ConteudoArtigoUm />
 
-                <h2 className={styles.titulo_jogo} style={{ ['--moldura-direita' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__MOLDURA_TITULO_DIREITA" })}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__MOLDURA_TITULO_ESQUERDA" })}")` }}>
+                <h2 className={styles.titulo_jogo} style={{ ['--moldura-direita' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__MOLDURA_TITULO_DIREITA)}")`, ['--moldura-esquerda' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__MOLDURA_TITULO_ESQUERDA)}")` }}>
                     <span className={styles.cinzel_decorative}>O</span> JO<span className={styles.cinzel_decorative}>G</span>O
                 </h2>
 
@@ -27,7 +29,7 @@ export default function SecaoJogoHomepage() {
 function ConteudoArtigoUm() {
     return (
         <div className={styles.recipiente_artigo_um} >
-            <div className={styles.moldura_tinta} style={{ ['--fundo-tinta' as never]: `url("${carregaArquivoInterno({ arquivo: "PAGINA_ATERRISSAGEM__FUNDO_TINTA" })}")` }}>
+            <div className={styles.moldura_tinta} style={{ ['--fundo-tinta' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.PAGINA_ATERRISSAGEM__FUNDO_TINTA)}")` }}>
                 <div className={styles.bg_fixed} style={{ ['--imagem-fundo' as never]: `url("${getImageUrlCdn('/RecursosPublicos/imagem_especial_artista/8d0bfc82-6f28-446a-b32c-cd1d7352ceda.webp')}")` }}/>
             </div>
 
