@@ -50,14 +50,14 @@ function ListaDeTodasAsSessoes() {
     return (
         <SecaoDeConteudo id={styles.recipiente_lista_todas_sessoes} {...scrollableProps}>
             <div id={styles.recipiente_container_lista_todas_sessoes}>
-                {/* {grupoAventuraSelecionada.detalhesSessoesAventuras.sort((a, b) => b.sessao.id - a.sessao.id).map(detalheSessaoAventura => (
+                {grupoAventuraSelecionada.detalhesSessoesAventuras.sort((a, b) => b.sessao.id - a.sessao.id).map(detalheSessaoAventura => (
                     <CustomLink key={detalheSessaoAventura.sessao.id} destino={{ pagina: PAGINAS.minhasPaginas.mestre.sessao, params: { id: detalheSessaoAventura.sessao.id } }}>
                         <div className={styles.recipiente_linha_episodio_em_lista}>
                             <h4>{detalheSessaoAventura.episodioPorExtenso}</h4>
                             <h4>{detalheSessaoAventura.sessao.detalheData}</h4>
                         </div>
                     </CustomLink>
-                ))} */}
+                ))}
             </div>
         </SecaoDeConteudo>
     );

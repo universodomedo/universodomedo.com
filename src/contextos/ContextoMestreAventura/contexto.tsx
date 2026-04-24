@@ -1,12 +1,12 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { GrupoAventuraCompletaDto } from 'types-nora-api';
+import { VIEW_GrupoAventuraDetalhado } from 'types-nora-api';
 
 import { buscaGrupoAventuraEspecifico } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 interface ContextoPaginaMestreAventuraProps {
-    grupoAventuraSelecionada: GrupoAventuraCompletaDto;
+    grupoAventuraSelecionada: VIEW_GrupoAventuraDetalhado;
 };
 
 const ContextoPaginaMestreAventura = createContext<ContextoPaginaMestreAventuraProps | undefined>(undefined);
@@ -19,7 +19,7 @@ export const useContextoPaginaMestreAventura = (): ContextoPaginaMestreAventuraP
 
 export const ContextoPaginaMestreAventuraProvider = ({ children, idGrupoAventura }: { children: React.ReactNode; idGrupoAventura: number; }) => {
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [grupoAventuraSelecionada, setGrupoAventuraSelecionada] = useState<GrupoAventuraCompletaDto | null>(null);
+    const [grupoAventuraSelecionada, setGrupoAventuraSelecionada] = useState<VIEW_GrupoAventuraDetalhado | null>(null);
 
     async function buscaGrupoAventuraSelecionado(idGrupoAventura: number) {
         setCarregando('Buscando Aventura');
