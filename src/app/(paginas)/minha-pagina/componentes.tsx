@@ -9,7 +9,7 @@ import BarraUsuario from 'Componentes/ElementosPaginaUsuario/BarraUsuario/page.t
 import SecaoPosts from 'Componentes/ElementosPaginaUsuario/Post/page.tsx';
 import SecaoContatos from 'Componentes/ElementosPaginaUsuario/Contato/page';
 
-export function MinhaPagina_Client() {
+export default function MinhaPagina_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.minhaPagina}>
             <MinhaPagina_Slot />
