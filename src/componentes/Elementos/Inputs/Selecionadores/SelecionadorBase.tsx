@@ -1,5 +1,7 @@
 'use client';
 
+import stylesBase from './styles.module.css';
+
 import { JSX, ReactNode } from 'react';
 import Select, { type GroupBase, type MultiValueProps, type OptionProps, type Props as ReactSelectProps, type SingleValueProps } from 'react-select';
 
@@ -12,6 +14,10 @@ export type SelecionadorComposto<Option, IsMulti extends boolean, Group extends 
     SingleValue: (props: SingleValueProps<Option, IsMulti, Group>) => JSX.Element;
     MultiValue: (props: MultiValueProps<Option, IsMulti, Group>) => JSX.Element;
 };
+
+function classeValida(classe: string | false | null | undefined): classe is string { return typeof classe === 'string' && classe.length > 0; }
+
+function juntarClasses(...classes: Array<string | false | null | undefined>): string { return classes.filter(classeValida).join(' '); }
 
 export default function criarSelecionadorBase<Option, IsMulti extends boolean, Group extends GroupBase<Option> = GroupBase<Option>>() {
     const Selecionador = (({ children, className }: { children?: ReactNode; className?: string }) => <div className={className}>{children}</div>) as SelecionadorComposto<Option, IsMulti, Group>;
@@ -37,6 +43,12 @@ export default function criarSelecionadorBase<Option, IsMulti extends boolean, G
                 styles={styles as never}
                 menuPortalTarget={menuPortalTarget}
                 menuPosition="fixed"
+                classNames={{
+                    ...(props.classNames ?? {}),
+                    menu: state => juntarClasses(stylesBase.menu, props.classNames?.menu?.(state)),
+                    menuList: state => juntarClasses(stylesBase.menu_list, props.classNames?.menuList?.(state)),
+                    option: state => juntarClasses(stylesBase.option, state.isFocused && stylesBase.option_focused, state.isSelected && stylesBase.option_selected, props.classNames?.option?.(state)),
+                }}
                 components={{ ...(props.components ?? {}), Option: Selecionador.Option, SingleValue: Selecionador.SingleValue, MultiValue: Selecionador.MultiValue }}
             />
         );

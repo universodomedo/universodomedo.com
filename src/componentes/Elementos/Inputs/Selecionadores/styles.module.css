@@ -82,14 +82,14 @@
 }
 
 /* MENU (vai pro body via portal, então NÃO dá pra depender de seletor local aqui) */
-:global(.rs__menu) {
+.menu {
     background: rgba(20, 16, 30, 0.98) !important;
     border: 0.08em solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 0.9em !important;
     overflow: hidden !important;
 }
 
-:global(.rs__menu-list) {
+.menu_list {
     max-height: 16em !important;
     padding: 0.4em !important;
     overflow: auto !important;
@@ -97,21 +97,21 @@
     scrollbar-color: white transparent;
 }
 
-:global(.rs__menu-list::-webkit-scrollbar) {
+.menu_list::-webkit-scrollbar {
     width: 0.6em;
     height: 0.6em;
 }
 
-:global(.rs__menu-list::-webkit-scrollbar-track) {
+.menu_list::-webkit-scrollbar-track {
     background: transparent;
 }
 
-:global(.rs__menu-list::-webkit-scrollbar-thumb) {
+.menu_list::-webkit-scrollbar-thumb {
     background-color: white;
     border-radius: 0.4em;
 }
 
-:global(.rs__option) {
+.option {
     color: #D9D9D9 !important;
     border-radius: 0.7em !important;
     cursor: pointer !important;
@@ -119,10 +119,10 @@
     background: transparent !important;
 }
 
-:global(.rs__option--is-focused) {
+.option_focused {
     background: rgba(255, 255, 255, 0.08) !important;
 }
 
-:global(.rs__option--is-selected) {
+.option_selected {
     background: rgba(255, 255, 255, 0.12) !important;
 }

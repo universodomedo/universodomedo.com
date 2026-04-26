@@ -25,7 +25,7 @@ export const ContextoPaginaAdminAventuraProvider = ({ children, idGrupoAventura 
         setCarregando('Buscando Aventura');
 
         try {
-            setGrupoAventura(await buscaGrupoAventuraEspecifico(idGrupoAventura));
+            // setGrupoAventura(await buscaGrupoAventuraEspecifico(idGrupoAventura)); to do
         } catch {
             setGrupoAventura(null);
         } finally {
