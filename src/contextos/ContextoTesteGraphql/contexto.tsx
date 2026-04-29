@@ -2,15 +2,13 @@
 
 import { createContext, useContext, useMemo } from 'react';
 
-import { EventosApi, EventosApiGraphqlV2 } from 'types-nora-api';
+import { EventosApi, EventosApiGraphqlV2, GraphqlOrderDirecao } from 'types-nora-api';
 
 import useApi from 'Hooks/useApi';
 
 interface ContextoTesteGraphql__Props {
     respostaSessaoGraphql: string | null;
-    respostaSessaoGraphqlBasica: string | null;
-    respostaSessaoGraphqlV2Basica: string | null;
-    respostaSessaoGraphqlV2Resumo: string | null;
+    respostaSessoesGraphql: string | null;
     respostaTesteRest: string | null;
     carregando: boolean;
     erro: string | null;
@@ -24,18 +22,18 @@ export const useContextoTesteGraphql = (): ContextoTesteGraphql__Props => {
     return context;
 };
 
-export const ContextoTesteGraphql__Provider = ({ children }: { children: React.ReactNode }) => {
-    const operacaoSessaoGraphqlV2Basica = useMemo(() => EventosApiGraphqlV2.Sessao.one({ where: { id: 1 }, select: { id: true } }), []);
-    const operacaoSessaoGraphqlV2Resumo = useMemo(() => EventosApiGraphqlV2.Sessao.one({ where: { id: 1 }, select: { id: true, detalheData: true, tipoPorExtenso: true, tituloInteligente: { tituloCompleto: true }, dadosArteCapa: { caminhoArquivoArteCapa: true }, usuarioMestre: { username: true } } }), []);
+function exibeData(valor: Date | string | null | undefined): string {
+    if (!valor) return 'null';
+    return `${valor}`;
+};
 
-    const sessaoGraphql = useApi(EventosApi.GET.Graphql.sessaoGraphql, { disparoInicial: { idSessao: 1 } });
-    const sessaoGraphqlBasica = useApi(EventosApi.GET.Graphql.sessaoGraphqlBasica, { disparoInicial: { idSessao: 1 } });
-    const sessaoGraphqlV2Basica = useApi(operacaoSessaoGraphqlV2Basica, { disparoInicial: {} });
-    const sessaoGraphqlV2Resumo = useApi(operacaoSessaoGraphqlV2Resumo, { disparoInicial: {} });
+export const ContextoTesteGraphql__Provider = ({ children }: { children: React.ReactNode }) => {
+    const sessaoGraphql = useApi(EventosApiGraphqlV2.obtem.Sessao.um, { disparoInicial: { select: { id: true, dataCriacao: true, dataPrevisaoInicio: true, dataInicio: true, duracaoEmSegundos: true, dataQueEncerrou: true, estadoAtual: true, detalheData: true, tipo: true, tipoPorExtenso: true, tituloInteligente: { tituloCompleto: true }, dadosArteCapa: { caminhoArquivoArteCapa: true }, usuarioMestre: { username: true }, linkSessaoYoutube: true, linkSessaoSpotify: true } } });
+    const sessoesGraphql = useApi(EventosApiGraphqlV2.obtem.Sessao.varios, { disparoInicial: { parametros: { where: { dataInicio: { ne: null }, duracaoEmSegundos: { ne: null } }, order: { dataPrevisaoInicio: 'DESC' }, limit: 3, offset: 0 }, select: { id: true, detalheData: true, tipoPorExtenso: true, tituloInteligente: { tituloCompleto: true }, usuarioMestre: { username: true } } } });
     const testeRest = useApi(EventosApi.GET.Rest.testeRest, { disparoInicial: {} });
 
     return (
-        <ContextoTesteGraphql.Provider value={{ respostaSessaoGraphql: sessaoGraphql.data ? `Sessão GraphQL #${sessaoGraphql.data.sessaoGraphql.id} — mestre=${sessaoGraphql.data.sessaoGraphql.usuarioMestre?.username ?? 'sem mestre'} — ${sessaoGraphql.data.sessaoGraphql.tipoPorExtenso} — ${sessaoGraphql.data.sessaoGraphql.tituloInteligente?.tituloCompleto ?? 'Sem título'} — capa=${sessaoGraphql.data.sessaoGraphql.dadosArteCapa?.caminhoArquivoArteCapa ?? 'sem capa'} — ${sessaoGraphql.data.sessaoGraphql.detalheData}` : null, respostaSessaoGraphqlBasica: sessaoGraphqlBasica.data ? `Sessão GraphQL básica #${sessaoGraphqlBasica.data.sessaoGraphql.id}` : null, respostaSessaoGraphqlV2Basica: sessaoGraphqlV2Basica.data ? `Sessão GraphQL V2 básica #${sessaoGraphqlV2Basica.data.sessaoGraphql.id}` : null, respostaSessaoGraphqlV2Resumo: sessaoGraphqlV2Resumo.data ? `Sessão GraphQL V2 #${sessaoGraphqlV2Resumo.data.sessaoGraphql.id} — mestre=${sessaoGraphqlV2Resumo.data.sessaoGraphql.usuarioMestre?.username ?? 'sem mestre'} — ${sessaoGraphqlV2Resumo.data.sessaoGraphql.tipoPorExtenso} — ${sessaoGraphqlV2Resumo.data.sessaoGraphql.tituloInteligente?.tituloCompleto ?? 'Sem título'} — capa=${sessaoGraphqlV2Resumo.data.sessaoGraphql.dadosArteCapa?.caminhoArquivoArteCapa ?? 'sem capa'} — ${sessaoGraphqlV2Resumo.data.sessaoGraphql.detalheData}` : null, respostaTesteRest: testeRest.data?.testeRest ?? null, carregando: sessaoGraphql.carregando || sessaoGraphqlBasica.carregando || sessaoGraphqlV2Basica.carregando || sessaoGraphqlV2Resumo.carregando || testeRest.carregando, erro: sessaoGraphql.erro ?? sessaoGraphqlBasica.erro ?? sessaoGraphqlV2Basica.erro ?? sessaoGraphqlV2Resumo.erro ?? testeRest.erro }}>
+        <ContextoTesteGraphql.Provider value={{ respostaSessaoGraphql: sessaoGraphql.data?.sessaoGraphql ? `Sessão GraphQL #${sessaoGraphql.data.sessaoGraphql.id} — mestre=${sessaoGraphql.data.sessaoGraphql.usuarioMestre?.username ?? 'sem mestre'} — estado=${sessaoGraphql.data.sessaoGraphql.estadoAtual} — tipo=${sessaoGraphql.data.sessaoGraphql.tipo}/${sessaoGraphql.data.sessaoGraphql.tipoPorExtenso} — ${sessaoGraphql.data.sessaoGraphql.tituloInteligente?.tituloCompleto ?? 'Sem título'} — capa=${sessaoGraphql.data.sessaoGraphql.dadosArteCapa?.caminhoArquivoArteCapa ?? 'sem capa'} — youtube=${sessaoGraphql.data.sessaoGraphql.linkSessaoYoutube ?? 'null'} — spotify=${sessaoGraphql.data.sessaoGraphql.linkSessaoSpotify ?? 'null'} — criada=${exibeData(sessaoGraphql.data.sessaoGraphql.dataCriacao)} — prevista=${exibeData(sessaoGraphql.data.sessaoGraphql.dataPrevisaoInicio)} — inicio=${exibeData(sessaoGraphql.data.sessaoGraphql.dataInicio)} — duracao=${sessaoGraphql.data.sessaoGraphql.duracaoEmSegundos ?? 'null'} — encerrou=${exibeData(sessaoGraphql.data.sessaoGraphql.dataQueEncerrou)} — ${sessaoGraphql.data.sessaoGraphql.detalheData}` : null, respostaSessoesGraphql: sessoesGraphql.data ? sessoesGraphql.data.sessoesGraphql.map(sessao => `#${sessao.id} ${sessao.usuarioMestre?.username ?? 'sem mestre'} — ${sessao.tipoPorExtenso} — ${sessao.tituloInteligente?.tituloCompleto ?? 'Sem título'} — ${sessao.detalheData}`).join(' | ') : null, respostaTesteRest: testeRest.data?.testeRest ?? null, carregando: sessaoGraphql.carregando || sessoesGraphql.carregando || testeRest.carregando, erro: sessaoGraphql.erro ?? sessoesGraphql.erro ?? testeRest.erro }}>
             {children}
         </ContextoTesteGraphql.Provider>
     );

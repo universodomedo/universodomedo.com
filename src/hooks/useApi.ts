@@ -23,6 +23,8 @@ type UseApiOpcoesExecucao<TResposta extends object> = {
 
 type ApiOperacaoSuportada<TParametros extends object, TVariaveis extends object, TResposta extends object> = ApiOperacaoGraphqlGet<TParametros, TVariaveis, TResposta> | ApiOperacaoRestGet<TParametros, TResposta>;
 
+type ApiOperacaoFactory<TDefinicao extends object, TVariaveis extends object, TResposta extends object> = (definicao: TDefinicao) => ApiOperacaoSuportada<Record<string, never>, TVariaveis, TResposta>;
+
 type ApiOperacaoErroLog = {
     nome: string;
     nomeOperacaoGraphql: string;
@@ -36,6 +38,10 @@ function montaUrlApi(endpoint: string): string {
 function montaMensagemErroGraphql<TResposta extends object>(operacao: ApiOperacaoErroLog, dados: ApiRespostaGraphql<TResposta>): string {
     if (!dados.errors?.length) return `Resposta GraphQL inválida para operação ${operacao.nome}`;
     return dados.errors.map(erroGraphql => `${erroGraphql.message}${erroGraphql.path?.length ? ` | path=${erroGraphql.path.join('.')}` : ''}`).join(' | ');
+};
+
+function ehApiOperacaoFactory<TDefinicao extends object, TParametros extends object, TVariaveis extends object, TResposta extends object>(entrada: ApiOperacaoSuportada<TParametros, TVariaveis, TResposta> | ApiOperacaoFactory<TDefinicao, TVariaveis, TResposta>): entrada is ApiOperacaoFactory<TDefinicao, TVariaveis, TResposta> {
+    return typeof entrada === 'function';
 };
 
 async function executaGraphql<TParametros extends object, TVariaveis extends object, TResposta extends object>(operacao: ApiOperacaoGraphqlGet<TParametros, TVariaveis, TResposta>, parametros: TParametros): Promise<TResposta> {
@@ -76,21 +82,43 @@ async function executaRest<TParametros extends object, TResposta extends object>
     return await resposta.json() as TResposta;
 };
 
-export default function useApi<TParametros extends object, TVariaveis extends object, TResposta extends object>(operacao: ApiOperacaoSuportada<TParametros, TVariaveis, TResposta>, opcoes?: UseApiOpcoes<TParametros, TResposta>): UseApiResultado<TParametros, TResposta> {
+async function executaOperacao<TParametros extends object, TVariaveis extends object, TResposta extends object>(operacao: ApiOperacaoSuportada<TParametros, TVariaveis, TResposta>, parametros: TParametros): Promise<TResposta> {
+    return operacao.transporte === ApiTransporte.GRAPHQL ? await executaGraphql(operacao, parametros) : await executaRest(operacao, parametros);
+};
+
+export default function useApi<const TDefinicao extends object, TVariaveis extends object, TResposta extends object>(entrada: ApiOperacaoFactory<TDefinicao, TVariaveis, TResposta>, opcoes?: UseApiOpcoes<TDefinicao, TResposta>): UseApiResultado<TDefinicao, TResposta>;
+
+export default function useApi<TParametros extends object, TVariaveis extends object, TResposta extends object>(entrada: ApiOperacaoSuportada<TParametros, TVariaveis, TResposta>, opcoes?: UseApiOpcoes<TParametros, TResposta>): UseApiResultado<TParametros, TResposta>;
+
+export default function useApi<const TEntrada extends object, TParametros extends object, TVariaveis extends object, TResposta extends object>(entrada: ApiOperacaoSuportada<TParametros, TVariaveis, TResposta> | ApiOperacaoFactory<TEntrada, TVariaveis, TResposta>, opcoes?: UseApiOpcoes<TEntrada | TParametros, TResposta>): UseApiResultado<TEntrada | TParametros, TResposta> {
     const [data, setData] = useState<TResposta | null>(null);
     const [carregando, setCarregando] = useState(false);
     const [erro, setErro] = useState<string | null>(null);
-    const opcoesRef = useRef<UseApiOpcoes<TParametros, TResposta> | null>(null);
+    const opcoesRef = useRef<UseApiOpcoes<TEntrada | TParametros, TResposta> | null>(null);
     const disparoInicialExecutadoRef = useRef(false);
 
     opcoesRef.current = opcoes ?? null;
 
-    const executar = useCallback(async (parametros: TParametros, opcoesExecucao?: UseApiOpcoesExecucao<TResposta>): Promise<TResposta> => {
+    const executar = useCallback(async (parametros: TEntrada | TParametros, opcoesExecucao?: UseApiOpcoesExecucao<TResposta>): Promise<TResposta> => {
         setCarregando(true);
         setErro(null);
 
+        let nomeOperacaoLog = typeof entrada === 'function' ? 'factory' : entrada.nome;
+        let transporteOperacaoLog: ApiTransporte | 'FACTORY' = typeof entrada === 'function' ? 'FACTORY' : entrada.transporte;
+
         try {
-            const resposta = operacao.transporte === ApiTransporte.GRAPHQL ? await executaGraphql(operacao, parametros) : await executaRest(operacao, parametros);
+            const resposta = ehApiOperacaoFactory<TEntrada, TParametros, TVariaveis, TResposta>(entrada)
+                ? await (() => {
+                    const operacao = entrada(parametros as TEntrada);
+                    nomeOperacaoLog = operacao.nome;
+                    transporteOperacaoLog = operacao.transporte;
+                    return executaOperacao(operacao, {});
+                })()
+                : await (() => {
+                    nomeOperacaoLog = entrada.nome;
+                    transporteOperacaoLog = entrada.transporte;
+                    return executaOperacao(entrada, parametros as TParametros);
+                })();
 
             setData(resposta);
             opcoesRef.current?.onSuccess?.(resposta);
@@ -100,7 +128,7 @@ export default function useApi<TParametros extends object, TVariaveis extends ob
         } catch (erroCapturado) {
             const mensagemErro = erroCapturado instanceof Error ? erroCapturado.message : 'Erro desconhecido ao chamar API';
 
-            console.error('[useApi][ERRO_CAPTURADO]', { operacao: operacao.nome, transporte: operacao.transporte, parametros, erro: mensagemErro });
+            console.error('[useApi][ERRO_CAPTURADO]', { operacao: nomeOperacaoLog, transporte: transporteOperacaoLog, parametros, erro: mensagemErro });
 
             setData(null);
             setErro(mensagemErro);
@@ -111,7 +139,7 @@ export default function useApi<TParametros extends object, TVariaveis extends ob
         } finally {
             setCarregando(false);
         }
-    }, [operacao]);
+    }, [entrada]);
 
     useEffect(() => {
         if (!opcoes?.disparoInicial) return;
