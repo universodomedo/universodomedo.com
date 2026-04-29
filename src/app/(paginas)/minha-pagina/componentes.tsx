@@ -25,7 +25,7 @@ function MinhaPagina_Slot() {
                 <SecaoPosts />
             </div>
 
-            <SecaoContatos />
+            {/* <SecaoContatos /> */}
         </div>
     );
 };
