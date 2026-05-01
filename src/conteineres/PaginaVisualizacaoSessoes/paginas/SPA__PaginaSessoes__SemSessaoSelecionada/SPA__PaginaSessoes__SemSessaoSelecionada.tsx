@@ -45,7 +45,7 @@ export default function SPA__PaginaSessoes__SemSessaoSelecionada() {
                                     <td>{sessao.id}</td>
                                     <td>{sessao.detalheData}</td>
                                     <td>{sessao.tipoPorExtenso}</td>
-                                    <td>{sessao.usernameUsuarioMestre}</td>
+                                    <td>{sessao.usuarioMestre.username}</td>
                                 </tr>
                             ))}
                         </tbody>

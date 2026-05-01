@@ -29,6 +29,9 @@
       "Adaptadores/*": [
         "./src/adaptadores/*"
       ],
+      "Api/*": [
+        "./src/api/*"
+      ],
       "App/*": [
         "./src/app/*"
       ],

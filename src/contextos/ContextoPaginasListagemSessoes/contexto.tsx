@@ -1,15 +1,18 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { VIEW_SessaoListagemGeralDto } from 'types-nora-api';
+import { createContext, useContext, useState } from 'react';
+import { GraphqlOrderDirecao, GraphqlTypesSessao } from 'types-nora-api';
 
-import { obtemListagemGeralSessoes } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-import { toast } from 'Hooks/useToast';
+import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
 import { useSincronizarQueryParamSPA } from 'Hooks/useSincronizarQueryParamSPA';
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
-interface ContextoPaginasListagemSessoesProps {
-    sessoes: VIEW_SessaoListagemGeralDto[];
+const SELECT_LISTAGEM_SESSOES = GraphqlTypesSessao.select('id', 'dataCriacao', 'detalheData', 'tipoPorExtenso', 'usuarioMestre');
+
+export type SessoesListagemContexto = GraphqlTypesSessao.Lista<typeof SELECT_LISTAGEM_SESSOES>;
+
+export interface ContextoPaginasListagemSessoesProps {
+    sessoes: SessoesListagemContexto;
     idSessaoSelecionada: number | null;
     setIdSessaoSelecionada: (idSessao: number) => void;
     deselecionaSessao: () => void;
@@ -24,36 +27,21 @@ export const useContextoPaginasListagemSessoes = (): ContextoPaginasListagemSess
 };
 
 export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInicial }: { children: React.ReactNode; idSessaoInicial: number | null; }) => {
-    const [carregando, setCarregando] = useState<string | null>(null);
-    const [sessoes, setSessoes] = useState<VIEW_SessaoListagemGeralDto[]>([]);
+    const consultaListagemSessoes = useNoraGraphQLConsulta(obtem => obtem.Sessao.varios({
+        parametros: { order: { dataCriacao: GraphqlOrderDirecao.DESC } },
+        select: SELECT_LISTAGEM_SESSOES,
+    }), { valorInicial: [], carregando: 'Buscando Sessões', mensagemErro: 'Houve um erro recuperando as Sessões à serem listadas', extrair: resposta => [...resposta.sessoesGraphql] });
+
     const [idSessaoSelecionada, setIdSessaoSelecionada] = useState<number | null>(idSessaoInicial ?? null);
-
-    async function buscaListaSessoes() {
-        setCarregando('Buscando Sessões');
-
-        try {
-            const lista = await obtemListagemGeralSessoes();
-            setSessoes(lista);
-        } catch {
-            setSessoes([]);
-            toast.erro('Houve um erro recuperando as Sessões à serem listadas');
-        } finally {
-            setCarregando(null);
-        }
-    };
 
     function deselecionaSessao() { setIdSessaoSelecionada(null); };
 
     useSincronizarQueryParamSPA(QUERY_PARAMS.SESSAO, idSessaoSelecionada);
 
-    useEffect(() => {
-        buscaListaSessoes();
-    }, []);
-
-    if (carregando) return <div>{carregando}</div>;
+    if (consultaListagemSessoes.carregando) return <div>{consultaListagemSessoes.carregando}</div>;
 
     return (
-        <ContextoPaginasListagemSessoes.Provider value={{ sessoes, idSessaoSelecionada, setIdSessaoSelecionada, deselecionaSessao }}>
+        <ContextoPaginasListagemSessoes.Provider value={{ sessoes: consultaListagemSessoes.data, idSessaoSelecionada, setIdSessaoSelecionada, deselecionaSessao }}>
             {children}
         </ContextoPaginasListagemSessoes.Provider>
     );
