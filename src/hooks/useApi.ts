@@ -30,14 +30,76 @@ type ApiOperacaoErroLog = {
     nomeOperacaoGraphql: string;
 };
 
+type ApiRespostaHttpFalha = {
+    status: number;
+    statusText: string;
+    url: string;
+    corpoTexto: string;
+};
+
 function montaUrlApi(endpoint: string): string {
     const urlBaseApi = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
     return `${urlBaseApi}${endpoint}`;
 };
 
+function limitaTextoErro(texto: string): string {
+    if (texto.length <= 3000) return texto;
+    return `${texto.substring(0, 3000)}... [corpo truncado]`;
+};
+
+function stringifySeguro(valor: object): string {
+    try {
+        return JSON.stringify(valor);
+    } catch {
+        return '[valor não serializável]';
+    }
+};
+
+function montaDetalheErroGraphql<TResposta extends object>(dados: ApiRespostaGraphql<TResposta>): string {
+    if (!dados.errors?.length) return 'sem lista de errors no corpo GraphQL';
+
+    return dados.errors.map(erroGraphql => {
+        const path = erroGraphql.path?.length ? ` | path=${erroGraphql.path.join('.')}` : '';
+        const extensions = erroGraphql.extensions ? ` | extensions=${stringifySeguro(erroGraphql.extensions)}` : '';
+
+        return `${erroGraphql.message}${path}${extensions}`;
+    }).join(' || ');
+};
+
+function tentaLerRespostaGraphql<TResposta extends object>(corpoTexto: string): ApiRespostaGraphql<TResposta> | null {
+    if (!corpoTexto.trim()) return null;
+
+    try {
+        return JSON.parse(corpoTexto) as ApiRespostaGraphql<TResposta>;
+    } catch {
+        return null;
+    }
+};
+
+async function leRespostaHttpFalha(resposta: Response, url: string): Promise<ApiRespostaHttpFalha> {
+    const corpoTexto = await resposta.text().catch(() => '[falha ao ler corpo da resposta HTTP]');
+
+    return {
+        status: resposta.status,
+        statusText: resposta.statusText,
+        url,
+        corpoTexto,
+    };
+};
+
 function montaMensagemErroGraphql<TResposta extends object>(operacao: ApiOperacaoErroLog, dados: ApiRespostaGraphql<TResposta>): string {
-    if (!dados.errors?.length) return `Resposta GraphQL inválida para operação ${operacao.nome}`;
-    return dados.errors.map(erroGraphql => `${erroGraphql.message}${erroGraphql.path?.length ? ` | path=${erroGraphql.path.join('.')}` : ''}`).join(' | ');
+    return `Erro GraphQL na operação ${operacao.nome}/${operacao.nomeOperacaoGraphql}: ${montaDetalheErroGraphql(dados)}`;
+};
+
+function montaMensagemErroHttpGraphql<TResposta extends object>(operacao: ApiOperacaoErroLog, falha: ApiRespostaHttpFalha, dados: ApiRespostaGraphql<TResposta> | null): string {
+    const detalheGraphql = dados ? montaDetalheErroGraphql(dados) : null;
+    const detalheCorpo = detalheGraphql ?? limitaTextoErro(falha.corpoTexto || '[resposta sem corpo]');
+
+    return `Falha HTTP ao chamar GraphQL: status=${falha.status} ${falha.statusText || ''} endpoint=${falha.url} operação=${operacao.nome}/${operacao.nomeOperacaoGraphql} detalhe=${detalheCorpo}`;
+};
+
+function montaMensagemErroHttpRest(operacao: { nome: string }, falha: ApiRespostaHttpFalha): string {
+    return `Falha HTTP ao chamar REST: status=${falha.status} ${falha.statusText || ''} endpoint=${falha.url} operação=${operacao.nome} detalhe=${limitaTextoErro(falha.corpoTexto || '[resposta sem corpo]')}`;
 };
 
 function ehApiOperacaoFactory<TDefinicao extends object, TParametros extends object, TVariaveis extends object, TResposta extends object>(entrada: ApiOperacaoSuportada<TParametros, TVariaveis, TResposta> | ApiOperacaoFactory<TDefinicao, TVariaveis, TResposta>): entrada is ApiOperacaoFactory<TDefinicao, TVariaveis, TResposta> {
@@ -47,23 +109,46 @@ function ehApiOperacaoFactory<TDefinicao extends object, TParametros extends obj
 async function executaGraphql<TParametros extends object, TVariaveis extends object, TResposta extends object>(operacao: ApiOperacaoGraphqlGet<TParametros, TVariaveis, TResposta>, parametros: TParametros): Promise<TResposta> {
     const url = montaUrlApi(operacao.endpoint);
     const variables = operacao.montaVariaveis(parametros);
-    const resposta = await fetch(url, { method: operacao.metodoHttp, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ operationName: operacao.nomeOperacaoGraphql, query: operacao.query, variables }) });
+    const body = JSON.stringify({ operationName: operacao.nomeOperacaoGraphql, query: operacao.query, variables });
+    const resposta = await fetch(url, { method: operacao.metodoHttp, headers: { 'Content-Type': 'application/json' }, body });
 
     if (!resposta.ok) {
-        console.error('[useApi][GraphQL][HTTP_ERRO]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, status: resposta.status, parametros, variables });
-        throw new Error(`Falha HTTP ao chamar GraphQL: ${resposta.status} em ${url}`);
+        const falha = await leRespostaHttpFalha(resposta, url);
+        const dados = tentaLerRespostaGraphql<TResposta>(falha.corpoTexto);
+
+        console.error('[useApi][GraphQL][HTTP_ERRO]', {
+            operacao: operacao.nome,
+            operationName: operacao.nomeOperacaoGraphql,
+            url,
+            status: falha.status,
+            statusText: falha.statusText,
+            parametros,
+            variables,
+            query: operacao.query,
+            responseBody: falha.corpoTexto,
+            graphqlErrors: dados?.errors ?? null,
+            graphqlData: dados?.data ?? null,
+        });
+
+        throw new Error(montaMensagemErroHttpGraphql(operacao, falha, dados));
     }
 
-    const dados = await resposta.json() as ApiRespostaGraphql<TResposta>;
+    const corpoTexto = await resposta.text();
+    const dados = tentaLerRespostaGraphql<TResposta>(corpoTexto);
+
+    if (!dados) {
+        console.error('[useApi][GraphQL][JSON_INVALIDO]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, parametros, variables, query: operacao.query, responseBody: corpoTexto });
+        throw new Error(`Resposta GraphQL não retornou JSON válido para operação ${operacao.nome}/${operacao.nomeOperacaoGraphql}: ${limitaTextoErro(corpoTexto || '[resposta sem corpo]')}`);
+    }
 
     if (dados.errors?.length) {
-        console.error('[useApi][GraphQL][ERRO]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, parametros, variables, errors: dados.errors, data: dados.data ?? null });
+        console.error('[useApi][GraphQL][ERRO]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, parametros, variables, query: operacao.query, errors: dados.errors, data: dados.data ?? null, responseBody: corpoTexto });
         throw new Error(montaMensagemErroGraphql(operacao, dados));
     }
 
     if (!dados.data) {
-        console.error('[useApi][GraphQL][SEM_DATA]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, parametros, variables, resposta: dados });
-        throw new Error(`Resposta GraphQL não retornou data para operação ${operacao.nome}`);
+        console.error('[useApi][GraphQL][SEM_DATA]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, parametros, variables, query: operacao.query, resposta: dados, responseBody: corpoTexto });
+        throw new Error(`Resposta GraphQL não retornou data para operação ${operacao.nome}/${operacao.nomeOperacaoGraphql}: ${limitaTextoErro(corpoTexto || '[resposta sem corpo]')}`);
     }
 
     return dados.data;
@@ -75,8 +160,11 @@ async function executaRest<TParametros extends object, TResposta extends object>
     const resposta = await fetch(url, { method: operacao.metodoHttp, headers: { 'Content-Type': 'application/json' } });
 
     if (!resposta.ok) {
-        console.error('[useApi][REST][HTTP_ERRO]', { operacao: operacao.nome, url, status: resposta.status, parametros });
-        throw new Error(`Falha HTTP ao chamar REST: ${resposta.status} em ${url}`);
+        const falha = await leRespostaHttpFalha(resposta, url);
+
+        console.error('[useApi][REST][HTTP_ERRO]', { operacao: operacao.nome, url, status: falha.status, statusText: falha.statusText, parametros, responseBody: falha.corpoTexto });
+
+        throw new Error(montaMensagemErroHttpRest(operacao, falha));
     }
 
     return await resposta.json() as TResposta;
@@ -128,7 +216,7 @@ export default function useApi<const TEntrada extends object, TParametros extend
         } catch (erroCapturado) {
             const mensagemErro = erroCapturado instanceof Error ? erroCapturado.message : 'Erro desconhecido ao chamar API';
 
-            console.error('[useApi][ERRO_CAPTURADO]', { operacao: nomeOperacaoLog, transporte: transporteOperacaoLog, parametros, erro: mensagemErro });
+            console.error('[useApi][ERRO_CAPTURADO]', { operacao: nomeOperacaoLog, transporte: transporteOperacaoLog, parametros, erro: mensagemErro, erroOriginal: erroCapturado });
 
             setData(null);
             setErro(mensagemErro);

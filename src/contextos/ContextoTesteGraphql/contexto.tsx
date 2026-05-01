@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from 'react';
 
-import { EventosApi, EventosApiGraphqlV2 } from 'types-nora-api';
+import { EventosApiGraphqlV2, EventosApiRest } from 'types-nora-api';
 
 import useApi from 'Hooks/useApi';
 
@@ -42,7 +42,7 @@ export const ContextoTesteGraphql__Provider = ({ children }: { children: React.R
     const sessoesGraphqlOffset = useApi(EventosApiGraphqlV2.obtem.Sessao.varios, { disparoInicial: { parametros: { where: { dataInicio: { ne: null }, duracaoEmSegundos: { ne: null } }, order: { dataPrevisaoInicio: 'DESC' }, limit: 2, offset: 1 }, select: { id: true, detalheData: true, tipoPorExtenso: true, tituloInteligente: true, usuarioMestre: true } } });
     const sessoesGraphqlOperadores = useApi(EventosApiGraphqlV2.obtem.Sessao.varios, { disparoInicial: { parametros: { where: { id: { in: [450, 447, 446] }, dataInicio: { isNull: false }, duracaoEmSegundos: { isNull: false } }, order: { dataPrevisaoInicio: 'DESC' }, limit: 5 }, select: { id: true, detalheData: true, tipoPorExtenso: true, tituloInteligente: true, usuarioMestre: true } } });
     const sessoesGraphqlRange = useApi(EventosApiGraphqlV2.obtem.Sessao.varios, { disparoInicial: { parametros: { where: { id: { gte: 446, lte: 450 } }, order: { id: 'DESC' }, limit: 5 }, select: { id: true, detalheData: true, tipoPorExtenso: true, tituloInteligente: true, usuarioMestre: true } } });
-    const testeRest = useApi(EventosApi.GET.Rest.testeRest, { disparoInicial: {} });
+    const testeRest = useApi(EventosApiRest.GET.Rest.testeRest, { disparoInicial: {} });
 
     const operacaoErroEsperadoGraphql = EventosApiGraphqlV2.obtem.Sessao.varios({ parametros: { where: { detalheData: { eq: 'Ocorreu em 07/04/2025 20:00' } }, limit: 1 }, select: { id: true } });
     const testeErroEsperadoGraphql = useApi(operacaoErroEsperadoGraphql);
