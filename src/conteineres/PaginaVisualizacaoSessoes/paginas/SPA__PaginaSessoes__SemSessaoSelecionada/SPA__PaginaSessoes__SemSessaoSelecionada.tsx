@@ -3,6 +3,7 @@
 import styles from './styles.module.css';
 
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
+import EstadoVazioFiltrosVisualizacao from 'Componentes/Filtros/FiltrosVisualizacao/EstadoVazioFiltrosVisualizacao';
 import FiltrosVisualizacao from 'Componentes/Filtros/FiltrosVisualizacao/FiltrosVisualizacao';
 
 import { useContextoPaginaSessoes__SemSessaoSelecionada } from 'Contextos/ContextoPaginaSessoes__SemSessaoSelecionada/contexto';
@@ -28,32 +29,35 @@ export default function SPA__PaginaSessoes__SemSessaoSelecionada() {
     return (
         <>
             <FiltrosVisualizacao />
-            <DivClicavel onClick={handleClickTabela} className={styles.tabela_sessoes_click_wrapper}>
-                <div className={styles.tabela_sessoes_container}>
-                    <table className={styles.tabela_sessoes}>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>ID</th>
-                                <th>Data</th>
-                                <th>Tipo</th>
-                                <th>Mestre</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {sessoesOrdenadas.map((sessao, index) => (
-                                <tr key={sessao.id} data-sessao-id={sessao.id}>
-                                    <td>{index + 1}</td>
-                                    <td>{sessao.id}</td>
-                                    <td>{sessao.detalheData}</td>
-                                    <td>{sessao.tipoPorExtenso}</td>
-                                    <td>{sessao.usuarioMestre.username}</td>
+            <EstadoVazioFiltrosVisualizacao />
+            {sessoesOrdenadas.length > 0 && (
+                <DivClicavel onClick={handleClickTabela} className={styles.tabela_sessoes_click_wrapper}>
+                    <div className={styles.tabela_sessoes_container}>
+                        <table className={styles.tabela_sessoes}>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>ID</th>
+                                    <th>Data</th>
+                                    <th>Tipo</th>
+                                    <th>Mestre</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </DivClicavel>
+                            </thead>
+                            <tbody>
+                                {sessoesOrdenadas.map((sessao, index) => (
+                                    <tr key={sessao.id} data-sessao-id={sessao.id}>
+                                        <td>{index + 1}</td>
+                                        <td>{sessao.id}</td>
+                                        <td>{sessao.detalheData}</td>
+                                        <td>{sessao.tipoPorExtenso}</td>
+                                        <td>{sessao.usuarioMestre.username}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </DivClicavel>
+            )}
         </>
     );
 };
