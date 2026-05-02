@@ -1,0 +1,129 @@
+.filtros {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65em;
+    padding: 0.75em;
+    border: 0.08em solid rgba(180, 30, 55, 0.35);
+    border-radius: 0.45em;
+    background: rgba(10, 0, 5, 0.48);
+    box-shadow: 0 0 0.75em rgba(0, 0, 0, 0.22);
+}
+
+.cabecalho {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+    color: rgba(255, 235, 235, 0.92);
+    font-size: 0.88em;
+}
+
+.cabecalho strong {
+    color: rgba(255, 245, 245, 0.98);
+    letter-spacing: 0.04em;
+}
+
+.formulario {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    flex-wrap: wrap;
+}
+
+.campo,
+.operador,
+.valor {
+    min-height: 2.15em;
+    padding: 0.35em 0.55em;
+    border: 0.08em solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.3em;
+    background: rgba(0, 0, 0, 0.48);
+    color: rgba(255, 245, 245, 0.94);
+    outline: none;
+}
+
+.campo {
+    min-width: 15em;
+}
+
+.operador {
+    min-width: 10em;
+}
+
+.valor {
+    min-width: 13em;
+}
+
+.campo:focus,
+.operador:focus,
+.valor:focus {
+    border-color: rgba(255, 80, 110, 0.75);
+    box-shadow: 0 0 0.45em rgba(255, 30, 75, 0.3);
+}
+
+.valor:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.botao,
+.botao_secundario {
+    min-height: 2.15em;
+    padding: 0.35em 0.75em;
+    border-radius: 0.3em;
+    cursor: pointer;
+    transition: filter 0.12s ease, transform 0.12s ease, opacity 0.12s ease;
+}
+
+.botao {
+    border: 0.08em solid rgba(255, 90, 120, 0.65);
+    background: rgba(125, 10, 35, 0.88);
+    color: rgba(255, 245, 245, 0.96);
+}
+
+.botao:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.botao_secundario {
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 235, 235, 0.88);
+}
+
+.botao:not(:disabled):hover,
+.botao_secundario:hover {
+    filter: brightness(1.12);
+}
+
+.botao:not(:disabled):active,
+.botao_secundario:active {
+    transform: scale(0.98);
+}
+
+.filtros_ativos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+}
+
+.filtro_ativo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.3em 0.55em;
+    border: 0.08em solid rgba(255, 90, 120, 0.38);
+    border-radius: 999em;
+    background: rgba(90, 0, 24, 0.52);
+    color: rgba(255, 240, 240, 0.92);
+    cursor: pointer;
+}
+
+.filtro_ativo span {
+    font-weight: 700;
+    color: rgba(255, 180, 190, 0.95);
+}

@@ -4,7 +4,7 @@ import { createContext, useContext } from 'react';
 
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SPA__PaginaSessoes__SemSessaoSelecionada from 'Conteineres/PaginaVisualizacaoSessoes/paginas/SPA__PaginaSessoes__SemSessaoSelecionada/SPA__PaginaSessoes__SemSessaoSelecionada';
-import type { ListaSessoesListagemContexto } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
+import { ListaSessoesListagemContexto } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
 
 interface ContextoPaginaSessoes__SemSessaoSelecionadaProps {
     sessoes: ListaSessoesListagemContexto;

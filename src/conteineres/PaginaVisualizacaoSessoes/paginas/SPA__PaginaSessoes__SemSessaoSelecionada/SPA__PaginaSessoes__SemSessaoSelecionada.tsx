@@ -3,6 +3,7 @@
 import styles from './styles.module.css';
 
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
+import FiltrosVisualizacao from 'Componentes/Filtros/FiltrosVisualizacao/FiltrosVisualizacao';
 
 import { useContextoPaginaSessoes__SemSessaoSelecionada } from 'Contextos/ContextoPaginaSessoes__SemSessaoSelecionada/contexto';
 
@@ -26,6 +27,7 @@ export default function SPA__PaginaSessoes__SemSessaoSelecionada() {
 
     return (
         <>
+            <FiltrosVisualizacao />
             <DivClicavel onClick={handleClickTabela} className={styles.tabela_sessoes_click_wrapper}>
                 <div className={styles.tabela_sessoes_container}>
                     <table className={styles.tabela_sessoes}>

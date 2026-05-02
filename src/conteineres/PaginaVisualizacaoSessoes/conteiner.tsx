@@ -3,7 +3,7 @@
 import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 
 import { ContextoPaginasListagemSessoesProvider, useContextoPaginasListagemSessoes } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
-import type { ListaSessoesListagemContexto } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
+import type { ContextoPaginasListagemSessoesProps } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
 import { ContextoPaginaSessoes__ComSessaoSelecionadaProvider } from 'Contextos/ContextoPaginaSessoes__ComSessaoSelecionada/contexto';
 import { ContextoPaginaSessoes__SemSessaoSelecionadaProvider } from 'Contextos/ContextoPaginaSessoes__SemSessaoSelecionada/contexto';
 
@@ -17,12 +17,7 @@ export default function Conteiner__PaginaVisualizacaoSessoes({ idSessaoInicial }
 
 const Conteiner__PaginaVisualizacaoSessoes__Interno = criaConteiner<PropsConteiner__PaginaVisualizacaoSessoes>({ useEstado, resolveSaida });
 
-type PropsConteiner__PaginaVisualizacaoSessoes = {
-    sessoes: ListaSessoesListagemContexto;
-    idSessaoSelecionada: number | null;
-    setIdSessaoSelecionada: (idSessao: number) => void;
-    deselecionaSessao: () => void;
-};
+type PropsConteiner__PaginaVisualizacaoSessoes = ContextoPaginasListagemSessoesProps;
 
 function resolveSaida(props: PropsConteiner__PaginaVisualizacaoSessoes): SaidaConteiner {
     if (props.idSessaoSelecionada) return criaSaidaConteiner(ContextoPaginaSessoes__ComSessaoSelecionadaProvider, { idSessaoSelecionada: props.idSessaoSelecionada, deselecionaSessao: props.deselecionaSessao });
@@ -30,8 +25,4 @@ function resolveSaida(props: PropsConteiner__PaginaVisualizacaoSessoes): SaidaCo
     return criaSaidaConteiner(ContextoPaginaSessoes__SemSessaoSelecionadaProvider, { sessoes: props.sessoes, selecionaSessao: props.setIdSessaoSelecionada });
 };
 
-function useEstado(): PropsConteiner__PaginaVisualizacaoSessoes {
-    const { sessoes, idSessaoSelecionada, setIdSessaoSelecionada, deselecionaSessao } = useContextoPaginasListagemSessoes();
-
-    return { sessoes, idSessaoSelecionada, setIdSessaoSelecionada, deselecionaSessao };
-};
+function useEstado(): PropsConteiner__PaginaVisualizacaoSessoes { return useContextoPaginasListagemSessoes(); };
