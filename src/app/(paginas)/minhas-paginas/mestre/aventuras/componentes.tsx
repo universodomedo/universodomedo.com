@@ -8,13 +8,15 @@ import { ControladorSlot } from 'Layouts/ControladorSlot';
 import { ContextoMestreAventurasProvider } from "Contextos/ContextoMestreAventuras/contexto";
 import { useContextoMestreAventuras } from 'Contextos/ContextoMestreAventuras/contexto';
 import { AventuraEmLayoutContextualizado } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AventuraEmLayoutContextualizado/page';
+import Conteiner__PaginaMestreAventuras from 'Conteineres/PaginaMestreAventuras/conteiner';
 
 export function AventurasMestre_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.mestre.aventuras}>
-            <ContextoMestreAventurasProvider>
+            <Conteiner__PaginaMestreAventuras />
+            {/* <ContextoMestreAventurasProvider>
                 <AventurasMestre_Slot />
-            </ContextoMestreAventurasProvider>
+            </ContextoMestreAventurasProvider> */}
         </ControladorSlot>
     );
 };

@@ -1,12 +1,14 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { GraphqlOrderDirecao, GraphqlTypesSessao } from 'types-nora-api';
 
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
-import { FiltrosVisualizacaoProvider, useContextoFiltrosVisualizacao } from 'Contextos/Contexto_Filtros/contexto';
+import { FiltrosConsultaProvider, useContextoFiltrosConsulta } from 'Contextos/Contexto__FiltrosConsulta/contexto';
+import { FiltrosVisualizacaoProvider, useContextoFiltrosVisualizacao } from 'Contextos/Contexto__Filtros/contexto';
 import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
 import { filtraCamposFiltroVisualizacaoPorSelect } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
+import { NoraGraphQLFiltroConsultaWhere } from 'Hooks/useNoraGraphQLFiltroConsulta';
 import { useSincronizarQueryParamSPA } from 'Hooks/useSincronizarQueryParamSPA';
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
@@ -34,11 +36,40 @@ export const useContextoPaginasListagemSessoes = (): ContextoPaginasListagemSess
     return context;
 };
 
+function montaParametrosConsultaListagemSessoes(where: NoraGraphQLFiltroConsultaWhere | null): GraphqlTypesSessao.ObtemVariosParametros {
+    return {
+        where: where as GraphqlTypesSessao.ObtemVariosParametros['where'],
+        order: { dataCriacao: GraphqlOrderDirecao.DESC },
+    };
+};
+
 export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInicial }: { children: React.ReactNode; idSessaoInicial: number | null; }) => {
+    return (
+        <FiltrosConsultaProvider campos={GraphqlTypesSessao.CamposFiltroConsulta}>
+            <ContextoPaginasListagemSessoesProviderComConsulta idSessaoInicial={idSessaoInicial}>
+                {children}
+            </ContextoPaginasListagemSessoesProviderComConsulta>
+        </FiltrosConsultaProvider>
+    );
+};
+
+function ContextoPaginasListagemSessoesProviderComConsulta({ children, idSessaoInicial }: { children: React.ReactNode; idSessaoInicial: number | null; }) {
+    const { where, versaoAplicacao } = useContextoFiltrosConsulta<object>();
+    const versaoAplicacaoAnteriorRef = useRef(versaoAplicacao);
+
     const consultaListagemSessoes = useNoraGraphQLConsulta(obtem => obtem.Sessao.varios({
-        parametros: { order: { dataCriacao: GraphqlOrderDirecao.DESC } },
+        parametros: montaParametrosConsultaListagemSessoes(where),
         select: SELECT_LISTAGEM_SESSOES,
     }), { valorInicial: [], carregando: 'Buscando Sessões', mensagemErro: 'Houve um erro recuperando as Sessões à serem listadas', carregamento: NoraApiCarregamento.BLOQUEIA_INTERFACE });
+
+    const recarregarListagemSessoes = consultaListagemSessoes.recarregar;
+
+    useEffect(() => {
+        if (versaoAplicacaoAnteriorRef.current === versaoAplicacao) return;
+
+        versaoAplicacaoAnteriorRef.current = versaoAplicacao;
+        recarregarListagemSessoes().catch(() => undefined);
+    }, [recarregarListagemSessoes, versaoAplicacao]);
 
     return (
         <FiltrosVisualizacaoProvider registros={consultaListagemSessoes.data} campos={CAMPOS_FILTRO_VISUALIZACAO_LISTAGEM_SESSOES}>

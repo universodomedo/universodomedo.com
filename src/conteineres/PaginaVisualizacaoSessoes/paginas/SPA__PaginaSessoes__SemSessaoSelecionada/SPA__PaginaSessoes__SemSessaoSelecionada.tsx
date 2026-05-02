@@ -3,6 +3,7 @@
 import styles from './styles.module.css';
 
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
+import FiltrosConsulta from 'Componentes/Filtros/FiltrosConsulta/FiltrosConsulta';
 import EstadoVazioFiltrosVisualizacao from 'Componentes/Filtros/FiltrosVisualizacao/EstadoVazioFiltrosVisualizacao';
 import FiltrosVisualizacao from 'Componentes/Filtros/FiltrosVisualizacao/FiltrosVisualizacao';
 
@@ -28,6 +29,7 @@ export default function SPA__PaginaSessoes__SemSessaoSelecionada() {
 
     return (
         <>
+            <FiltrosConsulta />
             <FiltrosVisualizacao />
             <EstadoVazioFiltrosVisualizacao />
             {sessoesOrdenadas.length > 0 && (

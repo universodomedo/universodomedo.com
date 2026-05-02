@@ -1,12 +1,12 @@
 'use client';
 
 import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { GraphqlFiltroCampoTipo, GraphqlFiltroOperador, GraphqlFiltroVisualizacaoCampoDef } from 'types-nora-api';
+import { GraphqlFiltroCampoTipo, GraphqlFiltroConsultaCampoDef, GraphqlFiltroOperador } from 'types-nora-api';
 
-import styles from './styles.module.css';
+import styles from '../FiltrosVisualizacao/styles.module.css';
 
-import { useContextoFiltrosVisualizacao } from '@/contextos/Contexto__Filtros/contexto';
-import { NoraGraphQLFiltroVisualizacaoAtivo, NoraGraphQLFiltroVisualizacaoValor } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
+import { useContextoFiltrosConsulta } from 'Contextos/Contexto__FiltrosConsulta/contexto';
+import { NoraGraphQLFiltroConsultaAtivo, NoraGraphQLFiltroConsultaValor } from 'Hooks/useNoraGraphQLFiltroConsulta';
 
 const LABEL_OPERADOR: Record<GraphqlFiltroOperador, string> = {
     [GraphqlFiltroOperador.CONTEM]: 'contém',
@@ -22,17 +22,12 @@ const LABEL_OPERADOR: Record<GraphqlFiltroOperador, string> = {
 const LABEL_PARTES_CAMPO: Record<string, string> = {
     id: 'ID',
     dataCriacao: 'Data Criação',
-    detalheData: 'Data',
-    tipoPorExtenso: 'Tipo',
-    usuarioMestre: 'Mestre',
-    username: 'Username',
-    nome: 'Nome',
-    email: 'E-mail',
-    dadosArteCapa: 'Arte de Capa',
-    caminhoArquivoArteCapa: 'Caminho da Arte',
+    dataPrevisaoInicio: 'Data Prevista',
+    dataInicio: 'Data Início',
+    duracaoEmSegundos: 'Duração',
 };
 
-function criaIdFiltroVisualizacao(): string {
+function criaIdFiltroConsulta(): string {
     return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 };
 
@@ -40,7 +35,7 @@ function campoAceitaValor(operador: GraphqlFiltroOperador): boolean {
     return operador !== GraphqlFiltroOperador.ESTA_NULO;
 };
 
-function obtemTipoInput(campo: GraphqlFiltroVisualizacaoCampoDef<object> | undefined): string {
+function obtemTipoInput(campo: GraphqlFiltroConsultaCampoDef<object> | undefined): string {
     if (!campo) return 'text';
     if (campo.tipo === GraphqlFiltroCampoTipo.NUMBER) return 'number';
     if (campo.tipo === GraphqlFiltroCampoTipo.DATE) return 'date';
@@ -48,7 +43,7 @@ function obtemTipoInput(campo: GraphqlFiltroVisualizacaoCampoDef<object> | undef
     return 'text';
 };
 
-function resolveValorFiltro(campo: GraphqlFiltroVisualizacaoCampoDef<object>, operador: GraphqlFiltroOperador, valorTexto: string): NoraGraphQLFiltroVisualizacaoValor | null {
+function resolveValorFiltro(campo: GraphqlFiltroConsultaCampoDef<object>, operador: GraphqlFiltroOperador, valorTexto: string): NoraGraphQLFiltroConsultaValor | null {
     const valorTextoTratado = valorTexto.trim();
 
     if (!campoAceitaValor(operador)) return null;
@@ -65,7 +60,7 @@ function resolveValorFiltro(campo: GraphqlFiltroVisualizacaoCampoDef<object>, op
     return valorTextoTratado;
 };
 
-function formataValorFiltro(valor: NoraGraphQLFiltroVisualizacaoValor): string {
+function formataValorFiltro(valor: NoraGraphQLFiltroConsultaValor): string {
     if (valor === null) return '';
     if (valor instanceof Date) return valor.toLocaleDateString('pt-BR');
     if (typeof valor === 'boolean') return valor ? 'sim' : 'não';
@@ -73,14 +68,14 @@ function formataValorFiltro(valor: NoraGraphQLFiltroVisualizacaoValor): string {
     return String(valor);
 };
 
-function normalizaValorFiltroParaComparacao(valor: NoraGraphQLFiltroVisualizacaoValor): string {
+function normalizaValorFiltroParaComparacao(valor: NoraGraphQLFiltroConsultaValor): string {
     if (valor === null) return 'null';
     if (valor instanceof Date) return valor.toISOString();
 
     return String(valor).trim().toLowerCase();
 };
 
-function filtroJaExiste(filtros: readonly NoraGraphQLFiltroVisualizacaoAtivo[], campo: string, operador: GraphqlFiltroOperador, valor: NoraGraphQLFiltroVisualizacaoValor): boolean {
+function filtroJaExiste(filtros: readonly NoraGraphQLFiltroConsultaAtivo[], campo: string, operador: GraphqlFiltroOperador, valor: NoraGraphQLFiltroConsultaValor): boolean {
     return filtros.some(filtro => filtro.campo === campo && filtro.operador === operador && normalizaValorFiltroParaComparacao(filtro.valor) === normalizaValorFiltroParaComparacao(valor));
 };
 
@@ -101,24 +96,24 @@ function humanizaParteCampo(parte: string): string {
     return separaCamelCase(parte).split(' ').map(capitalizaPalavra).join(' ');
 };
 
-function humanizaLabelCampo(campo: GraphqlFiltroVisualizacaoCampoDef<object>): string {
+function humanizaLabelCampo(campo: GraphqlFiltroConsultaCampoDef<object>): string {
     if (campo.label && campo.label !== campo.campo) return campo.label;
 
     return campo.path.map(humanizaParteCampo).join(' / ');
 };
 
-function obtemLabelCampo(campos: readonly GraphqlFiltroVisualizacaoCampoDef<object>[], campo: string): string {
+function obtemLabelCampo(campos: readonly GraphqlFiltroConsultaCampoDef<object>[], campo: string): string {
     const campoEncontrado = campos.find(campoFiltro => campoFiltro.campo === campo);
     if (!campoEncontrado) return campo;
 
     return humanizaLabelCampo(campoEncontrado);
 };
 
-export default function FiltrosVisualizacao() {
-    const { campos, filtros, setFiltros, totalOriginal, totalFiltrado } = useContextoFiltrosVisualizacao<object>();
+export default function FiltrosConsulta() {
+    const { campos, filtros, filtrosAplicados, setFiltros, possuiAlteracaoPendente, aplicaFiltros, limpaFiltros } = useContextoFiltrosConsulta<object>();
     const [campoSelecionado, setCampoSelecionado] = useState<string>(campos[0]?.campo ?? '');
     const campoAtual = useMemo(() => campos.find(campo => campo.campo === campoSelecionado), [campos, campoSelecionado]);
-    const [operadorSelecionado, setOperadorSelecionado] = useState<GraphqlFiltroOperador>(campoAtual?.operadores[0] ?? GraphqlFiltroOperador.CONTEM);
+    const [operadorSelecionado, setOperadorSelecionado] = useState<GraphqlFiltroOperador>(campoAtual?.operadores[0] ?? GraphqlFiltroOperador.IGUAL);
     const [valorTexto, setValorTexto] = useState('');
 
     const valorFiltroAtual = useMemo(() => {
@@ -180,7 +175,7 @@ export default function FiltrosVisualizacao() {
         if (!campoAtual) return;
         if (!podeAdicionarFiltro) return;
 
-        setFiltros([...filtros, { id: criaIdFiltroVisualizacao(), campo: campoAtual.campo, operador: operadorSelecionado, valor: valorFiltroAtual }]);
+        setFiltros([...filtros, { id: criaIdFiltroConsulta(), campo: campoAtual.campo, operador: operadorSelecionado, valor: valorFiltroAtual }]);
         setValorTexto('');
     };
 
@@ -188,17 +183,13 @@ export default function FiltrosVisualizacao() {
         setFiltros(filtros.filter(filtro => filtro.id !== id));
     };
 
-    function limpaFiltros() {
-        setFiltros([]);
-    };
-
     if (campos.length === 0) return null;
 
     return (
         <section className={styles.filtros}>
             <div className={styles.cabecalho}>
-                <strong>Filtros</strong>
-                <span>{totalFiltrado} de {totalOriginal} registros</span>
+                <strong>Filtros de consulta</strong>
+                <span>{filtrosAplicados.length > 0 ? `${filtrosAplicados.length} aplicado(s)` : 'Nenhum filtro aplicado'}</span>
             </div>
             <form onSubmit={adicionaFiltro} className={styles.formulario}>
                 <select value={campoSelecionado} onChange={event => selecionaCampo(event.target.value)} className={styles.campo}>
@@ -221,11 +212,12 @@ export default function FiltrosVisualizacao() {
                     <input value={valorTexto} onChange={event => setValorTexto(event.target.value)} disabled={!campoAceitaValor(operadorSelecionado)} type={obtemTipoInput(campoAtual)} className={styles.valor} placeholder={campoAceitaValor(operadorSelecionado) ? 'Valor' : 'Sem valor'} />
                 )}
                 <button type="submit" disabled={!podeAdicionarFiltro} className={styles.botao}>Adicionar</button>
-                {filtros.length > 0 && <button type="button" onClick={limpaFiltros} className={styles.botao_secundario}>Limpar</button>}
+                <button type="button" onClick={aplicaFiltros} disabled={!possuiAlteracaoPendente} className={styles.botao}>Aplicar</button>
+                {(filtros.length > 0 || filtrosAplicados.length > 0) && <button type="button" onClick={limpaFiltros} className={styles.botao_secundario}>Limpar</button>}
             </form>
             {filtros.length > 0 && (
                 <div className={styles.filtros_ativos}>
-                    {filtros.map((filtro: NoraGraphQLFiltroVisualizacaoAtivo) => (
+                    {filtros.map((filtro: NoraGraphQLFiltroConsultaAtivo) => (
                         <button key={filtro.id} type="button" onClick={() => removeFiltro(filtro.id)} className={styles.filtro_ativo}>
                             {obtemLabelCampo(campos, filtro.campo)} {LABEL_OPERADOR[filtro.operador]} {campoAceitaValor(filtro.operador) ? formataValorFiltro(filtro.valor) : ''}
                             <span>×</span>

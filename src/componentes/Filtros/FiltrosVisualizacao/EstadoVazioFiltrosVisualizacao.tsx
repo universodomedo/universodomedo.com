@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import { useContextoFiltrosVisualizacao } from 'Contextos/Contexto_Filtros/contexto';
+import { useContextoFiltrosVisualizacao } from '@/contextos/Contexto__Filtros/contexto';
 
 export default function EstadoVazioFiltrosVisualizacao() {
     const { totalOriginal, totalFiltrado, possuiFiltroAtivo, setFiltros } = useContextoFiltrosVisualizacao<object>();

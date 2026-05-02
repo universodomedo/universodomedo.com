@@ -44,10 +44,6 @@ export async function buscaGrupoAventuraEspecifico(idGrupoAventura: number): Pro
     return await useApi<VIEW_GrupoAventuraDetalhado | null>({ uri: '/grupos_aventuras/buscaGrupoAventuraEspecifico', method: 'GET', params: { idGrupoAventura } });
 }
 
-export async function obtemListagemGeralSessoes() {
-    return await useApi<VIEW_SessaoListagemGeralDto[]>({ uri: '/sessoes/obtemListagemGeralSessoes', method: 'GET' });
-}
-
 export async function obtemSessaoGeral(idSessao: number) {
     return await useApi<SessaoCompletaDto | null>({ uri: '/sessoes/obtemSessaoGeral', method: 'GET', params: { idSessao } });
 }
