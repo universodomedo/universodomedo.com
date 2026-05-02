@@ -35,6 +35,7 @@ import ConteinerEscalavel from 'Componentes/ElementosVisuais/ConteinerEscalavel/
 import NavigationBridgeProvider from 'Funcionalidades/NavigationBridgeProvider';
 import { ContextoCopiarParaClipboardProvider } from 'Contextos/ContextoCopiarParaClipboard/contexto';
 import ClipboardToast from 'Componentes/ElementosVisuais/ClipboardToast/ClipboardToast';
+import NoraApiCarregamentoGlobal from 'Componentes/ElementosVisuais/NoraApiCarregamentoGlobal/NoraApiCarregamentoGlobal';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -68,6 +69,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
+        <NoraApiCarregamentoGlobal />
         <ReduxProvider>
           <ContextoPerformanceProvider>
             <ContextoAutenticacaoProvider>

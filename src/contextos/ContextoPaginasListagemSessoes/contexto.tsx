@@ -3,16 +3,19 @@
 import { createContext, useContext, useState } from 'react';
 import { GraphqlOrderDirecao, GraphqlTypesSessao } from 'types-nora-api';
 
+import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
 import { useSincronizarQueryParamSPA } from 'Hooks/useSincronizarQueryParamSPA';
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
 const SELECT_LISTAGEM_SESSOES = GraphqlTypesSessao.select('id', 'dataCriacao', 'detalheData', 'tipoPorExtenso', 'usuarioMestre');
 
-export type SessoesListagemContexto = GraphqlTypesSessao.Lista<typeof SELECT_LISTAGEM_SESSOES>;
+export type SessaoListagemContextoRegistro = GraphqlTypesSessao.Item<typeof SELECT_LISTAGEM_SESSOES>;
+
+export type ListaSessoesListagemContexto = readonly SessaoListagemContextoRegistro[];
 
 export interface ContextoPaginasListagemSessoesProps {
-    sessoes: SessoesListagemContexto;
+    sessoes: ListaSessoesListagemContexto;
     idSessaoSelecionada: number | null;
     setIdSessaoSelecionada: (idSessao: number) => void;
     deselecionaSessao: () => void;
@@ -30,7 +33,7 @@ export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInici
     const consultaListagemSessoes = useNoraGraphQLConsulta(obtem => obtem.Sessao.varios({
         parametros: { order: { dataCriacao: GraphqlOrderDirecao.DESC } },
         select: SELECT_LISTAGEM_SESSOES,
-    }), { valorInicial: [], carregando: 'Buscando Sessões', mensagemErro: 'Houve um erro recuperando as Sessões à serem listadas', extrair: resposta => [...resposta.sessoesGraphql] });
+    }), { valorInicial: [], carregando: 'Buscando Sessões', mensagemErro: 'Houve um erro recuperando as Sessões à serem listadas', carregamento: NoraApiCarregamento.BLOQUEIA_INTERFACE });
 
     const [idSessaoSelecionada, setIdSessaoSelecionada] = useState<number | null>(idSessaoInicial ?? null);
 

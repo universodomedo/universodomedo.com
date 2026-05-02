@@ -3,10 +3,12 @@
 import { ApiOperacaoGraphqlGet, ApiRespostaGraphql } from 'types-nora-api';
 
 import { toast } from 'Hooks/useToast';
+import { NoraApiCarregamento, registraRequisicaoNoraApi } from 'Api/NoraApiRequisicoesStore';
 
 type NoraApiGraphQLOpcoes = {
     readonly mensagemErro?: string;
     readonly exibirToastErro?: boolean;
+    readonly carregamento?: NoraApiCarregamento;
 };
 
 type ApiOperacaoErroLog = {
@@ -14,7 +16,32 @@ type ApiOperacaoErroLog = {
     readonly nomeOperacaoGraphql: string;
 };
 
+type NoraApiErroParams = {
+    readonly mensagem: string;
+    readonly mensagemServidor?: string | null;
+};
+
+export class NoraApiErro extends Error {
+    readonly mensagemServidor: string | null;
+
+    constructor(params: NoraApiErroParams) {
+        super(params.mensagem);
+
+        this.name = 'NoraApiErro';
+        this.mensagemServidor = params.mensagemServidor ?? null;
+        Object.setPrototypeOf(this, NoraApiErro.prototype);
+    };
+};
+
 const PARAMETROS_GRAPHQL_SEM_CORPO: Record<string, never> = {};
+
+const NORA_API_DEBUG_GRAPHQL_DELAY_MS = 'NORA_API_DEBUG_GRAPHQL_DELAY_MS';
+
+const NORA_API_DEBUG_GRAPHQL_ERRO_OPERACAO = 'NORA_API_DEBUG_GRAPHQL_ERRO_OPERACAO';
+
+function registraAvisoControladoNoraApi(mensagem: string, dados: object): void {
+    console.warn(mensagem, dados);
+};
 
 function montaUrlApi(endpoint: string): string {
     const urlBaseApi = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
@@ -31,8 +58,85 @@ function deveExibirToastErro(opcoes?: NoraApiGraphQLOpcoes): boolean {
     return opcoes?.exibirToastErro ?? true;
 };
 
-function resolveMensagemToastErro(mensagemErro: string, opcoes?: NoraApiGraphQLOpcoes): string {
-    return opcoes?.mensagemErro ?? mensagemErro;
+function resolveCarregamentoNoraApi(opcoes?: NoraApiGraphQLOpcoes): NoraApiCarregamento {
+    return opcoes?.carregamento ?? NoraApiCarregamento.BARRA;
+};
+
+function montaMensagemComDetalheServidor(mensagemPrincipal: string, mensagemServidor: string | null): string {
+    if (!mensagemServidor) return mensagemPrincipal;
+    if (mensagemPrincipal.includes(mensagemServidor)) return mensagemPrincipal;
+
+    return `${mensagemPrincipal}\nDetalhe técnico: ${mensagemServidor}`;
+};
+
+export function montaMensagemErroNoraApiParaUsuario(erro: Error | null, mensagemErroPreferencial?: string): string {
+    const mensagemPrincipal = mensagemErroPreferencial ?? erro?.message ?? 'Erro desconhecido ao chamar a NoraAPI';
+    const mensagemServidor = erro instanceof NoraApiErro ? erro.mensagemServidor : null;
+
+    return montaMensagemComDetalheServidor(mensagemPrincipal, mensagemServidor);
+};
+
+function normalizaErroNoraApi(erroCapturado: Error | null): NoraApiErro {
+    if (erroCapturado instanceof NoraApiErro) return erroCapturado;
+
+    return new NoraApiErro({ mensagem: erroCapturado?.message ?? 'Erro desconhecido ao chamar a NoraAPI' });
+};
+
+function estaEmAmbienteCliente(): boolean {
+    return typeof window !== 'undefined';
+};
+
+function obtemItemLocalStorage(chave: string): string | null {
+    if (!estaEmAmbienteCliente()) return null;
+
+    try {
+        return window.localStorage.getItem(chave);
+    } catch {
+        return null;
+    }
+};
+
+function obtemDelayDebugGraphqlEmMs(): number {
+    const valor = obtemItemLocalStorage(NORA_API_DEBUG_GRAPHQL_DELAY_MS);
+    if (!valor) return 0;
+
+    const numero = Number(valor);
+    if (!Number.isFinite(numero)) return 0;
+    if (numero <= 0) return 0;
+
+    return numero;
+};
+
+function deveForcarErroDebugGraphql<TVariaveis extends object, TResposta extends object>(operacao: ApiOperacaoGraphqlGet<Record<string, never>, TVariaveis, TResposta>): boolean {
+    const valor = obtemItemLocalStorage(NORA_API_DEBUG_GRAPHQL_ERRO_OPERACAO);
+    if (!valor) return false;
+
+    const valorNormalizado = valor.trim();
+    if (valorNormalizado.length === 0) return false;
+    if (valorNormalizado === '*') return true;
+    if (valorNormalizado === operacao.nome) return true;
+    if (valorNormalizado === operacao.nomeOperacaoGraphql) return true;
+    if (valorNormalizado === `${operacao.nome}/${operacao.nomeOperacaoGraphql}`) return true;
+
+    return false;
+};
+
+function aguardaMs(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+async function aplicaDebugGraphql<TVariaveis extends object, TResposta extends object>(operacao: ApiOperacaoGraphqlGet<Record<string, never>, TVariaveis, TResposta>): Promise<void> {
+    const delayMs = obtemDelayDebugGraphqlEmMs();
+
+    if (delayMs > 0) {
+        registraAvisoControladoNoraApi('[NoraApi][GraphQL][DEBUG_DELAY]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, delayMs });
+        await aguardaMs(delayMs);
+    }
+
+    if (deveForcarErroDebugGraphql(operacao)) {
+        registraAvisoControladoNoraApi('[NoraApi][GraphQL][DEBUG_ERRO_FORCADO]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql });
+        throw new NoraApiErro({ mensagem: `Erro GraphQL forçado por debug na operação ${operacao.nome}/${operacao.nomeOperacaoGraphql}`, mensagemServidor: `Erro forçado via localStorage: ${NORA_API_DEBUG_GRAPHQL_ERRO_OPERACAO}` });
+    }
 };
 
 async function obtemTextoRespostaErro(resposta: Response): Promise<string | null> {
@@ -52,40 +156,51 @@ async function executaGraphql<TVariaveis extends object, TResposta extends objec
 
     if (!resposta.ok) {
         const textoErro = await obtemTextoRespostaErro(resposta);
+        const mensagemErro = `Falha HTTP ao chamar GraphQL: status=${resposta.status} endpoint=${url} operação=${operacao.nome}/${operacao.nomeOperacaoGraphql}${textoErro ? ` detalhe=${textoErro}` : ''}`;
 
-        console.error('[NoraApi][GraphQL][HTTP_ERRO]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, status: resposta.status, variables, query: operacao.query, resposta: textoErro });
+        registraAvisoControladoNoraApi('[NoraApi][GraphQL][HTTP_ERRO]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, status: resposta.status, variables, query: operacao.query, resposta: textoErro });
 
-        throw new Error(`Falha HTTP ao chamar GraphQL: status=${resposta.status} endpoint=${url} operação=${operacao.nome}/${operacao.nomeOperacaoGraphql}${textoErro ? ` detalhe=${textoErro}` : ''}`);
+        throw new NoraApiErro({ mensagem: mensagemErro, mensagemServidor: textoErro });
     }
 
     const dados = await resposta.json() as ApiRespostaGraphql<TResposta>;
 
     if (dados.errors?.length) {
-        console.error('[NoraApi][GraphQL][ERRO]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, variables, query: operacao.query, errors: dados.errors, data: dados.data ?? null });
+        const mensagemServidor = montaMensagemErroGraphql(operacao, dados);
 
-        throw new Error(montaMensagemErroGraphql(operacao, dados));
+        registraAvisoControladoNoraApi('[NoraApi][GraphQL][ERRO]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, variables, query: operacao.query, errors: dados.errors, data: dados.data ?? null });
+
+        throw new NoraApiErro({ mensagem: mensagemServidor, mensagemServidor });
     }
 
     if (!dados.data) {
-        console.error('[NoraApi][GraphQL][SEM_DATA]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, variables, query: operacao.query, resposta: dados });
+        const mensagemErro = `Resposta GraphQL não retornou data para operação ${operacao.nome}`;
 
-        throw new Error(`Resposta GraphQL não retornou data para operação ${operacao.nome}`);
+        registraAvisoControladoNoraApi('[NoraApi][GraphQL][SEM_DATA]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, url, variables, query: operacao.query, resposta: dados });
+
+        throw new NoraApiErro({ mensagem: mensagemErro });
     }
 
     return dados.data;
 };
 
 async function GraphQL<TVariaveis extends object, TResposta extends object>(operacao: ApiOperacaoGraphqlGet<Record<string, never>, TVariaveis, TResposta>, opcoes?: NoraApiGraphQLOpcoes): Promise<TResposta> {
+    const finalizaRequisicao = registraRequisicaoNoraApi(resolveCarregamentoNoraApi(opcoes));
+
     try {
+        await aplicaDebugGraphql(operacao);
         return await executaGraphql(operacao);
     } catch (erroCapturado) {
-        const mensagemErro = erroCapturado instanceof Error ? erroCapturado.message : 'Erro desconhecido ao chamar GraphQL';
+        const erro = normalizaErroNoraApi(erroCapturado instanceof Error ? erroCapturado : null);
+        const mensagemUsuario = montaMensagemErroNoraApiParaUsuario(erro, opcoes?.mensagemErro);
 
-        console.error('[NoraApi][GraphQL][ERRO_CAPTURADO]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, erro: mensagemErro });
+        registraAvisoControladoNoraApi('[NoraApi][GraphQL][ERRO_CONTROLADO]', { operacao: operacao.nome, operationName: operacao.nomeOperacaoGraphql, erro: erro.message, mensagemServidor: erro.mensagemServidor });
 
-        if (deveExibirToastErro(opcoes)) toast.erro(resolveMensagemToastErro(mensagemErro, opcoes));
+        if (deveExibirToastErro(opcoes)) toast.erro(mensagemUsuario);
 
-        throw new Error(mensagemErro);
+        throw erro;
+    } finally {
+        finalizaRequisicao();
     }
 };
 
