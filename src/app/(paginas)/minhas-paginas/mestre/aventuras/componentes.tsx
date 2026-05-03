@@ -1,32 +1,22 @@
 'use client';
 
-import styles from './styles.module.css';
-
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-import { ContextoMestreAventurasProvider } from "Contextos/ContextoMestreAventuras/contexto";
-import { useContextoMestreAventuras } from 'Contextos/ContextoMestreAventuras/contexto';
-import { AventuraEmLayoutContextualizado } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AventuraEmLayoutContextualizado/page';
 import Conteiner__PaginaMestreAventuras from 'Conteineres/PaginaMestreAventuras/conteiner';
 
 export function AventurasMestre_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.mestre.aventuras}>
             <Conteiner__PaginaMestreAventuras />
-            {/* <ContextoMestreAventurasProvider>
-                <AventurasMestre_Slot />
-            </ContextoMestreAventurasProvider> */}
         </ControladorSlot>
     );
 };
 
-function AventurasMestre_Slot() {
-    const { gruposAventurasListadas } = useContextoMestreAventuras();
-
-    return (
-        <div className={styles.recipiente_aventuras_mestre}>
-            {gruposAventurasListadas!.map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} destino={{ pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: grupoAventura.id } }} />)}
-        </div>
-    );
-};
+// function AventurasMestre_Slot() {
+//     return (
+//         <div className={styles.recipiente_aventuras_mestre}>
+//             {gruposAventurasListadas!.map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} destino={{ pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: grupoAventura.id } }} />)}
+//         </div>
+//     );
+// };

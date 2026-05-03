@@ -5,8 +5,12 @@ import { GraphqlFiltroCampoTipo, GraphqlFiltroOperador, GraphqlFiltroVisualizaca
 
 import styles from './styles.module.css';
 
-import { useContextoFiltrosVisualizacao } from '@/contextos/Contexto__Filtros/contexto';
+import { ContextoFiltrosVisualizacaoValor, useContextoFiltrosVisualizacao } from '@/contextos/Contexto__Filtros/contexto';
 import { NoraGraphQLFiltroVisualizacaoAtivo, NoraGraphQLFiltroVisualizacaoValor } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
+
+export type FiltrosVisualizacaoProps = {
+    readonly valor?: ContextoFiltrosVisualizacaoValor<object>;
+};
 
 const LABEL_OPERADOR: Record<GraphqlFiltroOperador, string> = {
     [GraphqlFiltroOperador.CONTEM]: 'contém',
@@ -114,8 +118,14 @@ function obtemLabelCampo(campos: readonly GraphqlFiltroVisualizacaoCampoDef<obje
     return humanizaLabelCampo(campoEncontrado);
 };
 
-export default function FiltrosVisualizacao() {
-    const { campos, filtros, setFiltros, totalOriginal, totalFiltrado } = useContextoFiltrosVisualizacao<object>();
+function FiltrosVisualizacaoComContexto() {
+    const valor = useContextoFiltrosVisualizacao<object>();
+
+    return <FiltrosVisualizacaoInterno valor={valor} />;
+};
+
+function FiltrosVisualizacaoInterno({ valor }: { readonly valor: ContextoFiltrosVisualizacaoValor<object>; }) {
+    const { campos, filtros, setFiltros, totalOriginal, totalFiltrado } = valor;
     const [campoSelecionado, setCampoSelecionado] = useState<string>(campos[0]?.campo ?? '');
     const campoAtual = useMemo(() => campos.find(campo => campo.campo === campoSelecionado), [campos, campoSelecionado]);
     const [operadorSelecionado, setOperadorSelecionado] = useState<GraphqlFiltroOperador>(campoAtual?.operadores[0] ?? GraphqlFiltroOperador.CONTEM);
@@ -235,4 +245,10 @@ export default function FiltrosVisualizacao() {
             )}
         </section>
     );
+};
+
+export default function FiltrosVisualizacao(props: FiltrosVisualizacaoProps) {
+    if (props.valor) return <FiltrosVisualizacaoInterno valor={props.valor} />;
+
+    return <FiltrosVisualizacaoComContexto />;
 };

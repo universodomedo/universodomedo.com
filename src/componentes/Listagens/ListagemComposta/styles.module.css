@@ -1,0 +1,246 @@
+.recipiente_listagem_composta {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    align-self: stretch;
+    width: 100%;
+    min-width: 0;
+    height: 0;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+.listagem_composta {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    border: 0.08em solid rgba(198, 173, 113, 0.42);
+    border-radius: 0.8em;
+    background: linear-gradient(180deg, rgba(18, 13, 20, 0.94), rgba(8, 7, 10, 0.98));
+    box-shadow: 0 0 1.2em rgba(0, 0, 0, 0.55), inset 0 0 0.8em rgba(255, 255, 255, 0.035);
+    overflow: hidden;
+}
+
+.cabecalho {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    gap: 1em;
+    padding: 0.9em 1.2em;
+    border-bottom: 0.08em solid rgba(198, 173, 113, 0.28);
+    background: linear-gradient(90deg, rgba(42, 28, 45, 0.55), rgba(16, 13, 18, 0.84));
+}
+
+.acoes {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    gap: 0.6em;
+}
+
+.area_filtros {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: 0.7em;
+    padding: 0.9em 1.2em;
+    border-bottom: 0.08em solid rgba(198, 173, 113, 0.22);
+    background: rgba(10, 8, 12, 0.62);
+}
+
+.filtros_globais {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.8em;
+    width: 100%;
+    min-width: 0;
+}
+
+.filtros_locais {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.8em;
+    width: 100%;
+    min-width: 0;
+    opacity: 0.9;
+}
+
+.area_conteudo {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    padding: 1.2em;
+    background: radial-gradient(circle at center, rgba(53, 38, 58, 0.28), rgba(5, 5, 8, 0.92) 68%);
+    box-shadow: inset 0 0 1.6em rgba(0, 0, 0, 0.72), inset 0 0 0.2em rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.conteudo_grade {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    flex-wrap: wrap;
+    white-space: nowrap;
+    gap: 3vh 3vw;
+    justify-content: space-evenly;
+    align-content: flex-start;
+    overflow: hidden;
+}
+
+.conteudo_linha {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    gap: 0.65em;
+    overflow: hidden;
+}
+
+.item {
+    display: contents;
+}
+
+.estado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6em;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    text-align: center;
+    color: rgba(235, 228, 214, 0.78);
+}
+
+.estado strong {
+    font-family: var(--fonte-cinzel);
+    font-size: 1em;
+    color: rgba(245, 230, 180, 0.9);
+}
+
+.estado span {
+    max-width: 70%;
+    font-size: 0.9em;
+    color: rgba(235, 228, 214, 0.66);
+}
+
+.rodape {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    gap: 1em;
+    min-height: 3.1em;
+    padding: 0.85em 1.2em;
+    border-top: 0.08em solid rgba(198, 173, 113, 0.24);
+    background: linear-gradient(90deg, rgba(14, 11, 16, 0.94), rgba(34, 24, 38, 0.64));
+    color: rgba(230, 222, 210, 0.78);
+    font-size: 0.86em;
+}
+
+.rodape_acoes {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.8em;
+}
+
+.paginacao {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75em;
+}
+
+.botao_paginacao {
+    border: 0.08em solid rgba(198, 173, 113, 0.36);
+    border-radius: 0.45em;
+    padding: 0.35em 0.8em;
+    background: rgba(42, 28, 45, 0.7);
+    color: rgba(245, 230, 180, 0.9);
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.botao_paginacao:not(:disabled):hover {
+    background: rgba(66, 43, 72, 0.78);
+    box-shadow: 0 0 0.55em rgba(245, 230, 180, 0.18);
+}
+
+.botao_paginacao:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+}
+
+.controle_texto {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: .75em;
+    width: 100%;
+    min-width: 0;
+}
+
+.controle_texto label {
+    flex-shrink: 0;
+    font-family: var(--fonte-cinzel);
+    font-size: .9em;
+    color: rgba(245, 230, 180, 0.9);
+}
+
+.controle_texto input {
+    width: 100%;
+    min-width: 0;
+    border: 0.08em solid rgba(198, 173, 113, 0.34);
+    border-radius: .45em;
+    padding: .55em .75em;
+    background: rgba(9, 7, 12, 0.76);
+    color: rgba(235, 228, 214, 0.9);
+    font-family: inherit;
+    outline: none;
+}
+
+.controle_texto input:focus {
+    border-color: rgba(245, 230, 180, 0.72);
+    box-shadow: 0 0 .65em rgba(245, 230, 180, 0.16);
+}
+
+.controle_texto input::placeholder {
+    color: rgba(235, 228, 214, 0.42);
+}
+
+.controle_texto button {
+    flex-shrink: 0;
+    border: 0.08em solid rgba(198, 173, 113, 0.36);
+    border-radius: .45em;
+    padding: .55em .9em;
+    background: rgba(42, 28, 45, 0.7);
+    color: rgba(245, 230, 180, 0.9);
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.controle_texto button:hover {
+    background: rgba(66, 43, 72, 0.78);
+    box-shadow: 0 0 .55em rgba(245, 230, 180, 0.18);
+}

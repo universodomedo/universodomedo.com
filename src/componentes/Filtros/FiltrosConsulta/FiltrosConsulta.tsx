@@ -5,8 +5,12 @@ import { GraphqlFiltroCampoTipo, GraphqlFiltroConsultaCampoDef, GraphqlFiltroOpe
 
 import styles from '../FiltrosVisualizacao/styles.module.css';
 
-import { useContextoFiltrosConsulta } from 'Contextos/Contexto__FiltrosConsulta/contexto';
+import { ContextoFiltrosConsultaValor, useContextoFiltrosConsulta } from 'Contextos/Contexto__FiltrosConsulta/contexto';
 import { NoraGraphQLFiltroConsultaAtivo, NoraGraphQLFiltroConsultaValor } from 'Hooks/useNoraGraphQLFiltroConsulta';
+
+export type FiltrosConsultaProps = {
+    readonly valor?: ContextoFiltrosConsultaValor<object>;
+};
 
 const LABEL_OPERADOR: Record<GraphqlFiltroOperador, string> = {
     [GraphqlFiltroOperador.CONTEM]: 'contém',
@@ -109,8 +113,14 @@ function obtemLabelCampo(campos: readonly GraphqlFiltroConsultaCampoDef<object>[
     return humanizaLabelCampo(campoEncontrado);
 };
 
-export default function FiltrosConsulta() {
-    const { campos, filtros, filtrosAplicados, setFiltros, possuiAlteracaoPendente, aplicaFiltros, limpaFiltros } = useContextoFiltrosConsulta<object>();
+function FiltrosConsultaComContexto() {
+    const valor = useContextoFiltrosConsulta<object>();
+
+    return <FiltrosConsultaInterno valor={valor} />;
+};
+
+function FiltrosConsultaInterno({ valor }: { readonly valor: ContextoFiltrosConsultaValor<object>; }) {
+    const { campos, filtros, filtrosAplicados, setFiltros, possuiAlteracaoPendente, aplicaFiltros, limpaFiltros } = valor;
     const [campoSelecionado, setCampoSelecionado] = useState<string>(campos[0]?.campo ?? '');
     const campoAtual = useMemo(() => campos.find(campo => campo.campo === campoSelecionado), [campos, campoSelecionado]);
     const [operadorSelecionado, setOperadorSelecionado] = useState<GraphqlFiltroOperador>(campoAtual?.operadores[0] ?? GraphqlFiltroOperador.IGUAL);
@@ -227,4 +237,10 @@ export default function FiltrosConsulta() {
             )}
         </section>
     );
+};
+
+export default function FiltrosConsulta(props: FiltrosConsultaProps) {
+    if (props.valor) return <FiltrosConsultaInterno valor={props.valor} />;
+
+    return <FiltrosConsultaComContexto />;
 };

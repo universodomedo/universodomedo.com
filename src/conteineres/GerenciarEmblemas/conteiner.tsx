@@ -4,30 +4,24 @@
 
 import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 
-import { ContextoGerenciarEmblemas__Provider } from 'Contextos/ContextoGerenciarEmblemas/contexto';
+import { Contexto__GerenciarEmblemas__Props, Contexto__GerenciarEmblemas__Provider, useContexto__GerenciarEmblemas } from '@/contextos/Contexto__GerenciarEmblemas/contexto';
+import { Contexto__GerenciarEmblemas__Listagem__Provider } from 'Contextos/Contexto__GerenciarEmblemas__Listagem/contexto';
 
 export function Conteiner__GerenciarEmblemas() {
     return (
-        <ContextoGerenciarEmblemas__Provider>
+        <Contexto__GerenciarEmblemas__Provider>
             <Conteiner__GerenciarEmblemas__Interno />
-        </ContextoGerenciarEmblemas__Provider>
+        </Contexto__GerenciarEmblemas__Provider>
     );
 };
 
 export const Conteiner__GerenciarEmblemas__Interno = criaConteiner<PropsConteiner__GerenciarEmblemas>({ useEstado, resolveSaida });
 
-type PropsConteiner__GerenciarEmblemas = {
-
-};
+type PropsConteiner__GerenciarEmblemas = Contexto__GerenciarEmblemas__Props;
 
 function resolveSaida(props: PropsConteiner__GerenciarEmblemas): SaidaConteiner {
-    return criaSaidaConteiner(nullable, { });
+    return criaSaidaConteiner(Contexto__GerenciarEmblemas__Listagem__Provider, { });
+    // return criaSaidaConteiner(Contexto__GerenciarEmblemas__Listagem__Provider, { emblemas: props.emblemas, selecionaEmblema: props.setIdEmblemaSelecionado });
 };
 
-function useEstado(): PropsConteiner__GerenciarEmblemas {
-    // const { } = useContextoGerenciarEmblemas();
-
-    return { };
-};
-
-function nullable() { return <></>; };
+function useEstado(): PropsConteiner__GerenciarEmblemas { return useContexto__GerenciarEmblemas(); };

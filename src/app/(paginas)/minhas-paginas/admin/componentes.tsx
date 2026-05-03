@@ -2,7 +2,7 @@ import { PAGINAS } from "types-nora-api";
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
 
-export function PaginaAdmin_Client() {
+export default function PaginaAdmin_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.admin}>
             <PaginaAdmin_Slot />
@@ -10,6 +10,6 @@ export function PaginaAdmin_Client() {
     );
 };
 
-export function PaginaAdmin_Slot() {
+function PaginaAdmin_Slot() {
     return <></>;
 };

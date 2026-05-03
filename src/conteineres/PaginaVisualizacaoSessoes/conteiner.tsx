@@ -2,8 +2,7 @@
 
 import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 
-import { ContextoPaginasListagemSessoesProvider, useContextoPaginasListagemSessoes } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
-import type { ContextoPaginasListagemSessoesProps } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
+import { ContextoPaginasListagemSessoesProvider, useContextoPaginasListagemSessoes, type ContextoPaginasListagemSessoesProps } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
 import { ContextoPaginaSessoes__ComSessaoSelecionadaProvider } from 'Contextos/ContextoPaginaSessoes__ComSessaoSelecionada/contexto';
 import { ContextoPaginaSessoes__SemSessaoSelecionadaProvider } from 'Contextos/ContextoPaginaSessoes__SemSessaoSelecionada/contexto';
 

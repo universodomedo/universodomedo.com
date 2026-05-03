@@ -18,7 +18,7 @@ const Conteiner__PaginaMestreAventuras__Interno = criaConteiner<PropsConteiner__
 type PropsConteiner__PaginaMestreAventuras = Contexto__PaginaMestreAventuras__Props;
 
 function resolveSaida(props: PropsConteiner__PaginaMestreAventuras): SaidaConteiner {
-    return criaSaidaConteiner(Contexto__PaginaMestreAventuras__SemAventuraSelecionada__Provider, { });
+    return criaSaidaConteiner(Contexto__PaginaMestreAventuras__SemAventuraSelecionada__Provider, props);
 };
 
 function useEstado(): PropsConteiner__PaginaMestreAventuras { return useContexto__PaginaMestreAventuras(); };
