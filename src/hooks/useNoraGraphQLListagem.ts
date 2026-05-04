@@ -1,12 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { ApiOperacaoGraphqlGet, EventosApiGraphqlV2, GraphqlFiltroConsultaCampoDef, GraphqlFiltroVisualizacaoCampoDef, GraphqlSelectEntradaRuntime } from 'types-nora-api';
 
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import type { ContextoFiltrosConsultaValor } from 'Contextos/Contexto__FiltrosConsulta/contexto';
 import type { ContextoFiltrosVisualizacaoValor } from 'Contextos/Contexto__Filtros/contexto';
-import type { ListagemCompostaListagem, ListagemCompostaPaginacaoProps } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
+import type { ListagemCompostaCarregarMaisProps, ListagemCompostaListagem } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
 import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
 import useNoraGraphQLFiltroConsulta, { NoraGraphQLFiltroConsultaAtivo, NoraGraphQLFiltroConsultaWhere } from 'Hooks/useNoraGraphQLFiltroConsulta';
 import useNoraGraphQLFiltroVisualizacao, { filtraCamposFiltroVisualizacaoPorSelect, NoraGraphQLFiltroVisualizacaoAtivo } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
@@ -17,7 +17,13 @@ type NoraGraphQLOperacaoBase = ApiOperacaoGraphqlGet<Record<string, never>, obje
 
 type NoraGraphQLRespostaBruta<TOperacao extends NoraGraphQLOperacaoBase> = TOperacao extends { readonly __noraApiTipoResposta?: infer TResposta } ? TResposta extends object ? TResposta : object : object;
 
-export type UseNoraGraphQLListagemParams<TRegistro extends object, TParametros extends object, TOperacao extends NoraGraphQLOperacaoBase> = {
+export type UseNoraGraphQLListagemConsultaParams = {
+    readonly where: NoraGraphQLFiltroConsultaWhere | null;
+    readonly limit: number | null;
+    readonly offset: number | null;
+};
+
+export type UseNoraGraphQLListagemParams<TRegistro extends object, TParametros extends object, TOperacaoRegistros extends NoraGraphQLOperacaoBase, TOperacaoTotalDeRegistros extends NoraGraphQLOperacaoBase> = {
     readonly select: GraphqlSelectEntradaRuntime;
     readonly camposFiltroConsulta: readonly GraphqlFiltroConsultaCampoDef<object>[];
     readonly camposFiltroVisualizacao: readonly GraphqlFiltroVisualizacaoCampoDef<object>[];
@@ -27,8 +33,10 @@ export type UseNoraGraphQLListagemParams<TRegistro extends object, TParametros e
     readonly mensagemListaVazia: string;
     readonly mensagemListaVaziaComFiltro: string;
     readonly carregamento?: NoraApiCarregamento;
-    readonly montaParametrosConsulta: (where: NoraGraphQLFiltroConsultaWhere | null) => TParametros;
-    readonly criaOperacao: (obtem: NoraGraphQLOperacoesLeitura, parametros: TParametros) => TOperacao;
+    readonly montaParametrosConsulta: (params: UseNoraGraphQLListagemConsultaParams) => TParametros;
+    readonly montaParametrosTotalDeRegistros?: (where: NoraGraphQLFiltroConsultaWhere | null) => TParametros;
+    readonly criaOperacao: (obtem: NoraGraphQLOperacoesLeitura, parametros: TParametros) => TOperacaoRegistros;
+    readonly criaOperacaoTotalDeRegistros: (obtem: NoraGraphQLOperacoesLeitura, parametros: TParametros) => TOperacaoTotalDeRegistros;
     readonly contador?: ReactNode;
     readonly acoes?: ReactNode;
     readonly rodape?: ReactNode;
@@ -62,14 +70,6 @@ function normalizaItensPorPagina(itensPorPagina: number): number {
     return Math.floor(itensPorPagina);
 };
 
-function calculaTotalPaginas(totalRegistros: number, itensPorPagina: number): number {
-    return Math.max(1, Math.ceil(totalRegistros / itensPorPagina));
-};
-
-function calculaIndiceInicialPagina(paginaAtual: number, itensPorPagina: number): number {
-    return (paginaAtual - 1) * itensPorPagina;
-};
-
 function extraiListaRespostaGraphQL<TRegistro extends object>(resposta: object): readonly TRegistro[] {
     const valoresResposta = Object.values(resposta);
 
@@ -83,22 +83,54 @@ function extraiListaRespostaGraphQL<TRegistro extends object>(resposta: object):
     return valorResposta as readonly TRegistro[];
 };
 
-function criaPaginacao(params: { readonly paginaAtual: number; readonly totalPaginas: number; readonly setPaginaAtual: Dispatch<SetStateAction<number>>; }): ListagemCompostaPaginacaoProps {
+function extraiTotalDeRegistrosRespostaGraphQL(resposta: object): number {
+    const respostaTipada = resposta as { readonly totalDeRegistros?: number };
+    const totalDeRegistros = respostaTipada.totalDeRegistros;
+
+    if (typeof totalDeRegistros !== 'number') throw new Error('Resposta GraphQL de totalDeRegistros não retornou um número');
+    if (!Number.isFinite(totalDeRegistros)) throw new Error('Resposta GraphQL de totalDeRegistros retornou um número inválido');
+
+    return totalDeRegistros;
+};
+
+function montaContadorPadrao(params: { readonly totalDeRegistros: number | null; readonly totalCarregado: number; readonly totalFiltrado: number; readonly possuiFiltroVisualizacao: boolean; readonly carregandoTotal: string | null; }): ReactNode {
+    if (params.carregandoTotal && params.totalDeRegistros === null) return 'Calculando total de registros...';
+    if (params.totalDeRegistros === null && params.possuiFiltroVisualizacao) return `${params.totalFiltrado} exibido(s) nesta lista · ${params.totalCarregado} carregado(s)`;
+    if (params.totalDeRegistros === null) return `${params.totalCarregado} registro(s) carregado(s)`;
+    if (params.possuiFiltroVisualizacao) return `${params.totalFiltrado} exibido(s) nesta lista · ${params.totalCarregado} carregado(s) de ${params.totalDeRegistros} encontrado(s)`;
+
+    return `${params.totalCarregado} de ${params.totalDeRegistros} registro(s) carregado(s)`;
+};
+
+function criaCarregarMais(params: { readonly podeCarregarMais: boolean; readonly carregando: string | null; readonly erro: string | null; readonly carregarMais: () => void; }): ListagemCompostaCarregarMaisProps {
     return {
-        temPaginaAnterior: params.paginaAtual > 1,
-        temProximaPagina: params.paginaAtual < params.totalPaginas,
-        aoVoltarPagina: () => params.setPaginaAtual(paginaAtual => Math.max(1, paginaAtual - 1)),
-        aoAvancarPagina: () => params.setPaginaAtual(paginaAtual => Math.min(params.totalPaginas, paginaAtual + 1)),
+        podeCarregarMais: params.podeCarregarMais,
+        carregando: params.carregando,
+        erro: params.erro,
+        aoCarregarMais: params.carregarMais,
+        textoBotao: 'Carregar mais',
+        textoCarregando: 'Carregando mais registros...',
+        textoEsgotado: 'Todos os registros encontrados já foram carregados.',
     };
 };
 
-export default function useNoraGraphQLListagem<TRegistro extends object, TParametros extends object, const TOperacao extends NoraGraphQLOperacaoBase = NoraGraphQLOperacaoBase>(params: UseNoraGraphQLListagemParams<TRegistro, TParametros, TOperacao>): UseNoraGraphQLListagemResultado<TRegistro> {
+export default function useNoraGraphQLListagem<TRegistro extends object, TParametros extends object, const TOperacaoRegistros extends NoraGraphQLOperacaoBase = NoraGraphQLOperacaoBase, const TOperacaoTotalDeRegistros extends NoraGraphQLOperacaoBase = NoraGraphQLOperacaoBase>(params: UseNoraGraphQLListagemParams<TRegistro, TParametros, TOperacaoRegistros, TOperacaoTotalDeRegistros>): UseNoraGraphQLListagemResultado<TRegistro> {
     const [filtrosConsulta, setFiltrosConsulta] = useState<readonly NoraGraphQLFiltroConsultaAtivo[]>([]);
     const [filtrosConsultaAplicados, setFiltrosConsultaAplicados] = useState<readonly NoraGraphQLFiltroConsultaAtivo[]>([]);
     const [versaoAplicacaoConsulta, setVersaoAplicacaoConsulta] = useState(0);
     const [filtrosVisualizacao, setFiltrosVisualizacao] = useState<readonly NoraGraphQLFiltroVisualizacaoAtivo[]>([]);
-    const [paginaAtual, setPaginaAtual] = useState(1);
-    const versaoAplicacaoConsultaAnteriorRef = useRef(versaoAplicacaoConsulta);
+    const [offsetConsulta, setOffsetConsulta] = useState(0);
+    const [versaoRequisicaoRegistros, setVersaoRequisicaoRegistros] = useState(0);
+    const [versaoRequisicaoTotalDeRegistros, setVersaoRequisicaoTotalDeRegistros] = useState(0);
+    const [registrosAcumulados, setRegistrosAcumulados] = useState<readonly TRegistro[]>([]);
+    const [quantidadeUltimaPaginaRecebida, setQuantidadeUltimaPaginaRecebida] = useState(0);
+
+    const offsetConsultaRef = useRef(offsetConsulta);
+    const primeiraRequisicaoRegistrosRef = useRef(true);
+    const primeiraRequisicaoTotalDeRegistrosRef = useRef(true);
+    const primeiraAplicacaoConsultaRef = useRef(true);
+    const ultimaDataRegistrosProcessadaRef = useRef<readonly TRegistro[] | null>(null);
+
     const itensPorPaginaNormalizado = normalizaItensPorPagina(params.itensPorPagina);
 
     const resultadoFiltroConsulta = useNoraGraphQLFiltroConsulta({
@@ -106,40 +138,66 @@ export default function useNoraGraphQLListagem<TRegistro extends object, TParame
         filtros: filtrosConsultaAplicados,
     });
 
-    const parametrosConsulta = useMemo(() => {
-        return params.montaParametrosConsulta(resultadoFiltroConsulta.where);
+    const parametrosConsultaRegistros = useMemo(() => {
+        return params.montaParametrosConsulta({
+            where: resultadoFiltroConsulta.where,
+            limit: itensPorPaginaNormalizado,
+            offset: offsetConsulta,
+        });
+    }, [itensPorPaginaNormalizado, offsetConsulta, params, resultadoFiltroConsulta.where]);
+
+    const parametrosTotalDeRegistros = useMemo(() => {
+        if (params.montaParametrosTotalDeRegistros) return params.montaParametrosTotalDeRegistros(resultadoFiltroConsulta.where);
+
+        return params.montaParametrosConsulta({
+            where: resultadoFiltroConsulta.where,
+            limit: null,
+            offset: null,
+        });
     }, [params, resultadoFiltroConsulta.where]);
 
-    const consulta = useNoraGraphQLConsulta(obtem => params.criaOperacao(obtem, parametrosConsulta), {
+    const consultaRegistros = useNoraGraphQLConsulta(obtem => params.criaOperacao(obtem, parametrosConsultaRegistros), {
         valorInicial: [] as readonly TRegistro[],
-        extrair: (resposta: NoraGraphQLRespostaBruta<TOperacao>) => extraiListaRespostaGraphQL<TRegistro>(resposta),
+        extrair: (resposta: NoraGraphQLRespostaBruta<TOperacaoRegistros>) => extraiListaRespostaGraphQL<TRegistro>(resposta),
         carregando: params.carregando,
         mensagemErro: params.mensagemErro,
         carregamento: params.carregamento ?? NoraApiCarregamento.BLOQUEIA_INTERFACE,
     });
+
+    const consultaTotalDeRegistros = useNoraGraphQLConsulta(obtem => params.criaOperacaoTotalDeRegistros(obtem, parametrosTotalDeRegistros), {
+        valorInicial: null as number | null,
+        extrair: (resposta: NoraGraphQLRespostaBruta<TOperacaoTotalDeRegistros>) => extraiTotalDeRegistrosRespostaGraphQL(resposta),
+        carregando: 'Calculando total de registros',
+        mensagemErro: 'Houve um erro calculando o total de registros',
+        carregamento: params.carregamento ?? NoraApiCarregamento.BLOQUEIA_INTERFACE,
+    });
+
+    const recarregarRegistrosRef = useRef(consultaRegistros.recarregar);
+    const recarregarTotalDeRegistrosRef = useRef(consultaTotalDeRegistros.recarregar);
 
     const camposFiltroVisualizacao = useMemo(() => {
         return filtraCamposFiltroVisualizacaoPorSelect(params.select, params.camposFiltroVisualizacao) as readonly GraphqlFiltroVisualizacaoCampoDef<TRegistro>[];
     }, [params.camposFiltroVisualizacao, params.select]);
 
     const resultadoFiltroVisualizacao = useNoraGraphQLFiltroVisualizacao({
-        registros: consulta.data,
+        registros: registrosAcumulados,
         campos: camposFiltroVisualizacao,
         filtros: filtrosVisualizacao,
     });
-
-    const totalPaginas = calculaTotalPaginas(resultadoFiltroVisualizacao.registrosFiltrados.length, itensPorPaginaNormalizado);
-
-    const registrosPaginaAtual = useMemo(() => {
-        const indiceInicial = calculaIndiceInicialPagina(paginaAtual, itensPorPaginaNormalizado);
-
-        return resultadoFiltroVisualizacao.registrosFiltrados.slice(indiceInicial, indiceInicial + itensPorPaginaNormalizado);
-    }, [itensPorPaginaNormalizado, paginaAtual, resultadoFiltroVisualizacao.registrosFiltrados]);
 
     const possuiFiltroConsultaAtivo = filtrosConsulta.length > 0;
     const possuiFiltroConsultaAplicado = filtrosConsultaAplicados.length > 0;
     const possuiAlteracaoPendenteConsulta = !filtrosConsultaSaoIguais(filtrosConsulta, filtrosConsultaAplicados);
     const possuiFiltroAtivo = possuiFiltroConsultaAplicado || resultadoFiltroVisualizacao.possuiFiltroAtivo;
+    const totalDeRegistros = consultaTotalDeRegistros.data;
+    const totalCarregado = registrosAcumulados.length;
+    const carregandoPrimeiraPagina = totalCarregado === 0 ? consultaRegistros.carregando : null;
+    const carregandoMaisRegistros = totalCarregado > 0 ? consultaRegistros.carregando : null;
+    const erroListagem = totalCarregado === 0 ? consultaRegistros.erro : null;
+    const erroCarregarMais = totalCarregado > 0 ? consultaRegistros.erro : null;
+    const podeCarregarMaisComTotal = totalDeRegistros !== null && totalCarregado < totalDeRegistros;
+    const podeCarregarMaisSemTotal = totalDeRegistros === null && quantidadeUltimaPaginaRecebida >= itensPorPaginaNormalizado;
+    const podeCarregarMais = !consultaRegistros.carregando && (podeCarregarMaisComTotal || podeCarregarMaisSemTotal);
 
     const aplicaFiltrosConsulta = useCallback(() => {
         setFiltrosConsultaAplicados(filtrosConsulta);
@@ -151,6 +209,13 @@ export default function useNoraGraphQLListagem<TRegistro extends object, TParame
         setFiltrosConsultaAplicados([]);
         setVersaoAplicacaoConsulta(versaoAtual => versaoAtual + 1);
     }, []);
+
+    const carregarMais = useCallback(() => {
+        if (!podeCarregarMais) return;
+
+        setOffsetConsulta(totalCarregado);
+        setVersaoRequisicaoRegistros(versaoAtual => versaoAtual + 1);
+    }, [podeCarregarMais, totalCarregado]);
 
     const filtrosConsultaValor = useMemo<ContextoFiltrosConsultaValor<object>>(() => ({
         campos: params.camposFiltroConsulta,
@@ -178,32 +243,78 @@ export default function useNoraGraphQLListagem<TRegistro extends object, TParame
     }), [camposFiltroVisualizacao, filtrosVisualizacao, resultadoFiltroVisualizacao.possuiFiltroAtivo, resultadoFiltroVisualizacao.registrosFiltrados, resultadoFiltroVisualizacao.registrosOriginais, resultadoFiltroVisualizacao.totalFiltrado, resultadoFiltroVisualizacao.totalOriginal]);
 
     useEffect(() => {
-        if (versaoAplicacaoConsultaAnteriorRef.current === versaoAplicacaoConsulta) return;
-
-        versaoAplicacaoConsultaAnteriorRef.current = versaoAplicacaoConsulta;
-        consulta.recarregar().catch(() => undefined);
-    }, [consulta.recarregar, versaoAplicacaoConsulta]);
+        offsetConsultaRef.current = offsetConsulta;
+    }, [offsetConsulta]);
 
     useEffect(() => {
-        setPaginaAtual(1);
-    }, [consulta.data, filtrosConsultaAplicados, filtrosVisualizacao]);
+        recarregarRegistrosRef.current = consultaRegistros.recarregar;
+    }, [consultaRegistros.recarregar]);
 
     useEffect(() => {
-        if (paginaAtual <= totalPaginas) return;
+        recarregarTotalDeRegistrosRef.current = consultaTotalDeRegistros.recarregar;
+    }, [consultaTotalDeRegistros.recarregar]);
 
-        setPaginaAtual(totalPaginas);
-    }, [paginaAtual, totalPaginas]);
+    useEffect(() => {
+        if (ultimaDataRegistrosProcessadaRef.current === consultaRegistros.data) return;
+
+        ultimaDataRegistrosProcessadaRef.current = consultaRegistros.data;
+        setQuantidadeUltimaPaginaRecebida(consultaRegistros.data.length);
+
+        if (offsetConsultaRef.current <= 0) {
+            setRegistrosAcumulados(consultaRegistros.data);
+            return;
+        }
+
+        setRegistrosAcumulados(registrosAtuais => [...registrosAtuais, ...consultaRegistros.data]);
+    }, [consultaRegistros.data]);
+
+    useEffect(() => {
+        if (primeiraRequisicaoRegistrosRef.current) {
+            primeiraRequisicaoRegistrosRef.current = false;
+            return;
+        }
+
+        recarregarRegistrosRef.current().catch(() => undefined);
+    }, [versaoRequisicaoRegistros]);
+
+    useEffect(() => {
+        if (primeiraRequisicaoTotalDeRegistrosRef.current) {
+            primeiraRequisicaoTotalDeRegistrosRef.current = false;
+            return;
+        }
+
+        recarregarTotalDeRegistrosRef.current().catch(() => undefined);
+    }, [versaoRequisicaoTotalDeRegistros]);
+
+    useEffect(() => {
+        if (primeiraAplicacaoConsultaRef.current) {
+            primeiraAplicacaoConsultaRef.current = false;
+            return;
+        }
+
+        setOffsetConsulta(0);
+        setRegistrosAcumulados([]);
+        setQuantidadeUltimaPaginaRecebida(0);
+        setVersaoRequisicaoRegistros(versaoAtual => versaoAtual + 1);
+        setVersaoRequisicaoTotalDeRegistros(versaoAtual => versaoAtual + 1);
+    }, [versaoAplicacaoConsulta]);
 
     return {
-        registros: registrosPaginaAtual,
-        carregando: consulta.carregando,
-        erro: consulta.erro,
+        registros: resultadoFiltroVisualizacao.registrosFiltrados,
+        carregando: carregandoPrimeiraPagina,
+        erro: erroListagem,
         mensagemListaVazia: possuiFiltroAtivo ? params.mensagemListaVaziaComFiltro : params.mensagemListaVazia,
         filtrosConsulta: filtrosConsultaValor,
         filtrosVisualizacao: filtrosVisualizacaoValor,
-        paginacao: criaPaginacao({ paginaAtual, totalPaginas, setPaginaAtual }),
-        contador: params.contador,
+        carregarMais: criaCarregarMais({ podeCarregarMais, carregando: carregandoMaisRegistros, erro: erroCarregarMais, carregarMais }),
+        contador: params.contador ?? montaContadorPadrao({
+            totalDeRegistros,
+            totalCarregado,
+            totalFiltrado: resultadoFiltroVisualizacao.totalFiltrado,
+            possuiFiltroVisualizacao: resultadoFiltroVisualizacao.possuiFiltroAtivo,
+            carregandoTotal: consultaTotalDeRegistros.carregando,
+        }),
         acoes: params.acoes,
-        rodape: params.rodape,
+    rodape: params.rodape,
     };
 };

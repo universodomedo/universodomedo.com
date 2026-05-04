@@ -2,12 +2,24 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.65em;
-    padding: 0.75em;
-    border: 0.08em solid rgba(180, 30, 55, 0.35);
-    border-radius: 0.45em;
-    background: rgba(10, 0, 5, 0.48);
-    box-shadow: 0 0 0.75em rgba(0, 0, 0, 0.22);
+    gap: 0.58em;
+    min-width: 0;
+    border-radius: 0.46em;
+    color: rgba(235, 228, 214, 0.9);
+}
+
+.filtros_consulta {
+    padding: 0.72em 0.78em;
+    border: 0.08em solid rgba(154, 95, 213, 0.36);
+    background: linear-gradient(180deg, rgba(14, 9, 18, 0.84), rgba(7, 5, 10, 0.92));
+    box-shadow: 0 0 0.85em rgba(0, 0, 0, 0.28), inset 0 0 0.75em rgba(154, 95, 213, 0.05);
+}
+
+.filtros_visualizacao {
+    padding: 0.55em 0.72em;
+    border: 0.08em solid rgba(154, 95, 213, 0.24);
+    background: rgba(5, 4, 8, 0.58);
+    box-shadow: inset 0 0 0.75em rgba(0, 0, 0, 0.26);
 }
 
 .cabecalho {
@@ -16,13 +28,24 @@
     align-items: center;
     justify-content: space-between;
     gap: 1em;
-    color: rgba(255, 235, 235, 0.92);
-    font-size: 0.88em;
+    color: rgba(235, 228, 214, 0.78);
+    font-size: 0.82em;
 }
 
 .cabecalho strong {
-    color: rgba(255, 245, 245, 0.98);
-    letter-spacing: 0.04em;
+    font-family: var(--fonte-cinzel);
+    color: rgba(245, 230, 180, 0.94);
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    text-shadow: 0 0 0.5em rgba(154, 95, 213, 0.28);
+}
+
+.filtros_visualizacao .cabecalho strong {
+    color: rgba(207, 167, 255, 0.88);
+}
+
+.cabecalho span {
+    color: rgba(235, 228, 214, 0.58);
 }
 
 .formulario {
@@ -36,13 +59,14 @@
 .campo,
 .operador,
 .valor {
-    min-height: 2.15em;
-    padding: 0.35em 0.55em;
-    border: 0.08em solid rgba(255, 255, 255, 0.18);
-    border-radius: 0.3em;
-    background: rgba(0, 0, 0, 0.48);
-    color: rgba(255, 245, 245, 0.94);
+    min-height: 2.1em;
+    padding: 0.35em 0.62em;
+    border: 0.08em solid rgba(154, 95, 213, 0.28);
+    border-radius: 0.32em;
+    background: rgba(1, 1, 4, 0.64);
+    color: rgba(235, 228, 214, 0.94);
     outline: none;
+    font-family: inherit;
 }
 
 .campo {
@@ -57,11 +81,19 @@
     min-width: 13em;
 }
 
+.filtros_visualizacao .campo,
+.filtros_visualizacao .operador,
+.filtros_visualizacao .valor {
+    min-height: 1.95em;
+    border-color: rgba(154, 95, 213, 0.2);
+    background: rgba(0, 0, 0, 0.46);
+}
+
 .campo:focus,
 .operador:focus,
 .valor:focus {
-    border-color: rgba(255, 80, 110, 0.75);
-    box-shadow: 0 0 0.45em rgba(255, 30, 75, 0.3);
+    border-color: rgba(207, 167, 255, 0.68);
+    box-shadow: 0 0 0.45em rgba(154, 95, 213, 0.28);
 }
 
 .valor:disabled {
@@ -71,33 +103,40 @@
 
 .botao,
 .botao_secundario {
-    min-height: 2.15em;
-    padding: 0.35em 0.75em;
-    border-radius: 0.3em;
+    min-height: 2.1em;
+    padding: 0.35em 0.8em;
+    border-radius: 0.32em;
     cursor: pointer;
-    transition: filter 0.12s ease, transform 0.12s ease, opacity 0.12s ease;
+    transition: filter 0.12s ease, transform 0.12s ease, opacity 0.12s ease, box-shadow 0.12s ease;
+    font-family: inherit;
+}
+
+.filtros_visualizacao .botao,
+.filtros_visualizacao .botao_secundario {
+    min-height: 1.95em;
 }
 
 .botao {
-    border: 0.08em solid rgba(255, 90, 120, 0.65);
-    background: rgba(125, 10, 35, 0.88);
-    color: rgba(255, 245, 245, 0.96);
+    border: 0.08em solid rgba(154, 95, 213, 0.52);
+    background: linear-gradient(180deg, rgba(68, 36, 104, 0.92), rgba(34, 19, 52, 0.96));
+    color: rgba(245, 230, 180, 0.94);
 }
 
 .botao:disabled {
-    opacity: 0.45;
+    opacity: 0.42;
     cursor: not-allowed;
 }
 
 .botao_secundario {
-    border: 0.08em solid rgba(255, 255, 255, 0.16);
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 235, 235, 0.88);
+    border: 0.08em solid rgba(235, 228, 214, 0.14);
+    background: rgba(255, 255, 255, 0.055);
+    color: rgba(235, 228, 214, 0.78);
 }
 
 .botao:not(:disabled):hover,
 .botao_secundario:hover {
     filter: brightness(1.12);
+    box-shadow: 0 0 0.45em rgba(154, 95, 213, 0.2);
 }
 
 .botao:not(:disabled):active,
@@ -115,17 +154,22 @@
     display: inline-flex;
     align-items: center;
     gap: 0.45em;
-    padding: 0.3em 0.55em;
-    border: 0.08em solid rgba(255, 90, 120, 0.38);
+    padding: 0.3em 0.6em;
+    border: 0.08em solid rgba(154, 95, 213, 0.36);
     border-radius: 999em;
-    background: rgba(90, 0, 24, 0.52);
-    color: rgba(255, 240, 240, 0.92);
+    background: rgba(41, 18, 66, 0.68);
+    color: rgba(235, 228, 214, 0.9);
     cursor: pointer;
+}
+
+.filtros_visualizacao .filtro_ativo {
+    border-color: rgba(154, 95, 213, 0.26);
+    background: rgba(28, 15, 42, 0.58);
 }
 
 .filtro_ativo span {
     font-weight: 700;
-    color: rgba(255, 180, 190, 0.95);
+    color: rgba(207, 167, 255, 0.95);
 }
 
 .estado_vazio {
@@ -137,15 +181,15 @@
     gap: 0.65em;
     padding: 1.25em;
     margin-top: 0.75em;
-    border: 0.08em dashed rgba(255, 90, 120, 0.36);
+    border: 0.08em dashed rgba(154, 95, 213, 0.34);
     border-radius: 0.45em;
-    background: rgba(10, 0, 5, 0.38);
-    color: rgba(255, 235, 235, 0.88);
+    background: rgba(10, 0, 18, 0.34);
+    color: rgba(235, 228, 214, 0.88);
     text-align: center;
 }
 
 .estado_vazio strong {
-    color: rgba(255, 245, 245, 0.96);
+    color: rgba(245, 230, 180, 0.96);
     font-size: 0.95em;
 }
 
@@ -153,5 +197,5 @@
     max-width: 34em;
     font-size: 0.84em;
     line-height: 1.45;
-    color: rgba(255, 225, 225, 0.76);
+    color: rgba(235, 228, 214, 0.7);
 }

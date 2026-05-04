@@ -8,8 +8,12 @@ import styles from '../FiltrosVisualizacao/styles.module.css';
 import { ContextoFiltrosConsultaValor, useContextoFiltrosConsulta } from 'Contextos/Contexto__FiltrosConsulta/contexto';
 import { NoraGraphQLFiltroConsultaAtivo, NoraGraphQLFiltroConsultaValor } from 'Hooks/useNoraGraphQLFiltroConsulta';
 
+export type FiltrosConsultaVariante = 'consulta' | 'visualizacao';
+
 export type FiltrosConsultaProps = {
     readonly valor?: ContextoFiltrosConsultaValor<object>;
+    readonly titulo?: string;
+    readonly variante?: FiltrosConsultaVariante;
 };
 
 const LABEL_OPERADOR: Record<GraphqlFiltroOperador, string> = {
@@ -113,13 +117,19 @@ function obtemLabelCampo(campos: readonly GraphqlFiltroConsultaCampoDef<object>[
     return humanizaLabelCampo(campoEncontrado);
 };
 
-function FiltrosConsultaComContexto() {
-    const valor = useContextoFiltrosConsulta<object>();
+function resolveClasseFiltros(variante: FiltrosConsultaVariante): string {
+    if (variante === 'visualizacao') return `${styles.filtros} ${styles.filtros_visualizacao}`;
 
-    return <FiltrosConsultaInterno valor={valor} />;
+    return `${styles.filtros} ${styles.filtros_consulta}`;
 };
 
-function FiltrosConsultaInterno({ valor }: { readonly valor: ContextoFiltrosConsultaValor<object>; }) {
+function FiltrosConsultaComContexto(props: { readonly titulo: string; readonly variante: FiltrosConsultaVariante; }) {
+    const valor = useContextoFiltrosConsulta<object>();
+
+    return <FiltrosConsultaInterno valor={valor} titulo={props.titulo} variante={props.variante} />;
+};
+
+function FiltrosConsultaInterno({ valor, titulo, variante }: { readonly valor: ContextoFiltrosConsultaValor<object>; readonly titulo: string; readonly variante: FiltrosConsultaVariante; }) {
     const { campos, filtros, filtrosAplicados, setFiltros, possuiAlteracaoPendente, aplicaFiltros, limpaFiltros } = valor;
     const [campoSelecionado, setCampoSelecionado] = useState<string>(campos[0]?.campo ?? '');
     const campoAtual = useMemo(() => campos.find(campo => campo.campo === campoSelecionado), [campos, campoSelecionado]);
@@ -196,9 +206,9 @@ function FiltrosConsultaInterno({ valor }: { readonly valor: ContextoFiltrosCons
     if (campos.length === 0) return null;
 
     return (
-        <section className={styles.filtros}>
+        <section className={resolveClasseFiltros(variante)}>
             <div className={styles.cabecalho}>
-                <strong>Filtros de consulta</strong>
+                <strong>{titulo}</strong>
                 <span>{filtrosAplicados.length > 0 ? `${filtrosAplicados.length} aplicado(s)` : 'Nenhum filtro aplicado'}</span>
             </div>
             <form onSubmit={adicionaFiltro} className={styles.formulario}>
@@ -240,7 +250,10 @@ function FiltrosConsultaInterno({ valor }: { readonly valor: ContextoFiltrosCons
 };
 
 export default function FiltrosConsulta(props: FiltrosConsultaProps) {
-    if (props.valor) return <FiltrosConsultaInterno valor={props.valor} />;
+    const titulo = props.titulo ?? 'Buscar registros';
+    const variante = props.variante ?? 'consulta';
 
-    return <FiltrosConsultaComContexto />;
+    if (props.valor) return <FiltrosConsultaInterno valor={props.valor} titulo={titulo} variante={variante} />;
+
+    return <FiltrosConsultaComContexto titulo={titulo} variante={variante} />;
 };

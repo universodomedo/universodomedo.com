@@ -21,7 +21,7 @@
 }
 
 .recipiente_layout_contextualizado_conteudo:not(.fundo_layout_contextualizado_conteudo) {
-    background-color: #312246b3;
+    /* background-color: #312246b3; */
     padding: .7% .4%;
 }
 
@@ -49,6 +49,6 @@
     flex-direction: column;
     height: 100%;
     padding: .4em .5em;
-    background-color: #312246b3;
+    /* background-color: #312246b3; */
     overflow-x: hidden;
 }

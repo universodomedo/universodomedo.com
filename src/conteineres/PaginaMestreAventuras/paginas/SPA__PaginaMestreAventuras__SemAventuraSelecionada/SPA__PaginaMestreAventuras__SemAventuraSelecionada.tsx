@@ -16,7 +16,7 @@ export default function SPA__PaginaMestreAventuras__SemAventuraSelecionada() {
             obterIdRegistro={grupoAventura => grupoAventura.id}
             renderizarItem={grupoAventura => (
                 <div className={styles.recipiente_item_imagem_aventura_mestre}>
-                    <RenderArquivoArteCapa caminhoArquivoArte={grupoAventura.caminhoArquivoCapa} />
+                    <RenderArquivoArteCapa caminhoArquivoArte={grupoAventura.dadosArteCapa.caminhoArquivoArteCapa} />
                 </div>
             )}
         />

@@ -8,8 +8,12 @@ import styles from './styles.module.css';
 import { ContextoFiltrosVisualizacaoValor, useContextoFiltrosVisualizacao } from '@/contextos/Contexto__Filtros/contexto';
 import { NoraGraphQLFiltroVisualizacaoAtivo, NoraGraphQLFiltroVisualizacaoValor } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
 
+export type FiltrosVisualizacaoVariante = 'consulta' | 'visualizacao';
+
 export type FiltrosVisualizacaoProps = {
     readonly valor?: ContextoFiltrosVisualizacaoValor<object>;
+    readonly titulo?: string;
+    readonly variante?: FiltrosVisualizacaoVariante;
 };
 
 const LABEL_OPERADOR: Record<GraphqlFiltroOperador, string> = {
@@ -118,13 +122,19 @@ function obtemLabelCampo(campos: readonly GraphqlFiltroVisualizacaoCampoDef<obje
     return humanizaLabelCampo(campoEncontrado);
 };
 
-function FiltrosVisualizacaoComContexto() {
-    const valor = useContextoFiltrosVisualizacao<object>();
+function resolveClasseFiltros(variante: FiltrosVisualizacaoVariante): string {
+    if (variante === 'consulta') return `${styles.filtros} ${styles.filtros_consulta}`;
 
-    return <FiltrosVisualizacaoInterno valor={valor} />;
+    return `${styles.filtros} ${styles.filtros_visualizacao}`;
 };
 
-function FiltrosVisualizacaoInterno({ valor }: { readonly valor: ContextoFiltrosVisualizacaoValor<object>; }) {
+function FiltrosVisualizacaoComContexto(props: { readonly titulo: string; readonly variante: FiltrosVisualizacaoVariante; }) {
+    const valor = useContextoFiltrosVisualizacao<object>();
+
+    return <FiltrosVisualizacaoInterno valor={valor} titulo={props.titulo} variante={props.variante} />;
+};
+
+function FiltrosVisualizacaoInterno({ valor, titulo, variante }: { readonly valor: ContextoFiltrosVisualizacaoValor<object>; readonly titulo: string; readonly variante: FiltrosVisualizacaoVariante; }) {
     const { campos, filtros, setFiltros, totalOriginal, totalFiltrado } = valor;
     const [campoSelecionado, setCampoSelecionado] = useState<string>(campos[0]?.campo ?? '');
     const campoAtual = useMemo(() => campos.find(campo => campo.campo === campoSelecionado), [campos, campoSelecionado]);
@@ -205,9 +215,9 @@ function FiltrosVisualizacaoInterno({ valor }: { readonly valor: ContextoFiltros
     if (campos.length === 0) return null;
 
     return (
-        <section className={styles.filtros}>
+        <section className={resolveClasseFiltros(variante)}>
             <div className={styles.cabecalho}>
-                <strong>Filtros</strong>
+                <strong>{titulo}</strong>
                 <span>{totalFiltrado} de {totalOriginal} registros</span>
             </div>
             <form onSubmit={adicionaFiltro} className={styles.formulario}>
@@ -248,7 +258,10 @@ function FiltrosVisualizacaoInterno({ valor }: { readonly valor: ContextoFiltros
 };
 
 export default function FiltrosVisualizacao(props: FiltrosVisualizacaoProps) {
-    if (props.valor) return <FiltrosVisualizacaoInterno valor={props.valor} />;
+    const titulo = props.titulo ?? 'Refinar esta lista';
+    const variante = props.variante ?? 'visualizacao';
 
-    return <FiltrosVisualizacaoComContexto />;
+    if (props.valor) return <FiltrosVisualizacaoInterno valor={props.valor} titulo={titulo} variante={variante} />;
+
+    return <FiltrosVisualizacaoComContexto titulo={titulo} variante={variante} />;
 };

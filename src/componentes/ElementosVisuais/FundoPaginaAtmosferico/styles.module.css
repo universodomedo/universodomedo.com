@@ -1,0 +1,86 @@
+.fundoPaginaAtmosferico {
+    position: relative;
+    width: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    isolation: isolate;
+    background: #050307;
+}
+
+.camadaBase {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+        radial-gradient(circle at 50% 18%, rgba(113, 53, 178, 0.26), transparent 34%),
+        radial-gradient(circle at 18% 78%, rgba(99, 28, 79, 0.18), transparent 28%),
+        radial-gradient(circle at 82% 72%, rgba(42, 40, 108, 0.16), transparent 30%),
+        linear-gradient(180deg, #12071a 0%, #09050d 52%, #040206 100%);
+}
+
+.camadaHaloPrincipal {
+    position: absolute;
+    inset: 8% 12% 14% 12%;
+    z-index: 1;
+    background: radial-gradient(ellipse at center, rgba(130, 72, 205, 0.2), rgba(71, 32, 118, 0.08) 42%, transparent 72%);
+    filter: blur(2.4em);
+    opacity: 0.92;
+    pointer-events: none;
+}
+
+.camadaHaloSecundario {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background:
+        radial-gradient(circle at 28% 18%, rgba(184, 68, 141, 0.12), transparent 24%),
+        radial-gradient(circle at 78% 22%, rgba(92, 67, 188, 0.12), transparent 26%),
+        radial-gradient(circle at 48% 92%, rgba(89, 30, 65, 0.16), transparent 28%);
+    filter: blur(1.6em);
+    opacity: 0.72;
+    pointer-events: none;
+}
+
+.camadaNeblina {
+    position: absolute;
+    inset: -12% -8%;
+    z-index: 3;
+    background:
+        radial-gradient(ellipse at 22% 38%, rgba(255, 255, 255, 0.045), transparent 24%),
+        radial-gradient(ellipse at 66% 58%, rgba(255, 255, 255, 0.035), transparent 26%),
+        radial-gradient(ellipse at 48% 20%, rgba(160, 110, 220, 0.055), transparent 32%);
+    filter: blur(2em);
+    opacity: 0.58;
+    transform: rotate(-4deg);
+    pointer-events: none;
+}
+
+.camadaTextura {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    opacity: 0.11;
+    mix-blend-mode: screen;
+    background:
+        repeating-radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12) 0, rgba(255, 255, 255, 0.12) 0.04em, transparent 0.05em, transparent 0.42em),
+        repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.04) 0, rgba(255, 255, 255, 0.04) 0.06em, transparent 0.08em, transparent 0.7em);
+    pointer-events: none;
+}
+
+.camadaVinheta {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background:
+        radial-gradient(circle at center, transparent 38%, rgba(0, 0, 0, 0.42) 72%, rgba(0, 0, 0, 0.82) 100%),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.48), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.48)),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 20%, transparent 76%, rgba(0, 0, 0, 0.58));
+    pointer-events: none;
+}
+
+.camadaConteudo {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    min-height: 100%;
+}

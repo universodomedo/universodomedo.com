@@ -36,6 +36,7 @@ import NavigationBridgeProvider from 'Funcionalidades/NavigationBridgeProvider';
 import { ContextoCopiarParaClipboardProvider } from 'Contextos/ContextoCopiarParaClipboard/contexto';
 import ClipboardToast from 'Componentes/ElementosVisuais/ClipboardToast/ClipboardToast';
 import NoraApiCarregamentoGlobal from 'Componentes/ElementosVisuais/NoraApiCarregamentoGlobal/NoraApiCarregamentoGlobal';
+import FundoPaginaAtmosferico from 'Componentes/ElementosVisuais/FundoPaginaAtmosferico/FundoPaginaAtmosferico';
 
 const cinzel = Cinzel({
   subsets: ['latin'],
@@ -69,34 +70,36 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
-        <NoraApiCarregamentoGlobal />
-        <ReduxProvider>
-          <ContextoPerformanceProvider>
-            <ContextoAutenticacaoProvider>
-              <SocketListeners />
-              <RadixTooltip delayDuration={200} skipDelayDuration={0}>
-                <AppClientProviders>
-                  <Contexto__Chat__Provider>
-                    <ContextoMenuSwiperEsquerdaProvider>
-                      <InicializadorCache>
-                        <ConteudoContextualizado>
-                          <ConteinerEscalavel>
-                            <ContextoCopiarParaClipboardProvider>
-                              <NavigationBridgeProvider />
-                              {children}
-                              <ClipboardToast />
-                            </ContextoCopiarParaClipboardProvider>
-                          </ConteinerEscalavel>
-                          {/* <BackgroundAudio /> */}
-                        </ConteudoContextualizado>
-                      </InicializadorCache>
-                    </ContextoMenuSwiperEsquerdaProvider>
-                  </Contexto__Chat__Provider>
-                </AppClientProviders>
-              </RadixTooltip>
-            </ContextoAutenticacaoProvider>
-          </ContextoPerformanceProvider>
-        </ReduxProvider>
+        <FundoPaginaAtmosferico>
+          <NoraApiCarregamentoGlobal />
+          <ReduxProvider>
+            <ContextoPerformanceProvider>
+              <ContextoAutenticacaoProvider>
+                <SocketListeners />
+                <RadixTooltip delayDuration={200} skipDelayDuration={0}>
+                  <AppClientProviders>
+                    <Contexto__Chat__Provider>
+                      <ContextoMenuSwiperEsquerdaProvider>
+                        <InicializadorCache>
+                          <ConteudoContextualizado>
+                            <ConteinerEscalavel>
+                              <ContextoCopiarParaClipboardProvider>
+                                <NavigationBridgeProvider />
+                                {children}
+                                <ClipboardToast />
+                              </ContextoCopiarParaClipboardProvider>
+                            </ConteinerEscalavel>
+                            {/* <BackgroundAudio /> */}
+                          </ConteudoContextualizado>
+                        </InicializadorCache>
+                      </ContextoMenuSwiperEsquerdaProvider>
+                    </Contexto__Chat__Provider>
+                  </AppClientProviders>
+                </RadixTooltip>
+              </ContextoAutenticacaoProvider>
+            </ContextoPerformanceProvider>
+          </ReduxProvider>
+        </FundoPaginaAtmosferico>
       </body>
     </html>
   );

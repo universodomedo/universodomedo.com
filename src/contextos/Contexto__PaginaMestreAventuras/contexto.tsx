@@ -5,10 +5,9 @@ import { GraphqlOrderDirecao, GraphqlTypesGrupoAventura } from 'types-nora-api';
 
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import type { ListagemCompostaListagem } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
-import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
-import type { NoraGraphQLFiltroConsultaWhere } from 'Hooks/useNoraGraphQLFiltroConsulta';
+import useNoraGraphQLListagem, { UseNoraGraphQLListagemConsultaParams } from 'Hooks/useNoraGraphQLListagem';
 
-const SELECT_AVENTURAS = GraphqlTypesGrupoAventura.select('id', 'caminhoArquivoCapa');
+const SELECT_AVENTURAS = GraphqlTypesGrupoAventura.select('id', 'dadosArteCapa');
 
 export type GrupoAventuraRegistro = GraphqlTypesGrupoAventura.Item<typeof SELECT_AVENTURAS>;
 
@@ -26,10 +25,18 @@ export const useContexto__PaginaMestreAventuras = (): Contexto__PaginaMestreAven
     return context;
 };
 
-function montaParametrosConsultaGruposAventuras(where: NoraGraphQLFiltroConsultaWhere | null): GraphqlTypesGrupoAventura.ObtemVariosParametros {
+function montaParametrosConsultaGruposAventuras(params: UseNoraGraphQLListagemConsultaParams): GraphqlTypesGrupoAventura.ObtemVariosParametros {
+    return {
+        where: params.where as GraphqlTypesGrupoAventura.ObtemVariosParametros['where'],
+        order: { id: GraphqlOrderDirecao.DESC },
+        limit: params.limit,
+        offset: params.offset,
+    };
+};
+
+function montaParametrosTotalDeRegistrosGruposAventuras(where: UseNoraGraphQLListagemConsultaParams['where']): GraphqlTypesGrupoAventura.ObtemVariosParametros {
     return {
         where: where as GraphqlTypesGrupoAventura.ObtemVariosParametros['where'],
-        order: { id: GraphqlOrderDirecao.DESC },
     };
 };
 
@@ -38,14 +45,16 @@ export const Contexto__PaginaMestreAventuras__Provider = ({ children }: { childr
         select: SELECT_AVENTURAS,
         camposFiltroConsulta: GraphqlTypesGrupoAventura.CamposFiltroConsulta,
         camposFiltroVisualizacao: GraphqlTypesGrupoAventura.CamposFiltroVisualizacao,
-        itensPorPagina: 30,
+        itensPorPagina: 12,
         carregando: 'Buscando Aventuras',
         mensagemErro: 'Houve um erro recuperando suas Aventuras',
         mensagemListaVazia: 'Nenhuma aventura encontrada.',
         mensagemListaVaziaComFiltro: 'Nenhuma aventura encontrada com os filtros atuais.',
         carregamento: NoraApiCarregamento.BLOQUEIA_INTERFACE,
         montaParametrosConsulta: montaParametrosConsultaGruposAventuras,
+        montaParametrosTotalDeRegistros: montaParametrosTotalDeRegistrosGruposAventuras,
         criaOperacao: (obtem, parametros) => obtem.GrupoAventura.varios({ parametros, select: SELECT_AVENTURAS }),
+        criaOperacaoTotalDeRegistros: (obtem, parametros) => obtem.GrupoAventura.totalDeRegistros({ parametros }),
     });
 
     return (
