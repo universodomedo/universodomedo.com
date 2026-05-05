@@ -16,7 +16,7 @@ export function VisualizadorSessoes() {
     return (
         <>
             <VisualizadorUltimasSessoes detalhesSessoesAventuras={grupoAventuraSelecionada.detalhesSessoesAventuras.sort((a, b) => a.sessao.id - b.sessao.id).slice(-2)} />
-            <AcoesSessoesRecentesDeAventurasEmAndamento />
+            {/* <AcoesSessoesRecentesDeAventurasEmAndamento /> */}
         </>
     );
 };

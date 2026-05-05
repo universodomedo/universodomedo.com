@@ -7,12 +7,20 @@ import { RenderArquivoArteCapa } from 'Uteis/RenderArquivoTipados/RenderArquivoT
 
 type CabecalhoProps = | { tipo: 'sessao'; caminhoCapaSessao: CaminhoArquivoArte; } | { tipo: 'grupoAventura'; grupoAventura: VIEW_GrupoAventuraDetalhado; };
 
-export function CabecalhoDeAventura(props: CabecalhoProps) { return props.tipo === 'sessao' ? <RenderCabecalho caminhoArquivoArte={props.caminhoCapaSessao} /> : <RenderCabecalho caminhoArquivoArte={props.grupoAventura.dadosArteCapa.caminhoArquivoArteCapa} /> };
+export function CabecalhoDeAventura(props: CabecalhoProps) { return props.tipo === 'sessao' ? <RenderCabecalhoLegado caminhoArquivoArte={props.caminhoCapaSessao} /> : <RenderCabecalhoLegado caminhoArquivoArte={props.grupoAventura.dadosArteCapa.caminhoArquivoArteCapa} /> };
 
-function RenderCabecalho({ caminhoArquivoArte }: { caminhoArquivoArte: CaminhoArquivoArte }) {
-  return (
-    <SecaoDeConteudo id={styles.recipiente_capa_cabecalho_aventura}>
-      <RenderArquivoArteCapa caminhoArquivoArte={caminhoArquivoArte} />
-    </SecaoDeConteudo>
-  );
+function RenderCabecalhoLegado({ caminhoArquivoArte }: { caminhoArquivoArte: CaminhoArquivoArte }) {
+	return (
+		<SecaoDeConteudo id={styles.recipiente_capa_cabecalho_aventura}>
+			<RenderArquivoArteCapa caminhoArquivoArte={caminhoArquivoArte} />
+		</SecaoDeConteudo>
+	);
+};
+
+export default function RenderCabecalhoCapa({ caminhoArquivoArte }: { caminhoArquivoArte: CaminhoArquivoArte }) {
+	return (
+		<SecaoDeConteudo id={styles.recipiente_capa_cabecalho_aventura}>
+			<RenderArquivoArteCapa caminhoArquivoArte={caminhoArquivoArte} />
+		</SecaoDeConteudo>
+	);
 };

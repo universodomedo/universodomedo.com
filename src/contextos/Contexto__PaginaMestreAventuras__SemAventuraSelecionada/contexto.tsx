@@ -2,10 +2,13 @@
 
 import { createContext, useContext } from 'react';
 
+import { useContexto__PaginaMestreAventuras } from '../Contexto__PaginaMestreAventuras/contexto';
 import SPA__PaginaMestreAventuras__SemAventuraSelecionada from 'Conteineres/PaginaMestreAventuras/paginas/SPA__PaginaMestreAventuras__SemAventuraSelecionada/SPA__PaginaMestreAventuras__SemAventuraSelecionada';
-import { Contexto__PaginaMestreAventuras__Props } from '../Contexto__PaginaMestreAventuras/contexto';
 
-type Contexto__PaginaMestreAventuras__SemAventuraSelecionada__Props = Contexto__PaginaMestreAventuras__Props;
+type Contexto__PaginaMestreAventuras__SemAventuraSelecionada__Props = {
+    readonly gruposAventuras: ReturnType<typeof useContexto__PaginaMestreAventuras>['listagemGruposAventuras'];
+    readonly selecionaGrupoAventura: ReturnType<typeof useContexto__PaginaMestreAventuras>['setIdGrupoAventuraSelecionada'];
+};
 
 const Contexto__PaginaMestreAventuras__SemAventuraSelecionada = createContext<Contexto__PaginaMestreAventuras__SemAventuraSelecionada__Props | undefined>(undefined);
 

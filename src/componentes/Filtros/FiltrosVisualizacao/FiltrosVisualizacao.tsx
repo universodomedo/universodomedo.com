@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, ReactNode, useEffect, useMemo, useState } from 'react';
 import { GraphqlFiltroCampoTipo, GraphqlFiltroOperador, GraphqlFiltroVisualizacaoCampoDef } from 'types-nora-api';
 
 import styles from './styles.module.css';
@@ -14,6 +14,7 @@ export type FiltrosVisualizacaoProps = {
     readonly valor?: ContextoFiltrosVisualizacaoValor<object>;
     readonly titulo?: string;
     readonly variante?: FiltrosVisualizacaoVariante;
+    readonly contador?: ReactNode;
 };
 
 const LABEL_OPERADOR: Record<GraphqlFiltroOperador, string> = {
@@ -128,13 +129,13 @@ function resolveClasseFiltros(variante: FiltrosVisualizacaoVariante): string {
     return `${styles.filtros} ${styles.filtros_visualizacao}`;
 };
 
-function FiltrosVisualizacaoComContexto(props: { readonly titulo: string; readonly variante: FiltrosVisualizacaoVariante; }) {
+function FiltrosVisualizacaoComContexto(props: { readonly titulo: string; readonly variante: FiltrosVisualizacaoVariante; readonly contador?: ReactNode; }) {
     const valor = useContextoFiltrosVisualizacao<object>();
 
-    return <FiltrosVisualizacaoInterno valor={valor} titulo={props.titulo} variante={props.variante} />;
+    return <FiltrosVisualizacaoInterno valor={valor} titulo={props.titulo} variante={props.variante} contador={props.contador} />;
 };
 
-function FiltrosVisualizacaoInterno({ valor, titulo, variante }: { readonly valor: ContextoFiltrosVisualizacaoValor<object>; readonly titulo: string; readonly variante: FiltrosVisualizacaoVariante; }) {
+function FiltrosVisualizacaoInterno({ valor, titulo, variante, contador }: { readonly valor: ContextoFiltrosVisualizacaoValor<object>; readonly titulo: string; readonly variante: FiltrosVisualizacaoVariante; readonly contador?: ReactNode; }) {
     const { campos, filtros, setFiltros, totalOriginal, totalFiltrado } = valor;
     const [campoSelecionado, setCampoSelecionado] = useState<string>(campos[0]?.campo ?? '');
     const campoAtual = useMemo(() => campos.find(campo => campo.campo === campoSelecionado), [campos, campoSelecionado]);
@@ -218,7 +219,7 @@ function FiltrosVisualizacaoInterno({ valor, titulo, variante }: { readonly valo
         <section className={resolveClasseFiltros(variante)}>
             <div className={styles.cabecalho}>
                 <strong>{titulo}</strong>
-                <span>{totalFiltrado} de {totalOriginal} registros</span>
+                <span>{contador ?? `${totalFiltrado} de ${totalOriginal} registros exibidos`}</span>
             </div>
             <form onSubmit={adicionaFiltro} className={styles.formulario}>
                 <select value={campoSelecionado} onChange={event => selecionaCampo(event.target.value)} className={styles.campo}>
@@ -261,7 +262,7 @@ export default function FiltrosVisualizacao(props: FiltrosVisualizacaoProps) {
     const titulo = props.titulo ?? 'Refinar esta lista';
     const variante = props.variante ?? 'visualizacao';
 
-    if (props.valor) return <FiltrosVisualizacaoInterno valor={props.valor} titulo={titulo} variante={variante} />;
+    if (props.valor) return <FiltrosVisualizacaoInterno valor={props.valor} titulo={titulo} variante={variante} contador={props.contador} />;
 
-    return <FiltrosVisualizacaoComContexto titulo={titulo} variante={variante} />;
+    return <FiltrosVisualizacaoComContexto titulo={titulo} variante={variante} contador={props.contador} />;
 };

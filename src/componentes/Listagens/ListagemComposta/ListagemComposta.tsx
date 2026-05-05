@@ -9,6 +9,7 @@ import FiltrosVisualizacao from 'Componentes/Filtros/FiltrosVisualizacao/Filtros
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 import type { ContextoFiltrosConsultaValor } from 'Contextos/Contexto__FiltrosConsulta/contexto';
 import type { ContextoFiltrosVisualizacaoValor } from 'Contextos/Contexto__Filtros/contexto';
+import React from 'react';
 
 export const ListagemCompostaModoExibicao = {
     GRADE: 'grade',
@@ -135,10 +136,9 @@ export default function ListagemComposta<TRegistro extends object>(props: Listag
                 {possuiFiltros && (
                     <div className={styles.area_filtros}>
                         {possuiFiltroConsulta && <div className={styles.filtros_globais}><FiltrosConsulta valor={listagem.filtrosConsulta} titulo="Buscar registros" variante="consulta" /></div>}
-                        {possuiFiltroVisualizacao && <div className={styles.filtros_locais}><FiltrosVisualizacao valor={listagem.filtrosVisualizacao as ContextoFiltrosVisualizacaoValor<object>} titulo="Refinar esta lista" variante="visualizacao" /></div>}
+                        {possuiFiltroVisualizacao && <div className={styles.filtros_locais}><FiltrosVisualizacao valor={listagem.filtrosVisualizacao as ContextoFiltrosVisualizacaoValor<object>} titulo="Refinar esta lista" variante="visualizacao" contador={listagem.contador} /></div>}
                     </div>
                 )}
-                {listagem.contador && <div className={styles.area_contador}>{listagem.contador}</div>}
                 <div className={styles.area_conteudo}>
                     {deveMostrarLoading && (
                         <div className={styles.estado}>
@@ -157,16 +157,15 @@ export default function ListagemComposta<TRegistro extends object>(props: Listag
                         </div>
                     )}
                     {deveMostrarRegistros && (
-                        <>
-                            <div className={resolveClasseConteudo(props.modoExibicao)} {...scrollableProps}>
-                                {listagem.registros.map((registro, indice) => (
-                                    <div key={props.obterIdRegistro(registro)} className={styles.item}>
-                                        {props.renderizarItem(registro, indice)}
-                                    </div>
-                                ))}
-                            </div>
+                        <div className={resolveClasseConteudo(props.modoExibicao)} {...scrollableProps}>
+                            {listagem.registros.map((registro, index) => (
+                                // <div key={props.obterIdRegistro(registro)} className={styles.item}>
+                                <React.Fragment key={index}>
+                                    {props.renderizarItem(registro, index)}
+                                </React.Fragment>
+                            ))}
                             {possuiCarregarMais && listagem.carregarMais && renderizaCarregarMais(listagem.carregarMais)}
-                        </>
+                        </div>
                     )}
                 </div>
                 {possuiRodape && (

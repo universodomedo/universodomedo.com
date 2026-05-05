@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { ApiOperacaoGraphqlGet, EventosApiGraphqlV2 } from 'types-nora-api';
+import { createContext, createElement, useCallback, useContext, useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
+import { ApiOperacaoGraphqlGet, EventosApiGraphqlV2, GraphqlObjetoDeSelectDef, GraphqlResultado, GraphqlSelect } from 'types-nora-api';
 
 import { montaMensagemErroNoraApiParaUsuario, NoraApi } from 'Api/NoraApi';
 import { NORA_API_CARREGAMENTO_VISUAL } from 'Api/NoraApiCarregamentoVisual.const';
@@ -40,11 +40,45 @@ type UseNoraGraphQLConsultaOpcoesComExtrair<TResposta extends object, TResultado
 
 type UseNoraGraphQLConsultaOpcoes<TOperacao extends NoraGraphQLOperacaoBase, TResultado> = UseNoraGraphQLConsultaOpcoesSemExtrair | UseNoraGraphQLConsultaOpcoesComExtrair<NoraGraphQLRespostaBruta<TOperacao>, TResultado>;
 
-type UseNoraGraphQLConsultaResultado<TResultado> = {
+export type UseNoraGraphQLConsultaResultado<TResultado> = {
     readonly data: TResultado;
     readonly carregando: string | null;
     readonly erro: string | null;
     readonly recarregar: () => Promise<TResultado>;
+};
+
+export type UseNoraGraphQLConsultaCarregamento = keyof typeof NoraApiCarregamento;
+
+export type UseNoraGraphQLConsultaContratoBase = {
+    readonly select: { readonly __noraGraphqlObjeto?: object; };
+};
+
+type UseNoraGraphQLConsultaObjeto<TGraphql extends UseNoraGraphQLConsultaContratoBase> = GraphqlObjetoDeSelectDef<TGraphql['select']>;
+
+type UseNoraGraphQLConsultaRegistro<TGraphql extends UseNoraGraphQLConsultaContratoBase, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TGraphql>>> = GraphqlResultado<UseNoraGraphQLConsultaObjeto<TGraphql>, TSelect>;
+
+type UseNoraGraphQLConsultaRegistroResultado<TGraphql extends UseNoraGraphQLConsultaContratoBase, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TGraphql>>> = UseNoraGraphQLConsultaResultado<UseNoraGraphQLConsultaRegistro<TGraphql, TSelect> | null>;
+
+export type UseNoraGraphQLConsultaRegistroParams<TGraphql extends UseNoraGraphQLConsultaContratoBase, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TGraphql>>, TProviderProps extends object, TOperacao extends NoraGraphQLOperacaoBase> = {
+    readonly graphql: TGraphql;
+    readonly props: TProviderProps;
+    readonly select: TSelect;
+    readonly carregando: string;
+    readonly mensagemErro?: string;
+    readonly exibirToastErro?: boolean;
+    readonly executarAoMontar?: boolean;
+    readonly limparDataAoFalhar?: boolean;
+    readonly carregamento?: UseNoraGraphQLConsultaCarregamento;
+    readonly aguardarFinalizacaoVisual?: boolean;
+    readonly lancarErroAoFalhar?: boolean;
+    readonly criaOperacao: (obtem: NoraGraphQLOperacoesLeitura, props: TProviderProps, select: TSelect) => TOperacao;
+};
+
+type UseNoraGraphQLConsultaRegistroDef<TGraphql extends UseNoraGraphQLConsultaContratoBase, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TGraphql>>, TProviderProps extends object, TOperacao extends NoraGraphQLOperacaoBase> = Omit<UseNoraGraphQLConsultaRegistroParams<TGraphql, TSelect, TProviderProps, TOperacao>, 'props'>;
+
+type UseNoraGraphQLConsultaExtrasParams<TResultado, TProviderProps extends object> = {
+    readonly consulta: UseNoraGraphQLConsultaResultado<TResultado>;
+    readonly props: TProviderProps;
 };
 
 function registraAvisoControladoNoraGraphQLConsulta(mensagem: string, dados: object): void {
@@ -103,6 +137,16 @@ function resolveResultado<TOperacao extends NoraGraphQLOperacaoBase, TResultado>
 
 function converteValorInicialPadrao<TOperacao extends NoraGraphQLOperacaoBase, TResultado>(valorInicial: NoraGraphQLValorInicialPadrao | TResultado): NoraGraphQLResultadoPadrao<TOperacao> | TResultado {
     return valorInicial as NoraGraphQLResultadoPadrao<TOperacao> | TResultado;
+};
+
+function obtemCarregamentoNoraApi(carregamento: UseNoraGraphQLConsultaCarregamento | undefined): NoraApiCarregamento | undefined {
+    if (!carregamento) return undefined;
+
+    return NoraApiCarregamento[carregamento];
+};
+
+function useNoraGraphQLConsultaExtrasVazio<TResultado, TProviderProps extends object>(_: UseNoraGraphQLConsultaExtrasParams<TResultado, TProviderProps>): Record<string, never> {
+    return {};
 };
 
 export default function useNoraGraphQLConsulta<const TOperacao extends NoraGraphQLOperacaoBase>(selecionaOperacao: (obtem: NoraGraphQLOperacoesLeitura) => TOperacao, opcoes: UseNoraGraphQLConsultaOpcoesSemExtrair): UseNoraGraphQLConsultaResultado<NoraGraphQLResultadoPadrao<TOperacao>>;
@@ -171,4 +215,51 @@ export default function useNoraGraphQLConsulta<const TOperacao extends NoraGraph
     }, [recarregar]);
 
     return { data, carregando, erro, recarregar };
+};
+
+export function useNoraGraphQLRegistro<const TGraphql extends UseNoraGraphQLConsultaContratoBase, const TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TGraphql>>, TProviderProps extends object, const TOperacao extends NoraGraphQLOperacaoBase = NoraGraphQLOperacaoBase>(params: UseNoraGraphQLConsultaRegistroParams<TGraphql, TSelect, TProviderProps, TOperacao>): UseNoraGraphQLConsultaRegistroResultado<TGraphql, TSelect> {
+    type TResultado = UseNoraGraphQLConsultaRegistro<TGraphql, TSelect> | null;
+
+    return useNoraGraphQLConsulta(obtem => params.criaOperacao(obtem, params.props, params.select), {
+        valorInicial: null as TResultado,
+        carregando: params.carregando,
+        mensagemErro: params.mensagemErro,
+        exibirToastErro: params.exibirToastErro,
+        executarAoMontar: params.executarAoMontar,
+        limparDataAoFalhar: params.limparDataAoFalhar,
+        carregamento: obtemCarregamentoNoraApi(params.carregamento),
+        aguardarFinalizacaoVisual: params.aguardarFinalizacaoVisual,
+        lancarErroAoFalhar: params.lancarErroAoFalhar,
+    }) as UseNoraGraphQLConsultaRegistroResultado<TGraphql, TSelect>;
+};
+
+export function criaContextoNoraGraphQLConsulta<const TNomeConsulta extends string, const TGraphql extends UseNoraGraphQLConsultaContratoBase, const TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TGraphql>>, TProviderProps extends object, const TOperacao extends NoraGraphQLOperacaoBase = NoraGraphQLOperacaoBase, TExtras extends object = Record<string, never>>(params: { readonly nomeConsulta: TNomeConsulta; readonly mensagemErroContexto: string; readonly renderiza: ComponentType; readonly mensagemRegistroNaoEncontrado?: string; readonly consulta: UseNoraGraphQLConsultaRegistroDef<TGraphql, TSelect, TProviderProps, TOperacao>; readonly useExtras?: (params: UseNoraGraphQLConsultaExtrasParams<UseNoraGraphQLConsultaRegistro<TGraphql, TSelect> | null, TProviderProps>) => TExtras; }) {
+    type TResultado = UseNoraGraphQLConsultaRegistro<TGraphql, TSelect>;
+    type TConsulta = UseNoraGraphQLConsultaResultado<TResultado | null>;
+    type TContextoBase = { readonly [TChave in TNomeConsulta]: TResultado };
+    type TContexto = TContextoBase & TExtras;
+
+    const Contexto = createContext<TContexto | undefined>(undefined);
+    const useExtras = (params.useExtras ?? useNoraGraphQLConsultaExtrasVazio) as (params: UseNoraGraphQLConsultaExtrasParams<TResultado | null, TProviderProps>) => TExtras;
+
+    const useContexto = (): TContexto => {
+        const context = useContext(Contexto);
+        if (!context) throw new Error(params.mensagemErroContexto);
+
+        return context;
+    };
+
+    const Provider = (props: TProviderProps) => {
+        const consulta: TConsulta = useNoraGraphQLRegistro({ ...params.consulta, props });
+        const extras = useExtras({ consulta, props });
+        const value = useMemo<TContexto>(() => ({ [params.nomeConsulta]: consulta.data as TResultado, ...extras } as TContexto), [consulta.data, extras]);
+
+        if (consulta.carregando) return createElement('div', null, consulta.carregando);
+        if (consulta.erro) return createElement('div', null, consulta.erro);
+        if (!consulta.data) return createElement('div', null, params.mensagemRegistroNaoEncontrado ?? 'Registro não encontrado.');
+
+        return createElement(Contexto.Provider, { value }, createElement(params.renderiza));
+    };
+
+    return { Provider, useContexto } as const;
 };

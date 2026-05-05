@@ -22,7 +22,7 @@
 
 .recipiente_layout_contextualizado_conteudo:not(.fundo_layout_contextualizado_conteudo) {
     /* background-color: #312246b3; */
-    padding: .7% .4%;
+    padding: .7% .4% 0;
 }
 
 .recipiente_layout_contextualizado_conteudo__header {
@@ -51,4 +51,8 @@
     padding: .4em .5em;
     /* background-color: #312246b3; */
     overflow-x: hidden;
+    background-color: #1c172c94;
+    border: 1px #473a64b8 solid;
+    border-radius: 0.6em;
+    box-shadow: 0 0 .55em #4d1969;
 }
