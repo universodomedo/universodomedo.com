@@ -19,14 +19,7 @@ export const { Provider: Contexto__PaginaMestreAventuras__ComAventuraSelecionada
         mensagemErro: 'Houve um erro recuperando a Aventura selecionada',
         carregamento: 'BLOQUEIA_INTERFACE',
         criaOperacao: (obtem, props: { readonly idGrupoAventuraSelecionado: number; readonly deselecionaGrupoAventura: Contexto__PaginaMestreAventuras__Props['deselecionaGrupoAventura']; }, select) => obtem.GrupoAventura.um({
-            parametros: {
-                where: {
-                    id: {
-                        eq: props.idGrupoAventuraSelecionado,
-                    },
-                },
-            },
-            select,
+            parametros: { where: { id: { eq: props.idGrupoAventuraSelecionado, }, }, }, select,
         }),
     },
     useExtras: ({ props }) => ({

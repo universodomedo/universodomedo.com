@@ -9,7 +9,7 @@ import { ControladorSlot } from "Layouts/ControladorSlot";
 import { ContextoPaginaAdminAventuraProvider, useContextoPaginaAdminAventura } from 'Contextos/ContextoPaginaAdminAventura/contexto';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { ContextoCadastroNovoLinkGrupoAventuraProvider, useContextoCadastroNovoLinkGrupoAventura } from 'Contextos/ContextoCadastroNovoLinkGrupoAventura/contexto';
-import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
+import { CabecalhoDeAventura } from '@/componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/CabecalhoDeAventura';
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 

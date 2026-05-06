@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 import { FichaTemporariaExibicaoDto, JogadorSessaoDto, PAGINAS, PersonagemExibicaoDto, TipoSessao, TipoVinculoSessaoJogador } from 'types-nora-api';
 
 import { useContextoVincularJogadorSessao } from "Contextos/ContextoVincularJogadorSessaoProvider/contexto";
-import { CabecalhoDeAventura } from "Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page";
+import { CabecalhoDeAventura } from "@/componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/CabecalhoDeAventura";
 import { DadosResumo } from "Componentes/Elementos/DetalhesRascunho/subcomponentes";
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';

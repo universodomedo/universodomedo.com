@@ -12,11 +12,3 @@ export function AventurasMestre_Client() {
         </ControladorSlot>
     );
 };
-
-// function AventurasMestre_Slot() {
-//     return (
-//         <div className={styles.recipiente_aventuras_mestre}>
-//             {gruposAventurasListadas!.map(grupoAventura => <AventuraEmLayoutContextualizado key={grupoAventura.id} grupoAventura={grupoAventura} destino={{ pagina: PAGINAS.minhasPaginas.mestre.aventura, params: { id: grupoAventura.id } }} />)}
-//         </div>
-//     );
-// };

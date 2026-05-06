@@ -2,7 +2,7 @@ import styles from './styles.module.css';
 
 import { FormatoMomento, ParticipanteSessao_Tipo, SessaoCompletaDto, TipoVinculoSessaoJogador } from 'types-nora-api';
 
-import { CabecalhoDeAventura } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/page';
+import { CabecalhoDeAventura } from '@/componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/CabecalhoDeAventura';
 import SecaoDeConteudo from "Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo";
 import { formataDuracao } from 'Uteis/FormatadorDeMomento/FormatadorDeMomento';
 import PersonagemEmVisualizacaoDeSessao from '../ElementosIndividuaisEmListaDeVisualizacao/PersonagemEmVisualizacaoDeSessao/page';

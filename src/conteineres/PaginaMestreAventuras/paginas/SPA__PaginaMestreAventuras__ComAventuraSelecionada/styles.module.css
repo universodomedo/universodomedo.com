@@ -7,3 +7,95 @@
     gap: 2vh;
     align-items: center;
 }
+
+#recipiente_visualizador_sessoes {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 2vw;
+}
+
+.recipiente_link_sessao {
+    flex: 1;
+}
+
+div.recipiente_informacoes_sessao {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5% 2%;
+    gap: 2vh;
+    cursor: pointer;
+
+    &:not(.ativo):hover {
+        box-shadow: 0px 0px 9px 0px #ffffff;
+    }
+}
+
+.recipiente_cabecalho_informacoes_sessao {
+    text-align: center;
+}
+
+.recipiente_par_informacao {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.recipiente_informacoes {
+    display: flex;
+    flex-direction: column;
+    text-align: end;
+}
+
+#recipiente_acoes_aventura {
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    gap: 2vw;
+}
+
+#recipiente_modal_marcar_sessao_como_final {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: black;
+}
+
+#recipiente_modal_marcar_sessao_como_final p {   
+    color: black;
+}
+
+#recipiente_informacoes_gerais_aventura {
+    display: flex;
+    flex-direction: row;
+    max-height: 40vh;
+    width: 100%;
+    gap: 1vw;
+}
+
+#recipiente_informacoes_aventura {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+    text-align: center;
+}
+
+#recipiente_container_informacoes_aventura {
+    display: flex;
+    flex-direction: column;
+    gap: .8vh;
+    text-align: start;
+}
+
+#recipiente_container_lista_todas_sessoes {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3vh;
+}
+
+.recipiente_linha_episodio_em_lista {
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    justify-content: center;
+}
