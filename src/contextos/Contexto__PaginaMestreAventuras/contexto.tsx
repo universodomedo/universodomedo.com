@@ -1,39 +1,40 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
-import { GraphqlOrderDirecao, GraphqlTypesGrupoAventura } from 'types-nora-api';
+import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
-import { criaContextoNoraGraphQLListagem } from 'Hooks/useNoraGraphQLListagem';
+import { ListagemGruposAventuras, useListagemGruposAventuras } from './consultaGraphQL';
 
-export const { Provider: Contexto__PaginaMestreAventuras__Provider, useContexto: useContexto__PaginaMestreAventuras } = criaContextoNoraGraphQLListagem({
-    nomeListagem: 'listagemGruposAventuras',
-    mensagemErroContexto: 'useContexto__PaginaMestreAventuras precisa estar dentro de um Contexto__PaginaMestreAventuras',
-    listagem: {
-        graphql: GraphqlTypesGrupoAventura,
-        select: ['id', 'dadosArteCapa'],
-        itensPorPagina: 12,
-        carregando: 'Buscando Aventuras',
-        mensagemErro: 'Houve um erro recuperando suas Aventuras',
-        mensagemListaVazia: 'Nenhuma aventura encontrada.',
-        mensagemListaVaziaComFiltro: 'Nenhuma aventura encontrada com os filtros atuais.',
-        carregamento: 'BLOQUEIA_INTERFACE',
-        montaParametrosConsulta: params => ({
-            where: params.where as GraphqlTypesGrupoAventura.ObtemVariosParametros['where'],
-            order: { id: GraphqlOrderDirecao.DESC },
-            limit: params.limit,
-            offset: params.offset,
-        }),
-        montaParametrosTotalDeRegistros: where => ({
-            where: where as GraphqlTypesGrupoAventura.ObtemVariosParametros['where'],
-        }),
-        criaOperacao: (obtem, parametros, select) => obtem.GrupoAventura.varios({ parametros, select }),
-        criaOperacaoTotalDeRegistros: (obtem, parametros) => obtem.GrupoAventura.totalDeRegistros({ parametros }),
-    },
-    useExtras: () => {
-        const [idGrupoAventuraSelecionada, setIdGrupoAventuraSelecionada] = useState<number | null>(null);
+interface Contexto__PaginaMestreAventuras__Props {
+    listagemGruposAventuras: ListagemGruposAventuras;
+    idGrupoAventuraSelecionada: number | null;
+    setIdGrupoAventuraSelecionada: (idGrupoAventuraSelecionada: number | null) => void;
+    deselecionaGrupoAventura: () => void;
+};
 
-        const deselecionaGrupoAventura = useCallback(() => { setIdGrupoAventuraSelecionada(null); }, []);
+const Contexto__PaginaMestreAventuras = createContext<Contexto__PaginaMestreAventuras__Props | undefined>(undefined);
 
-        return useMemo(() => ({ idGrupoAventuraSelecionada, setIdGrupoAventuraSelecionada, deselecionaGrupoAventura }), [deselecionaGrupoAventura, idGrupoAventuraSelecionada]);
-    },
-});
+export const useContexto__PaginaMestreAventuras = (): Contexto__PaginaMestreAventuras__Props => {
+    const context = useContext(Contexto__PaginaMestreAventuras);
+    if (!context) throw new Error('useContexto__PaginaMestreAventuras precisa estar dentro de um Contexto__PaginaMestreAventuras');
+    return context;
+};
+
+export const Contexto__PaginaMestreAventuras__Provider = ({ children }: { children: ReactNode; }) => {
+    const listagemGruposAventuras = useListagemGruposAventuras();
+    const [idGrupoAventuraSelecionada, setIdGrupoAventuraSelecionada] = useState<number | null>(null);
+
+    const deselecionaGrupoAventura = useCallback(() => { setIdGrupoAventuraSelecionada(null); }, []);
+
+    const value = useMemo<Contexto__PaginaMestreAventuras__Props>(() => ({
+        listagemGruposAventuras,
+        idGrupoAventuraSelecionada,
+        setIdGrupoAventuraSelecionada,
+        deselecionaGrupoAventura,
+    }), [deselecionaGrupoAventura, idGrupoAventuraSelecionada, listagemGruposAventuras]);
+
+    return (
+        <Contexto__PaginaMestreAventuras.Provider value={value}>
+            {children}
+        </Contexto__PaginaMestreAventuras.Provider>
+    );
+};

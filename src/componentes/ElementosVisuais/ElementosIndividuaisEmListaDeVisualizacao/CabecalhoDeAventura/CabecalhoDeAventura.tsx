@@ -8,7 +8,7 @@ import { CaminhoArquivoArte, VIEW_GrupoAventuraDetalhado } from 'types-nora-api'
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import { RenderArquivoArteCapa } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 import Modal from 'Componentes/Elementos/Modal/Modal';
-import { Recipiente__Contexto__Modal__ConfiguradorArteCapa__Provider } from 'Contextos/Contexto__Modal__ConfiguradorArteCapa/Contexto__Modal__ConfiguradorArteCapa';
+import { Recipiente__Contexto__Modal__ConfiguradorArteCapa__Provider } from '@/contextos/Contexto__Modal__ConfiguradorArteCapa/contexto';
 
 type CabecalhoProps = | { tipo: 'sessao'; caminhoCapaSessao: CaminhoArquivoArte; } | { tipo: 'grupoAventura'; grupoAventura: VIEW_GrupoAventuraDetalhado; };
 

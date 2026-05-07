@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import { useContexto__Modal__ConfiguradorArteCapa } from '@/contextos/Contexto__Modal__ConfiguradorArteCapa/Contexto__Modal__ConfiguradorArteCapa';
+import { useContexto__Modal__ConfiguradorArteCapa } from '@/contextos/Contexto__Modal__ConfiguradorArteCapa/contexto';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 
 export default function Modal__ConfiguradorArteCapa({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean; setIsModalOpen: (open: boolean) => void; }) {
