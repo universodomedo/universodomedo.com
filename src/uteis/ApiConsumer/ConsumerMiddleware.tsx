@@ -84,11 +84,6 @@ export async function me_atualizaEstadoItem(idItemPermissao: number, idUsuario: 
     return await useApi<boolean>({ uri: '/permissoes_usuarios/me/me_atualizaEstadoItem', method: 'POST', data: { idItemPermissao, idUsuario, idEstadoPermissao } });
 }
 
-// em algum momento, tem q fazer uma normalização de operações SUDO
-export async function buscaTodosArquivos_SUDO() {
-    return await useApi<ArquivoCompletaDto[]>({ uri: '/arquivos/buscaTodosArquivos_SUDO', method: 'GET' });
-}
-
 export async function deleteArquivo_PorPath_SUDO(pathRelativo: string) {
     return await useApi<boolean>({ uri: '/arquivos/deleteArquivo_PorPath_SUDO', method: 'DELETE', params: { pathRelativo: pathRelativo } });
 }

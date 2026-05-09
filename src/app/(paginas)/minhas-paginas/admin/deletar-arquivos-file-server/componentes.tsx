@@ -10,7 +10,7 @@ import { ControladorSlot } from "Layouts/ControladorSlot";
 import { ContextoPaginaSUDODeletarArquivosProvider, useContextoPaginaSUDODeletarArquivos } from 'Contextos/ContextoPaginaSUDODeletarArquivos/contexto';
 import RecipienteImagemPadrao from 'Uteis/ImagemLoader/RecipienteImagemPadrao';
 
-export function DeletarArquivos_Client() {
+export default function DeletarArquivos_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.admin.deletarArquivosFileServer}>
             <ContextoPaginaSUDODeletarArquivosProvider>

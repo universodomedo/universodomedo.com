@@ -29,5 +29,3 @@ export function useListagemGruposAventuras() {
         criaOperacaoTotalDeRegistros: (obtem, parametros) => obtem.GrupoAventura.totalDeRegistros({ parametros }),
     });
 };
-
-export type ListagemGruposAventuras = ReturnType<typeof useListagemGruposAventuras>;

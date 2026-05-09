@@ -23,7 +23,7 @@ export default function SPA__PaginaMestreAventuras__SemAventuraSelecionada() {
 
     return (
         <div className={styles.recipiente_aventura_selecionada}>
-            <RenderCabecalhoCapa caminhoArquivoArte={grupoAventuraSelecionado.dadosArteCapa.caminhoArquivoArteCapa} callbackConfigArteCapa={() => {console.log(`oi`)}} />
+            <RenderCabecalhoCapa caminhoArquivoArte={grupoAventuraSelecionado.dadosArteCapa.caminhoArquivoArteCapa} configArteCapa={{ callback: () => { console.log(`oi`) }, subtituloOperacao: grupoAventuraSelecionado.nomeUnicoGrupoAventura }} />
 
             {grupoAventuraSelecionado.detalhesSessoes.estadoAtual === AventuraEstado.EM_ANDAMENTO && <VisualizadorSessoes idGrupoAventura={grupoAventuraSelecionado.id} detalhesSessoes={grupoAventuraSelecionado.detalhesSessoes} />}
 

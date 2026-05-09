@@ -2,10 +2,10 @@
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
-import { ListagemGruposAventuras, useListagemGruposAventuras } from './consultaGraphQL';
+import { useListagemGruposAventuras } from './consultaGraphQL';
 
 interface Contexto__PaginaMestreAventuras__Props {
-    listagemGruposAventuras: ListagemGruposAventuras;
+    listagemGruposAventuras: ReturnType<typeof useListagemGruposAventuras>;
     idGrupoAventuraSelecionada: number | null;
     setIdGrupoAventuraSelecionada: (idGrupoAventuraSelecionada: number | null) => void;
     deselecionaGrupoAventura: () => void;
