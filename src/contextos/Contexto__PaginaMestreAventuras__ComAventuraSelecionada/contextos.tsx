@@ -1,13 +1,16 @@
 'use client';
 
 import { createContext, useContext } from 'react';
+import { GraphqlTypesGrupoAventura } from 'types-nora-api';
 
 import RenderizaConsultaNoraGraphQL from 'Helpers/RenderizaConsultaNoraGraphQL/RenderizaConsultaNoraGraphQL';
+import { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
 import { useContexto__PaginaMestreAventuras } from '../Contexto__PaginaMestreAventuras/contexto';
 import SPA__PaginaMestreAventuras__ComAventuraSelecionada from 'Conteineres/PaginaMestreAventuras/paginas/SPA__PaginaMestreAventuras__ComAventuraSelecionada/SPA__PaginaMestreAventuras__ComAventuraSelecionada';
-import { GrupoAventuraSelecionado, useConsultaGrupoAventuraSelecionada } from './consultaGraphQL';
 
 type Contexto__PaginaMestreAventuras__Props = ReturnType<typeof useContexto__PaginaMestreAventuras>;
+
+type GrupoAventuraSelecionado = NonNullable<ReturnType<typeof obtemConsultaGrupoAventuraSelecionado>['data']>;
 
 interface Contexto__PaginaMestreAventuras__ComAventuraSelecionada__Props {
     grupoAventuraSelecionado: GrupoAventuraSelecionado;
@@ -23,7 +26,7 @@ export const useContexto__PaginaMestreAventuras__ComAventuraSelecionada = (): Co
 };
 
 export const Contexto__PaginaMestreAventuras__ComAventuraSelecionada__Provider = ({ idGrupoAventuraSelecionado, deselecionaGrupoAventura }: { idGrupoAventuraSelecionado: number; deselecionaGrupoAventura: Contexto__PaginaMestreAventuras__Props['deselecionaGrupoAventura']; }) => {
-    const consultaGrupoAventuraSelecionado = useConsultaGrupoAventuraSelecionada({ idGrupoAventuraSelecionado });
+    const consultaGrupoAventuraSelecionado = obtemConsultaGrupoAventuraSelecionado({ idGrupoAventuraSelecionado });
 
     return (
         <RenderizaConsultaNoraGraphQL consulta={consultaGrupoAventuraSelecionado} mensagemRegistroNaoEncontrado="Registro não encontrado.">
@@ -34,4 +37,19 @@ export const Contexto__PaginaMestreAventuras__ComAventuraSelecionada__Provider =
             )}
         </RenderizaConsultaNoraGraphQL>
     );
+};
+
+//
+
+function obtemConsultaGrupoAventuraSelecionado(params: { idGrupoAventuraSelecionado: number; }) {
+    return useNoraGraphQLRegistro('GrupoAventura', {
+        select: ['id', 'nome', 'nomeUnicoGrupoAventura', 'dadosArteCapa', 'detalhesSessoes'],
+        props: params,
+        carregando: 'Buscando Aventura',
+        mensagemErro: 'Houve um erro recuperando a Aventura selecionada',
+        carregamento: 'BLOQUEIA_INTERFACE',
+        montaParametrosConsulta: props => ({
+            where: { id: { eq: props.idGrupoAventuraSelecionado } },
+        }),
+    });
 };

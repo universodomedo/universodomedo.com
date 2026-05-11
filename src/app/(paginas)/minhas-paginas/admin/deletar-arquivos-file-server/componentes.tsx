@@ -4,10 +4,11 @@ import styles from './styles.module.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
-import { ArquivoCompletaDto, PAGINAS } from 'types-nora-api';
+import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
 import { ContextoPaginaSUDODeletarArquivosProvider, useContextoPaginaSUDODeletarArquivos } from 'Contextos/ContextoPaginaSUDODeletarArquivos/contexto';
+import ListagemComposta, { ListagemCompostaModoExibicao } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
 import RecipienteImagemPadrao from 'Uteis/ImagemLoader/RecipienteImagemPadrao';
 
 export default function DeletarArquivos_Client() {
@@ -21,20 +22,20 @@ export default function DeletarArquivos_Client() {
 };
 
 function DeletarArquivos_Contexto() {
-    const { arquivos } = useContextoPaginaSUDODeletarArquivos();
+    const { listagemArquivos } = useContextoPaginaSUDODeletarArquivos();
 
-    return arquivos.length > 0
-        ? (
-            <div className={styles.recipiente_lista_arquivos}>
-                {arquivos.map(arquivo => <RenderizaArquivo key={arquivo.id} arquivo={arquivo} />)}
-            </div>
-        )
-        : (
-            <h4>Nenhum Arquivo encontrado</h4>
-        )
+    return (
+        <ListagemComposta
+            listagem={listagemArquivos}
+            modoExibicao={ListagemCompostaModoExibicao.GRADE}
+            itensPorLinha={6}
+            obterIdRegistro={grupoAventura => grupoAventura.id}
+            renderizarItem={arquivo => <RenderizaArquivo key={arquivo.id} arquivo={arquivo} />}
+        />
+    );
 };
 
-function RenderizaArquivo({ arquivo }: { arquivo: ArquivoCompletaDto }) {
+function RenderizaArquivo({ arquivo }: { arquivo: ReturnType<typeof useContextoPaginaSUDODeletarArquivos>['listagemArquivos']['registros'][number] }) {
     const { enviaDelete } = useContextoPaginaSUDODeletarArquivos();
 
     return (

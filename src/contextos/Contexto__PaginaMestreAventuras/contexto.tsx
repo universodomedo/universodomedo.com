@@ -1,11 +1,12 @@
 'use client';
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import { GraphqlTypesGrupoAventura } from 'types-nora-api';
 
-import { useListagemGruposAventuras } from './consultaGraphQL';
+import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 
 interface Contexto__PaginaMestreAventuras__Props {
-    listagemGruposAventuras: ReturnType<typeof useListagemGruposAventuras>;
+    listagemGruposAventuras: ReturnType<typeof obtemListagemGruposAventuras>;
     idGrupoAventuraSelecionada: number | null;
     setIdGrupoAventuraSelecionada: (idGrupoAventuraSelecionada: number | null) => void;
     deselecionaGrupoAventura: () => void;
@@ -20,7 +21,7 @@ export const useContexto__PaginaMestreAventuras = (): Contexto__PaginaMestreAven
 };
 
 export const Contexto__PaginaMestreAventuras__Provider = ({ children }: { children: ReactNode; }) => {
-    const listagemGruposAventuras = useListagemGruposAventuras();
+    const listagemGruposAventuras = obtemListagemGruposAventuras();
     const [idGrupoAventuraSelecionada, setIdGrupoAventuraSelecionada] = useState<number | null>(null);
 
     const deselecionaGrupoAventura = useCallback(() => { setIdGrupoAventuraSelecionada(null); }, []);
@@ -37,4 +38,25 @@ export const Contexto__PaginaMestreAventuras__Provider = ({ children }: { childr
             {children}
         </Contexto__PaginaMestreAventuras.Provider>
     );
+};
+
+//
+
+function obtemListagemGruposAventuras() {
+    return useNoraGraphQLListagem('GrupoAventura', {
+        select: ['id', 'dadosArteCapa'],
+        itensPorPagina: 12,
+        carregando: 'Buscando Aventuras',
+        mensagemErro: 'Houve um erro recuperando suas Aventuras',
+        mensagemListaVazia: 'Nenhuma aventura encontrada.',
+        mensagemListaVaziaComFiltro: 'Nenhuma aventura encontrada com os filtros atuais.',
+        carregamento: 'BLOQUEIA_INTERFACE',
+        montaParametrosConsulta: params => ({
+            where: params.where,
+            order: { id: 'DESC' },
+            limit: params.limit,
+            offset: params.offset,
+        }),
+        montaParametrosTotalDeRegistros: where => ({ where }),
+    });
 };

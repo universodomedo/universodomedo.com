@@ -6,7 +6,7 @@ import { PAGINAS } from "types-nora-api";
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
 import { ContextoPaginaMestreSessoesUnicasProvider, useContextoPaginaMestreSessoesUnicas } from 'Contextos/ContextoPaginaMestreSessoesUnicas/contexto';
-import RecipienteAventuraOuSessao__ItemListagem from 'Componentes/ElementosVisuais/RecipienteAventuraOuSessao__ItemListagem/RecipienteAventuraOuSessao__ItemListagem';
+// import RecipienteAventuraOuSessao__ItemListagem from 'Componentes/ElementosVisuais/RecipienteAventuraOuSessao__ItemListagem/RecipienteAventuraOuSessao__ItemListagem';
 
 export function PaginaMestreSessoesUnicas_Client() {
     return (

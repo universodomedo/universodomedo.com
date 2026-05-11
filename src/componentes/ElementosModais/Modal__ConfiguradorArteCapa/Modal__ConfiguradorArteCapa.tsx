@@ -29,6 +29,7 @@ function ConteudoModal() {
         <ListagemComposta
             listagem={listagemArtesCapa}
             modoExibicao={ListagemCompostaModoExibicao.GRADE}
+            itensPorLinha={4}
             obterIdRegistro={arteCapa => arteCapa.id}
             renderizarItem={arteCapa => (
                 <DivClicavel className={cn(styles.recipiente_item_imagem_arte_capa, arteCapa.id === idArteCapaSelecionada && styles.arte_capa_selecionada)} onClick={() => { selecionaArteCapa(arteCapa.id) }}>

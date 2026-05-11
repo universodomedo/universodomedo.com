@@ -46,9 +46,9 @@ function montaParametrosConsultaListagemSessoes(where: NoraGraphQLFiltroConsulta
 export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInicial }: { children: React.ReactNode; idSessaoInicial: number | null; }) => {
     return (
         <FiltrosConsultaProvider campos={GraphqlTypesSessao.CamposFiltroConsulta}>
-            <ContextoPaginasListagemSessoesProviderComConsulta idSessaoInicial={idSessaoInicial}>
+            {/* <ContextoPaginasListagemSessoesProviderComConsulta idSessaoInicial={idSessaoInicial}> */}
                 {children}
-            </ContextoPaginasListagemSessoesProviderComConsulta>
+            {/* </ContextoPaginasListagemSessoesProviderComConsulta> */}
         </FiltrosConsultaProvider>
     );
 };
@@ -57,26 +57,26 @@ function ContextoPaginasListagemSessoesProviderComConsulta({ children, idSessaoI
     const { where, versaoAplicacao } = useContextoFiltrosConsulta<object>();
     const versaoAplicacaoAnteriorRef = useRef(versaoAplicacao);
 
-    const consultaListagemSessoes = useNoraGraphQLConsulta(obtem => obtem.Sessao.varios({
-        parametros: montaParametrosConsultaListagemSessoes(where),
-        select: SELECT_LISTAGEM_SESSOES,
-    }), { valorInicial: [], carregando: 'Buscando Sessões', mensagemErro: 'Houve um erro recuperando as Sessões à serem listadas', carregamento: NoraApiCarregamento.BLOQUEIA_INTERFACE });
+    // const consultaListagemSessoes = useNoraGraphQLConsulta(obtem => obtem.Sessao.varios({
+    //     parametros: montaParametrosConsultaListagemSessoes(where),
+    //     select: SELECT_LISTAGEM_SESSOES,
+    // }), { valorInicial: [], carregando: 'Buscando Sessões', mensagemErro: 'Houve um erro recuperando as Sessões à serem listadas', carregamento: NoraApiCarregamento.BLOQUEIA_INTERFACE });
 
-    const recarregarListagemSessoes = consultaListagemSessoes.recarregar;
+    // const recarregarListagemSessoes = consultaListagemSessoes.recarregar;
 
-    useEffect(() => {
-        if (versaoAplicacaoAnteriorRef.current === versaoAplicacao) return;
+    // useEffect(() => {
+    //     if (versaoAplicacaoAnteriorRef.current === versaoAplicacao) return;
 
-        versaoAplicacaoAnteriorRef.current = versaoAplicacao;
-        recarregarListagemSessoes().catch(() => undefined);
-    }, [recarregarListagemSessoes, versaoAplicacao]);
+    //     versaoAplicacaoAnteriorRef.current = versaoAplicacao;
+    //     recarregarListagemSessoes().catch(() => undefined);
+    // }, [recarregarListagemSessoes, versaoAplicacao]);
 
     return (
-        <FiltrosVisualizacaoProvider registros={consultaListagemSessoes.data} campos={CAMPOS_FILTRO_VISUALIZACAO_LISTAGEM_SESSOES}>
-            <ContextoPaginasListagemSessoesProviderInterno idSessaoInicial={idSessaoInicial} carregando={consultaListagemSessoes.carregando}>
+        // <FiltrosVisualizacaoProvider registros={consultaListagemSessoes.data} campos={CAMPOS_FILTRO_VISUALIZACAO_LISTAGEM_SESSOES}>
+            // <ContextoPaginasListagemSessoesProviderInterno idSessaoInicial={idSessaoInicial} carregando={consultaListagemSessoes.carregando}>
                 {children}
-            </ContextoPaginasListagemSessoesProviderInterno>
-        </FiltrosVisualizacaoProvider>
+            // </ContextoPaginasListagemSessoesProviderInterno>
+        // </FiltrosVisualizacaoProvider>
     );
 };
 

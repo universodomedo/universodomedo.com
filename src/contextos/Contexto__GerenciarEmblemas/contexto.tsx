@@ -1,14 +1,11 @@
 'use client';
 
-// #region Bloco 1 - Imports
 import { createContext, useContext } from 'react';
 import { GraphqlOrderDirecao, GraphqlTypesEmblema } from 'types-nora-api';
 
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
-// #endregion
 
-// #region Bloco 2 - Contratos GraphQL
 const SELECT_GERENCIAMENTO_EMBLEMAS = GraphqlTypesEmblema.select('id', 'nome', 'nomeVisual', 'descricao', 'dataCriacao', { arquivos: ['caminhoArquivoMoldura', 'caminhoArquivoEmblema'] });
 
 const WHERE_GERENCIAMENTO_EMBLEMAS: GraphqlTypesEmblema.ObtemVariosParametros['where'] = {
@@ -18,18 +15,14 @@ const WHERE_GERENCIAMENTO_EMBLEMAS: GraphqlTypesEmblema.ObtemVariosParametros['w
 export type EmblemaGerenciamentoRegistro = GraphqlTypesEmblema.Item<typeof SELECT_GERENCIAMENTO_EMBLEMAS>;
 
 export type ListaEmblemasGerenciamento = readonly EmblemaGerenciamentoRegistro[];
-// #endregion
 
-// #region Bloco 3 - Tipos do Contexto
 export interface Contexto__GerenciarEmblemas__Props {
-    emblemas: ListaEmblemasGerenciamento;
-    carregandoEmblemas: string | null;
-    erroEmblemas: string | null;
-    recarregarEmblemas: () => Promise<ListaEmblemasGerenciamento>;
+    // emblemas: ListaEmblemasGerenciamento;
+    // carregandoEmblemas: string | null;
+    // erroEmblemas: string | null;
+    // recarregarEmblemas: () => Promise<ListaEmblemasGerenciamento>;
 };
-// #endregion
 
-// #region Bloco 4 - Contexto e Hook
 const Contexto__GerenciarEmblemas = createContext<Contexto__GerenciarEmblemas__Props | undefined>(undefined);
 
 export const useContexto__GerenciarEmblemas = (): Contexto__GerenciarEmblemas__Props => {
@@ -41,13 +34,14 @@ export const useContexto__GerenciarEmblemas = (): Contexto__GerenciarEmblemas__P
 
 // #region Bloco 5 - Provider
 export const Contexto__GerenciarEmblemas__Provider = ({ children }: { children: React.ReactNode; }) => {
-    const consultaEmblemas = useNoraGraphQLConsulta(obtem => obtem.Emblema.varios({
-        parametros: { where: WHERE_GERENCIAMENTO_EMBLEMAS, order: { dataCriacao: GraphqlOrderDirecao.DESC } },
-        select: SELECT_GERENCIAMENTO_EMBLEMAS,
-    }), { valorInicial: [], carregando: 'Buscando Emblemas', mensagemErro: 'Houve um erro recuperando os Emblemas à serem listados', carregamento: NoraApiCarregamento.BLOQUEIA_INTERFACE });
+    // const consultaEmblemas = useNoraGraphQLConsulta(obtem => obtem.Emblema.varios({
+    //     parametros: { where: WHERE_GERENCIAMENTO_EMBLEMAS, order: { dataCriacao: GraphqlOrderDirecao.DESC } },
+    //     select: SELECT_GERENCIAMENTO_EMBLEMAS,
+    // }), { valorInicial: [], carregando: 'Buscando Emblemas', mensagemErro: 'Houve um erro recuperando os Emblemas à serem listados', carregamento: NoraApiCarregamento.BLOQUEIA_INTERFACE });
 
     return (
-        <Contexto__GerenciarEmblemas.Provider value={{ emblemas: consultaEmblemas.data, carregandoEmblemas: consultaEmblemas.carregando, erroEmblemas: consultaEmblemas.erro, recarregarEmblemas: consultaEmblemas.recarregar }}>
+        // <Contexto__GerenciarEmblemas.Provider value={{ emblemas: consultaEmblemas.data, carregandoEmblemas: consultaEmblemas.carregando, erroEmblemas: consultaEmblemas.erro, recarregarEmblemas: consultaEmblemas.recarregar }}>
+        <Contexto__GerenciarEmblemas.Provider value={{  }}>
             {children}
         </Contexto__GerenciarEmblemas.Provider>
     );

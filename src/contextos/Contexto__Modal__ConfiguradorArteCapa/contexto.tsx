@@ -2,12 +2,14 @@
 
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
-import { useListagemArtesCapas } from './consultaGraphQL';
+import { GraphqlTypesArquivoTipadoArte } from 'types-nora-api';
+
+import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { BotaoConfigurarArteCapa } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/CabecalhoDeAventura';
 import Modal__ConfiguradorArteCapa from 'Componentes/ElementosModais/Modal__ConfiguradorArteCapa/Modal__ConfiguradorArteCapa';
 
 interface Contexto__Modal__ConfiguradorArteCapa__Props {
-    listagemArtesCapa: ReturnType<typeof useListagemArtesCapas>;
+    listagemArtesCapa: ReturnType<typeof obtemListagemArtesCapa>;
     configArteCapa: { callback: () => void; subtituloOperacao: string; };
     idArteCapaSelecionada: number | null;
     selecionaArteCapa: (idArteCapa: number) => void;
@@ -26,7 +28,7 @@ export function Recipiente__Contexto__Modal__ConfiguradorArteCapa__Provider({ co
 };
 
 const Contexto__Modal__ConfiguradorArteCapa__Provider = ({ configArteCapa }: { configArteCapa: { callback: () => void; subtituloOperacao: string; }; }) => {
-    const listagemArtesCapa = useListagemArtesCapas();
+    const listagemArtesCapa = obtemListagemArtesCapa();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = useCallback(() => { setIsModalOpen(true); }, []);
@@ -40,4 +42,25 @@ const Contexto__Modal__ConfiguradorArteCapa__Provider = ({ configArteCapa }: { c
             <Modal__ConfiguradorArteCapa isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </Contexto__Modal__ConfiguradorArteCapa.Provider>
     );
+};
+
+//
+
+export function obtemListagemArtesCapa() {
+    return useNoraGraphQLListagem('ArquivoTipadoArte', {
+        select: ['id', 'dadosArteCapa'],
+        itensPorPagina: 12,
+        carregando: 'Buscando Capas',
+        mensagemErro: 'Houve um erro recuperando as Capas existentes',
+        mensagemListaVazia: 'Nenhuma capa encontrada.',
+        mensagemListaVaziaComFiltro: 'Nenhuma capa encontrada com os filtros atuais.',
+        carregamento: 'BLOQUEIA_INTERFACE',
+        montaParametrosConsulta: params => ({
+            where: params.where,
+            order: { id: 'DESC' },
+            limit: params.limit,
+            offset: params.offset,
+        }),
+        montaParametrosTotalDeRegistros: where => ({ where }),
+    });
 };

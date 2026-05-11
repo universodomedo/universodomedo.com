@@ -88,8 +88,8 @@ export async function deleteArquivo_PorPath_SUDO(pathRelativo: string) {
     return await useApi<boolean>({ uri: '/arquivos/deleteArquivo_PorPath_SUDO', method: 'DELETE', params: { pathRelativo: pathRelativo } });
 }
 
-export async function deleteArquivo_SUDO(arquivo: ArquivoCompletaDto) {
-    return await useApi<boolean>({ uri: '/arquivos/deleteArquivo_SUDO', method: 'DELETE', params: { idArquivo: String(arquivo.id) } });
+export async function deleteArquivo_SUDO(idArquivo: number) {
+    return await useApi<boolean>({ uri: '/arquivos/deleteArquivo_SUDO', method: 'DELETE', params: { idArquivo: idArquivo } });
 }
 
 export async function me_upload({ arquivo, tipoArquivo, camposExtras }: { arquivo: File; tipoArquivo: TipoArquivoDef; camposExtras?: Record<string, string | number>; }) {

@@ -1,33 +1,17 @@
 'use client';
 
 import { createContext, createElement, useCallback, useEffect, useMemo, useRef, useState, useContext, type ReactNode } from 'react';
-import { ApiOperacaoGraphqlGet, EventosApiGraphqlV2, GraphqlFiltroConsultaCampoDef, GraphqlFiltroVisualizacaoCampoDef, GraphqlObjetoDeSelectDef, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime } from 'types-nora-api';
+import { ApiOperacaoGraphqlGet, GraphqlFiltroConsultaCampoDef, GraphqlFiltroVisualizacaoCampoDef, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemVariosParametrosEntidade, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime, GraphqlSelectNormalizadoObjeto, GraphqlSelectRuntime, GraphqlTotalDeRegistrosParametrosEntidade, normalizaSelectGraphql } from 'types-nora-api';
 
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import type { ContextoFiltrosConsultaValor } from 'Contextos/Contexto__FiltrosConsulta/contexto';
 import type { ContextoFiltrosVisualizacaoValor } from 'Contextos/Contexto__Filtros/contexto';
 import type { ListagemCompostaCarregarMaisProps, ListagemCompostaListagem } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
 import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
-import useNoraGraphQLFiltroConsulta, { NoraGraphQLFiltroConsultaAtivo, NoraGraphQLFiltroConsultaWhere } from 'Hooks/useNoraGraphQLFiltroConsulta';
-import useNoraGraphQLFiltroVisualizacao, { filtraCamposFiltroVisualizacaoPorSelect, NoraGraphQLFiltroVisualizacaoAtivo } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
-
-type NoraGraphQLOperacoesLeitura = typeof EventosApiGraphqlV2.obtem;
+import useNoraGraphQLFiltroConsulta, { NoraGraphQLFiltroConsultaAtivo } from 'Hooks/useNoraGraphQLFiltroConsulta';
+import useNoraGraphQLFiltroVisualizacao, { NoraGraphQLFiltroVisualizacaoAtivo } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
 
 type NoraGraphQLOperacaoBase = ApiOperacaoGraphqlGet<Record<string, never>, object, object>;
-
-type NoraGraphQLRespostaBruta<TOperacao extends NoraGraphQLOperacaoBase> = TOperacao extends { readonly __noraApiTipoResposta?: infer TResposta } ? TResposta extends object ? TResposta : object : object;
-
-type UseNoraGraphQLListagemObjeto<TGraphql extends UseNoraGraphQLListagemContratoBase> = GraphqlObjetoDeSelectDef<TGraphql['select']>;
-
-type UseNoraGraphQLListagemRegistro<TGraphql extends UseNoraGraphQLListagemContratoBase, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TGraphql>>> = GraphqlResultado<UseNoraGraphQLListagemObjeto<TGraphql>, TSelect>;
-
-export type UseNoraGraphQLListagemConsultaParams = {
-    readonly where: NoraGraphQLFiltroConsultaWhere | null;
-    readonly limit: number | null;
-    readonly offset: number | null;
-};
-
-export type UseNoraGraphQLListagemCarregamento = keyof typeof NoraApiCarregamento;
 
 export type UseNoraGraphQLListagemContratoBase = {
     readonly CamposFiltroConsulta: readonly GraphqlFiltroConsultaCampoDef<object>[];
@@ -35,19 +19,64 @@ export type UseNoraGraphQLListagemContratoBase = {
     readonly select: { readonly __noraGraphqlObjeto?: object; };
 };
 
-export type UseNoraGraphQLListagemParams<TGraphql extends UseNoraGraphQLListagemContratoBase, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TGraphql>>, TParametros extends object, TOperacaoRegistros extends NoraGraphQLOperacaoBase, TOperacaoTotalDeRegistros extends NoraGraphQLOperacaoBase> = {
-    readonly graphql: TGraphql;
+type UseNoraGraphQLListagemContrato<TNome extends GraphqlLeituraNome> = GraphqlLeituraPorNome<TNome> & UseNoraGraphQLListagemContratoBase;
+
+type UseNoraGraphQLListagemObjeto<TNome extends GraphqlLeituraNome> = GraphqlObjetoDeSelectDef<UseNoraGraphQLListagemContrato<TNome>['select']>;
+
+type UseNoraGraphQLListagemRegistro<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = GraphqlResultado<UseNoraGraphQLListagemObjeto<TNome>, TSelect>;
+
+type UseNoraGraphQLListagemParametrosConsulta<TNome extends GraphqlLeituraNome> = GraphqlObtemVariosParametrosEntidade<UseNoraGraphQLListagemObjeto<TNome>>;
+
+type UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome extends GraphqlLeituraNome> = GraphqlTotalDeRegistrosParametrosEntidade<UseNoraGraphQLListagemObjeto<TNome>>;
+
+type UseNoraGraphQLListagemEventos<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = {
+    readonly varios: (definicao: { readonly parametros: UseNoraGraphQLListagemParametrosConsulta<TNome>; readonly select: TSelect; }) => NoraGraphQLOperacaoBase;
+    readonly totalDeRegistros: (definicao: { readonly parametros: UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>; }) => NoraGraphQLOperacaoBase;
+};
+
+type UseNoraGraphQLListagemContratoComEventos<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = UseNoraGraphQLListagemContrato<TNome> & {
+    readonly eventos: UseNoraGraphQLListagemEventos<TNome, TSelect>;
+};
+
+type UseNoraGraphQLListagemCampoFiltroDef<TCampo extends string = string, TPath extends readonly string[] = readonly string[]> = {
+    readonly campo: TCampo;
+    readonly path: TPath;
+};
+
+type UseNoraGraphQLListagemSelectNormalizado<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = GraphqlSelectNormalizadoObjeto<UseNoraGraphQLListagemObjeto<TNome>, TSelect>;
+
+type UseNoraGraphQLListagemSelectContemPath<TSelect, TPath extends readonly string[]> = TPath extends readonly [infer THead extends string, ...infer TRest extends readonly string[]] ? THead extends keyof TSelect ? TSelect[THead] extends true ? true : TRest extends readonly [] ? true : TSelect[THead] extends object ? UseNoraGraphQLListagemSelectContemPath<TSelect[THead], TRest> : false : false : true;
+
+type UseNoraGraphQLListagemCampoFiltroSelecionado<TSelectNormalizado, TCampoFiltro> = TCampoFiltro extends UseNoraGraphQLListagemCampoFiltroDef<infer TCampo, infer TPath> ? UseNoraGraphQLListagemSelectContemPath<TSelectNormalizado, TPath> extends true ? TCampo : never : never;
+
+type UseNoraGraphQLListagemCamposFiltroConsultaContrato<TNome extends GraphqlLeituraNome> = GraphqlLeituraPorNome<TNome> extends { readonly CamposFiltroConsulta: infer TCampos extends readonly UseNoraGraphQLListagemCampoFiltroDef[] } ? TCampos[number] : never;
+
+type UseNoraGraphQLListagemCamposFiltroVisualizacaoContrato<TNome extends GraphqlLeituraNome> = GraphqlLeituraPorNome<TNome> extends { readonly CamposFiltroVisualizacao: infer TCampos extends readonly UseNoraGraphQLListagemCampoFiltroDef[] } ? TCampos[number] : never;
+
+export type UseNoraGraphQLListagemCampoFiltroConsulta<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = UseNoraGraphQLListagemCampoFiltroSelecionado<UseNoraGraphQLListagemSelectNormalizado<TNome, TSelect>, UseNoraGraphQLListagemCamposFiltroConsultaContrato<TNome>>;
+
+export type UseNoraGraphQLListagemCampoFiltroVisualizacao<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = UseNoraGraphQLListagemCampoFiltroSelecionado<UseNoraGraphQLListagemSelectNormalizado<TNome, TSelect>, UseNoraGraphQLListagemCamposFiltroVisualizacaoContrato<TNome>>;
+
+export type UseNoraGraphQLListagemConsultaParams<TNome extends GraphqlLeituraNome> = {
+    readonly where: UseNoraGraphQLListagemParametrosConsulta<TNome>['where'];
+    readonly limit: number | null;
+    readonly offset: number | null;
+};
+
+export type UseNoraGraphQLListagemCarregamento = keyof typeof NoraApiCarregamento;
+
+export type UseNoraGraphQLListagemParams<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = {
     readonly select: TSelect;
+    readonly camposFiltroConsulta?: readonly UseNoraGraphQLListagemCampoFiltroConsulta<NoInfer<TNome>, NoInfer<TSelect>>[];
+    readonly camposFiltroVisualizacao?: readonly UseNoraGraphQLListagemCampoFiltroVisualizacao<NoInfer<TNome>, NoInfer<TSelect>>[];
     readonly itensPorPagina: number;
     readonly carregando: string;
     readonly mensagemErro: string;
     readonly mensagemListaVazia: string;
     readonly mensagemListaVaziaComFiltro: string;
     readonly carregamento?: UseNoraGraphQLListagemCarregamento;
-    readonly montaParametrosConsulta: (params: UseNoraGraphQLListagemConsultaParams) => TParametros;
-    readonly montaParametrosTotalDeRegistros?: (where: NoraGraphQLFiltroConsultaWhere | null) => TParametros;
-    readonly criaOperacao: (obtem: NoraGraphQLOperacoesLeitura, parametros: TParametros, select: TSelect) => TOperacaoRegistros;
-    readonly criaOperacaoTotalDeRegistros: (obtem: NoraGraphQLOperacoesLeitura, parametros: TParametros) => TOperacaoTotalDeRegistros;
+    readonly montaParametrosConsulta: (params: UseNoraGraphQLListagemConsultaParams<TNome>) => UseNoraGraphQLListagemParametrosConsulta<TNome>;
+    readonly montaParametrosTotalDeRegistros?: (where: UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>['where']) => UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>;
     readonly contador?: ReactNode;
     readonly acoes?: ReactNode;
     readonly rodape?: ReactNode;
@@ -57,6 +86,15 @@ export type UseNoraGraphQLListagemResultado<TRegistro extends object> = Listagem
 
 type UseNoraGraphQLListagemExtrasParams<TRegistro extends object> = {
     readonly listagem: UseNoraGraphQLListagemResultado<TRegistro>;
+};
+
+type CampoFiltroComNomeEPath = {
+    readonly campo: string;
+    readonly path: readonly string[];
+};
+
+type FiltroAtivoComCampo = {
+    readonly campo: string;
 };
 
 function normalizaValorFiltroParaComparacao(valor: NoraGraphQLFiltroConsultaAtivo['valor']): string {
@@ -135,13 +173,58 @@ function criaCarregarMais(params: { readonly podeCarregarMais: boolean; readonly
     };
 };
 
+function selectContemPath(selectRuntime: GraphqlSelectRuntime, path: readonly string[]): boolean {
+    let selectAtual: true | GraphqlSelectRuntime | undefined = selectRuntime;
+
+    for (const parte of path) {
+        if (selectAtual === true) return true;
+        if (!selectAtual) return false;
+
+        selectAtual = selectAtual[parte];
+    }
+
+    return selectAtual !== undefined;
+};
+
+function filtraCamposFiltroPorSelect<TCampo extends CampoFiltroComNomeEPath>(select: GraphqlSelectEntradaRuntime, campos: readonly TCampo[]): readonly TCampo[] {
+    const selectRuntime = normalizaSelectGraphql(select);
+
+    return campos.filter(campo => selectContemPath(selectRuntime, campo.path));
+};
+
+function filtraCamposFiltroPorNomesPermitidos<TCampo extends CampoFiltroComNomeEPath>(campos: readonly TCampo[], nomesPermitidos: readonly string[] | undefined): readonly TCampo[] {
+    if (!nomesPermitidos) return campos;
+    if (nomesPermitidos.length === 0) return [];
+
+    const nomesPermitidosSet = new Set<string>(nomesPermitidos);
+
+    return campos.filter(campo => nomesPermitidosSet.has(campo.campo));
+};
+
+function filtraCamposFiltroDisponiveis<TCampo extends CampoFiltroComNomeEPath>(select: GraphqlSelectEntradaRuntime, campos: readonly TCampo[], nomesPermitidos: readonly string[] | undefined): readonly TCampo[] {
+    return filtraCamposFiltroPorNomesPermitidos(filtraCamposFiltroPorSelect(select, campos), nomesPermitidos);
+};
+
+function filtraFiltrosAtivosPorCamposDisponiveis<TFiltro extends FiltroAtivoComCampo>(filtros: readonly TFiltro[], campos: readonly CampoFiltroComNomeEPath[]): readonly TFiltro[] {
+    if (filtros.length === 0) return filtros;
+
+    const camposDisponiveisSet = new Set<string>(campos.map(campo => campo.campo));
+    const filtrosDisponiveis = filtros.filter(filtro => camposDisponiveisSet.has(filtro.campo));
+
+    if (filtrosDisponiveis.length === filtros.length) return filtros;
+
+    return filtrosDisponiveis;
+};
+
 function useNoraGraphQLListagemExtrasVazio<TRegistro extends object>(_: UseNoraGraphQLListagemExtrasParams<TRegistro>): Record<string, never> {
     return {};
 };
 
-export default function useNoraGraphQLListagem<const TGraphql extends UseNoraGraphQLListagemContratoBase, const TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TGraphql>>, TParametros extends object, const TOperacaoRegistros extends NoraGraphQLOperacaoBase = NoraGraphQLOperacaoBase, const TOperacaoTotalDeRegistros extends NoraGraphQLOperacaoBase = NoraGraphQLOperacaoBase>(params: UseNoraGraphQLListagemParams<TGraphql, TSelect, TParametros, TOperacaoRegistros, TOperacaoTotalDeRegistros>): UseNoraGraphQLListagemResultado<UseNoraGraphQLListagemRegistro<TGraphql, TSelect>> {
-    type TObjeto = UseNoraGraphQLListagemObjeto<TGraphql>;
-    type TRegistro = UseNoraGraphQLListagemRegistro<TGraphql, TSelect>;
+export default function useNoraGraphQLListagem<const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>>(nomeLeitura: TNome, params: UseNoraGraphQLListagemParams<TNome, TSelect>): UseNoraGraphQLListagemResultado<UseNoraGraphQLListagemRegistro<TNome, TSelect>> {
+    type TObjeto = UseNoraGraphQLListagemObjeto<TNome>;
+    type TRegistro = UseNoraGraphQLListagemRegistro<TNome, TSelect>;
+
+    const graphql = GraphqlLeituras[nomeLeitura] as UseNoraGraphQLListagemContratoComEventos<TNome, TSelect>;
 
     const [filtrosConsulta, setFiltrosConsulta] = useState<readonly NoraGraphQLFiltroConsultaAtivo[]>([]);
     const [filtrosConsultaAplicados, setFiltrosConsultaAplicados] = useState<readonly NoraGraphQLFiltroConsultaAtivo[]>([]);
@@ -161,43 +244,63 @@ export default function useNoraGraphQLListagem<const TGraphql extends UseNoraGra
 
     const itensPorPaginaNormalizado = normalizaItensPorPagina(params.itensPorPagina);
     const carregamento = obtemCarregamentoNoraApi(params.carregamento);
-    const camposFiltroConsulta = params.graphql.CamposFiltroConsulta as readonly GraphqlFiltroConsultaCampoDef<TObjeto>[];
-    const camposFiltroVisualizacaoContrato = params.graphql.CamposFiltroVisualizacao as readonly GraphqlFiltroVisualizacaoCampoDef<TObjeto>[];
+    const camposFiltroConsultaContrato = graphql.CamposFiltroConsulta as readonly GraphqlFiltroConsultaCampoDef<TObjeto>[];
+    const camposFiltroVisualizacaoContrato = graphql.CamposFiltroVisualizacao as readonly GraphqlFiltroVisualizacaoCampoDef<TObjeto>[];
+
+    const camposFiltroConsulta = useMemo(() => {
+        return filtraCamposFiltroDisponiveis(params.select as GraphqlSelectEntradaRuntime, camposFiltroConsultaContrato, params.camposFiltroConsulta) as readonly GraphqlFiltroConsultaCampoDef<TObjeto>[];
+    }, [camposFiltroConsultaContrato, params.camposFiltroConsulta, params.select]);
+
+    const camposFiltroVisualizacao = useMemo(() => {
+        return filtraCamposFiltroDisponiveis(params.select as GraphqlSelectEntradaRuntime, camposFiltroVisualizacaoContrato, params.camposFiltroVisualizacao) as readonly GraphqlFiltroVisualizacaoCampoDef<TRegistro>[];
+    }, [camposFiltroVisualizacaoContrato, params.camposFiltroVisualizacao, params.select]);
+
+    const filtrosConsultaDisponiveis = useMemo(() => {
+        return filtraFiltrosAtivosPorCamposDisponiveis(filtrosConsulta, camposFiltroConsulta);
+    }, [camposFiltroConsulta, filtrosConsulta]);
+
+    const filtrosConsultaAplicadosDisponiveis = useMemo(() => {
+        return filtraFiltrosAtivosPorCamposDisponiveis(filtrosConsultaAplicados, camposFiltroConsulta);
+    }, [camposFiltroConsulta, filtrosConsultaAplicados]);
+
+    const filtrosVisualizacaoDisponiveis = useMemo(() => {
+        return filtraFiltrosAtivosPorCamposDisponiveis(filtrosVisualizacao, camposFiltroVisualizacao);
+    }, [camposFiltroVisualizacao, filtrosVisualizacao]);
 
     const resultadoFiltroConsulta = useNoraGraphQLFiltroConsulta({
         campos: camposFiltroConsulta,
-        filtros: filtrosConsultaAplicados,
+        filtros: filtrosConsultaAplicadosDisponiveis,
     });
 
-    const parametrosConsultaRegistros = useMemo(() => {
+    const parametrosConsultaRegistros = useMemo<UseNoraGraphQLListagemParametrosConsulta<TNome>>(() => {
         return params.montaParametrosConsulta({
-            where: resultadoFiltroConsulta.where,
+            where: resultadoFiltroConsulta.where as UseNoraGraphQLListagemParametrosConsulta<TNome>['where'],
             limit: itensPorPaginaNormalizado,
             offset: offsetConsulta,
         });
     }, [itensPorPaginaNormalizado, offsetConsulta, params, resultadoFiltroConsulta.where]);
 
-    const parametrosTotalDeRegistros = useMemo(() => {
-        if (params.montaParametrosTotalDeRegistros) return params.montaParametrosTotalDeRegistros(resultadoFiltroConsulta.where);
+    const parametrosTotalDeRegistros = useMemo<UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>>(() => {
+        if (params.montaParametrosTotalDeRegistros) return params.montaParametrosTotalDeRegistros(resultadoFiltroConsulta.where as UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>['where']);
 
         return params.montaParametrosConsulta({
-            where: resultadoFiltroConsulta.where,
+            where: resultadoFiltroConsulta.where as UseNoraGraphQLListagemParametrosConsulta<TNome>['where'],
             limit: null,
             offset: null,
-        });
+        }) as UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>;
     }, [params, resultadoFiltroConsulta.where]);
 
-    const consultaRegistros = useNoraGraphQLConsulta(obtem => params.criaOperacao(obtem, parametrosConsultaRegistros, params.select), {
+    const consultaRegistros = useNoraGraphQLConsulta(() => graphql.eventos.varios({ parametros: parametrosConsultaRegistros, select: params.select }), {
         valorInicial: [] as readonly TRegistro[],
-        extrair: (resposta: NoraGraphQLRespostaBruta<TOperacaoRegistros>) => extraiListaRespostaGraphQL<TRegistro>(resposta),
+        extrair: resposta => extraiListaRespostaGraphQL<TRegistro>(resposta),
         carregando: params.carregando,
         mensagemErro: params.mensagemErro,
         carregamento,
     });
 
-    const consultaTotalDeRegistros = useNoraGraphQLConsulta(obtem => params.criaOperacaoTotalDeRegistros(obtem, parametrosTotalDeRegistros), {
+    const consultaTotalDeRegistros = useNoraGraphQLConsulta(() => graphql.eventos.totalDeRegistros({ parametros: parametrosTotalDeRegistros }), {
         valorInicial: null as number | null,
-        extrair: (resposta: NoraGraphQLRespostaBruta<TOperacaoTotalDeRegistros>) => extraiTotalDeRegistrosRespostaGraphQL(resposta),
+        extrair: resposta => extraiTotalDeRegistrosRespostaGraphQL(resposta),
         carregando: 'Calculando total de registros',
         mensagemErro: 'Houve um erro calculando o total de registros',
         carregamento,
@@ -206,19 +309,15 @@ export default function useNoraGraphQLListagem<const TGraphql extends UseNoraGra
     const recarregarRegistrosRef = useRef(consultaRegistros.recarregar);
     const recarregarTotalDeRegistrosRef = useRef(consultaTotalDeRegistros.recarregar);
 
-    const camposFiltroVisualizacao = useMemo(() => {
-        return filtraCamposFiltroVisualizacaoPorSelect(params.select as GraphqlSelectEntradaRuntime, camposFiltroVisualizacaoContrato) as readonly GraphqlFiltroVisualizacaoCampoDef<TRegistro>[];
-    }, [camposFiltroVisualizacaoContrato, params.select]);
-
     const resultadoFiltroVisualizacao = useNoraGraphQLFiltroVisualizacao({
         registros: registrosAcumulados,
         campos: camposFiltroVisualizacao,
-        filtros: filtrosVisualizacao,
+        filtros: filtrosVisualizacaoDisponiveis,
     });
 
-    const possuiFiltroConsultaAtivo = filtrosConsulta.length > 0;
-    const possuiFiltroConsultaAplicado = filtrosConsultaAplicados.length > 0;
-    const possuiAlteracaoPendenteConsulta = !filtrosConsultaSaoIguais(filtrosConsulta, filtrosConsultaAplicados);
+    const possuiFiltroConsultaAtivo = filtrosConsultaDisponiveis.length > 0;
+    const possuiFiltroConsultaAplicado = filtrosConsultaAplicadosDisponiveis.length > 0;
+    const possuiAlteracaoPendenteConsulta = !filtrosConsultaSaoIguais(filtrosConsultaDisponiveis, filtrosConsultaAplicadosDisponiveis);
     const possuiFiltroAtivo = possuiFiltroConsultaAplicado || resultadoFiltroVisualizacao.possuiFiltroAtivo;
     const totalDeRegistros = consultaTotalDeRegistros.data;
     const totalCarregado = registrosAcumulados.length;
@@ -231,9 +330,9 @@ export default function useNoraGraphQLListagem<const TGraphql extends UseNoraGra
     const podeCarregarMais = !consultaRegistros.carregando && (podeCarregarMaisComTotal || podeCarregarMaisSemTotal);
 
     const aplicaFiltrosConsulta = useCallback(() => {
-        setFiltrosConsultaAplicados(filtrosConsulta);
+        setFiltrosConsultaAplicados(filtrosConsultaDisponiveis);
         setVersaoAplicacaoConsulta(versaoAtual => versaoAtual + 1);
-    }, [filtrosConsulta]);
+    }, [filtrosConsultaDisponiveis]);
 
     const limpaFiltrosConsulta = useCallback(() => {
         setFiltrosConsulta([]);
@@ -250,8 +349,8 @@ export default function useNoraGraphQLListagem<const TGraphql extends UseNoraGra
 
     const filtrosConsultaValor = useMemo<ContextoFiltrosConsultaValor<object>>(() => ({
         campos: camposFiltroConsulta,
-        filtros: filtrosConsulta,
-        filtrosAplicados: filtrosConsultaAplicados,
+        filtros: filtrosConsultaDisponiveis,
+        filtrosAplicados: filtrosConsultaAplicadosDisponiveis,
         setFiltros: setFiltrosConsulta,
         where: resultadoFiltroConsulta.where,
         possuiFiltroAtivo: possuiFiltroConsultaAtivo,
@@ -260,18 +359,18 @@ export default function useNoraGraphQLListagem<const TGraphql extends UseNoraGra
         versaoAplicacao: versaoAplicacaoConsulta,
         aplicaFiltros: aplicaFiltrosConsulta,
         limpaFiltros: limpaFiltrosConsulta,
-    }), [aplicaFiltrosConsulta, camposFiltroConsulta, filtrosConsulta, filtrosConsultaAplicados, limpaFiltrosConsulta, possuiAlteracaoPendenteConsulta, possuiFiltroConsultaAplicado, possuiFiltroConsultaAtivo, resultadoFiltroConsulta.where, versaoAplicacaoConsulta]);
+    }), [aplicaFiltrosConsulta, camposFiltroConsulta, filtrosConsultaAplicadosDisponiveis, filtrosConsultaDisponiveis, limpaFiltrosConsulta, possuiAlteracaoPendenteConsulta, possuiFiltroConsultaAplicado, possuiFiltroConsultaAtivo, resultadoFiltroConsulta.where, versaoAplicacaoConsulta]);
 
     const filtrosVisualizacaoValor = useMemo<ContextoFiltrosVisualizacaoValor<TRegistro>>(() => ({
         registrosOriginais: resultadoFiltroVisualizacao.registrosOriginais,
         registrosFiltrados: resultadoFiltroVisualizacao.registrosFiltrados,
         campos: camposFiltroVisualizacao,
-        filtros: filtrosVisualizacao,
+        filtros: filtrosVisualizacaoDisponiveis,
         setFiltros: setFiltrosVisualizacao,
         totalOriginal: resultadoFiltroVisualizacao.totalOriginal,
         totalFiltrado: resultadoFiltroVisualizacao.totalFiltrado,
         possuiFiltroAtivo: resultadoFiltroVisualizacao.possuiFiltroAtivo,
-    }), [camposFiltroVisualizacao, filtrosVisualizacao, resultadoFiltroVisualizacao.possuiFiltroAtivo, resultadoFiltroVisualizacao.registrosFiltrados, resultadoFiltroVisualizacao.registrosOriginais, resultadoFiltroVisualizacao.totalFiltrado, resultadoFiltroVisualizacao.totalOriginal]);
+    }), [camposFiltroVisualizacao, filtrosVisualizacaoDisponiveis, resultadoFiltroVisualizacao.possuiFiltroAtivo, resultadoFiltroVisualizacao.registrosFiltrados, resultadoFiltroVisualizacao.registrosOriginais, resultadoFiltroVisualizacao.totalFiltrado, resultadoFiltroVisualizacao.totalOriginal]);
 
     useEffect(() => {
         offsetConsultaRef.current = offsetConsulta;
@@ -350,14 +449,14 @@ export default function useNoraGraphQLListagem<const TGraphql extends UseNoraGra
     };
 };
 
-export function criaContextoNoraGraphQLListagem<const TNomeListagem extends string, const TGraphql extends UseNoraGraphQLListagemContratoBase, const TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TGraphql>>, TParametros extends object, const TOperacaoRegistros extends NoraGraphQLOperacaoBase = NoraGraphQLOperacaoBase, const TOperacaoTotalDeRegistros extends NoraGraphQLOperacaoBase = NoraGraphQLOperacaoBase, TExtras extends object = Record<string, never>>(params: { readonly nomeListagem: TNomeListagem; readonly mensagemErroContexto: string; readonly listagem: UseNoraGraphQLListagemParams<TGraphql, TSelect, TParametros, TOperacaoRegistros, TOperacaoTotalDeRegistros>; readonly useExtras?: (params: UseNoraGraphQLListagemExtrasParams<UseNoraGraphQLListagemRegistro<TGraphql, TSelect>>) => TExtras; }) {
-    type TRegistro = UseNoraGraphQLListagemRegistro<TGraphql, TSelect>;
+export function criaContextoNoraGraphQLListagem<const TNomeListagem extends string, const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>>(params: { readonly nomeLeitura: TNome; readonly nomeListagem: TNomeListagem; readonly mensagemErroContexto: string; readonly listagem: UseNoraGraphQLListagemParams<TNome, TSelect>; readonly useExtras?: (params: UseNoraGraphQLListagemExtrasParams<UseNoraGraphQLListagemRegistro<TNome, TSelect>>) => object; }) {
+    type TRegistro = UseNoraGraphQLListagemRegistro<TNome, TSelect>;
     type TResultado = UseNoraGraphQLListagemResultado<TRegistro>;
     type TContextoBase = { readonly [TChave in TNomeListagem]: TResultado };
-    type TContexto = TContextoBase & TExtras;
+    type TContexto = TContextoBase & object;
 
     const Contexto = createContext<TContexto | undefined>(undefined);
-    const useExtras = (params.useExtras ?? useNoraGraphQLListagemExtrasVazio) as (params: UseNoraGraphQLListagemExtrasParams<TRegistro>) => TExtras;
+    const useExtras = (params.useExtras ?? useNoraGraphQLListagemExtrasVazio) as (params: UseNoraGraphQLListagemExtrasParams<TRegistro>) => object;
 
     const useContexto = (): TContexto => {
         const context = useContext(Contexto);
@@ -365,9 +464,9 @@ export function criaContextoNoraGraphQLListagem<const TNomeListagem extends stri
 
         return context;
     };
-    
+
     const Provider = ({ children }: { readonly children: ReactNode; }) => {
-        const listagem = useNoraGraphQLListagem(params.listagem);
+        const listagem = useNoraGraphQLListagem(params.nomeLeitura, params.listagem);
         const extras = useExtras({ listagem });
         const value = useMemo<TContexto>(() => ({ [params.nomeListagem]: listagem, ...extras } as TContexto), [extras, listagem]);
 
@@ -375,4 +474,4 @@ export function criaContextoNoraGraphQLListagem<const TNomeListagem extends stri
     };
 
     return { Provider, useContexto } as const;
-};
+}

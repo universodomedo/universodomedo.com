@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 
 import styles from './styles.module.css';
 
@@ -9,7 +9,6 @@ import FiltrosVisualizacao from 'Componentes/Filtros/FiltrosVisualizacao/Filtros
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 import type { ContextoFiltrosConsultaValor } from 'Contextos/Contexto__FiltrosConsulta/contexto';
 import type { ContextoFiltrosVisualizacaoValor } from 'Contextos/Contexto__Filtros/contexto';
-import React from 'react';
 
 export const ListagemCompostaModoExibicao = {
     GRADE: 'grade',
@@ -51,17 +50,44 @@ export type ListagemCompostaListagem<TRegistro extends object> = {
     readonly rodape?: ReactNode;
 };
 
-export type ListagemCompostaProps<TRegistro extends object> = {
+type ListagemCompostaPropsBase<TRegistro extends object> = {
     readonly listagem: ListagemCompostaListagem<TRegistro>;
-    readonly modoExibicao: ListagemCompostaModoExibicao;
     readonly obterIdRegistro: (registro: TRegistro) => ListagemCompostaIdRegistro;
     readonly renderizarItem: (registro: TRegistro, indice: number) => ReactNode;
+};
+
+type ListagemCompostaPropsGrade<TRegistro extends object> = ListagemCompostaPropsBase<TRegistro> & {
+    readonly modoExibicao: typeof ListagemCompostaModoExibicao.GRADE;
+    readonly itensPorLinha: number;
+};
+
+type ListagemCompostaPropsLinha<TRegistro extends object> = ListagemCompostaPropsBase<TRegistro> & {
+    readonly modoExibicao: typeof ListagemCompostaModoExibicao.LINHA;
+    readonly itensPorLinha?: never;
+};
+
+export type ListagemCompostaProps<TRegistro extends object> = ListagemCompostaPropsGrade<TRegistro> | ListagemCompostaPropsLinha<TRegistro>;
+
+type ListagemCompostaGradeStyle = CSSProperties & {
+    readonly '--itens-por-linha': number;
 };
 
 function resolveClasseConteudo(modoExibicao: ListagemCompostaModoExibicao): string {
     if (modoExibicao === ListagemCompostaModoExibicao.LINHA) return styles.conteudo_linha;
 
     return styles.conteudo_grade;
+};
+
+function normalizaItensPorLinhaGrade(itensPorLinha: number): number {
+    return Number.isFinite(itensPorLinha) ? Math.max(1, Math.floor(itensPorLinha)) : 1;
+};
+
+function resolveEstiloConteudo<TRegistro extends object>(props: ListagemCompostaProps<TRegistro>): ListagemCompostaGradeStyle | undefined {
+    if (props.modoExibicao === ListagemCompostaModoExibicao.LINHA) return undefined;
+
+    return {
+        '--itens-por-linha': normalizaItensPorLinhaGrade(props.itensPorLinha),
+    };
 };
 
 function deveMostrarFiltroVisualizacao<TRegistro extends object>(filtrosVisualizacao: ContextoFiltrosVisualizacaoValor<TRegistro> | undefined): boolean {
@@ -123,6 +149,7 @@ export default function ListagemComposta<TRegistro extends object>(props: Listag
     const deveMostrarErro = !!listagem.erro;
     const deveMostrarVazio = !deveMostrarLoading && !deveMostrarErro && listagem.registros.length === 0;
     const deveMostrarRegistros = !deveMostrarLoading && !deveMostrarErro && listagem.registros.length > 0;
+    const estiloConteudo = resolveEstiloConteudo(props);
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
 
     return (
@@ -157,12 +184,12 @@ export default function ListagemComposta<TRegistro extends object>(props: Listag
                         </div>
                     )}
                     {deveMostrarRegistros && (
-                        <div className={resolveClasseConteudo(props.modoExibicao)} {...scrollableProps}>
+                        <div className={resolveClasseConteudo(props.modoExibicao)} style={estiloConteudo} {...scrollableProps}>
                             {listagem.registros.map((registro, index) => (
                                 // <div key={props.obterIdRegistro(registro)} className={styles.item}>
-                                <React.Fragment key={index}>
+                                <div key={props.obterIdRegistro(registro)} className={styles.item}>
                                     {props.renderizarItem(registro, index)}
-                                </React.Fragment>
+                                </div>
                             ))}
                             {possuiCarregarMais && listagem.carregarMais && renderizaCarregarMais(listagem.carregarMais)}
                         </div>

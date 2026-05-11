@@ -6,7 +6,7 @@ import SPA__PaginaGerenciarEmblemas__Listagem from 'Conteineres/GerenciarEmblema
 import { ListaEmblemasGerenciamento, useContexto__GerenciarEmblemas } from 'Contextos/Contexto__GerenciarEmblemas/contexto';
 
 export interface Contexto__GerenciarEmblemas__Listagem__Props {
-    emblemas: ListaEmblemasGerenciamento;
+    // emblemas: ListaEmblemasGerenciamento;
 };
 
 const Contexto__GerenciarEmblemas__Listagem = createContext<Contexto__GerenciarEmblemas__Listagem__Props | undefined>(undefined);
@@ -18,12 +18,13 @@ export const useContexto__GerenciarEmblemas__Listagem = (): Contexto__GerenciarE
 };
 
 export const Contexto__GerenciarEmblemas__Listagem__Provider = () => {
-    const { emblemas, carregandoEmblemas } = useContexto__GerenciarEmblemas();
+    // const { emblemas, carregandoEmblemas } = useContexto__GerenciarEmblemas();
 
-    if (carregandoEmblemas) return <div>{carregandoEmblemas}</div>;
+    // if (carregandoEmblemas) return <div>{carregandoEmblemas}</div>;
 
     return (
-        <Contexto__GerenciarEmblemas__Listagem.Provider value={{ emblemas }}>
+        // <Contexto__GerenciarEmblemas__Listagem.Provider value={{ emblemas }}>
+        <Contexto__GerenciarEmblemas__Listagem.Provider value={{ }}>
             <SPA__PaginaGerenciarEmblemas__Listagem />
         </Contexto__GerenciarEmblemas__Listagem.Provider>
     );
