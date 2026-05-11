@@ -1,0 +1,257 @@
+.campo_filtro {
+    position: relative;
+    display: block;
+    flex: 0 0 auto;
+    width: var(--largura-campo-filtro);
+    min-width: var(--largura-campo-filtro-minima);
+    max-width: var(--largura-campo-filtro-maxima);
+    height: var(--altura-campo-filtro);
+    min-height: var(--altura-campo-filtro);
+    border: 0.08em solid rgba(154, 95, 213, 0.24);
+    border-radius: var(--raio-campo-filtro);
+    background: linear-gradient(180deg, rgba(12, 8, 16, 0.9), rgba(3, 3, 7, 0.92));
+    box-shadow: inset 0 0 0.75em rgba(0, 0, 0, 0.32), 0 0 0.45em rgba(154, 95, 213, 0.08);
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+.botao_resumo_multiselect {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 0.24em var(--largura-botao-limpar-campo-filtro) 0.24em 0.72em;
+    border: 0;
+    border-radius: calc(var(--raio-campo-filtro) - 0.08em);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.botao_resumo_multiselect:hover {
+    background: rgba(154, 95, 213, 0.1);
+}
+
+.botao_resumo_multiselect:focus {
+    outline: 0.08em solid rgba(207, 167, 255, 0.62);
+    outline-offset: -0.08em;
+}
+
+.campo_filtro_textos {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.1em;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+}
+
+.campo_filtro_label {
+    color: rgba(245, 230, 180, 0.94);
+    font-family: var(--fonte-cinzel);
+    font-size: 0.66em;
+    line-height: 1.05;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.campo_filtro_status {
+    min-width: 0;
+    color: rgba(235, 228, 214, 0.64);
+    font-size: 0.76em;
+    line-height: 1.1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.botao_limpar_campo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--largura-botao-limpar-campo-filtro);
+    height: 100%;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-left: 0.08em solid rgba(154, 95, 213, 0.16);
+    border-radius: 0 calc(var(--raio-campo-filtro) - 0.08em) calc(var(--raio-campo-filtro) - 0.08em) 0;
+    background: rgba(255, 255, 255, 0.035);
+    color: rgba(235, 228, 214, 0.64);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1.05em;
+    line-height: 1;
+    transition: filter 0.12s ease, color 0.12s ease, background 0.12s ease;
+    box-sizing: border-box;
+}
+
+.botao_limpar_campo:hover {
+    filter: brightness(1.14);
+    color: rgba(245, 230, 180, 0.9);
+    background: rgba(154, 95, 213, 0.16);
+}
+
+.popover_multiselect {
+    position: fixed;
+    z-index: 1000;
+    width: 20em;
+    max-height: 24em;
+    display: flex;
+    flex-direction: column;
+    padding: 0.65em;
+    border: 0.08em solid rgba(154, 95, 213, 0.46);
+    border-radius: 0.62em;
+    background: linear-gradient(180deg, rgba(11, 7, 16, 0.98), rgba(2, 2, 6, 0.99));
+    box-shadow: 0 0.8em 1.8em rgba(0, 0, 0, 0.72), 0 0 1em rgba(154, 95, 213, 0.22), inset 0 0 0.85em rgba(255, 255, 255, 0.035);
+}
+
+.cabecalho_popover {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7em;
+    padding-bottom: 0.52em;
+    border-bottom: 0.08em solid rgba(154, 95, 213, 0.18);
+}
+
+.cabecalho_popover strong {
+    min-width: 0;
+    color: rgba(245, 230, 180, 0.94);
+    font-family: var(--fonte-cinzel);
+    font-size: 0.82em;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cabecalho_popover span {
+    flex-shrink: 0;
+    color: rgba(235, 228, 214, 0.5);
+    font-size: 0.72em;
+}
+
+.lista_opcoes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.28em;
+    min-height: 0;
+    max-height: 16.5em;
+    padding: 0.56em 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.lista_opcoes::-webkit-scrollbar {
+    width: 0.48em;
+}
+
+.lista_opcoes::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.035);
+    border-radius: 999em;
+}
+
+.lista_opcoes::-webkit-scrollbar-thumb {
+    background: rgba(154, 95, 213, 0.42);
+    border-radius: 999em;
+}
+
+.opcao {
+    display: grid;
+    grid-template-columns: 1.45em minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+    min-height: 2.1em;
+    padding: 0.32em 0.45em;
+    border: 0.08em solid rgba(154, 95, 213, 0.16);
+    border-radius: 0.36em;
+    background: rgba(255, 255, 255, 0.035);
+    color: rgba(235, 228, 214, 0.78);
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+}
+
+.opcao:hover {
+    border-color: rgba(207, 167, 255, 0.48);
+    background: rgba(154, 95, 213, 0.14);
+}
+
+.opcao_selecionada {
+    border-color: rgba(207, 167, 255, 0.58);
+    background: linear-gradient(180deg, rgba(60, 34, 91, 0.9), rgba(25, 15, 38, 0.96));
+    color: rgba(245, 230, 180, 0.94);
+}
+
+.marcador_opcao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.35em;
+    height: 1.35em;
+    border: 0.08em solid rgba(154, 95, 213, 0.32);
+    border-radius: 0.26em;
+    color: rgba(245, 230, 180, 0.94);
+    font-size: 0.8em;
+}
+
+.label_opcao {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.total_opcao {
+    color: rgba(235, 228, 214, 0.5);
+    font-size: 0.72em;
+}
+
+.estado_vazio {
+    padding: 0.8em;
+    color: rgba(235, 228, 214, 0.58);
+    font-size: 0.82em;
+    text-align: center;
+}
+
+.rodape_popover {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 0.45em;
+    padding-top: 0.52em;
+    border-top: 0.08em solid rgba(154, 95, 213, 0.18);
+}
+
+.botao_rodape {
+    min-height: 1.95em;
+    padding: 0.26em 0.72em;
+    border-radius: 0.34em;
+    border: 0.08em solid rgba(154, 95, 213, 0.34);
+    background: rgba(47, 25, 73, 0.64);
+    color: rgba(235, 228, 214, 0.86);
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.botao_rodape:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+}
+
+.botao_rodape:not(:disabled):hover {
+    filter: brightness(1.12);
+    border-color: rgba(207, 167, 255, 0.58);
+    box-shadow: 0 0 0.45em rgba(154, 95, 213, 0.2);
+}

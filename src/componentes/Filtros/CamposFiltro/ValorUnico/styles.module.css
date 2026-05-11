@@ -1,0 +1,180 @@
+.campo_filtro {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    gap: 0.52em;
+    width: var(--largura-campo-filtro);
+    min-width: var(--largura-campo-filtro-minima);
+    max-width: var(--largura-campo-filtro-maxima);
+    padding: 0.62em;
+    border: 0.08em solid rgba(154, 95, 213, 0.24);
+    border-radius: var(--raio-campo-filtro);
+    background: linear-gradient(180deg, rgba(12, 8, 16, 0.9), rgba(3, 3, 7, 0.92));
+    box-shadow: inset 0 0 0.75em rgba(0, 0, 0, 0.32), 0 0 0.45em rgba(154, 95, 213, 0.08);
+    box-sizing: border-box;
+}
+
+.campo_filtro_texto {
+    display: block;
+    height: var(--altura-campo-filtro);
+    min-height: var(--altura-campo-filtro);
+    padding: 0;
+    overflow: hidden;
+}
+
+.campo_filtro_texto:focus-within {
+    border-color: rgba(207, 167, 255, 0.68);
+    box-shadow: 0 0 0.45em rgba(154, 95, 213, 0.28), inset 0 0 0.75em rgba(0, 0, 0, 0.32);
+}
+
+.campo_texto_linha {
+    position: relative;
+    display: grid;
+    grid-template-columns: var(--largura-botao-limpar-campo-filtro) minmax(0, 1fr);
+    align-items: stretch;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    padding-right: var(--largura-botao-limpar-campo-filtro);
+    background: rgba(1, 1, 4, 0.64);
+    box-sizing: border-box;
+}
+
+.icone_busca {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: rgba(235, 228, 214, 0.46);
+    font-size: 0.95em;
+    line-height: 1;
+}
+
+.input_texto_campo {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: rgba(235, 228, 214, 0.94);
+    outline: none;
+    font-family: inherit;
+    font-size: 0.86em;
+    line-height: normal;
+    box-sizing: border-box;
+}
+
+.input_texto_campo::placeholder {
+    color: rgba(235, 228, 214, 0.48);
+}
+
+.botao_limpar_texto {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--largura-botao-limpar-campo-filtro);
+    height: 100%;
+    min-height: 0;
+    padding: 0;
+    border: none;
+    border-left: 0.08em solid rgba(154, 95, 213, 0.16);
+    background: rgba(255, 255, 255, 0.035);
+    color: rgba(235, 228, 214, 0.64);
+    cursor: pointer;
+    font-size: 1.05em;
+    line-height: 1;
+    transition: filter 0.12s ease, color 0.12s ease, background 0.12s ease;
+    box-sizing: border-box;
+}
+
+.botao_limpar_texto:hover {
+    filter: brightness(1.14);
+    color: rgba(245, 230, 180, 0.9);
+    background: rgba(154, 95, 213, 0.16);
+}
+
+.campo_filtro_cabecalho {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.65em;
+    min-width: 0;
+}
+
+.campo_filtro_label {
+    color: rgba(245, 230, 180, 0.94);
+    font-family: var(--fonte-cinzel);
+    font-size: 0.76em;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.campo_filtro_status {
+    min-width: 0;
+    color: rgba(235, 228, 214, 0.58);
+    font-size: 0.74em;
+    line-height: 1.25;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.campo_filtro_controles {
+    display: grid;
+    grid-template-columns: minmax(7em, 0.7fr) minmax(9em, 1fr) auto;
+    gap: 0.4em;
+    align-items: center;
+    min-width: 0;
+}
+
+.select_operador_campo,
+.input_valor_campo {
+    min-height: 2.15em;
+    padding: 0.35em 0.62em;
+    border: 0.08em solid rgba(154, 95, 213, 0.28);
+    border-radius: 0.34em;
+    background: rgba(1, 1, 4, 0.64);
+    color: rgba(235, 228, 214, 0.94);
+    outline: none;
+    font-family: inherit;
+    min-width: 0;
+}
+
+.select_operador_campo:focus,
+.input_valor_campo:focus {
+    border-color: rgba(207, 167, 255, 0.68);
+    box-shadow: 0 0 0.45em rgba(154, 95, 213, 0.28);
+}
+
+.input_valor_campo:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.botao_limpar_campo {
+    min-height: 2.15em;
+    padding: 0.32em 0.65em;
+    border-radius: 0.34em;
+    border: 0.08em solid rgba(235, 228, 214, 0.12);
+    background: rgba(255, 255, 255, 0.045);
+    color: rgba(235, 228, 214, 0.68);
+    cursor: pointer;
+    font-family: inherit;
+    transition: filter 0.12s ease, transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.botao_limpar_campo:hover {
+    filter: brightness(1.12);
+    border-color: rgba(207, 167, 255, 0.58);
+    box-shadow: 0 0 0.45em rgba(154, 95, 213, 0.2);
+}
+
+.botao_limpar_campo:active {
+    transform: scale(0.98);
+}

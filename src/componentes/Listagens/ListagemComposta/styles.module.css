@@ -77,6 +77,10 @@
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
+    gap: 0;
+    border-bottom: 0.08em solid rgba(154, 95, 213, 0.28);
+    background: linear-gradient(180deg, rgba(16, 10, 22, 0.92), rgba(6, 5, 9, 0.94));
+    box-shadow: inset 0 -0.75em 1.25em rgba(0, 0, 0, 0.32);
     /* gap: 0.55em; */
     /* padding: 1em 1.15em 0.85em; */
     /* border-bottom: 0.08em solid rgba(154, 95, 213, 0.28); */
@@ -107,6 +111,83 @@
     background: linear-gradient(90deg, transparent, rgba(198, 173, 113, 0.26), rgba(207, 167, 255, 0.36), rgba(198, 173, 113, 0.26), transparent);
     pointer-events: none;
 } */
+
+.barra_filtros_listagem {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    gap: 0.75em;
+    min-width: 0;
+    min-height: 2.6em;
+    padding: 0.34em 0.68em;
+    border-bottom: 0.08em solid rgba(154, 95, 213, 0.16);
+    background: linear-gradient(90deg, rgba(6, 4, 10, 0.92), rgba(24, 15, 34, 0.72), rgba(6, 4, 10, 0.92));
+}
+
+.abas_filtros {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.24em;
+    min-width: 0;
+}
+
+.botao_aba_filtro {
+    min-height: 1.92em;
+    padding: 0.28em 0.72em;
+    border: 0.08em solid rgba(154, 95, 213, 0.2);
+    border-radius: 0.36em;
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(235, 228, 214, 0.58);
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.72em;
+    text-transform: uppercase;
+    letter-spacing: 0.045em;
+    transition: filter 0.12s ease, border-color 0.12s ease, background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.botao_aba_filtro:hover {
+    filter: brightness(1.12);
+    border-color: rgba(207, 167, 255, 0.48);
+    color: rgba(235, 228, 214, 0.82);
+}
+
+.botao_aba_filtro_ativo {
+    border-color: rgba(207, 167, 255, 0.52);
+    background: linear-gradient(180deg, rgba(60, 34, 91, 0.82), rgba(25, 15, 38, 0.92));
+    color: rgba(245, 230, 180, 0.94);
+    box-shadow: 0 0 0.45em rgba(154, 95, 213, 0.18), inset 0 0 0.4em rgba(255, 255, 255, 0.03);
+}
+
+.separador_abas_filtros {
+    color: rgba(207, 167, 255, 0.52);
+    font-size: 0.9em;
+}
+
+.contador_filtros {
+    flex-shrink: 0;
+    min-width: 4.8em;
+    padding: 0.28em 0.65em;
+    border: 0.08em solid rgba(154, 95, 213, 0.22);
+    border-radius: 999em;
+    background: rgba(0, 0, 0, 0.24);
+    color: rgba(245, 230, 180, 0.86);
+    font-family: var(--fonte-cinzel);
+    font-size: 0.76em;
+    letter-spacing: 0.04em;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.painel_filtros {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 0;
+}
 
 .filtros_globais {
     display: flex;

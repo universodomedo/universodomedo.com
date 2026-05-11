@@ -1,0 +1,274 @@
+.campo_filtro {
+    position: relative;
+    display: block;
+    flex: 0 0 auto;
+    width: var(--largura-campo-filtro);
+    min-width: var(--largura-campo-filtro-minima);
+    max-width: var(--largura-campo-filtro-maxima);
+    height: var(--altura-campo-filtro);
+    min-height: var(--altura-campo-filtro);
+    border: 0.08em solid rgba(154, 95, 213, 0.24);
+    border-radius: var(--raio-campo-filtro);
+    background: linear-gradient(180deg, rgba(12, 8, 16, 0.9), rgba(3, 3, 7, 0.92));
+    box-shadow: inset 0 0 0.75em rgba(0, 0, 0, 0.32), 0 0 0.45em rgba(154, 95, 213, 0.08);
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+.botao_resumo_data {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 0.24em var(--largura-botao-limpar-campo-filtro) 0.24em 0.72em;
+    border: 0;
+    border-radius: calc(var(--raio-campo-filtro) - 0.08em);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.botao_resumo_data:hover {
+    background: rgba(154, 95, 213, 0.1);
+}
+
+.botao_resumo_data:focus {
+    outline: 0.08em solid rgba(207, 167, 255, 0.62);
+    outline-offset: -0.08em;
+}
+
+.campo_filtro_textos {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.1em;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+}
+
+.campo_filtro_label {
+    color: rgba(245, 230, 180, 0.94);
+    font-family: var(--fonte-cinzel);
+    font-size: 0.66em;
+    line-height: 1.05;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.campo_filtro_status {
+    min-width: 0;
+    color: rgba(235, 228, 214, 0.64);
+    font-size: 0.76em;
+    line-height: 1.1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.botao_limpar_campo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: var(--largura-botao-limpar-campo-filtro);
+    height: 100%;
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-left: 0.08em solid rgba(154, 95, 213, 0.16);
+    border-radius: 0 calc(var(--raio-campo-filtro) - 0.08em) calc(var(--raio-campo-filtro) - 0.08em) 0;
+    background: rgba(255, 255, 255, 0.035);
+    color: rgba(235, 228, 214, 0.64);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1.05em;
+    line-height: 1;
+    transition: filter 0.12s ease, color 0.12s ease, background 0.12s ease;
+    box-sizing: border-box;
+}
+
+.botao_limpar_campo:hover {
+    filter: brightness(1.14);
+    color: rgba(245, 230, 180, 0.9);
+    background: rgba(154, 95, 213, 0.16);
+}
+
+.popover_calendario {
+    position: fixed;
+    z-index: 1000;
+    width: 20.5em;
+    padding: 0.7em;
+    border: 0.08em solid rgba(154, 95, 213, 0.46);
+    border-radius: 0.62em;
+    background: linear-gradient(180deg, rgba(11, 7, 16, 0.98), rgba(2, 2, 6, 0.99));
+    box-shadow: 0 0.8em 1.8em rgba(0, 0, 0, 0.72), 0 0 1em rgba(154, 95, 213, 0.22), inset 0 0 0.85em rgba(255, 255, 255, 0.035);
+}
+
+.cabecalho_calendario {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75em;
+    margin-bottom: 0.58em;
+}
+
+.cabecalho_calendario strong {
+    color: rgba(245, 230, 180, 0.94);
+    font-family: var(--fonte-cinzel);
+    font-size: 0.88em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.botao_mes,
+.botao_fechar_calendario {
+    min-height: 2.15em;
+    padding: 0.32em 0.65em;
+    border-radius: 0.34em;
+    border: 0.08em solid rgba(154, 95, 213, 0.34);
+    background: rgba(47, 25, 73, 0.64);
+    color: rgba(235, 228, 214, 0.86);
+    cursor: pointer;
+    font-family: inherit;
+    transition: filter 0.12s ease, transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.botao_mes {
+    width: 2.15em;
+    padding: 0.2em 0;
+    font-size: 1.05em;
+}
+
+.botao_mes:hover,
+.botao_fechar_calendario:hover {
+    filter: brightness(1.12);
+    border-color: rgba(207, 167, 255, 0.58);
+    box-shadow: 0 0 0.45em rgba(154, 95, 213, 0.2);
+}
+
+.botao_mes:active,
+.botao_fechar_calendario:active {
+    transform: scale(0.98);
+}
+
+.grade_calendario {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.22em;
+}
+
+.dia_semana {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 1.8em;
+    color: rgba(207, 167, 255, 0.72);
+    font-size: 0.72em;
+    text-transform: uppercase;
+}
+
+.dia_calendario {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.15em;
+    border: 0.08em solid transparent;
+    border-radius: 0.35em;
+    background: rgba(255, 255, 255, 0.035);
+    color: rgba(235, 228, 214, 0.86);
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.dia_calendario:hover {
+    border-color: rgba(207, 167, 255, 0.54);
+    background: rgba(154, 95, 213, 0.2);
+}
+
+.dia_calendario_vazio {
+    background: transparent;
+    cursor: default;
+}
+
+.dia_calendario_hoje {
+    border-color: rgba(245, 230, 180, 0.5);
+}
+
+.dia_calendario_intervalo {
+    background: rgba(154, 95, 213, 0.26);
+    color: rgba(245, 230, 180, 0.92);
+}
+
+.dia_calendario_inicio,
+.dia_calendario_fim {
+    border-color: rgba(245, 230, 180, 0.86);
+    background: linear-gradient(180deg, rgba(122, 72, 180, 0.92), rgba(58, 31, 91, 0.98));
+    color: rgba(255, 242, 198, 0.98);
+    box-shadow: 0 0 0.48em rgba(154, 95, 213, 0.35);
+}
+
+.controles_datas_popover {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0.5em;
+    margin-top: 0.68em;
+}
+
+.grupo_data_input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.22em;
+    min-width: 0;
+}
+
+.grupo_data_input span {
+    color: rgba(235, 228, 214, 0.54);
+    font-size: 0.68em;
+    text-transform: uppercase;
+    letter-spacing: 0.055em;
+}
+
+.input_data {
+    min-height: 2.15em;
+    min-width: 0;
+    padding: 0.35em 0.62em;
+    border: 0.08em solid rgba(154, 95, 213, 0.28);
+    border-radius: 0.34em;
+    background: rgba(1, 1, 4, 0.64);
+    color: rgba(235, 228, 214, 0.94);
+    outline: none;
+    font-family: inherit;
+}
+
+.input_data:focus {
+    border-color: rgba(207, 167, 255, 0.68);
+    box-shadow: 0 0 0.45em rgba(154, 95, 213, 0.28);
+}
+
+.rodape_calendario {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65em;
+    margin-top: 0.68em;
+    padding-top: 0.58em;
+    border-top: 0.08em solid rgba(154, 95, 213, 0.18);
+}
+
+.rodape_calendario span {
+    color: rgba(235, 228, 214, 0.56);
+    font-size: 0.72em;
+    line-height: 1.25;
+}
+
+.botao_fechar_calendario {
+    min-height: 1.9em;
+}

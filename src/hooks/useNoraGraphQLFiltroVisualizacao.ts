@@ -3,7 +3,11 @@
 import { useMemo } from 'react';
 import { GraphqlFiltroCampoTipo, GraphqlFiltroOperador, GraphqlFiltroVisualizacaoCampoDef, GraphqlSelectEntradaRuntime, GraphqlSelectRuntime, normalizaSelectGraphql } from 'types-nora-api';
 
-export type NoraGraphQLFiltroVisualizacaoValor = string | number | boolean | Date | null;
+export type NoraGraphQLFiltroVisualizacaoValorEscalar = string | number | boolean | Date | null;
+
+export type NoraGraphQLFiltroVisualizacaoValorLista = readonly Exclude<NoraGraphQLFiltroVisualizacaoValorEscalar, null>[];
+
+export type NoraGraphQLFiltroVisualizacaoValor = NoraGraphQLFiltroVisualizacaoValorEscalar | NoraGraphQLFiltroVisualizacaoValorLista;
 
 export type NoraGraphQLFiltroVisualizacaoAtivo<TCampo extends string = string> = {
     readonly id: string;
@@ -35,6 +39,10 @@ type UseNoraGraphQLFiltroVisualizacaoParams<TRegistro extends object> = {
     readonly filtros: readonly NoraGraphQLFiltroVisualizacaoAtivo[];
 };
 
+type NoraGraphQLFiltroVisualizacaoAtivoEscalar = NoraGraphQLFiltroVisualizacaoAtivo & {
+    readonly valor: NoraGraphQLFiltroVisualizacaoValorEscalar;
+};
+
 function valorEhObjetoCaminhoFiltroVisualizacao(valor: ValorCaminhoFiltroVisualizacao): valor is ObjetoCaminhoFiltroVisualizacao {
     if (valor === null) return false;
     if (valor === undefined) return false;
@@ -61,6 +69,7 @@ function normalizaTextoFiltroVisualizacao(valor: string): string {
 };
 
 function converteValorParaTexto(valor: ValorCaminhoFiltroVisualizacao | NoraGraphQLFiltroVisualizacaoValor): string {
+    if (Array.isArray(valor)) return valor.map(item => converteValorParaTexto(item)).join(' ');
     if (valor === null) return '';
     if (valor === undefined) return '';
     if (valor instanceof Date) return valor.toISOString();
@@ -69,6 +78,7 @@ function converteValorParaTexto(valor: ValorCaminhoFiltroVisualizacao | NoraGrap
 };
 
 function converteValorParaNumero(valor: ValorCaminhoFiltroVisualizacao | NoraGraphQLFiltroVisualizacaoValor): number | null {
+    if (Array.isArray(valor)) return null;
     if (valor === null) return null;
     if (valor === undefined) return null;
     if (valor instanceof Date) return valor.getTime();
@@ -79,6 +89,7 @@ function converteValorParaNumero(valor: ValorCaminhoFiltroVisualizacao | NoraGra
 };
 
 function converteValorParaBoolean(valor: ValorCaminhoFiltroVisualizacao | NoraGraphQLFiltroVisualizacaoValor): boolean | null {
+    if (Array.isArray(valor)) return null;
     if (typeof valor === 'boolean') return valor;
     if (typeof valor === 'string') {
         const valorNormalizado = normalizaTextoFiltroVisualizacao(valor);
@@ -92,6 +103,7 @@ function converteValorParaBoolean(valor: ValorCaminhoFiltroVisualizacao | NoraGr
 };
 
 function converteValorParaTempoData(valor: ValorCaminhoFiltroVisualizacao | NoraGraphQLFiltroVisualizacaoValor): number | null {
+    if (Array.isArray(valor)) return null;
     if (valor === null) return null;
     if (valor === undefined) return null;
     if (valor instanceof Date) return valor.getTime();
@@ -102,7 +114,7 @@ function converteValorParaTempoData(valor: ValorCaminhoFiltroVisualizacao | Nora
     return Number.isFinite(tempo) ? tempo : null;
 };
 
-function comparaTexto(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: NoraGraphQLFiltroVisualizacaoAtivo): boolean {
+function comparaTexto(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: NoraGraphQLFiltroVisualizacaoAtivoEscalar): boolean {
     const textoRegistro = normalizaTextoFiltroVisualizacao(converteValorParaTexto(valorRegistro));
     const textoFiltro = normalizaTextoFiltroVisualizacao(converteValorParaTexto(filtro.valor));
 
@@ -113,7 +125,7 @@ function comparaTexto(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: Nor
     return true;
 };
 
-function comparaNumero(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: NoraGraphQLFiltroVisualizacaoAtivo): boolean {
+function comparaNumero(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: NoraGraphQLFiltroVisualizacaoAtivoEscalar): boolean {
     const numeroRegistro = converteValorParaNumero(valorRegistro);
     const numeroFiltro = converteValorParaNumero(filtro.valor);
 
@@ -129,7 +141,7 @@ function comparaNumero(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: No
     return true;
 };
 
-function comparaBoolean(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: NoraGraphQLFiltroVisualizacaoAtivo): boolean {
+function comparaBoolean(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: NoraGraphQLFiltroVisualizacaoAtivoEscalar): boolean {
     const booleanRegistro = converteValorParaBoolean(valorRegistro);
     const booleanFiltro = converteValorParaBoolean(filtro.valor);
 
@@ -141,7 +153,7 @@ function comparaBoolean(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: N
     return true;
 };
 
-function comparaData(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: NoraGraphQLFiltroVisualizacaoAtivo): boolean {
+function comparaData(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: NoraGraphQLFiltroVisualizacaoAtivoEscalar): boolean {
     const tempoRegistro = converteValorParaTempoData(valorRegistro);
     const tempoFiltro = converteValorParaTempoData(filtro.valor);
 
@@ -157,12 +169,57 @@ function comparaData(valorRegistro: ValorCaminhoFiltroVisualizacao, filtro: Nora
     return true;
 };
 
+function valorRegistroExisteNaListaTexto(valorRegistro: ValorCaminhoFiltroVisualizacao, valores: NoraGraphQLFiltroVisualizacaoValorLista): boolean {
+    const textoRegistro = normalizaTextoFiltroVisualizacao(converteValorParaTexto(valorRegistro));
+
+    return valores.some(valor => textoRegistro === normalizaTextoFiltroVisualizacao(converteValorParaTexto(valor)));
+};
+
+function valorRegistroExisteNaListaNumero(valorRegistro: ValorCaminhoFiltroVisualizacao, valores: NoraGraphQLFiltroVisualizacaoValorLista): boolean {
+    const numeroRegistro = converteValorParaNumero(valorRegistro);
+    if (numeroRegistro === null) return false;
+
+    return valores.some(valor => converteValorParaNumero(valor) === numeroRegistro);
+};
+
+function valorRegistroExisteNaListaBoolean(valorRegistro: ValorCaminhoFiltroVisualizacao, valores: NoraGraphQLFiltroVisualizacaoValorLista): boolean {
+    const booleanRegistro = converteValorParaBoolean(valorRegistro);
+    if (booleanRegistro === null) return false;
+
+    return valores.some(valor => converteValorParaBoolean(valor) === booleanRegistro);
+};
+
+function valorRegistroExisteNaListaData(valorRegistro: ValorCaminhoFiltroVisualizacao, valores: NoraGraphQLFiltroVisualizacaoValorLista): boolean {
+    const tempoRegistro = converteValorParaTempoData(valorRegistro);
+    if (tempoRegistro === null) return false;
+
+    const diaRegistro = new Date(tempoRegistro).toISOString().slice(0, 10);
+
+    return valores.some(valor => {
+        const tempoValor = converteValorParaTempoData(valor);
+        if (tempoValor === null) return false;
+
+        return new Date(tempoValor).toISOString().slice(0, 10) === diaRegistro;
+    });
+};
+
+function comparaListaValores(valorRegistro: ValorCaminhoFiltroVisualizacao, tipo: GraphqlFiltroCampoTipo, filtro: NoraGraphQLFiltroVisualizacaoAtivo): boolean {
+    if (!Array.isArray(filtro.valor)) return false;
+
+    const existeNaLista = tipo === GraphqlFiltroCampoTipo.STRING ? valorRegistroExisteNaListaTexto(valorRegistro, filtro.valor) : tipo === GraphqlFiltroCampoTipo.NUMBER ? valorRegistroExisteNaListaNumero(valorRegistro, filtro.valor) : tipo === GraphqlFiltroCampoTipo.BOOLEAN ? valorRegistroExisteNaListaBoolean(valorRegistro, filtro.valor) : valorRegistroExisteNaListaData(valorRegistro, filtro.valor);
+
+    if (filtro.operador === GraphqlFiltroOperador.DIFERENTE) return !existeNaLista;
+
+    return existeNaLista;
+};
+
 function filtroEstaNulo(valorRegistro: ValorCaminhoFiltroVisualizacao): boolean {
     return valorRegistro === null || valorRegistro === undefined || valorRegistro === '';
 };
 
 function filtroEhAplicavel(filtro: NoraGraphQLFiltroVisualizacaoAtivo): boolean {
     if (filtro.operador === GraphqlFiltroOperador.ESTA_NULO) return true;
+    if (Array.isArray(filtro.valor)) return filtro.valor.length > 0;
     if (filtro.valor === null) return false;
     if (typeof filtro.valor === 'string') return filtro.valor.trim().length > 0;
 
@@ -173,11 +230,14 @@ function registroPassaNoFiltro<TRegistro extends object>(registro: TRegistro, ca
     const valorRegistro = obtemValorPorPath(registro, campo.path);
 
     if (filtro.operador === GraphqlFiltroOperador.ESTA_NULO) return filtroEstaNulo(valorRegistro);
+    if (Array.isArray(filtro.valor)) return comparaListaValores(valorRegistro, campo.tipo, filtro);
 
-    if (campo.tipo === GraphqlFiltroCampoTipo.STRING) return comparaTexto(valorRegistro, filtro);
-    if (campo.tipo === GraphqlFiltroCampoTipo.NUMBER) return comparaNumero(valorRegistro, filtro);
-    if (campo.tipo === GraphqlFiltroCampoTipo.BOOLEAN) return comparaBoolean(valorRegistro, filtro);
-    if (campo.tipo === GraphqlFiltroCampoTipo.DATE) return comparaData(valorRegistro, filtro);
+    const filtroEscalar = filtro as NoraGraphQLFiltroVisualizacaoAtivoEscalar;
+
+    if (campo.tipo === GraphqlFiltroCampoTipo.STRING) return comparaTexto(valorRegistro, filtroEscalar);
+    if (campo.tipo === GraphqlFiltroCampoTipo.NUMBER) return comparaNumero(valorRegistro, filtroEscalar);
+    if (campo.tipo === GraphqlFiltroCampoTipo.BOOLEAN) return comparaBoolean(valorRegistro, filtroEscalar);
+    if (campo.tipo === GraphqlFiltroCampoTipo.DATE) return comparaData(valorRegistro, filtroEscalar);
 
     return true;
 };

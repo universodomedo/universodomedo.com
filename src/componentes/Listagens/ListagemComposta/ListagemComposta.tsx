@@ -1,6 +1,6 @@
 'use client';
 
-import { CSSProperties, ReactNode } from 'react';
+import { CSSProperties, ReactNode, useEffect, useState } from 'react';
 
 import styles from './styles.module.css';
 
@@ -72,6 +72,13 @@ type ListagemCompostaGradeStyle = CSSProperties & {
     readonly '--itens-por-linha': number;
 };
 
+type ListagemCompostaAbaFiltros = 'consulta' | 'visualizacao';
+
+type ListagemCompostaContadorNormalizado = {
+    readonly texto: ReactNode;
+    readonly titulo?: string;
+};
+
 function resolveClasseConteudo(modoExibicao: ListagemCompostaModoExibicao): string {
     if (modoExibicao === ListagemCompostaModoExibicao.LINHA) return styles.conteudo_linha;
 
@@ -90,8 +97,15 @@ function resolveEstiloConteudo<TRegistro extends object>(props: ListagemComposta
     };
 };
 
+function deveMostrarFiltroConsulta(filtrosConsulta: ContextoFiltrosConsultaValor<object> | undefined): boolean {
+    if (!filtrosConsulta) return false;
+
+    return filtrosConsulta.campos.length > 0;
+};
+
 function deveMostrarFiltroVisualizacao<TRegistro extends object>(filtrosVisualizacao: ContextoFiltrosVisualizacaoValor<TRegistro> | undefined): boolean {
     if (!filtrosVisualizacao) return false;
+    if (filtrosVisualizacao.campos.length === 0) return false;
 
     return filtrosVisualizacao.totalOriginal > 0;
 };
@@ -109,6 +123,27 @@ function deveMostrarCarregarMais(carregarMais: ListagemCompostaCarregarMaisProps
     if (carregarMais.erro) return true;
 
     return true;
+};
+
+function normalizaContadorListagem(contador: ReactNode): ListagemCompostaContadorNormalizado {
+    if (typeof contador !== 'string') return { texto: contador };
+
+    const texto = contador.trim();
+    const matchTotal = texto.match(/^(\d+) de (\d+) registros exibidos$/);
+    const matchCarregado = texto.match(/^(\d+) registros exibidos nesta lista · (\d+) carregados$/);
+    const matchSimples = texto.match(/^(\d+) registros exibidos$/);
+
+    if (matchTotal) return { texto: `${matchTotal[1]} / ${matchTotal[2]}`, titulo: texto };
+    if (matchCarregado) return { texto: `${matchCarregado[1]} / ${matchCarregado[2]}`, titulo: texto };
+    if (matchSimples) return { texto: matchSimples[1], titulo: texto };
+
+    return { texto, titulo: texto };
+};
+
+function renderizaContadorListagem(contador: ReactNode): ReactNode {
+    const contadorNormalizado = normalizaContadorListagem(contador);
+
+    return <div className={styles.contador_filtros} title={contadorNormalizado.titulo}>{contadorNormalizado.texto}</div>;
 };
 
 function renderizaPaginacao(paginacao: ListagemCompostaPaginacaoProps): ReactNode {
@@ -136,10 +171,17 @@ function renderizaCarregarMais(carregarMais: ListagemCompostaCarregarMaisProps):
     );
 };
 
+function resolveClasseAbaFiltro(abaAtual: ListagemCompostaAbaFiltros, aba: ListagemCompostaAbaFiltros): string {
+    if (abaAtual === aba) return `${styles.botao_aba_filtro} ${styles.botao_aba_filtro_ativo}`;
+
+    return styles.botao_aba_filtro;
+};
+
 export default function ListagemComposta<TRegistro extends object>(props: ListagemCompostaProps<TRegistro>) {
     const { listagem } = props;
+    const [abaFiltrosAtiva, setAbaFiltrosAtiva] = useState<ListagemCompostaAbaFiltros>('consulta');
     const possuiAcoes = !!listagem.acoes;
-    const possuiFiltroConsulta = !!listagem.filtrosConsulta;
+    const possuiFiltroConsulta = deveMostrarFiltroConsulta(listagem.filtrosConsulta);
     const possuiFiltroVisualizacao = deveMostrarFiltroVisualizacao(listagem.filtrosVisualizacao);
     const possuiFiltros = possuiFiltroConsulta || possuiFiltroVisualizacao;
     const possuiPaginacao = deveMostrarPaginacao(listagem.paginacao);
@@ -151,6 +193,12 @@ export default function ListagemComposta<TRegistro extends object>(props: Listag
     const deveMostrarRegistros = !deveMostrarLoading && !deveMostrarErro && listagem.registros.length > 0;
     const estiloConteudo = resolveEstiloConteudo(props);
     const { scrollableProps } = useScrollable({ modo: 'sempreVisivel' });
+    const abaFiltrosRenderizada = possuiFiltroConsulta && abaFiltrosAtiva === 'consulta' ? 'consulta' : possuiFiltroVisualizacao ? 'visualizacao' : 'consulta';
+
+    useEffect(() => {
+        if (abaFiltrosAtiva === 'consulta' && !possuiFiltroConsulta && possuiFiltroVisualizacao) setAbaFiltrosAtiva('visualizacao');
+        if (abaFiltrosAtiva === 'visualizacao' && !possuiFiltroVisualizacao && possuiFiltroConsulta) setAbaFiltrosAtiva('consulta');
+    }, [abaFiltrosAtiva, possuiFiltroConsulta, possuiFiltroVisualizacao]);
 
     return (
         <div className={styles.recipiente_listagem_composta}>
@@ -162,8 +210,17 @@ export default function ListagemComposta<TRegistro extends object>(props: Listag
                 )}
                 {possuiFiltros && (
                     <div className={styles.area_filtros}>
-                        {possuiFiltroConsulta && <div className={styles.filtros_globais}><FiltrosConsulta valor={listagem.filtrosConsulta} titulo="Buscar registros" variante="consulta" /></div>}
-                        {possuiFiltroVisualizacao && <div className={styles.filtros_locais}><FiltrosVisualizacao valor={listagem.filtrosVisualizacao as ContextoFiltrosVisualizacaoValor<object>} titulo="Refinar esta lista" variante="visualizacao" contador={listagem.contador} /></div>}
+                        <div className={styles.barra_filtros_listagem}>
+                            <div className={styles.abas_filtros} role="tablist" aria-label="Filtros da listagem">
+                                {possuiFiltroConsulta && <button type="button" onClick={() => setAbaFiltrosAtiva('consulta')} className={resolveClasseAbaFiltro(abaFiltrosRenderizada, 'consulta')}>Buscar registros</button>}
+                                {possuiFiltroVisualizacao && <button type="button" onClick={() => setAbaFiltrosAtiva('visualizacao')} className={resolveClasseAbaFiltro(abaFiltrosRenderizada, 'visualizacao')}>Refinar lista</button>}
+                            </div>
+                            {listagem.contador && renderizaContadorListagem(listagem.contador)}
+                        </div>
+                        <div className={styles.painel_filtros}>
+                            {abaFiltrosRenderizada === 'consulta' && possuiFiltroConsulta && <div className={styles.filtros_globais}><FiltrosConsulta valor={listagem.filtrosConsulta} titulo="Buscar registros" variante="consulta" /></div>}
+                            {abaFiltrosRenderizada === 'visualizacao' && possuiFiltroVisualizacao && <div className={styles.filtros_locais}><FiltrosVisualizacao valor={listagem.filtrosVisualizacao as ContextoFiltrosVisualizacaoValor<object>} titulo="Refinar esta lista" variante="visualizacao" /></div>}
+                        </div>
                     </div>
                 )}
                 <div className={styles.area_conteudo}>

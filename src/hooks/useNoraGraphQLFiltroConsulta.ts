@@ -3,19 +3,21 @@
 import { useMemo } from 'react';
 import { GraphqlFiltroConsultaCampoDef, GraphqlFiltroOperador } from 'types-nora-api';
 
-import { NoraGraphQLFiltroVisualizacaoAtivo, NoraGraphQLFiltroVisualizacaoValor } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
+import { NoraGraphQLFiltroVisualizacaoAtivo, NoraGraphQLFiltroVisualizacaoValor, NoraGraphQLFiltroVisualizacaoValorEscalar, NoraGraphQLFiltroVisualizacaoValorLista } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
 
 export type NoraGraphQLFiltroConsultaAtivo = NoraGraphQLFiltroVisualizacaoAtivo;
 
 export type NoraGraphQLFiltroConsultaValor = NoraGraphQLFiltroVisualizacaoValor;
 
 export type NoraGraphQLFiltroConsultaWhereOperadores = {
-    readonly eq?: NoraGraphQLFiltroConsultaValor;
-    readonly ne?: NoraGraphQLFiltroConsultaValor;
-    readonly gt?: NoraGraphQLFiltroConsultaValor;
-    readonly gte?: NoraGraphQLFiltroConsultaValor;
-    readonly lt?: NoraGraphQLFiltroConsultaValor;
-    readonly lte?: NoraGraphQLFiltroConsultaValor;
+    readonly eq?: NoraGraphQLFiltroVisualizacaoValorEscalar;
+    readonly ne?: NoraGraphQLFiltroVisualizacaoValorEscalar;
+    readonly in?: NoraGraphQLFiltroVisualizacaoValorLista;
+    readonly notIn?: NoraGraphQLFiltroVisualizacaoValorLista;
+    readonly gt?: NoraGraphQLFiltroVisualizacaoValorEscalar;
+    readonly gte?: NoraGraphQLFiltroVisualizacaoValorEscalar;
+    readonly lt?: NoraGraphQLFiltroVisualizacaoValorEscalar;
+    readonly lte?: NoraGraphQLFiltroVisualizacaoValorEscalar;
     readonly isNull?: boolean;
 };
 
@@ -39,6 +41,10 @@ type UseNoraGraphQLFiltroConsultaResultado = {
     readonly possuiFiltroConsultaAtivo: boolean;
 };
 
+function valorFiltroConsultaEhLista(valor: NoraGraphQLFiltroConsultaValor): valor is NoraGraphQLFiltroVisualizacaoValorLista {
+    return Array.isArray(valor);
+};
+
 function obtemCampoFiltroConsulta<TRegistro extends object>(campos: readonly GraphqlFiltroConsultaCampoDef<TRegistro>[], nomeCampo: string): GraphqlFiltroConsultaCampoDef<TRegistro> | null {
     return campos.find(campo => campo.campo === nomeCampo) ?? null;
 };
@@ -56,18 +62,37 @@ function operadorFiltroConsultaExigeValor(operador: GraphqlFiltroOperador): bool
 
 function validaValorFiltroConsulta(filtro: NoraGraphQLFiltroConsultaAtivo): void {
     if (!operadorFiltroConsultaExigeValor(filtro.operador)) return;
-    if (filtro.valor === null) throw new Error(`Filtro de consulta GraphQL recebeu valor vazio para o campo ${filtro.campo}`);
-    if (typeof filtro.valor === 'string' && filtro.valor.trim().length === 0) throw new Error(`Filtro de consulta GraphQL recebeu texto vazio para o campo ${filtro.campo}`);
+
+    const valor = filtro.valor;
+
+    if (valorFiltroConsultaEhLista(valor)) {
+        if (valor.length === 0) throw new Error(`Filtro de consulta GraphQL recebeu lista vazia para o campo ${filtro.campo}`);
+
+        return;
+    }
+
+    if (valor === null) throw new Error(`Filtro de consulta GraphQL recebeu valor vazio para o campo ${filtro.campo}`);
+    if (typeof valor === 'string' && valor.trim().length === 0) throw new Error(`Filtro de consulta GraphQL recebeu texto vazio para o campo ${filtro.campo}`);
 };
 
 function montaOperadorWhereFiltroConsulta(filtro: NoraGraphQLFiltroConsultaAtivo): NoraGraphQLFiltroConsultaWhereOperadores {
     if (filtro.operador === GraphqlFiltroOperador.ESTA_NULO) return { isNull: true };
-    if (filtro.operador === GraphqlFiltroOperador.IGUAL) return { eq: filtro.valor };
-    if (filtro.operador === GraphqlFiltroOperador.DIFERENTE) return { ne: filtro.valor };
-    if (filtro.operador === GraphqlFiltroOperador.MAIOR_QUE) return { gt: filtro.valor };
-    if (filtro.operador === GraphqlFiltroOperador.MAIOR_OU_IGUAL) return { gte: filtro.valor };
-    if (filtro.operador === GraphqlFiltroOperador.MENOR_QUE) return { lt: filtro.valor };
-    if (filtro.operador === GraphqlFiltroOperador.MENOR_OU_IGUAL) return { lte: filtro.valor };
+
+    const valor = filtro.valor;
+
+    if (valorFiltroConsultaEhLista(valor)) {
+        if (filtro.operador === GraphqlFiltroOperador.IGUAL) return { in: valor };
+        if (filtro.operador === GraphqlFiltroOperador.DIFERENTE) return { notIn: valor };
+
+        throw new Error(`Filtro de consulta GraphQL recebeu lista de valores com operador incompatível para o campo ${filtro.campo}: ${filtro.operador}`);
+    }
+
+    if (filtro.operador === GraphqlFiltroOperador.IGUAL) return { eq: valor };
+    if (filtro.operador === GraphqlFiltroOperador.DIFERENTE) return { ne: valor };
+    if (filtro.operador === GraphqlFiltroOperador.MAIOR_QUE) return { gt: valor };
+    if (filtro.operador === GraphqlFiltroOperador.MAIOR_OU_IGUAL) return { gte: valor };
+    if (filtro.operador === GraphqlFiltroOperador.MENOR_QUE) return { lt: valor };
+    if (filtro.operador === GraphqlFiltroOperador.MENOR_OU_IGUAL) return { lte: valor };
 
     throw new Error(`Operador não suportado em filtro de consulta GraphQL: ${filtro.operador}`);
 };
