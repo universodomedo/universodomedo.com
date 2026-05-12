@@ -1,10 +1,11 @@
 'use client';
 
-import { GraphqlFiltroCampoTipo, GraphqlFiltroConsultaCampoDef } from 'types-nora-api';
+import { GraphqlFiltroCampoTipo, GraphqlFiltroConsultaCampoDef, GraphqlFiltroControleVisualizacao, type GraphqlOpcaoFiltroConsulta, type GraphqlOpcoesFiltroConsultaCampo } from 'types-nora-api';
 
 import styles from '../FiltrosVisualizacao/styles.module.css';
 
 import CampoFiltroDataRange from 'Componentes/Filtros/CamposFiltro/DataRange/DataRange';
+import CampoFiltroMultiSelect from 'Componentes/Filtros/CamposFiltro/MultiSelect/MultiSelect';
 import CampoFiltroValorUnico from 'Componentes/Filtros/CamposFiltro/ValorUnico/ValorUnico';
 import { ContextoFiltrosConsultaValor, useContextoFiltrosConsulta } from 'Contextos/Contexto__FiltrosConsulta/contexto';
 import { NoraGraphQLFiltroConsultaAtivo } from 'Hooks/useNoraGraphQLFiltroConsulta';
@@ -17,12 +18,20 @@ export type FiltrosConsultaProps = {
     readonly variante?: FiltrosConsultaVariante;
 };
 
+type ContextoFiltrosConsultaValorComRegistros = ContextoFiltrosConsultaValor<object> & {
+    readonly registrosOriginais?: readonly object[];
+};
+
 const LABEL_PARTES_CAMPO: Record<string, string> = {
     id: 'ID',
     dataCriacao: 'Data Criação',
     dataPrevisaoInicio: 'Data Prevista',
     dataInicio: 'Data Início',
     duracaoEmSegundos: 'Duração',
+    nome: 'Nome',
+    usuario: 'Usuário',
+    username: 'Username',
+    tipoPersonagem: 'Tipo',
 };
 
 function separaCamelCase(texto: string): string {
@@ -58,6 +67,28 @@ function contaCamposComFiltro(filtros: readonly NoraGraphQLFiltroConsultaAtivo[]
     return new Set(filtros.map(filtro => filtro.campo)).size;
 };
 
+function obtemRegistrosOriginais(valor: ContextoFiltrosConsultaValor<object>): readonly object[] {
+    if (!('registrosOriginais' in valor)) return [];
+
+    const valorComRegistros = valor as ContextoFiltrosConsultaValorComRegistros;
+
+    return valorComRegistros.registrosOriginais ?? [];
+};
+
+function obtemOpcoesConsultaCampo(opcoesPorCampo: readonly GraphqlOpcoesFiltroConsultaCampo[] | undefined, campo: string): readonly GraphqlOpcaoFiltroConsulta[] | undefined {
+    return opcoesPorCampo?.find(opcoesCampo => opcoesCampo.campo === campo)?.opcoes;
+};
+
+function campoUsaMultiSelect(campo: GraphqlFiltroConsultaCampoDef<object>): boolean {
+    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.MULTISELECT;
+};
+
+function campoUsaDataRange(campo: GraphqlFiltroConsultaCampoDef<object>): boolean {
+    if (campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.DATA_RANGE) return true;
+
+    return !campo.controleVisualizacao && campo.tipo === GraphqlFiltroCampoTipo.DATE;
+};
+
 function FiltrosConsultaComContexto(props: { readonly titulo: string; readonly variante: FiltrosConsultaVariante; }) {
     const valor = useContextoFiltrosConsulta<object>();
 
@@ -65,7 +96,8 @@ function FiltrosConsultaComContexto(props: { readonly titulo: string; readonly v
 };
 
 function FiltrosConsultaInterno({ valor, titulo, variante }: { readonly valor: ContextoFiltrosConsultaValor<object>; readonly titulo: string; readonly variante: FiltrosConsultaVariante; }) {
-    const { campos, filtros, filtrosAplicados, setFiltros, possuiAlteracaoPendente, aplicaFiltros, limpaFiltros } = valor;
+    const { campos, filtros, filtrosAplicados, setFiltros, possuiAlteracaoPendente, aplicaFiltros, limpaFiltros, opcoesPorCampo } = valor;
+    const registrosOriginais = obtemRegistrosOriginais(valor);
     const totalCamposFiltro = contaCamposComFiltro(filtros);
     const totalCamposAplicados = contaCamposComFiltro(filtrosAplicados);
 
@@ -75,7 +107,9 @@ function FiltrosConsultaInterno({ valor, titulo, variante }: { readonly valor: C
         <section className={resolveClasseFiltros(variante)} aria-label={titulo}>
             <div className={styles.barra_filtros}>
                 <div className={styles.trilho_filtros}>
-                    {campos.map(campo => campo.tipo === GraphqlFiltroCampoTipo.DATE ? (
+                    {campos.map(campo => campoUsaMultiSelect(campo) ? (
+                        <CampoFiltroMultiSelect key={campo.campo} campo={campo} registros={registrosOriginais} filtros={filtros} setFiltros={setFiltros} label={humanizaLabelCampo(campo)} opcoesExternas={obtemOpcoesConsultaCampo(opcoesPorCampo, campo.campo)} />
+                    ) : campoUsaDataRange(campo) ? (
                         <CampoFiltroDataRange key={campo.campo} campo={campo} filtros={filtros} setFiltros={setFiltros} label={humanizaLabelCampo(campo)} />
                     ) : (
                         <CampoFiltroValorUnico key={campo.campo} campo={campo} filtros={filtros} setFiltros={setFiltros} label={humanizaLabelCampo(campo)} />

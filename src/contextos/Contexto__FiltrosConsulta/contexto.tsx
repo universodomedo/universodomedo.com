@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState } from 'react';
-import { GraphqlFiltroConsultaCampoDef } from 'types-nora-api';
+import { GraphqlFiltroConsultaCampoDef, type GraphqlOpcoesFiltroConsultaCampo } from 'types-nora-api';
 
 import useNoraGraphQLFiltroConsulta, { NoraGraphQLFiltroConsultaAtivo, NoraGraphQLFiltroConsultaWhere } from 'Hooks/useNoraGraphQLFiltroConsulta';
 
@@ -17,6 +17,7 @@ export type ContextoFiltrosConsultaValor<TRegistro extends object> = {
     readonly versaoAplicacao: number;
     readonly aplicaFiltros: () => void;
     readonly limpaFiltros: () => void;
+    readonly opcoesPorCampo?: readonly GraphqlOpcoesFiltroConsultaCampo[];
 };
 
 type FiltrosConsultaProviderProps<TRegistro extends object> = {

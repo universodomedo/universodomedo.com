@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, createElement, useCallback, useEffect, useMemo, useRef, useState, useContext, type ReactNode } from 'react';
-import { ApiOperacaoGraphqlGet, GraphqlFiltroConsultaCampoDef, GraphqlFiltroVisualizacaoCampoDef, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemVariosParametrosEntidade, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime, GraphqlSelectNormalizadoObjeto, GraphqlSelectRuntime, GraphqlTotalDeRegistrosParametrosEntidade, normalizaSelectGraphql } from 'types-nora-api';
+import { ApiOperacaoGraphqlGet, GraphqlFiltroConsultaCampoDef, GraphqlFiltroControleVisualizacao, GraphqlFiltroVisualizacaoCampoDef, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemVariosParametrosEntidade, GraphqlOpcoesFiltroConsultaCampo, GraphqlOpcoesFiltrosConsultaParametros, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime, GraphqlSelectNormalizadoObjeto, GraphqlSelectRuntime, GraphqlTotalDeRegistrosParametrosEntidade, normalizaSelectGraphql } from 'types-nora-api';
 
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import type { ContextoFiltrosConsultaValor } from 'Contextos/Contexto__FiltrosConsulta/contexto';
@@ -29,9 +29,12 @@ type UseNoraGraphQLListagemParametrosConsulta<TNome extends GraphqlLeituraNome> 
 
 type UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome extends GraphqlLeituraNome> = GraphqlTotalDeRegistrosParametrosEntidade<UseNoraGraphQLListagemObjeto<TNome>>;
 
+type UseNoraGraphQLListagemParametrosOpcoesFiltrosConsulta<TNome extends GraphqlLeituraNome> = GraphqlOpcoesFiltrosConsultaParametros<UseNoraGraphQLListagemObjeto<TNome>, string>;
+
 type UseNoraGraphQLListagemEventos<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = {
     readonly varios: (definicao: { readonly parametros: UseNoraGraphQLListagemParametrosConsulta<TNome>; readonly select: TSelect; }) => NoraGraphQLOperacaoBase;
     readonly totalDeRegistros: (definicao: { readonly parametros: UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>; }) => NoraGraphQLOperacaoBase;
+    readonly opcoesFiltrosConsulta: (definicao: { readonly parametros: UseNoraGraphQLListagemParametrosOpcoesFiltrosConsulta<TNome>; }) => NoraGraphQLOperacaoBase;
 };
 
 type UseNoraGraphQLListagemContratoComEventos<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = UseNoraGraphQLListagemContrato<TNome> & {
@@ -152,6 +155,19 @@ function extraiTotalDeRegistrosRespostaGraphQL(resposta: object): number {
     return totalDeRegistros;
 };
 
+function extraiOpcoesFiltrosConsultaRespostaGraphQL(resposta: object): readonly GraphqlOpcoesFiltroConsultaCampo[] {
+    const valoresResposta = Object.values(resposta);
+
+    if (valoresResposta.length === 0) throw new Error('Resposta GraphQL de opções de filtros não possui nenhum campo de dados');
+    if (valoresResposta.length > 1) throw new Error('Resposta GraphQL de opções de filtros possui múltiplos campos de dados');
+
+    const valorResposta = valoresResposta[0];
+
+    if (!Array.isArray(valorResposta)) throw new Error('Resposta GraphQL de opções de filtros não retornou uma lista');
+
+    return valorResposta as readonly GraphqlOpcoesFiltroConsultaCampo[];
+};
+
 function montaContadorPadrao(params: { readonly totalDeRegistros: number | null; readonly totalCarregado: number; readonly totalFiltrado: number; readonly possuiFiltroVisualizacao: boolean; readonly carregandoTotal: string | null; }): ReactNode {
     if (params.carregandoTotal && params.totalDeRegistros === null) return 'Calculando total de registros...';
     if (params.totalDeRegistros === null && params.possuiFiltroVisualizacao) return `${params.totalFiltrado} registros exibidos nesta lista · ${params.totalCarregado} carregados`;
@@ -216,6 +232,14 @@ function filtraFiltrosAtivosPorCamposDisponiveis<TFiltro extends FiltroAtivoComC
     return filtrosDisponiveis;
 };
 
+function campoConsultaPrecisaDeOpcoesRemotas(campo: GraphqlFiltroConsultaCampoDef<object>): boolean {
+    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.MULTISELECT;
+};
+
+function criaAssinaturaCamposOpcoesFiltrosConsulta(campos: readonly GraphqlFiltroConsultaCampoDef<object>[]): string {
+    return campos.map(campo => campo.campo).sort().join('|');
+};
+
 function useNoraGraphQLListagemExtrasVazio<TRegistro extends object>(_: UseNoraGraphQLListagemExtrasParams<TRegistro>): Record<string, never> {
     return {};
 };
@@ -239,6 +263,7 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
     const offsetConsultaRef = useRef(offsetConsulta);
     const primeiraRequisicaoRegistrosRef = useRef(true);
     const primeiraRequisicaoTotalDeRegistrosRef = useRef(true);
+    const primeiraRequisicaoOpcoesFiltrosConsultaRef = useRef(true);
     const primeiraAplicacaoConsultaRef = useRef(true);
     const ultimaDataRegistrosProcessadaRef = useRef<readonly TRegistro[] | null>(null);
 
@@ -254,6 +279,12 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
     const camposFiltroVisualizacao = useMemo(() => {
         return filtraCamposFiltroDisponiveis(params.select as GraphqlSelectEntradaRuntime, camposFiltroVisualizacaoContrato, params.camposFiltroVisualizacao) as readonly GraphqlFiltroVisualizacaoCampoDef<TRegistro>[];
     }, [camposFiltroVisualizacaoContrato, params.camposFiltroVisualizacao, params.select]);
+
+    const camposOpcoesFiltrosConsulta = useMemo(() => {
+        return camposFiltroConsulta.filter(campo => campoConsultaPrecisaDeOpcoesRemotas(campo as GraphqlFiltroConsultaCampoDef<object>)) as readonly GraphqlFiltroConsultaCampoDef<TObjeto>[];
+    }, [camposFiltroConsulta]);
+
+    const assinaturaCamposOpcoesFiltrosConsulta = useMemo(() => criaAssinaturaCamposOpcoesFiltrosConsulta(camposOpcoesFiltrosConsulta as readonly GraphqlFiltroConsultaCampoDef<object>[]), [camposOpcoesFiltrosConsulta]);
 
     const filtrosConsultaDisponiveis = useMemo(() => {
         return filtraFiltrosAtivosPorCamposDisponiveis(filtrosConsulta, camposFiltroConsulta);
@@ -290,6 +321,14 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
         }) as UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>;
     }, [params, resultadoFiltroConsulta.where]);
 
+    const parametrosOpcoesFiltrosConsulta = useMemo<UseNoraGraphQLListagemParametrosOpcoesFiltrosConsulta<TNome>>(() => {
+        return {
+            campos: camposOpcoesFiltrosConsulta.map(campo => campo.campo),
+            where: resultadoFiltroConsulta.where as UseNoraGraphQLListagemParametrosOpcoesFiltrosConsulta<TNome>['where'],
+            limitePorCampo: 100,
+        };
+    }, [camposOpcoesFiltrosConsulta, resultadoFiltroConsulta.where]);
+
     const consultaRegistros = useNoraGraphQLConsulta(() => graphql.eventos.varios({ parametros: parametrosConsultaRegistros, select: params.select }), {
         valorInicial: [] as readonly TRegistro[],
         extrair: resposta => extraiListaRespostaGraphQL<TRegistro>(resposta),
@@ -306,8 +345,19 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
         carregamento,
     });
 
+    const consultaOpcoesFiltrosConsulta = useNoraGraphQLConsulta(() => graphql.eventos.opcoesFiltrosConsulta({ parametros: parametrosOpcoesFiltrosConsulta }), {
+        valorInicial: [] as readonly GraphqlOpcoesFiltroConsultaCampo[],
+        extrair: resposta => extraiOpcoesFiltrosConsultaRespostaGraphQL(resposta),
+        carregando: 'Buscando opções de filtros',
+        mensagemErro: 'Houve um erro recuperando as opções de filtros',
+        executarAoMontar: camposOpcoesFiltrosConsulta.length > 0,
+        limparDataAoFalhar: false,
+        carregamento,
+    });
+
     const recarregarRegistrosRef = useRef(consultaRegistros.recarregar);
     const recarregarTotalDeRegistrosRef = useRef(consultaTotalDeRegistros.recarregar);
+    const recarregarOpcoesFiltrosConsultaRef = useRef(consultaOpcoesFiltrosConsulta.recarregar);
 
     const resultadoFiltroVisualizacao = useNoraGraphQLFiltroVisualizacao({
         registros: registrosAcumulados,
@@ -359,7 +409,8 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
         versaoAplicacao: versaoAplicacaoConsulta,
         aplicaFiltros: aplicaFiltrosConsulta,
         limpaFiltros: limpaFiltrosConsulta,
-    }), [aplicaFiltrosConsulta, camposFiltroConsulta, filtrosConsultaAplicadosDisponiveis, filtrosConsultaDisponiveis, limpaFiltrosConsulta, possuiAlteracaoPendenteConsulta, possuiFiltroConsultaAplicado, possuiFiltroConsultaAtivo, resultadoFiltroConsulta.where, versaoAplicacaoConsulta]);
+        opcoesPorCampo: consultaOpcoesFiltrosConsulta.data,
+    }), [aplicaFiltrosConsulta, camposFiltroConsulta, consultaOpcoesFiltrosConsulta.data, filtrosConsultaAplicadosDisponiveis, filtrosConsultaDisponiveis, limpaFiltrosConsulta, possuiAlteracaoPendenteConsulta, possuiFiltroConsultaAplicado, possuiFiltroConsultaAtivo, resultadoFiltroConsulta.where, versaoAplicacaoConsulta]);
 
     const filtrosVisualizacaoValor = useMemo<ContextoFiltrosVisualizacaoValor<TRegistro>>(() => ({
         registrosOriginais: resultadoFiltroVisualizacao.registrosOriginais,
@@ -383,6 +434,10 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
     useEffect(() => {
         recarregarTotalDeRegistrosRef.current = consultaTotalDeRegistros.recarregar;
     }, [consultaTotalDeRegistros.recarregar]);
+
+    useEffect(() => {
+        recarregarOpcoesFiltrosConsultaRef.current = consultaOpcoesFiltrosConsulta.recarregar;
+    }, [consultaOpcoesFiltrosConsulta.recarregar]);
 
     useEffect(() => {
         if (ultimaDataRegistrosProcessadaRef.current === consultaRegistros.data) return;
@@ -415,6 +470,17 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
 
         recarregarTotalDeRegistrosRef.current().catch(() => undefined);
     }, [versaoRequisicaoTotalDeRegistros]);
+
+    useEffect(() => {
+        if (assinaturaCamposOpcoesFiltrosConsulta.length === 0) return;
+
+        if (primeiraRequisicaoOpcoesFiltrosConsultaRef.current) {
+            primeiraRequisicaoOpcoesFiltrosConsultaRef.current = false;
+            return;
+        }
+
+        recarregarOpcoesFiltrosConsultaRef.current().catch(() => undefined);
+    }, [assinaturaCamposOpcoesFiltrosConsulta, versaoAplicacaoConsulta]);
 
     useEffect(() => {
         if (primeiraAplicacaoConsultaRef.current) {

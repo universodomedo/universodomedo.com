@@ -66,7 +66,7 @@ export const ContextoGerenciarAvatares__Provider = ({ children }: { children: Re
 export function obtemListagemPersonagens() {
     return useNoraGraphQLListagem('Personagem', {
         select: ['id', 'nome', 'usuario', 'tipoPersonagem', 'avatares'],
-        itensPorPagina: 12,
+        itensPorPagina: 40,
         carregando: 'Buscando Personagens',
         mensagemErro: 'Houve um erro recuperando os Personagens existentes',
         mensagemListaVazia: 'Nenhum personagem encontrado.',

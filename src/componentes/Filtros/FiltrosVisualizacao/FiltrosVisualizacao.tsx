@@ -34,11 +34,15 @@ const LABEL_PARTES_CAMPO: Record<string, string> = {
     nomeGeralArquivo: 'Nome do arquivo',
     tipoArquivoNome: 'Tipo de arquivo',
     usuarioAdicionouUsername: 'Usuário',
-    tipoArquivo: 'Tipo de arquivo',
-    usuarioAdicionou: 'Usuário',
-    usuario: 'Usuário',
-    tipoPersonagem: 'Tipo de personagem',
+    tipoPersonagem: 'Tipo',
 };
+
+const CAMPOS_MULTISELECT = new Set<string>([
+    'tipoArquivoNome',
+    'usuarioAdicionouUsername',
+    'tipoArquivo.nome',
+    'usuarioAdicionou.username',
+]);
 
 function separaCamelCase(texto: string): string {
     return texto.replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -73,12 +77,44 @@ function contaCamposComFiltro(filtros: readonly NoraGraphQLFiltroVisualizacaoAti
     return new Set(filtros.map(filtro => filtro.campo)).size;
 };
 
+function campoPossuiControleMultiselect(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
+    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.MULTISELECT;
+};
+
+function campoPossuiControleDataRange(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
+    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.DATA_RANGE;
+};
+
+function campoPossuiControleValorUnico(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
+    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.VALOR_UNICO;
+};
+
+function campoPossuiControleTexto(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
+    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.TEXTO;
+};
+
+function campoEstaNoLegadoMultiselect(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
+    if (CAMPOS_MULTISELECT.has(campo.campo)) return true;
+
+    return CAMPOS_MULTISELECT.has(campo.path.join('.'));
+};
+
 function campoEhDataRange(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
-    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.DATA_RANGE || campo.tipo === GraphqlFiltroCampoTipo.DATE;
+    if (campoPossuiControleDataRange(campo)) return true;
+    if (campoPossuiControleMultiselect(campo)) return false;
+    if (campoPossuiControleValorUnico(campo)) return false;
+    if (campoPossuiControleTexto(campo)) return false;
+
+    return campo.tipo === GraphqlFiltroCampoTipo.DATE;
 };
 
 function campoEhMultiselect(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
-    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.MULTISELECT;
+    if (campoPossuiControleMultiselect(campo)) return true;
+    if (campoPossuiControleDataRange(campo)) return false;
+    if (campoPossuiControleValorUnico(campo)) return false;
+    if (campoPossuiControleTexto(campo)) return false;
+
+    return campoEstaNoLegadoMultiselect(campo);
 };
 
 function FiltrosVisualizacaoComContexto(props: { readonly titulo: string; readonly variante: FiltrosVisualizacaoVariante; readonly contador?: ReactNode; }) {

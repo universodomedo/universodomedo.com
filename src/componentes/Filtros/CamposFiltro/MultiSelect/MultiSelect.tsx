@@ -3,11 +3,13 @@
 import styles from './styles.module.css';
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { GraphqlFiltroCampoDef, GraphqlFiltroOperador, pluralize } from 'types-nora-api';
+import { GraphqlFiltroCampoDef, GraphqlFiltroOperador, pluralize, type GraphqlOpcaoFiltroConsulta } from 'types-nora-api';
 
 import { NoraGraphQLFiltroVisualizacaoAtivo, NoraGraphQLFiltroVisualizacaoValor, NoraGraphQLFiltroVisualizacaoValorEscalar } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
 
 type ValorOpcaoFiltro = Exclude<NoraGraphQLFiltroVisualizacaoValorEscalar, null>;
+
+type ValorOpcaoFiltroExterno = Exclude<GraphqlOpcaoFiltroConsulta['valor'], null>;
 
 type ValorCaminhoFiltro = ValorOpcaoFiltro | null | undefined | ObjetoCaminhoFiltro | readonly ValorCaminhoFiltro[];
 
@@ -33,6 +35,7 @@ type CampoFiltroMultiSelectProps = {
     readonly filtros: readonly NoraGraphQLFiltroVisualizacaoAtivo[];
     readonly setFiltros: (filtros: readonly NoraGraphQLFiltroVisualizacaoAtivo[]) => void;
     readonly label: string;
+    readonly opcoesExternas?: readonly GraphqlOpcaoFiltroConsulta[];
 };
 
 function criaIdFiltro(campo: string, valor: NoraGraphQLFiltroVisualizacaoValor): string {
@@ -103,7 +106,33 @@ function criaOpcaoFiltro(valor: ValorOpcaoFiltro): OpcaoFiltroMultiSelect {
     };
 };
 
-function montaOpcoesFiltro(registros: readonly object[], campo: GraphqlFiltroCampoDef<object>): readonly OpcaoFiltroMultiSelect[] {
+function valorExternoEhValorOpcao(valor: GraphqlOpcaoFiltroConsulta['valor']): valor is ValorOpcaoFiltroExterno {
+    return valor !== null;
+};
+
+function criaOpcaoFiltroExterna(opcao: GraphqlOpcaoFiltroConsulta): OpcaoFiltroMultiSelect | null {
+    if (!valorExternoEhValorOpcao(opcao.valor)) return null;
+
+    return {
+        chave: criaChaveOpcao(opcao.valor),
+        valor: opcao.valor,
+        label: opcao.label,
+        total: opcao.total,
+    };
+};
+
+function montaOpcoesFiltroExternas(opcoesExternas: readonly GraphqlOpcaoFiltroConsulta[]): readonly OpcaoFiltroMultiSelect[] {
+    const opcoes: OpcaoFiltroMultiSelect[] = [];
+
+    for (const opcaoExterna of opcoesExternas) {
+        const opcao = criaOpcaoFiltroExterna(opcaoExterna);
+        if (opcao) opcoes.push(opcao);
+    }
+
+    return opcoes.sort((a, b) => a.label.localeCompare(b.label));
+};
+
+function montaOpcoesFiltroPorRegistros(registros: readonly object[], campo: GraphqlFiltroCampoDef<object>): readonly OpcaoFiltroMultiSelect[] {
     const mapaOpcoes = new Map<string, OpcaoFiltroMultiSelect>();
 
     for (const registro of registros) {
@@ -122,6 +151,12 @@ function montaOpcoesFiltro(registros: readonly object[], campo: GraphqlFiltroCam
     }
 
     return Array.from(mapaOpcoes.values()).sort((a, b) => a.label.localeCompare(b.label));
+};
+
+function montaOpcoesFiltro(registros: readonly object[], campo: GraphqlFiltroCampoDef<object>, opcoesExternas: readonly GraphqlOpcaoFiltroConsulta[] | undefined): readonly OpcaoFiltroMultiSelect[] {
+    if (opcoesExternas) return montaOpcoesFiltroExternas(opcoesExternas);
+
+    return montaOpcoesFiltroPorRegistros(registros, campo);
 };
 
 function removeFiltrosCampo(filtros: readonly NoraGraphQLFiltroVisualizacaoAtivo[], campo: string): readonly NoraGraphQLFiltroVisualizacaoAtivo[] {
@@ -169,10 +204,10 @@ function montaEstiloPopover(posicao: PosicaoPopover | null): CSSProperties {
     };
 };
 
-export default function CampoFiltroMultiSelect({ campo, registros, filtros, setFiltros, label }: CampoFiltroMultiSelectProps) {
+export default function CampoFiltroMultiSelect({ campo, registros, filtros, setFiltros, label, opcoesExternas }: CampoFiltroMultiSelectProps) {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const popoverRef = useRef<HTMLDivElement | null>(null);
-    const opcoes = useMemo(() => montaOpcoesFiltro(registros, campo), [campo, registros]);
+    const opcoes = useMemo(() => montaOpcoesFiltro(registros, campo, opcoesExternas), [campo, opcoesExternas, registros]);
     const filtroCampoAtual = useMemo(() => obtemFiltroCampo(filtros, campo.campo), [campo.campo, filtros]);
     const valoresSelecionados = useMemo(() => obtemValoresSelecionados(filtroCampoAtual), [filtroCampoAtual]);
     const [aberto, setAberto] = useState(false);
@@ -269,7 +304,7 @@ export default function CampoFiltroMultiSelect({ campo, registros, filtros, setF
                     </div>
                     <div className={styles.lista_opcoes}>
                         {opcoes.length === 0 ? (
-                            <span className={styles.estado_vazio}>Nenhuma opção encontrada nos registros carregados.</span>
+                            <span className={styles.estado_vazio}>Nenhuma opção encontrada.</span>
                         ) : opcoes.map(opcao => (
                             <button key={opcao.chave} type="button" onClick={() => alternaOpcao(opcao)} className={valorSelecionadoPossuiOpcao(valoresSelecionados, opcao) ? `${styles.opcao} ${styles.opcao_selecionada}` : styles.opcao}>
                                 <span className={styles.marcador_opcao}>{valorSelecionadoPossuiOpcao(valoresSelecionados, opcao) ? '✓' : ''}</span>
