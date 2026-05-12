@@ -1,17 +1,19 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { CaminhoArquivoAvatar, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
+import { CaminhoArquivoAvatar } from 'types-nora-api';
 
-import { obtemAvataresDeComparacao, obtemListagemDePersonagensComAvatares } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
+import { obtemAvataresDeComparacao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { toast } from 'Hooks/useToast';
 
-interface ContextoGerenciarAvatares__Props {
-    personagens: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[];
+
+export interface ContextoGerenciarAvatares__Props {
+    listagemPersonagens: ReturnType<typeof obtemListagemPersonagens>;
     avataresDeComparacao: CaminhoArquivoAvatar[];
     setIdPersonagemSelecionado: (v: number) => void;
     deselecionaPersonagem: () => void;
-    personagemSelecionado: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto | null;
+    personagemSelecionado: ReturnType<typeof obtemListagemPersonagens>['registros'][number] | null;
 };
 
 const ContextoGerenciarAvatares = createContext<ContextoGerenciarAvatares__Props | undefined>(undefined);
@@ -23,25 +25,13 @@ export const useContextoGerenciarAvatares = (): ContextoGerenciarAvatares__Props
 };
 
 export const ContextoGerenciarAvatares__Provider = ({ children }: { children: React.ReactNode }) => {
+    const listagemPersonagens = obtemListagemPersonagens();
+
     const [carregando, setCarregando] = useState<string | null>(null);
-    const [personagens, setPersonagens] = useState<VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[] | null>(null);
-    const [avataresDeComparacao, setAvataresDeComparacao] = useState<CaminhoArquivoAvatar[] | null>(null);
+    const [avataresDeComparacao, setAvataresDeComparacao] = useState<CaminhoArquivoAvatar[]>([]);
     const [idPersonagemSelecionado, setIdPersonagemSelecionado] = useState<number | null>(null);
 
-    const personagemSelecionado: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto | null = personagens && idPersonagemSelecionado ? personagens.find(personagem => personagem.id === idPersonagemSelecionado)! : null;
-
-    async function buscaPersonagensListagemAvatares() {
-        setCarregando('Buscando Personagens e seus Avatares');
-
-        try {
-            setPersonagens(await obtemListagemDePersonagensComAvatares());
-        } catch {
-            setPersonagens(null);
-            toast.erro('Houve um problema ao carregar os Personagens da Listagem de Avatares');
-        } finally {
-            setCarregando(null);
-        }
-    };
+    const personagemSelecionado = idPersonagemSelecionado ? listagemPersonagens.registros.find(personagem => personagem.id === idPersonagemSelecionado) ?? null : null;
 
     async function buscaAvataresDeComparacao() {
         setCarregando('Buscando Avatares de Comparação');
@@ -49,7 +39,7 @@ export const ContextoGerenciarAvatares__Provider = ({ children }: { children: Re
         try {
             setAvataresDeComparacao(await obtemAvataresDeComparacao());
         } catch {
-            setAvataresDeComparacao(null);
+            setAvataresDeComparacao([]);
             toast.erro('Houve um problema ao carregar os Avatares de Comparação');
         } finally {
             setCarregando(null);
@@ -59,17 +49,35 @@ export const ContextoGerenciarAvatares__Provider = ({ children }: { children: Re
     function deselecionaPersonagem() { setIdPersonagemSelecionado(null); };
 
     useEffect(() => {
-        buscaPersonagensListagemAvatares();
         buscaAvataresDeComparacao();
     }, []);
-
-    if (personagens === null || avataresDeComparacao === null) return;
 
     if (carregando) return <div>{carregando}</div>;
 
     return (
-        <ContextoGerenciarAvatares.Provider value={{ personagens, avataresDeComparacao, setIdPersonagemSelecionado, deselecionaPersonagem, personagemSelecionado }}>
+        <ContextoGerenciarAvatares.Provider value={{ listagemPersonagens, avataresDeComparacao, setIdPersonagemSelecionado, deselecionaPersonagem, personagemSelecionado }}>
             {children}
         </ContextoGerenciarAvatares.Provider>
     );
+};
+
+//
+
+export function obtemListagemPersonagens() {
+    return useNoraGraphQLListagem('Personagem', {
+        select: ['id', 'nome', 'usuario', 'tipoPersonagem', 'avatares'],
+        itensPorPagina: 12,
+        carregando: 'Buscando Personagens',
+        mensagemErro: 'Houve um erro recuperando os Personagens existentes',
+        mensagemListaVazia: 'Nenhum personagem encontrado.',
+        mensagemListaVaziaComFiltro: 'Nenhuma personagem encontrado com os filtros atuais.',
+        carregamento: 'BLOQUEIA_INTERFACE',
+        montaParametrosConsulta: params => ({
+            where: params.where,
+            order: { id: 'DESC' },
+            limit: params.limit,
+            offset: params.offset,
+        }),
+        montaParametrosTotalDeRegistros: where => ({ where }),
+    });
 };

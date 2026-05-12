@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { GraphqlFiltroCampoTipo, GraphqlFiltroVisualizacaoCampoDef } from 'types-nora-api';
+import { GraphqlFiltroCampoTipo, GraphqlFiltroControleVisualizacao, GraphqlFiltroVisualizacaoCampoDef } from 'types-nora-api';
 
 import styles from './styles.module.css';
 
@@ -34,14 +34,11 @@ const LABEL_PARTES_CAMPO: Record<string, string> = {
     nomeGeralArquivo: 'Nome do arquivo',
     tipoArquivoNome: 'Tipo de arquivo',
     usuarioAdicionouUsername: 'Usuário',
+    tipoArquivo: 'Tipo de arquivo',
+    usuarioAdicionou: 'Usuário',
+    usuario: 'Usuário',
+    tipoPersonagem: 'Tipo de personagem',
 };
-
-const CAMPOS_MULTISELECT = new Set<string>([
-    'tipoArquivoNome',
-    'usuarioAdicionouUsername',
-    'tipoArquivo.nome',
-    'usuarioAdicionou.username',
-]);
 
 function separaCamelCase(texto: string): string {
     return texto.replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -76,10 +73,12 @@ function contaCamposComFiltro(filtros: readonly NoraGraphQLFiltroVisualizacaoAti
     return new Set(filtros.map(filtro => filtro.campo)).size;
 };
 
-function campoEhMultiselect(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
-    if (CAMPOS_MULTISELECT.has(campo.campo)) return true;
+function campoEhDataRange(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
+    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.DATA_RANGE || campo.tipo === GraphqlFiltroCampoTipo.DATE;
+};
 
-    return CAMPOS_MULTISELECT.has(campo.path.join('.'));
+function campoEhMultiselect(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
+    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.MULTISELECT;
 };
 
 function FiltrosVisualizacaoComContexto(props: { readonly titulo: string; readonly variante: FiltrosVisualizacaoVariante; readonly contador?: ReactNode; }) {
@@ -102,7 +101,7 @@ function FiltrosVisualizacaoInterno({ valor, titulo, variante, contador }: { rea
         <section className={resolveClasseFiltros(variante)} aria-label={titulo}>
             <div className={styles.barra_filtros}>
                 <div className={styles.trilho_filtros}>
-                    {campos.map(campo => campo.tipo === GraphqlFiltroCampoTipo.DATE ? (
+                    {campos.map(campo => campoEhDataRange(campo) ? (
                         <CampoFiltroDataRange key={campo.campo} campo={campo} filtros={filtros} setFiltros={setFiltros} label={humanizaLabelCampo(campo)} />
                     ) : campoEhMultiselect(campo) ? (
                         <CampoFiltroMultiSelect key={campo.campo} campo={campo} registros={registrosOriginais} filtros={filtros} setFiltros={setFiltros} label={humanizaLabelCampo(campo)} />

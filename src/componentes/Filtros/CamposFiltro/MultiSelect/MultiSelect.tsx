@@ -3,7 +3,7 @@
 import styles from './styles.module.css';
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
-import { GraphqlFiltroCampoDef, GraphqlFiltroOperador } from 'types-nora-api';
+import { GraphqlFiltroCampoDef, GraphqlFiltroOperador, pluralize } from 'types-nora-api';
 
 import { NoraGraphQLFiltroVisualizacaoAtivo, NoraGraphQLFiltroVisualizacaoValor, NoraGraphQLFiltroVisualizacaoValorEscalar } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
 
@@ -265,7 +265,7 @@ export default function CampoFiltroMultiSelect({ campo, registros, filtros, setF
                 <div ref={popoverRef} className={styles.popover_multiselect} style={montaEstiloPopover(posicaoPopover)}>
                     <div className={styles.cabecalho_popover}>
                         <strong>{label}</strong>
-                        <span>{opcoes.length} opção(ões)</span>
+                        <span>{opcoes.length} {pluralize(opcoes.length, 'opção', 'opções')}</span>
                     </div>
                     <div className={styles.lista_opcoes}>
                         {opcoes.length === 0 ? (

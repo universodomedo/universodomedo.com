@@ -266,10 +266,6 @@ export async function obtemJDadosFichaEmJogoPorIdFicha(idFicha: number): Promise
     return await useApi<J_DadosFichaEmJogo>({ uri: '/fichas/obtemJDadosFichaEmJogoPorIdFicha', method: 'GET', params: { idFicha: idFicha } });
 }
 
-export async function obtemListagemDePersonagensComAvatares(): Promise<VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[]> {
-    return await useApi<VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[]>({ uri: '/personagens/obtemListagemDePersonagensComAvatares', method: 'GET' });
-}
-
 export async function obtemAvataresDeComparacao(): Promise<CaminhoArquivoAvatar[]> {
     return await useApi<CaminhoArquivoAvatar[]>({ uri: '/arquivos_tipados_avatar/obtemAvataresDeComparacao', method: 'GET' });
 }

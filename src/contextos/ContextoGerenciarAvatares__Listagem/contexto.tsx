@@ -1,14 +1,16 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
-import { VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto } from 'types-nora-api';
+import { createContext, useContext } from 'react';
 
+import { type ContextoGerenciarAvatares__Props } from 'Contextos/ContextoGerenciarAvatares/contexto';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SPA__PaginaGerenciarAvatares__Listagem from 'Conteineres/GerenciarAvatares/paginas/SPA__PaginaGerenciarAvatares__Listagem/SPA__PaginaGerenciarAvatares__Listagem';
 
+type PersonagensGerenciarAvatares = ContextoGerenciarAvatares__Props['listagemPersonagens'];
+
 interface ContextoGerenciarAvatares__Listagem__Props {
-    personagens: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[];
-    selecionaPersonagem: (v: number) => void;
+    listagemPersonagens: PersonagensGerenciarAvatares;
+    selecionaPersonagem: (idPersonagem: number) => void;
 };
 
 const ContextoGerenciarAvatares__Listagem = createContext<ContextoGerenciarAvatares__Listagem__Props | undefined>(undefined);
@@ -19,11 +21,11 @@ export const useContextoGerenciarAvatares__Listagem = (): ContextoGerenciarAvata
     return context;
 };
 
-export const ContextoGerenciarAvatares__Listagem__Provider = ({ personagens, selecionaPersonagem }: { personagens: VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto[]; selecionaPersonagem: (v: number) => void; }) => {
+export const ContextoGerenciarAvatares__Listagem__Provider = ({ listagemPersonagens, selecionaPersonagem }: { listagemPersonagens: PersonagensGerenciarAvatares; selecionaPersonagem: (idPersonagem: number) => void; }) => {
     useConfigurarLayoutContextualizado({ titulo: 'Gerenciar Avatares', fecharProps: undefined }, 'patch');
     
     return (
-        <ContextoGerenciarAvatares__Listagem.Provider value={{ personagens, selecionaPersonagem }}>
+        <ContextoGerenciarAvatares__Listagem.Provider value={{ listagemPersonagens, selecionaPersonagem }}>
             <SPA__PaginaGerenciarAvatares__Listagem />
         </ContextoGerenciarAvatares__Listagem.Provider>
     );
