@@ -368,6 +368,7 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
     const possuiFiltroConsultaAtivo = filtrosConsultaDisponiveis.length > 0;
     const possuiFiltroConsultaAplicado = filtrosConsultaAplicadosDisponiveis.length > 0;
     const possuiAlteracaoPendenteConsulta = !filtrosConsultaSaoIguais(filtrosConsultaDisponiveis, filtrosConsultaAplicadosDisponiveis);
+    const possuiAcaoConsultaDisponivel = possuiFiltroConsultaAtivo || possuiAlteracaoPendenteConsulta;
     const possuiFiltroAtivo = possuiFiltroConsultaAplicado || resultadoFiltroVisualizacao.possuiFiltroAtivo;
     const totalDeRegistros = consultaTotalDeRegistros.data;
     const totalCarregado = registrosAcumulados.length;
@@ -405,12 +406,12 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
         where: resultadoFiltroConsulta.where,
         possuiFiltroAtivo: possuiFiltroConsultaAtivo,
         possuiFiltroAplicado: possuiFiltroConsultaAplicado,
-        possuiAlteracaoPendente: possuiAlteracaoPendenteConsulta,
+        possuiAlteracaoPendente: possuiAcaoConsultaDisponivel,
         versaoAplicacao: versaoAplicacaoConsulta,
         aplicaFiltros: aplicaFiltrosConsulta,
         limpaFiltros: limpaFiltrosConsulta,
         opcoesPorCampo: consultaOpcoesFiltrosConsulta.data,
-    }), [aplicaFiltrosConsulta, camposFiltroConsulta, consultaOpcoesFiltrosConsulta.data, filtrosConsultaAplicadosDisponiveis, filtrosConsultaDisponiveis, limpaFiltrosConsulta, possuiAlteracaoPendenteConsulta, possuiFiltroConsultaAplicado, possuiFiltroConsultaAtivo, resultadoFiltroConsulta.where, versaoAplicacaoConsulta]);
+    }), [aplicaFiltrosConsulta, camposFiltroConsulta, consultaOpcoesFiltrosConsulta.data, filtrosConsultaAplicadosDisponiveis, filtrosConsultaDisponiveis, limpaFiltrosConsulta, possuiAcaoConsultaDisponivel, possuiFiltroConsultaAplicado, possuiFiltroConsultaAtivo, resultadoFiltroConsulta.where, versaoAplicacaoConsulta]);
 
     const filtrosVisualizacaoValor = useMemo<ContextoFiltrosVisualizacaoValor<TRegistro>>(() => ({
         registrosOriginais: resultadoFiltroVisualizacao.registrosOriginais,
