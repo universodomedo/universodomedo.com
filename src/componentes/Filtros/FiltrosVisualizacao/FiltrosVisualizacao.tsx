@@ -5,6 +5,7 @@ import { GraphqlFiltroCampoTipo, GraphqlFiltroControleVisualizacao, GraphqlFiltr
 
 import styles from './styles.module.css';
 
+import CampoFiltroBooleano from 'Componentes/Filtros/CamposFiltro/Booleano/Booleano';
 import CampoFiltroDataRange from 'Componentes/Filtros/CamposFiltro/DataRange/DataRange';
 import CampoFiltroMultiSelect from 'Componentes/Filtros/CamposFiltro/MultiSelect/MultiSelect';
 import CampoFiltroValorUnico from 'Componentes/Filtros/CamposFiltro/ValorUnico/ValorUnico';
@@ -35,6 +36,7 @@ const LABEL_PARTES_CAMPO: Record<string, string> = {
     tipoArquivoNome: 'Tipo de arquivo',
     usuarioAdicionouUsername: 'Usuário',
     tipoPersonagem: 'Tipo',
+    possuiAvatarPendente: 'Possui Avatar Pendente',
 };
 
 const CAMPOS_MULTISELECT = new Set<string>([
@@ -77,6 +79,10 @@ function contaCamposComFiltro(filtros: readonly NoraGraphQLFiltroVisualizacaoAti
     return new Set(filtros.map(filtro => filtro.campo)).size;
 };
 
+function campoUsaBoolean(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
+    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.BOOLEAN;
+};
+
 function campoPossuiControleMultiselect(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
     return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.MULTISELECT;
 };
@@ -101,6 +107,7 @@ function campoEstaNoLegadoMultiselect(campo: GraphqlFiltroVisualizacaoCampoDef<o
 
 function campoEhDataRange(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
     if (campoPossuiControleDataRange(campo)) return true;
+    if (campoUsaBoolean(campo)) return false;
     if (campoPossuiControleMultiselect(campo)) return false;
     if (campoPossuiControleValorUnico(campo)) return false;
     if (campoPossuiControleTexto(campo)) return false;
@@ -110,6 +117,7 @@ function campoEhDataRange(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boo
 
 function campoEhMultiselect(campo: GraphqlFiltroVisualizacaoCampoDef<object>): boolean {
     if (campoPossuiControleMultiselect(campo)) return true;
+    if (campoUsaBoolean(campo)) return false;
     if (campoPossuiControleDataRange(campo)) return false;
     if (campoPossuiControleValorUnico(campo)) return false;
     if (campoPossuiControleTexto(campo)) return false;
@@ -137,7 +145,9 @@ function FiltrosVisualizacaoInterno({ valor, titulo, variante, contador }: { rea
         <section className={resolveClasseFiltros(variante)} aria-label={titulo}>
             <div className={styles.barra_filtros}>
                 <div className={styles.trilho_filtros}>
-                    {campos.map(campo => campoEhDataRange(campo) ? (
+                    {campos.map(campo => campoUsaBoolean(campo) ? (
+                        <CampoFiltroBooleano key={campo.campo} campo={campo} filtros={filtros} setFiltros={setFiltros} label={humanizaLabelCampo(campo)} />
+                    ) : campoEhDataRange(campo) ? (
                         <CampoFiltroDataRange key={campo.campo} campo={campo} filtros={filtros} setFiltros={setFiltros} label={humanizaLabelCampo(campo)} />
                     ) : campoEhMultiselect(campo) ? (
                         <CampoFiltroMultiSelect key={campo.campo} campo={campo} registros={registrosOriginais} filtros={filtros} setFiltros={setFiltros} label={humanizaLabelCampo(campo)} />

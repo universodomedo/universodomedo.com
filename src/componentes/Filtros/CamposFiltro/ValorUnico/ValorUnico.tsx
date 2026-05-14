@@ -66,8 +66,6 @@ function resolveValorFiltro(campo: GraphqlFiltroCampoDef<object>, operador: Grap
         return Number.isFinite(numero) ? numero : null;
     }
 
-    if (campo.tipo === GraphqlFiltroCampoTipo.BOOLEAN) return valorTextoTratado === 'true';
-
     return valorTextoTratado;
 };
 
@@ -211,15 +209,7 @@ export default function CampoFiltroValorUnico({ campo, filtros, setFiltros, labe
                 <select value={operadorSelecionado} onChange={event => selecionaOperador(event.target.value as GraphqlFiltroOperador)} className={styles.select_operador_campo}>
                     {campo.operadores.map(operador => <option key={operador} value={operador}>{LABEL_OPERADOR[operador]}</option>)}
                 </select>
-                {campo.tipo === GraphqlFiltroCampoTipo.BOOLEAN && campoAceitaValor(operadorSelecionado) ? (
-                    <select value={valorTexto} onChange={event => alteraValor(event.target.value)} className={styles.input_valor_campo}>
-                        <option value="">Todos</option>
-                        <option value="true">Sim</option>
-                        <option value="false">Não</option>
-                    </select>
-                ) : (
-                    <input value={valorTexto} onChange={event => alteraValor(event.target.value)} disabled={!campoAceitaValor(operadorSelecionado)} type={obtemTipoInput(campo)} className={styles.input_valor_campo} placeholder={campoAceitaValor(operadorSelecionado) ? 'Filtrar...' : 'Sem valor'} />
-                )}
+                <input value={valorTexto} onChange={event => alteraValor(event.target.value)} disabled={!campoAceitaValor(operadorSelecionado)} type={obtemTipoInput(campo)} className={styles.input_valor_campo} placeholder={campoAceitaValor(operadorSelecionado) ? 'Filtrar...' : 'Sem valor'} />
                 {filtroCampoAtual && <button type="button" onClick={limpaCampo} className={styles.botao_limpar_campo}>Limpar</button>}
             </div>
         </article>

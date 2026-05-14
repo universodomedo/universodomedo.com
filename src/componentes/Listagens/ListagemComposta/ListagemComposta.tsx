@@ -243,7 +243,6 @@ export default function ListagemComposta<TRegistro extends object>(props: Listag
                     {deveMostrarRegistros && (
                         <div className={resolveClasseConteudo(props.modoExibicao)} style={estiloConteudo} {...scrollableProps}>
                             {listagem.registros.map((registro, index) => (
-                                // <div key={props.obterIdRegistro(registro)} className={styles.item}>
                                 <div key={props.obterIdRegistro(registro)} className={styles.item}>
                                     {props.renderizarItem(registro, index)}
                                 </div>

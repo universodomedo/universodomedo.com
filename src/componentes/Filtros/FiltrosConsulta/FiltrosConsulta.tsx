@@ -4,6 +4,7 @@ import { GraphqlFiltroCampoTipo, GraphqlFiltroConsultaCampoDef, GraphqlFiltroCon
 
 import styles from '../FiltrosVisualizacao/styles.module.css';
 
+import CampoFiltroBooleano from 'Componentes/Filtros/CamposFiltro/Booleano/Booleano';
 import CampoFiltroDataRange from 'Componentes/Filtros/CamposFiltro/DataRange/DataRange';
 import CampoFiltroMultiSelect from 'Componentes/Filtros/CamposFiltro/MultiSelect/MultiSelect';
 import CampoFiltroValorUnico from 'Componentes/Filtros/CamposFiltro/ValorUnico/ValorUnico';
@@ -32,6 +33,7 @@ const LABEL_PARTES_CAMPO: Record<string, string> = {
     usuario: 'Usuário',
     username: 'Username',
     tipoPersonagem: 'Tipo',
+    possuiAvatarPendente: 'Possui Avatar Pendente',
 };
 
 function separaCamelCase(texto: string): string {
@@ -79,6 +81,10 @@ function obtemOpcoesConsultaCampo(opcoesPorCampo: readonly GraphqlOpcoesFiltroCo
     return opcoesPorCampo?.find(opcoesCampo => opcoesCampo.campo === campo)?.opcoes;
 };
 
+function campoUsaBoolean(campo: GraphqlFiltroConsultaCampoDef<object>): boolean {
+    return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.BOOLEAN;
+};
+
 function campoUsaMultiSelect(campo: GraphqlFiltroConsultaCampoDef<object>): boolean {
     return campo.controleVisualizacao === GraphqlFiltroControleVisualizacao.MULTISELECT;
 };
@@ -107,7 +113,9 @@ function FiltrosConsultaInterno({ valor, titulo, variante }: { readonly valor: C
         <section className={resolveClasseFiltros(variante)} aria-label={titulo}>
             <div className={styles.barra_filtros}>
                 <div className={styles.trilho_filtros}>
-                    {campos.map(campo => campoUsaMultiSelect(campo) ? (
+                    {campos.map(campo => campoUsaBoolean(campo) ? (
+                        <CampoFiltroBooleano key={campo.campo} campo={campo} filtros={filtros} setFiltros={setFiltros} label={humanizaLabelCampo(campo)} />
+                    ) : campoUsaMultiSelect(campo) ? (
                         <CampoFiltroMultiSelect key={campo.campo} campo={campo} registros={registrosOriginais} filtros={filtros} setFiltros={setFiltros} label={humanizaLabelCampo(campo)} opcoesExternas={obtemOpcoesConsultaCampo(opcoesPorCampo, campo.campo)} />
                     ) : campoUsaDataRange(campo) ? (
                         <CampoFiltroDataRange key={campo.campo} campo={campo} filtros={filtros} setFiltros={setFiltros} label={humanizaLabelCampo(campo)} />
