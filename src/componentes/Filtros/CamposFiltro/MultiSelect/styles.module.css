@@ -141,12 +141,40 @@
     font-size: 0.72em;
 }
 
+.busca_popover {
+    padding: 0.56em 0 0;
+}
+
+.input_busca_popover {
+    width: 100%;
+    min-height: 2.2em;
+    padding: 0.34em 0.58em;
+    border: 0.08em solid rgba(154, 95, 213, 0.26);
+    border-radius: 0.36em;
+    background: rgba(255, 255, 255, 0.045);
+    color: rgba(235, 228, 214, 0.9);
+    font-family: inherit;
+    font-size: 0.82em;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.input_busca_popover::placeholder {
+    color: rgba(235, 228, 214, 0.42);
+}
+
+.input_busca_popover:focus {
+    border-color: rgba(207, 167, 255, 0.58);
+    background: rgba(154, 95, 213, 0.1);
+    box-shadow: 0 0 0.45em rgba(154, 95, 213, 0.16);
+}
+
 .lista_opcoes {
     display: flex;
     flex-direction: column;
     gap: 0.28em;
     min-height: 0;
-    max-height: 16.5em;
+    max-height: 14.6em;
     padding: 0.56em 0;
     overflow-y: auto;
     scrollbar-width: thin;

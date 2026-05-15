@@ -20,6 +20,7 @@ type CampoFiltroBooleanoProps<TFiltro extends CampoFiltroBooleanoAtivoBase> = {
     readonly filtros: readonly TFiltro[];
     readonly setFiltros: (filtros: readonly TFiltro[]) => void;
     readonly label: string;
+    readonly registros?: readonly object[];
 };
 
 type CampoFiltroBooleanoOpcao = {
@@ -30,6 +31,12 @@ type CampoFiltroBooleanoOpcao = {
 type CampoFiltroBooleanoPosicaoPopover = {
     readonly top: number;
     readonly left: number;
+};
+
+type ValorCaminhoFiltro = string | number | boolean | Date | null | undefined | ObjetoCaminhoFiltro | readonly ValorCaminhoFiltro[];
+
+type ObjetoCaminhoFiltro = {
+    readonly [key: string]: ValorCaminhoFiltro;
 };
 
 const OPCOES_BOOLEANAS: readonly CampoFiltroBooleanoOpcao[] = [
@@ -58,6 +65,60 @@ function valorEhListaBooleanos(valor: CampoFiltroBooleanoValor): valor is readon
     return Array.isArray(valor) && valor.every(valorItem => typeof valorItem === 'boolean');
 };
 
+function valorEhListaCaminhoFiltro(valor: ValorCaminhoFiltro): valor is readonly ValorCaminhoFiltro[] {
+    return Array.isArray(valor);
+};
+
+function valorEhObjetoCaminhoFiltro(valor: ValorCaminhoFiltro): valor is ObjetoCaminhoFiltro {
+    if (valor === null) return false;
+    if (valor === undefined) return false;
+    if (valor instanceof Date) return false;
+    if (valorEhListaCaminhoFiltro(valor)) return false;
+
+    return typeof valor === 'object';
+};
+
+function obtemValorPorPath(registro: object, path: readonly string[]): ValorCaminhoFiltro {
+    let valorAtual: ValorCaminhoFiltro = registro as ObjetoCaminhoFiltro;
+
+    for (const parte of path) {
+        if (!valorEhObjetoCaminhoFiltro(valorAtual)) return undefined;
+
+        valorAtual = valorAtual[parte];
+    }
+
+    return valorAtual;
+};
+
+function coletaBooleanosValor(valor: ValorCaminhoFiltro, valores: Set<boolean>): void {
+    if (typeof valor === 'boolean') {
+        valores.add(valor);
+        return;
+    }
+
+    if (!valorEhListaCaminhoFiltro(valor)) return;
+
+    for (const item of valor) {
+        coletaBooleanosValor(item, valores);
+    }
+};
+
+function montaOpcoesBooleanasPorRegistros(registros: readonly object[], campo: GraphqlFiltroCampoDef<object>): readonly CampoFiltroBooleanoOpcao[] {
+    const valores = new Set<boolean>();
+
+    for (const registro of registros) {
+        coletaBooleanosValor(obtemValorPorPath(registro, campo.path), valores);
+    }
+
+    return OPCOES_BOOLEANAS.filter(opcao => valores.has(opcao.valor));
+};
+
+function montaOpcoesBooleanas(registros: readonly object[] | undefined, campo: GraphqlFiltroCampoDef<object>): readonly CampoFiltroBooleanoOpcao[] {
+    if (!registros) return OPCOES_BOOLEANAS;
+
+    return montaOpcoesBooleanasPorRegistros(registros, campo);
+};
+
 function removeFiltrosCampo<TFiltro extends CampoFiltroBooleanoAtivoBase>(filtros: readonly TFiltro[], campo: string): readonly TFiltro[] {
     return filtros.filter(filtro => filtro.campo !== campo);
 };
@@ -79,17 +140,18 @@ function valorEstaSelecionado(valoresSelecionados: readonly boolean[], valor: bo
     return valoresSelecionados.includes(valor);
 };
 
-function alternaValorSelecionado(valoresSelecionados: readonly boolean[], valor: boolean): readonly boolean[] {
+function alternaValorSelecionado(valoresSelecionados: readonly boolean[], valor: boolean, opcoes: readonly CampoFiltroBooleanoOpcao[]): readonly boolean[] {
     if (valorEstaSelecionado(valoresSelecionados, valor)) return valoresSelecionados.filter(valorSelecionado => valorSelecionado !== valor);
 
-    return OPCOES_BOOLEANAS.map(opcao => opcao.valor).filter(valorOpcao => valorOpcao === valor || valoresSelecionados.includes(valorOpcao));
+    return opcoes.map(opcao => opcao.valor).filter(valorOpcao => valorOpcao === valor || valoresSelecionados.includes(valorOpcao));
 };
 
 function obtemLabelValor(valor: boolean): string {
     return OPCOES_BOOLEANAS.find(opcao => opcao.valor === valor)?.label ?? String(valor);
 };
 
-function resolveStatus(valoresSelecionados: readonly boolean[]): string {
+function resolveStatus(valoresSelecionados: readonly boolean[], totalOpcoes: number): string {
+    if (totalOpcoes === 0) return 'Nenhuma opção';
     if (valoresSelecionados.length === 0) return 'Selecione';
     if (valoresSelecionados.length === 1) return obtemLabelValor(valoresSelecionados[0]);
 
@@ -120,10 +182,11 @@ function criaEstiloPopover(posicaoPopover: CampoFiltroBooleanoPosicaoPopover | n
     };
 };
 
-export default function CampoFiltroBooleano<TFiltro extends CampoFiltroBooleanoAtivoBase>({ campo, filtros, setFiltros, label }: CampoFiltroBooleanoProps<TFiltro>) {
+export default function CampoFiltroBooleano<TFiltro extends CampoFiltroBooleanoAtivoBase>({ campo, filtros, setFiltros, label, registros }: CampoFiltroBooleanoProps<TFiltro>) {
     const recipienteRef = useRef<HTMLElement | null>(null);
     const [aberto, setAberto] = useState(false);
     const [posicaoPopover, setPosicaoPopover] = useState<CampoFiltroBooleanoPosicaoPopover | null>(null);
+    const opcoes = useMemo(() => montaOpcoesBooleanas(registros, campo), [campo, registros]);
     const valoresSelecionados = useMemo(() => obtemValoresSelecionados(filtros, campo.campo), [campo.campo, filtros]);
 
     useEffect(() => {
@@ -166,7 +229,7 @@ export default function CampoFiltroBooleano<TFiltro extends CampoFiltroBooleanoA
     };
 
     function alternaOpcao(valor: boolean) {
-        atualizaValores(alternaValorSelecionado(valoresSelecionados, valor));
+        atualizaValores(alternaValorSelecionado(valoresSelecionados, valor, opcoes));
     };
 
     function limpaCampo() {
@@ -184,7 +247,7 @@ export default function CampoFiltroBooleano<TFiltro extends CampoFiltroBooleanoA
             <button type="button" onClick={alternaPopover} className={styles.botao_resumo_multiselect} aria-expanded={aberto}>
                 <span className={styles.campo_filtro_textos}>
                     <strong className={styles.campo_filtro_label}>{label}</strong>
-                    <span className={styles.campo_filtro_status}>{resolveStatus(valoresSelecionados)}</span>
+                    <span className={styles.campo_filtro_status}>{resolveStatus(valoresSelecionados, opcoes.length)}</span>
                 </span>
             </button>
             {valoresSelecionados.length > 0 && <button type="button" onClick={limpaCampo} className={styles.botao_limpar_campo} title="Limpar filtro">×</button>}
@@ -195,7 +258,9 @@ export default function CampoFiltroBooleano<TFiltro extends CampoFiltroBooleanoA
                         <span>{valoresSelecionados.length} selecionado(s)</span>
                     </div>
                     <div className={styles.lista_opcoes}>
-                        {OPCOES_BOOLEANAS.map(opcao => {
+                        {opcoes.length === 0 ? (
+                            <span className={styles.estado_vazio}>Nenhuma opção encontrada.</span>
+                        ) : opcoes.map(opcao => {
                             const selecionado = valorEstaSelecionado(valoresSelecionados, opcao.valor);
 
                             return (

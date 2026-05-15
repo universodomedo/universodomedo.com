@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type CSSProperties } from 'react';
 import { GraphqlFiltroCampoDef, GraphqlFiltroOperador, pluralize, type GraphqlOpcaoFiltroConsulta } from 'types-nora-api';
 
 import { NoraGraphQLFiltroVisualizacaoAtivo, NoraGraphQLFiltroVisualizacaoValor, NoraGraphQLFiltroVisualizacaoValorEscalar } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
@@ -159,6 +159,23 @@ function montaOpcoesFiltro(registros: readonly object[], campo: GraphqlFiltroCam
     return montaOpcoesFiltroPorRegistros(registros, campo);
 };
 
+function opcaoCombinaComBusca(opcao: OpcaoFiltroMultiSelect, termoNormalizado: string): boolean {
+    if (termoNormalizado.length === 0) return true;
+
+    const labelNormalizada = normalizaTextoComparacao(opcao.label);
+    const valorNormalizado = normalizaTextoComparacao(formataValorOpcao(opcao.valor));
+
+    return labelNormalizada.includes(termoNormalizado) || valorNormalizado.includes(termoNormalizado);
+};
+
+function filtraOpcoesPorBusca(opcoes: readonly OpcaoFiltroMultiSelect[], termoBusca: string): readonly OpcaoFiltroMultiSelect[] {
+    const termoNormalizado = normalizaTextoComparacao(termoBusca);
+
+    if (termoNormalizado.length === 0) return opcoes;
+
+    return opcoes.filter(opcao => opcaoCombinaComBusca(opcao, termoNormalizado));
+};
+
 function removeFiltrosCampo(filtros: readonly NoraGraphQLFiltroVisualizacaoAtivo[], campo: string): readonly NoraGraphQLFiltroVisualizacaoAtivo[] {
     return filtros.filter(filtro => filtro.campo !== campo);
 };
@@ -195,6 +212,12 @@ function resolveResumoSelecionados(totalSelecionado: number, totalOpcoes: number
     return `${totalSelecionado} selecionados`;
 };
 
+function resolveResumoOpcoesPopover(totalOpcoesVisiveis: number, totalOpcoes: number, termoBusca: string): string {
+    if (normalizaTextoComparacao(termoBusca).length === 0) return `${totalOpcoes} ${pluralize(totalOpcoes, 'opção', 'opções')}`;
+
+    return `${totalOpcoesVisiveis} de ${totalOpcoes} ${pluralize(totalOpcoes, 'opção', 'opções')}`;
+};
+
 function montaEstiloPopover(posicao: PosicaoPopover | null): CSSProperties {
     if (!posicao) return {};
 
@@ -207,11 +230,36 @@ function montaEstiloPopover(posicao: PosicaoPopover | null): CSSProperties {
 export default function CampoFiltroMultiSelect({ campo, registros, filtros, setFiltros, label, opcoesExternas }: CampoFiltroMultiSelectProps) {
     const triggerRef = useRef<HTMLButtonElement | null>(null);
     const popoverRef = useRef<HTMLDivElement | null>(null);
+    const inputBuscaRef = useRef<HTMLInputElement | null>(null);
     const opcoes = useMemo(() => montaOpcoesFiltro(registros, campo, opcoesExternas), [campo, opcoesExternas, registros]);
     const filtroCampoAtual = useMemo(() => obtemFiltroCampo(filtros, campo.campo), [campo.campo, filtros]);
     const valoresSelecionados = useMemo(() => obtemValoresSelecionados(filtroCampoAtual), [filtroCampoAtual]);
     const [aberto, setAberto] = useState(false);
     const [posicaoPopover, setPosicaoPopover] = useState<PosicaoPopover | null>(null);
+    const [termoBusca, setTermoBusca] = useState('');
+    const [termoBuscaDebounced, setTermoBuscaDebounced] = useState('');
+    const opcoesFiltradas = useMemo(() => filtraOpcoesPorBusca(opcoes, termoBuscaDebounced), [opcoes, termoBuscaDebounced]);
+
+    useEffect(() => {
+        const timeoutId = window.setTimeout(() => setTermoBuscaDebounced(termoBusca), 240);
+
+        return () => window.clearTimeout(timeoutId);
+    }, [termoBusca]);
+
+    useEffect(() => {
+        if (aberto) return;
+
+        setTermoBusca('');
+        setTermoBuscaDebounced('');
+    }, [aberto]);
+
+    useEffect(() => {
+        if (!aberto) return;
+
+        const rafId = window.requestAnimationFrame(() => inputBuscaRef.current?.focus());
+
+        return () => window.cancelAnimationFrame(rafId);
+    }, [aberto]);
 
     useEffect(() => {
         if (!aberto) return;
@@ -263,6 +311,10 @@ export default function CampoFiltroMultiSelect({ campo, registros, filtros, setF
         };
     }, [aberto]);
 
+    function atualizaTermoBusca(event: ChangeEvent<HTMLInputElement>) {
+        setTermoBusca(event.target.value);
+    };
+
     function atualizaValoresSelecionados(valores: readonly ValorOpcaoFiltro[]) {
         const filtrosSemCampo = removeFiltrosCampo(filtros, campo.campo);
 
@@ -300,12 +352,15 @@ export default function CampoFiltroMultiSelect({ campo, registros, filtros, setF
                 <div ref={popoverRef} className={styles.popover_multiselect} style={montaEstiloPopover(posicaoPopover)}>
                     <div className={styles.cabecalho_popover}>
                         <strong>{label}</strong>
-                        <span>{opcoes.length} {pluralize(opcoes.length, 'opção', 'opções')}</span>
+                        <span>{resolveResumoOpcoesPopover(opcoesFiltradas.length, opcoes.length, termoBuscaDebounced)}</span>
+                    </div>
+                    <div className={styles.busca_popover}>
+                        <input ref={inputBuscaRef} value={termoBusca} onChange={atualizaTermoBusca} className={styles.input_busca_popover} placeholder="Filtrar opções..." aria-label={`Filtrar opções de ${label}`} />
                     </div>
                     <div className={styles.lista_opcoes}>
-                        {opcoes.length === 0 ? (
+                        {opcoesFiltradas.length === 0 ? (
                             <span className={styles.estado_vazio}>Nenhuma opção encontrada.</span>
-                        ) : opcoes.map(opcao => (
+                        ) : opcoesFiltradas.map(opcao => (
                             <button key={opcao.chave} type="button" onClick={() => alternaOpcao(opcao)} className={valorSelecionadoPossuiOpcao(valoresSelecionados, opcao) ? `${styles.opcao} ${styles.opcao_selecionada}` : styles.opcao}>
                                 <span className={styles.marcador_opcao}>{valorSelecionadoPossuiOpcao(valoresSelecionados, opcao) ? '✓' : ''}</span>
                                 <span className={styles.label_opcao}>{opcao.label}</span>
