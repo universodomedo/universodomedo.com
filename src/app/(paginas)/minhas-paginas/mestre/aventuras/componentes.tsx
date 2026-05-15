@@ -5,7 +5,7 @@ import { PAGINAS } from 'types-nora-api';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import Conteiner__PaginaMestreAventuras from 'Conteineres/PaginaMestreAventuras/conteiner';
 
-export function AventurasMestre_Client() {
+export default function AventurasMestre_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.mestre.aventuras}>
             <Conteiner__PaginaMestreAventuras />

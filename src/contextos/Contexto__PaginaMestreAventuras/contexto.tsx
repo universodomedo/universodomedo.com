@@ -44,7 +44,7 @@ export const Contexto__PaginaMestreAventuras__Provider = ({ children }: { childr
 
 function obtemListagemGruposAventuras() {
     return useNoraGraphQLListagem('GrupoAventura', {
-        select: ['id', 'dadosArteCapa'],
+        select: ['id', 'nome', 'nomeUnicoGrupoAventura', 'dadosArteCapa', 'detalhesSessoes'],
         itensPorPagina: 12,
         carregando: 'Buscando Aventuras',
         mensagemErro: 'Houve um erro recuperando suas Aventuras',

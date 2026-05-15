@@ -17,7 +17,7 @@ export default function SPA__PaginaMestreAventuras__SemAventuraSelecionada() {
             itensPorLinha={4}
             obterIdRegistro={grupoAventura => grupoAventura.id}
             renderizarItem={grupoAventura => (
-                <DivClicavel className={styles.recipiente_item_imagem_aventura_mestre} onClick={() => { selecionaGrupoAventura(grupoAventura.id) }}>
+                <DivClicavel className={styles.recipiente_item_imagem_aventura_mestre} onClick={() => { selecionaGrupoAventura(grupoAventura.id) }} title={grupoAventura.nomeUnicoGrupoAventura}>
                     <RenderArquivoArteCapa caminhoArquivoArte={grupoAventura.dadosArteCapa.caminhoArquivoArteCapa} />
                 </DivClicavel>
             )}
