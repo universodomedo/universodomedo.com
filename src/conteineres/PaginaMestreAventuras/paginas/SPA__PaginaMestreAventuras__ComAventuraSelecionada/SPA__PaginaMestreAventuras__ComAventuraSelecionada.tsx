@@ -6,7 +6,6 @@ import { useState } from 'react';
 import { AventuraEstado, FormatoMomento, GrupoAventura_DetalhesSessoes, PAGINAS, SessaoEmGrupoAventura, SessaoGraphqlDto } from 'types-nora-api';
 
 import { useContexto__PaginaMestreAventuras__ComAventuraSelecionada } from "Contextos/Contexto__PaginaMestreAventuras__ComAventuraSelecionada/contextos";
-import { useConfigurarLayoutContextualizado } from "Redux/hooks/useLayoutContextualizado";
 import RenderCabecalhoCapa from '@/componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/CabecalhoDeAventura';
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 import CustomLink from 'Componentes/Elementos/CustomLink/CustomLink';
@@ -17,17 +16,15 @@ import useScrollable from '@/componentes/ElementosVisuais/ElementoScrollable/use
 import { formataDuracao } from '@/uteis/FormatadorDeMomento/FormatadorDeMomento';
 
 export default function SPA__PaginaMestreAventuras__SemAventuraSelecionada() {
-    const { grupoAventuraSelecionado, deselecionaGrupoAventura } = useContexto__PaginaMestreAventuras__ComAventuraSelecionada();
-
-    useConfigurarLayoutContextualizado({ titulo: grupoAventuraSelecionado.nomeUnicoGrupoAventura, fecharProps: { tipo: 'acao', executar: () => { deselecionaGrupoAventura() }, tituloTooltip: 'Voltar' } }, 'patch');
+    const { grupoAventura, configuraArteCapaGrupoAventuraSelecionado } = useContexto__PaginaMestreAventuras__ComAventuraSelecionada();
 
     return (
         <div className={styles.recipiente_aventura_selecionada}>
-            <RenderCabecalhoCapa caminhoArquivoArte={grupoAventuraSelecionado.dadosArteCapa.caminhoArquivoArteCapa} configArteCapa={{ callback: () => { console.log(`oi`) }, subtituloOperacao: grupoAventuraSelecionado.nomeUnicoGrupoAventura }} />
+            <RenderCabecalhoCapa caminhoArquivoArte={grupoAventura.dadosArteCapa.caminhoArquivoArteCapa} configArteCapa={grupoAventura.dadosArteCapa.temCapaConfigurada ? undefined : { callback: configuraArteCapaGrupoAventuraSelecionado, subtituloOperacao: grupoAventura.nomeUnicoGrupoAventura }} />
 
-            {grupoAventuraSelecionado.detalhesSessoes.estadoAtual === AventuraEstado.EM_ANDAMENTO && <VisualizadorSessoes idGrupoAventura={grupoAventuraSelecionado.id} detalhesSessoes={grupoAventuraSelecionado.detalhesSessoes} />}
+            {grupoAventura.detalhesSessoes.estadoAtual === AventuraEstado.EM_ANDAMENTO && <VisualizadorSessoes idGrupoAventura={grupoAventura.id} detalhesSessoes={grupoAventura.detalhesSessoes} />}
 
-            <InformacoesGeraisAventura detalhesSessoes={grupoAventuraSelecionado.detalhesSessoes} />
+            <InformacoesGeraisAventura detalhesSessoes={grupoAventura.detalhesSessoes} />
         </div>
     );
 };

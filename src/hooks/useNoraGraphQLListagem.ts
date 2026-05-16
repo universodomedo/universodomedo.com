@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, createElement, useCallback, useEffect, useMemo, useRef, useState, useContext, type ReactNode } from 'react';
-import { ApiOperacaoGraphqlGet, GraphqlFiltroConsultaCampoDef, GraphqlFiltroControleVisualizacao, GraphqlFiltroVisualizacaoCampoDef, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemVariosParametrosEntidade, GraphqlOpcoesFiltroConsultaCampo, GraphqlOpcoesFiltrosConsultaParametros, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime, GraphqlSelectNormalizadoObjeto, GraphqlSelectRuntime, GraphqlTotalDeRegistrosParametrosEntidade, normalizaSelectGraphql } from 'types-nora-api';
+import { ApiOperacaoGraphqlGet, GraphqlFiltroConsultaCampoDef, GraphqlFiltroControleVisualizacao, GraphqlFiltroVisualizacaoCampoDef, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemVariosParametrosEntidade, GraphqlOpcoesFiltroConsultaCampo, GraphqlOpcoesFiltrosConsultaParametros, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime, GraphqlSelectNormalizadoObjeto, GraphqlSelectRuntime, GraphqlTotalDeRegistrosParametrosEntidade, GraphqlWhereCampo, normalizaSelectGraphql } from 'types-nora-api';
 
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import type { ContextoFiltrosConsultaValor } from 'Contextos/Contexto__FiltrosConsulta/contexto';
@@ -31,6 +31,8 @@ type UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome extends GraphqlLeitu
 
 type UseNoraGraphQLListagemParametrosOpcoesFiltrosConsulta<TNome extends GraphqlLeituraNome> = GraphqlOpcoesFiltrosConsultaParametros<UseNoraGraphQLListagemObjeto<TNome>, string>;
 
+type UseNoraGraphQLListagemWhereGraphql<TNome extends GraphqlLeituraNome> = UseNoraGraphQLListagemParametrosConsulta<TNome>['where'];
+
 type UseNoraGraphQLListagemEventos<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = {
     readonly varios: (definicao: { readonly parametros: UseNoraGraphQLListagemParametrosConsulta<TNome>; readonly select: TSelect; }) => NoraGraphQLOperacaoBase;
     readonly totalDeRegistros: (definicao: { readonly parametros: UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>; }) => NoraGraphQLOperacaoBase;
@@ -56,12 +58,26 @@ type UseNoraGraphQLListagemCamposFiltroConsultaContrato<TNome extends GraphqlLei
 
 type UseNoraGraphQLListagemCamposFiltroVisualizacaoContrato<TNome extends GraphqlLeituraNome> = GraphqlLeituraPorNome<TNome> extends { readonly CamposFiltroVisualizacao: infer TCampos extends readonly UseNoraGraphQLListagemCampoFiltroDef[] } ? TCampos[number] : never;
 
+type UseNoraGraphQLListagemUnionParaIntersecao<TUnion> = (TUnion extends object ? (valor: TUnion) => void : never) extends (valor: infer TIntersecao) => void ? TIntersecao : never;
+
+type UseNoraGraphQLListagemSimplifica<TValor> = {
+    readonly [TChave in keyof TValor]: TValor[TChave];
+};
+
+type UseNoraGraphQLListagemWherePorPath<TObjeto, TPath extends readonly string[]> = TPath extends readonly [infer THead extends keyof TObjeto & string, ...infer TRest extends readonly string[]] ? TRest extends readonly [] ? { readonly [TChave in THead]?: GraphqlWhereCampo<TObjeto[THead]> } : NonNullable<TObjeto[THead]> extends object ? { readonly [TChave in THead]?: UseNoraGraphQLListagemWherePorPath<NonNullable<TObjeto[THead]>, TRest> } : never : never;
+
+type UseNoraGraphQLListagemWhereObjetoPorCampos<TNome extends GraphqlLeituraNome> = UseNoraGraphQLListagemUnionParaIntersecao<UseNoraGraphQLListagemCamposFiltroConsultaContrato<TNome> extends infer TCampo ? TCampo extends UseNoraGraphQLListagemCampoFiltroDef<string, infer TPath> ? UseNoraGraphQLListagemWherePorPath<UseNoraGraphQLListagemObjeto<TNome>, TPath> : never : never>;
+
+type UseNoraGraphQLListagemWhereObjetoConsulta<TNome extends GraphqlLeituraNome> = [UseNoraGraphQLListagemWhereObjetoPorCampos<TNome>] extends [never] ? Record<string, never> : UseNoraGraphQLListagemSimplifica<UseNoraGraphQLListagemWhereObjetoPorCampos<TNome>>;
+
+type UseNoraGraphQLListagemWhereFixo<TNome extends GraphqlLeituraNome> = UseNoraGraphQLListagemWhereObjetoConsulta<TNome> | readonly UseNoraGraphQLListagemWhereObjetoConsulta<TNome>[] | null | undefined;
+
 export type UseNoraGraphQLListagemCampoFiltroConsulta<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = UseNoraGraphQLListagemCampoFiltroSelecionado<UseNoraGraphQLListagemSelectNormalizado<TNome, TSelect>, UseNoraGraphQLListagemCamposFiltroConsultaContrato<TNome>>;
 
 export type UseNoraGraphQLListagemCampoFiltroVisualizacao<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = UseNoraGraphQLListagemCampoFiltroSelecionado<UseNoraGraphQLListagemSelectNormalizado<TNome, TSelect>, UseNoraGraphQLListagemCamposFiltroVisualizacaoContrato<TNome>>;
 
 export type UseNoraGraphQLListagemConsultaParams<TNome extends GraphqlLeituraNome> = {
-    readonly where: UseNoraGraphQLListagemParametrosConsulta<TNome>['where'];
+    readonly where: UseNoraGraphQLListagemWhereGraphql<TNome>;
     readonly limit: number | null;
     readonly offset: number | null;
 };
@@ -70,6 +86,7 @@ export type UseNoraGraphQLListagemCarregamento = keyof typeof NoraApiCarregament
 
 export type UseNoraGraphQLListagemParams<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = {
     readonly select: TSelect;
+    readonly whereFixo?: UseNoraGraphQLListagemWhereFixo<NoInfer<TNome>>;
     readonly camposFiltroConsulta?: readonly UseNoraGraphQLListagemCampoFiltroConsulta<NoInfer<TNome>, NoInfer<TSelect>>[];
     readonly camposFiltroVisualizacao?: readonly UseNoraGraphQLListagemCampoFiltroVisualizacao<NoInfer<TNome>, NoInfer<TSelect>>[];
     readonly itensPorPagina: number;
@@ -79,7 +96,7 @@ export type UseNoraGraphQLListagemParams<TNome extends GraphqlLeituraNome, TSele
     readonly mensagemListaVaziaComFiltro: string;
     readonly carregamento?: UseNoraGraphQLListagemCarregamento;
     readonly montaParametrosConsulta: (params: UseNoraGraphQLListagemConsultaParams<TNome>) => UseNoraGraphQLListagemParametrosConsulta<TNome>;
-    readonly montaParametrosTotalDeRegistros?: (where: UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>['where']) => UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>;
+    readonly montaParametrosTotalDeRegistros?: (where: UseNoraGraphQLListagemWhereGraphql<TNome>) => UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>;
     readonly contador?: ReactNode;
     readonly acoes?: ReactNode;
     readonly rodape?: ReactNode;
@@ -99,6 +116,16 @@ type CampoFiltroComNomeEPath = {
 type FiltroAtivoComCampo = {
     readonly campo: string;
 };
+
+type WhereListagemEscalar = string | number | boolean | Date | null;
+
+type WhereListagemValor = WhereListagemEscalar | readonly WhereListagemEscalar[] | WhereListagemObjeto;
+
+type WhereListagemObjeto = object;
+
+type WhereListagemInput = WhereListagemObjeto | readonly WhereListagemObjeto[] | null | undefined;
+
+type WhereListagemOutput = WhereListagemObjeto | readonly WhereListagemObjeto[] | undefined;
 
 function normalizaValorFiltroParaComparacao(valor: NoraGraphQLFiltroConsultaAtivo['valor']): string {
     if (valor === null) return 'null';
@@ -244,6 +271,99 @@ function useNoraGraphQLListagemExtrasVazio<TRegistro extends object>(_: UseNoraG
     return {};
 };
 
+function whereListagemEhLista(where: Exclude<WhereListagemInput, null | undefined>): where is readonly WhereListagemObjeto[] {
+    return Array.isArray(where);
+};
+
+function normalizaWhereListagem(where: WhereListagemInput): readonly WhereListagemObjeto[] {
+    if (where === null || where === undefined) return [];
+    if (whereListagemEhLista(where)) return where;
+
+    return [where];
+};
+
+function obtemCamposWhereListagem(where: WhereListagemObjeto): readonly string[] {
+    return Object.keys(where);
+};
+
+function obtemValorWhereListagem(where: WhereListagemObjeto, campo: string): WhereListagemValor | undefined {
+    const whereIndexado = where as { readonly [campo: string]: WhereListagemValor | undefined };
+
+    return whereIndexado[campo];
+};
+
+function valorWhereListagemEhObjetoComposto(valor: WhereListagemValor | undefined): valor is WhereListagemObjeto {
+    if (valor === undefined) return false;
+    if (valor === null) return false;
+    if (valor instanceof Date) return false;
+    if (Array.isArray(valor)) return false;
+
+    return typeof valor === 'object';
+};
+
+function whereObjetoEhVazio(where: WhereListagemObjeto): boolean {
+    for (const campo of obtemCamposWhereListagem(where)) {
+        const valor = obtemValorWhereListagem(where, campo);
+
+        if (valor === undefined) continue;
+        if (valorWhereListagemEhObjetoComposto(valor) && whereObjetoEhVazio(valor)) continue;
+
+        return false;
+    }
+
+    return true;
+};
+
+function mesclaObjetoWhereListagem(whereAtual: WhereListagemObjeto, whereNovo: WhereListagemObjeto): WhereListagemObjeto {
+    const resultado: { [campo: string]: WhereListagemValor | undefined } = {};
+
+    for (const campo of obtemCamposWhereListagem(whereAtual)) {
+        resultado[campo] = obtemValorWhereListagem(whereAtual, campo);
+    }
+
+    for (const campo of obtemCamposWhereListagem(whereNovo)) {
+        const valorAtual = resultado[campo];
+        const valorNovo = obtemValorWhereListagem(whereNovo, campo);
+
+        if (valorNovo === undefined) continue;
+
+        if (valorWhereListagemEhObjetoComposto(valorAtual) && valorWhereListagemEhObjetoComposto(valorNovo)) {
+            resultado[campo] = mesclaObjetoWhereListagem(valorAtual, valorNovo);
+            continue;
+        }
+
+        resultado[campo] = valorNovo;
+    }
+
+    return resultado;
+};
+
+function combinaListaWhereListagem(wheresFixo: readonly WhereListagemObjeto[], wheresDinamico: readonly WhereListagemObjeto[]): readonly WhereListagemObjeto[] {
+    if (wheresFixo.length === 0) return wheresDinamico;
+    if (wheresDinamico.length === 0) return wheresFixo;
+
+    const wheresCombinados: WhereListagemObjeto[] = [];
+
+    for (const whereFixo of wheresFixo) {
+        for (const whereDinamico of wheresDinamico) {
+            wheresCombinados.push(mesclaObjetoWhereListagem(whereFixo, whereDinamico));
+        }
+    }
+
+    return wheresCombinados;
+};
+
+function combinaWhereListagem(whereFixo: WhereListagemInput, whereDinamico: WhereListagemInput): WhereListagemOutput {
+    const wheresFixo = normalizaWhereListagem(whereFixo);
+    const wheresDinamico = normalizaWhereListagem(whereDinamico);
+    const wheresCombinados = combinaListaWhereListagem(wheresFixo, wheresDinamico).filter(where => !whereObjetoEhVazio(where));
+
+    if (wheresCombinados.length === 0) return undefined;
+    if (wheresCombinados.length === 1) return wheresCombinados[0];
+
+    return wheresCombinados;
+};
+
 export default function useNoraGraphQLListagem<const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>>(nomeLeitura: TNome, params: UseNoraGraphQLListagemParams<TNome, TSelect>): UseNoraGraphQLListagemResultado<UseNoraGraphQLListagemRegistro<TNome, TSelect>> {
     type TObjeto = UseNoraGraphQLListagemObjeto<TNome>;
     type TRegistro = UseNoraGraphQLListagemRegistro<TNome, TSelect>;
@@ -303,31 +423,35 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
         filtros: filtrosConsultaAplicadosDisponiveis,
     });
 
+    const whereConsultaComEscopoFixo = useMemo<UseNoraGraphQLListagemWhereGraphql<TNome>>(() => {
+        return combinaWhereListagem(params.whereFixo, resultadoFiltroConsulta.where) as UseNoraGraphQLListagemWhereGraphql<TNome>;
+    }, [params.whereFixo, resultadoFiltroConsulta.where]);
+
     const parametrosConsultaRegistros = useMemo<UseNoraGraphQLListagemParametrosConsulta<TNome>>(() => {
         return params.montaParametrosConsulta({
-            where: resultadoFiltroConsulta.where as UseNoraGraphQLListagemParametrosConsulta<TNome>['where'],
+            where: whereConsultaComEscopoFixo,
             limit: itensPorPaginaNormalizado,
             offset: offsetConsulta,
         });
-    }, [itensPorPaginaNormalizado, offsetConsulta, params, resultadoFiltroConsulta.where]);
+    }, [itensPorPaginaNormalizado, offsetConsulta, params, whereConsultaComEscopoFixo]);
 
     const parametrosTotalDeRegistros = useMemo<UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>>(() => {
-        if (params.montaParametrosTotalDeRegistros) return params.montaParametrosTotalDeRegistros(resultadoFiltroConsulta.where as UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>['where']);
+        if (params.montaParametrosTotalDeRegistros) return params.montaParametrosTotalDeRegistros(whereConsultaComEscopoFixo);
 
         return params.montaParametrosConsulta({
-            where: resultadoFiltroConsulta.where as UseNoraGraphQLListagemParametrosConsulta<TNome>['where'],
+            where: whereConsultaComEscopoFixo,
             limit: null,
             offset: null,
         }) as UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>;
-    }, [params, resultadoFiltroConsulta.where]);
+    }, [params, whereConsultaComEscopoFixo]);
 
     const parametrosOpcoesFiltrosConsulta = useMemo<UseNoraGraphQLListagemParametrosOpcoesFiltrosConsulta<TNome>>(() => {
         return {
             campos: camposOpcoesFiltrosConsulta.map(campo => campo.campo),
-            where: resultadoFiltroConsulta.where as UseNoraGraphQLListagemParametrosOpcoesFiltrosConsulta<TNome>['where'],
+            where: whereConsultaComEscopoFixo,
             limitePorCampo: 100,
         };
-    }, [camposOpcoesFiltrosConsulta, resultadoFiltroConsulta.where]);
+    }, [camposOpcoesFiltrosConsulta, whereConsultaComEscopoFixo]);
 
     const consultaRegistros = useNoraGraphQLConsulta(() => graphql.eventos.varios({ parametros: parametrosConsultaRegistros, select: params.select }), {
         valorInicial: [] as readonly TRegistro[],
@@ -541,4 +665,4 @@ export function criaContextoNoraGraphQLListagem<const TNomeListagem extends stri
     };
 
     return { Provider, useContexto } as const;
-}
+};

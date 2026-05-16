@@ -61,7 +61,14 @@ type UseNoraGraphQLConsultaRegistroResultado<TNome extends GraphqlLeituraNome, T
 
 type UseNoraGraphQLConsultaParametros<TNome extends GraphqlLeituraNome> = GraphqlObtemUmParametrosEntidade<UseNoraGraphQLConsultaObjeto<TNome>>;
 
-type UseNoraGraphQLConsultaEventos<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>> = {
+type UseNoraGraphQLConsultaEventoPorPK<TSelect extends object> = (definicao: { readonly pk: number; readonly select: TSelect; }) => NoraGraphQLOperacaoBase;
+
+type UseNoraGraphQLConsultaEventosPorPK<TSelect extends object> = {
+    readonly porPK?: UseNoraGraphQLConsultaEventoPorPK<TSelect>;
+    readonly obtemPorPK?: UseNoraGraphQLConsultaEventoPorPK<TSelect>;
+};
+
+type UseNoraGraphQLConsultaEventos<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>> = UseNoraGraphQLConsultaEventosPorPK<TSelect> & {
     readonly um: (definicao: { readonly parametros: UseNoraGraphQLConsultaParametros<TNome>; readonly select: TSelect; }) => NoraGraphQLOperacaoBase;
 };
 
@@ -69,8 +76,7 @@ type UseNoraGraphQLConsultaContratoComEventos<TNome extends GraphqlLeituraNome, 
     readonly eventos: UseNoraGraphQLConsultaEventos<TNome, TSelect>;
 };
 
-export type UseNoraGraphQLConsultaRegistroParams<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object> = {
-    readonly props: TProviderProps;
+type UseNoraGraphQLConsultaRegistroOpcoes<TSelect extends object> = {
     readonly select: TSelect;
     readonly carregando: string;
     readonly mensagemErro?: string;
@@ -80,10 +86,33 @@ export type UseNoraGraphQLConsultaRegistroParams<TNome extends GraphqlLeituraNom
     readonly carregamento?: UseNoraGraphQLConsultaCarregamento;
     readonly aguardarFinalizacaoVisual?: boolean;
     readonly lancarErroAoFalhar?: boolean;
+};
+
+type UseNoraGraphQLConsultaRegistroParamsPorPK<TSelect extends object, TProviderProps extends object> = UseNoraGraphQLConsultaRegistroOpcoes<TSelect> & {
+    readonly props: TProviderProps;
+    readonly pk: number;
+    readonly montaParametrosConsulta?: undefined;
+};
+
+type UseNoraGraphQLConsultaRegistroParamsPorConsulta<TNome extends GraphqlLeituraNome, TSelect extends object, TProviderProps extends object> = UseNoraGraphQLConsultaRegistroOpcoes<TSelect> & {
+    readonly props: TProviderProps;
+    readonly pk?: undefined;
     readonly montaParametrosConsulta: (props: TProviderProps) => UseNoraGraphQLConsultaParametros<TNome>;
 };
 
-type UseNoraGraphQLConsultaRegistroDef<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object> = Omit<UseNoraGraphQLConsultaRegistroParams<TNome, TSelect, TProviderProps>, 'props'>;
+export type UseNoraGraphQLConsultaRegistroParams<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object> = UseNoraGraphQLConsultaRegistroParamsPorPK<TSelect, TProviderProps> | UseNoraGraphQLConsultaRegistroParamsPorConsulta<TNome, TSelect, TProviderProps>;
+
+type UseNoraGraphQLConsultaRegistroDefPorPK<TSelect extends object, TProviderProps extends object> = UseNoraGraphQLConsultaRegistroOpcoes<TSelect> & {
+    readonly montaPK: (props: TProviderProps) => number;
+    readonly montaParametrosConsulta?: undefined;
+};
+
+type UseNoraGraphQLConsultaRegistroDefPorConsulta<TNome extends GraphqlLeituraNome, TSelect extends object, TProviderProps extends object> = UseNoraGraphQLConsultaRegistroOpcoes<TSelect> & {
+    readonly montaPK?: undefined;
+    readonly montaParametrosConsulta: (props: TProviderProps) => UseNoraGraphQLConsultaParametros<TNome>;
+};
+
+type UseNoraGraphQLConsultaRegistroDef<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object> = UseNoraGraphQLConsultaRegistroDefPorPK<TSelect, TProviderProps> | UseNoraGraphQLConsultaRegistroDefPorConsulta<TNome, TSelect, TProviderProps>;
 
 type UseNoraGraphQLConsultaExtrasParams<TResult, TProviderProps extends object> = {
     readonly consulta: UseNoraGraphQLConsultaResultado<TResult>;
@@ -156,6 +185,51 @@ function obtemCarregamentoNoraApi(carregamento: UseNoraGraphQLConsultaCarregamen
 
 function useNoraGraphQLConsultaExtrasVazio<TResult, TProviderProps extends object>(_: UseNoraGraphQLConsultaExtrasParams<TResult, TProviderProps>): Record<string, never> {
     return {};
+};
+
+function obtemEventoPorPK<TSelect extends object>(eventos: UseNoraGraphQLConsultaEventosPorPK<TSelect>): UseNoraGraphQLConsultaEventoPorPK<TSelect> {
+    if (eventos.porPK) return eventos.porPK;
+    if (eventos.obtemPorPK) return eventos.obtemPorPK;
+
+    throw new Error('Contrato GraphQL não expõe operação de seleção por PK. Gere novamente os contratos e confirme se a leitura possui operação por PK.');
+};
+
+function montaOperacaoRegistro<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object>(graphql: UseNoraGraphQLConsultaContratoComEventos<TNome, TSelect>, params: UseNoraGraphQLConsultaRegistroParams<TNome, TSelect, TProviderProps>): NoraGraphQLOperacaoBase {
+    if (params.pk !== undefined) return obtemEventoPorPK(graphql.eventos)({ pk: params.pk, select: params.select });
+
+    return graphql.eventos.um({ parametros: params.montaParametrosConsulta(params.props), select: params.select });
+};
+
+function montaRegistroParamsPorDef<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object>(definicao: UseNoraGraphQLConsultaRegistroDef<TNome, TSelect, TProviderProps>, props: TProviderProps): UseNoraGraphQLConsultaRegistroParams<TNome, TSelect, TProviderProps> {
+    if (definicao.montaPK) {
+        return {
+            props,
+            select: definicao.select,
+            pk: definicao.montaPK(props),
+            carregando: definicao.carregando,
+            mensagemErro: definicao.mensagemErro,
+            exibirToastErro: definicao.exibirToastErro,
+            executarAoMontar: definicao.executarAoMontar,
+            limparDataAoFalhar: definicao.limparDataAoFalhar,
+            carregamento: definicao.carregamento,
+            aguardarFinalizacaoVisual: definicao.aguardarFinalizacaoVisual,
+            lancarErroAoFalhar: definicao.lancarErroAoFalhar,
+        };
+    }
+
+    return {
+        props,
+        select: definicao.select,
+        montaParametrosConsulta: definicao.montaParametrosConsulta,
+        carregando: definicao.carregando,
+        mensagemErro: definicao.mensagemErro,
+        exibirToastErro: definicao.exibirToastErro,
+        executarAoMontar: definicao.executarAoMontar,
+        limparDataAoFalhar: definicao.limparDataAoFalhar,
+        carregamento: definicao.carregamento,
+        aguardarFinalizacaoVisual: definicao.aguardarFinalizacaoVisual,
+        lancarErroAoFalhar: definicao.lancarErroAoFalhar,
+    };
 };
 
 export default function useNoraGraphQLConsulta<const TOperacao extends NoraGraphQLOperacaoBase>(selecionaOperacao: () => TOperacao, opcoes: UseNoraGraphQLConsultaOpcoesSemExtrair): UseNoraGraphQLConsultaResultado<NoraGraphQLResultadoPadrao<TOperacao>>;
@@ -231,7 +305,7 @@ export function useNoraGraphQLRegistro<const TNome extends GraphqlLeituraNome, c
 
     const graphql = GraphqlLeituras[nomeLeitura] as UseNoraGraphQLConsultaContratoComEventos<TNome, TSelect>;
 
-    return useNoraGraphQLConsulta(() => graphql.eventos.um({ parametros: params.montaParametrosConsulta(params.props), select: params.select }), {
+    return useNoraGraphQLConsulta(() => montaOperacaoRegistro(graphql, params), {
         valorInicial: null as TResultado,
         carregando: params.carregando,
         mensagemErro: params.mensagemErro,
@@ -261,7 +335,8 @@ export function criaContextoNoraGraphQLConsulta<const TNomeConsulta extends stri
     };
 
     const Provider = (props: TProviderProps) => {
-        const consulta: TConsulta = useNoraGraphQLRegistro(params.nomeLeitura, { ...params.consulta, props });
+        const consultaParams = montaRegistroParamsPorDef(params.consulta, props);
+        const consulta: TConsulta = useNoraGraphQLRegistro(params.nomeLeitura, consultaParams);
         const extras = useExtras({ consulta, props });
         const value = useMemo<TContexto>(() => ({ [params.nomeConsulta]: consulta.data as TResultado, ...extras } as TContexto), [consulta.data, extras]);
 

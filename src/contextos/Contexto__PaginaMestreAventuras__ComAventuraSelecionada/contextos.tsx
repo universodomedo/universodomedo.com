@@ -1,20 +1,17 @@
 'use client';
 
-import { createContext, useContext } from 'react';
-import { GraphqlTypesGrupoAventura } from 'types-nora-api';
+import { createContext, useCallback, useContext } from 'react';
 
-import RenderizaConsultaNoraGraphQL from 'Helpers/RenderizaConsultaNoraGraphQL/RenderizaConsultaNoraGraphQL';
-import { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { useContexto__PaginaMestreAventuras } from '../Contexto__PaginaMestreAventuras/contexto';
 import SPA__PaginaMestreAventuras__ComAventuraSelecionada from 'Conteineres/PaginaMestreAventuras/paginas/SPA__PaginaMestreAventuras__ComAventuraSelecionada/SPA__PaginaMestreAventuras__ComAventuraSelecionada';
+import { configuraArteCapaGrupoAventura } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 type Contexto__PaginaMestreAventuras__Props = ReturnType<typeof useContexto__PaginaMestreAventuras>;
 
-type GrupoAventuraSelecionado = NonNullable<ReturnType<typeof obtemConsultaGrupoAventuraSelecionado>['data']>;
-
 interface Contexto__PaginaMestreAventuras__ComAventuraSelecionada__Props {
-    grupoAventuraSelecionado: GrupoAventuraSelecionado;
-    deselecionaGrupoAventura: Contexto__PaginaMestreAventuras__Props['deselecionaGrupoAventura'];
+    grupoAventura: NonNullable<Contexto__PaginaMestreAventuras__Props['grupoAventuraSelecionado']>;
+    configuraArteCapaGrupoAventuraSelecionado: (idArquivoTipadoArte: number) => Promise<void>;
 };
 
 const Contexto__PaginaMestreAventuras__ComAventuraSelecionada = createContext<Contexto__PaginaMestreAventuras__ComAventuraSelecionada__Props | undefined>(undefined);
@@ -25,31 +22,16 @@ export const useContexto__PaginaMestreAventuras__ComAventuraSelecionada = (): Co
     return context;
 };
 
-export const Contexto__PaginaMestreAventuras__ComAventuraSelecionada__Provider = ({ idGrupoAventuraSelecionado, deselecionaGrupoAventura }: { idGrupoAventuraSelecionado: number; deselecionaGrupoAventura: Contexto__PaginaMestreAventuras__Props['deselecionaGrupoAventura']; }) => {
-    const consultaGrupoAventuraSelecionado = obtemConsultaGrupoAventuraSelecionado({ idGrupoAventuraSelecionado });
+export const Contexto__PaginaMestreAventuras__ComAventuraSelecionada__Provider = ({ grupoAventura, deselecionaGrupoAventura }: { grupoAventura: NonNullable<Contexto__PaginaMestreAventuras__Props['grupoAventuraSelecionado']>; deselecionaGrupoAventura: Contexto__PaginaMestreAventuras__Props['deselecionaGrupoAventura']; }) => {
+    useConfigurarLayoutContextualizado({ titulo: grupoAventura.nomeUnicoGrupoAventura, fecharProps: { tipo: 'acao', executar: () => { deselecionaGrupoAventura() }, tituloTooltip: 'Voltar' } }, 'patch');
+
+    const configuraArteCapaGrupoAventuraSelecionado = useCallback(async (idArteCapa: number) => {
+        await configuraArteCapaGrupoAventura(grupoAventura.id, idArteCapa);
+    }, [grupoAventura.id]);
 
     return (
-        <RenderizaConsultaNoraGraphQL consulta={consultaGrupoAventuraSelecionado} mensagemRegistroNaoEncontrado="Registro não encontrado.">
-            {grupoAventuraSelecionado => (
-                <Contexto__PaginaMestreAventuras__ComAventuraSelecionada.Provider value={{ grupoAventuraSelecionado, deselecionaGrupoAventura }}>
-                    <SPA__PaginaMestreAventuras__ComAventuraSelecionada />
-                </Contexto__PaginaMestreAventuras__ComAventuraSelecionada.Provider>
-            )}
-        </RenderizaConsultaNoraGraphQL>
+        <Contexto__PaginaMestreAventuras__ComAventuraSelecionada.Provider value={{ grupoAventura, configuraArteCapaGrupoAventuraSelecionado }}>
+            <SPA__PaginaMestreAventuras__ComAventuraSelecionada />
+        </Contexto__PaginaMestreAventuras__ComAventuraSelecionada.Provider>
     );
-};
-
-//
-
-function obtemConsultaGrupoAventuraSelecionado(params: { idGrupoAventuraSelecionado: number; }) {
-    return useNoraGraphQLRegistro('GrupoAventura', {
-        select: ['id', 'nome', 'nomeUnicoGrupoAventura', 'dadosArteCapa', 'detalhesSessoes'],
-        props: params,
-        carregando: 'Buscando Aventura',
-        mensagemErro: 'Houve um erro recuperando a Aventura selecionada',
-        carregamento: 'BLOQUEIA_INTERFACE',
-        montaParametrosConsulta: props => ({
-            where: { id: { eq: props.idGrupoAventuraSelecionado } },
-        }),
-    });
 };

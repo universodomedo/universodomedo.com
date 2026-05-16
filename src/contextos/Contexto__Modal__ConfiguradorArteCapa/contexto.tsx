@@ -2,17 +2,21 @@
 
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
-import { GraphqlTypesArquivoTipadoArte } from 'types-nora-api';
-
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { BotaoConfigurarArteCapa } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/CabecalhoDeAventura/CabecalhoDeAventura';
 import Modal__ConfiguradorArteCapa from 'Componentes/ElementosModais/Modal__ConfiguradorArteCapa/Modal__ConfiguradorArteCapa';
 
+export type ConfiguracaoArteCapa = {
+    readonly callback: (idArteCapa: number) => void | Promise<void>;
+    readonly subtituloOperacao: string;
+};
+
 interface Contexto__Modal__ConfiguradorArteCapa__Props {
     listagemArtesCapa: ReturnType<typeof obtemListagemArtesCapa>;
-    configArteCapa: { callback: () => void; subtituloOperacao: string; };
+    subtituloOperacao: string;
     idArteCapaSelecionada: number | null;
     selecionaArteCapa: (idArteCapa: number) => void;
+    executaAtualizacaoArteCapaSelecionada: () => Promise<void>;
 };
 
 const Contexto__Modal__ConfiguradorArteCapa = createContext<Contexto__Modal__ConfiguradorArteCapa__Props | undefined>(undefined);
@@ -23,11 +27,9 @@ export const useContexto__Modal__ConfiguradorArteCapa = (): Contexto__Modal__Con
     return context;
 };
 
-export function Recipiente__Contexto__Modal__ConfiguradorArteCapa__Provider({ configArteCapa }: { configArteCapa: { callback: () => void; subtituloOperacao: string; }; }) {
-    return <Contexto__Modal__ConfiguradorArteCapa__Provider configArteCapa={configArteCapa} />;
-};
+export function Recipiente__Contexto__Modal__ConfiguradorArteCapa__Provider({ configArteCapa }: { configArteCapa: ConfiguracaoArteCapa; }) { return <Contexto__Modal__ConfiguradorArteCapa__Provider configArteCapa={configArteCapa} />; };
 
-const Contexto__Modal__ConfiguradorArteCapa__Provider = ({ configArteCapa }: { configArteCapa: { callback: () => void; subtituloOperacao: string; }; }) => {
+const Contexto__Modal__ConfiguradorArteCapa__Provider = ({ configArteCapa }: { configArteCapa: ConfiguracaoArteCapa; }) => {
     const listagemArtesCapa = obtemListagemArtesCapa();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,8 +38,15 @@ const Contexto__Modal__ConfiguradorArteCapa__Provider = ({ configArteCapa }: { c
     const [idArteCapaSelecionada, setIdArteCapaSelecionada] = useState<number | null>(null);
     const selecionaArteCapa = useCallback((idArteCapa: number) => { setIdArteCapaSelecionada(idArteCapa); }, []);
 
+    const executaAtualizacaoArteCapaSelecionada = useCallback(async () => {
+        if (idArteCapaSelecionada === null) return;
+
+        await configArteCapa.callback(idArteCapaSelecionada);
+        setIsModalOpen(false);
+    }, [configArteCapa, idArteCapaSelecionada]);
+
     return (
-        <Contexto__Modal__ConfiguradorArteCapa.Provider value={useMemo(() => ({ listagemArtesCapa, configArteCapa, idArteCapaSelecionada, selecionaArteCapa }), [configArteCapa, listagemArtesCapa])}>
+        <Contexto__Modal__ConfiguradorArteCapa.Provider value={useMemo(() => ({ listagemArtesCapa, subtituloOperacao: configArteCapa.subtituloOperacao, idArteCapaSelecionada, selecionaArteCapa, executaAtualizacaoArteCapaSelecionada }), [configArteCapa, idArteCapaSelecionada, listagemArtesCapa, selecionaArteCapa, executaAtualizacaoArteCapaSelecionada])}>
             <BotaoConfigurarArteCapa openModalConfigurarArteCapa={openModal} />
             <Modal__ConfiguradorArteCapa isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </Contexto__Modal__ConfiguradorArteCapa.Provider>

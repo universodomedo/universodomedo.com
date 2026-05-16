@@ -19,7 +19,7 @@ const Conteiner__PaginaMestreAventuras__Interno = criaConteiner<PropsConteiner__
 type PropsConteiner__PaginaMestreAventuras = ReturnType<typeof useContexto__PaginaMestreAventuras>;
 
 function resolveSaida(props: PropsConteiner__PaginaMestreAventuras): SaidaConteiner {
-    if (props.idGrupoAventuraSelecionada) return criaSaidaConteiner(Contexto__PaginaMestreAventuras__ComAventuraSelecionada__Provider, { idGrupoAventuraSelecionado: props.idGrupoAventuraSelecionada, deselecionaGrupoAventura: props.deselecionaGrupoAventura })
+    if (props.grupoAventuraSelecionado) return criaSaidaConteiner(Contexto__PaginaMestreAventuras__ComAventuraSelecionada__Provider, { grupoAventura: props.grupoAventuraSelecionado, deselecionaGrupoAventura: props.deselecionaGrupoAventura })
 
     return criaSaidaConteiner(Contexto__PaginaMestreAventuras__SemAventuraSelecionada__Provider, { gruposAventuras: props.listagemGruposAventuras, selecionaGrupoAventura: props.setIdGrupoAventuraSelecionada });
 };

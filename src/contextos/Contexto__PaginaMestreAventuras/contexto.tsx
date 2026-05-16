@@ -1,15 +1,15 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
-import { GraphqlTypesGrupoAventura } from 'types-nora-api';
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 
 interface Contexto__PaginaMestreAventuras__Props {
     listagemGruposAventuras: ReturnType<typeof obtemListagemGruposAventuras>;
-    idGrupoAventuraSelecionada: number | null;
     setIdGrupoAventuraSelecionada: (idGrupoAventuraSelecionada: number | null) => void;
     deselecionaGrupoAventura: () => void;
+    grupoAventuraSelecionado: ReturnType<typeof obtemListagemGruposAventuras>['registros'][number] | null
 };
 
 const Contexto__PaginaMestreAventuras = createContext<Contexto__PaginaMestreAventuras__Props | undefined>(undefined);
@@ -21,20 +21,17 @@ export const useContexto__PaginaMestreAventuras = (): Contexto__PaginaMestreAven
 };
 
 export const Contexto__PaginaMestreAventuras__Provider = ({ children }: { children: ReactNode; }) => {
-    const listagemGruposAventuras = obtemListagemGruposAventuras();
+    const { usuarioLogado } = useContextoAutenticacao();
+    
+    const listagemGruposAventuras = obtemListagemGruposAventuras(usuarioLogado?.id ?? null);
     const [idGrupoAventuraSelecionada, setIdGrupoAventuraSelecionada] = useState<number | null>(null);
+
+    const grupoAventuraSelecionado = idGrupoAventuraSelecionada ? listagemGruposAventuras.registros.find(grupoAventura => grupoAventura.id === idGrupoAventuraSelecionada) ?? null : null;
 
     const deselecionaGrupoAventura = useCallback(() => { setIdGrupoAventuraSelecionada(null); }, []);
 
-    const value = useMemo<Contexto__PaginaMestreAventuras__Props>(() => ({
-        listagemGruposAventuras,
-        idGrupoAventuraSelecionada,
-        setIdGrupoAventuraSelecionada,
-        deselecionaGrupoAventura,
-    }), [deselecionaGrupoAventura, idGrupoAventuraSelecionada, listagemGruposAventuras]);
-
     return (
-        <Contexto__PaginaMestreAventuras.Provider value={value}>
+        <Contexto__PaginaMestreAventuras.Provider value={{ listagemGruposAventuras, setIdGrupoAventuraSelecionada, deselecionaGrupoAventura, grupoAventuraSelecionado }}>
             {children}
         </Contexto__PaginaMestreAventuras.Provider>
     );
@@ -42,9 +39,10 @@ export const Contexto__PaginaMestreAventuras__Provider = ({ children }: { childr
 
 //
 
-function obtemListagemGruposAventuras() {
+function obtemListagemGruposAventuras(idUsuarioMestre: number | null) {
     return useNoraGraphQLListagem('GrupoAventura', {
         select: ['id', 'nome', 'nomeUnicoGrupoAventura', 'dadosArteCapa', 'detalhesSessoes'],
+        whereFixo: idUsuarioMestre === null ? { usuarioMestre: { id: -1 } } : { usuarioMestre: { id: idUsuarioMestre } },
         itensPorPagina: 12,
         carregando: 'Buscando Aventuras',
         mensagemErro: 'Houve um erro recuperando suas Aventuras',

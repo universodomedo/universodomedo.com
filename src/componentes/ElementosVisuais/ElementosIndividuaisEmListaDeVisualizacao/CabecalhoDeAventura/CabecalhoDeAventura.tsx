@@ -6,7 +6,7 @@ import { CaminhoArquivoArte, VIEW_GrupoAventuraDetalhado } from 'types-nora-api'
 
 import SecaoDeConteudo from 'Componentes/ElementosVisuais/SecaoDeConteudo/SecaoDeConteudo';
 import { RenderArquivoArteCapa } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
-import { Recipiente__Contexto__Modal__ConfiguradorArteCapa__Provider } from '@/contextos/Contexto__Modal__ConfiguradorArteCapa/contexto';
+import { Recipiente__Contexto__Modal__ConfiguradorArteCapa__Provider, type ConfiguracaoArteCapa } from '@/contextos/Contexto__Modal__ConfiguradorArteCapa/contexto';
 
 type CabecalhoProps = | { tipo: 'sessao'; caminhoCapaSessao: CaminhoArquivoArte; } | { tipo: 'grupoAventura'; grupoAventura: VIEW_GrupoAventuraDetalhado; };
 
@@ -20,7 +20,7 @@ function RenderCabecalhoLegado({ caminhoArquivoArte }: { caminhoArquivoArte: Cam
 	);
 };
 
-export default function RenderCabecalhoCapa({ caminhoArquivoArte, configArteCapa }: { caminhoArquivoArte: CaminhoArquivoArte; configArteCapa?: { callback: () => void; subtituloOperacao: string; }; }) {
+export default function RenderCabecalhoCapa({ caminhoArquivoArte, configArteCapa }: { caminhoArquivoArte: CaminhoArquivoArte; configArteCapa?: ConfiguracaoArteCapa; }) {
 	return (
 		<SecaoDeConteudo className={styles.recipiente_capa_cabecalho_aventura}>
 			<RenderArquivoArteCapa caminhoArquivoArte={caminhoArquivoArte} />

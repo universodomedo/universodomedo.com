@@ -270,6 +270,10 @@ export async function obtemAvataresDeComparacao(): Promise<CaminhoArquivoAvatar[
     return await useApi<CaminhoArquivoAvatar[]>({ uri: '/arquivos_tipados_avatar/obtemAvataresDeComparacao', method: 'GET' });
 }
 
+export async function configuraArteCapaGrupoAventura(idGrupoAventura: number, idArquivoTipadoArte: number): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/grupos_aventuras/configuraArteCapaGrupoAventura', method: 'PUT', data: { idGrupoAventura, idArquivoTipadoArte } });
+}
+
 //
 
 export async function desconectar() {
