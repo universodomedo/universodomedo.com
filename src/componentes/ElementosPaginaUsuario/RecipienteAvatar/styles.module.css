@@ -1,0 +1,132 @@
+/* =========================================
+   AVATAR
+========================================= */
+
+.absolut_avatar {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+
+    position: absolute;
+    top: 50%;
+    left: 8%;
+
+    z-index: 2;
+
+    transform: translateY(-65%);
+}
+
+.recipiente_avatar_usuario {
+    height: 50%;
+    aspect-ratio: 1 / 1;
+
+    position: relative;
+
+    transition: .4s ease;
+}
+
+.recipiente_avatar_usuario:hover {
+    transform: scale(.98);
+    transition: 0.4s ease;
+}
+
+.recipiente_imagem_usuario {
+    height: 100%;
+    aspect-ratio: 1 / 1;
+
+    position: relative;
+
+    border-radius: 7.5%;
+    overflow: hidden;
+
+    z-index: 1;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(to bottom,
+            #857f7200 30%,
+            hsla(41, 46%, 85%, 0.030) 100%),
+        radial-gradient(circle, #040309 53%, #07060B 100%);
+
+    border: 1px solid #352E4C;
+}
+
+.moldura_avatar {
+    width: 121.5%;
+    aspect-ratio: 1/1;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translateY(-50%) translateX(-50%);
+
+    z-index: 2;
+
+    pointer-events: none;
+}
+
+.recipiente_emblema_moldura {
+    position: absolute;
+    top: 85%;
+    left: 50%;
+
+    transform:
+        translateY(0%) translateX(-50%);
+
+    height: 20%;
+    aspect-ratio: 1/1;
+
+    z-index: 2;
+}
+
+
+/* =========================================
+   MODAL AVATARES
+========================================= */
+
+#recipiente_selecao_avatares {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    row-gap: 5vh;
+
+    padding: 2vh 0;
+}
+
+#recipiente_selecao_avatares h2 {
+    margin: auto;
+}
+
+.recipiente_celula_avatar {
+    flex: 0 0 30%;
+    height: fit-content;
+}
+
+.recipiente_avatar {
+    position: relative;
+
+    aspect-ratio: 1;
+    height: 8rem;
+
+    margin: auto;
+}
+
+.recipiente_avatar:not(.selecionado_atual) {
+    cursor: pointer;
+}
+
+.recipiente_avatar img {
+    filter: drop-shadow(2px 4px 6px black);
+}
+
+.recipiente_avatar.selecionado_atual img {
+    filter: drop-shadow(2px 4px 6px rgb(233, 170, 55));
+}
+
+.recipiente_avatar:not(.selecionado_atual):hover img {
+    filter: drop-shadow(2px 4px 6px rgb(51, 255, 136));
+}
