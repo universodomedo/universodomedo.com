@@ -19,7 +19,7 @@ export function Conteiner__GerenciarAvatares() {
 export const Conteiner__GerenciarAvatares__Interno = criaConteiner<ContextoGerenciarAvatares__Props>({ useEstado, resolveSaida });
 
 function resolveSaida(props: ContextoGerenciarAvatares__Props): SaidaConteiner {
-    if (props.personagemSelecionado) return criaSaidaConteiner(ContextoGerenciarAvatares__Personagem__Provider, { personagem: props.personagemSelecionado, avataresDeComparacao: props.avataresDeComparacao, deselecionaPersonagem: props.deselecionaPersonagem });
+    // if (props.personagemSelecionado) return criaSaidaConteiner(ContextoGerenciarAvatares__Personagem__Provider, { personagem: props.personagemSelecionado, avataresDeComparacao: props.avataresDeComparacao, deselecionaPersonagem: props.deselecionaPersonagem });
 
     return criaSaidaConteiner(ContextoGerenciarAvatares__Listagem__Provider, { listagemPersonagens: props.listagemPersonagens, selecionaPersonagem: props.setIdPersonagemSelecionado });
 };

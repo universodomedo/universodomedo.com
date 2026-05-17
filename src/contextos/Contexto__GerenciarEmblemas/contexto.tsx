@@ -6,15 +6,15 @@ import { GraphqlOrderDirecao, GraphqlTypesEmblema } from 'types-nora-api';
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
 
-const SELECT_GERENCIAMENTO_EMBLEMAS = GraphqlTypesEmblema.select('id', 'nome', 'nomeVisual', 'descricao', 'dataCriacao', { arquivos: ['caminhoArquivoMoldura', 'caminhoArquivoEmblema'] });
+// const SELECT_GERENCIAMENTO_EMBLEMAS = GraphqlTypesEmblema.select('id', 'nome', 'nomeVisual', 'descricao', 'dataCriacao', { arquivos: ['caminhoArquivoMoldura', 'caminhoArquivoEmblema'] });
 
 const WHERE_GERENCIAMENTO_EMBLEMAS: GraphqlTypesEmblema.ObtemVariosParametros['where'] = {
     id: { gt: 0 },
 };
 
-export type EmblemaGerenciamentoRegistro = GraphqlTypesEmblema.Item<typeof SELECT_GERENCIAMENTO_EMBLEMAS>;
+// export type EmblemaGerenciamentoRegistro = GraphqlTypesEmblema.Item<typeof SELECT_GERENCIAMENTO_EMBLEMAS>;
 
-export type ListaEmblemasGerenciamento = readonly EmblemaGerenciamentoRegistro[];
+// export type ListaEmblemasGerenciamento = readonly EmblemaGerenciamentoRegistro[];
 
 export interface Contexto__GerenciarEmblemas__Props {
     // emblemas: ListaEmblemasGerenciamento;

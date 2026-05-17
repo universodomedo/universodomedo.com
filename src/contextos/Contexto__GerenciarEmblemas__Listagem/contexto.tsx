@@ -3,7 +3,7 @@
 import { createContext, useContext } from 'react';
 
 import SPA__PaginaGerenciarEmblemas__Listagem from 'Conteineres/GerenciarEmblemas/paginas/SPA__PaginaGerenciarEmblemas__Listagem/SPA__PaginaGerenciarEmblemas__Listagem';
-import { ListaEmblemasGerenciamento, useContexto__GerenciarEmblemas } from 'Contextos/Contexto__GerenciarEmblemas/contexto';
+// import { ListaEmblemasGerenciamento, useContexto__GerenciarEmblemas } from 'Contextos/Contexto__GerenciarEmblemas/contexto';
 
 export interface Contexto__GerenciarEmblemas__Listagem__Props {
     // emblemas: ListaEmblemasGerenciamento;
