@@ -7,7 +7,6 @@ import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { obtemAvataresDeComparacao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { toast } from 'Hooks/useToast';
 
-
 export interface ContextoGerenciarAvatares__Props {
     listagemPersonagens: ReturnType<typeof obtemListagemPersonagens>;
     avataresDeComparacao: CaminhoArquivoAvatar[];

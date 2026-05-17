@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, createElement, useCallback, useEffect, useMemo, useRef, useState, useContext, type ReactNode } from 'react';
-import { ApiOperacaoGraphqlGet, GraphqlFiltroConsultaCampoDef, GraphqlFiltroControleVisualizacao, GraphqlFiltroVisualizacaoCampoDef, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemVariosParametrosEntidade, GraphqlOpcoesFiltroConsultaCampo, GraphqlOpcoesFiltrosConsultaParametros, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime, GraphqlSelectNormalizadoObjeto, GraphqlSelectRuntime, GraphqlTotalDeRegistrosParametrosEntidade, GraphqlWhereCampo, normalizaSelectGraphql } from 'types-nora-api';
+import { ApiOperacaoGraphqlGet, GraphqlFiltroConsultaCampoDef, GraphqlFiltroControleVisualizacao, GraphqlFiltroVisualizacaoCampoDef, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemVariosParametrosEntidade, GraphqlOpcoesFiltroConsultaCampo, GraphqlOpcoesFiltrosConsultaParametros, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime, GraphqlSelectNormalizadoObjeto, GraphqlSelectRuntime, GraphqlTotalDeRegistrosParametrosEntidade, normalizaSelectGraphql } from 'types-nora-api';
 
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import type { ContextoFiltrosConsultaValor } from 'Contextos/Contexto__FiltrosConsulta/contexto';
@@ -58,19 +58,7 @@ type UseNoraGraphQLListagemCamposFiltroConsultaContrato<TNome extends GraphqlLei
 
 type UseNoraGraphQLListagemCamposFiltroVisualizacaoContrato<TNome extends GraphqlLeituraNome> = GraphqlLeituraPorNome<TNome> extends { readonly CamposFiltroVisualizacao: infer TCampos extends readonly UseNoraGraphQLListagemCampoFiltroDef[] } ? TCampos[number] : never;
 
-type UseNoraGraphQLListagemUnionParaIntersecao<TUnion> = (TUnion extends object ? (valor: TUnion) => void : never) extends (valor: infer TIntersecao) => void ? TIntersecao : never;
-
-type UseNoraGraphQLListagemSimplifica<TValor> = {
-    readonly [TChave in keyof TValor]: TValor[TChave];
-};
-
-type UseNoraGraphQLListagemWherePorPath<TObjeto, TPath extends readonly string[]> = TPath extends readonly [infer THead extends keyof TObjeto & string, ...infer TRest extends readonly string[]] ? TRest extends readonly [] ? { readonly [TChave in THead]?: GraphqlWhereCampo<TObjeto[THead]> } : NonNullable<TObjeto[THead]> extends object ? { readonly [TChave in THead]?: UseNoraGraphQLListagemWherePorPath<NonNullable<TObjeto[THead]>, TRest> } : never : never;
-
-type UseNoraGraphQLListagemWhereObjetoPorCampos<TNome extends GraphqlLeituraNome> = UseNoraGraphQLListagemUnionParaIntersecao<UseNoraGraphQLListagemCamposFiltroConsultaContrato<TNome> extends infer TCampo ? TCampo extends UseNoraGraphQLListagemCampoFiltroDef<string, infer TPath> ? UseNoraGraphQLListagemWherePorPath<UseNoraGraphQLListagemObjeto<TNome>, TPath> : never : never>;
-
-type UseNoraGraphQLListagemWhereObjetoConsulta<TNome extends GraphqlLeituraNome> = [UseNoraGraphQLListagemWhereObjetoPorCampos<TNome>] extends [never] ? Record<string, never> : UseNoraGraphQLListagemSimplifica<UseNoraGraphQLListagemWhereObjetoPorCampos<TNome>>;
-
-type UseNoraGraphQLListagemWhereFixo<TNome extends GraphqlLeituraNome> = UseNoraGraphQLListagemWhereObjetoConsulta<TNome> | readonly UseNoraGraphQLListagemWhereObjetoConsulta<TNome>[] | null | undefined;
+type UseNoraGraphQLListagemWhereFixo<TNome extends GraphqlLeituraNome> = UseNoraGraphQLListagemWhereGraphql<TNome>;
 
 export type UseNoraGraphQLListagemCampoFiltroConsulta<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = UseNoraGraphQLListagemCampoFiltroSelecionado<UseNoraGraphQLListagemSelectNormalizado<TNome, TSelect>, UseNoraGraphQLListagemCamposFiltroConsultaContrato<TNome>>;
 

@@ -210,10 +210,6 @@ export async function me_obtemArquivoPendente(): Promise<ArquivoCompletaDto | nu
     return await useApi<ArquivoCompletaDto | null>({ uri: '/arquivos/me/me_obtemArquivoPendente', method: 'GET' });
 }
 
-export async function me_obtemTodosArquivosAprovados(): Promise<ArquivoCompletaDto[]> {
-    return await useApi<ArquivoCompletaDto[]>({ uri: '/arquivos/me/me_obtemTodosArquivosAprovados', method: 'GET' });
-}
-
 export async function obtemTodasImagensEspeciaisArtistaAprovadas(): Promise<ArquivoCompletaDto[]> {
     return await useApi<ArquivoCompletaDto[]>({ uri: '/arquivos/obtemTodasImagensEspeciaisArtistaAprovadas', method: 'GET' });
 }

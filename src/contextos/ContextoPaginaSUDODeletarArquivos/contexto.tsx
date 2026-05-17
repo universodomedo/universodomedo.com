@@ -46,9 +46,9 @@ export const ContextoPaginaSUDODeletarArquivosProvider = ({ children }: { childr
 
 export function obtemListagemArquivos() {
     return useNoraGraphQLListagem('Arquivo', {
-        select: ['id', 'tipoArquivo', 'caminhoArquivo', 'nomeGeralArquivo', 'detalheArquivoInterno', 'dataCriacao', 'tipoArquivo', 'usuarioAdicionou'],
+        select: ['id', 'tipoArquivo', 'caminhoArquivo', 'nomeGeralArquivo', 'detalheArquivoInterno', 'dataCriacao', 'tipoArquivo', 'usuario'],
         camposFiltroConsulta: ['dataCriacao'],
-        camposFiltroVisualizacao: ['dataCriacao', 'nomeGeralArquivo', 'tipoArquivo.nome', 'usuarioAdicionou.username'],
+        camposFiltroVisualizacao: ['dataCriacao', 'nomeGeralArquivo', 'tipoArquivo.nome', 'usuario.username'],
         itensPorPagina: 12,
         carregando: 'Buscando Capas',
         mensagemErro: 'Houve um erro recuperando as Capas existentes',

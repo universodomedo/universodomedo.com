@@ -29,7 +29,7 @@ function DeletarArquivos_Contexto() {
             listagem={listagemArquivos}
             modoExibicao={ListagemCompostaModoExibicao.GRADE}
             itensPorLinha={6}
-            obterIdRegistro={grupoAventura => grupoAventura.id}
+            obterIdRegistro={arquivo => arquivo.id}
             renderizarItem={arquivo => <RenderizaArquivo key={arquivo.id} arquivo={arquivo} />}
         />
     );

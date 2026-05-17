@@ -2,13 +2,14 @@
 
 import styles from './styles.module.css';
 
-import { ArquivoCompletaDto, PAGINAS } from "types-nora-api";
+import { PAGINAS } from "types-nora-api";
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
 import { ContextoPaginaArtistaMinhasImagensProvider, useContextoPaginaArtistaMinhasImagens } from "Contextos/ContextoPaginaArtistaMinhasImagens/contexto";
 import RecipienteImagemPadrao from 'Uteis/ImagemLoader/RecipienteImagemPadrao';
+import ListagemComposta, { ListagemCompostaModoExibicao } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
 
-export function PaginaArtista_MinhasImagens_Client() {
+export default function PaginaArtista_MinhasImagens_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.minhasPaginas.artista.minhasImagens}>
             <ContextoPaginaArtistaMinhasImagensProvider>
@@ -19,24 +20,24 @@ export function PaginaArtista_MinhasImagens_Client() {
 };
 
 function PaginaArtista_MinhasImagens_Contexto() {
-    const { arquivos } = useContextoPaginaArtistaMinhasImagens();
+    const { listagemArquivos } = useContextoPaginaArtistaMinhasImagens();
 
-    return arquivos.length > 0
-        ? (
-            <div className={styles.recipiente_lista_arquivos}>
-                {arquivos.map(arquivo => <RenderizaArquivo key={arquivo.id} arquivo={arquivo} />)}
-            </div>
-        )
-        : (
-            <h4>Nenhum Arquivo encontrado</h4>
-        )
+    return (
+        <ListagemComposta
+            listagem={listagemArquivos}
+            modoExibicao={ListagemCompostaModoExibicao.GRADE}
+            itensPorLinha={6}
+            obterIdRegistro={arquivo => arquivo.id}
+            renderizarItem={arquivo => <RenderizaArquivo key={arquivo.id} caminhoArquivo={arquivo.caminhoArquivo} />}
+        />
+    );
 };
 
-function RenderizaArquivo({ arquivo }: { arquivo: ArquivoCompletaDto }) {
+function RenderizaArquivo({ caminhoArquivo }: { caminhoArquivo: string }) {
     return (
         <div className={styles.recipiente_individual_item_arquivo}>
             <div className={styles.recipiente_area_render_arquivo}>
-                <RecipienteImagemPadrao src={arquivo.caminhoArquivo} />
+                <RecipienteImagemPadrao src={caminhoArquivo} />
             </div>
         </div>
     );

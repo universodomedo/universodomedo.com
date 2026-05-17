@@ -7,8 +7,36 @@ div.recipiente_capa_cabecalho_aventura {
 
 .botao_config_arte_capa {
     position: absolute;
-    right: 0.75em;
-    bottom: 0.75em;
+    bottom: .2em;
+    right: .8em;
+    padding: .45em 1.1em .35em;
     z-index: 1;
     cursor: pointer;
+    border: .08em solid rgba(255, 255, 255, .35);
+    border-radius: .35em;
+    background: linear-gradient(135deg, rgba(0, 0, 0, .82), rgba(0, 0, 0, .58));
+    backdrop-filter: blur(.55em) saturate(1.25);
+    -webkit-backdrop-filter: blur(.55em) saturate(1.25);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-shadow: 0 .08em .16em #000;
+    box-shadow: 0 .25em .9em rgba(0, 0, 0, .85), inset 0 .08em .08em rgba(255, 255, 255, .18), inset 0 -.12em .18em rgba(0, 0, 0, .55);
+    transition: transform .15s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+.botao_config_arte_capa:hover {
+    background: linear-gradient(135deg, rgba(0, 0, 0, .9), rgba(0, 0, 0, .68));
+    border-color: rgba(255, 255, 255, .55);
+    box-shadow: 0 .3em 1em rgba(0, 0, 0, .95), inset 0 .08em .08em rgba(255, 255, 255, .24), inset 0 -.12em .18em rgba(0, 0, 0, .65);
+    transform: translateY(-.05em);
+}
+
+.botao_config_arte_capa:active {
+    transform: translateY(.05em);
+}
+
+.botao_config_arte_capa:focus-visible {
+    outline: .12em solid rgba(255, 255, 255, .9);
+    outline-offset: .15em;
 }

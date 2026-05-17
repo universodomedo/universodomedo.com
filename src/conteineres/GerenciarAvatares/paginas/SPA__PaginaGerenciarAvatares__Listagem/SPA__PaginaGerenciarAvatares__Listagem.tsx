@@ -18,7 +18,7 @@ export default function SPA__PaginaGerenciarAvatares__Listagem() {
             listagem={listagemPersonagens}
             modoExibicao={ListagemCompostaModoExibicao.GRADE}
             itensPorLinha={6}
-            obterIdRegistro={grupoAventura => grupoAventura.id}
+            obterIdRegistro={personagem => personagem.id}
             renderizarItem={personagem => <RegistroPersonagemESeusAvatares key={personagem.id} personagem={personagem} />}
         />
     );
