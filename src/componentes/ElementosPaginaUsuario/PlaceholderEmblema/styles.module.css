@@ -1,0 +1,68 @@
+.placeholder_emblema {
+    position: relative;
+    top: 50%;
+    left: 50%;
+
+    transform: translateY(-50%) translateX(-50%);
+
+    height: 45%;
+    aspect-ratio: 1/1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1;
+}
+
+.placeholder_emblema:hover {
+    cursor: pointer;
+}
+
+.placeholder_emblema:hover .fundo_placeholder_emblema {
+    transform: scale(1.05);
+    transition: transform 0.5s ease;
+}
+
+.placeholder_emblema:hover .botao_placeholder_emblema {
+    transform: scale(.9);
+    transition: transform 0.3s ease;
+}
+
+.recipiente_setas_circulares {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+
+    width: 100%;
+    height: 100%;
+}
+
+.seta_circular_emblema {
+    width: 100%;
+    height: 100%;
+
+    opacity: 0.75;
+
+    background-image: linear-gradient(to bottom,
+            transparent 15%,
+            #967bb6,
+            #6A4398,
+            transparent 85%);
+
+    transition: animation 2s ease;
+}
+
+.fundo_placeholder_emblema {
+    position: absolute;
+    aspect-ratio: 1/1;
+
+    transition: transform 0.5s ease;
+}
+
+.botao_placeholder_emblema {
+    position: absolute;
+    aspect-ratio: 1/1;
+
+    transition: transform 0.3s ease;
+}

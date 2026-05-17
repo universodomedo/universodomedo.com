@@ -1,0 +1,475 @@
+.recipiente_emblemas_conquistas {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2%;
+}
+
+/* =========================
+   CARD DE EMBLEMA
+========================= */
+
+.recipiente_emblema {
+    height: 58.5%;
+    width: 100%;
+    margin-top: 2%;
+
+    display: flex;
+    justify-content: start;
+    align-items: start;
+}
+
+.area_emblema {
+    height: 100%;
+    width: 97.5%;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+
+    background:
+        linear-gradient(to bottom, #857f7200 30%, hsla(41, 46%, 85%, 0.030) 100%),
+        radial-gradient(circle, #040309 53%, #07060B 100%);
+
+    border-radius: .5rem 9rem .5rem .5rem;
+}
+
+.area_emblema::after {
+    content: url('/moldura-emblema.svg');
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translateY(-50%) translateX(-50%) scaleX(.935) scaleY(.935);
+
+    object-fit: contain;
+
+    z-index: 10;
+    pointer-events: none;
+}
+
+.recipiente_titulo_emblema {
+    position: relative;
+
+    height: 4.5rem;
+    width: 100%;
+
+    padding-left: 5%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+.recipiente_titulo_emblema::before {
+    content: '';
+
+    position: absolute;
+    top: 100%;
+    left: 48%;
+
+    transform: translateY(-50%) translateX(-50%);
+
+    width: 93%;
+    height: 1px;
+
+    background-color: #322F2F;
+
+    z-index: 10;
+}
+
+.titulo_emblema {
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: var(--fonte-cinzel);
+    font-size: 2.5rem;
+    font-weight: 400;
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+
+    color: transparent;
+
+    background: linear-gradient(to bottom, #857F72, #EBE0C9, #857F72);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.icone_emblema {
+    content: url('/icone-emblemas.png');
+
+    width: 40px;
+    height: 40px;
+
+    margin-right: 2.5%;
+    margin-top: 1%;
+}
+
+.recipiente_desenho_emblema {
+    position: relative;
+
+    height: 65%;
+    width: 100%;
+}
+
+.recipiente_desenho_emblema::before {
+    content: '';
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translateY(-50%) translateX(-50%);
+
+    width: 100%;
+    height: 100%;
+
+    background-image: url('/imagem-fundo-emblema.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.ornamento_emblema {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translateY(-50%) translateX(-50%);
+
+    width: 98%;
+    height: auto;
+}
+
+.placeholder_emblema {
+    position: relative;
+    top: 50%;
+    left: 50%;
+
+    transform: translateY(-50%) translateX(-50%);
+
+    height: 45%;
+    aspect-ratio: 1/1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1;
+}
+
+.placeholder_emblema:hover {
+    cursor: pointer;
+}
+
+.placeholder_emblema:hover .fundo_placeholder_emblema {
+    transform: scale(1.05);
+    transition: transform 0.5s ease;
+}
+
+.placeholder_emblema:hover .botao_placeholder_emblema {
+    transform: scale(.9);
+    transition: transform 0.3s ease;
+}
+
+.placeholder_emblema:hover + .recipiente_setas_circulares img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translateY(-50%) translateX(-50%);
+
+    animation: girar 12.5s linear infinite;
+    transition: animation 0.5s ease;
+}
+
+@keyframes girar {
+    from {
+        transform: translateY(-50%) translateX(-50%) rotate(0deg) scale(1);
+    }
+
+    to {
+        transform: translateY(-50%) translateX(-50%) rotate(360deg) scale(.95);
+    }
+}
+
+.recipiente_setas_circulares {
+    position: absolute;
+    top: 0%;
+    left: 0%;
+
+    width: 100%;
+    height: 100%;
+
+    mask: url('/setas-circulares.svg') no-repeat center;
+    -webkit-mask: url('/setas-circulares.svg') no-repeat center;
+}
+
+.seta_circular_emblema {
+    width: 100%;
+    height: 100%;
+
+    opacity: 0.75;
+
+    background-image: linear-gradient(
+        to bottom,
+        transparent 15%,
+        #967bb6,
+        #6A4398,
+        transparent 85%
+    );
+
+    transition: animation 2s ease;
+}
+
+.fundo_placeholder_emblema {
+    position: absolute;
+    aspect-ratio: 1/1;
+}
+
+.botao_placeholder_emblema {
+    position: absolute;
+    aspect-ratio: 1/1;
+}
+
+.area_emblema h3 {
+    position: relative;
+
+    width: 100%;
+    height: 20%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: var(--fonte-junge);
+    font-size: 2rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0.05em;
+
+    color: transparent;
+
+    background: linear-gradient(to bottom, #857F72, #EBE0C9, #857F72);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.area_emblema h3::before {
+    content: url('/ornamento-conquistas.svg');
+
+    position: absolute;
+    top: -25%;
+    left: 0%;
+
+    width: 100%;
+    height: 1.5rem;
+}
+
+/* =========================
+   CARD DE CONQUISTAS
+========================= */
+
+.recipiente_conquistas {
+    width: 97.5%;
+    height: 35.5%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background:
+        linear-gradient(to bottom, #857f7200 20%, hsla(41, 46%, 85%, 0.030) 100%),
+        radial-gradient(circle, #040309 53%, #07060B 100%);
+
+    border-radius: .5rem;
+}
+
+.area_conquistas {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+
+    gap: 7.5%;
+
+    text-align: center;
+}
+
+.area_conquistas::after {
+    content: url('/moldura-conquistas.svg');
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translateY(-50%) translateX(-53.5%) scale(.935);
+
+    width: 100%;
+
+    z-index: 10;
+    pointer-events: none;
+}
+
+.area_conquistas::before {
+    content: url('/ornamento-conquistas.svg');
+
+    position: absolute;
+    bottom: 5%;
+    left: 0%;
+
+    width: 100%;
+    height: 1.5rem;
+}
+
+.recipiente_titulo_conquistas {
+    position: relative;
+
+    width: 100%;
+    height: 4.5rem;
+
+    padding-left: 5%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+.recipiente_titulo_conquistas::before {
+    content: '';
+
+    position: absolute;
+    top: 100%;
+    left: 50%;
+
+    transform: translateY(-50%) translateX(-50%);
+
+    width: 95%;
+    height: 1px;
+
+    background-color: #322F2F;
+
+    z-index: 10;
+}
+
+.area_conquistas h2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: var(--fonte-cinzel);
+    font-size: 2.5rem;
+    font-weight: 400;
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+
+    color: transparent;
+
+    background: linear-gradient(to bottom, #857F72, #EBE0C9, #857F72);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.titulo_conquistas {
+    position: relative;
+
+    width: fit-content;
+    height: 100%;
+}
+
+.icone_conquistas {
+    content: url('/icone-conquistas.png');
+
+    width: 40px;
+    height: fit-content;
+
+    margin-right: 2.5%;
+    margin-top: .25%;
+}
+
+.recipiente_icones_conquistas {
+    width: 100%;
+    height: 8rem;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+
+    gap: 2.5%;
+
+    overflow: hidden;
+}
+
+.recipiente_placeholders {
+    position: relative;
+
+    height: 100%;
+    aspect-ratio: 1/1;
+}
+
+.recipiente_placeholders::before {
+    content: '';
+
+    position: absolute;
+    top: 10%;
+    right: -30%;
+
+    transform: translateX(-50%);
+
+    width: 1px;
+    height: 80%;
+
+    background-color: #322F2F;
+
+    z-index: 10;
+}
+
+.placeholder_conquistas {
+    position: relative;
+    top: 0%;
+    left: 0%;
+
+    height: 100%;
+    aspect-ratio: 1/1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1;
+}
+
+.placeholder_conquistas:hover {
+    cursor: pointer;
+}
+
+.placeholder_conquistas:hover .fundo_placeholder {
+    transform: scale(1.05);
+    transition: transform 0.5s ease;
+}
+
+.placeholder_conquistas:hover .botao_placeholder {
+    transform: scale(.9);
+    transition: transform 0.3s ease;
+}
+
+.botao_placeholder {
+    position: absolute;
+    z-index: 1;
+}

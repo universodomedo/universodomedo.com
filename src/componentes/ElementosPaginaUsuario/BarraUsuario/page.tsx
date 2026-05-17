@@ -4,11 +4,15 @@ import styles from './styles.module.css';
 
 import { useState } from 'react';
 import { PersonagemAvatarDto, PersonagemCompletaDto } from 'types-nora-api';
-
+import { atualizaAvatarUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto.tsx';
+
 import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
-import { atualizaAvatarUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
+import CardInformacoesUsuario from '../CardInformacoesUsuario/page.tsx';
+import EmblemaConquistas from '../EmblemaConquistas/page.tsx';
+
+import Image from "next/image";
 
 export default function BarraUsuario() {
     const { usuarioLogado } = useContextoAutenticacao();
@@ -16,20 +20,45 @@ export default function BarraUsuario() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const openModal = () => setIsModalOpen(true);
 
+    const [descricaoTemporaria, setDescricaoTemporaria] = useState(
+        ''
+    );
+
+    const [descricaoUsuario, setDescricaoUsuario] = useState(
+        ''
+    );
+
+    const [modoEdicao, setModoEdicao] = useState(false);
+
+    function iniciarEdicao() {
+        setDescricaoTemporaria(descricaoUsuario);
+        setModoEdicao(true);
+    }
+
+    function salvarDescricao() {
+        setDescricaoUsuario(descricaoTemporaria);
+        setModoEdicao(false);
+    }
+
+    function cancelarEdicao() {
+        setDescricaoTemporaria('');
+        setModoEdicao(false);
+    }
+
     if (!usuarioLogado) return;
 
     return (
         <>
-            <div id={styles.barra_usuario}>
-                <div className={styles.recipiente_imagem_usuario} onClick={openModal}>
-                    <RecipienteImagem src={usuarioLogado.customizacao.caminhoAvatar} />
-                </div>
-                <div className={styles.recipiente_informacoes_usuario}>
-                    <h1>{usuarioLogado.username}</h1>
+            <div className={styles.recipiente_perfil}>
+                <div className={styles.recipiente_barra_usuario}>
+                    <CardInformacoesUsuario />
+                    <EmblemaConquistas />
                 </div>
             </div>
+
+
             <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <Modal.Content cabecalho={ { titulo: 'Atualizar Avatar' } }>
+                <Modal.Content cabecalho={{ titulo: 'Atualizar Avatar' }}>
                     <ConteudoModalAtualizaAvatar listaAvatares={usuarioLogado.personagens?.filter(personagem => personagem.caminhoAvatarPersonagem !== null) ?? []} idPersonagemSelecinadoAtualmente={usuarioLogado.customizacao.personagemAvatarPrincipal?.idPersonagem} />
                 </Modal.Content>
             </Modal>

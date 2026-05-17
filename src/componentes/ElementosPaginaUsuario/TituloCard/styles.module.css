@@ -1,0 +1,58 @@
+.recipiente_titulo_emblema {
+    position: relative;
+
+    height: 4.5rem;
+    width: 100%;
+
+    padding-left: 5%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+}
+
+.recipiente_titulo_emblema::before {
+    content: '';
+
+    position: absolute;
+    top: 100%;
+    left: 48%;
+
+    transform: translateY(-50%) translateX(-50%);
+
+    width: 93%;
+    height: 1px;
+
+    background-color: #322F2F;
+
+    z-index: 10;
+}
+
+.icone_emblema {
+    width: 40px;
+    height: 40px;
+
+    margin-right: 2.5%;
+    margin-top: 1%;
+}
+
+.titulo_emblema {
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    font-family: var(--fonte-cinzel);
+    font-size: 2.5rem;
+    font-weight: 400;
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+
+    color: transparent;
+
+    background: linear-gradient(to bottom, #857F72, #EBE0C9, #857F72);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
