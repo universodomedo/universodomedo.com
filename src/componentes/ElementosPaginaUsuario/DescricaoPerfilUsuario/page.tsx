@@ -44,7 +44,7 @@ export default function DescricaoPerfilUsuario() {
                 {modoEdicao ? (
                     <>
                         <textarea
-                            maxLength={240}
+                            maxLength={66}
                             placeholder='O que você está pensando?'
                             value={descricaoTemporaria}
                             onChange={(e) => setDescricaoTemporaria(e.target.value)}

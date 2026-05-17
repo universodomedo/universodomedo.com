@@ -1,4 +1,3 @@
-
 /* =========================================
    DESCRIÇÃO
 ========================================= */
@@ -19,13 +18,21 @@
 
     font-family: var(--fonte-junge);
     font-size: 1.15rem;
-    line-height: 145%;
+    line-height: 1.45;
     letter-spacing: 5%;
 
     text-align: start;
     align-content: start;
 
     color: #aba9a1;
+
+    background-image:
+        linear-gradient(to bottom,
+            transparent 95%,
+            rgba(235, 224, 201, 0.08) 100%);
+
+    background-size: 100% 1.7rem;
+
 
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -82,11 +89,14 @@
 .descricao_edicao_icone svg {
     height: 1.5rem;
     width: 1.5rem;
-    
+
     position: absolute;
-    bottom: 0%;
+    top: -50%;
     right: 0%;
 
+    background-color: #15121C;
+    border: 3px solid #15121C;
+    outline: 1px solid #322F2F;
     color: #EBE0C9;
 }
 
