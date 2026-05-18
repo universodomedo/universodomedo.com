@@ -36,6 +36,13 @@ export type ListagemCompostaCarregarMaisProps = {
     readonly textoEsgotado?: string;
 };
 
+export type ListagemCompostaNovoRegistroProps = {
+    readonly estaEmProcessoCriacao: boolean;
+    readonly aoIniciarCriacao: () => void;
+    readonly textoBotao?: string;
+    readonly textoEmProcesso?: string;
+};
+
 export type ListagemCompostaListagem<TRegistro extends object> = {
     readonly registros: readonly TRegistro[];
     readonly carregando: string | null;
@@ -52,6 +59,7 @@ export type ListagemCompostaListagem<TRegistro extends object> = {
 
 type ListagemCompostaPropsBase<TRegistro extends object> = {
     readonly listagem: ListagemCompostaListagem<TRegistro>;
+    readonly novoRegistro?: ListagemCompostaNovoRegistroProps;
     readonly obterIdRegistro: (registro: TRegistro) => ListagemCompostaIdRegistro;
     readonly renderizarItem: (registro: TRegistro, indice: number) => ReactNode;
 };
@@ -146,6 +154,18 @@ function renderizaContadorListagem(contador: ReactNode): ReactNode {
     return <div className={styles.contador_filtros} title={contadorNormalizado.titulo}>{contadorNormalizado.texto}</div>;
 };
 
+function renderizaBotaoNovoRegistro(novoRegistro: ListagemCompostaNovoRegistroProps): ReactNode {
+    const textoBotao = novoRegistro.estaEmProcessoCriacao ? novoRegistro.textoEmProcesso ?? 'Criando' : novoRegistro.textoBotao ?? 'Novo';
+    const classeBotao = novoRegistro.estaEmProcessoCriacao ? `${styles.botao_novo_registro} ${styles.botao_novo_registro_em_processo}` : styles.botao_novo_registro;
+
+    return (
+        <button type="button" className={classeBotao} onClick={novoRegistro.aoIniciarCriacao} disabled={novoRegistro.estaEmProcessoCriacao}>
+            <span className={styles.icone_botao_novo_registro}>+</span>
+            <span>{textoBotao}</span>
+        </button>
+    );
+};
+
 function renderizaPaginacao(paginacao: ListagemCompostaPaginacaoProps): ReactNode {
     return (
         <div className={styles.paginacao}>
@@ -178,12 +198,13 @@ function resolveClasseAbaFiltro(abaAtual: ListagemCompostaAbaFiltros, aba: Lista
 };
 
 export default function ListagemComposta<TRegistro extends object>(props: ListagemCompostaProps<TRegistro>) {
-    const { listagem } = props;
+    const { listagem, novoRegistro } = props;
     const [abaFiltrosAtiva, setAbaFiltrosAtiva] = useState<ListagemCompostaAbaFiltros>('consulta');
     const possuiAcoes = !!listagem.acoes;
     const possuiFiltroConsulta = deveMostrarFiltroConsulta(listagem.filtrosConsulta);
     const possuiFiltroVisualizacao = deveMostrarFiltroVisualizacao(listagem.filtrosVisualizacao);
     const possuiFiltros = possuiFiltroConsulta || possuiFiltroVisualizacao;
+    const possuiBarraListagem = possuiFiltros || !!listagem.contador || !!novoRegistro;
     const possuiPaginacao = deveMostrarPaginacao(listagem.paginacao);
     const possuiCarregarMais = deveMostrarCarregarMais(listagem.carregarMais);
     const possuiRodape = possuiPaginacao || !!listagem.rodape;
@@ -208,19 +229,24 @@ export default function ListagemComposta<TRegistro extends object>(props: Listag
                         <div className={styles.acoes}>{listagem.acoes}</div>
                     </header>
                 )}
-                {possuiFiltros && (
+                {possuiBarraListagem && (
                     <div className={styles.area_filtros}>
                         <div className={styles.barra_filtros_listagem}>
                             <div className={styles.abas_filtros} role="tablist" aria-label="Filtros da listagem">
                                 {possuiFiltroConsulta && <button type="button" onClick={() => setAbaFiltrosAtiva('consulta')} className={resolveClasseAbaFiltro(abaFiltrosRenderizada, 'consulta')}>Buscar registros</button>}
                                 {possuiFiltroVisualizacao && <button type="button" onClick={() => setAbaFiltrosAtiva('visualizacao')} className={resolveClasseAbaFiltro(abaFiltrosRenderizada, 'visualizacao')}>Refinar lista</button>}
                             </div>
-                            {listagem.contador && renderizaContadorListagem(listagem.contador)}
+                            <div className={styles.acoes_barra_filtros}>
+                                {novoRegistro && renderizaBotaoNovoRegistro(novoRegistro)}
+                                {listagem.contador && renderizaContadorListagem(listagem.contador)}
+                            </div>
                         </div>
-                        <div className={styles.painel_filtros}>
-                            {abaFiltrosRenderizada === 'consulta' && possuiFiltroConsulta && <div className={styles.filtros_globais}><FiltrosConsulta valor={listagem.filtrosConsulta} titulo="Buscar registros" variante="consulta" /></div>}
-                            {abaFiltrosRenderizada === 'visualizacao' && possuiFiltroVisualizacao && <div className={styles.filtros_locais}><FiltrosVisualizacao valor={listagem.filtrosVisualizacao as ContextoFiltrosVisualizacaoValor<object>} titulo="Refinar esta lista" variante="visualizacao" /></div>}
-                        </div>
+                        {possuiFiltros && (
+                            <div className={styles.painel_filtros}>
+                                {abaFiltrosRenderizada === 'consulta' && possuiFiltroConsulta && <div className={styles.filtros_globais}><FiltrosConsulta valor={listagem.filtrosConsulta} titulo="Buscar registros" variante="consulta" /></div>}
+                                {abaFiltrosRenderizada === 'visualizacao' && possuiFiltroVisualizacao && <div className={styles.filtros_locais}><FiltrosVisualizacao valor={listagem.filtrosVisualizacao as ContextoFiltrosVisualizacaoValor<object>} titulo="Refinar esta lista" variante="visualizacao" /></div>}
+                            </div>
+                        )}
                     </div>
                 )}
                 <div className={styles.area_conteudo}>

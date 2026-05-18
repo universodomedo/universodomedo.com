@@ -2,10 +2,11 @@ import type { RootState } from 'Redux/store/types';
 
 function clampPercent(valor: number) { return Math.max(0, Math.min(100, valor)); }
 
-export function selectLayoutTitulo(state: RootState) { return state.layoutContextualizado.titulo; }
-export function selectLayoutEscondeFundo(state: RootState) { return state.layoutContextualizado.escondeFundo ?? false; }
-export function selectLayoutProporcaoConteudo(state: RootState) { return state.layoutContextualizado.proporcaoConteudo; }
-export function selectLayoutFecharProps(state: RootState) { return state.layoutContextualizado.fecharProps ?? undefined; }
+export function selectLayoutTitulo(state: RootState) { return state.layoutContextualizado.titulo; };
+export function selectLayoutSubtitulo(state: RootState) { return state.layoutContextualizado.subtitulo; };
+export function selectLayoutEscondeFundo(state: RootState) { return state.layoutContextualizado.escondeFundo ?? false; };
+export function selectLayoutProporcaoConteudo(state: RootState) { return state.layoutContextualizado.proporcaoConteudo; };
+export function selectLayoutFecharProps(state: RootState) { return state.layoutContextualizado.fecharProps ?? undefined; };
 export const selectLayoutEsconderMenu = (state: RootState) => state.layoutContextualizado.esconderMenu;
 
 export function selectLayoutProporcoes(state: RootState) {

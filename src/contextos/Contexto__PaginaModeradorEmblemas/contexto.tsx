@@ -4,11 +4,13 @@ import { createContext, useCallback, useContext, useState, type ReactNode } from
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 
-interface Contexto__PaginaModeradorEmblemas__Props {
+export interface Contexto__PaginaModeradorEmblemas__Props {
     listagemEmblemas: ReturnType<typeof obtemListagemEmblemas>;
     setIdEmblemaSelecionada: (idEmblemaSelecionada: number | null) => void;
     deselecionaEmblema: () => void;
-    emblemaSelecionado: ReturnType<typeof obtemListagemEmblemas>['registros'][number] | null
+    emblemaSelecionado: ReturnType<typeof obtemListagemEmblemas>['registros'][number] | null;
+    estaEmProcessoCriacao: boolean;
+    setEstaEmProcessoCriacao: (v: boolean) => void;
 };
 
 const Contexto__PaginaModeradorEmblemas = createContext<Contexto__PaginaModeradorEmblemas__Props | undefined>(undefined);
@@ -22,13 +24,14 @@ export const useContexto__PaginaModeradorEmblemas = (): Contexto__PaginaModerado
 export const Contexto__PaginaModeradorEmblemas__Provider = ({ children }: { children: ReactNode; }) => {
     const listagemEmblemas = obtemListagemEmblemas();
     const [idEmblemaSelecionada, setIdEmblemaSelecionada] = useState<number | null>(null);
+    const [estaEmProcessoCriacao, setEstaEmProcessoCriacao] = useState<boolean>(false);
 
     const emblemaSelecionado = idEmblemaSelecionada ? listagemEmblemas.registros.find(emblema => emblema.id === idEmblemaSelecionada) ?? null : null;
 
     const deselecionaEmblema = useCallback(() => { setIdEmblemaSelecionada(null); }, []);
 
     return (
-        <Contexto__PaginaModeradorEmblemas.Provider value={{ listagemEmblemas, setIdEmblemaSelecionada, deselecionaEmblema, emblemaSelecionado }}>
+        <Contexto__PaginaModeradorEmblemas.Provider value={{ listagemEmblemas, setIdEmblemaSelecionada, deselecionaEmblema, emblemaSelecionado, estaEmProcessoCriacao, setEstaEmProcessoCriacao }}>
             {children}
         </Contexto__PaginaModeradorEmblemas.Provider>
     );

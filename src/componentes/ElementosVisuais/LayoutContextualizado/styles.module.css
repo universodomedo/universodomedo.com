@@ -15,7 +15,7 @@
 .recipiente_layout_contextualizado_conteudo {
     display: flex;
     flex-direction: column;
-    gap: 1em;
+    gap: .6em;
     border-radius: 1.2em;
     align-items: center;
 }
@@ -40,8 +40,13 @@
     text-align: center;
 }
 
-#titulo_conteudo {
+.titulo_conteudo {
     font-size: 2.7em;
+    line-height: .8em;
+}
+
+.subtitulo_conteudo {
+    line-height: .9em;
 }
 
 #recipiente_layout_contextualizado_menu {

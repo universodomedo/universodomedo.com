@@ -1,0 +1,178 @@
+.recipiente_novo_emblema {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    padding: 1em;
+    overflow: hidden;
+}
+
+.painel_formulario {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    width: min(52em, 100%);
+    min-width: 0;
+    max-height: 100%;
+    border: 0.08em solid rgba(149, 89, 212, 0.68);
+    border-radius: 0.85em;
+    background: linear-gradient(180deg, rgba(10, 7, 14, 0.98), rgba(3, 3, 7, 0.99));
+    box-shadow: 0 0 1.4em rgba(0, 0, 0, 0.76), 0 0 1.1em rgba(91, 46, 135, 0.24), inset 0 0 1em rgba(255, 255, 255, 0.035);
+    overflow: hidden;
+}
+
+.cabecalho_formulario {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    gap: 0.35em;
+    padding: 1.05em 1.2em 0.9em;
+    border-bottom: 0.08em solid rgba(154, 95, 213, 0.28);
+    background: linear-gradient(90deg, rgba(42, 28, 52, 0.62), rgba(12, 10, 16, 0.9));
+}
+
+.cabecalho_formulario h2 {
+    margin: 0;
+    color: rgba(245, 230, 180, 0.96);
+    font-family: var(--fonte-cinzel);
+    font-size: 1.08em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-shadow: 0 0 0.55em rgba(198, 173, 113, 0.18);
+}
+
+.cabecalho_formulario p {
+    margin: 0;
+    max-width: 44em;
+    color: rgba(235, 228, 214, 0.68);
+    font-size: 0.84em;
+    line-height: 1.45;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    gap: 1em;
+    min-height: 0;
+    padding: 1.15em 1.2em;
+    overflow: auto;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.38em;
+    min-width: 0;
+}
+
+.campo span {
+    color: rgba(245, 230, 180, 0.88);
+    font-family: var(--fonte-cinzel);
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+}
+
+.campo input,
+.campo textarea {
+    width: 100%;
+    min-width: 0;
+    border: 0.08em solid rgba(154, 95, 213, 0.38);
+    border-radius: 0.42em;
+    background: rgba(0, 0, 0, 0.28);
+    color: rgba(235, 228, 214, 0.88);
+    font: inherit;
+    font-size: 0.92em;
+    outline: none;
+    box-shadow: inset 0 0 0.55em rgba(0, 0, 0, 0.42);
+    box-sizing: border-box;
+    transition: border-color 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+}
+
+.campo input {
+    min-height: 2.6em;
+    padding: 0.58em 0.72em;
+}
+
+.campo textarea {
+    min-height: 9em;
+    resize: vertical;
+    padding: 0.72em;
+    line-height: 1.45;
+}
+
+.campo input:focus,
+.campo textarea:focus {
+    border-color: rgba(207, 167, 255, 0.72);
+    background: rgba(12, 8, 18, 0.72);
+    box-shadow: 0 0 0.7em rgba(154, 95, 213, 0.18), inset 0 0 0.55em rgba(0, 0, 0, 0.38);
+}
+
+.campo input:disabled,
+.campo textarea:disabled {
+    opacity: 0.58;
+    cursor: not-allowed;
+}
+
+.campo input::placeholder,
+.campo textarea::placeholder {
+    color: rgba(235, 228, 214, 0.34);
+}
+
+.campo small {
+    color: rgba(235, 228, 214, 0.52);
+    font-size: 0.74em;
+    line-height: 1.35;
+}
+
+.rodape_formulario {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    gap: 0.8em;
+    padding: 0.85em 1.2em;
+    border-top: 0.08em solid rgba(154, 95, 213, 0.28);
+    background: linear-gradient(90deg, rgba(7, 6, 11, 0.99), rgba(31, 22, 42, 0.82), rgba(7, 6, 11, 0.99));
+}
+
+.botao_salvar {
+    min-height: 2.45em;
+    padding: 0.48em 1.25em;
+    border: 0.08em solid rgba(207, 167, 255, 0.58);
+    border-radius: 0.42em;
+    background: linear-gradient(180deg, rgba(60, 34, 91, 0.9), rgba(25, 15, 38, 0.96));
+    color: rgba(245, 230, 180, 0.96);
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.82em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: 0 0 0.55em rgba(154, 95, 213, 0.2), inset 0 0 0.4em rgba(255, 255, 255, 0.035);
+    transition: filter 0.12s ease, border-color 0.12s ease, background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
+}
+
+.botao_salvar:hover {
+    filter: brightness(1.12);
+    border-color: rgba(226, 197, 255, 0.82);
+    background: linear-gradient(180deg, rgba(72, 42, 112, 0.96), rgba(30, 20, 42, 0.98));
+    box-shadow: 0 0 0.82em rgba(154, 95, 213, 0.34), inset 0 0 0.48em rgba(255, 255, 255, 0.055);
+}
+
+.botao_salvar:active {
+    transform: translateY(0.06em);
+    filter: brightness(0.96);
+}
+
+.botao_salvar:disabled {
+    opacity: 0.48;
+    cursor: not-allowed;
+    transform: none;
+}

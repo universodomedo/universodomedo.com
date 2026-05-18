@@ -13,6 +13,7 @@ export type MenuLayoutContextualizadoTipo = 'static' | 'vazio' | 'dinamico';
 
 export interface LayoutContextualizadoState {
     titulo: string | null;
+    subtitulo: string | null;
     escondeFundo: boolean | null;
     proporcaoConteudo: number | null;
     fecharProps: LayoutContextualizadoFecharProps | null;
@@ -21,7 +22,7 @@ export interface LayoutContextualizadoState {
     menuItens: MenuNode[];
 };
 
-const initialState: LayoutContextualizadoState = { titulo: null, escondeFundo: null, proporcaoConteudo: null, fecharProps: null, esconderMenu: null, menuTipo: 'vazio', menuItens: [] };
+const initialState: LayoutContextualizadoState = { titulo: null, subtitulo: null, escondeFundo: null, proporcaoConteudo: null, fecharProps: null, esconderMenu: null, menuTipo: 'vazio', menuItens: [] };
 
 function clampPercent(valor: number) { return Math.max(0, Math.min(100, valor)); }
 
@@ -35,6 +36,7 @@ const layoutContextualizadoSlice = createSlice({
             const patch = action.payload;
 
             if (Object.prototype.hasOwnProperty.call(patch, 'titulo')) state.titulo = patch.titulo ?? null;
+            if (Object.prototype.hasOwnProperty.call(patch, 'subtitulo')) state.subtitulo = patch.subtitulo ?? null;
             if (Object.prototype.hasOwnProperty.call(patch, 'escondeFundo')) state.escondeFundo = patch.escondeFundo ?? null;
             if (Object.prototype.hasOwnProperty.call(patch, 'proporcaoConteudo')) state.proporcaoConteudo = patch.proporcaoConteudo !== undefined ? clampPercent(patch.proporcaoConteudo) : null;
             if (Object.prototype.hasOwnProperty.call(patch, 'fecharProps')) state.fecharProps = patch.fecharProps != null ? castDraft(patch.fecharProps) : null;
@@ -45,6 +47,7 @@ const layoutContextualizadoSlice = createSlice({
             const update = action.payload;
 
             state.titulo = update.titulo ?? null;
+            state.subtitulo = update.subtitulo ?? null;
             state.escondeFundo = update.escondeFundo ?? null;
             state.proporcaoConteudo = update.proporcaoConteudo !== undefined ? clampPercent(update.proporcaoConteudo) : null;
             state.fecharProps = update.fecharProps != null ? castDraft(update.fecharProps) : null;

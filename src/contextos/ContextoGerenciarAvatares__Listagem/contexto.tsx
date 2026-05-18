@@ -6,10 +6,8 @@ import { type ContextoGerenciarAvatares__Props } from 'Contextos/ContextoGerenci
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SPA__PaginaGerenciarAvatares__Listagem from 'Conteineres/GerenciarAvatares/paginas/SPA__PaginaGerenciarAvatares__Listagem/SPA__PaginaGerenciarAvatares__Listagem';
 
-type PersonagensGerenciarAvatares = ContextoGerenciarAvatares__Props['listagemPersonagens'];
-
 interface ContextoGerenciarAvatares__Listagem__Props {
-    listagemPersonagens: PersonagensGerenciarAvatares;
+    listagemPersonagens: ContextoGerenciarAvatares__Props['listagemPersonagens'];
     selecionaPersonagem: (idPersonagem: number) => void;
 };
 
@@ -21,7 +19,7 @@ export const useContextoGerenciarAvatares__Listagem = (): ContextoGerenciarAvata
     return context;
 };
 
-export const ContextoGerenciarAvatares__Listagem__Provider = ({ listagemPersonagens, selecionaPersonagem }: { listagemPersonagens: PersonagensGerenciarAvatares; selecionaPersonagem: (idPersonagem: number) => void; }) => {
+export const ContextoGerenciarAvatares__Listagem__Provider = ({ listagemPersonagens, selecionaPersonagem }: { listagemPersonagens: ContextoGerenciarAvatares__Props['listagemPersonagens']; selecionaPersonagem: (idPersonagem: number) => void; }) => {
     useConfigurarLayoutContextualizado({ titulo: 'Gerenciar Avatares', fecharProps: undefined }, 'patch');
     
     return (

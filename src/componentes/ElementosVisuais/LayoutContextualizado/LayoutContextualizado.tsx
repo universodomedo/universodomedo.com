@@ -6,7 +6,7 @@ import { ReactNode } from 'react';
 import cn from 'classnames';
 
 import { useAppSelector } from 'Redux/hooks/useRedux';
-import { selectLayoutEscondeFundo, selectLayoutFecharProps, selectLayoutProporcoes, selectLayoutTitulo } from 'Redux/selectors/layoutContextualizadoSelectors';
+import { selectLayoutEscondeFundo, selectLayoutFecharProps, selectLayoutProporcoes, selectLayoutSubtitulo, selectLayoutTitulo } from 'Redux/selectors/layoutContextualizadoSelectors';
 import useScrollable from '../ElementoScrollable/useScrollable';
 import { FerramentaRetornoPagina } from 'Componentes/Elementos/FerramentaRetornoPagina/FerramentaRetornoPagina';
 
@@ -22,6 +22,7 @@ export default function LayoutContextualizado({ children }: { children: ReactNod
 
 LayoutContextualizado.Conteudo = function Conteudo({ children, forcarLarguraTotal }: { children: ReactNode; forcarLarguraTotal?: boolean | undefined }) {
     const titulo = useAppSelector(selectLayoutTitulo);
+    const subTitulo = useAppSelector(selectLayoutSubtitulo);
     const escondeFundo = useAppSelector(selectLayoutEscondeFundo);
     const fecharProps = useAppSelector(selectLayoutFecharProps);
     const proporcoes = useAppSelector(selectLayoutProporcoes);
@@ -33,7 +34,8 @@ LayoutContextualizado.Conteudo = function Conteudo({ children, forcarLarguraTota
         <div className={cn(styles.recipiente_layout_contextualizado_conteudo, escondeFundo && styles.fundo_layout_contextualizado_conteudo)} style={{ width }} {...scrollableProps}>
             <div className={styles.recipiente_layout_contextualizado_conteudo__header}>
                 {fecharProps != undefined && <FerramentaRetornoPagina props={fecharProps} />}
-                {titulo && <h1 id={styles.titulo_conteudo}>{titulo}</h1>}
+                {titulo && <h1 className={styles.titulo_conteudo}>{titulo}</h1>}
+                {subTitulo && <h3 className={styles.subtitulo_conteudo}>{subTitulo}</h3>}
             </div>
             <div className={styles.recipiente_layout_contextualizado_conteudo__body}>
                 {children}
