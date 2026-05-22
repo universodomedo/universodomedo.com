@@ -1,0 +1,84 @@
+.canvas3d {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    cursor: default;
+    touch-action: none;
+}
+
+.canvas3d:active {
+    cursor: default;
+}
+
+.canvas3dGrabAtivo,
+.canvas3dPanAtivo {
+    cursor: grab;
+}
+
+.canvas3dGrabAtivo:active,
+.canvas3dPanAtivo:active {
+    cursor: grabbing;
+}
+
+.canvas3dRotateAtivo,
+.canvas3dRotacaoMouseAtiva {
+    cursor: alias;
+}
+
+.canvas3dScaleAtivo {
+    cursor: nwse-resize;
+}
+
+.cursorFantasmaEditor3D {
+    position: absolute;
+    z-index: 18;
+    left: var(--editor3d-cursor-x, 50%);
+    top: var(--editor3d-cursor-y, 50%);
+    width: 1em;
+    height: 1.25em;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-0.12em, -0.08em);
+}
+
+.cursorFantasmaEditor3D[data-editor3d-cursor-ativo="true"] {
+    opacity: 1;
+}
+
+.cursorFantasmaEditor3D::before {
+    content: '';
+    position: absolute;
+    left: 0.08em;
+    top: 0.04em;
+    width: 0.74em;
+    height: 0.74em;
+    border-left: 0.16em solid rgba(255, 255, 255, 0.96);
+    border-top: 0.16em solid rgba(255, 255, 255, 0.96);
+    filter: drop-shadow(0 0.08em 0.14em rgba(0, 0, 0, 0.9));
+    transform: rotate(-18deg) skew(-10deg);
+}
+
+.cursorFantasmaEditor3D::after {
+    content: '';
+    position: absolute;
+    left: 0.44em;
+    top: 0.54em;
+    width: 0.16em;
+    height: 0.6em;
+    border-radius: 999em;
+    background: rgba(255, 255, 255, 0.96);
+    filter: drop-shadow(0 0.08em 0.14em rgba(0, 0, 0, 0.9));
+    transform: rotate(-38deg);
+}
+
+.webglAviso {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 2em;
+    color: rgba(245, 239, 225, 0.72);
+    text-align: center;
+    background: rgba(0, 0, 0, 0.34);
+}

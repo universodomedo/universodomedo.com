@@ -1,0 +1,68 @@
+.toolbarMouseEditor3D {
+    position: absolute;
+    z-index: 9;
+    top: 0.8em;
+    left: 0.8em;
+    display: grid;
+    gap: 0.35em;
+    padding: 0.35em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.32em;
+    background: rgba(34, 34, 34, 0.92);
+    box-shadow: 0 0.8em 2em rgba(0, 0, 0, 0.32);
+}
+
+.botaoFerramentaMouseEditor3D {
+    display: grid;
+    grid-template-columns: 2em;
+    grid-template-rows: 2em auto;
+    place-items: center;
+    min-width: 2.8em;
+    min-height: 3.7em;
+    padding: 0.2em;
+    border: 0.08em solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.72);
+    font: inherit;
+    background: #303030;
+    cursor: pointer;
+}
+
+.botaoFerramentaMouseEditor3D:hover {
+    color: #ffffff;
+    background: #3a3a3a;
+}
+
+.botaoFerramentaMouseEditor3D span {
+    display: grid;
+    width: 2em;
+    height: 2em;
+    place-items: center;
+    border-radius: 0.2em;
+    font-size: 0.9em;
+    font-weight: 800;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.botaoFerramentaMouseEditor3D strong {
+    max-width: 4.8em;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.46);
+    font-size: 0.58em;
+    font-weight: 500;
+    line-height: 1.1;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.botaoFerramentaMouseEditor3DAtivo {
+    border-color: rgba(92, 148, 255, 0.9);
+    color: #ffffff;
+    background: rgba(58, 91, 145, 0.92);
+    box-shadow: inset 0.18em 0 0 rgba(255, 180, 60, 0.95);
+}
+
+.botaoFerramentaMouseEditor3DAtivo strong {
+    color: rgba(255, 255, 255, 0.82);
+}

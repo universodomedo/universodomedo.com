@@ -45,8 +45,8 @@ function obtemListagemEmblemas() {
         itensPorPagina: 12,
         carregando: 'Buscando Emblemas',
         mensagemErro: 'Houve um erro recuperando suas Emblemas',
-        mensagemListaVazia: 'Nenhum emblma encontrado.',
-        mensagemListaVaziaComFiltro: 'Nenhum emblma encontrado com os filtros atuais.',
+        mensagemListaVazia: 'Nenhum emblema encontrado.',
+        mensagemListaVaziaComFiltro: 'Nenhum emblema encontrado com os filtros atuais.',
         carregamento: 'BLOQUEIA_INTERFACE',
         montaParametrosConsulta: params => ({
             where: params.where,

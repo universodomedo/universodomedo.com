@@ -3,7 +3,7 @@ import styles from './styles.module.css';
 import { useContexto__PaginaModeradorEmblemas__NovoEmblema } from 'Contextos/Contexto__PaginaModeradorEmblemas__NovoEmblema/contexto';
 
 export default function SPA__PaginaModeradorEmblemas__NovoEmblema() {
-    const { nome, nomeVisual, descricao, salvando, podeSalvar, salvar, alteraNome, alteraNomeVisual, alteraDescricao } = useContexto__PaginaModeradorEmblemas__NovoEmblema();
+    const { formularioNovoEmblema } = useContexto__PaginaModeradorEmblemas__NovoEmblema();
 
     return (
         <section className={styles.recipiente_novo_emblema}>
@@ -16,23 +16,25 @@ export default function SPA__PaginaModeradorEmblemas__NovoEmblema() {
                 <div className={styles.formulario}>
                     <label className={styles.campo}>
                         <span>Nome</span>
-                        <input type="text" value={nome} onChange={alteraNome} placeholder="Ex: Guardião do Véu" disabled={salvando} />
+                        <input type="text" {...formularioNovoEmblema.input('nome')} />
+                        {formularioNovoEmblema.erro('nome') && <small className={styles.erro_campo}>{formularioNovoEmblema.erro('nome')}</small>}
                     </label>
 
                     <label className={styles.campo}>
                         <span>Nome Visual</span>
-                        <input type="text" value={nomeVisual} onChange={alteraNomeVisual} placeholder="Ex: Guardião do Véu Ancestral" disabled={salvando} />
-                        <small>Opcional. Quando vazio, o nome principal pode ser usado como referência visual.</small>
+                        <input type="text" {...formularioNovoEmblema.input('nomeVisual')} />
+                        {formularioNovoEmblema.erro('nomeVisual') ? <small className={styles.erro_campo}>{formularioNovoEmblema.erro('nomeVisual')}</small> : <small>Opcional. Quando vazio, o nome principal pode ser usado como referência visual.</small>}
                     </label>
 
                     <label className={styles.campo}>
                         <span>Descrição</span>
-                        <textarea value={descricao} onChange={alteraDescricao} placeholder="Descreva o significado, uso ou contexto do emblema." disabled={salvando} />
+                        <textarea {...formularioNovoEmblema.textarea('descricao')} />
+                        {formularioNovoEmblema.erro('descricao') && <small className={styles.erro_campo}>{formularioNovoEmblema.erro('descricao')}</small>}
                     </label>
                 </div>
 
                 <footer className={styles.rodape_formulario}>
-                    <button type="button" className={styles.botao_salvar} onClick={salvar} disabled={!podeSalvar}>{salvando ? 'Salvando...' : 'Salvar Emblema'}</button>
+                    <button type="button" className={styles.botao_salvar} onClick={formularioNovoEmblema.salvar} disabled={!formularioNovoEmblema.podeSalvar}>{formularioNovoEmblema.salvando ? 'Salvando...' : 'Salvar Emblema'}</button>
                 </footer>
             </div>
         </section>

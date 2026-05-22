@@ -1,0 +1,16 @@
+.espacoTrabalhoEditor3D {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    border-right: 0.08em solid rgba(255, 255, 255, 0.1);
+    background: #202020;
+}
+
+@media (max-width: 56em) {
+    .espacoTrabalhoEditor3D {
+        min-height: 34em;
+        border-right: 0;
+        border-bottom: 0.08em solid rgba(255, 255, 255, 0.1);
+    }
+}

@@ -5,7 +5,7 @@ import { Conteiner__GerenciarEmblemas } from 'Conteineres/GerenciarEmblemas/cont
 
 export default function GerenciarEmblemas_Client() {
     return (
-        <ControladorSlot pagina={PAGINAS.minhasPaginas.artista.emblemas.gerenciarEmblemas}>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.artista.emblemas.uploadRecursosEmblemas}>
             <Conteiner__GerenciarEmblemas />
         </ControladorSlot>
     );
