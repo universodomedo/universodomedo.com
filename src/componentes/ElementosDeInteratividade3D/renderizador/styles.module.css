@@ -22,7 +22,8 @@
 }
 
 .canvas3dRotateAtivo,
-.canvas3dRotacaoMouseAtiva {
+.canvas3dRotacaoMouseAtiva,
+.canvas3dRotacaoRapidaAtiva {
     cursor: alias;
 }
 
@@ -70,6 +71,68 @@
     background: rgba(255, 255, 255, 0.96);
     filter: drop-shadow(0 0.08em 0.14em rgba(0, 0, 0, 0.9));
     transform: rotate(-38deg);
+}
+
+.overlayGizmoEixosEditor3D {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    pointer-events: none;
+}
+
+.marcadorGizmoEixosEditor3D {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 1.18em;
+    height: 1.18em;
+    padding: 0;
+    border: 0.08em solid rgba(255, 255, 255, 0.22);
+    border-radius: 50%;
+    box-shadow: 0 0.08em 0.22em rgba(0, 0, 0, 0.38);
+    font: inherit;
+    pointer-events: auto;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+}
+
+.marcadorGizmoEixosEditor3D:hover {
+    box-shadow: 0 0.08em 0.28em rgba(0, 0, 0, 0.48), 0 0 0.28em rgba(255, 255, 255, 0.24);
+    transform: translate(-50%, -50%) scale(1.08);
+}
+
+.marcadorGizmoEixosEditor3D:focus-visible {
+    outline: 0.12em solid rgba(255, 255, 255, 0.72);
+    outline-offset: 0.12em;
+}
+
+.marcadorGizmoEixosEditor3D span {
+    color: rgba(12, 12, 12, 0.94);
+    font-size: 0.5em;
+    font-weight: 800;
+    line-height: 1;
+    text-shadow: 0 0.08em 0.12em rgba(255, 255, 255, 0.28);
+}
+
+.marcadorGizmoEixosEditor3DNegativo {
+    opacity: 0.56;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.marcadorGizmoEixosEditor3DNegativo:hover {
+    opacity: 0.86;
+}
+
+.marcadorGizmoEixoX {
+    background: #c53c43;
+}
+
+.marcadorGizmoEixoY {
+    background: #7cb13b;
+}
+
+.marcadorGizmoEixoZ {
+    background: #3f7ed7;
 }
 
 .webglAviso {

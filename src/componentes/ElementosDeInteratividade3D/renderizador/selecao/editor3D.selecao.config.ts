@@ -20,3 +20,10 @@ export const selecaoModoEditor3D: ConfigSelecaoEditor3D = {
     corLuz: [1, 1, 1],
     alpha: 0.38,
 };
+
+export const selecaoFaceEditor3D: ConfigSelecaoEditor3D = {
+    escala: 1,
+    corBase: [1, 0.62, 0.12],
+    corLuz: [1, 0.92, 0.38],
+    alpha: 0.62,
+};

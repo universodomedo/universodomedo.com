@@ -1,4 +1,3 @@
-import { aplicaCameraPorAtalhoEditor3D } from '../editor3D.renderizador.helpers';
 import { ativaCursorVirtualCentroEditor3D, desativaCursorVirtualEditor3D } from './editor3D.eventos.cursor';
 import { obtemEixoTeclaEditor3D } from './editor3D.eventos.eixo';
 import type { ControleEventosEditor3D } from './editor3D.eventos.types';
@@ -8,13 +7,13 @@ function eventoVeioDeElementoEditavel(event: KeyboardEvent): boolean {
 
     if (!(alvo instanceof Element)) return false;
 
-    return alvo.closest('input, textarea, select, button, [contenteditable="true"]') !== null;
+    return alvo.closest('input, textarea, select, [contenteditable="true"]') !== null;
 };
 
 function temObjetoSelecionado(controle: ControleEventosEditor3D): boolean {
     const state = controle.refs.estado.current;
 
-    return state.idsObjetosSelecionados.some(idObjetoSelecionado => state.objetos.some(objeto => objeto.id === idObjetoSelecionado));
+    return state.modoOperacao === 'OBJETO' && state.idsObjetosSelecionados.some(idObjetoSelecionado => state.objetos.some(objeto => objeto.id === idObjetoSelecionado));
 };
 
 function encerraPointerLockEditor3D(controle: ControleEventosEditor3D): void {
@@ -29,6 +28,7 @@ function iniciaModoPorAtalho(controle: ControleEventosEditor3D, event: KeyboardE
     const tecla = event.key.toLowerCase();
     const state = controle.refs.estado.current;
 
+    if (state.modoOperacao !== 'OBJETO') return false;
     if (tecla === 'g' && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaGrabObjetoSelecionado();
     else if (tecla === 'r' && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaRotateObjetoSelecionado();
     else if (tecla === 's' && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaScaleObjetoSelecionado();
@@ -97,6 +97,18 @@ function aplicaEntradaNumericaRotatePorAtalho(controle: ControleEventosEditor3D,
     return true;
 };
 
+function deletaObjetosSelecionadosPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
+    const state = controle.refs.estado.current;
+
+    if (event.key !== 'Delete' && event.key !== 'Backspace') return false;
+    if (state.modoOperacao !== 'OBJETO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.idsObjetosSelecionados.length === 0) return false;
+
+    controle.refs.acoes.current.deletaObjetosSelecionados();
+    event.preventDefault();
+
+    return true;
+};
+
 export function aplicaAtalhoTecladoEditor3D(controle: ControleEventosEditor3D, event: KeyboardEvent): void {
     const state = controle.refs.estado.current;
 
@@ -105,12 +117,6 @@ export function aplicaAtalhoTecladoEditor3D(controle: ControleEventosEditor3D, e
     if (iniciaModoPorAtalho(controle, event)) return;
     if (aplicaEixoModoPorAtalho(controle, event)) return;
     if (aplicaEntradaNumericaRotatePorAtalho(controle, event)) return;
+    if (deletaObjetosSelecionadosPorAtalho(controle, event)) return;
     if (state.modoAtual.tipo !== 'NENHUM') return;
-
-    const novaCamera = aplicaCameraPorAtalhoEditor3D(event.key, state.camera);
-
-    if (novaCamera === null) return;
-
-    controle.refs.acoes.current.atualizaCamera(novaCamera);
-    event.preventDefault();
 };

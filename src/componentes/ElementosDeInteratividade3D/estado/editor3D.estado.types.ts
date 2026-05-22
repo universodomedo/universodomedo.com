@@ -1,7 +1,10 @@
 import type { CameraEditor3D } from '../editor/editor3D.camera';
 import type { CampoVetorMalhaEditor3D, EixoEditor3D, IndiceVetor3Editor3D, ObjetoCenaEditor3D, TipoMalhaEditor3D, Vetor3 } from '../editor/editor3D.tipos';
+import type { EscopoEdicaoEditor3D, FaceSelecionadaEdicaoEditor3D, ModoOperacaoEditor3D } from '../modoOperacao/editor3D.modoOperacao.tipos';
 import type { FerramentaMouseEditor3D } from '../mouse/editor3D.mouse.tipos';
 import type { ModoEditor3D } from '../modos/editor3D.modo.tipos';
+
+export type PosicaoSoltarCenaEditor3D = 'ANTES' | 'DEPOIS';
 
 export interface AreaSelecaoEditor3D {
     readonly inicioX: number;
@@ -17,11 +20,26 @@ export interface CursorVirtualEditor3D {
     readonly y: number;
 };
 
+export interface ColecaoCenaEditor3D {
+    readonly id: string;
+    readonly nome: string;
+    readonly idsObjetos: string[];
+};
+
 export interface Editor3DState {
     readonly objetos: ObjetoCenaEditor3D[];
     readonly malhaEmCriacao: ObjetoCenaEditor3D | null;
     readonly idObjetoSelecionado: string | null;
     readonly idsObjetosSelecionados: string[];
+    readonly idsObjetosOcultos: string[];
+    readonly idsObjetosOcultosManualmente: string[];
+    readonly colecoes: ColecaoCenaEditor3D[];
+    readonly idsColecoesOcultas: string[];
+    readonly idColecaoSelecionada: string | null;
+    readonly proximoIdColecao: number;
+    readonly modoOperacao: ModoOperacaoEditor3D;
+    readonly escopoEdicao: EscopoEdicaoEditor3D | null;
+    readonly faceSelecionadaEdicao: FaceSelecionadaEdicaoEditor3D | null;
     readonly modoAtual: ModoEditor3D;
     readonly camera: CameraEditor3D;
     readonly ferramentaMouse: FerramentaMouseEditor3D;
@@ -32,11 +50,15 @@ export interface Editor3DState {
     readonly proximoId: number;
 };
 
-export type Editor3DAcao = { readonly tipo: 'ATUALIZA_CAMERA'; readonly camera: CameraEditor3D } | { readonly tipo: 'RESETA_CAMERA' } | { readonly tipo: 'ATIVA_FERRAMENTA_MOUSE'; readonly ferramenta: FerramentaMouseEditor3D } | { readonly tipo: 'RESETA_FERRAMENTA_MOUSE' } | { readonly tipo: 'INICIA_AREA_SELECAO'; readonly x: number; readonly y: number; readonly adicionando: boolean } | { readonly tipo: 'ATUALIZA_AREA_SELECAO'; readonly x: number; readonly y: number } | { readonly tipo: 'FINALIZA_AREA_SELECAO' } | { readonly tipo: 'ATUALIZA_CURSOR_VIRTUAL'; readonly x: number; readonly y: number; readonly ativo: boolean } | { readonly tipo: 'DESATIVA_CURSOR_VIRTUAL' } | { readonly tipo: 'SELECIONA_OBJETO'; readonly idObjeto: string | null; readonly adiciona: boolean } | { readonly tipo: 'SELECIONA_OBJETOS'; readonly idsObjetos: string[]; readonly adiciona: boolean } | { readonly tipo: 'SELECIONA_TIPO_MALHA'; readonly tipoMalha: TipoMalhaEditor3D } | { readonly tipo: 'ALTERA_QUANTIDADE_VERTICES'; readonly delta: number } | { readonly tipo: 'DEFINE_QUANTIDADE_VERTICES'; readonly quantidadeVertices: number } | { readonly tipo: 'INICIA_MALHA_EM_CRIACAO'; readonly tipoMalha: TipoMalhaEditor3D } | { readonly tipo: 'ATUALIZA_VETOR_MALHA_EM_CRIACAO'; readonly campo: CampoVetorMalhaEditor3D; readonly indice: IndiceVetor3Editor3D; readonly valor: number } | { readonly tipo: 'ATUALIZA_VETOR_OBJETO_SELECIONADO'; readonly campo: CampoVetorMalhaEditor3D; readonly indice: IndiceVetor3Editor3D; readonly valor: number } | { readonly tipo: 'APLICA_ROTATION_SCALE_OBJETOS_SELECIONADOS' } | { readonly tipo: 'CONFIRMA_MALHA_EM_CRIACAO' } | { readonly tipo: 'CANCELA_MALHA_EM_CRIACAO' } | { readonly tipo: 'LIMPA_CENA' } | { readonly tipo: 'MOVE_OBJETO_SELECIONADO'; readonly delta: Vetor3 } | { readonly tipo: 'INICIA_GRAB' } | { readonly tipo: 'APLICA_EIXO_GRAB'; readonly eixo: EixoEditor3D } | { readonly tipo: 'MOVE_OBJETO_GRAB'; readonly delta: Vetor3 } | { readonly tipo: 'INICIA_ROTATE' } | { readonly tipo: 'APLICA_EIXO_ROTATE'; readonly eixo: EixoEditor3D } | { readonly tipo: 'APLICA_ROTATE_LIVRE' } | { readonly tipo: 'ATUALIZA_ENTRADA_NUMERICA_ROTATE'; readonly entrada: string } | { readonly tipo: 'ROTACIONA_OBJETO_ROTATE'; readonly delta: Vetor3 } | { readonly tipo: 'INICIA_SCALE' } | { readonly tipo: 'APLICA_EIXO_SCALE'; readonly eixo: EixoEditor3D } | { readonly tipo: 'ESCALA_OBJETO_SCALE'; readonly delta: Vetor3 } | { readonly tipo: 'CONFIRMA_MODO' } | { readonly tipo: 'CANCELA_MODO' };
+export type Editor3DAcao = { readonly tipo: 'ATUALIZA_CAMERA'; readonly camera: CameraEditor3D } | { readonly tipo: 'RESETA_CAMERA' } | { readonly tipo: 'ENTRA_MODO_EDICAO' } | { readonly tipo: 'SAI_MODO_EDICAO' } | { readonly tipo: 'ALTERNA_MODO_OPERACAO' } | { readonly tipo: 'SELECIONA_FACE_EDICAO'; readonly idObjeto: string | null; readonly idFace: string | null } | { readonly tipo: 'ATIVA_FERRAMENTA_MOUSE'; readonly ferramenta: FerramentaMouseEditor3D } | { readonly tipo: 'RESETA_FERRAMENTA_MOUSE' } | { readonly tipo: 'INICIA_AREA_SELECAO'; readonly x: number; readonly y: number; readonly adicionando: boolean } | { readonly tipo: 'ATUALIZA_AREA_SELECAO'; readonly x: number; readonly y: number } | { readonly tipo: 'FINALIZA_AREA_SELECAO' } | { readonly tipo: 'ATUALIZA_CURSOR_VIRTUAL'; readonly x: number; readonly y: number; readonly ativo: boolean } | { readonly tipo: 'DESATIVA_CURSOR_VIRTUAL' } | { readonly tipo: 'SELECIONA_OBJETO'; readonly idObjeto: string | null; readonly adiciona: boolean } | { readonly tipo: 'SELECIONA_OBJETOS'; readonly idsObjetos: string[]; readonly adiciona: boolean } | { readonly tipo: 'SELECIONA_COLECAO_CENA'; readonly idColecao: string } | { readonly tipo: 'CRIA_COLECAO_CENA' } | { readonly tipo: 'RENOMEIA_OBJETO_CENA'; readonly idObjeto: string; readonly nome: string } | { readonly tipo: 'RENOMEIA_COLECAO_CENA'; readonly idColecao: string; readonly nome: string } | { readonly tipo: 'MOVE_OBJETO_PARA_COLECAO_CENA'; readonly idObjeto: string; readonly idColecao: string | null; readonly idObjetoReferencia: string | null; readonly posicao: PosicaoSoltarCenaEditor3D | null } | { readonly tipo: 'MOVE_COLECAO_CENA'; readonly idColecao: string; readonly idColecaoReferencia: string | null; readonly posicao: PosicaoSoltarCenaEditor3D | null } | { readonly tipo: 'DELETA_OBJETOS_SELECIONADOS' } | { readonly tipo: 'ALTERNA_VISIBILIDADE_OBJETO'; readonly idObjeto: string } | { readonly tipo: 'ALTERNA_VISIBILIDADE_COLECAO'; readonly idColecao: string } | { readonly tipo: 'SELECIONA_TIPO_MALHA'; readonly tipoMalha: TipoMalhaEditor3D } | { readonly tipo: 'ALTERA_QUANTIDADE_VERTICES'; readonly delta: number } | { readonly tipo: 'DEFINE_QUANTIDADE_VERTICES'; readonly quantidadeVertices: number } | { readonly tipo: 'INICIA_MALHA_EM_CRIACAO'; readonly tipoMalha: TipoMalhaEditor3D } | { readonly tipo: 'ATUALIZA_VETOR_MALHA_EM_CRIACAO'; readonly campo: CampoVetorMalhaEditor3D; readonly indice: IndiceVetor3Editor3D; readonly valor: number } | { readonly tipo: 'ATUALIZA_VETOR_OBJETO_SELECIONADO'; readonly campo: CampoVetorMalhaEditor3D; readonly indice: IndiceVetor3Editor3D; readonly valor: number } | { readonly tipo: 'APLICA_ROTATION_SCALE_OBJETOS_SELECIONADOS' } | { readonly tipo: 'CONFIRMA_MALHA_EM_CRIACAO' } | { readonly tipo: 'CANCELA_MALHA_EM_CRIACAO' } | { readonly tipo: 'LIMPA_CENA' } | { readonly tipo: 'MOVE_OBJETO_SELECIONADO'; readonly delta: Vetor3 } | { readonly tipo: 'INICIA_GRAB' } | { readonly tipo: 'APLICA_EIXO_GRAB'; readonly eixo: EixoEditor3D } | { readonly tipo: 'MOVE_OBJETO_GRAB'; readonly delta: Vetor3 } | { readonly tipo: 'INICIA_ROTATE' } | { readonly tipo: 'APLICA_EIXO_ROTATE'; readonly eixo: EixoEditor3D } | { readonly tipo: 'APLICA_ROTATE_LIVRE' } | { readonly tipo: 'ATUALIZA_ENTRADA_NUMERICA_ROTATE'; readonly entrada: string } | { readonly tipo: 'ROTACIONA_OBJETO_ROTATE'; readonly delta: Vetor3 } | { readonly tipo: 'INICIA_SCALE' } | { readonly tipo: 'APLICA_EIXO_SCALE'; readonly eixo: EixoEditor3D } | { readonly tipo: 'ESCALA_OBJETO_SCALE'; readonly delta: Vetor3 } | { readonly tipo: 'CONFIRMA_MODO' } | { readonly tipo: 'CANCELA_MODO' };
 
 export interface Editor3DAcoes {
     atualizaCamera: (camera: CameraEditor3D) => void;
     resetaCamera: () => void;
+    entraModoEdicao: () => void;
+    saiModoEdicao: () => void;
+    alternaModoOperacao: () => void;
+    selecionaFaceEdicao: (idObjeto: string | null, idFace: string | null) => void;
     ativaFerramentaMouse: (ferramenta: FerramentaMouseEditor3D) => void;
     resetaFerramentaMouse: () => void;
     iniciaAreaSelecao: (x: number, y: number, adicionando: boolean) => void;
@@ -46,6 +68,15 @@ export interface Editor3DAcoes {
     desativaCursorVirtual: () => void;
     selecionaObjeto: (idObjeto: string | null, adiciona?: boolean) => void;
     selecionaObjetos: (idsObjetos: string[], adiciona?: boolean) => void;
+    selecionaColecaoCena: (idColecao: string) => void;
+    criaColecaoCena: () => void;
+    renomeiaObjetoCena: (idObjeto: string, nome: string) => void;
+    renomeiaColecaoCena: (idColecao: string, nome: string) => void;
+    moveObjetoParaColecaoCena: (idObjeto: string, idColecao: string | null, idObjetoReferencia?: string | null, posicao?: PosicaoSoltarCenaEditor3D | null) => void;
+    moveColecaoCena: (idColecao: string, idColecaoReferencia?: string | null, posicao?: PosicaoSoltarCenaEditor3D | null) => void;
+    deletaObjetosSelecionados: () => void;
+    alternaVisibilidadeObjeto: (idObjeto: string) => void;
+    alternaVisibilidadeColecao: (idColecao: string) => void;
     selecionaTipoMalha: (tipoMalha: TipoMalhaEditor3D) => void;
     alteraQuantidadeVertices: (delta: number) => void;
     defineQuantidadeVertices: (quantidadeVertices: number) => void;

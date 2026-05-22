@@ -9,20 +9,27 @@ interface PainelTransformObjetoEditor3DProps {
     objetoSelecionado: ObjetoCenaEditor3D | null;
 };
 
-function grausParaRadianos(valor: number): number { return valor * (Math.PI / 180); };
-function radianosParaGraus(valor: number): number { return Number((valor * (180 / Math.PI)).toFixed(2)); };
+function grausParaRadianos(valor: number): number { return valor * (Math.PI / 180); }
+function radianosParaGraus(valor: number): number { return Number((valor * (180 / Math.PI)).toFixed(2)); }
 
 export function PainelTransformObjetoEditor3D({ objetoSelecionado }: PainelTransformObjetoEditor3DProps) {
     const { estado, acoes } = useEditor3DContexto();
 
-    function atualizaVetor(campo: CampoVetorMalhaEditor3D, indice: IndiceVetor3Editor3D, valor: number): void { acoes.atualizaVetorObjetoSelecionado(campo, indice, valor); };
-    function obtemValorPainel(): string { return estado.idsObjetosSelecionados.length <= 1 ? objetoSelecionado?.nome ?? 'None' : `${estado.idsObjetosSelecionados.length} objetos`; };
+    function atualizaVetor(campo: CampoVetorMalhaEditor3D, indice: IndiceVetor3Editor3D, valor: number): void { acoes.atualizaVetorObjetoSelecionado(campo, indice, valor); }
+    function obtemValorPainel(): string {
+        if (estado.modoOperacao === 'EDICAO') return 'Edit Mode';
+        if (estado.idsObjetosSelecionados.length <= 1) return objetoSelecionado?.nome ?? 'None';
+
+        return `${estado.idsObjetosSelecionados.length} objetos`;
+    };
 
     return (
         <PainelColapsavelEditor3D titulo="Transform" valor={obtemValorPainel()}>
-            {objetoSelecionado === null && <div className={styles.painelTransformVazio}>Selecione um objeto na Scene Collection para editar.</div>}
+            {estado.modoOperacao === 'EDICAO' && <div className={styles.painelTransformVazio}>Object Transform fica bloqueado em Edit Mode. A proxima etapa sera editar vertices, arestas e faces da mesh.</div>}
 
-            {objetoSelecionado !== null && (
+            {estado.modoOperacao === 'OBJETO' && objetoSelecionado === null && <div className={styles.painelTransformVazio}>Selecione um objeto na Scene Collection para editar.</div>}
+
+            {estado.modoOperacao === 'OBJETO' && objetoSelecionado !== null && (
                 <>
                     <CampoNumeroEditor3D rotulo="Location X" valor={objetoSelecionado.posicao[0]} passo={0.1} atualizaValor={valor => atualizaVetor('posicao', 0, valor)} />
                     <CampoNumeroEditor3D rotulo="Location Y" valor={objetoSelecionado.posicao[1]} passo={0.1} atualizaValor={valor => atualizaVetor('posicao', 1, valor)} />
@@ -37,4 +44,4 @@ export function PainelTransformObjetoEditor3D({ objetoSelecionado }: PainelTrans
             )}
         </PainelColapsavelEditor3D>
     );
-};
+}

@@ -2,22 +2,36 @@
 
 import styles from './styles.module.css';
 
-import { useEditor3DContexto } from '../contexto/Editor3DContexto';
-import { PainelCenaColecaoEditor3D } from './PainelCenaColecaoEditor3D';
-import { PainelTransformObjetoEditor3D } from './PainelTransformObjetoEditor3D';
-import { PainelViewportEditor3D } from './PainelViewportEditor3D';
+import { type MouseEvent } from 'react';
 
-export function PainelControlesEditor3D() {
-    const { estado } = useEditor3DContexto();
-    const objetoSelecionado = estado.objetos.find(objeto => objeto.id === estado.idObjetoSelecionado) ?? null;
+import { PainelCenaColecaoEditor3D } from './PainelCenaColecaoEditor3D';
+import { PainelContextualEditor3D } from './PainelContextualEditor3D';
+import type { ControlesMenuLateralDireitoEditor3D } from '../layout/useMenuLateralDireitoEditor3D';
+
+interface PainelControlesEditor3DProps {
+    menuLateralDireito: ControlesMenuLateralDireitoEditor3D;
+};
+
+export function PainelControlesEditor3D({ menuLateralDireito }: PainelControlesEditor3DProps) {
+    function iniciaRedimensionamento(event: MouseEvent<HTMLDivElement>): void {
+        event.preventDefault();
+        event.stopPropagation();
+        menuLateralDireito.iniciaRedimensionamento();
+    };
 
     return (
-        <aside className={styles.painelControles}>
-            <PainelCenaColecaoEditor3D />
+        <aside className={`${styles.painelControles} ${menuLateralDireito.colapsado ? styles.painelControlesColapsado : ''} ${menuLateralDireito.redimensionando ? styles.painelControlesRedimensionando : ''}`} aria-label="Menu lateral direito do editor 3D">
+            {!menuLateralDireito.colapsado && <div className={styles.alcaRedimensionamentoPainelDireito} role="separator" aria-orientation="vertical" aria-label="Redimensionar menu lateral direito" onMouseDown={iniciaRedimensionamento} />}
 
-            <PainelTransformObjetoEditor3D objetoSelecionado={objetoSelecionado} />
+            <button className={styles.botaoColapsarPainelDireito} type="button" onClick={menuLateralDireito.alternaColapsado} aria-label={menuLateralDireito.colapsado ? 'Expandir menu lateral direito' : 'Colapsar menu lateral direito'} title={menuLateralDireito.colapsado ? 'Expandir menu' : 'Colapsar menu'}>
+                {menuLateralDireito.colapsado ? '‹' : '›'}
+            </button>
 
-            <PainelViewportEditor3D />
+            <div className={styles.conteudoPainelControles} aria-hidden={menuLateralDireito.colapsado}>
+                <PainelCenaColecaoEditor3D />
+
+                <PainelContextualEditor3D />
+            </div>
         </aside>
     );
 };

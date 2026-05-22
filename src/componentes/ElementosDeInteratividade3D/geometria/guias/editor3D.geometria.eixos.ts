@@ -3,11 +3,13 @@ import { corEixoXBase, corEixoXLuz, corEixoYBase, corEixoYLuz, corEixoZBase, cor
 import type { GeometriaEditor3D, GuiaEditor3D } from '../editor3D.geometria.types';
 import type { Vetor3 } from '../../editor/editor3D.tipos';
 
-function criaCoresEixo(eixo: 'X' | 'Y' | 'Z'): { readonly corBase: Vetor3; readonly corLuz: Vetor3 } {
-    if (eixo === 'X') return { corBase: corEixoXBase, corLuz: corEixoXLuz };
-    if (eixo === 'Y') return { corBase: corEixoYBase, corLuz: corEixoYLuz };
+function atenuaCorEixoNegativo(cor: Vetor3): Vetor3 { return [cor[0] * 0.42, cor[1] * 0.42, cor[2] * 0.42]; };
 
-    return { corBase: corEixoZBase, corLuz: corEixoZLuz };
+function criaCoresEixo(eixo: 'X' | 'Y' | 'Z', negativo = false): { readonly corBase: Vetor3; readonly corLuz: Vetor3 } {
+    if (eixo === 'X') return { corBase: negativo ? atenuaCorEixoNegativo(corEixoXBase) : corEixoXBase, corLuz: negativo ? atenuaCorEixoNegativo(corEixoXLuz) : corEixoXLuz };
+    if (eixo === 'Y') return { corBase: negativo ? atenuaCorEixoNegativo(corEixoYBase) : corEixoYBase, corLuz: negativo ? atenuaCorEixoNegativo(corEixoYLuz) : corEixoYLuz };
+
+    return { corBase: negativo ? atenuaCorEixoNegativo(corEixoZBase) : corEixoZBase, corLuz: negativo ? atenuaCorEixoNegativo(corEixoZLuz) : corEixoZLuz };
 };
 
 function criaGeometriaEixoCompleto(eixo: 'X' | 'Y' | 'Z', tamanho: number): GeometriaEditor3D {
@@ -33,6 +35,17 @@ function criaGeometriaEixoPositivo(eixo: 'X' | 'Y' | 'Z', tamanho: number): Geom
     return criaGeometriaEditor3D(vertices, normais, 'LINHAS');
 };
 
+function criaGeometriaEixoNegativo(eixo: 'X' | 'Y' | 'Z', tamanho: number): GeometriaEditor3D {
+    const vertices: number[] = [];
+    const normais: number[] = [];
+
+    if (eixo === 'X') adicionaLinhaEditor3D(vertices, normais, [0, 0, 0], [-tamanho, 0, 0], [0, 0, 1]);
+    if (eixo === 'Y') adicionaLinhaEditor3D(vertices, normais, [0, 0, 0], [0, -tamanho, 0], [0, 0, 1]);
+    if (eixo === 'Z') adicionaLinhaEditor3D(vertices, normais, [0, 0, 0], [0, 0, -tamanho], [0, 1, 0]);
+
+    return criaGeometriaEditor3D(vertices, normais, 'LINHAS');
+};
+
 function criaGeometriaPontoEixo(eixo: 'X' | 'Y' | 'Z', tamanho: number): GeometriaEditor3D {
     const vertices: number[] = [];
     const normais: number[] = [];
@@ -46,4 +59,5 @@ function criaGeometriaPontoEixo(eixo: 'X' | 'Y' | 'Z', tamanho: number): Geometr
 
 export function criaGuiaEixoCompletoEditor3D(eixo: 'X' | 'Y' | 'Z', tamanho: number): GuiaEditor3D { return { geometria: criaGeometriaEixoCompleto(eixo, tamanho), ...criaCoresEixo(eixo) }; };
 export function criaGuiaEixoPositivoEditor3D(eixo: 'X' | 'Y' | 'Z', tamanho: number): GuiaEditor3D { return { geometria: criaGeometriaEixoPositivo(eixo, tamanho), ...criaCoresEixo(eixo) }; };
+export function criaGuiaEixoNegativoEditor3D(eixo: 'X' | 'Y' | 'Z', tamanho: number): GuiaEditor3D { return { geometria: criaGeometriaEixoNegativo(eixo, tamanho), ...criaCoresEixo(eixo, true) }; };
 export function criaGuiaPontoEixoEditor3D(eixo: 'X' | 'Y' | 'Z', tamanho: number): GuiaEditor3D { return { geometria: criaGeometriaPontoEixo(eixo, tamanho), ...criaCoresEixo(eixo) }; };

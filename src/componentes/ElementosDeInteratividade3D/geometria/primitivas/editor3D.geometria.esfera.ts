@@ -1,12 +1,13 @@
-import { adicionaTrianguloEditor3D, criaGeometriaEditor3D, normalizaVetorEditor3D } from '../editor3D.geometria.base';
-import type { GeometriaEditor3D } from '../editor3D.geometria.types';
+import { adicionaTrianguloEditor3D, criaFaceEditor3D, criaGeometriaEditor3D, normalizaVetorEditor3D } from '../editor3D.geometria.base';
+import type { FaceGeometriaEditor3D, GeometriaEditor3D } from '../editor3D.geometria.types';
 import type { Vetor3 } from '../../editor/editor3D.tipos';
 
-function criaPontoEsfera(theta: number, phi: number, raio: number): Vetor3 { return [Math.sin(theta) * Math.cos(phi) * raio, Math.cos(theta) * raio, Math.sin(theta) * Math.sin(phi) * raio]; };
+function criaPontoEsfera(theta: number, phi: number, raio: number): Vetor3 { return [Math.sin(theta) * Math.cos(phi) * raio, Math.cos(theta) * raio, Math.sin(theta) * Math.sin(phi) * raio]; }
 
 export function criaGeometriaEsferaEditor3D(quantidadeVertices: number): GeometriaEditor3D {
     const vertices: number[] = [];
     const normais: number[] = [];
+    const faces: FaceGeometriaEditor3D[] = [];
     const segmentos = Math.max(6, quantidadeVertices);
     const aneis = Math.max(3, Math.floor(segmentos / 2));
     const raio = 0.55;
@@ -25,8 +26,9 @@ export function criaGeometriaEsferaEditor3D(quantidadeVertices: number): Geometr
 
             adicionaTrianguloEditor3D(vertices, normais, a, b, c, normalizaVetorEditor3D(a[0], a[1], a[2]));
             adicionaTrianguloEditor3D(vertices, normais, a, c, d, normalizaVetorEditor3D(a[0], a[1], a[2]));
+            faces.push(criaFaceEditor3D(`esfera-face-${anel + 1}-${segmento + 1}`, `Face ${anel + 1}.${segmento + 1}`, [[a, b, c], [a, c, d]]));
         }
     }
 
-    return criaGeometriaEditor3D(vertices, normais, 'TRIANGULOS');
-};
+    return criaGeometriaEditor3D(vertices, normais, 'TRIANGULOS', faces);
+}

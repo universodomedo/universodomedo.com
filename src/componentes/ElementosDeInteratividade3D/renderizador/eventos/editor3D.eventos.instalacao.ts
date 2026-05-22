@@ -26,6 +26,8 @@ export function registraEventosRenderizadorEditor3D(controle: ControleEventosEdi
     window.addEventListener('keydown', aplicaAtalho);
 
     return () => {
+        const animacaoCameraFrameId = controle.refs.arraste.current.animacaoCameraFrameId;
+
         controle.canvas.removeEventListener('mousedown', iniciaArraste);
         controle.canvas.removeEventListener('wheel', aplicaZoom);
         document.removeEventListener('mousemove', moveMouse);
@@ -35,6 +37,7 @@ export function registraEventosRenderizadorEditor3D(controle: ControleEventosEdi
         document.removeEventListener('pointerlockchange', finalizaPointerLock);
         window.removeEventListener('keydown', aplicaAtalho);
         ocultaCursorFantasmaEditor3D(controle);
+        if (animacaoCameraFrameId !== null) cancelAnimationFrame(animacaoCameraFrameId);
         if (document.pointerLockElement === controle.canvas) document.exitPointerLock();
     };
 };
