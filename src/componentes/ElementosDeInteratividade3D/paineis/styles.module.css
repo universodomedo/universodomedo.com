@@ -1,3 +1,10 @@
+.conteinerPainelControles {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+}
+
 .painelControles {
     position: relative;
     box-sizing: border-box;
@@ -5,6 +12,7 @@
     grid-template-rows: minmax(10em, 1fr);
     min-width: 0;
     min-height: 0;
+    height: 100%;
     overflow: hidden;
     border-left: 0.08em solid rgba(255, 255, 255, 0.1);
     background: #1f1f1f;
@@ -49,16 +57,17 @@
 
 .botaoColapsarPainelDireito {
     position: absolute;
-    z-index: 6;
-    top: 0.35em;
-    left: 0.25em;
+    z-index: 20;
+    top: 0;
+    left: -1.55em;
     display: grid;
     width: 1.55em;
-    height: 1.55em;
+    height: 2.15em;
     place-items: center;
     padding: 0;
     border: 0.08em solid rgba(255, 255, 255, 0.1);
-    border-radius: 0.24em;
+    border-right: 0;
+    border-radius: 0.24em 0 0 0.24em;
     color: rgba(255, 255, 255, 0.62);
     font: inherit;
     font-size: 0.82em;
@@ -84,30 +93,51 @@
     position: sticky;
     z-index: 2;
     top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
     width: 100%;
     min-height: 2.15em;
-    padding: 0 0.75em 0 2.35em;
-    border: 0;
     border-bottom: 0.08em solid rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.88);
-    font: inherit;
-    font-size: 0.82em;
-    font-weight: 700;
-    text-align: left;
     background: #303030;
-    cursor: pointer;
 }
 
 .cabecalhoPainelBlender:hover {
     background: #383838;
 }
 
-.cabecalhoPainelBlender strong {
+.botaoCabecalhoPainelBlender {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: 2.15em;
+    padding: 0 0.75em;
+    border: 0;
+    color: rgba(255, 255, 255, 0.88);
+    font: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.acoesCabecalhoPainelBlender {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    min-height: 2.15em;
+    padding: 0;
+}
+
+.acoesCabecalhoPainelBlender strong {
+    display: grid;
+    min-width: 2.1em;
+    min-height: 2.15em;
+    place-items: center;
+    padding: 0 0.45em;
     color: rgba(255, 255, 255, 0.54);
-    font-size: 0.86em;
+    font-size: 0.7em;
     font-weight: 500;
 }
 
@@ -139,22 +169,40 @@
     padding: 0 0.7em 0.35em;
 }
 
+.botaoCriarColecaoCena,
+.botaoCriarColecaoCenaCabecalho {
+    display: grid;
+    place-items: center;
+    border: 0.08em solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.74);
+    font: inherit;
+    background: rgba(48, 48, 48, 0.72);
+    cursor: pointer;
+}
+
 .botaoCriarColecaoCena {
     display: flex;
     align-items: center;
     gap: 0.45em;
     min-height: 2em;
     padding: 0 0.55em;
-    border: 0.08em solid rgba(255, 255, 255, 0.1);
     border-radius: 0.24em;
-    color: rgba(255, 255, 255, 0.74);
-    font: inherit;
     font-size: 0.82em;
-    background: rgba(48, 48, 48, 0.72);
-    cursor: pointer;
 }
 
-.botaoCriarColecaoCena:hover {
+.botaoCriarColecaoCenaCabecalho {
+    width: 2.15em;
+    height: 100%;
+    padding: 0;
+    border-top: 0;
+    border-bottom: 0;
+    border-radius: 0;
+    font-size: 0.86em;
+    font-weight: 800;
+}
+
+.botaoCriarColecaoCena:hover,
+.botaoCriarColecaoCenaCabecalho:hover {
     color: #ffffff;
     background: #3a3a3a;
 }
@@ -548,6 +596,10 @@ div.linhaObjetoCena:active {
 }
 
 @media (max-width: 56em) {
+    .conteinerPainelControles {
+        height: auto;
+    }
+
     .painelControles,
     .painelControlesColapsado {
         display: grid;

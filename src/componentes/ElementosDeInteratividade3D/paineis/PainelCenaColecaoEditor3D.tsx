@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { PainelColapsavelEditor3D } from './PainelColapsavelEditor3D';
 import { useEditor3DContexto } from '../contexto/Editor3DContexto';
@@ -64,7 +64,17 @@ export function PainelCenaColecaoEditor3D() {
     const [edicaoNome, setEdicaoNome] = useState<EdicaoNomeCenaEditor3D | null>(null);
     const [arrasteAtual, setArrasteAtual] = useState<ArrasteCenaEditor3D | null>(null);
     const [chaveDestinoArraste, setChaveDestinoArraste] = useState<string | null>(null);
+    const inputEdicaoNomeRef = useRef<HTMLInputElement | null>(null);
     const editandoGeometria = estado.modoOperacao === 'EDICAO';
+
+    useEffect(() => {
+        const input = inputEdicaoNomeRef.current;
+
+        if (edicaoNome === null || input === null) return;
+
+        input.focus();
+        input.select();
+    }, [edicaoNome?.tipo, edicaoNome?.id]);
 
     function colecaoEstaAberta(idColecao: string): boolean { return colecoesAbertas[idColecao] ?? true; };
 
@@ -250,7 +260,7 @@ export function PainelCenaColecaoEditor3D() {
         encerraArraste();
     };
 
-    function soltaObjetoEmObjeto(event: DragEvent<HTMLElement>, idColecao: string | null, idObjetoReferencia: string): void {
+    function soltaObjetoEmObjeto(event: DragEvent<HTMLElement>, idColecaoContainer: string | null, idObjetoReferencia: string): void {
         if (arrasteAtual?.tipo !== 'OBJETO') return;
 
         event.preventDefault();
@@ -262,7 +272,7 @@ export function PainelCenaColecaoEditor3D() {
             return;
         }
 
-        acoes.moveObjetoParaColecaoCena(arrasteAtual.id, idColecao, idObjetoReferencia, obtemPosicaoSoltarElementoEditor3D(event));
+        acoes.moveObjetoParaColecaoCena(arrasteAtual.id, idColecaoContainer, idObjetoReferencia, obtemPosicaoSoltarElementoEditor3D(event));
         encerraArraste();
     };
 
@@ -297,7 +307,7 @@ export function PainelCenaColecaoEditor3D() {
             <div className={styles.editorNomeObjetoCena}>
                 <span className={styles.espacoArvore} />
                 <span className={styles.iconeObjetoCena}>{obtemIconeObjeto(objeto.tipo)}</span>
-                <input type="text" value={edicaoNome?.valor ?? objeto.nome} autoFocus onChange={event => atualizaNomeEmEdicao(event.target.value)} onBlur={confirmaEdicaoNome} onKeyDown={processaTeclaEdicaoNome} />
+                <input ref={inputEdicaoNomeRef} type="text" value={edicaoNome?.valor ?? objeto.nome} onChange={event => atualizaNomeEmEdicao(event.target.value)} onBlur={confirmaEdicaoNome} onKeyDown={processaTeclaEdicaoNome} />
             </div>
         );
     };
@@ -306,7 +316,7 @@ export function PainelCenaColecaoEditor3D() {
         return (
             <div className={styles.editorNomeColecaoCena}>
                 <span className={styles.iconeColecao}>▣</span>
-                <input type="text" value={edicaoNome?.valor ?? colecao.nome} autoFocus onChange={event => atualizaNomeEmEdicao(event.target.value)} onBlur={confirmaEdicaoNome} onKeyDown={processaTeclaEdicaoNome} />
+                <input ref={inputEdicaoNomeRef} type="text" value={edicaoNome?.valor ?? colecao.nome} onChange={event => atualizaNomeEmEdicao(event.target.value)} onBlur={confirmaEdicaoNome} onKeyDown={processaTeclaEdicaoNome} />
             </div>
         );
     };
@@ -376,15 +386,10 @@ export function PainelCenaColecaoEditor3D() {
     };
 
     return (
-        <PainelColapsavelEditor3D titulo="Coleção da Cena" valor={String(estado.objetos.length)}>
+        <PainelColapsavelEditor3D titulo="Coleção da Cena" valor={String(estado.objetos.length)} acoes={(
+            <button className={styles.botaoCriarColecaoCenaCabecalho} type="button" onClick={criaColecao} aria-label="Criar nova coleção" title="Nova coleção">+</button>
+        )}>
             <div className={styles.arvoreCena}>
-                <div className={styles.acoesArvoreCena}>
-                    <button className={styles.botaoCriarColecaoCena} type="button" onClick={criaColecao}>
-                        <span>+</span>
-                        <strong>Nova coleção</strong>
-                    </button>
-                </div>
-
                 {editandoGeometria && <div className={styles.avisoModoEdicaoCena}>Modo de edição ativo: seleção de objetos travada.</div>}
 
                 <div className={`${styles.blocoRaizCena} ${chaveDestinoArraste === CHAVE_DESTINO_RAIZ_CENA_EDITOR3D ? styles.blocoRaizCenaRecebendoArraste : ''}`} onDragOver={processaEntradaArrasteObjetoEmRaiz} onDragLeave={event => removeRealceDestinoArraste(event, CHAVE_DESTINO_RAIZ_CENA_EDITOR3D)} onDrop={soltaObjetoNaRaiz}>

@@ -49,7 +49,7 @@ function projetaPontoNoViewportEditor3D(matriz: Float32Array, viewport: Viewport
 export function obtemViewportGizmoEixosEditor3D(larguraCanvas: number, alturaCanvas: number): ViewportGizmoEixosEditor3D {
     const tamanhoBase = Math.min(larguraCanvas, alturaCanvas);
     const tamanhoGizmo = Math.max(54, Math.floor(tamanhoBase * 0.075));
-    const margemTopo = 4;
+    const margemTopo = 12;
     const margemDireita = 2;
     const esquerda = larguraCanvas - tamanhoGizmo - margemDireita;
     const topo = margemTopo;

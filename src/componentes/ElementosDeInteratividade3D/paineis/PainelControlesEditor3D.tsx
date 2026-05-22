@@ -20,18 +20,22 @@ export function PainelControlesEditor3D({ menuLateralDireito }: PainelControlesE
     };
 
     return (
-        <aside className={`${styles.painelControles} ${menuLateralDireito.colapsado ? styles.painelControlesColapsado : ''} ${menuLateralDireito.redimensionando ? styles.painelControlesRedimensionando : ''}`} aria-label="Menu lateral direito do editor 3D">
-            {!menuLateralDireito.colapsado && <div className={styles.alcaRedimensionamentoPainelDireito} role="separator" aria-orientation="vertical" aria-label="Redimensionar menu lateral direito" onMouseDown={iniciaRedimensionamento} />}
-
+        <div className={styles.conteinerPainelControles}>
             <button className={styles.botaoColapsarPainelDireito} type="button" onClick={menuLateralDireito.alternaColapsado} aria-label={menuLateralDireito.colapsado ? 'Expandir menu lateral direito' : 'Colapsar menu lateral direito'} title={menuLateralDireito.colapsado ? 'Expandir menu' : 'Colapsar menu'}>
                 {menuLateralDireito.colapsado ? '‹' : '›'}
             </button>
 
-            <div className={styles.conteudoPainelControles} aria-hidden={menuLateralDireito.colapsado}>
-                <PainelCenaColecaoEditor3D />
+            {!menuLateralDireito.colapsado && (
+                <aside className={`${styles.painelControles} ${menuLateralDireito.redimensionando ? styles.painelControlesRedimensionando : ''}`} aria-label="Menu lateral direito do editor 3D">
+                    <div className={styles.alcaRedimensionamentoPainelDireito} role="separator" aria-orientation="vertical" aria-label="Redimensionar menu lateral direito" onMouseDown={iniciaRedimensionamento} />
 
-                <PainelContextualEditor3D />
-            </div>
-        </aside>
+                    <div className={styles.conteudoPainelControles}>
+                        <PainelCenaColecaoEditor3D />
+
+                        <PainelContextualEditor3D />
+                    </div>
+                </aside>
+            )}
+        </div>
     );
 };
