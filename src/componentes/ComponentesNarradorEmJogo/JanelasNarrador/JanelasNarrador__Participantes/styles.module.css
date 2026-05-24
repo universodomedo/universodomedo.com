@@ -1,14 +1,68 @@
+.recipiente_painel_teste_pericia {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.recipiente_controles_teste_pericia {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.75em;
+    flex-wrap: wrap;
+}
+
+.campo_teste_pericia {
+    flex: 1;
+    min-width: 14em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    font-weight: 600;
+}
+
+.seletor_pericia {
+    width: 100%;
+    padding: 0.55em 0.65em;
+    border: 0.08em solid rgba(255, 255, 255, 0.24);
+    border-radius: 0.45em;
+    background: rgba(10, 10, 16, 0.84);
+    color: inherit;
+}
+
+.botao_solicitar_teste {
+    padding: 0.62em 0.9em;
+    border: 0.08em solid rgba(255, 177, 74, 0.76);
+    border-radius: 0.45em;
+    background: rgba(255, 177, 74, 0.16);
+    color: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.botao_solicitar_teste:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .recipiente_conteudo_janela_participantes {
     display: flex;
     flex-direction: column;
     flex: 1;
+    gap: 0.75em;
+    min-width: 10em;
+    padding: 0.85em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.5em;
+    background: rgba(255, 255, 255, 0.04);
 }
 
 .recipiente_participantes_sala_de_jogo {
     flex: 1;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    gap: 0.85em;
+    flex-wrap: wrap;
 }
 
 .recipiente_participante_sala_de_jogo {
@@ -20,8 +74,44 @@
     text-align: center;
 }
 
+.recipiente_participante_sala_de_jogo h2 {
+    font-size: 1em;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
 .recipiente_avatar_participante_sala_de_jogo {
     position: relative;
     aspect-ratio: 1;
     width: 8em;
+}
+
+.controle_selecao_participante {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45em;
+    font-weight: 700;
+}
+
+.controle_selecao_participante input {
+    accent-color: #ffb14a;
+}
+
+.recipiente_resultados_teste_pericia {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45em;
+}
+
+.recipiente_resultados_teste_pericia h3 {
+    font-size: 1em;
+}
+
+.recipiente_resultados_teste_pericia ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    margin: 0;
+    padding-left: 1.2em;
 }
