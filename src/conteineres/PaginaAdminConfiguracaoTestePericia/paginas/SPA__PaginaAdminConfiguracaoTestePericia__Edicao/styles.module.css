@@ -1,0 +1,141 @@
+.recipiente {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(18em, 1fr);
+    gap: 1.2em;
+    width: 100%;
+}
+
+.painel_regras,
+.painel_preview {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.5em;
+    padding: 1em;
+    background: rgba(18, 20, 24, 0.82);
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.cabecalho h2 {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: 700;
+}
+
+.tabela_regras,
+.lista_preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45em;
+}
+
+.linha_cabecalho,
+.linha_regra,
+.linha_preview {
+    display: grid;
+    grid-template-columns: 0.8fr 1.4fr 1fr 1fr;
+    align-items: center;
+    gap: 0.7em;
+    min-height: 2.8em;
+    padding: 0.65em 0.75em;
+    border-radius: 0.35em;
+}
+
+.linha_cabecalho {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.82em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.linha_regra,
+.linha_preview {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.linha_preview {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.linha_regra input {
+    width: 100%;
+    min-width: 0;
+    padding: 0.45em 0.55em;
+    border: 0.08em solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.35em;
+    color: #f4f4f4;
+    background: rgba(0, 0, 0, 0.24);
+}
+
+.linha_regra strong,
+.linha_preview strong {
+    font-size: 1em;
+    color: #f6d16d;
+}
+
+.linha_regra em {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9em;
+    font-style: normal;
+}
+
+.acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.7em;
+    flex-wrap: wrap;
+}
+
+.botao_principal,
+.botao_secundario {
+    border: 0;
+    border-radius: 0.4em;
+    padding: 0.7em 0.95em;
+    font-weight: 700;
+}
+
+.botao_principal {
+    color: #101216;
+    background: #f6d16d;
+}
+
+.botao_secundario {
+    color: #f4f4f4;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.botao_principal:not(:disabled),
+.botao_secundario:not(:disabled) {
+    cursor: pointer;
+}
+
+.botao_principal:disabled,
+.botao_secundario:disabled {
+    cursor: default;
+    opacity: 0.45;
+}
+
+.erro {
+    padding: 0.75em;
+    border-radius: 0.35em;
+    color: #ffd8d8;
+    background: rgba(153, 38, 38, 0.35);
+}
+
+@media (max-width: 54em) {
+    .recipiente {
+        grid-template-columns: 1fr;
+    }
+
+    .linha_cabecalho,
+    .linha_regra {
+        grid-template-columns: 0.7fr 1fr 0.8fr 1fr;
+    }
+}
