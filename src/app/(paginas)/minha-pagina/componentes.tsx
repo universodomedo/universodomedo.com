@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-import BarraUsuario from 'Componentes/ElementosPaginaUsuario/BarraUsuario/page.tsx';
+import BarraUsuario from '@/componentes/ElementosPaginaUsuario/BarraUsuario/page';
 import SecaoPosts from 'Componentes/ElementosPaginaUsuario/Post/page.tsx';
 import SecaoContatos from 'Componentes/ElementosPaginaUsuario/Contato/page';
 
