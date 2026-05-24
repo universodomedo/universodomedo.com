@@ -1,0 +1,54 @@
+
+/* =========================================
+   BARRA PRINCIPAL
+========================================= */
+
+#barra_usuario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    gap: 3.25%;
+
+    height: 75%;
+    width: 100%;
+
+    background:
+        linear-gradient(
+            to bottom,
+            #857f7200 20%,
+            hsla(41, 46%, 85%, 0.030) 100%
+        ),
+        radial-gradient(circle, #040309 53%, #07060B 100%);
+
+    border-radius: .5rem;
+
+    padding: .5% 5%;
+
+    position: relative;
+    z-index: 2;
+}
+
+#barra_usuario::after {
+    content: '';
+
+    position: absolute;
+    top: 50%;
+    left: 51.5%;
+
+    transform:
+        translateY(-50%)
+        translateX(-50%)
+        scaleX(1.035);
+
+    width: 100%;
+    height: 100%;
+
+    background-image: url('/moldura-card-usuario.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+
+    z-index: 1;
+
+    pointer-events: none;
+}

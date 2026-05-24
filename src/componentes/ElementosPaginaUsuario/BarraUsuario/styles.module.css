@@ -1,41 +1,38 @@
-#barra_usuario {
+
+.recipiente_perfil {
+    width: 100%;
+    height: fit-content;
+}
+
+
+.recipiente_barra_usuario {
+    margin: 2.5% auto;
+    position: relative;
+    width: 90%;
+    aspect-ratio: 16/4.815;
+
     display: flex;
     flex-direction: row;
-    position: relative;
-    border: 1px white solid;
-    border-radius: 10px;
-    flex: .17;
-    padding: .3% .5%;
-    gap: 2vw;
+    gap: 2%;
 }
 
-#barra_usuario h1 {
-    font-size: 3rem;
-}
-
-.recipiente_imagem_usuario {
+.recipiente_barra_usuario::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    width: 100%;
     height: 100%;
-    aspect-ratio: 1 / 1;
-    position: relative;
+    background-image: url('/moldura-seção-usuario.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+    z-index: 10;
+
+    pointer-events: none;
 }
 
-.recipiente_informacoes_usuario {
-    width: 40%;
-}
-
-.recipiente_conquistas_usuario {
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    width: 40%;
-    align-items: center;
-}
-
-.recipiente_conquista {
-    position: relative;
-    height: 80%;
-    aspect-ratio: 1;
-}
+/* AREA DE SELEÇÃO DE AVATARES ==============================*/
 
 #recipiente_selecao_avatares {
     display: flex;

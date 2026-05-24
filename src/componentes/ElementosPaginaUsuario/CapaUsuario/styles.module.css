@@ -1,0 +1,62 @@
+
+/* =========================================
+   CAPA
+========================================= */
+
+.capa_usuario {
+    width: 95%;
+    aspect-ratio: 16/7.5;
+    overflow: hidden;
+    position: relative;
+    border-radius: .5rem .5rem 0rem 0rem;
+}
+
+.texto_editacao {
+    position: absolute;
+    top: 8.5%;
+    left: 90%;
+    z-index: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10%;
+
+    font-family: var(--fonte-junge);
+    font-size: 1rem;
+    text-decoration: none;
+}
+
+.texto_editacao svg {
+    height: 1.5rem;
+}
+
+.texto_editacao:hover {
+    cursor: pointer;
+}
+
+.imagem_capa {
+    position: absolute;
+    width: 100%;
+    aspect-ratio: 16/9;
+}
+
+.filtro_capa {
+    background-image: linear-gradient(
+        to bottom,
+        transparent 85%,
+        rgba(0, 0, 0, 0.300)
+    );
+
+    height: 100%;
+    width: 100%;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform: translateX(-50%) translateY(-50%);
+
+    z-index: 1;
+    pointer-events: none;
+}

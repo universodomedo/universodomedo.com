@@ -22,10 +22,10 @@ function MinhaPagina_Slot() {
         <div className={styles.portal_usuario}>
             <div className={styles.portal_usuario_esquerda}>
                 <BarraUsuario />
-                <SecaoPosts />
+                {/* <SecaoPosts /> */}
             </div>
 
-            <SecaoContatos />
+            {/* <SecaoContatos /> */}
         </div>
     );
 };

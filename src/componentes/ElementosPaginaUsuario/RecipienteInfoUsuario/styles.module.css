@@ -1,0 +1,217 @@
+/* =========================================
+   INFORMAÇÕES DO USUÁRIO
+========================================= */
+
+.recipiente_informacoes_usuario {
+    width: 40%;
+    height: 40%;
+    margin-bottom: 3%;
+
+    padding: 2.5% 0% 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    gap: 3.5%;
+}
+
+.recipiente_informacoes_usuario::before {
+    content: '';
+
+    height: 1px;
+    width: 100%;
+
+    background-color: #322F2F;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translateY(-50%) translateX(-50%);
+}
+
+.recipiente_informacoes_usuario h1 {
+    font-family: var(--fonte-cinzel);
+    text-transform: lowercase;
+    font-size: 2.5rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+
+    color: #EBE0C9;
+}
+
+.divisoria_usuario {
+    height: 5px;
+    width: 95%;
+
+    background-image: linear-gradient(to right,
+            #e2b83c86,
+            #FDFC9E 30%,
+            #e2b83c00);
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+.status_usuario {
+    width: 100%;
+    height: auto;
+
+    margin-top: 1%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2%;
+}
+
+.status_usuario p {
+
+    font-family: var(--fonte-junge);
+    font-size: 1.15rem;
+}
+
+.status_icone {
+    position: relative;
+
+    height: 18px;
+    aspect-ratio: 1/1;
+
+    background-color: #97CD61;
+
+    mask-image: url('https://cdn.universodomedo.com/RecursosInternos/de695432-52f7-4742-97f6-58bd2f630bcd.svg');
+    mask-repeat: no-repeat;
+    mask-size: contain;
+    mask-position: center;
+
+    -webkit-mask-image: url('https://cdn.universodomedo.com/RecursosInternos/de695432-52f7-4742-97f6-58bd2f630bcd.svg');
+}
+
+/* =========================================
+   HISTÓRICO
+========================================= */
+
+.recipiente_status_usuario {
+    width: 110.3%;
+    height: 55%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.recipiente_status_usuario p {
+    font-family: var(--fonte-junge);
+    font-size: 1.15rem;
+    color: #EBE0C9;
+
+    line-height: 145%;
+    word-spacing: 5%;
+}
+
+.historico_usuario {
+    width: 100%;
+    height: 51%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.historico_usuario::after {
+    content: '';
+
+    height: 1px;
+    width: 100%;
+
+    background-color: #322F2F;
+
+    position: absolute;
+    bottom: 25%;
+    left: 0%;
+}
+
+.celula_desde,
+.celula_ultimo_acesso,
+.celula_regiao {
+    width: 33.33%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.celula_desde::after,
+.celula_ultimo_acesso::after {
+    content: '';
+
+    height: 25%;
+    width: 1px;
+
+    background-color: #322F2F;
+
+    position: absolute;
+    top: 50%;
+}
+
+.celula_desde::after {
+    left: 33.33%;
+}
+
+.celula_ultimo_acesso::after {
+    left: 66.66%;
+}
+
+/* =========================================
+   SOBRE
+========================================= */
+
+.sobre_usuario {
+    width: 100%;
+    height: 49%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.celula_sobre {
+    width: 20%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.celula_sobre::after {
+    content: '';
+
+    height: 25%;
+    width: 1px;
+
+    background-color: #322F2F;
+
+    position: absolute;
+    bottom: 0%;
+    left: 20%;
+}
+
+.celula_sobre_info {
+    height: 100%;
+    flex: 1;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
