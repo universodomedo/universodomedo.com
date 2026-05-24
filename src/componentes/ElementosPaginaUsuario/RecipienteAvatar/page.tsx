@@ -7,10 +7,10 @@ import { atualizaAvatarUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx'
 import { PersonagemAvatarDto } from 'types-nora-api';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto.tsx';
 
-import RecipienteImagem from 'Uteis/ImagemLoader/RecipienteImagem';
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
 import MolduraAvatar from '../MolduraAvatar/page';
 import EmblemaMoldura from '../EmblemaMoldura/page';
+import { RenderArquivoAvatar } from '@/uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 
 export default function RecipienteAvatar() {
@@ -35,14 +35,15 @@ export default function RecipienteAvatar() {
                     <MolduraAvatar urlMoldura='https://cdn.universodomedo.com/RecursosInternos/a58d8d62-8e8c-44ce-af07-0d1019659f69.webp' />
 
                     <div className={styles.recipiente_imagem_usuario} onClick={openModal}>
-                        <RecipienteImagem src={usuarioLogado.customizacao.caminhoAvatar} />
+                        {/* <RecipienteImagem src={usuarioLogado.customizacao.caminhoAvatar} /> */}
+                        <RenderArquivoAvatar caminhoArquivoAvatar={usuarioLogado.customizacao.caminhoArquivoAvatar} />
                     </div>
                 </div>
             </div>
 
             <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <Modal.Content cabecalho={{ titulo: 'Atualizar Avatar' }}>
-                    <ConteudoModalAtualizaAvatar listaAvatares={usuarioLogado.personagens?.filter(personagem => personagem.caminhoAvatarPersonagem !== null) ?? []} idPersonagemSelecinadoAtualmente={usuarioLogado.customizacao.personagemAvatarPrincipal?.idPersonagem} />
+                    <ConteudoModalAtualizaAvatar listaAvatares={usuarioLogado.personagens?.filter(personagem => personagem.avatarAtual !== null) ?? []} idPersonagemSelecinadoAtualmente={usuarioLogado.customizacao.personagemAvatarPrincipal?.idPersonagem} />
                 </Modal.Content>
             </Modal>
         </>
@@ -71,7 +72,7 @@ function ConteudoModalAtualizaAvatar({ listaAvatares, idPersonagemSelecinadoAtua
                     {listaAvatares.map(personagem => (
                         <div key={personagem.idPersonagem} className={styles.recipiente_celula_avatar} onClick={() => { atualizarAvatarUsuario(personagem.idPersonagem) }}>
                             <div className={`${styles.recipiente_avatar} ${idPersonagemSelecinadoAtualmente === personagem.idPersonagem ? styles.selecionado_atual : ''}`}>
-                                <RecipienteImagem src={personagem.caminhoAvatarPersonagem} />
+                                <RenderArquivoAvatar caminhoArquivoAvatar={personagem.avatarAtual} />
                             </div>
                         </div>
                     ))}
