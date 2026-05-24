@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { AcaoDeSessaoTestePericiaExecutado, Eventos_EnviaERecebe, LogicaJogoUsuario_ObjetoInicialSalaDto__Narrador, PericiaCompletaDto } from 'types-nora-api';
+import { Eventos_EnviaERecebe, LogicaJogoUsuario_ObjetoInicialSalaDto__Narrador, PericiaCompletaDto } from 'types-nora-api';
 
 import { eventoWs, getSocket } from 'Hooks/useEventoWs';
 import { useToast } from 'Hooks/useToast';
@@ -15,7 +15,6 @@ interface ContextoSalaDeJogo__NarradorProps {
     idPericiaSelecionadaParaTeste: number | null;
     idsUsuariosParticipantesSelecionadosParaTeste: number[];
     estaSolicitandoTestePericiaParticipantes: boolean;
-    acoesTestePericiaNarrador: AcaoDeSessaoTestePericiaExecutado[];
     selecionarPericiaParaTesteParticipantes: (idPericia: number | null) => void;
     alternarSelecaoParticipanteParaTestePericia: (idUsuario: number) => void;
     solicitarTestePericiaParticipantesSelecionados: () => void;
@@ -37,7 +36,6 @@ export const ContextoSalaDeJogo__NarradorProvider = ({ dadosSalaDeJogo__Narrador
     const [idPericiaSelecionadaParaTeste, setIdPericiaSelecionadaParaTeste] = useState<number | null>(null);
     const [idsUsuariosParticipantesSelecionadosParaTeste, setIdsUsuariosParticipantesSelecionadosParaTeste] = useState<number[]>([]);
     const [estaSolicitandoTestePericiaParticipantes, setEstaSolicitandoTestePericiaParticipantes] = useState(false);
-    const [acoesTestePericiaNarrador, setAcoesTestePericiaNarrador] = useState<AcaoDeSessaoTestePericiaExecutado[]>([]);
 
     const selecionarPericiaParaTesteParticipantes = useCallback((idPericia: number | null) => {
         setIdPericiaSelecionadaParaTeste(idPericia);
@@ -71,10 +69,9 @@ export const ContextoSalaDeJogo__NarradorProvider = ({ dadosSalaDeJogo__Narrador
             idPericia: idPericiaSelecionadaParaTeste,
             idsUsuariosParticipantes: idsUsuariosParticipantesSelecionadosParaTeste,
         }, {
-            onSuccess: (response) => {
-                setAcoesTestePericiaNarrador((acoesAtuais) => [...response.acoes, ...acoesAtuais]);
+            onSuccess: () => {
                 setEstaSolicitandoTestePericiaParticipantes(false);
-                void toast.sucesso('Teste executado', 'Resultado registrado no runtime da sessao.');
+                void toast.sucesso('Teste executado', 'Resultado registrado nas mensagens da sessao.');
             },
             onError: (error) => {
                 setEstaSolicitandoTestePericiaParticipantes(false);
@@ -89,11 +86,10 @@ export const ContextoSalaDeJogo__NarradorProvider = ({ dadosSalaDeJogo__Narrador
         idPericiaSelecionadaParaTeste,
         idsUsuariosParticipantesSelecionadosParaTeste,
         estaSolicitandoTestePericiaParticipantes,
-        acoesTestePericiaNarrador,
         selecionarPericiaParaTesteParticipantes,
         alternarSelecaoParticipanteParaTestePericia,
         solicitarTestePericiaParticipantesSelecionados,
-    }), [dadosSalaDeJogo__Narrador, periciasDisponiveis, idPericiaSelecionadaParaTeste, idsUsuariosParticipantesSelecionadosParaTeste, estaSolicitandoTestePericiaParticipantes, acoesTestePericiaNarrador, selecionarPericiaParaTesteParticipantes, alternarSelecaoParticipanteParaTestePericia, solicitarTestePericiaParticipantesSelecionados]);
+    }), [dadosSalaDeJogo__Narrador, periciasDisponiveis, idPericiaSelecionadaParaTeste, idsUsuariosParticipantesSelecionadosParaTeste, estaSolicitandoTestePericiaParticipantes, selecionarPericiaParaTesteParticipantes, alternarSelecaoParticipanteParaTestePericia, solicitarTestePericiaParticipantesSelecionados]);
 
     return (
         <ContextoSalaDeJogo__Narrador.Provider value={contexto}>

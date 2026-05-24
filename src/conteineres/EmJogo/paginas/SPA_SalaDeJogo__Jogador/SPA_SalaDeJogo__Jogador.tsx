@@ -16,7 +16,7 @@ export default function SPA_SalaDeJogo__Jogador() {
                     <TelaDeJogo capaSessao={objetoEmJogo.objetoInicialSala.caminhoArquivoArteCapa} />
                 </div>
                 <div className={styles.recipiente_container__janela_mensageens_de_jogo__em_pagina_de_jogo}>
-                    <JanelaDeMensagensDeJogo />
+                    <JanelaDeMensagensDeJogo codigoSala={objetoEmJogo.objetoInicialSala.codigoSalaDeJogo} />
                 </div>
             </div>
             <SwiperDireita>

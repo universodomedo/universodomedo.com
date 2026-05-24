@@ -1,6 +1,6 @@
 import styles from './styles.module.css';
 
-import { AcaoDeSessaoTestePericiaExecutado, PericiaCompletaDto, VIEW_JogadorDeSessao } from 'types-nora-api';
+import { PericiaCompletaDto, VIEW_JogadorDeSessao } from 'types-nora-api';
 
 import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
@@ -10,13 +10,12 @@ interface JanelasNarrador__ParticipantesProps {
     idPericiaSelecionadaParaTeste: number | null;
     idsUsuariosParticipantesSelecionadosParaTeste: number[];
     estaSolicitandoTestePericiaParticipantes: boolean;
-    acoesTestePericiaNarrador: AcaoDeSessaoTestePericiaExecutado[];
     selecionarPericiaParaTesteParticipantes: (idPericia: number | null) => void;
     alternarSelecaoParticipanteParaTestePericia: (idUsuario: number) => void;
     solicitarTestePericiaParticipantesSelecionados: () => void;
 };
 
-export default function JanelasNarrador__Participantes({ participantesDaSessao, periciasDisponiveis, idPericiaSelecionadaParaTeste, idsUsuariosParticipantesSelecionadosParaTeste, estaSolicitandoTestePericiaParticipantes, acoesTestePericiaNarrador, selecionarPericiaParaTesteParticipantes, alternarSelecaoParticipanteParaTestePericia, solicitarTestePericiaParticipantesSelecionados }: JanelasNarrador__ParticipantesProps) {
+export default function JanelasNarrador__Participantes({ participantesDaSessao, periciasDisponiveis, idPericiaSelecionadaParaTeste, idsUsuariosParticipantesSelecionadosParaTeste, estaSolicitandoTestePericiaParticipantes, selecionarPericiaParaTesteParticipantes, alternarSelecaoParticipanteParaTestePericia, solicitarTestePericiaParticipantesSelecionados }: JanelasNarrador__ParticipantesProps) {
     const podeSolicitarTeste = idPericiaSelecionadaParaTeste !== null && idsUsuariosParticipantesSelecionadosParaTeste.length > 0 && !estaSolicitandoTestePericiaParticipantes;
 
     return (
@@ -34,7 +33,6 @@ export default function JanelasNarrador__Participantes({ participantesDaSessao, 
             <div className={styles.recipiente_participantes_sala_de_jogo}>
                 {participantesDaSessao.map((participante) => <RenderParticipanteSessao key={participante.idUsuario} participante={participante} selecionado={idsUsuariosParticipantesSelecionadosParaTeste.includes(participante.idUsuario)} desabilitado={estaSolicitandoTestePericiaParticipantes} alternarSelecaoParticipanteParaTestePericia={alternarSelecaoParticipanteParaTestePericia} />)}
             </div>
-            {acoesTestePericiaNarrador.length > 0 && <RenderResultadosRecentes acoesTestePericiaNarrador={acoesTestePericiaNarrador} />}
         </div>
     );
 };
@@ -53,17 +51,6 @@ function RenderParticipanteSessao({ participante, selecionado, desabilitado, alt
                 </div>
                 <h2>{participante.nomeParticipante}</h2>
             </div>
-        </div>
-    );
-};
-
-function RenderResultadosRecentes({ acoesTestePericiaNarrador }: { acoesTestePericiaNarrador: AcaoDeSessaoTestePericiaExecutado[]; }) {
-    return (
-        <div className={styles.recipiente_resultados_teste_pericia}>
-            <h3>Resultados recentes</h3>
-            <ul>
-                {acoesTestePericiaNarrador.slice(0, 6).map((acao) => <li key={acao.id}>{acao.ator?.nomeExibicaoNoMomento ?? 'Ficha'} - {acao.payload.nomePericiaAbreviadoNoMomento}: {acao.payload.resultadoInterno}</li>)}
-            </ul>
         </div>
     );
 };
