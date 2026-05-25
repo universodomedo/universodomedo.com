@@ -2,9 +2,10 @@ import styles from './styles.module.css';
 import Image from 'next/image';
 
 import { useContexto__PaginaPerfilUsuario } from '@/contextos/Contexto__PaginaPerfilUsuario/contexto';
+import { RenderArquivoArteCapa } from '@/uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 export default function CapaUsuario() {
-    const {urlImagem} = useContexto__PaginaPerfilUsuario()
+    const {caminhoArquivoCapa} = useContexto__PaginaPerfilUsuario()
 
     return (
             <div className={styles.capa_usuario}>
@@ -15,9 +16,10 @@ export default function CapaUsuario() {
                     </svg>
                     <p>Editar</p>
                 </a>
-                <div className={styles.filtro_capa} />
+                <div className={styles.filtro_capa}/>
                 <div className={styles.imagem_capa}>
-                    <Image alt='' src={urlImagem} fill unoptimized />
+                    <RenderArquivoArteCapa caminhoArquivoArte={caminhoArquivoCapa}/>
+                    {/* { caminhoArquivoCapa && <RenderArquivoArteCapa caminhoArquivoArte={caminhoArquivoCapa}/>} */}
                 </div>
             </div>
     )
