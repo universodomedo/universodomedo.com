@@ -1,0 +1,71 @@
+.feed {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    width: 100%;
+}
+
+.registro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65em;
+    padding: 0.9em 1em;
+    border: 0.08em solid rgba(255, 255, 255, 0.13);
+    border-radius: 0.45em;
+    background: rgba(18, 20, 24, 0.84);
+}
+
+.detalhe {
+    color: #f3f4f6;
+}
+
+.detalhe summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.detalhe .detalhe {
+    margin-top: 0.5em;
+    color: #dfe5ea;
+}
+
+.linha_detalhe {
+    margin-top: 0.45em;
+    margin-bottom: 0;
+    color: #cfd7df;
+}
+
+.metadados {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45em;
+    padding-top: 0.55em;
+    border-top: 0.08em solid rgba(255, 255, 255, 0.08);
+}
+
+.metadados span {
+    padding: 0.28em 0.55em;
+    border-radius: 0.32em;
+    color: #c9d5df;
+    font-size: 0.82em;
+    background: rgba(82, 113, 124, 0.22);
+}
+
+.estado,
+.estado_erro {
+    width: 100%;
+    padding: 1.1em;
+    border-radius: 0.45em;
+    background: rgba(18, 20, 24, 0.84);
+}
+
+.estado p,
+.estado_erro p {
+    margin: 0;
+}
+
+.estado_erro {
+    color: #ffd4d4;
+    border: 0.08em solid rgba(186, 63, 63, 0.5);
+    background: rgba(82, 28, 34, 0.52);
+}
