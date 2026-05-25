@@ -3,43 +3,94 @@
     flex-direction: column;
     gap: 0.7em;
     width: 100%;
+    text-align: left;
 }
 
 .registro {
     display: flex;
     flex-direction: column;
-    gap: 0.65em;
-    padding: 0.9em 1em;
-    border: 0.08em solid rgba(255, 255, 255, 0.13);
+    gap: 0.75em;
+    padding: 0.75em 0.85em;
+    border: 0.08em solid rgba(183, 155, 230, 0.22);
     border-radius: 0.45em;
-    background: rgba(18, 20, 24, 0.84);
+    background: linear-gradient(180deg, rgba(18, 20, 24, 0.94), rgba(12, 13, 17, 0.88));
+    box-shadow: 0 0.35em 1em rgba(0, 0, 0, 0.22);
 }
 
-.detalhe {
-    color: #f3f4f6;
+.mensagem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.16em;
+    width: 100%;
+    color: #edf0f4;
+    font-family: inherit;
+    text-align: left;
 }
 
-.detalhe summary {
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.detalhe .detalhe {
-    margin-top: 0.5em;
+.detalhe,
+.detalhe_raiz {
+    width: calc(100% - 0.2em);
     color: #dfe5ea;
 }
 
+.detalhe summary,
+.detalhe_raiz summary {
+    display: flex;
+    align-items: center;
+    min-height: 1.85em;
+    padding: 0.22em 0.55em;
+    border: 0.08em solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.18em;
+    color: #dfe5ea;
+    font-size: 0.96em;
+    font-weight: 500;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.detalhe_raiz summary {
+    color: #f7f8fb;
+    font-size: 1em;
+    font-weight: 700;
+    background: rgba(212, 202, 236, 0.12);
+}
+
+.detalhe summary:hover,
+.detalhe_raiz summary:hover {
+    background: rgba(212, 202, 236, 0.17);
+}
+
+.detalhe summary::marker,
+.detalhe_raiz summary::marker {
+    color: #d8c7ff;
+}
+
+.subnivel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12em;
+    margin-top: 0.16em;
+    padding-left: 0.45em;
+    border-left: 0.12em solid rgba(216, 199, 255, 0.22);
+}
+
 .linha_detalhe {
-    margin-top: 0.45em;
+    min-height: 1.75em;
+    margin-top: 0;
     margin-bottom: 0;
+    padding: 0.24em 0.55em;
+    border: 0.08em solid rgba(255, 255, 255, 0.06);
+    border-radius: 0.16em;
     color: #cfd7df;
+    font-size: 0.95em;
+    background: rgba(255, 255, 255, 0.035);
 }
 
 .metadados {
     display: flex;
     flex-wrap: wrap;
     gap: 0.45em;
-    padding-top: 0.55em;
+    padding-top: 0.6em;
     border-top: 0.08em solid rgba(255, 255, 255, 0.08);
 }
 
@@ -56,6 +107,7 @@
     width: 100%;
     padding: 1.1em;
     border-radius: 0.45em;
+    text-align: left;
     background: rgba(18, 20, 24, 0.84);
 }
 

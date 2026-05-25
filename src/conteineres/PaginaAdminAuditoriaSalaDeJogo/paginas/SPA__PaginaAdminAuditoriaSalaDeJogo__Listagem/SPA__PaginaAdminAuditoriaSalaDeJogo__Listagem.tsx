@@ -20,7 +20,9 @@ export default function SPA__PaginaAdminAuditoriaSalaDeJogo__Listagem() {
 function RegistroAuditoria({ acao }: { acao: AcaoSalaJogoAuditoriaVisualizada; }) {
     return (
         <article className={styles.registro}>
-            <RenderMensagem mensagem={acao.mensagem} nivel={0} />
+            <div className={styles.mensagem}>
+                <RenderMensagem mensagem={acao.mensagem} nivel={0} />
+            </div>
 
             <div className={styles.metadados}>
                 <span>Sessao #{acao.acao.idSessao}</span>
@@ -34,12 +36,14 @@ function RegistroAuditoria({ acao }: { acao: AcaoSalaJogoAuditoriaVisualizada; }
 };
 
 function RenderMensagem({ mensagem, nivel }: { mensagem: MensagemSalaJogo; nivel: number; }) {
-    if (mensagem.subNivel.mensagens.length === 0) return <p className={styles.linha_detalhe} style={{ marginLeft: `${nivel}em` }}>{mensagem.mensagem}</p>;
+    if (mensagem.subNivel.mensagens.length === 0) return <p className={styles.linha_detalhe} style={{ marginLeft: `${nivel * 1.15}em` }}>{mensagem.mensagem}</p>;
 
     return (
-        <details className={styles.detalhe} style={{ marginLeft: `${nivel}em` }}>
+        <details className={nivel === 0 ? styles.detalhe_raiz : styles.detalhe} style={{ marginLeft: `${nivel * 1.15}em` }}>
             <summary>{mensagem.mensagem}</summary>
-            {mensagem.subNivel.mensagens.map((subMensagem, index) => <RenderMensagem key={index} mensagem={subMensagem} nivel={nivel + 1} />)}
+            <div className={styles.subnivel}>
+                {mensagem.subNivel.mensagens.map((subMensagem, index) => <RenderMensagem key={index} mensagem={subMensagem} nivel={nivel + 1} />)}
+            </div>
         </details>
     );
 };
