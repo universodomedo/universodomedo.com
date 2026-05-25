@@ -26,6 +26,8 @@
 
 .placeholder_emblema:hover .botao_placeholder_emblema {
     transform: scale(.9);
+    filter: brightness(95%);
+
     transition: transform 0.3s ease;
 }
 
@@ -63,6 +65,7 @@
 .botao_placeholder_emblema {
     position: absolute;
     aspect-ratio: 1/1;
+
 
     transition: transform 0.3s ease;
 }

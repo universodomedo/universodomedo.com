@@ -7,10 +7,10 @@ export default function PlaceholdersConquistas() {
 
                 <div className={styles.placeholder_conquistas}>
                     <img className={styles.fundo_placeholder} src="/fundo-ph-conquistas.png" alt="" />
-                    <img className={styles.botao_placeholder} src="/placeholder-conquistas.svg" alt="" />
+                    <img className={styles.botao_placeholder} src="/placeholder-conquistas.png" alt="" />
                 </div>
                 
             </div>
         </>
     )
-}
+}   

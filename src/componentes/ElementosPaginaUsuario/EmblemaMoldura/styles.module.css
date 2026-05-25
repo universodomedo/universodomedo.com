@@ -3,9 +3,7 @@
     top: 85%;
     left: 50%;
 
-    transform:
-        translateY(0%) translateX(-50%);
-
+    transform: translateY(0%) translateX(-50%);
     height: 20%;
     aspect-ratio: 1/1;
 

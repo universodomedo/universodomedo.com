@@ -29,7 +29,7 @@ export default function PlaceholderEmblema({
                 />
                 <img
                     className={styles.botao_placeholder_emblema}
-                    src="/centro-ph-emblema.svg"
+                    src="/centro-ph-emblema.png"
                     alt=""
                 />
             </div>
