@@ -10,10 +10,6 @@ export default function DescricaoPerfilUsuario() {
 
     const { usuarioLogado } = useContextoAutenticacao();
 
-    const [descricaoTemporaria, setDescricaoTemporaria] = useState(
-        ''
-    );
-
     const [descricaoUsuario, setDescricaoUsuario] = useState(
         ''
     );
@@ -21,17 +17,17 @@ export default function DescricaoPerfilUsuario() {
     const [modoEdicao, setModoEdicao] = useState(false);
 
     function iniciarEdicao() {
-        setDescricaoTemporaria(descricaoUsuario);
+        // setDescricaoTemporaria(descricaoUsuario);
         setModoEdicao(true);
     }
 
     function salvarDescricao() {
-        setDescricaoUsuario(descricaoTemporaria);
+        // setDescricaoUsuario(descricaoTemporaria);
         setModoEdicao(false);
     }
 
     function cancelarEdicao() {
-        setDescricaoTemporaria('');
+        // setDescricaoTemporaria('');
         setModoEdicao(false);
     }
 

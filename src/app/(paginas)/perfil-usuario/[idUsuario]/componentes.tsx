@@ -6,13 +6,13 @@ import { PAGINAS } from "types-nora-api";
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
 import BarraUsuario from 'Componentes/ElementosPaginaUsuario/BarraUsuario/page';
-import { Contexto__PaginaPerfilUsuario__Provider, useContexto__PaginaPerfilUsuario } from '@/contextos/Contexto__PaginaPerfilUsuario/contexto';
+import { Contexto__PaginaPerfilUsuario__Provider } from '@/contextos/Contexto__PaginaPerfilUsuario/contexto';
 
-export default function PaginaVisualizacaoPerfilUsuario_Client() {
+export default function PaginaVisualizacaoPerfilUsuario_Client({ idUsuario }: { idUsuario: number }) {
     return (
         <ControladorSlot pagina={PAGINAS.perfilUsuario}>
             {/* VAI VIRAR CONTEINER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */}
-            <Contexto__PaginaPerfilUsuario__Provider>
+            <Contexto__PaginaPerfilUsuario__Provider idUsuario={idUsuario}>
                 <MinhaPagina_Slot />
             </Contexto__PaginaPerfilUsuario__Provider>
         </ControladorSlot>

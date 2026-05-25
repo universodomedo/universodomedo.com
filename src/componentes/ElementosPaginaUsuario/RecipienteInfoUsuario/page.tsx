@@ -1,25 +1,21 @@
 'use client';
 
-import DescricaoPerfilUsuario from '../DescricaoPerfilUsuario/page';
 import styles from './styles.module.css';
-
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto.tsx';
+import DescricaoPerfilUsuario from '../DescricaoPerfilUsuario/page';
+import { useContexto__PaginaPerfilUsuario } from '@/contextos/Contexto__PaginaPerfilUsuario/contexto';
 
 export default function RecipienteInfoUsuario() {
+    const { registroUsuario } = useContexto__PaginaPerfilUsuario()
 
-    const { usuarioLogado } = useContextoAutenticacao();
-
-    if (!usuarioLogado) return;
-
-    return (
+return (
         <>
             <div className={styles.recipiente_informacoes_usuario}>
 
-                <h1>{usuarioLogado.username}</h1>
+                <h1>{registroUsuario.username}</h1>
                 <div className={styles.divisoria_usuario} />
-                
+
                 <DescricaoPerfilUsuario />
-            
+
             </div>
 
             <div className={styles.recipiente_status_usuario}>
@@ -32,16 +28,16 @@ export default function RecipienteInfoUsuario() {
 
                     <div className={styles.celula_ultimo_acesso}>
                         <p>Último Acesso:</p>
-                        <div className={styles.status_usuario}>
+                        {/* <div className={styles.status_usuario}>
                             <div className={styles.status_icone}>
                             </div>
-                            <p style={{ color: '#97CD61' }}>Online</p>
-                        </div>
+                            <p style={{ color: '#97CD61' }}>Online</p> 
+                        </div>*/}
                     </div>
 
                     <div className={styles.celula_regiao}>
                         <p>Região</p>
-                        <p style={{ color: '#ABA9A1' }}>Rio de Janeiro</p>
+                        {/* <p style={{ color: '#ABA9A1' }}>Rio de Janeiro</p> */}
                     </div>
                 </div>
 
@@ -50,7 +46,7 @@ export default function RecipienteInfoUsuario() {
                         <p>Sobre</p>
                     </div>
                     <div className={styles.celula_sobre_info}>
-                        <p style={{ color: '#ABA9A1' }}>Este delícia jogou com você em alguma aventura que já não lembro.</p>
+                        {/* <p style={{ color: '#ABA9A1' }}>Este delícia jogou com você em alguma aventura que já não lembro.</p> */}
                     </div>
                 </div>
 

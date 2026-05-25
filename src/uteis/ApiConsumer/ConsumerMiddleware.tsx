@@ -282,6 +282,10 @@ export async function PROTOTIPO_LUIZ__recupera_capa_perfil_usuario(): Promise<Ca
     return await useApi<CaminhoArquivoArte>({ uri: '/arquivos_tipados_arte/PROTOTIPO_LUIZ__recupera_capa_perfil_usuario', method: 'GET' });
 }
 
+export async function me_atualizaArteCapaPerfilUsuario(idArquivoTipadoArte: number) {
+    return await useApi<null>({ uri: '/customizacoes_usuario/me/me_atualizaArteCapaPerfilUsuario', method: 'PUT', data: { idArquivoTipadoArte: idArquivoTipadoArte } });
+}
+
 //
 
 export async function desconectar() {

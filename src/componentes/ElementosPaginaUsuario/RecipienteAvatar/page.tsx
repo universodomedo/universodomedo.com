@@ -8,9 +8,7 @@ import { PersonagemAvatarDto } from 'types-nora-api';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto.tsx';
 
 import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
-import MolduraAvatar from '../MolduraAvatar/page';
-import EmblemaMoldura from '../EmblemaMoldura/page';
-import { RenderArquivoAvatar } from '@/uteis/RenderArquivoTipados/RenderArquivoTipados';
+import { RenderArquivoAvatar, RenderArquivoInterno2 } from '@/uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 
 export default function RecipienteAvatar() {
@@ -30,10 +28,10 @@ export default function RecipienteAvatar() {
             <div className={styles.absolut_avatar}>
                 <div className={styles.recipiente_avatar_usuario}>
 
-                    <EmblemaMoldura urlEmblemaMoldura='https://cdn.universodomedo.com/RecursosInternos/6bfaeb00-e67f-4452-a08c-303125ab5687.webp' />
-
-                    <MolduraAvatar urlMoldura='https://cdn.universodomedo.com/RecursosInternos/a58d8d62-8e8c-44ce-af07-0d1019659f69.webp' />
-
+                    <RenderArquivoInterno2 arquivoInterno={'TESTE_EMBLEMA__EMBLEMA'} className={styles.recipiente_emblema_moldura} />
+                  
+                    <RenderArquivoInterno2 arquivoInterno={'TESTE_EMBLEMA__MOLDURA'} className={styles.moldura_avatar} />
+                  
                     <div className={styles.recipiente_imagem_usuario} onClick={openModal}>
                         {/* <RecipienteImagem src={usuarioLogado.customizacao.caminhoAvatar} /> */}
                         <RenderArquivoAvatar caminhoArquivoAvatar={usuarioLogado.customizacao.caminhoArquivoAvatar} />

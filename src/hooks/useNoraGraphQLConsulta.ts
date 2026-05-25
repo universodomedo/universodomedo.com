@@ -61,7 +61,7 @@ type UseNoraGraphQLConsultaRegistroResultado<TNome extends GraphqlLeituraNome, T
 
 type UseNoraGraphQLConsultaParametros<TNome extends GraphqlLeituraNome> = GraphqlObtemUmParametrosEntidade<UseNoraGraphQLConsultaObjeto<TNome>>;
 
-type UseNoraGraphQLConsultaEventoPorPK<TSelect extends object> = (definicao: { readonly pk: number; readonly select: TSelect; }) => NoraGraphQLOperacaoBase;
+type UseNoraGraphQLConsultaEventoPorPK<TSelect extends object> = (definicao: { readonly id: number; readonly select: TSelect; }) => NoraGraphQLOperacaoBase;
 
 type UseNoraGraphQLConsultaEventosPorPK<TSelect extends object> = {
     readonly porPK?: UseNoraGraphQLConsultaEventoPorPK<TSelect>;
@@ -195,7 +195,7 @@ function obtemEventoPorPK<TSelect extends object>(eventos: UseNoraGraphQLConsult
 };
 
 function montaOperacaoRegistro<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object>(graphql: UseNoraGraphQLConsultaContratoComEventos<TNome, TSelect>, params: UseNoraGraphQLConsultaRegistroParams<TNome, TSelect, TProviderProps>): NoraGraphQLOperacaoBase {
-    if (params.pk !== undefined) return obtemEventoPorPK(graphql.eventos)({ pk: params.pk, select: params.select });
+    if (params.pk !== undefined) return obtemEventoPorPK(graphql.eventos)({ id: params.pk, select: params.select });
 
     return graphql.eventos.um({ parametros: params.montaParametrosConsulta(params.props), select: params.select });
 };
