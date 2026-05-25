@@ -1,4 +1,4 @@
-import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PaginaTemplate, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, CaminhoArquivoArte } from "types-nora-api";
+import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoPatentesTestePericiaProjetada, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoPatentesTestePericia, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PaginaTemplate, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, CaminhoArquivoArte } from "types-nora-api";
 
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
@@ -14,6 +14,10 @@ export async function obtemTodosObjetosCache() {
 
 export async function salvaConfiguracaoTestePericia(payload: PAYLOAD__SalvarConfiguracaoTestePericia): Promise<ConfiguracaoTestePericiaProjetada> {
     return await useApi<ConfiguracaoTestePericiaProjetada>({ uri: '/cache/salvaConfiguracaoTestePericia', method: 'POST', data: payload });
+}
+
+export async function salvaConfiguracaoPatentesTestePericia(payload: PAYLOAD__SalvarConfiguracaoPatentesTestePericia): Promise<ConfiguracaoPatentesTestePericiaProjetada> {
+    return await useApi<ConfiguracaoPatentesTestePericiaProjetada>({ uri: '/cache/salvaConfiguracaoPatentesTestePericia', method: 'POST', data: payload });
 }
 
 export async function obtemDadosMinhasDisponibilidades() {

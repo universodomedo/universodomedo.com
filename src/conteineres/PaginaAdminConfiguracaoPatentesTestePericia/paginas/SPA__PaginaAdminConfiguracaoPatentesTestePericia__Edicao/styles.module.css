@@ -1,0 +1,105 @@
+.superficie {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    width: 100%;
+    padding: 1em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.5em;
+    background: rgba(18, 20, 24, 0.82);
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.cabecalho h2 {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: 700;
+}
+
+.botaoSalvar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.7em 0.95em;
+    border: 0;
+    border-radius: 0.4em;
+    color: #101216;
+    font-weight: 700;
+    background: #f6d16d;
+}
+
+.botaoSalvar:not(:disabled) {
+    cursor: pointer;
+}
+
+.botaoSalvar:disabled {
+    cursor: default;
+    opacity: 0.45;
+}
+
+.tabela {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45em;
+}
+
+.linhaCabecalho,
+.linhaRegra {
+    display: grid;
+    grid-template-columns: minmax(9em, 1.35fr) repeat(4, minmax(6em, 1fr));
+    align-items: center;
+    gap: 0.7em;
+    min-height: 2.8em;
+    padding: 0.65em 0.75em;
+    border-radius: 0.35em;
+}
+
+.linhaCabecalho {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.82em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.linhaRegra {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.linhaRegra input {
+    width: 100%;
+    min-width: 0;
+    padding: 0.45em 0.55em;
+    border: 0.08em solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.35em;
+    color: #f4f4f4;
+    background: rgba(0, 0, 0, 0.24);
+}
+
+.linhaRegra span {
+    color: #f6d16d;
+    font-weight: 700;
+}
+
+.erro {
+    padding: 0.75em;
+    border-radius: 0.35em;
+    color: #ffd8d8;
+    background: rgba(153, 38, 38, 0.35);
+}
+
+@media (max-width: 54em) {
+    .tabela {
+        overflow-x: auto;
+    }
+
+    .linhaCabecalho,
+    .linhaRegra {
+        min-width: 38em;
+    }
+}
