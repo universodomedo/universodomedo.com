@@ -6,12 +6,15 @@ import { PAGINAS } from "types-nora-api";
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
 import BarraUsuario from 'Componentes/ElementosPaginaUsuario/BarraUsuario/page';
+import { Contexto__PaginaPerfilUsuario__Provider, useContexto__PaginaPerfilUsuario } from '@/contextos/Contexto__PaginaPerfilUsuario/contexto';
 
 export default function PaginaVisualizacaoPerfilUsuario_Client() {
     return (
         <ControladorSlot pagina={PAGINAS.perfilUsuario}>
             {/* VAI VIRAR CONTEINER <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */}
-            <MinhaPagina_Slot />
+            <Contexto__PaginaPerfilUsuario__Provider>
+                <MinhaPagina_Slot />
+            </Contexto__PaginaPerfilUsuario__Provider>
         </ControladorSlot>
     );
 };
@@ -26,7 +29,6 @@ function MinhaPagina_Slot() {
                 <BarraUsuario />
                 {/* <SecaoPosts /> */}
             </div>
-
             {/* <SecaoContatos /> */}
         </div>
     );

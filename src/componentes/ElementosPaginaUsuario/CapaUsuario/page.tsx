@@ -1,10 +1,12 @@
 import styles from './styles.module.css';
-
 import Image from 'next/image';
 
+import { useContexto__PaginaPerfilUsuario } from '@/contextos/Contexto__PaginaPerfilUsuario/contexto';
+
 export default function CapaUsuario() {
+    const {urlImagem} = useContexto__PaginaPerfilUsuario()
+
     return (
-        <>
             <div className={styles.capa_usuario}>
                 <a className={styles.texto_editacao}>
                     <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -15,9 +17,8 @@ export default function CapaUsuario() {
                 </a>
                 <div className={styles.filtro_capa} />
                 <div className={styles.imagem_capa}>
-                    <Image alt='' src={'https://cdn.universodomedo.com/RecursosPublicos/imagem_especial_artista/7b1822c9-a109-4eea-a28d-382fa8f28f59.webp'} fill unoptimized />
+                    <Image alt='' src={urlImagem} fill unoptimized />
                 </div>
             </div>
-        </>
     )
 }
