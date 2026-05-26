@@ -6,38 +6,46 @@ import { J_DadosFichaEmJogo } from "types-nora-api";
 import { ContextoFichaDePersonagemProvider } from "Contextos/ContextoFichaDePersonagem/contexto";
 import combineProviders from 'Contextos/combineProviders';
 import { ContextoControleAtributosPericiasProvider, useContextoControleAtributosPericias } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAtributosPericias/contexto';
+import { ContextoControleAcoesRuntimeProvider } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAcoesRuntime/contexto';
 import PaginaControleAtributosPericias from './paginas/PaginaControleAtributosPericias/PaginaControleAtributosPericias';
+import PaginaControleAcoes from './paginas/PaginaControleAcoes/PaginaControleAcoes';
 import PaginaControleHabilidades from './paginas/PaginaControleHabilidades/PaginaControleHabilidades';
 import PaginaControleModificadores from './paginas/PaginaControleModificadores/PaginaControleModificadores';
 import CarrosselConteudoFichaDeJogo from '../CarrosselConteudoFichaDeJogo/CarrosselConteudoFichaDeJogo';
 
-export default function ConteudoFichaDeJogo({ JDadosFichaEmJogo, desativarAcoes, exibirHabilidadesRuntime = false, exibirModificadoresRuntime = false }: { JDadosFichaEmJogo: J_DadosFichaEmJogo; desativarAcoes: boolean; exibirHabilidadesRuntime?: boolean; exibirModificadoresRuntime?: boolean; }) {
+export default function ConteudoFichaDeJogo({ JDadosFichaEmJogo, desativarAcoes, exibirHabilidadesRuntime = false, exibirAcoesRuntime = false, exibirModificadoresRuntime = false }: { JDadosFichaEmJogo: J_DadosFichaEmJogo; desativarAcoes: boolean; exibirHabilidadesRuntime?: boolean; exibirAcoesRuntime?: boolean; exibirModificadoresRuntime?: boolean; }) {
     return (
         <ContextoFichaDePersonagemProvider JDadosFichaEmJogo={JDadosFichaEmJogo} desativarAcoes={desativarAcoes}>
-            <ConteudoFichaDeJogo_Interno exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} />
+            <ConteudoFichaDeJogo_Interno exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} />
         </ContextoFichaDePersonagemProvider>
     );
 };
 
-function ConteudoFichaDeJogo_Interno({ exibirHabilidadesRuntime, exibirModificadoresRuntime }: { exibirHabilidadesRuntime: boolean; exibirModificadoresRuntime: boolean; }) {
+function ConteudoFichaDeJogo_Interno({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; }) {
     const ProvidersControle = combineProviders(
         ContextoControleAtributosPericiasProvider,
     );
+    const conteudo = <ConteudoFichaDeJogo_ComContexto exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} />;
 
     return (
         <ProvidersControle>
-            <ConteudoFichaDeJogo_ComContexto exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} />
+            {exibirAcoesRuntime ? <ContextoControleAcoesRuntimeProvider>{conteudo}</ContextoControleAcoesRuntimeProvider> : conteudo}
         </ProvidersControle>
     );
 };
 
-function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirModificadoresRuntime }: { exibirHabilidadesRuntime: boolean; exibirModificadoresRuntime: boolean; }) {
+function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; }) {
     const listaPaginas = [
         {
             nome: 'Perícias',
             componente: <PaginaControleAtributosPericias />,
             contexto: useContextoControleAtributosPericias
         },
+        ...(exibirAcoesRuntime ? [{
+            nome: 'Ações',
+            componente: <PaginaControleAcoes />,
+            contexto: obtemMenuVazioAcoesRuntime
+        }] : []),
         {
             nome: 'Inventário',
             componente: <><h1>oi</h1></>,
@@ -75,4 +83,5 @@ function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirModif
 };
 
 function obtemMenuVazioHabilidadesRuntime() { return { listaMenus: [] }; };
+function obtemMenuVazioAcoesRuntime() { return { listaMenus: [] }; };
 function obtemMenuVazioModificadoresRuntime() { return { listaMenus: [] }; };

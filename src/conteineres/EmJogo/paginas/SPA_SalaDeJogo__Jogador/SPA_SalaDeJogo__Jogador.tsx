@@ -20,7 +20,7 @@ export default function SPA_SalaDeJogo__Jogador() {
                 </div>
             </div>
             <SwiperDireita>
-                <ConteudoFichaDeJogo JDadosFichaEmJogo={J_fichaAtualizada} desativarAcoes={false} exibirHabilidadesRuntime exibirModificadoresRuntime />
+                <ConteudoFichaDeJogo JDadosFichaEmJogo={J_fichaAtualizada} desativarAcoes={false} exibirHabilidadesRuntime exibirAcoesRuntime exibirModificadoresRuntime />
             </SwiperDireita>
         </div>
     );

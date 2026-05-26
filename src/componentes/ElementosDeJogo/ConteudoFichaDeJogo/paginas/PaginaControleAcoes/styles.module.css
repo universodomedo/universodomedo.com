@@ -1,0 +1,31 @@
+.lista_acoes {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1em;
+    color: white;
+    font-family: 'Crimson Pro', serif;
+}
+
+.acao {
+    border: .08em solid #625D70;
+    border-radius: .35em;
+    background-color: #35323D;
+    color: white;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1.1em;
+    padding: .7em 1em;
+    text-align: center;
+}
+
+.acao:hover:not(.blocked) {
+    background-color: #514C5C;
+}
+
+.blocked {
+    cursor: not-allowed;
+    opacity: .5;
+}
