@@ -90,7 +90,9 @@ export type UseNoraGraphQLListagemParams<TNome extends GraphqlLeituraNome, TSele
     readonly rodape?: ReactNode;
 };
 
-export type UseNoraGraphQLListagemResultado<TRegistro extends object> = ListagemCompostaListagem<TRegistro>;
+export type UseNoraGraphQLListagemResultado<TRegistro extends object> = ListagemCompostaListagem<TRegistro> & {
+    readonly recarregar: () => void;
+};
 
 type UseNoraGraphQLListagemExtrasParams<TRegistro extends object> = {
     readonly listagem: UseNoraGraphQLListagemResultado<TRegistro>;
@@ -256,6 +258,7 @@ function criaAssinaturaCamposOpcoesFiltrosConsulta(campos: readonly GraphqlFiltr
 };
 
 function useNoraGraphQLListagemExtrasVazio<TRegistro extends object>(_: UseNoraGraphQLListagemExtrasParams<TRegistro>): Record<string, never> {
+    void _;
     return {};
 };
 
@@ -510,6 +513,17 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
         setVersaoRequisicaoRegistros(versaoAtual => versaoAtual + 1);
     }, [podeCarregarMais, totalCarregado]);
 
+    const recarregar = useCallback(() => {
+        setOffsetConsulta(0);
+        setRegistrosAcumulados([]);
+        setQuantidadeUltimaPaginaRecebida(0);
+        ultimaDataRegistrosProcessadaRef.current = null;
+        setVersaoRequisicaoRegistros(versaoAtual => versaoAtual + 1);
+        setVersaoRequisicaoTotalDeRegistros(versaoAtual => versaoAtual + 1);
+
+        if (assinaturaCamposOpcoesFiltrosConsulta.length > 0) recarregarOpcoesFiltrosConsultaRef.current().catch(() => undefined);
+    }, [assinaturaCamposOpcoesFiltrosConsulta]);
+
     const filtrosConsultaValor = useMemo<ContextoFiltrosConsultaValor<object>>(() => ({
         campos: camposFiltroConsulta,
         filtros: filtrosConsultaDisponiveis,
@@ -625,6 +639,7 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
         }),
         acoes: params.acoes,
         rodape: params.rodape,
+        recarregar,
     };
 };
 
