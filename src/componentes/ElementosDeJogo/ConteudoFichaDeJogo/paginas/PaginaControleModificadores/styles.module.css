@@ -1,0 +1,61 @@
+.lista_modificadores {
+    display: flex;
+    flex-direction: column;
+    gap: .8em;
+    color: white;
+    font-family: 'Crimson Pro', serif;
+}
+
+.modificador {
+    padding: .8em;
+    border: .08em solid #625D70;
+    border-radius: .35em;
+    background-color: rgba(45, 42, 55, .7);
+}
+
+.cabecalho {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .5em;
+}
+
+.nome_modificador,
+.valor,
+.alvo,
+.origem {
+    margin: 0;
+}
+
+.nome_modificador {
+    font-size: 1.1em;
+}
+
+.valor {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.positivo {
+    color: #83EF83;
+}
+
+.negativo {
+    color: #EF8383;
+}
+
+.alvo {
+    margin-top: .35em;
+    color: #DFD9EB;
+}
+
+.origem {
+    margin-top: .35em;
+    font-size: .9em;
+    color: #BEB8CC;
+}
+
+.sem_modificadores {
+    color: white;
+    font-family: 'Crimson Pro', serif;
+}

@@ -1,0 +1,31 @@
+.lista_habilidades {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1em;
+    color: white;
+    font-family: 'Crimson Pro', serif;
+}
+
+.habilidade {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5em;
+    width: 6em;
+}
+
+.icone_habilidade {
+    width: 4.5em;
+    aspect-ratio: 1;
+    border-radius: .35em;
+    background-color: #625D70;
+}
+
+.nome_habilidade {
+    margin: 0;
+    font-size: 1.1em;
+    text-align: center;
+}

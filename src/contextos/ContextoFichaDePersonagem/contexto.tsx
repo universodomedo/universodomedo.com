@@ -1,12 +1,14 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import { FichaEmClient, J_DadosFichaEmJogo } from 'types-nora-api';
+import { FichaEmClient, Habilidade, J_DadosFichaEmJogo, ModificadorRuntime } from 'types-nora-api';
 
 import { useFichaDeJogo } from 'Hooks/useFichaDeJogo';
 
 interface ContextoFichaDePersonagemProps {
     ficha: FichaEmClient;
+    habilidades: Habilidade[];
+    modificadoresAtivos: ModificadorRuntime[];
     desativarAcoes: boolean;
 };
 
@@ -25,7 +27,7 @@ export const ContextoFichaDePersonagemProvider = ({ children, JDadosFichaEmJogo,
     if (erro || !ficha) return <h2>{erro ?? 'Erro ao montar ficha'}</h2>;
 
     return (
-        <ContextoFichaDePersonagem.Provider value={{ ficha, desativarAcoes }}>
+        <ContextoFichaDePersonagem.Provider value={{ ficha, habilidades: JDadosFichaEmJogo.habilidades, modificadoresAtivos: JDadosFichaEmJogo.modificadoresAtivos, desativarAcoes }}>
             {children}
         </ContextoFichaDePersonagem.Provider>
     );
