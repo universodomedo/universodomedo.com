@@ -30,7 +30,7 @@
 
 .conteudoPainelControles {
     display: grid;
-    grid-template-rows: minmax(10em, 1fr) auto;
+    grid-template-rows: auto minmax(10em, 1fr) auto;
     min-width: 0;
     min-height: 0;
     overflow: hidden;
@@ -38,6 +38,47 @@
 
 .painelControlesColapsado .conteudoPainelControles {
     display: none;
+}
+
+.painelTesteSalaJogoEditor3D {
+    display: grid;
+    padding: 0.65em;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.1);
+    background: #242424;
+}
+
+.botaoTesteSalaJogoEditor3D {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7em;
+    min-width: 0;
+    min-height: 2.35em;
+    padding: 0 0.8em;
+    border: 0.08em solid rgba(216, 166, 79, 0.42);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.9);
+    font: inherit;
+    font-size: 0.86em;
+    font-weight: 700;
+    background: #34302a;
+    cursor: pointer;
+}
+
+.botaoTesteSalaJogoEditor3D:hover {
+    border-color: rgba(255, 190, 90, 0.78);
+    background: #40382d;
+}
+
+.botaoTesteSalaJogoEditor3D strong {
+    display: grid;
+    min-width: 1.7em;
+    height: 1.45em;
+    place-items: center;
+    border-radius: 999em;
+    color: rgba(12, 12, 12, 0.88);
+    font-size: 0.76em;
+    background: #d8a64f;
 }
 
 .alcaRedimensionamentoPainelDireito {

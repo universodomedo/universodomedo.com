@@ -16,3 +16,58 @@
 
     overflow: hidden;
 }
+
+.runtimeCena3DPrototipo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #101014;
+    cursor: crosshair;
+}
+
+.runtimeCena3DPrototipo canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.botaoAlternarCameraCena3DPrototipo {
+    position: absolute;
+    z-index: 3;
+    top: 1em;
+    right: 1em;
+    display: grid;
+    width: 3.2em;
+    height: 2.3em;
+    place-items: center;
+    padding: 0;
+    border: 0.08em solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.88);
+    font: inherit;
+    font-size: 0.82em;
+    font-weight: 800;
+    background: rgba(20, 20, 24, 0.78);
+    cursor: pointer;
+}
+
+.botaoAlternarCameraCena3DPrototipo:hover {
+    color: #ffffff;
+    background: rgba(42, 42, 48, 0.88);
+}
+
+.miraCena3DPrototipo {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    width: 0.75em;
+    height: 0.75em;
+    border-top: 0.08em solid rgba(255, 255, 255, 0.72);
+    border-left: 0.08em solid rgba(255, 255, 255, 0.72);
+    opacity: 0.72;
+    pointer-events: none;
+    transform: translate(-50%, -50%) rotate(45deg);
+}

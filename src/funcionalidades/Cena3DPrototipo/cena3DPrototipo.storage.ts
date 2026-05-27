@@ -1,0 +1,56 @@
+import type { DocumentoCena3DPrototipo, ObjetoCena3DPrototipo, Vetor3Cena3DPrototipo } from './cena3DPrototipo.types';
+
+export const CHAVE_DOCUMENTO_CENA_3D_PROTOTIPO_SALA_DE_JOGO = 'udm:mvp-editor-3d:sala-de-jogo:cena:v1';
+
+function vetor3Cena3DPrototipoEhValido(vetor: Vetor3Cena3DPrototipo): boolean { return Array.isArray(vetor) && vetor.length === 3 && vetor.every(valor => typeof valor === 'number' && Number.isFinite(valor)); };
+
+function objetoCena3DPrototipoEhValido(objeto: ObjetoCena3DPrototipo | null): boolean {
+    if (objeto === null || typeof objeto !== 'object') return false;
+    if (typeof objeto.id !== 'string' || typeof objeto.nome !== 'string') return false;
+    if (typeof objeto.quantidadeVertices !== 'number' || !Number.isFinite(objeto.quantidadeVertices)) return false;
+    if (typeof objeto.visivel !== 'boolean' || typeof objeto.colisao !== 'boolean') return false;
+    if (objeto.colecaoId !== null && typeof objeto.colecaoId !== 'string') return false;
+    if (objeto.transform === null || typeof objeto.transform !== 'object') return false;
+    if (!vetor3Cena3DPrototipoEhValido(objeto.transform.posicao)) return false;
+    if (!vetor3Cena3DPrototipoEhValido(objeto.transform.rotacao)) return false;
+    if (!vetor3Cena3DPrototipoEhValido(objeto.transform.escala)) return false;
+    if (!Array.isArray(objeto.transform.matrizBase)) return false;
+    if (objeto.material === null || typeof objeto.material !== 'object') return false;
+    if (!vetor3Cena3DPrototipoEhValido(objeto.material.corBase)) return false;
+
+    return vetor3Cena3DPrototipoEhValido(objeto.material.corLuz);
+};
+
+function documentoCena3DPrototipoEhValido(documento: DocumentoCena3DPrototipo | null): documento is DocumentoCena3DPrototipo {
+    if (documento === null || typeof documento !== 'object') return false;
+    if (documento.versao !== 1) return false;
+    if (!Array.isArray(documento.objetos) || !Array.isArray(documento.colecoes)) return false;
+    if (documento.pontoEntradaJogador === null || typeof documento.pontoEntradaJogador !== 'object') return false;
+    if (!vetor3Cena3DPrototipoEhValido(documento.pontoEntradaJogador.posicao)) return false;
+    if (typeof documento.pontoEntradaJogador.rotacaoZ !== 'number' || !Number.isFinite(documento.pontoEntradaJogador.rotacaoZ)) return false;
+    if (documento.configuracaoAmbiente === null || typeof documento.configuracaoAmbiente !== 'object') return false;
+
+    return documento.objetos.every(objetoCena3DPrototipoEhValido);
+};
+
+export function salvaDocumentoCena3DPrototipoSalaDeJogo(documento: DocumentoCena3DPrototipo): void {
+    if (typeof window === 'undefined') return;
+
+    window.sessionStorage.setItem(CHAVE_DOCUMENTO_CENA_3D_PROTOTIPO_SALA_DE_JOGO, JSON.stringify(documento));
+};
+
+export function carregaDocumentoCena3DPrototipoSalaDeJogo(): DocumentoCena3DPrototipo | null {
+    if (typeof window === 'undefined') return null;
+
+    const documentoSerializado = window.sessionStorage.getItem(CHAVE_DOCUMENTO_CENA_3D_PROTOTIPO_SALA_DE_JOGO);
+
+    if (documentoSerializado === null) return null;
+
+    try {
+        const documento = JSON.parse(documentoSerializado) as DocumentoCena3DPrototipo | null;
+
+        return documentoCena3DPrototipoEhValido(documento) ? documento : null;
+    } catch {
+        return null;
+    }
+};

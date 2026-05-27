@@ -6,6 +6,7 @@ import { type MouseEvent } from 'react';
 
 import { PainelCenaColecaoEditor3D } from './PainelCenaColecaoEditor3D';
 import { PainelContextualEditor3D } from './PainelContextualEditor3D';
+import { PainelTesteSalaJogoEditor3D } from './PainelTesteSalaJogoEditor3D';
 import type { ControlesMenuLateralDireitoEditor3D } from '../layout/useMenuLateralDireitoEditor3D';
 
 interface PainelControlesEditor3DProps {
@@ -30,6 +31,8 @@ export function PainelControlesEditor3D({ menuLateralDireito }: PainelControlesE
                     <div className={styles.alcaRedimensionamentoPainelDireito} role="separator" aria-orientation="vertical" aria-label="Redimensionar menu lateral direito" onMouseDown={iniciaRedimensionamento} />
 
                     <div className={styles.conteudoPainelControles}>
+                        <PainelTesteSalaJogoEditor3D />
+
                         <PainelCenaColecaoEditor3D />
 
                         <PainelContextualEditor3D />
