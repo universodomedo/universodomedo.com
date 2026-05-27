@@ -1,0 +1,38 @@
+.recipiente_configuracao {
+    display: flex;
+    flex: 1 1 0;
+    justify-content: center;
+    width: 100%;
+    min-height: 0;
+    padding: 1em;
+}
+
+.painel_configuracao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55em;
+    width: min(58em, 100%);
+    height: fit-content;
+    padding: 1.35em;
+    border: 0.08em solid rgba(149, 89, 212, 0.68);
+    border-radius: 0.85em;
+    background: linear-gradient(180deg, rgba(10, 7, 14, 0.98), rgba(3, 3, 7, 0.99));
+}
+
+.painel_configuracao span {
+    color: rgba(207, 167, 255, 0.72);
+    font-family: var(--fonte-cinzel);
+    font-size: 0.7em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.painel_configuracao h2 {
+    margin: 0;
+    color: rgba(245, 230, 180, 0.96);
+    font-family: var(--fonte-cinzel);
+    font-size: 1.15em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}

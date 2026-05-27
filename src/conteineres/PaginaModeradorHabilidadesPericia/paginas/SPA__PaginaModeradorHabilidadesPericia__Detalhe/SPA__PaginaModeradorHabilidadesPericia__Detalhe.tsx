@@ -9,7 +9,7 @@ export default function SPA__PaginaModeradorHabilidadesPericia__Detalhe() {
         <section className={styles.recipiente_detalhe}>
             <article className={styles.painel_detalhe}>
                 <header className={styles.cabecalho_detalhe}>
-                    <h2>{habilidade.nome}</h2>
+                    <h2>{habilidade.habilidade.nome}</h2>
                     <div className={styles.contexto}>
                         <div>
                             <span>Perícia</span>
@@ -24,7 +24,7 @@ export default function SPA__PaginaModeradorHabilidadesPericia__Detalhe() {
 
                 <div className={styles.descricao}>
                     <span>Descrição</span>
-                    <p>{habilidade.descricao}</p>
+                    <p>{habilidade.habilidade.descricao}</p>
                 </div>
             </article>
         </section>

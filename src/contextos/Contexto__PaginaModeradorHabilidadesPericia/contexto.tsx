@@ -58,16 +58,16 @@ export const Contexto__PaginaModeradorHabilidadesPericia__Provider = ({ children
 
 function useListagemHabilidades() {
     return useNoraGraphQLListagem('HabilidadePericia', {
-        select: ['id', 'nome', 'descricao', 'pericia', 'patentePericia'],
-        camposFiltroConsulta: ['nome', 'pericia.nome', 'patentePericia.nome'],
-        camposFiltroVisualizacao: ['nome', 'pericia.nome', 'patentePericia.nome'],
+        select: ['id', 'habilidade', 'pericia', 'patentePericia'],
+        camposFiltroConsulta: ['habilidade.nome', 'pericia.nome', 'patentePericia.nome'],
+        camposFiltroVisualizacao: ['habilidade.nome', 'pericia.nome', 'patentePericia.nome'],
         itensPorPagina: 12,
         carregando: 'Buscando Habilidades de Perícia',
         mensagemErro: 'Houve um erro recuperando as Habilidades de Perícia',
         mensagemListaVazia: 'Nenhuma habilidade cadastrada.',
         mensagemListaVaziaComFiltro: 'Nenhuma habilidade encontrada com os filtros atuais.',
         carregamento: 'BLOQUEIA_INTERFACE',
-        montaParametrosConsulta: params => ({ where: params.where, order: { nome: 'ASC' }, limit: params.limit, offset: params.offset }),
+        montaParametrosConsulta: params => ({ where: params.where, order: { habilidade: { nome: 'ASC' } }, limit: params.limit, offset: params.offset }),
         montaParametrosTotalDeRegistros: where => ({ where }),
     });
 };

@@ -23,8 +23,8 @@ export default function SPA__PaginaModeradorHabilidadesPericia__Listagem() {
 function RenderizaRegistroHabilidade({ habilidade, selecionaHabilidade }: { habilidade: RegistroHabilidadePericia; selecionaHabilidade: (idHabilidade: number) => void; }) {
     return (
         <button type="button" className={styles.card_habilidade} onClick={() => selecionaHabilidade(habilidade.id)}>
-            <strong>{habilidade.nome}</strong>
-            <span>{habilidade.descricao}</span>
+            <strong>{habilidade.habilidade.nome}</strong>
+            <span>{habilidade.habilidade.descricao}</span>
             <small>{habilidade.pericia.nome} / {habilidade.patentePericia.nome}</small>
         </button>
     );

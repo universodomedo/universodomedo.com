@@ -19,7 +19,7 @@ export const useContexto__PaginaModeradorHabilidadesPericia__Detalhe = (): Conte
 };
 
 export const Contexto__PaginaModeradorHabilidadesPericia__Detalhe__Provider = ({ habilidade, deselecionaHabilidade }: { habilidade: Contexto__PaginaModeradorHabilidadesPericia__Detalhe__Props['habilidade']; deselecionaHabilidade: Contexto__PaginaModeradorHabilidadesPericia__Props['deselecionaHabilidade']; }) => {
-    useConfigurarLayoutContextualizado({ subtitulo: habilidade.nome, fecharProps: { tipo: 'acao', executar: deselecionaHabilidade, tituloTooltip: 'Voltar para Listagem' } });
+    useConfigurarLayoutContextualizado({ subtitulo: habilidade.habilidade.nome, fecharProps: { tipo: 'acao', executar: deselecionaHabilidade, tituloTooltip: 'Voltar para Listagem' } });
 
     return (
         <Contexto__PaginaModeradorHabilidadesPericia__Detalhe.Provider value={{ habilidade }}>
