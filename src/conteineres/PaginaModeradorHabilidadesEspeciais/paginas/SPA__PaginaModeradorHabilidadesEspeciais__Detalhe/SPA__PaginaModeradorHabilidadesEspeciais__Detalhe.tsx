@@ -1,6 +1,7 @@
 import styles from './styles.module.css';
 
 import { useContexto__PaginaModeradorHabilidadesEspeciais__Detalhe } from 'Contextos/Contexto__PaginaModeradorHabilidadesEspeciais__Detalhe/contexto';
+import { descrevePropriedadesHabilidadeEspecial } from 'Uteis/HabilidadesEspeciais/formatacaoHabilidadeEspecial';
 
 export default function SPA__PaginaModeradorHabilidadesEspeciais__Detalhe() {
     const { habilidade } = useContexto__PaginaModeradorHabilidadesEspeciais__Detalhe();
@@ -14,6 +15,10 @@ export default function SPA__PaginaModeradorHabilidadesEspeciais__Detalhe() {
                         <div>
                             <span>Custo</span>
                             <strong>{habilidade.custoPontosHabilidadeEspecial} pontos de habilidade especial</strong>
+                        </div>
+                        <div>
+                            <span>Comportamento</span>
+                            <strong>{descrevePropriedadesHabilidadeEspecial(habilidade.propriedades)}</strong>
                         </div>
                     </div>
                 </header>

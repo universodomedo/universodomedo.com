@@ -12,7 +12,7 @@ export default function PaginaControleModificadores() {
 
     return (
         <div className={styles.lista_modificadores}>
-            {modificadoresAtivos.map(modificador => <ModificadorAtivo key={modificador.key} modificador={modificador} nomeAlvo={obtemNomeAlvo(modificador, ficha.atributos)} />)}
+            {modificadoresAtivos.map(modificador => <ModificadorAtivo key={modificador.key} modificador={modificador} nomeAlvo={obtemNomeAlvo(modificador, ficha)} />)}
         </div>
     );
 };
@@ -30,7 +30,14 @@ function ModificadorAtivo({ modificador, nomeAlvo }: { modificador: ModificadorR
     );
 };
 
-function obtemNomeAlvo(modificador: ModificadorRuntime, atributos: FichaEmClient['atributos']): string {
-    const atributo = atributos.find(atributoAtual => atributoAtual.atributo.id === modificador.alvo.idAtributo);
+function obtemNomeAlvo(modificador: ModificadorRuntime, ficha: FichaEmClient): string {
+    const alvo = modificador.alvo;
+
+    if (alvo.tipo === 'teste_pericia_valor_maximo') {
+        const pericia = ficha.pericias.find(periciaAtual => periciaAtual.pericia.id === alvo.idPericia);
+        return `Valor Máximo de ${pericia?.pericia.nomeAbreviado ?? 'Perícia'}`;
+    }
+
+    const atributo = ficha.atributos.find(atributoAtual => atributoAtual.atributo.id === alvo.idAtributo);
     return atributo?.atributo.nomeAbreviado ?? 'Atributo';
 };

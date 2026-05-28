@@ -2,6 +2,7 @@ import styles from './styles.module.css';
 
 import ListagemComposta, { ListagemCompostaModoExibicao } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
 import { useContexto__PaginaModeradorHabilidadesEspeciais__Listagem } from 'Contextos/Contexto__PaginaModeradorHabilidadesEspeciais__Listagem/contexto';
+import { descrevePropriedadesHabilidadeEspecial } from 'Uteis/HabilidadesEspeciais/formatacaoHabilidadeEspecial';
 
 type RegistroHabilidadeEspecial = ReturnType<typeof useContexto__PaginaModeradorHabilidadesEspeciais__Listagem>['listagemHabilidades']['registros'][number];
 
@@ -26,6 +27,7 @@ function RenderizaRegistroHabilidade({ habilidade, selecionaHabilidade }: { habi
             <strong>{habilidade.habilidade.nome}</strong>
             <span>{habilidade.habilidade.descricao}</span>
             <small>{habilidade.custoPontosHabilidadeEspecial} pontos de habilidade especial</small>
+            <small>{descrevePropriedadesHabilidadeEspecial(habilidade.propriedades)}</small>
         </button>
     );
 };

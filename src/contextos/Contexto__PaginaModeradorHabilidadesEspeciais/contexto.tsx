@@ -50,7 +50,7 @@ export const Contexto__PaginaModeradorHabilidadesEspeciais__Provider = ({ childr
 
 function useListagemHabilidades() {
     return useNoraGraphQLListagem('HabilidadeEspecial', {
-        select: ['id', 'habilidade', 'custoPontosHabilidadeEspecial'],
+        select: ['id', 'habilidade', 'custoPontosHabilidadeEspecial', 'propriedades'],
         camposFiltroConsulta: ['habilidade.nome'],
         camposFiltroVisualizacao: ['habilidade.nome'],
         itensPorPagina: 12,
