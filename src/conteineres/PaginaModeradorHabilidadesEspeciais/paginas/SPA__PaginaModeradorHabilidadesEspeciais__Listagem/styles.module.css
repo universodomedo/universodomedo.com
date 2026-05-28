@@ -1,0 +1,51 @@
+.card_habilidade {
+    display: flex;
+    flex-direction: column;
+    gap: 0.72em;
+    width: 100%;
+    height: 100%;
+    min-height: 10em;
+    padding: 1em;
+    border: 0.08em solid rgba(149, 89, 212, 0.52);
+    border-radius: 0.68em;
+    background: linear-gradient(180deg, rgba(21, 14, 29, 0.94), rgba(5, 4, 8, 0.98));
+    color: rgba(235, 228, 214, 0.9);
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+    box-shadow: inset 0 0 0.7em rgba(255, 255, 255, 0.035);
+    transition: border-color 0.12s ease, box-shadow 0.12s ease, transform 0.12s ease;
+}
+
+.card_habilidade:hover {
+    border-color: rgba(207, 167, 255, 0.82);
+    box-shadow: 0 0 0.82em rgba(154, 95, 213, 0.3), inset 0 0 0.7em rgba(255, 255, 255, 0.055);
+    transform: translateY(-0.06em);
+}
+
+.card_habilidade strong {
+    color: rgba(245, 230, 180, 0.96);
+    font-family: var(--fonte-cinzel);
+    font-size: 0.9em;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+}
+
+.card_habilidade span {
+    display: -webkit-box;
+    flex: 1 1 0;
+    overflow: hidden;
+    color: rgba(235, 228, 214, 0.72);
+    font-size: 0.82em;
+    line-height: 1.45;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.card_habilidade small {
+    color: rgba(207, 167, 255, 0.78);
+    font-size: 0.72em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}

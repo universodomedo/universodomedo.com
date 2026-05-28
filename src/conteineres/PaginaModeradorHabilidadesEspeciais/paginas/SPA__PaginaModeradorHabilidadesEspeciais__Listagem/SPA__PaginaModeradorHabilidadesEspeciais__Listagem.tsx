@@ -1,12 +1,12 @@
 import styles from './styles.module.css';
 
 import ListagemComposta, { ListagemCompostaModoExibicao } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
-import { useContexto__PaginaModeradorHabilidadesPericia__Listagem } from 'Contextos/Contexto__PaginaModeradorHabilidadesPericia__Listagem/contexto';
+import { useContexto__PaginaModeradorHabilidadesEspeciais__Listagem } from 'Contextos/Contexto__PaginaModeradorHabilidadesEspeciais__Listagem/contexto';
 
-type RegistroHabilidadePericia = ReturnType<typeof useContexto__PaginaModeradorHabilidadesPericia__Listagem>['listagemHabilidades']['registros'][number];
+type RegistroHabilidadeEspecial = ReturnType<typeof useContexto__PaginaModeradorHabilidadesEspeciais__Listagem>['listagemHabilidades']['registros'][number];
 
-export default function SPA__PaginaModeradorHabilidadesPericia__Listagem() {
-    const { listagemHabilidades, estaEmProcessoCriacao, iniciaCriacao, selecionaHabilidade } = useContexto__PaginaModeradorHabilidadesPericia__Listagem();
+export default function SPA__PaginaModeradorHabilidadesEspeciais__Listagem() {
+    const { listagemHabilidades, estaEmProcessoCriacao, iniciaCriacao, selecionaHabilidade } = useContexto__PaginaModeradorHabilidadesEspeciais__Listagem();
 
     return (
         <ListagemComposta
@@ -20,12 +20,12 @@ export default function SPA__PaginaModeradorHabilidadesPericia__Listagem() {
     );
 };
 
-function RenderizaRegistroHabilidade({ habilidade, selecionaHabilidade }: { habilidade: RegistroHabilidadePericia; selecionaHabilidade: (idHabilidade: number) => void; }) {
+function RenderizaRegistroHabilidade({ habilidade, selecionaHabilidade }: { habilidade: RegistroHabilidadeEspecial; selecionaHabilidade: (idHabilidade: number) => void; }) {
     return (
         <button type="button" className={styles.card_habilidade} onClick={() => selecionaHabilidade(habilidade.habilidade.id)}>
             <strong>{habilidade.habilidade.nome}</strong>
             <span>{habilidade.habilidade.descricao}</span>
-            <small>{habilidade.pericia.nome} / {habilidade.patentePericia.nome}</small>
+            <small>{habilidade.custoPontosHabilidadeEspecial} pontos de habilidade especial</small>
         </button>
     );
 };
