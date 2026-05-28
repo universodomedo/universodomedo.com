@@ -13,25 +13,22 @@ type FormularioNovaHabilidadeEspecial = {
     nome: string;
     descricao: string;
     custoPontosHabilidadeEspecial: string;
-    tipoComportamento: PropriedadesHabilidadeEspecial['tipo'];
-    valorBonus: string;
+    tipoParametrizacao: PropriedadesHabilidadeEspecial['tipo'];
 };
 
 const FORMULARIO_CREATE_HABILIDADE_ESPECIAL = defineFormularioCreate<FormularioNovaHabilidadeEspecial>({
-    valoresIniciais: { nome: '', descricao: '', custoPontosHabilidadeEspecial: '', tipoComportamento: 'sem_efeito_runtime', valorBonus: '3' },
+    valoresIniciais: { nome: '', descricao: '', custoPontosHabilidadeEspecial: '', tipoParametrizacao: 'sem_argumento' },
     campos: {
         nome: { tipo: 'text', label: 'Nome', obrigatorio: true, maxLength: 120, placeholder: 'Ex: Estudo Reforçado' },
         descricao: { tipo: 'textarea', label: 'Descrição', obrigatorio: true, maxLength: 2000, placeholder: 'Descreva objetivamente o que esta habilidade possibilita.' },
         custoPontosHabilidadeEspecial: { tipo: 'text', label: 'Custo em Pontos', obrigatorio: true, placeholder: 'Ex: 10' },
-        tipoComportamento: { tipo: 'text', label: 'Comportamento', obrigatorio: true },
-        valorBonus: { tipo: 'text', label: 'Valor do Bônus', obrigatorio: true, placeholder: 'Ex: 3' },
+        tipoParametrizacao: { tipo: 'text', label: 'Parametrização', obrigatorio: true },
     },
 });
 
 interface Contexto__PaginaModeradorHabilidadesEspeciais__NovaHabilidade__Props {
     formularioNovaHabilidade: FormularioCreateEstado<FormularioNovaHabilidadeEspecial>;
     custoEhValido: boolean;
-    bonusEhValido: boolean;
     podeSalvar: boolean;
     salvar: () => Promise<void>;
 };
@@ -54,8 +51,7 @@ export const Contexto__PaginaModeradorHabilidadesEspeciais__NovaHabilidade__Prov
 
     const formularioNovaHabilidade = useFormularioNovaHabilidade(concluiCriacao);
     const custoEhValido = ehCustoHabilidadeEspecialValido(formularioNovaHabilidade.valores.custoPontosHabilidadeEspecial);
-    const bonusEhValido = ehBonusHabilidadeEspecialValido(formularioNovaHabilidade.valores.tipoComportamento, formularioNovaHabilidade.valores.valorBonus);
-    const podeSalvar = custoEhValido && bonusEhValido && formularioNovaHabilidade.podeSalvar;
+    const podeSalvar = custoEhValido && formularioNovaHabilidade.podeSalvar;
 
     async function salvar(): Promise<void> {
         if (!podeSalvar) return;
@@ -64,7 +60,7 @@ export const Contexto__PaginaModeradorHabilidadesEspeciais__NovaHabilidade__Prov
     };
 
     return (
-        <Contexto__PaginaModeradorHabilidadesEspeciais__NovaHabilidade.Provider value={{ formularioNovaHabilidade, custoEhValido, bonusEhValido, podeSalvar, salvar }}>
+        <Contexto__PaginaModeradorHabilidadesEspeciais__NovaHabilidade.Provider value={{ formularioNovaHabilidade, custoEhValido, podeSalvar, salvar }}>
             <SPA__PaginaModeradorHabilidadesEspeciais__NovaHabilidade />
         </Contexto__PaginaModeradorHabilidadesEspeciais__NovaHabilidade.Provider>
     );
@@ -73,13 +69,12 @@ export const Contexto__PaginaModeradorHabilidadesEspeciais__NovaHabilidade__Prov
 function useFormularioNovaHabilidade(concluiCriacao: () => void): FormularioCreateEstado<FormularioNovaHabilidadeEspecial> {
     return useFormularioCreate(FORMULARIO_CREATE_HABILIDADE_ESPECIAL, async payload => {
         if (!ehCustoHabilidadeEspecialValido(payload.custoPontosHabilidadeEspecial)) return;
-        if (!ehBonusHabilidadeEspecialValido(payload.tipoComportamento, payload.valorBonus)) return;
 
         const payloadCreate: DTO__CREATE__HabilidadeEspecial = {
             nome: payload.nome,
             descricao: payload.descricao,
             custoPontosHabilidadeEspecial: Number(payload.custoPontosHabilidadeEspecial),
-            propriedades: montaPropriedadesHabilidadeEspecial(payload.tipoComportamento, payload.valorBonus),
+            propriedades: montaPropriedadesHabilidadeEspecial(payload.tipoParametrizacao),
         };
         await criaHabilidadeEspecial(payloadCreate);
         concluiCriacao();
@@ -92,23 +87,8 @@ function ehCustoHabilidadeEspecialValido(custoInformado: string): boolean {
     return custoInformado.trim().length > 0 && Number.isInteger(custo) && custo >= 1;
 };
 
-function ehBonusHabilidadeEspecialValido(tipoComportamento: PropriedadesHabilidadeEspecial['tipo'], valorInformado: string): boolean {
-    if (tipoComportamento === 'sem_efeito_runtime') return true;
+function montaPropriedadesHabilidadeEspecial(tipoParametrizacao: PropriedadesHabilidadeEspecial['tipo']): PropriedadesHabilidadeEspecial {
+    if (tipoParametrizacao === 'parametrizada_por_pericia') return { tipo: 'parametrizada_por_pericia', argumento: { tipo: 'pericia' }, multiplicidade: 'por_argumento' };
 
-    const valor = Number(valorInformado);
-
-    return valorInformado.trim().length > 0 && Number.isInteger(valor) && valor >= 1;
-};
-
-function montaPropriedadesHabilidadeEspecial(tipoComportamento: PropriedadesHabilidadeEspecial['tipo'], valorInformado: string): PropriedadesHabilidadeEspecial {
-    if (tipoComportamento === 'modificador_parametrizado_teste_pericia_valor_maximo') {
-        return {
-            tipo: 'modificador_parametrizado_teste_pericia_valor_maximo',
-            valor: Number(valorInformado),
-            argumento: { tipo: 'pericia' },
-            multiplicidade: 'por_argumento',
-        };
-    };
-
-    return { tipo: 'sem_efeito_runtime' };
+    return { tipo: 'sem_argumento' };
 };

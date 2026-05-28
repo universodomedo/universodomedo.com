@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState } from 'react';
-import type { AtributoCompletaDto, DTO__CREATE__ModificadorHabilidade } from 'types-nora-api';
+import type { AtributoCompletaDto, DTO__CREATE__ModificadorHabilidade, PropriedadesModificadorHabilidade } from 'types-nora-api';
 
 import useFormularioCreate, { defineFormularioCreate, type FormularioCreateEstado } from 'Hooks/useFormularioCreate';
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
@@ -16,13 +16,15 @@ import SPA__PaginaModeradorConfiguracaoHabilidades__Configuracao from 'Conteiner
 type FormularioNovoModificador = {
     nome: string;
     valor: string;
+    tipoModificador: PropriedadesModificadorHabilidade['tipo'];
 };
 
 const FORMULARIO_CREATE_MODIFICADOR_HABILIDADE = defineFormularioCreate<FormularioNovoModificador>({
-    valoresIniciais: { nome: '', valor: '' },
+    valoresIniciais: { nome: '', valor: '', tipoModificador: 'atributo' },
     campos: {
         nome: { tipo: 'text', label: 'Nome', obrigatorio: true, placeholder: 'Ex: Inteligência ampliada' },
         valor: { tipo: 'text', label: 'Valor', obrigatorio: true, placeholder: 'Ex: 1 ou -1' },
+        tipoModificador: { tipo: 'text', label: 'Tipo de Modificador', obrigatorio: true },
     },
 });
 
@@ -32,6 +34,8 @@ interface Contexto__PaginaModeradorConfiguracaoHabilidades__Configuracao__Props 
     listagemModificadores: ReturnType<typeof useListagemModificadores>;
     idAtributoSelecionado: number | null;
     selecionaAtributo: (idAtributo: number | null) => void;
+    tipoModificadorSelecionado: PropriedadesModificadorHabilidade['tipo'];
+    selecionaTipoModificador: (tipoModificador: string) => void;
     formularioNovoModificador: FormularioCreateEstado<FormularioNovoModificador>;
     valorEhValido: boolean;
     podeSalvar: boolean;
@@ -57,7 +61,14 @@ export const Contexto__PaginaModeradorConfiguracaoHabilidades__Configuracao__Pro
     const [idAtributoSelecionado, setIdAtributoSelecionado] = useState<number | null>(null);
     const formularioNovoModificador = useFormularioNovoModificador(habilidade.id, idAtributoSelecionado, listagemModificadores.recarregar);
     const valorEhValido = ehValorModificadorValido(formularioNovoModificador.valores.valor);
-    const podeSalvar = idAtributoSelecionado !== null && valorEhValido && formularioNovoModificador.podeSalvar;
+    const tipoModificadorSelecionado = formularioNovoModificador.valores.tipoModificador;
+    const podeSalvar = (!modificadorPrecisaDeAtributo(tipoModificadorSelecionado) || idAtributoSelecionado !== null) && valorEhValido && formularioNovoModificador.podeSalvar;
+
+    function selecionaTipoModificador(tipoModificador: string): void {
+        const tipoNormalizado = normalizaTipoModificador(tipoModificador);
+        formularioNovoModificador.setCampo('tipoModificador', tipoNormalizado);
+        if (!modificadorPrecisaDeAtributo(tipoNormalizado)) setIdAtributoSelecionado(null);
+    };
 
     async function salvar(): Promise<void> {
         if (!podeSalvar) return;
@@ -85,7 +96,7 @@ export const Contexto__PaginaModeradorConfiguracaoHabilidades__Configuracao__Pro
     };
 
     return (
-        <Contexto__PaginaModeradorConfiguracaoHabilidades__Configuracao.Provider value={{ habilidade, atributos, listagemModificadores, idAtributoSelecionado, selecionaAtributo: setIdAtributoSelecionado, formularioNovoModificador, valorEhValido, podeSalvar, salvar, excluirModificador }}>
+        <Contexto__PaginaModeradorConfiguracaoHabilidades__Configuracao.Provider value={{ habilidade, atributos, listagemModificadores, idAtributoSelecionado, selecionaAtributo: setIdAtributoSelecionado, tipoModificadorSelecionado, selecionaTipoModificador, formularioNovoModificador, valorEhValido, podeSalvar, salvar, excluirModificador }}>
             <SPA__PaginaModeradorConfiguracaoHabilidades__Configuracao />
         </Contexto__PaginaModeradorConfiguracaoHabilidades__Configuracao.Provider>
     );
@@ -108,9 +119,12 @@ function useListagemModificadores(idHabilidade: number) {
 
 function useFormularioNovoModificador(idHabilidade: number, idAtributoSelecionado: number | null, recarregaListagem: () => void): FormularioCreateEstado<FormularioNovoModificador> {
     return useFormularioCreate(FORMULARIO_CREATE_MODIFICADOR_HABILIDADE, async payload => {
-        if (idAtributoSelecionado === null || !ehValorModificadorValido(payload.valor)) return;
+        if (!ehValorModificadorValido(payload.valor)) return;
 
-        const payloadCreate: DTO__CREATE__ModificadorHabilidade = { idHabilidade, nome: payload.nome, propriedades: { tipo: 'atributo', idAtributo: idAtributoSelecionado, valor: Number(payload.valor) } };
+        const propriedades = montaPropriedadesModificador(payload.tipoModificador, idAtributoSelecionado, Number(payload.valor));
+        if (propriedades === null) return;
+
+        const payloadCreate: DTO__CREATE__ModificadorHabilidade = { idHabilidade, nome: payload.nome, propriedades };
         await criaModificadorHabilidade(payloadCreate);
         recarregaListagem();
     });
@@ -120,4 +134,21 @@ function ehValorModificadorValido(valorInformado: string): boolean {
     const valor = Number(valorInformado);
 
     return valorInformado.trim().length > 0 && Number.isInteger(valor) && valor !== 0;
+};
+
+function normalizaTipoModificador(tipoModificador: string): PropriedadesModificadorHabilidade['tipo'] {
+    if (tipoModificador === 'teste_pericia_valor_maximo_parametrizado') return 'teste_pericia_valor_maximo_parametrizado';
+
+    return 'atributo';
+};
+
+function modificadorPrecisaDeAtributo(tipoModificador: PropriedadesModificadorHabilidade['tipo']): boolean {
+    return tipoModificador === 'atributo';
+};
+
+function montaPropriedadesModificador(tipoModificador: PropriedadesModificadorHabilidade['tipo'], idAtributoSelecionado: number | null, valor: number): PropriedadesModificadorHabilidade | null {
+    if (tipoModificador === 'teste_pericia_valor_maximo_parametrizado') return { tipo: 'teste_pericia_valor_maximo_parametrizado', valor, argumento: { tipo: 'pericia' }, multiplicidade: 'por_argumento' };
+    if (idAtributoSelecionado === null) return null;
+
+    return { tipo: 'atributo', idAtributo: idAtributoSelecionado, valor };
 };

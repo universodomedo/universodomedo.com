@@ -17,7 +17,7 @@ export default function SPA__PaginaModeradorHabilidadesEspeciais__Detalhe() {
                             <strong>{habilidade.custoPontosHabilidadeEspecial} pontos de habilidade especial</strong>
                         </div>
                         <div>
-                            <span>Comportamento</span>
+                            <span>Parametrização</span>
                             <strong>{descrevePropriedadesHabilidadeEspecial(habilidade.propriedades)}</strong>
                         </div>
                     </div>

@@ -6,8 +6,10 @@ type ContextoConfiguracao = ReturnType<typeof useContexto__PaginaModeradorConfig
 type RegistroModificador = ContextoConfiguracao['listagemModificadores']['registros'][number];
 
 export default function SPA__PaginaModeradorConfiguracaoHabilidades__Configuracao() {
-    const { habilidade, atributos, listagemModificadores, idAtributoSelecionado, selecionaAtributo, formularioNovoModificador, valorEhValido, podeSalvar, salvar, excluirModificador } = useContexto__PaginaModeradorConfiguracaoHabilidades__Configuracao();
+    const { habilidade, atributos, listagemModificadores, idAtributoSelecionado, selecionaAtributo, tipoModificadorSelecionado, selecionaTipoModificador, formularioNovoModificador, valorEhValido, podeSalvar, salvar, excluirModificador } = useContexto__PaginaModeradorConfiguracaoHabilidades__Configuracao();
     const carregarMais = listagemModificadores.carregarMais;
+    const modificadorDeAtributoSelecionado = tipoModificadorSelecionado === 'atributo';
+    const modificadorParametrizadoPorPericiaSelecionado = tipoModificadorSelecionado === 'teste_pericia_valor_maximo_parametrizado';
 
     return (
         <section className={styles.recipiente_configuracao}>
@@ -37,12 +39,28 @@ export default function SPA__PaginaModeradorConfiguracaoHabilidades__Configuraca
                             {formularioNovoModificador.erro('nome') && <small className={styles.erro_campo}>{formularioNovoModificador.erro('nome')}</small>}
                         </label>
                         <label className={styles.campo}>
-                            <span>Atributo</span>
-                            <select value={idAtributoSelecionado?.toString() ?? ''} onChange={evento => selecionaAtributo(evento.target.value ? Number(evento.target.value) : null)} disabled={formularioNovoModificador.salvando}>
-                                <option value="">Selecione um Atributo</option>
-                                {atributos.map(atributo => <option key={atributo.id} value={atributo.id}>{atributo.nome} ({atributo.nomeAbreviado})</option>)}
+                            <span>Tipo de modificador</span>
+                            <select value={tipoModificadorSelecionado} onChange={evento => selecionaTipoModificador(evento.target.value)} disabled={formularioNovoModificador.salvando}>
+                                <option value="atributo">Atributo</option>
+                                <option value="teste_pericia_valor_maximo_parametrizado">Valor Máximo de teste de Perícia parametrizado</option>
                             </select>
                         </label>
+                        {modificadorDeAtributoSelecionado && (
+                            <label className={styles.campo}>
+                                <span>Atributo</span>
+                                <select value={idAtributoSelecionado?.toString() ?? ''} onChange={evento => selecionaAtributo(evento.target.value ? Number(evento.target.value) : null)} disabled={formularioNovoModificador.salvando}>
+                                    <option value="">Selecione um Atributo</option>
+                                    {atributos.map(atributo => <option key={atributo.id} value={atributo.id}>{atributo.nome} ({atributo.nomeAbreviado})</option>)}
+                                </select>
+                            </label>
+                        )}
+                        {modificadorParametrizadoPorPericiaSelecionado && (
+                            <div className={styles.argumento_bloqueado}>
+                                <span>Argumento</span>
+                                <strong>Perícia</strong>
+                                <p>O modificador será aplicado na Perícia escolhida pela instância da Habilidade Especial.</p>
+                            </div>
+                        )}
                         <label className={styles.campo}>
                             <span>Valor</span>
                             <input type="number" step="1" {...formularioNovoModificador.input('valor')} />
@@ -57,18 +75,27 @@ export default function SPA__PaginaModeradorConfiguracaoHabilidades__Configuraca
 };
 
 function RenderizaModificador({ modificador, atributos, excluirModificador }: { modificador: RegistroModificador; atributos: ContextoConfiguracao['atributos']; excluirModificador: ContextoConfiguracao['excluirModificador']; }) {
-    const atributo = atributos.find(atributoAtual => atributoAtual.id === modificador.propriedades.idAtributo);
-    const nomeAtributo = atributo ? `${atributo.nome} (${atributo.nomeAbreviado})` : `Atributo inválido (#${modificador.propriedades.idAtributo})`;
+    const descricaoAlvo = descreveAlvoModificador(modificador, atributos);
     const valor = modificador.propriedades.valor > 0 ? `+${modificador.propriedades.valor}` : modificador.propriedades.valor.toString();
 
     return (
         <article className={styles.modificador}>
             <div>
                 <strong>{modificador.nome}</strong>
-                <span>{nomeAtributo}</span>
+                <span>{descricaoAlvo}</span>
             </div>
             <b>{valor}</b>
             <button type="button" className={styles.botao_excluir} onClick={() => excluirModificador(modificador.id, modificador.nome)}>Excluir</button>
         </article>
     );
+};
+
+function descreveAlvoModificador(modificador: RegistroModificador, atributos: ContextoConfiguracao['atributos']): string {
+    if (modificador.propriedades.tipo === 'teste_pericia_valor_maximo_parametrizado') return 'Valor Máximo de teste de Perícia (argumento: Perícia)';
+
+    const idAtributo = modificador.propriedades.idAtributo;
+    const atributo = atributos.find(atributoAtual => atributoAtual.id === idAtributo);
+    if (atributo) return `${atributo.nome} (${atributo.nomeAbreviado})`;
+
+    return `Atributo inválido (#${idAtributo ?? 'sem id'})`;
 };

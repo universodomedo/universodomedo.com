@@ -100,7 +100,7 @@
     padding: 0.58em 0.72em;
 }
 
-.secao_comportamento {
+.secao_parametrizacao {
     display: flex;
     flex-direction: column;
     gap: 0.9em;
@@ -110,7 +110,7 @@
     border-radius: 0.62em;
 }
 
-.secao_comportamento legend {
+.secao_parametrizacao legend {
     padding: 0 0.35em;
     color: rgba(245, 230, 180, 0.88);
     font-family: var(--fonte-cinzel);
