@@ -4,8 +4,9 @@ import styles from './styles.module.css';
 
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useEffect, useRef, useState, type Dispatch, type MouseEvent as ReactMouseEvent, type MutableRefObject, type RefObject, type SetStateAction } from 'react';
-import { Vector3, type Group } from 'three';
+import { Matrix4, Vector3, type Group } from 'three';
 
+import { comandoMouseAreaInterativa3DEstaAtivo, comandoTecladoAreaInterativa3DEstaAtivo, obtemDirecaoMovimentoSala3DComandoAreaInterativa3D } from '../../ElementosDeInteratividade3D/comandos/editor3D.comandos';
 import type { DocumentoCena3DPrototipo, ObjetoCena3DPrototipo, Vetor3Cena3DPrototipo } from 'Funcionalidades/Cena3DPrototipo/cena3DPrototipo.types';
 
 type ModoCameraSalaJogoPrototipo = 'PRIMEIRA_PESSOA' | 'TERCEIRA_PESSOA';
@@ -42,6 +43,8 @@ interface PersonagemTerceiraPessoaSalaJogoPrototipoProps {
 const velocidadeMovimentoJogadorSalaJogoPrototipo = 4;
 const sensibilidadeMouseSalaJogoPrototipo = 0.0024;
 const limitePitchSalaJogoPrototipo = Math.PI / 2.7;
+const matrizConversaoEditorParaThreeSalaJogoPrototipo = new Matrix4().fromArray([1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1]);
+const matrizConversaoThreeParaEditorSalaJogoPrototipo = new Matrix4().fromArray([1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1]);
 
 function limitaValorSalaJogoPrototipo(valor: number, minimo: number, maximo: number): number { return Math.min(maximo, Math.max(minimo, valor)); };
 function criaPosicaoThree(vetor: Vetor3Cena3DPrototipo): Vetor3Three { return [vetor[0], vetor[2], -vetor[1]]; };
@@ -65,13 +68,14 @@ function criaCorMaterial(cor: Vetor3Cena3DPrototipo): string {
 
 function somaVetor3Cena3D(a: Vetor3Cena3DPrototipo, b: Vetor3Cena3DPrototipo): Vetor3Cena3DPrototipo { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; };
 function multiplicaVetor3Cena3D(vetor: Vetor3Cena3DPrototipo, multiplicador: number): Vetor3Cena3DPrototipo { return [vetor[0] * multiplicador, vetor[1] * multiplicador, vetor[2] * multiplicador]; };
+function criaMatrizBaseThreeSalaJogoPrototipo(matrizBase: readonly number[]): Matrix4 { return matrizConversaoEditorParaThreeSalaJogoPrototipo.clone().multiply(new Matrix4().fromArray([...matrizBase])).multiply(matrizConversaoThreeParaEditorSalaJogoPrototipo); };
 
 function criaEstadoInicialJogador(documento: DocumentoCena3DPrototipo): EstadoJogadorSalaJogoPrototipo {
     return { posicao: documento.pontoEntradaJogador.posicao, yaw: documento.pontoEntradaJogador.rotacaoZ, pitch: 0 };
 };
 
 function solicitaPointerLock(event: ReactMouseEvent<HTMLDivElement>, elementoControleRef: RefObject<HTMLDivElement | null>): void {
-    if (event.button !== 0) return;
+    if (!comandoMouseAreaInterativa3DEstaAtivo('mouse-sala-3d', event)) return;
     if (event.target instanceof HTMLElement && event.target.closest('button') !== null) return;
 
     elementoControleRef.current?.requestPointerLock();
@@ -94,13 +98,28 @@ function GeometriaObjetoSalaJogoPrototipo({ objeto }: { objeto: ObjetoCena3DProt
 };
 
 function ObjetoCenaSalaJogoPrototipo({ objeto }: { objeto: ObjetoCena3DPrototipo }) {
+    const grupoMatrizBaseRef = useRef<Group | null>(null);
+
+    useEffect(() => {
+        const grupo = grupoMatrizBaseRef.current;
+
+        if (grupo === null) return;
+
+        grupo.matrix.copy(criaMatrizBaseThreeSalaJogoPrototipo(objeto.transform.matrizBase));
+        grupo.matrixAutoUpdate = false;
+    }, [objeto.transform.matrizBase, objeto.visivel]);
+
     if (!objeto.visivel) return null;
 
     return (
-        <mesh position={criaPosicaoThree(objeto.transform.posicao)} rotation={criaRotacaoThree(objeto.transform.rotacao)} scale={criaEscalaThree(objeto.transform.escala)} castShadow receiveShadow>
-            <GeometriaObjetoSalaJogoPrototipo objeto={objeto} />
-            <meshStandardMaterial color={criaCorMaterial(objeto.material.corBase)} roughness={0.72} metalness={0.02} />
-        </mesh>
+        <group position={criaPosicaoThree(objeto.transform.posicao)} rotation={criaRotacaoThree(objeto.transform.rotacao)} scale={criaEscalaThree(objeto.transform.escala)}>
+            <group ref={grupoMatrizBaseRef}>
+                <mesh castShadow receiveShadow>
+                    <GeometriaObjetoSalaJogoPrototipo objeto={objeto} />
+                    <meshStandardMaterial color={criaCorMaterial(objeto.material.corBase)} roughness={0.72} metalness={0.02} />
+                </mesh>
+            </group>
+        </group>
     );
 };
 
@@ -111,10 +130,20 @@ function ControladorJogadorSalaJogoPrototipo({ elementoControleRef, jogadorRef, 
         function pressionaTecla(event: KeyboardEvent): void {
             if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"]') !== null) return;
 
-            teclasPressionadasRef.current.add(event.key.toLowerCase());
+            const tecla = event.key.toLowerCase();
+
+            if (!comandoTecladoAreaInterativa3DEstaAtivo('wasd-sala-3d', event)) return;
+            if (document.pointerLockElement !== elementoControleRef.current) return;
+
+            teclasPressionadasRef.current.add(tecla);
+            event.preventDefault();
         };
 
         function soltaTecla(event: KeyboardEvent): void { teclasPressionadasRef.current.delete(event.key.toLowerCase()); };
+        function limpaTeclasPressionadas(): void { teclasPressionadasRef.current.clear(); };
+        function atualizaPointerLock(): void {
+            if (document.pointerLockElement !== elementoControleRef.current) limpaTeclasPressionadas();
+        };
 
         function moveMouse(event: MouseEvent): void {
             if (document.pointerLockElement !== elementoControleRef.current) return;
@@ -127,12 +156,16 @@ function ControladorJogadorSalaJogoPrototipo({ elementoControleRef, jogadorRef, 
 
         window.addEventListener('keydown', pressionaTecla);
         window.addEventListener('keyup', soltaTecla);
+        window.addEventListener('blur', limpaTeclasPressionadas);
         document.addEventListener('mousemove', moveMouse);
+        document.addEventListener('pointerlockchange', atualizaPointerLock);
 
         return () => {
             window.removeEventListener('keydown', pressionaTecla);
             window.removeEventListener('keyup', soltaTecla);
+            window.removeEventListener('blur', limpaTeclasPressionadas);
             document.removeEventListener('mousemove', moveMouse);
+            document.removeEventListener('pointerlockchange', atualizaPointerLock);
         };
     }, [elementoControleRef, jogadorRef]);
 
@@ -143,10 +176,14 @@ function ControladorJogadorSalaJogoPrototipo({ elementoControleRef, jogadorRef, 
         const direita: Vetor3Cena3DPrototipo = [Math.cos(jogador.yaw), -Math.sin(jogador.yaw), 0];
         let movimento: Vetor3Cena3DPrototipo = [0, 0, 0];
 
-        if (teclas.has('w')) movimento = somaVetor3Cena3D(movimento, frente);
-        if (teclas.has('s')) movimento = somaVetor3Cena3D(movimento, multiplicaVetor3Cena3D(frente, -1));
-        if (teclas.has('d')) movimento = somaVetor3Cena3D(movimento, direita);
-        if (teclas.has('a')) movimento = somaVetor3Cena3D(movimento, multiplicaVetor3Cena3D(direita, -1));
+        for (const tecla of teclas) {
+            const direcao = obtemDirecaoMovimentoSala3DComandoAreaInterativa3D(tecla);
+
+            if (direcao === 'FRENTE') movimento = somaVetor3Cena3D(movimento, frente);
+            if (direcao === 'TRAS') movimento = somaVetor3Cena3D(movimento, multiplicaVetor3Cena3D(frente, -1));
+            if (direcao === 'DIREITA') movimento = somaVetor3Cena3D(movimento, direita);
+            if (direcao === 'ESQUERDA') movimento = somaVetor3Cena3D(movimento, multiplicaVetor3Cena3D(direita, -1));
+        }
 
         const magnitude = Math.hypot(movimento[0], movimento[1]);
 

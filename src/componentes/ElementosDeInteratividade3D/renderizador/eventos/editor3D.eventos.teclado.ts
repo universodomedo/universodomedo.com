@@ -1,4 +1,5 @@
 import { ativaCursorVirtualCentroEditor3D, desativaCursorVirtualEditor3D } from './editor3D.eventos.cursor';
+import { comandoTecladoAreaInterativa3DEstaAtivo } from '../../comandos/editor3D.comandos';
 import { obtemEixoTeclaEditor3D } from './editor3D.eventos.eixo';
 import type { ControleEventosEditor3D } from './editor3D.eventos.types';
 
@@ -21,22 +22,21 @@ function encerraPointerLockEditor3D(controle: ControleEventosEditor3D): void {
     if (document.pointerLockElement === controle.canvas) document.exitPointerLock();
 };
 
-function teclaEntradaNumericaRotateEditor3D(tecla: string): boolean { return tecla.length === 1 && ((tecla >= '0' && tecla <= '9') || tecla === '-' || tecla === '+' || tecla === '.' || tecla === ','); };
 function entradaNumericaRotateValidaEditor3D(entrada: string): boolean { return /^[-+]?\d*([.,]\d*)?$/.test(entrada); };
 
 function iniciaModoPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
-    const tecla = event.key.toLowerCase();
     const state = controle.refs.estado.current;
 
     if (state.modoOperacao !== 'OBJETO') return false;
-    if (tecla === 'g' && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaGrabObjetoSelecionado();
-    else if (tecla === 'r' && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaRotateObjetoSelecionado();
-    else if (tecla === 's' && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaScaleObjetoSelecionado();
-    else if (tecla === 'r' && state.modoAtual.tipo === 'ROTATE') controle.refs.acoes.current.aplicaRotateLivreObjetoSelecionado();
+    if (comandoTecladoAreaInterativa3DEstaAtivo('mover', event) && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaGrabObjetoSelecionado();
+    else if (comandoTecladoAreaInterativa3DEstaAtivo('rotacionar', event) && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaRotateObjetoSelecionado();
+    else if (comandoTecladoAreaInterativa3DEstaAtivo('escalar', event) && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaScaleObjetoSelecionado();
+    else if (comandoTecladoAreaInterativa3DEstaAtivo('r-rotacionar-livre', event) && state.modoAtual.tipo === 'ROTATE') controle.refs.acoes.current.aplicaRotateLivreObjetoSelecionado();
     else return false;
 
     ativaCursorVirtualCentroEditor3D(controle);
     controle.canvas.focus();
+    controle.refs.arraste.current.finalizandoModoComPointerLock = false;
     controle.canvas.requestPointerLock();
     event.preventDefault();
 
@@ -44,6 +44,8 @@ function iniciaModoPorAtalho(controle: ControleEventosEditor3D, event: KeyboardE
 };
 
 function aplicaEixoModoPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
+    if (!comandoTecladoAreaInterativa3DEstaAtivo('xyz-eixo', event)) return false;
+
     const eixo = obtemEixoTeclaEditor3D(event.key);
     const state = controle.refs.estado.current;
 
@@ -63,7 +65,7 @@ function aplicaEntradaNumericaRotatePorAtalho(controle: ControleEventosEditor3D,
 
     if (modoAtual.tipo !== 'ROTATE' || modoAtual.eixo === null) return false;
 
-    if (event.key === 'Enter') {
+    if (comandoTecladoAreaInterativa3DEstaAtivo('enter-rotacao-eixo', event)) {
         controle.refs.acoes.current.confirmaModoAtual();
         encerraPointerLockEditor3D(controle);
         event.preventDefault();
@@ -71,7 +73,7 @@ function aplicaEntradaNumericaRotatePorAtalho(controle: ControleEventosEditor3D,
         return true;
     }
 
-    if (event.key === 'Escape') {
+    if (comandoTecladoAreaInterativa3DEstaAtivo('escape-rotacao-numerica', event)) {
         controle.refs.acoes.current.cancelaModoAtual();
         encerraPointerLockEditor3D(controle);
         event.preventDefault();
@@ -79,14 +81,14 @@ function aplicaEntradaNumericaRotatePorAtalho(controle: ControleEventosEditor3D,
         return true;
     }
 
-    if (event.key === 'Backspace') {
+    if (comandoTecladoAreaInterativa3DEstaAtivo('backspace-rotacao-numerica', event)) {
         controle.refs.acoes.current.atualizaEntradaNumericaRotate(modoAtual.entradaNumerica.slice(0, -1));
         event.preventDefault();
 
         return true;
     }
 
-    if (!teclaEntradaNumericaRotateEditor3D(event.key)) return false;
+    if (!comandoTecladoAreaInterativa3DEstaAtivo('valor-rotacao-numerica', event)) return false;
 
     const proximaEntrada = `${modoAtual.entradaNumerica}${event.key}`;
 
@@ -100,7 +102,7 @@ function aplicaEntradaNumericaRotatePorAtalho(controle: ControleEventosEditor3D,
 function deletaObjetosSelecionadosPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
     const state = controle.refs.estado.current;
 
-    if (event.key !== 'Delete' && event.key !== 'Backspace') return false;
+    if (!comandoTecladoAreaInterativa3DEstaAtivo('delete-objetos', event)) return false;
     if (state.modoOperacao !== 'OBJETO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.idsObjetosSelecionados.length === 0) return false;
 
     controle.refs.acoes.current.deletaObjetosSelecionados();
@@ -113,7 +115,6 @@ export function aplicaAtalhoTecladoEditor3D(controle: ControleEventosEditor3D, e
     const state = controle.refs.estado.current;
 
     if (eventoVeioDeElementoEditavel(event)) return;
-    if (event.ctrlKey || event.metaKey || event.altKey) return;
     if (iniciaModoPorAtalho(controle, event)) return;
     if (aplicaEixoModoPorAtalho(controle, event)) return;
     if (aplicaEntradaNumericaRotatePorAtalho(controle, event)) return;

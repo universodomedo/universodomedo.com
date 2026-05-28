@@ -28,6 +28,7 @@ export interface EstadoArrasteCameraEditor3D {
     acumuladoAjusteVista: number;
     ajusteVistaAplicado: boolean;
     animacaoCameraFrameId: number | null;
+    finalizandoModoComPointerLock: boolean;
 };
 
 interface OrientacaoCanonicaCameraEditor3D {
@@ -145,7 +146,7 @@ function criaMatrizAjusteVistaPorDirecaoEditor3D(direcao: DirecaoAjusteVistaEdit
 
 export function criaCameraPadraoEditor3D(): CameraEditor3D { return criaCameraEditor3D(rotacaoXPerspectivaPadraoCameraEditor3D, rotacaoYPerspectivaPadraoCameraEditor3D, 0, 'XY', 'XYZ'); };
 
-export function criaEstadoArrasteCameraEditor3D(): EstadoArrasteCameraEditor3D { return { arrastando: false, modoArraste: 'ROTACIONAR', ultimoX: 0, ultimoY: 0, direcaoAjusteVista: null, acumuladoAjusteVista: 0, ajusteVistaAplicado: false, animacaoCameraFrameId: null }; };
+export function criaEstadoArrasteCameraEditor3D(): EstadoArrasteCameraEditor3D { return { arrastando: false, modoArraste: 'ROTACIONAR', ultimoX: 0, ultimoY: 0, direcaoAjusteVista: null, acumuladoAjusteVista: 0, ajusteVistaAplicado: false, animacaoCameraFrameId: null, finalizandoModoComPointerLock: false }; };
 
 export function aplicaRotacaoCameraEditor3D(camera: CameraEditor3D, deltaX: number, deltaY: number): CameraEditor3D {
     const ajuste = multiplicaMatriz4(criaMatrizRotacaoX(deltaY * 0.008), criaMatrizRotacaoZ(deltaX * 0.008));

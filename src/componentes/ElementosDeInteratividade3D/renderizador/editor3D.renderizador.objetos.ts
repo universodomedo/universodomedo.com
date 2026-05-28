@@ -5,11 +5,8 @@ import { multiplicaMatriz4 } from '../editor/editor3D.matrizes';
 import type { Editor3DState } from '../estado/editor3D.estado.types';
 import type { FaceRenderizadaEditor3D, MalhaRenderizadaEditor3D } from './editor3D.renderizador.types';
 import type { MatrizesCenaEditor3D } from './editor3D.renderizador.matrizes';
-import type { ObjetoCenaEditor3D, Vetor3 } from '../editor/editor3D.tipos';
+import type { ObjetoCenaEditor3D } from '../editor/editor3D.tipos';
 import type { RecursosRenderizadorEditor3D } from './editor3D.renderizador.types';
-
-const corVisualObjetoSemMaterialBase: Vetor3 = [0.62, 0.62, 0.62];
-const corVisualObjetoSemMaterialLuz: Vetor3 = [0.86, 0.86, 0.86];
 
 function obtemObjetoAtual(state: Editor3DState, idObjeto: string): ObjetoCenaEditor3D | null {
     if (state.malhaEmCriacao !== null && state.malhaEmCriacao.id === idObjeto) return state.malhaEmCriacao;
@@ -49,7 +46,7 @@ export function desenhaObjetosCenaEditor3D(gl: WebGLRenderingContext, recursos: 
 
         if (objetoSelecionado) desenhaSelecaoObjetoEditor3D(gl, recursos.programa, malha, matrizes.perspectiva, matrizes.camera, matrizObjeto, objetoEmModo);
         aplicaMatrizesEditor3D(gl, recursos.programa, matrizFinal, matrizObjeto);
-        desenhaMalhaEditor3D(gl, recursos.programa, malha.buffers, malha.geometria, corVisualObjetoSemMaterialBase, corVisualObjetoSemMaterialLuz);
+        desenhaMalhaEditor3D(gl, recursos.programa, malha.buffers, malha.geometria, objetoAtual.corBase, objetoAtual.corLuz);
         if (faceSelecionada !== null) desenhaFaceSelecionadaEditor3D(gl, recursos.programa, faceSelecionada, matrizes.perspectiva, matrizes.camera, matrizObjeto);
     });
 };

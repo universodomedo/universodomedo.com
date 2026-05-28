@@ -62,10 +62,11 @@ function criaPontoEntradaJogador(objetos: readonly ObjetoCena3DPrototipo[]): Pon
 
     const centroX = (minimoX + maximoX) / 2;
     const centroY = (minimoY + maximoY) / 2;
+    const entradaX = centroX;
     const entradaY = minimoY - afastamentoPadraoEntradaCena3DPrototipo;
-    const rotacaoZ = Math.atan2(centroX - centroX, centroY - entradaY);
+    const rotacaoZ = Math.atan2(centroX - entradaX, centroY - entradaY);
 
-    return { posicao: [centroX, entradaY, alturaPadraoJogadorCena3DPrototipo], rotacaoZ };
+    return { posicao: [entradaX, entradaY, alturaPadraoJogadorCena3DPrototipo], rotacaoZ };
 };
 
 export function serializaEditor3DParaCena3DPrototipo(state: Editor3DState): DocumentoCena3DPrototipo {

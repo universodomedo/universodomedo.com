@@ -11,12 +11,10 @@ export function PainelViewportEditor3D() {
 
     return (
         <PainelColapsavelEditor3D titulo="Viewport" valor={estado.camera.planoGuia}>
-            <CampoStatusEditor3D titulo="Front" valor="1" />
-            <CampoStatusEditor3D titulo="Side" valor="3" />
-            <CampoStatusEditor3D titulo="Top" valor="7" />
-            <CampoStatusEditor3D titulo="Perspective" valor="0" />
-            <CampoStatusEditor3D titulo="Rotate" valor="Drag" />
-            <CampoStatusEditor3D titulo="Pan" valor="Shift + drag" />
+            <CampoStatusEditor3D titulo="Gizmo" valor="Click" />
+            <CampoStatusEditor3D titulo="Rotate" valor="MMB" />
+            <CampoStatusEditor3D titulo="Pan" valor="Shift + MMB" />
+            <CampoStatusEditor3D titulo="Snap" valor="Alt + MMB" />
             <CampoStatusEditor3D titulo="Zoom" valor="Scroll" />
             <CampoStatusEditor3D titulo="Zoom" valor={`${estado.camera.zoom.toFixed(2)}x`} />
 

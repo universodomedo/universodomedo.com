@@ -1,0 +1,125 @@
+.comandosAreaInterativa3D {
+    position: absolute;
+    right: 0.85em;
+    bottom: 0.85em;
+    z-index: 12;
+    pointer-events: auto;
+}
+
+.botaoComandosAreaInterativa3D {
+    display: grid;
+    width: 3.1em;
+    height: 3.1em;
+    place-items: center;
+    padding: 0;
+    border: 0.08em solid rgba(92, 148, 255, 0.66);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.88);
+    font: inherit;
+    background: rgba(34, 34, 34, 0.96);
+    box-shadow: 0 0.65em 1.8em rgba(0, 0, 0, 0.36);
+    cursor: pointer;
+}
+
+.botaoComandosAreaInterativa3D:hover {
+    color: #ffffff;
+    background: #3a3a3a;
+}
+
+.botaoComandosAreaInterativa3D span {
+    font-size: 0.74em;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.listaComandosAreaInterativa3D {
+    display: grid;
+    gap: 0.9em;
+    padding: 0.8em 0;
+}
+
+.grupoComandosAreaInterativa3D {
+    display: grid;
+    gap: 0.35em;
+}
+
+.grupoComandosAreaInterativa3D h3 {
+    margin: 0;
+    padding: 0.35em 0.9em;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.84em;
+    font-weight: 800;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.itensComandosAreaInterativa3D {
+    display: grid;
+}
+
+.itemComandoAreaInterativa3D {
+    display: grid;
+    grid-template-columns: 3em minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.72em;
+    min-height: 3.1em;
+    padding: 0.45em 0.9em;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.06);
+}
+
+.itemComandoAreaInterativa3D:last-child {
+    border-bottom: 0;
+}
+
+.iconeComandoAreaInterativa3D {
+    display: grid;
+    width: 2.35em;
+    height: 2.35em;
+    place-items: center;
+    border-radius: 0.28em;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.72em;
+    font-weight: 800;
+    letter-spacing: 0;
+    background: rgba(92, 148, 255, 0.18);
+}
+
+.textoComandoAreaInterativa3D {
+    display: grid;
+    gap: 0.14em;
+    min-width: 0;
+}
+
+.textoComandoAreaInterativa3D strong {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.86em;
+    font-weight: 700;
+}
+
+.textoComandoAreaInterativa3D span {
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 0.76em;
+    line-height: 1.35;
+}
+
+.itemComandoAreaInterativa3D kbd {
+    min-width: 4.8em;
+    padding: 0.34em 0.5em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.22em;
+    color: rgba(255, 255, 255, 0.72);
+    font: inherit;
+    font-size: 0.72em;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.22);
+}
+
+@media (max-width: 38em) {
+    .itemComandoAreaInterativa3D {
+        grid-template-columns: 2.65em minmax(0, 1fr);
+    }
+
+    .itemComandoAreaInterativa3D kbd {
+        grid-column: 2;
+        justify-self: start;
+    }
+}

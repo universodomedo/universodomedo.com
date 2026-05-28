@@ -5,10 +5,12 @@ import styles from './styles.module.css';
 import { useEffect, useRef, type MouseEvent as ReactMouseEvent } from 'react';
 
 import { AreaInterativa3D } from '../AreaInterativa3D';
+import { BotaoComandosAreaInterativa3D } from '../comandos/BotaoComandosAreaInterativa3D';
 import { CamadaAplicacaoTransformEditor3D } from '../aplicacao/CamadaAplicacaoTransformEditor3D';
 import { CamadaCriacaoMeshEditor3D } from '../criacao/CamadaCriacaoMeshEditor3D';
 import { SeletorModoOperacaoEditor3D } from '../modoOperacao/SeletorModoOperacaoEditor3D';
 import { ToolbarMouseEditor3D } from '../toolbar/ToolbarMouseEditor3D';
+import { comandoMouseAreaInterativa3DEstaAtivo, comandoTecladoAreaInterativa3DEstaAtivo } from '../comandos/editor3D.comandos';
 import { useEditor3DContexto } from '../contexto/Editor3DContexto';
 import { useMenuAplicacaoTransformEditor3D } from '../aplicacao/useMenuAplicacaoTransformEditor3D';
 import { useMenuCriacaoMeshEditor3D } from '../criacao/useMenuCriacaoMeshEditor3D';
@@ -37,9 +39,7 @@ export function EspacoTrabalhoEditor3D() {
         function processaAtalhoWorkspace(event: KeyboardEvent): void {
             if (eventoTecladoVeioDeElementoEditavel(event)) return;
 
-            const tecla = event.key.toLowerCase();
-
-            if (tecla === 'tab' && !event.shiftKey && !event.ctrlKey && !event.metaKey && !event.altKey) {
+            if (comandoTecladoAreaInterativa3DEstaAtivo('tab-modo-operacao', event)) {
                 event.preventDefault();
                 menuCriacao.fechaMenu();
                 menuAplicacao.fechaMenu();
@@ -48,7 +48,7 @@ export function EspacoTrabalhoEditor3D() {
                 return;
             }
 
-            if (event.shiftKey && tecla === 'a' && !event.ctrlKey && !event.metaKey && !event.altKey) {
+            if (comandoTecladoAreaInterativa3DEstaAtivo('shift-a-add-mesh', event)) {
                 event.preventDefault();
                 menuAplicacao.fechaMenu();
                 menuCriacao.abreMenuNoCentro(workspaceRef.current, podeAbrirMenuCriacao());
@@ -56,7 +56,7 @@ export function EspacoTrabalhoEditor3D() {
                 return;
             }
 
-            if ((event.ctrlKey || event.metaKey) && tecla === 'a' && !event.shiftKey && !event.altKey) {
+            if (comandoTecladoAreaInterativa3DEstaAtivo('ctrl-a-apply', event)) {
                 event.preventDefault();
                 menuCriacao.fechaMenu();
                 menuAplicacao.abreMenuNoCentro(workspaceRef.current, podeAbrirMenuAplicacao());
@@ -78,10 +78,11 @@ export function EspacoTrabalhoEditor3D() {
 
     function processaMouseDownWorkspace(event: ReactMouseEvent<HTMLElement>): void {
         if (alvoEstaDentroDe(event, '[data-editor3d-toolbar-mouse="true"]')) return;
+        if (alvoEstaDentroDe(event, '[data-editor3d-comandos="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-modo-operacao="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-menu-criacao="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-menu-aplicacao="true"]')) return;
-        if (event.button === 2) {
+        if (comandoMouseAreaInterativa3DEstaAtivo('rmb-add-mesh', event)) {
             abreMenuCriacao(event);
 
             return;
@@ -108,6 +109,8 @@ export function EspacoTrabalhoEditor3D() {
             <AreaInterativa3D />
 
             <ToolbarMouseEditor3D />
+
+            <BotaoComandosAreaInterativa3D />
 
             <SeletorModoOperacaoEditor3D />
 

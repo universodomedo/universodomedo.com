@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 import { useEffect, useRef, useState, type MouseEvent, type RefObject } from 'react';
 
 import { aplicaResetAbsolutoVistaCameraEditor3D, interpolaCameraEditor3D, type CameraEditor3D, type ResetAbsolutoVistaEditor3D } from '../editor/editor3D.camera';
+import { comandoMouseAreaInterativa3DEstaAtivo } from '../comandos/editor3D.comandos';
 import { useEditor3DContexto } from '../contexto/Editor3DContexto';
 import { projetaMarcadoresGizmoEixosEditor3D, type MarcadorGizmoEixosEditor3D } from './editor3D.renderizador.gizmo';
 
@@ -100,6 +101,8 @@ export function OverlayGizmoEixosEditor3D({ canvasRef }: OverlayGizmoEixosEditor
     function aplicaVistaMarcador(event: MouseEvent<HTMLButtonElement>, eixo: ResetAbsolutoVistaEditor3D): void {
         event.preventDefault();
         event.stopPropagation();
+        if (!comandoMouseAreaInterativa3DEstaAtivo('gizmo-viewport', event)) return;
+
         animaCameraAteVista(aplicaVistaMarcadorGizmoEditor3D(estado.camera, eixo));
     };
 

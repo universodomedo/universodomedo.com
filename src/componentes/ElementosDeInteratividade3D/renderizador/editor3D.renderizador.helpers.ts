@@ -1,10 +1,8 @@
-import { aplicaVistaFrenteCameraEditor3D, aplicaVistaLateralCameraEditor3D, aplicaVistaPerspectivaCameraEditor3D, aplicaVistaTopoCameraEditor3D, type CameraEditor3D, type ModoArrasteEditor3D, type PlanoGuiaEditor3D } from '../editor/editor3D.camera';
 import { criaBuffersEditor3D, type BuffersEditor3D } from '../webgl/editor3D.webgl.buffers';
 import { criaGeometriasGuiaEditor3D } from '../geometria/guias/editor3D.geometria.guias';
 import type { GuiaEditor3D } from '../geometria/editor3D.geometria.types';
+import type { PlanoGuiaEditor3D } from '../editor/editor3D.camera';
 import type { GuiaRenderizadaEditor3D, GuiasRenderizadasPorPlanoEditor3D } from './editor3D.renderizador.types';
-
-export function obtemModoArrasteEditor3D(event: MouseEvent): ModoArrasteEditor3D { return event.shiftKey ? 'PAN' : 'ROTACIONAR'; };
 
 export function criaGuiasRenderizadasEditor3D(gl: WebGLRenderingContext, definicoes: readonly GuiaEditor3D[]): GuiaRenderizadaEditor3D[] | null {
     const guias: GuiaRenderizadaEditor3D[] = [];
@@ -33,12 +31,3 @@ export function criaGuiasPorPlanoEditor3D(gl: WebGLRenderingContext): GuiasRende
 };
 
 export function obtemBuffersGuiasEditor3D(guiasPorPlano: GuiasRenderizadasPorPlanoEditor3D): BuffersEditor3D[] { return [...guiasPorPlano.XY, ...guiasPorPlano.XZ, ...guiasPorPlano.YZ].map(guia => guia.buffers); };
-
-export function aplicaCameraPorAtalhoEditor3D(tecla: string, camera: CameraEditor3D): CameraEditor3D | null {
-    if (tecla === '1') return aplicaVistaFrenteCameraEditor3D(camera);
-    if (tecla === '3') return aplicaVistaLateralCameraEditor3D(camera);
-    if (tecla === '7') return aplicaVistaTopoCameraEditor3D(camera);
-    if (tecla === '0') return aplicaVistaPerspectivaCameraEditor3D(camera);
-
-    return null;
-};

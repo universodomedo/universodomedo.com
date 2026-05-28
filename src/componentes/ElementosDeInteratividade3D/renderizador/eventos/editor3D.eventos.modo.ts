@@ -1,6 +1,7 @@
 import { criaDeltaMovimentoGrabEditor3D } from '../../modos/grab/editor3D.modoGrab.movimento';
 import { criaDeltaRotacaoEditor3D } from '../../modos/rotate/editor3D.modoRotate.movimento';
 import { criaDeltaScaleEditor3D } from '../../modos/scale/editor3D.modoScale.movimento';
+import { comandoMouseAreaInterativa3DEstaAtivo } from '../../comandos/editor3D.comandos';
 import { desativaCursorVirtualEditor3D } from './editor3D.eventos.cursor';
 import type { ControleEventosEditor3D } from './editor3D.eventos.types';
 
@@ -36,14 +37,19 @@ export function moveModoAtualEditor3D(controle: ControleEventosEditor3D, event: 
 
 export function finalizaOuCancelaModoAtualEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): void {
     const state = controle.refs.estado.current;
+    const deveConfirmar = comandoMouseAreaInterativa3DEstaAtivo('lmb-confirma-transform', event);
+    const deveCancelar = comandoMouseAreaInterativa3DEstaAtivo('rmb-cancela-transform', event);
 
     if (state.modoAtual.tipo === 'NENHUM') return;
-    if (event.button === 0) controle.refs.acoes.current.confirmaModoAtual();
-    if (event.button === 2) controle.refs.acoes.current.cancelaModoAtual();
+    if (deveConfirmar) controle.refs.acoes.current.confirmaModoAtual();
+    if (deveCancelar) controle.refs.acoes.current.cancelaModoAtual();
 
-    if (event.button === 0 || event.button === 2) {
+    if (deveConfirmar || deveCancelar) {
+        const pointerLockAtivo = document.pointerLockElement === controle.canvas;
+
+        controle.refs.arraste.current.finalizandoModoComPointerLock = pointerLockAtivo;
         desativaCursorVirtualEditor3D(controle);
-        if (document.pointerLockElement === controle.canvas) document.exitPointerLock();
+        if (pointerLockAtivo) document.exitPointerLock();
 
         event.preventDefault();
     }
