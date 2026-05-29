@@ -1,0 +1,78 @@
+.pagina {
+    max-width: 46em;
+    margin: 0 auto;
+    padding: 2em;
+}
+
+.titulo {
+    margin-top: 0;
+    margin-bottom: 1.5em;
+    font-family: 'Cinzel', serif;
+    color: #D9D9D9;
+    font-size: 1.5em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.mensagem {
+    margin: 0;
+    color: #7060a0;
+    font-family: 'Cinzel', serif;
+    font-size: 0.9em;
+    letter-spacing: 0.04em;
+}
+
+.meu_papel {
+    margin: 0 0 1.5em;
+    color: #4a3a6a;
+    font-size: 0.8em;
+    font-style: italic;
+}
+
+.secoes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85em;
+}
+
+.secao {
+    border: 0.1em solid #2d1a50;
+    border-radius: 0.55em;
+    padding: 1em 1.2em;
+    background: rgba(16, 8, 32, 0.75);
+}
+
+.secao_cabecalho {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    margin-bottom: 0.75em;
+}
+
+.secao_titulo {
+    margin: 0;
+    font-size: 0.88em;
+    font-weight: 700;
+    color: #D9D9D9;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.05em;
+}
+
+.secao_contador {
+    font-weight: 400;
+    color: #7060a0;
+    font-size: 0.82em;
+}
+
+.participantes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75em;
+}
+
+.vazio {
+    margin: 0;
+    color: #4a3a6a;
+    font-size: 0.8em;
+    font-style: italic;
+}
