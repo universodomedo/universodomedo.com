@@ -10,10 +10,10 @@
 
 .visualizadorModoAtualEditor3D {
     display: grid;
-    grid-template-rows: 3.2em auto;
+    grid-template-rows: 3.2em auto auto;
     place-items: center;
     min-width: 5.1em;
-    min-height: 5.6em;
+    min-height: 6.35em;
     padding: 0.42em 0.36em 0.34em;
     border: 0.08em solid rgba(92, 148, 255, 0.72);
     border-radius: 0 0 0.34em 0.34em;
@@ -41,6 +41,19 @@
     font-size: 0.66em;
     font-weight: 600;
     line-height: 1.1;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.subtituloModoAtualEditor3D {
+    max-width: 8.4em;
+    margin-top: 0.22em;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 0.58em;
+    font-weight: 600;
+    line-height: 1.12;
     text-align: center;
     text-overflow: ellipsis;
     white-space: nowrap;

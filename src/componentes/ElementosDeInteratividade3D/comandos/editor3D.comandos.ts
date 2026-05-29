@@ -43,9 +43,19 @@ export interface ComandoAreaInterativa3D {
     readonly descricao: string;
     readonly atalho: string | null;
     readonly icone: string;
+    readonly tituloToolbar?: string;
+    readonly subtituloToolbar?: string;
+    readonly iconeToolbar?: string;
     readonly teclado?: AtalhoTecladoComandoAreaInterativa3D;
     readonly mouse?: GestoMouseComandoAreaInterativa3D;
     readonly rodaMouse?: boolean;
+}
+
+export interface EstadoToolbarComandoAreaInterativa3D {
+    readonly titulo: string;
+    readonly subtitulo: string | null;
+    readonly icone: string;
+    readonly atalho: string | null;
 }
 
 interface CategoriaListaComandosAreaInterativa3D {
@@ -69,10 +79,11 @@ const comandosAreaInterativa3D = [
     {
         id: 'selecionar',
         categoria: 'Modo',
-        nome: 'Selecionar',
-        descricao: 'Modo base para selecionar objetos, faces e usar ferramentas do mouse.',
+        nome: 'Movimentacao',
+        descricao: 'Modo base para selecionar por clique e navegar a camera pela cena.',
         atalho: null,
-        icone: 'cursor'
+        icone: 'move',
+        subtituloToolbar: 'Cursor: Move'
     },
     {
         id: 'mover',
@@ -196,9 +207,18 @@ const comandosAreaInterativa3D = [
         categoria: 'Mouse',
         nome: 'Menu de criacao',
         descricao: 'Abre o menu contextual para adicionar elementos na cena.',
-        atalho: 'Botao direito',
+        atalho: 'Botao direito fora do canvas',
         icone: 'mouse-pointer',
         mouse: { botao: 2, shift: null, ctrlOuMeta: null, alt: null }
+    },
+    {
+        id: 'lmb-seleciona-elemento',
+        categoria: 'Mouse',
+        nome: 'Selecionar elemento',
+        descricao: 'Seleciona o objeto ou face clicada sem arrastar a camera.',
+        atalho: 'Clique esquerdo',
+        icone: 'move',
+        mouse: { botao: 0, shift: null, ctrlOuMeta: null, alt: null }
     },
     {
         id: 'lmb-confirma-transform',
@@ -219,22 +239,28 @@ const comandosAreaInterativa3D = [
         mouse: { botao: 2, shift: null, ctrlOuMeta: null, alt: null }
     },
     {
-        id: 'lmb-drag-selecao',
-        categoria: 'Mouse',
-        nome: 'Selecao por area',
-        descricao: 'Arrasta uma area para selecionar multiplos objetos ou faces.',
-        atalho: 'Arrastar com clique esquerdo',
-        icone: 'selection',
-        mouse: { botao: 0, shift: null, ctrlOuMeta: null, alt: null }
-    },
-    {
-        id: 'mmb-orbita-camera',
+        id: 'lmb-orbita-camera',
         categoria: 'Viewport',
         nome: 'Orbitar camera',
         descricao: 'Gira a camera do editor ao redor do alvo da viewport.',
-        atalho: 'Botao do meio + arrastar',
+        atalho: 'Clique esquerdo + arrastar',
         icone: 'orbit',
-        mouse: { botao: 1, shift: false, ctrlOuMeta: null, alt: false }
+        tituloToolbar: 'Movimentacao',
+        subtituloToolbar: 'Rotacionando',
+        iconeToolbar: 'move',
+        mouse: { botao: 0, shift: null, ctrlOuMeta: null, alt: null }
+    },
+    {
+        id: 'rmb-pan-camera',
+        categoria: 'Viewport',
+        nome: 'Mover camera',
+        descricao: 'Move a camera no X e Y da propria visao sem alterar a rotacao.',
+        atalho: 'Botao direito + arrastar',
+        icone: 'move',
+        tituloToolbar: 'Movimentacao',
+        subtituloToolbar: 'Movendo',
+        iconeToolbar: 'move',
+        mouse: { botao: 2, shift: null, ctrlOuMeta: null, alt: null }
     },
     {
         id: 'shift-mmb-pan-camera',
@@ -243,15 +269,30 @@ const comandosAreaInterativa3D = [
         descricao: 'Move lateralmente o alvo da camera da viewport.',
         atalho: 'Shift + botao do meio',
         icone: 'move',
+        tituloToolbar: 'Movimentacao',
+        subtituloToolbar: 'Movendo',
+        iconeToolbar: 'move',
         mouse: { botao: 1, shift: true, ctrlOuMeta: null, alt: false }
     },
     {
-        id: 'scroll-zoom',
+        id: 'mmb-dolly-camera',
         categoria: 'Viewport',
-        nome: 'Zoom da camera',
-        descricao: 'Aproxima ou afasta a camera da viewport.',
+        nome: 'Avancar/recuar camera',
+        descricao: 'Move a camera para frente ou para tras no eixo de profundidade.',
+        atalho: 'Botao do meio + arrastar',
+        icone: 'dolly',
+        tituloToolbar: 'Movimentacao',
+        subtituloToolbar: 'Profundidade',
+        iconeToolbar: 'move',
+        mouse: { botao: 1, shift: false, ctrlOuMeta: null, alt: false }
+    },
+    {
+        id: 'scroll-dolly-camera',
+        categoria: 'Viewport',
+        nome: 'Avancar/recuar com scroll',
+        descricao: 'Move a camera para frente ou para tras com o scroll do mouse.',
         atalho: 'Scroll',
-        icone: 'zoom',
+        icone: 'dolly',
         rodaMouse: true
     },
     {
@@ -261,6 +302,9 @@ const comandosAreaInterativa3D = [
         descricao: 'Arrasta a direcao de snap para encaixar a camera em vistas ortogonais.',
         atalho: 'Alt + botao do meio',
         icone: 'compass',
+        tituloToolbar: 'Movimentacao',
+        subtituloToolbar: 'Ajustando vista',
+        iconeToolbar: 'move',
         mouse: { botao: 1, shift: null, ctrlOuMeta: null, alt: true }
     },
     {
@@ -320,8 +364,9 @@ const comandoPorModoEditor3D: Record<TipoModoEditor3D, IdComandoAreaInterativa3D
 
 const comandoPorFerramentaMouseEditor3D: Record<FerramentaMouseEditor3D, IdComandoAreaInterativa3D> = {
     SELECIONAR: 'selecionar',
-    ROTACIONAR: 'mmb-orbita-camera',
-    PAN: 'shift-mmb-pan-camera',
+    ROTACIONAR: 'lmb-orbita-camera',
+    PAN: 'rmb-pan-camera',
+    DOLLY: 'mmb-dolly-camera',
     ROTACIONAR_RAPIDO: 'alt-mmb-snap-orbital'
 };
 
@@ -345,6 +390,12 @@ export function obtemComandoAreaInterativa3D(id: IdComandoAreaInterativa3D): Com
 export function obtemComandoInteracaoAtualEditor3D(tipoModo: TipoModoEditor3D, ferramentaMouse: FerramentaMouseEditor3D): ComandoAreaInterativa3D {
     const idComando = tipoModo === 'NENHUM' ? comandoPorFerramentaMouseEditor3D[ferramentaMouse] : comandoPorModoEditor3D[tipoModo];
     return obtemComandoAreaInterativa3D(idComando);
+}
+
+export function obtemEstadoToolbarInteracaoAtualEditor3D(tipoModo: TipoModoEditor3D, ferramentaMouse: FerramentaMouseEditor3D): EstadoToolbarComandoAreaInterativa3D {
+    const comando = obtemComandoInteracaoAtualEditor3D(tipoModo, ferramentaMouse);
+
+    return { titulo: comando.tituloToolbar ?? comando.nome, subtitulo: comando.subtituloToolbar ?? null, icone: comando.iconeToolbar ?? comando.icone, atalho: comando.atalho };
 }
 
 export function obtemTextoComandosAreaInterativa3D(): string {

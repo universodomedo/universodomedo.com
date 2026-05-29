@@ -1,29 +1,30 @@
-import { aplicaPanCameraEditor3D, aplicaRotacaoCameraEditor3D, aplicaZoomCameraEditor3D, interpolaCameraEditor3D, obtemCameraAjusteVistaPorDirecaoEditor3D, type DirecaoAjusteVistaEditor3D, type ModoArrasteEditor3D } from '../../editor/editor3D.camera';
-import { ativaCursorVirtualPorEventoEditor3D, atualizaCursorVirtualPorMovimentoEditor3D, criaPontoCanvasEditor3D, desativaCursorVirtualEditor3D } from './editor3D.eventos.cursor';
+import { aplicaDollyCameraEditor3D, aplicaPanCameraEditor3D, aplicaRotacaoCameraEditor3D, interpolaCameraEditor3D, obtemCameraAjusteVistaPorDirecaoEditor3D, type DirecaoAjusteVistaEditor3D, type ModoArrasteEditor3D } from '../../editor/editor3D.camera';
+import { ativaCursorVirtualPorEventoEditor3D, atualizaCursorVirtualPorMovimentoEditor3D, criaPontoCanvasPorCoordenadaEditor3D, desativaCursorVirtualEditor3D } from './editor3D.eventos.cursor';
 import { comandoMouseAreaInterativa3DEstaAtivo, comandoRodaMouseAreaInterativa3DEstaAtivo } from '../../comandos/editor3D.comandos';
-import { selecionaFacePorClickEditor3D, selecionaObjetoPorAreaEditor3D } from './editor3D.eventos.selecao';
+import { selecionaFacePorClickEditor3D, selecionaObjetoPorClickEditor3D } from './editor3D.eventos.selecao';
 import { modoEditor3DEstaAtivo } from '../../modos/editor3D.modo.utils';
 import { moveModoAtualEditor3D } from './editor3D.eventos.modo';
 import type { ControleEventosEditor3D } from './editor3D.eventos.types';
 import type { FerramentaMouseEditor3D } from '../../mouse/editor3D.mouse.tipos';
 
 const movimentoMinimoEventoAjusteVistaEditor3D = 2;
+const movimentoMinimoArrasteNavegacaoEditor3D = 4;
 const acumuladoMinimoAjusteVistaEditor3D = 28;
 const dominanciaMinimaAjusteVistaEditor3D = 1.25;
 const duracaoAnimacaoAjusteVistaEditor3D = 260;
 
-function obtemFerramentaMouseInicioEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): FerramentaMouseEditor3D | null {
-    if (comandoMouseAreaInterativa3DEstaAtivo('rmb-add-mesh', event)) return null;
+function obtemFerramentaMouseInicioEditor3D(event: MouseEvent): FerramentaMouseEditor3D | null {
+    if (comandoMouseAreaInterativa3DEstaAtivo('rmb-pan-camera', event)) return 'PAN';
     if (comandoMouseAreaInterativa3DEstaAtivo('shift-mmb-pan-camera', event)) return 'PAN';
-    if (comandoMouseAreaInterativa3DEstaAtivo('mmb-orbita-camera', event)) return 'ROTACIONAR';
-    if (comandoMouseAreaInterativa3DEstaAtivo('lmb-drag-selecao', event) && controle.refs.estado.current.modoOperacao === 'EDICAO') return null;
-    if (comandoMouseAreaInterativa3DEstaAtivo('lmb-drag-selecao', event)) return controle.refs.estado.current.ferramentaMouse;
+    if (comandoMouseAreaInterativa3DEstaAtivo('mmb-dolly-camera', event)) return 'DOLLY';
+    if (comandoMouseAreaInterativa3DEstaAtivo('lmb-orbita-camera', event)) return 'ROTACIONAR';
 
     return null;
 };
 
 function obtemModoArrastePorFerramentaEditor3D(ferramenta: FerramentaMouseEditor3D): ModoArrasteEditor3D | null {
     if (ferramenta === 'PAN') return 'PAN';
+    if (ferramenta === 'DOLLY') return 'DOLLY';
     if (ferramenta === 'ROTACIONAR') return 'ROTACIONAR';
 
     return null;
@@ -53,6 +54,12 @@ function encerraPointerLockEditor3D(controle: ControleEventosEditor3D): void {
 
 function limpaEstadoArrastePorPointerLockEditor3D(controle: ControleEventosEditor3D): void {
     controle.refs.arraste.current.arrastando = false;
+    controle.refs.arraste.current.botao = null;
+    controle.refs.arraste.current.inicioX = 0;
+    controle.refs.arraste.current.inicioY = 0;
+    controle.refs.arraste.current.ultimoX = 0;
+    controle.refs.arraste.current.ultimoY = 0;
+    controle.refs.arraste.current.movimentoAcumulado = 0;
     controle.refs.arraste.current.direcaoAjusteVista = null;
     controle.refs.arraste.current.acumuladoAjusteVista = 0;
     controle.refs.arraste.current.ajusteVistaAplicado = false;
@@ -92,8 +99,12 @@ function iniciaAjusteVistaPorArrasteEditor3D(controle: ControleEventosEditor3D, 
 
     arraste.arrastando = true;
     arraste.modoArraste = 'AJUSTAR_VISTA';
+    arraste.botao = event.button;
+    arraste.inicioX = event.clientX;
+    arraste.inicioY = event.clientY;
     arraste.ultimoX = event.clientX;
     arraste.ultimoY = event.clientY;
+    arraste.movimentoAcumulado = 0;
     arraste.direcaoAjusteVista = null;
     arraste.acumuladoAjusteVista = 0;
     arraste.ajusteVistaAplicado = false;
@@ -145,45 +156,20 @@ function processaAjusteVistaPorArrasteEditor3D(controle: ControleEventosEditor3D
     return true;
 };
 
-function tentaSelecionarFaceEdicaoEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): boolean {
+function selecionaElementoPorClickEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): boolean {
     const state = controle.refs.estado.current;
+    const arraste = controle.refs.arraste.current;
 
-    if (!comandoMouseAreaInterativa3DEstaAtivo('lmb-drag-selecao', event) || state.modoOperacao !== 'EDICAO' || modoEditor3DEstaAtivo(state.modoAtual)) return false;
+    if (!comandoMouseAreaInterativa3DEstaAtivo('lmb-seleciona-elemento', event)) return false;
+    if (arraste.botao !== 0 || arraste.modoArraste !== 'ROTACIONAR' || arraste.movimentoAcumulado > movimentoMinimoArrasteNavegacaoEditor3D) return false;
+    if (modoEditor3DEstaAtivo(state.modoAtual)) return false;
 
-    selecionaFacePorClickEditor3D(controle, criaPontoCanvasEditor3D(controle.canvas, event));
-    event.preventDefault();
+    const ponto = criaPontoCanvasPorCoordenadaEditor3D(controle.canvas, arraste.inicioX, arraste.inicioY);
 
-    return true;
-};
+    if (state.modoOperacao === 'EDICAO') selecionaFacePorClickEditor3D(controle, ponto);
+    else if (state.modoOperacao === 'OBJETO') selecionaObjetoPorClickEditor3D(controle, ponto, event.shiftKey);
+    else return false;
 
-function iniciaAreaSelecaoEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): void {
-    const ponto = criaPontoCanvasEditor3D(controle.canvas, event);
-
-    controle.refs.acoes.current.iniciaAreaSelecao(ponto.x, ponto.y, event.shiftKey);
-    event.preventDefault();
-};
-
-function atualizaAreaSelecaoEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): boolean {
-    if (controle.refs.estado.current.areaSelecao === null) return false;
-
-    const ponto = criaPontoCanvasEditor3D(controle.canvas, event);
-
-    controle.refs.acoes.current.atualizaAreaSelecao(ponto.x, ponto.y);
-    event.preventDefault();
-
-    return true;
-};
-
-function finalizaAreaSelecaoEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): boolean {
-    const areaSelecao = controle.refs.estado.current.areaSelecao;
-
-    if (!comandoMouseAreaInterativa3DEstaAtivo('lmb-drag-selecao', event) || areaSelecao === null) return false;
-
-    const ponto = criaPontoCanvasEditor3D(controle.canvas, event);
-
-    selecionaObjetoPorAreaEditor3D(controle, ponto, areaSelecao.adicionando);
-    controle.refs.acoes.current.finalizaAreaSelecao();
-    controle.refs.acoes.current.resetaFerramentaMouse();
     event.preventDefault();
 
     return true;
@@ -192,19 +178,12 @@ function finalizaAreaSelecaoEditor3D(controle: ControleEventosEditor3D, event: M
 export function iniciaArrasteCameraEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): void {
     if (modoEditor3DEstaAtivo(controle.refs.estado.current.modoAtual)) return;
     if (iniciaAjusteVistaPorArrasteEditor3D(controle, event)) return;
-    if (tentaSelecionarFaceEdicaoEditor3D(controle, event)) return;
 
-    const ferramenta = obtemFerramentaMouseInicioEditor3D(controle, event);
+    const ferramenta = obtemFerramentaMouseInicioEditor3D(event);
 
     if (ferramenta === null) return;
 
     controle.refs.acoes.current.ativaFerramentaMouse(ferramenta);
-
-    if (ferramenta === 'SELECIONAR') {
-        iniciaAreaSelecaoEditor3D(controle, event);
-
-        return;
-    }
 
     const modoArraste = obtemModoArrastePorFerramentaEditor3D(ferramenta);
 
@@ -214,8 +193,12 @@ export function iniciaArrasteCameraEditor3D(controle: ControleEventosEditor3D, e
 
     arraste.arrastando = true;
     arraste.modoArraste = modoArraste;
+    arraste.botao = event.button;
+    arraste.inicioX = event.clientX;
+    arraste.inicioY = event.clientY;
     arraste.ultimoX = event.clientX;
     arraste.ultimoY = event.clientY;
+    arraste.movimentoAcumulado = 0;
     arraste.finalizandoModoComPointerLock = false;
 
     ativaCursorVirtualPorEventoEditor3D(controle, event);
@@ -236,16 +219,23 @@ export function moveMouseEditor3D(controle: ControleEventosEditor3D, event: Mous
     if (pointerLockAtivo) atualizaCursorVirtualPorMovimentoEditor3D(controle, event);
     if (processaAjusteVistaPorArrasteEditor3D(controle, event, deltaX, deltaY)) return;
     if (moveModoAtualEditor3D(controle, event, deltaX, deltaY)) return;
-    if (atualizaAreaSelecaoEditor3D(controle, event)) return;
 
     const arraste = controle.refs.arraste.current;
 
     if (!arraste.arrastando) return;
 
+    arraste.movimentoAcumulado += Math.hypot(deltaX, deltaY);
+
+    if (arraste.modoArraste === 'ROTACIONAR' && arraste.movimentoAcumulado <= movimentoMinimoArrasteNavegacaoEditor3D) {
+        event.preventDefault();
+
+        return;
+    }
+
     const state = controle.refs.estado.current;
     const largura = Math.max(1, controle.canvas.clientWidth);
     const altura = Math.max(1, controle.canvas.clientHeight);
-    const novaCamera = arraste.modoArraste === 'PAN' ? aplicaPanCameraEditor3D(state.camera, deltaX, deltaY, largura, altura) : aplicaRotacaoCameraEditor3D(state.camera, deltaX, deltaY);
+    const novaCamera = arraste.modoArraste === 'PAN' ? aplicaPanCameraEditor3D(state.camera, deltaX, deltaY, largura, altura) : arraste.modoArraste === 'DOLLY' ? aplicaDollyCameraEditor3D(state.camera, deltaY) : aplicaRotacaoCameraEditor3D(state.camera, deltaX, deltaY);
 
     controle.refs.acoes.current.atualizaCamera(novaCamera);
     arraste.ultimoX = event.clientX;
@@ -255,9 +245,9 @@ export function moveMouseEditor3D(controle: ControleEventosEditor3D, event: Mous
 
 export function finalizaArrasteCameraEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): void {
     if (modoEditor3DEstaAtivo(controle.refs.estado.current.modoAtual)) return;
-    if (finalizaAreaSelecaoEditor3D(controle, event)) return;
     if (!controle.refs.arraste.current.arrastando) return;
 
+    selecionaElementoPorClickEditor3D(controle, event);
     limpaEstadoArrastePorPointerLockEditor3D(controle);
 
     if (document.pointerLockElement === controle.canvas) document.exitPointerLock();
@@ -265,13 +255,13 @@ export function finalizaArrasteCameraEditor3D(controle: ControleEventosEditor3D,
     event.preventDefault();
 };
 
-export function aplicaZoomMouseEditor3D(controle: ControleEventosEditor3D, event: WheelEvent): void {
+export function aplicaDollyScrollMouseEditor3D(controle: ControleEventosEditor3D, event: WheelEvent): void {
     const state = controle.refs.estado.current;
 
     if (modoEditor3DEstaAtivo(state.modoAtual)) return;
-    if (!comandoRodaMouseAreaInterativa3DEstaAtivo('scroll-zoom')) return;
+    if (!comandoRodaMouseAreaInterativa3DEstaAtivo('scroll-dolly-camera')) return;
 
-    controle.refs.acoes.current.atualizaCamera(aplicaZoomCameraEditor3D(state.camera, event.deltaY));
+    controle.refs.acoes.current.atualizaCamera(aplicaDollyCameraEditor3D(state.camera, event.deltaY));
     event.preventDefault();
 };
 

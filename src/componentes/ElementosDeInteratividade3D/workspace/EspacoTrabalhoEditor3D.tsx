@@ -82,6 +82,7 @@ export function EspacoTrabalhoEditor3D() {
         if (alvoEstaDentroDe(event, '[data-editor3d-modo-operacao="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-menu-criacao="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-menu-aplicacao="true"]')) return;
+        if (alvoEstaDentroDe(event, 'canvas')) return;
         if (comandoMouseAreaInterativa3DEstaAtivo('rmb-add-mesh', event)) {
             abreMenuCriacao(event);
 
@@ -90,7 +91,6 @@ export function EspacoTrabalhoEditor3D() {
 
         menuCriacao.fechaMenu();
         menuAplicacao.fechaMenu();
-        if (alvoEstaDentroDe(event, 'canvas')) return;
         if (estado.ferramentaMouse !== 'SELECIONAR') acoes.resetaFerramentaMouse();
     };
 

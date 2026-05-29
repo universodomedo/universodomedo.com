@@ -17,10 +17,14 @@ function obtemEscalaVisualCanvasEditor3D(canvas: HTMLCanvasElement): { readonly 
 };
 
 export function criaPontoCanvasEditor3D(canvas: HTMLCanvasElement, event: MouseEvent): PontoCanvasEditor3D {
+    return criaPontoCanvasPorCoordenadaEditor3D(canvas, event.clientX, event.clientY);
+};
+
+export function criaPontoCanvasPorCoordenadaEditor3D(canvas: HTMLCanvasElement, clientX: number, clientY: number): PontoCanvasEditor3D {
     const areaVisual = canvas.getBoundingClientRect();
     const escalas = obtemEscalaVisualCanvasEditor3D(canvas);
 
-    return { x: (event.clientX - areaVisual.left) * escalas.escalaX, y: (event.clientY - areaVisual.top) * escalas.escalaY };
+    return { x: (clientX - areaVisual.left) * escalas.escalaX, y: (clientY - areaVisual.top) * escalas.escalaY };
 };
 
 export function ativaCursorVirtualPorEventoEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): void {

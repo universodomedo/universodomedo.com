@@ -14,10 +14,11 @@ function obtemClasseCursorEditor3D(tipoModo: string, ferramentaMouse: Ferramenta
     if (tipoModo === 'ROTATE') return styles.canvas3dRotateAtivo;
     if (tipoModo === 'SCALE') return styles.canvas3dScaleAtivo;
     if (ferramentaMouse === 'PAN') return styles.canvas3dPanAtivo;
+    if (ferramentaMouse === 'DOLLY') return styles.canvas3dDollyAtivo;
     if (ferramentaMouse === 'ROTACIONAR_RAPIDO') return styles.canvas3dRotacaoRapidaAtiva;
     if (ferramentaMouse === 'ROTACIONAR') return styles.canvas3dRotacaoMouseAtiva;
 
-    return '';
+    return styles.canvas3dMovimentacaoAtiva;
 };
 
 export function RenderizadorEditor3D() {

@@ -11,6 +11,14 @@
     cursor: default;
 }
 
+.canvas3dMovimentacaoAtiva {
+    cursor: move;
+}
+
+.canvas3dMovimentacaoAtiva:active {
+    cursor: move;
+}
+
 .canvas3dGrabAtivo,
 .canvas3dPanAtivo {
     cursor: grab;
@@ -24,7 +32,21 @@
 .canvas3dRotateAtivo,
 .canvas3dRotacaoMouseAtiva,
 .canvas3dRotacaoRapidaAtiva {
-    cursor: alias;
+    cursor: move;
+}
+
+.canvas3dDollyAtivo {
+    cursor: ns-resize;
+}
+
+.canvas3dRotateAtivo:active,
+.canvas3dRotacaoMouseAtiva:active,
+.canvas3dRotacaoRapidaAtiva:active {
+    cursor: move;
+}
+
+.canvas3dDollyAtivo:active {
+    cursor: ns-resize;
 }
 
 .canvas3dScaleAtivo {

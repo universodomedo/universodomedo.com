@@ -238,6 +238,10 @@ export function selecionaObjetoPorAreaEditor3D(controle: ControleEventosEditor3D
     controle.refs.acoes.current.selecionaObjetos(obtemIdsObjetosSelecionadosPorAreaEditor3D(controle, retangulo), adiciona);
 };
 
+export function selecionaObjetoPorClickEditor3D(controle: ControleEventosEditor3D, pontoMouse: PontoCanvasEditor3D, adiciona: boolean): void {
+    controle.refs.acoes.current.selecionaObjeto(obtemIdObjetoSelecionadoPorClickEditor3D(controle, pontoMouse), adiciona);
+};
+
 export function selecionaFacePorClickEditor3D(controle: ControleEventosEditor3D, pontoMouse: PontoCanvasEditor3D): void {
     const faceSelecionada = obtemFaceSelecionadaPorClickEditor3D(controle, pontoMouse);
 

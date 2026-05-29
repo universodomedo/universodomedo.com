@@ -1,4 +1,4 @@
-import { criaMatrizCenaCameraEditor3D, type CameraEditor3D } from '../editor/editor3D.camera';
+import { criaMatrizCenaCameraEditor3D, obtemDistanciaCameraEditor3D, type CameraEditor3D } from '../editor/editor3D.camera';
 import { criaMatrizPerspectiva, criaMatrizTranslacao, multiplicaMatriz4 } from '../editor/editor3D.matrizes';
 
 export interface MatrizesCenaEditor3D {
@@ -11,7 +11,7 @@ export interface MatrizesCenaEditor3D {
 export function criaMatrizesCenaEditor3D(camera: CameraEditor3D, largura: number, altura: number): MatrizesCenaEditor3D {
     const proporcao = largura / altura;
     const perspectiva = criaMatrizPerspectiva(Math.PI / 3.2, proporcao, 0.1, 100);
-    const matrizCamera = criaMatrizTranslacao(camera.deslocamentoX, camera.deslocamentoY, -4 / camera.zoom);
+    const matrizCamera = criaMatrizTranslacao(camera.deslocamentoX, camera.deslocamentoY, -obtemDistanciaCameraEditor3D(camera));
     const cena = criaMatrizCenaCameraEditor3D(camera);
     const finalCena = multiplicaMatriz4(perspectiva, multiplicaMatriz4(matrizCamera, cena));
 

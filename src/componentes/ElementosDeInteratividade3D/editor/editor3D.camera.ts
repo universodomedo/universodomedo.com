@@ -2,7 +2,7 @@ import { criaMatrizRotacaoX, criaMatrizRotacaoZ, multiplicaMatriz4 } from './edi
 import type { EixoEditor3D } from './editor3D.tipos';
 
 export type DirecaoAjusteVistaEditor3D = 'DIREITA' | 'ESQUERDA' | 'CIMA' | 'BAIXO';
-export type ModoArrasteEditor3D = 'ROTACIONAR' | 'PAN' | 'AJUSTAR_VISTA';
+export type ModoArrasteEditor3D = 'ROTACIONAR' | 'PAN' | 'DOLLY' | 'AJUSTAR_VISTA';
 export type PlanoGuiaEditor3D = 'XY' | 'XZ' | 'YZ';
 export type EspacoMovimentoGrabEditor3D = PlanoGuiaEditor3D | 'XYZ';
 export type ResetAbsolutoVistaEditor3D = 'X' | 'Y' | 'Z' | '-X' | '-Y' | '-Z';
@@ -22,8 +22,12 @@ export interface CameraEditor3D {
 export interface EstadoArrasteCameraEditor3D {
     arrastando: boolean;
     modoArraste: ModoArrasteEditor3D;
+    botao: number | null;
+    inicioX: number;
+    inicioY: number;
     ultimoX: number;
     ultimoY: number;
+    movimentoAcumulado: number;
     direcaoAjusteVista: DirecaoAjusteVistaEditor3D | null;
     acumuladoAjusteVista: number;
     ajusteVistaAplicado: boolean;
@@ -146,7 +150,7 @@ function criaMatrizAjusteVistaPorDirecaoEditor3D(direcao: DirecaoAjusteVistaEdit
 
 export function criaCameraPadraoEditor3D(): CameraEditor3D { return criaCameraEditor3D(rotacaoXPerspectivaPadraoCameraEditor3D, rotacaoYPerspectivaPadraoCameraEditor3D, 0, 'XY', 'XYZ'); };
 
-export function criaEstadoArrasteCameraEditor3D(): EstadoArrasteCameraEditor3D { return { arrastando: false, modoArraste: 'ROTACIONAR', ultimoX: 0, ultimoY: 0, direcaoAjusteVista: null, acumuladoAjusteVista: 0, ajusteVistaAplicado: false, animacaoCameraFrameId: null, finalizandoModoComPointerLock: false }; };
+export function criaEstadoArrasteCameraEditor3D(): EstadoArrasteCameraEditor3D { return { arrastando: false, modoArraste: 'ROTACIONAR', botao: null, inicioX: 0, inicioY: 0, ultimoX: 0, ultimoY: 0, movimentoAcumulado: 0, direcaoAjusteVista: null, acumuladoAjusteVista: 0, ajusteVistaAplicado: false, animacaoCameraFrameId: null, finalizandoModoComPointerLock: false }; };
 
 export function aplicaRotacaoCameraEditor3D(camera: CameraEditor3D, deltaX: number, deltaY: number): CameraEditor3D {
     const ajuste = multiplicaMatriz4(criaMatrizRotacaoX(deltaY * 0.008), criaMatrizRotacaoZ(deltaX * 0.008));
@@ -156,10 +160,13 @@ export function aplicaRotacaoCameraEditor3D(camera: CameraEditor3D, deltaX: numb
 
 export function aplicaPanCameraEditor3D(camera: CameraEditor3D, deltaX: number, deltaY: number, largura: number, altura: number): CameraEditor3D { return { ...camera, deslocamentoX: camera.deslocamentoX + ((deltaX / largura) * (3 / camera.zoom)), deslocamentoY: camera.deslocamentoY - ((deltaY / altura) * (3 / camera.zoom)) }; };
 
-export function aplicaZoomCameraEditor3D(camera: CameraEditor3D, deltaY: number): CameraEditor3D {
-    const multiplicador = deltaY > 0 ? 0.92 : 1.08;
+export function obtemDistanciaCameraEditor3D(camera: CameraEditor3D): number { return 4 / camera.zoom; };
 
-    return { ...camera, zoom: limitaValor(camera.zoom * multiplicador, 0.55, 2.4) };
+export function aplicaDollyCameraEditor3D(camera: CameraEditor3D, deltaY: number): CameraEditor3D {
+    const distanciaAtual = obtemDistanciaCameraEditor3D(camera);
+    const proximaDistancia = limitaValor(distanciaAtual + (deltaY * 0.018), 1.35, 9.5);
+
+    return { ...camera, zoom: 4 / proximaDistancia };
 };
 
 export function aplicaVistaTopoCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraEditor3D(0, 0, 0, 'XY', 'XY', camera); };
