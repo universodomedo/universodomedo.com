@@ -45,6 +45,8 @@ type VetorCameraEditor3D = readonly [number, number, number];
 const rotacaoXPerspectivaPadraoCameraEditor3D = -Math.PI / 3;
 const rotacaoYPerspectivaPadraoCameraEditor3D = -Math.PI / 4;
 const quartoDeVoltaCameraEditor3D = Math.PI / 2;
+const sensibilidadeOrbitCameraEditor3D = 0.008;
+const margemPitchTurntableCameraEditor3D = 0.001;
 
 function limitaValor(valor: number, minimo: number, maximo: number): number { return Math.min(maximo, Math.max(minimo, valor)); };
 function interpolaValorCameraEditor3D(origem: number, destino: number, progresso: number): number { return origem + ((destino - origem) * progresso); };
@@ -57,6 +59,14 @@ function normalizaAnguloCameraEditor3D(angulo: number): number {
     while (anguloNormalizado > Math.PI) anguloNormalizado -= Math.PI * 2;
 
     return anguloNormalizado;
+};
+
+function limitaPitchTurntableCameraEditor3D(rotacaoX: number): number {
+    let rotacaoNormalizada = normalizaAnguloCameraEditor3D(rotacaoX);
+
+    if (rotacaoNormalizada > 0) rotacaoNormalizada -= Math.PI * 2;
+
+    return limitaValor(rotacaoNormalizada, -Math.PI + margemPitchTurntableCameraEditor3D, -margemPitchTurntableCameraEditor3D);
 };
 
 function interpolaAnguloCameraEditor3D(origem: number, destino: number, progresso: number): number { return origem + (normalizaAnguloCameraEditor3D(destino - origem) * progresso); };
@@ -126,11 +136,7 @@ function criaOrientacoesCanonicasCameraEditor3D(cameraBase: CameraEditor3D): Ori
         aplicaVistaNegativaZCameraEditor3D(cameraBase),
     ];
 
-    return bases.flatMap(camera => [0, 1, 2, 3].map(indiceRotacao => {
-        const cameraCanonica = criaCameraEditor3D(camera.rotacaoX, camera.rotacaoY, indiceRotacao * quartoDeVoltaCameraEditor3D, camera.planoGuia, camera.espacoMovimentoGrab, cameraBase);
-
-        return { camera: cameraCanonica, matrizCena: cameraCanonica.matrizCena };
-    }));
+    return bases.map(camera => ({ camera, matrizCena: camera.matrizCena }));
 };
 
 function obtemOrientacaoCanonicaMaisProximaCameraEditor3D(cameraBase: CameraEditor3D, matrizAlvo: Float32Array): CameraEditor3D {
@@ -153,9 +159,10 @@ export function criaCameraPadraoEditor3D(): CameraEditor3D { return criaCameraEd
 export function criaEstadoArrasteCameraEditor3D(): EstadoArrasteCameraEditor3D { return { arrastando: false, modoArraste: 'ROTACIONAR', botao: null, inicioX: 0, inicioY: 0, ultimoX: 0, ultimoY: 0, movimentoAcumulado: 0, direcaoAjusteVista: null, acumuladoAjusteVista: 0, ajusteVistaAplicado: false, animacaoCameraFrameId: null, finalizandoModoComPointerLock: false }; };
 
 export function aplicaRotacaoCameraEditor3D(camera: CameraEditor3D, deltaX: number, deltaY: number): CameraEditor3D {
-    const ajuste = multiplicaMatriz4(criaMatrizRotacaoX(deltaY * 0.008), criaMatrizRotacaoZ(deltaX * 0.008));
+    const rotacaoX = limitaPitchTurntableCameraEditor3D(camera.rotacaoX + (deltaY * sensibilidadeOrbitCameraEditor3D));
+    const rotacaoY = normalizaAnguloCameraEditor3D(camera.rotacaoY + (deltaX * sensibilidadeOrbitCameraEditor3D));
 
-    return criaCameraComMatrizCenaEditor3D(camera, multiplicaMatriz4(ajuste, camera.matrizCena));
+    return criaCameraEditor3D(rotacaoX, rotacaoY, 0, 'XY', 'XYZ', camera);
 };
 
 export function aplicaPanCameraEditor3D(camera: CameraEditor3D, deltaX: number, deltaY: number, largura: number, altura: number): CameraEditor3D { return { ...camera, deslocamentoX: camera.deslocamentoX + ((deltaX / largura) * (3 / camera.zoom)), deslocamentoY: camera.deslocamentoY - ((deltaY / altura) * (3 / camera.zoom)) }; };
