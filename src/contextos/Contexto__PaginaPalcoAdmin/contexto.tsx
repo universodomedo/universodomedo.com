@@ -10,71 +10,25 @@ type ResultadoAcaoPalcoAdmin = PalcoEstadoDto | Record<string, never>;
 
 function criarPalcoWs(): Promise<PalcoEstadoDto> {
     return new Promise((resolve, reject) => {
-        eventoWs(Eventos_EnviaERecebe.Palco.eventos.admin_criar, {}, {
-            onSuccess: (response: PalcoEstadoDto) => { resolve(response); },
-            onError: (error: WsErrorResponse) => { reject(error); },
-            timeoutMs: 8000,
-        });
+        eventoWs(Eventos_EnviaERecebe.Palco.eventos.admin_criar, {}, { onSuccess: (response: PalcoEstadoDto) => { resolve(response); }, onError: (error: WsErrorResponse) => { reject(error); }, timeoutMs: 8000 });
     });
 };
 
 function encerrarPalcoWs(): Promise<Record<string, never>> {
     return new Promise((resolve, reject) => {
-        eventoWs(Eventos_EnviaERecebe.Palco.eventos.admin_encerrar, {}, {
-            onSuccess: (response: Record<string, never>) => { resolve(response); },
-            onError: (error: WsErrorResponse) => { reject(error); },
-            timeoutMs: 8000,
-        });
-    });
-};
-
-function promoverWs(idUsuario: number): Promise<Record<string, never>> {
-    return new Promise((resolve, reject) => {
-        eventoWs(Eventos_EnviaERecebe.Palco.eventos.admin_promover, { idUsuario }, {
-            onSuccess: (response: Record<string, never>) => { resolve(response); },
-            onError: (error: WsErrorResponse) => { reject(error); },
-            timeoutMs: 8000,
-        });
-    });
-};
-
-function rebaixarWs(idUsuario: number): Promise<Record<string, never>> {
-    return new Promise((resolve, reject) => {
-        eventoWs(Eventos_EnviaERecebe.Palco.eventos.admin_rebaixar, { idUsuario }, {
-            onSuccess: (response: Record<string, never>) => { resolve(response); },
-            onError: (error: WsErrorResponse) => { reject(error); },
-            timeoutMs: 8000,
-        });
+        eventoWs(Eventos_EnviaERecebe.Palco.eventos.admin_encerrar, {}, { onSuccess: (response: Record<string, never>) => { resolve(response); }, onError: (error: WsErrorResponse) => { reject(error); }, timeoutMs: 8000 });
     });
 };
 
 function verificarEstadoWs(): Promise<PalcoEstadoDto> {
     return new Promise((resolve, reject) => {
-        eventoWs(Eventos_EnviaERecebe.Palco.eventos.verificarEstado, {}, {
-            onSuccess: (response: PalcoEstadoDto) => { resolve(response); },
-            onError: (error: WsErrorResponse) => { reject(error); },
-            timeoutMs: 8000,
-        });
-    });
-};
-
-function removerWs(idUsuario: number): Promise<Record<string, never>> {
-    return new Promise((resolve, reject) => {
-        eventoWs(Eventos_EnviaERecebe.Palco.eventos.admin_remover, { idUsuario }, {
-            onSuccess: (response: Record<string, never>) => { resolve(response); },
-            onError: (error: WsErrorResponse) => { reject(error); },
-            timeoutMs: 8000,
-        });
+        eventoWs(Eventos_EnviaERecebe.Palco.eventos.verificarEstado, {}, { onSuccess: (response: PalcoEstadoDto) => { resolve(response); }, onError: (error: WsErrorResponse) => { reject(error); }, timeoutMs: 8000 });
     });
 };
 
 function definirPapelWs(idUsuario: number, papel: PalcoParticipantePapel): Promise<Record<string, never>> {
     return new Promise((resolve, reject) => {
-        eventoWs(Eventos_EnviaERecebe.Palco.eventos.admin_definirPapel, { idUsuario, papel }, {
-            onSuccess: (response: Record<string, never>) => { resolve(response); },
-            onError: (error: WsErrorResponse) => { reject(error); },
-            timeoutMs: 8000,
-        });
+        eventoWs(Eventos_EnviaERecebe.Palco.eventos.admin_definirPapel, { idUsuario, papel }, { onSuccess: (response: Record<string, never>) => { resolve(response); }, onError: (error: WsErrorResponse) => { reject(error); }, timeoutMs: 8000 });
     });
 };
 
@@ -86,9 +40,6 @@ interface Contexto__PaginaPalcoAdmin__Props {
     erro: string | null;
     handleCriar: () => void;
     handleEncerrar: () => void;
-    handlePromover: (idUsuario: number) => void;
-    handleRebaixar: (idUsuario: number) => void;
-    handleRemover: (idUsuario: number) => void;
     handleDefinirPapel: (idUsuario: number, papel: PalcoParticipantePapel) => void;
 };
 
@@ -138,24 +89,12 @@ export const Contexto__PaginaPalcoAdmin__Provider = () => {
         executar(encerrarPalcoWs).catch(() => {});
     }, [executar]);
 
-    const handlePromover = useCallback((idUsuario: number) => {
-        executar(() => promoverWs(idUsuario)).catch(() => {});
-    }, [executar]);
-
-    const handleRebaixar = useCallback((idUsuario: number) => {
-        executar(() => rebaixarWs(idUsuario)).catch(() => {});
-    }, [executar]);
-
-    const handleRemover = useCallback((idUsuario: number) => {
-        executar(() => removerWs(idUsuario)).catch(() => {});
-    }, [executar]);
-
     const handleDefinirPapel = useCallback((idUsuario: number, papel: PalcoParticipantePapel) => {
         executar(() => definirPapelWs(idUsuario, papel)).catch(() => {});
     }, [executar]);
 
     return (
-        <Contexto__PaginaPalcoAdmin.Provider value={{ estado, processando, erro, handleCriar, handleEncerrar, handlePromover, handleRebaixar, handleRemover, handleDefinirPapel }}>
+        <Contexto__PaginaPalcoAdmin.Provider value={{ estado, processando, erro, handleCriar, handleEncerrar, handleDefinirPapel }}>
             <SPA__PaginaPalco__Admin />
         </Contexto__PaginaPalcoAdmin.Provider>
     );

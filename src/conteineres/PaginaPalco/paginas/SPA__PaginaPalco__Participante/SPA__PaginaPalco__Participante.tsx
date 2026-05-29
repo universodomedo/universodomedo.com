@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import { type PalcoParticipanteDto } from 'types-nora-api';
 
 import styles from './styles.module.css';
@@ -8,22 +7,14 @@ import { useContexto__PaginaPalcoEntrar } from 'Contextos/Contexto__PaginaPalcoE
 import CartaoParticipantePalco from 'Componentes/ElementosDePalco/CartaoParticipantePalco/CartaoParticipantePalco';
 
 export default function SPA__PaginaPalco__Participante() {
-    const { entrando, conectado, meuPapel, estado, entrarNoPalco } = useContexto__PaginaPalcoEntrar();
+    const { entrando, conectado, meuPapel, estado } = useContexto__PaginaPalcoEntrar();
     const palcoAtivo = estado?.ativo ?? false;
     const emEspera = !conectado || meuPapel === 'aguardando' || entrando;
-    const autoEntradaTentadaRef = useRef(false);
-
-    useEffect(() => {
-        if (!palcoAtivo) { autoEntradaTentadaRef.current = false; return; }
-        if (!conectado && !entrando && !autoEntradaTentadaRef.current) { autoEntradaTentadaRef.current = true; entrarNoPalco(); }
-    }, [palcoAtivo, conectado, entrando, entrarNoPalco]);
-
     const falantes: PalcoParticipanteDto[] = estado?.participantes.filter(p => p.papel === 'falante') ?? [];
     const ouvintes: PalcoParticipanteDto[] = estado?.participantes.filter(p => p.papel === 'ouvinte') ?? [];
 
     return (
         <main className={styles.pagina}>
-            <h1 className={styles.titulo}>Palco</h1>
             {!palcoAtivo && <p className={styles.mensagem}>O Palco não está aberto agora.</p>}
             {palcoAtivo && emEspera && <p className={styles.mensagem}>Aguardando entrar no Palco...</p>}
             {palcoAtivo && !emEspera && (

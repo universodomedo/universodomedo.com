@@ -1,15 +1,15 @@
 'use client';
 
+import styles from './styles.module.css';
+
 import cn from 'classnames';
 import { type PalcoParticipanteDto } from 'types-nora-api';
 
-import styles from './styles.module.css';
 import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
 
 type CartaoParticipantePalcoProps = {
     participante: PalcoParticipanteDto;
     processando?: boolean;
-    avatarUsuarioMini?: boolean;
     onDragStart?: (idUsuario: number) => void;
     onDragEnd?: () => void;
 };
