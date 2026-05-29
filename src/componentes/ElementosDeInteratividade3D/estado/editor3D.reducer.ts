@@ -1,5 +1,6 @@
 import { aplicaVistaEixoGrabCameraEditor3D, criaCameraPadraoEditor3D } from '../editor/editor3D.camera';
 import { criaColecaoCenaEditor3D, obtemIdsObjetosColecaoEditor3D, removeObjetosDasColecoesEditor3D } from './editor3D.colecoes';
+import { aplicaInsetFaceSelecionadaEditor3D } from './editor3D.reducer.edicao';
 import { alteraQuantidadeVerticesStateEditor3D, atualizaQuantidadeVerticesStateEditor3D, atualizaVetorMalhaEmCriacaoEditor3D, confirmaMalhaEmCriacaoEditor3D, iniciaMalhaEmCriacaoEditor3D } from './editor3D.reducer.criacao';
 import { aplicaRotationScaleObjetosEditor3D, atualizaObjetosEditor3D, atualizaVetorObjetoEditor3D, moveObjetosEditor3D } from './editor3D.reducer.objetos';
 import { aplicaEixoGrabEditor3D, aplicaEixoRotateEditor3D, aplicaEixoScaleEditor3D, aplicaRotateLivreEditor3D, atualizaEntradaNumericaRotateEditor3D, cancelaModoEditor3D, escalaModoScaleEditor3D, iniciaGrabEditor3D, iniciaRotateEditor3D, iniciaScaleEditor3D, moveModoGrabEditor3D, rotacionaModoRotateEditor3D } from './editor3D.reducer.modo';
@@ -287,6 +288,7 @@ export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Edito
     if (acao.tipo === 'SAI_MODO_EDICAO') return saiModoEdicaoEditor3D(state);
     if (acao.tipo === 'ALTERNA_MODO_OPERACAO') return alternaModoOperacaoEditor3D(state);
     if (acao.tipo === 'SELECIONA_FACE_EDICAO') return selecionaFaceEdicaoEditor3D(state, acao.idObjeto, acao.idFace);
+    if (acao.tipo === 'APLICA_INSET_FACE_SELECIONADA') return aplicaInsetFaceSelecionadaEditor3D(state);
     if (acao.tipo === 'ATIVA_FERRAMENTA_MOUSE') return state.modoAtual.tipo === 'NENHUM' ? { ...state, ferramentaMouse: acao.ferramenta } : state;
     if (acao.tipo === 'RESETA_FERRAMENTA_MOUSE') return { ...state, ferramentaMouse: 'SELECIONAR' };
     if (acao.tipo === 'INICIA_AREA_SELECAO') return state.modoOperacao === 'OBJETO' && state.modoAtual.tipo === 'NENHUM' && state.malhaEmCriacao === null ? { ...state, areaSelecao: { inicioX: acao.x, inicioY: acao.y, fimX: acao.x, fimY: acao.y, adicionando: acao.adicionando } } : state;

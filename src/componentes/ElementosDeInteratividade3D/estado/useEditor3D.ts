@@ -16,6 +16,7 @@ export function useEditor3D(): Editor3DModelo {
         saiModoEdicao: () => dispatch({ tipo: 'SAI_MODO_EDICAO' }),
         alternaModoOperacao: () => dispatch({ tipo: 'ALTERNA_MODO_OPERACAO' }),
         selecionaFaceEdicao: (idObjeto, idFace) => dispatch({ tipo: 'SELECIONA_FACE_EDICAO', idObjeto, idFace }),
+        aplicaInsetFaceSelecionada: () => dispatch({ tipo: 'APLICA_INSET_FACE_SELECIONADA' }),
         ativaFerramentaMouse: ferramenta => dispatch({ tipo: 'ATIVA_FERRAMENTA_MOUSE', ferramenta }),
         resetaFerramentaMouse: () => dispatch({ tipo: 'RESETA_FERRAMENTA_MOUSE' }),
         iniciaAreaSelecao: (x, y, adicionando) => dispatch({ tipo: 'INICIA_AREA_SELECAO', x, y, adicionando }),

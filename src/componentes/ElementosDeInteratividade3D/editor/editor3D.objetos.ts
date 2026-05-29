@@ -11,5 +11,5 @@ export function criaObjetoCenaEditor3D(id: number, tipo: TipoMalhaEditor3D, quan
     const definicao = obtemDefinicaoMalhaEditor3D(tipo);
     const quantidadeVerticesFinal = definicao.quantidadeAjustavel ? limitaQuantidadeVerticesEditor3D(quantidadeVertices, definicao) : definicao.quantidadePadrao;
 
-    return { id: `malha-${id}`, nome: `${definicao.nome} ${id}`, tipo, quantidadeVertices: quantidadeVerticesFinal, posicao: [0, 0, 0], rotacao: [0, 0, 0], escala: [1, 1, 1], matrizBase: criaMatrizIdentidadeEditor3D(), corBase: definicao.corBase, corLuz: definicao.corLuz };
+    return { id: `malha-${id}`, nome: `${definicao.nome} ${id}`, tipo, quantidadeVertices: quantidadeVerticesFinal, posicao: [0, 0, 0], rotacao: [0, 0, 0], escala: [1, 1, 1], matrizBase: criaMatrizIdentidadeEditor3D(), malhaEditavel: null, versaoGeometria: 0, corBase: definicao.corBase, corLuz: definicao.corLuz };
 };

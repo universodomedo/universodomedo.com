@@ -125,6 +125,19 @@ function deletaObjetosSelecionadosPorAtalho(controle: ControleEventosEditor3D, e
     return true;
 };
 
+function aplicaInsetFacesPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
+    const state = controle.refs.estado.current;
+
+    if (!comandoTecladoAreaInterativa3DEstaAtivo('i-inset-faces', event)) return false;
+    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.faceSelecionadaEdicao === null || state.escopoEdicao === null) return false;
+    if (state.faceSelecionadaEdicao.idObjeto !== state.escopoEdicao.idObjetoAtivo) return false;
+
+    controle.refs.acoes.current.aplicaInsetFaceSelecionada();
+    event.preventDefault();
+
+    return true;
+};
+
 export function aplicaAtalhoTecladoEditor3D(controle: ControleEventosEditor3D, event: KeyboardEvent): void {
     const state = controle.refs.estado.current;
 
@@ -134,6 +147,7 @@ export function aplicaAtalhoTecladoEditor3D(controle: ControleEventosEditor3D, e
     if (aplicaEixoModoPorAtalho(controle, event)) return;
     if (aplicaEntradaNumericaRotatePorAtalho(controle, event)) return;
     if (deletaObjetosSelecionadosPorAtalho(controle, event)) return;
+    if (aplicaInsetFacesPorAtalho(controle, event)) return;
     if (state.modoAtual.tipo !== 'NENHUM') return;
 };
 

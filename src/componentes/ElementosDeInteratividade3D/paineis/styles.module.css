@@ -597,6 +597,33 @@ div.linhaObjetoCena:active {
     background: #3a3a3a;
 }
 
+.botaoControle:disabled {
+    color: rgba(255, 255, 255, 0.38);
+    background: #292929;
+    cursor: not-allowed;
+}
+
+.botaoControle:disabled:hover {
+    background: #292929;
+}
+
+.botaoControleComIcone {
+    gap: 0.55em;
+}
+
+.rotuloBotaoControleEditor3D {
+    display: flex;
+    align-items: center;
+    gap: 0.48em;
+    min-width: 0;
+}
+
+.iconeBotaoControleEditor3D {
+    width: 1.15em;
+    height: 1.15em;
+    flex: 0 0 auto;
+}
+
 .botaoControle strong {
     color: rgba(255, 255, 255, 0.44);
     font-size: 0.82em;

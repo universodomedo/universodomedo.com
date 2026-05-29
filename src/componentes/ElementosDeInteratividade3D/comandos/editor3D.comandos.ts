@@ -214,6 +214,15 @@ const comandosAreaInterativa3D = [
         teclado: { teclas: ['delete', 'backspace'], shift: null, ctrlOuMeta: false, alt: false }
     },
     {
+        id: 'i-inset-faces',
+        categoria: 'Atalho',
+        nome: 'Inset Faces',
+        descricao: 'Cria uma face interna menor na face selecionada em Edit Mode.',
+        atalho: 'I',
+        icone: 'selection',
+        teclado: { teclas: ['i'], shift: false, ctrlOuMeta: false, alt: false }
+    },
+    {
         id: 'rmb-add-mesh',
         categoria: 'Mouse',
         nome: 'Menu de criacao',

@@ -95,6 +95,7 @@ function distanciaPontoRetanguloEditor3D(ponto: PontoCanvasEditor3D, retangulo: 
 function criaPontosCaixaEditor3D(x: number, y: number, z: number): Vetor3[] { return [[-x, -y, -z], [x, -y, -z], [-x, y, -z], [x, y, -z], [-x, -y, z], [x, -y, z], [-x, y, z], [x, y, z], [0, 0, 0]]; };
 
 function obtemPontosLimiteObjetoEditor3D(objeto: ObjetoCenaEditor3D): Vetor3[] {
+    if (objeto.malhaEditavel !== null) return [...objeto.malhaEditavel.vertices];
     if (objeto.tipo === 'VERTICE') return [[0, 0, 0]];
     if (objeto.tipo === 'PLANO_2D') return [[-0.6, -0.6, 0], [0.6, -0.6, 0], [-0.6, 0.6, 0], [0.6, 0.6, 0], [0, 0, 0]];
     if (objeto.tipo === 'CIRCULO_2D') return [[-0.62, -0.62, 0], [0.62, -0.62, 0], [-0.62, 0.62, 0], [0.62, 0.62, 0], [0, 0, 0]];

@@ -3,6 +3,18 @@ export type EixoEditor3D = 'X' | 'Y' | 'Z';
 export type IndiceVetor3Editor3D = 0 | 1 | 2;
 export type CampoVetorMalhaEditor3D = 'posicao' | 'rotacao' | 'escala';
 
+export interface FaceMalhaEditavelEditor3D {
+    readonly id: string;
+    readonly nome: string;
+    readonly indicesVertices: readonly number[];
+};
+
+export interface MalhaEditavelEditor3D {
+    readonly vertices: readonly Vetor3[];
+    readonly faces: readonly FaceMalhaEditavelEditor3D[];
+    readonly proximoIdFace: number;
+};
+
 export const tiposMalhaEditor3D = [
     { key: 'VERTICE', nome: 'Vértice', dimensao: 'VERTICE', quantidadePadrao: 1, quantidadeMinima: 1, quantidadeMaxima: 1, quantidadeAjustavel: false, corBase: [0.95, 0.78, 0.36], corLuz: [1, 0.94, 0.66] },
     { key: 'PLANO_2D', nome: 'Plano', dimensao: '2D', quantidadePadrao: 4, quantidadeMinima: 4, quantidadeMaxima: 4, quantidadeAjustavel: false, corBase: [0.52, 0.5, 0.58], corLuz: [0.88, 0.84, 1] },
@@ -25,6 +37,8 @@ export interface ObjetoCenaEditor3D {
     readonly rotacao: Vetor3;
     readonly escala: Vetor3;
     readonly matrizBase: Float32Array;
+    readonly malhaEditavel: MalhaEditavelEditor3D | null;
+    readonly versaoGeometria: number;
     readonly corBase: Vetor3;
     readonly corLuz: Vetor3;
 };

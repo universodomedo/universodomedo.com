@@ -16,7 +16,7 @@ export function useRenderizadorEditor3D(canvasRef: RefObject<HTMLCanvasElement |
     const { estado, acoes } = useEditor3DContexto();
     const refs = useRefsRenderizadorEditor3D(estado, acoes);
     const objetosRenderizaveis = useMemo(() => obtemObjetosRenderizaveisEditor3D(estado), [estado.objetos, estado.malhaEmCriacao]);
-    const assinaturaObjetos = useMemo(() => objetosRenderizaveis.map(objeto => `${objeto.id}:${objeto.tipo}:${objeto.quantidadeVertices}`).join('|'), [objetosRenderizaveis]);
+    const assinaturaObjetos = useMemo(() => objetosRenderizaveis.map(objeto => `${objeto.id}:${objeto.tipo}:${objeto.quantidadeVertices}:${objeto.versaoGeometria}`).join('|'), [objetosRenderizaveis]);
     const [webglDisponivel, setWebglDisponivel] = useState(true);
 
     useEffect(() => {
