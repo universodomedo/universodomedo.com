@@ -83,6 +83,11 @@
     background: rgba(92, 148, 255, 0.18);
 }
 
+.iconeComandoAreaInterativa3D svg {
+    width: 1.35em;
+    height: 1.35em;
+}
+
 .textoComandoAreaInterativa3D {
     display: grid;
     gap: 0.14em;

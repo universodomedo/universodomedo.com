@@ -4,6 +4,7 @@ import styles from './styles.module.css';
 
 import { useState, type MouseEvent } from 'react';
 
+import { IconeVisualComandoAreaInterativa3D } from './IconeVisualComandoAreaInterativa3D';
 import { ModalAreaInterativa3D } from '../modal/ModalAreaInterativa3D';
 import { categoriasComandosAreaInterativa3D, obtemComandosAreaInterativa3DPorCategoria, obtemTextoComandosAreaInterativa3D } from './editor3D.comandos';
 
@@ -84,7 +85,7 @@ export function BotaoComandosAreaInterativa3D() {
                                 <div className={styles.itensComandosAreaInterativa3D}>
                                     {obtemComandosAreaInterativa3DPorCategoria(categoria.key).map(comando => (
                                         <article key={comando.id} className={styles.itemComandoAreaInterativa3D}>
-                                            <span className={styles.iconeComandoAreaInterativa3D}>{comando.icone}</span>
+                                            <span className={styles.iconeComandoAreaInterativa3D}><IconeVisualComandoAreaInterativa3D icone={comando.icone} /></span>
 
                                             <div className={styles.textoComandoAreaInterativa3D}>
                                                 <strong>{comando.nome}</strong>

@@ -19,6 +19,11 @@
     cursor: move;
 }
 
+.canvas3dSelecionarAtivo,
+.canvas3dSelecionarAtivo:active {
+    cursor: default;
+}
+
 .canvas3dGrabAtivo,
 .canvas3dPanAtivo {
     cursor: grab;

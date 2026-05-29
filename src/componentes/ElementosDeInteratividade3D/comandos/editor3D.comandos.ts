@@ -5,6 +5,7 @@ export type CategoriaComandoAreaInterativa3D = 'Modo' | 'Atalho' | 'Mouse' | 'Vi
 export type BotaoMouseComandoAreaInterativa3D = 0 | 1 | 2;
 export type ModificadorComandoAreaInterativa3D = boolean | null;
 export type DirecaoMovimentoSala3DComandoAreaInterativa3D = 'FRENTE' | 'TRAS' | 'DIREITA' | 'ESQUERDA';
+export type IconeComandoAreaInterativa3D = 'arrow-up' | 'axis' | 'backspace' | 'check' | 'compass' | 'cursor' | 'dolly' | 'enter' | 'escape' | 'gizmo' | 'keyboard' | 'move' | 'mouse-pointer' | 'number' | 'orbit' | 'plus' | 'rotate' | 'scale' | 'selection' | 'tab' | 'trash';
 
 export interface AtalhoTecladoComandoAreaInterativa3D {
     readonly teclas: readonly string[];
@@ -42,10 +43,10 @@ export interface ComandoAreaInterativa3D {
     readonly nome: string;
     readonly descricao: string;
     readonly atalho: string | null;
-    readonly icone: string;
+    readonly icone: IconeComandoAreaInterativa3D;
     readonly tituloToolbar?: string;
     readonly subtituloToolbar?: string;
-    readonly iconeToolbar?: string;
+    readonly iconeToolbar?: IconeComandoAreaInterativa3D;
     readonly teclado?: AtalhoTecladoComandoAreaInterativa3D;
     readonly mouse?: GestoMouseComandoAreaInterativa3D;
     readonly rodaMouse?: boolean;
@@ -54,7 +55,7 @@ export interface ComandoAreaInterativa3D {
 export interface EstadoToolbarComandoAreaInterativa3D {
     readonly titulo: string;
     readonly subtitulo: string | null;
-    readonly icone: string;
+    readonly icone: IconeComandoAreaInterativa3D;
     readonly atalho: string | null;
 }
 
@@ -84,6 +85,16 @@ const comandosAreaInterativa3D = [
         atalho: null,
         icone: 'move',
         subtituloToolbar: 'Cursor: Move'
+    },
+    {
+        id: 'shift-modo-selecionar',
+        categoria: 'Modo',
+        nome: 'Selecionar',
+        descricao: 'Modo temporario para selecao multipla e area de selecao enquanto Shift esta pressionado.',
+        atalho: 'Hold Shift',
+        icone: 'cursor',
+        subtituloToolbar: 'Cursor: Default',
+        teclado: { teclas: ['shift'], shift: true, ctrlOuMeta: false, alt: false }
     },
     {
         id: 'mover',
@@ -218,7 +229,31 @@ const comandosAreaInterativa3D = [
         descricao: 'Seleciona o objeto ou face clicada sem arrastar a camera.',
         atalho: 'Clique esquerdo',
         icone: 'move',
-        mouse: { botao: 0, shift: null, ctrlOuMeta: null, alt: null }
+        mouse: { botao: 0, shift: false, ctrlOuMeta: null, alt: null }
+    },
+    {
+        id: 'shift-lmb-seleciona-elemento',
+        categoria: 'Mouse',
+        nome: 'Selecionar multiplo',
+        descricao: 'Adiciona o elemento clicado a selecao atual no modo Selecionar.',
+        atalho: 'Shift + clique esquerdo',
+        icone: 'cursor',
+        tituloToolbar: 'Selecionar',
+        subtituloToolbar: 'Cursor: Default',
+        iconeToolbar: 'cursor',
+        mouse: { botao: 0, shift: true, ctrlOuMeta: null, alt: null }
+    },
+    {
+        id: 'shift-lmb-area-selecao',
+        categoria: 'Mouse',
+        nome: 'Area de selecao',
+        descricao: 'Arrasta uma area para selecionar todos os elementos dentro dela.',
+        atalho: 'Shift + clique esquerdo + arrastar',
+        icone: 'selection',
+        tituloToolbar: 'Selecionar',
+        subtituloToolbar: 'Area de Selecao',
+        iconeToolbar: 'cursor',
+        mouse: { botao: 0, shift: true, ctrlOuMeta: null, alt: null }
     },
     {
         id: 'lmb-confirma-transform',
@@ -248,7 +283,7 @@ const comandosAreaInterativa3D = [
         tituloToolbar: 'Movimentacao',
         subtituloToolbar: 'Rotacionando',
         iconeToolbar: 'move',
-        mouse: { botao: 0, shift: null, ctrlOuMeta: null, alt: null }
+        mouse: { botao: 0, shift: false, ctrlOuMeta: null, alt: null }
     },
     {
         id: 'rmb-pan-camera',
@@ -364,6 +399,8 @@ const comandoPorModoEditor3D: Record<TipoModoEditor3D, IdComandoAreaInterativa3D
 
 const comandoPorFerramentaMouseEditor3D: Record<FerramentaMouseEditor3D, IdComandoAreaInterativa3D> = {
     SELECIONAR: 'selecionar',
+    SELECIONAR_MULTIPLO: 'shift-modo-selecionar',
+    AREA_SELECAO: 'shift-lmb-area-selecao',
     ROTACIONAR: 'lmb-orbita-camera',
     PAN: 'rmb-pan-camera',
     DOLLY: 'mmb-dolly-camera',
@@ -434,6 +471,16 @@ export function comandoTecladoAreaInterativa3DEstaAtivo(id: IdComandoAreaInterat
     }
 
     return comando.teclado.teclas.includes(event.key.toLowerCase()) && modificadorComandoAreaInterativa3DConfere(comando.teclado.shift, event.shiftKey) && modificadorComandoAreaInterativa3DConfere(comando.teclado.ctrlOuMeta, event.ctrlKey || event.metaKey) && modificadorComandoAreaInterativa3DConfere(comando.teclado.alt, event.altKey);
+}
+
+export function comandoTecladoAreaInterativa3DUsaTecla(id: IdComandoAreaInterativa3D, tecla: string): boolean {
+    const comando = obtemComandoAreaInterativa3D(id);
+
+    if (comando.teclado === undefined) {
+        return false;
+    }
+
+    return comando.teclado.teclas.includes(tecla.toLowerCase());
 }
 
 export function comandoMouseAreaInterativa3DEstaAtivo(id: IdComandoAreaInterativa3D, event: EventoMouseComandoAreaInterativa3D): boolean {

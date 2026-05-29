@@ -17,6 +17,7 @@ function obtemClasseCursorEditor3D(tipoModo: string, ferramentaMouse: Ferramenta
     if (ferramentaMouse === 'DOLLY') return styles.canvas3dDollyAtivo;
     if (ferramentaMouse === 'ROTACIONAR_RAPIDO') return styles.canvas3dRotacaoRapidaAtiva;
     if (ferramentaMouse === 'ROTACIONAR') return styles.canvas3dRotacaoMouseAtiva;
+    if (ferramentaMouse === 'SELECIONAR_MULTIPLO' || ferramentaMouse === 'AREA_SELECAO') return styles.canvas3dSelecionarAtivo;
 
     return styles.canvas3dMovimentacaoAtiva;
 };

@@ -227,6 +227,11 @@ export function selecionaObjetoPorAreaEditor3D(controle: ControleEventosEditor3D
 
     if (areaSelecao === null) return;
 
+    selecionaObjetoPorAreaEntrePontosEditor3D(controle, { x: areaSelecao.inicioX, y: areaSelecao.inicioY }, fim, adiciona);
+};
+
+export function selecionaObjetoPorAreaEntrePontosEditor3D(controle: ControleEventosEditor3D, inicio: PontoCanvasEditor3D, fim: PontoCanvasEditor3D, adiciona: boolean): void {
+    const areaSelecao: AreaSelecaoEditor3D = { inicioX: inicio.x, inicioY: inicio.y, fimX: fim.x, fimY: fim.y, adicionando: adiciona };
     const retangulo = criaRetanguloSelecaoEditor3D(areaSelecao, fim);
 
     if (retanguloEhClickEditor3D(retangulo)) {

@@ -34,6 +34,11 @@
     background: rgba(92, 148, 255, 0.28);
 }
 
+.iconeModoAtualEditor3D svg {
+    width: 1.65em;
+    height: 1.65em;
+}
+
 .visualizadorModoAtualEditor3D strong {
     max-width: 7em;
     overflow: hidden;

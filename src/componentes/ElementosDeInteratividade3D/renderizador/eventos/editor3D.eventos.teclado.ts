@@ -1,7 +1,8 @@
 import { ativaCursorVirtualCentroEditor3D, desativaCursorVirtualEditor3D } from './editor3D.eventos.cursor';
-import { comandoTecladoAreaInterativa3DEstaAtivo } from '../../comandos/editor3D.comandos';
+import { comandoTecladoAreaInterativa3DEstaAtivo, comandoTecladoAreaInterativa3DUsaTecla } from '../../comandos/editor3D.comandos';
 import { obtemEixoTeclaEditor3D } from './editor3D.eventos.eixo';
 import type { ControleEventosEditor3D } from './editor3D.eventos.types';
+import type { FerramentaMouseEditor3D } from '../../mouse/editor3D.mouse.tipos';
 
 function eventoVeioDeElementoEditavel(event: KeyboardEvent): boolean {
     const alvo = event.target;
@@ -23,6 +24,19 @@ function encerraPointerLockEditor3D(controle: ControleEventosEditor3D): void {
 };
 
 function entradaNumericaRotateValidaEditor3D(entrada: string): boolean { return /^[-+]?\d*([.,]\d*)?$/.test(entrada); };
+
+function ferramentaMouseEhModoSelecionarEditor3D(ferramentaMouse: FerramentaMouseEditor3D): boolean { return ferramentaMouse === 'SELECIONAR_MULTIPLO' || ferramentaMouse === 'AREA_SELECAO'; };
+
+function ativaModoSelecionarPorShiftEditor3D(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
+    const state = controle.refs.estado.current;
+
+    if (!comandoTecladoAreaInterativa3DEstaAtivo('shift-modo-selecionar', event)) return false;
+    if (state.modoOperacao !== 'OBJETO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || controle.refs.arraste.current.arrastando) return false;
+
+    controle.refs.acoes.current.ativaFerramentaMouse('SELECIONAR_MULTIPLO');
+
+    return true;
+};
 
 function iniciaModoPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
     const state = controle.refs.estado.current;
@@ -115,9 +129,25 @@ export function aplicaAtalhoTecladoEditor3D(controle: ControleEventosEditor3D, e
     const state = controle.refs.estado.current;
 
     if (eventoVeioDeElementoEditavel(event)) return;
+    if (ativaModoSelecionarPorShiftEditor3D(controle, event)) return;
     if (iniciaModoPorAtalho(controle, event)) return;
     if (aplicaEixoModoPorAtalho(controle, event)) return;
     if (aplicaEntradaNumericaRotatePorAtalho(controle, event)) return;
     if (deletaObjetosSelecionadosPorAtalho(controle, event)) return;
     if (state.modoAtual.tipo !== 'NENHUM') return;
+};
+
+export function finalizaModoSelecionarPorShiftEditor3D(controle: ControleEventosEditor3D, event: KeyboardEvent): void {
+    const state = controle.refs.estado.current;
+
+    if (!comandoTecladoAreaInterativa3DUsaTecla('shift-modo-selecionar', event.key)) return;
+    if (state.modoAtual.tipo !== 'NENHUM' || controle.refs.arraste.current.arrastando) return;
+    if (ferramentaMouseEhModoSelecionarEditor3D(state.ferramentaMouse)) controle.refs.acoes.current.resetaFerramentaMouse();
+};
+
+export function cancelaModoSelecionarPorPerdaFocoEditor3D(controle: ControleEventosEditor3D): void {
+    const state = controle.refs.estado.current;
+
+    if (state.modoAtual.tipo !== 'NENHUM' || controle.refs.arraste.current.arrastando) return;
+    if (ferramentaMouseEhModoSelecionarEditor3D(state.ferramentaMouse)) controle.refs.acoes.current.resetaFerramentaMouse();
 };

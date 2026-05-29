@@ -1,1 +1,1 @@
-export type FerramentaMouseEditor3D = 'SELECIONAR' | 'ROTACIONAR' | 'PAN' | 'DOLLY' | 'ROTACIONAR_RAPIDO';
+export type FerramentaMouseEditor3D = 'SELECIONAR' | 'SELECIONAR_MULTIPLO' | 'AREA_SELECAO' | 'ROTACIONAR' | 'PAN' | 'DOLLY' | 'ROTACIONAR_RAPIDO';

@@ -1,4 +1,4 @@
-import { aplicaAtalhoTecladoEditor3D } from './editor3D.eventos.teclado';
+import { aplicaAtalhoTecladoEditor3D, cancelaModoSelecionarPorPerdaFocoEditor3D, finalizaModoSelecionarPorShiftEditor3D } from './editor3D.eventos.teclado';
 import { aplicaDollyScrollMouseEditor3D, finalizaArrasteCameraEditor3D, finalizaArrastePorPerdaPointerLockEditor3D, iniciaArrasteCameraEditor3D, moveMouseEditor3D } from './editor3D.eventos.mouse';
 import { finalizaOuCancelaModoAtualEditor3D } from './editor3D.eventos.modo';
 import { ocultaCursorFantasmaEditor3D } from './editor3D.eventos.cursor';
@@ -11,6 +11,8 @@ export function registraEventosRenderizadorEditor3D(controle: ControleEventosEdi
     const finalizaModo = (event: MouseEvent): void => finalizaOuCancelaModoAtualEditor3D(controle, event);
     const aplicaDollyScroll = (event: WheelEvent): void => aplicaDollyScrollMouseEditor3D(controle, event);
     const aplicaAtalho = (event: KeyboardEvent): void => aplicaAtalhoTecladoEditor3D(controle, event);
+    const finalizaModoSelecionar = (event: KeyboardEvent): void => finalizaModoSelecionarPorShiftEditor3D(controle, event);
+    const cancelaModoSelecionar = (): void => cancelaModoSelecionarPorPerdaFocoEditor3D(controle);
     const bloqueiaMenuModo = (event: MouseEvent): void => {
         if (controle.refs.estado.current.modoAtual.tipo !== 'NENHUM' || controle.refs.arraste.current.arrastando) event.preventDefault();
     };
@@ -24,6 +26,8 @@ export function registraEventosRenderizadorEditor3D(controle: ControleEventosEdi
     document.addEventListener('contextmenu', bloqueiaMenuModo);
     document.addEventListener('pointerlockchange', finalizaPointerLock);
     window.addEventListener('keydown', aplicaAtalho);
+    window.addEventListener('keyup', finalizaModoSelecionar);
+    window.addEventListener('blur', cancelaModoSelecionar);
 
     return () => {
         const animacaoCameraFrameId = controle.refs.arraste.current.animacaoCameraFrameId;
@@ -36,6 +40,8 @@ export function registraEventosRenderizadorEditor3D(controle: ControleEventosEdi
         document.removeEventListener('contextmenu', bloqueiaMenuModo);
         document.removeEventListener('pointerlockchange', finalizaPointerLock);
         window.removeEventListener('keydown', aplicaAtalho);
+        window.removeEventListener('keyup', finalizaModoSelecionar);
+        window.removeEventListener('blur', cancelaModoSelecionar);
         ocultaCursorFantasmaEditor3D(controle);
         if (animacaoCameraFrameId !== null) cancelAnimationFrame(animacaoCameraFrameId);
         if (document.pointerLockElement === controle.canvas) document.exitPointerLock();
