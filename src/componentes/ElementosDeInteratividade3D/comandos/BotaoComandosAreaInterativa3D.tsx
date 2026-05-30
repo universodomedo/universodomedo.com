@@ -76,7 +76,7 @@ export function BotaoComandosAreaInterativa3D() {
             </div>
 
             {aberto && (
-                <ModalAreaInterativa3D titulo="Comandos" subtitulo="Modos e atalhos da area interativa" ariaLabel="Comandos da area interativa 3D" fecha={fechaModal} acoes={<button type="button" onClick={copiaComandos}>{obtemTextoBotaoCopia(statusCopia)}</button>}>
+                <ModalAreaInterativa3D titulo="Comandos" subtitulo="Modos, atalhos e visualizacao da area interativa" ariaLabel="Comandos da area interativa 3D" fecha={fechaModal} acoes={<button type="button" onClick={copiaComandos}>{obtemTextoBotaoCopia(statusCopia)}</button>}>
                     <div className={styles.listaComandosAreaInterativa3D}>
                         {categoriasComandosAreaInterativa3D.map(categoria => (
                             <section key={categoria.key} className={styles.grupoComandosAreaInterativa3D}>

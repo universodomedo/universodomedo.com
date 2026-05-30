@@ -14,6 +14,8 @@ export function useEditor3D(): Editor3DModelo {
         resetaCamera: () => dispatch({ tipo: 'RESETA_CAMERA' }),
         exibeNotificacaoAreaInterativa: texto => dispatch({ tipo: 'EXIBE_NOTIFICACAO_AREA_INTERATIVA', texto }),
         limpaNotificacaoAreaInterativa: id => dispatch({ tipo: 'LIMPA_NOTIFICACAO_AREA_INTERATIVA', id }),
+        defineModoVisualizacaoViewport: modoVisualizacaoViewport => dispatch({ tipo: 'DEFINE_MODO_VISUALIZACAO_VIEWPORT', modoVisualizacaoViewport }),
+        alternaVisualizacaoXRay: () => dispatch({ tipo: 'ALTERNA_VISUALIZACAO_XRAY' }),
         entraModoEdicao: () => dispatch({ tipo: 'ENTRA_MODO_EDICAO' }),
         saiModoEdicao: () => dispatch({ tipo: 'SAI_MODO_EDICAO' }),
         alternaModoOperacao: () => dispatch({ tipo: 'ALTERNA_MODO_OPERACAO' }),

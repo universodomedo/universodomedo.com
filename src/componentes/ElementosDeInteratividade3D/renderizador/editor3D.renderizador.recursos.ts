@@ -3,11 +3,12 @@ import { criaGeometriaArestasEdicaoEditor3D, criaGeometriaVerticesEdicaoEditor3D
 import { criaGeometriaFaceEditor3D } from '../geometria/editor3D.geometria.base';
 import { criaGeometriaObjetoEditor3D } from '../geometria/primitivas/editor3D.geometria.primitivas';
 import { criaGeometriasGizmoEixosEditor3D, criaGeometriasOrigemEditor3D } from '../geometria/guias/editor3D.geometria.guias';
+import { criaMalhaEditavelPorGeometriaEditor3D } from '../geometria/editor3D.geometria.malhaEditavel';
 import { criaGuiasPorPlanoEditor3D, criaGuiasRenderizadasEditor3D, obtemBuffersGuiasEditor3D } from './editor3D.renderizador.helpers';
 import { criaProgramaEditor3D } from '../webgl/editor3D.webgl.programa';
-import type { FaceGeometriaEditor3D } from '../geometria/editor3D.geometria.types';
+import type { FaceGeometriaEditor3D, GeometriaEditor3D } from '../geometria/editor3D.geometria.types';
 import type { ArestasEdicaoRenderizadasEditor3D, FaceRenderizadaEditor3D, RecursosRenderizadorEditor3D, VerticesEdicaoRenderizadosEditor3D } from './editor3D.renderizador.types';
-import type { ObjetoCenaEditor3D } from '../editor/editor3D.tipos';
+import type { MalhaEditavelEditor3D, ObjetoCenaEditor3D } from '../editor/editor3D.tipos';
 
 function criaBuffersFacesEditor3D(gl: WebGLRenderingContext, faces: readonly FaceGeometriaEditor3D[]): { readonly faces: FaceRenderizadaEditor3D[]; readonly buffers: BuffersEditor3D[]; readonly erro: boolean } {
     const facesRenderizadas: FaceRenderizadaEditor3D[] = [];
@@ -42,10 +43,14 @@ function criaBuffersVerticesEdicaoEditor3D(gl: WebGLRenderingContext, objeto: Ob
     return { verticesEdicao: { geometria, buffers }, buffers: [buffers], erro: false };
 };
 
-function criaBuffersArestasEdicaoEditor3D(gl: WebGLRenderingContext, objeto: ObjetoCenaEditor3D): { readonly arestasEdicao: ArestasEdicaoRenderizadasEditor3D | null; readonly buffers: BuffersEditor3D[]; readonly erro: boolean } {
-    if (objeto.malhaEditavel === null) return { arestasEdicao: null, buffers: [], erro: false };
+function obtemMalhaArestasVisualizacaoEditor3D(objeto: ObjetoCenaEditor3D, geometria: GeometriaEditor3D): MalhaEditavelEditor3D | null { return objeto.malhaEditavel ?? criaMalhaEditavelPorGeometriaEditor3D(geometria); };
 
-    const geometriaArestas = criaGeometriaArestasEdicaoEditor3D(objeto.malhaEditavel);
+function criaBuffersArestasEdicaoEditor3D(gl: WebGLRenderingContext, objeto: ObjetoCenaEditor3D, geometria: GeometriaEditor3D): { readonly arestasEdicao: ArestasEdicaoRenderizadasEditor3D | null; readonly buffers: BuffersEditor3D[]; readonly erro: boolean } {
+    const malhaArestas = obtemMalhaArestasVisualizacaoEditor3D(objeto, geometria);
+
+    if (malhaArestas === null) return { arestasEdicao: null, buffers: [], erro: false };
+
+    const geometriaArestas = criaGeometriaArestasEdicaoEditor3D(malhaArestas);
     const buffers = criaBuffersEditor3D(gl, geometriaArestas.geometria);
 
     if (buffers === null) return { arestasEdicao: null, buffers: [], erro: true };
@@ -79,7 +84,7 @@ function criaBuffersMalhas(gl: WebGLRenderingContext, objetos: readonly ObjetoCe
 
         const faces = criaBuffersFacesEditor3D(gl, geometria.faces);
         const verticesEdicao = criaBuffersVerticesEdicaoEditor3D(gl, objeto);
-        const arestasEdicao = criaBuffersArestasEdicaoEditor3D(gl, objeto);
+        const arestasEdicao = criaBuffersArestasEdicaoEditor3D(gl, objeto, geometria);
 
         buffersCriados.push(buffers, ...faces.buffers, ...verticesEdicao.buffers, ...arestasEdicao.buffers);
         if (faces.erro || verticesEdicao.erro || arestasEdicao.erro) {

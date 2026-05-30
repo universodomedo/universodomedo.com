@@ -1,8 +1,9 @@
 import type { TipoModoEditor3D } from '../modos/editor3D.modo.tipos';
 import type { FerramentaMouseEditor3D } from '../mouse/editor3D.mouse.tipos';
 import type { ModoOperacaoEditor3D, TipoSelecaoEdicaoEditor3D } from '../modoOperacao/editor3D.modoOperacao.tipos';
+import { modosVisualizacaoViewportEditor3D, type ModoVisualizacaoViewportEditor3D } from '../viewport/editor3D.viewport.tipos';
 
-export type CategoriaComandoAreaInterativa3D = 'Modo' | 'Atalho' | 'Mouse' | 'Viewport' | 'Sala de Jogo';
+export type CategoriaComandoAreaInterativa3D = 'Modo' | 'Visualizacao' | 'Atalho' | 'Mouse' | 'Viewport' | 'Sala de Jogo';
 export type BotaoMouseComandoAreaInterativa3D = 0 | 1 | 2;
 export type ModificadorComandoAreaInterativa3D = boolean | null;
 export type DirecaoMovimentoSala3DComandoAreaInterativa3D = 'FRENTE' | 'TRAS' | 'DIREITA' | 'ESQUERDA';
@@ -263,6 +264,51 @@ const comandosAreaInterativa3D = [
         teclado: { teclas: ['3'], shift: false, ctrlOuMeta: false, alt: false }
     },
     {
+        id: 'alt-1-visualizacao-solido',
+        categoria: 'Visualizacao',
+        nome: 'Solido',
+        descricao: 'Exibe objetos com faces preenchidas, volume legivel e aparencia neutra para edicao e inspecao de forma.',
+        atalho: 'Alt + 1',
+        icone: 'gizmo',
+        teclado: { teclas: ['1'], shift: false, ctrlOuMeta: false, alt: true }
+    },
+    {
+        id: 'alt-2-visualizacao-estrutura',
+        categoria: 'Visualizacao',
+        nome: 'Estrutura',
+        descricao: 'Exibe objetos como estrutura de malha e arestas para visualizar topologia, divisao de faces e densidade.',
+        atalho: 'Alt + 2',
+        icone: 'edge',
+        teclado: { teclas: ['2'], shift: false, ctrlOuMeta: false, alt: true }
+    },
+    {
+        id: 'alt-3-visualizacao-materiais',
+        categoria: 'Visualizacao',
+        nome: 'Materiais',
+        descricao: 'Exibe materiais, cores e texturas aplicadas com iluminacao de preview controlada pelo editor.',
+        atalho: 'Alt + 3',
+        icone: 'face',
+        teclado: { teclas: ['3'], shift: false, ctrlOuMeta: false, alt: true }
+    },
+    {
+        id: 'alt-4-visualizacao-renderizado',
+        categoria: 'Visualizacao',
+        nome: 'Renderizado',
+        descricao: 'Exibe a cena o mais proximo possivel do resultado final usando os recursos visuais disponiveis no viewport.',
+        atalho: 'Alt + 4',
+        icone: 'check',
+        teclado: { teclas: ['4'], shift: false, ctrlOuMeta: false, alt: true }
+    },
+    {
+        id: 'alt-x-visualizacao-xray',
+        categoria: 'Visualizacao',
+        nome: 'X-Ray',
+        descricao: 'Alterna transparencia do viewport nas visualizacoes Solido e Estrutura para enxergar elementos ocultos.',
+        atalho: 'Alt + X',
+        icone: 'gizmo',
+        teclado: { teclas: ['x'], shift: false, ctrlOuMeta: false, alt: true }
+    },
+    {
         id: 'enter-confirma-inset-face',
         categoria: 'Atalho',
         nome: 'Confirmar Inset Faces',
@@ -486,6 +532,7 @@ export type IdComandoAreaInterativa3D = typeof comandosAreaInterativa3D[number][
 
 export const categoriasComandosAreaInterativa3D = [
     { key: 'Modo', titulo: 'Modos' },
+    { key: 'Visualizacao', titulo: 'Visualizacao do Viewport' },
     { key: 'Atalho', titulo: 'Atalhos' },
     { key: 'Mouse', titulo: 'Mouse' },
     { key: 'Viewport', titulo: 'Viewport' },
@@ -515,6 +562,13 @@ const comandoPorTipoSelecaoEdicaoEditor3D: Record<TipoSelecaoEdicaoEditor3D, IdC
     FACE: '3-selecao-face-edicao'
 };
 
+const comandoPorModoVisualizacaoViewportEditor3D: Record<ModoVisualizacaoViewportEditor3D, IdComandoAreaInterativa3D> = {
+    SOLIDO: 'alt-1-visualizacao-solido',
+    ESTRUTURA: 'alt-2-visualizacao-estrutura',
+    MATERIAIS: 'alt-3-visualizacao-materiais',
+    RENDERIZADO: 'alt-4-visualizacao-renderizado'
+};
+
 export function obtemComandosAreaInterativa3D(): readonly ComandoAreaInterativa3D[] {
     return comandosAreaInterativa3D;
 }
@@ -541,6 +595,18 @@ export function obtemEstadoToolbarInteracaoAtualEditor3D(tipoModo: TipoModoEdito
     const comando = insetFaceAtivo ? obtemComandoAreaInterativa3D('i-inset-faces') : tipoModo === 'NENHUM' && ferramentaMouse === 'SELECIONAR' && modoOperacao === 'EDICAO' ? obtemComandoAreaInterativa3D(comandoPorTipoSelecaoEdicaoEditor3D[tipoSelecaoEdicao]) : obtemComandoInteracaoAtualEditor3D(tipoModo, ferramentaMouse);
 
     return { titulo: comando.tituloToolbar ?? comando.nome, subtitulo: comando.subtituloToolbar ?? null, icone: comando.iconeToolbar ?? comando.icone, atalho: comando.atalho };
+}
+
+export function obtemComandoModoVisualizacaoViewportEditor3D(modo: ModoVisualizacaoViewportEditor3D): ComandoAreaInterativa3D {
+    return obtemComandoAreaInterativa3D(comandoPorModoVisualizacaoViewportEditor3D[modo]);
+}
+
+export function obtemModoVisualizacaoViewportPorAtalhoEditor3D(event: EventoTecladoComandoAreaInterativa3D): ModoVisualizacaoViewportEditor3D | null {
+    for (const modo of modosVisualizacaoViewportEditor3D) {
+        if (comandoTecladoAreaInterativa3DEstaAtivo(comandoPorModoVisualizacaoViewportEditor3D[modo], event)) return modo;
+    }
+
+    return null;
 }
 
 export function obtemTextoComandosAreaInterativa3D(): string {

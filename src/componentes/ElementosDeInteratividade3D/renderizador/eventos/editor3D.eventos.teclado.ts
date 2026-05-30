@@ -1,9 +1,12 @@
 import { ativaCursorVirtualCentroEditor3D, desativaCursorVirtualEditor3D } from './editor3D.eventos.cursor';
-import { comandoTecladoAreaInterativa3DEstaAtivo, comandoTecladoAreaInterativa3DUsaTecla } from '../../comandos/editor3D.comandos';
+import { comandoTecladoAreaInterativa3DEstaAtivo, comandoTecladoAreaInterativa3DUsaTecla, obtemModoVisualizacaoViewportPorAtalhoEditor3D } from '../../comandos/editor3D.comandos';
 import { obtemMotivoBloqueioInsetFacesEditor3D } from '../../estado/editor3D.estado.edicao.selectors';
 import { obtemEixoTeclaEditor3D } from './editor3D.eventos.eixo';
+import { modoVisualizacaoViewportPermiteXRayEditor3D } from '../../viewport/editor3D.viewport.tipos';
 import type { ControleEventosEditor3D } from './editor3D.eventos.types';
 import type { FerramentaMouseEditor3D } from '../../mouse/editor3D.mouse.tipos';
+
+const avisoXRayIncompativelEditor3D = 'X-Ray so esta disponivel nas visualizacoes Solido e Estrutura.';
 
 function eventoVeioDeElementoEditavel(event: KeyboardEvent): boolean {
     const alvo = event.target;
@@ -35,6 +38,35 @@ function ativaModoSelecionarPorShiftEditor3D(controle: ControleEventosEditor3D, 
     if (state.modoOperacao !== 'OBJETO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || controle.refs.arraste.current.arrastando) return false;
 
     controle.refs.acoes.current.ativaFerramentaMouse('SELECIONAR_MULTIPLO');
+
+    return true;
+};
+
+function defineModoVisualizacaoViewportPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
+    const modoVisualizacaoViewport = obtemModoVisualizacaoViewportPorAtalhoEditor3D(event);
+
+    if (modoVisualizacaoViewport === null) return false;
+
+    controle.refs.acoes.current.defineModoVisualizacaoViewport(modoVisualizacaoViewport);
+    event.preventDefault();
+
+    return true;
+};
+
+function alternaVisualizacaoXRayPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
+    const state = controle.refs.estado.current;
+
+    if (!comandoTecladoAreaInterativa3DEstaAtivo('alt-x-visualizacao-xray', event)) return false;
+
+    if (!modoVisualizacaoViewportPermiteXRayEditor3D(state.modoVisualizacaoViewport)) {
+        controle.refs.acoes.current.exibeNotificacaoAreaInterativa(avisoXRayIncompativelEditor3D);
+        event.preventDefault();
+
+        return true;
+    }
+
+    controle.refs.acoes.current.alternaVisualizacaoXRay();
+    event.preventDefault();
 
     return true;
 };
@@ -186,6 +218,8 @@ export function aplicaAtalhoTecladoEditor3D(controle: ControleEventosEditor3D, e
     const state = controle.refs.estado.current;
 
     if (eventoVeioDeElementoEditavel(event)) return;
+    if (defineModoVisualizacaoViewportPorAtalho(controle, event)) return;
+    if (alternaVisualizacaoXRayPorAtalho(controle, event)) return;
     if (finalizaInsetFacesPorAtalho(controle, event)) return;
     if (ativaModoSelecionarPorShiftEditor3D(controle, event)) return;
     if (iniciaModoPorAtalho(controle, event)) return;

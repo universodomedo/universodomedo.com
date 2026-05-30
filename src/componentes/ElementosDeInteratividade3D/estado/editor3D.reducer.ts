@@ -7,6 +7,7 @@ import { aplicaEixoGrabEditor3D, aplicaEixoRotateEditor3D, aplicaEixoScaleEditor
 import { obtemDefinicaoMalhaEditor3D } from '../editor/editor3D.objetos';
 import { criaModoInativoEditor3D, modoEditor3DEstaAtivo } from '../modos/editor3D.modo.utils';
 import { criaEstadoInicialEditor3D } from './editor3D.estado.inicial';
+import { modoVisualizacaoViewportPermiteXRayEditor3D } from '../viewport/editor3D.viewport.tipos';
 import type { ColecaoCenaEditor3D, Editor3DAcao, Editor3DState, PosicaoSoltarCenaEditor3D } from './editor3D.estado.types';
 import type { EscopoEdicaoEditor3D } from '../modoOperacao/editor3D.modoOperacao.tipos';
 import type { ObjetoCenaEditor3D } from '../editor/editor3D.tipos';
@@ -281,11 +282,25 @@ function atualizaVetorObjetoSelecionadoEditor3D(state: Editor3DState, acao: Extr
     return { ...state, objetos: atualizaObjetosEditor3D(state.objetos, state.idsObjetosSelecionados, objeto => atualizaVetorObjetoEditor3D(objeto, acao.campo, acao.indice, acao.valor)) };
 };
 
+function defineModoVisualizacaoViewportEditor3D(state: Editor3DState, acao: Extract<Editor3DAcao, { readonly tipo: 'DEFINE_MODO_VISUALIZACAO_VIEWPORT' }>): Editor3DState {
+    const visualizacaoXRayAtiva = modoVisualizacaoViewportPermiteXRayEditor3D(acao.modoVisualizacaoViewport) ? state.visualizacaoXRayAtiva : false;
+
+    return { ...state, modoVisualizacaoViewport: acao.modoVisualizacaoViewport, visualizacaoXRayAtiva };
+};
+
+function alternaVisualizacaoXRayEditor3D(state: Editor3DState): Editor3DState {
+    if (!modoVisualizacaoViewportPermiteXRayEditor3D(state.modoVisualizacaoViewport)) return state;
+
+    return { ...state, visualizacaoXRayAtiva: !state.visualizacaoXRayAtiva };
+};
+
 export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Editor3DState {
     if (acao.tipo === 'ATUALIZA_CAMERA') return { ...state, camera: acao.camera };
     if (acao.tipo === 'RESETA_CAMERA') return { ...state, camera: criaCameraPadraoEditor3D() };
     if (acao.tipo === 'EXIBE_NOTIFICACAO_AREA_INTERATIVA') return { ...state, notificacaoAreaInterativa: { id: state.proximoIdNotificacaoAreaInterativa, texto: acao.texto }, proximoIdNotificacaoAreaInterativa: state.proximoIdNotificacaoAreaInterativa + 1 };
     if (acao.tipo === 'LIMPA_NOTIFICACAO_AREA_INTERATIVA') return state.notificacaoAreaInterativa?.id === acao.id ? { ...state, notificacaoAreaInterativa: null } : state;
+    if (acao.tipo === 'DEFINE_MODO_VISUALIZACAO_VIEWPORT') return defineModoVisualizacaoViewportEditor3D(state, acao);
+    if (acao.tipo === 'ALTERNA_VISUALIZACAO_XRAY') return alternaVisualizacaoXRayEditor3D(state);
     if (acao.tipo === 'ENTRA_MODO_EDICAO') return entraModoEdicaoEditor3D(state);
     if (acao.tipo === 'SAI_MODO_EDICAO') return saiModoEdicaoEditor3D(state);
     if (acao.tipo === 'ALTERNA_MODO_OPERACAO') return alternaModoOperacaoEditor3D(state);
