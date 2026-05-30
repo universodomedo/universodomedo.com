@@ -1,11 +1,12 @@
 import type { TipoModoEditor3D } from '../modos/editor3D.modo.tipos';
 import type { FerramentaMouseEditor3D } from '../mouse/editor3D.mouse.tipos';
+import type { ModoOperacaoEditor3D, TipoSelecaoEdicaoEditor3D } from '../modoOperacao/editor3D.modoOperacao.tipos';
 
 export type CategoriaComandoAreaInterativa3D = 'Modo' | 'Atalho' | 'Mouse' | 'Viewport' | 'Sala de Jogo';
 export type BotaoMouseComandoAreaInterativa3D = 0 | 1 | 2;
 export type ModificadorComandoAreaInterativa3D = boolean | null;
 export type DirecaoMovimentoSala3DComandoAreaInterativa3D = 'FRENTE' | 'TRAS' | 'DIREITA' | 'ESQUERDA';
-export type IconeComandoAreaInterativa3D = 'arrow-up' | 'axis' | 'backspace' | 'check' | 'compass' | 'cursor' | 'dolly' | 'enter' | 'escape' | 'gizmo' | 'keyboard' | 'move' | 'mouse-pointer' | 'number' | 'orbit' | 'plus' | 'rotate' | 'scale' | 'selection' | 'tab' | 'trash';
+export type IconeComandoAreaInterativa3D = 'arrow-up' | 'axis' | 'backspace' | 'check' | 'compass' | 'cursor' | 'dolly' | 'edge' | 'enter' | 'escape' | 'face' | 'gizmo' | 'keyboard' | 'move' | 'mouse-pointer' | 'number' | 'orbit' | 'plus' | 'rotate' | 'scale' | 'selection' | 'tab' | 'trash' | 'vertex';
 
 export interface AtalhoTecladoComandoAreaInterativa3D {
     readonly teclas: readonly string[];
@@ -217,10 +218,67 @@ const comandosAreaInterativa3D = [
         id: 'i-inset-faces',
         categoria: 'Atalho',
         nome: 'Inset Faces',
-        descricao: 'Cria uma face interna menor na face selecionada em Edit Mode.',
+        descricao: 'Inicia um inset interativo na face selecionada em Edit Mode com Selecao de Face ativa.',
         atalho: 'I',
-        icone: 'selection',
+        icone: 'face',
+        tituloToolbar: 'Inset Faces',
+        subtituloToolbar: 'Ajustando tamanho',
+        iconeToolbar: 'face',
         teclado: { teclas: ['i'], shift: false, ctrlOuMeta: false, alt: false }
+    },
+    {
+        id: '1-selecao-vertice-edicao',
+        categoria: 'Modo',
+        nome: 'Selecao de Vertice',
+        descricao: 'No Edit Mode, seleciona vertices e permite puxar o vertice clicado.',
+        atalho: '1',
+        icone: 'vertex',
+        tituloToolbar: 'Edit Mode',
+        subtituloToolbar: 'Selecao de Vertice',
+        iconeToolbar: 'vertex',
+        teclado: { teclas: ['1'], shift: false, ctrlOuMeta: false, alt: false }
+    },
+    {
+        id: '2-selecao-aresta-edicao',
+        categoria: 'Modo',
+        nome: 'Selecao de Aresta',
+        descricao: 'No Edit Mode, seleciona arestas e permite puxar a aresta clicada.',
+        atalho: '2',
+        icone: 'edge',
+        tituloToolbar: 'Edit Mode',
+        subtituloToolbar: 'Selecao de Aresta',
+        iconeToolbar: 'edge',
+        teclado: { teclas: ['2'], shift: false, ctrlOuMeta: false, alt: false }
+    },
+    {
+        id: '3-selecao-face-edicao',
+        categoria: 'Modo',
+        nome: 'Selecao de Face',
+        descricao: 'No Edit Mode, seleciona faces e permite puxar a face clicada.',
+        atalho: '3',
+        icone: 'face',
+        tituloToolbar: 'Edit Mode',
+        subtituloToolbar: 'Selecao de Face',
+        iconeToolbar: 'face',
+        teclado: { teclas: ['3'], shift: false, ctrlOuMeta: false, alt: false }
+    },
+    {
+        id: 'enter-confirma-inset-face',
+        categoria: 'Atalho',
+        nome: 'Confirmar Inset Faces',
+        descricao: 'Confirma o inset interativo em andamento.',
+        atalho: 'Enter',
+        icone: 'enter',
+        teclado: { teclas: ['enter'], shift: null, ctrlOuMeta: false, alt: false }
+    },
+    {
+        id: 'escape-cancela-inset-face',
+        categoria: 'Atalho',
+        nome: 'Cancelar Inset Faces',
+        descricao: 'Cancela o inset interativo e restaura a face original.',
+        atalho: 'Esc',
+        icone: 'escape',
+        teclado: { teclas: ['escape'], shift: null, ctrlOuMeta: false, alt: false }
     },
     {
         id: 'rmb-add-mesh',
@@ -235,8 +293,17 @@ const comandosAreaInterativa3D = [
         id: 'lmb-seleciona-elemento',
         categoria: 'Mouse',
         nome: 'Selecionar elemento',
-        descricao: 'Seleciona o objeto ou face clicada sem arrastar a camera.',
+        descricao: 'Seleciona o objeto ou o elemento editavel clicado sem arrastar a camera.',
         atalho: 'Clique esquerdo',
+        icone: 'move',
+        mouse: { botao: 0, shift: false, ctrlOuMeta: null, alt: null }
+    },
+    {
+        id: 'lmb-arrasta-selecao-edicao',
+        categoria: 'Mouse',
+        nome: 'Puxar selecao de edicao',
+        descricao: 'No Edit Mode, arrasta o vertice, aresta ou face clicada para editar a geometria.',
+        atalho: 'Clique esquerdo + arrastar em Vertice/Aresta/Face',
         icone: 'move',
         mouse: { botao: 0, shift: false, ctrlOuMeta: null, alt: null }
     },
@@ -272,6 +339,32 @@ const comandosAreaInterativa3D = [
         atalho: 'Clique esquerdo',
         icone: 'mouse-pointer',
         mouse: { botao: 0, shift: null, ctrlOuMeta: null, alt: null }
+    },
+    {
+        id: 'lmb-confirma-inset-face',
+        categoria: 'Mouse',
+        nome: 'Confirmar Inset Faces',
+        descricao: 'Confirma o inset interativo em andamento.',
+        atalho: 'Clique esquerdo',
+        icone: 'mouse-pointer',
+        mouse: { botao: 0, shift: null, ctrlOuMeta: null, alt: null }
+    },
+    {
+        id: 'mouse-ajusta-inset-face',
+        categoria: 'Mouse',
+        nome: 'Ajustar Inset Faces',
+        descricao: 'Move o mouse apos iniciar Inset Faces para aumentar ou diminuir a face interna antes de confirmar.',
+        atalho: 'Mover mouse apos I',
+        icone: 'face'
+    },
+    {
+        id: 'rmb-cancela-inset-face',
+        categoria: 'Mouse',
+        nome: 'Cancelar Inset Faces',
+        descricao: 'Cancela o inset interativo em andamento.',
+        atalho: 'Botao direito',
+        icone: 'mouse-pointer',
+        mouse: { botao: 2, shift: null, ctrlOuMeta: null, alt: null }
     },
     {
         id: 'rmb-cancela-transform',
@@ -416,6 +509,12 @@ const comandoPorFerramentaMouseEditor3D: Record<FerramentaMouseEditor3D, IdComan
     ROTACIONAR_RAPIDO: 'alt-mmb-snap-orbital'
 };
 
+const comandoPorTipoSelecaoEdicaoEditor3D: Record<TipoSelecaoEdicaoEditor3D, IdComandoAreaInterativa3D> = {
+    VERTICE: '1-selecao-vertice-edicao',
+    ARESTA: '2-selecao-aresta-edicao',
+    FACE: '3-selecao-face-edicao'
+};
+
 export function obtemComandosAreaInterativa3D(): readonly ComandoAreaInterativa3D[] {
     return comandosAreaInterativa3D;
 }
@@ -438,8 +537,8 @@ export function obtemComandoInteracaoAtualEditor3D(tipoModo: TipoModoEditor3D, f
     return obtemComandoAreaInterativa3D(idComando);
 }
 
-export function obtemEstadoToolbarInteracaoAtualEditor3D(tipoModo: TipoModoEditor3D, ferramentaMouse: FerramentaMouseEditor3D): EstadoToolbarComandoAreaInterativa3D {
-    const comando = obtemComandoInteracaoAtualEditor3D(tipoModo, ferramentaMouse);
+export function obtemEstadoToolbarInteracaoAtualEditor3D(tipoModo: TipoModoEditor3D, ferramentaMouse: FerramentaMouseEditor3D, modoOperacao: ModoOperacaoEditor3D, tipoSelecaoEdicao: TipoSelecaoEdicaoEditor3D, insetFaceAtivo: boolean): EstadoToolbarComandoAreaInterativa3D {
+    const comando = insetFaceAtivo ? obtemComandoAreaInterativa3D('i-inset-faces') : tipoModo === 'NENHUM' && ferramentaMouse === 'SELECIONAR' && modoOperacao === 'EDICAO' ? obtemComandoAreaInterativa3D(comandoPorTipoSelecaoEdicaoEditor3D[tipoSelecaoEdicao]) : obtemComandoInteracaoAtualEditor3D(tipoModo, ferramentaMouse);
 
     return { titulo: comando.tituloToolbar ?? comando.nome, subtitulo: comando.subtituloToolbar ?? null, icone: comando.iconeToolbar ?? comando.icone, atalho: comando.atalho };
 }

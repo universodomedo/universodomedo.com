@@ -1,4 +1,5 @@
 import type { BuffersEditor3D } from '../webgl/editor3D.webgl.buffers';
+import type { ArestaMalhaEditavelEditor3D } from '../geometria/editor3D.geometria.malhaEditavel';
 import type { GeometriaEditor3D, GuiaEditor3D } from '../geometria/editor3D.geometria.types';
 import type { ObjetoCenaEditor3D } from '../editor/editor3D.tipos';
 import type { PlanoGuiaEditor3D } from '../editor/editor3D.camera';
@@ -10,11 +11,25 @@ export interface FaceRenderizadaEditor3D {
     readonly buffers: BuffersEditor3D;
 };
 
+export interface VerticesEdicaoRenderizadosEditor3D {
+    readonly geometria: GeometriaEditor3D;
+    readonly buffers: BuffersEditor3D;
+};
+
+export interface ArestasEdicaoRenderizadasEditor3D {
+    readonly geometria: GeometriaEditor3D;
+    readonly buffers: BuffersEditor3D;
+    readonly arestas: readonly ArestaMalhaEditavelEditor3D[];
+    readonly verticesPorAresta: number;
+};
+
 export interface MalhaRenderizadaEditor3D {
     readonly idObjeto: string;
     readonly geometria: GeometriaEditor3D;
     readonly buffers: BuffersEditor3D;
     readonly faces: FaceRenderizadaEditor3D[];
+    readonly verticesEdicao: VerticesEdicaoRenderizadosEditor3D | null;
+    readonly arestasEdicao: ArestasEdicaoRenderizadasEditor3D | null;
 };
 
 export interface GuiaRenderizadaEditor3D {

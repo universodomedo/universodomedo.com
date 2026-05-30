@@ -29,6 +29,10 @@ export function aplicaMatrizesEditor3D(gl: WebGLRenderingContext, programa: Prog
 };
 
 export function desenhaMalhaEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, buffers: BuffersEditor3D, geometria: GeometriaEditor3D, corBase: Vetor3, corLuz: Vetor3, alpha = 1): void {
+    desenhaMalhaIntervaloEditor3D(gl, programa, buffers, geometria, corBase, corLuz, alpha, 0, geometria.quantidadeVertices);
+};
+
+export function desenhaMalhaIntervaloEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, buffers: BuffersEditor3D, geometria: GeometriaEditor3D, corBase: Vetor3, corLuz: Vetor3, alpha: number, inicio: number, quantidade: number): void {
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.vertices);
     gl.enableVertexAttribArray(programa.aPosition);
     gl.vertexAttribPointer(programa.aPosition, 3, gl.FLOAT, false, 0, 0);
@@ -39,5 +43,5 @@ export function desenhaMalhaEditor3D(gl: WebGLRenderingContext, programa: Progra
     gl.uniform3fv(programa.uCorLuz, criaVetorUniforme(corLuz));
     gl.uniform1f(programa.uAlpha, alpha);
     gl.uniform1f(programa.uUsaIluminacao, usaIluminacaoGeometriaEditor3D(geometria) ? 1 : 0);
-    gl.drawArrays(obtemModoDesenho(gl, geometria.modo), 0, geometria.quantidadeVertices);
+    gl.drawArrays(obtemModoDesenho(gl, geometria.modo), inicio, quantidade);
 };

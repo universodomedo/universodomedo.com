@@ -100,6 +100,26 @@
     transform: rotate(-38deg);
 }
 
+.notificacaoAreaInterativaEditor3D {
+    position: absolute;
+    z-index: 24;
+    top: 1.1em;
+    left: 50%;
+    max-width: min(34em, calc(100% - 2em));
+    padding: 0.62em 0.85em;
+    border: 0.08em solid rgba(255, 210, 122, 0.36);
+    border-radius: 0.32em;
+    color: rgba(255, 239, 198, 0.96);
+    font-size: 0.86em;
+    font-weight: 650;
+    line-height: 1.3;
+    text-align: center;
+    background: rgba(39, 31, 19, 0.92);
+    box-shadow: 0 0.45em 1.25em rgba(0, 0, 0, 0.34);
+    pointer-events: none;
+    transform: translateX(-50%);
+}
+
 .overlayGizmoEixosEditor3D {
     position: absolute;
     inset: 0;

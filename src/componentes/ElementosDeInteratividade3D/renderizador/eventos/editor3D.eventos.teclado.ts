@@ -1,5 +1,6 @@
 import { ativaCursorVirtualCentroEditor3D, desativaCursorVirtualEditor3D } from './editor3D.eventos.cursor';
 import { comandoTecladoAreaInterativa3DEstaAtivo, comandoTecladoAreaInterativa3DUsaTecla } from '../../comandos/editor3D.comandos';
+import { obtemMotivoBloqueioInsetFacesEditor3D } from '../../estado/editor3D.estado.edicao.selectors';
 import { obtemEixoTeclaEditor3D } from './editor3D.eventos.eixo';
 import type { ControleEventosEditor3D } from './editor3D.eventos.types';
 import type { FerramentaMouseEditor3D } from '../../mouse/editor3D.mouse.tipos';
@@ -129,10 +130,53 @@ function aplicaInsetFacesPorAtalho(controle: ControleEventosEditor3D, event: Key
     const state = controle.refs.estado.current;
 
     if (!comandoTecladoAreaInterativa3DEstaAtivo('i-inset-faces', event)) return false;
-    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.faceSelecionadaEdicao === null || state.escopoEdicao === null) return false;
-    if (state.faceSelecionadaEdicao.idObjeto !== state.escopoEdicao.idObjetoAtivo) return false;
+    if (state.modoOperacao !== 'EDICAO') return false;
 
-    controle.refs.acoes.current.aplicaInsetFaceSelecionada();
+    const motivoBloqueio = obtemMotivoBloqueioInsetFacesEditor3D(state);
+
+    if (motivoBloqueio !== null) {
+        controle.refs.acoes.current.exibeNotificacaoAreaInterativa(motivoBloqueio);
+        event.preventDefault();
+
+        return true;
+    }
+
+    controle.refs.acoes.current.iniciaInsetFaceSelecionada();
+    controle.refs.arraste.current.modoArraste = 'INSET_FACE';
+    controle.refs.arraste.current.ultimoX = Number.NaN;
+    controle.refs.arraste.current.ultimoY = Number.NaN;
+    event.preventDefault();
+
+    return true;
+};
+
+function defineTipoSelecaoEdicaoPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
+    const state = controle.refs.estado.current;
+
+    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null) return false;
+
+    if (comandoTecladoAreaInterativa3DEstaAtivo('1-selecao-vertice-edicao', event)) controle.refs.acoes.current.defineTipoSelecaoEdicao('VERTICE');
+    else if (comandoTecladoAreaInterativa3DEstaAtivo('2-selecao-aresta-edicao', event)) controle.refs.acoes.current.defineTipoSelecaoEdicao('ARESTA');
+    else if (comandoTecladoAreaInterativa3DEstaAtivo('3-selecao-face-edicao', event)) controle.refs.acoes.current.defineTipoSelecaoEdicao('FACE');
+    else return false;
+
+    event.preventDefault();
+
+    return true;
+};
+
+function finalizaInsetFacesPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
+    const state = controle.refs.estado.current;
+
+    if (state.insetFaceEdicao === null) return false;
+
+    if (comandoTecladoAreaInterativa3DEstaAtivo('enter-confirma-inset-face', event)) controle.refs.acoes.current.confirmaInsetFaceEmEdicao();
+    else if (comandoTecladoAreaInterativa3DEstaAtivo('escape-cancela-inset-face', event)) controle.refs.acoes.current.cancelaInsetFaceEmEdicao();
+    else return false;
+
+    controle.refs.arraste.current.modoArraste = 'ROTACIONAR';
+    controle.refs.arraste.current.ultimoX = 0;
+    controle.refs.arraste.current.ultimoY = 0;
     event.preventDefault();
 
     return true;
@@ -142,11 +186,13 @@ export function aplicaAtalhoTecladoEditor3D(controle: ControleEventosEditor3D, e
     const state = controle.refs.estado.current;
 
     if (eventoVeioDeElementoEditavel(event)) return;
+    if (finalizaInsetFacesPorAtalho(controle, event)) return;
     if (ativaModoSelecionarPorShiftEditor3D(controle, event)) return;
     if (iniciaModoPorAtalho(controle, event)) return;
     if (aplicaEixoModoPorAtalho(controle, event)) return;
     if (aplicaEntradaNumericaRotatePorAtalho(controle, event)) return;
     if (deletaObjetosSelecionadosPorAtalho(controle, event)) return;
+    if (defineTipoSelecaoEdicaoPorAtalho(controle, event)) return;
     if (aplicaInsetFacesPorAtalho(controle, event)) return;
     if (state.modoAtual.tipo !== 'NENHUM') return;
 };

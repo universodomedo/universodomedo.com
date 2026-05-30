@@ -2,7 +2,7 @@ import { criaMatrizRotacaoX, criaMatrizRotacaoZ, multiplicaMatriz4 } from './edi
 import type { EixoEditor3D } from './editor3D.tipos';
 
 export type DirecaoAjusteVistaEditor3D = 'DIREITA' | 'ESQUERDA' | 'CIMA' | 'BAIXO';
-export type ModoArrasteEditor3D = 'ROTACIONAR' | 'PAN' | 'DOLLY' | 'AJUSTAR_VISTA' | 'AREA_SELECAO';
+export type ModoArrasteEditor3D = 'ROTACIONAR' | 'PAN' | 'DOLLY' | 'AJUSTAR_VISTA' | 'AREA_SELECAO' | 'EDICAO_MALHA' | 'INSET_FACE';
 export type PlanoGuiaEditor3D = 'XY' | 'XZ' | 'YZ';
 export type EspacoMovimentoGrabEditor3D = PlanoGuiaEditor3D | 'XYZ';
 export type ResetAbsolutoVistaEditor3D = 'X' | 'Y' | 'Z' | '-X' | '-Y' | '-Z';

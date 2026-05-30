@@ -1,6 +1,6 @@
 import { aplicaMatrizesEditor3D, desenhaMalhaEditor3D } from '../webgl/editor3D.webgl.renderizacao';
 import { criaMatrizTransformObjetoEditor3D } from '../editor/editor3D.transform';
-import { desenhaFaceSelecionadaEditor3D, desenhaSelecaoObjetoEditor3D } from './selecao/editor3D.selecao.render';
+import { desenhaArestasEdicaoEditor3D, desenhaFaceSelecionadaEditor3D, desenhaSelecaoObjetoEditor3D, desenhaVerticesEdicaoEditor3D } from './selecao/editor3D.selecao.render';
 import { multiplicaMatriz4 } from '../editor/editor3D.matrizes';
 import type { Editor3DState } from '../estado/editor3D.estado.types';
 import type { FaceRenderizadaEditor3D, MalhaRenderizadaEditor3D } from './editor3D.renderizador.types';
@@ -30,6 +30,8 @@ function obtemFaceSelecionadaRenderizadaEditor3D(state: Editor3DState, malha: Ma
     return malha.faces.find(face => face.idFace === faceSelecionada.idFace) ?? null;
 };
 
+function objetoEstaNoEscopoEdicaoEditor3D(state: Editor3DState, idObjeto: string): boolean { return state.modoOperacao === 'EDICAO' && (state.escopoEdicao?.idsObjetos.includes(idObjeto) ?? false); };
+
 export function desenhaObjetosCenaEditor3D(gl: WebGLRenderingContext, recursos: RecursosRenderizadorEditor3D, state: Editor3DState, matrizes: MatrizesCenaEditor3D): void {
     recursos.malhas.forEach(malha => {
         if (objetoEstaOcultoEditor3D(state, malha.idObjeto)) return;
@@ -48,5 +50,7 @@ export function desenhaObjetosCenaEditor3D(gl: WebGLRenderingContext, recursos: 
         aplicaMatrizesEditor3D(gl, recursos.programa, matrizFinal, matrizObjeto);
         desenhaMalhaEditor3D(gl, recursos.programa, malha.buffers, malha.geometria, objetoAtual.corBase, objetoAtual.corLuz);
         if (faceSelecionada !== null) desenhaFaceSelecionadaEditor3D(gl, recursos.programa, faceSelecionada, matrizes.perspectiva, matrizes.camera, matrizObjeto);
+        if (objetoEstaNoEscopoEdicaoEditor3D(state, malha.idObjeto) && malha.arestasEdicao !== null) desenhaArestasEdicaoEditor3D(gl, recursos.programa, malha.arestasEdicao, state.arestaSelecionadaEdicao, malha.idObjeto, matrizes.perspectiva, matrizes.camera, matrizObjeto);
+        if (objetoEstaNoEscopoEdicaoEditor3D(state, malha.idObjeto) && state.tipoSelecaoEdicao === 'VERTICE' && malha.verticesEdicao !== null) desenhaVerticesEdicaoEditor3D(gl, recursos.programa, malha.verticesEdicao, state.verticeSelecionadoEdicao, malha.idObjeto, matrizes.perspectiva, matrizes.camera, matrizObjeto);
     });
 };

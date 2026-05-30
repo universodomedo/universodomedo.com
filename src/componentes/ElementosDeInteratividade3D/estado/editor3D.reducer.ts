@@ -1,6 +1,6 @@
 import { aplicaVistaEixoGrabCameraEditor3D, criaCameraPadraoEditor3D } from '../editor/editor3D.camera';
 import { criaColecaoCenaEditor3D, obtemIdsObjetosColecaoEditor3D, removeObjetosDasColecoesEditor3D } from './editor3D.colecoes';
-import { aplicaInsetFaceSelecionadaEditor3D } from './editor3D.reducer.edicao';
+import { aplicaInsetFaceSelecionadaEditor3D, atualizaInsetFaceEmEdicaoEditor3D, cancelaInsetFaceEmEdicaoEditor3D, confirmaInsetFaceEmEdicaoEditor3D, defineTipoSelecaoEdicaoEditor3D, iniciaInsetFaceSelecionadaEditor3D, moveSelecaoEdicaoEditor3D, preparaObjetosEscopoEdicaoEditor3D, selecionaArestaEdicaoEditor3D, selecionaFaceEdicaoEditor3D, selecionaVerticeEdicaoEditor3D } from './editor3D.reducer.edicao';
 import { alteraQuantidadeVerticesStateEditor3D, atualizaQuantidadeVerticesStateEditor3D, atualizaVetorMalhaEmCriacaoEditor3D, confirmaMalhaEmCriacaoEditor3D, iniciaMalhaEmCriacaoEditor3D } from './editor3D.reducer.criacao';
 import { aplicaRotationScaleObjetosEditor3D, atualizaObjetosEditor3D, atualizaVetorObjetoEditor3D, moveObjetosEditor3D } from './editor3D.reducer.objetos';
 import { aplicaEixoGrabEditor3D, aplicaEixoRotateEditor3D, aplicaEixoScaleEditor3D, aplicaRotateLivreEditor3D, atualizaEntradaNumericaRotateEditor3D, cancelaModoEditor3D, escalaModoScaleEditor3D, iniciaGrabEditor3D, iniciaRotateEditor3D, iniciaScaleEditor3D, moveModoGrabEditor3D, rotacionaModoRotateEditor3D } from './editor3D.reducer.modo';
@@ -124,28 +124,19 @@ function entraModoEdicaoEditor3D(state: Editor3DState): Editor3DState {
 
     if (escopoEdicao === null) return state;
 
-    return { ...state, modoOperacao: 'EDICAO', escopoEdicao, faceSelecionadaEdicao: null, ferramentaMouse: 'SELECIONAR', areaSelecao: null };
+    return { ...state, objetos: preparaObjetosEscopoEdicaoEditor3D(state.objetos, escopoEdicao.idsObjetos), modoOperacao: 'EDICAO', escopoEdicao, tipoSelecaoEdicao: 'VERTICE', verticeSelecionadoEdicao: null, arestaSelecionadaEdicao: null, faceSelecionadaEdicao: null, insetFaceEdicao: null, ferramentaMouse: 'SELECIONAR', areaSelecao: null };
 };
 
 function saiModoEdicaoEditor3D(state: Editor3DState): Editor3DState {
     if (state.modoOperacao === 'OBJETO') return state;
 
-    return { ...state, modoOperacao: 'OBJETO', escopoEdicao: null, faceSelecionadaEdicao: null, ferramentaMouse: 'SELECIONAR', areaSelecao: null };
+    return { ...state, modoOperacao: 'OBJETO', escopoEdicao: null, tipoSelecaoEdicao: 'VERTICE', verticeSelecionadoEdicao: null, arestaSelecionadaEdicao: null, faceSelecionadaEdicao: null, insetFaceEdicao: null, ferramentaMouse: 'SELECIONAR', areaSelecao: null };
 };
 
 function alternaModoOperacaoEditor3D(state: Editor3DState): Editor3DState {
     if (state.modoOperacao === 'OBJETO') return entraModoEdicaoEditor3D(state);
 
     return saiModoEdicaoEditor3D(state);
-};
-
-function selecionaFaceEdicaoEditor3D(state: Editor3DState, idObjeto: string | null, idFace: string | null): Editor3DState {
-    if (state.modoOperacao !== 'EDICAO') return state;
-    if (idObjeto === null || idFace === null) return { ...state, faceSelecionadaEdicao: null };
-    if (state.escopoEdicao === null || !state.escopoEdicao.idsObjetos.includes(idObjeto)) return state;
-    if (!idObjetoExisteEditor3D(state, idObjeto)) return state;
-
-    return { ...state, faceSelecionadaEdicao: { idObjeto, idFace } };
 };
 
 function selecionaObjetosEditor3D(state: Editor3DState, idsObjetos: readonly string[], adiciona: boolean): Editor3DState {
@@ -218,9 +209,12 @@ function moveObjetoParaColecaoCenaEditor3D(state: Editor3DState, idObjeto: strin
     const objetoFicouOculto = idsObjetosOcultos.includes(idObjeto);
     const idsObjetosSelecionados = objetoFicouOculto ? state.idsObjetosSelecionados.filter(idObjetoSelecionado => idObjetoSelecionado !== idObjeto) : state.idsObjetosSelecionados;
     const idObjetoSelecionado = objetoFicouOculto && state.idObjetoSelecionado === idObjeto ? idsObjetosSelecionados[idsObjetosSelecionados.length - 1] ?? null : state.idObjetoSelecionado;
+    const verticeSelecionadoEdicao = objetoFicouOculto && state.verticeSelecionadoEdicao?.idObjeto === idObjeto ? null : state.verticeSelecionadoEdicao;
+    const arestaSelecionadaEdicao = objetoFicouOculto && state.arestaSelecionadaEdicao?.idObjeto === idObjeto ? null : state.arestaSelecionadaEdicao;
     const faceSelecionadaEdicao = objetoFicouOculto && state.faceSelecionadaEdicao?.idObjeto === idObjeto ? null : state.faceSelecionadaEdicao;
+    const insetFaceEdicao = objetoFicouOculto && state.insetFaceEdicao?.idObjeto === idObjeto ? null : state.insetFaceEdicao;
 
-    return { ...state, objetos, colecoes, idsObjetosOcultos, idsObjetosSelecionados, idObjetoSelecionado, idColecaoSelecionada: null, faceSelecionadaEdicao };
+    return { ...state, objetos, colecoes, idsObjetosOcultos, idsObjetosSelecionados, idObjetoSelecionado, idColecaoSelecionada: null, verticeSelecionadoEdicao, arestaSelecionadaEdicao, faceSelecionadaEdicao, insetFaceEdicao };
 };
 
 function moveColecaoCenaEditor3D(state: Editor3DState, idColecao: string, idColecaoReferencia: string | null, posicao: PosicaoSoltarCenaEditor3D | null): Editor3DState {
@@ -253,9 +247,12 @@ function alternaVisibilidadeObjetoEditor3D(state: Editor3DState, idObjeto: strin
     const objetoFicouOculto = idsObjetosOcultos.includes(idObjeto);
     const idsObjetosSelecionados = objetoFicouOculto ? state.idsObjetosSelecionados.filter(idObjetoSelecionado => idObjetoSelecionado !== idObjeto) : state.idsObjetosSelecionados;
     const idObjetoSelecionado = objetoFicouOculto && state.idObjetoSelecionado === idObjeto ? idsObjetosSelecionados[idsObjetosSelecionados.length - 1] ?? null : state.idObjetoSelecionado;
+    const verticeSelecionadoEdicao = objetoFicouOculto && state.verticeSelecionadoEdicao?.idObjeto === idObjeto ? null : state.verticeSelecionadoEdicao;
+    const arestaSelecionadaEdicao = objetoFicouOculto && state.arestaSelecionadaEdicao?.idObjeto === idObjeto ? null : state.arestaSelecionadaEdicao;
     const faceSelecionadaEdicao = objetoFicouOculto && state.faceSelecionadaEdicao?.idObjeto === idObjeto ? null : state.faceSelecionadaEdicao;
+    const insetFaceEdicao = objetoFicouOculto && state.insetFaceEdicao?.idObjeto === idObjeto ? null : state.insetFaceEdicao;
 
-    return { ...state, idsObjetosOcultos, idsObjetosOcultosManualmente, idsObjetosSelecionados, idObjetoSelecionado, faceSelecionadaEdicao };
+    return { ...state, idsObjetosOcultos, idsObjetosOcultosManualmente, idsObjetosSelecionados, idObjetoSelecionado, verticeSelecionadoEdicao, arestaSelecionadaEdicao, faceSelecionadaEdicao, insetFaceEdicao };
 };
 
 function alternaVisibilidadeColecaoEditor3D(state: Editor3DState, idColecao: string): Editor3DState {
@@ -270,9 +267,12 @@ function alternaVisibilidadeColecaoEditor3D(state: Editor3DState, idColecao: str
     const colecaoFicouOculta = idsColecoesOcultas.includes(idColecao);
     const idsObjetosSelecionados = colecaoFicouOculta ? state.idsObjetosSelecionados.filter(idObjetoSelecionado => !idsObjetosColecao.includes(idObjetoSelecionado)) : state.idsObjetosSelecionados;
     const idObjetoSelecionado = colecaoFicouOculta && state.idObjetoSelecionado !== null && idsObjetosColecao.includes(state.idObjetoSelecionado) ? idsObjetosSelecionados[idsObjetosSelecionados.length - 1] ?? null : state.idObjetoSelecionado;
+    const verticeSelecionadoEdicao = colecaoFicouOculta && state.verticeSelecionadoEdicao !== null && idsObjetosColecao.includes(state.verticeSelecionadoEdicao.idObjeto) ? null : state.verticeSelecionadoEdicao;
+    const arestaSelecionadaEdicao = colecaoFicouOculta && state.arestaSelecionadaEdicao !== null && idsObjetosColecao.includes(state.arestaSelecionadaEdicao.idObjeto) ? null : state.arestaSelecionadaEdicao;
     const faceSelecionadaEdicao = colecaoFicouOculta && state.faceSelecionadaEdicao !== null && idsObjetosColecao.includes(state.faceSelecionadaEdicao.idObjeto) ? null : state.faceSelecionadaEdicao;
+    const insetFaceEdicao = colecaoFicouOculta && state.insetFaceEdicao !== null && idsObjetosColecao.includes(state.insetFaceEdicao.idObjeto) ? null : state.insetFaceEdicao;
 
-    return { ...state, idsColecoesOcultas, idsObjetosOcultos, idsObjetosSelecionados, idObjetoSelecionado, faceSelecionadaEdicao };
+    return { ...state, idsColecoesOcultas, idsObjetosOcultos, idsObjetosSelecionados, idObjetoSelecionado, verticeSelecionadoEdicao, arestaSelecionadaEdicao, faceSelecionadaEdicao, insetFaceEdicao };
 };
 
 function atualizaVetorObjetoSelecionadoEditor3D(state: Editor3DState, acao: Extract<Editor3DAcao, { readonly tipo: 'ATUALIZA_VETOR_OBJETO_SELECIONADO' }>): Editor3DState {
@@ -284,10 +284,20 @@ function atualizaVetorObjetoSelecionadoEditor3D(state: Editor3DState, acao: Extr
 export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Editor3DState {
     if (acao.tipo === 'ATUALIZA_CAMERA') return { ...state, camera: acao.camera };
     if (acao.tipo === 'RESETA_CAMERA') return { ...state, camera: criaCameraPadraoEditor3D() };
+    if (acao.tipo === 'EXIBE_NOTIFICACAO_AREA_INTERATIVA') return { ...state, notificacaoAreaInterativa: { id: state.proximoIdNotificacaoAreaInterativa, texto: acao.texto }, proximoIdNotificacaoAreaInterativa: state.proximoIdNotificacaoAreaInterativa + 1 };
+    if (acao.tipo === 'LIMPA_NOTIFICACAO_AREA_INTERATIVA') return state.notificacaoAreaInterativa?.id === acao.id ? { ...state, notificacaoAreaInterativa: null } : state;
     if (acao.tipo === 'ENTRA_MODO_EDICAO') return entraModoEdicaoEditor3D(state);
     if (acao.tipo === 'SAI_MODO_EDICAO') return saiModoEdicaoEditor3D(state);
     if (acao.tipo === 'ALTERNA_MODO_OPERACAO') return alternaModoOperacaoEditor3D(state);
+    if (acao.tipo === 'DEFINE_TIPO_SELECAO_EDICAO') return defineTipoSelecaoEdicaoEditor3D(state, acao.tipoSelecao);
+    if (acao.tipo === 'SELECIONA_VERTICE_EDICAO') return selecionaVerticeEdicaoEditor3D(state, acao.idObjeto, acao.indiceVertice);
+    if (acao.tipo === 'SELECIONA_ARESTA_EDICAO') return selecionaArestaEdicaoEditor3D(state, acao.idObjeto, acao.indiceOrigem, acao.indiceDestino);
     if (acao.tipo === 'SELECIONA_FACE_EDICAO') return selecionaFaceEdicaoEditor3D(state, acao.idObjeto, acao.idFace);
+    if (acao.tipo === 'INICIA_INSET_FACE_SELECIONADA') return iniciaInsetFaceSelecionadaEditor3D(state);
+    if (acao.tipo === 'ATUALIZA_INSET_FACE_EM_EDICAO') return atualizaInsetFaceEmEdicaoEditor3D(state, acao.deltaEscala);
+    if (acao.tipo === 'CONFIRMA_INSET_FACE_EM_EDICAO') return confirmaInsetFaceEmEdicaoEditor3D(state);
+    if (acao.tipo === 'CANCELA_INSET_FACE_EM_EDICAO') return cancelaInsetFaceEmEdicaoEditor3D(state);
+    if (acao.tipo === 'MOVE_SELECAO_EDICAO') return moveSelecaoEdicaoEditor3D(state, acao.delta);
     if (acao.tipo === 'APLICA_INSET_FACE_SELECIONADA') return aplicaInsetFaceSelecionadaEditor3D(state);
     if (acao.tipo === 'ATIVA_FERRAMENTA_MOUSE') return state.modoAtual.tipo === 'NENHUM' ? { ...state, ferramentaMouse: acao.ferramenta } : state;
     if (acao.tipo === 'RESETA_FERRAMENTA_MOUSE') return { ...state, ferramentaMouse: 'SELECIONAR' };

@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUpIcon, CheckIcon, ClipboardCopyIcon, Cross2Icon, CursorArrowIcon, DimensionsIcon, EnterIcon, FrameIcon, KeyboardIcon, LoopIcon, MoveIcon, PlusIcon, RotateCounterClockwiseIcon, TargetIcon, TrashIcon, ValueIcon, ZoomInIcon } from '@radix-ui/react-icons';
+import { ArrowUpIcon, CheckIcon, ClipboardCopyIcon, Cross2Icon, CursorArrowIcon, DimensionsIcon, DividerHorizontalIcon, DotFilledIcon, EnterIcon, FrameIcon, KeyboardIcon, LoopIcon, MoveIcon, PlusIcon, RotateCounterClockwiseIcon, SquareIcon, TargetIcon, TrashIcon, ValueIcon, ZoomInIcon } from '@radix-ui/react-icons';
 
 import type { IconeComandoAreaInterativa3D } from './editor3D.comandos';
 
@@ -20,8 +20,10 @@ const iconeVisualPorChaveComandoAreaInterativa3D: Record<IconeComandoAreaInterat
     compass: TargetIcon,
     cursor: CursorArrowIcon,
     dolly: ZoomInIcon,
+    edge: DividerHorizontalIcon,
     enter: EnterIcon,
     escape: Cross2Icon,
+    face: SquareIcon,
     gizmo: TargetIcon,
     keyboard: KeyboardIcon,
     move: MoveIcon,
@@ -33,7 +35,8 @@ const iconeVisualPorChaveComandoAreaInterativa3D: Record<IconeComandoAreaInterat
     scale: DimensionsIcon,
     selection: FrameIcon,
     tab: ClipboardCopyIcon,
-    trash: TrashIcon
+    trash: TrashIcon,
+    vertex: DotFilledIcon
 };
 
 export function IconeVisualComandoAreaInterativa3D({ icone, className }: IconeVisualComandoAreaInterativa3DProps) {

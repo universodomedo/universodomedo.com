@@ -5,8 +5,10 @@ export interface ResultadoInsetFaceEditor3D {
     readonly idFaceInterna: string;
 };
 
-const escalaInsetPadraoEditor3D = 0.68;
+export const escalaInsetInicialEditor3D = 0.68;
 const toleranciaGeometriaInsetFaceEditor3D = 0.00001;
+const escalaInsetMinimaEditor3D = 0.08;
+const escalaInsetMaximaEditor3D = 0.96;
 
 function subtraiVetoresEditor3D(a: Vetor3, b: Vetor3): Vetor3 { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; };
 function somaVetoresEditor3D(a: Vetor3, b: Vetor3): Vetor3 { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; };
@@ -95,13 +97,15 @@ function facePodeReceberInsetEditor3D(pontos: readonly Vetor3[]): boolean {
 
 function criaIdFaceEditadaEditor3D(proximoIdFace: number): string { return `edit-face-${proximoIdFace}`; };
 
-function criaPontosInternosInsetEditor3D(pontos: readonly Vetor3[]): Vetor3[] {
+export function normalizaEscalaInsetFaceEditor3D(escala: number): number { return Math.min(escalaInsetMaximaEditor3D, Math.max(escalaInsetMinimaEditor3D, escala)); };
+
+function criaPontosInternosInsetEditor3D(pontos: readonly Vetor3[], escalaInset: number): Vetor3[] {
     const centro = calculaCentroFaceEditor3D(pontos);
 
-    return pontos.map(ponto => somaVetoresEditor3D(centro, multiplicaVetorEditor3D(subtraiVetoresEditor3D(ponto, centro), escalaInsetPadraoEditor3D)));
+    return pontos.map(ponto => somaVetoresEditor3D(centro, multiplicaVetorEditor3D(subtraiVetoresEditor3D(ponto, centro), escalaInset)));
 };
 
-export function aplicaInsetFaceMalhaEditavelEditor3D(malha: MalhaEditavelEditor3D, idFace: string): ResultadoInsetFaceEditor3D | null {
+export function aplicaInsetFaceMalhaEditavelComEscalaEditor3D(malha: MalhaEditavelEditor3D, idFace: string, escala: number): ResultadoInsetFaceEditor3D | null {
     const face = obtemFaceMalhaEditavelEditor3D(malha, idFace);
 
     if (face === null) return null;
@@ -111,7 +115,8 @@ export function aplicaInsetFaceMalhaEditavelEditor3D(malha: MalhaEditavelEditor3
 
     if (pontos === null || !facePodeReceberInsetEditor3D(pontos)) return null;
 
-    const pontosInternos = criaPontosInternosInsetEditor3D(pontos);
+    const escalaInset = normalizaEscalaInsetFaceEditor3D(escala);
+    const pontosInternos = criaPontosInternosInsetEditor3D(pontos, escalaInset);
     const indicePrimeiroVerticeInterno = malha.vertices.length;
     const vertices = [...malha.vertices, ...pontosInternos];
     const faces: FaceMalhaEditavelEditor3D[] = [];
@@ -143,4 +148,8 @@ export function aplicaInsetFaceMalhaEditavelEditor3D(malha: MalhaEditavelEditor3
     proximoIdFace += 1;
 
     return { malha: { vertices, faces, proximoIdFace }, idFaceInterna };
+};
+
+export function aplicaInsetFaceMalhaEditavelEditor3D(malha: MalhaEditavelEditor3D, idFace: string): ResultadoInsetFaceEditor3D | null {
+    return aplicaInsetFaceMalhaEditavelComEscalaEditor3D(malha, idFace, escalaInsetInicialEditor3D);
 };

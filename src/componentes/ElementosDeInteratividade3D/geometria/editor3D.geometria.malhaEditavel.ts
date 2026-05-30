@@ -2,6 +2,11 @@ import { adicionaTrianguloEditor3D, calculaNormalTrianguloEditor3D, criaFaceEdit
 import type { FaceGeometriaEditor3D, GeometriaEditor3D, TrianguloFaceEditor3D } from './editor3D.geometria.types';
 import type { FaceMalhaEditavelEditor3D, MalhaEditavelEditor3D, Vetor3 } from '../editor/editor3D.tipos';
 
+export interface ArestaMalhaEditavelEditor3D {
+    readonly indiceOrigem: number;
+    readonly indiceDestino: number;
+};
+
 interface ArestaContadaMalhaEditavelEditor3D {
     readonly a: number;
     readonly b: number;
@@ -146,6 +151,25 @@ export function criaMalhaEditavelPorGeometriaEditor3D(geometria: GeometriaEditor
     }
 
     return { vertices, faces, proximoIdFace: 1 };
+};
+
+export function obtemArestasMalhaEditavelEditor3D(malha: MalhaEditavelEditor3D): ArestaMalhaEditavelEditor3D[] {
+    const arestas: ArestaMalhaEditavelEditor3D[] = [];
+    const chaves = new Set<string>();
+
+    malha.faces.forEach(face => {
+        face.indicesVertices.forEach((indiceOrigem, indice) => {
+            const indiceDestino = face.indicesVertices[(indice + 1) % face.indicesVertices.length];
+            const chave = criaChaveArestaEditor3D(indiceOrigem, indiceDestino);
+
+            if (indiceOrigem === indiceDestino || chaves.has(chave)) return;
+
+            chaves.add(chave);
+            arestas.push({ indiceOrigem, indiceDestino });
+        });
+    });
+
+    return arestas;
 };
 
 export function criaGeometriaMalhaEditavelEditor3D(malha: MalhaEditavelEditor3D): GeometriaEditor3D {

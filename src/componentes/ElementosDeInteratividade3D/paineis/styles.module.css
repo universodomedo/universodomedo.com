@@ -607,6 +607,16 @@ div.linhaObjetoCena:active {
     background: #292929;
 }
 
+.botaoControleBloqueado {
+    color: rgba(255, 255, 255, 0.42);
+    background: #292929;
+    cursor: pointer;
+}
+
+.botaoControleBloqueado:hover {
+    background: #313131;
+}
+
 .botaoControleComIcone {
     gap: 0.55em;
 }
