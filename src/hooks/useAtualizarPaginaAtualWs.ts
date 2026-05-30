@@ -14,14 +14,11 @@ export function useAtualizarPaginaAtualWs(templatePaginaAtual: PaginaTemplate | 
         if (!templatePaginaAtual) return;
         if (templatePaginaAtual === ultimoEnviado.current) return;
 
-        const socket = getSocket();
-        if (!socket) {
-            console.log('[DBG useAtualizarPaginaAtualWs] socket não disponível ainda, aguardando epoch. template=', templatePaginaAtual);
-            return;
-        }
+        // Só marca como enviado se o socket está disponível.
+        // Se não estiver, o effect vai retentar quando epoch mudar (socket conecta).
+        if (!getSocket()) return;
 
         ultimoEnviado.current = templatePaginaAtual;
-        console.log('[DBG useAtualizarPaginaAtualWs] enviando atualizarPaginaAtual template=', templatePaginaAtual, 'socketConnected=', socket.connected);
         eventoWs(Eventos_Envia.UsuariosConectados.eventos.atualizarPaginaAtual, { templatePaginaAtual });
     }, [estaAutenticado, templatePaginaAtual, epoch]);
 }

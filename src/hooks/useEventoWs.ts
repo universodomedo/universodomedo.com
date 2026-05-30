@@ -275,35 +275,27 @@ function requestInitialWithDedupe<P extends object, R extends object>(socket: So
 
     const p = new Promise<PendingResult<R>>(resolve => {
         const doEmit = () => {
-            console.log(`[DBG requestInitial] doEmit disparado para "${fullName}" socketConnected=${socket.connected}`);
             socket.timeout(timeoutMs).emit(fullName, payload, (err: Error | null, response: R | WsErrorResponse) => {
-                console.log(`[DBG requestInitial] ACK callback disparado para "${fullName}" err=${err?.message ?? null} responseType=${typeof response} isWsErr=${isWsErrorResponse(response)}`);
                 if (err) {
-                    console.log(`[DBG requestInitial] ERRO (timeout?) para "${fullName}":`, err.message);
                     resolve({ ok: false, error: { _wsErro: true, mensagem: "Timeout/erro ao aguardar resposta do WebSocket", code: "TIMEOUT", detalhes: { message: err.message } } });
                     return;
                 }
 
                 if (isWsErrorResponse(response)) {
-                    console.log(`[DBG requestInitial] wsError para "${fullName}":`, response);
                     resolve({ ok: false, error: response });
                     return;
                 }
 
-                console.log(`[DBG requestInitial] sucesso para "${fullName}" (ACK recebido)`);
                 resolve({ ok: true, value: response as R });
             });
         };
 
         if (socket.connected) {
-            console.log(`[DBG requestInitial] socket já conectado, chamando doEmit direto para "${fullName}"`);
             doEmit();
             return;
         }
 
-        console.log(`[DBG requestInitial] socket NÃO conectado, aguardando connect para "${fullName}"`);
         const onConnect = () => {
-            console.log(`[DBG requestInitial] onConnect disparado, chamando doEmit para "${fullName}"`);
             doEmit();
         };
         const onConnectError = (err: Error) => {
@@ -406,7 +398,6 @@ export function useEmitWsComDisparoInicial<D extends { tipo: "emite"; payload: o
         if (initialAppliedRef.current.chave !== chaveAtual) initialAppliedRef.current = { chave: chaveAtual, applied: false };
 
         const onMessage = (payload: D["response"] | WsErrorResponse) => {
-            console.log(`[DBG useEmitWsComDisparoInicial] onMessage disparado para "${def.fullName}" isWsErr=${isWsErrorResponse(payload)} hasHandler=${!!handlerRef.current}`);
             if (isWsErrorResponse(payload)) {
                 if (errorRef.current) errorRef.current(payload);
                 return;
@@ -420,18 +411,15 @@ export function useEmitWsComDisparoInicial<D extends { tipo: "emite"; payload: o
             if (handlerRef.current) handlerRef.current(payload as D["response"]);
         };
 
-        console.log(`[DBG useEmitWsComDisparoInicial] registrando socket.on para "${def.fullName}" socketConnected=${socket.connected} epoch=${epoch}`);
         socket.on(def.fullName, onMessage);
 
         const runInitial = async () => {
             const result = await requestInitialWithDedupe(socket, def.fullName, payloadInicial, timeoutMsRef.current);
-            console.log(`[DBG useEmitWsComDisparoInicial] runInitial resolveu para "${def.fullName}" ok=${result.ok} applied=${initialAppliedRef.current.applied} hasHandler=${!!handlerRef.current}`);
 
             if (initialAppliedRef.current.applied) return;
             initialAppliedRef.current.applied = true;
 
             if (!result.ok) {
-                console.log(`[DBG useEmitWsComDisparoInicial] runInitial ERRO para "${def.fullName}":`, result.error);
                 if (errorRef.current) errorRef.current(result.error);
                 return;
             }
