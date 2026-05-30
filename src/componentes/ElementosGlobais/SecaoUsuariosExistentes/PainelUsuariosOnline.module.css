@@ -1,0 +1,25 @@
+/* PainelUsuariosOnline
+   Slide-in do canto direito sobre o conteúdo da página.
+   Posicionamento: absolute relativo a #main (position: relative).
+
+   IMPORTANTE: sem display:flex para que o flex:.18 do portal_usuario_direita
+   não tenha efeito — o height:100% do filho funciona corretamente em
+   contexto de bloco quando o pai tem height explícito. */
+
+@keyframes slide_in_direita {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+}
+
+.painel_usuarios_online {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 22em;
+    overflow: hidden;
+    background-color: #080208fc;
+    border-left: .05em solid #8E44AD55;
+    z-index: var(--zindex-final-barraAcoesFlutuante);
+    animation: slide_in_direita .25s ease;
+}

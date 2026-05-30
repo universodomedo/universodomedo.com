@@ -12,6 +12,8 @@
 import type { ComponentType } from 'react';
 import { RegistradorAcaoChat } from 'Componentes/Elementos/Chat/RegistradorAcaoChat';
 import ComponenteChat from 'Componentes/Elementos/Chat/Chat';
+import { RegistradorAcaoUsuariosOnline } from 'Componentes/ElementosGlobais/SecaoUsuariosExistentes/RegistradorAcaoUsuariosOnline';
+import PainelUsuariosOnline from 'Componentes/ElementosGlobais/SecaoUsuariosExistentes/PainelUsuariosOnline';
 
 export interface ModuloAcao {
     id: string;
@@ -24,5 +26,10 @@ export const MODULOS_ACOES: ModuloAcao[] = [
         id: 'chat',
         Registrador: RegistradorAcaoChat,
         Painel: ComponenteChat,
+    },
+    {
+        id: 'usuarios-online',
+        Registrador: RegistradorAcaoUsuariosOnline,
+        Painel: PainelUsuariosOnline,
     },
 ];

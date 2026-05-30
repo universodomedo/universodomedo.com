@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react';
 
 import { ContextoBarraAcoesFlutuante__Provider } from 'Contextos/ContextoBarraAcoesFlutuante/contexto';
+import { ContextoUsuariosOnline__Provider } from 'Contextos/ContextoUsuariosOnline/contexto';
 
 // Wrapper Client Component que conecta o ContextoBarraAcoesFlutuante__Provider
 // às ações globais da aplicação.
@@ -16,7 +17,9 @@ import { ContextoBarraAcoesFlutuante__Provider } from 'Contextos/ContextoBarraAc
 export function BarraAcoesFlutuante__ProviderGlobal({ children }: { children: ReactNode }) {
     return (
         <ContextoBarraAcoesFlutuante__Provider>
-            {children}
+            <ContextoUsuariosOnline__Provider>
+                {children}
+            </ContextoUsuariosOnline__Provider>
         </ContextoBarraAcoesFlutuante__Provider>
     );
 };
