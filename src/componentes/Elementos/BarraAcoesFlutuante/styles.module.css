@@ -1,0 +1,68 @@
+/* BarraAcoesFlutuante — cápsula vertical unificada
+   Posicionamento: absolute relativo a #main (position: relative)
+   Ancoragem: canto inferior esquerdo
+   Cresce para cima conforme ações são adicionadas */
+
+#capsula_barra_acoes {
+    position: absolute;
+    bottom: 1rem;
+    left: 1.5rem;
+    display: flex;
+    flex-direction: column-reverse; /* toggle na base; ações crescem para cima */
+    align-items: center;
+    border-radius: 999rem;
+    background-color: #2c1440;
+    box-shadow: 0 0.3rem 0.6rem 0.15rem #0009;
+    overflow: hidden; /* garante que os cantos arredondados clipem o conteúdo */
+    z-index: var(--zindex-final-barraAcoesFlutuante);
+}
+
+/* Botão de toggle — base da cápsula */
+#botao_toggle_capsula {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color .15s ease;
+    user-select: none;
+}
+
+#botao_toggle_capsula:hover {
+    background-color: #3B1F47;
+}
+
+/* Separador visual entre toggle e ações */
+.divisor_capsula {
+    width: 60%;
+    height: .06em;
+    background-color: #8E44AD66;
+    flex-shrink: 0;
+}
+
+/* Cada ação dentro da cápsula — ícone apenas */
+.item_capsula {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 1.4rem;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color .15s ease;
+    user-select: none;
+}
+
+.item_capsula:hover {
+    background-color: #3B1F47;
+}

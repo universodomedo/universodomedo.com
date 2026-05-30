@@ -10,9 +10,9 @@ import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
-export default function SecaoContatos() {
+export default function SecaoUsuariosExistentes() {
     const { usuarioLogado } = useContextoAutenticacao();
-    
+
     const [listaAcessosUsuarios, setListaAcessosUsuarios] = useState<SOCKET_AcessoUsuario[]>([]);
 
     // console.log(`[CONTATOS] ${new Date().toISOString()} antes emitirUsuariosConectadosAgora`);
@@ -28,7 +28,7 @@ export default function SecaoContatos() {
             <div className={styles.secao_contatos}>
                 <div className={styles.recipiente_lista_contatos}>
                     {listaAcessosUsuarios.map(acessoUsuario => (
-                        <Contato key={acessoUsuario.usuario.id} acessoUsuario={acessoUsuario} />
+                        <UsuarioExistente key={acessoUsuario.usuario.id} acessoUsuario={acessoUsuario} />
                     ))}
                 </div>
             </div>
@@ -36,7 +36,7 @@ export default function SecaoContatos() {
     );
 };
 
-function Contato({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuario }) {
+function UsuarioExistente({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuario }) {
     return (
         <div className={`${styles.recipiente_contato} ${!acessoUsuario.paginaAtual ? styles.contato_desconectado : ''}`}>
             <div className={styles.recipiente_imagem_contato}>

@@ -15,18 +15,15 @@ import ListaSalas from "./componentes/ListaSalas";
 
 type WsStatus = "loading" | "ready" | "error";
 
-export default  function ComponenteChat() {
+export default function ComponenteChat() {
     const { estaAutenticado, carregando } = useContextoAutenticacao();
-    const { chatVisivel } = useContexto__Chat();
-    const [aberto, setAberto] = useState(false);
+    const { chatVisivel, chatAberto, fecharChat } = useContexto__Chat();
 
-    if (!chatVisivel || (!carregando && !estaAutenticado)) return;
-
-    if (!aberto) return (<button id={styles.botao_abre_janela_chat} onClick={() => setAberto(true)}>💬</button>);
+    if (!chatVisivel || (!carregando && !estaAutenticado) || !chatAberto) return null;
 
     return (
         <div id={styles.recipiente_corpo_chat}>
-            <DivClicavel id={styles.icone_fechar_chat} onClick={() => setAberto(false)}>x</DivClicavel>
+            <DivClicavel id={styles.icone_fechar_chat} onClick={fecharChat}>x</DivClicavel>
             <CorpoChat />
         </div>
     );

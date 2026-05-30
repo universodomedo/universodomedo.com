@@ -7,7 +7,6 @@ import { PAGINAS } from 'types-nora-api';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import BarraUsuario from '@/componentes/ElementosPaginaUsuario/BarraUsuario/page';
 import SecaoPosts from 'Componentes/ElementosPaginaUsuario/Post/page.tsx';
-import SecaoContatos from 'Componentes/ElementosPaginaUsuario/Contato/page';
 
 export default function MinhaPagina_Client() {
     return (
@@ -24,8 +23,6 @@ function MinhaPagina_Slot() {
                 <BarraUsuario />
                 {/* <SecaoPosts /> */}
             </div>
-
-            {/* <SecaoContatos /> */}
         </div>
     );
 };
