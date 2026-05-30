@@ -11,6 +11,7 @@ import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
+import { useAtualizarPaginaAtualWs } from 'Hooks/useAtualizarPaginaAtualWs';
 
 import { useAppDispatch, useAppSelector } from 'Redux/hooks/useRedux';
 import { updateLayoutContextualizado, setMenuLeaf } from 'Redux/slices/layoutContextualizadoSlice';
@@ -46,7 +47,7 @@ function MenuArea({ leaf }: { leaf: MenuLayoutLeaf }) {
 
 export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagina: PaginaFolha; children: React.ReactNode; embrulho?: EmbrulhoSlot | undefined; }) {
     const dispatch = useAppDispatch();
-    const { carregando, checkAuth, estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
+    const { carregando, estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
     const { setTamanhoReduzido } = useContextoMenuSwiperEsquerda();
     const esconderMenu = useAppSelector(selectLayoutEsconderMenu);
 
@@ -60,9 +61,7 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
         if (!comCabecalho) setTamanhoReduzido(true);
     }, [comCabecalho, setTamanhoReduzido]);
 
-    useEffect(() => {
-        checkAuth(pagina.template);
-    }, []);
+    useAtualizarPaginaAtualWs(pagina.template);
 
     const decisao = useMemo(() => {
         return decidirAcessoPagina(

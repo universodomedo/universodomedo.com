@@ -84,12 +84,14 @@
 
     background-color: #97CD61;
 
-    mask-image: url('https://cdn.universodomedo.com/RecursosInternos/de695432-52f7-4742-97f6-58bd2f630bcd.svg');
+    mask-image: var(--estrela);
+    /* mask-image: url('https://cdn.universodomedo.com/RecursosInternos/de695432-52f7-4742-97f6-58bd2f630bcd.svg'); */
     mask-repeat: no-repeat;
     mask-size: contain;
     mask-position: center;
 
-    -webkit-mask-image: url('https://cdn.universodomedo.com/RecursosInternos/de695432-52f7-4742-97f6-58bd2f630bcd.svg');
+    -webkit-mask-image: var(--estrela);
+    /* -webkit-mask-image: url('https://cdn.universodomedo.com/RecursosInternos/de695432-52f7-4742-97f6-58bd2f630bcd.svg'); */
 }
 
 /* =========================================

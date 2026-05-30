@@ -3,12 +3,27 @@
 import styles from './styles.module.css';
 
 import { useState } from 'react';
-import { Eventos_Emite, SOCKET_AcessoUsuario } from 'types-nora-api';
+import { Eventos_Emite, PAGINAS, SOCKET_AcessoUsuario, type PaginaTemplate } from 'types-nora-api';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
+
+function obterLabelDaPagina(template: PaginaTemplate | null | undefined): string | null {
+    if (!template) return null;
+    function buscar(obj: unknown): string | null {
+        if (!obj || typeof obj !== 'object') return null;
+        const rec = obj as Record<string, unknown>;
+        if ('template' in rec && rec.template === template && typeof rec.label === 'string') return rec.label;
+        for (const val of Object.values(rec)) {
+            const found = buscar(val);
+            if (found) return found;
+        }
+        return null;
+    }
+    return buscar(PAGINAS);
+}
 
 export default function SecaoUsuariosExistentes() {
     const { usuarioLogado } = useContextoAutenticacao();
@@ -17,7 +32,7 @@ export default function SecaoUsuariosExistentes() {
 
     // console.log(`[CONTATOS] ${new Date().toISOString()} antes emitirUsuariosConectadosAgora`);
     useEmitWsComDisparoInicial(Eventos_Emite.UsuariosConectados.eventos.emitirUsuariosConectadosAgora, data => {
-        // console.log(`[CONTATOS] ${new Date().toISOString()} dentro emitirUsuariosConectadosAgora`, data);
+        console.log('[DBG SecaoUsuariosExistentes] recebeu emitirUsuariosConectadosAgora', data.usuariosConectados.length, 'usuários:', data.usuariosConectados.map(a => `${a.usuario.username}(${a.paginaAtual ?? 'offline'})`));
         setListaAcessosUsuarios(data.usuariosConectados.filter(acesso => acesso.usuario.id !== usuarioLogado?.id));
     });
 
@@ -51,7 +66,7 @@ function UsuarioExistente({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuar
                 </div> */}
                 <div>
                     {acessoUsuario.paginaAtual ? (
-                        <span>{acessoUsuario.paginaAtual}</span>
+                        <span>{obterLabelDaPagina(acessoUsuario.paginaAtual) ?? acessoUsuario.paginaAtual}</span>
                     ) : (
                         <span>Desconectado</span>
                     )}

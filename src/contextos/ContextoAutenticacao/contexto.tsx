@@ -49,7 +49,7 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
         setPaginaAtualTemplate(paginaAtualTemplate ?? null);
 
         try {
-            const response = await obtemObjetoAutenticacao(paginaAtualTemplate ?? undefined);
+            const response = await obtemObjetoAutenticacao();
             dbgAuth('checkAuth OK', { usuarioId: response?.usuarioLogado?.id ?? null });
 
             setUsuarioLogado(response.usuarioLogado);
@@ -68,6 +68,8 @@ export const ContextoAutenticacaoProvider = ({ children }: { children: React.Rea
             setCarregando(false);
         }
     };
+
+    useEffect(() => { void checkAuth(); }, []);
 
     const verificarCapacidade = (capacidade: CapacidadeDef): boolean => !carregando && !!usuarioLogado && (capacidadesConcedidas[CAPACIDADES.ADMINISTRADOR__SUDO__BURLAR_CAPACIDADES.nome] === true || capacidadesConcedidas[capacidade.nome] === true);
 

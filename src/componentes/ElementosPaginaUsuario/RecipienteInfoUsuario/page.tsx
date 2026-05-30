@@ -1,13 +1,17 @@
 'use client';
 
 import styles from './styles.module.css';
+
+import { ARQUIVOS_INTERNOS } from 'types-nora-api';
+
 import DescricaoPerfilUsuario from '../DescricaoPerfilUsuario/page';
 import { useContexto__PaginaPerfilUsuario } from '@/contextos/Contexto__PaginaPerfilUsuario/contexto';
+import { carregaArquivoInterno } from '@/uteis/ImagemLoader/ImagemLoader';
 
 export default function RecipienteInfoUsuario() {
     const { registroUsuario } = useContexto__PaginaPerfilUsuario()
 
-return (
+    return (
         <>
             <div className={styles.recipiente_informacoes_usuario}>
 
@@ -26,12 +30,12 @@ return (
                         <p style={{ color: '#ABA9A1' }}>12 de Março de 2023</p>
                     </div>
 
-                    <div className={styles.celula_ultimo_acesso}>
+                    <div className={styles.celula_ultimo_acesso} style={{ ['--estrela' as never]: `url("${carregaArquivoInterno(ARQUIVOS_INTERNOS.TESTE_EMBLEMA__ESTRELA)}")` }}>
                         <p>Último Acesso:</p>
                         {/* <div className={styles.status_usuario}>
                             <div className={styles.status_icone}>
                             </div>
-                            <p style={{ color: '#97CD61' }}>Online</p> 
+                            <p style={{ color: '#97CD61' }}>Online</p>
                         </div>*/}
                     </div>
 
