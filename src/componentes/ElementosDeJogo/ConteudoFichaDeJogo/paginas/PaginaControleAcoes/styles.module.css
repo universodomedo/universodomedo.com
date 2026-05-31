@@ -20,6 +20,19 @@
     margin: 0;
 }
 
+.grupo_capacidade {
+    display: flex;
+    flex-direction: column;
+    gap: .4em;
+}
+
+.titulo_capacidade {
+    color: #B7B1C4;
+    font-size: .82em;
+    font-weight: 700;
+    margin: 0;
+}
+
 .lista_acoes {
     display: flex;
     flex-direction: row;
