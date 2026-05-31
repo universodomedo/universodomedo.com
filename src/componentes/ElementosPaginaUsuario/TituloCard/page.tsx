@@ -1,23 +1,14 @@
 import styles from './styles.module.css';
 
-type TituloCardProps = {
- iconeCard: string,
- tituloCard: string,
-}
+import { ArquivoInternoKey } from 'types-nora-api';
 
-export default function TituloCard({
-    iconeCard,
-    tituloCard,
-}: TituloCardProps) {
+import { RenderArquivoInterno2 } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
-    
-
+export default function TituloCard({ iconeCard, tituloCard }: { iconeCard: ArquivoInternoKey; tituloCard: string; }) {
     return (
-        <>
-            <div className={styles.recipiente_titulo_emblema}>
-                <img className={styles.icone_emblema} src={iconeCard} />
-                <h2 className={styles.titulo_emblema}>{tituloCard}</h2>
-            </div>
-        </>
+        <div className={styles.recipiente_titulo_emblema}>
+            <RenderArquivoInterno2 arquivoInterno={iconeCard} className={styles.icone_emblema} />
+            <h2 className={styles.titulo_emblema}>{tituloCard}</h2>
+        </div>
     );
-}
+};

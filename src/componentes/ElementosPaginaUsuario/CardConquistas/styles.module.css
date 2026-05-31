@@ -45,7 +45,7 @@
 }
 
 .area_conquistas::before {
-    content: url('/ornamento-conquistas.svg');
+    content: var(--ornamento-conquistas);
 
     position: absolute;
     bottom: 5%;
