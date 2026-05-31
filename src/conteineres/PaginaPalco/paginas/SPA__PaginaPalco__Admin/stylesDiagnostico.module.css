@@ -1,0 +1,144 @@
+.painel {
+    margin-top: 2em;
+    border-top: 0.1em solid #2d1a50;
+    padding-top: 1.5em;
+}
+
+.titulo {
+    margin: 0 0 1em;
+    font-family: 'Cinzel', serif;
+    font-size: 0.88em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #7060a0;
+}
+
+.vazio {
+    margin: 0;
+    color: #4a3a6a;
+    font-size: 0.8em;
+    font-style: italic;
+}
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+}
+
+.card {
+    background: rgba(10, 5, 20, 0.8);
+    border: 0.1em solid #2d1a50;
+    border-radius: 0.45em;
+    padding: 0.85em 1em;
+    font-size: 0.8em;
+}
+
+.card_cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    margin-bottom: 0.65em;
+}
+
+.card_nome {
+    font-weight: 600;
+    color: #D9D9D9;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.badge_falante {
+    padding: 0.15em 0.55em;
+    border-radius: 0.25em;
+    font-size: 0.75em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    background: rgba(107, 33, 200, 0.25);
+    border: 0.08em solid #6b21c8;
+    color: #c4a0ff;
+    white-space: nowrap;
+}
+
+.badge_ouvinte {
+    padding: 0.15em 0.55em;
+    border-radius: 0.25em;
+    font-size: 0.75em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    background: rgba(30, 80, 180, 0.2);
+    border: 0.08em solid rgba(80, 140, 230, 0.5);
+    color: #90b8f0;
+    white-space: nowrap;
+}
+
+.badge_aguardando {
+    padding: 0.15em 0.55em;
+    border-radius: 0.25em;
+    font-size: 0.75em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    background: rgba(45, 26, 80, 0.3);
+    border: 0.08em solid #3a2a55;
+    color: #7060a0;
+    white-space: nowrap;
+}
+
+.card_secao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.linha_info {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.linha_label {
+    color: #7060a0;
+    min-width: 8em;
+    flex-shrink: 0;
+}
+
+.linha_valor {
+    color: #c4b8d8;
+    font-variant-numeric: tabular-nums;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.barra_nivel_fundo {
+    flex: 1;
+    height: 0.6em;
+    background: rgba(45, 26, 80, 0.5);
+    border-radius: 0.3em;
+    overflow: hidden;
+}
+
+.barra_nivel_fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4a2280, #6b21c8, #9b5cf0);
+    border-radius: 0.3em;
+    transition: width 0.4s ease;
+    min-width: 0.2em;
+}
+
+.sem_audio {
+    margin: 0;
+    color: #4a3a6a;
+    font-style: italic;
+}
+
+.erro_recente {
+    margin: 0.5em 0 0;
+    color: #f08080;
+    font-size: 0.88em;
+    background: rgba(192, 64, 64, 0.1);
+    border-radius: 0.3em;
+    padding: 0.3em 0.6em;
+}

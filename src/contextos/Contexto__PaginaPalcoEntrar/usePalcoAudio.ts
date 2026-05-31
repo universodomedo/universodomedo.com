@@ -1,243 +1,250 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Eventos_Emite, Eventos_Envia, type EMIT__Palco_receberAnswer, type EMIT__Palco_receberIceCandidate, type EMIT__Palco_receberOffer, type PalcoParticipanteDto, type TesteVoz_DescricaoSessao, type TesteVoz_IceCandidate } from 'types-nora-api';
+import { useEffect, useRef } from 'react';
+import { Room, RoomEvent, Track, type RemoteTrack } from 'livekit-client';
+import { Eventos_Envia } from 'types-nora-api';
 
-import { eventoWs, useRecebeEmitWs } from 'Hooks/useEventoWs';
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import { eventoWs } from 'Hooks/useEventoWs';
 
 type PalcoAudioModo = 'ouvinte' | 'falante';
-type PeerMap = Map<number, RTCPeerConnection>;
-type AudioMap = Map<number, HTMLAudioElement>;
 
-const ICE_SERVERS: RTCIceServer[] = [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-];
+// ── Helpers de diagnóstico ─────────────────────────────────────────────────
 
-function criaDescricaoSessao(descricao: RTCSessionDescriptionInit): TesteVoz_DescricaoSessao | null {
-    if (!descricao.sdp) return null;
-    if (descricao.type !== 'offer' && descricao.type !== 'answer') return null;
-    return { type: descricao.type, sdp: descricao.sdp };
+// Gera um ID de rastreamento curto por tentativa de conexão.
+function gerarTraceId(): string { return Math.random().toString(36).slice(2, 8).toUpperCase(); };
+
+// Inspeciona metadados do JWT sem logar o valor completo.
+interface TokenMeta { room: string; identity: string; canPublish: boolean; canSubscribe: boolean; tamanho: number };
+
+interface LiveKitJWTVideoGrant { room?: string; roomJoin?: boolean; canPublish?: boolean; canSubscribe?: boolean };
+interface LiveKitJWTPayload { sub?: string; video?: LiveKitJWTVideoGrant };
+
+function inspecionarToken(token: string): TokenMeta | null {
+    try {
+        const partes = token.split('.');
+        if (partes.length !== 3) return null;
+        const payload = JSON.parse(atob(partes[1])) as LiveKitJWTPayload;
+        return { room: payload.video?.room ?? 'não encontrada', identity: payload.sub ?? 'não encontrado', canPublish: payload.video?.canPublish ?? false, canSubscribe: payload.video?.canSubscribe ?? false, tamanho: token.length };
+    } catch { return null; }
 };
 
-function criaIceCandidate(candidate: RTCIceCandidate): TesteVoz_IceCandidate | null {
-    if (!candidate.candidate) return null;
-    return { candidate: candidate.candidate, sdpMid: candidate.sdpMid, sdpMLineIndex: candidate.sdpMLineIndex };
+// Valida se a URL parece correta antes de tentar conectar.
+function validarLivekitUrl(url: string, traceId: string): boolean {
+    if (!url.trim()) { console.error(`[PalcoAudio:${traceId}] URL vazia ou apenas espaços.`); return false; };
+    if (url !== url.trim()) { console.warn(`[PalcoAudio:${traceId}] URL contém espaços no início/fim: "${url}"`); };
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+        console.error(`[PalcoAudio:${traceId}] URL começa com HTTP/HTTPS em vez de wss:// — LiveKit requer WebSocket. URL recebida: "${url}"`);
+        return false;
+    };
+    if (!url.startsWith('wss://') && !url.startsWith('ws://')) {
+        console.warn(`[PalcoAudio:${traceId}] URL não começa com wss:// nem ws://. URL recebida: "${url}"`);
+    };
+    if (url.startsWith('ws://')) { console.warn(`[PalcoAudio:${traceId}] URL usa ws:// (inseguro). Em produção/LiveKit Cloud deve ser wss://.`); };
+    return true;
 };
 
-export function usePalcoAudio({ modo, participantes, adicionaLog }: { modo: PalcoAudioModo; participantes: PalcoParticipanteDto[]; adicionaLog: (mensagem: string) => void; }) {
-    const { usuarioLogado } = useContextoAutenticacao();
+// Reporta telemetria de estado de áudio para o painel de diagnóstico do Admin.
+function reportarTelemetria(dados: Record<string, string | number | undefined>): void {
+    eventoWs(Eventos_Envia.Palco.eventos.relatarTelemetriaAudio, dados);
+};
 
-    // localStream só existe quando o papel é 'falante'.
-    const localStreamRef = useRef<MediaStream | null>(null);
-    const peersRef = useRef<PeerMap>(new Map());
-    const audiosRef = useRef<AudioMap>(new Map());
-    const iceCandidatesPendentesRef = useRef<Map<number, TesteVoz_IceCandidate[]>>(new Map());
-    const modoRef = useRef<PalcoAudioModo>(modo);
+// ─────────────────────────────────────────────────────────────────────────────
 
-    const idsParticipantes = useMemo(() => participantes.filter(p => p.papel !== 'aguardando' && p.idUsuario !== usuarioLogado?.id).map(p => p.idUsuario), [participantes, usuarioLogado?.id]);
-    const idsParticipantesKey = idsParticipantes.join('|');
-
-    const enviarIceCandidate = useCallback((idUsuarioDestino: number, candidate: TesteVoz_IceCandidate): void => { eventoWs(Eventos_Envia.Palco.eventos.enviarIceCandidate, { idUsuarioDestino, candidate }); }, []);
-    const enviarOffer = useCallback((idUsuarioDestino: number, offer: TesteVoz_DescricaoSessao): void => { eventoWs(Eventos_Envia.Palco.eventos.enviarOffer, { idUsuarioDestino, offer }); }, []);
-    const enviarAnswer = useCallback((idUsuarioDestino: number, answer: TesteVoz_DescricaoSessao): void => { eventoWs(Eventos_Envia.Palco.eventos.enviarAnswer, { idUsuarioDestino, answer }); }, []);
-
-    const removeAudioRemoto = useCallback((idUsuario: number): void => {
-        const audio = audiosRef.current.get(idUsuario);
-        if (!audio) return;
-        audio.pause();
-        audio.srcObject = null;
-        audio.remove();
-        audiosRef.current.delete(idUsuario);
-    }, []);
-
-    const fecharPeer = useCallback((idUsuario: number): void => {
-        const peer = peersRef.current.get(idUsuario);
-        if (peer) peer.close();
-        peersRef.current.delete(idUsuario);
-        iceCandidatesPendentesRef.current.delete(idUsuario);
-        removeAudioRemoto(idUsuario);
-    }, [removeAudioRemoto]);
-
-    const fecharConexoesDeAudio = useCallback((): void => {
-        Array.from(peersRef.current.keys()).forEach(idUsuario => { fecharPeer(idUsuario); });
-        peersRef.current.clear();
-        audiosRef.current.clear();
-        iceCandidatesPendentesRef.current.clear();
-    }, [fecharPeer]);
-
-    // Para e limpa o microfone. Chamada quando o usuário deixa de ser falante.
-    const pararMicrofone = useCallback((): void => {
-        localStreamRef.current?.getTracks().forEach(track => { track.stop(); });
-        localStreamRef.current = null;
-    }, []);
-
-    const conectarAudioRemoto = useCallback((idUsuario: number, stream: MediaStream): void => {
-        let audio = audiosRef.current.get(idUsuario);
-        if (!audio) {
-            audio = document.createElement('audio');
-            audio.autoplay = true;
-            audio.setAttribute('playsinline', 'true');
-            document.body.appendChild(audio);
-            audiosRef.current.set(idUsuario, audio);
-        }
-        audio.srcObject = stream;
-        audio.play().catch(() => { adicionaLog(`Autoplay bloqueado para usuário ${idUsuario}.`); });
-    }, [adicionaLog]);
-
-    // Cria (ou retorna existente) RTCPeerConnection.
-    // Falante: adiciona tracks do localStream. Ouvinte: cria transceiver recvonly (sem mic).
-    const obtemOuCriaPeer = useCallback((idUsuarioRemoto: number): RTCPeerConnection | null => {
-        const peerExistente = peersRef.current.get(idUsuarioRemoto);
-        if (peerExistente) return peerExistente;
-
-        const peer = new RTCPeerConnection({ iceServers: ICE_SERVERS });
-        const localStream = localStreamRef.current;
-
-        if (modoRef.current === 'falante') {
-            if (!localStream) { adicionaLog('Microfone local não inicializado.'); return null; }
-            localStream.getAudioTracks().forEach(track => { peer.addTrack(track, localStream); });
-        } else {
-            peer.addTransceiver('audio', { direction: 'recvonly' });
-        }
-
-        peer.onicecandidate = (evento: RTCPeerConnectionIceEvent): void => {
-            if (!evento.candidate) return;
-            const candidate = criaIceCandidate(evento.candidate);
-            if (!candidate) return;
-            enviarIceCandidate(idUsuarioRemoto, candidate);
-        };
-
-        peer.ontrack = (evento: RTCTrackEvent): void => {
-            const stream = evento.streams[0];
-            if (!stream) return;
-            conectarAudioRemoto(idUsuarioRemoto, stream);
-        };
-
-        peer.onconnectionstatechange = (): void => { adicionaLog(`Conexão com ${idUsuarioRemoto}: ${peer.connectionState}.`); };
-
-        peersRef.current.set(idUsuarioRemoto, peer);
-        adicionaLog(`Criando conexão WebRTC com ${idUsuarioRemoto}.`);
-        return peer;
-    }, [adicionaLog, conectarAudioRemoto, enviarIceCandidate]);
-
-    const aplicarIcePendentes = useCallback(async (idUsuarioRemoto: number, peer: RTCPeerConnection): Promise<void> => {
-        const pendentes = iceCandidatesPendentesRef.current.get(idUsuarioRemoto) ?? [];
-        iceCandidatesPendentesRef.current.delete(idUsuarioRemoto);
-        for (const candidate of pendentes) await peer.addIceCandidate(new RTCIceCandidate(candidate));
-    }, []);
-
-    const iniciarConexaoComUsuario = useCallback(async (idUsuarioRemoto: number): Promise<void> => {
-        if (idUsuarioRemoto === usuarioLogado?.id) return;
-
-        const peer = obtemOuCriaPeer(idUsuarioRemoto);
-        if (!peer) return;
-
-        const offer = await peer.createOffer();
-        await peer.setLocalDescription(offer);
-
-        const descricao = criaDescricaoSessao(offer);
-        if (!descricao) { adicionaLog(`Não foi possível criar offer para ${idUsuarioRemoto}.`); return; }
-
-        enviarOffer(idUsuarioRemoto, descricao);
-        adicionaLog(`Offer enviada para ${idUsuarioRemoto}.`);
-    }, [adicionaLog, enviarOffer, obtemOuCriaPeer, usuarioLogado?.id]);
-
-    const responderOffer = useCallback(async (idUsuarioOrigem: number, offer: TesteVoz_DescricaoSessao): Promise<void> => {
-        const peer = obtemOuCriaPeer(idUsuarioOrigem);
-        if (!peer) return;
-
-        await peer.setRemoteDescription(new RTCSessionDescription(offer));
-        await aplicarIcePendentes(idUsuarioOrigem, peer);
-
-        const answer = await peer.createAnswer();
-        await peer.setLocalDescription(answer);
-
-        const descricao = criaDescricaoSessao(answer);
-        if (!descricao) { adicionaLog(`Não foi possível criar answer para ${idUsuarioOrigem}.`); return; }
-
-        enviarAnswer(idUsuarioOrigem, descricao);
-        adicionaLog(`Answer enviada para ${idUsuarioOrigem}.`);
-    }, [adicionaLog, aplicarIcePendentes, enviarAnswer, obtemOuCriaPeer]);
-
-    const aplicarAnswer = useCallback(async (idUsuarioOrigem: number, answer: TesteVoz_DescricaoSessao): Promise<void> => {
-        const peer = peersRef.current.get(idUsuarioOrigem);
-        if (!peer) return;
-        await peer.setRemoteDescription(new RTCSessionDescription(answer));
-        await aplicarIcePendentes(idUsuarioOrigem, peer);
-        adicionaLog(`Answer recebida de ${idUsuarioOrigem}.`);
-    }, [adicionaLog, aplicarIcePendentes]);
-
-    const aplicarIceCandidate = useCallback(async (idUsuarioOrigem: number, candidate: TesteVoz_IceCandidate): Promise<void> => {
-        const peer = obtemOuCriaPeer(idUsuarioOrigem);
-        if (!peer) return;
-
-        if (!peer.remoteDescription) {
-            const pendentes = iceCandidatesPendentesRef.current.get(idUsuarioOrigem) ?? [];
-            iceCandidatesPendentesRef.current.set(idUsuarioOrigem, [...pendentes, candidate]);
-            return;
-        }
-
-        await peer.addIceCandidate(new RTCIceCandidate(candidate));
-    }, [obtemOuCriaPeer]);
-
-    // Solicita microfone. Chamada apenas na transição para falante.
-    const iniciarMicrofone = useCallback(async (): Promise<boolean> => {
-        if (modo !== 'falante') return true;
-        if (!navigator.mediaDevices?.getUserMedia) { adicionaLog('Este navegador não suporta captura de microfone.'); return false; }
-
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-            localStreamRef.current = stream;
-            adicionaLog('Microfone autorizado.');
-            return true;
-        } catch {
-            adicionaLog('Não foi possível capturar microfone.');
-            return false;
-        }
-    }, [adicionaLog, modo]);
-
-    useEffect(() => { modoRef.current = modo; }, [modo]);
+export function usePalcoAudio({ modo, token, livekitUrl, adicionaLog }: { modo: PalcoAudioModo; token: string | null; livekitUrl: string | null; adicionaLog: (mensagem: string) => void; }) {
+    const roomRef = useRef<Room | null>(null);
+    const intervaloRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    // Rastreia se adicionaLog muda de referência entre renders (depende da estabilidade no contexto pai).
+    const adicionaLogRef = useRef(adicionaLog);
+    adicionaLogRef.current = adicionaLog;
 
     useEffect(() => {
-        let cancelado = false;
+        const traceId = gerarTraceId();
+        const tsInicio = Date.now();
 
-        const iniciar = async (): Promise<void> => {
-            const microfoneOk = await iniciarMicrofone();
-            if (!microfoneOk || cancelado) return;
+        // ── Log de início do efeito ──
+        console.log(`[PalcoAudio:${traceId}] === useEffect INICIADO === ts=${tsInicio}`);
+        console.log(`[PalcoAudio:${traceId}]   modo="${modo}"`);
+        console.log(`[PalcoAudio:${traceId}]   token presente: ${token !== null}`);
+        console.log(`[PalcoAudio:${traceId}]   livekitUrl: "${livekitUrl ?? '(null)'}"`);
 
-            for (const idUsuarioRemoto of idsParticipantes) {
-                if (cancelado) return;
-                if (usuarioLogado?.id !== undefined && usuarioLogado.id > idUsuarioRemoto) continue;
-                await iniciarConexaoComUsuario(idUsuarioRemoto);
+        if (token) {
+            const meta = inspecionarToken(token);
+            if (meta) {
+                console.log(`[PalcoAudio:${traceId}]   token.tamanho=${meta.tamanho}`);
+                console.log(`[PalcoAudio:${traceId}]   token.room="${meta.room}"`);
+                console.log(`[PalcoAudio:${traceId}]   token.identity="${meta.identity}"`);
+                console.log(`[PalcoAudio:${traceId}]   token.canPublish=${meta.canPublish}`);
+                console.log(`[PalcoAudio:${traceId}]   token.canSubscribe=${meta.canSubscribe}`);
+            } else {
+                console.warn(`[PalcoAudio:${traceId}]   token presente mas não foi possível inspecionar (formato inesperado)`);
             }
+        }
+
+        // Sem token: aguarda emissão do backend após definirPapel.
+        if (!token || !livekitUrl) {
+            console.log(`[PalcoAudio:${traceId}] Sem token ou url — aguardando. Retornando sem conectar.`);
+            return;
         };
 
-        iniciar().catch(() => { adicionaLog('Falha ao iniciar conexões de áudio.'); });
+        // Validação da URL antes de tentar conectar.
+        if (!validarLivekitUrl(livekitUrl, traceId)) {
+            console.error(`[PalcoAudio:${traceId}] URL inválida — conexão abortada.`);
+            adicionaLog('Erro: URL LiveKit inválida. Verifique variável de ambiente LIVEKIT_WS_URL.');
+            reportarTelemetria({ erroRecente: `URL LiveKit inválida: "${livekitUrl}"` });
+            return;
+        };
+
+        console.log(`[PalcoAudio:${traceId}]   livekitUrl começa com wss://: ${livekitUrl.startsWith('wss://')}`);
+        console.log(`[PalcoAudio:${traceId}]   livekitUrl começa com ws://:  ${livekitUrl.startsWith('ws://')}`);
+
+        let cancelado = false;
+        const room = new Room();
+        roomRef.current = room;
+
+        console.log(`[PalcoAudio:${traceId}] Room criada. Estado inicial: "${room.state}"`);
+
+        // ── Eventos da Room ──────────────────────────────────────────────────
+
+        room.on(RoomEvent.Connected, () => {
+            console.log(`[PalcoAudio:${traceId}] EVENTO: Connected. room.state="${room.state}" cancelado=${cancelado}`);
+        });
+
+        room.on(RoomEvent.Disconnected, () => {
+            console.log(`[PalcoAudio:${traceId}] EVENTO: Disconnected. room.state="${room.state}" cancelado=${cancelado} ts_desde_inicio=${Date.now() - tsInicio}ms`);
+            adicionaLog('Desconectado do LiveKit.');
+            reportarTelemetria({ audioCtxEstado: 'closed' });
+        });
+
+        room.on(RoomEvent.Reconnecting, () => {
+            console.log(`[PalcoAudio:${traceId}] EVENTO: Reconnecting. room.state="${room.state}"`);
+        });
+
+        room.on(RoomEvent.Reconnected, () => {
+            console.log(`[PalcoAudio:${traceId}] EVENTO: Reconnected. room.state="${room.state}"`);
+        });
+
+        room.on(RoomEvent.ConnectionStateChanged, (state) => {
+            console.log(`[PalcoAudio:${traceId}] EVENTO: ConnectionStateChanged → "${state}" cancelado=${cancelado}`);
+        });
+
+        room.on(RoomEvent.MediaDevicesError, (error: Error) => {
+            console.error(`[PalcoAudio:${traceId}] EVENTO: MediaDevicesError: ${error.message}`);
+            console.error(error.stack ?? '(sem stack)');
+            adicionaLog(`Erro de dispositivo de mídia: ${error.message}`);
+            reportarTelemetria({ microfoneEstado: 'erro', erroRecente: `MediaDevicesError: ${error.message}` });
+        });
+
+        // Ouvinte: audio track remota recebida — conectar a elemento de áudio no DOM.
+        room.on(RoomEvent.TrackSubscribed, (track: RemoteTrack, _publication, participant) => {
+            console.log(`[PalcoAudio:${traceId}] EVENTO: TrackSubscribed. track.kind="${track.kind}" participant="${participant?.identity ?? 'desconhecido'}"`);
+            if (track.kind !== Track.Kind.Audio) { console.log(`[PalcoAudio:${traceId}]   (track ignorada — não é áudio)`); return; };
+
+            const audioEl = track.attach() as HTMLAudioElement;
+            audioEl.style.display = 'none';
+            document.body.appendChild(audioEl);
+            console.log(`[PalcoAudio:${traceId}]   audio element criado e anexado ao DOM. Chamando play()...`);
+
+            audioEl.play().then(() => {
+                console.log(`[PalcoAudio:${traceId}]   play() OK para participant="${participant?.identity ?? 'desconhecido'}"`);
+            }).catch((err: Error) => {
+                const msg = err instanceof Error ? err.message : String(err);
+                console.warn(`[PalcoAudio:${traceId}]   play() bloqueado (autoplay policy): ${msg}`);
+                adicionaLog('Autoplay bloqueado — interaja com a página para ouvir o áudio.');
+                reportarTelemetria({ audioCtxEstado: 'suspended', erroRecente: `Autoplay bloqueado: ${msg}` });
+            });
+        });
+
+        room.on(RoomEvent.TrackUnsubscribed, (track: RemoteTrack, _publication, participant) => {
+            console.log(`[PalcoAudio:${traceId}] EVENTO: TrackUnsubscribed. track.kind="${track.kind}" participant="${participant?.identity ?? 'desconhecido'}"`);
+            if (track.kind !== Track.Kind.Audio) return;
+            track.detach().forEach(el => { el.parentElement?.removeChild(el); });
+            console.log(`[PalcoAudio:${traceId}]   audio element removido do DOM`);
+        });
+
+        room.on(RoomEvent.LocalTrackPublished, (publication) => {
+            console.log(`[PalcoAudio:${traceId}] EVENTO: LocalTrackPublished. kind="${publication.kind}" trackSid="${publication.trackSid}"`);
+        });
+
+        // ────────────────────────────────────────────────────────────────────
+
+        const conectar = async (): Promise<void> => {
+            console.log(`[PalcoAudio:${traceId}] Chamando room.connect(url, token)...`);
+            console.log(`[PalcoAudio:${traceId}]   url="${livekitUrl}"`);
+            console.log(`[PalcoAudio:${traceId}]   room.state antes do connect="${room.state}"`);
+
+            await room.connect(livekitUrl, token);
+
+            console.log(`[PalcoAudio:${traceId}] room.connect() resolveu. room.state="${room.state}" cancelado=${cancelado}`);
+
+            if (cancelado) {
+                console.log(`[PalcoAudio:${traceId}] cleanup foi acionado antes do connect resolver — chamando room.disconnect() imediatamente.`);
+                room.disconnect();
+                return;
+            };
+
+            adicionaLog(`Conectado ao LiveKit como ${modo}.`);
+            reportarTelemetria({ audioCtxEstado: 'running' });
+
+            if (modo === 'falante') {
+                console.log(`[PalcoAudio:${traceId}] Solicitando microfone (setMicrophoneEnabled)...`);
+                reportarTelemetria({ microfoneEstado: 'aguardando' });
+                adicionaLog('Aguardando permissão de microfone...');
+
+                try {
+                    await room.localParticipant.setMicrophoneEnabled(true);
+                    console.log(`[PalcoAudio:${traceId}] Microfone habilitado. cancelado=${cancelado}`);
+                    adicionaLog('Microfone ativo — transmitindo.');
+                    reportarTelemetria({ microfoneEstado: 'capturando', nivelMicrofone: 0 });
+                } catch (err) {
+                    const msg = err instanceof Error ? err.message : String(err);
+                    const stack = err instanceof Error ? (err.stack ?? '(sem stack)') : '(sem stack)';
+                    console.error(`[PalcoAudio:${traceId}] Erro ao habilitar microfone: ${msg}`);
+                    console.error(stack);
+                    adicionaLog(`Erro ao ativar microfone: ${msg}`);
+                    reportarTelemetria({ microfoneEstado: 'erro', erroRecente: `Mic error: ${msg}` });
+                }
+            }
+
+            // Relatório periódico de telemetria para o painel Admin (a cada 2 segundos).
+            intervaloRef.current = setInterval(() => {
+                if (cancelado) return;
+                if (modo === 'falante') {
+                    const nivel = Math.round((room.localParticipant.audioLevel ?? 0) * 100);
+                    reportarTelemetria({ microfoneEstado: 'capturando', nivelMicrofone: nivel, audioCtxEstado: 'running' });
+                } else {
+                    const tracksAtivos = Array.from(room.remoteParticipants.values()).filter(p => Array.from(p.trackPublications.values()).some(pub => pub.kind === Track.Kind.Audio && pub.isSubscribed)).length;
+                    reportarTelemetria({ audioCtxEstado: room.state === 'connected' ? 'running' : room.state, chunksRecebidos: tracksAtivos });
+                }
+            }, 2000);
+        };
+
+        conectar().catch(e => {
+            if (cancelado) {
+                console.warn(`[PalcoAudio:${traceId}] conectar() rejeitou MAS cleanup já estava ativo (cancelado=true). Isso pode ser React Strict Mode ou remount.`);
+            }
+            const nome = e instanceof Error ? e.name : 'Erro';
+            const msg = e instanceof Error ? e.message : String(e);
+            const stack = e instanceof Error ? (e.stack ?? '(sem stack)') : '(sem stack)';
+            console.error(`[PalcoAudio:${traceId}] conectar() REJEITADO. room.state="${room.state}"`);
+            console.error(`[PalcoAudio:${traceId}]   nome: ${nome}`);
+            console.error(`[PalcoAudio:${traceId}]   mensagem: ${msg}`);
+            console.error(`[PalcoAudio:${traceId}]   stack: ${stack}`);
+            adicionaLog(`Erro ao conectar LiveKit: ${msg}`);
+            reportarTelemetria({ microfoneEstado: 'erro', erroRecente: `Falha na conexão LiveKit: ${msg}` });
+        });
 
         return () => {
             cancelado = true;
-            pararMicrofone();
-            fecharConexoesDeAudio();
+            const tsDiff = Date.now() - tsInicio;
+            console.log(`[PalcoAudio:${traceId}] === CLEANUP ACIONADO PELO REACT/hook ===`);
+            console.log(`[PalcoAudio:${traceId}]   ${tsDiff}ms após início do efeito`);
+            console.log(`[PalcoAudio:${traceId}]   room.state no momento do cleanup="${room.state}"`);
+            console.log(`[PalcoAudio:${traceId}]   Chamando room.disconnect()...`);
+            if (intervaloRef.current !== null) { clearInterval(intervaloRef.current); intervaloRef.current = null; };
+            room.disconnect();
+            roomRef.current = null;
+            reportarTelemetria({ microfoneEstado: 'parado', audioCtxEstado: 'closed' });
+            console.log(`[PalcoAudio:${traceId}] cleanup concluído.`);
         };
-    }, [adicionaLog, fecharConexoesDeAudio, idsParticipantesKey, iniciarConexaoComUsuario, iniciarMicrofone, pararMicrofone, usuarioLogado?.id]);
-
-    useRecebeEmitWs(Eventos_Emite.Palco.eventos.receberOffer, {
-        onSuccess: (data: EMIT__Palco_receberOffer) => {
-            responderOffer(data.idUsuarioOrigem, data.offer).catch(() => { adicionaLog(`Falha ao responder offer de ${data.idUsuarioOrigem}.`); });
-        },
-    });
-
-    useRecebeEmitWs(Eventos_Emite.Palco.eventos.receberAnswer, {
-        onSuccess: (data: EMIT__Palco_receberAnswer) => {
-            aplicarAnswer(data.idUsuarioOrigem, data.answer).catch(() => { adicionaLog(`Falha ao aplicar answer de ${data.idUsuarioOrigem}.`); });
-        },
-    });
-
-    useRecebeEmitWs(Eventos_Emite.Palco.eventos.receberIceCandidate, {
-        onSuccess: (data: EMIT__Palco_receberIceCandidate) => {
-            aplicarIceCandidate(data.idUsuarioOrigem, data.candidate).catch(() => { adicionaLog(`Falha ao aplicar ICE candidate de ${data.idUsuarioOrigem}.`); });
-        },
-    });
+    }, [token, livekitUrl, modo, adicionaLog]);
 };

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { Eventos_Emite, Eventos_EnviaERecebe, type EMIT__Palco_estadoAtualizado, type PalcoEstadoDto, type PalcoParticipantePapel, type WsErrorResponse } from 'types-nora-api';
+import { Eventos_Emite, Eventos_EnviaERecebe, type EMIT__Palco_diagnosticoAudio, type EMIT__Palco_estadoAtualizado, type PalcoEstadoDto, type PalcoParticipantePapel, type WsErrorResponse } from 'types-nora-api';
 
 import { eventoWs, useRecebeEmitWs } from 'Hooks/useEventoWs';
 import SPA__PaginaPalco__Admin from 'Conteineres/PaginaPalco/paginas/SPA__PaginaPalco__Admin/SPA__PaginaPalco__Admin';
@@ -36,6 +36,7 @@ function extraiMensagemErroPalcoAdmin(erro: Error | WsErrorResponse): string { r
 
 interface Contexto__PaginaPalcoAdmin__Props {
     estado: PalcoEstadoDto | null;
+    diagnostico: EMIT__Palco_diagnosticoAudio | null;
     processando: boolean;
     erro: string | null;
     handleCriar: () => void;
@@ -53,6 +54,7 @@ export const useContexto__PaginaPalcoAdmin = (): Contexto__PaginaPalcoAdmin__Pro
 
 export const Contexto__PaginaPalcoAdmin__Provider = () => {
     const [estado, setEstado] = useState<PalcoEstadoDto | null>(null);
+    const [diagnostico, setDiagnostico] = useState<EMIT__Palco_diagnosticoAudio | null>(null);
     const [processando, setProcessando] = useState(false);
     const [erro, setErro] = useState<string | null>(null);
 
@@ -65,7 +67,11 @@ export const Contexto__PaginaPalcoAdmin__Provider = () => {
     });
 
     useRecebeEmitWs(Eventos_Emite.Palco.eventos.encerrado, {
-        onSuccess: () => { setEstado({ ativo: false, participantes: [] }); },
+        onSuccess: () => { setEstado({ ativo: false, participantes: [] }); setDiagnostico(null); },
+    });
+
+    useRecebeEmitWs(Eventos_Emite.Palco.eventos.diagnosticoAudio, {
+        onSuccess: (data: EMIT__Palco_diagnosticoAudio) => { setDiagnostico(data); },
     });
 
     const executar = useCallback(async (acao: () => Promise<ResultadoAcaoPalcoAdmin>): Promise<void> => {
@@ -94,7 +100,7 @@ export const Contexto__PaginaPalcoAdmin__Provider = () => {
     }, [executar]);
 
     return (
-        <Contexto__PaginaPalcoAdmin.Provider value={{ estado, processando, erro, handleCriar, handleEncerrar, handleDefinirPapel }}>
+        <Contexto__PaginaPalcoAdmin.Provider value={{ estado, diagnostico, processando, erro, handleCriar, handleEncerrar, handleDefinirPapel }}>
             <SPA__PaginaPalco__Admin />
         </Contexto__PaginaPalcoAdmin.Provider>
     );

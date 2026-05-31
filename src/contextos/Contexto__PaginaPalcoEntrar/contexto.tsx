@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Eventos_Emite, Eventos_EnviaERecebe, type EMIT__Palco_encerrado, type EMIT__Palco_estadoAtualizado, type PalcoEstadoDto, type PalcoParticipanteDto, type PalcoParticipantePapel, type RESPONSE__Palco_entrar, type WsErrorResponse } from 'types-nora-api';
+import { Eventos_Emite, Eventos_EnviaERecebe, type EMIT__Palco_encerrado, type EMIT__Palco_estadoAtualizado, type EMIT__Palco_tokenMidia, type PalcoEstadoDto, type PalcoParticipanteDto, type PalcoParticipantePapel, type RESPONSE__Palco_entrar, type WsErrorResponse } from 'types-nora-api';
 
 import { criaConteiner, criaSaidaConteiner, type SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 import { eventoWs, useRecebeEmitWs } from 'Hooks/useEventoWs';
@@ -30,6 +30,8 @@ interface Contexto__PaginaPalcoEntrar__Props {
     meuPapel: PalcoParticipantePapel | null;
     estado: PalcoEstadoDto | null;
     participantesAudio: PalcoParticipanteDto[];
+    livekitToken: string | null;
+    livekitUrl: string | null;
     logs: string[];
     adicionaLog: (mensagem: string) => void;
     sairLocalmente: () => void;
@@ -50,6 +52,8 @@ export const Contexto__PaginaPalcoEntrar__Provider = () => {
     const [conectado, setConectado] = useState(false);
     const [meuPapel, setMeuPapel] = useState<PalcoParticipantePapel | null>(null);
     const [estado, setEstado] = useState<PalcoEstadoDto | null>(null);
+    const [livekitToken, setLivekitToken] = useState<string | null>(null);
+    const [livekitUrl, setLivekitUrl] = useState<string | null>(null);
     const [logs, setLogs] = useState<string[]>([]);
     const conectadoRef = useRef(false);
     const removidoRef = useRef(false);
@@ -66,6 +70,8 @@ export const Contexto__PaginaPalcoEntrar__Provider = () => {
         setConectado(false);
         setMeuPapel(null);
         setEstado(null);
+        setLivekitToken(null);
+        setLivekitUrl(null);
         adicionaLog('Saiu do palco.');
     }, [adicionaLog]);
 
@@ -116,6 +122,9 @@ export const Contexto__PaginaPalcoEntrar__Provider = () => {
             }
 
             setMeuPapel(eu.papel);
+
+            // Limpar token quando rebaixado para aguardando — LiveKit desconecta via hook cleanup.
+            if (eu.papel === 'aguardando') { setLivekitToken(null); setLivekitUrl(null); };
         },
     });
 
@@ -123,6 +132,15 @@ export const Contexto__PaginaPalcoEntrar__Provider = () => {
         onSuccess: (_data: EMIT__Palco_encerrado) => {
             adicionaLog('O palco foi encerrado pelo administrador.');
             sairLocalmente();
+        },
+    });
+
+    // Token LiveKit emitido pelo backend quando o papel muda para falante ou ouvinte.
+    useRecebeEmitWs(Eventos_Emite.Palco.eventos.tokenMidia, {
+        onSuccess: (data: EMIT__Palco_tokenMidia) => {
+            setLivekitToken(data.token);
+            setLivekitUrl(data.livekitUrl);
+            adicionaLog('Token de mídia recebido — conectando ao LiveKit.');
         },
     });
 
@@ -138,7 +156,7 @@ export const Contexto__PaginaPalcoEntrar__Provider = () => {
     const fluxo = resolveFluxoPaginaPalcoEntrar(estado, conectado, meuPapel);
 
     return (
-        <Contexto__PaginaPalcoEntrar.Provider value={{ fluxo, entrando, conectado, meuPapel, estado, participantesAudio, logs, adicionaLog, sairLocalmente }}>
+        <Contexto__PaginaPalcoEntrar.Provider value={{ fluxo, entrando, conectado, meuPapel, estado, participantesAudio, livekitToken, livekitUrl, logs, adicionaLog, sairLocalmente }}>
             <Conteiner__PaginaPalcoEntrar__Interno />
         </Contexto__PaginaPalcoEntrar.Provider>
     );
@@ -166,13 +184,13 @@ function resolveFluxoPaginaPalcoEntrar(estado: PalcoEstadoDto | null, conectado:
 function Contexto__PaginaPalcoEntrar__Aguardando__Provider() { return <SPA__PaginaPalco__Participante />; };
 
 function Contexto__PaginaPalcoEntrar__Ouvinte__Provider() {
-    const { participantesAudio, adicionaLog } = useContexto__PaginaPalcoEntrar();
-    usePalcoAudio({ modo: 'ouvinte', participantes: participantesAudio, adicionaLog });
+    const { adicionaLog, livekitToken, livekitUrl } = useContexto__PaginaPalcoEntrar();
+    usePalcoAudio({ modo: 'ouvinte', token: livekitToken, livekitUrl, adicionaLog });
     return <SPA__PaginaPalco__Participante />;
 };
 
 function Contexto__PaginaPalcoEntrar__Falante__Provider() {
-    const { participantesAudio, adicionaLog } = useContexto__PaginaPalcoEntrar();
-    usePalcoAudio({ modo: 'falante', participantes: participantesAudio, adicionaLog });
+    const { adicionaLog, livekitToken, livekitUrl } = useContexto__PaginaPalcoEntrar();
+    usePalcoAudio({ modo: 'falante', token: livekitToken, livekitUrl, adicionaLog });
     return <SPA__PaginaPalco__Participante />;
 };
