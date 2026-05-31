@@ -45,6 +45,10 @@ function AcaoEmFicha({ acao, desativarAcoes, executaAcao }: { acao: AcaoDisponiv
                 <strong>{acao.nome}</strong>
                 <span>{acao.origemExibicao.nome}</span>
                 <span>{status}</span>
+                <span className={styles.lista_requisitos}>
+                    {acao.requisitos.length === 0 && <span>Sem requisitos adicionais</span>}
+                    {acao.requisitos.map(requisito => <span key={requisito.descricao} className={requisito.cumprido ? styles.requisito_cumprido : styles.requisito_bloqueado}>{requisito.descricao}</span>)}
+                </span>
                 <small>{acao.key}</small>
             </span>
         </button>

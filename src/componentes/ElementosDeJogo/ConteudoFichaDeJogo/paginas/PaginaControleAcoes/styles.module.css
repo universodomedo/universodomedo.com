@@ -116,6 +116,22 @@
     overflow-wrap: anywhere;
 }
 
+.lista_requisitos {
+    display: flex;
+    flex-direction: column;
+    gap: .15em;
+    margin: .2em 0;
+}
+
+.requisito_cumprido {
+    color: #DCE8DE;
+}
+
+.requisito_bloqueado {
+    color: #F0BDC3;
+    font-weight: 700;
+}
+
 .acao:hover .resumo_acao,
 .acao:focus-visible .resumo_acao {
     opacity: 1;
