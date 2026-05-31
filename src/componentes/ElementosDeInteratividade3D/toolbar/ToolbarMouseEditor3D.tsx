@@ -8,7 +8,7 @@ import { useEditor3DContexto } from '../contexto/Editor3DContexto';
 
 export function ToolbarMouseEditor3D() {
     const { estado } = useEditor3DContexto();
-    const modoAtual = obtemEstadoToolbarInteracaoAtualEditor3D(estado.modoAtual.tipo, estado.ferramentaMouse, estado.modoOperacao, estado.tipoSelecaoEdicao, estado.insetFaceEdicao !== null);
+    const modoAtual = obtemEstadoToolbarInteracaoAtualEditor3D(estado.modoAtual.tipo, estado.ferramentaMouse, estado.modoOperacao, estado.tipoSelecaoEdicao, estado.insetFaceEdicao !== null, estado.bevelEdicao !== null);
 
     return (
         <aside className={styles.toolbarMouseEditor3D} data-editor3d-toolbar-mouse="true" aria-label="Modo atual de interacao">

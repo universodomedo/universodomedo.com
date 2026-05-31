@@ -1,4 +1,5 @@
 import { atualizaObjetoEditor3D, atualizaObjetosEditor3D, escalaObjetosEditor3D, moveObjetosEditor3D, rotacionaObjetosEditor3D } from './editor3D.reducer.objetos';
+import { criaMalhaComVerticesMovidosEditor3D, obtemIndicesSelecaoEdicaoEditor3D } from './editor3D.reducer.edicao';
 import { criaModoInativoEditor3D } from '../modos/editor3D.modo.utils';
 import type { Editor3DState } from './editor3D.estado.types';
 import type { EixoEditor3D, ObjetoCenaEditor3D, Vetor3 } from '../editor/editor3D.tipos';
@@ -14,6 +15,9 @@ function obtemObjetosSelecionados(state: Editor3DState): ObjetoCenaEditor3D[] {
 
     return [objetoAtivo, ...objetosSelecionados.filter(objeto => objeto.id !== objetoAtivo.id)];
 };
+
+function somaVetoresEditor3D(a: Vetor3, b: Vetor3): Vetor3 { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; };
+function obtemObjetoPorIdEditor3D(state: Editor3DState, idObjeto: string): ObjetoCenaEditor3D | null { return state.objetos.find(objeto => objeto.id === idObjeto) ?? null; };
 
 function criaMapaPosicoesIniciaisEditor3D(objetos: readonly ObjetoCenaEditor3D[]): Record<string, Vetor3> {
     const posicoes: Record<string, Vetor3> = {};
@@ -67,12 +71,28 @@ function aplicaValorRotacaoEixoEditor3D(rotacaoInicial: Vetor3, eixo: EixoEditor
 };
 
 export function iniciaGrabEditor3D(state: Editor3DState): Editor3DState {
+    if (state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return state;
+
+    if (state.modoOperacao === 'EDICAO') {
+        const idObjetoAtivo = state.escopoEdicao?.idObjetoAtivo ?? null;
+        const objeto = idObjetoAtivo === null ? null : obtemObjetoPorIdEditor3D(state, idObjetoAtivo);
+        const malhaEditavel = objeto?.malhaEditavel ?? null;
+
+        if (objeto === null || malhaEditavel === null) return state;
+
+        const indicesVertices = obtemIndicesSelecaoEdicaoEditor3D(state, malhaEditavel, objeto.id);
+
+        if (indicesVertices.length === 0) return state;
+
+        return { ...state, modoAtual: { tipo: 'GRAB', escopo: 'EDICAO', idObjeto: objeto.id, idsObjetos: [objeto.id], eixo: null, indicesVertices, malhaInicial: malhaEditavel, deltaAcumulado: [0, 0, 0] } };
+    }
+
     const objetos = obtemObjetosSelecionados(state);
     const objetoAtivo = objetos[0] ?? null;
 
-    if (objetoAtivo === null || state.modoAtual.tipo !== 'NENHUM') return state;
+    if (objetoAtivo === null) return state;
 
-    return { ...state, modoAtual: { tipo: 'GRAB', idObjeto: objetoAtivo.id, idsObjetos: objetos.map(objeto => objeto.id), eixo: null, posicaoInicial: objetoAtivo.posicao, posicoesIniciais: criaMapaPosicoesIniciaisEditor3D(objetos) } };
+    return { ...state, modoAtual: { tipo: 'GRAB', escopo: 'OBJETO', idObjeto: objetoAtivo.id, idsObjetos: objetos.map(objeto => objeto.id), eixo: null, posicaoInicial: objetoAtivo.posicao, posicoesIniciais: criaMapaPosicoesIniciaisEditor3D(objetos) } };
 };
 
 export function iniciaRotateEditor3D(state: Editor3DState): Editor3DState {
@@ -135,6 +155,11 @@ export function atualizaEntradaNumericaRotateEditor3D(state: Editor3DState, entr
 
 export function moveModoGrabEditor3D(state: Editor3DState, delta: Vetor3): Editor3DState {
     if (state.modoAtual.tipo !== 'GRAB') return state;
+    if (state.modoAtual.escopo === 'EDICAO') {
+        const modoAtual = state.modoAtual;
+
+        return { ...state, objetos: state.objetos.map(objeto => objeto.id === modoAtual.idObjeto && objeto.malhaEditavel !== null ? { ...objeto, malhaEditavel: criaMalhaComVerticesMovidosEditor3D(objeto.malhaEditavel, modoAtual.indicesVertices, delta), versaoGeometria: objeto.versaoGeometria + 1 } : objeto), modoAtual: { ...modoAtual, deltaAcumulado: somaVetoresEditor3D(modoAtual.deltaAcumulado, delta) } };
+    }
 
     return { ...state, objetos: moveObjetosEditor3D(state.objetos, state.modoAtual.idsObjetos, delta) };
 };
@@ -154,6 +179,7 @@ export function escalaModoScaleEditor3D(state: Editor3DState, delta: Vetor3): Ed
 export function cancelaModoEditor3D(state: Editor3DState): Editor3DState {
     const modoAtual = state.modoAtual;
 
+    if (modoAtual.tipo === 'GRAB' && modoAtual.escopo === 'EDICAO') return { ...state, modoAtual: criaModoInativoEditor3D(), objetos: state.objetos.map(objeto => objeto.id === modoAtual.idObjeto ? { ...objeto, malhaEditavel: modoAtual.malhaInicial, versaoGeometria: objeto.versaoGeometria + 1 } : objeto) };
     if (modoAtual.tipo === 'GRAB') return { ...state, modoAtual: criaModoInativoEditor3D(), objetos: atualizaObjetosEditor3D(state.objetos, modoAtual.idsObjetos, objeto => ({ ...objeto, posicao: modoAtual.posicoesIniciais[objeto.id] ?? objeto.posicao })) };
     if (modoAtual.tipo === 'ROTATE') return { ...state, modoAtual: criaModoInativoEditor3D(), objetos: atualizaObjetosEditor3D(state.objetos, modoAtual.idsObjetos, objeto => ({ ...objeto, rotacao: modoAtual.rotacoesIniciais[objeto.id] ?? objeto.rotacao })) };
     if (modoAtual.tipo === 'SCALE') return { ...state, modoAtual: criaModoInativoEditor3D(), objetos: atualizaObjetosEditor3D(state.objetos, modoAtual.idsObjetos, objeto => ({ ...objeto, escala: modoAtual.escalasIniciais[objeto.id] ?? objeto.escala })) };

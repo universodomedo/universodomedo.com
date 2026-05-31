@@ -24,6 +24,14 @@ export function useRenderizadorEditor3D(canvasRef: RefObject<HTMLCanvasElement |
 
         if (canvas === null) return;
 
+        return registraEventosRenderizadorEditor3D({ canvas, cursorFantasma: cursorFantasmaRef, refs });
+    }, [canvasRef, cursorFantasmaRef, refs]);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+
+        if (canvas === null) return;
+
         const gl = canvas.getContext('webgl', { alpha: true, antialias: true });
 
         if (gl === null) {
@@ -43,11 +51,9 @@ export function useRenderizadorEditor3D(canvasRef: RefObject<HTMLCanvasElement |
         setWebglDisponivel(true);
 
         const encerraLoop = iniciaLoopRenderizacaoEditor3D(gl, canvas, recursos, refs);
-        const removeEventos = registraEventosRenderizadorEditor3D({ canvas, cursorFantasma: cursorFantasmaRef, refs });
 
         return () => {
             encerraLoop();
-            removeEventos();
             limpaRecursosRenderizadorEditor3D(gl, recursos);
         };
     }, [assinaturaObjetos, canvasRef, cursorFantasmaRef, refs]);

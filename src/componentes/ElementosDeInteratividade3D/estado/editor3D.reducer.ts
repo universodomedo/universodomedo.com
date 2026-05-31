@@ -1,6 +1,6 @@
-import { aplicaVistaEixoGrabCameraEditor3D, criaCameraPadraoEditor3D } from '../editor/editor3D.camera';
+import { criaCameraPadraoEditor3D } from '../editor/editor3D.camera';
 import { criaColecaoCenaEditor3D, obtemIdsObjetosColecaoEditor3D, removeObjetosDasColecoesEditor3D } from './editor3D.colecoes';
-import { aplicaInsetFaceSelecionadaEditor3D, atualizaInsetFaceEmEdicaoEditor3D, cancelaInsetFaceEmEdicaoEditor3D, confirmaInsetFaceEmEdicaoEditor3D, defineTipoSelecaoEdicaoEditor3D, iniciaInsetFaceSelecionadaEditor3D, moveSelecaoEdicaoEditor3D, preparaObjetosEscopoEdicaoEditor3D, selecionaArestaEdicaoEditor3D, selecionaFaceEdicaoEditor3D, selecionaVerticeEdicaoEditor3D } from './editor3D.reducer.edicao';
+import { alteraSegmentosBevelEmEdicaoEditor3D, aplicaInsetFaceSelecionadaEditor3D, atualizaBevelEmEdicaoEditor3D, atualizaInsetFaceEmEdicaoEditor3D, cancelaBevelEmEdicaoEditor3D, cancelaInsetFaceEmEdicaoEditor3D, confirmaBevelEmEdicaoEditor3D, confirmaInsetFaceEmEdicaoEditor3D, defineTipoSelecaoEdicaoEditor3D, iniciaBevelSelecaoEditor3D, iniciaInsetFaceSelecionadaEditor3D, moveSelecaoEdicaoEditor3D, preparaObjetosEscopoEdicaoEditor3D, selecionaArestaEdicaoEditor3D, selecionaFaceEdicaoEditor3D, selecionaVerticeEdicaoEditor3D } from './editor3D.reducer.edicao';
 import { alteraQuantidadeVerticesStateEditor3D, atualizaQuantidadeVerticesStateEditor3D, atualizaVetorMalhaEmCriacaoEditor3D, confirmaMalhaEmCriacaoEditor3D, iniciaMalhaEmCriacaoEditor3D } from './editor3D.reducer.criacao';
 import { aplicaRotationScaleObjetosEditor3D, atualizaObjetosEditor3D, atualizaVetorObjetoEditor3D, moveObjetosEditor3D } from './editor3D.reducer.objetos';
 import { aplicaEixoGrabEditor3D, aplicaEixoRotateEditor3D, aplicaEixoScaleEditor3D, aplicaRotateLivreEditor3D, atualizaEntradaNumericaRotateEditor3D, cancelaModoEditor3D, escalaModoScaleEditor3D, iniciaGrabEditor3D, iniciaRotateEditor3D, iniciaScaleEditor3D, moveModoGrabEditor3D, rotacionaModoRotateEditor3D } from './editor3D.reducer.modo';
@@ -125,13 +125,15 @@ function entraModoEdicaoEditor3D(state: Editor3DState): Editor3DState {
 
     if (escopoEdicao === null) return state;
 
-    return { ...state, objetos: preparaObjetosEscopoEdicaoEditor3D(state.objetos, escopoEdicao.idsObjetos), modoOperacao: 'EDICAO', escopoEdicao, tipoSelecaoEdicao: 'VERTICE', verticeSelecionadoEdicao: null, arestaSelecionadaEdicao: null, faceSelecionadaEdicao: null, insetFaceEdicao: null, ferramentaMouse: 'SELECIONAR', areaSelecao: null };
+    return { ...state, objetos: preparaObjetosEscopoEdicaoEditor3D(state.objetos, escopoEdicao.idsObjetos), modoOperacao: 'EDICAO', escopoEdicao, tipoSelecaoEdicao: 'VERTICE', verticeSelecionadoEdicao: null, arestaSelecionadaEdicao: null, faceSelecionadaEdicao: null, insetFaceEdicao: null, bevelEdicao: null, ferramentaMouse: 'SELECIONAR', areaSelecao: null };
 };
 
 function saiModoEdicaoEditor3D(state: Editor3DState): Editor3DState {
     if (state.modoOperacao === 'OBJETO') return state;
+    if (state.modoAtual.tipo !== 'NENHUM') return state;
+    if (state.bevelEdicao !== null || state.insetFaceEdicao !== null) return state;
 
-    return { ...state, modoOperacao: 'OBJETO', escopoEdicao: null, tipoSelecaoEdicao: 'VERTICE', verticeSelecionadoEdicao: null, arestaSelecionadaEdicao: null, faceSelecionadaEdicao: null, insetFaceEdicao: null, ferramentaMouse: 'SELECIONAR', areaSelecao: null };
+    return { ...state, modoOperacao: 'OBJETO', escopoEdicao: null, tipoSelecaoEdicao: 'VERTICE', verticeSelecionadoEdicao: null, arestaSelecionadaEdicao: null, faceSelecionadaEdicao: null, insetFaceEdicao: null, bevelEdicao: null, ferramentaMouse: 'SELECIONAR', areaSelecao: null };
 };
 
 function alternaModoOperacaoEditor3D(state: Editor3DState): Editor3DState {
@@ -214,8 +216,9 @@ function moveObjetoParaColecaoCenaEditor3D(state: Editor3DState, idObjeto: strin
     const arestaSelecionadaEdicao = objetoFicouOculto && state.arestaSelecionadaEdicao?.idObjeto === idObjeto ? null : state.arestaSelecionadaEdicao;
     const faceSelecionadaEdicao = objetoFicouOculto && state.faceSelecionadaEdicao?.idObjeto === idObjeto ? null : state.faceSelecionadaEdicao;
     const insetFaceEdicao = objetoFicouOculto && state.insetFaceEdicao?.idObjeto === idObjeto ? null : state.insetFaceEdicao;
+    const bevelEdicao = objetoFicouOculto && state.bevelEdicao?.idObjeto === idObjeto ? null : state.bevelEdicao;
 
-    return { ...state, objetos, colecoes, idsObjetosOcultos, idsObjetosSelecionados, idObjetoSelecionado, idColecaoSelecionada: null, verticeSelecionadoEdicao, arestaSelecionadaEdicao, faceSelecionadaEdicao, insetFaceEdicao };
+    return { ...state, objetos, colecoes, idsObjetosOcultos, idsObjetosSelecionados, idObjetoSelecionado, idColecaoSelecionada: null, verticeSelecionadoEdicao, arestaSelecionadaEdicao, faceSelecionadaEdicao, insetFaceEdicao, bevelEdicao };
 };
 
 function moveColecaoCenaEditor3D(state: Editor3DState, idColecao: string, idColecaoReferencia: string | null, posicao: PosicaoSoltarCenaEditor3D | null): Editor3DState {
@@ -252,8 +255,9 @@ function alternaVisibilidadeObjetoEditor3D(state: Editor3DState, idObjeto: strin
     const arestaSelecionadaEdicao = objetoFicouOculto && state.arestaSelecionadaEdicao?.idObjeto === idObjeto ? null : state.arestaSelecionadaEdicao;
     const faceSelecionadaEdicao = objetoFicouOculto && state.faceSelecionadaEdicao?.idObjeto === idObjeto ? null : state.faceSelecionadaEdicao;
     const insetFaceEdicao = objetoFicouOculto && state.insetFaceEdicao?.idObjeto === idObjeto ? null : state.insetFaceEdicao;
+    const bevelEdicao = objetoFicouOculto && state.bevelEdicao?.idObjeto === idObjeto ? null : state.bevelEdicao;
 
-    return { ...state, idsObjetosOcultos, idsObjetosOcultosManualmente, idsObjetosSelecionados, idObjetoSelecionado, verticeSelecionadoEdicao, arestaSelecionadaEdicao, faceSelecionadaEdicao, insetFaceEdicao };
+    return { ...state, idsObjetosOcultos, idsObjetosOcultosManualmente, idsObjetosSelecionados, idObjetoSelecionado, verticeSelecionadoEdicao, arestaSelecionadaEdicao, faceSelecionadaEdicao, insetFaceEdicao, bevelEdicao };
 };
 
 function alternaVisibilidadeColecaoEditor3D(state: Editor3DState, idColecao: string): Editor3DState {
@@ -272,8 +276,9 @@ function alternaVisibilidadeColecaoEditor3D(state: Editor3DState, idColecao: str
     const arestaSelecionadaEdicao = colecaoFicouOculta && state.arestaSelecionadaEdicao !== null && idsObjetosColecao.includes(state.arestaSelecionadaEdicao.idObjeto) ? null : state.arestaSelecionadaEdicao;
     const faceSelecionadaEdicao = colecaoFicouOculta && state.faceSelecionadaEdicao !== null && idsObjetosColecao.includes(state.faceSelecionadaEdicao.idObjeto) ? null : state.faceSelecionadaEdicao;
     const insetFaceEdicao = colecaoFicouOculta && state.insetFaceEdicao !== null && idsObjetosColecao.includes(state.insetFaceEdicao.idObjeto) ? null : state.insetFaceEdicao;
+    const bevelEdicao = colecaoFicouOculta && state.bevelEdicao !== null && idsObjetosColecao.includes(state.bevelEdicao.idObjeto) ? null : state.bevelEdicao;
 
-    return { ...state, idsColecoesOcultas, idsObjetosOcultos, idsObjetosSelecionados, idObjetoSelecionado, verticeSelecionadoEdicao, arestaSelecionadaEdicao, faceSelecionadaEdicao, insetFaceEdicao };
+    return { ...state, idsColecoesOcultas, idsObjetosOcultos, idsObjetosSelecionados, idObjetoSelecionado, verticeSelecionadoEdicao, arestaSelecionadaEdicao, faceSelecionadaEdicao, insetFaceEdicao, bevelEdicao };
 };
 
 function atualizaVetorObjetoSelecionadoEditor3D(state: Editor3DState, acao: Extract<Editor3DAcao, { readonly tipo: 'ATUALIZA_VETOR_OBJETO_SELECIONADO' }>): Editor3DState {
@@ -312,6 +317,11 @@ export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Edito
     if (acao.tipo === 'ATUALIZA_INSET_FACE_EM_EDICAO') return atualizaInsetFaceEmEdicaoEditor3D(state, acao.deltaEscala);
     if (acao.tipo === 'CONFIRMA_INSET_FACE_EM_EDICAO') return confirmaInsetFaceEmEdicaoEditor3D(state);
     if (acao.tipo === 'CANCELA_INSET_FACE_EM_EDICAO') return cancelaInsetFaceEmEdicaoEditor3D(state);
+    if (acao.tipo === 'INICIA_BEVEL_SELECAO') return iniciaBevelSelecaoEditor3D(state);
+    if (acao.tipo === 'ATUALIZA_BEVEL_EM_EDICAO') return atualizaBevelEmEdicaoEditor3D(state, acao.deltaLargura);
+    if (acao.tipo === 'ALTERA_SEGMENTOS_BEVEL_EM_EDICAO') return alteraSegmentosBevelEmEdicaoEditor3D(state, acao.deltaSegmentos);
+    if (acao.tipo === 'CONFIRMA_BEVEL_EM_EDICAO') return confirmaBevelEmEdicaoEditor3D(state);
+    if (acao.tipo === 'CANCELA_BEVEL_EM_EDICAO') return cancelaBevelEmEdicaoEditor3D(state);
     if (acao.tipo === 'MOVE_SELECAO_EDICAO') return moveSelecaoEdicaoEditor3D(state, acao.delta);
     if (acao.tipo === 'APLICA_INSET_FACE_SELECIONADA') return aplicaInsetFaceSelecionadaEditor3D(state);
     if (acao.tipo === 'ATIVA_FERRAMENTA_MOUSE') return state.modoAtual.tipo === 'NENHUM' ? { ...state, ferramentaMouse: acao.ferramenta } : state;
@@ -347,8 +357,8 @@ export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Edito
     if (acao.tipo === 'CANCELA_MALHA_EM_CRIACAO') return { ...state, malhaEmCriacao: null };
     if (acao.tipo === 'LIMPA_CENA') return criaEstadoInicialEditor3D();
     if (acao.tipo === 'MOVE_OBJETO_SELECIONADO' && state.modoOperacao === 'OBJETO' && state.idsObjetosSelecionados.length > 0 && state.modoAtual.tipo === 'NENHUM') return { ...state, objetos: moveObjetosEditor3D(state.objetos, state.idsObjetosSelecionados, acao.delta) };
-    if (acao.tipo === 'INICIA_GRAB') return state.modoOperacao === 'OBJETO' ? iniciaGrabEditor3D(state) : state;
-    if (acao.tipo === 'APLICA_EIXO_GRAB' && state.modoAtual.tipo === 'GRAB') return { ...aplicaEixoGrabEditor3D(state, acao.eixo), camera: aplicaVistaEixoGrabCameraEditor3D(state.camera, acao.eixo) };
+    if (acao.tipo === 'INICIA_GRAB') return iniciaGrabEditor3D(state);
+    if (acao.tipo === 'APLICA_EIXO_GRAB' && state.modoAtual.tipo === 'GRAB') return aplicaEixoGrabEditor3D(state, acao.eixo);
     if (acao.tipo === 'MOVE_OBJETO_GRAB') return moveModoGrabEditor3D(state, acao.delta);
     if (acao.tipo === 'INICIA_ROTATE') return state.modoOperacao === 'OBJETO' ? iniciaRotateEditor3D(state) : state;
     if (acao.tipo === 'APLICA_EIXO_ROTATE') return aplicaEixoRotateEditor3D(state, acao.eixo);

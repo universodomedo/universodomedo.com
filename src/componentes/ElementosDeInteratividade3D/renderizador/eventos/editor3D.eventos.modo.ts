@@ -4,6 +4,16 @@ import { criaDeltaScaleEditor3D } from '../../modos/scale/editor3D.modoScale.mov
 import { comandoMouseAreaInterativa3DEstaAtivo } from '../../comandos/editor3D.comandos';
 import { desativaCursorVirtualEditor3D } from './editor3D.eventos.cursor';
 import type { ControleEventosEditor3D } from './editor3D.eventos.types';
+import type { ObjetoCenaEditor3D } from '../../editor/editor3D.tipos';
+
+function obtemObjetoEdicaoGrabEditor3D(controle: ControleEventosEditor3D): ObjetoCenaEditor3D | null {
+    const state = controle.refs.estado.current;
+    const modoAtual = state.modoAtual;
+
+    if (modoAtual.tipo !== 'GRAB' || modoAtual.escopo !== 'EDICAO') return null;
+
+    return state.objetos.find(objeto => objeto.id === modoAtual.idObjeto) ?? null;
+};
 
 export function moveModoAtualEditor3D(controle: ControleEventosEditor3D, event: MouseEvent, deltaX: number, deltaY: number): boolean {
     const state = controle.refs.estado.current;
@@ -12,7 +22,7 @@ export function moveModoAtualEditor3D(controle: ControleEventosEditor3D, event: 
     const altura = Math.max(1, controle.canvas.clientHeight);
 
     if (state.modoAtual.tipo === 'GRAB') {
-        acoes.moveObjetoGrab(criaDeltaMovimentoGrabEditor3D(state.camera, deltaX, deltaY, largura, altura, state.modoAtual.eixo));
+        acoes.moveObjetoGrab(criaDeltaMovimentoGrabEditor3D(state.camera, deltaX, deltaY, largura, altura, state.modoAtual.eixo, obtemObjetoEdicaoGrabEditor3D(controle)));
         event.preventDefault();
 
         return true;

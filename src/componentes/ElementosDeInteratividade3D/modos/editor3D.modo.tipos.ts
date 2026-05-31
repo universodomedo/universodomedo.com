@@ -1,4 +1,4 @@
-import type { EixoEditor3D, Vetor3 } from '../editor/editor3D.tipos';
+import type { EixoEditor3D, MalhaEditavelEditor3D, Vetor3 } from '../editor/editor3D.tipos';
 
 export type TipoModoEditor3D = 'NENHUM' | 'GRAB' | 'ROTATE' | 'SCALE';
 
@@ -6,14 +6,28 @@ export interface ModoEditor3DNenhum {
     readonly tipo: 'NENHUM';
 };
 
-export interface ModoGrabEditor3D {
+export interface ModoGrabObjetoEditor3D {
     readonly tipo: 'GRAB';
+    readonly escopo: 'OBJETO';
     readonly idObjeto: string;
     readonly idsObjetos: string[];
     readonly eixo: EixoEditor3D | null;
     readonly posicaoInicial: Vetor3;
     readonly posicoesIniciais: Record<string, Vetor3>;
 };
+
+export interface ModoGrabEdicaoEditor3D {
+    readonly tipo: 'GRAB';
+    readonly escopo: 'EDICAO';
+    readonly idObjeto: string;
+    readonly idsObjetos: string[];
+    readonly eixo: EixoEditor3D | null;
+    readonly indicesVertices: number[];
+    readonly malhaInicial: MalhaEditavelEditor3D;
+    readonly deltaAcumulado: Vetor3;
+};
+
+export type ModoGrabEditor3D = ModoGrabObjetoEditor3D | ModoGrabEdicaoEditor3D;
 
 export interface ModoRotateEditor3D {
     readonly tipo: 'ROTATE';

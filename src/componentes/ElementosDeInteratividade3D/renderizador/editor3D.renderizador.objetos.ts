@@ -32,12 +32,18 @@ function objetoEstaEmModoEditor3D(state: Editor3DState, idObjeto: string): boole
     return state.modoAtual.idsObjetos.includes(idObjeto);
 };
 
-function obtemFaceSelecionadaRenderizadaEditor3D(state: Editor3DState, malha: MalhaRenderizadaEditor3D): FaceRenderizadaEditor3D | null {
+function obtemFacesDestacadasRenderizadasEditor3D(state: Editor3DState, malha: MalhaRenderizadaEditor3D): FaceRenderizadaEditor3D[] {
+    const bevelEdicao = state.bevelEdicao;
+
+    if (bevelEdicao !== null && bevelEdicao.idObjeto === malha.idObjeto) return malha.faces.filter(face => bevelEdicao.idsFacesBevel.includes(face.idFace));
+
     const faceSelecionada = state.faceSelecionadaEdicao;
 
-    if (faceSelecionada === null || faceSelecionada.idObjeto !== malha.idObjeto) return null;
+    if (faceSelecionada === null || faceSelecionada.idObjeto !== malha.idObjeto) return [];
 
-    return malha.faces.find(face => face.idFace === faceSelecionada.idFace) ?? null;
+    const face = malha.faces.find(faceAtual => faceAtual.idFace === faceSelecionada.idFace) ?? null;
+
+    return face === null ? [] : [face];
 };
 
 function objetoEstaNoEscopoEdicaoEditor3D(state: Editor3DState, idObjeto: string): boolean { return state.modoOperacao === 'EDICAO' && (state.escopoEdicao?.idsObjetos.includes(idObjeto) ?? false); };
@@ -99,7 +105,7 @@ export function desenhaObjetosCenaEditor3D(gl: WebGLRenderingContext, recursos: 
         const matrizFinal = multiplicaMatriz4(matrizes.perspectiva, multiplicaMatriz4(matrizes.camera, matrizObjeto));
         const objetoSelecionado = state.idsObjetosSelecionados.includes(malha.idObjeto);
         const objetoEmModo = objetoEstaEmModoEditor3D(state, malha.idObjeto);
-        const faceSelecionada = obtemFaceSelecionadaRenderizadaEditor3D(state, malha);
+        const facesDestacadas = obtemFacesDestacadasRenderizadasEditor3D(state, malha);
         const coresVisualizacao = obtemCoresObjetoVisualizacaoViewportEditor3D(state, objetoAtual);
         const alphaMalhaPreenchida = obtemAlphaMalhaPreenchidaEditor3D(state);
 
@@ -108,7 +114,7 @@ export function desenhaObjetosCenaEditor3D(gl: WebGLRenderingContext, recursos: 
             desenhaMalhaPreenchidaViewportEditor3D(gl, recursos, malha, matrizFinal, matrizObjeto, coresVisualizacao, alphaMalhaPreenchida);
         }
         if (objetoSelecionado && !visualizacaoEstruturaEstaAtivaEditor3D(state) && alphaMalhaPreenchida < 1) desenhaSelecaoObjetoEditor3D(gl, recursos.programa, malha, matrizes.perspectiva, matrizes.camera, matrizObjeto, objetoEmModo);
-        if (faceSelecionada !== null && !visualizacaoEstruturaEstaAtivaEditor3D(state)) desenhaFaceSelecionadaEditor3D(gl, recursos.programa, faceSelecionada, matrizes.perspectiva, matrizes.camera, matrizObjeto);
+        if (!visualizacaoEstruturaEstaAtivaEditor3D(state)) facesDestacadas.forEach(face => desenhaFaceSelecionadaEditor3D(gl, recursos.programa, face, matrizes.perspectiva, matrizes.camera, matrizObjeto));
         if (deveDesenharArestasEditor3D(state, malha.idObjeto) && malha.arestasEdicao !== null) desenhaArestasEdicaoEditor3D(gl, recursos.programa, malha.arestasEdicao, state.arestaSelecionadaEdicao, malha.idObjeto, matrizes.perspectiva, matrizes.camera, matrizObjeto, { alphaBase: obtemAlphaArestasEditor3D(state), ignoraProfundidade: deveIgnorarProfundidadeArestasEditor3D(state) });
         if (objetoSelecionado && state.modoOperacao === 'OBJETO' && visualizacaoEstruturaEstaAtivaEditor3D(state) && malha.arestasEdicao !== null) desenhaArestasSelecaoObjetoEditor3D(gl, recursos.programa, malha.arestasEdicao, matrizes.perspectiva, matrizes.camera, matrizObjeto, objetoEmModo);
         if (objetoEstaNoEscopoEdicaoEditor3D(state, malha.idObjeto) && state.tipoSelecaoEdicao === 'VERTICE' && malha.verticesEdicao !== null) desenhaVerticesEdicaoEditor3D(gl, recursos.programa, malha.verticesEdicao, state.verticeSelecionadoEdicao, malha.idObjeto, matrizes.perspectiva, matrizes.camera, matrizObjeto);

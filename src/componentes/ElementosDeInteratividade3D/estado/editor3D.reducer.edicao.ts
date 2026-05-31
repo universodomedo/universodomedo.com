@@ -1,4 +1,5 @@
 import { aplicaInsetFaceMalhaEditavelComEscalaEditor3D, escalaInsetInicialEditor3D, normalizaEscalaInsetFaceEditor3D } from '../geometria/editor3D.geometria.insetFaces';
+import { aplicaBevelFaceMalhaEditavelEditor3D, aplicaBevelMalhaEditavelEditor3D, normalizaLarguraBevelEditor3D, normalizaSegmentosBevelEditor3D, type ArestaBevelMalhaEditavelEditor3D } from '../geometria/editor3D.geometria.bevel';
 import { criaGeometriaObjetoEditor3D } from '../geometria/primitivas/editor3D.geometria.primitivas';
 import { criaMalhaEditavelPorGeometriaEditor3D } from '../geometria/editor3D.geometria.malhaEditavel';
 import type { Editor3DState } from './editor3D.estado.types';
@@ -6,6 +7,9 @@ import type { FaceMalhaEditavelEditor3D, MalhaEditavelEditor3D, ObjetoCenaEditor
 import type { TipoSelecaoEdicaoEditor3D } from '../modoOperacao/editor3D.modoOperacao.tipos';
 
 const sensibilidadeInsetMouseEditor3D = 0.003;
+const sensibilidadeBevelMouseEditor3D = 0.006;
+const larguraInicialBevelEditor3D = 0;
+const segmentosInicialBevelEditor3D = 1;
 
 function somaVetoresEditor3D(a: Vetor3, b: Vetor3): Vetor3 { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; };
 
@@ -68,7 +72,33 @@ function obtemIndicesUnicosEditor3D(indices: readonly number[]): number[] {
     return indicesUnicos;
 };
 
-function obtemIndicesSelecaoEdicaoEditor3D(state: Editor3DState, malha: MalhaEditavelEditor3D, idObjeto: string): number[] {
+function obtemArestasFaceBevelEditor3D(face: FaceMalhaEditavelEditor3D): ArestaBevelMalhaEditavelEditor3D[] {
+    return face.indicesVertices.map((indiceOrigem, indice) => ({ indiceOrigem, indiceDestino: face.indicesVertices[(indice + 1) % face.indicesVertices.length] }));
+};
+
+function obtemArestasBevelSelecaoEdicaoEditor3D(state: Editor3DState, malha: MalhaEditavelEditor3D, idObjeto: string): ArestaBevelMalhaEditavelEditor3D[] {
+    if (state.tipoSelecaoEdicao === 'ARESTA') {
+        const aresta = state.arestaSelecionadaEdicao;
+
+        if (aresta === null || aresta.idObjeto !== idObjeto || !arestaExisteNaMalhaEditor3D(malha, aresta.indiceOrigem, aresta.indiceDestino)) return [];
+
+        return [{ indiceOrigem: aresta.indiceOrigem, indiceDestino: aresta.indiceDestino }];
+    }
+
+    if (state.tipoSelecaoEdicao === 'FACE') {
+        const faceSelecionada = state.faceSelecionadaEdicao;
+
+        if (faceSelecionada === null || faceSelecionada.idObjeto !== idObjeto) return [];
+
+        const face = obtemFaceMalhaEditor3D(malha, faceSelecionada.idFace);
+
+        return face === null ? [] : obtemArestasFaceBevelEditor3D(face);
+    }
+
+    return [];
+};
+
+export function obtemIndicesSelecaoEdicaoEditor3D(state: Editor3DState, malha: MalhaEditavelEditor3D, idObjeto: string): number[] {
     if (state.tipoSelecaoEdicao === 'VERTICE') {
         const vertice = state.verticeSelecionadoEdicao;
 
@@ -94,7 +124,7 @@ function obtemIndicesSelecaoEdicaoEditor3D(state: Editor3DState, malha: MalhaEdi
     return face === null ? [] : obtemIndicesUnicosEditor3D(face.indicesVertices);
 };
 
-function criaMalhaComVerticesMovidosEditor3D(malha: MalhaEditavelEditor3D, indicesMovidos: readonly number[], delta: Vetor3): MalhaEditavelEditor3D {
+export function criaMalhaComVerticesMovidosEditor3D(malha: MalhaEditavelEditor3D, indicesMovidos: readonly number[], delta: Vetor3): MalhaEditavelEditor3D {
     const indices = new Set(indicesMovidos);
     const vertices = malha.vertices.map((vertice, indice) => indices.has(indice) ? somaVetoresEditor3D(vertice, delta) : vertice);
 
@@ -102,13 +132,13 @@ function criaMalhaComVerticesMovidosEditor3D(malha: MalhaEditavelEditor3D, indic
 };
 
 export function defineTipoSelecaoEdicaoEditor3D(state: Editor3DState, tipoSelecao: TipoSelecaoEdicaoEditor3D): Editor3DState {
-    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.insetFaceEdicao !== null) return state;
+    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return state;
 
     return { ...limpaSelecaoEdicaoEditor3D(state), tipoSelecaoEdicao: tipoSelecao };
 };
 
 export function selecionaVerticeEdicaoEditor3D(state: Editor3DState, idObjeto: string | null, indiceVertice: number | null): Editor3DState {
-    if (state.modoOperacao !== 'EDICAO' || state.tipoSelecaoEdicao !== 'VERTICE' || state.insetFaceEdicao !== null) return state;
+    if (state.modoOperacao !== 'EDICAO' || state.tipoSelecaoEdicao !== 'VERTICE' || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return state;
     if (idObjeto === null || indiceVertice === null) return { ...state, verticeSelecionadoEdicao: null, arestaSelecionadaEdicao: null, faceSelecionadaEdicao: null };
     if (!objetoEstaNoEscopoEdicaoEditor3D(state, idObjeto)) return state;
 
@@ -121,7 +151,7 @@ export function selecionaVerticeEdicaoEditor3D(state: Editor3DState, idObjeto: s
 };
 
 export function selecionaArestaEdicaoEditor3D(state: Editor3DState, idObjeto: string | null, indiceOrigem: number | null, indiceDestino: number | null): Editor3DState {
-    if (state.modoOperacao !== 'EDICAO' || state.tipoSelecaoEdicao !== 'ARESTA' || state.insetFaceEdicao !== null) return state;
+    if (state.modoOperacao !== 'EDICAO' || state.tipoSelecaoEdicao !== 'ARESTA' || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return state;
     if (idObjeto === null || indiceOrigem === null || indiceDestino === null) return { ...state, verticeSelecionadoEdicao: null, arestaSelecionadaEdicao: null, faceSelecionadaEdicao: null };
     if (!objetoEstaNoEscopoEdicaoEditor3D(state, idObjeto)) return state;
 
@@ -134,7 +164,7 @@ export function selecionaArestaEdicaoEditor3D(state: Editor3DState, idObjeto: st
 };
 
 export function selecionaFaceEdicaoEditor3D(state: Editor3DState, idObjeto: string | null, idFace: string | null): Editor3DState {
-    if (state.modoOperacao !== 'EDICAO' || state.tipoSelecaoEdicao !== 'FACE' || state.insetFaceEdicao !== null) return state;
+    if (state.modoOperacao !== 'EDICAO' || state.tipoSelecaoEdicao !== 'FACE' || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return state;
     if (idObjeto === null || idFace === null) return { ...state, verticeSelecionadoEdicao: null, arestaSelecionadaEdicao: null, faceSelecionadaEdicao: null };
     if (!objetoEstaNoEscopoEdicaoEditor3D(state, idObjeto)) return state;
 
@@ -150,7 +180,7 @@ export function iniciaInsetFaceSelecionadaEditor3D(state: Editor3DState): Editor
     const faceSelecionada = state.faceSelecionadaEdicao;
     const escopoEdicao = state.escopoEdicao;
 
-    if (state.modoOperacao !== 'EDICAO' || state.tipoSelecaoEdicao !== 'FACE' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null) return state;
+    if (state.modoOperacao !== 'EDICAO' || state.tipoSelecaoEdicao !== 'FACE' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return state;
     if (faceSelecionada === null || escopoEdicao === null) return state;
     if (faceSelecionada.idObjeto !== escopoEdicao.idObjetoAtivo) return state;
 
@@ -200,10 +230,79 @@ export function cancelaInsetFaceEmEdicaoEditor3D(state: Editor3DState): Editor3D
     return { ...state, objetos: state.objetos.map(objetoAtual => objetoAtual.id === insetFaceEdicao.idObjeto ? { ...objetoAtual, malhaEditavel: insetFaceEdicao.malhaOriginal, versaoGeometria: objetoAtual.versaoGeometria + 1 } : objetoAtual), faceSelecionadaEdicao: { idObjeto: insetFaceEdicao.idObjeto, idFace: insetFaceEdicao.idFaceOriginal }, insetFaceEdicao: null };
 };
 
+function aplicaPreviewBevelEditor3D(state: Editor3DState, largura: number, segmentos: number): Editor3DState {
+    const bevelEdicao = state.bevelEdicao;
+
+    if (bevelEdicao === null) return state;
+
+    const larguraNormalizada = normalizaLarguraBevelEditor3D(largura);
+    const segmentosNormalizados = normalizaSegmentosBevelEditor3D(segmentos);
+
+    if (larguraNormalizada === bevelEdicao.largura && segmentosNormalizados === bevelEdicao.segmentos) return state;
+
+    const resultado = bevelEdicao.idFace === null ? aplicaBevelMalhaEditavelEditor3D(bevelEdicao.malhaOriginal, bevelEdicao.arestas, larguraNormalizada, segmentosNormalizados) : aplicaBevelFaceMalhaEditavelEditor3D(bevelEdicao.malhaOriginal, bevelEdicao.idFace, larguraNormalizada, segmentosNormalizados);
+
+    if (resultado === null) return state;
+
+    return { ...state, objetos: state.objetos.map(objetoAtual => objetoAtual.id === bevelEdicao.idObjeto ? { ...objetoAtual, malhaEditavel: resultado.malha, versaoGeometria: objetoAtual.versaoGeometria + 1 } : objetoAtual), bevelEdicao: { ...bevelEdicao, idsFacesBevel: resultado.idsFacesBevel, largura: larguraNormalizada, segmentos: segmentosNormalizados } };
+};
+
+export function iniciaBevelSelecaoEditor3D(state: Editor3DState): Editor3DState {
+    const escopoEdicao = state.escopoEdicao;
+
+    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null || state.bevelEdicao !== null || escopoEdicao === null) return state;
+    if (state.tipoSelecaoEdicao !== 'ARESTA' && state.tipoSelecaoEdicao !== 'FACE') return state;
+
+    const objeto = obtemObjetoEdicaoEditor3D(state, escopoEdicao.idObjetoAtivo);
+
+    if (objeto === null) return state;
+
+    const objetoComMalha = garanteMalhaEditavelObjetoEditor3D(objeto);
+    const malhaEditavel = objetoComMalha?.malhaEditavel ?? null;
+
+    if (objetoComMalha === null || malhaEditavel === null) return state;
+
+    const arestas = obtemArestasBevelSelecaoEdicaoEditor3D(state, malhaEditavel, objeto.id);
+
+    if (arestas.length === 0) return state;
+
+    return { ...state, objetos: state.objetos.map(objetoAtual => objetoAtual.id === objeto.id ? objetoComMalha : objetoAtual), bevelEdicao: { idObjeto: objeto.id, idFace: state.tipoSelecaoEdicao === 'FACE' ? state.faceSelecionadaEdicao?.idFace ?? null : null, malhaOriginal: malhaEditavel, arestas, idsFacesBevel: [], largura: larguraInicialBevelEditor3D, segmentos: segmentosInicialBevelEditor3D } };
+};
+
+export function atualizaBevelEmEdicaoEditor3D(state: Editor3DState, deltaLargura: number): Editor3DState {
+    const bevelEdicao = state.bevelEdicao;
+
+    if (bevelEdicao === null) return state;
+
+    return aplicaPreviewBevelEditor3D(state, bevelEdicao.largura + (deltaLargura * sensibilidadeBevelMouseEditor3D), bevelEdicao.segmentos);
+};
+
+export function alteraSegmentosBevelEmEdicaoEditor3D(state: Editor3DState, deltaSegmentos: number): Editor3DState {
+    const bevelEdicao = state.bevelEdicao;
+
+    if (bevelEdicao === null) return state;
+
+    return aplicaPreviewBevelEditor3D(state, bevelEdicao.largura, bevelEdicao.segmentos + deltaSegmentos);
+};
+
+export function confirmaBevelEmEdicaoEditor3D(state: Editor3DState): Editor3DState {
+    if (state.bevelEdicao === null) return state;
+
+    return { ...state, bevelEdicao: null, arestaSelecionadaEdicao: state.tipoSelecaoEdicao === 'ARESTA' ? null : state.arestaSelecionadaEdicao, faceSelecionadaEdicao: state.tipoSelecaoEdicao === 'FACE' ? null : state.faceSelecionadaEdicao };
+};
+
+export function cancelaBevelEmEdicaoEditor3D(state: Editor3DState): Editor3DState {
+    const bevelEdicao = state.bevelEdicao;
+
+    if (bevelEdicao === null) return state;
+
+    return { ...state, objetos: state.objetos.map(objetoAtual => objetoAtual.id === bevelEdicao.idObjeto ? { ...objetoAtual, malhaEditavel: bevelEdicao.malhaOriginal, versaoGeometria: objetoAtual.versaoGeometria + 1 } : objetoAtual), bevelEdicao: null };
+};
+
 export function moveSelecaoEdicaoEditor3D(state: Editor3DState, delta: Vetor3): Editor3DState {
     const escopoEdicao = state.escopoEdicao;
 
-    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null || escopoEdicao === null) return state;
+    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null || state.bevelEdicao !== null || escopoEdicao === null) return state;
 
     const objeto = obtemObjetoEdicaoEditor3D(state, escopoEdicao.idObjetoAtivo);
     const malhaEditavel = objeto?.malhaEditavel ?? null;

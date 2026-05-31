@@ -6,6 +6,7 @@ import { criaDeltaMovimentoGrabEditor3D } from '../../modos/grab/editor3D.modoGr
 import { modoEditor3DEstaAtivo } from '../../modos/editor3D.modo.utils';
 import { moveModoAtualEditor3D } from './editor3D.eventos.modo';
 import type { ControleEventosEditor3D } from './editor3D.eventos.types';
+import type { ObjetoCenaEditor3D } from '../../editor/editor3D.tipos';
 import type { FerramentaMouseEditor3D } from '../../mouse/editor3D.mouse.tipos';
 
 const movimentoMinimoEventoAjusteVistaEditor3D = 2;
@@ -166,7 +167,7 @@ function iniciaArrasteEdicaoMalhaPorClickEditor3D(controle: ControleEventosEdito
     const state = controle.refs.estado.current;
 
     if (!comandoMouseAreaInterativa3DEstaAtivo('lmb-arrasta-selecao-edicao', event)) return false;
-    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null) return false;
+    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return false;
 
     const ponto = criaPontoCanvasEditor3D(controle.canvas, event);
 
@@ -196,6 +197,19 @@ function finalizaInsetFacePorMouseEditor3D(controle: ControleEventosEditor3D, ev
 
     if (comandoMouseAreaInterativa3DEstaAtivo('lmb-confirma-inset-face', event)) controle.refs.acoes.current.confirmaInsetFaceEmEdicao();
     else if (comandoMouseAreaInterativa3DEstaAtivo('rmb-cancela-inset-face', event)) controle.refs.acoes.current.cancelaInsetFaceEmEdicao();
+    else return false;
+
+    limpaEstadoArrasteSemPointerLockEditor3D(controle);
+    event.preventDefault();
+
+    return true;
+};
+
+function finalizaBevelPorMouseEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): boolean {
+    if (controle.refs.estado.current.bevelEdicao === null) return false;
+
+    if (comandoMouseAreaInterativa3DEstaAtivo('lmb-confirma-bevel', event)) controle.refs.acoes.current.confirmaBevelEmEdicao();
+    else if (comandoMouseAreaInterativa3DEstaAtivo('rmb-cancela-bevel', event)) controle.refs.acoes.current.cancelaBevelEmEdicao();
     else return false;
 
     limpaEstadoArrasteSemPointerLockEditor3D(controle);
@@ -296,6 +310,38 @@ function processaInsetFacePorMovimentoEditor3D(controle: ControleEventosEditor3D
     return true;
 };
 
+function processaBevelPorMovimentoEditor3D(controle: ControleEventosEditor3D, event: MouseEvent, deltaX: number, deltaY: number): boolean {
+    const state = controle.refs.estado.current;
+    const arraste = controle.refs.arraste.current;
+
+    if (state.bevelEdicao === null) return false;
+
+    if (arraste.modoArraste !== 'BEVEL' || !Number.isFinite(deltaX) || !Number.isFinite(deltaY)) {
+        arraste.modoArraste = 'BEVEL';
+        arraste.ultimoX = event.clientX;
+        arraste.ultimoY = event.clientY;
+        event.preventDefault();
+
+        return true;
+    }
+
+    controle.refs.acoes.current.atualizaBevelEmEdicao(deltaX - deltaY);
+    arraste.ultimoX = event.clientX;
+    arraste.ultimoY = event.clientY;
+    event.preventDefault();
+
+    return true;
+};
+
+function obtemObjetoAtivoEdicaoMouseEditor3D(controle: ControleEventosEditor3D): ObjetoCenaEditor3D | null {
+    const state = controle.refs.estado.current;
+    const idObjetoAtivo = state.escopoEdicao?.idObjetoAtivo ?? null;
+
+    if (idObjetoAtivo === null) return null;
+
+    return state.objetos.find(objeto => objeto.id === idObjetoAtivo) ?? null;
+};
+
 function processaArrasteEdicaoMalhaEditor3D(controle: ControleEventosEditor3D, event: MouseEvent, deltaX: number, deltaY: number): boolean {
     const arraste = controle.refs.arraste.current;
 
@@ -311,7 +357,7 @@ function processaArrasteEdicaoMalhaEditor3D(controle: ControleEventosEditor3D, e
         return true;
     }
 
-    controle.refs.acoes.current.moveSelecaoEdicao(criaDeltaMovimentoGrabEditor3D(controle.refs.estado.current.camera, deltaX, deltaY, Math.max(1, controle.canvas.clientWidth), Math.max(1, controle.canvas.clientHeight), null));
+    controle.refs.acoes.current.moveSelecaoEdicao(criaDeltaMovimentoGrabEditor3D(controle.refs.estado.current.camera, deltaX, deltaY, Math.max(1, controle.canvas.clientWidth), Math.max(1, controle.canvas.clientHeight), null, obtemObjetoAtivoEdicaoMouseEditor3D(controle)));
     event.preventDefault();
 
     return true;
@@ -370,6 +416,12 @@ function selecionaElementoPorClickEditor3D(controle: ControleEventosEditor3D, ev
 
 export function iniciaArrasteCameraEditor3D(controle: ControleEventosEditor3D, event: MouseEvent): void {
     if (modoEditor3DEstaAtivo(controle.refs.estado.current.modoAtual)) return;
+    if (finalizaBevelPorMouseEditor3D(controle, event)) return;
+    if (controle.refs.estado.current.bevelEdicao !== null) {
+        event.preventDefault();
+
+        return;
+    }
     if (finalizaInsetFacePorMouseEditor3D(controle, event)) return;
     if (controle.refs.estado.current.insetFaceEdicao !== null) {
         event.preventDefault();
@@ -418,6 +470,7 @@ export function moveMouseEditor3D(controle: ControleEventosEditor3D, event: Mous
     const deltaY = pointerLockAtivo ? event.movementY : event.clientY - controle.refs.arraste.current.ultimoY;
 
     if (pointerLockAtivo) atualizaCursorVirtualPorMovimentoEditor3D(controle, event);
+    if (processaBevelPorMovimentoEditor3D(controle, event, deltaX, deltaY)) return;
     if (processaInsetFacePorMovimentoEditor3D(controle, event, deltaX, deltaY)) return;
     if (processaAjusteVistaPorArrasteEditor3D(controle, event, deltaX, deltaY)) return;
     if (moveModoAtualEditor3D(controle, event, deltaX, deltaY)) return;
@@ -465,6 +518,12 @@ export function aplicaDollyScrollMouseEditor3D(controle: ControleEventosEditor3D
     const state = controle.refs.estado.current;
 
     if (modoEditor3DEstaAtivo(state.modoAtual)) return;
+    if (state.bevelEdicao !== null) {
+        if (comandoRodaMouseAreaInterativa3DEstaAtivo('scroll-segmentos-bevel')) controle.refs.acoes.current.alteraSegmentosBevelEmEdicao(event.deltaY < 0 ? 1 : -1);
+        event.preventDefault();
+
+        return;
+    }
     if (state.insetFaceEdicao !== null) {
         event.preventDefault();
 

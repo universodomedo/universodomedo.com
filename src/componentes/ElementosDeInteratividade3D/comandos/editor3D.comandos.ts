@@ -102,7 +102,7 @@ const comandosAreaInterativa3D = [
         id: 'mover',
         categoria: 'Modo',
         nome: 'Mover',
-        descricao: 'Transforma a selecao por deslocamento no espaco 3D.',
+        descricao: 'Transforma objetos ou vertices, arestas e faces selecionadas por deslocamento no espaco 3D.',
         atalho: 'G',
         icone: 'move',
         teclado: { teclas: ['g'], shift: null, ctrlOuMeta: false, alt: false }
@@ -228,6 +228,18 @@ const comandosAreaInterativa3D = [
         teclado: { teclas: ['i'], shift: false, ctrlOuMeta: false, alt: false }
     },
     {
+        id: 'b-bevel',
+        categoria: 'Atalho',
+        nome: 'Bevel',
+        descricao: 'Inicia um Bevel interativo na aresta selecionada ou nas arestas da face selecionada em Edit Mode.',
+        atalho: 'B',
+        icone: 'edge',
+        tituloToolbar: 'Bevel',
+        subtituloToolbar: 'Ajustando largura',
+        iconeToolbar: 'edge',
+        teclado: { teclas: ['b'], shift: false, ctrlOuMeta: false, alt: false }
+    },
+    {
         id: '1-selecao-vertice-edicao',
         categoria: 'Modo',
         nome: 'Selecao de Vertice',
@@ -327,6 +339,24 @@ const comandosAreaInterativa3D = [
         teclado: { teclas: ['escape'], shift: null, ctrlOuMeta: false, alt: false }
     },
     {
+        id: 'enter-confirma-bevel',
+        categoria: 'Atalho',
+        nome: 'Confirmar Bevel',
+        descricao: 'Confirma o Bevel interativo em andamento.',
+        atalho: 'Enter',
+        icone: 'enter',
+        teclado: { teclas: ['enter'], shift: null, ctrlOuMeta: false, alt: false }
+    },
+    {
+        id: 'escape-cancela-bevel',
+        categoria: 'Atalho',
+        nome: 'Cancelar Bevel',
+        descricao: 'Cancela o Bevel interativo e restaura a geometria original.',
+        atalho: 'Esc',
+        icone: 'escape',
+        teclado: { teclas: ['escape'], shift: null, ctrlOuMeta: false, alt: false }
+    },
+    {
         id: 'rmb-add-mesh',
         categoria: 'Mouse',
         nome: 'Menu de criacao',
@@ -408,6 +438,41 @@ const comandosAreaInterativa3D = [
         categoria: 'Mouse',
         nome: 'Cancelar Inset Faces',
         descricao: 'Cancela o inset interativo em andamento.',
+        atalho: 'Botao direito',
+        icone: 'mouse-pointer',
+        mouse: { botao: 2, shift: null, ctrlOuMeta: null, alt: null }
+    },
+    {
+        id: 'lmb-confirma-bevel',
+        categoria: 'Mouse',
+        nome: 'Confirmar Bevel',
+        descricao: 'Confirma o Bevel interativo em andamento.',
+        atalho: 'Clique esquerdo',
+        icone: 'mouse-pointer',
+        mouse: { botao: 0, shift: null, ctrlOuMeta: null, alt: null }
+    },
+    {
+        id: 'mouse-ajusta-bevel',
+        categoria: 'Mouse',
+        nome: 'Ajustar Bevel',
+        descricao: 'Move o mouse apos iniciar Bevel para aumentar ou diminuir a largura antes de confirmar.',
+        atalho: 'Mover mouse apos B',
+        icone: 'edge'
+    },
+    {
+        id: 'scroll-segmentos-bevel',
+        categoria: 'Mouse',
+        nome: 'Segmentos do Bevel',
+        descricao: 'Altera o numero de segmentos do Bevel interativo em andamento.',
+        atalho: 'Scroll durante Bevel',
+        icone: 'dolly',
+        rodaMouse: true
+    },
+    {
+        id: 'rmb-cancela-bevel',
+        categoria: 'Mouse',
+        nome: 'Cancelar Bevel',
+        descricao: 'Cancela o Bevel interativo em andamento.',
         atalho: 'Botao direito',
         icone: 'mouse-pointer',
         mouse: { botao: 2, shift: null, ctrlOuMeta: null, alt: null }
@@ -591,8 +656,8 @@ export function obtemComandoInteracaoAtualEditor3D(tipoModo: TipoModoEditor3D, f
     return obtemComandoAreaInterativa3D(idComando);
 }
 
-export function obtemEstadoToolbarInteracaoAtualEditor3D(tipoModo: TipoModoEditor3D, ferramentaMouse: FerramentaMouseEditor3D, modoOperacao: ModoOperacaoEditor3D, tipoSelecaoEdicao: TipoSelecaoEdicaoEditor3D, insetFaceAtivo: boolean): EstadoToolbarComandoAreaInterativa3D {
-    const comando = insetFaceAtivo ? obtemComandoAreaInterativa3D('i-inset-faces') : tipoModo === 'NENHUM' && ferramentaMouse === 'SELECIONAR' && modoOperacao === 'EDICAO' ? obtemComandoAreaInterativa3D(comandoPorTipoSelecaoEdicaoEditor3D[tipoSelecaoEdicao]) : obtemComandoInteracaoAtualEditor3D(tipoModo, ferramentaMouse);
+export function obtemEstadoToolbarInteracaoAtualEditor3D(tipoModo: TipoModoEditor3D, ferramentaMouse: FerramentaMouseEditor3D, modoOperacao: ModoOperacaoEditor3D, tipoSelecaoEdicao: TipoSelecaoEdicaoEditor3D, insetFaceAtivo: boolean, bevelAtivo: boolean): EstadoToolbarComandoAreaInterativa3D {
+    const comando = bevelAtivo ? obtemComandoAreaInterativa3D('b-bevel') : insetFaceAtivo ? obtemComandoAreaInterativa3D('i-inset-faces') : tipoModo === 'NENHUM' && ferramentaMouse === 'SELECIONAR' && modoOperacao === 'EDICAO' ? obtemComandoAreaInterativa3D(comandoPorTipoSelecaoEdicaoEditor3D[tipoSelecaoEdicao]) : obtemComandoInteracaoAtualEditor3D(tipoModo, ferramentaMouse);
 
     return { titulo: comando.tituloToolbar ?? comando.nome, subtitulo: comando.subtituloToolbar ?? null, icone: comando.iconeToolbar ?? comando.icone, atalho: comando.atalho };
 }

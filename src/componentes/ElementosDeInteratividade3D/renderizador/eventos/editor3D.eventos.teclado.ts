@@ -1,6 +1,6 @@
 import { ativaCursorVirtualCentroEditor3D, desativaCursorVirtualEditor3D } from './editor3D.eventos.cursor';
 import { comandoTecladoAreaInterativa3DEstaAtivo, comandoTecladoAreaInterativa3DUsaTecla, obtemModoVisualizacaoViewportPorAtalhoEditor3D } from '../../comandos/editor3D.comandos';
-import { obtemMotivoBloqueioInsetFacesEditor3D } from '../../estado/editor3D.estado.edicao.selectors';
+import { obtemMotivoBloqueioBevelEditor3D, obtemMotivoBloqueioInsetFacesEditor3D } from '../../estado/editor3D.estado.edicao.selectors';
 import { obtemEixoTeclaEditor3D } from './editor3D.eventos.eixo';
 import { modoVisualizacaoViewportPermiteXRayEditor3D } from '../../viewport/editor3D.viewport.tipos';
 import type { ControleEventosEditor3D } from './editor3D.eventos.types';
@@ -20,6 +20,25 @@ function temObjetoSelecionado(controle: ControleEventosEditor3D): boolean {
     const state = controle.refs.estado.current;
 
     return state.modoOperacao === 'OBJETO' && state.idsObjetosSelecionados.some(idObjetoSelecionado => state.objetos.some(objeto => objeto.id === idObjetoSelecionado));
+};
+
+function temSelecaoEdicaoParaGrab(controle: ControleEventosEditor3D): boolean {
+    const state = controle.refs.estado.current;
+    const idObjetoAtivo = state.escopoEdicao?.idObjetoAtivo ?? null;
+
+    if (state.modoOperacao !== 'EDICAO' || idObjetoAtivo === null || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return false;
+    if (state.tipoSelecaoEdicao === 'VERTICE') return state.verticeSelecionadoEdicao !== null && state.verticeSelecionadoEdicao.idObjeto === idObjetoAtivo;
+    if (state.tipoSelecaoEdicao === 'ARESTA') return state.arestaSelecionadaEdicao !== null && state.arestaSelecionadaEdicao.idObjeto === idObjetoAtivo;
+
+    return state.faceSelecionadaEdicao !== null && state.faceSelecionadaEdicao.idObjeto === idObjetoAtivo;
+};
+
+function temAlvoGrab(controle: ControleEventosEditor3D): boolean {
+    const state = controle.refs.estado.current;
+
+    if (state.modoOperacao === 'OBJETO') return temObjetoSelecionado(controle);
+
+    return temSelecaoEdicaoParaGrab(controle);
 };
 
 function encerraPointerLockEditor3D(controle: ControleEventosEditor3D): void {
@@ -74,8 +93,7 @@ function alternaVisualizacaoXRayPorAtalho(controle: ControleEventosEditor3D, eve
 function iniciaModoPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
     const state = controle.refs.estado.current;
 
-    if (state.modoOperacao !== 'OBJETO') return false;
-    if (comandoTecladoAreaInterativa3DEstaAtivo('mover', event) && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaGrabObjetoSelecionado();
+    if (comandoTecladoAreaInterativa3DEstaAtivo('mover', event) && state.modoAtual.tipo === 'NENHUM' && temAlvoGrab(controle)) controle.refs.acoes.current.iniciaGrabObjetoSelecionado();
     else if (comandoTecladoAreaInterativa3DEstaAtivo('rotacionar', event) && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaRotateObjetoSelecionado();
     else if (comandoTecladoAreaInterativa3DEstaAtivo('escalar', event) && state.modoAtual.tipo === 'NENHUM' && temObjetoSelecionado(controle)) controle.refs.acoes.current.iniciaScaleObjetoSelecionado();
     else if (comandoTecladoAreaInterativa3DEstaAtivo('r-rotacionar-livre', event) && state.modoAtual.tipo === 'ROTATE') controle.refs.acoes.current.aplicaRotateLivreObjetoSelecionado();
@@ -182,10 +200,31 @@ function aplicaInsetFacesPorAtalho(controle: ControleEventosEditor3D, event: Key
     return true;
 };
 
+function aplicaBevelPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
+    if (!comandoTecladoAreaInterativa3DEstaAtivo('b-bevel', event)) return false;
+
+    const motivoBloqueio = obtemMotivoBloqueioBevelEditor3D(controle.refs.estado.current);
+
+    if (motivoBloqueio !== null) {
+        controle.refs.acoes.current.exibeNotificacaoAreaInterativa(motivoBloqueio);
+        event.preventDefault();
+
+        return true;
+    }
+
+    controle.refs.acoes.current.iniciaBevelSelecao();
+    controle.refs.arraste.current.modoArraste = 'BEVEL';
+    controle.refs.arraste.current.ultimoX = Number.NaN;
+    controle.refs.arraste.current.ultimoY = Number.NaN;
+    event.preventDefault();
+
+    return true;
+};
+
 function defineTipoSelecaoEdicaoPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
     const state = controle.refs.estado.current;
 
-    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null) return false;
+    if (state.modoOperacao !== 'EDICAO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return false;
 
     if (comandoTecladoAreaInterativa3DEstaAtivo('1-selecao-vertice-edicao', event)) controle.refs.acoes.current.defineTipoSelecaoEdicao('VERTICE');
     else if (comandoTecladoAreaInterativa3DEstaAtivo('2-selecao-aresta-edicao', event)) controle.refs.acoes.current.defineTipoSelecaoEdicao('ARESTA');
@@ -214,12 +253,30 @@ function finalizaInsetFacesPorAtalho(controle: ControleEventosEditor3D, event: K
     return true;
 };
 
+function finalizaBevelPorAtalho(controle: ControleEventosEditor3D, event: KeyboardEvent): boolean {
+    const state = controle.refs.estado.current;
+
+    if (state.bevelEdicao === null) return false;
+
+    if (comandoTecladoAreaInterativa3DEstaAtivo('enter-confirma-bevel', event)) controle.refs.acoes.current.confirmaBevelEmEdicao();
+    else if (comandoTecladoAreaInterativa3DEstaAtivo('escape-cancela-bevel', event)) controle.refs.acoes.current.cancelaBevelEmEdicao();
+    else return false;
+
+    controle.refs.arraste.current.modoArraste = 'ROTACIONAR';
+    controle.refs.arraste.current.ultimoX = 0;
+    controle.refs.arraste.current.ultimoY = 0;
+    event.preventDefault();
+
+    return true;
+};
+
 export function aplicaAtalhoTecladoEditor3D(controle: ControleEventosEditor3D, event: KeyboardEvent): void {
     const state = controle.refs.estado.current;
 
     if (eventoVeioDeElementoEditavel(event)) return;
     if (defineModoVisualizacaoViewportPorAtalho(controle, event)) return;
     if (alternaVisualizacaoXRayPorAtalho(controle, event)) return;
+    if (finalizaBevelPorAtalho(controle, event)) return;
     if (finalizaInsetFacesPorAtalho(controle, event)) return;
     if (ativaModoSelecionarPorShiftEditor3D(controle, event)) return;
     if (iniciaModoPorAtalho(controle, event)) return;
@@ -228,6 +285,7 @@ export function aplicaAtalhoTecladoEditor3D(controle: ControleEventosEditor3D, e
     if (deletaObjetosSelecionadosPorAtalho(controle, event)) return;
     if (defineTipoSelecaoEdicaoPorAtalho(controle, event)) return;
     if (aplicaInsetFacesPorAtalho(controle, event)) return;
+    if (aplicaBevelPorAtalho(controle, event)) return;
     if (state.modoAtual.tipo !== 'NENHUM') return;
 };
 

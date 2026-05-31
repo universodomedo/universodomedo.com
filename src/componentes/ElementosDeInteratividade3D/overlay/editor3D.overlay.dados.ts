@@ -34,7 +34,7 @@ export function criaDadosOverlayModoEditor3D(state: Editor3DState): DadosOverlay
     const nomeObjeto = obtemNomeObjetosModoEditor3D(state, objeto);
 
     if (state.modoAtual.tipo === 'GRAB') {
-        const delta = subtraiVetoresEditor3D(objeto.posicao, state.modoAtual.posicaoInicial);
+        const delta = state.modoAtual.escopo === 'EDICAO' ? state.modoAtual.deltaAcumulado : subtraiVetoresEditor3D(objeto.posicao, state.modoAtual.posicaoInicial);
         const eixo = state.modoAtual.eixo === null ? 'Livre' : state.modoAtual.eixo;
 
         return { titulo: 'Grab', nomeObjeto, detalhes: [`Eixo: ${eixo}`, ...criaDetalhesVetores('LMB confirma · RMB cancela', delta, formataDeltaEditor3D)] };
