@@ -15,8 +15,12 @@
     background-color: #35323D;
     color: white;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
     font-family: inherit;
     font-size: 1.1em;
+    gap: .2em;
+    align-items: center;
     padding: .7em 1em;
     text-align: center;
 }
@@ -28,4 +32,9 @@
 .blocked {
     cursor: not-allowed;
     opacity: .5;
+}
+
+.status_acao {
+    color: #D8C7A0;
+    font-size: .75em;
 }

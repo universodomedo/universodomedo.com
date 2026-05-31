@@ -17,9 +17,12 @@ export default function PaginaControleAcoes() {
 };
 
 function AcaoEmFicha({ acao, desativarAcoes, executaAcao }: { acao: AcaoDisponivel; desativarAcoes: boolean; executaAcao: (keyAcao: string) => void; }) {
+    const acaoDesativada = desativarAcoes || !acao.habilitado;
+
     return (
-        <button className={`${styles.acao} ${desativarAcoes ? styles.blocked : ''}`} disabled={desativarAcoes} onClick={() => { executaAcao(acao.key); }}>
-            {acao.nome}
+        <button className={`${styles.acao} ${acaoDesativada ? styles.blocked : ''}`} disabled={acaoDesativada} onClick={() => { executaAcao(acao.key); }}>
+            <span>{acao.nome}</span>
+            {!acao.habilitado && <span className={styles.status_acao}>Bloqueada</span>}
         </button>
     );
 };
