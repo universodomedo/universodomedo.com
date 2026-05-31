@@ -8,20 +8,27 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faArrowLeft, faGear } from '@fortawesome/free-solid-svg-icons';
 
 import BarraMenu from 'Componentes/ElementosDeJogo/BarraMenu/BarraMenu.tsx';
+import type { Menu } from 'Contextos/ContextosControladorSwiperFicha/typesContextoControle';
 
-export default function CarrosselConteudoFichaDeJogo({ listaPaginas, setPaginaAbertaSwiper, paginaAbertaSwiper }: {
-    listaPaginas: { nome: string; componente: React.ReactNode; contexto: () => any; }[],
-    setPaginaAbertaSwiper: React.Dispatch<React.SetStateAction<number>>,
-    paginaAbertaSwiper: number
+export type PaginaCarrosselConteudoFichaDeJogo = {
+    nome: string;
+    componente: React.ReactNode;
+    contexto: () => { listaMenus: Menu[]; };
+};
+
+export default function CarrosselConteudoFichaDeJogo({ listaPaginas, selecionaPaginaFicha, paginaAbertaFicha }: {
+    listaPaginas: PaginaCarrosselConteudoFichaDeJogo[],
+    selecionaPaginaFicha: (indicePagina: number) => void,
+    paginaAbertaFicha: number
 }) {
     const sliderRef = useRef<Slider>(null);
 
-    // Atualiza o slide sempre que `paginaAbertaSwiper` mudar
+    // Atualiza o slide sempre que `paginaAbertaFicha` mudar
     useEffect(() => {
         if (sliderRef.current) {
-            sliderRef.current.slickGoTo(paginaAbertaSwiper, true); // true para animação
+            sliderRef.current.slickGoTo(paginaAbertaFicha, true); // true para animação
         }
-    }, [paginaAbertaSwiper]);
+    }, [paginaAbertaFicha]);
 
     const NextArrow = ({ onClick }: { onClick?: React.MouseEventHandler<HTMLDivElement> }) => {
         return (
@@ -39,16 +46,16 @@ export default function CarrosselConteudoFichaDeJogo({ listaPaginas, setPaginaAb
         );
     }
 
-    const settings = { infinite: true, speed: 300, slidesToShow: 3, centerMode: true, centerPadding: "0", nextArrow: <NextArrow />, prevArrow: <PrevArrow />, beforeChange: (current: number, next: number) => setPaginaAbertaSwiper(next) };
+    const settings = { infinite: true, speed: 300, slidesToShow: 3, centerMode: true, centerPadding: "0", nextArrow: <NextArrow />, prevArrow: <PrevArrow />, beforeChange: (_current: number, next: number) => selecionaPaginaFicha(next) };
 
     return (
         <div id={styles.titulos_paginas_swiper_direita}>
             <Slider ref={sliderRef} {...settings}>
                 {listaPaginas.map((pagina, index) => (
-                    <div key={index} onClick={() => setPaginaAbertaSwiper(index)} className={`${styles.item_slider} ${index === paginaAbertaSwiper ? styles.item_slider_selecionado : ''}`}>
+                    <div key={index} onClick={() => selecionaPaginaFicha(index)} className={`${styles.item_slider} ${index === paginaAbertaFicha ? styles.item_slider_selecionado : ''}`}>
                         <h1>
                             {pagina.nome}
-                            {index === paginaAbertaSwiper && <AbaComIconeConfig useContextoPaginaAberta={pagina.contexto} />}
+                            {index === paginaAbertaFicha && <AbaComIconeConfig useContextoPaginaAberta={pagina.contexto} />}
                         </h1>
                     </div>
                 ))}
@@ -57,7 +64,7 @@ export default function CarrosselConteudoFichaDeJogo({ listaPaginas, setPaginaAb
     );
 };
 
-function AbaComIconeConfig ({ useContextoPaginaAberta }: { useContextoPaginaAberta: () => { listaMenus: Array<{ itensMenu: any[] }> } }) {
+function AbaComIconeConfig ({ useContextoPaginaAberta }: { useContextoPaginaAberta: () => { listaMenus: Menu[] } }) {
     const { listaMenus } = useContextoPaginaAberta();
 
     return (

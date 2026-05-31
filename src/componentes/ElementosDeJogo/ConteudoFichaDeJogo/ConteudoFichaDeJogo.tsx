@@ -1,40 +1,45 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect } from "react";
 import { J_DadosFichaEmJogo } from "types-nora-api";
 
 import { ContextoFichaDePersonagemProvider } from "Contextos/ContextoFichaDePersonagem/contexto";
 import combineProviders from 'Contextos/combineProviders';
 import { ContextoControleAtributosPericiasProvider, useContextoControleAtributosPericias } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAtributosPericias/contexto';
 import { ContextoControleAcoesRuntimeProvider } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAcoesRuntime/contexto';
+import { ContextoControleNavegacaoFichaProvider, useContextoControleNavegacaoFicha } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleNavegacaoFicha/contexto';
 import PaginaControleAtributosPericias from './paginas/PaginaControleAtributosPericias/PaginaControleAtributosPericias';
 import PaginaControleAcoes from './paginas/PaginaControleAcoes/PaginaControleAcoes';
 import PaginaControleHabilidades from './paginas/PaginaControleHabilidades/PaginaControleHabilidades';
 import PaginaControleModificadores from './paginas/PaginaControleModificadores/PaginaControleModificadores';
 import CarrosselConteudoFichaDeJogo from '../CarrosselConteudoFichaDeJogo/CarrosselConteudoFichaDeJogo';
 
+const ProvidersControleFicha = combineProviders(
+    ContextoControleAtributosPericiasProvider,
+);
+
 export default function ConteudoFichaDeJogo({ JDadosFichaEmJogo, desativarAcoes, exibirHabilidadesRuntime = false, exibirAcoesRuntime = false, exibirModificadoresRuntime = false }: { JDadosFichaEmJogo: J_DadosFichaEmJogo; desativarAcoes: boolean; exibirHabilidadesRuntime?: boolean; exibirAcoesRuntime?: boolean; exibirModificadoresRuntime?: boolean; }) {
     return (
-        <ContextoFichaDePersonagemProvider JDadosFichaEmJogo={JDadosFichaEmJogo} desativarAcoes={desativarAcoes}>
-            <ConteudoFichaDeJogo_Interno exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} />
-        </ContextoFichaDePersonagemProvider>
+        <ContextoControleNavegacaoFichaProvider>
+            <ContextoFichaDePersonagemProvider JDadosFichaEmJogo={JDadosFichaEmJogo} desativarAcoes={desativarAcoes}>
+                <ConteudoFichaDeJogo_Interno exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} />
+            </ContextoFichaDePersonagemProvider>
+        </ContextoControleNavegacaoFichaProvider>
     );
 };
 
 function ConteudoFichaDeJogo_Interno({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; }) {
-    const ProvidersControle = combineProviders(
-        ContextoControleAtributosPericiasProvider,
-    );
     const conteudo = <ConteudoFichaDeJogo_ComContexto exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} />;
 
     return (
-        <ProvidersControle>
+        <ProvidersControleFicha>
             {exibirAcoesRuntime ? <ContextoControleAcoesRuntimeProvider>{conteudo}</ContextoControleAcoesRuntimeProvider> : conteudo}
-        </ProvidersControle>
+        </ProvidersControleFicha>
     );
 };
 
 function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; }) {
+    const { paginaAbertaFicha, selecionaPaginaFicha, garantePaginaFichaValida } = useContextoControleNavegacaoFicha();
     const listaPaginas = [
         {
             nome: 'Perícias',
@@ -68,12 +73,15 @@ function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirAcoes
         },
     ];
 
-    const [paginaAbertaSwiper, setPaginaAbertaSwiper] = useState(0);
-    const paginaSelecionada = listaPaginas[paginaAbertaSwiper];
+    useEffect(() => {
+        garantePaginaFichaValida(listaPaginas.length);
+    }, [garantePaginaFichaValida, listaPaginas.length]);
+
+    const paginaSelecionada = listaPaginas[paginaAbertaFicha] ?? listaPaginas[0];
 
     return (
         <>
-            <CarrosselConteudoFichaDeJogo listaPaginas={listaPaginas} setPaginaAbertaSwiper={setPaginaAbertaSwiper} paginaAbertaSwiper={paginaAbertaSwiper} />
+            <CarrosselConteudoFichaDeJogo listaPaginas={listaPaginas} selecionaPaginaFicha={selecionaPaginaFicha} paginaAbertaFicha={paginaAbertaFicha} />
 
             <hr style={{ width: '100%' }} />
 
