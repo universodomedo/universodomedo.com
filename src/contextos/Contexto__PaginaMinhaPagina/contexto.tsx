@@ -12,7 +12,7 @@ interface Contexto__PaginaMinhaPagina__Props {
     configArteCapa: ConfiguracaoArteCapa;
 };
 
-const Contexto__PaginaMinhaPagina = createContext<Contexto__PaginaMinhaPagina__Props | undefined>(undefined);
+export const Contexto__PaginaMinhaPagina = createContext<Contexto__PaginaMinhaPagina__Props | undefined>(undefined);
 
 export const useContexto__PaginaMinhaPagina = (): Contexto__PaginaMinhaPagina__Props => {
     const context = useContext(Contexto__PaginaMinhaPagina);

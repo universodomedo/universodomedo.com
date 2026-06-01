@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SOCKET_UsuarioExistente } from 'types-nora-api';
+import { CaminhoArquivoAvatar, SOCKET_UsuarioExistente } from 'types-nora-api';
 
 export interface UsuariosState {
   usuarios: SOCKET_UsuarioExistente[];
@@ -16,8 +16,12 @@ const usuariosSlice = createSlice({
     setUsuarios(state, action: PayloadAction<SOCKET_UsuarioExistente[]>) {
       state.usuarios = action.payload;
     },
+    atualizarAvatarUsuario(state, action: PayloadAction<{ id: number; caminhoArquivoAvatar: CaminhoArquivoAvatar }>) {
+      const usuario = state.usuarios.find(u => u.id === action.payload.id);
+      if (usuario) usuario.caminhoArquivoAvatar = action.payload.caminhoArquivoAvatar;
+    },
   },
 });
 
-export const { setUsuarios } = usuariosSlice.actions;
+export const { setUsuarios, atualizarAvatarUsuario } = usuariosSlice.actions;
 export default usuariosSlice.reducer;

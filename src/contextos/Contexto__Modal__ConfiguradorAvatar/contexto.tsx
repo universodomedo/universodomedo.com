@@ -46,7 +46,7 @@ const Contexto__Modal__ConfiguradorAvatar__Provider = ({ isModalOpen, setIsModal
         if (idChaveNovoAvatarSelecionado === null) return;
         try {
             await me_atualizaAvatarPerfilUsuario(idChaveNovoAvatarSelecionado);
-            toast.sucesso('Avatar atualizado', 'Avatar atualizado com sucesso!', { recarregaPagina: true });
+            toast.sucesso('Avatar atualizado', 'Avatar atualizado com sucesso!');
         } catch {
             toast.erro('Erro ao atualizar avatar', 'Não foi possível atualizar o avatar.');
         }

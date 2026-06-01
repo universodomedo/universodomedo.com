@@ -8,7 +8,7 @@ import { Eventos_Emite, PAGINAS, SOCKET_AcessoUsuario, SOCKET_PresencaUsuario, t
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
-import { RenderArquivoAvatar } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
+import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
 
 // Mapa construído uma vez para lookup O(1) de label por template
 const paginasLabelMap: Map<string, string> = (() => {
@@ -58,7 +58,7 @@ function UsuarioExistente({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuar
     return (
         <div className={`${styles.recipiente_contato} ${!acessoUsuario.conectado ? styles.contato_desconectado : ''}`}>
             <div className={styles.recipiente_imagem_contato}>
-                <RenderArquivoAvatar caminhoArquivoAvatar={acessoUsuario.usuario.customizacao.caminhoArquivoAvatar} />
+                <AvatarUsuarioEmVisualizacao_CACHED idUsuario={acessoUsuario.usuario.id} />
             </div>
             <div className={styles.recipiente_informacoes_contato}>
                 <h2>{acessoUsuario.usuario.username}</h2>

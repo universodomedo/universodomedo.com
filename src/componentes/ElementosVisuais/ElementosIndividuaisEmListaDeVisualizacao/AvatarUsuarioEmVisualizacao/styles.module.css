@@ -1,3 +1,6 @@
+.avatar_transicao { transition: opacity 0.15s ease; }
+.avatar_oculto { opacity: 0; }
+
 .avatar_usuario {
     transform: scale(.5) translateX(60%) translateY(51%);
     filter: brightness(.8) drop-shadow(0 0 10px rgba(0, 0, 0, 0.6));
