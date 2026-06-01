@@ -14,15 +14,30 @@ export function AvatarUsuarioEmVisualizacao({ usuario }: { usuario: UsuarioCompl
 export function AvatarUsuarioEmVisualizacao_CACHED({ idUsuario, avatarUsuarioMini }: { idUsuario: number; avatarUsuarioMini?: true; }) {
     const caminhoAtual = useUsuarioAvatar(idUsuario);
     const [exibido, setExibido] = useState(caminhoAtual);
-    const [visivel, setVisivel] = useState(true);
+    const [fase, setFase] = useState<'normal' | 'saindo' | 'entrando'>('normal');
+    const [mostrarBolha, setMostrarBolha] = useState(false);
 
     useEffect(() => {
         if (!caminhoAtual || caminhoAtual === exibido) return;
         if (!exibido) { setExibido(caminhoAtual); return; }
-        setVisivel(false);
-        const t = setTimeout(() => { setExibido(caminhoAtual); setVisivel(true); }, 150);
-        return () => clearTimeout(t);
+        setFase('saindo');
+        const tTroca = setTimeout(() => { setExibido(caminhoAtual); setFase('entrando'); setMostrarBolha(true); }, 150);
+        const tNormal = setTimeout(() => setFase('normal'), 400);
+        const tBolha = setTimeout(() => setMostrarBolha(false), 3350);
+        return () => { clearTimeout(tTroca); clearTimeout(tNormal); clearTimeout(tBolha); };
     }, [caminhoAtual]);
 
-    return <RenderUsuario caminhoArquivoAvatar={exibido} className={cn(styles.avatar_transicao, avatarUsuarioMini && styles.avatar_usuario, !visivel && styles.avatar_oculto)} />;
+    return (
+        <div className={styles.recipiente_avatar_animado}>
+            <RenderUsuario
+                caminhoArquivoAvatar={exibido}
+                className={cn(
+                    avatarUsuarioMini && styles.avatar_usuario,
+                    fase === 'saindo' && styles.avatar_saindo,
+                    fase === 'entrando' && styles.avatar_entrando,
+                )}
+            />
+            {mostrarBolha && <div className={styles.bolha_notificacao}>!</div>}
+        </div>
+    );
 };
