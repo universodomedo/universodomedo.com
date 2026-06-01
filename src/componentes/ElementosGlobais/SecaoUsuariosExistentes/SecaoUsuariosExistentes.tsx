@@ -9,6 +9,7 @@ import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import useScrollable from 'Componentes/ElementosVisuais/ElementoScrollable/useScrollable';
 import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
+import { ContadorDesconexao } from 'Componentes/Elementos/ContadorDesconexao/ContadorDesconexao';
 
 // Mapa construído uma vez para lookup O(1) de label por template
 const paginasLabelMap: Map<string, string> = (() => {
@@ -62,14 +63,15 @@ function UsuarioExistente({ acessoUsuario }: { acessoUsuario: SOCKET_AcessoUsuar
             </div>
             <div className={styles.recipiente_informacoes_contato}>
                 <h2>{acessoUsuario.usuario.username}</h2>
-                <PresencasUsuario conectado={acessoUsuario.conectado} presencas={acessoUsuario.presencas} />
+                <PresencasUsuario conectado={acessoUsuario.conectado} presencas={acessoUsuario.presencas} dataDesconexao={acessoUsuario.dataDesconexao} />
             </div>
         </div>
     );
 };
 
-function PresencasUsuario({ conectado, presencas }: { conectado: boolean; presencas: SOCKET_PresencaUsuario[] }) {
+function PresencasUsuario({ conectado, presencas, dataDesconexao }: { conectado: boolean; presencas: SOCKET_PresencaUsuario[]; dataDesconexao: Date | null; }) {
     if (!conectado) {
+        if (dataDesconexao) return <span>Desconectado há <ContadorDesconexao dataDesconexao={dataDesconexao} /></span>;
         return <span>Desconectado</span>;
     }
 

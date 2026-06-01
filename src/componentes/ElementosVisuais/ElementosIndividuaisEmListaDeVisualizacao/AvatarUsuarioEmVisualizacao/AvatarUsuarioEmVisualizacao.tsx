@@ -26,7 +26,7 @@ export function AvatarUsuarioEmVisualizacao_CACHED({ idUsuario, avatarUsuarioMin
         setFase('saindo');
         const tTroca = setTimeout(() => { setExibido(caminhoAtual); setFase('entrando'); setMostrarBolha(true); }, 150);
         const tNormal = setTimeout(() => setFase('normal'), 400);
-        // const tBolha = setTimeout(() => setMostrarBolha(false), 350);
+        const tBolha = setTimeout(() => setMostrarBolha(false), 350);
         return () => { clearTimeout(tTroca); clearTimeout(tNormal);  };
     }, [caminhoAtual]);
 
