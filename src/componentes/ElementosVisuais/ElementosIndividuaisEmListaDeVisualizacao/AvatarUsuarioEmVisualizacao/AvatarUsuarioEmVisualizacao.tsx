@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import { PathAvatarPadrao, UsuarioCompletaDto } from "types-nora-api";
+import { UsuarioCompletaDto } from "types-nora-api";
 import cn from 'classnames'
 
 import { useUsuarioAvatar } from "Redux/hooks/useUsuarioAvatar";
@@ -13,6 +13,5 @@ export function AvatarUsuarioEmVisualizacao({ usuario }: { usuario: UsuarioCompl
 export function AvatarUsuarioEmVisualizacao_CACHED({ idUsuario, avatarUsuarioMini }: { idUsuario: number; avatarUsuarioMini?: true; } ) {
     const CACHED_pathAvatarUsuario = useUsuarioAvatar(idUsuario);
 
-    return <RenderUsuario caminhoArquivoAvatar={PathAvatarPadrao} className={cn(avatarUsuarioMini && styles.avatar_usuario)} />;
-    // return <RenderUsuario caminhoArquivoAvatar={CACHED_pathAvatarUsuario} className={cn(avatarUsuarioMini && styles.avatar_usuario)} />;
+    return <RenderUsuario caminhoArquivoAvatar={CACHED_pathAvatarUsuario} className={cn(avatarUsuarioMini && styles.avatar_usuario)} />;
 };

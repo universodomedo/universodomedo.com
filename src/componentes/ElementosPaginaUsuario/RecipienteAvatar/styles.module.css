@@ -40,8 +40,6 @@
 
     z-index: 1;
 
-    cursor: pointer;
-
     background:
         linear-gradient(to bottom,
             #857f7200 30%,
@@ -49,6 +47,22 @@
         radial-gradient(circle, #040309 53%, #07060B 100%);
 
     border: 1px solid #352E4C;
+}
+
+.recipiente_imagem_usuario_editavel {
+    cursor: pointer;
+}
+
+.recipiente_imagem_usuario_editavel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0);
+    transition: background 0.25s ease;
+}
+
+.recipiente_imagem_usuario_editavel:hover::after {
+    background: rgba(0, 0, 0, 0.45);
 }
 
 .recipiente_emblema_moldura {
@@ -77,52 +91,4 @@
     z-index: 2;
 
     pointer-events: none;
-}
-/* =========================================
-   MODAL AVATARES
-========================================= */
-
-#recipiente_selecao_avatares {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-
-    row-gap: 5vh;
-
-    padding: 2vh 0;
-}
-
-#recipiente_selecao_avatares h2 {
-    margin: auto;
-}
-
-.recipiente_celula_avatar {
-    flex: 0 0 30%;
-    height: fit-content;
-}
-
-.recipiente_avatar {
-    position: relative;
-
-    aspect-ratio: 1;
-    height: 8rem;
-
-    margin: auto;
-}
-
-.recipiente_avatar:not(.selecionado_atual) {
-    cursor: pointer;
-}
-
-.recipiente_avatar img {
-    filter: drop-shadow(2px 4px 6px black);
-}
-
-.recipiente_avatar.selecionado_atual img {
-    filter: drop-shadow(2px 4px 6px rgb(233, 170, 55));
-}
-
-.recipiente_avatar:not(.selecionado_atual):hover img {
-    filter: drop-shadow(2px 4px 6px rgb(51, 255, 136));
 }

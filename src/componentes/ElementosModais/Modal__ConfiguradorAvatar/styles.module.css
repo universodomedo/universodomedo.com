@@ -1,0 +1,16 @@
+.recipiente_item_avatar {
+    position: relative;
+    aspect-ratio: 1;
+}
+
+.recipiente_item_avatar img {
+    filter: drop-shadow(2px 4px 6px black);
+}
+
+.avatar_selecionado img {
+    filter: drop-shadow(2px 4px 6px rgb(233, 170, 55));
+}
+
+.recipiente_item_avatar:not(.avatar_selecionado):hover img {
+    filter: drop-shadow(2px 4px 6px rgb(51, 255, 136));
+}

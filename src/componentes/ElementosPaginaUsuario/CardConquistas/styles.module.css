@@ -30,7 +30,7 @@
 }
 
 .area_conquistas::after {
-    content: url('/moldura-conquistas.svg');
+    content: var(--moldura-conquistas);
 
     position: absolute;
     top: 50%;

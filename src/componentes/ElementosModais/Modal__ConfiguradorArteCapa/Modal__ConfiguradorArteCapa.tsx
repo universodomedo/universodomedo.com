@@ -11,11 +11,11 @@ import { DivClicavel } from '@/componentes/Elementos/DivClicavel/DivClicavel';
 import { RenderArquivoArteCapa } from '@/uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 export default function Modal__ConfiguradorArteCapa({ isModalOpen, setIsModalOpen }: { isModalOpen: boolean; setIsModalOpen: (open: boolean) => void; }) {
-    const { subtituloOperacao, idArteCapaSelecionada, executaAtualizacaoArteCapaSelecionada } = useContexto__Modal__ConfiguradorArteCapa();
+    const { tituloOperacao, subtituloOperacao, idArteCapaSelecionada, executaAtualizacaoArteCapaSelecionada } = useContexto__Modal__ConfiguradorArteCapa();
 
     return (
         <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-            <Modal.Content cabecalho={{ titulo: 'Configurando Capa de Aventura', subtitulo: subtituloOperacao }} botaoAcaoPrincipal={{ texto: 'Atualizar', desabilitado: idArteCapaSelecionada === null, execucao: executaAtualizacaoArteCapaSelecionada }}>
+            <Modal.Content cabecalho={{ titulo: tituloOperacao, subtitulo: subtituloOperacao }} botaoAcaoPrincipal={{ texto: 'Atualizar', desabilitado: idArteCapaSelecionada === null, execucao: executaAtualizacaoArteCapaSelecionada }}>
                 <ConteudoModal />
             </Modal.Content>
         </Modal>

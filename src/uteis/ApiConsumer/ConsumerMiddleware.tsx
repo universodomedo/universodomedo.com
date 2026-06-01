@@ -306,6 +306,14 @@ export async function me_atualizaArteCapaPerfilUsuario(idArquivoTipadoArte: numb
     return await useApi<null>({ uri: '/customizacoes_usuario/me/me_atualizaArteCapaPerfilUsuario', method: 'PUT', data: { idArquivoTipadoArte: idArquivoTipadoArte } });
 }
 
+export async function me_obtemMinhasChavesNovoAvatar() {
+    return await useApi<{ id: number; caminhoArquivo: CaminhoArquivoAvatar; avatarEstaConfigurado: boolean; descricao: string; }[]>({ uri: '/customizacoes_usuario/me/me_obtemMinhasChavesNovoAvatar', method: 'GET' });
+}
+
+export async function me_atualizaAvatarPerfilUsuario(idChaveNovoAvatar: number) {
+    return await useApi<null>({ uri: '/customizacoes_usuario/me/me_atualizaAvatarPerfilUsuario', method: 'PUT', data: { idChaveNovoAvatar: idChaveNovoAvatar } });
+}
+
 //
 
 export async function desconectar() {

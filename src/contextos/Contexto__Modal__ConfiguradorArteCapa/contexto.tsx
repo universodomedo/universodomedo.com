@@ -7,12 +7,14 @@ import { BotaoConfigurarArteCapa } from 'Componentes/ElementosVisuais/ElementosI
 import Modal__ConfiguradorArteCapa from 'Componentes/ElementosModais/Modal__ConfiguradorArteCapa/Modal__ConfiguradorArteCapa';
 
 export type ConfiguracaoArteCapa = {
-    readonly callback: (idArteCapa: number) => void | Promise<void>;
+    readonly tituloOperacao: string;
     readonly subtituloOperacao: string;
+    readonly callback: (idArteCapa: number) => void | Promise<void>;
 };
 
 interface Contexto__Modal__ConfiguradorArteCapa__Props {
     listagemArtesCapa: ReturnType<typeof obtemListagemArtesCapa>;
+    tituloOperacao: string;
     subtituloOperacao: string;
     idArteCapaSelecionada: number | null;
     selecionaArteCapa: (idArteCapa: number) => void;
@@ -46,7 +48,7 @@ const Contexto__Modal__ConfiguradorArteCapa__Provider = ({ configArteCapa }: { c
     }, [configArteCapa, idArteCapaSelecionada]);
 
     return (
-        <Contexto__Modal__ConfiguradorArteCapa.Provider value={useMemo(() => ({ listagemArtesCapa, subtituloOperacao: configArteCapa.subtituloOperacao, idArteCapaSelecionada, selecionaArteCapa, executaAtualizacaoArteCapaSelecionada }), [configArteCapa, idArteCapaSelecionada, listagemArtesCapa, selecionaArteCapa, executaAtualizacaoArteCapaSelecionada])}>
+        <Contexto__Modal__ConfiguradorArteCapa.Provider value={useMemo(() => ({ listagemArtesCapa, tituloOperacao: configArteCapa.tituloOperacao, subtituloOperacao: configArteCapa.subtituloOperacao, idArteCapaSelecionada, selecionaArteCapa, executaAtualizacaoArteCapaSelecionada }), [configArteCapa, idArteCapaSelecionada, listagemArtesCapa, selecionaArteCapa, executaAtualizacaoArteCapaSelecionada])}>
             <BotaoConfigurarArteCapa openModalConfigurarArteCapa={openModal} />
             <Modal__ConfiguradorArteCapa isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
         </Contexto__Modal__ConfiguradorArteCapa.Provider>

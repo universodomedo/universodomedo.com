@@ -20,7 +20,7 @@ export default function SPA__PaginaMestreAventuras__SemAventuraSelecionada() {
 
     return (
         <div className={styles.recipiente_aventura_selecionada}>
-            <RenderCabecalhoCapa caminhoArquivoArte={grupoAventura.dadosArteCapa.caminhoArquivoArteCapa} configArteCapa={grupoAventura.dadosArteCapa.temCapaConfigurada ? undefined : { callback: configuraArteCapaGrupoAventuraSelecionado, subtituloOperacao: grupoAventura.nomeUnicoGrupoAventura }} />
+            <RenderCabecalhoCapa caminhoArquivoArte={grupoAventura.dadosArteCapa.caminhoArquivoArteCapa} configArteCapa={grupoAventura.dadosArteCapa.temCapaConfigurada ? undefined : { tituloOperacao: 'Configurando Capa de Aventura', subtituloOperacao: grupoAventura.nomeUnicoGrupoAventura, callback: configuraArteCapaGrupoAventuraSelecionado }} />
 
             {grupoAventura.detalhesSessoes.estadoAtual === AventuraEstado.EM_ANDAMENTO && <VisualizadorSessoes idGrupoAventura={grupoAventura.id} detalhesSessoes={grupoAventura.detalhesSessoes} />}
 

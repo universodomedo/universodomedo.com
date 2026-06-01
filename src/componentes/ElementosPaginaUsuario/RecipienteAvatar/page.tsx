@@ -3,79 +3,28 @@
 import styles from './styles.module.css';
 
 import { useState } from 'react';
-import { atualizaAvatarUsuario } from 'Uteis/ApiConsumer/ConsumerMiddleware.tsx';
-import { PersonagemAvatarDto } from 'types-nora-api';
-import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto.tsx';
 
-import Modal from 'Componentes/Elementos/Modal/Modal.tsx';
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto.tsx';
+import { useContexto__PaginaPerfilUsuario } from '@/contextos/Contexto__PaginaPerfilUsuario/contexto';
+import { Recipiente__Contexto__Modal__ConfiguradorAvatar__Provider } from '@/contextos/Contexto__Modal__ConfiguradorAvatar/contexto';
 import { RenderArquivoAvatar, RenderArquivoInterno2 } from '@/uteis/RenderArquivoTipados/RenderArquivoTipados';
 
-
 export default function RecipienteAvatar() {
-
-
+    const { registroUsuario } = useContexto__PaginaPerfilUsuario();
     const { usuarioLogado } = useContextoAutenticacao();
-
+    const isOwner = !!usuarioLogado && usuarioLogado.id === registroUsuario.id;
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const openModal = () => setIsModalOpen(true);
-
-
-
-    if (!usuarioLogado) return;
 
     return (
-        <>
-            <div className={styles.absolut_avatar}>
-                <div className={styles.recipiente_avatar_usuario}>
-
-                    <RenderArquivoInterno2 arquivoInterno={'TESTE_EMBLEMA__EMBLEMA'} className={styles.recipiente_emblema_moldura} />
-                  
-                    <RenderArquivoInterno2 arquivoInterno={'TESTE_EMBLEMA__MOLDURA'} className={styles.moldura_avatar} />
-                  
-                    <div className={styles.recipiente_imagem_usuario} onClick={openModal}>
-                        {/* <RecipienteImagem src={usuarioLogado.customizacao.caminhoAvatar} /> */}
-                        <RenderArquivoAvatar caminhoArquivoAvatar={usuarioLogado.customizacao.caminhoArquivoAvatar} />
-                    </div>
+        <div className={styles.absolut_avatar}>
+            <div className={styles.recipiente_avatar_usuario}>
+                <RenderArquivoInterno2 arquivoInterno={'TESTE_EMBLEMA__EMBLEMA'} className={styles.recipiente_emblema_moldura} />
+                <RenderArquivoInterno2 arquivoInterno={'TESTE_EMBLEMA__MOLDURA'} className={styles.moldura_avatar} />
+                <div className={`${styles.recipiente_imagem_usuario}${isOwner ? ` ${styles.recipiente_imagem_usuario_editavel}` : ''}`} onClick={isOwner ? () => setIsModalOpen(true) : undefined}>
+                    <RenderArquivoAvatar caminhoArquivoAvatar={registroUsuario.customizacao.caminhoArquivoAvatar} />
                 </div>
             </div>
-
-            <Modal open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <Modal.Content cabecalho={{ titulo: 'Atualizar Avatar' }}>
-                    <ConteudoModalAtualizaAvatar listaAvatares={usuarioLogado.personagens?.filter(personagem => personagem.avatarAtual !== null) ?? []} idPersonagemSelecinadoAtualmente={usuarioLogado.customizacao.personagemAvatarPrincipal?.idPersonagem} />
-                </Modal.Content>
-            </Modal>
-        </>
+            {isOwner && <Recipiente__Contexto__Modal__ConfiguradorAvatar__Provider isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />}
+        </div>
     );
-}
-
-function ConteudoModalAtualizaAvatar({ listaAvatares, idPersonagemSelecinadoAtualmente }: { listaAvatares: PersonagemAvatarDto[], idPersonagemSelecinadoAtualmente: number | undefined; }) {
-    async function atualizarAvatarUsuario(idPersonagem: number) {
-        if (idPersonagemSelecinadoAtualmente === idPersonagem) return;
-
-        const respostaDadosMinhaPagina = await atualizaAvatarUsuario(idPersonagem);
-
-        if (!respostaDadosMinhaPagina) {
-            alert('Erro ao alterar o avatar');
-        } else {
-            window.location.reload();
-        }
-    };
-
-    return (
-        <div id={styles.recipiente_selecao_avatares}>
-            {listaAvatares.length <= 0 ? (
-                <h2>Não há avatares disponíveis</h2>
-            ) : (
-                <>
-                    {listaAvatares.map(personagem => (
-                        <div key={personagem.idPersonagem} className={styles.recipiente_celula_avatar} onClick={() => { atualizarAvatarUsuario(personagem.idPersonagem) }}>
-                            <div className={`${styles.recipiente_avatar} ${idPersonagemSelecinadoAtualmente === personagem.idPersonagem ? styles.selecionado_atual : ''}`}>
-                                <RenderArquivoAvatar caminhoArquivoAvatar={personagem.avatarAtual} />
-                            </div>
-                        </div>
-                    ))}
-                </>
-            )}
-        </div >
-    )
 };
