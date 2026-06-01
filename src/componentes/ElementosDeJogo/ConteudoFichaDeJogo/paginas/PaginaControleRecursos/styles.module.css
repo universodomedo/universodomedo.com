@@ -1,0 +1,70 @@
+.painel_recursos {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1em;
+    color: white;
+    font-family: 'Crimson Pro', serif;
+}
+
+.secao_recursos {
+    display: flex;
+    flex-direction: column;
+    gap: .55em;
+}
+
+.titulo_secao {
+    color: #D8C7A0;
+    font-size: .95em;
+    font-weight: 700;
+    margin: 0;
+}
+
+.lista_recursos {
+    display: flex;
+    flex-direction: column;
+    gap: .45em;
+}
+
+.recurso {
+    align-items: center;
+    background-color: rgba(45, 42, 55, .7);
+    border: .08em solid #625D70;
+    border-radius: .35em;
+    display: flex;
+    gap: .7em;
+    justify-content: space-between;
+    padding: .7em .8em;
+}
+
+.recurso_disponivel {
+    border-color: #8FAF96;
+}
+
+.recurso_indisponivel {
+    border-color: #9C4A55;
+}
+
+.nome_recurso {
+    color: white;
+    font-size: 1em;
+}
+
+.status_recurso {
+    font-size: .85em;
+    font-weight: 700;
+}
+
+.status_disponivel {
+    color: #DCE8DE;
+}
+
+.status_indisponivel {
+    color: #F0BDC3;
+}
+
+.sem_recursos {
+    color: #B7B1C4;
+    font-size: .9em;
+    margin: 0;
+}

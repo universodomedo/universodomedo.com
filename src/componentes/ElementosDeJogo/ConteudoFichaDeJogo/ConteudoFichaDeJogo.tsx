@@ -12,6 +12,7 @@ import PaginaControleAtributosPericias from './paginas/PaginaControleAtributosPe
 import PaginaControleAcoes from './paginas/PaginaControleAcoes/PaginaControleAcoes';
 import PaginaControleHabilidades from './paginas/PaginaControleHabilidades/PaginaControleHabilidades';
 import PaginaControleModificadores from './paginas/PaginaControleModificadores/PaginaControleModificadores';
+import PaginaControleRecursos from './paginas/PaginaControleRecursos/PaginaControleRecursos';
 import CarrosselConteudoFichaDeJogo from '../CarrosselConteudoFichaDeJogo/CarrosselConteudoFichaDeJogo';
 
 const ProvidersControleFicha = combineProviders(
@@ -50,6 +51,11 @@ function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirAcoes
             nome: 'Ações',
             componente: <PaginaControleAcoes />,
             contexto: obtemMenuVazioAcoesRuntime
+        },
+        {
+            nome: 'Recursos',
+            componente: <PaginaControleRecursos />,
+            contexto: obtemMenuVazioRecursosRuntime
         }] : []),
         {
             nome: 'Inventário',
@@ -92,4 +98,5 @@ function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirAcoes
 
 function obtemMenuVazioHabilidadesRuntime() { return { listaMenus: [] }; };
 function obtemMenuVazioAcoesRuntime() { return { listaMenus: [] }; };
+function obtemMenuVazioRecursosRuntime() { return { listaMenus: [] }; };
 function obtemMenuVazioModificadoresRuntime() { return { listaMenus: [] }; };
