@@ -34,7 +34,10 @@ function RecursoFicha({ recurso }: { recurso: RecursoFichaEmJogo; }) {
 
     return (
         <article className={`${styles.recurso} ${recurso.disponivel ? styles.recurso_disponivel : styles.recurso_indisponivel}`} aria-label={`${recurso.nome} - ${status}`}>
-            <strong className={styles.nome_recurso}>{recurso.nome}</strong>
+            <div className={styles.dados_recurso}>
+                <strong className={styles.nome_recurso}>{recurso.nome}</strong>
+                <span className={styles.descricao_estado}>{recurso.descricaoEstado}</span>
+            </div>
             <span className={`${styles.status_recurso} ${recurso.disponivel ? styles.status_disponivel : styles.status_indisponivel}`}>{status}</span>
         </article>
     );
