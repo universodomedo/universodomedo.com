@@ -1,7 +1,8 @@
 import { alteraQuantidadeVerticesEditor3D, atualizaQuantidadeVerticesObjetoEditor3D, atualizaVetorObjetoEditor3D, criaProximoObjetoEditor3D, defineQuantidadeVerticesEditor3D } from './editor3D.reducer.objetos';
-import { obtemDefinicaoMalhaEditor3D } from '../editor/editor3D.objetos';
-import type { CampoVetorMalhaEditor3D, IndiceVetor3Editor3D, TipoMalhaEditor3D } from '../editor/editor3D.tipos';
+import { criaObjetoPresetCenaEditor3D, obtemDefinicaoMalhaEditor3D } from '../editor/editor3D.objetos';
+import type { CampoVetorMalhaEditor3D, IndiceVetor3Editor3D, ObjetoCenaEditor3D, TipoMalhaEditor3D } from '../editor/editor3D.tipos';
 import type { ColecaoCenaEditor3D, Editor3DState } from './editor3D.estado.types';
+import type { PresetObjetoCenaEditor3D } from '../editor/editor3D.presetsObjeto.tipos';
 
 function obtemIdColecaoDestinoCriacaoEditor3D(state: Editor3DState): string | null {
     if (state.idColecaoSelecionada === null) return null;
@@ -19,6 +20,15 @@ function adicionaObjetoNaColecaoDestinoEditor3D(colecoes: ColecaoCenaEditor3D[],
 
         return { ...colecao, idsObjetos: [...colecao.idsObjetos, idObjeto] };
     });
+};
+
+function confirmaObjetoCriadoEditor3D(state: Editor3DState, objeto: ObjetoCenaEditor3D): Editor3DState {
+    const idColecaoDestino = obtemIdColecaoDestinoCriacaoEditor3D(state);
+    const colecoes = adicionaObjetoNaColecaoDestinoEditor3D(state.colecoes, idColecaoDestino, objeto.id);
+    const objetoOcultoPelaColecao = idColecaoDestino !== null && state.idsColecoesOcultas.includes(idColecaoDestino);
+    const idsObjetosOcultos = objetoOcultoPelaColecao && !state.idsObjetosOcultos.includes(objeto.id) ? [...state.idsObjetosOcultos, objeto.id] : state.idsObjetosOcultos;
+
+    return { ...state, objetos: [...state.objetos, objeto], idsObjetosOcultos, colecoes, idObjetoSelecionado: objeto.id, idsObjetosSelecionados: [objeto.id], idColecaoSelecionada: null, malhaEmCriacao: null, proximoId: state.proximoId + 1 };
 };
 
 export function iniciaMalhaEmCriacaoEditor3D(state: Editor3DState, tipoMalha: TipoMalhaEditor3D): Editor3DState {
@@ -49,13 +59,10 @@ export function atualizaVetorMalhaEmCriacaoEditor3D(state: Editor3DState, campo:
     return { ...state, malhaEmCriacao: atualizaVetorObjetoEditor3D(state.malhaEmCriacao, campo, indice, valor) };
 };
 
-export function confirmaMalhaEmCriacaoEditor3D(state: Editor3DState): Editor3DState {
-    if (state.malhaEmCriacao === null) return state;
+export function criaPresetObjetoCenaEditor3D(state: Editor3DState, preset: PresetObjetoCenaEditor3D): Editor3DState {
+    if (state.modoOperacao !== 'OBJETO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null) return state;
 
-    const idColecaoDestino = obtemIdColecaoDestinoCriacaoEditor3D(state);
-    const colecoes = adicionaObjetoNaColecaoDestinoEditor3D(state.colecoes, idColecaoDestino, state.malhaEmCriacao.id);
-    const objetoOcultoPelaColecao = idColecaoDestino !== null && state.idsColecoesOcultas.includes(idColecaoDestino);
-    const idsObjetosOcultos = objetoOcultoPelaColecao && !state.idsObjetosOcultos.includes(state.malhaEmCriacao.id) ? [...state.idsObjetosOcultos, state.malhaEmCriacao.id] : state.idsObjetosOcultos;
-
-    return { ...state, objetos: [...state.objetos, state.malhaEmCriacao], idsObjetosOcultos, colecoes, idObjetoSelecionado: state.malhaEmCriacao.id, idsObjetosSelecionados: [state.malhaEmCriacao.id], idColecaoSelecionada: null, malhaEmCriacao: null, proximoId: state.proximoId + 1 };
+    return confirmaObjetoCriadoEditor3D(state, criaObjetoPresetCenaEditor3D(state.proximoId, preset));
 };
+
+export function confirmaMalhaEmCriacaoEditor3D(state: Editor3DState): Editor3DState { return state.malhaEmCriacao === null ? state : confirmaObjetoCriadoEditor3D(state, state.malhaEmCriacao); };

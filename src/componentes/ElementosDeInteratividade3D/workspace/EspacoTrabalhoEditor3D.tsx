@@ -14,6 +14,7 @@ import { comandoMouseAreaInterativa3DEstaAtivo, comandoTecladoAreaInterativa3DEs
 import { useEditor3DContexto } from '../contexto/Editor3DContexto';
 import { useMenuAplicacaoTransformEditor3D } from '../aplicacao/useMenuAplicacaoTransformEditor3D';
 import { useMenuCriacaoMeshEditor3D } from '../criacao/useMenuCriacaoMeshEditor3D';
+import type { PresetObjetoCenaEditor3D } from '../editor/editor3D.presetsObjeto.tipos';
 import type { TipoMalhaEditor3D } from '../editor/editor3D.tipos';
 
 function alvoEstaDentroDe(event: ReactMouseEvent<HTMLElement>, seletor: string): boolean { return event.target instanceof Element && event.target.closest(seletor) !== null; };
@@ -99,6 +100,11 @@ export function EspacoTrabalhoEditor3D() {
         menuCriacao.fechaMenu();
     };
 
+    function criaPresetObjeto(preset: PresetObjetoCenaEditor3D): void {
+        acoes.criaPresetObjetoCena(preset);
+        menuCriacao.fechaMenu();
+    };
+
     function aplicaRotationScale(): void {
         acoes.aplicaRotationScaleObjetosSelecionados();
         menuAplicacao.fechaMenu();
@@ -114,7 +120,7 @@ export function EspacoTrabalhoEditor3D() {
 
             <SeletorModoOperacaoEditor3D />
 
-            <CamadaCriacaoMeshEditor3D posicaoMenu={menuCriacao.posicaoMenu} selecionaTipoMalha={selecionaTipoMalha} />
+            <CamadaCriacaoMeshEditor3D posicaoMenu={menuCriacao.posicaoMenu} selecionaTipoMalha={selecionaTipoMalha} criaPresetObjeto={criaPresetObjeto} />
 
             <CamadaAplicacaoTransformEditor3D posicaoMenu={menuAplicacao.posicaoMenu} aplicaRotationScale={aplicaRotationScale} />
         </section>
