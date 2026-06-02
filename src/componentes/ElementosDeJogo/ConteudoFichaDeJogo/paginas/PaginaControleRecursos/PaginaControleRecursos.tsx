@@ -3,6 +3,7 @@ import styles from './styles.module.css';
 import type { RecursoFichaEmJogo } from 'types-nora-api';
 
 import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonagem/contexto';
+import ResumoFuncionalRecursos from './ResumoFuncionalRecursos';
 
 export default function PaginaControleRecursos() {
     const { recursosPorGrupoFuncional } = useContextoFichaDePersonagem();
@@ -10,6 +11,7 @@ export default function PaginaControleRecursos() {
     return (
         <div className={styles.painel_recursos}>
             {recursosPorGrupoFuncional.length === 0 && <p className={styles.sem_recursos}>Nenhum recurso disponível para exibição</p>}
+            {recursosPorGrupoFuncional.length > 0 && <ResumoFuncionalRecursos grupos={recursosPorGrupoFuncional} />}
             {recursosPorGrupoFuncional.map(grupo => <GrupoRecursos key={grupo.grupoFuncional.key} titulo={grupo.grupoFuncional.nome} recursos={grupo.recursos} />)}
         </div>
     );

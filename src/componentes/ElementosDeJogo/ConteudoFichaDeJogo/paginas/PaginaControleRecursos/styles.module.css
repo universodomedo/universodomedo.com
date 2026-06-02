@@ -13,6 +13,74 @@
     gap: .6em;
 }
 
+.resumo_funcional_recursos {
+    display: flex;
+    flex-direction: column;
+    gap: .55em;
+}
+
+.titulo_resumo_funcional {
+    color: #D8C7A0;
+    font-size: .95em;
+    font-weight: 700;
+    margin: 0;
+}
+
+.lista_resumo_funcional {
+    display: grid;
+    gap: .45em;
+    grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+}
+
+.card_resumo_funcional {
+    background-color: rgba(28, 27, 36, .84);
+    border: .08em solid #625D70;
+    border-radius: .35em;
+    display: flex;
+    flex-direction: column;
+    gap: .35em;
+    padding: .65em .75em;
+}
+
+.cabecalho_resumo_funcional {
+    align-items: center;
+    display: flex;
+    gap: .6em;
+    justify-content: space-between;
+}
+
+.nome_grupo_resumo {
+    color: white;
+    font-size: .95em;
+}
+
+.estado_geral_resumo {
+    color: #D8C7A0;
+    font-size: .82em;
+    font-weight: 700;
+}
+
+.contadores_resumo {
+    color: #B7B1C4;
+    font-size: .84em;
+}
+
+.estado_operacional {
+    border-color: #8FAF96;
+}
+
+.estado_em_uso {
+    border-color: #D1A15E;
+}
+
+.estado_limitado {
+    border-color: #9C4A55;
+}
+
+.estado_sem_recursos {
+    border-color: #625D70;
+}
+
 .titulo_grupo {
     color: #D8C7A0;
     font-size: 1em;
