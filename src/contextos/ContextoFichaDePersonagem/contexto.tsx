@@ -4,6 +4,9 @@ import { createContext, useContext } from 'react';
 import type { AcaoDisponivel, FichaEmClient, Habilidade, J_DadosFichaEmJogo, ModificadorRuntime, RecursoFichaEmJogo } from 'types-nora-api';
 
 import { useFichaDeJogo } from 'Hooks/useFichaDeJogo';
+import { agrupaRecursosPorDisponibilidade, agrupaRecursosPorGrupoFuncional, type GrupoRecursosPorGrupoFuncionalFicha, type RecursosPorDisponibilidadeFicha } from './contextoFichaDePersonagem.recursos';
+
+export type { GrupoRecursosPorGrupoFuncionalFicha, RecursosPorDisponibilidadeFicha } from './contextoFichaDePersonagem.recursos';
 
 interface ContextoFichaDePersonagemProps {
     ficha: FichaEmClient;
@@ -12,6 +15,7 @@ interface ContextoFichaDePersonagemProps {
     acoesPorStatusECapacidade: AcoesPorStatusECapacidade;
     recursos: RecursoFichaEmJogo[];
     recursosPorDisponibilidade: RecursosPorDisponibilidadeFicha;
+    recursosPorGrupoFuncional: GrupoRecursosPorGrupoFuncionalFicha[];
     modificadoresAtivos: ModificadorRuntime[];
     desativarAcoes: boolean;
 };
@@ -26,11 +30,6 @@ export type AcoesPorStatusECapacidade = {
     bloqueadas: GrupoAcoesPorCapacidadeFicha[];
 };
 
-export type RecursosPorDisponibilidadeFicha = {
-    disponiveis: RecursoFichaEmJogo[];
-    indisponiveis: RecursoFichaEmJogo[];
-};
-
 const ContextoFichaDePersonagem = createContext<ContextoFichaDePersonagemProps | undefined>(undefined);
 
 export const useContextoFichaDePersonagem = (): ContextoFichaDePersonagemProps => {
@@ -43,12 +42,13 @@ export const ContextoFichaDePersonagemProvider = ({ children, JDadosFichaEmJogo,
     const { ficha, carregando, erro } = useFichaDeJogo(JDadosFichaEmJogo);
     const acoesPorStatusECapacidade = agrupaAcoesPorStatusECapacidade(JDadosFichaEmJogo.acoes);
     const recursosPorDisponibilidade = agrupaRecursosPorDisponibilidade(JDadosFichaEmJogo.recursos);
+    const recursosPorGrupoFuncional = agrupaRecursosPorGrupoFuncional(JDadosFichaEmJogo.recursos);
 
     if (carregando) return <h2>Carregando ficha...</h2>;
     if (erro || !ficha) return <h2>{erro ?? 'Erro ao montar ficha'}</h2>;
 
     return (
-        <ContextoFichaDePersonagem.Provider value={{ ficha, habilidades: JDadosFichaEmJogo.habilidades, acoes: JDadosFichaEmJogo.acoes, acoesPorStatusECapacidade, recursos: JDadosFichaEmJogo.recursos, recursosPorDisponibilidade, modificadoresAtivos: JDadosFichaEmJogo.modificadoresAtivos, desativarAcoes }}>
+        <ContextoFichaDePersonagem.Provider value={{ ficha, habilidades: JDadosFichaEmJogo.habilidades, acoes: JDadosFichaEmJogo.acoes, acoesPorStatusECapacidade, recursos: JDadosFichaEmJogo.recursos, recursosPorDisponibilidade, recursosPorGrupoFuncional, modificadoresAtivos: JDadosFichaEmJogo.modificadoresAtivos, desativarAcoes }}>
             {children}
         </ContextoFichaDePersonagem.Provider>
     );
@@ -80,11 +80,4 @@ function agrupaAcoesPorCapacidade(acoes: AcaoDisponivel[]): GrupoAcoesPorCapacid
         if (ordem !== 0) return ordem;
         return grupoA.capacidadeExibicao.nome.localeCompare(grupoB.capacidadeExibicao.nome);
     });
-};
-
-function agrupaRecursosPorDisponibilidade(recursos: RecursoFichaEmJogo[]): RecursosPorDisponibilidadeFicha {
-    return {
-        disponiveis: recursos.filter(recurso => recurso.disponivel),
-        indisponiveis: recursos.filter(recurso => !recurso.disponivel),
-    };
 };

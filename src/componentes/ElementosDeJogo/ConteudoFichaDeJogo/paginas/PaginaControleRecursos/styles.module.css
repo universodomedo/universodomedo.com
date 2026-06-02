@@ -2,20 +2,20 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 1em;
+    gap: 1.1em;
     color: white;
     font-family: 'Crimson Pro', serif;
 }
 
-.secao_recursos {
+.grupo_recursos {
     display: flex;
     flex-direction: column;
-    gap: .55em;
+    gap: .6em;
 }
 
-.titulo_secao {
+.titulo_grupo {
     color: #D8C7A0;
-    font-size: .95em;
+    font-size: 1em;
     font-weight: 700;
     margin: 0;
 }
@@ -27,17 +27,14 @@
 }
 
 .recurso {
-    align-items: center;
     background-color: rgba(45, 42, 55, .7);
     border: .08em solid #625D70;
     border-radius: .35em;
     display: flex;
-    gap: .7em;
-    justify-content: space-between;
-    padding: .7em .8em;
+    padding: .75em .85em;
 }
 
-.recurso_disponivel {
+.recurso_livre {
     border-color: #8FAF96;
 }
 
@@ -45,15 +42,33 @@
     border-color: #9C4A55;
 }
 
-.nome_recurso {
-    color: white;
-    font-size: 1em;
+.recurso_ocupado {
+    border-color: #D1A15E;
 }
 
 .dados_recurso {
     display: flex;
     flex-direction: column;
-    gap: .18em;
+    gap: .3em;
+    width: 100%;
+}
+
+.cabecalho_recurso {
+    align-items: center;
+    display: flex;
+    gap: .7em;
+    justify-content: space-between;
+}
+
+.nome_recurso {
+    color: white;
+    font-size: 1em;
+}
+
+.estado_recurso {
+    color: #D8C7A0;
+    font-size: .86em;
+    font-weight: 700;
 }
 
 .descricao_estado {
@@ -61,17 +76,31 @@
     font-size: .9em;
 }
 
-.status_recurso {
+.uso_acoes {
     font-size: .85em;
     font-weight: 700;
 }
 
-.status_disponivel {
+.uso_acoes_disponivel {
     color: #DCE8DE;
 }
 
-.status_indisponivel {
+.uso_acoes_indisponivel {
     color: #F0BDC3;
+}
+
+.lista_impactos {
+    display: flex;
+    flex-direction: column;
+    gap: .25em;
+    list-style: disc;
+    margin: .1em 0 0 1.2em;
+    padding: 0;
+}
+
+.impacto_recurso {
+    color: #D7D0E2;
+    font-size: .86em;
 }
 
 .sem_recursos {
