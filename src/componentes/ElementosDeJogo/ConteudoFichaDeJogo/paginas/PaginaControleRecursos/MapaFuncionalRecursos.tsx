@@ -68,7 +68,8 @@ function montaTituloRecursoMapa(recurso: RecursoFichaEmJogo): string {
     const linhas = [
         recurso.slotVisualFuncional.nome,
         `Tipo lógico: ${recurso.nomeLogico}`,
-        `Capacidade: ${recurso.capacidadeFuncional.nome}`,
+        `Capacidade principal: ${recurso.capacidadeFuncional.nome}`,
+        `Capacidades: ${formataCapacidadesFuncionais(recurso.capacidadesFuncionais)}`,
         `Estado: ${recurso.estadoResumo.nome}`,
         recurso.descricaoEstado,
         recurso.podeUsarEmAcoes ? 'Pode ser usado em ações' : 'Não pode ser usado em ações',
@@ -77,4 +78,8 @@ function montaTituloRecursoMapa(recurso: RecursoFichaEmJogo): string {
     if (recurso.impactos.length === 0) return linhas.join('\n');
 
     return [...linhas, 'Impactos:', ...recurso.impactos.map(impacto => `- ${impacto}`)].join('\n');
+};
+
+function formataCapacidadesFuncionais(capacidades: RecursoFichaEmJogo['capacidadesFuncionais']): string {
+    return capacidades.map(capacidade => capacidade.nome).join(', ');
 };

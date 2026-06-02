@@ -157,6 +157,12 @@
     color: #F0BDC3;
 }
 
+.capacidades_recurso {
+    color: #D8C7A0;
+    font-size: .84em;
+    font-weight: 700;
+}
+
 .lista_impactos {
     display: flex;
     flex-direction: column;

@@ -45,6 +45,7 @@ function RecursoFicha({ recurso }: { recurso: RecursoFichaEmJogo; }) {
                 </div>
                 <span className={styles.descricao_estado}>{recurso.descricaoEstado}</span>
                 <span className={`${styles.uso_acoes} ${recurso.podeUsarEmAcoes ? styles.uso_acoes_disponivel : styles.uso_acoes_indisponivel}`}>{textoUsoAcoes}</span>
+                <span className={styles.capacidades_recurso}>{formataCapacidadesFuncionais(recurso.capacidadesFuncionais)}</span>
                 {recurso.impactos.length > 0 && (
                     <ul className={styles.lista_impactos}>
                         {recurso.impactos.map(impacto => <li key={impacto} className={styles.impacto_recurso}>{impacto}</li>)}
@@ -59,4 +60,8 @@ function obtemClasseEstadoRecurso(tipoEstado: RecursoFichaEmJogo['estadoResumo']
     if (tipoEstado === 'livre') return styles.recurso_livre;
     if (tipoEstado === 'indisponivel') return styles.recurso_indisponivel;
     return styles.recurso_ocupado;
+};
+
+function formataCapacidadesFuncionais(capacidades: RecursoFichaEmJogo['capacidadesFuncionais']): string {
+    return capacidades.map(capacidade => capacidade.nome).join(', ');
 };

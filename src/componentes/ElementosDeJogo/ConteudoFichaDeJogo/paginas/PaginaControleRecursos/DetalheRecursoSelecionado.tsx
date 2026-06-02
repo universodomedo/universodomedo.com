@@ -22,7 +22,8 @@ export default function DetalheRecursoSelecionado() {
             <dl className={styles.lista_detalhes_recurso}>
                 <LinhaDetalheRecurso rotulo="Slot" valor={recursoSelecionado.slotVisualFuncional.nome} />
                 <LinhaDetalheRecurso rotulo="Nome lógico" valor={recursoSelecionado.nomeLogico} />
-                <LinhaDetalheRecurso rotulo="Capacidade" valor={recursoSelecionado.capacidadeFuncional.nome} />
+                <LinhaDetalheRecurso rotulo="Capacidade principal" valor={recursoSelecionado.capacidadeFuncional.nome} />
+                <LinhaDetalheRecurso rotulo="Capacidades" valor={formataCapacidadesFuncionais(recursoSelecionado.capacidadesFuncionais)} />
                 <LinhaDetalheRecurso rotulo="Área" valor={recursoSelecionado.visualizacaoFuncional.nomeArea} />
                 <LinhaDetalheRecurso rotulo="Grupo" valor={recursoSelecionado.grupoFuncional.nome} />
                 <LinhaDetalheRecurso rotulo="Estado" valor={recursoSelecionado.estadoResumo.nome} />
@@ -41,6 +42,10 @@ function LinhaDetalheRecurso({ rotulo, valor }: { rotulo: string; valor: string;
             <dd className={styles.valor_detalhe_recurso}>{valor}</dd>
         </div>
     );
+};
+
+function formataCapacidadesFuncionais(capacidades: RecursoFichaEmJogo['capacidadesFuncionais']): string {
+    return capacidades.map(capacidade => capacidade.nome).join(', ');
 };
 
 function ImpactosRecurso({ recurso }: { recurso: RecursoFichaEmJogo; }) {
