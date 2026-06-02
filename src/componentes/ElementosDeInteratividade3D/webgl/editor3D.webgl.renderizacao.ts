@@ -1,5 +1,6 @@
 import type { BuffersEditor3D } from './editor3D.webgl.buffers';
 import type { GeometriaEditor3D, ModoDesenhoEditor3D } from '../geometria/editor3D.geometria.types';
+import { aplicaMaterialEditor3D, criaMaterialEditor3D } from './editor3D.webgl.material';
 import type { ProgramaEditor3D } from './editor3D.webgl.programa';
 import type { Vetor3 } from '../editor/editor3D.tipos';
 
@@ -9,8 +10,6 @@ function obtemModoDesenho(gl: WebGLRenderingContext, modo: ModoDesenhoEditor3D):
 
     return gl.TRIANGLES;
 };
-
-function criaVetorUniforme(vetor: Vetor3): Float32Array { return new Float32Array([vetor[0], vetor[1], vetor[2]]); };
 
 function usaIluminacaoGeometriaEditor3D(geometria: GeometriaEditor3D): boolean { return geometria.modo === 'TRIANGULOS'; };
 
@@ -33,15 +32,14 @@ export function desenhaMalhaEditor3D(gl: WebGLRenderingContext, programa: Progra
 };
 
 export function desenhaMalhaIntervaloEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, buffers: BuffersEditor3D, geometria: GeometriaEditor3D, corBase: Vetor3, corLuz: Vetor3, alpha: number, inicio: number, quantidade: number): void {
+    const material = criaMaterialEditor3D(corBase, corLuz, usaIluminacaoGeometriaEditor3D(geometria), alpha);
+
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.vertices);
     gl.enableVertexAttribArray(programa.aPosition);
     gl.vertexAttribPointer(programa.aPosition, 3, gl.FLOAT, false, 0, 0);
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.normais);
     gl.enableVertexAttribArray(programa.aNormal);
     gl.vertexAttribPointer(programa.aNormal, 3, gl.FLOAT, false, 0, 0);
-    gl.uniform3fv(programa.uCorBase, criaVetorUniforme(corBase));
-    gl.uniform3fv(programa.uCorLuz, criaVetorUniforme(corLuz));
-    gl.uniform1f(programa.uAlpha, alpha);
-    gl.uniform1f(programa.uUsaIluminacao, usaIluminacaoGeometriaEditor3D(geometria) ? 1 : 0);
+    aplicaMaterialEditor3D(gl, programa, material);
     gl.drawArrays(obtemModoDesenho(gl, geometria.modo), inicio, quantidade);
 };
