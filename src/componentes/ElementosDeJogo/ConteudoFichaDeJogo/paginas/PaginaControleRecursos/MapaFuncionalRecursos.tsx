@@ -28,10 +28,9 @@ function RecursoMapaFuncional({ recurso }: { recurso: RecursoFichaEmJogo; }) {
     const recursoSelecionado = keyRecursoSelecionado === recurso.key;
 
     return (
-        <button type="button" className={`${chipStyles.recurso_mapa_funcional} ${obtemClasseEstadoRecurso(recurso.estadoResumo.tipo)} ${obtemClassePosicaoMapa(recurso.slotVisualFuncional.posicaoMapa)} ${recursoSelecionado ? chipStyles.recurso_mapa_selecionado : ''}`} aria-label={`${recurso.slotVisualFuncional.nome} - ${recurso.estadoResumo.nome}`} onClick={() => selecionaRecurso(recurso.key)} aria-pressed={recursoSelecionado}>
+        <button type="button" className={`${chipStyles.recurso_mapa_funcional} ${obtemClasseEstadoRecurso(recurso.estadoResumo.tipo)} ${obtemClassePosicaoMapa(recurso.slotVisualFuncional.posicaoMapa)} ${recursoSelecionado ? chipStyles.recurso_mapa_selecionado : ''}`} aria-label={`${recurso.slotVisualFuncional.nome} - ${recurso.estadoResumo.nome}`} title={montaTituloRecursoMapa(recurso)} onClick={() => selecionaRecurso(recurso.key)} aria-pressed={recursoSelecionado}>
             <span className={chipStyles.icone_recurso_mapa} aria-hidden={true}>{recurso.slotVisualFuncional.iconeTexto}</span>
             <strong className={chipStyles.nome_recurso_mapa}>{recurso.slotVisualFuncional.nome}</strong>
-            <span className={chipStyles.estado_recurso_mapa}>{recurso.estadoResumo.nome}</span>
         </button>
     );
 };
@@ -57,8 +56,25 @@ function obtemClassePosicaoMapa(posicaoMapa: RecursoFichaEmJogo['slotVisualFunci
     if (posicaoMapa === 'centro_baixo') return posicoesStyles.centro_baixo;
     if (posicaoMapa === 'esquerda_alto') return posicoesStyles.esquerda_alto;
     if (posicaoMapa === 'direita_alto') return posicoesStyles.direita_alto;
+    if (posicaoMapa === 'esquerda_superior') return posicoesStyles.esquerda_superior;
+    if (posicaoMapa === 'direita_superior') return posicoesStyles.direita_superior;
     if (posicaoMapa === 'esquerda_meio') return posicoesStyles.esquerda_meio;
     if (posicaoMapa === 'direita_meio') return posicoesStyles.direita_meio;
     if (posicaoMapa === 'esquerda_baixo') return posicoesStyles.esquerda_baixo;
     return posicoesStyles.direita_baixo;
+};
+
+function montaTituloRecursoMapa(recurso: RecursoFichaEmJogo): string {
+    const linhas = [
+        recurso.slotVisualFuncional.nome,
+        `Tipo lógico: ${recurso.nomeLogico}`,
+        `Capacidade: ${recurso.capacidadeFuncional.nome}`,
+        `Estado: ${recurso.estadoResumo.nome}`,
+        recurso.descricaoEstado,
+        recurso.podeUsarEmAcoes ? 'Pode ser usado em ações' : 'Não pode ser usado em ações',
+    ];
+
+    if (recurso.impactos.length === 0) return linhas.join('\n');
+
+    return [...linhas, 'Impactos:', ...recurso.impactos.map(impacto => `- ${impacto}`)].join('\n');
 };

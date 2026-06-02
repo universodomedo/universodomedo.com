@@ -30,13 +30,6 @@
     text-align: center;
 }
 
-.estado_recurso_mapa {
-    color: #B7B1C4;
-    font-size: .78em;
-    font-weight: 700;
-    text-align: center;
-}
-
 .icone_recurso_mapa {
     font-size: 1.65em;
     line-height: 1;
@@ -47,22 +40,10 @@
     border-color: #8FAF96;
 }
 
-.recurso_livre .estado_recurso_mapa {
-    color: #DCE8DE;
-}
-
 .recurso_indisponivel {
     border-color: #9C4A55;
 }
 
-.recurso_indisponivel .estado_recurso_mapa {
-    color: #F0BDC3;
-}
-
 .recurso_ocupado {
     border-color: #D1A15E;
-}
-
-.recurso_ocupado .estado_recurso_mapa {
-    color: #F1D5A8;
 }

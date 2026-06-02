@@ -21,11 +21,11 @@
     gap: .65em;
     grid-template-areas:
         "esquerda_alto centro_topo direita_alto"
-        "esquerda_alto centro_alto direita_alto"
+        "esquerda_superior centro_alto direita_superior"
         "esquerda_meio centro_meio direita_meio"
         "esquerda_baixo centro_baixo direita_baixo";
     grid-template-columns: minmax(7.5em, 1fr) minmax(8em, 1fr) minmax(7.5em, 1fr);
-    min-height: 20em;
+    min-height: 23em;
     position: relative;
 }
 

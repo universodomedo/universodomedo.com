@@ -21,6 +21,8 @@ export default function DetalheRecursoSelecionado() {
             </div>
             <dl className={styles.lista_detalhes_recurso}>
                 <LinhaDetalheRecurso rotulo="Slot" valor={recursoSelecionado.slotVisualFuncional.nome} />
+                <LinhaDetalheRecurso rotulo="Nome lógico" valor={recursoSelecionado.nomeLogico} />
+                <LinhaDetalheRecurso rotulo="Capacidade" valor={recursoSelecionado.capacidadeFuncional.nome} />
                 <LinhaDetalheRecurso rotulo="Área" valor={recursoSelecionado.visualizacaoFuncional.nomeArea} />
                 <LinhaDetalheRecurso rotulo="Grupo" valor={recursoSelecionado.grupoFuncional.nome} />
                 <LinhaDetalheRecurso rotulo="Estado" valor={recursoSelecionado.estadoResumo.nome} />

@@ -28,6 +28,16 @@
     grid-area: direita_alto;
 }
 
+.esquerda_superior {
+    align-self: center;
+    grid-area: esquerda_superior;
+}
+
+.direita_superior {
+    align-self: center;
+    grid-area: direita_superior;
+}
+
 .esquerda_meio {
     align-self: center;
     grid-area: esquerda_meio;
