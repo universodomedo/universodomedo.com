@@ -1,6 +1,6 @@
 import type { BuffersEditor3D } from './editor3D.webgl.buffers';
 import type { GeometriaEditor3D, ModoDesenhoEditor3D } from '../geometria/editor3D.geometria.types';
-import { aplicaMaterialEditor3D, criaMaterialEditor3D } from './editor3D.webgl.material';
+import { aplicaMaterialEditor3D, criaMaterialEditor3D, type MaterialEditor3D } from './editor3D.webgl.material';
 import type { ProgramaEditor3D } from './editor3D.webgl.programa';
 import type { Vetor3 } from '../editor/editor3D.tipos';
 
@@ -28,12 +28,22 @@ export function aplicaMatrizesEditor3D(gl: WebGLRenderingContext, programa: Prog
 };
 
 export function desenhaMalhaEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, buffers: BuffersEditor3D, geometria: GeometriaEditor3D, corBase: Vetor3, corLuz: Vetor3, alpha = 1): void {
-    desenhaMalhaIntervaloEditor3D(gl, programa, buffers, geometria, corBase, corLuz, alpha, 0, geometria.quantidadeVertices);
+    const material = criaMaterialEditor3D(corBase, corLuz, usaIluminacaoGeometriaEditor3D(geometria), alpha);
+
+    desenhaMalhaComMaterialEditor3D(gl, programa, buffers, geometria, material);
 };
 
 export function desenhaMalhaIntervaloEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, buffers: BuffersEditor3D, geometria: GeometriaEditor3D, corBase: Vetor3, corLuz: Vetor3, alpha: number, inicio: number, quantidade: number): void {
     const material = criaMaterialEditor3D(corBase, corLuz, usaIluminacaoGeometriaEditor3D(geometria), alpha);
 
+    desenhaMalhaIntervaloComMaterialEditor3D(gl, programa, buffers, geometria, material, inicio, quantidade);
+};
+
+export function desenhaMalhaComMaterialEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, buffers: BuffersEditor3D, geometria: GeometriaEditor3D, material: MaterialEditor3D): void {
+    desenhaMalhaIntervaloComMaterialEditor3D(gl, programa, buffers, geometria, material, 0, geometria.quantidadeVertices);
+};
+
+export function desenhaMalhaIntervaloComMaterialEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, buffers: BuffersEditor3D, geometria: GeometriaEditor3D, material: MaterialEditor3D, inicio: number, quantidade: number): void {
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.vertices);
     gl.enableVertexAttribArray(programa.aPosition);
     gl.vertexAttribPointer(programa.aPosition, 3, gl.FLOAT, false, 0, 0);
