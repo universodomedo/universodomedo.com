@@ -1,4 +1,4 @@
-import { aplicaMatrizesEditor3D, desenhaMalhaComMaterialEditor3D, desenhaMalhaEditor3D, desenhaMalhaIntervaloEditor3D } from '../../webgl/editor3D.webgl.renderizacao';
+import { aplicaMatrizesEditor3D, desenhaMalhaComMaterialEditor3D, desenhaMalhaEditor3D, desenhaMalhaIntervaloComMaterialEditor3D, desenhaMalhaIntervaloEditor3D } from '../../webgl/editor3D.webgl.renderizacao';
 import { criaMatrizEscala, multiplicaMatriz4 } from '../../editor/editor3D.matrizes';
 import { criaMaterialSemIluminacaoEditor3D } from '../../webgl/editor3D.webgl.material';
 import { selecaoFaceEditor3D, selecaoModoEditor3D, selecaoObjetoEditor3D } from './editor3D.selecao.config';
@@ -78,14 +78,16 @@ export function desenhaFaceSelecionadaEditor3D(gl: WebGLRenderingContext, progra
 
 export function desenhaVerticesEdicaoEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, verticesEdicao: VerticesEdicaoRenderizadosEditor3D, verticeSelecionado: VerticeSelecionadoEdicaoEditor3D | null, idObjeto: string, matrizPerspectiva: Float32Array, matrizCamera: Float32Array, matrizObjeto: Float32Array): void {
     const matrizFinal = multiplicaMatriz4(matrizPerspectiva, multiplicaMatriz4(matrizCamera, matrizObjeto));
+    const materialVerticesEdicao = criaMaterialSemIluminacaoEditor3D(corBaseVerticeEdicaoEditor3D, corLuzVerticeEdicaoEditor3D, 0.86);
+    const materialVerticeSelecionado = criaMaterialSemIluminacaoEditor3D(corBaseVerticeSelecionadoEditor3D, corLuzVerticeSelecionadoEditor3D);
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.depthMask(false);
     gl.disable(gl.CULL_FACE);
     aplicaMatrizesEditor3D(gl, programa, matrizFinal, matrizObjeto);
-    desenhaMalhaEditor3D(gl, programa, verticesEdicao.buffers, verticesEdicao.geometria, corBaseVerticeEdicaoEditor3D, corLuzVerticeEdicaoEditor3D, 0.86);
-    if (verticeSelecionado !== null && verticeSelecionado.idObjeto === idObjeto) desenhaMalhaIntervaloEditor3D(gl, programa, verticesEdicao.buffers, verticesEdicao.geometria, corBaseVerticeSelecionadoEditor3D, corLuzVerticeSelecionadoEditor3D, 1, verticeSelecionado.indiceVertice, 1);
+    desenhaMalhaComMaterialEditor3D(gl, programa, verticesEdicao.buffers, verticesEdicao.geometria, materialVerticesEdicao);
+    if (verticeSelecionado !== null && verticeSelecionado.idObjeto === idObjeto) desenhaMalhaIntervaloComMaterialEditor3D(gl, programa, verticesEdicao.buffers, verticesEdicao.geometria, materialVerticeSelecionado, verticeSelecionado.indiceVertice, 1);
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
     gl.depthMask(true);
