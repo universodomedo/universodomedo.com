@@ -1,7 +1,6 @@
 import type { ProgramaEditor3D } from './editor3D.webgl.programa';
 import type { Vetor3 } from '../editor/editor3D.tipos';
-
-export type ShaderEditor3D = 'PADRAO' | 'SEM_ILUMINACAO';
+import type { ShaderEditor3D } from '../editor/editor3D.shader.tipos';
 
 export interface MaterialEditor3D {
     readonly corBase: Vetor3;

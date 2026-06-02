@@ -1,3 +1,5 @@
+import type { ShaderEditor3D } from './editor3D.shader.tipos';
+
 export type Vetor3 = readonly [number, number, number];
 export type EixoEditor3D = 'X' | 'Y' | 'Z';
 export type IndiceVetor3Editor3D = 0 | 1 | 2;
@@ -41,4 +43,5 @@ export interface ObjetoCenaEditor3D {
     readonly versaoGeometria: number;
     readonly corBase: Vetor3;
     readonly corLuz: Vetor3;
+    readonly shader: ShaderEditor3D;
 };

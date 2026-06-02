@@ -74,22 +74,25 @@ function obtemAlphaArestasEditor3D(state: Editor3DState): number { return visual
 
 function deveIgnorarProfundidadeArestasEditor3D(state: Editor3DState): boolean { return visualizacaoXRayEstaAtivaEditor3D(state) && state.modoVisualizacaoViewport === 'ESTRUTURA'; };
 
-function desenhaMalhaPrincipalEditor3D(gl: WebGLRenderingContext, recursos: RecursosRenderizadorEditor3D, malha: MalhaRenderizadaEditor3D, cores: CoresObjetoVisualizacaoViewportEditor3D, alpha: number, selecionado: boolean): void {
-    if (!selecionado) {
-        desenhaMalhaEditor3D(gl, recursos.programa, malha.buffers, malha.geometria, cores.corBase, cores.corLuz, alpha);
+function desenhaMalhaPrincipalEditor3D(gl: WebGLRenderingContext, recursos: RecursosRenderizadorEditor3D, objeto: ObjetoCenaEditor3D, malha: MalhaRenderizadaEditor3D, cores: CoresObjetoVisualizacaoViewportEditor3D, alpha: number): void {
+    switch (objeto.shader) {
+        case 'PADRAO':
+            desenhaMalhaEditor3D(gl, recursos.programa, malha.buffers, malha.geometria, cores.corBase, cores.corLuz, alpha);
+            break;
+        case 'SEM_ILUMINACAO':
+            desenhaMalhaComMaterialEditor3D(gl, recursos.programa, malha.buffers, malha.geometria, criaMaterialSemIluminacaoEditor3D(cores.corBase, cores.corLuz, alpha));
+            break;
+        default:
+            const shaderNaoConfigurado: never = objeto.shader;
 
-        return;
+            throw new Error(`Shader do objeto do Editor 3D sem renderizacao configurada: ${shaderNaoConfigurado}`);
     }
-
-    const material = criaMaterialSemIluminacaoEditor3D(cores.corBase, cores.corLuz, alpha);
-
-    desenhaMalhaComMaterialEditor3D(gl, recursos.programa, malha.buffers, malha.geometria, material);
 };
 
-function desenhaMalhaPreenchidaViewportEditor3D(gl: WebGLRenderingContext, recursos: RecursosRenderizadorEditor3D, malha: MalhaRenderizadaEditor3D, matrizFinal: Float32Array, matrizObjeto: Float32Array, cores: CoresObjetoVisualizacaoViewportEditor3D, alpha: number, selecionado: boolean): void {
+function desenhaMalhaPreenchidaViewportEditor3D(gl: WebGLRenderingContext, recursos: RecursosRenderizadorEditor3D, objeto: ObjetoCenaEditor3D, malha: MalhaRenderizadaEditor3D, matrizFinal: Float32Array, matrizObjeto: Float32Array, cores: CoresObjetoVisualizacaoViewportEditor3D, alpha: number): void {
     if (alpha >= 1) {
         aplicaMatrizesEditor3D(gl, recursos.programa, matrizFinal, matrizObjeto);
-        desenhaMalhaPrincipalEditor3D(gl, recursos, malha, cores, 1, selecionado);
+        desenhaMalhaPrincipalEditor3D(gl, recursos, objeto, malha, cores, 1);
 
         return;
     }
@@ -99,7 +102,7 @@ function desenhaMalhaPreenchidaViewportEditor3D(gl: WebGLRenderingContext, recur
     gl.depthMask(false);
     gl.disable(gl.CULL_FACE);
     aplicaMatrizesEditor3D(gl, recursos.programa, matrizFinal, matrizObjeto);
-    desenhaMalhaPrincipalEditor3D(gl, recursos, malha, cores, alpha, selecionado);
+    desenhaMalhaPrincipalEditor3D(gl, recursos, objeto, malha, cores, alpha);
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
     gl.depthMask(true);
@@ -124,7 +127,7 @@ export function desenhaObjetosCenaEditor3D(gl: WebGLRenderingContext, recursos: 
 
         if (objetoSelecionado && !visualizacaoEstruturaEstaAtivaEditor3D(state) && alphaMalhaPreenchida >= 1) desenhaSelecaoObjetoEditor3D(gl, recursos.programa, malha, matrizes.perspectiva, matrizes.camera, matrizObjeto, objetoEmModo);
         if (deveDesenharMalhaPreenchidaEditor3D(state)) {
-            desenhaMalhaPreenchidaViewportEditor3D(gl, recursos, malha, matrizFinal, matrizObjeto, coresVisualizacao, alphaMalhaPreenchida, objetoSelecionado);
+            desenhaMalhaPreenchidaViewportEditor3D(gl, recursos, objetoAtual, malha, matrizFinal, matrizObjeto, coresVisualizacao, alphaMalhaPreenchida);
         }
         if (objetoSelecionado && !visualizacaoEstruturaEstaAtivaEditor3D(state) && alphaMalhaPreenchida < 1) desenhaSelecaoObjetoEditor3D(gl, recursos.programa, malha, matrizes.perspectiva, matrizes.camera, matrizObjeto, objetoEmModo);
         if (!visualizacaoEstruturaEstaAtivaEditor3D(state)) facesDestacadas.forEach(face => desenhaFaceSelecionadaEditor3D(gl, recursos.programa, face, matrizes.perspectiva, matrizes.camera, matrizObjeto));
