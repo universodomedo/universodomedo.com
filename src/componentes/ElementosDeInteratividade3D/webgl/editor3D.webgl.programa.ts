@@ -10,6 +10,7 @@ export interface ProgramaEditor3D {
     readonly uCorLuz: WebGLUniformLocation;
     readonly uAlpha: WebGLUniformLocation;
     readonly uUsaIluminacao: WebGLUniformLocation;
+    readonly uModoShader: WebGLUniformLocation;
 };
 
 function criaShader(gl: WebGLRenderingContext, tipo: number, codigo: string): WebGLShader | null {
@@ -65,12 +66,13 @@ export function criaProgramaEditor3D(gl: WebGLRenderingContext): ProgramaEditor3
     const uCorLuz = gl.getUniformLocation(programa, 'uCorLuz');
     const uAlpha = gl.getUniformLocation(programa, 'uAlpha');
     const uUsaIluminacao = gl.getUniformLocation(programa, 'uUsaIluminacao');
+    const uModoShader = gl.getUniformLocation(programa, 'uModoShader');
 
-    if (aPosition < 0 || aNormal < 0 || !uMatriz || !uMatrizModelo || !uCorBase || !uCorLuz || !uAlpha || !uUsaIluminacao) {
+    if (aPosition < 0 || aNormal < 0 || !uMatriz || !uMatrizModelo || !uCorBase || !uCorLuz || !uAlpha || !uUsaIluminacao || !uModoShader) {
         gl.deleteProgram(programa);
 
         return null;
     }
 
-    return { programa, aPosition, aNormal, uMatriz, uMatrizModelo, uCorBase, uCorLuz, uAlpha, uUsaIluminacao };
+    return { programa, aPosition, aNormal, uMatriz, uMatrizModelo, uCorBase, uCorLuz, uAlpha, uUsaIluminacao, uModoShader };
 };

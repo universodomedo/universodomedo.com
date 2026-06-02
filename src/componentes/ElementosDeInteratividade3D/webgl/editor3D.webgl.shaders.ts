@@ -20,12 +20,15 @@ export const codigoFragmentShaderEditor3D = `
     uniform vec3 uCorLuz;
     uniform float uAlpha;
     uniform float uUsaIluminacao;
+    uniform float uModoShader;
     varying vec3 vNormal;
     varying vec3 vPosicao;
     void main() {
+        vec3 normal = normalize(vNormal);
         vec3 cor = uCorBase;
-        if (uUsaIluminacao > 0.5) {
-            vec3 normal = normalize(vNormal);
+        if (uModoShader > 0.5) {
+            cor = (normal * 0.5) + 0.5;
+        } else if (uUsaIluminacao > 0.5) {
             vec3 luz = normalize(vec3(-0.35, 0.55, 0.76));
             float iluminacao = max(dot(normal, luz), 0.0);
             float brilho = pow(max(dot(reflect(-luz, normal), normalize(-vPosicao)), 0.0), 18.0);

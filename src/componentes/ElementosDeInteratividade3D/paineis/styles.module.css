@@ -690,7 +690,7 @@ div.linhaObjetoCena:active {
 
 .opcoesShaderObjetoEditor3D {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     min-width: 0;
     gap: 0.35em;
 }

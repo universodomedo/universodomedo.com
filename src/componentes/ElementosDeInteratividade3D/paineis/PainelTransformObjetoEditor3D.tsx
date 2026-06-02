@@ -38,6 +38,7 @@ export function PainelTransformObjetoEditor3D({ objetoSelecionado }: PainelTrans
                         <div className={styles.opcoesShaderObjetoEditor3D}>
                             <button className={`${styles.botaoShaderObjetoEditor3D} ${objetoSelecionado.shader === 'PADRAO' ? styles.botaoShaderObjetoEditor3DAtivo : ''}`} type="button" onClick={() => defineShader('PADRAO')} aria-pressed={objetoSelecionado.shader === 'PADRAO'}>PADRAO</button>
                             <button className={`${styles.botaoShaderObjetoEditor3D} ${objetoSelecionado.shader === 'SEM_ILUMINACAO' ? styles.botaoShaderObjetoEditor3DAtivo : ''}`} type="button" onClick={() => defineShader('SEM_ILUMINACAO')} aria-pressed={objetoSelecionado.shader === 'SEM_ILUMINACAO'}>SEM_ILUMINACAO</button>
+                            <button className={`${styles.botaoShaderObjetoEditor3D} ${objetoSelecionado.shader === 'NORMALS' ? styles.botaoShaderObjetoEditor3DAtivo : ''}`} type="button" onClick={() => defineShader('NORMALS')} aria-pressed={objetoSelecionado.shader === 'NORMALS'}>NORMALS</button>
                         </div>
                     </div>
                     <CampoNumeroEditor3D rotulo="Location X" valor={objetoSelecionado.posicao[0]} passo={0.1} atualizaValor={valor => atualizaVetor('posicao', 0, valor)} />

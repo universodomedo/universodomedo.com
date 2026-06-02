@@ -1,6 +1,6 @@
 import { aplicaMatrizesEditor3D, desenhaMalhaComMaterialEditor3D, desenhaMalhaEditor3D } from '../webgl/editor3D.webgl.renderizacao';
 import { criaMatrizTransformObjetoEditor3D } from '../editor/editor3D.transform';
-import { criaMaterialSemIluminacaoEditor3D } from '../webgl/editor3D.webgl.material';
+import { criaMaterialNormalsEditor3D, criaMaterialSemIluminacaoEditor3D } from '../webgl/editor3D.webgl.material';
 import { desenhaArestasEdicaoEditor3D, desenhaArestasSelecaoObjetoEditor3D, desenhaFaceSelecionadaEditor3D, desenhaSelecaoObjetoEditor3D, desenhaVerticesEdicaoEditor3D } from './selecao/editor3D.selecao.render';
 import { multiplicaMatriz4 } from '../editor/editor3D.matrizes';
 import type { Editor3DState } from '../estado/editor3D.estado.types';
@@ -81,6 +81,9 @@ function desenhaMalhaPrincipalEditor3D(gl: WebGLRenderingContext, recursos: Recu
             break;
         case 'SEM_ILUMINACAO':
             desenhaMalhaComMaterialEditor3D(gl, recursos.programa, malha.buffers, malha.geometria, criaMaterialSemIluminacaoEditor3D(cores.corBase, cores.corLuz, alpha));
+            break;
+        case 'NORMALS':
+            desenhaMalhaComMaterialEditor3D(gl, recursos.programa, malha.buffers, malha.geometria, criaMaterialNormalsEditor3D(cores.corBase, cores.corLuz, alpha));
             break;
         default:
             const shaderNaoConfigurado: never = objeto.shader;
