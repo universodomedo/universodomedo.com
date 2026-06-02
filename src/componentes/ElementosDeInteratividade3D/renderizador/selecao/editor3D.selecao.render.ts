@@ -1,5 +1,6 @@
-import { aplicaMatrizesEditor3D, desenhaMalhaEditor3D, desenhaMalhaIntervaloEditor3D } from '../../webgl/editor3D.webgl.renderizacao';
+import { aplicaMatrizesEditor3D, desenhaMalhaComMaterialEditor3D, desenhaMalhaEditor3D, desenhaMalhaIntervaloEditor3D } from '../../webgl/editor3D.webgl.renderizacao';
 import { criaMatrizEscala, multiplicaMatriz4 } from '../../editor/editor3D.matrizes';
+import { criaMaterialSemIluminacaoEditor3D } from '../../webgl/editor3D.webgl.material';
 import { selecaoFaceEditor3D, selecaoModoEditor3D, selecaoObjetoEditor3D } from './editor3D.selecao.config';
 import type { ArestasEdicaoRenderizadasEditor3D, FaceRenderizadaEditor3D, MalhaRenderizadaEditor3D, VerticesEdicaoRenderizadosEditor3D } from '../editor3D.renderizador.types';
 import type { ProgramaEditor3D } from '../../webgl/editor3D.webgl.programa';
@@ -58,6 +59,7 @@ export function desenhaArestasSelecaoObjetoEditor3D(gl: WebGLRenderingContext, p
 
 export function desenhaFaceSelecionadaEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, face: FaceRenderizadaEditor3D, matrizPerspectiva: Float32Array, matrizCamera: Float32Array, matrizObjeto: Float32Array): void {
     const matrizFinalFace = multiplicaMatriz4(matrizPerspectiva, multiplicaMatriz4(matrizCamera, matrizObjeto));
+    const materialFaceSelecionada = criaMaterialSemIluminacaoEditor3D(selecaoFaceEditor3D.corBase, selecaoFaceEditor3D.corLuz, selecaoFaceEditor3D.alpha);
 
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -66,7 +68,7 @@ export function desenhaFaceSelecionadaEditor3D(gl: WebGLRenderingContext, progra
     gl.enable(gl.POLYGON_OFFSET_FILL);
     gl.polygonOffset(-1, -1);
     aplicaMatrizesEditor3D(gl, programa, matrizFinalFace, matrizObjeto);
-    desenhaMalhaEditor3D(gl, programa, face.buffers, face.geometria, selecaoFaceEditor3D.corBase, selecaoFaceEditor3D.corLuz, selecaoFaceEditor3D.alpha);
+    desenhaMalhaComMaterialEditor3D(gl, programa, face.buffers, face.geometria, materialFaceSelecionada);
     gl.disable(gl.POLYGON_OFFSET_FILL);
     gl.enable(gl.CULL_FACE);
     gl.cullFace(gl.BACK);
