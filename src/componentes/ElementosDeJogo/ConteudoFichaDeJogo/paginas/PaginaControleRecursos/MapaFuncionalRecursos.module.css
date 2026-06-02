@@ -1,0 +1,103 @@
+.mapa_funcional_recursos {
+    display: flex;
+    flex-direction: column;
+    gap: .7em;
+}
+
+.titulo_mapa_funcional {
+    color: #D8C7A0;
+    font-size: 1.05em;
+    font-weight: 700;
+    margin: 0;
+}
+
+.lista_areas_funcionais {
+    display: grid;
+    gap: .7em;
+    grid-template-columns: repeat(auto-fit, minmax(13.5em, 1fr));
+}
+
+.area_funcional {
+    background-color: rgba(28, 27, 36, .9);
+    border: .08em solid #625D70;
+    border-radius: .45em;
+    display: flex;
+    flex-direction: column;
+    gap: .75em;
+    padding: .85em;
+}
+
+.cabecalho_area_funcional {
+    align-items: center;
+    display: flex;
+    gap: .65em;
+}
+
+.icone_area_funcional {
+    align-items: center;
+    background-color: rgba(216, 199, 160, .12);
+    border: .08em solid rgba(216, 199, 160, .28);
+    border-radius: .45em;
+    display: inline-flex;
+    font-size: 1.65em;
+    height: 1.7em;
+    justify-content: center;
+    width: 1.7em;
+}
+
+.nome_area_funcional {
+    color: white;
+    font-size: 1em;
+}
+
+.recursos_area_funcional {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45em;
+}
+
+.recurso_mapa_funcional {
+    background-color: rgba(45, 42, 55, .86);
+    border: .08em solid #625D70;
+    border-radius: .45em;
+    display: flex;
+    flex-direction: column;
+    gap: .12em;
+    min-width: 8.4em;
+    padding: .5em .65em;
+}
+
+.nome_recurso_mapa {
+    color: white;
+    font-size: .88em;
+}
+
+.estado_recurso_mapa {
+    color: #B7B1C4;
+    font-size: .78em;
+    font-weight: 700;
+}
+
+.recurso_livre {
+    border-color: #8FAF96;
+}
+
+.recurso_livre .estado_recurso_mapa {
+    color: #DCE8DE;
+}
+
+.recurso_indisponivel {
+    border-color: #9C4A55;
+}
+
+.recurso_indisponivel .estado_recurso_mapa {
+    color: #F0BDC3;
+}
+
+.recurso_ocupado {
+    border-color: #D1A15E;
+}
+
+.recurso_ocupado .estado_recurso_mapa {
+    color: #F1D5A8;
+}
