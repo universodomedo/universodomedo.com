@@ -1,0 +1,57 @@
+.recurso_mapa_funcional {
+    background-color: rgba(45, 42, 55, .86);
+    border: .08em solid #625D70;
+    border-radius: .45em;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    font-family: inherit;
+    gap: .12em;
+    min-width: 8.4em;
+    padding: .5em .65em;
+    text-align: left;
+}
+
+.recurso_mapa_funcional:focus-visible,
+.recurso_mapa_funcional:hover {
+    background-color: rgba(62, 58, 76, .92);
+}
+
+.recurso_mapa_selecionado {
+    box-shadow: 0 0 0 .14em rgba(216, 199, 160, .45);
+}
+
+.nome_recurso_mapa {
+    color: white;
+    font-size: .88em;
+}
+
+.estado_recurso_mapa {
+    color: #B7B1C4;
+    font-size: .78em;
+    font-weight: 700;
+}
+
+.recurso_livre {
+    border-color: #8FAF96;
+}
+
+.recurso_livre .estado_recurso_mapa {
+    color: #DCE8DE;
+}
+
+.recurso_indisponivel {
+    border-color: #9C4A55;
+}
+
+.recurso_indisponivel .estado_recurso_mapa {
+    color: #F0BDC3;
+}
+
+.recurso_ocupado {
+    border-color: #D1A15E;
+}
+
+.recurso_ocupado .estado_recurso_mapa {
+    color: #F1D5A8;
+}

@@ -1,0 +1,83 @@
+.detalhe_recurso_vazio {
+    background-color: rgba(28, 27, 36, .72);
+    border: .08em solid #625D70;
+    border-radius: .4em;
+    color: #B7B1C4;
+    font-size: .9em;
+    margin: 0;
+    padding: .75em .85em;
+}
+
+.detalhe_recurso_selecionado {
+    background-color: rgba(28, 27, 36, .88);
+    border: .08em solid #625D70;
+    border-radius: .45em;
+    display: flex;
+    flex-direction: column;
+    gap: .8em;
+    padding: .85em;
+}
+
+.cabecalho_detalhe_recurso {
+    align-items: flex-start;
+    display: flex;
+    gap: .75em;
+    justify-content: space-between;
+}
+
+.identificacao_detalhe_recurso {
+    display: flex;
+    flex-direction: column;
+    gap: .2em;
+}
+
+.nome_recurso_detalhe {
+    color: white;
+    font-size: 1.05em;
+}
+
+.estado_recurso_detalhe {
+    color: #D8C7A0;
+    font-size: .86em;
+    font-weight: 700;
+}
+
+.botao_limpar_selecao {
+    background-color: rgba(216, 199, 160, .1);
+    border: .08em solid rgba(216, 199, 160, .34);
+    border-radius: .35em;
+    color: #D8C7A0;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: .82em;
+    font-weight: 700;
+    padding: .4em .65em;
+}
+
+.botao_limpar_selecao:focus-visible,
+.botao_limpar_selecao:hover {
+    background-color: rgba(216, 199, 160, .18);
+}
+
+.lista_detalhes_recurso {
+    display: grid;
+    gap: .45em;
+    margin: 0;
+}
+
+.linha_detalhe_recurso {
+    display: grid;
+    gap: .2em;
+}
+
+.rotulo_detalhe_recurso {
+    color: #8E879D;
+    font-size: .78em;
+    font-weight: 700;
+}
+
+.valor_detalhe_recurso {
+    color: #E6E0EE;
+    font-size: .9em;
+    margin: 0;
+}

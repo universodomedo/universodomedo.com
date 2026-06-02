@@ -1,6 +1,9 @@
 import styles from './MapaFuncionalRecursos.module.css';
+import chipStyles from './MapaFuncionalRecursosChips.module.css';
 
 import type { RecursoFichaEmJogo } from 'types-nora-api';
+
+import { useContextoPaginaControleRecursos } from './ContextoPaginaControleRecursos';
 
 type AreaMapaFuncionalRecursos = {
     visualizacaoFuncional: RecursoFichaEmJogo['visualizacaoFuncional'];
@@ -37,11 +40,14 @@ function AreaFuncionalRecursos({ area }: { area: AreaMapaFuncionalRecursos; }) {
 };
 
 function RecursoMapaFuncional({ recurso }: { recurso: RecursoFichaEmJogo; }) {
+    const { keyRecursoSelecionado, selecionaRecurso } = useContextoPaginaControleRecursos();
+    const recursoSelecionado = keyRecursoSelecionado === recurso.key;
+
     return (
-        <span className={`${styles.recurso_mapa_funcional} ${obtemClasseEstadoRecurso(recurso.estadoResumo.tipo)}`} aria-label={`${recurso.nome} - ${recurso.estadoResumo.nome}`}>
-            <strong className={styles.nome_recurso_mapa}>{recurso.nome}</strong>
-            <span className={styles.estado_recurso_mapa}>{recurso.estadoResumo.nome}</span>
-        </span>
+        <button type="button" className={`${chipStyles.recurso_mapa_funcional} ${obtemClasseEstadoRecurso(recurso.estadoResumo.tipo)} ${recursoSelecionado ? chipStyles.recurso_mapa_selecionado : ''}`} aria-label={`${recurso.nome} - ${recurso.estadoResumo.nome}`} onClick={() => selecionaRecurso(recurso.key)} aria-pressed={recursoSelecionado}>
+            <strong className={chipStyles.nome_recurso_mapa}>{recurso.nome}</strong>
+            <span className={chipStyles.estado_recurso_mapa}>{recurso.estadoResumo.nome}</span>
+        </button>
     );
 };
 
@@ -67,7 +73,7 @@ function agrupaRecursosPorAreaFuncional(recursos: RecursoFichaEmJogo[]): AreaMap
 };
 
 function obtemClasseEstadoRecurso(tipoEstado: RecursoFichaEmJogo['estadoResumo']['tipo']): string {
-    if (tipoEstado === 'livre') return styles.recurso_livre;
-    if (tipoEstado === 'indisponivel') return styles.recurso_indisponivel;
-    return styles.recurso_ocupado;
+    if (tipoEstado === 'livre') return chipStyles.recurso_livre;
+    if (tipoEstado === 'indisponivel') return chipStyles.recurso_indisponivel;
+    return chipStyles.recurso_ocupado;
 };

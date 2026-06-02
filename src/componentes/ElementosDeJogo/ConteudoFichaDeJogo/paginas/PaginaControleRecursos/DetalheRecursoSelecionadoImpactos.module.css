@@ -1,0 +1,24 @@
+.bloco_impactos_detalhe {
+    display: flex;
+    flex-direction: column;
+    gap: .35em;
+}
+
+.titulo_impactos_detalhe {
+    color: #D8C7A0;
+    font-size: .86em;
+}
+
+.lista_impactos_detalhe {
+    display: flex;
+    flex-direction: column;
+    gap: .25em;
+    list-style: disc;
+    margin: 0 0 0 1.2em;
+    padding: 0;
+}
+
+.impacto_detalhe {
+    color: #D7D0E2;
+    font-size: .86em;
+}
