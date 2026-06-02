@@ -673,6 +673,58 @@ div.linhaObjetoCena:active {
     line-height: 1.45;
 }
 
+.campoShaderObjetoEditor3D {
+    display: grid;
+    grid-template-columns: 6.5em minmax(0, 1fr);
+    gap: 0.5em;
+    align-items: center;
+    min-height: 2.35em;
+    padding: 0.35em 0.7em;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.07);
+    font-size: 0.82em;
+}
+
+.campoShaderObjetoEditor3D > span {
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.opcoesShaderObjetoEditor3D {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-width: 0;
+    gap: 0.35em;
+}
+
+.botaoShaderObjetoEditor3D {
+    display: grid;
+    min-width: 0;
+    min-height: 2em;
+    place-items: center;
+    padding: 0 0.45em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.72);
+    font: inherit;
+    font-size: 0.82em;
+    line-height: 1.15;
+    text-align: center;
+    overflow-wrap: anywhere;
+    background: #191919;
+    cursor: pointer;
+}
+
+.botaoShaderObjetoEditor3D:hover {
+    color: rgba(255, 255, 255, 0.92);
+    border-color: rgba(92, 148, 255, 0.42);
+}
+
+.botaoShaderObjetoEditor3DAtivo,
+.botaoShaderObjetoEditor3DAtivo:hover {
+    color: rgba(255, 255, 255, 0.94);
+    border-color: rgba(255, 180, 60, 0.72);
+    background: rgba(92, 148, 255, 0.2);
+}
+
 @media (max-width: 56em) {
     .conteinerPainelControles {
         height: auto;

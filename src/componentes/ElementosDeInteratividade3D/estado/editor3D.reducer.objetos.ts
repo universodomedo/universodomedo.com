@@ -1,6 +1,7 @@
 import { aplicaDeltaEscalaEditor3D, criaObjetoCenaEditor3D, limitaQuantidadeVerticesEditor3D, obtemDefinicaoMalhaEditor3D, somaVetoresEditor3D } from '../editor/editor3D.objetos';
 import { criaMatrizEscala, multiplicaMatriz4 } from '../editor/editor3D.matrizes';
 import { criaMatrizRotacaoObjetoEditor3D } from '../editor/editor3D.transform';
+import type { ShaderEditor3D } from '../editor/editor3D.shader.tipos';
 import type { CampoVetorMalhaEditor3D, IndiceVetor3Editor3D, ObjetoCenaEditor3D, TipoMalhaEditor3D, Vetor3 } from '../editor/editor3D.tipos';
 
 export function atualizaObjetoEditor3D(objetos: ObjetoCenaEditor3D[], idObjeto: string, atualiza: (objeto: ObjetoCenaEditor3D) => ObjetoCenaEditor3D): ObjetoCenaEditor3D[] { return objetos.map(objeto => objeto.id === idObjeto ? atualiza(objeto) : objeto); };
@@ -12,6 +13,7 @@ export function rotacionaObjetosEditor3D(objetos: ObjetoCenaEditor3D[], idsObjet
 export function escalaObjetoEditor3D(objetos: ObjetoCenaEditor3D[], idObjeto: string, delta: Vetor3): ObjetoCenaEditor3D[] { return atualizaObjetoEditor3D(objetos, idObjeto, objeto => ({ ...objeto, escala: aplicaDeltaEscalaEditor3D(objeto.escala, delta) })); };
 export function escalaObjetosEditor3D(objetos: ObjetoCenaEditor3D[], idsObjetos: readonly string[], delta: Vetor3): ObjetoCenaEditor3D[] { return atualizaObjetosEditor3D(objetos, idsObjetos, objeto => ({ ...objeto, escala: aplicaDeltaEscalaEditor3D(objeto.escala, delta) })); };
 export function atualizaQuantidadeVerticesObjetoEditor3D(objeto: ObjetoCenaEditor3D, quantidadeVertices: number): ObjetoCenaEditor3D { return { ...objeto, quantidadeVertices }; };
+export function defineShaderObjetoEditor3D(objeto: ObjetoCenaEditor3D, shader: ShaderEditor3D): ObjetoCenaEditor3D { return { ...objeto, shader }; };
 
 export function aplicaRotationScaleObjetoEditor3D(objeto: ObjetoCenaEditor3D): ObjetoCenaEditor3D {
     const matrizRotacao = criaMatrizRotacaoObjetoEditor3D(objeto.rotacao);

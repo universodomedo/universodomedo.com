@@ -58,6 +58,7 @@ export function useEditor3D(): Editor3DModelo {
         iniciaMalhaEmCriacao: tipoMalha => dispatch({ tipo: 'INICIA_MALHA_EM_CRIACAO', tipoMalha }),
         atualizaVetorMalhaEmCriacao: (campo, indice, valor) => dispatch({ tipo: 'ATUALIZA_VETOR_MALHA_EM_CRIACAO', campo, indice, valor }),
         atualizaVetorObjetoSelecionado: (campo, indice, valor) => dispatch({ tipo: 'ATUALIZA_VETOR_OBJETO_SELECIONADO', campo, indice, valor }),
+        defineShaderObjetoSelecionado: shader => dispatch({ tipo: 'DEFINE_SHADER_OBJETO_SELECIONADO', shader }),
         aplicaRotationScaleObjetosSelecionados: () => dispatch({ tipo: 'APLICA_ROTATION_SCALE_OBJETOS_SELECIONADOS' }),
         confirmaMalhaEmCriacao: () => dispatch({ tipo: 'CONFIRMA_MALHA_EM_CRIACAO' }),
         cancelaMalhaEmCriacao: () => dispatch({ tipo: 'CANCELA_MALHA_EM_CRIACAO' }),

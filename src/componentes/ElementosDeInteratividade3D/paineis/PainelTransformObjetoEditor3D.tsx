@@ -3,6 +3,7 @@ import styles from './styles.module.css';
 import { CampoNumeroEditor3D } from '../controles/CampoNumeroEditor3D';
 import { PainelColapsavelEditor3D } from './PainelColapsavelEditor3D';
 import { useEditor3DContexto } from '../contexto/Editor3DContexto';
+import type { ShaderEditor3D } from '../editor/editor3D.shader.tipos';
 import type { CampoVetorMalhaEditor3D, IndiceVetor3Editor3D, ObjetoCenaEditor3D } from '../editor/editor3D.tipos';
 
 interface PainelTransformObjetoEditor3DProps {
@@ -16,6 +17,7 @@ export function PainelTransformObjetoEditor3D({ objetoSelecionado }: PainelTrans
     const { estado, acoes } = useEditor3DContexto();
 
     function atualizaVetor(campo: CampoVetorMalhaEditor3D, indice: IndiceVetor3Editor3D, valor: number): void { acoes.atualizaVetorObjetoSelecionado(campo, indice, valor); }
+    function defineShader(shader: ShaderEditor3D): void { acoes.defineShaderObjetoSelecionado(shader); }
     function obtemValorPainel(): string {
         if (estado.modoOperacao === 'EDICAO') return 'Edit Mode';
         if (estado.idsObjetosSelecionados.length <= 1) return objetoSelecionado?.nome ?? 'None';
@@ -31,6 +33,13 @@ export function PainelTransformObjetoEditor3D({ objetoSelecionado }: PainelTrans
 
             {estado.modoOperacao === 'OBJETO' && objetoSelecionado !== null && (
                 <>
+                    <div className={styles.campoShaderObjetoEditor3D}>
+                        <span>Shader</span>
+                        <div className={styles.opcoesShaderObjetoEditor3D}>
+                            <button className={`${styles.botaoShaderObjetoEditor3D} ${objetoSelecionado.shader === 'PADRAO' ? styles.botaoShaderObjetoEditor3DAtivo : ''}`} type="button" onClick={() => defineShader('PADRAO')} aria-pressed={objetoSelecionado.shader === 'PADRAO'}>PADRAO</button>
+                            <button className={`${styles.botaoShaderObjetoEditor3D} ${objetoSelecionado.shader === 'SEM_ILUMINACAO' ? styles.botaoShaderObjetoEditor3DAtivo : ''}`} type="button" onClick={() => defineShader('SEM_ILUMINACAO')} aria-pressed={objetoSelecionado.shader === 'SEM_ILUMINACAO'}>SEM_ILUMINACAO</button>
+                        </div>
+                    </div>
                     <CampoNumeroEditor3D rotulo="Location X" valor={objetoSelecionado.posicao[0]} passo={0.1} atualizaValor={valor => atualizaVetor('posicao', 0, valor)} />
                     <CampoNumeroEditor3D rotulo="Location Y" valor={objetoSelecionado.posicao[1]} passo={0.1} atualizaValor={valor => atualizaVetor('posicao', 1, valor)} />
                     <CampoNumeroEditor3D rotulo="Location Z" valor={objetoSelecionado.posicao[2]} passo={0.1} atualizaValor={valor => atualizaVetor('posicao', 2, valor)} />
