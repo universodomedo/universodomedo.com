@@ -1,0 +1,39 @@
+.legenda_mapa_funcional {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .55em;
+    justify-content: center;
+}
+
+.item_legenda_mapa {
+    align-items: center;
+    color: #B7B1C4;
+    display: inline-flex;
+    font-size: .82em;
+    font-weight: 700;
+    gap: .35em;
+}
+
+.marcador_legenda_mapa {
+    border: .12em solid #625D70;
+    border-radius: 50%;
+    display: inline-flex;
+    height: .85em;
+    width: .85em;
+}
+
+.marcador_livre {
+    border-color: #8FAF96;
+}
+
+.marcador_ocupado {
+    border-color: #D1A15E;
+}
+
+.marcador_indisponivel {
+    border-color: #9C4A55;
+}
+
+.texto_legenda_mapa {
+    color: inherit;
+}

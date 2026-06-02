@@ -1,57 +1,41 @@
 .mapa_funcional_recursos {
+    background: linear-gradient(180deg, rgba(28, 27, 36, .96), rgba(18, 17, 24, .94));
+    border: .08em solid rgba(216, 199, 160, .24);
+    border-radius: .6em;
     display: flex;
     flex-direction: column;
-    gap: .7em;
+    gap: .9em;
+    padding: 1em;
 }
 
 .titulo_mapa_funcional {
     color: #D8C7A0;
-    font-size: 1.05em;
+    font-size: 1.28em;
     font-weight: 700;
     margin: 0;
+    text-align: center;
 }
 
-.lista_areas_funcionais {
+.painel_mapa_corporal {
     display: grid;
-    gap: .7em;
-    grid-template-columns: repeat(auto-fit, minmax(13.5em, 1fr));
-}
-
-.area_funcional {
-    background-color: rgba(28, 27, 36, .9);
-    border: .08em solid #625D70;
-    border-radius: .45em;
-    display: flex;
-    flex-direction: column;
-    gap: .75em;
-    padding: .85em;
-}
-
-.cabecalho_area_funcional {
-    align-items: center;
-    display: flex;
     gap: .65em;
+    grid-template-areas:
+        "esquerda_alto centro_topo direita_alto"
+        "esquerda_alto centro_alto direita_alto"
+        "esquerda_meio centro_meio direita_meio"
+        "esquerda_baixo centro_baixo direita_baixo";
+    grid-template-columns: minmax(7.5em, 1fr) minmax(8em, 1fr) minmax(7.5em, 1fr);
+    min-height: 20em;
+    position: relative;
 }
 
-.icone_area_funcional {
-    align-items: center;
-    background-color: rgba(216, 199, 160, .12);
-    border: .08em solid rgba(216, 199, 160, .28);
-    border-radius: .45em;
-    display: inline-flex;
-    font-size: 1.65em;
-    height: 1.7em;
-    justify-content: center;
-    width: 1.7em;
-}
-
-.nome_area_funcional {
-    color: white;
-    font-size: 1em;
-}
-
-.recursos_area_funcional {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .45em;
+.painel_mapa_corporal::before {
+    background: linear-gradient(180deg, rgba(216, 199, 160, .1), rgba(143, 175, 150, .08));
+    border: .08em solid rgba(216, 199, 160, .12);
+    border-radius: 45%;
+    content: "";
+    grid-column: 2;
+    grid-row: 2 / 5;
+    opacity: .7;
+    z-index: 0;
 }

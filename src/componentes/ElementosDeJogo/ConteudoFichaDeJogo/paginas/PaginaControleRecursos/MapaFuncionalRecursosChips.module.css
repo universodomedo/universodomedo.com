@@ -6,10 +6,13 @@
     display: flex;
     flex-direction: column;
     font-family: inherit;
-    gap: .12em;
-    min-width: 8.4em;
+    gap: .16em;
+    justify-self: stretch;
+    min-width: 0;
     padding: .5em .65em;
+    position: relative;
     text-align: left;
+    z-index: 1;
 }
 
 .recurso_mapa_funcional:focus-visible,
@@ -24,12 +27,20 @@
 .nome_recurso_mapa {
     color: white;
     font-size: .88em;
+    text-align: center;
 }
 
 .estado_recurso_mapa {
     color: #B7B1C4;
     font-size: .78em;
     font-weight: 700;
+    text-align: center;
+}
+
+.icone_recurso_mapa {
+    font-size: 1.65em;
+    line-height: 1;
+    text-align: center;
 }
 
 .recurso_livre {

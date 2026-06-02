@@ -1,0 +1,49 @@
+.centro_topo {
+    align-self: center;
+    grid-area: centro_topo;
+}
+
+.centro_alto {
+    align-self: center;
+    grid-area: centro_alto;
+}
+
+.centro_meio {
+    align-self: center;
+    grid-area: centro_meio;
+}
+
+.centro_baixo {
+    align-self: center;
+    grid-area: centro_baixo;
+}
+
+.esquerda_alto {
+    align-self: end;
+    grid-area: esquerda_alto;
+}
+
+.direita_alto {
+    align-self: end;
+    grid-area: direita_alto;
+}
+
+.esquerda_meio {
+    align-self: center;
+    grid-area: esquerda_meio;
+}
+
+.direita_meio {
+    align-self: center;
+    grid-area: direita_meio;
+}
+
+.esquerda_baixo {
+    align-self: center;
+    grid-area: esquerda_baixo;
+}
+
+.direita_baixo {
+    align-self: center;
+    grid-area: direita_baixo;
+}

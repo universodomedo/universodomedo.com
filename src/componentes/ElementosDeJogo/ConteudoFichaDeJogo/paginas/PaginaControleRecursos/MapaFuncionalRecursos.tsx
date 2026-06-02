@@ -1,41 +1,25 @@
 import styles from './MapaFuncionalRecursos.module.css';
 import chipStyles from './MapaFuncionalRecursosChips.module.css';
+import posicoesStyles from './MapaFuncionalRecursosPosicoes.module.css';
 
 import type { RecursoFichaEmJogo } from 'types-nora-api';
 
 import { useContextoPaginaControleRecursos } from './ContextoPaginaControleRecursos';
-
-type AreaMapaFuncionalRecursos = {
-    visualizacaoFuncional: RecursoFichaEmJogo['visualizacaoFuncional'];
-    recursos: RecursoFichaEmJogo[];
-};
+import MapaFuncionalRecursosLegenda from './MapaFuncionalRecursosLegenda';
 
 export default function MapaFuncionalRecursos({ recursos }: { recursos: RecursoFichaEmJogo[]; }) {
-    const areas = agrupaRecursosPorAreaFuncional(recursos);
+    const recursosOrdenados = ordenaRecursosPorSlotVisual(recursos);
 
-    if (areas.length === 0) return null;
+    if (recursosOrdenados.length === 0) return null;
 
     return (
-        <section className={styles.mapa_funcional_recursos} aria-label="Mapa funcional dos recursos">
-            <h3 className={styles.titulo_mapa_funcional}>Mapa funcional</h3>
-            <div className={styles.lista_areas_funcionais}>
-                {areas.map(area => <AreaFuncionalRecursos key={area.visualizacaoFuncional.area} area={area} />)}
+        <section className={styles.mapa_funcional_recursos} aria-label="Mapa corporal dos recursos">
+            <h3 className={styles.titulo_mapa_funcional}>Corpo</h3>
+            <div className={styles.painel_mapa_corporal}>
+                {recursosOrdenados.map(recurso => <RecursoMapaFuncional key={recurso.key} recurso={recurso} />)}
             </div>
+            <MapaFuncionalRecursosLegenda />
         </section>
-    );
-};
-
-function AreaFuncionalRecursos({ area }: { area: AreaMapaFuncionalRecursos; }) {
-    return (
-        <article className={styles.area_funcional} aria-label={area.visualizacaoFuncional.nomeArea}>
-            <div className={styles.cabecalho_area_funcional}>
-                <span className={styles.icone_area_funcional} aria-hidden={true}>{area.visualizacaoFuncional.iconeTexto}</span>
-                <strong className={styles.nome_area_funcional}>{area.visualizacaoFuncional.nomeArea}</strong>
-            </div>
-            <div className={styles.recursos_area_funcional}>
-                {area.recursos.map(recurso => <RecursoMapaFuncional key={recurso.key} recurso={recurso} />)}
-            </div>
-        </article>
     );
 };
 
@@ -44,31 +28,19 @@ function RecursoMapaFuncional({ recurso }: { recurso: RecursoFichaEmJogo; }) {
     const recursoSelecionado = keyRecursoSelecionado === recurso.key;
 
     return (
-        <button type="button" className={`${chipStyles.recurso_mapa_funcional} ${obtemClasseEstadoRecurso(recurso.estadoResumo.tipo)} ${recursoSelecionado ? chipStyles.recurso_mapa_selecionado : ''}`} aria-label={`${recurso.nome} - ${recurso.estadoResumo.nome}`} onClick={() => selecionaRecurso(recurso.key)} aria-pressed={recursoSelecionado}>
-            <strong className={chipStyles.nome_recurso_mapa}>{recurso.nome}</strong>
+        <button type="button" className={`${chipStyles.recurso_mapa_funcional} ${obtemClasseEstadoRecurso(recurso.estadoResumo.tipo)} ${obtemClassePosicaoMapa(recurso.slotVisualFuncional.posicaoMapa)} ${recursoSelecionado ? chipStyles.recurso_mapa_selecionado : ''}`} aria-label={`${recurso.slotVisualFuncional.nome} - ${recurso.estadoResumo.nome}`} onClick={() => selecionaRecurso(recurso.key)} aria-pressed={recursoSelecionado}>
+            <span className={chipStyles.icone_recurso_mapa} aria-hidden={true}>{recurso.slotVisualFuncional.iconeTexto}</span>
+            <strong className={chipStyles.nome_recurso_mapa}>{recurso.slotVisualFuncional.nome}</strong>
             <span className={chipStyles.estado_recurso_mapa}>{recurso.estadoResumo.nome}</span>
         </button>
     );
 };
 
-function agrupaRecursosPorAreaFuncional(recursos: RecursoFichaEmJogo[]): AreaMapaFuncionalRecursos[] {
-    const areasPorChave = new Map<RecursoFichaEmJogo['visualizacaoFuncional']['area'], AreaMapaFuncionalRecursos>();
-
-    for (const recurso of recursos) {
-        const areaExistente = areasPorChave.get(recurso.visualizacaoFuncional.area);
-
-        if (areaExistente) {
-            areaExistente.recursos.push(recurso);
-            continue;
-        };
-
-        areasPorChave.set(recurso.visualizacaoFuncional.area, { visualizacaoFuncional: recurso.visualizacaoFuncional, recursos: [recurso] });
-    };
-
-    return [...areasPorChave.values()].sort((areaA, areaB) => {
-        const ordem = areaA.visualizacaoFuncional.ordem - areaB.visualizacaoFuncional.ordem;
+function ordenaRecursosPorSlotVisual(recursos: RecursoFichaEmJogo[]): RecursoFichaEmJogo[] {
+    return [...recursos].sort((recursoA, recursoB) => {
+        const ordem = recursoA.slotVisualFuncional.ordem - recursoB.slotVisualFuncional.ordem;
         if (ordem !== 0) return ordem;
-        return areaA.visualizacaoFuncional.nomeArea.localeCompare(areaB.visualizacaoFuncional.nomeArea);
+        return recursoA.slotVisualFuncional.nome.localeCompare(recursoB.slotVisualFuncional.nome);
     });
 };
 
@@ -76,4 +48,17 @@ function obtemClasseEstadoRecurso(tipoEstado: RecursoFichaEmJogo['estadoResumo']
     if (tipoEstado === 'livre') return chipStyles.recurso_livre;
     if (tipoEstado === 'indisponivel') return chipStyles.recurso_indisponivel;
     return chipStyles.recurso_ocupado;
+};
+
+function obtemClassePosicaoMapa(posicaoMapa: RecursoFichaEmJogo['slotVisualFuncional']['posicaoMapa']): string {
+    if (posicaoMapa === 'centro_topo') return posicoesStyles.centro_topo;
+    if (posicaoMapa === 'centro_alto') return posicoesStyles.centro_alto;
+    if (posicaoMapa === 'centro_meio') return posicoesStyles.centro_meio;
+    if (posicaoMapa === 'centro_baixo') return posicoesStyles.centro_baixo;
+    if (posicaoMapa === 'esquerda_alto') return posicoesStyles.esquerda_alto;
+    if (posicaoMapa === 'direita_alto') return posicoesStyles.direita_alto;
+    if (posicaoMapa === 'esquerda_meio') return posicoesStyles.esquerda_meio;
+    if (posicaoMapa === 'direita_meio') return posicoesStyles.direita_meio;
+    if (posicaoMapa === 'esquerda_baixo') return posicoesStyles.esquerda_baixo;
+    return posicoesStyles.direita_baixo;
 };

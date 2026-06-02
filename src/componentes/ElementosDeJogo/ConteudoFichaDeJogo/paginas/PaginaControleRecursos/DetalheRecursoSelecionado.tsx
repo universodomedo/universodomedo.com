@@ -20,6 +20,7 @@ export default function DetalheRecursoSelecionado() {
                 <button type="button" className={styles.botao_limpar_selecao} onClick={limpaSelecaoRecurso}>Limpar seleção</button>
             </div>
             <dl className={styles.lista_detalhes_recurso}>
+                <LinhaDetalheRecurso rotulo="Slot" valor={recursoSelecionado.slotVisualFuncional.nome} />
                 <LinhaDetalheRecurso rotulo="Área" valor={recursoSelecionado.visualizacaoFuncional.nomeArea} />
                 <LinhaDetalheRecurso rotulo="Grupo" valor={recursoSelecionado.grupoFuncional.nome} />
                 <LinhaDetalheRecurso rotulo="Estado" valor={recursoSelecionado.estadoResumo.nome} />
