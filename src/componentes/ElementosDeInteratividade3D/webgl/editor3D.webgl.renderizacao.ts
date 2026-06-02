@@ -1,6 +1,6 @@
 import type { BuffersEditor3D } from './editor3D.webgl.buffers';
 import type { GeometriaEditor3D, ModoDesenhoEditor3D } from '../geometria/editor3D.geometria.types';
-import { aplicaMaterialEditor3D, aplicaModoShaderPadraoEditor3D, criaMaterialEditor3D, type MaterialEditor3D } from './editor3D.webgl.material';
+import { aplicaMaterialEditor3D, criaMaterialEditor3D, type MaterialEditor3D } from './editor3D.webgl.material';
 import type { ProgramaEditor3D } from './editor3D.webgl.programa';
 import type { Vetor3 } from '../editor/editor3D.tipos';
 
@@ -30,14 +30,12 @@ export function aplicaMatrizesEditor3D(gl: WebGLRenderingContext, programa: Prog
 export function desenhaMalhaEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, buffers: BuffersEditor3D, geometria: GeometriaEditor3D, corBase: Vetor3, corLuz: Vetor3, alpha = 1): void {
     const material = criaMaterialEditor3D(corBase, corLuz, usaIluminacaoGeometriaEditor3D(geometria), alpha);
 
-    aplicaModoShaderPadraoEditor3D(gl, programa);
     desenhaMalhaComMaterialEditor3D(gl, programa, buffers, geometria, material);
 };
 
 export function desenhaMalhaIntervaloEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, buffers: BuffersEditor3D, geometria: GeometriaEditor3D, corBase: Vetor3, corLuz: Vetor3, alpha: number, inicio: number, quantidade: number): void {
     const material = criaMaterialEditor3D(corBase, corLuz, usaIluminacaoGeometriaEditor3D(geometria), alpha);
 
-    aplicaModoShaderPadraoEditor3D(gl, programa);
     desenhaMalhaIntervaloComMaterialEditor3D(gl, programa, buffers, geometria, material, inicio, quantidade);
 };
 

@@ -16,8 +16,6 @@ export interface MaterialEditor3D {
 function criaVetorUniformeMaterialEditor3D(vetor: Vetor3): Float32Array { return new Float32Array([vetor[0], vetor[1], vetor[2]]); };
 function aplicaModoShaderEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D, modoShader: number): void { gl.uniform1f(programa.uModoShader, modoShader); };
 
-export function aplicaModoShaderPadraoEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor3D): void { aplicaModoShaderEditor3D(gl, programa, modoShaderPadraoEditor3D); };
-
 export function criaMaterialEditor3D(corBase: Vetor3, corLuz: Vetor3, usaIluminacao: boolean, alpha = 1): MaterialEditor3D { return { corBase, corLuz, alpha, usaIluminacao, shader: 'PADRAO' }; };
 
 export function criaMaterialSemIluminacaoEditor3D(corBase: Vetor3, corLuz: Vetor3, alpha = 1): MaterialEditor3D { return { corBase, corLuz, alpha, usaIluminacao: false, shader: 'SEM_ILUMINACAO' }; };
