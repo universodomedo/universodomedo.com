@@ -54,7 +54,7 @@ function limitaComponenteCorEditor3D(valor: number): number { return Math.max(0,
 function intensificaCorLuzRenderizadoEditor3D(corLuz: Vetor3): Vetor3 { return [limitaComponenteCorEditor3D((corLuz[0] * 1.08) + 0.04), limitaComponenteCorEditor3D((corLuz[1] * 1.08) + 0.04), limitaComponenteCorEditor3D((corLuz[2] * 1.08) + 0.04)]; };
 
 function obtemCoresObjetoVisualizacaoViewportEditor3D(state: Editor3DState, objeto: ObjetoCenaEditor3D): CoresObjetoVisualizacaoViewportEditor3D {
-    if (state.modoVisualizacaoViewport === 'SOLIDO') return { corBase: corBaseSolidoVisualizacaoViewportEditor3D, corLuz: corLuzSolidoVisualizacaoViewportEditor3D };
+    if (state.modoVisualizacaoViewport === 'SOLIDO' && objeto.materialVisual === null) return { corBase: corBaseSolidoVisualizacaoViewportEditor3D, corLuz: corLuzSolidoVisualizacaoViewportEditor3D };
     if (state.modoVisualizacaoViewport === 'RENDERIZADO') return { corBase: objeto.corBase, corLuz: intensificaCorLuzRenderizadoEditor3D(objeto.corLuz) };
 
     return { corBase: objeto.corBase, corLuz: objeto.corLuz };

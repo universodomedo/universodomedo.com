@@ -3,6 +3,7 @@ import styles from './styles.module.css';
 import { CampoNumeroEditor3D } from '../controles/CampoNumeroEditor3D';
 import { PainelColapsavelEditor3D } from './PainelColapsavelEditor3D';
 import { useEditor3DContexto } from '../contexto/Editor3DContexto';
+import { materiaisVisuaisEditor3D, type MaterialVisualEditor3D } from '../editor/editor3D.materialVisual.tipos';
 import { shadersEditor3D, type ShaderEditor3D } from '../editor/editor3D.shader.tipos';
 import type { CampoVetorMalhaEditor3D, IndiceVetor3Editor3D, ObjetoCenaEditor3D } from '../editor/editor3D.tipos';
 
@@ -18,6 +19,7 @@ export function PainelTransformObjetoEditor3D({ objetoSelecionado }: PainelTrans
 
     function atualizaVetor(campo: CampoVetorMalhaEditor3D, indice: IndiceVetor3Editor3D, valor: number): void { acoes.atualizaVetorObjetoSelecionado(campo, indice, valor); }
     function defineShader(shader: ShaderEditor3D): void { acoes.defineShaderObjetoSelecionado(shader); }
+    function aplicaMaterialVisual(materialVisual: MaterialVisualEditor3D): void { acoes.aplicaMaterialVisualObjetoSelecionado(materialVisual); }
     function obtemValorPainel(): string {
         if (estado.modoOperacao === 'EDICAO') return 'Edit Mode';
         if (estado.idsObjetosSelecionados.length <= 1) return objetoSelecionado?.nome ?? 'None';
@@ -33,10 +35,16 @@ export function PainelTransformObjetoEditor3D({ objetoSelecionado }: PainelTrans
 
             {estado.modoOperacao === 'OBJETO' && objetoSelecionado !== null && (
                 <>
-                    <div className={styles.campoShaderObjetoEditor3D}>
+                    <div className={styles.campoOpcaoVisualObjetoEditor3D}>
                         <span>Shader</span>
-                        <div className={styles.opcoesShaderObjetoEditor3D}>
-                            {shadersEditor3D.map(shader => <button key={shader.key} className={`${styles.botaoShaderObjetoEditor3D} ${objetoSelecionado.shader === shader.key ? styles.botaoShaderObjetoEditor3DAtivo : ''}`} type="button" onClick={() => defineShader(shader.key)} aria-pressed={objetoSelecionado.shader === shader.key}>{shader.nome}</button>)}
+                        <div className={styles.opcoesVisuaisObjetoEditor3D}>
+                            {shadersEditor3D.map(shader => <button key={shader.key} className={`${styles.botaoOpcaoVisualObjetoEditor3D} ${objetoSelecionado.shader === shader.key ? styles.botaoOpcaoVisualObjetoEditor3DAtivo : ''}`} type="button" onClick={() => defineShader(shader.key)} aria-pressed={objetoSelecionado.shader === shader.key}>{shader.nome}</button>)}
+                        </div>
+                    </div>
+                    <div className={styles.campoOpcaoVisualObjetoEditor3D}>
+                        <span>Visual</span>
+                        <div className={styles.opcoesVisuaisObjetoEditor3D}>
+                            {materiaisVisuaisEditor3D.map(materialVisual => <button key={materialVisual.key} className={`${styles.botaoOpcaoVisualObjetoEditor3D} ${objetoSelecionado.materialVisual === materialVisual.key ? styles.botaoOpcaoVisualObjetoEditor3DAtivo : ''}`} type="button" onClick={() => aplicaMaterialVisual(materialVisual.key)} aria-pressed={objetoSelecionado.materialVisual === materialVisual.key}>{materialVisual.nome}</button>)}
                         </div>
                     </div>
                     <CampoNumeroEditor3D rotulo="Location X" valor={objetoSelecionado.posicao[0]} passo={0.1} atualizaValor={valor => atualizaVetor('posicao', 0, valor)} />

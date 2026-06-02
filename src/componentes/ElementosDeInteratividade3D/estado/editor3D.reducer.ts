@@ -2,7 +2,7 @@ import { criaCameraPadraoEditor3D } from '../editor/editor3D.camera';
 import { criaColecaoCenaEditor3D, obtemIdsObjetosColecaoEditor3D, removeObjetosDasColecoesEditor3D } from './editor3D.colecoes';
 import { alteraSegmentosBevelEmEdicaoEditor3D, aplicaInsetFaceSelecionadaEditor3D, atualizaBevelEmEdicaoEditor3D, atualizaInsetFaceEmEdicaoEditor3D, cancelaBevelEmEdicaoEditor3D, cancelaInsetFaceEmEdicaoEditor3D, confirmaBevelEmEdicaoEditor3D, confirmaInsetFaceEmEdicaoEditor3D, defineTipoSelecaoEdicaoEditor3D, iniciaBevelSelecaoEditor3D, iniciaInsetFaceSelecionadaEditor3D, moveSelecaoEdicaoEditor3D, preparaObjetosEscopoEdicaoEditor3D, selecionaArestaEdicaoEditor3D, selecionaFaceEdicaoEditor3D, selecionaVerticeEdicaoEditor3D } from './editor3D.reducer.edicao';
 import { alteraQuantidadeVerticesStateEditor3D, atualizaQuantidadeVerticesStateEditor3D, atualizaVetorMalhaEmCriacaoEditor3D, confirmaMalhaEmCriacaoEditor3D, iniciaMalhaEmCriacaoEditor3D } from './editor3D.reducer.criacao';
-import { aplicaRotationScaleObjetosEditor3D, atualizaObjetosEditor3D, atualizaVetorObjetoEditor3D, defineShaderObjetoEditor3D, moveObjetosEditor3D } from './editor3D.reducer.objetos';
+import { aplicaMaterialVisualObjetoEditor3D, aplicaRotationScaleObjetosEditor3D, atualizaObjetosEditor3D, atualizaVetorObjetoEditor3D, defineShaderObjetoEditor3D, moveObjetosEditor3D } from './editor3D.reducer.objetos';
 import { aplicaEixoGrabEditor3D, aplicaEixoRotateEditor3D, aplicaEixoScaleEditor3D, aplicaRotateLivreEditor3D, atualizaEntradaNumericaRotateEditor3D, cancelaModoEditor3D, escalaModoScaleEditor3D, iniciaGrabEditor3D, iniciaRotateEditor3D, iniciaScaleEditor3D, moveModoGrabEditor3D, rotacionaModoRotateEditor3D } from './editor3D.reducer.modo';
 import { obtemDefinicaoMalhaEditor3D } from '../editor/editor3D.objetos';
 import { criaModoInativoEditor3D, modoEditor3DEstaAtivo } from '../modos/editor3D.modo.utils';
@@ -10,6 +10,7 @@ import { criaEstadoInicialEditor3D } from './editor3D.estado.inicial';
 import { modoVisualizacaoViewportPermiteXRayEditor3D } from '../viewport/editor3D.viewport.tipos';
 import type { ColecaoCenaEditor3D, Editor3DAcao, Editor3DState, PosicaoSoltarCenaEditor3D } from './editor3D.estado.types';
 import type { EscopoEdicaoEditor3D } from '../modoOperacao/editor3D.modoOperacao.tipos';
+import type { MaterialVisualEditor3D } from '../editor/editor3D.materialVisual.tipos';
 import type { ShaderEditor3D } from '../editor/editor3D.shader.tipos';
 import type { ObjetoCenaEditor3D } from '../editor/editor3D.tipos';
 
@@ -294,6 +295,12 @@ function defineShaderObjetoSelecionadoEditor3D(state: Editor3DState, shader: Sha
     return { ...state, objetos: atualizaObjetosEditor3D(state.objetos, state.idsObjetosSelecionados, objeto => defineShaderObjetoEditor3D(objeto, shader)) };
 };
 
+function aplicaMaterialVisualObjetoSelecionadoEditor3D(state: Editor3DState, materialVisual: MaterialVisualEditor3D): Editor3DState {
+    if (state.modoOperacao !== 'OBJETO' || state.idsObjetosSelecionados.length === 0 || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null) return state;
+
+    return { ...state, objetos: atualizaObjetosEditor3D(state.objetos, state.idsObjetosSelecionados, objeto => aplicaMaterialVisualObjetoEditor3D(objeto, materialVisual)) };
+};
+
 function defineModoVisualizacaoViewportEditor3D(state: Editor3DState, acao: Extract<Editor3DAcao, { readonly tipo: 'DEFINE_MODO_VISUALIZACAO_VIEWPORT' }>): Editor3DState {
     const visualizacaoXRayAtiva = modoVisualizacaoViewportPermiteXRayEditor3D(acao.modoVisualizacaoViewport) ? state.visualizacaoXRayAtiva : false;
 
@@ -360,6 +367,7 @@ export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Edito
     if (acao.tipo === 'ATUALIZA_VETOR_MALHA_EM_CRIACAO') return atualizaVetorMalhaEmCriacaoEditor3D(state, acao.campo, acao.indice, acao.valor);
     if (acao.tipo === 'ATUALIZA_VETOR_OBJETO_SELECIONADO') return atualizaVetorObjetoSelecionadoEditor3D(state, acao);
     if (acao.tipo === 'DEFINE_SHADER_OBJETO_SELECIONADO') return defineShaderObjetoSelecionadoEditor3D(state, acao.shader);
+    if (acao.tipo === 'APLICA_MATERIAL_VISUAL_OBJETO_SELECIONADO') return aplicaMaterialVisualObjetoSelecionadoEditor3D(state, acao.materialVisual);
     if (acao.tipo === 'APLICA_ROTATION_SCALE_OBJETOS_SELECIONADOS') return state.modoOperacao !== 'OBJETO' || state.idsObjetosSelecionados.length === 0 || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null ? state : { ...state, objetos: aplicaRotationScaleObjetosEditor3D(state.objetos, state.idsObjetosSelecionados) };
     if (acao.tipo === 'CONFIRMA_MALHA_EM_CRIACAO') return confirmaMalhaEmCriacaoEditor3D(state);
     if (acao.tipo === 'CANCELA_MALHA_EM_CRIACAO') return { ...state, malhaEmCriacao: null };

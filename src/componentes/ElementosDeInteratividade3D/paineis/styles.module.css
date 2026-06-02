@@ -673,7 +673,7 @@ div.linhaObjetoCena:active {
     line-height: 1.45;
 }
 
-.campoShaderObjetoEditor3D {
+.campoOpcaoVisualObjetoEditor3D {
     display: grid;
     grid-template-columns: 6.5em minmax(0, 1fr);
     gap: 0.5em;
@@ -684,18 +684,18 @@ div.linhaObjetoCena:active {
     font-size: 0.82em;
 }
 
-.campoShaderObjetoEditor3D > span {
+.campoOpcaoVisualObjetoEditor3D > span {
     color: rgba(255, 255, 255, 0.58);
 }
 
-.opcoesShaderObjetoEditor3D {
+.opcoesVisuaisObjetoEditor3D {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(4em, 1fr));
     min-width: 0;
     gap: 0.35em;
 }
 
-.botaoShaderObjetoEditor3D {
+.botaoOpcaoVisualObjetoEditor3D {
     display: grid;
     min-width: 0;
     min-height: 2em;
@@ -713,13 +713,13 @@ div.linhaObjetoCena:active {
     cursor: pointer;
 }
 
-.botaoShaderObjetoEditor3D:hover {
+.botaoOpcaoVisualObjetoEditor3D:hover {
     color: rgba(255, 255, 255, 0.92);
     border-color: rgba(92, 148, 255, 0.42);
 }
 
-.botaoShaderObjetoEditor3DAtivo,
-.botaoShaderObjetoEditor3DAtivo:hover {
+.botaoOpcaoVisualObjetoEditor3DAtivo,
+.botaoOpcaoVisualObjetoEditor3DAtivo:hover {
     color: rgba(255, 255, 255, 0.94);
     border-color: rgba(255, 180, 60, 0.72);
     background: rgba(92, 148, 255, 0.2);
