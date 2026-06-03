@@ -159,7 +159,7 @@ export function OverlayGizmoEixosEditor3D({ canvasRef }: OverlayGizmoEixosEditor
     return (
         <div className={styles.overlayGizmoEixosEditor3D}>
             {marcadores.map(marcador => (
-                <button key={marcador.eixo} className={`${styles.marcadorGizmoEixosEditor3D} ${obtemClasseMarcadorGizmoEditor3D(marcador.eixo)} ${marcador.negativo ? styles.marcadorGizmoEixosEditor3DNegativo : ''} ${marcadorGizmoEstaTraseiroEditor3D(marcador, vistaAtual) ? styles.marcadorGizmoEixosEditor3DTraseiro : ''}`} type="button" style={{ left: `${marcador.x}px`, top: `${marcador.y}px`, zIndex: obtemZIndexMarcadorGizmoEditor3D(marcador, vistaAtual) }} onMouseDown={bloqueiaMouseMarcador} onClick={event => aplicaVistaMarcador(event, marcador.eixo)} aria-label={`Aplicar Reset Absoluto para a Vista ${marcador.eixo}`} title={`Vista ${marcador.eixo}`}>
+                <button key={marcador.chave} className={`${styles.marcadorGizmoEixosEditor3D} ${obtemClasseMarcadorGizmoEditor3D(marcador.eixo)} ${marcador.negativo ? styles.marcadorGizmoEixosEditor3DNegativo : ''} ${marcadorGizmoEstaTraseiroEditor3D(marcador, vistaAtual) ? styles.marcadorGizmoEixosEditor3DTraseiro : ''}`} type="button" style={{ left: `${marcador.x}px`, top: `${marcador.y}px`, zIndex: obtemZIndexMarcadorGizmoEditor3D(marcador, vistaAtual) }} onMouseDown={bloqueiaMouseMarcador} onClick={event => aplicaVistaMarcador(event, marcador.eixo)} aria-label={`Aplicar Reset Absoluto para a Vista ${marcador.eixo}`} title={`Vista ${marcador.eixo}`}>
                     <span>{obtemTextoMarcadorGizmoEditor3D(marcador.eixo)}</span>
                 </button>
             ))}
