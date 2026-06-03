@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import InicializadorSocket from 'Componentes/Elementos/InicializadorSocket/InicializadorSocket';
 import { useUsuariosSocket } from 'Listeners/usuariosSocket';
 import { useChatSocketListeners } from 'Listeners/chatsSocket';
+import { useEventosUsuarioSocket } from 'Listeners/eventosUsuarioSocket';
 import { getSocket, setSocketAuthState, clearSocketCache } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
@@ -112,5 +113,6 @@ export default function SocketListeners() {
 function SocketHooks() {
     useUsuariosSocket();
     useChatSocketListeners();
+    useEventosUsuarioSocket();
     return null;
 };

@@ -16,6 +16,7 @@ import Fumaca from 'Componentes/ElementosVisuais/Fumaca/Fumaca.tsx';
 
 import ReduxProvider from 'Redux/providers/ReduxProvider';
 import SocketListeners from 'Listeners/SocketListeners';
+import GatilhoDevEventosUsuario from 'Componentes/Elementos/GatilhoDevEventosUsuario/GatilhoDevEventosUsuario';
 
 import { ContextoPerformanceProvider } from 'Contextos/ContextoPerformace/contexto';
 import { ContextoAutenticacaoProvider } from 'Contextos/ContextoAutenticacao/contexto';
@@ -77,6 +78,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <ContextoPerformanceProvider>
               <ContextoAutenticacaoProvider>
                 <SocketListeners />
+                <GatilhoDevEventosUsuario />
                 <RadixTooltip delayDuration={200} skipDelayDuration={0}>
                   <AppClientProviders>
                     <Contexto__Chat__Provider>
