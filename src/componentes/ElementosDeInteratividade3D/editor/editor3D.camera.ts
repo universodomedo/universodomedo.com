@@ -302,8 +302,10 @@ export function aplicaResetAbsolutoVistaCameraEditor3D(camera: CameraEditor3D, v
     return aplicaVistaNegativaZCameraEditor3D(camera);
 };
 
+export function obtemResetAbsolutoVistaAtualCameraEditor3D(camera: CameraEditor3D): ResetAbsolutoVistaEditor3D { return obtemOrientacaoCanonicaMaisProximaCameraEditor3D(camera, camera.matrizCena).vista; };
+
 export function obtemCameraAjusteVistaPorDirecaoEditor3D(camera: CameraEditor3D, direcao: DirecaoAjusteVistaEditor3D): CameraEditor3D {
-    const vistaAtual = obtemOrientacaoCanonicaMaisProximaCameraEditor3D(camera, camera.matrizCena).vista;
+    const vistaAtual = obtemResetAbsolutoVistaAtualCameraEditor3D(camera);
 
     if (direcao === 'CIMA' || direcao === 'BAIXO') return obtemCameraAjusteVistaVerticalEditor3D(camera, vistaAtual, direcao);
 

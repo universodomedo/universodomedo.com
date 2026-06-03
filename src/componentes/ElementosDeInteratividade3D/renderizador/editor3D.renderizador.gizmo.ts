@@ -16,6 +16,7 @@ export interface MarcadorGizmoEixosEditor3D {
     readonly eixo: ResetAbsolutoVistaEditor3D;
     readonly x: number;
     readonly y: number;
+    readonly profundidade: number;
     readonly negativo: boolean;
 };
 
@@ -26,6 +27,10 @@ interface PontoClipEditor3D {
     readonly w: number;
 };
 
+const escalaGizmoEixosEditor3D = 1.60;
+const proporcaoGizmoEixosEditor3D = 0.075 * escalaGizmoEixosEditor3D;
+const tamanhoMinimoGizmoEixosEditor3D = 54 * escalaGizmoEixosEditor3D;
+
 function multiplicaMatrizPorPontoEditor3D(matriz: Float32Array, ponto: Vetor3): PontoClipEditor3D {
     return {
         x: (matriz[0] * ponto[0]) + (matriz[4] * ponto[1]) + (matriz[8] * ponto[2]) + matriz[12],
@@ -35,20 +40,21 @@ function multiplicaMatrizPorPontoEditor3D(matriz: Float32Array, ponto: Vetor3): 
     };
 };
 
-function projetaPontoNoViewportEditor3D(matriz: Float32Array, viewport: ViewportGizmoEixosEditor3D, ponto: Vetor3): { readonly x: number; readonly y: number } | null {
+function projetaPontoNoViewportEditor3D(matriz: Float32Array, viewport: ViewportGizmoEixosEditor3D, ponto: Vetor3): { readonly x: number; readonly y: number; readonly profundidade: number } | null {
     const clip = multiplicaMatrizPorPontoEditor3D(matriz, ponto);
 
     if (clip.w <= 0) return null;
 
     const ndcX = clip.x / clip.w;
     const ndcY = clip.y / clip.w;
+    const profundidade = clip.z / clip.w;
 
-    return { x: viewport.esquerda + (((ndcX + 1) / 2) * viewport.largura), y: viewport.topo + (((1 - ndcY) / 2) * viewport.altura) };
+    return { x: viewport.esquerda + (((ndcX + 1) / 2) * viewport.largura), y: viewport.topo + (((1 - ndcY) / 2) * viewport.altura), profundidade };
 };
 
 export function obtemViewportGizmoEixosEditor3D(larguraCanvas: number, alturaCanvas: number): ViewportGizmoEixosEditor3D {
     const tamanhoBase = Math.min(larguraCanvas, alturaCanvas);
-    const tamanhoGizmo = Math.max(54, Math.floor(tamanhoBase * 0.075));
+    const tamanhoGizmo = Math.max(Math.floor(tamanhoMinimoGizmoEixosEditor3D), Math.floor(tamanhoBase * proporcaoGizmoEixosEditor3D));
     const margemTopo = 12;
     const margemDireita = 2;
     const esquerda = larguraCanvas - tamanhoGizmo - margemDireita;
@@ -79,6 +85,6 @@ export function projetaMarcadoresGizmoEixosEditor3D(camera: CameraEditor3D, larg
 
         if (pontoProjetado === null) return null;
 
-        return { eixo: item.eixo, x: pontoProjetado.x, y: pontoProjetado.y, negativo: item.negativo };
-    }).filter((item): item is MarcadorGizmoEixosEditor3D => item !== null);
+        return { eixo: item.eixo, x: pontoProjetado.x, y: pontoProjetado.y, profundidade: pontoProjetado.profundidade, negativo: item.negativo };
+    }).filter((item): item is MarcadorGizmoEixosEditor3D => item !== null).sort((a, b) => b.profundidade - a.profundidade);
 };
