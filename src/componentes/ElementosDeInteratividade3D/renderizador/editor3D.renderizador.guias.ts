@@ -9,7 +9,9 @@ function desenhaGuiaEditor3D(gl: WebGLRenderingContext, programa: ProgramaEditor
     desenhaMalhaEditor3D(gl, programa, guia.buffers, guia.guia.geometria, guia.guia.corBase, guia.guia.corLuz);
 };
 
-export function desenhaGuiasCenaEditor3D(gl: WebGLRenderingContext, recursos: RecursosRenderizadorEditor3D, plano: keyof RecursosRenderizadorEditor3D['guiasPorPlano'], matrizFinal: Float32Array, matrizModelo: Float32Array): void {
+export function desenhaGuiasCenaEditor3D(gl: WebGLRenderingContext, recursos: RecursosRenderizadorEditor3D, plano: keyof RecursosRenderizadorEditor3D['guiasPorPlano'], matrizFinal: Float32Array, matrizModelo: Float32Array, guiasVisiveis: boolean): void {
+    if (!guiasVisiveis) return;
+
     gl.disable(gl.DEPTH_TEST);
     recursos.guiasPorPlano[plano].forEach(guia => desenhaGuiaEditor3D(gl, recursos.programa, guia, matrizFinal, matrizModelo));
     gl.enable(gl.DEPTH_TEST);

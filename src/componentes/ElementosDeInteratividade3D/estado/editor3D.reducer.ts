@@ -320,6 +320,8 @@ export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Edito
     if (acao.tipo === 'LIMPA_NOTIFICACAO_AREA_INTERATIVA') return state.notificacaoAreaInterativa?.id === acao.id ? { ...state, notificacaoAreaInterativa: null } : state;
     if (acao.tipo === 'DEFINE_MODO_VISUALIZACAO_VIEWPORT') return defineModoVisualizacaoViewportEditor3D(state, acao);
     if (acao.tipo === 'ALTERNA_VISUALIZACAO_XRAY') return alternaVisualizacaoXRayEditor3D(state);
+    if (acao.tipo === 'INICIA_OCULTACAO_GUIAS_CENA_TEMPORARIA') return { ...state, ocultacoesGuiasCenaTemporaria: state.ocultacoesGuiasCenaTemporaria + 1 };
+    if (acao.tipo === 'FINALIZA_OCULTACAO_GUIAS_CENA_TEMPORARIA') return { ...state, ocultacoesGuiasCenaTemporaria: Math.max(0, state.ocultacoesGuiasCenaTemporaria - 1) };
     if (acao.tipo === 'ENTRA_MODO_EDICAO') return entraModoEdicaoEditor3D(state);
     if (acao.tipo === 'SAI_MODO_EDICAO') return saiModoEdicaoEditor3D(state);
     if (acao.tipo === 'ALTERNA_MODO_OPERACAO') return alternaModoOperacaoEditor3D(state);

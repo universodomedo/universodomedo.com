@@ -16,6 +16,8 @@ export function useEditor3D(): Editor3DModelo {
         limpaNotificacaoAreaInterativa: id => dispatch({ tipo: 'LIMPA_NOTIFICACAO_AREA_INTERATIVA', id }),
         defineModoVisualizacaoViewport: modoVisualizacaoViewport => dispatch({ tipo: 'DEFINE_MODO_VISUALIZACAO_VIEWPORT', modoVisualizacaoViewport }),
         alternaVisualizacaoXRay: () => dispatch({ tipo: 'ALTERNA_VISUALIZACAO_XRAY' }),
+        iniciaOcultacaoGuiasCenaTemporaria: () => dispatch({ tipo: 'INICIA_OCULTACAO_GUIAS_CENA_TEMPORARIA' }),
+        finalizaOcultacaoGuiasCenaTemporaria: () => dispatch({ tipo: 'FINALIZA_OCULTACAO_GUIAS_CENA_TEMPORARIA' }),
         entraModoEdicao: () => dispatch({ tipo: 'ENTRA_MODO_EDICAO' }),
         saiModoEdicao: () => dispatch({ tipo: 'SAI_MODO_EDICAO' }),
         alternaModoOperacao: () => dispatch({ tipo: 'ALTERNA_MODO_OPERACAO' }),

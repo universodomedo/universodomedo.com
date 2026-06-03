@@ -66,9 +66,13 @@ export function OverlayGizmoEixosEditor3D({ canvasRef }: OverlayGizmoEixosEditor
 
     useEffect(() => {
         return () => {
-            if (animacaoFrameIdRef.current !== null) cancelAnimationFrame(animacaoFrameIdRef.current);
+            if (animacaoFrameIdRef.current !== null) {
+                cancelAnimationFrame(animacaoFrameIdRef.current);
+                animacaoFrameIdRef.current = null;
+                acoes.finalizaOcultacaoGuiasCenaTemporaria();
+            }
         };
-    }, []);
+    }, [acoes]);
 
     function bloqueiaMouseMarcador(event: MouseEvent<HTMLButtonElement>): void {
         event.preventDefault();
@@ -79,7 +83,13 @@ export function OverlayGizmoEixosEditor3D({ canvasRef }: OverlayGizmoEixosEditor
         const origem = estado.camera;
         const inicio = performance.now();
 
-        if (animacaoFrameIdRef.current !== null) cancelAnimationFrame(animacaoFrameIdRef.current);
+        if (animacaoFrameIdRef.current !== null) {
+            cancelAnimationFrame(animacaoFrameIdRef.current);
+            animacaoFrameIdRef.current = null;
+            acoes.finalizaOcultacaoGuiasCenaTemporaria();
+        }
+
+        acoes.iniciaOcultacaoGuiasCenaTemporaria();
 
         function animaFrame(agora: number): void {
             const progresso = Math.min(1, (agora - inicio) / duracaoAnimacaoResetAbsolutoGizmoEditor3D);
@@ -93,6 +103,7 @@ export function OverlayGizmoEixosEditor3D({ canvasRef }: OverlayGizmoEixosEditor
             }
 
             animacaoFrameIdRef.current = null;
+            acoes.finalizaOcultacaoGuiasCenaTemporaria();
         };
 
         animacaoFrameIdRef.current = requestAnimationFrame(animaFrame);

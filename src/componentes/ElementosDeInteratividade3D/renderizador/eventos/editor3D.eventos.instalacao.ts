@@ -43,7 +43,11 @@ export function registraEventosRenderizadorEditor3D(controle: ControleEventosEdi
         window.removeEventListener('keyup', finalizaModoSelecionar);
         window.removeEventListener('blur', cancelaModoSelecionar);
         ocultaCursorFantasmaEditor3D(controle);
-        if (animacaoCameraFrameId !== null) cancelAnimationFrame(animacaoCameraFrameId);
+        if (animacaoCameraFrameId !== null) {
+            cancelAnimationFrame(animacaoCameraFrameId);
+            controle.refs.arraste.current.animacaoCameraFrameId = null;
+            controle.refs.acoes.current.finalizaOcultacaoGuiasCenaTemporaria();
+        }
         if (document.pointerLockElement === controle.canvas) document.exitPointerLock();
     };
 };

@@ -91,7 +91,13 @@ function animaCameraAteEditor3D(controle: ControleEventosEditor3D, destino: Retu
     const origem = controle.refs.estado.current.camera;
     const inicio = performance.now();
 
-    if (arraste.animacaoCameraFrameId !== null) cancelAnimationFrame(arraste.animacaoCameraFrameId);
+    if (arraste.animacaoCameraFrameId !== null) {
+        cancelAnimationFrame(arraste.animacaoCameraFrameId);
+        arraste.animacaoCameraFrameId = null;
+        controle.refs.acoes.current.finalizaOcultacaoGuiasCenaTemporaria();
+    }
+
+    controle.refs.acoes.current.iniciaOcultacaoGuiasCenaTemporaria();
 
     function animaFrame(agora: number): void {
         const progresso = Math.min(1, (agora - inicio) / duracaoAnimacaoAjusteVistaEditor3D);
@@ -105,6 +111,7 @@ function animaCameraAteEditor3D(controle: ControleEventosEditor3D, destino: Retu
         }
 
         arraste.animacaoCameraFrameId = null;
+        controle.refs.acoes.current.finalizaOcultacaoGuiasCenaTemporaria();
         controle.refs.acoes.current.resetaFerramentaMouse();
     };
 
