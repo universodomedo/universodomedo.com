@@ -42,9 +42,12 @@ interface OrientacaoCanonicaCameraEditor3D {
 };
 
 type VetorCameraEditor3D = readonly [number, number, number];
+type PlanoCicloVerticalAjusteVistaEditor3D = 'X' | 'Y';
 
 const rotacaoXPerspectivaPadraoCameraEditor3D = -Math.PI / 3;
 const rotacaoYPerspectivaPadraoCameraEditor3D = -Math.PI / 4;
+const rotacaoYCicloVerticalEixoXCameraEditor3D = -Math.PI / 2;
+const rotacaoYCicloVerticalEixoYCameraEditor3D = 0;
 const sensibilidadeOrbitCameraEditor3D = 0.008;
 const margemPitchTurntableCameraEditor3D = 0.001;
 
@@ -121,7 +124,7 @@ function criaCameraComMatrizCenaEditor3D(camera: CameraEditor3D, matrizCena: Flo
 export function criaMatrizCenaCameraEditor3D(camera: CameraEditor3D): Float32Array { return camera.matrizCena; };
 
 function calculaDistanciaMatrizesCameraEditor3D(a: Float32Array, b: Float32Array): number {
-    const indices = [0, 1, 2, 4, 5, 6, 8, 9, 10];
+    const indices = [2, 6, 10];
 
     return indices.reduce((total, indice) => total + ((a[indice] - b[indice]) * (a[indice] - b[indice])), 0);
 };
@@ -147,30 +150,22 @@ function obtemOrientacaoCanonicaMaisProximaCameraEditor3D(cameraBase: CameraEdit
 
 function obtemResetAjustadoPorDirecaoEditor3D(vistaAtual: ResetAbsolutoVistaEditor3D, direcao: DirecaoAjusteVistaEditor3D): ResetAbsolutoVistaEditor3D {
     if (vistaAtual === 'Z') {
-        if (direcao === 'DIREITA') return 'X';
-        if (direcao === 'ESQUERDA') return '-X';
+        if (direcao === 'DIREITA') return '-X';
+        if (direcao === 'ESQUERDA') return 'X';
         if (direcao === 'CIMA') return 'Y';
 
         return '-Y';
     }
 
     if (vistaAtual === '-Z') {
-        if (direcao === 'DIREITA') return 'X';
-        if (direcao === 'ESQUERDA') return '-X';
+        if (direcao === 'DIREITA') return '-X';
+        if (direcao === 'ESQUERDA') return 'X';
         if (direcao === 'CIMA') return '-Y';
 
         return 'Y';
     }
 
     if (vistaAtual === 'X') {
-        if (direcao === 'DIREITA') return '-Y';
-        if (direcao === 'ESQUERDA') return 'Y';
-        if (direcao === 'CIMA') return 'Z';
-
-        return '-Z';
-    }
-
-    if (vistaAtual === '-X') {
         if (direcao === 'DIREITA') return 'Y';
         if (direcao === 'ESQUERDA') return '-Y';
         if (direcao === 'CIMA') return 'Z';
@@ -178,19 +173,87 @@ function obtemResetAjustadoPorDirecaoEditor3D(vistaAtual: ResetAbsolutoVistaEdit
         return '-Z';
     }
 
-    if (vistaAtual === 'Y') {
-        if (direcao === 'DIREITA') return 'X';
-        if (direcao === 'ESQUERDA') return '-X';
+    if (vistaAtual === '-X') {
+        if (direcao === 'DIREITA') return '-Y';
+        if (direcao === 'ESQUERDA') return 'Y';
         if (direcao === 'CIMA') return 'Z';
 
         return '-Z';
     }
 
-    if (direcao === 'DIREITA') return '-X';
-    if (direcao === 'ESQUERDA') return 'X';
+    if (vistaAtual === 'Y') {
+        if (direcao === 'DIREITA') return '-X';
+        if (direcao === 'ESQUERDA') return 'X';
+        if (direcao === 'CIMA') return 'Z';
+
+        return '-Z';
+    }
+
+    if (direcao === 'DIREITA') return 'X';
+    if (direcao === 'ESQUERDA') return '-X';
     if (direcao === 'CIMA') return 'Z';
 
     return '-Z';
+};
+
+function calculaDistanciaAnguloCameraEditor3D(a: number, b: number): number { return Math.abs(normalizaAnguloCameraEditor3D(a - b)); };
+
+function obtemPlanoCicloVerticalPorRotacaoCameraEditor3D(camera: CameraEditor3D): PlanoCicloVerticalAjusteVistaEditor3D {
+    const distanciaEixoX = Math.min(calculaDistanciaAnguloCameraEditor3D(camera.rotacaoY, -Math.PI / 2), calculaDistanciaAnguloCameraEditor3D(camera.rotacaoY, Math.PI / 2));
+    const distanciaEixoY = Math.min(calculaDistanciaAnguloCameraEditor3D(camera.rotacaoY, 0), calculaDistanciaAnguloCameraEditor3D(camera.rotacaoY, Math.PI));
+
+    return distanciaEixoX < distanciaEixoY ? 'X' : 'Y';
+};
+
+function obtemPlanoCicloVerticalCameraEditor3D(camera: CameraEditor3D, vistaAtual: ResetAbsolutoVistaEditor3D): PlanoCicloVerticalAjusteVistaEditor3D {
+    if (vistaAtual === 'X' || vistaAtual === '-X') return 'X';
+    if (vistaAtual === 'Y' || vistaAtual === '-Y') return 'Y';
+
+    return obtemPlanoCicloVerticalPorRotacaoCameraEditor3D(camera);
+};
+
+function obtemRotacaoYPlanoCicloVerticalCameraEditor3D(plano: PlanoCicloVerticalAjusteVistaEditor3D): number { return plano === 'X' ? rotacaoYCicloVerticalEixoXCameraEditor3D : rotacaoYCicloVerticalEixoYCameraEditor3D; };
+
+function criaVistaTopoCicloVerticalCameraEditor3D(camera: CameraEditor3D, plano: PlanoCicloVerticalAjusteVistaEditor3D): CameraEditor3D { return criaCameraEditor3D(0, obtemRotacaoYPlanoCicloVerticalCameraEditor3D(plano), 0, 'XY', 'XY', camera); };
+
+function criaVistaBaixoCicloVerticalCameraEditor3D(camera: CameraEditor3D, plano: PlanoCicloVerticalAjusteVistaEditor3D): CameraEditor3D { return criaCameraEditor3D(Math.PI, obtemRotacaoYPlanoCicloVerticalCameraEditor3D(plano), 0, 'XY', 'XY', camera); };
+
+function obtemCameraAjusteVistaVerticalEixoYEditor3D(camera: CameraEditor3D, vistaAtual: ResetAbsolutoVistaEditor3D, direcao: DirecaoAjusteVistaEditor3D): CameraEditor3D {
+    if (direcao === 'CIMA') {
+        if (vistaAtual === 'Y') return criaVistaBaixoCicloVerticalCameraEditor3D(camera, 'Y');
+        if (vistaAtual === '-Z') return aplicaVistaNegativaYCameraEditor3D(camera);
+        if (vistaAtual === '-Y') return criaVistaTopoCicloVerticalCameraEditor3D(camera, 'Y');
+
+        return aplicaVistaFrenteCameraEditor3D(camera);
+    }
+
+    if (vistaAtual === 'Y') return criaVistaTopoCicloVerticalCameraEditor3D(camera, 'Y');
+    if (vistaAtual === 'Z') return aplicaVistaNegativaYCameraEditor3D(camera);
+    if (vistaAtual === '-Y') return criaVistaBaixoCicloVerticalCameraEditor3D(camera, 'Y');
+
+    return aplicaVistaFrenteCameraEditor3D(camera);
+};
+
+function obtemCameraAjusteVistaVerticalEixoXEditor3D(camera: CameraEditor3D, vistaAtual: ResetAbsolutoVistaEditor3D, direcao: DirecaoAjusteVistaEditor3D): CameraEditor3D {
+    if (direcao === 'CIMA') {
+        if (vistaAtual === 'X') return criaVistaBaixoCicloVerticalCameraEditor3D(camera, 'X');
+        if (vistaAtual === '-Z') return aplicaVistaNegativaXCameraEditor3D(camera);
+        if (vistaAtual === '-X') return criaVistaTopoCicloVerticalCameraEditor3D(camera, 'X');
+
+        return aplicaVistaLateralCameraEditor3D(camera);
+    }
+
+    if (vistaAtual === 'X') return criaVistaTopoCicloVerticalCameraEditor3D(camera, 'X');
+    if (vistaAtual === 'Z') return aplicaVistaNegativaXCameraEditor3D(camera);
+    if (vistaAtual === '-X') return criaVistaBaixoCicloVerticalCameraEditor3D(camera, 'X');
+
+    return aplicaVistaLateralCameraEditor3D(camera);
+};
+
+function obtemCameraAjusteVistaVerticalEditor3D(camera: CameraEditor3D, vistaAtual: ResetAbsolutoVistaEditor3D, direcao: DirecaoAjusteVistaEditor3D): CameraEditor3D {
+    const plano = obtemPlanoCicloVerticalCameraEditor3D(camera, vistaAtual);
+
+    return plano === 'X' ? obtemCameraAjusteVistaVerticalEixoXEditor3D(camera, vistaAtual, direcao) : obtemCameraAjusteVistaVerticalEixoYEditor3D(camera, vistaAtual, direcao);
 };
 
 export function criaCameraPadraoEditor3D(): CameraEditor3D { return criaCameraEditor3D(rotacaoXPerspectivaPadraoCameraEditor3D, rotacaoYPerspectivaPadraoCameraEditor3D, 0, 'XY', 'XYZ'); };
@@ -241,6 +304,9 @@ export function aplicaResetAbsolutoVistaCameraEditor3D(camera: CameraEditor3D, v
 
 export function obtemCameraAjusteVistaPorDirecaoEditor3D(camera: CameraEditor3D, direcao: DirecaoAjusteVistaEditor3D): CameraEditor3D {
     const vistaAtual = obtemOrientacaoCanonicaMaisProximaCameraEditor3D(camera, camera.matrizCena).vista;
+
+    if (direcao === 'CIMA' || direcao === 'BAIXO') return obtemCameraAjusteVistaVerticalEditor3D(camera, vistaAtual, direcao);
+
     const proximaVista = obtemResetAjustadoPorDirecaoEditor3D(vistaAtual, direcao);
 
     return aplicaResetAbsolutoVistaCameraEditor3D(camera, proximaVista);
