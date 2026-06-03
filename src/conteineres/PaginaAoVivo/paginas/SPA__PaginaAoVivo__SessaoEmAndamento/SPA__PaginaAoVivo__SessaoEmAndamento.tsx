@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 import { useContextoPaginaAoVivo__SessaoEmAndamento } from 'Contextos/ContextoPaginaAoVivo__SessaoEmAndamento/contexto';
 import PersonagemEmVisualizacaoDeSessao from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/PersonagemEmVisualizacaoDeSessao/page';
 import JanelaDeMensagensDeJogo from 'Componentes/ElementosDeJogo/JanelaDeMensagensDeJogo/JanelaDeMensagensDeJogo';
-import TelaDeJogo from 'Componentes/ElementosDeJogo/TelaDeJogo/TelaDeJogo';
+import { RenderArquivoArteCapa } from 'Uteis/RenderArquivoTipados/RenderArquivoTipados';
 
 export default function SPA__PaginaAoVivo__SessaoEmAndamento() {
     const { sessaoEmAndamento, souStreamer } = useContextoPaginaAoVivo__SessaoEmAndamento();
@@ -37,7 +37,7 @@ export default function SPA__PaginaAoVivo__SessaoEmAndamento() {
                     </div>
 
                     <div className={styles.recipiente_container_tela_de_jogo}>
-                        <TelaDeJogo capaSessao={sessaoEmAndamento.caminhoArquivoArteCapa} />
+                        <RenderArquivoArteCapa caminhoArquivoArte={sessaoEmAndamento.caminhoArquivoArteCapa} />
                     </div>
                 </div>
             </div>

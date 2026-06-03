@@ -1,0 +1,107 @@
+.estado_mapa_logico {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    gap: 0.6em;
+    padding: 2em;
+    color: #f3eee5;
+    text-align: center;
+    background: #151821;
+}
+
+.estado_mapa_logico strong {
+    font-size: 1.15em;
+}
+
+.estado_mapa_logico span {
+    color: #c8d4e6;
+}
+
+.painel_mapa_logico {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    overflow: hidden;
+    color: #f7f4ec;
+    background: #10141d;
+}
+
+.area_mapa_logico {
+    position: relative;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 36%),
+        #0e121a;
+}
+
+.area_mapa_logico_arrastando {
+    cursor: grabbing;
+}
+
+.grade_mapa_logico {
+    display: grid;
+    grid-template-columns: repeat(var(--mapa-logico-colunas), minmax(3.4em, 1fr));
+    grid-template-rows: repeat(var(--mapa-logico-linhas), minmax(3.2em, 1fr));
+    width: max-content;
+    min-width: 100%;
+    min-height: 100%;
+    padding: 1.2em;
+    transform: translate(var(--mapa-logico-pan-x), var(--mapa-logico-pan-y)) scale(var(--mapa-logico-zoom)) rotate(var(--mapa-logico-rotacao));
+    transform-origin: center;
+}
+
+.celula_mapa_logico {
+    position: relative;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    min-width: 3.4em;
+    min-height: 3.2em;
+    padding: 0.35em;
+    border: 0.06em solid rgba(202, 213, 226, 0.24);
+    background: rgba(34, 44, 61, 0.68);
+}
+
+.celula_mapa_logico:nth-child(odd) {
+    background: rgba(43, 55, 75, 0.72);
+}
+
+.coordenada_celula_mapa_logico {
+    position: absolute;
+    top: 0.25em;
+    left: 0.3em;
+    color: rgba(226, 232, 240, 0.58);
+    font-size: 0.64em;
+    pointer-events: none;
+}
+
+.ocupante_mapa_logico {
+    display: grid;
+    max-width: 100%;
+    gap: 0.08em;
+    place-items: center;
+    padding: 0.28em 0.42em;
+    border: 0.08em solid #d9b35f;
+    border-radius: 0.4em;
+    color: #fff8df;
+    background: #4c3c1e;
+    box-shadow: 0 0.25em 0.85em rgba(0, 0, 0, 0.36);
+}
+
+.ocupante_mapa_logico strong {
+    font-size: 0.82em;
+    line-height: 1;
+}
+
+.ocupante_mapa_logico small {
+    max-width: 7em;
+    overflow: hidden;
+    color: #f4ddb0;
+    font-size: 0.58em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
