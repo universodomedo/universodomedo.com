@@ -22,14 +22,6 @@ function obtemClasseMarcadorGizmoEditor3D(eixo: ResetAbsolutoVistaEditor3D): str
     return styles.marcadorGizmoEixoZ;
 };
 
-function obtemTextoMarcadorGizmoEditor3D(eixo: ResetAbsolutoVistaEditor3D): string {
-    if (eixo === '-X') return '-X';
-    if (eixo === '-Y') return '-Y';
-    if (eixo === '-Z') return '-Z';
-
-    return eixo;
-};
-
 function obtemVistaOpostaMarcadorGizmoEditor3D(eixo: ResetAbsolutoVistaEditor3D): ResetAbsolutoVistaEditor3D {
     if (eixo === 'X') return '-X';
     if (eixo === '-X') return 'X';
@@ -40,24 +32,23 @@ function obtemVistaOpostaMarcadorGizmoEditor3D(eixo: ResetAbsolutoVistaEditor3D)
     return 'Z';
 };
 
-function obtemDestinoMarcadorGizmoEditor3D(camera: CameraEditor3D, eixo: ResetAbsolutoVistaEditor3D): ResetAbsolutoVistaEditor3D {
-    const vistaAtual = obtemResetAbsolutoVistaAtualCameraEditor3D(camera);
-
-    return vistaAtual === eixo ? obtemVistaOpostaMarcadorGizmoEditor3D(eixo) : eixo;
-};
-
-function marcadorGizmoEstaTraseiroEditor3D(marcador: MarcadorGizmoEixosEditor3D, vistaAtual: ResetAbsolutoVistaEditor3D): boolean { return marcador.eixo === obtemVistaOpostaMarcadorGizmoEditor3D(vistaAtual); };
+function marcadorGizmoEstaTraseiroEditor3D(marcador: MarcadorGizmoEixosEditor3D, vistaAtual: ResetAbsolutoVistaEditor3D): boolean { return marcador.eixoFisico === obtemVistaOpostaMarcadorGizmoEditor3D(vistaAtual); };
 
 function obtemZIndexMarcadorGizmoEditor3D(marcador: MarcadorGizmoEixosEditor3D, vistaAtual: ResetAbsolutoVistaEditor3D): number {
     const profundidadeBase = Math.max(1, Math.round(marcador.profundidade * 100000));
 
-    if (marcador.eixo === vistaAtual) return profundidadeBase + 300000;
+    if (marcador.eixoFisico === vistaAtual) return profundidadeBase + 300000;
     if (marcadorGizmoEstaTraseiroEditor3D(marcador, vistaAtual)) return profundidadeBase;
 
     return profundidadeBase + 100000;
 };
 
-function aplicaVistaMarcadorGizmoEditor3D(camera: CameraEditor3D, eixo: ResetAbsolutoVistaEditor3D): CameraEditor3D { return aplicaResetAbsolutoVistaCameraEditor3D(camera, obtemDestinoMarcadorGizmoEditor3D(camera, eixo)); };
+function aplicaVistaMarcadorGizmoEditor3D(camera: CameraEditor3D, eixoClicado: ResetAbsolutoVistaEditor3D): CameraEditor3D {
+    const vistaAtual = obtemResetAbsolutoVistaAtualCameraEditor3D(camera);
+    const destinoClique = vistaAtual === eixoClicado ? obtemVistaOpostaMarcadorGizmoEditor3D(eixoClicado) : eixoClicado;
+
+    return aplicaResetAbsolutoVistaCameraEditor3D(camera, destinoClique);
+};
 
 export function OverlayGizmoEixosEditor3D({ canvasRef }: OverlayGizmoEixosEditor3DProps) {
     const { estado, acoes } = useEditor3DContexto();
@@ -144,12 +135,12 @@ export function OverlayGizmoEixosEditor3D({ canvasRef }: OverlayGizmoEixosEditor
         animacaoFrameIdRef.current = requestAnimationFrame(animaFrame);
     };
 
-    function aplicaVistaMarcador(event: MouseEvent<HTMLButtonElement>, eixo: ResetAbsolutoVistaEditor3D): void {
+    function aplicaVistaMarcador(event: MouseEvent<HTMLButtonElement>, eixoClicado: ResetAbsolutoVistaEditor3D): void {
         event.preventDefault();
         event.stopPropagation();
         if (!comandoMouseAreaInterativa3DEstaAtivo('gizmo-viewport', event)) return;
 
-        animaCameraAteVista(aplicaVistaMarcadorGizmoEditor3D(estado.camera, eixo));
+        animaCameraAteVista(aplicaVistaMarcadorGizmoEditor3D(estado.camera, eixoClicado));
     };
 
     if (marcadores.length === 0) return null;
@@ -159,8 +150,8 @@ export function OverlayGizmoEixosEditor3D({ canvasRef }: OverlayGizmoEixosEditor
     return (
         <div className={styles.overlayGizmoEixosEditor3D}>
             {marcadores.map(marcador => (
-                <button key={marcador.chave} className={`${styles.marcadorGizmoEixosEditor3D} ${obtemClasseMarcadorGizmoEditor3D(marcador.eixo)} ${marcador.negativo ? styles.marcadorGizmoEixosEditor3DNegativo : ''} ${marcadorGizmoEstaTraseiroEditor3D(marcador, vistaAtual) ? styles.marcadorGizmoEixosEditor3DTraseiro : ''}`} type="button" style={{ left: `${marcador.x}px`, top: `${marcador.y}px`, zIndex: obtemZIndexMarcadorGizmoEditor3D(marcador, vistaAtual) }} onMouseDown={bloqueiaMouseMarcador} onClick={event => aplicaVistaMarcador(event, marcador.eixo)} aria-label={`Aplicar Reset Absoluto para a Vista ${marcador.eixo}`} title={`Vista ${marcador.eixo}`}>
-                    <span>{obtemTextoMarcadorGizmoEditor3D(marcador.eixo)}</span>
+                <button key={marcador.chave} className={`${styles.marcadorGizmoEixosEditor3D} ${obtemClasseMarcadorGizmoEditor3D(marcador.eixoFisico)} ${marcador.negativo ? styles.marcadorGizmoEixosEditor3DNegativo : ''} ${marcadorGizmoEstaTraseiroEditor3D(marcador, vistaAtual) ? styles.marcadorGizmoEixosEditor3DTraseiro : ''}`} type="button" style={{ left: `${marcador.x}px`, top: `${marcador.y}px`, zIndex: obtemZIndexMarcadorGizmoEditor3D(marcador, vistaAtual) }} onMouseDown={bloqueiaMouseMarcador} onClick={event => aplicaVistaMarcador(event, marcador.destinoClique)} aria-label={`Aplicar Reset Absoluto para a Vista ${marcador.destinoClique}`} title={`Vista ${marcador.destinoClique}`}>
+                    <span>{marcador.rotulo}</span>
                 </button>
             ))}
         </div>

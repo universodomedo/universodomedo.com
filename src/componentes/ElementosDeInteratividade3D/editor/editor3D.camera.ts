@@ -37,19 +37,49 @@ export interface EstadoArrasteCameraEditor3D {
 
 interface OrientacaoCanonicaCameraEditor3D {
     readonly vista: ResetAbsolutoVistaEditor3D;
-    readonly camera: CameraEditor3D;
     readonly matrizCena: Float32Array;
 };
 
+interface DefinicaoVistaCanonicaCameraEditor3D {
+    readonly rotacaoX: number;
+    readonly rotacaoY: number;
+    readonly rotacaoTela: number;
+    readonly planoGuia: PlanoGuiaEditor3D;
+    readonly espacoMovimentoGrab: EspacoMovimentoGrabEditor3D;
+};
+
+export interface OrientacaoCanonicaVistaEditor3D {
+    readonly centro: ResetAbsolutoVistaEditor3D;
+    readonly direita: ResetAbsolutoVistaEditor3D;
+    readonly esquerda: ResetAbsolutoVistaEditor3D;
+    readonly cima: ResetAbsolutoVistaEditor3D;
+    readonly baixo: ResetAbsolutoVistaEditor3D;
+    readonly tras: ResetAbsolutoVistaEditor3D;
+};
+
 type VetorCameraEditor3D = readonly [number, number, number];
-type PlanoCicloVerticalAjusteVistaEditor3D = 'X' | 'Y';
 
 const rotacaoXPerspectivaPadraoCameraEditor3D = -Math.PI / 3;
 const rotacaoYPerspectivaPadraoCameraEditor3D = -Math.PI / 4;
-const rotacaoYCicloVerticalEixoXCameraEditor3D = -Math.PI / 2;
-const rotacaoYCicloVerticalEixoYCameraEditor3D = 0;
 const sensibilidadeOrbitCameraEditor3D = 0.008;
 const margemPitchTurntableCameraEditor3D = 0.001;
+const resetsAbsolutosVistaEditor3D: readonly ResetAbsolutoVistaEditor3D[] = ['X', '-X', 'Y', '-Y', 'Z', '-Z'];
+const vetoresResetsAbsolutosVistaEditor3D: Readonly<Record<ResetAbsolutoVistaEditor3D, VetorCameraEditor3D>> = {
+    X: [1, 0, 0],
+    '-X': [-1, 0, 0],
+    Y: [0, 1, 0],
+    '-Y': [0, -1, 0],
+    Z: [0, 0, 1],
+    '-Z': [0, 0, -1],
+};
+const definicoesVistasCanonicasCameraEditor3D: Readonly<Record<ResetAbsolutoVistaEditor3D, DefinicaoVistaCanonicaCameraEditor3D>> = {
+    X: { rotacaoX: -Math.PI / 2, rotacaoY: Math.PI / 2, rotacaoTela: 0, planoGuia: 'YZ', espacoMovimentoGrab: 'YZ' },
+    '-X': { rotacaoX: -Math.PI / 2, rotacaoY: -Math.PI / 2, rotacaoTela: 0, planoGuia: 'YZ', espacoMovimentoGrab: 'YZ' },
+    Y: { rotacaoX: -Math.PI / 2, rotacaoY: 0, rotacaoTela: 0, planoGuia: 'XZ', espacoMovimentoGrab: 'XZ' },
+    '-Y': { rotacaoX: -Math.PI / 2, rotacaoY: Math.PI, rotacaoTela: 0, planoGuia: 'XZ', espacoMovimentoGrab: 'XZ' },
+    Z: { rotacaoX: 0, rotacaoY: 0, rotacaoTela: 0, planoGuia: 'XY', espacoMovimentoGrab: 'XY' },
+    '-Z': { rotacaoX: Math.PI, rotacaoY: 0, rotacaoTela: 0, planoGuia: 'XY', espacoMovimentoGrab: 'XY' },
+};
 
 function limitaValor(valor: number, minimo: number, maximo: number): number { return Math.min(maximo, Math.max(minimo, valor)); };
 function interpolaValorCameraEditor3D(origem: number, destino: number, progresso: number): number { return origem + ((destino - origem) * progresso); };
@@ -87,6 +117,11 @@ function normalizaVetorCameraEditor3D(vetor: VetorCameraEditor3D, fallback: Veto
 };
 
 function criaMatrizCenaEulerCameraEditor3D(rotacaoX: number, rotacaoY: number, rotacaoTela: number): Float32Array { return multiplicaMatriz4(criaMatrizRotacaoZ(rotacaoTela), multiplicaMatriz4(criaMatrizRotacaoX(rotacaoX), criaMatrizRotacaoZ(rotacaoY))); };
+function criaMatrizCenaVistaCanonicaEditor3D(vista: ResetAbsolutoVistaEditor3D): Float32Array {
+    const definicao = definicoesVistasCanonicasCameraEditor3D[vista];
+
+    return criaMatrizCenaEulerCameraEditor3D(definicao.rotacaoX, definicao.rotacaoY, definicao.rotacaoTela);
+};
 
 function normalizaMatrizRotacaoCameraEditor3D(matriz: Float32Array): Float32Array {
     const xInicial: VetorCameraEditor3D = [matriz[0], matriz[1], matriz[2]];
@@ -119,7 +154,11 @@ function criaCameraEditor3D(rotacaoX: number, rotacaoY: number, rotacaoTela: num
     return { rotacaoX, rotacaoY, rotacaoTela, matrizCena: criaMatrizCenaEulerCameraEditor3D(rotacaoX, rotacaoY, rotacaoTela), deslocamentoX: cameraBase?.deslocamentoX ?? 0, deslocamentoY: cameraBase?.deslocamentoY ?? 0, zoom: cameraBase?.zoom ?? 1, planoGuia, espacoMovimentoGrab };
 };
 
-function criaCameraComMatrizCenaEditor3D(camera: CameraEditor3D, matrizCena: Float32Array): CameraEditor3D { return { ...camera, matrizCena: normalizaMatrizRotacaoCameraEditor3D(matrizCena), planoGuia: 'XY', espacoMovimentoGrab: 'XYZ' }; };
+function criaCameraVistaCanonicaEditor3D(cameraBase: CameraEditor3D, vista: ResetAbsolutoVistaEditor3D): CameraEditor3D {
+    const definicao = definicoesVistasCanonicasCameraEditor3D[vista];
+
+    return { rotacaoX: definicao.rotacaoX, rotacaoY: definicao.rotacaoY, rotacaoTela: definicao.rotacaoTela, matrizCena: criaMatrizCenaVistaCanonicaEditor3D(vista), deslocamentoX: cameraBase.deslocamentoX, deslocamentoY: cameraBase.deslocamentoY, zoom: cameraBase.zoom, planoGuia: definicao.planoGuia, espacoMovimentoGrab: definicao.espacoMovimentoGrab };
+};
 
 export function criaMatrizCenaCameraEditor3D(camera: CameraEditor3D): Float32Array { return camera.matrizCena; };
 
@@ -129,131 +168,62 @@ function calculaDistanciaMatrizesCameraEditor3D(a: Float32Array, b: Float32Array
     return indices.reduce((total, indice) => total + ((a[indice] - b[indice]) * (a[indice] - b[indice])), 0);
 };
 
-function criaOrientacoesCanonicasCameraEditor3D(cameraBase: CameraEditor3D): OrientacaoCanonicaCameraEditor3D[] {
-    const bases: readonly { readonly vista: ResetAbsolutoVistaEditor3D; readonly camera: CameraEditor3D }[] = [
-        { vista: 'X', camera: aplicaVistaLateralCameraEditor3D(cameraBase) },
-        { vista: '-X', camera: aplicaVistaNegativaXCameraEditor3D(cameraBase) },
-        { vista: 'Y', camera: aplicaVistaFrenteCameraEditor3D(cameraBase) },
-        { vista: '-Y', camera: aplicaVistaNegativaYCameraEditor3D(cameraBase) },
-        { vista: 'Z', camera: aplicaVistaTopoCameraEditor3D(cameraBase) },
-        { vista: '-Z', camera: aplicaVistaNegativaZCameraEditor3D(cameraBase) },
-    ];
+function criaOrientacoesCanonicasCameraEditor3D(): OrientacaoCanonicaCameraEditor3D[] { return resetsAbsolutosVistaEditor3D.map(vista => ({ vista, matrizCena: criaMatrizCenaVistaCanonicaEditor3D(vista) })); };
 
-    return bases.map(base => ({ vista: base.vista, camera: base.camera, matrizCena: base.camera.matrizCena }));
-};
-
-function obtemOrientacaoCanonicaMaisProximaCameraEditor3D(cameraBase: CameraEditor3D, matrizAlvo: Float32Array): OrientacaoCanonicaCameraEditor3D {
-    const orientacoes = criaOrientacoesCanonicasCameraEditor3D(cameraBase);
+function obtemOrientacaoCanonicaMaisProximaCameraEditor3D(matrizAlvo: Float32Array): OrientacaoCanonicaCameraEditor3D {
+    const orientacoes = criaOrientacoesCanonicasCameraEditor3D();
 
     return orientacoes.reduce((melhor, atual) => calculaDistanciaMatrizesCameraEditor3D(matrizAlvo, atual.matrizCena) < calculaDistanciaMatrizesCameraEditor3D(matrizAlvo, melhor.matrizCena) ? atual : melhor, orientacoes[0]);
 };
 
-function obtemResetAjustadoPorDirecaoEditor3D(vistaAtual: ResetAbsolutoVistaEditor3D, direcao: DirecaoAjusteVistaEditor3D): ResetAbsolutoVistaEditor3D {
-    if (vistaAtual === 'Z') {
-        if (direcao === 'DIREITA') return '-X';
-        if (direcao === 'ESQUERDA') return 'X';
-        if (direcao === 'CIMA') return 'Y';
+function obtemVistaOpostaCameraEditor3D(vista: ResetAbsolutoVistaEditor3D): ResetAbsolutoVistaEditor3D {
+    if (vista === 'X') return '-X';
+    if (vista === '-X') return 'X';
+    if (vista === 'Y') return '-Y';
+    if (vista === '-Y') return 'Y';
+    if (vista === 'Z') return '-Z';
 
-        return '-Y';
-    }
-
-    if (vistaAtual === '-Z') {
-        if (direcao === 'DIREITA') return '-X';
-        if (direcao === 'ESQUERDA') return 'X';
-        if (direcao === 'CIMA') return '-Y';
-
-        return 'Y';
-    }
-
-    if (vistaAtual === 'X') {
-        if (direcao === 'DIREITA') return 'Y';
-        if (direcao === 'ESQUERDA') return '-Y';
-        if (direcao === 'CIMA') return 'Z';
-
-        return '-Z';
-    }
-
-    if (vistaAtual === '-X') {
-        if (direcao === 'DIREITA') return '-Y';
-        if (direcao === 'ESQUERDA') return 'Y';
-        if (direcao === 'CIMA') return 'Z';
-
-        return '-Z';
-    }
-
-    if (vistaAtual === 'Y') {
-        if (direcao === 'DIREITA') return '-X';
-        if (direcao === 'ESQUERDA') return 'X';
-        if (direcao === 'CIMA') return 'Z';
-
-        return '-Z';
-    }
-
-    if (direcao === 'DIREITA') return 'X';
-    if (direcao === 'ESQUERDA') return '-X';
-    if (direcao === 'CIMA') return 'Z';
-
-    return '-Z';
+    return 'Z';
 };
 
-function calculaDistanciaAnguloCameraEditor3D(a: number, b: number): number { return Math.abs(normalizaAnguloCameraEditor3D(a - b)); };
-
-function obtemPlanoCicloVerticalPorRotacaoCameraEditor3D(camera: CameraEditor3D): PlanoCicloVerticalAjusteVistaEditor3D {
-    const distanciaEixoX = Math.min(calculaDistanciaAnguloCameraEditor3D(camera.rotacaoY, -Math.PI / 2), calculaDistanciaAnguloCameraEditor3D(camera.rotacaoY, Math.PI / 2));
-    const distanciaEixoY = Math.min(calculaDistanciaAnguloCameraEditor3D(camera.rotacaoY, 0), calculaDistanciaAnguloCameraEditor3D(camera.rotacaoY, Math.PI));
-
-    return distanciaEixoX < distanciaEixoY ? 'X' : 'Y';
+function transformaVetorPorMatrizCenaCameraEditor3D(matrizCena: Float32Array, vetor: VetorCameraEditor3D): VetorCameraEditor3D {
+    return [
+        (matrizCena[0] * vetor[0]) + (matrizCena[4] * vetor[1]) + (matrizCena[8] * vetor[2]),
+        (matrizCena[1] * vetor[0]) + (matrizCena[5] * vetor[1]) + (matrizCena[9] * vetor[2]),
+        (matrizCena[2] * vetor[0]) + (matrizCena[6] * vetor[1]) + (matrizCena[10] * vetor[2]),
+    ];
 };
 
-function obtemPlanoCicloVerticalCameraEditor3D(camera: CameraEditor3D, vistaAtual: ResetAbsolutoVistaEditor3D): PlanoCicloVerticalAjusteVistaEditor3D {
-    if (vistaAtual === 'X' || vistaAtual === '-X') return 'X';
-    if (vistaAtual === 'Y' || vistaAtual === '-Y') return 'Y';
+function obtemPontuacaoResetPorDirecaoCameraEditor3D(matrizCena: Float32Array, reset: ResetAbsolutoVistaEditor3D, direcao: DirecaoAjusteVistaEditor3D): number {
+    const vetorProjetado = transformaVetorPorMatrizCenaCameraEditor3D(matrizCena, vetoresResetsAbsolutosVistaEditor3D[reset]);
 
-    return obtemPlanoCicloVerticalPorRotacaoCameraEditor3D(camera);
+    if (direcao === 'DIREITA') return vetorProjetado[0];
+    if (direcao === 'ESQUERDA') return -vetorProjetado[0];
+    if (direcao === 'CIMA') return vetorProjetado[1];
+
+    return -vetorProjetado[1];
 };
 
-function obtemRotacaoYPlanoCicloVerticalCameraEditor3D(plano: PlanoCicloVerticalAjusteVistaEditor3D): number { return plano === 'X' ? rotacaoYCicloVerticalEixoXCameraEditor3D : rotacaoYCicloVerticalEixoYCameraEditor3D; };
+function obtemResetPorDirecaoCameraEditor3D(vistaAtual: ResetAbsolutoVistaEditor3D, direcao: DirecaoAjusteVistaEditor3D): ResetAbsolutoVistaEditor3D {
+    const matrizCena = criaMatrizCenaVistaCanonicaEditor3D(vistaAtual);
+    const vistaOposta = obtemVistaOpostaCameraEditor3D(vistaAtual);
+    const candidatos = resetsAbsolutosVistaEditor3D.filter(reset => reset !== vistaAtual && reset !== vistaOposta);
 
-function criaVistaTopoCicloVerticalCameraEditor3D(camera: CameraEditor3D, plano: PlanoCicloVerticalAjusteVistaEditor3D): CameraEditor3D { return criaCameraEditor3D(0, obtemRotacaoYPlanoCicloVerticalCameraEditor3D(plano), 0, 'XY', 'XY', camera); };
-
-function criaVistaBaixoCicloVerticalCameraEditor3D(camera: CameraEditor3D, plano: PlanoCicloVerticalAjusteVistaEditor3D): CameraEditor3D { return criaCameraEditor3D(Math.PI, obtemRotacaoYPlanoCicloVerticalCameraEditor3D(plano), 0, 'XY', 'XY', camera); };
-
-function obtemCameraAjusteVistaVerticalEixoYEditor3D(camera: CameraEditor3D, vistaAtual: ResetAbsolutoVistaEditor3D, direcao: DirecaoAjusteVistaEditor3D): CameraEditor3D {
-    if (direcao === 'CIMA') {
-        if (vistaAtual === 'Y') return criaVistaBaixoCicloVerticalCameraEditor3D(camera, 'Y');
-        if (vistaAtual === '-Z') return aplicaVistaNegativaYCameraEditor3D(camera);
-        if (vistaAtual === '-Y') return criaVistaTopoCicloVerticalCameraEditor3D(camera, 'Y');
-
-        return aplicaVistaFrenteCameraEditor3D(camera);
-    }
-
-    if (vistaAtual === 'Y') return criaVistaTopoCicloVerticalCameraEditor3D(camera, 'Y');
-    if (vistaAtual === 'Z') return aplicaVistaNegativaYCameraEditor3D(camera);
-    if (vistaAtual === '-Y') return criaVistaBaixoCicloVerticalCameraEditor3D(camera, 'Y');
-
-    return aplicaVistaFrenteCameraEditor3D(camera);
+    return candidatos.reduce((melhor, atual) => obtemPontuacaoResetPorDirecaoCameraEditor3D(matrizCena, atual, direcao) > obtemPontuacaoResetPorDirecaoCameraEditor3D(matrizCena, melhor, direcao) ? atual : melhor, candidatos[0]);
 };
 
-function obtemCameraAjusteVistaVerticalEixoXEditor3D(camera: CameraEditor3D, vistaAtual: ResetAbsolutoVistaEditor3D, direcao: DirecaoAjusteVistaEditor3D): CameraEditor3D {
-    if (direcao === 'CIMA') {
-        if (vistaAtual === 'X') return criaVistaBaixoCicloVerticalCameraEditor3D(camera, 'X');
-        if (vistaAtual === '-Z') return aplicaVistaNegativaXCameraEditor3D(camera);
-        if (vistaAtual === '-X') return criaVistaTopoCicloVerticalCameraEditor3D(camera, 'X');
-
-        return aplicaVistaLateralCameraEditor3D(camera);
-    }
-
-    if (vistaAtual === 'X') return criaVistaTopoCicloVerticalCameraEditor3D(camera, 'X');
-    if (vistaAtual === 'Z') return aplicaVistaNegativaXCameraEditor3D(camera);
-    if (vistaAtual === '-X') return criaVistaBaixoCicloVerticalCameraEditor3D(camera, 'X');
-
-    return aplicaVistaLateralCameraEditor3D(camera);
+export function obtemOrientacaoCanonicaVistaEditor3D(vista: ResetAbsolutoVistaEditor3D): OrientacaoCanonicaVistaEditor3D {
+    return { centro: vista, direita: obtemResetPorDirecaoCameraEditor3D(vista, 'DIREITA'), esquerda: obtemResetPorDirecaoCameraEditor3D(vista, 'ESQUERDA'), cima: obtemResetPorDirecaoCameraEditor3D(vista, 'CIMA'), baixo: obtemResetPorDirecaoCameraEditor3D(vista, 'BAIXO'), tras: obtemVistaOpostaCameraEditor3D(vista) };
 };
 
-function obtemCameraAjusteVistaVerticalEditor3D(camera: CameraEditor3D, vistaAtual: ResetAbsolutoVistaEditor3D, direcao: DirecaoAjusteVistaEditor3D): CameraEditor3D {
-    const plano = obtemPlanoCicloVerticalCameraEditor3D(camera, vistaAtual);
+export function obtemResetAbsolutoVistaPorDirecaoEditor3D(vistaAtual: ResetAbsolutoVistaEditor3D, direcao: DirecaoAjusteVistaEditor3D): ResetAbsolutoVistaEditor3D {
+    const orientacao = obtemOrientacaoCanonicaVistaEditor3D(vistaAtual);
 
-    return plano === 'X' ? obtemCameraAjusteVistaVerticalEixoXEditor3D(camera, vistaAtual, direcao) : obtemCameraAjusteVistaVerticalEixoYEditor3D(camera, vistaAtual, direcao);
+    if (direcao === 'DIREITA') return orientacao.direita;
+    if (direcao === 'ESQUERDA') return orientacao.esquerda;
+    if (direcao === 'CIMA') return orientacao.cima;
+
+    return orientacao.baixo;
 };
 
 export function criaCameraPadraoEditor3D(): CameraEditor3D { return criaCameraEditor3D(rotacaoXPerspectivaPadraoCameraEditor3D, rotacaoYPerspectivaPadraoCameraEditor3D, 0, 'XY', 'XYZ'); };
@@ -278,38 +248,27 @@ export function aplicaDollyCameraEditor3D(camera: CameraEditor3D, deltaY: number
     return { ...camera, zoom: 4 / proximaDistancia };
 };
 
-export function aplicaVistaTopoCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraEditor3D(0, 0, 0, 'XY', 'XY', camera); };
+export function aplicaVistaTopoCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraVistaCanonicaEditor3D(camera, 'Z'); };
 
-export function aplicaVistaFrenteCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraEditor3D(-Math.PI / 2, 0, 0, 'XZ', 'XZ', camera); };
+export function aplicaVistaFrenteCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraVistaCanonicaEditor3D(camera, 'Y'); };
 
-export function aplicaVistaLateralCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraEditor3D(-Math.PI / 2, -Math.PI / 2, 0, 'YZ', 'YZ', camera); };
+export function aplicaVistaLateralCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraVistaCanonicaEditor3D(camera, 'X'); };
 
 export function aplicaVistaPerspectivaCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraEditor3D(rotacaoXPerspectivaPadraoCameraEditor3D, rotacaoYPerspectivaPadraoCameraEditor3D, 0, 'XY', 'XYZ', camera); };
 
-export function aplicaVistaNegativaXCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraEditor3D(-Math.PI / 2, Math.PI / 2, 0, 'YZ', 'YZ', camera); };
+export function aplicaVistaNegativaXCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraVistaCanonicaEditor3D(camera, '-X'); };
 
-export function aplicaVistaNegativaYCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraEditor3D(-Math.PI / 2, Math.PI, 0, 'XZ', 'XZ', camera); };
+export function aplicaVistaNegativaYCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraVistaCanonicaEditor3D(camera, '-Y'); };
 
-export function aplicaVistaNegativaZCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraEditor3D(Math.PI, 0, 0, 'XY', 'XY', camera); };
+export function aplicaVistaNegativaZCameraEditor3D(camera: CameraEditor3D): CameraEditor3D { return criaCameraVistaCanonicaEditor3D(camera, '-Z'); };
 
-export function aplicaResetAbsolutoVistaCameraEditor3D(camera: CameraEditor3D, vista: ResetAbsolutoVistaEditor3D): CameraEditor3D {
-    if (vista === 'X') return aplicaVistaLateralCameraEditor3D(camera);
-    if (vista === 'Y') return aplicaVistaFrenteCameraEditor3D(camera);
-    if (vista === 'Z') return aplicaVistaTopoCameraEditor3D(camera);
-    if (vista === '-X') return aplicaVistaNegativaXCameraEditor3D(camera);
-    if (vista === '-Y') return aplicaVistaNegativaYCameraEditor3D(camera);
+export function aplicaResetAbsolutoVistaCameraEditor3D(camera: CameraEditor3D, vista: ResetAbsolutoVistaEditor3D): CameraEditor3D { return criaCameraVistaCanonicaEditor3D(camera, vista); };
 
-    return aplicaVistaNegativaZCameraEditor3D(camera);
-};
-
-export function obtemResetAbsolutoVistaAtualCameraEditor3D(camera: CameraEditor3D): ResetAbsolutoVistaEditor3D { return obtemOrientacaoCanonicaMaisProximaCameraEditor3D(camera, camera.matrizCena).vista; };
+export function obtemResetAbsolutoVistaAtualCameraEditor3D(camera: CameraEditor3D): ResetAbsolutoVistaEditor3D { return obtemOrientacaoCanonicaMaisProximaCameraEditor3D(camera.matrizCena).vista; };
 
 export function obtemCameraAjusteVistaPorDirecaoEditor3D(camera: CameraEditor3D, direcao: DirecaoAjusteVistaEditor3D): CameraEditor3D {
     const vistaAtual = obtemResetAbsolutoVistaAtualCameraEditor3D(camera);
-
-    if (direcao === 'CIMA' || direcao === 'BAIXO') return obtemCameraAjusteVistaVerticalEditor3D(camera, vistaAtual, direcao);
-
-    const proximaVista = obtemResetAjustadoPorDirecaoEditor3D(vistaAtual, direcao);
+    const proximaVista = obtemResetAbsolutoVistaPorDirecaoEditor3D(vistaAtual, direcao);
 
     return aplicaResetAbsolutoVistaCameraEditor3D(camera, proximaVista);
 };
