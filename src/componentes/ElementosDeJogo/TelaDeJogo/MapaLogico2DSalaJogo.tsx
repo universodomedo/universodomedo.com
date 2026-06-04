@@ -2,11 +2,12 @@
 
 import styles from './MapaLogico2DSalaJogo.module.css';
 import controlesStyles from './MapaLogico2DSalaJogo.controles.module.css';
+import ocupantesStyles from './MapaLogico2DSalaJogo.ocupantes.module.css';
 
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
 
 export function MapaLogico2DSalaJogo() {
-    const { estadoCarregamento, erro, mapaLogicoSalaJogo, celulas, estiloMapa, arrastando, iniciaPan, atualizaPan, finalizaPan, aproximaZoom, afastaZoom, rotacionaMapa, resetaVisualizacao } = useContextoTelaDeJogoMapaLogico();
+    const { estadoCarregamento, erro, mapaLogicoSalaJogo, celulas, estiloMapa, arrastando, keyOcupanteSelecionado, selecionaOcupante, impedeInicioPanOcupante, iniciaPan, atualizaPan, finalizaPan, aproximaZoom, afastaZoom, rotacionaMapa, resetaVisualizacao } = useContextoTelaDeJogoMapaLogico();
 
     if (estadoCarregamento === 'carregando') {
         return (
@@ -52,10 +53,10 @@ export function MapaLogico2DSalaJogo() {
                         <div key={celula.key} className={styles.celula_mapa_logico}>
                             <span className={styles.coordenada_celula_mapa_logico}>{celula.x},{celula.y}</span>
                             {celula.ocupantes.map(ocupante => (
-                                <span key={ocupante.keySer} className={styles.ocupante_mapa_logico} title={`${ocupante.nomeExibicao} (${ocupante.posicao.x}, ${ocupante.posicao.y})`}>
+                                <button key={ocupante.keySer} type="button" className={`${ocupantesStyles.ocupante_mapa_logico} ${keyOcupanteSelecionado === ocupante.keySer ? ocupantesStyles.ocupante_mapa_logico_selecionado : ''}`} title={`${ocupante.nomeExibicao} (${ocupante.posicao.x}, ${ocupante.posicao.y})`} aria-pressed={keyOcupanteSelecionado === ocupante.keySer} onPointerDown={impedeInicioPanOcupante} onClick={() => selecionaOcupante(ocupante.keySer)}>
                                     <strong>{ocupante.rotuloCurto}</strong>
                                     <small>{ocupante.nomeExibicao}</small>
-                                </span>
+                                </button>
                             ))}
                         </div>
                     ))}

@@ -78,30 +78,3 @@
     font-size: 0.64em;
     pointer-events: none;
 }
-
-.ocupante_mapa_logico {
-    display: grid;
-    max-width: 100%;
-    gap: 0.08em;
-    place-items: center;
-    padding: 0.28em 0.42em;
-    border: 0.08em solid #d9b35f;
-    border-radius: 0.4em;
-    color: #fff8df;
-    background: #4c3c1e;
-    box-shadow: 0 0.25em 0.85em rgba(0, 0, 0, 0.36);
-}
-
-.ocupante_mapa_logico strong {
-    font-size: 0.82em;
-    line-height: 1;
-}
-
-.ocupante_mapa_logico small {
-    max-width: 7em;
-    overflow: hidden;
-    color: #f4ddb0;
-    font-size: 0.58em;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}

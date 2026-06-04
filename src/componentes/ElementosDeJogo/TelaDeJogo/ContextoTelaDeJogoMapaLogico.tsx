@@ -8,6 +8,7 @@ import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { criaCelulasMapaLogico, validaRespostaMapaLogicoSalaJogo } from './ContextoTelaDeJogoMapaLogico.helpers';
 import type { ContextoTelaDeJogoMapaLogicoProps, EstadoCarregamentoMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
 import { useControleVisualMapaLogico } from './useControleVisualMapaLogico';
+import { useSelecaoOcupanteMapaLogico } from './useSelecaoOcupanteMapaLogico';
 
 const ContextoTelaDeJogoMapaLogico = createContext<ContextoTelaDeJogoMapaLogicoProps | undefined>(undefined);
 
@@ -48,6 +49,7 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
 
     const celulas = useMemo(() => mapaLogicoSalaJogo === null ? [] : criaCelulasMapaLogico(mapaLogicoSalaJogo), [mapaLogicoSalaJogo]);
     const controleVisual = useControleVisualMapaLogico(mapaLogicoSalaJogo);
+    const selecaoOcupante = useSelecaoOcupanteMapaLogico(mapaLogicoSalaJogo);
 
     const contexto = useMemo<ContextoTelaDeJogoMapaLogicoProps>(() => ({
         estadoCarregamento,
@@ -55,7 +57,8 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
         mapaLogicoSalaJogo,
         celulas,
         ...controleVisual,
-    }), [celulas, controleVisual, erro, estadoCarregamento, mapaLogicoSalaJogo]);
+        ...selecaoOcupante,
+    }), [celulas, controleVisual, erro, estadoCarregamento, mapaLogicoSalaJogo, selecaoOcupante]);
 
     return (
         <ContextoTelaDeJogoMapaLogico.Provider value={contexto}>

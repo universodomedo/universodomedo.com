@@ -51,7 +51,15 @@ export type ControleVisualMapaLogicoTelaJogo = {
     resetaVisualizacao: () => void;
 };
 
-export type ContextoTelaDeJogoMapaLogicoProps = ControleVisualMapaLogicoTelaJogo & {
+export type SelecaoOcupanteMapaLogicoTelaJogo = {
+    keyOcupanteSelecionado: string | null;
+    ocupanteSelecionado: OcupanteMapaLogicoSalaJogoWsDto | null;
+    selecionaOcupante: (keySer: string) => void;
+    limpaSelecaoOcupante: () => void;
+    impedeInicioPanOcupante: (event: ReactPointerEvent<HTMLButtonElement>) => void;
+};
+
+export type ContextoTelaDeJogoMapaLogicoProps = ControleVisualMapaLogicoTelaJogo & SelecaoOcupanteMapaLogicoTelaJogo & {
     estadoCarregamento: EstadoCarregamentoMapaLogicoTelaJogo;
     erro: string | null;
     mapaLogicoSalaJogo: MapaLogicoSalaJogoPayloadWsDto | null;
