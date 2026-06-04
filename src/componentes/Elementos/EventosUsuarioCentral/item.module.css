@@ -1,0 +1,64 @@
+.item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    padding: 0.5em;
+    border-radius: 0.25em;
+    border-left: 0.2em solid transparent;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.item_nao_lido {
+    border-left-color: #4ea1ff;
+}
+
+.item_lido {
+    opacity: 0.6;
+}
+
+.item_cabecalho {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5em;
+}
+
+.item_titulo {
+    font-weight: bold;
+}
+
+.item_rotulo_formato {
+    flex-shrink: 0;
+    font-size: 0.7em;
+    padding: 0.1em 0.4em;
+    border-radius: 0.25em;
+    border: 0.1em solid rgba(255, 255, 255, 0.3);
+    opacity: 0.85;
+}
+
+.item_mensagem {
+    font-size: 0.9em;
+}
+
+.item_texto_auxiliar {
+    font-size: 0.85em;
+    padding: 0.4em 0.5em;
+    border-radius: 0.25em;
+    background: rgba(78, 161, 255, 0.12);
+}
+
+.item_meta {
+    font-size: 0.75em;
+    opacity: 0.7;
+}
+
+.botao_marcar_lido {
+    align-self: flex-start;
+    margin-top: 0.25em;
+    padding: 0.2em 0.5em;
+    border-radius: 0.25em;
+    border: 0.1em solid #fff;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+}

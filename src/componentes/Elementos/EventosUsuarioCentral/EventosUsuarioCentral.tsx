@@ -1,15 +1,15 @@
 'use client';
 
 import styles from './styles.module.css';
+import itemStyles from './item.module.css';
 
 import { useContextoEventosUsuario } from 'Contextos/ContextoEventosUsuario/contexto';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
-import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 
 // Central mínima de eventos do usuário (Etapa 7): apenas renderiza; toda a lógica/estado vive no ContextoEventosUsuario.
 export default function EventosUsuarioCentral() {
     const { estaAutenticado } = useContextoAutenticacao();
-    const { eventos, carregando, aberto, naoLidos, alternarAberto, listar, marcarLido } = useContextoEventosUsuario();
+    const { itens, carregando, aberto, naoLidos, alternarAberto, listar, marcarLido } = useContextoEventosUsuario();
 
     if (!estaAutenticado) return null;
 
@@ -24,14 +24,18 @@ export default function EventosUsuarioCentral() {
                         <button type="button" className={styles.botao_atualizar} onClick={listar} disabled={carregando}>{carregando ? '...' : 'Atualizar'}</button>
                     </div>
 
-                    {eventos.length === 0 && <div className={styles.vazio}>Nenhum evento.</div>}
+                    {itens.length === 0 && <div className={styles.vazio}>Nenhum evento.</div>}
 
-                    {eventos.map(evento => (
-                        <div key={evento.id} className={`${styles.item} ${evento.dataLeitura ? styles.item_lido : styles.item_nao_lido}`}>
-                            <div className={styles.item_titulo}>{evento.titulo}</div>
-                            <div className={styles.item_mensagem}>{evento.mensagem}</div>
-                            <div className={styles.item_meta}>{evento.formato} · {formataData(evento.dataCriacao, 'dd/MM/yyyy HH:mm')} · {evento.dataLeitura ? 'lido' : 'não lido'}</div>
-                            {!evento.dataLeitura && <button type="button" className={styles.botao_marcar_lido} onClick={() => marcarLido(evento.id)}>marcar como lido</button>}
+                    {itens.map(item => (
+                        <div key={item.id} className={`${itemStyles.item} ${item.lido ? itemStyles.item_lido : itemStyles.item_nao_lido}`}>
+                            <div className={itemStyles.item_cabecalho}>
+                                <span className={itemStyles.item_titulo}>{item.titulo}</span>
+                                <span className={itemStyles.item_rotulo_formato}>{item.rotuloFormato}</span>
+                            </div>
+                            <div className={itemStyles.item_mensagem}>{item.mensagem}</div>
+                            {item.textoAuxiliar && <div className={itemStyles.item_texto_auxiliar}>{item.textoAuxiliar}</div>}
+                            <div className={itemStyles.item_meta}>{item.dataCriacaoFormatada} · {item.rotuloLeitura}</div>
+                            {item.podeMarcarComoLido && <button type="button" className={itemStyles.botao_marcar_lido} onClick={() => marcarLido(item.id)}>marcar como lido</button>}
                         </div>
                     ))}
                 </div>

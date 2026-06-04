@@ -5,9 +5,11 @@ import { Eventos_EnviaERecebe, EventoUsuarioDto } from 'types-nora-api';
 
 import { eventoWs, useSocketEpoch } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import { paraItemCentral, EventoUsuarioCentralItem } from './eventoUsuarioCentralItem';
 
 export interface ContextoEventosUsuarioProps {
     eventos: EventoUsuarioDto[];
+    itens: EventoUsuarioCentralItem[];
     carregando: boolean;
     aberto: boolean;
     naoLidos: number;
@@ -73,7 +75,10 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
 
     const naoLidos = useMemo(() => eventos.filter(evento => !evento.dataLeitura).length, [eventos]);
 
-    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido }), [eventos, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido]);
+    // Etapa 11: itens prontos para render (contexto prepara; componente não interpreta formato/dados/datas).
+    const itens = useMemo(() => eventos.map(paraItemCentral), [eventos]);
+
+    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido }), [eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido]);
 
     return (
         <ContextoEventosUsuario.Provider value={api}>
