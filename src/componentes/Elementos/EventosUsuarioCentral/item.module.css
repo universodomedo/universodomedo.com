@@ -62,3 +62,14 @@
     color: #fff;
     cursor: pointer;
 }
+
+.botao_tutorial {
+    align-self: flex-start;
+    margin-top: 0.25em;
+    padding: 0.2em 0.5em;
+    border-radius: 0.25em;
+    border: 0.1em solid #4ea1ff;
+    background: transparent;
+    color: #4ea1ff;
+    cursor: pointer;
+}

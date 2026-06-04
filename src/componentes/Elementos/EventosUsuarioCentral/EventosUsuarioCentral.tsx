@@ -2,6 +2,7 @@
 
 import styles from './styles.module.css';
 import itemStyles from './item.module.css';
+import EventosUsuarioTutorialIntervencao from './EventosUsuarioTutorialIntervencao';
 
 import { useContextoEventosUsuario } from 'Contextos/ContextoEventosUsuario/contexto';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
@@ -9,7 +10,7 @@ import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto
 // Central mínima de eventos do usuário (Etapa 7): apenas renderiza; toda a lógica/estado vive no ContextoEventosUsuario.
 export default function EventosUsuarioCentral() {
     const { estaAutenticado } = useContextoAutenticacao();
-    const { itens, carregando, aberto, naoLidos, alternarAberto, listar, marcarLido } = useContextoEventosUsuario();
+    const { itens, carregando, aberto, naoLidos, alternarAberto, listar, marcarLido, abrirTutorial } = useContextoEventosUsuario();
 
     if (!estaAutenticado) return null;
 
@@ -35,11 +36,14 @@ export default function EventosUsuarioCentral() {
                             <div className={itemStyles.item_mensagem}>{item.mensagem}</div>
                             {item.textoAuxiliar && <div className={itemStyles.item_texto_auxiliar}>{item.textoAuxiliar}</div>}
                             <div className={itemStyles.item_meta}>{item.dataCriacaoFormatada} · {item.rotuloLeitura}</div>
+                            {item.podeAbrirTutorial && item.rotuloAcaoTutorial && <button type="button" className={itemStyles.botao_tutorial} onClick={() => abrirTutorial(item.id)}>{item.rotuloAcaoTutorial}</button>}
                             {item.podeMarcarComoLido && <button type="button" className={itemStyles.botao_marcar_lido} onClick={() => marcarLido(item.id)}>marcar como lido</button>}
                         </div>
                     ))}
                 </div>
             )}
+
+            <EventosUsuarioTutorialIntervencao />
         </div>
     );
 };

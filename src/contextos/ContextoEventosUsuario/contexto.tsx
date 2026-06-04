@@ -6,6 +6,7 @@ import { Eventos_EnviaERecebe, EventoUsuarioDto } from 'types-nora-api';
 import { eventoWs, useSocketEpoch } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { paraItemCentral, EventoUsuarioCentralItem } from './eventoUsuarioCentralItem';
+import { useTutorialIntervencao } from './useTutorialIntervencao';
 
 export interface ContextoEventosUsuarioProps {
     eventos: EventoUsuarioDto[];
@@ -17,6 +18,10 @@ export interface ContextoEventosUsuarioProps {
     listar: () => void;
     sincronizarAposNotificacaoRecebida: () => void;
     marcarLido: (idEvento: number) => void;
+    tutorialAberto: EventoUsuarioCentralItem | null;
+    abrirTutorial: (idEvento: number) => void;
+    fecharTutorial: () => void;
+    confirmarTutorial: () => void;
 };
 
 const ContextoEventosUsuario = createContext<ContextoEventosUsuarioProps | undefined>(undefined);
@@ -78,7 +83,10 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
     // Etapa 11: itens prontos para render (contexto prepara; componente não interpreta formato/dados/datas).
     const itens = useMemo(() => eventos.map(paraItemCentral), [eventos]);
 
-    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido }), [eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido]);
+    // Etapa 12: estado/ações da intervenção visual de tutorial (lógica isolada em hook para manter o contexto pequeno).
+    const { tutorialAberto, abrirTutorial, fecharTutorial, confirmarTutorial } = useTutorialIntervencao(itens, marcarLido, estaAutenticado);
+
+    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, abrirTutorial, fecharTutorial, confirmarTutorial }), [eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, abrirTutorial, fecharTutorial, confirmarTutorial]);
 
     return (
         <ContextoEventosUsuario.Provider value={api}>

@@ -13,6 +13,8 @@ export type EventoUsuarioCentralItem = {
     lido: boolean;
     podeMarcarComoLido: boolean;
     textoAuxiliar: string | null;
+    podeAbrirTutorial: boolean;
+    rotuloAcaoTutorial: string | null;
 };
 
 // Mapeamento fechado e explícito de formato → rótulo humano; default neutro 'Evento' defensivo p/ formato gerado futuro.
@@ -34,5 +36,6 @@ function textoAuxiliar(evento: EventoUsuarioDto): string | null {
 
 export function paraItemCentral(evento: EventoUsuarioDto): EventoUsuarioCentralItem {
     const lido = !!evento.dataLeitura;
-    return { id: evento.id, titulo: evento.titulo, mensagem: evento.mensagem, rotuloFormato: rotuloFormato(evento.formato), rotuloLeitura: lido ? 'lido' : 'não lido', dataCriacaoFormatada: formataData(evento.dataCriacao, 'dd/MM/yyyy HH:mm'), lido, podeMarcarComoLido: !lido, textoAuxiliar: textoAuxiliar(evento) };
+    const ehTutorial = evento.formato === 'tutorial';
+    return { id: evento.id, titulo: evento.titulo, mensagem: evento.mensagem, rotuloFormato: rotuloFormato(evento.formato), rotuloLeitura: lido ? 'lido' : 'não lido', dataCriacaoFormatada: formataData(evento.dataCriacao, 'dd/MM/yyyy HH:mm'), lido, podeMarcarComoLido: !lido, textoAuxiliar: textoAuxiliar(evento), podeAbrirTutorial: ehTutorial, rotuloAcaoTutorial: ehTutorial ? 'Ver orientação' : null };
 };
