@@ -3,7 +3,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Eventos_EnviaERecebe, EventoUsuarioDto } from 'types-nora-api';
 
-import { eventoWs } from 'Hooks/useEventoWs';
+import { eventoWs, useSocketEpoch } from 'Hooks/useEventoWs';
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 export interface ContextoEventosUsuarioProps {
     eventos: EventoUsuarioDto[];
@@ -28,6 +29,9 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
     const [eventos, setEventos] = useState<EventoUsuarioDto[]>([]);
     const [carregando, setCarregando] = useState(false);
     const [aberto, setAberto] = useState(false);
+
+    const { estaAutenticado } = useContextoAutenticacao();
+    const epoch = useSocketEpoch();
 
     // Busca a lista do backend (fonte da verdade). silencioso=true não mexe em `carregando` (sync pós-toast sem ruído visual).
     const buscarEventos = useCallback((silencioso: boolean) => {
@@ -55,6 +59,17 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
 
     // Carrega do backend ao abrir a central.
     useEffect(() => { if (aberto) listar(); }, [aberto, listar]);
+
+    // Etapa 9: estado inicial/reconexão. Autenticou/reconectou (epoch) => sincroniza silenciosamente; desautenticou => limpa e fecha.
+    useEffect(() => {
+        if (!estaAutenticado) {
+            setEventos([]);
+            setCarregando(false);
+            setAberto(false);
+            return;
+        }
+        buscarEventos(true);
+    }, [estaAutenticado, epoch, buscarEventos]);
 
     const naoLidos = useMemo(() => eventos.filter(evento => !evento.dataLeitura).length, [eventos]);
 
