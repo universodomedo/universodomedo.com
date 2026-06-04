@@ -5,15 +5,21 @@ import { Eventos_Emite, Eventos_Envia } from 'types-nora-api';
 
 import { useRecebeEmitWs, useSocketEpoch, eventoWs } from 'Hooks/useEventoWs';
 import { toast } from 'Hooks/useToast';
+import { useContextoEventosUsuario } from 'Contextos/ContextoEventosUsuario/contexto';
 
 export function useEventosUsuarioSocket() {
+    const { sincronizarAposNotificacaoRecebida } = useContextoEventosUsuario();
+
     useRecebeEmitWs(Eventos_Emite.EventosUsuario.eventos.notificacaoRecebida, data => {
         const n = data.notificacao;
-        if (n.tipo === 'sucesso') { toast.sucesso(n.titulo, n.mensagem); return; }
-        if (n.tipo === 'erro') { toast.erro(n.titulo, n.mensagem); return; }
-        if (n.tipo === 'aviso') { toast.aviso(n.titulo, n.mensagem); return; }
+        if (n.tipo === 'sucesso') toast.sucesso(n.titulo, n.mensagem);
+        else if (n.tipo === 'erro') toast.erro(n.titulo, n.mensagem);
+        else if (n.tipo === 'aviso') toast.aviso(n.titulo, n.mensagem);
         // fallback TEMPORÁRIO da Etapa 1: não há toast neutro 'info'. Não tornar isto regra de domínio.
-        toast.aviso(n.titulo, n.mensagem);
+        else toast.aviso(n.titulo, n.mensagem);
+
+        // Etapa 8: após o toast, sincroniza a lista da central com o backend (fonte da verdade), mesmo com a central fechada.
+        sincronizarAposNotificacaoRecebida();
     });
 
     // Etapa 4: após o listener acima estar registrado (ordem de efeitos do React garante), pede ao backend

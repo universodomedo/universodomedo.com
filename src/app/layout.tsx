@@ -79,9 +79,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <ReduxProvider>
             <ContextoPerformanceProvider>
               <ContextoAutenticacaoProvider>
-                <SocketListeners />
-                <GatilhoDevEventosUsuario />
                 <ContextoEventosUsuarioProvider>
+                  <SocketListeners />
+                  <GatilhoDevEventosUsuario />
                   <EventosUsuarioCentral />
                 </ContextoEventosUsuarioProvider>
                 <RadixTooltip delayDuration={200} skipDelayDuration={0}>

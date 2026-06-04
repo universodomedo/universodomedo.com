@@ -12,6 +12,7 @@ export interface ContextoEventosUsuarioProps {
     naoLidos: number;
     alternarAberto: () => void;
     listar: () => void;
+    sincronizarAposNotificacaoRecebida: () => void;
     marcarLido: (idEvento: number) => void;
 };
 
@@ -28,14 +29,20 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
     const [carregando, setCarregando] = useState(false);
     const [aberto, setAberto] = useState(false);
 
-    // Lista os eventos do próprio usuário pelo backend (fonte da verdade).
-    const listar = useCallback(() => {
-        setCarregando(true);
+    // Busca a lista do backend (fonte da verdade). silencioso=true não mexe em `carregando` (sync pós-toast sem ruído visual).
+    const buscarEventos = useCallback((silencioso: boolean) => {
+        if (!silencioso) setCarregando(true);
         eventoWs(Eventos_EnviaERecebe.EventosUsuario.eventos.obterMeusEventos, {}, {
-            onSuccess: resp => { setEventos(resp.eventos); setCarregando(false); },
-            onError: () => { setCarregando(false); },
+            onSuccess: resp => { setEventos(resp.eventos); if (!silencioso) setCarregando(false); },
+            onError: () => { if (!silencioso) setCarregando(false); },
         });
     }, []);
+
+    // Lista os eventos do próprio usuário pelo backend (fonte da verdade).
+    const listar = useCallback(() => buscarEventos(false), [buscarEventos]);
+
+    // Etapa 8: sincronização silenciosa após notificacaoRecebida — atualiza `eventos` sem abrir a central nem ligar `carregando`.
+    const sincronizarAposNotificacaoRecebida = useCallback(() => buscarEventos(true), [buscarEventos]);
 
     // Marca como lido e adota a lista atualizada que o backend devolve (sem mutar estado local como verdade).
     const marcarLido = useCallback((idEvento: number) => {
@@ -51,7 +58,7 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
 
     const naoLidos = useMemo(() => eventos.filter(evento => !evento.dataLeitura).length, [eventos]);
 
-    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, carregando, aberto, naoLidos, alternarAberto, listar, marcarLido }), [eventos, carregando, aberto, naoLidos, alternarAberto, listar, marcarLido]);
+    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido }), [eventos, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido]);
 
     return (
         <ContextoEventosUsuario.Provider value={api}>
