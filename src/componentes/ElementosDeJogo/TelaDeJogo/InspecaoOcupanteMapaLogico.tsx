@@ -18,6 +18,7 @@ export function InspecaoOcupanteMapaLogico() {
             <header className={styles.cabecalho_inspecao}>
                 <div>
                     <strong>{ocupanteSelecionado.nomeExibicao}</strong>
+                    <span>{ocupanteSelecionado.perfilFuncional.nome}</span>
                     <span>Ficha #{ocupanteSelecionado.idFicha} · {ocupanteSelecionado.posicao.x},{ocupanteSelecionado.posicao.y}</span>
                     <small>{ocupanteSelecionado.keySer}</small>
                 </div>

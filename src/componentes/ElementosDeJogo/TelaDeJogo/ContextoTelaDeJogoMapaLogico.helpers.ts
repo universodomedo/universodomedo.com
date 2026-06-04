@@ -14,6 +14,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
     for (const ocupante of payload.ocupantesMapaLogico) {
         if (!ocupante.keySer || !ocupante.nomeExibicao) return 'Ocupante do mapa veio sem identificação pública válida.';
         if (!Number.isInteger(ocupante.idFicha) || ocupante.idFicha <= 0) return `Ocupante ${ocupante.nomeExibicao} veio sem vínculo válido com ficha.`;
+        if (ocupante.perfilFuncional?.key !== 'policial_funcional_mvp' || !ocupante.perfilFuncional.nome) return `Ocupante ${ocupante.nomeExibicao} veio sem perfil funcional válido.`;
         if (!Number.isFinite(ocupante.posicao.x) || !Number.isInteger(ocupante.posicao.x)) return `Ocupante ${ocupante.nomeExibicao} veio com posição X inválida.`;
         if (!Number.isFinite(ocupante.posicao.y) || !Number.isInteger(ocupante.posicao.y)) return `Ocupante ${ocupante.nomeExibicao} veio com posição Y inválida.`;
         if (ocupante.posicao.x < 0 || ocupante.posicao.y < 0 || ocupante.posicao.x >= payload.mapaLogico.largura || ocupante.posicao.y >= payload.mapaLogico.altura) return `Ocupante ${ocupante.nomeExibicao} veio fora dos limites do mapa.`;
