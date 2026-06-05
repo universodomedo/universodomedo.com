@@ -1,0 +1,86 @@
+.recipiente {
+    display: grid;
+    grid-template-columns: minmax(16em, 24%) 1fr;
+    gap: 1em;
+    align-items: start;
+}
+
+.painel_listagem,
+.painel_formulario {
+    border: 0.08em solid var(--cor-borda, rgba(255, 255, 255, 0.16));
+    border-radius: 0.5em;
+    background: rgba(10, 10, 14, 0.72);
+}
+
+.painel_listagem {
+    padding: 1em;
+    position: sticky;
+    top: 1em;
+}
+
+.painel_formulario {
+    padding: 1.2em;
+}
+
+.cabecalho_painel,
+.cabecalho_formulario {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+    align-items: center;
+}
+
+.cabecalho_formulario {
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.14);
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+}
+
+.cabecalho_formulario h2 {
+    margin: 0;
+}
+
+.acoes_formulario,
+.lista_capacidades {
+    display: grid;
+    gap: 0.75em;
+}
+
+.acoes_formulario {
+    grid-auto-flow: column;
+}
+
+.card_capacidade {
+    display: grid;
+    gap: 0.35em;
+    width: 100%;
+    text-align: left;
+    padding: 0.8em;
+    border: 0.08em solid rgba(255, 255, 255, 0.13);
+    border-radius: 0.4em;
+    background: rgba(255, 255, 255, 0.04);
+    color: inherit;
+}
+
+.card_capacidade:hover {
+    border-color: rgba(255, 255, 255, 0.36);
+}
+
+.estado,
+.estado_erro {
+    margin: 0.8em 0;
+}
+
+.estado_erro {
+    color: #ff9d9d;
+}
+
+@media (max-width: 58em) {
+    .recipiente {
+        grid-template-columns: 1fr;
+    }
+
+    .painel_listagem {
+        position: static;
+    }
+}

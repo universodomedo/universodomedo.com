@@ -1,0 +1,63 @@
+import type { NaturezaFuncionalCapacidade, OpcoesCadastroCapacidadeFuncionalDto } from 'types-nora-api';
+
+import type { FormularioCapacidadeFuncional } from './formulario';
+import type { RegistroCapacidadeFuncional, useListagemCapacidadesFuncionais } from './listagem';
+
+export type GrupoItemEstruturalCapacidade = 'requisitosEstruturais' | 'condicoesFuncionais' | 'efeitosPassivos' | 'estadosBloqueiosPublicos';
+export type GrupoItemEstruturalOperacao = 'requisitosEstruturais' | 'condicoesFuncionais' | 'estadosBloqueiosPublicos';
+
+export interface Contexto__PaginaModeradorCapacidadesFuncionais__Props {
+    listagemCapacidadesFuncionais: ReturnType<typeof useListagemCapacidadesFuncionais>;
+    formulario: FormularioCapacidadeFuncional;
+    modoFormulario: 'novo' | 'edicao';
+    opcoes: OpcoesCadastroCapacidadeFuncionalDto | null;
+    carregandoOpcoes: string | null;
+    erroOpcoes: string | null;
+    carregandoDetalhe: string | null;
+    erroDetalhe: string | null;
+    salvando: boolean;
+    podeSalvar: boolean;
+    novaCapacidade: () => void;
+    selecionaCapacidade: (idCapacidadeFuncional: number) => Promise<void>;
+    salvaCapacidade: () => Promise<void>;
+    desativaSelecionada: () => Promise<void>;
+    reativaSelecionada: () => Promise<void>;
+    setCampoTexto: (campo: 'key' | 'nome', valor: string) => void;
+    alternaNatureza: (natureza: NaturezaFuncionalCapacidade) => void;
+    adicionaParametroAceito: () => void;
+    atualizaParametroAceitoTipo: (indice: number, tipo: string) => void;
+    atualizaParametroAceitoNome: (indice: number, nome: string) => void;
+    alternaParametroAceitoObrigatorio: (indice: number) => void;
+    removeParametroAceito: (indice: number) => void;
+    adicionaParametroFuncional: () => void;
+    atualizaParametroFuncionalTipo: (indice: number, tipo: string) => void;
+    atualizaParametroFuncionalNome: (indice: number, nome: string) => void;
+    atualizaParametroFuncionalValor: (indice: number, valor: string) => void;
+    removeParametroFuncional: (indice: number) => void;
+    adicionaOperacao: () => void;
+    atualizaOperacao: (indice: number, campo: 'key' | 'nome' | 'ordem', valor: string) => void;
+    adicionaParametroOperacao: (indiceOperacao: number) => void;
+    atualizaParametroOperacaoTipo: (indiceOperacao: number, indiceParametro: number, tipo: string) => void;
+    atualizaParametroOperacaoNome: (indiceOperacao: number, indiceParametro: number, nome: string) => void;
+    atualizaParametroOperacaoValor: (indiceOperacao: number, indiceParametro: number, valor: string) => void;
+    removeParametroOperacao: (indiceOperacao: number, indiceParametro: number) => void;
+    adicionaItemOperacao: (indiceOperacao: number, grupo: GrupoItemEstruturalOperacao) => void;
+    atualizaItemOperacao: (indiceOperacao: number, grupo: GrupoItemEstruturalOperacao, indiceItem: number, campo: 'key' | 'nome' | 'descricao', valor: string) => void;
+    removeItemOperacao: (indiceOperacao: number, grupo: GrupoItemEstruturalOperacao, indiceItem: number) => void;
+    adicionaParametroItemOperacao: (indiceOperacao: number, grupo: GrupoItemEstruturalOperacao, indiceItem: number) => void;
+    atualizaParametroItemOperacaoTipo: (indiceOperacao: number, grupo: GrupoItemEstruturalOperacao, indiceItem: number, indiceParametro: number, tipo: string) => void;
+    atualizaParametroItemOperacaoNome: (indiceOperacao: number, grupo: GrupoItemEstruturalOperacao, indiceItem: number, indiceParametro: number, nome: string) => void;
+    atualizaParametroItemOperacaoValor: (indiceOperacao: number, grupo: GrupoItemEstruturalOperacao, indiceItem: number, indiceParametro: number, valor: string) => void;
+    removeParametroItemOperacao: (indiceOperacao: number, grupo: GrupoItemEstruturalOperacao, indiceItem: number, indiceParametro: number) => void;
+    removeOperacao: (indice: number) => void;
+    adicionaItemEstrutural: (grupo: GrupoItemEstruturalCapacidade) => void;
+    atualizaItemEstrutural: (grupo: GrupoItemEstruturalCapacidade, indice: number, campo: 'key' | 'nome' | 'descricao', valor: string) => void;
+    adicionaParametroItemEstrutural: (grupo: GrupoItemEstruturalCapacidade, indiceItem: number) => void;
+    atualizaParametroItemEstruturalTipo: (grupo: GrupoItemEstruturalCapacidade, indiceItem: number, indiceParametro: number, tipo: string) => void;
+    atualizaParametroItemEstruturalNome: (grupo: GrupoItemEstruturalCapacidade, indiceItem: number, indiceParametro: number, nome: string) => void;
+    atualizaParametroItemEstruturalValor: (grupo: GrupoItemEstruturalCapacidade, indiceItem: number, indiceParametro: number, valor: string) => void;
+    removeParametroItemEstrutural: (grupo: GrupoItemEstruturalCapacidade, indiceItem: number, indiceParametro: number) => void;
+    removeItemEstrutural: (grupo: GrupoItemEstruturalCapacidade, indice: number) => void;
+};
+
+export type { RegistroCapacidadeFuncional };

@@ -1,4 +1,4 @@
-import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoPatentesTestePericiaProjetada, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoPatentesTestePericia, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, DTO__CREATE__HabilidadePericia, DTO__CREATE__HabilidadeEspecial, DTO__CREATE__ModificadorHabilidade, CaminhoArquivoArte } from "types-nora-api";
+import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoPatentesTestePericiaProjetada, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoPatentesTestePericia, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, DTO__CREATE__HabilidadePericia, DTO__CREATE__HabilidadeEspecial, DTO__CREATE__ModificadorHabilidade, DTO__CREATE__CapacidadeFuncional, DTO__UPDATE__CapacidadeFuncional, CapacidadeFuncionalDetalheDto, OpcoesCadastroCapacidadeFuncionalDto, CaminhoArquivoArte } from "types-nora-api";
 
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
@@ -296,6 +296,30 @@ export async function criaModificadorHabilidade(payload: DTO__CREATE__Modificado
 
 export async function deletaModificadorHabilidade(idModificadorHabilidade: number): Promise<boolean> {
     return await useApi<boolean>({ uri: '/modificadores_habilidade/deletaModificadorHabilidade', method: 'DELETE', params: { idModificadorHabilidade } });
+}
+
+export async function obtemOpcoesCadastroCapacidadeFuncional(): Promise<OpcoesCadastroCapacidadeFuncionalDto> {
+    return await useApi<OpcoesCadastroCapacidadeFuncionalDto>({ uri: '/capacidades_funcionais/obtemOpcoesCadastroCapacidadeFuncional', method: 'GET' });
+}
+
+export async function obtemDetalheCapacidadeFuncional(idCapacidadeFuncional: number): Promise<CapacidadeFuncionalDetalheDto> {
+    return await useApi<CapacidadeFuncionalDetalheDto>({ uri: '/capacidades_funcionais/obtemDetalheCapacidadeFuncional', method: 'GET', params: { idCapacidadeFuncional } });
+}
+
+export async function criaCapacidadeFuncional(payload: DTO__CREATE__CapacidadeFuncional): Promise<CapacidadeFuncionalDetalheDto> {
+    return await useApi<CapacidadeFuncionalDetalheDto>({ uri: '/capacidades_funcionais/criaCapacidadeFuncional', method: 'POST', data: payload });
+}
+
+export async function atualizaCapacidadeFuncional(payload: DTO__UPDATE__CapacidadeFuncional): Promise<CapacidadeFuncionalDetalheDto> {
+    return await useApi<CapacidadeFuncionalDetalheDto>({ uri: '/capacidades_funcionais/atualizaCapacidadeFuncional', method: 'PUT', data: payload });
+}
+
+export async function desativaCapacidadeFuncional(idCapacidadeFuncional: number): Promise<CapacidadeFuncionalDetalheDto> {
+    return await useApi<CapacidadeFuncionalDetalheDto>({ uri: '/capacidades_funcionais/desativaCapacidadeFuncional', method: 'PATCH', params: { idCapacidadeFuncional } });
+}
+
+export async function reativaCapacidadeFuncional(idCapacidadeFuncional: number): Promise<CapacidadeFuncionalDetalheDto> {
+    return await useApi<CapacidadeFuncionalDetalheDto>({ uri: '/capacidades_funcionais/reativaCapacidadeFuncional', method: 'PATCH', params: { idCapacidadeFuncional } });
 }
 
 export async function PROTOTIPO_LUIZ__recupera_capa_perfil_usuario(): Promise<CaminhoArquivoArte> {
