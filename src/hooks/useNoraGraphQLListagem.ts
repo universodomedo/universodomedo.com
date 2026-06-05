@@ -43,6 +43,8 @@ type UseNoraGraphQLListagemContratoComEventos<TNome extends GraphqlLeituraNome, 
     readonly eventos: UseNoraGraphQLListagemEventos<TNome, TSelect>;
 };
 
+const LIMITE_MAXIMO_REGISTROS_CONSULTA_GRAPHQL = 100;
+
 type UseNoraGraphQLListagemCampoFiltroDef<TCampo extends string = string, TPath extends readonly string[] = readonly string[]> = {
     readonly campo: TCampo;
     readonly path: TPath;
@@ -140,7 +142,7 @@ function normalizaItensPorPagina(itensPorPagina: number): number {
     if (!Number.isFinite(itensPorPagina)) return 1;
     if (itensPorPagina < 1) return 1;
 
-    return Math.floor(itensPorPagina);
+    return Math.min(Math.floor(itensPorPagina), LIMITE_MAXIMO_REGISTROS_CONSULTA_GRAPHQL);
 };
 
 function obtemCarregamentoNoraApi(carregamento: UseNoraGraphQLListagemCarregamento | undefined): NoraApiCarregamento {
@@ -440,7 +442,7 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
         return {
             campos: camposOpcoesFiltrosConsulta.map(campo => campo.campo),
             where: whereConsultaComEscopoFixo,
-            limitePorCampo: 100,
+            limitePorCampo: LIMITE_MAXIMO_REGISTROS_CONSULTA_GRAPHQL,
         };
     }, [camposOpcoesFiltrosConsulta, whereConsultaComEscopoFixo]);
 

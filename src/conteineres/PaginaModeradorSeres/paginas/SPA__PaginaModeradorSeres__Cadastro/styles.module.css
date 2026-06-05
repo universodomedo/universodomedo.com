@@ -1,0 +1,92 @@
+.recipiente_cadastro {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.painel_formulario {
+    width: min(100%, 52em);
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1.25em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background: var(--cor-fundo-secundario);
+}
+
+.cabecalho_formulario,
+.cabecalho_membros {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+}
+
+.campo input {
+    width: 100%;
+}
+
+.erro_campo {
+    color: var(--cor-erro);
+}
+
+.bloco_membros {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.card_membro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    padding: 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+}
+
+.lista_capacidades {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12em, 1fr));
+    gap: 0.5em;
+}
+
+.estado_capacidades {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5em;
+}
+
+.area_carregar_mais_capacidades {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5em;
+}
+
+.capacidade {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.botao_remover {
+    align-self: flex-start;
+}
+
+.rodape_formulario {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.botao_salvar {
+    min-width: 10em;
+}
