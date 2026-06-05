@@ -1,0 +1,14 @@
+.card_capacidade_inata {
+    width: 100%;
+    min-height: 7em;
+    display: flex;
+    align-items: center;
+    padding: 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background: var(--cor-fundo-secundario);
+}
+
+.card_capacidade_inata strong {
+    font-size: 1em;
+}

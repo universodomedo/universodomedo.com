@@ -1,0 +1,45 @@
+.recipiente_cadastro {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.painel_formulario {
+    width: min(100%, 42em);
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1.25em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background: var(--cor-fundo-secundario);
+}
+
+.cabecalho_formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+}
+
+.campo input {
+    width: 100%;
+}
+
+.erro_campo {
+    color: var(--cor-erro);
+}
+
+.rodape_formulario {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.botao_salvar {
+    min-width: 10em;
+}
