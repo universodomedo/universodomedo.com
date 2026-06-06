@@ -6,10 +6,10 @@ import { Eventos_EnviaERecebe, EventoUsuarioDto } from 'types-nora-api';
 import { eventoWs, useSocketEpoch } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { paraItemCentral, EventoUsuarioCentralItem } from './eventoUsuarioCentralItem';
-import { useTutorialIntervencao, PosicaoIntervencaoTutorial } from './useTutorialIntervencao';
+import { useTutorialIntervencao, IntervencaoTutorial } from './useTutorialIntervencao';
 import { useEventosUsuarioAcoes } from './useEventosUsuarioAcoes';
 
-export interface ContextoEventosUsuarioProps {
+export interface ContextoEventosUsuarioProps extends IntervencaoTutorial {
     eventos: EventoUsuarioDto[];
     itens: EventoUsuarioCentralItem[];
     carregando: boolean;
@@ -21,12 +21,6 @@ export interface ContextoEventosUsuarioProps {
     sincronizarAposNotificacaoRecebida: () => void;
     marcarLido: (idEvento: number) => void;
     concluirTutorial: (idEvento: number) => void;
-    tutorialAberto: EventoUsuarioCentralItem | null;
-    alvoVisualLocalizado: string | null;
-    posicaoIntervencao: PosicaoIntervencaoTutorial;
-    abrirTutorial: (idEvento: number) => void;
-    fecharTutorial: () => void;
-    confirmarTutorial: () => void;
 };
 
 const ContextoEventosUsuario = createContext<ContextoEventosUsuarioProps | undefined>(undefined);
@@ -87,9 +81,10 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
     const pendentes = useMemo(() => itens.filter(item => item.pendente).length, [itens]);
 
     // Etapa 12: estado/ações da intervenção visual de tutorial (lógica isolada em hook para manter o contexto pequeno).
-    const { tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial } = useTutorialIntervencao(itens, concluirTutorial, estaAutenticado);
+    // Etapa 16: API multi-passos do hook re-exposta flat no contexto (ContextoEventosUsuarioProps extends IntervencaoTutorial).
+    const intervencaoTutorial = useTutorialIntervencao(itens, concluirTutorial, estaAutenticado);
 
-    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, pendentes, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, concluirTutorial, tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial }), [eventos, itens, carregando, aberto, naoLidos, pendentes, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, concluirTutorial, tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial]);
+    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, pendentes, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, concluirTutorial, ...intervencaoTutorial }), [eventos, itens, carregando, aberto, naoLidos, pendentes, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, concluirTutorial, intervencaoTutorial]);
 
     return (
         <ContextoEventosUsuario.Provider value={api}>

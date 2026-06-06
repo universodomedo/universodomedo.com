@@ -1,4 +1,4 @@
-import { EventoUsuarioDto, EventoUsuarioFormato } from 'types-nora-api';
+import { EventoUsuarioDto, EventoUsuarioFormato, TUTORIAIS_USUARIO, PassoTutorialUsuario, CHAVE_TUTORIAL_CENTRAL } from 'types-nora-api';
 
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
 import { ALVO_VISUAL_CENTRAL_BOTAO } from './alvoVisualTutorial';
@@ -18,6 +18,7 @@ export type EventoUsuarioCentralItem = {
     rotuloAcaoTutorial: string | null;
     alvoVisual: string | null;
     possuiAlvoVisual: boolean;
+    passos: readonly PassoTutorialUsuario[];
     concluido: boolean;
     rotuloConclusao: string | null;
     pendente: boolean;
@@ -36,7 +37,7 @@ function rotuloFormato(formato: EventoUsuarioFormato): string {
 
 // Texto auxiliar mínimo apenas para o tutorial inicial da central (complemento no card; não overlay/modal/tooltip/tour).
 function textoAuxiliar(evento: EventoUsuarioDto): string | null {
-    if (evento.formato === 'tutorial' && evento.dados?.chaveTutorial === 'central_eventos_minima_v1') return 'Esta central reúne avisos, pendências e orientações importantes da plataforma.';
+    if (evento.formato === 'tutorial' && evento.dados?.chaveTutorial === CHAVE_TUTORIAL_CENTRAL) return 'Esta central reúne avisos, pendências e orientações importantes da plataforma.';
     return null;
 };
 
@@ -44,8 +45,15 @@ function textoAuxiliar(evento: EventoUsuarioDto): string | null {
 function alvoVisualDoEvento(evento: EventoUsuarioDto): string | null {
     if (evento.formato !== 'tutorial') return null;
     if (evento.dados?.alvoVisual === ALVO_VISUAL_CENTRAL_BOTAO) return ALVO_VISUAL_CENTRAL_BOTAO;
-    if (evento.dados?.chaveTutorial === 'central_eventos_minima_v1') return ALVO_VISUAL_CENTRAL_BOTAO;
+    if (evento.dados?.chaveTutorial === CHAVE_TUTORIAL_CENTRAL) return ALVO_VISUAL_CENTRAL_BOTAO;
     return null;
+};
+
+// Etapa 16: passos do tutorial resolvidos do contrato gerado por chaveTutorial (SSOT no backend). Não-tutorial/chave desconhecida => sem passos.
+function passosDoEvento(evento: EventoUsuarioDto): readonly PassoTutorialUsuario[] {
+    if (evento.formato !== 'tutorial') return [];
+    const chave = evento.dados?.chaveTutorial;
+    return typeof chave === 'string' ? (TUTORIAIS_USUARIO[chave] ?? []) : [];
 };
 
 export function paraItemCentral(evento: EventoUsuarioDto): EventoUsuarioCentralItem {
@@ -53,7 +61,8 @@ export function paraItemCentral(evento: EventoUsuarioDto): EventoUsuarioCentralI
     const ehTutorial = evento.formato === 'tutorial';
     const concluido = !!evento.dataConclusao;
     const alvoVisual = alvoVisualDoEvento(evento);
+    const passos = passosDoEvento(evento);
     // Etapa 15: pendência por tipo — tutorial pende até concluir; não-tutorial pende até ler.
     const pendente = ehTutorial ? !concluido : !lido;
-    return { id: evento.id, titulo: evento.titulo, mensagem: evento.mensagem, rotuloFormato: rotuloFormato(evento.formato), rotuloLeitura: lido ? 'lido' : 'não lido', dataCriacaoFormatada: formataData(evento.dataCriacao, 'dd/MM/yyyy HH:mm'), lido, podeMarcarComoLido: !lido && !ehTutorial, textoAuxiliar: textoAuxiliar(evento), podeAbrirTutorial: ehTutorial && !concluido, rotuloAcaoTutorial: ehTutorial && !concluido ? 'Ver orientação' : null, alvoVisual, possuiAlvoVisual: alvoVisual !== null, concluido, rotuloConclusao: ehTutorial && concluido ? 'concluído' : null, pendente };
+    return { id: evento.id, titulo: evento.titulo, mensagem: evento.mensagem, rotuloFormato: rotuloFormato(evento.formato), rotuloLeitura: lido ? 'lido' : 'não lido', dataCriacaoFormatada: formataData(evento.dataCriacao, 'dd/MM/yyyy HH:mm'), lido, podeMarcarComoLido: !lido && !ehTutorial, textoAuxiliar: textoAuxiliar(evento), podeAbrirTutorial: ehTutorial && !concluido && passos.length > 0, rotuloAcaoTutorial: ehTutorial && !concluido ? 'Ver orientação' : null, alvoVisual, possuiAlvoVisual: alvoVisual !== null, passos, concluido, rotuloConclusao: ehTutorial && concluido ? 'concluído' : null, pendente };
 };
