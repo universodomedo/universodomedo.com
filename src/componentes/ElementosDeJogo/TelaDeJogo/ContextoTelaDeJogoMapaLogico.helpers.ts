@@ -8,6 +8,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
     if (!payload) return 'Resposta do mapa lógico veio sem payload.';
     if (!payload.mapaLogico) return 'Resposta do mapa lógico veio sem dimensões.';
     if (!Array.isArray(payload.ocupantesMapaLogico)) return 'Resposta do mapa lógico veio sem ocupantes válidos.';
+    if (!Array.isArray(payload.seresNaSala)) return 'Resposta do mapa lógico veio sem seres persistidos válidos.';
     if (payload.mapaLogico.largura <= 0 || !Number.isFinite(payload.mapaLogico.largura) || !Number.isInteger(payload.mapaLogico.largura)) return 'Mapa lógico veio com largura inválida.';
     if (payload.mapaLogico.altura <= 0 || !Number.isFinite(payload.mapaLogico.altura) || !Number.isInteger(payload.mapaLogico.altura)) return 'Mapa lógico veio com altura inválida.';
 
@@ -26,6 +27,20 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
             if (!recurso.key || !recurso.nome || !recurso.nomeLogico || !recurso.descricaoEstado) return `Ocupante ${ocupante.nomeExibicao} veio com recurso funcional inválido.`;
             if (!recurso.grupoFuncional?.nome || !recurso.estadoResumo?.nome) return `Recurso ${recurso.nome} veio sem leitura funcional válida.`;
             if (!Array.isArray(recurso.capacidadesFuncionais)) return `Recurso ${recurso.nome} veio sem capacidades funcionais válidas.`;
+        }
+    }
+
+    for (const ser of payload.seresNaSala) {
+        if (!Number.isInteger(ser.id) || ser.id <= 0 || !ser.nome) return 'Ser persistido da sala veio sem identificação válida.';
+        if (!Array.isArray(ser.membros)) return `Ser ${ser.nome} veio sem membros válidos.`;
+
+        for (const membro of ser.membros) {
+            if (!Number.isInteger(membro.id) || membro.id <= 0 || !membro.nome) return `Ser ${ser.nome} veio com membro inválido.`;
+            if (!Array.isArray(membro.capacidades)) return `Membro ${membro.nome} veio sem capacidades inatas válidas.`;
+
+            for (const capacidade of membro.capacidades) {
+                if (!Number.isInteger(capacidade.id) || capacidade.id <= 0 || !capacidade.nome) return `Membro ${membro.nome} veio com capacidade inata inválida.`;
+            }
         }
     }
 

@@ -1,0 +1,72 @@
+.painel_seres_na_sala {
+    position: absolute;
+    z-index: 4;
+    left: 1em;
+    bottom: 1em;
+    display: grid;
+    gap: 0.75em;
+    width: min(23em, calc(100% - 2em));
+    max-height: calc(100% - 8em);
+    padding: 0.9em;
+    overflow: auto;
+    border: 0.08em solid rgba(255, 255, 255, 0.22);
+    border-radius: 0.4em;
+    color: #f7f4ec;
+    background: rgba(22, 30, 33, 0.96);
+    box-shadow: 0 0.5em 1.5em rgba(0, 0, 0, 0.4);
+}
+
+.cabecalho_seres_na_sala {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.8em;
+}
+
+.cabecalho_seres_na_sala span,
+.estado_vazio_seres_na_sala,
+.item_membro_ser_na_sala span {
+    color: #bfd2cf;
+}
+
+.cabecalho_seres_na_sala span {
+    font-size: 0.76em;
+}
+
+.estado_vazio_seres_na_sala {
+    font-size: 0.84em;
+}
+
+.lista_seres_na_sala,
+.lista_membros_ser_na_sala,
+.lista_capacidades_ser_na_sala {
+    display: grid;
+    gap: 0.55em;
+}
+
+.item_ser_na_sala {
+    display: grid;
+    gap: 0.6em;
+    padding: 0.65em;
+    border-left: 0.18em solid #80ae9f;
+    background: #1f2a2e;
+}
+
+.item_membro_ser_na_sala {
+    display: grid;
+    gap: 0.35em;
+}
+
+.lista_capacidades_ser_na_sala {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35em;
+}
+
+.lista_capacidades_ser_na_sala small {
+    padding: 0.25em 0.4em;
+    border: 0.06em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.28em;
+    color: #dcefe9;
+    background: #26383c;
+}

@@ -48,6 +48,7 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
     });
 
     const celulas = useMemo(() => mapaLogicoSalaJogo === null ? [] : criaCelulasMapaLogico(mapaLogicoSalaJogo), [mapaLogicoSalaJogo]);
+    const seresNaSala = useMemo(() => mapaLogicoSalaJogo?.seresNaSala ?? [], [mapaLogicoSalaJogo]);
     const controleVisual = useControleVisualMapaLogico(mapaLogicoSalaJogo);
     const selecaoOcupante = useSelecaoOcupanteMapaLogico(mapaLogicoSalaJogo);
 
@@ -55,10 +56,11 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
         estadoCarregamento,
         erro,
         mapaLogicoSalaJogo,
+        seresNaSala,
         celulas,
         ...controleVisual,
         ...selecaoOcupante,
-    }), [celulas, controleVisual, erro, estadoCarregamento, mapaLogicoSalaJogo, selecaoOcupante]);
+    }), [celulas, controleVisual, erro, estadoCarregamento, mapaLogicoSalaJogo, selecaoOcupante, seresNaSala]);
 
     return (
         <ContextoTelaDeJogoMapaLogico.Provider value={contexto}>
