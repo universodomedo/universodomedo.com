@@ -7,6 +7,7 @@ import { eventoWs, useSocketEpoch } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { paraItemCentral, EventoUsuarioCentralItem } from './eventoUsuarioCentralItem';
 import { useTutorialIntervencao, PosicaoIntervencaoTutorial } from './useTutorialIntervencao';
+import { useEventosUsuarioAcoes } from './useEventosUsuarioAcoes';
 
 export interface ContextoEventosUsuarioProps {
     eventos: EventoUsuarioDto[];
@@ -14,10 +15,12 @@ export interface ContextoEventosUsuarioProps {
     carregando: boolean;
     aberto: boolean;
     naoLidos: number;
+    pendentes: number;
     alternarAberto: () => void;
     listar: () => void;
     sincronizarAposNotificacaoRecebida: () => void;
     marcarLido: (idEvento: number) => void;
+    concluirTutorial: (idEvento: number) => void;
     tutorialAberto: EventoUsuarioCentralItem | null;
     alvoVisualLocalizado: string | null;
     posicaoIntervencao: PosicaoIntervencaoTutorial;
@@ -57,12 +60,7 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
     // Etapa 8: sincronização silenciosa após notificacaoRecebida — atualiza `eventos` sem abrir a central nem ligar `carregando`.
     const sincronizarAposNotificacaoRecebida = useCallback(() => buscarEventos(true), [buscarEventos]);
 
-    // Marca como lido e adota a lista atualizada que o backend devolve (sem mutar estado local como verdade).
-    const marcarLido = useCallback((idEvento: number) => {
-        eventoWs(Eventos_EnviaERecebe.EventosUsuario.eventos.marcarEventoComoLido, { idEvento }, {
-            onSuccess: resp => { setEventos(resp.eventos); },
-        });
-    }, []);
+    const { marcarLido, concluirTutorial } = useEventosUsuarioAcoes(setEventos);
 
     const alternarAberto = useCallback(() => { setAberto(prev => !prev); }, []);
 
@@ -85,10 +83,13 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
     // Etapa 11: itens prontos para render (contexto prepara; componente não interpreta formato/dados/datas).
     const itens = useMemo(() => eventos.map(paraItemCentral), [eventos]);
 
-    // Etapa 12: estado/ações da intervenção visual de tutorial (lógica isolada em hook para manter o contexto pequeno).
-    const { tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial } = useTutorialIntervencao(itens, marcarLido, estaAutenticado);
+    // Etapa 15: pendências da central (tutorial pende até concluir; demais até ler). `naoLidos` mantém a semântica pública anterior (sem dataLeitura).
+    const pendentes = useMemo(() => itens.filter(item => item.pendente).length, [itens]);
 
-    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial }), [eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial]);
+    // Etapa 12: estado/ações da intervenção visual de tutorial (lógica isolada em hook para manter o contexto pequeno).
+    const { tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial } = useTutorialIntervencao(itens, concluirTutorial, estaAutenticado);
+
+    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, pendentes, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, concluirTutorial, tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial }), [eventos, itens, carregando, aberto, naoLidos, pendentes, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, concluirTutorial, tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial]);
 
     return (
         <ContextoEventosUsuario.Provider value={api}>

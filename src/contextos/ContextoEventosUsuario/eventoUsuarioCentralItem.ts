@@ -18,6 +18,9 @@ export type EventoUsuarioCentralItem = {
     rotuloAcaoTutorial: string | null;
     alvoVisual: string | null;
     possuiAlvoVisual: boolean;
+    concluido: boolean;
+    rotuloConclusao: string | null;
+    pendente: boolean;
 };
 
 // Mapeamento fechado e explícito de formato → rótulo humano; default neutro 'Evento' defensivo p/ formato gerado futuro.
@@ -48,6 +51,9 @@ function alvoVisualDoEvento(evento: EventoUsuarioDto): string | null {
 export function paraItemCentral(evento: EventoUsuarioDto): EventoUsuarioCentralItem {
     const lido = !!evento.dataLeitura;
     const ehTutorial = evento.formato === 'tutorial';
+    const concluido = !!evento.dataConclusao;
     const alvoVisual = alvoVisualDoEvento(evento);
-    return { id: evento.id, titulo: evento.titulo, mensagem: evento.mensagem, rotuloFormato: rotuloFormato(evento.formato), rotuloLeitura: lido ? 'lido' : 'não lido', dataCriacaoFormatada: formataData(evento.dataCriacao, 'dd/MM/yyyy HH:mm'), lido, podeMarcarComoLido: !lido, textoAuxiliar: textoAuxiliar(evento), podeAbrirTutorial: ehTutorial, rotuloAcaoTutorial: ehTutorial ? 'Ver orientação' : null, alvoVisual, possuiAlvoVisual: alvoVisual !== null };
+    // Etapa 15: pendência por tipo — tutorial pende até concluir; não-tutorial pende até ler.
+    const pendente = ehTutorial ? !concluido : !lido;
+    return { id: evento.id, titulo: evento.titulo, mensagem: evento.mensagem, rotuloFormato: rotuloFormato(evento.formato), rotuloLeitura: lido ? 'lido' : 'não lido', dataCriacaoFormatada: formataData(evento.dataCriacao, 'dd/MM/yyyy HH:mm'), lido, podeMarcarComoLido: !lido && !ehTutorial, textoAuxiliar: textoAuxiliar(evento), podeAbrirTutorial: ehTutorial && !concluido, rotuloAcaoTutorial: ehTutorial && !concluido ? 'Ver orientação' : null, alvoVisual, possuiAlvoVisual: alvoVisual !== null, concluido, rotuloConclusao: ehTutorial && concluido ? 'concluído' : null, pendente };
 };

@@ -19,7 +19,8 @@ function calcularPosicaoIntervencao(elemento: Element): PosicaoIntervencaoTutori
 };
 
 // Etapa 12: estado/ações da intervenção visual mínima de tutorial. Backend continua a fonte da verdade (usa marcarLido).
-export function useTutorialIntervencao(itens: EventoUsuarioCentralItem[], marcarLido: (idEvento: number) => void, estaAutenticado: boolean) {
+// Etapa 15: o confirmar agora usa o fluxo dedicado concluirTutorial (não mais marcarLido); backend segue a fonte da verdade.
+export function useTutorialIntervencao(itens: EventoUsuarioCentralItem[], concluirTutorial: (idEvento: number) => void, estaAutenticado: boolean) {
     const [tutorialAberto, setTutorialAberto] = useState<EventoUsuarioCentralItem | null>(null);
     const [alvoVisualLocalizado, setAlvoVisualLocalizado] = useState<string | null>(null);
     const [posicaoIntervencao, setPosicaoIntervencao] = useState<PosicaoIntervencaoTutorial>('central');
@@ -40,13 +41,14 @@ export function useTutorialIntervencao(itens: EventoUsuarioCentralItem[], marcar
     const fecharTutorial = useCallback(() => { setTutorialAberto(null); setAlvoVisualLocalizado(null); setPosicaoIntervencao('central'); }, []);
 
     // Confirma: marca como lido pelo fluxo existente (backend devolve a lista) e fecha. Sem estado paralelo de conclusão.
+    // Etapa 15: agora chama concluirTutorial (conclusão dedicada) no lugar de marcarLido.
     const confirmarTutorial = useCallback(() => {
         if (!tutorialAberto) return;
-        marcarLido(tutorialAberto.id);
+        concluirTutorial(tutorialAberto.id);
         setTutorialAberto(null);
         setAlvoVisualLocalizado(null);
         setPosicaoIntervencao('central');
-    }, [tutorialAberto, marcarLido]);
+    }, [tutorialAberto, concluirTutorial]);
 
     // Desautenticou (eventos limpos no contexto) => fecha a intervenção.
     useEffect(() => { if (!estaAutenticado) { setTutorialAberto(null); setAlvoVisualLocalizado(null); setPosicaoIntervencao('central'); } }, [estaAutenticado]);

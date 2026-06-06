@@ -11,14 +11,14 @@ import { ALVO_VISUAL_CENTRAL_BOTAO } from 'Contextos/ContextoEventosUsuario/alvo
 // Central mínima de eventos do usuário (Etapa 7): apenas renderiza; toda a lógica/estado vive no ContextoEventosUsuario.
 export default function EventosUsuarioCentral() {
     const { estaAutenticado } = useContextoAutenticacao();
-    const { itens, carregando, aberto, naoLidos, alternarAberto, listar, marcarLido, abrirTutorial, alvoVisualLocalizado } = useContextoEventosUsuario();
+    const { itens, carregando, aberto, pendentes, alternarAberto, listar, marcarLido, abrirTutorial, alvoVisualLocalizado } = useContextoEventosUsuario();
 
     if (!estaAutenticado) return null;
 
     return (
         <div className={`${styles.central} ${alvoVisualLocalizado === ALVO_VISUAL_CENTRAL_BOTAO ? styles.central_destaque_ativo : ''}`}>
             {/* Etapa 13: alvo visual estável do tutorial inicial (atributo = ATRIBUTO_ALVO_VISUAL_TUTORIAL). */}
-            <button type="button" data-udm-tutorial={ALVO_VISUAL_CENTRAL_BOTAO} className={`${styles.botao_abrir} ${alvoVisualLocalizado === ALVO_VISUAL_CENTRAL_BOTAO ? styles.botao_abrir_destacado : ''}`} onClick={alternarAberto}>Eventos{naoLidos > 0 ? ` (${naoLidos})` : ''}</button>
+            <button type="button" data-udm-tutorial={ALVO_VISUAL_CENTRAL_BOTAO} className={`${styles.botao_abrir} ${alvoVisualLocalizado === ALVO_VISUAL_CENTRAL_BOTAO ? styles.botao_abrir_destacado : ''}`} onClick={alternarAberto}>Eventos{pendentes > 0 ? ` (${pendentes})` : ''}</button>
 
             {aberto && (
                 <div className={styles.painel}>
@@ -37,7 +37,7 @@ export default function EventosUsuarioCentral() {
                             </div>
                             <div className={itemStyles.item_mensagem}>{item.mensagem}</div>
                             {item.textoAuxiliar && <div className={itemStyles.item_texto_auxiliar}>{item.textoAuxiliar}</div>}
-                            <div className={itemStyles.item_meta}>{item.dataCriacaoFormatada} · {item.rotuloLeitura}</div>
+                            <div className={itemStyles.item_meta}>{item.dataCriacaoFormatada} · {item.rotuloLeitura}{item.rotuloConclusao ? ` · ${item.rotuloConclusao}` : ''}</div>
                             {item.podeAbrirTutorial && item.rotuloAcaoTutorial && <button type="button" className={itemStyles.botao_tutorial} onClick={() => abrirTutorial(item.id)}>{item.rotuloAcaoTutorial}</button>}
                             {item.podeMarcarComoLido && <button type="button" className={itemStyles.botao_marcar_lido} onClick={() => marcarLido(item.id)}>marcar como lido</button>}
                         </div>
