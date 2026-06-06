@@ -1,11 +1,11 @@
-.painel_inspecao,
+﻿.painel_inspecao,
 .painel_inspecao_vazio {
     position: absolute;
     z-index: 4;
-    top: 6.8em;
+    top: 4.4em;
     right: 1em;
     width: min(24em, calc(100% - 2em));
-    max-height: calc(100% - 7.8em);
+    max-height: calc(100% - 5.4em);
     padding: 0.9em;
     border: 0.08em solid rgba(255, 255, 255, 0.22);
     border-radius: 0.4em;

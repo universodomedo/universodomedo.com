@@ -70,24 +70,11 @@ export function criaRegioesVisuaisMapaLogico(payload: MapaLogicoSalaJogoPayloadW
 
     for (let yIndice = 0; yIndice < QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO; yIndice++) {
         for (let xIndice = 0; xIndice < QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO; xIndice++) {
-            const xInicialMetros = calculaInicioFaixaMetricaRegiaoVisual(xIndice, payload.mapaLogico.larguraMetros);
-            const xFinalMetros = calculaFimFaixaMetricaRegiaoVisual(xIndice, payload.mapaLogico.larguraMetros);
-            const yInicialMetros = calculaInicioFaixaMetricaRegiaoVisual(yIndice, payload.mapaLogico.alturaMetros);
-            const yFinalMetros = calculaFimFaixaMetricaRegiaoVisual(yIndice, payload.mapaLogico.alturaMetros);
-
-            regioesVisuais.push({ key: `${xIndice}:${yIndice}`, xIndice, yIndice, xInicialMetros, xFinalMetros, yInicialMetros, yFinalMetros, rotuloMetrico: `${xInicialMetros}m,${yInicialMetros}m`, ocupantes: payload.ocupantesMapaLogico.filter(ocupante => estaNaRegiaoVisualMapaLogico(ocupante.posicao, payload, xIndice, yIndice)).map(criaOcupanteVisualMapaLogico), seres: payload.seresNaSala.filter(ser => estaNaRegiaoVisualMapaLogico(ser.posicao, payload, xIndice, yIndice)).map(criaSerVisualMapaLogico) });
+            regioesVisuais.push({ key: `${xIndice}:${yIndice}`, xIndice, yIndice, ocupantes: payload.ocupantesMapaLogico.filter(ocupante => estaNaRegiaoVisualMapaLogico(ocupante.posicao, payload, xIndice, yIndice)).map(criaOcupanteVisualMapaLogico), seres: payload.seresNaSala.filter(ser => estaNaRegiaoVisualMapaLogico(ser.posicao, payload, xIndice, yIndice)).map(criaSerVisualMapaLogico) });
         }
     }
 
     return regioesVisuais;
-};
-
-function calculaInicioFaixaMetricaRegiaoVisual(indice: number, tamanhoMetros: number): number {
-    return Math.floor(indice * tamanhoMetros / QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO);
-};
-
-function calculaFimFaixaMetricaRegiaoVisual(indice: number, tamanhoMetros: number): number {
-    return Math.max(calculaInicioFaixaMetricaRegiaoVisual(indice, tamanhoMetros), Math.ceil((indice + 1) * tamanhoMetros / QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO) - 1);
 };
 
 function estaNaRegiaoVisualMapaLogico(posicao: PosicaoMapaLogicoSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto, xIndice: number, yIndice: number): boolean {

@@ -6,7 +6,7 @@
     display: grid;
     gap: 0.75em;
     width: min(23em, calc(100% - 2em));
-    max-height: calc(100% - 8em);
+    max-height: calc(100% - 2em);
     padding: 0.9em;
     overflow: auto;
     border: 0.08em solid rgba(255, 255, 255, 0.22);

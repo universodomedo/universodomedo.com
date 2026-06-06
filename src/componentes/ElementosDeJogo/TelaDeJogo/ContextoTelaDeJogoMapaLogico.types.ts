@@ -15,11 +15,6 @@ export type RegiaoVisualMapaLogicoTelaJogo = {
     key: string;
     xIndice: number;
     yIndice: number;
-    xInicialMetros: number;
-    xFinalMetros: number;
-    yInicialMetros: number;
-    yFinalMetros: number;
-    rotuloMetrico: string;
     ocupantes: readonly OcupanteVisualMapaLogicoTelaJogo[];
     seres: readonly SerVisualMapaLogicoTelaJogo[];
 };

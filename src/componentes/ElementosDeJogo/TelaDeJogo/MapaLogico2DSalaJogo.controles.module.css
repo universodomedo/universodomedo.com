@@ -1,58 +1,31 @@
-.barra_mapa_logico {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1em;
-    padding: 0.85em 1em;
-    border-bottom: 0.08em solid rgba(255, 255, 255, 0.16);
-    background: #1c2430;
-}
-
-.titulo_mapa_logico {
-    display: grid;
-    gap: 0.15em;
-}
-
-.titulo_mapa_logico strong {
-    font-size: 1em;
-}
-
-.titulo_mapa_logico span {
-    color: #b8c7d9;
-    font-size: 0.82em;
-}
-
 .controles_mapa_logico {
+    position: absolute;
+    z-index: 5;
+    top: 1em;
+    right: 1em;
     display: flex;
     flex-wrap: wrap;
     gap: 0.45em;
     justify-content: flex-end;
+    max-width: calc(100% - 2em);
+    pointer-events: auto;
 }
 
 .controles_mapa_logico button {
     min-width: 2.4em;
     min-height: 2.2em;
     padding: 0 0.7em;
-    border: 0.08em solid rgba(255, 255, 255, 0.2);
+    border: 0.08em solid rgba(255, 255, 255, 0.22);
     border-radius: 0.28em;
     color: #f8fafc;
     font: inherit;
     font-size: 0.8em;
     font-weight: 800;
-    background: #2f3a4a;
+    background: rgba(30, 39, 51, 0.86);
+    box-shadow: 0 0.35em 1.1em rgba(0, 0, 0, 0.32);
     cursor: pointer;
 }
 
 .controles_mapa_logico button:hover {
-    background: #41506a;
-}
-
-.legenda_eixos_mapa_logico {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.85em;
-    padding: 0.45em 1em;
-    color: #c9d6e7;
-    font-size: 0.78em;
-    background: #151c27;
+    background: rgba(55, 69, 90, 0.94);
 }

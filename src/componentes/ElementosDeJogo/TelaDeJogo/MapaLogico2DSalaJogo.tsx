@@ -30,29 +30,17 @@ export function MapaLogico2DSalaJogo() {
 
     return (
         <div className={styles.painel_mapa_logico}>
-            <div className={controlesStyles.barra_mapa_logico}>
-                <div className={controlesStyles.titulo_mapa_logico}>
-                    <strong>Mapa lógico da sala</strong>
-                    <span>{mapaLogicoSalaJogo.mapaLogico.larguraMetros}m x {mapaLogicoSalaJogo.mapaLogico.alturaMetros}m</span>
-                </div>
-                <div className={controlesStyles.controles_mapa_logico}>
-                    <button type="button" onClick={afastaZoom} aria-label="Diminuir zoom do mapa">-</button>
-                    <button type="button" onClick={aproximaZoom} aria-label="Aumentar zoom do mapa">+</button>
-                    <button type="button" onClick={rotacionaMapa} aria-label="Rotacionar mapa">Girar</button>
-                    <button type="button" onClick={resetaVisualizacao} aria-label="Resetar visualização do mapa">Reset</button>
-                </div>
-            </div>
-
-            <div className={controlesStyles.legenda_eixos_mapa_logico}>
-                <span>X aumenta para a direita</span>
-                <span>Y aumenta para baixo</span>
+            <div className={controlesStyles.controles_mapa_logico}>
+                <button type="button" onClick={afastaZoom} aria-label="Diminuir zoom do mapa">-</button>
+                <button type="button" onClick={aproximaZoom} aria-label="Aumentar zoom do mapa">+</button>
+                <button type="button" onClick={rotacionaMapa} aria-label="Rotacionar mapa">Girar</button>
+                <button type="button" onClick={resetaVisualizacao} aria-label="Resetar visualização do mapa">Reset</button>
             </div>
 
             <div className={`${styles.area_mapa_logico} ${arrastando ? styles.area_mapa_logico_arrastando : ''}`} onPointerDown={iniciaPan} onPointerMove={atualizaPan} onPointerUp={finalizaPan} onPointerCancel={finalizaPan}>
                 <div className={styles.malha_visual_mapa_logico} style={estiloMapa}>
                     {regioesVisuais.map(regiao => (
-                        <div key={regiao.key} className={styles.regiao_visual_mapa_logico} title={`${regiao.xInicialMetros}m-${regiao.xFinalMetros}m, ${regiao.yInicialMetros}m-${regiao.yFinalMetros}m`}>
-                            <span className={styles.coordenada_regiao_visual_mapa_logico}>{regiao.rotuloMetrico}</span>
+                        <div key={regiao.key} className={styles.regiao_visual_mapa_logico}>
                             {regiao.ocupantes.map(ocupante => (
                                 <button key={ocupante.keySer} type="button" className={`${ocupantesStyles.ocupante_mapa_logico} ${keyOcupanteSelecionado === ocupante.keySer ? ocupantesStyles.ocupante_mapa_logico_selecionado : ''}`} title={`${ocupante.nomeExibicao} (${ocupante.posicao.x}m, ${ocupante.posicao.y}m)`} aria-pressed={keyOcupanteSelecionado === ocupante.keySer} onPointerDown={impedeInicioPanOcupante} onClick={() => selecionaOcupante(ocupante.keySer)}>
                                     <strong>{ocupante.rotuloCurto}</strong>
