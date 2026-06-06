@@ -26,6 +26,7 @@
 .cabecalho_seres_na_sala span,
 .estado_vazio_seres_na_sala,
 .posicao_ser_na_sala,
+.titulo_acoes_ser_na_sala,
 .item_membro_ser_na_sala span {
     color: #bfd2cf;
 }
@@ -44,7 +45,8 @@
 
 .lista_seres_na_sala,
 .lista_membros_ser_na_sala,
-.lista_capacidades_ser_na_sala {
+.lista_capacidades_ser_na_sala,
+.bloco_acoes_ser_na_sala {
     display: grid;
     gap: 0.55em;
 }
@@ -68,10 +70,27 @@
     gap: 0.35em;
 }
 
-.lista_capacidades_ser_na_sala small {
+.titulo_acoes_ser_na_sala {
+    font-size: 0.72em;
+}
+
+.lista_acoes_ser_na_sala {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35em;
+}
+
+.lista_capacidades_ser_na_sala small,
+.lista_acoes_ser_na_sala small {
     padding: 0.25em 0.4em;
     border: 0.06em solid rgba(255, 255, 255, 0.16);
     border-radius: 0.28em;
     color: #dcefe9;
     background: #26383c;
+}
+
+.lista_acoes_ser_na_sala small {
+    border-color: rgba(125, 211, 199, 0.36);
+    color: #eafffb;
+    background: #17363b;
 }
