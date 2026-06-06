@@ -11,17 +11,22 @@ export type SerVisualMapaLogicoTelaJogo = SerNaSalaJogoWsDto & {
     rotuloCurto: string;
 };
 
-export type CelulaMapaLogicoTelaJogo = {
+export type RegiaoVisualMapaLogicoTelaJogo = {
     key: string;
-    x: number;
-    y: number;
+    xIndice: number;
+    yIndice: number;
+    xInicialMetros: number;
+    xFinalMetros: number;
+    yInicialMetros: number;
+    yFinalMetros: number;
+    rotuloMetrico: string;
     ocupantes: readonly OcupanteVisualMapaLogicoTelaJogo[];
     seres: readonly SerVisualMapaLogicoTelaJogo[];
 };
 
 export type EstiloTransformacaoMapaLogicoTelaJogo = CSSProperties & {
-    '--mapa-logico-colunas': number;
-    '--mapa-logico-linhas': number;
+    '--mapa-logico-regioes-x': number;
+    '--mapa-logico-regioes-y': number;
     '--mapa-logico-pan-x': string;
     '--mapa-logico-pan-y': string;
     '--mapa-logico-zoom': number;
@@ -69,5 +74,5 @@ export type ContextoTelaDeJogoMapaLogicoProps = ControleVisualMapaLogicoTelaJogo
     erro: string | null;
     mapaLogicoSalaJogo: MapaLogicoSalaJogoPayloadWsDto | null;
     seresNaSala: readonly SerNaSalaJogoWsDto[];
-    celulas: readonly CelulaMapaLogicoTelaJogo[];
+    regioesVisuais: readonly RegiaoVisualMapaLogicoTelaJogo[];
 };

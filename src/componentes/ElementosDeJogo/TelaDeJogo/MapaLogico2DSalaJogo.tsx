@@ -8,7 +8,7 @@ import seresStyles from './MapaLogico2DSalaJogo.seres.module.css';
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
 
 export function MapaLogico2DSalaJogo() {
-    const { estadoCarregamento, erro, mapaLogicoSalaJogo, celulas, estiloMapa, arrastando, keyOcupanteSelecionado, selecionaOcupante, impedeInicioPanOcupante, iniciaPan, atualizaPan, finalizaPan, aproximaZoom, afastaZoom, rotacionaMapa, resetaVisualizacao } = useContextoTelaDeJogoMapaLogico();
+    const { estadoCarregamento, erro, mapaLogicoSalaJogo, regioesVisuais, estiloMapa, arrastando, keyOcupanteSelecionado, selecionaOcupante, impedeInicioPanOcupante, iniciaPan, atualizaPan, finalizaPan, aproximaZoom, afastaZoom, rotacionaMapa, resetaVisualizacao } = useContextoTelaDeJogoMapaLogico();
 
     if (estadoCarregamento === 'carregando') {
         return (
@@ -33,7 +33,7 @@ export function MapaLogico2DSalaJogo() {
             <div className={controlesStyles.barra_mapa_logico}>
                 <div className={controlesStyles.titulo_mapa_logico}>
                     <strong>Mapa lógico da sala</strong>
-                    <span>{mapaLogicoSalaJogo.mapaLogico.largura} x {mapaLogicoSalaJogo.mapaLogico.altura}</span>
+                    <span>{mapaLogicoSalaJogo.mapaLogico.larguraMetros}m x {mapaLogicoSalaJogo.mapaLogico.alturaMetros}m</span>
                 </div>
                 <div className={controlesStyles.controles_mapa_logico}>
                     <button type="button" onClick={afastaZoom} aria-label="Diminuir zoom do mapa">-</button>
@@ -49,18 +49,18 @@ export function MapaLogico2DSalaJogo() {
             </div>
 
             <div className={`${styles.area_mapa_logico} ${arrastando ? styles.area_mapa_logico_arrastando : ''}`} onPointerDown={iniciaPan} onPointerMove={atualizaPan} onPointerUp={finalizaPan} onPointerCancel={finalizaPan}>
-                <div className={styles.grade_mapa_logico} style={estiloMapa}>
-                    {celulas.map(celula => (
-                        <div key={celula.key} className={styles.celula_mapa_logico}>
-                            <span className={styles.coordenada_celula_mapa_logico}>{celula.x},{celula.y}</span>
-                            {celula.ocupantes.map(ocupante => (
-                                <button key={ocupante.keySer} type="button" className={`${ocupantesStyles.ocupante_mapa_logico} ${keyOcupanteSelecionado === ocupante.keySer ? ocupantesStyles.ocupante_mapa_logico_selecionado : ''}`} title={`${ocupante.nomeExibicao} (${ocupante.posicao.x}, ${ocupante.posicao.y})`} aria-pressed={keyOcupanteSelecionado === ocupante.keySer} onPointerDown={impedeInicioPanOcupante} onClick={() => selecionaOcupante(ocupante.keySer)}>
+                <div className={styles.malha_visual_mapa_logico} style={estiloMapa}>
+                    {regioesVisuais.map(regiao => (
+                        <div key={regiao.key} className={styles.regiao_visual_mapa_logico} title={`${regiao.xInicialMetros}m-${regiao.xFinalMetros}m, ${regiao.yInicialMetros}m-${regiao.yFinalMetros}m`}>
+                            <span className={styles.coordenada_regiao_visual_mapa_logico}>{regiao.rotuloMetrico}</span>
+                            {regiao.ocupantes.map(ocupante => (
+                                <button key={ocupante.keySer} type="button" className={`${ocupantesStyles.ocupante_mapa_logico} ${keyOcupanteSelecionado === ocupante.keySer ? ocupantesStyles.ocupante_mapa_logico_selecionado : ''}`} title={`${ocupante.nomeExibicao} (${ocupante.posicao.x}m, ${ocupante.posicao.y}m)`} aria-pressed={keyOcupanteSelecionado === ocupante.keySer} onPointerDown={impedeInicioPanOcupante} onClick={() => selecionaOcupante(ocupante.keySer)}>
                                     <strong>{ocupante.rotuloCurto}</strong>
                                     <small>{ocupante.nomeExibicao}</small>
                                 </button>
                             ))}
-                            {celula.seres.map(ser => (
-                                <div key={ser.id} className={seresStyles.ser_mapa_logico} title={`${ser.nome} (${ser.posicao.x}, ${ser.posicao.y})`}>
+                            {regiao.seres.map(ser => (
+                                <div key={ser.id} className={seresStyles.ser_mapa_logico} title={`${ser.nome} (${ser.posicao.x}m, ${ser.posicao.y}m)`}>
                                     <strong>{ser.rotuloCurto}</strong>
                                     <small>{ser.nome}</small>
                                 </div>

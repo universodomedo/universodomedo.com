@@ -5,7 +5,7 @@ import { Eventos_Emite, type MapaLogicoSalaJogoPayloadWsDto, type PAYLOAD__Emiti
 
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 
-import { criaCelulasMapaLogico, validaRespostaMapaLogicoSalaJogo } from './ContextoTelaDeJogoMapaLogico.helpers';
+import { criaRegioesVisuaisMapaLogico, validaRespostaMapaLogicoSalaJogo } from './ContextoTelaDeJogoMapaLogico.helpers';
 import type { ContextoTelaDeJogoMapaLogicoProps, EstadoCarregamentoMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
 import { useControleVisualMapaLogico } from './useControleVisualMapaLogico';
 import { useSelecaoOcupanteMapaLogico } from './useSelecaoOcupanteMapaLogico';
@@ -47,7 +47,7 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
         },
     });
 
-    const celulas = useMemo(() => mapaLogicoSalaJogo === null ? [] : criaCelulasMapaLogico(mapaLogicoSalaJogo), [mapaLogicoSalaJogo]);
+    const regioesVisuais = useMemo(() => mapaLogicoSalaJogo === null ? [] : criaRegioesVisuaisMapaLogico(mapaLogicoSalaJogo), [mapaLogicoSalaJogo]);
     const seresNaSala = useMemo(() => mapaLogicoSalaJogo?.seresNaSala ?? [], [mapaLogicoSalaJogo]);
     const controleVisual = useControleVisualMapaLogico(mapaLogicoSalaJogo);
     const selecaoOcupante = useSelecaoOcupanteMapaLogico(mapaLogicoSalaJogo);
@@ -57,10 +57,10 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
         erro,
         mapaLogicoSalaJogo,
         seresNaSala,
-        celulas,
+        regioesVisuais,
         ...controleVisual,
         ...selecaoOcupante,
-    }), [celulas, controleVisual, erro, estadoCarregamento, mapaLogicoSalaJogo, selecaoOcupante, seresNaSala]);
+    }), [controleVisual, erro, estadoCarregamento, mapaLogicoSalaJogo, regioesVisuais, selecaoOcupante, seresNaSala]);
 
     return (
         <ContextoTelaDeJogoMapaLogico.Provider value={contexto}>

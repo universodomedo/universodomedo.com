@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
 import type { MapaLogicoSalaJogoPayloadWsDto } from 'types-nora-api';
 
+import { QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO } from './ContextoTelaDeJogoMapaLogico.helpers';
 import type { ArrasteMapaLogicoTelaJogo, ControleVisualMapaLogicoTelaJogo, EstadoVisualMapaLogicoTelaJogo, EstiloTransformacaoMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
 
 const estadoVisualInicialMapaLogico: EstadoVisualMapaLogicoTelaJogo = { panXEm: 0, panYEm: 0, zoom: 1, rotacaoGraus: 0, arrastando: false };
@@ -14,8 +15,8 @@ export function useControleVisualMapaLogico(mapaLogicoSalaJogo: MapaLogicoSalaJo
     const estiloMapa = useMemo<EstiloTransformacaoMapaLogicoTelaJogo | undefined>(() => {
         if (mapaLogicoSalaJogo === null) return undefined;
         return {
-            '--mapa-logico-colunas': mapaLogicoSalaJogo.mapaLogico.largura,
-            '--mapa-logico-linhas': mapaLogicoSalaJogo.mapaLogico.altura,
+            '--mapa-logico-regioes-x': QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO,
+            '--mapa-logico-regioes-y': QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO,
             '--mapa-logico-pan-x': `${estadoVisual.panXEm}em`,
             '--mapa-logico-pan-y': `${estadoVisual.panYEm}em`,
             '--mapa-logico-zoom': estadoVisual.zoom,

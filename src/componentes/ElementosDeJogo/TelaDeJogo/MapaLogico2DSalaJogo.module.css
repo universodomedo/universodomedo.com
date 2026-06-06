@@ -42,10 +42,10 @@
     cursor: grabbing;
 }
 
-.grade_mapa_logico {
+.malha_visual_mapa_logico {
     display: grid;
-    grid-template-columns: repeat(var(--mapa-logico-colunas), minmax(3.4em, 1fr));
-    grid-template-rows: repeat(var(--mapa-logico-linhas), minmax(3.2em, 1fr));
+    grid-template-columns: repeat(var(--mapa-logico-regioes-x), minmax(3.4em, 1fr));
+    grid-template-rows: repeat(var(--mapa-logico-regioes-y), minmax(3.2em, 1fr));
     width: max-content;
     min-width: 100%;
     min-height: 100%;
@@ -54,7 +54,7 @@
     transform-origin: center;
 }
 
-.celula_mapa_logico {
+.regiao_visual_mapa_logico {
     position: relative;
     display: grid;
     align-content: center;
@@ -66,11 +66,11 @@
     background: rgba(34, 44, 61, 0.68);
 }
 
-.celula_mapa_logico:nth-child(odd) {
+.regiao_visual_mapa_logico:nth-child(odd) {
     background: rgba(43, 55, 75, 0.72);
 }
 
-.coordenada_celula_mapa_logico {
+.coordenada_regiao_visual_mapa_logico {
     position: absolute;
     top: 0.25em;
     left: 0.3em;

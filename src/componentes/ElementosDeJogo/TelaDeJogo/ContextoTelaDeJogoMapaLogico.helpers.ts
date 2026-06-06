@@ -1,6 +1,8 @@
-import type { CapacidadeInataSerNaSalaJogoWsDto, MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto, RESPONSE__EmitirMapaLogicoSalaJogo, SerNaSalaJogoWsDto } from 'types-nora-api';
+import type { CapacidadeInataSerNaSalaJogoWsDto, MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto, PosicaoMapaLogicoSalaJogoWsDto, RESPONSE__EmitirMapaLogicoSalaJogo, SerNaSalaJogoWsDto } from 'types-nora-api';
 
-import type { CelulaMapaLogicoTelaJogo, OcupanteVisualMapaLogicoTelaJogo, SerVisualMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
+import type { OcupanteVisualMapaLogicoTelaJogo, RegiaoVisualMapaLogicoTelaJogo, SerVisualMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
+
+export const QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO = 10;
 
 export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaLogicoSalaJogo): string | null {
     const payload = resposta.mapaLogicoSalaJogo;
@@ -9,8 +11,8 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
     if (!payload.mapaLogico) return 'Resposta do mapa lógico veio sem dimensões.';
     if (!Array.isArray(payload.ocupantesMapaLogico)) return 'Resposta do mapa lógico veio sem ocupantes válidos.';
     if (!Array.isArray(payload.seresNaSala)) return 'Resposta do mapa lógico veio sem seres persistidos válidos.';
-    if (payload.mapaLogico.largura <= 0 || !Number.isFinite(payload.mapaLogico.largura) || !Number.isInteger(payload.mapaLogico.largura)) return 'Mapa lógico veio com largura inválida.';
-    if (payload.mapaLogico.altura <= 0 || !Number.isFinite(payload.mapaLogico.altura) || !Number.isInteger(payload.mapaLogico.altura)) return 'Mapa lógico veio com altura inválida.';
+    if (payload.mapaLogico.larguraMetros <= 0 || !Number.isFinite(payload.mapaLogico.larguraMetros) || !Number.isInteger(payload.mapaLogico.larguraMetros)) return 'Mapa lógico veio com largura em metros inválida.';
+    if (payload.mapaLogico.alturaMetros <= 0 || !Number.isFinite(payload.mapaLogico.alturaMetros) || !Number.isInteger(payload.mapaLogico.alturaMetros)) return 'Mapa lógico veio com altura em metros inválida.';
 
     for (const ocupante of payload.ocupantesMapaLogico) {
         if (!ocupante.keySer || !ocupante.nomeExibicao) return 'Ocupante do mapa veio sem identificação pública válida.';
@@ -18,7 +20,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
         if (!ocupante.perfilFuncional?.key || !ocupante.perfilFuncional.nome) return `Ocupante ${ocupante.nomeExibicao} veio sem perfil funcional válido.`;
         if (!Number.isFinite(ocupante.posicao.x) || !Number.isInteger(ocupante.posicao.x)) return `Ocupante ${ocupante.nomeExibicao} veio com posição X inválida.`;
         if (!Number.isFinite(ocupante.posicao.y) || !Number.isInteger(ocupante.posicao.y)) return `Ocupante ${ocupante.nomeExibicao} veio com posição Y inválida.`;
-        if (ocupante.posicao.x < 0 || ocupante.posicao.y < 0 || ocupante.posicao.x >= payload.mapaLogico.largura || ocupante.posicao.y >= payload.mapaLogico.altura) return `Ocupante ${ocupante.nomeExibicao} veio fora dos limites do mapa.`;
+        if (ocupante.posicao.x < 0 || ocupante.posicao.y < 0 || ocupante.posicao.x >= payload.mapaLogico.larguraMetros || ocupante.posicao.y >= payload.mapaLogico.alturaMetros) return `Ocupante ${ocupante.nomeExibicao} veio fora dos limites métricos do mapa.`;
         if (!Array.isArray(ocupante.recursosFuncionais)) return `Ocupante ${ocupante.nomeExibicao} veio sem recursos funcionais válidos.`;
         if (!Array.isArray(ocupante.capacidadesFuncionais)) return `Ocupante ${ocupante.nomeExibicao} veio sem capacidades funcionais válidas.`;
         if (!Array.isArray(ocupante.acoesDisponiveis)) return `Ocupante ${ocupante.nomeExibicao} veio sem ações disponíveis válidas.`;
@@ -35,7 +37,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
         if (!ser.posicao) return `Ser ${ser.nome} veio sem posição lógica.`;
         if (!Number.isFinite(ser.posicao.x) || !Number.isInteger(ser.posicao.x)) return `Ser ${ser.nome} veio com posição X inválida.`;
         if (!Number.isFinite(ser.posicao.y) || !Number.isInteger(ser.posicao.y)) return `Ser ${ser.nome} veio com posição Y inválida.`;
-        if (ser.posicao.x < 0 || ser.posicao.y < 0 || ser.posicao.x >= payload.mapaLogico.largura || ser.posicao.y >= payload.mapaLogico.altura) return `Ser ${ser.nome} veio fora dos limites do mapa.`;
+        if (ser.posicao.x < 0 || ser.posicao.y < 0 || ser.posicao.x >= payload.mapaLogico.larguraMetros || ser.posicao.y >= payload.mapaLogico.alturaMetros) return `Ser ${ser.nome} veio fora dos limites métricos do mapa.`;
         if (!Array.isArray(ser.membros)) return `Ser ${ser.nome} veio sem membros válidos.`;
 
         for (const membro of ser.membros) {
@@ -63,16 +65,38 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
     return null;
 };
 
-export function criaCelulasMapaLogico(payload: MapaLogicoSalaJogoPayloadWsDto): CelulaMapaLogicoTelaJogo[] {
-    const celulas: CelulaMapaLogicoTelaJogo[] = [];
+export function criaRegioesVisuaisMapaLogico(payload: MapaLogicoSalaJogoPayloadWsDto): RegiaoVisualMapaLogicoTelaJogo[] {
+    const regioesVisuais: RegiaoVisualMapaLogicoTelaJogo[] = [];
 
-    for (let y = 0; y < payload.mapaLogico.altura; y++) {
-        for (let x = 0; x < payload.mapaLogico.largura; x++) {
-            celulas.push({ key: `${x}:${y}`, x, y, ocupantes: payload.ocupantesMapaLogico.filter(ocupante => ocupante.posicao.x === x && ocupante.posicao.y === y).map(criaOcupanteVisualMapaLogico), seres: payload.seresNaSala.filter(ser => ser.posicao.x === x && ser.posicao.y === y).map(criaSerVisualMapaLogico) });
+    for (let yIndice = 0; yIndice < QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO; yIndice++) {
+        for (let xIndice = 0; xIndice < QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO; xIndice++) {
+            const xInicialMetros = calculaInicioFaixaMetricaRegiaoVisual(xIndice, payload.mapaLogico.larguraMetros);
+            const xFinalMetros = calculaFimFaixaMetricaRegiaoVisual(xIndice, payload.mapaLogico.larguraMetros);
+            const yInicialMetros = calculaInicioFaixaMetricaRegiaoVisual(yIndice, payload.mapaLogico.alturaMetros);
+            const yFinalMetros = calculaFimFaixaMetricaRegiaoVisual(yIndice, payload.mapaLogico.alturaMetros);
+
+            regioesVisuais.push({ key: `${xIndice}:${yIndice}`, xIndice, yIndice, xInicialMetros, xFinalMetros, yInicialMetros, yFinalMetros, rotuloMetrico: `${xInicialMetros}m,${yInicialMetros}m`, ocupantes: payload.ocupantesMapaLogico.filter(ocupante => estaNaRegiaoVisualMapaLogico(ocupante.posicao, payload, xIndice, yIndice)).map(criaOcupanteVisualMapaLogico), seres: payload.seresNaSala.filter(ser => estaNaRegiaoVisualMapaLogico(ser.posicao, payload, xIndice, yIndice)).map(criaSerVisualMapaLogico) });
         }
     }
 
-    return celulas;
+    return regioesVisuais;
+};
+
+function calculaInicioFaixaMetricaRegiaoVisual(indice: number, tamanhoMetros: number): number {
+    return Math.floor(indice * tamanhoMetros / QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO);
+};
+
+function calculaFimFaixaMetricaRegiaoVisual(indice: number, tamanhoMetros: number): number {
+    return Math.max(calculaInicioFaixaMetricaRegiaoVisual(indice, tamanhoMetros), Math.ceil((indice + 1) * tamanhoMetros / QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO) - 1);
+};
+
+function estaNaRegiaoVisualMapaLogico(posicao: PosicaoMapaLogicoSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto, xIndice: number, yIndice: number): boolean {
+    return obtemIndiceRegiaoVisualMapaLogico(posicao.x, payload.mapaLogico.larguraMetros) === xIndice && obtemIndiceRegiaoVisualMapaLogico(posicao.y, payload.mapaLogico.alturaMetros) === yIndice;
+};
+
+function obtemIndiceRegiaoVisualMapaLogico(coordenadaMetros: number, tamanhoMetros: number): number {
+    const indice = Math.floor(coordenadaMetros * QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO / tamanhoMetros);
+    return Math.min(Math.max(indice, 0), QUANTIDADE_REGIOES_VISUAIS_MAPA_LOGICO_TRANSICAO - 1);
 };
 
 function criaOcupanteVisualMapaLogico(ocupante: OcupanteMapaLogicoSalaJogoWsDto): OcupanteVisualMapaLogicoTelaJogo {
