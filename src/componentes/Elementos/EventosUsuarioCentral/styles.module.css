@@ -10,6 +10,11 @@
     color: #fff;
 }
 
+/* Etapa 14 (correção): com o alvo do tutorial destacado, eleva a central ao nível da camada (z-index 100000) para o botão furar a overlay; o painel/lista continua sob a camada. */
+.central_destaque_ativo {
+    z-index: 100000;
+}
+
 .botao_abrir {
     align-self: flex-start;
     padding: 0.5em 0.75em;

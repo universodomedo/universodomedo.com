@@ -1,0 +1,25 @@
+.central {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.superior_esquerda {
+    top: 1em;
+    left: 1em;
+}
+
+.superior_direita {
+    top: 1em;
+    right: 1em;
+}
+
+.inferior_esquerda {
+    bottom: 1em;
+    left: 1em;
+}
+
+.inferior_direita {
+    bottom: 1em;
+    right: 1em;
+}

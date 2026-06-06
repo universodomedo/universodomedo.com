@@ -6,7 +6,7 @@ import { Eventos_EnviaERecebe, EventoUsuarioDto } from 'types-nora-api';
 import { eventoWs, useSocketEpoch } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { paraItemCentral, EventoUsuarioCentralItem } from './eventoUsuarioCentralItem';
-import { useTutorialIntervencao } from './useTutorialIntervencao';
+import { useTutorialIntervencao, PosicaoIntervencaoTutorial } from './useTutorialIntervencao';
 
 export interface ContextoEventosUsuarioProps {
     eventos: EventoUsuarioDto[];
@@ -20,6 +20,7 @@ export interface ContextoEventosUsuarioProps {
     marcarLido: (idEvento: number) => void;
     tutorialAberto: EventoUsuarioCentralItem | null;
     alvoVisualLocalizado: string | null;
+    posicaoIntervencao: PosicaoIntervencaoTutorial;
     abrirTutorial: (idEvento: number) => void;
     fecharTutorial: () => void;
     confirmarTutorial: () => void;
@@ -85,9 +86,9 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
     const itens = useMemo(() => eventos.map(paraItemCentral), [eventos]);
 
     // Etapa 12: estado/ações da intervenção visual de tutorial (lógica isolada em hook para manter o contexto pequeno).
-    const { tutorialAberto, alvoVisualLocalizado, abrirTutorial, fecharTutorial, confirmarTutorial } = useTutorialIntervencao(itens, marcarLido, estaAutenticado);
+    const { tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial } = useTutorialIntervencao(itens, marcarLido, estaAutenticado);
 
-    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, alvoVisualLocalizado, abrirTutorial, fecharTutorial, confirmarTutorial }), [eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, alvoVisualLocalizado, abrirTutorial, fecharTutorial, confirmarTutorial]);
+    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial }), [eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, fecharTutorial, confirmarTutorial]);
 
     return (
         <ContextoEventosUsuario.Provider value={api}>

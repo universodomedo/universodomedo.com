@@ -16,7 +16,7 @@ export default function EventosUsuarioCentral() {
     if (!estaAutenticado) return null;
 
     return (
-        <div className={styles.central}>
+        <div className={`${styles.central} ${alvoVisualLocalizado === ALVO_VISUAL_CENTRAL_BOTAO ? styles.central_destaque_ativo : ''}`}>
             {/* Etapa 13: alvo visual estável do tutorial inicial (atributo = ATRIBUTO_ALVO_VISUAL_TUTORIAL). */}
             <button type="button" data-udm-tutorial={ALVO_VISUAL_CENTRAL_BOTAO} className={`${styles.botao_abrir} ${alvoVisualLocalizado === ALVO_VISUAL_CENTRAL_BOTAO ? styles.botao_abrir_destacado : ''}`} onClick={alternarAberto}>Eventos{naoLidos > 0 ? ` (${naoLidos})` : ''}</button>
 
