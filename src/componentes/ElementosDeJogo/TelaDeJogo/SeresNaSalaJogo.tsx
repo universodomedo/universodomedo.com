@@ -21,6 +21,7 @@ export function SeresNaSalaJogo() {
                     {seresNaSala.map(ser => (
                         <article key={ser.id} className={styles.item_ser_na_sala}>
                             <strong>{ser.nome}</strong>
+                            <span className={styles.posicao_ser_na_sala}>Posição {ser.posicao.x},{ser.posicao.y}</span>
                             <div className={styles.lista_membros_ser_na_sala}>
                                 {ser.membros.map(membro => (
                                     <section key={membro.id} className={styles.item_membro_ser_na_sala}>

@@ -25,6 +25,7 @@
 
 .cabecalho_seres_na_sala span,
 .estado_vazio_seres_na_sala,
+.posicao_ser_na_sala,
 .item_membro_ser_na_sala span {
     color: #bfd2cf;
 }
@@ -35,6 +36,10 @@
 
 .estado_vazio_seres_na_sala {
     font-size: 0.84em;
+}
+
+.posicao_ser_na_sala {
+    font-size: 0.76em;
 }
 
 .lista_seres_na_sala,

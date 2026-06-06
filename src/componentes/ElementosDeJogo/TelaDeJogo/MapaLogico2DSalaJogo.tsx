@@ -3,6 +3,7 @@
 import styles from './MapaLogico2DSalaJogo.module.css';
 import controlesStyles from './MapaLogico2DSalaJogo.controles.module.css';
 import ocupantesStyles from './MapaLogico2DSalaJogo.ocupantes.module.css';
+import seresStyles from './MapaLogico2DSalaJogo.seres.module.css';
 
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
 
@@ -57,6 +58,12 @@ export function MapaLogico2DSalaJogo() {
                                     <strong>{ocupante.rotuloCurto}</strong>
                                     <small>{ocupante.nomeExibicao}</small>
                                 </button>
+                            ))}
+                            {celula.seres.map(ser => (
+                                <div key={ser.id} className={seresStyles.ser_mapa_logico} title={`${ser.nome} (${ser.posicao.x}, ${ser.posicao.y})`}>
+                                    <strong>{ser.rotuloCurto}</strong>
+                                    <small>{ser.nome}</small>
+                                </div>
                             ))}
                         </div>
                     ))}

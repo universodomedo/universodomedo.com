@@ -1,0 +1,27 @@
+.ser_mapa_logico {
+    display: grid;
+    max-width: 100%;
+    gap: 0.06em;
+    place-items: center;
+    padding: 0.2em 0.34em;
+    border: 0.08em solid #7dd3c7;
+    border-radius: 0.3em;
+    color: #eafffb;
+    background: #17363b;
+    box-shadow: 0 0.18em 0.62em rgba(0, 0, 0, 0.32);
+    pointer-events: none;
+}
+
+.ser_mapa_logico strong {
+    font-size: 0.74em;
+    line-height: 1;
+}
+
+.ser_mapa_logico small {
+    max-width: 7em;
+    overflow: hidden;
+    color: #bdece5;
+    font-size: 0.52em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

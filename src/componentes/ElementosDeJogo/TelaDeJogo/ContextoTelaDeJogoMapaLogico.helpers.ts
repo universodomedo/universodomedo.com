@@ -1,6 +1,6 @@
-import type { MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto, RESPONSE__EmitirMapaLogicoSalaJogo } from 'types-nora-api';
+import type { MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto, RESPONSE__EmitirMapaLogicoSalaJogo, SerNaSalaJogoWsDto } from 'types-nora-api';
 
-import type { CelulaMapaLogicoTelaJogo, OcupanteVisualMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
+import type { CelulaMapaLogicoTelaJogo, OcupanteVisualMapaLogicoTelaJogo, SerVisualMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
 
 export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaLogicoSalaJogo): string | null {
     const payload = resposta.mapaLogicoSalaJogo;
@@ -32,6 +32,10 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
 
     for (const ser of payload.seresNaSala) {
         if (!Number.isInteger(ser.id) || ser.id <= 0 || !ser.nome) return 'Ser persistido da sala veio sem identificação válida.';
+        if (!ser.posicao) return `Ser ${ser.nome} veio sem posição lógica.`;
+        if (!Number.isFinite(ser.posicao.x) || !Number.isInteger(ser.posicao.x)) return `Ser ${ser.nome} veio com posição X inválida.`;
+        if (!Number.isFinite(ser.posicao.y) || !Number.isInteger(ser.posicao.y)) return `Ser ${ser.nome} veio com posição Y inválida.`;
+        if (ser.posicao.x < 0 || ser.posicao.y < 0 || ser.posicao.x >= payload.mapaLogico.largura || ser.posicao.y >= payload.mapaLogico.altura) return `Ser ${ser.nome} veio fora dos limites do mapa.`;
         if (!Array.isArray(ser.membros)) return `Ser ${ser.nome} veio sem membros válidos.`;
 
         for (const membro of ser.membros) {
@@ -52,7 +56,7 @@ export function criaCelulasMapaLogico(payload: MapaLogicoSalaJogoPayloadWsDto): 
 
     for (let y = 0; y < payload.mapaLogico.altura; y++) {
         for (let x = 0; x < payload.mapaLogico.largura; x++) {
-            celulas.push({ key: `${x}:${y}`, x, y, ocupantes: payload.ocupantesMapaLogico.filter(ocupante => ocupante.posicao.x === x && ocupante.posicao.y === y).map(criaOcupanteVisualMapaLogico) });
+            celulas.push({ key: `${x}:${y}`, x, y, ocupantes: payload.ocupantesMapaLogico.filter(ocupante => ocupante.posicao.x === x && ocupante.posicao.y === y).map(criaOcupanteVisualMapaLogico), seres: payload.seresNaSala.filter(ser => ser.posicao.x === x && ser.posicao.y === y).map(criaSerVisualMapaLogico) });
         }
     }
 
@@ -60,11 +64,15 @@ export function criaCelulasMapaLogico(payload: MapaLogicoSalaJogoPayloadWsDto): 
 };
 
 function criaOcupanteVisualMapaLogico(ocupante: OcupanteMapaLogicoSalaJogoWsDto): OcupanteVisualMapaLogicoTelaJogo {
-    return { ...ocupante, rotuloCurto: criaRotuloCurtoOcupante(ocupante.nomeExibicao) };
+    return { ...ocupante, rotuloCurto: criaRotuloCurtoNome(ocupante.nomeExibicao) };
 };
 
-function criaRotuloCurtoOcupante(nomeExibicao: string): string {
-    const partes = nomeExibicao.trim().split(/\s+/).filter(parte => parte.length > 0);
+function criaSerVisualMapaLogico(ser: SerNaSalaJogoWsDto): SerVisualMapaLogicoTelaJogo {
+    return { ...ser, posicao: { ...ser.posicao }, membros: ser.membros.map(membro => ({ id: membro.id, nome: membro.nome, capacidades: membro.capacidades.map(capacidade => ({ id: capacidade.id, nome: capacidade.nome })) })), rotuloCurto: criaRotuloCurtoNome(ser.nome) };
+};
+
+function criaRotuloCurtoNome(nome: string): string {
+    const partes = nome.trim().split(/\s+/).filter(parte => parte.length > 0);
     if (partes.length === 0) return '?';
 
     return partes.slice(0, 2).map(parte => parte[0]?.toUpperCase() ?? '').join('');

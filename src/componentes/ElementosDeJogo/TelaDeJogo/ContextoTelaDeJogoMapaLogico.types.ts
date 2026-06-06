@@ -7,11 +7,16 @@ export type OcupanteVisualMapaLogicoTelaJogo = OcupanteMapaLogicoSalaJogoWsDto &
     rotuloCurto: string;
 };
 
+export type SerVisualMapaLogicoTelaJogo = SerNaSalaJogoWsDto & {
+    rotuloCurto: string;
+};
+
 export type CelulaMapaLogicoTelaJogo = {
     key: string;
     x: number;
     y: number;
     ocupantes: readonly OcupanteVisualMapaLogicoTelaJogo[];
+    seres: readonly SerVisualMapaLogicoTelaJogo[];
 };
 
 export type EstiloTransformacaoMapaLogicoTelaJogo = CSSProperties & {
