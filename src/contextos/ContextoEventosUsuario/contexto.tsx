@@ -19,6 +19,7 @@ export interface ContextoEventosUsuarioProps {
     sincronizarAposNotificacaoRecebida: () => void;
     marcarLido: (idEvento: number) => void;
     tutorialAberto: EventoUsuarioCentralItem | null;
+    alvoVisualLocalizado: string | null;
     abrirTutorial: (idEvento: number) => void;
     fecharTutorial: () => void;
     confirmarTutorial: () => void;
@@ -84,9 +85,9 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
     const itens = useMemo(() => eventos.map(paraItemCentral), [eventos]);
 
     // Etapa 12: estado/ações da intervenção visual de tutorial (lógica isolada em hook para manter o contexto pequeno).
-    const { tutorialAberto, abrirTutorial, fecharTutorial, confirmarTutorial } = useTutorialIntervencao(itens, marcarLido, estaAutenticado);
+    const { tutorialAberto, alvoVisualLocalizado, abrirTutorial, fecharTutorial, confirmarTutorial } = useTutorialIntervencao(itens, marcarLido, estaAutenticado);
 
-    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, abrirTutorial, fecharTutorial, confirmarTutorial }), [eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, abrirTutorial, fecharTutorial, confirmarTutorial]);
+    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, alvoVisualLocalizado, abrirTutorial, fecharTutorial, confirmarTutorial }), [eventos, itens, carregando, aberto, naoLidos, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, tutorialAberto, alvoVisualLocalizado, abrirTutorial, fecharTutorial, confirmarTutorial]);
 
     return (
         <ContextoEventosUsuario.Provider value={api}>

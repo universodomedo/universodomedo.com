@@ -6,17 +6,19 @@ import EventosUsuarioTutorialIntervencao from './EventosUsuarioTutorialIntervenc
 
 import { useContextoEventosUsuario } from 'Contextos/ContextoEventosUsuario/contexto';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import { ALVO_VISUAL_CENTRAL_BOTAO } from 'Contextos/ContextoEventosUsuario/alvoVisualTutorial';
 
 // Central mínima de eventos do usuário (Etapa 7): apenas renderiza; toda a lógica/estado vive no ContextoEventosUsuario.
 export default function EventosUsuarioCentral() {
     const { estaAutenticado } = useContextoAutenticacao();
-    const { itens, carregando, aberto, naoLidos, alternarAberto, listar, marcarLido, abrirTutorial } = useContextoEventosUsuario();
+    const { itens, carregando, aberto, naoLidos, alternarAberto, listar, marcarLido, abrirTutorial, alvoVisualLocalizado } = useContextoEventosUsuario();
 
     if (!estaAutenticado) return null;
 
     return (
         <div className={styles.central}>
-            <button type="button" className={styles.botao_abrir} onClick={alternarAberto}>Eventos{naoLidos > 0 ? ` (${naoLidos})` : ''}</button>
+            {/* Etapa 13: alvo visual estável do tutorial inicial (atributo = ATRIBUTO_ALVO_VISUAL_TUTORIAL). */}
+            <button type="button" data-udm-tutorial={ALVO_VISUAL_CENTRAL_BOTAO} className={`${styles.botao_abrir} ${alvoVisualLocalizado === ALVO_VISUAL_CENTRAL_BOTAO ? styles.botao_abrir_destacado : ''}`} onClick={alternarAberto}>Eventos{naoLidos > 0 ? ` (${naoLidos})` : ''}</button>
 
             {aberto && (
                 <div className={styles.painel}>
