@@ -1,31 +1,28 @@
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
+﻿import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
 import type { MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto, SerNaSalaJogoWsDto } from 'types-nora-api';
 
 export type EstadoCarregamentoMapaLogicoTelaJogo = 'carregando' | 'erro' | 'pronto';
 
-export type OcupanteVisualMapaLogicoTelaJogo = OcupanteMapaLogicoSalaJogoWsDto & {
-    rotuloCurto: string;
-};
-
-export type SerVisualMapaLogicoTelaJogo = SerNaSalaJogoWsDto & {
-    rotuloCurto: string;
-};
-
-export type RegiaoVisualMapaLogicoTelaJogo = {
-    key: string;
-    xIndice: number;
-    yIndice: number;
-    ocupantes: readonly OcupanteVisualMapaLogicoTelaJogo[];
-    seres: readonly SerVisualMapaLogicoTelaJogo[];
+export type EstiloMarcadorMapaLogicoTelaJogo = CSSProperties & {
+    '--mapa-logico-marcador-x': string;
+    '--mapa-logico-marcador-y': string;
 };
 
 export type EstiloTransformacaoMapaLogicoTelaJogo = CSSProperties & {
-    '--mapa-logico-regioes-x': number;
-    '--mapa-logico-regioes-y': number;
     '--mapa-logico-pan-x': string;
     '--mapa-logico-pan-y': string;
     '--mapa-logico-zoom': number;
     '--mapa-logico-rotacao': string;
+};
+
+export type OcupanteVisualMapaLogicoTelaJogo = OcupanteMapaLogicoSalaJogoWsDto & {
+    rotuloCurto: string;
+    estiloMarcador: EstiloMarcadorMapaLogicoTelaJogo;
+};
+
+export type SerVisualMapaLogicoTelaJogo = SerNaSalaJogoWsDto & {
+    rotuloCurto: string;
+    estiloMarcador: EstiloMarcadorMapaLogicoTelaJogo;
 };
 
 export type ArrasteMapaLogicoTelaJogo = {
@@ -68,6 +65,7 @@ export type ContextoTelaDeJogoMapaLogicoProps = ControleVisualMapaLogicoTelaJogo
     estadoCarregamento: EstadoCarregamentoMapaLogicoTelaJogo;
     erro: string | null;
     mapaLogicoSalaJogo: MapaLogicoSalaJogoPayloadWsDto | null;
+    ocupantesVisuais: readonly OcupanteVisualMapaLogicoTelaJogo[];
     seresNaSala: readonly SerNaSalaJogoWsDto[];
-    regioesVisuais: readonly RegiaoVisualMapaLogicoTelaJogo[];
+    seresVisuais: readonly SerVisualMapaLogicoTelaJogo[];
 };

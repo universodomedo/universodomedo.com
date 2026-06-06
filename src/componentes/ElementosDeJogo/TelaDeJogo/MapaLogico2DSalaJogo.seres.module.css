@@ -1,6 +1,9 @@
-.ser_mapa_logico {
+﻿.ser_mapa_logico {
+    position: absolute;
+    left: var(--mapa-logico-marcador-x);
+    top: var(--mapa-logico-marcador-y);
     display: grid;
-    max-width: 100%;
+    max-width: 8em;
     gap: 0.06em;
     place-items: center;
     padding: 0.2em 0.34em;
@@ -10,6 +13,7 @@
     background: #17363b;
     box-shadow: 0 0.18em 0.62em rgba(0, 0, 0, 0.32);
     pointer-events: none;
+    transform: translate(-50%, -50%);
 }
 
 .ser_mapa_logico strong {

@@ -1,6 +1,9 @@
-.ocupante_mapa_logico {
+﻿.ocupante_mapa_logico {
+    position: absolute;
+    left: var(--mapa-logico-marcador-x);
+    top: var(--mapa-logico-marcador-y);
     display: grid;
-    max-width: 100%;
+    max-width: 8em;
     gap: 0.08em;
     place-items: center;
     padding: 0.28em 0.42em;
@@ -11,6 +14,7 @@
     background: #4c3c1e;
     box-shadow: 0 0.25em 0.85em rgba(0, 0, 0, 0.36);
     cursor: pointer;
+    transform: translate(-50%, -50%);
 }
 
 .ocupante_mapa_logico:hover {
