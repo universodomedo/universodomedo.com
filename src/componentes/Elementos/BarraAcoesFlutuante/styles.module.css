@@ -66,3 +66,9 @@
 .item_capsula:hover {
     background-color: #3B1F47;
 }
+
+/* Etapa 17: destaque (brilho) do alvo de tutorial — só visual, sem elevar/escapar a cápsula. */
+.item_capsula_destacado {
+    box-shadow: inset 0 0 0 0.12em #4ea1ff;
+    color: #4ea1ff;
+}

@@ -83,7 +83,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   <SocketListeners />
                   <GatilhoDevEventosUsuario />
                   <EventosUsuarioCentral />
-                </ContextoEventosUsuarioProvider>
                 <RadixTooltip delayDuration={200} skipDelayDuration={0}>
                   <AppClientProviders>
                     <Contexto__Chat__Provider>
@@ -106,6 +105,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     </Contexto__Chat__Provider>
                   </AppClientProviders>
                 </RadixTooltip>
+                </ContextoEventosUsuarioProvider>
               </ContextoAutenticacaoProvider>
             </ContextoPerformanceProvider>
           </ReduxProvider>

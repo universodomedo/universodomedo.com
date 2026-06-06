@@ -16,6 +16,7 @@ export type IntervencaoTutorial = {
     proximoPasso: () => void;
     fecharTutorial: () => void;
     confirmarTutorial: () => void;
+    reavaliarAlvoVisual: () => void;
 };
 
 // Etapa 12: estado/ações da intervenção visual mínima de tutorial. Backend continua a fonte da verdade (usa marcarLido).
@@ -72,6 +73,11 @@ export function useTutorialIntervencao(itens: EventoUsuarioCentralItem[], conclu
         resetar();
     }, [tutorialAberto, passoIndice, concluirTutorial, resetar]);
 
+    // Etapa 17: reavalia o alvo+posição do passo atual (rede de segurança após a barra expandir e o botão real montar).
+    const reavaliarAlvoVisual = useCallback(() => {
+        if (tutorialAberto) aplicarPasso(tutorialAberto, passoIndice);
+    }, [tutorialAberto, passoIndice, aplicarPasso]);
+
     // Desautenticou (eventos limpos no contexto) => fecha a intervenção e zera o estado temporário.
     useEffect(() => { if (!estaAutenticado) resetar(); }, [estaAutenticado, resetar]);
 
@@ -80,5 +86,5 @@ export function useTutorialIntervencao(itens: EventoUsuarioCentralItem[], conclu
     const ehUltimoPasso = totalPassos > 0 && passoIndice >= totalPassos - 1;
     const progressoRotulo = totalPassos > 0 ? `Passo ${passoIndice + 1} de ${totalPassos}` : '';
 
-    return useMemo(() => ({ tutorialAberto, passoAtual, progressoRotulo, ehUltimoPasso, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, proximoPasso, fecharTutorial, confirmarTutorial }), [tutorialAberto, passoAtual, progressoRotulo, ehUltimoPasso, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, proximoPasso, fecharTutorial, confirmarTutorial]);
+    return useMemo(() => ({ tutorialAberto, passoAtual, progressoRotulo, ehUltimoPasso, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, proximoPasso, fecharTutorial, confirmarTutorial, reavaliarAlvoVisual }), [tutorialAberto, passoAtual, progressoRotulo, ehUltimoPasso, alvoVisualLocalizado, posicaoIntervencao, abrirTutorial, proximoPasso, fecharTutorial, confirmarTutorial, reavaliarAlvoVisual]);
 };

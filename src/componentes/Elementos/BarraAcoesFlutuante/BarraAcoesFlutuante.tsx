@@ -1,7 +1,6 @@
 'use client';
 
 import styles from './styles.module.css';
-import { useState } from 'react';
 import { useContextoBarraAcoesFlutuante } from 'Contextos/ContextoBarraAcoesFlutuante/contexto';
 import type { AcaoBarra } from 'Contextos/ContextoBarraAcoesFlutuante/contexto';
 import { MODULOS_ACOES } from './definicoes-acoes';
@@ -11,8 +10,7 @@ function resolveVisivel(visivel: AcaoBarra['visivel']): boolean {
 };
 
 export default function BarraAcoesFlutuante() {
-    const { acoes } = useContextoBarraAcoesFlutuante();
-    const [aberto, setAberto] = useState(false);
+    const { acoes, expandido, definirExpandido } = useContextoBarraAcoesFlutuante();
 
     const acoesVisiveis = acoes.filter(a => resolveVisivel(a.visivel));
 
@@ -35,20 +33,21 @@ export default function BarraAcoesFlutuante() {
                 <div id={styles.capsula_barra_acoes}>
                     <button
                         id={styles.botao_toggle_capsula}
-                        onClick={() => setAberto(v => !v)}
-                        title={aberto ? 'Fechar' : 'Ações rápidas'}
+                        onClick={() => definirExpandido(!expandido)}
+                        title={expandido ? 'Fechar' : 'Ações rápidas'}
                     >
-                        {aberto ? '✕' : '⚡'}
+                        {expandido ? '✕' : '⚡'}
                     </button>
-                    {aberto && (
+                    {expandido && (
                         <>
                             <div className={styles.divisor_capsula} />
                             {acoesVisiveis.map(acao => (
                                 <button
                                     key={acao.id}
-                                    className={styles.item_capsula}
+                                    className={`${styles.item_capsula} ${acao.destacado ? styles.item_capsula_destacado : ''}`}
                                     onClick={acao.onClick}
                                     title={acao.rotulo}
+                                    data-udm-tutorial={acao.atributoAlvo}
                                 >
                                     {acao.icone}
                                 </button>

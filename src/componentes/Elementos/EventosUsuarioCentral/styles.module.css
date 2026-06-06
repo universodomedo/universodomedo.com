@@ -1,35 +1,14 @@
 .central {
+    /* Etapa 17 (correção sobreposição): a barra/gatilho ocupa o canto inferior ESQUERDO; ancoramos a Central no canto inferior DIREITO, sem referenciar largura/deslocamento da barra nem misturar referenciais. Assim o painel aberto nunca cobre o botão de notificações, em qualquer escala/viewport/quantidade de ações. A overlay/card do tutorial usam .camada (position: fixed) e independem disto. */
     position: fixed;
     bottom: 1em;
-    left: 1em;
+    right: 1em;
     z-index: 99998;
     display: flex;
     flex-direction: column;
     gap: 0.5em;
     font-size: 0.8em;
     color: #fff;
-}
-
-/* Etapa 14 (correção): com o alvo do tutorial destacado, eleva a central ao nível da camada (z-index 100000) para o botão furar a overlay; o painel/lista continua sob a camada. */
-.central_destaque_ativo {
-    z-index: 100000;
-}
-
-.botao_abrir {
-    align-self: flex-start;
-    padding: 0.5em 0.75em;
-    border-radius: 0.375em;
-    border: 0.1em solid #fff;
-    background: #111;
-    color: #fff;
-    cursor: pointer;
-}
-
-.botao_abrir_destacado {
-    position: relative;
-    z-index: 100001;
-    border-color: #4ea1ff;
-    box-shadow: 0 0 0 0.15em #4ea1ff, 0 0 0.8em rgba(78, 161, 255, 0.8);
 }
 
 .painel {

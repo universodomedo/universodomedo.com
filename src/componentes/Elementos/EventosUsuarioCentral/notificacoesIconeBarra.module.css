@@ -1,0 +1,20 @@
+.recipiente {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge {
+    position: absolute;
+    top: -0.4em;
+    right: -0.5em;
+    min-width: 1.2em;
+    padding: 0 0.25em;
+    border-radius: 999em;
+    background: #d33;
+    color: #fff;
+    font-size: 0.55em;
+    line-height: 1.4em;
+    text-align: center;
+}

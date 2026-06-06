@@ -9,12 +9,16 @@ export interface AcaoBarra {
     icone: ReactNode;
     visivel: boolean | (() => boolean);
     onClick: () => void;
+    atributoAlvo?: string;
+    destacado?: boolean;
 };
 
 interface ContextoBarraAcoesFlutuanteProps {
     acoes: AcaoBarra[];
     registrarAcao: (acao: AcaoBarra) => void;
     removerAcao: (id: string) => void;
+    expandido: boolean;
+    definirExpandido: (valor: boolean) => void;
 };
 
 const ContextoBarraAcoesFlutuante = createContext<ContextoBarraAcoesFlutuanteProps | undefined>(undefined);
@@ -32,6 +36,7 @@ interface ContextoBarraAcoesFlutuante__ProviderProps {
 
 export const ContextoBarraAcoesFlutuante__Provider = ({ children, acoesIniciais = [] }: ContextoBarraAcoesFlutuante__ProviderProps) => {
     const [acoes, setAcoes] = useState<AcaoBarra[]>(acoesIniciais);
+    const [expandido, setExpandido] = useState(false);
 
     const registrarAcao = useCallback((acao: AcaoBarra) => {
         setAcoes(prev => {
@@ -45,8 +50,10 @@ export const ContextoBarraAcoesFlutuante__Provider = ({ children, acoesIniciais 
         setAcoes(prev => prev.filter(a => a.id !== id));
     }, []);
 
+    const definirExpandido = useCallback((valor: boolean) => { setExpandido(valor); }, []);
+
     return (
-        <ContextoBarraAcoesFlutuante.Provider value={{ acoes, registrarAcao, removerAcao }}>
+        <ContextoBarraAcoesFlutuante.Provider value={{ acoes, registrarAcao, removerAcao, expandido, definirExpandido }}>
             {children}
         </ContextoBarraAcoesFlutuante.Provider>
     );
