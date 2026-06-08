@@ -8,12 +8,12 @@ import { EventosApiRest } from 'types-nora-api/api/rest';
 import { NoraApi } from 'Api/NoraApi';
 import { ModalAreaInterativa3D } from '../modal/ModalAreaInterativa3D';
 import { obtemMensagemConfirmacaoDescarteCenaEditor3D } from './editor3D.projeto.carregamento';
+import { criaPayloadSalvarNovoProjetoEditor3D, criaPayloadSalvarProjetoAtualEditor3D, obtemBloqueioSalvamentoProjetoEditor3D } from './editor3D.projeto.salvamento';
 import { obtemBloqueioCarregamentoCenaCanonicaEditor3D } from '../editor/editor3D.cenaCanonica.carregamento';
-import { obtemBloqueioGeracaoCenaCanonicaEditor3D, serializaEditor3DParaCenaCanonica } from '../editor/editor3D.cenaCanonica.serializador';
 import { useEditor3DContexto } from '../contexto/Editor3DContexto';
 import type { Projeto3DResumoPersistido } from 'types-nora-api/shared';
 
-type ModalProjetoEditor3D = 'SALVAR' | 'CARREGAR';
+type ModalProjetoEditor3D = 'SALVAR_NOVO' | 'CARREGAR';
 
 interface StatusProjetoEditor3D {
     readonly texto: string;
@@ -47,11 +47,11 @@ export function MenuProjetoEditor3D() {
         setIdProjetoCarregando(null);
     };
 
-    function abreSalvarProjeto(): void {
+    function abreSalvarNovoProjeto(): void {
         setMenuAberto(false);
-        setNomeProjeto(estado.projetoAberto?.nome ?? '');
+        setNomeProjeto('');
         setStatusSalvar(null);
-        setModalAberto('SALVAR');
+        setModalAberto('SALVAR_NOVO');
     };
 
     async function carregaListagemProjetos(): Promise<void> {
@@ -80,7 +80,47 @@ export function MenuProjetoEditor3D() {
         void carregaListagemProjetos();
     };
 
-    async function salvaProjeto(event: FormEvent<HTMLFormElement>): Promise<void> {
+    async function salvaProjetoAtual(): Promise<void> {
+        if (estado.projetoAberto === null) {
+            setStatusSalvar({ texto: 'Carregue ou salve um projeto novo antes de atualizar o projeto atual.', bloqueado: true });
+
+            return;
+        }
+
+        const motivoBloqueio = obtemBloqueioSalvamentoProjetoEditor3D(estado);
+
+        if (motivoBloqueio !== null) {
+            setStatusSalvar({ texto: motivoBloqueio, bloqueado: true });
+
+            return;
+        }
+
+        const payload = criaPayloadSalvarProjetoAtualEditor3D(estado);
+
+        if (payload === null) {
+            setStatusSalvar({ texto: 'Nenhum projeto aberto para atualizar.', bloqueado: true });
+
+            return;
+        }
+
+        setSalvando(true);
+        setStatusSalvar({ texto: `Salvando projeto atual: ${estado.projetoAberto.nome}...`, bloqueado: false });
+
+        try {
+            const projeto = await NoraApi.RestPOST(EventosApiRest.POST.Projeto3D.salvar, payload, { mensagemErro: 'Falha ao salvar projeto atual 3D' });
+
+            acoes.defineProjetoAberto({ id: projeto.id, nome: projeto.nome });
+            setStatusSalvar({ texto: `Projeto atual salvo: ${projeto.nome}.`, bloqueado: false });
+        } catch (erroCapturado) {
+            const mensagemErro = erroCapturado instanceof Error ? erroCapturado.message : 'Erro desconhecido ao salvar projeto atual 3D';
+
+            setStatusSalvar({ texto: mensagemErro, bloqueado: true });
+        } finally {
+            setSalvando(false);
+        }
+    };
+
+    async function salvaNovoProjeto(event: FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
 
         const nome = nomeProjeto.trim();
@@ -91,13 +131,7 @@ export function MenuProjetoEditor3D() {
             return;
         }
 
-        if (estado.objetos.length === 0) {
-            setStatusSalvar({ texto: 'Crie ao menos um objeto confirmado antes de salvar o projeto.', bloqueado: true });
-
-            return;
-        }
-
-        const motivoBloqueio = obtemBloqueioGeracaoCenaCanonicaEditor3D(estado);
+        const motivoBloqueio = obtemBloqueioSalvamentoProjetoEditor3D(estado);
 
         if (motivoBloqueio !== null) {
             setStatusSalvar({ texto: motivoBloqueio, bloqueado: true });
@@ -105,18 +139,17 @@ export function MenuProjetoEditor3D() {
             return;
         }
 
-        const cenaCanonica = serializaEditor3DParaCenaCanonica(estado);
-        const payload = estado.projetoAberto === null ? { nome, cenaCanonica } : { idProjeto: estado.projetoAberto.id, nome, cenaCanonica };
+        const payload = criaPayloadSalvarNovoProjetoEditor3D(estado, nome);
 
         setSalvando(true);
-        setStatusSalvar({ texto: 'Salvando projeto...', bloqueado: false });
+        setStatusSalvar({ texto: 'Salvando novo projeto...', bloqueado: false });
 
         try {
             const projeto = await NoraApi.RestPOST(EventosApiRest.POST.Projeto3D.salvar, payload, { mensagemErro: 'Falha ao salvar projeto 3D' });
 
             acoes.defineProjetoAberto({ id: projeto.id, nome: projeto.nome });
             setNomeProjeto(projeto.nome);
-            setStatusSalvar({ texto: `Projeto salvo: ${projeto.nome}.`, bloqueado: false });
+            setStatusSalvar({ texto: `Novo projeto salvo: ${projeto.nome}.`, bloqueado: false });
         } catch (erroCapturado) {
             const mensagemErro = erroCapturado instanceof Error ? erroCapturado.message : 'Erro desconhecido ao salvar projeto 3D';
 
@@ -176,22 +209,24 @@ export function MenuProjetoEditor3D() {
 
                 {menuAberto && (
                     <div className={styles.listaAcoesProjetoEditor3D}>
-                        <button type="button" onClick={abreSalvarProjeto}><span>S</span><strong>Salvar Projeto</strong></button>
+                        {estado.projetoAberto !== null && <button type="button" onClick={() => void salvaProjetoAtual()} disabled={salvando}><span>A</span><strong>Salvar Projeto Atual</strong></button>}
+                        <button type="button" onClick={abreSalvarNovoProjeto} disabled={salvando}><span>N</span><strong>{estado.projetoAberto === null ? 'Salvar Novo Projeto' : 'Salvar Como'}</strong></button>
                         <button type="button" onClick={abreCarregarProjeto}><span>C</span><strong>Carregar Projeto</strong></button>
+                        {statusSalvar !== null && modalAberto === null && <div className={`${styles.statusProjetoEditor3D} ${styles.statusMenuProjetoEditor3D} ${statusSalvar.bloqueado ? styles.statusProjetoEditor3DBloqueado : ''}`}>{statusSalvar.texto}</div>}
                     </div>
                 )}
             </div>
 
-            {modalAberto === 'SALVAR' && (
-                <ModalAreaInterativa3D titulo="Salvar Projeto" subtitulo={estado.projetoAberto === null ? 'Novo projeto' : `Atualizando ${estado.projetoAberto.nome}`} ariaLabel="Salvar projeto 3D" fecha={fechaModal}>
-                    <form className={styles.formularioProjetoEditor3D} onSubmit={salvaProjeto}>
-                        <label htmlFor="nome-projeto-editor-3d">Nome do projeto</label>
+            {modalAberto === 'SALVAR_NOVO' && (
+                <ModalAreaInterativa3D titulo={estado.projetoAberto === null ? 'Salvar Novo Projeto' : 'Salvar Como'} subtitulo="Criando novo projeto" ariaLabel="Salvar novo projeto 3D" fecha={fechaModal}>
+                    <form className={styles.formularioProjetoEditor3D} onSubmit={salvaNovoProjeto}>
+                        <label htmlFor="nome-projeto-editor-3d">Nome do novo projeto</label>
                         <input id="nome-projeto-editor-3d" type="text" value={nomeProjeto} onChange={evento => setNomeProjeto(evento.currentTarget.value)} maxLength={120} autoFocus />
 
                         {statusSalvar !== null && <div className={`${styles.statusProjetoEditor3D} ${statusSalvar.bloqueado ? styles.statusProjetoEditor3DBloqueado : ''}`}>{statusSalvar.texto}</div>}
 
                         <div className={styles.acoesFormularioProjetoEditor3D}>
-                            <button type="submit" disabled={salvando}>{salvando ? 'Salvando' : 'Confirmar Salvamento'}</button>
+                            <button type="submit" disabled={salvando}>{salvando ? 'Salvando' : 'Criar Novo Projeto'}</button>
                         </div>
                     </form>
                 </ModalAreaInterativa3D>

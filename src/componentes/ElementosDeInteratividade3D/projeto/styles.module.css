@@ -169,6 +169,10 @@
     background: rgba(92, 148, 255, 0.12);
 }
 
+.statusMenuProjetoEditor3D {
+    margin: 0.6em;
+}
+
 .statusProjetoEditor3DBloqueado {
     border-color: rgba(255, 154, 92, 0.34);
     color: rgba(255, 216, 196, 0.94);
