@@ -9,7 +9,7 @@ import { obtemDefinicaoMalhaEditor3D } from '../editor/editor3D.objetos';
 import { criaModoInativoEditor3D, modoEditor3DEstaAtivo } from '../modos/editor3D.modo.utils';
 import { criaEstadoInicialEditor3D } from './editor3D.estado.inicial';
 import { modoVisualizacaoViewportPermiteXRayEditor3D } from '../viewport/editor3D.viewport.tipos';
-import type { ColecaoCenaEditor3D, Editor3DAcao, Editor3DState, PosicaoSoltarCenaEditor3D } from './editor3D.estado.types';
+import type { ColecaoCenaEditor3D, Editor3DAcao, Editor3DState, PosicaoSoltarCenaEditor3D, ProjetoAbertoEditor3D } from './editor3D.estado.types';
 import type { EscopoEdicaoEditor3D } from '../modoOperacao/editor3D.modoOperacao.tipos';
 import type { MaterialVisualEditor3D } from '../editor/editor3D.materialVisual.tipos';
 import type { ShaderEditor3D } from '../editor/editor3D.shader.tipos';
@@ -314,13 +314,21 @@ function alternaVisualizacaoXRayEditor3D(state: Editor3DState): Editor3DState {
     return { ...state, visualizacaoXRayAtiva: !state.visualizacaoXRayAtiva };
 };
 
-function carregaCenaCanonicaEditor3D(state: Editor3DState, acao: Extract<Editor3DAcao, { readonly tipo: 'CARREGA_CENA_CANONICA' }>): Editor3DState {
+function aplicaCenaCanonicaEditor3D(state: Editor3DState, cena: Extract<Editor3DAcao, { readonly tipo: 'CARREGA_CENA_CANONICA' }>['cena'], projetoAberto: ProjetoAbertoEditor3D | null): Editor3DState {
     if (state.modoOperacao !== 'OBJETO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return state;
 
-    const cenaReconstruida = desserializaCenaCanonicaParaEditor3D(acao.cena, state.proximoId);
+    const cenaReconstruida = desserializaCenaCanonicaParaEditor3D(cena, state.proximoId);
     const estadoInicial = criaEstadoInicialEditor3D();
 
-    return { ...estadoInicial, objetos: cenaReconstruida.objetos, idsObjetosOcultos: cenaReconstruida.idsObjetosOcultosManualmente, idsObjetosOcultosManualmente: cenaReconstruida.idsObjetosOcultosManualmente, proximoId: cenaReconstruida.proximoId, camera: state.camera, modoVisualizacaoViewport: state.modoVisualizacaoViewport, visualizacaoXRayAtiva: state.visualizacaoXRayAtiva, tipoSelecionado: state.tipoSelecionado, quantidadeVertices: state.quantidadeVertices, proximoIdNotificacaoAreaInterativa: state.proximoIdNotificacaoAreaInterativa };
+    return { ...estadoInicial, objetos: cenaReconstruida.objetos, idsObjetosOcultos: cenaReconstruida.idsObjetosOcultosManualmente, idsObjetosOcultosManualmente: cenaReconstruida.idsObjetosOcultosManualmente, proximoId: cenaReconstruida.proximoId, camera: state.camera, modoVisualizacaoViewport: state.modoVisualizacaoViewport, visualizacaoXRayAtiva: state.visualizacaoXRayAtiva, tipoSelecionado: state.tipoSelecionado, quantidadeVertices: state.quantidadeVertices, proximoIdNotificacaoAreaInterativa: state.proximoIdNotificacaoAreaInterativa, projetoAberto };
+};
+
+function carregaCenaCanonicaEditor3D(state: Editor3DState, acao: Extract<Editor3DAcao, { readonly tipo: 'CARREGA_CENA_CANONICA' }>): Editor3DState {
+    return aplicaCenaCanonicaEditor3D(state, acao.cena, null);
+};
+
+function carregaProjetoCanonicoEditor3D(state: Editor3DState, acao: Extract<Editor3DAcao, { readonly tipo: 'CARREGA_PROJETO_CANONICO' }>): Editor3DState {
+    return aplicaCenaCanonicaEditor3D(state, acao.projeto.cenaCanonica, { id: acao.projeto.id, nome: acao.projeto.nome });
 };
 
 export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Editor3DState {
@@ -385,7 +393,9 @@ export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Edito
     if (acao.tipo === 'CONFIRMA_MALHA_EM_CRIACAO') return confirmaMalhaEmCriacaoEditor3D(state);
     if (acao.tipo === 'CANCELA_MALHA_EM_CRIACAO') return { ...state, malhaEmCriacao: null };
     if (acao.tipo === 'LIMPA_CENA') return criaEstadoInicialEditor3D();
+    if (acao.tipo === 'DEFINE_PROJETO_ABERTO') return { ...state, projetoAberto: acao.projetoAberto };
     if (acao.tipo === 'CARREGA_CENA_CANONICA') return carregaCenaCanonicaEditor3D(state, acao);
+    if (acao.tipo === 'CARREGA_PROJETO_CANONICO') return carregaProjetoCanonicoEditor3D(state, acao);
     if (acao.tipo === 'MOVE_OBJETO_SELECIONADO' && state.modoOperacao === 'OBJETO' && state.idsObjetosSelecionados.length > 0 && state.modoAtual.tipo === 'NENHUM') return { ...state, objetos: moveObjetosEditor3D(state.objetos, state.idsObjetosSelecionados, acao.delta) };
     if (acao.tipo === 'INICIA_GRAB') return iniciaGrabEditor3D(state);
     if (acao.tipo === 'APLICA_EIXO_GRAB' && state.modoAtual.tipo === 'GRAB') return aplicaEixoGrabEditor3D(state, acao.eixo);

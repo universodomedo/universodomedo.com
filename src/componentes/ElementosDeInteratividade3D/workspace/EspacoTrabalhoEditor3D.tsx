@@ -8,6 +8,7 @@ import { AreaInterativa3D } from '../AreaInterativa3D';
 import { BotaoComandosAreaInterativa3D } from '../comandos/BotaoComandosAreaInterativa3D';
 import { CamadaAplicacaoTransformEditor3D } from '../aplicacao/CamadaAplicacaoTransformEditor3D';
 import { CamadaCriacaoMeshEditor3D } from '../criacao/CamadaCriacaoMeshEditor3D';
+import { MenuProjetoEditor3D } from '../projeto/MenuProjetoEditor3D';
 import { SeletorModoOperacaoEditor3D } from '../modoOperacao/SeletorModoOperacaoEditor3D';
 import { ToolbarMouseEditor3D } from '../toolbar/ToolbarMouseEditor3D';
 import { comandoMouseAreaInterativa3DEstaAtivo, comandoTecladoAreaInterativa3DEstaAtivo } from '../comandos/editor3D.comandos';
@@ -83,6 +84,7 @@ export function EspacoTrabalhoEditor3D() {
         if (alvoEstaDentroDe(event, '[data-editor3d-modo-operacao="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-menu-criacao="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-menu-aplicacao="true"]')) return;
+        if (alvoEstaDentroDe(event, '[data-editor3d-menu-projeto="true"]')) return;
         if (alvoEstaDentroDe(event, 'canvas')) return;
         if (comandoMouseAreaInterativa3DEstaAtivo('rmb-add-mesh', event)) {
             abreMenuCriacao(event);
@@ -115,6 +117,8 @@ export function EspacoTrabalhoEditor3D() {
             <AreaInterativa3D />
 
             <ToolbarMouseEditor3D />
+
+            <MenuProjetoEditor3D />
 
             <BotaoComandosAreaInterativa3D />
 

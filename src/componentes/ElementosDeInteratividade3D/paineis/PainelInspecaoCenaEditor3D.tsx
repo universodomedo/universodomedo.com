@@ -7,9 +7,9 @@ import { EventosApiRest } from 'types-nora-api/api/rest';
 
 import { NoraApi } from 'Api/NoraApi';
 import { PainelColapsavelEditor3D } from './PainelColapsavelEditor3D';
+import { obtemBloqueioCarregamentoCenaCanonicaEditor3D } from '../editor/editor3D.cenaCanonica.carregamento';
 import { obtemBloqueioGeracaoCenaCanonicaEditor3D, serializaEditor3DParaCenaCanonica } from '../editor/editor3D.cenaCanonica.serializador';
 import { useEditor3DContexto } from '../contexto/Editor3DContexto';
-import type { Editor3DState } from '../estado/editor3D.estado.types';
 import type { CenaCanonicaEditor3D, Projeto3DMinimoPersistido } from 'types-nora-api/shared';
 
 interface StatusInspecaoCenaEditor3D {
@@ -19,16 +19,6 @@ interface StatusInspecaoCenaEditor3D {
 
 function formataCenaCanonicaEditor3D(cena: CenaCanonicaEditor3D): string { return JSON.stringify(cena, null, 4); };
 function formataProjeto3DMinimoPersistido(projeto: Projeto3DMinimoPersistido): string { return JSON.stringify(projeto, null, 4); };
-
-function obtemBloqueioCarregamentoProjetoMinimoEditor3D(state: Editor3DState): string | null {
-    if (state.malhaEmCriacao !== null) return 'Finalize ou cancele a malha em criacao antes de carregar o projeto minimo.';
-    if (state.modoAtual.tipo !== 'NENHUM') return 'Confirme ou cancele a transformacao em andamento antes de carregar o projeto minimo.';
-    if (state.insetFaceEdicao !== null) return 'Confirme ou cancele o inset em edicao antes de carregar o projeto minimo.';
-    if (state.bevelEdicao !== null) return 'Confirme ou cancele o bevel em edicao antes de carregar o projeto minimo.';
-    if (state.modoOperacao !== 'OBJETO') return 'Saia do modo de edicao antes de carregar o projeto minimo.';
-
-    return null;
-};
 
 function normalizaIdProjetoMinimoTecnico(valor: string): number | null {
     const idProjeto = Number(valor.trim());
@@ -44,7 +34,7 @@ export function PainelInspecaoCenaEditor3D() {
     const [carregandoProjetoMinimo, setCarregandoProjetoMinimo] = useState(false);
     const [idProjetoCarga, setIdProjetoCarga] = useState('');
     const bloqueio = obtemBloqueioGeracaoCenaCanonicaEditor3D(estado);
-    const bloqueioCarga = obtemBloqueioCarregamentoProjetoMinimoEditor3D(estado);
+    const bloqueioCarga = obtemBloqueioCarregamentoCenaCanonicaEditor3D(estado);
 
     function preparaCenaCanonicaParaAcao(nomeAcao: string): CenaCanonicaEditor3D | null {
         const motivoBloqueio = obtemBloqueioGeracaoCenaCanonicaEditor3D(estado);
@@ -108,7 +98,7 @@ export function PainelInspecaoCenaEditor3D() {
             return;
         }
 
-        const motivoBloqueio = obtemBloqueioCarregamentoProjetoMinimoEditor3D(estado);
+        const motivoBloqueio = obtemBloqueioCarregamentoCenaCanonicaEditor3D(estado);
 
         if (motivoBloqueio !== null) {
             setStatus({ texto: motivoBloqueio, bloqueado: true });

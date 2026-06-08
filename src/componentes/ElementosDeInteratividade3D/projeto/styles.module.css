@@ -1,0 +1,254 @@
+.menuProjetoEditor3D {
+    position: absolute;
+    z-index: 14;
+    top: 0;
+    right: 0.85em;
+    width: min(18em, calc(100% - 14em));
+    color: rgba(255, 255, 255, 0.88);
+    pointer-events: auto;
+}
+
+.botaoMenuProjetoEditor3D {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.7em;
+    width: 100%;
+    min-height: 2.45em;
+    padding: 0 0.75em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0 0 0.28em 0.28em;
+    color: rgba(255, 255, 255, 0.88);
+    font: inherit;
+    font-size: 0.82em;
+    background: rgba(48, 48, 48, 0.96);
+    box-shadow: 0 0.8em 2em rgba(0, 0, 0, 0.32);
+    cursor: pointer;
+}
+
+.botaoMenuProjetoEditor3D:hover {
+    background: rgba(58, 58, 58, 0.98);
+}
+
+.botaoMenuProjetoEditor3D span {
+    font-weight: 800;
+}
+
+.botaoMenuProjetoEditor3D strong {
+    min-width: 0;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 0.82em;
+    font-weight: 500;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.listaAcoesProjetoEditor3D {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.3em);
+    display: grid;
+    width: 100%;
+    overflow: hidden;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.28em;
+    background: #242424;
+    box-shadow: 0 1.2em 3em rgba(0, 0, 0, 0.42);
+}
+
+.listaAcoesProjetoEditor3D button {
+    display: grid;
+    grid-template-columns: 2.4em minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5em;
+    min-height: 3em;
+    padding: 0.48em 0.7em;
+    border: 0;
+    color: rgba(255, 255, 255, 0.82);
+    font: inherit;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.listaAcoesProjetoEditor3D button:hover {
+    color: #ffffff;
+    background: rgba(92, 148, 255, 0.26);
+}
+
+.listaAcoesProjetoEditor3D span {
+    display: grid;
+    width: 2.1em;
+    height: 2.1em;
+    place-items: center;
+    border-radius: 0.24em;
+    font-size: 0.72em;
+    font-weight: 800;
+    background: rgba(92, 148, 255, 0.18);
+}
+
+.listaAcoesProjetoEditor3D strong {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 0.86em;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.formularioProjetoEditor3D {
+    display: grid;
+    gap: 0.9em;
+    padding: 1em;
+}
+
+.formularioProjetoEditor3D label {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.82em;
+    font-weight: 700;
+}
+
+.formularioProjetoEditor3D input {
+    width: 100%;
+    min-height: 2.65em;
+    box-sizing: border-box;
+    padding: 0 0.72em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.9);
+    font: inherit;
+    background: rgba(0, 0, 0, 0.24);
+    outline: none;
+}
+
+.formularioProjetoEditor3D input:focus {
+    border-color: rgba(92, 148, 255, 0.86);
+}
+
+.acoesFormularioProjetoEditor3D {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.acoesFormularioProjetoEditor3D button,
+.acoesListagemProjetosEditor3D button {
+    min-height: 2.35em;
+    padding: 0 0.85em;
+    border: 0.08em solid rgba(92, 148, 255, 0.48);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.86);
+    font: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    background: rgba(92, 148, 255, 0.24);
+    cursor: pointer;
+}
+
+.acoesFormularioProjetoEditor3D button:hover,
+.acoesListagemProjetosEditor3D button:hover {
+    color: #ffffff;
+    background: rgba(92, 148, 255, 0.34);
+}
+
+.acoesFormularioProjetoEditor3D button:disabled,
+.acoesListagemProjetosEditor3D button:disabled {
+    color: rgba(255, 255, 255, 0.38);
+    background: rgba(255, 255, 255, 0.08);
+    cursor: wait;
+}
+
+.statusProjetoEditor3D {
+    padding: 0.65em 0.75em;
+    border: 0.08em solid rgba(92, 148, 255, 0.24);
+    border-radius: 0.24em;
+    color: rgba(210, 228, 255, 0.92);
+    font-size: 0.78em;
+    line-height: 1.35;
+    background: rgba(92, 148, 255, 0.12);
+}
+
+.statusProjetoEditor3DBloqueado {
+    border-color: rgba(255, 154, 92, 0.34);
+    color: rgba(255, 216, 196, 0.94);
+    background: rgba(255, 154, 92, 0.12);
+}
+
+.listagemProjetosEditor3D {
+    display: grid;
+    gap: 0.8em;
+    padding: 1em;
+}
+
+.acoesListagemProjetosEditor3D {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.itensListagemProjetosEditor3D {
+    display: grid;
+    overflow: hidden;
+    border: 0.08em solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.28em;
+}
+
+.itensListagemProjetosEditor3D button {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.8em;
+    min-height: 3.25em;
+    padding: 0.58em 0.75em;
+    border: 0;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.84);
+    font: inherit;
+    text-align: left;
+    background: rgba(255, 255, 255, 0.03);
+    cursor: pointer;
+}
+
+.itensListagemProjetosEditor3D button:last-child {
+    border-bottom: 0;
+}
+
+.itensListagemProjetosEditor3D button:hover {
+    color: #ffffff;
+    background: rgba(92, 148, 255, 0.18);
+}
+
+.itensListagemProjetosEditor3D button:disabled {
+    color: rgba(255, 255, 255, 0.38);
+    cursor: wait;
+}
+
+.itensListagemProjetosEditor3D span {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 0.88em;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.itensListagemProjetosEditor3D strong {
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 0.72em;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+@media (max-width: 42em) {
+    .menuProjetoEditor3D {
+        left: 0.8em;
+        right: auto;
+        top: 8.95em;
+        width: min(18em, calc(100% - 1.6em));
+    }
+
+    .itensListagemProjetosEditor3D button {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.18em;
+    }
+}
