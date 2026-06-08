@@ -67,6 +67,7 @@ export function useEditor3D(): Editor3DModelo {
         confirmaMalhaEmCriacao: () => dispatch({ tipo: 'CONFIRMA_MALHA_EM_CRIACAO' }),
         cancelaMalhaEmCriacao: () => dispatch({ tipo: 'CANCELA_MALHA_EM_CRIACAO' }),
         limpaCena: () => dispatch({ tipo: 'LIMPA_CENA' }),
+        carregaCenaCanonica: cena => dispatch({ tipo: 'CARREGA_CENA_CANONICA', cena }),
         moveObjetoSelecionado: delta => dispatch({ tipo: 'MOVE_OBJETO_SELECIONADO', delta }),
         iniciaGrabObjetoSelecionado: () => dispatch({ tipo: 'INICIA_GRAB' }),
         aplicaEixoGrabObjetoSelecionado: eixo => dispatch({ tipo: 'APLICA_EIXO_GRAB', eixo }),

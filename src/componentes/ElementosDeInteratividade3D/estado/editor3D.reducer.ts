@@ -4,6 +4,7 @@ import { alteraSegmentosBevelEmEdicaoEditor3D, aplicaInsetFaceSelecionadaEditor3
 import { alteraQuantidadeVerticesStateEditor3D, atualizaQuantidadeVerticesStateEditor3D, atualizaVetorMalhaEmCriacaoEditor3D, confirmaMalhaEmCriacaoEditor3D, criaPresetObjetoCenaEditor3D, iniciaMalhaEmCriacaoEditor3D } from './editor3D.reducer.criacao';
 import { aplicaMaterialVisualObjetoEditor3D, aplicaRotationScaleObjetosEditor3D, atualizaObjetosEditor3D, atualizaVetorObjetoEditor3D, defineShaderObjetoEditor3D, moveObjetosEditor3D } from './editor3D.reducer.objetos';
 import { aplicaEixoGrabEditor3D, aplicaEixoRotateEditor3D, aplicaEixoScaleEditor3D, aplicaRotateLivreEditor3D, atualizaEntradaNumericaRotateEditor3D, cancelaModoEditor3D, escalaModoScaleEditor3D, iniciaGrabEditor3D, iniciaRotateEditor3D, iniciaScaleEditor3D, moveModoGrabEditor3D, rotacionaModoRotateEditor3D } from './editor3D.reducer.modo';
+import { desserializaCenaCanonicaParaEditor3D } from '../editor/editor3D.cenaCanonica.desserializador';
 import { obtemDefinicaoMalhaEditor3D } from '../editor/editor3D.objetos';
 import { criaModoInativoEditor3D, modoEditor3DEstaAtivo } from '../modos/editor3D.modo.utils';
 import { criaEstadoInicialEditor3D } from './editor3D.estado.inicial';
@@ -313,6 +314,15 @@ function alternaVisualizacaoXRayEditor3D(state: Editor3DState): Editor3DState {
     return { ...state, visualizacaoXRayAtiva: !state.visualizacaoXRayAtiva };
 };
 
+function carregaCenaCanonicaEditor3D(state: Editor3DState, acao: Extract<Editor3DAcao, { readonly tipo: 'CARREGA_CENA_CANONICA' }>): Editor3DState {
+    if (state.modoOperacao !== 'OBJETO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return state;
+
+    const cenaReconstruida = desserializaCenaCanonicaParaEditor3D(acao.cena, state.proximoId);
+    const estadoInicial = criaEstadoInicialEditor3D();
+
+    return { ...estadoInicial, objetos: cenaReconstruida.objetos, idsObjetosOcultos: cenaReconstruida.idsObjetosOcultosManualmente, idsObjetosOcultosManualmente: cenaReconstruida.idsObjetosOcultosManualmente, proximoId: cenaReconstruida.proximoId, camera: state.camera, modoVisualizacaoViewport: state.modoVisualizacaoViewport, visualizacaoXRayAtiva: state.visualizacaoXRayAtiva, tipoSelecionado: state.tipoSelecionado, quantidadeVertices: state.quantidadeVertices, proximoIdNotificacaoAreaInterativa: state.proximoIdNotificacaoAreaInterativa };
+};
+
 export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Editor3DState {
     if (acao.tipo === 'ATUALIZA_CAMERA') return { ...state, camera: acao.camera };
     if (acao.tipo === 'RESETA_CAMERA') return { ...state, camera: criaCameraPadraoEditor3D() };
@@ -375,6 +385,7 @@ export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Edito
     if (acao.tipo === 'CONFIRMA_MALHA_EM_CRIACAO') return confirmaMalhaEmCriacaoEditor3D(state);
     if (acao.tipo === 'CANCELA_MALHA_EM_CRIACAO') return { ...state, malhaEmCriacao: null };
     if (acao.tipo === 'LIMPA_CENA') return criaEstadoInicialEditor3D();
+    if (acao.tipo === 'CARREGA_CENA_CANONICA') return carregaCenaCanonicaEditor3D(state, acao);
     if (acao.tipo === 'MOVE_OBJETO_SELECIONADO' && state.modoOperacao === 'OBJETO' && state.idsObjetosSelecionados.length > 0 && state.modoAtual.tipo === 'NENHUM') return { ...state, objetos: moveObjetosEditor3D(state.objetos, state.idsObjetosSelecionados, acao.delta) };
     if (acao.tipo === 'INICIA_GRAB') return iniciaGrabEditor3D(state);
     if (acao.tipo === 'APLICA_EIXO_GRAB' && state.modoAtual.tipo === 'GRAB') return aplicaEixoGrabEditor3D(state, acao.eixo);

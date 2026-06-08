@@ -646,6 +646,37 @@ div.linhaObjetoCena:active {
     padding: 0.7em;
 }
 
+.linhaTecnicaInspecaoCenaEditor3D {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.55em;
+}
+
+.rotuloCampoTecnicoInspecaoCenaEditor3D {
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.76em;
+}
+
+.campoTecnicoInspecaoCenaEditor3D {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 0.48em 0.58em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.84);
+    font: inherit;
+    font-size: 0.78em;
+    background: rgba(255, 255, 255, 0.045);
+}
+
+.campoTecnicoInspecaoCenaEditor3D:focus {
+    outline: none;
+    border-color: rgba(92, 148, 255, 0.42);
+    background: rgba(92, 148, 255, 0.08);
+}
+
 .statusInspecaoCenaEditor3D {
     padding: 0.55em 0.65em;
     border: 0.08em solid rgba(92, 148, 255, 0.22);
