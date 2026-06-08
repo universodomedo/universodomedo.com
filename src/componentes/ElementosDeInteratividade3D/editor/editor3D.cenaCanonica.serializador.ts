@@ -1,5 +1,5 @@
 import type { Editor3DState } from '../estado/editor3D.estado.types';
-import type { CenaCanonicaEditor3D, FaceMalhaEditavelCenaCanonicaEditor3D, MalhaEditavelCenaCanonicaEditor3D, ObjetoCenaCanonicaEditor3D, Vetor3CenaCanonicaEditor3D } from './editor3D.cenaCanonica.tipos';
+import type { CenaCanonicaEditor3D, FaceMalhaEditavelCenaCanonicaEditor3D, MalhaEditavelCenaCanonicaEditor3D, ObjetoCenaCanonicaEditor3D, Vetor3CenaCanonicaEditor3D } from 'types-nora-api/shared';
 import type { FaceMalhaEditavelEditor3D, MalhaEditavelEditor3D, ObjetoCenaEditor3D, Vetor3 } from './editor3D.tipos';
 
 function clonaVetor3CenaCanonicaEditor3D(vetor: Vetor3): Vetor3CenaCanonicaEditor3D { return [vetor[0], vetor[1], vetor[2]]; };

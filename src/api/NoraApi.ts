@@ -1,15 +1,19 @@
 'use client';
 
-import { ApiOperacaoGraphqlGet, ApiRespostaGraphql } from 'types-nora-api';
+import type { ApiOperacaoGraphqlGet, ApiRespostaGraphql } from 'types-nora-api';
+import type { ApiOperacaoRestGet, ApiOperacaoRestPost } from 'types-nora-api/api/rest';
 
 import { toast } from 'Hooks/useToast';
 import { NoraApiCarregamento, registraRequisicaoNoraApi } from 'Api/NoraApiRequisicoesStore';
 
-type NoraApiGraphQLOpcoes = {
+type NoraApiRequisicaoOpcoes = {
     readonly mensagemErro?: string;
     readonly exibirToastErro?: boolean;
     readonly carregamento?: NoraApiCarregamento;
 };
+
+type NoraApiGraphQLOpcoes = NoraApiRequisicaoOpcoes;
+type NoraApiRestOpcoes = NoraApiRequisicaoOpcoes;
 
 type ApiOperacaoErroLog = {
     readonly nome: string;
@@ -54,11 +58,11 @@ function montaMensagemErroGraphql<TResposta extends object>(operacao: ApiOperaca
     return dados.errors.map(erroGraphql => `${erroGraphql.message}${erroGraphql.path?.length ? ` | path=${erroGraphql.path.join('.')}` : ''}${erroGraphql.extensions ? ` | extensions=${JSON.stringify(erroGraphql.extensions)}` : ''}`).join(' | ');
 };
 
-function deveExibirToastErro(opcoes?: NoraApiGraphQLOpcoes): boolean {
+function deveExibirToastErro(opcoes?: NoraApiRequisicaoOpcoes): boolean {
     return opcoes?.exibirToastErro ?? true;
 };
 
-function resolveCarregamentoNoraApi(opcoes?: NoraApiGraphQLOpcoes): NoraApiCarregamento {
+function resolveCarregamentoNoraApi(opcoes?: NoraApiRequisicaoOpcoes): NoraApiCarregamento {
     return opcoes?.carregamento ?? NoraApiCarregamento.BARRA;
 };
 
@@ -149,6 +153,45 @@ async function obtemTextoRespostaErro(resposta: Response): Promise<string | null
     }
 };
 
+function montaUrlRestGet<TParametros extends object, TResposta>(operacao: ApiOperacaoRestGet<TParametros, TResposta>, parametros: TParametros): string {
+    const queryString = operacao.montaQueryString(parametros);
+    const endpoint = queryString.length > 0 ? `${operacao.endpoint}?${queryString}` : operacao.endpoint;
+
+    return montaUrlApi(endpoint);
+};
+
+async function executaRestGet<TParametros extends object, TResposta>(operacao: ApiOperacaoRestGet<TParametros, TResposta>, parametros: TParametros): Promise<TResposta> {
+    const url = montaUrlRestGet(operacao, parametros);
+    const resposta = await fetch(url, { method: operacao.metodoHttp, headers: { 'Content-Type': 'application/json' } });
+
+    if (!resposta.ok) {
+        const textoErro = await obtemTextoRespostaErro(resposta);
+        const mensagemErro = `Falha HTTP ao chamar REST GET: status=${resposta.status} endpoint=${url} operacao=${operacao.nome}${textoErro ? ` detalhe=${textoErro}` : ''}`;
+
+        registraAvisoControladoNoraApi('[NoraApi][REST][GET][HTTP_ERRO]', { operacao: operacao.nome, url, status: resposta.status, parametros, resposta: textoErro });
+
+        throw new NoraApiErro({ mensagem: mensagemErro, mensagemServidor: textoErro });
+    }
+
+    return await resposta.json() as TResposta;
+};
+
+async function executaRestPost<TCorpo extends object, TResposta>(operacao: ApiOperacaoRestPost<TCorpo, TResposta>, corpo: TCorpo): Promise<TResposta> {
+    const url = montaUrlApi(operacao.endpoint);
+    const resposta = await fetch(url, { method: operacao.metodoHttp, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
+
+    if (!resposta.ok) {
+        const textoErro = await obtemTextoRespostaErro(resposta);
+        const mensagemErro = `Falha HTTP ao chamar REST POST: status=${resposta.status} endpoint=${url} operacao=${operacao.nome}${textoErro ? ` detalhe=${textoErro}` : ''}`;
+
+        registraAvisoControladoNoraApi('[NoraApi][REST][POST][HTTP_ERRO]', { operacao: operacao.nome, url, status: resposta.status, corpo, resposta: textoErro });
+
+        throw new NoraApiErro({ mensagem: mensagemErro, mensagemServidor: textoErro });
+    }
+
+    return await resposta.json() as TResposta;
+};
+
 async function executaGraphql<TVariaveis extends object, TResposta extends object>(operacao: ApiOperacaoGraphqlGet<Record<string, never>, TVariaveis, TResposta>): Promise<TResposta> {
     const url = montaUrlApi(operacao.endpoint);
     const variables = operacao.montaVariaveis(PARAMETROS_GRAPHQL_SEM_CORPO);
@@ -204,6 +247,46 @@ async function GraphQL<TVariaveis extends object, TResposta extends object>(oper
     }
 };
 
+async function RestGET<TParametros extends object, TResposta>(operacao: ApiOperacaoRestGet<TParametros, TResposta>, parametros: TParametros, opcoes?: NoraApiRestOpcoes): Promise<TResposta> {
+    const finalizaRequisicao = registraRequisicaoNoraApi(resolveCarregamentoNoraApi(opcoes));
+
+    try {
+        return await executaRestGet(operacao, parametros);
+    } catch (erroCapturado) {
+        const erro = normalizaErroNoraApi(erroCapturado instanceof Error ? erroCapturado : null);
+        const mensagemUsuario = montaMensagemErroNoraApiParaUsuario(erro, opcoes?.mensagemErro);
+
+        registraAvisoControladoNoraApi('[NoraApi][REST][GET][ERRO_CONTROLADO]', { operacao: operacao.nome, erro: erro.message, mensagemServidor: erro.mensagemServidor });
+
+        if (deveExibirToastErro(opcoes)) toast.erro(mensagemUsuario);
+
+        throw erro;
+    } finally {
+        finalizaRequisicao();
+    }
+};
+
+async function RestPOST<TCorpo extends object, TResposta>(operacao: ApiOperacaoRestPost<TCorpo, TResposta>, corpo: TCorpo, opcoes?: NoraApiRestOpcoes): Promise<TResposta> {
+    const finalizaRequisicao = registraRequisicaoNoraApi(resolveCarregamentoNoraApi(opcoes));
+
+    try {
+        return await executaRestPost(operacao, corpo);
+    } catch (erroCapturado) {
+        const erro = normalizaErroNoraApi(erroCapturado instanceof Error ? erroCapturado : null);
+        const mensagemUsuario = montaMensagemErroNoraApiParaUsuario(erro, opcoes?.mensagemErro);
+
+        registraAvisoControladoNoraApi('[NoraApi][REST][POST][ERRO_CONTROLADO]', { operacao: operacao.nome, erro: erro.message, mensagemServidor: erro.mensagemServidor });
+
+        if (deveExibirToastErro(opcoes)) toast.erro(mensagemUsuario);
+
+        throw erro;
+    } finally {
+        finalizaRequisicao();
+    }
+};
+
 export const NoraApi = {
     GraphQL,
+    RestGET,
+    RestPOST,
 } as const;
