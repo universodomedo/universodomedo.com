@@ -30,7 +30,7 @@
 
 .conteudoPainelControles {
     display: grid;
-    grid-template-rows: auto minmax(10em, 1fr) auto;
+    grid-template-rows: auto auto minmax(10em, 1fr) auto;
     min-width: 0;
     min-height: 0;
     overflow: hidden;
@@ -638,6 +638,44 @@ div.linhaObjetoCena:active {
     color: rgba(255, 255, 255, 0.44);
     font-size: 0.82em;
     font-weight: 500;
+}
+
+.painelInspecaoCenaEditor3D {
+    display: grid;
+    gap: 0.55em;
+    padding: 0.7em;
+}
+
+.statusInspecaoCenaEditor3D {
+    padding: 0.55em 0.65em;
+    border: 0.08em solid rgba(92, 148, 255, 0.22);
+    border-radius: 0.24em;
+    color: rgba(211, 224, 255, 0.86);
+    font-size: 0.78em;
+    line-height: 1.35;
+    background: rgba(92, 148, 255, 0.08);
+}
+
+.statusInspecaoCenaEditor3DBloqueado {
+    border-color: rgba(255, 180, 60, 0.24);
+    color: rgba(255, 214, 142, 0.86);
+    background: rgba(255, 180, 60, 0.08);
+}
+
+.areaDadosCenaEditor3D {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 13em;
+    padding: 0.65em;
+    border: 0.08em solid rgba(255, 255, 255, 0.11);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.82);
+    font-family: Consolas, 'Courier New', monospace;
+    font-size: 0.76em;
+    line-height: 1.35;
+    resize: vertical;
+    background: #171717;
 }
 
 .linhaBotoes {
