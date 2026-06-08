@@ -7,6 +7,7 @@ import { type MouseEvent } from 'react';
 import { PainelCenaColecaoEditor3D } from './PainelCenaColecaoEditor3D';
 import { PainelContextualEditor3D } from './PainelContextualEditor3D';
 import { PainelInspecaoCenaEditor3D } from './PainelInspecaoCenaEditor3D';
+import { PainelScreenshotTemporarioEditor3D } from './PainelScreenshotTemporarioEditor3D';
 import { PainelTesteSalaJogoEditor3D } from './PainelTesteSalaJogoEditor3D';
 import type { ControlesMenuLateralDireitoEditor3D } from '../layout/useMenuLateralDireitoEditor3D';
 
@@ -33,6 +34,8 @@ export function PainelControlesEditor3D({ menuLateralDireito }: PainelControlesE
 
                     <div className={styles.conteudoPainelControles}>
                         <PainelTesteSalaJogoEditor3D />
+
+                        <PainelScreenshotTemporarioEditor3D />
 
                         <PainelInspecaoCenaEditor3D />
 

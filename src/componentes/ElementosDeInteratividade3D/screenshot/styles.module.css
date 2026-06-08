@@ -1,0 +1,28 @@
+.paginaScreenshotTemporarioEditor3D {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 32em;
+    overflow: hidden;
+    color: rgba(255, 255, 255, 0.88);
+    background: #181818;
+}
+
+.avisoScreenshotTemporarioEditor3D {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    place-items: center;
+    padding: 2em;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.avisoScreenshotTemporarioEditor3D h1 {
+    max-width: 28em;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1em;
+    font-weight: 700;
+    line-height: 1.35;
+}

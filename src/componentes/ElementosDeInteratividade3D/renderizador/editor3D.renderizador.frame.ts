@@ -1,6 +1,7 @@
 import { criaMatrizesCenaEditor3D } from './editor3D.renderizador.matrizes';
 import { desenhaGizmoEixosEditor3D, desenhaGuiasCenaEditor3D, desenhaOrigemEditor3D } from './editor3D.renderizador.guias';
 import { desenhaObjetosCenaEditor3D } from './editor3D.renderizador.objetos';
+import { renderizacaoEditor3DExibeAmbienteEdicao, type ModoRenderizacaoEditor3D } from './editor3D.renderizador.modo';
 import { preparaFrameEditor3D } from '../webgl/editor3D.webgl.renderizacao';
 import type { RefsRenderizadorEditor3D } from './editor3D.renderizador.refs';
 import type { RecursosRenderizadorEditor3D } from './editor3D.renderizador.types';
@@ -19,21 +20,23 @@ export function ajustaTamanhoCanvasEditor3D(gl: WebGLRenderingContext, canvas: H
     gl.viewport(0, 0, canvas.width, canvas.height);
 };
 
-export function iniciaLoopRenderizacaoEditor3D(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, recursos: RecursosRenderizadorEditor3D, refs: RefsRenderizadorEditor3D): () => void {
+export function iniciaLoopRenderizacaoEditor3D(gl: WebGLRenderingContext, canvas: HTMLCanvasElement, recursos: RecursosRenderizadorEditor3D, refs: RefsRenderizadorEditor3D, modoRenderizacao: ModoRenderizacaoEditor3D): () => void {
     let frameId = 0;
+    const exibeAmbienteEdicao = renderizacaoEditor3DExibeAmbienteEdicao(modoRenderizacao);
 
     function renderiza(): void {
         ajustaTamanhoCanvasEditor3D(gl, canvas);
 
         const state = refs.estado.current;
         const matrizes = criaMatrizesCenaEditor3D(state.camera, canvas.width, canvas.height);
-        const guiasVisiveis = state.ocultacoesGuiasCenaTemporaria <= 0;
 
         preparaFrameEditor3D(gl, recursos.programa);
-        desenhaGuiasCenaEditor3D(gl, recursos, state.camera.planoGuia, matrizes.finalCena, matrizes.cena, guiasVisiveis);
+        if (exibeAmbienteEdicao) desenhaGuiasCenaEditor3D(gl, recursos, state.camera.planoGuia, matrizes.finalCena, matrizes.cena, state.ocultacoesGuiasCenaTemporaria <= 0);
         desenhaObjetosCenaEditor3D(gl, recursos, state, matrizes);
-        desenhaOrigemEditor3D(gl, recursos, matrizes.finalCena, matrizes.cena);
-        desenhaGizmoEixosEditor3D(gl, canvas, recursos, matrizes.cena);
+        if (exibeAmbienteEdicao) {
+            desenhaOrigemEditor3D(gl, recursos, matrizes.finalCena, matrizes.cena);
+            desenhaGizmoEixosEditor3D(gl, canvas, recursos, matrizes.cena);
+        }
 
         frameId = requestAnimationFrame(renderiza);
     };
