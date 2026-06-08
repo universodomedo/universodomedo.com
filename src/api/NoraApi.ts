@@ -162,7 +162,7 @@ function montaUrlRestGet<TParametros extends object, TResposta>(operacao: ApiOpe
 
 async function executaRestGet<TParametros extends object, TResposta>(operacao: ApiOperacaoRestGet<TParametros, TResposta>, parametros: TParametros): Promise<TResposta> {
     const url = montaUrlRestGet(operacao, parametros);
-    const resposta = await fetch(url, { method: operacao.metodoHttp, headers: { 'Content-Type': 'application/json' } });
+    const resposta = await fetch(url, { method: operacao.metodoHttp, credentials: 'include', headers: { 'Content-Type': 'application/json' } });
 
     if (!resposta.ok) {
         const textoErro = await obtemTextoRespostaErro(resposta);
@@ -178,7 +178,7 @@ async function executaRestGet<TParametros extends object, TResposta>(operacao: A
 
 async function executaRestPost<TCorpo extends object, TResposta>(operacao: ApiOperacaoRestPost<TCorpo, TResposta>, corpo: TCorpo): Promise<TResposta> {
     const url = montaUrlApi(operacao.endpoint);
-    const resposta = await fetch(url, { method: operacao.metodoHttp, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
+    const resposta = await fetch(url, { method: operacao.metodoHttp, credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) });
 
     if (!resposta.ok) {
         const textoErro = await obtemTextoRespostaErro(resposta);
@@ -195,7 +195,7 @@ async function executaRestPost<TCorpo extends object, TResposta>(operacao: ApiOp
 async function executaGraphql<TVariaveis extends object, TResposta extends object>(operacao: ApiOperacaoGraphqlGet<Record<string, never>, TVariaveis, TResposta>): Promise<TResposta> {
     const url = montaUrlApi(operacao.endpoint);
     const variables = operacao.montaVariaveis(PARAMETROS_GRAPHQL_SEM_CORPO);
-    const resposta = await fetch(url, { method: operacao.metodoHttp, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ operationName: operacao.nomeOperacaoGraphql, query: operacao.query, variables }) });
+    const resposta = await fetch(url, { method: operacao.metodoHttp, credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ operationName: operacao.nomeOperacaoGraphql, query: operacao.query, variables }) });
 
     if (!resposta.ok) {
         const textoErro = await obtemTextoRespostaErro(resposta);

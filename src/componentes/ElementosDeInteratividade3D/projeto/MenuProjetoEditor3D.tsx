@@ -167,18 +167,20 @@ export function MenuProjetoEditor3D() {
     };
 
     return (
-        <div className={styles.menuProjetoEditor3D} data-editor3d-menu-projeto="true">
-            <button className={styles.botaoMenuProjetoEditor3D} type="button" onClick={() => setMenuAberto(aberto => !aberto)} aria-expanded={menuAberto} aria-label="Menu de projeto do Editor 3D">
-                <span>Projeto</span>
-                <strong>{estado.projetoAberto?.nome ?? 'Sem projeto'}</strong>
-            </button>
+        <>
+            <div className={styles.menuProjetoEditor3D} data-editor3d-menu-projeto="true">
+                <button className={styles.botaoMenuProjetoEditor3D} type="button" onClick={() => setMenuAberto(aberto => !aberto)} aria-expanded={menuAberto} aria-label="Menu de projeto do Editor 3D">
+                    <span>Projeto</span>
+                    <strong>{estado.projetoAberto?.nome ?? 'Sem projeto'}</strong>
+                </button>
 
-            {menuAberto && (
-                <div className={styles.listaAcoesProjetoEditor3D}>
-                    <button type="button" onClick={abreSalvarProjeto}><span>S</span><strong>Salvar Projeto</strong></button>
-                    <button type="button" onClick={abreCarregarProjeto}><span>C</span><strong>Carregar Projeto</strong></button>
-                </div>
-            )}
+                {menuAberto && (
+                    <div className={styles.listaAcoesProjetoEditor3D}>
+                        <button type="button" onClick={abreSalvarProjeto}><span>S</span><strong>Salvar Projeto</strong></button>
+                        <button type="button" onClick={abreCarregarProjeto}><span>C</span><strong>Carregar Projeto</strong></button>
+                    </div>
+                )}
+            </div>
 
             {modalAberto === 'SALVAR' && (
                 <ModalAreaInterativa3D titulo="Salvar Projeto" subtitulo={estado.projetoAberto === null ? 'Novo projeto' : `Atualizando ${estado.projetoAberto.nome}`} ariaLabel="Salvar projeto 3D" fecha={fechaModal}>
@@ -215,6 +217,6 @@ export function MenuProjetoEditor3D() {
                     </div>
                 </ModalAreaInterativa3D>
             )}
-        </div>
+        </>
     );
 };
