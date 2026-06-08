@@ -1,0 +1,63 @@
+.linha_tutorial {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    padding: 0.75em 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background-color: #392D58;
+}
+
+.dados {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.nome {
+    font-size: 1em;
+}
+
+.chave {
+    font-size: 0.8em;
+    opacity: 0.7;
+}
+
+.passos {
+    font-size: 0.9em;
+    opacity: 0.85;
+    flex: 0 0 auto;
+}
+
+.status_ativo,
+.status_inativo {
+    font-size: 0.8em;
+    padding: 0.2em 0.6em;
+    border-radius: 1em;
+    flex: 0 0 auto;
+}
+
+.status_ativo {
+    background-color: rgba(80, 200, 120, 0.25);
+}
+
+.status_inativo {
+    background-color: rgba(200, 80, 80, 0.25);
+}
+
+.botao_editar {
+    flex: 0 0 auto;
+    padding: 0.4em 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.botao_editar:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
