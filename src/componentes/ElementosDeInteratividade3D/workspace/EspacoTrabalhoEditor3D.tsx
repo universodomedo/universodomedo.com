@@ -2,13 +2,14 @@
 
 import styles from './styles.module.css';
 
-import { useEffect, useRef, type MouseEvent as ReactMouseEvent } from 'react';
+import { useCallback, useEffect, useRef, type MouseEvent as ReactMouseEvent } from 'react';
 
 import { AreaInterativa3D } from '../AreaInterativa3D';
+import { BarraAbasProjetoEditor3D } from '../menus/BarraAbasProjetoEditor3D';
+import { BarraMenusEditor3D } from '../menus/BarraMenusEditor3D';
 import { BotaoComandosAreaInterativa3D } from '../comandos/BotaoComandosAreaInterativa3D';
 import { CamadaAplicacaoTransformEditor3D } from '../aplicacao/CamadaAplicacaoTransformEditor3D';
 import { CamadaCriacaoMeshEditor3D } from '../criacao/CamadaCriacaoMeshEditor3D';
-import { MenuProjetoEditor3D } from '../projeto/MenuProjetoEditor3D';
 import { SeletorModoOperacaoEditor3D } from '../modoOperacao/SeletorModoOperacaoEditor3D';
 import { ToolbarMouseEditor3D } from '../toolbar/ToolbarMouseEditor3D';
 import { comandoMouseAreaInterativa3DEstaAtivo, comandoTecladoAreaInterativa3DEstaAtivo } from '../comandos/editor3D.comandos';
@@ -34,8 +35,8 @@ export function EspacoTrabalhoEditor3D() {
     const menuCriacao = useMenuCriacaoMeshEditor3D();
     const menuAplicacao = useMenuAplicacaoTransformEditor3D();
 
-    function podeAbrirMenuCriacao(): boolean { return estado.modoOperacao === 'OBJETO' && estado.modoAtual.tipo === 'NENHUM' && estado.malhaEmCriacao === null; };
-    function podeAbrirMenuAplicacao(): boolean { return estado.modoOperacao === 'OBJETO' && estado.modoAtual.tipo === 'NENHUM' && estado.malhaEmCriacao === null && estado.idsObjetosSelecionados.length > 0; };
+    const podeAbrirMenuCriacao = useCallback((): boolean => estado.modoOperacao === 'OBJETO' && estado.modoAtual.tipo === 'NENHUM' && estado.malhaEmCriacao === null, [estado.modoOperacao, estado.modoAtual.tipo, estado.malhaEmCriacao]);
+    const podeAbrirMenuAplicacao = useCallback((): boolean => estado.modoOperacao === 'OBJETO' && estado.modoAtual.tipo === 'NENHUM' && estado.malhaEmCriacao === null && estado.idsObjetosSelecionados.length > 0, [estado.modoOperacao, estado.modoAtual.tipo, estado.malhaEmCriacao, estado.idsObjetosSelecionados.length]);
 
     useEffect(() => {
         function processaAtalhoWorkspace(event: KeyboardEvent): void {
@@ -68,7 +69,7 @@ export function EspacoTrabalhoEditor3D() {
         window.addEventListener('keydown', processaAtalhoWorkspace);
 
         return () => window.removeEventListener('keydown', processaAtalhoWorkspace);
-    }, [estado.modoOperacao, estado.modoAtual.tipo, estado.malhaEmCriacao, estado.idsObjetosSelecionados.length, acoes, menuCriacao, menuAplicacao]);
+    }, [acoes, menuCriacao, menuAplicacao, podeAbrirMenuAplicacao, podeAbrirMenuCriacao]);
 
     function abreMenuCriacao(event: ReactMouseEvent<HTMLElement>): void {
         event.preventDefault();
@@ -84,7 +85,7 @@ export function EspacoTrabalhoEditor3D() {
         if (alvoEstaDentroDe(event, '[data-editor3d-modo-operacao="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-menu-criacao="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-menu-aplicacao="true"]')) return;
-        if (alvoEstaDentroDe(event, '[data-editor3d-menu-projeto="true"]')) return;
+        if (alvoEstaDentroDe(event, '[data-editor3d-shell="true"]')) return;
         if (alvoEstaDentroDe(event, 'canvas')) return;
         if (comandoMouseAreaInterativa3DEstaAtivo('rmb-add-mesh', event)) {
             abreMenuCriacao(event);
@@ -114,19 +115,23 @@ export function EspacoTrabalhoEditor3D() {
 
     return (
         <section ref={workspaceRef} className={styles.espacoTrabalhoEditor3D} onMouseDown={processaMouseDownWorkspace} onContextMenu={bloqueiaMenuContextoNativo}>
-            <AreaInterativa3D />
+            <BarraMenusEditor3D />
 
-            <ToolbarMouseEditor3D />
+            <BarraAbasProjetoEditor3D />
 
-            <MenuProjetoEditor3D />
+            <section className={styles.viewportEditor3D}>
+                <AreaInterativa3D />
 
-            <BotaoComandosAreaInterativa3D />
+                <ToolbarMouseEditor3D />
 
-            <SeletorModoOperacaoEditor3D />
+                <BotaoComandosAreaInterativa3D />
 
-            <CamadaCriacaoMeshEditor3D posicaoMenu={menuCriacao.posicaoMenu} selecionaTipoMalha={selecionaTipoMalha} criaPresetObjeto={criaPresetObjeto} />
+                <SeletorModoOperacaoEditor3D />
 
-            <CamadaAplicacaoTransformEditor3D posicaoMenu={menuAplicacao.posicaoMenu} aplicaRotationScale={aplicaRotationScale} />
+                <CamadaCriacaoMeshEditor3D posicaoMenu={menuCriacao.posicaoMenu} selecionaTipoMalha={selecionaTipoMalha} criaPresetObjeto={criaPresetObjeto} />
+
+                <CamadaAplicacaoTransformEditor3D posicaoMenu={menuAplicacao.posicaoMenu} aplicaRotationScale={aplicaRotationScale} />
+            </section>
         </section>
     );
 };

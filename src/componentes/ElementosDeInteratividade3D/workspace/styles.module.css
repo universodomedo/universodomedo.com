@@ -1,10 +1,19 @@
 .espacoTrabalhoEditor3D {
     position: relative;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
     min-width: 0;
     min-height: 0;
     overflow: hidden;
     border-right: 0.08em solid rgba(255, 255, 255, 0.1);
     background: #202020;
+}
+
+.viewportEditor3D {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
 }
 
 @media (max-width: 56em) {

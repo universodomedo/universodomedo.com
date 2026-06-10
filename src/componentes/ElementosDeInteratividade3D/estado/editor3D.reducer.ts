@@ -6,10 +6,12 @@ import { aplicaMaterialVisualObjetoEditor3D, aplicaRotationScaleObjetosEditor3D,
 import { aplicaEixoGrabEditor3D, aplicaEixoRotateEditor3D, aplicaEixoScaleEditor3D, aplicaRotateLivreEditor3D, atualizaEntradaNumericaRotateEditor3D, cancelaModoEditor3D, escalaModoScaleEditor3D, iniciaGrabEditor3D, iniciaRotateEditor3D, iniciaScaleEditor3D, moveModoGrabEditor3D, rotacionaModoRotateEditor3D } from './editor3D.reducer.modo';
 import { desserializaCenaCanonicaParaEditor3D } from '../editor/editor3D.cenaCanonica.desserializador';
 import { obtemDefinicaoMalhaEditor3D } from '../editor/editor3D.objetos';
+import { atualizaAbaAtivaComSnapshotProjeto3DEditor3D, criaAbaProjeto3DDeProjetoPersistidoEditor3D, criaAbaProjeto3DVaziaEditor3D, criaAssinaturaCenaCanonicaEditor3D, criaIdAbaProjeto3DEditor3D, criaNomeNovoProjetoEditor3D, obtemAbaProjeto3DAtivaEditor3D } from './editor3D.abasProjeto';
+import { serializaEditor3DParaCenaCanonica } from '../editor/editor3D.cenaCanonica.serializador';
 import { criaModoInativoEditor3D, modoEditor3DEstaAtivo } from '../modos/editor3D.modo.utils';
 import { criaEstadoInicialEditor3D } from './editor3D.estado.inicial';
 import { modoVisualizacaoViewportPermiteXRayEditor3D } from '../viewport/editor3D.viewport.tipos';
-import type { ColecaoCenaEditor3D, Editor3DAcao, Editor3DState, PosicaoSoltarCenaEditor3D, ProjetoAbertoEditor3D } from './editor3D.estado.types';
+import type { AbaProjeto3DEditor3D, ColecaoCenaEditor3D, Editor3DAcao, Editor3DState, PosicaoSoltarCenaEditor3D, ProjetoAbertoEditor3D } from './editor3D.estado.types';
 import type { EscopoEdicaoEditor3D } from '../modoOperacao/editor3D.modoOperacao.tipos';
 import type { MaterialVisualEditor3D } from '../editor/editor3D.materialVisual.tipos';
 import type { ShaderEditor3D } from '../editor/editor3D.shader.tipos';
@@ -314,13 +316,24 @@ function alternaVisualizacaoXRayEditor3D(state: Editor3DState): Editor3DState {
     return { ...state, visualizacaoXRayAtiva: !state.visualizacaoXRayAtiva };
 };
 
+function criaEstadoBaseComCenaCanonicaEditor3D(state: Editor3DState, aba: AbaProjeto3DEditor3D): Editor3DState {
+    const cenaReconstruida = desserializaCenaCanonicaParaEditor3D(aba.cenaCanonica, state.proximoId);
+    const estadoInicial = criaEstadoInicialEditor3D();
+
+    return { ...estadoInicial, objetos: cenaReconstruida.objetos, idsObjetosOcultos: cenaReconstruida.idsObjetosOcultosManualmente, idsObjetosOcultosManualmente: cenaReconstruida.idsObjetosOcultosManualmente, proximoId: cenaReconstruida.proximoId, camera: aba.camera, modoVisualizacaoViewport: state.modoVisualizacaoViewport, visualizacaoXRayAtiva: state.visualizacaoXRayAtiva, tipoSelecionado: state.tipoSelecionado, quantidadeVertices: state.quantidadeVertices, proximoIdNotificacaoAreaInterativa: state.proximoIdNotificacaoAreaInterativa, projetoAberto: aba.projetoAberto, abasProjeto3D: state.abasProjeto3D, idAbaProjeto3DAtiva: aba.id, proximoIdAbaProjeto3D: state.proximoIdAbaProjeto3D, proximoNumeroNovoProjeto: state.proximoNumeroNovoProjeto };
+};
+
 function aplicaCenaCanonicaEditor3D(state: Editor3DState, cena: Extract<Editor3DAcao, { readonly tipo: 'CARREGA_CENA_CANONICA' }>['cena'], projetoAberto: ProjetoAbertoEditor3D | null): Editor3DState {
     if (state.modoOperacao !== 'OBJETO' || state.modoAtual.tipo !== 'NENHUM' || state.malhaEmCriacao !== null || state.insetFaceEdicao !== null || state.bevelEdicao !== null) return state;
 
-    const cenaReconstruida = desserializaCenaCanonicaParaEditor3D(cena, state.proximoId);
-    const estadoInicial = criaEstadoInicialEditor3D();
+    const abaAtiva = obtemAbaProjeto3DAtivaEditor3D(state);
 
-    return { ...estadoInicial, objetos: cenaReconstruida.objetos, idsObjetosOcultos: cenaReconstruida.idsObjetosOcultosManualmente, idsObjetosOcultosManualmente: cenaReconstruida.idsObjetosOcultosManualmente, proximoId: cenaReconstruida.proximoId, camera: state.camera, modoVisualizacaoViewport: state.modoVisualizacaoViewport, visualizacaoXRayAtiva: state.visualizacaoXRayAtiva, tipoSelecionado: state.tipoSelecionado, quantidadeVertices: state.quantidadeVertices, proximoIdNotificacaoAreaInterativa: state.proximoIdNotificacaoAreaInterativa, projetoAberto };
+    if (abaAtiva === null) return state;
+
+    const abaAtualizada: AbaProjeto3DEditor3D = { ...abaAtiva, nome: projetoAberto?.nome ?? abaAtiva.nome, projetoAberto, cenaCanonica: cena, assinaturaCenaSalva: projetoAberto === null ? null : criaAssinaturaCenaCanonicaEditor3D(cena), camera: state.camera };
+    const estadoComAbaAtualizada = { ...state, abasProjeto3D: state.abasProjeto3D.map(aba => aba.id === abaAtualizada.id ? abaAtualizada : aba) };
+
+    return criaEstadoBaseComCenaCanonicaEditor3D(estadoComAbaAtualizada, abaAtualizada);
 };
 
 function carregaCenaCanonicaEditor3D(state: Editor3DState, acao: Extract<Editor3DAcao, { readonly tipo: 'CARREGA_CENA_CANONICA' }>): Editor3DState {
@@ -329,6 +342,76 @@ function carregaCenaCanonicaEditor3D(state: Editor3DState, acao: Extract<Editor3
 
 function carregaProjetoCanonicoEditor3D(state: Editor3DState, acao: Extract<Editor3DAcao, { readonly tipo: 'CARREGA_PROJETO_CANONICO' }>): Editor3DState {
     return aplicaCenaCanonicaEditor3D(state, acao.projeto.cenaCanonica, { id: acao.projeto.id, nome: acao.projeto.nome });
+};
+
+function criaNovaAbaProjeto3DEditor3D(state: Editor3DState): Editor3DState {
+    const estadoComSnapshot = atualizaAbaAtivaComSnapshotProjeto3DEditor3D(state);
+    const idAba = criaIdAbaProjeto3DEditor3D(estadoComSnapshot.proximoIdAbaProjeto3D);
+    const nome = criaNomeNovoProjetoEditor3D(estadoComSnapshot.proximoNumeroNovoProjeto);
+    const abaNova = criaAbaProjeto3DVaziaEditor3D(idAba, nome, criaCameraPadraoEditor3D());
+    const estadoComNovaAba = { ...estadoComSnapshot, abasProjeto3D: [...estadoComSnapshot.abasProjeto3D, abaNova], idAbaProjeto3DAtiva: idAba, proximoIdAbaProjeto3D: estadoComSnapshot.proximoIdAbaProjeto3D + 1, proximoNumeroNovoProjeto: estadoComSnapshot.proximoNumeroNovoProjeto + 1 };
+
+    return criaEstadoBaseComCenaCanonicaEditor3D(estadoComNovaAba, abaNova);
+};
+
+function trocaAbaProjeto3DEditor3D(state: Editor3DState, idAba: string): Editor3DState {
+    if (state.idAbaProjeto3DAtiva === idAba) return state;
+
+    const estadoComSnapshot = atualizaAbaAtivaComSnapshotProjeto3DEditor3D(state);
+    const abaDestino = estadoComSnapshot.abasProjeto3D.find(aba => aba.id === idAba) ?? null;
+
+    if (abaDestino === null) return state;
+
+    return criaEstadoBaseComCenaCanonicaEditor3D(estadoComSnapshot, abaDestino);
+};
+
+function fechaAbaProjeto3DEditor3D(state: Editor3DState, idAba: string): Editor3DState {
+    const indiceAba = state.abasProjeto3D.findIndex(aba => aba.id === idAba);
+
+    if (indiceAba < 0) return state;
+
+    if (state.abasProjeto3D.length === 1) {
+        const idNovaAba = criaIdAbaProjeto3DEditor3D(state.proximoIdAbaProjeto3D);
+        const nome = criaNomeNovoProjetoEditor3D(state.proximoNumeroNovoProjeto);
+        const abaNova = criaAbaProjeto3DVaziaEditor3D(idNovaAba, nome, criaCameraPadraoEditor3D());
+        const estadoComNovaAba = { ...state, abasProjeto3D: [abaNova], idAbaProjeto3DAtiva: idNovaAba, proximoIdAbaProjeto3D: state.proximoIdAbaProjeto3D + 1, proximoNumeroNovoProjeto: state.proximoNumeroNovoProjeto + 1 };
+
+        return criaEstadoBaseComCenaCanonicaEditor3D(estadoComNovaAba, abaNova);
+    }
+
+    if (state.idAbaProjeto3DAtiva !== idAba) return { ...state, abasProjeto3D: state.abasProjeto3D.filter(aba => aba.id !== idAba) };
+
+    const abasRestantes = state.abasProjeto3D.filter(aba => aba.id !== idAba);
+    const indiceDestino = Math.max(0, indiceAba - 1);
+    const abaDestino = abasRestantes[indiceDestino] ?? abasRestantes[0];
+    const estadoSemAba = { ...state, abasProjeto3D: abasRestantes, idAbaProjeto3DAtiva: abaDestino.id };
+
+    return criaEstadoBaseComCenaCanonicaEditor3D(estadoSemAba, abaDestino);
+};
+
+function carregaProjetoCanonicoEmAbaEditor3D(state: Editor3DState, projeto: Extract<Editor3DAcao, { readonly tipo: 'CARREGA_PROJETO_CANONICO_EM_ABA' }>['projeto']): Editor3DState {
+    const estadoComSnapshot = atualizaAbaAtivaComSnapshotProjeto3DEditor3D(state);
+    const abaExistente = estadoComSnapshot.abasProjeto3D.find(aba => aba.projetoAberto?.id === projeto.id) ?? null;
+
+    if (abaExistente !== null) return criaEstadoBaseComCenaCanonicaEditor3D(estadoComSnapshot, abaExistente);
+
+    const idAba = criaIdAbaProjeto3DEditor3D(estadoComSnapshot.proximoIdAbaProjeto3D);
+    const abaNova = criaAbaProjeto3DDeProjetoPersistidoEditor3D(idAba, projeto, criaCameraPadraoEditor3D());
+    const estadoComNovaAba = { ...estadoComSnapshot, abasProjeto3D: [...estadoComSnapshot.abasProjeto3D, abaNova], idAbaProjeto3DAtiva: idAba, proximoIdAbaProjeto3D: estadoComSnapshot.proximoIdAbaProjeto3D + 1 };
+
+    return criaEstadoBaseComCenaCanonicaEditor3D(estadoComNovaAba, abaNova);
+};
+
+function marcaAbaProjeto3DSalvaEditor3D(state: Editor3DState, projetoAberto: ProjetoAbertoEditor3D): Editor3DState {
+    const cenaCanonica = serializaEditor3DParaCenaCanonica(state);
+    const assinaturaCenaSalva = criaAssinaturaCenaCanonicaEditor3D(cenaCanonica);
+    const abaAtiva = obtemAbaProjeto3DAtivaEditor3D(state);
+
+    if (abaAtiva === null) return { ...state, projetoAberto };
+
+    const abaAtualizada: AbaProjeto3DEditor3D = { ...abaAtiva, nome: projetoAberto.nome, projetoAberto, cenaCanonica, assinaturaCenaSalva, camera: state.camera };
+
+    return { ...state, projetoAberto, abasProjeto3D: state.abasProjeto3D.map(aba => aba.id === abaAtualizada.id ? abaAtualizada : aba) };
 };
 
 export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Editor3DState {
@@ -393,9 +476,14 @@ export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Edito
     if (acao.tipo === 'CONFIRMA_MALHA_EM_CRIACAO') return confirmaMalhaEmCriacaoEditor3D(state);
     if (acao.tipo === 'CANCELA_MALHA_EM_CRIACAO') return { ...state, malhaEmCriacao: null };
     if (acao.tipo === 'LIMPA_CENA') return criaEstadoInicialEditor3D();
-    if (acao.tipo === 'DEFINE_PROJETO_ABERTO') return { ...state, projetoAberto: acao.projetoAberto };
+    if (acao.tipo === 'DEFINE_PROJETO_ABERTO') return acao.projetoAberto === null ? { ...state, projetoAberto: null } : marcaAbaProjeto3DSalvaEditor3D(state, acao.projetoAberto);
     if (acao.tipo === 'CARREGA_CENA_CANONICA') return carregaCenaCanonicaEditor3D(state, acao);
     if (acao.tipo === 'CARREGA_PROJETO_CANONICO') return carregaProjetoCanonicoEditor3D(state, acao);
+    if (acao.tipo === 'CRIA_NOVA_ABA_PROJETO_3D') return criaNovaAbaProjeto3DEditor3D(state);
+    if (acao.tipo === 'TROCA_ABA_PROJETO_3D') return trocaAbaProjeto3DEditor3D(state, acao.idAba);
+    if (acao.tipo === 'FECHA_ABA_PROJETO_3D') return fechaAbaProjeto3DEditor3D(state, acao.idAba);
+    if (acao.tipo === 'CARREGA_PROJETO_CANONICO_EM_ABA') return carregaProjetoCanonicoEmAbaEditor3D(state, acao.projeto);
+    if (acao.tipo === 'MARCA_ABA_PROJETO_3D_SALVA') return marcaAbaProjeto3DSalvaEditor3D(state, acao.projetoAberto);
     if (acao.tipo === 'MOVE_OBJETO_SELECIONADO' && state.modoOperacao === 'OBJETO' && state.idsObjetosSelecionados.length > 0 && state.modoAtual.tipo === 'NENHUM') return { ...state, objetos: moveObjetosEditor3D(state.objetos, state.idsObjetosSelecionados, acao.delta) };
     if (acao.tipo === 'INICIA_GRAB') return iniciaGrabEditor3D(state);
     if (acao.tipo === 'APLICA_EIXO_GRAB' && state.modoAtual.tipo === 'GRAB') return aplicaEixoGrabEditor3D(state, acao.eixo);

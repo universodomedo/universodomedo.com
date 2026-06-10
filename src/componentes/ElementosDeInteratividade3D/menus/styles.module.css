@@ -1,0 +1,212 @@
+.barraMenusEditor3D {
+    position: relative;
+    z-index: 18;
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+    min-height: 2.05em;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.86);
+    background: #2b2b2b;
+    user-select: none;
+}
+
+.menuEditor3D {
+    position: relative;
+    display: grid;
+}
+
+.menuEditor3D > button {
+    min-width: 4.8em;
+    padding: 0 0.75em;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    font-size: 0.78em;
+    font-weight: 600;
+    background: transparent;
+    cursor: default;
+}
+
+.menuEditor3D > button:hover,
+.botaoMenuEditor3DAtivo {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.listaItensMenuEditor3D,
+.submenuEditor3D {
+    position: absolute;
+    z-index: 22;
+    top: 100%;
+    left: 0;
+    display: grid;
+    width: 15.8em;
+    padding: 0.28em 0;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.88);
+    background: #f0f0f0;
+    box-shadow: 0 0.75em 1.8em rgba(0, 0, 0, 0.34);
+}
+
+.submenuEditor3D {
+    top: -0.28em;
+    left: 100%;
+    display: none;
+}
+
+.itemMenuEditor3D {
+    position: relative;
+}
+
+.itemMenuEditor3D:hover > .submenuEditor3D {
+    display: grid;
+}
+
+.itemMenuEditor3D > button {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    width: 100%;
+    min-height: 2.15em;
+    padding: 0 0.72em;
+    border: 0;
+    color: #1b1b1b;
+    font: inherit;
+    font-size: 0.78em;
+    text-align: left;
+    background: transparent;
+    cursor: default;
+}
+
+.itemMenuEditor3D > button:hover:not(:disabled) {
+    color: #ffffff;
+    background: #0078d7;
+}
+
+.itemMenuEditor3D > button:disabled {
+    color: rgba(27, 27, 27, 0.38);
+}
+
+.itemMenuEditor3D span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.statusBarraMenusEditor3D {
+    align-self: center;
+    max-width: 32em;
+    margin-left: auto;
+    margin-right: 0.75em;
+    overflow: hidden;
+    color: rgba(210, 228, 255, 0.95);
+    font-size: 0.72em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.statusBarraMenusEditor3DBloqueado {
+    color: rgba(255, 216, 196, 0.96);
+}
+
+.barraAbasProjetoEditor3D {
+    position: relative;
+    z-index: 17;
+    display: flex;
+    min-width: 0;
+    min-height: 2.35em;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.09);
+    background: #252526;
+}
+
+.listaAbasProjetoEditor3D {
+    display: flex;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.abaProjetoEditor3D {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1.8em;
+    align-items: stretch;
+    width: 13.5em;
+    min-width: 9em;
+    max-width: 18em;
+    border-right: 0.08em solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.68);
+    background: #2d2d2d;
+}
+
+.abaProjetoEditor3DAtiva {
+    color: rgba(255, 255, 255, 0.92);
+    background: #1f1f1f;
+}
+
+.botaoSelecionarAbaProjetoEditor3D,
+.botaoFecharAbaProjetoEditor3D {
+    border: 0;
+    color: inherit;
+    font: inherit;
+    background: transparent;
+}
+
+.botaoSelecionarAbaProjetoEditor3D {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.48em;
+    min-width: 0;
+    padding: 0 0.68em;
+    text-align: left;
+    cursor: pointer;
+}
+
+.nomeAbaProjetoEditor3D {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 0.78em;
+    font-weight: 650;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.indicadorAbaProjetoEditor3D {
+    width: 0.48em;
+    height: 0.48em;
+    border-radius: 50%;
+    background: rgba(255, 210, 92, 0.95);
+}
+
+.botaoFecharAbaProjetoEditor3D {
+    display: grid;
+    width: 1.8em;
+    place-items: center;
+    padding: 0;
+    opacity: 0.68;
+    cursor: pointer;
+}
+
+.botaoFecharAbaProjetoEditor3D:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+    opacity: 1;
+}
+
+@media (max-width: 42em) {
+    .menuEditor3D > button {
+        min-width: 4.2em;
+        padding: 0 0.54em;
+    }
+
+    .statusBarraMenusEditor3D {
+        display: none;
+    }
+
+    .abaProjetoEditor3D {
+        width: 11em;
+        min-width: 8.4em;
+    }
+}
