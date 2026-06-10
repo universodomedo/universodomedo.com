@@ -6,6 +6,7 @@ import InicializadorSocket from 'Componentes/Elementos/InicializadorSocket/Inici
 import { useUsuariosSocket } from 'Listeners/usuariosSocket';
 import { useChatSocketListeners } from 'Listeners/chatsSocket';
 import { useEventosUsuarioSocket } from 'Listeners/eventosUsuarioSocket';
+import { useTutorialAberturaSocket } from 'Listeners/tutorialAberturaSocket';
 import { getSocket, setSocketAuthState, clearSocketCache } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
@@ -114,5 +115,6 @@ function SocketHooks() {
     useUsuariosSocket();
     useChatSocketListeners();
     useEventosUsuarioSocket();
+    useTutorialAberturaSocket();
     return null;
 };

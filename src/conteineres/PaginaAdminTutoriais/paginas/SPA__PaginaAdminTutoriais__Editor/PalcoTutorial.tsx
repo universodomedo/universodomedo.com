@@ -1,8 +1,8 @@
 import styles from './PalcoTutorial.module.css';
 
 import { useContexto__PaginaAdminTutoriais__Editor } from 'Contextos/Contexto__PaginaAdminTutoriais__Editor/contexto';
-import { RAZAO_ALTURA_CONTEUDO_TUTORIAL } from 'Contextos/Contexto__PaginaAdminTutoriais__Editor/geometriaTutorial';
-import { botoesVisiveisDoPasso } from 'Contextos/Contexto__PaginaAdminTutoriais__Editor/botoesPassoTutorial';
+import { RAZAO_ALTURA_CONTEUDO_TUTORIAL } from 'Uteis/tutorial/geometriaTutorialCompartilhada';
+import { botoesVisiveisDoPasso } from 'Uteis/tutorial/botoesPassoTutorial';
 import BlocoCanvas from './BlocoCanvas';
 
 export default function PalcoTutorial() {

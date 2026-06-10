@@ -2,8 +2,7 @@ import type { AreaPercentual } from 'types-nora-api';
 
 import type { DirecaoResizeTutorial } from './tutorialEditor.types';
 
-// Etapa 8: constantes geométricas fixas do editor (palco lógico 16:9). Valores únicos reutilizáveis pelo futuro renderizador.
-export const RAZAO_ALTURA_CONTEUDO_TUTORIAL = 1.4;
+// Etapa 8: constantes geométricas fixas do editor. RAZAO_ALTURA_CONTEUDO_TUTORIAL migrou para Uteis/tutorial (compartilhada com o renderizador).
 export const SNAP_PERCENTUAL_TUTORIAL = 0.5;
 export const TAMANHO_MINIMO_BLOCO_TUTORIAL = 5;
 

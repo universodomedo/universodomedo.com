@@ -19,6 +19,8 @@ import SocketListeners from 'Listeners/SocketListeners';
 import GatilhoDevEventosUsuario from 'Componentes/Elementos/GatilhoDevEventosUsuario/GatilhoDevEventosUsuario';
 import EventosUsuarioCentral from 'Componentes/Elementos/EventosUsuarioCentral/EventosUsuarioCentral';
 import { ContextoEventosUsuarioProvider } from 'Contextos/ContextoEventosUsuario/contexto';
+import { ContextoTutorialAberturaProvider } from 'Contextos/ContextoTutorialAbertura/contexto';
+import RenderizadorTutorialModal from 'Componentes/Elementos/RenderizadorTutorial/RenderizadorTutorialModal';
 
 import { ContextoPerformanceProvider } from 'Contextos/ContextoPerformace/contexto';
 import { ContextoAutenticacaoProvider } from 'Contextos/ContextoAutenticacao/contexto';
@@ -80,9 +82,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <ContextoPerformanceProvider>
               <ContextoAutenticacaoProvider>
                 <ContextoEventosUsuarioProvider>
-                  <SocketListeners />
-                  <GatilhoDevEventosUsuario />
-                  <EventosUsuarioCentral />
+                  <ContextoTutorialAberturaProvider>
+                    <SocketListeners />
+                    <GatilhoDevEventosUsuario />
+                    <EventosUsuarioCentral />
+                    <RenderizadorTutorialModal />
                 <RadixTooltip delayDuration={200} skipDelayDuration={0}>
                   <AppClientProviders>
                     <Contexto__Chat__Provider>
@@ -105,6 +109,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     </Contexto__Chat__Provider>
                   </AppClientProviders>
                 </RadixTooltip>
+                  </ContextoTutorialAberturaProvider>
                 </ContextoEventosUsuarioProvider>
               </ContextoAutenticacaoProvider>
             </ContextoPerformanceProvider>
