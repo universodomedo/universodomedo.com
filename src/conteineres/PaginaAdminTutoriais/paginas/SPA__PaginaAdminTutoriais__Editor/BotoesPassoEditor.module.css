@@ -1,0 +1,21 @@
+.botoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    width: 9em;
+}
+
+.campo span {
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+.campo input {
+    width: 100%;
+}

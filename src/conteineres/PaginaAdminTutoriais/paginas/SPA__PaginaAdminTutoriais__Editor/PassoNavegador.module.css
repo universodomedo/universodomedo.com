@@ -1,0 +1,27 @@
+.navegador {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4em;
+}
+
+.aba,
+.aba_ativa,
+.acao {
+    padding: 0.3em 0.7em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.3em;
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.aba_ativa {
+    border-color: #8ab4ff;
+    background-color: rgba(138, 180, 255, 0.18);
+}
+
+.acao:disabled {
+    opacity: 0.5;
+    cursor: default;
+}

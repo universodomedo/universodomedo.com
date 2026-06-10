@@ -1,0 +1,49 @@
+.palco {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 80vh;
+    margin: 0 auto;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    overflow: hidden;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background-color: #161616;
+}
+
+.tutorial {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: #241c39;
+}
+
+.conteudoScroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.canvas {
+    position: relative;
+    width: 100%;
+}
+
+.botoes {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.4em;
+    padding: 0.5em;
+    border-top: 0.08em solid var(--cor-borda);
+}
+
+.botoes span {
+    padding: 0.3em 0.6em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.3em;
+    font-size: 0.8em;
+    opacity: 0.85;
+}

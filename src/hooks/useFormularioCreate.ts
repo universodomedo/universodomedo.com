@@ -6,7 +6,7 @@ export type FormularioCreateValorCampo = string | null;
 
 export type FormularioCreateCampoDef<TValor> = {
     readonly label: string;
-    readonly tipo: 'text' | 'textarea';
+    readonly tipo: 'text' | 'textarea' | 'checkbox';
     readonly obrigatorio?: boolean;
     readonly nullable?: boolean;
     readonly trim?: boolean;
@@ -38,6 +38,12 @@ export type FormularioCreateTextareaProps = {
     readonly placeholder?: string;
 };
 
+export type FormularioCreateCheckboxProps = {
+    readonly checked: boolean;
+    readonly onChange: (evento: ChangeEvent<HTMLInputElement>) => void;
+    readonly disabled: boolean;
+};
+
 export type FormularioCreateEstado<TValores extends object> = {
     readonly valores: TValores;
     readonly erros: Partial<Record<keyof TValores, string>>;
@@ -48,6 +54,7 @@ export type FormularioCreateEstado<TValores extends object> = {
     readonly setCampo: <TChave extends keyof TValores>(campo: TChave, valor: TValores[TChave]) => void;
     readonly input: <TChave extends keyof TValores>(campo: TChave) => FormularioCreateInputProps;
     readonly textarea: <TChave extends keyof TValores>(campo: TChave) => FormularioCreateTextareaProps;
+    readonly checkbox: <TChave extends keyof TValores>(campo: TChave) => FormularioCreateCheckboxProps;
     readonly erro: <TChave extends keyof TValores>(campo: TChave) => string | null;
 };
 
@@ -150,6 +157,14 @@ export default function useFormularioCreate<TValores extends object>(definicao: 
         };
     };
 
+    function checkbox<TChave extends keyof TValores>(campo: TChave): FormularioCreateCheckboxProps {
+        return {
+            checked: valores[campo] === true,
+            onChange: evento => setCampo(campo, evento.target.checked as TValores[TChave]),
+            disabled: salvando,
+        };
+    };
+
     function erro<TChave extends keyof TValores>(campo: TChave): string | null {
         return erros[campo] ?? null;
     };
@@ -166,5 +181,5 @@ export default function useFormularioCreate<TValores extends object>(definicao: 
         };
     };
 
-    return { valores, erros, salvando, podeSalvar, salvar, reset, setCampo, input, textarea, erro };
+    return { valores, erros, salvando, podeSalvar, salvar, reset, setCampo, input, textarea, checkbox, erro };
 };

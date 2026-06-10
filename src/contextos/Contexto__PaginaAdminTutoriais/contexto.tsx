@@ -13,6 +13,7 @@ export interface Contexto__PaginaAdminTutoriais__Props {
     iniciaCriacao: () => void;
     iniciaEdicao: (id: number) => void;
     voltarParaListagem: () => void;
+    concluiSalvamento: () => void;
 };
 
 const Contexto__PaginaAdminTutoriais = createContext<Contexto__PaginaAdminTutoriais__Props | undefined>(undefined);
@@ -31,9 +32,11 @@ export const Contexto__PaginaAdminTutoriais__Provider = ({ children }: { childre
     const iniciaCriacao = useCallback(() => { setTutorialEmEdicaoId(null); setEstadoFluxo('EDITOR'); }, []);
     const iniciaEdicao = useCallback((id: number) => { setTutorialEmEdicaoId(id); setEstadoFluxo('EDITOR'); }, []);
     const voltarParaListagem = useCallback(() => { setTutorialEmEdicaoId(null); setEstadoFluxo('LISTAGEM'); }, []);
+    const recarregarListagem = listagemTutoriais.recarregar;
+    const concluiSalvamento = useCallback(() => { recarregarListagem(); setTutorialEmEdicaoId(null); setEstadoFluxo('LISTAGEM'); }, [recarregarListagem]);
 
     return (
-        <Contexto__PaginaAdminTutoriais.Provider value={{ estadoFluxo, tutorialEmEdicaoId, listagemTutoriais, iniciaCriacao, iniciaEdicao, voltarParaListagem }}>
+        <Contexto__PaginaAdminTutoriais.Provider value={{ estadoFluxo, tutorialEmEdicaoId, listagemTutoriais, iniciaCriacao, iniciaEdicao, voltarParaListagem, concluiSalvamento }}>
             {children}
         </Contexto__PaginaAdminTutoriais.Provider>
     );

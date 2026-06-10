@@ -19,7 +19,7 @@ const Conteiner__PaginaAdminTutoriais__Interno = criaConteiner<PropsConteiner__P
 type PropsConteiner__PaginaAdminTutoriais = ReturnType<typeof useContexto__PaginaAdminTutoriais>;
 
 function resolveSaida(props: PropsConteiner__PaginaAdminTutoriais): SaidaConteiner {
-    if (props.estadoFluxo === 'EDITOR') return criaSaidaConteiner(Contexto__PaginaAdminTutoriais__Editor__Provider, { tutorialEmEdicaoId: props.tutorialEmEdicaoId, voltarParaListagem: props.voltarParaListagem });
+    if (props.estadoFluxo === 'EDITOR') return criaSaidaConteiner(Contexto__PaginaAdminTutoriais__Editor__Provider, { tutorialEmEdicaoId: props.tutorialEmEdicaoId, voltarParaListagem: props.voltarParaListagem, concluiSalvamento: props.concluiSalvamento });
 
     return criaSaidaConteiner(Contexto__PaginaAdminTutoriais__Listagem__Provider, { listagemTutoriais: props.listagemTutoriais, iniciaCriacao: props.iniciaCriacao, iniciaEdicao: props.iniciaEdicao });
 };

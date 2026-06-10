@@ -1,19 +1,58 @@
-.placeholder {
+.editor {
     width: 100%;
     display: flex;
     flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+}
+
+.cabecalho h2 {
+    margin: 0;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.campo_inline {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.75em;
-    padding: 2em;
-    text-align: center;
+    gap: 0.5em;
 }
 
-.aviso {
-    opacity: 0.8;
+.erro {
+    color: #ff9b9b;
+    font-size: 0.85em;
 }
 
-.botao_voltar {
+.passos {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.cabecalho_passos {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.toolbar_blocos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+}
+
+.rodape {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6em;
+}
+
+.botao_voltar,
+.botao_salvar {
     padding: 0.5em 1.2em;
     border: 0.08em solid var(--cor-borda);
     border-radius: 0.4em;
@@ -22,6 +61,12 @@
     cursor: pointer;
 }
 
-.botao_voltar:hover {
+.botao_salvar:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.botao_voltar:hover,
+.botao_salvar:not(:disabled):hover {
     background-color: rgba(255, 255, 255, 0.08);
 }
