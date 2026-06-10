@@ -135,15 +135,6 @@ const comandosAreaInterativa3D = [
         teclado: { teclas: ['tab'], shift: false, ctrlOuMeta: false, alt: false }
     },
     {
-        id: 'shift-a-add-mesh',
-        categoria: 'Atalho',
-        nome: 'Adicionar mesh',
-        descricao: 'Abre o menu de criacao de primitivas e objetos de cena.',
-        atalho: 'Shift + A',
-        icone: 'plus',
-        teclado: { teclas: ['a'], shift: true, ctrlOuMeta: false, alt: false }
-    },
-    {
         id: 'ctrl-a-apply',
         categoria: 'Atalho',
         nome: 'Aplicar transform',
@@ -355,15 +346,6 @@ const comandosAreaInterativa3D = [
         atalho: 'Esc',
         icone: 'escape',
         teclado: { teclas: ['escape'], shift: null, ctrlOuMeta: false, alt: false }
-    },
-    {
-        id: 'rmb-add-mesh',
-        categoria: 'Mouse',
-        nome: 'Menu de criacao',
-        descricao: 'Abre o menu contextual para adicionar elementos na cena.',
-        atalho: 'Botao direito fora do canvas',
-        icone: 'mouse-pointer',
-        mouse: { botao: 2, shift: null, ctrlOuMeta: null, alt: null }
     },
     {
         id: 'lmb-seleciona-elemento',

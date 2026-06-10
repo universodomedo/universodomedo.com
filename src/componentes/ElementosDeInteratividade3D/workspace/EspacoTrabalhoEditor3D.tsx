@@ -12,7 +12,7 @@ import { CamadaAplicacaoTransformEditor3D } from '../aplicacao/CamadaAplicacaoTr
 import { CamadaCriacaoMeshEditor3D } from '../criacao/CamadaCriacaoMeshEditor3D';
 import { SeletorModoOperacaoEditor3D } from '../modoOperacao/SeletorModoOperacaoEditor3D';
 import { ToolbarMouseEditor3D } from '../toolbar/ToolbarMouseEditor3D';
-import { comandoMouseAreaInterativa3DEstaAtivo, comandoTecladoAreaInterativa3DEstaAtivo } from '../comandos/editor3D.comandos';
+import { comandoTecladoAreaInterativa3DEstaAtivo } from '../comandos/editor3D.comandos';
 import { useEditor3DContexto } from '../contexto/Editor3DContexto';
 import { useMenuAplicacaoTransformEditor3D } from '../aplicacao/useMenuAplicacaoTransformEditor3D';
 import { useMenuCriacaoMeshEditor3D } from '../criacao/useMenuCriacaoMeshEditor3D';
@@ -51,14 +51,6 @@ export function EspacoTrabalhoEditor3D() {
                 return;
             }
 
-            if (comandoTecladoAreaInterativa3DEstaAtivo('shift-a-add-mesh', event)) {
-                event.preventDefault();
-                menuAplicacao.fechaMenu();
-                menuCriacao.abreMenuNoCentro(workspaceRef.current, podeAbrirMenuCriacao());
-
-                return;
-            }
-
             if (comandoTecladoAreaInterativa3DEstaAtivo('ctrl-a-apply', event)) {
                 event.preventDefault();
                 menuCriacao.fechaMenu();
@@ -71,10 +63,9 @@ export function EspacoTrabalhoEditor3D() {
         return () => window.removeEventListener('keydown', processaAtalhoWorkspace);
     }, [acoes, menuCriacao, menuAplicacao, podeAbrirMenuAplicacao, podeAbrirMenuCriacao]);
 
-    function abreMenuCriacao(event: ReactMouseEvent<HTMLElement>): void {
-        event.preventDefault();
+    function abreCriarNovoMesh(): void {
         menuAplicacao.fechaMenu();
-        menuCriacao.abreMenu(event, workspaceRef.current, podeAbrirMenuCriacao());
+        menuCriacao.abreMenuInferiorEsquerdo(podeAbrirMenuCriacao());
     };
 
     function bloqueiaMenuContextoNativo(event: ReactMouseEvent<HTMLElement>): void { event.preventDefault(); };
@@ -87,11 +78,6 @@ export function EspacoTrabalhoEditor3D() {
         if (alvoEstaDentroDe(event, '[data-editor3d-menu-aplicacao="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-shell="true"]')) return;
         if (alvoEstaDentroDe(event, 'canvas')) return;
-        if (comandoMouseAreaInterativa3DEstaAtivo('rmb-add-mesh', event)) {
-            abreMenuCriacao(event);
-
-            return;
-        }
 
         menuCriacao.fechaMenu();
         menuAplicacao.fechaMenu();
@@ -115,7 +101,7 @@ export function EspacoTrabalhoEditor3D() {
 
     return (
         <section ref={workspaceRef} className={styles.espacoTrabalhoEditor3D} onMouseDown={processaMouseDownWorkspace} onContextMenu={bloqueiaMenuContextoNativo}>
-            <BarraMenusEditor3D />
+            <BarraMenusEditor3D podeCriarNovoMesh={podeAbrirMenuCriacao()} abreCriarNovoMesh={abreCriarNovoMesh} />
 
             <BarraAbasProjetoEditor3D />
 

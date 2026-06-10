@@ -1,6 +1,6 @@
 export type PermissaoMenuEditor3D = 'CRIAR_INSIGNIA_HIDDEN';
 
-export type IdComandoMenuEditor3D = 'NOVO_PROJETO' | 'SALVAR_NOVO_PROJETO' | 'SALVAR_PROJETO_ATUAL' | 'CARREGAR_PROJETO' | 'CRIAR_INSIGNIA' | 'CRIAR_ARTE_ESPECIAL' | 'TOOLBAR_2D';
+export type IdComandoMenuEditor3D = 'NOVO_PROJETO' | 'SALVAR_NOVO_PROJETO' | 'SALVAR_PROJETO_ATUAL' | 'CARREGAR_PROJETO' | 'CRIAR_NOVO_MESH' | 'CRIAR_INSIGNIA' | 'CRIAR_ARTE_ESPECIAL' | 'TOOLBAR_2D';
 
 export interface ContextoMenuEditor3D {
     readonly permissoes: readonly PermissaoMenuEditor3D[];
@@ -11,6 +11,7 @@ export interface ContextoMenuEditor3D {
     readonly salvandoProjeto: boolean;
     readonly carregandoProjeto: boolean;
     readonly projetoAberto: boolean;
+    readonly podeCriarNovoMesh: boolean;
 };
 
 export interface ItemMenuEditor3D {
@@ -39,6 +40,7 @@ export const MENUS_EDITOR_3D: readonly MenuEditor3D[] = [
     {
         rotulo: 'Criar',
         itens: [
+            { rotulo: 'Criar Novo Mesh', comando: 'CRIAR_NOVO_MESH', disabled: contexto => !contexto.podeCriarNovoMesh },
             { rotulo: 'Criar Insignia', comando: 'CRIAR_INSIGNIA', permissao: 'CRIAR_INSIGNIA_HIDDEN', disabled: true },
             { rotulo: 'Criar Arte Especial', comando: 'CRIAR_ARTE_ESPECIAL', disabled: true },
         ],

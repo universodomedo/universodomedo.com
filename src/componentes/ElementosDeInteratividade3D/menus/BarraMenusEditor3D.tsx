@@ -23,6 +23,11 @@ interface StatusMenuProjetoEditor3D {
     readonly bloqueado: boolean;
 };
 
+interface BarraMenusEditor3DProps {
+    readonly podeCriarNovoMesh: boolean;
+    readonly abreCriarNovoMesh: () => void;
+};
+
 function formataDataAtualizacaoProjetoEditor3D(dataAtualizacao: string): string {
     const data = new Date(dataAtualizacao);
 
@@ -33,7 +38,7 @@ function formataDataAtualizacaoProjetoEditor3D(dataAtualizacao: string): string 
 
 function obtemMensagemErroPadraoProjetoEditor3D(operacao: string): string { return `Falha ao ${operacao} projeto 3D.`; };
 
-export function BarraMenusEditor3D() {
+export function BarraMenusEditor3D({ podeCriarNovoMesh, abreCriarNovoMesh }: BarraMenusEditor3DProps) {
     const { estado, acoes } = useEditor3DContexto();
     const [indiceMenuAberto, setIndiceMenuAberto] = useState<number | null>(null);
     const [modalAberto, setModalAberto] = useState<ModalMenuEditor3D | null>(null);
@@ -58,6 +63,7 @@ export function BarraMenusEditor3D() {
         salvandoProjeto: salvando,
         carregandoProjeto: carregandoListagem || idProjetoCarregando !== null,
         projetoAberto: estado.projetoAberto !== null,
+        podeCriarNovoMesh,
     };
 
     function fechaMenus(): void { setIndiceMenuAberto(null); };
@@ -235,6 +241,10 @@ export function BarraMenusEditor3D() {
         if (comando === 'SALVAR_NOVO_PROJETO') abreSalvarNovoProjeto();
         if (comando === 'SALVAR_PROJETO_ATUAL') void salvaProjetoAtual();
         if (comando === 'CARREGAR_PROJETO') abreCarregarProjeto();
+        if (comando === 'CRIAR_NOVO_MESH') {
+            fechaMenus();
+            abreCriarNovoMesh();
+        }
     };
 
     function renderizaItensMenu(itens: readonly ItemMenuEditor3D[]): ReactElement[] {
