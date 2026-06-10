@@ -15,7 +15,7 @@ export function removeBlocoTutorial(passos: readonly PassoLocalTutorial[], idLoc
 
 export function atualizaMarkdownBlocoTutorial(passos: readonly PassoLocalTutorial[], idLocalPasso: number, idLocalBloco: number, markdown: string): readonly PassoLocalTutorial[] { return mapaBloco(passos, idLocalPasso, idLocalBloco, bloco => ({ ...bloco, markdown })); };
 
-export function defineImagemBlocoTutorial(passos: readonly PassoLocalTutorial[], idLocalPasso: number, idLocalBloco: number, idImagem: number): readonly PassoLocalTutorial[] { return mapaBloco(passos, idLocalPasso, idLocalBloco, bloco => ({ ...bloco, idImagem })); };
+export function defineImagemBlocoTutorial(passos: readonly PassoLocalTutorial[], idLocalPasso: number, idLocalBloco: number, idArquivoTipadoArte: number): readonly PassoLocalTutorial[] { return mapaBloco(passos, idLocalPasso, idLocalBloco, bloco => ({ ...bloco, idArquivoTipadoArte })); };
 
 export function atualizaTextoBotaoPassoTutorial(passos: readonly PassoLocalTutorial[], idLocalPasso: number, campo: CampoTextoBotaoTutorial, valor: string): readonly PassoLocalTutorial[] { return mapaPasso(passos, idLocalPasso, passo => ({ ...passo, [campo]: valor })); };
 
@@ -28,6 +28,6 @@ function adicionaBloco(passos: readonly PassoLocalTutorial[], idLocalPasso: numb
     if (!passo) return { ok: false, motivo: 'Passo não encontrado.' };
     const area = calculaAreaNovoBloco(passo.blocos.map(bloco => bloco.area));
     if (!area) return { ok: false, motivo: 'Não há espaço livre neste Passo para um novo bloco com o tamanho padrão.' };
-    const novo: BlocoLocalTutorial = { idLocal: idLocalBloco, tipo, markdown: '', idImagem: null, area };
+    const novo: BlocoLocalTutorial = { idLocal: idLocalBloco, tipo, markdown: '', idArquivoTipadoArte: null, area };
     return { ok: true, passos: mapaPasso(passos, idLocalPasso, passoAtual => ({ ...passoAtual, blocos: [...passoAtual.blocos, novo] })) };
 };

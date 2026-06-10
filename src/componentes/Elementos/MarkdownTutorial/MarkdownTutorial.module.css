@@ -1,0 +1,28 @@
+.markdown {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    text-align: left;
+    font-size: 0.8em;
+    line-height: 1.3;
+    pointer-events: none;
+    word-break: break-word;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+    margin: 0 0 0.3em;
+    line-height: 1.2;
+}
+
+.markdown h1 { font-size: 1.4em; }
+.markdown h2 { font-size: 1.2em; }
+.markdown h3 { font-size: 1.05em; }
+
+.markdown p {
+    margin: 0 0 0.4em;
+}
+
+.markdown strong { font-weight: 700; }
+.markdown em { font-style: italic; }

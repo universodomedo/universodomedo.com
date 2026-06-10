@@ -21,7 +21,7 @@ export function passosLocaisDeComposicao(composicao: ComposicaoVisualTutorialLei
 };
 
 function blocoLocalDeLeitura(bloco: BlocoTutorialLeitura, idLocal: number): BlocoLocalTutorial {
-    if (bloco.tipo === 'imagem') return { idLocal, tipo: 'imagem', markdown: '', idImagem: bloco.idImagem, area: bloco.area };
-    if (bloco.tipo === 'texto') return { idLocal, tipo: 'texto', markdown: bloco.markdown ?? '', idImagem: null, area: bloco.area };
+    if (bloco.tipo === 'imagem') return { idLocal, tipo: 'imagem', markdown: '', idArquivoTipadoArte: bloco.idArquivoTipadoArte, area: bloco.area };
+    if (bloco.tipo === 'texto') return { idLocal, tipo: 'texto', markdown: bloco.markdown ?? '', idArquivoTipadoArte: null, area: bloco.area };
     throw new Error(`Tipo de bloco desconhecido recebido do contrato: ${bloco.tipo}`);
 };

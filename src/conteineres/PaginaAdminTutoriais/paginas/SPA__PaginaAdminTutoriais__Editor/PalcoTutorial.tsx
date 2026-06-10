@@ -17,7 +17,7 @@ export default function PalcoTutorial() {
                 <div className={styles.conteudoScroll}>
                     <div ref={editor.canvasRef} className={styles.canvas} style={{ aspectRatio: `1 / ${RAZAO_ALTURA_CONTEUDO_TUTORIAL}` }}>
                         {passo?.blocos.map(bloco => (
-                            <BlocoCanvas key={bloco.idLocal} passoId={passo.idLocal} bloco={bloco} caminhoImagem={bloco.idImagem !== null ? editor.artes.get(bloco.idImagem) ?? null : null} selecionado={editor.selecao.blocoSelecionadoId === bloco.idLocal} aoSelecionar={() => editor.selecao.selecionaBloco(bloco.idLocal)} iniciaDrag={editor.drag.iniciaDrag} iniciaResize={editor.resize.iniciaResize} />
+                            <BlocoCanvas key={bloco.idLocal} passoId={passo.idLocal} bloco={bloco} caminhoImagem={bloco.idArquivoTipadoArte !== null ? editor.artes.get(bloco.idArquivoTipadoArte) ?? null : null} selecionado={editor.selecao.blocoSelecionadoId === bloco.idLocal} aoSelecionar={() => editor.selecao.selecionaBloco(bloco.idLocal)} iniciaDrag={editor.drag.iniciaDrag} iniciaResize={editor.resize.iniciaResize} />
                         ))}
                     </div>
                 </div>

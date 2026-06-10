@@ -28,7 +28,7 @@ export default function BlocoEditor() {
 
             {bloco.tipo === 'imagem' && (
                 <div className={styles.imagem}>
-                    <span>{bloco.idImagem === null ? 'Nenhuma imagem selecionada' : `Imagem #${bloco.idImagem}`}</span>
+                    <span>{bloco.idArquivoTipadoArte === null ? 'Nenhuma imagem selecionada' : `Imagem #${bloco.idArquivoTipadoArte}`}</span>
                     <Recipiente__Contexto__Modal__ConfiguradorArteCapa__Provider configArteCapa={{ tituloOperacao: 'Selecionar Imagem', subtituloOperacao: 'Escolha uma arte cadastrada', callback: idArteCapa => editor.acoes.defineImagemBloco(passo.idLocal, bloco.idLocal, idArteCapa) }} />
                 </div>
             )}

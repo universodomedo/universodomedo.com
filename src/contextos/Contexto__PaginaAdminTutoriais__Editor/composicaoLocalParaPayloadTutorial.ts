@@ -2,7 +2,7 @@ import type { BlocoTutorial, PassoTutorial } from 'types-nora-api';
 
 import type { BlocoLocalTutorial, PassoLocalTutorial, ResultadoMontaComposicaoTutorial } from './tutorialEditor.types';
 
-// Monta a composição para o payload (segura por construção): falha explícita se um bloco de imagem não tiver idImagem (sem sentinela). larguraPercentual entra direto.
+// Monta a composição para o payload (segura por construção): falha explícita se um bloco de imagem não tiver idArquivoTipadoArte (sem sentinela). larguraPercentual entra direto.
 export function montaComposicaoVisualTutorial(passos: readonly PassoLocalTutorial[], larguraPercentual: number): ResultadoMontaComposicaoTutorial {
     const passosMontados: PassoTutorial[] = [];
     for (const passo of passos) {
@@ -19,8 +19,8 @@ export function montaComposicaoVisualTutorial(passos: readonly PassoLocalTutoria
 
 function montaBloco(bloco: BlocoLocalTutorial): { ok: true; bloco: BlocoTutorial } | { ok: false; motivo: string } {
     if (bloco.tipo === 'texto') return { ok: true, bloco: { tipo: 'texto', markdown: bloco.markdown, area: bloco.area } };
-    if (bloco.idImagem === null) return { ok: false, motivo: 'Há um bloco de imagem sem imagem selecionada.' };
-    return { ok: true, bloco: { tipo: 'imagem', idImagem: bloco.idImagem, area: bloco.area } };
+    if (bloco.idArquivoTipadoArte === null) return { ok: false, motivo: 'Há um bloco de imagem sem imagem selecionada.' };
+    return { ok: true, bloco: { tipo: 'imagem', idArquivoTipadoArte: bloco.idArquivoTipadoArte, area: bloco.area } };
 };
 
 function montaPasso(passo: PassoLocalTutorial, blocos: BlocoTutorial[]): PassoTutorial {

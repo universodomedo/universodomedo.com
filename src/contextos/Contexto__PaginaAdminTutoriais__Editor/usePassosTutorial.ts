@@ -32,7 +32,7 @@ export function usePassosTutorial() {
         removeBloco: (idPasso: number, idBloco: number) => setPassos(prev => removeBlocoTutorial(prev, idPasso, idBloco)),
         reordenaBloco: (idPasso: number, idBloco: number, direcao: DirecaoReordenar) => setPassos(prev => reordenaBlocoTutorial(prev, idPasso, idBloco, direcao)),
         atualizaMarkdownBloco: (idPasso: number, idBloco: number, markdown: string) => setPassos(prev => atualizaMarkdownBlocoTutorial(prev, idPasso, idBloco, markdown)),
-        defineImagemBloco: (idPasso: number, idBloco: number, idImagem: number) => setPassos(prev => defineImagemBlocoTutorial(prev, idPasso, idBloco, idImagem)),
+        defineImagemBloco: (idPasso: number, idBloco: number, idArquivoTipadoArte: number) => setPassos(prev => defineImagemBlocoTutorial(prev, idPasso, idBloco, idArquivoTipadoArte)),
         atualizaTextoBotao: (idPasso: number, campo: CampoTextoBotaoTutorial, valor: string) => setPassos(prev => atualizaTextoBotaoPassoTutorial(prev, idPasso, campo, valor)),
         aplicaArea: (idPasso: number, idBloco: number, area: AreaPercentual, comSnap: boolean) => setPassos(prev => aplicaAreaBloco(prev, idPasso, idBloco, area, comSnap)),
     };

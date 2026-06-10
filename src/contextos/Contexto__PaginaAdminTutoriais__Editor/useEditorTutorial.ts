@@ -49,7 +49,7 @@ export function useEditorTutorial(tutorialEmEdicaoId: number | null, concluiSalv
     }, [acoes.passos, selecao.passoAtivoId]);
 
     const passoAtivo = acoes.passos.find(passo => passo.idLocal === selecao.passoAtivoId) ?? acoes.passos[0];
-    const idsArte = useMemo(() => Array.from(new Set(acoes.passos.flatMap(passo => passo.blocos).map(bloco => bloco.idImagem).filter((id): id is number => id !== null))), [acoes.passos]);
+    const idsArte = useMemo(() => Array.from(new Set(acoes.passos.flatMap(passo => passo.blocos).map(bloco => bloco.idArquivoTipadoArte).filter((id): id is number => id !== null))), [acoes.passos]);
     const artes = useArtesDaComposicaoTutorial(idsArte);
 
     const pronto = !estaEditando || populadoRef.current;

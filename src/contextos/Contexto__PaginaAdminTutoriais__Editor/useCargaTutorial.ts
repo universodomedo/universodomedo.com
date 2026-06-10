@@ -2,7 +2,7 @@
 
 import { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
 
-const SELECT_EDICAO = ['id', 'chaveTutorial', 'nome', 'ativo', { composicaoVisual: [{ passos: [{ blocos: ['tipo', 'markdown', 'idImagem', { area: ['x', 'y', 'largura', 'altura'] }] }, 'textoBotaoVoltar', 'textoBotaoAvancar', 'textoBotaoConcluir', 'textoBotaoFechar'] }, 'larguraPercentual'] }] as const;
+const SELECT_EDICAO = ['id', 'chaveTutorial', 'nome', 'ativo', { composicaoVisual: [{ passos: [{ blocos: ['tipo', 'markdown', 'idArquivoTipadoArte', { area: ['x', 'y', 'largura', 'altura'] }] }, 'textoBotaoVoltar', 'textoBotaoAvancar', 'textoBotaoConcluir', 'textoBotaoFechar'] }, 'larguraPercentual'] }] as const;
 
 // Etapa 8: carga do Tutorial existente (edição) por GraphQL — 1 registro por PK, com a composição completa + largura.
 export function useCargaTutorial(tutorialEmEdicaoId: number | null) {

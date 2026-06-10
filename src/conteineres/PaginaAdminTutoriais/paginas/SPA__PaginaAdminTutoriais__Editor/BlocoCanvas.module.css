@@ -24,13 +24,6 @@
     pointer-events: none;
 }
 
-.texto {
-    padding: 0.2em;
-    font-size: 0.8em;
-    text-align: center;
-    pointer-events: none;
-}
-
 .vazio {
     font-size: 0.7em;
     opacity: 0.6;
