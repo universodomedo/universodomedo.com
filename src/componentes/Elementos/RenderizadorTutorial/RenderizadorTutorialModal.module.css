@@ -36,3 +36,9 @@
 .botao:hover {
     background-color: rgba(255, 255, 255, 0.08);
 }
+
+.erro {
+    color: #ff9b9b;
+    font-size: 0.85em;
+    text-align: center;
+}
