@@ -1,26 +1,27 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Eventos_EnviaERecebe, EventoUsuarioDto } from 'types-nora-api';
+import { Eventos_Envia, GraphqlLeituras } from 'types-nora-api';
 
+import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
 import { eventoWs, useSocketEpoch } from 'Hooks/useEventoWs';
+import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
-import { paraItemCentral, EventoUsuarioCentralItem } from './eventoUsuarioCentralItem';
-import { useTutorialIntervencao, IntervencaoTutorial } from './useTutorialIntervencao';
+import { CentralItem, SELECT_EVENTO_CENTRAL, SELECT_TUTORIAL_CENTRAL, eventoParaItemCentral, tutorialParaItemCentral } from './eventoUsuarioCentralItem';
 import { useEventosUsuarioAcoes } from './useEventosUsuarioAcoes';
 
-export interface ContextoEventosUsuarioProps extends IntervencaoTutorial {
-    eventos: EventoUsuarioDto[];
-    itens: EventoUsuarioCentralItem[];
+export interface ContextoEventosUsuarioProps {
+    itens: CentralItem[];
+    itensPendencias: CentralItem[];
+    itensAjudaTutoriais: CentralItem[];
     carregando: boolean;
     aberto: boolean;
-    naoLidos: number;
     pendentes: number;
     alternarAberto: () => void;
     listar: () => void;
     sincronizarAposNotificacaoRecebida: () => void;
     marcarLido: (idEvento: number) => void;
-    concluirTutorial: (idEvento: number) => void;
+    solicitarAberturaTutorial: (idUsuarioTutorial: number) => void;
 };
 
 const ContextoEventosUsuario = createContext<ContextoEventosUsuarioProps | undefined>(undefined);
@@ -32,59 +33,61 @@ export function useContextoEventosUsuario(): ContextoEventosUsuarioProps {
 };
 
 export function ContextoEventosUsuarioProvider({ children }: { children: React.ReactNode }) {
-    const [eventos, setEventos] = useState<EventoUsuarioDto[]>([]);
-    const [carregando, setCarregando] = useState(false);
     const [aberto, setAberto] = useState(false);
-
     const { estaAutenticado } = useContextoAutenticacao();
     const epoch = useSocketEpoch();
 
-    // Busca a lista do backend (fonte da verdade). silencioso=true não mexe em `carregando` (sync pós-toast sem ruído visual).
-    const buscarEventos = useCallback((silencioso: boolean) => {
-        if (!silencioso) setCarregando(true);
-        eventoWs(Eventos_EnviaERecebe.EventosUsuario.eventos.obterMeusEventos, {}, {
-            onSuccess: resp => { setEventos(resp.eventos); if (!silencioso) setCarregando(false); },
-            onError: () => { if (!silencioso) setCarregando(false); },
-        });
-    }, []);
+    // Etapa 14: a Central é composição GraphQL agregada (eventos + tutoriais), escopada no servidor. executarAoMontar=false: o disparo é controlado por auth/epoch/abrir. BARRA = carregamento não-bloqueante.
+    const consultaEventos = useNoraGraphQLConsulta(() => GraphqlLeituras.EventoUsuario.eventos.varios({ parametros: { limit: 100, offset: 0 }, select: SELECT_EVENTO_CENTRAL }), { valorInicial: [], carregando: 'Carregando eventos', mensagemErro: 'Não foi possível carregar seus eventos.', executarAoMontar: false, carregamento: NoraApiCarregamento.BARRA });
+    const consultaTutoriais = useNoraGraphQLConsulta(() => GraphqlLeituras.UsuarioTutorial.eventos.varios({ parametros: { limit: 100, offset: 0 }, select: SELECT_TUTORIAL_CENTRAL }), { valorInicial: [], carregando: 'Carregando tutoriais', mensagemErro: 'Não foi possível carregar seus tutoriais.', executarAoMontar: false, carregamento: NoraApiCarregamento.BARRA });
 
-    // Lista os eventos do próprio usuário pelo backend (fonte da verdade).
-    const listar = useCallback(() => buscarEventos(false), [buscarEventos]);
+    const recarregarEventos = consultaEventos.recarregar;
+    const recarregarTutoriais = consultaTutoriais.recarregar;
 
-    // Etapa 8: sincronização silenciosa após notificacaoRecebida — atualiza `eventos` sem abrir a central nem ligar `carregando`.
-    const sincronizarAposNotificacaoRecebida = useCallback(() => buscarEventos(true), [buscarEventos]);
+    // Refetch das duas leituras agregadas (fonte da verdade da Central). best-effort, fire-and-forget. Sem usuário autenticado não consulta (evita request sem sessão e vazamento entre usuários).
+    const listar = useCallback(() => {
+        if (!estaAutenticado) return;
+        void recarregarEventos();
+        void recarregarTutoriais();
+    }, [estaAutenticado, recarregarEventos, recarregarTutoriais]);
 
-    const { marcarLido, concluirTutorial } = useEventosUsuarioAcoes(setEventos);
+    // Etapa 8: após o toast (notificacaoRecebida) a Central sincroniza com o backend; agora = refetch GraphQL.
+    const sincronizarAposNotificacaoRecebida = useCallback(() => { listar(); }, [listar]);
+
+    const { marcarLido } = useEventosUsuarioAcoes(listar);
+
+    // Etapa 14: a Central só SOLICITA a abertura; o modal render-ready global renderiza ao receber abrirTutorial. Nunca conclui nem busca render-ready aqui.
+    const solicitarAberturaTutorial = useCallback((idUsuarioTutorial: number) => { eventoWs(Eventos_Envia.Tutoriais.eventos.solicitarAberturaTutorial, { idUsuarioTutorial }); }, []);
 
     const alternarAberto = useCallback(() => { setAberto(prev => !prev); }, []);
 
-    // Carrega do backend ao abrir a central.
+    // Carrega do backend ao abrir a Central.
     useEffect(() => { if (aberto) listar(); }, [aberto, listar]);
 
-    // Etapa 9: estado inicial/reconexão. Autenticou/reconectou (epoch) => sincroniza silenciosamente; desautenticou => limpa e fecha.
+    // Estado inicial/reconexão: autenticou/reconectou (epoch) => refetch; desautenticou => fecha a Central (isolamento entre usuários na mesma sessão SPA).
     useEffect(() => {
         if (!estaAutenticado) {
-            setEventos([]);
-            setCarregando(false);
             setAberto(false);
             return;
         }
-        buscarEventos(true);
-    }, [estaAutenticado, epoch, buscarEventos]);
+        listar();
+    }, [estaAutenticado, epoch, listar]);
 
-    const naoLidos = useMemo(() => eventos.filter(evento => !evento.dataLeitura).length, [eventos]);
+    // Mescla pronta para render (apresentação): eventos + tutoriais ordenados por data desc. Sem usuário autenticado, deriva vazio (não renderiza dado antigo da sessão anterior).
+    const itens = useMemo<CentralItem[]>(() => {
+        if (!estaAutenticado) return [];
+        const eventos = consultaEventos.data.map(eventoParaItemCentral);
+        const tutoriais = consultaTutoriais.data.map(tutorialParaItemCentral);
+        return [...eventos, ...tutoriais].sort((a, b) => b.dataOrdenacao - a.dataOrdenacao);
+    }, [estaAutenticado, consultaEventos.data, consultaTutoriais.data]);
 
-    // Etapa 11: itens prontos para render (contexto prepara; componente não interpreta formato/dados/datas).
-    const itens = useMemo(() => eventos.map(paraItemCentral), [eventos]);
+    // Pendências: tudo pendente (flag do backend). Ajuda/Tutoriais: tutoriais concluídos (ação Reabrir).
+    const itensPendencias = useMemo(() => itens.filter(item => item.pendente), [itens]);
+    const itensAjudaTutoriais = useMemo(() => itens.filter(item => item.tipoItem === 'tutorial' && item.concluido), [itens]);
+    const pendentes = itensPendencias.length;
+    const carregando = consultaEventos.carregando !== null || consultaTutoriais.carregando !== null;
 
-    // Etapa 15: pendências da central (tutorial pende até concluir; demais até ler). `naoLidos` mantém a semântica pública anterior (sem dataLeitura).
-    const pendentes = useMemo(() => itens.filter(item => item.pendente).length, [itens]);
-
-    // Etapa 12: estado/ações da intervenção visual de tutorial (lógica isolada em hook para manter o contexto pequeno).
-    // Etapa 16: API multi-passos do hook re-exposta flat no contexto (ContextoEventosUsuarioProps extends IntervencaoTutorial).
-    const intervencaoTutorial = useTutorialIntervencao(itens, concluirTutorial, estaAutenticado);
-
-    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ eventos, itens, carregando, aberto, naoLidos, pendentes, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, concluirTutorial, ...intervencaoTutorial }), [eventos, itens, carregando, aberto, naoLidos, pendentes, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, concluirTutorial, intervencaoTutorial]);
+    const api = useMemo<ContextoEventosUsuarioProps>(() => ({ itens, itensPendencias, itensAjudaTutoriais, carregando, aberto, pendentes, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, solicitarAberturaTutorial }), [itens, itensPendencias, itensAjudaTutoriais, carregando, aberto, pendentes, alternarAberto, listar, sincronizarAposNotificacaoRecebida, marcarLido, solicitarAberturaTutorial]);
 
     return (
         <ContextoEventosUsuario.Provider value={api}>

@@ -50,7 +50,13 @@ export function ContextoTutorialAberturaProvider({ children }: { children: React
     const enfileirar = useCallback((payload: AberturaTutorialPayload) => dispatch({ tipo: 'ENFILEIRAR', payload }), []);
     const avancar = useCallback(() => dispatch({ tipo: 'AVANCAR' }), []);
     const voltar = useCallback(() => dispatch({ tipo: 'VOLTAR' }), []);
-    const fechar = useCallback(() => dispatch({ tipo: 'FECHAR' }), []);
+
+    // Etapa 14: Fechar NÃO conclui. Ao encerrar uma abertura VINCULADA, refaz a Central (best-effort) para refletir o ACK já persistido (dataPrimeiraAbertura/dataUltimaAbertura) — assim "Abrir" vira "Continuar". Captura ehVinculado ANTES do dispatch (a fila avança); não bloqueia a fila; o ACK em si nunca recarrega.
+    const fechar = useCallback(() => {
+        const eraVinculado = estado.aberturaAtual?.usuarioTutorial != null;
+        dispatch({ tipo: 'FECHAR' });
+        if (eraVinculado) listar();
+    }, [estado.aberturaAtual, listar]);
 
     // Etapa 12: ACK de abertura (envia, fire-and-forget). Disparado pelo modal ao montar a abertura vinculada; sem reação ao resultado; nunca recarrega a Central.
     const confirmarAbertura = useCallback((idUsuarioTutorial: number) => { eventoWs(Eventos_Envia.Tutoriais.eventos.confirmarAberturaTutorial, { idUsuarioTutorial }); }, []);

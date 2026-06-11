@@ -1,31 +1,23 @@
-import { EventoUsuarioDto, EventoUsuarioFormato, TUTORIAIS_USUARIO, PassoTutorialUsuario, CHAVE_TUTORIAL_CENTRAL } from 'types-nora-api';
+import { GraphqlTypesEventoUsuario, GraphqlTypesUsuarioTutorial } from 'types-nora-api';
 
 import { formataData } from 'Uteis/FormatadorDeDatas/FormatadorDeDatas';
-import { ALVO_VISUAL_CENTRAL_BOTAO } from './alvoVisualTutorial';
 
-// Modelo de apresentação pronto para render: o componente não interpreta formato/dados/datas.
-export type EventoUsuarioCentralItem = {
-    id: number;
-    titulo: string;
-    mensagem: string;
-    rotuloFormato: string;
-    rotuloLeitura: string;
-    dataCriacaoFormatada: string;
-    lido: boolean;
-    podeMarcarComoLido: boolean;
-    textoAuxiliar: string | null;
-    podeAbrirTutorial: boolean;
-    rotuloAcaoTutorial: string | null;
-    alvoVisual: string | null;
-    possuiAlvoVisual: boolean;
-    passos: readonly PassoTutorialUsuario[];
-    concluido: boolean;
-    rotuloConclusao: string | null;
-    pendente: boolean;
-};
+// Etapa 14: selects mínimos da Central. O servidor já escopa por usuário autenticado (sem where/id do cliente). Não pede render-ready/passos (a abertura é por WS).
+export const SELECT_EVENTO_CENTRAL = { id: true, tipo: true, titulo: true, mensagem: true, formato: true, dataCriacao: true, dataLeitura: true, dataConclusao: true, pendente: true } as const;
+export const SELECT_TUTORIAL_CENTRAL = { id: true, dataDesbloqueio: true, dataPrimeiraAbertura: true, dataUltimaAbertura: true, dataConclusao: true, pendente: true, concluido: true, tutorial: { id: true, chaveTutorial: true, nome: true, ativo: true } } as const;
+
+export type EventoUsuarioRegistro = GraphqlTypesEventoUsuario.Resultado<typeof SELECT_EVENTO_CENTRAL>;
+export type UsuarioTutorialRegistro = GraphqlTypesUsuarioTutorial.Resultado<typeof SELECT_TUTORIAL_CENTRAL>;
+
+export type AcaoTutorialCentral = 'abrir' | 'continuar' | 'reabrir';
+
+// Item base discriminado pronto para render: o componente não interpreta DTO/datas/estado; só renderiza.
+export type CentralItemEvento = { tipoItem: 'evento'; chave: string; id: number; titulo: string; mensagem: string; rotuloFormato: string; dataFormatada: string; dataOrdenacao: number; lido: boolean; pendente: boolean; podeMarcarComoLido: boolean };
+export type CentralItemTutorial = { tipoItem: 'tutorial'; chave: string; idUsuarioTutorial: number; titulo: string; dataFormatada: string; dataOrdenacao: number; pendente: boolean; concluido: boolean; acao: AcaoTutorialCentral; rotuloAcao: string };
+export type CentralItem = CentralItemEvento | CentralItemTutorial;
 
 // Mapeamento fechado e explícito de formato → rótulo humano; default neutro 'Evento' defensivo p/ formato gerado futuro.
-function rotuloFormato(formato: EventoUsuarioFormato): string {
+function rotuloFormato(formato: EventoUsuarioRegistro['formato']): string {
     switch (formato) {
         case 'simples': return 'Evento';
         case 'convite_sessao': return 'Convite';
@@ -35,34 +27,31 @@ function rotuloFormato(formato: EventoUsuarioFormato): string {
     }
 };
 
-// Texto auxiliar mínimo apenas para o tutorial inicial da central (complemento no card; não overlay/modal/tooltip/tour).
-function textoAuxiliar(evento: EventoUsuarioDto): string | null {
-    if (evento.formato === 'tutorial' && evento.dados?.chaveTutorial === CHAVE_TUTORIAL_CENTRAL) return 'Esta central reúne avisos, pendências e orientações importantes da plataforma.';
-    return null;
+function instanteOuZero(data: Date | null): number { return data ? new Date(data).getTime() : 0; };
+
+export function eventoParaItemCentral(evento: EventoUsuarioRegistro): CentralItemEvento {
+    const lido = evento.dataLeitura !== null;
+    return { tipoItem: 'evento', chave: `evento-${evento.id}`, id: evento.id, titulo: evento.titulo, mensagem: evento.mensagem, rotuloFormato: rotuloFormato(evento.formato), dataFormatada: formataData(evento.dataCriacao, 'dd/MM/yyyy HH:mm'), dataOrdenacao: instanteOuZero(evento.dataCriacao), lido, pendente: evento.pendente, podeMarcarComoLido: !lido };
 };
 
-// Alvo visual do tutorial: SÓ o alvo conhecido desta etapa — nunca repassa dados.alvoVisual adiante como seletor livre.
-function alvoVisualDoEvento(evento: EventoUsuarioDto): string | null {
-    if (evento.formato !== 'tutorial') return null;
-    if (evento.dados?.alvoVisual === ALVO_VISUAL_CENTRAL_BOTAO) return ALVO_VISUAL_CENTRAL_BOTAO;
-    if (evento.dados?.chaveTutorial === CHAVE_TUTORIAL_CENTRAL) return ALVO_VISUAL_CENTRAL_BOTAO;
-    return null;
+// Ação derivada do estado do vínculo (regra de exibição; pendência/conclusão vêm do backend). Nunca aberto => Abrir; aberto e não concluído => Continuar; concluído => Reabrir.
+function acaoTutorial(vinculo: UsuarioTutorialRegistro): AcaoTutorialCentral {
+    if (vinculo.concluido) return 'reabrir';
+    if (vinculo.dataPrimeiraAbertura !== null) return 'continuar';
+    return 'abrir';
 };
 
-// Etapa 16: passos do tutorial resolvidos do contrato gerado por chaveTutorial (SSOT no backend). Não-tutorial/chave desconhecida => sem passos.
-function passosDoEvento(evento: EventoUsuarioDto): readonly PassoTutorialUsuario[] {
-    if (evento.formato !== 'tutorial') return [];
-    const chave = evento.dados?.chaveTutorial;
-    return typeof chave === 'string' ? (TUTORIAIS_USUARIO[chave] ?? []) : [];
+const ROTULO_ACAO_TUTORIAL: Record<AcaoTutorialCentral, string> = { abrir: 'Abrir Tutorial', continuar: 'Continuar Tutorial', reabrir: 'Reabrir Tutorial' };
+
+// Data de referência por estado (exibição + ordenação). dataDesbloqueio (sempre presente) garante valor e ordenação válida para Tutorial nunca aberto.
+function dataReferenciaTutorial(vinculo: UsuarioTutorialRegistro): Date {
+    if (vinculo.concluido) return vinculo.dataConclusao ?? vinculo.dataUltimaAbertura ?? vinculo.dataPrimeiraAbertura ?? vinculo.dataDesbloqueio;
+    if (vinculo.dataPrimeiraAbertura !== null) return vinculo.dataUltimaAbertura ?? vinculo.dataPrimeiraAbertura ?? vinculo.dataDesbloqueio;
+    return vinculo.dataDesbloqueio;
 };
 
-export function paraItemCentral(evento: EventoUsuarioDto): EventoUsuarioCentralItem {
-    const lido = !!evento.dataLeitura;
-    const ehTutorial = evento.formato === 'tutorial';
-    const concluido = !!evento.dataConclusao;
-    const alvoVisual = alvoVisualDoEvento(evento);
-    const passos = passosDoEvento(evento);
-    // Etapa 15: pendência por tipo — tutorial pende até concluir; não-tutorial pende até ler.
-    const pendente = ehTutorial ? !concluido : !lido;
-    return { id: evento.id, titulo: evento.titulo, mensagem: evento.mensagem, rotuloFormato: rotuloFormato(evento.formato), rotuloLeitura: lido ? 'lido' : 'não lido', dataCriacaoFormatada: formataData(evento.dataCriacao, 'dd/MM/yyyy HH:mm'), lido, podeMarcarComoLido: !lido && !ehTutorial, textoAuxiliar: textoAuxiliar(evento), podeAbrirTutorial: ehTutorial && !concluido && passos.length > 0, rotuloAcaoTutorial: ehTutorial && !concluido ? 'Ver orientação' : null, alvoVisual, possuiAlvoVisual: alvoVisual !== null, passos, concluido, rotuloConclusao: ehTutorial && concluido ? 'concluído' : null, pendente };
+export function tutorialParaItemCentral(vinculo: UsuarioTutorialRegistro): CentralItemTutorial {
+    const acao = acaoTutorial(vinculo);
+    const dataReferencia = dataReferenciaTutorial(vinculo);
+    return { tipoItem: 'tutorial', chave: `tutorial-${vinculo.id}`, idUsuarioTutorial: vinculo.id, titulo: vinculo.tutorial.nome, dataFormatada: formataData(dataReferencia, 'dd/MM/yyyy HH:mm'), dataOrdenacao: new Date(dataReferencia).getTime(), pendente: vinculo.pendente, concluido: vinculo.concluido, acao, rotuloAcao: ROTULO_ACAO_TUTORIAL[acao] };
 };
