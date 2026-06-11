@@ -1,16 +1,20 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { CaminhoArquivoAvatar, Eventos_Emite, J_DadosFichaEmJogo, LogicaJogoUsuario_ObjetoEmJogoDto } from 'types-nora-api';
+import { CaminhoArquivoAvatar, Eventos_Emite, J_DadosFichaEmJogo, LogicaJogoUsuario_ObjetoEmJogoDto, LogicaJogoUsuario_ObjetoInicialSalaDto__Jogador } from 'types-nora-api';
 
 import SPA_SalaDeJogo from 'Conteineres/EmJogo/paginas/SPA_SalaDeJogo__Jogador/SPA_SalaDeJogo__Jogador';
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { toast } from 'Hooks/useToast';
 
 interface ContextoSalaDeJogo__JogadorProps {
-    objetoEmJogo: LogicaJogoUsuario_ObjetoEmJogoDto;
+    objetoEmJogo: LogicaJogoUsuario_ObjetoEmJogoDto__Jogador;
     J_fichaAtualizada: J_DadosFichaEmJogo;
     caminhoAvatar: CaminhoArquivoAvatar;
+};
+
+export type LogicaJogoUsuario_ObjetoEmJogoDto__Jogador = Omit<LogicaJogoUsuario_ObjetoEmJogoDto, 'objetoInicialSala'> & {
+    objetoInicialSala: LogicaJogoUsuario_ObjetoInicialSalaDto__Jogador;
 };
 
 const ContextoSalaDeJogo__Jogador = createContext<ContextoSalaDeJogo__JogadorProps | undefined>(undefined);
@@ -21,7 +25,7 @@ export const useContextoSalaDeJogo__Jogador = (): ContextoSalaDeJogo__JogadorPro
     return context;
 };
 
-export const ContextoSalaDeJogo__JogadorProvider = ({ objetoEmJogo, idFicha, caminhoAvatar }: { objetoEmJogo: LogicaJogoUsuario_ObjetoEmJogoDto; idFicha: number; caminhoAvatar: CaminhoArquivoAvatar; }) => {
+export const ContextoSalaDeJogo__JogadorProvider = ({ objetoEmJogo, idFicha, caminhoAvatar }: { objetoEmJogo: LogicaJogoUsuario_ObjetoEmJogoDto__Jogador; idFicha: number; caminhoAvatar: CaminhoArquivoAvatar; }) => {
     const [J_fichaAtualizada, setJ_FichaAtualizada] = useState<J_DadosFichaEmJogo | null>(null);
 
     useEmitWsComDisparoInicial(Eventos_Emite.Jogo.eventos.emitirFichaEmJogo, {

@@ -4,8 +4,8 @@ import { createContext, useContext } from 'react';
 import { Eventos_Envia, SalaDeJogo_TipoParticipante } from 'types-nora-api';
 
 import { eventoWs } from 'Hooks/useEventoWs';
-import { useContextoEMJOGO } from 'Contextos/ContextoEMJOGO/contexto';
 import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonagem/contexto';
+import { useContextoSalaDeJogo__Jogador } from 'Contextos/ContextoSalaDeJogo__Jogador/contexto';
 
 interface ContextoControleAcoesRuntimeProps {
     executaAcao: (keyAcao: string) => void;
@@ -21,7 +21,7 @@ export const useContextoControleAcoesRuntime = (): ContextoControleAcoesRuntimeP
 
 export const ContextoControleAcoesRuntimeProvider = ({ children }: { children: React.ReactNode; }) => {
     const { desativarAcoes } = useContextoFichaDePersonagem();
-    const { objetoEmJogo } = useContextoEMJOGO();
+    const { objetoEmJogo } = useContextoSalaDeJogo__Jogador();
 
     function executaAcao(keyAcao: string): void {
         if (desativarAcoes) return;

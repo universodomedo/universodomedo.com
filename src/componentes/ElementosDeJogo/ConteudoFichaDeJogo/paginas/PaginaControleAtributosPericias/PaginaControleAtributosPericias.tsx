@@ -9,7 +9,7 @@ import adicionaSinalEmNumeroParaExibicao from 'Uteis/UteisTexto/adicionaSinalEmN
 import { useContextoFichaDePersonagem } from "Contextos/ContextoFichaDePersonagem/contexto";
 import { useContextoControleAtributosPericias } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAtributosPericias/contexto';
 import { eventoWs } from 'Hooks/useEventoWs';
-import { useContextoEMJOGO } from 'Contextos/ContextoEMJOGO/contexto';
+import { useContextoSalaDeJogo__Jogador } from 'Contextos/ContextoSalaDeJogo__Jogador/contexto';
 
 export default function PaginaControleAtributosPericias() {
     const { ficha } = useContextoFichaDePersonagem();
@@ -74,7 +74,7 @@ function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFicha; }
     const { abreviar } = useContextoControleAtributosPericias();
     const periciaPorExtenso = textoFormatadoParaVisualizacao(abreviar ? periciaPersonagem.pericia.nomeAbreviado : periciaPersonagem.pericia.nome);
     const { desativarAcoes } = useContextoFichaDePersonagem();
-    const { objetoEmJogo } = useContextoEMJOGO();
+    const { objetoEmJogo } = useContextoSalaDeJogo__Jogador();
 
     function enviaTeste() {
         if (desativarAcoes) return;
