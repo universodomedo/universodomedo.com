@@ -15,11 +15,11 @@ import { ToolbarMouseEditor3D } from '../toolbar/ToolbarMouseEditor3D';
 import { comandoTecladoAreaInterativa3DEstaAtivo } from '../comandos/editor3D.comandos';
 import { useEditor3DContexto } from '../contexto/Editor3DContexto';
 import { useMenuAplicacaoTransformEditor3D } from '../aplicacao/useMenuAplicacaoTransformEditor3D';
-import { useMenuCriacaoMeshEditor3D } from '../criacao/useMenuCriacaoMeshEditor3D';
-import type { PresetObjetoCenaEditor3D } from '../editor/editor3D.presetsObjeto.tipos';
 import type { TipoMalhaEditor3D } from '../editor/editor3D.tipos';
 
 function alvoEstaDentroDe(event: ReactMouseEvent<HTMLElement>, seletor: string): boolean { return event.target instanceof Element && event.target.closest(seletor) !== null; };
+
+const tipoPadraoCriacaoMeshEditor3D: TipoMalhaEditor3D = 'CUBO_3D';
 
 function eventoTecladoVeioDeElementoEditavel(event: KeyboardEvent): boolean {
     const alvo = event.target;
@@ -32,10 +32,9 @@ function eventoTecladoVeioDeElementoEditavel(event: KeyboardEvent): boolean {
 export function EspacoTrabalhoEditor3D() {
     const workspaceRef = useRef<HTMLElement | null>(null);
     const { estado, acoes } = useEditor3DContexto();
-    const menuCriacao = useMenuCriacaoMeshEditor3D();
     const menuAplicacao = useMenuAplicacaoTransformEditor3D();
 
-    const podeAbrirMenuCriacao = useCallback((): boolean => estado.modoOperacao === 'OBJETO' && estado.modoAtual.tipo === 'NENHUM' && estado.malhaEmCriacao === null, [estado.modoOperacao, estado.modoAtual.tipo, estado.malhaEmCriacao]);
+    const podeCriarNovoMesh = useCallback((): boolean => estado.modoOperacao === 'OBJETO' && estado.modoAtual.tipo === 'NENHUM' && estado.malhaEmCriacao === null, [estado.modoOperacao, estado.modoAtual.tipo, estado.malhaEmCriacao]);
     const podeAbrirMenuAplicacao = useCallback((): boolean => estado.modoOperacao === 'OBJETO' && estado.modoAtual.tipo === 'NENHUM' && estado.malhaEmCriacao === null && estado.idsObjetosSelecionados.length > 0, [estado.modoOperacao, estado.modoAtual.tipo, estado.malhaEmCriacao, estado.idsObjetosSelecionados.length]);
 
     useEffect(() => {
@@ -44,7 +43,6 @@ export function EspacoTrabalhoEditor3D() {
 
             if (comandoTecladoAreaInterativa3DEstaAtivo('tab-modo-operacao', event)) {
                 event.preventDefault();
-                menuCriacao.fechaMenu();
                 menuAplicacao.fechaMenu();
                 acoes.alternaModoOperacao();
 
@@ -53,7 +51,6 @@ export function EspacoTrabalhoEditor3D() {
 
             if (comandoTecladoAreaInterativa3DEstaAtivo('ctrl-a-apply', event)) {
                 event.preventDefault();
-                menuCriacao.fechaMenu();
                 menuAplicacao.abreMenuNoCentro(workspaceRef.current, podeAbrirMenuAplicacao());
             }
         };
@@ -61,11 +58,13 @@ export function EspacoTrabalhoEditor3D() {
         window.addEventListener('keydown', processaAtalhoWorkspace);
 
         return () => window.removeEventListener('keydown', processaAtalhoWorkspace);
-    }, [acoes, menuCriacao, menuAplicacao, podeAbrirMenuAplicacao, podeAbrirMenuCriacao]);
+    }, [acoes, menuAplicacao, podeAbrirMenuAplicacao]);
 
     function abreCriarNovoMesh(): void {
+        if (!podeCriarNovoMesh()) return;
+
         menuAplicacao.fechaMenu();
-        menuCriacao.abreMenuInferiorEsquerdo(podeAbrirMenuCriacao());
+        acoes.iniciaMalhaEmCriacao(tipoPadraoCriacaoMeshEditor3D);
     };
 
     function bloqueiaMenuContextoNativo(event: ReactMouseEvent<HTMLElement>): void { event.preventDefault(); };
@@ -75,23 +74,13 @@ export function EspacoTrabalhoEditor3D() {
         if (alvoEstaDentroDe(event, '[data-editor3d-comandos="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-modo-operacao="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-menu-criacao="true"]')) return;
+        if (alvoEstaDentroDe(event, '[data-editor3d-painel-parametrizacao-mesh="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-menu-aplicacao="true"]')) return;
         if (alvoEstaDentroDe(event, '[data-editor3d-shell="true"]')) return;
         if (alvoEstaDentroDe(event, 'canvas')) return;
 
-        menuCriacao.fechaMenu();
         menuAplicacao.fechaMenu();
         if (estado.ferramentaMouse !== 'SELECIONAR') acoes.resetaFerramentaMouse();
-    };
-
-    function selecionaTipoMalha(tipoMalha: TipoMalhaEditor3D): void {
-        acoes.iniciaMalhaEmCriacao(tipoMalha);
-        menuCriacao.fechaMenu();
-    };
-
-    function criaPresetObjeto(preset: PresetObjetoCenaEditor3D): void {
-        acoes.criaPresetObjetoCena(preset);
-        menuCriacao.fechaMenu();
     };
 
     function aplicaRotationScale(): void {
@@ -101,7 +90,7 @@ export function EspacoTrabalhoEditor3D() {
 
     return (
         <section ref={workspaceRef} className={styles.espacoTrabalhoEditor3D} onMouseDown={processaMouseDownWorkspace} onContextMenu={bloqueiaMenuContextoNativo}>
-            <BarraMenusEditor3D podeCriarNovoMesh={podeAbrirMenuCriacao()} abreCriarNovoMesh={abreCriarNovoMesh} />
+            <BarraMenusEditor3D podeCriarNovoMesh={podeCriarNovoMesh()} abreCriarNovoMesh={abreCriarNovoMesh} />
 
             <BarraAbasProjetoEditor3D />
 
@@ -114,7 +103,7 @@ export function EspacoTrabalhoEditor3D() {
 
                 <SeletorModoOperacaoEditor3D />
 
-                <CamadaCriacaoMeshEditor3D posicaoMenu={menuCriacao.posicaoMenu} selecionaTipoMalha={selecionaTipoMalha} criaPresetObjeto={criaPresetObjeto} />
+                <CamadaCriacaoMeshEditor3D />
 
                 <CamadaAplicacaoTransformEditor3D posicaoMenu={menuAplicacao.posicaoMenu} aplicaRotationScale={aplicaRotationScale} />
             </section>
