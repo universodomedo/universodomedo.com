@@ -1,7 +1,7 @@
 import { criaCameraPadraoEditor3D } from '../editor/editor3D.camera';
 import { criaColecaoCenaEditor3D, obtemIdsObjetosColecaoEditor3D, removeObjetosDasColecoesEditor3D } from './editor3D.colecoes';
 import { alteraSegmentosBevelEmEdicaoEditor3D, aplicaInsetFaceSelecionadaEditor3D, atualizaBevelEmEdicaoEditor3D, atualizaInsetFaceEmEdicaoEditor3D, cancelaBevelEmEdicaoEditor3D, cancelaInsetFaceEmEdicaoEditor3D, confirmaBevelEmEdicaoEditor3D, confirmaInsetFaceEmEdicaoEditor3D, defineTipoSelecaoEdicaoEditor3D, iniciaBevelSelecaoEditor3D, iniciaInsetFaceSelecionadaEditor3D, moveSelecaoEdicaoEditor3D, preparaObjetosEscopoEdicaoEditor3D, selecionaArestaEdicaoEditor3D, selecionaFaceEdicaoEditor3D, selecionaVerticeEdicaoEditor3D } from './editor3D.reducer.edicao';
-import { alteraQuantidadeVerticesStateEditor3D, atualizaQuantidadeVerticesStateEditor3D, atualizaVetorMalhaEmCriacaoEditor3D, confirmaMalhaEmCriacaoEditor3D, criaPresetObjetoCenaEditor3D, iniciaMalhaEmCriacaoEditor3D } from './editor3D.reducer.criacao';
+import { alteraQuantidadeVerticesStateEditor3D, atualizaQuantidadeVerticesStateEditor3D, atualizaVetorMalhaEmCriacaoEditor3D, confirmaMalhaEmCriacaoEditor3D, criaPresetObjetoCenaEditor3D, iniciaMalhaEmCriacaoEditor3D, trocaTipoMalhaEmCriacaoEditor3D } from './editor3D.reducer.criacao';
 import { aplicaMaterialVisualObjetoEditor3D, aplicaRotationScaleObjetosEditor3D, atualizaObjetosEditor3D, atualizaVetorObjetoEditor3D, defineShaderObjetoEditor3D, moveObjetosEditor3D } from './editor3D.reducer.objetos';
 import { aplicaEixoGrabEditor3D, aplicaEixoRotateEditor3D, aplicaEixoScaleEditor3D, aplicaRotateLivreEditor3D, atualizaEntradaNumericaRotateEditor3D, cancelaModoEditor3D, escalaModoScaleEditor3D, iniciaGrabEditor3D, iniciaRotateEditor3D, iniciaScaleEditor3D, moveModoGrabEditor3D, rotacionaModoRotateEditor3D } from './editor3D.reducer.modo';
 import { desserializaCenaCanonicaParaEditor3D } from '../editor/editor3D.cenaCanonica.desserializador';
@@ -467,6 +467,7 @@ export function editor3DReducer(state: Editor3DState, acao: Editor3DAcao): Edito
     if (acao.tipo === 'ALTERA_QUANTIDADE_VERTICES') return alteraQuantidadeVerticesStateEditor3D(state, acao.delta);
     if (acao.tipo === 'DEFINE_QUANTIDADE_VERTICES') return atualizaQuantidadeVerticesStateEditor3D(state, acao.quantidadeVertices);
     if (acao.tipo === 'INICIA_MALHA_EM_CRIACAO') return state.modoOperacao === 'OBJETO' ? iniciaMalhaEmCriacaoEditor3D(state, acao.tipoMalha) : state;
+    if (acao.tipo === 'TROCA_TIPO_MALHA_EM_CRIACAO') return trocaTipoMalhaEmCriacaoEditor3D(state, acao.tipoMalha);
     if (acao.tipo === 'CRIA_PRESET_OBJETO_CENA') return criaPresetObjetoCenaEditor3D(state, acao.preset);
     if (acao.tipo === 'ATUALIZA_VETOR_MALHA_EM_CRIACAO') return atualizaVetorMalhaEmCriacaoEditor3D(state, acao.campo, acao.indice, acao.valor);
     if (acao.tipo === 'ATUALIZA_VETOR_OBJETO_SELECIONADO') return atualizaVetorObjetoSelecionadoEditor3D(state, acao);

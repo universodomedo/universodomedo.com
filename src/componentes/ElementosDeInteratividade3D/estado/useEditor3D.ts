@@ -58,6 +58,7 @@ export function useEditor3D(): Editor3DModelo {
         alteraQuantidadeVertices: delta => dispatch({ tipo: 'ALTERA_QUANTIDADE_VERTICES', delta }),
         defineQuantidadeVertices: quantidadeVertices => dispatch({ tipo: 'DEFINE_QUANTIDADE_VERTICES', quantidadeVertices }),
         iniciaMalhaEmCriacao: tipoMalha => dispatch({ tipo: 'INICIA_MALHA_EM_CRIACAO', tipoMalha }),
+        trocaTipoMalhaEmCriacao: tipoMalha => dispatch({ tipo: 'TROCA_TIPO_MALHA_EM_CRIACAO', tipoMalha }),
         criaPresetObjetoCena: preset => dispatch({ tipo: 'CRIA_PRESET_OBJETO_CENA', preset }),
         atualizaVetorMalhaEmCriacao: (campo, indice, valor) => dispatch({ tipo: 'ATUALIZA_VETOR_MALHA_EM_CRIACAO', campo, indice, valor }),
         atualizaVetorObjetoSelecionado: (campo, indice, valor) => dispatch({ tipo: 'ATUALIZA_VETOR_OBJETO_SELECIONADO', campo, indice, valor }),

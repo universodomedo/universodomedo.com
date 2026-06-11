@@ -40,6 +40,16 @@ export function iniciaMalhaEmCriacaoEditor3D(state: Editor3DState, tipoMalha: Ti
     return { ...state, tipoSelecionado: tipoMalha, quantidadeVertices: definicao.quantidadePadrao, malhaEmCriacao, idObjetoSelecionado: null, idsObjetosSelecionados: [] };
 };
 
+export function trocaTipoMalhaEmCriacaoEditor3D(state: Editor3DState, tipoMalha: TipoMalhaEditor3D): Editor3DState {
+    if (state.malhaEmCriacao === null) return state;
+
+    const definicao = obtemDefinicaoMalhaEditor3D(tipoMalha);
+    const malhaBase = criaProximoObjetoEditor3D(state.proximoId, tipoMalha, definicao.quantidadePadrao);
+    const malhaEmCriacao = { ...malhaBase, posicao: state.malhaEmCriacao.posicao, rotacao: state.malhaEmCriacao.rotacao, escala: state.malhaEmCriacao.escala };
+
+    return { ...state, tipoSelecionado: tipoMalha, quantidadeVertices: definicao.quantidadePadrao, malhaEmCriacao };
+};
+
 export function atualizaQuantidadeVerticesStateEditor3D(state: Editor3DState, quantidadeVertices: number): Editor3DState {
     const quantidadeFinal = defineQuantidadeVerticesEditor3D(quantidadeVertices, state.tipoSelecionado);
     const malhaEmCriacao = state.malhaEmCriacao === null ? null : atualizaQuantidadeVerticesObjetoEditor3D(state.malhaEmCriacao, quantidadeFinal);
