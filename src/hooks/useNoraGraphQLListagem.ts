@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, createElement, useCallback, useEffect, useMemo, useRef, useState, useContext, type ReactNode } from 'react';
-import { ApiOperacaoGraphqlGet, GraphqlFiltroConsultaCampoDef, GraphqlFiltroControleVisualizacao, GraphqlFiltroVisualizacaoCampoDef, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemVariosParametrosEntidade, GraphqlOpcoesFiltroConsultaCampo, GraphqlOpcoesFiltrosConsultaParametros, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime, GraphqlSelectNormalizadoObjeto, GraphqlSelectRuntime, GraphqlTotalDeRegistrosParametrosEntidade, normalizaSelectGraphql } from 'types-nora-api';
+import { ApiOperacaoGraphqlGet, GraphqlFiltroConsultaCampoDef, GraphqlFiltroControleVisualizacao, GraphqlFiltroVisualizacaoCampoDef, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemVariosParametrosEntidadeRestrita, GraphqlOpcoesFiltroConsultaCampo, GraphqlOpcoesFiltrosConsultaParametros, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime, GraphqlSelectNormalizadoObjeto, GraphqlSelectRuntime, GraphqlTotalDeRegistrosParametrosEntidadeRestrita, normalizaSelectGraphql } from 'types-nora-api';
 
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import type { ContextoFiltrosConsultaValor } from 'Contextos/Contexto__FiltrosConsulta/contexto';
@@ -25,9 +25,13 @@ type UseNoraGraphQLListagemObjeto<TNome extends GraphqlLeituraNome> = GraphqlObj
 
 type UseNoraGraphQLListagemRegistro<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>> = GraphqlResultado<UseNoraGraphQLListagemObjeto<TNome>, TSelect>;
 
-type UseNoraGraphQLListagemParametrosConsulta<TNome extends GraphqlLeituraNome> = GraphqlObtemVariosParametrosEntidade<UseNoraGraphQLListagemObjeto<TNome>>;
+type UseNoraGraphQLListagemWhereTrie<TNome extends GraphqlLeituraNome> = GraphqlLeituraPorNome<TNome> extends { readonly CamposWhereTrie: infer TTrie } ? TTrie : never;
 
-type UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome extends GraphqlLeituraNome> = GraphqlTotalDeRegistrosParametrosEntidade<UseNoraGraphQLListagemObjeto<TNome>>;
+type UseNoraGraphQLListagemOrderTrie<TNome extends GraphqlLeituraNome> = GraphqlLeituraPorNome<TNome> extends { readonly CamposOrderTrie: infer TTrie } ? TTrie : never;
+
+type UseNoraGraphQLListagemParametrosConsulta<TNome extends GraphqlLeituraNome> = GraphqlObtemVariosParametrosEntidadeRestrita<UseNoraGraphQLListagemObjeto<TNome>, UseNoraGraphQLListagemWhereTrie<TNome>, UseNoraGraphQLListagemOrderTrie<TNome>>;
+
+type UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome extends GraphqlLeituraNome> = GraphqlTotalDeRegistrosParametrosEntidadeRestrita<UseNoraGraphQLListagemObjeto<TNome>, UseNoraGraphQLListagemWhereTrie<TNome>, UseNoraGraphQLListagemOrderTrie<TNome>>;
 
 type UseNoraGraphQLListagemParametrosOpcoesFiltrosConsulta<TNome extends GraphqlLeituraNome> = GraphqlOpcoesFiltrosConsultaParametros<UseNoraGraphQLListagemObjeto<TNome>, string>;
 

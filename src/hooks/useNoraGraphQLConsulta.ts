@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, createElement, useCallback, useContext, useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
-import { ApiOperacaoGraphqlGet, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemUmParametrosEntidade, GraphqlResultado, GraphqlSelect } from 'types-nora-api';
+import { ApiOperacaoGraphqlGet, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemUmParametrosEntidadeRestrita, GraphqlResultado, GraphqlSelect } from 'types-nora-api';
 
 import { montaMensagemErroNoraApiParaUsuario, NoraApi } from 'Api/NoraApi';
 import { NORA_API_CARREGAMENTO_VISUAL } from 'Api/NoraApiCarregamentoVisual.const';
@@ -59,7 +59,11 @@ type UseNoraGraphQLConsultaRegistro<TNome extends GraphqlLeituraNome, TSelect ex
 
 type UseNoraGraphQLConsultaRegistroResultado<TNome extends GraphqlLeituraNome, TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>> = UseNoraGraphQLConsultaResultado<UseNoraGraphQLConsultaRegistro<TNome, TSelect> | null>;
 
-type UseNoraGraphQLConsultaParametros<TNome extends GraphqlLeituraNome> = GraphqlObtemUmParametrosEntidade<UseNoraGraphQLConsultaObjeto<TNome>>;
+type UseNoraGraphQLConsultaWhereTrie<TNome extends GraphqlLeituraNome> = GraphqlLeituraPorNome<TNome> extends { readonly CamposWhereTrie: infer TTrie } ? TTrie : never;
+
+type UseNoraGraphQLConsultaOrderTrie<TNome extends GraphqlLeituraNome> = GraphqlLeituraPorNome<TNome> extends { readonly CamposOrderTrie: infer TTrie } ? TTrie : never;
+
+type UseNoraGraphQLConsultaParametros<TNome extends GraphqlLeituraNome> = GraphqlObtemUmParametrosEntidadeRestrita<UseNoraGraphQLConsultaObjeto<TNome>, UseNoraGraphQLConsultaWhereTrie<TNome>, UseNoraGraphQLConsultaOrderTrie<TNome>>;
 
 type UseNoraGraphQLConsultaEventoPorPK<TSelect extends object> = (definicao: { readonly id: number; readonly select: TSelect; }) => NoraGraphQLOperacaoBase;
 
