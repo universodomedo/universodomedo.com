@@ -3,10 +3,11 @@
 import { useEffect } from "react";
 import { J_DadosFichaEmJogo } from "types-nora-api";
 
-import { ContextoFichaDePersonagemProvider } from "Contextos/ContextoFichaDePersonagem/contexto";
+import { ContextoFichaDePersonagemProvider, useContextoFichaDePersonagem } from "Contextos/ContextoFichaDePersonagem/contexto";
 import combineProviders from 'Contextos/combineProviders';
 import { ContextoControleAtributosPericiasProvider, useContextoControleAtributosPericias } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAtributosPericias/contexto';
-import { ContextoControleAcoesRuntimeProvider } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAcoesRuntime/contexto';
+import { ContextoControleAcoesRuntimeProvider, ContextoControleAcoesRuntimeSomenteLeituraProvider } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAcoesRuntime/contexto';
+import { ContextoControleTestesPericiaRuntimeProvider, ContextoControleTestesPericiaRuntimeSomenteLeituraProvider } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleTestesPericiaRuntime/contexto';
 import { ContextoControleNavegacaoFichaProvider, useContextoControleNavegacaoFicha } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleNavegacaoFicha/contexto';
 import PaginaControleAtributosPericias from './paginas/PaginaControleAtributosPericias/PaginaControleAtributosPericias';
 import PaginaControleAcoes from './paginas/PaginaControleAcoes/PaginaControleAcoes';
@@ -30,11 +31,16 @@ export default function ConteudoFichaDeJogo({ JDadosFichaEmJogo, desativarAcoes,
 };
 
 function ConteudoFichaDeJogo_Interno({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; }) {
+    const { desativarAcoes } = useContextoFichaDePersonagem();
     const conteudo = <ConteudoFichaDeJogo_ComContexto exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} />;
+    const ProviderAcoesRuntime = desativarAcoes ? ContextoControleAcoesRuntimeSomenteLeituraProvider : ContextoControleAcoesRuntimeProvider;
+    const ProviderTestesPericiaRuntime = desativarAcoes ? ContextoControleTestesPericiaRuntimeSomenteLeituraProvider : ContextoControleTestesPericiaRuntimeProvider;
 
     return (
         <ProvidersControleFicha>
-            {exibirAcoesRuntime ? <ContextoControleAcoesRuntimeProvider>{conteudo}</ContextoControleAcoesRuntimeProvider> : conteudo}
+            <ProviderTestesPericiaRuntime>
+                {exibirAcoesRuntime ? <ProviderAcoesRuntime>{conteudo}</ProviderAcoesRuntime> : conteudo}
+            </ProviderTestesPericiaRuntime>
         </ProvidersControleFicha>
     );
 };

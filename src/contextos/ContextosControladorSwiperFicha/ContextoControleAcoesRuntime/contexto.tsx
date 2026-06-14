@@ -37,3 +37,13 @@ export const ContextoControleAcoesRuntimeProvider = ({ children }: { children: R
         </ContextoControleAcoesRuntime.Provider>
     );
 };
+
+export const ContextoControleAcoesRuntimeSomenteLeituraProvider = ({ children }: { children: React.ReactNode; }) => {
+    function executaAcao(keyAcao: string): void { void keyAcao; return; };
+
+    return (
+        <ContextoControleAcoesRuntime.Provider value={{ executaAcao }}>
+            {children}
+        </ContextoControleAcoesRuntime.Provider>
+    );
+};

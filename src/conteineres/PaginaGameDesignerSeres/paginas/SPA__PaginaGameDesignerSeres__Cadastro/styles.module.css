@@ -1,0 +1,69 @@
+.recipiente_cadastro {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.painel_formulario {
+    width: min(100%, 42em);
+    display: flex;
+    flex-direction: column;
+    gap: 1.2em;
+}
+
+.cabecalho_formulario h2 {
+    margin: 0;
+    font-size: 1.45em;
+    font-weight: 700;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45em;
+}
+
+.campo span {
+    font-size: 0.9em;
+    opacity: 0.82;
+}
+
+.campo input,
+.campo select {
+    width: 100%;
+    padding: 0.75em 0.85em;
+    border: 0.08em solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.35em;
+    background: rgba(255, 255, 255, 0.06);
+    color: inherit;
+}
+
+.erro_campo {
+    color: #ff8d8d;
+}
+
+.rodape_formulario {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.botao_salvar {
+    padding: 0.7em 1.1em;
+    border: 0;
+    border-radius: 0.35em;
+    background: #c9a45c;
+    color: #19140d;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.botao_salvar:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}

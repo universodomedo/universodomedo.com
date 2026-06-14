@@ -1,0 +1,13 @@
+.detalhe_vazio {
+    width: 100%;
+    min-height: 12em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.detalhe_vazio h2 {
+    margin: 0;
+    font-size: 1.4em;
+    font-weight: 700;
+}

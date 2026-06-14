@@ -1,15 +1,14 @@
 import styles from './styles.module.css';
 
 import cn from 'classnames';
-import { AtributoFicha, Eventos_Envia, PericiaFicha, SalaDeJogo_TipoParticipante } from 'types-nora-api';
+import { AtributoFicha, PericiaFicha } from 'types-nora-api';
 
 import textoFormatadoParaVisualizacao from 'Uteis/UteisTexto/textoFormatadoParaVisualizacao';
 import Tooltip from 'Componentes/Elementos/Tooltip/Tooltip';
 import adicionaSinalEmNumeroParaExibicao from 'Uteis/UteisTexto/adicionaSinalEmNumeroParaExibicao';
 import { useContextoFichaDePersonagem } from "Contextos/ContextoFichaDePersonagem/contexto";
 import { useContextoControleAtributosPericias } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAtributosPericias/contexto';
-import { eventoWs } from 'Hooks/useEventoWs';
-import { useContextoSalaDeJogo__Jogador } from 'Contextos/ContextoSalaDeJogo__Jogador/contexto';
+import { useContextoControleTestesPericiaRuntime } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleTestesPericiaRuntime/contexto';
 
 export default function PaginaControleAtributosPericias() {
     const { ficha } = useContextoFichaDePersonagem();
@@ -74,13 +73,11 @@ function AreaPericia({ periciaPersonagem }: { periciaPersonagem: PericiaFicha; }
     const { abreviar } = useContextoControleAtributosPericias();
     const periciaPorExtenso = textoFormatadoParaVisualizacao(abreviar ? periciaPersonagem.pericia.nomeAbreviado : periciaPersonagem.pericia.nome);
     const { desativarAcoes } = useContextoFichaDePersonagem();
-    const { objetoEmJogo } = useContextoSalaDeJogo__Jogador();
+    const { executaTestePericia } = useContextoControleTestesPericiaRuntime();
 
     function enviaTeste() {
         if (desativarAcoes) return;
-        const obj = objetoEmJogo.objetoInicialSala;
-        if (obj.tipoParticipante !== SalaDeJogo_TipoParticipante.JOGADOR) return;
-        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.executaTestePericia, { codigoRecuperarFichaRuntime: `${objetoEmJogo.objetoInicialSala.codigoSalaDeJogo}_${obj.idFicha}`, idPericia: periciaPersonagem.pericia.id });
+        executaTestePericia(periciaPersonagem.pericia.id);
     };
 
     return (

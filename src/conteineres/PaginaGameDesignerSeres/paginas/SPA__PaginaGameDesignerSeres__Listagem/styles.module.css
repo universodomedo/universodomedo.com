@@ -1,0 +1,18 @@
+.registro_ser {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 1em;
+    align-items: center;
+    padding: 0.85em 1em;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.35em;
+    background: rgba(255, 255, 255, 0.04);
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+}
+
+.registro_ser:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
