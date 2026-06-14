@@ -7,7 +7,7 @@ import { useContexto__PaginaGameDesignerSeres__Cadastro } from 'Contextos/Contex
 const OPCOES_TIPOS_SER = [TIPOS_SER.SER_UNICO, TIPOS_SER.SER_GENERICO] as const;
 
 export default function SPA__PaginaGameDesignerSeres__Cadastro() {
-    const { formularioNovoSer, salvar } = useContexto__PaginaGameDesignerSeres__Cadastro();
+    const { formularioNovoSer, ehSerUnico, ehSerJogavel, serJogavel, setSerJogavel, idNivel, setIdNivel, niveis, podeSalvar, salvar } = useContexto__PaginaGameDesignerSeres__Cadastro();
 
     return (
         <section className={styles.recipiente_cadastro}>
@@ -30,10 +30,27 @@ export default function SPA__PaginaGameDesignerSeres__Cadastro() {
                         <input type="text" {...formularioNovoSer.input('nome')} />
                         {formularioNovoSer.erro('nome') && <small className={styles.erro_campo}>{formularioNovoSer.erro('nome')}</small>}
                     </label>
+
+                    {ehSerUnico && (
+                        <label className={styles.campo}>
+                            <span>Ser Jogável?</span>
+                            <input type="checkbox" checked={serJogavel} onChange={evento => setSerJogavel(evento.target.checked)} disabled={formularioNovoSer.salvando} />
+                        </label>
+                    )}
+
+                    {ehSerJogavel && (
+                        <label className={styles.campo}>
+                            <span>Nível</span>
+                            <select value={idNivel === null ? '' : String(idNivel)} onChange={evento => setIdNivel(evento.target.value === '' ? null : Number(evento.target.value))} disabled={formularioNovoSer.salvando}>
+                                <option value="">Selecione um nível</option>
+                                {niveis.map(nivel => <option key={nivel.id} value={String(nivel.id)}>{nivel.nomeVisualizacao}</option>)}
+                            </select>
+                        </label>
+                    )}
                 </div>
 
                 <footer className={styles.rodape_formulario}>
-                    <button type="button" className={styles.botao_salvar} onClick={salvar} disabled={!formularioNovoSer.podeSalvar}>{formularioNovoSer.salvando ? 'Salvando...' : 'Salvar Ser'}</button>
+                    <button type="button" className={styles.botao_salvar} onClick={salvar} disabled={!podeSalvar}>{formularioNovoSer.salvando ? 'Salvando...' : 'Salvar Ser'}</button>
                 </footer>
             </div>
         </section>

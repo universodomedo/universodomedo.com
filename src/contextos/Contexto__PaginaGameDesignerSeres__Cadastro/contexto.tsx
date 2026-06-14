@@ -1,10 +1,11 @@
 'use client';
 
-import { createContext, useContext } from 'react';
-import { EventosApiRest, TIPOS_SER, type PAYLOAD__CriarSerRegistroComDetalhe } from 'types-nora-api';
+import { createContext, useContext, useState } from 'react';
+import { EventosApiRest, TIPOS_SER, type ObjetoCache, type PAYLOAD__CriarSerRegistroComDetalhe } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
 import useFormularioCreate, { defineFormularioCreate, type FormularioCreateEstado } from 'Hooks/useFormularioCreate';
+import { useCache } from 'Redux/hooks/useCache';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { Contexto__PaginaGameDesignerSeres__Props } from '../Contexto__PaginaGameDesignerSeres/contexto';
 import SPA__PaginaGameDesignerSeres__Cadastro from 'Conteineres/PaginaGameDesignerSeres/paginas/SPA__PaginaGameDesignerSeres__Cadastro/SPA__PaginaGameDesignerSeres__Cadastro';
@@ -24,6 +25,14 @@ const FORMULARIO_CREATE_SER_REGISTRO = defineFormularioCreate<FormularioNovoSer>
 
 interface Contexto__PaginaGameDesignerSeres__Cadastro__Props {
     formularioNovoSer: FormularioCreateEstado<FormularioNovoSer>;
+    ehSerUnico: boolean;
+    ehSerJogavel: boolean;
+    serJogavel: boolean;
+    setSerJogavel: (jogavel: boolean) => void;
+    idNivel: number | null;
+    setIdNivel: (idNivel: number | null) => void;
+    niveis: ObjetoCache['niveis'];
+    podeSalvar: boolean;
     salvar: () => Promise<void>;
 };
 
@@ -43,16 +52,28 @@ export const useContexto__PaginaGameDesignerSeres__Cadastro = (): Contexto__Pagi
 export const Contexto__PaginaGameDesignerSeres__Cadastro__Provider = ({ cancelaCadastro, concluiCadastro }: PropsProvider) => {
     useConfigurarLayoutContextualizado({ subtitulo: 'Novo Ser', fecharProps: { tipo: 'acao', executar: cancelaCadastro, tituloTooltip: 'Voltar para Listagem' } });
 
+    const cache = useCache();
+    const [serJogavel, setSerJogavel] = useState(false);
+    const [idNivel, setIdNivel] = useState<number | null>(null);
+
     const formularioNovoSer = useFormularioCreate(FORMULARIO_CREATE_SER_REGISTRO, async valores => {
-        const payload: PAYLOAD__CriarSerRegistroComDetalhe = { idTipoSer: Number(valores.idTipoSer), nome: valores.nome };
+        const idTipoSer = Number(valores.idTipoSer);
+        const ehJogavel = idTipoSer === TIPOS_SER.SER_GENERICO.id || (idTipoSer === TIPOS_SER.SER_UNICO.id && serJogavel);
+        const payload: PAYLOAD__CriarSerRegistroComDetalhe = { idTipoSer, nome: valores.nome, serJogavel: idTipoSer === TIPOS_SER.SER_UNICO.id ? serJogavel : undefined, idNivel: ehJogavel && idNivel !== null ? idNivel : undefined };
         await NoraApi.RestPOST(EventosApiRest.POST.SerRegistro.criarComDetalhe, payload, { mensagemErro: 'Não foi possível criar o Ser.' });
         concluiCadastro();
     });
 
-    async function salvar(): Promise<void> { await formularioNovoSer.salvar(); };
+    const idTipoSerAtual = Number(formularioNovoSer.valores.idTipoSer);
+    const ehSerUnico = idTipoSerAtual === TIPOS_SER.SER_UNICO.id;
+    const ehSerJogavel = idTipoSerAtual === TIPOS_SER.SER_GENERICO.id || (ehSerUnico && serJogavel);
+    const niveis = cache.pronto ? cache.niveis : [];
+    const podeSalvar = formularioNovoSer.podeSalvar && (!ehSerJogavel || idNivel !== null);
+
+    async function salvar(): Promise<void> { if (podeSalvar) await formularioNovoSer.salvar(); };
 
     return (
-        <Contexto__PaginaGameDesignerSeres__Cadastro.Provider value={{ formularioNovoSer, salvar }}>
+        <Contexto__PaginaGameDesignerSeres__Cadastro.Provider value={{ formularioNovoSer, ehSerUnico, ehSerJogavel, serJogavel, setSerJogavel, idNivel, setIdNivel, niveis, podeSalvar, salvar }}>
             <SPA__PaginaGameDesignerSeres__Cadastro />
         </Contexto__PaginaGameDesignerSeres__Cadastro.Provider>
     );

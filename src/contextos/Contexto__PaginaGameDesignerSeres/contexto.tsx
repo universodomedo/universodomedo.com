@@ -4,11 +4,11 @@ import { createContext, useCallback, useContext, useState, type ReactNode } from
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 
-type FluxoPaginaGameDesignerSeres = 'LISTAGEM' | 'CADASTRO' | 'DETALHE';
+type FluxoPaginaGameDesignerSeres = 'LISTAGEM' | 'CADASTRO';
 
 export interface Contexto__PaginaGameDesignerSeres__Props {
     estadoFluxo: FluxoPaginaGameDesignerSeres;
-    idSerSelecionado: number | null;
+    idSerEmEdicao: number | null;
     listagemSeres: ReturnType<typeof useListagemSeres>;
     iniciaCadastro: () => void;
     selecionaSer: (idSer: number) => void;
@@ -27,26 +27,23 @@ export const useContexto__PaginaGameDesignerSeres = (): Contexto__PaginaGameDesi
 export const Contexto__PaginaGameDesignerSeres__Provider = ({ children }: { children: ReactNode; }) => {
     const listagemSeres = useListagemSeres();
     const [estadoFluxo, setEstadoFluxo] = useState<FluxoPaginaGameDesignerSeres>('LISTAGEM');
-    const [idSerSelecionado, setIdSerSelecionado] = useState<number | null>(null);
+    const [idSerEmEdicao, setIdSerEmEdicao] = useState<number | null>(null);
     const recarregarListagem = listagemSeres.recarregar;
 
     const iniciaCadastro = useCallback(() => { setEstadoFluxo('CADASTRO'); }, []);
-    const selecionaSer = useCallback((idSer: number) => {
-        setIdSerSelecionado(idSer);
-        setEstadoFluxo('DETALHE');
-    }, []);
+    const selecionaSer = useCallback((idSer: number) => { setIdSerEmEdicao(idSer); }, []);
     const voltaParaListagem = useCallback(() => {
-        setIdSerSelecionado(null);
+        setIdSerEmEdicao(null);
         setEstadoFluxo('LISTAGEM');
     }, []);
     const concluiCadastro = useCallback(() => {
         recarregarListagem();
-        setIdSerSelecionado(null);
+        setIdSerEmEdicao(null);
         setEstadoFluxo('LISTAGEM');
     }, [recarregarListagem]);
 
     return (
-        <Contexto__PaginaGameDesignerSeres.Provider value={{ estadoFluxo, idSerSelecionado, listagemSeres, iniciaCadastro, selecionaSer, voltaParaListagem, concluiCadastro }}>
+        <Contexto__PaginaGameDesignerSeres.Provider value={{ estadoFluxo, idSerEmEdicao, listagemSeres, iniciaCadastro, selecionaSer, voltaParaListagem, concluiCadastro }}>
             {children}
         </Contexto__PaginaGameDesignerSeres.Provider>
     );
