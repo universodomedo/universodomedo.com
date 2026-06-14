@@ -5,7 +5,7 @@ import Conteiner__PaginaModeradorHabilidadesPericia from 'Conteineres/PaginaMode
 
 export default function PaginaModeradorHabilidadesPericia_Client() {
     return (
-        <ControladorSlot pagina={PAGINAS.minhasPaginas.moderador.habilidadesPericia}>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.gameDesigner.criar.habilidadesPericia}>
             <Conteiner__PaginaModeradorHabilidadesPericia />
         </ControladorSlot>
     );

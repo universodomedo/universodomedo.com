@@ -5,7 +5,7 @@ import Conteiner__PaginaModeradorConfiguracaoHabilidades from 'Conteineres/Pagin
 
 export default function PaginaModeradorConfiguracaoHabilidades_Client() {
     return (
-        <ControladorSlot pagina={PAGINAS.minhasPaginas.moderador.configuracaoHabilidades}>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.gameDesigner.criar.configuracaoHabilidades}>
             <Conteiner__PaginaModeradorConfiguracaoHabilidades />
         </ControladorSlot>
     );

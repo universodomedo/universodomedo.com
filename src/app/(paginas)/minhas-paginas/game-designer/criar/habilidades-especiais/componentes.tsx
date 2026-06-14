@@ -5,7 +5,7 @@ import Conteiner__PaginaModeradorHabilidadesEspeciais from 'Conteineres/PaginaMo
 
 export default function PaginaModeradorHabilidadesEspeciais_Client() {
     return (
-        <ControladorSlot pagina={PAGINAS.minhasPaginas.moderador.habilidadesEspeciais}>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.gameDesigner.criar.habilidadesEspeciais}>
             <Conteiner__PaginaModeradorHabilidadesEspeciais />
         </ControladorSlot>
     );

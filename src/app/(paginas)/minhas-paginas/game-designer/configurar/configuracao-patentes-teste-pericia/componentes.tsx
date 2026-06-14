@@ -7,7 +7,7 @@ import { Conteiner__PaginaAdminConfiguracaoPatentesTestePericia } from 'Conteine
 
 export default function PaginaAdminConfiguracaoPatentesTestePericia_Client() {
     return (
-        <ControladorSlot pagina={PAGINAS.minhasPaginas.admin.configuracaoPatentesTestePericia}>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.gameDesigner.configurar.configuracaoPatentesTestePericia}>
             <Conteiner__PaginaAdminConfiguracaoPatentesTestePericia />
         </ControladorSlot>
     );

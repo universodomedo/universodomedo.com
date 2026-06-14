@@ -5,7 +5,7 @@ import Conteiner__PaginaModeradorCapacidadesInatas from 'Conteineres/PaginaModer
 
 export default function PaginaModeradorCapacidadesInatas_Client() {
     return (
-        <ControladorSlot pagina={PAGINAS.minhasPaginas.moderador.capacidadesInatas}>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.gameDesigner.criar.capacidadesInatas}>
             <Conteiner__PaginaModeradorCapacidadesInatas />
         </ControladorSlot>
     );

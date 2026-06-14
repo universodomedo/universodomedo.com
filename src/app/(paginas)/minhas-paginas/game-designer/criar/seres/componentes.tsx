@@ -7,7 +7,7 @@ import Conteiner__PaginaGameDesignerSeres from 'Conteineres/PaginaGameDesignerSe
 
 export default function PaginaGameDesignerSeres_Client() {
     return (
-        <ControladorSlot pagina={PAGINAS.minhasPaginas.gameDesigner.criar.ser}>
+        <ControladorSlot pagina={PAGINAS.minhasPaginas.gameDesigner.criar.seres}>
             <Conteiner__PaginaGameDesignerSeres />
         </ControladorSlot>
     );
