@@ -53,6 +53,6 @@ export const Contexto__PaginaAdminAuditoriaSalaDeJogo__Provider = ({ children }:
 
 function mesclarAcoesAuditoria(acoesAtuais: AcaoSalaJogoAuditoriaVisualizada[], acoesNovas: AcaoSalaJogoAuditoriaVisualizada[]): AcaoSalaJogoAuditoriaVisualizada[] {
     const acoesPorReferencia = new Map<string, AcaoSalaJogoAuditoriaVisualizada>();
-    for (const acao of [...acoesAtuais, ...acoesNovas]) acoesPorReferencia.set(`${acao.referenciaAcao.idSessao}:${acao.referenciaAcao.idAcao}`, acao);
-    return Array.from(acoesPorReferencia.values()).sort((a, b) => b.acao.timestampReal.localeCompare(a.acao.timestampReal) || b.referenciaAcao.idSessao - a.referenciaAcao.idSessao || b.referenciaAcao.idAcao - a.referenciaAcao.idAcao);
+    for (const acao of [...acoesAtuais, ...acoesNovas]) acoesPorReferencia.set(`${acao.referenciaAcao.codigoSala}:${acao.referenciaAcao.idAcao}`, acao);
+    return Array.from(acoesPorReferencia.values()).sort((a, b) => b.acao.timestampReal.localeCompare(a.acao.timestampReal) || b.referenciaAcao.codigoSala.localeCompare(a.referenciaAcao.codigoSala) || b.referenciaAcao.idAcao - a.referenciaAcao.idAcao);
 };

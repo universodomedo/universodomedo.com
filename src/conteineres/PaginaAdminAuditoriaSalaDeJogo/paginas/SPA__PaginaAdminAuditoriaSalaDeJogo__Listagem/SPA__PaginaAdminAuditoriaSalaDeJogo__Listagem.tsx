@@ -12,7 +12,7 @@ export default function SPA__PaginaAdminAuditoriaSalaDeJogo__Listagem() {
 
     return (
         <section className={styles.feed}>
-            {acoes.map(acao => <RegistroAuditoria key={`${acao.referenciaAcao.idSessao}:${acao.referenciaAcao.idAcao}`} acao={acao} />)}
+            {acoes.map(acao => <RegistroAuditoria key={`${acao.referenciaAcao.codigoSala}:${acao.referenciaAcao.idAcao}`} acao={acao} />)}
         </section>
     );
 };
@@ -25,9 +25,9 @@ function RegistroAuditoria({ acao }: { acao: AcaoSalaJogoAuditoriaVisualizada; }
             </div>
 
             <div className={styles.metadados}>
-                <span>Sessao #{acao.acao.idSessao}</span>
+                <span>Sala {acao.acao.codigoSala}</span>
                 <span>Acao #{acao.acao.id}</span>
-                <span>{acao.acao.segundoDaSessao}s</span>
+                <span>{acao.acao.segundoDaPartida}s</span>
                 <span>{obtemOrigem(acao)}</span>
                 <span>{acao.acao.payload.modoExecucaoTeste}</span>
             </div>

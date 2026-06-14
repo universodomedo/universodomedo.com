@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from "react";
-import { J_DadosFichaEmJogo } from "types-nora-api";
+import { J_DadosFichaEmJogo, type CodigoRecuperarFichaRuntime } from "types-nora-api";
 
 import { ContextoFichaDePersonagemProvider, useContextoFichaDePersonagem } from "Contextos/ContextoFichaDePersonagem/contexto";
 import combineProviders from 'Contextos/combineProviders';
@@ -20,27 +20,26 @@ const ProvidersControleFicha = combineProviders(
     ContextoControleAtributosPericiasProvider,
 );
 
-export default function ConteudoFichaDeJogo({ JDadosFichaEmJogo, desativarAcoes, exibirHabilidadesRuntime = false, exibirAcoesRuntime = false, exibirModificadoresRuntime = false }: { JDadosFichaEmJogo: J_DadosFichaEmJogo; desativarAcoes: boolean; exibirHabilidadesRuntime?: boolean; exibirAcoesRuntime?: boolean; exibirModificadoresRuntime?: boolean; }) {
+export default function ConteudoFichaDeJogo({ JDadosFichaEmJogo, desativarAcoes, exibirHabilidadesRuntime = false, exibirAcoesRuntime = false, exibirModificadoresRuntime = false, codigoRecuperarFichaRuntime }: { JDadosFichaEmJogo: J_DadosFichaEmJogo; desativarAcoes: boolean; exibirHabilidadesRuntime?: boolean; exibirAcoesRuntime?: boolean; exibirModificadoresRuntime?: boolean; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; }) {
     return (
         <ContextoControleNavegacaoFichaProvider>
             <ContextoFichaDePersonagemProvider JDadosFichaEmJogo={JDadosFichaEmJogo} desativarAcoes={desativarAcoes}>
-                <ConteudoFichaDeJogo_Interno exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} />
+                <ConteudoFichaDeJogo_Interno exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime} />
             </ContextoFichaDePersonagemProvider>
         </ContextoControleNavegacaoFichaProvider>
     );
 };
 
-function ConteudoFichaDeJogo_Interno({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; }) {
+function ConteudoFichaDeJogo_Interno({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime, codigoRecuperarFichaRuntime }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; }) {
     const { desativarAcoes } = useContextoFichaDePersonagem();
     const conteudo = <ConteudoFichaDeJogo_ComContexto exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} />;
-    const ProviderAcoesRuntime = desativarAcoes ? ContextoControleAcoesRuntimeSomenteLeituraProvider : ContextoControleAcoesRuntimeProvider;
-    const ProviderTestesPericiaRuntime = desativarAcoes ? ContextoControleTestesPericiaRuntimeSomenteLeituraProvider : ContextoControleTestesPericiaRuntimeProvider;
+
+    const conteudoComAcoes = !exibirAcoesRuntime ? conteudo : desativarAcoes ? <ContextoControleAcoesRuntimeSomenteLeituraProvider>{conteudo}</ContextoControleAcoesRuntimeSomenteLeituraProvider> : <ContextoControleAcoesRuntimeProvider codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime}>{conteudo}</ContextoControleAcoesRuntimeProvider>;
+    const conteudoComTestesPericia = desativarAcoes ? <ContextoControleTestesPericiaRuntimeSomenteLeituraProvider>{conteudoComAcoes}</ContextoControleTestesPericiaRuntimeSomenteLeituraProvider> : <ContextoControleTestesPericiaRuntimeProvider codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime}>{conteudoComAcoes}</ContextoControleTestesPericiaRuntimeProvider>;
 
     return (
         <ProvidersControleFicha>
-            <ProviderTestesPericiaRuntime>
-                {exibirAcoesRuntime ? <ProviderAcoesRuntime>{conteudo}</ProviderAcoesRuntime> : conteudo}
-            </ProviderTestesPericiaRuntime>
+            {conteudoComTestesPericia}
         </ProvidersControleFicha>
     );
 };

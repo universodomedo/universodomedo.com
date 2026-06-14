@@ -1,11 +1,10 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import { Eventos_Envia, SalaDeJogo_TipoParticipante } from 'types-nora-api';
+import { Eventos_Envia, type CodigoRecuperarFichaRuntime } from 'types-nora-api';
 
 import { eventoWs } from 'Hooks/useEventoWs';
 import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonagem/contexto';
-import { useContextoSalaDeJogo__Jogador } from 'Contextos/ContextoSalaDeJogo__Jogador/contexto';
 
 interface ContextoControleTestesPericiaRuntimeProps {
     executaTestePericia: (idPericia: number) => void;
@@ -19,16 +18,14 @@ export const useContextoControleTestesPericiaRuntime = (): ContextoControleTeste
     return context;
 };
 
-export const ContextoControleTestesPericiaRuntimeProvider = ({ children }: { children: React.ReactNode; }) => {
+export const ContextoControleTestesPericiaRuntimeProvider = ({ children, codigoRecuperarFichaRuntime }: { children: React.ReactNode; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; }) => {
     const { desativarAcoes } = useContextoFichaDePersonagem();
-    const { objetoEmJogo } = useContextoSalaDeJogo__Jogador();
 
     function executaTestePericia(idPericia: number): void {
         if (desativarAcoes) return;
-        const objetoInicialSala = objetoEmJogo.objetoInicialSala;
-        if (objetoInicialSala.tipoParticipante !== SalaDeJogo_TipoParticipante.JOGADOR) return;
+        if (!codigoRecuperarFichaRuntime) return;
 
-        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.executaTestePericia, { codigoRecuperarFichaRuntime: `${objetoInicialSala.codigoSalaDeJogo}_${objetoInicialSala.idFicha}`, idPericia });
+        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.executaTestePericia, { codigoRecuperarFichaRuntime, idPericia });
     };
 
     return (
