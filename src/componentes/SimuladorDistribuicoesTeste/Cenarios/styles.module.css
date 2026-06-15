@@ -1,0 +1,139 @@
+.secaoCenarios {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+}
+
+.cabecalhoCenarios {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.cabecalhoCenarios h2 {
+    margin: 0 0 0.2em;
+    font-size: 1.15em;
+}
+
+.cabecalhoCenarios span {
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.88em;
+}
+
+.cabecalhoCenarios button,
+.botaoRemover {
+    border: 0;
+    border-radius: 0.4em;
+    padding: 0.65em 0.85em;
+    color: #f4f4f4;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.gradeCenarios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17em, 1fr));
+    gap: 0.8em;
+}
+
+.cardCenario {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    padding: 0.9em;
+    border: 0.08em solid color-mix(in srgb, var(--cor-cenario) 55%, transparent);
+    border-radius: 0.5em;
+    background: rgba(18, 20, 24, 0.8);
+}
+
+.cabecalhoCard {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.7em;
+}
+
+.cabecalhoCard strong {
+    color: var(--cor-cenario);
+    font-size: 0.95em;
+}
+
+.resumoRegra {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    text-align: right;
+}
+
+.resumoRegra small {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.72em;
+    white-space: nowrap;
+}
+
+.nomeCenario,
+.camposCenario input,
+.camposCenario select {
+    min-width: 0;
+    padding: 0.55em 0.6em;
+    border: 0.08em solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.35em;
+    color: #f4f4f4;
+    background: rgba(0, 0, 0, 0.24);
+}
+
+.nomeCenario {
+    width: 100%;
+    font-weight: 700;
+}
+
+.camposCenario {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.55em;
+}
+
+.camposCenario label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.82em;
+}
+
+.camposCenario .corCenario {
+    width: 100%;
+    min-height: 2.45em;
+    padding: 0.2em;
+}
+
+.botaoRemover {
+    align-self: flex-end;
+    color: #ffcccc;
+    background: rgba(145, 45, 45, 0.35);
+}
+
+.secaoCenarios button:not(:disabled),
+.secaoCenarios input:not(:disabled),
+.secaoCenarios select:not(:disabled) {
+    cursor: pointer;
+}
+
+.secaoCenarios button:disabled,
+.secaoCenarios input:disabled,
+.secaoCenarios select:disabled {
+    cursor: default;
+    opacity: 0.48;
+}
+
+@media (max-width: 42em) {
+    .cabecalhoCenarios {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .camposCenario {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
