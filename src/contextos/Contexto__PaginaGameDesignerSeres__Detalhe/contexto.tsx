@@ -9,6 +9,7 @@ import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContext
 import { Contexto__PaginaGameDesignerSeres__Props } from '../Contexto__PaginaGameDesignerSeres/contexto';
 import SPA__PaginaGameDesignerSeres__Detalhe from 'Conteineres/PaginaGameDesignerSeres/paginas/SPA__PaginaGameDesignerSeres__Detalhe/SPA__PaginaGameDesignerSeres__Detalhe';
 import { Contexto__PaginaGameDesignerSeres__EditarMembros__Provider } from 'Contextos/Contexto__PaginaGameDesignerSeres__EditarMembros/contexto';
+import { Contexto__PaginaGameDesignerSeres__CriarFicha__Provider } from 'Contextos/Contexto__PaginaGameDesignerSeres__CriarFicha/contexto';
 
 interface Contexto__PaginaGameDesignerSeres__Detalhe__Props {
     idSerEmEdicao: number;
@@ -21,6 +22,8 @@ interface Contexto__PaginaGameDesignerSeres__Detalhe__Props {
     usuarioCriacaoNome: string | null;
     modoEdicaoMembros: boolean;
     abrirEditorMembros: () => void;
+    modoCriarFicha: boolean;
+    abrirEditorFicha: () => void;
 };
 
 type PropsProvider = {
@@ -41,6 +44,7 @@ export const Contexto__PaginaGameDesignerSeres__Detalhe__Provider = ({ idSerEmEd
 
     const cache = useCache();
     const [modoEdicaoMembros, setModoEdicaoMembros] = useState(false);
+    const [modoCriarFicha, setModoCriarFicha] = useState(false);
     const listagemDetalhe = useDetalheSer(idSerEmEdicao);
     const listagemTipadoJogavel = useTipadoJogavelSer(idSerEmEdicao);
 
@@ -57,10 +61,14 @@ export const Contexto__PaginaGameDesignerSeres__Detalhe__Provider = ({ idSerEmEd
 
     function abrirEditorMembros(): void { setModoEdicaoMembros(true); };
     function fecharEditorMembros(): void { setModoEdicaoMembros(false); };
+    function abrirEditorFicha(): void { setModoCriarFicha(true); };
+    function fecharEditorFicha(): void { setModoCriarFicha(false); };
 
     return (
-        <Contexto__PaginaGameDesignerSeres__Detalhe.Provider value={{ idSerEmEdicao, carregando, erro, nome, tipoNome, ehJogavel, nivelNome, usuarioCriacaoNome, modoEdicaoMembros, abrirEditorMembros }}>
-            {modoEdicaoMembros ? <Contexto__PaginaGameDesignerSeres__EditarMembros__Provider fkSerId={idSerEmEdicao} voltar={fecharEditorMembros} /> : <SPA__PaginaGameDesignerSeres__Detalhe />}
+        <Contexto__PaginaGameDesignerSeres__Detalhe.Provider value={{ idSerEmEdicao, carregando, erro, nome, tipoNome, ehJogavel, nivelNome, usuarioCriacaoNome, modoEdicaoMembros, abrirEditorMembros, modoCriarFicha, abrirEditorFicha }}>
+            {modoEdicaoMembros ? <Contexto__PaginaGameDesignerSeres__EditarMembros__Provider fkSerId={idSerEmEdicao} voltar={fecharEditorMembros} />
+                : modoCriarFicha ? <Contexto__PaginaGameDesignerSeres__CriarFicha__Provider fkSerId={idSerEmEdicao} voltar={fecharEditorFicha} />
+                : <SPA__PaginaGameDesignerSeres__Detalhe />}
         </Contexto__PaginaGameDesignerSeres__Detalhe.Provider>
     );
 };

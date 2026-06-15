@@ -3,7 +3,7 @@ import styles from './styles.module.css';
 import { useContexto__PaginaGameDesignerSeres__Detalhe } from 'Contextos/Contexto__PaginaGameDesignerSeres__Detalhe/contexto';
 
 export default function SPA__PaginaGameDesignerSeres__Detalhe() {
-    const { idSerEmEdicao, carregando, erro, nome, tipoNome, ehJogavel, nivelNome, usuarioCriacaoNome, abrirEditorMembros } = useContexto__PaginaGameDesignerSeres__Detalhe();
+    const { idSerEmEdicao, carregando, erro, nome, tipoNome, ehJogavel, nivelNome, usuarioCriacaoNome, abrirEditorMembros, abrirEditorFicha } = useContexto__PaginaGameDesignerSeres__Detalhe();
 
     if (carregando) return <section className={styles.detalhe}><p>Carregando Ser...</p></section>;
     if (erro) return <section className={styles.detalhe}><p className={styles.erro}>{erro}</p></section>;
@@ -25,7 +25,7 @@ export default function SPA__PaginaGameDesignerSeres__Detalhe() {
             {ehJogavel && (
                 <div className={styles.acoes}>
                     <button type="button" className={styles.botao_acao} onClick={abrirEditorMembros}>Editar Capacidades Inatas</button>
-                    <button type="button" className={styles.botao_acao} onClick={() => undefined}>Criar Ficha</button>
+                    <button type="button" className={styles.botao_acao} onClick={abrirEditorFicha}>Criar Ficha</button>
                 </div>
             )}
         </section>
