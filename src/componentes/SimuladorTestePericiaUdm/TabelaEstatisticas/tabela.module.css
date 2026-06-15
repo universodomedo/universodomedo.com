@@ -1,0 +1,157 @@
+.painelEstatisticas {
+    min-width: 0;
+    padding: 0.9em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.55em;
+    background: rgba(18, 20, 24, 0.86);
+}
+
+.cabecalhoPainel {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1em;
+    margin-bottom: 0.8em;
+}
+
+.cabecalhoPainel h2 {
+    margin: 0;
+    font-size: 1.05em;
+}
+
+.cabecalhoPainel span {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.82em;
+}
+
+.legendaColunas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15em, 1fr));
+    gap: 0.55em 1.1em;
+    margin: 0 0 1em;
+    padding: 0.75em;
+    border: 0.08em solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.4em;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.legendaColunas div {
+    display: flex;
+    gap: 0.35em;
+    min-width: 0;
+}
+
+.legendaColunas dt {
+    flex: none;
+    color: rgba(246, 209, 109, 0.9);
+    font-size: 0.78em;
+    font-weight: 700;
+}
+
+.legendaColunas dd {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.78em;
+    line-height: 1.35;
+}
+
+.rolagemTabela {
+    overflow-x: auto;
+}
+
+.rolagemTabela table {
+    width: 100%;
+    min-width: 88em;
+    border-collapse: collapse;
+}
+
+.rolagemTabela th,
+.rolagemTabela td {
+    padding: 0.7em;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.08);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.rolagemTabela th {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.75em;
+    text-transform: uppercase;
+}
+
+.rolagemTabela td {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.86em;
+}
+
+.rolagemTabela td:first-child {
+    position: relative;
+    min-width: 12em;
+    padding-left: 1.25em;
+}
+
+.rolagemTabela td strong,
+.rolagemTabela td small {
+    display: block;
+}
+
+.rolagemTabela td small {
+    margin-top: 0.2em;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.identificadorCor {
+    position: absolute;
+    top: 0.7em;
+    bottom: 0.7em;
+    left: 0;
+    width: 0.25em;
+    border-radius: 1em;
+}
+
+.linhaComResumo {
+    cursor: help;
+    outline: none;
+}
+
+.linhaComResumo:hover td,
+.linhaComResumo:focus td {
+    background: rgba(246, 209, 109, 0.06);
+}
+
+.resumoAnalitico {
+    max-width: 34em;
+    padding: 0.85em 1em;
+    border: 0.08em solid rgba(246, 209, 109, 0.34);
+    border-radius: 0.45em;
+    color: #f4f4f4;
+    line-height: 1.45;
+    background: #15171c;
+    box-shadow: 0 0.7em 2em rgba(0, 0, 0, 0.42);
+    z-index: var(--zindex-final-tooltip);
+}
+
+.resumoAnalitico strong {
+    display: block;
+    margin-bottom: 0.35em;
+    color: #f6d16d;
+    font-size: 0.78em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.resumoAnalitico p {
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.setaResumoAnalitico {
+    fill: #15171c;
+}
+
+@media (max-width: 40em) {
+    .cabecalhoPainel {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,58 @@
+.secaoGraficos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+}
+
+.gradeGraficos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9em;
+}
+
+.painelGrafico {
+    min-width: 0;
+    padding: 0.9em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.55em;
+    background: rgba(18, 20, 24, 0.86);
+}
+
+.painelGrafico header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.8em;
+    margin-bottom: 0.5em;
+}
+
+.painelGrafico h2 {
+    margin: 0;
+    font-size: 1.05em;
+}
+
+.painelGrafico header span,
+.avisoBins {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.8em;
+}
+
+.painelGrafico svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+@media (max-width: 72em) {
+    .gradeGraficos {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 40em) {
+    .painelGrafico header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,56 @@
+.paginaSimulador {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2em;
+    width: 100%;
+    padding-bottom: 2em;
+}
+
+.apresentacao {
+    display: grid;
+    grid-template-columns: minmax(18em, 0.85fr) minmax(20em, 1.15fr);
+    align-items: end;
+    gap: 1.5em;
+    padding: 0.4em 0;
+}
+
+.apresentacao span {
+    color: #f6d16d;
+    font-size: 0.78em;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.apresentacao h1 {
+    margin: 0.25em 0 0;
+    font-size: clamp(1.35em, 2.2vw, 2.1em);
+    line-height: 1.1;
+}
+
+.apresentacao p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.66);
+    line-height: 1.55;
+}
+
+.estadoAnalise {
+    padding: 1em;
+    border: 0.08em solid rgba(246, 209, 109, 0.2);
+    border-radius: 0.5em;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(246, 209, 109, 0.04);
+}
+
+.estadoErro {
+    border-color: rgba(255, 105, 105, 0.35);
+    color: #ffcccc;
+    background: rgba(145, 45, 45, 0.12);
+}
+
+@media (max-width: 58em) {
+    .apresentacao {
+        grid-template-columns: 1fr;
+        align-items: start;
+    }
+}

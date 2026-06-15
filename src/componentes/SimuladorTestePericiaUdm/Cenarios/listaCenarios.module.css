@@ -1,0 +1,58 @@
+.secaoCenarios {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+}
+
+.cabecalhoCenarios {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.cabecalhoCenarios h2 {
+    margin: 0 0 0.2em;
+    font-size: 1.15em;
+}
+
+.cabecalhoCenarios span {
+    color: rgba(255, 255, 255, 0.58);
+    font-size: 0.88em;
+}
+
+.cabecalhoCenarios button {
+    flex: none;
+    padding: 0.65em 0.85em;
+    border: 0;
+    border-radius: 0.4em;
+    color: #f4f4f4;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.cabecalhoCenarios button:not(:disabled) {
+    cursor: pointer;
+}
+
+.cabecalhoCenarios button:disabled {
+    cursor: default;
+    opacity: 0.48;
+}
+
+.gradeCenarios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(22em, 1fr));
+    gap: 0.8em;
+}
+
+@media (max-width: 42em) {
+    .cabecalhoCenarios {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .gradeCenarios {
+        grid-template-columns: 1fr;
+    }
+}

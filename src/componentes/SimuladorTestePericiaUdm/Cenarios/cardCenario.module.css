@@ -1,0 +1,109 @@
+.cardCenario {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    padding: 0.9em;
+    border: 0.08em solid color-mix(in srgb, var(--cor-cenario) 55%, transparent);
+    border-radius: 0.5em;
+    background: rgba(18, 20, 24, 0.8);
+}
+
+.cabecalhoCard {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.7em;
+}
+
+.resumoRegra {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    text-align: right;
+}
+
+.resumoRegra strong {
+    color: var(--cor-cenario);
+    font-size: 0.9em;
+}
+
+.resumoRegra small {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.72em;
+    white-space: nowrap;
+}
+
+.nomeCenario,
+.camposCenario input,
+.camposCenario select {
+    min-width: 0;
+    padding: 0.55em 0.6em;
+    border: 0.08em solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.35em;
+    color: #f4f4f4;
+    background: rgba(0, 0, 0, 0.24);
+}
+
+.nomeCenario {
+    width: 100%;
+    font-weight: 700;
+}
+
+.camposCenario {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.55em;
+}
+
+.camposCenario label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.82em;
+}
+
+.camposCenario .corCenario {
+    width: 100%;
+    min-height: 2.45em;
+    padding: 0.2em;
+}
+
+.botaoRemover {
+    align-self: flex-end;
+    padding: 0.65em 0.85em;
+    border: 0;
+    border-radius: 0.4em;
+    color: #ffcccc;
+    font-weight: 700;
+    background: rgba(145, 45, 45, 0.35);
+}
+
+.cardCenario button:not(:disabled),
+.cardCenario input:not(:disabled),
+.cardCenario select:not(:disabled) {
+    cursor: pointer;
+}
+
+.cardCenario button:disabled,
+.cardCenario input:disabled,
+.cardCenario select:disabled {
+    cursor: default;
+    opacity: 0.48;
+}
+
+@media (max-width: 54em) {
+    .camposCenario {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 34em) {
+    .cabecalhoCard {
+        grid-template-columns: 1fr;
+    }
+
+    .resumoRegra {
+        text-align: left;
+    }
+}
