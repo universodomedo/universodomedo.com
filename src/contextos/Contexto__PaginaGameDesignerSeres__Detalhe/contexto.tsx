@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { TIPOS_SER, type ObjetoCache } from 'types-nora-api';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
@@ -8,6 +8,7 @@ import { useCache } from 'Redux/hooks/useCache';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { Contexto__PaginaGameDesignerSeres__Props } from '../Contexto__PaginaGameDesignerSeres/contexto';
 import SPA__PaginaGameDesignerSeres__Detalhe from 'Conteineres/PaginaGameDesignerSeres/paginas/SPA__PaginaGameDesignerSeres__Detalhe/SPA__PaginaGameDesignerSeres__Detalhe';
+import { Contexto__PaginaGameDesignerSeres__EditarMembros__Provider } from 'Contextos/Contexto__PaginaGameDesignerSeres__EditarMembros/contexto';
 
 interface Contexto__PaginaGameDesignerSeres__Detalhe__Props {
     idSerEmEdicao: number;
@@ -18,6 +19,8 @@ interface Contexto__PaginaGameDesignerSeres__Detalhe__Props {
     ehJogavel: boolean;
     nivelNome: string | null;
     usuarioCriacaoNome: string | null;
+    modoEdicaoMembros: boolean;
+    abrirEditorMembros: () => void;
 };
 
 type PropsProvider = {
@@ -37,6 +40,7 @@ export const Contexto__PaginaGameDesignerSeres__Detalhe__Provider = ({ idSerEmEd
     useConfigurarLayoutContextualizado({ subtitulo: 'Editar Ser', fecharProps: { tipo: 'acao', executar: voltaParaListagem, tituloTooltip: 'Voltar para Listagem' } });
 
     const cache = useCache();
+    const [modoEdicaoMembros, setModoEdicaoMembros] = useState(false);
     const listagemDetalhe = useDetalheSer(idSerEmEdicao);
     const listagemTipadoJogavel = useTipadoJogavelSer(idSerEmEdicao);
 
@@ -51,9 +55,12 @@ export const Contexto__PaginaGameDesignerSeres__Detalhe__Provider = ({ idSerEmEd
     const nivelNome = ehJogavel && cache.pronto ? obtemNomeNivel(cache.niveis, tipadoJogavel.fkNivelId) : null;
     const usuarioCriacaoNome = detalhe?.usuarioCriacao.username ?? null;
 
+    function abrirEditorMembros(): void { setModoEdicaoMembros(true); };
+    function fecharEditorMembros(): void { setModoEdicaoMembros(false); };
+
     return (
-        <Contexto__PaginaGameDesignerSeres__Detalhe.Provider value={{ idSerEmEdicao, carregando, erro, nome, tipoNome, ehJogavel, nivelNome, usuarioCriacaoNome }}>
-            <SPA__PaginaGameDesignerSeres__Detalhe />
+        <Contexto__PaginaGameDesignerSeres__Detalhe.Provider value={{ idSerEmEdicao, carregando, erro, nome, tipoNome, ehJogavel, nivelNome, usuarioCriacaoNome, modoEdicaoMembros, abrirEditorMembros }}>
+            {modoEdicaoMembros ? <Contexto__PaginaGameDesignerSeres__EditarMembros__Provider fkSerId={idSerEmEdicao} voltar={fecharEditorMembros} /> : <SPA__PaginaGameDesignerSeres__Detalhe />}
         </Contexto__PaginaGameDesignerSeres__Detalhe.Provider>
     );
 };
