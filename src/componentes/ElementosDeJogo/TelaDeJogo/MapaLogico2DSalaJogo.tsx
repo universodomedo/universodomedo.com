@@ -3,12 +3,11 @@
 import styles from './MapaLogico2DSalaJogo.module.css';
 import controlesStyles from './MapaLogico2DSalaJogo.controles.module.css';
 import ocupantesStyles from './MapaLogico2DSalaJogo.ocupantes.module.css';
-import seresStyles from './MapaLogico2DSalaJogo.seres.module.css';
 
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
 
 export function MapaLogico2DSalaJogo() {
-    const { estadoCarregamento, erro, mapaLogicoSalaJogo, ocupantesVisuais, seresVisuais, estiloMapa, arrastando, keyOcupanteSelecionado, selecionaOcupante, impedeInicioPanOcupante, iniciaPan, atualizaPan, finalizaPan, aproximaZoom, afastaZoom, rotacionaMapa, resetaVisualizacao } = useContextoTelaDeJogoMapaLogico();
+    const { estadoCarregamento, erro, mapaLogicoSalaJogo, ocupantesVisuais, estiloMapa, arrastando, keyOcupanteSelecionado, selecionaOcupante, impedeInicioPanOcupante, iniciaPan, atualizaPan, finalizaPan, aproximaZoom, afastaZoom, rotacionaMapa, resetaVisualizacao } = useContextoTelaDeJogoMapaLogico();
 
     if (estadoCarregamento === 'carregando') {
         return (
@@ -44,12 +43,6 @@ export function MapaLogico2DSalaJogo() {
                             <strong>{ocupante.rotuloCurto}</strong>
                             <small>{ocupante.nomeExibicao}</small>
                         </button>
-                    ))}
-                    {seresVisuais.map(ser => (
-                        <div key={ser.id} className={seresStyles.ser_mapa_logico} style={ser.estiloMarcador} title={`${ser.nome} (${ser.posicao.x}m, ${ser.posicao.y}m)`}>
-                            <strong>{ser.rotuloCurto}</strong>
-                            <small>{ser.nome}</small>
-                        </div>
                     ))}
                 </div>
             </div>
