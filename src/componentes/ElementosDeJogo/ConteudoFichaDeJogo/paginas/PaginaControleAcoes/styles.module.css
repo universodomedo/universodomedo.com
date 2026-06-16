@@ -1,10 +1,11 @@
 .painel_acoes {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
     gap: 1em;
     color: white;
     font-family: 'Crimson Pro', serif;
+    text-align: center;
+    align-items: center;
 }
 
 .secao_acoes {
