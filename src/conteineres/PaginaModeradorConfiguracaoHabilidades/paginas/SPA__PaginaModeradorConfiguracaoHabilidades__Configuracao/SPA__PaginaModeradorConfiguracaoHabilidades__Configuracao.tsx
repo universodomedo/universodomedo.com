@@ -3,11 +3,10 @@ import styles from './styles.module.css';
 import { useContexto__PaginaModeradorConfiguracaoHabilidades__Configuracao } from 'Contextos/Contexto__PaginaModeradorConfiguracaoHabilidades__Configuracao/contexto';
 
 type ContextoConfiguracao = ReturnType<typeof useContexto__PaginaModeradorConfiguracaoHabilidades__Configuracao>;
-type RegistroModificador = ContextoConfiguracao['listagemModificadores']['registros'][number];
+type RegistroModificador = ContextoConfiguracao['modificadoresLogica'][number];
 
 export default function SPA__PaginaModeradorConfiguracaoHabilidades__Configuracao() {
-    const { habilidade, atributos, listagemModificadores, idAtributoSelecionado, selecionaAtributo, tipoModificadorSelecionado, selecionaTipoModificador, formularioNovoModificador, valorEhValido, podeSalvar, salvar, excluirModificador } = useContexto__PaginaModeradorConfiguracaoHabilidades__Configuracao();
-    const carregarMais = listagemModificadores.carregarMais;
+    const { habilidade, atributos, modificadoresLogica, idAtributoSelecionado, selecionaAtributo, tipoModificadorSelecionado, selecionaTipoModificador, formularioNovoModificador, valorEhValido, podeSalvar, salvar, excluirModificador, acoesLogica, logicaCarregando, logicaErro, salvandoLogica, podeSalvarLogica, adicionaAcaoLogica, alteraAcaoLogica, removeAcaoLogica, salvarLogica } = useContexto__PaginaModeradorConfiguracaoHabilidades__Configuracao();
     const modificadorDeAtributoSelecionado = tipoModificadorSelecionado === 'atributo';
     const modificadorParametrizadoPorPericiaSelecionado = tipoModificadorSelecionado === 'teste_pericia_valor_maximo_parametrizado';
 
@@ -20,15 +19,44 @@ export default function SPA__PaginaModeradorConfiguracaoHabilidades__Configuraca
                 </header>
 
                 <div className={styles.conteudo_configuracao}>
+                    <section className={styles.area_logica}>
+                        <header className={styles.cabecalho_area}>
+                            <h3>Ações da lógica</h3>
+                            <button type="button" className={styles.botao_secundario} onClick={adicionaAcaoLogica} disabled={logicaCarregando || salvandoLogica}>Adicionar ação</button>
+                        </header>
+                        {logicaCarregando && <p className={styles.estado_listagem}>Buscando lógica da habilidade</p>}
+                        {logicaErro && <p className={styles.estado_erro}>{logicaErro}</p>}
+                        {!logicaCarregando && !logicaErro && acoesLogica.length === 0 && <p className={styles.estado_listagem}>Nenhuma ação interna configurada.</p>}
+                        <div className={styles.lista_acoes_logica}>
+                            {acoesLogica.map((acao, indice) => (
+                                <article key={indice} className={styles.acao_logica}>
+                                    <label className={styles.campo}>
+                                        <span>Ordem</span>
+                                        <input type="number" step="1" value={acao.ordem} onChange={evento => alteraAcaoLogica(indice, 'ordem', evento.target.value)} disabled={salvandoLogica} />
+                                    </label>
+                                    <label className={styles.campo}>
+                                        <span>Nome</span>
+                                        <input type="text" value={acao.nome} onChange={evento => alteraAcaoLogica(indice, 'nome', evento.target.value)} disabled={salvandoLogica} />
+                                    </label>
+                                    <label className={styles.campo}>
+                                        <span>Chave do domínio</span>
+                                        <input type="text" value={acao.chaveDominio} onChange={evento => alteraAcaoLogica(indice, 'chaveDominio', evento.target.value)} disabled={salvandoLogica} placeholder="percepcao_auditiva" />
+                                    </label>
+                                    <button type="button" className={styles.botao_excluir} onClick={() => removeAcaoLogica(indice)} disabled={salvandoLogica}>Remover</button>
+                                </article>
+                            ))}
+                        </div>
+                        <button type="button" className={styles.botao_salvar} onClick={salvarLogica} disabled={!podeSalvarLogica}>{salvandoLogica ? 'Salvando...' : 'Salvar Lógica'}</button>
+                    </section>
+
                     <section className={styles.area_modificadores}>
                         <h3>Modificadores passivos</h3>
-                        {listagemModificadores.carregando && <p className={styles.estado_listagem}>{listagemModificadores.carregando}</p>}
-                        {listagemModificadores.erro && <p className={styles.estado_erro}>{listagemModificadores.erro}</p>}
-                        {!listagemModificadores.carregando && !listagemModificadores.erro && listagemModificadores.registros.length === 0 && <p className={styles.estado_listagem}>{listagemModificadores.mensagemListaVazia}</p>}
+                        {logicaCarregando && <p className={styles.estado_listagem}>Buscando lógica da habilidade</p>}
+                        {logicaErro && <p className={styles.estado_erro}>{logicaErro}</p>}
+                        {!logicaCarregando && !logicaErro && modificadoresLogica.length === 0 && <p className={styles.estado_listagem}>Nenhum modificador passivo cadastrado.</p>}
                         <div className={styles.lista_modificadores}>
-                            {listagemModificadores.registros.map(modificador => <RenderizaModificador key={modificador.id} modificador={modificador} atributos={atributos} excluirModificador={excluirModificador} />)}
+                            {modificadoresLogica.map((modificador, indice) => <RenderizaModificador key={`${modificador.ordem}-${modificador.nome}-${indice}`} indice={indice} modificador={modificador} atributos={atributos} excluirModificador={excluirModificador} />)}
                         </div>
-                        {carregarMais?.podeCarregarMais && <button type="button" className={styles.botao_secundario} onClick={carregarMais.aoCarregarMais} disabled={!!carregarMais.carregando}>{carregarMais.carregando ?? 'Carregar mais'}</button>}
                     </section>
 
                     <section className={styles.area_cadastro}>
@@ -58,7 +86,7 @@ export default function SPA__PaginaModeradorConfiguracaoHabilidades__Configuraca
                             <div className={styles.argumento_bloqueado}>
                                 <span>Argumento</span>
                                 <strong>Perícia</strong>
-                                <p>O modificador será aplicado na Perícia escolhida pela instância da Habilidade Especial.</p>
+                                <p>O modificador será aplicado na Perícia que carrega esta Habilidade.</p>
                             </div>
                         )}
                         <label className={styles.campo}>
@@ -74,7 +102,7 @@ export default function SPA__PaginaModeradorConfiguracaoHabilidades__Configuraca
     );
 };
 
-function RenderizaModificador({ modificador, atributos, excluirModificador }: { modificador: RegistroModificador; atributos: ContextoConfiguracao['atributos']; excluirModificador: ContextoConfiguracao['excluirModificador']; }) {
+function RenderizaModificador({ indice, modificador, atributos, excluirModificador }: { indice: number; modificador: RegistroModificador; atributos: ContextoConfiguracao['atributos']; excluirModificador: ContextoConfiguracao['excluirModificador']; }) {
     const descricaoAlvo = descreveAlvoModificador(modificador, atributos);
     const valor = modificador.propriedades.valor > 0 ? `+${modificador.propriedades.valor}` : modificador.propriedades.valor.toString();
 
@@ -85,7 +113,7 @@ function RenderizaModificador({ modificador, atributos, excluirModificador }: { 
                 <span>{descricaoAlvo}</span>
             </div>
             <b>{valor}</b>
-            <button type="button" className={styles.botao_excluir} onClick={() => excluirModificador(modificador.id, modificador.nome)}>Excluir</button>
+            <button type="button" className={styles.botao_excluir} onClick={() => excluirModificador(indice, modificador.nome)}>Excluir</button>
         </article>
     );
 };

@@ -52,6 +52,7 @@
     align-items: start;
 }
 
+.area_logica,
 .area_modificadores,
 .area_cadastro {
     display: flex;
@@ -63,6 +64,43 @@
     background: rgba(17, 12, 23, 0.58);
 }
 
+.area_logica {
+    grid-column: 1 / -1;
+}
+
+.cabecalho_area {
+    display: flex;
+    gap: 0.75em;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.cabecalho_area h3 {
+    margin: 0;
+}
+
+.lista_acoes_logica {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+}
+
+.acao_logica {
+    display: grid;
+    grid-template-columns: minmax(5em, 0.28fr) minmax(12em, 1fr) minmax(12em, 1fr) auto;
+    gap: 0.7em;
+    align-items: end;
+    padding: 0.72em;
+    border: 0.08em solid rgba(154, 95, 213, 0.32);
+    border-radius: 0.42em;
+    background: rgba(0, 0, 0, 0.22);
+}
+
+.acao_logica .botao_excluir {
+    align-self: end;
+}
+
+.area_logica h3,
 .area_modificadores h3,
 .area_cadastro h3 {
     margin: 0;
@@ -239,6 +277,15 @@
 
 @media (max-width: 54em) {
     .conteudo_configuracao {
+        grid-template-columns: 1fr;
+    }
+
+    .cabecalho_area {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .acao_logica {
         grid-template-columns: 1fr;
     }
 }
