@@ -3,36 +3,6 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: 1em;
-}
-
-.resumo_missao_funcional {
-    width: min(92%, 58em);
-    margin: 0 auto;
-    padding: 1.2em 0 0;
-    color: #f8f3ea;
-}
-
-.resumo_missao_funcional p {
-    margin: 0 0 0.45em;
-    color: #d8c58b;
-    font-size: 0.82em;
-    text-transform: uppercase;
-}
-
-.resumo_missao_funcional span {
-    display: block;
-    margin: 0 0 0.6em;
-    color: #c6c1ba;
-    font-size: 0.86em;
-}
-
-.resumo_missao_funcional h1 {
-    margin: 0;
-    font-size: 1.15em;
-    font-weight: 500;
-    line-height: 1.45;
-    letter-spacing: 0;
 }
 
 .recipiente__pagina_de_jogo__superior{
@@ -41,21 +11,11 @@
     align-items: stretch;
     justify-content: center;
     min-height: 0;
-    padding: 1.2em 3% 0;
-    gap: 1.2em;
+    /* padding: 1.2em 3% 0; */
 }
 
 .recipiente_container_tela_de_jogo__em_pagina_de_jogo {
-    flex: 1 1 42em;
-    max-width: 62em;
-    aspect-ratio: 16 / 9;
-    min-height: 0;
-}
-
-.recipiente_container__janela_mensageens_de_jogo__em_pagina_de_jogo {
-    flex: 0 1 26em;
-    min-width: 18em;
-    min-height: 0;
+    flex: 1;
 }
 
 @media (max-width: 70em) {
@@ -63,14 +23,9 @@
         flex-direction: column;
     }
 
-    .recipiente_container_tela_de_jogo__em_pagina_de_jogo,
-    .recipiente_container__janela_mensageens_de_jogo__em_pagina_de_jogo {
+    .recipiente_container_tela_de_jogo__em_pagina_de_jogo {
         width: 100%;
         max-width: none;
-    }
-
-    .recipiente_container__janela_mensageens_de_jogo__em_pagina_de_jogo {
-        min-height: 14em;
     }
 }
 

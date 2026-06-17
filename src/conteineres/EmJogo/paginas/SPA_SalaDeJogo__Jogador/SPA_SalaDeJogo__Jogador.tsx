@@ -5,7 +5,6 @@ import { Eventos_EnviaERecebe } from 'types-nora-api';
 
 import { useContextoSalaDeJogo__Jogador } from "Contextos/ContextoSalaDeJogo__Jogador/contexto";
 import TelaDeJogo from "Componentes/ElementosDeJogo/TelaDeJogo/TelaDeJogo";
-import JanelaDeMensagensDeJogo from 'Componentes/ElementosDeJogo/JanelaDeMensagensDeJogo/JanelaDeMensagensDeJogo';
 import SwiperDireita from 'Componentes/ElementosVisuais/SwiperDireita/SwiperDireita';
 import ConteudoFichaDeJogo from 'Componentes/ElementosDeJogo/ConteudoFichaDeJogo/ConteudoFichaDeJogo';
 import { eventoWs } from 'Hooks/useEventoWs';
@@ -15,7 +14,6 @@ export default function SPA_SalaDeJogo__Jogador() {
     const { objetoEmJogo, J_fichaAtualizada, resultadoMissaoFuncional } = useContextoSalaDeJogo__Jogador();
     const [fechandoSala, setFechandoSala] = useState(false);
     const codigoSala = objetoEmJogo.objetoInicialSala.codigoSalaDeJogo;
-    const missaoFuncional = objetoEmJogo.objetoInicialSala.missaoFuncional;
 
     function retornar(): void {
         if (fechandoSala) return;
@@ -33,23 +31,13 @@ export default function SPA_SalaDeJogo__Jogador() {
 
     return (
         <div className={styles.recipiente_pagina_de_jogo}>
-            {missaoFuncional && (
-                <header className={styles.resumo_missao_funcional}>
-                    <p>{missaoFuncional.nome}</p>
-                    <span>{missaoFuncional.nomeCenario}</span>
-                    <h1>{missaoFuncional.narracaoInicial}</h1>
-                </header>
-            )}
             <div className={styles.recipiente__pagina_de_jogo__superior}>
                 <div className={styles.recipiente_container_tela_de_jogo__em_pagina_de_jogo}>
                     <TelaDeJogo codigoSala={codigoSala} />
                 </div>
-                <div className={styles.recipiente_container__janela_mensageens_de_jogo__em_pagina_de_jogo}>
-                    <JanelaDeMensagensDeJogo codigoSala={codigoSala} />
-                </div>
             </div>
             <SwiperDireita>
-                <ConteudoFichaDeJogo JDadosFichaEmJogo={J_fichaAtualizada} desativarAcoes={resultadoMissaoFuncional !== null} exibirHabilidadesRuntime exibirAcoesRuntime exibirModificadoresRuntime codigoRecuperarFichaRuntime={`${codigoSala}_${objetoEmJogo.objetoInicialSala.idFicha}`} />
+                <ConteudoFichaDeJogo JDadosFichaEmJogo={J_fichaAtualizada} desativarAcoes={resultadoMissaoFuncional !== null} exibirHabilidadesRuntime exibirAcoesRuntime exibirModificadoresRuntime codigoRecuperarFichaRuntime={`${codigoSala}_${objetoEmJogo.objetoInicialSala.idFicha}`} codigoSala={codigoSala} />
             </SwiperDireita>
             {resultadoMissaoFuncional && (
                 <aside className={styles.finalizacao_sala}>

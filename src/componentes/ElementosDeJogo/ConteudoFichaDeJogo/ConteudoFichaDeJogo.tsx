@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from "react";
-import { J_DadosFichaEmJogo, type CodigoRecuperarFichaRuntime } from "types-nora-api";
+import { J_DadosFichaEmJogo, type CodigoRecuperarFichaRuntime, type SalaDeJogo_Codigo } from "types-nora-api";
 
 import { ContextoFichaDePersonagemProvider, useContextoFichaDePersonagem } from "Contextos/ContextoFichaDePersonagem/contexto";
 import combineProviders from 'Contextos/combineProviders';
@@ -15,24 +15,25 @@ import PaginaControleHabilidades from './paginas/PaginaControleHabilidades/Pagin
 import PaginaControleModificadores from './paginas/PaginaControleModificadores/PaginaControleModificadores';
 import PaginaControleRecursos from './paginas/PaginaControleRecursos/PaginaControleRecursos';
 import CarrosselConteudoFichaDeJogo from '../CarrosselConteudoFichaDeJogo/CarrosselConteudoFichaDeJogo';
+import JanelaDeMensagensDeJogo from '../JanelaDeMensagensDeJogo/JanelaDeMensagensDeJogo';
 
 const ProvidersControleFicha = combineProviders(
     ContextoControleAtributosPericiasProvider,
 );
 
-export default function ConteudoFichaDeJogo({ JDadosFichaEmJogo, desativarAcoes, exibirHabilidadesRuntime = false, exibirAcoesRuntime = false, exibirModificadoresRuntime = false, codigoRecuperarFichaRuntime }: { JDadosFichaEmJogo: J_DadosFichaEmJogo; desativarAcoes: boolean; exibirHabilidadesRuntime?: boolean; exibirAcoesRuntime?: boolean; exibirModificadoresRuntime?: boolean; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; }) {
+export default function ConteudoFichaDeJogo({ JDadosFichaEmJogo, desativarAcoes, exibirHabilidadesRuntime = false, exibirAcoesRuntime = false, exibirModificadoresRuntime = false, codigoRecuperarFichaRuntime, codigoSala }: { JDadosFichaEmJogo: J_DadosFichaEmJogo; desativarAcoes: boolean; exibirHabilidadesRuntime?: boolean; exibirAcoesRuntime?: boolean; exibirModificadoresRuntime?: boolean; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; codigoSala?: SalaDeJogo_Codigo; }) {
     return (
         <ContextoControleNavegacaoFichaProvider>
             <ContextoFichaDePersonagemProvider JDadosFichaEmJogo={JDadosFichaEmJogo} desativarAcoes={desativarAcoes}>
-                <ConteudoFichaDeJogo_Interno exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime} />
+                <ConteudoFichaDeJogo_Interno exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime} codigoSala={codigoSala} />
             </ContextoFichaDePersonagemProvider>
         </ContextoControleNavegacaoFichaProvider>
     );
 };
 
-function ConteudoFichaDeJogo_Interno({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime, codigoRecuperarFichaRuntime }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; }) {
+function ConteudoFichaDeJogo_Interno({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime, codigoRecuperarFichaRuntime, codigoSala }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; codigoSala?: SalaDeJogo_Codigo; }) {
     const { desativarAcoes } = useContextoFichaDePersonagem();
-    const conteudo = <ConteudoFichaDeJogo_ComContexto exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} />;
+    const conteudo = <ConteudoFichaDeJogo_ComContexto exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} codigoSala={codigoSala} />;
 
     const conteudoComAcoes = !exibirAcoesRuntime ? conteudo : desativarAcoes ? <ContextoControleAcoesRuntimeSomenteLeituraProvider>{conteudo}</ContextoControleAcoesRuntimeSomenteLeituraProvider> : <ContextoControleAcoesRuntimeProvider codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime}>{conteudo}</ContextoControleAcoesRuntimeProvider>;
     const conteudoComTestesPericia = desativarAcoes ? <ContextoControleTestesPericiaRuntimeSomenteLeituraProvider>{conteudoComAcoes}</ContextoControleTestesPericiaRuntimeSomenteLeituraProvider> : <ContextoControleTestesPericiaRuntimeProvider codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime}>{conteudoComAcoes}</ContextoControleTestesPericiaRuntimeProvider>;
@@ -44,7 +45,7 @@ function ConteudoFichaDeJogo_Interno({ exibirHabilidadesRuntime, exibirAcoesRunt
     );
 };
 
-function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; }) {
+function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime, codigoSala }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; codigoSala?: SalaDeJogo_Codigo; }) {
     const { paginaAbertaFicha, selecionaPaginaFicha, garantePaginaFichaValida } = useContextoControleNavegacaoFicha();
     const listaPaginas = [
         {
@@ -79,7 +80,7 @@ function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirAcoes
         }] : []),
         {
             nome: 'Registros',
-            componente: <><h1>oi</h1></>,
+            componente: codigoSala ? <JanelaDeMensagensDeJogo codigoSala={codigoSala} /> : <></>,
             contexto: useContextoControleAtributosPericias
         },
     ];
