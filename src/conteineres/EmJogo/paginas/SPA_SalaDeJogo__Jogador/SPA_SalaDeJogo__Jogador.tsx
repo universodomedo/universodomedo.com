@@ -36,6 +36,7 @@ export default function SPA_SalaDeJogo__Jogador() {
             {missaoFuncional && (
                 <header className={styles.resumo_missao_funcional}>
                     <p>{missaoFuncional.nome}</p>
+                    <span>{missaoFuncional.nomeCenario}</span>
                     <h1>{missaoFuncional.narracaoInicial}</h1>
                 </header>
             )}

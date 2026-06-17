@@ -20,6 +20,13 @@
     text-transform: uppercase;
 }
 
+.resumo_missao_funcional span {
+    display: block;
+    margin: 0 0 0.6em;
+    color: #c6c1ba;
+    font-size: 0.86em;
+}
+
 .resumo_missao_funcional h1 {
     margin: 0;
     font-size: 1.15em;
