@@ -1,0 +1,50 @@
+.painel_inspecao_interagivel {
+    position: absolute;
+    z-index: 4;
+    left: 1em;
+    top: 4.4em;
+    display: grid;
+    gap: 0.8em;
+    width: min(24em, calc(100% - 2em));
+    max-height: calc(100% - 5.4em);
+    padding: 0.9em;
+    overflow: auto;
+    border: 0.08em solid rgba(255, 255, 255, 0.22);
+    border-radius: 0.4em;
+    color: #f7f4ec;
+    background: rgba(27, 28, 37, 0.96);
+    box-shadow: 0 0.5em 1.5em rgba(0, 0, 0, 0.4);
+}
+
+.cabecalho_inspecao_interagivel {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.8em;
+}
+
+.cabecalho_inspecao_interagivel div {
+    display: grid;
+    gap: 0.3em;
+}
+
+.cabecalho_inspecao_interagivel span,
+.cabecalho_inspecao_interagivel small {
+    color: #cbd1dd;
+}
+
+.cabecalho_inspecao_interagivel button {
+    padding: 0.35em 0.55em;
+    border: 0.08em solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.28em;
+    color: #f8fafc;
+    font: inherit;
+    background: #343848;
+    cursor: pointer;
+}
+
+.painel_inspecao_interagivel p {
+    margin: 0;
+    color: #e5e8f0;
+    font-size: 0.88em;
+}

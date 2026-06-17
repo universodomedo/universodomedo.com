@@ -8,7 +8,7 @@ import ocupantesStyles from './MapaLogico2DSalaJogo.ocupantes.module.css';
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
 
 export function MapaLogico2DSalaJogo() {
-    const { estadoCarregamento, erro, mapaLogicoSalaJogo, ocupantesVisuais, interagiveisVisuais, keysInteragiveisPercebidosNovos, estiloMapa, arrastando, keyOcupanteSelecionado, selecionaOcupante, impedeInicioPanOcupante, iniciaPan, atualizaPan, finalizaPan, aproximaZoom, afastaZoom, rotacionaMapa, resetaVisualizacao } = useContextoTelaDeJogoMapaLogico();
+    const { estadoCarregamento, erro, mapaLogicoSalaJogo, ocupantesVisuais, interagiveisVisuais, keysInteragiveisPercebidosNovos, estiloMapa, arrastando, keyOcupanteSelecionado, keyInteragivelSelecionado, selecionaOcupante, selecionaInteragivel, impedeInicioPanOcupante, impedeInicioPanInteragivel, iniciaPan, atualizaPan, finalizaPan, aproximaZoom, afastaZoom, rotacionaMapa, resetaVisualizacao } = useContextoTelaDeJogoMapaLogico();
 
     if (estadoCarregamento === 'carregando') {
         return (
@@ -43,13 +43,14 @@ export function MapaLogico2DSalaJogo() {
                         if (interagivel.estiloMarcador === null) return null;
 
                         const ehNovo = keysInteragiveisPercebidosNovos.includes(interagivel.key);
-                        const className = ehNovo ? `${interagiveisStyles.interagivel_mapa_logico} ${interagiveisStyles.interagivel_mapa_logico_novo}` : interagiveisStyles.interagivel_mapa_logico;
+                        const estaSelecionado = keyInteragivelSelecionado === interagivel.key;
+                        const className = `${interagiveisStyles.interagivel_mapa_logico} ${ehNovo ? interagiveisStyles.interagivel_mapa_logico_novo : ''} ${estaSelecionado ? interagiveisStyles.interagivel_mapa_logico_selecionado : ''}`;
 
                         return (
-                            <div key={interagivel.key} className={className} style={interagivel.estiloMarcador} title={`${interagivel.nome} (${interagivel.posicao?.x ?? 0}m, ${interagivel.posicao?.y ?? 0}m)`}>
+                            <button key={interagivel.key} type="button" className={className} style={interagivel.estiloMarcador} title={`${interagivel.nome} (${interagivel.posicao?.x ?? 0}m, ${interagivel.posicao?.y ?? 0}m)`} aria-pressed={estaSelecionado} onPointerDown={impedeInicioPanInteragivel} onClick={() => selecionaInteragivel(interagivel.key)}>
                                 <strong>{interagivel.rotuloCurto}</strong>
                                 <small>{interagivel.nome}</small>
-                            </div>
+                            </button>
                         );
                     })}
                     {ocupantesVisuais.map(ocupante => (

@@ -5,7 +5,7 @@ import styles from './InteragiveisPercebidosSalaJogo.module.css';
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
 
 export function InteragiveisPercebidosSalaJogo() {
-    const { estadoCarregamento, mapaLogicoSalaJogo, interagiveisPercebidos, keysInteragiveisPercebidosNovos } = useContextoTelaDeJogoMapaLogico();
+    const { estadoCarregamento, mapaLogicoSalaJogo, interagiveisPercebidos, keysInteragiveisPercebidosNovos, keyInteragivelSelecionado, selecionaInteragivel } = useContextoTelaDeJogoMapaLogico();
 
     if (estadoCarregamento !== 'pronto' || mapaLogicoSalaJogo === null) return null;
 
@@ -20,15 +20,16 @@ export function InteragiveisPercebidosSalaJogo() {
                 <div className={styles.lista_interagiveis_percebidos}>
                     {interagiveisPercebidos.map(interagivel => {
                         const ehNovo = keysInteragiveisPercebidosNovos.includes(interagivel.key);
-                        const className = ehNovo ? `${styles.item_interagivel_percebido} ${styles.item_interagivel_percebido_novo}` : styles.item_interagivel_percebido;
+                        const estaSelecionado = keyInteragivelSelecionado === interagivel.key;
+                        const className = `${styles.item_interagivel_percebido} ${ehNovo ? styles.item_interagivel_percebido_novo : ''} ${estaSelecionado ? styles.item_interagivel_percebido_selecionado : ''}`;
 
                         return (
-                            <article key={interagivel.key} className={className}>
+                            <button key={interagivel.key} type="button" className={className} onClick={() => selecionaInteragivel(interagivel.key)}>
                                 <strong>{interagivel.nome}{ehNovo ? <span className={styles.marcador_interagivel_novo}>Novo</span> : null}</strong>
                                 <span>{interagivel.tipo}</span>
-                                <p>{interagivel.descricao}</p>
+                                <span className={styles.descricao_interagivel_percebido}>{interagivel.descricao}</span>
                                 {interagivel.posicao ? <small>Posição {interagivel.posicao.x}m,{interagivel.posicao.y}m</small> : null}
-                            </article>
+                            </button>
                         );
                     })}
                 </div>

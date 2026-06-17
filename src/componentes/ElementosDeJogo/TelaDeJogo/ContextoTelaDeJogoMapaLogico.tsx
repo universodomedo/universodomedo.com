@@ -8,6 +8,7 @@ import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 import { criaInteragiveisVisuaisMapaLogico, criaOcupantesVisuaisMapaLogico, criaSeresVisuaisMapaLogico, validaRespostaMapaLogicoSalaJogo } from './ContextoTelaDeJogoMapaLogico.helpers';
 import type { ContextoTelaDeJogoMapaLogicoProps, EstadoCarregamentoMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
 import { useControleVisualMapaLogico } from './useControleVisualMapaLogico';
+import { useSelecaoInteragivelMapaLogico } from './useSelecaoInteragivelMapaLogico';
 import { useSelecaoOcupanteMapaLogico } from './useSelecaoOcupanteMapaLogico';
 
 const ContextoTelaDeJogoMapaLogico = createContext<ContextoTelaDeJogoMapaLogicoProps | undefined>(undefined);
@@ -62,6 +63,7 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
     const interagiveisVisuais = useMemo(() => mapaLogicoSalaJogo === null ? [] : criaInteragiveisVisuaisMapaLogico(mapaLogicoSalaJogo), [mapaLogicoSalaJogo]);
     const controleVisual = useControleVisualMapaLogico(mapaLogicoSalaJogo);
     const selecaoOcupante = useSelecaoOcupanteMapaLogico(mapaLogicoSalaJogo);
+    const selecaoInteragivel = useSelecaoInteragivelMapaLogico(mapaLogicoSalaJogo);
 
     const contexto = useMemo<ContextoTelaDeJogoMapaLogicoProps>(() => ({
         estadoCarregamento,
@@ -75,7 +77,8 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
         keysInteragiveisPercebidosNovos,
         ...controleVisual,
         ...selecaoOcupante,
-    }), [controleVisual, erro, estadoCarregamento, interagiveisPercebidos, interagiveisVisuais, keysInteragiveisPercebidosNovos, mapaLogicoSalaJogo, ocupantesVisuais, selecaoOcupante, seresNaSala, seresVisuais]);
+        ...selecaoInteragivel,
+    }), [controleVisual, erro, estadoCarregamento, interagiveisPercebidos, interagiveisVisuais, keysInteragiveisPercebidosNovos, mapaLogicoSalaJogo, ocupantesVisuais, selecaoInteragivel, selecaoOcupante, seresNaSala, seresVisuais]);
 
     return (
         <ContextoTelaDeJogoMapaLogico.Provider value={contexto}>

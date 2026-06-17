@@ -66,7 +66,15 @@ export type SelecaoOcupanteMapaLogicoTelaJogo = {
     impedeInicioPanOcupante: (event: ReactPointerEvent<HTMLButtonElement>) => void;
 };
 
-export type ContextoTelaDeJogoMapaLogicoProps = ControleVisualMapaLogicoTelaJogo & SelecaoOcupanteMapaLogicoTelaJogo & {
+export type SelecaoInteragivelMapaLogicoTelaJogo = {
+    keyInteragivelSelecionado: string | null;
+    interagivelSelecionado: InteragivelPercebidoSalaJogoWsDto | null;
+    selecionaInteragivel: (keyInteragivel: string) => void;
+    limpaSelecaoInteragivel: () => void;
+    impedeInicioPanInteragivel: (event: ReactPointerEvent<HTMLButtonElement>) => void;
+};
+
+export type ContextoTelaDeJogoMapaLogicoProps = ControleVisualMapaLogicoTelaJogo & SelecaoOcupanteMapaLogicoTelaJogo & SelecaoInteragivelMapaLogicoTelaJogo & {
     estadoCarregamento: EstadoCarregamentoMapaLogicoTelaJogo;
     erro: string | null;
     mapaLogicoSalaJogo: MapaLogicoSalaJogoPayloadWsDto | null;

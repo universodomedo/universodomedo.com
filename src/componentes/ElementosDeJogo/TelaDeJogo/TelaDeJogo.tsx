@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 import type { SalaDeJogo_Codigo } from 'types-nora-api';
 
 import { ContextoTelaDeJogoMapaLogicoProvider } from './ContextoTelaDeJogoMapaLogico';
+import { InspecaoInteragivelMapaLogico } from './InspecaoInteragivelMapaLogico';
 import { InspecaoOcupanteMapaLogico } from './InspecaoOcupanteMapaLogico';
 import { InteragiveisPercebidosSalaJogo } from './InteragiveisPercebidosSalaJogo';
 import { MapaLogico2DSalaJogo } from './MapaLogico2DSalaJogo';
@@ -21,6 +22,7 @@ export default function TelaDeJogo(props: TelaDeJogoProps) {
                 <MapaLogico2DSalaJogo />
                 <SeresNaSalaJogo />
                 <InteragiveisPercebidosSalaJogo />
+                <InspecaoInteragivelMapaLogico />
                 <InspecaoOcupanteMapaLogico />
             </ContextoTelaDeJogoMapaLogicoProvider>
         </div>
