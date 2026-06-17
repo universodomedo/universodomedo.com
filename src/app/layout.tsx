@@ -16,7 +16,6 @@ import Fumaca from 'Componentes/ElementosVisuais/Fumaca/Fumaca.tsx';
 
 import ReduxProvider from 'Redux/providers/ReduxProvider';
 import SocketListeners from 'Listeners/SocketListeners';
-import GatilhoDevEventosUsuario from 'Componentes/Elementos/GatilhoDevEventosUsuario/GatilhoDevEventosUsuario';
 import EventosUsuarioCentral from 'Componentes/Elementos/EventosUsuarioCentral/EventosUsuarioCentral';
 import { ContextoEventosUsuarioProvider } from 'Contextos/ContextoEventosUsuario/contexto';
 import { ContextoTutorialAberturaProvider } from 'Contextos/ContextoTutorialAbertura/contexto';
@@ -84,7 +83,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 <ContextoEventosUsuarioProvider>
                   <ContextoTutorialAberturaProvider>
                     <SocketListeners />
-                    <GatilhoDevEventosUsuario />
                     <EventosUsuarioCentral />
                     <RenderizadorTutorialModal />
                 <RadixTooltip delayDuration={200} skipDelayDuration={0}>
