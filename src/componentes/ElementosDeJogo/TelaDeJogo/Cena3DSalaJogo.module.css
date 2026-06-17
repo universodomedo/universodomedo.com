@@ -1,0 +1,45 @@
+.recipiente_cena_3d_sala_jogo,
+.estado_cena_3d_sala_jogo {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    color: #f7f4ec;
+    background: #111318;
+}
+
+.estado_cena_3d_sala_jogo {
+    display: grid;
+    place-content: center;
+    gap: 0.6em;
+    padding: 2em;
+    text-align: center;
+}
+
+.estado_cena_3d_sala_jogo strong {
+    font-size: 1.15em;
+}
+
+.estado_cena_3d_sala_jogo span {
+    color: #c8d4e6;
+}
+
+.ajuda_cena_3d_sala_jogo {
+    position: absolute;
+    z-index: 3;
+    left: 1em;
+    bottom: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45em;
+    max-width: min(28em, calc(100% - 2em));
+    pointer-events: none;
+}
+
+.ajuda_cena_3d_sala_jogo span {
+    padding: 0.32em 0.48em;
+    border: 0.08em solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.28em;
+    color: #dce4f2;
+    font-size: 0.72em;
+    background: rgba(16, 18, 24, 0.72);
+}
