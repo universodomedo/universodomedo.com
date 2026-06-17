@@ -1,8 +1,8 @@
-﻿import type { CapacidadeInataSerNaSalaJogoWsDto, MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto, PosicaoMapaLogicoSalaJogoWsDto, RESPONSE__EmitirMapaLogicoSalaJogo, SerNaSalaJogoWsDto } from 'types-nora-api';
+import type { CapacidadeInataSerNaSalaJogoWsDto, InteragivelPercebidoSalaJogoWsDto, MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto, PosicaoMapaLogicoSalaJogoWsDto, RESPONSE__EmitirMapaLogicoSalaJogo, SerNaSalaJogoWsDto } from 'types-nora-api';
 
 import type { TipoInteragivelPercebidoSalaDeJogoRuntime } from 'types-nora-api';
 
-import type { EstiloMarcadorMapaLogicoTelaJogo, OcupanteVisualMapaLogicoTelaJogo, SerVisualMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
+import type { EstiloMarcadorMapaLogicoTelaJogo, InteragivelVisualMapaLogicoTelaJogo, OcupanteVisualMapaLogicoTelaJogo, SerVisualMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
 
 export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaLogicoSalaJogo): string | null {
     const payload = resposta.mapaLogicoSalaJogo;
@@ -84,6 +84,10 @@ export function criaSeresVisuaisMapaLogico(payload: MapaLogicoSalaJogoPayloadWsD
     return payload.seresNaSala.map(ser => criaSerVisualMapaLogico(ser, payload));
 };
 
+export function criaInteragiveisVisuaisMapaLogico(payload: MapaLogicoSalaJogoPayloadWsDto): InteragivelVisualMapaLogicoTelaJogo[] {
+    return payload.interagiveisPercebidos.map(interagivel => criaInteragivelVisualMapaLogico(interagivel, payload));
+};
+
 function obtemCapacidadeOrigemAcaoSerNaSala(capacidades: readonly CapacidadeInataSerNaSalaJogoWsDto[], idCapacidadeInata: number): CapacidadeInataSerNaSalaJogoWsDto | null {
     return capacidades.find((capacidade: CapacidadeInataSerNaSalaJogoWsDto) => capacidade.id === idCapacidadeInata) ?? null;
 };
@@ -98,6 +102,10 @@ function criaOcupanteVisualMapaLogico(ocupante: OcupanteMapaLogicoSalaJogoWsDto,
 
 function criaSerVisualMapaLogico(ser: SerNaSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto): SerVisualMapaLogicoTelaJogo {
     return { ...ser, posicao: { ...ser.posicao }, membros: ser.membros.map(membro => ({ id: membro.id, nome: membro.nome, capacidades: membro.capacidades.map(capacidade => ({ id: capacidade.id, nome: capacidade.nome, nomeInteracao: capacidade.nomeInteracao })), acoesDisponiveis: membro.acoesDisponiveis.map(acao => ({ key: acao.key, nome: acao.nome, estado: acao.estado, origem: { ...acao.origem } })) })), rotuloCurto: criaRotuloCurtoNome(ser.nome), estiloMarcador: criaEstiloMarcadorMapaLogico(ser.posicao, payload) };
+};
+
+function criaInteragivelVisualMapaLogico(interagivel: InteragivelPercebidoSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto): InteragivelVisualMapaLogicoTelaJogo {
+    return { ...interagivel, posicao: interagivel.posicao ? { ...interagivel.posicao } : null, rotuloCurto: criaRotuloCurtoNome(interagivel.nome), estiloMarcador: interagivel.posicao ? criaEstiloMarcadorMapaLogico(interagivel.posicao, payload) : null };
 };
 
 function criaEstiloMarcadorMapaLogico(posicao: PosicaoMapaLogicoSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto): EstiloMarcadorMapaLogicoTelaJogo {

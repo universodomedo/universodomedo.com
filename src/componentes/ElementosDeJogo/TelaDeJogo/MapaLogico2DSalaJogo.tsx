@@ -2,12 +2,13 @@
 
 import styles from './MapaLogico2DSalaJogo.module.css';
 import controlesStyles from './MapaLogico2DSalaJogo.controles.module.css';
+import interagiveisStyles from './MapaLogico2DSalaJogo.interagiveis.module.css';
 import ocupantesStyles from './MapaLogico2DSalaJogo.ocupantes.module.css';
 
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
 
 export function MapaLogico2DSalaJogo() {
-    const { estadoCarregamento, erro, mapaLogicoSalaJogo, ocupantesVisuais, estiloMapa, arrastando, keyOcupanteSelecionado, selecionaOcupante, impedeInicioPanOcupante, iniciaPan, atualizaPan, finalizaPan, aproximaZoom, afastaZoom, rotacionaMapa, resetaVisualizacao } = useContextoTelaDeJogoMapaLogico();
+    const { estadoCarregamento, erro, mapaLogicoSalaJogo, ocupantesVisuais, interagiveisVisuais, keysInteragiveisPercebidosNovos, estiloMapa, arrastando, keyOcupanteSelecionado, selecionaOcupante, impedeInicioPanOcupante, iniciaPan, atualizaPan, finalizaPan, aproximaZoom, afastaZoom, rotacionaMapa, resetaVisualizacao } = useContextoTelaDeJogoMapaLogico();
 
     if (estadoCarregamento === 'carregando') {
         return (
@@ -38,6 +39,19 @@ export function MapaLogico2DSalaJogo() {
 
             <div className={`${styles.area_mapa_logico} ${arrastando ? styles.area_mapa_logico_arrastando : ''}`} onPointerDown={iniciaPan} onPointerMove={atualizaPan} onPointerUp={finalizaPan} onPointerCancel={finalizaPan}>
                 <div className={styles.plano_mapa_logico} style={estiloMapa}>
+                    {interagiveisVisuais.map(interagivel => {
+                        if (interagivel.estiloMarcador === null) return null;
+
+                        const ehNovo = keysInteragiveisPercebidosNovos.includes(interagivel.key);
+                        const className = ehNovo ? `${interagiveisStyles.interagivel_mapa_logico} ${interagiveisStyles.interagivel_mapa_logico_novo}` : interagiveisStyles.interagivel_mapa_logico;
+
+                        return (
+                            <div key={interagivel.key} className={className} style={interagivel.estiloMarcador} title={`${interagivel.nome} (${interagivel.posicao?.x ?? 0}m, ${interagivel.posicao?.y ?? 0}m)`}>
+                                <strong>{interagivel.rotuloCurto}</strong>
+                                <small>{interagivel.nome}</small>
+                            </div>
+                        );
+                    })}
                     {ocupantesVisuais.map(ocupante => (
                         <button key={ocupante.keySer} type="button" className={`${ocupantesStyles.ocupante_mapa_logico} ${keyOcupanteSelecionado === ocupante.keySer ? ocupantesStyles.ocupante_mapa_logico_selecionado : ''}`} style={ocupante.estiloMarcador} title={`${ocupante.nomeExibicao} (${ocupante.posicao.x}m, ${ocupante.posicao.y}m)`} aria-pressed={keyOcupanteSelecionado === ocupante.keySer} onPointerDown={impedeInicioPanOcupante} onClick={() => selecionaOcupante(ocupante.keySer)}>
                             <strong>{ocupante.rotuloCurto}</strong>

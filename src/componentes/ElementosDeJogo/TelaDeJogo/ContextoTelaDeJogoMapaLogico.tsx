@@ -5,7 +5,7 @@ import { Eventos_Emite, type MapaLogicoSalaJogoPayloadWsDto, type PAYLOAD__Emiti
 
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
 
-import { criaOcupantesVisuaisMapaLogico, criaSeresVisuaisMapaLogico, validaRespostaMapaLogicoSalaJogo } from './ContextoTelaDeJogoMapaLogico.helpers';
+import { criaInteragiveisVisuaisMapaLogico, criaOcupantesVisuaisMapaLogico, criaSeresVisuaisMapaLogico, validaRespostaMapaLogicoSalaJogo } from './ContextoTelaDeJogoMapaLogico.helpers';
 import type { ContextoTelaDeJogoMapaLogicoProps, EstadoCarregamentoMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
 import { useControleVisualMapaLogico } from './useControleVisualMapaLogico';
 import { useSelecaoOcupanteMapaLogico } from './useSelecaoOcupanteMapaLogico';
@@ -59,6 +59,7 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
     const seresNaSala = useMemo(() => mapaLogicoSalaJogo?.seresNaSala ?? [], [mapaLogicoSalaJogo]);
     const seresVisuais = useMemo(() => mapaLogicoSalaJogo === null ? [] : criaSeresVisuaisMapaLogico(mapaLogicoSalaJogo), [mapaLogicoSalaJogo]);
     const interagiveisPercebidos = useMemo(() => mapaLogicoSalaJogo?.interagiveisPercebidos ?? [], [mapaLogicoSalaJogo]);
+    const interagiveisVisuais = useMemo(() => mapaLogicoSalaJogo === null ? [] : criaInteragiveisVisuaisMapaLogico(mapaLogicoSalaJogo), [mapaLogicoSalaJogo]);
     const controleVisual = useControleVisualMapaLogico(mapaLogicoSalaJogo);
     const selecaoOcupante = useSelecaoOcupanteMapaLogico(mapaLogicoSalaJogo);
 
@@ -70,10 +71,11 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
         seresNaSala,
         seresVisuais,
         interagiveisPercebidos,
+        interagiveisVisuais,
         keysInteragiveisPercebidosNovos,
         ...controleVisual,
         ...selecaoOcupante,
-    }), [controleVisual, erro, estadoCarregamento, interagiveisPercebidos, keysInteragiveisPercebidosNovos, mapaLogicoSalaJogo, ocupantesVisuais, selecaoOcupante, seresNaSala, seresVisuais]);
+    }), [controleVisual, erro, estadoCarregamento, interagiveisPercebidos, interagiveisVisuais, keysInteragiveisPercebidosNovos, mapaLogicoSalaJogo, ocupantesVisuais, selecaoOcupante, seresNaSala, seresVisuais]);
 
     return (
         <ContextoTelaDeJogoMapaLogico.Provider value={contexto}>

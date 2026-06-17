@@ -1,0 +1,38 @@
+.interagivel_mapa_logico {
+    position: absolute;
+    left: var(--mapa-logico-marcador-x);
+    top: var(--mapa-logico-marcador-y);
+    display: grid;
+    max-width: 8em;
+    gap: 0.08em;
+    place-items: center;
+    padding: 0.24em 0.38em;
+    border: 0.08em solid #b9c7e8;
+    border-radius: 0.32em;
+    color: #f5f7ff;
+    background: #2f3446;
+    box-shadow: 0 0.22em 0.75em rgba(0, 0, 0, 0.34);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+
+.interagivel_mapa_logico_novo {
+    border-color: #f0d16a;
+    color: #fff7cf;
+    background: #423a24;
+    box-shadow: 0 0 0 0.14em rgba(240, 209, 106, 0.34), 0 0.22em 0.75em rgba(0, 0, 0, 0.34);
+}
+
+.interagivel_mapa_logico strong {
+    font-size: 0.76em;
+    line-height: 1;
+}
+
+.interagivel_mapa_logico small {
+    max-width: 7em;
+    overflow: hidden;
+    color: #dde5fb;
+    font-size: 0.54em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

@@ -52,8 +52,8 @@ export default function SPA_SalaDeJogo__Jogador() {
                 <ConteudoFichaDeJogo JDadosFichaEmJogo={J_fichaAtualizada} desativarAcoes={resultadoMissaoFuncional !== null} exibirHabilidadesRuntime exibirAcoesRuntime exibirModificadoresRuntime codigoRecuperarFichaRuntime={`${codigoSala}_${objetoEmJogo.objetoInicialSala.idFicha}`} />
             </SwiperDireita>
             {resultadoMissaoFuncional && (
-                <div className={styles.finalizacao_sala}>
-                    <section className={styles.modal_finalizacao_sala}>
+                <aside className={styles.finalizacao_sala}>
+                    <section className={styles.painel_finalizacao_sala}>
                         <p className={styles.etiqueta_finalizacao_sala}>{resultadoMissaoFuncional.nomeMissao}</p>
                         <h2>Vitória</h2>
                         <dl className={styles.detalhes_finalizacao_sala}>
@@ -64,7 +64,7 @@ export default function SPA_SalaDeJogo__Jogador() {
                         </dl>
                         <button type="button" onClick={retornar} disabled={fechandoSala}>{fechandoSala ? 'Fechando...' : 'Retornar'}</button>
                     </section>
-                </div>
+                </aside>
             )}
         </div>
     );

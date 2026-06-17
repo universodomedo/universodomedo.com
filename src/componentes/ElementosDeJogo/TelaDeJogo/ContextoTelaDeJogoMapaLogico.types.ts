@@ -25,6 +25,11 @@ export type SerVisualMapaLogicoTelaJogo = SerNaSalaJogoWsDto & {
     estiloMarcador: EstiloMarcadorMapaLogicoTelaJogo;
 };
 
+export type InteragivelVisualMapaLogicoTelaJogo = InteragivelPercebidoSalaJogoWsDto & {
+    rotuloCurto: string;
+    estiloMarcador: EstiloMarcadorMapaLogicoTelaJogo | null;
+};
+
 export type ArrasteMapaLogicoTelaJogo = {
     pointerId: number;
     clientXInicial: number;
@@ -69,5 +74,6 @@ export type ContextoTelaDeJogoMapaLogicoProps = ControleVisualMapaLogicoTelaJogo
     seresNaSala: readonly SerNaSalaJogoWsDto[];
     seresVisuais: readonly SerVisualMapaLogicoTelaJogo[];
     interagiveisPercebidos: readonly InteragivelPercebidoSalaJogoWsDto[];
+    interagiveisVisuais: readonly InteragivelVisualMapaLogicoTelaJogo[];
     keysInteragiveisPercebidosNovos: readonly string[];
 };
