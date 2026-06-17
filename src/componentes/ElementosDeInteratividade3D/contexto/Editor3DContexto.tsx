@@ -3,16 +3,17 @@
 import { createContext, useContext, type ReactNode } from 'react';
 
 import { useEditor3D } from '../estado/useEditor3D';
-import type { Editor3DModelo } from '../estado/editor3D.estado.types';
+import type { Editor3DModelo, Editor3DState } from '../estado/editor3D.estado.types';
 
 const Editor3DContexto = createContext<Editor3DModelo | null>(null);
 
 interface Editor3DProviderProps {
     children: ReactNode;
+    readonly estadoInicial?: Editor3DState;
 };
 
-export function Editor3DProvider({ children }: Editor3DProviderProps) {
-    const editor = useEditor3D();
+export function Editor3DProvider({ children, estadoInicial }: Editor3DProviderProps) {
+    const editor = useEditor3D(estadoInicial);
 
     return (
         <Editor3DContexto.Provider value={editor}>

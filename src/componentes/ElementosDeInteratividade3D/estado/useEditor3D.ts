@@ -4,10 +4,12 @@ import { useMemo, useReducer } from 'react';
 
 import { editor3DReducer } from './editor3D.reducer';
 import { criaEstadoInicialEditor3D } from './editor3D.estado.inicial';
-import type { Editor3DAcoes, Editor3DModelo } from './editor3D.estado.types';
+import type { Editor3DAcoes, Editor3DModelo, Editor3DState } from './editor3D.estado.types';
 
-export function useEditor3D(): Editor3DModelo {
-    const [estado, dispatch] = useReducer(editor3DReducer, undefined, criaEstadoInicialEditor3D);
+function criaEstadoInicialUseEditor3D(estadoInicial?: Editor3DState): Editor3DState { return estadoInicial ?? criaEstadoInicialEditor3D(); };
+
+export function useEditor3D(estadoInicial?: Editor3DState): Editor3DModelo {
+    const [estado, dispatch] = useReducer(editor3DReducer, estadoInicial, criaEstadoInicialUseEditor3D);
 
     const acoes = useMemo<Editor3DAcoes>(() => ({
         atualizaCamera: camera => dispatch({ tipo: 'ATUALIZA_CAMERA', camera }),

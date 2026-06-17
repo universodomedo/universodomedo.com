@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
 import { criaDocumentoCena3DSalaJogo } from './Cena3DSalaJogo.helpers';
-import { RuntimeCena3DPrototipoSalaDeJogo } from './RuntimeCena3DPrototipoSalaDeJogo';
+import { Ambiente3DSalaJogo } from './Ambiente3DSalaJogo';
 
 export function Cena3DSalaJogo() {
     const { estadoCarregamento, erro, mapaLogicoSalaJogo, keysInteragiveisPercebidosNovos } = useContextoTelaDeJogoMapaLogico();
@@ -32,7 +32,7 @@ export function Cena3DSalaJogo() {
 
     return (
         <div className={styles.recipiente_cena_3d_sala_jogo}>
-            <RuntimeCena3DPrototipoSalaDeJogo documento={documento} />
+            <Ambiente3DSalaJogo documento={documento} />
         </div>
     );
 };
