@@ -33,10 +33,6 @@ export function Cena3DSalaJogo() {
     return (
         <div className={styles.recipiente_cena_3d_sala_jogo}>
             <RuntimeCena3DPrototipoSalaDeJogo documento={documento} />
-            <div className={styles.ajuda_cena_3d_sala_jogo}>
-                <span>Clique na cena para olhar</span>
-                <span>WASD move o Ser</span>
-            </div>
         </div>
     );
 };
