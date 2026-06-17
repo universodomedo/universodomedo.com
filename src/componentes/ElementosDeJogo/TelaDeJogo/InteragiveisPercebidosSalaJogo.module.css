@@ -51,6 +51,29 @@
     background: #242632;
 }
 
+.item_interagivel_percebido_novo {
+    border-left-color: #f0d16a;
+    background: #30303b;
+    box-shadow: 0 0 0 0.08em rgba(240, 209, 106, 0.42), 0 0.55em 1.15em rgba(0, 0, 0, 0.25);
+}
+
+.item_interagivel_percebido strong {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.55em;
+}
+
+.marcador_interagivel_novo {
+    padding: 0.12em 0.45em;
+    border: 0.08em solid rgba(240, 209, 106, 0.58);
+    border-radius: 0.25em;
+    color: #f7e6a6;
+    font-size: 0.72em;
+    font-weight: 700;
+    background: rgba(240, 209, 106, 0.13);
+}
+
 .item_interagivel_percebido p {
     margin: 0;
     color: #e5e8f0;

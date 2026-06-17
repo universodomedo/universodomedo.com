@@ -69,4 +69,5 @@ export type ContextoTelaDeJogoMapaLogicoProps = ControleVisualMapaLogicoTelaJogo
     seresNaSala: readonly SerNaSalaJogoWsDto[];
     seresVisuais: readonly SerVisualMapaLogicoTelaJogo[];
     interagiveisPercebidos: readonly InteragivelPercebidoSalaJogoWsDto[];
+    keysInteragiveisPercebidosNovos: readonly string[];
 };

@@ -5,7 +5,7 @@ import styles from './InteragiveisPercebidosSalaJogo.module.css';
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
 
 export function InteragiveisPercebidosSalaJogo() {
-    const { estadoCarregamento, mapaLogicoSalaJogo, interagiveisPercebidos } = useContextoTelaDeJogoMapaLogico();
+    const { estadoCarregamento, mapaLogicoSalaJogo, interagiveisPercebidos, keysInteragiveisPercebidosNovos } = useContextoTelaDeJogoMapaLogico();
 
     if (estadoCarregamento !== 'pronto' || mapaLogicoSalaJogo === null) return null;
 
@@ -18,14 +18,19 @@ export function InteragiveisPercebidosSalaJogo() {
 
             {interagiveisPercebidos.length === 0 ? <span className={styles.estado_vazio_interagiveis_percebidos}>Nenhum interagível percebido.</span> : (
                 <div className={styles.lista_interagiveis_percebidos}>
-                    {interagiveisPercebidos.map(interagivel => (
-                        <article key={interagivel.key} className={styles.item_interagivel_percebido}>
-                            <strong>{interagivel.nome}</strong>
-                            <span>{interagivel.tipo}</span>
-                            <p>{interagivel.descricao}</p>
-                            {interagivel.posicao ? <small>Posição {interagivel.posicao.x}m,{interagivel.posicao.y}m</small> : null}
-                        </article>
-                    ))}
+                    {interagiveisPercebidos.map(interagivel => {
+                        const ehNovo = keysInteragiveisPercebidosNovos.includes(interagivel.key);
+                        const className = ehNovo ? `${styles.item_interagivel_percebido} ${styles.item_interagivel_percebido_novo}` : styles.item_interagivel_percebido;
+
+                        return (
+                            <article key={interagivel.key} className={className}>
+                                <strong>{interagivel.nome}{ehNovo ? <span className={styles.marcador_interagivel_novo}>Novo</span> : null}</strong>
+                                <span>{interagivel.tipo}</span>
+                                <p>{interagivel.descricao}</p>
+                                {interagivel.posicao ? <small>Posição {interagivel.posicao.x}m,{interagivel.posicao.y}m</small> : null}
+                            </article>
+                        );
+                    })}
                 </div>
             )}
         </aside>

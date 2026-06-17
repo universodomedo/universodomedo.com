@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Eventos_Emite, type MapaLogicoSalaJogoPayloadWsDto, type PAYLOAD__EmitirMapaLogicoSalaJogo, type RESPONSE__EmitirMapaLogicoSalaJogo, type SalaDeJogo_Codigo } from 'types-nora-api';
 
 import { useEmitWsComDisparoInicial } from 'Hooks/useEventoWs';
@@ -22,6 +22,8 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
     const [estadoCarregamento, setEstadoCarregamento] = useState<EstadoCarregamentoMapaLogicoTelaJogo>('carregando');
     const [erro, setErro] = useState<string | null>(null);
     const [mapaLogicoSalaJogo, setMapaLogicoSalaJogo] = useState<MapaLogicoSalaJogoPayloadWsDto | null>(null);
+    const [keysInteragiveisPercebidosNovos, setKeysInteragiveisPercebidosNovos] = useState<readonly string[]>([]);
+    const keysInteragiveisPercebidosRef = useRef<ReadonlySet<string> | null>(null);
 
     const payloadInicial = useMemo<PAYLOAD__EmitirMapaLogicoSalaJogo>(() => ({ codigoSala }), [codigoSala]);
 
@@ -36,13 +38,19 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
                 return;
             }
 
+            const keysInteragiveisPercebidosAtuais = new Set(resposta.mapaLogicoSalaJogo.interagiveisPercebidos.map(interagivel => interagivel.key));
+            const keysInteragiveisPercebidosNovosAtualizados = keysInteragiveisPercebidosRef.current === null ? [] : Array.from(keysInteragiveisPercebidosAtuais).filter(key => !keysInteragiveisPercebidosRef.current?.has(key));
+            keysInteragiveisPercebidosRef.current = keysInteragiveisPercebidosAtuais;
             setEstadoCarregamento('pronto');
             setErro(null);
+            setKeysInteragiveisPercebidosNovos(keysInteragiveisPercebidosNovosAtualizados);
             setMapaLogicoSalaJogo(resposta.mapaLogicoSalaJogo);
         },
         onError: erroWs => {
             setEstadoCarregamento('erro');
             setErro(erroWs.mensagem);
+            setKeysInteragiveisPercebidosNovos([]);
+            keysInteragiveisPercebidosRef.current = null;
             setMapaLogicoSalaJogo(null);
         },
     });
@@ -62,9 +70,10 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
         seresNaSala,
         seresVisuais,
         interagiveisPercebidos,
+        keysInteragiveisPercebidosNovos,
         ...controleVisual,
         ...selecaoOcupante,
-    }), [controleVisual, erro, estadoCarregamento, interagiveisPercebidos, mapaLogicoSalaJogo, ocupantesVisuais, selecaoOcupante, seresNaSala, seresVisuais]);
+    }), [controleVisual, erro, estadoCarregamento, interagiveisPercebidos, keysInteragiveisPercebidosNovos, mapaLogicoSalaJogo, ocupantesVisuais, selecaoOcupante, seresNaSala, seresVisuais]);
 
     return (
         <ContextoTelaDeJogoMapaLogico.Provider value={contexto}>
