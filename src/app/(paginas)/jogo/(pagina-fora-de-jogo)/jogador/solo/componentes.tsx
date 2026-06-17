@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Eventos_EnviaERecebe, PAGINAS } from 'types-nora-api';
+import { CodigoMissaoFuncionalSalaDeJogoRuntime, Eventos_EnviaERecebe, PAGINAS } from 'types-nora-api';
 
 import { eventoWs, getSocket } from 'Hooks/useEventoWs';
 import { toast } from 'Hooks/useToast';
@@ -11,10 +11,10 @@ import JogoRouteGuard from '../../../JogoRouteGuard';
 
 export default function PaginaModoSolo_Conteiner() {
     const router = useRouter();
-    const [iniciando, setIniciando] = useState(false);
+    const [codigoMissaoIniciando, setCodigoMissaoIniciando] = useState<CodigoMissaoFuncionalSalaDeJogoRuntime | null>(null);
 
-    function iniciarModoSolo(): void {
-        if (iniciando) return;
+    function iniciarModoSolo(codigoMissaoFuncional: CodigoMissaoFuncionalSalaDeJogoRuntime): void {
+        if (codigoMissaoIniciando) return;
 
         const socket = getSocket();
 
@@ -23,14 +23,14 @@ export default function PaginaModoSolo_Conteiner() {
             return;
         }
 
-        setIniciando(true);
+        setCodigoMissaoIniciando(codigoMissaoFuncional);
 
-        eventoWs(Eventos_EnviaERecebe.Jogo.eventos.iniciarModoSolo, {}, {
+        eventoWs(Eventos_EnviaERecebe.Jogo.eventos.iniciarModoSolo, { codigoMissaoFuncional }, {
             onSuccess: () => {
                 router.push(PAGINAS.jogo.emJogo.href);
             },
             onError: (err) => {
-                setIniciando(false);
+                setCodigoMissaoIniciando(null);
                 toast.erro('Falha ao iniciar Modo Solo', err.mensagem);
             },
         });
@@ -38,7 +38,8 @@ export default function PaginaModoSolo_Conteiner() {
 
     return (
         <ControladorSlot pagina={PAGINAS.jogo.jogador.solo} embrulho={JogoRouteGuard}>
-            <button type="button" onClick={iniciarModoSolo} disabled={iniciando}>{iniciando ? 'Iniciando...' : 'Iniciar Missão Funcional 1'}</button>
+            <button type="button" onClick={() => iniciarModoSolo('MISSAO_FUNCIONAL_1')} disabled={codigoMissaoIniciando !== null}>{codigoMissaoIniciando === 'MISSAO_FUNCIONAL_1' ? 'Iniciando...' : 'Iniciar Missão Funcional 1'}</button>
+            <button type="button" onClick={() => iniciarModoSolo('MISSAO_FUNCIONAL_2_OUVIR_REFEM')} disabled={codigoMissaoIniciando !== null}>{codigoMissaoIniciando === 'MISSAO_FUNCIONAL_2_OUVIR_REFEM' ? 'Iniciando...' : 'Iniciar Missão Funcional 2'}</button>
         </ControladorSlot>
     );
 };
