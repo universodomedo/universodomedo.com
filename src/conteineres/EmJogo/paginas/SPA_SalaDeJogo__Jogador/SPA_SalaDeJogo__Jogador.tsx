@@ -15,6 +15,7 @@ export default function SPA_SalaDeJogo__Jogador() {
     const { objetoEmJogo, J_fichaAtualizada, resultadoMissaoFuncional } = useContextoSalaDeJogo__Jogador();
     const [fechandoSala, setFechandoSala] = useState(false);
     const codigoSala = objetoEmJogo.objetoInicialSala.codigoSalaDeJogo;
+    const missaoFuncional = objetoEmJogo.objetoInicialSala.missaoFuncional;
 
     function retornar(): void {
         if (fechandoSala) return;
@@ -32,6 +33,12 @@ export default function SPA_SalaDeJogo__Jogador() {
 
     return (
         <div className={styles.recipiente_pagina_de_jogo}>
+            {missaoFuncional && (
+                <header className={styles.resumo_missao_funcional}>
+                    <p>{missaoFuncional.nome}</p>
+                    <h1>{missaoFuncional.narracaoInicial}</h1>
+                </header>
+            )}
             <div className={styles.recipiente__pagina_de_jogo__superior}>
                 <div className={styles.recipiente_container_tela_de_jogo__em_pagina_de_jogo}>
                     <TelaDeJogo codigoSala={codigoSala} />

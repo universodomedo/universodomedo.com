@@ -6,6 +6,28 @@
     gap: 1em;
 }
 
+.resumo_missao_funcional {
+    width: min(92%, 58em);
+    margin: 0 auto;
+    padding: 1.2em 0 0;
+    color: #f8f3ea;
+}
+
+.resumo_missao_funcional p {
+    margin: 0 0 0.45em;
+    color: #d8c58b;
+    font-size: 0.82em;
+    text-transform: uppercase;
+}
+
+.resumo_missao_funcional h1 {
+    margin: 0;
+    font-size: 1.15em;
+    font-weight: 500;
+    line-height: 1.45;
+    letter-spacing: 0;
+}
+
 .recipiente__pagina_de_jogo__superior{
     flex: 1;
     display: flex;
