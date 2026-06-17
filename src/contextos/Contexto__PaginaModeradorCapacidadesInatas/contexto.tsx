@@ -43,9 +43,9 @@ export const Contexto__PaginaModeradorCapacidadesInatas__Provider = ({ children 
 
 function useListagemCapacidadesInatas() {
     return useNoraGraphQLListagem('CapacidadeInata', {
-        select: ['id', 'nome'],
-        camposFiltroConsulta: ['nome'],
-        camposFiltroVisualizacao: ['nome'],
+        select: ['id', 'nome', 'nomeInteracao'],
+        camposFiltroConsulta: ['nome', 'nomeInteracao'],
+        camposFiltroVisualizacao: ['nome', 'nomeInteracao'],
         itensPorPagina: 12,
         carregando: 'Buscando Capacidades Inatas',
         mensagemErro: 'Houve um erro recuperando as Capacidades Inatas',

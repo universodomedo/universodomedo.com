@@ -12,9 +12,10 @@ import SPA__PaginaModeradorCapacidadesInatas__Cadastro from 'Conteineres/PaginaM
 type FormularioNovaCapacidadeInata = DTO__CREATE__CapacidadeInata;
 
 const FORMULARIO_CREATE_CAPACIDADE_INATA = defineFormularioCreate<FormularioNovaCapacidadeInata>({
-    valoresIniciais: { nome: '' },
+    valoresIniciais: { nome: '', nomeInteracao: '' },
     campos: {
         nome: { tipo: 'text', label: 'Nome', obrigatorio: true, maxLength: 120, placeholder: 'Ex: Faro apurado' },
+        nomeInteracao: { tipo: 'text', label: 'Interação', obrigatorio: true, maxLength: 120, placeholder: 'Ex: Farejável' },
     },
 });
 

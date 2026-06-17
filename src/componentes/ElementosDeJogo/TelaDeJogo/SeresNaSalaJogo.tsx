@@ -27,13 +27,13 @@ export function SeresNaSalaJogo() {
                                     <section key={membro.id} className={styles.item_membro_ser_na_sala}>
                                         <span>{membro.nome}</span>
                                         <div className={styles.lista_capacidades_ser_na_sala}>
-                                            {membro.capacidades.map(capacidade => <small key={capacidade.id}>{capacidade.nome}</small>)}
+                                            {membro.capacidades.map(capacidade => <small key={capacidade.id}>{capacidade.nome} / {capacidade.nomeInteracao}</small>)}
                                         </div>
                                         {membro.acoesDisponiveis.length > 0 ? (
                                             <div className={styles.bloco_acoes_ser_na_sala}>
                                                 <strong className={styles.titulo_acoes_ser_na_sala}>Ações disponíveis</strong>
                                                 <div className={styles.lista_acoes_ser_na_sala}>
-                                                    {membro.acoesDisponiveis.map(acao => <small key={acao.key} title={`${acao.origem.nomeMembro} / ${acao.origem.nomeCapacidadeInata}`}>{acao.nome}</small>)}
+                                                    {membro.acoesDisponiveis.map(acao => <small key={acao.key} title={`${acao.origem.nomeMembro} / ${acao.origem.nomeCapacidadeInata} / ${acao.origem.nomeInteracaoCapacidadeInata}`}>{acao.nome}</small>)}
                                                 </div>
                                             </div>
                                         ) : null}

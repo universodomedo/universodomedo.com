@@ -44,7 +44,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
             if (!Array.isArray(membro.acoesDisponiveis)) return `Membro ${membro.nome} veio sem ações disponíveis válidas.`;
 
             for (const capacidade of membro.capacidades) {
-                if (!Number.isInteger(capacidade.id) || capacidade.id <= 0 || !capacidade.nome) return `Membro ${membro.nome} veio com capacidade inata inválida.`;
+                if (!Number.isInteger(capacidade.id) || capacidade.id <= 0 || !capacidade.nome || !capacidade.nomeInteracao) return `Membro ${membro.nome} veio com capacidade inata inválida.`;
             }
 
             for (const acao of membro.acoesDisponiveis) {
@@ -52,10 +52,10 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
                 if (!acao.origem) return `Ação ${acao.nome} veio sem origem.`;
                 if (acao.origem.idSer !== ser.id || acao.origem.nomeSer !== ser.nome) return `Ação ${acao.nome} veio com origem de ser inconsistente.`;
                 if (acao.origem.idMembro !== membro.id || acao.origem.nomeMembro !== membro.nome) return `Ação ${acao.nome} veio com origem de membro inconsistente.`;
-                if (!Number.isInteger(acao.origem.idCapacidadeInata) || acao.origem.idCapacidadeInata <= 0 || !acao.origem.nomeCapacidadeInata) return `Ação ${acao.nome} veio com origem de capacidade inata inválida.`;
+                if (!Number.isInteger(acao.origem.idCapacidadeInata) || acao.origem.idCapacidadeInata <= 0 || !acao.origem.nomeCapacidadeInata || !acao.origem.nomeInteracaoCapacidadeInata) return `Ação ${acao.nome} veio com origem de capacidade inata inválida.`;
 
                 const capacidadeOrigem = obtemCapacidadeOrigemAcaoSerNaSala(membro.capacidades, acao.origem.idCapacidadeInata);
-                if (!capacidadeOrigem || capacidadeOrigem.nome !== acao.origem.nomeCapacidadeInata) return `Ação ${acao.nome} veio sem capacidade inata correspondente no membro.`;
+                if (!capacidadeOrigem || capacidadeOrigem.nome !== acao.origem.nomeCapacidadeInata || capacidadeOrigem.nomeInteracao !== acao.origem.nomeInteracaoCapacidadeInata) return `Ação ${acao.nome} veio sem capacidade inata correspondente no membro.`;
             }
         }
     }
@@ -80,7 +80,7 @@ function criaOcupanteVisualMapaLogico(ocupante: OcupanteMapaLogicoSalaJogoWsDto,
 };
 
 function criaSerVisualMapaLogico(ser: SerNaSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto): SerVisualMapaLogicoTelaJogo {
-    return { ...ser, posicao: { ...ser.posicao }, membros: ser.membros.map(membro => ({ id: membro.id, nome: membro.nome, capacidades: membro.capacidades.map(capacidade => ({ id: capacidade.id, nome: capacidade.nome })), acoesDisponiveis: membro.acoesDisponiveis.map(acao => ({ key: acao.key, nome: acao.nome, estado: acao.estado, origem: { ...acao.origem } })) })), rotuloCurto: criaRotuloCurtoNome(ser.nome), estiloMarcador: criaEstiloMarcadorMapaLogico(ser.posicao, payload) };
+    return { ...ser, posicao: { ...ser.posicao }, membros: ser.membros.map(membro => ({ id: membro.id, nome: membro.nome, capacidades: membro.capacidades.map(capacidade => ({ id: capacidade.id, nome: capacidade.nome, nomeInteracao: capacidade.nomeInteracao })), acoesDisponiveis: membro.acoesDisponiveis.map(acao => ({ key: acao.key, nome: acao.nome, estado: acao.estado, origem: { ...acao.origem } })) })), rotuloCurto: criaRotuloCurtoNome(ser.nome), estiloMarcador: criaEstiloMarcadorMapaLogico(ser.posicao, payload) };
 };
 
 function criaEstiloMarcadorMapaLogico(posicao: PosicaoMapaLogicoSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto): EstiloMarcadorMapaLogicoTelaJogo {

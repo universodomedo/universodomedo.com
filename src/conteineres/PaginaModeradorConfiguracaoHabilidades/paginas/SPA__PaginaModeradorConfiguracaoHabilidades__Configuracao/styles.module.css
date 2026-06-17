@@ -87,7 +87,7 @@
 
 .acao_logica {
     display: grid;
-    grid-template-columns: minmax(5em, 0.28fr) minmax(12em, 1fr) minmax(12em, 1fr) auto;
+    grid-template-columns: minmax(5em, 0.22fr) minmax(12em, 0.85fr) minmax(12em, 1fr) auto;
     gap: 0.7em;
     align-items: end;
     padding: 0.72em;
@@ -198,6 +198,10 @@
     font: inherit;
     font-size: 0.88em;
     outline: none;
+}
+
+.campo select[multiple] {
+    min-height: 5.8em;
 }
 
 .argumento_bloqueado {

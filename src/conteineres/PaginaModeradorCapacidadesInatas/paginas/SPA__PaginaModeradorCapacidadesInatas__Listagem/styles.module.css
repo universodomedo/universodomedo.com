@@ -2,7 +2,10 @@
     width: 100%;
     min-height: 7em;
     display: flex;
+    flex-direction: column;
+    gap: 0.45em;
     align-items: center;
+    justify-content: center;
     padding: 1em;
     border: 0.08em solid var(--cor-borda);
     border-radius: 0.5em;
@@ -11,4 +14,9 @@
 
 .card_capacidade_inata strong {
     font-size: 1em;
+}
+
+.card_capacidade_inata span {
+    color: var(--cor-texto-secundario);
+    font-size: 0.84em;
 }

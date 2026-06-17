@@ -6,7 +6,7 @@ type ContextoConfiguracao = ReturnType<typeof useContexto__PaginaModeradorConfig
 type RegistroModificador = ContextoConfiguracao['modificadoresLogica'][number];
 
 export default function SPA__PaginaModeradorConfiguracaoHabilidades__Configuracao() {
-    const { habilidade, atributos, modificadoresLogica, idAtributoSelecionado, selecionaAtributo, tipoModificadorSelecionado, selecionaTipoModificador, formularioNovoModificador, valorEhValido, podeSalvar, salvar, excluirModificador, acoesLogica, logicaCarregando, logicaErro, salvandoLogica, podeSalvarLogica, adicionaAcaoLogica, alteraAcaoLogica, removeAcaoLogica, salvarLogica } = useContexto__PaginaModeradorConfiguracaoHabilidades__Configuracao();
+    const { habilidade, atributos, capacidadesInatas, modificadoresLogica, idAtributoSelecionado, selecionaAtributo, tipoModificadorSelecionado, selecionaTipoModificador, formularioNovoModificador, valorEhValido, podeSalvar, salvar, excluirModificador, acoesLogica, logicaCarregando, logicaErro, salvandoLogica, podeSalvarLogica, adicionaAcaoLogica, alteraAcaoLogica, removeAcaoLogica, salvarLogica } = useContexto__PaginaModeradorConfiguracaoHabilidades__Configuracao();
     const modificadorDeAtributoSelecionado = tipoModificadorSelecionado === 'atributo';
     const modificadorParametrizadoPorPericiaSelecionado = tipoModificadorSelecionado === 'teste_pericia_valor_maximo_parametrizado';
 
@@ -39,8 +39,11 @@ export default function SPA__PaginaModeradorConfiguracaoHabilidades__Configuraca
                                         <input type="text" value={acao.nome} onChange={evento => alteraAcaoLogica(indice, 'nome', evento.target.value)} disabled={salvandoLogica} />
                                     </label>
                                     <label className={styles.campo}>
-                                        <span>Chave do domínio</span>
-                                        <input type="text" value={acao.chaveDominio} onChange={evento => alteraAcaoLogica(indice, 'chaveDominio', evento.target.value)} disabled={salvandoLogica} placeholder="percepcao_auditiva" />
+                                        <span>Domínio</span>
+                                        <select value={acao.idCapacidadeInata} onChange={evento => alteraAcaoLogica(indice, 'idCapacidadeInata', evento.target.value)} disabled={salvandoLogica}>
+                                            <option value="">Selecione um domínio</option>
+                                            {capacidadesInatas.map(capacidadeInata => <option key={capacidadeInata.id} value={capacidadeInata.id}>{capacidadeInata.nome} / {capacidadeInata.nomeInteracao}</option>)}
+                                        </select>
                                     </label>
                                     <button type="button" className={styles.botao_excluir} onClick={() => removeAcaoLogica(indice)} disabled={salvandoLogica}>Remover</button>
                                 </article>

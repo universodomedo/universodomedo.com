@@ -17,6 +17,11 @@ export default function SPA__PaginaModeradorCapacidadesInatas__Cadastro() {
                     <input type="text" {...formularioNovaCapacidadeInata.input('nome')} />
                     {formularioNovaCapacidadeInata.erro('nome') && <small className={styles.erro_campo}>{formularioNovaCapacidadeInata.erro('nome')}</small>}
                 </label>
+                <label className={styles.campo}>
+                    <span>Interação</span>
+                    <input type="text" {...formularioNovaCapacidadeInata.input('nomeInteracao')} />
+                    {formularioNovaCapacidadeInata.erro('nomeInteracao') && <small className={styles.erro_campo}>{formularioNovaCapacidadeInata.erro('nomeInteracao')}</small>}
+                </label>
 
                 <footer className={styles.rodape_formulario}>
                     <button type="button" className={styles.botao_salvar} onClick={salvar} disabled={!formularioNovaCapacidadeInata.podeSalvar}>{formularioNovaCapacidadeInata.salvando ? 'Salvando...' : 'Salvar Capacidade'}</button>

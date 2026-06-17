@@ -24,6 +24,7 @@ function RenderizaRegistroCapacidadeInata({ capacidadeInata }: { capacidadeInata
     return (
         <article className={styles.card_capacidade_inata}>
             <strong>{capacidadeInata.nome}</strong>
+            <span>{capacidadeInata.nomeInteracao}</span>
         </article>
     );
 };
