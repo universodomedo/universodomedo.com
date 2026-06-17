@@ -50,6 +50,7 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
     const ocupantesVisuais = useMemo(() => mapaLogicoSalaJogo === null ? [] : criaOcupantesVisuaisMapaLogico(mapaLogicoSalaJogo), [mapaLogicoSalaJogo]);
     const seresNaSala = useMemo(() => mapaLogicoSalaJogo?.seresNaSala ?? [], [mapaLogicoSalaJogo]);
     const seresVisuais = useMemo(() => mapaLogicoSalaJogo === null ? [] : criaSeresVisuaisMapaLogico(mapaLogicoSalaJogo), [mapaLogicoSalaJogo]);
+    const interagiveisPercebidos = useMemo(() => mapaLogicoSalaJogo?.interagiveisPercebidos ?? [], [mapaLogicoSalaJogo]);
     const controleVisual = useControleVisualMapaLogico(mapaLogicoSalaJogo);
     const selecaoOcupante = useSelecaoOcupanteMapaLogico(mapaLogicoSalaJogo);
 
@@ -60,9 +61,10 @@ export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: {
         ocupantesVisuais,
         seresNaSala,
         seresVisuais,
+        interagiveisPercebidos,
         ...controleVisual,
         ...selecaoOcupante,
-    }), [controleVisual, erro, estadoCarregamento, mapaLogicoSalaJogo, ocupantesVisuais, selecaoOcupante, seresNaSala, seresVisuais]);
+    }), [controleVisual, erro, estadoCarregamento, interagiveisPercebidos, mapaLogicoSalaJogo, ocupantesVisuais, selecaoOcupante, seresNaSala, seresVisuais]);
 
     return (
         <ContextoTelaDeJogoMapaLogico.Provider value={contexto}>

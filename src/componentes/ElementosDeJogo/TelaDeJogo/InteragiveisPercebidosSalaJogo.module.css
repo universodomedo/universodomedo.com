@@ -1,0 +1,58 @@
+.painel_interagiveis_percebidos {
+    position: absolute;
+    z-index: 4;
+    right: 1em;
+    bottom: 1em;
+    display: grid;
+    gap: 0.75em;
+    width: min(23em, calc(100% - 2em));
+    max-height: calc(100% - 2em);
+    padding: 0.9em;
+    overflow: auto;
+    border: 0.08em solid rgba(255, 255, 255, 0.22);
+    border-radius: 0.4em;
+    color: #f7f4ec;
+    background: rgba(24, 24, 29, 0.96);
+    box-shadow: 0 0.5em 1.5em rgba(0, 0, 0, 0.4);
+}
+
+.cabecalho_interagiveis_percebidos {
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.8em;
+}
+
+.cabecalho_interagiveis_percebidos span,
+.estado_vazio_interagiveis_percebidos,
+.item_interagivel_percebido span,
+.item_interagivel_percebido small {
+    color: #cbd1dd;
+}
+
+.cabecalho_interagiveis_percebidos span {
+    font-size: 0.76em;
+}
+
+.estado_vazio_interagiveis_percebidos {
+    font-size: 0.84em;
+}
+
+.lista_interagiveis_percebidos {
+    display: grid;
+    gap: 0.55em;
+}
+
+.item_interagivel_percebido {
+    display: grid;
+    gap: 0.35em;
+    padding: 0.65em;
+    border-left: 0.18em solid #a4b1d8;
+    background: #242632;
+}
+
+.item_interagivel_percebido p {
+    margin: 0;
+    color: #e5e8f0;
+    font-size: 0.84em;
+}

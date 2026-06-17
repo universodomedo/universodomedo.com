@@ -1,5 +1,5 @@
 ﻿import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react';
-import type { MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto, SerNaSalaJogoWsDto } from 'types-nora-api';
+import type { InteragivelPercebidoSalaJogoWsDto, MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto, SerNaSalaJogoWsDto } from 'types-nora-api';
 
 export type EstadoCarregamentoMapaLogicoTelaJogo = 'carregando' | 'erro' | 'pronto';
 
@@ -68,4 +68,5 @@ export type ContextoTelaDeJogoMapaLogicoProps = ControleVisualMapaLogicoTelaJogo
     ocupantesVisuais: readonly OcupanteVisualMapaLogicoTelaJogo[];
     seresNaSala: readonly SerNaSalaJogoWsDto[];
     seresVisuais: readonly SerVisualMapaLogicoTelaJogo[];
+    interagiveisPercebidos: readonly InteragivelPercebidoSalaJogoWsDto[];
 };

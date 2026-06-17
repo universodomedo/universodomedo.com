@@ -1,5 +1,7 @@
 ﻿import type { CapacidadeInataSerNaSalaJogoWsDto, MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto, PosicaoMapaLogicoSalaJogoWsDto, RESPONSE__EmitirMapaLogicoSalaJogo, SerNaSalaJogoWsDto } from 'types-nora-api';
 
+import type { TipoInteragivelPercebidoSalaDeJogoRuntime } from 'types-nora-api';
+
 import type { EstiloMarcadorMapaLogicoTelaJogo, OcupanteVisualMapaLogicoTelaJogo, SerVisualMapaLogicoTelaJogo } from './ContextoTelaDeJogoMapaLogico.types';
 
 export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaLogicoSalaJogo): string | null {
@@ -9,6 +11,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
     if (!payload.mapaLogico) return 'Resposta do mapa lógico veio sem dimensões.';
     if (!Array.isArray(payload.ocupantesMapaLogico)) return 'Resposta do mapa lógico veio sem ocupantes válidos.';
     if (!Array.isArray(payload.seresNaSala)) return 'Resposta do mapa lógico veio sem seres persistidos válidos.';
+    if (!Array.isArray(payload.interagiveisPercebidos)) return 'Resposta do mapa lógico veio sem interagíveis percebidos válidos.';
     if (payload.mapaLogico.larguraMetros <= 0 || !Number.isFinite(payload.mapaLogico.larguraMetros) || !Number.isInteger(payload.mapaLogico.larguraMetros)) return 'Mapa lógico veio com largura em metros inválida.';
     if (payload.mapaLogico.alturaMetros <= 0 || !Number.isFinite(payload.mapaLogico.alturaMetros) || !Number.isInteger(payload.mapaLogico.alturaMetros)) return 'Mapa lógico veio com altura em metros inválida.';
 
@@ -60,6 +63,16 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
         }
     }
 
+    for (const interagivel of payload.interagiveisPercebidos) {
+        if (!interagivel.key || !interagivel.nome || !interagivel.descricao || !ehTipoInteragivelPercebidoValido(interagivel.tipo)) return 'Interagível percebido veio sem identificação válida.';
+
+        if (interagivel.posicao !== null) {
+            if (!Number.isFinite(interagivel.posicao.x) || !Number.isInteger(interagivel.posicao.x)) return `Interagível ${interagivel.nome} veio com posição X inválida.`;
+            if (!Number.isFinite(interagivel.posicao.y) || !Number.isInteger(interagivel.posicao.y)) return `Interagível ${interagivel.nome} veio com posição Y inválida.`;
+            if (interagivel.posicao.x < 0 || interagivel.posicao.y < 0 || interagivel.posicao.x >= payload.mapaLogico.larguraMetros || interagivel.posicao.y >= payload.mapaLogico.alturaMetros) return `Interagível ${interagivel.nome} veio fora dos limites métricos do mapa.`;
+        }
+    }
+
     return null;
 };
 
@@ -73,6 +86,10 @@ export function criaSeresVisuaisMapaLogico(payload: MapaLogicoSalaJogoPayloadWsD
 
 function obtemCapacidadeOrigemAcaoSerNaSala(capacidades: readonly CapacidadeInataSerNaSalaJogoWsDto[], idCapacidadeInata: number): CapacidadeInataSerNaSalaJogoWsDto | null {
     return capacidades.find((capacidade: CapacidadeInataSerNaSalaJogoWsDto) => capacidade.id === idCapacidadeInata) ?? null;
+};
+
+function ehTipoInteragivelPercebidoValido(tipo: string): tipo is TipoInteragivelPercebidoSalaDeJogoRuntime {
+    return tipo === 'ser' || tipo === 'objeto' || tipo === 'elemento_sensorial';
 };
 
 function criaOcupanteVisualMapaLogico(ocupante: OcupanteMapaLogicoSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto): OcupanteVisualMapaLogicoTelaJogo {

@@ -6,6 +6,7 @@ import type { SalaDeJogo_Codigo } from 'types-nora-api';
 
 import { ContextoTelaDeJogoMapaLogicoProvider } from './ContextoTelaDeJogoMapaLogico';
 import { InspecaoOcupanteMapaLogico } from './InspecaoOcupanteMapaLogico';
+import { InteragiveisPercebidosSalaJogo } from './InteragiveisPercebidosSalaJogo';
 import { MapaLogico2DSalaJogo } from './MapaLogico2DSalaJogo';
 import { SeresNaSalaJogo } from './SeresNaSalaJogo';
 
@@ -19,6 +20,7 @@ export default function TelaDeJogo(props: TelaDeJogoProps) {
             <ContextoTelaDeJogoMapaLogicoProvider codigoSala={props.codigoSala}>
                 <MapaLogico2DSalaJogo />
                 <SeresNaSalaJogo />
+                <InteragiveisPercebidosSalaJogo />
                 <InspecaoOcupanteMapaLogico />
             </ContextoTelaDeJogoMapaLogicoProvider>
         </div>
