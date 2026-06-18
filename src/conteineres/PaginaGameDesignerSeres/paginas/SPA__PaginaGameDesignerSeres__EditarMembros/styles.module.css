@@ -70,6 +70,35 @@
     gap: 0.35em;
 }
 
+.bloco_acoes_membro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+}
+
+.cabecalho_acoes_membro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.lista_acoes_membro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+}
+
+.acao_membro {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    align-items: end;
+    gap: 0.75em;
+    padding: 0.75em;
+    border: 0.06em solid var(--cor-borda, #d0d0d0);
+    border-radius: 0.4em;
+}
+
 .botao_remover {
     align-self: flex-start;
     cursor: pointer;
@@ -83,4 +112,10 @@
 .botao_salvar {
     padding: 0.6em 1.2em;
     cursor: pointer;
+}
+
+@media (max-width: 48em) {
+    .acao_membro {
+        grid-template-columns: 1fr;
+    }
 }
