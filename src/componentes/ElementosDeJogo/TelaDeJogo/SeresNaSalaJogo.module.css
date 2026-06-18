@@ -87,7 +87,8 @@
 
 .lista_capacidades_ser_na_sala small,
 .lista_estatisticas_ser_na_sala small,
-.lista_acoes_ser_na_sala small {
+.lista_acoes_ser_na_sala small,
+.lista_acoes_ser_na_sala button {
     padding: 0.25em 0.4em;
     border: 0.06em solid rgba(255, 255, 255, 0.16);
     border-radius: 0.28em;
@@ -101,8 +102,19 @@
     background: #3b2020;
 }
 
-.lista_acoes_ser_na_sala small {
+.lista_acoes_ser_na_sala small,
+.lista_acoes_ser_na_sala button {
     border-color: rgba(125, 211, 199, 0.36);
     color: #eafffb;
     background: #17363b;
+}
+
+.lista_acoes_ser_na_sala button {
+    cursor: pointer;
+    font: inherit;
+}
+
+.lista_acoes_ser_na_sala button:hover {
+    border-color: rgba(157, 235, 226, 0.68);
+    background: #1d4c52;
 }

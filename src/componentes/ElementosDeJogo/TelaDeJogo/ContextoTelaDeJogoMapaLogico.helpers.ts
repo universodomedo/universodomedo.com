@@ -35,6 +35,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
 
     for (const ser of payload.seresNaSala) {
         if (!ser.keyInstancia || !Number.isInteger(ser.id) || ser.id <= 0 || !ser.nome) return 'Ser persistido da sala veio sem identificação válida.';
+        if (ser.papel !== 'controlado' && ser.papel !== 'inimigo') return `Ser ${ser.nome} veio com papel inválido.`;
         if (!ser.posicao) return `Ser ${ser.nome} veio sem posição lógica.`;
         if (!Number.isFinite(ser.posicao.x) || !Number.isInteger(ser.posicao.x)) return `Ser ${ser.nome} veio com posição X inválida.`;
         if (!Number.isFinite(ser.posicao.y) || !Number.isInteger(ser.posicao.y)) return `Ser ${ser.nome} veio com posição Y inválida.`;
