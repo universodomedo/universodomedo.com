@@ -6,18 +6,20 @@ import { CursorVirtualEditor3D } from './mouse/CursorVirtualEditor3D';
 import { OverlayAreaSelecaoEditor3D } from './overlay/OverlayAreaSelecaoEditor3D';
 import { OverlayModoEditor3D } from './overlay/OverlayModoEditor3D';
 import { RenderizadorEditor3D } from './renderizador/RenderizadorEditor3D';
+import type { ConfiguracaoCameraJogo3D } from './renderizador/editor3D.renderizador.jogo';
 import { renderizacaoEditor3DExibeAmbienteEdicao, type ModoRenderizacaoEditor3D } from './renderizador/editor3D.renderizador.modo';
 
 interface AreaInterativa3DProps {
     readonly modoRenderizacao?: ModoRenderizacaoEditor3D;
+    readonly configuracaoCameraJogo?: ConfiguracaoCameraJogo3D;
 };
 
-export function AreaInterativa3D({ modoRenderizacao = 'EDICAO' }: AreaInterativa3DProps) {
+export function AreaInterativa3D({ modoRenderizacao = 'EDICAO', configuracaoCameraJogo }: AreaInterativa3DProps) {
     const exibeAmbienteEdicao = renderizacaoEditor3DExibeAmbienteEdicao(modoRenderizacao);
 
     return (
         <section className={styles.areaInterativa3D} aria-label="Área interativa 3D">
-            <RenderizadorEditor3D modoRenderizacao={modoRenderizacao} />
+            <RenderizadorEditor3D modoRenderizacao={modoRenderizacao} configuracaoCameraJogo={configuracaoCameraJogo} />
 
             {exibeAmbienteEdicao && <OverlayAreaSelecaoEditor3D />}
 

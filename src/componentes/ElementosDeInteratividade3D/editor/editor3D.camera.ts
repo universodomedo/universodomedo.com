@@ -8,6 +8,7 @@ export type EspacoMovimentoGrabEditor3D = PlanoGuiaEditor3D | 'XYZ';
 export type ResetAbsolutoVistaEditor3D = 'X' | 'Y' | 'Z' | '-X' | '-Y' | '-Z';
 
 export interface CameraEditor3D {
+    readonly fov: number;
     readonly rotacaoX: number;
     readonly rotacaoY: number;
     readonly rotacaoTela: number;
@@ -61,6 +62,7 @@ type VetorCameraEditor3D = readonly [number, number, number];
 
 const rotacaoXPerspectivaPadraoCameraEditor3D = -Math.PI / 3;
 const rotacaoYPerspectivaPadraoCameraEditor3D = -Math.PI / 4;
+const fovPadraoCameraEditor3D = Math.PI / 3.2;
 const sensibilidadeOrbitCameraEditor3D = 0.008;
 const margemPitchTurntableCameraEditor3D = 0.001;
 const resetsAbsolutosVistaEditor3D: readonly ResetAbsolutoVistaEditor3D[] = ['X', '-X', 'Y', '-Y', 'Z', '-Z'];
@@ -151,13 +153,13 @@ function interpolaMatrizCenaCameraEditor3D(origem: Float32Array, destino: Float3
 };
 
 function criaCameraEditor3D(rotacaoX: number, rotacaoY: number, rotacaoTela: number, planoGuia: PlanoGuiaEditor3D, espacoMovimentoGrab: EspacoMovimentoGrabEditor3D, cameraBase?: CameraEditor3D): CameraEditor3D {
-    return { rotacaoX, rotacaoY, rotacaoTela, matrizCena: criaMatrizCenaEulerCameraEditor3D(rotacaoX, rotacaoY, rotacaoTela), deslocamentoX: cameraBase?.deslocamentoX ?? 0, deslocamentoY: cameraBase?.deslocamentoY ?? 0, zoom: cameraBase?.zoom ?? 1, planoGuia, espacoMovimentoGrab };
+    return { fov: cameraBase?.fov ?? fovPadraoCameraEditor3D, rotacaoX, rotacaoY, rotacaoTela, matrizCena: criaMatrizCenaEulerCameraEditor3D(rotacaoX, rotacaoY, rotacaoTela), deslocamentoX: cameraBase?.deslocamentoX ?? 0, deslocamentoY: cameraBase?.deslocamentoY ?? 0, zoom: cameraBase?.zoom ?? 1, planoGuia, espacoMovimentoGrab };
 };
 
 function criaCameraVistaCanonicaEditor3D(cameraBase: CameraEditor3D, vista: ResetAbsolutoVistaEditor3D): CameraEditor3D {
     const definicao = definicoesVistasCanonicasCameraEditor3D[vista];
 
-    return { rotacaoX: definicao.rotacaoX, rotacaoY: definicao.rotacaoY, rotacaoTela: definicao.rotacaoTela, matrizCena: criaMatrizCenaVistaCanonicaEditor3D(vista), deslocamentoX: cameraBase.deslocamentoX, deslocamentoY: cameraBase.deslocamentoY, zoom: cameraBase.zoom, planoGuia: definicao.planoGuia, espacoMovimentoGrab: definicao.espacoMovimentoGrab };
+    return { fov: cameraBase.fov, rotacaoX: definicao.rotacaoX, rotacaoY: definicao.rotacaoY, rotacaoTela: definicao.rotacaoTela, matrizCena: criaMatrizCenaVistaCanonicaEditor3D(vista), deslocamentoX: cameraBase.deslocamentoX, deslocamentoY: cameraBase.deslocamentoY, zoom: cameraBase.zoom, planoGuia: definicao.planoGuia, espacoMovimentoGrab: definicao.espacoMovimentoGrab };
 };
 
 export function criaMatrizCenaCameraEditor3D(camera: CameraEditor3D): Float32Array { return camera.matrizCena; };
@@ -227,6 +229,7 @@ export function obtemResetAbsolutoVistaPorDirecaoEditor3D(vistaAtual: ResetAbsol
 };
 
 export function criaCameraPadraoEditor3D(): CameraEditor3D { return criaCameraEditor3D(rotacaoXPerspectivaPadraoCameraEditor3D, rotacaoYPerspectivaPadraoCameraEditor3D, 0, 'XY', 'XYZ'); };
+export function criaCameraPorRotacaoEditor3D(rotacaoX: number, rotacaoY: number, cameraBase: CameraEditor3D): CameraEditor3D { return criaCameraEditor3D(rotacaoX, rotacaoY, 0, 'XY', 'XYZ', cameraBase); };
 
 export function criaEstadoArrasteCameraEditor3D(): EstadoArrasteCameraEditor3D { return { arrastando: false, modoArraste: 'ROTACIONAR', botao: null, inicioX: 0, inicioY: 0, ultimoX: 0, ultimoY: 0, movimentoAcumulado: 0, direcaoAjusteVista: null, acumuladoAjusteVista: 0, ajusteVistaAplicado: false, animacaoCameraFrameId: null, finalizandoModoComPointerLock: false }; };
 
@@ -278,7 +281,7 @@ export function interpolaCameraEditor3D(origem: CameraEditor3D, destino: CameraE
 
     const progressoSuavizado = suavizaProgressoCameraEditor3D(limitaValor(progresso, 0, 1));
 
-    return { ...origem, rotacaoX: interpolaAnguloCameraEditor3D(origem.rotacaoX, destino.rotacaoX, progressoSuavizado), rotacaoY: interpolaAnguloCameraEditor3D(origem.rotacaoY, destino.rotacaoY, progressoSuavizado), rotacaoTela: interpolaAnguloCameraEditor3D(origem.rotacaoTela, destino.rotacaoTela, progressoSuavizado), matrizCena: interpolaMatrizCenaCameraEditor3D(origem.matrizCena, destino.matrizCena, progressoSuavizado), deslocamentoX: interpolaValorCameraEditor3D(origem.deslocamentoX, destino.deslocamentoX, progressoSuavizado), deslocamentoY: interpolaValorCameraEditor3D(origem.deslocamentoY, destino.deslocamentoY, progressoSuavizado), zoom: interpolaValorCameraEditor3D(origem.zoom, destino.zoom, progressoSuavizado) };
+    return { ...origem, fov: interpolaValorCameraEditor3D(origem.fov, destino.fov, progressoSuavizado), rotacaoX: interpolaAnguloCameraEditor3D(origem.rotacaoX, destino.rotacaoX, progressoSuavizado), rotacaoY: interpolaAnguloCameraEditor3D(origem.rotacaoY, destino.rotacaoY, progressoSuavizado), rotacaoTela: interpolaAnguloCameraEditor3D(origem.rotacaoTela, destino.rotacaoTela, progressoSuavizado), matrizCena: interpolaMatrizCenaCameraEditor3D(origem.matrizCena, destino.matrizCena, progressoSuavizado), deslocamentoX: interpolaValorCameraEditor3D(origem.deslocamentoX, destino.deslocamentoX, progressoSuavizado), deslocamentoY: interpolaValorCameraEditor3D(origem.deslocamentoY, destino.deslocamentoY, progressoSuavizado), zoom: interpolaValorCameraEditor3D(origem.zoom, destino.zoom, progressoSuavizado) };
 };
 
 export function aplicaVistaEixoGrabCameraEditor3D(camera: CameraEditor3D, eixo: EixoEditor3D): CameraEditor3D {

@@ -12,6 +12,7 @@ const planosGuiaValidosScreenshotTemporarioEditor3D: readonly PlanoGuiaEditor3D[
 const espacosMovimentoGrabValidosScreenshotTemporarioEditor3D: readonly EspacoMovimentoGrabEditor3D[] = ['XY', 'XZ', 'YZ', 'XYZ'];
 
 export interface CameraScreenshotTemporarioEditor3D {
+    readonly fov: number;
     readonly rotacaoX: number;
     readonly rotacaoY: number;
     readonly rotacaoTela: number;
@@ -46,6 +47,7 @@ function indicesFaceScreenshotTemporarioEditor3DEhValidos(indices: readonly numb
 
 function serializaCameraScreenshotTemporarioEditor3D(camera: CameraEditor3D): CameraScreenshotTemporarioEditor3D {
     return {
+        fov: camera.fov,
         rotacaoX: camera.rotacaoX,
         rotacaoY: camera.rotacaoY,
         rotacaoTela: camera.rotacaoTela,
@@ -60,6 +62,7 @@ function serializaCameraScreenshotTemporarioEditor3D(camera: CameraEditor3D): Ca
 
 function cameraScreenshotTemporarioEditor3DEhValida(camera: CameraScreenshotTemporarioEditor3D | null): camera is CameraScreenshotTemporarioEditor3D {
     if (camera === null || typeof camera !== 'object') return false;
+    if (!numeroScreenshotTemporarioEditor3DEhValido(camera.fov)) return false;
     if (!numeroScreenshotTemporarioEditor3DEhValido(camera.rotacaoX)) return false;
     if (!numeroScreenshotTemporarioEditor3DEhValido(camera.rotacaoY)) return false;
     if (!numeroScreenshotTemporarioEditor3DEhValido(camera.rotacaoTela)) return false;

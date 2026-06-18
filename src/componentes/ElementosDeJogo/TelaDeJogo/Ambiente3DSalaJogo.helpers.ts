@@ -1,23 +1,25 @@
 import { criaMatrizIdentidadeEditor3D } from 'Componentes/ElementosDeInteratividade3D/editor/editor3D.matrizes';
+import { criaCameraPorRotacaoEditor3D } from 'Componentes/ElementosDeInteratividade3D/editor/editor3D.camera';
 import { criaEstadoInicialEditor3D } from 'Componentes/ElementosDeInteratividade3D/estado/editor3D.estado.inicial';
 import type { DocumentoCena3DPrototipo, ObjetoCena3DPrototipo, Vetor3Cena3DPrototipo } from 'Funcionalidades/Cena3DPrototipo/cena3DPrototipo.types';
 import type { Editor3DState } from 'Componentes/ElementosDeInteratividade3D/estado/editor3D.estado.types';
+import type { ModoCameraJogo3D } from 'Componentes/ElementosDeInteratividade3D/renderizador/editor3D.renderizador.jogo';
 import type { ObjetoCenaEditor3D, Vetor3 } from 'Componentes/ElementosDeInteratividade3D/editor/editor3D.tipos';
 
 interface CaixaHorizontalAmbiente3DSalaJogo {
-    readonly centroX: number;
-    readonly centroY: number;
+    readonly origemX: number;
+    readonly origemY: number;
     readonly extensao: number;
 };
 
 function clonaVetor3Ambiente3DSalaJogo(vetor: Vetor3Cena3DPrototipo): Vetor3 { return [vetor[0], vetor[1], vetor[2]]; };
-function deslocaVetor3Ambiente3DSalaJogo(vetor: Vetor3Cena3DPrototipo, caixa: CaixaHorizontalAmbiente3DSalaJogo): Vetor3 { return [vetor[0] - caixa.centroX, vetor[1] - caixa.centroY, vetor[2]]; };
+function deslocaVetor3Ambiente3DSalaJogo(vetor: Vetor3Cena3DPrototipo, caixa: CaixaHorizontalAmbiente3DSalaJogo): Vetor3 { return [vetor[0] - caixa.origemX, vetor[1] - caixa.origemY, vetor[2]]; };
 function criaMatrizBaseAmbiente3DSalaJogo(objeto: ObjetoCena3DPrototipo): Float32Array { return objeto.transform.matrizBase.length === 16 ? new Float32Array(objeto.transform.matrizBase) : criaMatrizIdentidadeEditor3D(); };
 
 function calculaCaixaHorizontalAmbiente3DSalaJogo(documento: DocumentoCena3DPrototipo): CaixaHorizontalAmbiente3DSalaJogo {
     const objetosVisiveis = documento.objetos.filter(objeto => objeto.visivel);
 
-    if (objetosVisiveis.length === 0) return { centroX: 0, centroY: 0, extensao: 1 };
+    if (objetosVisiveis.length === 0) return { origemX: documento.pontoEntradaJogador.posicao[0], origemY: documento.pontoEntradaJogador.posicao[1], extensao: 1 };
 
     let minimoX = Number.POSITIVE_INFINITY;
     let maximoX = Number.NEGATIVE_INFINITY;
@@ -39,13 +41,19 @@ function calculaCaixaHorizontalAmbiente3DSalaJogo(documento: DocumentoCena3DProt
     const largura = Math.max(1, maximoX - minimoX);
     const altura = Math.max(1, maximoY - minimoY);
 
-    return { centroX: (minimoX + maximoX) / 2, centroY: (minimoY + maximoY) / 2, extensao: Math.max(largura, altura) };
+    return { origemX: documento.pontoEntradaJogador.posicao[0], origemY: documento.pontoEntradaJogador.posicao[1], extensao: Math.max(largura, altura) };
 };
 
-function calculaZoomAmbiente3DSalaJogo(caixa: CaixaHorizontalAmbiente3DSalaJogo): number {
-    const distancia = Math.max(6, caixa.extensao * 1.32);
+function calculaZoomAmbiente3DSalaJogo(caixa: CaixaHorizontalAmbiente3DSalaJogo, modoCamera: ModoCameraJogo3D): number {
+    const distancia = modoCamera === 'PRIMEIRA_PESSOA' ? 0.08 : Math.max(5, caixa.extensao * 0.98);
 
     return 4 / distancia;
+};
+
+function calculaCameraAmbiente3DSalaJogo(estadoInicial: Editor3DState, caixa: CaixaHorizontalAmbiente3DSalaJogo, modoCamera: ModoCameraJogo3D): Editor3DState['camera'] {
+    if (modoCamera === 'PRIMEIRA_PESSOA') return { ...criaCameraPorRotacaoEditor3D(-Math.PI / 2.4, 0, estadoInicial.camera), deslocamentoX: 0, deslocamentoY: -0.15, zoom: calculaZoomAmbiente3DSalaJogo(caixa, modoCamera) };
+
+    return { ...criaCameraPorRotacaoEditor3D(-Math.PI / 2.75, -Math.PI / 4, estadoInicial.camera), deslocamentoX: 0, deslocamentoY: 0, zoom: calculaZoomAmbiente3DSalaJogo(caixa, modoCamera) };
 };
 
 function criaObjetoEditor3DAmbiente3DSalaJogo(objeto: ObjetoCena3DPrototipo, caixa: CaixaHorizontalAmbiente3DSalaJogo, indice: number): ObjetoCenaEditor3D {
@@ -67,7 +75,7 @@ function criaObjetoEditor3DAmbiente3DSalaJogo(objeto: ObjetoCena3DPrototipo, cai
     };
 };
 
-export function criaEstadoAmbiente3DParaSalaJogo(documento: DocumentoCena3DPrototipo): Editor3DState {
+export function criaEstadoAmbiente3DParaSalaJogo(documento: DocumentoCena3DPrototipo, modoCamera: ModoCameraJogo3D): Editor3DState {
     const estadoInicial = criaEstadoInicialEditor3D();
     const caixa = calculaCaixaHorizontalAmbiente3DSalaJogo(documento);
     const idsObjetosOcultos = documento.objetos.filter(objeto => !objeto.visivel).map(objeto => objeto.id);
@@ -79,7 +87,7 @@ export function criaEstadoAmbiente3DParaSalaJogo(documento: DocumentoCena3DProto
         idsObjetosOcultosManualmente: idsObjetosOcultos,
         modoVisualizacaoViewport: 'RENDERIZADO',
         visualizacaoXRayAtiva: false,
-        camera: { ...estadoInicial.camera, deslocamentoX: 0, deslocamentoY: 0, zoom: calculaZoomAmbiente3DSalaJogo(caixa) },
+        camera: calculaCameraAmbiente3DSalaJogo(estadoInicial, caixa, modoCamera),
     };
 };
 

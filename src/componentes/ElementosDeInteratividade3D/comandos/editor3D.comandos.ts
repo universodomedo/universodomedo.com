@@ -565,6 +565,33 @@ const comandosAreaInterativa3D = [
         mouse: { botao: 0, shift: null, ctrlOuMeta: null, alt: null }
     },
     {
+        id: 'arrastar-camera-sala-3d',
+        categoria: 'Sala de Jogo',
+        nome: 'Arrastar camera',
+        descricao: 'Move a camera sobre o cenario no modo terceira pessoa.',
+        atalho: 'Clique esquerdo + arrastar',
+        icone: 'move',
+        mouse: { botao: 0, shift: false, ctrlOuMeta: null, alt: null }
+    },
+    {
+        id: 'rotacionar-camera-sala-3d',
+        categoria: 'Sala de Jogo',
+        nome: 'Rotacionar camera',
+        descricao: 'Rotaciona a camera da Sala de Jogo ao redor do foco atual.',
+        atalho: 'Botao direito + arrastar',
+        icone: 'orbit',
+        mouse: { botao: 2, shift: null, ctrlOuMeta: null, alt: null }
+    },
+    {
+        id: 'zoom-camera-sala-3d',
+        categoria: 'Sala de Jogo',
+        nome: 'Zoom da camera',
+        descricao: 'Aproxima ou afasta a camera da Sala de Jogo.',
+        atalho: 'Scroll',
+        icone: 'dolly',
+        rodaMouse: true
+    },
+    {
         id: 'espaco-sala-3d',
         categoria: 'Sala de Jogo',
         nome: 'Pular',

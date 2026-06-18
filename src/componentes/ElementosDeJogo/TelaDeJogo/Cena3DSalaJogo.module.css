@@ -22,3 +22,56 @@
 .estado_cena_3d_sala_jogo span {
     color: #c8d4e6;
 }
+
+.visao_principal_sala_jogo_3d,
+.visao_secundaria_sala_jogo_3d {
+    position: absolute;
+    overflow: hidden;
+}
+
+.visao_principal_sala_jogo_3d {
+    inset: 0;
+}
+
+.quadro_visao_secundaria_sala_jogo_3d {
+    position: absolute;
+    z-index: 3;
+    left: 1em;
+    bottom: 1em;
+    width: min(22em, 26%);
+    aspect-ratio: 16 / 9;
+}
+
+.visao_secundaria_sala_jogo_3d {
+    inset: 0;
+    border: 0.08em solid rgba(255, 255, 255, 0.24);
+    border-radius: 0.3em;
+    background: #111318;
+    box-shadow: 0 0.55em 1.8em rgba(0, 0, 0, 0.42);
+}
+
+.botao_trocar_visoes_sala_jogo {
+    position: absolute;
+    z-index: 4;
+    right: -1.15em;
+    top: -1.15em;
+    display: grid;
+    width: 2.3em;
+    height: 2.3em;
+    place-items: center;
+    padding: 0;
+    border: 0.08em solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.88);
+    font: inherit;
+    font-size: 0.86em;
+    font-weight: 800;
+    background: rgba(20, 20, 24, 0.78);
+    cursor: pointer;
+    transform: translateX(1.55em);
+}
+
+.botao_trocar_visoes_sala_jogo:hover {
+    color: #ffffff;
+    background: rgba(42, 42, 48, 0.88);
+}

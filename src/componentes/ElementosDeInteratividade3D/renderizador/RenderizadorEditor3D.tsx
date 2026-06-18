@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 import { useEffect, useRef } from 'react';
 
 import { OverlayGizmoEixosEditor3D } from './OverlayGizmoEixosEditor3D';
+import type { ConfiguracaoCameraJogo3D } from './editor3D.renderizador.jogo';
 import { renderizacaoEditor3DExibeAmbienteEdicao, type ModoRenderizacaoEditor3D } from './editor3D.renderizador.modo';
 import { useEditor3DContexto } from '../contexto/Editor3DContexto';
 import { useRenderizadorEditor3D } from './useRenderizadorEditor3D';
@@ -14,6 +15,7 @@ const duracaoNotificacaoAreaInterativaEditor3D = 3200;
 
 interface RenderizadorEditor3DProps {
     readonly modoRenderizacao?: ModoRenderizacaoEditor3D;
+    readonly configuracaoCameraJogo?: ConfiguracaoCameraJogo3D;
 };
 
 function obtemClasseCursorEditor3D(tipoModo: string, ferramentaMouse: FerramentaMouseEditor3D): string {
@@ -29,11 +31,11 @@ function obtemClasseCursorEditor3D(tipoModo: string, ferramentaMouse: Ferramenta
     return styles.canvas3dMovimentacaoAtiva;
 };
 
-export function RenderizadorEditor3D({ modoRenderizacao = 'EDICAO' }: RenderizadorEditor3DProps) {
+export function RenderizadorEditor3D({ modoRenderizacao = 'EDICAO', configuracaoCameraJogo }: RenderizadorEditor3DProps) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const cursorFantasmaRef = useRef<HTMLDivElement | null>(null);
     const { estado, acoes } = useEditor3DContexto();
-    const webglDisponivel = useRenderizadorEditor3D(canvasRef, cursorFantasmaRef, modoRenderizacao);
+    const webglDisponivel = useRenderizadorEditor3D(canvasRef, cursorFantasmaRef, modoRenderizacao, configuracaoCameraJogo);
     const exibeAmbienteEdicao = renderizacaoEditor3DExibeAmbienteEdicao(modoRenderizacao);
     const classeCursor = obtemClasseCursorEditor3D(estado.modoAtual.tipo, estado.ferramentaMouse);
     const notificacao = estado.notificacaoAreaInterativa;

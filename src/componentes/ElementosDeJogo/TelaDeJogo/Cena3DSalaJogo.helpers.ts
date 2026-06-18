@@ -1,4 +1,4 @@
-import type { InteragivelPercebidoSalaJogoWsDto, MapaLogicoSalaJogoPayloadWsDto, PosicaoMapaLogicoSalaJogoWsDto } from 'types-nora-api';
+import type { InteragivelPercebidoSalaJogoWsDto, MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto, PosicaoMapaLogicoSalaJogoWsDto } from 'types-nora-api';
 
 import type { DocumentoCena3DPrototipo, ObjetoCena3DPrototipo, Vetor3Cena3DPrototipo } from 'Funcionalidades/Cena3DPrototipo/cena3DPrototipo.types';
 
@@ -16,6 +16,7 @@ export function criaDocumentoCena3DSalaJogo(payload: MapaLogicoSalaJogoPayloadWs
         versao: 1,
         objetos: [
             ...criaObjetosSalaTesteCena3D(largura, altura),
+            ...payload.ocupantesMapaLogico.flatMap(criaObjetosOcupanteCena3D),
             ...payload.interagiveisPercebidos.flatMap(interagivel => criaObjetosInteragivelCena3D(interagivel, keysInteragiveisNovos.includes(interagivel.key))),
         ],
         colecoes: [],
@@ -34,11 +35,21 @@ export function criaDocumentoCena3DSalaJogo(payload: MapaLogicoSalaJogoPayloadWs
 function criaObjetosSalaTesteCena3D(largura: number, altura: number): ObjetoCena3DPrototipo[] {
     return [
         criaObjetoCena3D('sala:piso', 'Piso da sala de testes', 'CUBO_3D', [largura / 2, altura / 2, -0.05], [largura, altura, 0.1], [0.25, 0.27, 0.31]),
-        criaObjetoCena3D('sala:teto', 'Teto da sala de testes', 'CUBO_3D', [largura / 2, altura / 2, alturaParedeCena3DSalaJogo], [largura, altura, 0.1], [0.16, 0.17, 0.2]),
         criaObjetoCena3D('sala:parede:norte', 'Parede norte da sala de testes', 'CUBO_3D', [largura / 2, -espessuraParedeCena3DSalaJogo / 2, alturaParedeCena3DSalaJogo / 2], [largura + espessuraParedeCena3DSalaJogo, espessuraParedeCena3DSalaJogo, alturaParedeCena3DSalaJogo], [0.36, 0.38, 0.43]),
         criaObjetoCena3D('sala:parede:sul', 'Parede sul da sala de testes', 'CUBO_3D', [largura / 2, altura + espessuraParedeCena3DSalaJogo / 2, alturaParedeCena3DSalaJogo / 2], [largura + espessuraParedeCena3DSalaJogo, espessuraParedeCena3DSalaJogo, alturaParedeCena3DSalaJogo], [0.36, 0.38, 0.43]),
         criaObjetoCena3D('sala:parede:oeste', 'Parede oeste da sala de testes', 'CUBO_3D', [-espessuraParedeCena3DSalaJogo / 2, altura / 2, alturaParedeCena3DSalaJogo / 2], [espessuraParedeCena3DSalaJogo, altura + espessuraParedeCena3DSalaJogo, alturaParedeCena3DSalaJogo], [0.32, 0.34, 0.39]),
         criaObjetoCena3D('sala:parede:leste', 'Parede leste da sala de testes', 'CUBO_3D', [largura + espessuraParedeCena3DSalaJogo / 2, altura / 2, alturaParedeCena3DSalaJogo / 2], [espessuraParedeCena3DSalaJogo, altura + espessuraParedeCena3DSalaJogo, alturaParedeCena3DSalaJogo], [0.32, 0.34, 0.39]),
+    ];
+};
+
+function criaObjetosOcupanteCena3D(ocupante: OcupanteMapaLogicoSalaJogoWsDto): ObjetoCena3DPrototipo[] {
+    const x = ocupante.posicao.x + 0.5;
+    const y = ocupante.posicao.y + 0.5;
+
+    return [
+        criaObjetoCena3D(`ocupante:${ocupante.keySer}:base`, `${ocupante.nomeExibicao} - base`, 'CILINDRO_3D', [x, y, 0.08], [0.92, 0.92, 0.16], [0.58, 0.13, 0.17]),
+        criaObjetoCena3D(`ocupante:${ocupante.keySer}:corpo`, `${ocupante.nomeExibicao} - corpo`, 'CILINDRO_3D', [x, y, 0.78], [0.5, 0.5, 1.22], [0.68, 0.2, 0.24]),
+        criaObjetoCena3D(`ocupante:${ocupante.keySer}:cabeca`, `${ocupante.nomeExibicao} - cabeca`, 'ESFERA_3D', [x, y, 1.58], [0.32, 0.32, 0.32], [0.82, 0.62, 0.46]),
     ];
 };
 
