@@ -52,11 +52,12 @@ function gerarRegrasTexto(regras: RegrasUploadArquivo) {
 }
 
 export default function Uploader() {
-    const { regras, accept, previewUrl, erro, isValido, isCarregando, selecionarArquivo, limpar, enviar, isEnviando } = useContextoUploadImagem();
+    const { regras, accept, arquivo, previewUrl, erro, isValido, isCarregando, selecionarArquivo, limpar, enviar, isEnviando } = useContextoUploadImagem();
     const [isDragOver, setIsDragOver] = useState<boolean>(false);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const regrasTexto = useMemo(() => gerarRegrasTexto(regras), [regras]);
+    const isAudio = Boolean(arquivo && (arquivo.type.startsWith('audio/') || arquivo.name.toLowerCase().endsWith('.opus')));
 
     function abrirSeletorArquivos() {
         if (isCarregando || !inputRef.current) return;
@@ -112,7 +113,7 @@ export default function Uploader() {
                     </div>
                 ) : (
                     <div className={styles.estadoPreview}>
-                        <img className={styles.previewImagem} src={previewUrl} alt="Pré-visualização" />
+                        {isAudio ? <audio className={styles.previewAudio} src={previewUrl} controls /> : <img className={styles.previewImagem} src={previewUrl} alt="Pré-visualização" />}
                         <button className={styles.botaoRemover} type="button" onClick={removerArquivo} aria-label="Remover arquivo">×</button>
                     </div>
                 )}

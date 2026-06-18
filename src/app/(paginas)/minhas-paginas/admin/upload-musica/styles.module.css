@@ -1,0 +1,7 @@
+.recipiente_conteudo_pagina_upload_musica {
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    gap: 1.2em;
+    align-items: center;
+}

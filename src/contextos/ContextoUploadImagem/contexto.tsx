@@ -53,6 +53,9 @@ function formatoFromFile(file: File): FormatoUploadArquivo | null {
     if (file.type === 'image/webp') return 'webp';
     if (file.type === 'image/svg+xml') return 'svg';
     if (file.type === 'image/png') return 'png';
+    if (file.type === 'audio/ogg' && file.name.toLowerCase().endsWith('.opus')) return 'opus';
+    if (file.type === 'audio/opus' && file.name.toLowerCase().endsWith('.opus')) return 'opus';
+    if (!file.type && file.name.toLowerCase().endsWith('.opus')) return 'opus';
     return null;
 };
 

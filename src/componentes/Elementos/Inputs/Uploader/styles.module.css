@@ -94,6 +94,10 @@
     object-fit: contain;
 }
 
+.previewAudio {
+    width: 92%;
+}
+
 .botaoRemover {
     position: absolute;
     top: 0.6em;
