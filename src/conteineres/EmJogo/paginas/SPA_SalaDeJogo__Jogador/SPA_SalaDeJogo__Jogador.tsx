@@ -33,7 +33,7 @@ export default function SPA_SalaDeJogo__Jogador() {
         <div className={styles.recipiente_pagina_de_jogo}>
             <div className={styles.recipiente__pagina_de_jogo__superior}>
                 <div className={styles.recipiente_container_tela_de_jogo__em_pagina_de_jogo}>
-                    <TelaDeJogo codigoSala={codigoSala} />
+                    <TelaDeJogo codigoSala={codigoSala} missaoFuncional={objetoEmJogo.objetoInicialSala.missaoFuncional} resultadoMissaoFuncional={resultadoMissaoFuncional} />
                 </div>
             </div>
             <SwiperDireita>

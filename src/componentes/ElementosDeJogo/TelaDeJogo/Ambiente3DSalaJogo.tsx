@@ -4,7 +4,7 @@ import styles from './Cena3DSalaJogo.module.css';
 
 import { useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRightLeft } from '@fortawesome/free-solid-svg-icons';
+import { faExpand, faMinus, faRightLeft } from '@fortawesome/free-solid-svg-icons';
 
 import { AreaInterativa3D } from 'Componentes/ElementosDeInteratividade3D/AreaInterativa3D';
 import { Editor3DProvider } from 'Componentes/ElementosDeInteratividade3D/contexto/Editor3DContexto';
@@ -38,21 +38,31 @@ function VisaoAmbiente3DSalaJogo({ documento, modoCamera, assinaturaCena }: Visa
 
 export function Ambiente3DSalaJogo({ documento }: Ambiente3DSalaJogoProps) {
     const [modoCameraPrincipal, setModoCameraPrincipal] = useState<ModoCameraJogo3D>('PRIMEIRA_PESSOA');
+    const [visaoSecundariaMinimizada, setVisaoSecundariaMinimizada] = useState(false);
     const assinaturaCena = useMemo(() => criaAssinaturaAmbiente3DSalaJogo(documento), [documento]);
     const modoCameraSecundaria = obtemModoCameraOpostoSalaJogo(modoCameraPrincipal);
+    const classeQuadroVisaoSecundaria = visaoSecundariaMinimizada ? `${styles.quadro_visao_secundaria_sala_jogo_3d} ${styles.quadro_visao_secundaria_sala_jogo_3d_minimizado}` : styles.quadro_visao_secundaria_sala_jogo_3d;
 
     return (
         <>
             <div className={styles.visao_principal_sala_jogo_3d}>
                 <VisaoAmbiente3DSalaJogo documento={documento} modoCamera={modoCameraPrincipal} assinaturaCena={assinaturaCena} />
             </div>
-            <div className={styles.quadro_visao_secundaria_sala_jogo_3d}>
-                <div className={styles.visao_secundaria_sala_jogo_3d}>
-                    <VisaoAmbiente3DSalaJogo documento={documento} modoCamera={modoCameraSecundaria} assinaturaCena={assinaturaCena} />
+            <div className={classeQuadroVisaoSecundaria}>
+                {!visaoSecundariaMinimizada && (
+                    <div className={styles.visao_secundaria_sala_jogo_3d}>
+                        <VisaoAmbiente3DSalaJogo documento={documento} modoCamera={modoCameraSecundaria} assinaturaCena={assinaturaCena} />
+                    </div>
+                )}
+                <div className={styles.barra_visao_secundaria_sala_jogo}>
+                    <span>{modoCameraSecundaria === 'PRIMEIRA_PESSOA' ? '1P' : '3P'}</span>
+                    <button type="button" onClick={() => setModoCameraPrincipal(modoCameraSecundaria)} aria-label="Trocar visão principal e secundária" title="Trocar visão">
+                        <FontAwesomeIcon icon={faRightLeft} />
+                    </button>
+                    <button type="button" onClick={() => setVisaoSecundariaMinimizada(!visaoSecundariaMinimizada)} aria-label={visaoSecundariaMinimizada ? 'Restaurar visão secundária' : 'Minimizar visão secundária'} title={visaoSecundariaMinimizada ? 'Restaurar visão secundária' : 'Minimizar visão secundária'}>
+                        <FontAwesomeIcon icon={visaoSecundariaMinimizada ? faExpand : faMinus} />
+                    </button>
                 </div>
-                <button className={styles.botao_trocar_visoes_sala_jogo} type="button" onClick={() => setModoCameraPrincipal(modoCameraSecundaria)} aria-label="Trocar visão principal e secundária" title="Trocar visão">
-                    <FontAwesomeIcon icon={faRightLeft} />
-                </button>
             </div>
         </>
     );

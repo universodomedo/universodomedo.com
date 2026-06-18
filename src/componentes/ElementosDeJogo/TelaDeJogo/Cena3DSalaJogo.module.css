@@ -40,38 +40,131 @@
     bottom: 1em;
     width: min(22em, 26%);
     aspect-ratio: 16 / 9;
+    border: 0.1em solid rgba(161, 205, 238, 0.62);
+    border-radius: 0.35em;
+    background: rgba(10, 12, 17, 0.94);
+    box-shadow: 0 0.7em 2.2em rgba(0, 0, 0, 0.58), 0 0 0.8em rgba(161, 205, 238, 0.16);
 }
 
 .visao_secundaria_sala_jogo_3d {
     inset: 0;
-    border: 0.08em solid rgba(255, 255, 255, 0.24);
-    border-radius: 0.3em;
+    border-radius: 0.25em;
     background: #111318;
-    box-shadow: 0 0.55em 1.8em rgba(0, 0, 0, 0.42);
 }
 
-.botao_trocar_visoes_sala_jogo {
+.quadro_visao_secundaria_sala_jogo_3d_minimizado {
+    width: min(16em, 22%);
+    height: 2.4em;
+    aspect-ratio: auto;
+}
+
+.barra_visao_secundaria_sala_jogo {
     position: absolute;
     z-index: 4;
-    right: -1.15em;
-    top: -1.15em;
-    display: grid;
-    width: 2.3em;
-    height: 2.3em;
-    place-items: center;
-    padding: 0;
-    border: 0.08em solid rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    color: rgba(255, 255, 255, 0.88);
-    font: inherit;
-    font-size: 0.86em;
-    font-weight: 800;
-    background: rgba(20, 20, 24, 0.78);
-    cursor: pointer;
-    transform: translateX(1.55em);
+    right: 0.35em;
+    top: 0.35em;
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
 }
 
-.botao_trocar_visoes_sala_jogo:hover {
+.barra_visao_secundaria_sala_jogo span {
+    min-width: 2em;
+    padding: 0.18em 0.45em;
+    border: 0.08em solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.2em;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 0.72em;
+    font-weight: 800;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.54);
+}
+
+.barra_visao_secundaria_sala_jogo button {
+    display: grid;
+    width: 2em;
+    height: 2em;
+    place-items: center;
+    padding: 0;
+    border: 0.08em solid rgba(255, 255, 255, 0.22);
+    border-radius: 0.2em;
+    color: rgba(255, 255, 255, 0.9);
+    font: inherit;
+    font-size: 0.82em;
+    font-weight: 800;
+    background: rgba(14, 16, 21, 0.82);
+    cursor: pointer;
+}
+
+.barra_visao_secundaria_sala_jogo button:hover {
     color: #ffffff;
-    background: rgba(42, 42, 48, 0.88);
+    background: rgba(42, 45, 53, 0.92);
+}
+
+.objetivos_missao_sala_jogo {
+    position: absolute;
+    z-index: 4;
+    left: 1.3em;
+    top: 1.2em;
+    min-width: min(21em, 36%);
+    max-width: min(28em, 45%);
+    padding: 0.2em 0.15em;
+    color: #ffc89b;
+    text-shadow: 0 0.12em 0.25em rgba(0, 0, 0, 0.84);
+    pointer-events: none;
+}
+
+.objetivos_missao_sala_jogo strong {
+    display: block;
+    margin-bottom: 0.28em;
+    color: #ffd5ae;
+    font-size: 0.86em;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.objetivos_missao_sala_jogo ul {
+    display: grid;
+    gap: 0.18em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.objetivos_missao_sala_jogo li {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    color: #ffc89b;
+    font-size: 0.82em;
+    font-weight: 700;
+    line-height: 1.18;
+}
+
+.objetivos_missao_sala_jogo li::before {
+    content: "";
+    width: 0.52em;
+    height: 0.52em;
+    flex: 0 0 auto;
+    border-radius: 0.12em;
+    background: currentColor;
+    transform: rotate(45deg);
+}
+
+.objetivos_missao_sala_jogo li svg {
+    width: 0.82em;
+    height: 0.82em;
+    flex: 0 0 auto;
+}
+
+.objetivos_missao_sala_jogo li.condicao_vitoria_concluida::before {
+    content: none;
+}
+
+.condicao_vitoria_pendente {
+    color: #ffc89b;
+}
+
+.condicao_vitoria_concluida {
+    color: #83e097;
 }
