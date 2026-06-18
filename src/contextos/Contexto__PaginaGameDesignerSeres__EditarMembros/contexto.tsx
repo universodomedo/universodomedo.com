@@ -6,7 +6,7 @@ import { EventosApiRest } from 'types-nora-api';
 import { NoraApi } from 'Api/NoraApi';
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import SPA__PaginaGameDesignerSeres__EditarMembros from 'Conteineres/PaginaGameDesignerSeres/paginas/SPA__PaginaGameDesignerSeres__EditarMembros/SPA__PaginaGameDesignerSeres__EditarMembros';
-import { adicionaAcaoMembroEditor, alternaCapacidadeMembroEditor, atualizaCapacidadeAcaoMembroEditor, atualizaNomeAcaoMembroEditor, atualizaNomeMembroEditor, membroEditorVazio, membrosEditorDePersistidos, membrosEditorSaoValidos, montaInputMembrosEditor, obtemMensagemValidacaoMembrosEditor, removeAcaoMembroEditor, type MembroEditor } from './membrosSerJogavelEditor';
+import { adicionaAcaoMembroEditor, alternaCapacidadeMembroEditor, atualizaCapacidadeAcaoMembroEditor, atualizaDanoAcaoMembroEditor, atualizaNomeAcaoMembroEditor, atualizaNomeMembroEditor, membroEditorVazio, membrosEditorDePersistidos, membrosEditorSaoValidos, montaInputMembrosEditor, obtemMensagemValidacaoMembrosEditor, removeAcaoMembroEditor, type MembroEditor } from './membrosSerJogavelEditor';
 
 interface Contexto__PaginaGameDesignerSeres__EditarMembros__Props {
     membros: readonly MembroEditor[];
@@ -23,6 +23,7 @@ interface Contexto__PaginaGameDesignerSeres__EditarMembros__Props {
     removeAcaoMembro: (idLocal: number, idLocalAcao: number) => void;
     atualizaNomeAcaoMembro: (idLocal: number, idLocalAcao: number, nome: string) => void;
     atualizaCapacidadeAcaoMembro: (idLocal: number, idLocalAcao: number, idCapacidadeInata: number) => void;
+    atualizaDanoAcaoMembro: (idLocal: number, idLocalAcao: number, dano: number | '') => void;
     salvar: () => Promise<void>;
     voltar: () => void;
 };
@@ -73,8 +74,8 @@ export const Contexto__PaginaGameDesignerSeres__EditarMembros__Provider = ({ fkS
         return () => { ativo = false; };
     }, [fkSerId]);
 
-    const mensagemValidacao = obtemMensagemValidacaoMembrosEditor(membros, capacidadesInatas.registros.length);
-    const podeSalvar = !salvando && membrosEditorSaoValidos(membros) && capacidadesInatas.registros.length > 0;
+    const mensagemValidacao = obtemMensagemValidacaoMembrosEditor(membros, capacidadesInatas.registros);
+    const podeSalvar = !salvando && membrosEditorSaoValidos(membros, capacidadesInatas.registros) && capacidadesInatas.registros.length > 0;
 
     function adicionaMembro(): void { setMembros(membrosAtuais => [...membrosAtuais, membroEditorVazio(proximoIdLocalRef.current++)]); };
     function removeMembro(idLocal: number): void { setMembros(membrosAtuais => membrosAtuais.filter(membro => membro.idLocal !== idLocal)); };
@@ -84,6 +85,7 @@ export const Contexto__PaginaGameDesignerSeres__EditarMembros__Provider = ({ fkS
     function removeAcaoMembro(idLocal: number, idLocalAcao: number): void { setMembros(membrosAtuais => removeAcaoMembroEditor(membrosAtuais, idLocal, idLocalAcao)); };
     function atualizaNomeAcaoMembro(idLocal: number, idLocalAcao: number, nome: string): void { setMembros(membrosAtuais => atualizaNomeAcaoMembroEditor(membrosAtuais, idLocal, idLocalAcao, nome)); };
     function atualizaCapacidadeAcaoMembro(idLocal: number, idLocalAcao: number, idCapacidadeInata: number): void { setMembros(membrosAtuais => atualizaCapacidadeAcaoMembroEditor(membrosAtuais, idLocal, idLocalAcao, idCapacidadeInata)); };
+    function atualizaDanoAcaoMembro(idLocal: number, idLocalAcao: number, dano: number | ''): void { setMembros(membrosAtuais => atualizaDanoAcaoMembroEditor(membrosAtuais, idLocal, idLocalAcao, dano)); };
 
     async function salvar(): Promise<void> {
         if (!podeSalvar) return;
@@ -98,7 +100,7 @@ export const Contexto__PaginaGameDesignerSeres__EditarMembros__Provider = ({ fkS
     };
 
     return (
-        <Contexto__PaginaGameDesignerSeres__EditarMembros.Provider value={{ membros, capacidadesInatas, carregando, salvando, podeSalvar, mensagemValidacao, adicionaMembro, removeMembro, atualizaNomeMembro, alternaCapacidadeMembro, adicionaAcaoMembro, removeAcaoMembro, atualizaNomeAcaoMembro, atualizaCapacidadeAcaoMembro, salvar, voltar }}>
+        <Contexto__PaginaGameDesignerSeres__EditarMembros.Provider value={{ membros, capacidadesInatas, carregando, salvando, podeSalvar, mensagemValidacao, adicionaMembro, removeMembro, atualizaNomeMembro, alternaCapacidadeMembro, adicionaAcaoMembro, removeAcaoMembro, atualizaNomeAcaoMembro, atualizaCapacidadeAcaoMembro, atualizaDanoAcaoMembro, salvar, voltar }}>
             <SPA__PaginaGameDesignerSeres__EditarMembros />
         </Contexto__PaginaGameDesignerSeres__EditarMembros.Provider>
     );
@@ -106,7 +108,7 @@ export const Contexto__PaginaGameDesignerSeres__EditarMembros__Provider = ({ fkS
 
 function useListagemCapacidadesInatas() {
     return useNoraGraphQLListagem('CapacidadeInata', {
-        select: ['id', 'nome'],
+        select: ['id', 'nome', 'nomeInteracao'],
         camposFiltroConsulta: ['nome'],
         camposFiltroVisualizacao: ['nome'],
         itensPorPagina: 100,

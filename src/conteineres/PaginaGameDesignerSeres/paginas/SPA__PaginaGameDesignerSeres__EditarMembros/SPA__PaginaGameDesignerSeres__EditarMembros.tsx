@@ -55,24 +55,36 @@ export default function SPA__PaginaGameDesignerSeres__EditarMembros() {
 
                                 {membro.acoes.length > 0 && (
                                     <div className={styles.lista_acoes_membro}>
-                                        {membro.acoes.map(acao => (
-                                            <div key={acao.idLocal} className={styles.acao_membro}>
-                                                <label className={styles.campo}>
-                                                    <span>Nome da ação</span>
-                                                    <input type="text" value={acao.nome} onChange={evento => contexto.atualizaNomeAcaoMembro(membro.idLocal, acao.idLocal, evento.target.value)} disabled={contexto.salvando} />
-                                                </label>
+                                        {membro.acoes.map(acao => {
+                                            const capacidadeAcao = capacidadesDoMembro.find(capacidade => capacidade.id === acao.idCapacidadeInata);
+                                            const acaoDanificavel = capacidadeAcao?.nomeInteracao === 'Danificável';
 
-                                                <label className={styles.campo}>
-                                                    <span>Capacidade Inata utilizada</span>
-                                                    <select value={acao.idCapacidadeInata} onChange={evento => contexto.atualizaCapacidadeAcaoMembro(membro.idLocal, acao.idLocal, Number(evento.target.value))} disabled={contexto.salvando}>
-                                                        <option value={0}>Selecione</option>
-                                                        {capacidadesDoMembro.map(capacidade => <option key={capacidade.id} value={capacidade.id}>{capacidade.nome}</option>)}
-                                                    </select>
-                                                </label>
+                                            return (
+                                                <div key={acao.idLocal} className={styles.acao_membro}>
+                                                    <label className={styles.campo}>
+                                                        <span>Nome da ação</span>
+                                                        <input type="text" value={acao.nome} onChange={evento => contexto.atualizaNomeAcaoMembro(membro.idLocal, acao.idLocal, evento.target.value)} disabled={contexto.salvando} />
+                                                    </label>
 
-                                                <button type="button" className={styles.botao_remover} onClick={() => contexto.removeAcaoMembro(membro.idLocal, acao.idLocal)} disabled={contexto.salvando}>Remover ação</button>
-                                            </div>
-                                        ))}
+                                                    <label className={styles.campo}>
+                                                        <span>Capacidade Inata utilizada</span>
+                                                        <select value={acao.idCapacidadeInata} onChange={evento => contexto.atualizaCapacidadeAcaoMembro(membro.idLocal, acao.idLocal, Number(evento.target.value))} disabled={contexto.salvando}>
+                                                            <option value={0}>Selecione</option>
+                                                            {capacidadesDoMembro.map(capacidade => <option key={capacidade.id} value={capacidade.id}>{capacidade.nome}</option>)}
+                                                        </select>
+                                                    </label>
+
+                                                    {acaoDanificavel && (
+                                                        <label className={styles.campo}>
+                                                            <span>Dano</span>
+                                                            <input type="number" min={1} step={1} value={acao.parametros.dano} onChange={evento => contexto.atualizaDanoAcaoMembro(membro.idLocal, acao.idLocal, evento.target.value === '' ? '' : Number(evento.target.value))} disabled={contexto.salvando} />
+                                                        </label>
+                                                    )}
+
+                                                    <button type="button" className={styles.botao_remover} onClick={() => contexto.removeAcaoMembro(membro.idLocal, acao.idLocal)} disabled={contexto.salvando}>Remover ação</button>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </div>

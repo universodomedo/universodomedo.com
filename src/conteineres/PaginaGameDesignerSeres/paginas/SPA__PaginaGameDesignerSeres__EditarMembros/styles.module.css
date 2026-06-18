@@ -91,7 +91,7 @@
 
 .acao_membro {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    grid-template-columns: 1fr 1fr 8em auto;
     align-items: end;
     gap: 0.75em;
     padding: 0.75em;
