@@ -2,7 +2,7 @@
 
 import styles from './SeresNaSalaJogo.module.css';
 
-import { Eventos_Envia } from 'types-nora-api';
+import { Eventos_Envia, type KeyCombatenteMissaoFuncionalSalaDeJogoRuntime } from 'types-nora-api';
 
 import { eventoWs } from 'Hooks/useEventoWs';
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
@@ -12,9 +12,9 @@ export function SeresNaSalaJogo() {
 
     if (estadoCarregamento !== 'pronto' || mapaLogicoSalaJogo === null) return null;
 
-    function executaAcaoSerNaSala(keyAcao: string): void {
+    function executaAcaoSerNaSala(keyAcao: string, keyCombatenteAlvo: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime): void {
         if (mapaLogicoSalaJogo === null) return;
-        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.executaAcaoSerNaSala, { codigoSala: mapaLogicoSalaJogo.codigoSala, keyAcao });
+        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.executaAcaoSerNaSala, { codigoSala: mapaLogicoSalaJogo.codigoSala, keyAcao, keyCombatenteAlvo });
     };
 
     return (
@@ -46,7 +46,12 @@ export function SeresNaSalaJogo() {
                                             <div className={styles.bloco_acoes_ser_na_sala}>
                                                 <strong className={styles.titulo_acoes_ser_na_sala}>Ações disponíveis</strong>
                                                 <div className={styles.lista_acoes_ser_na_sala}>
-                                                    {membro.acoesDisponiveis.map(acao => ser.papel === 'controlado' ? <button key={acao.key} type="button" title={`${acao.origem.nomeMembro} / ${acao.origem.nomeCapacidadeInata} / ${acao.origem.nomeInteracaoCapacidadeInata}`} onClick={() => executaAcaoSerNaSala(acao.key)}>{acao.nome}</button> : <small key={acao.key} title={`${acao.origem.nomeMembro} / ${acao.origem.nomeCapacidadeInata} / ${acao.origem.nomeInteracaoCapacidadeInata}`}>{acao.nome}</small>)}
+                                                    {membro.acoesDisponiveis.map(acao => {
+                                                        const alvos = seresNaSala.filter(serAlvo => serAlvo.keyInstancia !== ser.keyInstancia);
+                                                        if (ser.papel !== 'controlado') return <small key={acao.key} title={`${acao.origem.nomeMembro} / ${acao.origem.nomeCapacidadeInata} / ${acao.origem.nomeInteracaoCapacidadeInata}`}>{acao.nome}</small>;
+                                                        if (alvos.length === 0) return <small key={acao.key} title="Nenhum alvo disponível">{acao.nome}</small>;
+                                                        return alvos.map(alvo => <button key={`${acao.key}:${alvo.keyInstancia}`} type="button" title={`${acao.origem.nomeMembro} / ${acao.origem.nomeCapacidadeInata} / ${acao.origem.nomeInteracaoCapacidadeInata}`} onClick={() => executaAcaoSerNaSala(acao.key, alvo.keyInstancia)}>{acao.nome} em {alvo.nome}</button>);
+                                                    })}
                                                 </div>
                                             </div>
                                         ) : null}
