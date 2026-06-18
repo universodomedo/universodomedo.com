@@ -37,7 +37,6 @@ export function ContextoEventosUsuarioProvider({ children }: { children: React.R
     const { estaAutenticado } = useContextoAutenticacao();
     const epoch = useSocketEpoch();
 
-    // Etapa 14: a Central é composição GraphQL agregada (eventos + tutoriais), escopada no servidor. executarAoMontar=false: o disparo é controlado por auth/epoch/abrir. BARRA = carregamento não-bloqueante.
     const consultaEventos = useNoraGraphQLConsulta(() => GraphqlLeituras.EventoUsuario.eventos.varios({ parametros: { limit: 100, offset: 0 }, select: SELECT_EVENTO_CENTRAL }), { valorInicial: [], carregando: 'Carregando eventos', mensagemErro: 'Não foi possível carregar seus eventos.', executarAoMontar: false, carregamento: NoraApiCarregamento.BARRA });
     const consultaTutoriais = useNoraGraphQLConsulta(() => GraphqlLeituras.UsuarioTutorial.eventos.varios({ parametros: { limit: 100, offset: 0 }, select: SELECT_TUTORIAL_CENTRAL }), { valorInicial: [], carregando: 'Carregando tutoriais', mensagemErro: 'Não foi possível carregar seus tutoriais.', executarAoMontar: false, carregamento: NoraApiCarregamento.BARRA });
 
