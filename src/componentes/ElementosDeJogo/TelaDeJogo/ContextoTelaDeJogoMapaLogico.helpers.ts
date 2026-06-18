@@ -39,7 +39,13 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
         if (!Number.isFinite(ser.posicao.x) || !Number.isInteger(ser.posicao.x)) return `Ser ${ser.nome} veio com posição X inválida.`;
         if (!Number.isFinite(ser.posicao.y) || !Number.isInteger(ser.posicao.y)) return `Ser ${ser.nome} veio com posição Y inválida.`;
         if (ser.posicao.x < 0 || ser.posicao.y < 0 || ser.posicao.x >= payload.mapaLogico.larguraMetros || ser.posicao.y >= payload.mapaLogico.alturaMetros) return `Ser ${ser.nome} veio fora dos limites métricos do mapa.`;
+        if (!Array.isArray(ser.estatisticasDanificaveis)) return `Ser ${ser.nome} veio sem estatísticas danificáveis válidas.`;
         if (!Array.isArray(ser.membros)) return `Ser ${ser.nome} veio sem membros válidos.`;
+
+        for (const estatistica of ser.estatisticasDanificaveis) {
+            if (!Number.isInteger(estatistica.id) || estatistica.id <= 0 || !estatistica.nome) return `Ser ${ser.nome} veio com estatística danificável inválida.`;
+            if (!Number.isFinite(estatistica.valorAtual) || !Number.isFinite(estatistica.valorMaximo)) return `Estatística ${estatistica.nome} veio com valores inválidos.`;
+        }
 
         for (const membro of ser.membros) {
             if (!Number.isInteger(membro.id) || membro.id <= 0 || !membro.nome) return `Ser ${ser.nome} veio com membro inválido.`;
@@ -102,7 +108,7 @@ function criaOcupanteVisualMapaLogico(ocupante: OcupanteMapaLogicoSalaJogoWsDto,
 };
 
 function criaSerVisualMapaLogico(ser: SerNaSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto): SerVisualMapaLogicoTelaJogo {
-    return { ...ser, posicao: { ...ser.posicao }, membros: ser.membros.map(membro => ({ id: membro.id, nome: membro.nome, capacidades: membro.capacidades.map(capacidade => ({ id: capacidade.id, nome: capacidade.nome, nomeInteracao: capacidade.nomeInteracao })), acoesDisponiveis: membro.acoesDisponiveis.map(acao => ({ key: acao.key, nome: acao.nome, estado: acao.estado, origem: { ...acao.origem } })) })), rotuloCurto: criaRotuloCurtoNome(ser.nome), estiloMarcador: criaEstiloMarcadorMapaLogico(ser.posicao, payload) };
+    return { ...ser, posicao: { ...ser.posicao }, estatisticasDanificaveis: ser.estatisticasDanificaveis.map(estatistica => ({ ...estatistica })), membros: ser.membros.map(membro => ({ id: membro.id, nome: membro.nome, capacidades: membro.capacidades.map(capacidade => ({ id: capacidade.id, nome: capacidade.nome, nomeInteracao: capacidade.nomeInteracao })), acoesDisponiveis: membro.acoesDisponiveis.map(acao => ({ key: acao.key, nome: acao.nome, estado: acao.estado, origem: { ...acao.origem } })) })), rotuloCurto: criaRotuloCurtoNome(ser.nome), estiloMarcador: criaEstiloMarcadorMapaLogico(ser.posicao, payload) };
 };
 
 function criaInteragivelVisualMapaLogico(interagivel: InteragivelPercebidoSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto): InteragivelVisualMapaLogicoTelaJogo {

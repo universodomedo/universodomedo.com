@@ -45,6 +45,7 @@
 
 .lista_seres_na_sala,
 .lista_membros_ser_na_sala,
+.lista_estatisticas_ser_na_sala,
 .lista_capacidades_ser_na_sala,
 .bloco_acoes_ser_na_sala {
     display: grid;
@@ -70,6 +71,10 @@
     gap: 0.35em;
 }
 
+.lista_estatisticas_ser_na_sala {
+    grid-template-columns: repeat(auto-fit, minmax(8em, 1fr));
+}
+
 .titulo_acoes_ser_na_sala {
     font-size: 0.72em;
 }
@@ -81,12 +86,19 @@
 }
 
 .lista_capacidades_ser_na_sala small,
+.lista_estatisticas_ser_na_sala small,
 .lista_acoes_ser_na_sala small {
     padding: 0.25em 0.4em;
     border: 0.06em solid rgba(255, 255, 255, 0.16);
     border-radius: 0.28em;
     color: #dcefe9;
     background: #26383c;
+}
+
+.lista_estatisticas_ser_na_sala small {
+    border-color: rgba(255, 95, 95, 0.34);
+    color: #ffe6e6;
+    background: #3b2020;
 }
 
 .lista_acoes_ser_na_sala small {

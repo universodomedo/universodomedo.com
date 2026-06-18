@@ -22,6 +22,11 @@ export function SeresNaSalaJogo() {
                         <article key={ser.keyInstancia} className={styles.item_ser_na_sala}>
                             <strong>{ser.nome}</strong>
                             <span className={styles.posicao_ser_na_sala}>Posição {ser.posicao.x}m,{ser.posicao.y}m</span>
+                            {ser.estatisticasDanificaveis.length > 0 ? (
+                                <div className={styles.lista_estatisticas_ser_na_sala}>
+                                    {ser.estatisticasDanificaveis.map(estatistica => <small key={estatistica.id}>{estatistica.nome}: {estatistica.valorAtual}/{estatistica.valorMaximo}</small>)}
+                                </div>
+                            ) : null}
                             <div className={styles.lista_membros_ser_na_sala}>
                                 {ser.membros.map(membro => (
                                     <section key={membro.id} className={styles.item_membro_ser_na_sala}>

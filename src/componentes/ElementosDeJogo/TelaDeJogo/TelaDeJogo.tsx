@@ -6,18 +6,20 @@ import type { ResultadoMissaoFuncionalSalaDeJogoRuntime, ResumoMissaoFuncionalSa
 
 import { Cena3DSalaJogo } from './Cena3DSalaJogo';
 import { ContextoTelaDeJogoMapaLogicoProvider } from './ContextoTelaDeJogoMapaLogico';
+import { SeresNaSalaJogo } from './SeresNaSalaJogo';
 
 type TelaDeJogoProps = {
     codigoSala: SalaDeJogo_Codigo;
-    missaoFuncional: ResumoMissaoFuncionalSalaDeJogoRuntime | null;
-    resultadoMissaoFuncional: ResultadoMissaoFuncionalSalaDeJogoRuntime | null;
+    missaoFuncional?: ResumoMissaoFuncionalSalaDeJogoRuntime | null;
+    resultadoMissaoFuncional?: ResultadoMissaoFuncionalSalaDeJogoRuntime | null;
 };
 
 export default function TelaDeJogo(props: TelaDeJogoProps) {
     return (
         <div className={styles.recipiente_tela_jogo}>
             <ContextoTelaDeJogoMapaLogicoProvider codigoSala={props.codigoSala}>
-                <Cena3DSalaJogo missaoFuncional={props.missaoFuncional} resultadoMissaoFuncional={props.resultadoMissaoFuncional} />
+                <Cena3DSalaJogo missaoFuncional={props.missaoFuncional ?? null} resultadoMissaoFuncional={props.resultadoMissaoFuncional ?? null} />
+                <SeresNaSalaJogo />
             </ContextoTelaDeJogoMapaLogicoProvider>
         </div>
     );
