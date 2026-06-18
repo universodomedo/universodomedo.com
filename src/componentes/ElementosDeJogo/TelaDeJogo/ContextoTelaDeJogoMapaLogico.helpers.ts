@@ -34,7 +34,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
     }
 
     for (const ser of payload.seresNaSala) {
-        if (!Number.isInteger(ser.id) || ser.id <= 0 || !ser.nome) return 'Ser persistido da sala veio sem identificação válida.';
+        if (!ser.keyInstancia || !Number.isInteger(ser.id) || ser.id <= 0 || !ser.nome) return 'Ser persistido da sala veio sem identificação válida.';
         if (!ser.posicao) return `Ser ${ser.nome} veio sem posição lógica.`;
         if (!Number.isFinite(ser.posicao.x) || !Number.isInteger(ser.posicao.x)) return `Ser ${ser.nome} veio com posição X inválida.`;
         if (!Number.isFinite(ser.posicao.y) || !Number.isInteger(ser.posicao.y)) return `Ser ${ser.nome} veio com posição Y inválida.`;
@@ -53,6 +53,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
             for (const acao of membro.acoesDisponiveis) {
                 if (!acao.key || !acao.nome || acao.estado !== 'DISPONIVEL') return `Membro ${membro.nome} veio com ação disponível inválida.`;
                 if (!acao.origem) return `Ação ${acao.nome} veio sem origem.`;
+                if (acao.origem.keyInstanciaSer !== ser.keyInstancia) return `Ação ${acao.nome} veio com origem de instância inconsistente.`;
                 if (acao.origem.idSer !== ser.id || acao.origem.nomeSer !== ser.nome) return `Ação ${acao.nome} veio com origem de ser inconsistente.`;
                 if (acao.origem.idMembro !== membro.id || acao.origem.nomeMembro !== membro.nome) return `Ação ${acao.nome} veio com origem de membro inconsistente.`;
                 if (!Number.isInteger(acao.origem.idCapacidadeInata) || acao.origem.idCapacidadeInata <= 0 || !acao.origem.nomeCapacidadeInata || !acao.origem.nomeInteracaoCapacidadeInata) return `Ação ${acao.nome} veio com origem de capacidade inata inválida.`;

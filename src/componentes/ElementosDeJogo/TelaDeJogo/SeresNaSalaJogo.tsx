@@ -19,7 +19,7 @@ export function SeresNaSalaJogo() {
             {seresNaSala.length === 0 ? <span className={styles.estado_vazio_seres_na_sala}>Nenhum ser persistido carregado.</span> : (
                 <div className={styles.lista_seres_na_sala}>
                     {seresNaSala.map(ser => (
-                        <article key={ser.id} className={styles.item_ser_na_sala}>
+                        <article key={ser.keyInstancia} className={styles.item_ser_na_sala}>
                             <strong>{ser.nome}</strong>
                             <span className={styles.posicao_ser_na_sala}>Posição {ser.posicao.x}m,{ser.posicao.y}m</span>
                             <div className={styles.lista_membros_ser_na_sala}>
