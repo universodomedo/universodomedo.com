@@ -165,3 +165,71 @@
     transform: translateX(-50%) rotate(45deg);
     width: .65em;
 }
+
+.fundo_modal_alvo {
+    align-items: center;
+    background-color: rgba(0, 0, 0, .72);
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    padding: 1em;
+    position: fixed;
+    z-index: 30;
+}
+
+.modal_alvo {
+    background-color: #18151F;
+    border: .08em solid #625D70;
+    border-radius: .45em;
+    box-shadow: 0 .55em 1.6em rgba(0, 0, 0, .45);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: .8em;
+    max-width: 24em;
+    padding: .95em;
+    width: 100%;
+}
+
+.cabecalho_modal_alvo {
+    align-items: center;
+    display: flex;
+    gap: .8em;
+    justify-content: space-between;
+}
+
+.cabecalho_modal_alvo strong {
+    color: #D8C7A0;
+}
+
+.cabecalho_modal_alvo button,
+.lista_alvos button {
+    border: .08em solid #625D70;
+    border-radius: .35em;
+    background-color: #35323D;
+    color: white;
+    cursor: pointer;
+    font: inherit;
+    padding: .45em .65em;
+}
+
+.cabecalho_modal_alvo button:hover,
+.lista_alvos button:hover:not(:disabled) {
+    background-color: #514C5C;
+}
+
+.lista_alvos {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+}
+
+.lista_alvos span {
+    color: #B7B1C4;
+    font-size: .9em;
+}
+
+.lista_alvos button:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { createContext, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Eventos_Emite, type MapaLogicoSalaJogoPayloadWsDto, type PAYLOAD__EmitirMapaLogicoSalaJogo, type RESPONSE__EmitirMapaLogicoSalaJogo, type SalaDeJogo_Codigo } from 'types-nora-api';
@@ -17,6 +17,10 @@ export function useContextoTelaDeJogoMapaLogico(): ContextoTelaDeJogoMapaLogicoP
     const contexto = useContext(ContextoTelaDeJogoMapaLogico);
     if (!contexto) throw new Error('useContextoTelaDeJogoMapaLogico precisa estar dentro de ContextoTelaDeJogoMapaLogicoProvider');
     return contexto;
+};
+
+export function useContextoTelaDeJogoMapaLogicoOpcional(): ContextoTelaDeJogoMapaLogicoProps | null {
+    return useContext(ContextoTelaDeJogoMapaLogico) ?? null;
 };
 
 export function ContextoTelaDeJogoMapaLogicoProvider({ codigoSala, children }: { codigoSala: SalaDeJogo_Codigo; children: ReactNode; }) {

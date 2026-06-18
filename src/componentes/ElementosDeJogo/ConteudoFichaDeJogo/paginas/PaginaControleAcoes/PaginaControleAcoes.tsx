@@ -1,24 +1,45 @@
 import styles from './styles.module.css';
 
-import type { AcaoDisponivel } from 'types-nora-api';
+import { useState } from 'react';
+import type { AcaoDisponivel, KeyCombatenteMissaoFuncionalSalaDeJogoRuntime, SerNaSalaJogoWsDto } from 'types-nora-api';
 
 import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonagem/contexto';
 import type { GrupoAcoesPorCapacidadeFicha } from 'Contextos/ContextoFichaDePersonagem/contexto';
 import { useContextoControleAcoesRuntime } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAcoesRuntime/contexto';
+import { useContextoTelaDeJogoMapaLogicoOpcional } from 'Componentes/ElementosDeJogo/TelaDeJogo/ContextoTelaDeJogoMapaLogico';
 
 export default function PaginaControleAcoes() {
     const { acoesPorStatusECapacidade, desativarAcoes } = useContextoFichaDePersonagem();
     const { executaAcao } = useContextoControleAcoesRuntime();
+    const mapaLogico = useContextoTelaDeJogoMapaLogicoOpcional();
+    const [acaoComSelecaoAlvo, setAcaoComSelecaoAlvo] = useState<AcaoDisponivel | null>(null);
+    const seresNaSala = mapaLogico?.seresNaSala ?? [];
+
+    function solicitaExecucaoAcao(acao: AcaoDisponivel): void {
+        if (acao.execucao.tipo === 'combatente_sala') {
+            setAcaoComSelecaoAlvo(acao);
+            return;
+        }
+
+        executaAcao(acao.key);
+    };
+
+    function executaAcaoComAlvo(keyCombatenteAlvo: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime): void {
+        if (!acaoComSelecaoAlvo) return;
+        executaAcao(acaoComSelecaoAlvo.key, keyCombatenteAlvo);
+        setAcaoComSelecaoAlvo(null);
+    };
 
     return (
         <div className={styles.painel_acoes}>
-            {acoesPorStatusECapacidade.realizaveis.length > 0 && <SecaoAcoesFicha titulo="Ações Realizáveis" grupos={acoesPorStatusECapacidade.realizaveis} desativarAcoes={desativarAcoes} executaAcao={executaAcao} />}
-            {acoesPorStatusECapacidade.bloqueadas.length > 0 && <SecaoAcoesFicha titulo="Ações Bloqueadas" grupos={acoesPorStatusECapacidade.bloqueadas} desativarAcoes={desativarAcoes} executaAcao={executaAcao} />}
+            {acoesPorStatusECapacidade.realizaveis.length > 0 && <SecaoAcoesFicha titulo="Ações Realizáveis" grupos={acoesPorStatusECapacidade.realizaveis} desativarAcoes={desativarAcoes} executaAcao={solicitaExecucaoAcao} />}
+            {acoesPorStatusECapacidade.bloqueadas.length > 0 && <SecaoAcoesFicha titulo="Ações Bloqueadas" grupos={acoesPorStatusECapacidade.bloqueadas} desativarAcoes={desativarAcoes} executaAcao={solicitaExecucaoAcao} />}
+            {acaoComSelecaoAlvo && <ModalSelecaoAlvoAcao acao={acaoComSelecaoAlvo} seresNaSala={seresNaSala} cancelar={() => setAcaoComSelecaoAlvo(null)} confirmar={executaAcaoComAlvo} />}
         </div>
     );
 };
 
-function SecaoAcoesFicha({ titulo, grupos, desativarAcoes, executaAcao }: { titulo: string; grupos: GrupoAcoesPorCapacidadeFicha[]; desativarAcoes: boolean; executaAcao: (keyAcao: string) => void; }) {
+function SecaoAcoesFicha({ titulo, grupos, desativarAcoes, executaAcao }: { titulo: string; grupos: GrupoAcoesPorCapacidadeFicha[]; desativarAcoes: boolean; executaAcao: (acao: AcaoDisponivel) => void; }) {
     return (
         <section className={styles.secao_acoes}>
             <h3 className={styles.titulo_secao}>{titulo}</h3>
@@ -27,7 +48,7 @@ function SecaoAcoesFicha({ titulo, grupos, desativarAcoes, executaAcao }: { titu
     );
 };
 
-function GrupoAcoesFicha({ grupo, desativarAcoes, executaAcao }: { grupo: GrupoAcoesPorCapacidadeFicha; desativarAcoes: boolean; executaAcao: (keyAcao: string) => void; }) {
+function GrupoAcoesFicha({ grupo, desativarAcoes, executaAcao }: { grupo: GrupoAcoesPorCapacidadeFicha; desativarAcoes: boolean; executaAcao: (acao: AcaoDisponivel) => void; }) {
     return (
         <div className={styles.grupo_capacidade}>
             <h4 className={styles.titulo_capacidade}>{grupo.capacidadeExibicao.nome}</h4>
@@ -38,13 +59,13 @@ function GrupoAcoesFicha({ grupo, desativarAcoes, executaAcao }: { grupo: GrupoA
     );
 };
 
-function AcaoEmFicha({ acao, desativarAcoes, executaAcao }: { acao: AcaoDisponivel; desativarAcoes: boolean; executaAcao: (keyAcao: string) => void; }) {
+function AcaoEmFicha({ acao, desativarAcoes, executaAcao }: { acao: AcaoDisponivel; desativarAcoes: boolean; executaAcao: (acao: AcaoDisponivel) => void; }) {
     const acaoPodeExecutar = acao.habilitado && !desativarAcoes;
     const status = acao.habilitado ? 'Realizável' : 'Bloqueada';
 
     function acionar(): void {
         if (!acaoPodeExecutar) return;
-        executaAcao(acao.key);
+        executaAcao(acao);
     };
 
     return (
@@ -62,5 +83,22 @@ function AcaoEmFicha({ acao, desativarAcoes, executaAcao }: { acao: AcaoDisponiv
                 <small>{acao.key}</small>
             </span>
         </button>
+    );
+};
+
+function ModalSelecaoAlvoAcao({ acao, seresNaSala, cancelar, confirmar }: { acao: AcaoDisponivel; seresNaSala: readonly SerNaSalaJogoWsDto[]; cancelar: () => void; confirmar: (keyCombatenteAlvo: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime) => void; }) {
+    return (
+        <div className={styles.fundo_modal_alvo}>
+            <section className={styles.modal_alvo} role="dialog" aria-modal="true" aria-label={`Selecionar alvo para ${acao.nome}`}>
+                <header className={styles.cabecalho_modal_alvo}>
+                    <strong>{acao.nome}</strong>
+                    <button type="button" onClick={cancelar}>Cancelar</button>
+                </header>
+                <div className={styles.lista_alvos}>
+                    {seresNaSala.length === 0 && <span>Nenhum alvo disponível.</span>}
+                    {seresNaSala.map(ser => <button key={ser.keyInstancia} type="button" disabled={ser.papel === 'controlado'} onClick={() => confirmar(ser.keyInstancia)}>{ser.nome}{ser.papel === 'controlado' ? ' (ator)' : ''}</button>)}
+                </div>
+            </section>
+        </div>
     );
 };

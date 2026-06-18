@@ -1,13 +1,13 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import { Eventos_Envia, type CodigoRecuperarFichaRuntime } from 'types-nora-api';
+import { Eventos_Envia, type CodigoRecuperarFichaRuntime, type KeyCombatenteMissaoFuncionalSalaDeJogoRuntime } from 'types-nora-api';
 
 import { eventoWs } from 'Hooks/useEventoWs';
 import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonagem/contexto';
 
 interface ContextoControleAcoesRuntimeProps {
-    executaAcao: (keyAcao: string) => void;
+    executaAcao: (keyAcao: string, keyCombatenteAlvo?: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime) => void;
 };
 
 const ContextoControleAcoesRuntime = createContext<ContextoControleAcoesRuntimeProps | undefined>(undefined);
@@ -21,11 +21,11 @@ export const useContextoControleAcoesRuntime = (): ContextoControleAcoesRuntimeP
 export const ContextoControleAcoesRuntimeProvider = ({ children, codigoRecuperarFichaRuntime }: { children: React.ReactNode; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; }) => {
     const { desativarAcoes } = useContextoFichaDePersonagem();
 
-    function executaAcao(keyAcao: string): void {
+    function executaAcao(keyAcao: string, keyCombatenteAlvo?: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime): void {
         if (desativarAcoes) return;
         if (!codigoRecuperarFichaRuntime) return;
 
-        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.executaAcao, { codigoRecuperarFichaRuntime, keyAcao });
+        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.executaAcao, { codigoRecuperarFichaRuntime, keyAcao, keyCombatenteAlvo });
     };
 
     return (
@@ -36,7 +36,7 @@ export const ContextoControleAcoesRuntimeProvider = ({ children, codigoRecuperar
 };
 
 export const ContextoControleAcoesRuntimeSomenteLeituraProvider = ({ children }: { children: React.ReactNode; }) => {
-    function executaAcao(keyAcao: string): void { void keyAcao; return; };
+    function executaAcao(keyAcao: string, keyCombatenteAlvo?: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime): void { void keyAcao; void keyCombatenteAlvo; return; };
 
     return (
         <ContextoControleAcoesRuntime.Provider value={{ executaAcao }}>

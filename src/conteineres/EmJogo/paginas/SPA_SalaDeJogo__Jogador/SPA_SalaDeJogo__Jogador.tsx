@@ -7,6 +7,7 @@ import { useContextoSalaDeJogo__Jogador } from "Contextos/ContextoSalaDeJogo__Jo
 import TelaDeJogo from "Componentes/ElementosDeJogo/TelaDeJogo/TelaDeJogo";
 import SwiperDireita from 'Componentes/ElementosVisuais/SwiperDireita/SwiperDireita';
 import ConteudoFichaDeJogo from 'Componentes/ElementosDeJogo/ConteudoFichaDeJogo/ConteudoFichaDeJogo';
+import { ContextoTelaDeJogoMapaLogicoProvider } from 'Componentes/ElementosDeJogo/TelaDeJogo/ContextoTelaDeJogoMapaLogico';
 import { eventoWs } from 'Hooks/useEventoWs';
 import { toast } from 'Hooks/useToast';
 
@@ -37,7 +38,9 @@ export default function SPA_SalaDeJogo__Jogador() {
                 </div>
             </div>
             <SwiperDireita>
-                <ConteudoFichaDeJogo JDadosFichaEmJogo={J_fichaAtualizada} desativarAcoes={resultadoMissaoFuncional !== null} exibirHabilidadesRuntime exibirAcoesRuntime exibirModificadoresRuntime codigoRecuperarFichaRuntime={`${codigoSala}_${objetoEmJogo.objetoInicialSala.idFicha}`} codigoSala={codigoSala} />
+                <ContextoTelaDeJogoMapaLogicoProvider codigoSala={codigoSala}>
+                    <ConteudoFichaDeJogo JDadosFichaEmJogo={J_fichaAtualizada} desativarAcoes={resultadoMissaoFuncional !== null} exibirHabilidadesRuntime exibirAcoesRuntime exibirModificadoresRuntime codigoRecuperarFichaRuntime={`${codigoSala}_${objetoEmJogo.objetoInicialSala.idFicha}`} codigoSala={codigoSala} />
+                </ContextoTelaDeJogoMapaLogicoProvider>
             </SwiperDireita>
             {resultadoMissaoFuncional && (
                 <aside className={styles.finalizacao_sala}>
