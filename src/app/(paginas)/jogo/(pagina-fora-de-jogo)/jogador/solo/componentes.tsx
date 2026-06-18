@@ -41,6 +41,7 @@ export default function PaginaModoSolo_Conteiner() {
             <button type="button" onClick={() => iniciarModoSolo('MISSAO_FUNCIONAL_1')} disabled={codigoMissaoIniciando !== null}>{codigoMissaoIniciando === 'MISSAO_FUNCIONAL_1' ? 'Iniciando...' : 'Iniciar Missão Funcional 1'}</button>
             <button type="button" onClick={() => iniciarModoSolo('MISSAO_FUNCIONAL_2_OUVIR_REFEM')} disabled={codigoMissaoIniciando !== null}>{codigoMissaoIniciando === 'MISSAO_FUNCIONAL_2_OUVIR_REFEM' ? 'Iniciando...' : 'Iniciar Missão Funcional 2'}</button>
             <button type="button" onClick={() => iniciarModoSolo('MISSAO_FUNCIONAL_3_DERROTE_INIMIGO')} disabled={codigoMissaoIniciando !== null}>{codigoMissaoIniciando === 'MISSAO_FUNCIONAL_3_DERROTE_INIMIGO' ? 'Iniciando...' : 'Iniciar Missão Funcional 3'}</button>
+            <button type="button" onClick={() => iniciarModoSolo('MISSAO_FUNCIONAL_4_TEMPO_REAL')} disabled={codigoMissaoIniciando !== null}>{codigoMissaoIniciando === 'MISSAO_FUNCIONAL_4_TEMPO_REAL' ? 'Iniciando...' : 'Iniciar Missão Funcional 4'}</button>
         </ControladorSlot>
     );
 };

@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 
 import { useState } from 'react';
-import type { AcaoDisponivel, KeyCombatenteMissaoFuncionalSalaDeJogoRuntime, SerNaSalaJogoWsDto } from 'types-nora-api';
+import type { AcaoDisponivel, EstadoTemporalSalaDeJogoRuntime, KeyCombatenteMissaoFuncionalSalaDeJogoRuntime, SerNaSalaJogoWsDto } from 'types-nora-api';
 
 import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonagem/contexto';
 import type { GrupoAcoesPorCapacidadeFicha } from 'Contextos/ContextoFichaDePersonagem/contexto';
@@ -10,7 +10,7 @@ import { useContextoTelaDeJogoMapaLogicoOpcional } from 'Componentes/ElementosDe
 
 export default function PaginaControleAcoes() {
     const { acoesPorStatusECapacidade, desativarAcoes } = useContextoFichaDePersonagem();
-    const { executaAcao } = useContextoControleAcoesRuntime();
+    const { executaAcao, executaEsperar, estadoTemporalSalaJogo } = useContextoControleAcoesRuntime();
     const mapaLogico = useContextoTelaDeJogoMapaLogicoOpcional();
     const [acaoComSelecaoAlvo, setAcaoComSelecaoAlvo] = useState<AcaoDisponivel | null>(null);
     const seresNaSala = mapaLogico?.seresNaSala ?? [];
@@ -33,9 +33,44 @@ export default function PaginaControleAcoes() {
     return (
         <div className={styles.painel_acoes}>
             {acoesPorStatusECapacidade.realizaveis.length > 0 && <SecaoAcoesFicha titulo="Ações Realizáveis" grupos={acoesPorStatusECapacidade.realizaveis} desativarAcoes={desativarAcoes} executaAcao={solicitaExecucaoAcao} />}
+            {estadoTemporalSalaJogo && <SecaoAcaoTemporalEsperar estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} executaEsperar={executaEsperar} />}
             {acoesPorStatusECapacidade.bloqueadas.length > 0 && <SecaoAcoesFicha titulo="Ações Bloqueadas" grupos={acoesPorStatusECapacidade.bloqueadas} desativarAcoes={desativarAcoes} executaAcao={solicitaExecucaoAcao} />}
             {acaoComSelecaoAlvo && <ModalSelecaoAlvoAcao acao={acaoComSelecaoAlvo} seresNaSala={seresNaSala} cancelar={() => setAcaoComSelecaoAlvo(null)} confirmar={executaAcaoComAlvo} />}
         </div>
+    );
+};
+
+function SecaoAcaoTemporalEsperar({ estadoTemporalSalaJogo, desativarAcoes, executaEsperar }: { estadoTemporalSalaJogo: EstadoTemporalSalaDeJogoRuntime; desativarAcoes: boolean; executaEsperar: () => void; }) {
+    const acaoPodeExecutar = estadoTemporalSalaJogo.status !== 'RODANDO' && !desativarAcoes;
+    const status = estadoTemporalSalaJogo.status === 'RODANDO' ? 'Tempo em andamento' : 'Realizável';
+
+    function acionar(): void {
+        if (!acaoPodeExecutar) return;
+        executaEsperar();
+    };
+
+    return (
+        <section className={styles.secao_acoes}>
+            <h3 className={styles.titulo_secao}>Ações Temporais</h3>
+            <div className={styles.grupo_capacidade}>
+                <h4 className={styles.titulo_capacidade}>Tempo da Sala</h4>
+                <div className={styles.lista_acoes}>
+                    <button type="button" className={`${styles.acao} ${acaoPodeExecutar ? styles.acao_realizavel : styles.acao_bloqueada} ${!acaoPodeExecutar ? styles.acao_sem_interacao : ''}`} aria-disabled={!acaoPodeExecutar} aria-label={`Esperar - ${status}`} onClick={acionar}>
+                        <span className={styles.icone_acao} aria-hidden="true">E</span>
+                        <span className={styles.resumo_acao} role="tooltip">
+                            <strong>Esperar</strong>
+                            <span>Tempo da Sala</span>
+                            <span>Retoma a passagem do tempo</span>
+                            <span>{status}</span>
+                            <span className={styles.lista_requisitos}>
+                                <span>{estadoTemporalSalaJogo.status === 'RODANDO' ? 'O tempo já está em andamento' : 'O tempo está pausado'}</span>
+                            </span>
+                            <small>sala.temporal.esperar</small>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </section>
     );
 };
 

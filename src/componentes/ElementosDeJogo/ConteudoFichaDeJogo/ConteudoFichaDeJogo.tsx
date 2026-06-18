@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from "react";
-import { J_DadosFichaEmJogo, type CodigoRecuperarFichaRuntime, type SalaDeJogo_Codigo } from "types-nora-api";
+import { J_DadosFichaEmJogo, type CodigoRecuperarFichaRuntime, type EstadoTemporalSalaDeJogoRuntime, type SalaDeJogo_Codigo } from "types-nora-api";
 
 import { ContextoFichaDePersonagemProvider, useContextoFichaDePersonagem } from "Contextos/ContextoFichaDePersonagem/contexto";
 import combineProviders from 'Contextos/combineProviders';
@@ -21,21 +21,21 @@ const ProvidersControleFicha = combineProviders(
     ContextoControleAtributosPericiasProvider,
 );
 
-export default function ConteudoFichaDeJogo({ JDadosFichaEmJogo, desativarAcoes, exibirHabilidadesRuntime = false, exibirAcoesRuntime = false, exibirModificadoresRuntime = false, codigoRecuperarFichaRuntime, codigoSala }: { JDadosFichaEmJogo: J_DadosFichaEmJogo; desativarAcoes: boolean; exibirHabilidadesRuntime?: boolean; exibirAcoesRuntime?: boolean; exibirModificadoresRuntime?: boolean; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; codigoSala?: SalaDeJogo_Codigo; }) {
+export default function ConteudoFichaDeJogo({ JDadosFichaEmJogo, desativarAcoes, exibirHabilidadesRuntime = false, exibirAcoesRuntime = false, exibirModificadoresRuntime = false, codigoRecuperarFichaRuntime, codigoSala, estadoTemporalSalaJogo }: { JDadosFichaEmJogo: J_DadosFichaEmJogo; desativarAcoes: boolean; exibirHabilidadesRuntime?: boolean; exibirAcoesRuntime?: boolean; exibirModificadoresRuntime?: boolean; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; codigoSala?: SalaDeJogo_Codigo; estadoTemporalSalaJogo?: EstadoTemporalSalaDeJogoRuntime | null; }) {
     return (
         <ContextoControleNavegacaoFichaProvider>
             <ContextoFichaDePersonagemProvider JDadosFichaEmJogo={JDadosFichaEmJogo} desativarAcoes={desativarAcoes}>
-                <ConteudoFichaDeJogo_Interno exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime} codigoSala={codigoSala} />
+                <ConteudoFichaDeJogo_Interno exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime} codigoSala={codigoSala} estadoTemporalSalaJogo={estadoTemporalSalaJogo} />
             </ContextoFichaDePersonagemProvider>
         </ContextoControleNavegacaoFichaProvider>
     );
 };
 
-function ConteudoFichaDeJogo_Interno({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime, codigoRecuperarFichaRuntime, codigoSala }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; codigoSala?: SalaDeJogo_Codigo; }) {
+function ConteudoFichaDeJogo_Interno({ exibirHabilidadesRuntime, exibirAcoesRuntime, exibirModificadoresRuntime, codigoRecuperarFichaRuntime, codigoSala, estadoTemporalSalaJogo }: { exibirHabilidadesRuntime: boolean; exibirAcoesRuntime: boolean; exibirModificadoresRuntime: boolean; codigoRecuperarFichaRuntime?: CodigoRecuperarFichaRuntime; codigoSala?: SalaDeJogo_Codigo; estadoTemporalSalaJogo?: EstadoTemporalSalaDeJogoRuntime | null; }) {
     const { desativarAcoes } = useContextoFichaDePersonagem();
     const conteudo = <ConteudoFichaDeJogo_ComContexto exibirHabilidadesRuntime={exibirHabilidadesRuntime} exibirAcoesRuntime={exibirAcoesRuntime} exibirModificadoresRuntime={exibirModificadoresRuntime} codigoSala={codigoSala} />;
 
-    const conteudoComAcoes = !exibirAcoesRuntime ? conteudo : desativarAcoes ? <ContextoControleAcoesRuntimeSomenteLeituraProvider>{conteudo}</ContextoControleAcoesRuntimeSomenteLeituraProvider> : <ContextoControleAcoesRuntimeProvider codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime}>{conteudo}</ContextoControleAcoesRuntimeProvider>;
+    const conteudoComAcoes = !exibirAcoesRuntime ? conteudo : desativarAcoes ? <ContextoControleAcoesRuntimeSomenteLeituraProvider>{conteudo}</ContextoControleAcoesRuntimeSomenteLeituraProvider> : <ContextoControleAcoesRuntimeProvider codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime} codigoSala={codigoSala} estadoTemporalSalaJogo={estadoTemporalSalaJogo}>{conteudo}</ContextoControleAcoesRuntimeProvider>;
     const conteudoComTestesPericia = desativarAcoes ? <ContextoControleTestesPericiaRuntimeSomenteLeituraProvider>{conteudoComAcoes}</ContextoControleTestesPericiaRuntimeSomenteLeituraProvider> : <ContextoControleTestesPericiaRuntimeProvider codigoRecuperarFichaRuntime={codigoRecuperarFichaRuntime}>{conteudoComAcoes}</ContextoControleTestesPericiaRuntimeProvider>;
 
     return (

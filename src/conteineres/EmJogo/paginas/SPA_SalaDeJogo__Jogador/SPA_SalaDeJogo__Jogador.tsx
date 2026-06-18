@@ -12,7 +12,7 @@ import { eventoWs } from 'Hooks/useEventoWs';
 import { toast } from 'Hooks/useToast';
 
 export default function SPA_SalaDeJogo__Jogador() {
-    const { objetoEmJogo, J_fichaAtualizada, resultadoMissaoFuncional } = useContextoSalaDeJogo__Jogador();
+    const { objetoEmJogo, J_fichaAtualizada, resultadoMissaoFuncional, estadoTemporalSalaJogo } = useContextoSalaDeJogo__Jogador();
     const [fechandoSala, setFechandoSala] = useState(false);
     const codigoSala = objetoEmJogo.objetoInicialSala.codigoSalaDeJogo;
 
@@ -34,12 +34,12 @@ export default function SPA_SalaDeJogo__Jogador() {
         <div className={styles.recipiente_pagina_de_jogo}>
             <div className={styles.recipiente__pagina_de_jogo__superior}>
                 <div className={styles.recipiente_container_tela_de_jogo__em_pagina_de_jogo}>
-                    <TelaDeJogo codigoSala={codigoSala} missaoFuncional={objetoEmJogo.objetoInicialSala.missaoFuncional} resultadoMissaoFuncional={resultadoMissaoFuncional} />
+                    <TelaDeJogo codigoSala={codigoSala} missaoFuncional={objetoEmJogo.objetoInicialSala.missaoFuncional} resultadoMissaoFuncional={resultadoMissaoFuncional} estadoTemporalSalaJogo={estadoTemporalSalaJogo} />
                 </div>
             </div>
             <SwiperDireita>
                 <ContextoTelaDeJogoMapaLogicoProvider codigoSala={codigoSala}>
-                    <ConteudoFichaDeJogo JDadosFichaEmJogo={J_fichaAtualizada} desativarAcoes={resultadoMissaoFuncional !== null} exibirHabilidadesRuntime exibirAcoesRuntime exibirModificadoresRuntime codigoRecuperarFichaRuntime={`${codigoSala}_${objetoEmJogo.objetoInicialSala.idFicha}`} codigoSala={codigoSala} />
+                    <ConteudoFichaDeJogo JDadosFichaEmJogo={J_fichaAtualizada} desativarAcoes={resultadoMissaoFuncional !== null} exibirHabilidadesRuntime exibirAcoesRuntime exibirModificadoresRuntime codigoRecuperarFichaRuntime={`${codigoSala}_${objetoEmJogo.objetoInicialSala.idFicha}`} codigoSala={codigoSala} estadoTemporalSalaJogo={estadoTemporalSalaJogo} />
                 </ContextoTelaDeJogoMapaLogicoProvider>
             </SwiperDireita>
             {resultadoMissaoFuncional && (

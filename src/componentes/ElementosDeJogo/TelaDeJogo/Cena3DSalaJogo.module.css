@@ -161,6 +161,32 @@
     content: none;
 }
 
+.relogio_ficcional_sala_jogo {
+    position: absolute;
+    z-index: 4;
+    right: 1.3em;
+    bottom: 1.2em;
+    display: grid;
+    gap: 0.15em;
+    justify-items: end;
+    color: #f4efe4;
+    text-shadow: 0 0.12em 0.25em rgba(0, 0, 0, 0.84);
+    pointer-events: none;
+}
+
+.relogio_ficcional_sala_jogo span {
+    color: #a9c6e8;
+    font-size: 0.74em;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.relogio_ficcional_sala_jogo strong {
+    font-size: 1em;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+}
+
 .condicao_vitoria_pendente {
     color: #ffc89b;
 }

@@ -2,10 +2,10 @@
 
 import styles from './Cena3DSalaJogo.module.css';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import type { ResultadoMissaoFuncionalSalaDeJogoRuntime, ResumoMissaoFuncionalSalaDeJogoRuntime } from 'types-nora-api';
+import type { EstadoTemporalSalaDeJogoRuntime, ResultadoMissaoFuncionalSalaDeJogoRuntime, ResumoMissaoFuncionalSalaDeJogoRuntime } from 'types-nora-api';
 
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
 import { criaDocumentoCena3DSalaJogo } from './Cena3DSalaJogo.helpers';
@@ -14,6 +14,7 @@ import { Ambiente3DSalaJogo } from './Ambiente3DSalaJogo';
 interface Cena3DSalaJogoProps {
     readonly missaoFuncional: ResumoMissaoFuncionalSalaDeJogoRuntime | null;
     readonly resultadoMissaoFuncional: ResultadoMissaoFuncionalSalaDeJogoRuntime | null;
+    readonly estadoTemporalSalaJogo: EstadoTemporalSalaDeJogoRuntime | null;
 };
 
 interface ObjetivosMissaoSalaJogoProps {
@@ -21,7 +22,11 @@ interface ObjetivosMissaoSalaJogoProps {
     readonly concluida: boolean;
 };
 
-export function Cena3DSalaJogo({ missaoFuncional, resultadoMissaoFuncional }: Cena3DSalaJogoProps) {
+interface RelogioFiccionalSalaJogoProps {
+    readonly estadoTemporalSalaJogo: EstadoTemporalSalaDeJogoRuntime;
+};
+
+export function Cena3DSalaJogo({ missaoFuncional, resultadoMissaoFuncional, estadoTemporalSalaJogo }: Cena3DSalaJogoProps) {
     const { estadoCarregamento, erro, mapaLogicoSalaJogo, keysInteragiveisPercebidosNovos } = useContextoTelaDeJogoMapaLogico();
     const documento = useMemo(() => mapaLogicoSalaJogo === null ? null : criaDocumentoCena3DSalaJogo(mapaLogicoSalaJogo, keysInteragiveisPercebidosNovos), [keysInteragiveisPercebidosNovos, mapaLogicoSalaJogo]);
 
@@ -47,8 +52,41 @@ export function Cena3DSalaJogo({ missaoFuncional, resultadoMissaoFuncional }: Ce
         <div className={styles.recipiente_cena_3d_sala_jogo}>
             <Ambiente3DSalaJogo documento={documento} />
             {missaoFuncional && <ObjetivosMissaoSalaJogo missaoFuncional={missaoFuncional} concluida={resultadoMissaoFuncional?.resultado === 'VITORIA'} />}
+            {estadoTemporalSalaJogo && <RelogioFiccionalSalaJogo estadoTemporalSalaJogo={estadoTemporalSalaJogo} />}
         </div>
     );
+};
+
+function RelogioFiccionalSalaJogo({ estadoTemporalSalaJogo }: RelogioFiccionalSalaJogoProps) {
+    const [momentoAtualMs, setMomentoAtualMs] = useState(estadoTemporalSalaJogo.momentoAtualMs);
+
+    useEffect(() => {
+        const momentoReferenciaMs = estadoTemporalSalaJogo.momentoAtualMs;
+        const recebidoLocalmenteEmMs = Date.now();
+        setMomentoAtualMs(momentoReferenciaMs);
+
+        if (estadoTemporalSalaJogo.status !== 'RODANDO') return;
+
+        const intervalo = window.setInterval(() => {
+            setMomentoAtualMs(limitaMomentoFiccionalProjetado(momentoReferenciaMs + Math.max(0, Date.now() - recebidoLocalmenteEmMs) * estadoTemporalSalaJogo.escalaTempo, estadoTemporalSalaJogo.momentoLimiteProjecaoMs));
+        }, 33);
+
+        return () => {
+            window.clearInterval(intervalo);
+        };
+    }, [estadoTemporalSalaJogo]);
+
+    return (
+        <section className={styles.relogio_ficcional_sala_jogo} aria-label="Tempo da Sala">
+            <span>{estadoTemporalSalaJogo.status === 'RODANDO' ? 'Tempo em andamento' : 'Tempo pausado'}</span>
+            <strong>{formataMomentoFiccional(momentoAtualMs)}</strong>
+        </section>
+    );
+};
+
+function limitaMomentoFiccionalProjetado(momentoMs: number, momentoLimiteProjecaoMs: number | null): number {
+    if (momentoLimiteProjecaoMs === null) return momentoMs;
+    return Math.min(momentoMs, momentoLimiteProjecaoMs);
 };
 
 function ObjetivosMissaoSalaJogo({ missaoFuncional, concluida }: ObjetivosMissaoSalaJogoProps) {
@@ -66,3 +104,18 @@ function ObjetivosMissaoSalaJogo({ missaoFuncional, concluida }: ObjetivosMissao
         </section>
     );
 };
+
+function formataMomentoFiccional(momentoMs: number): string {
+    const data = new Date(momentoMs);
+    const dia = formataNumeroRelogio(data.getUTCDate(), 2);
+    const mes = formataNumeroRelogio(data.getUTCMonth() + 1, 2);
+    const ano = data.getUTCFullYear();
+    const hora = formataNumeroRelogio(data.getUTCHours(), 2);
+    const minuto = formataNumeroRelogio(data.getUTCMinutes(), 2);
+    const segundo = formataNumeroRelogio(data.getUTCSeconds(), 2);
+    const milissegundo = formataNumeroRelogio(data.getUTCMilliseconds(), 3);
+
+    return `${dia}/${mes}/${ano} ${hora}:${minuto}:${segundo}.${milissegundo}`;
+};
+
+function formataNumeroRelogio(valor: number, tamanho: number): string { return String(valor).padStart(tamanho, '0'); };
