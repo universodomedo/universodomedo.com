@@ -3,39 +3,28 @@
 import styles from './styles.module.css';
 
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent, type WheelEvent } from 'react';
-
-export type MissaoCatalogoDeMissoes = {
-    readonly id: number;
-    readonly nome: string;
-    readonly descricao: string;
-};
-
-export type CatalogoDeMissoesItem = {
-    readonly id: number;
-    readonly nome: string;
-    readonly missoes: readonly MissaoCatalogoDeMissoes[];
-};
+import type { CatalogoMissaoJogavelResumo, MissaoJogavelResumo } from 'types-nora-api';
 
 type CatalogoDeMissoesProps = {
-    readonly catalogos: readonly CatalogoDeMissoesItem[];
+    readonly catalogos: readonly CatalogoMissaoJogavelResumo[];
     readonly idMissaoSelecionada: number | null;
     readonly carregando: boolean;
-    readonly aoSelecionarMissao: (missao: MissaoCatalogoDeMissoes) => void;
+    readonly aoSelecionarMissao: (missao: MissaoJogavelResumo) => void;
 };
 
 type ItemCatalogoOrbital = {
     readonly tipo: 'catalogo';
     readonly id: string;
     readonly idCatalogo: number;
-    readonly catalogo: CatalogoDeMissoesItem;
+    readonly catalogo: CatalogoMissaoJogavelResumo;
 };
 
 type ItemMissaoOrbital = {
     readonly tipo: 'missao';
     readonly id: string;
     readonly idCatalogo: number;
-    readonly catalogo: CatalogoDeMissoesItem;
-    readonly missao: MissaoCatalogoDeMissoes;
+    readonly catalogo: CatalogoMissaoJogavelResumo;
+    readonly missao: MissaoJogavelResumo;
 };
 
 type ItemOrbital = ItemCatalogoOrbital | ItemMissaoOrbital;
@@ -162,7 +151,7 @@ export default function CatalogoDeMissoes({ catalogos, idMissaoSelecionada, carr
     );
 };
 
-function ItemOrbital({ item, indice, indiceSelecionado, idMissaoSelecionada, idsCatalogosFechados, aoSelecionarMissao, aoAlternarCatalogo }: { readonly item: ItemOrbital; readonly indice: number; readonly indiceSelecionado: number; readonly idMissaoSelecionada: number | null; readonly idsCatalogosFechados: readonly number[]; readonly aoSelecionarMissao: (missao: MissaoCatalogoDeMissoes) => void; readonly aoAlternarCatalogo: (idCatalogo: number) => void; }) {
+function ItemOrbital({ item, indice, indiceSelecionado, idMissaoSelecionada, idsCatalogosFechados, aoSelecionarMissao, aoAlternarCatalogo }: { readonly item: ItemOrbital; readonly indice: number; readonly indiceSelecionado: number; readonly idMissaoSelecionada: number | null; readonly idsCatalogosFechados: readonly number[]; readonly aoSelecionarMissao: (missao: MissaoJogavelResumo) => void; readonly aoAlternarCatalogo: (idCatalogo: number) => void; }) {
     const distancia = indice - indiceSelecionado;
     const estilo = montaEstiloItemOrbital(distancia, item.tipo);
 
@@ -181,16 +170,12 @@ function ItemOrbital({ item, indice, indiceSelecionado, idMissaoSelecionada, ids
 
     return (
         <button type="button" className={`${styles.item_orbital} ${styles.item_missao} ${selecionada ? styles.item_missao_selecionada : ''}`} style={estilo} onClick={() => aoSelecionarMissao(item.missao)}>
-            <span className={styles.icone_missao} aria-hidden="true" />
-            <span className={styles.textos_missao}>
-                <strong>{item.missao.nome}</strong>
-                <span>{item.missao.descricao}</span>
-            </span>
+            <strong className={styles.titulo_missao}>{item.missao.nome}</strong>
         </button>
     );
 };
 
-function montaItensOrbitais(catalogos: readonly CatalogoDeMissoesItem[], idsCatalogosFechados: readonly number[]): readonly ItemOrbital[] {
+function montaItensOrbitais(catalogos: readonly CatalogoMissaoJogavelResumo[], idsCatalogosFechados: readonly number[]): readonly ItemOrbital[] {
     const itens: ItemOrbital[] = [];
 
     catalogos.forEach(catalogo => {
@@ -233,7 +218,8 @@ function montaEstiloItemOrbital(distancia: number, tipo: ItemOrbital['tipo']): E
     const y = GEOMETRIA_ORBITAL.centroY + Math.sin(radianos) * GEOMETRIA_ORBITAL.raioY;
     const distanciaAbsoluta = Math.abs(distancia);
     const escalaBase = Math.max(0.72, 1 - distanciaAbsoluta * 0.07);
-    const escala = tipo === 'catalogo' ? escalaBase * 0.92 : escalaBase;
+    const realceCentral = distancia === 0 && tipo === 'missao' ? 1.08 : 1;
+    const escala = (tipo === 'catalogo' ? escalaBase * 0.92 : escalaBase) * realceCentral;
     const opacidade = Math.max(0.34, 1 - distanciaAbsoluta * 0.14);
 
     return {
