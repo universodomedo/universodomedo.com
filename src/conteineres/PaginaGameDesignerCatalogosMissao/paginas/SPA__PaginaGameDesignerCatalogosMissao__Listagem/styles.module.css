@@ -1,0 +1,61 @@
+.linha_catalogo {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    padding: 0.75em 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background-color: #273E45;
+}
+
+.dados_catalogo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.nome_catalogo {
+    font-size: 1em;
+}
+
+.meta_catalogo,
+.data_catalogo {
+    font-size: 0.82em;
+    opacity: 0.72;
+}
+
+.data_catalogo,
+.acoes_catalogo {
+    flex: 0 0 auto;
+}
+
+.acoes_catalogo {
+    display: flex;
+    gap: 0.5em;
+}
+
+.botao_secundario,
+.botao_perigo {
+    padding: 0.4em 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.botao_secundario:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.botao_perigo {
+    border-color: rgba(255, 98, 98, 0.7);
+    color: #FFB0B0;
+}
+
+.botao_perigo:hover {
+    background-color: rgba(255, 98, 98, 0.12);
+}
