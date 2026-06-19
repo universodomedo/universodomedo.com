@@ -1,0 +1,106 @@
+.fluxoMixer {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.5em;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.cabecalhoFluxo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.botaoEstado {
+    padding: 0.62em 1em;
+    border: 0;
+    border-radius: 0.35em;
+    background: #e0b85c;
+    color: #111;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.botaoEstado:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.tempoAtual {
+    color: rgba(255, 255, 255, 0.74);
+    font-weight: 700;
+}
+
+.areaFluxo {
+    display: grid;
+    grid-template-columns: 3em minmax(0, 1fr) 4em;
+    align-items: center;
+    gap: 1em;
+}
+
+.noInicio,
+.noFim {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5em;
+    border: 0.08em solid rgba(224, 184, 92, 0.35);
+    border-radius: 50%;
+    background: rgba(224, 184, 92, 0.14);
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 0.82em;
+    font-weight: 700;
+}
+
+.trilhaFluxo {
+    position: relative;
+    min-height: 4em;
+    cursor: grab;
+    touch-action: none;
+}
+
+.trilhaFluxo:active {
+    cursor: grabbing;
+}
+
+.trilhaFluxo:focus-visible {
+    outline: 0.16em solid rgba(224, 184, 92, 0.82);
+    outline-offset: 0.3em;
+}
+
+.linhaBase,
+.linhaExecutada {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 0.22em;
+    border-radius: 999em;
+    transform: translateY(-50%);
+}
+
+.linhaBase {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.linhaExecutada {
+    width: calc(var(--progresso) * 100%);
+    background: #e0b85c;
+}
+
+.marcadorExecucao {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--progresso) * 100%);
+    width: 1.45em;
+    height: 1.45em;
+    border: 0.18em solid #151515;
+    border-radius: 50%;
+    background: #e0b85c;
+    box-shadow: 0 0.35em 1.1em rgba(0, 0, 0, 0.35);
+    transform: translate(-50%, -50%);
+}

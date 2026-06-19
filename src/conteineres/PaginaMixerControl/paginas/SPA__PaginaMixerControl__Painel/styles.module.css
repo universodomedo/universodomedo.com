@@ -1,0 +1,46 @@
+.pagina {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 2em;
+}
+
+.painel {
+    width: min(48em, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1.4em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.5em;
+    background: rgba(12, 14, 18, 0.92);
+}
+
+.cabecalho {
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.titulo {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.descricao {
+    margin: 0.45em 0 0;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.status {
+    align-self: flex-start;
+    padding: 0.35em 0.7em;
+    border-radius: 0.35em;
+    background: rgba(255, 255, 255, 0.1);
+    font-size: 0.85em;
+}
+
+.erro {
+    margin: 0;
+    color: #ff9b9b;
+}
