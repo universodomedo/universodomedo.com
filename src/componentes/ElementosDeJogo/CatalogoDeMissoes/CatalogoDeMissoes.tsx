@@ -31,7 +31,7 @@ export default function CatalogoDeMissoes({ catalogos, idMissaoSelecionada, carr
 
     if (carregando) {
         return (
-            <section className={styles.catalogo_de_missoes}>
+            <section className={`${styles.catalogo_de_missoes} ${styles.catalogo_de_missoes_vazio}`}>
                 <div className={styles.estado_catalogo}>
                     <strong>Carregando missões</strong>
                     <span>Aguarde um instante.</span>
@@ -42,7 +42,7 @@ export default function CatalogoDeMissoes({ catalogos, idMissaoSelecionada, carr
 
     if (totalMissoes === 0) {
         return (
-            <section className={styles.catalogo_de_missoes}>
+            <section className={`${styles.catalogo_de_missoes} ${styles.catalogo_de_missoes_vazio}`}>
                 <div className={styles.estado_catalogo}>
                     <strong>Não há missões disponíveis</strong>
                     <span>Volte em breve para novos desafios solo.</span>
@@ -65,9 +65,8 @@ function GrupoCatalogo({ catalogo, indiceCatalogo, idMissaoSelecionada, aoSeleci
     return (
         <section className={styles.grupo_catalogo}>
             <header className={styles.cabecalho_catalogo}>
-                <span className={styles.marcador_catalogo} aria-hidden="true" />
                 <strong>{catalogo.nome}</strong>
-                <span>{catalogo.missoes.length} missões</span>
+                <span className={styles.marcador_catalogo} aria-hidden="true" />
             </header>
 
             <div className={styles.lista_missoes}>
@@ -78,11 +77,11 @@ function GrupoCatalogo({ catalogo, indiceCatalogo, idMissaoSelecionada, aoSeleci
 
                     return (
                         <button key={missao.id} type="button" className={`${styles.item_missao} ${selecionada ? styles.item_missao_selecionada : ''}`} style={estilo} onClick={() => aoSelecionarMissao(missao)}>
-                            <span className={styles.icone_missao} aria-hidden="true" />
                             <span className={styles.textos_missao}>
                                 <strong>{missao.nome}</strong>
                                 <span>{missao.descricao}</span>
                             </span>
+                            <span className={styles.icone_missao} aria-hidden="true" />
                         </button>
                     );
                 })}

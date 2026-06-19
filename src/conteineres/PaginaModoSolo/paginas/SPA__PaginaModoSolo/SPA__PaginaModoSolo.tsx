@@ -5,10 +5,10 @@ import type { Contexto__PaginaModoSolo__Props } from 'Contextos/Contexto__Pagina
 
 export default function SPA__PaginaModoSolo({ catalogosDisponiveis, idMissaoSelecionada, carregando, erro, selecionarMissao }: Contexto__PaginaModoSolo__Props) {
     return (
-        <main className={styles.pagina_modo_solo}>
+        <div className={styles.pagina_modo_solo}>
             {erro && <div className={styles.erro}>{erro}</div>}
             <section className={styles.secao_detalhamento} aria-hidden="true" />
             <section className={styles.secao_catalogo}><CatalogoDeMissoes catalogos={catalogosDisponiveis} idMissaoSelecionada={idMissaoSelecionada} carregando={carregando} aoSelecionarMissao={missao => selecionarMissao(missao.id)} /></section>
-        </main>
+        </div>
     );
 };
