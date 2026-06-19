@@ -1,0 +1,46 @@
+.linha_configuracao {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    padding: 0.75em 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background-color: #322F4C;
+}
+
+.dados_configuracao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.nome_configuracao {
+    font-size: 1em;
+}
+
+.meta_configuracao,
+.id_configuracao {
+    font-size: 0.82em;
+    opacity: 0.72;
+}
+
+.id_configuracao,
+.botao_secundario {
+    flex: 0 0 auto;
+}
+
+.botao_secundario {
+    padding: 0.4em 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.botao_secundario:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
