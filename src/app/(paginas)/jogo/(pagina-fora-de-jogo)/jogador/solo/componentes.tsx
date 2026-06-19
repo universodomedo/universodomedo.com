@@ -1,47 +1,75 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { CodigoMissaoFuncionalSalaDeJogoRuntime, Eventos_EnviaERecebe, PAGINAS } from 'types-nora-api';
+import styles from './styles.module.css';
 
-import { eventoWs, getSocket } from 'Hooks/useEventoWs';
-import { toast } from 'Hooks/useToast';
+import { useEffect, useMemo, useState } from 'react';
+import { EstruturaMissoesJogaveis, EventosApiRest, PAGINAS, type CatalogoMissaoJogavelResumo } from 'types-nora-api';
+
+import { NoraApi } from 'Api/NoraApi';
+import CatalogoDeMissoes from 'Componentes/ElementosDeJogo/CatalogoDeMissoes/CatalogoDeMissoes';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import JogoRouteGuard from '../../../JogoRouteGuard';
 
 export default function PaginaModoSolo_Conteiner() {
-    const router = useRouter();
-    const [codigoMissaoIniciando, setCodigoMissaoIniciando] = useState<CodigoMissaoFuncionalSalaDeJogoRuntime | null>(null);
+    const [estrutura, setEstrutura] = useState<EstruturaMissoesJogaveis | null>(null);
+    const [carregando, setCarregando] = useState(true);
+    const [erro, setErro] = useState<string | null>(null);
+    const [idMissaoSelecionada, setIdMissaoSelecionada] = useState<number | null>(null);
 
-    function iniciarModoSolo(codigoMissaoFuncional: CodigoMissaoFuncionalSalaDeJogoRuntime): void {
-        if (codigoMissaoIniciando) return;
+    useEffect(() => {
+        async function carregarEstrutura(): Promise<void> {
+            setCarregando(true);
+            setErro(null);
 
-        const socket = getSocket();
+            try {
+                const resposta = await NoraApi.RestGET(EventosApiRest.GET.MissoesJogaveis.estrutura, {}, { mensagemErro: 'Não foi possível carregar as Missões do Modo Solo.' });
+                setEstrutura(resposta);
+            } catch {
+                setErro('Não foi possível carregar as Missões do Modo Solo.');
+            } finally {
+                setCarregando(false);
+            }
+        };
 
-        if (!socket) {
-            toast.erro('Falha ao iniciar Modo Solo', 'WebSocket indisponível.');
+        void carregarEstrutura();
+    }, []);
+
+    const catalogosDisponiveis = useMemo<readonly CatalogoMissaoJogavelResumo[]>(() => {
+        if (!estrutura) return [];
+
+        return estrutura.catalogos.filter(catalogo => catalogo.ativo).map(catalogo => ({ ...catalogo, missoes: catalogo.missoes.filter(missao => missao.ativo) }));
+    }, [estrutura]);
+
+    const idsMissoesDisponiveis = useMemo<readonly number[]>(() => montaIdsMissoesDisponiveis(catalogosDisponiveis), [catalogosDisponiveis]);
+
+    useEffect(() => {
+        if (idsMissoesDisponiveis.length === 0) {
+            if (idMissaoSelecionada !== null) setIdMissaoSelecionada(null);
             return;
         }
 
-        setCodigoMissaoIniciando(codigoMissaoFuncional);
-
-        eventoWs(Eventos_EnviaERecebe.Jogo.eventos.iniciarModoSolo, { codigoMissaoFuncional }, {
-            onSuccess: () => {
-                router.push(PAGINAS.jogo.emJogo.href);
-            },
-            onError: (err) => {
-                setCodigoMissaoIniciando(null);
-                toast.erro('Falha ao iniciar Modo Solo', err.mensagem);
-            },
-        });
-    };
+        if (!idsMissoesDisponiveis.includes(idMissaoSelecionada ?? 0)) setIdMissaoSelecionada(idsMissoesDisponiveis[0]);
+    }, [idsMissoesDisponiveis, idMissaoSelecionada]);
 
     return (
         <ControladorSlot pagina={PAGINAS.jogo.jogador.solo} embrulho={JogoRouteGuard}>
-            <button type="button" onClick={() => iniciarModoSolo('MISSAO_FUNCIONAL_1')} disabled={codigoMissaoIniciando !== null}>{codigoMissaoIniciando === 'MISSAO_FUNCIONAL_1' ? 'Iniciando...' : 'Iniciar Missão Funcional 1'}</button>
-            <button type="button" onClick={() => iniciarModoSolo('MISSAO_FUNCIONAL_2_OUVIR_REFEM')} disabled={codigoMissaoIniciando !== null}>{codigoMissaoIniciando === 'MISSAO_FUNCIONAL_2_OUVIR_REFEM' ? 'Iniciando...' : 'Iniciar Missão Funcional 2'}</button>
-            <button type="button" onClick={() => iniciarModoSolo('MISSAO_FUNCIONAL_3_DERROTE_INIMIGO')} disabled={codigoMissaoIniciando !== null}>{codigoMissaoIniciando === 'MISSAO_FUNCIONAL_3_DERROTE_INIMIGO' ? 'Iniciando...' : 'Iniciar Missão Funcional 3'}</button>
-            <button type="button" onClick={() => iniciarModoSolo('MISSAO_FUNCIONAL_4_TEMPO_REAL')} disabled={codigoMissaoIniciando !== null}>{codigoMissaoIniciando === 'MISSAO_FUNCIONAL_4_TEMPO_REAL' ? 'Iniciando...' : 'Iniciar Missão Funcional 4'}</button>
+            <main className={styles.pagina_modo_solo}>
+                {erro && <div className={styles.erro}>{erro}</div>}
+                <section className={styles.secao_detalhamento} aria-hidden="true" />
+                <section className={styles.secao_catalogo}><CatalogoDeMissoes catalogos={catalogosDisponiveis} idMissaoSelecionada={idMissaoSelecionada} carregando={carregando} aoSelecionarMissao={missao => setIdMissaoSelecionada(missao.id)} /></section>
+            </main>
         </ControladorSlot>
     );
+};
+
+function montaIdsMissoesDisponiveis(catalogos: readonly CatalogoMissaoJogavelResumo[]): readonly number[] {
+    const idsMissoes: number[] = [];
+
+    catalogos.forEach(catalogo => {
+        catalogo.missoes.forEach(missao => {
+            idsMissoes.push(missao.id);
+        });
+    });
+
+    return idsMissoes;
 };
