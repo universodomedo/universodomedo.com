@@ -15,29 +15,54 @@
     gap: 1em;
 }
 
-.botaoEstado {
+.acoesFluxo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65em;
+}
+
+.botaoEstado,
+.botaoCriarTrecho,
+.botaoInicioUtil {
     padding: 0.62em 1em;
     border: 0;
     border-radius: 0.35em;
-    background: #e0b85c;
-    color: #111;
     cursor: pointer;
     font-weight: 700;
 }
 
-.botaoEstado:disabled {
+.botaoEstado {
+    background: #e0b85c;
+    color: #111;
+}
+
+.botaoCriarTrecho,
+.botaoInicioUtil {
+    border: 0.08em solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.84);
+}
+
+.botaoEstado:disabled,
+.botaoCriarTrecho:disabled,
+.botaoInicioUtil:disabled {
     opacity: 0.45;
     cursor: default;
 }
 
-.tempoAtual {
+.temposFluxo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2em;
     color: rgba(255, 255, 255, 0.74);
+    font-size: 0.86em;
     font-weight: 700;
 }
 
 .areaFluxo {
     display: grid;
-    grid-template-columns: 3em minmax(0, 1fr) 4em;
+    grid-template-columns: 3em minmax(0, 1fr) 5.7em;
     align-items: center;
     gap: 1em;
 }
@@ -58,7 +83,7 @@
 
 .trilhaFluxo {
     position: relative;
-    min-height: 4em;
+    min-height: 6.4em;
     cursor: grab;
     touch-action: none;
 }
@@ -72,11 +97,51 @@
     outline-offset: 0.3em;
 }
 
+.barrigaInicial {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 1;
+    width: calc(var(--inicio-util) * 100%);
+    border-radius: 0.45em 0 0 0.45em;
+    background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0.08) 0.28em, rgba(255, 255, 255, 0.02) 0.28em, rgba(255, 255, 255, 0.02) 0.56em);
+    pointer-events: none;
+}
+
+.ondaAudio {
+    position: absolute;
+    top: 3.15em;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    height: 1.45em;
+    display: flex;
+    align-items: center;
+    gap: 0.04em;
+    opacity: 0.78;
+    pointer-events: none;
+}
+
+.amostraOnda {
+    flex: 1 1 0;
+    min-height: 0.08em;
+    height: calc(var(--amplitude) * 100%);
+    border-radius: 999em;
+    background: rgba(115, 190, 255, 0.55);
+}
+
+.carregandoOnda {
+    width: 100%;
+    height: 0.22em;
+    border-radius: 999em;
+    background: rgba(115, 190, 255, 0.34);
+}
+
 .linhaBase,
 .linhaExecutada {
     position: absolute;
-    top: 50%;
+    top: 68%;
     left: 0;
+    z-index: 2;
     height: 0.22em;
     border-radius: 999em;
     transform: translateY(-50%);
@@ -92,10 +157,36 @@
     background: #e0b85c;
 }
 
+.marcadorInicioUtil {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--inicio-util) * 100%);
+    z-index: 4;
+    width: 0;
+    border-left: 0.12em solid #75d191;
+    pointer-events: none;
+}
+
+.marcadorInicioUtil span {
+    position: absolute;
+    top: 4.55em;
+    left: 50%;
+    padding: 0.18em 0.42em;
+    border-radius: 0.3em;
+    background: rgba(117, 209, 145, 0.2);
+    color: rgba(220, 255, 230, 0.94);
+    font-size: 0.68em;
+    font-weight: 800;
+    white-space: nowrap;
+    transform: translateX(-50%);
+}
+
 .marcadorExecucao {
     position: absolute;
-    top: 50%;
+    top: 68%;
     left: calc(var(--progresso) * 100%);
+    z-index: 5;
     width: 1.45em;
     height: 1.45em;
     border: 0.18em solid #151515;
@@ -103,4 +194,135 @@
     background: #e0b85c;
     box-shadow: 0 0.35em 1.1em rgba(0, 0, 0, 0.35);
     transform: translate(-50%, -50%);
+}
+
+.camadaTrechos {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.trechoFluxo {
+    position: absolute;
+    top: 0.45em;
+    left: calc(var(--inicio) * 100%);
+    width: max(3.8em, calc((var(--fim) - var(--inicio)) * 100%));
+    min-height: 2.3em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    border: 0.08em solid rgba(115, 190, 255, 0.82);
+    border-radius: 0.5em;
+    background: rgba(48, 122, 190, 0.28);
+    color: rgba(255, 255, 255, 0.9);
+    pointer-events: auto;
+}
+
+.trechoFluxo[data-selecionado="true"] {
+    border-color: #e0b85c;
+    box-shadow: 0 0 0 0.12em rgba(224, 184, 92, 0.25);
+}
+
+.trechoFluxo[data-habilitado="false"] {
+    border-style: dashed;
+    opacity: 0.48;
+}
+
+.nomeTrecho {
+    min-width: 0;
+    overflow: hidden;
+    padding: 0 0.45em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.78em;
+    font-weight: 800;
+}
+
+.alcaTrecho {
+    align-self: stretch;
+    width: 0.65em;
+    border: 0;
+    background: rgba(255, 255, 255, 0.28);
+    cursor: ew-resize;
+}
+
+.alcaTrecho:hover,
+.alcaTrecho:focus-visible {
+    background: #e0b85c;
+}
+
+.editorTrecho {
+    display: grid;
+    grid-template-columns: minmax(10em, 1fr) auto auto;
+    align-items: end;
+    gap: 0.85em;
+    padding-top: 0.85em;
+    border-top: 0.08em solid rgba(255, 255, 255, 0.12);
+}
+
+.campoTrecho {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.82em;
+    font-weight: 700;
+}
+
+.campoTrecho input {
+    min-width: 0;
+    padding: 0.62em 0.75em;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.35em;
+    background: rgba(0, 0, 0, 0.18);
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.metricasTrecho {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.82em;
+    font-weight: 700;
+}
+
+.acoesTrecho {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+.acoesTrecho button {
+    padding: 0.62em 0.8em;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.35em;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.88);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.acoesTrecho button:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+@media (max-width: 46em) {
+    .cabecalhoFluxo,
+    .editorTrecho {
+        align-items: stretch;
+        grid-template-columns: 1fr;
+    }
+
+    .cabecalhoFluxo {
+        flex-direction: column;
+    }
+
+    .areaFluxo {
+        grid-template-columns: 2.7em minmax(0, 1fr) 5.2em;
+        gap: 0.65em;
+    }
 }
