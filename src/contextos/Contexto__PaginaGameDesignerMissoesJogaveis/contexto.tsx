@@ -38,6 +38,7 @@ export interface Contexto__PaginaGameDesignerMissoesJogaveis__Props {
     alterarEditorMissao: (valores: EditorMissao) => void;
     cancelarEditorMissao: () => void;
     salvarEditorMissao: () => Promise<void>;
+    sincronizarMissoesFuncionaisIniciais: () => Promise<void>;
     alternarAtivoCatalogo: (catalogo: CatalogoMissaoJogavelResumo, ativo: boolean) => Promise<void>;
     alternarAtivoMissao: (missao: MissaoJogavelResumo, ativo: boolean) => Promise<void>;
     reordenarCatalogos: (idOrigem: number, idDestino: number) => Promise<void>;
@@ -145,6 +146,20 @@ export const Contexto__PaginaGameDesignerMissoesJogaveis__Provider = ({ children
         await executaComEstrutura(() => NoraApi.RestPOST(EventosApiRest.POST.MissoesJogaveis.alternarMissao, { id: missao.id, ativo }, { mensagemErro: 'Não foi possível alternar a Missão.' }), 'Não foi possível alternar a Missão.');
     }, [executaComEstrutura]);
 
+    const sincronizarMissoesFuncionaisIniciais = useCallback(async () => {
+        setSalvando(true);
+        setErro(null);
+
+        try {
+            await NoraApi.RestPOST(EventosApiRest.POST.MissoesConfiguracoesRuntime.sincronizarMissoesFuncionaisIniciais, {}, { mensagemErro: 'Não foi possível sincronizar as Missões Funcionais iniciais.' });
+            await carregarEstrutura();
+        } catch {
+            setErro('Não foi possível sincronizar as Missões Funcionais iniciais.');
+        } finally {
+            setSalvando(false);
+        }
+    }, [carregarEstrutura]);
+
     const reordenarCatalogos = useCallback(async (idOrigem: number, idDestino: number) => {
         if (!estrutura || idOrigem === idDestino) return;
 
@@ -160,7 +175,7 @@ export const Contexto__PaginaGameDesignerMissoesJogaveis__Provider = ({ children
     }, [executaComEstrutura]);
 
     return (
-        <Contexto__PaginaGameDesignerMissoesJogaveis.Provider value={{ estrutura, carregando, salvando, erro, idsCatalogosAbertos, editorCatalogo, editorMissao, recarregar: carregarEstrutura, alternarCatalogoAberto, abrirCriacaoCatalogo, abrirEdicaoCatalogo, alterarEditorCatalogoNome, cancelarEditorCatalogo, salvarEditorCatalogo, abrirCriacaoMissao, abrirEdicaoMissao, alterarEditorMissao, cancelarEditorMissao, salvarEditorMissao, alternarAtivoCatalogo, alternarAtivoMissao, reordenarCatalogos, reordenarMissoesCatalogo }}>
+        <Contexto__PaginaGameDesignerMissoesJogaveis.Provider value={{ estrutura, carregando, salvando, erro, idsCatalogosAbertos, editorCatalogo, editorMissao, recarregar: carregarEstrutura, alternarCatalogoAberto, abrirCriacaoCatalogo, abrirEdicaoCatalogo, alterarEditorCatalogoNome, cancelarEditorCatalogo, salvarEditorCatalogo, abrirCriacaoMissao, abrirEdicaoMissao, alterarEditorMissao, cancelarEditorMissao, salvarEditorMissao, sincronizarMissoesFuncionaisIniciais, alternarAtivoCatalogo, alternarAtivoMissao, reordenarCatalogos, reordenarMissoesCatalogo }}>
             {children}
         </Contexto__PaginaGameDesignerMissoesJogaveis.Provider>
     );

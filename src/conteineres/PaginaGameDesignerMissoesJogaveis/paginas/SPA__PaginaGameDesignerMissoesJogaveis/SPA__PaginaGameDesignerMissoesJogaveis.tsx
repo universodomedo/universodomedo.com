@@ -17,6 +17,7 @@ export default function SPA__PaginaGameDesignerMissoesJogaveis() {
         <section className={styles.pagina}>
             <header className={styles.barra_acoes}>
                 <button type="button" className={styles.botao_principal} onClick={contexto.abrirCriacaoCatalogo} disabled={contexto.salvando}>Novo Catálogo</button>
+                <button type="button" className={styles.botao_secundario} onClick={() => void contexto.sincronizarMissoesFuncionaisIniciais()} disabled={contexto.salvando}>Sincronizar MFs</button>
                 <button type="button" className={styles.botao_secundario} onClick={() => void contexto.recarregar()} disabled={contexto.salvando}>Atualizar</button>
             </header>
 
@@ -87,7 +88,7 @@ function MissaoItem({ catalogo, missao, missaoArrastada, setMissaoArrastada }: {
         <article className={styles.missao} draggable onDragStart={() => setMissaoArrastada({ idCatalogo: catalogo.id, idMissao: missao.id })} onDragEnd={() => setMissaoArrastada(null)} onDragOver={onDragOver} onDrop={onDropMissao}>
             <div className={styles.dados_missao}>
                 <strong>{missao.nome}</strong>
-                <span>ID {missao.id} · Ordem {missao.ordem}</span>
+                <span>ID {missao.id} · Ordem {missao.ordem} · {missao.runtimeConfigurado ? 'Runtime configurado' : 'Sem runtime'}</span>
                 {missao.descricao && <p>{missao.descricao}</p>}
             </div>
             <AlternaOpcao opcao={missao.ativo} onChange={ativo => void contexto.alternarAtivoMissao(missao, ativo)} />
