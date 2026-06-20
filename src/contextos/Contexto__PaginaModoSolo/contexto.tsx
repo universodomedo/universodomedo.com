@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { EstruturaMissoesJogaveis, EventosApiRest, Eventos_EnviaERecebe, PAGINAS, type CatalogoMissaoJogavelResumo, type CodigoMissaoFuncionalSalaDeJogoRuntime, type RESPONSE__IniciarModoSolo, type WsErrorResponse } from 'types-nora-api';
+import { EstruturaMissoesJogaveis, EventosApiRest, Eventos_EnviaERecebe, PAGINAS, type CatalogoMissaoJogavelResumo, type MissaoJogavelResumo, type RESPONSE__IniciarModoSolo, type WsErrorResponse } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
 import { eventoWs } from 'Hooks/useEventoWs';
@@ -73,17 +73,16 @@ export const Contexto__PaginaModoSolo__Provider = ({ children }: { readonly chil
         setIdMissaoSelecionada(idMissao);
     }, []);
 
-    const codigoMissaoFuncionalSelecionada = resolveCodigoMissaoFuncional(idMissaoSelecionada);
-    const podeIniciarMissaoSelecionada = codigoMissaoFuncionalSelecionada !== null;
+    const missaoSelecionada = useMemo<MissaoJogavelResumo | null>(() => obtemMissaoPorId(catalogosDisponiveis, idMissaoSelecionada), [catalogosDisponiveis, idMissaoSelecionada]);
+    const podeIniciarMissaoSelecionada = missaoSelecionada?.runtimeConfigurado === true;
 
     const iniciarMissaoSelecionada = useCallback(() => {
-        const codigoMissaoFuncional = resolveCodigoMissaoFuncional(idMissaoSelecionada);
-        if (!codigoMissaoFuncional || iniciandoMissao) return;
+        if (!missaoSelecionada || !podeIniciarMissaoSelecionada || iniciandoMissao) return;
 
         setIniciandoMissao(true);
         setErro(null);
 
-        eventoWs(Eventos_EnviaERecebe.Jogo.eventos.iniciarModoSolo, { codigoMissaoFuncional }, {
+        eventoWs(Eventos_EnviaERecebe.Jogo.eventos.iniciarModoSolo, { idMissao: missaoSelecionada.id }, {
             onSuccess: (_response: RESPONSE__IniciarModoSolo) => {
                 router.replace(PAGINAS.jogo.emJogo.href);
             },
@@ -93,7 +92,7 @@ export const Contexto__PaginaModoSolo__Provider = ({ children }: { readonly chil
             },
             timeoutMs: 8000,
         });
-    }, [idMissaoSelecionada, iniciandoMissao, router]);
+    }, [missaoSelecionada, podeIniciarMissaoSelecionada, iniciandoMissao, router]);
 
     return (
         <Contexto__PaginaModoSolo.Provider value={{ catalogosDisponiveis, idMissaoSelecionada, podeIniciarMissaoSelecionada, carregando, iniciandoMissao, erro, selecionarMissao, iniciarMissaoSelecionada }}>
@@ -114,10 +113,12 @@ function montaIdsMissoesDisponiveis(catalogos: readonly CatalogoMissaoJogavelRes
     return idsMissoes;
 };
 
-function resolveCodigoMissaoFuncional(idMissao: number | null): CodigoMissaoFuncionalSalaDeJogoRuntime | null {
-    if (idMissao === 1) return 'MISSAO_FUNCIONAL_1';
-    if (idMissao === 2) return 'MISSAO_FUNCIONAL_2_OUVIR_REFEM';
-    if (idMissao === 3) return 'MISSAO_FUNCIONAL_3_DERROTE_INIMIGO';
-    if (idMissao === 4) return 'MISSAO_FUNCIONAL_4_TEMPO_REAL';
+function obtemMissaoPorId(catalogos: readonly CatalogoMissaoJogavelResumo[], idMissao: number | null): MissaoJogavelResumo | null {
+    if (idMissao === null) return null;
+    for (const catalogo of catalogos) {
+        const missao = catalogo.missoes.find(item => item.id === idMissao);
+        if (missao) return missao;
+    }
+
     return null;
 };
