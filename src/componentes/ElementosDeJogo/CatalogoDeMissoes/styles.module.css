@@ -12,22 +12,13 @@
     justify-content: center;
 }
 
-.catalogo_de_missoes::before {
-    content: "";
+.orbita {
     position: absolute;
-    left: var(--orbita-externa-left);
-    top: var(--orbita-externa-top);
-    width: var(--orbita-externa-width);
-    height: var(--orbita-externa-height);
     border: 0.08em solid rgba(183, 144, 81, 0.18);
-    border-left-color: rgba(183, 144, 81, 0.55);
+    border-right-color: rgba(183, 144, 81, 0.5);
     border-radius: 50%;
-    box-shadow: inset 0 0 4em rgba(183, 144, 81, 0.08);
+    box-shadow: inset 0 0 4em rgba(199, 135, 255, 0.05);
     pointer-events: none;
-}
-
-.catalogo_de_missoes_vazio::before {
-    content: none;
 }
 
 .lista_catalogos {
@@ -38,75 +29,38 @@
 
 .item_orbital {
     position: absolute;
-    left: var(--orbital-x);
-    top: var(--orbital-y);
-    z-index: var(--orbital-z);
-    display: grid;
-    align-items: center;
-    width: 64%;
-    border-radius: 0.6em;
+    box-sizing: border-box;
+    min-width: 0;
+    appearance: none;
+    border: 0;
+    background: transparent;
     color: #EBE0C9;
     cursor: pointer;
-    opacity: var(--orbital-opacity);
     text-align: left;
-    transform: translate(0, -50%) scale(var(--orbital-scale));
-    transform-origin: left center;
-    transition: transform 180ms ease, opacity 180ms ease, border-color 180ms ease, background 180ms ease, box-shadow 180ms ease, top 180ms ease, left 180ms ease;
+    transition: top 0.46s cubic-bezier(0.2, 0.8, 0.2, 1), right 0.46s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.3s ease, height 0.3s ease, opacity 0.3s ease, border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
-.item_orbital::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: -7%;
-    width: 7%;
-    height: 0.08em;
-    background: rgba(183, 144, 81, 0.32);
-}
-
-.item_orbital:hover,
 .item_orbital:focus-visible {
-    opacity: 1;
     outline: none;
-    transform: translate(2%, -50%) scale(var(--orbital-scale));
 }
 
 .item_catalogo {
-    grid-template-columns: 0.9em auto;
-    gap: 0.6em;
-    width: 48%;
-    min-height: 2.4em;
-    padding: 0 0.65em;
-    border: 0;
-    border-bottom: 0.08em solid rgba(183, 144, 81, 0.4);
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-    color: #B79051;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-}
-
-.item_catalogo::before {
-    content: none;
-}
-
-.item_catalogo::after {
-    content: "";
-    position: absolute;
-    bottom: -3.1em;
-    left: 1em;
-    width: 0.08em;
-    height: 3.1em;
-    background: linear-gradient(180deg, rgba(183, 144, 81, 0.5), rgba(183, 144, 81, 0.08));
-    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 0.4em;
+    padding: 0 0.2em;
 }
 
 .item_catalogo strong {
     overflow: hidden;
+    max-width: 100%;
     font-family: var(--fonte-cinzel);
-    font-size: 0.85em;
+    font-size: 1em;
     font-variant: small-caps;
+    letter-spacing: 0.1em;
+    color: #B79051;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -115,67 +69,75 @@
     filter: saturate(0.7);
 }
 
-.item_catalogo_fechado::after {
-    opacity: 0.3;
-}
-
-.marcador_catalogo {
-    width: 0.62em;
-    height: 0.62em;
-    border: 0.12em solid #B79051;
-    border-radius: 50%;
-    box-shadow: 0 0 0.8em rgba(183, 144, 81, 0.6);
+.linha_catalogo {
+    width: 9em;
+    max-width: 100%;
+    height: 0.07em;
+    background: linear-gradient(to right, rgba(183, 144, 81, 0.42), transparent);
 }
 
 .item_missao {
     display: flex;
     align-items: flex-end;
-    min-height: 4.6em;
-    padding: 0.7em 1em;
+    justify-content: flex-start;
+    padding: 0.5em 0.85em;
     border: 0.08em solid #322F2F;
+    border-radius: 0.6em;
+    overflow: hidden;
     background:
         linear-gradient(180deg, transparent 28%, rgba(5, 4, 10, 0.4) 64%, rgba(5, 4, 10, 0.92) 100%),
-        radial-gradient(circle at 78% 26%, rgba(183, 144, 81, 0.22), transparent 60%),
-        linear-gradient(120deg, #0e0a16, #0a0810);
-    box-shadow: 0 0.8em 1.6em rgba(0, 0, 0, 0.32);
+        radial-gradient(circle at 26% 28%, rgba(183, 144, 81, 0.18), transparent 62%),
+        linear-gradient(120deg, #0a0810, #0e0a16);
+    box-shadow: 0 0.6em 1.4em rgba(0, 0, 0, 0.32);
+}
+
+.item_missao strong {
     overflow: hidden;
-}
-
-.item_missao:hover,
-.item_missao:focus-visible {
-    border-color: rgba(183, 144, 81, 0.7);
-    box-shadow: 0 0 1.4em rgba(183, 144, 81, 0.2);
-}
-
-.item_missao_selecionada {
-    border-color: #B79051;
-    background:
-        linear-gradient(180deg, transparent 24%, rgba(5, 4, 10, 0.38) 60%, rgba(5, 4, 10, 0.92) 100%),
-        radial-gradient(circle at 74% 28%, rgba(183, 144, 81, 0.4), transparent 60%),
-        linear-gradient(120deg, rgba(183, 144, 81, 0.14), #0a0810);
-    box-shadow: 0 0 1.8em rgba(199, 135, 255, 0.34), 0 0 0.7em rgba(255, 86, 235, 0.26), 0 0 0.5em rgba(183, 144, 81, 0.4);
-    opacity: 1;
-}
-
-.titulo_missao {
-    position: relative;
-    z-index: 2;
-    overflow: hidden;
-    color: #EBE0C9;
+    max-width: 100%;
     font-family: var(--fonte-junge);
-    font-size: 0.95em;
-    letter-spacing: 0.03em;
+    font-size: 1em;
+    letter-spacing: 0.02em;
+    color: #EBE0C9;
+    text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.item_missao_selecionada .titulo_missao {
-    color: #fff;
+.item_missao_selecionada {
+    align-items: center;
+    border-color: #B79051;
+    border-width: 0.1em;
+    background:
+        linear-gradient(180deg, transparent 24%, rgba(5, 4, 10, 0.38) 60%, rgba(5, 4, 10, 0.92) 100%),
+        radial-gradient(circle at 26% 28%, rgba(183, 144, 81, 0.4), transparent 60%),
+        linear-gradient(120deg, rgba(183, 144, 81, 0.14), #0a0810);
+    box-shadow: 0 0 2em rgba(199, 135, 255, 0.34), 0 0 0.8em rgba(255, 86, 235, 0.26), 0 0 0.5em rgba(183, 144, 81, 0.4);
+}
+
+.item_missao_selecionada strong {
     font-family: var(--fonte-cinzel);
-    font-size: 1.25em;
     font-variant: small-caps;
-    letter-spacing: 0.05em;
-    white-space: normal;
+    letter-spacing: 0.03em;
+    color: #ffffff;
+}
+
+.catalogo_fixado {
+    position: absolute;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4em;
+    pointer-events: none;
+}
+
+.catalogo_fixado strong {
+    font-family: var(--fonte-cinzel);
+    font-size: 1em;
+    font-variant: small-caps;
+    letter-spacing: 0.1em;
+    color: #d8b066;
+    text-shadow: 0 0.1em 0.5em #040309, 0 0 0.7em #040309;
 }
 
 .estado_catalogo {
