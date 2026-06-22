@@ -2,7 +2,10 @@
 
 import { createContext, useContext, useState, useEffect, useMemo, type ReactNode } from 'react';
 
+import { Eventos_Emite } from 'types-nora-api';
+
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
+import { useRecebeEmitWs } from 'Hooks/useEventoWs';
 import { criaObjetivo as apiCriaObjetivo, criaColuna as apiCriaColuna, criaCard as apiCriaCard, criaComentario as apiCriaComentario, atualizaCard as apiAtualizaCard, reordenaCards as apiReordenaCards } from 'Uteis/ApiConsumer/PainelDoMedoMiddleware';
 
 export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
@@ -56,6 +59,15 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
         if (cardAbertoId !== null) comentarios.recarregar();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [cardAbertoId]);
+
+    useRecebeEmitWs(Eventos_Emite.PainelDoMedo.eventos.painelAtualizado, {
+        onSuccess: () => {
+            objetivos.recarregar();
+            colunas.recarregar();
+            cards.recarregar();
+            if (cardAbertoId !== null) comentarios.recarregar();
+        },
+    });
 
     const abrirCard = (id: number) => setCardAbertoId(id);
     const fecharCard = () => setCardAbertoId(null);
