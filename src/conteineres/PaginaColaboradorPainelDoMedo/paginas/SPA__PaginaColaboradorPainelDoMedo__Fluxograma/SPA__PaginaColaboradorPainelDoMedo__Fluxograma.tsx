@@ -30,7 +30,7 @@ function pontoBorda(cx: number, cy: number, w: number, h: number, alvoX: number,
 };
 
 export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
-    const { view, setView, objetivos, objetivoAtualId, setObjetivoAtualId, cards, statusCards, colunas, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, atualizaCard, criaComentario, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard } = useContexto__PaginaColaboradorPainelDoMedo();
+    const { pagina, setPagina, irParaListagem, objetivos, objetivoAtualId, setObjetivoAtualId, cards, statusCards, colunas, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, atualizaCard, criaComentario, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard } = useContexto__PaginaColaboradorPainelDoMedo();
 
     const [vista, setVista] = useState({ x: 40, y: 30, z: 1 });
     const [posLocal, setPosLocal] = useState<Record<number, { x: number; y: number }>>({});
@@ -48,6 +48,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
     const arrasteRef = useRef<null | { tipo: 'card' | 'pan' | 'conectar'; id: number; sx: number; sy: number; ox: number; oy: number; moveu: boolean }>(null);
 
     const registros = cards.registros;
+    const objetivoAtual = objetivos.registros.find(o => o.id === objetivoAtualId) ?? null;
     const idsVisiveis = useMemo(() => new Set(registros.map(c => c.id)), [registros]);
     const cardLevePorId = useMemo(() => { const m = new Map<number, CardLeve>(); todosCards.registros.forEach(c => m.set(c.id, c)); return m; }, [todosCards.registros]);
     const objetivoNome = (id: number) => objetivos.registros.find(o => o.id === id)?.nome ?? 'Outro objetivo';
@@ -145,11 +146,9 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
     return (
         <section className={styles.fluxograma}>
             <header className={styles.barra}>
-                <BarraView view={view} setView={setView} />
-                <span className={styles.rotulo}>Objetivo:</span>
-                <select className={styles.seletor} value={objetivoAtualId ?? ''} onChange={evento => setObjetivoAtualId(evento.target.value ? Number(evento.target.value) : null)}>
-                    {objetivos.registros.map(objetivo => <option key={objetivo.id} value={objetivo.id}>{objetivo.nome}</option>)}
-                </select>
+                <BarraView pagina={pagina} setPagina={setPagina} />
+                <button className={styles.botao} onClick={irParaListagem}>← Objetivos</button>
+                <span className={styles.nomeObjetivo}>{objetivoAtual?.nome ?? ''}</span>
                 <span className={styles.divisor} />
                 <button className={styles.botao} onClick={() => alteraZoom(-0.15)}>−</button>
                 <span className={styles.zoomTxt}>{Math.round(vista.z * 100)}%</span>

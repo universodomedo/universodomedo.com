@@ -141,6 +141,106 @@
     font-size: 0.95em;
 }
 
+.voltar {
+    background: #16121f;
+    border: 0.1em solid #352E4C;
+    color: #EBE0C9;
+    border-radius: 0.4em;
+    padding: 0.35em 0.7em;
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.75em;
+}
+
+.voltar:hover {
+    border-color: #B79051;
+    color: #B79051;
+}
+
+.nomeObjetivo {
+    font-family: var(--fonte-cinzel);
+    color: #EBE0C9;
+    font-size: 1em;
+    margin-left: 0.2em;
+}
+
+.adicionaColuna {
+    width: 16em;
+    flex: 0 0 auto;
+}
+
+.placeholderColuna {
+    width: 100%;
+    text-align: left;
+    background: rgba(183, 144, 81, 0.06);
+    border: 0.1em dashed #5a4f7a;
+    border-radius: 0.6em;
+    color: #B79051;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.82em;
+    padding: 0.7em 0.8em;
+    cursor: pointer;
+}
+
+.placeholderColuna:hover {
+    border-color: #B79051;
+    background: rgba(183, 144, 81, 0.12);
+}
+
+.formColuna {
+    background: linear-gradient(180deg, #0e0b16, #0a0810);
+    border: 0.1em solid #352E4C;
+    border-radius: 0.6em;
+    padding: 0.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.entradaNovaColuna {
+    background: #0d0b14;
+    border: 0.1em solid #B79051;
+    color: #EBE0C9;
+    border-radius: 0.4em;
+    padding: 0.4em 0.5em;
+    font-family: inherit;
+    font-size: 0.9em;
+}
+
+.formColunaAcoes {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+.adicionaColunaBtn {
+    background: #16121f;
+    border: 0.1em solid #B79051;
+    color: #B79051;
+    border-radius: 0.4em;
+    padding: 0.35em 0.7em;
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.78em;
+}
+
+.adicionaColunaBtn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.fecharForm {
+    background: transparent;
+    border: 0;
+    color: #8a8474;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.fecharForm:hover {
+    color: #DB4747;
+}
+
 .lista {
     padding: 0.5em;
     display: flex;

@@ -1,0 +1,98 @@
+.cadastro {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    gap: 1em;
+    padding: 1em 1.2em;
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+}
+
+.voltar {
+    background: #16121f;
+    border: 0.1em solid #352E4C;
+    color: #EBE0C9;
+    border-radius: 0.4em;
+    padding: 0.35em 0.7em;
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.78em;
+}
+
+.voltar:hover {
+    border-color: #B79051;
+    color: #B79051;
+}
+
+.titulo {
+    font-family: var(--fonte-cinzel);
+    color: #EBE0C9;
+    font-size: 1.2em;
+    margin: 0;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+    max-width: 28em;
+    background: linear-gradient(180deg, #100c18, #0a0810);
+    border: 0.1em solid #2a2536;
+    border-radius: 0.7em;
+    padding: 1em 1.1em;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    color: #aba9a1;
+    font-size: 0.9em;
+}
+
+.campo input {
+    background: #0d0b14;
+    border: 0.1em solid #352E4C;
+    color: #EBE0C9;
+    border-radius: 0.4em;
+    padding: 0.45em 0.55em;
+    font-family: inherit;
+    font-size: 1em;
+}
+
+.acoes {
+    display: flex;
+    gap: 0.5em;
+}
+
+.criar {
+    background: #16121f;
+    border: 0.1em solid #B79051;
+    color: #B79051;
+    border-radius: 0.4em;
+    padding: 0.45em 0.9em;
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.85em;
+}
+
+.criar:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.cancelar {
+    background: #16121f;
+    border: 0.1em solid #352E4C;
+    color: #aba9a1;
+    border-radius: 0.4em;
+    padding: 0.45em 0.8em;
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.85em;
+}

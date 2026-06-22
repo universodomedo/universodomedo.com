@@ -26,8 +26,11 @@ export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     atualizaCard: (id: number, titulo: string, fkTiposStatusCardId: number, prazo: string | null) => Promise<void>;
     criaComentario: (texto: string) => Promise<void>;
     reordenaCards: (fkColunasId: number, idsOrdenados: number[]) => Promise<void>;
-    view: 'quadro' | 'fluxograma';
-    setView: (view: 'quadro' | 'fluxograma') => void;
+    pagina: 'listagemObjetivos' | 'cadastroObjetivo' | 'quadro' | 'fluxograma';
+    setPagina: (pagina: 'listagemObjetivos' | 'cadastroObjetivo' | 'quadro' | 'fluxograma') => void;
+    irParaObjetivo: (id: number) => void;
+    irParaListagem: () => void;
+    irParaCadastroObjetivo: () => void;
     dependenciasCards: ReturnType<typeof obtemDependenciasCards>;
     posicoesFluxograma: ReturnType<typeof obtemPosicoesFluxograma>;
     todosCards: ReturnType<typeof obtemTodosCards>;
@@ -55,7 +58,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     const objetivos = obtemObjetivos();
     const statusCards = obtemStatusCards();
     const colunas = obtemColunas();
-    const [view, setView] = useState<'quadro' | 'fluxograma'>('quadro');
+    const [pagina, setPagina] = useState<'listagemObjetivos' | 'cadastroObjetivo' | 'quadro' | 'fluxograma'>('listagemObjetivos');
     const [objetivoAtualId, setObjetivoAtualId] = useState<number | null>(null);
     const [cardAbertoId, setCardAbertoId] = useState<number | null>(null);
     const [salvando, setSalvando] = useState<boolean>(false);
@@ -64,10 +67,6 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     const dependenciasCards = obtemDependenciasCards();
     const posicoesFluxograma = obtemPosicoesFluxograma();
     const todosCards = obtemTodosCards();
-
-    useEffect(() => {
-        if (objetivoAtualId === null && objetivos.registros.length > 0) setObjetivoAtualId(objetivos.registros[0].id);
-    }, [objetivoAtualId, objetivos.registros]);
 
     useEffect(() => {
         if (objetivoAtualId !== null) cards.recarregar();
@@ -93,6 +92,10 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
 
     const abrirCard = (id: number) => setCardAbertoId(id);
     const fecharCard = () => setCardAbertoId(null);
+
+    const irParaObjetivo = (id: number) => { setObjetivoAtualId(id); setPagina('quadro'); };
+    const irParaListagem = () => setPagina('listagemObjetivos');
+    const irParaCadastroObjetivo = () => setPagina('cadastroObjetivo');
 
     const criaObjetivo = async (nome: string) => {
         if (!nome.trim() || salvando) return;
@@ -190,7 +193,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     };
 
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, view, setView, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, deletaCard, atualizaColuna, deletaColuna, reordenaColunas, atualizaObjetivo, deletaObjetivo }}>
+        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, pagina, setPagina, irParaObjetivo, irParaListagem, irParaCadastroObjetivo, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, deletaCard, atualizaColuna, deletaColuna, reordenaColunas, atualizaObjetivo, deletaObjetivo }}>
             {children}
         </Contexto__PaginaColaboradorPainelDoMedo.Provider>
     );
