@@ -6,7 +6,7 @@ import { Eventos_Emite } from 'types-nora-api';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { useRecebeEmitWs } from 'Hooks/useEventoWs';
-import { criaObjetivo as apiCriaObjetivo, criaColuna as apiCriaColuna, criaCard as apiCriaCard, criaComentario as apiCriaComentario, atualizaCard as apiAtualizaCard, reordenaCards as apiReordenaCards, criaDependenciaCard as apiCriaDependencia, atualizaDependenciaCard as apiAtualizaDependencia, deletaDependenciaCard as apiDeletaDependencia, definePosicaoFluxogramaCard as apiDefinePosicao } from 'Uteis/ApiConsumer/PainelDoMedoMiddleware';
+import { criaObjetivo as apiCriaObjetivo, criaColuna as apiCriaColuna, criaCard as apiCriaCard, criaComentario as apiCriaComentario, atualizaCard as apiAtualizaCard, reordenaCards as apiReordenaCards, criaDependenciaCard as apiCriaDependencia, atualizaDependenciaCard as apiAtualizaDependencia, deletaDependenciaCard as apiDeletaDependencia, definePosicaoFluxogramaCard as apiDefinePosicao, deletaCard as apiDeletaCard, atualizaColuna as apiAtualizaColuna, deletaColuna as apiDeletaColuna, reordenaColunas as apiReordenaColunas, atualizaObjetivo as apiAtualizaObjetivo, deletaObjetivo as apiDeletaObjetivo } from 'Uteis/ApiConsumer/PainelDoMedoMiddleware';
 
 export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     objetivos: ReturnType<typeof obtemObjetivos>;
@@ -35,6 +35,12 @@ export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     atualizaDependenciaCard: (id: number, descricao: string | null, bloqueante: boolean) => Promise<void>;
     deletaDependenciaCard: (id: number) => Promise<void>;
     definePosicaoFluxogramaCard: (fkCardsId: number, posicaoX: number, posicaoY: number) => Promise<void>;
+    deletaCard: (id: number) => Promise<void>;
+    atualizaColuna: (id: number, nome: string) => Promise<void>;
+    deletaColuna: (id: number) => Promise<void>;
+    reordenaColunas: (idsOrdenados: number[]) => Promise<void>;
+    atualizaObjetivo: (id: number, nome: string) => Promise<void>;
+    deletaObjetivo: (id: number) => Promise<void>;
 };
 
 const Contexto__PaginaColaboradorPainelDoMedo = createContext<Contexto__PaginaColaboradorPainelDoMedo__Props | undefined>(undefined);
@@ -147,8 +153,44 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
         try { await apiDefinePosicao({ fkCardsId, posicaoX, posicaoY }); posicoesFluxograma.recarregar(); } catch { /* posicao sera reconciliada no proximo refetch */ }
     };
 
+    const deletaCard = async (id: number) => {
+        if (salvando) return;
+        setSalvando(true);
+        try { await apiDeletaCard({ id }); if (cardAbertoId === id) setCardAbertoId(null); cards.recarregar(); dependenciasCards.recarregar(); posicoesFluxograma.recarregar(); } finally { setSalvando(false); }
+    };
+
+    const atualizaColuna = async (id: number, nome: string) => {
+        if (!nome.trim() || salvando) return;
+        setSalvando(true);
+        try { await apiAtualizaColuna({ id, nome: nome.trim() }); colunas.recarregar(); } finally { setSalvando(false); }
+    };
+
+    const deletaColuna = async (id: number) => {
+        if (salvando) return;
+        setSalvando(true);
+        try { await apiDeletaColuna({ id }); colunas.recarregar(); } finally { setSalvando(false); }
+    };
+
+    const reordenaColunas = async (idsOrdenados: number[]) => {
+        if (idsOrdenados.length < 1 || salvando) return;
+        setSalvando(true);
+        try { await apiReordenaColunas({ idsOrdenados }); colunas.recarregar(); } finally { setSalvando(false); }
+    };
+
+    const atualizaObjetivo = async (id: number, nome: string) => {
+        if (!nome.trim() || salvando) return;
+        setSalvando(true);
+        try { await apiAtualizaObjetivo({ id, nome: nome.trim() }); objetivos.recarregar(); } finally { setSalvando(false); }
+    };
+
+    const deletaObjetivo = async (id: number) => {
+        if (salvando) return;
+        setSalvando(true);
+        try { await apiDeletaObjetivo({ id }); if (objetivoAtualId === id) setObjetivoAtualId(null); objetivos.recarregar(); } finally { setSalvando(false); }
+    };
+
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, view, setView, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard }}>
+        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, view, setView, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, deletaCard, atualizaColuna, deletaColuna, reordenaColunas, atualizaObjetivo, deletaObjetivo }}>
             {children}
         </Contexto__PaginaColaboradorPainelDoMedo.Provider>
     );
