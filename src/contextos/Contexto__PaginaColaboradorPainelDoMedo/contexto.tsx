@@ -30,6 +30,7 @@ export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     setView: (view: 'quadro' | 'fluxograma') => void;
     dependenciasCards: ReturnType<typeof obtemDependenciasCards>;
     posicoesFluxograma: ReturnType<typeof obtemPosicoesFluxograma>;
+    todosCards: ReturnType<typeof obtemTodosCards>;
     criaDependenciaCard: (fkCardsDependenteId: number, fkCardsRequisitoId: number, descricao: string | null, bloqueante: boolean) => Promise<void>;
     atualizaDependenciaCard: (id: number, descricao: string | null, bloqueante: boolean) => Promise<void>;
     deletaDependenciaCard: (id: number) => Promise<void>;
@@ -56,6 +57,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     const comentarios = obtemComentarios(cardAbertoId);
     const dependenciasCards = obtemDependenciasCards();
     const posicoesFluxograma = obtemPosicoesFluxograma();
+    const todosCards = obtemTodosCards();
 
     useEffect(() => {
         if (objetivoAtualId === null && objetivos.registros.length > 0) setObjetivoAtualId(objetivos.registros[0].id);
@@ -78,6 +80,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
             cards.recarregar();
             dependenciasCards.recarregar();
             posicoesFluxograma.recarregar();
+            todosCards.recarregar();
             if (cardAbertoId !== null) comentarios.recarregar();
         },
     });
@@ -145,7 +148,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     };
 
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, view, setView, dependenciasCards, posicoesFluxograma, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard }}>
+        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, view, setView, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard }}>
             {children}
         </Contexto__PaginaColaboradorPainelDoMedo.Provider>
     );
@@ -238,5 +241,17 @@ function obtemPosicoesFluxograma() {
         mensagemListaVazia: 'Nenhuma posição ainda.',
         mensagemListaVaziaComFiltro: 'Nenhuma posição com os filtros atuais.',
         montaParametrosConsulta: params => ({ where: params.where, order: { id: 'ASC' }, limit: params.limit, offset: params.offset }),
+    });
+};
+
+function obtemTodosCards() {
+    return useNoraGraphQLListagem('Card', {
+        select: ['id', 'titulo', 'fkObjetivosId', 'fkColunasId', 'fkTiposStatusCardId'],
+        itensPorPagina: 100,
+        carregando: 'Carregando cards',
+        mensagemErro: 'Houve um erro recuperando os cards',
+        mensagemListaVazia: 'Nenhum card ainda.',
+        mensagemListaVaziaComFiltro: 'Nenhum card com os filtros atuais.',
+        montaParametrosConsulta: params => ({ where: params.where, order: { fkObjetivosId: 'ASC', id: 'ASC' }, limit: params.limit, offset: params.offset }),
     });
 };
