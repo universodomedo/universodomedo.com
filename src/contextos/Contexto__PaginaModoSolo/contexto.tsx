@@ -10,6 +10,7 @@ import { eventoWs } from 'Hooks/useEventoWs';
 export interface Contexto__PaginaModoSolo__Props {
     catalogosDisponiveis: readonly CatalogoMissaoJogavelResumo[];
     idMissaoSelecionada: number | null;
+    missaoSelecionada: MissaoJogavelResumo | null;
     podeIniciarMissaoSelecionada: boolean;
     carregando: boolean;
     iniciandoMissao: boolean;
@@ -95,7 +96,7 @@ export const Contexto__PaginaModoSolo__Provider = ({ children }: { readonly chil
     }, [missaoSelecionada, podeIniciarMissaoSelecionada, iniciandoMissao, router]);
 
     return (
-        <Contexto__PaginaModoSolo.Provider value={{ catalogosDisponiveis, idMissaoSelecionada, podeIniciarMissaoSelecionada, carregando, iniciandoMissao, erro, selecionarMissao, iniciarMissaoSelecionada }}>
+        <Contexto__PaginaModoSolo.Provider value={{ catalogosDisponiveis, idMissaoSelecionada, missaoSelecionada, podeIniciarMissaoSelecionada, carregando, iniciandoMissao, erro, selecionarMissao, iniciarMissaoSelecionada }}>
             {children}
         </Contexto__PaginaModoSolo.Provider>
     );

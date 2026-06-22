@@ -58,6 +58,17 @@
     transform: scale(0.98);
 }
 
+.capsula.desabilitado {
+    cursor: not-allowed;
+    filter: saturate(0.35);
+    opacity: 0.42;
+}
+
+.capsula.desabilitado:hover,
+.capsula.desabilitado:active {
+    transform: none;
+}
+
 .capsula:focus-visible {
     outline: 2px solid #0066cc;
     outline-offset: 2px;

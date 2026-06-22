@@ -38,6 +38,10 @@
     padding: 1em;
 }
 
+.editor_runtime {
+    width: 100%;
+}
+
 .campo {
     display: flex;
     flex-direction: column;
@@ -62,6 +66,11 @@
 
 .campo textarea {
     resize: vertical;
+}
+
+.editor_runtime textarea {
+    font-family: monospace;
+    line-height: 1.45;
 }
 
 .acoes_editor {

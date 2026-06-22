@@ -24,6 +24,7 @@ export default function SPA__PaginaGameDesignerMissoesJogaveis() {
             {contexto.erro && <div className={styles.alerta}>{contexto.erro}</div>}
             {contexto.editorCatalogo && <EditorCatalogo />}
             {contexto.editorMissao && <EditorMissao />}
+            {contexto.editorRuntimeMissao && <EditorRuntimeMissao />}
 
             <div className={styles.lista_catalogos}>
                 {(contexto.estrutura?.catalogos ?? []).map(catalogo => (
@@ -88,10 +89,11 @@ function MissaoItem({ catalogo, missao, missaoArrastada, setMissaoArrastada }: {
         <article className={styles.missao} draggable onDragStart={() => setMissaoArrastada({ idCatalogo: catalogo.id, idMissao: missao.id })} onDragEnd={() => setMissaoArrastada(null)} onDragOver={onDragOver} onDrop={onDropMissao}>
             <div className={styles.dados_missao}>
                 <strong>{missao.nome}</strong>
-                <span>ID {missao.id} · Ordem {missao.ordem} · {missao.runtimeConfigurado ? 'Runtime configurado' : 'Sem runtime'}</span>
+                <span>ID {missao.id} · Ordem {missao.ordem} · {missao.runtimeConfigurado ? 'Runtime configurado' : 'Sem runtime - ativação bloqueada'}</span>
                 {missao.descricao && <p>{missao.descricao}</p>}
             </div>
-            <AlternaOpcao opcao={missao.ativo} onChange={ativo => void contexto.alternarAtivoMissao(missao, ativo)} />
+            <AlternaOpcao opcao={missao.ativo} onChange={ativo => void contexto.alternarAtivoMissao(missao, ativo)} desabilitado={contexto.salvando || !missao.runtimeConfigurado} />
+            <button type="button" className={styles.botao_secundario} onClick={() => void contexto.abrirEditorRuntimeMissao(missao)} disabled={contexto.salvando}>Runtime</button>
             <button type="button" className={styles.botao_secundario} onClick={() => contexto.abrirEdicaoMissao(catalogo, missao)}>Editar</button>
         </article>
     );
@@ -140,6 +142,25 @@ function EditorMissao() {
             <div className={styles.acoes_editor}>
                 <button type="button" className={styles.botao_secundario} onClick={contexto.cancelarEditorMissao}>Cancelar</button>
                 <button type="button" className={styles.botao_principal} onClick={() => void contexto.salvarEditorMissao()} disabled={contexto.salvando || editor.nome.trim().length === 0 || editor.descricao.trim().length === 0}>Salvar</button>
+            </div>
+        </section>
+    );
+};
+
+function EditorRuntimeMissao() {
+    const contexto = useContexto__PaginaGameDesignerMissoesJogaveis();
+    const editor = contexto.editorRuntimeMissao;
+    if (!editor) return null;
+
+    return (
+        <section className={`${styles.editor} ${styles.editor_runtime}`}>
+            <label className={styles.campo}>
+                <span>Configuração Runtime - {editor.nomeMissao}</span>
+                <textarea value={editor.textoConfiguracao} onChange={evento => contexto.alterarEditorRuntimeMissaoTexto(evento.target.value)} rows={22} spellCheck={false} />
+            </label>
+            <div className={styles.acoes_editor}>
+                <button type="button" className={styles.botao_secundario} onClick={contexto.cancelarEditorRuntimeMissao}>Cancelar</button>
+                <button type="button" className={styles.botao_principal} onClick={() => void contexto.salvarEditorRuntimeMissao()} disabled={contexto.salvando || editor.textoConfiguracao.trim().length === 0}>Salvar Runtime</button>
             </div>
         </section>
     );
