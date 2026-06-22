@@ -6,7 +6,7 @@ import { Eventos_Emite } from 'types-nora-api';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { useRecebeEmitWs } from 'Hooks/useEventoWs';
-import { criaObjetivo as apiCriaObjetivo, criaColuna as apiCriaColuna, criaCard as apiCriaCard, criaComentario as apiCriaComentario, atualizaCard as apiAtualizaCard, reordenaCards as apiReordenaCards, criaDependenciaCard as apiCriaDependencia, atualizaDependenciaCard as apiAtualizaDependencia, deletaDependenciaCard as apiDeletaDependencia, definePosicaoFluxogramaCard as apiDefinePosicao, deletaCard as apiDeletaCard, atualizaColuna as apiAtualizaColuna, deletaColuna as apiDeletaColuna, reordenaColunas as apiReordenaColunas, atualizaObjetivo as apiAtualizaObjetivo, deletaObjetivo as apiDeletaObjetivo } from 'Uteis/ApiConsumer/PainelDoMedoMiddleware';
+import { criaObjetivo as apiCriaObjetivo, criaColuna as apiCriaColuna, criaCard as apiCriaCard, criaComentario as apiCriaComentario, atualizaCard as apiAtualizaCard, reordenaCards as apiReordenaCards, criaDependenciaCard as apiCriaDependencia, atualizaDependenciaCard as apiAtualizaDependencia, deletaDependenciaCard as apiDeletaDependencia, definePosicaoFluxogramaCard as apiDefinePosicao, deletaCard as apiDeletaCard, atualizaColuna as apiAtualizaColuna, deletaColuna as apiDeletaColuna, reordenaColunas as apiReordenaColunas, atualizaObjetivo as apiAtualizaObjetivo, deletaObjetivo as apiDeletaObjetivo, salvaDesenhoFluxograma as apiSalvaDesenhoFluxograma } from 'Uteis/ApiConsumer/PainelDoMedoMiddleware';
 
 export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     objetivos: ReturnType<typeof obtemObjetivos>;
@@ -33,6 +33,7 @@ export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     irParaCadastroObjetivo: () => void;
     dependenciasCards: ReturnType<typeof obtemDependenciasCards>;
     posicoesFluxograma: ReturnType<typeof obtemPosicoesFluxograma>;
+    desenhoFluxograma: ReturnType<typeof obtemDesenhoFluxograma>;
     todosCards: ReturnType<typeof obtemTodosCards>;
     criaDependenciaCard: (fkCardsDependenteId: number, fkCardsRequisitoId: number, descricao: string | null, bloqueante: boolean) => Promise<void>;
     atualizaDependenciaCard: (id: number, descricao: string | null, bloqueante: boolean) => Promise<void>;
@@ -44,6 +45,7 @@ export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     reordenaColunas: (idsOrdenados: number[]) => Promise<void>;
     atualizaObjetivo: (id: number, nome: string) => Promise<void>;
     deletaObjetivo: (id: number) => Promise<void>;
+    salvaDesenhoFluxograma: (conteudo: string | null) => Promise<void>;
 };
 
 const Contexto__PaginaColaboradorPainelDoMedo = createContext<Contexto__PaginaColaboradorPainelDoMedo__Props | undefined>(undefined);
@@ -66,10 +68,11 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     const comentarios = obtemComentarios(cardAbertoId);
     const dependenciasCards = obtemDependenciasCards();
     const posicoesFluxograma = obtemPosicoesFluxograma();
+    const desenhoFluxograma = obtemDesenhoFluxograma(objetivoAtualId);
     const todosCards = obtemTodosCards();
 
     useEffect(() => {
-        if (objetivoAtualId !== null) cards.recarregar();
+        if (objetivoAtualId !== null) { cards.recarregar(); desenhoFluxograma.recarregar(); }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [objetivoAtualId]);
 
@@ -84,7 +87,6 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
             colunas.recarregar();
             cards.recarregar();
             dependenciasCards.recarregar();
-            posicoesFluxograma.recarregar();
             todosCards.recarregar();
             if (cardAbertoId !== null) comentarios.recarregar();
         },
@@ -153,7 +155,12 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     };
 
     const definePosicaoFluxogramaCard = async (fkCardsId: number, posicaoX: number, posicaoY: number) => {
-        try { await apiDefinePosicao({ fkCardsId, posicaoX, posicaoY }); posicoesFluxograma.recarregar(); } catch { /* posicao sera reconciliada no proximo refetch */ }
+        try { await apiDefinePosicao({ fkCardsId, posicaoX, posicaoY }); } catch { /* posicao otimista no estado local; reconciliada no proximo carregamento do objetivo */ }
+    };
+
+    const salvaDesenhoFluxograma = async (conteudo: string | null) => {
+        if (objetivoAtualId === null) return;
+        try { await apiSalvaDesenhoFluxograma({ fkObjetivosId: objetivoAtualId, conteudo }); } catch { /* desenho sera reconciliado no proximo refetch */ }
     };
 
     const deletaCard = async (id: number) => {
@@ -193,7 +200,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     };
 
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, pagina, setPagina, irParaObjetivo, irParaListagem, irParaCadastroObjetivo, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, deletaCard, atualizaColuna, deletaColuna, reordenaColunas, atualizaObjetivo, deletaObjetivo }}>
+        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, pagina, setPagina, irParaObjetivo, irParaListagem, irParaCadastroObjetivo, dependenciasCards, posicoesFluxograma, desenhoFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, salvaDesenhoFluxograma, deletaCard, atualizaColuna, deletaColuna, reordenaColunas, atualizaObjetivo, deletaObjetivo }}>
             {children}
         </Contexto__PaginaColaboradorPainelDoMedo.Provider>
     );
@@ -285,6 +292,20 @@ function obtemPosicoesFluxograma() {
         mensagemErro: 'Houve um erro recuperando as posições',
         mensagemListaVazia: 'Nenhuma posição ainda.',
         mensagemListaVaziaComFiltro: 'Nenhuma posição com os filtros atuais.',
+        montaParametrosConsulta: params => ({ where: params.where, order: { id: 'ASC' }, limit: params.limit, offset: params.offset }),
+    });
+};
+
+function obtemDesenhoFluxograma(objetivoId: number | null) {
+    const whereFixo = useMemo(() => ({ fkObjetivosId: objetivoId ?? -1 }), [objetivoId]);
+    return useNoraGraphQLListagem('DesenhoFluxograma', {
+        select: ['id', 'fkObjetivosId', 'conteudo'],
+        whereFixo,
+        itensPorPagina: 1,
+        carregando: 'Carregando desenho',
+        mensagemErro: 'Houve um erro recuperando o desenho',
+        mensagemListaVazia: 'Nenhum desenho ainda.',
+        mensagemListaVaziaComFiltro: 'Nenhum desenho com os filtros atuais.',
         montaParametrosConsulta: params => ({ where: params.where, order: { id: 'ASC' }, limit: params.limit, offset: params.offset }),
     });
 };

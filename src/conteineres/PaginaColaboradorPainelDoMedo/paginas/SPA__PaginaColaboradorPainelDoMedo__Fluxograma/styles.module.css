@@ -93,7 +93,7 @@
     border: 0.1em solid #2a2536;
     border-radius: 0.6em;
     background: radial-gradient(60em 40em at 30% -10%, #120d20, #0a0810);
-    cursor: grab;
+    cursor: default;
 }
 
 .palco.conectando {
@@ -331,4 +331,86 @@
     font-size: 0.85em;
     line-height: 1.35;
     margin: 0;
+}
+
+.ferramentas {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    flex-wrap: wrap;
+}
+
+.dicaMouse {
+    color: #6f6857;
+    font-size: 0.72em;
+    font-style: italic;
+    margin-left: auto;
+}
+
+.ferramenta {
+    width: 2em;
+    height: 2em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #16121f;
+    border: 0.1em solid #352E4C;
+    color: #EBE0C9;
+    border-radius: 0.4em;
+    cursor: pointer;
+    font-size: 0.9em;
+    line-height: 1;
+    padding: 0;
+}
+
+.ferramenta:hover {
+    border-color: #B79051;
+    color: #B79051;
+}
+
+.ferramentaAtiva {
+    background: #B79051;
+    color: #16121f;
+    border-color: #B79051;
+}
+
+.swatch {
+    width: 1.4em;
+    height: 1.4em;
+    border-radius: 50%;
+    border: 0.15em solid transparent;
+    cursor: pointer;
+    padding: 0;
+}
+
+.swatchAtivo {
+    border-color: #EBE0C9;
+    box-shadow: inset 0 0 0 0.1em #16121f;
+}
+
+.desenhando {
+    cursor: crosshair;
+}
+
+.movendoCanvas,
+.movendoCanvas * {
+    cursor: grabbing !important;
+}
+
+.editorTexto {
+    position: absolute;
+    transform-origin: left top;
+    background: rgba(13, 11, 20, 0.85);
+    border: 0.1em solid #B79051;
+    border-radius: 0.3em;
+    color: #EBE0C9;
+    font-family: var(--fonte-junge);
+    padding: 0 0.2em;
+    min-width: 6em;
+    min-height: 1.4em;
+    resize: none;
+    outline: none;
+    z-index: 5;
+    white-space: pre;
+    overflow: hidden;
 }
