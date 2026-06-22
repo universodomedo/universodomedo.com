@@ -1,0 +1,25 @@
+.toggle {
+    display: flex;
+    border: 0.1em solid #352E4C;
+    border-radius: 0.5em;
+    overflow: hidden;
+}
+
+.toggle button {
+    background: transparent;
+    border: 0;
+    color: #8a8474;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.75em;
+    padding: 0.4em 0.9em;
+    cursor: pointer;
+}
+
+.toggle button:hover {
+    color: #B79051;
+}
+
+.ativo {
+    background: #16121f;
+    color: #B79051;
+}

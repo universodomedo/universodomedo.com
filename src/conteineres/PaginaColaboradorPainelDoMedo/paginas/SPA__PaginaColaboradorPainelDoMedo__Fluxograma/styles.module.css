@@ -1,0 +1,268 @@
+.fluxograma {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    gap: 0.6em;
+    padding: 0.8em 1em;
+}
+
+.barra {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    flex-wrap: wrap;
+}
+
+.rotulo {
+    color: #aba9a1;
+    font-size: 0.9em;
+}
+
+.seletor {
+    background: #0d0b14;
+    border: 0.1em solid #352E4C;
+    color: #D9D9D9;
+    border-radius: 0.4em;
+    padding: 0.3em 0.6em;
+    font-family: inherit;
+}
+
+.divisor {
+    width: 0.1em;
+    height: 1.4em;
+    background: #352E4C;
+}
+
+.botao {
+    background: #16121f;
+    border: 0.1em solid #352E4C;
+    color: #EBE0C9;
+    border-radius: 0.4em;
+    padding: 0.35em 0.7em;
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.75em;
+}
+
+.botao:hover:not(:disabled) {
+    border-color: #B79051;
+    color: #B79051;
+}
+
+.botao:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.botaoAtivo {
+    background: #B79051;
+    color: #16121f;
+    border-color: #B79051;
+}
+
+.zoomTxt {
+    color: #8a8474;
+    font-size: 0.75em;
+    width: 3em;
+    text-align: center;
+}
+
+.erro {
+    color: #DB4747;
+}
+
+.corpo {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    gap: 0.6em;
+}
+
+.palco {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    border: 0.1em solid #2a2536;
+    border-radius: 0.6em;
+    background: radial-gradient(60em 40em at 30% -10%, #120d20, #0a0810);
+    cursor: grab;
+}
+
+.palco.conectando {
+    cursor: crosshair;
+}
+
+.svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.aviso {
+    position: absolute;
+    top: 1em;
+    left: 1em;
+    right: 1em;
+    color: #7c7565;
+    font-style: italic;
+    line-height: 1.5;
+    pointer-events: none;
+}
+
+.nodo .alvo {
+    cursor: grab;
+}
+
+.nodo text {
+    pointer-events: none;
+    user-select: none;
+}
+
+.tCinzel {
+    font-family: var(--fonte-cinzel);
+}
+
+.tJunge {
+    font-family: var(--fonte-junge);
+}
+
+.painel {
+    width: 19em;
+    min-width: 16em;
+    background: linear-gradient(180deg, #100c18, #0a0810);
+    border: 0.1em solid #2a2536;
+    border-radius: 0.6em;
+    padding: 0.8em 0.9em;
+    overflow: auto;
+}
+
+.detalhe {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.detalheCabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chipPrincipal {
+    font-family: var(--fonte-cinzel);
+    font-size: 0.72em;
+    color: #B79051;
+    border: 0.1em solid #B79051;
+    border-radius: 1em;
+    padding: 0.1em 0.6em;
+}
+
+.fechar {
+    background: transparent;
+    border: 0;
+    color: #aba9a1;
+    cursor: pointer;
+    font-size: 1em;
+    margin-left: auto;
+}
+
+.fechar:hover {
+    color: #DB4747;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    font-size: 0.82em;
+    color: #aba9a1;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+    background: #0d0b14;
+    border: 0.1em solid #352E4C;
+    color: #D9D9D9;
+    border-radius: 0.4em;
+    padding: 0.35em 0.5em;
+    font-family: inherit;
+}
+
+.campo textarea {
+    resize: vertical;
+    min-height: 4em;
+    line-height: 1.35;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.82em;
+    color: #aba9a1;
+    cursor: pointer;
+}
+
+.chips {
+    margin: 0.2em 0;
+}
+
+.chip {
+    display: inline-block;
+    font-size: 0.74em;
+    padding: 0.1em 0.6em;
+    border-radius: 1em;
+    border: 0.1em solid;
+}
+
+.salvar {
+    background: #16121f;
+    border: 0.1em solid #B79051;
+    color: #B79051;
+    border-radius: 0.4em;
+    padding: 0.4em 0.8em;
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.8em;
+    margin-top: 0.3em;
+}
+
+.salvar:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.acoes {
+    display: flex;
+    gap: 0.5em;
+    margin-top: 0.3em;
+}
+
+.excluir {
+    background: #1c1116;
+    border: 0.1em solid #6e2b2b;
+    color: #DB4747;
+    border-radius: 0.4em;
+    padding: 0.4em 0.8em;
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.8em;
+}
+
+.excluir:hover:not(:disabled) {
+    border-color: #DB4747;
+}
+
+.excluir:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.ligacaoTexto {
+    color: #aba9a1;
+    font-size: 0.85em;
+    line-height: 1.35;
+    margin: 0;
+}

@@ -4,6 +4,7 @@ import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_
 
 import { Contexto__PaginaColaboradorPainelDoMedo__Props, Contexto__PaginaColaboradorPainelDoMedo__Provider, useContexto__PaginaColaboradorPainelDoMedo } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo/contexto';
 import SPA__PaginaColaboradorPainelDoMedo__Quadro from 'Conteineres/PaginaColaboradorPainelDoMedo/paginas/SPA__PaginaColaboradorPainelDoMedo__Quadro/SPA__PaginaColaboradorPainelDoMedo__Quadro';
+import SPA__PaginaColaboradorPainelDoMedo__Fluxograma from 'Conteineres/PaginaColaboradorPainelDoMedo/paginas/SPA__PaginaColaboradorPainelDoMedo__Fluxograma/SPA__PaginaColaboradorPainelDoMedo__Fluxograma';
 
 export function Conteiner__PaginaColaboradorPainelDoMedo() {
     return (
@@ -17,6 +18,9 @@ export const Conteiner__PaginaColaboradorPainelDoMedo__Interno = criaConteiner<P
 
 type PropsConteiner__PaginaColaboradorPainelDoMedo = Contexto__PaginaColaboradorPainelDoMedo__Props;
 
-function resolveSaida(): SaidaConteiner { return criaSaidaConteiner(SPA__PaginaColaboradorPainelDoMedo__Quadro, {}); };
+function resolveSaida(props: PropsConteiner__PaginaColaboradorPainelDoMedo): SaidaConteiner {
+    if (props.view === 'fluxograma') return criaSaidaConteiner(SPA__PaginaColaboradorPainelDoMedo__Fluxograma, {});
+    return criaSaidaConteiner(SPA__PaginaColaboradorPainelDoMedo__Quadro, {});
+};
 
 function useEstado(): PropsConteiner__PaginaColaboradorPainelDoMedo { return useContexto__PaginaColaboradorPainelDoMedo(); };

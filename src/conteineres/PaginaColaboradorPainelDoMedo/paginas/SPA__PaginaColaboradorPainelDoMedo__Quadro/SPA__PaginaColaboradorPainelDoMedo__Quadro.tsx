@@ -5,10 +5,11 @@ import { useState } from 'react';
 import styles from './styles.module.css';
 
 import { useContexto__PaginaColaboradorPainelDoMedo } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo/contexto';
+import BarraView from 'Conteineres/PaginaColaboradorPainelDoMedo/componentes/BarraView';
 import ModalCard from './ModalCard';
 
 export default function SPA__PaginaColaboradorPainelDoMedo__Quadro() {
-    const { objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards } = useContexto__PaginaColaboradorPainelDoMedo();
+    const { view, setView, objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards } = useContexto__PaginaColaboradorPainelDoMedo();
 
     const [novoObjetivo, setNovoObjetivo] = useState('');
     const [novaColuna, setNovaColuna] = useState('');
@@ -46,6 +47,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Quadro() {
     return (
         <section className={styles.painel}>
             <header className={styles.barra}>
+                <BarraView view={view} setView={setView} />
                 <span className={styles.rotulo}>Objetivo:</span>
                 <select className={styles.seletor} value={objetivoAtualId ?? ''} onChange={evento => setObjetivoAtualId(evento.target.value ? Number(evento.target.value) : null)}>
                     {objetivos.registros.map(objetivo => <option key={objetivo.id} value={objetivo.id}>{objetivo.nome}</option>)}
