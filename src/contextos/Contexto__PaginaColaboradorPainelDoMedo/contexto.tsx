@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, useMemo, type ReactNode } from 'react';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
-import { criaObjetivo as apiCriaObjetivo, criaColuna as apiCriaColuna, criaCard as apiCriaCard, criaComentario as apiCriaComentario, atualizaCard as apiAtualizaCard } from 'Uteis/ApiConsumer/PainelDoMedoMiddleware';
+import { criaObjetivo as apiCriaObjetivo, criaColuna as apiCriaColuna, criaCard as apiCriaCard, criaComentario as apiCriaComentario, atualizaCard as apiAtualizaCard, reordenaCards as apiReordenaCards } from 'Uteis/ApiConsumer/PainelDoMedoMiddleware';
 
 export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     objetivos: ReturnType<typeof obtemObjetivos>;
@@ -22,6 +22,7 @@ export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     criaCard: (fkColunasId: number, titulo: string) => Promise<void>;
     atualizaCard: (id: number, titulo: string, fkTiposStatusCardId: number, prazo: string | null) => Promise<void>;
     criaComentario: (texto: string) => Promise<void>;
+    reordenaCards: (fkColunasId: number, idsOrdenados: number[]) => Promise<void>;
 };
 
 const Contexto__PaginaColaboradorPainelDoMedo = createContext<Contexto__PaginaColaboradorPainelDoMedo__Props | undefined>(undefined);
@@ -90,8 +91,14 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
         try { await apiCriaComentario({ fkCardsId: cardAbertoId, texto: texto.trim() }); comentarios.recarregar(); } finally { setSalvando(false); }
     };
 
+    const reordenaCards = async (fkColunasId: number, idsOrdenados: number[]) => {
+        if (idsOrdenados.length < 1 || salvando) return;
+        setSalvando(true);
+        try { await apiReordenaCards({ fkColunasId, idsOrdenados }); cards.recarregar(); } finally { setSalvando(false); }
+    };
+
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario }}>
+        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards }}>
             {children}
         </Contexto__PaginaColaboradorPainelDoMedo.Provider>
     );
