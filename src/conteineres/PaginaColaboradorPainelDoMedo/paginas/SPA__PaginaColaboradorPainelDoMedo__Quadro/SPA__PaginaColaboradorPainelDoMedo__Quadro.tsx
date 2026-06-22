@@ -5,15 +5,17 @@ import { useState } from 'react';
 import styles from './styles.module.css';
 
 import { useContexto__PaginaColaboradorPainelDoMedo } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo/contexto';
+import ModalCard from './ModalCard';
 
 export default function SPA__PaginaColaboradorPainelDoMedo__Quadro() {
-    const { objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, salvando, criaObjetivo, criaColuna, criaCard } = useContexto__PaginaColaboradorPainelDoMedo();
+    const { objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario } = useContexto__PaginaColaboradorPainelDoMedo();
 
     const [novoObjetivo, setNovoObjetivo] = useState('');
     const [novaColuna, setNovaColuna] = useState('');
     const [novoCard, setNovoCard] = useState<Record<number, string>>({});
 
     const obtemStatus = (fkTiposStatusCardId: number) => statusCards.registros.find(status => status.id === fkTiposStatusCardId) ?? null;
+    const cardAberto = cardAbertoId !== null ? cards.registros.find(card => card.id === cardAbertoId) ?? null : null;
 
     const submeteObjetivo = async () => { await criaObjetivo(novoObjetivo); setNovoObjetivo(''); };
     const submeteColuna = async () => { await criaColuna(novaColuna); setNovaColuna(''); };
@@ -55,7 +57,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Quadro() {
                                     {cardsDaColuna.map(card => {
                                         const status = obtemStatus(card.fkTiposStatusCardId);
                                         return (
-                                            <div key={card.id} className={styles.card} style={status ? { borderLeftColor: status.cor } : undefined}>
+                                            <div key={card.id} className={styles.card} style={status ? { borderLeftColor: status.cor } : undefined} onClick={() => abrirCard(card.id)}>
                                                 <span className={styles.cardTitulo}>{card.titulo}</span>
                                                 {status && <span className={styles.pill} style={{ borderColor: status.cor, color: status.cor }}>{status.nome}</span>}
                                             </div>
@@ -70,6 +72,8 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Quadro() {
                     })}
                 </div>
             )}
+
+            {cardAberto && <ModalCard key={cardAberto.id} card={cardAberto} status={statusCards.registros} comentarios={comentarios} salvando={salvando} onSalvar={atualizaCard} onComentar={criaComentario} onFechar={fecharCard} />}
         </section>
     );
 };
