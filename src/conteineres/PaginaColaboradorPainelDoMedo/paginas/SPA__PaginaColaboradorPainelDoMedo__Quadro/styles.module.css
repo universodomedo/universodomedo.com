@@ -1,0 +1,19 @@
+.recipiente {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+    min-height: 60%;
+    padding: 2em;
+    text-align: center;
+}
+
+.titulo {
+    letter-spacing: 0.06em;
+}
+
+.subtitulo {
+    max-width: 40em;
+    opacity: 0.8;
+}
