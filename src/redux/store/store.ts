@@ -4,6 +4,7 @@ import usuariosReducer from '../slices/usuariosSlice';
 import chatsReducer from '../slices/chatsSlice';
 import cacheReducer from '../slices/cacheSlice';
 import layoutContextualizadoReducer from 'Redux/slices/layoutContextualizadoSlice';
+import audioPaginaReducer from 'Redux/slices/audioPaginaSlice';
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         chats: chatsReducer,
         cache: cacheReducer,
         layoutContextualizado: layoutContextualizadoReducer,
+        audioPagina: audioPaginaReducer,
     },
     middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false }),
 });

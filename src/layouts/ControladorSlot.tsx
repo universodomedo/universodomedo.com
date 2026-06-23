@@ -15,6 +15,7 @@ import { useAtualizarPaginaAtualWs } from 'Hooks/useAtualizarPaginaAtualWs';
 
 import { useAppDispatch, useAppSelector } from 'Redux/hooks/useRedux';
 import { updateLayoutContextualizado, setMenuLeaf } from 'Redux/slices/layoutContextualizadoSlice';
+import { setMusicaPagina } from 'Redux/slices/audioPaginaSlice';
 import { selectLayoutEsconderMenu, selectMenuLayoutTipo } from 'Redux/selectors/layoutContextualizadoSelectors';
 
 import { MenuLayoutDinamicoProvider, useMenuLayoutDinamicoValor } from './MenuLayoutDinamico';
@@ -77,6 +78,11 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
         dispatch(updateLayoutContextualizado(pagina.layoutContextualizadoInicial));
         dispatch(setMenuLeaf(menuLeaf));
     }, [dispatch, temLayout, decisao.permitido, pagina, menuLeaf]);
+
+    useEffect(() => {
+        if (!decisao.permitido) return;
+        dispatch(setMusicaPagina(pagina.idMusicaPagina ?? null));
+    }, [dispatch, decisao.permitido, pagina]);
 
     if (carregando) return (<h1>carregando....</h1>);
     if (!decisao.permitido) return (<RedirecionadorInterno pagina={decisao.redirecionarPara} />);

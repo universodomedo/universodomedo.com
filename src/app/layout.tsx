@@ -32,7 +32,7 @@ import { Cinzel, Cinzel_Decorative, Junge, B612_Mono } from 'next/font/google';
 import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwiperEsquerda.tsx';
 
 import { Provider as RadixTooltip } from "@radix-ui/react-tooltip";
-import BackgroundAudio from 'Componentes/Elementos/BackgroundAudio/BackgroundAudio';
+import ControladorAudioGlobal from 'Componentes/Elementos/ControladorAudioGlobal/ControladorAudioGlobal';
 import BarraAcoesFlutuante from 'Componentes/Elementos/BarraAcoesFlutuante/BarraAcoesFlutuante';
 import { BarraAcoesFlutuante__ProviderGlobal } from 'Componentes/Elementos/BarraAcoesFlutuante/BarraAcoesFlutuante__ProviderGlobal';
 import InicializadorCache from 'Componentes/Elementos/InicializadorCache/InicializadorCache';
@@ -99,7 +99,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                                   <ClipboardToast />
                                 </ContextoCopiarParaClipboardProvider>
                               </ConteinerEscalavel>
-                              {/* <BackgroundAudio /> */}
+                              <ControladorAudioGlobal />
                             </ConteudoContextualizado>
                           </InicializadorCache>
                         </ContextoMenuSwiperEsquerdaProvider>
