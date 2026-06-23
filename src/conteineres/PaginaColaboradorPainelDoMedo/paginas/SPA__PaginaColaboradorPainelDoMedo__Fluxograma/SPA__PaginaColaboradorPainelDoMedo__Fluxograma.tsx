@@ -4,12 +4,10 @@ import { useState, useRef, useEffect, useMemo, type MouseEvent as ReactMouseEven
 
 import styles from './styles.module.css';
 
-import { Eventos_Emite } from 'types-nora-api';
-
 import { useContexto__PaginaColaboradorPainelDoMedo, Contexto__PaginaColaboradorPainelDoMedo__Props } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo/contexto';
-import { useRecebeEmitWs } from 'Hooks/useEventoWs';
 import BarraView from 'Conteineres/PaginaColaboradorPainelDoMedo/componentes/BarraView';
 import ModalCard from '../SPA__PaginaColaboradorPainelDoMedo__Quadro/ModalCard';
+import FichaObjetivo from 'Conteineres/PaginaColaboradorPainelDoMedo/componentes/FichaObjetivo';
 
 type Card = Contexto__PaginaColaboradorPainelDoMedo__Props['cards']['registros'][number];
 type Dependencia = Contexto__PaginaColaboradorPainelDoMedo__Props['dependenciasCards']['registros'][number];
@@ -93,7 +91,7 @@ function pontoBorda(cx: number, cy: number, w: number, h: number, alvoX: number,
 };
 
 export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
-    const { pagina, setPagina, irParaListagem, objetivos, objetivoAtualId, setObjetivoAtualId, cards, statusCards, colunas, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, atualizaCard, criaComentario, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, desenhoFluxograma, salvaDesenhoFluxograma } = useContexto__PaginaColaboradorPainelDoMedo();
+    const { pagina, setPagina, irParaListagem, objetivos, objetivoAtualId, setObjetivoAtualId, cards, statusCards, colunas, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, atualizaCard, criaComentario, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, desenhoConteudo, registraDesenho, flushDesenho, objetivoFichaAbertaId, abrirFichaObjetivo } = useContexto__PaginaColaboradorPainelDoMedo();
 
     const [vista, setVista] = useState({ x: 40, y: 30, z: 1 });
     const [posLocal, setPosLocal] = useState<Record<number, { x: number; y: number }>>({});
@@ -120,11 +118,11 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
     const elementosRef = useRef(elementos); elementosRef.current = elementos;
     const rascunhoRef = useRef(rascunho); rascunhoRef.current = rascunho;
     const marqueeRef = useRef(marquee); marqueeRef.current = marquee;
-    const salvaDesenhoRef = useRef(salvaDesenhoFluxograma); salvaDesenhoRef.current = salvaDesenhoFluxograma;
-    const salvaTimerRef = useRef<number | null>(null);
+    const registraDesenhoRef = useRef(registraDesenho); registraDesenhoRef.current = registraDesenho;
+    const flushDesenhoRef = useRef(flushDesenho); flushDesenhoRef.current = flushDesenho;
     const ultimoSerialRef = useRef<string>('');
-    const ultimoPersistidoRef = useRef<string>('');
     const svgRef = useRef<SVGSVGElement | null>(null);
+    const grupoRef = useRef<SVGGElement | null>(null);
     const arrasteRef = useRef<null | { tipo: 'card' | 'pan' | 'conectar'; id: number; sx: number; sy: number; ox: number; oy: number; moveu: boolean }>(null);
     const desenhoArrasteRef = useRef<null | { modo: 'desenhar' | 'mover' | 'resize' | 'marcar'; tipo: ElementoTipo; sx: number; sy: number; origens: Elemento[]; moveu: boolean }>(null);
 
@@ -142,7 +140,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
     const nomeColuna = (card: Card) => colunas.registros.find(c => c.id === card.fkColunasId)?.nome ?? '';
 
     const indiceColuna = useMemo(() => { const m = new Map<number, number>(); [...colunas.registros].sort((a, b) => a.ordem - b.ordem).forEach((c, i) => m.set(c.id, i)); return m; }, [colunas.registros]);
-    const posPadrao = (card: Card) => ({ x: (indiceColuna.get(card.fkColunasId) ?? 0) * 260 + 30, y: ((card.ordem ?? 1) - 1) * 110 + 30 });
+    const posPadrao = (card: Card) => ({ x: (indiceColuna.get(card.fkColunasId) ?? 0) * 260 + 30, y: ((card.ordem ?? 1) - 1) * 110 + 170 });
     const posServidor = (cardId: number) => { const p = posicoesFluxograma.registros.find(x => x.fkCardsId === cardId); return p ? { x: p.posicaoX, y: p.posicaoY } : null; };
     const posCard = (card: Card) => posLocal[card.id] ?? posServidor(card.id) ?? posPadrao(card);
 
@@ -161,56 +159,35 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
     const posPorId = (cardId: number) => { const c = registros.find(x => x.id === cardId); if (c) return posCard(c); return fantasmas.get(cardId) ?? null; };
     const tituloPorId = (cardId: number) => { const c = registros.find(x => x.id === cardId); if (c) return c.titulo; return cardLevePorId.get(cardId)?.titulo ?? '?'; };
 
-    const agendaSalvar = () => {
-        if (salvaTimerRef.current !== null) window.clearTimeout(salvaTimerRef.current);
-        salvaTimerRef.current = window.setTimeout(() => {
-            const vazio = elementosRef.current.length === 0;
-            const serial = vazio ? '' : JSON.stringify(elementosRef.current);
-            ultimoSerialRef.current = serial;
-            salvaTimerRef.current = null;
-            salvaDesenhoRef.current(vazio ? null : serial);
-        }, 500);
-    };
-    const comita = (atualiza: (prev: Elemento[]) => Elemento[]) => { setElementos(prev => { const next = atualiza(prev); elementosRef.current = next; return next; }); agendaSalvar(); };
-    const aplicaLive = (atualiza: (prev: Elemento[]) => Elemento[]) => setElementos(prev => { const next = atualiza(prev); elementosRef.current = next; return next; });
+    const serializaDesenho = (elems: Elemento[]) => elems.length ? JSON.stringify(elems) : null;
+    const persisteDesenho = () => { const serial = serializaDesenho(elementosRef.current); ultimoSerialRef.current = serial ?? ''; registraDesenhoRef.current(serial); };
+    const comita = (atualiza: (prev: Elemento[]) => Elemento[]) => { const next = atualiza(elementosRef.current); elementosRef.current = next; setElementos(next); persisteDesenho(); };
+    const aplicaLive = (atualiza: (prev: Elemento[]) => Elemento[]) => { const next = atualiza(elementosRef.current); elementosRef.current = next; setElementos(next); };
 
     const finalizaTexto = (id: string) => {
         setEditTextoId(null);
         const el = elementosRef.current.find(x => x.id === id);
         if (el && !(el.texto ?? '').trim()) comita(prev => prev.filter(x => x.id !== id));
-        else agendaSalvar();
+        else persisteDesenho();
     };
 
     const comitaRef = useRef(comita); comitaRef.current = comita;
     const aplicaLiveRef = useRef(aplicaLive); aplicaLiveRef.current = aplicaLive;
-    const agendaSalvarRef = useRef(agendaSalvar); agendaSalvarRef.current = agendaSalvar;
+    const persisteDesenhoRef = useRef(persisteDesenho); persisteDesenhoRef.current = persisteDesenho;
 
-    const persistido = desenhoFluxograma.registros[0]?.conteudo ?? '';
     useEffect(() => {
-        if (persistido === ultimoPersistidoRef.current) return;
         if (desenhoArrasteRef.current || editTextoId !== null) return;
-        ultimoPersistidoRef.current = persistido;
-        ultimoSerialRef.current = persistido;
-        const novos = parseElementos(persistido || null);
+        const serial = desenhoConteudo ?? '';
+        if (serial === ultimoSerialRef.current) return;
+        ultimoSerialRef.current = serial;
+        const novos = parseElementos(desenhoConteudo);
         elementosRef.current = novos;
         setElementos(novos);
         setSelIds([]);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [persistido, objetivoAtualId, editTextoId]);
+    }, [desenhoConteudo, editTextoId]);
 
-    useRecebeEmitWs(Eventos_Emite.PainelDoMedo.eventos.desenhoAtualizado, {
-        onSuccess: ({ fkObjetivosId, conteudo }) => {
-            if (fkObjetivosId !== objetivoAtualId) return;
-            const serial = conteudo ?? '';
-            if (serial === ultimoSerialRef.current) return;
-            if (desenhoArrasteRef.current || editTextoId !== null) return;
-            ultimoSerialRef.current = serial;
-            const novos = parseElementos(conteudo);
-            elementosRef.current = novos;
-            setElementos(novos);
-            setSelIds([]);
-        },
-    });
+    useEffect(() => () => flushDesenhoRef.current(), []);
 
     useEffect(() => {
         setPosLocal(prev => {
@@ -221,7 +198,10 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [posicoesFluxograma.registros]);
 
-    const cursorMundo = (clientX: number, clientY: number) => { const r = svgRef.current?.getBoundingClientRect(); const z = vistaRef.current.z; return { x: ((clientX - (r?.left ?? 0)) - vistaRef.current.x) / z, y: ((clientY - (r?.top ?? 0)) - vistaRef.current.y) / z }; };
+    // Converte coordenadas de tela (clientX/Y) para o sistema do canvas via getScreenCTM do grupo transformado: embute escala da plataforma (ConteinerEscalavel), layout do SVG, pan e zoom.
+    const cursorMundo = (clientX: number, clientY: number) => { const ctm = grupoRef.current?.getScreenCTM(); if (!ctm) return { x: 0, y: 0 }; const inv = ctm.inverse(); return { x: inv.a * clientX + inv.c * clientY + inv.e, y: inv.b * clientX + inv.d * clientY + inv.f }; };
+    // Escala de tela do SVG raiz (sem o pan/zoom interno): usada para converter deltas de pixel de tela em deltas de pan.
+    const escalaTela = () => svgRef.current?.getScreenCTM()?.a ?? 1;
     const mundoParaTela = (x: number, y: number) => ({ x: vista.x + x * vista.z, y: vista.y + y * vista.z });
 
     useEffect(() => {
@@ -247,8 +227,8 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
             const a = arrasteRef.current; if (!a) return;
             const dx = e.clientX - a.sx, dy = e.clientY - a.sy;
             if (Math.abs(dx) > 3 || Math.abs(dy) > 3) a.moveu = true;
-            if (a.tipo === 'pan') setVista(v => ({ ...v, x: a.ox + dx, y: a.oy + dy }));
-            else if (a.tipo === 'card') setPosLocal(p => ({ ...p, [a.id]: { x: a.ox + dx / vistaRef.current.z, y: a.oy + dy / vistaRef.current.z } }));
+            if (a.tipo === 'pan') { const s = escalaTela(); setVista(v => ({ ...v, x: a.ox + dx / s, y: a.oy + dy / s })); }
+            else if (a.tipo === 'card') { const m = cursorMundo(e.clientX, e.clientY); setPosLocal(p => ({ ...p, [a.id]: { x: m.x + a.ox, y: m.y + a.oy } })); }
             else if (a.tipo === 'conectar') { const m = cursorMundo(e.clientX, e.clientY); setConectando({ deCardId: a.id, cx: m.x, cy: m.y }); }
         };
         const aoSoltar = (e: MouseEvent) => {
@@ -269,7 +249,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
                     if (da.moveu && mq && (mq.w > 2 || mq.h > 2)) setSelIds(elementosRef.current.filter(el => intersecta(mq, bbox(el))).map(el => el.id));
                     else setSelIds([]);
                     setDepSelId(null);
-                } else if (da.moveu) agendaSalvarRef.current();
+                } else if (da.moveu) persisteDesenhoRef.current();
                 return;
             }
             const a = arrasteRef.current; if (!a) return;
@@ -309,8 +289,8 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
         if (e.button === 1) { e.preventDefault(); return; }
         if (e.button !== 0 || ferramenta !== 'selecionar') return;
         e.stopPropagation();
-        const pos = posCard(card);
-        arrasteRef.current = { tipo: 'card', id: card.id, sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y, moveu: false };
+        const pos = posCard(card), m = cursorMundo(e.clientX, e.clientY);
+        arrasteRef.current = { tipo: 'card', id: card.id, sx: e.clientX, sy: e.clientY, ox: pos.x - m.x, oy: pos.y - m.y, moveu: false };
     };
     const aoMouseDownHandle = (e: ReactMouseEvent, card: Card) => {
         if (e.button !== 0 || ferramenta !== 'selecionar') return;
@@ -418,7 +398,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
                                 <path d="M1,1 L9,5 L1,9" fill="none" stroke="#b8a67a" strokeWidth={1.6} />
                             </marker>
                         </defs>
-                        <g transform={`translate(${vista.x},${vista.y}) scale(${vista.z})`}>
+                        <g ref={grupoRef} transform={`translate(${vista.x},${vista.y}) scale(${vista.z})`}>
                             {depsTocandoVisivel.map(d => {
                                 const pr = posPorId(d.fkCardsRequisitoId), pd = posPorId(d.fkCardsDependenteId);
                                 if (!pr || !pd) return null;
@@ -452,6 +432,20 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
                             })}
 
                             {conectando && (() => { const de = registros.find(c => c.id === conectando.deCardId); if (!de) return null; const p = posCard(de); return <line x1={p.x + DIM.w / 2} y1={p.y + DIM.h} x2={conectando.cx} y2={conectando.cy} stroke="#EBE0C9" strokeWidth={2} strokeDasharray="4 4" style={{ pointerEvents: 'none' }} />; })()}
+
+                            {objetivoAtual && (() => {
+                                const ox = 30, oy = 24, ow = 340, oh = 96;
+                                const st = statusCards.registros.find(s => s.id === objetivoAtual.fkTiposStatusCardId) ?? null;
+                                return (
+                                    <g style={{ cursor: 'pointer' }} onMouseDown={e => { if (e.button !== 0 || ferramenta !== 'selecionar') return; e.stopPropagation(); abrirFichaObjetivo(objetivoAtual.id); }}>
+                                        <rect x={ox} y={oy} width={ow} height={oh} rx={16} fill="#B79051" fillOpacity={0.12} stroke="#B79051" strokeWidth={2.6} />
+                                        <circle cx={ox + 18} cy={oy + 22} r={6} fill="#B79051" stroke="rgba(0,0,0,.4)" strokeWidth={1} />
+                                        <text className={styles.tCinzel} x={ox + 34} y={oy + 28} fontSize={16} fill="#EBE0C9">{objetivoAtual.nome}</text>
+                                        <text className={styles.tJunge} x={ox + 16} y={oy + 54} fontSize={11.5} fill={st ? st.cor : '#8a8474'}>{st ? st.nome : 'sem status'}</text>
+                                        <text className={styles.tJunge} x={ox + 16} y={oy + 78} fontSize={10.5} fill="#7c7565">Clique para abrir a ficha (descrição + pendências)</text>
+                                    </g>
+                                );
+                            })()}
 
                             {registros.map(card => {
                                 const p = posCard(card), cor = corDe(card);
@@ -518,6 +512,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
             </div>
 
             {cardAberto && <ModalCard key={cardAberto.id} card={cardAberto} status={statusCards.registros} comentarios={comentarios} salvando={salvando} onSalvar={atualizaCard} onComentar={criaComentario} onFechar={fecharCard} />}
+            {objetivoFichaAbertaId !== null && <FichaObjetivo key={objetivoFichaAbertaId} objetivoId={objetivoFichaAbertaId} />}
         </section>
     );
 };

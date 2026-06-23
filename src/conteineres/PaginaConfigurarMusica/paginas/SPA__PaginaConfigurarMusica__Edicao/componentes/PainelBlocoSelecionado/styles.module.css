@@ -1,0 +1,111 @@
+.painel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    flex: 1;
+    padding: 1em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.85em;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.vazio {
+    opacity: 0.55;
+    font-style: italic;
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.titulo {
+    font-size: 0.8em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #B79051;
+}
+
+.acoes {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.botaoTestar {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.4em 0.8em;
+    color: #EBE0C9;
+    border: 0.08em solid rgba(183, 144, 81, 0.45);
+    border-radius: 0.6em;
+    background: rgba(183, 144, 81, 0.12);
+    cursor: pointer;
+
+    & svg {
+        width: 1em;
+        height: 1em;
+        flex: 0 0 auto;
+    }
+
+    &:hover {
+        background: rgba(183, 144, 81, 0.22);
+    }
+}
+
+.botaoRemover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2em;
+    height: 2.2em;
+    color: #d98b8b;
+    border: 0.08em solid rgba(217, 139, 139, 0.35);
+    border-radius: 0.6em;
+    background: transparent;
+
+    & svg {
+        width: 1em;
+        height: 1em;
+    }
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:hover:not(:disabled) {
+        background: rgba(217, 139, 139, 0.15);
+    }
+
+    &:disabled {
+        opacity: 0.35;
+        cursor: default;
+    }
+}
+
+.campoNome {
+    width: 100%;
+    padding: 0.5em 0.7em;
+}
+
+.tempos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2em;
+    font-variant-numeric: tabular-nums;
+}
+
+.tempo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+}
+
+.tempoRotulo {
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.55;
+}

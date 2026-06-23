@@ -1,0 +1,357 @@
+.editor {
+    position: relative;
+    width: 100%;
+    user-select: none;
+}
+
+.controles {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5em;
+    margin-bottom: 0.45em;
+}
+
+.botaoZoom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9em;
+    height: 1.9em;
+    font-size: 1em;
+    line-height: 1;
+    color: #EBE0C9;
+    border: 0.08em solid rgba(183, 144, 81, 0.4);
+    border-radius: 0.5em;
+    background: rgba(255, 255, 255, 0.04);
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:hover:not(:disabled) {
+        border-color: rgba(183, 144, 81, 0.75);
+        background: rgba(183, 144, 81, 0.16);
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+}
+
+.zoomSlider {
+    width: 9em;
+    accent-color: #B79051;
+    cursor: pointer;
+}
+
+.zoomValor {
+    min-width: 3.2em;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.85em;
+    opacity: 0.75;
+}
+
+.botaoAjustar {
+    padding: 0.35em 0.7em;
+    font-size: 0.82em;
+    color: #EBE0C9;
+    border: 0.08em solid rgba(183, 144, 81, 0.4);
+    border-radius: 0.5em;
+    background: rgba(255, 255, 255, 0.04);
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:hover:not(:disabled) {
+        border-color: rgba(183, 144, 81, 0.75);
+        background: rgba(183, 144, 81, 0.16);
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+}
+
+.viewport {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: 0.08em solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.7em;
+    background: linear-gradient(180deg, rgba(20, 16, 30, 0.55), rgba(10, 8, 16, 0.7));
+    scrollbar-width: thin;
+    scrollbar-color: rgba(183, 144, 81, 0.6) transparent;
+}
+
+.viewport::-webkit-scrollbar {
+    height: 0.7em;
+}
+
+.viewport::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.viewport::-webkit-scrollbar-thumb {
+    background-color: rgba(183, 144, 81, 0.55);
+    border-radius: 0.4em;
+}
+
+.conteudo {
+    position: relative;
+    min-width: 100%;
+    padding: 0.4em;
+    touch-action: none;
+}
+
+.regua {
+    position: relative;
+    width: 100%;
+    height: 1.5em;
+    overflow: hidden;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.08);
+}
+
+.reguaMarca {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 0.08em solid rgba(255, 255, 255, 0.16);
+}
+
+.reguaTexto {
+    position: absolute;
+    left: 0.3em;
+    top: 0.1em;
+    font-size: 0.62em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    color: rgba(235, 224, 201, 0.55);
+}
+
+.pista {
+    position: relative;
+    width: 100%;
+    margin-top: 0.4em;
+}
+
+.faixa {
+    position: relative;
+    width: 100%;
+    height: 9em;
+    border: 0.08em solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5em;
+    overflow: hidden;
+    background: rgba(7, 6, 11, 0.35);
+    cursor: crosshair;
+}
+
+.onda {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.onda rect {
+    fill: rgba(183, 144, 81, 0.55);
+}
+
+.semOnda {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85em;
+    font-style: italic;
+    opacity: 0.4;
+}
+
+.silencio {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: rgba(7, 6, 11, 0.66);
+    pointer-events: none;
+}
+
+.fadeFim {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(183, 144, 81, 0), rgba(183, 144, 81, 0.32));
+    border-right: 0.1em solid rgba(183, 144, 81, 0.5);
+    pointer-events: none;
+}
+
+.fadeInicio {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(183, 144, 81, 0.32), rgba(183, 144, 81, 0));
+    border-left: 0.1em solid rgba(183, 144, 81, 0.5);
+    pointer-events: none;
+}
+
+.sobreposicao {
+    position: absolute;
+    top: 0;
+    height: 1.1em;
+    background: repeating-linear-gradient(45deg, rgba(130, 190, 210, 0.28) 0 0.4em, rgba(130, 190, 210, 0.1) 0.4em 0.8em);
+    border-left: 0.12em dashed rgba(150, 205, 225, 0.75);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.lane {
+    position: relative;
+    width: 100%;
+    height: 2.6em;
+    margin-top: 0.5em;
+}
+
+.bloco {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5em;
+    color: #EBE0C9;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.45em;
+    background: rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    cursor: pointer;
+
+    &:hover {
+        border-color: rgba(183, 144, 81, 0.6);
+        background: rgba(183, 144, 81, 0.12);
+    }
+}
+
+.blocoSelecionado {
+    color: #07060B;
+    border-color: #B79051;
+    background: rgba(183, 144, 81, 0.85);
+
+    &:hover {
+        background: #B79051;
+    }
+}
+
+.blocoNome {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.85em;
+}
+
+.fronteira {
+    position: absolute;
+    top: -0.3em;
+    bottom: -0.3em;
+    width: 0.9em;
+    transform: translateX(-50%);
+    cursor: ew-resize;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 0.14em;
+        transform: translateX(-50%);
+        background: rgba(235, 224, 201, 0.55);
+        border-radius: 0.1em;
+    }
+
+    &:hover::before {
+        background: #EBE0C9;
+    }
+}
+
+.marcador {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1em;
+    transform: translateX(-50%);
+    cursor: ew-resize;
+    z-index: 3;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 0.16em;
+        transform: translateX(-50%);
+        background: #B79051;
+    }
+}
+
+.marcadorFim::before {
+    background: #d8853f;
+}
+
+.marcadorRetorno::before {
+    background: #5fb8c9;
+}
+
+.marcadorTab {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.1em 0.45em;
+    font-size: 0.68em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #07060B;
+    background: #B79051;
+    border-radius: 0 0 0.35em 0.35em;
+    white-space: nowrap;
+}
+
+.marcadorFim .marcadorTab {
+    background: #d8853f;
+}
+
+.marcadorRetorno .marcadorTab {
+    top: 1.5em;
+    background: #5fb8c9;
+}
+
+.playhead {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0.12em;
+    transform: translateX(-50%);
+    background: #EBE0C9;
+    box-shadow: 0 0 0.5em rgba(235, 224, 201, 0.8);
+    pointer-events: none;
+    z-index: 4;
+}
+
+.playheadPuxador {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1.1em;
+    height: 1.1em;
+    transform: translateX(-50%) rotate(45deg);
+    background: #EBE0C9;
+    border-radius: 0.2em;
+    pointer-events: auto;
+    cursor: ew-resize;
+}

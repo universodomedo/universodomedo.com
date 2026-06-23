@@ -1,4 +1,4 @@
-import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoPatentesTestePericiaProjetada, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoPatentesTestePericia, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, DTO__CREATE__HabilidadePericia, DTO__CREATE__HabilidadeEspecial, DTO__CREATE__CapacidadeInata, CaminhoArquivoArte, DadosCriarTutorial, DadosEditarTutorial } from "types-nora-api";
+import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoPatentesTestePericiaProjetada, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoPatentesTestePericia, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, DTO__CREATE__HabilidadePericia, DTO__CREATE__HabilidadeEspecial, DTO__CREATE__CapacidadeInata, DTO__CREATE__MusicaConfigurada, DTO__UPDATE__MusicaConfigurada, CaminhoArquivoArte, DadosCriarTutorial, DadosEditarTutorial } from "types-nora-api";
 
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
@@ -280,6 +280,14 @@ export async function configuraArteCapaGrupoAventura(idGrupoAventura: number, id
 
 export async function criaEmblema(payload: DTO__CREATE__Emblema): Promise<boolean> {
     return await useApi<boolean>({ uri: '/emblemas/criaEmblema', method: 'POST', data: payload });
+}
+
+export async function criaMusicaConfigurada(payload: DTO__CREATE__MusicaConfigurada): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/musicasConfiguradas/criaMusicaConfigurada', method: 'POST', data: payload });
+}
+
+export async function atualizaMusicaConfigurada(payload: DTO__UPDATE__MusicaConfigurada): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/musicasConfiguradas/atualizaMusicaConfigurada', method: 'POST', data: payload });
 }
 
 export async function criaHabilidadePericia(payload: DTO__CREATE__HabilidadePericia): Promise<boolean> {

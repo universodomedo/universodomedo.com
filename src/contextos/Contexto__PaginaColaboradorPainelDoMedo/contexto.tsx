@@ -1,12 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useRef, type ReactNode } from 'react';
 
 import { Eventos_Emite } from 'types-nora-api';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { useRecebeEmitWs } from 'Hooks/useEventoWs';
-import { criaObjetivo as apiCriaObjetivo, criaColuna as apiCriaColuna, criaCard as apiCriaCard, criaComentario as apiCriaComentario, atualizaCard as apiAtualizaCard, reordenaCards as apiReordenaCards, criaDependenciaCard as apiCriaDependencia, atualizaDependenciaCard as apiAtualizaDependencia, deletaDependenciaCard as apiDeletaDependencia, definePosicaoFluxogramaCard as apiDefinePosicao, deletaCard as apiDeletaCard, atualizaColuna as apiAtualizaColuna, deletaColuna as apiDeletaColuna, reordenaColunas as apiReordenaColunas, atualizaObjetivo as apiAtualizaObjetivo, deletaObjetivo as apiDeletaObjetivo, salvaDesenhoFluxograma as apiSalvaDesenhoFluxograma } from 'Uteis/ApiConsumer/PainelDoMedoMiddleware';
+import { criaObjetivo as apiCriaObjetivo, criaColuna as apiCriaColuna, criaCard as apiCriaCard, criaComentario as apiCriaComentario, atualizaCard as apiAtualizaCard, reordenaCards as apiReordenaCards, criaDependenciaCard as apiCriaDependencia, atualizaDependenciaCard as apiAtualizaDependencia, deletaDependenciaCard as apiDeletaDependencia, definePosicaoFluxogramaCard as apiDefinePosicao, deletaCard as apiDeletaCard, atualizaColuna as apiAtualizaColuna, deletaColuna as apiDeletaColuna, reordenaColunas as apiReordenaColunas, atualizaObjetivo as apiAtualizaObjetivo, deletaObjetivo as apiDeletaObjetivo, salvaDesenhoFluxograma as apiSalvaDesenhoFluxograma, atualizaObjetivoFicha as apiAtualizaObjetivoFicha, criaItemChecklist as apiCriaItemChecklist, marcaItemChecklist as apiMarcaItemChecklist, atualizaItemChecklist as apiAtualizaItemChecklist, deletaItemChecklist as apiDeletaItemChecklist } from 'Uteis/ApiConsumer/PainelDoMedoMiddleware';
 
 export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     objetivos: ReturnType<typeof obtemObjetivos>;
@@ -45,7 +45,18 @@ export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     reordenaColunas: (idsOrdenados: number[]) => Promise<void>;
     atualizaObjetivo: (id: number, nome: string) => Promise<void>;
     deletaObjetivo: (id: number) => Promise<void>;
-    salvaDesenhoFluxograma: (conteudo: string | null) => Promise<void>;
+    desenhoConteudo: string | null;
+    registraDesenho: (conteudo: string | null) => void;
+    flushDesenho: () => void;
+    checklist: ReturnType<typeof obtemChecklist>;
+    objetivoFichaAbertaId: number | null;
+    abrirFichaObjetivo: (id: number) => void;
+    fecharFichaObjetivo: () => void;
+    atualizaObjetivoFicha: (id: number, descricao: string | null, fkTiposStatusCardId: number | null) => Promise<void>;
+    criaItemChecklist: (texto: string) => Promise<void>;
+    marcaItemChecklist: (id: number, concluido: boolean) => Promise<void>;
+    atualizaItemChecklist: (id: number, texto: string) => Promise<void>;
+    deletaItemChecklist: (id: number) => Promise<void>;
 };
 
 const Contexto__PaginaColaboradorPainelDoMedo = createContext<Contexto__PaginaColaboradorPainelDoMedo__Props | undefined>(undefined);
@@ -63,13 +74,17 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     const [pagina, setPagina] = useState<'listagemObjetivos' | 'cadastroObjetivo' | 'quadro' | 'fluxograma'>('listagemObjetivos');
     const [objetivoAtualId, setObjetivoAtualId] = useState<number | null>(null);
     const [cardAbertoId, setCardAbertoId] = useState<number | null>(null);
+    const [objetivoFichaAbertaId, setObjetivoFichaAbertaId] = useState<number | null>(null);
     const [salvando, setSalvando] = useState<boolean>(false);
+    const [desenhoConteudo, setDesenhoConteudo] = useState<string | null>(null);
+    const desenhoTimerRef = useRef<number | null>(null);
     const cards = obtemCards(objetivoAtualId);
     const comentarios = obtemComentarios(cardAbertoId);
     const dependenciasCards = obtemDependenciasCards();
     const posicoesFluxograma = obtemPosicoesFluxograma();
     const desenhoFluxograma = obtemDesenhoFluxograma(objetivoAtualId);
     const todosCards = obtemTodosCards();
+    const checklist = obtemChecklist(cardAbertoId, objetivoFichaAbertaId);
 
     useEffect(() => {
         if (objetivoAtualId !== null) { cards.recarregar(); desenhoFluxograma.recarregar(); }
@@ -81,6 +96,19 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [cardAbertoId]);
 
+    useEffect(() => {
+        if (cardAbertoId !== null || objetivoFichaAbertaId !== null) checklist.recarregar();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [cardAbertoId, objetivoFichaAbertaId]);
+
+    // O conteudo do desenho vive aqui (sobrevive a navegacao entre Quadro/Fluxograma). A listagem so semeia o estado ao trocar de objetivo; salvar atualiza este estado na hora.
+    const conteudoListagemDesenho = desenhoFluxograma.registros[0]?.conteudo ?? null;
+    useEffect(() => {
+        if (desenhoFluxograma.carregando) return;
+        setDesenhoConteudo(conteudoListagemDesenho);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [conteudoListagemDesenho, desenhoFluxograma.carregando]);
+
     useRecebeEmitWs(Eventos_Emite.PainelDoMedo.eventos.painelAtualizado, {
         onSuccess: () => {
             objetivos.recarregar();
@@ -90,6 +118,10 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
             todosCards.recarregar();
             if (cardAbertoId !== null) comentarios.recarregar();
         },
+    });
+
+    useRecebeEmitWs(Eventos_Emite.PainelDoMedo.eventos.desenhoAtualizado, {
+        onSuccess: ({ fkObjetivosId, conteudo }) => { if (fkObjetivosId === objetivoAtualId) setDesenhoConteudo(conteudo); },
     });
 
     const abrirCard = (id: number) => setCardAbertoId(id);
@@ -158,9 +190,18 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
         try { await apiDefinePosicao({ fkCardsId, posicaoX, posicaoY }); } catch { /* posicao otimista no estado local; reconciliada no proximo carregamento do objetivo */ }
     };
 
-    const salvaDesenhoFluxograma = async (conteudo: string | null) => {
+    const registraDesenho = (conteudo: string | null) => {
+        setDesenhoConteudo(conteudo);
         if (objetivoAtualId === null) return;
-        try { await apiSalvaDesenhoFluxograma({ fkObjetivosId: objetivoAtualId, conteudo }); } catch { /* desenho sera reconciliado no proximo refetch */ }
+        const objetivoId = objetivoAtualId;
+        if (desenhoTimerRef.current !== null) window.clearTimeout(desenhoTimerRef.current);
+        desenhoTimerRef.current = window.setTimeout(() => { desenhoTimerRef.current = null; apiSalvaDesenhoFluxograma({ fkObjetivosId: objetivoId, conteudo }).catch(() => { /* reconciliado no proximo carregamento do objetivo */ }); }, 500);
+    };
+
+    const flushDesenho = () => {
+        if (desenhoTimerRef.current === null || objetivoAtualId === null) return;
+        window.clearTimeout(desenhoTimerRef.current); desenhoTimerRef.current = null;
+        apiSalvaDesenhoFluxograma({ fkObjetivosId: objetivoAtualId, conteudo: desenhoConteudo }).catch(() => { /* reconciliado no proximo carregamento do objetivo */ });
     };
 
     const deletaCard = async (id: number) => {
@@ -199,8 +240,38 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
         try { await apiDeletaObjetivo({ id }); if (objetivoAtualId === id) setObjetivoAtualId(null); objetivos.recarregar(); } finally { setSalvando(false); }
     };
 
+    const abrirFichaObjetivo = (id: number) => setObjetivoFichaAbertaId(id);
+    const fecharFichaObjetivo = () => setObjetivoFichaAbertaId(null);
+
+    const atualizaObjetivoFicha = async (id: number, descricao: string | null, fkTiposStatusCardId: number | null) => {
+        if (salvando) return;
+        setSalvando(true);
+        try { await apiAtualizaObjetivoFicha({ id, descricao, fkTiposStatusCardId }); objetivos.recarregar(); } finally { setSalvando(false); }
+    };
+
+    const criaItemChecklist = async (texto: string) => {
+        if (!texto.trim()) return;
+        const fkCardsId = cardAbertoId;
+        const fkObjetivosId = cardAbertoId !== null ? null : objetivoFichaAbertaId;
+        if (fkCardsId === null && fkObjetivosId === null) return;
+        try { await apiCriaItemChecklist({ fkCardsId, fkObjetivosId, texto: texto.trim() }); checklist.recarregar(); } catch { /* reconciliado ao reabrir */ }
+    };
+
+    const marcaItemChecklist = async (id: number, concluido: boolean) => {
+        try { await apiMarcaItemChecklist({ id, concluido }); } catch { /* otimista no componente; reconciliado ao reabrir */ }
+    };
+
+    const atualizaItemChecklist = async (id: number, texto: string) => {
+        if (!texto.trim()) return;
+        try { await apiAtualizaItemChecklist({ id, texto: texto.trim() }); checklist.recarregar(); } catch { /* reconciliado ao reabrir */ }
+    };
+
+    const deletaItemChecklist = async (id: number) => {
+        try { await apiDeletaItemChecklist({ id }); checklist.recarregar(); } catch { /* reconciliado ao reabrir */ }
+    };
+
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, pagina, setPagina, irParaObjetivo, irParaListagem, irParaCadastroObjetivo, dependenciasCards, posicoesFluxograma, desenhoFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, salvaDesenhoFluxograma, deletaCard, atualizaColuna, deletaColuna, reordenaColunas, atualizaObjetivo, deletaObjetivo }}>
+        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, statusCards, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, pagina, setPagina, irParaObjetivo, irParaListagem, irParaCadastroObjetivo, dependenciasCards, posicoesFluxograma, desenhoFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, desenhoConteudo, registraDesenho, flushDesenho, deletaCard, atualizaColuna, deletaColuna, reordenaColunas, atualizaObjetivo, deletaObjetivo, checklist, objetivoFichaAbertaId, abrirFichaObjetivo, fecharFichaObjetivo, atualizaObjetivoFicha, criaItemChecklist, marcaItemChecklist, atualizaItemChecklist, deletaItemChecklist }}>
             {children}
         </Contexto__PaginaColaboradorPainelDoMedo.Provider>
     );
@@ -210,7 +281,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
 
 function obtemObjetivos() {
     return useNoraGraphQLListagem('Objetivo', {
-        select: ['id', 'nome'],
+        select: ['id', 'nome', 'descricao', 'fkTiposStatusCardId'],
         itensPorPagina: 50,
         carregando: 'Carregando objetivos',
         mensagemErro: 'Houve um erro recuperando os objetivos',
@@ -307,6 +378,20 @@ function obtemDesenhoFluxograma(objetivoId: number | null) {
         mensagemListaVazia: 'Nenhum desenho ainda.',
         mensagemListaVaziaComFiltro: 'Nenhum desenho com os filtros atuais.',
         montaParametrosConsulta: params => ({ where: params.where, order: { id: 'ASC' }, limit: params.limit, offset: params.offset }),
+    });
+};
+
+function obtemChecklist(cardId: number | null, objetivoId: number | null) {
+    const whereFixo = useMemo(() => cardId !== null ? { fkCardsId: cardId } : objetivoId !== null ? { fkObjetivosId: objetivoId } : { id: -1 }, [cardId, objetivoId]);
+    return useNoraGraphQLListagem('ItemChecklist', {
+        select: ['id', 'fkCardsId', 'fkObjetivosId', 'texto', 'concluido', 'ordem'],
+        whereFixo,
+        itensPorPagina: 100,
+        carregando: 'Carregando checklist',
+        mensagemErro: 'Houve um erro recuperando a checklist',
+        mensagemListaVazia: 'Nenhum item ainda.',
+        mensagemListaVaziaComFiltro: 'Nenhum item com os filtros atuais.',
+        montaParametrosConsulta: params => ({ where: params.where, order: { ordem: 'ASC', id: 'ASC' }, limit: params.limit, offset: params.offset }),
     });
 };
 

@@ -22,6 +22,22 @@ O frontend pode decidir composição visual, experiência, layout, renderizaçã
 
 O frontend é dono da experiência de uso, mas não é dono da verdade estrutural da plataforma.
 
+## Skills obrigatórias por tipo de tarefa (descoberta determinística)
+
+Antes de planejar ou implementar qualquer tarefa no `universodomedo.com`, o agente deve enumerar, em ordem lexicográfica dos caminhos relativos, os manifestos `.agents/skills/**/skill.yaml`. As skills podem estar organizadas em subpastas; diretórios classificadores sem `skill.yaml` devem ser ignorados.
+
+Os manifestos devem ser validados conforme `.agents/skill-system/skill-manifest.schema.md`. A descoberta e a seleção devem ser executadas por `npm run --silent skills:select`, enviando pela entrada padrão o JSON definido no contrato (`protocol_version`, `task_text`, `task_paths`, `loaded_skills`).
+
+O JSON por `stdin` é o caminho padrão. No Windows PowerShell, quando a tarefa contiver acentos, usar `npm run --silent skills:select -- --input-base64 <BASE64_UTF8_DO_JSON>` para preservar UTF-8.
+
+Durante a descoberta, somente os manifestos e o frontmatter necessário à validação devem ser lidos. O agente deve carregar integralmente apenas os arquivos indicados por `skills_to_load` e fazer isso antes do planejamento ou da implementação. Se novos caminhos diretamente relacionados à tarefa forem descobertos, o seletor deve ser executado novamente com `task_paths` acumulado e `loaded_skills` atualizado; skills já carregadas não devem ser recarregadas na mesma tarefa.
+
+No plano, o agente deve declarar: skills encontradas; skills selecionadas; regras e evidências que determinaram cada seleção; manifestos inválidos e seus erros; e quais `SKILL.md` foram carregados integralmente.
+
+Se o seletor falhar ou retornar `discovery_complete: false`, a tarefa deve ser bloqueada antes do planejamento e o impedimento deve ser reportado.
+
+Este protocolo determinístico (`.agents/skills`) espelha o da Nora-Api e complementa o roteamento de skills existente em `.codex/skills`. Toda situação recorrente de implementação (ex.: coordenadas de ponteiro sob o `ConteinerEscalavel`) deve virar uma skill aqui, para que o agente a encontre e aplique a solução sem depender de memória humana.
+
 ## 2. Regras globais de alteração no frontend
 
 Alterações no `universodomedo.com` devem preservar comportamento existente, experiência de uso, contratos consumidos da Nora-Api e separação entre lógica de tela e renderização.

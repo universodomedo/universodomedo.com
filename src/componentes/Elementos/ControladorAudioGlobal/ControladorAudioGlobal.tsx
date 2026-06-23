@@ -1,41 +1,41 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
-import { getImageUrl } from 'Uteis/ImagemLoader/ImagemLoader';
-import { useAppSelector } from 'Redux/hooks/useRedux';
-import { selectIdMusicaPaginaAtual } from 'Redux/selectors/audioPaginaSelectors';
+import { useAppDispatch, useAppSelector } from 'Redux/hooks/useRedux';
+import { selectIdMusicaPaginaAtual, selectNivelVolume } from 'Redux/selectors/audioPaginaSelectors';
+import { GANHO_POR_NIVEL_VOLUME, setNivelVolume } from 'Redux/slices/audioPaginaSlice';
+import { lerNivelVolumeSalvo } from 'Uteis/PreferenciaVolume/preferenciaVolume';
+import { useReprodutorMontagem } from './useReprodutorMontagem';
 
-const SELECT_MUSICA = { id: true, arquivo: { id: true, caminhoArquivo: true } } as const;
+const SELECT_MUSICA = { id: true, arquivo: { id: true, caminhoArquivo: true }, montagem: { inicioMs: true, retornoMs: true, fimMs: true, transicaoLoop: { duracaoFadeOutMs: true, duracaoFadeInMs: true, sobreposicaoInicioLoopMs: true } } } as const;
 
 export default function ControladorAudioGlobal() {
+    const dispatch = useAppDispatch();
     const idMusica = useAppSelector(selectIdMusicaPaginaAtual);
-    const refAudio = useRef<HTMLAudioElement | null>(null);
+    const nivelVolume = useAppSelector(selectNivelVolume);
 
-    const consulta = useNoraGraphQLRegistro('ArquivoTipadoMusica', { props: { idMusica: idMusica ?? 0 }, pk: idMusica ?? 0, select: SELECT_MUSICA, mensagemErro: 'Não foi possível carregar a música da página', executarAoMontar: false });
+    // restaura o volume escolhido pelo usuário (persistido em localStorage) ao montar
+    useEffect(() => {
+        const salvo = lerNivelVolumeSalvo();
+        if (salvo) dispatch(setNivelVolume(salvo));
+    }, [dispatch]);
+
+    const consulta = useNoraGraphQLRegistro('MusicaConfigurada', { props: { idMusica: idMusica ?? 0 }, pk: idMusica ?? 0, select: SELECT_MUSICA, mensagemErro: 'Não foi possível carregar a música da página', executarAoMontar: false });
     const recarregar = consulta.recarregar;
 
-    // a página atual define (ou troca) a música via Redux; aqui busca a faixa correspondente no backend
+    // a página atual define (ou troca) a música via Redux; aqui busca a faixa configurada correspondente no backend
     useEffect(() => {
         if (idMusica == null) return;
         recarregar();
     }, [idMusica, recarregar]);
 
     const caminhoArquivo = idMusica != null ? (consulta.data?.arquivo?.caminhoArquivo ?? null) : null;
-    const urlFaixa = caminhoArquivo ? getImageUrl(caminhoArquivo) : null;
+    const montagem = idMusica != null ? (consulta.data?.montagem ?? null) : null;
 
-    // toca em loop; se o autoplay for bloqueado, o primeiro gesto do usuário inicia
-    useEffect(() => {
-        const audio = refAudio.current;
-        if (!audio || !urlFaixa) return;
-        const tentarTocar = () => { audio.play().catch(() => undefined); };
-        tentarTocar();
-        window.addEventListener('pointerdown', tentarTocar);
-        window.addEventListener('keydown', tentarTocar);
-        return () => { window.removeEventListener('pointerdown', tentarTocar); window.removeEventListener('keydown', tentarTocar); };
-    }, [urlFaixa]);
+    // motor Web Audio: aplica a montagem (Início/Fim + loop Fim→Retorno com crossfade) + o volume global, em vez de tocar o arquivo cru
+    useReprodutorMontagem(caminhoArquivo, montagem, GANHO_POR_NIVEL_VOLUME[nivelVolume]);
 
-    if (!urlFaixa) return null;
-    return <audio ref={refAudio} src={urlFaixa} loop preload="auto" hidden />;
+    return null;
 };

@@ -1,4 +1,4 @@
-import { PAYLOAD__CriarObjetivo, PAYLOAD__CriarColuna, PAYLOAD__CriarCard, PAYLOAD__CriarComentario, PAYLOAD__AtualizarCard, PAYLOAD__ReordenarCards, PAYLOAD__CriarDependenciaCard, PAYLOAD__AtualizarDependenciaCard, PAYLOAD__DeletarDependenciaCard, PAYLOAD__DefinirPosicaoFluxogramaCard, PAYLOAD__DeletarCard, PAYLOAD__AtualizarColuna, PAYLOAD__DeletarColuna, PAYLOAD__ReordenarColunas, PAYLOAD__AtualizarObjetivo, PAYLOAD__DeletarObjetivo, PAYLOAD__SalvarDesenhoFluxograma } from 'types-nora-api';
+import { PAYLOAD__CriarObjetivo, PAYLOAD__CriarColuna, PAYLOAD__CriarCard, PAYLOAD__CriarComentario, PAYLOAD__AtualizarCard, PAYLOAD__ReordenarCards, PAYLOAD__CriarDependenciaCard, PAYLOAD__AtualizarDependenciaCard, PAYLOAD__DeletarDependenciaCard, PAYLOAD__DefinirPosicaoFluxogramaCard, PAYLOAD__DeletarCard, PAYLOAD__AtualizarColuna, PAYLOAD__DeletarColuna, PAYLOAD__ReordenarColunas, PAYLOAD__AtualizarObjetivo, PAYLOAD__DeletarObjetivo, PAYLOAD__SalvarDesenhoFluxograma, PAYLOAD__AtualizarObjetivoFicha, PAYLOAD__CriarItemChecklist, PAYLOAD__MarcarItemChecklist, PAYLOAD__AtualizarItemChecklist, PAYLOAD__DeletarItemChecklist } from 'types-nora-api';
 
 import useApi from 'Uteis/ApiConsumer/Consumer.tsx';
 
@@ -68,4 +68,24 @@ export async function deletaObjetivo(payload: PAYLOAD__DeletarObjetivo): Promise
 
 export async function salvaDesenhoFluxograma(payload: PAYLOAD__SalvarDesenhoFluxograma): Promise<void> {
     await useApi<void>({ uri: '/desenhosFluxograma/salvaDesenho', method: 'POST', data: payload });
+};
+
+export async function atualizaObjetivoFicha(payload: PAYLOAD__AtualizarObjetivoFicha): Promise<void> {
+    await useApi<void>({ uri: '/objetivos/atualizaFicha', method: 'POST', data: payload });
+};
+
+export async function criaItemChecklist(payload: PAYLOAD__CriarItemChecklist): Promise<void> {
+    await useApi<void>({ uri: '/itensChecklist/criaItem', method: 'POST', data: payload });
+};
+
+export async function marcaItemChecklist(payload: PAYLOAD__MarcarItemChecklist): Promise<void> {
+    await useApi<void>({ uri: '/itensChecklist/marcaItem', method: 'POST', data: payload });
+};
+
+export async function atualizaItemChecklist(payload: PAYLOAD__AtualizarItemChecklist): Promise<void> {
+    await useApi<void>({ uri: '/itensChecklist/atualizaItem', method: 'POST', data: payload });
+};
+
+export async function deletaItemChecklist(payload: PAYLOAD__DeletarItemChecklist): Promise<void> {
+    await useApi<void>({ uri: '/itensChecklist/deletaItem', method: 'POST', data: payload });
 };

@@ -1,0 +1,124 @@
+/* PainelCentralAudio — barra de player no centro-inferior (estilo header de rádio).
+   Posicionamento: absolute relativo a #main (position: relative). */
+
+@keyframes subir_central_audio {
+    from { transform: translateX(-50%) translateY(130%); opacity: 0; }
+    to   { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+.painel {
+    position: absolute;
+    bottom: 1.2em;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40%;
+    min-width: 30em;
+    display: flex;
+    align-items: center;
+    gap: 1.2em;
+    padding: 0.7em 1.1em;
+    border: 0.08em solid rgba(183, 144, 81, 0.45);
+    border-radius: 0.9em;
+    background: rgba(8, 2, 8, 0.96);
+    box-shadow: 0 0.4em 1.4em rgba(0, 0, 0, 0.55);
+    z-index: var(--zindex-final-barraAcoesFlutuante);
+    animation: subir_central_audio 0.25s ease;
+}
+
+.info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+}
+
+.rotulo {
+    font-size: 0.68em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #B79051;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.faixa {
+    font-size: 1em;
+    color: #EBE0C9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vazio {
+    font-style: italic;
+    opacity: 0.5;
+}
+
+.volume {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    flex-shrink: 0;
+}
+
+.volumeRotulo {
+    font-size: 0.68em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.6;
+}
+
+.niveis {
+    display: flex;
+    border: 0.08em solid rgba(183, 144, 81, 0.35);
+    border-radius: 0.55em;
+    overflow: hidden;
+}
+
+.nivel {
+    padding: 0.4em 0.7em;
+    font-size: 0.82em;
+    color: #EBE0C9;
+    border: none;
+    border-left: 0.08em solid rgba(183, 144, 81, 0.25);
+    background: transparent;
+    cursor: pointer;
+
+    &:first-child {
+        border-left: none;
+    }
+
+    &:hover {
+        background: rgba(183, 144, 81, 0.16);
+    }
+}
+
+.nivelAtivo {
+    color: #07060B;
+    background: #B79051;
+
+    &:hover {
+        background: #c8a062;
+    }
+}
+
+.fechar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9em;
+    height: 1.9em;
+    flex-shrink: 0;
+    color: #EBE0C9;
+    border: 0.08em solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.5em;
+    background: transparent;
+    cursor: pointer;
+
+    &:hover {
+        border-color: rgba(183, 144, 81, 0.7);
+        background: rgba(183, 144, 81, 0.14);
+    }
+}

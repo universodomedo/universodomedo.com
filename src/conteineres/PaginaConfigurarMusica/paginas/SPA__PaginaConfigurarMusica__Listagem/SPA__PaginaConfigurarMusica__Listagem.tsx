@@ -1,0 +1,39 @@
+'use client';
+
+import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
+import ListagemComposta, { ListagemCompostaModoExibicao } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
+import { type Contexto__PaginaConfigurarMusica__Props } from 'Contextos/Contexto__PaginaConfigurarMusica/contexto';
+import styles from './styles.module.css';
+
+type Props = { listagemMusicas: Contexto__PaginaConfigurarMusica__Props['listagemMusicas']; selecionar: Contexto__PaginaConfigurarMusica__Props['selecionar']; };
+type MusicaRegistro = Contexto__PaginaConfigurarMusica__Props['listagemMusicas']['registros'][number];
+
+export default function SPA__PaginaConfigurarMusica__Listagem({ listagemMusicas, selecionar }: Props) {
+    useConfigurarLayoutContextualizado({ subtitulo: null, fecharProps: undefined });
+
+    return (
+        <ListagemComposta
+            listagem={listagemMusicas}
+            modoExibicao={ListagemCompostaModoExibicao.LINHA}
+            obterIdRegistro={musica => musica.id}
+            renderizarItem={musica => <LinhaMusica musica={musica} aoSelecionar={() => selecionar(musica.id)} />}
+        />
+    );
+};
+
+function LinhaMusica({ musica, aoSelecionar }: { musica: MusicaRegistro; aoSelecionar: () => void; }) {
+    return (
+        <button type="button" className={styles.linha} onClick={aoSelecionar}>
+            <span className={styles.id}>#{musica.id}</span>
+            {musica.configurada ? (
+                <span className={styles.configurada}>
+                    <span className={styles.tagConfigurada}>CONFIGURADA</span>
+                    <span className={styles.nome}>{musica.nomeMusica}</span>
+                    <span className={styles.fonte}>· {musica.nomeFonte}</span>
+                </span>
+            ) : (
+                <span className={styles.tagPendente}>PENDENTE</span>
+            )}
+        </button>
+    );
+};

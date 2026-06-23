@@ -1,0 +1,108 @@
+.editor {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    width: 100%;
+    padding: 1em 1.2em 0;
+}
+
+.cabecalho {
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.tagId {
+    padding: 0.35em 0.7em;
+    font-variant-numeric: tabular-nums;
+    color: #B79051;
+    border: 0.08em solid rgba(183, 144, 81, 0.4);
+    border-radius: 0.6em;
+    background: rgba(183, 144, 81, 0.08);
+}
+
+.campoNomeRotulo {
+    flex: 1 1 14em;
+}
+
+.campoFonteRotulo {
+    flex: 1 1 18em;
+}
+
+.campo {
+    width: 100%;
+    padding: 0.55em 0.75em;
+}
+
+.aviso {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 12em;
+    opacity: 0.55;
+    font-style: italic;
+    border: 0.08em dashed rgba(255, 255, 255, 0.14);
+    border-radius: 0.85em;
+}
+
+.corpo {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.paineis {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    align-items: stretch;
+}
+
+.rodape {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1em;
+    margin-top: 0.5em;
+    padding: 0.8em 0;
+    background: linear-gradient(180deg, rgba(7, 6, 11, 0), rgba(7, 6, 11, 0.9) 45%);
+}
+
+.erro {
+    color: #ff6b6b;
+    font-size: 0.85em;
+}
+
+.botaoSalvar {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.7em 1.6em;
+    font-size: 1em;
+    color: #07060B;
+    border: 0.08em solid #B79051;
+    border-radius: 0.7em;
+    background: #B79051;
+
+    & svg {
+        width: 1em;
+        height: 1em;
+        flex: 0 0 auto;
+    }
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:hover:not(:disabled) {
+        background: #c8a062;
+    }
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
+}

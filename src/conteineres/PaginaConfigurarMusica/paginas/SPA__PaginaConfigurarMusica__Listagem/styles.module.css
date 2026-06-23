@@ -1,0 +1,55 @@
+.linha {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    width: 100%;
+    padding: 0.75em 1em;
+    text-align: left;
+    border: 0.0625em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.4em;
+    background: transparent;
+    cursor: pointer;
+}
+
+.linha:hover {
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.id {
+    font-variant-numeric: tabular-nums;
+    opacity: 0.7;
+    min-width: 3em;
+}
+
+.configurada {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+}
+
+.tagConfigurada {
+    font-size: 0.7em;
+    letter-spacing: 0.06em;
+    padding: 0.15em 0.5em;
+    border-radius: 0.3em;
+    background: rgba(120, 220, 150, 0.18);
+    color: #8fe0a5;
+}
+
+.tagPendente {
+    font-size: 0.7em;
+    letter-spacing: 0.06em;
+    padding: 0.15em 0.5em;
+    border-radius: 0.3em;
+    background: rgba(255, 200, 120, 0.18);
+    color: #ffcc88;
+}
+
+.nome {
+    font-weight: 600;
+}
+
+.fonte {
+    opacity: 0.7;
+    font-size: 0.9em;
+}

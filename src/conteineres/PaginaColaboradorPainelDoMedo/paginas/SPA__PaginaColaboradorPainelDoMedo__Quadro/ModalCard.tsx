@@ -5,6 +5,7 @@ import { useState } from 'react';
 import styles from './ModalCard.module.css';
 
 import { useContexto__PaginaColaboradorPainelDoMedo, Contexto__PaginaColaboradorPainelDoMedo__Props } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo/contexto';
+import SecaoChecklist from 'Conteineres/PaginaColaboradorPainelDoMedo/componentes/SecaoChecklist';
 
 type CardItem = Contexto__PaginaColaboradorPainelDoMedo__Props['cards']['registros'][number];
 type StatusItem = Contexto__PaginaColaboradorPainelDoMedo__Props['statusCards']['registros'][number];
@@ -19,7 +20,7 @@ export default function ModalCard({ card, status, comentarios, salvando, onSalva
     onComentar: (texto: string) => Promise<void>;
     onFechar: () => void;
 }) {
-    const { dependenciasCards, todosCards, objetivos, criaDependenciaCard, deletaDependenciaCard, deletaCard } = useContexto__PaginaColaboradorPainelDoMedo();
+    const { dependenciasCards, todosCards, objetivos, criaDependenciaCard, deletaDependenciaCard, deletaCard, checklist, criaItemChecklist, marcaItemChecklist, deletaItemChecklist } = useContexto__PaginaColaboradorPainelDoMedo();
 
     const [titulo, setTitulo] = useState<string>(card.titulo);
     const [statusId, setStatusId] = useState<number>(card.fkTiposStatusCardId);
@@ -60,6 +61,10 @@ export default function ModalCard({ card, status, comentarios, salvando, onSalva
                         <input type="date" value={prazo} onChange={evento => setPrazo(evento.target.value)} />
                     </label>
                     <button className={styles.salvar} onClick={salvar} disabled={salvando || !titulo.trim()}>{salvando ? 'Salvando…' : 'Salvar'}</button>
+                </div>
+
+                <div className={styles.comentarios}>
+                    <SecaoChecklist itens={checklist.registros} carregando={checklist.carregando} salvando={salvando} onCriar={criaItemChecklist} onMarcar={marcaItemChecklist} onExcluir={deletaItemChecklist} />
                 </div>
 
                 <div className={styles.comentarios}>

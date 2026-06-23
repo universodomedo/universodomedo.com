@@ -1,0 +1,63 @@
+schema_version: 1
+name: "coordenadas-ponteiro-conteiner-escalavel"
+description: "Tratar coordenadas de ponteiro (clientX/clientY) ao implementar arraste, área de seleção, canvas/SVG, pan, zoom, hit-test ou qualquer mapeamento ponteiro→conteúdo no frontend do Universo do Medo, que é escalado globalmente pelo ConteinerEscalavel via transform CSS --scale. Converter com getScreenCTM().inverse() ou dividir deltas de tela pela escala efetiva; nunca tratar pixel de tela como pixel de layout."
+selection:
+    requirement: "required"
+    rules:
+        - id: "apis-de-coordenada-de-ponteiro"
+          match:
+              identifier:
+                  - "getScreenCTM"
+                  - "getBoundingClientRect"
+                  - "clientX"
+                  - "clientY"
+                  - "offsetX"
+                  - "offsetY"
+                  - "createSVGPoint"
+                  - "matrixTransform"
+                  - "--scale"
+        - id: "arquivo-conteiner-escalavel"
+          match:
+              path_glob:
+                  - "**/ConteinerEscalavel/**"
+                  - "**/ConteinerEscalavel*.tsx"
+        - id: "interacao-de-canvas-ou-arraste"
+          match:
+              all:
+                  - terms_any:
+                      - "arrastar"
+                      - "arraste"
+                      - "drag"
+                      - "mover"
+                      - "área de seleção"
+                      - "area de selecao"
+                      - "marquee"
+                      - "pan"
+                      - "zoom"
+                      - "canvas"
+                      - "svg"
+                      - "fluxograma"
+                      - "redimensionar"
+                      - "resize"
+                  - terms_any:
+                      - "coordenada"
+                      - "coordenadas"
+                      - "ponteiro"
+                      - "mouse"
+                      - "cursor"
+                      - "posição"
+                      - "posicao"
+                      - "offset"
+                      - "escala"
+                      - "escalar"
+                      - "hit-test"
+                      - "clique"
+                      - "clicar"
+        - id: "escala-global-explicita"
+          match:
+              terms_any:
+                  - "ConteinerEscalavel"
+                  - "--scale"
+                  - "escala da plataforma"
+                  - "conteiner escalavel"
+                  - "container escalavel"

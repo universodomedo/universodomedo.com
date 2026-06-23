@@ -1,0 +1,59 @@
+.recipiente_cena_r3f {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    user-select: none;
+    touch-action: none;
+}
+
+.vista_principal {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.vista_secundaria {
+    position: absolute;
+    left: 1em;
+    bottom: 1em;
+    width: 24em;
+    height: 13.5em;
+    z-index: 2;
+    overflow: hidden;
+    border-radius: 0.6em;
+}
+
+.moldura_secundaria {
+    position: absolute;
+    left: 1em;
+    bottom: 1em;
+    width: 24em;
+    height: 13.5em;
+    z-index: 3;
+    border: 0.14em solid #c79a3f;
+    border-radius: 0.6em;
+    pointer-events: none;
+}
+
+.botao_troca_visao {
+    position: absolute;
+    top: -0.9em;
+    right: -0.9em;
+    width: 2.2em;
+    height: 2.2em;
+    padding: 0;
+    border-radius: 50%;
+    background: #171019;
+    border: 0.14em solid #e8c074;
+    color: #f0d28a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.botao_troca_visao:active {
+    transform: scale(0.94);
+}

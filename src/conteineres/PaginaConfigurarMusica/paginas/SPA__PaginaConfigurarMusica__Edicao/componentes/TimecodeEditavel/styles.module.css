@@ -1,0 +1,56 @@
+.timecode {
+    display: flex;
+    align-items: stretch;
+    gap: 0.25em;
+}
+
+.passo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.7em;
+    font-size: 1.1em;
+    line-height: 1;
+    color: #EBE0C9;
+    border: 0.08em solid rgba(183, 144, 81, 0.4);
+    border-radius: 0.45em;
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+
+    &:hover {
+        border-color: rgba(183, 144, 81, 0.8);
+        background: rgba(183, 144, 81, 0.16);
+    }
+}
+
+.valor {
+    min-width: 5.4em;
+    padding: 0.2em 0.6em;
+    font-family: 'Courier New', monospace;
+    font-size: 1.6em;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    color: #B79051;
+    border: 0.08em solid transparent;
+    border-radius: 0.45em;
+    background: transparent;
+    cursor: text;
+
+    &:hover {
+        border-color: rgba(183, 144, 81, 0.35);
+        background: rgba(183, 144, 81, 0.08);
+    }
+}
+
+.campo {
+    min-width: 5.4em;
+    padding: 0.2em 0.6em;
+    font-family: 'Courier New', monospace;
+    font-size: 1.6em;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    color: #EBE0C9;
+    border: 0.08em solid #B79051;
+    border-radius: 0.45em;
+    background: rgba(7, 6, 11, 0.6);
+}

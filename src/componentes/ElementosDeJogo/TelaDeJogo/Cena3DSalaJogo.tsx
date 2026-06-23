@@ -2,14 +2,13 @@
 
 import styles from './Cena3DSalaJogo.module.css';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import type { EstadoTemporalSalaDeJogoRuntime, ResultadoMissaoFuncionalSalaDeJogoRuntime, ResumoMissaoFuncionalSalaDeJogoRuntime } from 'types-nora-api';
 
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
-import { criaDocumentoCena3DSalaJogo } from './Cena3DSalaJogo.helpers';
-import { Ambiente3DSalaJogo } from './Ambiente3DSalaJogo';
+import { CenaSalaJogoR3F } from './CenaSalaJogoR3F';
 
 interface Cena3DSalaJogoProps {
     readonly missaoFuncional: ResumoMissaoFuncionalSalaDeJogoRuntime | null;
@@ -27,8 +26,7 @@ interface RelogioFiccionalSalaJogoProps {
 };
 
 export function Cena3DSalaJogo({ missaoFuncional, resultadoMissaoFuncional, estadoTemporalSalaJogo }: Cena3DSalaJogoProps) {
-    const { estadoCarregamento, erro, mapaLogicoSalaJogo, keysInteragiveisPercebidosNovos } = useContextoTelaDeJogoMapaLogico();
-    const documento = useMemo(() => mapaLogicoSalaJogo === null ? null : criaDocumentoCena3DSalaJogo(mapaLogicoSalaJogo, keysInteragiveisPercebidosNovos), [keysInteragiveisPercebidosNovos, mapaLogicoSalaJogo]);
+    const { estadoCarregamento, erro, mapaLogicoSalaJogo, keysInteragiveisPercebidosNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, selecionaOcupante, selecionaInteragivel, limpaSelecaoOcupante, limpaSelecaoInteragivel } = useContextoTelaDeJogoMapaLogico();
 
     if (estadoCarregamento === 'carregando') {
         return (
@@ -39,7 +37,7 @@ export function Cena3DSalaJogo({ missaoFuncional, resultadoMissaoFuncional, esta
         );
     }
 
-    if (estadoCarregamento === 'erro' || documento === null) {
+    if (estadoCarregamento === 'erro' || mapaLogicoSalaJogo === null) {
         return (
             <div className={styles.estado_cena_3d_sala_jogo}>
                 <strong>Cenário 3D indisponível</strong>
@@ -50,7 +48,7 @@ export function Cena3DSalaJogo({ missaoFuncional, resultadoMissaoFuncional, esta
 
     return (
         <div className={styles.recipiente_cena_3d_sala_jogo}>
-            <Ambiente3DSalaJogo documento={documento} />
+            <CenaSalaJogoR3F payload={mapaLogicoSalaJogo} keysInteragiveisPercebidosNovos={keysInteragiveisPercebidosNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} aoSelecionarOcupante={selecionaOcupante} aoSelecionarInteragivel={selecionaInteragivel} aoLimparSelecao={() => { limpaSelecaoOcupante(); limpaSelecaoInteragivel(); }} />
             {missaoFuncional && <ObjetivosMissaoSalaJogo missaoFuncional={missaoFuncional} concluida={resultadoMissaoFuncional?.resultado === 'VITORIA'} />}
             {estadoTemporalSalaJogo && <RelogioFiccionalSalaJogo estadoTemporalSalaJogo={estadoTemporalSalaJogo} />}
         </div>

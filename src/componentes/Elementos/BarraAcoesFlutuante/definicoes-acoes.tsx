@@ -15,6 +15,8 @@ import ComponenteChat from 'Componentes/Elementos/Chat/Chat';
 import { RegistradorAcaoUsuariosOnline } from 'Componentes/ElementosGlobais/SecaoUsuariosExistentes/RegistradorAcaoUsuariosOnline';
 import PainelUsuariosOnline from 'Componentes/ElementosGlobais/SecaoUsuariosExistentes/PainelUsuariosOnline';
 import { RegistradorAcaoNotificacoes } from 'Componentes/Elementos/EventosUsuarioCentral/RegistradorAcaoNotificacoes';
+import { RegistradorAcaoCentralAudio } from 'Componentes/Elementos/CentralAudio/RegistradorAcaoCentralAudio';
+import PainelCentralAudio from 'Componentes/Elementos/CentralAudio/PainelCentralAudio';
 
 export interface ModuloAcao {
     id: string;
@@ -36,5 +38,10 @@ export const MODULOS_ACOES: ModuloAcao[] = [
     {
         id: 'notificacoes',
         Registrador: RegistradorAcaoNotificacoes,
+    },
+    {
+        id: 'central-audio',
+        Registrador: RegistradorAcaoCentralAudio,
+        Painel: PainelCentralAudio,
     },
 ];

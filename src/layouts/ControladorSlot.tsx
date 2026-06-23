@@ -81,7 +81,7 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
 
     useEffect(() => {
         if (!decisao.permitido) return;
-        dispatch(setMusicaPagina(pagina.idMusicaPagina ?? null));
+        dispatch(setMusicaPagina({ idMusica: pagina.idMusicaPagina ?? null, tituloPagina: pagina.idMusicaPagina != null ? pagina.label : null }));
     }, [dispatch, decisao.permitido, pagina]);
 
     if (carregando) return (<h1>carregando....</h1>);
