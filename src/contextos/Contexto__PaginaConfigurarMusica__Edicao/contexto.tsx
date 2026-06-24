@@ -1,9 +1,9 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { BlocoMontagemMusica, GraphqlLeituras, GraphqlTypesFonteMusica, MontagemMusica, TransicaoLoopMontagemMusica } from 'types-nora-api';
+import { BlocoMontagemMusica, MontagemMusica, TransicaoLoopMontagemMusica } from 'types-nora-api';
 
-import useNoraGraphQLConsulta, { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
+import { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { getImageUrl } from 'Uteis/ImagemLoader/ImagemLoader';
@@ -11,9 +11,8 @@ import { criaMusicaConfigurada, atualizaMusicaConfigurada } from 'Uteis/ApiConsu
 import { type Contexto__PaginaConfigurarMusica__Props } from '../Contexto__PaginaConfigurarMusica/contexto';
 import SPA__PaginaConfigurarMusica__Edicao from 'Conteineres/PaginaConfigurarMusica/paginas/SPA__PaginaConfigurarMusica__Edicao/SPA__PaginaConfigurarMusica__Edicao';
 
-const SELECT_FONTE = { id: true, nome: true } as const;
 const SELECT_ARQUIVO = { id: true, arquivo: { id: true, caminhoArquivo: true, tipoMime: true } } as const;
-const SELECT_MUSICA = { id: true, nome: true, fonteMusica: { id: true, nome: true }, montagem: { inicioMs: true, retornoMs: true, fimMs: true, blocos: { id: true, nome: true, inicioMs: true, fimMs: true }, transicaoLoop: { duracaoFadeOutMs: true, duracaoFadeInMs: true, sobreposicaoInicioLoopMs: true } } } as const;
+const SELECT_MUSICA = { id: true, montagem: { inicioMs: true, retornoMs: true, fimMs: true, blocos: { id: true, nome: true, inicioMs: true, fimMs: true }, transicaoLoop: { duracaoFadeOutMs: true, duracaoFadeInMs: true, sobreposicaoInicioLoopMs: true } } } as const;
 
 const QTD_PICOS = 600;
 const DURACAO_MINIMA_BLOCO_MS = 200;
@@ -21,8 +20,6 @@ const ANTECEDENCIA_TESTE_LOOP_MS = 4000;
 const CAUDA_TESTE_LOOP_MS = 4000;
 const TRANSICAO_LOOP_PADRAO: TransicaoLoopMontagemMusica = { duracaoFadeOutMs: 0, duracaoFadeInMs: 0, sobreposicaoInicioLoopMs: 0 };
 
-export type FonteItem = GraphqlTypesFonteMusica.Item<typeof SELECT_FONTE>;
-export type FonteSelecao = { idFonteMusica: number | null; nomeFonteNova: string | null };
 export type CampoTransicaoLoop = 'duracaoFadeOutMs' | 'duracaoFadeInMs' | 'sobreposicaoInicioLoopMs';
 type ArquivoSelecionado = NonNullable<Contexto__PaginaConfigurarMusica__Props['arquivoSelecionado']>;
 type ModoReproducao = { tipo: 'parado' } | { tipo: 'livre' } | { tipo: 'trecho'; ateMs: number } | { tipo: 'loop' };
@@ -31,11 +28,8 @@ type Segmento = { baseMs: number; ctxStart: number; ateMs: number | null };
 interface Contexto__PaginaConfigurarMusica__Edicao__Props {
     idArquivoTipadoMusica: number;
     configurada: boolean;
-    nome: string;
-    setNome: (valor: string) => void;
-    fonteSelecao: FonteSelecao;
-    setFonteSelecao: (selecao: FonteSelecao) => void;
-    fontes: FonteItem[];
+    nomeMusica: string;
+    nomeFonte: string;
 
     carregandoAudio: boolean;
     erroAudio: string | null;
@@ -91,14 +85,11 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
     const configurada = arquivo.idMusicaConfigurada !== null;
     useConfigurarLayoutContextualizado({ subtitulo: configurada ? 'Editando montagem' : 'Configurando música', fecharProps: { tipo: 'acao', executar: () => deseleciona(), tituloTooltip: 'Voltar para a listagem' } });
 
-    const consultaFontes = useNoraGraphQLConsulta(() => GraphqlLeituras.FonteMusica.eventos.varios({ parametros: { limit: 100, offset: 0 }, select: SELECT_FONTE }), { valorInicial: [], carregando: 'Carregando fontes', mensagemErro: 'Não foi possível carregar as fontes.', carregamento: NoraApiCarregamento.BARRA });
     const registroArquivo = useNoraGraphQLRegistro('ArquivoTipadoMusica', { props: { id: arquivo.id }, pk: arquivo.id, select: SELECT_ARQUIVO, carregando: 'Carregando arquivo', mensagemErro: 'Não foi possível carregar o arquivo da música.', carregamento: NoraApiCarregamento.BARRA });
     const registroMusica = useNoraGraphQLRegistro('MusicaConfigurada', { props: { id: arquivo.idMusicaConfigurada ?? 0 }, pk: arquivo.idMusicaConfigurada ?? 0, select: SELECT_MUSICA, carregando: 'Carregando montagem', mensagemErro: 'Não foi possível carregar a montagem.', carregamento: NoraApiCarregamento.BARRA, executarAoMontar: configurada });
 
     const caminhoArquivo = registroArquivo.data?.arquivo?.caminhoArquivo ?? null;
 
-    const [nome, setNome] = useState('');
-    const [fonteSelecao, setFonteSelecao] = useState<FonteSelecao>({ idFonteMusica: null, nomeFonteNova: null });
     const [montagem, setMontagem] = useState<MontagemMusica | null>(null);
     const [blocoSelecionadoId, setBlocoSelecionadoId] = useState<string | null>(null);
 
@@ -158,8 +149,6 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
         if (configurada) {
             const dados = registroMusica.data;
             if (!dados) return;
-            setNome(dados.nome);
-            setFonteSelecao({ idFonteMusica: dados.fonteMusica.id, nomeFonteNova: null });
             setMontagem({ inicioMs: dados.montagem.inicioMs, retornoMs: dados.montagem.retornoMs, fimMs: dados.montagem.fimMs, blocos: dados.montagem.blocos.map(bloco => ({ id: bloco.id, nome: bloco.nome, inicioMs: bloco.inicioMs, fimMs: bloco.fimMs })), transicaoLoop: { duracaoFadeOutMs: dados.montagem.transicaoLoop.duracaoFadeOutMs, duracaoFadeInMs: dados.montagem.transicaoLoop.duracaoFadeInMs, sobreposicaoInicioLoopMs: dados.montagem.transicaoLoop.sobreposicaoInicioLoopMs } });
             if (duracaoMs <= 0) setDuracaoMs(dados.montagem.fimMs);
             seedRef.current = true;
@@ -391,7 +380,7 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
 
     const blocoSelecionado = useMemo(() => montagem?.blocos.find(bloco => bloco.id === blocoSelecionadoId) ?? null, [montagem, blocoSelecionadoId]);
 
-    const podeSalvar = montagem !== null && !carregandoAudio && !salvando && nome.trim().length > 0 && (fonteSelecao.idFonteMusica !== null || (fonteSelecao.nomeFonteNova !== null && fonteSelecao.nomeFonteNova.trim().length > 0));
+    const podeSalvar = montagem !== null && !carregandoAudio && !salvando;
 
     const salvar = useCallback(async () => {
         if (!montagem || salvando) return;
@@ -399,22 +388,21 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
         setErroSalvar(null);
         try {
             const montagemSalvar: MontagemMusica = { inicioMs: montagem.inicioMs, retornoMs: montagem.retornoMs, fimMs: montagem.fimMs, blocos: montagem.blocos.map(bloco => ({ id: bloco.id, nome: bloco.nome.trim() || 'Bloco', inicioMs: bloco.inicioMs, fimMs: bloco.fimMs })), transicaoLoop: montagem.transicaoLoop };
-            if (arquivo.idMusicaConfigurada !== null) await atualizaMusicaConfigurada({ idMusicaConfigurada: arquivo.idMusicaConfigurada, nome: nome.trim(), idFonteMusica: fonteSelecao.idFonteMusica, nomeFonteNova: fonteSelecao.nomeFonteNova, montagem: montagemSalvar });
-            else await criaMusicaConfigurada({ idArquivoTipadoMusica: arquivo.id, nome: nome.trim(), idFonteMusica: fonteSelecao.idFonteMusica, nomeFonteNova: fonteSelecao.nomeFonteNova, montagem: montagemSalvar });
+            if (arquivo.idMusicaConfigurada !== null) await atualizaMusicaConfigurada({ idMusicaConfigurada: arquivo.idMusicaConfigurada, montagem: montagemSalvar });
+            else await criaMusicaConfigurada({ idArquivoTipadoMusica: arquivo.id, montagem: montagemSalvar });
             recarregarListagem();
             deseleciona();
         } catch (erro) {
             setErroSalvar(erro instanceof Error ? erro.message : 'Falha ao salvar a montagem.');
             setSalvando(false);
         }
-    }, [montagem, salvando, arquivo.id, arquivo.idMusicaConfigurada, nome, fonteSelecao, recarregarListagem, deseleciona]);
+    }, [montagem, salvando, arquivo.id, arquivo.idMusicaConfigurada, recarregarListagem, deseleciona]);
 
     const valor: Contexto__PaginaConfigurarMusica__Edicao__Props = {
         idArquivoTipadoMusica: arquivo.id,
         configurada,
-        nome, setNome,
-        fonteSelecao, setFonteSelecao,
-        fontes: consultaFontes.data,
+        nomeMusica: arquivo.nomeMusica,
+        nomeFonte: arquivo.nomeFonte,
         carregandoAudio, erroAudio, picos,
         montagemPronta: montagem !== null,
         inicioMs: montagem?.inicioMs ?? 0,

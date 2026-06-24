@@ -1,0 +1,64 @@
+.pagina {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2em;
+    padding: 1.5em;
+    color: #EBE0C9;
+}
+
+.form {
+    display: flex;
+    gap: 0.6em;
+    flex-wrap: wrap;
+}
+
+.input {
+    flex: 1;
+    min-width: 16em;
+    padding: 0.6em 0.9em;
+    color: #EBE0C9;
+    border: 0.08em solid rgba(183, 144, 81, 0.4);
+    border-radius: 0.5em;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.botao {
+    padding: 0.6em 1.4em;
+    color: #07060B;
+    border: none;
+    border-radius: 0.5em;
+    background: #B79051;
+    cursor: pointer;
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
+}
+
+.erro {
+    margin: 0;
+    color: #ff6b6b;
+    font-size: 0.9em;
+}
+
+.lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.item {
+    padding: 0.6em 0.9em;
+    border: 0.08em solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.5em;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.vazio {
+    opacity: 0.5;
+    font-style: italic;
+}

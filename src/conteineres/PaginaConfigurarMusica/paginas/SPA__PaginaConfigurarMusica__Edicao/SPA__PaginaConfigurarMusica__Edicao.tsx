@@ -6,8 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk } from '@fortawesome/free-solid-svg-icons';
 
 import { useContexto__PaginaConfigurarMusica__Edicao } from 'Contextos/Contexto__PaginaConfigurarMusica__Edicao/contexto';
-import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
-import SelecionadorFonteMusica from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorFonteMusica/SelecionadorFonteMusica';
 import EditorTimelineMusica from './componentes/EditorTimelineMusica/EditorTimelineMusica';
 import PainelBlocoSelecionado from './componentes/PainelBlocoSelecionado/PainelBlocoSelecionado';
 import PainelTransicaoLoop from './componentes/PainelTransicaoLoop/PainelTransicaoLoop';
@@ -19,12 +17,10 @@ export default function SPA__PaginaConfigurarMusica__Edicao() {
         <section className={styles.editor}>
             <header className={styles.cabecalho}>
                 <span className={styles.tagId}>Música #{ctx.idArquivoTipadoMusica}</span>
-                <InputComRotulo rotulo={'Nome da música'} classname={styles.campoNomeRotulo}>
-                    <input className={styles.campo} value={ctx.nome} onChange={evento => ctx.setNome(evento.target.value)} placeholder="Ex: Tema de Investigação" />
-                </InputComRotulo>
-                <InputComRotulo rotulo={'Fonte'} classname={styles.campoFonteRotulo}>
-                    <SelecionadorFonteMusica options={ctx.fontes.map(fonte => ({ id: fonte.id, nome: fonte.nome }))} idSelecionado={ctx.fonteSelecao.idFonteMusica} nomeNovo={ctx.fonteSelecao.nomeFonteNova} onSelecionar={ctx.setFonteSelecao} />
-                </InputComRotulo>
+                <div className={styles.identificacao}>
+                    <span className={styles.nomeMusica}>{ctx.nomeMusica}</span>
+                    <span className={styles.fonteMusicaRotulo}>{ctx.nomeFonte}</span>
+                </div>
             </header>
 
             {ctx.erroAudio ? (
