@@ -25,16 +25,11 @@ export default function SPA__PaginaConfigurarMusica__Listagem({ listagemMusicas,
 function LinhaMusica({ musica, aoSelecionar }: { musica: MusicaRegistro; aoSelecionar: () => void; }) {
     return (
         <button type="button" className={styles.linha} onClick={aoSelecionar}>
-            <span className={styles.id}>#{musica.id}</span>
-            {musica.configurada ? (
-                <span className={styles.configurada}>
-                    <span className={styles.tagConfigurada}>CONFIGURADA</span>
-                    <span className={styles.nome}>{musica.nomeMusica}</span>
-                    <span className={styles.fonte}>· {musica.nomeFonte}</span>
-                </span>
-            ) : (
-                <span className={styles.tagPendente}>PENDENTE</span>
-            )}
+            <span className={styles.info}>
+                <span className={styles.nome}>{musica.nomeMusica}</span>
+                <span className={styles.fonte}>· {musica.nomeFonte}</span>
+            </span>
+            <span className={musica.configurada ? styles.tagConfigurada : styles.tagPendente}>{musica.configurada ? 'CONFIGURADA' : 'PENDENTE'}</span>
         </button>
     );
 };

@@ -1,18 +1,20 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { BlocoMontagemMusica, MontagemMusica, TransicaoLoopMontagemMusica } from 'types-nora-api';
+import { BlocoMontagemMusica, GraphqlLeituras, MontagemMusica, TransicaoLoopMontagemMusica } from 'types-nora-api';
 
-import { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
+import useNoraGraphQLConsulta, { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { getImageUrl } from 'Uteis/ImagemLoader/ImagemLoader';
 import { criaMusicaConfigurada, atualizaMusicaConfigurada } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { type Contexto__PaginaConfigurarMusica__Props } from '../Contexto__PaginaConfigurarMusica/contexto';
+import { Contexto__PaginaConfigurarMusica__Edicao__Abas__Provider } from '../Contexto__PaginaConfigurarMusica__Edicao__Abas/contexto';
 import SPA__PaginaConfigurarMusica__Edicao from 'Conteineres/PaginaConfigurarMusica/paginas/SPA__PaginaConfigurarMusica__Edicao/SPA__PaginaConfigurarMusica__Edicao';
 
 const SELECT_ARQUIVO = { id: true, arquivo: { id: true, caminhoArquivo: true, tipoMime: true } } as const;
-const SELECT_MUSICA = { id: true, montagem: { inicioMs: true, retornoMs: true, fimMs: true, blocos: { id: true, nome: true, inicioMs: true, fimMs: true }, transicaoLoop: { duracaoFadeOutMs: true, duracaoFadeInMs: true, sobreposicaoInicioLoopMs: true } } } as const;
+const SELECT_DIMENSAO = { id: true, nome: true, bipolar: true, rotuloOposto: true } as const;
+const SELECT_MUSICA = { id: true, montagem: { inicioMs: true, retornoMs: true, fimMs: true, blocos: { id: true, nome: true, inicioMs: true, fimMs: true }, transicaoLoop: { duracaoFadeOutMs: true, duracaoFadeInMs: true, sobreposicaoInicioLoopMs: true } }, clima: { itens: { idDimensao: true, nivel: true } } } as const;
 
 const QTD_PICOS = 600;
 const DURACAO_MINIMA_BLOCO_MS = 200;
@@ -21,6 +23,8 @@ const CAUDA_TESTE_LOOP_MS = 4000;
 const TRANSICAO_LOOP_PADRAO: TransicaoLoopMontagemMusica = { duracaoFadeOutMs: 0, duracaoFadeInMs: 0, sobreposicaoInicioLoopMs: 0 };
 
 export type CampoTransicaoLoop = 'duracaoFadeOutMs' | 'duracaoFadeInMs' | 'sobreposicaoInicioLoopMs';
+export type ClimaItemEdicao = { idDimensao: number; nivel: number };
+export type DimensaoClimaOpcao = { id: number; nome: string; bipolar: boolean; rotuloOposto: string | null };
 type ArquivoSelecionado = NonNullable<Contexto__PaginaConfigurarMusica__Props['arquivoSelecionado']>;
 type ModoReproducao = { tipo: 'parado' } | { tipo: 'livre' } | { tipo: 'trecho'; ateMs: number } | { tipo: 'loop' };
 type Segmento = { baseMs: number; ctxStart: number; ateMs: number | null };
@@ -55,6 +59,12 @@ interface Contexto__PaginaConfigurarMusica__Edicao__Props {
     marcarFim: () => void;
     cortarNaPosicao: () => void;
 
+    climaItens: ClimaItemEdicao[];
+    dimensoesCatalogo: DimensaoClimaOpcao[];
+    adicionarDimensaoClima: (idDimensao: number) => void;
+    setNivelClima: (idDimensao: number, nivel: number) => void;
+    removerDimensaoClima: (idDimensao: number) => void;
+
     tocando: boolean;
     posicaoMs: number;
     alternarPlayPause: () => void;
@@ -84,11 +94,13 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
 
     const registroArquivo = useNoraGraphQLRegistro('ArquivoTipadoMusica', { props: { id: arquivo.id }, pk: arquivo.id, select: SELECT_ARQUIVO, carregando: 'Carregando arquivo', mensagemErro: 'Não foi possível carregar o arquivo da música.', carregamento: NoraApiCarregamento.BARRA });
     const registroMusica = useNoraGraphQLRegistro('MusicaConfigurada', { props: { id: arquivo.idMusicaConfigurada ?? 0 }, pk: arquivo.idMusicaConfigurada ?? 0, select: SELECT_MUSICA, carregando: 'Carregando montagem', mensagemErro: 'Não foi possível carregar a montagem.', carregamento: NoraApiCarregamento.BARRA, executarAoMontar: configurada });
+    const consultaDimensoes = useNoraGraphQLConsulta(() => GraphqlLeituras.DimensaoClima.eventos.varios({ parametros: { limit: 100, offset: 0 }, select: SELECT_DIMENSAO }), { valorInicial: [], carregando: 'Carregando dimensões', mensagemErro: 'Não foi possível carregar as dimensões.', carregamento: NoraApiCarregamento.BARRA });
 
     const caminhoArquivo = registroArquivo.data?.arquivo?.caminhoArquivo ?? null;
 
     const [montagem, setMontagem] = useState<MontagemMusica | null>(null);
     const [blocoSelecionadoId, setBlocoSelecionadoId] = useState<string | null>(null);
+    const [climaItens, setClimaItens] = useState<ClimaItemEdicao[]>([]);
 
     const [picos, setPicos] = useState<number[]>([]);
     const [duracaoMs, setDuracaoMs] = useState(0);
@@ -147,6 +159,7 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
             const dados = registroMusica.data;
             if (!dados) return;
             setMontagem({ inicioMs: dados.montagem.inicioMs, retornoMs: dados.montagem.retornoMs, fimMs: dados.montagem.fimMs, blocos: dados.montagem.blocos.map(bloco => ({ id: bloco.id, nome: bloco.nome, inicioMs: bloco.inicioMs, fimMs: bloco.fimMs })), transicaoLoop: { duracaoFadeOutMs: dados.montagem.transicaoLoop.duracaoFadeOutMs, duracaoFadeInMs: dados.montagem.transicaoLoop.duracaoFadeInMs, sobreposicaoInicioLoopMs: dados.montagem.transicaoLoop.sobreposicaoInicioLoopMs } });
+            setClimaItens(dados.clima.itens.map(item => ({ idDimensao: item.idDimensao, nivel: item.nivel })));
             if (duracaoMs <= 0) setDuracaoMs(dados.montagem.fimMs);
             seedRef.current = true;
             return;
@@ -377,6 +390,19 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
 
     const blocoSelecionado = useMemo(() => montagem?.blocos.find(bloco => bloco.id === blocoSelecionadoId) ?? null, [montagem, blocoSelecionadoId]);
 
+    const adicionarDimensaoClima = useCallback((idDimensao: number) => setClimaItens(atual => {
+        if (atual.some(item => item.idDimensao === idDimensao)) return atual;
+        const bipolar = consultaDimensoes.data.some(dimensao => dimensao.id === idDimensao && dimensao.bipolar);
+        return [...atual, { idDimensao, nivel: bipolar ? 0 : 5 }];
+    }), [consultaDimensoes.data]);
+    const setNivelClima = useCallback((idDimensao: number, nivel: number) => setClimaItens(atual => atual.map(item => {
+        if (item.idDimensao !== idDimensao) return item;
+        const bipolar = consultaDimensoes.data.some(dimensao => dimensao.id === idDimensao && dimensao.bipolar);
+        const min = bipolar ? -10 : 0;
+        return { ...item, nivel: Math.max(min, Math.min(10, Math.round(nivel))) };
+    })), [consultaDimensoes.data]);
+    const removerDimensaoClima = useCallback((idDimensao: number) => setClimaItens(atual => atual.filter(item => item.idDimensao !== idDimensao)), []);
+
     const podeSalvar = montagem !== null && !carregandoAudio && !salvando;
 
     const salvar = useCallback(async () => {
@@ -385,15 +411,15 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
         setErroSalvar(null);
         try {
             const montagemSalvar: MontagemMusica = { inicioMs: montagem.inicioMs, retornoMs: montagem.retornoMs, fimMs: montagem.fimMs, blocos: montagem.blocos.map(bloco => ({ id: bloco.id, nome: bloco.nome.trim() || 'Bloco', inicioMs: bloco.inicioMs, fimMs: bloco.fimMs })), transicaoLoop: montagem.transicaoLoop };
-            if (arquivo.idMusicaConfigurada !== null) await atualizaMusicaConfigurada({ idMusicaConfigurada: arquivo.idMusicaConfigurada, montagem: montagemSalvar });
-            else await criaMusicaConfigurada({ idArquivoTipadoMusica: arquivo.id, montagem: montagemSalvar });
+            if (arquivo.idMusicaConfigurada !== null) await atualizaMusicaConfigurada({ idMusicaConfigurada: arquivo.idMusicaConfigurada, montagem: montagemSalvar, clima: { itens: climaItens } });
+            else await criaMusicaConfigurada({ idArquivoTipadoMusica: arquivo.id, montagem: montagemSalvar, clima: { itens: climaItens } });
             recarregarListagem();
             deseleciona();
         } catch (erro) {
-            setErroSalvar(erro instanceof Error ? erro.message : 'Falha ao salvar a montagem.');
+            setErroSalvar(erro instanceof Error ? erro.message : 'Falha ao salvar a configuração.');
             setSalvando(false);
         }
-    }, [montagem, salvando, arquivo.id, arquivo.idMusicaConfigurada, recarregarListagem, deseleciona]);
+    }, [montagem, salvando, arquivo.id, arquivo.idMusicaConfigurada, climaItens, recarregarListagem, deseleciona]);
 
     const valor: Contexto__PaginaConfigurarMusica__Edicao__Props = {
         configurada,
@@ -408,13 +434,16 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
         blocoSelecionadoId, blocoSelecionado,
         setInicioMs, setRetornoMs, setFimMs, selecionarBloco, renomearBloco, dividirEm, moverFronteira, removerBloco, setCampoTransicaoLoop,
         marcarInicio, marcarRetorno, marcarFim, cortarNaPosicao,
+        climaItens, dimensoesCatalogo: consultaDimensoes.data, adicionarDimensaoClima, setNivelClima, removerDimensaoClima,
         tocando, posicaoMs, alternarPlayPause, parar, tocarDoInicio, tocarBloco, testarLoop, irParaMs,
         salvar, salvando, erroSalvar, podeSalvar,
     };
 
     return (
         <Contexto__PaginaConfigurarMusica__Edicao.Provider value={valor}>
-            <SPA__PaginaConfigurarMusica__Edicao />
+            <Contexto__PaginaConfigurarMusica__Edicao__Abas__Provider>
+                <SPA__PaginaConfigurarMusica__Edicao />
+            </Contexto__PaginaConfigurarMusica__Edicao__Abas__Provider>
         </Contexto__PaginaConfigurarMusica__Edicao.Provider>
     );
 };

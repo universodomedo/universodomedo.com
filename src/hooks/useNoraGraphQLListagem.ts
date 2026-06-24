@@ -442,13 +442,19 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
         }) as UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>;
     }, [params, whereConsultaComEscopoFixo]);
 
+    // As opcoes de um filtro de Busca refletem o ESCOPO ESTRUTURAL (whereFixo) do banco, NUNCA os filtros ativos:
+    // se incluissem o where dinamico, filtrar pela opcao 2 faria a opcao 1 sumir da propria lista de opcoes.
+    const whereEscopoFixo = useMemo<UseNoraGraphQLListagemWhereGraphql<TNome>>(() => {
+        return combinaWhereListagem(params.whereFixo, undefined) as UseNoraGraphQLListagemWhereGraphql<TNome>;
+    }, [params.whereFixo]);
+
     const parametrosOpcoesFiltrosConsulta = useMemo<UseNoraGraphQLListagemParametrosOpcoesFiltrosConsulta<TNome>>(() => {
         return {
             campos: camposOpcoesFiltrosConsulta.map(campo => campo.campo),
-            where: whereConsultaComEscopoFixo,
+            where: whereEscopoFixo,
             limitePorCampo: LIMITE_MAXIMO_REGISTROS_CONSULTA_GRAPHQL,
         };
-    }, [camposOpcoesFiltrosConsulta, whereConsultaComEscopoFixo]);
+    }, [camposOpcoesFiltrosConsulta, whereEscopoFixo]);
 
     const consultaRegistros = useNoraGraphQLConsulta(() => graphql.eventos.varios({ parametros: parametrosConsultaRegistros, select: params.select }), {
         valorInicial: [] as readonly TRegistro[],
@@ -613,7 +619,7 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
         }
 
         recarregarOpcoesFiltrosConsultaRef.current().catch(() => undefined);
-    }, [assinaturaCamposOpcoesFiltrosConsulta, versaoAplicacaoConsulta]);
+    }, [assinaturaCamposOpcoesFiltrosConsulta]);
 
     useEffect(() => {
         if (primeiraAplicacaoConsultaRef.current) {

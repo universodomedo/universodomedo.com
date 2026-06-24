@@ -1,0 +1,133 @@
+.painel {
+    flex: 1 1 22em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    padding: 1em 1.2em;
+    border: 0.08em solid rgba(183, 144, 81, 0.3);
+    border-radius: 0.7em;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.titulo {
+    margin: 0;
+    color: #B79051;
+    font-weight: 500;
+}
+
+.adicionar {
+    align-self: stretch;
+    padding: 0.55em 0.7em;
+    color: #E3C078;
+    border: 0.08em solid rgba(183, 144, 81, 0.45);
+    border-radius: 0.5em;
+    background: rgba(183, 144, 81, 0.07);
+    cursor: pointer;
+    color-scheme: dark;
+}
+
+.adicionar:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55em;
+}
+
+.linha {
+    display: grid;
+    grid-template-columns: 7em 1fr 7em 2.8em 1.2em;
+    align-items: center;
+    gap: 0.8em;
+}
+
+.poloEsquerdo,
+.poloDireito {
+    min-width: 0;
+    font-size: 0.95em;
+    color: #EBE0C9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.poloEsquerdo {
+    text-align: right;
+}
+
+.poloDireito {
+    text-align: left;
+}
+
+.trilha {
+    position: relative;
+    height: 0.5em;
+    border-radius: 0.35em;
+    background: rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    touch-action: none;
+}
+
+.trilha:focus-visible {
+    outline: 0.12em solid rgba(199, 154, 83, 0.6);
+    outline-offset: 0.2em;
+}
+
+.preenchimento {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-radius: 0.35em;
+    background: #B79051;
+}
+
+.thumb {
+    position: absolute;
+    top: 50%;
+    width: 0.95em;
+    height: 0.95em;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: #E3C078;
+    box-shadow: 0 0 0 0.2em rgba(199, 154, 83, 0.22);
+}
+
+.centro {
+    position: absolute;
+    top: -0.2em;
+    bottom: -0.2em;
+    left: 50%;
+    width: 0.14em;
+    transform: translateX(-50%);
+    background: rgba(235, 228, 214, 0.3);
+    border-radius: 0.1em;
+}
+
+.valor {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.9em;
+    color: #E3C078;
+}
+
+.remover {
+    padding: 0;
+    color: rgba(235, 228, 214, 0.35);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95em;
+}
+
+.remover:hover {
+    color: #ff6b6b;
+}
+
+.vazio {
+    margin: 0;
+    opacity: 0.5;
+    font-style: italic;
+}

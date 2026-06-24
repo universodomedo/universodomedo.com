@@ -3,7 +3,8 @@
 import { criaConteiner, criaSaidaConteiner, type SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 
 import { Contexto__PaginaGerenciarDimensoes__Provider, useContexto__PaginaGerenciarDimensoes } from 'Contextos/Contexto__PaginaGerenciarDimensoes/contexto';
-import SPA__PaginaGerenciarDimensoes__Gestao from './paginas/SPA__PaginaGerenciarDimensoes__Gestao/SPA__PaginaGerenciarDimensoes__Gestao';
+import { Contexto__PaginaGerenciarDimensoes__Listagem__Provider } from 'Contextos/Contexto__PaginaGerenciarDimensoes__Listagem/contexto';
+import { Contexto__PaginaGerenciarDimensoes__NovaDimensao__Provider } from 'Contextos/Contexto__PaginaGerenciarDimensoes__NovaDimensao/contexto';
 
 export function Conteiner__PaginaGerenciarDimensoes() {
     return (
@@ -17,6 +18,10 @@ const Conteiner__PaginaGerenciarDimensoes__Interno = criaConteiner<PropsConteine
 
 type PropsConteiner__PaginaGerenciarDimensoes = ReturnType<typeof useContexto__PaginaGerenciarDimensoes>;
 
-function resolveSaida(props: PropsConteiner__PaginaGerenciarDimensoes): SaidaConteiner { return criaSaidaConteiner(SPA__PaginaGerenciarDimensoes__Gestao, props); };
+function resolveSaida(props: PropsConteiner__PaginaGerenciarDimensoes): SaidaConteiner {
+    if (props.estaEmProcessoCriacao) return criaSaidaConteiner(Contexto__PaginaGerenciarDimensoes__NovaDimensao__Provider, { cancelaCriacao: props.cancelaCriacao, concluiCriacao: props.concluiCriacao });
+
+    return criaSaidaConteiner(Contexto__PaginaGerenciarDimensoes__Listagem__Provider, { listagemDimensoes: props.listagemDimensoes, iniciaCriacao: props.iniciaCriacao });
+};
 
 function useEstado(): PropsConteiner__PaginaGerenciarDimensoes { return useContexto__PaginaGerenciarDimensoes(); };

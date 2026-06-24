@@ -1,0 +1,70 @@
+.pagina {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1.5em;
+    color: #EBE0C9;
+}
+
+.cabecalho h1 {
+    margin: 0 0 0.2em;
+    color: #B79051;
+}
+
+.cabecalho p {
+    margin: 0;
+    opacity: 0.65;
+}
+
+.eixos {
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+}
+
+.eixo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    font-size: 0.8em;
+    color: #cbb98f;
+}
+
+.eixo select {
+    padding: 0.4em 0.6em;
+    color: #EBE0C9;
+    border: 0.08em solid rgba(183, 144, 81, 0.4);
+    border-radius: 0.5em;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.mapa {
+    width: 100%;
+    max-width: 40em;
+}
+
+.orbe {
+    cursor: pointer;
+}
+
+.agora {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+    color: #d8b06a;
+    min-height: 1.2em;
+}
+
+.limpar {
+    color: #8f8a7e;
+    background: transparent;
+    border: 0.08em solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.4em;
+    padding: 0.25em 0.7em;
+    cursor: pointer;
+}
+
+.vazio {
+    opacity: 0.5;
+    font-style: italic;
+}

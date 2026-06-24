@@ -1,20 +1,15 @@
 'use client';
 
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
-import { GraphqlLeituras } from 'types-nora-api';
 
-import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
-import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
-import { criaDimensaoClima } from 'Uteis/ApiConsumer/ConsumerMiddleware';
-
-const SELECT_DIMENSAO = { id: true, nome: true } as const;
+import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 
 export interface Contexto__PaginaGerenciarDimensoes__Props {
-    dimensoes: { id: number; nome: string }[];
-    carregando: boolean;
-    erro: string | null;
-    criar: (nome: string) => Promise<boolean>;
-    recarregar: () => void;
+    listagemDimensoes: ReturnType<typeof useListagemDimensoes>;
+    estaEmProcessoCriacao: boolean;
+    iniciaCriacao: () => void;
+    cancelaCriacao: () => void;
+    concluiCriacao: () => void;
 };
 
 const Contexto__PaginaGerenciarDimensoes = createContext<Contexto__PaginaGerenciarDimensoes__Props | undefined>(undefined);
@@ -26,26 +21,31 @@ export const useContexto__PaginaGerenciarDimensoes = (): Contexto__PaginaGerenci
 };
 
 export const Contexto__PaginaGerenciarDimensoes__Provider = ({ children }: { children: ReactNode; }) => {
-    const consulta = useNoraGraphQLConsulta(() => GraphqlLeituras.DimensaoClima.eventos.varios({ parametros: { limit: 100, offset: 0 }, select: SELECT_DIMENSAO }), { valorInicial: [], carregando: 'Carregando dimensões', mensagemErro: 'Não foi possível carregar as dimensões.', carregamento: NoraApiCarregamento.BARRA });
-    const [erro, setErro] = useState<string | null>(null);
+    const listagemDimensoes = useListagemDimensoes();
+    const [estaEmProcessoCriacao, setEstaEmProcessoCriacao] = useState<boolean>(false);
 
-    const recarregar = consulta.recarregar;
-
-    const criar = useCallback(async (nome: string): Promise<boolean> => {
-        setErro(null);
-        try {
-            await criaDimensaoClima({ nome: nome.trim() });
-            await recarregar();
-            return true;
-        } catch (e) {
-            setErro(e instanceof Error ? e.message : 'Falha ao criar a dimensão.');
-            return false;
-        }
-    }, [recarregar]);
+    const iniciaCriacao = useCallback(() => setEstaEmProcessoCriacao(true), []);
+    const cancelaCriacao = useCallback(() => setEstaEmProcessoCriacao(false), []);
+    const recarregarListagem = listagemDimensoes.recarregar;
+    const concluiCriacao = useCallback(() => { recarregarListagem(); setEstaEmProcessoCriacao(false); }, [recarregarListagem]);
 
     return (
-        <Contexto__PaginaGerenciarDimensoes.Provider value={{ dimensoes: consulta.data, carregando: consulta.carregando != null, erro, criar, recarregar }}>
+        <Contexto__PaginaGerenciarDimensoes.Provider value={{ listagemDimensoes, estaEmProcessoCriacao, iniciaCriacao, cancelaCriacao, concluiCriacao }}>
             {children}
         </Contexto__PaginaGerenciarDimensoes.Provider>
     );
+};
+
+function useListagemDimensoes() {
+    return useNoraGraphQLListagem('DimensaoClima', {
+        select: ['id', 'nome', 'bipolar', 'rotuloOposto'],
+        itensPorPagina: 100,
+        carregando: 'Buscando dimensões',
+        mensagemErro: 'Houve um erro recuperando as dimensões',
+        mensagemListaVazia: 'Nenhuma dimensão cadastrada ainda.',
+        mensagemListaVaziaComFiltro: 'Nenhuma dimensão encontrada com os filtros atuais.',
+        carregamento: 'BLOQUEIA_INTERFACE',
+        montaParametrosConsulta: params => ({ where: params.where, order: { id: 'ASC' }, limit: params.limit, offset: params.offset }),
+        montaParametrosTotalDeRegistros: where => ({ where }),
+    });
 };
