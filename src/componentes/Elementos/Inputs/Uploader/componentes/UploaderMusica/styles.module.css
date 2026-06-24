@@ -1,0 +1,21 @@
+.campos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    margin-top: 1em;
+    max-width: 32em;
+}
+
+.input {
+    width: 100%;
+    padding: 0.7em 0.8em;
+    border-radius: 0.8em;
+    border: 0.1em solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.erro {
+    color: #ff6b6b;
+    font-size: 0.9em;
+}

@@ -1,9 +1,11 @@
 'use client';
 
 import { ComponentType, createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { acceptFromFormatos, FormatoUploadArquivo, isFormatoImagemBitmap, RegrasUploadArquivo, TipoArquivoDef, TIPOS_ARQUIVO, validarRegrasUploadArquivo } from 'types-nora-api';
+import { acceptFromFormatos, FormatoUploadArquivo, GraphqlLeituras, isFormatoImagemBitmap, RegrasUploadArquivo, TipoArquivoDef, TIPOS_ARQUIVO, validarRegrasUploadArquivo } from 'types-nora-api';
 
 import { buscaRegrasPorTipoArquivo, me_upload } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
+import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import { toast } from 'Hooks/useToast';
 
 import Uploader from 'Componentes/Elementos/Inputs/Uploader/Uploader';
@@ -11,8 +13,13 @@ import UploaderRecursosInternos from 'Componentes/Elementos/Inputs/Uploader/comp
 import UploaderAvatar from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderAvatar/UploaderAvatar';
 import UploaderArtes from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderArtes/UploaderArtes';
 import UploaderEmblema from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderEmblema/UploaderEmblema';
+import UploaderMusica from 'Componentes/Elementos/Inputs/Uploader/componentes/UploaderMusica/UploaderMusica';
 
 type RecursosInternosState = { nome: string; setNome: (valor: string) => void; erro: string | null; };
+
+type FonteSelecaoUpload = { idFonteMusica: number | null; nomeFonteNova: string | null };
+
+type MusicaUploadState = { nome: string; setNome: (valor: string) => void; fontes: { id: number; nome: string }[]; fonteSelecao: FonteSelecaoUpload; setFonteSelecao: (selecao: FonteSelecaoUpload) => void; erro: string | null; };
 
 type UploaderComponent = ComponentType;
 
@@ -27,6 +34,7 @@ const UPLOADER_POR_TIPO: Partial<Record<TipoArquivoId, UploaderComponent>> = {
     [TIPOS_ARQUIVO.AVATAR_PERSONAGEM.id]: UploaderAvatar,
     [TIPOS_ARQUIVO.IMAGEM_ESPECIAL_ARTISTA.id]: UploaderArtes,
     [TIPOS_ARQUIVO.ITENS_EMBLEMAS.id]: UploaderEmblema,
+    [TIPOS_ARQUIVO.MUSICA.id]: UploaderMusica,
     // outros tipos específicos aqui...
 };
 
@@ -42,6 +50,7 @@ type ContextoUploadImagemProps = {
     isValido: boolean;
     isCarregando: boolean;
     recursosInternos: RecursosInternosState | null;
+    musica: MusicaUploadState | null;
     selecionarArquivo: (arquivo: File) => Promise<void>;
     limpar: () => void;
     enviar: () => void;
@@ -171,9 +180,29 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras, ca
         return nomeRecursoInterno.trim().length > 0;
     }, [isRecursosInternos, nomeRecursoInterno]);
 
+    const isMusica = tipoArquivo.id === TIPOS_ARQUIVO.MUSICA.id;
+
+    const consultaFontes = useNoraGraphQLConsulta(() => GraphqlLeituras.FonteMusica.eventos.varios({ parametros: { limit: 100, offset: 0 }, select: { id: true, nome: true } }), { valorInicial: [], carregando: 'Carregando fontes', mensagemErro: 'Não foi possível carregar as fontes.', carregamento: NoraApiCarregamento.BARRA, executarAoMontar: isMusica });
+
+    const [nomeMusica, setNomeMusica] = useState<string>('');
+    const [fonteSelecao, setFonteSelecao] = useState<FonteSelecaoUpload>({ idFonteMusica: null, nomeFonteNova: null });
+    const [erroMusica, setErroMusica] = useState<string | null>(null);
+
+    const fonteSelecionadaOk = fonteSelecao.idFonteMusica !== null || (fonteSelecao.nomeFonteNova !== null && fonteSelecao.nomeFonteNova.trim().length > 0);
+
+    const musica = useMemo<MusicaUploadState | null>(() => {
+        if (!isMusica) return null;
+        return { nome: nomeMusica, setNome: (v) => { setNomeMusica(v); if (erroMusica) setErroMusica(null); }, fontes: consultaFontes.data, fonteSelecao, setFonteSelecao: (s) => { setFonteSelecao(s); if (erroMusica) setErroMusica(null); }, erro: erroMusica };
+    }, [isMusica, nomeMusica, consultaFontes.data, fonteSelecao, erroMusica]);
+
+    const musicaOk = useMemo(() => {
+        if (!isMusica) return true;
+        return nomeMusica.trim().length > 0 && fonteSelecionadaOk;
+    }, [isMusica, nomeMusica, fonteSelecionadaOk]);
+
     const isValido = useMemo(() => {
-        return isArquivoValido && nomeRecursoInternoOk;
-    }, [isArquivoValido, nomeRecursoInternoOk]);
+        return isArquivoValido && nomeRecursoInternoOk && musicaOk;
+    }, [isArquivoValido, nomeRecursoInternoOk, musicaOk]);
 
     const previewUrlRef = useRef<string | null>(null);
 
@@ -185,6 +214,9 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras, ca
         setPreviewUrl(null);
         setNomeRecursoInterno('');
         setErroNomeRecursoInterno(null);
+        setNomeMusica('');
+        setFonteSelecao({ idFonteMusica: null, nomeFonteNova: null });
+        setErroMusica(null);
         if (previewUrlRef.current) {
             URL.revokeObjectURL(previewUrlRef.current);
             previewUrlRef.current = null;
@@ -278,6 +310,11 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras, ca
         const camposExtrasLocais: CamposExtrasUpload = {};
 
         if (isRecursosInternos) camposExtrasLocais.nomeRecursoInterno = nomeRecursoInterno.trim();
+        if (isMusica) {
+            camposExtrasLocais.nome = nomeMusica.trim();
+            const nomeFonte = fonteSelecao.idFonteMusica !== null ? (consultaFontes.data.find(fonte => fonte.id === fonteSelecao.idFonteMusica)?.nome ?? '') : (fonteSelecao.nomeFonteNova?.trim() ?? '');
+            camposExtrasLocais.fonte = nomeFonte;
+        }
 
         return { ...(camposExtrasFixos ?? {}), ...camposExtrasLocais };
     };
@@ -287,6 +324,7 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras, ca
 
         if (!isValido) {
             if (isRecursosInternos && nomeRecursoInterno.trim().length === 0) setErroNomeRecursoInterno('Campo obrigatório.');
+            if (isMusica && !musicaOk) setErroMusica('Nome e fonte são obrigatórios.');
             return;
         }
 
@@ -312,8 +350,8 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras, ca
     };
 
     const value = useMemo<ContextoUploadImagemProps>(() => {
-        return { regras, accept, tipoArquivo, arquivo, previewUrl, erro, isValido, isCarregando, recursosInternos, selecionarArquivo, limpar, enviar, isEnviando };
-    }, [regras, accept, tipoArquivo, arquivo, previewUrl, erro, isValido, isCarregando, recursosInternos, selecionarArquivo, limpar, enviar, isEnviando]);
+        return { regras, accept, tipoArquivo, arquivo, previewUrl, erro, isValido, isCarregando, recursosInternos, musica, selecionarArquivo, limpar, enviar, isEnviando };
+    }, [regras, accept, tipoArquivo, arquivo, previewUrl, erro, isValido, isCarregando, recursosInternos, musica, selecionarArquivo, limpar, enviar, isEnviando]);
 
     return (
         <ContextoUploadImagem.Provider value={value}>
