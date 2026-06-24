@@ -15,8 +15,8 @@ import { useAtualizarPaginaAtualWs } from 'Hooks/useAtualizarPaginaAtualWs';
 
 import { useAppDispatch, useAppSelector } from 'Redux/hooks/useRedux';
 import { updateLayoutContextualizado, setMenuLeaf } from 'Redux/slices/layoutContextualizadoSlice';
-import { setMusicaPagina } from 'Redux/slices/audioPaginaSlice';
 import { selectLayoutEsconderMenu, selectMenuLayoutTipo } from 'Redux/selectors/layoutContextualizadoSelectors';
+import { useDefinirMusicaPagina } from 'Hooks/useDefinirMusicaPagina';
 
 import { MenuLayoutDinamicoProvider, useMenuLayoutDinamicoValor } from './MenuLayoutDinamico';
 
@@ -48,6 +48,7 @@ function MenuArea({ leaf }: { leaf: MenuLayoutLeaf }) {
 
 export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagina: PaginaFolha; children: React.ReactNode; embrulho?: EmbrulhoSlot | undefined; }) {
     const dispatch = useAppDispatch();
+    const definirMusicaPagina = useDefinirMusicaPagina();
     const { carregando, estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
     const { setTamanhoReduzido } = useContextoMenuSwiperEsquerda();
     const esconderMenu = useAppSelector(selectLayoutEsconderMenu);
@@ -81,8 +82,8 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
 
     useEffect(() => {
         if (!decisao.permitido) return;
-        dispatch(setMusicaPagina({ idMusica: pagina.idMusicaPagina ?? null, tituloPagina: pagina.idMusicaPagina != null ? pagina.label : null }));
-    }, [dispatch, decisao.permitido, pagina]);
+        definirMusicaPagina(pagina.idMusicaPagina ?? null, pagina.idMusicaPagina != null ? pagina.label : null);
+    }, [definirMusicaPagina, decisao.permitido, pagina]);
 
     if (carregando) return (<h1>carregando....</h1>);
     if (!decisao.permitido) return (<RedirecionadorInterno pagina={decisao.redirecionarPara} />);

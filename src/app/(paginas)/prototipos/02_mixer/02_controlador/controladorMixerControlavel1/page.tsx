@@ -1,14 +1,11 @@
+import { Componente_ConteudoPrototipo } from "./conteudo";
+
 export default function PagePrototipo() {
     return (
         <>
-            <h1>Essa página deve Testar a funcionalidade de Controlador de Música para o mixerControlador1</h1>
+            <h1>Essa página deve Testar a funcionalidade de Controlador de Música para o mixerControlavel1</h1>
+            <h2>Selecione ao vivo qual música toca para todos os ouvintes do canal 1; a escolha é transmitida por WebSocket</h2>
             <Componente_ConteudoPrototipo />
         </>
-    );
-};
-
-function Componente_ConteudoPrototipo() {
-    return (
-        <></>
     );
 };

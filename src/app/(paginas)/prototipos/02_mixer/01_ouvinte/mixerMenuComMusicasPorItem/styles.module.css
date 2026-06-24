@@ -1,0 +1,71 @@
+.prototipo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2em;
+    padding: 1.5em;
+    color: #EBE0C9;
+}
+
+.cabecalho h1 {
+    margin: 0 0 0.3em;
+    color: #B79051;
+}
+
+.cabecalho p {
+    margin: 0;
+    max-width: 50em;
+    line-height: 1.5;
+    opacity: 0.7;
+}
+
+.corpo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5em;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    min-width: 14em;
+}
+
+.item {
+    padding: 0.7em 1em;
+    text-align: left;
+    color: #EBE0C9;
+    border: 0.08em solid rgba(183, 144, 81, 0.35);
+    border-radius: 0.6em;
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+
+    &:hover {
+        border-color: rgba(183, 144, 81, 0.7);
+        background: rgba(183, 144, 81, 0.16);
+    }
+}
+
+.itemAtivo {
+    color: #07060B;
+    border-color: #B79051;
+    background: #B79051;
+
+    &:hover {
+        background: #c8a062;
+    }
+}
+
+.conteudo {
+    flex: 1;
+    min-width: 16em;
+    padding: 1.2em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.7em;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.vazio {
+    opacity: 0.5;
+    font-style: italic;
+}

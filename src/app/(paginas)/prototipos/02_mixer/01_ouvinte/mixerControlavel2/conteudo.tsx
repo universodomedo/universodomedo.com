@@ -1,18 +1,18 @@
 'use client';
 
 import { useEffect } from 'react';
-import { MIXER_CANAL_CONTROLAVEL_1 } from 'types-nora-api';
+import { MIXER_CANAL_CONTROLAVEL_2 } from 'types-nora-api';
 
 import { useDefinirMusicaPagina } from 'Hooks/useDefinirMusicaPagina';
 import { useMixerCanal } from '../../_compartilhado/useMixerCanal';
 import styles from './styles.module.css';
 
-const TITULO_CANAL = 'Sala Controlável 1';
+const TITULO_CANAL = 'Sala Controlável 2';
 
 // Caso 5 (ouvinte): a musica deste canal e escolhida AO VIVO pelo controlador. O ouvinte so reflete a selecao
 // recebida por WS no SSOT de audio (definirMusicaPagina) — reproducao/crossfade/Central vem inteiros da base.
 export function Componente_ConteudoPrototipo() {
-    const { selecao } = useMixerCanal(MIXER_CANAL_CONTROLAVEL_1);
+    const { selecao } = useMixerCanal(MIXER_CANAL_CONTROLAVEL_2);
     const definirMusicaPagina = useDefinirMusicaPagina();
     const idMusica = selecao?.idMusicaConfigurada ?? null;
 
