@@ -40,7 +40,7 @@ export const Contexto__PaginaConfigurarMusica__Provider = ({ children }: { child
 
 function obtemListagemMusicas() {
     return useNoraGraphQLListagem('ArquivoTipadoMusica', {
-        select: ['id', 'configurada', 'idMusicaConfigurada', 'nomeMusica', 'nomeFonte'],
+        select: ['id', 'configurada', 'idMusicaConfigurada', 'nomeMusica', 'nomeFonte', 'fonteMusica'],
         itensPorPagina: 20,
         carregando: 'Buscando músicas',
         mensagemErro: 'Houve um erro recuperando as músicas',

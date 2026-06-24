@@ -1,0 +1,33 @@
+schema_version: 1
+name: "navegacao-layout-contextualizado"
+description: "Usar useConfigurarLayoutContextualizado para a navegação contextual de uma subpágina no frontend do Universo do Medo. O título fica estável e vem da PAGINA; o subtítulo detalha o processo e o alvo atual; fecharProps mantém a navegação não-travada. Nunca redefinir nem duplicar o título, e nunca repetir a identidade do alvo no corpo da SPA (tagId, header de nome ou fonte) porque ocupa espaço nobre e essa identidade pertence ao subtítulo."
+selection:
+    requirement: "required"
+    rules:
+        - id: "uso-do-hook-layout-contextualizado"
+          match:
+              identifier:
+                  - "useConfigurarLayoutContextualizado"
+                  - "useLayoutContextualizado"
+                  - "updateLayoutContextualizado"
+                  - "patchLayoutContextualizado"
+                  - "fecharProps"
+                  - "LayoutContextualizadoInterno"
+        - id: "arquivos-do-layout-contextualizado"
+          match:
+              path_glob:
+                  - "**/useLayoutContextualizado*"
+                  - "**/layoutContextualizadoSlice*"
+        - id: "termos-de-navegacao-contextual"
+          match:
+              all:
+                  - terms_any:
+                      - "layout contextualizado"
+                      - "navegacao contextual"
+                  - terms_any:
+                      - "titulo"
+                      - "subtitulo"
+                      - "fecharprops"
+                      - "breadcrumb"
+                      - "subpagina"
+                      - "cabecalho de navegacao"

@@ -15,14 +15,6 @@ export default function SPA__PaginaConfigurarMusica__Edicao() {
 
     return (
         <section className={styles.editor}>
-            <header className={styles.cabecalho}>
-                <span className={styles.tagId}>Música #{ctx.idArquivoTipadoMusica}</span>
-                <div className={styles.identificacao}>
-                    <span className={styles.nomeMusica}>{ctx.nomeMusica}</span>
-                    <span className={styles.fonteMusicaRotulo}>{ctx.nomeFonte}</span>
-                </div>
-            </header>
-
             {ctx.erroAudio ? (
                 <div className={styles.aviso}>{ctx.erroAudio}</div>
             ) : !ctx.montagemPronta ? (

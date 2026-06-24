@@ -26,10 +26,7 @@ type ModoReproducao = { tipo: 'parado' } | { tipo: 'livre' } | { tipo: 'trecho';
 type Segmento = { baseMs: number; ctxStart: number; ateMs: number | null };
 
 interface Contexto__PaginaConfigurarMusica__Edicao__Props {
-    idArquivoTipadoMusica: number;
     configurada: boolean;
-    nomeMusica: string;
-    nomeFonte: string;
 
     carregandoAudio: boolean;
     erroAudio: string | null;
@@ -83,7 +80,7 @@ export const useContexto__PaginaConfigurarMusica__Edicao = (): Contexto__PaginaC
 
 export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, deseleciona, recarregarListagem }: { arquivo: ArquivoSelecionado; deseleciona: () => void; recarregarListagem: () => void; }) => {
     const configurada = arquivo.idMusicaConfigurada !== null;
-    useConfigurarLayoutContextualizado({ subtitulo: configurada ? 'Editando montagem' : 'Configurando música', fecharProps: { tipo: 'acao', executar: () => deseleciona(), tituloTooltip: 'Voltar para a listagem' } });
+    useConfigurarLayoutContextualizado({ subtitulo: `${arquivo.nomeFonte} · ${arquivo.nomeMusica}`, fecharProps: { tipo: 'acao', executar: () => deseleciona(), tituloTooltip: 'Voltar para a listagem' } });
 
     const registroArquivo = useNoraGraphQLRegistro('ArquivoTipadoMusica', { props: { id: arquivo.id }, pk: arquivo.id, select: SELECT_ARQUIVO, carregando: 'Carregando arquivo', mensagemErro: 'Não foi possível carregar o arquivo da música.', carregamento: NoraApiCarregamento.BARRA });
     const registroMusica = useNoraGraphQLRegistro('MusicaConfigurada', { props: { id: arquivo.idMusicaConfigurada ?? 0 }, pk: arquivo.idMusicaConfigurada ?? 0, select: SELECT_MUSICA, carregando: 'Carregando montagem', mensagemErro: 'Não foi possível carregar a montagem.', carregamento: NoraApiCarregamento.BARRA, executarAoMontar: configurada });
@@ -399,10 +396,7 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
     }, [montagem, salvando, arquivo.id, arquivo.idMusicaConfigurada, recarregarListagem, deseleciona]);
 
     const valor: Contexto__PaginaConfigurarMusica__Edicao__Props = {
-        idArquivoTipadoMusica: arquivo.id,
         configurada,
-        nomeMusica: arquivo.nomeMusica,
-        nomeFonte: arquivo.nomeFonte,
         carregandoAudio, erroAudio, picos,
         montagemPronta: montagem !== null,
         inicioMs: montagem?.inicioMs ?? 0,

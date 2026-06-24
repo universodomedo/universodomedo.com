@@ -1,9 +1,10 @@
 'use client';
 
+import styles from './styles.module.css';
+
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import ListagemComposta, { ListagemCompostaModoExibicao } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
 import { type Contexto__PaginaConfigurarMusica__Props } from 'Contextos/Contexto__PaginaConfigurarMusica/contexto';
-import styles from './styles.module.css';
 
 type Props = { listagemMusicas: Contexto__PaginaConfigurarMusica__Props['listagemMusicas']; selecionar: Contexto__PaginaConfigurarMusica__Props['selecionar']; };
 type MusicaRegistro = Contexto__PaginaConfigurarMusica__Props['listagemMusicas']['registros'][number];

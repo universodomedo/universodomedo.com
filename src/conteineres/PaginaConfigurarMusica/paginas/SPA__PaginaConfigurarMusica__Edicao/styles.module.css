@@ -6,40 +6,6 @@
     padding: 1em 1.2em 0;
 }
 
-.cabecalho {
-    display: flex;
-    align-items: flex-end;
-    flex-wrap: wrap;
-    gap: 1em;
-}
-
-.tagId {
-    padding: 0.35em 0.7em;
-    font-variant-numeric: tabular-nums;
-    color: #B79051;
-    border: 0.08em solid rgba(183, 144, 81, 0.4);
-    border-radius: 0.6em;
-    background: rgba(183, 144, 81, 0.08);
-}
-
-.identificacao {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15em;
-}
-
-.nomeMusica {
-    font-size: 1.15em;
-    font-weight: 600;
-    color: #EBE0C9;
-}
-
-.fonteMusicaRotulo {
-    font-size: 0.9em;
-    opacity: 0.7;
-    color: #B79051;
-}
-
 .aviso {
     display: flex;
     align-items: center;

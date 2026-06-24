@@ -10,6 +10,7 @@ import { readSkillFrontmatter, selectSkills } from '../selector/select-skills.mj
 const TEST_ROOT = fileURLToPath(new URL('.', import.meta.url));
 const REPOSITORY_ROOT = resolve(TEST_ROOT, '../../..');
 const COORDENADAS_SKILL = 'coordenadas-ponteiro-conteiner-escalavel';
+const LAYOUT_SKILL = 'navegacao-layout-contextualizado';
 const CONTEINER_ESCALAVEL_PATH = 'src/componentes/ElementosVisuais/ConteinerEscalavel/ConteinerEscalavel.tsx';
 
 function selectorInput(taskText, taskPaths = [], loadedSkills = []) {
@@ -71,6 +72,38 @@ test('loaded_skills evita recarregar a skill de coordenadas', async () => {
     const result = await selectSkills({ rootDir: REPOSITORY_ROOT, input: selectorInput('Corrigir coordenadas do ponteiro com getScreenCTM no arraste.', [], [COORDENADAS_SKILL]) });
     assert.deepEqual(result.skills_to_load, []);
     assert.ok(result.skills_already_loaded.includes(COORDENADAS_SKILL));
+});
+
+test('descoberta encontra a skill de navegacao contextual', async () => {
+    const result = await selectSkills({ rootDir: REPOSITORY_ROOT, input: selectorInput('Tarefa neutra') });
+    assert.equal(result.discovery_complete, true);
+    assert.deepEqual(result.invalid_manifests, []);
+    assert.ok(result.skills_found.includes(LAYOUT_SKILL));
+});
+
+test('seleciona a skill de navegacao contextual pelo uso do hook', async () => {
+    const result = await selectSkills({ rootDir: REPOSITORY_ROOT, input: selectorInput('Estou usando useConfigurarLayoutContextualizado para ajustar o subtitulo da subpagina de edicao.') });
+    assert.equal(result.discovery_complete, true);
+    assert.ok(selectedSkill(result, LAYOUT_SKILL));
+    assert.ok(matchedRuleIds(result, LAYOUT_SKILL).includes('uso-do-hook-layout-contextualizado'));
+});
+
+test('seleciona a skill de navegacao contextual pelo caminho do hook', async () => {
+    const result = await selectSkills({ rootDir: REPOSITORY_ROOT, input: selectorInput('Ajustar o hook de layout.', ['src/redux/hooks/useLayoutContextualizado.ts']) });
+    assert.ok(selectedSkill(result, LAYOUT_SKILL));
+    assert.ok(matchedRuleIds(result, LAYOUT_SKILL).includes('arquivos-do-layout-contextualizado'));
+});
+
+test('seleciona a skill de navegacao contextual por termos', async () => {
+    const result = await selectSkills({ rootDir: REPOSITORY_ROOT, input: selectorInput('Preciso configurar a navegação contextual e definir um bom subtitulo para a subpagina.') });
+    assert.ok(selectedSkill(result, LAYOUT_SKILL));
+    assert.ok(matchedRuleIds(result, LAYOUT_SKILL).includes('termos-de-navegacao-contextual'));
+});
+
+test('não seleciona a skill de navegacao contextual em tarefa neutra', async () => {
+    const result = await selectSkills({ rootDir: REPOSITORY_ROOT, input: selectorInput('Atualizar a documentação do README do projeto.') });
+    assert.equal(result.discovery_complete, true);
+    assert.equal(selectedSkill(result, LAYOUT_SKILL), undefined);
 });
 
 test('manifesto com schema_version não suportado torna a descoberta incompleta', async () => {
