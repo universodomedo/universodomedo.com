@@ -95,6 +95,14 @@
     width: 100%;
 }
 
+.cobertura_cooldown_acao {
+    border-radius: .45em;
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+    z-index: 1;
+}
+
 .resumo_acao {
     background-color: #18151F;
     border: .08em solid #625D70;

@@ -26,6 +26,7 @@ export const ContextoControleAcoesRuntimeProvider = ({ children, codigoRecuperar
     function executaAcao(keyAcao: string, keyCombatenteAlvo?: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime): void {
         if (desativarAcoes) return;
         if (!codigoRecuperarFichaRuntime) return;
+        if (estadoTemporalSalaJogo && estadoTemporalSalaJogo.status === 'RODANDO') return;
 
         eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.executaAcao, { codigoRecuperarFichaRuntime, keyAcao, keyCombatenteAlvo });
     };

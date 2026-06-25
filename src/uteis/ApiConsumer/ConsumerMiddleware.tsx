@@ -318,6 +318,29 @@ export async function editaTutorial(id: number, payload: DadosEditarTutorial): P
     return await useApi<boolean>({ uri: `/tutoriais/editaTutorial/${id}`, method: 'PUT', data: payload });
 }
 
+export async function criaMenu(payload: { chave: string; tipo: 'principal' | 'interno'; descricao?: string | null }): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/menus/criaMenu', method: 'POST', data: payload });
+}
+
+export type MenuNoDoBancoDto = { id: number; tipo: string; titulo: string; ordem: number; paginaTemplate: string | null; visivel: boolean; filhos: MenuNoDoBancoDto[] };
+export type MenuDoBancoDto = { id: number; chave: string; tipo: string; descricao: string | null; nos: MenuNoDoBancoDto[] };
+
+export async function obtemNavegacaoDoBanco(): Promise<MenuDoBancoDto[]> {
+    return await useApi<MenuDoBancoDto[]>({ uri: '/menus/montaNavegacao', method: 'GET' });
+}
+
+export async function criaMenuNo(payload: { fkMenusId: number; fkMenusNosId?: number | null; tipo: 'item' | 'grupo'; titulo: string; ordem?: number; paginaTemplate?: string | null; visivel?: boolean }): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/menus/criaMenuNo', method: 'POST', data: payload });
+}
+
+export async function editaMenuNo(id: number, payload: { titulo?: string; ordem?: number; visivel?: boolean }): Promise<boolean> {
+    return await useApi<boolean>({ uri: `/menus/editaMenuNo/${id}`, method: 'PUT', data: payload });
+}
+
+export async function importarNavegacaoDoConst(): Promise<{ menus: number; nos: number; layout: number }> {
+    return await useApi<{ menus: number; nos: number; layout: number }>({ uri: '/menus/importarDoConst', method: 'POST' });
+}
+
 export async function PROTOTIPO_LUIZ__recupera_capa_perfil_usuario(): Promise<CaminhoArquivoArte> {
     return await useApi<CaminhoArquivoArte>({ uri: '/arquivos_tipados_arte/PROTOTIPO_LUIZ__recupera_capa_perfil_usuario', method: 'GET' });
 }

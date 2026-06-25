@@ -90,6 +90,12 @@ export default function EditorRuntimeMissao() {
         if (tipo === 'tempo_jogo_alcancado' || tipo === 'proximidade_ser_alcancada') { atualizaConfig({ condicaoVitoria, temporal: { momentoInicialMs: 0 } }); return; }
         atualizaConfig({ condicaoVitoria });
     };
+    function defineTempoReal(ativo: boolean): void {
+        setConfig(atual => {
+            if (ativo) return { ...atual, temporal: { momentoInicialMs: 0 } };
+            return { narracaoInicial: atual.narracaoInicial, cenario: atual.cenario, controlaveis: atual.controlaveis, naoControlaveis: atual.naoControlaveis, interagiveis: atual.interagiveis, descobertasCondicionadas: atual.descobertasCondicionadas, condicaoVitoria: atual.condicaoVitoria };
+        });
+    };
     function atualizaCenario(parcial: Partial<ConfiguracaoRuntimeMissaoJogavel['cenario']>): void { setConfig(atual => ({ ...atual, cenario: { ...atual.cenario, ...parcial } })); };
     function atualizaMapaLogico(parcial: Partial<ConfiguracaoRuntimeMissaoJogavel['cenario']['mapaLogico']>): void { setConfig(atual => ({ ...atual, cenario: { ...atual.cenario, mapaLogico: { ...atual.cenario.mapaLogico, ...parcial } } })); };
 
@@ -141,6 +147,14 @@ export default function EditorRuntimeMissao() {
             <ListaSeresEmSala titulo="Não-controláveis" descricao="NPCs, inimigos e reféns presentes na sala." grupo="naoControlaveis" rotuloBotao="não-controlável" seresEmSala={config.naoControlaveis} seresDisponiveis={seres.registros} aoAdicionar={adicionaSerEmSala} aoRemover={removeSerEmSala} aoAtualizar={atualizaSerEmSala} />
 
             <SecaoDescobertasCondicionadas descobertas={config.descobertasCondicionadas} capacidades={capacidades.registros} naoControlaveis={config.naoControlaveis} aoAdicionar={adicionaDescoberta} aoRemover={removeDescoberta} aoAtualizar={atualizaDescoberta} />
+
+            <fieldset className={styles.secao}>
+                <legend>Tempo</legend>
+                <label className={styles.checkbox}>
+                    <input type="checkbox" checked={config.temporal !== undefined} disabled={config.condicaoVitoria.tipo === 'tempo_jogo_alcancado' || config.condicaoVitoria.tipo === 'proximidade_ser_alcancada'} onChange={evento => defineTempoReal(evento.target.checked)} />
+                    Tempo real (sistema temporal ativo — necessário para ações com duração, locomoção e combate temporizado)
+                </label>
+            </fieldset>
 
             <fieldset className={styles.secao}>
                 <legend>Condição de vitória</legend>

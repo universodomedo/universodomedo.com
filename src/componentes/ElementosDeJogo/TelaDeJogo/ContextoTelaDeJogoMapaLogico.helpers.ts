@@ -58,7 +58,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
             }
 
             for (const acao of membro.acoesDisponiveis) {
-                if (!acao.key || !acao.nome || acao.estado !== 'DISPONIVEL') return `Membro ${membro.nome} veio com ação disponível inválida.`;
+                if (!acao.key || !acao.nome || (acao.estado !== 'DISPONIVEL' && acao.estado !== 'EXECUTANDO')) return `Membro ${membro.nome} veio com ação disponível inválida.`;
                 if (!acao.origem) return `Ação ${acao.nome} veio sem origem.`;
                 if (acao.origem.keyInstanciaSer !== ser.keyInstancia) return `Ação ${acao.nome} veio com origem de instância inconsistente.`;
                 if (acao.origem.idSer !== ser.id || acao.origem.nomeSer !== ser.nome) return `Ação ${acao.nome} veio com origem de ser inconsistente.`;
