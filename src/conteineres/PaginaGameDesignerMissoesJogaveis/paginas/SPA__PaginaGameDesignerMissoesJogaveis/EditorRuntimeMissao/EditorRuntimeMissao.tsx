@@ -16,7 +16,7 @@ type DescobertaCondicionada = ConfiguracaoRuntimeMissaoJogavel['descobertasCondi
 type RecompensaDescoberta = DescobertaCondicionada['recompensas'][number];
 type CapacidadeInataSelecao = { readonly id: number; readonly nome: string; readonly nomeInteracao: string; };
 
-const ROTULOS_TIPO_CONDICAO_VITORIA: Record<TipoCondicaoVitoria, string> = { qualquer_acao_executada: 'Executar qualquer ação', refem_percebido: 'Perceber um refém (Ser)', inimigo_derrotado: 'Derrotar um não-controlável', tempo_jogo_alcancado: 'Alcançar um marco de tempo' };
+const ROTULOS_TIPO_CONDICAO_VITORIA: Record<TipoCondicaoVitoria, string> = { qualquer_acao_executada: 'Executar qualquer ação', refem_percebido: 'Perceber um refém (Ser)', inimigo_derrotado: 'Derrotar um não-controlável', tempo_jogo_alcancado: 'Alcançar um marco de tempo', proximidade_ser_alcancada: 'Chegar perto de um Ser (locomoção)' };
 
 const KEY_SER_EM_SALA_VAZIA: KeySerEmSala = 'SER_EM_SALA:';
 
@@ -28,6 +28,7 @@ function criaCondicaoVitoria(tipo: TipoCondicaoVitoria): CondicaoVitoria {
     if (tipo === 'refem_percebido') return { tipo, keySerEmSala: KEY_SER_EM_SALA_VAZIA };
     if (tipo === 'inimigo_derrotado') return { tipo, keySerEmSala: KEY_SER_EM_SALA_VAZIA, idEstatisticaDanificavel: 0 };
     if (tipo === 'tempo_jogo_alcancado') return { tipo, tempoAlvoMs: 0 };
+    if (tipo === 'proximidade_ser_alcancada') return { tipo, keySerEmSala: KEY_SER_EM_SALA_VAZIA, distanciaMaximaMetros: 1 };
     return { tipo: 'qualquer_acao_executada' };
 };
 
@@ -84,6 +85,11 @@ export default function EditorRuntimeMissao() {
     };
 
     function atualizaConfig(parcial: Partial<ConfiguracaoRuntimeMissaoJogavel>): void { setConfig(atual => ({ ...atual, ...parcial })); };
+    function selecionaTipoCondicaoVitoria(tipo: TipoCondicaoVitoria): void {
+        const condicaoVitoria = criaCondicaoVitoria(tipo);
+        if (tipo === 'tempo_jogo_alcancado' || tipo === 'proximidade_ser_alcancada') { atualizaConfig({ condicaoVitoria, temporal: { momentoInicialMs: 0 } }); return; }
+        atualizaConfig({ condicaoVitoria });
+    };
     function atualizaCenario(parcial: Partial<ConfiguracaoRuntimeMissaoJogavel['cenario']>): void { setConfig(atual => ({ ...atual, cenario: { ...atual.cenario, ...parcial } })); };
     function atualizaMapaLogico(parcial: Partial<ConfiguracaoRuntimeMissaoJogavel['cenario']['mapaLogico']>): void { setConfig(atual => ({ ...atual, cenario: { ...atual.cenario, mapaLogico: { ...atual.cenario.mapaLogico, ...parcial } } })); };
 
@@ -140,7 +146,7 @@ export default function EditorRuntimeMissao() {
                 <legend>Condição de vitória</legend>
                 <label className={styles.campo}>
                     <span>Tipo</span>
-                    <select value={config.condicaoVitoria.tipo} onChange={evento => atualizaConfig({ condicaoVitoria: criaCondicaoVitoria(evento.target.value as TipoCondicaoVitoria) })}>
+                    <select value={config.condicaoVitoria.tipo} onChange={evento => selecionaTipoCondicaoVitoria(evento.target.value as TipoCondicaoVitoria)}>
                         {(Object.keys(ROTULOS_TIPO_CONDICAO_VITORIA) as TipoCondicaoVitoria[]).map(tipo => <option key={tipo} value={tipo}>{ROTULOS_TIPO_CONDICAO_VITORIA[tipo]}</option>)}
                     </select>
                 </label>
@@ -174,6 +180,15 @@ function ListaSeresEmSala({ titulo, descricao, grupo, rotuloBotao, seresEmSala, 
                         <span>Nome em jogo (opcional)</span>
                         <input type="text" value={ser.nomeExibicao ?? ''} onChange={evento => aoAtualizar(grupo, ser.key, { nomeExibicao: evento.target.value.trim().length > 0 ? evento.target.value : undefined })} />
                     </label>
+                    {grupo === 'naoControlaveis' && (
+                        <label className={styles.campo}>
+                            <span>Percepção inicial</span>
+                            <select value={ser.percepcaoInicial ?? 'DESPERCEBIDO'} onChange={evento => aoAtualizar(grupo, ser.key, { percepcaoInicial: evento.target.value as 'DESPERCEBIDO' | 'PERCEBIDO' })}>
+                                <option value="DESPERCEBIDO">Despercebido (invisível até perceber)</option>
+                                <option value="PERCEBIDO">Percebido (visível desde o início)</option>
+                            </select>
+                        </label>
+                    )}
                     <label className={styles.campo_estreito}>
                         <span>Pos. X</span>
                         <input type="number" value={ser.posicaoInicial.x} onChange={evento => aoAtualizar(grupo, ser.key, { posicaoInicial: { x: Number(evento.target.value), y: ser.posicaoInicial.y } })} />
@@ -223,6 +238,23 @@ function CamposCondicaoVitoria({ condicaoVitoria, naoControlaveis, aoAtualizar }
                 <label className={styles.campo_estreito}>
                     <span>Id estatística danificável</span>
                     <input type="number" min={1} value={condicaoVitoria.idEstatisticaDanificavel} onChange={evento => aoAtualizar({ condicaoVitoria: { tipo: 'inimigo_derrotado', keySerEmSala: condicaoVitoria.keySerEmSala, idEstatisticaDanificavel: Number(evento.target.value) } })} />
+                </label>
+            </div>
+        );
+    }
+    if (condicaoVitoria.tipo === 'proximidade_ser_alcancada') {
+        return (
+            <div className={styles.linha}>
+                <label className={styles.campo}>
+                    <span>Ser a alcançar (não-controlável)</span>
+                    <select value={condicaoVitoria.keySerEmSala} onChange={evento => aoAtualizar({ condicaoVitoria: { tipo: 'proximidade_ser_alcancada', keySerEmSala: evento.target.value as KeySerEmSala, distanciaMaximaMetros: condicaoVitoria.distanciaMaximaMetros } })}>
+                        <option value={KEY_SER_EM_SALA_VAZIA}>Selecione…</option>
+                        {naoControlaveis.map(ser => <option key={ser.key} value={ser.key}>{ser.nomeExibicao ?? ser.key}</option>)}
+                    </select>
+                </label>
+                <label className={styles.campo_estreito}>
+                    <span>Distância máx. (m)</span>
+                    <input type="number" min={1} value={condicaoVitoria.distanciaMaximaMetros} onChange={evento => aoAtualizar({ condicaoVitoria: { tipo: 'proximidade_ser_alcancada', keySerEmSala: condicaoVitoria.keySerEmSala, distanciaMaximaMetros: Number(evento.target.value) } })} />
                 </label>
             </div>
         );

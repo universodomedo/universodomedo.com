@@ -36,6 +36,7 @@ type EditorTimelineMusicaProps = {
     onParar: () => void;
     onInicio: () => void;
     onTestarLoop: () => void;
+    onRepetirEmenda: () => void;
     onMarcarInicio: () => void;
     onMarcarRetorno: () => void;
     onMarcarFim: () => void;
@@ -166,7 +167,7 @@ export default function EditorTimelineMusica(props: EditorTimelineMusicaProps): 
         <div className={styles.editor}>
             <ToolbarEditor
                 posicaoMs={props.posicaoMs} duracaoMs={props.duracaoMs} fimMs={props.fimMs} onSeekManual={seekManual}
-                tocando={props.tocando} podeTocar={props.podeTocar} onPlayPause={props.onPlayPause} onParar={props.onParar} onInicio={props.onInicio} onTestarLoop={props.onTestarLoop}
+                tocando={props.tocando} podeTocar={props.podeTocar} onPlayPause={props.onPlayPause} onParar={props.onParar} onInicio={props.onInicio} onTestarLoop={props.onTestarLoop} onRepetirEmenda={props.onRepetirEmenda}
                 onMarcarInicio={props.onMarcarInicio} onMarcarRetorno={props.onMarcarRetorno} onMarcarFim={props.onMarcarFim} onCortar={props.onCortar}
                 zoom={zoom} zoomMin={ZOOM_MIN} zoomMax={ZOOM_MAX} onZoomMenos={() => aplicarZoom(1 / 1.5)} onZoomMais={() => aplicarZoom(1.5)} onZoomSlider={definirZoom} onAjustar={ajustar}
             />

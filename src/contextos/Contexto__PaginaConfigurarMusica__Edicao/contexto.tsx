@@ -21,12 +21,31 @@ const DURACAO_MINIMA_BLOCO_MS = 200;
 const ANTECEDENCIA_TESTE_LOOP_MS = 4000;
 const CAUDA_TESTE_LOOP_MS = 4000;
 const TRANSICAO_LOOP_PADRAO: TransicaoLoopMontagemMusica = { duracaoFadeOutMs: 0, duracaoFadeInMs: 0, sobreposicaoInicioLoopMs: 0 };
+const AMOSTRAS_CURVA_FADE = 64;
+const PRE_EMENDA_MS = 2500;
+const POS_EMENDA_MS = 2500;
+const MICRO_FADE_EMENDA_MS = 12;
+const MICRO_WRAP_EMENDA_MS = 30;
+const LOOKAHEAD_EMENDA_S = 0.4;
+
+// Curvas de potencia constante (equal-power): dois fades simultaneos mantem o volume constante na emenda, sem o "buraco" de -3 dB do fade linear.
+const CURVA_FADE_SOBE = criaCurvaEqualPower(true);
+const CURVA_FADE_DESCE = criaCurvaEqualPower(false);
+
+function criaCurvaEqualPower(subindo: boolean): Float32Array {
+    const curva = new Float32Array(AMOSTRAS_CURVA_FADE);
+    for (let i = 0; i < AMOSTRAS_CURVA_FADE; i++) {
+        const fracao = i / (AMOSTRAS_CURVA_FADE - 1);
+        curva[i] = subindo ? Math.sin((fracao * Math.PI) / 2) : Math.cos((fracao * Math.PI) / 2);
+    }
+    return curva;
+};
 
 export type CampoTransicaoLoop = 'duracaoFadeOutMs' | 'duracaoFadeInMs' | 'sobreposicaoInicioLoopMs';
 export type ClimaItemEdicao = { idDimensao: number; nivel: number };
 export type DimensaoClimaOpcao = { id: number; nome: string; bipolar: boolean; rotuloOposto: string | null };
 type ArquivoSelecionado = NonNullable<Contexto__PaginaConfigurarMusica__Props['arquivoSelecionado']>;
-type ModoReproducao = { tipo: 'parado' } | { tipo: 'livre' } | { tipo: 'trecho'; ateMs: number } | { tipo: 'loop' };
+type ModoReproducao = { tipo: 'parado' } | { tipo: 'livre' } | { tipo: 'trecho'; ateMs: number } | { tipo: 'loop' } | { tipo: 'emenda' };
 type Segmento = { baseMs: number; ctxStart: number; ateMs: number | null };
 
 interface Contexto__PaginaConfigurarMusica__Edicao__Props {
@@ -72,6 +91,7 @@ interface Contexto__PaginaConfigurarMusica__Edicao__Props {
     tocarDoInicio: () => void;
     tocarBloco: (id: string) => void;
     testarLoop: () => void;
+    repetirEmenda: () => void;
     irParaMs: (ms: number) => void;
 
     salvar: () => Promise<void>;
@@ -123,6 +143,8 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
     const montagemRef = useRef<MontagemMusica | null>(null);
     const posicaoRef = useRef(0);
     const seedRef = useRef(false);
+    const proximoStartRef = useRef(0);
+    const segmentosEmendaRef = useRef<{ ctxStart: number; baseMs: number; durS: number }[]>([]);
     montagemRef.current = montagem;
     posicaoRef.current = posicaoMs;
 
@@ -217,9 +239,13 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
         const dur = Math.max(0.02, duracaoTrechoMs / 1000);
         const fadeIn = fadeInMs / 1000;
         const fadeOut = fadeOutMs / 1000;
-        if (fadeIn > 0) { ganho.gain.setValueAtTime(0, t0); ganho.gain.linearRampToValueAtTime(1, t0 + Math.min(fadeIn, dur)); }
+        const fadeInUsado = fadeIn > 0 ? Math.min(fadeIn, dur) : 0;
+        if (fadeIn > 0) ganho.gain.setValueCurveAtTime(CURVA_FADE_SOBE, t0, fadeInUsado);
         else ganho.gain.setValueAtTime(1, t0);
-        if (fadeOut > 0) { ganho.gain.setValueAtTime(1, t0 + Math.max(fadeIn, dur - fadeOut)); ganho.gain.linearRampToValueAtTime(0, t0 + dur); }
+        const fadeOutInicio = t0 + Math.max(fadeInUsado, dur - fadeOut);
+        const fadeOutDuracao = t0 + dur - fadeOutInicio;
+        if (fadeOut > 0 && fadeOutDuracao > 0) ganho.gain.setValueCurveAtTime(CURVA_FADE_DESCE, fadeOutInicio, fadeOutDuracao);
+        source.onended = () => { try { source.disconnect(); } catch { /* ja desconectado */ } const indice = sourcesRef.current.indexOf(source); if (indice >= 0) sourcesRef.current.splice(indice, 1); };
         source.start(t0, Math.max(0, offsetMs / 1000), dur);
         sourcesRef.current.push(source);
     }, []);
@@ -303,6 +329,60 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
         cancelarRaf();
         rafRef.current = requestAnimationFrame(iterar);
     }, [obterContexto, pararSources, agendarFonte, cancelarRaf, iterar]);
+
+    // Agenda os ciclos do preview da emenda (look-ahead). Cada ciclo toca SO a virada: [Fim-PRE..Fim] (saida) em crossfade com [Retorno..Retorno+POS] (entrada). O miolo entre eles NAO toca — fica curto e repetitivo. Le a montagem a cada ciclo (afina ao vivo).
+    const agendarCiclosEmenda = useCallback(() => {
+        const ctx = audioCtxRef.current;
+        const buffer = bufferRef.current;
+        const montagem = montagemRef.current;
+        if (!ctx || !buffer || !montagem) return;
+        const { retornoMs, fimMs, transicaoLoop } = montagem;
+        const corpoMs = Math.max(50, fimMs - retornoMs);
+        const preMs = Math.min(PRE_EMENDA_MS, corpoMs);
+        const posMs = Math.min(POS_EMENDA_MS, corpoMs);
+        const sobre = Math.min(transicaoLoop.sobreposicaoInicioLoopMs, preMs);
+        while (proximoStartRef.current < ctx.currentTime + LOOKAHEAD_EMENDA_S) {
+            const tSaida = Math.max(ctx.currentTime + 0.03, proximoStartRef.current);
+            agendarFonte(buffer, fimMs - preMs, preMs, tSaida, MICRO_FADE_EMENDA_MS, transicaoLoop.duracaoFadeOutMs);
+            segmentosEmendaRef.current.push({ ctxStart: tSaida, baseMs: fimMs - preMs, durS: preMs / 1000 });
+            const tEntrada = tSaida + preMs / 1000 - sobre / 1000;
+            agendarFonte(buffer, retornoMs, posMs, tEntrada, transicaoLoop.duracaoFadeInMs, MICRO_FADE_EMENDA_MS);
+            segmentosEmendaRef.current.push({ ctxStart: tEntrada, baseMs: retornoMs, durS: posMs / 1000 });
+            proximoStartRef.current = tEntrada + posMs / 1000 - MICRO_WRAP_EMENDA_MS / 1000;
+        }
+    }, [agendarFonte]);
+
+    // Repete SO a virada do loop em ciclo continuo (curto), movendo a head pelo segmento ativo, pra afinar os fades de ouvido ao vivo.
+    const repetirEmenda = useCallback(() => {
+        const buffer = bufferRef.current;
+        const montagem = montagemRef.current;
+        if (!buffer || !montagem) return;
+        const ctx = obterContexto();
+        ctx.resume();
+        pararSources();
+        cancelarRaf();
+        segmentosEmendaRef.current = [];
+        proximoStartRef.current = ctx.currentTime + 0.06;
+
+        modoRef.current = { tipo: 'emenda' };
+        setTocando(true);
+        const passo = () => {
+            if (modoRef.current.tipo !== 'emenda') return;
+            agendarCiclosEmenda();
+            const ctxAtual = audioCtxRef.current;
+            if (ctxAtual) {
+                const agora = ctxAtual.currentTime;
+                segmentosEmendaRef.current = segmentosEmendaRef.current.filter(seg => seg.ctxStart + seg.durS >= agora - 0.05);
+                let ativo: { ctxStart: number; baseMs: number; durS: number } | null = null;
+                for (const seg of segmentosEmendaRef.current) {
+                    if (seg.ctxStart <= agora && agora < seg.ctxStart + seg.durS && (!ativo || seg.ctxStart > ativo.ctxStart)) ativo = seg;
+                }
+                if (ativo) setPosicaoMs(ativo.baseMs + (agora - ativo.ctxStart) * 1000);
+            }
+            rafRef.current = requestAnimationFrame(passo);
+        };
+        passo();
+    }, [obterContexto, pararSources, cancelarRaf, agendarCiclosEmenda]);
 
     // Move o cursor (scrub) para uma posicao; se estiver tocando, retoma dali ate o Fim.
     const irParaMs = useCallback((ms: number) => {
@@ -435,7 +515,7 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
         setInicioMs, setRetornoMs, setFimMs, selecionarBloco, renomearBloco, dividirEm, moverFronteira, removerBloco, setCampoTransicaoLoop,
         marcarInicio, marcarRetorno, marcarFim, cortarNaPosicao,
         climaItens, dimensoesCatalogo: consultaDimensoes.data, adicionarDimensaoClima, setNivelClima, removerDimensaoClima,
-        tocando, posicaoMs, alternarPlayPause, parar, tocarDoInicio, tocarBloco, testarLoop, irParaMs,
+        tocando, posicaoMs, alternarPlayPause, parar, tocarDoInicio, tocarBloco, testarLoop, repetirEmenda, irParaMs,
         salvar, salvando, erroSalvar, podeSalvar,
     };
 

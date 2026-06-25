@@ -57,3 +57,19 @@
 .botao_troca_visao:active {
     transform: scale(0.94);
 }
+
+.overlay_movimentacao {
+    position: absolute;
+    top: 1em;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+    padding: 0.4em 0.9em;
+    border-radius: 0.5em;
+    background: rgba(23, 16, 25, 0.86);
+    border: 0.12em solid #4ade80;
+    color: #d8f5d8;
+    font-size: 0.95em;
+    white-space: nowrap;
+    pointer-events: none;
+}

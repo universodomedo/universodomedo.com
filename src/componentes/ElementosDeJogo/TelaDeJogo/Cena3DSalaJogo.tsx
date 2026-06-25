@@ -8,6 +8,7 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import type { EstadoTemporalSalaDeJogoRuntime, ResultadoMissaoFuncionalSalaDeJogoRuntime, ResumoMissaoFuncionalSalaDeJogoRuntime } from 'types-nora-api';
 
 import { useContextoTelaDeJogoMapaLogico } from './ContextoTelaDeJogoMapaLogico';
+import { useContextoMovimentacaoSalaJogoOpcional } from './ContextoMovimentacaoSalaJogo';
 import { CenaSalaJogoR3F } from './CenaSalaJogoR3F';
 
 interface Cena3DSalaJogoProps {
@@ -27,6 +28,7 @@ interface RelogioFiccionalSalaJogoProps {
 
 export function Cena3DSalaJogo({ missaoFuncional, resultadoMissaoFuncional, estadoTemporalSalaJogo }: Cena3DSalaJogoProps) {
     const { estadoCarregamento, erro, mapaLogicoSalaJogo, keysInteragiveisPercebidosNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, selecionaOcupante, selecionaInteragivel, limpaSelecaoOcupante, limpaSelecaoInteragivel } = useContextoTelaDeJogoMapaLogico();
+    const movimentacao = useContextoMovimentacaoSalaJogoOpcional();
 
     if (estadoCarregamento === 'carregando') {
         return (
@@ -48,7 +50,7 @@ export function Cena3DSalaJogo({ missaoFuncional, resultadoMissaoFuncional, esta
 
     return (
         <div className={styles.recipiente_cena_3d_sala_jogo}>
-            <CenaSalaJogoR3F payload={mapaLogicoSalaJogo} keysInteragiveisPercebidosNovos={keysInteragiveisPercebidosNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} aoSelecionarOcupante={selecionaOcupante} aoSelecionarInteragivel={selecionaInteragivel} aoLimparSelecao={() => { limpaSelecaoOcupante(); limpaSelecaoInteragivel(); }} />
+            <CenaSalaJogoR3F payload={mapaLogicoSalaJogo} keysInteragiveisPercebidosNovos={keysInteragiveisPercebidosNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} estadoTemporalSalaJogo={estadoTemporalSalaJogo} modoMovimentacaoAtivo={movimentacao?.modoMovimentacaoAtivo ?? false} aoSelecionarOcupante={selecionaOcupante} aoSelecionarInteragivel={selecionaInteragivel} aoLimparSelecao={() => { limpaSelecaoOcupante(); limpaSelecaoInteragivel(); }} aoConfirmarMovimentacao={destino => movimentacao?.confirmaMovimentacao(destino)} aoCancelarMovimentacao={() => movimentacao?.cancelaModoMovimentacao()} />
             {missaoFuncional && <ObjetivosMissaoSalaJogo missaoFuncional={missaoFuncional} concluida={resultadoMissaoFuncional?.resultado === 'VITORIA'} />}
             {estadoTemporalSalaJogo && <RelogioFiccionalSalaJogo estadoTemporalSalaJogo={estadoTemporalSalaJogo} />}
         </div>

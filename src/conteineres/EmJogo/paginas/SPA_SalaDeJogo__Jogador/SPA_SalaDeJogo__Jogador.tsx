@@ -8,6 +8,7 @@ import TelaDeJogo from "Componentes/ElementosDeJogo/TelaDeJogo/TelaDeJogo";
 import SwiperDireita from 'Componentes/ElementosVisuais/SwiperDireita/SwiperDireita';
 import ConteudoFichaDeJogo from 'Componentes/ElementosDeJogo/ConteudoFichaDeJogo/ConteudoFichaDeJogo';
 import { ContextoTelaDeJogoMapaLogicoProvider } from 'Componentes/ElementosDeJogo/TelaDeJogo/ContextoTelaDeJogoMapaLogico';
+import { ContextoMovimentacaoSalaJogoProvider } from 'Componentes/ElementosDeJogo/TelaDeJogo/ContextoMovimentacaoSalaJogo';
 import { eventoWs } from 'Hooks/useEventoWs';
 import { toast } from 'Hooks/useToast';
 
@@ -31,6 +32,7 @@ export default function SPA_SalaDeJogo__Jogador() {
     };
 
     return (
+        <ContextoMovimentacaoSalaJogoProvider codigoSala={codigoSala}>
         <div className={styles.recipiente_pagina_de_jogo}>
             <div className={styles.recipiente__pagina_de_jogo__superior}>
                 <div className={styles.recipiente_container_tela_de_jogo__em_pagina_de_jogo}>
@@ -58,6 +60,7 @@ export default function SPA_SalaDeJogo__Jogador() {
                 </aside>
             )}
         </div>
+        </ContextoMovimentacaoSalaJogoProvider>
     );
 };
 

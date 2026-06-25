@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 
 import { JSX } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBackwardStep, faFlag, faFlagCheckered, faPause, faPlay, faRepeat, faRotateLeft, faScissors, faStop } from '@fortawesome/free-solid-svg-icons';
+import { faBackwardStep, faFlag, faFlagCheckered, faInfinity, faPause, faPlay, faRepeat, faRotateLeft, faScissors, faStop } from '@fortawesome/free-solid-svg-icons';
 
 import { formatarMs } from '../editorMusica.uteis';
 import TimecodeEditavel from '../TimecodeEditavel/TimecodeEditavel';
@@ -20,6 +20,7 @@ type ToolbarEditorProps = {
     onParar: () => void;
     onInicio: () => void;
     onTestarLoop: () => void;
+    onRepetirEmenda: () => void;
     onMarcarInicio: () => void;
     onMarcarRetorno: () => void;
     onMarcarFim: () => void;
@@ -46,6 +47,7 @@ export default function ToolbarEditor(props: ToolbarEditorProps): JSX.Element {
                 <button className={`${styles.botao} ${styles.botaoPrincipal}`} disabled={!props.podeTocar} onClick={props.onPlayPause} title={props.tocando ? 'Pausar' : 'Tocar'}><FontAwesomeIcon icon={props.tocando ? faPause : faPlay} /></button>
                 <button className={styles.botao} disabled={!props.podeTocar} onClick={props.onParar} title="Parar"><FontAwesomeIcon icon={faStop} /></button>
                 <button className={styles.botao} disabled={!props.podeTocar} onClick={props.onTestarLoop} title="Testar o loop (Fim → Retorno)"><FontAwesomeIcon icon={faRepeat} /></button>
+                <button className={styles.botao} disabled={!props.podeTocar} onClick={props.onRepetirEmenda} title="Repetir a emenda em loop contínuo"><FontAwesomeIcon icon={faInfinity} /></button>
 
                 <span className={styles.separador} />
 

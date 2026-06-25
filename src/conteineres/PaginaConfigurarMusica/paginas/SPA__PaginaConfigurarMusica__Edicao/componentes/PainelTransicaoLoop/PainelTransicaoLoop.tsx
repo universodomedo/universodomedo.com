@@ -4,7 +4,7 @@ import styles from './styles.module.css';
 
 import { JSX } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRepeat } from '@fortawesome/free-solid-svg-icons';
+import { faInfinity, faRepeat } from '@fortawesome/free-solid-svg-icons';
 import { TransicaoLoopMontagemMusica } from 'types-nora-api';
 
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
@@ -15,6 +15,7 @@ type PainelTransicaoLoopProps = {
     transicaoLoop: TransicaoLoopMontagemMusica;
     onSetCampo: (campo: CampoTransicaoLoop, valor: number) => void;
     onTestar: () => void;
+    onRepetirEmenda: () => void;
 };
 
 export default function PainelTransicaoLoop(props: PainelTransicaoLoopProps): JSX.Element {
@@ -24,6 +25,9 @@ export default function PainelTransicaoLoop(props: PainelTransicaoLoopProps): JS
                 <span className={styles.titulo}>Transição de loop (Fim → Início)</span>
                 <button className={styles.botaoTestar} onClick={props.onTestar} title="Tocar a virada do loop com crossfade">
                     <FontAwesomeIcon icon={faRepeat} /> Testar loop
+                </button>
+                <button className={styles.botaoTestar} onClick={props.onRepetirEmenda} title="Repetir a emenda em loop contínuo pra afinar de ouvido">
+                    <FontAwesomeIcon icon={faInfinity} /> Repetir emenda
                 </button>
             </div>
 
