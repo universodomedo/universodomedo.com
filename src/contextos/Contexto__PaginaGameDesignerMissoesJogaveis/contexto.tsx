@@ -21,7 +21,11 @@ type EditorMissao = {
 type EditorRuntimeMissao = {
     readonly idMissao: number;
     readonly nomeMissao: string;
-    readonly textoConfiguracao: string;
+    readonly configuracaoInicial: ConfiguracaoRuntimeMissaoJogavel;
+};
+
+function criaConfiguracaoRuntimeInicial(): ConfiguracaoRuntimeMissaoJogavel {
+    return { narracaoInicial: '', cenario: { nome: '', mapaLogico: { larguraMetros: 100, alturaMetros: 100 } }, controlaveis: [], naoControlaveis: [], interagiveis: [], descobertasCondicionadas: [], condicaoVitoria: { tipo: 'qualquer_acao_executada' } };
 };
 
 export interface Contexto__PaginaGameDesignerMissoesJogaveis__Props {
@@ -46,10 +50,8 @@ export interface Contexto__PaginaGameDesignerMissoesJogaveis__Props {
     cancelarEditorMissao: () => void;
     salvarEditorMissao: () => Promise<void>;
     abrirEditorRuntimeMissao: (missao: MissaoJogavelResumo) => Promise<void>;
-    alterarEditorRuntimeMissaoTexto: (texto: string) => void;
     cancelarEditorRuntimeMissao: () => void;
-    salvarEditorRuntimeMissao: () => Promise<void>;
-    sincronizarMissoesFuncionaisIniciais: () => Promise<void>;
+    salvarConfiguracaoRuntimeMissao: (configuracao: ConfiguracaoRuntimeMissaoJogavel) => Promise<void>;
     alternarAtivoCatalogo: (catalogo: CatalogoMissaoJogavelResumo, ativo: boolean) => Promise<void>;
     alternarAtivoMissao: (missao: MissaoJogavelResumo, ativo: boolean) => Promise<void>;
     reordenarCatalogos: (idOrigem: number, idDestino: number) => Promise<void>;
@@ -155,16 +157,11 @@ export const Contexto__PaginaGameDesignerMissoesJogaveis__Provider = ({ children
         setErro(null);
 
         try {
-            const resposta = await NoraApi.RestGET(EventosApiRest.GET.MissoesConfiguracoesRuntime.obter, { idMissao: missao.id }, { mensagemErro: 'Não foi possível carregar a configuração runtime da Missão.' });
-            if (!resposta) {
-                setErro('Missão ainda não possui configuração runtime.');
-                setEditorRuntimeMissao(null);
-                return;
-            }
+            const resposta = missao.runtimeConfigurado ? await NoraApi.RestGET(EventosApiRest.GET.MissoesConfiguracoesRuntime.obter, { idMissao: missao.id }, { mensagemErro: 'Não foi possível carregar a configuração runtime da Missão.' }) : null;
 
             setEditorCatalogo(null);
             setEditorMissao(null);
-            setEditorRuntimeMissao({ idMissao: missao.id, nomeMissao: missao.nome, textoConfiguracao: JSON.stringify(resposta.configuracao, null, 4) });
+            setEditorRuntimeMissao({ idMissao: missao.id, nomeMissao: missao.nome, configuracaoInicial: resposta ? resposta.configuracao : criaConfiguracaoRuntimeInicial() });
         } catch {
             setErro('Não foi possível carregar a configuração runtime da Missão.');
         } finally {
@@ -172,20 +169,10 @@ export const Contexto__PaginaGameDesignerMissoesJogaveis__Provider = ({ children
         }
     }, []);
 
-    const alterarEditorRuntimeMissaoTexto = useCallback((texto: string) => { setEditorRuntimeMissao(editorAtual => editorAtual ? { ...editorAtual, textoConfiguracao: texto } : null); }, []);
     const cancelarEditorRuntimeMissao = useCallback(() => setEditorRuntimeMissao(null), []);
 
-    const salvarEditorRuntimeMissao = useCallback(async () => {
+    const salvarConfiguracaoRuntimeMissao = useCallback(async (configuracao: ConfiguracaoRuntimeMissaoJogavel) => {
         if (!editorRuntimeMissao) return;
-
-        let configuracao: ConfiguracaoRuntimeMissaoJogavel;
-
-        try {
-            configuracao = JSON.parse(editorRuntimeMissao.textoConfiguracao) as ConfiguracaoRuntimeMissaoJogavel;
-        } catch {
-            setErro('JSON da configuração runtime está inválido.');
-            return;
-        }
 
         setSalvando(true);
         setErro(null);
@@ -215,20 +202,6 @@ export const Contexto__PaginaGameDesignerMissoesJogaveis__Provider = ({ children
         await executaComEstrutura(() => NoraApi.RestPOST(EventosApiRest.POST.MissoesJogaveis.alternarMissao, { id: missao.id, ativo }, { mensagemErro: 'Não foi possível alternar a Missão.' }), 'Não foi possível alternar a Missão.');
     }, [executaComEstrutura]);
 
-    const sincronizarMissoesFuncionaisIniciais = useCallback(async () => {
-        setSalvando(true);
-        setErro(null);
-
-        try {
-            await NoraApi.RestPOST(EventosApiRest.POST.MissoesConfiguracoesRuntime.sincronizarMissoesFuncionaisIniciais, {}, { mensagemErro: 'Não foi possível sincronizar as Missões Funcionais iniciais.' });
-            await carregarEstrutura();
-        } catch {
-            setErro('Não foi possível sincronizar as Missões Funcionais iniciais.');
-        } finally {
-            setSalvando(false);
-        }
-    }, [carregarEstrutura]);
-
     const reordenarCatalogos = useCallback(async (idOrigem: number, idDestino: number) => {
         if (!estrutura || idOrigem === idDestino) return;
 
@@ -244,7 +217,7 @@ export const Contexto__PaginaGameDesignerMissoesJogaveis__Provider = ({ children
     }, [executaComEstrutura]);
 
     return (
-        <Contexto__PaginaGameDesignerMissoesJogaveis.Provider value={{ estrutura, carregando, salvando, erro, idsCatalogosAbertos, editorCatalogo, editorMissao, editorRuntimeMissao, recarregar: carregarEstrutura, alternarCatalogoAberto, abrirCriacaoCatalogo, abrirEdicaoCatalogo, alterarEditorCatalogoNome, cancelarEditorCatalogo, salvarEditorCatalogo, abrirCriacaoMissao, abrirEdicaoMissao, alterarEditorMissao, cancelarEditorMissao, salvarEditorMissao, abrirEditorRuntimeMissao, alterarEditorRuntimeMissaoTexto, cancelarEditorRuntimeMissao, salvarEditorRuntimeMissao, sincronizarMissoesFuncionaisIniciais, alternarAtivoCatalogo, alternarAtivoMissao, reordenarCatalogos, reordenarMissoesCatalogo }}>
+        <Contexto__PaginaGameDesignerMissoesJogaveis.Provider value={{ estrutura, carregando, salvando, erro, idsCatalogosAbertos, editorCatalogo, editorMissao, editorRuntimeMissao, recarregar: carregarEstrutura, alternarCatalogoAberto, abrirCriacaoCatalogo, abrirEdicaoCatalogo, alterarEditorCatalogoNome, cancelarEditorCatalogo, salvarEditorCatalogo, abrirCriacaoMissao, abrirEdicaoMissao, alterarEditorMissao, cancelarEditorMissao, salvarEditorMissao, abrirEditorRuntimeMissao, cancelarEditorRuntimeMissao, salvarConfiguracaoRuntimeMissao, alternarAtivoCatalogo, alternarAtivoMissao, reordenarCatalogos, reordenarMissoesCatalogo }}>
             {children}
         </Contexto__PaginaGameDesignerMissoesJogaveis.Provider>
     );

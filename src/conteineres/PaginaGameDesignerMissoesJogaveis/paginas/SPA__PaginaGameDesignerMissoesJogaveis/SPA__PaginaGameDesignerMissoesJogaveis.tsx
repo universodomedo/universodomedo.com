@@ -3,6 +3,7 @@ import styles from './styles.module.css';
 import { useState, type DragEvent } from 'react';
 
 import AlternaOpcao from 'Componentes/Elementos/Inputs/AlternaOpcao/AlternaOpcao';
+import EditorRuntimeMissao from './EditorRuntimeMissao/EditorRuntimeMissao';
 import { useContexto__PaginaGameDesignerMissoesJogaveis } from 'Contextos/Contexto__PaginaGameDesignerMissoesJogaveis/contexto';
 import type { CatalogoMissaoJogavelResumo, MissaoJogavelResumo } from 'types-nora-api';
 
@@ -17,14 +18,13 @@ export default function SPA__PaginaGameDesignerMissoesJogaveis() {
         <section className={styles.pagina}>
             <header className={styles.barra_acoes}>
                 <button type="button" className={styles.botao_principal} onClick={contexto.abrirCriacaoCatalogo} disabled={contexto.salvando}>Novo Catálogo</button>
-                <button type="button" className={styles.botao_secundario} onClick={() => void contexto.sincronizarMissoesFuncionaisIniciais()} disabled={contexto.salvando}>Sincronizar MFs</button>
                 <button type="button" className={styles.botao_secundario} onClick={() => void contexto.recarregar()} disabled={contexto.salvando}>Atualizar</button>
             </header>
 
             {contexto.erro && <div className={styles.alerta}>{contexto.erro}</div>}
             {contexto.editorCatalogo && <EditorCatalogo />}
             {contexto.editorMissao && <EditorMissao />}
-            {contexto.editorRuntimeMissao && <EditorRuntimeMissao />}
+            {contexto.editorRuntimeMissao && <EditorRuntimeMissao key={contexto.editorRuntimeMissao.idMissao} />}
 
             <div className={styles.lista_catalogos}>
                 {(contexto.estrutura?.catalogos ?? []).map(catalogo => (
@@ -147,21 +147,3 @@ function EditorMissao() {
     );
 };
 
-function EditorRuntimeMissao() {
-    const contexto = useContexto__PaginaGameDesignerMissoesJogaveis();
-    const editor = contexto.editorRuntimeMissao;
-    if (!editor) return null;
-
-    return (
-        <section className={`${styles.editor} ${styles.editor_runtime}`}>
-            <label className={styles.campo}>
-                <span>Configuração Runtime - {editor.nomeMissao}</span>
-                <textarea value={editor.textoConfiguracao} onChange={evento => contexto.alterarEditorRuntimeMissaoTexto(evento.target.value)} rows={22} spellCheck={false} />
-            </label>
-            <div className={styles.acoes_editor}>
-                <button type="button" className={styles.botao_secundario} onClick={contexto.cancelarEditorRuntimeMissao}>Cancelar</button>
-                <button type="button" className={styles.botao_principal} onClick={() => void contexto.salvarEditorRuntimeMissao()} disabled={contexto.salvando || editor.textoConfiguracao.trim().length === 0}>Salvar Runtime</button>
-            </div>
-        </section>
-    );
-};

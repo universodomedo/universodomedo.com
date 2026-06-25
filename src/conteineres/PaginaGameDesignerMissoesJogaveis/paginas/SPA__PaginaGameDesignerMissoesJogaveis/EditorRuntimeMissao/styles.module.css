@@ -1,0 +1,204 @@
+.editor {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background-color: rgba(24, 36, 40, 0.9);
+}
+
+.cabecalho {
+    font-size: 1.05em;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.secao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    margin: 0;
+    padding: 0.9em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.45em;
+}
+
+.secao legend {
+    padding: 0 0.4em;
+    font-size: 0.9em;
+    opacity: 0.85;
+}
+
+.campo,
+.campo_estreito {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+}
+
+.campo_estreito {
+    width: 7em;
+}
+
+.campo span,
+.campo_estreito span {
+    font-size: 0.85em;
+    opacity: 0.75;
+}
+
+.campo input,
+.campo select,
+.campo textarea,
+.campo_estreito input {
+    width: 100%;
+    padding: 0.65em 0.8em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    background-color: rgba(0, 0, 0, 0.24);
+    color: inherit;
+}
+
+.campo textarea {
+    resize: vertical;
+}
+
+.linha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8em;
+}
+
+.item_ser {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.7em;
+    padding: 0.7em;
+    border: 0.08em solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.45em;
+    background-color: rgba(0, 0, 0, 0.18);
+}
+
+.item_ser .campo {
+    flex: 1 1 12em;
+}
+
+.dica {
+    margin: 0;
+    font-size: 0.82em;
+    opacity: 0.7;
+}
+
+.vazio {
+    margin: 0;
+    font-size: 0.85em;
+    font-style: italic;
+    opacity: 0.6;
+}
+
+.acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75em;
+}
+
+.botao_principal,
+.botao_secundario,
+.botao_remover {
+    padding: 0.55em 1.05em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    color: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.botao_principal {
+    background-color: #00A8B8;
+    color: #031317;
+    border-color: #00D4E8;
+}
+
+.botao_secundario {
+    align-self: flex-start;
+    background-color: transparent;
+}
+
+.botao_remover {
+    background-color: transparent;
+    border-color: rgba(255, 120, 120, 0.5);
+    color: #FFB0B0;
+}
+
+.botao_principal:disabled,
+.botao_secundario:disabled,
+.botao_remover:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.botao_secundario:hover:not(:disabled) {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.botao_remover:hover:not(:disabled) {
+    background-color: rgba(255, 120, 120, 0.12);
+}
+
+.item_descoberta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    padding: 0.7em;
+    border: 0.08em solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.45em;
+    background-color: rgba(0, 0, 0, 0.18);
+}
+
+.item_descoberta .linha .campo {
+    flex: 1 1 12em;
+}
+
+.recompensas {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    padding: 0.6em;
+    border: 0.08em dashed rgba(255, 255, 255, 0.12);
+    border-radius: 0.4em;
+}
+
+.rotulo_bloco {
+    font-size: 0.82em;
+    opacity: 0.75;
+}
+
+.item_recompensa {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.7em;
+}
+
+.item_recompensa .campo {
+    flex: 1 1 14em;
+}
+
+.checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em 1em;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    font-size: 0.88em;
+}
+
+.checkbox input {
+    width: auto;
+}
