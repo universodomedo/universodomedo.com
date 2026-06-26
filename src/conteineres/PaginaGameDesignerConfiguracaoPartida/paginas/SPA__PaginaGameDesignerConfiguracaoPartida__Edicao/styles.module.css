@@ -1,0 +1,113 @@
+.edicao {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    max-width: 36em;
+}
+
+.cabecalho {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+.selo,
+.selo_ok,
+.selo_pendente {
+    padding: 0.15em 0.6em;
+    border-radius: 1em;
+    font-size: 0.72em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.selo {
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    opacity: 0.85;
+}
+
+.selo_ok {
+    background-color: rgba(0, 168, 184, 0.22);
+    color: #5FE0EC;
+}
+
+.selo_pendente {
+    background-color: rgba(255, 190, 120, 0.18);
+    color: #FFD9A8;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+}
+
+.campo > span {
+    font-size: 0.85em;
+    opacity: 0.85;
+}
+
+.linha {
+    display: flex;
+    gap: 0.5em;
+}
+
+.linha input {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.campo input,
+.campo select {
+    padding: 0.55em 0.75em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    background-color: rgba(0, 0, 0, 0.24);
+    color: inherit;
+}
+
+.dica {
+    margin: 0;
+    font-size: 0.85em;
+    opacity: 0.7;
+    line-height: 1.4;
+}
+
+.acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7em;
+    padding-top: 0.6em;
+}
+
+.botao_principal,
+.botao_secundario,
+.botao_perigo {
+    padding: 0.55em 1.1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    color: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:disabled {
+        opacity: 0.55;
+        cursor: default;
+    }
+}
+
+.botao_principal {
+    background-color: #00A8B8;
+    color: #031317;
+    border-color: #00D4E8;
+}
+
+.botao_secundario {
+    background-color: transparent;
+}
+
+.botao_perigo {
+    background-color: transparent;
+    border-color: rgba(255, 120, 120, 0.5);
+    color: #FFB0B0;
+}

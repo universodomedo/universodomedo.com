@@ -3,28 +3,30 @@
 import styles from './styles.module.css';
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent, type WheelEvent } from 'react';
-import type { CatalogoMissaoJogavelResumo, MissaoJogavelResumo } from 'types-nora-api';
+export type CatalogoDeMissoesItem = { readonly id: number; readonly nome: string; };
+
+export type CatalogoDeMissoesCatalogo = { readonly id: number; readonly nome: string; readonly missoes: readonly CatalogoDeMissoesItem[]; };
 
 type CatalogoDeMissoesProps = {
-    readonly catalogos: readonly CatalogoMissaoJogavelResumo[];
+    readonly catalogos: readonly CatalogoDeMissoesCatalogo[];
     readonly idMissaoSelecionada: number | null;
     readonly carregando: boolean;
-    readonly aoSelecionarMissao: (missao: MissaoJogavelResumo) => void;
+    readonly aoSelecionarMissao: (missao: CatalogoDeMissoesItem) => void;
 };
 
 type ItemCatalogoOrbital = {
     readonly tipo: 'catalogo';
     readonly id: string;
     readonly idCatalogo: number;
-    readonly catalogo: CatalogoMissaoJogavelResumo;
+    readonly catalogo: CatalogoDeMissoesCatalogo;
 };
 
 type ItemMissaoOrbital = {
     readonly tipo: 'missao';
     readonly id: string;
     readonly idCatalogo: number;
-    readonly catalogo: CatalogoMissaoJogavelResumo;
-    readonly missao: MissaoJogavelResumo;
+    readonly catalogo: CatalogoDeMissoesCatalogo;
+    readonly missao: CatalogoDeMissoesItem;
 };
 
 type ItemOrbital = ItemCatalogoOrbital | ItemMissaoOrbital;
@@ -162,7 +164,7 @@ export default function CatalogoDeMissoes({ catalogos, idMissaoSelecionada, carr
     );
 };
 
-function ItemOrbital({ item, estilo, idMissaoSelecionada, idsCatalogosFechados, aoSelecionarMissao, aoAlternarCatalogo }: { readonly item: ItemOrbital; readonly estilo: CSSProperties; readonly idMissaoSelecionada: number | null; readonly idsCatalogosFechados: readonly number[]; readonly aoSelecionarMissao: (missao: MissaoJogavelResumo) => void; readonly aoAlternarCatalogo: (idCatalogo: number) => void; }) {
+function ItemOrbital({ item, estilo, idMissaoSelecionada, idsCatalogosFechados, aoSelecionarMissao, aoAlternarCatalogo }: { readonly item: ItemOrbital; readonly estilo: CSSProperties; readonly idMissaoSelecionada: number | null; readonly idsCatalogosFechados: readonly number[]; readonly aoSelecionarMissao: (missao: CatalogoDeMissoesItem) => void; readonly aoAlternarCatalogo: (idCatalogo: number) => void; }) {
     if (item.tipo === 'catalogo') {
         const fechado = idsCatalogosFechados.includes(item.idCatalogo);
 
@@ -183,7 +185,7 @@ function ItemOrbital({ item, estilo, idMissaoSelecionada, idsCatalogosFechados, 
     );
 };
 
-function montaItensOrbitais(catalogos: readonly CatalogoMissaoJogavelResumo[], idsCatalogosFechados: readonly number[]): readonly ItemOrbital[] {
+function montaItensOrbitais(catalogos: readonly CatalogoDeMissoesCatalogo[], idsCatalogosFechados: readonly number[]): readonly ItemOrbital[] {
     const itens: ItemOrbital[] = [];
 
     catalogos.forEach(catalogo => {

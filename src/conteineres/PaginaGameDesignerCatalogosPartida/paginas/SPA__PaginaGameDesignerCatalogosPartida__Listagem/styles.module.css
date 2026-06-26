@@ -1,0 +1,44 @@
+.registro {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.7em;
+    padding: 0.7em 0.9em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background-color: rgba(47, 53, 75, 0.9);
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover {
+        background-color: rgba(63, 71, 99, 0.95);
+    }
+}
+
+.nome {
+    flex: 1 1 14em;
+    min-width: 0;
+    font-size: 1.05em;
+}
+
+.selo_ativo,
+.selo_inativo {
+    padding: 0.15em 0.6em;
+    border-radius: 1em;
+    font-size: 0.72em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.selo_ativo {
+    background-color: rgba(120, 220, 150, 0.18);
+    color: #A8F0C0;
+}
+
+.selo_inativo {
+    background-color: rgba(255, 255, 255, 0.08);
+    opacity: 0.7;
+}
