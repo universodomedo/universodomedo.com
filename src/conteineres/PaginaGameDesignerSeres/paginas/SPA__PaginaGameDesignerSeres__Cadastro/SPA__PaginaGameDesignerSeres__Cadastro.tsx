@@ -4,7 +4,7 @@ import { TIPOS_SER } from 'types-nora-api';
 
 import { useContexto__PaginaGameDesignerSeres__Cadastro } from 'Contextos/Contexto__PaginaGameDesignerSeres__Cadastro/contexto';
 
-const OPCOES_TIPOS_SER = [TIPOS_SER.SER_UNICO, TIPOS_SER.SER_GENERICO] as const;
+const OPCOES_TIPOS_SER = Object.values(TIPOS_SER).sort((a, b) => a.id - b.id);
 
 export default function SPA__PaginaGameDesignerSeres__Cadastro() {
     const { formularioNovoSer, ehSerUnico, ehSerJogavel, serJogavel, setSerJogavel, idNivel, setIdNivel, niveis, podeSalvar, salvar } = useContexto__PaginaGameDesignerSeres__Cadastro();

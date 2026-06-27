@@ -58,7 +58,7 @@ export const Contexto__PaginaGameDesignerSeres__Cadastro__Provider = ({ cancelaC
 
     const formularioNovoSer = useFormularioCreate(FORMULARIO_CREATE_SER_REGISTRO, async valores => {
         const idTipoSer = Number(valores.idTipoSer);
-        const ehJogavel = idTipoSer === TIPOS_SER.SER_GENERICO.id || (idTipoSer === TIPOS_SER.SER_UNICO.id && serJogavel);
+        const ehJogavel = idTipoSer === TIPOS_SER.SER_UNICO.id ? serJogavel : true;
         const payload: PAYLOAD__CriarSerRegistroComDetalhe = { idTipoSer, nome: valores.nome, serJogavel: idTipoSer === TIPOS_SER.SER_UNICO.id ? serJogavel : undefined, idNivel: ehJogavel && idNivel !== null ? idNivel : undefined };
         await NoraApi.RestPOST(EventosApiRest.POST.SerRegistro.criarComDetalhe, payload, { mensagemErro: 'Não foi possível criar o Ser.' });
         concluiCadastro();
@@ -66,7 +66,7 @@ export const Contexto__PaginaGameDesignerSeres__Cadastro__Provider = ({ cancelaC
 
     const idTipoSerAtual = Number(formularioNovoSer.valores.idTipoSer);
     const ehSerUnico = idTipoSerAtual === TIPOS_SER.SER_UNICO.id;
-    const ehSerJogavel = idTipoSerAtual === TIPOS_SER.SER_GENERICO.id || (ehSerUnico && serJogavel);
+    const ehSerJogavel = ehSerUnico ? serJogavel : true;
     const niveis = cache.pronto ? cache.niveis : [];
     const podeSalvar = formularioNovoSer.podeSalvar && (!ehSerJogavel || idNivel !== null);
 
