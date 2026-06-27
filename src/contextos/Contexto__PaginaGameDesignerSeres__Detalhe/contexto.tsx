@@ -9,7 +9,7 @@ import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContext
 import { Contexto__PaginaGameDesignerSeres__Props } from '../Contexto__PaginaGameDesignerSeres/contexto';
 import SPA__PaginaGameDesignerSeres__Detalhe from 'Conteineres/PaginaGameDesignerSeres/paginas/SPA__PaginaGameDesignerSeres__Detalhe/SPA__PaginaGameDesignerSeres__Detalhe';
 import { Contexto__PaginaGameDesignerSeres__EditarMembros__Provider } from 'Contextos/Contexto__PaginaGameDesignerSeres__EditarMembros/contexto';
-import { Contexto__PaginaGameDesignerSeres__CriarFicha__Provider } from 'Contextos/Contexto__PaginaGameDesignerSeres__CriarFicha/contexto';
+import { RecipienteEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
 
 interface Contexto__PaginaGameDesignerSeres__Detalhe__Props {
     idSerEmEdicao: number;
@@ -67,7 +67,7 @@ export const Contexto__PaginaGameDesignerSeres__Detalhe__Provider = ({ idSerEmEd
     return (
         <Contexto__PaginaGameDesignerSeres__Detalhe.Provider value={{ idSerEmEdicao, carregando, erro, nome, tipoNome, ehJogavel, nivelNome, usuarioCriacaoNome, modoEdicaoMembros, abrirEditorMembros, modoCriarFicha, abrirEditorFicha }}>
             {modoEdicaoMembros ? <Contexto__PaginaGameDesignerSeres__EditarMembros__Provider fkSerId={idSerEmEdicao} voltar={fecharEditorMembros} />
-                : modoCriarFicha ? <Contexto__PaginaGameDesignerSeres__CriarFicha__Provider fkSerId={idSerEmEdicao} voltar={fecharEditorFicha} />
+                : modoCriarFicha ? <RecipienteEdicaoFicha recipienteEdicaoFichaProps={{ metodo: 'CRIANDO_FICHA_TEMPORARIA', nomeFicha: nome ?? '', descricaoFicha: '', metodoSairEvolucaoFicha: fecharEditorFicha, metodoSalvarFicha: async (): Promise<number> => { throw new Error('Salvar a Ficha do Ser ainda não está disponível.'); } }} />
                 : <SPA__PaginaGameDesignerSeres__Detalhe />}
         </Contexto__PaginaGameDesignerSeres__Detalhe.Provider>
     );

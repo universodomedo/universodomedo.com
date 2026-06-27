@@ -1,0 +1,57 @@
+.recipiente {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+    max-width: 30em;
+}
+
+.cabecalho h2 {
+    margin: 0;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.pesos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+}
+
+.titulo_pesos {
+    font-weight: 600;
+}
+
+.campo_peso {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.soma {
+    opacity: 0.8;
+}
+
+.soma_invalida {
+    color: #e2574c;
+    font-weight: 600;
+}
+
+.rodape {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.botao_salvar:not(:disabled) {
+    cursor: pointer;
+}
+
+.botao_salvar:disabled {
+    opacity: 0.5;
+    cursor: default;
+}

@@ -256,9 +256,6 @@ export class GanhosEvolucao {
         if (this.fichaSendoEvoluida.nivel.id === 2)
             return (estatisticaDanificavel: EstatisticaDanificavelCompletaDto) => this.valorEstatisticaFixo(estatisticaDanificavel);
 
-        if (this.fichaSendoEvoluida.nivel.id === 1)
-            return (estatisticaDanificavel: EstatisticaDanificavelCompletaDto) => Math.ceil(GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0));
-
         return (estatisticaDanificavel: EstatisticaDanificavelCompletaDto) => {
             const valor = GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0);
 
