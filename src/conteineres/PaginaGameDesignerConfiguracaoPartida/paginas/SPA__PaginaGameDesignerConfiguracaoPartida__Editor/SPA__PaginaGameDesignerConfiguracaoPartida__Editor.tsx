@@ -21,7 +21,13 @@ const ROTULOS_TIPO_CONDICAO_VITORIA: Record<TipoCondicaoVitoria, string> = { qua
 const KEY_SER_EM_SALA_VAZIA: KeySerEmSala = 'SER_EM_SALA:';
 
 function criaConfiguracaoVazia(): ConfiguracaoPartida {
-    return { narracaoInicial: '', cenario: { nome: '', mapaLogico: { larguraMetros: 100, alturaMetros: 100 } }, controlaveis: [], naoControlaveis: [], interagiveis: [], descobertasCondicionadas: [], condicaoVitoria: { tipo: 'qualquer_acao_executada' } };
+    return { narracaoInicial: '', cenario: { nome: '', mapaLogico: { larguraMetros: 100, alturaMetros: 100 } }, controlaveis: [], naoControlaveis: [], interagiveis: [], descobertasCondicionadas: [], condicaoVitoria: { tipo: 'qualquer_acao_executada' }, temporal: { momentoInicialMs: 0 } };
+};
+
+// Tempo real e base do jogo (nao e configuravel): toda configuracao nasce com o sistema temporal ativo.
+function garanteTemporal(config: ConfiguracaoPartida): ConfiguracaoPartida {
+    if (config.temporal !== undefined) return config;
+    return { ...config, temporal: { momentoInicialMs: 0 } };
 };
 
 function criaCondicaoVitoria(tipo: TipoCondicaoVitoria): CondicaoVitoria {
@@ -81,7 +87,7 @@ function FormularioEditor() {
     const seres = useSeresParaSelecao();
     const capacidades = useCapacidadesInatas();
     const contadorKeysRef = useRef(0);
-    const [config, setConfig] = useState<ConfiguracaoPartida>(() => configuracaoInicial ?? criaConfiguracaoVazia());
+    const [config, setConfig] = useState<ConfiguracaoPartida>(() => garanteTemporal(configuracaoInicial ?? criaConfiguracaoVazia()));
 
     function criaKeySerEmSala(grupo: GrupoSeres): KeySerEmSala {
         contadorKeysRef.current += 1;
@@ -89,17 +95,7 @@ function FormularioEditor() {
     };
 
     function atualizaConfig(parcial: Partial<ConfiguracaoPartida>): void { setConfig(atual => ({ ...atual, ...parcial })); };
-    function selecionaTipoCondicaoVitoria(tipo: TipoCondicaoVitoria): void {
-        const condicaoVitoria = criaCondicaoVitoria(tipo);
-        if (tipo === 'tempo_jogo_alcancado' || tipo === 'proximidade_ser_alcancada') { atualizaConfig({ condicaoVitoria, temporal: { momentoInicialMs: 0 } }); return; }
-        atualizaConfig({ condicaoVitoria });
-    };
-    function defineTempoReal(ativo: boolean): void {
-        setConfig(atual => {
-            if (ativo) return { ...atual, temporal: { momentoInicialMs: 0 } };
-            return { narracaoInicial: atual.narracaoInicial, cenario: atual.cenario, controlaveis: atual.controlaveis, naoControlaveis: atual.naoControlaveis, interagiveis: atual.interagiveis, descobertasCondicionadas: atual.descobertasCondicionadas, condicaoVitoria: atual.condicaoVitoria };
-        });
-    };
+    function selecionaTipoCondicaoVitoria(tipo: TipoCondicaoVitoria): void { atualizaConfig({ condicaoVitoria: criaCondicaoVitoria(tipo) }); };
     function atualizaCenario(parcial: Partial<ConfiguracaoPartida['cenario']>): void { setConfig(atual => ({ ...atual, cenario: { ...atual.cenario, ...parcial } })); };
     function atualizaMapaLogico(parcial: Partial<ConfiguracaoPartida['cenario']['mapaLogico']>): void { setConfig(atual => ({ ...atual, cenario: { ...atual.cenario, mapaLogico: { ...atual.cenario.mapaLogico, ...parcial } } })); };
 
@@ -151,14 +147,6 @@ function FormularioEditor() {
             <ListaSeresEmSala titulo="Não-controláveis" descricao="NPCs, inimigos e reféns presentes na sala." grupo="naoControlaveis" rotuloBotao="não-controlável" seresEmSala={config.naoControlaveis} seresDisponiveis={seres.registros} aoAdicionar={adicionaSerEmSala} aoRemover={removeSerEmSala} aoAtualizar={atualizaSerEmSala} />
 
             <SecaoDescobertasCondicionadas descobertas={config.descobertasCondicionadas} capacidades={capacidades.registros} naoControlaveis={config.naoControlaveis} aoAdicionar={adicionaDescoberta} aoRemover={removeDescoberta} aoAtualizar={atualizaDescoberta} />
-
-            <fieldset className={styles.secao}>
-                <legend>Tempo</legend>
-                <label className={styles.checkbox}>
-                    <input type="checkbox" checked={config.temporal !== undefined} disabled={config.condicaoVitoria.tipo === 'tempo_jogo_alcancado' || config.condicaoVitoria.tipo === 'proximidade_ser_alcancada'} onChange={evento => defineTempoReal(evento.target.checked)} />
-                    Tempo real (sistema temporal ativo — necessário para ações com duração, locomoção e combate temporizado)
-                </label>
-            </fieldset>
 
             <fieldset className={styles.secao}>
                 <legend>Condição de vitória</legend>
@@ -228,7 +216,7 @@ function CamposCondicaoVitoria({ condicaoVitoria, naoControlaveis, aoAtualizar }
         return (
             <label className={styles.campo_estreito}>
                 <span>Tempo alvo (ms)</span>
-                <input type="number" min={1} value={condicaoVitoria.tempoAlvoMs} onChange={evento => aoAtualizar({ condicaoVitoria: { tipo: 'tempo_jogo_alcancado', tempoAlvoMs: Number(evento.target.value) }, temporal: { momentoInicialMs: 0 } })} />
+                <input type="number" min={1} value={condicaoVitoria.tempoAlvoMs} onChange={evento => aoAtualizar({ condicaoVitoria: { tipo: 'tempo_jogo_alcancado', tempoAlvoMs: Number(evento.target.value) } })} />
             </label>
         );
     }

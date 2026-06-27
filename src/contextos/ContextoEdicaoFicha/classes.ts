@@ -236,10 +236,10 @@ export class GanhosEvolucao {
             const ganhosDessaEstatistica = this.ganhosEstatisticasPorAtributo.find(ganhoEstatistica => ganhoEstatistica.estatisticaDanificavel.id === estatisticaDanificavel.id);
             const ganhosDessaEstatisticaParaEsseAtributo = ganhosDessaEstatistica?.ganhosPorAtributo.find(ganhoPorAtributo => ganhoPorAtributo.atributo.id === atributo.id);
 
-            return (
+            return Math.round((
                 this.atributosEditados.find(atributoFichaEditado => atributoFichaEditado.atributo.id === atributo.id)!.valor
                 * (ganhosDessaEstatisticaParaEsseAtributo?.valorPorUnidade || 0)
-            );
+            ) * 100) / 100;
         }
     };
 
@@ -259,17 +259,21 @@ export class GanhosEvolucao {
         return (estatisticaDanificavel: EstatisticaDanificavelCompletaDto) => {
             const valor = GanhosEvolucao.dadosReferencia.atributos.reduce((acc, cur) => acc + this.valorEstatisticaPorAtributo(estatisticaDanificavel, cur), 0);
 
-            return Math.round(valor * 10) / 10;
+            return Math.round(valor * 100) / 100;
         };
     }
 
     private get estatisticasDanificaveisEditadas(): EstatisticaDanificavelFicha[] {
-        return this.fichaSendoEvoluida.fichaDeJogo!.estatisticasDanificaveis.sort((a, b) => a.estatisticaDanificavel.id - b.estatisticaDanificavel.id).map(estatisticaFicha => {
-            return {
-                ...estatisticaFicha,
-                valorMaximo: (Math.round((estatisticaFicha.valorMaximo + this.valorTotalGanhadoPorEstatistica(estatisticaFicha.estatisticaDanificavel)) * 10) / 10),
-            };
-        });
+        const estatisticasAnteriores = this.fichaSendoEvoluida.fichaDeJogo!.estatisticasDanificaveis;
+        const estatisticasComGanho = this.ganhosEstatisticasPorAtributo.map(ganhoEstatistica => ganhoEstatistica.estatisticaDanificavel);
+
+        return GanhosEvolucao.dadosReferencia.estatisticasDanificaveis
+            .filter(estatisticaDanificavel => estatisticasAnteriores.some(estatisticaAnterior => estatisticaAnterior.estatisticaDanificavel.id === estatisticaDanificavel.id) || estatisticasComGanho.some(estatisticaComGanho => estatisticaComGanho.id === estatisticaDanificavel.id))
+            .sort((a, b) => a.id - b.id)
+            .map(estatisticaDanificavel => {
+                const valorMaximoAnterior = estatisticasAnteriores.find(estatisticaAnterior => estatisticaAnterior.estatisticaDanificavel.id === estatisticaDanificavel.id)?.valorMaximo ?? 0;
+                return { estatisticaDanificavel, valorMaximo: Math.round((valorMaximoAnterior + this.valorTotalGanhadoPorEstatistica(estatisticaDanificavel)) * 100) / 100 };
+            });
     }
 
     private get detalheEditado(): DetalheFicha {
@@ -329,9 +333,12 @@ export class GanhosEvolucao {
             })() : []),
             {
                 etapa: 'Estatísticas Danificáveis',
-                detalhes: this.estatisticasDanificaveisEditadas.map(estatisticaDanificavelEditada => (
-                    `${estatisticaDanificavelEditada.estatisticaDanificavel.nome}: ${this.fichaSendoEvoluida.fichaDeJogo!.estatisticasDanificaveis.find(estatisticaDanificavelAnteriormente => estatisticaDanificavelAnteriormente.estatisticaDanificavel.id === estatisticaDanificavelEditada.estatisticaDanificavel.id)!.valorMaximo} → ${estatisticaDanificavelEditada.valorMaximo}`
-                ))
+                detalhes: this.estatisticasDanificaveisEditadas.map(estatisticaDanificavelEditada => {
+                    const estatisticaAnterior = this.fichaSendoEvoluida.fichaDeJogo!.estatisticasDanificaveis.find(estatisticaDanificavelAnteriormente => estatisticaDanificavelAnteriormente.estatisticaDanificavel.id === estatisticaDanificavelEditada.estatisticaDanificavel.id);
+                    return estatisticaAnterior === undefined
+                        ? `${estatisticaDanificavelEditada.estatisticaDanificavel.nome}: ${estatisticaDanificavelEditada.valorMaximo}`
+                        : `${estatisticaDanificavelEditada.estatisticaDanificavel.nome}: ${estatisticaAnterior.valorMaximo} → ${estatisticaDanificavelEditada.valorMaximo}`;
+                })
             }
         ];
     }

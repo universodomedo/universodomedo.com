@@ -18,14 +18,14 @@ export function TooltipEvolucao_EstatisticaComGanhoPorAtributo({ estatisticaDani
             <Tooltip.Content propsLink={{ href:`definicoes/EstatisticasDanificaveis/${estatisticaDanificavel.nome}` }}>
                 <h1>{estatisticaDanificavel.nome}</h1>
                 <p>{estatisticaDanificavel.descricao}</p>
-                <h2>Ganhos de {estatisticaDanificavel.nomeAbreviado}: [+{ganhos.valorTotalGanhadoPorEstatistica(estatisticaDanificavel).toFixed(1)}]</h2>
+                <h2>Ganhos de {estatisticaDanificavel.nomeAbreviado}: [+{ganhos.valorTotalGanhadoPorEstatistica(estatisticaDanificavel)}]</h2>
                 {exibeDetalhesAtributos && GanhosEvolucao.dadosReferencia.atributos.map(atributo => {
                     const valorDessaEstatisticaPorEsseAtributo = ganhos.valorEstatisticaPorAtributo(estatisticaDanificavel, atributo);
 
                     if (valorDessaEstatisticaPorEsseAtributo <= 0) return;
 
                     return (
-                        <p key={atributo.id}>{`${atributo.nomeAbreviado}: +${valorDessaEstatisticaPorEsseAtributo.toFixed(1)}`}</p>
+                        <p key={atributo.id}>{`${atributo.nomeAbreviado}: +${valorDessaEstatisticaPorEsseAtributo}`}</p>
                     );
                 })}
             </Tooltip.Content>
@@ -48,7 +48,7 @@ export function TooltipEvolucao_Atributo({ atributo, infoGanhoEstatistica = fals
                 {infoGanhoEstatistica && (
                     <div>
                         {ganhos.ganhosEstatisticasPorAtributo.map(ganhoEstatistica => ganhoEstatistica.ganhosPorAtributo.filter(ganhoPorAtributo => ganhoPorAtributo.atributo.id === atributo.id).map(ganhoPorAtributo => (
-                            <p key={`${ganhoEstatistica.estatisticaDanificavel.id}:${ganhoPorAtributo.atributo.id}`} className={styles.ganhos_estatistica_por_atributo}>+ {ganhoPorAtributo.valorPorUnidade.toFixed(1)} {ganhoEstatistica.estatisticaDanificavel.nomeAbreviado} por Ponto Atribuído</p>
+                            <p key={`${ganhoEstatistica.estatisticaDanificavel.id}:${ganhoPorAtributo.atributo.id}`} className={styles.ganhos_estatistica_por_atributo}>+ {ganhoPorAtributo.valorPorUnidade} {ganhoEstatistica.estatisticaDanificavel.nomeAbreviado} por Ponto Atribuído</p>
                         )))}
                     </div>
                 )}
