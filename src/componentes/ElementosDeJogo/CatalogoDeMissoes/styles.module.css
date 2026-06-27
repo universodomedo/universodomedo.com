@@ -76,6 +76,57 @@
     background: linear-gradient(to right, rgba(183, 144, 81, 0.42), transparent);
 }
 
+.item_subgrupo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 0.3em;
+    padding: 0 0.2em 0 1.1em;
+    cursor: default;
+    pointer-events: none;
+}
+
+.item_subgrupo strong {
+    overflow: hidden;
+    max-width: 100%;
+    font-family: var(--fonte-junge);
+    font-size: 1em;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    color: #9a8a6a;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.linha_subgrupo {
+    width: 6em;
+    max-width: 100%;
+    height: 0.06em;
+    background: linear-gradient(to right, rgba(154, 138, 106, 0.3), transparent);
+}
+
+.item_vazio {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0.4em 0.85em 0.4em 1.7em;
+    cursor: default;
+    pointer-events: none;
+}
+
+.item_vazio span {
+    overflow: hidden;
+    max-width: 100%;
+    font-family: var(--fonte-junge);
+    font-size: 1em;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    color: #6f6a5e;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .item_missao {
     display: flex;
     align-items: flex-end;

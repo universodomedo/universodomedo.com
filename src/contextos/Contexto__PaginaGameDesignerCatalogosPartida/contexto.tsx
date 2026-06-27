@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { EventosApiRest, type CatalogoPartidaResumo, type EstruturaPartidas, type PartidaResumo, type PAYLOAD__AdicionarPartidaCatalogo, type PAYLOAD__AlternarExibicaoPartida, type PAYLOAD__DeletarCatalogoPartida, type PAYLOAD__RemoverPartidaCatalogo, type PAYLOAD__ReordenarPartidasCatalogo, type PAYLOAD__SalvarCatalogoPartida } from 'types-nora-api';
+import { EventosApiRest, type CatalogoPartidaResumo, type EstruturaPartidas, type PartidaResumo, type PAYLOAD__AdicionarPartidaCatalogo, type PAYLOAD__AlternarExibicaoPartida, type PAYLOAD__DeletarCatalogoPartida, type PAYLOAD__RemoverPartidaCatalogo, type PAYLOAD__ReordenarPartidasCatalogo, type PAYLOAD__SalvarCatalogoPartida, type TipoCatalogoPartida } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
 
@@ -25,7 +25,7 @@ export interface Contexto__PaginaGameDesignerCatalogosPartida__Props {
     selecionaCatalogo: (idCatalogo: number) => void;
     voltaParaListagem: () => void;
     concluiCadastro: () => void;
-    criarCatalogo: (nome: string) => Promise<void>;
+    criarCatalogo: (nome: string, tipo: TipoCatalogoPartida) => Promise<void>;
     salvarCatalogo: (payload: PAYLOAD__SalvarCatalogoPartida) => Promise<void>;
     deletarCatalogo: (payload: PAYLOAD__DeletarCatalogoPartida) => Promise<void>;
     adicionarPartida: (payload: PAYLOAD__AdicionarPartidaCatalogo) => Promise<void>;
@@ -80,8 +80,8 @@ export const Contexto__PaginaGameDesignerCatalogosPartida__Provider = ({ childre
         }
     }, []);
 
-    const criarCatalogo = useCallback(async (nome: string) => {
-        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.criarCatalogo, { nome }, { mensagemErro: 'Não foi possível criar o catálogo.' }), 'Não foi possível criar o catálogo.');
+    const criarCatalogo = useCallback(async (nome: string, tipo: TipoCatalogoPartida) => {
+        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.criarCatalogo, { nome, tipo }, { mensagemErro: 'Não foi possível criar o catálogo.' }), 'Não foi possível criar o catálogo.');
     }, [executarSalvando]);
 
     const salvarCatalogo = useCallback(async (payload: PAYLOAD__SalvarCatalogoPartida) => {

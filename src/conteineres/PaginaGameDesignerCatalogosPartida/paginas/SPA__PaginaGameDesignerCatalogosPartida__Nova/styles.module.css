@@ -16,7 +16,8 @@
     opacity: 0.85;
 }
 
-.campo input {
+.campo input,
+.campo select {
     padding: 0.55em 0.75em;
     border: 0.08em solid var(--cor-borda);
     border-radius: 0.4em;

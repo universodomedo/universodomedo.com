@@ -2,8 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { EventosApiRest, Eventos_EnviaERecebe, PAGINAS, type EstruturaPartidas, type PartidaNoCatalogoResumo, type PartidaResumo, type RESPONSE__IniciarPartida, type WsErrorResponse } from 'types-nora-api';
-import type { CatalogoDeMissoesCatalogo, CatalogoDeMissoesItem } from 'Componentes/ElementosDeJogo/CatalogoDeMissoes/CatalogoDeMissoes';
+import { EventosApiRest, Eventos_EnviaERecebe, PAGINAS, type EstruturaPartidas, type PainelDesafiosAtivos, type PartidaNoCatalogoResumo, type PartidaResumo, type RESPONSE__IniciarPartida, type WsErrorResponse } from 'types-nora-api';
+import type { CatalogoDeMissoesCatalogo, CatalogoDeMissoesItem, CatalogoDeMissoesSubgrupo } from 'Componentes/ElementosDeJogo/CatalogoDeMissoes/CatalogoDeMissoes';
 
 import { NoraApi } from 'Api/NoraApi';
 import { eventoWs } from 'Hooks/useEventoWs';
@@ -31,6 +31,7 @@ export const useContexto__PaginaPartidas = (): Contexto__PaginaPartidas__Props =
 export const Contexto__PaginaPartidas__Provider = ({ children }: { readonly children: ReactNode; }) => {
     const router = useRouter();
     const [estrutura, setEstrutura] = useState<EstruturaPartidas | null>(null);
+    const [painel, setPainel] = useState<PainelDesafiosAtivos | null>(null);
     const [carregando, setCarregando] = useState(true);
     const [jogando, setJogando] = useState(false);
     const [erro, setErro] = useState<string | null>(null);
@@ -42,8 +43,12 @@ export const Contexto__PaginaPartidas__Provider = ({ children }: { readonly chil
             setErro(null);
 
             try {
-                const resposta = await NoraApi.RestGET(EventosApiRest.GET.Partidas.estruturaOrbital, {}, { mensagemErro: 'Não foi possível carregar as Partidas.' });
-                setEstrutura(resposta);
+                const [respostaEstrutura, respostaPainel] = await Promise.all([
+                    NoraApi.RestGET(EventosApiRest.GET.Partidas.estruturaOrbital, {}, { mensagemErro: 'Não foi possível carregar as Partidas.' }),
+                    NoraApi.RestGET(EventosApiRest.GET.DesafiosAtivos.painel, {}, { mensagemErro: 'Não foi possível carregar os Desafios.' }),
+                ]);
+                setEstrutura(respostaEstrutura);
+                setPainel(respostaPainel);
             } catch {
                 setErro('Não foi possível carregar as Partidas.');
             } finally {
@@ -54,8 +59,8 @@ export const Contexto__PaginaPartidas__Provider = ({ children }: { readonly chil
         void carregar();
     }, []);
 
-    const catalogosDisponiveis = useMemo<readonly CatalogoDeMissoesCatalogo[]>(() => montaCatalogos(estrutura), [estrutura]);
-    const idsDisponiveis = useMemo<readonly number[]>(() => catalogosDisponiveis.flatMap(catalogo => catalogo.missoes.map(partida => partida.id)), [catalogosDisponiveis]);
+    const catalogosDisponiveis = useMemo<readonly CatalogoDeMissoesCatalogo[]>(() => montaCatalogos(estrutura, painel), [estrutura, painel]);
+    const idsDisponiveis = useMemo<readonly number[]>(() => catalogosDisponiveis.flatMap(catalogo => [...catalogo.missoes.map(item => item.id), ...(catalogo.subgrupos ?? []).flatMap(subgrupo => subgrupo.itens.map(item => item.id))]), [catalogosDisponiveis]);
 
     useEffect(() => {
         if (idsDisponiveis.length === 0) {
@@ -98,10 +103,23 @@ export const Contexto__PaginaPartidas__Provider = ({ children }: { readonly chil
 
 function adaptaPartida(partida: PartidaNoCatalogoResumo): CatalogoDeMissoesItem { return { id: partida.idPartida, nome: partida.nome }; };
 
-function montaCatalogos(estrutura: EstruturaPartidas | null): readonly CatalogoDeMissoesCatalogo[] {
+function montaCatalogos(estrutura: EstruturaPartidas | null, painel: PainelDesafiosAtivos | null): readonly CatalogoDeMissoesCatalogo[] {
     if (!estrutura) return [];
 
-    return estrutura.catalogos.map(catalogo => ({ id: catalogo.id, nome: catalogo.nome, missoes: catalogo.partidas.map(adaptaPartida) }));
+    return estrutura.catalogos.map(catalogo => catalogo.tipo === 'DESAFIOS'
+        ? { id: catalogo.id, nome: catalogo.nome, missoes: [], subgrupos: montaSubgruposDesafio(painel) }
+        : { id: catalogo.id, nome: catalogo.nome, missoes: catalogo.partidas.map(adaptaPartida) });
+};
+
+function montaSubgruposDesafio(painel: PainelDesafiosAtivos | null): readonly CatalogoDeMissoesSubgrupo[] {
+    if (!painel) return [];
+
+    return painel.tipos.map(tipoPainel => ({
+        id: tipoPainel.tipo,
+        rotulo: `Desafio ${tipoPainel.rotulo}`,
+        itens: tipoPainel.rotativo ? (tipoPainel.desafioAtivo ? [{ id: tipoPainel.desafioAtivo.id, nome: tipoPainel.desafioAtivo.nome }] : []) : tipoPainel.desafiosPublicados.map(desafio => ({ id: desafio.id, nome: desafio.nome })),
+        mensagemVazio: tipoPainel.rotativo ? 'Esse Desafio não está ativo' : 'Nenhum Desafio encontrado',
+    }));
 };
 
 function obtemPartidaPorId(estrutura: EstruturaPartidas | null, idPartida: number | null): PartidaResumo | null {

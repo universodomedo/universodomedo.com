@@ -5,7 +5,9 @@ import styles from './styles.module.css';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent, type WheelEvent } from 'react';
 export type CatalogoDeMissoesItem = { readonly id: number; readonly nome: string; };
 
-export type CatalogoDeMissoesCatalogo = { readonly id: number; readonly nome: string; readonly missoes: readonly CatalogoDeMissoesItem[]; };
+export type CatalogoDeMissoesSubgrupo = { readonly id: string; readonly rotulo: string; readonly itens: readonly CatalogoDeMissoesItem[]; readonly mensagemVazio: string; };
+
+export type CatalogoDeMissoesCatalogo = { readonly id: number; readonly nome: string; readonly missoes: readonly CatalogoDeMissoesItem[]; readonly subgrupos?: readonly CatalogoDeMissoesSubgrupo[]; };
 
 type CatalogoDeMissoesProps = {
     readonly catalogos: readonly CatalogoDeMissoesCatalogo[];
@@ -21,6 +23,13 @@ type ItemCatalogoOrbital = {
     readonly catalogo: CatalogoDeMissoesCatalogo;
 };
 
+type ItemSubgrupoOrbital = {
+    readonly tipo: 'subgrupo';
+    readonly id: string;
+    readonly idCatalogo: number;
+    readonly rotulo: string;
+};
+
 type ItemMissaoOrbital = {
     readonly tipo: 'missao';
     readonly id: string;
@@ -29,7 +38,14 @@ type ItemMissaoOrbital = {
     readonly missao: CatalogoDeMissoesItem;
 };
 
-type ItemOrbital = ItemCatalogoOrbital | ItemMissaoOrbital;
+type ItemVazioOrbital = {
+    readonly tipo: 'vazio';
+    readonly id: string;
+    readonly idCatalogo: number;
+    readonly mensagem: string;
+};
+
+type ItemOrbital = ItemCatalogoOrbital | ItemSubgrupoOrbital | ItemMissaoOrbital | ItemVazioOrbital;
 
 type Tamanho = { readonly largura: number; readonly altura: number };
 
@@ -50,10 +66,12 @@ const RAZAO_FOLGA_ARCO = 0.018;
 const RAZAO_LARGURA_MISSAO = 0.27;
 const RAZAO_LARGURA_SELECIONADA = 0.44;
 const RAZAO_ALTURA_HEADER = 0.05;
+const RAZAO_ALTURA_SUBGRUPO = 0.042;
 const RAZAO_ALTURA_MISSAO = 0.075;
 const RAZAO_ALTURA_SELECIONADA = 0.097;
 const RAZAO_ESPACO_ITENS = 0.018;
 const RAZAO_FONTE_HEADER = 0.019;
+const RAZAO_FONTE_SUBGRUPO = 0.016;
 const RAZAO_FONTE_MISSAO = 0.0185;
 const RAZAO_FONTE_SELECIONADA = 0.032;
 const RAZAO_QUEDA_OPACIDADE = 0.5;
@@ -67,7 +85,7 @@ export default function CatalogoDeMissoes({ catalogos, idMissaoSelecionada, carr
     const inicioToqueY = useRef<number | null>(null);
     const [tamanho, setTamanho] = useState<Tamanho>({ largura: 0, altura: 0 });
     const [idsCatalogosFechados, setIdsCatalogosFechados] = useState<readonly number[]>([]);
-    const catalogosComMissoes = useMemo(() => catalogos.filter(catalogo => catalogo.missoes.length > 0), [catalogos]);
+    const catalogosComMissoes = useMemo(() => catalogos.filter(catalogo => catalogo.missoes.length > 0 || (catalogo.subgrupos?.length ?? 0) > 0), [catalogos]);
     const itensOrbitais = useMemo(() => montaItensOrbitais(catalogosComMissoes, idsCatalogosFechados), [catalogosComMissoes, idsCatalogosFechados]);
     const missoesVisiveis = useMemo(() => itensOrbitais.filter(itemOrbitalEhMissao), [itensOrbitais]);
     const indiceSelecionado = resolveIndiceSelecionado(itensOrbitais, idMissaoSelecionada);
@@ -176,6 +194,23 @@ function ItemOrbital({ item, estilo, idMissaoSelecionada, idsCatalogosFechados, 
         );
     }
 
+    if (item.tipo === 'subgrupo') {
+        return (
+            <div className={`${styles.item_orbital} ${styles.item_subgrupo}`} style={estilo} aria-hidden="true">
+                <strong>{item.rotulo}</strong>
+                <span className={styles.linha_subgrupo} aria-hidden="true" />
+            </div>
+        );
+    }
+
+    if (item.tipo === 'vazio') {
+        return (
+            <div className={`${styles.item_orbital} ${styles.item_vazio}`} style={estilo} aria-hidden="true">
+                <span>{item.mensagem}</span>
+            </div>
+        );
+    }
+
     const selecionada = item.missao.id === idMissaoSelecionada;
 
     return (
@@ -191,11 +226,23 @@ function montaItensOrbitais(catalogos: readonly CatalogoDeMissoesCatalogo[], ids
     catalogos.forEach(catalogo => {
         itens.push({ tipo: 'catalogo', id: `catalogo-${catalogo.id}`, idCatalogo: catalogo.id, catalogo });
 
-        if (!idsCatalogosFechados.includes(catalogo.id)) {
-            catalogo.missoes.forEach(missao => {
-                itens.push({ tipo: 'missao', id: `missao-${missao.id}`, idCatalogo: catalogo.id, catalogo, missao });
+        if (idsCatalogosFechados.includes(catalogo.id)) return;
+
+        if (catalogo.subgrupos && catalogo.subgrupos.length > 0) {
+            catalogo.subgrupos.forEach(subgrupo => {
+                itens.push({ tipo: 'subgrupo', id: `subgrupo-${catalogo.id}-${subgrupo.id}`, idCatalogo: catalogo.id, rotulo: subgrupo.rotulo });
+
+                if (subgrupo.itens.length === 0) {
+                    itens.push({ tipo: 'vazio', id: `vazio-${catalogo.id}-${subgrupo.id}`, idCatalogo: catalogo.id, mensagem: subgrupo.mensagemVazio });
+                    return;
+                }
+
+                subgrupo.itens.forEach(missao => itens.push({ tipo: 'missao', id: `missao-${catalogo.id}-${subgrupo.id}-${missao.id}`, idCatalogo: catalogo.id, catalogo, missao }));
             });
+            return;
         }
+
+        catalogo.missoes.forEach(missao => itens.push({ tipo: 'missao', id: `missao-${catalogo.id}-${missao.id}`, idCatalogo: catalogo.id, catalogo, missao }));
     });
 
     return itens;
@@ -213,11 +260,15 @@ function resolveIndiceSelecionado(itens: readonly ItemOrbital[], idMissaoSelecio
 
 function alturaDoItem(item: ItemOrbital, selecionado: boolean, largura: number): number {
     if (item.tipo === 'catalogo') return largura * RAZAO_ALTURA_HEADER;
+    if (item.tipo === 'subgrupo') return largura * RAZAO_ALTURA_SUBGRUPO;
+    if (item.tipo === 'vazio') return largura * RAZAO_ALTURA_MISSAO;
     return largura * (selecionado ? RAZAO_ALTURA_SELECIONADA : RAZAO_ALTURA_MISSAO);
 };
 
 function fonteDoItem(item: ItemOrbital, selecionado: boolean, largura: number): number {
     if (item.tipo === 'catalogo') return largura * RAZAO_FONTE_HEADER;
+    if (item.tipo === 'subgrupo') return largura * RAZAO_FONTE_SUBGRUPO;
+    if (item.tipo === 'vazio') return largura * RAZAO_FONTE_MISSAO;
     return largura * (selecionado ? RAZAO_FONTE_SELECIONADA : RAZAO_FONTE_MISSAO);
 };
 
@@ -278,6 +329,7 @@ function montaLayoutOrbital(itens: readonly ItemOrbital[], indiceSelecionado: nu
             zIndex: selecionado ? 50 : Math.max(0, 20 - distancia),
         };
         if (item.tipo === 'missao') estilo.width = `${largura * (selecionado ? RAZAO_LARGURA_SELECIONADA : RAZAO_LARGURA_MISSAO)}px`;
+        if (item.tipo === 'vazio') estilo.width = `${largura * RAZAO_LARGURA_MISSAO}px`;
 
         return estilo;
     });

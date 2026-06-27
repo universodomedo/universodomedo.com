@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState } from 'react';
+import type { TipoCatalogoPartida } from 'types-nora-api';
 
 import useFormularioCreate, { defineFormularioCreate, type FormularioCreateEstado } from 'Hooks/useFormularioCreate';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
@@ -20,6 +21,8 @@ const FORMULARIO_CREATE_CATALOGO = defineFormularioCreate<FormularioNovoCatalogo
 
 interface Contexto__PaginaGameDesignerCatalogosPartida__Nova__Props {
     formularioNovoCatalogo: FormularioCreateEstado<FormularioNovoCatalogo>;
+    tipo: TipoCatalogoPartida;
+    setTipo: (tipo: TipoCatalogoPartida) => void;
     podeSalvar: boolean;
     salvar: () => Promise<void>;
 };
@@ -41,8 +44,10 @@ export const useContexto__PaginaGameDesignerCatalogosPartida__Nova = (): Context
 export const Contexto__PaginaGameDesignerCatalogosPartida__Nova__Provider = ({ criarCatalogo, cancelar, concluir }: PropsProvider) => {
     useConfigurarLayoutContextualizado({ titulo: 'Novo Catálogo', fecharProps: { tipo: 'acao', executar: cancelar, tituloTooltip: 'Voltar para Listagem' } });
 
+    const [tipo, setTipo] = useState<TipoCatalogoPartida>('PADRAO');
+
     const formularioNovoCatalogo = useFormularioCreate(FORMULARIO_CREATE_CATALOGO, async valores => {
-        await criarCatalogo(valores.nome);
+        await criarCatalogo(valores.nome, tipo);
         concluir();
     });
 
@@ -51,7 +56,7 @@ export const Contexto__PaginaGameDesignerCatalogosPartida__Nova__Provider = ({ c
     async function salvar(): Promise<void> { if (podeSalvar) await formularioNovoCatalogo.salvar(); };
 
     return (
-        <Contexto__PaginaGameDesignerCatalogosPartida__Nova.Provider value={{ formularioNovoCatalogo, podeSalvar, salvar }}>
+        <Contexto__PaginaGameDesignerCatalogosPartida__Nova.Provider value={{ formularioNovoCatalogo, tipo, setTipo, podeSalvar, salvar }}>
             <SPA__PaginaGameDesignerCatalogosPartida__Nova />
         </Contexto__PaginaGameDesignerCatalogosPartida__Nova.Provider>
     );
