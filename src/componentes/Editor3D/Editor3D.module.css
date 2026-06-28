@@ -1,0 +1,47 @@
+.recipiente_editor_3d {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    user-select: none;
+    touch-action: none;
+}
+
+.painel_ferramentas {
+    position: absolute;
+    top: 1em;
+    left: 1em;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.grupo_botoes {
+    display: flex;
+    gap: 0.4em;
+    padding: 0.4em;
+    border-radius: 0.5em;
+    background: rgba(23, 16, 25, 0.86);
+    border: 0.1em solid #2c2438;
+}
+
+.botao {
+    padding: 0.35em 0.7em;
+    border-radius: 0.4em;
+    background: #1d1726;
+    border: 0.1em solid #3a3550;
+    color: #d9cff0;
+    font-size: 0.85em;
+    cursor: pointer;
+
+    &:hover {
+        border-color: #6c5f8f;
+        color: #f0d28a;
+    }
+
+    &.botao_ativo {
+        background: #2a2138;
+        border-color: #e8c074;
+        color: #f0d28a;
+    }
+}

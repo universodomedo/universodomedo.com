@@ -1,3 +1,3 @@
-import { ElementosDeInteratividade3D } from "Componentes/ElementosDeInteratividade3D/ElementosDeInteratividade3D";
+import { Editor3D } from "Componentes/Editor3D/Editor3D";
 
-export default function Teste3D() { return <ElementosDeInteratividade3D />; };
+export default function Teste3D() { return <Editor3D />; };
