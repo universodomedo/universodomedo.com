@@ -1,15 +1,17 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
-import { TIPOS_SER, type ObjetoCache } from 'types-nora-api';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { EventosApiRest, TIPOS_SER, type ObjetoCache } from 'types-nora-api';
 
+import { NoraApi } from 'Api/NoraApi';
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
+import { toast } from 'Hooks/useToast';
 import { useCache } from 'Redux/hooks/useCache';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { Contexto__PaginaGameDesignerSeres__Props } from '../Contexto__PaginaGameDesignerSeres/contexto';
 import SPA__PaginaGameDesignerSeres__Detalhe from 'Conteineres/PaginaGameDesignerSeres/paginas/SPA__PaginaGameDesignerSeres__Detalhe/SPA__PaginaGameDesignerSeres__Detalhe';
 import { Contexto__PaginaGameDesignerSeres__EditarMembros__Provider } from 'Contextos/Contexto__PaginaGameDesignerSeres__EditarMembros/contexto';
-import { RecipienteEdicaoFicha } from 'Contextos/ContextoEdicaoFicha/contexto';
+import { SPA_PaginaJogadorCriaFicha } from 'Contextos/ContextoPaginaJogadorCriaFicha/contexto';
 
 interface Contexto__PaginaGameDesignerSeres__Detalhe__Props {
     idSerEmEdicao: number;
@@ -24,6 +26,7 @@ interface Contexto__PaginaGameDesignerSeres__Detalhe__Props {
     abrirEditorMembros: () => void;
     modoCriarFicha: boolean;
     abrirEditorFicha: () => void;
+    evolucaoPendente: boolean;
 };
 
 type PropsProvider = {
@@ -45,6 +48,7 @@ export const Contexto__PaginaGameDesignerSeres__Detalhe__Provider = ({ idSerEmEd
     const cache = useCache();
     const [modoEdicaoMembros, setModoEdicaoMembros] = useState(false);
     const [modoCriarFicha, setModoCriarFicha] = useState(false);
+    const [evolucaoPendente, setEvolucaoPendente] = useState(false);
     const listagemDetalhe = useDetalheSer(idSerEmEdicao);
     const listagemTipadoJogavel = useTipadoJogavelSer(idSerEmEdicao);
 
@@ -59,15 +63,28 @@ export const Contexto__PaginaGameDesignerSeres__Detalhe__Provider = ({ idSerEmEd
     const nivelNome = ehJogavel && cache.pronto ? obtemNomeNivel(cache.niveis, tipadoJogavel.fkNivelId) : null;
     const usuarioCriacaoNome = detalhe?.usuarioCriacao.username ?? null;
 
+    async function carregarEvolucaoPendente(): Promise<void> {
+        try { setEvolucaoPendente(await NoraApi.RestGET(EventosApiRest.GET.SeresJogaveisFichas.evolucaoPendente, { fkSerId: idSerEmEdicao })); }
+        catch { setEvolucaoPendente(false); }
+    };
+
+    useEffect(() => { carregarEvolucaoPendente(); }, [idSerEmEdicao]);
+
     function abrirEditorMembros(): void { setModoEdicaoMembros(true); };
     function fecharEditorMembros(): void { setModoEdicaoMembros(false); };
     function abrirEditorFicha(): void { setModoCriarFicha(true); };
-    function fecharEditorFicha(): void { setModoCriarFicha(false); };
+    function fecharEditorFicha(): void { setModoCriarFicha(false); carregarEvolucaoPendente(); };
 
     return (
-        <Contexto__PaginaGameDesignerSeres__Detalhe.Provider value={{ idSerEmEdicao, carregando, erro, nome, tipoNome, ehJogavel, nivelNome, usuarioCriacaoNome, modoEdicaoMembros, abrirEditorMembros, modoCriarFicha, abrirEditorFicha }}>
+        <Contexto__PaginaGameDesignerSeres__Detalhe.Provider value={{ idSerEmEdicao, carregando, erro, nome, tipoNome, ehJogavel, nivelNome, usuarioCriacaoNome, modoEdicaoMembros, abrirEditorMembros, modoCriarFicha, abrirEditorFicha, evolucaoPendente }}>
             {modoEdicaoMembros ? <Contexto__PaginaGameDesignerSeres__EditarMembros__Provider fkSerId={idSerEmEdicao} voltar={fecharEditorMembros} />
-                : modoCriarFicha ? <RecipienteEdicaoFicha recipienteEdicaoFichaProps={{ metodo: 'CRIANDO_FICHA_TEMPORARIA', nomeFicha: nome ?? '', descricaoFicha: '', metodoSairEvolucaoFicha: fecharEditorFicha, metodoSalvarFicha: async (): Promise<number> => { throw new Error('Salvar a Ficha do Ser ainda não está disponível.'); } }} />
+                : modoCriarFicha ? <SPA_PaginaJogadorCriaFicha finalidade={{
+                    pularInicial: true,
+                    nomeFicha: nome ?? '',
+                    metodoSair: fecharEditorFicha,
+                    metodoSalvarFicha: async dadosEvolucaoFicha => (await NoraApi.RestPOST(EventosApiRest.POST.SeresJogaveisFichas.criar, { fkSerId: idSerEmEdicao, dadosEvolucaoFicha }, { mensagemErro: 'Não foi possível salvar a Ficha do Ser.' })).idFicha,
+                    metodoAposSalvar: async () => { await toast.sucesso('Ficha salva com sucesso!', 'A Ficha do Ser foi criada.'); fecharEditorFicha(); },
+                }} />
                 : <SPA__PaginaGameDesignerSeres__Detalhe />}
         </Contexto__PaginaGameDesignerSeres__Detalhe.Provider>
     );

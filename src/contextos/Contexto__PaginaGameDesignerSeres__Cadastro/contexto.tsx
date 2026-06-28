@@ -31,6 +31,8 @@ interface Contexto__PaginaGameDesignerSeres__Cadastro__Props {
     setSerJogavel: (jogavel: boolean) => void;
     idNivel: number | null;
     setIdNivel: (idNivel: number | null) => void;
+    ehSemClasse: boolean;
+    setEhSemClasse: (ehSemClasse: boolean) => void;
     niveis: ObjetoCache['niveis'];
     podeSalvar: boolean;
     salvar: () => Promise<void>;
@@ -55,11 +57,12 @@ export const Contexto__PaginaGameDesignerSeres__Cadastro__Provider = ({ cancelaC
     const cache = useCache();
     const [serJogavel, setSerJogavel] = useState(false);
     const [idNivel, setIdNivel] = useState<number | null>(null);
+    const [ehSemClasse, setEhSemClasse] = useState(false);
 
     const formularioNovoSer = useFormularioCreate(FORMULARIO_CREATE_SER_REGISTRO, async valores => {
         const idTipoSer = Number(valores.idTipoSer);
         const ehJogavel = idTipoSer === TIPOS_SER.SER_UNICO.id ? serJogavel : true;
-        const payload: PAYLOAD__CriarSerRegistroComDetalhe = { idTipoSer, nome: valores.nome, serJogavel: idTipoSer === TIPOS_SER.SER_UNICO.id ? serJogavel : undefined, idNivel: ehJogavel && idNivel !== null ? idNivel : undefined };
+        const payload: PAYLOAD__CriarSerRegistroComDetalhe = { idTipoSer, nome: valores.nome, serJogavel: idTipoSer === TIPOS_SER.SER_UNICO.id ? serJogavel : undefined, idNivel: ehJogavel && idNivel !== null ? idNivel : undefined, ehSemClasse: ehJogavel ? ehSemClasse : undefined };
         await NoraApi.RestPOST(EventosApiRest.POST.SerRegistro.criarComDetalhe, payload, { mensagemErro: 'Não foi possível criar o Ser.' });
         concluiCadastro();
     });
@@ -73,7 +76,7 @@ export const Contexto__PaginaGameDesignerSeres__Cadastro__Provider = ({ cancelaC
     async function salvar(): Promise<void> { if (podeSalvar) await formularioNovoSer.salvar(); };
 
     return (
-        <Contexto__PaginaGameDesignerSeres__Cadastro.Provider value={{ formularioNovoSer, ehSerUnico, ehSerJogavel, serJogavel, setSerJogavel, idNivel, setIdNivel, niveis, podeSalvar, salvar }}>
+        <Contexto__PaginaGameDesignerSeres__Cadastro.Provider value={{ formularioNovoSer, ehSerUnico, ehSerJogavel, serJogavel, setSerJogavel, idNivel, setIdNivel, ehSemClasse, setEhSemClasse, niveis, podeSalvar, salvar }}>
             <SPA__PaginaGameDesignerSeres__Cadastro />
         </Contexto__PaginaGameDesignerSeres__Cadastro.Provider>
     );

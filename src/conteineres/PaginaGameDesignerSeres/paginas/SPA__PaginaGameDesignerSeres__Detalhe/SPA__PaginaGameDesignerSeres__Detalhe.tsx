@@ -3,7 +3,7 @@ import styles from './styles.module.css';
 import { useContexto__PaginaGameDesignerSeres__Detalhe } from 'Contextos/Contexto__PaginaGameDesignerSeres__Detalhe/contexto';
 
 export default function SPA__PaginaGameDesignerSeres__Detalhe() {
-    const { idSerEmEdicao, carregando, erro, nome, tipoNome, ehJogavel, nivelNome, usuarioCriacaoNome, abrirEditorMembros, abrirEditorFicha } = useContexto__PaginaGameDesignerSeres__Detalhe();
+    const { idSerEmEdicao, carregando, erro, nome, tipoNome, ehJogavel, nivelNome, usuarioCriacaoNome, abrirEditorMembros, abrirEditorFicha, evolucaoPendente } = useContexto__PaginaGameDesignerSeres__Detalhe();
 
     if (carregando) return <section className={styles.detalhe}><p>Carregando Ser...</p></section>;
     if (erro) return <section className={styles.detalhe}><p className={styles.erro}>{erro}</p></section>;
@@ -13,6 +13,8 @@ export default function SPA__PaginaGameDesignerSeres__Detalhe() {
             <header className={styles.cabecalho}>
                 <h2>{nome ?? `Ser #${idSerEmEdicao}`}</h2>
             </header>
+
+            {evolucaoPendente && <span className={styles.badge_pendente}>Evolução Pendente — ficha em nível diferente do alvo</span>}
 
             <dl className={styles.dados}>
                 <div><dt>Tipo</dt><dd>{tipoNome ?? '—'}</dd></div>

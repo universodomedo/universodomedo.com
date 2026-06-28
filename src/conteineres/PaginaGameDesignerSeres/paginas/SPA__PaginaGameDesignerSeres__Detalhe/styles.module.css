@@ -37,6 +37,17 @@
     color: var(--cor-erro, #c0392b);
 }
 
+.badge_pendente {
+    align-self: flex-start;
+    padding: 0.35em 0.75em;
+    border-radius: 0.4em;
+    font-size: 0.85em;
+    font-weight: 700;
+    color: var(--cor-aviso-texto, #7a5200);
+    background: var(--cor-aviso-fundo, #ffe8a3);
+    border: 1px solid var(--cor-aviso-borda, #e0b34d);
+}
+
 .acoes {
     display: flex;
     gap: 1em;

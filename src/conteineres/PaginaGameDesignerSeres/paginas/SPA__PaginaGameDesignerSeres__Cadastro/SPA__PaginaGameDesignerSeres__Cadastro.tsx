@@ -7,7 +7,7 @@ import { useContexto__PaginaGameDesignerSeres__Cadastro } from 'Contextos/Contex
 const OPCOES_TIPOS_SER = Object.values(TIPOS_SER).sort((a, b) => a.id - b.id);
 
 export default function SPA__PaginaGameDesignerSeres__Cadastro() {
-    const { formularioNovoSer, ehSerUnico, ehSerJogavel, serJogavel, setSerJogavel, idNivel, setIdNivel, niveis, podeSalvar, salvar } = useContexto__PaginaGameDesignerSeres__Cadastro();
+    const { formularioNovoSer, ehSerUnico, ehSerJogavel, serJogavel, setSerJogavel, idNivel, setIdNivel, ehSemClasse, setEhSemClasse, niveis, podeSalvar, salvar } = useContexto__PaginaGameDesignerSeres__Cadastro();
 
     return (
         <section className={styles.recipiente_cadastro}>
@@ -45,6 +45,13 @@ export default function SPA__PaginaGameDesignerSeres__Cadastro() {
                                 <option value="">Selecione um nível</option>
                                 {niveis.map(nivel => <option key={nivel.id} value={String(nivel.id)}>{nivel.nomeVisualizacao}</option>)}
                             </select>
+                        </label>
+                    )}
+
+                    {ehSerJogavel && (
+                        <label className={styles.campo}>
+                            <span>Sem Classe? (criatura)</span>
+                            <input type="checkbox" checked={ehSemClasse} onChange={evento => setEhSemClasse(evento.target.checked)} disabled={formularioNovoSer.salvando} />
                         </label>
                     )}
                 </div>

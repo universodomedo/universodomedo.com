@@ -11,7 +11,7 @@ import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
 
 export type RecipienteEdicaoFichaProps =
-    { metodoSairEvolucaoFicha: () => void; metodoSalvarFicha: (dadosEvolucaoFicha: DadosEvolucaoFicha) => Promise<number>; } &
+    { metodoSairEvolucaoFicha: () => void; metodoSalvarFicha: (dadosEvolucaoFicha: DadosEvolucaoFicha) => Promise<number>; metodoAposSalvar?: (idFicha: number) => void | Promise<void>; } &
     ({ metodo: 'CRIANDO_FICHA_TEMPORARIA'; nomeFicha: string; descricaoFicha: string; } | { metodo: 'CRIANDO_PERSONAGEM'; idPersonagem: number; });
 
 interface ContextoEdicaoFichaProps {
@@ -36,6 +36,7 @@ const ContextoEdicaoFichaProvider = ({ recipienteEdicaoFichaProps }: { recipient
         return async (dadosEvolucaoFicha: DadosEvolucaoFicha) => {
             try {
                 const idFichaTemporariaSala = await salvarEvolucao(dadosEvolucaoFicha);
+                if (recipienteEdicaoFichaProps.metodoAposSalvar) return await recipienteEdicaoFichaProps.metodoAposSalvar(idFichaTemporariaSala);
                 await toast.sucesso('Ficha salva com sucesso!', `A Ficha foi criada`, { redirecionaLinkInterno: { pagina: PAGINAS.fichas, query: { [QUERY_PARAMS.FICHA]: idFichaTemporariaSala } } });
             } catch (e) { await toast.erro('Erro ao salvar a evolução do personagem.', e instanceof Error ? e.message : 'Erro ao salvar a evolução do personagem.'); }
         };

@@ -162,6 +162,8 @@ export class GanhosEvolucao {
             classe: this.classeSelecionadaNessaEvolucao ? this.classeSelecionadaNessaEvolucao : this.fichaSendoEvoluida.fichaDeJogo!.classe,
             detalhe: this.detalheEditado,
             detalhesUsoEvolucaoPericiasLivres: this.detalhesPericiasLivres,
+            // Carimba o nível REAL até onde a ficha foi construída (fonte do estado derivado "Evolução Pendente").
+            nivel: this.fichaSendoEvoluida.nivel,
         };
     }
 
