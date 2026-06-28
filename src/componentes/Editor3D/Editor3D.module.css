@@ -1,47 +1,1355 @@
 .recipiente_editor_3d {
     position: fixed;
     inset: 0;
-    overflow: hidden;
-    user-select: none;
-    touch-action: none;
-}
-
-.painel_ferramentas {
-    position: absolute;
-    top: 1em;
-    left: 1em;
-    z-index: 2;
     display: flex;
     flex-direction: column;
-    gap: 0.5em;
+    overflow: hidden;
+    color: #d8d8d8;
+    background: #181818;
+    user-select: none;
 }
 
-.grupo_botoes {
+.area_editor {
+    flex: 1;
     display: flex;
-    gap: 0.4em;
-    padding: 0.4em;
-    border-radius: 0.5em;
-    background: rgba(23, 16, 25, 0.86);
-    border: 0.1em solid #2c2438;
+    min-width: 0;
+    min-height: 0;
 }
 
-.botao {
-    padding: 0.35em 0.7em;
-    border-radius: 0.4em;
-    background: #1d1726;
-    border: 0.1em solid #3a3550;
-    color: #d9cff0;
-    font-size: 0.85em;
+.viewport {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    touch-action: none;
+    background: #202020;
+    border-right: 0.08em solid rgba(255, 255, 255, 0.1);
+}
+
+/* ---- Barra de menus (VS Code) ---- */
+.barra_menus {
+    position: relative;
+    z-index: 18;
+    display: flex;
+    align-items: stretch;
+    min-height: 1.7em;
+    background: #2b2b2b;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.1);
+}
+
+.fundo_menu {
+    position: fixed;
+    inset: 0;
+    z-index: 16;
+}
+
+.menu {
+    position: relative;
+    z-index: 19;
+    display: grid;
+}
+
+.menu > button {
+    min-width: 4.1em;
+    padding: 0 0.6em;
+    border: 0;
+    color: rgba(255, 255, 255, 0.86);
+    font: inherit;
+    font-size: 0.78em;
+    font-weight: 600;
+    background: transparent;
     cursor: pointer;
+}
 
-    &:hover {
-        border-color: #6c5f8f;
-        color: #f0d28a;
-    }
+.menu > button:hover,
+.menu > button.botao_menu_aberto {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+}
 
-    &.botao_ativo {
-        background: #2a2138;
-        border-color: #e8c074;
-        color: #f0d28a;
-    }
+.dropdown {
+    position: absolute;
+    z-index: 22;
+    top: 100%;
+    left: 0;
+    display: grid;
+    width: 15.5em;
+    padding: 0.28em 0;
+    background: #242424;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 0.75em 1.8em rgba(0, 0, 0, 0.34);
+}
+
+.item_dropdown {
+    width: 100%;
+    min-height: 1.95em;
+    padding: 0 0.7em;
+    border: 0;
+    color: rgba(255, 255, 255, 0.86);
+    font: inherit;
+    font-size: 0.8em;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.item_dropdown:hover:not(:disabled) {
+    color: #ffffff;
+    background: #0078d7;
+}
+
+.item_dropdown:disabled {
+    color: rgba(255, 255, 255, 0.24);
+    cursor: default;
+}
+
+/* ---- Barra de abas de projeto (VS Code) ---- */
+.barra_abas {
+    position: relative;
+    z-index: 17;
+    display: flex;
+    min-height: 1.9em;
+    background: #252526;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.09);
+}
+
+.lista_abas {
+    display: flex;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.aba {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1.5em;
+    align-items: stretch;
+    width: 13em;
+    min-width: 9em;
+    max-width: 18em;
+    color: rgba(255, 255, 255, 0.68);
+    background: #2d2d2d;
+    border-right: 0.08em solid rgba(255, 255, 255, 0.08);
+}
+
+.aba_ativa {
+    color: rgba(255, 255, 255, 0.92);
+    background: #1f1f1f;
+}
+
+.botao_selecionar_aba {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.4em;
+    min-width: 0;
+    padding: 0 0.55em;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.nome_aba {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 0.76em;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.indicador_aba {
+    width: 0.42em;
+    height: 0.42em;
+    border-radius: 50%;
+    background: rgba(255, 210, 92, 0.95);
+}
+
+.botao_fechar_aba {
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    font-size: 0.78em;
+    background: transparent;
+    opacity: 0.66;
+    cursor: pointer;
+}
+
+.botao_fechar_aba:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+    opacity: 1;
+}
+
+.botao_nova_aba {
+    flex: 0 0 auto;
+    align-self: center;
+    width: 1.7em;
+    height: 1.7em;
+    margin: 0 0.3em;
+    padding: 0;
+    border: 0;
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.66);
+    font: inherit;
+    font-size: 0.9em;
+    background: transparent;
+    cursor: pointer;
+}
+
+.botao_nova_aba:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ---- Seletor de modo (overlay esq. superior) ---- */
+.seletor_modo {
+    position: absolute;
+    z-index: 10;
+    top: 0;
+    left: 0.8em;
+    width: 11.5em;
+}
+
+.botao_modo_op {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8em;
+    width: 100%;
+    min-height: 2.4em;
+    padding: 0 0.75em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-top: 0;
+    border-radius: 0 0 0.28em 0.28em;
+    color: rgba(255, 255, 255, 0.9);
+    font: inherit;
+    font-size: 0.82em;
+    background: rgba(48, 48, 48, 0.96);
+    box-shadow: 0 0.8em 2em rgba(0, 0, 0, 0.32);
+    cursor: pointer;
+}
+
+.botao_modo_op:hover {
+    background: rgba(58, 58, 58, 0.98);
+}
+
+.botao_modo_op strong {
+    color: rgba(255, 255, 255, 0.46);
+    font-size: 0.78em;
+    font-weight: 500;
+}
+
+.menu_modo {
+    position: absolute;
+    top: calc(100% + 0.3em);
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    background: #242424;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.28em;
+    box-shadow: 0 1.2em 3em rgba(0, 0, 0, 0.42);
+}
+
+.item_modo {
+    display: grid;
+    gap: 0.18em;
+    width: 100%;
+    min-height: 2.9em;
+    padding: 0.45em 0.7em;
+    border: 0;
+    color: rgba(255, 255, 255, 0.82);
+    font: inherit;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.item_modo:hover:not(:disabled) {
+    color: #ffffff;
+    background: rgba(92, 148, 255, 0.26);
+}
+
+.item_modo:disabled {
+    color: rgba(255, 255, 255, 0.34);
+    cursor: default;
+}
+
+.item_modo span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.86em;
+    font-weight: 700;
+}
+
+.item_modo kbd {
+    padding: 0.05em 0.4em;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.2em;
+    color: rgba(255, 255, 255, 0.7);
+    font: inherit;
+    font-size: 0.82em;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.item_modo small {
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 0.72em;
+    line-height: 1.25;
+}
+
+.item_modo_ativo {
+    background: rgba(92, 148, 255, 0.18);
+    box-shadow: inset 0.22em 0 0 rgba(255, 180, 60, 0.95);
+}
+
+/* ---- Barra de edição de malha (V/E/F + Extrude) ---- */
+.barra_edicao_malha {
+    position: absolute;
+    z-index: 11;
+    top: 0.6em;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.3em 0.4em;
+    background: rgba(34, 34, 34, 0.96);
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.4em;
+    box-shadow: 0 0.6em 1.6em rgba(0, 0, 0, 0.34);
+}
+
+.grupo_modo_selecao {
+    display: flex;
+    gap: 0.18em;
+}
+
+.botao_modo_selecao {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    padding: 0.32em 0.6em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.3em;
+    color: rgba(255, 255, 255, 0.82);
+    font: inherit;
+    font-size: 0.82em;
+    background: rgba(48, 48, 48, 0.9);
+    cursor: pointer;
+}
+
+.botao_modo_selecao:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.botao_modo_selecao_ativo {
+    color: #ffffff;
+    border-color: rgba(92, 148, 255, 0.7);
+    background: rgba(92, 148, 255, 0.26);
+}
+
+.botao_modo_selecao kbd,
+.botao_extrude kbd {
+    padding: 0 0.3em;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.2em;
+    color: rgba(255, 255, 255, 0.6);
+    font: inherit;
+    font-size: 0.82em;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.botao_extrude {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.34em 0.7em;
+    border: 0.08em solid rgba(216, 166, 79, 0.5);
+    border-radius: 0.3em;
+    color: rgba(255, 255, 255, 0.92);
+    font: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    background: #34302a;
+    cursor: pointer;
+}
+
+.botao_extrude:hover:not(:disabled) {
+    border-color: rgba(255, 190, 90, 0.8);
+    background: #40382d;
+}
+
+.botao_extrude:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.botao_bevel {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.34em 0.7em;
+    border: 0.08em solid rgba(92, 148, 255, 0.5);
+    border-radius: 0.3em;
+    color: rgba(255, 255, 255, 0.92);
+    font: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    background: #2b3038;
+    cursor: pointer;
+}
+
+.botao_bevel:hover:not(:disabled) {
+    border-color: rgba(120, 170, 255, 0.8);
+    background: #303a48;
+}
+
+.botao_bevel:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+/* ---- Submenu do menu superior ---- */
+.item_com_submenu {
+    position: relative;
+}
+
+.item_com_submenu > .item_dropdown {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.seta_submenu {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85em;
+}
+
+.submenu {
+    position: absolute;
+    z-index: 23;
+    top: -0.28em;
+    left: 100%;
+    display: none;
+    flex-direction: column;
+    width: 14em;
+    padding: 0.28em 0;
+    background: #242424;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 0.75em 1.8em rgba(0, 0, 0, 0.34);
+}
+
+.item_com_submenu:hover > .submenu {
+    display: flex;
+}
+
+/* ---- Painel de parametrização de mesh (esquerda inferior) ---- */
+.painel_parametrizacao {
+    position: absolute;
+    z-index: 11;
+    left: 0.8em;
+    bottom: 0.8em;
+    width: 18em;
+    overflow: hidden;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.28em;
+    color: rgba(255, 255, 255, 0.82);
+    background: rgba(39, 39, 39, 0.96);
+    box-shadow: 0 1.2em 3em rgba(0, 0, 0, 0.38);
+}
+
+.cabecalho_parametrizacao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 2.15em;
+    padding: 0 0.75em;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.1);
+    background: #303030;
+}
+
+.cabecalho_parametrizacao span {
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.82em;
+    font-weight: 700;
+}
+
+.cabecalho_parametrizacao strong {
+    color: rgba(255, 255, 255, 0.52);
+    font-size: 0.78em;
+    font-weight: 500;
+}
+
+.controle_tipo_mesh {
+    display: grid;
+    grid-template-columns: 6.5em minmax(0, 1fr);
+    gap: 0.5em;
+    align-items: center;
+    min-height: 2.35em;
+    padding: 0.35em 0.7em;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.07);
+    font-size: 0.82em;
+}
+
+.controle_tipo_mesh span {
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.controle_tipo_mesh select {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 2em;
+    padding: 0 0.55em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.9);
+    font: inherit;
+    background: #191919;
+}
+
+.controle_tipo_mesh select:focus {
+    outline: 0.08em solid rgba(92, 148, 255, 0.72);
+    outline-offset: 0;
+}
+
+.rodape_parametrizacao {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5em;
+    padding: 0.6em 0.75em;
+    background: rgba(0, 0, 0, 0.14);
+}
+
+.rodape_parametrizacao button {
+    min-height: 2.25em;
+    padding: 0 0.85em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.78);
+    font: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+}
+
+.rodape_parametrizacao button:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.rodape_parametrizacao .botao_confirmar_parametrizacao {
+    border-color: rgba(92, 148, 255, 0.52);
+    background: rgba(92, 148, 255, 0.24);
+}
+
+.rodape_parametrizacao .botao_confirmar_parametrizacao:hover {
+    background: rgba(92, 148, 255, 0.34);
+}
+
+/* ---- Tela inicial (Home) ---- */
+.tela_inicio {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: #1d1d1d;
+}
+
+.banner_inicio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    padding: 2.2em 2.4em 1.6em;
+    background: linear-gradient(120deg, #241b33, #1b1726 60%, #1d1d1d);
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.08);
+}
+
+.titulo_inicio {
+    color: #f0d28a;
+    font-size: 1.6em;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.subtitulo_inicio {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.9em;
+}
+
+.colunas_inicio {
+    flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 2.4em;
+    padding: 1.8em 2.4em;
+    align-content: start;
+}
+
+.coluna_inicio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    min-width: 0;
+}
+
+.coluna_inicio h3 {
+    margin: 0 0 0.5em;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.78em;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.acao_inicio,
+.item_recente {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    width: 100%;
+    padding: 0.55em 0.7em;
+    border: 0.08em solid transparent;
+    border-radius: 0.32em;
+    color: rgba(255, 255, 255, 0.86);
+    font: inherit;
+    font-size: 0.95em;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.acao_inicio:hover,
+.item_recente:hover {
+    border-color: rgba(92, 148, 255, 0.5);
+    background: rgba(92, 148, 255, 0.12);
+}
+
+.icone_inicio {
+    display: inline-grid;
+    width: 1.4em;
+    place-items: center;
+    color: rgba(255, 210, 130, 0.85);
+}
+
+.separador_inicio {
+    height: 0.08em;
+    margin: 0.5em 0.2em;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.lista_recentes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+}
+
+.nome_recente {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.item_recente small {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.78em;
+}
+
+.vazio_inicio {
+    margin: 0.3em 0.2em;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.88em;
+}
+
+/* ---- Botão de comando (CMD, dir. inferior) ---- */
+.canto_comando {
+    position: absolute;
+    z-index: 12;
+    right: 0.85em;
+    bottom: 0.85em;
+}
+
+.botao_comando {
+    display: grid;
+    width: 3.1em;
+    height: 3.1em;
+    place-items: center;
+    padding: 0;
+    border: 0.08em solid rgba(92, 148, 255, 0.66);
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.88);
+    font: inherit;
+    font-size: 0.82em;
+    font-weight: 800;
+    background: rgba(34, 34, 34, 0.96);
+    box-shadow: 0 0.65em 1.8em rgba(0, 0, 0, 0.36);
+    cursor: pointer;
+}
+
+.botao_comando:hover {
+    color: #ffffff;
+    background: #3a3a3a;
+}
+
+/* ---- Painel lateral (inspetor) ---- */
+.painel_lateral {
+    flex: 0 0 22em;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    overflow-y: auto;
+    background: #1f1f1f;
+}
+
+.bloco_acao_painel {
+    display: grid;
+    padding: 0.65em;
+    background: #242424;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.1);
+}
+
+.botao_acao_painel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7em;
+    min-height: 2.35em;
+    padding: 0 0.8em;
+    border: 0.08em solid rgba(92, 148, 255, 0.42);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.9);
+    font: inherit;
+    font-size: 0.86em;
+    font-weight: 700;
+    background: #2b3038;
+    cursor: pointer;
+}
+
+.botao_acao_painel:hover:not(:disabled) {
+    border-color: rgba(120, 170, 255, 0.78);
+    background: #303a48;
+}
+
+.botao_acao_painel:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.botao_acao_painel strong {
+    display: grid;
+    min-width: 1.9em;
+    height: 1.45em;
+    place-items: center;
+    padding: 0 0.4em;
+    border-radius: 999em;
+    color: rgba(12, 12, 12, 0.88);
+    font-size: 0.74em;
+    background: #78aaff;
+}
+
+.painel_colapsavel {
+    min-width: 0;
+    overflow: auto;
+    background: #252525;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.1);
+}
+
+.cabecalho_painel {
+    position: sticky;
+    z-index: 2;
+    top: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: stretch;
+    min-height: 2.15em;
+    background: #303030;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.1);
+}
+
+.cabecalho_painel:hover {
+    background: #383838;
+}
+
+.botao_cabecalho_painel {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: 2.15em;
+    padding: 0 0.75em;
+    border: 0;
+    color: rgba(255, 255, 255, 0.88);
+    font: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.titulo_painel {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    min-width: 0;
+}
+
+.icone_painel {
+    display: inline-grid;
+    width: 1em;
+    place-items: center;
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.acoes_cabecalho_painel {
+    display: flex;
+    align-items: stretch;
+}
+
+.acoes_cabecalho_painel strong {
+    display: grid;
+    min-width: 2.1em;
+    place-items: center;
+    padding: 0 0.45em;
+    color: rgba(255, 255, 255, 0.54);
+    font-size: 0.7em;
+    font-weight: 500;
+}
+
+.botao_add_colecao {
+    display: grid;
+    width: 2.15em;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-left: 0.08em solid rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+    font: inherit;
+    font-size: 0.92em;
+    font-weight: 800;
+    background: transparent;
+    cursor: pointer;
+}
+
+.botao_add_colecao:hover {
+    color: #ffffff;
+    background: #3a3a3a;
+}
+
+.conteudo_painel {
+    min-width: 0;
+}
+
+.vazio_painel {
+    margin: 0;
+    padding: 0.7em 0.85em;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.78em;
+    line-height: 1.4;
+}
+
+/* ---- Árvore de cena ---- */
+.arvore_cena {
+    padding: 0.35em 0;
+}
+
+.linha_objeto {
+    display: grid;
+    grid-template-columns: 1.3em 1.3em minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.25em;
+    width: 100%;
+    min-height: 1.85em;
+    padding: 0 0.7em;
+    border: 0;
+    color: rgba(255, 255, 255, 0.82);
+    font: inherit;
+    font-size: 0.86em;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.linha_objeto:hover {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.linha_objeto_grade {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1.65em;
+    align-items: center;
+    min-height: 1.85em;
+}
+
+.linha_objeto_grade:hover {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.linha_objeto_selecionado {
+    background: rgba(92, 148, 255, 0.24);
+    box-shadow: inset 0.22em 0 0 rgba(255, 180, 60, 0.95);
+}
+
+.linha_objeto_selecionado:hover {
+    background: rgba(92, 148, 255, 0.32);
+}
+
+.linha_objeto_oculto .icone_objeto,
+.linha_objeto_oculto .nome_objeto,
+.linha_objeto_oculto strong {
+    opacity: 0.42;
+}
+
+.botao_conteudo_objeto {
+    display: grid;
+    grid-template-columns: 1.3em 1.3em minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.25em;
+    min-width: 0;
+    min-height: 1.85em;
+    padding: 0 0.7em;
+    border: 0;
+    color: rgba(255, 255, 255, 0.82);
+    font: inherit;
+    font-size: 0.86em;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.espaco_arvore {
+    display: block;
+}
+
+.icone_objeto,
+.icone_origem {
+    display: inline-grid;
+    place-items: center;
+    color: rgba(255, 255, 255, 0.74);
+}
+
+.icone_origem {
+    color: rgba(255, 210, 130, 0.85);
+}
+
+.nome_objeto {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.linha_objeto strong,
+.botao_conteudo_objeto strong {
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 0.82em;
+    font-weight: 500;
+}
+
+.botao_visibilidade {
+    display: grid;
+    width: 1.55em;
+    height: 1.55em;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font: inherit;
+    font-size: 0.82em;
+    background: transparent;
+    cursor: pointer;
+}
+
+.botao_visibilidade:hover {
+    color: #ffffff;
+}
+
+/* ---- Coleções (agrupamento de sessão) ---- */
+.bloco_raiz,
+.bloco_colecao {
+    min-width: 0;
+    border-radius: 0.18em;
+}
+
+.bloco_recebendo_arraste {
+    background: rgba(92, 148, 255, 0.12);
+    box-shadow: inset 0 0 0 0.08em rgba(92, 148, 255, 0.5);
+}
+
+.linha_objeto_arrastando {
+    opacity: 0.45;
+}
+
+.linha_colecao {
+    display: grid;
+    grid-template-columns: 1.3em minmax(0, 1fr) 1.55em 1.4em;
+    align-items: center;
+    gap: 0.2em;
+    min-height: 1.95em;
+    padding: 0 0.5em 0 0.4em;
+    color: rgba(255, 255, 255, 0.92);
+    background: #2b2b2b;
+}
+
+.botao_alternar_colecao {
+    display: grid;
+    width: 1.3em;
+    height: 1.85em;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    color: rgba(255, 255, 255, 0.7);
+    font: inherit;
+    background: transparent;
+    cursor: pointer;
+}
+
+.botao_alternar_colecao:hover {
+    color: #ffffff;
+}
+
+.botao_conteudo_colecao {
+    display: grid;
+    grid-template-columns: 1.3em minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.3em;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+}
+
+.icone_colecao {
+    display: inline-grid;
+    place-items: center;
+    color: rgba(180, 200, 255, 0.85);
+}
+
+.botao_conteudo_colecao strong {
+    min-width: 0;
+    overflow: hidden;
+    font-size: 0.86em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.botao_conteudo_colecao small {
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 0.78em;
+}
+
+.botao_remover_colecao {
+    display: grid;
+    width: 1.4em;
+    height: 1.55em;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    color: rgba(255, 255, 255, 0.5);
+    font: inherit;
+    font-size: 0.78em;
+    background: transparent;
+    cursor: pointer;
+}
+
+.botao_remover_colecao:hover {
+    color: #ff9a9a;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.input_renomear_colecao {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 1.55em;
+    padding: 0 0.35em;
+    border: 0.08em solid rgba(92, 148, 255, 0.72);
+    border-radius: 0.18em;
+    color: rgba(255, 255, 255, 0.94);
+    font: inherit;
+    font-size: 0.86em;
+    background: #191919;
+}
+
+.input_renomear_colecao:focus {
+    outline: 0;
+}
+
+.colecao_vazia {
+    padding: 0.4em 0.7em 0.5em 2.1em;
+    color: rgba(255, 255, 255, 0.34);
+    font-size: 0.76em;
+}
+
+/* ---- Modais (Salvar / Abrir / Comandos) ---- */
+.fundo_modal_projeto {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.modal_projeto {
+    width: 28em;
+    max-width: 92%;
+    overflow: hidden;
+    background: #242424;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.4em;
+    box-shadow: 0 1.4em 3.4em rgba(0, 0, 0, 0.5);
+}
+
+.cabecalho_modal_projeto {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7em 1em;
+    color: rgba(255, 255, 255, 0.92);
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.12);
+    background: #303030;
+}
+
+.cabecalho_modal_projeto strong {
+    font-size: 0.92em;
+}
+
+.cabecalho_modal_projeto button {
+    padding: 0.25em 0.6em;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.82);
+    font: inherit;
+    font-size: 0.82em;
+    background: transparent;
+    cursor: pointer;
+}
+
+.cabecalho_modal_projeto button:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.corpo_modal_projeto {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    padding: 1em;
+    max-height: 26em;
+    overflow-y: auto;
+}
+
+.rotulo_campo_projeto {
+    color: rgba(255, 255, 255, 0.56);
+    font-size: 0.74em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.campo_texto_projeto {
+    padding: 0.5em 0.7em;
+    color: rgba(255, 255, 255, 0.94);
+    border: 0.08em solid rgba(92, 148, 255, 0.5);
+    border-radius: 0.24em;
+    font: inherit;
+    font-size: 0.95em;
+    background: #191919;
+}
+
+.campo_texto_projeto:focus {
+    outline: 0;
+    border-color: rgba(92, 148, 255, 0.85);
+}
+
+.acoes_modal_projeto {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5em;
+    margin-top: 0.3em;
+}
+
+.botao_primario_projeto {
+    padding: 0.45em 1em;
+    border: 0;
+    border-radius: 0.24em;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 700;
+    background: #0e639c;
+    cursor: pointer;
+}
+
+.botao_primario_projeto:hover:not(:disabled) {
+    background: #1177bb;
+}
+
+.botao_primario_projeto:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.botao_secundario_projeto {
+    padding: 0.45em 1em;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.86);
+    font: inherit;
+    background: transparent;
+    cursor: pointer;
+}
+
+.botao_secundario_projeto:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.botao_secundario_projeto:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.lista_projetos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.item_projeto {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    padding: 0.5em 0.7em;
+    border: 0.08em solid transparent;
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.86);
+    font: inherit;
+    text-align: left;
+    background: #1f1f1f;
+    cursor: pointer;
+}
+
+.item_projeto strong {
+    font-size: 0.9em;
+}
+
+.item_projeto span {
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 0.74em;
+}
+
+.item_projeto:hover {
+    border-color: rgba(92, 148, 255, 0.6);
+    background: #262626;
+}
+
+.vazio_inspetor {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 0.82em;
+}
+
+.grupo_comandos {
+    display: grid;
+    gap: 0.3em;
+}
+
+.grupo_comandos h3 {
+    margin: 0;
+    padding: 0.3em 0.1em;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.8em;
+    font-weight: 800;
+}
+
+.lista_atalhos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+}
+
+.lista_atalhos li {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.86em;
+}
+
+.lista_atalhos kbd {
+    min-width: 9em;
+    padding: 0.2em 0.5em;
+    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.2em;
+    color: rgba(255, 255, 255, 0.74);
+    font: inherit;
+    font-size: 0.78em;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+/* ---- Campos numéricos do Transform ---- */
+.grupo_propriedades {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo_numero {
+    display: grid;
+    grid-template-columns: 5.4em minmax(0, 1fr);
+    gap: 0.5em;
+    align-items: center;
+    min-height: 2.25em;
+    padding: 0.3em 0.7em;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.07);
+    font-size: 0.82em;
+}
+
+.campo_numero span {
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.campo_numero input {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 1.9em;
+    padding: 0 0.55em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.9);
+    font: inherit;
+    text-align: right;
+    background: #191919;
+}
+
+.campo_numero input:focus {
+    outline: 0.08em solid rgba(92, 148, 255, 0.72);
+    outline-offset: 0;
 }

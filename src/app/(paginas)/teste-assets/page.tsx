@@ -2,7 +2,10 @@
 
 import styles from './styles.module.css';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+import { obtemUltimaArteDeCapa } from 'Funcionalidades/ArteDeCapa/arteDeCapa.storage';
+import type { ArteDeCapa } from 'Funcionalidades/ArteDeCapa/arteDeCapa.types';
 
 type TipoCasoVisual = 'INSIGNIA' | 'ARTE_CAPA' | 'SER' | 'AVATAR_SER' | 'EMBLEMA' | 'ASSET_SITE';
 type TipoPreviewCasoVisual = 'quadrado' | 'wide' | 'vertical' | 'livre';
@@ -107,6 +110,8 @@ export default function Page() {
     const [exibeTitulo, setExibeTitulo] = useState(true);
     const [exibeAssinatura, setExibeAssinatura] = useState(true);
     const [usaSelecionado, setUsaSelecionado] = useState(true);
+    const [capaSalva, setCapaSalva] = useState<ArteDeCapa | null>(null);
+    useEffect(() => { setCapaSalva(obtemUltimaArteDeCapa()); }, []);
     const casoSelecionado = useMemo(() => casosVisuaisTeste.find(casoVisual => casoVisual.tipo === tipoSelecionado) ?? obtemCasoVisualInicial(), [tipoSelecionado]);
     const classePreview = obtemClassePreview(casoSelecionado.preview);
     const arteCapaSelecionada = casoSelecionado.tipo === 'ARTE_CAPA';
@@ -185,12 +190,16 @@ export default function Page() {
                             </header>
 
                             <div className={`${styles.preview} ${classePreview} ${usaSelecionado ? styles.previewSelecionado : styles.previewDesativado}`}>
-                                <div className={styles.conteudoPreview}>
-                                    <span>{casoSelecionado.nome}</span>
-                                    <strong>{usaSelecionado ? 'Selecionado' : 'Vazio'}</strong>
-                                    {arteCapaSelecionada && exibeTitulo && <em>Título customizado</em>}
-                                    {arteCapaSelecionada && exibeAssinatura && <small>Autor simulado</small>}
-                                </div>
+                                {arteCapaSelecionada && usaSelecionado && capaSalva ? (
+                                    <img className={styles.imagemCapaSalva} src={capaSalva.imagem} alt="Arte de Capa capturada do editor" />
+                                ) : (
+                                    <div className={styles.conteudoPreview}>
+                                        <span>{casoSelecionado.nome}</span>
+                                        <strong>{usaSelecionado ? 'Selecionado' : 'Vazio'}</strong>
+                                        {arteCapaSelecionada && exibeTitulo && <em>Título customizado</em>}
+                                        {arteCapaSelecionada && exibeAssinatura && <small>Autor simulado</small>}
+                                    </div>
+                                )}
                             </div>
                         </article>
                     </div>
