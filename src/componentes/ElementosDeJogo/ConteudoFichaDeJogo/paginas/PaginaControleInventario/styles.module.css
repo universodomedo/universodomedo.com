@@ -1,0 +1,74 @@
+.painel_inventario {
+    display: flex;
+    flex-direction: column;
+    gap: .55em;
+    color: white;
+    font-family: 'Crimson Pro', serif;
+    width: 100%;
+}
+
+.inventario_vazio {
+    color: #B7B1C4;
+    font-family: 'Crimson Pro', serif;
+    font-size: .9em;
+    text-align: center;
+    padding: 1em;
+}
+
+.item_inventario {
+    align-items: center;
+    background-color: #35323D;
+    border: .08em solid #625D70;
+    border-radius: .45em;
+    display: flex;
+    gap: .8em;
+    justify-content: space-between;
+    padding: .6em .8em;
+}
+
+.item_empunhado {
+    border-color: #8FAF96;
+}
+
+.dados_item {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: .1em;
+}
+
+.dados_item strong {
+    color: #D8C7A0;
+    font-size: 1em;
+}
+
+.estado_item {
+    color: #B7B1C4;
+    font-size: .82em;
+}
+
+.botao_sacar {
+    background-color: #35323D;
+    border: .08em solid #8FAF96;
+    border-radius: .35em;
+    color: white;
+    cursor: pointer;
+    font: inherit;
+    padding: .4em .8em;
+}
+
+.botao_sacar:hover:not(:disabled) {
+    background-color: #514C5C;
+}
+
+.botao_sacar:disabled {
+    border-color: #625D70;
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+.tag_empunhado {
+    color: #DCE8DE;
+    font-size: .85em;
+    font-weight: 700;
+}

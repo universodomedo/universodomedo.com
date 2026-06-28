@@ -11,6 +11,7 @@ import { ContextoControleTestesPericiaRuntimeProvider, ContextoControleTestesPer
 import { ContextoControleNavegacaoFichaProvider, useContextoControleNavegacaoFicha } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleNavegacaoFicha/contexto';
 import PaginaControleAtributosPericias from './paginas/PaginaControleAtributosPericias/PaginaControleAtributosPericias';
 import PaginaControleAcoes from './paginas/PaginaControleAcoes/PaginaControleAcoes';
+import PaginaControleInventario from './paginas/PaginaControleInventario/PaginaControleInventario';
 import PaginaControleHabilidades from './paginas/PaginaControleHabilidades/PaginaControleHabilidades';
 import PaginaControleModificadores from './paginas/PaginaControleModificadores/PaginaControleModificadores';
 import PaginaControleRecursos from './paginas/PaginaControleRecursos/PaginaControleRecursos';
@@ -65,8 +66,8 @@ function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirAcoes
         }] : []),
         {
             nome: 'Inventário',
-            componente: <><h1>oi</h1></>,
-            contexto: useContextoControleAtributosPericias
+            componente: exibirAcoesRuntime ? <PaginaControleInventario /> : <><h1>oi</h1></>,
+            contexto: exibirAcoesRuntime ? obtemMenuVazioInventarioRuntime : useContextoControleAtributosPericias
         },
         {
             nome: 'Habilidades',
@@ -104,5 +105,6 @@ function ConteudoFichaDeJogo_ComContexto({ exibirHabilidadesRuntime, exibirAcoes
 
 function obtemMenuVazioHabilidadesRuntime() { return { listaMenus: [] }; };
 function obtemMenuVazioAcoesRuntime() { return { listaMenus: [] }; };
+function obtemMenuVazioInventarioRuntime() { return { listaMenus: [] }; };
 function obtemMenuVazioRecursosRuntime() { return { listaMenus: [] }; };
 function obtemMenuVazioModificadoresRuntime() { return { listaMenus: [] }; };
