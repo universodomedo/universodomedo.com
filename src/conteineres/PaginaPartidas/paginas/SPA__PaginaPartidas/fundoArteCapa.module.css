@@ -1,0 +1,47 @@
+.fundo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.camada_saindo,
+.camada_entrando {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    will-change: opacity;
+}
+
+/* Imagem nova entra; a anterior sai. fill-mode forwards mantém o estado final (sem volta). */
+.camada_entrando {
+    opacity: 0;
+    animation: fundo_entra 0.55s ease forwards;
+}
+
+.camada_saindo {
+    opacity: 1;
+    animation: fundo_sai 0.55s ease forwards;
+}
+
+@keyframes fundo_entra {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fundo_sai {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/* Scrim p/ legibilidade do orbital + botão sobre a capa. Mais escuro à esquerda (conteúdo) e na base; capa aparece mais ao centro/direita. */
+.scrim {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(100deg, rgba(6, 5, 12, 0.9) 0%, rgba(6, 5, 12, 0.55) 46%, rgba(6, 5, 12, 0.66) 100%),
+        linear-gradient(0deg, rgba(6, 5, 12, 0.78) 0%, rgba(6, 5, 12, 0.1) 42%, transparent 70%);
+}

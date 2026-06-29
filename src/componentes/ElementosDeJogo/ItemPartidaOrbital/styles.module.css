@@ -1,0 +1,72 @@
+/* Visual do item de Partida no Orbital (reutilizável). NÃO define posição/tamanho/fonte — isso vem do caller (orbital: .item_orbital + estilo; preview: classe com cqw). */
+.cartao {
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 0.5em 0.85em;
+    border: 0.08em solid #322F2F;
+    border-radius: 0.6em;
+    overflow: hidden;
+    color: #EBE0C9;
+    text-align: left;
+    appearance: none;
+    background:
+        linear-gradient(180deg, transparent 28%, rgba(5, 4, 10, 0.4) 64%, rgba(5, 4, 10, 0.92) 100%),
+        radial-gradient(circle at 26% 28%, rgba(183, 144, 81, 0.18), transparent 62%),
+        linear-gradient(120deg, #0a0810, #0e0a16);
+    box-shadow: 0 0.6em 1.4em rgba(0, 0, 0, 0.32);
+}
+
+/* Capa (base-only + encaixe) ao fundo do item. */
+.capa {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+}
+
+/* Escurecimento na base p/ legibilidade do nome sobre a capa. */
+.escurecimento {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(180deg, transparent 28%, rgba(5, 4, 10, 0.4) 64%, rgba(5, 4, 10, 0.92) 100%);
+}
+
+.nome {
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+    max-width: 100%;
+    font-family: var(--fonte-junge);
+    font-size: 1em;
+    letter-spacing: 0.02em;
+    color: #EBE0C9;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cartao_selecionado {
+    align-items: center;
+    border-color: #B79051;
+    border-width: 0.1em;
+    background:
+        linear-gradient(180deg, transparent 24%, rgba(5, 4, 10, 0.38) 60%, rgba(5, 4, 10, 0.92) 100%),
+        radial-gradient(circle at 26% 28%, rgba(183, 144, 81, 0.4), transparent 60%),
+        linear-gradient(120deg, rgba(183, 144, 81, 0.14), #0a0810);
+    box-shadow: 0 0 2em rgba(199, 135, 255, 0.34), 0 0 0.8em rgba(255, 86, 235, 0.26), 0 0 0.5em rgba(183, 144, 81, 0.4);
+}
+
+.cartao_selecionado .escurecimento {
+    background: linear-gradient(180deg, transparent 24%, rgba(5, 4, 10, 0.38) 60%, rgba(5, 4, 10, 0.92) 100%);
+}
+
+.cartao_selecionado .nome {
+    font-family: var(--fonte-cinzel);
+    font-variant: small-caps;
+    letter-spacing: 0.03em;
+    color: #ffffff;
+}

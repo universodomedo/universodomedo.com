@@ -22,6 +22,7 @@ export interface Contexto__PaginaGameDesignerConfiguracaoPartida__Props {
     idPartidaEmEdicao: number | null;
     partidaEmEdicao: PartidaResumo | null;
     partidaEmConfiguracao: PartidaResumo | null;
+    partidaEmDetalhes: PartidaResumo | null;
     iniciaCadastro: () => void;
     selecionaPartida: (idPartida: number) => void;
     voltaParaListagem: () => void;
@@ -32,6 +33,8 @@ export interface Contexto__PaginaGameDesignerConfiguracaoPartida__Props {
     abrirConfiguracao: (partida: PartidaResumo) => void;
     fecharConfiguracao: () => void;
     salvarConfiguracao: (configuracao: ConfiguracaoPartida) => Promise<void>;
+    abrirDetalhes: (partida: PartidaResumo) => void;
+    fecharDetalhes: () => void;
 };
 
 const Contexto__PaginaGameDesignerConfiguracaoPartida = createContext<Contexto__PaginaGameDesignerConfiguracaoPartida__Props | undefined>(undefined);
@@ -50,6 +53,7 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Provider = ({ chil
     const [estadoFluxo, setEstadoFluxo] = useState<FluxoConfiguracaoPartida>('LISTAGEM');
     const [idPartidaEmEdicao, setIdPartidaEmEdicao] = useState<number | null>(null);
     const [partidaEmConfiguracao, setPartidaEmConfiguracao] = useState<PartidaResumo | null>(null);
+    const [partidaEmDetalhes, setPartidaEmDetalhes] = useState<PartidaResumo | null>(null);
 
     const carregar = useCallback(async () => {
         setCarregando(true);
@@ -109,6 +113,9 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Provider = ({ chil
     const abrirConfiguracao = useCallback((partida: PartidaResumo) => setPartidaEmConfiguracao(partida), []);
     const fecharConfiguracao = useCallback(() => setPartidaEmConfiguracao(null), []);
 
+    const abrirDetalhes = useCallback((partida: PartidaResumo) => setPartidaEmDetalhes(partida), []);
+    const fecharDetalhes = useCallback(() => setPartidaEmDetalhes(null), []);
+
     const salvarConfiguracao = useCallback(async (configuracao: ConfiguracaoPartida) => {
         if (!partidaEmConfiguracao) return;
 
@@ -120,7 +127,7 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Provider = ({ chil
     const listagemPartidas = useMemo<ListagemPartidas>(() => montaListagemPartidas(estrutura, carregando, erro), [estrutura, carregando, erro]);
 
     return (
-        <Contexto__PaginaGameDesignerConfiguracaoPartida.Provider value={{ estrutura, listagemPartidas, salvando, estadoFluxo, idPartidaEmEdicao, partidaEmEdicao, partidaEmConfiguracao, iniciaCadastro, selecionaPartida, voltaParaListagem, concluiCadastro, criarPartida, salvarPartida, deletarPartida, abrirConfiguracao, fecharConfiguracao, salvarConfiguracao }}>
+        <Contexto__PaginaGameDesignerConfiguracaoPartida.Provider value={{ estrutura, listagemPartidas, salvando, estadoFluxo, idPartidaEmEdicao, partidaEmEdicao, partidaEmConfiguracao, partidaEmDetalhes, iniciaCadastro, selecionaPartida, voltaParaListagem, concluiCadastro, criarPartida, salvarPartida, deletarPartida, abrirConfiguracao, fecharConfiguracao, salvarConfiguracao, abrirDetalhes, fecharDetalhes }}>
             {children}
         </Contexto__PaginaGameDesignerConfiguracaoPartida.Provider>
     );

@@ -208,49 +208,14 @@
     white-space: nowrap;
 }
 
-.item_missao {
-    display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
-    padding: 0.5em 0.85em;
-    border: 0.08em solid #322F2F;
-    border-radius: 0.6em;
-    overflow: hidden;
-    background:
-        linear-gradient(180deg, transparent 28%, rgba(5, 4, 10, 0.4) 64%, rgba(5, 4, 10, 0.92) 100%),
-        radial-gradient(circle at 26% 28%, rgba(183, 144, 81, 0.18), transparent 62%),
-        linear-gradient(120deg, #0a0810, #0e0a16);
-    box-shadow: 0 0.6em 1.4em rgba(0, 0, 0, 0.32);
-}
-
-.item_missao strong {
-    overflow: hidden;
-    max-width: 100%;
-    font-family: var(--fonte-junge);
-    font-size: 1em;
-    letter-spacing: 0.02em;
-    color: #EBE0C9;
-    text-align: left;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.item_missao_selecionada {
-    align-items: center;
-    border-color: #B79051;
-    border-width: 0.1em;
-    background:
-        linear-gradient(180deg, transparent 24%, rgba(5, 4, 10, 0.38) 60%, rgba(5, 4, 10, 0.92) 100%),
-        radial-gradient(circle at 26% 28%, rgba(183, 144, 81, 0.4), transparent 60%),
-        linear-gradient(120deg, rgba(183, 144, 81, 0.14), #0a0810);
-    box-shadow: 0 0 2em rgba(199, 135, 255, 0.34), 0 0 0.8em rgba(255, 86, 235, 0.26), 0 0 0.5em rgba(183, 144, 81, 0.4);
-}
-
-.item_missao_selecionada strong {
-    font-family: var(--fonte-cinzel);
-    font-variant: small-caps;
-    letter-spacing: 0.03em;
-    color: #ffffff;
+/* Item de missão = ItemPartidaOrbital (visual em .cartao/_selecionado no módulo dele). Aqui só posição/transição do Orbital — sem mexer em background/borda (não conflitar com .cartao). */
+.item_missao_orbital {
+    position: absolute;
+    box-sizing: border-box;
+    min-width: 0;
+    appearance: none;
+    cursor: pointer;
+    transition: top 0.46s cubic-bezier(0.2, 0.8, 0.2, 1), right 0.46s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.3s ease, height 0.3s ease, opacity 0.3s ease, border-color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .catalogo_fixado {

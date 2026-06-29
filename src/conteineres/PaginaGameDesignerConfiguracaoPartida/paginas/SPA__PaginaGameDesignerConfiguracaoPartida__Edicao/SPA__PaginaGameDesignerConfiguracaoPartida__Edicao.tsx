@@ -6,7 +6,7 @@ import { useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao } from 'Cont
 const ROTULOS_TIPO_PARTIDA: Record<TipoPartida, string> = { MISSAO: 'Missão', DESAFIO: 'Desafio' };
 
 export default function SPA__PaginaGameDesignerConfiguracaoPartida__Edicao() {
-    const { partida, salvando, nome, setNome, podeSalvarNome, salvarNome, configurarRuntime, deletar } = useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao();
+    const { partida, salvando, nome, setNome, podeSalvarNome, salvarNome, configurarRuntime, configurarDetalhes, deletar } = useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao();
 
     return (
         <section className={styles.edicao}>
@@ -27,6 +27,7 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Edicao() {
 
             <div className={styles.acoes}>
                 <button type="button" className={styles.botao_principal} onClick={configurarRuntime}>Configurar Runtime</button>
+                <button type="button" className={styles.botao_principal} onClick={() => void configurarDetalhes()} disabled={salvando}>Configurar Detalhes</button>
                 <button type="button" className={styles.botao_perigo} onClick={() => void deletar()} disabled={salvando}>Deletar Partida</button>
             </div>
         </section>

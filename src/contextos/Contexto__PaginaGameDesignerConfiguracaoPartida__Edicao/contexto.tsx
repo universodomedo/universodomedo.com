@@ -15,6 +15,7 @@ interface Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Props {
     podeSalvarNome: boolean;
     salvarNome: () => Promise<void>;
     configurarRuntime: () => void;
+    configurarDetalhes: () => Promise<void>;
     deletar: () => Promise<void>;
 };
 
@@ -24,6 +25,7 @@ type PropsProvider = {
     salvarPartida: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['salvarPartida'];
     deletarPartida: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['deletarPartida'];
     abrirConfiguracao: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['abrirConfiguracao'];
+    abrirDetalhes: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['abrirDetalhes'];
     voltaParaListagem: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['voltaParaListagem'];
 };
 
@@ -35,7 +37,7 @@ export const useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao = (): Co
     return context;
 };
 
-export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider = ({ partida, salvando, salvarPartida, deletarPartida, abrirConfiguracao, voltaParaListagem }: PropsProvider) => {
+export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider = ({ partida, salvando, salvarPartida, deletarPartida, abrirConfiguracao, abrirDetalhes, voltaParaListagem }: PropsProvider) => {
     useConfigurarLayoutContextualizado({ titulo: 'Editando Partida', subtitulo: `${partida.nome}`, fecharProps: { tipo: 'acao', executar: voltaParaListagem, tituloTooltip: 'Voltar para Listagem' } });
 
     const [nome, setNome] = useState(partida.nome);
@@ -50,10 +52,16 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider =
 
     function configurarRuntime(): void { abrirConfiguracao(partida); };
 
+    // Detalhes só edita a Arte de Capa — garante o nome salvo/atualizado antes de entrar, e leva o nome corrente.
+    async function configurarDetalhes(): Promise<void> {
+        if (podeSalvarNome) await salvarPartida({ id: partida.id, nome: nomeNormalizado });
+        abrirDetalhes({ ...partida, nome: nomeNormalizado });
+    };
+
     async function deletar(): Promise<void> { await deletarPartida({ idPartida: partida.id }); };
 
     return (
-        <Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider value={{ partida, salvando, nome, setNome, podeSalvarNome, salvarNome, configurarRuntime, deletar }}>
+        <Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider value={{ partida, salvando, nome, setNome, podeSalvarNome, salvarNome, configurarRuntime, configurarDetalhes, deletar }}>
             <SPA__PaginaGameDesignerConfiguracaoPartida__Edicao />
         </Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider>
     );

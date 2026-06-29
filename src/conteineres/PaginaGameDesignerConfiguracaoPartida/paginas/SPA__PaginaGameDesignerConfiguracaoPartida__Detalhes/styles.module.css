@@ -1,0 +1,159 @@
+.detalhes {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1em;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    max-width: 28em;
+}
+
+.campo span {
+    font-size: 0.85em;
+    opacity: 0.78;
+}
+
+.campo select,
+.campo input {
+    width: 100%;
+    padding: 0.55em 0.75em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    background-color: rgba(0, 0, 0, 0.24);
+    color: inherit;
+}
+
+.colunas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.6em;
+    align-items: flex-start;
+}
+
+.coluna {
+    flex: 1 1 22em;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+}
+
+.rotulo_bloco,
+.previa_label {
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+}
+
+/* Imagem da Arte de Capa "aberta" (inteira, 16:9). Arrastar move a faixa do recorte; o recorte (o que o Orbital mostra) fica destacado. */
+.imagem_aberta {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background-color: #0a0810;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    display: grid;
+    place-items: center;
+}
+
+.imagem_aberta:active {
+    cursor: grabbing;
+}
+
+/* A capa e o recorte não interceptam o ponteiro: o arraste é tratado pelo container (a capa é um <div> com background-image). */
+.imagem_aberta > div {
+    pointer-events: none;
+}
+
+/* Recorte que o item do Orbital exibe — janela clara + escurecimento ao redor (box-shadow gigante). */
+.recorte {
+    position: absolute;
+    border: 0.14em solid #00D4E8;
+    border-radius: 0.25em;
+    box-shadow: 0 0 0 100vmax rgba(4, 3, 8, 0.62);
+    pointer-events: none;
+}
+
+.vazio {
+    font-size: 0.85em;
+    opacity: 0.55;
+}
+
+/* Prévia no formato real do item do Orbital — cqw preservando as razões do Orbital. */
+.previa {
+    container-type: inline-size;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.previa_grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.previa_item_normal {
+    position: relative;
+    width: 55.2cqw;
+    aspect-ratio: 3.6 / 1;
+    font-size: 3.78cqw;
+}
+
+.previa_item_selecionado {
+    position: relative;
+    width: 90cqw;
+    aspect-ratio: 4.536 / 1;
+    font-size: 6.55cqw;
+}
+
+.acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75em;
+    max-width: 60em;
+}
+
+.botao_principal,
+.botao_remover {
+    padding: 0.55em 1.05em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    color: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.botao_principal:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.botao_principal {
+    background-color: #00A8B8;
+    color: #031317;
+    border-color: #00D4E8;
+}
+
+.botao_remover {
+    background-color: transparent;
+    border-color: rgba(255, 120, 120, 0.4);
+    color: #FFB0B0;
+    padding: 0.45em 0.8em;
+}
+
+.botao_remover:hover {
+    background-color: rgba(255, 120, 120, 0.12);
+}

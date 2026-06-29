@@ -101,7 +101,7 @@ export const Contexto__PaginaPartidas__Provider = ({ children }: { readonly chil
     );
 };
 
-function adaptaPartida(partida: PartidaNoCatalogoResumo): CatalogoDeMissoesItem { return { id: partida.idPartida, nome: partida.nome }; };
+function adaptaPartida(partida: PartidaNoCatalogoResumo): CatalogoDeMissoesItem { return { id: partida.idPartida, nome: partida.nome, arteCapa: partida.arteCapa }; };
 
 function montaCatalogos(estrutura: EstruturaPartidas | null, painel: PainelDesafiosAtivos | null): readonly CatalogoDeMissoesCatalogo[] {
     if (!estrutura) return [];

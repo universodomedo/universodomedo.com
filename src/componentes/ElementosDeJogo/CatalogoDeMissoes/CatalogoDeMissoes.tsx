@@ -5,8 +5,11 @@ import styles from './styles.module.css';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent, type WheelEvent } from 'react';
 
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
+import { ItemPartidaOrbital } from 'Componentes/ElementosDeJogo/ItemPartidaOrbital/ItemPartidaOrbital';
+import { useImagemCapaArte } from 'Funcionalidades/ArteDeCapa/useImagemCapaArte';
+import type { ArteCapaDaPartida } from 'types-nora-api';
 
-export type CatalogoDeMissoesItem = { readonly id: number; readonly nome: string; };
+export type CatalogoDeMissoesItem = { readonly id: number; readonly nome: string; readonly arteCapa?: ArteCapaDaPartida | null; };
 
 export type CatalogoDeMissoesSubgrupo = { readonly id: string; readonly rotulo: string; readonly itens: readonly CatalogoDeMissoesItem[]; readonly mensagemVazio: string; };
 
@@ -266,11 +269,13 @@ function ItemOrbital({ item, estilo, ehCentral, colapsado, vAbsoluto, aoCentrali
         );
     }
 
-    return (
-        <button type="button" className={`${styles.item_orbital} ${styles.item_missao} ${ehCentral ? styles.item_missao_selecionada : ''}`} style={estilo} onClick={() => aoCentralizar(vAbsoluto, item)}>
-            <strong>{item.missao.nome}</strong>
-        </button>
-    );
+    return <ItemMissaoNoOrbital item={item} estilo={estilo} ehCentral={ehCentral} vAbsoluto={vAbsoluto} aoCentralizar={aoCentralizar} />;
+};
+
+function ItemMissaoNoOrbital({ item, estilo, ehCentral, vAbsoluto, aoCentralizar }: { readonly item: ItemMissaoOrbital; readonly estilo: CSSProperties; readonly ehCentral: boolean; readonly vAbsoluto: number; readonly aoCentralizar: (vAbsoluto: number, item: ItemOrbital) => void; }) {
+    const imagem = useImagemCapaArte(item.missao.arteCapa?.idProjeto ?? null);
+
+    return <ItemPartidaOrbital className={styles.item_missao_orbital} style={estilo} nome={item.missao.nome} imagemBase64={imagem} encaixe={item.missao.arteCapa?.encaixe ?? null} selecionado={ehCentral} onClick={() => aoCentralizar(vAbsoluto, item)} />;
 };
 
 function montaItensOrbitais(catalogos: readonly CatalogoDeMissoesCatalogo[], idsCatalogosColapsados: readonly number[]): readonly ItemOrbital[] {

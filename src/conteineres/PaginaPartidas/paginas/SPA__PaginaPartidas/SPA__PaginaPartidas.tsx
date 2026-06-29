@@ -1,6 +1,7 @@
 import styles from './styles.module.css';
 
 import CatalogoDeMissoes from 'Componentes/ElementosDeJogo/CatalogoDeMissoes/CatalogoDeMissoes';
+import { FundoArteCapaPartida } from 'Conteineres/PaginaPartidas/paginas/SPA__PaginaPartidas/FundoArteCapaPartida';
 import type { Contexto__PaginaPartidas__Props } from 'Contextos/Contexto__PaginaPartidas/contexto';
 
 export default function SPA__PaginaPartidas({ catalogosDisponiveis, idPartidaSelecionada, partidaSelecionada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }: Contexto__PaginaPartidas__Props) {
@@ -8,6 +9,7 @@ export default function SPA__PaginaPartidas({ catalogosDisponiveis, idPartidaSel
 
     return (
         <div className={styles.pagina_partidas}>
+            <FundoArteCapaPartida idProjetoCapa={partidaSelecionada?.arteCapa?.idProjeto ?? null} />
             {erro && <div className={styles.erro}>{erro}</div>}
             <section className={styles.secao_detalhamento}>
                 <button type="button" className={styles.botao_jogar} disabled={!podeJogarPartidaSelecionada || jogando || carregando} onClick={jogarPartidaSelecionada}>
