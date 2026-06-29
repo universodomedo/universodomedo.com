@@ -1,0 +1,29 @@
+.item_capa {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+    padding: 0.4em;
+}
+
+.miniatura {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 0.4em;
+    background-color: #0a0810;
+    display: grid;
+    place-items: center;
+}
+
+.carregando {
+    font-size: 0.85em;
+    opacity: 0.5;
+}
+
+.nome {
+    font-size: 0.85em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

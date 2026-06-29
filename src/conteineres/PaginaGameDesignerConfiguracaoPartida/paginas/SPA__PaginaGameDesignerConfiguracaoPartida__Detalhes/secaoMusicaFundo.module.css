@@ -1,0 +1,55 @@
+.secao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    margin: 0;
+    padding: 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background-color: rgba(24, 36, 40, 0.9);
+}
+
+.secao legend {
+    padding: 0 0.4em;
+    font-size: 0.95em;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.estado {
+    margin: 0;
+    font-size: 0.9em;
+    opacity: 0.85;
+}
+
+.acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+}
+
+.botao_secundario {
+    padding: 0.55em 1.05em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.botao_secundario:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.botao_remover {
+    padding: 0.45em 0.8em;
+    border: 0.08em solid rgba(255, 120, 120, 0.4);
+    border-radius: 0.4em;
+    background-color: transparent;
+    color: #FFB0B0;
+    cursor: pointer;
+}
+
+.botao_remover:hover {
+    background-color: rgba(255, 120, 120, 0.12);
+}

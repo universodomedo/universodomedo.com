@@ -5,18 +5,9 @@ import styles from './fundoArteCapa.module.css';
 import { useEffect, useRef, useState } from 'react';
 
 import { useImagemCapaArte } from 'Funcionalidades/ArteDeCapa/useImagemCapaArte';
+import { useValorEstabilizado } from 'Hooks/useValorEstabilizado';
 
 const ATRASO_ESTABILIZACAO_MS = 220;
-
-// Estabiliza o valor: só muda depois de ficar parado por `atrasoMs` — evita trocar o fundo a cada item durante scroll rápido (anti-piscar).
-function useValorEstabilizado(valor: number | null, atrasoMs: number): number | null {
-    const [estavel, setEstavel] = useState(valor);
-    useEffect(() => {
-        const id = setTimeout(() => setEstavel(valor), atrasoMs);
-        return () => clearTimeout(id);
-    }, [valor, atrasoMs]);
-    return estavel;
-};
 
 // Fundo da página = Arte de Capa da Partida SELECIONADA (cover, sem título/assinatura), com scrim p/ legibilidade.
 // Fluidez: imagem vem do cache compartilhado (instantânea se o orbital já carregou) + crossfade (entra com fade-in, anterior sai com fade-out) + seleção estabilizada (debounce).

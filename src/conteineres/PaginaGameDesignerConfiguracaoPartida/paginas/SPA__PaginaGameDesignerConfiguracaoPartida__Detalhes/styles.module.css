@@ -157,3 +157,30 @@
 .botao_remover:hover {
     background-color: rgba(255, 120, 120, 0.12);
 }
+
+.botao_secundario {
+    padding: 0.55em 1.05em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.botao_secundario:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.barra_capa {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8em;
+}
+
+.barra_capa_acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+}

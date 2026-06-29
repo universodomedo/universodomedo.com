@@ -1,0 +1,73 @@
+.selecionador {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    width: 100%;
+    min-width: 0;
+}
+
+.cabecalho {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+}
+
+.cabecalho strong {
+    font-size: 1.05em;
+    font-weight: 600;
+}
+
+.cabecalho span {
+    font-size: 0.85em;
+    opacity: 0.7;
+}
+
+/* O ListagemComposta tem root flex:1 / height:0 → precisa de um pai flex-column com ALTURA definida p/ preencher (senão o scrollable colapsa em 0). */
+.listagem {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    height: min(55vh, 32em);
+}
+
+/* Cada registro é um card clicável (moldura visível por padrão p/ destacar mesmo conteúdo escuro); o selecionado ganha destaque dourado. O conteúdo visual de cada item vem do caller (renderizarItem). */
+.item {
+    cursor: pointer;
+    border: 0.16em solid rgba(255, 255, 255, 0.16);
+    border-radius: 0.55em;
+    background-color: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.item:hover {
+    border-color: rgba(183, 144, 81, 0.45);
+}
+
+.item_selecionado,
+.item_selecionado:hover {
+    border-color: #B79051;
+    box-shadow: 0 0 0.9em rgba(183, 144, 81, 0.5);
+}
+
+.acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75em;
+}
+
+.botao_confirmar {
+    padding: 0.6em 1.2em;
+    border: 0.08em solid #00D4E8;
+    border-radius: 0.4em;
+    background-color: #00A8B8;
+    color: #031317;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.botao_confirmar:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
