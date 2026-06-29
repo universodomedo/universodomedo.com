@@ -4,8 +4,8 @@ import styles from './styles.module.css';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { obtemUltimaArteDeCapa } from 'Funcionalidades/ArteDeCapa/arteDeCapa.storage';
-import type { ArteDeCapa } from 'Funcionalidades/ArteDeCapa/arteDeCapa.types';
+import { listaCapasArte3D, obtemImagemCapaArte3D } from 'Funcionalidades/ArteDeCapa/arteDeCapa.api';
+import type { Projeto3DCapaArteImagemPersistida } from 'types-nora-api';
 
 type TipoCasoVisual = 'INSIGNIA' | 'ARTE_CAPA' | 'SER' | 'AVATAR_SER' | 'EMBLEMA' | 'ASSET_SITE';
 type TipoPreviewCasoVisual = 'quadrado' | 'wide' | 'vertical' | 'livre';
@@ -110,8 +110,19 @@ export default function Page() {
     const [exibeTitulo, setExibeTitulo] = useState(true);
     const [exibeAssinatura, setExibeAssinatura] = useState(true);
     const [usaSelecionado, setUsaSelecionado] = useState(true);
-    const [capaSalva, setCapaSalva] = useState<ArteDeCapa | null>(null);
-    useEffect(() => { setCapaSalva(obtemUltimaArteDeCapa()); }, []);
+    const [capaPadrao, setCapaPadrao] = useState<Projeto3DCapaArteImagemPersistida | null>(null);
+    useEffect(() => {
+        let ativo = true;
+        listaCapasArte3D()
+            .then(async capas => {
+                if (capas.length === 0) return;
+                const alvo = capas.find(capa => capa.nome === 'Capa Gizmo') ?? capas[0];
+                const imagem = await obtemImagemCapaArte3D(alvo.idProjeto);
+                if (ativo && imagem) setCapaPadrao(imagem);
+            })
+            .catch(() => {});
+        return () => { ativo = false; };
+    }, []);
     const casoSelecionado = useMemo(() => casosVisuaisTeste.find(casoVisual => casoVisual.tipo === tipoSelecionado) ?? obtemCasoVisualInicial(), [tipoSelecionado]);
     const classePreview = obtemClassePreview(casoSelecionado.preview);
     const arteCapaSelecionada = casoSelecionado.tipo === 'ARTE_CAPA';
@@ -122,7 +133,7 @@ export default function Page() {
                 <div className={styles.blocoTitulo}>
                     <span className={styles.selo}>Teste local</span>
                     <h1>Casos visuais do Universo do Medo</h1>
-                    <p>Página vazia para testar o roadmap de criação visual/editorial sem backend, sem GraphQL, sem persistência e sem consumo externo.</p>
+                    <p>Página para testar o roadmap de criação visual/editorial. Onde já existe asset real persistido (ex.: Arte de Capa), o registro é puxado do backend; os demais casos são mockups de referência.</p>
                 </div>
 
                 <div className={styles.resumoAtual} aria-label="Resumo do caso selecionado">
@@ -170,16 +181,25 @@ export default function Page() {
                         <article className={styles.cartaoPreview}>
                             <header>
                                 <span>Padrão esperado</span>
-                                <strong>{casoSelecionado.dimensao}</strong>
+                                <strong>{arteCapaSelecionada && capaPadrao ? `${capaPadrao.nome} · ${casoSelecionado.dimensao}` : casoSelecionado.dimensao}</strong>
                             </header>
 
                             <div className={`${styles.preview} ${classePreview}`}>
-                                <div className={styles.conteudoPreview}>
-                                    <span>{casoSelecionado.nome}</span>
-                                    <strong>Padrão</strong>
-                                    {arteCapaSelecionada && exibeTitulo && <em>Título da capa</em>}
-                                    {arteCapaSelecionada && exibeAssinatura && <small>Assinatura do autor</small>}
-                                </div>
+                                {arteCapaSelecionada && capaPadrao ? (
+                                    <div className={styles.molduraCapaSalva}>
+                                        <img className={styles.imagemCapaSalva} src={`data:image/png;base64,${capaPadrao.imagemBase64}`} alt={`Arte de Capa do projeto ${capaPadrao.nome}`} />
+                                        {exibeTitulo && capaPadrao.imagemTituloBase64 && (
+                                            <img className={styles.camadaTituloCapa} src={`data:image/png;base64,${capaPadrao.imagemTituloBase64}`} alt="Camada do título da capa" />
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className={styles.conteudoPreview}>
+                                        <span>{casoSelecionado.nome}</span>
+                                        <strong>Padrão</strong>
+                                        {arteCapaSelecionada && exibeTitulo && <em>Título da capa</em>}
+                                        {arteCapaSelecionada && exibeAssinatura && <small>Assinatura do autor</small>}
+                                    </div>
+                                )}
                             </div>
                         </article>
 
@@ -190,16 +210,12 @@ export default function Page() {
                             </header>
 
                             <div className={`${styles.preview} ${classePreview} ${usaSelecionado ? styles.previewSelecionado : styles.previewDesativado}`}>
-                                {arteCapaSelecionada && usaSelecionado && capaSalva ? (
-                                    <img className={styles.imagemCapaSalva} src={capaSalva.imagem} alt="Arte de Capa capturada do editor" />
-                                ) : (
-                                    <div className={styles.conteudoPreview}>
-                                        <span>{casoSelecionado.nome}</span>
-                                        <strong>{usaSelecionado ? 'Selecionado' : 'Vazio'}</strong>
-                                        {arteCapaSelecionada && exibeTitulo && <em>Título customizado</em>}
-                                        {arteCapaSelecionada && exibeAssinatura && <small>Autor simulado</small>}
-                                    </div>
-                                )}
+                                <div className={styles.conteudoPreview}>
+                                    <span>{casoSelecionado.nome}</span>
+                                    <strong>{usaSelecionado ? 'Selecionado' : 'Vazio'}</strong>
+                                    {arteCapaSelecionada && exibeTitulo && <em>Título customizado</em>}
+                                    {arteCapaSelecionada && exibeAssinatura && <small>Autor simulado</small>}
+                                </div>
                             </div>
                         </article>
                     </div>

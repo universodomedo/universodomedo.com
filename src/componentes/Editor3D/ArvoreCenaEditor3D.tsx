@@ -4,6 +4,8 @@ import styles from './Editor3D.module.css';
 
 import { useEffect, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
 
+import { SELECAO_CAMERA_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D } from './editor3D.tipos';
+
 export type ObjetoResumoEditor3D = { readonly id: number; readonly nome: string; readonly icone: string; readonly tipoRotulo: string; readonly visivel: boolean; };
 export type ColecaoArvoreEditor3D = { readonly id: number; readonly nome: string; readonly visivel: boolean; readonly objetos: readonly ObjetoResumoEditor3D[]; };
 
@@ -11,17 +13,20 @@ interface ArvoreCenaEditor3DProps {
     readonly objetosRaiz: readonly ObjetoResumoEditor3D[];
     readonly colecoes: readonly ColecaoArvoreEditor3D[];
     readonly idSelecionado: number | null;
+    readonly temCamera: boolean;
+    readonly povCameraAtiva: boolean;
     readonly aoSelecionar: (id: number) => void;
     readonly aoAlternarVisibilidadeObjeto: (id: number) => void;
     readonly aoAlternarVisibilidadeColecao: (id: number) => void;
     readonly aoRenomearColecao: (id: number, nome: string) => void;
     readonly aoRemoverColecao: (id: number) => void;
     readonly aoMoverObjeto: (idObjeto: number, idColecaoDestino: number | null) => void;
+    readonly aoAlternarPovCamera: () => void;
 };
 
 const ALVO_RAIZ_ARVORE_EDITOR3D = -1;
 
-export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, aoSelecionar, aoAlternarVisibilidadeObjeto, aoAlternarVisibilidadeColecao, aoRenomearColecao, aoRemoverColecao, aoMoverObjeto }: ArvoreCenaEditor3DProps) {
+export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, temCamera, povCameraAtiva, aoSelecionar, aoAlternarVisibilidadeObjeto, aoAlternarVisibilidadeColecao, aoRenomearColecao, aoRemoverColecao, aoMoverObjeto, aoAlternarPovCamera }: ArvoreCenaEditor3DProps) {
     const [arrastandoId, setArrastandoId] = useState<number | null>(null);
     const [alvoArraste, setAlvoArraste] = useState<number | null>(null);
     const [colecoesAbertas, setColecoesAbertas] = useState<Record<number, boolean>>({});
@@ -84,6 +89,28 @@ export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, aoSel
                     <span className={styles.nome_objeto}>Origem</span>
                     <strong>0, 0, 0</strong>
                 </button>
+                {temCamera && (
+                    <div className={`${styles.linha_objeto_grade} ${idSelecionado === SELECAO_CAMERA_EDITOR3D ? styles.linha_objeto_selecionado : ''}`}>
+                        <button type="button" className={styles.botao_conteudo_objeto} aria-pressed={idSelecionado === SELECAO_CAMERA_EDITOR3D} onClick={() => aoSelecionar(SELECAO_CAMERA_EDITOR3D)}>
+                            <span className={styles.espaco_arvore} />
+                            <span className={styles.icone_origem}>🎥</span>
+                            <span className={styles.nome_objeto}>Câmera</span>
+                            <strong>Output</strong>
+                        </button>
+                        <button type="button" className={`${styles.botao_visibilidade} ${povCameraAtiva ? styles.botao_pov_arvore_ativo : ''}`} onClick={aoAlternarPovCamera} aria-pressed={povCameraAtiva} title={povCameraAtiva ? 'Sair da 1ª pessoa (ver em 3ª)' : 'Ver/controlar em 1ª pessoa'}>👁</button>
+                    </div>
+                )}
+                {temCamera && (
+                    <div className={`${styles.linha_objeto_grade} ${idSelecionado === SELECAO_TITULO_CAPA_ARTE_EDITOR3D ? styles.linha_objeto_selecionado : ''}`}>
+                        <button type="button" className={styles.botao_conteudo_objeto} aria-pressed={idSelecionado === SELECAO_TITULO_CAPA_ARTE_EDITOR3D} onClick={() => aoSelecionar(SELECAO_TITULO_CAPA_ARTE_EDITOR3D)}>
+                            <span className={styles.espaco_arvore} />
+                            <span className={styles.espaco_arvore} />
+                            <span className={styles.icone_objeto}>🅣</span>
+                            <span className={styles.nome_objeto}>Título</span>
+                            <strong>Texto 3D</strong>
+                        </button>
+                    </div>
+                )}
                 {objetosRaiz.map(renderizaObjeto)}
             </div>
 

@@ -677,6 +677,186 @@
     font-size: 0.88em;
 }
 
+/* ---- Painel da câmera (Capa de Arte) ---- */
+.painel_camera_capa {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    padding: 0.2em 0;
+}
+
+.aviso_camera_capa {
+    margin: 0 0 0.4em;
+    padding: 0.45em 0.6em;
+    border-radius: 0.32em;
+    color: rgba(255, 210, 130, 0.92);
+    font-size: 0.78em;
+    line-height: 1.35;
+    background: rgba(255, 180, 60, 0.1);
+    border: 0.08em solid rgba(255, 180, 60, 0.28);
+}
+
+.preview_camera_capa {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin-bottom: 0.5em;
+    overflow: hidden;
+    border-radius: 0.32em;
+    background: #0e0c14;
+    border: 0.08em solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.78em;
+}
+
+/* Painel do título da Capa de Arte (objeto 3D filho da câmera). */
+.painel_titulo_capa {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo_texto_capa {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    margin-bottom: 0.55em;
+    font-size: 0.82em;
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.campo_texto_capa small {
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 0.85em;
+}
+
+.campo_texto_capa input {
+    padding: 0.45em 0.6em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.32em;
+    color: rgba(255, 255, 255, 0.95);
+    font: inherit;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.campo_texto_capa input:focus {
+    outline: none;
+    border-color: rgba(255, 180, 60, 0.6);
+    background: rgba(255, 180, 60, 0.08);
+}
+
+.campo_cor_capa {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5em;
+    margin-bottom: 0.55em;
+    font-size: 0.82em;
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.campo_cor_capa input {
+    width: 3em;
+    height: 1.8em;
+    padding: 0;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.32em;
+    background: transparent;
+    cursor: pointer;
+}
+
+.preview_camera_capa img,
+.preview_camera_capa canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.toggle_alvo_camera {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 0.1em 0 0.5em;
+    padding: 0.4em 0.5em;
+    border-radius: 0.32em;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.82em;
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+}
+
+.toggle_alvo_camera input {
+    accent-color: rgba(255, 180, 60, 0.9);
+    cursor: pointer;
+}
+
+.toggle_alvo_camera small {
+    display: block;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.85em;
+}
+
+.botao_pov_arvore_ativo {
+    color: #1b1726;
+    background: rgba(255, 180, 60, 0.9);
+}
+
+.botao_pov_camera {
+    width: 100%;
+    margin-bottom: 0.5em;
+    padding: 0.5em 0.7em;
+    border: 0.08em solid rgba(92, 148, 255, 0.45);
+    border-radius: 0.32em;
+    color: rgba(190, 214, 255, 0.95);
+    font: inherit;
+    font-size: 0.85em;
+    background: rgba(92, 148, 255, 0.12);
+    cursor: pointer;
+}
+
+.botao_pov_camera:hover {
+    background: rgba(92, 148, 255, 0.22);
+}
+
+.botao_pov_camera_ativo {
+    color: #1b1726;
+    background: rgba(255, 180, 60, 0.9);
+    border-color: rgba(255, 180, 60, 0.9);
+}
+
+.botao_pov_camera_ativo:hover {
+    background: rgba(255, 180, 60, 1);
+}
+
+/* ---- Overlay do POV da câmera (guia 16:9 + letterbox) ---- */
+.overlay_pov_camera {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+}
+
+.guia_enquadramento_pov {
+    width: 100%;
+    max-height: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0.12em solid rgba(255, 200, 110, 0.75);
+    box-shadow: 0 0 0 100vmax rgba(8, 6, 12, 0.5);
+}
+
+.aviso_pov_camera {
+    position: absolute;
+    top: 0.9em;
+    padding: 0.3em 0.85em;
+    border-radius: 1em;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.78em;
+    background: rgba(20, 16, 28, 0.82);
+}
+
 /* ---- Botão de comando (CMD, dir. inferior) ---- */
 .canto_comando {
     position: absolute;
