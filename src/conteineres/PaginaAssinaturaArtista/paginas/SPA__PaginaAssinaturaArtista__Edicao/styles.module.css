@@ -1,0 +1,132 @@
+.pagina {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.6em;
+    align-items: flex-start;
+    padding: 1em;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.carregando {
+    padding: 1.2em;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    flex: 1 1 18em;
+    max-width: 24em;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    font-size: 0.95em;
+}
+
+.campo > span {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85em;
+}
+
+.campo input,
+.campo select {
+    padding: 0.55em 0.7em;
+    border: 0.08em solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.4em;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.95);
+    font: inherit;
+}
+
+.campo input:focus,
+.campo select:focus {
+    outline: none;
+    border-color: rgba(255, 180, 60, 0.6);
+    background: rgba(255, 180, 60, 0.08);
+}
+
+.campo select option {
+    color: #1b1726;
+}
+
+.erro {
+    color: #ff8a8a;
+    font-size: 0.78em;
+}
+
+.botaoSalvar {
+    margin-top: 0.4em;
+    padding: 0.65em 1em;
+    border: none;
+    border-radius: 0.4em;
+    background: linear-gradient(135deg, #f0b357, #d98a2b);
+    color: #1b1726;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.botaoSalvar:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.areaPreview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    flex: 1 1 22em;
+    min-width: 18em;
+}
+
+.rotuloPreview {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.8em;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+/* Recipiente que representa a Arte de Capa (16:9). container-type p/ a assinatura escalar com a capa (tamanho padrão proporcional). */
+.previewCapa {
+    position: relative;
+    container-type: inline-size;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.5em;
+    overflow: hidden;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    background: radial-gradient(circle at 32% 24%, #3a2f5c, #14101f 72%);
+}
+
+/* Assinatura sempre no canto inferior esquerdo, com margem e sobre um sombreamento (legibilidade em qualquer fundo). */
+.assinaturaPreview {
+    position: absolute;
+    left: 4.5%;
+    bottom: 4.5%;
+    max-width: 62%;
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+    background: rgba(0, 0, 0, 0.42);
+    box-shadow: 0 0.3em 1.4em rgba(0, 0, 0, 0.55);
+}
+
+.textoAssinatura {
+    display: block;
+    color: #f4f4f4;
+    font-size: 8cqw;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 0.04em 0.2em rgba(0, 0, 0, 0.6);
+}
+
+.notaPreview {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.78em;
+}

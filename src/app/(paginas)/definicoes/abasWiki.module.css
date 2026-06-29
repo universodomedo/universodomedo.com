@@ -1,0 +1,45 @@
+.recipiente_abas {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.4em;
+    width: 100%;
+    max-width: 80em;
+    margin: 1.5vh auto 0;
+}
+
+.layout_leitura {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5em;
+    width: 100%;
+    max-width: 80em;
+    margin: 0 auto;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.aba {
+    font-family: var(--fonte-cinzel);
+    font-variant: small-caps;
+    letter-spacing: 0.12em;
+    font-size: 0.95em;
+    color: #aba9a1;
+    padding: 0.5em 1.4em;
+    border: 0.06em solid #352E4C;
+    border-bottom: none;
+    border-radius: 0.4em 0.4em 0 0;
+    background: rgba(7, 6, 11, 0.4);
+    text-decoration: none;
+    transition: color 0.2s ease, background 0.2s ease;
+
+    &:hover {
+        color: #EBE0C9;
+    }
+}
+
+.aba_ativa {
+    color: #B79051;
+    background: radial-gradient(120% 140% at 50% 100%, rgba(53, 46, 76, 0.55), rgba(7, 6, 11, 0.4));
+    border-color: #4a3f63;
+}

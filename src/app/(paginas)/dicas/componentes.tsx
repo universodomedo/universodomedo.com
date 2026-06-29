@@ -1,56 +1,29 @@
-import { PAGINAS, EstruturaPaginaDefinicao } from 'types-nora-api';
+import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-import PaginaConteudoDinamico, { InicioProps } from 'Componentes/Elementos/PaginaConteudoDinamico/page';
+import RedirecionadorInterno from 'Componentes/Elementos/RedirecionadorInterno/RedirecionadorInterno';
+import PaginaConteudoDinamico from 'Componentes/Elementos/PaginaConteudoDinamico/page';
+import { obtemDadosPorPaginaDefinicao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
-export function PaginaDefinicao_Client({ listaSlug }: { listaSlug: string[]; }) {
-    const conteudo: EstruturaPaginaDefinicao = {
-        titulo: 'Dicas',
-        listaConteudo: {
-            itens: [
-                {
-                    tipo: 'Lista',
-                    itensLista: [
-                        {
-                            tipo: 'ItemLista',
-                            etiqueta: 'Seu primeiro Personagem',
-                            subPaginaDefinicao: '/dicas/comecando',
-                            // itemDeDuasColunas: true,
-                        },
-                        {
-                            tipo: 'ItemLista',
-                            etiqueta: 'Criando e Evoluindo seu Personagem',
-                            subPaginaDefinicao: '/dicas/evoluindo',
-                            // itemDeDuasColunas: true,
-                        }
-                    ]
-                },
-                {
-                    tipo: 'Lista',
-                    itensLista: [
-                        {
-                            tipo: 'ItemLista',
-                            etiqueta: 'Disponibilidades',
-                            subPaginaDefinicao: '/dicas/disponibilidades'
-                        },
-                        {
-                            tipo: 'ItemLista',
-                            etiqueta: 'Termos de Aceite',
-                            subPaginaDefinicao: '/dicas/termos-de-aceite'
-                        },
-                    ]
-                },
-            ]
-        }
-    }
-
-    return <ControladorSlot_TEMPORARIO_Dicas conteudo={conteudo} inicio={{ pagina: PAGINAS.dicas }} listaSlug={listaSlug} />;
-};
-
-export function ControladorSlot_TEMPORARIO_Dicas({ conteudo, inicio, listaSlug }: { conteudo: EstruturaPaginaDefinicao; inicio: InicioProps<typeof PAGINAS.dicas>; listaSlug: string[]; }) {
+export function PaginaDica_Client({ listaSlug }: { listaSlug: string[] }) {
     return (
         <ControladorSlot pagina={PAGINAS.dicas}>
-            <PaginaConteudoDinamico conteudo={conteudo} inicio={inicio} listaSlug={listaSlug} />
+            <PaginaDica_Slot listaSlug={listaSlug} />
         </ControladorSlot>
+    );
+};
+
+async function PaginaDica_Slot({ listaSlug }: { listaSlug: string[] }) {
+    const identificadorPagina = listaSlug.length > 0 ? `/${listaSlug.join('/')}` : '';
+    const resultado = await obtemDadosPorPaginaDefinicao(identificadorPagina, 'dica');
+
+    if (!resultado) return <RedirecionadorInterno pagina={PAGINAS.dicas} params={{ slug: [] }} />;
+
+    return (
+        <PaginaConteudoDinamico
+            conteudo={resultado}
+            inicio={{ pagina: PAGINAS.dicas, params: { slug: [] } }}
+            listaSlug={listaSlug}
+        />
     );
 };

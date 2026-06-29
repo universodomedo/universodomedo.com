@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { EstruturaPaginaDefinicao, montarHref, toParamsRecord, type PaginaDef, type PaginaParams, type RequiredKeys } from 'types-nora-api';
 
 import TextoGlitado from 'Componentes/ElementosVisuais/TextoGlitado/TextoGlitado';
+import TituloDefinicao from './TituloDefinicao';
 
 export type InicioProps<P extends PaginaDef<string>> =
     keyof PaginaParams<P> extends never
@@ -16,14 +17,18 @@ export type InicioProps<P extends PaginaDef<string>> =
 export default function PaginaConteudoDinamico<P extends PaginaDef<string>>({ conteudo, inicio, listaSlug }: { conteudo: EstruturaPaginaDefinicao; inicio: InicioProps<P>; listaSlug: string[] }) {
     const paramsObj = ('params' in inicio && inicio.params) ? toParamsRecord(inicio.params) : {};
     const hrefInicio = montarHref(inicio.pagina.hrefTemplate, paramsObj);
+    const hrefAnterior = listaSlug.length > 1 ? `${hrefInicio}/${listaSlug.slice(0, -1).join('/')}` : hrefInicio;
 
     return (
         <div className={styles.recipiente_definicao}>
-            {listaSlug.length > 0 && <Breadcrumb hrefInicio={hrefInicio} listaSlug={listaSlug.map((chave) => decodeURIComponent(chave))} />}
+            {listaSlug.length > 0 && (
+                <Link className={styles.seta_voltar} href={hrefAnterior} aria-label="Voltar para a Definição anterior">←</Link>
+            )}
 
             <div className={styles.recipiente_titulo}>
-                <h1 className={styles.definicao_titulo}>{conteudo.titulo}</h1>
-                {conteudo.subtitulo && (<h3>{conteudo.subtitulo}</h3>)}
+                <TituloDefinicao titulo={conteudo.titulo} />
+                {conteudo.subtitulo && (<h3 className={styles.definicao_subtitulo}>{conteudo.subtitulo}</h3>)}
+                <span className={styles.divisoria_ornamental} />
             </div>
 
             <div className={styles.definicao_corpo}>
@@ -83,31 +88,6 @@ export default function PaginaConteudoDinamico<P extends PaginaDef<string>>({ co
                     </div>
                 </div>
             )}
-        </div>
-    );
-};
-
-function Breadcrumb({ hrefInicio, listaSlug }: { hrefInicio: string; listaSlug: string[] }) {
-    const caminho = [
-        { label: 'Início', href: hrefInicio },
-        ...listaSlug.map((chave, index) => ({
-            label: chave,
-            href: `${hrefInicio}/${listaSlug.slice(0, index + 1).join('/')}`,
-        })),
-    ];
-
-    return (
-        <div className={styles.recipiente_breadcrumb}>
-            {caminho.map((item, index) => (
-                <span key={item.href}>
-                    {index < caminho.length - 1 ? (
-                        <Link href={`${item.href}`}>{item.label}</Link>
-                    ) : (
-                        <span>{item.label}</span>
-                    )}
-                    {index < caminho.length - 1 && ' → '}
-                </span>
-            ))}
         </div>
     );
 };

@@ -5,7 +5,7 @@
 }
 
 .titulo_jogo {
-    margin: 0 auto 5%;
+    margin: 0 auto .3em;
     width: fit-content;
     position: relative;
     z-index: 2;

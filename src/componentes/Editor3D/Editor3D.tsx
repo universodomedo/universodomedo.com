@@ -18,7 +18,7 @@ import { BotaoComandoEditor3D } from './BotaoComandoEditor3D';
 import { PainelLateralEditor3D, type ColecaoArvoreEditor3D, type ObjetoResumoEditor3D } from './PainelLateralEditor3D';
 import { ModalSalvarProjetoEditor3D } from './ModalSalvarProjetoEditor3D';
 import { ModalAbrirProjetoEditor3D } from './ModalAbrirProjetoEditor3D';
-import { CAMERA_PADRAO_CAPA_ARTE_EDITOR3D, CAPA_ARTE_PADRAO_EDITOR3D, capaArteDaCena, cameraDaCena, desserializaCenaCanonicaEditor3D, serializaCenaCanonicaEditor3D, tipoProjetoDaCena, type CameraEditor3D, type CapaArteEditor3D, type EntradaSerializacaoObjetoEditor3D, type ObjetoCarregadoEditor3D, type TipoPrimitivaEditor3D, type TransformEditor3D } from './editor3D.projeto.serializacao';
+import { CAMERA_PADRAO_CAPA_ARTE_EDITOR3D, CAPA_ARTE_PADRAO_EDITOR3D, capaArteDaCena, cameraDaCena, desserializaCenaCanonicaEditor3D, restringeTextoNaCameraEditor3D, serializaCenaCanonicaEditor3D, tipoProjetoDaCena, type CameraEditor3D, type CapaArteEditor3D, type EntradaSerializacaoObjetoEditor3D, type ObjetoCarregadoEditor3D, type TipoPrimitivaEditor3D, type TransformEditor3D } from './editor3D.projeto.serializacao';
 import { consultaProjeto3D, listaProjetos3D, salvaProjeto3D } from './editor3D.projeto.api';
 import type { ComandoMenuEditor3D } from './editor3D.menus';
 import { SELECAO_CAMERA_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D, type CampoTransformEditor3D, type ModoTransformEditor3D } from './editor3D.tipos';
@@ -158,6 +158,8 @@ export function Editor3D() {
 
     const atualizaCameraFov = useCallback((valor: number) => {
         setCamera(atual => atual ? { ...atual, fov: valor } : atual);
+        // FOV mudou → o frustum mudou; re-restringe o título para continuar dentro da área da câmera.
+        setCapaArte(atual => ({ ...atual, titulo: { ...atual.titulo, posicao: restringeTextoNaCameraEditor3D(atual.titulo.posicao, valor) } }));
         setAlterado(true);
     }, []);
 
@@ -182,10 +184,17 @@ export function Editor3D() {
         setCapaArte(atual => {
             const vetor = [...atual.titulo[campo]] as [number, number, number];
             vetor[indice] = valor;
-            return { ...atual, titulo: { ...atual.titulo, [campo]: vetor } };
+            // Posição é restrita ao frustum da câmera (não sai da área da câmera); rotação/escala são livres.
+            const titulo = campo === 'posicao' ? { ...atual.titulo, posicao: restringeTextoNaCameraEditor3D(vetor, camera?.fov ?? 40) } : { ...atual.titulo, [campo]: vetor };
+            return { ...atual, titulo };
         });
         setAlterado(true);
-    }, []);
+    }, [camera]);
+    // Arrasto do gizmo do título no cenário: posição restrita ao frustum.
+    const moveTituloPosicao = useCallback((posicao: [number, number, number]) => {
+        setCapaArte(atual => ({ ...atual, titulo: { ...atual.titulo, posicao: restringeTextoNaCameraEditor3D(posicao, camera?.fov ?? 40) } }));
+        setAlterado(true);
+    }, [camera]);
 
     const adicionaObjeto = useCallback((tipo: TipoPrimitivaEditor3D) => {
         contadorRef.current += 1;
@@ -579,7 +588,7 @@ export function Editor3D() {
                         {paramsCriacao && <PreviewMalhaEditor3D params={paramsCriacao} />}
 
                         {tipoProjeto === 'CAPA_ARTE' && camera && <CameraCapaArteEditor3D camera={camera} selecionada={idSelecionado === SELECAO_CAMERA_EDITOR3D} ocultarGizmo={capturando} povAtiva={camPovAtiva} aoSelecionarCamera={() => setIdSelecionado(SELECAO_CAMERA_EDITOR3D)} aoMoverPosicao={moveCameraPosicao} aoMoverAlvo={moveCameraAlvo} />}
-                        {tipoProjeto === 'CAPA_ARTE' && camera && <TituloCapaArteEditor3D camera={camera} titulo={capaArte.titulo} povAtiva={camPovAtiva} aoSelecionar={() => setIdSelecionado(SELECAO_TITULO_CAPA_ARTE_EDITOR3D)} />}
+                        {tipoProjeto === 'CAPA_ARTE' && camera && <TituloCapaArteEditor3D camera={camera} titulo={capaArte.titulo} mostrarGizmo={idSelecionado === SELECAO_TITULO_CAPA_ARTE_EDITOR3D && !camPovAtiva && !capturando} aoSelecionar={() => setIdSelecionado(SELECAO_TITULO_CAPA_ARTE_EDITOR3D)} aoMover={moveTituloPosicao} />}
                         {tipoProjeto === 'CAPA_ARTE' && camera && <PreviewVivoCapaArteEditor3D camera={camera} ativo={idSelecionado === SELECAO_CAMERA_EDITOR3D || idSelecionado === SELECAO_TITULO_CAPA_ARTE_EDITOR3D} refCanvas={refCanvasPreviewCapa} />}
                         <RenderizadorCapaArteEditor3D aoRegistrar={registraRenderCapa} />
 

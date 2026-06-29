@@ -1,0 +1,113 @@
+.editor {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+    width: 100%;
+    max-width: 50em;
+    margin: 0 auto;
+    font-family: var(--fonte-junge);
+}
+
+.campos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+
+    label {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3em;
+        font-size: 0.95em;
+    }
+
+    input {
+        padding: 0.5em;
+        background-color: #2F2641;
+        border: 0.05em solid #4a3f63;
+        color: inherit;
+        border-radius: 0.3em;
+    }
+}
+
+.lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+}
+
+.cabecalhoLista {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.item {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6em;
+    padding: 0.6em;
+    background-color: rgba(47, 38, 65, 0.5);
+    border-radius: 0.3em;
+
+    input,
+    select,
+    textarea {
+        padding: 0.4em;
+        background-color: #2F2641;
+        border: 0.05em solid #4a3f63;
+        color: inherit;
+        border-radius: 0.3em;
+        flex: 1 1 8em;
+    }
+
+    textarea {
+        min-height: 4em;
+        flex-basis: 100%;
+    }
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    flex: 0 0 auto;
+}
+
+.acoes {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1em;
+}
+
+.salvar {
+    padding: 0.6em 1.2em;
+    cursor: pointer;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+}
+
+.remover {
+    padding: 0.6em 1.2em;
+    cursor: pointer;
+    color: #ff8a8a;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+}
+
+.erro {
+    color: #ff8a8a;
+}
+
+.sucesso {
+    color: #8aff9e;
+}

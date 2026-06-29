@@ -173,7 +173,9 @@ async function executaRestGet<TParametros extends object, TResposta>(operacao: A
         throw new NoraApiErro({ mensagem: mensagemErro, mensagemServidor: textoErro });
     }
 
-    return await resposta.json() as TResposta;
+    // Endpoints nullable podem retornar 200 com corpo vazio (Nest envia vazio para `null`); tratamos corpo vazio como null.
+    const textoResposta = await resposta.text();
+    return (textoResposta.length === 0 ? null : JSON.parse(textoResposta)) as TResposta;
 };
 
 async function executaRestPost<TCorpo extends object, TResposta>(operacao: ApiOperacaoRestPost<TCorpo, TResposta>, corpo: TCorpo): Promise<TResposta> {

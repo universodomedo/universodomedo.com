@@ -716,6 +716,11 @@
     flex-direction: column;
 }
 
+/* Título aninhado sob a Câmera na árvore (filho do nó Câmera). */
+.linha_titulo_camera {
+    margin-left: 1.1em;
+}
+
 .campo_texto_capa {
     display: flex;
     flex-direction: column;

@@ -1,0 +1,36 @@
+.recipiente {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+    width: 100%;
+}
+
+.titulo {
+    flex: 0 1 auto;
+    font-family: var(--fonte-cinzel);
+    font-variant: small-caps;
+    letter-spacing: 0.06em;
+    color: #B79051;
+    font-size: 2.4em;
+    line-height: 1.1;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.moldura {
+    flex: 1 1 0;
+    min-width: 0;
+    height: 3.4rem;
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+}
+
+.moldura:first-child {
+    background-position: right center;
+}
+
+.moldura:last-child {
+    background-position: left center;
+}

@@ -1,4 +1,4 @@
-import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoPatentesTestePericiaProjetada, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoPatentesTestePericia, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, DTO__CREATE__HabilidadePericia, DTO__CREATE__HabilidadeEspecial, DTO__CREATE__CapacidadeInata, DTO__CREATE__MusicaConfigurada, DTO__UPDATE__MusicaConfigurada, DTO__DEFINIR__ClimaMusica, DTO__CREATE__DimensaoClima, CaminhoArquivoArte, DadosCriarTutorial, DadosEditarTutorial } from "types-nora-api";
+import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoPatentesTestePericiaProjetada, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoPatentesTestePericia, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, DTO__CREATE__HabilidadePericia, DTO__CREATE__HabilidadeEspecial, DTO__CREATE__CapacidadeInata, DTO__CREATE__MusicaConfigurada, DTO__UPDATE__MusicaConfigurada, DTO__DEFINIR__ClimaMusica, DTO__CREATE__DimensaoClima, CaminhoArquivoArte, DadosCriarTutorial, DadosEditarTutorial, PAYLOAD__SalvarPaginaWiki, ItemNavegacaoWiki, SecaoWiki } from "types-nora-api";
 
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
@@ -28,11 +28,35 @@ export async function me_salvaDisponibilidade(listaDisponibilidadesUsuario: List
     return await useApi<boolean>({ uri: '/disponibilidades_usuario/me/me_salvaDisponibilidade', method: 'POST', data: { listaDisponibilidadesUsuario: listaDisponibilidadesUsuario } });
 }
 
-export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string) {
+export async function obtemDadosPorPaginaDefinicao(identificadorPagina: string, secao: SecaoWiki = 'definicao') {
     try {
-        return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina } });
+        return await useApi<EstruturaPaginaDefinicao>({ uri: '/definicoes/obtemDadosPorPaginaDefinicao', method: 'GET', params: { identificadorPagina, secao } });
     } catch (error) {
         return null;
+    }
+}
+
+export async function salvarPaginaWiki(payload: PAYLOAD__SalvarPaginaWiki): Promise<void> {
+    return await useApi<void>({ uri: '/definicoes/wiki/salvarPagina', method: 'POST', data: payload });
+}
+
+export async function removerPaginaWiki(chave: string, secao: SecaoWiki = 'definicao'): Promise<void> {
+    return await useApi<void>({ uri: '/definicoes/wiki/removerPagina', method: 'POST', data: { chave, secao } });
+}
+
+export async function obtemPaginaWikiParaEdicao(chave: string, secao: SecaoWiki = 'definicao'): Promise<PAYLOAD__SalvarPaginaWiki | null> {
+    try {
+        return await useApi<PAYLOAD__SalvarPaginaWiki | null>({ uri: '/definicoes/wiki/paginaParaEdicao', method: 'GET', params: { chave, secao } });
+    } catch (error) {
+        return null;
+    }
+}
+
+export async function obtemNavegacaoWiki(secao: SecaoWiki = 'definicao'): Promise<ItemNavegacaoWiki[]> {
+    try {
+        return await useApi<ItemNavegacaoWiki[]>({ uri: '/definicoes/wiki/navegacao', method: 'GET', params: { secao } }) ?? [];
+    } catch (error) {
+        return [];
     }
 }
 

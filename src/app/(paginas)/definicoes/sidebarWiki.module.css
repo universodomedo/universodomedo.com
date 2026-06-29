@@ -1,0 +1,53 @@
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 14em;
+    align-self: flex-start;
+    gap: 1.2em;
+    padding: 2.5vh 1.2em;
+    border: 0.06em solid #352E4C;
+    border-radius: 0.5em;
+    background: rgba(7, 6, 11, 0.4);
+    font-family: var(--fonte-junge);
+}
+
+.titulo_nav {
+    font-family: var(--fonte-cinzel);
+    font-variant: small-caps;
+    letter-spacing: 0.12em;
+    color: #B79051;
+    font-size: 1.2em;
+    text-align: center;
+    border-bottom: 0.06em solid #352E4C;
+    padding-bottom: 0.6em;
+}
+
+.lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.item {
+    display: block;
+    padding: 0.5em 0.8em;
+    border-radius: 0.3em;
+    color: #aba9a1;
+    text-decoration: none;
+    font-size: 1em;
+    transition: color 0.2s ease, background 0.2s ease;
+
+    &:hover {
+        color: #EBE0C9;
+        background: rgba(53, 46, 76, 0.4);
+    }
+}
+
+.item_ativo {
+    color: #B79051;
+    background: rgba(53, 46, 76, 0.55);
+    border-left: 0.2em solid #B79051;
+}

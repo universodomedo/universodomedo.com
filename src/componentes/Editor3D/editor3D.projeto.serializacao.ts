@@ -20,6 +20,19 @@ export type CapaArteEditor3D = { readonly titulo: TextoCapaArteEditor3D; readonl
 export const TEXTO_CAPA_ARTE_PADRAO_EDITOR3D: TextoCapaArteEditor3D = { texto: '', posicao: [0, 0.2, -5], rotacao: [0, 0, 0], escala: [1, 1, 1], cor: '#ffffff' };
 export const CAPA_ARTE_PADRAO_EDITOR3D: CapaArteEditor3D = { titulo: TEXTO_CAPA_ARTE_PADRAO_EDITOR3D, assinatura: TEXTO_CAPA_ARTE_PADRAO_EDITOR3D };
 
+const ASPECTO_CAPA_ARTE_EDITOR3D = 1280 / 720;
+
+// Restringe a posição do texto ao frustum da câmera-output na profundidade atual (z sempre < 0 = à frente): para o título NÃO existe cena fora da área da câmera. Movimento error/context-safe.
+export function restringeTextoNaCameraEditor3D(posicao: [number, number, number], fov: number): [number, number, number] {
+    const z = Math.min(-0.2, posicao[2]);
+    const profundidade = -z;
+    const meiaAltura = profundidade * Math.tan((fov * Math.PI) / 360);
+    const meiaLargura = meiaAltura * ASPECTO_CAPA_ARTE_EDITOR3D;
+    const x = Math.max(-meiaLargura, Math.min(meiaLargura, posicao[0]));
+    const y = Math.max(-meiaAltura, Math.min(meiaAltura, posicao[1]));
+    return [x, y, z];
+};
+
 const TIPO_MALHA_POR_PRIMITIVA: Record<TipoPrimitivaEditor3D, TipoMalhaCenaCanonicaEditor3D> = { CUBO: 'CUBO_3D', CILINDRO: 'CILINDRO_3D' };
 const PRIMITIVA_POR_TIPO_MALHA: Partial<Record<TipoMalhaCenaCanonicaEditor3D, TipoPrimitivaEditor3D>> = { CUBO_3D: 'CUBO', CILINDRO_3D: 'CILINDRO' };
 

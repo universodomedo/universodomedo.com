@@ -4,8 +4,10 @@ import styles from './styles.module.css';
 
 import { useEffect, useMemo, useState } from 'react';
 
-import { listaCapasArte3D, obtemImagemCapaArte3D } from 'Funcionalidades/ArteDeCapa/arteDeCapa.api';
-import type { Projeto3DCapaArteImagemPersistida } from 'types-nora-api';
+import { listaCapasArte3D, montaConteudoArteCapaUDM, obtemImagemCapaArte3D } from 'Funcionalidades/ArteDeCapa/arteDeCapa.api';
+import { obtemMinhaAssinatura } from 'Funcionalidades/AssinaturaArtista/assinaturaArtista.api';
+import { Renderiza__ImagemUDM__ArteCapa } from 'Uteis/RenderImagemUDM/Renderiza__ImagemUDM__ArteCapa';
+import type { AssinaturaArtistaPersistida, Projeto3DCapaArteImagemPersistida } from 'types-nora-api';
 
 type TipoCasoVisual = 'INSIGNIA' | 'ARTE_CAPA' | 'SER' | 'AVATAR_SER' | 'EMBLEMA' | 'ASSET_SITE';
 type TipoPreviewCasoVisual = 'quadrado' | 'wide' | 'vertical' | 'livre';
@@ -107,10 +109,14 @@ function criaTextoResumoCaso(casoVisual: CasoVisualTeste): string { return `${ca
 
 export default function Page() {
     const [tipoSelecionado, setTipoSelecionado] = useState<TipoCasoVisual>(obtemCasoVisualInicial().tipo);
-    const [exibeTitulo, setExibeTitulo] = useState(true);
-    const [exibeAssinatura, setExibeAssinatura] = useState(true);
     const [usaSelecionado, setUsaSelecionado] = useState(true);
     const [capaPadrao, setCapaPadrao] = useState<Projeto3DCapaArteImagemPersistida | null>(null);
+    const [assinatura, setAssinatura] = useState<AssinaturaArtistaPersistida | null>(null);
+    useEffect(() => {
+        let ativo = true;
+        obtemMinhaAssinatura().then(registro => { if (ativo) setAssinatura(registro); }).catch(() => { });
+        return () => { ativo = false; };
+    }, []);
     useEffect(() => {
         let ativo = true;
         listaCapasArte3D()
@@ -167,13 +173,6 @@ export default function Page() {
                             <button className={`${styles.botaoAlternancia} ${usaSelecionado ? styles.botaoAlternanciaAtivo : ''}`} type="button" onClick={() => setUsaSelecionado(!usaSelecionado)}>
                                 {usaSelecionado ? 'Selecionado ativo' : 'Padrão ativo'}
                             </button>
-
-                            {arteCapaSelecionada && (
-                                <>
-                                    <button className={`${styles.botaoAlternancia} ${exibeTitulo ? styles.botaoAlternanciaAtivo : ''}`} type="button" onClick={() => setExibeTitulo(!exibeTitulo)}>Título</button>
-                                    <button className={`${styles.botaoAlternancia} ${exibeAssinatura ? styles.botaoAlternanciaAtivo : ''}`} type="button" onClick={() => setExibeAssinatura(!exibeAssinatura)}>Assinatura</button>
-                                </>
-                            )}
                         </div>
                     </div>
 
@@ -184,23 +183,18 @@ export default function Page() {
                                 <strong>{arteCapaSelecionada && capaPadrao ? `${capaPadrao.nome} · ${casoSelecionado.dimensao}` : casoSelecionado.dimensao}</strong>
                             </header>
 
-                            <div className={`${styles.preview} ${classePreview}`}>
-                                {arteCapaSelecionada && capaPadrao ? (
-                                    <div className={styles.molduraCapaSalva}>
-                                        <img className={styles.imagemCapaSalva} src={`data:image/png;base64,${capaPadrao.imagemBase64}`} alt={`Arte de Capa do projeto ${capaPadrao.nome}`} />
-                                        {exibeTitulo && capaPadrao.imagemTituloBase64 && (
-                                            <img className={styles.camadaTituloCapa} src={`data:image/png;base64,${capaPadrao.imagemTituloBase64}`} alt="Camada do título da capa" />
-                                        )}
-                                    </div>
-                                ) : (
+                            {arteCapaSelecionada && capaPadrao ? (
+                                <Renderiza__ImagemUDM__ArteCapa conteudo={montaConteudoArteCapaUDM(capaPadrao, assinatura)} />
+                            ) : (
+                                <div className={`${styles.preview} ${classePreview}`}>
                                     <div className={styles.conteudoPreview}>
                                         <span>{casoSelecionado.nome}</span>
                                         <strong>Padrão</strong>
-                                        {arteCapaSelecionada && exibeTitulo && <em>Título da capa</em>}
-                                        {arteCapaSelecionada && exibeAssinatura && <small>Assinatura do autor</small>}
+                                        {arteCapaSelecionada && <em>Título da capa</em>}
+                                        {arteCapaSelecionada && <small>Assinatura do autor</small>}
                                     </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </article>
 
                         <article className={styles.cartaoPreview}>
@@ -213,8 +207,8 @@ export default function Page() {
                                 <div className={styles.conteudoPreview}>
                                     <span>{casoSelecionado.nome}</span>
                                     <strong>{usaSelecionado ? 'Selecionado' : 'Vazio'}</strong>
-                                    {arteCapaSelecionada && exibeTitulo && <em>Título customizado</em>}
-                                    {arteCapaSelecionada && exibeAssinatura && <small>Autor simulado</small>}
+                                    {arteCapaSelecionada && <em>Título customizado</em>}
+                                    {arteCapaSelecionada && <small>Autor simulado</small>}
                                 </div>
                             </div>
                         </article>

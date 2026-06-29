@@ -101,14 +101,14 @@ export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, temCa
                     </div>
                 )}
                 {temCamera && (
-                    <div className={`${styles.linha_objeto_grade} ${idSelecionado === SELECAO_TITULO_CAPA_ARTE_EDITOR3D ? styles.linha_objeto_selecionado : ''}`}>
+                    <div className={`${styles.linha_objeto_grade} ${styles.linha_titulo_camera} ${idSelecionado === SELECAO_TITULO_CAPA_ARTE_EDITOR3D ? styles.linha_objeto_selecionado : ''}`}>
                         <button type="button" className={styles.botao_conteudo_objeto} aria-pressed={idSelecionado === SELECAO_TITULO_CAPA_ARTE_EDITOR3D} onClick={() => aoSelecionar(SELECAO_TITULO_CAPA_ARTE_EDITOR3D)}>
                             <span className={styles.espaco_arvore} />
-                            <span className={styles.espaco_arvore} />
-                            <span className={styles.icone_objeto}>🅣</span>
+                            <span className={styles.icone_objeto}>T</span>
                             <span className={styles.nome_objeto}>Título</span>
                             <strong>Texto 3D</strong>
                         </button>
+                        <span className={styles.botao_visibilidade} aria-hidden="true" />
                     </div>
                 )}
                 {objetosRaiz.map(renderizaObjeto)}

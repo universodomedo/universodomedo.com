@@ -308,28 +308,7 @@
     font-size: 0.72em;
 }
 
-.molduraCapaSalva {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.imagemCapaSalva {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* Camada do título (PNG transparente) renderizada separadamente, sobreposta à base — ligável/desligável pelo toggle Título. */
-.camadaTituloCapa {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    pointer-events: none;
-}
+/* A composição da Arte de Capa (base + título + assinatura) e seus toggles foram movidos para o componente reutilizável Renderiza__ImagemUDM__ArteCapa. */
 
 .detalhesCaso {
     display: grid;
