@@ -36,7 +36,7 @@ No plano, o agente deve declarar: skills encontradas; skills selecionadas; regra
 
 Se o seletor falhar ou retornar `discovery_complete: false`, a tarefa deve ser bloqueada antes do planejamento e o impedimento deve ser reportado.
 
-Este protocolo determinístico (`.agents/skills`) espelha o da Nora-Api e complementa o roteamento de skills existente em `.codex/skills`. Toda situação recorrente de implementação (ex.: coordenadas de ponteiro sob o `ConteinerEscalavel`) deve virar uma skill aqui, para que o agente a encontre e aplique a solução sem depender de memória humana.
+Este protocolo determinístico (`.agents/skills`) espelha o da Nora-Api e é o único roteamento de skills do frontend (o antigo `.codex/skills` foi migrado para cá e retirado). Toda situação recorrente de implementação (ex.: coordenadas de ponteiro sob o `ConteinerEscalavel`) deve virar uma skill aqui, para que o agente a encontre e aplique a solução sem depender de memória humana.
 
 ## 2. Regras globais de alteração no frontend
 
@@ -166,7 +166,7 @@ Se o frontend precisar de uma estrutura que deveria vir do backend, não inventa
 
 ## 4. Skills obrigatórias por tipo de tarefa
 
-O `AGENTS.md` contém regras sempre ativas. Contextos específicos devem ser carregados por skills em `.codex/skills`.
+O `AGENTS.md` contém regras sempre ativas. Contextos específicos devem ser carregados por skills em `.agents/skills` (descobertas pelo seletor determinístico).
 
 Antes de alterar arquivos, identificar se a tarefa envolve alguma das áreas abaixo e usar a skill correspondente.
 

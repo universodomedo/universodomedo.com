@@ -1,0 +1,25 @@
+schema_version: 1
+name: "estilos-css-udm"
+description: "Use quando a tarefa envolver CSS, CSS Modules, SASS/SCSS, styles.module.css, organização de estilos, responsividade, estados visuais, hover, disabled, pseudo-elementos, sombras, cores, quebra de arquivos de estilo ou componentes visuais no frontend do Universo do Medo."
+selection:
+    requirement: "required"
+    rules:
+        - id: "arquivos-de-estilo"
+          match:
+              path_glob:
+                  - "**/*.module.css"
+                  - "**/*.module.scss"
+                  - "**/*.css"
+                  - "**/*.scss"
+                  - "**/*.sass"
+        - id: "termos-de-estilizacao"
+          match:
+              terms_any:
+                  - "css"
+                  - "scss"
+                  - "sass"
+                  - "estilizacao"
+                  - "responsividade"
+                  - "styles module"
+                  - "css module"
+                  - "media query"

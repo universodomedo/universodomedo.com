@@ -1,0 +1,19 @@
+schema_version: 1
+name: "componente-selecionador-udm"
+description: "Use quando a tarefa envolver escolher UM registro de uma entidade no frontend do Universo do Medo, Componente_Selecionador, Componente_Selecionador__Entidade, selecionador reutilizável, ListagemComposta para seleção, aoConfirmar com id, pré-seleção idInicial ou substituir select cru/lista ad-hoc/modal de escolha por um seletor padronizado."
+selection:
+    requirement: "required"
+    rules:
+        - id: "uso-do-componente-selecionador"
+          match:
+              identifier:
+                  - "Componente_Selecionador"
+        - id: "arquivos-do-componente-selecionador"
+          match:
+              path_glob:
+                  - "**/Componente_Selecionador*"
+        - id: "termos-de-selecionador"
+          match:
+              terms_any:
+                  - "selecionador"
+                  - "componente selecionador"

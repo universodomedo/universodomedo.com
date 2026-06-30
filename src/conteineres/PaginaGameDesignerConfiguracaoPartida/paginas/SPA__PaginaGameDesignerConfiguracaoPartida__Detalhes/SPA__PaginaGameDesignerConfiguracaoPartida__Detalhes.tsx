@@ -110,16 +110,7 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Detalhes() {
 
     if (carregando) return <section className={styles.detalhes}><p className={styles.dica}>Carregando detalhes da Partida…</p></section>;
 
-    if (selecionando) {
-        return (
-            <section className={styles.detalhes}>
-                <Componente_Selecionador__ArteCapa idInicial={idProjeto} aoConfirmar={selecionaCapa} />
-                <div className={styles.acoes}>
-                    <button type="button" className={styles.botao_secundario} onClick={() => setSelecionando(false)}>Cancelar</button>
-                </div>
-            </section>
-        );
-    }
+    if (selecionando) return <Componente_Selecionador__ArteCapa idInicial={idProjeto} aoConfirmar={selecionaCapa} aoCancelar={() => setSelecionando(false)} />;
 
     return (
         <section className={styles.detalhes}>

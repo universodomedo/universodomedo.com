@@ -115,6 +115,10 @@ Para formulários comuns de criação/edição, preferir o padrão existente com
 
 Não voltar a criar dezenas de `useState` manuais para campos simples de formulário.
 
+## Estrutura corpo + ações — `ConteudoForm` (OBRIGATÓRIO)
+
+Toda SPA/tela com corpo + botões de ação (edição, criação, detalhe, seleção, configuração, qualquer fluxo com ações) DEVE usar o compound **`ConteudoForm`** (`componentes/Elementos/ConteudoForm`): `<ConteudoForm.AreaCorpo>` pro corpo + `<ConteudoForm.AreaBotoes>` pros `<button>` (que o `AreaBotoes` estiliza on-brand; variante via `data-variante`; rodapé já centralizado/fixo na base). NÃO há componente `Botao`. NUNCA montar a área de ações na mão (`.acoes`/div de botões por página) nem estilizar `<button>` de ação na mão fora do `AreaBotoes`. Detalhe em `conteiner-contexto-spa-udm` e `estilos-css-udm`.
+
 ## CSS da página
 
 CSS module da SPA deve ficar próximo da SPA quando for específico dela.

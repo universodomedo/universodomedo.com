@@ -57,6 +57,33 @@
     min-width: 0;
 }
 
+/* Botão inline de salvar nome (ação de campo, modesto). Fora do ConteudoForm.AreaBotoes → estilo local da SPA. */
+.botao_salvar {
+    flex: none;
+    padding: 0.55em 1.1em;
+    border: 0.08em solid rgba(235, 224, 201, 0.3);
+    border-radius: 0.4em;
+    background: transparent;
+    color: #EBE0C9;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.8em;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover:not(:disabled),
+    &:focus-visible:not(:disabled) {
+        outline: none;
+        border-color: rgba(235, 224, 201, 0.6);
+        background: rgba(235, 224, 201, 0.08);
+    }
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
+}
+
 .campo input,
 .campo select {
     padding: 0.55em 0.75em;
@@ -71,43 +98,4 @@
     font-size: 0.85em;
     opacity: 0.7;
     line-height: 1.4;
-}
-
-.acoes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7em;
-    padding-top: 0.6em;
-}
-
-.botao_principal,
-.botao_secundario,
-.botao_perigo {
-    padding: 0.55em 1.1em;
-    border: 0.08em solid var(--cor-borda);
-    border-radius: 0.4em;
-    color: inherit;
-    cursor: pointer;
-    white-space: nowrap;
-
-    &:disabled {
-        opacity: 0.55;
-        cursor: default;
-    }
-}
-
-.botao_principal {
-    background-color: #00A8B8;
-    color: #031317;
-    border-color: #00D4E8;
-}
-
-.botao_secundario {
-    background-color: transparent;
-}
-
-.botao_perigo {
-    background-color: transparent;
-    border-color: rgba(255, 120, 120, 0.5);
-    color: #FFB0B0;
 }

@@ -17,9 +17,8 @@ export type CatalogoDeMissoesCatalogo = { readonly id: number; readonly nome: st
 
 type CatalogoDeMissoesProps = {
     readonly catalogos: readonly CatalogoDeMissoesCatalogo[];
-    readonly idMissaoSelecionada: number | null;
     readonly carregando: boolean;
-    readonly aoSelecionarMissao: (missao: CatalogoDeMissoesItem) => void;
+    readonly aoFocarMissao: (missao: CatalogoDeMissoesItem | null) => void;
 };
 
 type ItemCatalogoOrbital = {
@@ -100,7 +99,7 @@ const LIMIAR_TOQUE = 36;
 
 function mod(valor: number, divisor: number): number { return ((valor % divisor) + divisor) % divisor; };
 
-export default function CatalogoDeMissoes({ catalogos, idMissaoSelecionada, carregando, aoSelecionarMissao }: CatalogoDeMissoesProps) {
+export default function CatalogoDeMissoes({ catalogos, carregando, aoFocarMissao }: CatalogoDeMissoesProps) {
     const secaoRef = useRef<HTMLElement | null>(null);
     const inicioToqueY = useRef<number | null>(null);
     const inicializadoRef = useRef(false);
@@ -110,7 +109,6 @@ export default function CatalogoDeMissoes({ catalogos, idMissaoSelecionada, carr
     const catalogosComItens = useMemo(() => catalogos.filter(catalogo => catalogo.missoes.length > 0 || (catalogo.subgrupos?.length ?? 0) > 0), [catalogos]);
     const itensOrbitais = useMemo(() => montaItensOrbitais(catalogosComItens, idsCatalogosColapsados), [catalogosComItens, idsCatalogosColapsados]);
     const itensNavegaveis = useMemo(() => itensOrbitais.filter(itemEhNavegavel), [itensOrbitais]);
-    const missoesVisiveis = useMemo(() => itensOrbitais.filter(itemOrbitalEhMissao), [itensOrbitais]);
     const total = itensOrbitais.length;
     const itemCentral = total > 0 ? itensOrbitais[mod(vCentro, total)] : undefined;
     const layout = useMemo(() => montaLayoutOrbital(itensOrbitais, vCentro, tamanho), [itensOrbitais, vCentro, tamanho]);
@@ -147,16 +145,12 @@ export default function CatalogoDeMissoes({ catalogos, idMissaoSelecionada, carr
     }, [itemCentral, itensOrbitais, total]);
 
     useEffect(() => {
-        if (missoesVisiveis.length === 0) return;
-        if (missoesVisiveis.some(item => item.missao.id === idMissaoSelecionada)) return;
+        aoFocarMissao(itemCentral && itemCentral.tipo === 'missao' ? itemCentral.missao : null);
+    }, [itemCentral, aoFocarMissao]);
 
-        aoSelecionarMissao(missoesVisiveis[0].missao);
-    }, [missoesVisiveis, idMissaoSelecionada, aoSelecionarMissao]);
-
-    const centralizarItem = useCallback((vAbsoluto: number, item: ItemOrbital) => {
+    const centralizarItem = useCallback((vAbsoluto: number) => {
         setVCentro(vAbsoluto);
-        if (item.tipo === 'missao') aoSelecionarMissao(item.missao);
-    }, [aoSelecionarMissao]);
+    }, []);
 
     const alternarColapso = useCallback((item: ItemCatalogoOrbital) => {
         const jaColapsado = idsCatalogosColapsados.includes(item.idCatalogo);
@@ -179,7 +173,7 @@ export default function CatalogoDeMissoes({ catalogos, idMissaoSelecionada, carr
         const alvo = itensOrbitais[mod(v, total)];
         if (!itemEhNavegavel(alvo)) return;
 
-        centralizarItem(v, alvo);
+        centralizarItem(v);
     }, [vCentro, itensOrbitais, total, centralizarItem]);
 
     function onWheel(evento: WheelEvent<HTMLElement>): void {
@@ -238,10 +232,10 @@ export default function CatalogoDeMissoes({ catalogos, idMissaoSelecionada, carr
     );
 };
 
-function ItemOrbital({ item, estilo, ehCentral, colapsado, vAbsoluto, aoCentralizar, aoAlternarColapso }: { readonly item: ItemOrbital; readonly estilo: CSSProperties; readonly ehCentral: boolean; readonly colapsado: boolean; readonly vAbsoluto: number; readonly aoCentralizar: (vAbsoluto: number, item: ItemOrbital) => void; readonly aoAlternarColapso: (item: ItemCatalogoOrbital) => void; }) {
+function ItemOrbital({ item, estilo, ehCentral, colapsado, vAbsoluto, aoCentralizar, aoAlternarColapso }: { readonly item: ItemOrbital; readonly estilo: CSSProperties; readonly ehCentral: boolean; readonly colapsado: boolean; readonly vAbsoluto: number; readonly aoCentralizar: (vAbsoluto: number) => void; readonly aoAlternarColapso: (item: ItemCatalogoOrbital) => void; }) {
     if (item.tipo === 'catalogo') {
         return (
-            <DivClicavel className={`${styles.item_orbital} ${styles.item_catalogo} ${ehCentral ? styles.item_catalogo_central : ''}`} style={estilo} onClick={() => aoCentralizar(vAbsoluto, item)} role="button" title="Navegar até o Catálogo">
+            <DivClicavel className={`${styles.item_orbital} ${styles.item_catalogo} ${ehCentral ? styles.item_catalogo_central : ''}`} style={estilo} onClick={() => aoCentralizar(vAbsoluto)} role="button" title="Navegar até o Catálogo">
                 <strong>{item.catalogo.nome}</strong>
                 <button type="button" className={styles.item_catalogo_toggle} onClick={evento => { evento.stopPropagation(); aoAlternarColapso(item); }} aria-expanded={!colapsado} title={colapsado ? 'Expandir Catálogo' : 'Retrair Catálogo'}>
                     <svg viewBox="0 0 12 12" className={`${styles.item_catalogo_chevron} ${colapsado ? styles.item_catalogo_chevron_colapsado : ''}`} aria-hidden="true">
@@ -272,10 +266,10 @@ function ItemOrbital({ item, estilo, ehCentral, colapsado, vAbsoluto, aoCentrali
     return <ItemMissaoNoOrbital item={item} estilo={estilo} ehCentral={ehCentral} vAbsoluto={vAbsoluto} aoCentralizar={aoCentralizar} />;
 };
 
-function ItemMissaoNoOrbital({ item, estilo, ehCentral, vAbsoluto, aoCentralizar }: { readonly item: ItemMissaoOrbital; readonly estilo: CSSProperties; readonly ehCentral: boolean; readonly vAbsoluto: number; readonly aoCentralizar: (vAbsoluto: number, item: ItemOrbital) => void; }) {
+function ItemMissaoNoOrbital({ item, estilo, ehCentral, vAbsoluto, aoCentralizar }: { readonly item: ItemMissaoOrbital; readonly estilo: CSSProperties; readonly ehCentral: boolean; readonly vAbsoluto: number; readonly aoCentralizar: (vAbsoluto: number) => void; }) {
     const imagem = useImagemCapaArte(item.missao.arteCapa?.idProjeto ?? null);
 
-    return <ItemPartidaOrbital className={styles.item_missao_orbital} style={estilo} nome={item.missao.nome} imagemBase64={imagem} encaixe={item.missao.arteCapa?.encaixe ?? null} selecionado={ehCentral} onClick={() => aoCentralizar(vAbsoluto, item)} />;
+    return <ItemPartidaOrbital className={styles.item_missao_orbital} style={estilo} nome={item.missao.nome} imagemBase64={imagem} encaixe={item.missao.arteCapa?.encaixe ?? null} selecionado={ehCentral} onClick={() => aoCentralizar(vAbsoluto)} />;
 };
 
 function montaItensOrbitais(catalogos: readonly CatalogoDeMissoesCatalogo[], idsCatalogosColapsados: readonly number[]): readonly ItemOrbital[] {

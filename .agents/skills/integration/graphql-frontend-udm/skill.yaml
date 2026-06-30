@@ -1,0 +1,34 @@
+schema_version: 1
+name: "graphql-frontend-udm"
+description: "Use quando a tarefa envolver GraphQL no frontend do Universo do Medo, useNoraGraphQLListagem, GraphqlTypes, GraphqlLeituras, EventosApiGraphql, EventosApiGraphqlV2, select tipado, filtros, whereFixo, paginação, total de registros ou consumo de leituras GraphQL vindas da Nora-Api."
+selection:
+    requirement: "required"
+    rules:
+        - id: "uso-do-hook-e-tipos-graphql-frontend"
+          match:
+              identifier:
+                  - "useNoraGraphQLListagem"
+                  - "useNoraGraphQLConsulta"
+                  - "GraphqlLeituras"
+                  - "EventosApiGraphql"
+                  - "camposFiltroConsulta"
+                  - "camposFiltroVisualizacao"
+                  - "whereFixo"
+        - id: "arquivos-de-listagem-e-graphql-frontend"
+          match:
+              path_glob:
+                  - "**/use*GraphQL*"
+                  - "**/*Listagem*"
+        - id: "termos-graphql-listagem-frontend"
+          match:
+              all:
+                  - terms_any:
+                      - "graphql"
+                      - "listagem"
+                  - terms_any:
+                      - "filtro"
+                      - "filtros"
+                      - "paginacao"
+                      - "select tipado"
+                      - "wherefixo"
+                      - "total de registros"

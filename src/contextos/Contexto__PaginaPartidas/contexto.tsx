@@ -16,7 +16,7 @@ export interface Contexto__PaginaPartidas__Props {
     carregando: boolean;
     jogando: boolean;
     erro: string | null;
-    selecionarPartida: (idPartida: number) => void;
+    selecionarPartida: (idPartida: number | null) => void;
     jogarPartidaSelecionada: () => void;
 };
 
@@ -60,18 +60,8 @@ export const Contexto__PaginaPartidas__Provider = ({ children }: { readonly chil
     }, []);
 
     const catalogosDisponiveis = useMemo<readonly CatalogoDeMissoesCatalogo[]>(() => montaCatalogos(estrutura, painel), [estrutura, painel]);
-    const idsDisponiveis = useMemo<readonly number[]>(() => catalogosDisponiveis.flatMap(catalogo => [...catalogo.missoes.map(item => item.id), ...(catalogo.subgrupos ?? []).flatMap(subgrupo => subgrupo.itens.map(item => item.id))]), [catalogosDisponiveis]);
 
-    useEffect(() => {
-        if (idsDisponiveis.length === 0) {
-            if (idPartidaSelecionada !== null) setIdPartidaSelecionada(null);
-            return;
-        }
-
-        if (!idsDisponiveis.includes(idPartidaSelecionada ?? 0)) setIdPartidaSelecionada(idsDisponiveis[0]);
-    }, [idsDisponiveis, idPartidaSelecionada]);
-
-    const selecionarPartida = useCallback((idPartida: number) => setIdPartidaSelecionada(idPartida), []);
+    const selecionarPartida = useCallback((idPartida: number | null) => setIdPartidaSelecionada(idPartida), []);
 
     const partidaSelecionada = useMemo<PartidaResumo | null>(() => obtemPartidaPorId(estrutura, idPartidaSelecionada), [estrutura, idPartidaSelecionada]);
     const podeJogarPartidaSelecionada = partidaSelecionada?.partidaConfigurada === true;

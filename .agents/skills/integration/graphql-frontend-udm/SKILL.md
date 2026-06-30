@@ -120,10 +120,15 @@ Ao trocar REST/listagem antiga por GraphQL, preservar loading, mensagem de erro,
 
 Mudança de fonte de dados não autoriza redesign nem mudança funcional acidental.
 
+## Usabilidade da listagem (critério de aceite)
+
+Uma listagem só está pronta se o usuário consegue ENCONTRAR um registro entre muitos. Listagem sem filtro nenhum (nem por NOME) não é aceitável — "como acho 1 registro entre milhares?". O `useNoraGraphQLListagem` já entrega os filtros do contrato: `camposFiltroConsulta` (Busca server-side, refaz a consulta) e `camposFiltroVisualizacao` (Refino local). Usar o que a entidade expõe — no mínimo nome. Se a entidade não tem filtro útil no contrato, reportar pra expor na leitura GraphQL (Nora-Api), não entregar a listagem sem busca.
+
 ## Bloqueios
 
 É bloqueado:
 
+- entregar listagem sem nenhum filtro de busca/refino (nem por nome) quando faz sentido procurar registro;
 - montar contrato GraphQL paralelo no frontend;
 - criar DTO local de resposta GraphQL;
 - usar campo não exposto pelo contrato;

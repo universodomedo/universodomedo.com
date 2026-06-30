@@ -166,10 +166,30 @@ Não duplicar breakpoint sem necessidade.
 
 Não alterar responsividade existente sem entender impacto visual.
 
+## Identidade visual (não inventar por página)
+
+O UDM tem UMA identidade visual (gótico-horror), e ela é a fonte — extraída de `globals.css` e dos módulos: ouro velho `#B79051` (cor de marca: títulos de jogo, seleção, ação primária), pergaminho `#EBE0C9` (nomes/headings), fundo quase-preto, toques paranormais em roxo/magenta.
+
+Regra: NÃO criar uma identidade visual nova a cada página/componente. Reaproveitar a paleta + os padrões já existentes. NÃO inventar cor fora da paleta de marca (ex.: teal `#00A8B8` NÃO é da marca).
+
+### Padrão de botão — `<button>` dentro de `ConteudoForm.AreaBotoes`
+NÃO há componente `Botao` (removido — era indireção inútil). O botão de ação on-brand vem do **rodapé `ConteudoForm.AreaBotoes`** (`componentes/Elementos/ConteudoForm`), que estiliza os `<button>` que recebe: ponha um `<button>` direto dentro do `<ConteudoForm.AreaBotoes>` e ele já fica on-brand. Variante via atributo `data-variante`:
+
+- (sem atributo) — primário: ouro velho `#B79051` (ação principal / confirmar);
+- `data-variante="secundario"` — contorno pergaminho `#EBE0C9` (cancelar / ação leve);
+- `data-variante="perigo"` — contorno vermelho de aviso `#DB4747` (destrutiva, ex.: deletar).
+
+Todos CAIXA-ALTA + `letter-spacing`, `min-height ~3em`. NÃO estilizar `<button>` de ação na mão por página — pôr dentro do `AreaBotoes`. Variante nova → adicionar no CSS do `AreaBotoes`. (Botão inline raro fora do rodapé — ex.: salvar de campo — pode ter estilo modesto local da SPA.)
+
+### Estrutura corpo + ações — usar `ConteudoForm`
+TODA página/fluxo com corpo + botões usa o compound **`ConteudoForm`** (`componentes/Elementos/ConteudoForm`): `<ConteudoForm><ConteudoForm.AreaCorpo>…corpo…</ConteudoForm.AreaCorpo><ConteudoForm.AreaBotoes><button …>…</button></ConteudoForm.AreaBotoes></ConteudoForm>`. O `AreaCorpo` preenche; o `AreaBotoes` já é o rodapé padronizado (centralizado, fixo na base, separador) que ESTILIZA os `<button>` que recebe (variante via `data-variante`). NÃO reimplementar `.acoes`/rodapé de botões na mão por página.
+
 ## Bloqueios
 
 É bloqueado:
 
+- criar identidade visual nova por página/componente em vez de reusar a paleta de marca, ou usar cor fora dela (ex.: teal `#00A8B8`);
+- estilizar `<button>` de ação na mão por página em vez de pôr dentro do `ConteudoForm.AreaBotoes` (que já estiliza);
 - usar `px`;
 - criar CSS global sem necessidade real;
 - criar CSS module único para dezenas de componentes;

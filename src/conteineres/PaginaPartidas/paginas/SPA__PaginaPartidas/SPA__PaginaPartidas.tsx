@@ -1,12 +1,17 @@
 import styles from './styles.module.css';
 
-import CatalogoDeMissoes from 'Componentes/ElementosDeJogo/CatalogoDeMissoes/CatalogoDeMissoes';
+import { useCallback } from 'react';
+
+import CatalogoDeMissoes, { type CatalogoDeMissoesItem } from 'Componentes/ElementosDeJogo/CatalogoDeMissoes/CatalogoDeMissoes';
 import { FundoArteCapaPartida } from 'Conteineres/PaginaPartidas/paginas/SPA__PaginaPartidas/FundoArteCapaPartida';
 import { MusicaFundoPartida } from 'Conteineres/PaginaPartidas/paginas/SPA__PaginaPartidas/MusicaFundoPartida';
+import { DetalhePartida } from 'Conteineres/PaginaPartidas/paginas/SPA__PaginaPartidas/DetalhePartida';
 import type { Contexto__PaginaPartidas__Props } from 'Contextos/Contexto__PaginaPartidas/contexto';
 
-export default function SPA__PaginaPartidas({ catalogosDisponiveis, idPartidaSelecionada, partidaSelecionada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }: Contexto__PaginaPartidas__Props) {
+export default function SPA__PaginaPartidas({ catalogosDisponiveis, partidaSelecionada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }: Contexto__PaginaPartidas__Props) {
     const textoBotaoJogar = resolveTextoBotaoJogar(carregando, jogando, partidaSelecionada, podeJogarPartidaSelecionada);
+    const botaoDesabilitado = !podeJogarPartidaSelecionada || jogando || carregando;
+    const aoFocarMissao = useCallback((missao: CatalogoDeMissoesItem | null) => selecionarPartida(missao ? missao.id : null), [selecionarPartida]);
 
     return (
         <div className={styles.pagina_partidas}>
@@ -14,11 +19,9 @@ export default function SPA__PaginaPartidas({ catalogosDisponiveis, idPartidaSel
             <MusicaFundoPartida idMusicaConfigurada={partidaSelecionada?.idMusicaConfigurada ?? null} nomePartida={partidaSelecionada?.nome ?? null} />
             {erro && <div className={styles.erro}>{erro}</div>}
             <section className={styles.secao_detalhamento}>
-                <button type="button" className={styles.botao_jogar} disabled={!podeJogarPartidaSelecionada || jogando || carregando} onClick={jogarPartidaSelecionada}>
-                    {textoBotaoJogar}
-                </button>
+                {partidaSelecionada && <DetalhePartida partida={partidaSelecionada} textoBotaoJogar={textoBotaoJogar} desabilitado={botaoDesabilitado} aoJogar={jogarPartidaSelecionada} />}
             </section>
-            <section className={styles.secao_catalogo}><CatalogoDeMissoes catalogos={catalogosDisponiveis} idMissaoSelecionada={idPartidaSelecionada} carregando={carregando} aoSelecionarMissao={partida => selecionarPartida(partida.id)} /></section>
+            <section className={styles.secao_catalogo}><CatalogoDeMissoes catalogos={catalogosDisponiveis} carregando={carregando} aoFocarMissao={aoFocarMissao} /></section>
         </div>
     );
 };

@@ -149,6 +149,21 @@ Para formulários comuns, preferir `useFormularioCreate` quando aplicável.
 
 Não voltar para dezenas de `useState` manuais em formulário comum.
 
+## Estrutura corpo + ações — `ConteudoForm` (OBRIGATÓRIO)
+
+TODA SPA/tela com **corpo + botões de ação** (edição, criação, detalhe, seleção, configuração, ou qualquer fluxo com ações) DEVE usar o compound **`ConteudoForm`** (`componentes/Elementos/ConteudoForm`):
+
+```tsx
+<ConteudoForm>
+    <ConteudoForm.AreaCorpo>…campos/listagem/conteúdo…</ConteudoForm.AreaCorpo>
+    <ConteudoForm.AreaBotoes><button …>…</button></ConteudoForm.AreaBotoes>
+</ConteudoForm>
+```
+
+- `AreaCorpo` preenche o espaço; `AreaBotoes` já é o rodapé padronizado (centralizado, fixo na base, separador).
+- Os botões são `<button>` direto dentro do `AreaBotoes` (ele estiliza on-brand; variante via `data-variante="secundario"|"perigo"`, default = primário ouro). NÃO há componente `Botao`; NÃO estilizar botão de ação na mão por página. Ver `estilos-css-udm`.
+- É BLOQUEADO montar a área de ações na mão (`.acoes`/`<div>` de botões com CSS próprio por página) ou estilizar botão direto. Reimplementar o rodapé por página é exatamente o anti-padrão que o `ConteudoForm` elimina.
+
 ## Nomenclatura
 
 A nomenclatura com `__` é obrigatória no padrão UDM.

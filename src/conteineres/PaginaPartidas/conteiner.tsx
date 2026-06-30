@@ -17,8 +17,6 @@ const Conteiner__PaginaPartidas__Interno = criaConteiner<PropsConteiner__PaginaP
 
 type PropsConteiner__PaginaPartidas = Contexto__PaginaPartidas__Props;
 
-function resolveSaida(props: PropsConteiner__PaginaPartidas): SaidaConteiner {
-    return criaSaidaConteiner(SPA__PaginaPartidas, props);
-};
+function resolveSaida(props: PropsConteiner__PaginaPartidas): SaidaConteiner { return criaSaidaConteiner(SPA__PaginaPartidas, props); };
 
 function useEstado(): PropsConteiner__PaginaPartidas { return useContexto__PaginaPartidas(); };

@@ -1,0 +1,28 @@
+schema_version: 1
+name: "conteiner-contexto-spa-udm"
+description: "Use quando a tarefa envolver Conteiner, criaConteiner, resolveSaida, useEstado, Contexto de Controle de Fluxo, Contexto de SPA/Subfluxo, SPA de renderização, separação entre lógica e renderização, componente final por props ou arquitetura de fluxo de páginas no frontend do Universo do Medo."
+selection:
+    requirement: "required"
+    rules:
+        - id: "uso-de-conteiner-fluxo"
+          match:
+              identifier:
+                  - "criaConteiner"
+                  - "resolveSaida"
+                  - "useEstado"
+                  - "criaSaidaConteiner"
+                  - "SaidaConteiner"
+        - id: "arquivos-de-conteiner-contexto-spa"
+          match:
+              path_glob:
+                  - "**/Conteiner*"
+                  - "**/Contexto__*"
+                  - "**/SPA__*"
+        - id: "termos-de-controle-de-fluxo"
+          match:
+              terms_any:
+                  - "conteiner"
+                  - "contexto"
+                  - "spa"
+                  - "subfluxo"
+                  - "controle de fluxo"

@@ -1,0 +1,25 @@
+schema_version: 1
+name: "paginas-udm-frontend"
+description: "Use quando a tarefa envolver criação ou alteração de páginas, rotas Next, page.tsx, componentes.tsx, ControladorSlot, PAGINAS, MENUS, layout contextualizado, Conteiner, Contexto de Controle de Fluxo, Contexto de SPA ou SPA de renderização no frontend do Universo do Medo."
+selection:
+    requirement: "required"
+    rules:
+        - id: "uso-de-controlador-e-paginas"
+          match:
+              identifier:
+                  - "ControladorSlot"
+                  - "PAGINAS"
+                  - "MENUS"
+        - id: "arquivos-de-pagina-frontend"
+          match:
+              path_glob:
+                  - "**/page.tsx"
+                  - "**/componentes.tsx"
+                  - "**/paginas.const*"
+        - id: "termos-de-pagina"
+          match:
+              terms_any:
+                  - "page tsx"
+                  - "rota"
+                  - "menu"
+                  - "pagina"

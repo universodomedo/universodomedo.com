@@ -1,0 +1,26 @@
+schema_version: 1
+name: "websocket-frontend-udm"
+description: "Use quando a tarefa envolver WebSocket no frontend do Universo do Medo, hook WebSocket, eventos em tempo real, sala de jogo, chat, voz, Eventos_Envia, Eventos_Emite, Eventos_EnviaERecebe, WsResult, erro WS, payload/response de eventos ou integração com contratos WebSocket vindos da Nora-Api."
+selection:
+    requirement: "required"
+    rules:
+        - id: "uso-de-eventos-websocket-frontend"
+          match:
+              identifier:
+                  - "Eventos_Envia"
+                  - "Eventos_Emite"
+                  - "Eventos_EnviaERecebe"
+                  - "WsResult"
+                  - "WsErrorResponse"
+                  - "isWsErrorResponse"
+        - id: "arquivos-de-websocket-frontend"
+          match:
+              path_glob:
+                  - "**/*WebSocket*"
+                  - "**/*Websocket*"
+        - id: "termos-de-websocket-frontend"
+          match:
+              terms_any:
+                  - "websocket"
+                  - "tempo real"
+                  - "socket"

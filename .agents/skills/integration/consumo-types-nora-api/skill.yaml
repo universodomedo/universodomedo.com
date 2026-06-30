@@ -1,0 +1,29 @@
+schema_version: 1
+name: "consumo-types-nora-api"
+description: "Use quando a tarefa envolver types-nora-api, contratos vindos da Nora-Api, DTOs, enums, constantes compartilhadas, helpers compartilháveis, PAGINAS, MENUS, acessos, GraphQL, REST, WebSocket ou qualquer estrutura pública consumida pelo frontend do Universo do Medo."
+selection:
+    requirement: "required"
+    rules:
+        - id: "uso-de-contratos-types-nora-api"
+          match:
+              identifier:
+                  - "types-nora-api"
+                  - "EventosApiGraphql"
+                  - "EventosApiGraphqlV2"
+                  - "GraphqlLeituras"
+                  - "GraphqlTypes"
+        - id: "termos-de-contrato-nora-api"
+          match:
+              all:
+                  - terms_any:
+                      - "contrato"
+                      - "contratos"
+                      - "dto"
+                      - "enum"
+                      - "codegen"
+                  - terms_any:
+                      - "nora api"
+                      - "types nora"
+                      - "frontend"
+                      - "compartilhado"
+                      - "compartilhada"

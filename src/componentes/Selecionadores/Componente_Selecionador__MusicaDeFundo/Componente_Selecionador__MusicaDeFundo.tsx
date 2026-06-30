@@ -53,8 +53,6 @@ export function Componente_Selecionador__MusicaDeFundo({ aoConfirmar, idInicial 
             )}
             aoConfirmar={musica => aoConfirmar(musica.id, musica.nome)}
             idInicial={idInicial}
-            titulo="Escolher Música de Fundo"
-            subtitulo="Selecione uma música e confirme. Clique ▶ para ouvir."
             textoConfirmar="Usar esta música"
         />
     );
