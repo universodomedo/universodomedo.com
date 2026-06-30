@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 
-import { obtemNavegacaoDoBanco, criaMenuNo, editaMenuNo, importarNavegacaoDoConst, type MenuDoBancoDto, type MenuNoDoBancoDto } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { obtemNavegacaoDoBanco, criaMenuNo, editaMenuNo, type MenuDoBancoDto, type MenuNoDoBancoDto } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 export default function GerenciadorNavegacao() {
     const [navegacao, setNavegacao] = useState<MenuDoBancoDto[] | null>(null);
@@ -17,37 +17,10 @@ export default function GerenciadorNavegacao() {
     return (
         <div>
             <h3>Navegação (montada do banco)</h3>
-            <BotaoImportar aoImportar={recarregar} />
             {erro && <div>Erro ao montar a navegação do banco: {erro}</div>}
             {navegacao === null && !erro && <div>Montando navegação a partir do banco…</div>}
             {navegacao !== null && navegacao.length < 1 && <div>Nenhum menu no banco ainda.</div>}
             {navegacao !== null && navegacao.map(menu => <MenuDoBanco key={menu.id} menu={menu} aoMudar={recarregar} />)}
-        </div>
-    );
-};
-
-function BotaoImportar({ aoImportar }: { aoImportar: () => void }) {
-    const [importando, setImportando] = useState(false);
-    const [resultado, setResultado] = useState<string | null>(null);
-
-    async function importar() {
-        setImportando(true);
-        setResultado(null);
-        try {
-            const r = await importarNavegacaoDoConst();
-            setResultado(`Importado: ${r.menus} menus, ${r.nos} itens, ${r.layout} mapeamentos de layout.`);
-            aoImportar();
-        } catch (capturado) {
-            setResultado(capturado instanceof Error ? capturado.message : 'Erro ao importar do código.');
-        } finally {
-            setImportando(false);
-        }
-    };
-
-    return (
-        <div>
-            <button type="button" onClick={importar} disabled={importando}>{importando ? 'Importando...' : 'Importar do código (substitui)'}</button>
-            {resultado && <small> {resultado}</small>}
         </div>
     );
 };

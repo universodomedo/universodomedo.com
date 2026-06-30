@@ -361,10 +361,6 @@ export async function editaMenuNo(id: number, payload: { titulo?: string; ordem?
     return await useApi<boolean>({ uri: `/menus/editaMenuNo/${id}`, method: 'PUT', data: payload });
 }
 
-export async function importarNavegacaoDoConst(): Promise<{ menus: number; nos: number; layout: number }> {
-    return await useApi<{ menus: number; nos: number; layout: number }>({ uri: '/menus/importarDoConst', method: 'POST' });
-}
-
 export async function PROTOTIPO_LUIZ__recupera_capa_perfil_usuario(): Promise<CaminhoArquivoArte> {
     return await useApi<CaminhoArquivoArte>({ uri: '/arquivos_tipados_arte/PROTOTIPO_LUIZ__recupera_capa_perfil_usuario', method: 'GET' });
 }
