@@ -9,7 +9,9 @@ type QueryRecord = Record<string, QueryValue>;
 
 type PaginaSemParamsObrigatorios = PaginaFolha extends infer P ? P extends PaginaFolha ? (P['hrefTemplate'] extends `${string}[${string}` ? never : P) : never : never;
 
-export type DestinoInput = (PaginaDestino | PaginaSemParamsObrigatorios) & { query?: QueryRecord };
+export type DestinoTemplate = { paginaTemplate: string; params?: ParamsRecord; query?: QueryRecord };
+
+export type DestinoInput = ((PaginaDestino | PaginaSemParamsObrigatorios) & { query?: QueryRecord }) | DestinoTemplate;
 
 export function normalizePath(p: string) {
     if (!p) return '/';
@@ -52,6 +54,11 @@ function isPaginaDestino(destino: DestinoInput): destino is PaginaDestino & { qu
 function normalizarDestino(destino: DestinoInput): (PaginaDestino & { query?: QueryRecord }) { return isPaginaDestino(destino) ? destino : ({ pagina: destino } as PaginaDestino); };
 
 export function resolverHref(destino: DestinoInput) {
+    if ('paginaTemplate' in destino) {
+        const params = destino.params ? toParamsRecord(destino.params) : {};
+        return `${montarHref(destino.paginaTemplate, params)}${buildQueryString(destino.query)}`;
+    }
+
     const destinoNormalizado = normalizarDestino(destino);
     const paramsObj = ('params' in destinoNormalizado && destinoNormalizado.params) ? toParamsRecord(destinoNormalizado.params) : {};
     const base = montarHref(destinoNormalizado.pagina.hrefTemplate, paramsObj);

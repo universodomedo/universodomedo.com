@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { castDraft } from 'immer';
-import type { LayoutContextualizadoInicial, MenuLayoutLeaf, MenuNode } from 'types-nora-api';
+import type { LayoutContextualizadoInicial, MenuLeafRuntime, MenuNode } from 'types-nora-api';
 import type { LayoutContextualizadoFecharProps } from 'Componentes/Elementos/FerramentaRetornoPagina/FerramentaRetornoPagina';
 
 export type LayoutContextualizadoModo = 'patch' | 'update';
@@ -25,8 +25,6 @@ export interface LayoutContextualizadoState {
 const initialState: LayoutContextualizadoState = { titulo: null, subtitulo: null, escondeFundo: null, proporcaoConteudo: null, fecharProps: null, esconderMenu: null, menuTipo: 'vazio', menuItens: [] };
 
 function clampPercent(valor: number) { return Math.max(0, Math.min(100, valor)); }
-
-function isArrayMenuLeaf(leaf: MenuLayoutLeaf): leaf is readonly MenuNode[] { return Array.isArray(leaf); }
 
 const layoutContextualizadoSlice = createSlice({
     name: 'layoutContextualizado',
@@ -54,12 +52,12 @@ const layoutContextualizadoSlice = createSlice({
             state.esconderMenu = update.esconderMenu ?? null;
         },
 
-        setMenuLeaf: (state, action: PayloadAction<MenuLayoutLeaf>) => {
+        setMenuLeaf: (state, action: PayloadAction<MenuLeafRuntime>) => {
             const leaf = action.payload;
 
-            if (isArrayMenuLeaf(leaf)) {
+            if (leaf.tipo === 'menu') {
                 state.menuTipo = 'static';
-                state.menuItens = castDraft(leaf.slice());
+                state.menuItens = [];
                 return;
             }
 

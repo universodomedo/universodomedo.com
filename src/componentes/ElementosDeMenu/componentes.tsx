@@ -3,20 +3,24 @@
 import styles from './styles.module.css';
 
 import React, { JSX, useMemo } from 'react';
-import { type MenuNode, filtrarMenuPorAcesso } from 'types-nora-api';
+import { type MenuNodeRuntime, filtrarMenuRuntime } from 'types-nora-api';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import { useContextoNavegacaoRuntime } from 'Contextos/ContextoNavegacaoRuntime/contexto';
 import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 
-export default function MenuInterno({ itens }: { itens: readonly MenuNode[] }) {
+const OPTS_ACESSO = { redirectNaoAutenticado: '/acessar', redirectSemCapacidade: '/' };
+
+export default function MenuInterno({ itens }: { itens: readonly MenuNodeRuntime[] }) {
     const { estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
-    const itensFiltrados = useMemo(() => filtrarMenuPorAcesso(itens, { estaAutenticado, verificarCapacidade, cadastroPermitido }), [itens, estaAutenticado, verificarCapacidade]);
-    
-    function RenderNode(node: MenuNode, key: string, depth: number): JSX.Element | null {
+    const { indice } = useContextoNavegacaoRuntime();
+    const itensFiltrados = useMemo(() => indice ? filtrarMenuRuntime(itens, indice, { estaAutenticado, verificarCapacidade, cadastroPermitido }, OPTS_ACESSO) : [], [itens, indice, estaAutenticado, verificarCapacidade, cadastroPermitido]);
+
+    function RenderNode(node: MenuNodeRuntime, key: string, depth: number): JSX.Element | null {
         if (node.tipo === 'item') {
             return (
                 <div key={key} className={styles.recipiente_item_lista_acoes}>
-                    <LinkInterno destino={node.destino}><h2>{node.titulo}</h2></LinkInterno>
+                    <LinkInterno destino={{ paginaTemplate: node.paginaTemplate, params: node.params ?? undefined }}><h2>{node.titulo}</h2></LinkInterno>
                 </div>
             );
         }

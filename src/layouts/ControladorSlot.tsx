@@ -1,15 +1,16 @@
 'use client';
 
 import React, { useEffect, useMemo } from 'react';
-import { decidirAcessoPagina, PAGINAS, resolverMenuInterno, obterMenuInternoLayoutContexto, type PaginaFolha, type LayoutContextualizadoInicial, type MenuLayoutLeaf, type MenuNode } from 'types-nora-api';
+import { decidirAcessoRuntime, type PaginaFolha, type MenuLeafRuntime } from 'types-nora-api';
 
 import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho/Cabecalho';
-import RedirecionadorInterno from 'Componentes/Elementos/RedirecionadorInterno/RedirecionadorInterno';
+import RedirecionadorHref from 'Componentes/Elementos/RedirecionadorHref/RedirecionadorHref';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import { useContextoNavegacaoRuntime } from 'Contextos/ContextoNavegacaoRuntime/contexto';
 import { useContextoMenuSwiperEsquerda } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
 import { useAtualizarPaginaAtualWs } from 'Hooks/useAtualizarPaginaAtualWs';
 
@@ -22,24 +23,18 @@ import { MenuLayoutDinamicoProvider, useMenuLayoutDinamicoValor } from './MenuLa
 
 export type EmbrulhoSlot = React.ComponentType<{ children: React.ReactNode }>;
 
-type PaginaComLayout = PaginaFolha & { readonly layoutContextualizadoInicial: LayoutContextualizadoInicial };
+const OPTS_ACESSO = { redirectNaoAutenticado: '/acessar', redirectSemCapacidade: '/' };
 
-function isPaginaComLayout(pagina: PaginaFolha): pagina is PaginaComLayout { return Object.prototype.hasOwnProperty.call(pagina, 'layoutContextualizadoInicial'); };
-
-function isLeafArray(leaf: MenuLayoutLeaf): leaf is readonly MenuNode[] { return Array.isArray(leaf); };
-
-function resolverMenuLeaf(pagina: PaginaFolha): MenuLayoutLeaf { return obterMenuInternoLayoutContexto(pagina) ?? { tipo: 'vazio' }; };
-
-function temMenuParaRenderizar(leaf: MenuLayoutLeaf): boolean {
-    if (isLeafArray(leaf)) return leaf.length > 0;
+function temMenuParaRenderizar(leaf: MenuLeafRuntime): boolean {
+    if (leaf.tipo === 'menu') return leaf.nodes.length > 0;
     return leaf.tipo !== 'vazio';
 }
 
-function MenuArea({ leaf }: { leaf: MenuLayoutLeaf }) {
+function MenuArea({ leaf }: { leaf: MenuLeafRuntime }) {
     const menuTipo = useAppSelector(selectMenuLayoutTipo);
     const menuDinamico = useMenuLayoutDinamicoValor();
 
-    if (isLeafArray(leaf)) return <MenuInterno itens={leaf} />;
+    if (leaf.tipo === 'menu') return <MenuInterno itens={leaf.nodes} />;
     if (leaf.tipo === 'vazio') return null;
 
     if (menuTipo !== 'dinamico') return null;
@@ -50,12 +45,15 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
     const dispatch = useAppDispatch();
     const definirMusicaPagina = useDefinirMusicaPagina();
     const { carregando, estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
+    const { indice } = useContextoNavegacaoRuntime();
     const { setTamanhoReduzido } = useContextoMenuSwiperEsquerda();
     const esconderMenu = useAppSelector(selectLayoutEsconderMenu);
 
-    const comCabecalho = pagina.comCabecalho === true;
-    const temLayout = isPaginaComLayout(pagina);
-    const menuLeaf = useMemo(() => resolverMenuLeaf(pagina), [pagina]);
+    const pagConfig = indice ? indice.paginaPorTemplate.get(pagina.template) ?? null : null;
+    const comCabecalho = pagConfig?.comCabecalho === true;
+    const layout = pagConfig?.layout ?? null;
+    const temLayout = layout !== null;
+    const menuLeaf = useMemo<MenuLeafRuntime>(() => (indice ? indice.leafPorTemplate.get(pagina.template) : undefined) ?? { tipo: 'vazio' }, [indice, pagina.template]);
     const menuConfigurado = useMemo(() => temMenuParaRenderizar(menuLeaf), [menuLeaf]);
     const temMenu = menuConfigurado && esconderMenu !== true;
 
@@ -66,27 +64,27 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
     useAtualizarPaginaAtualWs(pagina.template);
 
     const decisao = useMemo(() => {
-        return decidirAcessoPagina(
-            pagina,
-            { estaAutenticado, verificarCapacidade, cadastroPermitido },
-            { resolverMenuInterno, redirectNaoAutenticado: PAGINAS.acessar, redirectSemCapacidade: PAGINAS.home }
-        );
-    }, [pagina, estaAutenticado, verificarCapacidade, cadastroPermitido]);
+        if (indice === null) return null;
+        return decidirAcessoRuntime(pagina.template, indice, { estaAutenticado, verificarCapacidade, cadastroPermitido }, OPTS_ACESSO);
+    }, [indice, pagina.template, estaAutenticado, verificarCapacidade, cadastroPermitido]);
+
+    const permitido = decisao !== null && decisao.permitido;
 
     useEffect(() => {
-        if (!temLayout) return;
-        if (!decisao.permitido) return;
-        dispatch(updateLayoutContextualizado(pagina.layoutContextualizadoInicial));
+        if (!temLayout || layout === null) return;
+        if (!permitido) return;
+        dispatch(updateLayoutContextualizado(layout));
         dispatch(setMenuLeaf(menuLeaf));
-    }, [dispatch, temLayout, decisao.permitido, pagina, menuLeaf]);
+    }, [dispatch, temLayout, layout, permitido, menuLeaf]);
 
     useEffect(() => {
-        if (!decisao.permitido) return;
-        definirMusicaPagina(pagina.idMusicaPagina ?? null, pagina.idMusicaPagina != null ? pagina.label : null);
-    }, [definirMusicaPagina, decisao.permitido, pagina]);
+        if (!permitido) return;
+        const idMusica = pagConfig?.idMusicaPagina ?? null;
+        definirMusicaPagina(idMusica, idMusica !== null ? (pagConfig?.label ?? null) : null);
+    }, [definirMusicaPagina, permitido, pagConfig]);
 
-    if (carregando) return (<h1>carregando....</h1>);
-    if (!decisao.permitido) return (<RedirecionadorInterno pagina={decisao.redirecionarPara} />);
+    if (carregando || indice === null || decisao === null) return (<h1>carregando....</h1>);
+    if (!decisao.permitido) return (<RedirecionadorHref href={decisao.redirecionarPara} />);
 
     const corpoSemLayout = (
         <>
@@ -100,7 +98,7 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
         return <Embrulho>{corpoSemLayout}</Embrulho>;
     }
 
-    const layout = (
+    const layoutEl = (
         <LayoutContextualizado>
             <LayoutContextualizado.Conteudo forcarLarguraTotal={!temMenu}>
                 {children}
@@ -120,10 +118,10 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
             <MenuLayoutDinamicoProvider>
                 {Embrulho ? (
                     <Embrulho>
-                        {layout}
+                        {layoutEl}
                     </Embrulho>
                 ) : (
-                    layout
+                    layoutEl
                 )}
             </MenuLayoutDinamicoProvider>
         </>

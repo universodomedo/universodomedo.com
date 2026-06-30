@@ -3,15 +3,22 @@
 import styles from './styles.module.css';
 
 import { type JSX } from 'react';
-import { filtrarMenuPorAcesso, MENU_PRINCIPAL, type MenuNode } from 'types-nora-api';
+import { filtrarMenuRuntime, type MenuNodeRuntime } from 'types-nora-api';
 
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+import { useContextoNavegacaoRuntime } from 'Contextos/ContextoNavegacaoRuntime/contexto';
 import LinkInterno from 'Componentes/Elementos/LinkInterno/LinkInterno';
 import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
 
+const OPTS_ACESSO = { redirectNaoAutenticado: '/acessar', redirectSemCapacidade: '/' };
+
 export function ItensMenuSwiperEsquerda() {
     const { estaAutenticado, verificarCapacidade, cadastroPermitido } = useContextoAutenticacao();
-    const itens = filtrarMenuPorAcesso(MENU_PRINCIPAL, { estaAutenticado, verificarCapacidade, cadastroPermitido });
+    const { config, indice } = useContextoNavegacaoRuntime();
+
+    if (config === null || indice === null) return <div className={styles.recipiente_lista} />;
+
+    const itens = filtrarMenuRuntime(config.menuPrincipal, indice, { estaAutenticado, verificarCapacidade, cadastroPermitido }, OPTS_ACESSO);
 
     return (
         <div className={styles.recipiente_lista}>
@@ -20,11 +27,11 @@ export function ItensMenuSwiperEsquerda() {
     );
 };
 
-function RenderNode({ node }: { node: MenuNode }): JSX.Element | null {
+function RenderNode({ node }: { node: MenuNodeRuntime }): JSX.Element | null {
     if (node.tipo === 'item') {
         return (
             <div className={styles.item_menu}>
-                <LinkInterno destino={node.destino} className={styles.conteudo_item_menu}><ConteudoItemLink titulo={node.titulo} /></LinkInterno>
+                <LinkInterno destino={{ paginaTemplate: node.paginaTemplate, params: node.params ?? undefined }} className={styles.conteudo_item_menu}><ConteudoItemLink titulo={node.titulo} /></LinkInterno>
             </div>
         );
     }

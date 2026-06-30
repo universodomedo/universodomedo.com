@@ -24,6 +24,7 @@ import RenderizadorTutorialModal from 'Componentes/Elementos/RenderizadorTutoria
 import { ContextoPerformanceProvider } from 'Contextos/ContextoPerformace/contexto';
 import { ContextoAutenticacaoProvider } from 'Contextos/ContextoAutenticacao/contexto';
 import { ContextoMenuSwiperEsquerdaProvider } from 'Contextos/ContextoMenuSwiperEsquerda/contexto.tsx';
+import { ContextoNavegacaoRuntimeProvider } from 'Contextos/ContextoNavegacaoRuntime/contexto';
 import AppClientProviders from '../funcionalidades/AppClientProvider';
 import { Contexto__Chat__Provider } from 'Contextos/ContextoChat/contexto';
 
@@ -90,6 +91,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     <Contexto__Chat__Provider>
                       <BarraAcoesFlutuante__ProviderGlobal>
                         <ContextoMenuSwiperEsquerdaProvider>
+                          <ContextoNavegacaoRuntimeProvider>
                           <InicializadorCache>
                             <ConteudoContextualizado>
                               <ConteinerEscalavel>
@@ -102,6 +104,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                               <ControladorAudioGlobal />
                             </ConteudoContextualizado>
                           </InicializadorCache>
+                          </ContextoNavegacaoRuntimeProvider>
                         </ContextoMenuSwiperEsquerdaProvider>
                       </BarraAcoesFlutuante__ProviderGlobal>
                     </Contexto__Chat__Provider>
