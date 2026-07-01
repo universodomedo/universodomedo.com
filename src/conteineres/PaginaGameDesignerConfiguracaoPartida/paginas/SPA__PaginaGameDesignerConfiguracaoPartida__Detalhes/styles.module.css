@@ -21,40 +21,6 @@
     background-color: rgba(24, 20, 32, 0.5);
 }
 
-.estado {
-    margin: 0;
-    font-size: 0.9em;
-    opacity: 0.78;
-}
-
-.linha_acoes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7em;
-}
-
-.campo {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35em;
-    max-width: 28em;
-}
-
-.campo span {
-    font-size: 0.85em;
-    opacity: 0.78;
-}
-
-.campo select,
-.campo input {
-    width: 100%;
-    padding: 0.55em 0.75em;
-    border: 0.08em solid var(--cor-borda);
-    border-radius: 0.4em;
-    background-color: rgba(0, 0, 0, 0.24);
-    color: inherit;
-}
-
 .colunas {
     display: flex;
     flex-wrap: wrap;
@@ -78,10 +44,32 @@
     opacity: 0.6;
 }
 
+/* Editor da capa: zoom vertical à esquerda + imagem "aberta" à direita, mesma altura. */
+.editor_capa {
+    display: flex;
+    align-items: stretch;
+    gap: 0.6em;
+    width: 100%;
+}
+
+/* Zoom vertical (sem rótulo — o eixo + o contexto já comunicam; valor no title). */
+.zoom_vertical {
+    flex: none;
+    align-self: stretch;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 1.5em;
+    height: auto;
+    margin: 0;
+    accent-color: #B79051;
+    cursor: pointer;
+}
+
 /* Imagem da Arte de Capa "aberta" (inteira, 16:9). Arrastar move a faixa do recorte; o recorte (o que o Orbital mostra) fica destacado. */
 .imagem_aberta {
     position: relative;
-    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
     aspect-ratio: 16 / 9;
     overflow: hidden;
     border: 0.08em solid var(--cor-borda);
@@ -112,9 +100,72 @@
     pointer-events: none;
 }
 
+/* Trocar Arte de Capa: ícone sobreposto no canto superior direito interno da imagem (≠ botão de texto). */
+.botao_trocar {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2em;
+    height: 2.2em;
+    padding: 0;
+    border: 0.08em solid rgba(235, 224, 201, 0.5);
+    border-radius: 0.4em;
+    background: rgba(10, 8, 16, 0.72);
+    color: #EBE0C9;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
+
+    &:hover {
+        border-color: #E8C887;
+        background: rgba(183, 144, 81, 0.3);
+        color: #F0D79A;
+    }
+
+    & svg {
+        width: 1.2em;
+        height: 1.2em;
+    }
+}
+
 .vazio {
     font-size: 0.85em;
     opacity: 0.55;
+}
+
+/* Estado sem capa: placeholder clicável enxuto (abre o seletor) — sem frase instrutiva. */
+.placeholder_vazio {
+    width: 100%;
+    max-width: 32em;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6em;
+    border: 0.12em dashed rgba(183, 144, 81, 0.42);
+    border-radius: 0.5em;
+    background: rgba(0, 0, 0, 0.24);
+    color: #EBE0C9;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: border-color 140ms ease, background-color 140ms ease;
+
+    &:hover {
+        border-color: rgba(232, 200, 135, 0.7);
+        background: rgba(183, 144, 81, 0.1);
+    }
+}
+
+.placeholder_icone {
+    width: 2.4em;
+    height: 2.4em;
+    opacity: 0.85;
 }
 
 /* Prévia no formato real do item do Orbital — cqw preservando as razões do Orbital. */
@@ -123,7 +174,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.9em;
-    align-items: flex-start;
+    align-items: center;
     width: 100%;
 }
 
@@ -145,48 +196,4 @@
     width: 90cqw;
     aspect-ratio: 4.536 / 1;
     font-size: 6.55cqw;
-}
-
-/* Ação primária do card (Escolher/Trocar) — contorno pergaminho on-brand, inline (≠ save do rodapé, que é ouro no ConteudoForm.AreaBotoes). */
-.botao_acao {
-    padding: 0.6em 1.2em;
-    border: 0.1em solid rgba(235, 224, 201, 0.32);
-    border-radius: 0.45em;
-    background: transparent;
-    color: #EBE0C9;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    cursor: pointer;
-    transition: border-color 140ms ease, background-color 140ms ease;
-
-    &:hover:not(:disabled) {
-        border-color: rgba(235, 224, 201, 0.65);
-        background: rgba(235, 224, 201, 0.08);
-    }
-
-    &:disabled {
-        opacity: 0.45;
-        cursor: default;
-    }
-}
-
-.botao_remover {
-    padding: 0.6em 1em;
-    border: 0.1em solid rgba(219, 71, 71, 0.5);
-    border-radius: 0.45em;
-    background: transparent;
-    color: #F0A8A8;
-    cursor: pointer;
-    transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
-
-    &:hover:not(:disabled) {
-        border-color: #DB4747;
-        background: rgba(219, 71, 71, 0.14);
-        color: #FFD9D5;
-    }
-
-    &:disabled {
-        opacity: 0.45;
-        cursor: default;
-    }
 }

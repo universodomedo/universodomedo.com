@@ -1,65 +1,62 @@
+/* Card = container de consulta (cqw) + âncora dos badges; no foco escala como o item central do Orbital. */
 .card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em;
-    padding: 0.5em;
-    border: 0.08em solid var(--cor-borda);
-    border-radius: 0.6em;
-    background-color: rgba(47, 53, 75, 0.55);
-    cursor: pointer;
-    transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+    position: relative;
+    container-type: inline-size;
+    transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 
-    &:hover {
-        border-color: rgba(183, 144, 81, 0.5);
-        background-color: rgba(63, 71, 99, 0.7);
-        transform: translateY(-0.12em);
+    /* Foco (hover): replica o item central do Orbital — o componente já aplica o tratamento selecionado (ouro/cinzel/glow) via prop; aqui só o zoom + camada acima dos vizinhos. */
+    &.card_focado {
+        transform: scale(1.12);
+        z-index: 20;
     }
 }
 
-/* Slot 16/9 da capa: ocupa 100% da largura do card e mantém o espaço mesmo sem imagem. */
-.capa {
+/* Item do Orbital reusado como card: MESMA proporção do item normal do Orbital (3.6:1) e fonte proporcional à largura (6.85cqw, como o 0.0185/0.27 do Orbital). */
+.card_orbital {
+    position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    border-radius: 0.4em;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
+    aspect-ratio: 3.6 / 1;
+    font-size: 6.85cqw;
+    cursor: pointer;
 }
 
-.capa > * {
-    width: 100%;
-    height: 100%;
-}
-
-.tags {
+/* Badges (tipo de desafio + estado) sobre a capa; escalam com o card (cqw) e não interceptam o clique — o item inteiro é clicável. */
+.badges {
+    position: absolute;
+    top: 3cqw;
+    right: 3cqw;
+    z-index: 3;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4em;
+    justify-content: flex-end;
+    gap: 1.4cqw;
+    max-width: 88%;
+    pointer-events: none;
 }
 
 .tag,
 .tag_configurado,
 .tag_pendente {
-    padding: 0.12em 0.55em;
+    padding: 0.6cqw 1.8cqw;
     border-radius: 1em;
-    font-size: 0.68em;
+    font-size: 3.1cqw;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     white-space: nowrap;
+    background-color: rgba(5, 4, 10, 0.72);
 }
 
 .tag {
-    border: 0.08em solid rgba(235, 224, 201, 0.2);
-    color: #D9D9D9;
-    opacity: 0.85;
+    border: 0.08em solid rgba(235, 224, 201, 0.25);
+    color: #EBE0C9;
 }
 
 .tag_configurado {
-    background-color: rgba(61, 152, 61, 0.22);
+    border: 0.08em solid rgba(61, 152, 61, 0.5);
     color: #A8F0C0;
 }
 
 .tag_pendente {
-    background-color: rgba(190, 170, 70, 0.2);
+    border: 0.08em solid rgba(190, 170, 70, 0.5);
     color: #F0DDA8;
 }

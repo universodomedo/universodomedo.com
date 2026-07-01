@@ -21,7 +21,7 @@ export const useContexto__PaginaGameDesignerConfiguracaoPartida__Listagem = (): 
 };
 
 export const Contexto__PaginaGameDesignerConfiguracaoPartida__Listagem__Provider = ({ listagemPartidas, iniciaCadastro, selecionaPartida }: Contexto__PaginaGameDesignerConfiguracaoPartida__Listagem__Props) => {
-    useConfigurarLayoutContextualizado({ fecharProps: undefined });
+    useConfigurarLayoutContextualizado({ subtitulo: undefined, fecharProps: undefined });
 
     return (
         <Contexto__PaginaGameDesignerConfiguracaoPartida__Listagem.Provider value={{ listagemPartidas, iniciaCadastro, selecionaPartida }}>

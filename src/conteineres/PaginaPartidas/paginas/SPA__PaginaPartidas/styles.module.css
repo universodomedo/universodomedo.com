@@ -19,7 +19,7 @@
     display: flex;
     width: 100%;
     height: 100%;
-    padding: 3em 0 3em 4em;
+    padding: 1em 0 1em 4em;
 }
 
 .detalhe {
@@ -53,6 +53,92 @@
 .detalhe_corpo {
     flex: 1 1 auto;
     min-height: 0;
+    overflow-y: auto;
+}
+
+/* Bloco logo acima do botão Jogar: 2 colunas — título + descrição (esq.) | meta (dir.). */
+.info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2em;
+    align-items: flex-start;
+}
+
+.info_principal {
+    flex: 1 1 18em;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+}
+
+.info_titulo {
+    margin: 0;
+    font-weight: 800;
+    font-size: 2em;
+    line-height: 1.05;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #EEFCFF;
+}
+
+.info_descricao {
+    margin: 0;
+    max-width: 34em;
+    color: rgba(220, 235, 240, 0.72);
+    font-size: 0.98em;
+    line-height: 1.55;
+}
+
+.info_descricao_vazia {
+    font-style: italic;
+    color: rgba(220, 235, 240, 0.42);
+}
+
+.info_meta {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4em;
+    margin: 0;
+}
+
+.info_meta_item {
+    display: flex;
+    align-items: center;
+    gap: 0.85em;
+}
+
+.info_meta_icone {
+    flex: none;
+    width: 1.9em;
+    height: 1.9em;
+    color: #3fd0dd;
+}
+
+.info_meta_icone svg {
+    width: 100%;
+    height: 100%;
+}
+
+.info_meta_texto {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+}
+
+.info_meta_rotulo {
+    font-size: 0.72em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #3fd0dd;
+}
+
+.info_meta_valor {
+    margin: 0;
+    font-size: 1.02em;
+    color: #EEFCFF;
 }
 
 .detalhe_rodape {

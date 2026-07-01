@@ -2,20 +2,23 @@
 
 import styles from './styles.module.css';
 
-import { useRef, useState } from 'react';
+import { useEffect } from 'react';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { Componente_Selecionador } from 'Componentes/Selecionadores/Componente_Selecionador/Componente_Selecionador';
 import { ListagemCompostaModoExibicao } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
-import { getImageUrl } from 'Uteis/ImagemLoader/ImagemLoader';
+import { useDefinirMusicaSobreposicao } from 'Hooks/useDefinirMusicaPagina';
+import { useAppSelector } from 'Redux/hooks/useRedux';
+import { selectIdMusicaSobreposicao } from 'Redux/selectors/audioPaginaSelectors';
 
-// Seletor de Música de Fundo — instância do Componente_Selecionador com fonte GraphQL MusicaConfigurada (SÓ música já configurada no mixer; o id já é o tocável) + preview de áudio. Devolve { idMusicaConfigurada, nome } via aoConfirmar.
-export function Componente_Selecionador__MusicaDeFundo({ aoConfirmar, idInicial = null }: { aoConfirmar: (idMusicaConfigurada: number, nome: string) => void | Promise<void>; idInicial?: number | null; }) {
-    const audioRef = useRef<HTMLAudioElement | null>(null);
-    const [tocandoId, setTocandoId] = useState<number | null>(null);
+// Seletor de Música de Fundo — instância do Componente_Selecionador com fonte GraphQL MusicaConfigurada (SÓ música já configurada no mixer; o id já é o tocável). Devolve { idMusicaConfigurada, nome } via aoConfirmar.
+// REGRA: nenhum player próprio — o preview de cada música vai pra Central de Áudio como SOBREPOSIÇÃO (por cima); ao sair do seletor some (volta a música anterior).
+export function Componente_Selecionador__MusicaDeFundo({ aoConfirmar, aoCancelar, idInicial = null }: { aoConfirmar: (idMusicaConfigurada: number, nome: string) => void | Promise<void>; aoCancelar?: () => void; idInicial?: number | null; }) {
+    const definirSobreposicao = useDefinirMusicaSobreposicao();
+    const idSobreposicao = useAppSelector(selectIdMusicaSobreposicao);
 
     const listagem = useNoraGraphQLListagem('MusicaConfigurada', {
-        select: ['id', 'nome', { arquivo: ['caminhoArquivo'] }, { fonteMusica: ['nome'] }],
+        select: ['id', 'nome', { fonteMusica: ['nome'] }],
         itensPorPagina: 12,
         carregando: 'Buscando Músicas',
         mensagemErro: 'Houve um erro recuperando as Músicas',
@@ -26,13 +29,12 @@ export function Componente_Selecionador__MusicaDeFundo({ aoConfirmar, idInicial 
         montaParametrosTotalDeRegistros: where => ({ where }),
     });
 
-    function alternaPreview(id: number, url: string): void {
-        if (!audioRef.current) audioRef.current = new Audio();
-        const audio = audioRef.current;
-        if (tocandoId === id) { audio.pause(); setTocandoId(null); return; }
-        audio.src = url;
-        audio.onended = () => setTocandoId(null);
-        audio.play().then(() => setTocandoId(id)).catch(() => { });
+    // Ao sair do seletor (fechar/confirmar/cancelar), tira a sobreposição — o preview nunca vaza pra fora da página.
+    useEffect(() => () => { definirSobreposicao(null, null); }, [definirSobreposicao]);
+
+    function alternaPreview(id: number, nome: string): void {
+        if (idSobreposicao === id) definirSobreposicao(null, null);
+        else definirSobreposicao(id, nome);
     };
 
     return (
@@ -42,8 +44,8 @@ export function Componente_Selecionador__MusicaDeFundo({ aoConfirmar, idInicial 
             modoExibicao={ListagemCompostaModoExibicao.LINHA}
             renderizarItem={musica => (
                 <div className={styles.item_musica}>
-                    <button type="button" className={styles.botao_preview} onClick={evento => { evento.stopPropagation(); alternaPreview(musica.id, getImageUrl(musica.arquivo.caminhoArquivo)); }} aria-label={tocandoId === musica.id ? 'Pausar' : 'Ouvir'}>
-                        {tocandoId === musica.id ? '❚❚' : '▶'}
+                    <button type="button" className={styles.botao_preview} onClick={evento => { evento.stopPropagation(); alternaPreview(musica.id, musica.nome); }} aria-label={idSobreposicao === musica.id ? 'Parar' : 'Ouvir'}>
+                        {idSobreposicao === musica.id ? '❚❚' : '▶'}
                     </button>
                     <div className={styles.info}>
                         <strong className={styles.nome}>{musica.nome}</strong>
@@ -52,6 +54,7 @@ export function Componente_Selecionador__MusicaDeFundo({ aoConfirmar, idInicial 
                 </div>
             )}
             aoConfirmar={musica => aoConfirmar(musica.id, musica.nome)}
+            aoCancelar={aoCancelar}
             idInicial={idInicial}
             textoConfirmar="Usar esta música"
         />

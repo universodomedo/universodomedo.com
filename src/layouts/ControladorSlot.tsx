@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo } from 'react';
+import { notFound } from 'next/navigation';
 import { decidirAcessoRuntime, type PaginaFolha, type MenuLeafRuntime } from 'types-nora-api';
 
 import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho/Cabecalho';
@@ -84,7 +85,11 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
     }, [definirMusicaPagina, permitido, pagConfig]);
 
     if (carregando || indice === null || decisao === null) return (<h1>carregando....</h1>);
-    if (!decisao.permitido) return (<RedirecionadorHref href={decisao.redirecionarPara} />);
+    if (!decisao.permitido) {
+        // Página inativa (para não-SUDO) responde igual a uma rota que não existe: o 404 real do Next.
+        if (decisao.motivo === 'INEXISTENTE') notFound();
+        return (<RedirecionadorHref href={decisao.redirecionarPara} />);
+    }
 
     const corpoSemLayout = (
         <>

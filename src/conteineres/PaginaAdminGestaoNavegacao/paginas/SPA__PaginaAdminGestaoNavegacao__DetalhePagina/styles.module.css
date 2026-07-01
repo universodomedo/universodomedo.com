@@ -1,0 +1,59 @@
+.host {
+    width: 100%;
+    padding: 0.4em 0 1.6em;
+}
+
+.grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
+    gap: 1.2em;
+    align-items: start;
+    max-width: 40em;
+}
+
+.cartao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    padding: 1.1em 1.2em 1.3em;
+    border: 0.08em solid rgba(183, 144, 81, 0.28);
+    border-radius: 0.6em;
+    background: linear-gradient(160deg, rgba(24, 18, 32, 0.66), rgba(12, 9, 18, 0.6));
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8em;
+}
+
+.titulo {
+    margin: 0;
+    font-family: var(--fonte-cinzel);
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    font-size: 1.05em;
+    color: #E8C887;
+}
+
+.botao_editar {
+    appearance: none;
+    flex: none;
+    padding: 0.4em 1em;
+    border: 0.08em solid rgba(235, 224, 201, 0.32);
+    border-radius: 0.4em;
+    background: transparent;
+    color: #EBE0C9;
+    font: inherit;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+
+    &:hover {
+        border-color: rgba(232, 200, 135, 0.65);
+        background: rgba(183, 144, 81, 0.12);
+    }
+}

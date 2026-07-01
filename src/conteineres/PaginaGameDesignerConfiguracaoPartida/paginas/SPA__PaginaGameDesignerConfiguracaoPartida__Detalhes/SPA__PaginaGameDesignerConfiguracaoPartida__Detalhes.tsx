@@ -45,11 +45,6 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Detalhes() {
         setSelecionando(false);
     };
 
-    function removerCapa(): void {
-        setIdProjeto(null);
-        setEncaixe(ENCAIXE_PADRAO);
-    };
-
     // Recorte (o que o item normal do Orbital mostra) projetado sobre a imagem inteira: largura/altura encolhem com o zoom; posição = deslocamento.
     const fracaoLargura = Math.min(1, 1 / encaixe.escala);
     const fracaoAltura = FRACAO_VERTICAL / encaixe.escala;
@@ -98,26 +93,31 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Detalhes() {
             <ConteudoForm.AreaCorpo>
                 <section className={styles.detalhes}>
                     <fieldset className={styles.secao}>
-                        {idProjeto !== null ? (
+                        {idProjeto === null ? (
+                            <button type="button" className={styles.placeholder_vazio} onClick={() => setSelecionando(true)}>
+                                <svg viewBox="0 0 24 24" className={styles.placeholder_icone} aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></svg>
+                                Escolher Arte de Capa
+                            </button>
+                        ) : (
                             <div className={styles.colunas}>
                                 <div className={styles.coluna}>
-                                    <span className={styles.rotulo_bloco}>Imagem da capa — arraste para escolher a faixa, ajuste o zoom abaixo</span>
-                                    <div className={styles.imagem_aberta} onPointerDown={aoBaixarPonteiro} onPointerMove={aoMoverPonteiro} onPointerUp={aoSoltarPonteiro} onPointerCancel={aoSoltarPonteiro}>
-                                        {imagemBase64 ? (
-                                            <>
-                                                <Renderiza__ImagemUDM__ArteCapaEnquadrada imagemBase64={imagemBase64} />
-                                                <div className={styles.recorte} style={estiloRecorte} />
-                                            </>
-                                        ) : <span className={styles.vazio}>Carregando imagem…</span>}
+                                    <div className={styles.editor_capa}>
+                                        <input type="range" className={styles.zoom_vertical} min={1} max={4} step={0.05} value={encaixe.escala} onChange={evento => setEncaixe(atual => ({ ...atual, escala: Number(evento.target.value) }))} title={`Zoom (${encaixe.escala.toFixed(2)}×)`} aria-label="Zoom" />
+                                        <div className={styles.imagem_aberta} onPointerDown={aoBaixarPonteiro} onPointerMove={aoMoverPonteiro} onPointerUp={aoSoltarPonteiro} onPointerCancel={aoSoltarPonteiro}>
+                                            {imagemBase64 ? (
+                                                <>
+                                                    <Renderiza__ImagemUDM__ArteCapaEnquadrada imagemBase64={imagemBase64} />
+                                                    <div className={styles.recorte} style={estiloRecorte} />
+                                                </>
+                                            ) : <span className={styles.vazio}>Carregando imagem…</span>}
+                                            <button type="button" className={styles.botao_trocar} onPointerDown={evento => evento.stopPropagation()} onClick={() => setSelecionando(true)} title="Trocar Arte de Capa" aria-label="Trocar Arte de Capa">
+                                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h13l-3-3M20 16H7l3 3" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <label className={styles.campo}>
-                                        <span>Zoom ({encaixe.escala.toFixed(2)}×)</span>
-                                        <input type="range" min={1} max={4} step={0.05} value={encaixe.escala} onChange={evento => setEncaixe(atual => ({ ...atual, escala: Number(evento.target.value) }))} />
-                                    </label>
                                 </div>
 
                                 <div className={styles.coluna}>
-                                    <span className={styles.rotulo_bloco}>Prévia no Orbital</span>
                                     <div className={styles.previa}>
                                         <div className={styles.previa_grupo}>
                                             <span className={styles.previa_label}>No catálogo</span>
@@ -130,12 +130,7 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Detalhes() {
                                     </div>
                                 </div>
                             </div>
-                        ) : <p className={styles.estado}>Nenhuma Arte de Capa selecionada — escolha uma para exibir no Orbital e na página da Partida.</p>}
-
-                        <div className={styles.linha_acoes}>
-                            <button type="button" className={styles.botao_acao} onClick={() => setSelecionando(true)}>{idProjeto === null ? 'Escolher Arte de Capa' : 'Trocar Arte de Capa'}</button>
-                            {idProjeto !== null && <button type="button" className={styles.botao_remover} onClick={removerCapa}>Remover</button>}
-                        </div>
+                        )}
                     </fieldset>
                 </section>
             </ConteudoForm.AreaCorpo>

@@ -1,0 +1,64 @@
+.vazio {
+    margin: 0;
+    color: rgba(235, 224, 201, 0.6);
+    font-size: 0.9em;
+}
+
+/* Bloco interativo: clicar manda a música pra Central de Áudio (por cima). Tocando = destaque ouro. */
+.bloco {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+    width: 100%;
+    padding: 0.6em 0.75em;
+    border: 0.08em solid rgba(183, 144, 81, 0.3);
+    border-radius: 0.5em;
+    background: rgba(10, 8, 16, 0.4);
+    color: #EBE0C9;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+
+    &:hover {
+        border-color: rgba(232, 200, 135, 0.6);
+        background: rgba(183, 144, 81, 0.12);
+    }
+}
+
+.bloco_tocando {
+    border-color: #B79051;
+    background: rgba(183, 144, 81, 0.16);
+    box-shadow: 0 0 0.8em rgba(183, 144, 81, 0.35);
+}
+
+.icone {
+    flex: none;
+    width: 2.2em;
+    height: 2.2em;
+    display: grid;
+    place-items: center;
+    border: 0.08em solid rgba(183, 144, 81, 0.5);
+    border-radius: 999em;
+    background: rgba(0, 0, 0, 0.3);
+    color: #E8C887;
+    font-size: 0.9em;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    min-width: 0;
+}
+
+.nome {
+    overflow: hidden;
+    color: #EBE0C9;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fonte {
+    color: rgba(235, 224, 201, 0.6);
+    font-size: 0.82em;
+}

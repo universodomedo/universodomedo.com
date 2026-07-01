@@ -1,15 +1,18 @@
 'use client';
 
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import type { ConfiguracaoPartida, PartidaResumo } from 'types-nora-api';
+import { EventosApiRest, type ConfiguracaoPartida, type PartidaResumo } from 'types-nora-api';
 
+import { NoraApi } from 'Api/NoraApi';
 import { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { Contexto__PaginaGameDesignerConfiguracaoPartida__Props } from '../Contexto__PaginaGameDesignerConfiguracaoPartida/contexto';
 import { remapeiaConfiguracaoPartidaGraphql } from './remapeiaConfiguracaoPartida';
 import SPA__PaginaGameDesignerConfiguracaoPartida__Edicao from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Edicao/SPA__PaginaGameDesignerConfiguracaoPartida__Edicao';
 
-export type AbaEdicaoPartida = 'runtime' | 'arteCapa' | 'musica';
+export type AbaEdicaoPartida = 'visao' | 'runtime' | 'arteCapa' | 'musica';
+
+const ROTULO_EDITOR: Record<Exclude<AbaEdicaoPartida, 'visao'>, string> = { runtime: 'Runtime', arteCapa: 'Arte de Capa', musica: 'Música de Fundo' };
 
 // Carga unica do detalhe da Partida: o configuracao (runtime) vem por GraphQL Partida-por-PK; arteCapa e idMusicaConfigurada ja vem no PartidaResumo (estrutura), entao a aba Detalhes os le direto da partida — sem N+1.
 const SELECT_CONFIGURACAO_PARTIDA = {
@@ -34,6 +37,8 @@ interface Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Props {
     configuracaoInicial: ConfiguracaoPartida | null;
     salvando: boolean;
     salvarConfiguracao: (configuracao: ConfiguracaoPartida) => Promise<void>;
+    idMusicaConfigurada: number | null;
+    definirMusicaConfigurada: (idMusica: number | null) => Promise<void>;
 };
 
 type PropsProvider = {
@@ -52,9 +57,15 @@ export const useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao = (): Co
 };
 
 export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider = ({ partida, salvando, salvarConfiguracaoPartida, voltaParaListagem }: PropsProvider) => {
-    useConfigurarLayoutContextualizado({ subtitulo: partida.nome, fecharProps: { tipo: 'acao', executar: voltaParaListagem, tituloTooltip: 'Voltar para Listagem' } });
+    const [aba, setAba] = useState<AbaEdicaoPartida>('visao');
 
-    const [aba, setAba] = useState<AbaEdicaoPartida>('runtime');
+    // Navegação contextual (o X do cabeçalho) segue o modo: na visão volta pra Listagem; dentro de um editor volta um nível, pros Dados de Exibição. O subtítulo detalha o alvo + o editor — sem barra/título próprios no corpo.
+    useConfigurarLayoutContextualizado({
+        subtitulo: aba === 'visao' ? partida.nome : `${partida.nome} · ${ROTULO_EDITOR[aba]}`,
+        fecharProps: aba === 'visao'
+            ? { tipo: 'acao', executar: voltaParaListagem, tituloTooltip: 'Voltar para Listagem' }
+            : { tipo: 'acao', executar: () => setAba('visao'), tituloTooltip: 'Voltar para Dados de Exibição' },
+    });
 
     const consulta = useNoraGraphQLRegistro('Partida', {
         props: { idPartida: partida.id },
@@ -70,8 +81,15 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider =
     }, [consulta.data]);
     const salvarConfiguracao = useCallback((configuracao: ConfiguracaoPartida) => salvarConfiguracaoPartida(partida.id, configuracao), [salvarConfiguracaoPartida, partida.id]);
 
+    // Música de fundo editável a partir do estado do PartidaResumo; ao salvar (REST) atualiza o estado local pra a visão refletir sem recarregar.
+    const [idMusicaConfigurada, setIdMusicaConfigurada] = useState<number | null>(partida.idMusicaConfigurada);
+    const definirMusicaConfigurada = useCallback(async (idMusica: number | null): Promise<void> => {
+        await NoraApi.RestPOST(EventosApiRest.POST.Partidas.salvarMusicaFundo, { id: partida.id, idMusicaConfigurada: idMusica }, { mensagemErro: 'Não foi possível salvar a Música de Fundo.' });
+        setIdMusicaConfigurada(idMusica);
+    }, [partida.id]);
+
     return (
-        <Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider value={{ partida, aba, setAba, carregando: consulta.carregando, erro: consulta.erro, configuracaoInicial, salvando, salvarConfiguracao }}>
+        <Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider value={{ partida, aba, setAba, carregando: consulta.carregando, erro: consulta.erro, configuracaoInicial, salvando, salvarConfiguracao, idMusicaConfigurada, definirMusicaConfigurada }}>
             <SPA__PaginaGameDesignerConfiguracaoPartida__Edicao />
         </Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider>
     );

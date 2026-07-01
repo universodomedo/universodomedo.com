@@ -5,11 +5,7 @@ import { createContext, useContext } from 'react';
 import { Contexto__PaginaAdminGestaoNavegacao__Props } from '../Contexto__PaginaAdminGestaoNavegacao/contexto';
 import SPA__PaginaAdminGestaoNavegacao__Listagem from 'Conteineres/PaginaAdminGestaoNavegacao/paginas/SPA__PaginaAdminGestaoNavegacao__Listagem/SPA__PaginaAdminGestaoNavegacao__Listagem';
 
-interface Contexto__PaginaAdminGestaoNavegacao__Listagem__Props {
-    listagemMenus: Contexto__PaginaAdminGestaoNavegacao__Props['listagemMenus'];
-    estaEmProcessoCriacao: Contexto__PaginaAdminGestaoNavegacao__Props['estaEmProcessoCriacao'];
-    setEstaEmProcessoCriacao: Contexto__PaginaAdminGestaoNavegacao__Props['setEstaEmProcessoCriacao'];
-};
+type Contexto__PaginaAdminGestaoNavegacao__Listagem__Props = Pick<Contexto__PaginaAdminGestaoNavegacao__Props, 'listagemPaginas' | 'selecionarPagina'>;
 
 const Contexto__PaginaAdminGestaoNavegacao__Listagem = createContext<Contexto__PaginaAdminGestaoNavegacao__Listagem__Props | undefined>(undefined);
 
@@ -19,9 +15,9 @@ export const useContexto__PaginaAdminGestaoNavegacao__Listagem = (): Contexto__P
     return context;
 };
 
-export const Contexto__PaginaAdminGestaoNavegacao__Listagem__Provider = ({ listagemMenus, estaEmProcessoCriacao, setEstaEmProcessoCriacao }: { listagemMenus: Contexto__PaginaAdminGestaoNavegacao__Props['listagemMenus']; estaEmProcessoCriacao: Contexto__PaginaAdminGestaoNavegacao__Props['estaEmProcessoCriacao']; setEstaEmProcessoCriacao: Contexto__PaginaAdminGestaoNavegacao__Props['setEstaEmProcessoCriacao']; }) => {
+export const Contexto__PaginaAdminGestaoNavegacao__Listagem__Provider = (props: Contexto__PaginaAdminGestaoNavegacao__Listagem__Props) => {
     return (
-        <Contexto__PaginaAdminGestaoNavegacao__Listagem.Provider value={{ listagemMenus, estaEmProcessoCriacao, setEstaEmProcessoCriacao }}>
+        <Contexto__PaginaAdminGestaoNavegacao__Listagem.Provider value={props}>
             <SPA__PaginaAdminGestaoNavegacao__Listagem />
         </Contexto__PaginaAdminGestaoNavegacao__Listagem.Provider>
     );

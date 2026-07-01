@@ -1,0 +1,109 @@
+.host {
+    width: 100%;
+    padding: 0.4em 0 1.6em;
+}
+
+.grade {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
+    gap: 1.2em;
+    align-items: start;
+}
+
+.cartao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    padding: 1.1em 1.2em 1.3em;
+    border: 0.08em solid rgba(183, 144, 81, 0.28);
+    border-radius: 0.6em;
+    background: linear-gradient(160deg, rgba(24, 18, 32, 0.66), rgba(12, 9, 18, 0.6));
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8em;
+}
+
+.titulo {
+    margin: 0;
+    font-family: var(--fonte-cinzel);
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    font-size: 1.05em;
+    color: #E8C887;
+}
+
+.botao_editar {
+    appearance: none;
+    flex: none;
+    padding: 0.4em 1em;
+    border: 0.08em solid rgba(235, 224, 201, 0.32);
+    border-radius: 0.4em;
+    background: transparent;
+    color: #EBE0C9;
+    font: inherit;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+
+    &:hover {
+        border-color: rgba(232, 200, 135, 0.65);
+        background: rgba(183, 144, 81, 0.12);
+    }
+}
+
+/* Prévia do item do Orbital na proporção real (3.6:1), fonte proporcional via cqw — WYSIWYG com o jogo/listagem. */
+.previa_orbital {
+    container-type: inline-size;
+    width: 100%;
+}
+
+.item_orbital {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3.6 / 1;
+    font-size: 6.85cqw;
+}
+
+.dica {
+    margin: 0;
+    color: rgba(235, 224, 201, 0.6);
+    font-size: 0.88em;
+}
+
+.resumo {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+}
+
+.resumo_linha {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1em;
+    border-bottom: 0.06em solid rgba(235, 224, 201, 0.1);
+    padding-bottom: 0.35em;
+
+    &:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    & dt {
+        color: rgba(235, 224, 201, 0.7);
+        font-size: 0.9em;
+    }
+
+    & dd {
+        margin: 0;
+        color: #EBE0C9;
+        font-weight: 600;
+    }
+}

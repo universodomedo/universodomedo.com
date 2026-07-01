@@ -1,0 +1,33 @@
+.linha_pagina {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    min-width: 0;
+    height: 100%;
+    padding: 0.9em 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background-color: #392D58;
+    cursor: pointer;
+    white-space: normal;
+}
+
+.linha_pagina:hover {
+    background-color: #453769;
+}
+
+/* Página inativa: borda vermelha (perigo) de destaque. */
+.inativa {
+    border-color: #DB4747;
+    box-shadow: inset 0 0 0 0.04em rgba(219, 71, 71, 0.5);
+}
+
+.nome {
+    font-size: 0.95em;
+}
+
+.chave {
+    font-size: 0.75em;
+    opacity: 0.7;
+    overflow-wrap: anywhere;
+}

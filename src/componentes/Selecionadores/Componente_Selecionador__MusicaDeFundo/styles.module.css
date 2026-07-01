@@ -12,16 +12,19 @@
     height: 2.4em;
     display: grid;
     place-items: center;
-    border: 0.08em solid rgba(0, 232, 232, 0.5);
+    border: 0.08em solid rgba(183, 144, 81, 0.5);
     border-radius: 999em;
-    background-color: rgba(0, 168, 184, 0.18);
-    color: #9fefff;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #E8C887;
     font-size: 0.85em;
     cursor: pointer;
+    transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
 }
 
 .botao_preview:hover {
-    background-color: rgba(0, 168, 184, 0.32);
+    border-color: rgba(232, 200, 135, 0.85);
+    background-color: rgba(183, 144, 81, 0.18);
+    color: #F0D79A;
 }
 
 .info {
