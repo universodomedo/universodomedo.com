@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 import { useRef, useState } from 'react';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
+import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Editor } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/contexto';
 import type { ConfiguracaoPartida, KeySerEmSala, SerEmSala } from 'types-nora-api';
 
@@ -76,14 +77,11 @@ function useCapacidadesInatas() {
 };
 
 export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor() {
-    const { carregandoConfig } = useContexto__PaginaGameDesignerConfiguracaoPartida__Editor();
-    if (carregandoConfig) return <section className={styles.editor}><span className={styles.cabecalho}>Carregando configuração da Partida…</span></section>;
-
     return <FormularioEditor />;
 };
 
 function FormularioEditor() {
-    const { partida, configuracaoInicial, salvando, salvar, cancelar } = useContexto__PaginaGameDesignerConfiguracaoPartida__Editor();
+    const { configuracaoInicial, salvando, salvar } = useContexto__PaginaGameDesignerConfiguracaoPartida__Editor();
     const seres = useSeresParaSelecao();
     const capacidades = useCapacidadesInatas();
     const contadorKeysRef = useRef(0);
@@ -117,53 +115,54 @@ function FormularioEditor() {
     const podeSalvar = configuracaoEstaPreenchida(config) && !salvando;
 
     return (
-        <section className={styles.editor}>
-            <header className={styles.cabecalho}>Configuração de Partida — {partida.nome}</header>
-
-            <label className={styles.campo}>
-                <span>Narração inicial</span>
-                <textarea value={config.narracaoInicial} onChange={evento => atualizaConfig({ narracaoInicial: evento.target.value })} rows={3} />
-            </label>
-
-            <fieldset className={styles.secao}>
-                <legend>Cenário</legend>
-                <label className={styles.campo}>
-                    <span>Nome do cenário</span>
-                    <input type="text" value={config.cenario.nome} onChange={evento => atualizaCenario({ nome: evento.target.value })} />
-                </label>
-                <div className={styles.linha}>
-                    <label className={styles.campo_estreito}>
-                        <span>Largura (m)</span>
-                        <input type="number" min={1} value={config.cenario.mapaLogico.larguraMetros} onChange={evento => atualizaMapaLogico({ larguraMetros: Number(evento.target.value) })} />
+        <ConteudoForm>
+            <ConteudoForm.AreaCorpo>
+                <section className={styles.editor}>
+                    <label className={styles.campo}>
+                        <span>Narração inicial</span>
+                        <textarea value={config.narracaoInicial} onChange={evento => atualizaConfig({ narracaoInicial: evento.target.value })} rows={3} />
                     </label>
-                    <label className={styles.campo_estreito}>
-                        <span>Altura (m)</span>
-                        <input type="number" min={1} value={config.cenario.mapaLogico.alturaMetros} onChange={evento => atualizaMapaLogico({ alturaMetros: Number(evento.target.value) })} />
-                    </label>
-                </div>
-            </fieldset>
 
-            <ListaSeresEmSala titulo="Controláveis" descricao="Seres que o jogador controla (ao menos um)." grupo="controlaveis" rotuloBotao="controlável" seresEmSala={config.controlaveis} seresDisponiveis={seres.registros} aoAdicionar={adicionaSerEmSala} aoRemover={removeSerEmSala} aoAtualizar={atualizaSerEmSala} />
-            <ListaSeresEmSala titulo="Não-controláveis" descricao="NPCs, inimigos e reféns presentes na sala." grupo="naoControlaveis" rotuloBotao="não-controlável" seresEmSala={config.naoControlaveis} seresDisponiveis={seres.registros} aoAdicionar={adicionaSerEmSala} aoRemover={removeSerEmSala} aoAtualizar={atualizaSerEmSala} />
+                    <fieldset className={styles.secao}>
+                        <legend>Cenário</legend>
+                        <label className={styles.campo}>
+                            <span>Nome do cenário</span>
+                            <input type="text" value={config.cenario.nome} onChange={evento => atualizaCenario({ nome: evento.target.value })} />
+                        </label>
+                        <div className={styles.linha}>
+                            <label className={styles.campo_estreito}>
+                                <span>Largura (m)</span>
+                                <input type="number" min={1} value={config.cenario.mapaLogico.larguraMetros} onChange={evento => atualizaMapaLogico({ larguraMetros: Number(evento.target.value) })} />
+                            </label>
+                            <label className={styles.campo_estreito}>
+                                <span>Altura (m)</span>
+                                <input type="number" min={1} value={config.cenario.mapaLogico.alturaMetros} onChange={evento => atualizaMapaLogico({ alturaMetros: Number(evento.target.value) })} />
+                            </label>
+                        </div>
+                    </fieldset>
 
-            <SecaoDescobertasCondicionadas descobertas={config.descobertasCondicionadas} capacidades={capacidades.registros} naoControlaveis={config.naoControlaveis} aoAdicionar={adicionaDescoberta} aoRemover={removeDescoberta} aoAtualizar={atualizaDescoberta} />
+                    <ListaSeresEmSala titulo="Controláveis" descricao="Seres que o jogador controla (ao menos um)." grupo="controlaveis" rotuloBotao="controlável" seresEmSala={config.controlaveis} seresDisponiveis={seres.registros} aoAdicionar={adicionaSerEmSala} aoRemover={removeSerEmSala} aoAtualizar={atualizaSerEmSala} />
+                    <ListaSeresEmSala titulo="Não-controláveis" descricao="NPCs, inimigos e reféns presentes na sala." grupo="naoControlaveis" rotuloBotao="não-controlável" seresEmSala={config.naoControlaveis} seresDisponiveis={seres.registros} aoAdicionar={adicionaSerEmSala} aoRemover={removeSerEmSala} aoAtualizar={atualizaSerEmSala} />
 
-            <fieldset className={styles.secao}>
-                <legend>Condição de vitória</legend>
-                <label className={styles.campo}>
-                    <span>Tipo</span>
-                    <select value={config.condicaoVitoria.tipo} onChange={evento => selecionaTipoCondicaoVitoria(evento.target.value as TipoCondicaoVitoria)}>
-                        {(Object.keys(ROTULOS_TIPO_CONDICAO_VITORIA) as TipoCondicaoVitoria[]).map(tipo => <option key={tipo} value={tipo}>{ROTULOS_TIPO_CONDICAO_VITORIA[tipo]}</option>)}
-                    </select>
-                </label>
-                <CamposCondicaoVitoria condicaoVitoria={config.condicaoVitoria} naoControlaveis={config.naoControlaveis} aoAtualizar={atualizaConfig} />
-            </fieldset>
+                    <SecaoDescobertasCondicionadas descobertas={config.descobertasCondicionadas} capacidades={capacidades.registros} naoControlaveis={config.naoControlaveis} aoAdicionar={adicionaDescoberta} aoRemover={removeDescoberta} aoAtualizar={atualizaDescoberta} />
 
-            <div className={styles.acoes}>
-                <button type="button" className={styles.botao_secundario} onClick={cancelar} disabled={salvando}>Cancelar</button>
-                <button type="button" className={styles.botao_principal} onClick={() => void salvar(config)} disabled={!podeSalvar}>Salvar Configuração</button>
-            </div>
-        </section>
+                    <fieldset className={styles.secao}>
+                        <legend>Condição de vitória</legend>
+                        <label className={styles.campo}>
+                            <span>Tipo</span>
+                            <select value={config.condicaoVitoria.tipo} onChange={evento => selecionaTipoCondicaoVitoria(evento.target.value as TipoCondicaoVitoria)}>
+                                {(Object.keys(ROTULOS_TIPO_CONDICAO_VITORIA) as TipoCondicaoVitoria[]).map(tipo => <option key={tipo} value={tipo}>{ROTULOS_TIPO_CONDICAO_VITORIA[tipo]}</option>)}
+                            </select>
+                        </label>
+                        <CamposCondicaoVitoria condicaoVitoria={config.condicaoVitoria} naoControlaveis={config.naoControlaveis} aoAtualizar={atualizaConfig} />
+                    </fieldset>
+                </section>
+            </ConteudoForm.AreaCorpo>
+
+            <ConteudoForm.AreaBotoes>
+                <button type="button" onClick={() => void salvar(config)} disabled={!podeSalvar}>Salvar Configuração</button>
+            </ConteudoForm.AreaBotoes>
+        </ConteudoForm>
     );
 };
 

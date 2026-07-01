@@ -161,41 +161,49 @@
     color: inherit;
 }
 
-.acoes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7em;
-    padding-top: 0.2em;
-}
-
-.botao_principal,
-.botao_secundario,
-.botao_perigo {
+/* Salvar nome: save de campo, inline, modesto (fora do rodapé — o Deletar é que vai pro ConteudoForm.AreaBotoes). */
+.botao_salvar {
+    flex: none;
     padding: 0.55em 1.1em;
-    border: 0.08em solid var(--cor-borda);
+    border: 0.08em solid rgba(235, 224, 201, 0.3);
     border-radius: 0.4em;
-    color: inherit;
+    background: transparent;
+    color: #EBE0C9;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.8em;
     cursor: pointer;
     white-space: nowrap;
 
+    &:hover:not(:disabled) {
+        border-color: rgba(235, 224, 201, 0.6);
+        background: rgba(235, 224, 201, 0.08);
+    }
+
     &:disabled {
-        opacity: 0.55;
+        opacity: 0.45;
         cursor: default;
     }
 }
 
-.botao_principal {
-    background-color: #00A8B8;
-    color: #031317;
-    border-color: #00D4E8;
-}
+/* Adicionar Partida: ação inline contextual do bloco (contorno pergaminho on-brand, ≠ teal antigo). */
+.botao_adicionar {
+    padding: 0.55em 1.2em;
+    border: 0.1em solid rgba(235, 224, 201, 0.32);
+    border-radius: 0.45em;
+    background: transparent;
+    color: #EBE0C9;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
 
-.botao_secundario {
-    background-color: transparent;
-}
+    &:hover:not(:disabled) {
+        border-color: rgba(235, 224, 201, 0.65);
+        background: rgba(235, 224, 201, 0.08);
+    }
 
-.botao_perigo {
-    background-color: transparent;
-    border-color: rgba(255, 120, 120, 0.5);
-    color: #FFB0B0;
+    &:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
 }

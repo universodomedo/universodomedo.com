@@ -29,26 +29,3 @@
     color: #FFB0B0;
     font-size: 0.8em;
 }
-
-.acoes {
-    display: flex;
-    gap: 0.7em;
-    padding-top: 0.5em;
-}
-
-.botao_principal {
-    padding: 0.6em 1.4em;
-    border: 0.08em solid #00D4E8;
-    border-radius: 0.4em;
-    background-color: #00A8B8;
-    color: #031317;
-    cursor: pointer;
-
-    &:disabled {
-        opacity: 0.55;
-        cursor: default;
-        background-color: transparent;
-        color: inherit;
-        border-color: var(--cor-borda);
-    }
-}

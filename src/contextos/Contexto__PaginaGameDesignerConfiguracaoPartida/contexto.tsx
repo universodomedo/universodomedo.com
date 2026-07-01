@@ -21,8 +21,6 @@ export interface Contexto__PaginaGameDesignerConfiguracaoPartida__Props {
     estadoFluxo: FluxoConfiguracaoPartida;
     idPartidaEmEdicao: number | null;
     partidaEmEdicao: PartidaResumo | null;
-    partidaEmConfiguracao: PartidaResumo | null;
-    partidaEmDetalhes: PartidaResumo | null;
     iniciaCadastro: () => void;
     selecionaPartida: (idPartida: number) => void;
     voltaParaListagem: () => void;
@@ -30,11 +28,7 @@ export interface Contexto__PaginaGameDesignerConfiguracaoPartida__Props {
     criarPartida: (payload: PAYLOAD__CriarPartida) => Promise<void>;
     salvarPartida: (payload: PAYLOAD__SalvarPartida) => Promise<void>;
     deletarPartida: (payload: PAYLOAD__DeletarPartida) => Promise<void>;
-    abrirConfiguracao: (partida: PartidaResumo) => void;
-    fecharConfiguracao: () => void;
-    salvarConfiguracao: (configuracao: ConfiguracaoPartida) => Promise<void>;
-    abrirDetalhes: (partida: PartidaResumo) => void;
-    fecharDetalhes: () => void;
+    salvarConfiguracaoPartida: (idPartida: number, configuracao: ConfiguracaoPartida) => Promise<void>;
 };
 
 const Contexto__PaginaGameDesignerConfiguracaoPartida = createContext<Contexto__PaginaGameDesignerConfiguracaoPartida__Props | undefined>(undefined);
@@ -52,8 +46,6 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Provider = ({ chil
     const [erro, setErro] = useState<string | null>(null);
     const [estadoFluxo, setEstadoFluxo] = useState<FluxoConfiguracaoPartida>('LISTAGEM');
     const [idPartidaEmEdicao, setIdPartidaEmEdicao] = useState<number | null>(null);
-    const [partidaEmConfiguracao, setPartidaEmConfiguracao] = useState<PartidaResumo | null>(null);
-    const [partidaEmDetalhes, setPartidaEmDetalhes] = useState<PartidaResumo | null>(null);
 
     const carregar = useCallback(async () => {
         setCarregando(true);
@@ -99,6 +91,11 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Provider = ({ chil
         setEstadoFluxo('LISTAGEM');
     }, [executarSalvando]);
 
+    // Salva a configuracao runtime e ja reflete na estrutura (badge "Configurada" da grade). Nao navega: as abas (Runtime/Detalhes) seguem abertas sobre a mesma Partida.
+    const salvarConfiguracaoPartida = useCallback(async (idPartida: number, configuracao: ConfiguracaoPartida) => {
+        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.salvarConfiguracao, { id: idPartida, configuracao }, { mensagemErro: 'Não foi possível salvar a configuração da Partida.' }), 'Não foi possível salvar a configuração da Partida.');
+    }, [executarSalvando]);
+
     const iniciaCadastro = useCallback(() => setEstadoFluxo('CADASTRO'), []);
     const selecionaPartida = useCallback((idPartida: number) => setIdPartidaEmEdicao(idPartida), []);
     const voltaParaListagem = useCallback(() => {
@@ -110,24 +107,11 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Provider = ({ chil
         setEstadoFluxo('LISTAGEM');
     }, []);
 
-    const abrirConfiguracao = useCallback((partida: PartidaResumo) => setPartidaEmConfiguracao(partida), []);
-    const fecharConfiguracao = useCallback(() => setPartidaEmConfiguracao(null), []);
-
-    const abrirDetalhes = useCallback((partida: PartidaResumo) => setPartidaEmDetalhes(partida), []);
-    const fecharDetalhes = useCallback(() => setPartidaEmDetalhes(null), []);
-
-    const salvarConfiguracao = useCallback(async (configuracao: ConfiguracaoPartida) => {
-        if (!partidaEmConfiguracao) return;
-
-        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.salvarConfiguracao, { id: partidaEmConfiguracao.id, configuracao }, { mensagemErro: 'Não foi possível salvar a configuração da Partida.' }), 'Não foi possível salvar a configuração da Partida.');
-        setPartidaEmConfiguracao(null);
-    }, [partidaEmConfiguracao, executarSalvando]);
-
     const partidaEmEdicao = useMemo(() => obtemPartida(estrutura, idPartidaEmEdicao), [estrutura, idPartidaEmEdicao]);
     const listagemPartidas = useMemo<ListagemPartidas>(() => montaListagemPartidas(estrutura, carregando, erro), [estrutura, carregando, erro]);
 
     return (
-        <Contexto__PaginaGameDesignerConfiguracaoPartida.Provider value={{ estrutura, listagemPartidas, salvando, estadoFluxo, idPartidaEmEdicao, partidaEmEdicao, partidaEmConfiguracao, partidaEmDetalhes, iniciaCadastro, selecionaPartida, voltaParaListagem, concluiCadastro, criarPartida, salvarPartida, deletarPartida, abrirConfiguracao, fecharConfiguracao, salvarConfiguracao, abrirDetalhes, fecharDetalhes }}>
+        <Contexto__PaginaGameDesignerConfiguracaoPartida.Provider value={{ estrutura, listagemPartidas, salvando, estadoFluxo, idPartidaEmEdicao, partidaEmEdicao, iniciaCadastro, selecionaPartida, voltaParaListagem, concluiCadastro, criarPartida, salvarPartida, deletarPartida, salvarConfiguracaoPartida }}>
             {children}
         </Contexto__PaginaGameDesignerConfiguracaoPartida.Provider>
     );

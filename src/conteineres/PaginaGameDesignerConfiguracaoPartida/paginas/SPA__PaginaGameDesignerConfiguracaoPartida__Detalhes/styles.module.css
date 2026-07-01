@@ -1,8 +1,36 @@
 .detalhes {
     width: 100%;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 1.1em;
+    padding-right: 0.4em;
+}
+
+/* Card do conteúdo da aba (a identidade vem do rótulo da aba, não de um título repetido aqui). */
+.secao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    margin: 0;
+    padding: 1.1em 1.2em;
+    border: 0.08em solid rgba(183, 144, 81, 0.28);
+    border-radius: 0.6em;
+    background-color: rgba(24, 20, 32, 0.5);
+}
+
+.estado {
+    margin: 0;
+    font-size: 0.9em;
+    opacity: 0.78;
+}
+
+.linha_acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7em;
 }
 
 .campo {
@@ -119,68 +147,46 @@
     font-size: 6.55cqw;
 }
 
-.acoes {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75em;
-    max-width: 60em;
-}
-
-.botao_principal,
-.botao_remover {
-    padding: 0.55em 1.05em;
-    border: 0.08em solid var(--cor-borda);
-    border-radius: 0.4em;
-    color: inherit;
+/* Ação primária do card (Escolher/Trocar) — contorno pergaminho on-brand, inline (≠ save do rodapé, que é ouro no ConteudoForm.AreaBotoes). */
+.botao_acao {
+    padding: 0.6em 1.2em;
+    border: 0.1em solid rgba(235, 224, 201, 0.32);
+    border-radius: 0.45em;
+    background: transparent;
+    color: #EBE0C9;
+    font-weight: 600;
+    letter-spacing: 0.03em;
     cursor: pointer;
-    white-space: nowrap;
-}
+    transition: border-color 140ms ease, background-color 140ms ease;
 
-.botao_principal:disabled {
-    opacity: 0.55;
-    cursor: default;
-}
+    &:hover:not(:disabled) {
+        border-color: rgba(235, 224, 201, 0.65);
+        background: rgba(235, 224, 201, 0.08);
+    }
 
-.botao_principal {
-    background-color: #00A8B8;
-    color: #031317;
-    border-color: #00D4E8;
+    &:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
 }
 
 .botao_remover {
-    background-color: transparent;
-    border-color: rgba(255, 120, 120, 0.4);
-    color: #FFB0B0;
-    padding: 0.45em 0.8em;
-}
-
-.botao_remover:hover {
-    background-color: rgba(255, 120, 120, 0.12);
-}
-
-.botao_secundario {
-    padding: 0.55em 1.05em;
-    border: 0.08em solid var(--cor-borda);
-    border-radius: 0.4em;
-    background-color: transparent;
-    color: inherit;
+    padding: 0.6em 1em;
+    border: 0.1em solid rgba(219, 71, 71, 0.5);
+    border-radius: 0.45em;
+    background: transparent;
+    color: #F0A8A8;
     cursor: pointer;
-}
+    transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
 
-.botao_secundario:hover {
-    background-color: rgba(255, 255, 255, 0.08);
-}
+    &:hover:not(:disabled) {
+        border-color: #DB4747;
+        background: rgba(219, 71, 71, 0.14);
+        color: #FFD9D5;
+    }
 
-.barra_capa {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.8em;
-}
-
-.barra_capa_acoes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6em;
+    &:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
 }

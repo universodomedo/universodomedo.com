@@ -56,6 +56,28 @@ Não criar tipo local para “forçar” campo que o contrato não expõe.
 
 Se o campo necessário não existe no contrato, reportar necessidade de ajuste na Nora-Api.
 
+## União discriminada — remap flat→nativo no consumo (transform legítimo, não gambiarra)
+
+A leitura GraphQL **não modela união discriminada** (`@Objeto` só faz objeto de campos fixos). Um campo união (ex.: `condicaoVitoria`) vem **achatado**: um objeto com o discriminante (`tipo`) + os campos de TODAS as variantes nullable. Pra alimentar código que usa a união nativa (ex.: um editor que estreita por `tipo`), reconstrua a união no **contexto/helper co-locado** do subfluxo:
+
+```ts
+// tipo de entrada DERIVADO do DTO gerado — nunca recriar tipo local paralelo
+type CondicaoGraphql = NonNullable<PartidaGraphqlDto['configuracao']>['condicaoVitoria'];
+
+function remapCondicao(c: CondicaoGraphql): CondicaoVitoria {
+    if (c.tipo === 'inimigo_derrotado') return { tipo: c.tipo, keySerEmSala: c.keySerEmSala! as KeySerEmSala, idEstatisticaDanificavel: c.idEstatisticaDanificavel! };
+    // ... uma variante por branch ...
+    return { tipo: 'qualquer_acao_executada' };
+}
+```
+
+Isto **não** fere a regra anti-`as`/anti-contrato-fraco:
+- não compensa contrato quebrado — o contrato está **correto** (a forma achatada é o melhor que GraphQL/leitura faz pra união); é transform **wire→domínio**, não conserto de contrato;
+- os casts são de marca/variante (`string`→`KeySerEmSala`, achatado→variante discriminada), nunca `as any`/`as unknown` (esses seguem **bloqueados**);
+- o tipo de entrada vem do DTO gerado (`NonNullable<...GraphqlDto[...]>`), não de tipo local.
+
+**Mantenha barato e descartável.** Esse remap é andaime pra união **estática** em código. Se o domínio caminha pra catálogo no banco (a forma vira genérica `{ tipoId, parametros: jsonb }`), a união some — e o remap junto. NÃO investir em máquina pesada (ex.: suporte a união no framework de leitura) pra algo que vai virar dado dinâmico: scaffolding barato pra forma transitória é a escolha certa. Remap fica no contexto/helper do subfluxo, NUNCA espalhado em componente folha.
+
 ## Filtros
 
 Filtros devem vir do contrato.

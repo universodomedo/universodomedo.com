@@ -1,101 +1,58 @@
-.edicao {
+.host {
     display: flex;
     flex-direction: column;
-    gap: 1em;
-    max-width: 36em;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
 }
 
-.cabecalho {
+.abas {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5em;
+    gap: 0.4em;
+    flex: 0 0 auto;
+    border-bottom: 0.08em solid rgba(183, 144, 81, 0.35);
+    margin-bottom: 1.2em;
 }
 
-.selo,
-.selo_ok,
-.selo_pendente {
-    padding: 0.15em 0.6em;
-    border-radius: 1em;
-    font-size: 0.72em;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
-.selo {
-    border: 0.08em solid rgba(255, 255, 255, 0.12);
-    opacity: 0.85;
-}
-
-.selo_ok {
-    background-color: rgba(0, 168, 184, 0.22);
-    color: #5FE0EC;
-}
-
-.selo_pendente {
-    background-color: rgba(255, 190, 120, 0.18);
-    color: #FFD9A8;
-}
-
-.campo {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35em;
-}
-
-.campo > span {
-    font-size: 0.85em;
-    opacity: 0.85;
-}
-
-.linha {
-    display: flex;
-    gap: 0.5em;
-}
-
-.linha input {
-    flex: 1 1 auto;
-    min-width: 0;
-}
-
-/* Botão inline de salvar nome (ação de campo, modesto). Fora do ConteudoForm.AreaBotoes → estilo local da SPA. */
-.botao_salvar {
-    flex: none;
-    padding: 0.55em 1.1em;
-    border: 0.08em solid rgba(235, 224, 201, 0.3);
-    border-radius: 0.4em;
+.aba {
+    appearance: none;
     background: transparent;
-    color: #EBE0C9;
+    border: none;
+    border-bottom: 0.18em solid transparent;
+    margin-bottom: -0.08em;
+    color: rgba(235, 224, 201, 0.55);
+    font: inherit;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    font-size: 0.8em;
+    letter-spacing: 0.1em;
+    padding: 0.7em 1.3em;
     cursor: pointer;
-    white-space: nowrap;
+    transition: color 0.15s ease, border-color 0.15s ease;
 
-    &:hover:not(:disabled),
-    &:focus-visible:not(:disabled) {
-        outline: none;
-        border-color: rgba(235, 224, 201, 0.6);
-        background: rgba(235, 224, 201, 0.08);
-    }
-
-    &:disabled {
-        opacity: 0.45;
-        cursor: default;
+    &:hover {
+        color: #EBE0C9;
     }
 }
 
-.campo input,
-.campo select {
-    padding: 0.55em 0.75em;
-    border: 0.08em solid var(--cor-borda);
-    border-radius: 0.4em;
-    background-color: rgba(0, 0, 0, 0.24);
-    color: inherit;
+.aba_ativa {
+    composes: aba;
+    color: #B79051;
+    border-bottom-color: #B79051;
 }
 
-.dica {
-    margin: 0;
-    font-size: 0.85em;
-    opacity: 0.7;
-    line-height: 1.4;
+.painel {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.painel_oculto {
+    display: none;
+}
+
+.estado {
+    color: rgba(235, 224, 201, 0.7);
+    padding: 1.6em 0;
+    text-align: center;
 }

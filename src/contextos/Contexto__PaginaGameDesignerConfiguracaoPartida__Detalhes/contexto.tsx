@@ -3,8 +3,6 @@
 import { createContext, useContext } from 'react';
 import type { PartidaResumo } from 'types-nora-api';
 
-import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
-import { Contexto__PaginaGameDesignerConfiguracaoPartida__Props } from '../Contexto__PaginaGameDesignerConfiguracaoPartida/contexto';
 import SPA__PaginaGameDesignerConfiguracaoPartida__Detalhes from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Detalhes/SPA__PaginaGameDesignerConfiguracaoPartida__Detalhes';
 
 interface Contexto__PaginaGameDesignerConfiguracaoPartida__Detalhes__Props {
@@ -13,7 +11,6 @@ interface Contexto__PaginaGameDesignerConfiguracaoPartida__Detalhes__Props {
 
 type PropsProvider = {
     partida: PartidaResumo;
-    fecharDetalhes: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['fecharDetalhes'];
 };
 
 const Contexto__PaginaGameDesignerConfiguracaoPartida__Detalhes = createContext<Contexto__PaginaGameDesignerConfiguracaoPartida__Detalhes__Props | undefined>(undefined);
@@ -24,9 +21,8 @@ export const useContexto__PaginaGameDesignerConfiguracaoPartida__Detalhes = (): 
     return context;
 };
 
-export const Contexto__PaginaGameDesignerConfiguracaoPartida__Detalhes__Provider = ({ partida, fecharDetalhes }: PropsProvider) => {
-    useConfigurarLayoutContextualizado({ titulo: 'Detalhes da Partida', subtitulo: partida.nome, fecharProps: { tipo: 'acao', executar: fecharDetalhes, tituloTooltip: 'Voltar para a Partida' } });
-
+// Conteudo da aba Detalhes: arteCapa e idMusicaConfigurada ja vem no PartidaResumo (estrutura) — a SPA inicializa a partir deles, sem busca propria. Nao configura layout — a Edicao (host das abas) cuida disso.
+export const Contexto__PaginaGameDesignerConfiguracaoPartida__Detalhes__Provider = ({ partida }: PropsProvider) => {
     return (
         <Contexto__PaginaGameDesignerConfiguracaoPartida__Detalhes.Provider value={{ partida }}>
             <SPA__PaginaGameDesignerConfiguracaoPartida__Detalhes />

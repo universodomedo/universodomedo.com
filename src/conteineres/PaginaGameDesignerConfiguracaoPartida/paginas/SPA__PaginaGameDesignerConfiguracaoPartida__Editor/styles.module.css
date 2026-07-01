@@ -1,8 +1,12 @@
 .editor {
     width: 100%;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 1em;
+    padding-right: 0.4em;
 }
 
 .cabecalho {
@@ -137,13 +141,6 @@
     border-radius: 0.4em;
 }
 
-.acoes {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75em;
-}
-
-.botao_principal,
 .botao_secundario,
 .botao_remover {
     padding: 0.55em 1.05em;
@@ -157,12 +154,6 @@
         opacity: 0.55;
         cursor: default;
     }
-}
-
-.botao_principal {
-    background-color: #00A8B8;
-    color: #031317;
-    border-color: #00D4E8;
 }
 
 .botao_secundario {

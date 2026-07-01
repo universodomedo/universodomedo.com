@@ -9,7 +9,7 @@ import { obtemImagemCapaArte3D } from 'Funcionalidades/ArteDeCapa/arteDeCapa.api
 import { Renderiza__ImagemUDM__ArteCapaEnquadrada } from 'Uteis/RenderImagemUDM/Renderiza__ImagemUDM__ArteCapaEnquadrada';
 import { ItemPartidaOrbital } from 'Componentes/ElementosDeJogo/ItemPartidaOrbital/ItemPartidaOrbital';
 import { Componente_Selecionador__ArteCapa } from 'Componentes/Selecionadores/Componente_Selecionador__ArteCapa/Componente_Selecionador__ArteCapa';
-import { SecaoMusicaFundo } from './SecaoMusicaFundo';
+import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Detalhes } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Detalhes/contexto';
 import { EventosApiRest, type ArteCapaDaPartida, type EncaixeArteCapaPartida } from 'types-nora-api';
 
@@ -24,29 +24,12 @@ type Arraste = { ponteiroX: number; ponteiroY: number; deslocamentoX: number; de
 
 export default function SPA__PaginaGameDesignerConfiguracaoPartida__Detalhes() {
     const { partida } = useContexto__PaginaGameDesignerConfiguracaoPartida__Detalhes();
-    const [idProjeto, setIdProjeto] = useState<number | null>(null);
-    const [encaixe, setEncaixe] = useState<EncaixeArteCapaPartida>(ENCAIXE_PADRAO);
+    const [idProjeto, setIdProjeto] = useState<number | null>(partida.arteCapa?.idProjeto ?? null);
+    const [encaixe, setEncaixe] = useState<EncaixeArteCapaPartida>(partida.arteCapa?.encaixe ?? ENCAIXE_PADRAO);
     const [imagemBase64, setImagemBase64] = useState<string | null>(null);
-    const [carregando, setCarregando] = useState(true);
     const [salvando, setSalvando] = useState(false);
     const [selecionando, setSelecionando] = useState(false);
     const arrasteRef = useRef<Arraste | null>(null);
-
-    // Carrega a Arte de Capa atual da Partida (a listagem de capas é responsabilidade do seletor).
-    useEffect(() => {
-        let ativo = true;
-        async function carregar(): Promise<void> {
-            setCarregando(true);
-            try {
-                const resposta = await NoraApi.RestGET(EventosApiRest.GET.Partidas.arteCapa, { id: partida.id }, { mensagemErro: 'Não foi possível carregar a Arte de Capa da Partida.' });
-                if (!ativo) return;
-                if (resposta.arteCapa) { setIdProjeto(resposta.arteCapa.idProjeto); setEncaixe(resposta.arteCapa.encaixe); }
-            } catch { /* toast já tratado pelo NoraApi */ }
-            finally { if (ativo) setCarregando(false); }
-        };
-        void carregar();
-        return () => { ativo = false; };
-    }, [partida.id]);
 
     // Carrega a imagem (base64) da capa selecionada.
     useEffect(() => {
@@ -108,59 +91,58 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Detalhes() {
         } finally { setSalvando(false); }
     };
 
-    if (carregando) return <section className={styles.detalhes}><p className={styles.dica}>Carregando detalhes da Partida…</p></section>;
-
     if (selecionando) return <Componente_Selecionador__ArteCapa idInicial={idProjeto} aoConfirmar={selecionaCapa} aoCancelar={() => setSelecionando(false)} />;
 
     return (
-        <section className={styles.detalhes}>
-            <div className={styles.barra_capa}>
-                <span className={styles.rotulo_bloco}>Arte de Capa</span>
-                <div className={styles.barra_capa_acoes}>
-                    <button type="button" className={styles.botao_secundario} onClick={() => setSelecionando(true)}>{idProjeto === null ? 'Escolher Arte de Capa' : 'Trocar Arte de Capa'}</button>
-                    {idProjeto !== null && <button type="button" className={styles.botao_remover} onClick={removerCapa}>Remover capa</button>}
-                </div>
-            </div>
+        <ConteudoForm>
+            <ConteudoForm.AreaCorpo>
+                <section className={styles.detalhes}>
+                    <fieldset className={styles.secao}>
+                        {idProjeto !== null ? (
+                            <div className={styles.colunas}>
+                                <div className={styles.coluna}>
+                                    <span className={styles.rotulo_bloco}>Imagem da capa — arraste para escolher a faixa, ajuste o zoom abaixo</span>
+                                    <div className={styles.imagem_aberta} onPointerDown={aoBaixarPonteiro} onPointerMove={aoMoverPonteiro} onPointerUp={aoSoltarPonteiro} onPointerCancel={aoSoltarPonteiro}>
+                                        {imagemBase64 ? (
+                                            <>
+                                                <Renderiza__ImagemUDM__ArteCapaEnquadrada imagemBase64={imagemBase64} />
+                                                <div className={styles.recorte} style={estiloRecorte} />
+                                            </>
+                                        ) : <span className={styles.vazio}>Carregando imagem…</span>}
+                                    </div>
+                                    <label className={styles.campo}>
+                                        <span>Zoom ({encaixe.escala.toFixed(2)}×)</span>
+                                        <input type="range" min={1} max={4} step={0.05} value={encaixe.escala} onChange={evento => setEncaixe(atual => ({ ...atual, escala: Number(evento.target.value) }))} />
+                                    </label>
+                                </div>
 
-            {idProjeto !== null ? (
-                <div className={styles.colunas}>
-                    <div className={styles.coluna}>
-                        <span className={styles.rotulo_bloco}>Imagem da capa — arraste para escolher a faixa, ajuste o zoom abaixo</span>
-                        <div className={styles.imagem_aberta} onPointerDown={aoBaixarPonteiro} onPointerMove={aoMoverPonteiro} onPointerUp={aoSoltarPonteiro} onPointerCancel={aoSoltarPonteiro}>
-                            {imagemBase64 ? (
-                                <>
-                                    <Renderiza__ImagemUDM__ArteCapaEnquadrada imagemBase64={imagemBase64} />
-                                    <div className={styles.recorte} style={estiloRecorte} />
-                                </>
-                            ) : <span className={styles.vazio}>Carregando imagem…</span>}
-                        </div>
-                        <label className={styles.campo}>
-                            <span>Zoom ({encaixe.escala.toFixed(2)}×)</span>
-                            <input type="range" min={1} max={4} step={0.05} value={encaixe.escala} onChange={evento => setEncaixe(atual => ({ ...atual, escala: Number(evento.target.value) }))} />
-                        </label>
-                    </div>
-
-                    <div className={styles.coluna}>
-                        <span className={styles.rotulo_bloco}>Prévia no Orbital</span>
-                        <div className={styles.previa}>
-                            <div className={styles.previa_grupo}>
-                                <span className={styles.previa_label}>No catálogo</span>
-                                <ItemPartidaOrbital className={styles.previa_item_normal} nome={partida.nome} imagemBase64={imagemBase64} encaixe={encaixe} />
+                                <div className={styles.coluna}>
+                                    <span className={styles.rotulo_bloco}>Prévia no Orbital</span>
+                                    <div className={styles.previa}>
+                                        <div className={styles.previa_grupo}>
+                                            <span className={styles.previa_label}>No catálogo</span>
+                                            <ItemPartidaOrbital className={styles.previa_item_normal} nome={partida.nome} imagemBase64={imagemBase64} encaixe={encaixe} />
+                                        </div>
+                                        <div className={styles.previa_grupo}>
+                                            <span className={styles.previa_label}>Selecionada (em foco)</span>
+                                            <ItemPartidaOrbital className={styles.previa_item_selecionado} nome={partida.nome} imagemBase64={imagemBase64} encaixe={encaixe} selecionado />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className={styles.previa_grupo}>
-                                <span className={styles.previa_label}>Selecionada (em foco)</span>
-                                <ItemPartidaOrbital className={styles.previa_item_selecionado} nome={partida.nome} imagemBase64={imagemBase64} encaixe={encaixe} selecionado />
-                            </div>
+                        ) : <p className={styles.estado}>Nenhuma Arte de Capa selecionada — escolha uma para exibir no Orbital e na página da Partida.</p>}
+
+                        <div className={styles.linha_acoes}>
+                            <button type="button" className={styles.botao_acao} onClick={() => setSelecionando(true)}>{idProjeto === null ? 'Escolher Arte de Capa' : 'Trocar Arte de Capa'}</button>
+                            {idProjeto !== null && <button type="button" className={styles.botao_remover} onClick={removerCapa}>Remover</button>}
                         </div>
-                    </div>
-                </div>
-            ) : <p className={styles.dica}>Nenhuma Arte de Capa selecionada. Use "Escolher Arte de Capa".</p>}
+                    </fieldset>
+                </section>
+            </ConteudoForm.AreaCorpo>
 
-            <div className={styles.acoes}>
-                <button type="button" className={styles.botao_principal} onClick={() => void salvar()} disabled={salvando}>{salvando ? 'Salvando…' : 'Salvar Arte de Capa'}</button>
-            </div>
-
-            <SecaoMusicaFundo idPartida={partida.id} />
-        </section>
+            <ConteudoForm.AreaBotoes>
+                <button type="button" onClick={() => void salvar()} disabled={salvando}>{salvando ? 'Salvando…' : 'Salvar Arte de Capa'}</button>
+            </ConteudoForm.AreaBotoes>
+        </ConteudoForm>
     );
 };

@@ -1,31 +1,45 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
-import type { PartidaResumo } from 'types-nora-api';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import type { ConfiguracaoPartida, PartidaResumo } from 'types-nora-api';
 
+import { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { Contexto__PaginaGameDesignerConfiguracaoPartida__Props } from '../Contexto__PaginaGameDesignerConfiguracaoPartida/contexto';
+import { remapeiaConfiguracaoPartidaGraphql } from './remapeiaConfiguracaoPartida';
 import SPA__PaginaGameDesignerConfiguracaoPartida__Edicao from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Edicao/SPA__PaginaGameDesignerConfiguracaoPartida__Edicao';
+
+export type AbaEdicaoPartida = 'runtime' | 'arteCapa' | 'musica';
+
+// Carga unica do detalhe da Partida: o configuracao (runtime) vem por GraphQL Partida-por-PK; arteCapa e idMusicaConfigurada ja vem no PartidaResumo (estrutura), entao a aba Detalhes os le direto da partida — sem N+1.
+const SELECT_CONFIGURACAO_PARTIDA = {
+    configuracao: {
+        narracaoInicial: true,
+        cenario: { nome: true, mapaLogico: { larguraMetros: true, alturaMetros: true } },
+        controlaveis: { key: true, referencia: { tipo: true, id: true }, posicaoInicial: { x: true, y: true }, nomeExibicao: true, percepcaoInicial: true },
+        naoControlaveis: { key: true, referencia: { tipo: true, id: true }, posicaoInicial: { x: true, y: true }, nomeExibicao: true, percepcaoInicial: true },
+        interagiveis: { key: true, nome: true, tipo: true, descricao: true, posicao: { x: true, y: true }, estadoPercepcaoInicial: true },
+        descobertasCondicionadas: { key: true, nome: true, descricaoInterna: true, idCapacidadeInata: true, recompensas: { dificuldadeMinima: true, keysSeresPercebidos: true } },
+        temporal: { momentoInicialMs: true },
+        condicaoVitoria: { tipo: true, keySerEmSala: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMetros: true },
+    },
+} as const;
 
 interface Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Props {
     partida: PartidaResumo;
+    aba: AbaEdicaoPartida;
+    setAba: (aba: AbaEdicaoPartida) => void;
+    carregando: string | null;
+    erro: string | null;
+    configuracaoInicial: ConfiguracaoPartida | null;
     salvando: boolean;
-    nome: string;
-    setNome: (nome: string) => void;
-    podeSalvarNome: boolean;
-    salvarNome: () => Promise<void>;
-    configurarRuntime: () => void;
-    configurarDetalhes: () => Promise<void>;
-    deletar: () => Promise<void>;
+    salvarConfiguracao: (configuracao: ConfiguracaoPartida) => Promise<void>;
 };
 
 type PropsProvider = {
     partida: PartidaResumo;
     salvando: boolean;
-    salvarPartida: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['salvarPartida'];
-    deletarPartida: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['deletarPartida'];
-    abrirConfiguracao: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['abrirConfiguracao'];
-    abrirDetalhes: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['abrirDetalhes'];
+    salvarConfiguracaoPartida: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['salvarConfiguracaoPartida'];
     voltaParaListagem: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['voltaParaListagem'];
 };
 
@@ -37,31 +51,27 @@ export const useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao = (): Co
     return context;
 };
 
-export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider = ({ partida, salvando, salvarPartida, deletarPartida, abrirConfiguracao, abrirDetalhes, voltaParaListagem }: PropsProvider) => {
-    useConfigurarLayoutContextualizado({ titulo: 'Editando Partida', subtitulo: `${partida.nome}`, fecharProps: { tipo: 'acao', executar: voltaParaListagem, tituloTooltip: 'Voltar para Listagem' } });
+export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider = ({ partida, salvando, salvarConfiguracaoPartida, voltaParaListagem }: PropsProvider) => {
+    useConfigurarLayoutContextualizado({ subtitulo: partida.nome, fecharProps: { tipo: 'acao', executar: voltaParaListagem, tituloTooltip: 'Voltar para Listagem' } });
 
-    const [nome, setNome] = useState(partida.nome);
+    const [aba, setAba] = useState<AbaEdicaoPartida>('runtime');
 
-    const nomeNormalizado = nome.trim();
-    const podeSalvarNome = nomeNormalizado.length > 0 && nomeNormalizado !== partida.nome;
+    const consulta = useNoraGraphQLRegistro('Partida', {
+        props: { idPartida: partida.id },
+        pk: partida.id,
+        select: SELECT_CONFIGURACAO_PARTIDA,
+        carregando: 'Carregando configuração da Partida',
+        mensagemErro: 'Não foi possível carregar a configuração da Partida.',
+    });
 
-    async function salvarNome(): Promise<void> {
-        if (!podeSalvarNome) return;
-        await salvarPartida({ id: partida.id, nome: nomeNormalizado });
-    };
-
-    function configurarRuntime(): void { abrirConfiguracao(partida); };
-
-    // Detalhes só edita a Arte de Capa — garante o nome salvo/atualizado antes de entrar, e leva o nome corrente.
-    async function configurarDetalhes(): Promise<void> {
-        if (podeSalvarNome) await salvarPartida({ id: partida.id, nome: nomeNormalizado });
-        abrirDetalhes({ ...partida, nome: nomeNormalizado });
-    };
-
-    async function deletar(): Promise<void> { await deletarPartida({ idPartida: partida.id }); };
+    const configuracaoInicial = useMemo<ConfiguracaoPartida | null>(() => {
+        const configuracao = consulta.data?.configuracao;
+        return configuracao ? remapeiaConfiguracaoPartidaGraphql(configuracao) : null;
+    }, [consulta.data]);
+    const salvarConfiguracao = useCallback((configuracao: ConfiguracaoPartida) => salvarConfiguracaoPartida(partida.id, configuracao), [salvarConfiguracaoPartida, partida.id]);
 
     return (
-        <Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider value={{ partida, salvando, nome, setNome, podeSalvarNome, salvarNome, configurarRuntime, configurarDetalhes, deletar }}>
+        <Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider value={{ partida, aba, setAba, carregando: consulta.carregando, erro: consulta.erro, configuracaoInicial, salvando, salvarConfiguracao }}>
             <SPA__PaginaGameDesignerConfiguracaoPartida__Edicao />
         </Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider>
     );
