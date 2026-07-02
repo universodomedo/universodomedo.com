@@ -1,11 +1,12 @@
-.registro_ser {
+.card_ser {
     width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 1em;
-    align-items: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.35em;
     padding: 0.85em 1em;
-    border: 0.08em solid rgba(255, 255, 255, 0.16);
+    border: 0.08em solid rgba(183, 144, 81, 0.35);
     border-radius: 0.35em;
     background: rgba(255, 255, 255, 0.04);
     color: inherit;
@@ -13,6 +14,20 @@
     cursor: pointer;
 }
 
-.registro_ser:hover {
-    background: rgba(255, 255, 255, 0.08);
+.card_ser:hover {
+    background: rgba(183, 144, 81, 0.12);
+    border-color: rgba(183, 144, 81, 0.6);
+}
+
+.card_ser_nome {
+    color: #EBE0C9;
+    font-size: 1.05em;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.card_ser_gep {
+    color: #B79051;
+    font-size: 0.85em;
+    letter-spacing: 0.03em;
 }

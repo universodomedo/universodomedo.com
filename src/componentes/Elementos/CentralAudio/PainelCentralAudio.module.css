@@ -59,49 +59,7 @@
 .volume {
     display: flex;
     align-items: center;
-    gap: 0.6em;
     flex-shrink: 0;
-}
-
-.volumeRotulo {
-    font-size: 0.68em;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    opacity: 0.6;
-}
-
-.niveis {
-    display: flex;
-    border: 0.08em solid rgba(183, 144, 81, 0.35);
-    border-radius: 0.55em;
-    overflow: hidden;
-}
-
-.nivel {
-    padding: 0.4em 0.7em;
-    font-size: 0.82em;
-    color: #EBE0C9;
-    border: none;
-    border-left: 0.08em solid rgba(183, 144, 81, 0.25);
-    background: transparent;
-    cursor: pointer;
-
-    &:first-child {
-        border-left: none;
-    }
-
-    &:hover {
-        background: rgba(183, 144, 81, 0.16);
-    }
-}
-
-.nivelAtivo {
-    color: #07060B;
-    background: #B79051;
-
-    &:hover {
-        background: #c8a062;
-    }
 }
 
 .fechar {

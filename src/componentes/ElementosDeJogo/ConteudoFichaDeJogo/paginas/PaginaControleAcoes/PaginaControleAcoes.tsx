@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 
 import { useEffect, useState, type CSSProperties } from 'react';
-import type { AcaoDisponivel, AcaoTemporalSalaDeJogoRuntime, EstadoTemporalSalaDeJogoRuntime, KeyCombatenteMissaoFuncionalSalaDeJogoRuntime, SerNaSalaJogoWsDto } from 'types-nora-api';
+import type { AcaoDisponivel, AcaoTemporalSalaDeJogoRuntime, EstadoTemporalSalaDeJogoRuntime, InteragivelPercebidoSalaJogoWsDto, KeyCombatenteMissaoFuncionalSalaDeJogoRuntime, SerNaSalaJogoWsDto } from 'types-nora-api';
 
 import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonagem/contexto';
 import type { GrupoAcoesPorCapacidadeFicha } from 'Contextos/ContextoFichaDePersonagem/contexto';
@@ -19,6 +19,7 @@ export default function PaginaControleAcoes() {
     const [acaoComSelecaoAlvo, setAcaoComSelecaoAlvo] = useState<AcaoDisponivel | null>(null);
     const [momentoProjetadoMs, setMomentoProjetadoMs] = useState(0);
     const seresNaSala = mapaLogico?.seresNaSala ?? [];
+    const interagiveisPercebidos = mapaLogico?.interagiveisPercebidos ?? [];
     const tempoRodando = estadoTemporalSalaJogo?.status === 'RODANDO';
     const acoesFichaDesativadas = desativarAcoes || tempoRodando;
     const acaoEmExecucao = estadoTemporalSalaJogo?.acoesTemporais.find(acaoTemporal => acaoTemporal.status === 'EM_ANDAMENTO' && acaoTemporal.tipo === 'atacar') ?? null;
@@ -62,7 +63,7 @@ export default function PaginaControleAcoes() {
             {estadoTemporalSalaJogo && movimentacao && <SecaoAcaoLocomocao estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} modoMovimentacaoAtivo={movimentacao.modoMovimentacaoAtivo} iniciaModoMovimentacao={movimentacao.iniciaModoMovimentacao} cancelaModoMovimentacao={movimentacao.cancelaModoMovimentacao} />}
             {estadoTemporalSalaJogo && <SecaoAcaoTemporalEsperar estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} executaEsperar={executaEsperar} />}
             {acoesPorStatusECapacidade.bloqueadas.length > 0 && <SecaoAcoesFicha titulo="Ações Bloqueadas" grupos={acoesPorStatusECapacidade.bloqueadas} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
-            {acaoComSelecaoAlvo && <ModalSelecaoAlvoAcao acao={acaoComSelecaoAlvo} seresNaSala={seresNaSala} cancelar={() => setAcaoComSelecaoAlvo(null)} confirmar={executaAcaoComAlvo} />}
+            {acaoComSelecaoAlvo && <ModalSelecaoAlvoAcao acao={acaoComSelecaoAlvo} seresNaSala={seresNaSala} interagiveisPercebidos={interagiveisPercebidos} cancelar={() => setAcaoComSelecaoAlvo(null)} confirmar={executaAcaoComAlvo} />}
         </div>
     );
 };
@@ -196,7 +197,9 @@ function AcaoEmFicha({ acao, desativarAcoes, cooldownAcaoExecutando, executaAcao
     );
 };
 
-function ModalSelecaoAlvoAcao({ acao, seresNaSala, cancelar, confirmar }: { acao: AcaoDisponivel; seresNaSala: readonly SerNaSalaJogoWsDto[]; cancelar: () => void; confirmar: (keyCombatenteAlvo: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime) => void; }) {
+function ModalSelecaoAlvoAcao({ acao, seresNaSala, interagiveisPercebidos, cancelar, confirmar }: { acao: AcaoDisponivel; seresNaSala: readonly SerNaSalaJogoWsDto[]; interagiveisPercebidos: readonly InteragivelPercebidoSalaJogoWsDto[]; cancelar: () => void; confirmar: (keyCombatenteAlvo: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime) => void; }) {
+    const objetosAlvo = interagiveisPercebidos.filter(interagivel => interagivel.tipo === 'objeto');
+
     return (
         <div className={styles.fundo_modal_alvo}>
             <section className={styles.modal_alvo} role="dialog" aria-modal="true" aria-label={`Selecionar alvo para ${acao.nome}`}>
@@ -205,8 +208,9 @@ function ModalSelecaoAlvoAcao({ acao, seresNaSala, cancelar, confirmar }: { acao
                     <button type="button" onClick={cancelar}>Cancelar</button>
                 </header>
                 <div className={styles.lista_alvos}>
-                    {seresNaSala.length === 0 && <span>Nenhum alvo disponível.</span>}
+                    {seresNaSala.length === 0 && objetosAlvo.length === 0 && <span>Nenhum alvo disponível.</span>}
                     {seresNaSala.map(ser => <button key={ser.keyInstancia} type="button" disabled={ser.papel === 'controlado'} onClick={() => confirmar(ser.keyInstancia)}>{ser.nome}{ser.papel === 'controlado' ? ' (ator)' : ''}</button>)}
+                    {objetosAlvo.map(objeto => <button key={objeto.key} type="button" onClick={() => confirmar(objeto.key as KeyCombatenteMissaoFuncionalSalaDeJogoRuntime)}>{objeto.nome}</button>)}
                 </div>
             </section>
         </div>

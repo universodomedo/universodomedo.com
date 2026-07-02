@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 import { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
 import { useAppDispatch, useAppSelector } from 'Redux/hooks/useRedux';
-import { selectIdMusicaPaginaAtual, selectNivelVolume } from 'Redux/selectors/audioPaginaSelectors';
+import { selectIdMusicaPaginaAtual, selectNivelVolumeEfetivo } from 'Redux/selectors/audioPaginaSelectors';
 import { GANHO_POR_NIVEL_VOLUME, setNivelVolume } from 'Redux/slices/audioPaginaSlice';
 import { lerNivelVolumeSalvo } from 'Uteis/PreferenciaVolume/preferenciaVolume';
 import { useReprodutorMontagem } from './useReprodutorMontagem';
@@ -14,7 +14,7 @@ const SELECT_MUSICA = { id: true, arquivo: { id: true, caminhoArquivo: true }, m
 export default function ControladorAudioGlobal() {
     const dispatch = useAppDispatch();
     const idMusica = useAppSelector(selectIdMusicaPaginaAtual);
-    const nivelVolume = useAppSelector(selectNivelVolume);
+    const nivelVolume = useAppSelector(selectNivelVolumeEfetivo);
 
     // restaura o volume escolhido pelo usuário (persistido em localStorage) ao montar
     useEffect(() => {

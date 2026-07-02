@@ -1,0 +1,136 @@
+/* SeletorNivelVolume — slider de volume arrastável entre 6 níveis (mudo → máximo) da Central de Áudio.
+   Barra com groove afundado + preenchimento em espectro (cor vem da config, via inline) + polegar-pílula.
+   Snap com "bounce": a transição do polegar/preenchimento usa easing com overshoot; some enquanto arrasta. */
+
+.seletor {
+    display: flex;
+    flex-direction: column;
+    width: 14em;
+}
+
+.trilhoArea {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.55em;
+}
+
+.icone {
+    font-size: 0.75em;
+    line-height: 1;
+    opacity: 0.55;
+    margin-bottom: 0.45em;
+}
+
+/* cadeado no ponto do Mínimo: sinaliza que ali é o piso e não dá pra descer ao Silencioso agora */
+.cadeado {
+    position: absolute;
+    top: 50%;
+    z-index: 3;
+    transform: translate(-50%, -50%);
+    font-size: 0.66em;
+    line-height: 1;
+    pointer-events: none;
+    filter: drop-shadow(0 0.05em 0.1em rgba(0, 0, 0, 0.7));
+}
+
+.barraCol {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* faixa que reserva a altura do rótulo acima da barra; o rótulo é posicionado sobre o ponto atual */
+.faixaRotulo {
+    position: relative;
+    height: 1.2em;
+}
+
+.valor {
+    position: absolute;
+    bottom: 0;
+    white-space: nowrap;
+    font-size: 0.82em;
+    font-weight: 600;
+    pointer-events: none;
+    transition: left 0.34s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
+}
+
+.trilho {
+    position: relative;
+    height: 1.5em;
+    cursor: pointer;
+    outline: none;
+    touch-action: none;
+
+    /* groove: a barra afundada */
+    &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 0.62em;
+        transform: translateY(-50%);
+        border-radius: 0.34em;
+        background: rgba(0, 0, 0, 0.5);
+        border: 0.07em solid rgba(183, 144, 81, 0.28);
+        box-shadow: inset 0 0.07em 0.16em rgba(0, 0, 0, 0.65);
+    }
+
+    &:focus-visible .polegar {
+        box-shadow: 0 0.12em 0.34em rgba(0, 0, 0, 0.55), 0 0 0 0.2em rgba(183, 144, 81, 0.5);
+    }
+}
+
+/* preenchimento em espectro (background = gradiente da config, por inline); revelado até o polegar via clip-path */
+.preenchimento {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 0.62em;
+    transform: translateY(-50%);
+    box-shadow: inset 0 0.06em 0.12em rgba(255, 255, 255, 0.28);
+    pointer-events: none;
+    transition: clip-path 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* marcas dos níveis, como entalhes dentro da barra */
+.marca {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    width: 0.2em;
+    height: 0.2em;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    pointer-events: none;
+}
+
+/* ponto do Silencioso quando travado: apagado, sinalizando indisponível nesta página */
+.marcaBloqueada {
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 0.06em rgba(255, 255, 255, 0.1);
+}
+
+/* polegar: pílula elevada mais alta que a barra; a borda acompanha a cor do nível (inline) */
+.polegar {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    width: 0.7em;
+    height: 1.3em;
+    transform: translate(-50%, -50%);
+    border-radius: 0.36em;
+    background: linear-gradient(180deg, #f4ecd7, #d6c8a4);
+    border: 0.1em solid #B79051;
+    box-shadow: 0 0.12em 0.34em rgba(0, 0, 0, 0.55), inset 0 0.06em 0.1em rgba(255, 255, 255, 0.65);
+    pointer-events: none;
+    transition: left 0.34s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.2s ease;
+}
+
+/* enquanto arrasta, polegar/preenchimento seguem o dedo sem transição (o bounce só acontece ao soltar) */
+.semTransicao {
+    transition: none;
+}

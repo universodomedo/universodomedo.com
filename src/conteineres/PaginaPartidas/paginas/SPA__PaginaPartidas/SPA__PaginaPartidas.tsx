@@ -5,6 +5,7 @@ import { useCallback } from 'react';
 import CatalogoDeMissoes, { type CatalogoDeMissoesItem } from 'Componentes/ElementosDeJogo/CatalogoDeMissoes/CatalogoDeMissoes';
 import { FundoArteCapaPartida } from 'Conteineres/PaginaPartidas/paginas/SPA__PaginaPartidas/FundoArteCapaPartida';
 import { MusicaFundoPartida } from 'Conteineres/PaginaPartidas/paginas/SPA__PaginaPartidas/MusicaFundoPartida';
+import { BloqueioDeSilencio } from 'Componentes/Elementos/CentralAudio/BloqueioDeSilencio';
 import { DetalhePartida } from 'Conteineres/PaginaPartidas/paginas/SPA__PaginaPartidas/DetalhePartida';
 import type { Contexto__PaginaPartidas__Props } from 'Contextos/Contexto__PaginaPartidas/contexto';
 
@@ -18,6 +19,7 @@ export default function SPA__PaginaPartidas({ catalogosDisponiveis, partidaSelec
         <div className={styles.pagina_partidas}>
             <FundoArteCapaPartida idProjetoCapa={partidaSelecionada?.arteCapa?.idProjeto ?? null} />
             <MusicaFundoPartida idMusicaConfigurada={partidaSelecionada?.idMusicaConfigurada ?? null} nomePartida={partidaSelecionada?.nome ?? null} />
+            <BloqueioDeSilencio />
             {erro && <div className={styles.erro}>{erro}</div>}
             <section className={styles.secao_detalhamento}>
                 {partidaSelecionada && <DetalhePartida key={partidaSelecionada.id} partida={partidaSelecionada} textoBotaoJogar={textoBotaoJogar} desabilitado={botaoDesabilitado} aoJogar={jogarPartidaSelecionada} />}

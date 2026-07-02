@@ -144,12 +144,12 @@
     gap: 0.5em;
     width: auto;
     max-width: 20em;
-    padding: 0 0.95em;
+    padding: 0 0.55em 0 0.95em;
     border: 0.07em solid rgba(154, 138, 106, 0.32);
     border-radius: 999em;
     background: linear-gradient(120deg, rgba(16, 12, 24, 0.62), rgba(10, 8, 16, 0.5));
-    cursor: default;
-    pointer-events: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .item_subgrupo::before {
@@ -172,6 +172,83 @@
     color: #B0A082;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.item_subgrupo:hover {
+    border-color: rgba(199, 168, 106, 0.6);
+    box-shadow: 0 0 0.7em rgba(183, 144, 81, 0.22);
+}
+
+.item_subgrupo_central {
+    border-color: rgba(232, 200, 135, 0.72);
+    background: linear-gradient(120deg, rgba(30, 21, 44, 0.85), rgba(14, 10, 22, 0.72));
+    box-shadow: 0 0 1.4em rgba(199, 135, 255, 0.22), 0 0 0.7em rgba(183, 144, 81, 0.32);
+}
+
+.item_subgrupo_central strong {
+    color: #E8D9B8;
+}
+
+.item_subgrupo_unico {
+    padding: 0 0.85em 0 0.95em;
+}
+
+.item_subgrupo_unico::after {
+    content: '';
+    flex: none;
+    width: 0.42em;
+    height: 0.42em;
+    margin-left: 0.1em;
+    border-right: 0.12em solid rgba(199, 168, 106, 0.75);
+    border-bottom: 0.12em solid rgba(199, 168, 106, 0.75);
+    transform: rotate(-45deg);
+}
+
+.item_subgrupo_inativo {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.1em;
+    width: auto;
+    max-width: 22em;
+    padding: 0 1em;
+    border: 0.07em solid rgba(120, 110, 95, 0.28);
+    border-radius: 1.1em;
+    background: linear-gradient(120deg, rgba(14, 11, 20, 0.5), rgba(9, 7, 14, 0.42));
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.item_subgrupo_inativo:hover {
+    border-color: rgba(154, 138, 106, 0.5);
+}
+
+.item_subgrupo_inativo strong {
+    font-family: var(--fonte-cinzel);
+    font-size: 1em;
+    font-variant: small-caps;
+    letter-spacing: 0.08em;
+    color: #8A7F6A;
+    white-space: nowrap;
+}
+
+.item_subgrupo_inativo span {
+    font-family: var(--fonte-junge);
+    font-size: 0.78em;
+    font-style: italic;
+    letter-spacing: 0.01em;
+    color: #6A6458;
+    white-space: nowrap;
+}
+
+.item_subgrupo_inativo_central {
+    border-color: rgba(199, 168, 106, 0.55);
+    box-shadow: 0 0 1.1em rgba(199, 135, 255, 0.16), 0 0 0.6em rgba(183, 144, 81, 0.24);
+}
+
+.item_subgrupo_inativo_central strong {
+    color: #C9BE9E;
 }
 
 .item_vazio {

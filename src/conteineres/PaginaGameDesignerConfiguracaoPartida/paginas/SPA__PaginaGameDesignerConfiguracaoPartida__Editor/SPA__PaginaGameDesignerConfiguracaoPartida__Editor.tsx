@@ -15,6 +15,7 @@ type GrupoSeres = 'controlaveis' | 'naoControlaveis';
 type SerRegistroSelecao = { readonly id: number; readonly tipoSer: { readonly nome: string; }; };
 type DescobertaCondicionada = ConfiguracaoPartida['descobertasCondicionadas'][number];
 type RecompensaDescoberta = DescobertaCondicionada['recompensas'][number];
+type Interagivel = ConfiguracaoPartida['interagiveis'][number];
 type CapacidadeInataSelecao = { readonly id: number; readonly nome: string; readonly nomeInteracao: string; };
 
 const ROTULOS_TIPO_CONDICAO_VITORIA: Record<TipoCondicaoVitoria, string> = { qualquer_acao_executada: 'Executar qualquer ação', refem_percebido: 'Perceber um refém (Ser)', inimigo_derrotado: 'Derrotar um não-controlável', tempo_jogo_alcancado: 'Alcançar um marco de tempo', proximidade_ser_alcancada: 'Chegar perto de um Ser (locomoção)' };
@@ -112,6 +113,14 @@ function FormularioEditor() {
     function removeDescoberta(key: string): void { setConfig(atual => ({ ...atual, descobertasCondicionadas: atual.descobertasCondicionadas.filter(descoberta => descoberta.key !== key) })); };
     function atualizaDescoberta(key: string, parcial: Partial<DescobertaCondicionada>): void { setConfig(atual => ({ ...atual, descobertasCondicionadas: atual.descobertasCondicionadas.map(descoberta => descoberta.key === key ? { ...descoberta, ...parcial } : descoberta) })); };
 
+    function adicionaObjeto(): void {
+        contadorKeysRef.current += 1;
+        const novo: Interagivel = { key: `OBJETO:${contadorKeysRef.current}`, nome: '', tipo: 'objeto', descricao: '', posicao: { x: 0, y: 0 }, estadoPercepcaoInicial: 'PERCEBIDO', durabilidadeMaxima: 1 };
+        setConfig(atual => ({ ...atual, interagiveis: [...atual.interagiveis, novo] }));
+    };
+    function removeObjeto(key: string): void { setConfig(atual => ({ ...atual, interagiveis: atual.interagiveis.filter(objeto => objeto.key !== key) })); };
+    function atualizaObjeto(key: string, parcial: Partial<Interagivel>): void { setConfig(atual => ({ ...atual, interagiveis: atual.interagiveis.map(objeto => objeto.key === key ? { ...objeto, ...parcial } : objeto) })); };
+
     const podeSalvar = configuracaoEstaPreenchida(config) && !salvando;
 
     return (
@@ -143,6 +152,8 @@ function FormularioEditor() {
 
                     <ListaSeresEmSala titulo="Controláveis" descricao="Seres que o jogador controla (ao menos um)." grupo="controlaveis" rotuloBotao="controlável" seresEmSala={config.controlaveis} seresDisponiveis={seres.registros} aoAdicionar={adicionaSerEmSala} aoRemover={removeSerEmSala} aoAtualizar={atualizaSerEmSala} />
                     <ListaSeresEmSala titulo="Não-controláveis" descricao="NPCs, inimigos e reféns presentes na sala." grupo="naoControlaveis" rotuloBotao="não-controlável" seresEmSala={config.naoControlaveis} seresDisponiveis={seres.registros} aoAdicionar={adicionaSerEmSala} aoRemover={removeSerEmSala} aoAtualizar={atualizaSerEmSala} />
+
+                    <SecaoObjetos objetos={config.interagiveis} aoAdicionar={adicionaObjeto} aoRemover={removeObjeto} aoAtualizar={atualizaObjeto} />
 
                     <SecaoDescobertasCondicionadas descobertas={config.descobertasCondicionadas} capacidades={capacidades.registros} naoControlaveis={config.naoControlaveis} aoAdicionar={adicionaDescoberta} aoRemover={removeDescoberta} aoAtualizar={atualizaDescoberta} />
 
@@ -265,6 +276,49 @@ function CamposCondicaoVitoria({ condicaoVitoria, naoControlaveis, aoAtualizar }
         );
     }
     return <p className={styles.dica}>A Partida vence assim que o jogador executa qualquer ação.</p>;
+};
+
+function SecaoObjetos({ objetos, aoAdicionar, aoRemover, aoAtualizar }: { objetos: readonly Interagivel[]; aoAdicionar: () => void; aoRemover: (key: string) => void; aoAtualizar: (key: string, parcial: Partial<Interagivel>) => void; }) {
+    return (
+        <fieldset className={styles.secao}>
+            <legend>Objetos</legend>
+            <p className={styles.dica}>Alvos que não são Seres (ex.: Manequim de Treino) — sofrem dano na Durabilidade em vez de vida.</p>
+            {objetos.length === 0 && <p className={styles.vazio}>Nenhum objeto adicionado.</p>}
+            {objetos.map(objeto => (
+                <div key={objeto.key} className={styles.item_ser}>
+                    <label className={styles.campo}>
+                        <span>Nome</span>
+                        <input type="text" value={objeto.nome} onChange={evento => aoAtualizar(objeto.key, { nome: evento.target.value })} />
+                    </label>
+                    <label className={styles.campo}>
+                        <span>Descrição</span>
+                        <input type="text" value={objeto.descricao} onChange={evento => aoAtualizar(objeto.key, { descricao: evento.target.value })} />
+                    </label>
+                    <label className={styles.campo_estreito}>
+                        <span>Durabilidade</span>
+                        <input type="number" min={1} value={objeto.durabilidadeMaxima ?? 1} onChange={evento => aoAtualizar(objeto.key, { durabilidadeMaxima: Number(evento.target.value) })} />
+                    </label>
+                    <label className={styles.campo}>
+                        <span>Percepção inicial</span>
+                        <select value={objeto.estadoPercepcaoInicial} onChange={evento => aoAtualizar(objeto.key, { estadoPercepcaoInicial: evento.target.value as 'DESPERCEBIDO' | 'PERCEBIDO' })}>
+                            <option value="PERCEBIDO">Percebido (visível desde o início)</option>
+                            <option value="DESPERCEBIDO">Despercebido</option>
+                        </select>
+                    </label>
+                    <label className={styles.campo_estreito}>
+                        <span>Pos. X</span>
+                        <input type="number" value={objeto.posicao?.x ?? 0} onChange={evento => aoAtualizar(objeto.key, { posicao: { x: Number(evento.target.value), y: objeto.posicao?.y ?? 0 } })} />
+                    </label>
+                    <label className={styles.campo_estreito}>
+                        <span>Pos. Y</span>
+                        <input type="number" value={objeto.posicao?.y ?? 0} onChange={evento => aoAtualizar(objeto.key, { posicao: { x: objeto.posicao?.x ?? 0, y: Number(evento.target.value) } })} />
+                    </label>
+                    <button type="button" className={styles.botao_remover} onClick={() => aoRemover(objeto.key)}>Remover</button>
+                </div>
+            ))}
+            <button type="button" className={styles.botao_secundario} onClick={aoAdicionar}>Adicionar objeto</button>
+        </fieldset>
+    );
 };
 
 function SecaoDescobertasCondicionadas({ descobertas, capacidades, naoControlaveis, aoAdicionar, aoRemover, aoAtualizar }: { descobertas: readonly DescobertaCondicionada[]; capacidades: readonly CapacidadeInataSelecao[]; naoControlaveis: readonly SerEmSala[]; aoAdicionar: () => void; aoRemover: (key: string) => void; aoAtualizar: (key: string, parcial: Partial<DescobertaCondicionada>) => void; }) {

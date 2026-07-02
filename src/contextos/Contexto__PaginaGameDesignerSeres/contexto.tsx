@@ -50,17 +50,17 @@ export const Contexto__PaginaGameDesignerSeres__Provider = ({ children }: { chil
 };
 
 function useListagemSeres() {
-    return useNoraGraphQLListagem('SerRegistro', {
-        select: ['id', 'fkTiposSerId', 'dataCriacao', { tipoSer: ['id', 'nome'] }],
-        camposFiltroConsulta: ['fkTiposSerId'],
-        camposFiltroVisualizacao: ['fkTiposSerId', 'dataCriacao'],
+    return useNoraGraphQLListagem('SerDetalhe', {
+        select: ['fkSerId', 'nome', 'gep', 'tipoSerNome', 'evolucaoPendente'],
+        camposFiltroConsulta: ['nome'],
+        camposFiltroVisualizacao: ['nome', 'gep', 'tipoSerNome', 'evolucaoPendente'],
         itensPorPagina: 20,
         carregando: 'Buscando Seres',
         mensagemErro: 'Houve um erro recuperando os Seres',
         mensagemListaVazia: 'Nenhum Ser cadastrado.',
         mensagemListaVaziaComFiltro: 'Nenhum Ser encontrado com os filtros atuais.',
         carregamento: 'BLOQUEIA_INTERFACE',
-        montaParametrosConsulta: params => ({ where: params.where, order: { id: 'DESC' }, limit: params.limit, offset: params.offset }),
+        montaParametrosConsulta: params => ({ where: params.where, order: { nome: 'ASC' }, limit: params.limit, offset: params.offset }),
         montaParametrosTotalDeRegistros: where => ({ where }),
     });
 };

@@ -11,8 +11,9 @@ export default function SPA__PaginaGameDesignerSeres__Listagem() {
     return (
         <ListagemComposta
             listagem={listagemSeres}
-            modoExibicao={ListagemCompostaModoExibicao.LINHA}
-            obterIdRegistro={ser => ser.id}
+            modoExibicao={ListagemCompostaModoExibicao.GRADE}
+            itensPorLinha={6}
+            obterIdRegistro={ser => ser.fkSerId}
             renderizarItem={ser => <RenderizaRegistroSer ser={ser} />}
             novoRegistro={{ estaEmProcessoCriacao: false, aoIniciarCriacao: iniciaCadastro, textoBotao: 'Novo Ser' }}
         />
@@ -21,13 +22,11 @@ export default function SPA__PaginaGameDesignerSeres__Listagem() {
 
 function RenderizaRegistroSer({ ser }: { ser: RegistroSer; }) {
     const { selecionaSer } = useContexto__PaginaGameDesignerSeres__Listagem();
-    const dataCriacao = new Date(ser.dataCriacao).toLocaleDateString('pt-BR');
 
     return (
-        <button type="button" className={styles.registro_ser} onClick={() => selecionaSer(ser.id)}>
-            <strong>Ser #{ser.id}</strong>
-            <span>{ser.tipoSer.nome}</span>
-            <span>{dataCriacao}</span>
+        <button type="button" className={styles.card_ser} onClick={() => selecionaSer(ser.fkSerId)}>
+            <strong className={styles.card_ser_nome}>{ser.nome}</strong>
+            <span className={styles.card_ser_gep}>{ser.gep ?? '—'}</span>
         </button>
     );
 };

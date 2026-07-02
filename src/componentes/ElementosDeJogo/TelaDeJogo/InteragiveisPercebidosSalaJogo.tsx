@@ -29,6 +29,7 @@ export function InteragiveisPercebidosSalaJogo() {
                                 <span>{interagivel.tipo}</span>
                                 <span className={styles.descricao_interagivel_percebido}>{interagivel.descricao}</span>
                                 {interagivel.posicao ? <small>Posição {interagivel.posicao.x}m,{interagivel.posicao.y}m</small> : null}
+                                {interagivel.durabilidade ? <small>Durabilidade {interagivel.durabilidade.valorAtual}/{interagivel.durabilidade.valorMaximo}</small> : null}
                             </button>
                         );
                     })}

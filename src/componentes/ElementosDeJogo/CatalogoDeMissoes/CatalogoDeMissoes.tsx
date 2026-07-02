@@ -11,7 +11,7 @@ import type { ArteCapaDaPartida } from 'types-nora-api';
 
 export type CatalogoDeMissoesItem = { readonly id: number; readonly nome: string; readonly arteCapa?: ArteCapaDaPartida | null; };
 
-export type CatalogoDeMissoesSubgrupo = { readonly id: string; readonly rotulo: string; readonly itens: readonly CatalogoDeMissoesItem[]; readonly mensagemVazio: string; };
+export type CatalogoDeMissoesSubgrupo = { readonly id: string; readonly rotulo: string; readonly itens: readonly CatalogoDeMissoesItem[]; readonly mensagemVazio: string; readonly slotUnico: boolean; };
 
 export type CatalogoDeMissoesCatalogo = { readonly id: number; readonly nome: string; readonly missoes: readonly CatalogoDeMissoesItem[]; readonly subgrupos?: readonly CatalogoDeMissoesSubgrupo[]; };
 
@@ -24,15 +24,23 @@ type CatalogoDeMissoesProps = {
 type ItemCatalogoOrbital = {
     readonly tipo: 'catalogo';
     readonly id: string;
-    readonly idCatalogo: number;
+    readonly keyColapso: string;
     readonly catalogo: CatalogoDeMissoesCatalogo;
 };
 
 type ItemSubgrupoOrbital = {
     readonly tipo: 'subgrupo';
     readonly id: string;
-    readonly idCatalogo: number;
+    readonly keyColapso: string;
     readonly rotulo: string;
+};
+
+type ItemSubgrupoUnicoOrbital = {
+    readonly tipo: 'subgrupo_unico';
+    readonly id: string;
+    readonly rotulo: string;
+    readonly missao: CatalogoDeMissoesItem | null;
+    readonly mensagemVazio: string;
 };
 
 type ItemMissaoOrbital = {
@@ -51,7 +59,7 @@ type ItemVazioOrbital = {
     readonly mensagem: string;
 };
 
-type ItemOrbital = ItemCatalogoOrbital | ItemSubgrupoOrbital | ItemMissaoOrbital | ItemVazioOrbital;
+type ItemOrbital = ItemCatalogoOrbital | ItemSubgrupoOrbital | ItemSubgrupoUnicoOrbital | ItemMissaoOrbital | ItemVazioOrbital;
 
 type Tamanho = { readonly largura: number; readonly altura: number };
 
@@ -105,9 +113,9 @@ export default function CatalogoDeMissoes({ catalogos, carregando, aoFocarMissao
     const inicializadoRef = useRef(false);
     const [tamanho, setTamanho] = useState<Tamanho>({ largura: 0, altura: 0 });
     const [vCentro, setVCentro] = useState(0);
-    const [idsCatalogosColapsados, setIdsCatalogosColapsados] = useState<readonly number[]>([]);
+    const [chavesColapsadas, setChavesColapsadas] = useState<readonly string[]>([]);
     const catalogosComItens = useMemo(() => catalogos.filter(catalogo => catalogo.missoes.length > 0 || (catalogo.subgrupos?.length ?? 0) > 0), [catalogos]);
-    const itensOrbitais = useMemo(() => montaItensOrbitais(catalogosComItens, idsCatalogosColapsados), [catalogosComItens, idsCatalogosColapsados]);
+    const itensOrbitais = useMemo(() => montaItensOrbitais(catalogosComItens, chavesColapsadas), [catalogosComItens, chavesColapsadas]);
     const itensNavegaveis = useMemo(() => itensOrbitais.filter(itemEhNavegavel), [itensOrbitais]);
     const total = itensOrbitais.length;
     const itemCentral = total > 0 ? itensOrbitais[mod(vCentro, total)] : undefined;
@@ -129,7 +137,7 @@ export default function CatalogoDeMissoes({ catalogos, carregando, aoFocarMissao
     useEffect(() => {
         if (inicializadoRef.current || total === 0) return;
 
-        const indiceMissao = itensOrbitais.findIndex(itemOrbitalEhMissao);
+        const indiceMissao = itensOrbitais.findIndex(item => missaoFocadaDoItem(item) !== null);
         const alvo = indiceMissao >= 0 ? indiceMissao : itensOrbitais.findIndex(itemEhNavegavel);
         if (alvo >= 0) {
             setVCentro(alvo);
@@ -145,21 +153,21 @@ export default function CatalogoDeMissoes({ catalogos, carregando, aoFocarMissao
     }, [itemCentral, itensOrbitais, total]);
 
     useEffect(() => {
-        aoFocarMissao(itemCentral && itemCentral.tipo === 'missao' ? itemCentral.missao : null);
+        aoFocarMissao(missaoFocadaDoItem(itemCentral));
     }, [itemCentral, aoFocarMissao]);
 
     const centralizarItem = useCallback((vAbsoluto: number) => {
         setVCentro(vAbsoluto);
     }, []);
 
-    const alternarColapso = useCallback((item: ItemCatalogoOrbital) => {
-        const jaColapsado = idsCatalogosColapsados.includes(item.idCatalogo);
-        const novos = jaColapsado ? idsCatalogosColapsados.filter(id => id !== item.idCatalogo) : [...idsCatalogosColapsados, item.idCatalogo];
-        const novaLista = montaItensOrbitais(catalogosComItens, novos);
-        const novoIndice = novaLista.findIndex(it => it.id === item.id);
-        setIdsCatalogosColapsados(novos);
+    const alternarColapso = useCallback((keyColapso: string, idItem: string) => {
+        const jaColapsado = chavesColapsadas.includes(keyColapso);
+        const novas = jaColapsado ? chavesColapsadas.filter(chave => chave !== keyColapso) : [...chavesColapsadas, keyColapso];
+        const novaLista = montaItensOrbitais(catalogosComItens, novas);
+        const novoIndice = novaLista.findIndex(it => it.id === idItem);
+        setChavesColapsadas(novas);
         if (novoIndice >= 0 && novaLista.length > 0) setVCentro(v => v - mod(v, novaLista.length) + novoIndice);
-    }, [idsCatalogosColapsados, catalogosComItens]);
+    }, [chavesColapsadas, catalogosComItens]);
 
     const navegarRelativo = useCallback((direcao: -1 | 1) => {
         if (total === 0) return;
@@ -219,7 +227,7 @@ export default function CatalogoDeMissoes({ catalogos, carregando, aoFocarMissao
                 <>
                     {layout.orbita && <div className={styles.orbita} style={layout.orbita} aria-hidden="true" />}
                     <div className={styles.lista_catalogos}>
-                        {layout.itens.map(descritor => <ItemOrbital key={descritor.chave} item={descritor.item} estilo={descritor.estilo} ehCentral={descritor.ehCentral} colapsado={descritor.item.tipo === 'catalogo' && idsCatalogosColapsados.includes(descritor.item.idCatalogo)} vAbsoluto={descritor.vAbsoluto} aoCentralizar={centralizarItem} aoAlternarColapso={alternarColapso} />)}
+                        {layout.itens.map(descritor => <ItemOrbital key={descritor.chave} item={descritor.item} estilo={descritor.estilo} ehCentral={descritor.ehCentral} colapsado={estaColapsado(descritor.item, chavesColapsadas)} vAbsoluto={descritor.vAbsoluto} aoCentralizar={centralizarItem} aoAlternarColapso={alternarColapso} />)}
                     </div>
                     {layout.catalogoFixado && (
                         <div className={styles.catalogo_fixado} style={layout.catalogoFixado.estilo} aria-hidden="true">
@@ -232,12 +240,12 @@ export default function CatalogoDeMissoes({ catalogos, carregando, aoFocarMissao
     );
 };
 
-function ItemOrbital({ item, estilo, ehCentral, colapsado, vAbsoluto, aoCentralizar, aoAlternarColapso }: { readonly item: ItemOrbital; readonly estilo: CSSProperties; readonly ehCentral: boolean; readonly colapsado: boolean; readonly vAbsoluto: number; readonly aoCentralizar: (vAbsoluto: number) => void; readonly aoAlternarColapso: (item: ItemCatalogoOrbital) => void; }) {
+function ItemOrbital({ item, estilo, ehCentral, colapsado, vAbsoluto, aoCentralizar, aoAlternarColapso }: { readonly item: ItemOrbital; readonly estilo: CSSProperties; readonly ehCentral: boolean; readonly colapsado: boolean; readonly vAbsoluto: number; readonly aoCentralizar: (vAbsoluto: number) => void; readonly aoAlternarColapso: (keyColapso: string, idItem: string) => void; }) {
     if (item.tipo === 'catalogo') {
         return (
             <DivClicavel className={`${styles.item_orbital} ${styles.item_catalogo} ${ehCentral ? styles.item_catalogo_central : ''}`} style={estilo} onClick={() => aoCentralizar(vAbsoluto)} role="button" title="Navegar até o Catálogo">
                 <strong>{item.catalogo.nome}</strong>
-                <button type="button" className={styles.item_catalogo_toggle} onClick={evento => { evento.stopPropagation(); aoAlternarColapso(item); }} aria-expanded={!colapsado} title={colapsado ? 'Expandir Catálogo' : 'Retrair Catálogo'}>
+                <button type="button" className={styles.item_catalogo_toggle} onClick={evento => { evento.stopPropagation(); aoAlternarColapso(item.keyColapso, item.id); }} aria-expanded={!colapsado} title={colapsado ? 'Expandir Catálogo' : 'Retrair Catálogo'}>
                     <svg viewBox="0 0 12 12" className={`${styles.item_catalogo_chevron} ${colapsado ? styles.item_catalogo_chevron_colapsado : ''}`} aria-hidden="true">
                         <path d="M2.5 4.5L6 8L9.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -248,9 +256,31 @@ function ItemOrbital({ item, estilo, ehCentral, colapsado, vAbsoluto, aoCentrali
 
     if (item.tipo === 'subgrupo') {
         return (
-            <div className={`${styles.item_orbital} ${styles.item_subgrupo}`} style={estilo} aria-hidden="true">
+            <DivClicavel className={`${styles.item_orbital} ${styles.item_subgrupo} ${ehCentral ? styles.item_subgrupo_central : ''}`} style={estilo} onClick={() => aoCentralizar(vAbsoluto)} role="button" title="Navegar até o SubCatálogo">
                 <strong>{item.rotulo}</strong>
-            </div>
+                <button type="button" className={styles.item_catalogo_toggle} onClick={evento => { evento.stopPropagation(); aoAlternarColapso(item.keyColapso, item.id); }} aria-expanded={!colapsado} title={colapsado ? 'Expandir SubCatálogo' : 'Retrair SubCatálogo'}>
+                    <svg viewBox="0 0 12 12" className={`${styles.item_catalogo_chevron} ${colapsado ? styles.item_catalogo_chevron_colapsado : ''}`} aria-hidden="true">
+                        <path d="M2.5 4.5L6 8L9.5 4.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                </button>
+            </DivClicavel>
+        );
+    }
+
+    if (item.tipo === 'subgrupo_unico') {
+        if (item.missao === null) {
+            return (
+                <DivClicavel className={`${styles.item_orbital} ${styles.item_subgrupo_inativo} ${ehCentral ? styles.item_subgrupo_inativo_central : ''}`} style={estilo} onClick={() => aoCentralizar(vAbsoluto)} role="button" title="Sem Desafio ativo">
+                    <strong>{item.rotulo}</strong>
+                    <span>{item.mensagemVazio}</span>
+                </DivClicavel>
+            );
+        }
+
+        return (
+            <DivClicavel className={`${styles.item_orbital} ${styles.item_subgrupo} ${styles.item_subgrupo_unico} ${ehCentral ? styles.item_subgrupo_central : ''}`} style={estilo} onClick={() => aoCentralizar(vAbsoluto)} role="button" title="Abrir Desafio">
+                <strong>{item.rotulo}</strong>
+            </DivClicavel>
         );
     }
 
@@ -272,22 +302,32 @@ function ItemMissaoNoOrbital({ item, estilo, ehCentral, vAbsoluto, aoCentralizar
     return <ItemPartidaOrbital className={styles.item_missao_orbital} style={estilo} nome={item.missao.nome} imagemBase64={imagem} encaixe={item.missao.arteCapa?.encaixe ?? null} selecionado={ehCentral} onClick={() => aoCentralizar(vAbsoluto)} />;
 };
 
-function montaItensOrbitais(catalogos: readonly CatalogoDeMissoesCatalogo[], idsCatalogosColapsados: readonly number[]): readonly ItemOrbital[] {
+function montaItensOrbitais(catalogos: readonly CatalogoDeMissoesCatalogo[], chavesColapsadas: readonly string[]): readonly ItemOrbital[] {
     const itens: ItemOrbital[] = [];
 
     catalogos.forEach(catalogo => {
-        itens.push({ tipo: 'catalogo', id: `catalogo-${catalogo.id}`, idCatalogo: catalogo.id, catalogo });
+        const keyColapsoCatalogo = `catalogo:${catalogo.id}`;
+        itens.push({ tipo: 'catalogo', id: `catalogo-${catalogo.id}`, keyColapso: keyColapsoCatalogo, catalogo });
 
-        if (idsCatalogosColapsados.includes(catalogo.id)) return;
+        if (chavesColapsadas.includes(keyColapsoCatalogo)) return;
 
         if (catalogo.subgrupos && catalogo.subgrupos.length > 0) {
             catalogo.subgrupos.forEach(subgrupo => {
+                // SubCatálogo de slot único (Diário/Semanal/Mensal): não colapsa e é SEMPRE selecionável, com ou sem item. Com item, focar abre o Detalhe; sem item, mostra "não está ativo" mas segue selecionável.
+                if (subgrupo.slotUnico) {
+                    itens.push({ tipo: 'subgrupo_unico', id: `subgrupo-unico-${catalogo.id}-${subgrupo.id}`, rotulo: subgrupo.rotulo, missao: subgrupo.itens[0] ?? null, mensagemVazio: subgrupo.mensagemVazio });
+                    return;
+                }
+
                 if (subgrupo.itens.length === 0) {
                     itens.push({ tipo: 'vazio', id: `vazio-${catalogo.id}-${subgrupo.id}`, idCatalogo: catalogo.id, rotulo: subgrupo.rotulo, mensagem: subgrupo.mensagemVazio });
                     return;
                 }
 
-                itens.push({ tipo: 'subgrupo', id: `subgrupo-${catalogo.id}-${subgrupo.id}`, idCatalogo: catalogo.id, rotulo: subgrupo.rotulo });
+                // SubCatálogo de itens corridos (Especiais): colapsável e navegável, como um Catálogo.
+                const keyColapsoSubgrupo = `subgrupo:${catalogo.id}:${subgrupo.id}`;
+                itens.push({ tipo: 'subgrupo', id: `subgrupo-${catalogo.id}-${subgrupo.id}`, keyColapso: keyColapsoSubgrupo, rotulo: subgrupo.rotulo });
+                if (chavesColapsadas.includes(keyColapsoSubgrupo)) return;
                 subgrupo.itens.forEach(missao => itens.push({ tipo: 'missao', id: `missao-${catalogo.id}-${subgrupo.id}-${missao.id}`, idCatalogo: catalogo.id, catalogo, missao }));
             });
             return;
@@ -299,13 +339,21 @@ function montaItensOrbitais(catalogos: readonly CatalogoDeMissoesCatalogo[], ids
     return itens;
 };
 
-function itemEhNavegavel(item: ItemOrbital): boolean { return item.tipo === 'catalogo' || item.tipo === 'missao'; };
+function itemEhNavegavel(item: ItemOrbital): boolean { return item.tipo === 'catalogo' || item.tipo === 'subgrupo' || item.tipo === 'subgrupo_unico' || item.tipo === 'missao'; };
 
-function itemOrbitalEhMissao(item: ItemOrbital): item is ItemMissaoOrbital { return item.tipo === 'missao'; };
+function missaoFocadaDoItem(item: ItemOrbital | undefined): CatalogoDeMissoesItem | null {
+    if (!item) return null;
+    if (item.tipo === 'missao') return item.missao;
+    if (item.tipo === 'subgrupo_unico') return item.missao;
+    return null;
+};
+
+function estaColapsado(item: ItemOrbital, chavesColapsadas: readonly string[]): boolean { return (item.tipo === 'catalogo' || item.tipo === 'subgrupo') && chavesColapsadas.includes(item.keyColapso); };
 
 function alturaDoItem(item: ItemOrbital, central: boolean, largura: number): number {
     if (item.tipo === 'catalogo') return largura * RAZAO_ALTURA_HEADER;
     if (item.tipo === 'subgrupo') return largura * RAZAO_ALTURA_SUBGRUPO;
+    if (item.tipo === 'subgrupo_unico') return largura * (item.missao === null ? RAZAO_ALTURA_VAZIO : RAZAO_ALTURA_SUBGRUPO);
     if (item.tipo === 'vazio') return largura * RAZAO_ALTURA_VAZIO;
     return largura * (central ? RAZAO_ALTURA_SELECIONADA : RAZAO_ALTURA_MISSAO);
 };
@@ -313,6 +361,7 @@ function alturaDoItem(item: ItemOrbital, central: boolean, largura: number): num
 function fonteDoItem(item: ItemOrbital, central: boolean, largura: number): number {
     if (item.tipo === 'catalogo') return largura * RAZAO_FONTE_HEADER;
     if (item.tipo === 'subgrupo') return largura * RAZAO_FONTE_SUBGRUPO;
+    if (item.tipo === 'subgrupo_unico') return largura * (item.missao === null ? RAZAO_FONTE_VAZIO : RAZAO_FONTE_SUBGRUPO);
     if (item.tipo === 'vazio') return largura * RAZAO_FONTE_VAZIO;
     return largura * (central ? RAZAO_FONTE_SELECIONADA : RAZAO_FONTE_MISSAO);
 };

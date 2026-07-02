@@ -8,10 +8,12 @@ import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_
 import { ContextoEMJOGOProvider, useContextoEMJOGO } from 'Contextos/ContextoEMJOGO/contexto';
 import { ContextoSalaDeJogo__NarradorProvider } from 'Contextos/ContextoSalaDeJogo__Narrador/contexto';
 import { ContextoSalaDeJogo__JogadorProvider, LogicaJogoUsuario_ObjetoEmJogoDto__Jogador } from 'Contextos/ContextoSalaDeJogo__Jogador/contexto';
+import { BloqueioDeSilencio } from 'Componentes/Elementos/CentralAudio/BloqueioDeSilencio';
 
 export default function Conteiner__EmJogo() {
     return (
         <ContextoEMJOGOProvider>
+            <BloqueioDeSilencio />
             <Conteiner__EmJogo__Interno />
         </ContextoEMJOGOProvider>
     );

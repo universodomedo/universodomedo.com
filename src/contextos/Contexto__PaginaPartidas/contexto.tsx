@@ -127,7 +127,8 @@ function montaSubgruposDesafio(painel: PainelDesafiosAtivos | null, itemPorIdPar
             id: tipoPainel.tipo,
             rotulo: `Desafio ${tipoPainel.rotulo}`,
             itens: idsPartida.map(itemPorIdPartida).filter(ehItemOrbital),
-            mensagemVazio: tipoPainel.rotativo ? 'Esse Desafio não está ativo' : 'Nenhum Desafio encontrado',
+            mensagemVazio: tipoPainel.rotativo ? 'não está ativo' : 'Nenhum Desafio encontrado',
+            slotUnico: tipoPainel.rotativo,
         };
     });
 };

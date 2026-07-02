@@ -6,25 +6,20 @@ import { useEffect } from 'react';
 
 import { useNoraGraphQLRegistro } from 'Hooks/useNoraGraphQLConsulta';
 import { useAppDispatch, useAppSelector } from 'Redux/hooks/useRedux';
-import { selectIdMusicaPaginaAtual, selectNivelVolume, selectTituloPaginaAtual } from 'Redux/selectors/audioPaginaSelectors';
-import { setNivelVolume, type NivelVolume } from 'Redux/slices/audioPaginaSlice';
+import { selectIdMusicaPaginaAtual, selectNivelVolumeEfetivo, selectSilencioBloqueado, selectTituloPaginaAtual } from 'Redux/selectors/audioPaginaSelectors';
+import { setNivelVolume } from 'Redux/slices/audioPaginaSlice';
 import { salvarNivelVolume } from 'Uteis/PreferenciaVolume/preferenciaVolume';
+import SeletorNivelVolume from './SeletorNivelVolume';
 
 const SELECT_MUSICA = { id: true, nome: true, fonteMusica: { id: true, nome: true } } as const;
-
-const NIVEIS_VOLUME: { nivel: NivelVolume; label: string }[] = [
-    { nivel: 'BAIXO', label: 'Baixo' },
-    { nivel: 'MEDIO', label: 'Médio' },
-    { nivel: 'ALTO', label: 'Alto' },
-    { nivel: 'MAXIMO', label: 'Máximo' },
-];
 
 // Conteúdo da Central de Áudio — só monta quando o painel está aberto (nunca no SSR), por isso pode usar GraphQL/Redux com segurança.
 export default function ConteudoCentralAudio({ onFechar, onAtividade }: { onFechar: () => void; onAtividade: () => void }) {
     const dispatch = useAppDispatch();
     const idMusica = useAppSelector(selectIdMusicaPaginaAtual);
     const tituloPagina = useAppSelector(selectTituloPaginaAtual);
-    const nivelVolume = useAppSelector(selectNivelVolume);
+    const nivelVolume = useAppSelector(selectNivelVolumeEfetivo);
+    const silencioBloqueado = useAppSelector(selectSilencioBloqueado);
 
     const consulta = useNoraGraphQLRegistro('MusicaConfigurada', { props: { idMusica: idMusica ?? 0 }, pk: idMusica ?? 0, select: SELECT_MUSICA, mensagemErro: 'Não foi possível carregar a música atual', executarAoMontar: false });
     const recarregar = consulta.recarregar;
@@ -50,12 +45,7 @@ export default function ConteudoCentralAudio({ onFechar, onAtividade }: { onFech
             </div>
 
             <div className={styles.volume}>
-                <span className={styles.volumeRotulo}>Volume</span>
-                <div className={styles.niveis}>
-                    {NIVEIS_VOLUME.map(item => (
-                        <button key={item.nivel} className={`${styles.nivel} ${item.nivel === nivelVolume ? styles.nivelAtivo : ''}`} onClick={() => { dispatch(setNivelVolume(item.nivel)); salvarNivelVolume(item.nivel); }}>{item.label}</button>
-                    ))}
-                </div>
+                <SeletorNivelVolume nivel={nivelVolume} silencioBloqueado={silencioBloqueado} onSelecionarNivel={nivel => { dispatch(setNivelVolume(nivel)); salvarNivelVolume(nivel); }} />
             </div>
 
             <button className={styles.fechar} onClick={onFechar} title="Fechar">✕</button>
