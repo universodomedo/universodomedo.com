@@ -39,12 +39,14 @@ interface Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Props {
     salvarConfiguracao: (configuracao: ConfiguracaoPartida) => Promise<void>;
     idMusicaConfigurada: number | null;
     definirMusicaConfigurada: (idMusica: number | null) => Promise<void>;
+    alternarDesabilitada: (desabilitada: boolean) => Promise<void>;
 };
 
 type PropsProvider = {
     partida: PartidaResumo;
     salvando: boolean;
     salvarConfiguracaoPartida: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['salvarConfiguracaoPartida'];
+    alternarDesabilitadaPartida: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['alternarDesabilitadaPartida'];
     voltaParaListagem: Contexto__PaginaGameDesignerConfiguracaoPartida__Props['voltaParaListagem'];
 };
 
@@ -56,7 +58,7 @@ export const useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao = (): Co
     return context;
 };
 
-export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider = ({ partida, salvando, salvarConfiguracaoPartida, voltaParaListagem }: PropsProvider) => {
+export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider = ({ partida, salvando, salvarConfiguracaoPartida, alternarDesabilitadaPartida, voltaParaListagem }: PropsProvider) => {
     const [aba, setAba] = useState<AbaEdicaoPartida>('visao');
 
     // Navegação contextual (o X do cabeçalho) segue o modo: na visão volta pra Listagem; dentro de um editor volta um nível, pros Dados de Exibição. O subtítulo detalha o alvo + o editor — sem barra/título próprios no corpo.
@@ -80,6 +82,7 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider =
         return configuracao ? remapeiaConfiguracaoPartidaGraphql(configuracao) : null;
     }, [consulta.data]);
     const salvarConfiguracao = useCallback((configuracao: ConfiguracaoPartida) => salvarConfiguracaoPartida(partida.id, configuracao), [salvarConfiguracaoPartida, partida.id]);
+    const alternarDesabilitada = useCallback((desabilitada: boolean) => alternarDesabilitadaPartida({ idPartida: partida.id, desabilitada }), [alternarDesabilitadaPartida, partida.id]);
 
     // Música de fundo editável a partir do estado do PartidaResumo; ao salvar (REST) atualiza o estado local pra a visão refletir sem recarregar.
     const [idMusicaConfigurada, setIdMusicaConfigurada] = useState<number | null>(partida.idMusicaConfigurada);
@@ -89,7 +92,7 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider =
     }, [partida.id]);
 
     return (
-        <Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider value={{ partida, aba, setAba, carregando: consulta.carregando, erro: consulta.erro, configuracaoInicial, salvando, salvarConfiguracao, idMusicaConfigurada, definirMusicaConfigurada }}>
+        <Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider value={{ partida, aba, setAba, carregando: consulta.carregando, erro: consulta.erro, configuracaoInicial, salvando, salvarConfiguracao, idMusicaConfigurada, definirMusicaConfigurada, alternarDesabilitada }}>
             <SPA__PaginaGameDesignerConfiguracaoPartida__Edicao />
         </Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider>
     );

@@ -36,7 +36,8 @@
 
 .tag,
 .tag_configurado,
-.tag_pendente {
+.tag_pendente,
+.tag_desabilitada {
     padding: 0.6cqw 1.8cqw;
     border-radius: 1em;
     font-size: 3.1cqw;
@@ -59,4 +60,9 @@
 .tag_pendente {
     border: 0.08em solid rgba(190, 170, 70, 0.5);
     color: #F0DDA8;
+}
+
+.tag_desabilitada {
+    border: 0.08em solid rgba(219, 71, 71, 0.6);
+    color: #F0A8A8;
 }

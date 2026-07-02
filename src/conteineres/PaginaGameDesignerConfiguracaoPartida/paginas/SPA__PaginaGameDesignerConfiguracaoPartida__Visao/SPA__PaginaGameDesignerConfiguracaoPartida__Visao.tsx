@@ -4,23 +4,35 @@ import styles from './styles.module.css';
 
 import type { ArteCapaDaPartida, ConfiguracaoPartida } from 'types-nora-api';
 
+import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 import { ItemPartidaOrbital } from 'Componentes/ElementosDeJogo/ItemPartidaOrbital/ItemPartidaOrbital';
 import { useImagemCapaArte } from 'Funcionalidades/ArteDeCapa/useImagemCapaArte';
 import { PreviewMusicaConfigurada } from './PreviewMusicaConfigurada';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao/contexto';
 
 // Dados de Exibição da Partida: visão só-leitura (nada editável direto). Cada card tem um "Editar" que entra no editor daquele dado.
+// Rodapé: Desabilitar/Reabilitar a Partida (aposentadoria soft — some das superfícies de jogo, reversível), no lugar de um "deletar".
 export default function SPA__PaginaGameDesignerConfiguracaoPartida__Visao() {
-    const { partida, configuracaoInicial, carregando, erro, setAba, idMusicaConfigurada } = useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao();
+    const { partida, configuracaoInicial, carregando, erro, setAba, idMusicaConfigurada, salvando, alternarDesabilitada } = useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao();
 
     return (
-        <div className={styles.host}>
-            <div className={styles.grade}>
-                <CardArteCapa nome={partida.nome} arteCapa={partida.arteCapa} aoEditar={() => setAba('arteCapa')} />
-                <CardMusica idMusica={idMusicaConfigurada} aoEditar={() => setAba('musica')} />
-                <CardRuntime configuracao={configuracaoInicial} carregando={carregando} erro={erro} aoEditar={() => setAba('runtime')} />
-            </div>
-        </div>
+        <ConteudoForm>
+            <ConteudoForm.AreaCorpo>
+                <div className={styles.host}>
+                    <div className={styles.grade}>
+                        <CardArteCapa nome={partida.nome} arteCapa={partida.arteCapa} aoEditar={() => setAba('arteCapa')} />
+                        <CardMusica idMusica={idMusicaConfigurada} aoEditar={() => setAba('musica')} />
+                        <CardRuntime configuracao={configuracaoInicial} carregando={carregando} erro={erro} aoEditar={() => setAba('runtime')} />
+                    </div>
+                </div>
+            </ConteudoForm.AreaCorpo>
+
+            <ConteudoForm.AreaBotoes>
+                <button type="button" data-variante={partida.desabilitada ? undefined : 'perigo'} onClick={() => void alternarDesabilitada(!partida.desabilitada)} disabled={salvando}>
+                    {partida.desabilitada ? 'Reabilitar Partida' : 'Desabilitar Partida'}
+                </button>
+            </ConteudoForm.AreaBotoes>
+        </ConteudoForm>
     );
 };
 

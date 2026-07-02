@@ -21,7 +21,7 @@ type PropsConteiner__PaginaGameDesignerConfiguracaoPartida = ReturnType<typeof u
 
 function resolveSaida(props: PropsConteiner__PaginaGameDesignerConfiguracaoPartida): SaidaConteiner {
     if (props.estadoFluxo === 'CADASTRO') return criaSaidaConteiner(Contexto__PaginaGameDesignerConfiguracaoPartida__Nova__Provider, { criarPartida: props.criarPartida, cancelar: props.voltaParaListagem, concluir: props.concluiCadastro });
-    if (props.partidaEmEdicao !== null) return criaSaidaConteiner(Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider, { partida: props.partidaEmEdicao, salvando: props.salvando, salvarConfiguracaoPartida: props.salvarConfiguracaoPartida, voltaParaListagem: props.voltaParaListagem });
+    if (props.partidaEmEdicao !== null) return criaSaidaConteiner(Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider, { partida: props.partidaEmEdicao, salvando: props.salvando, salvarConfiguracaoPartida: props.salvarConfiguracaoPartida, alternarDesabilitadaPartida: props.alternarDesabilitadaPartida, voltaParaListagem: props.voltaParaListagem });
 
     return criaSaidaConteiner(Contexto__PaginaGameDesignerConfiguracaoPartida__Listagem__Provider, { listagemPartidas: props.listagemPartidas, iniciaCadastro: props.iniciaCadastro, selecionaPartida: props.selecionaPartida });
 };

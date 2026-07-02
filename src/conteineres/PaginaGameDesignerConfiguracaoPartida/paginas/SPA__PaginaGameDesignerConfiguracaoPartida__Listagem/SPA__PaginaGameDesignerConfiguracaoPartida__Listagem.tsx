@@ -15,13 +15,14 @@ type PartidaListagemRegistro = {
     readonly tipo: string;
     readonly tipoDesafio: string | null;
     readonly partidaConfigurada: boolean;
+    readonly desabilitada: boolean;
     readonly arteCapa: { readonly idProjeto: number; readonly encaixe: EncaixeArteCapaPartida } | null;
 };
 
 export default function SPA__PaginaGameDesignerConfiguracaoPartida__Listagem() {
     const { iniciaCadastro } = useContexto__PaginaGameDesignerConfiguracaoPartida__Listagem();
     const listagemPartidas = useNoraGraphQLListagem('Partida', {
-        select: ['id', 'nome', 'tipo', 'partidaConfigurada', 'tipoDesafio', { arteCapa: ['idProjeto', { encaixe: ['escala', 'deslocamentoX', 'deslocamentoY'] }] }],
+        select: ['id', 'nome', 'tipo', 'partidaConfigurada', 'desabilitada', 'tipoDesafio', { arteCapa: ['idProjeto', { encaixe: ['escala', 'deslocamentoX', 'deslocamentoY'] }] }],
         camposFiltroConsulta: ['nome', 'tipo', 'partidaConfigurada'],
         camposFiltroVisualizacao: ['nome', 'tipo', 'partidaConfigurada'],
         itensPorPagina: 60,
@@ -56,6 +57,7 @@ function CardPartida({ partida }: { partida: PartidaListagemRegistro; }) {
         <div className={`${styles.card} ${focado ? styles.card_focado : ''}`} onMouseEnter={() => setFocado(true)} onMouseLeave={() => setFocado(false)}>
             <ItemPartidaOrbital className={styles.card_orbital} nome={partida.nome} imagemBase64={imagem} encaixe={partida.arteCapa?.encaixe} selecionado={focado} onClick={() => selecionaPartida(partida.id)} />
             <div className={styles.badges}>
+                {partida.desabilitada && <span className={styles.tag_desabilitada}>Desabilitada</span>}
                 {partida.tipoDesafio && <span className={styles.tag}>{partida.tipoDesafio}</span>}
                 <span className={partida.partidaConfigurada ? styles.tag_configurado : styles.tag_pendente}>{partida.partidaConfigurada ? 'Configurado' : 'Não Configurado'}</span>
             </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
-import { EstruturaDesafios, EventosApiRest, type DesafioResumo, type GrupoTipoDesafio, type PAYLOAD__CriarDesafio, type PAYLOAD__SalvarDesafio, type TipoDesafio } from 'types-nora-api';
+import { EstruturaDesafios, EventosApiRest, type DesafioResumo, type GrupoTipoDesafio, type TipoDesafio } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
 import type { ListagemCompostaListagem } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
@@ -16,8 +16,6 @@ export interface Contexto__PaginaGameDesignerDesafios__Props {
     recarregar: () => Promise<void>;
     selecionaTipo: (tipo: TipoDesafio) => void;
     voltaParaTipos: () => void;
-    criarDesafio: (tipo: TipoDesafio, nome: string, descricao: string) => Promise<void>;
-    salvarDesafio: (id: number, tipo: TipoDesafio, nome: string, descricao: string) => Promise<void>;
     alternarAtivoDesafio: (desafio: DesafioResumo, ativo: boolean) => Promise<void>;
 };
 
@@ -70,16 +68,6 @@ export const Contexto__PaginaGameDesignerDesafios__Provider = ({ children }: { c
     const selecionaTipo = useCallback((tipo: TipoDesafio) => setTipoSelecionado(tipo), []);
     const voltaParaTipos = useCallback(() => setTipoSelecionado(null), []);
 
-    const criarDesafio = useCallback(async (tipo: TipoDesafio, nome: string, descricao: string) => {
-        const payload: PAYLOAD__CriarDesafio = { tipo, nome, descricao };
-        await executaComEstrutura(() => NoraApi.RestPOST(EventosApiRest.POST.Desafios.criarDesafio, payload, { mensagemErro: 'Não foi possível criar o Desafio.' }), 'Não foi possível criar o Desafio.');
-    }, [executaComEstrutura]);
-
-    const salvarDesafio = useCallback(async (id: number, tipo: TipoDesafio, nome: string, descricao: string) => {
-        const payload: PAYLOAD__SalvarDesafio = { id, tipo, nome, descricao };
-        await executaComEstrutura(() => NoraApi.RestPOST(EventosApiRest.POST.Desafios.salvarDesafio, payload, { mensagemErro: 'Não foi possível salvar o Desafio.' }), 'Não foi possível salvar o Desafio.');
-    }, [executaComEstrutura]);
-
     const alternarAtivoDesafio = useCallback(async (desafio: DesafioResumo, ativo: boolean) => {
         await executaComEstrutura(() => NoraApi.RestPOST(EventosApiRest.POST.Desafios.alternarDesafio, { id: desafio.id, ativo }, { mensagemErro: 'Não foi possível alternar o Desafio.' }), 'Não foi possível alternar o Desafio.');
     }, [executaComEstrutura]);
@@ -87,7 +75,7 @@ export const Contexto__PaginaGameDesignerDesafios__Provider = ({ children }: { c
     const listagemTipos: ListagemCompostaListagem<GrupoTipoDesafio> = { registros: estrutura?.grupos ?? [], carregando: carregando ? 'Carregando Desafios' : null, erro, mensagemListaVazia: 'Nenhum tipo de Desafio.' };
 
     return (
-        <Contexto__PaginaGameDesignerDesafios.Provider value={{ estrutura, carregando, salvando, erro, tipoSelecionado, listagemTipos, recarregar: carregarEstrutura, selecionaTipo, voltaParaTipos, criarDesafio, salvarDesafio, alternarAtivoDesafio }}>
+        <Contexto__PaginaGameDesignerDesafios.Provider value={{ estrutura, carregando, salvando, erro, tipoSelecionado, listagemTipos, recarregar: carregarEstrutura, selecionaTipo, voltaParaTipos, alternarAtivoDesafio }}>
             {children}
         </Contexto__PaginaGameDesignerDesafios.Provider>
     );

@@ -10,6 +10,7 @@ import type { Contexto__PaginaPartidas__Props } from 'Contextos/Contexto__Pagina
 
 export default function SPA__PaginaPartidas({ catalogosDisponiveis, partidaSelecionada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }: Contexto__PaginaPartidas__Props) {
     const textoBotaoJogar = resolveTextoBotaoJogar(carregando, jogando, partidaSelecionada, podeJogarPartidaSelecionada);
+    // TODO(desafio-cooldown): somar aqui o estado de ESPERA do Desafio (cooldown) para desabilitar o botão enquanto o timer corre — ver resolveTextoBotaoJogar.
     const botaoDesabilitado = !podeJogarPartidaSelecionada || jogando || carregando;
     const aoFocarMissao = useCallback((missao: CatalogoDeMissoesItem | null) => selecionarPartida(missao ? missao.id : null), [selecionarPartida]);
 
@@ -19,7 +20,7 @@ export default function SPA__PaginaPartidas({ catalogosDisponiveis, partidaSelec
             <MusicaFundoPartida idMusicaConfigurada={partidaSelecionada?.idMusicaConfigurada ?? null} nomePartida={partidaSelecionada?.nome ?? null} />
             {erro && <div className={styles.erro}>{erro}</div>}
             <section className={styles.secao_detalhamento}>
-                {partidaSelecionada && <DetalhePartida partida={partidaSelecionada} textoBotaoJogar={textoBotaoJogar} desabilitado={botaoDesabilitado} aoJogar={jogarPartidaSelecionada} />}
+                {partidaSelecionada && <DetalhePartida key={partidaSelecionada.id} partida={partidaSelecionada} textoBotaoJogar={textoBotaoJogar} desabilitado={botaoDesabilitado} aoJogar={jogarPartidaSelecionada} />}
             </section>
             <section className={styles.secao_catalogo}><CatalogoDeMissoes catalogos={catalogosDisponiveis} carregando={carregando} aoFocarMissao={aoFocarMissao} /></section>
         </div>
@@ -32,5 +33,11 @@ function resolveTextoBotaoJogar(carregando: boolean, jogando: boolean, partidaSe
     if (!partidaSelecionada) return 'Selecione uma Partida';
     if (!podeJogarPartidaSelecionada) return 'Partida não configurada';
 
-    return 'Jogar Partida';
+    const ehDesafio = partidaSelecionada.tipo === 'DESAFIO';
+
+    // TODO(desafio-cooldown): quando o item for um DESAFIO em ESPERA (janela de participação fechada),
+    // o texto aqui deve virar o timer de disponibilidade (ex.: "Disponível em 2h 15m") e o botão fica
+    // desabilitado (ver botaoDesabilitado). O estado/tempo vem do backend (Painel de Desafios Ativos) — lógica ainda não implementada.
+
+    return ehDesafio ? 'Iniciar Desafio' : 'Iniciar Partida';
 };

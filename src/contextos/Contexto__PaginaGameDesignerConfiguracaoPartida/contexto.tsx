@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { EventosApiRest, type ConfiguracaoPartida, type EstruturaPartidas, type PartidaResumo, type PAYLOAD__CriarPartida, type PAYLOAD__DeletarPartida, type PAYLOAD__SalvarPartida } from 'types-nora-api';
+import { EventosApiRest, type ConfiguracaoPartida, type EstruturaPartidas, type PartidaResumo, type PAYLOAD__AlternarDesabilitadaPartida, type PAYLOAD__CriarPartida, type PAYLOAD__SalvarPartida } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
 
@@ -27,7 +27,7 @@ export interface Contexto__PaginaGameDesignerConfiguracaoPartida__Props {
     concluiCadastro: () => void;
     criarPartida: (payload: PAYLOAD__CriarPartida) => Promise<void>;
     salvarPartida: (payload: PAYLOAD__SalvarPartida) => Promise<void>;
-    deletarPartida: (payload: PAYLOAD__DeletarPartida) => Promise<void>;
+    alternarDesabilitadaPartida: (payload: PAYLOAD__AlternarDesabilitadaPartida) => Promise<void>;
     salvarConfiguracaoPartida: (idPartida: number, configuracao: ConfiguracaoPartida) => Promise<void>;
 };
 
@@ -85,10 +85,9 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Provider = ({ chil
         await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.salvarPartida, payload, { mensagemErro: 'Não foi possível salvar a Partida.' }), 'Não foi possível salvar a Partida.');
     }, [executarSalvando]);
 
-    const deletarPartida = useCallback(async (payload: PAYLOAD__DeletarPartida) => {
-        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.deletarPartida, payload, { mensagemErro: 'Não foi possível deletar a Partida.' }), 'Não foi possível deletar a Partida.');
-        setIdPartidaEmEdicao(null);
-        setEstadoFluxo('LISTAGEM');
+    const alternarDesabilitadaPartida = useCallback(async (payload: PAYLOAD__AlternarDesabilitadaPartida) => {
+        // Soft-disable: não navega — fica na Visão pra o usuário ver o estado e poder reabilitar.
+        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.alternarDesabilitadaPartida, payload, { mensagemErro: 'Não foi possível alterar a Partida.' }), 'Não foi possível alterar a Partida.');
     }, [executarSalvando]);
 
     // Salva a configuracao runtime e ja reflete na estrutura (badge "Configurada" da grade). Nao navega: as abas (Runtime/Detalhes) seguem abertas sobre a mesma Partida.
@@ -111,7 +110,7 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Provider = ({ chil
     const listagemPartidas = useMemo<ListagemPartidas>(() => montaListagemPartidas(estrutura, carregando, erro), [estrutura, carregando, erro]);
 
     return (
-        <Contexto__PaginaGameDesignerConfiguracaoPartida.Provider value={{ estrutura, listagemPartidas, salvando, estadoFluxo, idPartidaEmEdicao, partidaEmEdicao, iniciaCadastro, selecionaPartida, voltaParaListagem, concluiCadastro, criarPartida, salvarPartida, deletarPartida, salvarConfiguracaoPartida }}>
+        <Contexto__PaginaGameDesignerConfiguracaoPartida.Provider value={{ estrutura, listagemPartidas, salvando, estadoFluxo, idPartidaEmEdicao, partidaEmEdicao, iniciaCadastro, selecionaPartida, voltaParaListagem, concluiCadastro, criarPartida, salvarPartida, alternarDesabilitadaPartida, salvarConfiguracaoPartida }}>
             {children}
         </Contexto__PaginaGameDesignerConfiguracaoPartida.Provider>
     );

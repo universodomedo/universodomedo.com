@@ -21,7 +21,7 @@ type PropsConteiner__PaginaGameDesignerDesafios = ReturnType<typeof useContexto_
 function resolveSaida(props: PropsConteiner__PaginaGameDesignerDesafios): SaidaConteiner {
     if (props.tipoSelecionado !== null) {
         const grupo = props.estrutura?.grupos.find(grupoTipo => grupoTipo.tipo === props.tipoSelecionado) ?? null;
-        if (grupo) return criaSaidaConteiner(Contexto__PaginaGameDesignerDesafios__DesafiosDoTipo__Provider, { grupo, voltaParaTipos: props.voltaParaTipos, criarDesafio: props.criarDesafio, salvarDesafio: props.salvarDesafio, alternarAtivoDesafio: props.alternarAtivoDesafio, salvando: props.salvando });
+        if (grupo) return criaSaidaConteiner(Contexto__PaginaGameDesignerDesafios__DesafiosDoTipo__Provider, { grupo, voltaParaTipos: props.voltaParaTipos, alternarAtivoDesafio: props.alternarAtivoDesafio, salvando: props.salvando });
     }
 
     return criaSaidaConteiner(Contexto__PaginaGameDesignerDesafios__Tipos__Provider, { listagemTipos: props.listagemTipos, selecionaTipo: props.selecionaTipo });
