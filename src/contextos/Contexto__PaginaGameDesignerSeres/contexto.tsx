@@ -52,7 +52,7 @@ export const Contexto__PaginaGameDesignerSeres__Provider = ({ children }: { chil
 function useListagemSeres() {
     return useNoraGraphQLListagem('SerDetalhe', {
         select: ['fkSerId', 'nome', 'gep', 'tipoSerNome', 'evolucaoPendente'],
-        camposFiltroConsulta: ['nome'],
+        camposFiltroConsulta: ['nome', 'gep', 'tipoSerNome', 'evolucaoPendente'],
         camposFiltroVisualizacao: ['nome', 'gep', 'tipoSerNome', 'evolucaoPendente'],
         itensPorPagina: 20,
         carregando: 'Buscando Seres',

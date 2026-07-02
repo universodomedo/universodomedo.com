@@ -4,6 +4,7 @@ import { ComponentType, createContext, ReactNode, useCallback, useContext, useEf
 import { acceptFromFormatos, FormatoUploadArquivo, GraphqlLeituras, isFormatoImagemBitmap, RegrasUploadArquivo, TipoArquivoDef, TIPOS_ARQUIVO, validarRegrasUploadArquivo } from 'types-nora-api';
 
 import { buscaRegrasPorTipoArquivo, me_upload } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { medirLoudnessDeArquivo } from 'Uteis/Loudness/medirLoudnessDeArquivo';
 import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import { toast } from 'Hooks/useToast';
@@ -337,6 +338,12 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras, ca
 
         try {
             const camposExtras = obtemCamposExtrasParaUploadAtual();
+
+            // Música: mede loudness+pico no upload (fato do arquivo) e envia junto. Falha de medição não trava o upload (fica nulo no banco).
+            if (isMusica) {
+                const medicao = await medirLoudnessDeArquivo(arquivo);
+                if (medicao) { camposExtras.loudnessLufs = medicao.lufsIntegrado; camposExtras.picoDbfs = medicao.picoDb; }
+            }
 
             await me_upload({ arquivo, tipoArquivo, camposExtras });
 
