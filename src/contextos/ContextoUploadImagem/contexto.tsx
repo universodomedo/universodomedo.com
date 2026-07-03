@@ -342,7 +342,7 @@ const ContextoUploadImagemProviderInterno = ({ children, tipoArquivo, regras, ca
             // Música: mede loudness+pico no upload (fato do arquivo) e envia junto. Falha de medição não trava o upload (fica nulo no banco).
             if (isMusica) {
                 const medicao = await medirLoudnessDeArquivo(arquivo);
-                if (medicao) { camposExtras.loudnessLufs = medicao.lufsIntegrado; camposExtras.picoDbfs = medicao.picoDb; }
+                if (medicao) { camposExtras.loudnessLufs = medicao.lufsIntegrado; camposExtras.picoDbfs = medicao.picoDb; camposExtras.lraLu = medicao.lraLu; }
             }
 
             await me_upload({ arquivo, tipoArquivo, camposExtras });

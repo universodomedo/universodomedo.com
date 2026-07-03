@@ -7,14 +7,16 @@ import useNoraGraphQLConsulta, { useNoraGraphQLRegistro } from 'Hooks/useNoraGra
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { getImageUrl } from 'Uteis/ImagemLoader/ImagemLoader';
+import { calcularGanhoNormalizacao, detalharGanhoNormalizacao, LIMIAR_LRA_DINAMICA_ALTA } from 'Uteis/Loudness/normalizacaoLoudness';
+import { GANHO_POR_NIVEL_VOLUME } from 'Redux/slices/audioPaginaSlice';
 import { criaMusicaConfigurada, atualizaMusicaConfigurada } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 import { type Contexto__PaginaConfigurarMusica__Props } from '../Contexto__PaginaConfigurarMusica/contexto';
 import { Contexto__PaginaConfigurarMusica__Edicao__Abas__Provider } from '../Contexto__PaginaConfigurarMusica__Edicao__Abas/contexto';
 import SPA__PaginaConfigurarMusica__Edicao from 'Conteineres/PaginaConfigurarMusica/paginas/SPA__PaginaConfigurarMusica__Edicao/SPA__PaginaConfigurarMusica__Edicao';
 
-const SELECT_ARQUIVO = { id: true, arquivo: { id: true, caminhoArquivo: true, tipoMime: true } } as const;
+const SELECT_ARQUIVO = { id: true, arquivo: { id: true, caminhoArquivo: true, tipoMime: true }, loudnessLufs: true, picoDbfs: true, lraLu: true } as const;
 const SELECT_DIMENSAO = { id: true, nome: true, bipolar: true, rotuloOposto: true } as const;
-const SELECT_MUSICA = { id: true, montagem: { inicioMs: true, retornoMs: true, fimMs: true, blocos: { id: true, nome: true, inicioMs: true, fimMs: true }, transicaoLoop: { duracaoFadeOutMs: true, duracaoFadeInMs: true, sobreposicaoInicioLoopMs: true } }, clima: { itens: { idDimensao: true, nivel: true } } } as const;
+const SELECT_MUSICA = { id: true, montagem: { inicioMs: true, retornoMs: true, fimMs: true, blocos: { id: true, nome: true, inicioMs: true, fimMs: true }, transicaoLoop: { duracaoFadeOutMs: true, duracaoFadeInMs: true, sobreposicaoInicioLoopMs: true }, automacaoVolume: { tMs: true, ganhoDb: true } }, clima: { itens: { idDimensao: true, nivel: true } } } as const;
 
 const QTD_PICOS = 600;
 const DURACAO_MINIMA_BLOCO_MS = 200;
@@ -44,12 +46,35 @@ function criaCurvaEqualPower(subindo: boolean): Float32Array {
 export type CampoTransicaoLoop = 'duracaoFadeOutMs' | 'duracaoFadeInMs' | 'sobreposicaoInicioLoopMs';
 export type ClimaItemEdicao = { idDimensao: number; nivel: number };
 export type DimensaoClimaOpcao = { id: number; nome: string; bipolar: boolean; rotuloOposto: string | null };
+export type AnaliseAudio = { loudnessLufs: number; lraLu: number | null; picoDbfs: number; ganhoDb: number; travadoAntiClip: boolean; dinamicaAlta: boolean };
+export type PontoAutomacao = { id: string; tMs: number; ganhoDb: number };
 type ArquivoSelecionado = NonNullable<Contexto__PaginaConfigurarMusica__Props['arquivoSelecionado']>;
 type ModoReproducao = { tipo: 'parado' } | { tipo: 'livre' } | { tipo: 'trecho'; ateMs: number } | { tipo: 'loop' } | { tipo: 'emenda' };
 type Segmento = { baseMs: number; ctxStart: number; ateMs: number | null };
+type NodeAutomacao = { source: AudioBufferSourceNode; ganhoAuto: GainNode; offsetMs: number; durTrechoMs: number; ctxInicio: number; tFim: number };
+
+// Ganho linear (dB→linear) da automacao de volume no instante ms do buffer, interpolando entre pontos. Sem pontos → 1 (neutro).
+function ganhoLinearAutomacaoEm(pontos: readonly PontoAutomacao[], ms: number): number {
+    if (pontos.length === 0) return 1;
+    if (ms <= pontos[0].tMs) return Math.pow(10, pontos[0].ganhoDb / 20);
+    const ultimo = pontos[pontos.length - 1];
+    if (ms >= ultimo.tMs) return Math.pow(10, ultimo.ganhoDb / 20);
+    for (let i = 0; i < pontos.length - 1; i++) { const a = pontos[i], b = pontos[i + 1]; if (ms >= a.tMs && ms <= b.tMs) { const f = (ms - a.tMs) / (b.tMs - a.tMs); return Math.pow(10, (a.ganhoDb + f * (b.ganhoDb - a.ganhoDb)) / 20); } }
+    return 1;
+};
+
+// Programa a envelope de automacao no ganhoAuto pro trecho [offsetMs, offsetMs+durTrechoMs] mapeado ao AudioContext por ctxInicio; agenda de tStart ate tFim. Reprogramavel ao vivo passando tStart=agora (arraste durante o playback).
+function programarEnvelopeAutomacao(ganhoAuto: GainNode, pontos: readonly PontoAutomacao[], offsetMs: number, durTrechoMs: number, ctxInicio: number, tStart: number, tFim: number): void {
+    const msEm = (t: number): number => offsetMs + (t - ctxInicio) * 1000;
+    ganhoAuto.gain.cancelScheduledValues(tStart);
+    ganhoAuto.gain.setValueAtTime(ganhoLinearAutomacaoEm(pontos, msEm(tStart)), tStart);
+    for (const p of pontos) { const tp = ctxInicio + (p.tMs - offsetMs) / 1000; if (tp > tStart && tp < tFim) ganhoAuto.gain.linearRampToValueAtTime(Math.pow(10, p.ganhoDb / 20), tp); }
+    ganhoAuto.gain.linearRampToValueAtTime(ganhoLinearAutomacaoEm(pontos, offsetMs + durTrechoMs), tFim);
+};
 
 interface Contexto__PaginaConfigurarMusica__Edicao__Props {
     configurada: boolean;
+    analiseAudio: AnaliseAudio | null;
 
     carregandoAudio: boolean;
     erroAudio: string | null;
@@ -83,6 +108,14 @@ interface Contexto__PaginaConfigurarMusica__Edicao__Props {
     adicionarDimensaoClima: (idDimensao: number) => void;
     setNivelClima: (idDimensao: number, nivel: number) => void;
     removerDimensaoClima: (idDimensao: number) => void;
+
+    automacaoVolume: PontoAutomacao[];
+    adicionarPontoAutomacao: (tMs: number, ganhoDb: number) => void;
+    moverPontoAutomacao: (id: string, tMs: number, ganhoDb: number) => void;
+    removerPontoAutomacao: (id: string) => void;
+
+    lowCutHz: number;
+    setLowCutHz: (hz: number) => void;
 
     tocando: boolean;
     posicaoMs: number;
@@ -121,6 +154,13 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
     const [montagem, setMontagem] = useState<MontagemMusica | null>(null);
     const [blocoSelecionadoId, setBlocoSelecionadoId] = useState<string | null>(null);
     const [climaItens, setClimaItens] = useState<ClimaItemEdicao[]>([]);
+    const [automacaoVolume, setAutomacaoVolume] = useState<PontoAutomacao[]>([]);
+    const [lowCutHz, setLowCutHzState] = useState(0);
+
+    const adicionarPontoAutomacao = useCallback((tMs: number, ganhoDb: number) => { setAutomacaoVolume(pontos => [...pontos, { id: crypto.randomUUID(), tMs: Math.round(tMs), ganhoDb }].sort((a, b) => a.tMs - b.tMs)); }, []);
+    const moverPontoAutomacao = useCallback((id: string, tMs: number, ganhoDb: number) => { setAutomacaoVolume(pontos => pontos.map(p => p.id === id ? { ...p, tMs: Math.round(tMs), ganhoDb } : p).sort((a, b) => a.tMs - b.tMs)); }, []);
+    const removerPontoAutomacao = useCallback((id: string) => { setAutomacaoVolume(pontos => pontos.filter(p => p.id !== id)); }, []);
+    const setLowCutHz = useCallback((hz: number) => setLowCutHzState(Math.max(0, Math.min(400, Math.round(hz)))), []);
 
     const [picos, setPicos] = useState<number[]>([]);
     const [duracaoMs, setDuracaoMs] = useState(0);
@@ -147,6 +187,28 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
     const segmentosEmendaRef = useRef<{ ctxStart: number; baseMs: number; durS: number }[]>([]);
     montagemRef.current = montagem;
     posicaoRef.current = posicaoMs;
+    const automacaoVolumeRef = useRef<PontoAutomacao[]>([]);
+    automacaoVolumeRef.current = automacaoVolume;
+    const nodesAutomacaoRef = useRef<NodeAutomacao[]>([]);
+    const lowCutHzRef = useRef(0);
+    lowCutHzRef.current = lowCutHz;
+    const lowCutRef = useRef<BiquadFilterNode | null>(null);
+
+    // Medições do arquivo (fatos objetivos): loudness/pico alimentam a normalização; LRA sinaliza dinâmica.
+    const loudnessLufs = registroArquivo.data?.loudnessLufs ?? null;
+    const picoDbfs = registroArquivo.data?.picoDbfs ?? null;
+    const lraLu = registroArquivo.data?.lraLu ?? null;
+
+    // Preview normalizado: aplica no editor o MESMO ganho de loudness que a Central aplica no jogo (masterMax = 1, pois o preview toca sem master). Loudness nula (faixa antiga) → ganho 1.
+    const ganhoNormalizacao = calcularGanhoNormalizacao(loudnessLufs, picoDbfs, 1);
+    const ganhoNormalizacaoRef = useRef(1);
+    ganhoNormalizacaoRef.current = ganhoNormalizacao;
+    const noGanhoNormalizacaoRef = useRef<GainNode | null>(null);
+
+    // Análise de áudio pro editor: fatos + ganho IN-GAME (masterMax = Máximo da Central) + sinais de dinâmica alta / ganho travado anti-clip.
+    const analiseAudio: AnaliseAudio | null = loudnessLufs !== null && picoDbfs !== null
+        ? { loudnessLufs, lraLu, picoDbfs, ...detalharGanhoNormalizacao(loudnessLufs, picoDbfs, GANHO_POR_NIVEL_VOLUME.MAXIMO), dinamicaAlta: lraLu !== null && lraLu >= LIMIAR_LRA_DINAMICA_ALTA }
+        : null;
 
     // Busca e decodifica o arquivo uma vez: a forma de onda vem dos picos; o AudioBuffer alimenta o motor Web Audio (mesmo contexto da reproducao).
     useEffect(() => {
@@ -182,6 +244,8 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
             if (!dados) return;
             setMontagem({ inicioMs: dados.montagem.inicioMs, retornoMs: dados.montagem.retornoMs, fimMs: dados.montagem.fimMs, blocos: dados.montagem.blocos.map(bloco => ({ id: bloco.id, nome: bloco.nome, inicioMs: bloco.inicioMs, fimMs: bloco.fimMs })), transicaoLoop: { duracaoFadeOutMs: dados.montagem.transicaoLoop.duracaoFadeOutMs, duracaoFadeInMs: dados.montagem.transicaoLoop.duracaoFadeInMs, sobreposicaoInicioLoopMs: dados.montagem.transicaoLoop.sobreposicaoInicioLoopMs } });
             setClimaItens(dados.clima.itens.map(item => ({ idDimensao: item.idDimensao, nivel: item.nivel })));
+            setAutomacaoVolume((dados.montagem.automacaoVolume ?? []).map(ponto => ({ id: crypto.randomUUID(), tMs: ponto.tMs, ganhoDb: ponto.ganhoDb })));
+            setLowCutHzState(dados.montagem.lowCutHz ?? 0);
             if (duracaoMs <= 0) setDuracaoMs(dados.montagem.fimMs);
             seedRef.current = true;
             return;
@@ -197,6 +261,7 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
     const pararSources = useCallback(() => {
         sourcesRef.current.forEach(source => { try { source.stop(); } catch { /* ja parado */ } source.disconnect(); });
         sourcesRef.current = [];
+        nodesAutomacaoRef.current = [];
     }, []);
 
     const pararInterno = useCallback(() => {
@@ -234,9 +299,24 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
         source.buffer = buffer;
         const ganho = ctx.createGain();
         source.connect(ganho);
-        ganho.connect(ctx.destination);
+        if (!noGanhoNormalizacaoRef.current) {
+            noGanhoNormalizacaoRef.current = ctx.createGain();
+            lowCutRef.current = ctx.createBiquadFilter();
+            lowCutRef.current.type = 'highpass';
+            lowCutRef.current.Q.value = 0.707;
+            lowCutRef.current.frequency.value = lowCutHzRef.current > 0 ? lowCutHzRef.current : 20;
+            noGanhoNormalizacaoRef.current.connect(lowCutRef.current);
+            lowCutRef.current.connect(ctx.destination);
+        }
+        noGanhoNormalizacaoRef.current.gain.value = ganhoNormalizacaoRef.current;
         const t0 = Math.max(ctx.currentTime, quando);
         const dur = Math.max(0.02, duracaoTrechoMs / 1000);
+        // automação de volume: um ganho por-trecho que segue a curva (pontos) ao longo do buffer tocado; rastreado pra reprogramar ao vivo durante o arraste
+        const ganhoAuto = ctx.createGain();
+        programarEnvelopeAutomacao(ganhoAuto, automacaoVolumeRef.current, offsetMs, duracaoTrechoMs, t0, t0, t0 + dur);
+        ganho.connect(ganhoAuto);
+        ganhoAuto.connect(noGanhoNormalizacaoRef.current);
+        nodesAutomacaoRef.current.push({ source, ganhoAuto, offsetMs, durTrechoMs: duracaoTrechoMs, ctxInicio: t0, tFim: t0 + dur });
         const fadeIn = fadeInMs / 1000;
         const fadeOut = fadeOutMs / 1000;
         const fadeInUsado = fadeIn > 0 ? Math.min(fadeIn, dur) : 0;
@@ -245,10 +325,31 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
         const fadeOutInicio = t0 + Math.max(fadeInUsado, dur - fadeOut);
         const fadeOutDuracao = t0 + dur - fadeOutInicio;
         if (fadeOut > 0 && fadeOutDuracao > 0) ganho.gain.setValueCurveAtTime(CURVA_FADE_DESCE, fadeOutInicio, fadeOutDuracao);
-        source.onended = () => { try { source.disconnect(); } catch { /* ja desconectado */ } const indice = sourcesRef.current.indexOf(source); if (indice >= 0) sourcesRef.current.splice(indice, 1); };
+        source.onended = () => { try { source.disconnect(); } catch { /* ja desconectado */ } const indice = sourcesRef.current.indexOf(source); if (indice >= 0) sourcesRef.current.splice(indice, 1); const iAuto = nodesAutomacaoRef.current.findIndex(n => n.source === source); if (iAuto >= 0) nodesAutomacaoRef.current.splice(iAuto, 1); };
         source.start(t0, Math.max(0, offsetMs / 1000), dur);
         sourcesRef.current.push(source);
     }, []);
+
+    // Enquanto a musica toca, arrastar/adicionar/remover um ponto reprograma a envelope das fontes ativas a partir de agora — o volume segue a curva ao vivo, sem reiniciar o trecho.
+    const reagendarAutomacaoAtiva = useCallback(() => {
+        const ctx = audioCtxRef.current;
+        if (!ctx) return;
+        const pontos = automacaoVolumeRef.current;
+        const agora = ctx.currentTime;
+        for (const n of nodesAutomacaoRef.current) {
+            if (agora >= n.tFim) continue;
+            programarEnvelopeAutomacao(n.ganhoAuto, pontos, n.offsetMs, n.durTrechoMs, n.ctxInicio, Math.max(agora, n.ctxInicio), n.tFim);
+        }
+    }, []);
+
+    useEffect(() => { reagendarAutomacaoAtiva(); }, [automacaoVolume, reagendarAutomacaoAtiva]);
+
+    // Low-cut ao vivo: atualiza a frequencia do high-pass compartilhado enquanto arrasta o slider (0 → 20 Hz, praticamente desligado).
+    useEffect(() => {
+        const ctx = audioCtxRef.current;
+        const filtro = lowCutRef.current;
+        if (ctx && filtro) filtro.frequency.setTargetAtTime(lowCutHz > 0 ? lowCutHz : 20, ctx.currentTime, 0.03);
+    }, [lowCutHz]);
 
     const obterContexto = useCallback(() => {
         if (!audioCtxRef.current) audioCtxRef.current = new AudioContext();
@@ -490,7 +591,7 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
         setSalvando(true);
         setErroSalvar(null);
         try {
-            const montagemSalvar: MontagemMusica = { inicioMs: montagem.inicioMs, retornoMs: montagem.retornoMs, fimMs: montagem.fimMs, blocos: montagem.blocos.map(bloco => ({ id: bloco.id, nome: bloco.nome.trim() || 'Bloco', inicioMs: bloco.inicioMs, fimMs: bloco.fimMs })), transicaoLoop: montagem.transicaoLoop };
+            const montagemSalvar: MontagemMusica = { inicioMs: montagem.inicioMs, retornoMs: montagem.retornoMs, fimMs: montagem.fimMs, blocos: montagem.blocos.map(bloco => ({ id: bloco.id, nome: bloco.nome.trim() || 'Bloco', inicioMs: bloco.inicioMs, fimMs: bloco.fimMs })), transicaoLoop: montagem.transicaoLoop, automacaoVolume: automacaoVolume.map(ponto => ({ tMs: Math.round(ponto.tMs), ganhoDb: ponto.ganhoDb })), lowCutHz };
             if (arquivo.idMusicaConfigurada !== null) await atualizaMusicaConfigurada({ idMusicaConfigurada: arquivo.idMusicaConfigurada, montagem: montagemSalvar, clima: { itens: climaItens } });
             else await criaMusicaConfigurada({ idArquivoTipadoMusica: arquivo.id, montagem: montagemSalvar, clima: { itens: climaItens } });
             recarregarListagem();
@@ -499,10 +600,11 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
             setErroSalvar(erro instanceof Error ? erro.message : 'Falha ao salvar a configuração.');
             setSalvando(false);
         }
-    }, [montagem, salvando, arquivo.id, arquivo.idMusicaConfigurada, climaItens, recarregarListagem, deseleciona]);
+    }, [montagem, salvando, arquivo.id, arquivo.idMusicaConfigurada, climaItens, automacaoVolume, lowCutHz, recarregarListagem, deseleciona]);
 
     const valor: Contexto__PaginaConfigurarMusica__Edicao__Props = {
         configurada,
+        analiseAudio,
         carregandoAudio, erroAudio, picos,
         montagemPronta: montagem !== null,
         inicioMs: montagem?.inicioMs ?? 0,
@@ -515,6 +617,8 @@ export const Contexto__PaginaConfigurarMusica__Edicao__Provider = ({ arquivo, de
         setInicioMs, setRetornoMs, setFimMs, selecionarBloco, renomearBloco, dividirEm, moverFronteira, removerBloco, setCampoTransicaoLoop,
         marcarInicio, marcarRetorno, marcarFim, cortarNaPosicao,
         climaItens, dimensoesCatalogo: consultaDimensoes.data, adicionarDimensaoClima, setNivelClima, removerDimensaoClima,
+        automacaoVolume, adicionarPontoAutomacao, moverPontoAutomacao, removerPontoAutomacao,
+        lowCutHz, setLowCutHz,
         tocando, posicaoMs, alternarPlayPause, parar, tocarDoInicio, tocarBloco, testarLoop, repetirEmenda, irParaMs,
         salvar, salvando, erroSalvar, podeSalvar,
     };

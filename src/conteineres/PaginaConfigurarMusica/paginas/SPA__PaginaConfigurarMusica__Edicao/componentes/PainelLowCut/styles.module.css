@@ -1,0 +1,49 @@
+.painel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9em;
+    flex: 1 1 14em;
+    padding: 1em;
+    border: 0.08em solid rgba(183, 144, 81, 0.25);
+    border-radius: 0.85em;
+    background: rgba(183, 144, 81, 0.06);
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6em;
+}
+
+.titulo {
+    font-size: 0.8em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #B79051;
+}
+
+.valor {
+    font-size: 0.9em;
+    font-variant-numeric: tabular-nums;
+    color: #EBE0C9;
+}
+
+.valorDesligado {
+    font-size: 0.9em;
+    font-style: italic;
+    color: #8f8a7e;
+}
+
+.slider {
+    width: 100%;
+    accent-color: #B79051;
+    cursor: pointer;
+}
+
+.dica {
+    margin: 0;
+    font-size: 0.8em;
+    line-height: 1.4;
+    opacity: 0.6;
+}

@@ -6,6 +6,7 @@ import { useContexto__PaginaConfigurarMusica__Edicao } from 'Contextos/Contexto_
 import EditorTimelineMusica from '../componentes/EditorTimelineMusica/EditorTimelineMusica';
 import PainelBlocoSelecionado from '../componentes/PainelBlocoSelecionado/PainelBlocoSelecionado';
 import PainelTransicaoLoop from '../componentes/PainelTransicaoLoop/PainelTransicaoLoop';
+import PainelLowCut from '../componentes/PainelLowCut/PainelLowCut';
 
 export default function AbaMontagem() {
     const ctx = useContexto__PaginaConfigurarMusica__Edicao();
@@ -20,11 +21,13 @@ export default function AbaMontagem() {
                 onSelecionarBloco={ctx.selecionarBloco} onArrastarInicio={ctx.setInicioMs} onArrastarRetorno={ctx.setRetornoMs} onArrastarFim={ctx.setFimMs} onMoverFronteira={ctx.moverFronteira} onDividirEm={ctx.dividirEm} onIrPara={ctx.irParaMs}
                 onPlayPause={ctx.alternarPlayPause} onParar={ctx.parar} onInicio={ctx.tocarDoInicio} onTestarLoop={ctx.testarLoop} onRepetirEmenda={ctx.repetirEmenda}
                 onMarcarInicio={ctx.marcarInicio} onMarcarRetorno={ctx.marcarRetorno} onMarcarFim={ctx.marcarFim} onCortar={ctx.cortarNaPosicao}
+                automacaoVolume={ctx.automacaoVolume} onAdicionarPontoAutomacao={ctx.adicionarPontoAutomacao} onMoverPontoAutomacao={ctx.moverPontoAutomacao} onRemoverPontoAutomacao={ctx.removerPontoAutomacao}
             />
 
             <div className={styles.paineis}>
                 <PainelBlocoSelecionado bloco={ctx.blocoSelecionado} podeRemover={ctx.blocos.length > 1} onRenomear={nome => ctx.blocoSelecionado && ctx.renomearBloco(ctx.blocoSelecionado.id, nome)} onTestar={() => ctx.blocoSelecionado && ctx.tocarBloco(ctx.blocoSelecionado.id)} onRemover={() => ctx.blocoSelecionado && ctx.removerBloco(ctx.blocoSelecionado.id)} />
                 <PainelTransicaoLoop transicaoLoop={ctx.transicaoLoop} onSetCampo={ctx.setCampoTransicaoLoop} onTestar={ctx.testarLoop} onRepetirEmenda={ctx.repetirEmenda} />
+                <PainelLowCut lowCutHz={ctx.lowCutHz} onSetLowCutHz={ctx.setLowCutHz} />
             </div>
         </div>
     );

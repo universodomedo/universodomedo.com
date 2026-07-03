@@ -9,6 +9,8 @@ export type MontagemLoop = {
     readonly retornoMs: number;
     readonly fimMs: number;
     readonly transicaoLoop: { readonly duracaoFadeOutMs: number; readonly duracaoFadeInMs: number; readonly sobreposicaoInicioLoopMs: number };
+    readonly automacaoVolume?: readonly { readonly tMs: number; readonly ganhoDb: number }[];
+    readonly lowCutHz?: number;
 };
 
 const LOOKAHEAD_S = 0.5;
@@ -22,13 +24,16 @@ type InstanciaMusica = { gainMusica: GainNode; montagem: MontagemLoop; sources: 
 
 // Toca a música configurada em loop (Início→Fim, depois Fim→Retorno com crossfade), com fade-in inicial de 2s.
 // Ao trocar de música, a anterior faz fade-out de 2.5s. Master gain = volume global (sem mute). 1ª fatia do Motor de Áudio.
-export function useReprodutorMontagem(caminhoArquivo: string | null, montagem: MontagemLoop | null, volume: number): void {
+export function useReprodutorMontagem(caminhoArquivo: string | null, montagem: MontagemLoop | null, volume: number, ganhoNormalizacao: number): void {
     const ctxRef = useRef<AudioContext | null>(null);
     const masterGainRef = useRef<GainNode | null>(null);
+    const lowCutRef = useRef<BiquadFilterNode | null>(null);
     const instanciaRef = useRef<InstanciaMusica | null>(null);
     const volumeRef = useRef(volume);
     const gestoRef = useRef<(() => void) | null>(null);
+    const ganhoNormRef = useRef(ganhoNormalizacao);
     volumeRef.current = volume;
+    ganhoNormRef.current = ganhoNormalizacao;
 
     const chave = caminhoArquivo && montagem ? `${caminhoArquivo}#${montagem.inicioMs},${montagem.retornoMs},${montagem.fimMs},${montagem.transicaoLoop.duracaoFadeOutMs},${montagem.transicaoLoop.duracaoFadeInMs},${montagem.transicaoLoop.sobreposicaoInicioLoopMs}` : '';
 
@@ -39,6 +44,13 @@ export function useReprodutorMontagem(caminhoArquivo: string | null, montagem: M
         if (ctx && master) master.gain.setTargetAtTime(volume, ctx.currentTime, 0.04);
     }, [volume]);
 
+    // ajusta o ganho de NORMALIZAÇÃO da faixa atual suavemente (per-faixa, no gainMusica, sob o master)
+    useEffect(() => {
+        const ctx = ctxRef.current;
+        const instancia = instanciaRef.current;
+        if (ctx && instancia) instancia.gainMusica.gain.setTargetAtTime(ganhoNormalizacao, ctx.currentTime, 0.04);
+    }, [ganhoNormalizacao]);
+
     useEffect(() => {
         let cancelado = false;
 
@@ -47,7 +59,12 @@ export function useReprodutorMontagem(caminhoArquivo: string | null, montagem: M
                 ctxRef.current = new AudioContext();
                 masterGainRef.current = ctxRef.current.createGain();
                 masterGainRef.current.gain.value = volumeRef.current;
-                masterGainRef.current.connect(ctxRef.current.destination);
+                lowCutRef.current = ctxRef.current.createBiquadFilter();
+                lowCutRef.current.type = 'highpass';
+                lowCutRef.current.Q.value = 0.707;
+                lowCutRef.current.frequency.value = 20;
+                masterGainRef.current.connect(lowCutRef.current);
+                lowCutRef.current.connect(ctxRef.current.destination);
             }
             return ctxRef.current;
         }
@@ -71,9 +88,24 @@ export function useReprodutorMontagem(caminhoArquivo: string | null, montagem: M
             source.buffer = buffer;
             const ganho = ctx.createGain();
             source.connect(ganho);
-            ganho.connect(instancia.gainMusica);
             const t0 = Math.max(ctx.currentTime, quando);
             const dur = Math.max(0.02, duracaoMs / 1000);
+            // automação de volume: um ganho por-trecho que segue a curva (pontos) ao longo do buffer tocado — mesma envelope do editor; o loop reaplica a curva do trecho a cada ciclo
+            const pontosAuto = instancia.montagem.automacaoVolume ?? [];
+            const ganhoLinAutoEm = (ms: number): number => {
+                if (pontosAuto.length === 0) return 1;
+                if (ms <= pontosAuto[0].tMs) return Math.pow(10, pontosAuto[0].ganhoDb / 20);
+                const ultimo = pontosAuto[pontosAuto.length - 1];
+                if (ms >= ultimo.tMs) return Math.pow(10, ultimo.ganhoDb / 20);
+                for (let i = 0; i < pontosAuto.length - 1; i++) { const a = pontosAuto[i], b = pontosAuto[i + 1]; if (ms >= a.tMs && ms <= b.tMs) { const f = (ms - a.tMs) / (b.tMs - a.tMs); return Math.pow(10, (a.ganhoDb + f * (b.ganhoDb - a.ganhoDb)) / 20); } }
+                return 1;
+            };
+            const ganhoAuto = ctx.createGain();
+            ganhoAuto.gain.setValueAtTime(ganhoLinAutoEm(offsetMs), t0);
+            for (const p of pontosAuto) if (p.tMs > offsetMs && p.tMs < offsetMs + duracaoMs) ganhoAuto.gain.linearRampToValueAtTime(Math.pow(10, p.ganhoDb / 20), t0 + (p.tMs - offsetMs) / 1000);
+            ganhoAuto.gain.linearRampToValueAtTime(ganhoLinAutoEm(offsetMs + duracaoMs), t0 + dur);
+            ganho.connect(ganhoAuto);
+            ganhoAuto.connect(instancia.gainMusica);
             const fadeIn = fadeInMs / 1000;
             const fadeOut = fadeOutMs / 1000;
             if (fadeIn > 0) { ganho.gain.setValueAtTime(0, t0); ganho.gain.linearRampToValueAtTime(1, t0 + Math.min(fadeIn, dur)); }
@@ -99,8 +131,9 @@ export function useReprodutorMontagem(caminhoArquivo: string | null, montagem: M
         function criarInstancia(buffer: AudioBuffer, m: MontagemLoop) {
             const ctx = ctxRef.current;
             if (!ctx || !masterGainRef.current || cancelado || instanciaRef.current) return;
+            if (lowCutRef.current) lowCutRef.current.frequency.setTargetAtTime(m.lowCutHz && m.lowCutHz > 0 ? m.lowCutHz : 20, ctx.currentTime, 0.05);
             const gainMusica = ctx.createGain();
-            gainMusica.gain.value = 1;
+            gainMusica.gain.value = ganhoNormRef.current;
             gainMusica.connect(masterGainRef.current);
             const instancia: InstanciaMusica = { gainMusica, montagem: m, sources: [], intervalo: null, proximaT: 0 };
             const t0 = ctx.currentTime + 0.1;
@@ -161,6 +194,6 @@ export function useReprodutorMontagem(caminhoArquivo: string | null, montagem: M
     }, [chave]);
 
     useEffect(() => () => {
-        if (ctxRef.current) { ctxRef.current.close().catch(() => undefined); ctxRef.current = null; masterGainRef.current = null; instanciaRef.current = null; }
+        if (ctxRef.current) { ctxRef.current.close().catch(() => undefined); ctxRef.current = null; masterGainRef.current = null; lowCutRef.current = null; instanciaRef.current = null; }
     }, []);
 };

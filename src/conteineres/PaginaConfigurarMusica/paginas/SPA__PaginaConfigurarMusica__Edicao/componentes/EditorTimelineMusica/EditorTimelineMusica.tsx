@@ -4,14 +4,18 @@ import styles from './styles.module.css';
 
 import { JSX, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BlocoMontagemMusica, TransicaoLoopMontagemMusica } from 'types-nora-api';
+import { PontoAutomacao } from 'Contextos/Contexto__PaginaConfigurarMusica__Edicao/contexto';
 
 import { formatarMs, fracaoParaMs, intervaloRegua, msParaPercentual } from '../editorMusica.uteis';
 import ToolbarEditor from '../ToolbarEditor/ToolbarEditor';
 
-type AlvoArrasto = { tipo: 'inicio' } | { tipo: 'retorno' } | { tipo: 'fim' } | { tipo: 'fronteira'; indice: number } | { tipo: 'seek' };
+type AlvoArrasto = { tipo: 'inicio' } | { tipo: 'retorno' } | { tipo: 'fim' } | { tipo: 'fronteira'; indice: number } | { tipo: 'seek' } | { tipo: 'ponto-automacao'; id: string };
 
 const ZOOM_MIN = 1;
 const ZOOM_MAX = 32;
+const AUTOMACAO_DB_TOPO = 6;
+const AUTOMACAO_DB_FUNDO = -30;
+const yAutomacaoDb = (db: number): number => ((AUTOMACAO_DB_TOPO - db) / (AUTOMACAO_DB_TOPO - AUTOMACAO_DB_FUNDO)) * 100;
 
 type EditorTimelineMusicaProps = {
     picos: number[];
@@ -41,11 +45,16 @@ type EditorTimelineMusicaProps = {
     onMarcarRetorno: () => void;
     onMarcarFim: () => void;
     onCortar: () => void;
+    automacaoVolume: PontoAutomacao[];
+    onAdicionarPontoAutomacao: (tMs: number, ganhoDb: number) => void;
+    onMoverPontoAutomacao: (id: string, tMs: number, ganhoDb: number) => void;
+    onRemoverPontoAutomacao: (id: string) => void;
 };
 
 export default function EditorTimelineMusica(props: EditorTimelineMusicaProps): JSX.Element {
     const viewportRef = useRef<HTMLDivElement | null>(null);
     const trilhaRef = useRef<HTMLDivElement | null>(null);
+    const laneAutomacaoRef = useRef<HTMLDivElement | null>(null);
     const arrastandoRef = useRef<AlvoArrasto | null>(null);
     const ancoraZoomRef = useRef<{ fracao: number; px: number } | null>(null);
     const centrarPendenteRef = useRef(false);
@@ -61,6 +70,13 @@ export default function EditorTimelineMusica(props: EditorTimelineMusicaProps): 
         return fracaoParaMs((clientX - rect.left) / rect.width, propsRef.current.duracaoMs);
     }, []);
 
+    const ganhoDbDoClientY = useCallback((clientY: number): number => {
+        const rect = laneAutomacaoRef.current?.getBoundingClientRect();
+        if (!rect || rect.height === 0) return 0;
+        const fracao = (clientY - rect.top) / rect.height;
+        return Math.max(AUTOMACAO_DB_FUNDO, Math.min(AUTOMACAO_DB_TOPO, AUTOMACAO_DB_TOPO - fracao * (AUTOMACAO_DB_TOPO - AUTOMACAO_DB_FUNDO)));
+    }, []);
+
     useEffect(() => {
         function aoMover(evento: PointerEvent) {
             const alvo = arrastandoRef.current;
@@ -71,13 +87,14 @@ export default function EditorTimelineMusica(props: EditorTimelineMusicaProps): 
             else if (alvo.tipo === 'retorno') atual.onArrastarRetorno(ms);
             else if (alvo.tipo === 'fim') atual.onArrastarFim(ms);
             else if (alvo.tipo === 'fronteira') atual.onMoverFronteira(alvo.indice, ms);
+            else if (alvo.tipo === 'ponto-automacao') atual.onMoverPontoAutomacao(alvo.id, ms, ganhoDbDoClientY(evento.clientY));
             else atual.onIrPara(ms);
         };
         function aoSoltar() { arrastandoRef.current = null; };
         window.addEventListener('pointermove', aoMover);
         window.addEventListener('pointerup', aoSoltar);
         return () => { window.removeEventListener('pointermove', aoMover); window.removeEventListener('pointerup', aoSoltar); };
-    }, [msDoClientX]);
+    }, [msDoClientX, ganhoDbDoClientY]);
 
     const ancorarNoHead = useCallback(() => {
         const viewport = viewportRef.current;
@@ -141,6 +158,15 @@ export default function EditorTimelineMusica(props: EditorTimelineMusicaProps): 
 
     function aoDuploClique(evento: ReactMouseEvent) { props.onDividirEm(msDoClientX(evento.clientX)); };
 
+    function aoApontarAutomacao(evento: ReactPointerEvent) {
+        if (evento.button !== 0) return;
+        evento.preventDefault();
+        evento.stopPropagation();
+        props.onAdicionarPontoAutomacao(msDoClientX(evento.clientX), ganhoDbDoClientY(evento.clientY));
+    };
+
+    const iniciarArrastoPonto = (id: string) => (evento: ReactPointerEvent) => { evento.preventDefault(); evento.stopPropagation(); arrastandoRef.current = { tipo: 'ponto-automacao', id }; };
+
     const ondaMemo = useMemo(() => {
         if (props.picos.length === 0) return <div className={styles.semOnda}>Forma de onda indisponível</div>;
         const largura = 1000 / props.picos.length;
@@ -150,6 +176,14 @@ export default function EditorTimelineMusica(props: EditorTimelineMusicaProps): 
             </svg>
         );
     }, [props.picos]);
+
+    const pontosLinhaAutomacao = useMemo(() => {
+        const pts = props.automacaoVolume;
+        if (props.duracaoMs <= 0 || pts.length === 0) return `0,${yAutomacaoDb(0)} 1000,${yAutomacaoDb(0)}`;
+        const x = (tMs: number) => (tMs / props.duracaoMs) * 1000;
+        const interno = pts.map(p => `${x(p.tMs)},${yAutomacaoDb(p.ganhoDb)}`).join(' ');
+        return `0,${yAutomacaoDb(pts[0].ganhoDb)} ${interno} 1000,${yAutomacaoDb(pts[pts.length - 1].ganhoDb)}`;
+    }, [props.automacaoVolume, props.duracaoMs]);
 
     const reguaMemo = useMemo(() => {
         if (props.duracaoMs <= 0) return null;
@@ -186,6 +220,16 @@ export default function EditorTimelineMusica(props: EditorTimelineMusicaProps): 
                             {fadeOutMs > 0 && <div className={styles.fadeFim} style={{ left: `${msParaPercentual(props.fimMs - fadeOutMs, props.duracaoMs)}%`, width: `${msParaPercentual(fadeOutMs, props.duracaoMs)}%` }} />}
                             {fadeInMs > 0 && <div className={styles.fadeInicio} style={{ left: `${msParaPercentual(props.retornoMs, props.duracaoMs)}%`, width: `${msParaPercentual(fadeInMs, props.duracaoMs)}%` }} />}
                             {sobreposicaoMs > 0 && <div className={styles.sobreposicao} style={{ left: `${msParaPercentual(props.fimMs - sobreposicaoMs, props.duracaoMs)}%`, width: `${msParaPercentual(sobreposicaoMs, props.duracaoMs)}%` }} title="Sobreposição do loop" />}
+
+                            <div className={styles.automacaoOverlay} ref={laneAutomacaoRef}>
+                                <svg className={styles.automacaoSvg} viewBox="0 0 1000 100" preserveAspectRatio="none">
+                                    <polyline className={styles.automacaoHit} points={pontosLinhaAutomacao} onPointerDown={aoApontarAutomacao} />
+                                    <polyline className={styles.automacaoLinha} points={pontosLinhaAutomacao} />
+                                </svg>
+                                {props.automacaoVolume.map(ponto => (
+                                    <div key={ponto.id} className={styles.automacaoPonto} style={{ left: `${msParaPercentual(ponto.tMs, props.duracaoMs)}%`, top: `${yAutomacaoDb(ponto.ganhoDb)}%` }} onPointerDown={iniciarArrastoPonto(ponto.id)} onDoubleClick={ev => { ev.stopPropagation(); props.onRemoverPontoAutomacao(ponto.id); }} title={`${ponto.ganhoDb >= 0 ? '+' : ''}${ponto.ganhoDb.toFixed(1)} dB`} />
+                                ))}
+                            </div>
                         </div>
 
                         <div className={styles.lane}>

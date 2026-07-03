@@ -355,3 +355,56 @@
     pointer-events: auto;
     cursor: ew-resize;
 }
+
+/* Automação de volume SOBRE a waveform (estilo DaVinci): linha clara + pontos arrastáveis; clicar na linha adiciona ponto, o resto da onda segue seek. */
+.automacaoOverlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.automacaoSvg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.automacaoLinha {
+    fill: none;
+    stroke: #EBE0C9;
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+    filter: drop-shadow(0 0 0.15em rgba(0, 0, 0, 0.8));
+}
+
+.automacaoHit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 14;
+    vector-effect: non-scaling-stroke;
+    pointer-events: stroke;
+    cursor: crosshair;
+}
+
+.automacaoPonto {
+    position: absolute;
+    width: 0.8em;
+    height: 0.8em;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #EBE0C9;
+    border: 0.1em solid rgba(7, 6, 11, 0.75);
+    box-shadow: 0 0 0.3em rgba(0, 0, 0, 0.7);
+    pointer-events: auto;
+    cursor: grab;
+    z-index: 3;
+
+    &:hover {
+        background: #B79051;
+    }
+}
