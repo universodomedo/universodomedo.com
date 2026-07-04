@@ -1,0 +1,125 @@
+.recipiente {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1em;
+    width: 100%;
+    max-width: 72em;
+    min-height: 100%;
+    padding: 1.4em;
+}
+
+.cabecalho {
+    display: inline-flex;
+    align-items: center;
+    gap: .6em;
+    align-self: flex-start;
+    padding: .5em 1em;
+    border-radius: 999em;
+    background: rgba(70, 245, 165, .1);
+    border: .08em solid rgba(70, 245, 165, .3);
+}
+
+.pulso {
+    width: .7em;
+    height: .7em;
+    border-radius: 999em;
+    background: rgba(70, 245, 165, .95);
+    animation: pulsar 1.8s infinite;
+}
+
+@keyframes pulsar {
+    0% { box-shadow: 0 0 0 0 rgba(70, 245, 165, .5); }
+    70% { box-shadow: 0 0 0 .7em rgba(70, 245, 165, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(70, 245, 165, 0); }
+}
+
+.cabecalho_texto {
+    font-size: .95em;
+    font-weight: 850;
+    color: #EBE0C9;
+}
+
+.vazio {
+    margin: 0;
+    font-size: 1em;
+    font-weight: 740;
+    opacity: .78;
+}
+
+.tabela_scroll {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 1em;
+    border: .08em solid rgba(255, 255, 255, .12);
+}
+
+.tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1em;
+}
+
+.tabela thead th {
+    text-align: left;
+    padding: .85em 1.05em;
+    font-size: .82em;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    opacity: .72;
+    background: rgba(255, 255, 255, .05);
+    border-bottom: .08em solid rgba(255, 255, 255, .12);
+}
+
+.tabela tbody td {
+    padding: .85em 1.05em;
+    font-weight: 760;
+    border-bottom: .06em solid rgba(255, 255, 255, .07);
+}
+
+.col_valor {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.tabela tbody td.col_valor {
+    font-weight: 950;
+    color: #B79051;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    padding: .28em .7em;
+    border-radius: 999em;
+    font-size: .82em;
+    font-weight: 850;
+    border: .08em solid rgba(255, 255, 255, .12);
+}
+
+.tag_assinatura {
+    background: rgba(70, 245, 165, .12);
+}
+
+.tag_doacao {
+    background: rgba(183, 144, 81, .14);
+}
+
+.status_pago {
+    background: rgba(70, 245, 165, .14);
+    color: #EBE0C9;
+}
+
+.status_aguardando {
+    background: rgba(245, 205, 105, .16);
+    color: #EBE0C9;
+}
+
+.linha_nova td {
+    animation: flash 2s ease-out;
+}
+
+@keyframes flash {
+    0% { background: rgba(183, 144, 81, .35); }
+    100% { background: transparent; }
+}
