@@ -19,9 +19,10 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
         if (!ocupante.keySer || !ocupante.nomeExibicao) return 'Ocupante do mapa veio sem identificação pública válida.';
         if (!Number.isInteger(ocupante.idFicha) || ocupante.idFicha <= 0) return `Ocupante ${ocupante.nomeExibicao} veio sem vínculo válido com ficha.`;
         if (!ocupante.perfilFuncional?.key || !ocupante.perfilFuncional.nome) return `Ocupante ${ocupante.nomeExibicao} veio sem perfil funcional válido.`;
-        if (!Number.isFinite(ocupante.posicao.x) || !Number.isInteger(ocupante.posicao.x)) return `Ocupante ${ocupante.nomeExibicao} veio com posição X inválida.`;
-        if (!Number.isFinite(ocupante.posicao.y) || !Number.isInteger(ocupante.posicao.y)) return `Ocupante ${ocupante.nomeExibicao} veio com posição Y inválida.`;
-        if (ocupante.posicao.x < 0 || ocupante.posicao.y < 0 || ocupante.posicao.x >= payload.mapaLogico.larguraMetros || ocupante.posicao.y >= payload.mapaLogico.alturaMetros) return `Ocupante ${ocupante.nomeExibicao} veio fora dos limites métricos do mapa.`;
+        if (!Number.isFinite(ocupante.posicao.x)) return `Ocupante ${ocupante.nomeExibicao} veio com posição X inválida.`;
+        if (!Number.isFinite(ocupante.posicao.y)) return `Ocupante ${ocupante.nomeExibicao} veio com posição Y inválida.`;
+        // Posicao continua (sub-metrica): sem exigencia de inteiro; limite superior inclusivo ate a extensao do mapa.
+        if (ocupante.posicao.x < 0 || ocupante.posicao.y < 0 || ocupante.posicao.x > payload.mapaLogico.larguraMetros || ocupante.posicao.y > payload.mapaLogico.alturaMetros) return `Ocupante ${ocupante.nomeExibicao} veio fora dos limites métricos do mapa.`;
         if (!Array.isArray(ocupante.recursosFuncionais)) return `Ocupante ${ocupante.nomeExibicao} veio sem recursos funcionais válidos.`;
         if (!Array.isArray(ocupante.capacidadesFuncionais)) return `Ocupante ${ocupante.nomeExibicao} veio sem capacidades funcionais válidas.`;
         if (!Array.isArray(ocupante.acoesDisponiveis)) return `Ocupante ${ocupante.nomeExibicao} veio sem ações disponíveis válidas.`;
@@ -37,9 +38,10 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
         if (!ser.keyInstancia || !Number.isInteger(ser.id) || ser.id <= 0 || !ser.nome) return 'Ser persistido da sala veio sem identificação válida.';
         if (ser.papel !== 'controlado' && ser.papel !== 'inimigo') return `Ser ${ser.nome} veio com papel inválido.`;
         if (!ser.posicao) return `Ser ${ser.nome} veio sem posição lógica.`;
-        if (!Number.isFinite(ser.posicao.x) || !Number.isInteger(ser.posicao.x)) return `Ser ${ser.nome} veio com posição X inválida.`;
-        if (!Number.isFinite(ser.posicao.y) || !Number.isInteger(ser.posicao.y)) return `Ser ${ser.nome} veio com posição Y inválida.`;
-        if (ser.posicao.x < 0 || ser.posicao.y < 0 || ser.posicao.x >= payload.mapaLogico.larguraMetros || ser.posicao.y >= payload.mapaLogico.alturaMetros) return `Ser ${ser.nome} veio fora dos limites métricos do mapa.`;
+        if (!Number.isFinite(ser.posicao.x)) return `Ser ${ser.nome} veio com posição X inválida.`;
+        if (!Number.isFinite(ser.posicao.y)) return `Ser ${ser.nome} veio com posição Y inválida.`;
+        // Posicao continua (sub-metrica): sem exigencia de inteiro; limite superior inclusivo ate a extensao do mapa.
+        if (ser.posicao.x < 0 || ser.posicao.y < 0 || ser.posicao.x > payload.mapaLogico.larguraMetros || ser.posicao.y > payload.mapaLogico.alturaMetros) return `Ser ${ser.nome} veio fora dos limites métricos do mapa.`;
         if (!Array.isArray(ser.estatisticasDanificaveis)) return `Ser ${ser.nome} veio sem estatísticas danificáveis válidas.`;
         if (!Array.isArray(ser.membros)) return `Ser ${ser.nome} veio sem membros válidos.`;
 
@@ -75,9 +77,10 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
         if (!interagivel.key || !interagivel.nome || !interagivel.descricao || !ehTipoInteragivelPercebidoValido(interagivel.tipo)) return 'Interagível percebido veio sem identificação válida.';
 
         if (interagivel.posicao !== null) {
-            if (!Number.isFinite(interagivel.posicao.x) || !Number.isInteger(interagivel.posicao.x)) return `Interagível ${interagivel.nome} veio com posição X inválida.`;
-            if (!Number.isFinite(interagivel.posicao.y) || !Number.isInteger(interagivel.posicao.y)) return `Interagível ${interagivel.nome} veio com posição Y inválida.`;
-            if (interagivel.posicao.x < 0 || interagivel.posicao.y < 0 || interagivel.posicao.x >= payload.mapaLogico.larguraMetros || interagivel.posicao.y >= payload.mapaLogico.alturaMetros) return `Interagível ${interagivel.nome} veio fora dos limites métricos do mapa.`;
+            if (!Number.isFinite(interagivel.posicao.x)) return `Interagível ${interagivel.nome} veio com posição X inválida.`;
+            if (!Number.isFinite(interagivel.posicao.y)) return `Interagível ${interagivel.nome} veio com posição Y inválida.`;
+            // Posicao continua (sub-metrica): sem exigencia de inteiro; limite superior inclusivo ate a extensao do mapa.
+            if (interagivel.posicao.x < 0 || interagivel.posicao.y < 0 || interagivel.posicao.x > payload.mapaLogico.larguraMetros || interagivel.posicao.y > payload.mapaLogico.alturaMetros) return `Interagível ${interagivel.nome} veio fora dos limites métricos do mapa.`;
         }
     }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { EventosApiRest, type ConfiguracaoPartida, type PartidaResumo } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
@@ -10,9 +10,9 @@ import { Contexto__PaginaGameDesignerConfiguracaoPartida__Props } from '../Conte
 import { remapeiaConfiguracaoPartidaGraphql } from './remapeiaConfiguracaoPartida';
 import SPA__PaginaGameDesignerConfiguracaoPartida__Edicao from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Edicao/SPA__PaginaGameDesignerConfiguracaoPartida__Edicao';
 
-export type AbaEdicaoPartida = 'visao' | 'runtime' | 'arteCapa' | 'musica';
+export type AbaEdicaoPartida = 'visao' | 'runtime' | 'arteCapa' | 'musica' | 'musicaEmJogo';
 
-const ROTULO_EDITOR: Record<Exclude<AbaEdicaoPartida, 'visao'>, string> = { runtime: 'Runtime', arteCapa: 'Arte de Capa', musica: 'Música de Fundo' };
+const ROTULO_EDITOR: Record<Exclude<AbaEdicaoPartida, 'visao'>, string> = { runtime: 'Runtime', arteCapa: 'Arte de Capa', musica: 'Música de Fundo', musicaEmJogo: 'Música em Jogo' };
 
 // Carga unica do detalhe da Partida: o configuracao (runtime) vem por GraphQL Partida-por-PK; arteCapa e idMusicaConfigurada ja vem no PartidaResumo (estrutura), entao a aba Detalhes os le direto da partida — sem N+1.
 const SELECT_CONFIGURACAO_PARTIDA = {
@@ -39,6 +39,8 @@ interface Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Props {
     salvarConfiguracao: (configuracao: ConfiguracaoPartida) => Promise<void>;
     idMusicaConfigurada: number | null;
     definirMusicaConfigurada: (idMusica: number | null) => Promise<void>;
+    idMusicaEmJogo: number | null;
+    definirMusicaEmJogo: (idMusica: number | null) => Promise<void>;
     alternarDesabilitada: (desabilitada: boolean) => Promise<void>;
 };
 
@@ -91,8 +93,20 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider =
         setIdMusicaConfigurada(idMusica);
     }, [partida.id]);
 
+    // Música EM JOGO: não vem no PartidaResumo (é detalhe menos usado), então carrega sob demanda por REST; ao salvar atualiza o estado local.
+    const [idMusicaEmJogo, setIdMusicaEmJogo] = useState<number | null>(null);
+    useEffect(() => {
+        let ativo = true;
+        void NoraApi.RestGET(EventosApiRest.GET.Partidas.musicaEmJogo, { id: partida.id }, { mensagemErro: 'Não foi possível carregar a Música em Jogo.' }).then(resposta => { if (ativo) setIdMusicaEmJogo(resposta.idMusicaConfigurada); }).catch(() => { });
+        return () => { ativo = false; };
+    }, [partida.id]);
+    const definirMusicaEmJogo = useCallback(async (idMusica: number | null): Promise<void> => {
+        await NoraApi.RestPOST(EventosApiRest.POST.Partidas.salvarMusicaEmJogo, { id: partida.id, idMusicaConfigurada: idMusica }, { mensagemErro: 'Não foi possível salvar a Música em Jogo.' });
+        setIdMusicaEmJogo(idMusica);
+    }, [partida.id]);
+
     return (
-        <Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider value={{ partida, aba, setAba, carregando: consulta.carregando, erro: consulta.erro, configuracaoInicial, salvando, salvarConfiguracao, idMusicaConfigurada, definirMusicaConfigurada, alternarDesabilitada }}>
+        <Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider value={{ partida, aba, setAba, carregando: consulta.carregando, erro: consulta.erro, configuracaoInicial, salvando, salvarConfiguracao, idMusicaConfigurada, definirMusicaConfigurada, idMusicaEmJogo, definirMusicaEmJogo, alternarDesabilitada }}>
             <SPA__PaginaGameDesignerConfiguracaoPartida__Edicao />
         </Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao.Provider>
     );

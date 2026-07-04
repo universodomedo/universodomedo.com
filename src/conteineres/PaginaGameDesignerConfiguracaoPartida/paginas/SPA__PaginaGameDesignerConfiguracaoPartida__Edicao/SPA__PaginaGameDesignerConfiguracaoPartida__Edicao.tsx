@@ -7,7 +7,7 @@ import SPA__PaginaGameDesignerConfiguracaoPartida__Visao from 'Conteineres/Pagin
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao/contexto';
 
 export default function SPA__PaginaGameDesignerConfiguracaoPartida__Edicao() {
-    const { partida, aba, setAba, carregando, erro, configuracaoInicial, salvando, salvarConfiguracao, idMusicaConfigurada, definirMusicaConfigurada } = useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao();
+    const { partida, aba, setAba, carregando, erro, configuracaoInicial, salvando, salvarConfiguracao, idMusicaConfigurada, definirMusicaConfigurada, idMusicaEmJogo, definirMusicaEmJogo } = useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao();
 
     // Landing = Dados de Exibição (só leitura). Entrar num editor troca a aba; o "voltar" é o X contextual do cabeçalho (fecharProps), não uma barra própria.
     if (aba === 'visao') return <SPA__PaginaGameDesignerConfiguracaoPartida__Visao />;
@@ -17,6 +17,7 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Edicao() {
             {aba === 'runtime' && (carregando ? <p className={styles.estado}>{carregando}…</p> : erro ? <p className={styles.estado}>{erro}</p> : <Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__Provider partida={partida} configuracaoInicial={configuracaoInicial} salvando={salvando} salvar={salvarConfiguracao} />)}
             {aba === 'arteCapa' && <Contexto__PaginaGameDesignerConfiguracaoPartida__Detalhes__Provider partida={partida} />}
             {aba === 'musica' && <Componente_Selecionador__MusicaDeFundo idInicial={idMusicaConfigurada} aoConfirmar={async idMusica => { await definirMusicaConfigurada(idMusica); setAba('visao'); }} />}
+            {aba === 'musicaEmJogo' && <Componente_Selecionador__MusicaDeFundo idInicial={idMusicaEmJogo} aoConfirmar={async idMusica => { await definirMusicaEmJogo(idMusica); setAba('visao'); }} />}
         </div>
     );
 };

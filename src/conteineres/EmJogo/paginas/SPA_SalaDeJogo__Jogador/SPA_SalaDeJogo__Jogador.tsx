@@ -11,6 +11,7 @@ import { ContextoTelaDeJogoMapaLogicoProvider } from 'Componentes/ElementosDeJog
 import { ContextoMovimentacaoSalaJogoProvider } from 'Componentes/ElementosDeJogo/TelaDeJogo/ContextoMovimentacaoSalaJogo';
 import { eventoWs } from 'Hooks/useEventoWs';
 import { toast } from 'Hooks/useToast';
+import { MusicaEmJogoPartida } from './MusicaEmJogoPartida';
 
 export default function SPA_SalaDeJogo__Jogador() {
     const { objetoEmJogo, J_fichaAtualizada, resultadoMissaoFuncional, estadoTemporalSalaJogo } = useContextoSalaDeJogo__Jogador();
@@ -34,6 +35,7 @@ export default function SPA_SalaDeJogo__Jogador() {
     return (
         <ContextoMovimentacaoSalaJogoProvider codigoSala={codigoSala}>
         <div className={styles.recipiente_pagina_de_jogo}>
+            {objetoEmJogo.objetoInicialSala.missaoFuncional && <MusicaEmJogoPartida idMusica={objetoEmJogo.objetoInicialSala.missaoFuncional.idMusicaEmJogo} nomePartida={objetoEmJogo.objetoInicialSala.missaoFuncional.nome} />}
             <div className={styles.recipiente__pagina_de_jogo__superior}>
                 <div className={styles.recipiente_container_tela_de_jogo__em_pagina_de_jogo}>
                     <TelaDeJogo codigoSala={codigoSala} missaoFuncional={objetoEmJogo.objetoInicialSala.missaoFuncional} resultadoMissaoFuncional={resultadoMissaoFuncional} estadoTemporalSalaJogo={estadoTemporalSalaJogo} />

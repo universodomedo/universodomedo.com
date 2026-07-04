@@ -1,0 +1,183 @@
+.tela {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 100%;
+    padding: 2.4em 1.4em;
+}
+
+.cartao {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1em;
+    width: 100%;
+    max-width: 40em;
+    padding: 1.7em;
+    border-radius: 1.25em;
+    background: linear-gradient(135deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .03));
+    border: .08em solid rgba(255, 255, 255, .14);
+    box-shadow: 0 1.1em 2.2em rgba(0, 0, 0, .16);
+}
+
+.cabecalho {
+    display: flex;
+    flex-direction: column;
+    gap: .3em;
+}
+
+.titulo {
+    margin: 0;
+    font-size: 1.9em;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    line-height: 1.05em;
+    color: #EBE0C9;
+    text-shadow: 0 .06em .16em rgba(0, 0, 0, .22);
+}
+
+.subtitulo {
+    margin: 0;
+    font-size: 1em;
+    font-weight: 740;
+    line-height: 1.34em;
+    opacity: .84;
+}
+
+.aviso_anonimo {
+    display: flex;
+    flex-direction: column;
+    gap: .3em;
+    padding: .85em 1.05em;
+    border-radius: .8em;
+    font-size: .9em;
+    line-height: 1.4em;
+    background: rgba(183, 144, 81, .1);
+    border: .08em solid rgba(183, 144, 81, .4);
+}
+
+.aviso_titulo {
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-size: .85em;
+    color: #B79051;
+}
+
+.link_acessar {
+    padding: 0;
+    font: inherit;
+    font-weight: 900;
+    color: #B79051;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: .7em;
+}
+
+.texto_apoio {
+    margin: 0;
+    font-size: .85em;
+    font-weight: 700;
+    opacity: .7;
+}
+
+.campo_armadilha {
+    position: absolute;
+    left: -100em;
+    width: 1em;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.erro {
+    margin: 0;
+    color: #DB4747;
+    font-size: .92em;
+    font-weight: 800;
+}
+
+.botao_doar {
+    align-self: stretch;
+    margin-top: .2em;
+    padding: .95em 1.6em;
+    font-size: 1.05em;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #1a1a1a;
+    background: #B79051;
+    border: none;
+    border-radius: .6em;
+    cursor: pointer;
+}
+
+.botao_doar:disabled {
+    opacity: .55;
+    cursor: default;
+}
+
+.caixa_pix {
+    display: flex;
+    flex-direction: column;
+    gap: .7em;
+    padding: 1em;
+    border-radius: .5em;
+    background: rgba(0, 0, 0, .25);
+    border: .08em solid rgba(255, 255, 255, .14);
+}
+
+.caixa_pix_rotulo {
+    font-size: .8em;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    opacity: .8;
+}
+
+.copia_cola {
+    font-family: monospace;
+    font-size: .82em;
+    word-break: break-all;
+    line-height: 1.5;
+    padding: .7em;
+    border-radius: .35em;
+    background: rgba(0, 0, 0, .35);
+    border: .06em solid rgba(255, 255, 255, .1);
+}
+
+.botao_copiar {
+    align-self: flex-start;
+    padding: .55em 1.2em;
+    border-radius: .4em;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #1a1a1a;
+    background: #B79051;
+    border: none;
+    cursor: pointer;
+}
+
+.aguardando {
+    font-size: .9em;
+    opacity: .85;
+}
+
+.pago {
+    display: flex;
+    flex-direction: column;
+    gap: .9em;
+}
+
+.pago_texto {
+    font-size: 1.1em;
+    font-weight: 850;
+    color: #EBE0C9;
+}

@@ -8,8 +8,8 @@ import { PAGINAS, type MinhasAssinaturasDto, type MinhasDoacoesDto, type OfertaA
 import { ControladorSlot } from 'Layouts/ControladorSlot';
 import StatusPasse from 'Componentes/Passe/StatusPasse/StatusPasse';
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
-import InputNumerico from 'Componentes/Elementos/Inputs/InputNumerico/InputNumerico';
-import { obterMinhasAssinaturas, obterMinhasDoacoes, obterOfertaAssinatura, geraPixProduto, obterOfertaDoacao, geraPixDoacao, obterStatusPix } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import InputMoeda from 'Componentes/Elementos/Inputs/InputMoeda/InputMoeda';
+import { obterMinhasAssinaturas, obterMinhasDoacoes, obterOfertaAssinatura, geraPixProduto, obterOfertaDoacao, geraPixDoacao, obterStatusPix, obterPixPendente } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 type Aba = 'assinaturas' | 'doacoes';
 
@@ -132,7 +132,16 @@ function BlocoAssinar({ onPago, temPasseAtivo }: { onPago: () => void; temPasseA
     useEffect(() => {
         let ativo = true;
         obterOfertaAssinatura()
-            .then(oferta => { if (!ativo) return; setOferta(oferta); setEstado(oferta ? 'pronto' : 'indisponivel'); })
+            .then(async oferta => {
+                if (!ativo) return;
+                setOferta(oferta);
+                if (!oferta) { setEstado('indisponivel'); return; }
+                // Se já existe uma cobrança a pagar (válida e não paga), retoma ela no lugar de oferecer "Assinar".
+                const pendente = await obterPixPendente(oferta.idProduto).catch(() => null);
+                if (!ativo) return;
+                if (pendente) { setPix(pendente); setEstado('aguardando'); }
+                else setEstado('pronto');
+            })
             .catch(() => { if (ativo) { setEstado('indisponivel'); setErro('Não foi possível carregar a oferta.'); } });
         return () => { ativo = false; };
     }, []);
@@ -210,7 +219,7 @@ type EstadoDoacao = 'carregando' | 'pronto' | 'gerando' | 'aguardando' | 'pago' 
 function BlocoDoar({ onPago }: { onPago: () => void; }) {
     const [oferta, setOferta] = useState<OfertaDoacaoDto | null>(null);
     const [estado, setEstado] = useState<EstadoDoacao>('carregando');
-    const [valor, setValor] = useState<number>(0);
+    const [valorCentavos, setValorCentavos] = useState<number>(0);
     const [pix, setPix] = useState<PixGeradoDto | null>(null);
     const [erro, setErro] = useState<string | null>(null);
     const [copiado, setCopiado] = useState<boolean>(false);
@@ -218,7 +227,16 @@ function BlocoDoar({ onPago }: { onPago: () => void; }) {
     useEffect(() => {
         let ativo = true;
         obterOfertaDoacao()
-            .then(oferta => { if (!ativo) return; setOferta(oferta); setEstado(oferta ? 'pronto' : 'indisponivel'); })
+            .then(async oferta => {
+                if (!ativo) return;
+                setOferta(oferta);
+                if (!oferta) { setEstado('indisponivel'); return; }
+                // Se já existe uma doação a pagar (válida e não paga), retoma ela no lugar do formulário.
+                const pendente = await obterPixPendente(oferta.idProduto).catch(() => null);
+                if (!ativo) return;
+                if (pendente) { setPix(pendente); setEstado('aguardando'); }
+                else setEstado('pronto');
+            })
             .catch(() => { if (ativo) { setEstado('indisponivel'); setErro('Não foi possível carregar a doação.'); } });
         return () => { ativo = false; };
     }, []);
@@ -233,8 +251,8 @@ function BlocoDoar({ onPago }: { onPago: () => void; }) {
     }, [estado, pix, onPago]);
 
     function centavosDoValor(): number | null {
-        if (!Number.isFinite(valor) || valor <= 0) return null;
-        return Math.round(valor * 100);
+        if (!Number.isInteger(valorCentavos) || valorCentavos < 100) return null;
+        return valorCentavos;
     }
 
     async function doar(): Promise<void> {
@@ -272,8 +290,8 @@ function BlocoDoar({ onPago }: { onPago: () => void; }) {
                 <div className={styles.doar_form}>
                     <p className={styles.texto_menor}>{oferta.descricao ?? 'Contribua com o valor que quiser para apoiar o Universo do Medo.'}</p>
                     <div className={styles.doar_linha}>
-                        <InputComRotulo rotulo="Valor da doação (R$)" classname={styles.doar_campo}>
-                            <InputNumerico value={valor} onChange={setValor} min={1} step="0.01" disabled={estado === 'gerando'} />
+                        <InputComRotulo rotulo="Valor da doação" classname={styles.doar_campo}>
+                            <InputMoeda valorCentavos={valorCentavos} onChange={setValorCentavos} disabled={estado === 'gerando'} />
                         </InputComRotulo>
                         <button className={styles.botao_doar} onClick={doar} disabled={estado === 'gerando'}>{estado === 'gerando' ? 'Gerando...' : 'Doar via Pix'}</button>
                     </div>

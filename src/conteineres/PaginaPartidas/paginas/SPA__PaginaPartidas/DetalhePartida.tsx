@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 import type { PartidaResumo } from 'types-nora-api';
 import { useImagemCapaArte } from 'Funcionalidades/ArteDeCapa/useImagemCapaArte';
 import { ConteudoConfiguracaoPartida } from 'Conteineres/PaginaPartidas/paginas/SPA__PaginaPartidas/ConteudoConfiguracaoPartida';
+import { PainelPlacarDesafio } from 'Conteineres/PaginaPartidas/paginas/SPA__PaginaPartidas/PainelPlacarDesafio';
 
 // Detalhe da Partida selecionada: ocupa 100% da altura ao lado do Orbital.
 // Topo = Arte de Capa. Corpo = descrição (2 colunas: título/descrição | meta) + rodapé (botão Jogar) num mesmo bloco.
@@ -47,6 +48,8 @@ export function DetalhePartida({ partida, textoBotaoJogar, desabilitado, aoJogar
                             </div>
                         </dl>
                     </div>
+
+                    {partida.tipo === 'DESAFIO' && partida.tipoDesafio && <PainelPlacarDesafio tipoDesafio={partida.tipoDesafio} />}
                 </div>
 
                 <div className={styles.detalhe_rodape}>

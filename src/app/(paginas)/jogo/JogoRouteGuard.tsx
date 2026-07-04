@@ -53,7 +53,8 @@ export default function JogoRouteGuard({ children }: { children: ReactNode }) {
             return;
         }
 
-        router.replace(PAGINAS.jogo.jogador.href);
+        // Ao sair de uma Partida (fim de jogo => nao esta mais em jogo, ainda na tela em-jogo), volta para a pagina de Partidas.
+        router.replace(PAGINAS.jogo.jogador.partidas.href);
     }, [estadoValidacao, objetoEstouEmJogo, pathname, router]);
 
     if (estadoValidacao === 'carregando') return <p>Carregando...</p>;

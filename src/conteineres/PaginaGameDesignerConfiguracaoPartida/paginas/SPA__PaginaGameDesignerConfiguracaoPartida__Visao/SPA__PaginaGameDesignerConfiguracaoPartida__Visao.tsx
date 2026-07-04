@@ -13,7 +13,7 @@ import { useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao } from 'Cont
 // Dados de Exibição da Partida: visão só-leitura (nada editável direto). Cada card tem um "Editar" que entra no editor daquele dado.
 // Rodapé: Desabilitar/Reabilitar a Partida (aposentadoria soft — some das superfícies de jogo, reversível), no lugar de um "deletar".
 export default function SPA__PaginaGameDesignerConfiguracaoPartida__Visao() {
-    const { partida, configuracaoInicial, carregando, erro, setAba, idMusicaConfigurada, salvando, alternarDesabilitada } = useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao();
+    const { partida, configuracaoInicial, carregando, erro, setAba, idMusicaConfigurada, idMusicaEmJogo, salvando, alternarDesabilitada } = useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao();
 
     return (
         <ConteudoForm>
@@ -22,6 +22,7 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Visao() {
                     <div className={styles.grade}>
                         <CardArteCapa nome={partida.nome} arteCapa={partida.arteCapa} aoEditar={() => setAba('arteCapa')} />
                         <CardMusica idMusica={idMusicaConfigurada} aoEditar={() => setAba('musica')} />
+                        <CardMusicaEmJogo idMusica={idMusicaEmJogo} aoEditar={() => setAba('musicaEmJogo')} />
                         <CardRuntime configuracao={configuracaoInicial} carregando={carregando} erro={erro} aoEditar={() => setAba('runtime')} />
                     </div>
                 </div>
@@ -58,6 +59,18 @@ function CardMusica({ idMusica, aoEditar }: { idMusica: number | null; aoEditar:
         <section className={styles.cartao}>
             <header className={styles.cabecalho}>
                 <h3 className={styles.titulo}>Música de Fundo</h3>
+                <button type="button" className={styles.botao_editar} onClick={aoEditar}>{idMusica === null ? 'Definir' : 'Editar'}</button>
+            </header>
+            <PreviewMusicaConfigurada idMusica={idMusica} />
+        </section>
+    );
+};
+
+function CardMusicaEmJogo({ idMusica, aoEditar }: { idMusica: number | null; aoEditar: () => void; }) {
+    return (
+        <section className={styles.cartao}>
+            <header className={styles.cabecalho}>
+                <h3 className={styles.titulo}>Música em Jogo</h3>
                 <button type="button" className={styles.botao_editar} onClick={aoEditar}>{idMusica === null ? 'Definir' : 'Editar'}</button>
             </header>
             <PreviewMusicaConfigurada idMusica={idMusica} />

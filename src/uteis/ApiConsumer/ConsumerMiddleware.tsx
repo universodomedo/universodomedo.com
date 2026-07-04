@@ -1,4 +1,4 @@
-import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoPatentesTestePericiaProjetada, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoPatentesTestePericia, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, DTO__CREATE__HabilidadePericia, DTO__CREATE__HabilidadeEspecial, DTO__CREATE__CapacidadeInata, DTO__CREATE__MusicaConfigurada, DTO__UPDATE__MusicaConfigurada, DTO__DEFINIR__ClimaMusica, DTO__CREATE__DimensaoClima, CaminhoArquivoArte, DadosCriarTutorial, DadosEditarTutorial, PAYLOAD__SalvarPaginaWiki, ItemNavegacaoWiki, SecaoWiki, NavegacaoConfigRuntime, DadosEditarPaginaNavegacao, DadosCriarPaginaNavegacao, MenuDoBancoDto, DadosCriarMenu, DadosEditarMenu, DadosCriarMenuNo, DadosEditarMenuNo, DadosMoverMenuNo, LayoutContextoDto, DadosDefinirLayoutContexto, PAYLOAD__CriarProduto, PAYLOAD__AtualizarProduto, PAYLOAD__DefinirAtivoProduto, PAYLOAD__CriarPasse, PAYLOAD__AtualizarPasse, PAYLOAD__DefinirAtivoPasse, PAYLOAD__CriarVinculoProdutoPasse, PAYLOAD__AtualizarVinculoProdutoPasse, PAYLOAD__DefinirAtivoVinculoProdutoPasse, OfertaAssinaturaDto, PAYLOAD__GerarPixProduto, PixGeradoDto, PixStatusDto, OfertaDoacaoDto, PAYLOAD__GerarPixDoacao, MinhasAssinaturasDto, MinhasDoacoesDto, PagamentoAdminDto } from "types-nora-api";
+import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoPatentesTestePericiaProjetada, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoPatentesTestePericia, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, DTO__CREATE__HabilidadePericia, DTO__CREATE__HabilidadeEspecial, DTO__CREATE__CapacidadeInata, DTO__CREATE__MusicaConfigurada, DTO__UPDATE__MusicaConfigurada, DTO__DEFINIR__ClimaMusica, DTO__CREATE__DimensaoClima, CaminhoArquivoArte, DadosCriarTutorial, DadosEditarTutorial, PAYLOAD__SalvarPaginaWiki, ItemNavegacaoWiki, SecaoWiki, NavegacaoConfigRuntime, DadosEditarPaginaNavegacao, DadosCriarPaginaNavegacao, MenuDoBancoDto, DadosCriarMenu, DadosEditarMenu, DadosCriarMenuNo, DadosEditarMenuNo, DadosMoverMenuNo, LayoutContextoDto, DadosDefinirLayoutContexto, PAYLOAD__CriarProduto, PAYLOAD__AtualizarProduto, PAYLOAD__DefinirAtivoProduto, PAYLOAD__CriarPasse, PAYLOAD__AtualizarPasse, PAYLOAD__DefinirAtivoPasse, PAYLOAD__CriarVinculoProdutoPasse, PAYLOAD__AtualizarVinculoProdutoPasse, PAYLOAD__DefinirAtivoVinculoProdutoPasse, OfertaAssinaturaDto, PAYLOAD__GerarPixProduto, PixGeradoDto, PixStatusDto, OfertaDoacaoDto, PAYLOAD__GerarPixDoacao, MinhasAssinaturasDto, MinhasDoacoesDto, PagamentoAdminDto, PAYLOAD__DoacaoPublica } from "types-nora-api";
 
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
@@ -436,6 +436,11 @@ export async function obterStatusPix(idRegistroPix: number): Promise<PixStatusDt
     return await useApi<PixStatusDto>({ uri: `/pix/status/${idRegistroPix}`, method: 'GET' });
 }
 
+// Retoma uma cobrança pendente (ainda válida e não paga) do usuário para um produto — evita gerar um novo Pix quando já há um a pagar.
+export async function obterPixPendente(idProduto: number): Promise<PixGeradoDto | null> {
+    return await useApi<PixGeradoDto | null>({ uri: `/pix/pendente/${idProduto}`, method: 'GET' });
+}
+
 // Doação (Pix) — oferta de valor livre e geração da cobrança (o valor é informado pelo doador).
 export async function obterOfertaDoacao(): Promise<OfertaDoacaoDto | null> {
     return await useApi<OfertaDoacaoDto | null>({ uri: '/pix/doacao/oferta', method: 'GET' });
@@ -443,6 +448,15 @@ export async function obterOfertaDoacao(): Promise<OfertaDoacaoDto | null> {
 
 export async function geraPixDoacao(payload: PAYLOAD__GerarPixDoacao): Promise<PixGeradoDto> {
     return await useApi<PixGeradoDto>({ uri: '/pix/geraDoacao', method: 'POST', data: payload });
+}
+
+// Doação pública (anônima, sem login).
+export async function geraDoacaoPublica(payload: PAYLOAD__DoacaoPublica): Promise<PixGeradoDto> {
+    return await useApi<PixGeradoDto>({ uri: '/pix/doacao-publica', method: 'POST', data: payload });
+}
+
+export async function obterStatusDoacaoPublica(idRegistroPix: number): Promise<PixStatusDto> {
+    return await useApi<PixStatusDto>({ uri: `/pix/doacao-publica/status/${idRegistroPix}`, method: 'GET' });
 }
 
 // Histórico financeiro do próprio usuário logado.
