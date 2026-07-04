@@ -26,6 +26,7 @@ export function DetalhePartida({ partida, textoBotaoJogar, desabilitado, aoJogar
                             <ConteudoConfiguracaoPartida key={partida.id} idPartida={partida.id} />
                         </div>
 
+                        {/* Oculto temporariamente neste EA (NÃO excluir — só não entra neste Desafio): seção "Já jogou / Tempo estimado" + a divisória vertical (border-left do .info_meta). Descomentar para voltar.
                         <dl className={styles.info_meta}>
                             <div className={styles.info_meta_item}>
                                 <span className={styles.info_meta_icone} aria-hidden="true">
@@ -47,6 +48,7 @@ export function DetalhePartida({ partida, textoBotaoJogar, desabilitado, aoJogar
                                 </div>
                             </div>
                         </dl>
+                        */}
                     </div>
 
                     {partida.tipo === 'DESAFIO' && partida.tipoDesafio && <PainelPlacarDesafio tipoDesafio={partida.tipoDesafio} />}

@@ -30,28 +30,31 @@
 }
 
 .finalizacao_sala {
-    position: absolute;
-    z-index: 8;
-    right: 1em;
-    top: 1em;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
     display: flex;
-    justify-content: flex-end;
-    width: min(28em, calc(100% - 2em));
-    pointer-events: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    background: rgba(6, 6, 9, 0.55);
+    backdrop-filter: blur(2px);
+    animation: surgir_finalizacao 0.28s ease-out;
 }
 
 .painel_finalizacao_sala {
     display: flex;
     flex-direction: column;
     gap: 0.8em;
-    width: 100%;
+    width: min(28em, calc(100% - 2em));
     padding: 1em;
     border: 0.08em solid rgba(255, 255, 255, 0.24);
     border-radius: 0.5em;
     background: rgba(16, 16, 20, 0.96);
     color: #f8f3ea;
     box-shadow: 0 0.8em 2.2em rgba(0, 0, 0, 0.42);
-    pointer-events: auto;
+    text-align: center;
+    animation: surgir_painel_finalizacao 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 
 .painel_finalizacao_sala h2 {
@@ -90,7 +93,7 @@
 }
 
 .painel_finalizacao_sala button {
-    align-self: flex-end;
+    align-self: center;
     padding: 0.8em 1.4em;
     border: 0;
     border-radius: 0.4em;
@@ -103,4 +106,21 @@
 .painel_finalizacao_sala button:disabled {
     cursor: wait;
     opacity: 0.72;
+}
+
+@keyframes surgir_finalizacao {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes surgir_painel_finalizacao {
+    from { opacity: 0; transform: scale(0.9) translateY(0.5em); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .finalizacao_sala,
+    .painel_finalizacao_sala {
+        animation: none;
+    }
 }

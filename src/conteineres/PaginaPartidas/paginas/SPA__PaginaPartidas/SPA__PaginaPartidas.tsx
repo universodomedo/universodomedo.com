@@ -9,7 +9,7 @@ import { BloqueioDeSilencio } from 'Componentes/Elementos/CentralAudio/BloqueioD
 import { DetalhePartida } from 'Conteineres/PaginaPartidas/paginas/SPA__PaginaPartidas/DetalhePartida';
 import type { Contexto__PaginaPartidas__Props } from 'Contextos/Contexto__PaginaPartidas/contexto';
 
-export default function SPA__PaginaPartidas({ catalogosDisponiveis, partidaSelecionada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }: Contexto__PaginaPartidas__Props) {
+export default function SPA__PaginaPartidas({ catalogosDisponiveis, idPartidaInicial, partidaSelecionada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }: Contexto__PaginaPartidas__Props) {
     const textoBotaoJogar = resolveTextoBotaoJogar(carregando, jogando, partidaSelecionada, podeJogarPartidaSelecionada);
     // TODO(desafio-cooldown): somar aqui o estado de ESPERA do Desafio (cooldown) para desabilitar o botão enquanto o timer corre — ver resolveTextoBotaoJogar.
     const botaoDesabilitado = !podeJogarPartidaSelecionada || jogando || carregando;
@@ -24,7 +24,7 @@ export default function SPA__PaginaPartidas({ catalogosDisponiveis, partidaSelec
             <section className={styles.secao_detalhamento}>
                 {partidaSelecionada && <DetalhePartida key={partidaSelecionada.id} partida={partidaSelecionada} textoBotaoJogar={textoBotaoJogar} desabilitado={botaoDesabilitado} aoJogar={jogarPartidaSelecionada} />}
             </section>
-            <section className={styles.secao_catalogo}><CatalogoDeMissoes catalogos={catalogosDisponiveis} carregando={carregando} aoFocarMissao={aoFocarMissao} /></section>
+            <section className={styles.secao_catalogo}><CatalogoDeMissoes catalogos={catalogosDisponiveis} carregando={carregando} aoFocarMissao={aoFocarMissao} idMissaoInicial={idPartidaInicial} /></section>
         </div>
     );
 };

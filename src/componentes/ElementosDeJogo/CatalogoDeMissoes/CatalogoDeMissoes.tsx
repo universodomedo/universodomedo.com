@@ -19,6 +19,8 @@ type CatalogoDeMissoesProps = {
     readonly catalogos: readonly CatalogoDeMissoesCatalogo[];
     readonly carregando: boolean;
     readonly aoFocarMissao: (missao: CatalogoDeMissoesItem | null) => void;
+    // Missão (Partida) a centralizar ao montar. null/não achada = padrão (primeira missão).
+    readonly idMissaoInicial?: number | null;
 };
 
 type ItemCatalogoOrbital = {
@@ -107,7 +109,7 @@ const LIMIAR_TOQUE = 36;
 
 function mod(valor: number, divisor: number): number { return ((valor % divisor) + divisor) % divisor; };
 
-export default function CatalogoDeMissoes({ catalogos, carregando, aoFocarMissao }: CatalogoDeMissoesProps) {
+export default function CatalogoDeMissoes({ catalogos, carregando, aoFocarMissao, idMissaoInicial }: CatalogoDeMissoesProps) {
     const secaoRef = useRef<HTMLElement | null>(null);
     const inicioToqueY = useRef<number | null>(null);
     const inicializadoRef = useRef(false);
@@ -137,13 +139,15 @@ export default function CatalogoDeMissoes({ catalogos, carregando, aoFocarMissao
     useEffect(() => {
         if (inicializadoRef.current || total === 0) return;
 
-        const indiceMissao = itensOrbitais.findIndex(item => missaoFocadaDoItem(item) !== null);
+        // Prioriza a Partida salva (última selecionada); senão, a primeira missão (padrão).
+        const indiceSalvo = idMissaoInicial != null ? itensOrbitais.findIndex(item => missaoFocadaDoItem(item)?.id === idMissaoInicial) : -1;
+        const indiceMissao = indiceSalvo >= 0 ? indiceSalvo : itensOrbitais.findIndex(item => missaoFocadaDoItem(item) !== null);
         const alvo = indiceMissao >= 0 ? indiceMissao : itensOrbitais.findIndex(itemEhNavegavel);
         if (alvo >= 0) {
             setVCentro(alvo);
             inicializadoRef.current = true;
         }
-    }, [itensOrbitais, total]);
+    }, [itensOrbitais, total, idMissaoInicial]);
 
     useEffect(() => {
         if (total === 0 || !itemCentral || itemEhNavegavel(itemCentral)) return;

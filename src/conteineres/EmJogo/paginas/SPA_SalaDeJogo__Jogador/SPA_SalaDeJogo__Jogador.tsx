@@ -1,6 +1,6 @@
 import styles from './styles.module.css';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Eventos_EnviaERecebe } from 'types-nora-api';
 
 import { useContextoSalaDeJogo__Jogador } from "Contextos/ContextoSalaDeJogo__Jogador/contexto";
@@ -12,11 +12,15 @@ import { ContextoMovimentacaoSalaJogoProvider } from 'Componentes/ElementosDeJog
 import { eventoWs } from 'Hooks/useEventoWs';
 import { toast } from 'Hooks/useToast';
 import { MusicaEmJogoPartida } from './MusicaEmJogoPartida';
+import { somVitoria } from './somVitoria';
 
 export default function SPA_SalaDeJogo__Jogador() {
     const { objetoEmJogo, J_fichaAtualizada, resultadoMissaoFuncional, estadoTemporalSalaJogo } = useContextoSalaDeJogo__Jogador();
     const [fechandoSala, setFechandoSala] = useState(false);
     const codigoSala = objetoEmJogo.objetoInicialSala.codigoSalaDeJogo;
+
+    // Ao lançar a Vitória (resultado != null), toca a fanfarra celebratória junto com a modal centralizada.
+    useEffect(() => { if (resultadoMissaoFuncional !== null) somVitoria(); }, [resultadoMissaoFuncional]);
 
     function retornar(): void {
         if (fechandoSala) return;

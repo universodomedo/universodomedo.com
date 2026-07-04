@@ -12,9 +12,17 @@ import { useValorEstabilizado } from 'Hooks/useValorEstabilizado';
 // Debounce ÚNICO da transição de item do Orbital: fundo, música e Detalhe saem TODOS da mesma seleção estável. NÃO criar outros timers com este mesmo tempo — a transição do item é uma coisa só.
 const ATRASO_ESTABILIZACAO_MS = 220;
 
+// Última Partida selecionada no Orbital (por sessão do navegador): ao voltar (troca de página / fim de partida), o Orbital recentraliza nela.
+const CHAVE_ULTIMA_PARTIDA_ORBITAL = 'udm-orbital-ultima-partida';
+
+// TEMPORÁRIO (EA): oculta no Orbital os subcatálogos de Desafio recorrentes (Diário/Semanal/Mensal/Elite) — não agregam neste EA. Mantém ESPECIAL (o Desafio do EA). Não destrutivo: remover este Set + o filter em montaSubgruposDesafio para voltar a exibir.
+const TIPOS_DESAFIO_OCULTOS_EA: ReadonlySet<string> = new Set(['DIARIO', 'SEMANAL', 'MENSAL', 'ELITE']);
+
 export interface Contexto__PaginaPartidas__Props {
     catalogosDisponiveis: readonly CatalogoDeMissoesCatalogo[];
     idPartidaSelecionada: number | null;
+    // Partida que o Orbital deve centralizar ao montar: a última selecionada (persistida). null = comportamento padrão (primeira missão).
+    idPartidaInicial: number | null;
     partidaSelecionada: PartidaResumo | null;
     podeJogarPartidaSelecionada: boolean;
     carregando: boolean;
@@ -40,6 +48,12 @@ export const Contexto__PaginaPartidas__Provider = ({ children }: { readonly chil
     const [jogando, setJogando] = useState(false);
     const [erro, setErro] = useState<string | null>(null);
     const [idPartidaFocada, setIdPartidaFocada] = useState<number | null>(null);
+    // Lido UMA vez na montagem: o Orbital centraliza nesta Partida (a última selecionada na sessão), em vez da primeira missão.
+    const [idPartidaInicial] = useState<number | null>(() => {
+        if (typeof window === 'undefined') return null;
+        const salvo = Number(window.sessionStorage.getItem(CHAVE_ULTIMA_PARTIDA_ORBITAL));
+        return Number.isInteger(salvo) && salvo > 0 ? salvo : null;
+    });
 
     useEffect(() => {
         async function carregar(): Promise<void> {
@@ -72,6 +86,12 @@ export const Contexto__PaginaPartidas__Provider = ({ children }: { readonly chil
     const partidaSelecionada = useMemo<PartidaResumo | null>(() => obtemPartidaPorId(estrutura, idPartidaSelecionada), [estrutura, idPartidaSelecionada]);
     const podeJogarPartidaSelecionada = partidaSelecionada?.partidaConfigurada === true;
 
+    // Persiste a seleção assentada para o Orbital voltar nela ao remontar (troca de página / fim de partida).
+    useEffect(() => {
+        if (typeof window === 'undefined' || idPartidaSelecionada === null) return;
+        window.sessionStorage.setItem(CHAVE_ULTIMA_PARTIDA_ORBITAL, String(idPartidaSelecionada));
+    }, [idPartidaSelecionada]);
+
     const jogarPartidaSelecionada = useCallback(() => {
         if (!partidaSelecionada || !podeJogarPartidaSelecionada || jogando) return;
 
@@ -91,7 +111,7 @@ export const Contexto__PaginaPartidas__Provider = ({ children }: { readonly chil
     }, [partidaSelecionada, podeJogarPartidaSelecionada, jogando, router]);
 
     return (
-        <Contexto__PaginaPartidas.Provider value={{ catalogosDisponiveis, idPartidaSelecionada, partidaSelecionada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }}>
+        <Contexto__PaginaPartidas.Provider value={{ catalogosDisponiveis, idPartidaSelecionada, idPartidaInicial, partidaSelecionada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }}>
             {children}
         </Contexto__PaginaPartidas.Provider>
     );
@@ -119,7 +139,7 @@ function montaCatalogos(estrutura: EstruturaPartidas | null, painel: PainelDesaf
 function montaSubgruposDesafio(painel: PainelDesafiosAtivos | null, itemPorIdPartida: (idPartida: number) => CatalogoDeMissoesItem | null): readonly CatalogoDeMissoesSubgrupo[] {
     if (!painel) return [];
 
-    return painel.tipos.map(tipoPainel => {
+    return painel.tipos.filter(tipoPainel => !TIPOS_DESAFIO_OCULTOS_EA.has(tipoPainel.tipo)).map(tipoPainel => {
         // O painel só diz QUAIS partidas e como agrupar; o item em si sai da Partida, pelo mesmo caminho das Missões.
         const idsPartida = tipoPainel.rotativo ? (tipoPainel.desafioAtivo ? [tipoPainel.desafioAtivo.id] : []) : tipoPainel.desafiosPublicados.map(desafio => desafio.id);
 

@@ -58,14 +58,15 @@ function textoCondicaoVitoria(condicao: CondicaoVitoriaGraphql): string {
     switch (condicao.tipo) {
         case 'inimigo_derrotado': return 'Derrotar o inimigo.';
         case 'refem_percebido': return 'Encontrar e perceber o refém.';
-        case 'tempo_jogo_alcancado': return `Sobreviver por ${formataMinutos(condicao.tempoAlvoMs)}.`;
+        case 'tempo_jogo_alcancado': return `Sobreviver por ${formataDuracao(condicao.tempoAlvoMs)}.`;
         case 'proximidade_ser_alcancada': return `Alcançar o alvo (até ${condicao.distanciaMaximaMetros ?? 0} m).`;
         case 'qualquer_acao_executada': return 'Executar qualquer ação.';
         default: return 'Condição de vitória não definida.';
     }
 };
 
-function formataMinutos(ms: number | null): string {
-    const minutos = Math.max(1, Math.round((ms ?? 0) / 60000));
-    return `${minutos} min`;
+function formataDuracao(ms: number | null): string {
+    const totalSegundos = Math.max(1, Math.round((ms ?? 0) / 1000));
+    if (totalSegundos < 60) return `${totalSegundos}s`;
+    return `${Math.round(totalSegundos / 60)} min`;
 };
