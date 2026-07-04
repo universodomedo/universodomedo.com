@@ -1,0 +1,51 @@
+.seletor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    max-width: 34em;
+}
+
+.mapa {
+    position: relative;
+    width: 100%;
+    max-height: 60vh;
+    border-radius: 0.5em;
+    border: 0.1em solid rgba(183, 144, 81, 0.6);
+    background-color: rgba(235, 224, 201, 0.06);
+    background-image: linear-gradient(rgba(183, 144, 81, 0.12) 0.06em, transparent 0.06em), linear-gradient(90deg, rgba(183, 144, 81, 0.12) 0.06em, transparent 0.06em);
+    background-size: 10% 10%;
+    cursor: crosshair;
+    overflow: hidden;
+}
+
+.marcador_contexto,
+.marcador_ativo {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.ponto_contexto {
+    display: block;
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    background: rgba(235, 224, 201, 0.45);
+    border: 0.08em solid rgba(0, 0, 0, 0.35);
+}
+
+.ponto_ativo {
+    display: block;
+    width: 1.1em;
+    height: 1.1em;
+    border-radius: 50%;
+    background: #B79051;
+    border: 0.12em solid #EBE0C9;
+    box-shadow: 0 0 0.4em rgba(183, 144, 81, 0.8);
+}
+
+.leitura {
+    font-size: 0.85em;
+    opacity: 0.75;
+    margin: 0;
+}

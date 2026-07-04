@@ -57,7 +57,7 @@ function ConteudoComLimiteDeFichasAtingido() {
     return (
         <>
             <h1>Para acessar sua Ficha, selecione no menu lateral ao lado</h1>
-            <h2>Para cadastrar uma nova, delete a anterior ou obtenha o <LinkInterno destino={{ pagina: PAGINAS.minhasPaginas.minhasConfiguracoes.passeDeJogador }}>Passe de Jogador</LinkInterno></h2>
+            <h2>Para cadastrar uma nova, delete a anterior ou obtenha o <LinkInterno destino={{ pagina: PAGINAS.minhasPaginas.minhasConfiguracoes.minhaConta }}>Passe de Fundador</LinkInterno></h2>
         </>
     );
 };

@@ -6,6 +6,7 @@ import { Contexto__PaginaAdminGestaoNavegacao__Props, Contexto__PaginaAdminGesta
 import { Contexto__PaginaAdminGestaoNavegacao__Listagem__Provider } from 'Contextos/Contexto__PaginaAdminGestaoNavegacao__Listagem/contexto';
 import { Contexto__PaginaAdminGestaoNavegacao__DetalhePagina__Provider } from 'Contextos/Contexto__PaginaAdminGestaoNavegacao__DetalhePagina/contexto';
 import { Contexto__PaginaAdminGestaoNavegacao__EdicaoMusica__Provider } from 'Contextos/Contexto__PaginaAdminGestaoNavegacao__EdicaoMusica/contexto';
+import { Contexto__PaginaAdminGestaoNavegacao__NovaPagina__Provider } from 'Contextos/Contexto__PaginaAdminGestaoNavegacao__NovaPagina/contexto';
 
 export function Conteiner__PaginaAdminGestaoNavegacao() {
     return (
@@ -19,9 +20,12 @@ export const Conteiner__PaginaAdminGestaoNavegacao__Interno = criaConteiner<Prop
 
 type PropsConteiner__PaginaAdminGestaoNavegacao = Contexto__PaginaAdminGestaoNavegacao__Props;
 
-// Fluxo controlado aqui (não dentro das SPAs): sem página selecionada → Listagem; selecionada + editando → Edição de Música; selecionada → Detalhe da página.
+// Fluxo controlado aqui (não dentro das SPAs): sem página selecionada → Nova Página / Listagem; selecionada + editando → Edição de Música; selecionada → Detalhe. (Gestão de Menu é uma PÁGINA própria agora.)
 function resolveSaida(props: PropsConteiner__PaginaAdminGestaoNavegacao): SaidaConteiner {
-    if (props.paginaSelecionada === null) return criaSaidaConteiner(Contexto__PaginaAdminGestaoNavegacao__Listagem__Provider, { listagemPaginas: props.listagemPaginas, selecionarPagina: props.selecionarPagina });
+    if (props.paginaSelecionada === null) {
+        if (props.estaEmCriacao) return criaSaidaConteiner(Contexto__PaginaAdminGestaoNavegacao__NovaPagina__Provider, { criarPagina: props.criarPagina, cancelarCriacao: props.cancelarCriacao });
+        return criaSaidaConteiner(Contexto__PaginaAdminGestaoNavegacao__Listagem__Provider, { listagemPaginas: props.listagemPaginas, selecionarPagina: props.selecionarPagina, estaEmCriacao: props.estaEmCriacao, iniciarCriacao: props.iniciarCriacao });
+    }
 
     if (props.editando) return criaSaidaConteiner(Contexto__PaginaAdminGestaoNavegacao__EdicaoMusica__Provider, { pagina: props.paginaSelecionada, idMusicaAtual: props.idMusicaAtual, salvarMusica: props.salvarMusica, voltarParaVisao: props.voltarParaVisao });
 

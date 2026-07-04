@@ -11,6 +11,7 @@ import type { EstadoTemporalSalaDeJogoRuntime, InteragivelPercebidoSalaJogoWsDto
 import { ControlesCameraJogo } from 'Componentes/ElementosDeJogo/Cena3D/ControlesCameraJogo';
 import { PERFIL_CAMERA_TATICA } from 'Componentes/ElementosDeJogo/Cena3D/cena3D.controles';
 import { ControladorPrimeiraPessoaJogo } from 'Componentes/ElementosDeJogo/Cena3D/ControladorPrimeiraPessoaJogo';
+import { FiguraSerR3F } from './FiguraSerR3F';
 import type { DestinoMovimentacaoSalaJogo } from './ContextoMovimentacaoSalaJogo';
 
 const ALTURA_PAREDE = 3.6;
@@ -343,7 +344,7 @@ function MarcadorControladoR3F({ ocupante, estadoTemporal, largura, altura, sele
 
     return (
         <group ref={grupoRef}>
-            <FiguraHumana position={[0, 0, 0]} corRoupa="#2f6f86" corPele="#e0b48f" selecionado={selecionado} aoClicar={aoClicar} />
+            <FiguraSerR3F position={[0, 0, 0]} corPrimaria="#2f6f86" corPele="#e0b48f" selecionado={selecionado} aoClicar={aoClicar} />
         </group>
     );
 };
@@ -352,7 +353,7 @@ interface OcupanteR3FProps { ocupante: OcupanteMapaLogicoSalaJogoWsDto; largura:
 
 function OcupanteR3F({ ocupante, largura, altura, selecionado, aoSelecionar }: OcupanteR3FProps) {
     const aoClicar = aoSelecionar === undefined ? undefined : (e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); aoSelecionar(ocupante.keySer); };
-    return <FiguraHumana position={[mundoX(ocupante.posicao.x, largura), 0, mundoZ(ocupante.posicao.y, altura)]} corRoupa="#2f6f86" corPele="#e0b48f" selecionado={selecionado} aoClicar={aoClicar} />;
+    return <FiguraSerR3F position={[mundoX(ocupante.posicao.x, largura), 0, mundoZ(ocupante.posicao.y, altura)]} corPrimaria="#2f6f86" corPele="#e0b48f" selecionado={selecionado} aoClicar={aoClicar} />;
 };
 
 interface InteragivelR3FProps { interagivel: InteragivelPercebidoSalaJogoWsDto; novo: boolean; selecionado: boolean; largura: number; altura: number; aoSelecionar?: (key: string) => void; };
@@ -364,7 +365,7 @@ function InteragivelR3F({ interagivel, novo, selecionado, largura, altura, aoSel
     const z = mundoZ(interagivel.posicao.y, altura);
     const aoClicar = aoSelecionar === undefined ? undefined : (e: ThreeEvent<MouseEvent>) => { e.stopPropagation(); aoSelecionar(interagivel.key); };
 
-    if (interagivel.tipo === 'ser') return <FiguraHumana position={[x, 0, z]} corRoupa={novo ? '#c79a3f' : '#7484b4'} corPele="#d8b48c" selecionado={selecionado} aoClicar={aoClicar} />;
+    if (interagivel.tipo === 'ser') return <FiguraSerR3F position={[x, 0, z]} corPrimaria={novo ? '#c79a3f' : '#7484b4'} corPele="#d8b48c" selecionado={selecionado} aoClicar={aoClicar} />;
 
     return (
         <group position={[x, 0, z]} onClick={aoClicar}>
@@ -387,62 +388,6 @@ function AnelSelecao() {
             <torusGeometry args={[0.6, 0.05, 14, 56]} />
             <meshStandardMaterial color="#e8c074" emissive="#e8c074" emissiveIntensity={0.85} roughness={0.4} metalness={0.2} />
         </mesh>
-    );
-};
-
-interface FiguraHumanaProps { position: [number, number, number]; corRoupa: string; corPele: string; selecionado?: boolean; aoClicar?: (e: ThreeEvent<MouseEvent>) => void; };
-
-function FiguraHumana({ position, corRoupa, corPele, selecionado = false, aoClicar }: FiguraHumanaProps) {
-    const emissiva = selecionado ? '#e8c074' : '#000000';
-    const intensidade = selecionado ? 0.5 : 0;
-
-    return (
-        <group position={position} onClick={aoClicar}>
-            {selecionado && <AnelSelecao />}
-
-            <mesh position={[0, 1.0, 0]}>
-                <cylinderGeometry args={[0.7, 0.7, 2.0, 8]} />
-                <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-            </mesh>
-
-            <mesh castShadow position={[-0.14, 0.36, 0]}>
-                <capsuleGeometry args={[0.12, 0.42, 6, 14]} />
-                <meshStandardMaterial color={corRoupa} emissive={emissiva} emissiveIntensity={intensidade} roughness={0.55} metalness={0.05} />
-            </mesh>
-            <mesh castShadow position={[0.14, 0.36, 0]}>
-                <capsuleGeometry args={[0.12, 0.42, 6, 14]} />
-                <meshStandardMaterial color={corRoupa} emissive={emissiva} emissiveIntensity={intensidade} roughness={0.55} metalness={0.05} />
-            </mesh>
-
-            <mesh castShadow position={[0, 0.74, 0]}>
-                <boxGeometry args={[0.4, 0.24, 0.26]} />
-                <meshStandardMaterial color={corRoupa} emissive={emissiva} emissiveIntensity={intensidade} roughness={0.55} metalness={0.05} />
-            </mesh>
-
-            <mesh castShadow position={[0, 1.04, 0]}>
-                <cylinderGeometry args={[0.25, 0.2, 0.52, 18]} />
-                <meshStandardMaterial color={corRoupa} emissive={emissiva} emissiveIntensity={intensidade} roughness={0.55} metalness={0.05} />
-            </mesh>
-
-            <mesh castShadow position={[-0.32, 1.0, 0]} rotation={[0, 0, 0.09]}>
-                <capsuleGeometry args={[0.08, 0.44, 6, 12]} />
-                <meshStandardMaterial color={corRoupa} emissive={emissiva} emissiveIntensity={intensidade} roughness={0.55} metalness={0.05} />
-            </mesh>
-            <mesh castShadow position={[0.32, 1.0, 0]} rotation={[0, 0, -0.09]}>
-                <capsuleGeometry args={[0.08, 0.44, 6, 12]} />
-                <meshStandardMaterial color={corRoupa} emissive={emissiva} emissiveIntensity={intensidade} roughness={0.55} metalness={0.05} />
-            </mesh>
-
-            <mesh position={[0, 1.35, 0]}>
-                <cylinderGeometry args={[0.07, 0.085, 0.1, 12]} />
-                <meshStandardMaterial color={corPele} roughness={0.6} metalness={0} />
-            </mesh>
-
-            <mesh castShadow position={[0, 1.5, 0]}>
-                <sphereGeometry args={[0.17, 28, 28]} />
-                <meshStandardMaterial color={corPele} roughness={0.6} metalness={0} />
-            </mesh>
-        </group>
     );
 };
 

@@ -48,6 +48,16 @@
     color: #ff8d8d;
 }
 
+.linha_base {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+}
+
+.linha_base span {
+    opacity: 0.82;
+}
+
 .rodape_formulario {
     display: flex;
     justify-content: flex-end;

@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { EventosApiRest } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
-import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
+import { useListagemCapacidadesInatas } from 'Hooks/useListagemCapacidadesInatas';
 import SPA__PaginaGameDesignerSeres__EditarMembros from 'Conteineres/PaginaGameDesignerSeres/paginas/SPA__PaginaGameDesignerSeres__EditarMembros/SPA__PaginaGameDesignerSeres__EditarMembros';
 import { adicionaAcaoMembroEditor, alternaCapacidadeMembroEditor, atualizaCapacidadeAcaoMembroEditor, atualizaDanoAcaoMembroEditor, atualizaNomeAcaoMembroEditor, atualizaNomeMembroEditor, membroEditorVazio, membrosEditorDePersistidos, membrosEditorSaoValidos, montaInputMembrosEditor, obtemMensagemValidacaoMembrosEditor, removeAcaoMembroEditor, type MembroEditor } from './membrosSerJogavelEditor';
 
@@ -24,6 +24,7 @@ interface Contexto__PaginaGameDesignerSeres__EditarMembros__Props {
     atualizaNomeAcaoMembro: (idLocal: number, idLocalAcao: number, nome: string) => void;
     atualizaCapacidadeAcaoMembro: (idLocal: number, idLocalAcao: number, idCapacidadeInata: number) => void;
     atualizaDanoAcaoMembro: (idLocal: number, idLocalAcao: number, dano: number | '') => void;
+    carregarDeBaseSer: (idBaseSer: number) => Promise<void>;
     salvar: () => Promise<void>;
     voltar: () => void;
 };
@@ -87,6 +88,14 @@ export const Contexto__PaginaGameDesignerSeres__EditarMembros__Provider = ({ fkS
     function atualizaCapacidadeAcaoMembro(idLocal: number, idLocalAcao: number, idCapacidadeInata: number): void { setMembros(membrosAtuais => atualizaCapacidadeAcaoMembroEditor(membrosAtuais, idLocal, idLocalAcao, idCapacidadeInata)); };
     function atualizaDanoAcaoMembro(idLocal: number, idLocalAcao: number, dano: number | ''): void { setMembros(membrosAtuais => atualizaDanoAcaoMembroEditor(membrosAtuais, idLocal, idLocalAcao, dano)); };
 
+    async function carregarDeBaseSer(idBaseSer: number): Promise<void> {
+        const proximoIdLocal = (): number => { const id = proximoIdLocalRef.current; proximoIdLocalRef.current += 1; return id; };
+        const proximoIdLocalAcao = (): number => { const id = proximoIdLocalAcaoRef.current; proximoIdLocalAcaoRef.current += 1; return id; };
+
+        const dados = await NoraApi.RestGET(EventosApiRest.GET.BasesSer.obter, { idBaseSer }, { mensagemErro: 'Não foi possível carregar a Base de Ser.' });
+        setMembros(membrosEditorDePersistidos(dados.membros, proximoIdLocal, proximoIdLocalAcao));
+    };
+
     async function salvar(): Promise<void> {
         if (!podeSalvar) return;
         setSalvando(true);
@@ -100,24 +109,8 @@ export const Contexto__PaginaGameDesignerSeres__EditarMembros__Provider = ({ fkS
     };
 
     return (
-        <Contexto__PaginaGameDesignerSeres__EditarMembros.Provider value={{ membros, capacidadesInatas, carregando, salvando, podeSalvar, mensagemValidacao, adicionaMembro, removeMembro, atualizaNomeMembro, alternaCapacidadeMembro, adicionaAcaoMembro, removeAcaoMembro, atualizaNomeAcaoMembro, atualizaCapacidadeAcaoMembro, atualizaDanoAcaoMembro, salvar, voltar }}>
+        <Contexto__PaginaGameDesignerSeres__EditarMembros.Provider value={{ membros, capacidadesInatas, carregando, salvando, podeSalvar, mensagemValidacao, adicionaMembro, removeMembro, atualizaNomeMembro, alternaCapacidadeMembro, adicionaAcaoMembro, removeAcaoMembro, atualizaNomeAcaoMembro, atualizaCapacidadeAcaoMembro, atualizaDanoAcaoMembro, carregarDeBaseSer, salvar, voltar }}>
             <SPA__PaginaGameDesignerSeres__EditarMembros />
         </Contexto__PaginaGameDesignerSeres__EditarMembros.Provider>
     );
-};
-
-function useListagemCapacidadesInatas() {
-    return useNoraGraphQLListagem('CapacidadeInata', {
-        select: ['id', 'nome', 'nomeInteracao'],
-        camposFiltroConsulta: ['nome'],
-        camposFiltroVisualizacao: ['nome'],
-        itensPorPagina: 100,
-        carregando: 'Buscando Capacidades Inatas',
-        mensagemErro: 'Houve um erro recuperando as Capacidades Inatas',
-        mensagemListaVazia: 'Nenhuma capacidade inata cadastrada.',
-        mensagemListaVaziaComFiltro: 'Nenhuma capacidade inata encontrada com os filtros atuais.',
-        carregamento: 'BLOQUEIA_INTERFACE',
-        montaParametrosConsulta: params => ({ where: params.where, order: { nome: 'ASC' }, limit: params.limit, offset: params.offset }),
-        montaParametrosTotalDeRegistros: where => ({ where }),
-    });
 };

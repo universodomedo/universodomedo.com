@@ -1,0 +1,42 @@
+.grade {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    align-content: flex-start;
+}
+
+.campo_largo {
+    flex-basis: 100%;
+}
+
+.escolha {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    justify-content: space-between;
+}
+
+.fixo {
+    opacity: 0.85;
+}
+
+.botao_leve {
+    padding: 0.3em 0.9em;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.85;
+}
+
+.caixa_selecionador {
+    width: 100%;
+    min-height: 22em;
+    display: flex;
+    flex-direction: column;
+}
+
+.erro {
+    flex-basis: 100%;
+    color: #DB4747;
+    font-size: 0.85em;
+}

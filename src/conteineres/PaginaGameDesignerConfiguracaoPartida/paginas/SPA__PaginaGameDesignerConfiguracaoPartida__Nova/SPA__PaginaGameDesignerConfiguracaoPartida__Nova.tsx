@@ -2,9 +2,13 @@ import styles from './styles.module.css';
 
 import { ROTULOS_TIPO_DESAFIO, TIPOS_DESAFIO, TIPOS_PARTIDA, type TipoDesafio, type TipoPartida } from 'types-nora-api';
 import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
+import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
+import SelecionadorOpcoes from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorOpcoes/SelecionadorOpcoes';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Nova } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Nova/contexto';
 
 const ROTULOS_TIPO_PARTIDA: Record<TipoPartida, string> = { MISSAO: 'Missão', DESAFIO: 'Desafio' };
+const OPCOES_TIPO_PARTIDA = TIPOS_PARTIDA.map(opcao => ({ value: opcao, label: ROTULOS_TIPO_PARTIDA[opcao] }));
+const OPCOES_TIPO_DESAFIO = TIPOS_DESAFIO.map(opcao => ({ value: opcao, label: ROTULOS_TIPO_DESAFIO[opcao] }));
 
 export default function SPA__PaginaGameDesignerConfiguracaoPartida__Nova() {
     const { formularioNovaPartida, tipo, setTipo, tipoDesafio, setTipoDesafio, podeSalvar, salvar } = useContexto__PaginaGameDesignerConfiguracaoPartida__Nova();
@@ -15,26 +19,19 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Nova() {
         <ConteudoForm>
             <ConteudoForm.AreaCorpo>
                 <section className={styles.formulario}>
-                    <label className={styles.campo}>
-                        <span>Nome da Partida</span>
+                    <InputComRotulo rotulo="Nome da Partida">
                         <input type="text" value={inputNome.value} onChange={inputNome.onChange} disabled={inputNome.disabled} maxLength={inputNome.maxLength} placeholder={inputNome.placeholder} />
                         {erroNome && <small className={styles.erro}>{erroNome}</small>}
-                    </label>
+                    </InputComRotulo>
 
-                    <label className={styles.campo}>
-                        <span>Tipo</span>
-                        <select value={tipo} onChange={evento => setTipo(evento.target.value as TipoPartida)} disabled={formularioNovaPartida.salvando}>
-                            {TIPOS_PARTIDA.map(opcao => <option key={opcao} value={opcao}>{ROTULOS_TIPO_PARTIDA[opcao]}</option>)}
-                        </select>
-                    </label>
+                    <InputComRotulo rotulo="Tipo">
+                        <SelecionadorOpcoes opcoes={OPCOES_TIPO_PARTIDA} valor={tipo} onChange={valor => { if (valor) setTipo(valor as TipoPartida); }} isClearable={false} disabled={formularioNovaPartida.salvando} />
+                    </InputComRotulo>
 
                     {tipo === 'DESAFIO' && (
-                        <label className={styles.campo}>
-                            <span>Categoria do Desafio</span>
-                            <select value={tipoDesafio} onChange={evento => setTipoDesafio(evento.target.value as TipoDesafio)} disabled={formularioNovaPartida.salvando}>
-                                {TIPOS_DESAFIO.map(opcao => <option key={opcao} value={opcao}>{ROTULOS_TIPO_DESAFIO[opcao]}</option>)}
-                            </select>
-                        </label>
+                        <InputComRotulo rotulo="Categoria do Desafio">
+                            <SelecionadorOpcoes opcoes={OPCOES_TIPO_DESAFIO} valor={tipoDesafio} onChange={valor => { if (valor) setTipoDesafio(valor as TipoDesafio); }} isClearable={false} disabled={formularioNovaPartida.salvando} />
+                        </InputComRotulo>
                     )}
                 </section>
             </ConteudoForm.AreaCorpo>

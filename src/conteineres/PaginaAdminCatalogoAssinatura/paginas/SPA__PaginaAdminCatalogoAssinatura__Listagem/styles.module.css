@@ -1,0 +1,61 @@
+.recipiente {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    height: 100%;
+}
+
+.abas {
+    display: flex;
+    gap: 0.5em;
+    flex: 0 0 auto;
+}
+
+.aba {
+    padding: 0.4em 1.1em;
+    opacity: 0.55;
+    border-bottom: 0.15em solid transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.82em;
+}
+
+.aba_ativa {
+    opacity: 1;
+    border-bottom-color: #B79051;
+}
+
+.cartao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    padding: 0.75em 0.9em;
+}
+
+.inativo {
+    opacity: 0.5;
+}
+
+.nome {
+    font-size: 1em;
+}
+
+.codigo {
+    font-size: 0.72em;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.detalhe {
+    font-size: 0.85em;
+}
+
+.badge {
+    align-self: flex-start;
+    margin-top: 0.15em;
+    font-size: 0.66em;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+}

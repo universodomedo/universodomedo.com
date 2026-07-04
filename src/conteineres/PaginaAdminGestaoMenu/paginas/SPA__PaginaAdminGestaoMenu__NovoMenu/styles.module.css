@@ -1,0 +1,14 @@
+.grade {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2em;
+    width: 100%;
+    padding: 0.4em 0 1em;
+}
+
+.dica {
+    margin: 0;
+    text-align: center;
+    opacity: 0.75;
+    font-size: 0.85em;
+}

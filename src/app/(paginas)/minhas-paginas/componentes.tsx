@@ -1,6 +1,7 @@
 import { PAGINAS } from 'types-nora-api';
 
 import { ControladorSlot } from "Layouts/ControladorSlot";
+import StatusPasse from "Componentes/Passe/StatusPasse/StatusPasse";
 
 export function MinhasPaginas_Client() {
     return (
@@ -11,5 +12,5 @@ export function MinhasPaginas_Client() {
 };
 
 function MinhasPaginas_Contexto() {
-    return (<></>);
+    return (<StatusPasse variante="compacto" />);
 };

@@ -5,7 +5,7 @@ import { createContext, useContext } from 'react';
 import { Contexto__PaginaAdminGestaoNavegacao__Props } from '../Contexto__PaginaAdminGestaoNavegacao/contexto';
 import SPA__PaginaAdminGestaoNavegacao__Listagem from 'Conteineres/PaginaAdminGestaoNavegacao/paginas/SPA__PaginaAdminGestaoNavegacao__Listagem/SPA__PaginaAdminGestaoNavegacao__Listagem';
 
-type Contexto__PaginaAdminGestaoNavegacao__Listagem__Props = Pick<Contexto__PaginaAdminGestaoNavegacao__Props, 'listagemPaginas' | 'selecionarPagina'>;
+type Contexto__PaginaAdminGestaoNavegacao__Listagem__Props = Pick<Contexto__PaginaAdminGestaoNavegacao__Props, 'listagemPaginas' | 'selecionarPagina' | 'estaEmCriacao' | 'iniciarCriacao'>;
 
 const Contexto__PaginaAdminGestaoNavegacao__Listagem = createContext<Contexto__PaginaAdminGestaoNavegacao__Listagem__Props | undefined>(undefined);
 

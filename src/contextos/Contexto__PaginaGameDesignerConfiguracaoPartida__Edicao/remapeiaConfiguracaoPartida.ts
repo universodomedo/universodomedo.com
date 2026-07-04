@@ -27,6 +27,7 @@ function remapeiaInteragivel(interagivel: InteragivelGraphql): ConfiguracaoParti
         descricao: interagivel.descricao,
         posicao: interagivel.posicao === null ? null : { x: interagivel.posicao.x, y: interagivel.posicao.y },
         estadoPercepcaoInicial: interagivel.estadoPercepcaoInicial as 'DESPERCEBIDO' | 'PERCEBIDO',
+        durabilidadeMaxima: interagivel.durabilidadeMaxima,
     };
 };
 
@@ -36,7 +37,7 @@ function remapeiaDescoberta(descoberta: DescobertaGraphql): ConfiguracaoPartida[
         nome: descoberta.nome,
         descricaoInterna: descoberta.descricaoInterna,
         idCapacidadeInata: descoberta.idCapacidadeInata,
-        recompensas: descoberta.recompensas.map(recompensa => ({ dificuldadeMinima: recompensa.dificuldadeMinima, keysSeresPercebidos: recompensa.keysSeresPercebidos as readonly KeySerEmSala[] })),
+        recompensas: descoberta.recompensas.map(recompensa => ({ dificuldadeMinima: recompensa.dificuldadeMinima, keysSeresPercebidos: recompensa.keysSeresPercebidos as readonly KeySerEmSala[], keysInteragiveisPercebidos: recompensa.keysInteragiveisPercebidos ?? [] })),
     };
 };
 

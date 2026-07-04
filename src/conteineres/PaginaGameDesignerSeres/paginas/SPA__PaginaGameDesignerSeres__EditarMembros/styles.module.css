@@ -22,85 +22,8 @@
     cursor: pointer;
 }
 
-.bloco_membros {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-}
-
-.cabecalho_membros {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1em;
-}
-
-.cabecalho_membros h3 {
-    margin: 0;
-}
-
-.erro_campo {
-    color: var(--cor-erro, #c0392b);
-}
-
-.card_membro {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75em;
-    padding: 1em;
-    border: 0.06em solid var(--cor-borda, #d0d0d0);
-    border-radius: 0.4em;
-}
-
-.campo {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35em;
-}
-
-.lista_capacidades {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75em;
-}
-
-.capacidade {
-    display: flex;
-    align-items: center;
-    gap: 0.35em;
-}
-
-.bloco_acoes_membro {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75em;
-}
-
-.cabecalho_acoes_membro {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1em;
-}
-
-.lista_acoes_membro {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75em;
-}
-
-.acao_membro {
-    display: grid;
-    grid-template-columns: 1fr 1fr 8em auto;
-    align-items: end;
-    gap: 0.75em;
-    padding: 0.75em;
-    border: 0.06em solid var(--cor-borda, #d0d0d0);
-    border-radius: 0.4em;
-}
-
-.botao_remover {
-    align-self: flex-start;
+.botao_base {
+    margin-left: auto;
     cursor: pointer;
 }
 
@@ -112,10 +35,4 @@
 .botao_salvar {
     padding: 0.6em 1.2em;
     cursor: pointer;
-}
-
-@media (max-width: 48em) {
-    .acao_membro {
-        grid-template-columns: 1fr;
-    }
 }

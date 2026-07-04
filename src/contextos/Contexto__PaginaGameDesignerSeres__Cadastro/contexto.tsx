@@ -34,6 +34,10 @@ interface Contexto__PaginaGameDesignerSeres__Cadastro__Props {
     ehSemClasse: boolean;
     setEhSemClasse: (ehSemClasse: boolean) => void;
     niveis: ObjetoCache['niveis'];
+    idBaseSerSelecionada: number | null;
+    nomeBaseSerSelecionada: string | null;
+    selecionaBaseSer: (idBaseSer: number, nome: string) => void;
+    limpaBaseSer: () => void;
     podeSalvar: boolean;
     salvar: () => Promise<void>;
 };
@@ -58,12 +62,18 @@ export const Contexto__PaginaGameDesignerSeres__Cadastro__Provider = ({ cancelaC
     const [serJogavel, setSerJogavel] = useState(false);
     const [idNivel, setIdNivel] = useState<number | null>(null);
     const [ehSemClasse, setEhSemClasse] = useState(false);
+    const [idBaseSerSelecionada, setIdBaseSerSelecionada] = useState<number | null>(null);
+    const [nomeBaseSerSelecionada, setNomeBaseSerSelecionada] = useState<string | null>(null);
 
     const formularioNovoSer = useFormularioCreate(FORMULARIO_CREATE_SER_REGISTRO, async valores => {
         const idTipoSer = Number(valores.idTipoSer);
         const ehJogavel = idTipoSer === TIPOS_SER.SER_UNICO.id ? serJogavel : true;
         const payload: PAYLOAD__CriarSerRegistroComDetalhe = { idTipoSer, nome: valores.nome, serJogavel: idTipoSer === TIPOS_SER.SER_UNICO.id ? serJogavel : undefined, idNivel: ehJogavel && idNivel !== null ? idNivel : undefined, ehSemClasse: ehJogavel ? ehSemClasse : undefined };
-        await NoraApi.RestPOST(EventosApiRest.POST.SerRegistro.criarComDetalhe, payload, { mensagemErro: 'Não foi possível criar o Ser.' });
+        const criado = await NoraApi.RestPOST(EventosApiRest.POST.SerRegistro.criarComDetalhe, payload, { mensagemErro: 'Não foi possível criar o Ser.' });
+        if (ehJogavel && idBaseSerSelecionada !== null) {
+            const base = await NoraApi.RestGET(EventosApiRest.GET.BasesSer.obter, { idBaseSer: idBaseSerSelecionada }, { mensagemErro: 'Não foi possível carregar a Base de Ser selecionada.' });
+            await NoraApi.RestPOST(EventosApiRest.POST.SeresJogaveisMembros.salvar, { fkSerId: criado.id, membros: base.membros }, { mensagemErro: 'Não foi possível herdar os membros da Base de Ser.' });
+        }
         concluiCadastro();
     });
 
@@ -73,10 +83,13 @@ export const Contexto__PaginaGameDesignerSeres__Cadastro__Provider = ({ cancelaC
     const niveis = cache.pronto ? cache.niveis : [];
     const podeSalvar = formularioNovoSer.podeSalvar && (!ehSerJogavel || idNivel !== null);
 
+    function selecionaBaseSer(idBaseSer: number, nome: string): void { setIdBaseSerSelecionada(idBaseSer); setNomeBaseSerSelecionada(nome); };
+    function limpaBaseSer(): void { setIdBaseSerSelecionada(null); setNomeBaseSerSelecionada(null); };
+
     async function salvar(): Promise<void> { if (podeSalvar) await formularioNovoSer.salvar(); };
 
     return (
-        <Contexto__PaginaGameDesignerSeres__Cadastro.Provider value={{ formularioNovoSer, ehSerUnico, ehSerJogavel, serJogavel, setSerJogavel, idNivel, setIdNivel, ehSemClasse, setEhSemClasse, niveis, podeSalvar, salvar }}>
+        <Contexto__PaginaGameDesignerSeres__Cadastro.Provider value={{ formularioNovoSer, ehSerUnico, ehSerJogavel, serJogavel, setSerJogavel, idNivel, setIdNivel, ehSemClasse, setEhSemClasse, niveis, idBaseSerSelecionada, nomeBaseSerSelecionada, selecionaBaseSer, limpaBaseSer, podeSalvar, salvar }}>
             <SPA__PaginaGameDesignerSeres__Cadastro />
         </Contexto__PaginaGameDesignerSeres__Cadastro.Provider>
     );

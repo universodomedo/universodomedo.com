@@ -6,6 +6,162 @@
     padding: 1.4em;
 }
 
+.caixa_pix {
+    display: flex;
+    flex-direction: column;
+    gap: .7em;
+    margin-top: 1.1em;
+    padding: 1em;
+    border-radius: .5em;
+    background: rgba(255, 255, 255, .04);
+    border: .08em solid rgba(255, 255, 255, .14);
+}
+
+.caixa_pix_rotulo {
+    font-size: .8em;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    opacity: .8;
+}
+
+.copia_cola {
+    font-family: monospace;
+    font-size: .82em;
+    word-break: break-all;
+    line-height: 1.5;
+    padding: .7em;
+    border-radius: .35em;
+    background: rgba(0, 0, 0, .35);
+    border: .06em solid rgba(255, 255, 255, .1);
+}
+
+.botao_copiar {
+    align-self: flex-start;
+    padding: .55em 1.2em;
+    border-radius: .4em;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #1a1a1a;
+    background: #B79051;
+    border: none;
+    cursor: pointer;
+}
+
+.aguardando {
+    font-size: .9em;
+    opacity: .85;
+}
+
+.erro_pix {
+    margin-top: .5em;
+    color: #DB4747;
+    font-size: .9em;
+}
+
+.bloco_status {
+    display: flex;
+    flex-direction: column;
+    gap: .9em;
+    padding: 1.3em;
+    border-radius: 1.25em;
+    background: linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .025));
+    border: .08em solid rgba(255, 255, 255, .12);
+    box-shadow: 0 1em 2.1em rgba(0, 0, 0, .12);
+}
+
+.status_linha {
+    display: flex;
+    align-items: center;
+    gap: .9em;
+    padding: 1em 1.1em;
+    border-radius: 1em;
+    border: .08em solid rgba(255, 255, 255, .12);
+}
+
+.status_ativo {
+    background: rgba(70, 245, 165, .1);
+    border-color: rgba(70, 245, 165, .35);
+}
+
+.status_inativo {
+    background: rgba(255, 255, 255, .04);
+}
+
+.status_ponto {
+    width: .95em;
+    height: .95em;
+    border-radius: 999em;
+    flex-shrink: 0;
+    box-shadow: 0 .5em 1.1em rgba(0, 0, 0, .18);
+}
+
+.status_ativo .status_ponto {
+    background: rgba(70, 245, 165, .92);
+}
+
+.status_inativo .status_ponto {
+    background: rgba(245, 205, 105, .95);
+}
+
+.status_titulo {
+    font-size: 1.15em;
+    font-weight: 930;
+    line-height: 1.15em;
+}
+
+.status_sub {
+    font-size: .98em;
+    font-weight: 740;
+    opacity: .82;
+}
+
+.historico_lista {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: .55em;
+    margin: 0;
+    padding: 0;
+}
+
+.historico_item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 1em;
+    padding: .85em 1.05em;
+    border-radius: .9em;
+    background: rgba(255, 255, 255, .04);
+    border: .08em solid rgba(255, 255, 255, .1);
+}
+
+.historico_produto {
+    font-size: 1.02em;
+    font-weight: 850;
+}
+
+.historico_valor {
+    font-size: 1.02em;
+    font-weight: 950;
+    color: #B79051;
+}
+
+.historico_data {
+    font-size: .92em;
+    font-weight: 740;
+    opacity: .72;
+    min-width: 6em;
+    text-align: right;
+}
+
+.historico_vazio {
+    margin: 0;
+    font-size: 1em;
+    font-weight: 740;
+    opacity: .78;
+}
+
 .hero {
     display: flex;
     flex-direction: column;

@@ -1,13 +1,26 @@
+'use client';
+
 import styles from './styles.module.css';
 
+import { useState } from 'react';
 import { TIPOS_SER } from 'types-nora-api';
 
 import { useContexto__PaginaGameDesignerSeres__Cadastro } from 'Contextos/Contexto__PaginaGameDesignerSeres__Cadastro/contexto';
+import { Componente_Selecionador__BaseSer } from 'Componentes/Selecionadores/Componente_Selecionador__BaseSer/Componente_Selecionador__BaseSer';
 
 const OPCOES_TIPOS_SER = Object.values(TIPOS_SER).sort((a, b) => a.id - b.id);
 
 export default function SPA__PaginaGameDesignerSeres__Cadastro() {
-    const { formularioNovoSer, ehSerUnico, ehSerJogavel, serJogavel, setSerJogavel, idNivel, setIdNivel, ehSemClasse, setEhSemClasse, niveis, podeSalvar, salvar } = useContexto__PaginaGameDesignerSeres__Cadastro();
+    const { formularioNovoSer, ehSerUnico, ehSerJogavel, serJogavel, setSerJogavel, idNivel, setIdNivel, ehSemClasse, setEhSemClasse, niveis, idBaseSerSelecionada, nomeBaseSerSelecionada, selecionaBaseSer, limpaBaseSer, podeSalvar, salvar } = useContexto__PaginaGameDesignerSeres__Cadastro();
+    const [selecionandoBase, setSelecionandoBase] = useState(false);
+
+    if (selecionandoBase) return (
+        <Componente_Selecionador__BaseSer
+            idInicial={idBaseSerSelecionada}
+            aoConfirmar={(idBaseSer, nome) => { selecionaBaseSer(idBaseSer, nome); setSelecionandoBase(false); }}
+            aoCancelar={() => setSelecionandoBase(false)}
+        />
+    );
 
     return (
         <section className={styles.recipiente_cadastro}>
@@ -52,6 +65,17 @@ export default function SPA__PaginaGameDesignerSeres__Cadastro() {
                         <label className={styles.campo}>
                             <span>Sem Classe? (criatura)</span>
                             <input type="checkbox" checked={ehSemClasse} onChange={evento => setEhSemClasse(evento.target.checked)} disabled={formularioNovoSer.salvando} />
+                        </label>
+                    )}
+
+                    {ehSerJogavel && (
+                        <label className={styles.campo}>
+                            <span>Base de Ser (opcional — herda os membros)</span>
+                            <div className={styles.linha_base}>
+                                <span>{nomeBaseSerSelecionada ?? 'Nenhuma'}</span>
+                                <button type="button" onClick={() => setSelecionandoBase(true)} disabled={formularioNovoSer.salvando}>Selecionar Base</button>
+                                {idBaseSerSelecionada !== null && <button type="button" onClick={limpaBaseSer} disabled={formularioNovoSer.salvando}>Remover</button>}
+                            </div>
                         </label>
                     )}
                 </div>

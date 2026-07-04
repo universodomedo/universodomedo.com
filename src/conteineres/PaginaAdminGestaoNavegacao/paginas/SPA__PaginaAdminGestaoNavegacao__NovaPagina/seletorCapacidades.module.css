@@ -1,0 +1,49 @@
+.seletor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+}
+
+.busca {
+    padding: 0.5em 0.7em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    background-color: rgba(0, 0, 0, 0.25);
+    color: inherit;
+    font: inherit;
+}
+
+.lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+    height: 14em;
+    overflow-y: auto;
+    padding: 0.3em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.25em 0.4em;
+    border-radius: 0.3em;
+    cursor: pointer;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.06);
+    }
+}
+
+.chave {
+    font-size: 0.78em;
+    overflow-wrap: anywhere;
+}
+
+.contador {
+    font-size: 0.78em;
+    opacity: 0.7;
+}

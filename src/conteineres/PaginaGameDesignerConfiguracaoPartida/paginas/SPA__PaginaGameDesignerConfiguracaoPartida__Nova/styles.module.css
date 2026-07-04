@@ -5,26 +5,6 @@
     max-width: 32em;
 }
 
-.campo {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35em;
-}
-
-.campo > span {
-    font-size: 0.85em;
-    opacity: 0.85;
-}
-
-.campo input,
-.campo select {
-    padding: 0.55em 0.75em;
-    border: 0.08em solid var(--cor-borda);
-    border-radius: 0.4em;
-    background-color: rgba(0, 0, 0, 0.24);
-    color: inherit;
-}
-
 .erro {
     color: #FFB0B0;
     font-size: 0.8em;

@@ -31,7 +31,7 @@ export default function SPA_PaginaJogadorCriarFicha_Inicial() {
                             </InputComRotulo>
                         </>
                     ) : (
-                        <h1>Você já possui uma Ficha! Para cadastrar uma nova, delete a anterior ou obtenha o <LinkInterno destino={{ pagina: PAGINAS.minhasPaginas.minhasConfiguracoes.passeDeJogador }}>Passe de Jogador</LinkInterno></h1>
+                        <h1>Você já possui uma Ficha! Para cadastrar uma nova, delete a anterior ou obtenha o <LinkInterno destino={{ pagina: PAGINAS.minhasPaginas.minhasConfiguracoes.minhaConta }}>Passe de Fundador</LinkInterno></h1>
                     )}
                 </div>
             </div>

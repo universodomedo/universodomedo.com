@@ -1,9 +1,10 @@
 'use client';
 
 import { createContext, useCallback, useContext, useState } from 'react';
+import type { DadosCriarPaginaNavegacao } from 'types-nora-api';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
-import { editaPaginaNavegacao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
+import { editaPaginaNavegacao, criaPaginaNavegacao } from 'Uteis/ApiConsumer/ConsumerMiddleware';
 
 export type RegistroPaginaNavegacao = ReturnType<typeof obtemListagemPaginas>['registros'][number];
 
@@ -11,6 +12,7 @@ export interface Contexto__PaginaAdminGestaoNavegacao__Props {
     listagemPaginas: ReturnType<typeof obtemListagemPaginas>;
     paginaSelecionada: RegistroPaginaNavegacao | null;
     editando: boolean;
+    estaEmCriacao: boolean;
     idMusicaAtual: number | null;
     ativoAtual: boolean;
     selecionarPagina: (pagina: RegistroPaginaNavegacao) => void;
@@ -19,6 +21,9 @@ export interface Contexto__PaginaAdminGestaoNavegacao__Props {
     voltarParaVisao: () => void;
     salvarMusica: (idMusica: number | null) => Promise<void>;
     definirAtivo: (ativo: boolean) => Promise<void>;
+    iniciarCriacao: () => void;
+    cancelarCriacao: () => void;
+    criarPagina: (dados: DadosCriarPaginaNavegacao) => Promise<void>;
 };
 
 const Contexto__PaginaAdminGestaoNavegacao = createContext<Contexto__PaginaAdminGestaoNavegacao__Props | undefined>(undefined);
@@ -33,6 +38,7 @@ export const Contexto__PaginaAdminGestaoNavegacao__Provider = ({ children }: { c
     const listagemPaginas = obtemListagemPaginas();
     const [paginaSelecionada, setPaginaSelecionada] = useState<RegistroPaginaNavegacao | null>(null);
     const [editando, setEditando] = useState<boolean>(false);
+    const [estaEmCriacao, setEstaEmCriacao] = useState<boolean>(false);
     const [idMusicaAtual, setIdMusicaAtual] = useState<number | null>(null);
     const [ativoAtual, setAtivoAtual] = useState<boolean>(true);
 
@@ -52,8 +58,17 @@ export const Contexto__PaginaAdminGestaoNavegacao__Provider = ({ children }: { c
         setAtivoAtual(ativo);
     }, [paginaSelecionada]);
 
+    const iniciarCriacao = useCallback(() => setEstaEmCriacao(true), []);
+    const cancelarCriacao = useCallback(() => setEstaEmCriacao(false), []);
+    const recarregarPaginas = listagemPaginas.recarregar;
+    const criarPagina = useCallback(async (dados: DadosCriarPaginaNavegacao): Promise<void> => {
+        await criaPaginaNavegacao(dados);
+        recarregarPaginas();
+        setEstaEmCriacao(false);
+    }, [recarregarPaginas]);
+
     return (
-        <Contexto__PaginaAdminGestaoNavegacao.Provider value={{ listagemPaginas, paginaSelecionada, editando, idMusicaAtual, ativoAtual, selecionarPagina, voltar, iniciarEdicao, voltarParaVisao, salvarMusica, definirAtivo }}>
+        <Contexto__PaginaAdminGestaoNavegacao.Provider value={{ listagemPaginas, paginaSelecionada, editando, estaEmCriacao, idMusicaAtual, ativoAtual, selecionarPagina, voltar, iniciarEdicao, voltarParaVisao, salvarMusica, definirAtivo, iniciarCriacao, cancelarCriacao, criarPagina }}>
             {children}
         </Contexto__PaginaAdminGestaoNavegacao.Provider>
     );
@@ -61,7 +76,8 @@ export const Contexto__PaginaAdminGestaoNavegacao__Provider = ({ children }: { c
 
 //
 
-function obtemListagemPaginas() {
+// Exportada para a página "Menus" reusar a MESMA listagem de páginas (mesmo select/tipo) no seletor de destino de itens de menu.
+export function obtemListagemPaginas() {
     return useNoraGraphQLListagem('PaginaNavegacao', {
         select: ['id', 'label', 'chave', 'template', 'idMusicaPagina', 'ativo'],
         camposFiltroConsulta: ['label', 'chave', 'ativo'],

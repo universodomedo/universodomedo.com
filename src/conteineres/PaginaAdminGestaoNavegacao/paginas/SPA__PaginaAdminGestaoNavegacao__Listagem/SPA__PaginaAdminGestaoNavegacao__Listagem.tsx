@@ -8,7 +8,7 @@ import { useContexto__PaginaAdminGestaoNavegacao__Listagem } from 'Contextos/Con
 import type { RegistroPaginaNavegacao } from 'Contextos/Contexto__PaginaAdminGestaoNavegacao/contexto';
 
 export default function SPA__PaginaAdminGestaoNavegacao__Listagem() {
-    const { listagemPaginas, selecionarPagina } = useContexto__PaginaAdminGestaoNavegacao__Listagem();
+    const { listagemPaginas, selecionarPagina, estaEmCriacao, iniciarCriacao } = useContexto__PaginaAdminGestaoNavegacao__Listagem();
 
     return (
         <ListagemComposta
@@ -17,6 +17,7 @@ export default function SPA__PaginaAdminGestaoNavegacao__Listagem() {
             itensPorLinha={5}
             obterIdRegistro={pagina => pagina.id}
             renderizarItem={pagina => <LinhaPagina pagina={pagina} aoSelecionar={selecionarPagina} />}
+            novoRegistro={{ estaEmProcessoCriacao: estaEmCriacao, aoIniciarCriacao: iniciarCriacao, textoBotao: 'Nova Página' }}
         />
     );
 };

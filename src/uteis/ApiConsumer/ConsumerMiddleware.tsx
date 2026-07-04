@@ -1,4 +1,4 @@
-import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoPatentesTestePericiaProjetada, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoPatentesTestePericia, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, DTO__CREATE__HabilidadePericia, DTO__CREATE__HabilidadeEspecial, DTO__CREATE__CapacidadeInata, DTO__CREATE__MusicaConfigurada, DTO__UPDATE__MusicaConfigurada, DTO__DEFINIR__ClimaMusica, DTO__CREATE__DimensaoClima, CaminhoArquivoArte, DadosCriarTutorial, DadosEditarTutorial, PAYLOAD__SalvarPaginaWiki, ItemNavegacaoWiki, SecaoWiki, NavegacaoConfigRuntime, DadosEditarPaginaNavegacao } from "types-nora-api";
+import { ArquivoCompletaDto, ArvoreItensPermissaoDto, AventuraCompletaDto, AventuraParaAssistirDto, DadosCriacaoSessao, DadosEvolucaoFicha, DadosJanelaDisponibilidade, DetalheSessaoCanonicaParaAssistirDto, DisponibilidadeUsuarioCompletaDto, EstiloSessaoMestradaDto, EstruturaPaginaDefinicao, FichaEmClient, FichaPersonagemCompletaDto, GrupoAventuraCompletaDto, JanelaDisponibilidadeCompletaDto, LinkCompletaDto, ListaDisponibilidadesUsuario, ObjetoAutenticacao, ObjetoCache, ConfiguracaoPatentesTestePericiaProjetada, ConfiguracaoTestePericiaProjetada, PAYLOAD__SalvarConfiguracaoPatentesTestePericia, PAYLOAD__SalvarConfiguracaoTestePericia, ObjetoEvolucaoCompleto, ObjetoGanhosEvolucao, PericiaCompletaDto, PersonagemCompletaDto, RascunhoCompletaDto, RegrasUploadArquivo, SessaoCompletaDto, SessaoEmVisualizacaoDto, VIEW_SessaoDeJogadorDto, TipoArquivoDef, TipoImagemCompletaDto, TipoLinkCompletaDto, UsuarioCompletaDto, PersonagemVisualizacaoDetalhadaDto, VIEW_SessaoComParticipantesDto, FichaTemporariaVisualizacaoDetalhadaDto, J_DadosFichaEmJogo, PAYLOAD_DetalheRascunhoEdicaoDto, VIEW_SessaoListagemGeralDto, VIEW_LISTAGEM_GerenciamentoAvataresPersonagemDto, CaminhoArquivoAvatar, VIEW_GrupoAventuraDetalhado, DTO__CREATE__Emblema, DTO__CREATE__HabilidadePericia, DTO__CREATE__HabilidadeEspecial, DTO__CREATE__CapacidadeInata, DTO__CREATE__MusicaConfigurada, DTO__UPDATE__MusicaConfigurada, DTO__DEFINIR__ClimaMusica, DTO__CREATE__DimensaoClima, CaminhoArquivoArte, DadosCriarTutorial, DadosEditarTutorial, PAYLOAD__SalvarPaginaWiki, ItemNavegacaoWiki, SecaoWiki, NavegacaoConfigRuntime, DadosEditarPaginaNavegacao, DadosCriarPaginaNavegacao, MenuDoBancoDto, DadosCriarMenu, DadosEditarMenu, DadosCriarMenuNo, DadosEditarMenuNo, DadosMoverMenuNo, LayoutContextoDto, DadosDefinirLayoutContexto, PAYLOAD__CriarProduto, PAYLOAD__AtualizarProduto, PAYLOAD__DefinirAtivoProduto, PAYLOAD__CriarPasse, PAYLOAD__AtualizarPasse, PAYLOAD__DefinirAtivoPasse, PAYLOAD__CriarVinculoProdutoPasse, PAYLOAD__AtualizarVinculoProdutoPasse, PAYLOAD__DefinirAtivoVinculoProdutoPasse, OfertaAssinaturaDto, PAYLOAD__GerarPixProduto, PixGeradoDto, PixStatusDto, OfertaDoacaoDto, PAYLOAD__GerarPixDoacao, MinhasAssinaturasDto, MinhasDoacoesDto } from "types-nora-api";
 
 import useApi from "Uteis/ApiConsumer/Consumer.tsx";
 
@@ -346,27 +346,112 @@ export async function editaTutorial(id: number, payload: DadosEditarTutorial): P
     return await useApi<boolean>({ uri: `/tutoriais/editaTutorial/${id}`, method: 'PUT', data: payload });
 }
 
-export async function criaMenu(payload: { chave: string; tipo: 'principal' | 'interno'; descricao?: string | null }): Promise<{ id: number }> {
+export async function criaMenu(payload: DadosCriarMenu): Promise<{ id: number }> {
     return await useApi<{ id: number }>({ uri: '/menus/criaMenu', method: 'POST', data: payload });
 }
-
-export type MenuNoDoBancoDto = { id: number; tipo: string; titulo: string; ordem: number; paginaTemplate: string | null; visivel: boolean; filhos: MenuNoDoBancoDto[] };
-export type MenuDoBancoDto = { id: number; chave: string; tipo: string; descricao: string | null; nos: MenuNoDoBancoDto[] };
 
 export async function obtemNavegacaoDoBanco(): Promise<MenuDoBancoDto[]> {
     return await useApi<MenuDoBancoDto[]>({ uri: '/menus/montaNavegacao', method: 'GET' });
 }
 
-export async function criaMenuNo(payload: { fkMenusId: number; fkMenusNosId?: number | null; tipo: 'item' | 'grupo'; titulo: string; ordem?: number; paginaTemplate?: string | null; visivel?: boolean }): Promise<{ id: number }> {
+export async function editaMenu(id: number, payload: DadosEditarMenu): Promise<boolean> {
+    return await useApi<boolean>({ uri: `/menus/editaMenu/${id}`, method: 'PUT', data: payload });
+}
+
+export async function criaMenuNo(payload: DadosCriarMenuNo): Promise<{ id: number }> {
     return await useApi<{ id: number }>({ uri: '/menus/criaMenuNo', method: 'POST', data: payload });
 }
 
-export async function editaMenuNo(id: number, payload: { titulo?: string; ordem?: number; visivel?: boolean }): Promise<boolean> {
+export async function editaMenuNo(id: number, payload: DadosEditarMenuNo): Promise<boolean> {
     return await useApi<boolean>({ uri: `/menus/editaMenuNo/${id}`, method: 'PUT', data: payload });
+}
+
+export async function moveMenuNo(id: number, payload: DadosMoverMenuNo): Promise<boolean> {
+    return await useApi<boolean>({ uri: `/menus/moverNo/${id}`, method: 'PUT', data: payload });
+}
+
+export async function obtemLayoutContextos(): Promise<LayoutContextoDto[]> {
+    return await useApi<LayoutContextoDto[]>({ uri: '/layout-contexto/lista', method: 'GET' });
+}
+
+export async function defineLayoutContexto(payload: DadosDefinirLayoutContexto): Promise<boolean> {
+    return await useApi<boolean>({ uri: '/layout-contexto/definir', method: 'PUT', data: payload });
 }
 
 export async function editaPaginaNavegacao(id: number, payload: DadosEditarPaginaNavegacao): Promise<boolean> {
     return await useApi<boolean>({ uri: `/paginas-navegacao/${id}`, method: 'PATCH', data: payload });
+}
+
+export async function criaPaginaNavegacao(payload: DadosCriarPaginaNavegacao): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/paginas-navegacao', method: 'POST', data: payload });
+}
+
+// Catálogo da assinatura (admin, gate SUDO) — escrita REST de produtos, passes e vínculos produto→passe.
+export async function criaProduto(payload: PAYLOAD__CriarProduto): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/produtos/criaProduto', method: 'POST', data: payload });
+}
+
+export async function atualizaProduto(payload: PAYLOAD__AtualizarProduto): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/produtos/atualizaProduto', method: 'POST', data: payload });
+}
+
+export async function defineAtivoProduto(payload: PAYLOAD__DefinirAtivoProduto): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/produtos/defineAtivoProduto', method: 'POST', data: payload });
+}
+
+export async function criaPasse(payload: PAYLOAD__CriarPasse): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/passes/criaPasse', method: 'POST', data: payload });
+}
+
+export async function atualizaPasse(payload: PAYLOAD__AtualizarPasse): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/passes/atualizaPasse', method: 'POST', data: payload });
+}
+
+export async function defineAtivoPasse(payload: PAYLOAD__DefinirAtivoPasse): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/passes/defineAtivoPasse', method: 'POST', data: payload });
+}
+
+export async function criaVinculoProdutoPasse(payload: PAYLOAD__CriarVinculoProdutoPasse): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/vinculos_produto_passe/criaVinculo', method: 'POST', data: payload });
+}
+
+export async function atualizaVinculoProdutoPasse(payload: PAYLOAD__AtualizarVinculoProdutoPasse): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/vinculos_produto_passe/atualizaVinculo', method: 'POST', data: payload });
+}
+
+export async function defineAtivoVinculoProdutoPasse(payload: PAYLOAD__DefinirAtivoVinculoProdutoPasse): Promise<{ id: number }> {
+    return await useApi<{ id: number }>({ uri: '/vinculos_produto_passe/defineAtivoVinculo', method: 'POST', data: payload });
+}
+
+// Assinatura (Pix) — oferta atual, geração da cobrança e polling do status.
+export async function obterOfertaAssinatura(): Promise<OfertaAssinaturaDto | null> {
+    return await useApi<OfertaAssinaturaDto | null>({ uri: '/pix/oferta', method: 'GET' });
+}
+
+export async function geraPixProduto(payload: PAYLOAD__GerarPixProduto): Promise<PixGeradoDto> {
+    return await useApi<PixGeradoDto>({ uri: '/pix/geraProduto', method: 'POST', data: payload });
+}
+
+export async function obterStatusPix(idRegistroPix: number): Promise<PixStatusDto> {
+    return await useApi<PixStatusDto>({ uri: `/pix/status/${idRegistroPix}`, method: 'GET' });
+}
+
+// Doação (Pix) — oferta de valor livre e geração da cobrança (o valor é informado pelo doador).
+export async function obterOfertaDoacao(): Promise<OfertaDoacaoDto | null> {
+    return await useApi<OfertaDoacaoDto | null>({ uri: '/pix/doacao/oferta', method: 'GET' });
+}
+
+export async function geraPixDoacao(payload: PAYLOAD__GerarPixDoacao): Promise<PixGeradoDto> {
+    return await useApi<PixGeradoDto>({ uri: '/pix/geraDoacao', method: 'POST', data: payload });
+}
+
+// Histórico financeiro do próprio usuário logado.
+export async function obterMinhasAssinaturas(): Promise<MinhasAssinaturasDto> {
+    return await useApi<MinhasAssinaturasDto>({ uri: '/pix/minhas-assinaturas', method: 'GET' });
+}
+
+export async function obterMinhasDoacoes(): Promise<MinhasDoacoesDto> {
+    return await useApi<MinhasDoacoesDto>({ uri: '/pix/minhas-doacoes', method: 'GET' });
 }
 
 export async function PROTOTIPO_LUIZ__recupera_capa_perfil_usuario(): Promise<CaminhoArquivoArte> {

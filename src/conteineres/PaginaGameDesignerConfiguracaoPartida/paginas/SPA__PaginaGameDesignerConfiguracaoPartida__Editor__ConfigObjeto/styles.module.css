@@ -1,0 +1,6 @@
+.linha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    max-width: 34em;
+}

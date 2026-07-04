@@ -57,3 +57,24 @@
         background: rgba(183, 144, 81, 0.12);
     }
 }
+
+.select_menu {
+    padding: 0.5em 0.7em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.4em;
+    background-color: rgba(0, 0, 0, 0.25);
+    color: inherit;
+    font: inherit;
+}
+
+.carregando_menu {
+    margin: 0;
+    opacity: 0.7;
+    font-size: 0.9em;
+}
+
+.dica_menu {
+    margin: 0;
+    opacity: 0.6;
+    font-size: 0.8em;
+}

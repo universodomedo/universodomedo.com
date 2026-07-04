@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { EventosApiRest, type ConfiguracaoPartida, type EstruturaPartidas, type PartidaResumo, type PAYLOAD__AlternarDesabilitadaPartida, type PAYLOAD__CriarPartida, type PAYLOAD__SalvarPartida } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
+import { toast } from 'Hooks/useToast';
 
 type FluxoConfiguracaoPartida = 'LISTAGEM' | 'CADASTRO';
 
@@ -63,15 +64,17 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Provider = ({ chil
 
     useEffect(() => { void carregar(); }, [carregar]);
 
-    const executarSalvando = useCallback(async (acao: () => Promise<EstruturaPartidas>, mensagemErro: string) => {
+    const executarSalvando = useCallback(async (acao: () => Promise<EstruturaPartidas>, mensagemErro: string): Promise<boolean> => {
         setSalvando(true);
         setErro(null);
 
         try {
             const resposta = await acao();
             setEstrutura(resposta);
+            return true;
         } catch {
             setErro(mensagemErro);
+            return false;
         } finally {
             setSalvando(false);
         }
@@ -91,9 +94,13 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Provider = ({ chil
     }, [executarSalvando]);
 
     // Salva a configuracao runtime e ja reflete na estrutura (badge "Configurada" da grade). Nao navega: as abas (Runtime/Detalhes) seguem abertas sobre a mesma Partida.
+    // Erro ja toasta automatico no NoraApi (mensagemErro); no sucesso, toast + recarrega a listagem (padrao das outras paginas).
     const salvarConfiguracaoPartida = useCallback(async (idPartida: number, configuracao: ConfiguracaoPartida) => {
-        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.salvarConfiguracao, { id: idPartida, configuracao }, { mensagemErro: 'Não foi possível salvar a configuração da Partida.' }), 'Não foi possível salvar a configuração da Partida.');
-    }, [executarSalvando]);
+        const ok = await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.salvarConfiguracao, { id: idPartida, configuracao }, { mensagemErro: 'Não foi possível salvar a configuração da Partida.' }), 'Não foi possível salvar a configuração da Partida.');
+        if (!ok) return;
+        void toast.sucesso('Configuração salva', 'A configuração da Partida foi salva.');
+        await carregar();
+    }, [executarSalvando, carregar]);
 
     const iniciaCadastro = useCallback(() => setEstadoFluxo('CADASTRO'), []);
     const selecionaPartida = useCallback((idPartida: number) => setIdPartidaEmEdicao(idPartida), []);

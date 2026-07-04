@@ -1,0 +1,30 @@
+.item_ser {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+}
+
+.avatar {
+    position: relative;
+    display: block;
+    width: 2.6em;
+    height: 2.6em;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 0.1em solid rgba(183, 144, 81, 0.6);
+    flex-shrink: 0;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+}
+
+.nome {
+    font-size: 1em;
+}
+
+.tipo {
+    font-size: 0.78em;
+    opacity: 0.7;
+}

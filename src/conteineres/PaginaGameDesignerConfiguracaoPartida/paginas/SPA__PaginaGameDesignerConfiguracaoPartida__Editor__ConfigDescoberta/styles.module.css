@@ -1,0 +1,64 @@
+.vazio {
+    font-size: 0.85em;
+    opacity: 0.6;
+    margin: 0.25em 0;
+}
+
+.linha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    max-width: 34em;
+}
+
+.recompensa {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+    padding: 0.85em;
+    margin-bottom: 0.75em;
+    border-radius: 0.5em;
+    border: 0.08em solid rgba(183, 144, 81, 0.25);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.recompensa_cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.recompensa_titulo {
+    font-size: 0.9em;
+    color: #B79051;
+}
+
+.botao_secundario {
+    align-self: flex-start;
+    padding: 0.45em 0.9em;
+    border-radius: 0.4em;
+    border: 0.08em dashed rgba(183, 144, 81, 0.6);
+    background: transparent;
+    color: #EBE0C9;
+    cursor: pointer;
+}
+
+.botao_secundario:hover {
+    border-style: solid;
+    background: rgba(183, 144, 81, 0.12);
+}
+
+.botao_remover {
+    padding: 0.25em 0.6em;
+    border: none;
+    border-radius: 0.4em;
+    background: rgba(0, 0, 0, 0.35);
+    color: #EBE0C9;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.botao_remover:hover {
+    opacity: 1;
+    color: #DB4747;
+}

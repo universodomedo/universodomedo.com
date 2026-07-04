@@ -1,0 +1,10 @@
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    max-width: 32em;
+}
+
+.erro_campo {
+    color: var(--cor-erro, #c0392b);
+}

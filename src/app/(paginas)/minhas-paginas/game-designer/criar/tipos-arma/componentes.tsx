@@ -1,0 +1,1 @@
+export default function PaginaGameDesignerTiposArma_Client() { return <h1>teste</h1> };
