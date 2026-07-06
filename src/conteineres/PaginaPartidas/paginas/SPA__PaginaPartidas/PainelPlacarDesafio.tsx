@@ -38,7 +38,7 @@ export function PainelPlacarDesafio({ tipoDesafio }: { tipoDesafio: string }) {
                         </div>
 
                         {entradas.map(entrada => (
-                            <div key={entrada.usuarioId} className={styles.linha} data-topo={entrada.colocacao <= 3 ? 'sim' : undefined}>
+                            <div key={entrada.usuarioId} className={styles.linha}>
                                 <span className={styles.col_pos}>{entrada.colocacao}º</span>
                                 <span className={styles.col_nome} title={entrada.usuarioNome}>{entrada.usuarioNome}</span>
                                 <span className={styles.col_pont}>{formataPontuacao(entrada.pontuacao)}</span>

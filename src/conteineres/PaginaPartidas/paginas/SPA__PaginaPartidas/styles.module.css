@@ -85,6 +85,29 @@
     min-height: 0;
     overflow-y: auto;
     padding: 1.75em 1.75em 1.25em;
+    scrollbar-width: thin;
+    scrollbar-color: #64305f transparent;
+}
+
+/* Scrollbar on-brand: gradiente roxo canônico do UDM, fina e arredondada, trilho transparente. */
+.detalhe_descricao::-webkit-scrollbar {
+    width: 0.5em;
+}
+
+.detalhe_descricao::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.detalhe_descricao::-webkit-scrollbar-thumb {
+    border-radius: 1em;
+    border: 0.14em solid transparent;
+    background: linear-gradient(180deg, #330ba4, #64305f, #330ba4);
+    background-clip: padding-box;
+}
+
+.detalhe_descricao::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #4520c9, #7d3d74, #4520c9);
+    background-clip: padding-box;
 }
 
 /* Bloco logo acima do botão Jogar: 2 colunas — título/descrição/condição (esq.) | meta (dir.) — separadas por divisória vertical (border no .info_meta). */

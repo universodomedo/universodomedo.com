@@ -1,11 +1,11 @@
-/* Placar ao vivo dentro do Detalhe do Desafio (Orbital). Reaproveita os neutros/acento teal do card do Detalhe; ouro de marca (#B79051) marca o 1º lugar; ponto vermelho = AO VIVO. Estilo coeso de um componente (cabeçalho + badge ao vivo + tabela rolável + estados). */
+/* Placar ao vivo dentro do Detalhe do Desafio (Orbital). Identidade UDM em roxo/lilás (plum #502C6E → lilás #C7ABE4, uma tonalidade mais clara do mesmo matiz) sobre violeta-quase-preto; pergaminho #EBE0C9 nos nomes. SEM pódio: TODAS as linhas têm exatamente a mesma cor e o mesmo formato — o UDM é experiência conjunta de aprendizado, não competição. Ponto vermelho de marca (--cor-aviso) = AO VIVO. */
 .placar {
     display: flex;
     flex-direction: column;
     gap: 0.7em;
     margin-top: 1.1em;
     padding-top: 1.1em;
-    border-top: 0.08em solid rgba(160, 172, 182, 0.18);
+    border-top: 0.08em solid rgba(124, 92, 175, 0.2);
 }
 
 .cabecalho {
@@ -18,7 +18,7 @@
     flex: none;
     width: 1.3em;
     height: 1.3em;
-    color: #3fd0dd;
+    color: #C7ABE4;
 }
 
 .icone svg {
@@ -32,7 +32,7 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #3fd0dd;
+    color: #C7ABE4;
 }
 
 .aovivo {
@@ -43,15 +43,15 @@
     font-size: 0.68em;
     font-weight: 800;
     letter-spacing: 0.1em;
-    color: #ff6a5a;
+    color: var(--cor-aviso);
 }
 
 .aovivo_ponto {
     width: 0.55em;
     height: 0.55em;
     border-radius: 50%;
-    background: #ff4738;
-    box-shadow: 0 0 0.5em rgba(255, 71, 56, 0.8);
+    background: var(--cor-aviso);
+    box-shadow: 0 0 0.5em rgba(219, 71, 71, 0.8);
     animation: pulso_aovivo 1.4s ease-in-out infinite;
 }
 
@@ -64,7 +64,7 @@
     margin: 0.2em 0;
     font-size: 0.92em;
     font-style: italic;
-    color: rgba(220, 235, 240, 0.5);
+    color: rgba(235, 224, 201, 0.5);
 }
 
 /* Rolagem horizontal (e vertical) — a tabela pode crescer além da largura do card sem quebrar o layout. */
@@ -72,6 +72,34 @@
     overflow-x: auto;
     overflow-y: auto;
     max-height: 15em;
+    scrollbar-width: thin;
+    scrollbar-color: #64305f transparent;
+}
+
+/* Scrollbar on-brand: gradiente roxo canônico do UDM, fina, arredondada, trilho transparente e polegar levemente recuado (borda transparente + background-clip). */
+.rolagem::-webkit-scrollbar {
+    width: 0.5em;
+    height: 0.5em;
+}
+
+.rolagem::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.rolagem::-webkit-scrollbar-thumb {
+    border-radius: 1em;
+    border: 0.14em solid transparent;
+    background: linear-gradient(180deg, #330ba4, #64305f, #330ba4);
+    background-clip: padding-box;
+}
+
+.rolagem::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #4520c9, #7d3d74, #4520c9);
+    background-clip: padding-box;
+}
+
+.rolagem::-webkit-scrollbar-corner {
+    background: transparent;
 }
 
 .tabela {
@@ -93,46 +121,33 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: rgba(220, 235, 240, 0.5);
+    color: rgba(235, 224, 201, 0.5);
 }
 
+/* TODAS as linhas idênticas: mesma cor de fundo, mesma borda, mesmo formato. Sem destaque de 1º lugar / pódio / top-3. */
 .linha {
     display: flex;
     align-items: center;
     gap: 0.75em;
     padding: 0.5em 0.75em;
-    border: 0.08em solid transparent;
+    border: 0.08em solid rgba(124, 92, 175, 0.22);
     border-radius: 0.45em;
-    background: rgba(255, 255, 255, 0.035);
-}
-
-.linha[data-topo='sim'] {
-    background: rgba(63, 208, 221, 0.08);
-    border-color: rgba(63, 208, 221, 0.22);
-}
-
-.linha_cabecalho + .linha {
-    background: rgba(183, 144, 81, 0.12);
-    border-color: rgba(183, 144, 81, 0.42);
+    background: rgba(80, 44, 110, 0.16);
 }
 
 .col_pos {
     flex: none;
     width: 2.4em;
     font-weight: 800;
-    color: rgba(220, 235, 240, 0.6);
+    color: #C7ABE4;
     font-variant-numeric: tabular-nums;
-}
-
-.linha_cabecalho + .linha .col_pos {
-    color: #B79051;
 }
 
 .col_nome {
     flex: 1 0 9em;
     min-width: 9em;
     white-space: nowrap;
-    color: #EEFCFF;
+    color: #EBE0C9;
     font-size: 0.98em;
 }
 
@@ -142,6 +157,6 @@
     margin-left: auto;
     text-align: right;
     font-weight: 800;
-    color: #3fd0dd;
+    color: #C7ABE4;
     font-variant-numeric: tabular-nums;
 }
