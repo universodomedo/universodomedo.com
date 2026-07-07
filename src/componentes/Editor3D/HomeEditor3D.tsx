@@ -10,6 +10,7 @@ import type { Projeto3DResumoPersistido } from 'types-nora-api';
 interface HomeEditor3DProps {
     readonly aoProjetoVazio: () => void;
     readonly aoCapaArte: () => void;
+    readonly aoPersonagem: () => void;
     readonly aoAbrirProjeto: (id: number, nome: string) => void;
     readonly aoAbrirModal: () => void;
 };
@@ -20,7 +21,7 @@ function formataDataRecente(dataIso: string): string {
     return data.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 };
 
-export function HomeEditor3D({ aoProjetoVazio, aoCapaArte, aoAbrirProjeto, aoAbrirModal }: HomeEditor3DProps) {
+export function HomeEditor3D({ aoProjetoVazio, aoCapaArte, aoPersonagem, aoAbrirProjeto, aoAbrirModal }: HomeEditor3DProps) {
     const [recentes, setRecentes] = useState<readonly Projeto3DResumoPersistido[]>([]);
     const [carregando, setCarregando] = useState(true);
 
@@ -44,6 +45,7 @@ export function HomeEditor3D({ aoProjetoVazio, aoCapaArte, aoAbrirProjeto, aoAbr
                     <h3>Novo</h3>
                     <button type="button" className={styles.acao_inicio} onClick={aoProjetoVazio}><span className={styles.icone_inicio}>▱</span>Projeto Vazio</button>
                     <button type="button" className={styles.acao_inicio} onClick={aoCapaArte}><span className={styles.icone_inicio}>▭</span>Capa de Arte</button>
+                    <button type="button" className={styles.acao_inicio} onClick={aoPersonagem}><span className={styles.icone_inicio}>🧍</span>Personagem</button>
                     <div className={styles.separador_inicio} />
                     <button type="button" className={styles.acao_inicio} onClick={aoAbrirModal}><span className={styles.icone_inicio}>▤</span>Abrir Projeto…</button>
                 </section>

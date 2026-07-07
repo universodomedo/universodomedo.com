@@ -5,9 +5,10 @@ import { type PalcoParticipanteDto } from 'types-nora-api';
 import styles from './styles.module.css';
 import { useContexto__PaginaPalcoEntrar } from 'Contextos/Contexto__PaginaPalcoEntrar/contexto';
 import CartaoParticipantePalco from 'Componentes/ElementosDePalco/CartaoParticipantePalco/CartaoParticipantePalco';
+import PainelTranscricaoPalco from 'Componentes/ElementosDePalco/PainelTranscricaoPalco/PainelTranscricaoPalco';
 
 export default function SPA__PaginaPalco__Participante() {
-    const { entrando, conectado, meuPapel, estado } = useContexto__PaginaPalcoEntrar();
+    const { entrando, conectado, meuPapel, estado, transcricao } = useContexto__PaginaPalcoEntrar();
     const palcoAtivo = estado?.ativo ?? false;
     const emEspera = !conectado || meuPapel === 'aguardando' || entrando;
     const falantes: PalcoParticipanteDto[] = estado?.participantes.filter(p => p.papel === 'falante') ?? [];
@@ -41,6 +42,7 @@ export default function SPA__PaginaPalco__Participante() {
                                 : <div className={styles.participantes}>{ouvintes.map(p => <CartaoParticipantePalco key={p.idUsuario} participante={p} />)}</div>
                             }
                         </section>
+                        <PainelTranscricaoPalco utterances={transcricao} />
                     </div>
                 </>
             )}

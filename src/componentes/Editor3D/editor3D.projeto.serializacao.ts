@@ -1,10 +1,10 @@
 import { Color } from 'three';
 import type { Mesh } from 'three';
-import type { CameraCenaCanonicaEditor3D, CapaArteCenaCanonicaEditor3D, CenaCanonicaEditor3D, ObjetoCenaCanonicaEditor3D, TextoCapaArteCenaCanonicaEditor3D, TipoMalhaCenaCanonicaEditor3D, TipoProjetoEditor3D, Vetor3CenaCanonicaEditor3D } from 'types-nora-api';
+import type { CameraCenaCanonicaEditor3D, CapaArteCenaCanonicaEditor3D, CenaCanonicaEditor3D, CorpoPersonagemCenaCanonicaEditor3D, ObjetoCenaCanonicaEditor3D, PecaPersonagemCenaCanonicaEditor3D, TextoCapaArteCenaCanonicaEditor3D, TipoMalhaCenaCanonicaEditor3D, TipoProjetoEditor3D, Vetor3CenaCanonicaEditor3D } from 'types-nora-api';
 
 import type { MalhaEditavelLocal, Vetor3Malha } from './editor3D.malha';
 
-export type TipoPrimitivaEditor3D = 'CUBO' | 'CILINDRO';
+export type TipoPrimitivaEditor3D = 'CUBO' | 'CILINDRO' | 'ESFERA';
 export type TransformEditor3D = { readonly posicao: [number, number, number]; readonly rotacao: [number, number, number]; readonly escala: [number, number, number]; };
 
 // Câmera-output do projeto Capa de Arte: enquadra o render final. Mira em `alvo` (lookAt); aspecto é fixo pela saída 1280x720.
@@ -33,19 +33,21 @@ export function restringeTextoNaCameraEditor3D(posicao: [number, number, number]
     return [x, y, z];
 };
 
-const TIPO_MALHA_POR_PRIMITIVA: Record<TipoPrimitivaEditor3D, TipoMalhaCenaCanonicaEditor3D> = { CUBO: 'CUBO_3D', CILINDRO: 'CILINDRO_3D' };
-const PRIMITIVA_POR_TIPO_MALHA: Partial<Record<TipoMalhaCenaCanonicaEditor3D, TipoPrimitivaEditor3D>> = { CUBO_3D: 'CUBO', CILINDRO_3D: 'CILINDRO' };
+const TIPO_MALHA_POR_PRIMITIVA: Record<TipoPrimitivaEditor3D, TipoMalhaCenaCanonicaEditor3D> = { CUBO: 'CUBO_3D', CILINDRO: 'CILINDRO_3D', ESFERA: 'ESFERA_3D' };
+const PRIMITIVA_POR_TIPO_MALHA: Partial<Record<TipoMalhaCenaCanonicaEditor3D, TipoPrimitivaEditor3D>> = { CUBO_3D: 'CUBO', CILINDRO_3D: 'CILINDRO', ESFERA_3D: 'ESFERA' };
 
 function corHexParaVetor3Editor3D(hex: string): Vetor3CenaCanonicaEditor3D { const cor = new Color(hex); return [cor.r, cor.g, cor.b]; };
 
-// Sem cor/material por objeto editáveis ainda — base neutra cinza, luz neutra, shader padrão.
-const COR_BASE_PADRAO_EDITOR_3D: Vetor3CenaCanonicaEditor3D = corHexParaVetor3Editor3D('#7484b4');
+// Cor base é editável por objeto (persiste em corBase); luz neutra e shader padrão seguem fixos.
+export const COR_OBJETO_PADRAO_EDITOR3D = '#7484b4';
 const COR_LUZ_PADRAO_EDITOR_3D: Vetor3CenaCanonicaEditor3D = [1, 1, 1];
 
 export interface EntradaSerializacaoObjetoEditor3D {
     readonly id: number;
     readonly nome: string;
     readonly tipo: TipoPrimitivaEditor3D;
+    readonly cor: string;
+    readonly idPeca: string | null;
     readonly malha: MalhaEditavelLocal;
     readonly mesh: Mesh;
 };
@@ -70,11 +72,12 @@ function serializaObjetoEditor3D(entrada: EntradaSerializacaoObjetoEditor3D): Ob
         rotacao: [mesh.rotation.x, mesh.rotation.y, mesh.rotation.z],
         escala: [mesh.scale.x, mesh.scale.y, mesh.scale.z],
         matrizBase: Array.from(mesh.matrix.elements),
-        corBase: COR_BASE_PADRAO_EDITOR_3D,
+        corBase: corHexParaVetor3Editor3D(entrada.cor),
         corLuz: COR_LUZ_PADRAO_EDITOR_3D,
         materialVisual: null,
         shader: 'PADRAO',
         visivel: mesh.visible,
+        idPeca: entrada.idPeca,
         malhaEditavel: serializaMalhaEditavel(entrada.malha),
     };
 };
@@ -91,14 +94,18 @@ function serializaCapaArteEditor3D(capaArte: CapaArteEditor3D): CapaArteCenaCano
     return { titulo: serializaTextoCapaArteEditor3D(capaArte.titulo), assinatura: serializaTextoCapaArteEditor3D(capaArte.assinatura) };
 };
 
-export function serializaCenaCanonicaEditor3D(entradas: readonly EntradaSerializacaoObjetoEditor3D[], tipoProjeto: TipoProjetoEditor3D, camera: CameraEditor3D | null, capaArte: CapaArteEditor3D | null): CenaCanonicaEditor3D {
+export function serializaCenaCanonicaEditor3D(entradas: readonly EntradaSerializacaoObjetoEditor3D[], tipoProjeto: TipoProjetoEditor3D, camera: CameraEditor3D | null, capaArte: CapaArteEditor3D | null, corpoPersonagem: CorpoPersonagemCenaCanonicaEditor3D | null, pecas: readonly PecaPersonagemCenaCanonicaEditor3D[]): CenaCanonicaEditor3D {
     const objetos = entradas.map(serializaObjetoEditor3D);
     if (tipoProjeto === 'CAPA_ARTE' && camera) return { versao: 1, tipoProjeto, objetos, camera: serializaCameraEditor3D(camera), capaArte: serializaCapaArteEditor3D(capaArte ?? CAPA_ARTE_PADRAO_EDITOR3D) };
+    if (tipoProjeto === 'PERSONAGEM' && corpoPersonagem) return { versao: 1, tipoProjeto, objetos, corpoPersonagem, pecas: [...pecas] };
     return { versao: 1, tipoProjeto, objetos };
 };
 
 export interface ObjetoCarregadoEditor3D {
     readonly tipo: TipoPrimitivaEditor3D;
+    readonly nome: string;
+    readonly cor: string;
+    readonly idPeca: string | null;
     readonly transform: TransformEditor3D;
     readonly malha?: MalhaEditavelLocal;
 };
@@ -118,6 +125,9 @@ export function desserializaCenaCanonicaEditor3D(cena: CenaCanonicaEditor3D): Ob
         if (!primitiva) continue;
         carregados.push({
             tipo: primitiva,
+            nome: objeto.nome,
+            cor: vetor3ParaCorHexEditor3D(objeto.corBase),
+            idPeca: objeto.idPeca ?? null,
             transform: { posicao: [objeto.posicao[0], objeto.posicao[1], objeto.posicao[2]], rotacao: [objeto.rotacao[0], objeto.rotacao[1], objeto.rotacao[2]], escala: [objeto.escala[0], objeto.escala[1], objeto.escala[2]] },
             malha: objeto.malhaEditavel ? desserializaMalhaEditavel(objeto.malhaEditavel) : undefined,
         });
@@ -126,6 +136,10 @@ export function desserializaCenaCanonicaEditor3D(cena: CenaCanonicaEditor3D): Ob
 };
 
 export function tipoProjetoDaCena(cena: CenaCanonicaEditor3D): TipoProjetoEditor3D { return cena.tipoProjeto ?? 'PADRAO'; };
+
+export function pecasDaCena(cena: CenaCanonicaEditor3D): PecaPersonagemCenaCanonicaEditor3D[] { return cena.pecas ? [...cena.pecas] : []; };
+
+export function corpoPersonagemDaCena(cena: CenaCanonicaEditor3D): CorpoPersonagemCenaCanonicaEditor3D | null { return cena.corpoPersonagem ?? null; };
 
 export function cameraDaCena(cena: CenaCanonicaEditor3D): CameraEditor3D | null {
     if (!cena.camera) return null;

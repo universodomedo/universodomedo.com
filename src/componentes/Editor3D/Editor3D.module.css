@@ -1538,3 +1538,149 @@
     outline: 0.08em solid rgba(92, 148, 255, 0.72);
     outline-offset: 0;
 }
+
+/* ---- Painel Objeto (nome/cor/ações do objeto selecionado) ---- */
+.painel_objeto {
+    display: flex;
+    flex-direction: column;
+    padding: 0.55em 0.7em;
+}
+
+.acoes_objeto_painel {
+    display: flex;
+    gap: 0.45em;
+    margin-top: 0.2em;
+}
+
+.botao_acao_objeto {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    min-height: 2.1em;
+    padding: 0.35em 0.6em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.32em;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.85);
+    font: inherit;
+    font-size: 0.8em;
+    cursor: pointer;
+}
+
+.botao_acao_objeto:hover {
+    border-color: rgba(255, 180, 60, 0.6);
+    background: rgba(255, 180, 60, 0.08);
+}
+
+.botao_excluir_objeto:hover {
+    border-color: rgba(220, 90, 90, 0.65);
+    background: rgba(220, 90, 90, 0.1);
+    color: #ff9d9d;
+}
+
+.aviso_membro_obrigatorio {
+    margin: 0.2em 0 0;
+    padding: 0.45em 0.6em;
+    border: 0.08em solid rgba(255, 180, 60, 0.35);
+    border-radius: 0.32em;
+    background: rgba(255, 180, 60, 0.07);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.78em;
+    line-height: 1.35;
+}
+
+/* Sliders de proporção do membro (Personagem). */
+.grupo_sliders_membro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    margin-bottom: 0.55em;
+}
+
+.titulo_grupo_sliders {
+    margin-bottom: 0.25em;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.75em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.campo_slider {
+    display: grid;
+    grid-template-columns: 5.4em minmax(0, 1fr) 3.2em;
+    gap: 0.5em;
+    align-items: center;
+    min-height: 1.9em;
+    font-size: 0.82em;
+}
+
+.campo_slider span {
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.campo_slider strong {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9em;
+    text-align: right;
+}
+
+.campo_slider input {
+    width: 100%;
+    height: 0.35em;
+    accent-color: #b79051;
+    cursor: pointer;
+}
+
+/* Peças anexadas ao slot do membro (Personagem). */
+.grupo_pecas_membro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    margin-top: 0.55em;
+}
+
+.vazio_pecas_membro {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.38);
+    font-size: 0.78em;
+}
+
+.linha_peca_membro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5em;
+    padding: 0.3em 0.55em;
+    border: 0.08em solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.32em;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.nome_peca_membro {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.botao_remover_peca {
+    flex-shrink: 0;
+    width: 1.6em;
+    height: 1.6em;
+    border: 0.08em solid transparent;
+    border-radius: 0.32em;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.45);
+    font: inherit;
+    font-size: 0.8em;
+    cursor: pointer;
+}
+
+.botao_remover_peca:hover {
+    border-color: rgba(220, 90, 90, 0.65);
+    background: rgba(220, 90, 90, 0.1);
+    color: #ff9d9d;
+}

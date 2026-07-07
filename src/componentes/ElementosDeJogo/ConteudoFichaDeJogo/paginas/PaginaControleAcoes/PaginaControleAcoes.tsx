@@ -20,6 +20,8 @@ export default function PaginaControleAcoes() {
     const [momentoProjetadoMs, setMomentoProjetadoMs] = useState(0);
     const seresNaSala = mapaLogico?.seresNaSala ?? [];
     const interagiveisPercebidos = mapaLogico?.interagiveisPercebidos ?? [];
+    // Gate de locomocao por Ser: undefined = sem gate (legado, mostra a acao); false = Ser autorado sem Deslocamento Terrestre, esconde a acao de Locomocao.
+    const permiteLocomocaoTerrestre = (seresNaSala.find(ser => ser.papel === 'controlado')?.permiteLocomocaoTerrestre) !== false;
     const tempoRodando = estadoTemporalSalaJogo?.status === 'RODANDO';
     const acoesFichaDesativadas = desativarAcoes || tempoRodando;
     const acaoEmExecucao = estadoTemporalSalaJogo?.acoesTemporais.find(acaoTemporal => acaoTemporal.status === 'EM_ANDAMENTO' && acaoTemporal.tipo === 'atacar') ?? null;
@@ -60,7 +62,7 @@ export default function PaginaControleAcoes() {
     return (
         <div className={styles.painel_acoes}>
             {acoesPorStatusECapacidade.realizaveis.length > 0 && <SecaoAcoesFicha titulo="Ações Realizáveis" grupos={acoesPorStatusECapacidade.realizaveis} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
-            {estadoTemporalSalaJogo && movimentacao && <SecaoAcaoLocomocao estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} modoMovimentacaoAtivo={movimentacao.modoMovimentacaoAtivo} iniciaModoMovimentacao={movimentacao.iniciaModoMovimentacao} cancelaModoMovimentacao={movimentacao.cancelaModoMovimentacao} />}
+            {estadoTemporalSalaJogo && movimentacao && permiteLocomocaoTerrestre && <SecaoAcaoLocomocao estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} modoMovimentacaoAtivo={movimentacao.modoMovimentacaoAtivo} iniciaModoMovimentacao={movimentacao.iniciaModoMovimentacao} cancelaModoMovimentacao={movimentacao.cancelaModoMovimentacao} />}
             {estadoTemporalSalaJogo && <SecaoAcaoTemporalEsperar estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} executaEsperar={executaEsperar} />}
             {acoesPorStatusECapacidade.bloqueadas.length > 0 && <SecaoAcoesFicha titulo="Ações Bloqueadas" grupos={acoesPorStatusECapacidade.bloqueadas} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
             {acaoComSelecaoAlvo && <ModalSelecaoAlvoAcao acao={acaoComSelecaoAlvo} seresNaSala={seresNaSala} interagiveisPercebidos={interagiveisPercebidos} cancelar={() => setAcaoComSelecaoAlvo(null)} confirmar={executaAcaoComAlvo} />}

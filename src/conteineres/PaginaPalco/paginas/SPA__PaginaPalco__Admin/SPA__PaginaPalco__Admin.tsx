@@ -7,6 +7,7 @@ import { type PalcoParticipanteDto, type PalcoParticipantePapel } from 'types-no
 import styles from './styles.module.css';
 import { useContexto__PaginaPalcoAdmin } from 'Contextos/Contexto__PaginaPalcoAdmin/contexto';
 import CartaoParticipantePalco from 'Componentes/ElementosDePalco/CartaoParticipantePalco/CartaoParticipantePalco';
+import PainelTranscricaoPalco from 'Componentes/ElementosDePalco/PainelTranscricaoPalco/PainelTranscricaoPalco';
 import PainelDiagnosticoAudio from './PainelDiagnosticoAudio';
 
 type SecaoAlvo = PalcoParticipantePapel | null;
@@ -26,7 +27,7 @@ const DESCRICOES: Record<PalcoParticipantePapel, string> = {
 const ORDEM_SECOES: PalcoParticipantePapel[] = ['falante', 'ouvinte', 'aguardando'];
 
 export default function SPA__PaginaPalco__Admin() {
-    const { estado, diagnostico, processando, erro, handleCriar, handleEncerrar, handleDefinirPapel } = useContexto__PaginaPalcoAdmin();
+    const { estado, diagnostico, transcricao, processando, erro, handleCriar, handleEncerrar, handleDefinirPapel } = useContexto__PaginaPalcoAdmin();
     const idArrastando = useRef<number | null>(null);
     const [secaoAlvo, setSecaoAlvo] = useState<SecaoAlvo>(null);
     const palcoAtivo = estado?.ativo ?? false;
@@ -79,6 +80,7 @@ export default function SPA__PaginaPalco__Admin() {
                 </div>
             )}
             {!palcoAtivo && <p className={styles.palco_fechado}>O palco está fechado. Abra-o para gerenciar os participantes.</p>}
+            {palcoAtivo && <div className={styles.transcricao}><PainelTranscricaoPalco utterances={transcricao} /></div>}
             {palcoAtivo && <PainelDiagnosticoAudio diagnostico={diagnostico} />}
         </main>
     );

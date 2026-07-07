@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { Eventos_Emite, Eventos_EnviaERecebe, type EMIT__Palco_diagnosticoAudio, type EMIT__Palco_estadoAtualizado, type PalcoEstadoDto, type PalcoParticipantePapel, type WsErrorResponse } from 'types-nora-api';
+import { Eventos_Emite, Eventos_EnviaERecebe, type EMIT__Palco_diagnosticoAudio, type EMIT__Palco_estadoAtualizado, type EMIT__Palco_transcricaoAtualizada, type PalcoEstadoDto, type PalcoParticipantePapel, type PalcoTranscricaoUtterance, type RESPONSE__Palco_verificarTranscricao, type WsErrorResponse } from 'types-nora-api';
 
 import { eventoWs, useRecebeEmitWs } from 'Hooks/useEventoWs';
 import SPA__PaginaPalco__Admin from 'Conteineres/PaginaPalco/paginas/SPA__PaginaPalco__Admin/SPA__PaginaPalco__Admin';
@@ -26,6 +26,12 @@ function verificarEstadoWs(): Promise<PalcoEstadoDto> {
     });
 };
 
+function verificarTranscricaoWs(): Promise<RESPONSE__Palco_verificarTranscricao> {
+    return new Promise((resolve, reject) => {
+        eventoWs(Eventos_EnviaERecebe.Palco.eventos.verificarTranscricao, {}, { onSuccess: (response: RESPONSE__Palco_verificarTranscricao) => { resolve(response); }, onError: (error: WsErrorResponse) => { reject(error); }, timeoutMs: 8000 });
+    });
+};
+
 function definirPapelWs(idUsuario: number, papel: PalcoParticipantePapel): Promise<Record<string, never>> {
     return new Promise((resolve, reject) => {
         eventoWs(Eventos_EnviaERecebe.Palco.eventos.admin_definirPapel, { idUsuario, papel }, { onSuccess: (response: Record<string, never>) => { resolve(response); }, onError: (error: WsErrorResponse) => { reject(error); }, timeoutMs: 8000 });
@@ -37,6 +43,7 @@ function extraiMensagemErroPalcoAdmin(erro: Error | WsErrorResponse): string { r
 interface Contexto__PaginaPalcoAdmin__Props {
     estado: PalcoEstadoDto | null;
     diagnostico: EMIT__Palco_diagnosticoAudio | null;
+    transcricao: PalcoTranscricaoUtterance[];
     processando: boolean;
     erro: string | null;
     handleCriar: () => void;
@@ -55,11 +62,13 @@ export const useContexto__PaginaPalcoAdmin = (): Contexto__PaginaPalcoAdmin__Pro
 export const Contexto__PaginaPalcoAdmin__Provider = () => {
     const [estado, setEstado] = useState<PalcoEstadoDto | null>(null);
     const [diagnostico, setDiagnostico] = useState<EMIT__Palco_diagnosticoAudio | null>(null);
+    const [transcricao, setTranscricao] = useState<PalcoTranscricaoUtterance[]>([]);
     const [processando, setProcessando] = useState(false);
     const [erro, setErro] = useState<string | null>(null);
 
     useEffect(() => {
         verificarEstadoWs().then(s => { setEstado(s); }).catch(() => {});
+        verificarTranscricaoWs().then(r => { setTranscricao(r.utterances); }).catch(() => {});
     }, []);
 
     useRecebeEmitWs(Eventos_Emite.Palco.eventos.estadoAtualizado, {
@@ -67,11 +76,15 @@ export const Contexto__PaginaPalcoAdmin__Provider = () => {
     });
 
     useRecebeEmitWs(Eventos_Emite.Palco.eventos.encerrado, {
-        onSuccess: () => { setEstado({ ativo: false, participantes: [] }); setDiagnostico(null); },
+        onSuccess: () => { setEstado({ ativo: false, participantes: [] }); setDiagnostico(null); setTranscricao([]); },
     });
 
     useRecebeEmitWs(Eventos_Emite.Palco.eventos.diagnosticoAudio, {
         onSuccess: (data: EMIT__Palco_diagnosticoAudio) => { setDiagnostico(data); },
+    });
+
+    useRecebeEmitWs(Eventos_Emite.Palco.eventos.transcricaoAtualizada, {
+        onSuccess: (data: EMIT__Palco_transcricaoAtualizada) => { setTranscricao(data.utterances); },
     });
 
     const executar = useCallback(async (acao: () => Promise<ResultadoAcaoPalcoAdmin>): Promise<void> => {
@@ -100,7 +113,7 @@ export const Contexto__PaginaPalcoAdmin__Provider = () => {
     }, [executar]);
 
     return (
-        <Contexto__PaginaPalcoAdmin.Provider value={{ estado, diagnostico, processando, erro, handleCriar, handleEncerrar, handleDefinirPapel }}>
+        <Contexto__PaginaPalcoAdmin.Provider value={{ estado, diagnostico, transcricao, processando, erro, handleCriar, handleEncerrar, handleDefinirPapel }}>
             <SPA__PaginaPalco__Admin />
         </Contexto__PaginaPalcoAdmin.Provider>
     );

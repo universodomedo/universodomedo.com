@@ -7,6 +7,7 @@ import type { Projeto3DResumoPersistido } from 'types-nora-api';
 interface ModalAbrirProjetoEditor3DProps {
     readonly projetos: readonly Projeto3DResumoPersistido[];
     readonly carregando: boolean;
+    readonly titulo?: string;
     readonly aoSelecionar: (id: number, nome: string) => void;
     readonly aoFechar: () => void;
 };
@@ -17,12 +18,12 @@ function formataDataAtualizacaoEditor3D(dataIso: string): string {
     return data.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
 };
 
-export function ModalAbrirProjetoEditor3D({ projetos, carregando, aoSelecionar, aoFechar }: ModalAbrirProjetoEditor3DProps) {
+export function ModalAbrirProjetoEditor3D({ projetos, carregando, titulo = 'Abrir projeto', aoSelecionar, aoFechar }: ModalAbrirProjetoEditor3DProps) {
     return (
         <div className={styles.fundo_modal_projeto} onClick={aoFechar}>
-            <section className={styles.modal_projeto} role="dialog" aria-modal="true" aria-label="Abrir projeto" onClick={evento => evento.stopPropagation()}>
+            <section className={styles.modal_projeto} role="dialog" aria-modal="true" aria-label={titulo} onClick={evento => evento.stopPropagation()}>
                 <header className={styles.cabecalho_modal_projeto}>
-                    <strong>Abrir projeto</strong>
+                    <strong>{titulo}</strong>
                     <button type="button" onClick={aoFechar}>Fechar</button>
                 </header>
                 <div className={styles.corpo_modal_projeto}>

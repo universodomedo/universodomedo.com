@@ -1,0 +1,67 @@
+.painel {
+    border: 0.1em solid #2d1a50;
+    border-radius: 0.55em;
+    padding: 1em 1.2em;
+    background: rgba(16, 8, 32, 0.75);
+}
+
+.cabecalho {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    margin-bottom: 0.75em;
+}
+
+.titulo {
+    margin: 0;
+    font-size: 0.88em;
+    font-weight: 700;
+    color: #D9D9D9;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.05em;
+}
+
+.contador {
+    font-weight: 400;
+    color: #7060a0;
+    font-size: 0.82em;
+}
+
+.lista {
+    max-height: 16em;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+}
+
+.utterance {
+    margin: 0;
+    font-size: 0.85em;
+    line-height: 1.4;
+    color: #D9D9D9;
+}
+
+.utterance_parcial {
+    opacity: 0.55;
+    font-style: italic;
+}
+
+.horario {
+    color: #4a3a6a;
+    font-size: 0.8em;
+    margin-right: 0.6em;
+}
+
+.autor {
+    color: #B79051;
+    font-weight: 700;
+    margin-right: 0.6em;
+}
+
+.vazio {
+    margin: 0;
+    color: #4a3a6a;
+    font-size: 0.8em;
+    font-style: italic;
+}

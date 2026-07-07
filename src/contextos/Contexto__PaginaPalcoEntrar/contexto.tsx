@@ -1,13 +1,14 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Eventos_Emite, Eventos_EnviaERecebe, type EMIT__Palco_encerrado, type EMIT__Palco_estadoAtualizado, type EMIT__Palco_tokenMidia, type PalcoEstadoDto, type PalcoParticipanteDto, type PalcoParticipantePapel, type RESPONSE__Palco_entrar, type WsErrorResponse } from 'types-nora-api';
+import { Eventos_Emite, Eventos_EnviaERecebe, type EMIT__Palco_encerrado, type EMIT__Palco_estadoAtualizado, type EMIT__Palco_tokenMidia, type EMIT__Palco_transcricaoAtualizada, type PalcoEstadoDto, type PalcoParticipanteDto, type PalcoParticipantePapel, type PalcoTranscricaoUtterance, type RESPONSE__Palco_entrar, type RESPONSE__Palco_verificarTranscricao, type WsErrorResponse } from 'types-nora-api';
 
 import { criaConteiner, criaSaidaConteiner, type SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 import { eventoWs, useRecebeEmitWs } from 'Hooks/useEventoWs';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import SPA__PaginaPalco__Participante from 'Conteineres/PaginaPalco/paginas/SPA__PaginaPalco__Participante/SPA__PaginaPalco__Participante';
 import { usePalcoAudio } from './usePalcoAudio';
+import { usePalcoTranscricao } from './usePalcoTranscricao';
 
 type FluxoPaginaPalcoEntrar = 'FECHADO' | 'AGUARDANDO' | 'OUVINTE' | 'FALANTE';
 
@@ -23,6 +24,12 @@ function verificarEstadoWs(): Promise<PalcoEstadoDto> {
     });
 };
 
+function verificarTranscricaoWs(): Promise<RESPONSE__Palco_verificarTranscricao> {
+    return new Promise((resolve, reject) => {
+        eventoWs(Eventos_EnviaERecebe.Palco.eventos.verificarTranscricao, {}, { onSuccess: (response: RESPONSE__Palco_verificarTranscricao) => { resolve(response); }, onError: (error: WsErrorResponse) => { reject(error); }, timeoutMs: 8000 });
+    });
+};
+
 interface Contexto__PaginaPalcoEntrar__Props {
     fluxo: FluxoPaginaPalcoEntrar;
     entrando: boolean;
@@ -30,6 +37,7 @@ interface Contexto__PaginaPalcoEntrar__Props {
     meuPapel: PalcoParticipantePapel | null;
     estado: PalcoEstadoDto | null;
     participantesAudio: PalcoParticipanteDto[];
+    transcricao: PalcoTranscricaoUtterance[];
     livekitToken: string | null;
     livekitUrl: string | null;
     logs: string[];
@@ -52,6 +60,7 @@ export const Contexto__PaginaPalcoEntrar__Provider = () => {
     const [conectado, setConectado] = useState(false);
     const [meuPapel, setMeuPapel] = useState<PalcoParticipantePapel | null>(null);
     const [estado, setEstado] = useState<PalcoEstadoDto | null>(null);
+    const [transcricao, setTranscricao] = useState<PalcoTranscricaoUtterance[]>([]);
     const [livekitToken, setLivekitToken] = useState<string | null>(null);
     const [livekitUrl, setLivekitUrl] = useState<string | null>(null);
     const [logs, setLogs] = useState<string[]>([]);
@@ -70,6 +79,7 @@ export const Contexto__PaginaPalcoEntrar__Provider = () => {
         setConectado(false);
         setMeuPapel(null);
         setEstado(null);
+        setTranscricao([]);
         setLivekitToken(null);
         setLivekitUrl(null);
         adicionaLog('Saiu do palco.');
@@ -98,6 +108,12 @@ export const Contexto__PaginaPalcoEntrar__Provider = () => {
     useEffect(() => {
         verificarEstadoWs().then(s => { setEstado(s); }).catch(() => {});
     }, []);
+
+    // Estado inicial da transcrição ao ganhar papel de áudio; as atualizações chegam pelo emit.
+    useEffect(() => {
+        if (meuPapel !== 'falante' && meuPapel !== 'ouvinte') return;
+        verificarTranscricaoWs().then(r => { setTranscricao(r.utterances); }).catch(() => {});
+    }, [meuPapel]);
 
     useEffect(() => {
         if (!estado?.ativo) { removidoRef.current = false; return; }
@@ -135,6 +151,10 @@ export const Contexto__PaginaPalcoEntrar__Provider = () => {
         },
     });
 
+    useRecebeEmitWs(Eventos_Emite.Palco.eventos.transcricaoAtualizada, {
+        onSuccess: (data: EMIT__Palco_transcricaoAtualizada) => { setTranscricao(data.utterances); },
+    });
+
     // Token LiveKit emitido pelo backend quando o papel muda para falante ou ouvinte.
     useRecebeEmitWs(Eventos_Emite.Palco.eventos.tokenMidia, {
         onSuccess: (data: EMIT__Palco_tokenMidia) => {
@@ -156,7 +176,7 @@ export const Contexto__PaginaPalcoEntrar__Provider = () => {
     const fluxo = resolveFluxoPaginaPalcoEntrar(estado, conectado, meuPapel);
 
     return (
-        <Contexto__PaginaPalcoEntrar.Provider value={{ fluxo, entrando, conectado, meuPapel, estado, participantesAudio, livekitToken, livekitUrl, logs, adicionaLog, sairLocalmente }}>
+        <Contexto__PaginaPalcoEntrar.Provider value={{ fluxo, entrando, conectado, meuPapel, estado, participantesAudio, transcricao, livekitToken, livekitUrl, logs, adicionaLog, sairLocalmente }}>
             <Conteiner__PaginaPalcoEntrar__Interno />
         </Contexto__PaginaPalcoEntrar.Provider>
     );
@@ -192,5 +212,6 @@ function Contexto__PaginaPalcoEntrar__Ouvinte__Provider() {
 function Contexto__PaginaPalcoEntrar__Falante__Provider() {
     const { adicionaLog, livekitToken, livekitUrl } = useContexto__PaginaPalcoEntrar();
     usePalcoAudio({ modo: 'falante', token: livekitToken, livekitUrl, adicionaLog });
+    usePalcoTranscricao({ adicionaLog });
     return <SPA__PaginaPalco__Participante />;
 };

@@ -1,11 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { EventosApiRest, type NovoSerNaSalaDeTeste, type NovoSerExecucaoNaSalaSolo } from 'types-nora-api';
+import { useRouter } from 'next/navigation';
+import { EventosApiRest, PAGINAS, type NovoSerNaSalaDeTeste, type NovoSerExecucaoNaSalaSolo } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
 
 export default function Page() {
+    const router = useRouter();
     const [idOrigem, setIdOrigem] = useState('2');
     const [criados, setCriados] = useState<number[]>([]);
     const [clonando, setClonando] = useState(false);
@@ -16,10 +18,56 @@ export default function Page() {
     const [montando, setMontando] = useState(false);
     const [erroSala, setErroSala] = useState<string | null>(null);
 
-    const [idPartida, setIdPartida] = useState('');
+    const [idPartida, setIdPartida] = useState('1');
     const [execucao, setExecucao] = useState<NovoSerExecucaoNaSalaSolo | null>(null);
     const [executando, setExecutando] = useState(false);
     const [erroExec, setErroExec] = useState<string | null>(null);
+
+    const [rodando, setRodando] = useState(false);
+    const [erroRodar, setErroRodar] = useState<string | null>(null);
+
+    const [entrando, setEntrando] = useState(false);
+    const [erroVivo, setErroVivo] = useState<string | null>(null);
+
+    async function jogarAoVivo(): Promise<void> {
+        const origem = Number(idOrigem);
+        const partida = Number(idPartida);
+        if (!Number.isInteger(origem) || origem <= 0) { setErroVivo('Informe um id de Ser legado válido.'); return; }
+        if (!Number.isInteger(partida) || partida <= 0) { setErroVivo('Informe o id de uma Partida com manequim (1 = Desafio EA).'); return; }
+        setEntrando(true);
+        setErroVivo(null);
+        try {
+            const criado = await NoraApi.RestPOST(EventosApiRest.POST.NovoSerRegistro.clonarDeLegado, { idSerLegadoOrigem: origem }, { mensagemErro: 'Não foi possível clonar o Ser.' });
+            setCriados(anteriores => [...anteriores, criado.id]);
+            setIdNovoSer(String(criado.id));
+            await NoraApi.RestPOST(EventosApiRest.POST.NovoSerRegistro.iniciarAoVivo, { idNovoSer: criado.id, idPartida: partida }, { mensagemErro: 'Não foi possível iniciar a Partida ao vivo.' });
+            router.push(PAGINAS.jogo.emJogo.href);
+        } catch {
+            setErroVivo('Não foi possível jogar ao vivo (já há uma sala aberta? feche a partida atual; a Partida tem config?).');
+            setEntrando(false);
+        }
+    };
+
+    async function rodarTudo(): Promise<void> {
+        const origem = Number(idOrigem);
+        const partida = Number(idPartida);
+        if (!Number.isInteger(origem) || origem <= 0) { setErroRodar('Informe um id de Ser legado válido.'); return; }
+        if (!Number.isInteger(partida) || partida <= 0) { setErroRodar('Informe o id de uma Partida com manequim (1 = Desafio EA).'); return; }
+        setRodando(true);
+        setErroRodar(null);
+        setExecucao(null);
+        try {
+            const criado = await NoraApi.RestPOST(EventosApiRest.POST.NovoSerRegistro.clonarDeLegado, { idSerLegadoOrigem: origem }, { mensagemErro: 'Não foi possível clonar o Ser.' });
+            setCriados(anteriores => [...anteriores, criado.id]);
+            setIdNovoSer(String(criado.id));
+            const resultado = await NoraApi.RestPOST(EventosApiRest.POST.NovoSerRegistro.executarNaSalaSolo, { idNovoSer: criado.id, idPartida: partida }, { mensagemErro: 'Não foi possível executar na Sala Solo.' });
+            setExecucao(resultado);
+        } catch {
+            setErroRodar('Não foi possível rodar (a Partida tem manequim? o Ser legado é jogável com ação de dano?).');
+        } finally {
+            setRodando(false);
+        }
+    };
 
     async function clonar(): Promise<void> {
         const idSerLegadoOrigem = Number(idOrigem);
@@ -75,6 +123,23 @@ export default function Page() {
         <main style={{ padding: '2.5em', color: '#D9D9D9', fontFamily: 'system-ui', maxWidth: '46em', margin: '0 auto' }}>
             <span style={{ fontSize: '0.7em', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#B79051', fontWeight: 700 }}>Teste local · novo_ser</span>
             <h1 style={{ color: '#EBE0C9', margin: '0.3em 0 0.2em' }}>novo_ser → MF1 (esqueleto)</h1>
+
+            <div style={{ marginTop: '1em', border: '1px solid #B79051', borderRadius: '0.6em', padding: '1em', background: '#15120A' }}>
+                <div style={{ color: '#EBE0C9', fontSize: '0.92em', marginBottom: '0.7em' }}>Atalho de 1 clique: clona o Ser legado <strong>{idOrigem}</strong> e executa na Partida <strong>{idPartida}</strong> (id 1 = Desafio EA, tem o Manequim de Treino).</div>
+                <div style={{ display: 'flex', gap: '0.6em', flexWrap: 'wrap' }}>
+                    <button type="button" onClick={rodarTudo} disabled={rodando} style={{ ...botaoStyle(rodando), background: rodando ? '#1A1725' : '#B79051', color: '#0B0A10', fontWeight: 700 }}>{rodando ? 'Rodando...' : 'Rodar tudo (síncrono → MF1)'}</button>
+                    <button type="button" onClick={jogarAoVivo} disabled={entrando} style={{ ...botaoStyle(entrando), background: entrando ? '#1A1725' : '#7CC576', color: '#0B0A10', fontWeight: 700 }}>{entrando ? 'Entrando...' : 'Jogar ao vivo (clona → tela Solo oficial) ▶'}</button>
+                </div>
+                {erroRodar && <p style={{ color: '#DB4747', marginTop: '0.6em' }}>{erroRodar}</p>}
+                {erroVivo && <p style={{ color: '#DB4747', marginTop: '0.6em' }}>{erroVivo}</p>}
+                {execucao && (
+                    <div style={{ marginTop: '0.9em', color: '#EBE0C9', fontSize: '0.9em' }}>
+                        <div><strong>{execucao.nomeSer}</strong> · {execucao.nomeAcao} → {execucao.nomeAlvo}</div>
+                        <div>Durabilidade do manequim: {execucao.durabilidadeAntes} → {execucao.durabilidadeDepois} <span style={{ color: '#DB8A47' }}>(dano {execucao.danoAplicado})</span></div>
+                        <div style={{ color: execucao.missaoVenceu ? '#7CC576' : '#DB8A47', fontWeight: 700, marginTop: '0.3em' }}>{execucao.missaoVenceu ? 'MF1 concluída: VITÓRIA ✓ — o Ser de novo_ser chegou e agiu na Partida' : 'Ação aplicada (MF não concluída)'}</div>
+                    </div>
+                )}
+            </div>
 
             <section style={{ marginTop: '1.5em', borderTop: '1px solid #322F2F', paddingTop: '1.2em' }}>
                 <h2 style={{ color: '#B79051', fontSize: '1em', letterSpacing: '0.06em' }}>1 · Popular (clonar Ser legado)</h2>

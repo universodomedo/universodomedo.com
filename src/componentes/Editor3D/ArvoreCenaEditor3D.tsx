@@ -4,7 +4,9 @@ import styles from './Editor3D.module.css';
 
 import { useEffect, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
 
-import { SELECAO_CAMERA_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D } from './editor3D.tipos';
+import type { MembroPersonagemEditor3D } from 'types-nora-api';
+
+import { SELECAO_CAMERA_EDITOR3D, SELECAO_CORPO_PERSONAGEM_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D } from './editor3D.tipos';
 
 export type ObjetoResumoEditor3D = { readonly id: number; readonly nome: string; readonly icone: string; readonly tipoRotulo: string; readonly visivel: boolean; };
 export type ColecaoArvoreEditor3D = { readonly id: number; readonly nome: string; readonly visivel: boolean; readonly objetos: readonly ObjetoResumoEditor3D[]; };
@@ -15,6 +17,9 @@ interface ArvoreCenaEditor3DProps {
     readonly idSelecionado: number | null;
     readonly temCamera: boolean;
     readonly povCameraAtiva: boolean;
+    readonly regioesCorpo: readonly { readonly membro: MembroPersonagemEditor3D; readonly rotulo: string }[];
+    readonly regiaoCorpoSelecionada: MembroPersonagemEditor3D | null;
+    readonly aoSelecionarCorpo: (regiao: MembroPersonagemEditor3D | null) => void;
     readonly aoSelecionar: (id: number) => void;
     readonly aoAlternarVisibilidadeObjeto: (id: number) => void;
     readonly aoAlternarVisibilidadeColecao: (id: number) => void;
@@ -26,7 +31,7 @@ interface ArvoreCenaEditor3DProps {
 
 const ALVO_RAIZ_ARVORE_EDITOR3D = -1;
 
-export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, temCamera, povCameraAtiva, aoSelecionar, aoAlternarVisibilidadeObjeto, aoAlternarVisibilidadeColecao, aoRenomearColecao, aoRemoverColecao, aoMoverObjeto, aoAlternarPovCamera }: ArvoreCenaEditor3DProps) {
+export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, temCamera, povCameraAtiva, regioesCorpo, regiaoCorpoSelecionada, aoSelecionarCorpo, aoSelecionar, aoAlternarVisibilidadeObjeto, aoAlternarVisibilidadeColecao, aoRenomearColecao, aoRemoverColecao, aoMoverObjeto, aoAlternarPovCamera }: ArvoreCenaEditor3DProps) {
     const [arrastandoId, setArrastandoId] = useState<number | null>(null);
     const [alvoArraste, setAlvoArraste] = useState<number | null>(null);
     const [colecoesAbertas, setColecoesAbertas] = useState<Record<number, boolean>>({});
@@ -100,6 +105,28 @@ export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, temCa
                         <button type="button" className={`${styles.botao_visibilidade} ${povCameraAtiva ? styles.botao_pov_arvore_ativo : ''}`} onClick={aoAlternarPovCamera} aria-pressed={povCameraAtiva} title={povCameraAtiva ? 'Sair da 1ª pessoa (ver em 3ª)' : 'Ver/controlar em 1ª pessoa'}>👁</button>
                     </div>
                 )}
+                {regioesCorpo.length > 0 && (
+                    <div className={`${styles.linha_objeto_grade} ${idSelecionado === SELECAO_CORPO_PERSONAGEM_EDITOR3D && regiaoCorpoSelecionada === null ? styles.linha_objeto_selecionado : ''}`}>
+                        <button type="button" className={styles.botao_conteudo_objeto} aria-pressed={idSelecionado === SELECAO_CORPO_PERSONAGEM_EDITOR3D && regiaoCorpoSelecionada === null} onClick={() => aoSelecionarCorpo(null)}>
+                            <span className={styles.espaco_arvore} />
+                            <span className={styles.icone_origem}>🧍</span>
+                            <span className={styles.nome_objeto}>Corpo</span>
+                            <strong>Contínuo</strong>
+                        </button>
+                        <span className={styles.botao_visibilidade} aria-hidden="true" />
+                    </div>
+                )}
+                {regioesCorpo.map(regiao => (
+                    <div key={regiao.membro} className={`${styles.linha_objeto_grade} ${styles.linha_titulo_camera} ${regiaoCorpoSelecionada === regiao.membro ? styles.linha_objeto_selecionado : ''}`}>
+                        <button type="button" className={styles.botao_conteudo_objeto} aria-pressed={regiaoCorpoSelecionada === regiao.membro} onClick={() => aoSelecionarCorpo(regiao.membro)}>
+                            <span className={styles.espaco_arvore} />
+                            <span className={styles.icone_objeto}>◈</span>
+                            <span className={styles.nome_objeto}>{regiao.rotulo}</span>
+                            <strong>Região</strong>
+                        </button>
+                        <span className={styles.botao_visibilidade} aria-hidden="true" />
+                    </div>
+                ))}
                 {temCamera && (
                     <div className={`${styles.linha_objeto_grade} ${styles.linha_titulo_camera} ${idSelecionado === SELECAO_TITULO_CAPA_ARTE_EDITOR3D ? styles.linha_objeto_selecionado : ''}`}>
                         <button type="button" className={styles.botao_conteudo_objeto} aria-pressed={idSelecionado === SELECAO_TITULO_CAPA_ARTE_EDITOR3D} onClick={() => aoSelecionar(SELECAO_TITULO_CAPA_ARTE_EDITOR3D)}>

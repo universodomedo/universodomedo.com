@@ -19,7 +19,10 @@ export type ParamCriacaoMalhaEditor3D = {
 const TIPOS_MESH_EDITOR3D: readonly { readonly tipo: TipoPrimitivaEditor3D; readonly nome: string; }[] = [
     { tipo: 'CUBO', nome: 'Cubo' },
     { tipo: 'CILINDRO', nome: 'Cilindro' },
+    { tipo: 'ESFERA', nome: 'Esfera' },
 ];
+
+const NOME_TIPO_MESH_EDITOR3D: Record<TipoPrimitivaEditor3D, string> = { CUBO: 'Cubo', CILINDRO: 'Cilindro', ESFERA: 'Esfera' };
 
 function grausParaRadianos(valor: number): number { return valor * (Math.PI / 180); };
 function radianosParaGraus(valor: number): number { return Number((valor * (180 / Math.PI)).toFixed(2)); };
@@ -41,7 +44,7 @@ export function PainelParametrizacaoMeshEditor3D({ params, aoMudarTipo, aoMudarS
     return (
         <div className={styles.painel_parametrizacao}>
             <header className={styles.cabecalho_parametrizacao}>
-                <span>Criar {ehCubo ? 'Cubo' : 'Cilindro'}</span>
+                <span>Criar {NOME_TIPO_MESH_EDITOR3D[params.tipo]}</span>
                 <strong>3D</strong>
             </header>
 

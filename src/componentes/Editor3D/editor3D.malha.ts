@@ -51,6 +51,33 @@ export function criaMalhaCilindro(segmentos = 24): MalhaEditavelLocal {
     return { vertices, faces, proximoIdFace: idFace + 1 };
 };
 
+// Esfera UV raio 0.5: polo sul + anéis intermediários + polo norte; fans triangulares nos polos e quads entre anéis (winding consistente com o cilindro).
+export function criaMalhaEsfera(segmentos = 16): MalhaEditavelLocal {
+    const r = 0.5;
+    const aneis = Math.max(3, Math.round(segmentos / 2));
+    const vertices: Vetor3Malha[] = [[0, -r, 0]];
+    for (let i = 1; i < aneis; i++) {
+        const teta = (i / aneis) * Math.PI;
+        const y = -Math.cos(teta) * r;
+        const raioAnel = Math.sin(teta) * r;
+        for (let j = 0; j < segmentos; j++) { const a = (j / segmentos) * Math.PI * 2; vertices.push([Math.cos(a) * raioAnel, y, Math.sin(a) * raioAnel]); }
+    }
+    vertices.push([0, r, 0]);
+
+    const indiceAnel = (i: number, j: number): number => 1 + (i - 1) * segmentos + (j % segmentos);
+    const poloSul = 0;
+    const poloNorte = vertices.length - 1;
+    const faces: FaceMalhaLocal[] = [];
+    let idFace = 0;
+    for (let j = 0; j < segmentos; j++) { idFace += 1; faces.push(face(idFace, `Polo Sul ${j + 1}`, [poloSul, indiceAnel(1, j), indiceAnel(1, j + 1)])); }
+    for (let i = 1; i < aneis - 1; i++) {
+        for (let j = 0; j < segmentos; j++) { idFace += 1; faces.push(face(idFace, `Gomo ${idFace}`, [indiceAnel(i, j), indiceAnel(i + 1, j), indiceAnel(i + 1, j + 1), indiceAnel(i, j + 1)])); }
+    }
+    for (let j = 0; j < segmentos; j++) { idFace += 1; faces.push(face(idFace, `Polo Norte ${j + 1}`, [poloNorte, indiceAnel(aneis - 1, j + 1), indiceAnel(aneis - 1, j)])); }
+
+    return { vertices, faces, proximoIdFace: idFace + 1 };
+};
+
 // Constrói a geometria de render a partir da malha: posições por vértice, faces via fan-triangulation, normais calculadas.
 export function criaGeometriaDeMalha(malha: MalhaEditavelLocal): BufferGeometry {
     const posicoes: number[] = [];
@@ -67,6 +94,87 @@ export function criaGeometriaDeMalha(malha: MalhaEditavelLocal): BufferGeometry 
     geometria.setIndex(indices);
     geometria.computeVertexNormals();
     return geometria;
+};
+
+// Superfície de subdivisão Catmull-Clark (o mecanismo Maya/Blender de forma orgânica): cada n-gon vira n quads e a malha
+// converge para uma superfície lisa — modela-se a GAIOLA simples (caixas/segmentos) e a subdivisão entrega a organicidade.
+// Suporta malhas fechadas (e bordas, com regra de midpoint); múltiplas cascas desconexas na mesma malha funcionam.
+export function subdivideMalhaCatmullClark(malha: MalhaEditavelLocal, iteracoes = 1): MalhaEditavelLocal {
+    let atual = malha;
+    for (let n = 0; n < iteracoes; n++) atual = subdivideUmaVezCatmullClark(atual);
+    return atual;
+};
+
+function subdivideUmaVezCatmullClark(malha: MalhaEditavelLocal): MalhaEditavelLocal {
+    const antigos = malha.vertices;
+    const facesAntigas = malha.faces;
+    const pontosFace: Vetor3Malha[] = facesAntigas.map(face => centroideDaMalha(malha, face.indicesVertices));
+
+    type ArestaSubdivisao = { a: number; b: number; facesIncidentes: number[]; indicePonto: number; };
+    const arestasPorChave = new Map<string, ArestaSubdivisao>();
+    const chaveAresta = (a: number, b: number): string => a < b ? `${a}-${b}` : `${b}-${a}`;
+    facesAntigas.forEach((face, indiceFace) => {
+        const ids = face.indicesVertices;
+        for (let i = 0; i < ids.length; i++) {
+            const chave = chaveAresta(ids[i], ids[(i + 1) % ids.length]);
+            let aresta = arestasPorChave.get(chave);
+            if (!aresta) { aresta = { a: ids[i], b: ids[(i + 1) % ids.length], facesIncidentes: [], indicePonto: -1 }; arestasPorChave.set(chave, aresta); }
+            aresta.facesIncidentes.push(indiceFace);
+        }
+    });
+
+    const facesDoVertice: number[][] = antigos.map(() => []);
+    facesAntigas.forEach((face, indiceFace) => { for (const v of face.indicesVertices) facesDoVertice[v].push(indiceFace); });
+    const arestasDoVertice: ArestaSubdivisao[][] = antigos.map(() => []);
+    for (const aresta of arestasPorChave.values()) { arestasDoVertice[aresta.a].push(aresta); arestasDoVertice[aresta.b].push(aresta); }
+
+    const soma = (destino: Vetor3Malha, origem: readonly [number, number, number]): void => { destino[0] += origem[0]; destino[1] += origem[1]; destino[2] += origem[2]; };
+    const vertices: Vetor3Malha[] = [];
+
+    // Vértices originais reposicionados: (F + 2R + (n-3)P) / n, com F = média dos pontos de face e R = média dos meios das arestas incidentes.
+    for (let v = 0; v < antigos.length; v++) {
+        const valencia = arestasDoVertice[v].length;
+        if (valencia === 0) { vertices.push([antigos[v][0], antigos[v][1], antigos[v][2]]); continue; }
+        const mediaFaces: Vetor3Malha = [0, 0, 0];
+        for (const indiceFace of facesDoVertice[v]) soma(mediaFaces, pontosFace[indiceFace]);
+        const totalFaces = facesDoVertice[v].length || 1;
+        const mediaMeios: Vetor3Malha = [0, 0, 0];
+        for (const aresta of arestasDoVertice[v]) soma(mediaMeios, [(antigos[aresta.a][0] + antigos[aresta.b][0]) / 2, (antigos[aresta.a][1] + antigos[aresta.b][1]) / 2, (antigos[aresta.a][2] + antigos[aresta.b][2]) / 2]);
+        const novo: Vetor3Malha = [0, 0, 0];
+        for (let eixo = 0; eixo < 3; eixo++) novo[eixo] = (mediaFaces[eixo] / totalFaces + 2 * (mediaMeios[eixo] / valencia) + (valencia - 3) * antigos[v][eixo]) / valencia;
+        vertices.push(novo);
+    }
+
+    const baseFaces = vertices.length;
+    for (const ponto of pontosFace) vertices.push([ponto[0], ponto[1], ponto[2]]);
+
+    for (const aresta of arestasPorChave.values()) {
+        aresta.indicePonto = vertices.length;
+        const meio: Vetor3Malha = [(antigos[aresta.a][0] + antigos[aresta.b][0]) / 2, (antigos[aresta.a][1] + antigos[aresta.b][1]) / 2, (antigos[aresta.a][2] + antigos[aresta.b][2]) / 2];
+        if (aresta.facesIncidentes.length === 2) {
+            const f1 = pontosFace[aresta.facesIncidentes[0]];
+            const f2 = pontosFace[aresta.facesIncidentes[1]];
+            vertices.push([(antigos[aresta.a][0] + antigos[aresta.b][0] + f1[0] + f2[0]) / 4, (antigos[aresta.a][1] + antigos[aresta.b][1] + f1[1] + f2[1]) / 4, (antigos[aresta.a][2] + antigos[aresta.b][2] + f1[2] + f2[2]) / 4]);
+        } else {
+            vertices.push(meio);
+        }
+    }
+
+    const faces: FaceMalhaLocal[] = [];
+    let idFace = 0;
+    facesAntigas.forEach((face, indiceFace) => {
+        const ids = face.indicesVertices;
+        const total = ids.length;
+        for (let i = 0; i < total; i++) {
+            const arestaSeguinte = arestasPorChave.get(chaveAresta(ids[i], ids[(i + 1) % total]));
+            const arestaAnterior = arestasPorChave.get(chaveAresta(ids[(i - 1 + total) % total], ids[i]));
+            if (!arestaSeguinte || !arestaAnterior) continue;
+            idFace += 1;
+            faces.push({ id: `f${idFace}`, nome: face.nome, indicesVertices: [ids[i], arestaSeguinte.indicePonto, baseFaces + indiceFace, arestaAnterior.indicePonto] });
+        }
+    });
+
+    return { vertices, faces, proximoIdFace: idFace + 1 };
 };
 
 export type ArestaMalhaLocal = { id: string; a: number; b: number; };
