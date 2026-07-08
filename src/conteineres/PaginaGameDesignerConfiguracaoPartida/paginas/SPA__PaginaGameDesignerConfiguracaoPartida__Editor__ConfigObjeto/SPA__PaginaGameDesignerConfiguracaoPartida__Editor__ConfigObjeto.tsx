@@ -7,16 +7,19 @@ import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputCom
 import InputNumerico from 'Componentes/Elementos/Inputs/InputNumerico/InputNumerico';
 import SelecionadorOpcoes from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorOpcoes/SelecionadorOpcoes';
 import { SeletorPosicaoMapa } from 'Componentes/ElementosDeJogo/SeletorPosicaoMapa/SeletorPosicaoMapa';
+import { EditorDescobertasInteragivel } from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Editor/EditorDescobertasInteragivel';
+import type { Descoberta } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 
 type Percepcao = 'DESPERCEBIDO' | 'PERCEBIDO';
+type OpcaoSelecionador = { value: string; label: string };
 
 type Props = {
     nome: string;
     aoMudarNome: (nome: string) => void;
     descricao: string;
     aoMudarDescricao: (descricao: string) => void;
-    durabilidadeMaxima: number;
-    aoMudarDurabilidade: (valor: number) => void;
+    pontosDurabilidadeMaximo: number;
+    aoMudarPontosDurabilidade: (valor: number) => void;
     percepcaoInicial: Percepcao;
     aoMudarPercepcao: (percepcao: Percepcao) => void;
     posicao: { x: number; y: number };
@@ -25,6 +28,10 @@ type Props = {
     alturaMetros: number;
     rotuloAtivo: string;
     marcadoresContexto: readonly { key: string; posicao: { x: number; y: number }; rotulo: string }[];
+    descobertas: readonly Descoberta[];
+    aoMudarDescobertas: (descobertas: Descoberta[]) => void;
+    opcoesCapacidades: readonly OpcaoSelecionador[];
+    opcoesInteragiveis: readonly OpcaoSelecionador[];
     salvar: () => void;
 };
 
@@ -33,7 +40,7 @@ const OPCOES_PERCEPCAO = [
     { value: 'DESPERCEBIDO', label: 'Despercebido (invisível até perceber)' },
 ];
 
-export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto({ nome, aoMudarNome, descricao, aoMudarDescricao, durabilidadeMaxima, aoMudarDurabilidade, percepcaoInicial, aoMudarPercepcao, posicao, aoMudarPosicao, larguraMetros, alturaMetros, rotuloAtivo, marcadoresContexto, salvar }: Props) {
+export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto({ nome, aoMudarNome, descricao, aoMudarDescricao, pontosDurabilidadeMaximo, aoMudarPontosDurabilidade, percepcaoInicial, aoMudarPercepcao, posicao, aoMudarPosicao, larguraMetros, alturaMetros, rotuloAtivo, marcadoresContexto, descobertas, aoMudarDescobertas, opcoesCapacidades, opcoesInteragiveis, salvar }: Props) {
     return (
         <ConteudoForm>
             <ConteudoForm.AreaCorpo>
@@ -46,8 +53,8 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__Conf
                 </InputComRotulo>
 
                 <div className={styles.linha}>
-                    <InputComRotulo rotulo="Durabilidade (pontos)">
-                        <InputNumerico value={durabilidadeMaxima} onChange={aoMudarDurabilidade} />
+                    <InputComRotulo rotulo="Pontos de Durabilidade">
+                        <InputNumerico value={pontosDurabilidadeMaximo} onChange={aoMudarPontosDurabilidade} />
                     </InputComRotulo>
                     <InputComRotulo rotulo="Percepção inicial">
                         <SelecionadorOpcoes opcoes={OPCOES_PERCEPCAO} valor={percepcaoInicial} onChange={valor => aoMudarPercepcao(valor === 'DESPERCEBIDO' ? 'DESPERCEBIDO' : 'PERCEBIDO')} />
@@ -57,6 +64,8 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__Conf
                 <InputComRotulo rotulo="Posição no mapa">
                     <SeletorPosicaoMapa larguraMetros={larguraMetros} alturaMetros={alturaMetros} posicao={posicao} aoMudarPosicao={aoMudarPosicao} rotuloAtivo={rotuloAtivo} marcadoresContexto={marcadoresContexto} />
                 </InputComRotulo>
+
+                <EditorDescobertasInteragivel descobertas={descobertas} aoMudarDescobertas={aoMudarDescobertas} opcoesCapacidades={opcoesCapacidades} opcoesInteragiveis={opcoesInteragiveis} />
             </ConteudoForm.AreaCorpo>
 
             <ConteudoForm.AreaBotoes>

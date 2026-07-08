@@ -9,9 +9,13 @@ import { MENUS_EDITOR_3D, type ComandoMenuEditor3D, type ItemMenuEditor3D } from
 interface BarraMenusEditor3DProps {
     readonly comandoDesabilitado: (comando: ComandoMenuEditor3D) => boolean;
     readonly aoComando: (comando: ComandoMenuEditor3D) => void;
+    readonly podeDesfazer: boolean;
+    readonly podeRefazer: boolean;
+    readonly aoDesfazer: () => void;
+    readonly aoRefazer: () => void;
 };
 
-export function BarraMenusEditor3D({ comandoDesabilitado, aoComando }: BarraMenusEditor3DProps) {
+export function BarraMenusEditor3D({ comandoDesabilitado, aoComando, podeDesfazer, podeRefazer, aoDesfazer, aoRefazer }: BarraMenusEditor3DProps) {
     const [menuAberto, setMenuAberto] = useState<string | null>(null);
 
     function acionaComando(comando: ComandoMenuEditor3D): void {
@@ -43,6 +47,11 @@ export function BarraMenusEditor3D({ comandoDesabilitado, aoComando }: BarraMenu
                     {menuAberto === menu.rotulo && <div className={styles.dropdown}>{menu.itens.map(renderizaItem)}</div>}
                 </div>
             ))}
+
+            <div className={styles.grupo_historico}>
+                <button type="button" className={styles.botao_historico} disabled={!podeDesfazer} onClick={aoDesfazer} title="Desfazer a última ação">↩ Desfazer</button>
+                <button type="button" className={styles.botao_historico} disabled={!podeRefazer} onClick={aoRefazer} title="Refazer a ação desfeita">↪ Refazer</button>
+            </div>
         </section>
     );
 };

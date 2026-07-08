@@ -104,6 +104,36 @@
     cursor: default;
 }
 
+/* ---- Desfazer/Refazer (afordância visível na barra de menus) ---- */
+.grupo_historico {
+    display: flex;
+    align-items: stretch;
+    margin-left: 0.5em;
+    padding-left: 0.5em;
+    border-left: 0.08em solid rgba(255, 255, 255, 0.12);
+}
+
+.botao_historico {
+    padding: 0 0.7em;
+    border: 0;
+    color: rgba(255, 255, 255, 0.86);
+    font: inherit;
+    font-size: 0.78em;
+    font-weight: 600;
+    background: transparent;
+    cursor: pointer;
+}
+
+.botao_historico:hover:not(:disabled) {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.botao_historico:disabled {
+    color: rgba(255, 255, 255, 0.24);
+    cursor: default;
+}
+
 /* ---- Barra de abas de projeto (VS Code) ---- */
 .barra_abas {
     position: relative;
@@ -417,6 +447,67 @@
 .botao_bevel:disabled {
     opacity: 0.45;
     cursor: default;
+}
+
+/* Operadores de gaiola (Cortar Anel / Inset / Fundir / Excluir) — neutros; Excluir com hover de perigo. */
+.botao_operador_malha {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.34em 0.7em;
+    border: 0.08em solid rgba(255, 255, 255, 0.28);
+    border-radius: 0.3em;
+    color: rgba(255, 255, 255, 0.92);
+    font: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    background: #2f2f33;
+    cursor: pointer;
+}
+
+.botao_operador_malha:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.55);
+    background: #3a3a40;
+}
+
+.botao_operador_malha:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+.botao_operador_malha_perigo:hover:not(:disabled) {
+    border-color: rgba(220, 90, 90, 0.75);
+    background: #3d2c2c;
+    color: #ffb3b3;
+}
+
+/* Valor compacto de operador (recuo do Bevel / fator do Inset) ao lado do botão correspondente. */
+.campo_valor_operador {
+    width: 5em;
+}
+
+.campo_valor_operador .campo_numero {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+}
+
+.campo_valor_operador .campo_numero > span {
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.campo_valor_operador .campo_numero > input {
+    width: 3.2em;
+    min-height: 1.7em;
+    padding: 0 0.35em;
+    border: 0.08em solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.3em;
+    color: rgba(255, 255, 255, 0.92);
+    font: inherit;
+    font-size: 0.8em;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
 }
 
 /* ---- Submenu do menu superior ---- */
@@ -1550,6 +1641,57 @@
     display: flex;
     gap: 0.45em;
     margin-top: 0.2em;
+}
+
+/* ---- Subdivisão Catmull-Clark do objeto (gaiola → superfície) ---- */
+.campo_subdivisao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    margin: 0.35em 0 0.2em;
+}
+
+.campo_subdivisao > span {
+    font-size: 0.72em;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.controles_subdivisao {
+    display: flex;
+    align-items: stretch;
+    gap: 0.45em;
+}
+
+.controles_subdivisao .botao_acao_objeto {
+    flex: 0 0 2.2em;
+    min-height: 1.8em;
+    font-weight: 700;
+}
+
+.controles_subdivisao .botao_acao_objeto:disabled {
+    color: rgba(255, 255, 255, 0.24);
+    border-color: rgba(255, 255, 255, 0.08);
+    background: transparent;
+    cursor: default;
+}
+
+.valor_subdivisao {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78em;
+    color: rgba(255, 255, 255, 0.85);
+    border: 0.08em solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.32em;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.dica_subdivisao {
+    margin: 0;
+    font-size: 0.66em;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.42);
 }
 
 .botao_acao_objeto {

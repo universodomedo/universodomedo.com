@@ -4,6 +4,7 @@ import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_
 
 import { Contexto__PaginaGameDesignerNovoSer__Provider, useContexto__PaginaGameDesignerNovoSer } from 'Contextos/Contexto__PaginaGameDesignerNovoSer/contexto';
 import { Contexto__PaginaGameDesignerNovoSer__Cadastro__Provider } from 'Contextos/Contexto__PaginaGameDesignerNovoSer__Cadastro/contexto';
+import { Contexto__PaginaGameDesignerNovoSer__Estrutura__Provider } from 'Contextos/Contexto__PaginaGameDesignerNovoSer__Estrutura/contexto';
 import { Contexto__PaginaGameDesignerNovoSer__Listagem__Provider } from 'Contextos/Contexto__PaginaGameDesignerNovoSer__Listagem/contexto';
 
 export default function Conteiner__PaginaGameDesignerNovoSer() {
@@ -20,8 +21,9 @@ type PropsConteiner__PaginaGameDesignerNovoSer = ReturnType<typeof useContexto__
 
 function resolveSaida(props: PropsConteiner__PaginaGameDesignerNovoSer): SaidaConteiner {
     if (props.estadoFluxo === 'CADASTRO') return criaSaidaConteiner(Contexto__PaginaGameDesignerNovoSer__Cadastro__Provider, { cancelaCadastro: props.voltaParaListagem, concluiCadastro: props.concluiCadastro });
+    if (props.estadoFluxo === 'ESTRUTURA' && props.idSerEstrutura !== null) return criaSaidaConteiner(Contexto__PaginaGameDesignerNovoSer__Estrutura__Provider, { idSer: props.idSerEstrutura, voltar: props.voltaParaListagem });
 
-    return criaSaidaConteiner(Contexto__PaginaGameDesignerNovoSer__Listagem__Provider, { listagemSeres: props.listagemSeres, iniciaCadastro: props.iniciaCadastro });
+    return criaSaidaConteiner(Contexto__PaginaGameDesignerNovoSer__Listagem__Provider, { listagemSeres: props.listagemSeres, iniciaCadastro: props.iniciaCadastro, abreEstrutura: props.abreEstrutura });
 };
 
 function useEstado(): PropsConteiner__PaginaGameDesignerNovoSer { return useContexto__PaginaGameDesignerNovoSer(); };

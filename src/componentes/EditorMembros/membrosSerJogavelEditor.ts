@@ -1,5 +1,8 @@
 import type { MembroSerJogavel, MembroSerJogavelInput } from 'types-nora-api';
 
+// Helpers PUROS do editor de membros do Ser jogavel, no territorio do EditorMembros compartilhado.
+// Duplicado do legado Contexto__PaginaGameDesignerSeres__EditarMembros/membrosSerJogavelEditor (que morre na aposentadoria do Ser legado).
+// TODO: 'Danificável' literal — validacao espelha o backend (TIPOS_INTERACAO); migrar quando o contrato de tipos de interacao propagar ao types-nora-api.
 export type CapacidadeInataMembroEditor = {
     readonly id: number;
     readonly nome: string;

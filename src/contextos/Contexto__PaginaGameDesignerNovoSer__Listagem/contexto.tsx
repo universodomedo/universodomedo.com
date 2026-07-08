@@ -9,6 +9,7 @@ import SPA__PaginaGameDesignerNovoSer__Listagem from 'Conteineres/PaginaGameDesi
 interface Contexto__PaginaGameDesignerNovoSer__Listagem__Props {
     listagemSeres: Contexto__PaginaGameDesignerNovoSer__Props['listagemSeres'];
     iniciaCadastro: Contexto__PaginaGameDesignerNovoSer__Props['iniciaCadastro'];
+    abreEstrutura: Contexto__PaginaGameDesignerNovoSer__Props['abreEstrutura'];
 };
 
 const Contexto__PaginaGameDesignerNovoSer__Listagem = createContext<Contexto__PaginaGameDesignerNovoSer__Listagem__Props | undefined>(undefined);
@@ -19,11 +20,11 @@ export const useContexto__PaginaGameDesignerNovoSer__Listagem = (): Contexto__Pa
     return context;
 };
 
-export const Contexto__PaginaGameDesignerNovoSer__Listagem__Provider = ({ listagemSeres, iniciaCadastro }: Contexto__PaginaGameDesignerNovoSer__Listagem__Props) => {
+export const Contexto__PaginaGameDesignerNovoSer__Listagem__Provider = ({ listagemSeres, iniciaCadastro, abreEstrutura }: Contexto__PaginaGameDesignerNovoSer__Listagem__Props) => {
     useConfigurarLayoutContextualizado({ subtitulo: 'Seres', fecharProps: undefined });
 
     return (
-        <Contexto__PaginaGameDesignerNovoSer__Listagem.Provider value={{ listagemSeres, iniciaCadastro }}>
+        <Contexto__PaginaGameDesignerNovoSer__Listagem.Provider value={{ listagemSeres, iniciaCadastro, abreEstrutura }}>
             <SPA__PaginaGameDesignerNovoSer__Listagem />
         </Contexto__PaginaGameDesignerNovoSer__Listagem.Provider>
     );

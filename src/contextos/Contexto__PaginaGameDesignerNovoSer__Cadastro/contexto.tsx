@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useState } from 'react';
-import { EventosApiRest, type OrigemEstruturaNovoSerJogavel, type TipoControlabilidadeNovoSer } from 'types-nora-api';
+import { EventosApiRest, type OrigemEstruturaSerJogavel, type TipoControlabilidadeSer } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
@@ -9,14 +9,14 @@ import { Contexto__PaginaGameDesignerNovoSer__Props } from '../Contexto__PaginaG
 import SPA__PaginaGameDesignerNovoSer__Cadastro from 'Conteineres/PaginaGameDesignerNovoSer/paginas/SPA__PaginaGameDesignerNovoSer__Cadastro/SPA__PaginaGameDesignerNovoSer__Cadastro';
 
 interface Contexto__PaginaGameDesignerNovoSer__Cadastro__Props {
-    tipo: TipoControlabilidadeNovoSer | null;
+    tipo: TipoControlabilidadeSer | null;
     nome: string;
-    origemEstrutura: OrigemEstruturaNovoSerJogavel | null;
+    origemEstrutura: OrigemEstruturaSerJogavel | null;
     salvando: boolean;
     podeSalvar: boolean;
-    setTipo: (tipo: TipoControlabilidadeNovoSer | null) => void;
+    setTipo: (tipo: TipoControlabilidadeSer | null) => void;
     setNome: (nome: string) => void;
-    setOrigemEstrutura: (origem: OrigemEstruturaNovoSerJogavel | null) => void;
+    setOrigemEstrutura: (origem: OrigemEstruturaSerJogavel | null) => void;
     criar: () => Promise<void>;
 };
 
@@ -36,9 +36,9 @@ export const useContexto__PaginaGameDesignerNovoSer__Cadastro = (): Contexto__Pa
 export const Contexto__PaginaGameDesignerNovoSer__Cadastro__Provider = ({ cancelaCadastro, concluiCadastro }: PropsProvider) => {
     useConfigurarLayoutContextualizado({ subtitulo: 'Novo Ser', fecharProps: { tipo: 'acao', executar: cancelaCadastro, tituloTooltip: 'Voltar para Listagem' } });
 
-    const [tipo, setTipo] = useState<TipoControlabilidadeNovoSer | null>(null);
+    const [tipo, setTipo] = useState<TipoControlabilidadeSer | null>(null);
     const [nome, setNome] = useState<string>('');
-    const [origemEstrutura, setOrigemEstrutura] = useState<OrigemEstruturaNovoSerJogavel | null>(null);
+    const [origemEstrutura, setOrigemEstrutura] = useState<OrigemEstruturaSerJogavel | null>(null);
     const [salvando, setSalvando] = useState<boolean>(false);
 
     const podeSalvar = tipo !== null && (tipo === 'nao_jogavel' ? nome.trim().length > 0 : origemEstrutura !== null) && !salvando;
@@ -47,7 +47,7 @@ export const Contexto__PaginaGameDesignerNovoSer__Cadastro__Provider = ({ cancel
         if (tipo === null) return;
         setSalvando(true);
         try {
-            await NoraApi.RestPOST(EventosApiRest.POST.NovoSerRegistro.criar, {
+            await NoraApi.RestPOST(EventosApiRest.POST.SerRegistro.criar, {
                 tipo,
                 nome: tipo === 'nao_jogavel' ? nome.trim() : null,
                 origemEstrutura: tipo === 'jogavel' ? origemEstrutura : null,

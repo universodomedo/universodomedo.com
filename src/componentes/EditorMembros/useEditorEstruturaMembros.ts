@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from 'react';
 import type { MembroSerJogavel, MembroSerJogavelInput } from 'types-nora-api';
 
 import { useListagemCapacidadesInatas } from 'Hooks/useListagemCapacidadesInatas';
-import { adicionaAcaoMembroEditor, alternaCapacidadeMembroEditor, atualizaCapacidadeAcaoMembroEditor, atualizaDanoAcaoMembroEditor, atualizaNomeAcaoMembroEditor, atualizaNomeMembroEditor, membroEditorVazio, membrosEditorDePersistidos, membrosEditorSaoValidos, montaInputMembrosEditor, obtemMensagemValidacaoMembrosEditor, removeAcaoMembroEditor, type MembroEditor } from 'Contextos/Contexto__PaginaGameDesignerSeres__EditarMembros/membrosSerJogavelEditor';
+import { adicionaAcaoMembroEditor, alternaCapacidadeMembroEditor, atualizaCapacidadeAcaoMembroEditor, atualizaDanoAcaoMembroEditor, atualizaNomeAcaoMembroEditor, atualizaNomeMembroEditor, membroEditorVazio, membrosEditorDePersistidos, membrosEditorSaoValidos, montaInputMembrosEditor, obtemMensagemValidacaoMembrosEditor, removeAcaoMembroEditor, type MembroEditor } from './membrosSerJogavelEditor';
 
 // Estado REUTILIZAVEL do editor de estrutura (Membros -> Capacidades Inatas + Acoes), extraido do editor legado, desacoplado de persistencia.
 // Quem usa: carrega os membros (carregar), edita pelas acoes e persiste com montaInput. Serve para a estrutura humana compartilhada e para a estrutura propria do nao-humano.

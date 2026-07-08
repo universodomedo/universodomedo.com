@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import type { CapacidadeInataMembroEditor, MembroEditor } from 'Contextos/Contexto__PaginaGameDesignerSeres__EditarMembros/membrosSerJogavelEditor';
+import type { CapacidadeInataMembroEditor, MembroEditor } from './membrosSerJogavelEditor';
 
 type CarregarMaisEditorMembros = { readonly podeCarregarMais: boolean; readonly aoCarregarMais: () => void; readonly carregando?: string | null; };
 

@@ -2,26 +2,26 @@
 
 import styles from './styles.module.css';
 
-import type { ConfiguracaoPartida, KeySerEmSala, SerEmSala } from 'types-nora-api';
+import type { ConfiguracaoPartida, KeySerEmSala } from 'types-nora-api';
 
 import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
 import InputNumerico from 'Componentes/Elementos/Inputs/InputNumerico/InputNumerico';
 import SelecionadorOpcoes from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorOpcoes/SelecionadorOpcoes';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Editor } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/contexto';
-import { KEY_SER_EM_SALA_VAZIA, ROTULOS_TIPO_CONDICAO_VITORIA, rotuloSer, type CondicaoVitoria, type TipoCondicaoVitoria } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
+import { KEY_SER_EM_SALA_VAZIA, ROTULOS_TIPO_CONDICAO_VITORIA, keySerEmSalaDaChave, objetosDaConfig, rotuloSer, seresDoGrupo, type CondicaoVitoria, type InteragivelSer, type TipoCondicaoVitoria } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 import { SecaoSeresEmSala } from './SecaoSeresEmSala';
 import { SecaoObjetos } from './SecaoObjetos';
-import { SecaoDescobertas } from './SecaoDescobertas';
 
 const OPCOES_TIPO_CONDICAO_VITORIA = (Object.keys(ROTULOS_TIPO_CONDICAO_VITORIA) as TipoCondicaoVitoria[]).map(tipo => ({ value: tipo, label: ROTULOS_TIPO_CONDICAO_VITORIA[tipo] }));
 
 // Subfluxo Formulário (vista principal do Runtime). O config, os helpers e o mapa de nomes dos Seres vêm do Controlador de Fluxo (contexto do Editor); este SPA só renderiza.
-// As grades (Controláveis / Não-controláveis / Objetos / Descobertas) disparam ações de fluxo — o resolveSaida decide seleção/config em vistas próprias.
+// As grades (Seres de Jogadores / Seres do Sistema / Objetos) são filtros do interagiveis unificado por controlador/tipo. Descobertas moram dentro de cada Interagível (config próprio).
 export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor() {
     const editor = useContexto__PaginaGameDesignerConfiguracaoPartida__Editor();
     const config = editor.config;
     const nomesPorIdSer = editor.nomesPorIdSer;
+    const seresSistema = seresDoGrupo(config, 'sistema');
 
     return (
         <ConteudoForm>
@@ -50,20 +50,18 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor() {
                         </div>
                     </fieldset>
 
-                    <SecaoSeresEmSala titulo="Controláveis" seres={config.controlaveis} nomesPorIdSer={nomesPorIdSer} aoAdicionar={() => editor.irParaSelecaoSer('controlaveis')} aoEditar={key => editor.irParaConfigSer('controlaveis', key)} aoRemover={key => editor.removeSerEmSala('controlaveis', key)} />
+                    <SecaoSeresEmSala titulo="Seres de Jogadores" seres={seresDoGrupo(config, 'jogador')} nomesPorIdSer={nomesPorIdSer} aoAdicionar={() => editor.irParaSelecaoSer('jogador')} aoEditar={chave => editor.irParaConfigSer(chave)} aoRemover={chave => editor.removeInteragivel(chave)} />
 
-                    <SecaoSeresEmSala titulo="Não-controláveis" seres={config.naoControlaveis} nomesPorIdSer={nomesPorIdSer} aoAdicionar={() => editor.irParaSelecaoSer('naoControlaveis')} aoEditar={key => editor.irParaConfigSer('naoControlaveis', key)} aoRemover={key => editor.removeSerEmSala('naoControlaveis', key)} />
+                    <SecaoSeresEmSala titulo="Seres do Sistema" seres={seresSistema} nomesPorIdSer={nomesPorIdSer} aoAdicionar={() => editor.irParaSelecaoSer('sistema')} aoEditar={chave => editor.irParaConfigSer(chave)} aoRemover={chave => editor.removeInteragivel(chave)} />
 
-                    <SecaoObjetos objetos={config.interagiveis} aoAdicionar={editor.adicionaEConfiguraObjeto} aoEditar={key => editor.irParaConfigObjeto(key)} aoRemover={editor.removeObjeto} />
-
-                    <SecaoDescobertas descobertas={config.descobertasCondicionadas} aoAdicionar={editor.adicionaEConfiguraDescoberta} aoEditar={key => editor.irParaConfigDescoberta(key)} aoRemover={editor.removeDescoberta} />
+                    <SecaoObjetos objetos={objetosDaConfig(config)} aoAdicionar={editor.adicionaEConfiguraObjeto} aoEditar={chave => editor.irParaConfigObjeto(chave)} aoRemover={chave => editor.removeInteragivel(chave)} />
 
                     <fieldset className={styles.secao}>
                         <legend>Condição de vitória</legend>
                         <InputComRotulo rotulo="Tipo">
                             <SelecionadorOpcoes opcoes={OPCOES_TIPO_CONDICAO_VITORIA} valor={config.condicaoVitoria.tipo} onChange={valor => { if (valor) editor.selecionaTipoCondicaoVitoria(valor as TipoCondicaoVitoria); }} isClearable={false} />
                         </InputComRotulo>
-                        <CamposCondicaoVitoria condicaoVitoria={config.condicaoVitoria} naoControlaveis={config.naoControlaveis} nomesPorIdSer={nomesPorIdSer} aoAtualizar={editor.atualizaConfig} />
+                        <CamposCondicaoVitoria condicaoVitoria={config.condicaoVitoria} seresSistema={seresSistema} nomesPorIdSer={nomesPorIdSer} aoAtualizar={editor.atualizaConfig} />
                     </fieldset>
                 </section>
             </ConteudoForm.AreaCorpo>
@@ -75,8 +73,8 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor() {
     );
 };
 
-function CamposCondicaoVitoria({ condicaoVitoria, naoControlaveis, nomesPorIdSer, aoAtualizar }: { condicaoVitoria: CondicaoVitoria; naoControlaveis: readonly SerEmSala[]; nomesPorIdSer: Record<number, string>; aoAtualizar: (parcial: Partial<ConfiguracaoPartida>) => void; }) {
-    const opcoesNaoControlaveis = naoControlaveis.map(ser => ({ value: ser.key, label: rotuloSer(ser, nomesPorIdSer) }));
+function CamposCondicaoVitoria({ condicaoVitoria, seresSistema, nomesPorIdSer, aoAtualizar }: { condicaoVitoria: CondicaoVitoria; seresSistema: readonly InteragivelSer[]; nomesPorIdSer: Record<number, string>; aoAtualizar: (parcial: Partial<ConfiguracaoPartida>) => void; }) {
+    const opcoesSeres = seresSistema.map(ser => ({ value: keySerEmSalaDaChave(ser.chave) as string, label: rotuloSer(ser, nomesPorIdSer) }));
     const valorSerEmSala = (keySerEmSala: KeySerEmSala): string | null => keySerEmSala === KEY_SER_EM_SALA_VAZIA ? null : keySerEmSala;
 
     if (condicaoVitoria.tipo === 'tempo_jogo_alcancado') {
@@ -88,16 +86,16 @@ function CamposCondicaoVitoria({ condicaoVitoria, naoControlaveis, nomesPorIdSer
     }
     if (condicaoVitoria.tipo === 'refem_percebido') {
         return (
-            <InputComRotulo rotulo="Refém (não-controlável a perceber)">
-                <SelecionadorOpcoes opcoes={opcoesNaoControlaveis} valor={valorSerEmSala(condicaoVitoria.keySerEmSala)} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'refem_percebido', keySerEmSala: (valor ?? KEY_SER_EM_SALA_VAZIA) as KeySerEmSala } })} placeholder="Selecione…" isClearable={false} />
+            <InputComRotulo rotulo="Refém (Ser do Sistema a perceber)">
+                <SelecionadorOpcoes opcoes={opcoesSeres} valor={valorSerEmSala(condicaoVitoria.keySerEmSala)} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'refem_percebido', keySerEmSala: (valor ?? KEY_SER_EM_SALA_VAZIA) as KeySerEmSala } })} placeholder="Selecione…" isClearable={false} />
             </InputComRotulo>
         );
     }
     if (condicaoVitoria.tipo === 'inimigo_derrotado') {
         return (
             <div className={styles.linha}>
-                <InputComRotulo rotulo="Não-controlável alvo">
-                    <SelecionadorOpcoes opcoes={opcoesNaoControlaveis} valor={valorSerEmSala(condicaoVitoria.keySerEmSala)} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'inimigo_derrotado', keySerEmSala: (valor ?? KEY_SER_EM_SALA_VAZIA) as KeySerEmSala, idEstatisticaDanificavel: condicaoVitoria.idEstatisticaDanificavel } })} placeholder="Selecione…" isClearable={false} />
+                <InputComRotulo rotulo="Ser do Sistema alvo">
+                    <SelecionadorOpcoes opcoes={opcoesSeres} valor={valorSerEmSala(condicaoVitoria.keySerEmSala)} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'inimigo_derrotado', keySerEmSala: (valor ?? KEY_SER_EM_SALA_VAZIA) as KeySerEmSala, idEstatisticaDanificavel: condicaoVitoria.idEstatisticaDanificavel } })} placeholder="Selecione…" isClearable={false} />
                 </InputComRotulo>
                 <InputComRotulo rotulo="Id estatística danificável">
                     <InputNumerico value={condicaoVitoria.idEstatisticaDanificavel} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'inimigo_derrotado', keySerEmSala: condicaoVitoria.keySerEmSala, idEstatisticaDanificavel: valor } })} />
@@ -108,8 +106,8 @@ function CamposCondicaoVitoria({ condicaoVitoria, naoControlaveis, nomesPorIdSer
     if (condicaoVitoria.tipo === 'proximidade_ser_alcancada') {
         return (
             <div className={styles.linha}>
-                <InputComRotulo rotulo="Ser a alcançar (não-controlável)">
-                    <SelecionadorOpcoes opcoes={opcoesNaoControlaveis} valor={valorSerEmSala(condicaoVitoria.keySerEmSala)} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'proximidade_ser_alcancada', keySerEmSala: (valor ?? KEY_SER_EM_SALA_VAZIA) as KeySerEmSala, distanciaMaximaMetros: condicaoVitoria.distanciaMaximaMetros } })} placeholder="Selecione…" isClearable={false} />
+                <InputComRotulo rotulo="Ser a alcançar (do Sistema)">
+                    <SelecionadorOpcoes opcoes={opcoesSeres} valor={valorSerEmSala(condicaoVitoria.keySerEmSala)} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'proximidade_ser_alcancada', keySerEmSala: (valor ?? KEY_SER_EM_SALA_VAZIA) as KeySerEmSala, distanciaMaximaMetros: condicaoVitoria.distanciaMaximaMetros } })} placeholder="Selecione…" isClearable={false} />
                 </InputComRotulo>
                 <InputComRotulo rotulo="Distância máx. (m)">
                     <InputNumerico value={condicaoVitoria.distanciaMaximaMetros} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'proximidade_ser_alcancada', keySerEmSala: condicaoVitoria.keySerEmSala, distanciaMaximaMetros: valor } })} />

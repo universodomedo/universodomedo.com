@@ -2,55 +2,77 @@
 
 import { useState } from 'react';
 
+import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { toast } from 'Hooks/useToast';
-import { rotuloSer } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
+import { rotuloInteragivel, type Descoberta } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Editor } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/contexto';
 import SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala/SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala';
 
-// Subfluxo Configuração do Ser em sala: edita o Ser selecionado (Nome em jogo + Posição, e Percepção inicial p/ não-controlável) na sua própria vista.
-// Genérico para controláveis e não-controláveis (grupoEmFoco). Buffer local → Salvar commita no config e volta; "voltar" é a navegação (fecharProps), dono no Controlador de Fluxo.
+// Subfluxo Configuração do Ser: edita o Ser (Nome em jogo, Percepção inicial, Posição) + as Descobertas que MORAM nele.
+// O controlador (jogador/sistema) é definido na criação, não aqui. Buffer local → Salvar commita no config e volta.
 export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala__Provider = () => {
-    const { config, nomesPorIdSer, grupoEmFoco, serEmEdicaoKey, atualizaSerEmSala, voltarParaFormulario } = useContexto__PaginaGameDesignerConfiguracaoPartida__Editor();
-    const ser = config[grupoEmFoco].find(serAtual => serAtual.key === serEmEdicaoKey) ?? null;
+    const { config, nomesPorIdSer, chaveEmEdicao, atualizaSer, voltarParaFormulario } = useContexto__PaginaGameDesignerConfiguracaoPartida__Editor();
+    const interagivel = config.interagiveis.find(interagivelAtual => interagivelAtual.chave === chaveEmEdicao) ?? null;
+    const ser = interagivel !== null && interagivel.tipo === 'ser' ? interagivel : null;
 
-    const [nomeExibicao, setNomeExibicao] = useState<string>(ser?.nomeExibicao ?? '');
-    const [posicao, setPosicao] = useState<{ x: number; y: number }>(ser?.posicaoInicial ?? { x: 0, y: 0 });
-    const [percepcaoInicial, setPercepcaoInicial] = useState<'DESPERCEBIDO' | 'PERCEBIDO'>(ser?.percepcaoInicial ?? 'DESPERCEBIDO');
+    const [nome, setNome] = useState<string>(ser?.nome ?? '');
+    const [posicao, setPosicao] = useState<{ x: number; y: number }>(ser?.posicao ?? { x: 0, y: 0 });
+    const [percepcaoInicial, setPercepcaoInicial] = useState<'DESPERCEBIDO' | 'PERCEBIDO'>(ser?.estadoPercepcaoInicial ?? 'DESPERCEBIDO');
+    const [descobertas, setDescobertas] = useState<readonly Descoberta[]>(ser?.descobertas ?? []);
+
+    const capacidades = useCapacidadesInatas();
 
     if (!ser) return null;
     const ativo = ser;
-    const ehNaoControlavel = grupoEmFoco === 'naoControlaveis';
 
     const mapaLogico = config.cenario.mapaLogico;
     // Rótulo do marcador ativo: Nome do Ser + nome em jogo (buffer ao vivo), nunca id.
-    const nomeSerAtivo = nomesPorIdSer[ativo.referencia.id];
-    const nomeEmJogoAtivo = nomeExibicao.trim().length > 0 ? nomeExibicao.trim() : null;
+    const nomeSerAtivo = nomesPorIdSer[ativo.idSer];
+    const nomeEmJogoAtivo = nome.trim().length > 0 ? nome.trim() : null;
     const rotuloAtivo = nomeSerAtivo && nomeEmJogoAtivo ? `${nomeSerAtivo} (${nomeEmJogoAtivo})` : (nomeSerAtivo ?? nomeEmJogoAtivo ?? 'Ser');
-    const marcadoresContexto = [...config.controlaveis, ...config.naoControlaveis]
-        .filter(serAtual => serAtual.key !== ativo.key && serAtual.posicaoInicial !== undefined)
-        .map(serAtual => ({ key: serAtual.key, posicao: { x: serAtual.posicaoInicial?.x ?? 0, y: serAtual.posicaoInicial?.y ?? 0 }, rotulo: rotuloSer(serAtual, nomesPorIdSer) }));
+    const marcadoresContexto = config.interagiveis
+        .filter(interagivelAtual => interagivelAtual.chave !== ativo.chave)
+        .map(interagivelAtual => ({ key: interagivelAtual.chave, posicao: { x: interagivelAtual.posicao?.x ?? 0, y: interagivelAtual.posicao?.y ?? 0 }, rotulo: rotuloInteragivel(interagivelAtual, nomesPorIdSer) }));
+    const opcoesCapacidades = capacidades.registros.map(capacidade => ({ value: String(capacidade.id), label: `${capacidade.nome} (${capacidade.nomeInteracao})` }));
+    const opcoesInteragiveis = config.interagiveis.filter(interagivelAtual => interagivelAtual.chave !== ativo.chave).map(interagivelAtual => ({ value: interagivelAtual.chave, label: rotuloInteragivel(interagivelAtual, nomesPorIdSer) }));
 
     function salvar(): void {
-        atualizaSerEmSala(grupoEmFoco, ativo.key, ehNaoControlavel
-            ? { nomeExibicao: nomeExibicao.trim().length > 0 ? nomeExibicao : undefined, posicaoInicial: posicao, percepcaoInicial }
-            : { nomeExibicao: nomeExibicao.trim().length > 0 ? nomeExibicao : undefined, posicaoInicial: posicao });
-        void toast.sucesso(ehNaoControlavel ? 'Não-controlável salvo' : 'Controlável salvo');
+        atualizaSer(ativo.chave, { nome, posicao, estadoPercepcaoInicial: percepcaoInicial, descobertas });
+        void toast.sucesso('Ser salvo');
         voltarParaFormulario();
     };
 
     return (
         <SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala
-            nomeExibicao={nomeExibicao}
-            aoMudarNomeExibicao={setNomeExibicao}
+            nome={nome}
+            aoMudarNome={setNome}
             posicao={posicao}
             aoMudarPosicao={setPosicao}
-            percepcaoInicial={ehNaoControlavel ? percepcaoInicial : null}
+            percepcaoInicial={percepcaoInicial}
             aoMudarPercepcao={setPercepcaoInicial}
             larguraMetros={mapaLogico.larguraMetros}
             alturaMetros={mapaLogico.alturaMetros}
             rotuloAtivo={rotuloAtivo}
             marcadoresContexto={marcadoresContexto}
+            descobertas={descobertas}
+            aoMudarDescobertas={setDescobertas}
+            opcoesCapacidades={opcoesCapacidades}
+            opcoesInteragiveis={opcoesInteragiveis}
             salvar={salvar}
         />
     );
+};
+
+function useCapacidadesInatas() {
+    return useNoraGraphQLListagem('CapacidadeInata', {
+        select: ['id', 'nome', 'nomeInteracao'],
+        itensPorPagina: 100,
+        carregando: 'Buscando Capacidades Inatas',
+        mensagemErro: 'Houve um erro recuperando as Capacidades Inatas',
+        mensagemListaVazia: 'Nenhuma capacidade inata cadastrada.',
+        mensagemListaVaziaComFiltro: 'Nenhuma capacidade inata encontrada com os filtros atuais.',
+        carregamento: 'BARRA',
+        montaParametrosConsulta: params => ({ where: params.where, order: { id: 'ASC' }, limit: params.limit, offset: params.offset }),
+        montaParametrosTotalDeRegistros: where => ({ where }),
+    });
 };

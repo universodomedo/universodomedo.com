@@ -22,7 +22,7 @@ interface PainelLateralEditor3DProps {
     readonly colecoes: readonly ColecaoArvoreEditor3D[];
     readonly totalObjetos: number;
     readonly idSelecionado: number | null;
-    readonly objetoSelecionado: { readonly nome: string; readonly cor: string; readonly tipoRotulo: string; readonly peca: { readonly idPeca: string; readonly nome: string } | null } | null;
+    readonly objetoSelecionado: { readonly nome: string; readonly cor: string; readonly tipoRotulo: string; readonly subdivisao: number; readonly peca: { readonly idPeca: string; readonly nome: string } | null } | null;
     readonly transformSelecionado: TransformEditor3D | null;
     readonly camera: CameraEditor3D | null;
     readonly capaArte: CapaArteEditor3D;
@@ -41,6 +41,8 @@ interface PainelLateralEditor3DProps {
     readonly aoAlternarVisibilidade: (id: number) => void;
     readonly aoRenomearObjeto: (nome: string) => void;
     readonly aoMudarCorObjeto: (cor: string) => void;
+    readonly aoMudarSubdivisaoObjeto: (subdivisao: number) => void;
+    readonly aoEspelharObjetoX: () => void;
     readonly aoDuplicarObjeto: () => void;
     readonly aoExcluirObjeto: () => void;
     readonly aoAtualizarParametroCorpo: (regiao: MembroPersonagemEditor3D | null, campo: CampoParametroRegiaoEditor3D, valor: number) => void;
@@ -93,7 +95,7 @@ export function PainelLateralEditor3D(props: PainelLateralEditor3DProps) {
                 <>
                     {props.objetoSelecionado !== null && (
                         <PainelColapsavelEditor3D titulo="Objeto" valor={props.objetoSelecionado.tipoRotulo}>
-                            <PainelObjetoEditor3D nome={props.objetoSelecionado.nome} cor={props.objetoSelecionado.cor} peca={props.objetoSelecionado.peca} aoRenomear={props.aoRenomearObjeto} aoMudarCor={props.aoMudarCorObjeto} aoDuplicar={props.aoDuplicarObjeto} aoExcluir={props.aoExcluirObjeto} aoRemoverPeca={props.aoRemoverPeca} />
+                            <PainelObjetoEditor3D nome={props.objetoSelecionado.nome} cor={props.objetoSelecionado.cor} subdivisao={props.objetoSelecionado.subdivisao} peca={props.objetoSelecionado.peca} aoRenomear={props.aoRenomearObjeto} aoMudarCor={props.aoMudarCorObjeto} aoMudarSubdivisao={props.aoMudarSubdivisaoObjeto} aoEspelharX={props.aoEspelharObjetoX} aoDuplicar={props.aoDuplicarObjeto} aoExcluir={props.aoExcluirObjeto} aoRemoverPeca={props.aoRemoverPeca} />
                         </PainelColapsavelEditor3D>
                     )}
                     <PainelColapsavelEditor3D titulo="Transform" valor={props.transformSelecionado !== null ? '1' : '0'}>

@@ -1,44 +1,34 @@
 import type { ConfiguracaoPartida, KeySerEmSala, PartidaGraphqlDto } from 'types-nora-api';
+import type { Controlador, Descoberta, Interagivel } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 
-// A leitura GraphQL da Partida entrega o configuracao em forma "achatada": condicaoVitoria vira { tipo + campos de todas as variantes opcionais }
-// e os tipos de marca (KeySerEmSala, 'Ser', enums de percepcao) chegam alargados como string. O Editor trabalha no ConfiguracaoPartida nativo
-// (uniao discriminada de condicaoVitoria, KeySerEmSala). Este remap reconstroi o nativo a partir do GraphQL — a forma achatada nao escapa daqui.
+// A leitura GraphQL da Partida entrega o configuracao "achatado": o interagivel vem com os campos de ambas as variantes (objeto|ser) opcionais + tipo,
+// condicaoVitoria com os campos de todas as variantes opcionais, e os tipos de marca (KeySerEmSala, enums) alargados como string. O Editor trabalha no
+// ConfiguracaoPartida nativo (uniao discriminada de interagivel/condicaoVitoria). Este remap reconstroi o nativo — a forma achatada nao escapa daqui.
 type ConfiguracaoPartidaGraphql = NonNullable<PartidaGraphqlDto['configuracao']>;
-type SerEmSalaGraphql = ConfiguracaoPartidaGraphql['controlaveis'][number];
 type InteragivelGraphql = ConfiguracaoPartidaGraphql['interagiveis'][number];
-type DescobertaGraphql = ConfiguracaoPartidaGraphql['descobertasCondicionadas'][number];
+type DescobertaGraphql = InteragivelGraphql['descobertas'][number];
 type CondicaoVitoriaGraphql = ConfiguracaoPartidaGraphql['condicaoVitoria'];
 
-function remapeiaSerEmSala(ser: SerEmSalaGraphql): ConfiguracaoPartida['controlaveis'][number] {
-    return {
-        key: ser.key as KeySerEmSala,
-        referencia: { tipo: 'Ser', id: ser.referencia.id },
-        posicaoInicial: { x: ser.posicaoInicial.x, y: ser.posicaoInicial.y },
-        nomeExibicao: ser.nomeExibicao === null ? undefined : ser.nomeExibicao,
-        percepcaoInicial: ser.percepcaoInicial === null ? undefined : ser.percepcaoInicial as 'DESPERCEBIDO' | 'PERCEBIDO',
-    };
+function remapeiaDescoberta(descoberta: DescobertaGraphql): Descoberta {
+    return { nome: descoberta.nome, descricaoInterna: descoberta.descricaoInterna, idCapacidadeInata: descoberta.idCapacidadeInata, recompensas: descoberta.recompensas.map(recompensa => ({ dificuldadeMinima: recompensa.dificuldadeMinima, chavesReveladas: recompensa.chavesReveladas ?? [] })) };
 };
 
-function remapeiaInteragivel(interagivel: InteragivelGraphql): ConfiguracaoPartida['interagiveis'][number] {
-    return {
-        key: interagivel.key,
+function remapeiaControlador(controlador: InteragivelGraphql['controlador']): Controlador {
+    if (controlador !== null && controlador.tipo === 'jogador') return { tipo: 'jogador', slotJogador: controlador.slotJogador ?? 1 };
+    return { tipo: 'sistema' };
+};
+
+function remapeiaInteragivel(interagivel: InteragivelGraphql): Interagivel {
+    const base = {
+        chave: interagivel.chave,
         nome: interagivel.nome,
-        tipo: interagivel.tipo as 'ser' | 'objeto' | 'elemento_sensorial',
         descricao: interagivel.descricao,
         posicao: interagivel.posicao === null ? null : { x: interagivel.posicao.x, y: interagivel.posicao.y },
         estadoPercepcaoInicial: interagivel.estadoPercepcaoInicial as 'DESPERCEBIDO' | 'PERCEBIDO',
-        durabilidadeMaxima: interagivel.durabilidadeMaxima,
+        descobertas: interagivel.descobertas.map(remapeiaDescoberta),
     };
-};
-
-function remapeiaDescoberta(descoberta: DescobertaGraphql): ConfiguracaoPartida['descobertasCondicionadas'][number] {
-    return {
-        key: descoberta.key,
-        nome: descoberta.nome,
-        descricaoInterna: descoberta.descricaoInterna,
-        idCapacidadeInata: descoberta.idCapacidadeInata,
-        recompensas: descoberta.recompensas.map(recompensa => ({ dificuldadeMinima: recompensa.dificuldadeMinima, keysSeresPercebidos: recompensa.keysSeresPercebidos as readonly KeySerEmSala[], keysInteragiveisPercebidos: recompensa.keysInteragiveisPercebidos ?? [] })),
-    };
+    if (interagivel.tipo === 'ser') return { ...base, tipo: 'ser', idSer: interagivel.idSer ?? 0, controlador: remapeiaControlador(interagivel.controlador) };
+    return { ...base, tipo: 'objeto', pontosDurabilidadeMaximo: interagivel.pontosDurabilidadeMaximo ?? 1 };
 };
 
 function remapeiaCondicaoVitoria(condicao: CondicaoVitoriaGraphql): ConfiguracaoPartida['condicaoVitoria'] {
@@ -53,10 +43,7 @@ export function remapeiaConfiguracaoPartidaGraphql(configuracao: ConfiguracaoPar
     return {
         narracaoInicial: configuracao.narracaoInicial,
         cenario: { nome: configuracao.cenario.nome, mapaLogico: { larguraMetros: configuracao.cenario.mapaLogico.larguraMetros, alturaMetros: configuracao.cenario.mapaLogico.alturaMetros } },
-        controlaveis: configuracao.controlaveis.map(remapeiaSerEmSala),
-        naoControlaveis: configuracao.naoControlaveis.map(remapeiaSerEmSala),
         interagiveis: configuracao.interagiveis.map(remapeiaInteragivel),
-        descobertasCondicionadas: configuracao.descobertasCondicionadas.map(remapeiaDescoberta),
         condicaoVitoria: remapeiaCondicaoVitoria(configuracao.condicaoVitoria),
         temporal: configuracao.temporal === null ? undefined : { momentoInicialMs: configuracao.temporal.momentoInicialMs },
     };

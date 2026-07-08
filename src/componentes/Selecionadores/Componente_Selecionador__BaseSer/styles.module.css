@@ -1,9 +1,0 @@
-.item_base {
-    display: flex;
-    align-items: center;
-    min-height: 2.4em;
-}
-
-.nome {
-    font-size: 1em;
-}

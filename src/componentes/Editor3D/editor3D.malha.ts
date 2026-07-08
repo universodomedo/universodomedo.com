@@ -96,6 +96,9 @@ export function criaGeometriaDeMalha(malha: MalhaEditavelLocal): BufferGeometry 
     return geometria;
 };
 
+// Teto de níveis de subdivisão de exibição por objeto (cada nível multiplica as faces por ~4; 3 é o limite prático em JS).
+export const MAXIMO_SUBDIVISAO_MALHA_EDITOR3D = 3;
+
 // Superfície de subdivisão Catmull-Clark (o mecanismo Maya/Blender de forma orgânica): cada n-gon vira n quads e a malha
 // converge para uma superfície lisa — modela-se a GAIOLA simples (caixas/segmentos) e a subdivisão entrega a organicidade.
 // Suporta malhas fechadas (e bordas, com regra de midpoint); múltiplas cascas desconexas na mesma malha funcionam.
@@ -312,4 +315,215 @@ export function chanframaAresta(malha: MalhaEditavelLocal, a: number, b: number,
     proximoIdFace += 1;
 
     return { malha: { vertices, faces, proximoIdFace }, indicesChanfro };
+};
+
+// Remove vértices órfãos (não referenciados por nenhuma face) e remapeia os índices das faces.
+function removeVerticesOrfaosDaMalha(vertices: readonly Vetor3Malha[], faces: readonly FaceMalhaLocal[]): { vertices: Vetor3Malha[]; faces: FaceMalhaLocal[]; remapa: Map<number, number> } {
+    const usados = new Set<number>();
+    for (const face of faces) for (const indice of face.indicesVertices) usados.add(indice);
+    const remapa = new Map<number, number>();
+    const novos: Vetor3Malha[] = [];
+    for (let i = 0; i < vertices.length; i += 1) { if (usados.has(i)) { remapa.set(i, novos.length); novos.push([vertices[i][0], vertices[i][1], vertices[i][2]]); } }
+    return { vertices: novos, faces: faces.map(face => ({ ...face, indicesVertices: face.indicesVertices.map(indice => remapa.get(indice) ?? 0) })), remapa };
+};
+
+// Corte de anel (loop cut): insere um anel de arestas atravessando a sequência de QUADS perpendicular à aresta (a,b).
+// Caminha de quad em quad pela aresta oposta até fechar o anel ou parar em borda/face não-quad (anel aberto); nas pontas
+// abertas o ponto médio terminal é inserido também na face vizinha que interrompeu (tri/n-gon ganha um vértice — sem T-junction).
+export function cortaAnelAresta(malha: MalhaEditavelLocal, a: number, b: number): { malha: MalhaEditavelLocal; indicesNovoAnel: number[] } | null {
+    const chave = (x: number, y: number): string => x < y ? `${x}-${y}` : `${y}-${x}`;
+    const facesPorAresta = new Map<string, FaceMalhaLocal[]>();
+    for (const face of malha.faces) {
+        const ids = face.indicesVertices;
+        for (let i = 0; i < ids.length; i += 1) {
+            const k = chave(ids[i], ids[(i + 1) % ids.length]);
+            const lista = facesPorAresta.get(k);
+            if (lista) lista.push(face); else facesPorAresta.set(k, [face]);
+        }
+    }
+
+    function arestaOposta(face: FaceMalhaLocal, u: number, v: number): [number, number] | null {
+        if (face.indicesVertices.length !== 4) return null;
+        const ids = face.indicesVertices;
+        const i = ids.findIndex((id, idx) => (id === u && ids[(idx + 1) % 4] === v) || (id === v && ids[(idx + 1) % 4] === u));
+        if (i < 0) return null;
+        return [ids[(i + 2) % 4], ids[(i + 3) % 4]];
+    };
+
+    // Sequência do anel: em anel aberto, arestas.length === quadsAnel.length + 1; fechado, comprimentos iguais.
+    const arestas: [number, number][] = [[a, b]];
+    const quadsAnel: FaceMalhaLocal[] = [];
+    const arestasVisitadas = new Set<string>([chave(a, b)]);
+    const quadsUsados = new Set<string>();
+    let fechado = false;
+
+    function caminhaDesde(acrescentaNoFim: boolean): void {
+        let atual = acrescentaNoFim ? arestas[arestas.length - 1] : arestas[0];
+        for (;;) {
+            const proxima = (facesPorAresta.get(chave(atual[0], atual[1])) ?? []).find(face => !quadsUsados.has(face.id) && face.indicesVertices.length === 4);
+            if (!proxima) return;
+            const oposta = arestaOposta(proxima, atual[0], atual[1]);
+            if (!oposta) return;
+            quadsUsados.add(proxima.id);
+            if (acrescentaNoFim) quadsAnel.push(proxima); else quadsAnel.unshift(proxima);
+            if (chave(oposta[0], oposta[1]) === chave(a, b)) { fechado = true; return; }
+            if (arestasVisitadas.has(chave(oposta[0], oposta[1]))) return;
+            arestasVisitadas.add(chave(oposta[0], oposta[1]));
+            if (acrescentaNoFim) arestas.push(oposta); else arestas.unshift(oposta);
+            atual = oposta;
+        }
+    };
+
+    caminhaDesde(true);
+    if (!fechado) caminhaDesde(false);
+    if (quadsAnel.length === 0) return null;
+
+    const vertices: Vetor3Malha[] = malha.vertices.map(vertice => [vertice[0], vertice[1], vertice[2]]);
+    const meioPorChave = new Map<string, number>();
+    for (const [u, v] of arestas) {
+        const k = chave(u, v);
+        if (meioPorChave.has(k)) continue;
+        meioPorChave.set(k, vertices.length);
+        vertices.push([(vertices[u][0] + vertices[v][0]) / 2, (vertices[u][1] + vertices[v][1]) / 2, (vertices[u][2] + vertices[v][2]) / 2]);
+    }
+
+    let proximoIdFace = malha.proximoIdFace;
+    const idsQuadsAnel = new Set(quadsAnel.map(face => face.id));
+    const facesNovas: FaceMalhaLocal[] = [];
+    for (let j = 0; j < quadsAnel.length; j += 1) {
+        const quad = quadsAnel[j];
+        const entrada = arestas[j];
+        const ids = quad.indicesVertices;
+        const i = ids.findIndex((id, idx) => { const seguinte = ids[(idx + 1) % 4]; return (id === entrada[0] && seguinte === entrada[1]) || (id === entrada[1] && seguinte === entrada[0]); });
+        if (i < 0) continue;
+        const p0 = ids[i];
+        const p1 = ids[(i + 1) % 4];
+        const p2 = ids[(i + 2) % 4];
+        const p3 = ids[(i + 3) % 4];
+        const m1 = meioPorChave.get(chave(p0, p1));
+        const m2 = meioPorChave.get(chave(p2, p3));
+        if (m1 === undefined || m2 === undefined) continue;
+        facesNovas.push({ id: `f${proximoIdFace}`, nome: quad.nome, indicesVertices: [p0, m1, m2, p3] });
+        proximoIdFace += 1;
+        facesNovas.push({ id: `f${proximoIdFace}`, nome: quad.nome, indicesVertices: [m1, p1, p2, m2] });
+        proximoIdFace += 1;
+    }
+
+    // Pontas do anel aberto: insere o ponto médio terminal na face vizinha não-quad (interior do anel já é consistente por construção).
+    const facesAjustadas = malha.faces.filter(face => !idsQuadsAnel.has(face.id)).map(face => {
+        if (fechado) return face;
+        let ids = [...face.indicesVertices];
+        for (const terminal of [arestas[0], arestas[arestas.length - 1]]) {
+            const meio = meioPorChave.get(chave(terminal[0], terminal[1]));
+            if (meio === undefined) continue;
+            for (let i = 0; i < ids.length; i += 1) {
+                if (chave(ids[i], ids[(i + 1) % ids.length]) === chave(terminal[0], terminal[1])) { ids = [...ids.slice(0, i + 1), meio, ...ids.slice(i + 1)]; break; }
+            }
+        }
+        return ids.length === face.indicesVertices.length ? face : { ...face, indicesVertices: ids };
+    });
+
+    return { malha: { vertices, faces: [...facesAjustadas, ...facesNovas], proximoIdFace }, indicesNovoAnel: [...meioPorChave.values()] };
+};
+
+// Inset da face: encolhe a face em direção ao centróide criando uma moldura de quads (o "extrude sem altura + escala" da modelagem de gaiola).
+export function insetaFace(malha: MalhaEditavelLocal, idFace: string, fator = 0.3): { malha: MalhaEditavelLocal; idNovaFace: string; indicesNovaFace: number[] } {
+    const face = malha.faces.find(item => item.id === idFace);
+    if (!face) return { malha, idNovaFace: idFace, indicesNovaFace: [] };
+
+    const centro = centroideDaMalha(malha, face.indicesVertices);
+    const base = malha.vertices.length;
+    const novosVertices: Vetor3Malha[] = face.indicesVertices.map(indice => { const v = malha.vertices[indice]; return [v[0] + fator * (centro[0] - v[0]), v[1] + fator * (centro[1] - v[1]), v[2] + fator * (centro[2] - v[2])]; });
+    const vertices: Vetor3Malha[] = [...malha.vertices, ...novosVertices];
+    const indicesNovaFace = face.indicesVertices.map((_, posicao) => base + posicao);
+
+    let proximoIdFace = malha.proximoIdFace;
+    const faces: FaceMalhaLocal[] = malha.faces.filter(item => item.id !== idFace);
+    const idNovaFace = `f${proximoIdFace}`;
+    proximoIdFace += 1;
+    faces.push({ id: idNovaFace, nome: 'Inset', indicesVertices: indicesNovaFace });
+
+    const total = face.indicesVertices.length;
+    for (let i = 0; i < total; i += 1) {
+        const i2 = (i + 1) % total;
+        faces.push({ id: `f${proximoIdFace}`, nome: `Inset Moldura ${i + 1}`, indicesVertices: [face.indicesVertices[i], face.indicesVertices[i2], indicesNovaFace[i2], indicesNovaFace[i]] });
+        proximoIdFace += 1;
+    }
+
+    return { malha: { vertices, faces, proximoIdFace }, idNovaFace, indicesNovaFace };
+};
+
+// Exclui faces por id; vértices órfãos são removidos com remapeamento. Bloqueado se a malha ficaria sem faces.
+export function excluiFacesDaMalha(malha: MalhaEditavelLocal, idsFaces: readonly string[]): MalhaEditavelLocal | null {
+    const alvo = new Set(idsFaces);
+    const restantes = malha.faces.filter(face => !alvo.has(face.id));
+    if (restantes.length === 0 || restantes.length === malha.faces.length) return null;
+
+    const podados = removeVerticesOrfaosDaMalha(malha.vertices, restantes);
+    return { vertices: podados.vertices, faces: podados.faces, proximoIdFace: malha.proximoIdFace };
+};
+
+// Exclui vértices: toda face que toca qualquer um deles some; órfãos removidos. Bloqueado se a malha ficaria sem faces.
+export function excluiVerticesDaMalha(malha: MalhaEditavelLocal, indices: readonly number[]): MalhaEditavelLocal | null {
+    const alvo = new Set(indices);
+    const restantes = malha.faces.filter(face => !face.indicesVertices.some(indice => alvo.has(indice)));
+    if (restantes.length === 0 || restantes.length === malha.faces.length) return null;
+
+    const podados = removeVerticesOrfaosDaMalha(malha.vertices, restantes);
+    return { vertices: podados.vertices, faces: podados.faces, proximoIdFace: malha.proximoIdFace };
+};
+
+// Espelha a malha no plano X=0 LOCAL e solda os vértices do plano (|x| < epsilon): o fluxo é modelar uma metade
+// (removendo a face da costura com Excluir) e espelhar a outra. Faces espelhadas têm o winding invertido (reflexão
+// troca a orientação); faces inteiramente no plano não são duplicadas.
+export function espelhaMalhaX(malha: MalhaEditavelLocal, epsilon = 0.0001): MalhaEditavelLocal {
+    const vertices: Vetor3Malha[] = malha.vertices.map(vertice => Math.abs(vertice[0]) < epsilon ? [0, vertice[1], vertice[2]] : [vertice[0], vertice[1], vertice[2]]);
+    const espelhoDe = new Map<number, number>();
+    const totalOriginais = vertices.length;
+    for (let i = 0; i < totalOriginais; i += 1) {
+        if (vertices[i][0] === 0) { espelhoDe.set(i, i); continue; }
+        espelhoDe.set(i, vertices.length);
+        vertices.push([-vertices[i][0], vertices[i][1], vertices[i][2]]);
+    }
+
+    let proximoIdFace = malha.proximoIdFace;
+    const faces: FaceMalhaLocal[] = [...malha.faces];
+    for (const face of malha.faces) {
+        const idsEspelho = face.indicesVertices.map(indice => espelhoDe.get(indice) ?? indice);
+        if (idsEspelho.every((id, i) => id === face.indicesVertices[i])) continue;
+        faces.push({ id: `f${proximoIdFace}`, nome: `${face.nome} (espelho)`, indicesVertices: [...idsEspelho].reverse() });
+        proximoIdFace += 1;
+    }
+
+    return { vertices, faces, proximoIdFace };
+};
+
+// Funde (weld) os vértices selecionados no centróide deles: faces degeneradas (índice repetido ou menos de 3 vértices) somem; órfãos removidos.
+export function fundeVerticesDaMalha(malha: MalhaEditavelLocal, indices: readonly number[]): { malha: MalhaEditavelLocal; indiceFundido: number } | null {
+    if (indices.length < 2) return null;
+
+    const alvo = new Set(indices);
+    const destino = Math.min(...indices);
+    const centro: Vetor3Malha = [0, 0, 0];
+    for (const indice of indices) { centro[0] += malha.vertices[indice][0]; centro[1] += malha.vertices[indice][1]; centro[2] += malha.vertices[indice][2]; }
+    centro[0] /= indices.length;
+    centro[1] /= indices.length;
+    centro[2] /= indices.length;
+
+    const vertices: Vetor3Malha[] = malha.vertices.map((vertice, i) => i === destino ? centro : [vertice[0], vertice[1], vertice[2]]);
+    const faces: FaceMalhaLocal[] = [];
+    for (const face of malha.faces) {
+        const remapeados = face.indicesVertices.map(indice => alvo.has(indice) ? destino : indice);
+        const compactados: number[] = [];
+        for (const indice of remapeados) if (compactados[compactados.length - 1] !== indice) compactados.push(indice);
+        while (compactados.length > 1 && compactados[0] === compactados[compactados.length - 1]) compactados.pop();
+        if (compactados.length >= 3 && new Set(compactados).size === compactados.length) faces.push({ ...face, indicesVertices: compactados });
+    }
+    if (faces.length === 0) return null;
+
+    const podados = removeVerticesOrfaosDaMalha(vertices, faces);
+    const indiceFundido = podados.remapa.get(destino);
+    if (indiceFundido === undefined) return null;
+
+    return { malha: { vertices: podados.vertices, faces: podados.faces, proximoIdFace: malha.proximoIdFace }, indiceFundido };
 };

@@ -2,6 +2,8 @@
 
 import styles from './Editor3D.module.css';
 
+import { CampoNumeroEditor3D } from './CampoNumeroEditor3D';
+
 export type ModoSelecaoEdicaoEditor3D = 'VERTICE' | 'ARESTA' | 'FACE';
 
 const MODOS_SELECAO_EDICAO: readonly { readonly modo: ModoSelecaoEdicaoEditor3D; readonly rotulo: string; readonly atalho: string; }[] = [
@@ -14,12 +16,24 @@ interface BarraEdicaoMalhaEditor3DProps {
     readonly modoSelecao: ModoSelecaoEdicaoEditor3D;
     readonly podeExtrudar: boolean;
     readonly podeChanfrar: boolean;
+    readonly podeCortarAnel: boolean;
+    readonly podeInsetar: boolean;
+    readonly podeExcluir: boolean;
+    readonly podeFundir: boolean;
+    readonly quantidadeBevel: number;
+    readonly fatorInset: number;
     readonly aoTrocarModoSelecao: (modo: ModoSelecaoEdicaoEditor3D) => void;
     readonly aoExtrudar: () => void;
     readonly aoChanfrar: () => void;
+    readonly aoCortarAnel: () => void;
+    readonly aoInsetar: () => void;
+    readonly aoExcluir: () => void;
+    readonly aoFundir: () => void;
+    readonly aoMudarQuantidadeBevel: (valor: number) => void;
+    readonly aoMudarFatorInset: (valor: number) => void;
 };
 
-export function BarraEdicaoMalhaEditor3D({ modoSelecao, podeExtrudar, podeChanfrar, aoTrocarModoSelecao, aoExtrudar, aoChanfrar }: BarraEdicaoMalhaEditor3DProps) {
+export function BarraEdicaoMalhaEditor3D({ modoSelecao, podeExtrudar, podeChanfrar, podeCortarAnel, podeInsetar, podeExcluir, podeFundir, quantidadeBevel, fatorInset, aoTrocarModoSelecao, aoExtrudar, aoChanfrar, aoCortarAnel, aoInsetar, aoExcluir, aoFundir, aoMudarQuantidadeBevel, aoMudarFatorInset }: BarraEdicaoMalhaEditor3DProps) {
     return (
         <div className={styles.barra_edicao_malha}>
             <div className={styles.grupo_modo_selecao}>
@@ -29,6 +43,16 @@ export function BarraEdicaoMalhaEditor3D({ modoSelecao, podeExtrudar, podeChanfr
             </div>
             <button type="button" className={styles.botao_extrude} disabled={!podeExtrudar} onClick={aoExtrudar} title={podeExtrudar ? 'Extrudar a face selecionada' : 'Selecione uma face (modo Face)'}>Extrude<kbd>E</kbd></button>
             <button type="button" className={styles.botao_bevel} disabled={!podeChanfrar} onClick={aoChanfrar} title={podeChanfrar ? 'Chanfrar a aresta selecionada' : 'Selecione uma aresta (modo Aresta)'}>Bevel<kbd>B</kbd></button>
+            <div className={styles.campo_valor_operador} title="Recuo do Bevel (fração da aresta vizinha)">
+                <CampoNumeroEditor3D rotulo="↧" valor={quantidadeBevel} passo={0.05} minimo={0.05} maximo={0.45} atualizaValor={aoMudarQuantidadeBevel} />
+            </div>
+            <button type="button" className={styles.botao_operador_malha} disabled={!podeCortarAnel} onClick={aoCortarAnel} title={podeCortarAnel ? 'Cortar um anel de arestas perpendicular à aresta selecionada' : 'Selecione uma aresta (modo Aresta)'}>Cortar Anel</button>
+            <button type="button" className={styles.botao_operador_malha} disabled={!podeInsetar} onClick={aoInsetar} title={podeInsetar ? 'Encolher a face selecionada criando uma moldura' : 'Selecione uma face (modo Face)'}>Inset</button>
+            <div className={styles.campo_valor_operador} title="Fator do Inset (encolhimento em direção ao centro)">
+                <CampoNumeroEditor3D rotulo="⤢" valor={fatorInset} passo={0.05} minimo={0.05} maximo={0.9} atualizaValor={aoMudarFatorInset} />
+            </div>
+            <button type="button" className={styles.botao_operador_malha} disabled={!podeFundir} onClick={aoFundir} title={podeFundir ? 'Fundir os vértices selecionados no centróide' : 'Selecione 2+ vértices (modo Vértice)'}>Fundir</button>
+            <button type="button" className={`${styles.botao_operador_malha} ${styles.botao_operador_malha_perigo}`} disabled={!podeExcluir} onClick={aoExcluir} title={podeExcluir ? (modoSelecao === 'FACE' ? 'Excluir a face selecionada' : 'Excluir os vértices selecionados (e as faces que os tocam)') : 'Selecione uma face ou vértices'}>Excluir</button>
         </div>
     );
 };

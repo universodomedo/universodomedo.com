@@ -49,6 +49,7 @@ export interface EntradaSerializacaoObjetoEditor3D {
     readonly cor: string;
     readonly idPeca: string | null;
     readonly malha: MalhaEditavelLocal;
+    readonly subdivisao: number;
     readonly mesh: Mesh;
 };
 
@@ -79,6 +80,7 @@ function serializaObjetoEditor3D(entrada: EntradaSerializacaoObjetoEditor3D): Ob
         visivel: mesh.visible,
         idPeca: entrada.idPeca,
         malhaEditavel: serializaMalhaEditavel(entrada.malha),
+        subdivisao: entrada.subdivisao,
     };
 };
 
@@ -108,6 +110,7 @@ export interface ObjetoCarregadoEditor3D {
     readonly idPeca: string | null;
     readonly transform: TransformEditor3D;
     readonly malha?: MalhaEditavelLocal;
+    readonly subdivisao: number;
 };
 
 function desserializaMalhaEditavel(malha: NonNullable<ObjetoCenaCanonicaEditor3D['malhaEditavel']>): MalhaEditavelLocal {
@@ -130,6 +133,7 @@ export function desserializaCenaCanonicaEditor3D(cena: CenaCanonicaEditor3D): Ob
             idPeca: objeto.idPeca ?? null,
             transform: { posicao: [objeto.posicao[0], objeto.posicao[1], objeto.posicao[2]], rotacao: [objeto.rotacao[0], objeto.rotacao[1], objeto.rotacao[2]], escala: [objeto.escala[0], objeto.escala[1], objeto.escala[2]] },
             malha: objeto.malhaEditavel ? desserializaMalhaEditavel(objeto.malhaEditavel) : undefined,
+            subdivisao: objeto.subdivisao ?? 0,
         });
     }
     return carregados;

@@ -4,12 +4,14 @@ import { createContext, useCallback, useContext, useState, type ReactNode } from
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 
-type FluxoPaginaGameDesignerNovoSer = 'LISTAGEM' | 'CADASTRO';
+type FluxoPaginaGameDesignerNovoSer = 'LISTAGEM' | 'CADASTRO' | 'ESTRUTURA';
 
 export interface Contexto__PaginaGameDesignerNovoSer__Props {
     estadoFluxo: FluxoPaginaGameDesignerNovoSer;
     listagemSeres: ReturnType<typeof useListagemSeres>;
+    idSerEstrutura: number | null;
     iniciaCadastro: () => void;
+    abreEstrutura: (idSer: number) => void;
     voltaParaListagem: () => void;
     concluiCadastro: () => void;
 };
@@ -25,24 +27,26 @@ export const useContexto__PaginaGameDesignerNovoSer = (): Contexto__PaginaGameDe
 export const Contexto__PaginaGameDesignerNovoSer__Provider = ({ children }: { children: ReactNode; }) => {
     const listagemSeres = useListagemSeres();
     const [estadoFluxo, setEstadoFluxo] = useState<FluxoPaginaGameDesignerNovoSer>('LISTAGEM');
+    const [idSerEstrutura, setIdSerEstrutura] = useState<number | null>(null);
     const recarregarListagem = listagemSeres.recarregar;
 
     const iniciaCadastro = useCallback(() => { setEstadoFluxo('CADASTRO'); }, []);
-    const voltaParaListagem = useCallback(() => { setEstadoFluxo('LISTAGEM'); }, []);
+    const abreEstrutura = useCallback((idSer: number) => { setIdSerEstrutura(idSer); setEstadoFluxo('ESTRUTURA'); }, []);
+    const voltaParaListagem = useCallback(() => { setIdSerEstrutura(null); setEstadoFluxo('LISTAGEM'); }, []);
     const concluiCadastro = useCallback(() => {
         recarregarListagem();
         setEstadoFluxo('LISTAGEM');
     }, [recarregarListagem]);
 
     return (
-        <Contexto__PaginaGameDesignerNovoSer.Provider value={{ estadoFluxo, listagemSeres, iniciaCadastro, voltaParaListagem, concluiCadastro }}>
+        <Contexto__PaginaGameDesignerNovoSer.Provider value={{ estadoFluxo, listagemSeres, idSerEstrutura, iniciaCadastro, abreEstrutura, voltaParaListagem, concluiCadastro }}>
             {children}
         </Contexto__PaginaGameDesignerNovoSer.Provider>
     );
 };
 
 function useListagemSeres() {
-    return useNoraGraphQLListagem('NovoSer', {
+    return useNoraGraphQLListagem('Ser', {
         select: ['id', 'dataCriacao'],
         camposFiltroConsulta: ['id', 'dataCriacao'],
         camposFiltroVisualizacao: ['id', 'dataCriacao'],

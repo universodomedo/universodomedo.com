@@ -94,10 +94,9 @@ function CardRuntime({ configuracao, carregando, erro, aoEditar }: { configuraca
                         : (
                             <dl className={styles.resumo}>
                                 <div className={styles.resumo_linha}><dt>Cenário</dt><dd>{configuracao.cenario.nome || '—'}</dd></div>
-                                <div className={styles.resumo_linha}><dt>Controláveis</dt><dd>{configuracao.controlaveis.length}</dd></div>
-                                <div className={styles.resumo_linha}><dt>Não-controláveis</dt><dd>{configuracao.naoControlaveis.length}</dd></div>
-                                <div className={styles.resumo_linha}><dt>Interagíveis</dt><dd>{configuracao.interagiveis.length}</dd></div>
-                                <div className={styles.resumo_linha}><dt>Descobertas</dt><dd>{configuracao.descobertasCondicionadas.length}</dd></div>
+                                <div className={styles.resumo_linha}><dt>Seres</dt><dd>{configuracao.interagiveis.filter(interagivel => interagivel.tipo === 'ser').length}</dd></div>
+                                <div className={styles.resumo_linha}><dt>Objetos</dt><dd>{configuracao.interagiveis.filter(interagivel => interagivel.tipo === 'objeto').length}</dd></div>
+                                <div className={styles.resumo_linha}><dt>Descobertas</dt><dd>{configuracao.interagiveis.reduce((total, interagivel) => total + interagivel.descobertas.length, 0)}</dd></div>
                             </dl>
                         )}
         </section>
