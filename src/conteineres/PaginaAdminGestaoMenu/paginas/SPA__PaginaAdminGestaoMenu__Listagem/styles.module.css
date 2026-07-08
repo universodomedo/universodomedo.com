@@ -1,0 +1,72 @@
+.card_menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    min-width: 0;
+    height: 100%;
+    padding: 0.9em 1em;
+    border: 0.08em solid var(--cor-borda);
+    border-radius: 0.5em;
+    background-color: #392D58;
+    cursor: pointer;
+    white-space: normal;
+}
+
+.card_menu:hover {
+    background-color: #453769;
+}
+
+/* Menu inativo: borda vermelha (perigo) de destaque, como página inativa. */
+.inativo {
+    border-color: #DB4747;
+    box-shadow: inset 0 0 0 0.04em rgba(219, 71, 71, 0.5);
+}
+
+.cabecalho_card {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.badge_tipo {
+    font-size: 0.68em;
+    font-variant: small-caps;
+    letter-spacing: 0.06em;
+    padding: 0.1em 0.7em;
+    border-radius: 0.8em;
+    border: 0.08em solid rgba(199, 184, 240, 0.4);
+    color: #c7b8f0;
+}
+
+/* Menu principal (barra global) destacado em ouro; internos ficam no violeta padrão. */
+.badge_tipo[data-principal="true"] {
+    border-color: rgba(226, 184, 60, 0.5);
+    color: #e2b83c;
+}
+
+.badge_inativo {
+    font-size: 0.68em;
+    font-variant: small-caps;
+    letter-spacing: 0.06em;
+    padding: 0.1em 0.7em;
+    border-radius: 0.8em;
+    border: 0.08em solid rgba(219, 71, 71, 0.55);
+    color: #DB4747;
+}
+
+.chave {
+    font-size: 0.85em;
+    color: #EBE0C9;
+    overflow-wrap: anywhere;
+}
+
+.descricao {
+    font-size: 0.78em;
+    opacity: 0.75;
+    flex: 1;
+}
+
+.resumo {
+    font-size: 0.72em;
+    opacity: 0.6;
+}

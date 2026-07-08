@@ -186,6 +186,45 @@
     }
 }
 
+/* Seletor de subcatálogo na linha da Partida: dropdown compacto, não disputa espaço com o nome. */
+.seletor_subcatalogo {
+    flex: 0 1 14em;
+    min-width: 10em;
+    font-size: 0.85em;
+}
+
+.toggle_subcatalogo {
+    flex: none;
+    display: flex;
+    align-items: center;
+}
+
+/* Só LAYOUT: o card/estilo do campo vem do InputComRotulo. */
+.campo_novo_subcatalogo {
+    flex: 1 1 16em;
+    min-width: 12em;
+}
+
+/* Linha de definição do requisito (alvo/tipo/modo): três dropdowns compactos lado a lado. */
+.definicao_requisito {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+.campo_definicao {
+    flex: 1 1 12em;
+    min-width: 10em;
+    font-size: 0.85em;
+}
+
+/* Selecionador de Capacidade inline: precisa de altura definida para o ListagemComposta interno não colapsar. */
+.selecionador_capacidade {
+    display: flex;
+    flex-direction: column;
+    min-height: 24em;
+}
+
 /* Adicionar Partida: ação inline contextual do bloco (contorno pergaminho on-brand, ≠ teal antigo). */
 .botao_adicionar {
     padding: 0.55em 1.2em;

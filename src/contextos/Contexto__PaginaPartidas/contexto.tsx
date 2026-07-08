@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { EventosApiRest, Eventos_EnviaERecebe, PAGINAS, type EstruturaPartidas, type PainelDesafiosAtivos, type PartidaResumo, type RESPONSE__IniciarPartida, type WsErrorResponse } from 'types-nora-api';
+import { EventosApiRest, Eventos_EnviaERecebe, PAGINAS, type CatalogoPartidaResumo, type EstruturaPartidas, type PainelDesafiosAtivos, type PartidaResumo, type RESPONSE__IniciarPartida, type WsErrorResponse } from 'types-nora-api';
 import type { CatalogoDeMissoesCatalogo, CatalogoDeMissoesItem, CatalogoDeMissoesSubgrupo } from 'Componentes/ElementosDeJogo/CatalogoDeMissoes/CatalogoDeMissoes';
 
 import { NoraApi } from 'Api/NoraApi';
@@ -24,6 +24,8 @@ export interface Contexto__PaginaPartidas__Props {
     // Partida que o Orbital deve centralizar ao montar: a última selecionada (persistida). null = comportamento padrão (primeira missão).
     idPartidaInicial: number | null;
     partidaSelecionada: PartidaResumo | null;
+    // Gating BLOQUEADO: a Partida aparece (vitrine) mas não é jogável para este usuário.
+    partidaSelecionadaBloqueada: boolean;
     podeJogarPartidaSelecionada: boolean;
     carregando: boolean;
     jogando: boolean;
@@ -77,14 +79,15 @@ export const Contexto__PaginaPartidas__Provider = ({ children }: { readonly chil
         void carregar();
     }, []);
 
-    const catalogosDisponiveis = useMemo<readonly CatalogoDeMissoesCatalogo[]>(() => montaCatalogos(estrutura, painel), [estrutura, painel]);
+    const { catalogos: catalogosDisponiveis, idsPartidasBloqueadas } = useMemo(() => montaCatalogosComGating(estrutura, painel), [estrutura, painel]);
 
     const selecionarPartida = useCallback((idPartida: number | null) => setIdPartidaFocada(idPartida), []);
 
     // O foco muda a cada item durante o scroll; a seleção só ASSENTA (e comita fundo/música/Detalhe juntos) quando o foco fica parado por ATRASO_ESTABILIZACAO_MS.
     const idPartidaSelecionada = useValorEstabilizado(idPartidaFocada, ATRASO_ESTABILIZACAO_MS);
     const partidaSelecionada = useMemo<PartidaResumo | null>(() => obtemPartidaPorId(estrutura, idPartidaSelecionada), [estrutura, idPartidaSelecionada]);
-    const podeJogarPartidaSelecionada = partidaSelecionada?.partidaConfigurada === true;
+    const partidaSelecionadaBloqueada = idPartidaSelecionada !== null && idsPartidasBloqueadas.has(idPartidaSelecionada);
+    const podeJogarPartidaSelecionada = partidaSelecionada?.partidaConfigurada === true && !partidaSelecionadaBloqueada;
 
     // Persiste a seleção assentada para o Orbital voltar nela ao remontar (troca de página / fim de partida).
     useEffect(() => {
@@ -111,29 +114,72 @@ export const Contexto__PaginaPartidas__Provider = ({ children }: { readonly chil
     }, [partidaSelecionada, podeJogarPartidaSelecionada, jogando, router]);
 
     return (
-        <Contexto__PaginaPartidas.Provider value={{ catalogosDisponiveis, idPartidaSelecionada, idPartidaInicial, partidaSelecionada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }}>
+        <Contexto__PaginaPartidas.Provider value={{ catalogosDisponiveis, idPartidaSelecionada, idPartidaInicial, partidaSelecionada, partidaSelecionadaBloqueada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }}>
             {children}
         </Contexto__PaginaPartidas.Provider>
     );
 };
 
 // Contrato ÚNICO de item do Orbital, derivado SEMPRE da Partida (a fonte de verdade). Missão e Desafio produzem o MESMO item pela MESMA função — o id do Desafio é o id da Partida.
-function montaItemOrbital(partida: PartidaResumo): CatalogoDeMissoesItem { return { id: partida.id, nome: partida.nome, arteCapa: partida.arteCapa }; };
+function montaItemOrbital(partida: PartidaResumo, bloqueado: boolean): CatalogoDeMissoesItem { return { id: partida.id, nome: partida.nome, arteCapa: partida.arteCapa, bloqueado }; };
 
 function ehItemOrbital(item: CatalogoDeMissoesItem | null): item is CatalogoDeMissoesItem { return item !== null; };
 
-function montaCatalogos(estrutura: EstruturaPartidas | null, painel: PainelDesafiosAtivos | null): readonly CatalogoDeMissoesCatalogo[] {
-    if (!estrutura) return [];
+type CatalogosComGating = {
+    readonly catalogos: readonly CatalogoDeMissoesCatalogo[];
+    // Partidas travadas pelo gating BLOQUEADO. Se a MESMA Partida aparece em algum contexto livre, o livre vence (o Jogar não trava).
+    readonly idsPartidasBloqueadas: ReadonlySet<number>;
+};
+
+function montaCatalogosComGating(estrutura: EstruturaPartidas | null, painel: PainelDesafiosAtivos | null): CatalogosComGating {
+    if (!estrutura) return { catalogos: [], idsPartidasBloqueadas: new Set<number>() };
 
     const partidas = estrutura.partidas;
-    const itemPorIdPartida = (idPartida: number): CatalogoDeMissoesItem | null => {
+    const bloqueadas = new Set<number>();
+    const livres = new Set<number>();
+    const registraGate = (idsPartida: readonly number[], bloqueado: boolean): void => { for (const idPartida of idsPartida) (bloqueado ? bloqueadas : livres).add(idPartida); };
+    const itemPorIdPartida = (idPartida: number, bloqueado: boolean = false): CatalogoDeMissoesItem | null => {
         const partida = partidas.find(item => item.id === idPartida);
-        return partida ? montaItemOrbital(partida) : null;
+        return partida ? montaItemOrbital(partida, bloqueado) : null;
     };
 
-    return estrutura.catalogos.map(catalogo => catalogo.tipo === 'DESAFIOS'
-        ? { id: catalogo.id, nome: catalogo.nome, missoes: [], subgrupos: montaSubgruposDesafio(painel, itemPorIdPartida) }
-        : { id: catalogo.id, nome: catalogo.nome, missoes: catalogo.partidas.map(partida => itemPorIdPartida(partida.idPartida)).filter(ehItemOrbital) });
+    const catalogos = estrutura.catalogos.map(catalogo => {
+        if (catalogo.tipo === 'DESAFIOS') return { id: catalogo.id, nome: catalogo.nome, missoes: [], subgrupos: montaSubgruposDesafio(painel, idPartida => itemPorIdPartida(idPartida)) };
+
+        const catalogoBloqueado = catalogo.estadoAcesso === 'BLOQUEADO';
+        const soltas = catalogo.partidas.filter(partida => partida.idSubcatalogo === null);
+        registraGate(soltas.map(partida => partida.idPartida), catalogoBloqueado);
+
+        return {
+            id: catalogo.id,
+            nome: catalogo.nome,
+            missoes: soltas.map(partida => itemPorIdPartida(partida.idPartida, catalogoBloqueado)).filter(ehItemOrbital),
+            subgrupos: montaSubgruposPersistidos(catalogo, catalogoBloqueado, itemPorIdPartida, registraGate),
+        };
+    });
+
+    for (const idPartida of livres) bloqueadas.delete(idPartida);
+
+    return { catalogos, idsPartidasBloqueadas: bloqueadas };
+};
+
+// Subgrupos persistidos de um catalogo PADRAO (subcatalogos do banco) no MESMO contrato visual dos subgrupos derivados do Desafios.
+// MASCARADO: o backend ja mandou nome "???" e escondeu os itens — aqui só ajustamos a mensagem do slot vazio para não denunciar que "não há Partidas".
+function montaSubgruposPersistidos(catalogo: CatalogoPartidaResumo, catalogoBloqueado: boolean, itemPorIdPartida: (idPartida: number, bloqueado?: boolean) => CatalogoDeMissoesItem | null, registraGate: (idsPartida: readonly number[], bloqueado: boolean) => void): readonly CatalogoDeMissoesSubgrupo[] {
+    return catalogo.subcatalogos.map(subcatalogo => {
+        const mascarado = subcatalogo.estadoAcesso === 'MASCARADO';
+        const bloqueado = catalogoBloqueado || subcatalogo.estadoAcesso === 'BLOQUEADO';
+        const partidasDoSubcatalogo = catalogo.partidas.filter(partida => partida.idSubcatalogo === subcatalogo.id);
+        registraGate(partidasDoSubcatalogo.map(partida => partida.idPartida), bloqueado);
+
+        return {
+            id: String(subcatalogo.id),
+            rotulo: subcatalogo.nome,
+            itens: partidasDoSubcatalogo.map(partida => itemPorIdPartida(partida.idPartida, bloqueado)).filter(ehItemOrbital),
+            mensagemVazio: mascarado ? '???' : 'Nenhuma Partida',
+            slotUnico: false,
+        };
+    });
 };
 
 function montaSubgruposDesafio(painel: PainelDesafiosAtivos | null, itemPorIdPartida: (idPartida: number) => CatalogoDeMissoesItem | null): readonly CatalogoDeMissoesSubgrupo[] {

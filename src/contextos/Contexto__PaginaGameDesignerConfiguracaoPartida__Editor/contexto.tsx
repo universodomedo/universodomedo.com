@@ -58,9 +58,11 @@ export const useContexto__PaginaGameDesignerConfiguracaoPartida__Editor = (): Co
 // Interagiveis unificados (Objeto|Ser+controlador); descobertas moram DENTRO de cada interagivel (editadas no ConfigObjeto/ConfigSer).
 // O resolveSaida abaixo decide qual vista renderiza (formulário / seleção de Ser / config do Ser / config do Objeto) — nunca uma SPA.
 export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__Provider = ({ partida, configuracaoInicial, salvando, salvar }: PropsProvider) => {
+    // Config sem carimbo versaoShape = jsonb legado (pré-shape novo): não é editável nem lível aqui — o editor parte do zero, espelhando o backend (obtemDefinicaoRuntime rejeita shape legado). Salvar substitui o jsonb inteiro.
+    const configuracaoCarregavel = configuracaoInicial && configuracaoInicial.versaoShape != null ? configuracaoInicial : null;
     // Contador inicia acima do maior índice já existente no config carregado — senão uma chave nova colide com uma salva.
-    const contadorChavesRef = useRef(configuracaoInicial ? maiorIndiceChaveConfig(configuracaoInicial) : 0);
-    const [config, setConfig] = useState<ConfiguracaoPartida>(() => garanteTemporal(configuracaoInicial ?? criaConfiguracaoVazia()));
+    const contadorChavesRef = useRef(configuracaoCarregavel ? maiorIndiceChaveConfig(configuracaoCarregavel) : 0);
+    const [config, setConfig] = useState<ConfiguracaoPartida>(() => garanteTemporal(configuracaoCarregavel ?? criaConfiguracaoVazia()));
     const [subVista, setSubVista] = useState<SubVista>('formulario');
     const [grupoEmFoco, setGrupoEmFoco] = useState<GrupoControle>('jogador');
     const [chaveEmEdicao, setChaveEmEdicao] = useState<string | null>(null);

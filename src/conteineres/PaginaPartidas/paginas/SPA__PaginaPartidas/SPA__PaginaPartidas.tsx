@@ -9,8 +9,8 @@ import { BloqueioDeSilencio } from 'Componentes/Elementos/CentralAudio/BloqueioD
 import { DetalhePartida } from 'Conteineres/PaginaPartidas/paginas/SPA__PaginaPartidas/DetalhePartida';
 import type { Contexto__PaginaPartidas__Props } from 'Contextos/Contexto__PaginaPartidas/contexto';
 
-export default function SPA__PaginaPartidas({ catalogosDisponiveis, idPartidaInicial, partidaSelecionada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }: Contexto__PaginaPartidas__Props) {
-    const textoBotaoJogar = resolveTextoBotaoJogar(carregando, jogando, partidaSelecionada, podeJogarPartidaSelecionada);
+export default function SPA__PaginaPartidas({ catalogosDisponiveis, idPartidaInicial, partidaSelecionada, partidaSelecionadaBloqueada, podeJogarPartidaSelecionada, carregando, jogando, erro, selecionarPartida, jogarPartidaSelecionada }: Contexto__PaginaPartidas__Props) {
+    const textoBotaoJogar = resolveTextoBotaoJogar(carregando, jogando, partidaSelecionada, partidaSelecionadaBloqueada, podeJogarPartidaSelecionada);
     // TODO(desafio-cooldown): somar aqui o estado de ESPERA do Desafio (cooldown) para desabilitar o botão enquanto o timer corre — ver resolveTextoBotaoJogar.
     const botaoDesabilitado = !podeJogarPartidaSelecionada || jogando || carregando;
     const aoFocarMissao = useCallback((missao: CatalogoDeMissoesItem | null) => selecionarPartida(missao ? missao.id : null), [selecionarPartida]);
@@ -29,10 +29,11 @@ export default function SPA__PaginaPartidas({ catalogosDisponiveis, idPartidaIni
     );
 };
 
-function resolveTextoBotaoJogar(carregando: boolean, jogando: boolean, partidaSelecionada: Contexto__PaginaPartidas__Props['partidaSelecionada'], podeJogarPartidaSelecionada: boolean): string {
+function resolveTextoBotaoJogar(carregando: boolean, jogando: boolean, partidaSelecionada: Contexto__PaginaPartidas__Props['partidaSelecionada'], partidaSelecionadaBloqueada: boolean, podeJogarPartidaSelecionada: boolean): string {
     if (carregando) return 'Carregando Partidas';
     if (jogando) return 'Iniciando...';
     if (!partidaSelecionada) return 'Selecione uma Partida';
+    if (partidaSelecionadaBloqueada) return 'Bloqueado';
     if (!podeJogarPartidaSelecionada) return 'Partida não configurada';
 
     const ehDesafio = partidaSelecionada.tipo === 'DESAFIO';

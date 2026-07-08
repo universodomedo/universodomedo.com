@@ -9,7 +9,7 @@ import { ItemPartidaOrbital } from 'Componentes/ElementosDeJogo/ItemPartidaOrbit
 import { useImagemCapaArte } from 'Funcionalidades/ArteDeCapa/useImagemCapaArte';
 import type { ArteCapaDaPartida } from 'types-nora-api';
 
-export type CatalogoDeMissoesItem = { readonly id: number; readonly nome: string; readonly arteCapa?: ArteCapaDaPartida | null; };
+export type CatalogoDeMissoesItem = { readonly id: number; readonly nome: string; readonly arteCapa?: ArteCapaDaPartida | null; readonly bloqueado?: boolean; };
 
 export type CatalogoDeMissoesSubgrupo = { readonly id: string; readonly rotulo: string; readonly itens: readonly CatalogoDeMissoesItem[]; readonly mensagemVazio: string; readonly slotUnico: boolean; };
 
@@ -303,7 +303,7 @@ function ItemOrbital({ item, estilo, ehCentral, colapsado, vAbsoluto, aoCentrali
 function ItemMissaoNoOrbital({ item, estilo, ehCentral, vAbsoluto, aoCentralizar }: { readonly item: ItemMissaoOrbital; readonly estilo: CSSProperties; readonly ehCentral: boolean; readonly vAbsoluto: number; readonly aoCentralizar: (vAbsoluto: number) => void; }) {
     const imagem = useImagemCapaArte(item.missao.arteCapa?.idProjeto ?? null);
 
-    return <ItemPartidaOrbital className={styles.item_missao_orbital} style={estilo} nome={item.missao.nome} imagemBase64={imagem} encaixe={item.missao.arteCapa?.encaixe ?? null} selecionado={ehCentral} onClick={() => aoCentralizar(vAbsoluto)} />;
+    return <ItemPartidaOrbital className={styles.item_missao_orbital} style={estilo} nome={item.missao.nome} imagemBase64={imagem} encaixe={item.missao.arteCapa?.encaixe ?? null} selecionado={ehCentral} bloqueado={item.missao.bloqueado === true} onClick={() => aoCentralizar(vAbsoluto)} />;
 };
 
 function montaItensOrbitais(catalogos: readonly CatalogoDeMissoesCatalogo[], chavesColapsadas: readonly string[]): readonly ItemOrbital[] {
@@ -314,6 +314,9 @@ function montaItensOrbitais(catalogos: readonly CatalogoDeMissoesCatalogo[], cha
         itens.push({ tipo: 'catalogo', id: `catalogo-${catalogo.id}`, keyColapso: keyColapsoCatalogo, catalogo });
 
         if (chavesColapsadas.includes(keyColapsoCatalogo)) return;
+
+        // Missões soltas (sem subgrupo) ficam direto sob o header do catálogo, ANTES dos subgrupos.
+        catalogo.missoes.forEach(missao => itens.push({ tipo: 'missao', id: `missao-${catalogo.id}-${missao.id}`, idCatalogo: catalogo.id, catalogo, missao }));
 
         if (catalogo.subgrupos && catalogo.subgrupos.length > 0) {
             catalogo.subgrupos.forEach(subgrupo => {
@@ -334,10 +337,7 @@ function montaItensOrbitais(catalogos: readonly CatalogoDeMissoesCatalogo[], cha
                 if (chavesColapsadas.includes(keyColapsoSubgrupo)) return;
                 subgrupo.itens.forEach(missao => itens.push({ tipo: 'missao', id: `missao-${catalogo.id}-${subgrupo.id}-${missao.id}`, idCatalogo: catalogo.id, catalogo, missao }));
             });
-            return;
         }
-
-        catalogo.missoes.forEach(missao => itens.push({ tipo: 'missao', id: `missao-${catalogo.id}-${missao.id}`, idCatalogo: catalogo.id, catalogo, missao }));
     });
 
     return itens;

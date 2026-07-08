@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState } from 'react';
-import type { CatalogoPartidaResumo, PartidaNoCatalogoResumo, PartidaResumo } from 'types-nora-api';
+import type { CatalogoPartidaResumo, ModoRequisitoAcesso, PartidaNoCatalogoResumo, PartidaResumo, RequisitoAcessoResumo, SubcatalogoPartidaResumo, TipoRequisitoAcesso } from 'types-nora-api';
 
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { Contexto__PaginaGameDesignerCatalogosPartida__Props } from '../Contexto__PaginaGameDesignerCatalogosPartida/contexto';
@@ -22,6 +22,16 @@ interface Contexto__PaginaGameDesignerCatalogosPartida__Edicao__Props {
     removerPartidaDoCatalogo: (idPartida: number) => Promise<void>;
     alternarExibicaoPartida: (idPartida: number, ativo: boolean) => Promise<void>;
     reordenarPartidasDoCatalogo: (idsPartidaOrdenados: readonly number[]) => Promise<void>;
+    requisitosAcesso: readonly RequisitoAcessoResumo[];
+    adicionarRequisitoAoCatalogo: (tipo: TipoRequisitoAcesso, modo: ModoRequisitoAcesso, idCapacidade?: number) => Promise<void>;
+    removerRequisitoAcessoDoCatalogo: (idRequisito: number) => Promise<void>;
+    adicionarRequisitoAoSubcatalogo: (idSubcatalogo: number, tipo: TipoRequisitoAcesso, modo: ModoRequisitoAcesso, idCapacidade?: number) => Promise<void>;
+    removerRequisitoDoSubcatalogo: (idSubcatalogo: number, idRequisito: number) => Promise<void>;
+    subcatalogos: readonly SubcatalogoPartidaResumo[];
+    criarSubcatalogoNoCatalogo: (nome: string) => Promise<void>;
+    alternarAtivoSubcatalogo: (subcatalogo: SubcatalogoPartidaResumo, ativo: boolean) => Promise<void>;
+    deletarSubcatalogoDoCatalogo: (idSubcatalogo: number) => Promise<void>;
+    definirSubcatalogoDaPartida: (idPartida: number, idSubcatalogo: number | null) => Promise<void>;
 };
 
 type PropsProvider = {
@@ -34,6 +44,14 @@ type PropsProvider = {
     removerPartida: Contexto__PaginaGameDesignerCatalogosPartida__Props['removerPartida'];
     alternarExibicao: Contexto__PaginaGameDesignerCatalogosPartida__Props['alternarExibicao'];
     reordenarPartidas: Contexto__PaginaGameDesignerCatalogosPartida__Props['reordenarPartidas'];
+    adicionarRequisitoCatalogo: Contexto__PaginaGameDesignerCatalogosPartida__Props['adicionarRequisitoCatalogo'];
+    removerRequisitoAcesso: Contexto__PaginaGameDesignerCatalogosPartida__Props['removerRequisitoAcesso'];
+    adicionarRequisitoSubcatalogo: Contexto__PaginaGameDesignerCatalogosPartida__Props['adicionarRequisitoSubcatalogo'];
+    removerRequisitoAcessoSubcatalogo: Contexto__PaginaGameDesignerCatalogosPartida__Props['removerRequisitoAcessoSubcatalogo'];
+    criarSubcatalogo: Contexto__PaginaGameDesignerCatalogosPartida__Props['criarSubcatalogo'];
+    salvarSubcatalogo: Contexto__PaginaGameDesignerCatalogosPartida__Props['salvarSubcatalogo'];
+    deletarSubcatalogo: Contexto__PaginaGameDesignerCatalogosPartida__Props['deletarSubcatalogo'];
+    definirSubcatalogoPartida: Contexto__PaginaGameDesignerCatalogosPartida__Props['definirSubcatalogoPartida'];
     voltaParaListagem: Contexto__PaginaGameDesignerCatalogosPartida__Props['voltaParaListagem'];
 };
 
@@ -45,7 +63,7 @@ export const useContexto__PaginaGameDesignerCatalogosPartida__Edicao = (): Conte
     return context;
 };
 
-export const Contexto__PaginaGameDesignerCatalogosPartida__Edicao__Provider = ({ catalogo, todasPartidas, salvando, salvarCatalogo, deletarCatalogo, adicionarPartida, removerPartida, alternarExibicao, reordenarPartidas, voltaParaListagem }: PropsProvider) => {
+export const Contexto__PaginaGameDesignerCatalogosPartida__Edicao__Provider = ({ catalogo, todasPartidas, salvando, salvarCatalogo, deletarCatalogo, adicionarPartida, removerPartida, alternarExibicao, reordenarPartidas, adicionarRequisitoCatalogo, removerRequisitoAcesso, adicionarRequisitoSubcatalogo, removerRequisitoAcessoSubcatalogo, criarSubcatalogo, salvarSubcatalogo, deletarSubcatalogo, definirSubcatalogoPartida, voltaParaListagem }: PropsProvider) => {
     useConfigurarLayoutContextualizado({ titulo: 'Editando Catálogo', subtitulo: `${catalogo.nome}`, fecharProps: { tipo: 'acao', executar: voltaParaListagem, tituloTooltip: 'Voltar para Listagem' } });
 
     const [nome, setNome] = useState(catalogo.nome);
@@ -75,8 +93,24 @@ export const Contexto__PaginaGameDesignerCatalogosPartida__Edicao__Provider = ({
 
     async function reordenarPartidasDoCatalogo(idsPartidaOrdenados: readonly number[]): Promise<void> { await reordenarPartidas({ idCatalogo: catalogo.id, idsPartidaOrdenados }); };
 
+    async function adicionarRequisitoAoCatalogo(tipo: TipoRequisitoAcesso, modo: ModoRequisitoAcesso, idCapacidade?: number): Promise<void> { await adicionarRequisitoCatalogo({ idCatalogo: catalogo.id, tipo, modo, idCapacidade }); };
+
+    async function removerRequisitoAcessoDoCatalogo(idRequisito: number): Promise<void> { await removerRequisitoAcesso({ idCatalogo: catalogo.id, idRequisito }); };
+
+    async function adicionarRequisitoAoSubcatalogo(idSubcatalogo: number, tipo: TipoRequisitoAcesso, modo: ModoRequisitoAcesso, idCapacidade?: number): Promise<void> { await adicionarRequisitoSubcatalogo({ idSubcatalogo, tipo, modo, idCapacidade }); };
+
+    async function removerRequisitoDoSubcatalogo(idSubcatalogo: number, idRequisito: number): Promise<void> { await removerRequisitoAcessoSubcatalogo({ idSubcatalogo, idRequisito }); };
+
+    async function criarSubcatalogoNoCatalogo(nomeSubcatalogo: string): Promise<void> { await criarSubcatalogo({ idCatalogo: catalogo.id, nome: nomeSubcatalogo }); };
+
+    async function alternarAtivoSubcatalogo(subcatalogo: SubcatalogoPartidaResumo, ativo: boolean): Promise<void> { await salvarSubcatalogo({ idSubcatalogo: subcatalogo.id, nome: subcatalogo.nome, ativo, ordem: subcatalogo.ordem }); };
+
+    async function deletarSubcatalogoDoCatalogo(idSubcatalogo: number): Promise<void> { await deletarSubcatalogo({ idSubcatalogo }); };
+
+    async function definirSubcatalogoDaPartida(idPartida: number, idSubcatalogo: number | null): Promise<void> { await definirSubcatalogoPartida({ idCatalogo: catalogo.id, idPartida, idSubcatalogo }); };
+
     return (
-        <Contexto__PaginaGameDesignerCatalogosPartida__Edicao.Provider value={{ catalogo, partidasNoCatalogo: catalogo.partidas, partidasDisponiveis, salvando, nome, setNome, podeSalvarNome, salvarNome, alternarAtivoCatalogo, deletar, adicionarPartidaAoCatalogo, removerPartidaDoCatalogo, alternarExibicaoPartida, reordenarPartidasDoCatalogo }}>
+        <Contexto__PaginaGameDesignerCatalogosPartida__Edicao.Provider value={{ catalogo, partidasNoCatalogo: catalogo.partidas, partidasDisponiveis, salvando, nome, setNome, podeSalvarNome, salvarNome, alternarAtivoCatalogo, deletar, adicionarPartidaAoCatalogo, removerPartidaDoCatalogo, alternarExibicaoPartida, reordenarPartidasDoCatalogo, requisitosAcesso: catalogo.requisitosAcesso, adicionarRequisitoAoCatalogo, removerRequisitoAcessoDoCatalogo, adicionarRequisitoAoSubcatalogo, removerRequisitoDoSubcatalogo, subcatalogos: catalogo.subcatalogos, criarSubcatalogoNoCatalogo, alternarAtivoSubcatalogo, deletarSubcatalogoDoCatalogo, definirSubcatalogoDaPartida }}>
             <SPA__PaginaGameDesignerCatalogosPartida__Edicao />
         </Contexto__PaginaGameDesignerCatalogosPartida__Edicao.Provider>
     );

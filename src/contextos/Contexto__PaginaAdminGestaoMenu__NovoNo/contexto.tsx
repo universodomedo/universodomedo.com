@@ -2,25 +2,17 @@
 
 import { useMemo, useState } from 'react';
 
-import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import type { MenuDoBancoDto, MenuNoDoBancoDto } from 'types-nora-api';
 import { useContexto__PaginaAdminGestaoMenu, type AlvoNovoNo } from '../Contexto__PaginaAdminGestaoMenu/contexto';
 import SPA__PaginaAdminGestaoMenu__NovoNo from 'Conteineres/PaginaAdminGestaoMenu/paginas/SPA__PaginaAdminGestaoMenu__NovoNo/SPA__PaginaAdminGestaoMenu__NovoNo';
 
-// Subfluxo NovoNo: criação de um nó (item/grupo) num alvo (menu + pai) já escolhido na estrutura. Form ConteudoForm; dono do estado do form.
+// Subfluxo NovoNo: criação de um nó (item/grupo) num alvo (menu + pai) já escolhido na estrutura. Form ConteudoForm; dono do estado do form. Layout contextual é do Controlador de Fluxo.
 export const Contexto__PaginaAdminGestaoMenu__NovoNo__Provider = () => {
     const { alvoNovoNo, navegacao, paginas, salvando, adicionarNo, voltarParaEstrutura } = useContexto__PaginaAdminGestaoMenu();
     const [titulo, setTitulo] = useState<string>('');
     const [paginaTemplate, setPaginaTemplate] = useState<string>('');
 
-    const menuChave = useMemo(() => (navegacao ?? []).find(m => m.id === alvoNovoNo?.fkMenusId)?.chave ?? '', [navegacao, alvoNovoNo?.fkMenusId]);
     const proximaOrdem = useMemo(() => alvoNovoNo ? calcularProximaOrdem(navegacao, alvoNovoNo) : 0, [navegacao, alvoNovoNo]);
-
-    // Título estável da PÁGINA; subtítulo detalha ação + alvo (o menu); X volta pra estrutura.
-    useConfigurarLayoutContextualizado({
-        subtitulo: `Novo ${alvoNovoNo?.tipo === 'grupo' ? 'grupo' : 'item'} · ${menuChave}`,
-        fecharProps: { tipo: 'acao', executar: voltarParaEstrutura, tituloTooltip: 'Voltar para a estrutura' },
-    });
 
     if (!alvoNovoNo) return null;
     const alvo = alvoNovoNo;

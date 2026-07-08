@@ -4,8 +4,8 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { EventosApiRest } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
-import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { useEditorEstruturaMembros } from 'Componentes/EditorMembros/useEditorEstruturaMembros';
+import type { LayoutBaseEditorEstrutura } from 'Contextos/Contexto__EditorEstrutura/contexto';
 import SPA__PaginaGameDesignerNovoSer__Estrutura from 'Conteineres/PaginaGameDesignerNovoSer/paginas/SPA__PaginaGameDesignerNovoSer__Estrutura/SPA__PaginaGameDesignerNovoSer__Estrutura';
 
 interface Contexto__PaginaGameDesignerNovoSer__Estrutura__Props {
@@ -15,6 +15,7 @@ interface Contexto__PaginaGameDesignerNovoSer__Estrutura__Props {
     salvando: boolean;
     podeSalvar: boolean;
     salvar: () => Promise<void>;
+    layoutBase: LayoutBaseEditorEstrutura;
 };
 
 type PropsProvider = {
@@ -30,16 +31,17 @@ export const useContexto__PaginaGameDesignerNovoSer__Estrutura = (): Contexto__P
     return context;
 };
 
-// Subfluxo Estrutura própria do jogável NÃO-HUMANO (por Ser): mesmo editor de membros da estrutura humana, contra o jsonb próprio do Ser.
+// Subfluxo Estrutura própria do jogável NÃO-HUMANO (por Ser): mesmo Controlador de Fluxo do EditorEstrutura da estrutura humana, contra o jsonb próprio do Ser.
 // Humano usa a estrutura da espécie (página estrutura-ser-humano); clicar num humano/não-jogável cai no erro orientativo do backend.
 export const Contexto__PaginaGameDesignerNovoSer__Estrutura__Provider = ({ idSer, voltar }: PropsProvider) => {
-    useConfigurarLayoutContextualizado({ subtitulo: `Estrutura própria · Ser #${idSer}`, fecharProps: { tipo: 'acao', executar: voltar, tituloTooltip: 'Voltar para Listagem' } });
-
     const editor = useEditorEstruturaMembros();
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
     const [salvando, setSalvando] = useState(false);
     const carregar = editor.carregar;
+
+    // Layout base do subfluxo: o Controlador do EditorEstrutura é o dono do layout por subvista e compõe a partir daqui.
+    const layoutBase: LayoutBaseEditorEstrutura = { subtitulo: `Estrutura própria · Ser #${idSer}`, fecharProps: { tipo: 'acao', executar: voltar, tituloTooltip: 'Voltar para Listagem' } };
 
     useEffect(() => {
         let ativo = true;
@@ -75,7 +77,7 @@ export const Contexto__PaginaGameDesignerNovoSer__Estrutura__Provider = ({ idSer
     };
 
     return (
-        <Contexto__PaginaGameDesignerNovoSer__Estrutura.Provider value={{ editor, carregando, erro, salvando, podeSalvar, salvar }}>
+        <Contexto__PaginaGameDesignerNovoSer__Estrutura.Provider value={{ editor, carregando, erro, salvando, podeSalvar, salvar, layoutBase }}>
             <SPA__PaginaGameDesignerNovoSer__Estrutura />
         </Contexto__PaginaGameDesignerNovoSer__Estrutura.Provider>
     );

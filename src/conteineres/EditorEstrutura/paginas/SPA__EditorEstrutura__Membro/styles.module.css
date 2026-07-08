@@ -1,0 +1,97 @@
+/* Subvista do Membro: campos do membro + resumo clicável das ações (edição da ação acontece na subvista própria). */
+
+.membro {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 0.4em;
+}
+
+.cabecalho_acoes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
+    margin-top: 0.4em;
+}
+
+.cabecalho_acoes h3 {
+    margin: 0;
+}
+
+.lista_acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.linha_acao {
+    display: flex;
+    align-items: baseline;
+    gap: 1em;
+    text-align: left;
+    font-family: inherit;
+    background: #12101A;
+    border: 0.07em solid #352E4C;
+    border-left: 0.25em solid var(--cor-tipo, #B79051);
+    border-radius: 0.4em;
+    padding: 0.6em 1em;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.linha_acao:hover {
+    border-color: #4a3d70;
+    background: #151221;
+}
+
+.nome_acao {
+    color: #EBE0C9;
+    font-size: 1em;
+    letter-spacing: 0.03em;
+}
+
+.dano_acao {
+    font-family: var(--fonte-B612Mono), monospace;
+    font-size: 0.85em;
+    color: #D9B87E;
+}
+
+.capacidade_acao {
+    margin-left: auto;
+    color: #6f6a7a;
+    font-size: 0.85em;
+}
+
+.resumo_vazio {
+    margin: 0;
+    color: #6f6a7a;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+.botao_adicionar {
+    background: none;
+    border: 0.07em dashed #352E4C;
+    border-radius: 0.5em;
+    color: #aba9a1;
+    font-family: inherit;
+    font-size: 0.95em;
+    letter-spacing: 0.05em;
+    padding: 0.6em 1.2em;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.botao_adicionar:hover:not(:disabled) {
+    border-color: #B79051;
+    color: #EBE0C9;
+}
+
+.botao_adicionar:disabled {
+    opacity: 0.5;
+    cursor: default;
+}

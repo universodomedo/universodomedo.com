@@ -1,11 +1,24 @@
 'use client';
 
 import { useContexto__PaginaAdminGestaoMenu } from '../Contexto__PaginaAdminGestaoMenu/contexto';
-import SPA__PaginaAdminGestaoMenu from 'Conteineres/PaginaAdminGestaoMenu/paginas/SPA__PaginaAdminGestaoMenu/SPA__PaginaAdminGestaoMenu';
+import SPA__PaginaAdminGestaoMenu__Estrutura from 'Conteineres/PaginaAdminGestaoMenu/paginas/SPA__PaginaAdminGestaoMenu__Estrutura/SPA__PaginaAdminGestaoMenu__Estrutura';
 
-// Subfluxo Estrutura: a VISTA CUSTOM da árvore de menus e RAIZ da página "Menus". NÃO configura layout — o título vem da PAGINA; os subfluxos ConteudoForm (novo/editar nó/menu) setam o seu subtítulo/fecharProps e limpam no unmount.
+// Subfluxo Estrutura: a árvore de UM menu (escolhido na listagem) como conteúdo nobre. A identidade do menu mora no subtítulo (dono: Controlador de Fluxo), não no corpo.
 export const Contexto__PaginaAdminGestaoMenu__Estrutura__Provider = () => {
-    const { navegacao, erro, irParaNovoNo, irParaEdicaoNo, irParaNovoMenu, irParaEdicaoMenu, reordenar, reparentar } = useContexto__PaginaAdminGestaoMenu();
+    const { menuSelecionado, erro, irParaNovoNo, irParaEdicaoNo, irParaEdicaoMenu, reordenar, reparentar, moverParaPosicao } = useContexto__PaginaAdminGestaoMenu();
 
-    return <SPA__PaginaAdminGestaoMenu navegacao={navegacao} erro={erro} irParaNovoNo={irParaNovoNo} irParaEdicaoNo={irParaEdicaoNo} irParaNovoMenu={irParaNovoMenu} irParaEdicaoMenu={irParaEdicaoMenu} reordenar={reordenar} reparentar={reparentar} />;
+    if (!menuSelecionado) return null;
+
+    return (
+        <SPA__PaginaAdminGestaoMenu__Estrutura
+            menu={menuSelecionado}
+            erro={erro}
+            irParaNovoNo={irParaNovoNo}
+            irParaEdicaoNo={irParaEdicaoNo}
+            irParaEdicaoMenu={irParaEdicaoMenu}
+            reordenar={reordenar}
+            reparentar={reparentar}
+            moverParaPosicao={moverParaPosicao}
+        />
+    );
 };

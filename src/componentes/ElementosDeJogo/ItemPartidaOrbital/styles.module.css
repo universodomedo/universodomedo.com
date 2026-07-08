@@ -49,6 +49,22 @@
     white-space: nowrap;
 }
 
+/* Bloqueado (gating): capa dessaturada + selo de cadeado no canto — o item continua visível e selecionável (vitrine), só não é jogável. */
+.cartao_bloqueado .capa {
+    filter: grayscale(0.75) brightness(0.7);
+}
+
+.selo_bloqueado {
+    position: absolute;
+    top: 0.4em;
+    right: 0.5em;
+    z-index: 2;
+    font-size: 1em;
+    line-height: 1;
+    opacity: 0.9;
+    text-shadow: 0 0 0.4em rgba(0, 0, 0, 0.8);
+}
+
 .cartao_selecionado {
     align-items: center;
     border-color: #B79051;

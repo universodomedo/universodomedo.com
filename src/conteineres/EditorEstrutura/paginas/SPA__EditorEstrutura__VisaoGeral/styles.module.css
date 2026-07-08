@@ -1,0 +1,145 @@
+/* Visão Geral (Complete View) da estrutura: grade de cards de membros + resumos compostos. Identidade UDM. */
+
+.visao_geral {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4em;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 0.4em;
+}
+
+.aviso_validacao {
+    margin: 0;
+    color: var(--cor-aviso);
+    font-size: 0.9em;
+}
+
+.info_discreta {
+    color: #aba9a1;
+    font-size: 0.9em;
+}
+
+.secao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+}
+
+.secao h3 {
+    margin: 0;
+}
+
+.grade_membros {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18em, 1fr));
+    gap: 0.8em;
+    align-items: stretch;
+}
+
+.chips_capacidades {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7em;
+}
+
+.chip_capacidade {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    padding: 0.45em 1em;
+    border: 0.07em solid #352E4C;
+    border-radius: 2em;
+    background: #12101A;
+    color: #D9D9D9;
+    font-size: 0.9em;
+}
+
+.chip_capacidade b {
+    color: #6f6a7a;
+    font-weight: 400;
+    font-size: 0.85em;
+}
+
+.gema_chip {
+    width: 0.55em;
+    height: 0.55em;
+    border-radius: 50%;
+    background: var(--cor-tipo, #B79051);
+    box-shadow: 0 0 0.35em var(--cor-tipo, #B79051);
+}
+
+.lista_acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.linha_acao {
+    display: flex;
+    align-items: baseline;
+    gap: 1em;
+    text-align: left;
+    font-family: inherit;
+    background: #12101A;
+    border: 0.07em solid #352E4C;
+    border-left: 0.25em solid var(--cor-tipo, #B79051);
+    border-radius: 0.4em;
+    padding: 0.6em 1em;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.linha_acao:hover {
+    border-color: #4a3d70;
+    background: #151221;
+}
+
+.nome_acao {
+    color: #EBE0C9;
+    font-size: 1em;
+    letter-spacing: 0.03em;
+}
+
+.dano_acao {
+    font-family: var(--fonte-B612Mono), monospace;
+    font-size: 0.85em;
+    color: #D9B87E;
+}
+
+.origem_acao {
+    margin-left: auto;
+    color: #6f6a7a;
+    font-size: 0.85em;
+}
+
+.resumo_vazio {
+    margin: 0;
+    color: #6f6a7a;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+.botao_adicionar {
+    background: none;
+    border: 0.07em dashed #352E4C;
+    border-radius: 0.5em;
+    color: #aba9a1;
+    font-family: inherit;
+    font-size: 0.95em;
+    letter-spacing: 0.05em;
+    padding: 0.8em;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.botao_adicionar:hover:not(:disabled) {
+    border-color: #B79051;
+    color: #EBE0C9;
+}
+
+.botao_adicionar:disabled {
+    opacity: 0.5;
+    cursor: default;
+}

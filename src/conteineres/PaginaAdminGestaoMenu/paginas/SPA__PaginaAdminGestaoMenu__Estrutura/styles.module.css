@@ -1,0 +1,157 @@
+.host {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    padding: 0.5em 0.25em;
+}
+
+.erro {
+    color: var(--cor-aviso);
+}
+
+.info {
+    opacity: 0.7;
+}
+
+.lista_nos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Níveis aninhados: recuo com guia sépia — a hierarquia se lê pela linha, sem rótulos. */
+.lista_nos .lista_nos {
+    margin-left: 1.5em;
+    border-left: 0.07em solid #322F2F;
+    padding-left: 0.8em;
+}
+
+.no {
+    position: relative;
+}
+
+.linha_no {
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    padding: 0.4em 0.65em;
+    border: 0.07em solid transparent;
+    border-radius: 0.45em;
+    position: relative;
+}
+
+.linha_no:hover {
+    background-color: rgba(53, 46, 76, 0.35);
+    border-color: #352E4C;
+}
+
+/* Nó sendo arrastado: fantasma no lugar de origem. */
+.linha_no[data-arrastando="true"] {
+    opacity: 0.35;
+}
+
+/* Alvo de "colocar dentro" (miolo de um grupo durante o arrasto): grupo aceso em ouro. */
+.linha_no[data-nest="true"] {
+    border-color: #B79051;
+    background-color: rgba(183, 144, 81, 0.12);
+    box-shadow: inset 0 0 0.7em rgba(183, 144, 81, 0.35);
+}
+
+/* Linha de inserção (antes/depois) durante o arrasto: risco âmbar com brilho. */
+.no[data-inserir="antes"] > .linha_no::before,
+.no[data-inserir="depois"] > .linha_no::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 0.14em;
+    border-radius: 0.1em;
+    background: linear-gradient(90deg, #e2b83c, rgba(226, 184, 60, 0.05));
+    box-shadow: 0 0 0.5em rgba(226, 184, 60, 0.7);
+    pointer-events: none;
+}
+
+.no[data-inserir="antes"] > .linha_no::before {
+    top: -0.12em;
+}
+
+.no[data-inserir="depois"] > .linha_no::after {
+    bottom: -0.12em;
+}
+
+.manopla {
+    color: #322F2F;
+    cursor: grab;
+    user-select: none;
+    font-size: 0.9em;
+}
+
+.linha_no:hover .manopla {
+    color: #B79051;
+}
+
+.titulo_no {
+    color: #D9D9D9;
+}
+
+/* Grupo: título em small-caps pergaminho — distinção tipográfica, sem badge. */
+.linha_no[data-grupo="true"] .titulo_no {
+    font-variant: small-caps;
+    letter-spacing: 0.04em;
+    color: #EBE0C9;
+}
+
+.linha_no[data-oculto="true"] .titulo_no {
+    opacity: 0.5;
+    text-decoration: line-through rgba(219, 71, 71, 0.6);
+}
+
+/* Destino do item: template da página, discreto, com seta ouro. */
+.destino {
+    font-size: 0.72em;
+    opacity: 0.65;
+}
+
+.destino::before {
+    content: '→ ';
+    color: #B79051;
+}
+
+.tag_oculto {
+    font-size: 0.68em;
+    font-variant: small-caps;
+    letter-spacing: 0.06em;
+    padding: 0.1em 0.7em;
+    border-radius: 0.8em;
+    border: 0.08em solid rgba(219, 71, 71, 0.55);
+    color: #DB4747;
+}
+
+/* Ações da linha: só existem no hover/focus — em repouso a árvore é leitura limpa. */
+.acoes_no {
+    margin-left: auto;
+    display: flex;
+    gap: 0.3em;
+    opacity: 0;
+    transition: opacity 0.12s;
+}
+
+.linha_no:hover .acoes_no,
+.linha_no:focus-within .acoes_no {
+    opacity: 1;
+}
+
+.botao_mini {
+    background: transparent;
+    border: 0.07em solid #322F2F;
+    color: #aba9a1;
+    border-radius: 0.35em;
+    padding: 0.05em 0.5em;
+    font-size: 0.78em;
+    cursor: pointer;
+}
+
+.botao_mini:hover {
+    color: #e2b83c;
+    border-color: #B79051;
+}

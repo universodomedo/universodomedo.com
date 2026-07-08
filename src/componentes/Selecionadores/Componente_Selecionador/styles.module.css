@@ -10,6 +10,8 @@
 /* Cada registro é um card clicável (moldura visível por padrão p/ destacar mesmo conteúdo escuro); o selecionado ganha destaque dourado. O conteúdo visual de cada item vem do caller (renderizarItem). */
 .item {
     cursor: pointer;
+    /* Em modo LINHA o card é filho flex direto do conteúdo scrollável: sem isto o flex-shrink esmaga os cards quando há mais itens que altura (o scroll só existe se o filho não encolher). */
+    flex-shrink: 0;
     border: 0.16em solid rgba(255, 255, 255, 0.16);
     border-radius: 0.55em;
     background-color: rgba(255, 255, 255, 0.07);

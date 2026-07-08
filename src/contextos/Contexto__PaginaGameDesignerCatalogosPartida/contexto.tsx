@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { EventosApiRest, type CatalogoPartidaResumo, type EstruturaPartidas, type PartidaResumo, type PAYLOAD__AdicionarPartidaCatalogo, type PAYLOAD__AlternarExibicaoPartida, type PAYLOAD__DeletarCatalogoPartida, type PAYLOAD__RemoverPartidaCatalogo, type PAYLOAD__ReordenarPartidasCatalogo, type PAYLOAD__SalvarCatalogoPartida, type TipoCatalogoPartida } from 'types-nora-api';
+import { EventosApiRest, type CatalogoPartidaResumo, type EstruturaPartidas, type PartidaResumo, type PAYLOAD__AdicionarPartidaCatalogo, type PAYLOAD__AdicionarRequisitoCatalogo, type PAYLOAD__AdicionarRequisitoSubcatalogo, type PAYLOAD__AlternarExibicaoPartida, type PAYLOAD__CriarSubcatalogoPartida, type PAYLOAD__DefinirSubcatalogoPartidaCatalogo, type PAYLOAD__DeletarCatalogoPartida, type PAYLOAD__DeletarSubcatalogoPartida, type PAYLOAD__RemoverPartidaCatalogo, type PAYLOAD__RemoverRequisitoAcessoCatalogo, type PAYLOAD__RemoverRequisitoAcessoSubcatalogo, type PAYLOAD__ReordenarPartidasCatalogo, type PAYLOAD__SalvarCatalogoPartida, type PAYLOAD__SalvarSubcatalogoPartida, type TipoCatalogoPartida } from 'types-nora-api';
 
 import { NoraApi } from 'Api/NoraApi';
 
@@ -32,6 +32,14 @@ export interface Contexto__PaginaGameDesignerCatalogosPartida__Props {
     removerPartida: (payload: PAYLOAD__RemoverPartidaCatalogo) => Promise<void>;
     alternarExibicao: (payload: PAYLOAD__AlternarExibicaoPartida) => Promise<void>;
     reordenarPartidas: (payload: PAYLOAD__ReordenarPartidasCatalogo) => Promise<void>;
+    adicionarRequisitoCatalogo: (payload: PAYLOAD__AdicionarRequisitoCatalogo) => Promise<void>;
+    removerRequisitoAcesso: (payload: PAYLOAD__RemoverRequisitoAcessoCatalogo) => Promise<void>;
+    adicionarRequisitoSubcatalogo: (payload: PAYLOAD__AdicionarRequisitoSubcatalogo) => Promise<void>;
+    removerRequisitoAcessoSubcatalogo: (payload: PAYLOAD__RemoverRequisitoAcessoSubcatalogo) => Promise<void>;
+    criarSubcatalogo: (payload: PAYLOAD__CriarSubcatalogoPartida) => Promise<void>;
+    salvarSubcatalogo: (payload: PAYLOAD__SalvarSubcatalogoPartida) => Promise<void>;
+    deletarSubcatalogo: (payload: PAYLOAD__DeletarSubcatalogoPartida) => Promise<void>;
+    definirSubcatalogoPartida: (payload: PAYLOAD__DefinirSubcatalogoPartidaCatalogo) => Promise<void>;
 };
 
 const Contexto__PaginaGameDesignerCatalogosPartida = createContext<Contexto__PaginaGameDesignerCatalogosPartida__Props | undefined>(undefined);
@@ -110,6 +118,38 @@ export const Contexto__PaginaGameDesignerCatalogosPartida__Provider = ({ childre
         await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.reordenarPartidasCatalogo, payload, { mensagemErro: 'Não foi possível reordenar as Partidas.' }), 'Não foi possível reordenar as Partidas.');
     }, [executarSalvando]);
 
+    const adicionarRequisitoCatalogo = useCallback(async (payload: PAYLOAD__AdicionarRequisitoCatalogo) => {
+        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.adicionarRequisitoCatalogo, payload, { mensagemErro: 'Não foi possível adicionar o requisito ao catálogo.' }), 'Não foi possível adicionar o requisito ao catálogo.');
+    }, [executarSalvando]);
+
+    const removerRequisitoAcesso = useCallback(async (payload: PAYLOAD__RemoverRequisitoAcessoCatalogo) => {
+        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.removerRequisitoAcessoCatalogo, payload, { mensagemErro: 'Não foi possível remover o requisito do catálogo.' }), 'Não foi possível remover o requisito do catálogo.');
+    }, [executarSalvando]);
+
+    const adicionarRequisitoSubcatalogo = useCallback(async (payload: PAYLOAD__AdicionarRequisitoSubcatalogo) => {
+        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.adicionarRequisitoSubcatalogo, payload, { mensagemErro: 'Não foi possível adicionar o requisito ao subcatálogo.' }), 'Não foi possível adicionar o requisito ao subcatálogo.');
+    }, [executarSalvando]);
+
+    const removerRequisitoAcessoSubcatalogo = useCallback(async (payload: PAYLOAD__RemoverRequisitoAcessoSubcatalogo) => {
+        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.removerRequisitoAcessoSubcatalogo, payload, { mensagemErro: 'Não foi possível remover o requisito do subcatálogo.' }), 'Não foi possível remover o requisito do subcatálogo.');
+    }, [executarSalvando]);
+
+    const criarSubcatalogo = useCallback(async (payload: PAYLOAD__CriarSubcatalogoPartida) => {
+        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.criarSubcatalogo, payload, { mensagemErro: 'Não foi possível criar o subcatálogo.' }), 'Não foi possível criar o subcatálogo.');
+    }, [executarSalvando]);
+
+    const salvarSubcatalogo = useCallback(async (payload: PAYLOAD__SalvarSubcatalogoPartida) => {
+        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.salvarSubcatalogo, payload, { mensagemErro: 'Não foi possível salvar o subcatálogo.' }), 'Não foi possível salvar o subcatálogo.');
+    }, [executarSalvando]);
+
+    const deletarSubcatalogo = useCallback(async (payload: PAYLOAD__DeletarSubcatalogoPartida) => {
+        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.deletarSubcatalogo, payload, { mensagemErro: 'Não foi possível deletar o subcatálogo.' }), 'Não foi possível deletar o subcatálogo.');
+    }, [executarSalvando]);
+
+    const definirSubcatalogoPartida = useCallback(async (payload: PAYLOAD__DefinirSubcatalogoPartidaCatalogo) => {
+        await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.definirSubcatalogoPartida, payload, { mensagemErro: 'Não foi possível mover a Partida de subcatálogo.' }), 'Não foi possível mover a Partida de subcatálogo.');
+    }, [executarSalvando]);
+
     const iniciaCadastro = useCallback(() => setEstadoFluxo('CADASTRO'), []);
     const selecionaCatalogo = useCallback((idCatalogo: number) => setIdCatalogoEmEdicao(idCatalogo), []);
     const voltaParaListagem = useCallback(() => {
@@ -126,7 +166,7 @@ export const Contexto__PaginaGameDesignerCatalogosPartida__Provider = ({ childre
     const listagemCatalogos = useMemo<ListagemCatalogos>(() => montaListagemCatalogos(estrutura, carregando, erro), [estrutura, carregando, erro]);
 
     return (
-        <Contexto__PaginaGameDesignerCatalogosPartida.Provider value={{ listagemCatalogos, partidas, salvando, estadoFluxo, idCatalogoEmEdicao, catalogoEmEdicao, iniciaCadastro, selecionaCatalogo, voltaParaListagem, concluiCadastro, criarCatalogo, salvarCatalogo, deletarCatalogo, adicionarPartida, removerPartida, alternarExibicao, reordenarPartidas }}>
+        <Contexto__PaginaGameDesignerCatalogosPartida.Provider value={{ listagemCatalogos, partidas, salvando, estadoFluxo, idCatalogoEmEdicao, catalogoEmEdicao, iniciaCadastro, selecionaCatalogo, voltaParaListagem, concluiCadastro, criarCatalogo, salvarCatalogo, deletarCatalogo, adicionarPartida, removerPartida, alternarExibicao, reordenarPartidas, adicionarRequisitoCatalogo, removerRequisitoAcesso, adicionarRequisitoSubcatalogo, removerRequisitoAcessoSubcatalogo, criarSubcatalogo, salvarSubcatalogo, deletarSubcatalogo, definirSubcatalogoPartida }}>
             {children}
         </Contexto__PaginaGameDesignerCatalogosPartida.Provider>
     );

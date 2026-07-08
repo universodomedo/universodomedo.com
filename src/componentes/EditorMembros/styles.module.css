@@ -1,87 +1,96 @@
-.bloco_membros {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-}
-
-.cabecalho_membros {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1em;
-}
-
-.cabecalho_membros h3 {
-    margin: 0;
-}
-
-.erro_campo {
-    color: var(--cor-erro, #c0392b);
-}
+/* CardMembroEditor: card de resumo de um membro (filete/gemas na cor do tipo de interação). Identidade UDM. */
 
 .card_membro {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75em;
-    padding: 1em;
-    border: 0.06em solid var(--cor-borda, #d0d0d0);
-    border-radius: 0.4em;
-}
-
-.campo {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.35em;
+    text-align: left;
+    font-family: inherit;
+    background: #12101A;
+    border: 0.07em solid #352E4C;
+    border-radius: 0.5em;
+    padding: 0.9em 1.1em 0.8em 1.3em;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
 }
 
-.lista_capacidades {
+.card_membro::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    bottom: 0.6em;
+    width: 0.22em;
+    border-radius: 0.2em;
+    background: var(--cor-membro, #B79051);
+}
+
+.card_membro:hover {
+    border-color: #4a3d70;
+    background: #151221;
+}
+
+.card_membro.ativo {
+    border-color: #B79051;
+    background: #17131f;
+    box-shadow: 0 0 0.8em rgba(183, 144, 81, 0.15);
+}
+
+.linha_nome {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.8em;
+}
+
+.nome_membro {
+    color: #aba9a1;
+    font-variant: small-caps;
+    letter-spacing: 0.04em;
+    font-size: 1.25em;
+}
+
+.card_membro:hover .nome_membro,
+.card_membro.ativo .nome_membro {
+    color: #EBE0C9;
+}
+
+.gemas {
+    display: flex;
+    gap: 0.4em;
+    flex: none;
+}
+
+.gema {
+    width: 0.55em;
+    height: 0.55em;
+    border-radius: 50%;
+    background: var(--cor-gema, #B79051);
+    box-shadow: 0 0 0.35em var(--cor-gema, #B79051);
+}
+
+.capacidades_membro {
+    color: #6f6a7a;
+    font-size: 0.85em;
+}
+
+.acoes_membro {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75em;
+    gap: 0.3em 0.9em;
+    font-family: var(--fonte-B612Mono), monospace;
+    font-size: 0.8em;
+    color: #aba9a1;
 }
 
-.capacidade {
-    display: flex;
-    align-items: center;
-    gap: 0.35em;
+.dano_resumo {
+    color: #D9B87E;
+    font-weight: 400;
 }
 
-.bloco_acoes_membro {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75em;
-}
-
-.cabecalho_acoes_membro {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1em;
-}
-
-.lista_acoes_membro {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75em;
-}
-
-.acao_membro {
-    display: grid;
-    grid-template-columns: 1fr 1fr 8em auto;
-    align-items: end;
-    gap: 0.75em;
-    padding: 0.75em;
-    border: 0.06em solid var(--cor-borda, #d0d0d0);
-    border-radius: 0.4em;
-}
-
-.botao_remover {
-    align-self: flex-start;
-    cursor: pointer;
-}
-
-@media (max-width: 48em) {
-    .acao_membro {
-        grid-template-columns: 1fr;
-    }
+.acoes_membro_vazio {
+    color: #6f6a7a;
+    font-style: italic;
+    font-size: 0.8em;
 }

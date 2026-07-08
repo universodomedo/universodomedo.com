@@ -1,8 +1,7 @@
-import type { MembroSerJogavel, MembroSerJogavelInput } from 'types-nora-api';
+import { TIPOS_INTERACAO, type MembroSerJogavel, type MembroSerJogavelInput } from 'types-nora-api';
 
 // Helpers PUROS do editor de membros do Ser jogavel, no territorio do EditorMembros compartilhado.
-// Duplicado do legado Contexto__PaginaGameDesignerSeres__EditarMembros/membrosSerJogavelEditor (que morre na aposentadoria do Ser legado).
-// TODO: 'Danificável' literal — validacao espelha o backend (TIPOS_INTERACAO); migrar quando o contrato de tipos de interacao propagar ao types-nora-api.
+// A validacao de dano espelha o backend via contrato TIPOS_INTERACAO (nunca literal).
 export type CapacidadeInataMembroEditor = {
     readonly id: number;
     readonly nome: string;
@@ -91,7 +90,7 @@ function alternaCapacidade(membro: MembroEditor, idCapacidade: number): MembroEd
 
 function acaoPossuiParametrosValidos(acao: AcaoMembroEditor, capacidades: readonly CapacidadeInataMembroEditor[]): boolean {
     const capacidade = capacidades.find(capacidadeAtual => capacidadeAtual.id === acao.idCapacidadeInata);
-    if (capacidade?.nomeInteracao !== 'Danificável') return true;
+    if (capacidade?.nomeInteracao !== TIPOS_INTERACAO.DANIFICAVEL.chave) return true;
     const dano = acao.parametros.dano;
     return typeof dano === 'number' && Number.isInteger(dano) && dano > 0;
 };

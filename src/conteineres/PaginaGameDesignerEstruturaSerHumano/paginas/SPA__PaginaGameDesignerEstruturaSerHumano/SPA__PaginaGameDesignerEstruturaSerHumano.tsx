@@ -1,36 +1,13 @@
 'use client';
 
-import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
-import { EditorMembros } from 'Componentes/EditorMembros/EditorMembros';
+import { Contexto__EditorEstrutura__Provider, EditorEstrutura__AplicaLayoutBase } from 'Contextos/Contexto__EditorEstrutura/contexto';
 import { useContexto__PaginaGameDesignerEstruturaSerHumano } from 'Contextos/Contexto__PaginaGameDesignerEstruturaSerHumano/contexto';
 
+// A página delega ao Controlador de Fluxo do EditorEstrutura (Visão Geral / Membro / Ação); persistência via callbacks do contexto da página.
 export default function SPA__PaginaGameDesignerEstruturaSerHumano() {
-    const { editor, carregando, salvando, podeSalvar, salvar } = useContexto__PaginaGameDesignerEstruturaSerHumano();
+    const { editor, carregando, salvando, podeSalvar, salvar, layoutBase } = useContexto__PaginaGameDesignerEstruturaSerHumano();
 
-    if (carregando) return <p>Carregando estrutura humana...</p>;
+    if (carregando) return <><EditorEstrutura__AplicaLayoutBase layoutBase={layoutBase} /><p>Carregando estrutura humana...</p></>;
 
-    return (
-        <ConteudoForm>
-            <ConteudoForm.AreaCorpo>
-                <EditorMembros
-                    membros={editor.membros}
-                    capacidadesInatas={editor.capacidadesInatas}
-                    salvando={salvando}
-                    mensagemValidacao={editor.mensagemValidacao}
-                    adicionaMembro={editor.adicionaMembro}
-                    removeMembro={editor.removeMembro}
-                    atualizaNomeMembro={editor.atualizaNomeMembro}
-                    alternaCapacidadeMembro={editor.alternaCapacidadeMembro}
-                    adicionaAcaoMembro={editor.adicionaAcaoMembro}
-                    removeAcaoMembro={editor.removeAcaoMembro}
-                    atualizaNomeAcaoMembro={editor.atualizaNomeAcaoMembro}
-                    atualizaCapacidadeAcaoMembro={editor.atualizaCapacidadeAcaoMembro}
-                    atualizaDanoAcaoMembro={editor.atualizaDanoAcaoMembro}
-                />
-            </ConteudoForm.AreaCorpo>
-            <ConteudoForm.AreaBotoes>
-                <button type="button" onClick={salvar} disabled={!podeSalvar}>{salvando ? 'Salvando...' : 'Salvar estrutura'}</button>
-            </ConteudoForm.AreaBotoes>
-        </ConteudoForm>
-    );
+    return <Contexto__EditorEstrutura__Provider editor={editor} salvando={salvando} podeSalvar={podeSalvar} salvar={salvar} layoutBase={layoutBase} />;
 };
