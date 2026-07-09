@@ -15,11 +15,14 @@ type Props = {
     aoSelecionar: () => void;
 };
 
-// Card de resumo de um membro na coluna de listagem do EditorMembros (componente final por props): filete/gemas na cor do tipo de interação + resumo das ações.
+// Card de resumo de um membro na coluna de listagem do EditorMembros (componente final por props): filete/gemas na cor do tipo de interação + resumo das ações (dano vem da capacidade do Membro).
 export function CardMembroEditor({ membro, capacidades, ativo, aoSelecionar }: Props) {
-    const capacidadesDoMembro = capacidades.filter(capacidade => membro.idsCapacidadesInatas.includes(capacidade.id));
+    const idsDoMembro = membro.capacidades.map(capacidade => capacidade.idCapacidadeInata);
+    const capacidadesDoMembro = capacidades.filter(capacidade => idsDoMembro.includes(capacidade.id));
     const tipos = [...new Set(capacidadesDoMembro.map(capacidade => capacidade.nomeInteracao).filter((tipo): tipo is string => typeof tipo === 'string'))];
     const corMembro = tipos.length === 1 ? corDoTipoInteracao(tipos[0]) : COR_TIPO_PADRAO;
+
+    const danoDaAcao = (idCapacidadeInata: number): number | '' => membro.capacidades.find(capacidade => capacidade.idCapacidadeInata === idCapacidadeInata)?.parametros.dano ?? '';
 
     return (
         <button type="button" className={cn(styles.card_membro, { [styles.ativo]: ativo })} onClick={aoSelecionar} style={{ '--cor-membro': corMembro } as CSSProperties}>
@@ -29,7 +32,7 @@ export function CardMembroEditor({ membro, capacidades, ativo, aoSelecionar }: P
             </span>
             <span className={styles.capacidades_membro}>{capacidadesDoMembro.map(capacidade => capacidade.nome).join(' · ') || 'Sem Capacidades Inatas'}</span>
             {membro.acoes.length > 0
-                ? <span className={styles.acoes_membro}>{membro.acoes.map(acao => <span key={acao.idLocal}>{acao.nome.trim() || '—'}{typeof acao.parametros.dano === 'number' && <b className={styles.dano_resumo}> {acao.parametros.dano}</b>}</span>)}</span>
+                ? <span className={styles.acoes_membro}>{membro.acoes.map(acao => { const dano = danoDaAcao(acao.idCapacidadeInata); return <span key={acao.idLocal}>{acao.nome.trim() || '—'}{typeof dano === 'number' && <b className={styles.dano_resumo}> {dano}</b>}</span>; })}</span>
                 : <span className={styles.acoes_membro_vazio}>sem ações</span>}
         </button>
     );

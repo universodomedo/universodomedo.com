@@ -17,14 +17,18 @@ import type { DestinoMovimentacaoSalaJogo } from './ContextoMovimentacaoSalaJogo
 const ALTURA_PAREDE = 3.6;
 const ESPESSURA_PAREDE = 0.3;
 const ALTURA_OLHOS = 1.55;
-const VELOCIDADE_LOCOMOCAO_TESTE_METROS_POR_SEGUNDO = 1;
+const VELOCIDADE_LOCOMOCAO_TESTE_MILIMETROS_POR_SEGUNDO = 1000;
 const COR_MOVIMENTACAO = '#4ade80';
 
-function mundoX(x: number, largura: number): number { return x + 0.5 - largura / 2; };
-function mundoZ(y: number, altura: number): number { return y + 0.5 - altura / 2; };
+// O dado vive em milimetros (precisao cheia); a cena Three.js renderiza numa escala confortavel: 1 unidade de cena = 1000 mm. So o DESENHO escala — nenhum arredondamento no dado.
+const MILIMETROS_POR_UNIDADE_CENA = 1000;
+function paraUnidadeCena(valorMilimetros: number): number { return valorMilimetros / MILIMETROS_POR_UNIDADE_CENA; };
+
+function mundoX(x: number, largura: number): number { return paraUnidadeCena(x - largura / 2) + 0.5; };
+function mundoZ(y: number, altura: number): number { return paraUnidadeCena(y - altura / 2) + 0.5; };
 function celulaDoMundo(pontoX: number, pontoZ: number, largura: number, altura: number): DestinoMovimentacaoSalaJogo {
-    const x = Math.min(Math.max(Math.round(pontoX - 0.5 + largura / 2), 0), largura - 1);
-    const y = Math.min(Math.max(Math.round(pontoZ - 0.5 + altura / 2), 0), altura - 1);
+    const x = Math.min(Math.max(Math.round((pontoX - 0.5) * MILIMETROS_POR_UNIDADE_CENA + largura / 2), 0), largura);
+    const y = Math.min(Math.max(Math.round((pontoZ - 0.5) * MILIMETROS_POR_UNIDADE_CENA + altura / 2), 0), altura);
     return { x, y };
 };
 function projetaMomentoFiccional(momentoMs: number, momentoLimiteMs: number | null): number { return momentoLimiteMs === null ? momentoMs : Math.min(momentoMs, momentoLimiteMs); };
@@ -96,7 +100,7 @@ interface VistaTaticaSalaJogoProps {
 
 function VistaTaticaSalaJogo({ className, payload, keysNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, estadoTemporalSalaJogo, modoMovimentacaoAtivo, aoSelecionarOcupante, aoSelecionarInteragivel, aoLimparSelecao, aoConfirmarMovimentacao, aoCancelarMovimentacao }: VistaTaticaSalaJogoProps) {
     useReforcaRedimensionamentoCanvas();
-    const extensao = Math.max(payload.mapaLogico.larguraMetros, payload.mapaLogico.alturaMetros);
+    const extensao = paraUnidadeCena(Math.max(payload.mapaLogico.larguraMilimetros, payload.mapaLogico.alturaMilimetros));
     const distancia = Math.max(8, extensao * 1.15);
     const [celulaHoverDestino, setCelulaHoverDestino] = useState<DestinoMovimentacaoSalaJogo | null>(null);
     const ocupanteControlado = payload.ocupantesMapaLogico[0] ?? null;
@@ -134,10 +138,10 @@ interface OverlayMovimentacaoProps {
 function OverlayMovimentacao({ ocupanteControlado, celulaHoverDestino }: OverlayMovimentacaoProps) {
     if (!ocupanteControlado || !celulaHoverDestino) return <div className={styles.overlay_movimentacao}>Clique no chão para definir o destino</div>;
 
-    const distanciaMetros = Math.hypot(celulaHoverDestino.x - ocupanteControlado.posicao.x, celulaHoverDestino.y - ocupanteControlado.posicao.y);
-    const tempoSegundos = distanciaMetros / VELOCIDADE_LOCOMOCAO_TESTE_METROS_POR_SEGUNDO;
+    const distanciaMilimetros = Math.hypot(celulaHoverDestino.x - ocupanteControlado.posicao.x, celulaHoverDestino.y - ocupanteControlado.posicao.y);
+    const tempoSegundos = distanciaMilimetros / VELOCIDADE_LOCOMOCAO_TESTE_MILIMETROS_POR_SEGUNDO;
 
-    return <div className={styles.overlay_movimentacao}>Distância: {distanciaMetros.toFixed(1)} m · Tempo: {tempoSegundos.toFixed(1)} s</div>;
+    return <div className={styles.overlay_movimentacao}>Distância: {distanciaMilimetros.toFixed(0)} mm · Tempo: {tempoSegundos.toFixed(1)} s</div>;
 };
 
 interface VistaPrimeiraPessoaSalaJogoProps {
@@ -151,9 +155,9 @@ interface VistaPrimeiraPessoaSalaJogoProps {
 
 function VistaPrimeiraPessoaSalaJogo({ className, payload, keysNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, ocupanteJogador }: VistaPrimeiraPessoaSalaJogoProps) {
     useReforcaRedimensionamentoCanvas();
-    const largura = payload.mapaLogico.larguraMetros;
-    const altura = payload.mapaLogico.alturaMetros;
-    const extensao = Math.max(largura, altura);
+    const largura = payload.mapaLogico.larguraMilimetros;
+    const altura = payload.mapaLogico.alturaMilimetros;
+    const extensao = paraUnidadeCena(Math.max(largura, altura));
     const cabecaX = ocupanteJogador === null ? 0 : mundoX(ocupanteJogador.posicao.x, largura);
     const cabecaZ = ocupanteJogador === null ? 0 : mundoZ(ocupanteJogador.posicao.y, altura);
 
@@ -183,9 +187,9 @@ interface ConteudoCena3DSalaJogoProps {
 };
 
 function ConteudoCena3DSalaJogo({ payload, keysNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, estadoTemporalSalaJogo, modoMovimentacaoAtivo, celulaHoverDestino, aoMoverDestino, aoConfirmarDestino, aoSelecionarOcupante, aoSelecionarInteragivel, ocultarKeyOcupante }: ConteudoCena3DSalaJogoProps) {
-    const largura = payload.mapaLogico.larguraMetros;
-    const altura = payload.mapaLogico.alturaMetros;
-    const extensao = Math.max(largura, altura);
+    const largura = payload.mapaLogico.larguraMilimetros;
+    const altura = payload.mapaLogico.alturaMilimetros;
+    const extensao = paraUnidadeCena(Math.max(largura, altura));
     const limiteSombra = Math.max(9, extensao * 0.75);
     const ocupanteControlado = payload.ocupantesMapaLogico[0] ?? null;
 
@@ -243,7 +247,7 @@ function SalaLaboratorio({ largura, altura }: SalaLaboratorioProps) {
                 <meshStandardMaterial color="#cdd4db" roughness={0.55} metalness={0.12} />
             </mesh>
 
-            <Grid position={[0, 0.012, 0]} args={[largura, altura]} cellSize={1} cellThickness={0.6} cellColor="#9aa3ad" sectionSize={5} sectionThickness={1} sectionColor="#6c7682" fadeDistance={Math.max(largura, altura) * 2.6} fadeStrength={1} followCamera={false} infiniteGrid={false} />
+            <Grid position={[0, 0.012, 0]} args={[paraUnidadeCena(largura), paraUnidadeCena(altura)]} cellSize={1} cellThickness={0.6} cellColor="#9aa3ad" sectionSize={5} sectionThickness={1} sectionColor="#6c7682" fadeDistance={paraUnidadeCena(Math.max(largura, altura)) * 2.6} fadeStrength={1} followCamera={false} infiniteGrid={false} />
 
             <Parede position={[0, meioParede, -altura / 2]} args={[largura, ALTURA_PAREDE, ESPESSURA_PAREDE]} />
             <Parede position={[0, meioParede, altura / 2]} args={[largura, ALTURA_PAREDE, ESPESSURA_PAREDE]} />

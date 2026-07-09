@@ -5,10 +5,10 @@ import { EventosApiRest, type OrigemEstruturaSerJogavel, type TipoControlabilida
 
 import { NoraApi } from 'Api/NoraApi';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
-import { Contexto__PaginaGameDesignerNovoSer__Props } from '../Contexto__PaginaGameDesignerNovoSer/contexto';
-import SPA__PaginaGameDesignerNovoSer__Cadastro from 'Conteineres/PaginaGameDesignerNovoSer/paginas/SPA__PaginaGameDesignerNovoSer__Cadastro/SPA__PaginaGameDesignerNovoSer__Cadastro';
+import { Contexto__PaginaGameDesignerSeres__Props } from '../Contexto__PaginaGameDesignerSeres/contexto';
+import SPA__PaginaGameDesignerSeres__Cadastro from 'Conteineres/PaginaGameDesignerSeres/paginas/SPA__PaginaGameDesignerSeres__Cadastro/SPA__PaginaGameDesignerSeres__Cadastro';
 
-interface Contexto__PaginaGameDesignerNovoSer__Cadastro__Props {
+interface Contexto__PaginaGameDesignerSeres__Cadastro__Props {
     tipo: TipoControlabilidadeSer | null;
     nome: string;
     origemEstrutura: OrigemEstruturaSerJogavel | null;
@@ -21,19 +21,19 @@ interface Contexto__PaginaGameDesignerNovoSer__Cadastro__Props {
 };
 
 type PropsProvider = {
-    cancelaCadastro: Contexto__PaginaGameDesignerNovoSer__Props['voltaParaListagem'];
-    concluiCadastro: Contexto__PaginaGameDesignerNovoSer__Props['concluiCadastro'];
+    cancelaCadastro: Contexto__PaginaGameDesignerSeres__Props['voltaParaListagem'];
+    concluiCadastro: Contexto__PaginaGameDesignerSeres__Props['concluiCadastro'];
 };
 
-const Contexto__PaginaGameDesignerNovoSer__Cadastro = createContext<Contexto__PaginaGameDesignerNovoSer__Cadastro__Props | undefined>(undefined);
+const Contexto__PaginaGameDesignerSeres__Cadastro = createContext<Contexto__PaginaGameDesignerSeres__Cadastro__Props | undefined>(undefined);
 
-export const useContexto__PaginaGameDesignerNovoSer__Cadastro = (): Contexto__PaginaGameDesignerNovoSer__Cadastro__Props => {
-    const context = useContext(Contexto__PaginaGameDesignerNovoSer__Cadastro);
-    if (!context) throw new Error('useContexto__PaginaGameDesignerNovoSer__Cadastro precisa estar dentro de um Contexto__PaginaGameDesignerNovoSer__Cadastro');
+export const useContexto__PaginaGameDesignerSeres__Cadastro = (): Contexto__PaginaGameDesignerSeres__Cadastro__Props => {
+    const context = useContext(Contexto__PaginaGameDesignerSeres__Cadastro);
+    if (!context) throw new Error('useContexto__PaginaGameDesignerSeres__Cadastro precisa estar dentro de um Contexto__PaginaGameDesignerSeres__Cadastro');
     return context;
 };
 
-export const Contexto__PaginaGameDesignerNovoSer__Cadastro__Provider = ({ cancelaCadastro, concluiCadastro }: PropsProvider) => {
+export const Contexto__PaginaGameDesignerSeres__Cadastro__Provider = ({ cancelaCadastro, concluiCadastro }: PropsProvider) => {
     useConfigurarLayoutContextualizado({ subtitulo: 'Novo Ser', fecharProps: { tipo: 'acao', executar: cancelaCadastro, tituloTooltip: 'Voltar para Listagem' } });
 
     const [tipo, setTipo] = useState<TipoControlabilidadeSer | null>(null);
@@ -59,8 +59,8 @@ export const Contexto__PaginaGameDesignerNovoSer__Cadastro__Provider = ({ cancel
     }, [tipo, nome, origemEstrutura, concluiCadastro]);
 
     return (
-        <Contexto__PaginaGameDesignerNovoSer__Cadastro.Provider value={{ tipo, nome, origemEstrutura, salvando, podeSalvar, setTipo, setNome, setOrigemEstrutura, criar }}>
-            <SPA__PaginaGameDesignerNovoSer__Cadastro />
-        </Contexto__PaginaGameDesignerNovoSer__Cadastro.Provider>
+        <Contexto__PaginaGameDesignerSeres__Cadastro.Provider value={{ tipo, nome, origemEstrutura, salvando, podeSalvar, setTipo, setNome, setOrigemEstrutura, criar }}>
+            <SPA__PaginaGameDesignerSeres__Cadastro />
+        </Contexto__PaginaGameDesignerSeres__Cadastro.Provider>
     );
 };

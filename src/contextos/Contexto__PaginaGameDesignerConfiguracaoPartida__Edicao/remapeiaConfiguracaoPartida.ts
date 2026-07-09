@@ -35,14 +35,14 @@ function remapeiaCondicaoVitoria(condicao: CondicaoVitoriaGraphql): Configuracao
     if (condicao.tipo === 'refem_percebido') return { tipo: 'refem_percebido', keySerEmSala: (condicao.keySerEmSala ?? '') as KeySerEmSala };
     if (condicao.tipo === 'inimigo_derrotado') return { tipo: 'inimigo_derrotado', keySerEmSala: (condicao.keySerEmSala ?? '') as KeySerEmSala, idEstatisticaDanificavel: condicao.idEstatisticaDanificavel ?? 0 };
     if (condicao.tipo === 'tempo_jogo_alcancado') return { tipo: 'tempo_jogo_alcancado', tempoAlvoMs: condicao.tempoAlvoMs ?? 0 };
-    if (condicao.tipo === 'proximidade_ser_alcancada') return { tipo: 'proximidade_ser_alcancada', keySerEmSala: (condicao.keySerEmSala ?? '') as KeySerEmSala, distanciaMaximaMetros: condicao.distanciaMaximaMetros ?? 0 };
+    if (condicao.tipo === 'proximidade_ser_alcancada') return { tipo: 'proximidade_ser_alcancada', keySerEmSala: (condicao.keySerEmSala ?? '') as KeySerEmSala, distanciaMaximaMilimetros: condicao.distanciaMaximaMilimetros ?? 0 };
     return { tipo: 'qualquer_acao_executada' };
 };
 
 export function remapeiaConfiguracaoPartidaGraphql(configuracao: ConfiguracaoPartidaGraphql): ConfiguracaoPartida {
     return {
         narracaoInicial: configuracao.narracaoInicial,
-        cenario: { nome: configuracao.cenario.nome, mapaLogico: { larguraMetros: configuracao.cenario.mapaLogico.larguraMetros, alturaMetros: configuracao.cenario.mapaLogico.alturaMetros } },
+        cenario: { nome: configuracao.cenario.nome, mapaLogico: { larguraMilimetros: configuracao.cenario.mapaLogico.larguraMilimetros, alturaMilimetros: configuracao.cenario.mapaLogico.alturaMilimetros } },
         interagiveis: configuracao.interagiveis.map(remapeiaInteragivel),
         condicaoVitoria: remapeiaCondicaoVitoria(configuracao.condicaoVitoria),
         temporal: configuracao.temporal === null ? undefined : { momentoInicialMs: configuracao.temporal.momentoInicialMs },

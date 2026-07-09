@@ -24,8 +24,8 @@ type Props = {
     aoMudarPercepcao: (percepcao: Percepcao) => void;
     posicao: { x: number; y: number };
     aoMudarPosicao: (posicao: { x: number; y: number }) => void;
-    larguraMetros: number;
-    alturaMetros: number;
+    larguraMilimetros: number;
+    alturaMilimetros: number;
     rotuloAtivo: string;
     marcadoresContexto: readonly { key: string; posicao: { x: number; y: number }; rotulo: string }[];
     descobertas: readonly Descoberta[];
@@ -40,7 +40,7 @@ const OPCOES_PERCEPCAO = [
     { value: 'DESPERCEBIDO', label: 'Despercebido (invisível até perceber)' },
 ];
 
-export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto({ nome, aoMudarNome, descricao, aoMudarDescricao, pontosDurabilidadeMaximo, aoMudarPontosDurabilidade, percepcaoInicial, aoMudarPercepcao, posicao, aoMudarPosicao, larguraMetros, alturaMetros, rotuloAtivo, marcadoresContexto, descobertas, aoMudarDescobertas, opcoesCapacidades, opcoesInteragiveis, salvar }: Props) {
+export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto({ nome, aoMudarNome, descricao, aoMudarDescricao, pontosDurabilidadeMaximo, aoMudarPontosDurabilidade, percepcaoInicial, aoMudarPercepcao, posicao, aoMudarPosicao, larguraMilimetros, alturaMilimetros, rotuloAtivo, marcadoresContexto, descobertas, aoMudarDescobertas, opcoesCapacidades, opcoesInteragiveis, salvar }: Props) {
     return (
         <ConteudoForm>
             <ConteudoForm.AreaCorpo>
@@ -62,7 +62,7 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__Conf
                 </div>
 
                 <InputComRotulo rotulo="Posição no mapa">
-                    <SeletorPosicaoMapa larguraMetros={larguraMetros} alturaMetros={alturaMetros} posicao={posicao} aoMudarPosicao={aoMudarPosicao} rotuloAtivo={rotuloAtivo} marcadoresContexto={marcadoresContexto} />
+                    <SeletorPosicaoMapa larguraMilimetros={larguraMilimetros} alturaMilimetros={alturaMilimetros} posicao={posicao} aoMudarPosicao={aoMudarPosicao} rotuloAtivo={rotuloAtivo} marcadoresContexto={marcadoresContexto} />
                 </InputComRotulo>
 
                 <EditorDescobertasInteragivel descobertas={descobertas} aoMudarDescobertas={aoMudarDescobertas} opcoesCapacidades={opcoesCapacidades} opcoesInteragiveis={opcoesInteragiveis} />

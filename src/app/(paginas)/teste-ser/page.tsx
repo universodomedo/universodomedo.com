@@ -6,12 +6,11 @@ import { EventosApiRest, PAGINAS, type SerNaSalaDeTeste, type SerExecucaoNaSalaS
 
 import { NoraApi } from 'Api/NoraApi';
 
-// Harness local do novo_ser (sem clone — o clone do legado foi aposentado): recebe o id de um Ser AUTORADO
-// (cadastro-novo-ser + estrutura) e exercita montar na Sala / executar na Sala Solo / jogar ao vivo.
+// Harness local do schema ser: recebe o id de um Ser AUTORADO (criar/seres + estrutura) e exercita montar na Sala / executar na Sala Solo / jogar ao vivo.
 export default function Page() {
     const router = useRouter();
 
-    const [idNovoSer, setIdNovoSer] = useState('');
+    const [idSer, setIdSer] = useState('');
     const [naSala, setNaSala] = useState<SerNaSalaDeTeste | null>(null);
     const [montando, setMontando] = useState(false);
     const [erroSala, setErroSala] = useState<string | null>(null);
@@ -25,8 +24,8 @@ export default function Page() {
     const [erroVivo, setErroVivo] = useState<string | null>(null);
 
     async function montarNaSala(): Promise<void> {
-        const id = Number(idNovoSer);
-        if (!Number.isInteger(id) || id <= 0) { setErroSala('Informe o id de um Ser de novo_ser autorado (cadastro-novo-ser).'); return; }
+        const id = Number(idSer);
+        if (!Number.isInteger(id) || id <= 0) { setErroSala('Informe o id de um Ser autorado (criar/seres).'); return; }
         setMontando(true);
         setErroSala(null);
         setNaSala(null);
@@ -41,9 +40,9 @@ export default function Page() {
     };
 
     async function executar(): Promise<void> {
-        const id = Number(idNovoSer);
+        const id = Number(idSer);
         const partida = Number(idPartida);
-        if (!Number.isInteger(id) || id <= 0) { setErroExec('Informe o id de um Ser de novo_ser autorado.'); return; }
+        if (!Number.isInteger(id) || id <= 0) { setErroExec('Informe o id de um Ser autorado.'); return; }
         if (!Number.isInteger(partida) || partida <= 0) { setErroExec('Informe o id de uma Partida configurada (empresta cenário + manequim).'); return; }
         setExecutando(true);
         setErroExec(null);
@@ -59,9 +58,9 @@ export default function Page() {
     };
 
     async function jogarAoVivo(): Promise<void> {
-        const id = Number(idNovoSer);
+        const id = Number(idSer);
         const partida = Number(idPartida);
-        if (!Number.isInteger(id) || id <= 0) { setErroVivo('Informe o id de um Ser de novo_ser autorado.'); return; }
+        if (!Number.isInteger(id) || id <= 0) { setErroVivo('Informe o id de um Ser autorado.'); return; }
         if (!Number.isInteger(partida) || partida <= 0) { setErroVivo('Informe o id de uma Partida configurada.'); return; }
         setEntrando(true);
         setErroVivo(null);
@@ -76,13 +75,13 @@ export default function Page() {
 
     return (
         <main style={{ padding: '2.5em', color: '#D9D9D9', fontFamily: 'system-ui', maxWidth: '46em', margin: '0 auto' }}>
-            <span style={{ fontSize: '0.7em', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#B79051', fontWeight: 700 }}>Teste local · novo_ser</span>
-            <h1 style={{ color: '#EBE0C9', margin: '0.3em 0 0.2em' }}>novo_ser → runtime (Ser autorado)</h1>
-            <p style={{ color: '#aba9a1', lineHeight: 1.5, fontSize: '0.92em' }}>Autore um Ser em <code>cadastro-novo-ser</code> (e a estrutura em <code>estrutura-ser-humano</code>), informe o id abaixo e exercite o runtime.</p>
+            <span style={{ fontSize: '0.7em', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#B79051', fontWeight: 700 }}>Teste local · Ser</span>
+            <h1 style={{ color: '#EBE0C9', margin: '0.3em 0 0.2em' }}>Ser → runtime (Ser autorado)</h1>
+            <p style={{ color: '#aba9a1', lineHeight: 1.5, fontSize: '0.92em' }}>Autore um Ser em <code>criar/seres</code> (e a estrutura da espécie em <code>estrutura-ser-humano</code>), informe o id abaixo e exercite o runtime.</p>
 
             <div style={{ marginTop: '1em', display: 'flex', alignItems: 'center', gap: '0.6em', flexWrap: 'wrap' }}>
-                <label style={{ color: '#aba9a1', fontSize: '0.9em' }}>Id do novo_ser:</label>
-                <input type="number" min={1} value={idNovoSer} onChange={e => setIdNovoSer(e.target.value)} placeholder="autorado" style={inputStyle} />
+                <label style={{ color: '#aba9a1', fontSize: '0.9em' }}>Id do Ser:</label>
+                <input type="number" min={1} value={idSer} onChange={e => setIdSer(e.target.value)} placeholder="autorado" style={inputStyle} />
                 <label style={{ color: '#aba9a1', fontSize: '0.9em' }}>Id da Partida:</label>
                 <input type="number" min={1} value={idPartida} onChange={e => setIdPartida(e.target.value)} style={inputStyle} />
                 <button type="button" onClick={jogarAoVivo} disabled={entrando} style={{ ...botaoStyle(entrando), background: entrando ? '#1A1725' : '#7CC576', color: '#0B0A10', fontWeight: 700 }}>{entrando ? 'Entrando...' : 'Jogar ao vivo ▶'}</button>

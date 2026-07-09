@@ -50,8 +50,8 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerE
             aoMudarPosicao={setPosicao}
             percepcaoInicial={percepcaoInicial}
             aoMudarPercepcao={setPercepcaoInicial}
-            larguraMetros={mapaLogico.larguraMetros}
-            alturaMetros={mapaLogico.alturaMetros}
+            larguraMilimetros={mapaLogico.larguraMilimetros}
+            alturaMilimetros={mapaLogico.alturaMilimetros}
             rotuloAtivo={rotuloAtivo}
             marcadoresContexto={marcadoresContexto}
             descobertas={descobertas}

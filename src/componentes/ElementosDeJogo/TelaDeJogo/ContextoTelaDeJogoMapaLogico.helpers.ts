@@ -12,8 +12,8 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
     if (!Array.isArray(payload.ocupantesMapaLogico)) return 'Resposta do mapa lógico veio sem ocupantes válidos.';
     if (!Array.isArray(payload.seresNaSala)) return 'Resposta do mapa lógico veio sem seres persistidos válidos.';
     if (!Array.isArray(payload.interagiveisPercebidos)) return 'Resposta do mapa lógico veio sem interagíveis percebidos válidos.';
-    if (payload.mapaLogico.larguraMetros <= 0 || !Number.isFinite(payload.mapaLogico.larguraMetros) || !Number.isInteger(payload.mapaLogico.larguraMetros)) return 'Mapa lógico veio com largura em metros inválida.';
-    if (payload.mapaLogico.alturaMetros <= 0 || !Number.isFinite(payload.mapaLogico.alturaMetros) || !Number.isInteger(payload.mapaLogico.alturaMetros)) return 'Mapa lógico veio com altura em metros inválida.';
+    if (payload.mapaLogico.larguraMilimetros <= 0 || !Number.isFinite(payload.mapaLogico.larguraMilimetros) || !Number.isInteger(payload.mapaLogico.larguraMilimetros)) return 'Mapa lógico veio com largura em milímetros inválida.';
+    if (payload.mapaLogico.alturaMilimetros <= 0 || !Number.isFinite(payload.mapaLogico.alturaMilimetros) || !Number.isInteger(payload.mapaLogico.alturaMilimetros)) return 'Mapa lógico veio com altura em milímetros inválida.';
 
     for (const ocupante of payload.ocupantesMapaLogico) {
         if (!ocupante.keySer || !ocupante.nomeExibicao) return 'Ocupante do mapa veio sem identificação pública válida.';
@@ -22,7 +22,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
         if (!Number.isFinite(ocupante.posicao.x)) return `Ocupante ${ocupante.nomeExibicao} veio com posição X inválida.`;
         if (!Number.isFinite(ocupante.posicao.y)) return `Ocupante ${ocupante.nomeExibicao} veio com posição Y inválida.`;
         // Posicao continua (sub-metrica): sem exigencia de inteiro; limite superior inclusivo ate a extensao do mapa.
-        if (ocupante.posicao.x < 0 || ocupante.posicao.y < 0 || ocupante.posicao.x > payload.mapaLogico.larguraMetros || ocupante.posicao.y > payload.mapaLogico.alturaMetros) return `Ocupante ${ocupante.nomeExibicao} veio fora dos limites métricos do mapa.`;
+        if (ocupante.posicao.x < 0 || ocupante.posicao.y < 0 || ocupante.posicao.x > payload.mapaLogico.larguraMilimetros || ocupante.posicao.y > payload.mapaLogico.alturaMilimetros) return `Ocupante ${ocupante.nomeExibicao} veio fora dos limites do mapa (mm).`;
         if (!Array.isArray(ocupante.recursosFuncionais)) return `Ocupante ${ocupante.nomeExibicao} veio sem recursos funcionais válidos.`;
         if (!Array.isArray(ocupante.capacidadesFuncionais)) return `Ocupante ${ocupante.nomeExibicao} veio sem capacidades funcionais válidas.`;
         if (!Array.isArray(ocupante.acoesDisponiveis)) return `Ocupante ${ocupante.nomeExibicao} veio sem ações disponíveis válidas.`;
@@ -41,7 +41,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
         if (!Number.isFinite(ser.posicao.x)) return `Ser ${ser.nome} veio com posição X inválida.`;
         if (!Number.isFinite(ser.posicao.y)) return `Ser ${ser.nome} veio com posição Y inválida.`;
         // Posicao continua (sub-metrica): sem exigencia de inteiro; limite superior inclusivo ate a extensao do mapa.
-        if (ser.posicao.x < 0 || ser.posicao.y < 0 || ser.posicao.x > payload.mapaLogico.larguraMetros || ser.posicao.y > payload.mapaLogico.alturaMetros) return `Ser ${ser.nome} veio fora dos limites métricos do mapa.`;
+        if (ser.posicao.x < 0 || ser.posicao.y < 0 || ser.posicao.x > payload.mapaLogico.larguraMilimetros || ser.posicao.y > payload.mapaLogico.alturaMilimetros) return `Ser ${ser.nome} veio fora dos limites do mapa (mm).`;
         if (!Array.isArray(ser.estatisticasDanificaveis)) return `Ser ${ser.nome} veio sem estatísticas danificáveis válidas.`;
         if (!Array.isArray(ser.membros)) return `Ser ${ser.nome} veio sem membros válidos.`;
 
@@ -80,7 +80,7 @@ export function validaRespostaMapaLogicoSalaJogo(resposta: RESPONSE__EmitirMapaL
             if (!Number.isFinite(interagivel.posicao.x)) return `Interagível ${interagivel.nome} veio com posição X inválida.`;
             if (!Number.isFinite(interagivel.posicao.y)) return `Interagível ${interagivel.nome} veio com posição Y inválida.`;
             // Posicao continua (sub-metrica): sem exigencia de inteiro; limite superior inclusivo ate a extensao do mapa.
-            if (interagivel.posicao.x < 0 || interagivel.posicao.y < 0 || interagivel.posicao.x > payload.mapaLogico.larguraMetros || interagivel.posicao.y > payload.mapaLogico.alturaMetros) return `Interagível ${interagivel.nome} veio fora dos limites métricos do mapa.`;
+            if (interagivel.posicao.x < 0 || interagivel.posicao.y < 0 || interagivel.posicao.x > payload.mapaLogico.larguraMilimetros || interagivel.posicao.y > payload.mapaLogico.alturaMilimetros) return `Interagível ${interagivel.nome} veio fora dos limites do mapa (mm).`;
         }
     }
 
@@ -120,7 +120,7 @@ function criaInteragivelVisualMapaLogico(interagivel: InteragivelPercebidoSalaJo
 };
 
 function criaEstiloMarcadorMapaLogico(posicao: PosicaoMapaLogicoSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto): EstiloMarcadorMapaLogicoTelaJogo {
-    return { '--mapa-logico-marcador-x': `${posicao.x / payload.mapaLogico.larguraMetros * 100}%`, '--mapa-logico-marcador-y': `${posicao.y / payload.mapaLogico.alturaMetros * 100}%` };
+    return { '--mapa-logico-marcador-x': `${posicao.x / payload.mapaLogico.larguraMilimetros * 100}%`, '--mapa-logico-marcador-y': `${posicao.y / payload.mapaLogico.alturaMilimetros * 100}%` };
 };
 
 function criaRotuloCurtoNome(nome: string): string {

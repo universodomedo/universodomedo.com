@@ -1,11 +1,25 @@
-import { TIPOS_INTERACAO, type MembroSerJogavel, type MembroSerJogavelInput } from 'types-nora-api';
+import { TIPOS_INTERACAO, type MembroSerJogavel, type MembroSerJogavelInput, type ParametrosCapacidadeMembroSerJogavel } from 'types-nora-api';
 
-// Helpers PUROS do editor de membros do Ser jogavel, no territorio do EditorMembros compartilhado.
-// A validacao de dano espelha o backend via contrato TIPOS_INTERACAO (nunca literal).
+// Helpers PUROS do editor de membros do Ser jogavel. Os parametros vivem na CAPACIDADE do membro (a faculdade: o dano e do Membro, a visao e do Membro), nunca na acao. A validacao por tipo espelha o backend via TIPOS_INTERACAO (nunca literal).
 export type CapacidadeInataMembroEditor = {
     readonly id: number;
     readonly nome: string;
     readonly nomeInteracao?: string;
+};
+
+// Parametros da capacidade em edicao (number | '' pra permitir campo vazio); o montaInput converte '' -> undefined.
+export type ParametrosCapacidadeEditor = {
+    readonly dano: number | '';
+    readonly alcanceLinhaVisaoMilimetros: number | '';
+    readonly idTipoVisao: number | '';
+    readonly dependenciaIluminacaoPercentual: number | '';
+};
+
+export type CampoParametroCapacidadeEditor = keyof ParametrosCapacidadeEditor;
+
+export type CapacidadeMembroEditor = {
+    readonly idCapacidadeInata: number;
+    readonly parametros: ParametrosCapacidadeEditor;
 };
 
 export type AcaoMembroEditor = {
@@ -13,23 +27,28 @@ export type AcaoMembroEditor = {
     readonly id: number | null;
     readonly nome: string;
     readonly idCapacidadeInata: number;
-    readonly parametros: {
-        readonly dano: number | '';
-    };
 };
 
 export type MembroEditor = {
     readonly idLocal: number;
     readonly id: number | null;
     readonly nome: string;
-    readonly idsCapacidadesInatas: readonly number[];
+    readonly capacidades: readonly CapacidadeMembroEditor[];
     readonly acoes: readonly AcaoMembroEditor[];
 };
 
-export function membroEditorVazio(idLocal: number): MembroEditor { return { idLocal, id: null, nome: '', idsCapacidadesInatas: [], acoes: [] }; };
+export function idsCapacidadesDoMembroEditor(membro: MembroEditor): number[] { return membro.capacidades.map(capacidade => capacidade.idCapacidadeInata); };
+
+export function membroEditorVazio(idLocal: number): MembroEditor { return { idLocal, id: null, nome: '', capacidades: [], acoes: [] }; };
 
 export function membrosEditorDePersistidos(membros: readonly MembroSerJogavel[], proximoIdLocal: () => number, proximoIdLocalAcao: () => number): MembroEditor[] {
-    return membros.map(membro => ({ idLocal: proximoIdLocal(), id: membro.id, nome: membro.nome, idsCapacidadesInatas: membro.idsCapacidadesInatas, acoes: membro.acoes.map(acao => ({ idLocal: proximoIdLocalAcao(), id: acao.id, nome: acao.nome, idCapacidadeInata: acao.idCapacidadeInata, parametros: { dano: acao.parametros.dano ?? '' } })) }));
+    return membros.map(membro => ({
+        idLocal: proximoIdLocal(),
+        id: membro.id,
+        nome: membro.nome,
+        capacidades: membro.capacidades.map(capacidade => ({ idCapacidadeInata: capacidade.idCapacidadeInata, parametros: parametrosCapacidadeDePersistidos(capacidade.parametros) })),
+        acoes: membro.acoes.map(acao => ({ idLocal: proximoIdLocalAcao(), id: acao.id, nome: acao.nome, idCapacidadeInata: acao.idCapacidadeInata })),
+    }));
 };
 
 export function atualizaNomeMembroEditor(membros: readonly MembroEditor[], idLocal: number, nome: string): readonly MembroEditor[] {
@@ -40,8 +59,12 @@ export function alternaCapacidadeMembroEditor(membros: readonly MembroEditor[], 
     return membros.map(membro => membro.idLocal === idLocal ? alternaCapacidade(membro, idCapacidade) : membro);
 };
 
+export function atualizaParametroCapacidadeEditor(membros: readonly MembroEditor[], idLocal: number, idCapacidade: number, campo: CampoParametroCapacidadeEditor, valor: number | ''): readonly MembroEditor[] {
+    return membros.map(membro => membro.idLocal === idLocal ? { ...membro, capacidades: membro.capacidades.map(capacidade => capacidade.idCapacidadeInata === idCapacidade ? { ...capacidade, parametros: { ...capacidade.parametros, [campo]: valor } } : capacidade) } : membro);
+};
+
 export function adicionaAcaoMembroEditor(membros: readonly MembroEditor[], idLocal: number, idLocalAcao: number): readonly MembroEditor[] {
-    return membros.map(membro => membro.idLocal === idLocal ? { ...membro, acoes: [...membro.acoes, { idLocal: idLocalAcao, id: null, nome: '', idCapacidadeInata: membro.idsCapacidadesInatas[0] ?? 0, parametros: { dano: '' } }] } : membro);
+    return membros.map(membro => membro.idLocal === idLocal ? { ...membro, acoes: [...membro.acoes, { idLocal: idLocalAcao, id: null, nome: '', idCapacidadeInata: membro.capacidades[0]?.idCapacidadeInata ?? 0 }] } : membro);
 };
 
 export function removeAcaoMembroEditor(membros: readonly MembroEditor[], idLocal: number, idLocalAcao: number): readonly MembroEditor[] {
@@ -56,41 +79,89 @@ export function atualizaCapacidadeAcaoMembroEditor(membros: readonly MembroEdito
     return membros.map(membro => membro.idLocal === idLocal ? { ...membro, acoes: membro.acoes.map(acao => acao.idLocal === idLocalAcao ? { ...acao, idCapacidadeInata } : acao) } : membro);
 };
 
-export function atualizaDanoAcaoMembroEditor(membros: readonly MembroEditor[], idLocal: number, idLocalAcao: number, dano: number | ''): readonly MembroEditor[] {
-    return membros.map(membro => membro.idLocal === idLocal ? { ...membro, acoes: membro.acoes.map(acao => acao.idLocal === idLocalAcao ? { ...acao, parametros: { ...acao.parametros, dano } } : acao) } : membro);
-};
-
 export function membrosEditorSaoValidos(membros: readonly MembroEditor[], capacidades: readonly CapacidadeInataMembroEditor[]): boolean {
     if (membros.length < 1) return false;
 
-    return membros.every(membro => membro.nome.trim().length > 0 && membro.idsCapacidadesInatas.length > 0 && membro.acoes.every(acao => acao.nome.trim().length > 0 && membro.idsCapacidadesInatas.includes(acao.idCapacidadeInata) && acaoPossuiParametrosValidos(acao, capacidades)));
+    return membros.every(membro => membro.nome.trim().length > 0
+        && membro.capacidades.length > 0
+        && membro.capacidades.every(capacidade => mensagemParametroCapacidade(capacidade, capacidades) === null)
+        && membro.acoes.every(acao => acao.nome.trim().length > 0 && idsCapacidadesDoMembroEditor(membro).includes(acao.idCapacidadeInata)));
 };
 
 export function obtemMensagemValidacaoMembrosEditor(membros: readonly MembroEditor[], capacidades: readonly CapacidadeInataMembroEditor[]): string | null {
     if (capacidades.length < 1) return 'Cadastre ao menos uma Capacidade Inata antes de configurar os membros.';
     if (membros.length < 1) return 'Adicione ao menos um membro.';
     if (membros.some(membro => membro.nome.trim().length < 1)) return 'Todos os membros precisam de nome.';
-    if (membros.some(membro => membro.idsCapacidadesInatas.length < 1)) return 'Cada membro precisa de ao menos uma Capacidade Inata.';
+    if (membros.some(membro => membro.capacidades.length < 1)) return 'Cada membro precisa de ao menos uma Capacidade Inata.';
+
+    for (const membro of membros) {
+        for (const capacidade of membro.capacidades) {
+            const mensagem = mensagemParametroCapacidade(capacidade, capacidades);
+            if (mensagem) return mensagem;
+        }
+    }
+
     if (membros.some(membro => membro.acoes.some(acao => acao.nome.trim().length < 1))) return 'Toda ação de membro precisa de nome.';
-    if (membros.some(membro => membro.acoes.some(acao => !membro.idsCapacidadesInatas.includes(acao.idCapacidadeInata)))) return 'Toda ação precisa usar uma Capacidade Inata do próprio membro.';
-    if (membros.some(membro => membro.acoes.some(acao => !acaoPossuiParametrosValidos(acao, capacidades)))) return 'Toda ação Danificável precisa informar dano inteiro positivo.';
+    if (membros.some(membro => membro.acoes.some(acao => !idsCapacidadesDoMembroEditor(membro).includes(acao.idCapacidadeInata)))) return 'Toda ação precisa usar uma Capacidade Inata do próprio membro.';
 
     return null;
 };
 
 export function montaInputMembrosEditor(membros: readonly MembroEditor[]): readonly MembroSerJogavelInput[] {
-    return membros.map(membro => ({ id: membro.id ?? undefined, nome: membro.nome.trim(), idsCapacidadesInatas: [...membro.idsCapacidadesInatas], acoes: membro.acoes.map(acao => ({ id: acao.id ?? undefined, nome: acao.nome.trim(), idCapacidadeInata: acao.idCapacidadeInata, parametros: { dano: acao.parametros.dano === '' ? undefined : acao.parametros.dano } })) }));
+    return membros.map(membro => ({
+        id: membro.id ?? undefined,
+        nome: membro.nome.trim(),
+        capacidades: membro.capacidades.map(capacidade => ({ idCapacidadeInata: capacidade.idCapacidadeInata, parametros: montaParametrosInput(capacidade.parametros) })),
+        acoes: membro.acoes.map(acao => ({ id: acao.id ?? undefined, nome: acao.nome.trim(), idCapacidadeInata: acao.idCapacidadeInata })),
+    }));
 };
+
+function parametrosCapacidadeVazio(): ParametrosCapacidadeEditor {
+    return { dano: '', alcanceLinhaVisaoMilimetros: '', idTipoVisao: '', dependenciaIluminacaoPercentual: '' };
+};
+
+function parametrosCapacidadeDePersistidos(parametros: ParametrosCapacidadeMembroSerJogavel): ParametrosCapacidadeEditor {
+    return {
+        dano: parametros.dano ?? '',
+        alcanceLinhaVisaoMilimetros: parametros.alcanceLinhaVisaoMilimetros ?? '',
+        idTipoVisao: parametros.idTipoVisao ?? '',
+        dependenciaIluminacaoPercentual: parametros.dependenciaIluminacaoPercentual ?? '',
+    };
+};
+
+function montaParametrosInput(parametros: ParametrosCapacidadeEditor): ParametrosCapacidadeMembroSerJogavel {
+    return {
+        dano: numeroOuUndefined(parametros.dano),
+        alcanceLinhaVisaoMilimetros: numeroOuUndefined(parametros.alcanceLinhaVisaoMilimetros),
+        idTipoVisao: numeroOuUndefined(parametros.idTipoVisao),
+        dependenciaIluminacaoPercentual: numeroOuUndefined(parametros.dependenciaIluminacaoPercentual),
+    };
+};
+
+function numeroOuUndefined(valor: number | ''): number | undefined { return valor === '' ? undefined : valor; };
 
 function alternaCapacidade(membro: MembroEditor, idCapacidade: number): MembroEditor {
-    if (membro.idsCapacidadesInatas.includes(idCapacidade)) return { ...membro, idsCapacidadesInatas: membro.idsCapacidadesInatas.filter(id => id !== idCapacidade), acoes: membro.acoes.filter(acao => acao.idCapacidadeInata !== idCapacidade) };
+    if (membro.capacidades.some(capacidade => capacidade.idCapacidadeInata === idCapacidade)) return { ...membro, capacidades: membro.capacidades.filter(capacidade => capacidade.idCapacidadeInata !== idCapacidade), acoes: membro.acoes.filter(acao => acao.idCapacidadeInata !== idCapacidade) };
 
-    return { ...membro, idsCapacidadesInatas: [...membro.idsCapacidadesInatas, idCapacidade] };
+    return { ...membro, capacidades: [...membro.capacidades, { idCapacidadeInata: idCapacidade, parametros: parametrosCapacidadeVazio() }] };
 };
 
-function acaoPossuiParametrosValidos(acao: AcaoMembroEditor, capacidades: readonly CapacidadeInataMembroEditor[]): boolean {
-    const capacidade = capacidades.find(capacidadeAtual => capacidadeAtual.id === acao.idCapacidadeInata);
-    if (capacidade?.nomeInteracao !== TIPOS_INTERACAO.DANIFICAVEL.chave) return true;
-    const dano = acao.parametros.dano;
-    return typeof dano === 'number' && Number.isInteger(dano) && dano > 0;
+// Mensagem de parametro invalido da capacidade conforme o Tipo de Interacao (afordancia derivada); null = valida.
+function mensagemParametroCapacidade(capacidade: CapacidadeMembroEditor, catalogo: readonly CapacidadeInataMembroEditor[]): string | null {
+    const info = catalogo.find(capacidadeCatalogo => capacidadeCatalogo.id === capacidade.idCapacidadeInata);
+    const parametros = capacidade.parametros;
+
+    if (info?.nomeInteracao === TIPOS_INTERACAO.DANIFICAVEL.chave) {
+        if (!ehInteiroPositivo(parametros.dano)) return 'Capacidade Danificável precisa de dano inteiro positivo.';
+    } else if (info?.nomeInteracao === TIPOS_INTERACAO.VISUAL.chave) {
+        if (!ehInteiroPositivo(parametros.alcanceLinhaVisaoMilimetros)) return 'Percepção Visual precisa do Alcance da Linha de Visão (mm, inteiro positivo).';
+        if (!ehInteiroPositivo(parametros.idTipoVisao)) return 'Percepção Visual precisa do Tipo de Visão.';
+        if (!ehPercentual(parametros.dependenciaIluminacaoPercentual)) return 'Percepção Visual precisa da Dependência de Iluminação (0 a 100).';
+    }
+
+    return null;
 };
+
+function ehInteiroPositivo(valor: number | ''): boolean { return typeof valor === 'number' && Number.isInteger(valor) && valor > 0; };
+
+function ehPercentual(valor: number | ''): boolean { return typeof valor === 'number' && valor >= 0 && valor <= 100; };

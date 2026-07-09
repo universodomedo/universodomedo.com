@@ -4,10 +4,10 @@ import { createContext, useCallback, useContext, useState, type ReactNode } from
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 
-type FluxoPaginaGameDesignerNovoSer = 'LISTAGEM' | 'CADASTRO' | 'ESTRUTURA';
+type FluxoPaginaGameDesignerSeres = 'LISTAGEM' | 'CADASTRO' | 'ESTRUTURA';
 
-export interface Contexto__PaginaGameDesignerNovoSer__Props {
-    estadoFluxo: FluxoPaginaGameDesignerNovoSer;
+export interface Contexto__PaginaGameDesignerSeres__Props {
+    estadoFluxo: FluxoPaginaGameDesignerSeres;
     listagemSeres: ReturnType<typeof useListagemSeres>;
     idSerEstrutura: number | null;
     iniciaCadastro: () => void;
@@ -16,17 +16,17 @@ export interface Contexto__PaginaGameDesignerNovoSer__Props {
     concluiCadastro: () => void;
 };
 
-const Contexto__PaginaGameDesignerNovoSer = createContext<Contexto__PaginaGameDesignerNovoSer__Props | undefined>(undefined);
+const Contexto__PaginaGameDesignerSeres = createContext<Contexto__PaginaGameDesignerSeres__Props | undefined>(undefined);
 
-export const useContexto__PaginaGameDesignerNovoSer = (): Contexto__PaginaGameDesignerNovoSer__Props => {
-    const context = useContext(Contexto__PaginaGameDesignerNovoSer);
-    if (!context) throw new Error('useContexto__PaginaGameDesignerNovoSer precisa estar dentro de um Contexto__PaginaGameDesignerNovoSer');
+export const useContexto__PaginaGameDesignerSeres = (): Contexto__PaginaGameDesignerSeres__Props => {
+    const context = useContext(Contexto__PaginaGameDesignerSeres);
+    if (!context) throw new Error('useContexto__PaginaGameDesignerSeres precisa estar dentro de um Contexto__PaginaGameDesignerSeres');
     return context;
 };
 
-export const Contexto__PaginaGameDesignerNovoSer__Provider = ({ children }: { children: ReactNode; }) => {
+export const Contexto__PaginaGameDesignerSeres__Provider = ({ children }: { children: ReactNode; }) => {
     const listagemSeres = useListagemSeres();
-    const [estadoFluxo, setEstadoFluxo] = useState<FluxoPaginaGameDesignerNovoSer>('LISTAGEM');
+    const [estadoFluxo, setEstadoFluxo] = useState<FluxoPaginaGameDesignerSeres>('LISTAGEM');
     const [idSerEstrutura, setIdSerEstrutura] = useState<number | null>(null);
     const recarregarListagem = listagemSeres.recarregar;
 
@@ -39,9 +39,9 @@ export const Contexto__PaginaGameDesignerNovoSer__Provider = ({ children }: { ch
     }, [recarregarListagem]);
 
     return (
-        <Contexto__PaginaGameDesignerNovoSer.Provider value={{ estadoFluxo, listagemSeres, idSerEstrutura, iniciaCadastro, abreEstrutura, voltaParaListagem, concluiCadastro }}>
+        <Contexto__PaginaGameDesignerSeres.Provider value={{ estadoFluxo, listagemSeres, idSerEstrutura, iniciaCadastro, abreEstrutura, voltaParaListagem, concluiCadastro }}>
             {children}
-        </Contexto__PaginaGameDesignerNovoSer.Provider>
+        </Contexto__PaginaGameDesignerSeres.Provider>
     );
 };
 

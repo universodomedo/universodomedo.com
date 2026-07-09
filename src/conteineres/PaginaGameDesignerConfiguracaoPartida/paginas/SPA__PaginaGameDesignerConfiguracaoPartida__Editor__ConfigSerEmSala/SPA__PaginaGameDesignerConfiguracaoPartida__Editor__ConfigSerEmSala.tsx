@@ -22,8 +22,8 @@ type Props = {
     aoMudarPosicao: (posicao: { x: number; y: number }) => void;
     percepcaoInicial: Percepcao;
     aoMudarPercepcao: (percepcao: Percepcao) => void;
-    larguraMetros: number;
-    alturaMetros: number;
+    larguraMilimetros: number;
+    alturaMilimetros: number;
     rotuloAtivo: string;
     marcadoresContexto: readonly { key: string; posicao: { x: number; y: number }; rotulo: string }[];
     descobertas: readonly Descoberta[];
@@ -38,7 +38,7 @@ const OPCOES_PERCEPCAO = [
     { value: 'PERCEBIDO', label: 'Percebido (visível desde o início)' },
 ];
 
-export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala({ nome, aoMudarNome, posicao, aoMudarPosicao, percepcaoInicial, aoMudarPercepcao, larguraMetros, alturaMetros, rotuloAtivo, marcadoresContexto, descobertas, aoMudarDescobertas, opcoesCapacidades, opcoesInteragiveis, salvar }: Props) {
+export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala({ nome, aoMudarNome, posicao, aoMudarPosicao, percepcaoInicial, aoMudarPercepcao, larguraMilimetros, alturaMilimetros, rotuloAtivo, marcadoresContexto, descobertas, aoMudarDescobertas, opcoesCapacidades, opcoesInteragiveis, salvar }: Props) {
     return (
         <ConteudoForm>
             <ConteudoForm.AreaCorpo>
@@ -56,7 +56,7 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__Conf
                 </InputComRotulo>
 
                 <InputComRotulo rotulo="Posição no mapa">
-                    <SeletorPosicaoMapa larguraMetros={larguraMetros} alturaMetros={alturaMetros} posicao={posicao} aoMudarPosicao={aoMudarPosicao} rotuloAtivo={rotuloAtivo} marcadoresContexto={marcadoresContexto} />
+                    <SeletorPosicaoMapa larguraMilimetros={larguraMilimetros} alturaMilimetros={alturaMilimetros} posicao={posicao} aoMudarPosicao={aoMudarPosicao} rotuloAtivo={rotuloAtivo} marcadoresContexto={marcadoresContexto} />
                 </InputComRotulo>
 
                 <EditorDescobertasInteragivel descobertas={descobertas} aoMudarDescobertas={aoMudarDescobertas} opcoesCapacidades={opcoesCapacidades} opcoesInteragiveis={opcoesInteragiveis} />

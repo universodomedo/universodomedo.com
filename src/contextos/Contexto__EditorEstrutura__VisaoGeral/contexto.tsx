@@ -49,11 +49,11 @@ export const Contexto__EditorEstrutura__VisaoGeral__Provider = () => {
 // Resumo composto: cada capacidade em uso na estrutura + em quantos membros aparece.
 function montaCapacidadesDaEstrutura(membros: readonly MembroEditor[], capacidades: readonly CapacidadeInataMembroEditor[]): CapacidadeDaEstrutura[] {
     return capacidades
-        .map(capacidade => ({ capacidade, totalMembros: membros.filter(membro => membro.idsCapacidadesInatas.includes(capacidade.id)).length }))
+        .map(capacidade => ({ capacidade, totalMembros: membros.filter(membro => membro.capacidades.some(capacidadeMembro => capacidadeMembro.idCapacidadeInata === capacidade.id)).length }))
         .filter(entrada => entrada.totalMembros > 0);
 };
 
-// Resumo composto: todas as ações da estrutura com o membro dono e a capacidade utilizada.
+// Resumo composto: todas as ações da estrutura com o membro dono e a capacidade utilizada; o dano vem da capacidade do Membro (a ação inflige o dano do Membro).
 function montaAcoesDaEstrutura(membros: readonly MembroEditor[], capacidades: readonly CapacidadeInataMembroEditor[]): AcaoDaEstrutura[] {
     return membros.flatMap(membro => membro.acoes.map(acao => ({
         idLocalMembro: membro.idLocal,
@@ -61,6 +61,6 @@ function montaAcoesDaEstrutura(membros: readonly MembroEditor[], capacidades: re
         nomeAcao: acao.nome,
         nomeMembro: membro.nome,
         capacidade: capacidades.find(capacidade => capacidade.id === acao.idCapacidadeInata) ?? null,
-        dano: acao.parametros.dano,
+        dano: membro.capacidades.find(capacidadeMembro => capacidadeMembro.idCapacidadeInata === acao.idCapacidadeInata)?.parametros.dano ?? '',
     })));
 };

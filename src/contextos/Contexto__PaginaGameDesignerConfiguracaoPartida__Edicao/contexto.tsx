@@ -18,10 +18,10 @@ const ROTULO_EDITOR: Record<Exclude<AbaEdicaoPartida, 'visao'>, string> = { runt
 const SELECT_CONFIGURACAO_PARTIDA = {
     configuracao: {
         narracaoInicial: true,
-        cenario: { nome: true, mapaLogico: { larguraMetros: true, alturaMetros: true } },
+        cenario: { nome: true, mapaLogico: { larguraMilimetros: true, alturaMilimetros: true } },
         interagiveis: { chave: true, nome: true, descricao: true, tipo: true, posicao: { x: true, y: true }, estadoPercepcaoInicial: true, pontosDurabilidadeMaximo: true, idSer: true, controlador: { tipo: true, slotJogador: true }, descobertas: { nome: true, descricaoInterna: true, idCapacidadeInata: true, recompensas: { dificuldadeMinima: true, chavesReveladas: true } } },
         temporal: { momentoInicialMs: true },
-        condicaoVitoria: { tipo: true, keySerEmSala: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMetros: true },
+        condicaoVitoria: { tipo: true, keySerEmSala: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMilimetros: true },
     },
 } as const;
 

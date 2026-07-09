@@ -2,12 +2,12 @@ import styles from './styles.module.css';
 
 import { DivClicavel } from 'Componentes/Elementos/DivClicavel/DivClicavel';
 import ListagemComposta, { ListagemCompostaModoExibicao } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
-import { useContexto__PaginaGameDesignerNovoSer__Listagem } from 'Contextos/Contexto__PaginaGameDesignerNovoSer__Listagem/contexto';
+import { useContexto__PaginaGameDesignerSeres__Listagem } from 'Contextos/Contexto__PaginaGameDesignerSeres__Listagem/contexto';
 
-type RegistroSer = ReturnType<typeof useContexto__PaginaGameDesignerNovoSer__Listagem>['listagemSeres']['registros'][number];
+type RegistroSer = ReturnType<typeof useContexto__PaginaGameDesignerSeres__Listagem>['listagemSeres']['registros'][number];
 
-export default function SPA__PaginaGameDesignerNovoSer__Listagem() {
-    const { listagemSeres, iniciaCadastro, abreEstrutura } = useContexto__PaginaGameDesignerNovoSer__Listagem();
+export default function SPA__PaginaGameDesignerSeres__Listagem() {
+    const { listagemSeres, iniciaCadastro, abreEstrutura } = useContexto__PaginaGameDesignerSeres__Listagem();
 
     return (
         <ListagemComposta

@@ -11,7 +11,7 @@ type CondicaoVitoriaGraphql = NonNullable<PartidaGraphqlDto['configuracao']>['co
 const SELECT_CONTEUDO = {
     configuracao: {
         narracaoInicial: true,
-        condicaoVitoria: { tipo: true, keySerEmSala: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMetros: true },
+        condicaoVitoria: { tipo: true, keySerEmSala: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMilimetros: true },
     },
 } as const;
 
@@ -59,7 +59,7 @@ function textoCondicaoVitoria(condicao: CondicaoVitoriaGraphql): string {
         case 'inimigo_derrotado': return 'Derrotar o inimigo.';
         case 'refem_percebido': return 'Encontrar e perceber o refém.';
         case 'tempo_jogo_alcancado': return `Sobreviver por ${formataDuracao(condicao.tempoAlvoMs)}.`;
-        case 'proximidade_ser_alcancada': return `Alcançar o alvo (até ${condicao.distanciaMaximaMetros ?? 0} m).`;
+        case 'proximidade_ser_alcancada': return `Alcançar o alvo (até ${condicao.distanciaMaximaMilimetros ?? 0} mm).`;
         case 'qualquer_acao_executada': return 'Executar qualquer ação.';
         default: return 'Condição de vitória não definida.';
     }

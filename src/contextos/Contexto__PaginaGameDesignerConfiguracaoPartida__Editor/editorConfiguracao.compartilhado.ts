@@ -43,7 +43,7 @@ export function controladorDoGrupo(grupo: GrupoControle): Controlador {
 };
 
 export function criaConfiguracaoVazia(): ConfiguracaoPartida {
-    return { narracaoInicial: '', cenario: { nome: '', mapaLogico: { larguraMetros: 100, alturaMetros: 100 } }, interagiveis: [], condicaoVitoria: { tipo: 'qualquer_acao_executada' }, temporal: { momentoInicialMs: 0 } };
+    return { narracaoInicial: '', cenario: { nome: '', mapaLogico: { larguraMilimetros: 100000, alturaMilimetros: 100000 } }, interagiveis: [], condicaoVitoria: { tipo: 'qualquer_acao_executada' }, temporal: { momentoInicialMs: 0 } };
 };
 
 // Tempo real e base do jogo (nao e configuravel): toda configuracao nasce com o sistema temporal ativo.
@@ -56,7 +56,7 @@ export function criaCondicaoVitoria(tipo: TipoCondicaoVitoria): CondicaoVitoria 
     if (tipo === 'refem_percebido') return { tipo, keySerEmSala: KEY_SER_EM_SALA_VAZIA };
     if (tipo === 'inimigo_derrotado') return { tipo, keySerEmSala: KEY_SER_EM_SALA_VAZIA, idEstatisticaDanificavel: 0 };
     if (tipo === 'tempo_jogo_alcancado') return { tipo, tempoAlvoMs: 0 };
-    if (tipo === 'proximidade_ser_alcancada') return { tipo, keySerEmSala: KEY_SER_EM_SALA_VAZIA, distanciaMaximaMetros: 1 };
+    if (tipo === 'proximidade_ser_alcancada') return { tipo, keySerEmSala: KEY_SER_EM_SALA_VAZIA, distanciaMaximaMilimetros: 1000 };
     return { tipo: 'qualquer_acao_executada' };
 };
 
@@ -89,7 +89,7 @@ export function rotuloDescoberta(descoberta: Descoberta | null): string {
 export function configuracaoEstaPreenchida(config: ConfiguracaoPartida): boolean {
     if (config.narracaoInicial.trim().length === 0) return false;
     if (config.cenario.nome.trim().length === 0) return false;
-    if (config.cenario.mapaLogico.larguraMetros <= 0 || config.cenario.mapaLogico.alturaMetros <= 0) return false;
+    if (config.cenario.mapaLogico.larguraMilimetros <= 0 || config.cenario.mapaLogico.alturaMilimetros <= 0) return false;
     const seres = config.interagiveis.filter(ehSer);
     if (seres.filter(ser => ser.controlador.tipo === 'jogador').length === 0) return false;
     if (seres.some(ser => !Number.isInteger(ser.idSer) || ser.idSer <= 0)) return false;

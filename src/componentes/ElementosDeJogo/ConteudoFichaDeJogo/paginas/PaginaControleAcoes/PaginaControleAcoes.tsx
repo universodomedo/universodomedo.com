@@ -7,7 +7,6 @@ import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonage
 import type { GrupoAcoesPorCapacidadeFicha } from 'Contextos/ContextoFichaDePersonagem/contexto';
 import { useContextoControleAcoesRuntime } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAcoesRuntime/contexto';
 import { useContextoTelaDeJogoMapaLogicoOpcional } from 'Componentes/ElementosDeJogo/TelaDeJogo/ContextoTelaDeJogoMapaLogico';
-import { useContextoMovimentacaoSalaJogoOpcional } from 'Componentes/ElementosDeJogo/TelaDeJogo/ContextoMovimentacaoSalaJogo';
 
 type CooldownAcaoExecutandoFicha = { keyAcao: string; estilo: CSSProperties };
 
@@ -15,13 +14,10 @@ export default function PaginaControleAcoes() {
     const { acoesPorStatusECapacidade, desativarAcoes } = useContextoFichaDePersonagem();
     const { executaAcao, executaEsperar, estadoTemporalSalaJogo } = useContextoControleAcoesRuntime();
     const mapaLogico = useContextoTelaDeJogoMapaLogicoOpcional();
-    const movimentacao = useContextoMovimentacaoSalaJogoOpcional();
     const [acaoComSelecaoAlvo, setAcaoComSelecaoAlvo] = useState<AcaoDisponivel | null>(null);
     const [momentoProjetadoMs, setMomentoProjetadoMs] = useState(0);
     const seresNaSala = mapaLogico?.seresNaSala ?? [];
     const interagiveisPercebidos = mapaLogico?.interagiveisPercebidos ?? [];
-    // Gate de locomocao por Ser: undefined = sem gate (legado, mostra a acao); false = Ser autorado sem Deslocamento Terrestre, esconde a acao de Locomocao.
-    const permiteLocomocaoTerrestre = (seresNaSala.find(ser => ser.papel === 'controlado')?.permiteLocomocaoTerrestre) !== false;
     const tempoRodando = estadoTemporalSalaJogo?.status === 'RODANDO';
     const acoesFichaDesativadas = desativarAcoes || tempoRodando;
     const acaoEmExecucao = estadoTemporalSalaJogo?.acoesTemporais.find(acaoTemporal => acaoTemporal.status === 'EM_ANDAMENTO' && acaoTemporal.tipo === 'atacar') ?? null;
@@ -62,7 +58,6 @@ export default function PaginaControleAcoes() {
     return (
         <div className={styles.painel_acoes}>
             {acoesPorStatusECapacidade.realizaveis.length > 0 && <SecaoAcoesFicha titulo="Ações Realizáveis" grupos={acoesPorStatusECapacidade.realizaveis} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
-            {estadoTemporalSalaJogo && movimentacao && permiteLocomocaoTerrestre && <SecaoAcaoLocomocao estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} modoMovimentacaoAtivo={movimentacao.modoMovimentacaoAtivo} iniciaModoMovimentacao={movimentacao.iniciaModoMovimentacao} cancelaModoMovimentacao={movimentacao.cancelaModoMovimentacao} />}
             {estadoTemporalSalaJogo && <SecaoAcaoTemporalEsperar estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} executaEsperar={executaEsperar} />}
             {acoesPorStatusECapacidade.bloqueadas.length > 0 && <SecaoAcoesFicha titulo="Ações Bloqueadas" grupos={acoesPorStatusECapacidade.bloqueadas} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
             {acaoComSelecaoAlvo && <ModalSelecaoAlvoAcao acao={acaoComSelecaoAlvo} seresNaSala={seresNaSala} interagiveisPercebidos={interagiveisPercebidos} cancelar={() => setAcaoComSelecaoAlvo(null)} confirmar={executaAcaoComAlvo} />}
@@ -110,38 +105,6 @@ function SecaoAcaoTemporalEsperar({ estadoTemporalSalaJogo, desativarAcoes, exec
                                 <span>{estadoTemporalSalaJogo.status === 'RODANDO' ? 'O tempo já está em andamento' : 'O tempo está pausado'}</span>
                             </span>
                             <small>sala.temporal.esperar</small>
-                        </span>
-                    </button>
-                </div>
-            </div>
-        </section>
-    );
-};
-
-function SecaoAcaoLocomocao({ estadoTemporalSalaJogo, desativarAcoes, modoMovimentacaoAtivo, iniciaModoMovimentacao, cancelaModoMovimentacao }: { estadoTemporalSalaJogo: EstadoTemporalSalaDeJogoRuntime; desativarAcoes: boolean; modoMovimentacaoAtivo: boolean; iniciaModoMovimentacao: () => void; cancelaModoMovimentacao: () => void; }) {
-    const acaoPodeExecutar = estadoTemporalSalaJogo.status !== 'RODANDO' && !desativarAcoes;
-    const status = estadoTemporalSalaJogo.status === 'RODANDO' ? 'Em locomoção' : modoMovimentacaoAtivo ? 'Selecionando destino' : 'Realizável';
-
-    function acionar(): void {
-        if (!acaoPodeExecutar) return;
-        if (modoMovimentacaoAtivo) { cancelaModoMovimentacao(); return; }
-        iniciaModoMovimentacao();
-    };
-
-    return (
-        <section className={styles.secao_acoes}>
-            <h3 className={styles.titulo_secao}>Locomoção</h3>
-            <div className={styles.grupo_capacidade}>
-                <h4 className={styles.titulo_capacidade}>Movimento</h4>
-                <div className={styles.lista_acoes}>
-                    <button type="button" className={`${styles.acao} ${acaoPodeExecutar ? styles.acao_realizavel : styles.acao_bloqueada} ${!acaoPodeExecutar ? styles.acao_sem_interacao : ''}`} aria-disabled={!acaoPodeExecutar} aria-pressed={modoMovimentacaoAtivo} aria-label={`Teste Locomoção - ${status}`} onClick={acionar}>
-                        <span className={styles.icone_acao} aria-hidden="true">L</span>
-                        <span className={styles.resumo_acao} role="tooltip">
-                            <strong>{modoMovimentacaoAtivo ? 'Cancelar movimentação' : 'Teste Locomoção'}</strong>
-                            <span>Movimento</span>
-                            <span>{modoMovimentacaoAtivo ? 'Clique no chão para definir o destino' : 'Selecione um ponto no chão para se mover'}</span>
-                            <span>{status}</span>
-                            <small>sala.locomocao.teste</small>
                         </span>
                     </button>
                 </div>

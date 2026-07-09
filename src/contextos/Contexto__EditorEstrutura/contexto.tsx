@@ -2,9 +2,7 @@
 
 import { createContext, useContext, useState } from 'react';
 
-import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { criaConteiner, criaSaidaConteiner, type SaidaConteiner } from 'Conteineres/_core/criaConteiner';
-import type { LayoutContextualizadoFecharProps } from 'Componentes/Elementos/FerramentaRetornoPagina/FerramentaRetornoPagina';
 import type { useEditorEstruturaMembros } from 'Componentes/EditorMembros/useEditorEstruturaMembros';
 import type { AcaoMembroEditor, MembroEditor } from 'Componentes/EditorMembros/membrosSerJogavelEditor';
 import { Contexto__EditorEstrutura__VisaoGeral__Provider } from '../Contexto__EditorEstrutura__VisaoGeral/contexto';
@@ -12,8 +10,6 @@ import { Contexto__EditorEstrutura__Membro__Provider } from '../Contexto__Editor
 import { Contexto__EditorEstrutura__Acao__Provider } from '../Contexto__EditorEstrutura__Acao/contexto';
 
 type SubVistaEditorEstrutura = 'visaoGeral' | 'membro' | 'acao';
-
-export type LayoutBaseEditorEstrutura = { readonly subtitulo: string; readonly fecharProps: LayoutContextualizadoFecharProps | undefined; };
 
 export interface Contexto__EditorEstrutura__Props {
     editor: ReturnType<typeof useEditorEstruturaMembros>;
@@ -38,7 +34,6 @@ type PropsProvider = {
     salvando: boolean;
     podeSalvar: boolean;
     salvar: () => Promise<void>;
-    layoutBase: LayoutBaseEditorEstrutura;
 };
 
 const Contexto__EditorEstrutura = createContext<Contexto__EditorEstrutura__Props | undefined>(undefined);
@@ -50,9 +45,9 @@ export const useContexto__EditorEstrutura = (): Contexto__EditorEstrutura__Props
 };
 
 // Controlador de Fluxo REUTILIZÁVEL do editor de estrutura de membros (estrutura da espécie Humano e estrutura própria do não-humano):
-// dono da subvista ativa (Visão Geral / Membro / Ação) e do layout contextual por subvista; o estado dos membros vive no editor do host (callbacks).
-// O resolveSaida abaixo decide qual vista renderiza — nunca uma SPA.
-export const Contexto__EditorEstrutura__Provider = ({ editor, salvando, podeSalvar, salvar, layoutBase }: PropsProvider) => {
+// dono da subvista ativa (Visão Geral / Membro / Ação); o estado dos membros vive no editor do host (callbacks). A navegação entre subvistas é in-content
+// (botões Concluir/Remover das SPAs). O layout contextual (título/subtítulo/fecharProps) é do host, não daqui. O resolveSaida decide a vista — nunca uma SPA.
+export const Contexto__EditorEstrutura__Provider = ({ editor, salvando, podeSalvar, salvar }: PropsProvider) => {
     const [subVista, setSubVista] = useState<SubVistaEditorEstrutura>('visaoGeral');
     const [idLocalMembroEmEdicao, setIdLocalMembroEmEdicao] = useState<number | null>(null);
     const [idLocalAcaoEmEdicao, setIdLocalAcaoEmEdicao] = useState<number | null>(null);
@@ -76,35 +71,11 @@ export const Contexto__EditorEstrutura__Provider = ({ editor, salvando, podeSalv
         voltarParaMembro();
     };
 
-    // Dono único do layout contextual das subvistas: re-aplica subtítulo + fecharProps a cada troca (o hook não restaura no unmount). Identidade do alvo mora no subtítulo, não no corpo.
-    useConfigurarLayoutContextualizado(layoutContextualDaSubVista({ subVista, layoutBase, membroEmEdicao, acaoEmEdicao, voltarParaVisaoGeral, voltarParaMembro }));
-
     return (
         <Contexto__EditorEstrutura.Provider value={{ editor, salvando, podeSalvar, salvar, subVista, membroEmEdicao, acaoEmEdicao, abreMembro, abreNovoMembro, abreAcao, abreNovaAcao, voltarParaVisaoGeral, voltarParaMembro, removeMembroEmEdicao, removeAcaoEmEdicao }}>
             <ConteinerInterno__EditorEstrutura />
         </Contexto__EditorEstrutura.Provider>
     );
-};
-
-// Aplica o layout base enquanto o Controlador não está montado (carregando/erro do host) — a navegação nunca fica travada.
-export const EditorEstrutura__AplicaLayoutBase = ({ layoutBase }: { layoutBase: LayoutBaseEditorEstrutura; }) => {
-    useConfigurarLayoutContextualizado({ subtitulo: layoutBase.subtitulo, fecharProps: layoutBase.fecharProps });
-    return null;
-};
-
-type EntradaLayoutSubVista = {
-    subVista: SubVistaEditorEstrutura;
-    layoutBase: LayoutBaseEditorEstrutura;
-    membroEmEdicao: MembroEditor | null;
-    acaoEmEdicao: AcaoMembroEditor | null;
-    voltarParaVisaoGeral: () => void;
-    voltarParaMembro: () => void;
-};
-
-function layoutContextualDaSubVista({ subVista, layoutBase, membroEmEdicao, acaoEmEdicao, voltarParaVisaoGeral, voltarParaMembro }: EntradaLayoutSubVista) {
-    if (subVista === 'membro' && membroEmEdicao !== null) return { subtitulo: `${layoutBase.subtitulo} · Membro · ${membroEmEdicao.nome.trim() || 'novo'}`, fecharProps: { tipo: 'acao' as const, executar: voltarParaVisaoGeral, tituloTooltip: 'Voltar para a Estrutura' } };
-    if (subVista === 'acao' && membroEmEdicao !== null && acaoEmEdicao !== null) return { subtitulo: `${layoutBase.subtitulo} · ${membroEmEdicao.nome.trim() || 'membro'} · Ação · ${acaoEmEdicao.nome.trim() || 'nova'}`, fecharProps: { tipo: 'acao' as const, executar: voltarParaMembro, tituloTooltip: 'Voltar para o Membro' } };
-    return { subtitulo: layoutBase.subtitulo, fecharProps: layoutBase.fecharProps };
 };
 
 // Conteiner aninhado: o resolveSaida escolhe a subvista a partir do estado de fluxo do contexto.

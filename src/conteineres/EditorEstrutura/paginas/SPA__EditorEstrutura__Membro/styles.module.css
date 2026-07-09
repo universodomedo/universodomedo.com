@@ -54,10 +54,34 @@
     letter-spacing: 0.03em;
 }
 
-.dano_acao {
-    font-family: var(--fonte-B612Mono), monospace;
-    font-size: 0.85em;
-    color: #D9B87E;
+/* Bloco de parâmetros das capacidades do membro (a faculdade: dano, visão…), um card por capacidade com filete na cor do tipo de interação. */
+.bloco_capacidades {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+}
+
+.bloco_capacidades > h3 {
+    margin: 0.4em 0 0;
+}
+
+.card_capacidade {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
+    background: #12101A;
+    border: 0.07em solid #352E4C;
+    border-left: 0.25em solid var(--cor-tipo, #B79051);
+    border-radius: 0.5em;
+    padding: 0.9em 1.1em;
+}
+
+.titulo_capacidade {
+    margin: 0;
+    color: #EBE0C9;
+    font-variant: small-caps;
+    letter-spacing: 0.05em;
+    font-size: 1.05em;
 }
 
 .capacidade_acao {

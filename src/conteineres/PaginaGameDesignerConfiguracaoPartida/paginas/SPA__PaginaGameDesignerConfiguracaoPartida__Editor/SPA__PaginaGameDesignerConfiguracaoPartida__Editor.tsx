@@ -40,12 +40,12 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor() {
                         </label>
                         <div className={styles.linha}>
                             <label className={styles.campo_estreito}>
-                                <span>Largura (m)</span>
-                                <input type="number" min={1} value={config.cenario.mapaLogico.larguraMetros} onChange={evento => editor.atualizaMapaLogico({ larguraMetros: Number(evento.target.value) })} />
+                                <span>Largura (mm)</span>
+                                <input type="number" min={1} value={config.cenario.mapaLogico.larguraMilimetros} onChange={evento => editor.atualizaMapaLogico({ larguraMilimetros: Number(evento.target.value) })} />
                             </label>
                             <label className={styles.campo_estreito}>
-                                <span>Altura (m)</span>
-                                <input type="number" min={1} value={config.cenario.mapaLogico.alturaMetros} onChange={evento => editor.atualizaMapaLogico({ alturaMetros: Number(evento.target.value) })} />
+                                <span>Altura (mm)</span>
+                                <input type="number" min={1} value={config.cenario.mapaLogico.alturaMilimetros} onChange={evento => editor.atualizaMapaLogico({ alturaMilimetros: Number(evento.target.value) })} />
                             </label>
                         </div>
                     </fieldset>
@@ -107,10 +107,10 @@ function CamposCondicaoVitoria({ condicaoVitoria, seresSistema, nomesPorIdSer, a
         return (
             <div className={styles.linha}>
                 <InputComRotulo rotulo="Ser a alcançar (do Sistema)">
-                    <SelecionadorOpcoes opcoes={opcoesSeres} valor={valorSerEmSala(condicaoVitoria.keySerEmSala)} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'proximidade_ser_alcancada', keySerEmSala: (valor ?? KEY_SER_EM_SALA_VAZIA) as KeySerEmSala, distanciaMaximaMetros: condicaoVitoria.distanciaMaximaMetros } })} placeholder="Selecione…" isClearable={false} />
+                    <SelecionadorOpcoes opcoes={opcoesSeres} valor={valorSerEmSala(condicaoVitoria.keySerEmSala)} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'proximidade_ser_alcancada', keySerEmSala: (valor ?? KEY_SER_EM_SALA_VAZIA) as KeySerEmSala, distanciaMaximaMilimetros: condicaoVitoria.distanciaMaximaMilimetros } })} placeholder="Selecione…" isClearable={false} />
                 </InputComRotulo>
                 <InputComRotulo rotulo="Distância máx. (m)">
-                    <InputNumerico value={condicaoVitoria.distanciaMaximaMetros} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'proximidade_ser_alcancada', keySerEmSala: condicaoVitoria.keySerEmSala, distanciaMaximaMetros: valor } })} />
+                    <InputNumerico value={condicaoVitoria.distanciaMaximaMilimetros} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'proximidade_ser_alcancada', keySerEmSala: condicaoVitoria.keySerEmSala, distanciaMaximaMilimetros: valor } })} />
                 </InputComRotulo>
             </div>
         );

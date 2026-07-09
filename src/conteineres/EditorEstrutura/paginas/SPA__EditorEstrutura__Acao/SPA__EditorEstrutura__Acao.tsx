@@ -6,13 +6,12 @@ import { type CSSProperties } from 'react';
 
 import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
-import InputNumerico from 'Componentes/Elementos/Inputs/InputNumerico/InputNumerico';
 import SelecionadorOpcoes from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorOpcoes/SelecionadorOpcoes';
 import { useContexto__EditorEstrutura__Acao } from 'Contextos/Contexto__EditorEstrutura__Acao/contexto';
 
-// Subvista da Ação: nome + Capacidade Inata (só as do próprio membro) + dano quando a capacidade é Danificável.
+// Subvista da Ação: nome + Capacidade Inata (só as do próprio membro) que a ação exerce. Os parametros (dano/visão) vivem na capacidade do Membro, não aqui.
 export default function SPA__EditorEstrutura__Acao() {
-    const { acao, salvando, opcoesCapacidadesDoMembro, acaoDanificavel, corTipo, atualizaNome, atualizaCapacidade, atualizaDano, removeAcaoEVolta, concluir } = useContexto__EditorEstrutura__Acao();
+    const { acao, salvando, opcoesCapacidadesDoMembro, corTipo, atualizaNome, atualizaCapacidade, removeAcaoEVolta, concluir } = useContexto__EditorEstrutura__Acao();
 
     return (
         <ConteudoForm>
@@ -25,12 +24,6 @@ export default function SPA__EditorEstrutura__Acao() {
                     <InputComRotulo rotulo="Capacidade Inata utilizada">
                         <SelecionadorOpcoes opcoes={opcoesCapacidadesDoMembro} valor={acao.idCapacidadeInata > 0 ? String(acao.idCapacidadeInata) : null} onChange={atualizaCapacidade} disabled={salvando} placeholder="Selecione" />
                     </InputComRotulo>
-
-                    {acaoDanificavel && (
-                        <InputComRotulo rotulo="Dano">
-                            <InputNumerico min={1} step={1} value={typeof acao.parametros.dano === 'number' ? acao.parametros.dano : 0} onChange={atualizaDano} disabled={salvando} />
-                        </InputComRotulo>
-                    )}
                 </div>
             </ConteudoForm.AreaCorpo>
             <ConteudoForm.AreaBotoes>

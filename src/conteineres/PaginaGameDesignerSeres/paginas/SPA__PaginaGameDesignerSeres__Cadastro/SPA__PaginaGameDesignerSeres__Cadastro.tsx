@@ -1,7 +1,7 @@
 import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
 import SelecionadorOpcoes, { type OpcaoSelecionador } from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorOpcoes/SelecionadorOpcoes';
-import { useContexto__PaginaGameDesignerNovoSer__Cadastro } from 'Contextos/Contexto__PaginaGameDesignerNovoSer__Cadastro/contexto';
+import { useContexto__PaginaGameDesignerSeres__Cadastro } from 'Contextos/Contexto__PaginaGameDesignerSeres__Cadastro/contexto';
 
 const OPCOES_TIPO: readonly OpcaoSelecionador[] = [
     { value: 'jogavel', label: 'Jogável' },
@@ -13,8 +13,8 @@ const OPCOES_ORIGEM: readonly OpcaoSelecionador[] = [
     { value: 'nao_humano', label: 'Não Humano' },
 ];
 
-export default function SPA__PaginaGameDesignerNovoSer__Cadastro() {
-    const { tipo, nome, origemEstrutura, salvando, podeSalvar, setTipo, setNome, setOrigemEstrutura, criar } = useContexto__PaginaGameDesignerNovoSer__Cadastro();
+export default function SPA__PaginaGameDesignerSeres__Cadastro() {
+    const { tipo, nome, origemEstrutura, salvando, podeSalvar, setTipo, setNome, setOrigemEstrutura, criar } = useContexto__PaginaGameDesignerSeres__Cadastro();
 
     return (
         <ConteudoForm>
