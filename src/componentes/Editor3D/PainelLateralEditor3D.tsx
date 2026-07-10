@@ -43,8 +43,8 @@ interface PainelLateralEditor3DProps {
     readonly aoMudarCorObjeto: (cor: string) => void;
     readonly aoMudarSubdivisaoObjeto: (subdivisao: number) => void;
     readonly aoEspelharObjetoX: () => void;
-    readonly aoDuplicarObjeto: () => void;
-    readonly aoExcluirObjeto: () => void;
+    readonly aoDuplicarObjeto: (id: number) => void;
+    readonly aoExcluirObjeto: (id: number) => void;
     readonly aoAtualizarParametroCorpo: (regiao: MembroPersonagemEditor3D | null, campo: CampoParametroRegiaoEditor3D, valor: number) => void;
     readonly aoMudarCorCorpo: (cor: string) => void;
     readonly aoAnexarPeca: () => void;
@@ -76,7 +76,7 @@ export function PainelLateralEditor3D(props: PainelLateralEditor3DProps) {
             </div>
 
             <PainelColapsavelEditor3D titulo="Coleção da Cena" valor={String(props.totalObjetos)} acoes={<button type="button" className={styles.botao_add_colecao} onClick={() => props.aoCriarColecao()} title="Nova coleção" aria-label="Nova coleção">+</button>}>
-                <ArvoreCenaEditor3D objetosRaiz={props.objetosRaiz} colecoes={props.colecoes} idSelecionado={props.idSelecionado} temCamera={props.camera !== null} povCameraAtiva={props.povCameraAtiva} regioesCorpo={props.regioesCorpo} regiaoCorpoSelecionada={props.regiaoCorpoSelecionada} aoSelecionarCorpo={props.aoSelecionarCorpo} aoSelecionar={props.aoSelecionar} aoAlternarVisibilidadeObjeto={props.aoAlternarVisibilidade} aoAlternarVisibilidadeColecao={props.aoAlternarVisibilidadeColecao} aoRenomearColecao={props.aoRenomearColecao} aoRemoverColecao={props.aoRemoverColecao} aoMoverObjeto={props.aoMoverObjeto} aoAlternarPovCamera={props.aoAlternarPovCamera} />
+                <ArvoreCenaEditor3D objetosRaiz={props.objetosRaiz} colecoes={props.colecoes} idSelecionado={props.idSelecionado} temCamera={props.camera !== null} povCameraAtiva={props.povCameraAtiva} regioesCorpo={props.regioesCorpo} regiaoCorpoSelecionada={props.regiaoCorpoSelecionada} aoSelecionarCorpo={props.aoSelecionarCorpo} aoSelecionar={props.aoSelecionar} aoAlternarVisibilidadeObjeto={props.aoAlternarVisibilidade} aoDuplicarObjeto={props.aoDuplicarObjeto} aoExcluirObjeto={props.aoExcluirObjeto} aoAlternarVisibilidadeColecao={props.aoAlternarVisibilidadeColecao} aoRenomearColecao={props.aoRenomearColecao} aoRemoverColecao={props.aoRemoverColecao} aoMoverObjeto={props.aoMoverObjeto} aoAlternarPovCamera={props.aoAlternarPovCamera} />
             </PainelColapsavelEditor3D>
 
             {props.idSelecionado === SELECAO_CAMERA_EDITOR3D && props.camera !== null ? (
@@ -95,7 +95,7 @@ export function PainelLateralEditor3D(props: PainelLateralEditor3DProps) {
                 <>
                     {props.objetoSelecionado !== null && (
                         <PainelColapsavelEditor3D titulo="Objeto" valor={props.objetoSelecionado.tipoRotulo}>
-                            <PainelObjetoEditor3D nome={props.objetoSelecionado.nome} cor={props.objetoSelecionado.cor} subdivisao={props.objetoSelecionado.subdivisao} peca={props.objetoSelecionado.peca} aoRenomear={props.aoRenomearObjeto} aoMudarCor={props.aoMudarCorObjeto} aoMudarSubdivisao={props.aoMudarSubdivisaoObjeto} aoEspelharX={props.aoEspelharObjetoX} aoDuplicar={props.aoDuplicarObjeto} aoExcluir={props.aoExcluirObjeto} aoRemoverPeca={props.aoRemoverPeca} />
+                            <PainelObjetoEditor3D nome={props.objetoSelecionado.nome} cor={props.objetoSelecionado.cor} subdivisao={props.objetoSelecionado.subdivisao} peca={props.objetoSelecionado.peca} aoRenomear={props.aoRenomearObjeto} aoMudarCor={props.aoMudarCorObjeto} aoMudarSubdivisao={props.aoMudarSubdivisaoObjeto} aoEspelharX={props.aoEspelharObjetoX} aoRemoverPeca={props.aoRemoverPeca} />
                         </PainelColapsavelEditor3D>
                     )}
                     <PainelColapsavelEditor3D titulo="Transform" valor={props.transformSelecionado !== null ? '1' : '0'}>

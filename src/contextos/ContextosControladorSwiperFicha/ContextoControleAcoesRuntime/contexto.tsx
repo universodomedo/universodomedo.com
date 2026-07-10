@@ -9,6 +9,7 @@ import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonage
 interface ContextoControleAcoesRuntimeProps {
     executaAcao: (keyAcao: string, keyCombatenteAlvo?: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime) => void;
     executaEsperar: () => void;
+    executaSair: () => void;
     executaSaqueItem: (keyItem: string) => void;
     estadoTemporalSalaJogo: EstadoTemporalSalaDeJogoRuntime | null;
 };
@@ -48,8 +49,16 @@ export const ContextoControleAcoesRuntimeProvider = ({ children, codigoRecuperar
         eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.jogadorSacaItemSalaJogo, { codigoSala, keyItem });
     };
 
+    // Sala de treino: sair pela porta (o servidor so conclui se estiver ao pe dela). Sem gate de tempo — deixar a sala nao e acao temporizada.
+    function executaSair(): void {
+        if (desativarAcoes) return;
+        if (!codigoSala) return;
+
+        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.jogadorSaiSalaJogo, { codigoSala });
+    };
+
     return (
-        <ContextoControleAcoesRuntime.Provider value={{ executaAcao, executaEsperar, executaSaqueItem, estadoTemporalSalaJogo: estadoTemporalSalaJogo ?? null }}>
+        <ContextoControleAcoesRuntime.Provider value={{ executaAcao, executaEsperar, executaSair, executaSaqueItem, estadoTemporalSalaJogo: estadoTemporalSalaJogo ?? null }}>
             {children}
         </ContextoControleAcoesRuntime.Provider>
     );
@@ -58,10 +67,11 @@ export const ContextoControleAcoesRuntimeProvider = ({ children, codigoRecuperar
 export const ContextoControleAcoesRuntimeSomenteLeituraProvider = ({ children }: { children: React.ReactNode; }) => {
     function executaAcao(keyAcao: string, keyCombatenteAlvo?: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime): void { void keyAcao; void keyCombatenteAlvo; return; };
     function executaEsperar(): void { return; };
+    function executaSair(): void { return; };
     function executaSaqueItem(keyItem: string): void { void keyItem; return; };
 
     return (
-        <ContextoControleAcoesRuntime.Provider value={{ executaAcao, executaEsperar, executaSaqueItem, estadoTemporalSalaJogo: null }}>
+        <ContextoControleAcoesRuntime.Provider value={{ executaAcao, executaEsperar, executaSair, executaSaqueItem, estadoTemporalSalaJogo: null }}>
             {children}
         </ContextoControleAcoesRuntime.Provider>
     );

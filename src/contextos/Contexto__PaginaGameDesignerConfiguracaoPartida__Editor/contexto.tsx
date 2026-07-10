@@ -5,14 +5,15 @@ import type { ConfiguracaoPartida, PartidaResumo } from 'types-nora-api';
 
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import { criaConteiner, criaSaidaConteiner, SaidaConteiner } from 'Conteineres/_core/criaConteiner';
-import { criaConfiguracaoVazia, criaCondicaoVitoria, configuracaoEstaPreenchida, controladorDoGrupo, garanteTemporal, rotuloSer, rotuloObjeto, type GrupoControle, type InteragivelObjeto, type InteragivelSer, type TipoCondicaoVitoria } from './editorConfiguracao.compartilhado';
+import { criaConfiguracaoVazia, criaCondicaoVitoria, configuracaoEstaPreenchida, controladorDoGrupo, garanteTemporal, LUZ_PADRAO, rotuloSer, rotuloObjeto, rotuloLuz, TAMANHO_OBJETO_PADRAO_MILIMETROS, type GrupoControle, type InteragivelObjeto, type InteragivelSer, type Luz, type TipoCondicaoVitoria } from './editorConfiguracao.compartilhado';
 import { Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__Formulario__Provider } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__Formulario/contexto';
 import { Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__SelecaoSer__Provider } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__SelecaoSer/contexto';
 import { Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala__Provider } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala/contexto';
 import { Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto__Provider } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto/contexto';
+import { Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigLuz__Provider } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigLuz/contexto';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Edicao } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao/contexto';
 
-type SubVista = 'formulario' | 'selecaoSer' | 'configSer' | 'configObjeto';
+type SubVista = 'formulario' | 'selecaoSer' | 'configSer' | 'configObjeto' | 'configLuz';
 
 interface Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__Props {
     partida: PartidaResumo;
@@ -36,6 +37,10 @@ interface Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__Props {
     removeInteragivel: (chave: string) => void;
     atualizaObjeto: (chave: string, parcial: Partial<InteragivelObjeto>) => void;
     atualizaSer: (chave: string, parcial: Partial<InteragivelSer>) => void;
+    adicionaEConfiguraLuz: () => void;
+    irParaConfigLuz: (chave: string) => void;
+    atualizaLuz: (chave: string, parcial: Partial<Luz>) => void;
+    removeLuz: (chave: string) => void;
     salvarConfiguracao: () => Promise<void>;
 };
 
@@ -83,6 +88,8 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__Provider =
     function removeInteragivel(chave: string): void { setConfig(atual => ({ ...atual, interagiveis: atual.interagiveis.filter(interagivel => interagivel.chave !== chave) })); };
     function atualizaObjeto(chave: string, parcial: Partial<InteragivelObjeto>): void { setConfig(atual => ({ ...atual, interagiveis: atual.interagiveis.map(interagivel => interagivel.chave === chave && interagivel.tipo === 'objeto' ? { ...interagivel, ...parcial } : interagivel) })); };
     function atualizaSer(chave: string, parcial: Partial<InteragivelSer>): void { setConfig(atual => ({ ...atual, interagiveis: atual.interagiveis.map(interagivel => interagivel.chave === chave && interagivel.tipo === 'ser' ? { ...interagivel, ...parcial } : interagivel) })); };
+    function atualizaLuz(chave: string, parcial: Partial<Luz>): void { setConfig(atual => ({ ...atual, luzes: (atual.luzes ?? []).map(luz => luz.chave === chave ? { ...luz, ...parcial } : luz) })); };
+    function removeLuz(chave: string): void { setConfig(atual => ({ ...atual, luzes: (atual.luzes ?? []).filter(luz => luz.chave !== chave) })); };
 
     function adicionaSer(grupo: GrupoControle, idSer: number): void {
         const novo: InteragivelSer = { chave: criaChave('SER'), tipo: 'ser', idSer, controlador: controladorDoGrupo(grupo), nome: '', descricao: '', posicao: { x: 0, y: 0 }, estadoPercepcaoInicial: grupo === 'sistema' ? 'DESPERCEBIDO' : 'PERCEBIDO', descobertas: [] };
@@ -90,7 +97,7 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__Provider =
     };
 
     function criaObjetoVazio(): InteragivelObjeto {
-        return { chave: criaChave('OBJETO'), tipo: 'objeto', nome: '', descricao: '', posicao: { x: 0, y: 0 }, estadoPercepcaoInicial: 'PERCEBIDO', pontosDurabilidadeMaximo: 1, descobertas: [] };
+        return { chave: criaChave('OBJETO'), tipo: 'objeto', nome: '', descricao: '', posicao: { x: 0, y: 0 }, estadoPercepcaoInicial: 'PERCEBIDO', pontosDurabilidadeMaximo: 1, larguraMilimetros: TAMANHO_OBJETO_PADRAO_MILIMETROS.largura, alturaMilimetros: TAMANHO_OBJETO_PADRAO_MILIMETROS.altura, profundidadeMilimetros: TAMANHO_OBJETO_PADRAO_MILIMETROS.profundidade, descobertas: [] };
     };
     function adicionaEConfiguraObjeto(): void {
         const novo = criaObjetoVazio();
@@ -98,9 +105,19 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__Provider =
         irParaConfigObjeto(novo.chave);
     };
 
+    function criaLuzVazia(): Luz {
+        return { chave: criaChave('LUZ'), nome: '', posicao: { x: 0, y: 0 }, alcanceMilimetros: LUZ_PADRAO.alcanceMilimetros, intensidade: LUZ_PADRAO.intensidade };
+    };
+    function adicionaEConfiguraLuz(): void {
+        const nova = criaLuzVazia();
+        setConfig(atual => ({ ...atual, luzes: [...(atual.luzes ?? []), nova] }));
+        irParaConfigLuz(nova.chave);
+    };
+
     function irParaSelecaoSer(grupo: GrupoControle): void { setGrupoEmFoco(grupo); setSubVista('selecaoSer'); };
     function irParaConfigSer(chave: string): void { setChaveEmEdicao(chave); setSubVista('configSer'); };
     function irParaConfigObjeto(chave: string): void { setChaveEmEdicao(chave); setSubVista('configObjeto'); };
+    function irParaConfigLuz(chave: string): void { setChaveEmEdicao(chave); setSubVista('configLuz'); };
     function voltarParaFormulario(): void { setChaveEmEdicao(null); setSubVista('formulario'); };
 
     async function salvarConfiguracao(): Promise<void> { if (configuracaoEstaPreenchida(config) && !salvando) await salvar(config); };
@@ -111,7 +128,7 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__Provider =
     useConfigurarLayoutContextualizado(layoutContextualDaSubVista({ subVista, grupoEmFoco, partida, config, nomesPorIdSer, chaveEmEdicao, voltarParaFormulario, voltarParaVisao: () => setAba('visao') }));
 
     return (
-        <Contexto__PaginaGameDesignerConfiguracaoPartida__Editor.Provider value={{ partida, config, nomesPorIdSer, salvando, podeSalvar, subVista, grupoEmFoco, chaveEmEdicao, irParaSelecaoSer, adicionaSer, irParaConfigSer, adicionaEConfiguraObjeto, irParaConfigObjeto, voltarParaFormulario, atualizaConfig, selecionaTipoCondicaoVitoria, atualizaCenario, atualizaMapaLogico, removeInteragivel, atualizaObjeto, atualizaSer, salvarConfiguracao }}>
+        <Contexto__PaginaGameDesignerConfiguracaoPartida__Editor.Provider value={{ partida, config, nomesPorIdSer, salvando, podeSalvar, subVista, grupoEmFoco, chaveEmEdicao, irParaSelecaoSer, adicionaSer, irParaConfigSer, adicionaEConfiguraObjeto, irParaConfigObjeto, voltarParaFormulario, atualizaConfig, selecionaTipoCondicaoVitoria, atualizaCenario, atualizaMapaLogico, removeInteragivel, atualizaObjeto, atualizaSer, adicionaEConfiguraLuz, irParaConfigLuz, atualizaLuz, removeLuz, salvarConfiguracao }}>
             <ConteinerInterno__Editor />
         </Contexto__PaginaGameDesignerConfiguracaoPartida__Editor.Provider>
     );
@@ -143,9 +160,11 @@ function layoutContextualDaSubVista({ subVista, grupoEmFoco, partida, config, no
     const base = `${partida.nome} · Runtime`;
     const voltarConfig = { tipo: 'acao' as const, executar: voltarParaFormulario, tituloTooltip: 'Voltar para a configuração' };
     const interagivelEmEdicao = config.interagiveis.find(interagivel => interagivel.chave === chaveEmEdicao) ?? null;
+    const luzEmEdicao = (config.luzes ?? []).find(luz => luz.chave === chaveEmEdicao) ?? null;
     if (subVista === 'selecaoSer') return { subtitulo: `${base} · Escolher Ser ${grupoEmFoco === 'jogador' ? 'de Jogador' : 'do Sistema'}`, fecharProps: voltarConfig };
     if (subVista === 'configSer') return { subtitulo: `${base} · Configurando ${rotuloSer(interagivelEmEdicao !== null && interagivelEmEdicao.tipo === 'ser' ? interagivelEmEdicao : null, nomesPorIdSer)}`, fecharProps: voltarConfig };
     if (subVista === 'configObjeto') return { subtitulo: `${base} · Configurando ${rotuloObjeto(interagivelEmEdicao !== null && interagivelEmEdicao.tipo === 'objeto' ? interagivelEmEdicao : null)}`, fecharProps: voltarConfig };
+    if (subVista === 'configLuz') return { subtitulo: `${base} · Configurando ${rotuloLuz(luzEmEdicao)}`, fecharProps: voltarConfig };
     return { subtitulo: base, fecharProps: { tipo: 'acao' as const, executar: voltarParaVisao, tituloTooltip: 'Voltar para Dados de Exibição' } };
 };
 
@@ -156,5 +175,6 @@ function resolveSaida(props: Contexto__PaginaGameDesignerConfiguracaoPartida__Ed
     if (props.subVista === 'selecaoSer') return criaSaidaConteiner(Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__SelecaoSer__Provider, {});
     if (props.subVista === 'configSer' && props.chaveEmEdicao !== null) return criaSaidaConteiner(Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala__Provider, {});
     if (props.subVista === 'configObjeto' && props.chaveEmEdicao !== null) return criaSaidaConteiner(Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto__Provider, {});
+    if (props.subVista === 'configLuz' && props.chaveEmEdicao !== null) return criaSaidaConteiner(Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigLuz__Provider, {});
     return criaSaidaConteiner(Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__Formulario__Provider, {});
 };

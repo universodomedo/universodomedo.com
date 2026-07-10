@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { toast } from 'Hooks/useToast';
-import { rotuloInteragivel, type Descoberta } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
+import { rotuloInteragivel, TAMANHO_OBJETO_PADRAO_MILIMETROS, type Descoberta } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Editor } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/contexto';
 import SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto/SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto';
 
@@ -18,6 +18,9 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObje
     const [nome, setNome] = useState<string>(objeto?.nome ?? '');
     const [descricao, setDescricao] = useState<string>(objeto?.descricao ?? '');
     const [pontosDurabilidadeMaximo, setPontosDurabilidadeMaximo] = useState<number>(objeto?.pontosDurabilidadeMaximo ?? 1);
+    const [larguraMilimetros, setLarguraMilimetros] = useState<number>(objeto?.larguraMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.largura);
+    const [alturaMilimetros, setAlturaMilimetros] = useState<number>(objeto?.alturaMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.altura);
+    const [profundidadeMilimetros, setProfundidadeMilimetros] = useState<number>(objeto?.profundidadeMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.profundidade);
     const [percepcaoInicial, setPercepcaoInicial] = useState<'DESPERCEBIDO' | 'PERCEBIDO'>(objeto?.estadoPercepcaoInicial ?? 'PERCEBIDO');
     const [posicao, setPosicao] = useState<{ x: number; y: number }>(objeto?.posicao ?? { x: 0, y: 0 });
     const [descobertas, setDescobertas] = useState<readonly Descoberta[]>(objeto?.descobertas ?? []);
@@ -36,7 +39,7 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObje
     const opcoesInteragiveis = config.interagiveis.filter(interagivelAtual => interagivelAtual.chave !== ativo.chave).map(interagivelAtual => ({ value: interagivelAtual.chave, label: rotuloInteragivel(interagivelAtual, nomesPorIdSer) }));
 
     function salvar(): void {
-        atualizaObjeto(ativo.chave, { nome, descricao, pontosDurabilidadeMaximo, estadoPercepcaoInicial: percepcaoInicial, posicao, descobertas });
+        atualizaObjeto(ativo.chave, { nome, descricao, pontosDurabilidadeMaximo, larguraMilimetros, alturaMilimetros, profundidadeMilimetros, estadoPercepcaoInicial: percepcaoInicial, posicao, descobertas });
         void toast.sucesso('Objeto salvo');
         voltarParaFormulario();
     };
@@ -49,6 +52,12 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObje
             aoMudarDescricao={setDescricao}
             pontosDurabilidadeMaximo={pontosDurabilidadeMaximo}
             aoMudarPontosDurabilidade={setPontosDurabilidadeMaximo}
+            larguraObjetoMilimetros={larguraMilimetros}
+            aoMudarLarguraObjeto={setLarguraMilimetros}
+            alturaObjetoMilimetros={alturaMilimetros}
+            aoMudarAlturaObjeto={setAlturaMilimetros}
+            profundidadeObjetoMilimetros={profundidadeMilimetros}
+            aoMudarProfundidadeObjeto={setProfundidadeMilimetros}
             percepcaoInicial={percepcaoInicial}
             aoMudarPercepcao={setPercepcaoInicial}
             posicao={posicao}

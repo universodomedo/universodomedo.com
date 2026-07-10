@@ -1,5 +1,5 @@
 import type { ConfiguracaoPartida, KeySerEmSala, PartidaGraphqlDto } from 'types-nora-api';
-import type { Controlador, Descoberta, Interagivel } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
+import { TAMANHO_OBJETO_PADRAO_MILIMETROS, type Controlador, type Descoberta, type Interagivel, type Luz } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 
 // A leitura GraphQL da Partida entrega o configuracao "achatado": o interagivel vem com os campos de ambas as variantes (objeto|ser) opcionais + tipo,
 // condicaoVitoria com os campos de todas as variantes opcionais, e os tipos de marca (KeySerEmSala, enums) alargados como string. O Editor trabalha no
@@ -18,6 +18,10 @@ function remapeiaControlador(controlador: InteragivelGraphql['controlador']): Co
     return { tipo: 'sistema' };
 };
 
+function remapeiaLuz(luz: NonNullable<ConfiguracaoPartidaGraphql['luzes']>[number]): Luz {
+    return { chave: luz.chave, nome: luz.nome, posicao: luz.posicao === null ? null : { x: luz.posicao.x, y: luz.posicao.y }, alcanceMilimetros: luz.alcanceMilimetros, intensidade: luz.intensidade };
+};
+
 function remapeiaInteragivel(interagivel: InteragivelGraphql): Interagivel {
     const base = {
         chave: interagivel.chave,
@@ -28,7 +32,11 @@ function remapeiaInteragivel(interagivel: InteragivelGraphql): Interagivel {
         descobertas: interagivel.descobertas.map(remapeiaDescoberta),
     };
     if (interagivel.tipo === 'ser') return { ...base, tipo: 'ser', idSer: interagivel.idSer ?? 0, controlador: remapeiaControlador(interagivel.controlador) };
-    return { ...base, tipo: 'objeto', pontosDurabilidadeMaximo: interagivel.pontosDurabilidadeMaximo ?? 1 };
+    return { ...base, tipo: 'objeto', pontosDurabilidadeMaximo: interagivel.pontosDurabilidadeMaximo ?? 1, larguraMilimetros: interagivel.larguraMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.largura, alturaMilimetros: interagivel.alturaMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.altura, profundidadeMilimetros: interagivel.profundidadeMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.profundidade, vinculoElementoMapa: interagivel.vinculoElementoMapa ?? undefined };
+};
+
+function remapeiaPortaMapa(porta: NonNullable<ConfiguracaoPartidaGraphql['cenario']['mapaLogico']['portas']>[number]): NonNullable<ConfiguracaoPartida['cenario']['mapaLogico']['portas']>[number] {
+    return { chave: porta.chave, nome: porta.nome, posicao: { x: porta.posicao.x, y: porta.posicao.y }, orientacaoGraus: porta.orientacaoGraus, larguraMilimetros: porta.larguraMilimetros, alturaMilimetros: porta.alturaMilimetros };
 };
 
 function remapeiaCondicaoVitoria(condicao: CondicaoVitoriaGraphql): ConfiguracaoPartida['condicaoVitoria'] {
@@ -36,14 +44,18 @@ function remapeiaCondicaoVitoria(condicao: CondicaoVitoriaGraphql): Configuracao
     if (condicao.tipo === 'inimigo_derrotado') return { tipo: 'inimigo_derrotado', keySerEmSala: (condicao.keySerEmSala ?? '') as KeySerEmSala, idEstatisticaDanificavel: condicao.idEstatisticaDanificavel ?? 0 };
     if (condicao.tipo === 'tempo_jogo_alcancado') return { tipo: 'tempo_jogo_alcancado', tempoAlvoMs: condicao.tempoAlvoMs ?? 0 };
     if (condicao.tipo === 'proximidade_ser_alcancada') return { tipo: 'proximidade_ser_alcancada', keySerEmSala: (condicao.keySerEmSala ?? '') as KeySerEmSala, distanciaMaximaMilimetros: condicao.distanciaMaximaMilimetros ?? 0 };
+    if (condicao.tipo === 'saida_pela_porta') return { tipo: 'saida_pela_porta', keyInteragivel: condicao.keyInteragivel ?? '', distanciaMaximaMilimetros: condicao.distanciaMaximaMilimetros ?? 0 };
     return { tipo: 'qualquer_acao_executada' };
 };
 
 export function remapeiaConfiguracaoPartidaGraphql(configuracao: ConfiguracaoPartidaGraphql): ConfiguracaoPartida {
     return {
+        // Carimbo de shape: sem ele o Editor trata a config como legada e comeca do ZERO (descarta a persistida). Tem que atravessar o remap.
+        versaoShape: configuracao.versaoShape ?? undefined,
         narracaoInicial: configuracao.narracaoInicial,
-        cenario: { nome: configuracao.cenario.nome, mapaLogico: { larguraMilimetros: configuracao.cenario.mapaLogico.larguraMilimetros, alturaMilimetros: configuracao.cenario.mapaLogico.alturaMilimetros } },
+        cenario: { nome: configuracao.cenario.nome, mapaLogico: { larguraMilimetros: configuracao.cenario.mapaLogico.larguraMilimetros, alturaMilimetros: configuracao.cenario.mapaLogico.alturaMilimetros, portas: (configuracao.cenario.mapaLogico.portas ?? []).map(remapeiaPortaMapa) } },
         interagiveis: configuracao.interagiveis.map(remapeiaInteragivel),
+        luzes: (configuracao.luzes ?? []).map(remapeiaLuz),
         condicaoVitoria: remapeiaCondicaoVitoria(configuracao.condicaoVitoria),
         temporal: configuracao.temporal === null ? undefined : { momentoInicialMs: configuracao.temporal.momentoInicialMs },
     };

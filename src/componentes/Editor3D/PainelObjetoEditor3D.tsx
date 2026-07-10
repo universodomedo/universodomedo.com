@@ -15,14 +15,12 @@ interface PainelObjetoEditor3DProps {
     readonly aoMudarCor: (cor: string) => void;
     readonly aoMudarSubdivisao: (subdivisao: number) => void;
     readonly aoEspelharX: () => void;
-    readonly aoDuplicar: () => void;
-    readonly aoExcluir: () => void;
     readonly aoRemoverPeca: (idPeca: string) => void;
 };
 
-// Propriedades do objeto selecionado (nome/cor/subdivisão/ações). O nome confirma no blur/Enter (Escape restaura) para não renomear a cada tecla.
-// Parte de peça: sem Duplicar/Excluir individual — a peça é removida inteira.
-export function PainelObjetoEditor3D({ nome, cor, subdivisao, peca, aoRenomear, aoMudarCor, aoMudarSubdivisao, aoEspelharX, aoDuplicar, aoExcluir, aoRemoverPeca }: PainelObjetoEditor3DProps) {
+// Propriedades do objeto selecionado (nome/cor/subdivisão/espelho). O nome confirma no blur/Enter (Escape restaura) para não renomear a cada tecla.
+// Duplicar/Excluir moram como ícones inline na linha do objeto na árvore da cena; parte de peça é removida pela peça inteira.
+export function PainelObjetoEditor3D({ nome, cor, subdivisao, peca, aoRenomear, aoMudarCor, aoMudarSubdivisao, aoEspelharX, aoRemoverPeca }: PainelObjetoEditor3DProps) {
     const [nomeEditado, setNomeEditado] = useState(nome);
 
     useEffect(() => { setNomeEditado(nome); }, [nome]);
@@ -68,8 +66,6 @@ export function PainelObjetoEditor3D({ nome, cor, subdivisao, peca, aoRenomear, 
             ) : (
                 <div className={styles.acoes_objeto_painel}>
                     <button type="button" className={styles.botao_acao_objeto} onClick={aoEspelharX} title="Espelhar a malha no plano X local (modele metade e espelhe; a costura em X=0 é soldada)">⇋ Espelhar X</button>
-                    <button type="button" className={styles.botao_acao_objeto} onClick={aoDuplicar} title="Duplicar objeto">⧉ Duplicar</button>
-                    <button type="button" className={`${styles.botao_acao_objeto} ${styles.botao_excluir_objeto}`} onClick={aoExcluir} title="Excluir objeto">✕ Excluir</button>
                 </div>
             )}
         </div>

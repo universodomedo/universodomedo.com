@@ -10,12 +10,17 @@ export type CapacidadeInataMembroEditor = {
 // Parametros da capacidade em edicao (number | '' pra permitir campo vazio); o montaInput converte '' -> undefined.
 export type ParametrosCapacidadeEditor = {
     readonly dano: number | '';
+    readonly alcanceAtaqueMilimetros: number | '';
     readonly alcanceLinhaVisaoMilimetros: number | '';
     readonly idTipoVisao: number | '';
     readonly dependenciaIluminacaoPercentual: number | '';
+    readonly velocidadeLocomocaoMilimetrosPorSegundo: number | '';
+    readonly meioLocomocao: '' | 'terrestre' | 'aquatico' | 'aereo';
 };
 
-export type CampoParametroCapacidadeEditor = keyof ParametrosCapacidadeEditor;
+// Campos numericos (atualizaParametro); o meio de locomocao e string e tem updater proprio (atualizaMeioLocomocaoEditor).
+export type CampoParametroCapacidadeEditor = Exclude<keyof ParametrosCapacidadeEditor, 'meioLocomocao'>;
+export type MeioLocomocaoEditor = ParametrosCapacidadeEditor['meioLocomocao'];
 
 export type CapacidadeMembroEditor = {
     readonly idCapacidadeInata: number;
@@ -61,6 +66,10 @@ export function alternaCapacidadeMembroEditor(membros: readonly MembroEditor[], 
 
 export function atualizaParametroCapacidadeEditor(membros: readonly MembroEditor[], idLocal: number, idCapacidade: number, campo: CampoParametroCapacidadeEditor, valor: number | ''): readonly MembroEditor[] {
     return membros.map(membro => membro.idLocal === idLocal ? { ...membro, capacidades: membro.capacidades.map(capacidade => capacidade.idCapacidadeInata === idCapacidade ? { ...capacidade, parametros: { ...capacidade.parametros, [campo]: valor } } : capacidade) } : membro);
+};
+
+export function atualizaMeioLocomocaoEditor(membros: readonly MembroEditor[], idLocal: number, idCapacidade: number, meio: MeioLocomocaoEditor): readonly MembroEditor[] {
+    return membros.map(membro => membro.idLocal === idLocal ? { ...membro, capacidades: membro.capacidades.map(capacidade => capacidade.idCapacidadeInata === idCapacidade ? { ...capacidade, parametros: { ...capacidade.parametros, meioLocomocao: meio } } : capacidade) } : membro);
 };
 
 export function adicionaAcaoMembroEditor(membros: readonly MembroEditor[], idLocal: number, idLocalAcao: number): readonly MembroEditor[] {
@@ -117,24 +126,30 @@ export function montaInputMembrosEditor(membros: readonly MembroEditor[]): reado
 };
 
 function parametrosCapacidadeVazio(): ParametrosCapacidadeEditor {
-    return { dano: '', alcanceLinhaVisaoMilimetros: '', idTipoVisao: '', dependenciaIluminacaoPercentual: '' };
+    return { dano: '', alcanceAtaqueMilimetros: '', alcanceLinhaVisaoMilimetros: '', idTipoVisao: '', dependenciaIluminacaoPercentual: '', velocidadeLocomocaoMilimetrosPorSegundo: '', meioLocomocao: '' };
 };
 
 function parametrosCapacidadeDePersistidos(parametros: ParametrosCapacidadeMembroSerJogavel): ParametrosCapacidadeEditor {
     return {
         dano: parametros.dano ?? '',
+        alcanceAtaqueMilimetros: parametros.alcanceAtaqueMilimetros ?? '',
         alcanceLinhaVisaoMilimetros: parametros.alcanceLinhaVisaoMilimetros ?? '',
         idTipoVisao: parametros.idTipoVisao ?? '',
         dependenciaIluminacaoPercentual: parametros.dependenciaIluminacaoPercentual ?? '',
+        velocidadeLocomocaoMilimetrosPorSegundo: parametros.velocidadeLocomocaoMilimetrosPorSegundo ?? '',
+        meioLocomocao: parametros.meioLocomocao ?? '',
     };
 };
 
 function montaParametrosInput(parametros: ParametrosCapacidadeEditor): ParametrosCapacidadeMembroSerJogavel {
     return {
         dano: numeroOuUndefined(parametros.dano),
+        alcanceAtaqueMilimetros: numeroOuUndefined(parametros.alcanceAtaqueMilimetros),
         alcanceLinhaVisaoMilimetros: numeroOuUndefined(parametros.alcanceLinhaVisaoMilimetros),
         idTipoVisao: numeroOuUndefined(parametros.idTipoVisao),
         dependenciaIluminacaoPercentual: numeroOuUndefined(parametros.dependenciaIluminacaoPercentual),
+        velocidadeLocomocaoMilimetrosPorSegundo: numeroOuUndefined(parametros.velocidadeLocomocaoMilimetrosPorSegundo),
+        meioLocomocao: parametros.meioLocomocao === '' ? undefined : parametros.meioLocomocao,
     };
 };
 
@@ -153,10 +168,14 @@ function mensagemParametroCapacidade(capacidade: CapacidadeMembroEditor, catalog
 
     if (info?.nomeInteracao === TIPOS_INTERACAO.DANIFICAVEL.chave) {
         if (!ehInteiroPositivo(parametros.dano)) return 'Capacidade Danificável precisa de dano inteiro positivo.';
+        if (!ehInteiroPositivo(parametros.alcanceAtaqueMilimetros)) return 'Capacidade Danificável precisa do Alcance do Ataque (mm, inteiro positivo).';
     } else if (info?.nomeInteracao === TIPOS_INTERACAO.VISUAL.chave) {
         if (!ehInteiroPositivo(parametros.alcanceLinhaVisaoMilimetros)) return 'Percepção Visual precisa do Alcance da Linha de Visão (mm, inteiro positivo).';
         if (!ehInteiroPositivo(parametros.idTipoVisao)) return 'Percepção Visual precisa do Tipo de Visão.';
         if (!ehPercentual(parametros.dependenciaIluminacaoPercentual)) return 'Percepção Visual precisa da Dependência de Iluminação (0 a 100).';
+    } else if (info?.nomeInteracao === TIPOS_INTERACAO.LOCOMOCAO.chave) {
+        if (!ehInteiroPositivo(parametros.velocidadeLocomocaoMilimetrosPorSegundo)) return 'Capacidade Locomoção precisa da Velocidade (mm/s, inteiro positivo).';
+        if (parametros.meioLocomocao === '') return 'Capacidade Locomoção precisa do Meio (terrestre, aquático ou aéreo).';
     }
 
     return null;

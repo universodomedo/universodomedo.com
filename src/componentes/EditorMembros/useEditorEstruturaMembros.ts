@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from 'react';
 import type { MembroSerJogavel, MembroSerJogavelInput } from 'types-nora-api';
 
 import { useListagemCapacidadesInatas } from 'Hooks/useListagemCapacidadesInatas';
-import { adicionaAcaoMembroEditor, alternaCapacidadeMembroEditor, atualizaCapacidadeAcaoMembroEditor, atualizaNomeAcaoMembroEditor, atualizaNomeMembroEditor, atualizaParametroCapacidadeEditor, membroEditorVazio, membrosEditorDePersistidos, membrosEditorSaoValidos, montaInputMembrosEditor, obtemMensagemValidacaoMembrosEditor, removeAcaoMembroEditor, type CampoParametroCapacidadeEditor, type CapacidadeInataMembroEditor, type MembroEditor } from './membrosSerJogavelEditor';
+import { adicionaAcaoMembroEditor, alternaCapacidadeMembroEditor, atualizaCapacidadeAcaoMembroEditor, atualizaMeioLocomocaoEditor, atualizaNomeAcaoMembroEditor, atualizaNomeMembroEditor, atualizaParametroCapacidadeEditor, membroEditorVazio, membrosEditorDePersistidos, membrosEditorSaoValidos, montaInputMembrosEditor, obtemMensagemValidacaoMembrosEditor, removeAcaoMembroEditor, type CampoParametroCapacidadeEditor, type CapacidadeInataMembroEditor, type MeioLocomocaoEditor, type MembroEditor } from './membrosSerJogavelEditor';
 
 type CarregarMaisEditorMembros = { readonly podeCarregarMais: boolean; readonly aoCarregarMais: () => void; readonly carregando?: string | null; };
 
@@ -38,6 +38,7 @@ export function useEditorEstruturaMembros() {
     function atualizaNomeMembro(idLocal: number, nome: string): void { setMembros(atuais => atualizaNomeMembroEditor(atuais, idLocal, nome)); };
     function alternaCapacidadeMembro(idLocal: number, idCapacidade: number): void { setMembros(atuais => alternaCapacidadeMembroEditor(atuais, idLocal, idCapacidade)); };
     function atualizaParametroCapacidade(idLocal: number, idCapacidade: number, campo: CampoParametroCapacidadeEditor, valor: number | ''): void { setMembros(atuais => atualizaParametroCapacidadeEditor(atuais, idLocal, idCapacidade, campo, valor)); };
+    function atualizaMeioLocomocao(idLocal: number, idCapacidade: number, meio: MeioLocomocaoEditor): void { setMembros(atuais => atualizaMeioLocomocaoEditor(atuais, idLocal, idCapacidade, meio)); };
     function adicionaAcaoMembro(idLocal: number): number { const idLocalAcao = proximoIdLocalAcaoRef.current++; setMembros(atuais => adicionaAcaoMembroEditor(atuais, idLocal, idLocalAcao)); return idLocalAcao; };
     function removeAcaoMembro(idLocal: number, idLocalAcao: number): void { setMembros(atuais => removeAcaoMembroEditor(atuais, idLocal, idLocalAcao)); };
     function atualizaNomeAcaoMembro(idLocal: number, idLocalAcao: number, nome: string): void { setMembros(atuais => atualizaNomeAcaoMembroEditor(atuais, idLocal, idLocalAcao, nome)); };
@@ -48,5 +49,5 @@ export function useEditorEstruturaMembros() {
 
     function montaInput(): readonly MembroSerJogavelInput[] { return montaInputMembrosEditor(membros); };
 
-    return { membros, capacidadesInatas, mensagemValidacao, valido, carregar, montaInput, adicionaMembro, removeMembro, atualizaNomeMembro, alternaCapacidadeMembro, atualizaParametroCapacidade, adicionaAcaoMembro, removeAcaoMembro, atualizaNomeAcaoMembro, atualizaCapacidadeAcaoMembro };
+    return { membros, capacidadesInatas, mensagemValidacao, valido, carregar, montaInput, adicionaMembro, removeMembro, atualizaNomeMembro, alternaCapacidadeMembro, atualizaParametroCapacidade, atualizaMeioLocomocao, adicionaAcaoMembro, removeAcaoMembro, atualizaNomeAcaoMembro, atualizaCapacidadeAcaoMembro };
 };

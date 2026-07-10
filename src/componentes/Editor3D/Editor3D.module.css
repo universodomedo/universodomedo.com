@@ -1173,6 +1173,11 @@
     min-height: 1.85em;
 }
 
+/* Linha de objeto com ações inline (duplicar / visibilidade / excluir); linhas especiais (câmera/corpo/título) seguem na grade base. */
+.linha_objeto_acoes {
+    grid-template-columns: minmax(0, 1fr) 1.55em 1.65em 1.4em;
+}
+
 .linha_objeto_grade:hover {
     background: rgba(255, 255, 255, 0.055);
 }

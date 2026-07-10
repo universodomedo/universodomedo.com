@@ -5,7 +5,7 @@ import { createContext, useContext } from 'react';
 import { useContexto__EditorEstrutura } from '../Contexto__EditorEstrutura/contexto';
 import SPA__EditorEstrutura__Membro from 'Conteineres/EditorEstrutura/paginas/SPA__EditorEstrutura__Membro/SPA__EditorEstrutura__Membro';
 import { useListagemTiposVisao } from 'Hooks/useListagemTiposVisao';
-import { idsCapacidadesDoMembroEditor, type AcaoMembroEditor, type CampoParametroCapacidadeEditor, type CapacidadeInataMembroEditor, type CapacidadeMembroEditor, type MembroEditor } from 'Componentes/EditorMembros/membrosSerJogavelEditor';
+import { idsCapacidadesDoMembroEditor, type AcaoMembroEditor, type CampoParametroCapacidadeEditor, type CapacidadeInataMembroEditor, type CapacidadeMembroEditor, type MeioLocomocaoEditor, type MembroEditor } from 'Componentes/EditorMembros/membrosSerJogavelEditor';
 import type { OpcaoSelecionador } from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorOpcoes/SelecionadorOpcoes';
 
 export type AcaoDoMembro = { readonly acao: AcaoMembroEditor; readonly capacidade: CapacidadeInataMembroEditor | null; };
@@ -25,6 +25,7 @@ interface Contexto__EditorEstrutura__Membro__Props {
     atualizaNome: (nome: string) => void;
     aoMudarCapacidades: (valores: readonly string[]) => void;
     atualizaParametro: (idCapacidade: number, campo: CampoParametroCapacidadeEditor, valor: number | '') => void;
+    atualizaMeioLocomocao: (idCapacidade: number, meio: MeioLocomocaoEditor) => void;
     abreAcao: (idLocalAcao: number) => void;
     abreNovaAcao: () => void;
     removeMembroEVolta: () => void;
@@ -73,6 +74,7 @@ export const Contexto__EditorEstrutura__Membro__Provider = () => {
             atualizaNome: nome => editor.atualizaNomeMembro(membro.idLocal, nome),
             aoMudarCapacidades,
             atualizaParametro: (idCapacidade, campo, valor) => editor.atualizaParametroCapacidade(membro.idLocal, idCapacidade, campo, valor),
+            atualizaMeioLocomocao: (idCapacidade, meio) => editor.atualizaMeioLocomocao(membro.idLocal, idCapacidade, meio),
             abreAcao: idLocalAcao => abreAcao(membro.idLocal, idLocalAcao),
             abreNovaAcao: () => abreNovaAcao(membro.idLocal),
             removeMembroEVolta: removeMembroEmEdicao,

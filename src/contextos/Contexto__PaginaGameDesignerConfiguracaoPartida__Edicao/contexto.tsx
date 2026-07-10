@@ -17,11 +17,13 @@ const ROTULO_EDITOR: Record<Exclude<AbaEdicaoPartida, 'visao'>, string> = { runt
 // Carga unica do detalhe da Partida: o configuracao (runtime) vem por GraphQL Partida-por-PK; arteCapa e idMusicaConfigurada ja vem no PartidaResumo (estrutura), entao a aba Detalhes os le direto da partida — sem N+1.
 const SELECT_CONFIGURACAO_PARTIDA = {
     configuracao: {
+        versaoShape: true,
         narracaoInicial: true,
-        cenario: { nome: true, mapaLogico: { larguraMilimetros: true, alturaMilimetros: true } },
-        interagiveis: { chave: true, nome: true, descricao: true, tipo: true, posicao: { x: true, y: true }, estadoPercepcaoInicial: true, pontosDurabilidadeMaximo: true, idSer: true, controlador: { tipo: true, slotJogador: true }, descobertas: { nome: true, descricaoInterna: true, idCapacidadeInata: true, recompensas: { dificuldadeMinima: true, chavesReveladas: true } } },
+        cenario: { nome: true, mapaLogico: { larguraMilimetros: true, alturaMilimetros: true, portas: { chave: true, nome: true, posicao: { x: true, y: true }, orientacaoGraus: true, larguraMilimetros: true, alturaMilimetros: true } } },
+        interagiveis: { chave: true, nome: true, descricao: true, tipo: true, posicao: { x: true, y: true }, estadoPercepcaoInicial: true, pontosDurabilidadeMaximo: true, larguraMilimetros: true, alturaMilimetros: true, profundidadeMilimetros: true, vinculoElementoMapa: true, idSer: true, controlador: { tipo: true, slotJogador: true }, descobertas: { nome: true, descricaoInterna: true, idCapacidadeInata: true, recompensas: { dificuldadeMinima: true, chavesReveladas: true } } },
+        luzes: { chave: true, nome: true, posicao: { x: true, y: true }, alcanceMilimetros: true, intensidade: true },
         temporal: { momentoInicialMs: true },
-        condicaoVitoria: { tipo: true, keySerEmSala: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMilimetros: true },
+        condicaoVitoria: { tipo: true, keySerEmSala: true, keyInteragivel: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMilimetros: true },
     },
 } as const;
 

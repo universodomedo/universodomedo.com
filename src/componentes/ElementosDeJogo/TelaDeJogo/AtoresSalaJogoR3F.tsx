@@ -4,7 +4,7 @@ import type { Group } from 'three';
 import type { EstadoTemporalSalaDeJogoRuntime, InteragivelPercebidoSalaJogoWsDto, OcupanteMapaLogicoSalaJogoWsDto } from 'types-nora-api';
 
 import { FiguraSerR3F } from './FiguraSerR3F';
-import { encontraMovimentoAtivoControlado, mundoX, mundoZ, posicaoLogicaControladoFiccional } from './cenaSalaJogo.helpers';
+import { dimensoesInteragivelCena, encontraMovimentoAtivoControlado, mundoX, mundoZ, posicaoLogicaControladoFiccional } from './cenaSalaJogo.helpers';
 
 interface MarcadorControladoR3FProps { ocupante: OcupanteMapaLogicoSalaJogoWsDto; estadoTemporal: EstadoTemporalSalaDeJogoRuntime; largura: number; altura: number; selecionado: boolean; aoSelecionar?: (keySer: string) => void; };
 
@@ -51,15 +51,18 @@ export function InteragivelR3F({ interagivel, novo, selecionado, largura, altura
 
     if (interagivel.tipo === 'ser') return <FiguraSerR3F position={[x, 0, z]} corPrimaria={novo ? '#c79a3f' : '#7484b4'} corPele="#d8b48c" selecionado={selecionado} aoClicar={aoClicar} />;
 
+    const dims = dimensoesInteragivelCena(interagivel);
+    const meioAltura = dims.altura / 2;
+
     return (
         <group position={[x, 0, z]} onClick={aoClicar}>
             {selecionado && <AnelSelecao />}
-            <mesh position={[0, 0.6, 0]}>
-                <boxGeometry args={[1.1, 1.2, 1.1]} />
+            <mesh position={[0, meioAltura + 0.15, 0]}>
+                <boxGeometry args={[dims.largura + 0.3, dims.altura + 0.3, dims.profundidade + 0.3]} />
                 <meshBasicMaterial transparent opacity={0} depthWrite={false} />
             </mesh>
-            <mesh castShadow position={[0, 0.45, 0]}>
-                <boxGeometry args={[0.8, 0.9, 0.8]} />
+            <mesh castShadow position={[0, meioAltura, 0]}>
+                <boxGeometry args={[dims.largura, dims.altura, dims.profundidade]} />
                 <meshStandardMaterial color={novo ? '#e8c074' : '#8aa0d0'} emissive={selecionado ? '#e8c074' : novo ? '#e8c074' : '#000000'} emissiveIntensity={selecionado ? 0.55 : novo ? 0.25 : 0} roughness={0.5} metalness={0.1} />
             </mesh>
         </group>

@@ -69,7 +69,7 @@ function PainelLuz({ position, args }: ParedeProps) {
     return (
         <mesh position={position}>
             <boxGeometry args={args} />
-            <meshStandardMaterial color="#eef4ff" emissive="#dfeaff" emissiveIntensity={0.9} roughness={0.3} />
+            <meshStandardMaterial color="#d6dbe2" emissive="#c9d4e6" emissiveIntensity={0.25} roughness={0.45} />
         </mesh>
     );
 };

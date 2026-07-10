@@ -8,7 +8,7 @@ import type { MembroPersonagemEditor3D } from 'types-nora-api';
 
 import { SELECAO_CAMERA_EDITOR3D, SELECAO_CORPO_PERSONAGEM_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D } from './editor3D.tipos';
 
-export type ObjetoResumoEditor3D = { readonly id: number; readonly nome: string; readonly icone: string; readonly tipoRotulo: string; readonly visivel: boolean; };
+export type ObjetoResumoEditor3D = { readonly id: number; readonly nome: string; readonly icone: string; readonly tipoRotulo: string; readonly visivel: boolean; readonly ehPeca: boolean; };
 export type ColecaoArvoreEditor3D = { readonly id: number; readonly nome: string; readonly visivel: boolean; readonly objetos: readonly ObjetoResumoEditor3D[]; };
 
 interface ArvoreCenaEditor3DProps {
@@ -22,6 +22,8 @@ interface ArvoreCenaEditor3DProps {
     readonly aoSelecionarCorpo: (regiao: MembroPersonagemEditor3D | null) => void;
     readonly aoSelecionar: (id: number) => void;
     readonly aoAlternarVisibilidadeObjeto: (id: number) => void;
+    readonly aoDuplicarObjeto: (id: number) => void;
+    readonly aoExcluirObjeto: (id: number) => void;
     readonly aoAlternarVisibilidadeColecao: (id: number) => void;
     readonly aoRenomearColecao: (id: number, nome: string) => void;
     readonly aoRemoverColecao: (id: number) => void;
@@ -31,7 +33,7 @@ interface ArvoreCenaEditor3DProps {
 
 const ALVO_RAIZ_ARVORE_EDITOR3D = -1;
 
-export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, temCamera, povCameraAtiva, regioesCorpo, regiaoCorpoSelecionada, aoSelecionarCorpo, aoSelecionar, aoAlternarVisibilidadeObjeto, aoAlternarVisibilidadeColecao, aoRenomearColecao, aoRemoverColecao, aoMoverObjeto, aoAlternarPovCamera }: ArvoreCenaEditor3DProps) {
+export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, temCamera, povCameraAtiva, regioesCorpo, regiaoCorpoSelecionada, aoSelecionarCorpo, aoSelecionar, aoAlternarVisibilidadeObjeto, aoDuplicarObjeto, aoExcluirObjeto, aoAlternarVisibilidadeColecao, aoRenomearColecao, aoRemoverColecao, aoMoverObjeto, aoAlternarPovCamera }: ArvoreCenaEditor3DProps) {
     const [arrastandoId, setArrastandoId] = useState<number | null>(null);
     const [alvoArraste, setAlvoArraste] = useState<number | null>(null);
     const [colecoesAbertas, setColecoesAbertas] = useState<Record<number, boolean>>({});
@@ -70,17 +72,21 @@ export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, temCa
         if (evento.key === 'Escape') setEditando(null);
     };
 
+    // Ações do objeto moram na própria linha (ícones inline): duplicar / visibilidade / excluir. Partes de peça não têm
+    // duplicar/excluir individual (a peça é removida inteira pelo painel) — colunas ficam vazias p/ manter o alinhamento.
     function renderizaObjeto(objeto: ObjetoResumoEditor3D) {
         const selecionado = objeto.id === idSelecionado;
         return (
-            <div key={objeto.id} className={`${styles.linha_objeto_grade} ${selecionado ? styles.linha_objeto_selecionado : ''} ${objeto.visivel ? '' : styles.linha_objeto_oculto} ${arrastandoId === objeto.id ? styles.linha_objeto_arrastando : ''}`} draggable onDragStart={evento => iniciaArraste(evento, objeto.id)} onDragEnd={encerraArraste}>
+            <div key={objeto.id} className={`${styles.linha_objeto_grade} ${styles.linha_objeto_acoes} ${selecionado ? styles.linha_objeto_selecionado : ''} ${objeto.visivel ? '' : styles.linha_objeto_oculto} ${arrastandoId === objeto.id ? styles.linha_objeto_arrastando : ''}`} draggable onDragStart={evento => iniciaArraste(evento, objeto.id)} onDragEnd={encerraArraste}>
                 <button type="button" className={styles.botao_conteudo_objeto} aria-pressed={selecionado} onClick={() => aoSelecionar(objeto.id)}>
                     <span className={styles.espaco_arvore} />
                     <span className={styles.icone_objeto}>{objeto.icone}</span>
                     <span className={styles.nome_objeto}>{objeto.nome}</span>
                     <strong>{objeto.tipoRotulo}</strong>
                 </button>
+                {objeto.ehPeca ? <span aria-hidden="true" /> : <button type="button" className={styles.botao_visibilidade} onClick={() => aoDuplicarObjeto(objeto.id)} title="Duplicar objeto" aria-label={`Duplicar ${objeto.nome}`}>⧉</button>}
                 <button type="button" className={styles.botao_visibilidade} onClick={() => aoAlternarVisibilidadeObjeto(objeto.id)} aria-pressed={objeto.visivel} title={objeto.visivel ? 'Ocultar objeto' : 'Mostrar objeto'}>{objeto.visivel ? '👁' : '⊘'}</button>
+                {objeto.ehPeca ? <span aria-hidden="true" /> : <button type="button" className={styles.botao_remover_colecao} onClick={() => aoExcluirObjeto(objeto.id)} title="Excluir objeto" aria-label={`Excluir ${objeto.nome}`}>✕</button>}
             </div>
         );
     };

@@ -12,7 +12,7 @@ export type DestinoMovimentacaoSalaJogo = {
 
 export type ContextoMovimentacaoSalaJogoProps = {
     modoMovimentacaoAtivo: boolean;
-    iniciaModoMovimentacao: () => void;
+    iniciaModoMovimentacao: (keyAcao: string) => void;
     cancelaModoMovimentacao: () => void;
     confirmaMovimentacao: (destino: DestinoMovimentacaoSalaJogo) => void;
 };
@@ -25,12 +25,16 @@ export function useContextoMovimentacaoSalaJogoOpcional(): ContextoMovimentacaoS
 
 export function ContextoMovimentacaoSalaJogoProvider({ codigoSala, children }: { codigoSala: SalaDeJogo_Codigo; children: ReactNode; }) {
     const [modoMovimentacaoAtivo, setModoMovimentacaoAtivo] = useState(false);
-    const iniciaModoMovimentacao = useCallback(() => setModoMovimentacaoAtivo(true), []);
-    const cancelaModoMovimentacao = useCallback(() => setModoMovimentacaoAtivo(false), []);
+    // Qual acao de Locomocao disparou o modo-mover: o servidor usa a velocidade autorada dela.
+    const [keyAcaoMovimentacao, setKeyAcaoMovimentacao] = useState<string | null>(null);
+    const iniciaModoMovimentacao = useCallback((keyAcao: string) => { setKeyAcaoMovimentacao(keyAcao); setModoMovimentacaoAtivo(true); }, []);
+    const cancelaModoMovimentacao = useCallback(() => { setModoMovimentacaoAtivo(false); setKeyAcaoMovimentacao(null); }, []);
     const confirmaMovimentacao = useCallback((destino: DestinoMovimentacaoSalaJogo) => {
         setModoMovimentacaoAtivo(false);
-        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.jogadorMoveSerSalaJogo, { codigoSala, destino });
-    }, [codigoSala]);
+        if (!keyAcaoMovimentacao) return;
+        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.jogadorMoveSerSalaJogo, { codigoSala, destino, keyAcao: keyAcaoMovimentacao });
+        setKeyAcaoMovimentacao(null);
+    }, [codigoSala, keyAcaoMovimentacao]);
 
     const contexto = useMemo<ContextoMovimentacaoSalaJogoProps>(() => ({ modoMovimentacaoAtivo, iniciaModoMovimentacao, cancelaModoMovimentacao, confirmaMovimentacao }), [cancelaModoMovimentacao, confirmaMovimentacao, iniciaModoMovimentacao, modoMovimentacaoAtivo]);
 

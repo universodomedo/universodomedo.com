@@ -10,12 +10,12 @@ import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputCom
 import InputNumerico from 'Componentes/Elementos/Inputs/InputNumerico/InputNumerico';
 import SelecionadorOpcoes, { type OpcaoSelecionador } from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorOpcoes/SelecionadorOpcoes';
 import { corDoTipoInteracao } from 'Componentes/EditorMembros/tiposInteracaoVisual';
-import type { CampoParametroCapacidadeEditor } from 'Componentes/EditorMembros/membrosSerJogavelEditor';
+import type { CampoParametroCapacidadeEditor, MeioLocomocaoEditor } from 'Componentes/EditorMembros/membrosSerJogavelEditor';
 import { useContexto__EditorEstrutura__Membro, type CapacidadeDoMembroComParametros } from 'Contextos/Contexto__EditorEstrutura__Membro/contexto';
 
 // Subvista do Membro: nome + Capacidades Inatas (cada uma com seus parâmetros — a faculdade); as ações listam como resumo e abrem na subvista específica de Ação.
 export default function SPA__EditorEstrutura__Membro() {
-    const { membro, salvando, opcoesCapacidades, idsCapacidadesSelecionadas, capacidadesDoMembro, tiposVisaoOpcoes, tiposVisaoCarregando, acoesDoMembro, podeAdicionarAcao, atualizaNome, aoMudarCapacidades, atualizaParametro, abreAcao, abreNovaAcao, removeMembroEVolta, concluir } = useContexto__EditorEstrutura__Membro();
+    const { membro, salvando, opcoesCapacidades, idsCapacidadesSelecionadas, capacidadesDoMembro, tiposVisaoOpcoes, tiposVisaoCarregando, acoesDoMembro, podeAdicionarAcao, atualizaNome, aoMudarCapacidades, atualizaParametro, atualizaMeioLocomocao, abreAcao, abreNovaAcao, removeMembroEVolta, concluir } = useContexto__EditorEstrutura__Membro();
 
     const capacidadesComParametros = capacidadesDoMembro.filter(capacidadeTemParametros);
 
@@ -35,7 +35,7 @@ export default function SPA__EditorEstrutura__Membro() {
                         <div className={styles.bloco_capacidades}>
                             <h3>Parâmetros das Capacidades</h3>
                             {capacidadesComParametros.map(capacidade => (
-                                <CamposParametrosCapacidade key={capacidade.idCapacidadeInata} capacidade={capacidade} salvando={salvando} tiposVisaoOpcoes={tiposVisaoOpcoes} tiposVisaoCarregando={tiposVisaoCarregando} atualizaParametro={atualizaParametro} />
+                                <CamposParametrosCapacidade key={capacidade.idCapacidadeInata} capacidade={capacidade} salvando={salvando} tiposVisaoOpcoes={tiposVisaoOpcoes} tiposVisaoCarregando={tiposVisaoCarregando} atualizaParametro={atualizaParametro} atualizaMeioLocomocao={atualizaMeioLocomocao} />
                             ))}
                         </div>
                     )}
@@ -66,7 +66,18 @@ export default function SPA__EditorEstrutura__Membro() {
 };
 
 function capacidadeTemParametros(capacidade: CapacidadeDoMembroComParametros): boolean {
-    return capacidade.nomeInteracao === TIPOS_INTERACAO.DANIFICAVEL.chave || capacidade.nomeInteracao === TIPOS_INTERACAO.VISUAL.chave;
+    return capacidade.nomeInteracao === TIPOS_INTERACAO.DANIFICAVEL.chave || capacidade.nomeInteracao === TIPOS_INTERACAO.VISUAL.chave || capacidade.nomeInteracao === TIPOS_INTERACAO.LOCOMOCAO.chave;
+};
+
+// Meio de Locomoção — opções fixas (só a lógica terrestre está implementada; aquático/aéreo são autoráveis pro modelo).
+const OPCOES_MEIO_LOCOMOCAO: readonly OpcaoSelecionador[] = [
+    { value: 'terrestre', label: 'Terrestre' },
+    { value: 'aquatico', label: 'Aquático' },
+    { value: 'aereo', label: 'Aéreo' },
+];
+
+function valorParaMeioLocomocao(valor: string | null): MeioLocomocaoEditor {
+    return valor === 'terrestre' || valor === 'aquatico' || valor === 'aereo' ? valor : '';
 };
 
 type PropsCamposParametros = {
@@ -75,10 +86,11 @@ type PropsCamposParametros = {
     tiposVisaoOpcoes: readonly OpcaoSelecionador[];
     tiposVisaoCarregando: string | null;
     atualizaParametro: (idCapacidade: number, campo: CampoParametroCapacidadeEditor, valor: number | '') => void;
+    atualizaMeioLocomocao: (idCapacidade: number, meio: MeioLocomocaoEditor) => void;
 };
 
-// Campos de parâmetro de UMA capacidade do membro, derivados do Tipo de Interação (Danificável → dano; Visual → alcance + tipo de visão + dependência de iluminação).
-function CamposParametrosCapacidade({ capacidade, salvando, tiposVisaoOpcoes, tiposVisaoCarregando, atualizaParametro }: PropsCamposParametros) {
+// Campos de parâmetro de UMA capacidade do membro, derivados do Tipo de Interação (Danificável → dano + alcance; Visual → alcance + tipo de visão + dependência; Locomoção → velocidade + meio).
+function CamposParametrosCapacidade({ capacidade, salvando, tiposVisaoOpcoes, tiposVisaoCarregando, atualizaParametro, atualizaMeioLocomocao }: PropsCamposParametros) {
     const { idCapacidadeInata, nome, nomeInteracao, parametros } = capacidade;
     const numero = (valor: number | ''): number => typeof valor === 'number' ? valor : 0;
 
@@ -86,9 +98,14 @@ function CamposParametrosCapacidade({ capacidade, salvando, tiposVisaoOpcoes, ti
         <div className={styles.card_capacidade} style={{ '--cor-tipo': corDoTipoInteracao(nomeInteracao) } as CSSProperties}>
             <h4 className={styles.titulo_capacidade}>{nome}</h4>
             {nomeInteracao === TIPOS_INTERACAO.DANIFICAVEL.chave && (
-                <InputComRotulo rotulo="Dano">
-                    <InputNumerico min={1} step={1} value={numero(parametros.dano)} onChange={valor => atualizaParametro(idCapacidadeInata, 'dano', valor)} disabled={salvando} />
-                </InputComRotulo>
+                <>
+                    <InputComRotulo rotulo="Dano">
+                        <InputNumerico min={1} step={1} value={numero(parametros.dano)} onChange={valor => atualizaParametro(idCapacidadeInata, 'dano', valor)} disabled={salvando} />
+                    </InputComRotulo>
+                    <InputComRotulo rotulo="Alcance do Ataque (mm)">
+                        <InputNumerico min={1} step={1} value={numero(parametros.alcanceAtaqueMilimetros)} onChange={valor => atualizaParametro(idCapacidadeInata, 'alcanceAtaqueMilimetros', valor)} disabled={salvando} />
+                    </InputComRotulo>
+                </>
             )}
             {nomeInteracao === TIPOS_INTERACAO.VISUAL.chave && (
                 <>
@@ -100,6 +117,16 @@ function CamposParametrosCapacidade({ capacidade, salvando, tiposVisaoOpcoes, ti
                     </InputComRotulo>
                     <InputComRotulo rotulo="Dependência de Iluminação (%)">
                         <InputNumerico min={0} max={100} step={1} value={numero(parametros.dependenciaIluminacaoPercentual)} onChange={valor => atualizaParametro(idCapacidadeInata, 'dependenciaIluminacaoPercentual', valor)} disabled={salvando} />
+                    </InputComRotulo>
+                </>
+            )}
+            {nomeInteracao === TIPOS_INTERACAO.LOCOMOCAO.chave && (
+                <>
+                    <InputComRotulo rotulo="Velocidade (mm/s)">
+                        <InputNumerico min={1} step={1} value={numero(parametros.velocidadeLocomocaoMilimetrosPorSegundo)} onChange={valor => atualizaParametro(idCapacidadeInata, 'velocidadeLocomocaoMilimetrosPorSegundo', valor)} disabled={salvando} />
+                    </InputComRotulo>
+                    <InputComRotulo rotulo="Meio">
+                        <SelecionadorOpcoes opcoes={OPCOES_MEIO_LOCOMOCAO} valor={parametros.meioLocomocao || null} onChange={valor => atualizaMeioLocomocao(idCapacidadeInata, valorParaMeioLocomocao(valor))} disabled={salvando} placeholder="Selecione" />
                     </InputComRotulo>
                 </>
             )}

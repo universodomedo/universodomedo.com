@@ -1,0 +1,9 @@
+.linha {
+    display: flex;
+    gap: 0.8em;
+    flex-wrap: wrap;
+}
+
+.linha > * {
+    flex: 1 1 10em;
+}

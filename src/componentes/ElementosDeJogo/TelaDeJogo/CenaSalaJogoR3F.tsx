@@ -10,11 +10,18 @@ import { ControlesCameraJogo } from 'Componentes/ElementosDeJogo/Cena3D/Controle
 import { PERFIL_CAMERA_TATICA } from 'Componentes/ElementosDeJogo/Cena3D/cena3D.controles';
 import { ControladorPrimeiraPessoaJogo } from 'Componentes/ElementosDeJogo/Cena3D/ControladorPrimeiraPessoaJogo';
 import type { DestinoMovimentacaoSalaJogo } from './ContextoMovimentacaoSalaJogo';
-import { ALTURA_OLHOS, ALTURA_PAREDE, mundoX, mundoZ, paraUnidadeCena, useReforcaRedimensionamentoCanvas } from './cenaSalaJogo.helpers';
+import { ALTURA_OLHOS, mundoX, mundoZ, paraUnidadeCena, useReforcaRedimensionamentoCanvas } from './cenaSalaJogo.helpers';
 import { SalaLaboratorioR3F } from './SalaLaboratorioR3F';
 import { InteragivelR3F, MarcadorControladoR3F, OcupanteR3F } from './AtoresSalaJogoR3F';
 import { CaminhoMovimentacaoR3F, OverlayMovimentacao, PlanoSelecaoMovimentacao } from './MovimentacaoSalaJogoR3F';
-import { MascaraVisaoControlador, obtemAlcanceLinhaVisaoMilimetros } from './MascaraVisaoSalaJogoR3F';
+import { MascaraVisaoControlador, obtemAlcanceLinhaVisaoMilimetros, obtemDependenciaIluminacaoPercentual } from './MascaraVisaoSalaJogoR3F';
+import { LuzesSalaJogoR3F } from './LuzesSalaJogoR3F';
+
+// Ambiente base da "visao no escuro": um Ser dep 0% ve o cenario achatado neste nivel; dep 100% (humano) -> 0 (sala preta, so luzes-objeto).
+const AMBIENTE_VISAO_BASE = 0.9;
+// Rebatimento (fill indireto fingido): teto por soma de intensidade das luzes, e quanto cada unidade de intensidade contribui. Suave — o direto das luzes-objeto dá o destaque.
+const REBATIMENTO_MAXIMO = 0.42;
+const REBATIMENTO_POR_INTENSIDADE = 0.012;
 
 interface CenaSalaJogoR3FProps {
     readonly payload: MapaLogicoSalaJogoPayloadWsDto;
@@ -96,7 +103,7 @@ function VistaTaticaSalaJogo({ className, payload, keysNovos, keyOcupanteSelecio
 
     return (
         <div className={className}>
-            <Canvas shadows dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [distancia * 0.62, distancia * 0.8, distancia * 0.62], fov: 34, near: 0.1, far: distancia * 8 }} onPointerMissed={aoErrarClique}>
+            <Canvas shadows="soft" dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [distancia * 0.62, distancia * 0.8, distancia * 0.62], fov: 34, near: 0.1, far: distancia * 8 }} onPointerMissed={aoErrarClique}>
                 <ConteudoCena3DSalaJogo payload={payload} keysNovos={keysNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} estadoTemporalSalaJogo={estadoTemporalSalaJogo} modoMovimentacaoAtivo={modoMovimentacaoAtivo} celulaHoverDestino={celulaHoverDestino} aoMoverDestino={setCelulaHoverDestino} aoConfirmarDestino={aoConfirmarMovimentacao} aoSelecionarOcupante={aoSelecionarOcupante} aoSelecionarInteragivel={aoSelecionarInteragivel} />
                 <ControlesCameraJogo perfil={PERFIL_CAMERA_TATICA} alvo={[0, 0.6, 0]} distanciaMin={Math.max(4, extensao * 0.35)} distanciaMax={extensao * 1.9} />
             </Canvas>
@@ -124,7 +131,7 @@ function VistaPrimeiraPessoaSalaJogo({ className, payload, keysNovos, keyOcupant
 
     return (
         <div className={className}>
-            <Canvas shadows dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [cabecaX, ALTURA_OLHOS, cabecaZ], fov: 72, near: 0.05, far: Math.max(120, extensao * 6) }}>
+            <Canvas shadows="soft" dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [cabecaX, ALTURA_OLHOS, cabecaZ], fov: 72, near: 0.05, far: Math.max(120, extensao * 6) }}>
                 <ConteudoCena3DSalaJogo payload={payload} keysNovos={keysNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} ocultarKeyOcupante={ocupanteJogador?.keySer ?? null} seguirCameraNaVisao />
                 <ControladorPrimeiraPessoaJogo cabecaX={cabecaX} cabecaY={ALTURA_OLHOS} cabecaZ={cabecaZ} />
             </Canvas>
@@ -153,10 +160,14 @@ function ConteudoCena3DSalaJogo({ payload, keysNovos, keyOcupanteSelecionado, ke
     const largura = payload.mapaLogico.larguraMilimetros;
     const altura = payload.mapaLogico.alturaMilimetros;
     const extensao = paraUnidadeCena(Math.max(largura, altura));
-    const limiteSombra = Math.max(9, extensao * 0.75);
     const ocupanteControlado = payload.ocupantesMapaLogico[0] ?? null;
     const serControlado = payload.seresNaSala.find(ser => ser.papel === 'controlado') ?? null;
     const alcanceLinhaVisaoMilimetros = obtemAlcanceLinhaVisaoMilimetros(serControlado);
+    const dependenciaIluminacao = obtemDependenciaIluminacaoPercentual(serControlado);
+    const ambienteVisao = dependenciaIluminacao === null ? AMBIENTE_VISAO_BASE : (1 - dependenciaIluminacao / 100) * AMBIENTE_VISAO_BASE;
+    // Rebatimento (luz indireta FINGIDA): fill suave escalado pela luz real presente na sala — sem GI, custo ~nulo. Sala sem luz -> 0 (segue preta).
+    const intensidadeLuzTotal = payload.luzes.reduce((soma, luz) => soma + (Number.isFinite(luz.intensidade) ? luz.intensidade : 0), 0);
+    const rebatimento = Math.min(REBATIMENTO_MAXIMO, intensidadeLuzTotal * REBATIMENTO_POR_INTENSIDADE);
 
     return (
         <>
@@ -164,25 +175,10 @@ function ConteudoCena3DSalaJogo({ payload, keysNovos, keyOcupanteSelecionado, ke
             <color attach="background" args={['#000000']} />
             <fog attach="fog" args={['#000000', extensao * 1.7, extensao * 4.2]} />
 
-            <ambientLight intensity={0.55} color="#eef2f6" />
-            <hemisphereLight intensity={0.55} color="#f4f7fb" groundColor="#9aa1ad" />
-            <directionalLight
-                castShadow
-                position={[extensao * 0.55, extensao * 1.1, extensao * 0.4]}
-                intensity={1.25}
-                color="#fff4e2"
-                shadow-mapSize-width={2048}
-                shadow-mapSize-height={2048}
-                shadow-bias={-0.0005}
-                shadow-camera-near={0.5}
-                shadow-camera-far={extensao * 4}
-                shadow-camera-left={-limiteSombra}
-                shadow-camera-right={limiteSombra}
-                shadow-camera-top={limiteSombra}
-                shadow-camera-bottom={-limiteSombra}
-            />
-            <directionalLight position={[-extensao * 0.4, extensao * 0.7, -extensao * 0.3]} intensity={0.35} color="#cfe0ff" />
-            <pointLight position={[0, ALTURA_PAREDE - 0.4, 0]} intensity={4} distance={extensao * 1.6} decay={2} color="#eaf1ff" />
+            {/* Iluminacao OBJETIVA em 2 termos + as luzes-objeto: (1) rebatimento — fill quente e suave escalado pelas luzes reais (a luz que "quica"; sala sem luz -> 0); (2) visao-no-escuro — ambiente frio derivado da dependencia (dep 100% -> 0). As luzes-objeto dao os destaques diretos + sombra macia por cima. */}
+            <hemisphereLight intensity={rebatimento} color="#ffe8c0" groundColor="#2a2418" />
+            <ambientLight intensity={ambienteVisao} color="#e8ecf2" />
+            <LuzesSalaJogoR3F luzes={payload.luzes} largura={largura} altura={altura} />
 
             <SalaLaboratorioR3F largura={largura} altura={altura} />
 
@@ -196,7 +192,7 @@ function ConteudoCena3DSalaJogo({ payload, keysNovos, keyOcupanteSelecionado, ke
             {modoMovimentacaoAtivo && aoMoverDestino && aoConfirmarDestino && <PlanoSelecaoMovimentacao largura={largura} altura={altura} aoMoverDestino={aoMoverDestino} aoConfirmarDestino={aoConfirmarDestino} />}
             {modoMovimentacaoAtivo && celulaHoverDestino && ocupanteControlado && <CaminhoMovimentacaoR3F origem={ocupanteControlado.posicao} destino={celulaHoverDestino} largura={largura} altura={altura} />}
 
-            <MascaraVisaoControlador alcanceLinhaVisaoMilimetros={alcanceLinhaVisaoMilimetros} ocupanteControlado={ocupanteControlado} estadoTemporal={estadoTemporalSalaJogo ?? null} largura={largura} altura={altura} seguirCamera={seguirCameraNaVisao ?? false} />
+            <MascaraVisaoControlador alcanceLinhaVisaoMilimetros={alcanceLinhaVisaoMilimetros} ocupanteControlado={ocupanteControlado} interagiveisPercebidos={payload.interagiveisPercebidos} estadoTemporal={estadoTemporalSalaJogo ?? null} largura={largura} altura={altura} seguirCamera={seguirCameraNaVisao ?? false} />
         </>
     );
 };

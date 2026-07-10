@@ -9,9 +9,10 @@ import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputCom
 import InputNumerico from 'Componentes/Elementos/Inputs/InputNumerico/InputNumerico';
 import SelecionadorOpcoes from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorOpcoes/SelecionadorOpcoes';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Editor } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/contexto';
-import { KEY_SER_EM_SALA_VAZIA, ROTULOS_TIPO_CONDICAO_VITORIA, keySerEmSalaDaChave, objetosDaConfig, rotuloSer, seresDoGrupo, type CondicaoVitoria, type InteragivelSer, type TipoCondicaoVitoria } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
+import { KEY_SER_EM_SALA_VAZIA, ROTULOS_TIPO_CONDICAO_VITORIA, keySerEmSalaDaChave, luzesDaConfig, objetosDaConfig, rotuloObjeto, rotuloSer, seresDoGrupo, type CondicaoVitoria, type InteragivelObjeto, type InteragivelSer, type TipoCondicaoVitoria } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 import { SecaoSeresEmSala } from './SecaoSeresEmSala';
 import { SecaoObjetos } from './SecaoObjetos';
+import { SecaoLuzes } from './SecaoLuzes';
 
 const OPCOES_TIPO_CONDICAO_VITORIA = (Object.keys(ROTULOS_TIPO_CONDICAO_VITORIA) as TipoCondicaoVitoria[]).map(tipo => ({ value: tipo, label: ROTULOS_TIPO_CONDICAO_VITORIA[tipo] }));
 
@@ -56,12 +57,14 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor() {
 
                     <SecaoObjetos objetos={objetosDaConfig(config)} aoAdicionar={editor.adicionaEConfiguraObjeto} aoEditar={chave => editor.irParaConfigObjeto(chave)} aoRemover={chave => editor.removeInteragivel(chave)} />
 
+                    <SecaoLuzes luzes={luzesDaConfig(config)} aoAdicionar={editor.adicionaEConfiguraLuz} aoEditar={chave => editor.irParaConfigLuz(chave)} aoRemover={chave => editor.removeLuz(chave)} />
+
                     <fieldset className={styles.secao}>
                         <legend>Condição de vitória</legend>
                         <InputComRotulo rotulo="Tipo">
                             <SelecionadorOpcoes opcoes={OPCOES_TIPO_CONDICAO_VITORIA} valor={config.condicaoVitoria.tipo} onChange={valor => { if (valor) editor.selecionaTipoCondicaoVitoria(valor as TipoCondicaoVitoria); }} isClearable={false} />
                         </InputComRotulo>
-                        <CamposCondicaoVitoria condicaoVitoria={config.condicaoVitoria} seresSistema={seresSistema} nomesPorIdSer={nomesPorIdSer} aoAtualizar={editor.atualizaConfig} />
+                        <CamposCondicaoVitoria condicaoVitoria={config.condicaoVitoria} seresSistema={seresSistema} objetos={objetosDaConfig(config)} nomesPorIdSer={nomesPorIdSer} aoAtualizar={editor.atualizaConfig} />
                     </fieldset>
                 </section>
             </ConteudoForm.AreaCorpo>
@@ -73,8 +76,9 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor() {
     );
 };
 
-function CamposCondicaoVitoria({ condicaoVitoria, seresSistema, nomesPorIdSer, aoAtualizar }: { condicaoVitoria: CondicaoVitoria; seresSistema: readonly InteragivelSer[]; nomesPorIdSer: Record<number, string>; aoAtualizar: (parcial: Partial<ConfiguracaoPartida>) => void; }) {
+function CamposCondicaoVitoria({ condicaoVitoria, seresSistema, objetos, nomesPorIdSer, aoAtualizar }: { condicaoVitoria: CondicaoVitoria; seresSistema: readonly InteragivelSer[]; objetos: readonly InteragivelObjeto[]; nomesPorIdSer: Record<number, string>; aoAtualizar: (parcial: Partial<ConfiguracaoPartida>) => void; }) {
     const opcoesSeres = seresSistema.map(ser => ({ value: keySerEmSalaDaChave(ser.chave) as string, label: rotuloSer(ser, nomesPorIdSer) }));
+    const opcoesObjetos = objetos.map(objeto => ({ value: objeto.chave, label: rotuloObjeto(objeto) }));
     const valorSerEmSala = (keySerEmSala: KeySerEmSala): string | null => keySerEmSala === KEY_SER_EM_SALA_VAZIA ? null : keySerEmSala;
 
     if (condicaoVitoria.tipo === 'tempo_jogo_alcancado') {
@@ -111,6 +115,18 @@ function CamposCondicaoVitoria({ condicaoVitoria, seresSistema, nomesPorIdSer, a
                 </InputComRotulo>
                 <InputComRotulo rotulo="Distância máx. (m)">
                     <InputNumerico value={condicaoVitoria.distanciaMaximaMilimetros} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'proximidade_ser_alcancada', keySerEmSala: condicaoVitoria.keySerEmSala, distanciaMaximaMilimetros: valor } })} />
+                </InputComRotulo>
+            </div>
+        );
+    }
+    if (condicaoVitoria.tipo === 'saida_pela_porta') {
+        return (
+            <div className={styles.linha}>
+                <InputComRotulo rotulo="Porta (objeto de saída)">
+                    <SelecionadorOpcoes opcoes={opcoesObjetos} valor={condicaoVitoria.keyInteragivel || null} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'saida_pela_porta', keyInteragivel: valor ?? '', distanciaMaximaMilimetros: condicaoVitoria.distanciaMaximaMilimetros } })} placeholder="Selecione…" isClearable={false} />
+                </InputComRotulo>
+                <InputComRotulo rotulo="Distância máx. (mm)">
+                    <InputNumerico value={condicaoVitoria.distanciaMaximaMilimetros} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'saida_pela_porta', keyInteragivel: condicaoVitoria.keyInteragivel, distanciaMaximaMilimetros: valor } })} />
                 </InputComRotulo>
             </div>
         );

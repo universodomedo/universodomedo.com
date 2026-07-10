@@ -7,13 +7,16 @@ import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonage
 import type { GrupoAcoesPorCapacidadeFicha } from 'Contextos/ContextoFichaDePersonagem/contexto';
 import { useContextoControleAcoesRuntime } from 'Contextos/ContextosControladorSwiperFicha/ContextoControleAcoesRuntime/contexto';
 import { useContextoTelaDeJogoMapaLogicoOpcional } from 'Componentes/ElementosDeJogo/TelaDeJogo/ContextoTelaDeJogoMapaLogico';
+import { useContextoMovimentacaoSalaJogoOpcional } from 'Componentes/ElementosDeJogo/TelaDeJogo/ContextoMovimentacaoSalaJogo';
 
 type CooldownAcaoExecutandoFicha = { keyAcao: string; estilo: CSSProperties };
 
 export default function PaginaControleAcoes() {
     const { acoesPorStatusECapacidade, desativarAcoes } = useContextoFichaDePersonagem();
-    const { executaAcao, executaEsperar, estadoTemporalSalaJogo } = useContextoControleAcoesRuntime();
+    const { executaAcao, executaEsperar, executaSair, estadoTemporalSalaJogo } = useContextoControleAcoesRuntime();
     const mapaLogico = useContextoTelaDeJogoMapaLogicoOpcional();
+    const movimentacao = useContextoMovimentacaoSalaJogoOpcional();
+    const saidaDisponivel = mapaLogico?.mapaLogicoSalaJogo?.saidaDisponivel ?? false;
     const [acaoComSelecaoAlvo, setAcaoComSelecaoAlvo] = useState<AcaoDisponivel | null>(null);
     const [momentoProjetadoMs, setMomentoProjetadoMs] = useState(0);
     const seresNaSala = mapaLogico?.seresNaSala ?? [];
@@ -46,6 +49,11 @@ export default function PaginaControleAcoes() {
             return;
         }
 
+        if (acao.execucao.tipo === 'destino_mapa') {
+            movimentacao?.iniciaModoMovimentacao(acao.key);
+            return;
+        }
+
         executaAcao(acao.key);
     };
 
@@ -59,6 +67,7 @@ export default function PaginaControleAcoes() {
         <div className={styles.painel_acoes}>
             {acoesPorStatusECapacidade.realizaveis.length > 0 && <SecaoAcoesFicha titulo="Ações Realizáveis" grupos={acoesPorStatusECapacidade.realizaveis} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
             {estadoTemporalSalaJogo && <SecaoAcaoTemporalEsperar estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} executaEsperar={executaEsperar} />}
+            {saidaDisponivel && <SecaoAcaoSair desativarAcoes={desativarAcoes} executaSair={executaSair} />}
             {acoesPorStatusECapacidade.bloqueadas.length > 0 && <SecaoAcoesFicha titulo="Ações Bloqueadas" grupos={acoesPorStatusECapacidade.bloqueadas} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
             {acaoComSelecaoAlvo && <ModalSelecaoAlvoAcao acao={acaoComSelecaoAlvo} seresNaSala={seresNaSala} interagiveisPercebidos={interagiveisPercebidos} cancelar={() => setAcaoComSelecaoAlvo(null)} confirmar={executaAcaoComAlvo} />}
         </div>
@@ -105,6 +114,34 @@ function SecaoAcaoTemporalEsperar({ estadoTemporalSalaJogo, desativarAcoes, exec
                                 <span>{estadoTemporalSalaJogo.status === 'RODANDO' ? 'O tempo já está em andamento' : 'O tempo está pausado'}</span>
                             </span>
                             <small>sala.temporal.esperar</small>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+// Sala de treino: aparece so quando o servidor sinaliza saidaDisponivel (jogador ao pe da Porta). Deixa a sala = vitoria.
+function SecaoAcaoSair({ desativarAcoes, executaSair }: { desativarAcoes: boolean; executaSair: () => void; }) {
+    function acionar(): void {
+        if (desativarAcoes) return;
+        executaSair();
+    };
+
+    return (
+        <section className={styles.secao_acoes}>
+            <h3 className={styles.titulo_secao}>Sala de Treino</h3>
+            <div className={styles.grupo_capacidade}>
+                <h4 className={styles.titulo_capacidade}>Porta</h4>
+                <div className={styles.lista_acoes}>
+                    <button type="button" className={`${styles.acao} ${styles.acao_realizavel} ${desativarAcoes ? styles.acao_sem_interacao : ''}`} aria-disabled={desativarAcoes} aria-label="Sair da sala de treino" onClick={acionar}>
+                        <span className={styles.icone_acao} aria-hidden="true">S</span>
+                        <span className={styles.resumo_acao} role="tooltip">
+                            <strong>Sair</strong>
+                            <span>Porta</span>
+                            <span>Deixa a sala de treino</span>
+                            <small>sala.porta.sair</small>
                         </span>
                     </button>
                 </div>
@@ -163,7 +200,11 @@ function AcaoEmFicha({ acao, desativarAcoes, cooldownAcaoExecutando, executaAcao
 };
 
 function ModalSelecaoAlvoAcao({ acao, seresNaSala, interagiveisPercebidos, cancelar, confirmar }: { acao: AcaoDisponivel; seresNaSala: readonly SerNaSalaJogoWsDto[]; interagiveisPercebidos: readonly InteragivelPercebidoSalaJogoWsDto[]; cancelar: () => void; confirmar: (keyCombatenteAlvo: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime) => void; }) {
-    const objetosAlvo = interagiveisPercebidos.filter(interagivel => interagivel.tipo === 'objeto');
+    // Alcance do ataque (mm, do param Danificável) + posição do ator: só é alvo o que está DENTRO do alcance (corpo-a-corpo não mira o outro lado da sala). Percepção já filtrou o que chega aqui.
+    const alcanceMilimetros = acao.execucao.tipo === 'combatente_sala' ? acao.execucao.alcanceMilimetros : 0;
+    const origem = seresNaSala.find(ser => ser.papel === 'controlado')?.posicao ?? null;
+    const seresAlvo = seresNaSala.filter(ser => ser.papel !== 'controlado' && dentroDoAlcanceAtaque(ser.posicao, origem, alcanceMilimetros));
+    const objetosAlvo = interagiveisPercebidos.filter(interagivel => interagivel.tipo === 'objeto' && dentroDoAlcanceAtaque(interagivel.posicao, origem, alcanceMilimetros));
 
     return (
         <div className={styles.fundo_modal_alvo}>
@@ -173,11 +214,17 @@ function ModalSelecaoAlvoAcao({ acao, seresNaSala, interagiveisPercebidos, cance
                     <button type="button" onClick={cancelar}>Cancelar</button>
                 </header>
                 <div className={styles.lista_alvos}>
-                    {seresNaSala.length === 0 && objetosAlvo.length === 0 && <span>Nenhum alvo disponível.</span>}
-                    {seresNaSala.map(ser => <button key={ser.keyInstancia} type="button" disabled={ser.papel === 'controlado'} onClick={() => confirmar(ser.keyInstancia)}>{ser.nome}{ser.papel === 'controlado' ? ' (ator)' : ''}</button>)}
+                    {seresAlvo.length === 0 && objetosAlvo.length === 0 && <span>Nenhum alvo disponível.</span>}
+                    {seresAlvo.map(ser => <button key={ser.keyInstancia} type="button" onClick={() => confirmar(ser.keyInstancia)}>{ser.nome}</button>)}
                     {objetosAlvo.map(objeto => <button key={objeto.key} type="button" onClick={() => confirmar(objeto.key as KeyCombatenteMissaoFuncionalSalaDeJogoRuntime)}>{objeto.nome}</button>)}
                 </div>
             </section>
         </div>
     );
+};
+
+// Alvo dentro do alcance do ataque (mm) a partir do ator, no floorplan 2D. Sem posição ou alcance <= 0 => fora.
+function dentroDoAlcanceAtaque(posicao: { readonly x: number; readonly y: number } | null, origem: { readonly x: number; readonly y: number } | null, alcanceMilimetros: number): boolean {
+    if (!posicao || !origem || alcanceMilimetros <= 0) return false;
+    return Math.hypot(posicao.x - origem.x, posicao.y - origem.y) <= alcanceMilimetros;
 };

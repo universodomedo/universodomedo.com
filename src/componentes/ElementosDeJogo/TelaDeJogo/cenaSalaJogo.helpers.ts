@@ -8,6 +8,18 @@ export const ALTURA_OLHOS = 1.55;
 export const VELOCIDADE_LOCOMOCAO_TESTE_MILIMETROS_POR_SEGUNDO = 1000;
 export const COR_MOVIMENTACAO = '#4ade80';
 
+// Caixa padrao (fallback) de um interagivel tipo objeto na cena (unidade de cena), quando o objeto nao trouxe tamanho autorado.
+export const CAIXA_INTERAGIVEL = { largura: 0.8, altura: 0.9, profundidade: 0.8, centroY: 0.45 };
+
+// Dimensoes de um interagivel-objeto em unidade de cena: usa o tamanho autorado (mm no payload) ou o padrao. Fonte unica pro DESENHO (InteragivelR3F) e o OCLUSOR (MascaraVisaoSalaJogoR3F).
+export function dimensoesInteragivelCena(dims: { larguraMilimetros?: number; alturaMilimetros?: number; profundidadeMilimetros?: number; }): { largura: number; altura: number; profundidade: number; } {
+    return {
+        largura: dims.larguraMilimetros != null ? paraUnidadeCena(dims.larguraMilimetros) : CAIXA_INTERAGIVEL.largura,
+        altura: dims.alturaMilimetros != null ? paraUnidadeCena(dims.alturaMilimetros) : CAIXA_INTERAGIVEL.altura,
+        profundidade: dims.profundidadeMilimetros != null ? paraUnidadeCena(dims.profundidadeMilimetros) : CAIXA_INTERAGIVEL.profundidade,
+    };
+};
+
 // O dado vive em milimetros (precisao cheia); a cena Three.js renderiza numa escala confortavel: 1 unidade de cena = 1000 mm. So o DESENHO escala — nenhum arredondamento no dado. TODA geometria de mundo (chao/paredes/plano de movimento) desenha em unidade de cena via paraUnidadeCena.
 export const MILIMETROS_POR_UNIDADE_CENA = 1000;
 export function paraUnidadeCena(valorMilimetros: number): number { return valorMilimetros / MILIMETROS_POR_UNIDADE_CENA; };

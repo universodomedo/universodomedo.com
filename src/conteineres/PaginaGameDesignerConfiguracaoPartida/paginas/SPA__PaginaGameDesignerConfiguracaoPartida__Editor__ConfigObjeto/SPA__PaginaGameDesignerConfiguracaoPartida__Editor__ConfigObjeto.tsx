@@ -20,6 +20,12 @@ type Props = {
     aoMudarDescricao: (descricao: string) => void;
     pontosDurabilidadeMaximo: number;
     aoMudarPontosDurabilidade: (valor: number) => void;
+    larguraObjetoMilimetros: number;
+    aoMudarLarguraObjeto: (valor: number) => void;
+    alturaObjetoMilimetros: number;
+    aoMudarAlturaObjeto: (valor: number) => void;
+    profundidadeObjetoMilimetros: number;
+    aoMudarProfundidadeObjeto: (valor: number) => void;
     percepcaoInicial: Percepcao;
     aoMudarPercepcao: (percepcao: Percepcao) => void;
     posicao: { x: number; y: number };
@@ -40,7 +46,7 @@ const OPCOES_PERCEPCAO = [
     { value: 'DESPERCEBIDO', label: 'Despercebido (invisível até perceber)' },
 ];
 
-export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto({ nome, aoMudarNome, descricao, aoMudarDescricao, pontosDurabilidadeMaximo, aoMudarPontosDurabilidade, percepcaoInicial, aoMudarPercepcao, posicao, aoMudarPosicao, larguraMilimetros, alturaMilimetros, rotuloAtivo, marcadoresContexto, descobertas, aoMudarDescobertas, opcoesCapacidades, opcoesInteragiveis, salvar }: Props) {
+export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto({ nome, aoMudarNome, descricao, aoMudarDescricao, pontosDurabilidadeMaximo, aoMudarPontosDurabilidade, larguraObjetoMilimetros, aoMudarLarguraObjeto, alturaObjetoMilimetros, aoMudarAlturaObjeto, profundidadeObjetoMilimetros, aoMudarProfundidadeObjeto, percepcaoInicial, aoMudarPercepcao, posicao, aoMudarPosicao, larguraMilimetros, alturaMilimetros, rotuloAtivo, marcadoresContexto, descobertas, aoMudarDescobertas, opcoesCapacidades, opcoesInteragiveis, salvar }: Props) {
     return (
         <ConteudoForm>
             <ConteudoForm.AreaCorpo>
@@ -58,6 +64,18 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__Conf
                     </InputComRotulo>
                     <InputComRotulo rotulo="Percepção inicial">
                         <SelecionadorOpcoes opcoes={OPCOES_PERCEPCAO} valor={percepcaoInicial} onChange={valor => aoMudarPercepcao(valor === 'DESPERCEBIDO' ? 'DESPERCEBIDO' : 'PERCEBIDO')} />
+                    </InputComRotulo>
+                </div>
+
+                <div className={styles.linha}>
+                    <InputComRotulo rotulo="Largura (mm)">
+                        <InputNumerico value={larguraObjetoMilimetros} onChange={aoMudarLarguraObjeto} />
+                    </InputComRotulo>
+                    <InputComRotulo rotulo="Altura (mm)">
+                        <InputNumerico value={alturaObjetoMilimetros} onChange={aoMudarAlturaObjeto} />
+                    </InputComRotulo>
+                    <InputComRotulo rotulo="Profundidade (mm)">
+                        <InputNumerico value={profundidadeObjetoMilimetros} onChange={aoMudarProfundidadeObjeto} />
                     </InputComRotulo>
                 </div>
 
