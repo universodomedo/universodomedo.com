@@ -38,6 +38,9 @@ type Props = {
     aoMudarDescobertas: (descobertas: Descoberta[]) => void;
     opcoesCapacidades: readonly OpcaoSelecionador[];
     opcoesInteragiveis: readonly OpcaoSelecionador[];
+    opcoesPortas: readonly OpcaoSelecionador[];
+    vinculoElementoMapa: string | undefined;
+    aoMudarVinculo: (vinculo: string | undefined) => void;
     salvar: () => void;
 };
 
@@ -46,7 +49,7 @@ const OPCOES_PERCEPCAO = [
     { value: 'DESPERCEBIDO', label: 'Despercebido (invisível até perceber)' },
 ];
 
-export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto({ nome, aoMudarNome, descricao, aoMudarDescricao, pontosDurabilidadeMaximo, aoMudarPontosDurabilidade, larguraObjetoMilimetros, aoMudarLarguraObjeto, alturaObjetoMilimetros, aoMudarAlturaObjeto, profundidadeObjetoMilimetros, aoMudarProfundidadeObjeto, percepcaoInicial, aoMudarPercepcao, posicao, aoMudarPosicao, larguraMilimetros, alturaMilimetros, rotuloAtivo, marcadoresContexto, descobertas, aoMudarDescobertas, opcoesCapacidades, opcoesInteragiveis, salvar }: Props) {
+export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto({ nome, aoMudarNome, descricao, aoMudarDescricao, pontosDurabilidadeMaximo, aoMudarPontosDurabilidade, larguraObjetoMilimetros, aoMudarLarguraObjeto, alturaObjetoMilimetros, aoMudarAlturaObjeto, profundidadeObjetoMilimetros, aoMudarProfundidadeObjeto, percepcaoInicial, aoMudarPercepcao, posicao, aoMudarPosicao, larguraMilimetros, alturaMilimetros, rotuloAtivo, marcadoresContexto, descobertas, aoMudarDescobertas, opcoesCapacidades, opcoesInteragiveis, opcoesPortas, vinculoElementoMapa, aoMudarVinculo, salvar }: Props) {
     return (
         <ConteudoForm>
             <ConteudoForm.AreaCorpo>
@@ -79,9 +82,17 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__Conf
                     </InputComRotulo>
                 </div>
 
-                <InputComRotulo rotulo="Posição no mapa">
-                    <SeletorPosicaoMapa larguraMilimetros={larguraMilimetros} alturaMilimetros={alturaMilimetros} posicao={posicao} aoMudarPosicao={aoMudarPosicao} rotuloAtivo={rotuloAtivo} marcadoresContexto={marcadoresContexto} />
+                <InputComRotulo rotulo="Vínculo com Porta do mapa (opcional)">
+                    <SelecionadorOpcoes opcoes={opcoesPortas} valor={vinculoElementoMapa ?? null} onChange={valor => aoMudarVinculo(valor ?? undefined)} placeholder="Sem vínculo (posição livre)" />
                 </InputComRotulo>
+
+                {vinculoElementoMapa
+                    ? <p>Posição herdada da Porta do mapa — o objeto não desenha caixa; o visual é a porta na parede.</p>
+                    : (
+                        <InputComRotulo rotulo="Posição no mapa">
+                            <SeletorPosicaoMapa larguraMilimetros={larguraMilimetros} alturaMilimetros={alturaMilimetros} posicao={posicao} aoMudarPosicao={aoMudarPosicao} rotuloAtivo={rotuloAtivo} marcadoresContexto={marcadoresContexto} />
+                        </InputComRotulo>
+                    )}
 
                 <EditorDescobertasInteragivel descobertas={descobertas} aoMudarDescobertas={aoMudarDescobertas} opcoesCapacidades={opcoesCapacidades} opcoesInteragiveis={opcoesInteragiveis} />
             </ConteudoForm.AreaCorpo>

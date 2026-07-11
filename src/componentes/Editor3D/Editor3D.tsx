@@ -5,8 +5,8 @@ import styles from './Editor3D.module.css';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useThree, type ThreeEvent } from '@react-three/fiber';
 import { GizmoHelper, GizmoViewport, Grid, OrbitControls, TransformControls } from '@react-three/drei';
-import { BufferAttribute, BufferGeometry, Color, Object3D, Vector3 } from 'three';
-import type { Mesh } from 'three';
+import { BufferAttribute, BufferGeometry, Color, Object3D, Plane, Raycaster, Vector2, Vector3 } from 'three';
+import type { EventDispatcher, Mesh } from 'three';
 import type { CorpoPersonagemCenaCanonicaEditor3D, MembroPersonagemEditor3D, PecaPersonagemCenaCanonicaEditor3D, Projeto3DResumoPersistido, TipoProjetoEditor3D } from 'types-nora-api';
 
 import { CORPO_PERSONAGEM_PADRAO_EDITOR3D, ancoraPunhoCorpoPersonagem, ancoraRegiaoCorpoPersonagem, escalaMaoCorpoPersonagem, geraGeometriaCorpoPersonagem } from 'Funcionalidades/CorpoPersonagem/corpoPersonagem.gerador';
@@ -16,7 +16,6 @@ import { ALTURA_ARTE_DE_CAPA, LARGURA_ARTE_DE_CAPA, type ArteDeCapa } from 'Func
 import { salvaArteDeCapa } from 'Funcionalidades/ArteDeCapa/arteDeCapa.storage';
 import { BarraMenusEditor3D } from './BarraMenusEditor3D';
 import { BarraAbasEditor3D } from './BarraAbasEditor3D';
-import { SeletorModoEditor3D } from './SeletorModoEditor3D';
 import { BotaoComandoEditor3D } from './BotaoComandoEditor3D';
 import { PainelLateralEditor3D, type ColecaoArvoreEditor3D, type ObjetoResumoEditor3D } from './PainelLateralEditor3D';
 import { ModalSalvarProjetoEditor3D } from './ModalSalvarProjetoEditor3D';
@@ -24,9 +23,10 @@ import { ModalAbrirProjetoEditor3D } from './ModalAbrirProjetoEditor3D';
 import { CAMERA_PADRAO_CAPA_ARTE_EDITOR3D, CAPA_ARTE_PADRAO_EDITOR3D, COR_OBJETO_PADRAO_EDITOR3D, capaArteDaCena, cameraDaCena, corpoPersonagemDaCena, desserializaCenaCanonicaEditor3D, pecasDaCena, restringeTextoNaCameraEditor3D, serializaCenaCanonicaEditor3D, tipoProjetoDaCena, type CameraEditor3D, type CapaArteEditor3D, type EntradaSerializacaoObjetoEditor3D, type ObjetoCarregadoEditor3D, type TipoPrimitivaEditor3D, type TransformEditor3D } from './editor3D.projeto.serializacao';
 import { consultaProjeto3D, listaProjetos3D, salvaProjeto3D } from './editor3D.projeto.api';
 import type { ComandoMenuEditor3D } from './editor3D.menus';
-import { SELECAO_CAMERA_EDITOR3D, SELECAO_CORPO_PERSONAGEM_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D, type CampoTransformEditor3D, type ModoTransformEditor3D } from './editor3D.tipos';
+import { CURSOR_MODO_TRANSFORM_EDITOR3D, SELECAO_CAMERA_EDITOR3D, SELECAO_CORPO_PERSONAGEM_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D, type CampoTransformEditor3D, type ModoTransformEditor3D } from './editor3D.tipos';
 import { MAXIMO_SUBDIVISAO_MALHA_EDITOR3D, arestasDaMalha, centroideDaMalha, chanframaAresta, cortaAnelAresta, criaGeometriaDeMalha, criaMalhaCilindro, criaMalhaCubo, criaMalhaEsfera, espelhaMalhaX, excluiFacesDaMalha, excluiVerticesDaMalha, extrudaFace, fundeVerticesDaMalha, insetaFace, subdivideMalhaCatmullClark, type MalhaEditavelLocal, type Vetor3Malha } from './editor3D.malha';
 import { BarraEdicaoMalhaEditor3D, type ModoSelecaoEdicaoEditor3D } from './BarraEdicaoMalhaEditor3D';
+import { IndicadorModoEditor3D } from './IndicadorModoEditor3D';
 import { PainelParametrizacaoMeshEditor3D, type CampoVetorCriacaoEditor3D, type ParamCriacaoMalhaEditor3D } from './PainelParametrizacaoMeshEditor3D';
 import { CameraCapaArteEditor3D, CameraPovEditor3D, PreviewVivoCapaArteEditor3D, RenderizadorCapaArteEditor3D, type RenderCapaArteEditor3D } from './CameraCapaArteEditor3D';
 import { TituloCapaArteEditor3D } from './TituloCapaArteEditor3D';
@@ -35,6 +35,8 @@ import { HomeEditor3D } from './HomeEditor3D';
 
 type ModoOperacaoEditor3D = 'OBJETO' | 'EDICAO';
 type ObjetoEditor3D = { id: number; tipo: TipoPrimitivaEditor3D; nome: string; cor: string; idPeca: string | null; visivel: boolean; malha: MalhaEditavelLocal; subdivisao: number; transformInicial: TransformEditor3D; };
+// O `state.controls` do R3F é tipado como EventDispatcher; o OrbitControls do drei acrescenta `enabled` — estreitamos p/ togglar durante o drag.
+type ControleOrbitaEditor3D = EventDispatcher & { enabled: boolean };
 
 const ROTULO_REGIAO_CORPO_EDITOR3D: Record<MembroPersonagemEditor3D, string> = { CABECA: 'Cabeça', TRONCO: 'Tronco', BRACO_ESQUERDO: 'Braço Esquerdo', BRACO_DIREITO: 'Braço Direito', PERNA_ESQUERDA: 'Perna Esquerda', PERNA_DIREITA: 'Perna Direita' };
 const REGIOES_CORPO_EDITOR3D: readonly MembroPersonagemEditor3D[] = ['CABECA', 'TRONCO', 'BRACO_ESQUERDO', 'BRACO_DIREITO', 'PERNA_ESQUERDA', 'PERNA_DIREITA'];
@@ -96,7 +98,7 @@ export function Editor3D() {
     useReforcaRedimensionamentoCanvas();
     const [objetos, setObjetos] = useState<readonly ObjetoEditor3D[]>([]);
     const [idSelecionado, setIdSelecionado] = useState<number | null>(null);
-    const [modo, setModo] = useState<ModoTransformEditor3D>('translate');
+    const [modo, setModo] = useState<ModoTransformEditor3D>('select');
     const [modoOperacao, setModoOperacao] = useState<ModoOperacaoEditor3D>('OBJETO');
     const [verticesSelecionados, setVerticesSelecionados] = useState<readonly number[]>([]);
     const [modoSelecaoEdicao, setModoSelecaoEdicao] = useState<ModoSelecaoEdicaoEditor3D>('VERTICE');
@@ -192,6 +194,21 @@ export function Editor3D() {
 
     // Arrasto de gizmo (objeto ou vértices): cada arrasto é UM registro, capturado no mouseDown (antes da primeira mutação).
     const registraHistoricoArrasto = useCallback(() => { registraHistorico(); }, [registraHistorico]);
+
+    // Arrasto de OBJETO com CANCELAMENTO (botão direito): o snapshot pré-arrasto é capturado no 1º move, mas só entra no
+    // Desfazer no COMMIT (soltar). Cancelar descarta o snapshot → nada no histórico e o mesh é restaurado (é cancelar, não undo).
+    const snapshotArrastoObjetoRef = useRef<CenaArmazenadaEditor3D | null>(null);
+    // Verdadeiro enquanto um transform modal está em andamento: suprime o onPointerMissed (o clique de confirmar/cancelar não deve deselecionar nem cair p/ Selecionar).
+    const arrastoObjetoAtivoRef = useRef(false);
+    const iniciaArrastoObjeto = useCallback(() => { snapshotArrastoObjetoRef.current = capturaCenaAtiva(); }, [capturaCenaAtiva]);
+    const confirmaArrastoObjeto = useCallback(() => {
+        const snap = snapshotArrastoObjetoRef.current;
+        if (!snap) return;
+        snapshotArrastoObjetoRef.current = null;
+        setPilhaDesfazer(atuais => atuais.length >= LIMITE_HISTORICO_EDITOR3D ? [...atuais.slice(1), snap] : [...atuais, snap]);
+        setPilhaRefazer([]);
+    }, []);
+    const cancelaArrastoObjeto = useCallback(() => { snapshotArrastoObjetoRef.current = null; }, []);
 
     const limpaHistorico = useCallback(() => {
         setPilhaDesfazer([]);
@@ -793,13 +810,30 @@ export function Editor3D() {
         function aoTeclar(evento: KeyboardEvent): void {
             if (alvoEhCampoEditavelEditor3D(evento.target)) return;
             if (evento.key === 'Tab') { evento.preventDefault(); setModoOperacao(atual => atual === 'OBJETO' ? 'EDICAO' : 'OBJETO'); }
-            if (evento.key === 'g') setModo('translate');
-            if (evento.key === 'r') setModo('rotate');
-            if (evento.key === 's') setModo('scale');
         };
         window.addEventListener('keydown', aoTeclar);
         return () => window.removeEventListener('keydown', aoTeclar);
     }, [idSelecionado]);
+
+    // Modos de transform (Mover/Rotacionar/Escalar) SÓ existem com um OBJETO (mesh) selecionado — transformar "o quê" sem seleção não faz sentido.
+    // G/R/S são ignorados sem seleção; Q/Esc (voltar a Selecionar) valem sempre. Atalhos da Modal Comandos.
+    const temObjetoSelecionado = idSelecionado !== null && idSelecionado > 0;
+    useEffect(() => {
+        function aoTeclar(evento: KeyboardEvent): void {
+            if (alvoEhCampoEditavelEditor3D(evento.target)) return;
+            if (evento.key === 'g' || evento.key === 'G') { if (temObjetoSelecionado) setModo('translate'); }
+            else if (evento.key === 'r' || evento.key === 'R') { if (temObjetoSelecionado) setModo('rotate'); }
+            else if (evento.key === 's' || evento.key === 'S') { if (temObjetoSelecionado) setModo('scale'); }
+            else if (evento.key === 'q' || evento.key === 'Q' || evento.key === 'Escape') setModo('select');
+        };
+        window.addEventListener('keydown', aoTeclar);
+        return () => window.removeEventListener('keydown', aoTeclar);
+    }, [temObjetoSelecionado]);
+
+    // Perdeu a seleção (deselecionou, excluiu, ou selecionou câmera/corpo/título) estando num modo de transform → cai p/ Selecionar.
+    useEffect(() => {
+        if (modo !== 'select' && !temObjetoSelecionado) setModo('select');
+    }, [temObjetoSelecionado, modo]);
 
     useEffect(() => { setVerticesSelecionados([]); setFaceSelecionada(null); setModoSelecaoEdicao('VERTICE'); }, [modoOperacao, idSelecionado]);
 
@@ -880,12 +914,12 @@ export function Editor3D() {
                 <HomeEditor3D aoProjetoVazio={iniciaProjetoVazio} aoCapaArte={iniciaCapaArte} aoPersonagem={iniciaPersonagem} aoAbrirProjeto={abreProjetoEmAba} aoAbrirModal={() => void abrirModalAbrirProjeto()} />
             ) : (
                 <div className={styles.area_editor}>
-                <div className={styles.viewport}>
-                    <SeletorModoEditor3D modoOperacao={modoOperacao} modoTransform={modo} podeEditar={idSelecionado !== null && idSelecionado > 0} aoTrocarModoOperacao={setModoOperacao} />
+                <div className={styles.viewport} style={{ cursor: CURSOR_MODO_TRANSFORM_EDITOR3D[modo] }}>
+                    <IndicadorModoEditor3D modo={modo} />
                     {modoOperacao === 'EDICAO' && <BarraEdicaoMalhaEditor3D modoSelecao={modoSelecaoEdicao} podeExtrudar={modoSelecaoEdicao === 'FACE' && faceSelecionada !== null} podeChanfrar={modoSelecaoEdicao === 'ARESTA' && verticesSelecionados.length === 2} podeCortarAnel={modoSelecaoEdicao === 'ARESTA' && verticesSelecionados.length === 2} podeInsetar={modoSelecaoEdicao === 'FACE' && faceSelecionada !== null} podeExcluir={(modoSelecaoEdicao === 'FACE' && faceSelecionada !== null) || (modoSelecaoEdicao === 'VERTICE' && verticesSelecionados.length > 0)} podeFundir={modoSelecaoEdicao === 'VERTICE' && verticesSelecionados.length >= 2} quantidadeBevel={quantidadeBevel} fatorInset={fatorInset} aoTrocarModoSelecao={setModoSelecaoEdicao} aoExtrudar={extrudaFaceSelecionada} aoChanfrar={chanframaArestaSelecionada} aoCortarAnel={cortaAnelSelecionado} aoInsetar={insetaFaceSelecionada} aoExcluir={excluiSelecaoEdicao} aoFundir={fundeVerticesSelecionadosEdicao} aoMudarQuantidadeBevel={setQuantidadeBevel} aoMudarFatorInset={setFatorInset} />}
                     <BotaoComandoEditor3D />
 
-                    <Canvas shadows dpr={[1, 2]} gl={{ preserveDrawingBuffer: true }} resize={{ offsetSize: true }} camera={{ position: [6, 5, 6], fov: 38, near: 0.1, far: 200 }} onPointerMissed={() => { if (modoOperacao === 'EDICAO') setVerticesSelecionados([]); else { setIdSelecionado(null); setRegiaoCorpoSelecionada(null); } }}>
+                    <Canvas shadows dpr={[1, 2]} gl={{ preserveDrawingBuffer: true }} resize={{ offsetSize: true }} camera={{ position: [6, 5, 6], fov: 38, near: 0.1, far: 200 }} onPointerMissed={() => { if (arrastoObjetoAtivoRef.current) return; if (modoOperacao === 'EDICAO') setVerticesSelecionados([]); else { setIdSelecionado(null); setRegiaoCorpoSelecionada(null); setModo('select'); } }}>
                         <color attach="background" args={['#0e0c14']} />
                         <ambientLight intensity={0.6} color="#eef2f6" />
                         <hemisphereLight intensity={0.5} color="#f4f7fb" groundColor="#9aa1ad" />
@@ -895,7 +929,7 @@ export function Editor3D() {
 
                         {tipoProjeto === 'PERSONAGEM' && corpoPersonagem && <CorpoPersonagemViewportEditor3D corpo={corpoPersonagem} selecionado={idSelecionado === SELECAO_CORPO_PERSONAGEM_EDITOR3D} aoSelecionar={() => selecionaCorpo(null)} />}
 
-                        {objetos.map(objeto => <ObjetoEditavelEditor3D key={objeto.id} objeto={objeto} visivelEfetivo={objeto.visivel && !colecaoOcultaPorObjeto.has(objeto.id)} selecionado={objeto.id === idSelecionado} edicaoAtiva={modoOperacao === 'EDICAO' && objeto.id === idSelecionado} modoSelecaoEdicao={modoSelecaoEdicao} verticesSelecionados={verticesSelecionados} faceSelecionada={faceSelecionada} modo={modo} ocultarGizmo={capturando} aoSelecionar={setIdSelecionado} aoSelecionarSubElemento={selecionaSubElemento} aoMoverVertices={moveVerticesSelecionados} aoIniciarArrasto={registraHistoricoArrasto} registraMeshSelecionada={registraMeshSelecionada} registraMesh={registraMesh} aoTransformar={sincronizaTransformSelecionado} />)}
+                        {objetos.map(objeto => <ObjetoEditavelEditor3D key={objeto.id} objeto={objeto} visivelEfetivo={objeto.visivel && !colecaoOcultaPorObjeto.has(objeto.id)} selecionado={objeto.id === idSelecionado} edicaoAtiva={modoOperacao === 'EDICAO' && objeto.id === idSelecionado} modoSelecaoEdicao={modoSelecaoEdicao} verticesSelecionados={verticesSelecionados} faceSelecionada={faceSelecionada} modo={modo} ocultarGizmo={capturando} aoSelecionar={setIdSelecionado} aoSelecionarSubElemento={selecionaSubElemento} aoMoverVertices={moveVerticesSelecionados} aoIniciarArrasto={registraHistoricoArrasto} aoIniciarArrastoObjeto={iniciaArrastoObjeto} aoConfirmarArrastoObjeto={confirmaArrastoObjeto} aoCancelarArrastoObjeto={cancelaArrastoObjeto} arrastoAtivoRef={arrastoObjetoAtivoRef} registraMeshSelecionada={registraMeshSelecionada} registraMesh={registraMesh} aoTransformar={sincronizaTransformSelecionado} />)}
 
                         {paramsCriacao && <PreviewMalhaEditor3D params={paramsCriacao} />}
 
@@ -973,13 +1007,37 @@ interface ObjetoEditavelEditor3DProps {
     readonly aoSelecionarSubElemento: (vertices: readonly number[], faceId: string | null, aditivo: boolean) => void;
     readonly aoMoverVertices: (delta: [number, number, number]) => void;
     readonly aoIniciarArrasto: () => void;
+    readonly aoIniciarArrastoObjeto: () => void;
+    readonly aoConfirmarArrastoObjeto: () => void;
+    readonly aoCancelarArrastoObjeto: () => void;
+    readonly arrastoAtivoRef: { current: boolean };
     readonly registraMeshSelecionada: (mesh: Mesh | null) => void;
     readonly registraMesh: (id: number, mesh: Mesh | null) => void;
     readonly aoTransformar: () => void;
 };
 
-function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAtiva, modoSelecaoEdicao, verticesSelecionados, faceSelecionada, modo, ocultarGizmo, aoSelecionar, aoSelecionarSubElemento, aoMoverVertices, aoIniciarArrasto, registraMeshSelecionada, registraMesh, aoTransformar }: ObjetoEditavelEditor3DProps) {
+function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAtiva, modoSelecaoEdicao, verticesSelecionados, faceSelecionada, modo, ocultarGizmo, aoSelecionar, aoSelecionarSubElemento, aoMoverVertices, aoIniciarArrasto, aoIniciarArrastoObjeto, aoConfirmarArrastoObjeto, aoCancelarArrastoObjeto, arrastoAtivoRef, registraMeshSelecionada, registraMesh, aoTransformar }: ObjetoEditavelEditor3DProps) {
     const meshRef = useRef<Mesh>(null);
+    const camera = useThree((estado) => estado.camera);
+    const gl = useThree((estado) => estado.gl);
+    const controles = useThree((estado) => estado.controls);
+    // Estado do transform MODAL no corpo do mesh. `fase`: 'iniciando' = gesto inicial ainda em andamento; 'ativo' = objeto acompanha o mouse esperando confirmar/cancelar.
+    // `escala` = fator do ConteinerEscalavel; `posIni/rotIni/escIni` = transform PRÉ-arrasto (p/ cancelar).
+    const arrasteRef = useRef<{ modo: ModoTransformEditor3D; fase: 'iniciando' | 'ativo'; plano: Plane; raycaster: Raycaster; ndc: Vector2; ultimoPlano: Vector3; iniClientX: number; iniClientY: number; escala: number; moveu: boolean; posIni: [number, number, number]; rotIni: [number, number, number]; escIni: [number, number, number] } | null>(null);
+    // Handlers de janela ativos no transform (guardados p/ remover na finalização, sem depender circular entre os useCallback).
+    const listenersArrasteRef = useRef<{ mover: (e: PointerEvent) => void; soltar: (e: PointerEvent) => void; decidir: (e: PointerEvent) => void; teclar: (e: KeyboardEvent) => void; menu: (e: Event) => void } | null>(null);
+    // Refs p/ ler as últimas callbacks dentro dos listeners de janela estáveis (as callbacks de histórico mudam de identidade).
+    const aoTransformarRef = useRef(aoTransformar);
+    aoTransformarRef.current = aoTransformar;
+    const aoIniciarArrastoObjetoRef = useRef(aoIniciarArrastoObjeto);
+    aoIniciarArrastoObjetoRef.current = aoIniciarArrastoObjeto;
+    const aoConfirmarArrastoObjetoRef = useRef(aoConfirmarArrastoObjeto);
+    aoConfirmarArrastoObjetoRef.current = aoConfirmarArrastoObjeto;
+    const aoCancelarArrastoObjetoRef = useRef(aoCancelarArrastoObjeto);
+    aoCancelarArrastoObjetoRef.current = aoCancelarArrastoObjeto;
+    // Sincronização do painel numérico coalescida por frame (throttle): o mesh é mutado no caminho quente e RENDERIZA sozinho
+    // (frameloop "always"); o setState p/ o inspetor roda no máximo 1×/frame, não a cada pointermove. Fica no grão do R3F.
+    const rafSyncPainelRef = useRef<number | null>(null);
     // A geometria de EXIBIÇÃO aplica a subdivisão Catmull-Clark sobre a gaiola; os handles de edição seguem na gaiola (objeto.malha).
     const geometria = useMemo(() => criaGeometriaDeMalha(objeto.subdivisao > 0 ? subdivideMalhaCatmullClark(objeto.malha, objeto.subdivisao) : objeto.malha), [objeto.malha, objeto.subdivisao]);
     const proxyVertices = useMemo(() => new Object3D(), []);
@@ -1038,6 +1096,112 @@ function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAti
     function aoClicar(evento: ThreeEvent<MouseEvent>): void { evento.stopPropagation(); aoSelecionar(objeto.id); };
     function aoClicarHandle(evento: ThreeEvent<MouseEvent>, vertices: readonly number[], faceId: string | null): void { evento.stopPropagation(); aoSelecionarSubElemento(vertices, faceId, evento.nativeEvent.shiftKey); };
 
+    // Manipulação DIRETA no corpo do mesh (fora da edição): arrastar transforma o objeto no modo atual, sem gizmo.
+    // Os listeners ficam na JANELA (não no onPointerMove do R3F): quando o mesh se move sob o ponteiro parado, o R3F
+    // RE-DISPARA o onPointerMove p/ atualizar hover, realimentando o setState → "Maximum update depth". A janela só dispara com movimento REAL.
+    const agendaSyncPainel = useCallback((): void => {
+        if (rafSyncPainelRef.current !== null) return;
+        rafSyncPainelRef.current = requestAnimationFrame(() => { rafSyncPainelRef.current = null; aoTransformarRef.current(); });
+    }, []);
+    const aoMoverJanela = useCallback((evento: PointerEvent): void => {
+        const arraste = arrasteRef.current;
+        const mesh = meshRef.current;
+        if (!arraste || !mesh) return;
+        // Histórico só no 1º movimento real (mesh ainda pré-arrasto); só é COMMITADO no soltar, e descartado se cancelar (botão direito).
+        if (!arraste.moveu) { arraste.moveu = true; aoIniciarArrastoObjetoRef.current(); }
+        if (arraste.modo === 'translate') {
+            const rect = gl.domElement.getBoundingClientRect();
+            arraste.ndc.set(((evento.clientX - rect.left) / rect.width) * 2 - 1, -((evento.clientY - rect.top) / rect.height) * 2 + 1);
+            arraste.raycaster.setFromCamera(arraste.ndc, camera);
+            const atual = new Vector3();
+            if (arraste.raycaster.ray.intersectPlane(arraste.plano, atual)) { mesh.position.add(atual.clone().sub(arraste.ultimoPlano)); arraste.ultimoPlano.copy(atual); }
+        } else if (arraste.modo === 'rotate') {
+            const dx = (evento.clientX - arraste.iniClientX) / arraste.escala;
+            const dy = (evento.clientY - arraste.iniClientY) / arraste.escala;
+            mesh.rotation.set(arraste.rotIni[0] + dy * 0.01, arraste.rotIni[1] + dx * 0.01, arraste.rotIni[2]);
+        } else if (arraste.modo === 'scale') {
+            const fator = Math.max(0.05, 1 + ((arraste.iniClientY - evento.clientY) / arraste.escala) * 0.01);
+            mesh.scale.set(arraste.escIni[0] * fator, arraste.escIni[1] * fator, arraste.escIni[2] * fator);
+        }
+        mesh.updateMatrix();
+        agendaSyncPainel();
+    }, [gl, camera, agendaSyncPainel]);
+    // Finalização comum (confirmar OU cancelar): limpa o estado do transform, religa o OrbitControls, avisa o pai (arrastoAtivoRef) e remove os listeners de janela.
+    const finalizaArrasto = useCallback((): void => {
+        arrasteRef.current = null;
+        arrastoAtivoRef.current = false;
+        if (controles) (controles as ControleOrbitaEditor3D).enabled = true;
+        if (rafSyncPainelRef.current !== null) { cancelAnimationFrame(rafSyncPainelRef.current); rafSyncPainelRef.current = null; }
+        const l = listenersArrasteRef.current;
+        if (l) { window.removeEventListener('pointermove', l.mover); window.removeEventListener('pointerup', l.soltar); window.removeEventListener('pointerdown', l.decidir); window.removeEventListener('keydown', l.teclar); window.removeEventListener('contextmenu', l.menu); listenersArrasteRef.current = null; }
+    }, [controles, arrastoAtivoRef]);
+    // CONFIRMAR (clique esquerdo/Enter): aplica o transform (sync final) e empilha o histórico pré-transform (no-op se nada moveu). Mantém o modo atual.
+    const confirmaArrasto = useCallback((): void => {
+        if (!arrasteRef.current) return;
+        finalizaArrasto();
+        aoTransformarRef.current();
+        aoConfirmarArrastoObjetoRef.current();
+    }, [finalizaArrasto]);
+    // CANCELAR (clique direito/Esc): restaura o transform PRÉ-mudança e DESCARTA o snapshot — nada entra no Desfazer. NÃO é undo. Mantém o modo atual.
+    const cancelaArrasto = useCallback((): void => {
+        const arraste = arrasteRef.current;
+        const mesh = meshRef.current;
+        if (!arraste || !mesh) return;
+        mesh.position.set(arraste.posIni[0], arraste.posIni[1], arraste.posIni[2]);
+        mesh.rotation.set(arraste.rotIni[0], arraste.rotIni[1], arraste.rotIni[2]);
+        mesh.scale.set(arraste.escIni[0], arraste.escIni[1], arraste.escIni[2]);
+        mesh.updateMatrix();
+        finalizaArrasto();
+        aoTransformarRef.current();
+        aoCancelarArrastoObjetoRef.current();
+    }, [finalizaArrasto]);
+    // MODAL (tipo Blender): o gesto inicial (clique/arrasto no corpo) fica na fase 'iniciando'; ao SOLTAR vira 'ativo' e o objeto passa a acompanhar o mouse
+    // sem botão, esperando o clique de confirmar/cancelar. (Soltar NÃO aplica — é isso que abre a janela "antes de aplicar" pro cancelar.)
+    const aoSoltarInicial = useCallback((): void => {
+        const arraste = arrasteRef.current;
+        if (arraste && arraste.fase === 'iniciando') arraste.fase = 'ativo';
+    }, []);
+    // Só decide com o transform já 'ativo': ignora o pointerdown inicial (que ainda borbulha nesta mesma dispatch e chegaria aqui na fase 'iniciando').
+    const aoDecidir = useCallback((evento: PointerEvent): void => {
+        const arraste = arrasteRef.current;
+        if (!arraste || arraste.fase !== 'ativo') return;
+        evento.preventDefault();
+        if (evento.button === 2) cancelaArrasto(); else confirmaArrasto();
+    }, [cancelaArrasto, confirmaArrasto]);
+    const aoTeclar = useCallback((evento: KeyboardEvent): void => {
+        if (!arrasteRef.current) return;
+        if (evento.key === 'Escape') { evento.preventDefault(); cancelaArrasto(); }
+        else if (evento.key === 'Enter') { evento.preventDefault(); confirmaArrasto(); }
+    }, [cancelaArrasto, confirmaArrasto]);
+    const suprimeMenu = useCallback((evento: Event): void => { if (arrasteRef.current) evento.preventDefault(); }, []);
+    useEffect(() => finalizaArrasto, [finalizaArrasto]);
+    // Inicia o transform MODAL. OrbitControls desligado (senão orbitaria); translate segue o plano de tela, rotate/scale a varredura. Um transform já em andamento
+    // ignora este pointerdown (é o clique de confirmar/cancelar, tratado na janela por aoDecidir) — evita reiniciar um novo transform sobre o mesmo clique.
+    function aoDescerParaTransformar(evento: ThreeEvent<PointerEvent>): void {
+        if (edicaoAtiva || modo === 'select') return;
+        if (arrasteRef.current) return;
+        evento.stopPropagation();
+        const mesh = meshRef.current;
+        if (!mesh) return;
+        if (!selecionado) aoSelecionar(objeto.id);
+        if (controles) (controles as ControleOrbitaEditor3D).enabled = false;
+        arrastoAtivoRef.current = true;
+        const normal = new Vector3();
+        camera.getWorldDirection(normal);
+        const plano = new Plane().setFromNormalAndCoplanarPoint(normal, mesh.position.clone());
+        const inicio = new Vector3();
+        evento.ray.intersectPlane(plano, inicio);
+        // Escala efetiva do ConteinerEscalavel (rect pós-transform / layout): compensa deltas de tela em rotate/scale (regra da skill).
+        const escala = gl.domElement.getBoundingClientRect().width / gl.domElement.offsetWidth || 1;
+        arrasteRef.current = { modo, fase: 'iniciando', plano, raycaster: new Raycaster(), ndc: new Vector2(), ultimoPlano: inicio, iniClientX: evento.nativeEvent.clientX, iniClientY: evento.nativeEvent.clientY, escala, moveu: false, posIni: [mesh.position.x, mesh.position.y, mesh.position.z], rotIni: [mesh.rotation.x, mesh.rotation.y, mesh.rotation.z], escIni: [mesh.scale.x, mesh.scale.y, mesh.scale.z] };
+        listenersArrasteRef.current = { mover: aoMoverJanela, soltar: aoSoltarInicial, decidir: aoDecidir, teclar: aoTeclar, menu: suprimeMenu };
+        window.addEventListener('pointermove', aoMoverJanela);
+        window.addEventListener('pointerup', aoSoltarInicial);
+        window.addEventListener('pointerdown', aoDecidir);
+        window.addEventListener('keydown', aoTeclar);
+        window.addEventListener('contextmenu', suprimeMenu);
+    };
+
     function aoMoverProxy(): void {
         const delta = proxyVertices.position.clone().sub(centroidRef.current);
         // Delta não-finito (estado de arrasto corrompido) contaminaria a malha com NaN — e NaN persiste no projeto.
@@ -1049,7 +1213,7 @@ function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAti
 
     return (
         <>
-            <mesh ref={meshRef} geometry={geometria} visible={visivelEfetivo} castShadow receiveShadow onClick={aoClicar}>
+            <mesh ref={meshRef} geometry={geometria} visible={visivelEfetivo} castShadow receiveShadow onClick={aoClicar} onPointerDown={aoDescerParaTransformar}>
                 <meshStandardMaterial color={objeto.cor} emissive={selecionado ? '#e8c074' : '#000000'} emissiveIntensity={selecionado ? 0.35 : 0} roughness={0.55} metalness={0.1} flatShading={objeto.subdivisao === 0} key={`material-${objeto.subdivisao === 0 ? 'flat' : 'suave'}`} />
                 {edicaoAtiva && modoSelecaoEdicao === 'VERTICE' && objeto.malha.vertices.map((vertice, indice) => (
                     <mesh key={`v${indice}`} position={vertice} onClick={evento => aoClicarHandle(evento, [indice], null)}>
@@ -1081,7 +1245,7 @@ function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAti
                 )}
                 {temSelecaoVertices && <primitive object={proxyVertices} />}
             </mesh>
-            {selecionado && visivelEfetivo && !edicaoAtiva && !ocultarGizmo && <TransformControls object={meshRef} mode={modo} onMouseDown={aoIniciarArrasto} onObjectChange={aoTransformar} />}
+            {/* Transform de objeto é por manipulação DIRETA (arrastar o corpo no modo atual); o gizmo de eixos foi removido por interceptar o arrasto. A edição de vértices mantém o próprio gizmo. */}
             {temSelecaoVertices && !ocultarGizmo && <TransformControls object={proxyVertices} mode="translate" space="local" onMouseDown={aoIniciarArrasto} onObjectChange={aoMoverProxy} />}
         </>
     );

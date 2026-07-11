@@ -12,7 +12,7 @@ import { ControladorPrimeiraPessoaJogo } from 'Componentes/ElementosDeJogo/Cena3
 import type { DestinoMovimentacaoSalaJogo } from './ContextoMovimentacaoSalaJogo';
 import { ALTURA_OLHOS, mundoX, mundoZ, paraUnidadeCena, useReforcaRedimensionamentoCanvas } from './cenaSalaJogo.helpers';
 import { SalaLaboratorioR3F } from './SalaLaboratorioR3F';
-import { InteragivelR3F, MarcadorControladoR3F, OcupanteR3F } from './AtoresSalaJogoR3F';
+import { InteragivelR3F, MarcadorControladoR3F, OcupanteR3F, PortaMapaR3F } from './AtoresSalaJogoR3F';
 import { CaminhoMovimentacaoR3F, OverlayMovimentacao, PlanoSelecaoMovimentacao } from './MovimentacaoSalaJogoR3F';
 import { MascaraVisaoControlador, obtemAlcanceLinhaVisaoMilimetros, obtemDependenciaIluminacaoPercentual } from './MascaraVisaoSalaJogoR3F';
 import { LuzesSalaJogoR3F } from './LuzesSalaJogoR3F';
@@ -180,7 +180,7 @@ function ConteudoCena3DSalaJogo({ payload, keysNovos, keyOcupanteSelecionado, ke
             <ambientLight intensity={ambienteVisao} color="#e8ecf2" />
             <LuzesSalaJogoR3F luzes={payload.luzes} largura={largura} altura={altura} />
 
-            <SalaLaboratorioR3F largura={largura} altura={altura} />
+            <SalaLaboratorioR3F largura={largura} altura={altura} portas={payload.mapaLogico.portas} />
 
             {payload.ocupantesMapaLogico.map((ocupante, indice) => {
                 if (ocupante.keySer === ocultarKeyOcupante) return null;
@@ -188,6 +188,7 @@ function ConteudoCena3DSalaJogo({ payload, keysNovos, keyOcupanteSelecionado, ke
                 return <OcupanteR3F key={ocupante.keySer} ocupante={ocupante} largura={largura} altura={altura} selecionado={keyOcupanteSelecionado === ocupante.keySer} aoSelecionar={aoSelecionarOcupante} />;
             })}
             {payload.interagiveisPercebidos.map(interagivel => <InteragivelR3F key={interagivel.key} interagivel={interagivel} novo={keysNovos.includes(interagivel.key)} selecionado={keyInteragivelSelecionado === interagivel.key} largura={largura} altura={altura} aoSelecionar={aoSelecionarInteragivel} />)}
+            {payload.mapaLogico.portas.map(porta => <PortaMapaR3F key={porta.chave} porta={porta} largura={largura} altura={altura} />)}
 
             {modoMovimentacaoAtivo && aoMoverDestino && aoConfirmarDestino && <PlanoSelecaoMovimentacao largura={largura} altura={altura} aoMoverDestino={aoMoverDestino} aoConfirmarDestino={aoConfirmarDestino} />}
             {modoMovimentacaoAtivo && celulaHoverDestino && ocupanteControlado && <CaminhoMovimentacaoR3F origem={ocupanteControlado.posicao} destino={celulaHoverDestino} largura={largura} altura={altura} />}

@@ -239,107 +239,59 @@
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* ---- Seletor de modo (overlay esq. superior) ---- */
-.seletor_modo {
+/* ---- Indicador de modo (SSOT `modo`, canto sup. esquerdo): quadro com o cursor do modo + nome embaixo ---- */
+.indicador_modo {
     position: absolute;
     z-index: 10;
-    top: 0;
+    top: 0.7em;
     left: 0.8em;
-    width: 11.5em;
-}
-
-.botao_modo_op {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    gap: 0.8em;
-    width: 100%;
-    min-height: 2.4em;
-    padding: 0 0.75em;
-    border: 0.08em solid rgba(255, 255, 255, 0.14);
-    border-top: 0;
-    border-radius: 0 0 0.28em 0.28em;
-    color: rgba(255, 255, 255, 0.9);
-    font: inherit;
-    font-size: 0.82em;
-    background: rgba(48, 48, 48, 0.96);
-    box-shadow: 0 0.8em 2em rgba(0, 0, 0, 0.32);
-    cursor: pointer;
+    gap: 0.3em;
+    pointer-events: none;
 }
 
-.botao_modo_op:hover {
-    background: rgba(58, 58, 58, 0.98);
-}
-
-.botao_modo_op strong {
-    color: rgba(255, 255, 255, 0.46);
-    font-size: 0.78em;
-    font-weight: 500;
-}
-
-.menu_modo {
-    position: absolute;
-    top: calc(100% + 0.3em);
-    left: 0;
-    width: 100%;
-    overflow: hidden;
-    background: #242424;
-    border: 0.08em solid rgba(255, 255, 255, 0.16);
-    border-radius: 0.28em;
-    box-shadow: 0 1.2em 3em rgba(0, 0, 0, 0.42);
-}
-
-.item_modo {
+.quadro_indicador_modo {
     display: grid;
-    gap: 0.18em;
-    width: 100%;
-    min-height: 2.9em;
-    padding: 0.45em 0.7em;
-    border: 0;
-    color: rgba(255, 255, 255, 0.82);
-    font: inherit;
-    text-align: left;
-    background: transparent;
-    cursor: pointer;
-}
-
-.item_modo:hover:not(:disabled) {
-    color: #ffffff;
-    background: rgba(92, 148, 255, 0.26);
-}
-
-.item_modo:disabled {
-    color: rgba(255, 255, 255, 0.34);
-    cursor: default;
-}
-
-.item_modo span {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.86em;
-    font-weight: 700;
-}
-
-.item_modo kbd {
-    padding: 0.05em 0.4em;
+    place-items: center;
+    width: 2.6em;
+    height: 2.6em;
     border: 0.08em solid rgba(255, 255, 255, 0.16);
-    border-radius: 0.2em;
-    color: rgba(255, 255, 255, 0.7);
-    font: inherit;
-    font-size: 0.82em;
-    background: rgba(0, 0, 0, 0.25);
+    border-radius: 0.32em;
+    background: rgba(40, 40, 40, 0.94);
+    box-shadow: 0 0.6em 1.6em rgba(0, 0, 0, 0.34);
+    pointer-events: auto;
 }
 
-.item_modo small {
-    color: rgba(255, 255, 255, 0.48);
-    font-size: 0.72em;
-    line-height: 1.25;
+.glifo_cursor {
+    width: 1.5em;
+    height: 1.5em;
+    fill: rgba(255, 255, 255, 0.92);
+    stroke: rgba(0, 0, 0, 0.5);
+    stroke-width: 0.7;
+    stroke-linejoin: round;
 }
 
-.item_modo_ativo {
-    background: rgba(92, 148, 255, 0.18);
-    box-shadow: inset 0.22em 0 0 rgba(255, 180, 60, 0.95);
+/* Glifo de rotação: seta circular traçada (não preenchida) — mesma forma do cursor do modo Rotacionar. */
+.glifo_cursor_rotacao {
+    width: 1.5em;
+    height: 1.5em;
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.92);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.nome_indicador_modo {
+    padding: 0.1em 0.5em;
+    border-radius: 0.28em;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.74em;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    background: rgba(40, 40, 40, 0.94);
 }
 
 /* ---- Barra de edição de malha (V/E/F + Extrude) ---- */

@@ -6,6 +6,29 @@ export type Interagivel = ConfiguracaoPartida['interagiveis'][number];
 export type InteragivelObjeto = Extract<Interagivel, { tipo: 'objeto' }>;
 export type InteragivelSer = Extract<Interagivel, { tipo: 'ser' }>;
 export type Luz = NonNullable<ConfiguracaoPartida['luzes']>[number];
+export type Porta = NonNullable<ConfiguracaoPartida['cenario']['mapaLogico']['portas']>[number];
+export type ParedeMapa = 'norte' | 'sul' | 'leste' | 'oeste';
+
+export const PAREDES_MAPA: readonly { readonly value: ParedeMapa; readonly label: string }[] = [{ value: 'norte', label: 'Norte' }, { value: 'sul', label: 'Sul' }, { value: 'leste', label: 'Leste' }, { value: 'oeste', label: 'Oeste' }];
+
+export function portasDaConfig(config: ConfiguracaoPartida): readonly Porta[] { return config.cenario.mapaLogico.portas ?? []; };
+export function rotuloPorta(porta: Porta): string { return porta.nome.trim() || porta.chave; };
+
+// Guardamos SEMPRE geometria (posicao + orientacaoGraus) — a autoria por parede+deslocamento e so conveniencia da sala retangular; o Editor 3D depois escreve a mesma forma sem redo. norte/sul = parede horizontal (porta ao longo de X, 0 graus); leste/oeste = vertical (ao longo de Y, 90 graus).
+export function geometriaPortaDaParede(parede: ParedeMapa, deslocamentoMilimetros: number, mapaLargura: number, mapaAltura: number): { posicao: { x: number; y: number }; orientacaoGraus: number } {
+    if (parede === 'norte') return { posicao: { x: deslocamentoMilimetros, y: 0 }, orientacaoGraus: 0 };
+    if (parede === 'sul') return { posicao: { x: deslocamentoMilimetros, y: mapaAltura }, orientacaoGraus: 0 };
+    if (parede === 'oeste') return { posicao: { x: 0, y: deslocamentoMilimetros }, orientacaoGraus: 90 };
+    return { posicao: { x: mapaLargura, y: deslocamentoMilimetros }, orientacaoGraus: 90 };
+};
+
+// Reconstrucao (parede + deslocamento) a partir da geometria, pra reeditar a porta.
+export function paredeDaPorta(porta: Porta, mapaAltura: number): { parede: ParedeMapa; deslocamento: number } {
+    if (porta.posicao.y <= 0) return { parede: 'norte', deslocamento: porta.posicao.x };
+    if (porta.posicao.y >= mapaAltura) return { parede: 'sul', deslocamento: porta.posicao.x };
+    if (porta.posicao.x <= 0) return { parede: 'oeste', deslocamento: porta.posicao.y };
+    return { parede: 'leste', deslocamento: porta.posicao.y };
+};
 export type Controlador = InteragivelSer['controlador'];
 export type Descoberta = Interagivel['descobertas'][number];
 export type Recompensa = Descoberta['recompensas'][number];
@@ -54,7 +77,7 @@ export function controladorDoGrupo(grupo: GrupoControle): Controlador {
 };
 
 export function criaConfiguracaoVazia(): ConfiguracaoPartida {
-    return { narracaoInicial: '', cenario: { nome: '', mapaLogico: { larguraMilimetros: 10000, alturaMilimetros: 10000 } }, interagiveis: [], luzes: [], condicaoVitoria: { tipo: 'qualquer_acao_executada' }, temporal: { momentoInicialMs: 0 } };
+    return { narracaoInicial: '', cenario: { nome: '', mapaLogico: { larguraMilimetros: 10000, alturaMilimetros: 10000, portas: [] } }, interagiveis: [], luzes: [], condicaoVitoria: { tipo: 'qualquer_acao_executada' }, temporal: { momentoInicialMs: 0 } };
 };
 
 // Tempo real e base do jogo (nao e configuravel): toda configuracao nasce com o sistema temporal ativo.

@@ -8,6 +8,7 @@ const COMANDOS_EDITOR_3D: readonly { readonly categoria: string; readonly itens:
     {
         categoria: 'Modos',
         itens: [
+            { nome: 'Selecionar', atalho: 'Q' },
             { nome: 'Mover', atalho: 'G' },
             { nome: 'Rotacionar', atalho: 'R' },
             { nome: 'Escalar', atalho: 'S' },
