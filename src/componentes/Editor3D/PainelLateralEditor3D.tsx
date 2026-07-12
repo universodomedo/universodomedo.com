@@ -13,6 +13,7 @@ import { PainelTituloCapaArteEditor3D } from './PainelTituloCapaArteEditor3D';
 import { ArvoreCenaEditor3D, type ColecaoArvoreEditor3D, type ObjetoResumoEditor3D } from './ArvoreCenaEditor3D';
 import { SELECAO_CAMERA_EDITOR3D, SELECAO_CORPO_PERSONAGEM_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D, type CampoTransformEditor3D } from './editor3D.tipos';
 import type { CameraEditor3D, CapaArteEditor3D, TransformEditor3D } from './editor3D.projeto.serializacao';
+import type { Vetor3Malha } from './editor3D.malha';
 import type { CorpoPersonagemCenaCanonicaEditor3D, MembroPersonagemEditor3D } from 'types-nora-api';
 
 export type { ColecaoArvoreEditor3D, ObjetoResumoEditor3D };
@@ -22,8 +23,10 @@ interface PainelLateralEditor3DProps {
     readonly colecoes: readonly ColecaoArvoreEditor3D[];
     readonly totalObjetos: number;
     readonly idSelecionado: number | null;
-    readonly objetoSelecionado: { readonly nome: string; readonly cor: string; readonly tipoRotulo: string; readonly subdivisao: number; readonly peca: { readonly idPeca: string; readonly nome: string } | null } | null;
+    readonly objetoSelecionado: { readonly nome: string; readonly cor: string; readonly materiaisExtras: readonly { readonly nome: string; readonly cor: string }[]; readonly tipoRotulo: string; readonly subdivisao: number; readonly espessura: number; readonly peca: { readonly idPeca: string; readonly nome: string } | null } | null;
+    readonly temFacesSelecionadas: boolean;
     readonly transformSelecionado: TransformEditor3D | null;
+    readonly dimensoesBaseSelecionado: Vetor3Malha | null;
     readonly camera: CameraEditor3D | null;
     readonly capaArte: CapaArteEditor3D;
     readonly corpoPersonagem: CorpoPersonagemCenaCanonicaEditor3D | null;
@@ -42,7 +45,13 @@ interface PainelLateralEditor3DProps {
     readonly aoRenomearObjeto: (nome: string) => void;
     readonly aoMudarCorObjeto: (cor: string) => void;
     readonly aoMudarSubdivisaoObjeto: (subdivisao: number) => void;
+    readonly aoMudarEspessuraObjeto: (espessura: number) => void;
+    readonly aoAdicionarMaterialObjeto: () => void;
+    readonly aoMudarCorMaterialObjeto: (slot: number, cor: string) => void;
+    readonly aoRenomearMaterialObjeto: (slot: number, nome: string) => void;
+    readonly aoAtribuirMaterialObjeto: (slot: number) => void;
     readonly aoEspelharObjetoX: () => void;
+    readonly aoAplicarTransformacoesObjeto: () => void;
     readonly aoDuplicarObjeto: (id: number) => void;
     readonly aoExcluirObjeto: (id: number) => void;
     readonly aoAtualizarParametroCorpo: (regiao: MembroPersonagemEditor3D | null, campo: CampoParametroRegiaoEditor3D, valor: number) => void;
@@ -95,11 +104,11 @@ export function PainelLateralEditor3D(props: PainelLateralEditor3DProps) {
                 <>
                     {props.objetoSelecionado !== null && (
                         <PainelColapsavelEditor3D titulo="Objeto" valor={props.objetoSelecionado.tipoRotulo}>
-                            <PainelObjetoEditor3D nome={props.objetoSelecionado.nome} cor={props.objetoSelecionado.cor} subdivisao={props.objetoSelecionado.subdivisao} peca={props.objetoSelecionado.peca} aoRenomear={props.aoRenomearObjeto} aoMudarCor={props.aoMudarCorObjeto} aoMudarSubdivisao={props.aoMudarSubdivisaoObjeto} aoEspelharX={props.aoEspelharObjetoX} aoRemoverPeca={props.aoRemoverPeca} />
+                            <PainelObjetoEditor3D nome={props.objetoSelecionado.nome} cor={props.objetoSelecionado.cor} materiaisExtras={props.objetoSelecionado.materiaisExtras} subdivisao={props.objetoSelecionado.subdivisao} espessura={props.objetoSelecionado.espessura} temFacesSelecionadas={props.temFacesSelecionadas} peca={props.objetoSelecionado.peca} aoRenomear={props.aoRenomearObjeto} aoMudarCor={props.aoMudarCorObjeto} aoMudarSubdivisao={props.aoMudarSubdivisaoObjeto} aoMudarEspessura={props.aoMudarEspessuraObjeto} aoAdicionarMaterial={props.aoAdicionarMaterialObjeto} aoMudarCorMaterial={props.aoMudarCorMaterialObjeto} aoRenomearMaterial={props.aoRenomearMaterialObjeto} aoAtribuirMaterial={props.aoAtribuirMaterialObjeto} aoEspelharX={props.aoEspelharObjetoX} aoAplicarTransformacoes={props.aoAplicarTransformacoesObjeto} aoRemoverPeca={props.aoRemoverPeca} />
                         </PainelColapsavelEditor3D>
                     )}
                     <PainelColapsavelEditor3D titulo="Transform" valor={props.transformSelecionado !== null ? '1' : '0'}>
-                        <PainelTransformEditor3D transform={props.transformSelecionado} aoAtualizar={props.aoAtualizarTransform} />
+                        <PainelTransformEditor3D transform={props.transformSelecionado} dimensoesBase={props.dimensoesBaseSelecionado} aoAtualizar={props.aoAtualizarTransform} />
                     </PainelColapsavelEditor3D>
                 </>
             )}

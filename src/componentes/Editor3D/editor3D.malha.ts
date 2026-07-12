@@ -1,7 +1,9 @@
-import { BufferGeometry, Float32BufferAttribute } from 'three';
+import { BufferGeometry, Float32BufferAttribute, Matrix4, Vector3 } from 'three';
 
 export type Vetor3Malha = [number, number, number];
-export type FaceMalhaLocal = { id: string; nome: string; indicesVertices: number[]; };
+// slotMaterial: índice do material do objeto que esta face usa (undefined/0 = material base). Operações que derivam
+// faces (inset/extrude/subdivisão/solidify/espelho) HERDAM o slot da face de origem — mesma semântica do Blender.
+export type FaceMalhaLocal = { id: string; nome: string; indicesVertices: number[]; slotMaterial?: number; };
 export type MalhaEditavelLocal = { vertices: Vetor3Malha[]; faces: FaceMalhaLocal[]; proximoIdFace: number; };
 
 function face(id: number, nome: string, indices: number[]): FaceMalhaLocal { return { id: `f${id}`, nome, indicesVertices: indices }; };
@@ -79,21 +81,148 @@ export function criaMalhaEsfera(segmentos = 16): MalhaEditavelLocal {
 };
 
 // Constrói a geometria de render a partir da malha: posições por vértice, faces via fan-triangulation, normais calculadas.
-export function criaGeometriaDeMalha(malha: MalhaEditavelLocal): BufferGeometry {
+// Com `totalSlotsMaterial` > 1, os triângulos são agrupados por slot (BufferGeometry groups) — o mesh usa um ARRAY de
+// materiais e cada face desenha com o material do seu slot; slot fora do intervalo cai no base (0).
+export function criaGeometriaDeMalha(malha: MalhaEditavelLocal, totalSlotsMaterial = 1): BufferGeometry {
     const posicoes: number[] = [];
     for (const vertice of malha.vertices) posicoes.push(vertice[0], vertice[1], vertice[2]);
 
-    const indices: number[] = [];
-    for (const faceMalha of malha.faces) {
-        const ids = faceMalha.indicesVertices;
-        for (let i = 1; i + 1 < ids.length; i += 1) indices.push(ids[0], ids[i], ids[i + 1]);
-    }
-
     const geometria = new BufferGeometry();
     geometria.setAttribute('position', new Float32BufferAttribute(posicoes, 3));
+
+    if (totalSlotsMaterial <= 1) {
+        const indices: number[] = [];
+        for (const faceMalha of malha.faces) {
+            const ids = faceMalha.indicesVertices;
+            for (let i = 1; i + 1 < ids.length; i += 1) indices.push(ids[0], ids[i], ids[i + 1]);
+        }
+        geometria.setIndex(indices);
+        geometria.computeVertexNormals();
+        return geometria;
+    }
+
+    const indicesPorSlot: number[][] = Array.from({ length: totalSlotsMaterial }, () => []);
+    for (const faceMalha of malha.faces) {
+        const slot = faceMalha.slotMaterial !== undefined && faceMalha.slotMaterial > 0 && faceMalha.slotMaterial < totalSlotsMaterial ? faceMalha.slotMaterial : 0;
+        const ids = faceMalha.indicesVertices;
+        for (let i = 1; i + 1 < ids.length; i += 1) indicesPorSlot[slot].push(ids[0], ids[i], ids[i + 1]);
+    }
+    const indices: number[] = [];
+    let inicio = 0;
+    for (let slot = 0; slot < totalSlotsMaterial; slot += 1) {
+        indices.push(...indicesPorSlot[slot]);
+        geometria.addGroup(inicio, indicesPorSlot[slot].length, slot);
+        inicio += indicesPorSlot[slot].length;
+    }
     geometria.setIndex(indices);
     geometria.computeVertexNormals();
     return geometria;
+};
+
+// Dimensões da caixa envolvente da malha em espaço LOCAL (antes da escala do objeto): base do campo "Dimensões" do painel — dimensão exibida = base × escala viva.
+export function dimensoesDaMalha(malha: MalhaEditavelLocal): Vetor3Malha {
+    if (malha.vertices.length === 0) return [0, 0, 0];
+    const minimo: Vetor3Malha = [Infinity, Infinity, Infinity];
+    const maximo: Vetor3Malha = [-Infinity, -Infinity, -Infinity];
+    for (const vertice of malha.vertices) for (let eixo = 0; eixo < 3; eixo += 1) { if (vertice[eixo] < minimo[eixo]) minimo[eixo] = vertice[eixo]; if (vertice[eixo] > maximo[eixo]) maximo[eixo] = vertice[eixo]; }
+    return [maximo[0] - minimo[0], maximo[1] - minimo[1], maximo[2] - minimo[2]];
+};
+
+// Aplica ("bake") a matriz de transform do objeto nos vértices da gaiola: o transform pode voltar à identidade sem mudança
+// visual e as medidas reais viram a condição inicial (operações absolutas — espessura, inset em metros — passam a valer).
+// Determinante negativo (espelho por escala negativa) inverte o winding das faces para as normais seguirem para fora.
+export function aplicaTransformNaMalha(malha: MalhaEditavelLocal, matriz: Matrix4): MalhaEditavelLocal {
+    const ponto = new Vector3();
+    const vertices: Vetor3Malha[] = malha.vertices.map(vertice => { ponto.set(vertice[0], vertice[1], vertice[2]).applyMatrix4(matriz); return [ponto.x, ponto.y, ponto.z]; });
+    const inverteWinding = matriz.determinant() < 0;
+    const faces: FaceMalhaLocal[] = malha.faces.map(face => ({ ...face, indicesVertices: inverteWinding ? [...face.indicesVertices].reverse() : [...face.indicesVertices] }));
+    return { vertices, faces, proximoIdFace: malha.proximoIdFace };
+};
+
+// Teto da espessura de parede (Solidify) por objeto, em unidade de cena (metros).
+export const MAXIMO_ESPESSURA_MALHA_EDITOR3D = 2;
+
+// Solidify NÃO-DESTRUTIVO de exibição: gera a casca INTERNA deslocando cada vértice contra a normal média das faces
+// adjacentes — com compensação de canto ("even thickness": o deslocamento é escalado pelo cosseno médio p/ manter a
+// distância às faces; exato em cantos retos) — e fecha as bordas abertas com quads (rim fill). A gaiola editável NÃO
+// muda: isto roda apenas no caminho de desenho, como a subdivisão.
+export function solidificaMalha(malha: MalhaEditavelLocal, espessura: number): MalhaEditavelLocal {
+    if (espessura <= 0 || malha.faces.length === 0) return malha;
+
+    const normaisFace = new Map<string, Vetor3Malha>();
+    for (const face of malha.faces) normaisFace.set(face.id, normalDaFace(malha, face.indicesVertices));
+
+    const facesDoVertice: FaceMalhaLocal[][] = malha.vertices.map(() => []);
+    for (const face of malha.faces) for (const indice of face.indicesVertices) facesDoVertice[indice].push(face);
+
+    // Casca interna: vértice i vira i + total; deslocado contra a normal média com o fator de compensação de canto.
+    const total = malha.vertices.length;
+    const vertices: Vetor3Malha[] = malha.vertices.map(vertice => [vertice[0], vertice[1], vertice[2]]);
+    for (let i = 0; i < total; i += 1) {
+        const facesAdjacentes = facesDoVertice[i];
+        const original = malha.vertices[i];
+        if (facesAdjacentes.length === 0) { vertices.push([original[0], original[1], original[2]]); continue; }
+        let somaX = 0;
+        let somaY = 0;
+        let somaZ = 0;
+        for (const face of facesAdjacentes) { const normal = normaisFace.get(face.id) ?? [0, 0, 0]; somaX += normal[0]; somaY += normal[1]; somaZ += normal[2]; }
+        const comprimento = Math.hypot(somaX, somaY, somaZ) || 1;
+        const direcao: Vetor3Malha = [somaX / comprimento, somaY / comprimento, somaZ / comprimento];
+        let somaCosseno = 0;
+        for (const face of facesAdjacentes) { const normal = normaisFace.get(face.id) ?? [0, 0, 0]; somaCosseno += direcao[0] * normal[0] + direcao[1] * normal[1] + direcao[2] * normal[2]; }
+        const cossenoMedio = Math.max(0.2, somaCosseno / facesAdjacentes.length);
+        const fator = espessura / cossenoMedio;
+        vertices.push([original[0] - direcao[0] * fator, original[1] - direcao[1] * fator, original[2] - direcao[2] * fator]);
+    }
+
+    let proximoIdFace = malha.proximoIdFace;
+    const faces: FaceMalhaLocal[] = malha.faces.map(face => ({ ...face, indicesVertices: [...face.indicesVertices] }));
+    // Faces internas: winding invertido (normais apontam para DENTRO da sala/cavidade); herdam o material da face externa.
+    for (const face of malha.faces) {
+        faces.push({ id: `f${proximoIdFace}`, nome: `${face.nome} (interna)`, indicesVertices: [...face.indicesVertices].map(indice => indice + total).reverse(), slotMaterial: face.slotMaterial });
+        proximoIdFace += 1;
+    }
+
+    // Rim fill: aresta de borda (1 face incidente) ganha um quad ligando casca externa ↔ interna, orientado para o lado aberto.
+    const incidencia = new Map<string, { face: FaceMalhaLocal; a: number; b: number; contagem: number }>();
+    const chave = (x: number, y: number): string => x < y ? `${x}-${y}` : `${y}-${x}`;
+    for (const face of malha.faces) {
+        const ids = face.indicesVertices;
+        for (let i = 0; i < ids.length; i += 1) {
+            const a = ids[i];
+            const b = ids[(i + 1) % ids.length];
+            const registro = incidencia.get(chave(a, b));
+            if (registro) registro.contagem += 1;
+            else incidencia.set(chave(a, b), { face, a, b, contagem: 1 });
+        }
+    }
+    for (const registro of incidencia.values()) {
+        if (registro.contagem !== 1) continue;
+        const { face, a, b } = registro;
+        const normalFace = normaisFace.get(face.id) ?? [0, 1, 0];
+        const va = malha.vertices[a];
+        const vb = malha.vertices[b];
+        const arestaDir: Vetor3Malha = [vb[0] - va[0], vb[1] - va[1], vb[2] - va[2]];
+        // Direção do lado ABERTO (fora da face): cross(aresta, normal da face).
+        const abertura: Vetor3Malha = [arestaDir[1] * normalFace[2] - arestaDir[2] * normalFace[1], arestaDir[2] * normalFace[0] - arestaDir[0] * normalFace[2], arestaDir[0] * normalFace[1] - arestaDir[1] * normalFace[0]];
+        const quad = [b, a, a + total, b + total];
+        // Newell do quad candidato: se apontar contra a abertura, inverte o winding.
+        let nx = 0;
+        let ny = 0;
+        let nz = 0;
+        for (let i = 0; i < 4; i += 1) {
+            const p = vertices[quad[i]];
+            const q = vertices[quad[(i + 1) % 4]];
+            nx += (p[1] - q[1]) * (p[2] + q[2]);
+            ny += (p[2] - q[2]) * (p[0] + q[0]);
+            nz += (p[0] - q[0]) * (p[1] + q[1]);
+        }
+        const indicesVertices = nx * abertura[0] + ny * abertura[1] + nz * abertura[2] >= 0 ? quad : [...quad].reverse();
+        faces.push({ id: `f${proximoIdFace}`, nome: 'Borda Solidify', indicesVertices, slotMaterial: face.slotMaterial });
+        proximoIdFace += 1;
+    }
+
+    return { vertices, faces, proximoIdFace };
 };
 
 // Teto de níveis de subdivisão de exibição por objeto (cada nível multiplica as faces por ~4; 3 é o limite prático em JS).
@@ -173,7 +302,7 @@ function subdivideUmaVezCatmullClark(malha: MalhaEditavelLocal): MalhaEditavelLo
             const arestaAnterior = arestasPorChave.get(chaveAresta(ids[(i - 1 + total) % total], ids[i]));
             if (!arestaSeguinte || !arestaAnterior) continue;
             idFace += 1;
-            faces.push({ id: `f${idFace}`, nome: face.nome, indicesVertices: [ids[i], arestaSeguinte.indicePonto, baseFaces + indiceFace, arestaAnterior.indicePonto] });
+            faces.push({ id: `f${idFace}`, nome: face.nome, indicesVertices: [ids[i], arestaSeguinte.indicePonto, baseFaces + indiceFace, arestaAnterior.indicePonto], slotMaterial: face.slotMaterial });
         }
     });
 
@@ -221,7 +350,7 @@ export function extrudaFace(malha: MalhaEditavelLocal, idFace: string): { malha:
 
     const idNovaFace = `f${proximoIdFace}`;
     proximoIdFace += 1;
-    faces.push({ id: idNovaFace, nome: 'Extrude Tampa', indicesVertices: indicesNovaFace });
+    faces.push({ id: idNovaFace, nome: 'Extrude Tampa', indicesVertices: indicesNovaFace, slotMaterial: face.slotMaterial });
 
     const total = face.indicesVertices.length;
     for (let i = 0; i < total; i += 1) {
@@ -230,7 +359,7 @@ export function extrudaFace(malha: MalhaEditavelLocal, idFace: string): { malha:
         const vi2 = face.indicesVertices[i2];
         const ni = indicesNovaFace[i];
         const ni2 = indicesNovaFace[i2];
-        faces.push({ id: `f${proximoIdFace}`, nome: `Extrude Lateral ${i + 1}`, indicesVertices: [vi, vi2, ni2, ni] });
+        faces.push({ id: `f${proximoIdFace}`, nome: `Extrude Lateral ${i + 1}`, indicesVertices: [vi, vi2, ni2, ni], slotMaterial: face.slotMaterial });
         proximoIdFace += 1;
     }
 
@@ -311,7 +440,7 @@ export function chanframaAresta(malha: MalhaEditavelLocal, a: number, b: number,
     });
 
     const indicesChanfro = [vA1, vA2, vB2, vB1];
-    faces.push({ id: `f${proximoIdFace}`, nome: 'Chanfro', indicesVertices: indicesChanfro });
+    faces.push({ id: `f${proximoIdFace}`, nome: 'Chanfro', indicesVertices: indicesChanfro, slotMaterial: f1.slotMaterial });
     proximoIdFace += 1;
 
     return { malha: { vertices, faces, proximoIdFace }, indicesChanfro };
@@ -403,9 +532,9 @@ export function cortaAnelAresta(malha: MalhaEditavelLocal, a: number, b: number)
         const m1 = meioPorChave.get(chave(p0, p1));
         const m2 = meioPorChave.get(chave(p2, p3));
         if (m1 === undefined || m2 === undefined) continue;
-        facesNovas.push({ id: `f${proximoIdFace}`, nome: quad.nome, indicesVertices: [p0, m1, m2, p3] });
+        facesNovas.push({ id: `f${proximoIdFace}`, nome: quad.nome, indicesVertices: [p0, m1, m2, p3], slotMaterial: quad.slotMaterial });
         proximoIdFace += 1;
-        facesNovas.push({ id: `f${proximoIdFace}`, nome: quad.nome, indicesVertices: [m1, p1, p2, m2] });
+        facesNovas.push({ id: `f${proximoIdFace}`, nome: quad.nome, indicesVertices: [m1, p1, p2, m2], slotMaterial: quad.slotMaterial });
         proximoIdFace += 1;
     }
 
@@ -426,31 +555,96 @@ export function cortaAnelAresta(malha: MalhaEditavelLocal, a: number, b: number)
     return { malha: { vertices, faces: [...facesAjustadas, ...facesNovas], proximoIdFace }, indicesNovoAnel: [...meioPorChave.values()] };
 };
 
-// Inset da face: encolhe a face em direção ao centróide criando uma moldura de quads (o "extrude sem altura + escala" da modelagem de gaiola).
-export function insetaFace(malha: MalhaEditavelLocal, idFace: string, fator = 0.3): { malha: MalhaEditavelLocal; idNovaFace: string; indicesNovaFace: number[] } {
-    const face = malha.faces.find(item => item.id === idFace);
-    if (!face) return { malha, idNovaFace: idFace, indicesNovaFace: [] };
+// Normal da face por Newell (robusta p/ n-gons quase planos), normalizada; segue o winding (CCW visto do lado da normal).
+function normalDaFace(malha: MalhaEditavelLocal, indices: readonly number[]): Vetor3Malha {
+    let nx = 0;
+    let ny = 0;
+    let nz = 0;
+    for (let i = 0; i < indices.length; i += 1) {
+        const a = malha.vertices[indices[i]];
+        const b = malha.vertices[indices[(i + 1) % indices.length]];
+        nx += (a[1] - b[1]) * (a[2] + b[2]);
+        ny += (a[2] - b[2]) * (a[0] + b[0]);
+        nz += (a[0] - b[0]) * (a[1] + b[1]);
+    }
+    const comprimento = Math.hypot(nx, ny, nz) || 1;
+    return [nx / comprimento, ny / comprimento, nz / comprimento];
+};
 
-    const centro = centroideDaMalha(malha, face.indicesVertices);
-    const base = malha.vertices.length;
-    const novosVertices: Vetor3Malha[] = face.indicesVertices.map(indice => { const v = malha.vertices[indice]; return [v[0] + fator * (centro[0] - v[0]), v[1] + fator * (centro[1] - v[1]), v[2] + fator * (centro[2] - v[2])]; });
-    const vertices: Vetor3Malha[] = [...malha.vertices, ...novosVertices];
-    const indicesNovaFace = face.indicesVertices.map((_, posicao) => base + posicao);
+// Normal INTERNA da aresta (de→para) no plano da face: cross(normal da face, direção da aresta) aponta para dentro do polígono CCW.
+function normalInternaAresta(normalFace: Vetor3Malha, de: Vetor3Malha, para: Vetor3Malha): Vetor3Malha {
+    const ex = para[0] - de[0];
+    const ey = para[1] - de[1];
+    const ez = para[2] - de[2];
+    const cx = normalFace[1] * ez - normalFace[2] * ey;
+    const cy = normalFace[2] * ex - normalFace[0] * ez;
+    const cz = normalFace[0] * ey - normalFace[1] * ex;
+    const comprimento = Math.hypot(cx, cy, cz) || 1;
+    return [cx / comprimento, cy / comprimento, cz / comprimento];
+};
 
+// Inset de faces por DISTÂNCIA ABSOLUTA (unidade de cena = metro), cada face INDIVIDUALMENTE (o "Individual" do Blender):
+// cada vértice recua pelo miter das normais internas das 2 arestas adjacentes — a moldura fica com largura uniforme igual
+// à distância (exata em retângulos). Face que degeneraria (distância ≥ metade do lado menor) é PULADA, não corrompida.
+export function insetaFacesDaMalha(malha: MalhaEditavelLocal, idsFaces: readonly string[], distancia: number): { malha: MalhaEditavelLocal; idsNovasFaces: string[]; indicesNovasFaces: number[] } {
+    const alvo = new Set(idsFaces);
+    const vertices: Vetor3Malha[] = malha.vertices.map(vertice => [vertice[0], vertice[1], vertice[2]]);
     let proximoIdFace = malha.proximoIdFace;
-    const faces: FaceMalhaLocal[] = malha.faces.filter(item => item.id !== idFace);
-    const idNovaFace = `f${proximoIdFace}`;
-    proximoIdFace += 1;
-    faces.push({ id: idNovaFace, nome: 'Inset', indicesVertices: indicesNovaFace });
+    const faces: FaceMalhaLocal[] = [];
+    const idsNovasFaces: string[] = [];
+    const indicesNovasFaces: number[] = [];
 
-    const total = face.indicesVertices.length;
-    for (let i = 0; i < total; i += 1) {
-        const i2 = (i + 1) % total;
-        faces.push({ id: `f${proximoIdFace}`, nome: `Inset Moldura ${i + 1}`, indicesVertices: [face.indicesVertices[i], face.indicesVertices[i2], indicesNovaFace[i2], indicesNovaFace[i]] });
+    for (const face of malha.faces) {
+        if (!alvo.has(face.id)) { faces.push({ ...face, indicesVertices: [...face.indicesVertices] }); continue; }
+
+        const ids = face.indicesVertices;
+        const total = ids.length;
+        const normal = normalDaFace(malha, ids);
+        const internos: Vetor3Malha[] = [];
+        let degenerada = false;
+        for (let i = 0; i < total; i += 1) {
+            const anterior = malha.vertices[ids[(i - 1 + total) % total]];
+            const atual = malha.vertices[ids[i]];
+            const seguinte = malha.vertices[ids[(i + 1) % total]];
+            const normal1 = normalInternaAresta(normal, anterior, atual);
+            const normal2 = normalInternaAresta(normal, atual, seguinte);
+            const denominador = 1 + (normal1[0] * normal2[0] + normal1[1] * normal2[1] + normal1[2] * normal2[2]);
+            if (denominador <= 0.0001) { degenerada = true; break; }
+            const fator = distancia / denominador;
+            internos.push([atual[0] + (normal1[0] + normal2[0]) * fator, atual[1] + (normal1[1] + normal2[1]) * fator, atual[2] + (normal1[2] + normal2[2]) * fator]);
+        }
+        // Anel interno que virou/colapsou (Newell do anel novo contra a normal original) = inset largo demais p/ esta face.
+        if (!degenerada) {
+            let nx = 0;
+            let ny = 0;
+            let nz = 0;
+            for (let i = 0; i < total; i += 1) {
+                const a = internos[i];
+                const b = internos[(i + 1) % total];
+                nx += (a[1] - b[1]) * (a[2] + b[2]);
+                ny += (a[2] - b[2]) * (a[0] + b[0]);
+                nz += (a[0] - b[0]) * (a[1] + b[1]);
+            }
+            degenerada = nx * normal[0] + ny * normal[1] + nz * normal[2] <= 0.000000001;
+        }
+        if (degenerada) { faces.push({ ...face, indicesVertices: [...face.indicesVertices] }); continue; }
+
+        const base = vertices.length;
+        for (const interno of internos) vertices.push(interno);
+        const indicesFaceInterna = ids.map((_, posicao) => base + posicao);
+        const idFaceInterna = `f${proximoIdFace}`;
         proximoIdFace += 1;
+        faces.push({ id: idFaceInterna, nome: 'Inset', indicesVertices: indicesFaceInterna, slotMaterial: face.slotMaterial });
+        idsNovasFaces.push(idFaceInterna);
+        indicesNovasFaces.push(...indicesFaceInterna);
+        for (let i = 0; i < total; i += 1) {
+            const i2 = (i + 1) % total;
+            faces.push({ id: `f${proximoIdFace}`, nome: `Inset Moldura ${i + 1}`, indicesVertices: [ids[i], ids[i2], indicesFaceInterna[i2], indicesFaceInterna[i]], slotMaterial: face.slotMaterial });
+            proximoIdFace += 1;
+        }
     }
 
-    return { malha: { vertices, faces, proximoIdFace }, idNovaFace, indicesNovaFace };
+    return { malha: { vertices, faces, proximoIdFace }, idsNovasFaces, indicesNovasFaces };
 };
 
 // Exclui faces por id; vértices órfãos são removidos com remapeamento. Bloqueado se a malha ficaria sem faces.
@@ -491,7 +685,7 @@ export function espelhaMalhaX(malha: MalhaEditavelLocal, epsilon = 0.0001): Malh
     for (const face of malha.faces) {
         const idsEspelho = face.indicesVertices.map(indice => espelhoDe.get(indice) ?? indice);
         if (idsEspelho.every((id, i) => id === face.indicesVertices[i])) continue;
-        faces.push({ id: `f${proximoIdFace}`, nome: `${face.nome} (espelho)`, indicesVertices: [...idsEspelho].reverse() });
+        faces.push({ id: `f${proximoIdFace}`, nome: `${face.nome} (espelho)`, indicesVertices: [...idsEspelho].reverse(), slotMaterial: face.slotMaterial });
         proximoIdFace += 1;
     }
 

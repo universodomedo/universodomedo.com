@@ -47,16 +47,18 @@ export interface EntradaSerializacaoObjetoEditor3D {
     readonly nome: string;
     readonly tipo: TipoPrimitivaEditor3D;
     readonly cor: string;
+    readonly materiaisExtras: readonly { readonly nome: string; readonly cor: string }[];
     readonly idPeca: string | null;
     readonly malha: MalhaEditavelLocal;
     readonly subdivisao: number;
+    readonly espessura: number;
     readonly mesh: Mesh;
 };
 
 function serializaMalhaEditavel(malha: MalhaEditavelLocal): ObjetoCenaCanonicaEditor3D['malhaEditavel'] {
     return {
         vertices: malha.vertices.map(vertice => [vertice[0], vertice[1], vertice[2]] as Vetor3CenaCanonicaEditor3D),
-        faces: malha.faces.map(face => ({ id: face.id, nome: face.nome, indicesVertices: [...face.indicesVertices] })),
+        faces: malha.faces.map(face => ({ id: face.id, nome: face.nome, indicesVertices: [...face.indicesVertices], ...(face.slotMaterial === undefined || face.slotMaterial <= 0 ? {} : { slotMaterial: face.slotMaterial }) })),
         proximoIdFace: malha.proximoIdFace,
     };
 };
@@ -81,6 +83,8 @@ function serializaObjetoEditor3D(entrada: EntradaSerializacaoObjetoEditor3D): Ob
         idPeca: entrada.idPeca,
         malhaEditavel: serializaMalhaEditavel(entrada.malha),
         subdivisao: entrada.subdivisao,
+        ...(entrada.espessura > 0 ? { espessura: entrada.espessura } : {}),
+        ...(entrada.materiaisExtras.length > 0 ? { materiaisExtras: entrada.materiaisExtras.map(material => ({ nome: material.nome, cor: corHexParaVetor3Editor3D(material.cor) })) } : {}),
     };
 };
 
@@ -111,12 +115,16 @@ export interface ObjetoCarregadoEditor3D {
     readonly transform: TransformEditor3D;
     readonly malha?: MalhaEditavelLocal;
     readonly subdivisao: number;
+    // Espessura de parede (Solidify de exibição), em metros. 0 = desligado. Persistência no contrato chega com o EDT-07.
+    readonly espessura: number;
+    // Slots de material adicionais (slot 0 = base = cor). Persistência no contrato chega com o EDT-07.
+    readonly materiaisExtras: readonly { readonly nome: string; readonly cor: string }[];
 };
 
 function desserializaMalhaEditavel(malha: NonNullable<ObjetoCenaCanonicaEditor3D['malhaEditavel']>): MalhaEditavelLocal {
     return {
         vertices: malha.vertices.map(vertice => [vertice[0], vertice[1], vertice[2]] as Vetor3Malha),
-        faces: malha.faces.map(face => ({ id: face.id, nome: face.nome, indicesVertices: [...face.indicesVertices] })),
+        faces: malha.faces.map(face => ({ id: face.id, nome: face.nome, indicesVertices: [...face.indicesVertices], ...(face.slotMaterial === undefined ? {} : { slotMaterial: face.slotMaterial }) })),
         proximoIdFace: malha.proximoIdFace,
     };
 };
@@ -134,6 +142,8 @@ export function desserializaCenaCanonicaEditor3D(cena: CenaCanonicaEditor3D): Ob
             transform: { posicao: [objeto.posicao[0], objeto.posicao[1], objeto.posicao[2]], rotacao: [objeto.rotacao[0], objeto.rotacao[1], objeto.rotacao[2]], escala: [objeto.escala[0], objeto.escala[1], objeto.escala[2]] },
             malha: objeto.malhaEditavel ? desserializaMalhaEditavel(objeto.malhaEditavel) : undefined,
             subdivisao: objeto.subdivisao ?? 0,
+            espessura: objeto.espessura ?? 0,
+            materiaisExtras: (objeto.materiaisExtras ?? []).map(material => ({ nome: material.nome, cor: vetor3ParaCorHexEditor3D(material.cor) })),
         });
     }
     return carregados;

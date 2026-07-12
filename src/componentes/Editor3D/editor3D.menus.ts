@@ -1,4 +1,4 @@
-export type ComandoMenuEditor3D = 'NOVO_PROJETO' | 'SALVAR_PROJETO_ATUAL' | 'SALVAR_NOVO_PROJETO' | 'ABRIR_PROJETO' | 'CRIAR_CAPA_ARTE' | 'CRIAR_PERSONAGEM' | 'ADD_CUBO' | 'ADD_CILINDRO' | 'ADD_ESFERA' | 'NOVO_MESH' | 'CAPTURAR_ARTE_CAPA';
+export type ComandoMenuEditor3D = 'NOVO_PROJETO' | 'SALVAR_PROJETO_ATUAL' | 'SALVAR_NOVO_PROJETO' | 'ABRIR_PROJETO' | 'CRIAR_CAPA_ARTE' | 'CRIAR_PERSONAGEM' | 'CRIAR_MAPA' | 'ADD_CUBO' | 'ADD_CILINDRO' | 'ADD_ESFERA' | 'NOVO_MESH' | 'CAPTURAR_ARTE_CAPA';
 
 export interface ItemMenuEditor3D {
     readonly rotulo: string;
@@ -20,7 +20,7 @@ export const MENUS_EDITOR_3D: readonly MenuEditor3D[] = [
             { rotulo: 'Salvar Projeto', comando: 'SALVAR_PROJETO_ATUAL' },
             { rotulo: 'Salvar como Novo', comando: 'SALVAR_NOVO_PROJETO' },
             { rotulo: 'Abrir Projeto', comando: 'ABRIR_PROJETO' },
-            { rotulo: 'Criar Especial', itens: [{ rotulo: 'Capa de Arte', comando: 'CRIAR_CAPA_ARTE' }, { rotulo: 'Personagem', comando: 'CRIAR_PERSONAGEM' }] },
+            { rotulo: 'Criar Especial', itens: [{ rotulo: 'Capa de Arte', comando: 'CRIAR_CAPA_ARTE' }, { rotulo: 'Personagem', comando: 'CRIAR_PERSONAGEM' }, { rotulo: 'Mapa', comando: 'CRIAR_MAPA' }] },
         ],
     },
     {

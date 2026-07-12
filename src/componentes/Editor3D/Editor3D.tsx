@@ -5,8 +5,8 @@ import styles from './Editor3D.module.css';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useThree, type ThreeEvent } from '@react-three/fiber';
 import { GizmoHelper, GizmoViewport, Grid, OrbitControls, TransformControls } from '@react-three/drei';
-import { BufferAttribute, BufferGeometry, Color, Object3D, Plane, Raycaster, Vector2, Vector3 } from 'three';
-import type { EventDispatcher, Mesh } from 'three';
+import { BufferAttribute, BufferGeometry, Color, Mesh, MeshStandardMaterial, Object3D, Plane, Raycaster, Vector2, Vector3 } from 'three';
+import type { EventDispatcher } from 'three';
 import type { CorpoPersonagemCenaCanonicaEditor3D, MembroPersonagemEditor3D, PecaPersonagemCenaCanonicaEditor3D, Projeto3DResumoPersistido, TipoProjetoEditor3D } from 'types-nora-api';
 
 import { CORPO_PERSONAGEM_PADRAO_EDITOR3D, ancoraPunhoCorpoPersonagem, ancoraRegiaoCorpoPersonagem, escalaMaoCorpoPersonagem, geraGeometriaCorpoPersonagem } from 'Funcionalidades/CorpoPersonagem/corpoPersonagem.gerador';
@@ -24,7 +24,7 @@ import { CAMERA_PADRAO_CAPA_ARTE_EDITOR3D, CAPA_ARTE_PADRAO_EDITOR3D, COR_OBJETO
 import { consultaProjeto3D, listaProjetos3D, salvaProjeto3D } from './editor3D.projeto.api';
 import type { ComandoMenuEditor3D } from './editor3D.menus';
 import { CURSOR_MODO_TRANSFORM_EDITOR3D, SELECAO_CAMERA_EDITOR3D, SELECAO_CORPO_PERSONAGEM_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D, type CampoTransformEditor3D, type ModoTransformEditor3D } from './editor3D.tipos';
-import { MAXIMO_SUBDIVISAO_MALHA_EDITOR3D, arestasDaMalha, centroideDaMalha, chanframaAresta, cortaAnelAresta, criaGeometriaDeMalha, criaMalhaCilindro, criaMalhaCubo, criaMalhaEsfera, espelhaMalhaX, excluiFacesDaMalha, excluiVerticesDaMalha, extrudaFace, fundeVerticesDaMalha, insetaFace, subdivideMalhaCatmullClark, type MalhaEditavelLocal, type Vetor3Malha } from './editor3D.malha';
+import { MAXIMO_ESPESSURA_MALHA_EDITOR3D, MAXIMO_SUBDIVISAO_MALHA_EDITOR3D, aplicaTransformNaMalha, arestasDaMalha, centroideDaMalha, chanframaAresta, cortaAnelAresta, criaGeometriaDeMalha, criaMalhaCilindro, criaMalhaCubo, criaMalhaEsfera, dimensoesDaMalha, espelhaMalhaX, excluiFacesDaMalha, excluiVerticesDaMalha, extrudaFace, fundeVerticesDaMalha, insetaFacesDaMalha, solidificaMalha, subdivideMalhaCatmullClark, type MalhaEditavelLocal, type Vetor3Malha } from './editor3D.malha';
 import { BarraEdicaoMalhaEditor3D, type ModoSelecaoEdicaoEditor3D } from './BarraEdicaoMalhaEditor3D';
 import { IndicadorModoEditor3D } from './IndicadorModoEditor3D';
 import { PainelParametrizacaoMeshEditor3D, type CampoVetorCriacaoEditor3D, type ParamCriacaoMalhaEditor3D } from './PainelParametrizacaoMeshEditor3D';
@@ -34,7 +34,11 @@ import type { CampoVetorCameraCapaArteEditor3D } from './PainelCameraCapaArteEdi
 import { HomeEditor3D } from './HomeEditor3D';
 
 type ModoOperacaoEditor3D = 'OBJETO' | 'EDICAO';
-type ObjetoEditor3D = { id: number; tipo: TipoPrimitivaEditor3D; nome: string; cor: string; idPeca: string | null; visivel: boolean; malha: MalhaEditavelLocal; subdivisao: number; transformInicial: TransformEditor3D; };
+// Raycast no-op estável (X-Ray): o mesh deixa de interceptar cliques sem recriar função a cada render.
+const raycastNuloEditor3D = (): null => null;
+// Slot de material adicional do objeto (slot 0 = base = `cor`; extras são slots 1..N). Faces apontam o slot via `slotMaterial`.
+type MaterialExtraEditor3D = { nome: string; cor: string; };
+type ObjetoEditor3D = { id: number; tipo: TipoPrimitivaEditor3D; nome: string; cor: string; materiaisExtras: readonly MaterialExtraEditor3D[]; idPeca: string | null; visivel: boolean; malha: MalhaEditavelLocal; subdivisao: number; espessura: number; transformInicial: TransformEditor3D; };
 // O `state.controls` do R3F é tipado como EventDispatcher; o OrbitControls do drei acrescenta `enabled` — estreitamos p/ togglar durante o drag.
 type ControleOrbitaEditor3D = EventDispatcher & { enabled: boolean };
 
@@ -51,6 +55,8 @@ type AbaEditor3D = { readonly idAba: number; readonly nomePadrao: string; readon
 const CENA_VAZIA_EDITOR3D: CenaArmazenadaEditor3D = { objetos: [], colecoes: [], pecas: [], corpoPersonagem: null, idSelecionado: null, projetoAberto: null, alterado: false, ehInicio: false, tipoProjeto: 'PADRAO', camera: null, capaArte: CAPA_ARTE_PADRAO_EDITOR3D };
 const CENA_INICIO_EDITOR3D: CenaArmazenadaEditor3D = { objetos: [], colecoes: [], pecas: [], corpoPersonagem: null, idSelecionado: null, projetoAberto: null, alterado: false, ehInicio: true, tipoProjeto: 'PADRAO', camera: null, capaArte: CAPA_ARTE_PADRAO_EDITOR3D };
 const CENA_CAPA_ARTE_EDITOR3D: CenaArmazenadaEditor3D = { objetos: [], colecoes: [], pecas: [], corpoPersonagem: null, idSelecionado: null, projetoAberto: null, alterado: false, ehInicio: false, tipoProjeto: 'CAPA_ARTE', camera: CAMERA_PADRAO_CAPA_ARTE_EDITOR3D, capaArte: CAPA_ARTE_PADRAO_EDITOR3D };
+// Mapa: cena de autoria de MAPAS jogáveis (a sala do jogo nasce aqui). Estruturalmente igual ao projeto vazio — a diferença é o tipoProjeto persistido, que gateia o consumo (Partida referencia projetos MAPA).
+const CENA_MAPA_EDITOR3D: CenaArmazenadaEditor3D = { ...CENA_VAZIA_EDITOR3D, tipoProjeto: 'MAPA' };
 
 // Histórico de Desfazer/Refazer: snapshots da cena ativa (mesma captura usada pelas abas), com teto para não crescer sem limite.
 const LIMITE_HISTORICO_EDITOR3D = 50;
@@ -102,9 +108,12 @@ export function Editor3D() {
     const [modoOperacao, setModoOperacao] = useState<ModoOperacaoEditor3D>('OBJETO');
     const [verticesSelecionados, setVerticesSelecionados] = useState<readonly number[]>([]);
     const [modoSelecaoEdicao, setModoSelecaoEdicao] = useState<ModoSelecaoEdicaoEditor3D>('VERTICE');
-    const [faceSelecionada, setFaceSelecionada] = useState<string | null>(null);
+    // Seleção de faces é um CONJUNTO (shift aditivo, como nos vértices): operações por face varrem a seleção inteira.
+    const [facesSelecionadas, setFacesSelecionadas] = useState<readonly string[]>([]);
     const [quantidadeBevel, setQuantidadeBevel] = useState(0.25);
-    const [fatorInset, setFatorInset] = useState(0.3);
+    const [distanciaInset, setDistanciaInset] = useState(0.5);
+    // X-Ray (modo EDIÇÃO): malha translúcida e SELEÇÃO atravessando a geometria — sem ele, handle atrás de parede é inalcançável.
+    const [xRayAtivo, setXRayAtivo] = useState(false);
     const [paramsCriacao, setParamsCriacao] = useState<ParamCriacaoMalhaEditor3D | null>(null);
     const [capturando, setCapturando] = useState(false);
     const [capaSalva, setCapaSalva] = useState(false);
@@ -176,6 +185,10 @@ export function Editor3D() {
         setTipoProjeto(cena.tipoProjeto);
         setCamera(cena.camera);
         setCapaArte(cena.capaArte);
+        // O painel Transform lê da mesh viva, mas ao repor uma cena (undo/redo/troca de aba) a mesh só assenta no effect do
+        // objeto — sincroniza pelo transform gravado na própria cena (o mesmo que a mesh vai receber) p/ não exibir valor velho.
+        const objetoSelecionadoCena = cena.idSelecionado !== null && cena.idSelecionado > 0 ? (cena.objetos.find(objeto => objeto.id === cena.idSelecionado) ?? null) : null;
+        setTransformSelecionado(objetoSelecionadoCena !== null ? objetoSelecionadoCena.transformInicial : null);
         setCamPovAtiva(false);
         setAlvoTravado(true);
     }, []);
@@ -231,7 +244,7 @@ export function Editor3D() {
         setPilhaRefazer(atuais => [...atuais, capturaAtual]);
         tagHistoricoRef.current = null;
         setVerticesSelecionados([]);
-        setFaceSelecionada(null);
+        setFacesSelecionadas([]);
         aplicaCenaAtiva(alvo);
     }, [pilhaDesfazer, capturaCenaAtiva, aplicaCenaAtiva]);
 
@@ -243,7 +256,7 @@ export function Editor3D() {
         setPilhaDesfazer(atuais => [...atuais, capturaAtual]);
         tagHistoricoRef.current = null;
         setVerticesSelecionados([]);
-        setFaceSelecionada(null);
+        setFacesSelecionadas([]);
         aplicaCenaAtiva(alvo);
     }, [pilhaRefazer, capturaCenaAtiva, aplicaCenaAtiva]);
 
@@ -325,7 +338,7 @@ export function Editor3D() {
         registraHistorico();
         contadorRef.current += 1;
         const id = contadorRef.current;
-        setObjetos(atuais => [...atuais, { id, tipo, nome: `${rotuloTipoPrimitivaEditor3D(tipo)} ${id}`, cor: COR_OBJETO_PADRAO_EDITOR3D, idPeca: null, visivel: true, malha: criaMalhaPrimitiva(tipo), subdivisao: 0, transformInicial: { posicao: calculaPosicaoInicialObjeto(atuais.length), rotacao: [0, 0, 0], escala: [1, 1, 1] } }]);
+        setObjetos(atuais => [...atuais, { id, tipo, nome: `${rotuloTipoPrimitivaEditor3D(tipo)} ${id}`, cor: COR_OBJETO_PADRAO_EDITOR3D, materiaisExtras: [], idPeca: null, visivel: true, malha: criaMalhaPrimitiva(tipo), subdivisao: 0, espessura: 0, transformInicial: { posicao: calculaPosicaoInicialObjeto(atuais.length), rotacao: [0, 0, 0], escala: [1, 1, 1] } }]);
         setIdSelecionado(id);
         setAlterado(true);
     }, [registraHistorico]);
@@ -358,8 +371,8 @@ export function Editor3D() {
             : { ...objeto.transformInicial, posicao: [objeto.transformInicial.posicao[0] + 0.4, objeto.transformInicial.posicao[1], objeto.transformInicial.posicao[2] + 0.4] };
         contadorRef.current += 1;
         const novoId = contadorRef.current;
-        const malhaCopiada: MalhaEditavelLocal = { vertices: objeto.malha.vertices.map(vertice => [vertice[0], vertice[1], vertice[2]] as Vetor3Malha), faces: objeto.malha.faces.map(face => ({ id: face.id, nome: face.nome, indicesVertices: [...face.indicesVertices] })), proximoIdFace: objeto.malha.proximoIdFace };
-        setObjetos(atuais => [...atuais, { ...objeto, id: novoId, nome: `${objeto.nome} (cópia)`, malha: malhaCopiada, transformInicial: transformAtual }]);
+        const malhaCopiada: MalhaEditavelLocal = { vertices: objeto.malha.vertices.map(vertice => [vertice[0], vertice[1], vertice[2]] as Vetor3Malha), faces: objeto.malha.faces.map(face => ({ ...face, indicesVertices: [...face.indicesVertices] })), proximoIdFace: objeto.malha.proximoIdFace };
+        setObjetos(atuais => [...atuais, { ...objeto, id: novoId, nome: `${objeto.nome} (cópia)`, materiaisExtras: objeto.materiaisExtras.map(material => ({ ...material })), malha: malhaCopiada, transformInicial: transformAtual }]);
         setColecoes(atuais => atuais.map(colecao => colecao.idsObjetos.includes(id) ? { ...colecao, idsObjetos: [...colecao.idsObjetos, novoId] } : colecao));
         setIdSelecionado(novoId);
         setAlterado(true);
@@ -384,6 +397,48 @@ export function Editor3D() {
         const nivel = Math.max(0, Math.min(MAXIMO_SUBDIVISAO_MALHA_EDITOR3D, Math.round(subdivisao)));
         registraHistorico();
         setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, subdivisao: nivel } : objeto));
+        setAlterado(true);
+    }, [registraHistorico]);
+
+    // Materiais do objeto: slot 0 = base (a Cor); extras = slots 1..N. Novo material nasce claro (o interior da sala do roteiro).
+    const adicionaMaterialObjeto = useCallback((id: number) => {
+        registraHistorico();
+        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, materiaisExtras: [...objeto.materiaisExtras, { nome: `Material ${objeto.materiaisExtras.length + 2}`, cor: '#ede8d0' }] } : objeto));
+        setAlterado(true);
+    }, [registraHistorico]);
+
+    const mudaCorMaterialObjeto = useCallback((id: number, slot: number, cor: string) => {
+        if (slot <= 0) { mudaCorObjeto(id, cor); return; }
+        registraHistorico(`cor-material-${id}-${slot}`);
+        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, materiaisExtras: objeto.materiaisExtras.map((material, indice) => indice === slot - 1 ? { ...material, cor } : material) } : objeto));
+        setAlterado(true);
+    }, [mudaCorObjeto, registraHistorico]);
+
+    const renomeiaMaterialObjeto = useCallback((id: number, slot: number, nome: string) => {
+        const nomeLimpo = nome.trim();
+        if (nomeLimpo.length === 0 || slot <= 0) return;
+        registraHistorico();
+        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, materiaisExtras: objeto.materiaisExtras.map((material, indice) => indice === slot - 1 ? { ...material, nome: nomeLimpo } : material) } : objeto));
+        setAlterado(true);
+    }, [registraHistorico]);
+
+    // Atribuir (Assign): grava o slot do material nas faces SELECIONADAS da gaiola — o render agrupa os triângulos por slot.
+    const atribuiMaterialAsFacesSelecionadas = useCallback((slot: number) => {
+        if (idSelecionado === null || facesSelecionadas.length === 0) return;
+        const objeto = objetos.find(item => item.id === idSelecionado);
+        if (!objeto) return;
+        registraHistorico();
+        const alvo = new Set(facesSelecionadas);
+        const faces = objeto.malha.faces.map(face => alvo.has(face.id) ? { ...face, slotMaterial: slot <= 0 ? undefined : slot } : face);
+        setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: { ...item.malha, faces } } : item));
+        setAlterado(true);
+    }, [idSelecionado, facesSelecionadas, objetos, registraHistorico]);
+
+    // Espessura de parede (Solidify) de EXIBIÇÃO do objeto, em metros: 0 = desligado; a gaiola segue original (não-destrutivo, padrão da subdivisão).
+    const mudaEspessuraObjeto = useCallback((id: number, espessura: number) => {
+        const valor = Math.max(0, Math.min(MAXIMO_ESPESSURA_MALHA_EDITOR3D, espessura));
+        registraHistorico(`espessura-objeto-${id}`);
+        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, espessura: valor } : objeto));
         setAlterado(true);
     }, [registraHistorico]);
 
@@ -412,7 +467,7 @@ export function Editor3D() {
         const base = ancoraRegiaoCorpoPersonagem(corpoPersonagem, regiaoCorpoSelecionada);
         const novos: ObjetoEditor3D[] = carregados.map(carregado => {
             contadorRef.current += 1;
-            return { id: contadorRef.current, tipo: carregado.tipo, nome: carregado.nome, cor: carregado.cor, idPeca, visivel: true, malha: carregado.malha ?? criaMalhaPrimitiva(carregado.tipo), subdivisao: carregado.subdivisao, transformInicial: { posicao: [carregado.transform.posicao[0] + base[0], carregado.transform.posicao[1] + base[1], carregado.transform.posicao[2] + base[2]], rotacao: carregado.transform.rotacao, escala: carregado.transform.escala } };
+            return { id: contadorRef.current, tipo: carregado.tipo, nome: carregado.nome, cor: carregado.cor, materiaisExtras: [], idPeca, visivel: true, malha: carregado.malha ?? criaMalhaPrimitiva(carregado.tipo), subdivisao: carregado.subdivisao, espessura: 0, transformInicial: { posicao: [carregado.transform.posicao[0] + base[0], carregado.transform.posicao[1] + base[1], carregado.transform.posicao[2] + base[2]], rotacao: carregado.transform.rotacao, escala: carregado.transform.escala } };
         });
         setObjetos(atuais => [...atuais, ...novos]);
         setPecas(atuais => [...atuais, { idPeca, membro: regiaoCorpoSelecionada, nome: nomeProjeto, idProjetoOrigem: persistido.id }]);
@@ -444,14 +499,19 @@ export function Editor3D() {
         contadorRef.current += 1;
         const id = contadorRef.current;
         const malha = criaMalhaPrimitiva(paramsCriacao.tipo, paramsCriacao.segmentos);
-        setObjetos(atuais => [...atuais, { id, tipo: paramsCriacao.tipo, nome: `${rotuloTipoPrimitivaEditor3D(paramsCriacao.tipo)} ${id}`, cor: COR_OBJETO_PADRAO_EDITOR3D, idPeca: null, visivel: true, malha, subdivisao: 0, transformInicial: { posicao: paramsCriacao.posicao, rotacao: paramsCriacao.rotacao, escala: paramsCriacao.escala } }]);
+        setObjetos(atuais => [...atuais, { id, tipo: paramsCriacao.tipo, nome: `${rotuloTipoPrimitivaEditor3D(paramsCriacao.tipo)} ${id}`, cor: COR_OBJETO_PADRAO_EDITOR3D, materiaisExtras: [], idPeca: null, visivel: true, malha, subdivisao: 0, espessura: 0, transformInicial: { posicao: paramsCriacao.posicao, rotacao: paramsCriacao.rotacao, escala: paramsCriacao.escala } }]);
         setIdSelecionado(id);
         setAlterado(true);
         setParamsCriacao(null);
     }, [paramsCriacao, registraHistorico]);
 
     const selecionaSubElemento = useCallback((vertices: readonly number[], faceId: string | null, aditivo: boolean) => {
-        setFaceSelecionada(aditivo ? null : faceId);
+        // Faces: clique simples substitui a seleção; shift alterna a face no conjunto (mesma semântica dos vértices).
+        setFacesSelecionadas(atuais => {
+            if (faceId === null) return aditivo ? atuais : [];
+            if (!aditivo) return [faceId];
+            return atuais.includes(faceId) ? atuais.filter(id => id !== faceId) : [...atuais, faceId];
+        });
         setVerticesSelecionados(atuais => {
             if (!aditivo) return [...vertices];
             const conjunto = new Set(atuais);
@@ -461,17 +521,18 @@ export function Editor3D() {
         });
     }, []);
 
+    // Extrude segue operação de UMA face (o fluxo com gizmo é por face); com várias selecionadas o botão desabilita.
     const extrudaFaceSelecionada = useCallback(() => {
-        if (idSelecionado === null || faceSelecionada === null) return;
+        if (idSelecionado === null || facesSelecionadas.length !== 1) return;
         const objeto = objetos.find(item => item.id === idSelecionado);
         if (!objeto) return;
         registraHistorico();
-        const resultado = extrudaFace(objeto.malha, faceSelecionada);
+        const resultado = extrudaFace(objeto.malha, facesSelecionadas[0]);
         setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado.malha } : item));
         setVerticesSelecionados(resultado.indicesNovaFace);
-        setFaceSelecionada(resultado.idNovaFace);
+        setFacesSelecionadas([resultado.idNovaFace]);
         setAlterado(true);
-    }, [idSelecionado, faceSelecionada, objetos, registraHistorico]);
+    }, [idSelecionado, facesSelecionadas, objetos, registraHistorico]);
 
     const chanframaArestaSelecionada = useCallback(() => {
         if (idSelecionado === null || modoSelecaoEdicao !== 'ARESTA' || verticesSelecionados.length !== 2) return;
@@ -482,7 +543,7 @@ export function Editor3D() {
         registraHistorico();
         setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado.malha } : item));
         setVerticesSelecionados(resultado.indicesChanfro);
-        setFaceSelecionada(null);
+        setFacesSelecionadas([]);
         setAlterado(true);
     }, [idSelecionado, modoSelecaoEdicao, verticesSelecionados, objetos, quantidadeBevel, registraHistorico]);
 
@@ -496,21 +557,23 @@ export function Editor3D() {
         registraHistorico();
         setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado.malha } : item));
         setVerticesSelecionados(resultado.indicesNovoAnel);
-        setFaceSelecionada(null);
+        setFacesSelecionadas([]);
         setAlterado(true);
     }, [idSelecionado, modoSelecaoEdicao, verticesSelecionados, objetos, registraHistorico]);
 
-    const insetaFaceSelecionada = useCallback(() => {
-        if (idSelecionado === null || faceSelecionada === null) return;
+    // Inset varre TODAS as faces selecionadas, cada uma individualmente, com largura de moldura absoluta em metros.
+    const insetaFacesSelecionadas = useCallback(() => {
+        if (idSelecionado === null || facesSelecionadas.length === 0) return;
         const objeto = objetos.find(item => item.id === idSelecionado);
         if (!objeto) return;
+        const resultado = insetaFacesDaMalha(objeto.malha, facesSelecionadas, distanciaInset);
+        if (resultado.idsNovasFaces.length === 0) return;
         registraHistorico();
-        const resultado = insetaFace(objeto.malha, faceSelecionada, fatorInset);
         setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado.malha } : item));
-        setVerticesSelecionados(resultado.indicesNovaFace);
-        setFaceSelecionada(resultado.idNovaFace);
+        setVerticesSelecionados(resultado.indicesNovasFaces);
+        setFacesSelecionadas(resultado.idsNovasFaces);
         setAlterado(true);
-    }, [idSelecionado, faceSelecionada, objetos, fatorInset, registraHistorico]);
+    }, [idSelecionado, facesSelecionadas, objetos, distanciaInset, registraHistorico]);
 
     // Espelhar X: opera na malha inteira do objeto selecionado (plano X=0 local; modele metade e espelhe).
     const espelhaObjetoSelecionadoX = useCallback(() => {
@@ -521,17 +584,34 @@ export function Editor3D() {
         const malhaEspelhada = espelhaMalhaX(objeto.malha);
         setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: malhaEspelhada } : item));
         setVerticesSelecionados([]);
-        setFaceSelecionada(null);
+        setFacesSelecionadas([]);
         setAlterado(true);
     }, [idSelecionado, objetos, registraHistorico]);
 
-    // Excluir contextual: no modo FACE remove a face selecionada; no modo VÉRTICE remove as faces que tocam os vértices selecionados.
+    // Aplicar Transformações (bake): grava o transform vivo da mesh nos vértices da gaiola e zera o transform (pos/rot 0, escala 1)
+    // sem mudança visual — as medidas reais viram a condição inicial do objeto (operações absolutas passam a valer sobre elas).
+    const aplicaTransformacoesObjetoSelecionado = useCallback(() => {
+        if (idSelecionado === null || idSelecionado < 0) return;
+        const objeto = objetos.find(item => item.id === idSelecionado);
+        const mesh = registroMeshes.current.get(idSelecionado);
+        if (!objeto || !mesh) return;
+        registraHistorico();
+        mesh.updateMatrix();
+        const malhaAplicada = aplicaTransformNaMalha(objeto.malha, mesh.matrix);
+        setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: malhaAplicada, transformInicial: { posicao: [0, 0, 0], rotacao: [0, 0, 0], escala: [1, 1, 1] } } : item));
+        setVerticesSelecionados([]);
+        setFacesSelecionadas([]);
+        setTransformSelecionado({ posicao: [0, 0, 0], rotacao: [0, 0, 0], escala: [1, 1, 1] });
+        setAlterado(true);
+    }, [idSelecionado, objetos, registraHistorico]);
+
+    // Excluir contextual: no modo FACE remove as faces selecionadas; no modo VÉRTICE remove as faces que tocam os vértices selecionados.
     const excluiSelecaoEdicao = useCallback(() => {
         if (idSelecionado === null) return;
         const objeto = objetos.find(item => item.id === idSelecionado);
         if (!objeto) return;
-        const resultado = modoSelecaoEdicao === 'FACE' && faceSelecionada !== null
-            ? excluiFacesDaMalha(objeto.malha, [faceSelecionada])
+        const resultado = modoSelecaoEdicao === 'FACE' && facesSelecionadas.length > 0
+            ? excluiFacesDaMalha(objeto.malha, facesSelecionadas)
             : modoSelecaoEdicao === 'VERTICE' && verticesSelecionados.length > 0
                 ? excluiVerticesDaMalha(objeto.malha, verticesSelecionados)
                 : null;
@@ -539,9 +619,9 @@ export function Editor3D() {
         registraHistorico();
         setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado } : item));
         setVerticesSelecionados([]);
-        setFaceSelecionada(null);
+        setFacesSelecionadas([]);
         setAlterado(true);
-    }, [idSelecionado, modoSelecaoEdicao, faceSelecionada, verticesSelecionados, objetos, registraHistorico]);
+    }, [idSelecionado, modoSelecaoEdicao, facesSelecionadas, verticesSelecionados, objetos, registraHistorico]);
 
     const fundeVerticesSelecionadosEdicao = useCallback(() => {
         if (idSelecionado === null || modoSelecaoEdicao !== 'VERTICE' || verticesSelecionados.length < 2) return;
@@ -552,7 +632,7 @@ export function Editor3D() {
         registraHistorico();
         setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado.malha } : item));
         setVerticesSelecionados([resultado.indiceFundido]);
-        setFaceSelecionada(null);
+        setFacesSelecionadas([]);
         setAlterado(true);
     }, [idSelecionado, modoSelecaoEdicao, verticesSelecionados, objetos, registraHistorico]);
 
@@ -580,7 +660,7 @@ export function Editor3D() {
         setCapturando(true);
     }, [tipoProjeto, camera]);
 
-    const montaObjetosCarregados = useCallback((carregados: readonly ObjetoCarregadoEditor3D[]): ObjetoEditor3D[] => carregados.map(carregado => { contadorRef.current += 1; return { id: contadorRef.current, tipo: carregado.tipo, nome: carregado.nome, cor: carregado.cor, idPeca: carregado.idPeca, visivel: true, malha: carregado.malha ?? criaMalhaPrimitiva(carregado.tipo), subdivisao: carregado.subdivisao, transformInicial: carregado.transform }; }), []);
+    const montaObjetosCarregados = useCallback((carregados: readonly ObjetoCarregadoEditor3D[]): ObjetoEditor3D[] => carregados.map(carregado => { contadorRef.current += 1; return { id: contadorRef.current, tipo: carregado.tipo, nome: carregado.nome, cor: carregado.cor, materiaisExtras: carregado.materiaisExtras.map(material => ({ ...material })), idPeca: carregado.idPeca, visivel: true, malha: carregado.malha ?? criaMalhaPrimitiva(carregado.tipo), subdivisao: carregado.subdivisao, espessura: carregado.espessura, transformInicial: carregado.transform }; }), []);
 
     const criaColecao = useCallback(() => {
         registraHistorico();
@@ -630,7 +710,7 @@ export function Editor3D() {
         const cenaAtual = capturaCenaAtiva();
         contadorAbaRef.current += 1;
         const novoId = contadorAbaRef.current;
-        const nomeNovaAba = cenaInicial.ehInicio ? 'Início' : cenaInicial.tipoProjeto === 'CAPA_ARTE' ? `Capa de Arte ${novoId}` : cenaInicial.tipoProjeto === 'PERSONAGEM' ? `Personagem ${novoId}` : `Novo Projeto ${novoId}`;
+        const nomeNovaAba = cenaInicial.ehInicio ? 'Início' : cenaInicial.tipoProjeto === 'CAPA_ARTE' ? `Capa de Arte ${novoId}` : cenaInicial.tipoProjeto === 'PERSONAGEM' ? `Personagem ${novoId}` : cenaInicial.tipoProjeto === 'MAPA' ? `Mapa ${novoId}` : `Novo Projeto ${novoId}`;
         setAbas(atuais => [...atuais.map(aba => aba.idAba === idAbaAtiva ? { ...aba, cenaInativa: cenaAtual } : aba), { idAba: novoId, nomePadrao: nomeNovaAba, cenaInativa: null }]);
         aplicaCenaNova(cenaInicial);
         setIdAbaAtiva(novoId);
@@ -662,7 +742,7 @@ export function Editor3D() {
         for (const objeto of objetos) {
             const mesh = registroMeshes.current.get(objeto.id);
             if (!mesh) continue;
-            entradas.push({ id: objeto.id, nome: objeto.nome, tipo: objeto.tipo, cor: objeto.cor, idPeca: objeto.idPeca, malha: objeto.malha, subdivisao: objeto.subdivisao, mesh });
+            entradas.push({ id: objeto.id, nome: objeto.nome, tipo: objeto.tipo, cor: objeto.cor, materiaisExtras: objeto.materiaisExtras, idPeca: objeto.idPeca, malha: objeto.malha, subdivisao: objeto.subdivisao, espessura: objeto.espessura, mesh });
         }
         return entradas;
     }, [objetos]);
@@ -714,6 +794,15 @@ export function Editor3D() {
             aplicaCenaNova(CENA_CAPA_ARTE_EDITOR3D);
         } else {
             abreNovaAba(CENA_CAPA_ARTE_EDITOR3D);
+        }
+    }, [ehInicio, idAbaAtiva, aplicaCenaNova, abreNovaAba]);
+
+    const iniciaMapa = useCallback(() => {
+        if (ehInicio) {
+            setAbas(atuais => atuais.map(aba => aba.idAba === idAbaAtiva ? { ...aba, nomePadrao: `Mapa ${aba.idAba}` } : aba));
+            aplicaCenaNova(CENA_MAPA_EDITOR3D);
+        } else {
+            abreNovaAba(CENA_MAPA_EDITOR3D);
         }
     }, [ehInicio, idAbaAtiva, aplicaCenaNova, abreNovaAba]);
 
@@ -778,7 +867,7 @@ export function Editor3D() {
 
     const comandoDesabilitado = useCallback((comando: ComandoMenuEditor3D): boolean => {
         if (salvando) return true;
-        if (ehInicio) return comando !== 'NOVO_PROJETO' && comando !== 'ABRIR_PROJETO' && comando !== 'CRIAR_CAPA_ARTE' && comando !== 'CRIAR_PERSONAGEM';
+        if (ehInicio) return comando !== 'NOVO_PROJETO' && comando !== 'ABRIR_PROJETO' && comando !== 'CRIAR_CAPA_ARTE' && comando !== 'CRIAR_PERSONAGEM' && comando !== 'CRIAR_MAPA';
         if (comando === 'SALVAR_PROJETO_ATUAL' || comando === 'SALVAR_NOVO_PROJETO') return objetos.length === 0 && tipoProjeto !== 'CAPA_ARTE' && tipoProjeto !== 'PERSONAGEM';
         if (comando === 'CAPTURAR_ARTE_CAPA') return objetos.length === 0 && tipoProjeto !== 'PERSONAGEM';
         return false;
@@ -792,11 +881,12 @@ export function Editor3D() {
         else if (comando === 'NOVO_PROJETO') iniciaProjetoVazio();
         else if (comando === 'CRIAR_CAPA_ARTE') iniciaCapaArte();
         else if (comando === 'CRIAR_PERSONAGEM') iniciaPersonagem();
+        else if (comando === 'CRIAR_MAPA') iniciaMapa();
         else if (comando === 'SALVAR_PROJETO_ATUAL') salvarProjetoAtual();
         else if (comando === 'SALVAR_NOVO_PROJETO') setModalSalvarAberto(true);
         else if (comando === 'ABRIR_PROJETO') void abrirModalAbrirProjeto();
         else if (comando === 'CAPTURAR_ARTE_CAPA') iniciaCaptura();
-    }, [adicionaObjeto, abreCriacaoMalha, iniciaProjetoVazio, iniciaCapaArte, iniciaPersonagem, salvarProjetoAtual, abrirModalAbrirProjeto, iniciaCaptura]);
+    }, [adicionaObjeto, abreCriacaoMalha, iniciaProjetoVazio, iniciaCapaArte, iniciaPersonagem, iniciaMapa, salvarProjetoAtual, abrirModalAbrirProjeto, iniciaCaptura]);
 
     const aoCapturar = useCallback((dataUrl: string) => {
         const arte: ArteDeCapa = { id: crypto.randomUUID(), tipo: 'ARTE_CAPA', largura: LARGURA_ARTE_DE_CAPA, altura: ALTURA_ARTE_DE_CAPA, imagem: dataUrl, origem: 'SNAPSHOT_3D', criadoEmMs: Date.now() };
@@ -835,9 +925,9 @@ export function Editor3D() {
         if (modo !== 'select' && !temObjetoSelecionado) setModo('select');
     }, [temObjetoSelecionado, modo]);
 
-    useEffect(() => { setVerticesSelecionados([]); setFaceSelecionada(null); setModoSelecaoEdicao('VERTICE'); }, [modoOperacao, idSelecionado]);
+    useEffect(() => { setVerticesSelecionados([]); setFacesSelecionadas([]); setModoSelecaoEdicao('VERTICE'); }, [modoOperacao, idSelecionado]);
 
-    useEffect(() => { setVerticesSelecionados([]); setFaceSelecionada(null); }, [modoSelecaoEdicao]);
+    useEffect(() => { setVerticesSelecionados([]); setFacesSelecionadas([]); }, [modoSelecaoEdicao]);
 
     // Ao sair do Início para o editor, o Canvas monta agora; reforça a remedição para não ficar preto no 1º frame.
     useEffect(() => {
@@ -884,8 +974,15 @@ export function Editor3D() {
         const objeto = objetos.find(item => item.id === idSelecionado);
         if (!objeto) return null;
         const pecaDoObjeto = objeto.idPeca !== null ? (pecas.find(peca => peca.idPeca === objeto.idPeca) ?? null) : null;
-        return { nome: objeto.nome, cor: objeto.cor, tipoRotulo: objeto.idPeca !== null ? 'Peça' : rotuloTipoPrimitivaEditor3D(objeto.tipo), subdivisao: objeto.subdivisao, peca: pecaDoObjeto !== null ? { idPeca: pecaDoObjeto.idPeca, nome: pecaDoObjeto.nome } : null };
+        return { nome: objeto.nome, cor: objeto.cor, materiaisExtras: objeto.materiaisExtras, tipoRotulo: objeto.idPeca !== null ? 'Peça' : rotuloTipoPrimitivaEditor3D(objeto.tipo), subdivisao: objeto.subdivisao, espessura: objeto.espessura, peca: pecaDoObjeto !== null ? { idPeca: pecaDoObjeto.idPeca, nome: pecaDoObjeto.nome } : null };
     }, [objetos, pecas, idSelecionado]);
+
+    // Base do campo Dimensões: caixa envolvente LOCAL da gaiola do objeto selecionado (dimensão exibida = base × escala viva da mesh).
+    const dimensoesBaseSelecionado = useMemo<Vetor3Malha | null>(() => {
+        if (idSelecionado === null || idSelecionado < 0) return null;
+        const objeto = objetos.find(item => item.id === idSelecionado);
+        return objeto ? dimensoesDaMalha(objeto.malha) : null;
+    }, [objetos, idSelecionado]);
 
     const regioesCorpo = useMemo(() => corpoPersonagem !== null ? REGIOES_CORPO_EDITOR3D.map(membro => ({ membro, rotulo: ROTULO_REGIAO_CORPO_EDITOR3D[membro] })) : [], [corpoPersonagem]);
 
@@ -911,15 +1008,15 @@ export function Editor3D() {
             <BarraAbasEditor3D abas={abasResumo} aoSelecionar={trocaAba} aoFechar={fechaAba} aoNovaAba={() => abreNovaAba(CENA_INICIO_EDITOR3D)} />
 
             {ehInicio ? (
-                <HomeEditor3D aoProjetoVazio={iniciaProjetoVazio} aoCapaArte={iniciaCapaArte} aoPersonagem={iniciaPersonagem} aoAbrirProjeto={abreProjetoEmAba} aoAbrirModal={() => void abrirModalAbrirProjeto()} />
+                <HomeEditor3D aoProjetoVazio={iniciaProjetoVazio} aoCapaArte={iniciaCapaArte} aoPersonagem={iniciaPersonagem} aoMapa={iniciaMapa} aoAbrirProjeto={abreProjetoEmAba} aoAbrirModal={() => void abrirModalAbrirProjeto()} />
             ) : (
                 <div className={styles.area_editor}>
                 <div className={styles.viewport} style={{ cursor: CURSOR_MODO_TRANSFORM_EDITOR3D[modo] }}>
                     <IndicadorModoEditor3D modo={modo} />
-                    {modoOperacao === 'EDICAO' && <BarraEdicaoMalhaEditor3D modoSelecao={modoSelecaoEdicao} podeExtrudar={modoSelecaoEdicao === 'FACE' && faceSelecionada !== null} podeChanfrar={modoSelecaoEdicao === 'ARESTA' && verticesSelecionados.length === 2} podeCortarAnel={modoSelecaoEdicao === 'ARESTA' && verticesSelecionados.length === 2} podeInsetar={modoSelecaoEdicao === 'FACE' && faceSelecionada !== null} podeExcluir={(modoSelecaoEdicao === 'FACE' && faceSelecionada !== null) || (modoSelecaoEdicao === 'VERTICE' && verticesSelecionados.length > 0)} podeFundir={modoSelecaoEdicao === 'VERTICE' && verticesSelecionados.length >= 2} quantidadeBevel={quantidadeBevel} fatorInset={fatorInset} aoTrocarModoSelecao={setModoSelecaoEdicao} aoExtrudar={extrudaFaceSelecionada} aoChanfrar={chanframaArestaSelecionada} aoCortarAnel={cortaAnelSelecionado} aoInsetar={insetaFaceSelecionada} aoExcluir={excluiSelecaoEdicao} aoFundir={fundeVerticesSelecionadosEdicao} aoMudarQuantidadeBevel={setQuantidadeBevel} aoMudarFatorInset={setFatorInset} />}
+                    {modoOperacao === 'EDICAO' && <BarraEdicaoMalhaEditor3D modoSelecao={modoSelecaoEdicao} xRayAtivo={xRayAtivo} aoAlternarXRay={() => setXRayAtivo(atual => !atual)} podeExtrudar={modoSelecaoEdicao === 'FACE' && facesSelecionadas.length === 1} podeChanfrar={modoSelecaoEdicao === 'ARESTA' && verticesSelecionados.length === 2} podeCortarAnel={modoSelecaoEdicao === 'ARESTA' && verticesSelecionados.length === 2} podeInsetar={modoSelecaoEdicao === 'FACE' && facesSelecionadas.length > 0} podeExcluir={(modoSelecaoEdicao === 'FACE' && facesSelecionadas.length > 0) || (modoSelecaoEdicao === 'VERTICE' && verticesSelecionados.length > 0)} podeFundir={modoSelecaoEdicao === 'VERTICE' && verticesSelecionados.length >= 2} quantidadeBevel={quantidadeBevel} distanciaInset={distanciaInset} aoTrocarModoSelecao={setModoSelecaoEdicao} aoExtrudar={extrudaFaceSelecionada} aoChanfrar={chanframaArestaSelecionada} aoCortarAnel={cortaAnelSelecionado} aoInsetar={insetaFacesSelecionadas} aoExcluir={excluiSelecaoEdicao} aoFundir={fundeVerticesSelecionadosEdicao} aoMudarQuantidadeBevel={setQuantidadeBevel} aoMudarDistanciaInset={setDistanciaInset} />}
                     <BotaoComandoEditor3D />
 
-                    <Canvas shadows dpr={[1, 2]} gl={{ preserveDrawingBuffer: true }} resize={{ offsetSize: true }} camera={{ position: [6, 5, 6], fov: 38, near: 0.1, far: 200 }} onPointerMissed={() => { if (arrastoObjetoAtivoRef.current) return; if (modoOperacao === 'EDICAO') setVerticesSelecionados([]); else { setIdSelecionado(null); setRegiaoCorpoSelecionada(null); setModo('select'); } }}>
+                    <Canvas shadows dpr={[1, 2]} gl={{ preserveDrawingBuffer: true }} resize={{ offsetSize: true }} camera={{ position: [6, 5, 6], fov: 38, near: 0.1, far: 200 }} onPointerMissed={evento => { if (arrastoObjetoAtivoRef.current) return; if (evento.shiftKey) return; if (modoOperacao === 'EDICAO') { setVerticesSelecionados([]); setFacesSelecionadas([]); } else { setIdSelecionado(null); setRegiaoCorpoSelecionada(null); setModo('select'); } }}>
                         <color attach="background" args={['#0e0c14']} />
                         <ambientLight intensity={0.6} color="#eef2f6" />
                         <hemisphereLight intensity={0.5} color="#f4f7fb" groundColor="#9aa1ad" />
@@ -929,7 +1026,7 @@ export function Editor3D() {
 
                         {tipoProjeto === 'PERSONAGEM' && corpoPersonagem && <CorpoPersonagemViewportEditor3D corpo={corpoPersonagem} selecionado={idSelecionado === SELECAO_CORPO_PERSONAGEM_EDITOR3D} aoSelecionar={() => selecionaCorpo(null)} />}
 
-                        {objetos.map(objeto => <ObjetoEditavelEditor3D key={objeto.id} objeto={objeto} visivelEfetivo={objeto.visivel && !colecaoOcultaPorObjeto.has(objeto.id)} selecionado={objeto.id === idSelecionado} edicaoAtiva={modoOperacao === 'EDICAO' && objeto.id === idSelecionado} modoSelecaoEdicao={modoSelecaoEdicao} verticesSelecionados={verticesSelecionados} faceSelecionada={faceSelecionada} modo={modo} ocultarGizmo={capturando} aoSelecionar={setIdSelecionado} aoSelecionarSubElemento={selecionaSubElemento} aoMoverVertices={moveVerticesSelecionados} aoIniciarArrasto={registraHistoricoArrasto} aoIniciarArrastoObjeto={iniciaArrastoObjeto} aoConfirmarArrastoObjeto={confirmaArrastoObjeto} aoCancelarArrastoObjeto={cancelaArrastoObjeto} arrastoAtivoRef={arrastoObjetoAtivoRef} registraMeshSelecionada={registraMeshSelecionada} registraMesh={registraMesh} aoTransformar={sincronizaTransformSelecionado} />)}
+                        {objetos.map(objeto => <ObjetoEditavelEditor3D key={objeto.id} objeto={objeto} visivelEfetivo={objeto.visivel && !colecaoOcultaPorObjeto.has(objeto.id)} selecionado={objeto.id === idSelecionado} edicaoAtiva={modoOperacao === 'EDICAO' && objeto.id === idSelecionado} modoSelecaoEdicao={modoSelecaoEdicao} verticesSelecionados={verticesSelecionados} facesSelecionadas={facesSelecionadas} xRayAtivo={xRayAtivo} modo={modo} ocultarGizmo={capturando} aoSelecionar={setIdSelecionado} aoSelecionarSubElemento={selecionaSubElemento} aoMoverVertices={moveVerticesSelecionados} aoIniciarArrasto={registraHistoricoArrasto} aoIniciarArrastoObjeto={iniciaArrastoObjeto} aoConfirmarArrastoObjeto={confirmaArrastoObjeto} aoCancelarArrastoObjeto={cancelaArrastoObjeto} arrastoAtivoRef={arrastoObjetoAtivoRef} registraMeshSelecionada={registraMeshSelecionada} registraMesh={registraMesh} aoTransformar={sincronizaTransformSelecionado} />)}
 
                         {paramsCriacao && <PreviewMalhaEditor3D params={paramsCriacao} />}
 
@@ -961,7 +1058,7 @@ export function Editor3D() {
                     )}
                 </div>
 
-                <PainelLateralEditor3D objetosRaiz={objetosRaizResumo} colecoes={colecoesArvore} totalObjetos={objetos.length} idSelecionado={idSelecionado} objetoSelecionado={objetoSelecionadoResumo} aoRenomearObjeto={nome => idSelecionado !== null && renomeiaObjeto(idSelecionado, nome)} aoMudarCorObjeto={cor => idSelecionado !== null && mudaCorObjeto(idSelecionado, cor)} aoMudarSubdivisaoObjeto={subdivisao => idSelecionado !== null && mudaSubdivisaoObjeto(idSelecionado, subdivisao)} aoEspelharObjetoX={espelhaObjetoSelecionadoX} aoDuplicarObjeto={duplicaObjeto} aoExcluirObjeto={removeObjeto} corpoPersonagem={corpoPersonagem} regioesCorpo={regioesCorpo} regiaoCorpoSelecionada={regiaoCorpoSelecionada} rotuloRegiaoSelecionada={regiaoCorpoSelecionada !== null ? ROTULO_REGIAO_CORPO_EDITOR3D[regiaoCorpoSelecionada] : 'Corpo'} pecasDaRegiao={pecasDaRegiaoSelecionada} aoSelecionarCorpo={selecionaCorpo} aoAtualizarParametroCorpo={atualizaParametroCorpo} aoMudarCorCorpo={mudaCorCorpo} aoAnexarPeca={() => void abrirModalAnexarPeca()} aoRemoverPeca={removePeca} transformSelecionado={transformSelecionado} camera={camera} capaArte={capaArte} refPreviewCamera={refCanvasPreviewCapa} povCameraAtiva={camPovAtiva} alvoTravado={alvoTravado} capturando={capturando} capaSalva={capaSalva} aoSelecionar={id => { setRegiaoCorpoSelecionada(null); setIdSelecionado(id === SELECAO_CAMERA_EDITOR3D || id === SELECAO_TITULO_CAPA_ARTE_EDITOR3D ? id : id < 0 ? null : id); }} aoAlternarVisibilidade={alternaVisibilidade} aoAtualizarTransform={atualizaTransformObjeto} aoAtualizarCameraVetor={atualizaCameraVetor} aoAtualizarCameraFov={atualizaCameraFov} aoAtualizarTituloTexto={atualizaTituloTexto} aoAtualizarTituloTransform={atualizaTituloTransform} aoAtualizarTituloCor={atualizaTituloCor} aoAlternarPovCamera={alternaPovCamera} aoAlternarAlvoTravado={alternaAlvoTravado} aoCapturar={iniciaCaptura} aoCriarColecao={criaColecao} aoAlternarVisibilidadeColecao={alternaVisibilidadeColecao} aoRenomearColecao={renomeiaColecao} aoRemoverColecao={removeColecao} aoMoverObjeto={moveObjetoParaColecao} />
+                <PainelLateralEditor3D objetosRaiz={objetosRaizResumo} colecoes={colecoesArvore} totalObjetos={objetos.length} idSelecionado={idSelecionado} objetoSelecionado={objetoSelecionadoResumo} aoRenomearObjeto={nome => idSelecionado !== null && renomeiaObjeto(idSelecionado, nome)} aoMudarCorObjeto={cor => idSelecionado !== null && mudaCorObjeto(idSelecionado, cor)} aoMudarSubdivisaoObjeto={subdivisao => idSelecionado !== null && mudaSubdivisaoObjeto(idSelecionado, subdivisao)} aoMudarEspessuraObjeto={espessura => idSelecionado !== null && mudaEspessuraObjeto(idSelecionado, espessura)} temFacesSelecionadas={modoOperacao === 'EDICAO' && modoSelecaoEdicao === 'FACE' && facesSelecionadas.length > 0} aoAdicionarMaterialObjeto={() => idSelecionado !== null && adicionaMaterialObjeto(idSelecionado)} aoMudarCorMaterialObjeto={(slot, cor) => idSelecionado !== null && mudaCorMaterialObjeto(idSelecionado, slot, cor)} aoRenomearMaterialObjeto={(slot, nome) => idSelecionado !== null && renomeiaMaterialObjeto(idSelecionado, slot, nome)} aoAtribuirMaterialObjeto={atribuiMaterialAsFacesSelecionadas} aoEspelharObjetoX={espelhaObjetoSelecionadoX} aoAplicarTransformacoesObjeto={aplicaTransformacoesObjetoSelecionado} aoDuplicarObjeto={duplicaObjeto} aoExcluirObjeto={removeObjeto} corpoPersonagem={corpoPersonagem} regioesCorpo={regioesCorpo} regiaoCorpoSelecionada={regiaoCorpoSelecionada} rotuloRegiaoSelecionada={regiaoCorpoSelecionada !== null ? ROTULO_REGIAO_CORPO_EDITOR3D[regiaoCorpoSelecionada] : 'Corpo'} pecasDaRegiao={pecasDaRegiaoSelecionada} aoSelecionarCorpo={selecionaCorpo} aoAtualizarParametroCorpo={atualizaParametroCorpo} aoMudarCorCorpo={mudaCorCorpo} aoAnexarPeca={() => void abrirModalAnexarPeca()} aoRemoverPeca={removePeca} transformSelecionado={transformSelecionado} dimensoesBaseSelecionado={dimensoesBaseSelecionado} camera={camera} capaArte={capaArte} refPreviewCamera={refCanvasPreviewCapa} povCameraAtiva={camPovAtiva} alvoTravado={alvoTravado} capturando={capturando} capaSalva={capaSalva} aoSelecionar={id => { setRegiaoCorpoSelecionada(null); setIdSelecionado(id === SELECAO_CAMERA_EDITOR3D || id === SELECAO_TITULO_CAPA_ARTE_EDITOR3D ? id : id < 0 ? null : id); }} aoAlternarVisibilidade={alternaVisibilidade} aoAtualizarTransform={atualizaTransformObjeto} aoAtualizarCameraVetor={atualizaCameraVetor} aoAtualizarCameraFov={atualizaCameraFov} aoAtualizarTituloTexto={atualizaTituloTexto} aoAtualizarTituloTransform={atualizaTituloTransform} aoAtualizarTituloCor={atualizaTituloCor} aoAlternarPovCamera={alternaPovCamera} aoAlternarAlvoTravado={alternaAlvoTravado} aoCapturar={iniciaCaptura} aoCriarColecao={criaColecao} aoAlternarVisibilidadeColecao={alternaVisibilidadeColecao} aoRenomearColecao={renomeiaColecao} aoRemoverColecao={removeColecao} aoMoverObjeto={moveObjetoParaColecao} />
                 </div>
             )}
 
@@ -1000,7 +1097,8 @@ interface ObjetoEditavelEditor3DProps {
     readonly edicaoAtiva: boolean;
     readonly modoSelecaoEdicao: ModoSelecaoEdicaoEditor3D;
     readonly verticesSelecionados: readonly number[];
-    readonly faceSelecionada: string | null;
+    readonly facesSelecionadas: readonly string[];
+    readonly xRayAtivo: boolean;
     readonly modo: ModoTransformEditor3D;
     readonly ocultarGizmo: boolean;
     readonly aoSelecionar: (id: number) => void;
@@ -1016,7 +1114,7 @@ interface ObjetoEditavelEditor3DProps {
     readonly aoTransformar: () => void;
 };
 
-function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAtiva, modoSelecaoEdicao, verticesSelecionados, faceSelecionada, modo, ocultarGizmo, aoSelecionar, aoSelecionarSubElemento, aoMoverVertices, aoIniciarArrasto, aoIniciarArrastoObjeto, aoConfirmarArrastoObjeto, aoCancelarArrastoObjeto, arrastoAtivoRef, registraMeshSelecionada, registraMesh, aoTransformar }: ObjetoEditavelEditor3DProps) {
+function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAtiva, modoSelecaoEdicao, verticesSelecionados, facesSelecionadas, xRayAtivo, modo, ocultarGizmo, aoSelecionar, aoSelecionarSubElemento, aoMoverVertices, aoIniciarArrasto, aoIniciarArrastoObjeto, aoConfirmarArrastoObjeto, aoCancelarArrastoObjeto, arrastoAtivoRef, registraMeshSelecionada, registraMesh, aoTransformar }: ObjetoEditavelEditor3DProps) {
     const meshRef = useRef<Mesh>(null);
     const camera = useThree((estado) => estado.camera);
     const gl = useThree((estado) => estado.gl);
@@ -1038,8 +1136,21 @@ function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAti
     // Sincronização do painel numérico coalescida por frame (throttle): o mesh é mutado no caminho quente e RENDERIZA sozinho
     // (frameloop "always"); o setState p/ o inspetor roda no máximo 1×/frame, não a cada pointermove. Fica no grão do R3F.
     const rafSyncPainelRef = useRef<number | null>(null);
-    // A geometria de EXIBIÇÃO aplica a subdivisão Catmull-Clark sobre a gaiola; os handles de edição seguem na gaiola (objeto.malha).
-    const geometria = useMemo(() => criaGeometriaDeMalha(objeto.subdivisao > 0 ? subdivideMalhaCatmullClark(objeto.malha, objeto.subdivisao) : objeto.malha), [objeto.malha, objeto.subdivisao]);
+    // A geometria de EXIBIÇÃO aplica subdivisão Catmull-Clark e depois a espessura (Solidify) sobre a gaiola; os handles de edição seguem na gaiola (objeto.malha).
+    const geometria = useMemo(() => {
+        const malhaSubdividida = objeto.subdivisao > 0 ? subdivideMalhaCatmullClark(objeto.malha, objeto.subdivisao) : objeto.malha;
+        const malhaExibicao = objeto.espessura > 0 ? solidificaMalha(malhaSubdividida, objeto.espessura) : malhaSubdividida;
+        return criaGeometriaDeMalha(malhaExibicao, 1 + objeto.materiaisExtras.length);
+    }, [objeto.malha, objeto.subdivisao, objeto.espessura, objeto.materiaisExtras.length]);
+
+    // Materiais por slot (0 = base, 1.. = extras): o mesh recebe o ARRAY e os groups da geometria escolhem o slot por face.
+    const materiais = useMemo(() => {
+        const emXRay = edicaoAtiva && xRayAtivo;
+        const slots = [{ nome: 'Base', cor: objeto.cor }, ...objeto.materiaisExtras];
+        return slots.map(slot => new MeshStandardMaterial({ color: new Color(slot.cor), emissive: new Color(selecionado ? '#e8c074' : '#000000'), emissiveIntensity: selecionado ? 0.35 : 0, roughness: 0.55, metalness: 0.1, flatShading: objeto.subdivisao === 0, transparent: emXRay, opacity: emXRay ? 0.45 : 1, depthWrite: !emXRay }));
+    }, [objeto.cor, objeto.materiaisExtras, objeto.subdivisao, selecionado, edicaoAtiva, xRayAtivo]);
+
+    useEffect(() => () => { for (const material of materiais) material.dispose(); }, [materiais]);
     const proxyVertices = useMemo(() => new Object3D(), []);
     const arestas = useMemo(() => arestasDaMalha(objeto.malha), [objeto.malha]);
 
@@ -1213,8 +1324,8 @@ function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAti
 
     return (
         <>
-            <mesh ref={meshRef} geometry={geometria} visible={visivelEfetivo} castShadow receiveShadow onClick={aoClicar} onPointerDown={aoDescerParaTransformar}>
-                <meshStandardMaterial color={objeto.cor} emissive={selecionado ? '#e8c074' : '#000000'} emissiveIntensity={selecionado ? 0.35 : 0} roughness={0.55} metalness={0.1} flatShading={objeto.subdivisao === 0} key={`material-${objeto.subdivisao === 0 ? 'flat' : 'suave'}`} />
+            {/* X-Ray (na edição): malha translúcida e SEM raycast — o clique atravessa e alcança os handles atrás da geometria. Fora do X-Ray o raycast PADRÃO do Mesh é reposto explicitamente (passar undefined apagaria o método). O material é um ARRAY (slots) casando com os groups da geometria. */}
+            <mesh ref={meshRef} geometry={geometria} material={materiais.length === 1 ? materiais[0] : materiais} visible={visivelEfetivo} castShadow receiveShadow raycast={edicaoAtiva && xRayAtivo ? raycastNuloEditor3D : Mesh.prototype.raycast} onClick={aoClicar} onPointerDown={aoDescerParaTransformar}>
                 {edicaoAtiva && modoSelecaoEdicao === 'VERTICE' && objeto.malha.vertices.map((vertice, indice) => (
                     <mesh key={`v${indice}`} position={vertice} onClick={evento => aoClicarHandle(evento, [indice], null)}>
                         <sphereGeometry args={[0.05, 10, 10]} />
@@ -1235,7 +1346,7 @@ function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAti
                 {edicaoAtiva && modoSelecaoEdicao === 'FACE' && objeto.malha.faces.map(face => (
                     <mesh key={face.id} position={centroideDaMalha(objeto.malha, face.indicesVertices)} onClick={evento => aoClicarHandle(evento, face.indicesVertices, face.id)}>
                         <sphereGeometry args={[0.06, 10, 10]} />
-                        <meshBasicMaterial color={faceSelecionada === face.id ? '#ff8a3d' : '#7bdc8a'} depthTest={false} />
+                        <meshBasicMaterial color={facesSelecionadas.includes(face.id) ? '#ff8a3d' : '#7bdc8a'} depthTest={false} />
                     </mesh>
                 ))}
                 {edicaoAtiva && geometriaArestasGaiola && (
