@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 import { ContextoBarraAcoesFlutuante__Provider } from 'Contextos/ContextoBarraAcoesFlutuante/contexto';
 import { ContextoUsuariosOnline__Provider } from 'Contextos/ContextoUsuariosOnline/contexto';
 import { ContextoCentralAudio__Provider } from 'Contextos/ContextoCentralAudio/contexto';
+import { ContextoControlePalco__Provider } from 'Contextos/ContextoControlePalco/contexto';
 
 // Wrapper Client Component que conecta o ContextoBarraAcoesFlutuante__Provider
 // às ações globais da aplicação.
@@ -20,7 +21,9 @@ export function BarraAcoesFlutuante__ProviderGlobal({ children }: { children: Re
         <ContextoBarraAcoesFlutuante__Provider>
             <ContextoUsuariosOnline__Provider>
                 <ContextoCentralAudio__Provider>
-                    {children}
+                    <ContextoControlePalco__Provider>
+                        {children}
+                    </ContextoControlePalco__Provider>
                 </ContextoCentralAudio__Provider>
             </ContextoUsuariosOnline__Provider>
         </ContextoBarraAcoesFlutuante__Provider>

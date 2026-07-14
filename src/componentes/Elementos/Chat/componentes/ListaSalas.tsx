@@ -19,7 +19,7 @@ export default function ListaSalas() {
             <div id={styles.recipiente_lista_salas}>
                 {salas.map((sala) => (
                     <div key={sala.id} className={cn(styles.item_sala, salaSelecionadaId === sala.id ? styles.item_sala_selecionada : styles.item_sala_nao_selecionada)} onClick={() => dispatch(selecionarSala(sala.id))}>
-                        <h4>{sala.id}</h4>
+                        <h4>{sala.nome}</h4>
                     </div>
                 ))}
             </div>

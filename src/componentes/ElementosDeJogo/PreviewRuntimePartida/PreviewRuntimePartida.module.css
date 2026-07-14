@@ -1,0 +1,30 @@
+.preview {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    height: 100%;
+    min-height: 30em;
+}
+
+.cena {
+    flex: 1;
+    min-height: 0;
+    border-radius: 0.5em;
+    border: 0.1em solid rgba(183, 144, 81, 0.6);
+    background-color: rgba(10, 8, 16, 0.9);
+    overflow: hidden;
+}
+
+.leitura {
+    font-size: 0.85em;
+    opacity: 0.75;
+    margin: 0;
+    text-align: center;
+}
+
+.aviso {
+    display: grid;
+    place-items: center;
+    min-height: 16em;
+    color: rgba(235, 224, 201, 0.6);
+}

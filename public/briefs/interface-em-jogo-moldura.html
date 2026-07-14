@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UDM — Interface em Jogo · Moldura (Recuada)</title>
+<style>
+  :root{
+    --void:#040309; --ink:#0d0a14; --panel:rgba(16,13,26,.92); --panel-2:rgba(22,18,34,.88);
+    --ouro:#B79051; --ouro-vivo:#d8b06a; --perg:#EBE0C9; --perg-dim:#c9bda3;
+    --paranormal:#a855f7; --magenta:#c026d3;
+    --ok:#8FAF96; --no:#c07a84; --hair:rgba(183,144,81,.28);
+    --mono:'Consolas','Cascadia Mono',monospace;
+    --serif:Georgia,'Times New Roman',serif;
+  }
+  html,body{ background:var(--void); color:var(--perg); font-family:var(--serif); }
+  body{ margin:0; padding:0 0 6rem; }
+  .wrap{ max-width:1280px; margin:0 auto; padding:0 1.2rem; }
+
+  header.top{ padding:2.6rem 0 1.2rem; border-bottom:1px solid var(--hair); }
+  .eyebrow{ font-family:var(--mono); font-size:.72rem; letter-spacing:.32em; color:var(--ouro); text-transform:uppercase; }
+  h1{ font-size:clamp(1.6rem,3.4vw,2.4rem); font-weight:600; letter-spacing:.06em; margin:.5rem 0 .4rem; color:var(--perg); text-wrap:balance; font-variant:small-caps; }
+  .lede{ max-width:62ch; color:var(--perg-dim); line-height:1.55; margin:0; font-size:1.02rem; }
+  .botao-md{ margin-top:1rem; font-family:var(--mono); font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; background:rgba(183,144,81,.1); border:1px solid var(--ouro); color:var(--ouro-vivo); border-radius:2px; padding:.55rem 1.1rem; cursor:pointer; }
+  .botao-md.ok{ border-color:var(--ok); color:var(--ok); }
+
+  /* ---------- controles ---------- */
+  .controls{ display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; justify-content:space-between; padding:1.1rem 0 .9rem; position:sticky; top:0; background:linear-gradient(var(--void) 82%,transparent); z-index:40; }
+  .tabs{ display:flex; gap:.45rem; flex-wrap:wrap; }
+  .tab{ font-family:var(--serif); font-variant:small-caps; letter-spacing:.06em; font-size:.95rem; color:var(--perg-dim); background:transparent; border:1px solid var(--hair); border-radius:2px; padding:.42rem .85rem; cursor:pointer; }
+  .tab .n{ font-family:var(--mono); font-size:.7rem; color:var(--ouro); margin-right:.45em; }
+  .tab.on{ color:var(--perg); border-color:var(--ouro); background:rgba(183,144,81,.08); box-shadow:0 0 14px rgba(168,85,247,.12); }
+  .tab:focus-visible,.tempo button:focus-visible{ outline:2px solid var(--paranormal); outline-offset:2px; }
+  .tempo{ display:flex; border:1px solid var(--hair); border-radius:2px; overflow:hidden; }
+  .tempo button{ font-family:var(--mono); font-size:.74rem; letter-spacing:.14em; padding:.5rem .9rem; background:transparent; color:var(--perg-dim); border:0; cursor:pointer; text-transform:uppercase; }
+  .tempo button.on{ background:rgba(183,144,81,.14); color:var(--ouro-vivo); }
+
+  /* ---------- palco ---------- */
+  .stage-wrap{ border:1px solid var(--hair); border-radius:3px; background:#000; box-shadow:0 30px 80px rgba(0,0,0,.6); }
+  .stage{ position:relative; aspect-ratio:16/9; overflow:hidden; container-type:size; border-radius:3px; }
+  .stage svg.cena{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .layer{ position:absolute; inset:0; display:none; }
+  .stage[data-p="1"] .layer.p1,.stage[data-p="2"] .layer.p2,.stage[data-p="3"] .layer.p3,.stage[data-p="4"] .layer.p4,.stage[data-p="5"] .layer.p5{ display:block; }
+  .stage[data-t="pausado"] .so-rodando{ display:none !important; }
+  .stage[data-t="rodando"] .so-pausado{ display:none !important; }
+  /* véu paranormal do estado pausado (o "beat" V.A.T.S.) */
+  .veu{ position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at 50% 58%, transparent 46%, rgba(88,40,140,.16) 100%); opacity:0; transition:opacity .3s; }
+  .stage[data-t="pausado"] .veu{ opacity:1; }
+
+  /* peças de UI dentro do palco — escalam com cqw */
+  .chip{ position:absolute; transform:translate(-50%,-50%); background:var(--panel); border:1px solid var(--hair); border-radius:2px; padding:.55cqw .9cqw; font-size:1.15cqw; line-height:1.35; white-space:nowrap; }
+  .chip b{ color:var(--perg); font-weight:600; }
+  .chip .d{ font-family:var(--mono); font-size:.95cqw; color:var(--perg-dim); }
+  .chip.ok{ border-color:rgba(143,175,150,.55); }
+  .chip.sel{ border-color:var(--ouro); box-shadow:0 0 12px rgba(168,85,247,.25); }
+  .chip.acao{ cursor:pointer; }
+  .mini{ font-family:var(--mono); font-size:.95cqw; letter-spacing:.08em; }
+  .pct{ font-family:var(--mono); color:var(--ouro-vivo); }
+  .clock{ position:absolute; left:50%; top:3.2%; transform:translateX(-50%); font-family:var(--mono); font-size:1.25cqw; letter-spacing:.18em; padding:.5cqw 1.3cqw; background:var(--panel); border:1px solid var(--hair); border-radius:2px; color:var(--perg); }
+  .clock .st{ color:var(--ouro-vivo); } .clock .st.run{ color:var(--ok); }
+  .clock .esc{ color:var(--perg-dim); font-size:1cqw; }
+
+  .barra{ height:.55cqw; background:rgba(255,255,255,.09); border-radius:1px; overflow:hidden; }
+  .barra i{ display:block; height:100%; background:var(--ok); }
+  .barra.pv i{ background:linear-gradient(90deg,#7fae86,#a9c9a9); }
+  .barra.cast i{ background:linear-gradient(90deg,var(--paranormal),var(--magenta)); animation:enche 2s linear infinite; }
+  @keyframes enche{ from{width:12%} to{width:96%} }
+  @media (prefers-reduced-motion:reduce){ .barra.cast i{ animation:none; width:60%; } }
+
+  .btn-int{ font-family:var(--serif); font-variant:small-caps; letter-spacing:.1em; background:rgba(156,74,85,.18); border:1px solid #9C4A55; color:#f0bdc3; border-radius:2px; padding:.45cqw 1.2cqw; font-size:1.15cqw; cursor:pointer; }
+  .btn-conf{ font-variant:small-caps; letter-spacing:.14em; background:rgba(183,144,81,.16); border:1px solid var(--ouro); color:var(--perg); border-radius:2px; padding:.55cqw 2cqw; font-size:1.3cqw; cursor:pointer; }
+
+  /* P1 — específicos */
+  .callout{ position:absolute; transform:translate(-100%,-50%); text-align:right; font-size:1.05cqw; }
+  .callout .lin{ display:inline-block; border-bottom:1px solid var(--hair); padding:0 .5cqw .15cqw 0; }
+  .feed-ghost{ position:absolute; left:2.4%; bottom:4%; font-family:var(--mono); font-size:.95cqw; color:rgba(235,224,201,.4); line-height:1.7; }
+
+  /* P2 — janelas */
+  .win{ position:absolute; width:23cqw; background:var(--panel); border:1px solid var(--hair); border-radius:2px; box-shadow:0 10px 30px rgba(0,0,0,.55); font-size:1.05cqw; }
+  .win h4{ margin:0; padding:.5cqw .8cqw; font-size:1.05cqw; font-weight:600; font-variant:small-caps; letter-spacing:.08em; color:var(--ouro-vivo); border-bottom:1px solid var(--hair); cursor:grab; display:flex; justify-content:space-between; user-select:none; }
+  .win h4 span{ color:var(--perg-dim); font-family:var(--mono); font-size:.85cqw; }
+  .win .bd{ padding:.6cqw .8cqw .8cqw; display:flex; flex-direction:column; gap:.45cqw; }
+  .row{ display:flex; justify-content:space-between; gap:1cqw; align-items:center; }
+  .row .nm{ color:var(--perg); } .row .vl{ font-family:var(--mono); color:var(--perg-dim); font-size:.9cqw; }
+
+  /* P3 — HUD fixo */
+  .hud-bot{ position:absolute; left:0; right:0; bottom:0; height:15.5%; background:linear-gradient(rgba(10,8,16,.55),rgba(8,6,12,.96) 40%); border-top:1px solid var(--hair); display:flex; align-items:center; gap:1.4cqw; padding:0 1.4cqw; }
+  .hud-id{ display:flex; align-items:center; gap:.9cqw; min-width:17cqw; }
+  .sigil{ width:4.4cqw; height:4.4cqw; border:1px solid var(--ouro); border-radius:2px; display:grid; place-items:center; background:radial-gradient(circle at 50% 38%, rgba(168,85,247,.25), transparent 70%); }
+  .sigil i{ width:1cqw; height:1cqw; border-radius:50%; background:var(--ouro-vivo); box-shadow:0 0 8px var(--paranormal); }
+  .slots{ display:flex; gap:.55cqw; }
+  .slot{ width:3.6cqw; height:3.6cqw; border:1px solid rgba(143,175,150,.5); border-radius:2px; background:var(--panel-2); display:grid; place-items:center; font-size:1cqw; font-variant:small-caps; color:var(--perg); position:relative; cursor:pointer; }
+  .slot small{ position:absolute; bottom:-1.5cqw; font-size:.75cqw; color:var(--perg-dim); font-family:var(--mono); }
+  .slot.blk{ border-color:rgba(156,74,85,.55); color:#e5b7bd; }
+  .slot.sel{ border-color:var(--ouro); box-shadow:0 0 10px rgba(168,85,247,.3); }
+  .slot .cd{ position:absolute; inset:0; background:conic-gradient(rgba(4,3,9,.78) 230deg, transparent 230deg); border-radius:2px; }
+  .fila{ margin-left:auto; display:flex; flex-direction:column; gap:.5cqw; min-width:23cqw; font-size:1cqw; }
+  .fila .f{ display:flex; align-items:center; gap:.7cqw; }
+  .fila .f .m{ font-family:var(--mono); font-size:.8cqw; color:var(--ouro); width:5.5cqw; letter-spacing:.06em; }
+  .fila .f .barra{ flex:1; }
+  .hud-top-l{ position:absolute; left:1.2%; top:2.8%; }
+  .hud-top-r{ position:absolute; right:1.2%; top:2.8%; text-align:right; font-family:var(--mono); font-size:.95cqw; color:rgba(235,224,201,.55); line-height:1.7; }
+  .hud-alvo{ position:absolute; left:50%; top:9.5%; transform:translateX(-50%); }
+  .minimapa{ position:absolute; right:1.2%; bottom:17.5%; width:9cqw; height:6.4cqw; border:1px solid var(--hair); background:rgba(10,8,16,.8); }
+  .minimapa i{ position:absolute; width:.6cqw; height:.6cqw; border-radius:50%; }
+
+  /* P4 — overlay de mira */
+  .ov-top{ position:absolute; left:0; right:0; top:0; padding:1cqw 0 .8cqw; background:linear-gradient(rgba(6,4,10,.94),rgba(6,4,10,.72)); border-bottom:1px solid var(--hair); text-align:center; }
+  .ov-bot{ position:absolute; left:0; right:0; bottom:0; padding:1cqw 2cqw 1.2cqw; background:linear-gradient(transparent,rgba(6,4,10,.94) 45%); border-top:1px solid var(--hair); display:flex; align-items:center; justify-content:space-between; gap:2cqw; }
+  .ov-top .t1{ font-variant:small-caps; letter-spacing:.2em; font-size:1.15cqw; color:var(--ouro-vivo); }
+  .ov-top .t2{ font-size:1.5cqw; margin:.2cqw 0; }
+  .ov-top .t3{ font-family:var(--mono); font-size:1cqw; color:var(--perg-dim); }
+  .membros{ position:absolute; left:50%; top:15.5%; transform:translateX(-50%); display:flex; gap:.6cqw; }
+  .membro{ border:1px solid var(--hair); background:var(--panel); border-radius:2px; padding:.4cqw .9cqw; font-size:1.05cqw; cursor:pointer; }
+  .membro.sel{ border-color:var(--ouro); box-shadow:0 0 10px rgba(168,85,247,.3); }
+  .bracket{ position:absolute; border:1px solid transparent; pointer-events:none; }
+  .bracket:before,.bracket:after,.bracket i:before,.bracket i:after{ content:''; position:absolute; width:1.6cqw; height:1.6cqw; border-color:var(--ouro-vivo); border-style:solid; border-width:0; }
+  .bracket:before{ left:0; top:0; border-left-width:2px; border-top-width:2px; }
+  .bracket:after{ right:0; top:0; border-right-width:2px; border-top-width:2px; }
+  .bracket i:before{ left:0; bottom:0; border-left-width:2px; border-bottom-width:2px; }
+  .bracket i:after{ right:0; bottom:0; border-right-width:2px; border-bottom-width:2px; }
+
+  /* P5 — moldura (recuada) */
+  .mundo{ position:absolute; inset:0; overflow:hidden; transform-origin:1.5% 30%; transition:transform .22s ease-out, box-shadow .22s ease-out; }
+  .mundo-in{ position:absolute; inset:0; transform-origin:52% 55%; transition:transform .25s ease-out; }
+  .stage[data-p="5"][data-t="pausado"] .mundo{ transform:scale(.8); box-shadow:0 0 0 1.5px var(--ouro), 0 0 30px rgba(168,85,247,.22); }
+  .stage[data-p="5"][data-t="pausado"] .mundo-in{ transform:scale(1.15); }
+  .p5w{ display:none; }
+  .stage[data-p="5"] .p5w{ display:block; }
+  .dock{ transition:transform .22s ease-out, opacity .18s ease-out; }
+  .p5-top{ position:absolute; left:0; width:80.3%; top:0; height:6%; display:flex; align-items:center; justify-content:space-between; padding:0 1.2cqw; font-size:1cqw; }
+  .p5-right{ position:absolute; left:80.3%; right:0; top:0; height:86%; background:var(--panel); border-left:1px solid var(--hair); padding:.9cqw; display:flex; flex-direction:column; gap:.65cqw; font-size:1cqw; overflow:hidden; }
+  .p5-right h4{ margin:0; font-size:1.05cqw; font-weight:600; font-variant:small-caps; letter-spacing:.08em; color:var(--ouro-vivo); }
+  .p5-right .sec{ font-family:var(--mono); font-size:.75cqw; letter-spacing:.16em; color:var(--perg-dim); text-transform:uppercase; margin-top:.4cqw; }
+  .membro-v{ display:flex; justify-content:space-between; border:1px solid var(--hair); background:var(--panel-2); border-radius:2px; padding:.35cqw .7cqw; cursor:pointer; }
+  .membro-v.sel{ border-color:var(--ouro); box-shadow:0 0 8px rgba(168,85,247,.28); }
+  .comp{ border:1px solid rgba(183,144,81,.35); background:rgba(183,144,81,.07); border-radius:2px; padding:.55cqw .7cqw; line-height:1.55; font-size:.95cqw; }
+  .comp b{ color:var(--ouro-vivo); }
+  .p5-feed{ font-family:var(--mono); font-size:.78cqw; color:rgba(235,224,201,.5); line-height:1.65; }
+  .btn-codice{ margin-top:auto; font-variant:small-caps; letter-spacing:.1em; background:transparent; border:1px solid var(--hair); color:var(--perg-dim); border-radius:2px; padding:.4cqw; font-size:.95cqw; cursor:pointer; }
+  .p5-bottom{ position:absolute; left:0; right:0; top:86%; bottom:0; background:linear-gradient(rgba(10,8,16,.7),rgba(8,6,12,.97) 45%); border-top:1px solid var(--hair); display:flex; align-items:center; gap:1.3cqw; padding:0 1.2cqw; }
+  .stage[data-p="5"][data-t="rodando"] .p5-top{ transform:translateY(-120%); opacity:0; pointer-events:none; }
+  .stage[data-p="5"][data-t="rodando"] .p5-right{ transform:translateX(115%); opacity:0; pointer-events:none; }
+  .stage[data-p="5"][data-t="rodando"] .p5-bottom{ transform:translateY(120%); opacity:0; pointer-events:none; }
+  @media (prefers-reduced-motion:reduce){ .mundo,.mundo-in,.dock{ transition:none; } }
+
+  .cap{ font-family:var(--mono); font-size:.75rem; color:var(--perg-dim); letter-spacing:.06em; padding:.6rem .2rem; }
+
+  /* ---------- avaliação ---------- */
+  .eval{ display:none; margin-top:2.2rem; }
+  .eval.on{ display:block; }
+  .eval .tese{ font-size:1.12rem; line-height:1.6; max-width:70ch; color:var(--perg); }
+  .eval .refs{ font-family:var(--mono); font-size:.75rem; color:var(--ouro); letter-spacing:.1em; margin:.4rem 0 1.4rem; }
+  .duas{ display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1.2rem 0; }
+  @media (max-width:760px){ .duas{ grid-template-columns:1fr; } }
+  .card{ border:1px solid var(--hair); border-radius:3px; padding:1rem 1.1rem; background:var(--panel-2); }
+  .card h5{ margin:0 0 .6rem; font-variant:small-caps; letter-spacing:.12em; font-size:.95rem; }
+  .card.res h5{ color:var(--ok); } .card.ris h5{ color:var(--no); }
+  .card ul{ margin:0; padding-left:1.1rem; line-height:1.6; color:var(--perg-dim); }
+  .card li b{ color:var(--perg); font-weight:600; }
+  .mapa{ width:100%; border-collapse:collapse; margin-top:.4rem; font-size:.95rem; }
+  .mapa caption{ text-align:left; font-variant:small-caps; letter-spacing:.12em; color:var(--ouro); padding-bottom:.5rem; }
+  .mapa th,.mapa td{ text-align:left; padding:.5rem .7rem; border-bottom:1px solid rgba(183,144,81,.14); vertical-align:top; }
+  .mapa th{ color:var(--perg-dim); font-weight:400; width:15rem; white-space:nowrap; font-variant:small-caps; letter-spacing:.05em; }
+  .mapa td{ color:var(--perg); line-height:1.5; }
+  .mapa td .obs{ color:var(--perg-dim); font-size:.85rem; }
+  .tblwrap{ overflow-x:auto; }
+
+  .leitura{ margin-top:3.4rem; border-top:1px solid var(--hair); padding-top:2rem; }
+  .leitura h2{ font-variant:small-caps; letter-spacing:.1em; font-weight:600; font-size:1.4rem; margin:0 0 1rem; }
+  .leitura p{ max-width:70ch; line-height:1.65; color:var(--perg-dim); }
+  .leitura p b{ color:var(--perg); }
+  .rec{ border:1px solid var(--ouro); border-radius:3px; background:rgba(183,144,81,.06); padding:1.2rem 1.4rem; margin:1.4rem 0; }
+  .rec h5{ margin:0 0 .6rem; color:var(--ouro-vivo); font-variant:small-caps; letter-spacing:.14em; }
+  .rec ol{ margin:.2rem 0 0; padding-left:1.2rem; line-height:1.7; color:var(--perg-dim); }
+  .rec li b{ color:var(--perg); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Universo do Medo · brief · interface em jogo</div>
+    <h1>Quatro paradigmas — e uma síntese — para decidir em Partida</h1>
+    <p class="lede">A mesma cena (Dia de Treinamento), o mesmo momento de decisão (mirar o Manequim, planejar o flanco) e o mesmo conjunto de informações — apresentados por quatro arquiteturas diferentes, mais a síntese decidida: a <b>Moldura (V)</b>, onde o mundo recua em vez de ser coberto. Alterne o tempo para ver o que cada paradigma vira quando a decisão está tomada e o mundo anda.</p>
+    <button class="botao-md" id="btnExtrairMd" type="button">Extrair Markdown</button>
+  </header>
+
+  <div class="controls">
+    <div class="tabs" role="tablist">
+      <button class="tab" data-p="1" role="tab"><span class="n">I</span>No Mundo</button>
+      <button class="tab" data-p="2" role="tab"><span class="n">II</span>Janelas Livres</button>
+      <button class="tab" data-p="3" role="tab"><span class="n">III</span>HUD Fixo</button>
+      <button class="tab" data-p="4" role="tab"><span class="n">IV</span>Overlay de Mira</button>
+      <button class="tab on" data-p="5" role="tab" style="border-color:rgba(183,144,81,.6);"><span class="n">V</span>Moldura (Recuada)</button>
+    </div>
+    <div class="tempo">
+      <button class="on" data-t="pausado">◈ Pausado</button>
+      <button data-t="rodando">▶ Rodando</button>
+    </div>
+  </div>
+
+  <div class="stage-wrap">
+    <div class="stage" id="stage" data-p="5" data-t="pausado">
+      <!-- ======== CENA COMPARTILHADA (o "mundo" recua no paradigma V) ======== -->
+      <div class="mundo"><div class="mundo-in">
+      <svg class="cena" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="1920" height="1080" fill="#040309"/>
+        <!-- parede do fundo -->
+        <polygon points="560,148 1360,148 1302,262 618,262" fill="#171310"/>
+        <rect x="640" y="180" width="240" height="26" rx="4" fill="#3b352b"/>
+        <rect x="648" y="186" width="224" height="14" rx="3" fill="#efe7d2" opacity=".85"/>
+        <!-- porta -->
+        <polygon points="1082,156 1186,156 1180,258 1088,258" fill="#5d3f27" stroke="#2e2013" stroke-width="3"/>
+        <circle cx="1168" cy="212" r="5" fill="#B79051"/>
+        <!-- paredes laterais -->
+        <polygon points="560,148 618,262 196,976 118,976" fill="#0e0b09"/>
+        <polygon points="1360,148 1302,262 1726,976 1804,976" fill="#0c0a08"/>
+        <!-- piso -->
+        <polygon points="618,262 1302,262 1726,976 196,976" fill="#201c15"/>
+        <!-- poças de luz (luz objetiva) -->
+        <ellipse cx="810" cy="640" rx="560" ry="300" fill="#cfc0a0" opacity=".38"/>
+        <ellipse cx="1180" cy="560" rx="420" ry="240" fill="#d6c8a8" opacity=".42"/>
+        <ellipse cx="960" cy="430" rx="500" ry="180" fill="#c9ba98" opacity=".26"/>
+        <!-- vazio além da visão -->
+        <polygon points="196,976 520,976 340,700" fill="#040309" opacity=".85"/>
+        <polygon points="1726,976 1350,976 1560,690" fill="#040309" opacity=".8"/>
+
+        <!-- linha de visão (sutil) -->
+        <line x1="768" y1="600" x2="1128" y2="540" stroke="#EBE0C9" stroke-width="2" stroke-dasharray="3 9" opacity=".28"/>
+
+        <!-- anel de alcance do Soco (mundo) -->
+        <g class="svg-espacial">
+          <ellipse cx="762" cy="770" rx="165" ry="56" fill="none" stroke="#B79051" stroke-width="2.5" stroke-dasharray="8 7" opacity=".55"/>
+          <!-- trajeto planejado até o flanco -->
+          <path d="M 782 768 Q 900 760 1006 690" fill="none" stroke="#EBE0C9" stroke-width="3" stroke-dasharray="10 9" opacity=".6"/>
+          <polygon points="1006,690 988,684 992,702" fill="#EBE0C9" opacity=".7"/>
+          <ellipse cx="1010" cy="694" rx="26" ry="10" fill="none" stroke="#EBE0C9" stroke-width="2" opacity=".45"/>
+        </g>
+
+        <!-- seleção do alvo -->
+        <ellipse cx="1152" cy="618" rx="88" ry="30" fill="none" stroke="#B79051" stroke-width="3" opacity=".9"/>
+        <ellipse cx="1152" cy="618" rx="102" ry="37" fill="none" stroke="#a855f7" stroke-width="2" opacity=".35"/>
+
+        <!-- Manequim de Treino (objeto, blocos) -->
+        <ellipse cx="1152" cy="620" rx="60" ry="16" fill="#000" opacity=".5"/>
+        <rect x="1134" y="586" width="38" height="30" fill="#4a4436"/>
+        <rect x="1118" y="462" width="68" height="128" rx="6" fill="#d8d2c2"/>
+        <rect x="1186" y="478" width="18" height="74" rx="6" fill="#cfc8b6"/>
+        <rect x="1131" y="414" width="42" height="42" rx="5" fill="#e2dccb"/>
+
+        <!-- Ser controlado (figura abstrata atual do jogo) -->
+        <ellipse cx="762" cy="772" rx="64" ry="18" fill="#000" opacity=".55"/>
+        <polygon points="734,772 790,772 778,520 762,470 748,520" fill="#0a0810"/>
+        <circle cx="763" cy="556" r="11" fill="#f2d78a"/>
+      </svg>
+      <div class="p5w">
+        <div class="bracket so-pausado" style="left:56.5%; top:35%; width:9.5%; height:22%;"><i></i></div>
+        <div class="chip so-rodando" style="left:39.7%; top:33.5%; padding:.4cqw .8cqw;">
+          <span class="mini">Soco → Manequim · impacto em <span class="pct">1,2s</span></span>
+          <div class="barra cast" style="width:10cqw; margin-top:.3cqw;"><i></i></div>
+        </div>
+      </div>
+      </div></div>
+      <div class="veu"></div>
+
+      <!-- ======== P1 · NO MUNDO ======== -->
+      <div class="layer p1">
+        <div class="clock"><span class="st so-pausado">◈ PAUSADO</span><span class="st run so-rodando">▶ RODANDO</span>&nbsp; T+<span class="tt">7,450</span>s &nbsp;<span class="esc">×1</span></div>
+
+        <!-- vitais diegéticos sobre o Ser -->
+        <div class="chip" style="left:39.7%; top:37.5%; padding:.35cqw .7cqw;">
+          <span class="mini">PV 14/14</span>
+          <div class="barra pv" style="width:7cqw; margin-top:.25cqw;"><i style="width:100%"></i></div>
+        </div>
+
+        <!-- ações ancoradas no alvo (pausado) -->
+        <div class="so-pausado">
+          <div class="chip acao sel" style="left:72.5%; top:39%;"><b>Soco</b> <span class="d">dano 6 · 2,0s · recarga 3,0s</span></div>
+          <div class="chip acao ok" style="left:72.5%; top:45.5%;"><b>Chute</b> <span class="d">dano 7 · 2,4s · fora de alcance</span></div>
+          <div class="chip acao ok" style="left:72.5%; top:52%;"><b>Analisar</b> <span class="d">descoberta · 1,5s</span></div>
+          <!-- mira por membro, callouts V.A.T.S. -->
+          <div class="callout" style="left:56.5%; top:40.5%;"><span class="lin">Cabeça <span class="pct">41%</span></span></div>
+          <div class="callout" style="left:55.5%; top:47%;"><span class="lin">Tronco <span class="pct">73%</span> ◈</span></div>
+          <div class="callout" style="left:56%; top:53.5%;"><span class="lin">Braço <span class="pct">58%</span></span></div>
+          <!-- ETA no trajeto -->
+          <div class="chip" style="left:47%; top:69%;"><span class="mini">flanco · 3,4m · <span class="pct">2,5s</span></span></div>
+        </div>
+
+        <!-- execução (rodando) -->
+        <div class="so-rodando">
+          <div class="chip" style="left:39.7%; top:33.5%; padding:.4cqw .8cqw;">
+            <span class="mini">Soco → Manequim · impacto em <span class="pct">1,2s</span></span>
+            <div class="barra cast" style="width:10cqw; margin-top:.3cqw;"><i></i></div>
+          </div>
+          <button class="btn-int" style="position:absolute; left:39.7%; top:78%; transform:translate(-50%,-50%);">Interromper</button>
+        </div>
+
+        <div class="feed-ghost">T+5,2 &nbsp;Trajeto definido: flanco leste<br>T+7,4 &nbsp;Soco agendado no Tronco do Manequim</div>
+      </div>
+
+      <!-- ======== P2 · JANELAS LIVRES ======== -->
+      <div class="layer p2">
+        <div class="clock"><span class="st so-pausado">◈ PAUSADO</span><span class="st run so-rodando">▶ RODANDO</span>&nbsp; T+<span class="tt">7,450</span>s &nbsp;<span class="esc">×1</span></div>
+
+        <div class="win" style="left:2%; top:9%;">
+          <h4>Ações <span>⌕ ✕</span></h4>
+          <div class="bd">
+            <div class="row"><span class="nm">Soco</span><span class="vl">dano 6 · 2,0s</span></div>
+            <div class="so-rodando"><div class="barra cast"><i></i></div></div>
+            <div class="row"><span class="nm">Chute</span><span class="vl">dano 7 · 2,4s</span></div>
+            <div class="row"><span class="nm">Andar</span><span class="vl">1,4 m/s</span></div>
+            <div class="row"><span class="nm" style="color:#e5b7bd">Ouvir</span><span class="vl">bloqueada</span></div>
+          </div>
+        </div>
+
+        <div class="win" style="left:63%; top:7%;">
+          <h4>Alvo — Manequim de Treino <span>⌕ ✕</span></h4>
+          <div class="bd">
+            <div class="row"><span class="nm">Durabilidade</span><span class="vl">12/12</span></div>
+            <div class="barra"><i style="width:100%; background:#b9a26d;"></i></div>
+            <div class="row"><span class="nm">Tronco</span><span class="vl pct">73%</span></div>
+            <div class="row"><span class="nm">Braço</span><span class="vl pct">58%</span></div>
+            <div class="row"><span class="nm">Cabeça</span><span class="vl pct">41%</span></div>
+            <div class="row"><span class="nm">Distância</span><span class="vl">0,7 m — no alcance</span></div>
+          </div>
+        </div>
+
+        <div class="win" style="left:4%; top:56%;">
+          <h4>Agente Iniciante <span>⌕ ✕</span></h4>
+          <div class="bd">
+            <div class="row"><span class="nm">PV</span><span class="vl">14/14</span></div>
+            <div class="barra pv"><i style="width:100%"></i></div>
+            <div class="row"><span class="nm">Fila — Braço</span><span class="vl so-pausado">Soco agendado</span><span class="vl so-rodando">Soco · 1,2s</span></div>
+            <div class="row"><span class="nm">Fila — Pernas</span><span class="vl so-pausado">flanco 2,5s</span><span class="vl so-rodando">andando · 1,8s</span></div>
+            <button class="btn-int so-rodando" style="align-self:flex-start; margin-top:.3cqw;">Interromper tudo</button>
+          </div>
+        </div>
+
+        <div class="win" style="left:60%; top:58%;">
+          <h4>Registro <span>⌕ ✕</span></h4>
+          <div class="bd" style="font-family:var(--mono); font-size:.9cqw; color:var(--perg-dim); line-height:1.6;">
+            T+0,0 · Tempo pausado<br>
+            T+5,2 · Trajeto definido: flanco leste<br>
+            T+7,4 · Soco agendado no Tronco<br>
+            <span class="so-rodando">T+8,1 · Manequim range: PD 12 → …</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== P3 · HUD FIXO ======== -->
+      <div class="layer p3">
+        <div class="hud-top-l chip" style="position:absolute; transform:none;"><b>Dia de Treinamento</b> <span class="d">· derrote o Manequim · resta 82s</span></div>
+        <div class="hud-top-r">T+7,4 Soco agendado no Tronco<br>T+5,2 trajeto definido: flanco leste<br><span class="so-rodando">T+8,1 impacto em 1,2s…</span></div>
+        <div class="hud-alvo chip sel"><b>Manequim de Treino</b> <span class="d">PD 12/12 · Tronco 73% ◈ · Braço 58% · Cabeça 41%</span></div>
+        <div class="clock" style="top:auto; bottom:17.5%;"><span class="st so-pausado">◈ PAUSADO</span><span class="st run so-rodando">▶ RODANDO</span>&nbsp; T+<span class="tt">7,450</span>s &nbsp;<span class="esc">×1</span></div>
+
+        <div class="minimapa">
+          <i style="left:34%; top:62%; background:var(--ouro-vivo); box-shadow:0 0 6px var(--paranormal);"></i>
+          <i style="left:62%; top:44%; background:#d8d2c2;"></i>
+          <i style="left:58%; top:12%; width:1.4cqw; height:.35cqw; border-radius:0; background:#5d3f27;"></i>
+        </div>
+
+        <div class="hud-bot">
+          <div class="hud-id">
+            <div class="sigil"><i></i></div>
+            <div style="font-size:1.05cqw;">
+              <b>Agente Iniciante</b>
+              <div class="mini" style="color:var(--perg-dim); margin:.2cqw 0;">PV 14/14</div>
+              <div class="barra pv" style="width:11cqw;"><i style="width:100%"></i></div>
+            </div>
+          </div>
+          <div class="slots">
+            <div class="slot sel">Soco<small>dano 6</small><div class="cd so-rodando"></div></div>
+            <div class="slot">Chute<small>dano 7</small></div>
+            <div class="slot">Andar<small>1,4m/s</small></div>
+            <div class="slot">Ver</div>
+            <div class="slot blk">Ouvir</div>
+            <div class="slot">Esperar</div>
+            <div class="slot" style="opacity:.35"></div>
+            <div class="slot" style="opacity:.35"></div>
+          </div>
+          <div class="fila">
+            <div class="f"><span class="m">BRAÇO</span><div class="barra"><i class="so-pausado" style="width:4%"></i></div><span class="mini so-pausado">Soco agendado</span><span class="mini so-rodando">Soco · 1,2s</span></div>
+            <div class="f"><span class="m">PERNAS</span><div class="barra"><i class="so-pausado" style="width:4%"></i></div><span class="mini so-pausado">flanco · 2,5s</span><span class="mini so-rodando">andando · 1,8s</span></div>
+            <button class="btn-int so-rodando" style="align-self:flex-end;">Interromper</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== P4 · OVERLAY DE MIRA ======== -->
+      <div class="layer p4">
+        <div class="bracket" style="left:56.5%; top:35%; width:9.5%; height:22%;"><i></i></div>
+
+        <div class="ov-top so-pausado">
+          <div class="t1">Modo de mira</div>
+          <div class="t2"><b>Soco</b> → Manequim de Treino</div>
+          <div class="t3">Dano 6 = 5 base + 1 Força ampliada &nbsp;·&nbsp; execução 2,0s &nbsp;·&nbsp; recarga 3,0s &nbsp;·&nbsp; impacto previsto T+9,45s</div>
+        </div>
+        <div class="membros so-pausado">
+          <div class="membro">Cabeça <span class="pct">41%</span></div>
+          <div class="membro sel">Tronco <span class="pct">73%</span></div>
+          <div class="membro">Braço <span class="pct">58%</span></div>
+        </div>
+        <div class="ov-bot so-pausado">
+          <div style="display:flex; gap:.6cqw;">
+            <div class="chip acao" style="position:static; transform:none;">Chute</div>
+            <div class="chip acao" style="position:static; transform:none;">Analisar</div>
+            <div class="chip acao" style="position:static; transform:none;">Cancelar</div>
+          </div>
+          <button class="btn-conf">Confirmar Soco</button>
+          <div class="mini" style="color:var(--perg-dim);">Pernas seguem livres — flanco mantido (2,5s)</div>
+        </div>
+
+        <div class="so-rodando">
+          <div class="clock"><span class="st run">▶ RODANDO</span>&nbsp; T+<span class="tt">7,450</span>s &nbsp;<span class="esc">×1</span></div>
+          <div class="chip" style="left:50%; top:88%; padding:.5cqw 1.2cqw;">
+            <span class="mini">BRAÇO · Soco → Manequim · <span class="pct">1,2s</span></span>
+            <div class="barra cast" style="width:14cqw; margin:.35cqw 0;"><i></i></div>
+            <button class="btn-int">Interromper</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======== P5 · MOLDURA (RECUADA) ======== -->
+      <div class="layer p5">
+        <div class="p5-top dock">
+          <span><b>Dia de Treinamento</b> <span class="mini" style="color:var(--perg-dim);">· derrote o Manequim · resta 82s</span></span>
+          <span class="mini" style="letter-spacing:.2em; color:var(--ouro-vivo);">◈ DELIBERAÇÃO &nbsp;·&nbsp; T+<span class="tt">7,450</span>s &nbsp;·&nbsp; ×1</span>
+        </div>
+
+        <div class="p5-right dock">
+          <h4>Manequim de Treino</h4>
+          <div class="row"><span class="nm">Durabilidade</span><span class="vl">12/12</span></div>
+          <div class="barra"><i style="width:100%; background:#b9a26d;"></i></div>
+          <div class="sec">Mirar membro</div>
+          <div class="membro-v"><span>Cabeça</span><span class="pct">41%</span></div>
+          <div class="membro-v sel"><span>Tronco ◈</span><span class="pct">73%</span></div>
+          <div class="membro-v"><span>Braço</span><span class="pct">58%</span></div>
+          <div class="sec">O que vai acontecer</div>
+          <div class="comp"><b>Dano 6</b> = 5 base + 1 Força ampliada<br>execução 2,0s · recarga 3,0s<br>distância 0,7m — no alcance<br>impacto previsto <b>T+9,45s</b></div>
+          <div class="sec">Registro</div>
+          <div class="p5-feed">T+0,0 · Tempo pausado<br>T+5,2 · Trajeto: flanco leste<br>T+7,4 · Soco agendado no Tronco</div>
+          <button class="btn-codice">Abrir códice ▸</button>
+        </div>
+
+        <div class="p5-bottom dock">
+          <div class="hud-id" style="min-width:15cqw;">
+            <div class="sigil" style="width:3.6cqw; height:3.6cqw;"><i></i></div>
+            <div style="font-size:1cqw;">
+              <b>Agente Iniciante</b>
+              <div class="mini" style="color:var(--perg-dim); margin:.15cqw 0;">PV 14/14</div>
+              <div class="barra pv" style="width:9cqw;"><i style="width:100%"></i></div>
+            </div>
+          </div>
+          <div class="fila" style="margin-left:0; min-width:17cqw;">
+            <div class="f"><span class="m">BRAÇO</span><span class="mini">Soco agendado ◈</span></div>
+            <div class="f"><span class="m">PERNAS</span><span class="mini">flanco · 2,5s</span></div>
+          </div>
+          <div class="slots" style="margin-left:auto;">
+            <div class="slot sel">Soco</div>
+            <div class="slot">Chute</div>
+            <div class="slot">Andar</div>
+            <div class="slot">Ver</div>
+            <div class="slot blk">Ouvir</div>
+            <div class="slot">Esperar</div>
+          </div>
+          <button class="btn-conf" style="margin-left:1cqw;">Confirmar Soco</button>
+        </div>
+
+        <div class="so-rodando">
+          <div class="clock"><span class="st run">▶ RODANDO</span>&nbsp; T+<span class="tt">7,450</span>s &nbsp;<span class="esc">×1</span></div>
+          <div class="chip" style="left:86%; top:88%; padding:.5cqw .9cqw; text-align:left;">
+            <span class="mini">BRAÇO · Soco · <span class="pct">1,2s</span><br>PERNAS · flanco · <span class="pct">1,8s</span></span><br>
+            <button class="btn-int" style="margin-top:.35cqw;">Interromper</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cap" id="cap">V · Moldura (Recuada) — o mundo recua, a bancada se revela. Alterne o tempo e sinta o beat pausado⇄rodando.</div>
+
+  <!-- ======== AVALIAÇÕES ======== -->
+  <section class="eval" data-e="1">
+    <p class="tese">Toda informação é ancorada no elemento do mundo que a origina: ações orbitam o alvo, percentuais apontam membros, o ETA vive no trajeto. O mapa nunca é coberto porque <b>o mapa é a interface</b>.</p>
+    <div class="refs">REF · Clair Obscur — Fallout V.A.T.S. — HellSign (cone de visão)</div>
+    <div class="duas">
+      <div class="card res"><h5>Resolve</h5><ul>
+        <li><b>Zero oclusão</b> — nada cobre o cenário; decidir e ver são o mesmo ato.</li>
+        <li><b>Espacial de graça</b> — distância, alcance e trajeto já estão na linguagem certa (desenho, não número).</li>
+        <li><b>Interpretação máxima</b> — o olhar fica no mundo, o clima gótico nunca é interrompido por chrome.</li>
+      </ul></div>
+      <div class="card ris"><h5>Arrisca</h5><ul>
+        <li><b>Não escala sozinho</b> — 12 ações realizáveis ao redor de um alvo viram nuvem; exige curadoria contextual agressiva.</li>
+        <li><b>Sem lar para o não-espacial</b> — fila, feed, vitals e códice não têm âncora natural no mundo.</li>
+        <li><b>Legibilidade instável</b> — texto sobre cena clara/escura exige placas, e placas demais recriam a poluição.</li>
+      </ul></div>
+    </div>
+    <div class="tblwrap"><table class="mapa"><caption>Onde mora cada informação</caption>
+      <tr><th>Estado temporal</th><td>Pílula flutuante + véu paranormal quando pausado <span class="obs">— o pause precisa de tratamento de cena, não só de texto</span></td></tr>
+      <tr><th>Ações disponíveis</th><td>Chips ancorados no alvo selecionado (só as pertinentes àquele alvo)</td></tr>
+      <tr><th>Alvo & membros</th><td>Callouts sobre o próprio corpo do alvo (V.A.T.S.)</td></tr>
+      <tr><th>Composição (o que vai acontecer)</th><td>Resumida no chip; breakdown completo exige hover/expandir</td></tr>
+      <tr><th>Espacial (alcance · trajeto · ETA)</th><td>Desenhado no chão — anel, linha, bandeira de ETA</td></tr>
+      <tr><th>Fila & interrupção</th><td>Cast bar sobre o Ser + botão junto dele</td></tr>
+      <tr><th>Vitals</th><td>Barra diegética sobre o Ser</td></tr>
+      <tr><th>Feed / registro</th><td>Linhas-fantasma no canto <span class="obs">— frágil; melhor peça deste paradigma para delegar a outro</span></td></tr>
+      <tr><th>Códice</th><td>Sem lar — precisa de gatilho externo</td></tr>
+    </table></div>
+  </section>
+
+  <section class="eval" data-e="2">
+    <p class="tese">Cada conteúdo vive numa janela própria, arrastável, que o jogador compõe como quiser. Máxima liberdade, máxima densidade — e o custo aparece sozinho: <b>as janelas competem com o mundo pela mesma tela</b>. Arraste-as neste mock e observe o que você cobre para poder ver.</p>
+    <div class="refs">REF · Anarchy Online — MMOs clássicos</div>
+    <div class="duas">
+      <div class="card res"><h5>Resolve</h5><ul>
+        <li><b>Tudo simultâneo</b> — inventário + alvo + fila + registro visíveis ao mesmo tempo, sem trocar de aba (o problema nº1 do Swiper morre).</li>
+        <li><b>Gamestyle de interface</b> — cada jogador monta o cockpit do seu estilo; poder real para o high-end de 300+ ações.</li>
+        <li><b>Evolui barato</b> — página nova = janela nova; nenhuma re-arquitetura por conteúdo novo.</li>
+      </ul></div>
+      <div class="card ris"><h5>Arrisca</h5><ul>
+        <li><b>Poluição estrutural</b> — o paradigma não tem defesa contra cobrir o mapa; a tela do Anarchy Online é o estado final natural.</li>
+        <li><b>Custo de setup</b> — novato herda caos ou um preset que nunca ajusta; a curva de aprendizado vira curva de arrumação.</li>
+        <li><b>Quebra o clima</b> — dezesseis bordas de janela sobre uma cena de horror gótico; a estética vira painel de corretora.</li>
+      </ul></div>
+    </div>
+    <div class="tblwrap"><table class="mapa"><caption>Onde mora cada informação</caption>
+      <tr><th>Estado temporal</th><td>Pílula flutuante (ou mais uma janela)</td></tr>
+      <tr><th>Ações disponíveis</th><td>Janela "Ações" — lista completa, rolável</td></tr>
+      <tr><th>Alvo & membros</th><td>Janela "Alvo" — atualiza com a seleção</td></tr>
+      <tr><th>Composição</th><td>Dentro da janela de Ações/Alvo, textual</td></tr>
+      <tr><th>Espacial</th><td><span class="obs">Sem lar natural — número na janela ("0,7m") em vez de desenho no chão</span></td></tr>
+      <tr><th>Fila & interrupção</th><td>Janela do Ser</td></tr>
+      <tr><th>Vitals</th><td>Janela do Ser</td></tr>
+      <tr><th>Feed / registro</th><td>Janela "Registro"</td></tr>
+      <tr><th>Códice</th><td>É só mais uma janela — integração trivial</td></tr>
+    </table></div>
+  </section>
+
+  <section class="eval" data-e="3">
+    <p class="tese">Regiões fixas e finas nas bordas: barra de ações embaixo, alvo no topo, feed e minimapa nos cantos. O centro da tela é <b>sagrado e permanentemente do mundo</b>. É a gramática que vinte anos de RTS/MOBA ensinaram a qualquer jogador.</p>
+    <div class="refs">REF · DOTA — Red Solstice 2</div>
+    <div class="duas">
+      <div class="card res"><h5>Resolve</h5><ul>
+        <li><b>Lar para tudo</b> — cada classe de informação tem endereço fixo; a fila por Membro (Braço/Pernas em trilhas paralelas) ganha o lugar de destaque que o modelo do UdM merece.</li>
+        <li><b>Aprendizado zero</b> — posição convencional; o jogador novo já sabe onde olhar.</li>
+        <li><b>Estados legíveis</b> — pausado/rodando muda a barra inteira (slots acesos ⇄ fila em progresso), não um tooltip.</li>
+      </ul></div>
+      <div class="card ris"><h5>Arrisca</h5><ul>
+        <li><b>Slots não escalam nativamente</b> — 8 quadradinhos para 300 ações exige loadout curado + códice; a decisão de curadoria vira sistema obrigatório.</li>
+        <li><b>Rouba palco permanente</b> — ~15% da tela sempre ocupada, mesmo explorando no escuro (dá para recolher, mas é chrome constante).</li>
+        <li><b>Genérico por padrão</b> — sem tratamento forte, parece qualquer jogo; a identidade precisa vir do desenho dos painéis.</li>
+      </ul></div>
+    </div>
+    <div class="tblwrap"><table class="mapa"><caption>Onde mora cada informação</caption>
+      <tr><th>Estado temporal</th><td>Relógio fixo acima da barra — sempre no mesmo lugar</td></tr>
+      <tr><th>Ações disponíveis</th><td>Slots da barra (loadout curado); catálogo completo no códice</td></tr>
+      <tr><th>Alvo & membros</th><td>Placa de alvo no topo-centro</td></tr>
+      <tr><th>Composição</th><td>Resumo no slot/placa; breakdown por hover</td></tr>
+      <tr><th>Espacial</th><td><span class="obs">Minimapa + números — o desenho no chão não é nativo deste paradigma</span></td></tr>
+      <tr><th>Fila & interrupção</th><td>Trilhas por Membro na barra, com Interromper ao lado</td></tr>
+      <tr><th>Vitals</th><td>Retrato/sigilo na barra</td></tr>
+      <tr><th>Feed / registro</th><td>Canto superior direito, rolante</td></tr>
+      <tr><th>Códice</th><td>Botão na barra → overlay deliberado</td></tr>
+    </table></div>
+  </section>
+
+  <section class="eval" data-e="4">
+    <p class="tese">A interface é um <b>modo</b>, não um lugar: mirar invoca um overlay que enquadra a tela, mostra a composição inteira do que vai acontecer e pede confirmação. Fora do modo, a tela é quase só mundo. É o "momento V.A.T.S." como arquitetura.</p>
+    <div class="refs">REF · XCOM 2 — Baldur's Gate 3 — Fallout V.A.T.S.</div>
+    <div class="duas">
+      <div class="card res"><h5>Resolve</h5><ul>
+        <li><b>Informação máxima no instante certo</b> — a composição completa (dano = base + modificador, custo, impacto previsto) aparece exatamente quando a decisão é tomada.</li>
+        <li><b>Ritual de decisão</b> — o enquadramento dá peso e clima ao ato de decidir; é o paradigma que mais honra "deliberação em tempo real".</li>
+        <li><b>Tela limpa fora do modo</b> — explorando, o mundo é 100% da tela.</li>
+      </ul></div>
+      <div class="card ris"><h5>Arrisca</h5><ul>
+        <li><b>Não cobre o contínuo</b> — overlay é ótimo para decidir e péssimo para acompanhar; sozinho, não tem onde viver a fila, o feed, os vitals.</li>
+        <li><b>Cerimônia repetitiva</b> — confirmar toda ação trivial vira fricção; precisa de atalho "repetir sem cerimônia".</li>
+        <li><b>Modo é estado escondido</b> — entrar/sair de modos confunde se a transição não for teatral e óbvia.</li>
+      </ul></div>
+    </div>
+    <div class="tblwrap"><table class="mapa"><caption>Onde mora cada informação</caption>
+      <tr><th>Estado temporal</th><td>No overlay: impacto previsto em T+ (tempo vira consequência da decisão)</td></tr>
+      <tr><th>Ações disponíveis</th><td>Alternativas no rodapé do overlay (só as do alvo mirado)</td></tr>
+      <tr><th>Alvo & membros</th><td>Seletor de membros central + brackets no mundo</td></tr>
+      <tr><th>Composição</th><td><b>Protagonista</b> — linha inteira do topo, sem hover</td></tr>
+      <tr><th>Espacial</th><td>Permanece desenhado no mundo (herda do paradigma I)</td></tr>
+      <tr><th>Fila & interrupção</th><td>Pílula mínima quando rodando <span class="obs">— insuficiente sozinha</span></td></tr>
+      <tr><th>Vitals</th><td><span class="obs">Sem lar fora do modo</span></td></tr>
+      <tr><th>Feed / registro</th><td><span class="obs">Sem lar fora do modo</span></td></tr>
+      <tr><th>Códice</th><td>Extensão natural: "expandir" a partir da composição</td></tr>
+    </table></div>
+  </section>
+
+  <section class="eval on" data-e="5">
+    <p class="tese">A síntese decidida: <b>o mundo recua em vez de ser coberto</b>. Deliberar invoca a moldura (docks fixos ao redor do mundo, que ganha filete de ouro e reenquadra a câmera na ação); confirmar dissolve tudo e o mundo volta a ocupar a tela inteira, restando só o resquício de acompanhamento. A transição É o beat pausado⇄rodando.</p>
+    <div class="refs">REF · squeeze-back de TV — chess.com (tabuleiro + painel) — Into the Breach — World of Horror — V.A.T.S. (reenquadre de câmera)</div>
+    <div class="duas">
+      <div class="card res"><h5>Resolve</h5><ul>
+        <li><b>Zero oclusão por construção</b> — nada jamais fica por cima do mundo; a moldura só existe onde o mundo cedeu espaço.</li>
+        <li><b>Estado temporal visceral</b> — recuar/expandir comunica pausado/rodando sem ler nada; o filete de ouro + brilho paranormal marcam a câmara de deliberação.</li>
+        <li><b>Herda o melhor dos quatro</b> — endereços fixos (III), composição protagonista (IV), geometria no mundo (I), docks personalizáveis no futuro (lição do II).</li>
+        <li><b>Câmera compensa a recuada</b> — o viewport encolhe ~20%, mas o reenquadre (~1,15×) devolve o tamanho da ação; a legibilidade tática não cai.</li>
+      </ul></div>
+      <div class="card ris"><h5>Arrisca</h5><ul>
+        <li><b>Transição precisa ser barata</b> — 150–250ms reversível; se parecer "abrir menu", o jogador evita a deliberação e perde o jogo pensado.</li>
+        <li><b>Periferia some no reenquadre</b> — a borda do mapa fica fora do viewport durante a mira; ameaças na periferia precisam de sinal (marcador de borda) ou de auto-pause por percepção.</li>
+        <li><b>Slots ainda exigem curadoria</b> — a moldura organiza a decisão, mas não resolve 300 ações; loadout + códice continuam obrigatórios.</li>
+      </ul></div>
+    </div>
+    <div class="tblwrap"><table class="mapa"><caption>Onde mora cada informação</caption>
+      <tr><th>Estado temporal</th><td>Na própria geometria da tela (recuada = pausado) + relógio no topo da moldura / pílula no rodando</td></tr>
+      <tr><th>Ações disponíveis</th><td>Slots na faixa inferior da moldura (loadout curado)</td></tr>
+      <tr><th>Alvo & membros</th><td>Dock direito — seletor de membro com %; brackets no mundo</td></tr>
+      <tr><th>Composição (o que vai acontecer)</th><td><b>Protagonista</b> no dock direito — dano composto, custos, impacto previsto</td></tr>
+      <tr><th>Espacial (alcance · trajeto · ETA)</th><td>Geometria desenhada no mundo (texto migra para a moldura)</td></tr>
+      <tr><th>Fila & interrupção</th><td>Faixa inferior (pausado) / chip compacto no canto + cast bar sobre o Ser (rodando)</td></tr>
+      <tr><th>Vitals</th><td>Faixa inferior, junto ao sigilo do Ser</td></tr>
+      <tr><th>Feed / registro</th><td>Dock direito (pausado); eventos novos podem pulsar no resquício (rodando)</td></tr>
+      <tr><th>Códice</th><td>Botão fixo no dock direito — expansão natural da composição</td></tr>
+    </table></div>
+  </section>
+
+  <!-- ======== LEITURA ======== -->
+  <section class="leitura">
+    <h2>Leitura do Claude</h2>
+    <p>Os quatro paradigmas não competem pelo mesmo cargo — <b>cada um responde a uma fase diferente do ciclo de decisão</b>. O I é imbatível para informação espacial, o III é o único com lar permanente para processo contínuo (fila, feed, vitals), o IV é o melhor momento-de-decisão já inventado, e o II é o único que leva a customização a sério. Escolher um "vencedor" puro significa herdar os buracos dele inteiros: a tabela "onde mora cada informação" mostra que nenhum cobre as nove linhas sozinho.</p>
+    <div class="rec">
+      <h5>Composição decidida — materializada no paradigma V</h5>
+      <ol>
+        <li><b>Mecanismo: recuada + moldura (V)</b> — o mundo nunca é coberto; deliberar recua o viewport (~80%, câmera reenquadrando a ação) e revela docks fixos. Confirmar dissolve. A transição (150–250ms, reversível) é o próprio beat pausado⇄rodando.</li>
+        <li><b>Espacial: sempre no mundo (I)</b> — alcance, trajeto+ETA, linha de visão, brackets. Regra da migração: <em>geometria fica no mundo, texto vai para a moldura</em> — texto não sobrevive ao encolhimento.</li>
+        <li><b>Contínuo: resquício fino no rodando (III)</b> — mundo cheio + cast bar sobre o Ser + fila compacta com Interromper num canto. É o que impede o buraco do "tempo rodando sem controle nenhum".</li>
+        <li><b>Customização: a lição do II, sem janelas livres</b> — docks com conteúdo trocável por gamestyle, nunca posição livre. O jogador escolhe <em>o quê</em>, o sistema garante <em>onde</em>.</li>
+      </ol>
+    </div>
+    <p>A composição mapeia 1:1 no runtime que já existe: a moldura é a fase <span style="font-family:var(--mono); font-size:.85em;">PAUSADO</span> (onde ações são agendadas), o resquício é o <span style="font-family:var(--mono); font-size:.85em;">RODANDO</span> (onde processos são acompanhados e interrompidos), e o espacial-no-mundo é o mapa lógico que o servidor já emite. Alterne o tempo no paradigma V para sentir a transição.</p>
+    <p><b>Brief de desenvolvimento:</b> use o botão "Extrair Markdown" no topo — ele copia o documento completo (estado atual da sala, o que será feito, por quê e critérios de aceite). Cópia canônica no workspace: <span style="font-family:var(--mono); font-size:.85em;">E:\UDM_WORKSPACE\INTERFACE-EM-JOGO-MOLDURA.md</span>.</p>
+  </section>
+</div>
+
+<script type="text/plain" id="mdBriefing">
+# Interface em Jogo — Moldura (Recuada) — brief de desenvolvimento
+
+> Decisão de design fechada em 11/07/2026 (sessão de análise + mocks comparativos).
+> Referência visual interativa: `/briefs/interface-em-jogo-moldura.html` (os 4 paradigmas avaliados + a síntese, com transição animada e tabelas "onde mora cada informação").
+> Este documento define **o que** será feito, **por que** desse jeito e **o esperado**. Ele é insumo de prompt — a prompt de desenvolvimento deve ler os SKILL.md das áreas afetadas antes de planejar (roteador obrigatório).
+
+---
+
+## 1. Como a sala funciona hoje (diagnóstico verificado em jogo, MF0, 11/07/2026)
+
+Arquitetura atual de `/jogo/em-jogo`:
+
+| Peça | Arquivo | Papel |
+|---|---|---|
+| Página da sala | `universodomedo.com/src/conteineres/EmJogo/paginas/SPA_SalaDeJogo__Jogador/SPA_SalaDeJogo__Jogador.tsx` | Monta TelaDeJogo (canvas) + SwiperDireita (gaveta) + modal de vitória |
+| Cena | `TelaDeJogo/Cena3DSalaJogo.tsx` + `CenaSalaJogoR3F.tsx` | Canvas R3F (visão tática + POV com swap), objetivo (topo-esq), indicador temporal (canto inf-dir), minimapa (inf-esq) |
+| Gaveta | `ElementosVisuais/SwiperDireita/SwiperDireita.tsx` | Toggle pelo avatar; aberta cobre ~1/3 direito da tela — inclusive o indicador temporal |
+| Ficha | `ConteudoFichaDeJogo` + `CarrosselConteudoFichaDeJogo` | Carrossel react-slick com 7 abas (Perícias, Ações, Recursos, Inventário, Habilidades, Modificadores, Registros), 3 visíveis por vez |
+| Ações | `paginas/PaginaControleAcoes/PaginaControleAcoes.tsx` | Gating `acoesFichaDesativadas = desativarAcoes OU tempoRodando`; fluxos: `combatente_sala` → modal de lista de alvos; `destino_mapa` → modo movimentação; Esperar → retoma o tempo |
+| Runtime | `Nora-Api/src/modules/logica-de-jogo/runtime/salaDeJogo/salaDeJogo.interno.ts` | Modelo temporal event-driven: agenda-se PAUSADO; RODANDO corre até o próximo evento e **auto-pausa**; Esperar = fast-forward 5× **sem fim previsto** |
+
+**O modelo temporal (pausa → agenda → roda → auto-pausa) está correto e fica.** O problema desta frente é de apresentação, não de regra.
+
+Problemas verificados jogando:
+
+1. **Softlock do Esperar vazio** — Esperar sem ação agendada registra espera com `momentoFimPrevistoMs: null`; sem evento futuro o tempo roda para sempre, todas as ações da ficha ficam inertes, não há pausa manual nem "abandonar sala" (runbook: sala presa só limpa com restart do backend).
+2. **Estado inerte invisível** — com tempo RODANDO os botões seguem sob o header "Ações Realizáveis" e o tooltip diz "Realizável" (o status exibido só olha `acao.habilitado`, ignora `tempoRodando`); a única pista é `opacity: .72`.
+3. **Ação sem feedback** — teste de perícia dispara no clique da pill (mesmo alvo do hover do tooltip), sem confirmação, sem resultado visível; o registro aparece só na aba Registros e sem o valor do teste.
+4. **Indicador temporal ilegível e coberto** — datetime com milissegundos no canto inferior direito, coberto pelo swiper aberto — exatamente na hora de decidir.
+5. **Carrossel de abas** — 7 abas com 3 visíveis, setas minúsculas, cliques engolidos durante a animação; as informações de uma mesma decisão (ação + alvo + recursos + modificadores) vivem em abas não simultâneas.
+6. **Vazamentos de dev na UI** — keys internas em tooltips (`SER:COMBATENTE:...`), "EFEITO_TEMPORARIO - Validação técnica de modificadores runtime" em Modificadores, quadrados cinza sem ícone em Habilidades, header "Detalhes do Total" com corpo comentado no código, timestamp de registro aparentando tempo real com o relógio da sala pausado.
+
+Diagnóstico-síntese: o SwiperDireita é uma **ficha digitalizada** (organização por categoria) servindo de **controlador de jogo em tempo real** (que exige organização por momento). Ele nasceu quando a ficha era o jogo; hoje o jogo é o mapa 3D.
+
+---
+
+## 2. O que será feito — a Moldura (Recuada)
+
+Dois regimes de tela; **a transição entre eles é o próprio sinal do estado temporal**:
+
+### RODANDO (acompanhar)
+- Mundo em 100% da tela.
+- Resquício fino: cast bar sobre o Ser (ação em execução + tempo restante), chip compacto de **fila por Membro** com botão **Interromper** (canto inferior direito), relógio compacto (`T+` relativo + escala).
+
+### PAUSADO (deliberar)
+- O mundo **recua** para ~80%, ancorado à esquerda; transição 150–250ms ease-out, **reversível no meio**.
+- A câmera **reenquadra** a ação (~1,15× em direção a ator+alvo) — o viewport encolhe, a ação não.
+- O viewport recuado ganha filete de ouro + brilho paranormal (a "câmara de deliberação").
+- Ao redor, **docks fixos** (endereços permanentes, nunca janelas livres):
+  - **Dock inferior** — sigilo + vitals do Ser; fila por Membro (trilhas paralelas, ex.: Braço/Pernas); slots das ações realizáveis (loadout); botão Confirmar.
+  - **Dock direito** — alvo selecionado (durabilidade/PV); **Mirar Membro** com chances por membro; box **"O que vai acontecer"** (valor composto: dano = base + modificadores, execução/recarga, distância vs. alcance, impacto previsto `T+`); registro compacto; acesso ao códice.
+  - **Faixa superior** — objetivo da Partida; estado (`DELIBERAÇÃO · T+ · escala`).
+
+### Regra de migração
+**Geometria no mundo, texto na moldura.** Anéis de alcance, trajeto + ETA, linha de visão e brackets de alvo são desenhados na cena (sobrevivem à escala); números e explicações moram nos docks (não encolhem).
+
+### O que acontece com o SwiperDireita
+Não é removido: é **rebaixado a códice** — consulta profunda (ficha completa, breakdowns, histórico), aberto por escolha deliberada. Deixa de ser o controlador do jogo. A linguagem de tooltips ricos (requisitos cumprido/bloqueado, origem, capacidade) **migra** para as novas superfícies — a clareza pedagógica é patrimônio, não legado.
+
+---
+
+## 3. Por que desse jeito
+
+1. **Zero oclusão por construção** — a moldura só existe onde o mundo cedeu espaço; "nada cobre o mapa" vira garantia estrutural, não disciplina de cada tela nova.
+2. **Organização por momento, não por categoria** — cada fase do ciclo (explorar → mirar → executar → resolver) vê pouca informação, e a certa. O catálogo completo continua existindo (códice), mas não disputa a tela com a decisão.
+3. **O beat pausado⇄rodando materializado** — a recuada comunica o estado temporal sem texto. Mapeia 1:1 no runtime existente (agendar PAUSADO / correr até evento / auto-pausar): **nenhuma mudança no modelo temporal é pré-requisito**.
+4. **Síntese dos 4 paradigmas avaliados** (ver brief): herda do HUD fixo os endereços permanentes, do overlay de mira a composição protagonista, do diegético a geometria no mundo, e das janelas livres a lição da customização — conteúdo trocável em docks fixos, nunca posição livre.
+5. **Princípios do produto respeitados** — tempo real serve interpretação, nunca reflexo (decisões sem pressão de twitch: xadrez/V.A.T.S.); affordância direta sem texto instrutivo; identidade gótica na moldura (quase-preto, ouro velho, brilho paranormal só em seleção); a "prova da estratégia" é do sistema, não da execução manual do jogador.
+6. **Referências**: Fallout V.A.T.S. (congelar + reenquadrar + mirar membro), chess.com (tabuleiro + painel, nunca sobreposição), Into the Breach, Red Solstice 2 (a build executa; reações são política autorada), squeeze-back de TV. Board completo no Figma "Interface UDM 1.0".
+
+---
+
+## 4. Escopo por slices (cada um exercitável na tela antes do próximo)
+
+1. **Slice 1 — Mecanismo da recuada**: canvas recua/expande dirigido pelo `estadoTemporalSalaJogo` real (WS); moldura vazia com filete; transição 150–250ms reversível. Atenção ao padrão já validado do projeto para canvas R3F em wrapper (`resize={{offsetSize:true}}` + wrapper absolute). **Atenção crítica de coordenadas**: a recuada adiciona um segundo transform além do `--scale` global do `ConteinerEscalavel` — todo mapeamento ponteiro→mundo (clique em destino, seleção de alvo, hit-test) deve seguir a skill `coordenadas-ponteiro-conteiner-escalavel` compondo as escalas; nunca tratar pixel de tela como pixel de layout. Critério: Esperar/auto-pausa movem a tela nos dois sentidos sem quebrar o canvas, e cliques no mundo recuado acertam o que está sob o cursor.
+2. **Slice 2 — Dock inferior**: vitals + fila por Membro (de `estadoTemporal.acoesTemporais`) + Interromper + slots disparando as ações reais (substitui a aba Ações como ponto de disparo). Critério: agendar Soco pela moldura e interromper pelo resquício, ponta a ponta.
+3. **Slice 3 — Dock direito**: alvo selecionado + Mirar Membro + composição real do runtime ("o que vai acontecer") + registro compacto. Critério: selecionar o Manequim mostra dano composto e impacto previsto reais.
+4. **Slice 4 — Resquício do RODANDO + feedback**: cast bar sobre o Ser; chip de fila; resultado de teste/evento visível no momento em que acontece (com valor).
+5. **Correções de runtime acopladas** (podem entrar no Slice 1): Esperar com fim (duração finita) **ou** pausa manual — matar o softlock; status/tooltip das ações refletindo `tempoRodando`; affordance "Abandonar Partida".
+
+**Fora de escopo desta frente**: redesenho das páginas do códice (Inventário, Modificadores, Habilidades...) — virão depois, cada uma herdando o lar que a moldura define; multiplayer/pausa negociada (decisão futura — apenas não escolher solução que a impossibilite).
+
+---
+
+## 5. O esperado (critérios de aceite)
+
+1. Em nenhum estado algo cobre o mundo (única exceção legítima: a modal de vitória já existente).
+2. O estado temporal é legível nos dois regimes sem abrir nada (geometria da tela + relógio `T+` relativo).
+3. O ciclo completo — selecionar alvo → deliberar → confirmar → assistir → interromper — acontece sem trocar de aba e sem cliques mortos.
+4. A composição do efeito (dano = base + modificadores) é visível no momento da decisão, sem hover obrigatório.
+5. Sem softlock: não existe estado do qual o jogador não saia pela própria UI.
+6. Tooltip/status nunca contradiz a interatividade real do controle.
+7. Códice (conteúdo atual do Swiper) continua acessível; fluxo de vitória (modal + Retornar) intacto.
+8. Autocheck no Chrome antes de entregar: build ok, caso central ok (MF0 ponta a ponta), console limpo.
+
+---
+
+## 6. Referências e insumos
+
+- Brief interativo (5 mocks + avaliações): `universodomedo.com/public/briefs/interface-em-jogo-moldura.html` — servido em `/briefs/interface-em-jogo-moldura.html`.
+- Board de referências de jogabilidade (Figma): "Interface UDM 1.0".
+- Runbook E2E de jogabilidade: `E:\DEV\docs\Teste 0.2\Runbook E2E - Jogabilidade de Partida.md`.
+- Skills de padrão já identificadas como aplicáveis (ler antes de implementar): `conteiner-contexto-spa-udm` (arquitetura Conteiner/Contexto/SPA da página) e `coordenadas-ponteiro-conteiner-escalavel` (ponteiro→mundo sob transform composto). O roteador de skills pode casar outras.
+- Interação DENTRO de Partida em testes é humana (runbook); o agente prepara até o INICIAR.
+</script>
+
+<script>
+  const stage = document.getElementById('stage');
+  const caps = {
+    1:'I · No Mundo — a informação nasce ancorada em quem ela descreve.',
+    2:'II · Janelas Livres — arraste as janelas pelas barras de título e observe o que você cobre para poder ver.',
+    3:'III · HUD Fixo — bordas ocupadas, centro sagrado. Fila por Membro em trilhas paralelas.',
+    4:'IV · Overlay de Mira — a decisão é um modo com começo, composição e confirmação. Alterne o tempo para vê-lo dissolver.',
+    5:'V · Moldura (Recuada) — o mundo recua, a bancada se revela. Alterne o tempo e sinta o beat pausado⇄rodando.'
+  };
+  document.querySelectorAll('.tab').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      stage.dataset.p = b.dataset.p;
+      document.getElementById('cap').textContent = caps[b.dataset.p];
+      document.querySelectorAll('.eval').forEach(e=>e.classList.toggle('on', e.dataset.e===b.dataset.p));
+    });
+  });
+  let t0 = 7.45, running = false, base = 0;
+  document.querySelectorAll('.tempo button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.tempo button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      stage.dataset.t = b.dataset.t;
+      running = b.dataset.t === 'rodando';
+      base = performance.now();
+    });
+  });
+  const fmt = v => v.toFixed(3).replace('.',',');
+  setInterval(()=>{
+    const v = running ? t0 + (performance.now()-base)/1000 : t0;
+    document.querySelectorAll('.tt').forEach(e=>e.textContent = fmt(v));
+  },90);
+  // drag das janelas (P2)
+  document.querySelectorAll('.win h4').forEach(h=>{
+    h.addEventListener('pointerdown',ev=>{
+      const w = h.parentElement, r = w.getBoundingClientRect(), s = stage.getBoundingClientRect();
+      const dx = ev.clientX - r.left, dy = ev.clientY - r.top;
+      h.setPointerCapture(ev.pointerId);
+      const move = e=>{
+        w.style.left = Math.max(0,Math.min(e.clientX - s.left - dx, s.width - r.width))/s.width*100+'%';
+        w.style.top  = Math.max(0,Math.min(e.clientY - s.top - dy, s.height - r.height))/s.height*100+'%';
+      };
+      const up = ()=>{ h.removeEventListener('pointermove',move); h.removeEventListener('pointerup',up); };
+      h.addEventListener('pointermove',move); h.addEventListener('pointerup',up);
+    });
+  });
+  // Extrair Markdown (padrão dos briefs)
+  document.getElementById('btnExtrairMd').addEventListener('click', function () {
+    var btn = this;
+    var md = document.getElementById('mdBriefing').textContent.trim();
+    function feito() { btn.classList.add('ok'); btn.textContent = 'Copiado — cola no agente'; setTimeout(function () { btn.classList.remove('ok'); btn.textContent = 'Extrair Markdown'; }, 2600); }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = md; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); feito(); } catch (e) { btn.textContent = 'erro ao copiar'; }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(md).then(feito).catch(fallback); } else { fallback(); }
+  });
+</script>
+</body>
+</html>

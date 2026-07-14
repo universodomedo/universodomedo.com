@@ -1,0 +1,327 @@
+/* FluxoDeMusica — editor do Controle de Música em tempo real (espaço com zoom/pan, nós de música, ligações e pulso). */
+
+.raiz {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.barra {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+}
+
+.acao {
+    padding: 0.2em 0.7em;
+    font-size: 0.78em;
+    letter-spacing: 0.04em;
+    background: transparent;
+    border: 0.08em solid #B79051;
+    color: #B79051;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(183, 144, 81, 0.14);
+    }
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
+}
+
+.acao_perigo {
+    border-color: #DB4747;
+    color: #DB4747;
+
+    &:hover {
+        background: rgba(219, 71, 71, 0.14);
+    }
+}
+
+.dica {
+    flex: 1;
+    font-size: 0.68em;
+    color: rgba(235, 224, 201, 0.4);
+    letter-spacing: 0.04em;
+}
+
+.transporte {
+    font-size: 0.8em;
+    color: #ffd98a;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* ── Espaço aberto ────────────────────────────────────── */
+
+.espaco {
+    position: relative;
+    height: 30em;
+    overflow: hidden;
+    border: 0.09em solid #2d1a50;
+    border-radius: 0.55em;
+    background:
+        radial-gradient(circle at 30% 20%, rgba(107, 33, 200, 0.06), transparent 50%),
+        radial-gradient(rgba(235, 224, 201, 0.05) 0.06em, transparent 0.1em);
+    background-size: auto, 2.1em 2.1em;
+    cursor: grab;
+    touch-action: none;
+
+    &:active {
+        cursor: grabbing;
+    }
+}
+
+.espaco_ligando {
+    cursor: crosshair;
+}
+
+.mundo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    transform-origin: 0 0;
+}
+
+.plano {
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: visible;
+    pointer-events: none;
+}
+
+/* ── Ligações ─────────────────────────────────────────── */
+
+.lig_hit {
+    stroke: transparent;
+    stroke-width: 16;
+    fill: none;
+    pointer-events: stroke;
+    cursor: pointer;
+}
+
+.lig_linha {
+    fill: none;
+    stroke-width: 2;
+}
+
+.lig_conectada {
+    stroke: #d9a441;
+    opacity: 0.9;
+}
+
+.lig_desconectada {
+    stroke: rgba(235, 224, 201, 0.22);
+    stroke-dasharray: 4 6;
+}
+
+.lig_provisoria {
+    stroke: #d9b87e;
+    stroke-dasharray: 6 5;
+    stroke-width: 2;
+    fill: none;
+    opacity: 0.8;
+}
+
+.lig_chip {
+    font-size: 0.6em;
+    fill: rgba(235, 224, 201, 0.35);
+    text-anchor: middle;
+    pointer-events: none;
+}
+
+.lig_chip_conectada {
+    fill: #d9a441;
+}
+
+/* ── Pulso ────────────────────────────────────────────── */
+
+.pulso_dot {
+    fill: #ffd98a;
+    filter: drop-shadow(0 0 0.5em rgba(255, 217, 138, 0.95));
+    pointer-events: none;
+}
+
+.pulso_halo {
+    fill: none;
+    stroke: #ffd98a;
+    opacity: 0.5;
+    pointer-events: none;
+    animation: halo_pulso_fluxo 1.4s ease-out infinite;
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+@keyframes halo_pulso_fluxo {
+    from { transform: scale(0.6); opacity: 0.6; }
+    to { transform: scale(2.1); opacity: 0; }
+}
+
+/* ── Nó de música ─────────────────────────────────────── */
+
+.no {
+    position: absolute;
+    width: 16em;
+    border: 0.09em solid #2d1a50;
+    border-radius: 0.6em;
+    background: rgba(16, 8, 32, 0.92);
+    box-shadow: 0 0.4em 1.2em rgba(0, 0, 0, 0.5);
+    user-select: none;
+}
+
+.no_tocando {
+    border-color: #B79051;
+    box-shadow: 0 0 1.2em rgba(183, 144, 81, 0.28), 0 0.4em 1.2em rgba(0, 0, 0, 0.5);
+}
+
+.no_colapsado {
+    width: 12em;
+}
+
+.no_cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.5em 0.7em;
+    cursor: move;
+}
+
+.no_nome {
+    flex: 1;
+    min-width: 0;
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    font-size: 0.85em;
+    letter-spacing: 0.05em;
+    color: #EBE0C9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.no_tocando .no_nome {
+    color: #d9b87e;
+}
+
+.no_botao {
+    width: 1.5em;
+    height: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: transparent;
+    border: 0.08em solid rgba(235, 224, 201, 0.25);
+    border-radius: 0.35em;
+    color: rgba(235, 224, 201, 0.55);
+    cursor: pointer;
+    font-size: 0.7em;
+    line-height: 1;
+
+    &:hover {
+        border-color: #B79051;
+        color: #B79051;
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+}
+
+.no_botao_perigo {
+    &:hover {
+        border-color: #DB4747;
+        color: #DB4747;
+    }
+}
+
+/* ── Blocos ───────────────────────────────────────────── */
+
+.blocos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45em;
+    padding: 0.55em 0.6em 0.65em;
+    border-top: 0.07em solid rgba(45, 26, 80, 0.8);
+}
+
+.bloco {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.45em 0.6em;
+    border: 0.09em solid rgba(183, 144, 81, 0.28);
+    border-radius: 0.4em;
+    background: rgba(28, 15, 42, 0.9);
+    font-size: 0.78em;
+    cursor: pointer;
+    overflow: hidden;
+
+    &:hover {
+        border-color: #B79051;
+    }
+}
+
+.bloco_ativo {
+    border-color: #ffd98a;
+    background: rgba(255, 217, 138, 0.09);
+}
+
+.bloco_nome {
+    position: relative;
+    z-index: 1;
+    color: #EBE0C9;
+    letter-spacing: 0.02em;
+}
+
+.bloco_dur {
+    position: relative;
+    z-index: 1;
+    margin-left: auto;
+    font-size: 0.85em;
+    color: rgba(235, 224, 201, 0.35);
+    font-variant-numeric: tabular-nums;
+}
+
+.bloco_ativo .bloco_dur {
+    color: #ffd98a;
+}
+
+.bloco_progresso {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(90deg, rgba(255, 217, 138, 0.16), rgba(255, 217, 138, 0.05));
+    pointer-events: none;
+}
+
+.porto {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+    width: 1.3em;
+    height: 1.3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: -0.3em;
+    border: 0.1em solid #B79051;
+    border-radius: 50%;
+    background: rgba(16, 8, 32, 0.95);
+    color: #B79051;
+    font-size: 0.75em;
+    line-height: 1;
+    cursor: crosshair;
+
+    &:hover {
+        background: #B79051;
+        color: #0a040d;
+    }
+}

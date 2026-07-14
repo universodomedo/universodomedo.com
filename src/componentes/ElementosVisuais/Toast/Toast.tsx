@@ -12,6 +12,11 @@ export default function ToastViewport({ visiveis, onFechar }: { visiveis: ToastI
                     <div className={styles.toast_conteudo}>
                         <div className={styles.toast_titulo}>{t.titulo}</div>
                         {t.mensagem ? <div className={styles.toast_msg}>{t.mensagem}</div> : null}
+                        {t.acoes && t.acoes.length > 0 && (
+                            <div className={styles.toast_acoes}>
+                                {t.acoes.map(acao => <button key={acao.rotulo} className={styles.toast_acao} onClick={() => { acao.executar(); onFechar(t.id); }}>{acao.rotulo}</button>)}
+                            </div>
+                        )}
                     </div>
 
                     <button className={styles.toast_fechar} onClick={() => onFechar(t.id)}>×</button>

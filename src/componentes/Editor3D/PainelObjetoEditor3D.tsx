@@ -8,7 +8,6 @@ import { MAXIMO_ESPESSURA_MALHA_EDITOR3D, MAXIMO_SUBDIVISAO_MALHA_EDITOR3D } fro
 import { CampoNumeroEditor3D } from './CampoNumeroEditor3D';
 
 interface PainelObjetoEditor3DProps {
-    readonly nome: string;
     readonly cor: string;
     readonly materiaisExtras: readonly { readonly nome: string; readonly cor: string }[];
     readonly subdivisao: number;
@@ -16,7 +15,6 @@ interface PainelObjetoEditor3DProps {
     // Habilita os botões Atribuir: precisa de faces selecionadas no modo Edição › Face.
     readonly temFacesSelecionadas: boolean;
     readonly peca: { readonly idPeca: string; readonly nome: string } | null;
-    readonly aoRenomear: (nome: string) => void;
     readonly aoMudarCor: (cor: string) => void;
     readonly aoMudarSubdivisao: (subdivisao: number) => void;
     readonly aoMudarEspessura: (espessura: number) => void;
@@ -29,31 +27,12 @@ interface PainelObjetoEditor3DProps {
     readonly aoRemoverPeca: (idPeca: string) => void;
 };
 
-// Propriedades do objeto selecionado (nome/cor/subdivisão/espelho/aplicar transform). O nome confirma no blur/Enter (Escape restaura) para não renomear a cada tecla.
+// Propriedades do objeto selecionado (cor/subdivisão/espelho/aplicar transform). RENOMEAR não mora aqui: é duplo clique
+// no nome do objeto na árvore da Coleção da Cena (o nome é identidade da árvore, não propriedade de painel).
 // Duplicar/Excluir moram como ícones inline na linha do objeto na árvore da cena; parte de peça é removida pela peça inteira.
-export function PainelObjetoEditor3D({ nome, cor, materiaisExtras, subdivisao, espessura, temFacesSelecionadas, peca, aoRenomear, aoMudarCor, aoMudarSubdivisao, aoMudarEspessura, aoAdicionarMaterial, aoMudarCorMaterial, aoRenomearMaterial, aoAtribuirMaterial, aoEspelharX, aoAplicarTransformacoes, aoRemoverPeca }: PainelObjetoEditor3DProps) {
-    const [nomeEditado, setNomeEditado] = useState(nome);
-
-    useEffect(() => { setNomeEditado(nome); }, [nome]);
-
-    function confirmaNome(): void {
-        const nomeLimpo = nomeEditado.trim();
-        if (nomeLimpo.length === 0) { setNomeEditado(nome); return; }
-        if (nomeLimpo !== nome) aoRenomear(nomeLimpo);
-    };
-
-    function teclaNome(evento: KeyboardEvent<HTMLInputElement>): void {
-        evento.stopPropagation();
-        if (evento.key === 'Enter') evento.currentTarget.blur();
-        if (evento.key === 'Escape') { setNomeEditado(nome); evento.currentTarget.blur(); }
-    };
-
+export function PainelObjetoEditor3D({ cor, materiaisExtras, subdivisao, espessura, temFacesSelecionadas, peca, aoMudarCor, aoMudarSubdivisao, aoMudarEspessura, aoAdicionarMaterial, aoMudarCorMaterial, aoRenomearMaterial, aoAtribuirMaterial, aoEspelharX, aoAplicarTransformacoes, aoRemoverPeca }: PainelObjetoEditor3DProps) {
     return (
         <div className={styles.painel_objeto}>
-            <label className={styles.campo_texto_capa}>
-                <span>Nome</span>
-                <input type="text" value={nomeEditado} maxLength={80} onChange={evento => setNomeEditado(evento.target.value)} onBlur={confirmaNome} onKeyDown={teclaNome} />
-            </label>
             <label className={styles.campo_cor_capa}>
                 <span>Cor</span>
                 <input type="color" value={cor} onChange={evento => aoMudarCor(evento.target.value)} />

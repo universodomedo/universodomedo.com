@@ -18,12 +18,13 @@ type Props = {
     aoMudarPosicao: (posicao: { x: number; y: number }) => void;
     larguraMilimetros: number;
     alturaMilimetros: number;
+    idProjetoMapa: number | null;
     rotuloAtivo: string;
     marcadoresContexto: readonly { key: string; posicao: { x: number; y: number }; rotulo: string }[];
-    salvar: () => void;
+    aplicar: () => void;
 };
 
-export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigLuz({ nome, aoMudarNome, alcanceMilimetros, aoMudarAlcance, intensidade, aoMudarIntensidade, posicao, aoMudarPosicao, larguraMilimetros, alturaMilimetros, rotuloAtivo, marcadoresContexto, salvar }: Props) {
+export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigLuz({ nome, aoMudarNome, alcanceMilimetros, aoMudarAlcance, intensidade, aoMudarIntensidade, posicao, aoMudarPosicao, larguraMilimetros, alturaMilimetros, idProjetoMapa, rotuloAtivo, marcadoresContexto, aplicar }: Props) {
     return (
         <ConteudoForm>
             <ConteudoForm.AreaCorpo>
@@ -41,12 +42,12 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__Conf
                 </div>
 
                 <InputComRotulo rotulo="Posição no mapa">
-                    <SeletorPosicaoMapa larguraMilimetros={larguraMilimetros} alturaMilimetros={alturaMilimetros} posicao={posicao} aoMudarPosicao={aoMudarPosicao} rotuloAtivo={rotuloAtivo} marcadoresContexto={marcadoresContexto} />
+                    <SeletorPosicaoMapa larguraMilimetros={larguraMilimetros} alturaMilimetros={alturaMilimetros} idProjetoMapa={idProjetoMapa} posicao={posicao} aoMudarPosicao={aoMudarPosicao} rotuloAtivo={rotuloAtivo} marcadoresContexto={marcadoresContexto} />
                 </InputComRotulo>
             </ConteudoForm.AreaCorpo>
 
             <ConteudoForm.AreaBotoes>
-                <button type="button" onClick={salvar}>Salvar</button>
+                <button type="button" onClick={aplicar}>Aplicar</button>
             </ConteudoForm.AreaBotoes>
         </ConteudoForm>
     );

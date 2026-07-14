@@ -5,6 +5,7 @@
 // Descartável por natureza — ao promover a oficial, refatorar para Conteiner/Contexto/SPA.
 
 import { useCallback, useEffect, useRef, useState, type PointerEvent as PointerEventReact } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Room, RoomEvent, Track, type RemoteTrack, type RemoteParticipant } from 'livekit-client';
 import { Eventos_Emite, Eventos_EnviaERecebe, PAGINAS, type EMIT__Palco_encerrado, type EMIT__Palco_estadoAtualizado, type EMIT__Palco_tokenMidia, type PalcoEstadoDto, type PalcoParticipantePapel, type RESPONSE__Palco_entrar, type WsErrorResponse } from 'types-nora-api';
 
@@ -18,9 +19,9 @@ const RAIO_INICIAL_METROS = 4;
 
 type FalantePosicionado = { identity: string; idUsuario: number; nome: string; x: number; y: number };
 
-function entrarWs(): Promise<RESPONSE__Palco_entrar> {
+function entrarWs(codigoPalco: string): Promise<RESPONSE__Palco_entrar> {
     return new Promise((resolve, reject) => {
-        eventoWs(Eventos_EnviaERecebe.Palco.eventos.entrar, {}, { onSuccess: (response: RESPONSE__Palco_entrar) => { resolve(response); }, onError: (error: WsErrorResponse) => { reject(error); }, timeoutMs: 8000 });
+        eventoWs(Eventos_EnviaERecebe.Palco.eventos.entrar, { codigoPalco }, { onSuccess: (response: RESPONSE__Palco_entrar) => { resolve(response); }, onError: (error: WsErrorResponse) => { reject(error); }, timeoutMs: 8000 });
     });
 };
 
@@ -37,6 +38,8 @@ export default function TestePalco3D_Client() {
 
 function Pagina() {
     const { usuarioLogado } = useContextoAutenticacao();
+    const searchParams = useSearchParams();
+    const codigoPalco = searchParams.get('codigoPalco');
     const [entrando, setEntrando] = useState(false);
     const [conectado, setConectado] = useState(false);
     const [meuPapel, setMeuPapel] = useState<PalcoParticipantePapel | null>(null);
@@ -210,24 +213,26 @@ function Pagina() {
         audioCtxRef.current = ctx;
         ctx.resume().catch(() => {});
 
+        if (!codigoPalco) { adicionaLog('Informe ?codigoPalco=... na URL para testar um palco vivo.'); setEntrando(false); return; }
+
         try {
-            const entrada = await entrarWs();
+            const entrada = await entrarWs(codigoPalco);
             conectadoRef.current = true;
-            estadoRef.current = { ativo: entrada.ativo, participantes: entrada.participantes };
+            estadoRef.current = { codigoPalco: entrada.codigoPalco, nome: entrada.nome, ativo: entrada.ativo, idUsuarioDono: entrada.idUsuarioDono, nomeDono: entrada.nomeDono, idSalaChat: entrada.idSalaChat, participantes: entrada.participantes, fluxo: entrada.fluxo };
             setConectado(true);
             setMeuPapel(entrada.meuPapel ?? 'aguardando');
-            adicionaLog('Entrou no palco. Peça ao admin para te mover para Assistindo/Participando.');
+            adicionaLog('Entrou no palco. Peça a quem comanda para te mover para Assistindo/Participando.');
         } catch {
             adicionaLog('Não foi possível entrar no palco (está aberto?).');
         } finally {
             setEntrando(false);
         }
-    }, [adicionaLog, conectado, entrando]);
+    }, [adicionaLog, conectado, entrando, codigoPalco]);
 
     useRecebeEmitWs(Eventos_Emite.Palco.eventos.estadoAtualizado, {
         onSuccess: (data: EMIT__Palco_estadoAtualizado) => {
             estadoRef.current = data;
-            if (!conectadoRef.current || usuarioLogado === undefined) return;
+            if (!conectadoRef.current || !usuarioLogado) return;
             const eu = data.participantes.find(p => p.idUsuario === usuarioLogado.id);
             if (eu) { setMeuPapel(eu.papel); return; };
             adicionaLog('Você foi removido do palco.');

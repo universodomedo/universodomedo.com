@@ -1,0 +1,674 @@
+<title>Spike Egress — UDM</title>
+<style>
+    :root {
+        --fundo: #0E0817; --painel: #161022; --painel2: #1D1530; --borda: #2d1a50; --borda-forte: #43307a;
+        --pergaminho: #EBE0C9; --corpo: #C6BFD6; --mudo: #7d6fa8; --apagado: #55497a;
+        --ouro: #B79051; --ouro-claro: #D9B87E; --ok: #3D983D; --alerta: #DB4747;
+        --serif: "Palatino Linotype", Palatino, Georgia, serif;
+        --sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+        --mono: Consolas, ui-monospace, "Cascadia Mono", monospace;
+    }
+    * { box-sizing: border-box; }
+    body { background: var(--fundo); color: var(--corpo); font-family: var(--sans); font-size: 15px; line-height: 1.6; margin: 0; }
+    .pagina { max-width: 880px; margin: 0 auto; padding: 40px 20px 80px; }
+    .eyebrow { font-family: var(--sans); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--mudo); margin: 0 0 10px; }
+    h1 { font-family: var(--serif); color: var(--pergaminho); font-size: 34px; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 6px; text-wrap: balance; }
+    .tese { font-size: 17px; color: var(--corpo); max-width: 62ch; margin: 10px 0 0; }
+    .tese strong { color: var(--ouro-claro); font-weight: 600; }
+    .badges { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .badge { font-size: 12px; letter-spacing: 0.04em; color: var(--pergaminho); border: 1px solid var(--borda); background: var(--painel); padding: 5px 12px; border-radius: 3px; }
+    .badge b { color: var(--ouro); font-weight: 600; }
+
+    .num-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 26px 0 10px; }
+    .num-card { background: var(--painel); border: 1px solid var(--borda); border-radius: 4px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .num-card .rotulo { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mudo); }
+    .num-card .desc { font-size: 12.5px; color: var(--apagado); line-height: 1.45; }
+    .num-card input, .num-card select { background: var(--fundo); border: 1px solid var(--borda-forte); color: var(--ouro-claro); font-family: var(--mono); font-size: 20px; padding: 8px 10px; border-radius: 3px; width: 100%; font-variant-numeric: tabular-nums; }
+    .num-card input::placeholder { color: var(--apagado); font-size: 15px; }
+    .num-card input:focus, .num-card select:focus, button:focus-visible, .tab:focus-visible { outline: 2px solid var(--ouro); outline-offset: 1px; }
+    .num-card select { font-size: 15px; font-family: var(--sans); }
+
+    .extrair-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 16px; }
+    .botao-md { background: none; border: 1px solid var(--ouro); color: var(--ouro-claro); font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 9px 16px; border-radius: 3px; cursor: pointer; }
+    .botao-md:hover { background: rgba(183, 144, 81, 0.12); }
+    .botao-md.ok { border-color: var(--ok); color: var(--ok); }
+    .extrair-dica { font-size: 12.5px; color: var(--mudo); }
+
+    .relatorio-row { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin: 14px 0 6px; }
+    .botao-ouro { background: var(--ouro); color: #1a1206; border: 0; font-family: var(--sans); font-weight: 600; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; padding: 12px 22px; border-radius: 3px; cursor: pointer; }
+    .botao-ouro:hover { background: var(--ouro-claro); }
+    .relatorio-dica { font-size: 12.5px; color: var(--apagado); max-width: 46ch; }
+
+    .tabs { display: flex; flex-wrap: wrap; gap: 2px; border-bottom: 1px solid var(--borda); margin: 44px 0 0; }
+    .tab { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--mudo); font-family: var(--sans); font-size: 13.5px; letter-spacing: 0.03em; padding: 10px 14px; cursor: pointer; }
+    .tab:hover { color: var(--pergaminho); }
+    .tab.ativa { color: var(--ouro-claro); border-bottom-color: var(--ouro); }
+    .painel-tab { display: none; padding-top: 26px; }
+    .painel-tab.ativa { display: block; }
+
+    h2 { font-family: var(--serif); color: var(--pergaminho); font-size: 21px; font-weight: 400; letter-spacing: 0.05em; margin: 30px 0 10px; }
+    h2:first-child { margin-top: 0; }
+    h3 { font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ouro); font-weight: 600; margin: 26px 0 8px; }
+    p { margin: 0 0 12px; max-width: 70ch; }
+    .mutedp { color: var(--mudo); font-size: 13.5px; }
+
+    .passo { border: 1px solid var(--borda); border-radius: 4px; background: var(--painel); margin-bottom: 12px; }
+    .passo-cab { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; cursor: pointer; }
+    .passo-cab input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--ouro); margin-top: 2px; flex: none; cursor: pointer; }
+    .passo-titulo { color: var(--pergaminho); font-size: 15px; font-weight: 600; }
+    .passo-tempo { color: var(--apagado); font-size: 12px; margin-left: 8px; font-weight: 400; }
+    .passo-sub { font-size: 13px; color: var(--mudo); margin-top: 2px; }
+    .passo-corpo { padding: 0 16px 16px 46px; font-size: 14px; }
+    .passo.feito .passo-titulo { color: var(--apagado); text-decoration: line-through; }
+    .progresso { height: 6px; background: var(--painel2); border-radius: 3px; margin: 4px 0 20px; overflow: hidden; }
+    .progresso > div { height: 100%; width: 0%; background: var(--ouro); transition: width 0.3s; }
+    .progresso-txt { font-size: 12px; color: var(--mudo); margin-bottom: 6px; }
+
+    .cmd { position: relative; background: #0a0612; border: 1px solid var(--borda); border-radius: 3px; margin: 10px 0; }
+    .cmd pre { margin: 0; padding: 12px 90px 12px 14px; overflow-x: auto; font-family: var(--mono); font-size: 13px; color: #D8CFA8; line-height: 1.5; }
+    .copiar { position: absolute; top: 8px; right: 8px; background: var(--painel2); color: var(--mudo); border: 1px solid var(--borda-forte); border-radius: 3px; font-size: 11px; letter-spacing: 0.05em; padding: 4px 10px; cursor: pointer; font-family: var(--sans); }
+    .copiar:hover { color: var(--pergaminho); border-color: var(--ouro); }
+    .copiar.ok { color: var(--ok); border-color: var(--ok); }
+
+    .aviso { border: 1px solid rgba(219, 71, 71, 0.45); background: rgba(219, 71, 71, 0.08); border-radius: 4px; padding: 12px 16px; font-size: 14px; margin: 14px 0; }
+    .aviso b { color: #F09595; }
+    .nota-ouro { border: 1px solid rgba(183, 144, 81, 0.5); background: rgba(183, 144, 81, 0.07); border-radius: 4px; padding: 12px 16px; font-size: 14px; margin: 14px 0; }
+    .nota-ouro b { color: var(--ouro-claro); }
+
+    table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 12px 0 20px; }
+    th { text-align: left; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mudo); font-weight: 600; padding: 8px 12px; border-bottom: 1px solid var(--borda-forte); }
+    td { padding: 9px 12px; border-bottom: 1px solid var(--borda); vertical-align: top; }
+    td:first-child { color: var(--apagado); }
+    td:last-child { color: var(--corpo); }
+    .tab-scroll { overflow-x: auto; }
+
+    details { border: 1px solid var(--borda); border-radius: 4px; background: var(--painel); margin-bottom: 10px; }
+    summary { cursor: pointer; padding: 13px 16px; color: var(--pergaminho); font-size: 14.5px; font-weight: 600; list-style: none; display: flex; gap: 10px; align-items: baseline; }
+    summary::before { content: "+"; color: var(--ouro); font-family: var(--mono); font-size: 16px; flex: none; }
+    details[open] summary::before { content: "–"; }
+    details > div { padding: 0 16px 14px 38px; font-size: 14px; }
+    details > div p:last-child { margin-bottom: 0; }
+
+    .dd-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    @media (min-width: 720px) { .dd-grid { grid-template-columns: 1fr 1fr; } }
+    .dd-col ol { margin: 8px 0 0; padding-left: 20px; }
+    .dd-col li { margin-bottom: 12px; font-size: 14px; }
+    .dd-col li b { color: var(--pergaminho); }
+    .dd-def { border-top: 3px solid var(--ouro); background: var(--painel); border-radius: 4px; padding: 18px 20px; }
+    .dd-dec { border-top: 3px solid var(--borda-forte); background: var(--painel); border-radius: 4px; padding: 18px 20px; }
+    .dd-tag { font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 700; }
+    .dd-def .dd-tag { color: var(--ouro); }
+    .dd-dec .dd-tag { color: var(--mudo); }
+    .dd-col h2 { margin: 4px 0 4px; font-size: 19px; }
+    .dd-sub { font-size: 12.5px; color: var(--apagado); margin-bottom: 6px; }
+
+    .arquivo-nome { font-family: var(--mono); font-size: 13px; color: var(--ouro-claro); }
+    footer { margin-top: 56px; border-top: 1px solid var(--borda); padding-top: 18px; font-size: 12.5px; color: var(--apagado); max-width: 70ch; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="pagina">
+    <p class="eyebrow">Universo do Medo · Infra · Julho 2026</p>
+    <h1>Spike de Egress</h1>
+    <p class="tese">O pedido inteiro cabe numa frase: <strong>rodar 3 testes num docker compose e devolver 3 números.</strong> Com eles a gente dimensiona o servidor da transmissão do UDM e mata o Streamlabs pago. O resto desta página é detalhe — clica no que quiser aprofundar.</p>
+    <div class="badges">
+        <span class="badge"><b>~40 min</b> hands-on</span>
+        <span class="badge"><b>0</b> linhas de código p/ escrever</span>
+        <span class="badge"><b>3</b> containers, autocontido</span>
+        <span class="badge">hosting &amp; orquestração: <b>decisão sua</b></span>
+    </div>
+    <div class="extrair-row">
+        <button class="botao-md" id="btnExtrairMd" type="button">Extrair Markdown</button>
+        <span class="extrair-dica">Extraia e jogue no seu agente de IA — ele lê o briefing inteiro e te guia pelo roteiro.</span>
+    </div>
+
+    <h2 style="margin-top: 40px;">Os 3 números (preenche aqui e me manda)</h2>
+    <div class="num-grid">
+        <div class="num-card">
+            <span class="rotulo">1 · CPU no teste B</span>
+            <input id="numB" type="text" placeholder="ex.: 240" inputmode="decimal">
+            <span class="desc">% de CPU do container <code>egress</code> no <code>docker stats</code> gravando página 1080p30 (100% = 1 core). Expectativa: 100–300%.</span>
+        </div>
+        <div class="num-card">
+            <span class="rotulo">2 · CPU + upload no teste C</span>
+            <input id="numC" type="text" placeholder="ex.: 250% / 5 Mbps">
+            <span class="desc">Mesma medida transmitindo RTMP pro YouTube, mais o upload sustentado (~4–6 Mbps esperado por destino).</span>
+        </div>
+        <div class="num-card">
+            <span class="rotulo">3 · Estabilidade</span>
+            <select id="numEst">
+                <option value="">— selecione —</option>
+                <option>Estável 10+ min (YouTube "Excelente")</option>
+                <option>Rodou com quedas/warnings</option>
+                <option>Caiu / não completou</option>
+            </select>
+            <span class="desc">Stream aguentou 10+ minutos? Arquivos gravados abrem íntegros?</span>
+        </div>
+    </div>
+    <div class="num-grid" style="margin-top: 0;">
+        <div class="num-card">
+            <span class="rotulo">Ambiente do teste</span>
+            <select id="numAmb">
+                <option>Windows / Docker Desktop (número indicativo)</option>
+                <option>Linux (número definitivo)</option>
+            </select>
+        </div>
+        <div class="num-card">
+            <span class="rotulo">Specs da máquina do teste</span>
+            <input id="numSpec" type="text" placeholder="ex.: Ryzen 5600, 6c/12t, 300 Mbps up">
+            <span class="desc">Sem isso os números não dizem nada. Aproveita e me passa as do servidor atual também (Definição 4).</span>
+        </div>
+    </div>
+    <div class="relatorio-row">
+        <button class="botao-ouro" id="btnRelatorio" type="button">Copiar relatório pronto</button>
+        <span class="relatorio-dica" id="dicaRelatorio">Preenche os campos acima e este botão monta o texto do resultado — é só colar no chat. Seu entregável inteiro é esse.</span>
+    </div>
+
+    <nav class="tabs" role="tablist">
+        <button class="tab ativa" data-tab="roteiro" type="button">Roteiro</button>
+        <button class="tab" data-tab="contexto" type="button">Por quê</button>
+        <button class="tab" data-tab="dd" type="button">Definições &amp; Decisões</button>
+        <button class="tab" data-tab="objeicoes" type="button">Desculpas previstas</button>
+        <button class="tab" data-tab="arquivos" type="button">Arquivos do kit</button>
+    </nav>
+
+    <section class="painel-tab ativa" id="tab-roteiro">
+        <p class="progresso-txt" id="progressoTxt">0 de 7 passos</p>
+        <div class="progresso"><div id="barraProgresso"></div></div>
+
+        <div class="passo" data-passo="0">
+            <label class="passo-cab"><input type="checkbox">
+                <span><span class="passo-titulo">Preparar</span><span class="passo-tempo">~5 min</span>
+                <span class="passo-sub">Parar o livekit-server atual (o spike usa as mesmas portas 7880/7881/7882) e conferir as keys.</span></span>
+            </label>
+            <div class="passo-corpo">
+                <p>Os YAMLs vêm com <code>devkey</code>/<code>devsecret</code> (os fallbacks de dev da API). Se o <code>.env</code> da Nora-Api define <code>LIVEKIT_API_KEY</code>/<code>LIVEKIT_API_SECRET</code> reais, use os mesmos valores em <code>livekit.yaml</code> e <code>egress.yaml</code>.</p>
+            </div>
+        </div>
+
+        <div class="passo" data-passo="1">
+            <label class="passo-cab"><input type="checkbox">
+                <span><span class="passo-titulo">Subir o trio</span><span class="passo-tempo">~5 min + pull</span>
+                <span class="passo-sub">Redis + livekit-server + Egress. Na pasta do kit (aba "Arquivos" tem tudo):</span></span>
+            </label>
+            <div class="passo-corpo">
+                <div class="cmd"><pre>docker compose up -d</pre><button class="copiar" type="button">copiar</button></div>
+                <p class="mutedp">O app (Palco) continua funcionando normal por cima do livekit do spike — mesmas portas, mesmas keys.</p>
+            </div>
+        </div>
+
+        <div class="passo" data-passo="2">
+            <label class="passo-cab"><input type="checkbox">
+                <span><span class="passo-titulo">Instalar o CLI <code>lk</code> e exportar o ambiente</span><span class="passo-tempo">~5 min</span>
+                <span class="passo-sub">Releases em github.com/livekit/livekit-cli</span></span>
+            </label>
+            <div class="passo-corpo">
+                <div class="cmd"><pre>set LIVEKIT_URL=ws://localhost:7880
+set LIVEKIT_API_KEY=devkey
+set LIVEKIT_API_SECRET=devsecret</pre><button class="copiar" type="button">copiar</button></div>
+                <p class="mutedp">(Ou <code>export</code> no Linux. Keys reais se você trocou no passo 1.)</p>
+            </div>
+        </div>
+
+        <div class="passo" data-passo="3">
+            <label class="passo-cab"><input type="checkbox">
+                <span><span class="passo-titulo">Teste A — gravar voz do Palco em Opus</span><span class="passo-tempo">~5 min</span>
+                <span class="passo-sub">Leve. Este é o formato de gravação do produto (só áudio — ver "Por quê").</span></span>
+            </label>
+            <div class="passo-corpo">
+                <p>Com um palco aberto no app e alguém falando:</p>
+                <div class="cmd"><pre>lk egress start --type room-composite pedidos/gravacao-palco-audio.json</pre><button class="copiar" type="button">copiar</button></div>
+                <p>O <code>.ogg</code> (container OGG, codec <b>Opus</b> — equivalente a <code>.opus</code>) cai em <code>./gravacoes/</code>. Parar: <code>lk egress stop --id &lt;ID&gt;</code>.</p>
+            </div>
+        </div>
+
+        <div class="passo" data-passo="4">
+            <label class="passo-cab"><input type="checkbox">
+                <span><span class="passo-titulo">Teste B — Web Egress 1080p30 (o pesado)</span><span class="passo-tempo">~10 min</span>
+                <span class="passo-sub">Chrome headless renderiza uma página do UDM e encoda. Aqui nasce o número 1.</span></span>
+            </label>
+            <div class="passo-corpo">
+                <div class="cmd"><pre>lk egress start --type web pedidos/gravacao-web-1080p.json</pre><button class="copiar" type="button">copiar</button></div>
+                <div class="cmd"><pre>docker stats</pre><button class="copiar" type="button">copiar</button></div>
+                <p><b>Anote o CPU % do container <code>egress</code></b> (100% = 1 core). O MP4 gerado aqui é só instrumento de medição — o encode é idêntico ao da transmissão ao vivo. <b>MP4 não é formato de produto</b> (gravação de sessão = teste A).</p>
+            </div>
+        </div>
+
+        <div class="passo" data-passo="5">
+            <label class="passo-cab"><input type="checkbox">
+                <span><span class="passo-titulo">Teste C — RTMP pro YouTube, 10+ min</span><span class="passo-tempo">~15 min</span>
+                <span class="passo-sub">Live não listada no YouTube Studio. Aqui nascem os números 2 e 3.</span></span>
+            </label>
+            <div class="passo-corpo">
+                <p>Cole a stream key da live em <code>pedidos/rtmp-web-youtube.json</code> e:</p>
+                <div class="cmd"><pre>lk egress start --type web pedidos/rtmp-web-youtube.json</pre><button class="copiar" type="button">copiar</button></div>
+                <p>Anote CPU % e upload sustentado; no YouTube Studio, confira a saúde do stream ("Excelente/estável") por 10+ minutos.</p>
+            </div>
+        </div>
+
+        <div class="passo" data-passo="6">
+            <label class="passo-cab"><input type="checkbox">
+                <span><span class="passo-titulo">Devolver os 3 números</span><span class="passo-tempo">~2 min</span>
+                <span class="passo-sub">Preenche os campos no topo desta página e usa o botão "Copiar relatório pronto".</span></span>
+            </label>
+            <div class="passo-corpo">
+                <p class="mutedp">Encerrar tudo: <code>docker compose down</code> e religar o livekit-server de sempre.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="painel-tab" id="tab-contexto">
+        <h2>O que estamos fazendo</h2>
+        <p>Substituindo o pipeline de transmissão do UDM (Streamlabs + Discord + Kenku FM + captura de tela) por funcionalidades dentro da própria plataforma, sobre <b>LiveKit</b> (open source, Apache 2.0, self-hosted — o mesmo que já roda a voz do Palco hoje, funcional).</p>
+        <div class="tab-scroll"><table>
+            <tr><th>Hoje</th><th>Vira</th></tr>
+            <tr><td>Discord (voz)</td><td>Palco — pronto e funcionando</td></tr>
+            <tr><td>Transcrição (não existia)</td><td>Pronta — protótipo aprovado em sessão real</td></tr>
+            <tr><td>Kenku FM (trilha/SFX)</td><td>Mixer Interativo (outra frente, em andamento)</td></tr>
+            <tr><td>Streamlabs (captura + multi-stream pago)</td><td><b>Egress</b> — este spike</td></tr>
+            <tr><td>Baixar gravado da live e subir depois</td><td>Egress grava a trilha de voz (Opus); o vídeo do VOD é o <b>replay in-game</b></td></tr>
+        </table></div>
+
+        <h2>Os dois usos do Egress (não confundir)</h2>
+        <p><b>Transmissão ao vivo</b> — YouTube/Twitch/Facebook: o Egress renderiza uma página do UDM num Chrome headless, encoda e envia RTMP. Aqui existe encode de vídeo, e é isso que o spike mede.</p>
+        <div class="nota-ouro"><b>Gravação de sessão NÃO é vídeo.</b> O que o espectador assiste depois é o <b>replay das ações da sala, renderizado pelo próprio UDM, com câmera livre no cenário</b> (o jogo grava o log de ações de cada Partida para isso). O Egress só grava a <b>trilha de voz em Opus</b> — leve, sem encode — para sincronizar com o replay e alimentar o podcast. Gravação de tela/MP4 seria "assistir um grupo jogando RPG", que é exatamente o que estamos abandonando.</div>
+
+        <h2>Por que isso importa</h2>
+        <p>1) Multi-stream do Streamlabs é pago e o fluxo atual são 4 ferramentas para uma pipeline. 2) Transmitindo pelo próprio UDM, a cena da live é uma página do app — fichas, mapa, UI de jogo. 3) Voz e transcrição já rodam nesta mesma infra: Egress é o terceiro braço, não uma ferramenta nova.</p>
+
+        <h2>O que já está pronto (código)</h2>
+        <p>Palco (voz em tempo real, papéis, admin, diagnóstico) — funcional. Transcrição ao vivo — validada com usuários reais, zero infra. Teste de áudio 3D — funcional, zero infra. Kit deste spike — completo (aba "Arquivos"). O botão in-app "Iniciar transmissão" (via <code>EgressClient</code>, mesma SDK que a API já usa) foi <b>deixado de fora de propósito</b>: só faz sentido depois do seu veredito de hardware.</p>
+    </section>
+
+    <section class="painel-tab" id="tab-dd">
+        <div class="dd-grid">
+            <div class="dd-col dd-def">
+                <span class="dd-tag">Definições</span>
+                <h2>Já está decidido — é executar</h2>
+                <p class="dd-sub">Sem debate nesta camada; o custo de re-discutir é maior que o de rodar.</p>
+                <ol>
+                    <li><b>Rodar o spike</b> — os 3 testes do Roteiro (A: gravação Opus; B: web 1080p30; C: RTMP YouTube 10+ min).</li>
+                    <li><b>Medir e reportar</b> — CPU % do container <code>egress</code> em B e C, upload sustentado em C, estabilidade e integridade dos arquivos. Use os campos no topo.</li>
+                    <li><b>Alinhar as keys</b> — os YAMLs usam <code>devkey</code>/<code>devsecret</code>; se a Nora usa keys reais no <code>.env</code>, replicar nos dois YAMLs.</li>
+                    <li><b>Specs do servidor atual</b> — cores, RAM, upload e franquia mensal. Não temos isso documentado e sem isso nenhum número vira decisão.</li>
+                </ol>
+            </div>
+            <div class="dd-col dd-dec">
+                <span class="dd-tag">Decisões</span>
+                <h2>São suas — só nos diga o quê</h2>
+                <p class="dd-sub">Aqui ninguém decide por você; queremos sua recomendação.</p>
+                <ol>
+                    <li><b>Onde rodar o spike</b> — dev Windows/Docker Desktop (indicativo) ou direto num Linux alvo (definitivo). O ideal é ter o número Linux em algum momento.</li>
+                    <li><b>Onde versionar o kit</b> — hoje vive fora dos repositórios (<code>infra-spikes/egress-spike/</code>). Branch, repo de infra, formato: sua praia.</li>
+                    <li><b>Hospedagem futura</b> — o driver de custo é <b>banda</b>, não CPU. Teto projetado (5 palcos, 550 pessoas, áudio-only): 60–120 Mbps sustentado, 8–16 vCPU, ~US$100–200/mês. Hyperscaler é armadilha para SFU (egress a ~US$0,13/GB; sessão de 4h ≈ 150–250 GB). Na mesa: Vultr/DO São Paulo, bare metal BR, Hetzner EU. Escolha sua.</li>
+                    <li><b>Orquestração em produção</b> — compose, systemd, k8s: como preferir. O spike só prova o hardware.</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <section class="painel-tab" id="tab-objeicoes">
+        <p class="mutedp" style="margin-bottom: 16px;">Respostas prontas para os "mas". Se sobrar alguma objeção fora desta lista, ela é bem-vinda — junto com o número do teste que a sustenta.</p>
+        <details>
+            <summary>"Isso é perda de tempo — OBS/Streamlabs já resolve"</summary>
+            <div><p>OBS resolve <b>uma tela de um PC de uma pessoa</b>. O objetivo é o servidor transmitir a visão-de-espectador do jogo (página do app com ficha/mapa) sem depender do PC de ninguém, para múltiplos destinos, e gravar a voz de toda sessão automaticamente. Nada disso o OBS faz sozinho — e o multi-stream do Streamlabs é assinatura paga que queremos matar.</p></div>
+        </details>
+        <details>
+            <summary>"Por que não usar LiveKit Cloud / um serviço pronto?"</summary>
+            <div><p>O Cloud cobra por minuto de participante e de egress — vira custo recorrente permanente. Self-host é Apache 2.0, grátis, e o SFU <b>já roda self-hosted hoje</b> servindo a voz do Palco. O spike existe exatamente para saber se o nosso ferro aguenta o pedaço que falta antes de qualquer decisão de gasto.</p></div>
+        </details>
+        <details>
+            <summary>"Docker Desktop no Windows não mede nada"</summary>
+            <div><p>Concordo — por isso o número Windows está marcado como <b>indicativo</b> e a Decisão 1 é sua: se preferir rodar direto num Linux, melhor ainda, vira número definitivo de uma vez. Mas um indicativo hoje vale mais que um definitivo nunca.</p></div>
+        </details>
+        <details>
+            <summary>"Isso não escala / vai cair no meio da live"</summary>
+            <div><p>Pode ser! É <b>exatamente</b> o que o spike responde com número em vez de achismo. O teto de projeto é conhecido (5 palcos, 550 pessoas, 60–120 Mbps) e o encode de vídeo só existe <b>durante transmissão ao vivo</b> — gravação de sessão é audio-only (Opus), quase grátis. Se o número disser "não dá", ganhamos essa informação pelo preço de 40 minutos.</p></div>
+        </details>
+        <details>
+            <summary>"Não tenho tempo pra isso"</summary>
+            <div><p>Hands-on real: ~40 min. Metade é pull de imagem e 10 minutos olhando um stream rodar — dá para fazer em paralelo com outra coisa. O entregável são 3 números num formulário que já monta o relatório sozinho (topo da página).</p></div>
+        </details>
+        <details>
+            <summary>"Depois vão me pedir pra manter mais um monstro"</summary>
+            <div><p>Produção é a Decisão 4 — orquestração do seu jeito. E o "monstro" são 3 containers stateless + Redis: sem banco novo, sem deploy de aplicação, sem migração. O app já fala com o LiveKit hoje; só entra um worker do lado dele.</p></div>
+        </details>
+    </section>
+
+    <section class="painel-tab" id="tab-arquivos">
+        <p class="mutedp" style="margin-bottom: 16px;">O kit completo — esta página se basta: crie uma pasta, cole estes 6 arquivos (estrutura: raiz + subpasta <code>pedidos/</code>) e siga o Roteiro. Também existe pronto na máquina do Caio em <code>E:\UDM_WORKSPACE\infra-spikes\egress-spike\</code>.</p>
+
+        <h3><span class="arquivo-nome">docker-compose.yml</span></h3>
+        <div class="cmd"><pre>services:
+    redis:
+        image: redis:7-alpine
+        ports:
+            - "6379:6379"
+
+    livekit:
+        image: livekit/livekit-server:latest
+        command: --config /etc/livekit.yaml
+        volumes:
+            - ./livekit.yaml:/etc/livekit.yaml:ro
+        ports:
+            - "7880:7880"
+            - "7881:7881"
+            - "7882:7882/udp"
+        depends_on:
+            - redis
+
+    egress:
+        image: livekit/egress:latest
+        environment:
+            - EGRESS_CONFIG_FILE=/etc/egress.yaml
+        volumes:
+            - ./egress.yaml:/etc/egress.yaml:ro
+            - ./gravacoes:/out
+        cap_add:
+            - SYS_ADMIN
+        depends_on:
+            - redis
+            - livekit</pre><button class="copiar" type="button">copiar</button></div>
+
+        <h3><span class="arquivo-nome">livekit.yaml</span></h3>
+        <div class="cmd"><pre>port: 7880
+rtc:
+    tcp_port: 7881
+    udp_port: 7882
+    use_external_ip: false
+redis:
+    address: redis:6379
+keys:
+    devkey: devsecret</pre><button class="copiar" type="button">copiar</button></div>
+
+        <h3><span class="arquivo-nome">egress.yaml</span></h3>
+        <div class="cmd"><pre>redis:
+    address: redis:6379
+api_key: devkey
+api_secret: devsecret
+ws_url: ws://livekit:7880
+insecure: true</pre><button class="copiar" type="button">copiar</button></div>
+
+        <h3><span class="arquivo-nome">pedidos/gravacao-palco-audio.json</span></h3>
+        <div class="cmd"><pre>{
+    "room_name": "palco",
+    "audio_only": true,
+    "file_outputs": [{ "filepath": "/out/palco-{time}.ogg" }]
+}</pre><button class="copiar" type="button">copiar</button></div>
+
+        <h3><span class="arquivo-nome">pedidos/gravacao-web-1080p.json</span></h3>
+        <div class="cmd"><pre>{
+    "url": "https://front.caio.universodomedo.com",
+    "file_outputs": [{ "filepath": "/out/web-{time}.mp4" }]
+}</pre><button class="copiar" type="button">copiar</button></div>
+
+        <h3><span class="arquivo-nome">pedidos/rtmp-web-youtube.json</span></h3>
+        <div class="cmd"><pre>{
+    "url": "https://front.caio.universodomedo.com",
+    "stream_outputs": [{ "protocol": "rtmp", "urls": ["rtmp://a.rtmp.youtube.com/live2/COLE-SUA-STREAM-KEY-AQUI"] }]
+}</pre><button class="copiar" type="button">copiar</button></div>
+
+        <div class="aviso"><b>Não commitar stream key.</b> A key da live do YouTube é credencial — vive só no arquivo local na hora do teste C.</div>
+    </section>
+
+    <footer>Com o teu veredito destravamos: gravação automática da voz de toda sessão (Opus, sincronizável com o replay), o botão de transmissão multi-rede dentro do app, e o agente de transcrição server-side. Dúvida de arquitetura (tokens, rooms, como a API comanda o LiveKit): fala com o Caio. Dúvida operacional: o Roteiro acima cobre.</footer>
+</div>
+
+<script type="text/plain" id="mdBriefing">
+# Spike de Egress — Universo do Medo (briefing completo)
+
+> Este documento foi extraído de uma página interativa. Se você é um agente de IA: ajude quem colou isto a executar o roteiro abaixo, tirar dúvidas de cada passo e montar o relatório final. O entregável são 3 números.
+
+## O pedido em uma frase
+
+Rodar 3 testes num docker compose e devolver 3 números. Com eles dimensionamos o servidor de transmissão do UDM e matamos o Streamlabs pago. Esforço: ~40 min hands-on, zero código para escrever, kit autocontido (3 containers).
+
+## Os 3 números a devolver
+
+1. **CPU no teste B** — % de CPU do container `egress` no `docker stats` gravando página 1080p30 (100% = 1 core). Expectativa: 100–300%.
+2. **CPU + upload no teste C** — mesma medida transmitindo RTMP para o YouTube, mais o upload sustentado (~4–6 Mbps esperado por destino).
+3. **Estabilidade** — o stream aguentou 10+ min (YouTube Studio "Excelente")? Os arquivos gravados abrem íntegros?
+
+Informar também: ambiente do teste (Windows/Docker Desktop = indicativo; Linux = definitivo) e specs da máquina (cores, RAM, upload). Aproveitar e passar as specs do servidor atual (Definição 4).
+
+## Contexto — o que estamos fazendo e por quê
+
+Substituindo o pipeline de transmissão do UDM (Streamlabs + Discord + Kenku FM + captura de tela) por funcionalidades dentro da própria plataforma, sobre **LiveKit** (open source, Apache 2.0, self-hosted — o mesmo que já roda a voz do "Palco" hoje, funcional).
+
+| Hoje | Vira |
+|---|---|
+| Discord (voz) | Palco — pronto e funcionando |
+| Transcrição (não existia) | Pronta — protótipo aprovado em sessão real |
+| Kenku FM (trilha/SFX) | Mixer Interativo (outra frente, em andamento) |
+| Streamlabs (captura + multi-stream pago) | **Egress** — este spike |
+| Baixar gravado da live e subir depois | Egress grava a trilha de voz (Opus); o vídeo do VOD é o replay in-game |
+
+**Os dois usos do Egress (não confundir):**
+
+- **Transmissão ao vivo** (YouTube/Twitch/Facebook): Egress renderiza uma página do UDM num Chrome headless, encoda e envia RTMP. Aqui existe encode de vídeo — é o que o spike mede.
+- **Gravação de sessão NÃO é vídeo**: o espectador assiste depois é o replay das ações da sala, renderizado pelo próprio UDM, com câmera livre no cenário. O Egress só grava a trilha de voz em **Opus** (leve, sem encode de vídeo), para sincronizar com o replay e alimentar o podcast. MP4/captura de tela não é formato de produto.
+
+**Código já pronto**: Palco (voz, papéis, admin, diagnóstico), transcrição ao vivo, teste de áudio 3D — tudo funcional. O botão in-app "Iniciar transmissão" (via EgressClient, mesma SDK que a API já usa) foi deixado de fora de propósito: só faz sentido após o veredito de hardware deste spike.
+
+## Roteiro (7 passos)
+
+1. **Preparar (~5 min)** — Parar o livekit-server atual (o spike usa as mesmas portas 7880/7881/7882). Os YAMLs vêm com `devkey`/`devsecret`; se o `.env` da Nora-Api define keys reais, usar as mesmas em `livekit.yaml` e `egress.yaml`.
+2. **Subir o trio (~5 min + pull)** — na pasta do kit: `docker compose up -d`. O app (Palco) continua funcionando por cima do livekit do spike.
+3. **CLI lk (~5 min)** — instalar de github.com/livekit/livekit-cli e exportar: `LIVEKIT_URL=ws://localhost:7880`, `LIVEKIT_API_KEY=devkey`, `LIVEKIT_API_SECRET=devsecret`.
+4. **Teste A — voz em Opus (~5 min)** — com um palco aberto e alguém falando: `lk egress start --type room-composite pedidos/gravacao-palco-audio.json`. O `.ogg` (container OGG, codec Opus — equivalente a `.opus`) cai em `./gravacoes/`. Parar: `lk egress stop --id <ID>`. Este é o formato de gravação do produto.
+5. **Teste B — Web Egress 1080p30, o pesado (~10 min)** — `lk egress start --type web pedidos/gravacao-web-1080p.json` e, em paralelo, `docker stats`. Anotar o CPU % do container `egress`. O MP4 gerado é só instrumento de medição (encode idêntico ao da transmissão ao vivo); MP4 não é formato de produto.
+6. **Teste C — RTMP para o YouTube, 10+ min (~15 min)** — criar live não listada no YouTube Studio, colar a stream key em `pedidos/rtmp-web-youtube.json` e `lk egress start --type web pedidos/rtmp-web-youtube.json`. Anotar CPU % e upload sustentado; conferir saúde do stream por 10+ minutos.
+7. **Devolver os 3 números (~2 min)** — preencher na página interativa (botão gera o relatório) ou mandar em texto. Encerrar: `docker compose down` e religar o livekit-server de sempre.
+
+## Definições (já decidido — é executar)
+
+1. Rodar o spike (os 3 testes acima).
+2. Medir e reportar (CPU em B e C, upload em C, estabilidade, integridade dos arquivos).
+3. Alinhar as keys dos YAMLs com as da Nora-Api.
+4. Passar as specs do servidor atual: cores, RAM, upload, franquia mensal.
+
+## Decisões (do responsável de infra — só nos diga o quê)
+
+1. **Onde rodar o spike** — dev Windows (indicativo) ou Linux alvo (definitivo). Ideal ter o número Linux em algum momento.
+2. **Onde versionar o kit** — hoje vive fora dos repositórios; branch/repo de infra é escolha sua.
+3. **Hospedagem futura** — driver de custo é banda, não CPU. Teto projetado (5 palcos, 550 pessoas, áudio-only): 60–120 Mbps sustentado, 8–16 vCPU, ~US$100–200/mês. Evitar hyperscaler para SFU (egress ~US$0,13/GB; sessão de 4h ≈ 150–250 GB). Na mesa: Vultr/DO São Paulo, bare metal BR, Hetzner EU.
+4. **Orquestração em produção** — compose, systemd, k8s: como preferir.
+
+## Objeções já respondidas
+
+- **"OBS/Streamlabs já resolve"** — OBS resolve uma tela de um PC de uma pessoa. O objetivo é o servidor transmitir a visão-de-espectador do jogo sem PC de ninguém, multi-destino, e gravar a voz de toda sessão automaticamente. E o multi-stream do Streamlabs é pago.
+- **"Por que não LiveKit Cloud?"** — cobra por minuto de participante e egress; self-host é grátis e o SFU já roda self-hosted hoje.
+- **"Docker Desktop no Windows não mede nada"** — concordo; por isso o número Windows é indicativo e rodar no Linux é a Decisão 1. Um indicativo hoje vale mais que um definitivo nunca.
+- **"Não escala / vai cair na live"** — é exatamente o que o spike responde com número. Encode de vídeo só existe durante transmissão ao vivo; gravação de sessão é audio-only, quase grátis.
+- **"Não tenho tempo"** — ~40 min hands-on; metade é pull de imagem e stream rodando em paralelo.
+- **"Vou ter que manter mais um monstro"** — 3 containers stateless + Redis; sem banco novo, sem deploy de app; orquestração de produção é decisão sua.
+
+## Arquivos do kit
+
+Estrutura: raiz + subpasta `pedidos/`. (Também existe pronto na máquina do Caio em `E:\UDM_WORKSPACE\infra-spikes\egress-spike\`.)
+
+**docker-compose.yml**
+
+```yaml
+services:
+    redis:
+        image: redis:7-alpine
+        ports:
+            - "6379:6379"
+
+    livekit:
+        image: livekit/livekit-server:latest
+        command: --config /etc/livekit.yaml
+        volumes:
+            - ./livekit.yaml:/etc/livekit.yaml:ro
+        ports:
+            - "7880:7880"
+            - "7881:7881"
+            - "7882:7882/udp"
+        depends_on:
+            - redis
+
+    egress:
+        image: livekit/egress:latest
+        environment:
+            - EGRESS_CONFIG_FILE=/etc/egress.yaml
+        volumes:
+            - ./egress.yaml:/etc/egress.yaml:ro
+            - ./gravacoes:/out
+        cap_add:
+            - SYS_ADMIN
+        depends_on:
+            - redis
+            - livekit
+```
+
+**livekit.yaml**
+
+```yaml
+port: 7880
+rtc:
+    tcp_port: 7881
+    udp_port: 7882
+    use_external_ip: false
+redis:
+    address: redis:6379
+keys:
+    devkey: devsecret
+```
+
+**egress.yaml**
+
+```yaml
+redis:
+    address: redis:6379
+api_key: devkey
+api_secret: devsecret
+ws_url: ws://livekit:7880
+insecure: true
+```
+
+**pedidos/gravacao-palco-audio.json**
+
+```json
+{
+    "room_name": "palco",
+    "audio_only": true,
+    "file_outputs": [{ "filepath": "/out/palco-{time}.ogg" }]
+}
+```
+
+**pedidos/gravacao-web-1080p.json**
+
+```json
+{
+    "url": "https://front.caio.universodomedo.com",
+    "file_outputs": [{ "filepath": "/out/web-{time}.mp4" }]
+}
+```
+
+**pedidos/rtmp-web-youtube.json**
+
+```json
+{
+    "url": "https://front.caio.universodomedo.com",
+    "stream_outputs": [{ "protocol": "rtmp", "urls": ["rtmp://a.rtmp.youtube.com/live2/COLE-SUA-STREAM-KEY-AQUI"] }]
+}
+```
+
+⚠️ Não commitar stream key do YouTube — é credencial; vive só no arquivo local na hora do teste C.
+
+## Formato do relatório esperado
+
+```
+SPIKE EGRESS - RESULTADO
+Ambiente: <Windows Docker Desktop | Linux> | Specs: <cpu, cores, upload>
+1. CPU teste B (web 1080p30): <n>%
+2. CPU + upload teste C (RTMP): <n>% / <n> Mbps
+3. Estabilidade: <estável 10+ min | quedas | caiu>
+```
+
+## O que o veredito destrava
+
+Gravação automática da voz de toda sessão (Opus, sincronizável com o replay in-game e pronta para o podcast), botão de transmissão multi-rede dentro do app (mata o Streamlabs pago) e o agente de transcrição server-side (leve, não pesa nessa conta).
+</script>
+
+<script>
+(function () {
+    var tabs = document.querySelectorAll('.tab');
+    tabs.forEach(function (t) {
+        t.addEventListener('click', function () {
+            tabs.forEach(function (x) { x.classList.remove('ativa'); });
+            document.querySelectorAll('.painel-tab').forEach(function (p) { p.classList.remove('ativa'); });
+            t.classList.add('ativa');
+            document.getElementById('tab-' + t.dataset.tab).classList.add('ativa');
+        });
+    });
+
+    function copiarTexto(texto, botao) {
+        var original = botao.textContent;
+        function feito() { botao.classList.add('ok'); botao.textContent = 'copiado'; setTimeout(function () { botao.classList.remove('ok'); botao.textContent = original; }, 1600); }
+        if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(texto).then(feito).catch(function () { fallback(); }); } else { fallback(); }
+        function fallback() {
+            var ta = document.createElement('textarea');
+            ta.value = texto; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); feito(); } catch (e) { botao.textContent = 'erro'; }
+            document.body.removeChild(ta);
+        }
+    }
+
+    document.querySelectorAll('.cmd .copiar').forEach(function (b) {
+        b.addEventListener('click', function () { copiarTexto(b.parentElement.querySelector('pre').textContent, b); });
+    });
+
+    var passos = document.querySelectorAll('.passo');
+    var chaveLS = 'udm-spike-egress-passos';
+    var estado = [];
+    try { estado = JSON.parse(localStorage.getItem(chaveLS) || '[]'); } catch (e) { estado = []; }
+    function atualizaProgresso() {
+        var feitos = 0;
+        passos.forEach(function (p) { if (p.classList.contains('feito')) feitos++; });
+        document.getElementById('barraProgresso').style.width = (feitos / passos.length * 100) + '%';
+        document.getElementById('progressoTxt').textContent = feitos + ' de ' + passos.length + ' passos' + (feitos === passos.length ? ' — agora é só mandar o relatório' : '');
+    }
+    passos.forEach(function (p, i) {
+        var cb = p.querySelector('input[type=checkbox]');
+        if (estado[i]) { cb.checked = true; p.classList.add('feito'); }
+        cb.addEventListener('change', function () {
+            p.classList.toggle('feito', cb.checked);
+            estado[i] = cb.checked;
+            try { localStorage.setItem(chaveLS, JSON.stringify(estado)); } catch (e) { }
+            atualizaProgresso();
+        });
+    });
+    atualizaProgresso();
+
+    document.getElementById('btnRelatorio').addEventListener('click', function () {
+        var v = function (id) { var el = document.getElementById(id); return (el.value || '').trim(); };
+        var linhas = [
+            'SPIKE EGRESS - RESULTADO',
+            'Ambiente: ' + v('numAmb') + (v('numSpec') ? ' | Specs: ' + v('numSpec') : ''),
+            '1. CPU teste B (web 1080p30, gravacao MP4 de medicao): ' + (v('numB') || '(nao preenchido)'),
+            '2. CPU + upload teste C (RTMP YouTube): ' + (v('numC') || '(nao preenchido)'),
+            '3. Estabilidade: ' + (v('numEst') || '(nao preenchido)'),
+        ];
+        copiarTexto(linhas.join('\n'), this);
+        var dica = document.getElementById('dicaRelatorio');
+        dica.textContent = 'Relatório copiado — cola no chat com o Caio.';
+    });
+
+    document.getElementById('btnExtrairMd').addEventListener('click', function () {
+        var btn = this;
+        var md = document.getElementById('mdBriefing').textContent.trim();
+        function feito() { btn.classList.add('ok'); btn.textContent = 'Copiado — cola no agente'; setTimeout(function () { btn.classList.remove('ok'); btn.textContent = 'Extrair Markdown'; }, 2600); }
+        function fallback() {
+            var ta = document.createElement('textarea');
+            ta.value = md; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); feito(); } catch (e) { btn.textContent = 'erro ao copiar'; }
+            document.body.removeChild(ta);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(md).then(feito).catch(fallback); } else { fallback(); }
+    });
+})();
+</script>

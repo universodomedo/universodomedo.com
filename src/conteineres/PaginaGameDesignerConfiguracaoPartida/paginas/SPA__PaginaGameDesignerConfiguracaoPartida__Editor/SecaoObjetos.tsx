@@ -9,13 +9,14 @@ import { rotuloObjeto, type InteragivelObjeto } from 'Contextos/Contexto__Pagina
 type Props = {
     objetos: readonly InteragivelObjeto[];
     aoAdicionar: () => void;
+    aoAdicionarDoMapa: () => void;
     aoEditar: (chave: string) => void;
     aoRemover: (chave: string) => void;
 };
 
 // Grade de cards dos objetos (Interagíveis não-vivos, ex.: Porta/Manequim): exibe, adiciona e remove. Objeto não tem avatar → glifo genérico.
 // Clicar num card / no "+" só dispara ações de fluxo — o Controlador de Fluxo renderiza a config do objeto em vista própria.
-export function SecaoObjetos({ objetos, aoAdicionar, aoEditar, aoRemover }: Props) {
+export function SecaoObjetos({ objetos, aoAdicionar, aoAdicionarDoMapa, aoEditar, aoRemover }: Props) {
     return (
         <InputComRotulo rotulo="Objetos">
             <div className={styles.grade_cards}>
@@ -29,6 +30,10 @@ export function SecaoObjetos({ objetos, aoAdicionar, aoEditar, aoRemover }: Prop
                 <button type="button" className={styles.cartao_adicionar} onClick={aoAdicionar}>
                     <span className={styles.mais}>+</span>
                     <span className={styles.rotulo}>Adicionar</span>
+                </button>
+                <button type="button" className={styles.cartao_adicionar} onClick={aoAdicionarDoMapa}>
+                    <span className={styles.mais}>+</span>
+                    <span className={styles.rotulo}>Do Mapa</span>
                 </button>
             </div>
         </InputComRotulo>

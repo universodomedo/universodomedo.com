@@ -10,20 +10,20 @@ import { Contexto__PaginaGameDesignerConfiguracaoPartida__Props } from '../Conte
 import { remapeiaConfiguracaoPartidaGraphql } from './remapeiaConfiguracaoPartida';
 import SPA__PaginaGameDesignerConfiguracaoPartida__Edicao from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Edicao/SPA__PaginaGameDesignerConfiguracaoPartida__Edicao';
 
-export type AbaEdicaoPartida = 'visao' | 'runtime' | 'arteCapa' | 'musica' | 'musicaEmJogo';
+export type AbaEdicaoPartida = 'visao' | 'runtime' | 'previewRuntime' | 'arteCapa' | 'musica' | 'musicaEmJogo';
 
-const ROTULO_EDITOR: Record<Exclude<AbaEdicaoPartida, 'visao'>, string> = { runtime: 'Runtime', arteCapa: 'Arte de Capa', musica: 'Música de Fundo', musicaEmJogo: 'Música em Jogo' };
+const ROTULO_EDITOR: Record<Exclude<AbaEdicaoPartida, 'visao'>, string> = { runtime: 'Runtime', previewRuntime: 'Preview do Runtime', arteCapa: 'Arte de Capa', musica: 'Música de Fundo', musicaEmJogo: 'Música em Jogo' };
 
 // Carga unica do detalhe da Partida: o configuracao (runtime) vem por GraphQL Partida-por-PK; arteCapa e idMusicaConfigurada ja vem no PartidaResumo (estrutura), entao a aba Detalhes os le direto da partida — sem N+1.
 const SELECT_CONFIGURACAO_PARTIDA = {
     configuracao: {
         versaoShape: true,
         narracaoInicial: true,
-        cenario: { nome: true, mapaLogico: { larguraMilimetros: true, alturaMilimetros: true, portas: { chave: true, nome: true, posicao: { x: true, y: true }, orientacaoGraus: true, larguraMilimetros: true, alturaMilimetros: true } } },
-        interagiveis: { chave: true, nome: true, descricao: true, tipo: true, posicao: { x: true, y: true }, estadoPercepcaoInicial: true, pontosDurabilidadeMaximo: true, larguraMilimetros: true, alturaMilimetros: true, profundidadeMilimetros: true, vinculoElementoMapa: true, idSer: true, controlador: { tipo: true, slotJogador: true }, descobertas: { nome: true, descricaoInterna: true, idCapacidadeInata: true, recompensas: { dificuldadeMinima: true, chavesReveladas: true } } },
+        cenario: { nome: true, mapaLogico: { larguraMilimetros: true, alturaMilimetros: true, idProjetoMapa: true } },
+        interagiveis: { chave: true, nome: true, descricao: true, tipo: true, posicao: { x: true, y: true }, estadoPercepcaoInicial: true, pontosDurabilidadeMaximo: true, larguraMilimetros: true, alturaMilimetros: true, profundidadeMilimetros: true, idElementoMapa: true, acoes: { tipo: true, alcanceMilimetros: true }, idSer: true, controlador: { tipo: true, slotJogador: true }, descobertas: { nome: true, descricaoInterna: true, idCapacidadeInata: true, recompensas: { dificuldadeMinima: true, chavesReveladas: true } } },
         luzes: { chave: true, nome: true, posicao: { x: true, y: true }, alcanceMilimetros: true, intensidade: true },
         temporal: { momentoInicialMs: true },
-        condicaoVitoria: { tipo: true, keySerEmSala: true, keyInteragivel: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMilimetros: true },
+        condicaoVitoria: { tipo: true, keySerEmSala: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMilimetros: true },
     },
 } as const;
 
@@ -35,7 +35,7 @@ interface Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Props {
     erro: string | null;
     configuracaoInicial: ConfiguracaoPartida | null;
     salvando: boolean;
-    salvarConfiguracao: (configuracao: ConfiguracaoPartida) => Promise<void>;
+    salvarConfiguracao: (configuracao: ConfiguracaoPartida) => Promise<boolean>;
     idMusicaConfigurada: number | null;
     definirMusicaConfigurada: (idMusica: number | null) => Promise<void>;
     idMusicaEmJogo: number | null;
@@ -82,7 +82,12 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Edicao__Provider =
         const configuracao = consulta.data?.configuracao;
         return configuracao ? remapeiaConfiguracaoPartidaGraphql(configuracao) : null;
     }, [consulta.data]);
-    const salvarConfiguracao = useCallback((configuracao: ConfiguracaoPartida) => salvarConfiguracaoPartida(partida.id, configuracao), [salvarConfiguracaoPartida, partida.id]);
+    // Pós-save confirmado: reconsulta o registro — configuracaoInicial alimenta o Preview do Runtime e a remontagem do editor; sem reconsultar, ambos seguiriam no estado anterior ao save.
+    const salvarConfiguracao = useCallback(async (configuracao: ConfiguracaoPartida): Promise<boolean> => {
+        const salvou = await salvarConfiguracaoPartida(partida.id, configuracao);
+        if (salvou) await consulta.recarregar();
+        return salvou;
+    }, [salvarConfiguracaoPartida, partida.id, consulta.recarregar]);
     const alternarDesabilitada = useCallback((desabilitada: boolean) => alternarDesabilitadaPartida({ idPartida: partida.id, desabilitada }), [alternarDesabilitadaPartida, partida.id]);
 
     // Música de fundo editável a partir do estado do PartidaResumo; ao salvar (REST) atualiza o estado local pra a visão refletir sem recarregar.

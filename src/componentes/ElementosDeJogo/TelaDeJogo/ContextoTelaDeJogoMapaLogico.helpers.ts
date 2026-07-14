@@ -112,7 +112,7 @@ function criaOcupanteVisualMapaLogico(ocupante: OcupanteMapaLogicoSalaJogoWsDto,
 };
 
 function criaSerVisualMapaLogico(ser: SerNaSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto): SerVisualMapaLogicoTelaJogo {
-    return { ...ser, posicao: { ...ser.posicao }, estatisticasDanificaveis: ser.estatisticasDanificaveis.map(estatistica => ({ ...estatistica })), membros: ser.membros.map(membro => ({ id: membro.id, nome: membro.nome, capacidades: membro.capacidades.map(capacidade => ({ id: capacidade.id, nome: capacidade.nome, nomeInteracao: capacidade.nomeInteracao })), acoesDisponiveis: membro.acoesDisponiveis.map(acao => ({ key: acao.key, nome: acao.nome, estado: acao.estado, origem: { ...acao.origem }, parametros: { ...acao.parametros } })) })), rotuloCurto: criaRotuloCurtoNome(ser.nome), estiloMarcador: criaEstiloMarcadorMapaLogico(ser.posicao, payload) };
+    return { ...ser, posicao: { ...ser.posicao }, estatisticasDanificaveis: ser.estatisticasDanificaveis.map(estatistica => ({ ...estatistica })), membros: ser.membros.map(membro => ({ id: membro.id, nome: membro.nome, capacidades: membro.capacidades.map(capacidade => ({ id: capacidade.id, nome: capacidade.nome, nomeInteracao: capacidade.nomeInteracao, parametros: { ...capacidade.parametros } })), acoesDisponiveis: membro.acoesDisponiveis.map(acao => ({ key: acao.key, nome: acao.nome, estado: acao.estado, origem: { ...acao.origem }, parametros: { ...acao.parametros } })) })), rotuloCurto: criaRotuloCurtoNome(ser.nome), estiloMarcador: criaEstiloMarcadorMapaLogico(ser.posicao, payload) };
 };
 
 function criaInteragivelVisualMapaLogico(interagivel: InteragivelPercebidoSalaJogoWsDto, payload: MapaLogicoSalaJogoPayloadWsDto): InteragivelVisualMapaLogicoTelaJogo {

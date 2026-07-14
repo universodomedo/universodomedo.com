@@ -26,6 +26,7 @@ interface ArvoreCenaEditor3DProps {
     readonly aoExcluirObjeto: (id: number) => void;
     readonly aoAlternarVisibilidadeColecao: (id: number) => void;
     readonly aoRenomearColecao: (id: number, nome: string) => void;
+    readonly aoRenomearObjeto: (id: number, nome: string) => void;
     readonly aoRemoverColecao: (id: number) => void;
     readonly aoMoverObjeto: (idObjeto: number, idColecaoDestino: number | null) => void;
     readonly aoAlternarPovCamera: () => void;
@@ -33,7 +34,7 @@ interface ArvoreCenaEditor3DProps {
 
 const ALVO_RAIZ_ARVORE_EDITOR3D = -1;
 
-export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, temCamera, povCameraAtiva, regioesCorpo, regiaoCorpoSelecionada, aoSelecionarCorpo, aoSelecionar, aoAlternarVisibilidadeObjeto, aoDuplicarObjeto, aoExcluirObjeto, aoAlternarVisibilidadeColecao, aoRenomearColecao, aoRemoverColecao, aoMoverObjeto, aoAlternarPovCamera }: ArvoreCenaEditor3DProps) {
+export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, temCamera, povCameraAtiva, regioesCorpo, regiaoCorpoSelecionada, aoSelecionarCorpo, aoSelecionar, aoAlternarVisibilidadeObjeto, aoDuplicarObjeto, aoExcluirObjeto, aoAlternarVisibilidadeColecao, aoRenomearColecao, aoRenomearObjeto, aoRemoverColecao, aoMoverObjeto, aoAlternarPovCamera }: ArvoreCenaEditor3DProps) {
     const [arrastandoId, setArrastandoId] = useState<number | null>(null);
     const [alvoArraste, setAlvoArraste] = useState<number | null>(null);
     const [colecoesAbertas, setColecoesAbertas] = useState<Record<number, boolean>>({});
@@ -72,18 +73,31 @@ export function ArvoreCenaEditor3D({ objetosRaiz, colecoes, idSelecionado, temCa
         if (evento.key === 'Escape') setEditando(null);
     };
 
+    // Rename inline do OBJETO (duplo clique no nome, como nas coleções): o nome é identidade da árvore, não campo de painel.
+    const [editandoObjeto, setEditandoObjeto] = useState<{ id: number; valor: string } | null>(null);
+    function confirmaRenomearObjeto(): void { if (editandoObjeto !== null) { aoRenomearObjeto(editandoObjeto.id, editandoObjeto.valor); setEditandoObjeto(null); } };
+    function teclaRenomearObjeto(evento: KeyboardEvent<HTMLInputElement>): void {
+        evento.stopPropagation();
+        if (evento.key === 'Enter') confirmaRenomearObjeto();
+        if (evento.key === 'Escape') setEditandoObjeto(null);
+    };
+
     // Ações do objeto moram na própria linha (ícones inline): duplicar / visibilidade / excluir. Partes de peça não têm
     // duplicar/excluir individual (a peça é removida inteira pelo painel) — colunas ficam vazias p/ manter o alinhamento.
     function renderizaObjeto(objeto: ObjetoResumoEditor3D) {
         const selecionado = objeto.id === idSelecionado;
         return (
             <div key={objeto.id} className={`${styles.linha_objeto_grade} ${styles.linha_objeto_acoes} ${selecionado ? styles.linha_objeto_selecionado : ''} ${objeto.visivel ? '' : styles.linha_objeto_oculto} ${arrastandoId === objeto.id ? styles.linha_objeto_arrastando : ''}`} draggable onDragStart={evento => iniciaArraste(evento, objeto.id)} onDragEnd={encerraArraste}>
-                <button type="button" className={styles.botao_conteudo_objeto} aria-pressed={selecionado} onClick={() => aoSelecionar(objeto.id)}>
-                    <span className={styles.espaco_arvore} />
-                    <span className={styles.icone_objeto}>{objeto.icone}</span>
-                    <span className={styles.nome_objeto}>{objeto.nome}</span>
-                    <strong>{objeto.tipoRotulo}</strong>
-                </button>
+                {editandoObjeto?.id === objeto.id ? (
+                    <input className={styles.input_renomear_colecao} autoFocus value={editandoObjeto.valor} onChange={evento => setEditandoObjeto({ id: objeto.id, valor: evento.target.value })} onBlur={confirmaRenomearObjeto} onKeyDown={teclaRenomearObjeto} />
+                ) : (
+                    <button type="button" className={styles.botao_conteudo_objeto} aria-pressed={selecionado} onClick={() => aoSelecionar(objeto.id)} onDoubleClick={() => setEditandoObjeto({ id: objeto.id, valor: objeto.nome })} title="Duplo clique para renomear">
+                        <span className={styles.espaco_arvore} />
+                        <span className={styles.icone_objeto}>{objeto.icone}</span>
+                        <span className={styles.nome_objeto}>{objeto.nome}</span>
+                        <strong>{objeto.tipoRotulo}</strong>
+                    </button>
+                )}
                 {objeto.ehPeca ? <span aria-hidden="true" /> : <button type="button" className={styles.botao_visibilidade} onClick={() => aoDuplicarObjeto(objeto.id)} title="Duplicar objeto" aria-label={`Duplicar ${objeto.nome}`}>⧉</button>}
                 <button type="button" className={styles.botao_visibilidade} onClick={() => aoAlternarVisibilidadeObjeto(objeto.id)} aria-pressed={objeto.visivel} title={objeto.visivel ? 'Ocultar objeto' : 'Mostrar objeto'}>{objeto.visivel ? '👁' : '⊘'}</button>
                 {objeto.ehPeca ? <span aria-hidden="true" /> : <button type="button" className={styles.botao_remover_colecao} onClick={() => aoExcluirObjeto(objeto.id)} title="Excluir objeto" aria-label={`Excluir ${objeto.nome}`}>✕</button>}

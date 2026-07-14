@@ -33,6 +33,8 @@ function CorpoChat() {
     const { estaAutenticado, carregando } = useContextoAutenticacao();
     const [wsStatus, setWsStatus] = useState<WsStatus>(() => { const s = getSocket(); return s && s.connected ? "ready" : "loading"; });
     const [wsError, setWsError] = useState<string | null>(null);
+    // Hooks sempre antes dos returns condicionais (rules of hooks)
+    const usuarios = useAppSelector((state: RootState) => state.usuarios.usuarios);
 
     useEffect(() => {
         const socket = getSocket();
@@ -64,7 +66,6 @@ function CorpoChat() {
 
     if (wsStatus === "error") return (<h2 id={styles.mensagem_chat_carregando}>Chat indisponível no momento. {wsError ? `(${wsError})` : ""}</h2>);
 
-    const usuarios = useAppSelector((state: RootState) => state.usuarios.usuarios);
     if (estaAutenticado && (!usuarios || usuarios.length === 0)) return (<h2 id={styles.mensagem_chat_carregando}>Carregando salas e mensagens..</h2>);
 
     return (

@@ -7,7 +7,8 @@ import { LUZ_PADRAO, rotuloInteragivel, rotuloLuz } from '../Contexto__PaginaGam
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Editor } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/contexto';
 import SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigLuz from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigLuz/SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigLuz';
 
-// Subfluxo Configuração da Luz: edita a fonte de luz (Nome, Alcance mm, Intensidade, Posição). Buffer local → Salvar commita no config e volta.
+// Subfluxo Configuração da Luz: edita a fonte de luz (Nome, Alcance mm, Intensidade, Posição). Buffer local → Aplicar commita
+// no RASCUNHO do config e volta (persistir é o "Salvar Configuração" do formulário).
 export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigLuz__Provider = () => {
     const { config, nomesPorIdSer, chaveEmEdicao, atualizaLuz, voltarParaFormulario } = useContexto__PaginaGameDesignerConfiguracaoPartida__Editor();
     const luz = (config.luzes ?? []).find(luzAtual => luzAtual.chave === chaveEmEdicao) ?? null;
@@ -27,9 +28,9 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigLuz_
         ...config.interagiveis.map(interagivel => ({ key: interagivel.chave, posicao: { x: interagivel.posicao?.x ?? 0, y: interagivel.posicao?.y ?? 0 }, rotulo: rotuloInteragivel(interagivel, nomesPorIdSer) })),
     ];
 
-    function salvar(): void {
+    function aplicar(): void {
         atualizaLuz(ativa.chave, { nome, alcanceMilimetros, intensidade, posicao });
-        void toast.sucesso('Luz salva');
+        void toast.sucesso('Luz aplicada à configuração', 'Persiste ao Salvar Configuração.');
         voltarParaFormulario();
     };
 
@@ -45,9 +46,10 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigLuz_
             aoMudarPosicao={setPosicao}
             larguraMilimetros={mapaLogico.larguraMilimetros}
             alturaMilimetros={mapaLogico.alturaMilimetros}
+            idProjetoMapa={mapaLogico.idProjetoMapa ?? null}
             rotuloAtivo={rotuloAtivo}
             marcadoresContexto={marcadoresContexto}
-            salvar={salvar}
+            aplicar={aplicar}
         />
     );
 };

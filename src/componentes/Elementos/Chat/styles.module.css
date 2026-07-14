@@ -114,6 +114,38 @@
     padding: .6% 0;
 }
 
+#mensagem_erro_envio {
+    margin: .2em 0 0;
+    font-size: .8em;
+    color: #DB4747;
+}
+
+#aviso_sala_trancada {
+    margin: .2em 0 0;
+    font-size: .8em;
+    color: #EBE0C9;
+    opacity: .7;
+    text-align: center;
+}
+
+#botao_carregar_anteriores {
+    align-self: center;
+    margin: .3em 0;
+    padding: .2em .8em;
+    font-size: .8em;
+    background: transparent;
+    border: .08em solid #B79051;
+    color: #B79051;
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+}
+
 #recipiente_input_conversa {
     display: flex;
     flex-direction: row;

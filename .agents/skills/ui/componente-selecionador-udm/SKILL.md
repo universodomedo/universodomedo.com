@@ -30,6 +30,8 @@ Padrão reutilizável para **selecionar UM registro de uma entidade** e devolver
 }
 ```
 
+Preview rico de um registro (áudio, render 3D…) mora DENTRO do card, via `renderizarItem` — nunca num painel lateral do selecionador (feedback do usuário 12/07/2026: "n quero um elemento lateral"). Ex.: Música toca no item; Mapa renderiza `MiniaturaMapa3D` no item.
+
 ### 2. Instância — `componentes/Selecionadores/Componente_Selecionador__<Entidade>/`
 Embrulha o genérico com a fonte de dados + o render de cada registro. Mapeia o callback (ex.: ArteCapa → `aoConfirmar(capa.idProjeto)`; Música → `(musica.id, musica.nome)`).
 
@@ -62,5 +64,6 @@ selecionando
 
 ## Existente para espelhar
 - `Componente_Selecionador` + `Componente_Selecionador__ArteCapa` (REST) + `Componente_Selecionador__MusicaDeFundo` (GraphQL `MusicaConfigurada`, modo linha, preview de áudio).
+- `Componente_Selecionador__Mapa` (REST `listaMapas3D`, grade em que cada card renderiza o mapa em 3D real via `MiniaturaMapa3D`).
 - Referência legada (modal, NÃO copiar a parte do Modal): `Contexto__Modal__ConfiguradorArteCapa`.
 - Skills relacionadas: `navegacao-layout-contextualizado`, `estilos-css-udm`, `paginas-udm-frontend`, `conteiner-contexto-spa-udm`, `graphql-frontend-udm`.

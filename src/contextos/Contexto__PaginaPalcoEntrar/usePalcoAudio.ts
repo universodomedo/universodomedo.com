@@ -43,19 +43,28 @@ function validarLivekitUrl(url: string, traceId: string): boolean {
     return true;
 };
 
-// Reporta telemetria de estado de áudio para o painel de diagnóstico do Admin.
-function reportarTelemetria(dados: Record<string, string | number | undefined>): void {
-    eventoWs(Eventos_Envia.Palco.eventos.relatarTelemetriaAudio, dados);
+// Reporta telemetria de estado de áudio para o painel de diagnóstico de quem comanda o palco.
+function reportarTelemetria(codigoPalco: string, dados: Record<string, string | number | undefined>): void {
+    eventoWs(Eventos_Envia.Palco.eventos.relatarTelemetriaAudio, { codigoPalco, ...dados });
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function usePalcoAudio({ modo, token, livekitUrl, adicionaLog }: { modo: PalcoAudioModo; token: string | null; livekitUrl: string | null; adicionaLog: (mensagem: string) => void; }) {
+// ganho: volume [0..1] aplicado aos áudios remotos (a Central de Áudio modula o palco como qualquer faixa); default 1.
+export function usePalcoAudio({ codigoPalco, modo, token, livekitUrl, adicionaLog, ganho = 1 }: { codigoPalco: string; modo: PalcoAudioModo; token: string | null; livekitUrl: string | null; adicionaLog: (mensagem: string) => void; ganho?: number; }) {
     const roomRef = useRef<Room | null>(null);
     const intervaloRef = useRef<ReturnType<typeof setInterval> | null>(null);
     // Rastreia se adicionaLog muda de referência entre renders (depende da estabilidade no contexto pai).
     const adicionaLogRef = useRef(adicionaLog);
     adicionaLogRef.current = adicionaLog;
+
+    // Elementos de áudio vivos: o ganho muda sem reconectar (ref lida no attach; efeito aplica nos já anexados).
+    const audiosRef = useRef<Set<HTMLAudioElement>>(new Set());
+    const ganhoRef = useRef(ganho);
+    useEffect(() => {
+        ganhoRef.current = ganho;
+        audiosRef.current.forEach(audio => { audio.volume = ganho; });
+    }, [ganho]);
 
     useEffect(() => {
         const traceId = gerarTraceId();
@@ -90,7 +99,7 @@ export function usePalcoAudio({ modo, token, livekitUrl, adicionaLog }: { modo: 
         if (!validarLivekitUrl(livekitUrl, traceId)) {
             console.error(`[PalcoAudio:${traceId}] URL inválida — conexão abortada.`);
             adicionaLog('Erro: URL LiveKit inválida. Verifique variável de ambiente LIVEKIT_WS_URL.');
-            reportarTelemetria({ erroRecente: `URL LiveKit inválida: "${livekitUrl}"` });
+            reportarTelemetria(codigoPalco, { erroRecente: `URL LiveKit inválida: "${livekitUrl}"` });
             return;
         };
 
@@ -112,7 +121,7 @@ export function usePalcoAudio({ modo, token, livekitUrl, adicionaLog }: { modo: 
         room.on(RoomEvent.Disconnected, () => {
             console.log(`[PalcoAudio:${traceId}] EVENTO: Disconnected. room.state="${room.state}" cancelado=${cancelado} ts_desde_inicio=${Date.now() - tsInicio}ms`);
             adicionaLog('Desconectado do LiveKit.');
-            reportarTelemetria({ audioCtxEstado: 'closed' });
+            reportarTelemetria(codigoPalco, { audioCtxEstado: 'closed' });
         });
 
         room.on(RoomEvent.Reconnecting, () => {
@@ -131,7 +140,7 @@ export function usePalcoAudio({ modo, token, livekitUrl, adicionaLog }: { modo: 
             console.error(`[PalcoAudio:${traceId}] EVENTO: MediaDevicesError: ${error.message}`);
             console.error(error.stack ?? '(sem stack)');
             adicionaLog(`Erro de dispositivo de mídia: ${error.message}`);
-            reportarTelemetria({ microfoneEstado: 'erro', erroRecente: `MediaDevicesError: ${error.message}` });
+            reportarTelemetria(codigoPalco, { microfoneEstado: 'erro', erroRecente: `MediaDevicesError: ${error.message}` });
         });
 
         // Ouvinte: audio track remota recebida — conectar a elemento de áudio no DOM.
@@ -141,6 +150,8 @@ export function usePalcoAudio({ modo, token, livekitUrl, adicionaLog }: { modo: 
 
             const audioEl = track.attach() as HTMLAudioElement;
             audioEl.style.display = 'none';
+            audioEl.volume = ganhoRef.current;
+            audiosRef.current.add(audioEl);
             document.body.appendChild(audioEl);
             console.log(`[PalcoAudio:${traceId}]   audio element criado e anexado ao DOM. Chamando play()...`);
 
@@ -150,14 +161,14 @@ export function usePalcoAudio({ modo, token, livekitUrl, adicionaLog }: { modo: 
                 const msg = err instanceof Error ? err.message : String(err);
                 console.warn(`[PalcoAudio:${traceId}]   play() bloqueado (autoplay policy): ${msg}`);
                 adicionaLog('Autoplay bloqueado — interaja com a página para ouvir o áudio.');
-                reportarTelemetria({ audioCtxEstado: 'suspended', erroRecente: `Autoplay bloqueado: ${msg}` });
+                reportarTelemetria(codigoPalco, { audioCtxEstado: 'suspended', erroRecente: `Autoplay bloqueado: ${msg}` });
             });
         });
 
         room.on(RoomEvent.TrackUnsubscribed, (track: RemoteTrack, _publication, participant) => {
             console.log(`[PalcoAudio:${traceId}] EVENTO: TrackUnsubscribed. track.kind="${track.kind}" participant="${participant?.identity ?? 'desconhecido'}"`);
             if (track.kind !== Track.Kind.Audio) return;
-            track.detach().forEach(el => { el.parentElement?.removeChild(el); });
+            track.detach().forEach(el => { audiosRef.current.delete(el as HTMLAudioElement); el.parentElement?.removeChild(el); });
             console.log(`[PalcoAudio:${traceId}]   audio element removido do DOM`);
         });
 
@@ -183,25 +194,26 @@ export function usePalcoAudio({ modo, token, livekitUrl, adicionaLog }: { modo: 
             };
 
             adicionaLog(`Conectado ao LiveKit como ${modo}.`);
-            reportarTelemetria({ audioCtxEstado: 'running' });
+            // erroRecente vazio LIMPA o erro anterior no diagnóstico (senão um erro transiente de reconexão fica grudado pra sempre).
+            reportarTelemetria(codigoPalco, { audioCtxEstado: 'running', erroRecente: '' });
 
             if (modo === 'falante') {
                 console.log(`[PalcoAudio:${traceId}] Solicitando microfone (setMicrophoneEnabled)...`);
-                reportarTelemetria({ microfoneEstado: 'aguardando' });
+                reportarTelemetria(codigoPalco, { microfoneEstado: 'aguardando' });
                 adicionaLog('Aguardando permissão de microfone...');
 
                 try {
                     await room.localParticipant.setMicrophoneEnabled(true);
                     console.log(`[PalcoAudio:${traceId}] Microfone habilitado. cancelado=${cancelado}`);
                     adicionaLog('Microfone ativo — transmitindo.');
-                    reportarTelemetria({ microfoneEstado: 'capturando', nivelMicrofone: 0 });
+                    reportarTelemetria(codigoPalco, { microfoneEstado: 'capturando', nivelMicrofone: 0 });
                 } catch (err) {
                     const msg = err instanceof Error ? err.message : String(err);
                     const stack = err instanceof Error ? (err.stack ?? '(sem stack)') : '(sem stack)';
                     console.error(`[PalcoAudio:${traceId}] Erro ao habilitar microfone: ${msg}`);
                     console.error(stack);
                     adicionaLog(`Erro ao ativar microfone: ${msg}`);
-                    reportarTelemetria({ microfoneEstado: 'erro', erroRecente: `Mic error: ${msg}` });
+                    reportarTelemetria(codigoPalco, { microfoneEstado: 'erro', erroRecente: `Mic error: ${msg}` });
                 }
             }
 
@@ -210,40 +222,49 @@ export function usePalcoAudio({ modo, token, livekitUrl, adicionaLog }: { modo: 
                 if (cancelado) return;
                 if (modo === 'falante') {
                     const nivel = Math.round((room.localParticipant.audioLevel ?? 0) * 100);
-                    reportarTelemetria({ microfoneEstado: 'capturando', nivelMicrofone: nivel, audioCtxEstado: 'running' });
+                    reportarTelemetria(codigoPalco, { microfoneEstado: 'capturando', nivelMicrofone: nivel, audioCtxEstado: 'running' });
                 } else {
                     const tracksAtivos = Array.from(room.remoteParticipants.values()).filter(p => Array.from(p.trackPublications.values()).some(pub => pub.kind === Track.Kind.Audio && pub.isSubscribed)).length;
-                    reportarTelemetria({ audioCtxEstado: room.state === 'connected' ? 'running' : room.state, chunksRecebidos: tracksAtivos });
+                    reportarTelemetria(codigoPalco, { audioCtxEstado: room.state === 'connected' ? 'running' : room.state, chunksRecebidos: tracksAtivos });
                 }
             }, 2000);
         };
 
-        conectar().catch(e => {
-            if (cancelado) {
-                console.warn(`[PalcoAudio:${traceId}] conectar() rejeitou MAS cleanup já estava ativo (cancelado=true). Isso pode ser React Strict Mode ou remount.`);
-            }
-            const nome = e instanceof Error ? e.name : 'Erro';
-            const msg = e instanceof Error ? e.message : String(e);
-            const stack = e instanceof Error ? (e.stack ?? '(sem stack)') : '(sem stack)';
-            console.error(`[PalcoAudio:${traceId}] conectar() REJEITADO. room.state="${room.state}"`);
-            console.error(`[PalcoAudio:${traceId}]   nome: ${nome}`);
-            console.error(`[PalcoAudio:${traceId}]   mensagem: ${msg}`);
-            console.error(`[PalcoAudio:${traceId}]   stack: ${stack}`);
-            adicionaLog(`Erro ao conectar LiveKit: ${msg}`);
-            reportarTelemetria({ microfoneEstado: 'erro', erroRecente: `Falha na conexão LiveKit: ${msg}` });
-        });
+        // Defer curto: troca de papel altera token e modo em momentos próximos (tokenMidia + estadoAtualizado); reconexões
+        // em rajada colapsam na última em vez de cancelar um connect em andamento (falso "Client initiated disconnect").
+        const timerConexao = setTimeout(() => {
+            conectar().catch(e => {
+                const nome = e instanceof Error ? e.name : 'Erro';
+                const msg = e instanceof Error ? e.message : String(e);
+                const stack = e instanceof Error ? (e.stack ?? '(sem stack)') : '(sem stack)';
+                if (cancelado) {
+                    // Cancelamento do próprio cleanup (remount/reconexão em rajada): não é um erro real — não polui a telemetria.
+                    console.warn(`[PalcoAudio:${traceId}] conectar() cancelado pelo cleanup (${nome}: ${msg}).`);
+                    return;
+                }
+                console.error(`[PalcoAudio:${traceId}] conectar() REJEITADO. room.state="${room.state}"`);
+                console.error(`[PalcoAudio:${traceId}]   nome: ${nome}`);
+                console.error(`[PalcoAudio:${traceId}]   mensagem: ${msg}`);
+                console.error(`[PalcoAudio:${traceId}]   stack: ${stack}`);
+                adicionaLog(`Erro ao conectar LiveKit: ${msg}`);
+                reportarTelemetria(codigoPalco, { microfoneEstado: 'erro', erroRecente: `Falha na conexão LiveKit: ${msg}` });
+            });
+        }, 250);
 
         return () => {
             cancelado = true;
+            clearTimeout(timerConexao);
             const tsDiff = Date.now() - tsInicio;
             console.log(`[PalcoAudio:${traceId}] === CLEANUP ACIONADO PELO REACT/hook ===`);
             console.log(`[PalcoAudio:${traceId}]   ${tsDiff}ms após início do efeito`);
             console.log(`[PalcoAudio:${traceId}]   room.state no momento do cleanup="${room.state}"`);
             console.log(`[PalcoAudio:${traceId}]   Chamando room.disconnect()...`);
             if (intervaloRef.current !== null) { clearInterval(intervaloRef.current); intervaloRef.current = null; };
+            audiosRef.current.forEach(audio => { audio.remove(); });
+            audiosRef.current.clear();
             room.disconnect();
             roomRef.current = null;
-            reportarTelemetria({ microfoneEstado: 'parado', audioCtxEstado: 'closed' });
+            reportarTelemetria(codigoPalco, { microfoneEstado: 'parado', audioCtxEstado: 'closed' });
             console.log(`[PalcoAudio:${traceId}] cleanup concluído.`);
         };
     }, [token, livekitUrl, modo, adicionaLog]);

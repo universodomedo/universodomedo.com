@@ -4,15 +4,16 @@ import styles from './CenaSalaJogoR3F.module.css';
 
 import { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import type { EstadoTemporalSalaDeJogoRuntime, MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto } from 'types-nora-api';
+import type { CenaCanonicaEditor3D, EstadoTemporalSalaDeJogoRuntime, MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto } from 'types-nora-api';
 
 import { ControlesCameraJogo } from 'Componentes/ElementosDeJogo/Cena3D/ControlesCameraJogo';
 import { PERFIL_CAMERA_TATICA } from 'Componentes/ElementosDeJogo/Cena3D/cena3D.controles';
 import { ControladorPrimeiraPessoaJogo } from 'Componentes/ElementosDeJogo/Cena3D/ControladorPrimeiraPessoaJogo';
 import type { DestinoMovimentacaoSalaJogo } from './ContextoMovimentacaoSalaJogo';
 import { ALTURA_OLHOS, mundoX, mundoZ, paraUnidadeCena, useReforcaRedimensionamentoCanvas } from './cenaSalaJogo.helpers';
-import { SalaLaboratorioR3F } from './SalaLaboratorioR3F';
-import { InteragivelR3F, MarcadorControladoR3F, OcupanteR3F, PortaMapaR3F } from './AtoresSalaJogoR3F';
+import { ChaoSemMapaR3F, MapaProjetoR3F } from './MapaProjetoR3F';
+import { useProjetoMapa } from 'Funcionalidades/MapaJogavel/useProjetoMapa';
+import { InteragivelR3F, MarcadorControladoR3F, OcupanteR3F } from './AtoresSalaJogoR3F';
 import { CaminhoMovimentacaoR3F, OverlayMovimentacao, PlanoSelecaoMovimentacao } from './MovimentacaoSalaJogoR3F';
 import { MascaraVisaoControlador, obtemAlcanceLinhaVisaoMilimetros, obtemDependenciaIluminacaoPercentual } from './MascaraVisaoSalaJogoR3F';
 import { LuzesSalaJogoR3F } from './LuzesSalaJogoR3F';
@@ -39,6 +40,9 @@ interface CenaSalaJogoR3FProps {
 
 export function CenaSalaJogoR3F({ payload, keysInteragiveisPercebidosNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, estadoTemporalSalaJogo, modoMovimentacaoAtivo, aoSelecionarOcupante, aoSelecionarInteragivel, aoLimparSelecao, aoConfirmarMovimentacao, aoCancelarMovimentacao }: CenaSalaJogoR3FProps) {
     const [principal, setPrincipal] = useState<'tatico' | 'fp'>('tatico');
+    // O cenário É o Projeto 3D (tipo MAPA) apontado pela config; consultado UMA vez (cache) e compartilhado pelas duas vistas.
+    const { projetoMapa } = useProjetoMapa(payload.mapaLogico.idProjetoMapa);
+    const cenaMapa = projetoMapa?.cenaCanonica ?? null;
 
     // Modo Solo: o jogador é o único ocupante (o primeiro). Quando houver multiplayer/identidade, casar por idFicha da ficha do jogador.
     const ocupanteJogador = payload.ocupantesMapaLogico[0] ?? null;
@@ -48,8 +52,8 @@ export function CenaSalaJogoR3F({ payload, keysInteragiveisPercebidosNovos, keyO
 
     return (
         <div className={styles.recipiente_cena_r3f}>
-            <VistaTaticaSalaJogo className={classeTatica} payload={payload} keysNovos={keysInteragiveisPercebidosNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} estadoTemporalSalaJogo={estadoTemporalSalaJogo} modoMovimentacaoAtivo={modoMovimentacaoAtivo} aoSelecionarOcupante={aoSelecionarOcupante} aoSelecionarInteragivel={aoSelecionarInteragivel} aoLimparSelecao={aoLimparSelecao} aoConfirmarMovimentacao={aoConfirmarMovimentacao} aoCancelarMovimentacao={aoCancelarMovimentacao} />
-            <VistaPrimeiraPessoaSalaJogo className={classeFp} payload={payload} keysNovos={keysInteragiveisPercebidosNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} ocupanteJogador={ocupanteJogador} />
+            <VistaTaticaSalaJogo className={classeTatica} payload={payload} cenaMapa={cenaMapa} keysNovos={keysInteragiveisPercebidosNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} estadoTemporalSalaJogo={estadoTemporalSalaJogo} modoMovimentacaoAtivo={modoMovimentacaoAtivo} aoSelecionarOcupante={aoSelecionarOcupante} aoSelecionarInteragivel={aoSelecionarInteragivel} aoLimparSelecao={aoLimparSelecao} aoConfirmarMovimentacao={aoConfirmarMovimentacao} aoCancelarMovimentacao={aoCancelarMovimentacao} />
+            <VistaPrimeiraPessoaSalaJogo className={classeFp} payload={payload} cenaMapa={cenaMapa} keysNovos={keysInteragiveisPercebidosNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} ocupanteJogador={ocupanteJogador} />
 
             <div className={styles.moldura_secundaria}>
                 <button type="button" className={styles.botao_troca_visao} onClick={() => setPrincipal(p => (p === 'tatico' ? 'fp' : 'tatico'))} title="Trocar visão principal" aria-label="Trocar visão principal">
@@ -68,6 +72,7 @@ export function CenaSalaJogoR3F({ payload, keysInteragiveisPercebidosNovos, keyO
 interface VistaTaticaSalaJogoProps {
     readonly className: string;
     readonly payload: MapaLogicoSalaJogoPayloadWsDto;
+    readonly cenaMapa: CenaCanonicaEditor3D | null;
     readonly keysNovos: readonly string[];
     readonly keyOcupanteSelecionado: string | null;
     readonly keyInteragivelSelecionado: string | null;
@@ -80,7 +85,7 @@ interface VistaTaticaSalaJogoProps {
     readonly aoCancelarMovimentacao: () => void;
 };
 
-function VistaTaticaSalaJogo({ className, payload, keysNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, estadoTemporalSalaJogo, modoMovimentacaoAtivo, aoSelecionarOcupante, aoSelecionarInteragivel, aoLimparSelecao, aoConfirmarMovimentacao, aoCancelarMovimentacao }: VistaTaticaSalaJogoProps) {
+function VistaTaticaSalaJogo({ className, payload, cenaMapa, keysNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, estadoTemporalSalaJogo, modoMovimentacaoAtivo, aoSelecionarOcupante, aoSelecionarInteragivel, aoLimparSelecao, aoConfirmarMovimentacao, aoCancelarMovimentacao }: VistaTaticaSalaJogoProps) {
     useReforcaRedimensionamentoCanvas();
     const extensao = paraUnidadeCena(Math.max(payload.mapaLogico.larguraMilimetros, payload.mapaLogico.alturaMilimetros));
     const distancia = Math.max(8, extensao * 1.15);
@@ -104,7 +109,7 @@ function VistaTaticaSalaJogo({ className, payload, keysNovos, keyOcupanteSelecio
     return (
         <div className={className}>
             <Canvas shadows="soft" dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [distancia * 0.62, distancia * 0.8, distancia * 0.62], fov: 34, near: 0.1, far: distancia * 8 }} onPointerMissed={aoErrarClique}>
-                <ConteudoCena3DSalaJogo payload={payload} keysNovos={keysNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} estadoTemporalSalaJogo={estadoTemporalSalaJogo} modoMovimentacaoAtivo={modoMovimentacaoAtivo} celulaHoverDestino={celulaHoverDestino} aoMoverDestino={setCelulaHoverDestino} aoConfirmarDestino={aoConfirmarMovimentacao} aoSelecionarOcupante={aoSelecionarOcupante} aoSelecionarInteragivel={aoSelecionarInteragivel} />
+                <ConteudoCena3DSalaJogo payload={payload} cenaMapa={cenaMapa} keysNovos={keysNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} estadoTemporalSalaJogo={estadoTemporalSalaJogo} modoMovimentacaoAtivo={modoMovimentacaoAtivo} celulaHoverDestino={celulaHoverDestino} aoMoverDestino={setCelulaHoverDestino} aoConfirmarDestino={aoConfirmarMovimentacao} aoSelecionarOcupante={aoSelecionarOcupante} aoSelecionarInteragivel={aoSelecionarInteragivel} />
                 <ControlesCameraJogo perfil={PERFIL_CAMERA_TATICA} alvo={[0, 0.6, 0]} distanciaMin={Math.max(4, extensao * 0.35)} distanciaMax={extensao * 1.9} />
             </Canvas>
             {modoMovimentacaoAtivo && <OverlayMovimentacao ocupanteControlado={ocupanteControlado} celulaHoverDestino={celulaHoverDestino} />}
@@ -115,13 +120,14 @@ function VistaTaticaSalaJogo({ className, payload, keysNovos, keyOcupanteSelecio
 interface VistaPrimeiraPessoaSalaJogoProps {
     readonly className: string;
     readonly payload: MapaLogicoSalaJogoPayloadWsDto;
+    readonly cenaMapa: CenaCanonicaEditor3D | null;
     readonly keysNovos: readonly string[];
     readonly keyOcupanteSelecionado: string | null;
     readonly keyInteragivelSelecionado: string | null;
     readonly ocupanteJogador: OcupanteMapaLogicoSalaJogoWsDto | null;
 };
 
-function VistaPrimeiraPessoaSalaJogo({ className, payload, keysNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, ocupanteJogador }: VistaPrimeiraPessoaSalaJogoProps) {
+function VistaPrimeiraPessoaSalaJogo({ className, payload, cenaMapa, keysNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, ocupanteJogador }: VistaPrimeiraPessoaSalaJogoProps) {
     useReforcaRedimensionamentoCanvas();
     const largura = payload.mapaLogico.larguraMilimetros;
     const altura = payload.mapaLogico.alturaMilimetros;
@@ -132,7 +138,7 @@ function VistaPrimeiraPessoaSalaJogo({ className, payload, keysNovos, keyOcupant
     return (
         <div className={className}>
             <Canvas shadows="soft" dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [cabecaX, ALTURA_OLHOS, cabecaZ], fov: 72, near: 0.05, far: Math.max(120, extensao * 6) }}>
-                <ConteudoCena3DSalaJogo payload={payload} keysNovos={keysNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} ocultarKeyOcupante={ocupanteJogador?.keySer ?? null} seguirCameraNaVisao />
+                <ConteudoCena3DSalaJogo payload={payload} cenaMapa={cenaMapa} keysNovos={keysNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} ocultarKeyOcupante={ocupanteJogador?.keySer ?? null} seguirCameraNaVisao />
                 <ControladorPrimeiraPessoaJogo cabecaX={cabecaX} cabecaY={ALTURA_OLHOS} cabecaZ={cabecaZ} />
             </Canvas>
         </div>
@@ -141,6 +147,7 @@ function VistaPrimeiraPessoaSalaJogo({ className, payload, keysNovos, keyOcupant
 
 interface ConteudoCena3DSalaJogoProps {
     readonly payload: MapaLogicoSalaJogoPayloadWsDto;
+    readonly cenaMapa: CenaCanonicaEditor3D | null;
     readonly keysNovos: readonly string[];
     readonly keyOcupanteSelecionado: string | null;
     readonly keyInteragivelSelecionado: string | null;
@@ -156,7 +163,7 @@ interface ConteudoCena3DSalaJogoProps {
     readonly seguirCameraNaVisao?: boolean;
 };
 
-function ConteudoCena3DSalaJogo({ payload, keysNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, estadoTemporalSalaJogo, modoMovimentacaoAtivo, celulaHoverDestino, aoMoverDestino, aoConfirmarDestino, aoSelecionarOcupante, aoSelecionarInteragivel, ocultarKeyOcupante, seguirCameraNaVisao }: ConteudoCena3DSalaJogoProps) {
+function ConteudoCena3DSalaJogo({ payload, cenaMapa, keysNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, estadoTemporalSalaJogo, modoMovimentacaoAtivo, celulaHoverDestino, aoMoverDestino, aoConfirmarDestino, aoSelecionarOcupante, aoSelecionarInteragivel, ocultarKeyOcupante, seguirCameraNaVisao }: ConteudoCena3DSalaJogoProps) {
     const largura = payload.mapaLogico.larguraMilimetros;
     const altura = payload.mapaLogico.alturaMilimetros;
     const extensao = paraUnidadeCena(Math.max(largura, altura));
@@ -180,7 +187,8 @@ function ConteudoCena3DSalaJogo({ payload, keysNovos, keyOcupanteSelecionado, ke
             <ambientLight intensity={ambienteVisao} color="#e8ecf2" />
             <LuzesSalaJogoR3F luzes={payload.luzes} largura={largura} altura={altura} />
 
-            <SalaLaboratorioR3F largura={largura} altura={altura} portas={payload.mapaLogico.portas} />
+            {/* Cenário = o Projeto 3D (tipo MAPA) da config, alinhado ao espaço lógico; config legada sem mapa cai num chão neutro (protótipo procedural aposentado). */}
+            {cenaMapa !== null ? <MapaProjetoR3F cena={cenaMapa} largura={largura} altura={altura} /> : <ChaoSemMapaR3F largura={largura} altura={altura} />}
 
             {payload.ocupantesMapaLogico.map((ocupante, indice) => {
                 if (ocupante.keySer === ocultarKeyOcupante) return null;
@@ -188,7 +196,6 @@ function ConteudoCena3DSalaJogo({ payload, keysNovos, keyOcupanteSelecionado, ke
                 return <OcupanteR3F key={ocupante.keySer} ocupante={ocupante} largura={largura} altura={altura} selecionado={keyOcupanteSelecionado === ocupante.keySer} aoSelecionar={aoSelecionarOcupante} />;
             })}
             {payload.interagiveisPercebidos.map(interagivel => <InteragivelR3F key={interagivel.key} interagivel={interagivel} novo={keysNovos.includes(interagivel.key)} selecionado={keyInteragivelSelecionado === interagivel.key} largura={largura} altura={altura} aoSelecionar={aoSelecionarInteragivel} />)}
-            {payload.mapaLogico.portas.map(porta => <PortaMapaR3F key={porta.chave} porta={porta} largura={largura} altura={altura} />)}
 
             {modoMovimentacaoAtivo && aoMoverDestino && aoConfirmarDestino && <PlanoSelecaoMovimentacao largura={largura} altura={altura} aoMoverDestino={aoMoverDestino} aoConfirmarDestino={aoConfirmarDestino} />}
             {modoMovimentacaoAtivo && celulaHoverDestino && ocupanteControlado && <CaminhoMovimentacaoR3F origem={ocupanteControlado.posicao} destino={celulaHoverDestino} largura={largura} altura={altura} />}

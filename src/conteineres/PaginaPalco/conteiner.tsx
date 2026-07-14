@@ -2,8 +2,7 @@
 
 import { criaConteiner, criaSaidaConteiner, type SaidaConteiner } from 'Conteineres/_core/criaConteiner';
 import { Contexto__PaginaPalco__Provider, useContexto__PaginaPalco } from 'Contextos/Contexto__PaginaPalco/contexto';
-import { Contexto__PaginaPalcoAdmin__Provider } from 'Contextos/Contexto__PaginaPalcoAdmin/contexto';
-import { Contexto__PaginaPalcoEntrar__Provider } from 'Contextos/Contexto__PaginaPalcoEntrar/contexto';
+import { Contexto__PaginaPalcoEntrar__Provider, Contexto__PaginaPalcoSemCodigo__Provider } from 'Contextos/Contexto__PaginaPalcoEntrar/contexto';
 
 export default function Conteiner__PaginaPalco() {
     return (
@@ -18,9 +17,9 @@ const Conteiner__PaginaPalco__Interno = criaConteiner<PropsConteiner__PaginaPalc
 type PropsConteiner__PaginaPalco = ReturnType<typeof useContexto__PaginaPalco>;
 
 function resolveSaida(props: PropsConteiner__PaginaPalco): SaidaConteiner {
-    if (props.fluxo === 'ADMIN') return criaSaidaConteiner(Contexto__PaginaPalcoAdmin__Provider, {});
+    if (props.fluxo === 'PALCO' && props.codigoPalco !== null) return criaSaidaConteiner(Contexto__PaginaPalcoEntrar__Provider, { codigoPalco: props.codigoPalco });
 
-    return criaSaidaConteiner(Contexto__PaginaPalcoEntrar__Provider, {});
+    return criaSaidaConteiner(Contexto__PaginaPalcoSemCodigo__Provider, {});
 };
 
 function useEstado(): PropsConteiner__PaginaPalco { return useContexto__PaginaPalco(); };

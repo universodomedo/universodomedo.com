@@ -15,12 +15,13 @@ interface PainelTransformEditor3DProps {
     // Caixa envolvente LOCAL da malha do objeto (sem escala): dimensão exibida = base × escala; editar a dimensão ajusta a escala. null = seleção sem malha (câmera/título).
     readonly dimensoesBase: Vetor3Malha | null;
     readonly aoAtualizar: (campo: CampoTransformEditor3D, indice: number, valor: number) => void;
+    readonly aoAssentarNoChao: () => void;
 };
 
 // Um eixo com base ~zero (malha achatada) não tem como derivar escala a partir da dimensão — o campo trava.
 const MINIMO_BASE_DIMENSAO_EDITOR3D = 0.000001;
 
-export function PainelTransformEditor3D({ transform, dimensoesBase, aoAtualizar }: PainelTransformEditor3DProps) {
+export function PainelTransformEditor3D({ transform, dimensoesBase, aoAtualizar, aoAssentarNoChao }: PainelTransformEditor3DProps) {
     if (transform === null) return <p className={styles.vazio_painel}>Selecione um objeto na Coleção da Cena para editar suas propriedades.</p>;
 
     // 1 unidade de cena = 1 m (mesma convenção do jogo: 1 unidade = 1000 mm).
@@ -43,6 +44,7 @@ export function PainelTransformEditor3D({ transform, dimensoesBase, aoAtualizar 
                     <CampoNumeroEditor3D rotulo="Dimensão X (m)" valor={dimensao(0)} passo={0.01} minimo={0.01} desabilitado={dimensoesBase[0] <= MINIMO_BASE_DIMENSAO_EDITOR3D} atualizaValor={valor => atualizaDimensao(0, valor)} />
                     <CampoNumeroEditor3D rotulo="Dimensão Y (m)" valor={dimensao(1)} passo={0.01} minimo={0.01} desabilitado={dimensoesBase[1] <= MINIMO_BASE_DIMENSAO_EDITOR3D} atualizaValor={valor => atualizaDimensao(1, valor)} />
                     <CampoNumeroEditor3D rotulo="Dimensão Z (m)" valor={dimensao(2)} passo={0.01} minimo={0.01} desabilitado={dimensoesBase[2] <= MINIMO_BASE_DIMENSAO_EDITOR3D} atualizaValor={valor => atualizaDimensao(2, valor)} />
+                    <button type="button" className={styles.botao_acao_objeto} onClick={aoAssentarNoChao} title="Descer (ou erguer) o objeto até a base tocar o chão (y=0)">Assentar no chão</button>
                 </>
             )}
         </div>

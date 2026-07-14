@@ -1,19 +1,36 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Eventos_Emite, Eventos_Envia } from 'types-nora-api';
 
 import { useRecebeEmitWs, useSocketEpoch, eventoWs } from 'Hooks/useEventoWs';
 import { toast } from 'Hooks/useToast';
+import { useAppDispatch } from 'Redux/hooks/useRedux';
+import { setPalcoNaCentral } from 'Redux/slices/audioPaginaSlice';
 import { useContextoEventosUsuario } from 'Contextos/ContextoEventosUsuario/contexto';
 import { reproduzirSomNotificacao } from 'Contextos/ContextoEventosUsuario/somNotificacao';
 
 export function useEventosUsuarioSocket() {
     const { sincronizarAposNotificacaoRecebida } = useContextoEventosUsuario();
+    const dispatch = useAppDispatch();
+    const router = useRouter();
 
     useRecebeEmitWs(Eventos_Emite.EventosUsuario.eventos.notificacaoRecebida, data => {
         const n = data.notificacao;
-        if (n.tipo === 'sucesso') toast.sucesso(n.titulo, n.mensagem);
+
+        // Formato estruturado: palco aberto ganha as ações "Ouvir na Central" (camada de áudio na hora) e "Entrar na Página".
+        if (n.formato === 'palco_aberto' && n.dados && typeof n.dados.codigoPalco === 'string') {
+            const codigoPalco = n.dados.codigoPalco;
+            const nomePalco = typeof n.dados.nomePalco === 'string' && n.dados.nomePalco ? n.dados.nomePalco : n.titulo;
+            toast.aviso(n.titulo, n.mensagem, {
+                acoes: [
+                    { rotulo: 'Ouvir na Central', executar: () => { dispatch(setPalcoNaCentral({ codigoPalco, titulo: nomePalco, papel: null })); } },
+                    { rotulo: 'Entrar na Página', executar: () => { router.push(`/palco?codigoPalco=${encodeURIComponent(codigoPalco)}`); } },
+                ],
+            });
+        }
+        else if (n.tipo === 'sucesso') toast.sucesso(n.titulo, n.mensagem);
         else if (n.tipo === 'erro') toast.erro(n.titulo, n.mensagem);
         else if (n.tipo === 'aviso') toast.aviso(n.titulo, n.mensagem);
         // fallback TEMPORÁRIO da Etapa 1: não há toast neutro 'info'. Não tornar isto regra de domínio.

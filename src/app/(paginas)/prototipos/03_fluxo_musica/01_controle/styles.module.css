@@ -1,0 +1,15 @@
+/* Bancada do protótipo do Controle de Música (o editor traz o próprio espaço). */
+
+.bancada {
+    max-width: 70em;
+    margin: 1em auto;
+    padding: 0 1em;
+}
+
+/* O Componente_Selecionador (ConteudoForm height:100%) EXIGE pai flex-column com altura definida —
+   sem isto o corpo colapsa e o rodapé "Usar esta música" some. */
+.selecionador {
+    height: 34em;
+    display: flex;
+    flex-direction: column;
+}

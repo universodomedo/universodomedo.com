@@ -10,9 +10,12 @@ import { registerToast, unregisterToast } from 'Hooks/useToast';
 
 export type ToastTipo = 'sucesso' | 'aviso' | 'erro';
 
-export type ToastOpcao = { recarregaPagina?: boolean } | { redirecionaLinkInterno: DestinoInput };
+// Ação renderizada como botão no toast: executar roda e o toast fecha (ex.: notificação de palco com "Ouvir na Central").
+export type ToastAcao = { rotulo: string; executar: () => void };
 
-export type ToastItem = { id: string; tipo: ToastTipo; titulo: string; mensagem?: string };
+export type ToastOpcao = { recarregaPagina?: boolean } | { redirecionaLinkInterno: DestinoInput } | { acoes: ToastAcao[] };
+
+export type ToastItem = { id: string; tipo: ToastTipo; titulo: string; mensagem?: string; acoes?: ToastAcao[] };
 
 export interface ContextoToastProps {
     sucesso: (titulo: string, mensagem?: string, opcoes?: ToastOpcao) => Promise<void>;
@@ -70,12 +73,13 @@ export function ContextoToastProvider({ children }: { children: React.ReactNode 
         if (isOpcaoRedirect(opcoes)) {
             redirecionarInterno(opcoes.redirecionaLinkInterno);
             await new Promise<void>((r) => setTimeout(() => r(), 0));
-        } else if (opcoes?.recarregaPagina) {
+        } else if (opcoes && 'recarregaPagina' in opcoes && opcoes.recarregaPagina) {
             recarregaPagina();
             await new Promise<void>((r) => setTimeout(() => r(), 0));
         }
 
-        pushVisiveis({ id: uid(), tipo, titulo, mensagem });
+        const acoes = opcoes && 'acoes' in opcoes ? opcoes.acoes : undefined;
+        pushVisiveis({ id: uid(), tipo, titulo, mensagem, acoes });
     }, [pushVisiveis, recarregaPagina]);
 
     const api = useMemo<ContextoToastProps>(() => ({

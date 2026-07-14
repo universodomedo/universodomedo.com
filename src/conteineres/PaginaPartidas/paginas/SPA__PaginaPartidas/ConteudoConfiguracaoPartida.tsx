@@ -11,7 +11,7 @@ type CondicaoVitoriaGraphql = NonNullable<PartidaGraphqlDto['configuracao']>['co
 const SELECT_CONTEUDO = {
     configuracao: {
         narracaoInicial: true,
-        condicaoVitoria: { tipo: true, keySerEmSala: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMilimetros: true },
+        condicaoVitoria: { tipo: true, keySerEmSala: true, keyInteragivel: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMilimetros: true },
     },
 } as const;
 

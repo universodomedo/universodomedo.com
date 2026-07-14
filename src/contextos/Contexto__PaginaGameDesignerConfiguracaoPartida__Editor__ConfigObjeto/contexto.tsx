@@ -4,12 +4,13 @@ import { useState } from 'react';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { toast } from 'Hooks/useToast';
-import { rotuloInteragivel, TAMANHO_OBJETO_PADRAO_MILIMETROS, type Descoberta } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
+import { rotuloInteragivel, TAMANHO_OBJETO_PADRAO_MILIMETROS, type AcaoObjeto, type Descoberta } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Editor } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/contexto';
 import SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto/SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto';
 
 // Subfluxo Configuração do Objeto: edita o objeto (Nome, Descrição, Pontos de Durabilidade, Percepção, Posição) + as Descobertas que MORAM nele.
-// Buffer local → Salvar commita no config e volta; "voltar" é a navegação (fecharProps), dono no Controlador de Fluxo.
+// Buffer local → Aplicar commita no RASCUNHO do config e volta (persistir é o "Salvar Configuração" do formulário);
+// "voltar" é a navegação (fecharProps), dono no Controlador de Fluxo.
 export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObjeto__Provider = () => {
     const { config, nomesPorIdSer, chaveEmEdicao, atualizaObjeto, voltarParaFormulario } = useContexto__PaginaGameDesignerConfiguracaoPartida__Editor();
     const interagivel = config.interagiveis.find(interagivelAtual => interagivelAtual.chave === chaveEmEdicao) ?? null;
@@ -24,7 +25,7 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObje
     const [percepcaoInicial, setPercepcaoInicial] = useState<'DESPERCEBIDO' | 'PERCEBIDO'>(objeto?.estadoPercepcaoInicial ?? 'PERCEBIDO');
     const [posicao, setPosicao] = useState<{ x: number; y: number }>(objeto?.posicao ?? { x: 0, y: 0 });
     const [descobertas, setDescobertas] = useState<readonly Descoberta[]>(objeto?.descobertas ?? []);
-    const [vinculoElementoMapa, setVinculoElementoMapa] = useState<string | undefined>(objeto?.vinculoElementoMapa);
+    const [acoes, setAcoes] = useState<readonly AcaoObjeto[]>(objeto?.acoes ?? []);
 
     const capacidades = useCapacidadesInatas();
 
@@ -38,11 +39,10 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObje
         .map(interagivelAtual => ({ key: interagivelAtual.chave, posicao: { x: interagivelAtual.posicao?.x ?? 0, y: interagivelAtual.posicao?.y ?? 0 }, rotulo: rotuloInteragivel(interagivelAtual, nomesPorIdSer) }));
     const opcoesCapacidades = capacidades.registros.map(capacidade => ({ value: String(capacidade.id), label: `${capacidade.nome} (${capacidade.nomeInteracao})` }));
     const opcoesInteragiveis = config.interagiveis.filter(interagivelAtual => interagivelAtual.chave !== ativo.chave).map(interagivelAtual => ({ value: interagivelAtual.chave, label: rotuloInteragivel(interagivelAtual, nomesPorIdSer) }));
-    const opcoesPortas = (mapaLogico.portas ?? []).map(porta => ({ value: porta.chave, label: porta.nome.trim() || porta.chave }));
 
-    function salvar(): void {
-        atualizaObjeto(ativo.chave, { nome, descricao, pontosDurabilidadeMaximo, larguraMilimetros, alturaMilimetros, profundidadeMilimetros, estadoPercepcaoInicial: percepcaoInicial, posicao, descobertas, vinculoElementoMapa: vinculoElementoMapa || undefined });
-        void toast.sucesso('Objeto salvo');
+    function aplicar(): void {
+        atualizaObjeto(ativo.chave, { nome, descricao, pontosDurabilidadeMaximo, larguraMilimetros, alturaMilimetros, profundidadeMilimetros, estadoPercepcaoInicial: percepcaoInicial, posicao, descobertas, acoes });
+        void toast.sucesso('Objeto aplicado à configuração', 'Persiste ao Salvar Configuração.');
         voltarParaFormulario();
     };
 
@@ -66,16 +66,17 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigObje
             aoMudarPosicao={setPosicao}
             larguraMilimetros={mapaLogico.larguraMilimetros}
             alturaMilimetros={mapaLogico.alturaMilimetros}
+            idProjetoMapa={mapaLogico.idProjetoMapa ?? null}
             rotuloAtivo={rotuloAtivo}
             marcadoresContexto={marcadoresContexto}
             descobertas={descobertas}
             aoMudarDescobertas={setDescobertas}
             opcoesCapacidades={opcoesCapacidades}
             opcoesInteragiveis={opcoesInteragiveis}
-            opcoesPortas={opcoesPortas}
-            vinculoElementoMapa={vinculoElementoMapa}
-            aoMudarVinculo={setVinculoElementoMapa}
-            salvar={salvar}
+            idElementoMapa={ativo.idElementoMapa ?? null}
+            acoes={acoes}
+            aoMudarAcoes={setAcoes}
+            aplicar={aplicar}
         />
     );
 };

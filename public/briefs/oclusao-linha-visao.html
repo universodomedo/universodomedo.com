@@ -1,0 +1,585 @@
+<title>Modelo de Oclusão da Visão — UDM</title>
+<style>
+  :root {
+    --ground: #0b0a10;
+    --panel: #141220;
+    --panel-2: #1b1828;
+    --line: #2b2740;
+    --gold: #b79051;
+    --gold-bright: #d8b678;
+    --parch: #ebe0c9;
+    --muted: #918a9e;
+    --lit: #ece7d6;
+    --occ-lit: #b9bdc9;
+    --occ-obj: #9fb0c4;
+    --danger: #b0607e;
+    --serke: #2f9db0;
+    --serfill: #2f6f86;
+    --focus: #d8b678;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background:
+      radial-gradient(120% 80% at 50% -10%, #17132400 0%, var(--ground) 60%),
+      var(--ground);
+    color: var(--parch);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 62rem; margin: 0 auto; padding: 2.4rem 1.4rem 3.4rem; }
+
+  header { margin-bottom: 1.9rem; }
+  .eyebrow {
+    font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--gold); font-weight: 600; margin: 0 0 0.7rem;
+  }
+  h1 {
+    font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    font-weight: 600; font-size: clamp(1.7rem, 4.2vw, 2.5rem); line-height: 1.08;
+    margin: 0 0 0.7rem; letter-spacing: -0.01em; text-wrap: balance; color: var(--parch);
+  }
+  .lede { color: var(--muted); max-width: 44rem; font-size: 1.02rem; margin: 0; }
+  .lede b { color: var(--parch); font-weight: 600; }
+
+  .modebar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1.9rem 0 1.1rem; }
+  .modebtn {
+    appearance: none; cursor: pointer; border: 1px solid var(--line);
+    background: var(--panel); color: var(--muted);
+    padding: 0.62rem 0.95rem; border-radius: 0.6rem; font: inherit; font-size: 0.86rem;
+    display: flex; align-items: baseline; gap: 0.55rem; transition: border-color .15s, color .15s, background .15s;
+  }
+  .modebtn .k { font-family: ui-monospace, "Cascadia Code", monospace; font-size: 0.74rem; color: var(--gold); opacity: .7; }
+  .modebtn:hover { border-color: #40395c; color: var(--parch); }
+  .modebtn[aria-pressed="true"] { background: var(--panel-2); border-color: var(--gold); color: var(--parch); }
+  .modebtn[aria-pressed="true"] .k { opacity: 1; }
+  .modebtn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  .views { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.1rem; }
+  @media (max-width: 720px) { .views { grid-template-columns: 1fr; } }
+
+  .view {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 0.9rem;
+    padding: 0.9rem; display: flex; flex-direction: column; gap: 0.7rem;
+  }
+  .canvas-wrap { position: relative; }
+
+  .percebidos {
+    position: absolute; top: 0.7rem; right: 0.7rem;
+    background: rgba(9,8,14,0.82); border: 1px solid var(--line); border-radius: 0.5rem;
+    padding: 0.5rem 0.65rem 0.55rem; min-width: 8.8rem; pointer-events: none;
+    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  }
+  .perc-title { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 0.45rem; }
+  .perc-row { display: flex; align-items: center; gap: 0.45rem; font-size: 0.76rem; color: var(--muted); padding: 0.12rem 0; opacity: 0.42; transition: opacity .12s, color .12s; }
+  .perc-row .dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #3a3746; flex: none; transition: background .12s, box-shadow .12s; }
+  .perc-row.on { opacity: 1; color: var(--parch); }
+  .perc-row.on.sangue .dot { background: #c8283a; box-shadow: 0 0 6px rgba(200,40,58,0.6); }
+  .perc-row.on.inimigo .dot { background: #e0556a; box-shadow: 0 0 6px rgba(224,85,106,0.6); }
+  .view-head { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
+  .view-title {
+    font-size: 0.74rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--parch); font-weight: 600; margin: 0;
+  }
+  .view-tag {
+    font-size: 0.68rem; letter-spacing: 0.05em; color: var(--muted);
+    font-family: ui-monospace, monospace;
+  }
+  canvas { width: 100%; height: auto; display: block; border-radius: 0.5rem; background: #000; touch-action: none; }
+  .hint { font-size: 0.75rem; color: var(--muted); margin: 0; }
+  .hint b { color: var(--gold-bright); font-weight: 600; }
+
+  .ctl { display: flex; align-items: center; gap: 0.7rem; font-size: 0.8rem; color: var(--muted); }
+  .ctl input[type="range"] { flex: 1; accent-color: var(--gold); }
+  .ctl .val { font-family: ui-monospace, monospace; color: var(--parch); min-width: 3.4em; text-align: right; font-variant-numeric: tabular-nums; }
+
+  .explain {
+    background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--gold);
+    border-radius: 0.7rem; padding: 1.05rem 1.2rem; margin-bottom: 1.4rem;
+  }
+  .explain h3 {
+    font-family: Georgia, serif; font-weight: 600; font-size: 1.12rem; margin: 0 0 0.4rem; color: var(--parch);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .verdict {
+    font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700;
+    padding: 0.18rem 0.55rem; border-radius: 0.4rem; font-family: ui-monospace, monospace;
+  }
+  .verdict.bad { background: #3a1f2c; color: #e79ab4; }
+  .verdict.meh { background: #33262e; color: #d98fa8; }
+  .verdict.good { background: #2a3320; color: #b6d089; }
+  .explain p { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.94rem; max-width: 48rem; }
+  .explain p b { color: var(--parch); font-weight: 600; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 1rem 1.4rem; margin: 1.2rem 0 0.2rem; font-size: 0.78rem; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 0.45rem; }
+  .swatch { width: 0.85rem; height: 0.85rem; border-radius: 0.2rem; display: inline-block; }
+
+  footer { margin-top: 2rem; padding-top: 1.3rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.9rem; }
+  footer b { color: var(--parch); }
+  footer .rec { color: var(--gold-bright); font-weight: 600; }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Universo do Medo · Modelo de Visão</p>
+    <h1>Como a oclusão deve recortar o mundo</h1>
+    <p class="lede">A Linha de Visão já limita por <b>distância</b>. A pergunta é o que fazer quando há uma parede ou uma geladeira no caminho. Arraste o <b>Ser</b> e troque o modo — repare que a <b>1ª pessoa fica igual nos três</b>: a decisão é só sobre a visão tática. O painel <b>Percebidos</b> acende o inimigo e a marca de sangue só enquanto a cabeça tem linha até eles.</p>
+  </header>
+
+  <div class="modebar" role="group" aria-label="Modo de oclusão">
+    <button class="modebtn" data-mode="0"><span class="k">A</span> Só distância</button>
+    <button class="modebtn" data-mode="1"><span class="k">B</span> Oclusão estrita</button>
+    <button class="modebtn" data-mode="2"><span class="k">C</span> Oclusão 2D</button>
+  </div>
+
+  <div class="views">
+    <div class="view">
+      <div class="view-head">
+        <p class="view-title">Visão Tática · 3ª pessoa</p>
+        <span class="view-tag" id="tagTatica">topo · esquemático</span>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="cTatica" width="760" height="760" aria-label="Vista tática de cima do cenário"></canvas>
+        <div class="percebidos" aria-live="polite">
+          <div class="perc-title">Percebidos</div>
+          <div class="perc-row sangue" id="percSangue"><span class="dot"></span> Marca de sangue</div>
+          <div class="perc-row inimigo" id="percInimigo"><span class="dot"></span> Inimigo</div>
+        </div>
+      </div>
+      <div class="ctl">
+        <label for="alc">Alcance</label>
+        <input type="range" id="alc" min="150" max="420" value="300" />
+        <span class="val" id="alcVal">300</span>
+      </div>
+      <p class="hint">Arraste o <b>Ser</b> (ponto azul). A geladeira e a parede interna bloqueiam conforme o modo.</p>
+    </div>
+
+    <div class="view">
+      <div class="view-head">
+        <p class="view-title">Primeira Pessoa</p>
+        <span class="view-tag">olhando pra geladeira</span>
+      </div>
+      <canvas id="cFP" width="760" height="470" aria-label="Vista em primeira pessoa do Ser"></canvas>
+      <p class="hint">Idêntica nos 3 modos: aqui a oclusão é <b>natural</b> — você não vê atrás da parede porque ela tampa. Nada a decidir.</p>
+    </div>
+  </div>
+
+  <div class="explain" id="explain">
+    <h3><span id="exTitle">Oclusão 2D</span> <span class="verdict good" id="exVerdict">recomendado</span></h3>
+    <p id="exBody"></p>
+  </div>
+
+  <div class="legend">
+    <span><i class="swatch" style="background:#ece7d6"></i> enxerga</span>
+    <span><i class="swatch" style="background:#000;border:1px solid #2b2740"></i> fora da visão</span>
+    <span><i class="swatch" style="background:#b9bdc9"></i> parede</span>
+    <span><i class="swatch" style="background:#9fb0c4"></i> geladeira (objeto)</span>
+    <span><i class="swatch" style="background:#2f9db0"></i> Ser</span>
+    <span><i class="swatch" style="background:#96141c"></i> marca de sangue</span>
+    <span><i class="swatch" style="background:#c8384a"></i> inimigo</span>
+  </div>
+
+  <footer>
+    <p>Minha recomendação é a <span class="rec">Oclusão 2D</span>: paredes e objetos escondem o que está <b>atrás</b> deles (a linha de visão que importa pra stealth e exploração), mas todo objeto que a cabeça alcança aparece <b>inteiro</b> — sem a traseira da geladeira ficando preta. A oclusão estrita (per-fragment) é o "realista e chato". Variante possível: <b>só estruturas ocluem</b> (paredes bloqueiam região; objetos nunca escondem nada) — mais permissiva ainda, se você quiser.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var cT = document.getElementById("cTatica");
+  var gT = cT.getContext("2d");
+  var cF = document.getElementById("cFP");
+  var gF = cF.getContext("2d");
+
+  // Espaco logico = metade do backing (retina 2x).
+  var S = 380;               // lado logico da tatica
+  var FW = 380, FH = 235;    // primeira pessoa logica
+  var DPR = 2;
+
+  var PAD = 36;
+  var ROOM = { x0: PAD, y0: PAD, x1: S - PAD, y1: S - PAD };
+  var fridge = { x0: 150, y0: 172, x1: 198, y1: 222 };
+  var wall = { ax: 268, ay: PAD, bx: 268, by: 214 }; // parede interna parcial -> alcove em cima a direita
+  var ser = { x: 96, y: 268 };
+  var alcance = 300;
+  var mode = 2;
+
+  // Entidades para PERCEBER (nao sao oclusores): mancha de sangue = decal NA PAREDE DE TRAS da geladeira (so se ve indo por tras); inimigo espreitando na BEIRADA da parede interna, observando o jogador.
+  var bloodMark = { x: 174, y: 170 };
+  var enemy = { x: 282, y: 198 };
+
+  var COL = {
+    lit: "#ece7d6", occLit: "#b9bdc9", occObj: "#9fb0c4",
+    wallDark: "#20222c", objDark: "#1a1d26",
+    serke: "#2f9db0", serfill: "#2f6f86", gold: "#d8b678", ring: "#b79051"
+  };
+
+  function segments() {
+    var s = [];
+    function seg(ax, ay, bx, by, tipo) { s.push({ a: { x: ax, y: ay }, b: { x: bx, y: by }, tipo: tipo }); }
+    // sala
+    seg(ROOM.x0, ROOM.y0, ROOM.x1, ROOM.y0, "parede");
+    seg(ROOM.x1, ROOM.y0, ROOM.x1, ROOM.y1, "parede");
+    seg(ROOM.x1, ROOM.y1, ROOM.x0, ROOM.y1, "parede");
+    seg(ROOM.x0, ROOM.y1, ROOM.x0, ROOM.y0, "parede");
+    // parede interna
+    seg(wall.ax, wall.ay, wall.bx, wall.by, "parede");
+    // geladeira
+    seg(fridge.x0, fridge.y0, fridge.x1, fridge.y0, "objeto");
+    seg(fridge.x1, fridge.y0, fridge.x1, fridge.y1, "objeto");
+    seg(fridge.x1, fridge.y1, fridge.x0, fridge.y1, "objeto");
+    seg(fridge.x0, fridge.y1, fridge.x0, fridge.y0, "objeto");
+    return s;
+  }
+
+  function raySeg(ox, oy, dx, dy, ax, ay, bx, by) {
+    var sx = bx - ax, sy = by - ay;
+    var denom = dx * sy - dy * sx;
+    if (Math.abs(denom) < 1e-9) return null;
+    var t2 = ((ax - ox) * dy - (ay - oy) * dx) / denom;
+    var t1 = ((ax - ox) * sy - (ay - oy) * sx) / denom;
+    if (t1 > 0 && t2 >= -1e-6 && t2 <= 1 + 1e-6) return t1;
+    return null;
+  }
+
+  function nearestHit(ox, oy, dx, dy, segs) {
+    var best = null, bt = Infinity, btipo = null;
+    for (var i = 0; i < segs.length; i++) {
+      var t = raySeg(ox, oy, dx, dy, segs[i].a.x, segs[i].a.y, segs[i].b.x, segs[i].b.y);
+      if (t !== null && t < bt) { bt = t; best = { x: ox + dx * t, y: oy + dy * t }; btipo = segs[i].tipo; }
+    }
+    if (!best) return null;
+    return { x: best.x, y: best.y, t: bt, tipo: btipo };
+  }
+
+  function visibilityPolygon(sx, sy, segs) {
+    var angs = [];
+    for (var i = 0; i < segs.length; i++) {
+      var ps = [segs[i].a, segs[i].b];
+      for (var k = 0; k < 2; k++) {
+        var base = Math.atan2(ps[k].y - sy, ps[k].x - sx);
+        angs.push(base - 0.0002, base, base + 0.0002);
+      }
+    }
+    var poly = [];
+    for (var j = 0; j < angs.length; j++) {
+      var dx = Math.cos(angs[j]), dy = Math.sin(angs[j]);
+      var h = nearestHit(sx, sy, dx, dy, segs);
+      if (h) poly.push({ ang: angs[j], x: h.x, y: h.y });
+    }
+    poly.sort(function (a, b) { return a.ang - b.ang; });
+    return poly;
+  }
+
+  function fillLitPoly(g, poly, sx, sy) {
+    if (poly.length < 3) return;
+    g.save();
+    g.beginPath();
+    g.moveTo(poly[0].x, poly[0].y);
+    for (var i = 1; i < poly.length; i++) g.lineTo(poly[i].x, poly[i].y);
+    g.closePath();
+    g.clip();
+    var rg = g.createRadialGradient(sx, sy, 0, sx, sy, alcance);
+    rg.addColorStop(0, "rgba(236,231,214,0.96)");
+    rg.addColorStop(0.55, "rgba(236,231,214,0.62)");
+    rg.addColorStop(0.85, "rgba(236,231,214,0.20)");
+    rg.addColorStop(1, "rgba(236,231,214,0)");
+    g.fillStyle = rg;
+    g.fillRect(0, 0, S, S);
+    g.restore();
+  }
+
+  function fillLitDisc(g, sx, sy) {
+    var rg = g.createRadialGradient(sx, sy, 0, sx, sy, alcance);
+    rg.addColorStop(0, "rgba(236,231,214,0.9)");
+    rg.addColorStop(0.55, "rgba(236,231,214,0.55)");
+    rg.addColorStop(0.85, "rgba(236,231,214,0.18)");
+    rg.addColorStop(1, "rgba(236,231,214,0)");
+    g.fillStyle = rg;
+    g.beginPath(); g.arc(sx, sy, alcance, 0, Math.PI * 2); g.fill();
+  }
+
+  function litAt(sx, sy, px, py, segs) {
+    // fracao de luz num ponto: distancia * (linha de visao livre?)
+    var d = Math.hypot(px - sx, py - sy);
+    if (d > alcance) return 0;
+    var fall = 1 - d / alcance;
+    if (mode === 0) return fall; // distancia ignora obstaculos
+    var dx = (px - sx) / d, dy = (py - sy) / d;
+    var h = nearestHit(sx, sy, dx, dy, segs);
+    if (h && h.t < d - 0.8) return 0; // algo entre a cabeca e o ponto
+    return fall;
+  }
+
+  // Uma entidade e PERCEBIDA se esta no alcance e a cabeca tem linha ate ela. No modo distancia, ignora oclusao (percebe atraves).
+  function percebido(px, py, segs) {
+    var d = Math.hypot(px - ser.x, py - ser.y);
+    if (d > alcance) return false;
+    if (mode === 0) return true;
+    var h = nearestHit(ser.x, ser.y, (px - ser.x) / d, (py - ser.y) / d, segs);
+    return !(h && h.t < d - 1);
+  }
+
+  function fridgeSeen(segs) {
+    var cx = (fridge.x0 + fridge.x1) / 2, cy = (fridge.y0 + fridge.y1) / 2;
+    var d = Math.hypot(cx - ser.x, cy - ser.y);
+    if (mode === 0) return d <= alcance + 40;
+    // a geladeira e "vista" se o 1o obstaculo na direcao dela for ela mesma (objeto), dentro do alcance
+    var h = nearestHit(ser.x, ser.y, (cx - ser.x) / d, (cy - ser.y) / d, segs);
+    return !!(h && h.tipo === "objeto" && h.t <= alcance);
+  }
+
+  function drawFridge(g, segs) {
+    var cx = (fridge.x0 + fridge.x1) / 2, cy = (fridge.y0 + fridge.y1) / 2;
+    var w = fridge.x1 - fridge.x0, h = fridge.y1 - fridge.y0;
+    if (!fridgeSeen(segs)) { g.fillStyle = COL.objDark; g.fillRect(fridge.x0, fridge.y0, w, h); return; }
+
+    if (mode === 1) {
+      // estrita: lado voltado pro Ser aceso, lado oposto escuro (auto-oclusao)
+      var dx = ser.x - cx, dy = ser.y - cy, dl = Math.hypot(dx, dy) || 1;
+      dx /= dl; dy /= dl;
+      var half = Math.hypot(w, h) / 2;
+      var grad = g.createLinearGradient(cx - dx * half, cy - dy * half, cx + dx * half, cy + dy * half);
+      grad.addColorStop(0, COL.objDark);
+      grad.addColorStop(0.5, "#4a5568");
+      grad.addColorStop(1, COL.occObj);
+      g.fillStyle = grad;
+    } else {
+      g.fillStyle = COL.occObj;
+    }
+    g.fillRect(fridge.x0, fridge.y0, w, h);
+    g.strokeStyle = "rgba(0,0,0,0.5)"; g.lineWidth = 1;
+    g.strokeRect(fridge.x0 + 0.5, fridge.y0 + 0.5, w - 1, h - 1);
+  }
+
+  function drawWalls(g, segs, seeThrough) {
+    // paredes (sala + interna)
+    g.lineCap = "round";
+    g.lineWidth = 4;
+    for (var i = 0; i < segs.length; i++) {
+      if (segs[i].tipo !== "parede") continue;
+      var a = segs[i].a, b = segs[i].b;
+      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      var lit = seeThrough ? 1 : (litAt(ser.x, ser.y, mx, my, segs) > 0 ? 1 : 0);
+      g.strokeStyle = lit ? COL.occLit : COL.wallDark;
+      g.beginPath(); g.moveTo(a.x, a.y); g.lineTo(b.x, b.y); g.stroke();
+    }
+  }
+
+  function facing() {
+    var cx = (fridge.x0 + fridge.x1) / 2, cy = (fridge.y0 + fridge.y1) / 2;
+    return Math.atan2(cy - ser.y, cx - ser.x);
+  }
+
+  function drawSer(g) {
+    // anel de alcance
+    g.strokeStyle = "rgba(183,144,81,0.28)";
+    g.lineWidth = 1; g.setLineDash([4, 5]);
+    g.beginPath(); g.arc(ser.x, ser.y, alcance, 0, Math.PI * 2); g.stroke();
+    g.setLineDash([]);
+    // facing (pra geladeira)
+    var f = facing();
+    g.strokeStyle = "rgba(47,157,176,0.85)"; g.lineWidth = 2;
+    g.beginPath(); g.moveTo(ser.x, ser.y); g.lineTo(ser.x + Math.cos(f) * 22, ser.y + Math.sin(f) * 22); g.stroke();
+    // corpo
+    g.beginPath(); g.arc(ser.x, ser.y, 7, 0, Math.PI * 2);
+    g.fillStyle = COL.serke; g.fill();
+    g.lineWidth = 2; g.strokeStyle = "#0b0a10"; g.stroke();
+  }
+
+  function renderTatica() {
+    var segs = segments();
+    gT.setTransform(DPR, 0, 0, DPR, 0, 0);
+    gT.clearRect(0, 0, S, S);
+    gT.fillStyle = "#000"; gT.fillRect(0, 0, S, S);
+
+    if (mode === 0) {
+      fillLitDisc(gT, ser.x, ser.y);
+      drawWalls(gT, segs, true);
+      drawFridge(gT, segs);
+    } else {
+      var poly = visibilityPolygon(ser.x, ser.y, segs);
+      fillLitPoly(gT, poly, ser.x, ser.y);
+      drawWalls(gT, segs, false);
+      drawFridge(gT, segs);
+    }
+    drawEntities(gT, segs);
+    drawSer(gT);
+
+    // moldura da sala
+    gT.strokeStyle = "rgba(43,39,64,0.9)"; gT.lineWidth = 1;
+    gT.strokeRect(ROOM.x0 - 0.5, ROOM.y0 - 0.5, ROOM.x1 - ROOM.x0 + 1, ROOM.y1 - ROOM.y0 + 1);
+
+    updatePercebidos(segs);
+  }
+
+  function drawEntities(g, segs) {
+    if (percebido(bloodMark.x, bloodMark.y, segs)) {
+      // decal na parede de tras (topo) da geladeira: smear horizontal na aresta + escorridos pra baixo
+      g.fillStyle = "rgba(150,20,28,0.95)";
+      g.beginPath(); g.ellipse(bloodMark.x, fridge.y0, 11, 3.6, 0, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.ellipse(bloodMark.x - 5, fridge.y0 + 4, 2.4, 4.6, 0, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.ellipse(bloodMark.x + 6, fridge.y0 + 3, 1.8, 3.6, 0, 0, Math.PI * 2); g.fill();
+    }
+    if (percebido(enemy.x, enemy.y, segs)) {
+      g.beginPath(); g.arc(enemy.x, enemy.y, 7, 0, Math.PI * 2);
+      g.fillStyle = "#c8384a"; g.fill();
+      g.lineWidth = 2; g.strokeStyle = "#0b0a10"; g.stroke();
+    }
+  }
+
+  function updatePercebidos(segs) {
+    document.getElementById("percSangue").classList.toggle("on", percebido(bloodMark.x, bloodMark.y, segs));
+    document.getElementById("percInimigo").classList.toggle("on", percebido(enemy.x, enemy.y, segs));
+  }
+
+  function renderFP() {
+    var segs = segments();
+    gF.setTransform(DPR, 0, 0, DPR, 0, 0);
+    gF.clearRect(0, 0, FW, FH);
+    // fundo: teto->chao
+    var bg = gF.createLinearGradient(0, 0, 0, FH);
+    bg.addColorStop(0, "#000000");
+    bg.addColorStop(0.5, "#050507");
+    bg.addColorStop(0.5, "#08080c");
+    bg.addColorStop(1, "#101018");
+    gF.fillStyle = bg; gF.fillRect(0, 0, FW, FH);
+
+    var fov = 68 * Math.PI / 180;
+    var f = facing();
+    var cols = FW;
+    var depth = new Array(cols);
+    for (var i = 0; i < cols; i++) {
+      depth[i] = Infinity;
+      var a = f - fov / 2 + fov * (i / (cols - 1));
+      var dx = Math.cos(a), dy = Math.sin(a);
+      var h = nearestHit(ser.x, ser.y, dx, dy, segs);
+      if (!h || h.t > alcance) continue;
+      var corr = h.t * Math.cos(a - f);
+      depth[i] = corr;
+      var wallH = Math.min(FH, (FH * 46) / Math.max(corr, 8));
+      var shade = Math.max(0, 1 - h.t / alcance);
+      shade = Math.pow(shade, 0.8);
+      var base = h.tipo === "objeto" ? [159, 176, 196] : [150, 156, 168];
+      var r = Math.round(base[0] * shade), gg = Math.round(base[1] * shade), bb = Math.round(base[2] * shade);
+      gF.fillStyle = "rgb(" + r + "," + gg + "," + bb + ")";
+      var y0 = (FH - wallH) / 2;
+      gF.fillRect(i, y0, 1.2, wallH);
+    }
+
+    drawFPEntity(gF, depth, f, fov, segs, enemy, "inimigo");
+    drawFPEntity(gF, depth, f, fov, segs, bloodMark, "sangue");
+  }
+
+  function normAng(a) { while (a > Math.PI) { a -= 2 * Math.PI; } while (a < -Math.PI) { a += 2 * Math.PI; } return a; }
+
+  // Sprite do percebido na 1a pessoa: projeta pelo angulo relativo, escala por distancia, e so desenha se estiver na frente da parede daquela coluna (teste de profundidade).
+  function drawFPEntity(g, depth, f, fov, segs, ent, kind) {
+    if (!percebido(ent.x, ent.y, segs)) return;
+    var dd = Math.hypot(ent.x - ser.x, ent.y - ser.y);
+    var rel = normAng(Math.atan2(ent.y - ser.y, ent.x - ser.x) - f);
+    if (Math.abs(rel) > fov / 2) return;
+    var corr = dd * Math.cos(rel);
+    var col = Math.round((rel / fov + 0.5) * (FW - 1));
+    var margem = kind === "sangue" ? 5 : 0; // decal fica NA superficie da parede: tolera igualar a profundidade dela
+    if (col < 0 || col >= FW || corr >= depth[col] + margem) return;
+    var sh = Math.max(0.25, 1 - dd / alcance);
+    if (kind === "inimigo") {
+      var hgt = Math.min(FH * 0.86, (FH * 42) / Math.max(corr, 8));
+      var wdt = hgt * 0.32;
+      var yb = FH / 2 + hgt / 2;
+      g.fillStyle = "rgba(" + Math.round(210 * sh) + "," + Math.round(64 * sh) + "," + Math.round(82 * sh) + ",1)";
+      g.fillRect(col - wdt / 2, yb - hgt * 0.72, wdt, hgt * 0.72);
+      g.beginPath(); g.arc(col, yb - hgt * 0.78, wdt * 0.56, 0, Math.PI * 2); g.fill();
+    } else {
+      // mancha na parede: centrada na altura do face, com um escorrido
+      var wsp = Math.max(5, (FH * 14) / Math.max(corr, 8));
+      var yc = FH / 2 + wsp * 0.2;
+      g.fillStyle = "rgba(150,20,28,0.92)";
+      g.beginPath(); g.ellipse(col, yc, wsp, wsp * 0.72, 0.35, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.ellipse(col + wsp * 0.55, yc + wsp * 0.9, wsp * 0.26, wsp * 0.5, 0, 0, Math.PI * 2); g.fill();
+    }
+  }
+
+  var EX = [
+    {
+      t: "Só distância", v: "irreal", cls: "bad",
+      b: "A visão é um disco puro: a cabeça <b>enxerga através</b> da parede e da geladeira. No painel Percebidos, o <b>inimigo aparece através da parede</b> e a marca de sangue através da geladeira — nítido demais. É o <b>Slice A de hoje</b>, sem oclusão."
+    },
+    {
+      t: "Oclusão estrita", v: "realista, chato", cls: "meh",
+      b: "Só superfícies com <b>reta livre até a cabeça</b>. O cômodo atrás da parede fica escuro (certo), mas a <b>traseira da geladeira também</b> — ela vira meio-preta na tática, porque a face de trás não tem linha direta. Correto na física, mas <b>recorta o objeto</b> de um jeito feio. É o que você chamou de realista e chato."
+    },
+    {
+      t: "Oclusão 2D", v: "recomendado", cls: "good",
+      b: "Parede e geladeira escondem o que está <b>atrás</b> delas (o cômodo e a sombra atrás da geladeira ficam pretos — a linha de visão que importa), mas a geladeira, por estar no campo da cabeça, aparece <b>inteira</b>. Sem auto-oclusão feia. O inimigo atrás da parede só entra em <b>Percebidos</b> quando você contorna e ganha linha até ele — a marca de sangue idem. É o meio-termo que combina com o jogo."
+    }
+  ];
+
+  function updateExplain() {
+    var e = EX[mode];
+    document.getElementById("exTitle").textContent = e.t;
+    var v = document.getElementById("exVerdict");
+    v.textContent = e.v; v.className = "verdict " + e.cls;
+    document.getElementById("exBody").innerHTML = e.b;
+    var btns = document.querySelectorAll(".modebtn");
+    for (var i = 0; i < btns.length; i++) btns[i].setAttribute("aria-pressed", String(Number(btns[i].dataset.mode) === mode));
+    document.getElementById("tagTatica").textContent = mode === 0 ? "topo · vê através" : "topo · linha de visão";
+  }
+
+  function renderAll() { renderTatica(); renderFP(); }
+
+  // interacao
+  var dragging = false;
+  function canvasPoint(ev) {
+    var r = cT.getBoundingClientRect();
+    var px = (ev.clientX - r.left) / r.width * S;
+    var py = (ev.clientY - r.top) / r.height * S;
+    return { x: px, y: py };
+  }
+  function clampSer(p) {
+    var m = 12;
+    p.x = Math.max(ROOM.x0 + m, Math.min(ROOM.x1 - m, p.x));
+    p.y = Math.max(ROOM.y0 + m, Math.min(ROOM.y1 - m, p.y));
+    // nao deixar entrar na geladeira
+    if (p.x > fridge.x0 - m && p.x < fridge.x1 + m && p.y > fridge.y0 - m && p.y < fridge.y1 + m) {
+      p.y = ser.y > fridge.y1 ? fridge.y1 + m : (ser.y < fridge.y0 ? fridge.y0 - m : p.y);
+    }
+    return p;
+  }
+  cT.addEventListener("pointerdown", function (ev) {
+    var p = canvasPoint(ev);
+    if (Math.hypot(p.x - ser.x, p.y - ser.y) < 26) { dragging = true; cT.setPointerCapture(ev.pointerId); }
+  });
+  cT.addEventListener("pointermove", function (ev) {
+    if (!dragging) return;
+    var p = clampSer(canvasPoint(ev));
+    ser.x = p.x; ser.y = p.y; renderAll();
+  });
+  cT.addEventListener("pointerup", function () { dragging = false; });
+  cT.addEventListener("pointercancel", function () { dragging = false; });
+
+  var btns = document.querySelectorAll(".modebtn");
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener("click", function () { mode = Number(this.dataset.mode); updateExplain(); renderAll(); });
+  }
+
+  var alc = document.getElementById("alc");
+  alc.addEventListener("input", function () {
+    alcance = Number(this.value);
+    document.getElementById("alcVal").textContent = this.value;
+    renderAll();
+  });
+
+  updateExplain();
+  renderAll();
+})();
+</script>

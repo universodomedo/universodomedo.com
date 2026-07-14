@@ -1,0 +1,226 @@
+/* PainelControlePalco — comando resumido do palco, slide-in do canto direito sobre o conteúdo da página.
+   Posicionamento: absolute relativo a #main (position: relative), mesmo padrão do PainelUsuariosOnline. */
+
+@keyframes slide_in_direita_controle_palco {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+}
+
+.painel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 24em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+    padding: 1em 1.1em;
+    overflow-y: auto;
+    background-color: #080208fc;
+    border-left: 0.05em solid rgba(183, 144, 81, 0.45);
+    z-index: var(--zindex-final-barraAcoesFlutuante);
+    animation: slide_in_direita_controle_palco 0.25s ease;
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.titulo_painel {
+    font-size: 0.72em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #B79051;
+}
+
+.fechar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9em;
+    height: 1.9em;
+    color: #EBE0C9;
+    border: 0.08em solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.5em;
+    background: transparent;
+    cursor: pointer;
+
+    &:hover {
+        border-color: rgba(183, 144, 81, 0.7);
+        background: rgba(183, 144, 81, 0.14);
+    }
+}
+
+.seletor_palcos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+}
+
+.aba_palco {
+    padding: 0.2em 0.7em;
+    font-size: 0.78em;
+    background: transparent;
+    border: 0.08em solid rgba(183, 144, 81, 0.4);
+    border-radius: 0.5em;
+    color: #EBE0C9;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.aba_palco_ativa {
+    border-color: #B79051;
+    background: rgba(183, 144, 81, 0.18);
+    color: #B79051;
+}
+
+.identidade {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7em;
+}
+
+.nome_palco {
+    flex: 1;
+    min-width: 0;
+    font-size: 1.05em;
+    color: #EBE0C9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.status {
+    font-size: 0.72em;
+    letter-spacing: 0.05em;
+    color: rgba(235, 224, 201, 0.55);
+    white-space: nowrap;
+}
+
+.status_ativo {
+    color: #7bc47b;
+}
+
+.erro {
+    font-size: 0.8em;
+    color: #DB4747;
+}
+
+.secao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    padding: 0.55em 0.7em;
+    border: 0.08em solid rgba(183, 144, 81, 0.25);
+    border-radius: 0.6em;
+}
+
+.secao_cabecalho {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4em;
+}
+
+.secao_titulo {
+    font-size: 0.72em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #B79051;
+}
+
+.secao_titulo_erro {
+    color: #DB4747;
+}
+
+.secao_contador {
+    font-size: 0.72em;
+    color: rgba(235, 224, 201, 0.55);
+}
+
+.participante {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+}
+
+.participante_nome {
+    flex: 1;
+    min-width: 0;
+    color: #EBE0C9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.participante_acoes {
+    display: flex;
+    gap: 0.3em;
+}
+
+.acao {
+    padding: 0.12em 0.5em;
+    font-size: 0.68em;
+    letter-spacing: 0.04em;
+    background: transparent;
+    border: 0.08em solid #B79051;
+    color: #B79051;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(183, 144, 81, 0.14);
+    }
+
+    &:disabled {
+        opacity: 0.45;
+        cursor: default;
+    }
+}
+
+.acao_perigo {
+    border-color: #DB4747;
+    color: #DB4747;
+
+    &:hover {
+        background: rgba(219, 71, 71, 0.14);
+    }
+}
+
+.problema {
+    font-size: 0.78em;
+    color: rgba(235, 224, 201, 0.8);
+    overflow-wrap: anywhere;
+}
+
+.vazio {
+    font-size: 0.8em;
+    font-style: italic;
+    color: rgba(235, 224, 201, 0.45);
+}
+
+.volume {
+    display: flex;
+    justify-content: center;
+    padding: 0.3em 0;
+}
+
+.acoes_palco {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: auto;
+    padding-top: 0.6em;
+    border-top: 0.08em solid rgba(183, 144, 81, 0.3);
+}
+
+.na_central {
+    font-size: 0.72em;
+    letter-spacing: 0.05em;
+    color: #B79051;
+}

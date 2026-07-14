@@ -24,13 +24,14 @@ type Props = {
     aoMudarPercepcao: (percepcao: Percepcao) => void;
     larguraMilimetros: number;
     alturaMilimetros: number;
+    idProjetoMapa: number | null;
     rotuloAtivo: string;
     marcadoresContexto: readonly { key: string; posicao: { x: number; y: number }; rotulo: string }[];
     descobertas: readonly Descoberta[];
     aoMudarDescobertas: (descobertas: Descoberta[]) => void;
     opcoesCapacidades: readonly OpcaoSelecionador[];
     opcoesInteragiveis: readonly OpcaoSelecionador[];
-    salvar: () => void;
+    aplicar: () => void;
 };
 
 const OPCOES_PERCEPCAO = [
@@ -38,7 +39,7 @@ const OPCOES_PERCEPCAO = [
     { value: 'PERCEBIDO', label: 'Percebido (visível desde o início)' },
 ];
 
-export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala({ nome, aoMudarNome, posicao, aoMudarPosicao, percepcaoInicial, aoMudarPercepcao, larguraMilimetros, alturaMilimetros, rotuloAtivo, marcadoresContexto, descobertas, aoMudarDescobertas, opcoesCapacidades, opcoesInteragiveis, salvar }: Props) {
+export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala({ nome, aoMudarNome, posicao, aoMudarPosicao, percepcaoInicial, aoMudarPercepcao, larguraMilimetros, alturaMilimetros, idProjetoMapa, rotuloAtivo, marcadoresContexto, descobertas, aoMudarDescobertas, opcoesCapacidades, opcoesInteragiveis, aplicar }: Props) {
     return (
         <ConteudoForm>
             <ConteudoForm.AreaCorpo>
@@ -56,14 +57,14 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__Conf
                 </InputComRotulo>
 
                 <InputComRotulo rotulo="Posição no mapa">
-                    <SeletorPosicaoMapa larguraMilimetros={larguraMilimetros} alturaMilimetros={alturaMilimetros} posicao={posicao} aoMudarPosicao={aoMudarPosicao} rotuloAtivo={rotuloAtivo} marcadoresContexto={marcadoresContexto} />
+                    <SeletorPosicaoMapa larguraMilimetros={larguraMilimetros} alturaMilimetros={alturaMilimetros} idProjetoMapa={idProjetoMapa} posicao={posicao} aoMudarPosicao={aoMudarPosicao} rotuloAtivo={rotuloAtivo} marcadoresContexto={marcadoresContexto} />
                 </InputComRotulo>
 
                 <EditorDescobertasInteragivel descobertas={descobertas} aoMudarDescobertas={aoMudarDescobertas} opcoesCapacidades={opcoesCapacidades} opcoesInteragiveis={opcoesInteragiveis} />
             </ConteudoForm.AreaCorpo>
 
             <ConteudoForm.AreaBotoes>
-                <button type="button" onClick={salvar}>Salvar</button>
+                <button type="button" onClick={aplicar}>Aplicar</button>
             </ConteudoForm.AreaBotoes>
         </ConteudoForm>
     );

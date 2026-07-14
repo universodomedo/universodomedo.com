@@ -1,0 +1,13 @@
+.cena {
+    position: absolute;
+    inset: 0;
+}
+
+.aviso {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: rgba(235, 224, 201, 0.55);
+    font-size: 0.85em;
+}

@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import { useAppSelector } from 'Redux/hooks/useRedux';
-import { selectIdMusicaPaginaAtual } from 'Redux/selectors/audioPaginaSelectors';
+import { selectIdMusicaPaginaAtual, selectPalcoNaCentral } from 'Redux/selectors/audioPaginaSelectors';
 
 const DURACAO_ABERTURA_AUTOMATICA_MS = 4000;
 
@@ -49,6 +49,15 @@ export const ContextoCentralAudio__Provider = ({ children }: { children: React.R
         anteriorRef.current = idMusica;
         if (idMusica != null && idMusica !== anterior) abrirTemporario();
     }, [idMusica, abrirTemporario]);
+
+    // Palco entrou na Central: abre PERSISTENTE (o usuário precisa ver a faixa ao vivo e o volume travado — o mudo pode estar invisível).
+    const palcoNaCentral = useAppSelector(selectPalcoNaCentral);
+    const codigoPalcoAnteriorRef = useRef<string | null>(null);
+    useEffect(() => {
+        const anterior = codigoPalcoAnteriorRef.current;
+        codigoPalcoAnteriorRef.current = palcoNaCentral?.codigoPalco ?? null;
+        if (palcoNaCentral && palcoNaCentral.codigoPalco !== anterior) abrirPainel();
+    }, [palcoNaCentral, abrirPainel]);
 
     useEffect(() => () => limparTimer(), [limparTimer]);
 

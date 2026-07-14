@@ -1,0 +1,26 @@
+.item_mapa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4em;
+    width: 100%;
+    padding-bottom: 0.6em;
+}
+
+/* Moldura da miniatura 3D: o Canvas (absolute) preenche este quadro — o aspect-ratio dá a ALTURA que um canvas não impõe sozinho. */
+.miniatura {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background-color: rgba(10, 8, 16, 0.85);
+    overflow: hidden;
+}
+
+.nome {
+    font-weight: 600;
+    text-align: center;
+}
+
+.dimensoes {
+    color: rgba(240, 210, 138, 0.75);
+}

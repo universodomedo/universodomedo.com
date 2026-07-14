@@ -29,7 +29,7 @@ export interface Contexto__PaginaGameDesignerConfiguracaoPartida__Props {
     criarPartida: (payload: PAYLOAD__CriarPartida) => Promise<void>;
     salvarPartida: (payload: PAYLOAD__SalvarPartida) => Promise<void>;
     alternarDesabilitadaPartida: (payload: PAYLOAD__AlternarDesabilitadaPartida) => Promise<void>;
-    salvarConfiguracaoPartida: (idPartida: number, configuracao: ConfiguracaoPartida) => Promise<void>;
+    salvarConfiguracaoPartida: (idPartida: number, configuracao: ConfiguracaoPartida) => Promise<boolean>;
 };
 
 const Contexto__PaginaGameDesignerConfiguracaoPartida = createContext<Contexto__PaginaGameDesignerConfiguracaoPartida__Props | undefined>(undefined);
@@ -95,11 +95,13 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Provider = ({ chil
 
     // Salva a configuracao runtime e ja reflete na estrutura (badge "Configurada" da grade). Nao navega: as abas (Runtime/Detalhes) seguem abertas sobre a mesma Partida.
     // Erro ja toasta automatico no NoraApi (mensagemErro); no sucesso, toast + recarrega a listagem (padrao das outras paginas).
-    const salvarConfiguracaoPartida = useCallback(async (idPartida: number, configuracao: ConfiguracaoPartida) => {
+    // Retorna se persistiu de fato — o editor só baixa a pendência de alterações quando o banco confirmou.
+    const salvarConfiguracaoPartida = useCallback(async (idPartida: number, configuracao: ConfiguracaoPartida): Promise<boolean> => {
         const ok = await executarSalvando(() => NoraApi.RestPOST(EventosApiRest.POST.Partidas.salvarConfiguracao, { id: idPartida, configuracao }, { mensagemErro: 'Não foi possível salvar a configuração da Partida.' }), 'Não foi possível salvar a configuração da Partida.');
-        if (!ok) return;
+        if (!ok) return false;
         void toast.sucesso('Configuração salva', 'A configuração da Partida foi salva.');
         await carregar();
+        return true;
     }, [executarSalvando, carregar]);
 
     const iniciaCadastro = useCallback(() => setEstadoFluxo('CADASTRO'), []);

@@ -17,6 +17,8 @@ import PainelUsuariosOnline from 'Componentes/ElementosGlobais/SecaoUsuariosExis
 import { RegistradorAcaoNotificacoes } from 'Componentes/Elementos/EventosUsuarioCentral/RegistradorAcaoNotificacoes';
 import { RegistradorAcaoCentralAudio } from 'Componentes/Elementos/CentralAudio/RegistradorAcaoCentralAudio';
 import PainelCentralAudio from 'Componentes/Elementos/CentralAudio/PainelCentralAudio';
+import { RegistradorAcaoControlePalco } from 'Componentes/Elementos/ControlePalco/RegistradorAcaoControlePalco';
+import PainelControlePalco from 'Componentes/Elementos/ControlePalco/PainelControlePalco';
 
 export interface ModuloAcao {
     id: string;
@@ -43,5 +45,10 @@ export const MODULOS_ACOES: ModuloAcao[] = [
         id: 'central-audio',
         Registrador: RegistradorAcaoCentralAudio,
         Painel: PainelCentralAudio,
+    },
+    {
+        id: 'controle-palco',
+        Registrador: RegistradorAcaoControlePalco,
+        Painel: PainelControlePalco,
     },
 ];

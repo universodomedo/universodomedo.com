@@ -13,14 +13,15 @@ type CooldownAcaoExecutandoFicha = { keyAcao: string; estilo: CSSProperties };
 
 export default function PaginaControleAcoes() {
     const { acoesPorStatusECapacidade, desativarAcoes } = useContextoFichaDePersonagem();
-    const { executaAcao, executaEsperar, executaSair, estadoTemporalSalaJogo } = useContextoControleAcoesRuntime();
+    const { executaAcao, executaEsperar, executaPressionarInteragivel, estadoTemporalSalaJogo } = useContextoControleAcoesRuntime();
     const mapaLogico = useContextoTelaDeJogoMapaLogicoOpcional();
     const movimentacao = useContextoMovimentacaoSalaJogoOpcional();
-    const saidaDisponivel = mapaLogico?.mapaLogicoSalaJogo?.saidaDisponivel ?? false;
     const [acaoComSelecaoAlvo, setAcaoComSelecaoAlvo] = useState<AcaoDisponivel | null>(null);
     const [momentoProjetadoMs, setMomentoProjetadoMs] = useState(0);
     const seresNaSala = mapaLogico?.seresNaSala ?? [];
     const interagiveisPercebidos = mapaLogico?.interagiveisPercebidos ?? [];
+    // Interagiveis percebidos com acao autorada (v1: vitoria): cada um vira uma acao "Pressionar" — disponibilidade vem do servidor (percepcao + alcance).
+    const interagiveisComAcao = interagiveisPercebidos.filter(interagivel => (interagivel.acoes ?? []).length > 0);
     const tempoRodando = estadoTemporalSalaJogo?.status === 'RODANDO';
     const acoesFichaDesativadas = desativarAcoes || tempoRodando;
     const acaoEmExecucao = estadoTemporalSalaJogo?.acoesTemporais.find(acaoTemporal => acaoTemporal.status === 'EM_ANDAMENTO' && acaoTemporal.tipo === 'atacar') ?? null;
@@ -67,7 +68,7 @@ export default function PaginaControleAcoes() {
         <div className={styles.painel_acoes}>
             {acoesPorStatusECapacidade.realizaveis.length > 0 && <SecaoAcoesFicha titulo="Ações Realizáveis" grupos={acoesPorStatusECapacidade.realizaveis} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
             {estadoTemporalSalaJogo && <SecaoAcaoTemporalEsperar estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} executaEsperar={executaEsperar} />}
-            {saidaDisponivel && <SecaoAcaoSair desativarAcoes={desativarAcoes} executaSair={executaSair} />}
+            {interagiveisComAcao.length > 0 && <SecaoAcoesInteragiveis interagiveis={interagiveisComAcao} desativarAcoes={desativarAcoes} executaPressionar={executaPressionarInteragivel} />}
             {acoesPorStatusECapacidade.bloqueadas.length > 0 && <SecaoAcoesFicha titulo="Ações Bloqueadas" grupos={acoesPorStatusECapacidade.bloqueadas} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
             {acaoComSelecaoAlvo && <ModalSelecaoAlvoAcao acao={acaoComSelecaoAlvo} seresNaSala={seresNaSala} interagiveisPercebidos={interagiveisPercebidos} cancelar={() => setAcaoComSelecaoAlvo(null)} confirmar={executaAcaoComAlvo} />}
         </div>
@@ -122,30 +123,32 @@ function SecaoAcaoTemporalEsperar({ estadoTemporalSalaJogo, desativarAcoes, exec
     );
 };
 
-// Sala de treino: aparece so quando o servidor sinaliza saidaDisponivel (jogador ao pe da Porta). Deixa a sala = vitoria.
-function SecaoAcaoSair({ desativarAcoes, executaSair }: { desativarAcoes: boolean; executaSair: () => void; }) {
-    function acionar(): void {
-        if (desativarAcoes) return;
-        executaSair();
-    };
-
+// Interagiveis com acao autorada: um botao "Pressionar" por interagivel. Afordancia derivada do tipo da acao; a disponibilidade
+// (percebido + dentro do alcance) vem PRONTA do servidor na projecao — o cliente so habilita/desabilita.
+function SecaoAcoesInteragiveis({ interagiveis, desativarAcoes, executaPressionar }: { interagiveis: readonly InteragivelPercebidoSalaJogoWsDto[]; desativarAcoes: boolean; executaPressionar: (keyInteragivel: string) => void; }) {
     return (
         <section className={styles.secao_acoes}>
-            <h3 className={styles.titulo_secao}>Sala de Treino</h3>
-            <div className={styles.grupo_capacidade}>
-                <h4 className={styles.titulo_capacidade}>Porta</h4>
-                <div className={styles.lista_acoes}>
-                    <button type="button" className={`${styles.acao} ${styles.acao_realizavel} ${desativarAcoes ? styles.acao_sem_interacao : ''}`} aria-disabled={desativarAcoes} aria-label="Sair da sala de treino" onClick={acionar}>
-                        <span className={styles.icone_acao} aria-hidden="true">S</span>
-                        <span className={styles.resumo_acao} role="tooltip">
-                            <strong>Sair</strong>
-                            <span>Porta</span>
-                            <span>Deixa a sala de treino</span>
-                            <small>sala.porta.sair</small>
-                        </span>
-                    </button>
-                </div>
-            </div>
+            <h3 className={styles.titulo_secao}>Interagíveis</h3>
+            {interagiveis.map(interagivel => {
+                const disponivel = (interagivel.acoes ?? []).some(acao => acao.disponivel);
+                const acaoPodeExecutar = disponivel && !desativarAcoes;
+                return (
+                    <div key={interagivel.key} className={styles.grupo_capacidade}>
+                        <h4 className={styles.titulo_capacidade}>{interagivel.nome}</h4>
+                        <div className={styles.lista_acoes}>
+                            <button type="button" className={`${styles.acao} ${acaoPodeExecutar ? styles.acao_realizavel : styles.acao_bloqueada} ${!acaoPodeExecutar ? styles.acao_sem_interacao : ''}`} aria-disabled={!acaoPodeExecutar} aria-label={`Pressionar ${interagivel.nome}`} onClick={() => { if (acaoPodeExecutar) executaPressionar(interagivel.key); }}>
+                                <span className={styles.icone_acao} aria-hidden="true">P</span>
+                                <span className={styles.resumo_acao} role="tooltip">
+                                    <strong>Pressionar</strong>
+                                    <span>{interagivel.nome}</span>
+                                    <span>{disponivel ? 'Realizável' : 'Aproxime-se para pressionar'}</span>
+                                    <small>{interagivel.key}</small>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                );
+            })}
         </section>
     );
 };

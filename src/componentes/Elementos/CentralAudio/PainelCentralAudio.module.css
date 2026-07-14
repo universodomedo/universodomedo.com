@@ -14,8 +14,8 @@
     width: 40%;
     min-width: 30em;
     display: flex;
-    align-items: center;
-    gap: 1.2em;
+    flex-direction: column;
+    gap: 0.6em;
     padding: 0.7em 1.1em;
     border: 0.08em solid rgba(183, 144, 81, 0.45);
     border-radius: 0.9em;
@@ -23,6 +23,13 @@
     box-shadow: 0 0.4em 1.4em rgba(0, 0, 0, 0.55);
     z-index: var(--zindex-final-barraAcoesFlutuante);
     animation: subir_central_audio 0.25s ease;
+}
+
+.linha_principal {
+    display: flex;
+    align-items: center;
+    gap: 1.2em;
+    width: 100%;
 }
 
 .info {
@@ -54,6 +61,66 @@
 .vazio {
     font-style: italic;
     opacity: 0.5;
+}
+
+/* Indicador de falante ativo: o mic segue publicando em qualquer página. */
+.falando {
+    font-size: 0.78em;
+    letter-spacing: 0.05em;
+    color: #DB4747;
+}
+
+.acoes_palco {
+    display: flex;
+    gap: 0.5em;
+    margin: 0.15em 0 0.35em;
+}
+
+.acao_palco {
+    padding: 0.1em 0.6em;
+    font-size: 0.68em;
+    letter-spacing: 0.05em;
+    background: transparent;
+    border: 0.08em solid #B79051;
+    color: #B79051;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(183, 144, 81, 0.14);
+    }
+}
+
+/* Eventos ao vivo para ouvir (palcos abertos que ainda não estão na Central). */
+.ao_vivo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    width: 100%;
+    padding-top: 0.55em;
+    border-top: 0.08em solid rgba(183, 144, 81, 0.3);
+}
+
+.ao_vivo_item {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+    min-width: 0;
+}
+
+.ao_vivo_nome {
+    color: #EBE0C9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ao_vivo_detalhe {
+    flex: 1;
+    font-size: 0.72em;
+    color: rgba(235, 224, 201, 0.55);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .volume {

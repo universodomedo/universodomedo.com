@@ -81,3 +81,10 @@
     font-size: 0.82em;
     opacity: 0.7;
 }
+
+/* Rascunho divergente do salvo: aviso ao lado do Salvar Configuração (o botão só habilita com pendência). */
+.pendencia {
+    align-self: center;
+    font-size: 0.85em;
+    color: rgba(224, 193, 136, 0.95);
+}

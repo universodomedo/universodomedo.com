@@ -47,6 +47,26 @@
     color: #D9D9D9;
 }
 
+.toast_acoes {
+    display: flex;
+    gap: 0.5em;
+    margin-top: 0.35em;
+}
+
+.toast_acao {
+    border: 0.08em solid rgba(255, 255, 255, 0.35);
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 0.5em;
+    padding: 0.2em 0.7em;
+    font-size: 0.85em;
+    color: #EAEAEA;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.45);
+    }
+}
+
 .toast_fechar {
     border: 0.08em solid rgba(255, 255, 255, 0.14);
     background: rgba(255, 255, 255, 0.05);

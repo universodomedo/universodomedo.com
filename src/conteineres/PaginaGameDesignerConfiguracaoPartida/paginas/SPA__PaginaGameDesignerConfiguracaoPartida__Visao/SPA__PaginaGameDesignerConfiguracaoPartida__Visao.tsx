@@ -23,7 +23,7 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Visao() {
                         <CardArteCapa nome={partida.nome} arteCapa={partida.arteCapa} aoEditar={() => setAba('arteCapa')} />
                         <CardMusica idMusica={idMusicaConfigurada} aoEditar={() => setAba('musica')} />
                         <CardMusicaEmJogo idMusica={idMusicaEmJogo} aoEditar={() => setAba('musicaEmJogo')} />
-                        <CardRuntime configuracao={configuracaoInicial} carregando={carregando} erro={erro} aoEditar={() => setAba('runtime')} />
+                        <CardRuntime configuracao={configuracaoInicial} carregando={carregando} erro={erro} aoEditar={() => setAba('runtime')} aoVisualizarPreview={() => setAba('previewRuntime')} />
                     </div>
                 </div>
             </ConteudoForm.AreaCorpo>
@@ -78,11 +78,12 @@ function CardMusicaEmJogo({ idMusica, aoEditar }: { idMusica: number | null; aoE
     );
 };
 
-function CardRuntime({ configuracao, carregando, erro, aoEditar }: { configuracao: ConfiguracaoPartida | null; carregando: string | null; erro: string | null; aoEditar: () => void; }) {
+function CardRuntime({ configuracao, carregando, erro, aoEditar, aoVisualizarPreview }: { configuracao: ConfiguracaoPartida | null; carregando: string | null; erro: string | null; aoEditar: () => void; aoVisualizarPreview: () => void; }) {
     return (
         <section className={styles.cartao}>
             <header className={styles.cabecalho}>
                 <h3 className={styles.titulo}>Runtime</h3>
+                {configuracao !== null && <button type="button" className={styles.botao_editar} onClick={aoVisualizarPreview} title="Preview local do Runtime: mapa e interagíveis nas posições configuradas, sem iniciar Partida">Visualizar Preview</button>}
                 <button type="button" className={styles.botao_editar} onClick={aoEditar}>Editar</button>
             </header>
             {carregando

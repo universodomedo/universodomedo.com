@@ -17,12 +17,15 @@ declare global { interface Window { SpeechRecognition?: ConstrutorReconhecimento
 
 // Protótipo de transcrição: o falante transcreve a própria fala no browser (Web Speech) e reporta pelo contrato do Palco.
 // seq identifica a frase para o backend: parciais com o mesmo seq substituem o texto até o resultado final selar.
-export function usePalcoTranscricao({ adicionaLog }: { adicionaLog: (mensagem: string) => void; }) {
+// ativo=false desliga a captura (ex.: comandante que não é falante) sem desmontar o chamador.
+export function usePalcoTranscricao({ codigoPalco, adicionaLog, ativo = true }: { codigoPalco: string; adicionaLog: (mensagem: string) => void; ativo?: boolean; }) {
     const proximoSeqRef = useRef(0);
     const adicionaLogRef = useRef(adicionaLog);
     adicionaLogRef.current = adicionaLog;
 
     useEffect(() => {
+        if (!ativo) return;
+
         const Construtor = window.SpeechRecognition ?? window.webkitSpeechRecognition;
         if (!Construtor) { adicionaLogRef.current('Transcrição indisponível neste navegador — use Chrome no desktop.'); return; }
 
@@ -40,7 +43,7 @@ export function usePalcoTranscricao({ adicionaLog }: { adicionaLog: (mensagem: s
                 if (!texto) continue;
                 const seq = seqBase + i;
                 if (seq >= proximoSeqRef.current) proximoSeqRef.current = seq + 1;
-                eventoWs(Eventos_Envia.Palco.eventos.relatarTranscricao, { seq, texto, parcial: !resultado.isFinal });
+                eventoWs(Eventos_Envia.Palco.eventos.relatarTranscricao, { codigoPalco, seq, texto, parcial: !resultado.isFinal });
             }
         };
 
@@ -69,5 +72,5 @@ export function usePalcoTranscricao({ adicionaLog }: { adicionaLog: (mensagem: s
             reconhecimento.onend = null;
             reconhecimento.stop();
         };
-    }, []);
+    }, [ativo, codigoPalco]);
 };

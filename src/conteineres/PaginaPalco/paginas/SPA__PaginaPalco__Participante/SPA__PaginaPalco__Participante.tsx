@@ -3,6 +3,7 @@
 import { type PalcoParticipanteDto } from 'types-nora-api';
 
 import styles from './styles.module.css';
+import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 import { useContexto__PaginaPalcoEntrar } from 'Contextos/Contexto__PaginaPalcoEntrar/contexto';
 import CartaoParticipantePalco from 'Componentes/ElementosDePalco/CartaoParticipantePalco/CartaoParticipantePalco';
 import PainelTranscricaoPalco from 'Componentes/ElementosDePalco/PainelTranscricaoPalco/PainelTranscricaoPalco';
@@ -15,6 +16,8 @@ export default function SPA__PaginaPalco__Participante() {
     const ouvintes: PalcoParticipanteDto[] = estado?.participantes.filter(p => p.papel === 'ouvinte') ?? [];
 
     return (
+        <ConteudoForm>
+            <ConteudoForm.AreaCorpo>
         <main className={styles.pagina}>
             {!palcoAtivo && <p className={styles.mensagem}>O Palco não está aberto agora.</p>}
             {palcoAtivo && emEspera && <p className={styles.mensagem}>Aguardando entrar no Palco...</p>}
@@ -47,5 +50,7 @@ export default function SPA__PaginaPalco__Participante() {
                 </>
             )}
         </main>
+            </ConteudoForm.AreaCorpo>
+        </ConteudoForm>
     );
 };

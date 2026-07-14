@@ -9,7 +9,7 @@ import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputCom
 import InputNumerico from 'Componentes/Elementos/Inputs/InputNumerico/InputNumerico';
 import SelecionadorOpcoes from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorOpcoes/SelecionadorOpcoes';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Editor } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/contexto';
-import { KEY_SER_EM_SALA_VAZIA, PAREDES_MAPA, ROTULOS_TIPO_CONDICAO_VITORIA, geometriaPortaDaParede, keySerEmSalaDaChave, luzesDaConfig, objetosDaConfig, paredeDaPorta, portasDaConfig, rotuloObjeto, rotuloSer, seresDoGrupo, type CondicaoVitoria, type InteragivelObjeto, type InteragivelSer, type ParedeMapa, type Porta, type TipoCondicaoVitoria } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
+import { KEY_SER_EM_SALA_VAZIA, ROTULOS_TIPO_CONDICAO_VITORIA, keySerEmSalaDaChave, luzesDaConfig, objetosDaConfig, rotuloObjeto, rotuloSer, seresDoGrupo, type CondicaoVitoria, type InteragivelObjeto, type InteragivelSer, type TipoCondicaoVitoria } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 import { SecaoSeresEmSala } from './SecaoSeresEmSala';
 import { SecaoObjetos } from './SecaoObjetos';
 import { SecaoLuzes } from './SecaoLuzes';
@@ -33,31 +33,27 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor() {
                         <textarea value={config.narracaoInicial} onChange={evento => editor.atualizaConfig({ narracaoInicial: evento.target.value })} rows={3} />
                     </label>
 
+                    {/* Cenário = um Projeto 3D tipo MAPA (obrigatório). Nome e dimensões DERIVAM do mapa na seleção — nada digitado à mão. */}
                     <fieldset className={styles.secao}>
                         <legend>Cenário</legend>
-                        <label className={styles.campo}>
-                            <span>Nome do cenário</span>
-                            <input type="text" value={config.cenario.nome} onChange={evento => editor.atualizaCenario({ nome: evento.target.value })} />
-                        </label>
-                        <div className={styles.linha}>
-                            <label className={styles.campo_estreito}>
-                                <span>Largura (mm)</span>
-                                <input type="number" min={1} value={config.cenario.mapaLogico.larguraMilimetros} onChange={evento => editor.atualizaMapaLogico({ larguraMilimetros: Number(evento.target.value) })} />
-                            </label>
-                            <label className={styles.campo_estreito}>
-                                <span>Altura (mm)</span>
-                                <input type="number" min={1} value={config.cenario.mapaLogico.alturaMilimetros} onChange={evento => editor.atualizaMapaLogico({ alturaMilimetros: Number(evento.target.value) })} />
-                            </label>
-                        </div>
+                        {config.cenario.mapaLogico.idProjetoMapa != null ? (
+                            <div className={styles.linha}>
+                                <p className={styles.dica}>Mapa: <strong>{config.cenario.nome}</strong> — {(config.cenario.mapaLogico.larguraMilimetros / 1000).toFixed(1)}m × {(config.cenario.mapaLogico.alturaMilimetros / 1000).toFixed(1)}m</p>
+                                <button type="button" onClick={editor.irParaSelecaoMapa}>Trocar Mapa</button>
+                            </div>
+                        ) : (
+                            <div className={styles.linha}>
+                                <p className={styles.dica}>Nenhum mapa selecionado — a Partida precisa de um Mapa autorado no Editor 3D.</p>
+                                <button type="button" onClick={editor.irParaSelecaoMapa}>Selecionar Mapa</button>
+                            </div>
+                        )}
                     </fieldset>
-
-                    <SecaoPortasMapa portas={portasDaConfig(config)} mapaLargura={config.cenario.mapaLogico.larguraMilimetros} mapaAltura={config.cenario.mapaLogico.alturaMilimetros} aoAtualizar={portas => editor.atualizaMapaLogico({ portas })} />
 
                     <SecaoSeresEmSala titulo="Seres de Jogadores" seres={seresDoGrupo(config, 'jogador')} nomesPorIdSer={nomesPorIdSer} aoAdicionar={() => editor.irParaSelecaoSer('jogador')} aoEditar={chave => editor.irParaConfigSer(chave)} aoRemover={chave => editor.removeInteragivel(chave)} />
 
                     <SecaoSeresEmSala titulo="Seres do Sistema" seres={seresSistema} nomesPorIdSer={nomesPorIdSer} aoAdicionar={() => editor.irParaSelecaoSer('sistema')} aoEditar={chave => editor.irParaConfigSer(chave)} aoRemover={chave => editor.removeInteragivel(chave)} />
 
-                    <SecaoObjetos objetos={objetosDaConfig(config)} aoAdicionar={editor.adicionaEConfiguraObjeto} aoEditar={chave => editor.irParaConfigObjeto(chave)} aoRemover={chave => editor.removeInteragivel(chave)} />
+                    <SecaoObjetos objetos={objetosDaConfig(config)} aoAdicionar={editor.adicionaEConfiguraObjeto} aoAdicionarDoMapa={editor.irParaSelecaoElementoMapa} aoEditar={chave => editor.irParaConfigObjeto(chave)} aoRemover={chave => editor.removeInteragivel(chave)} />
 
                     <SecaoLuzes luzes={luzesDaConfig(config)} aoAdicionar={editor.adicionaEConfiguraLuz} aoEditar={chave => editor.irParaConfigLuz(chave)} aoRemover={chave => editor.removeLuz(chave)} />
 
@@ -72,55 +68,10 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor() {
             </ConteudoForm.AreaCorpo>
 
             <ConteudoForm.AreaBotoes>
+                {editor.alteracoesPendentes && <span className={styles.pendencia}>Alterações não salvas</span>}
                 <button type="button" onClick={() => void editor.salvarConfiguracao()} disabled={!editor.podeSalvar}>Salvar Configuração</button>
             </ConteudoForm.AreaBotoes>
         </ConteudoForm>
-    );
-};
-
-// Autoria mínima das Portas do Mapa (estrutura): parede N/S/L/O + deslocamento => geometria (posicao/orientacao). O Editor 3D depois autora a mesma geometria. Guardado em cenario.mapaLogico.portas.
-function SecaoPortasMapa({ portas, mapaLargura, mapaAltura, aoAtualizar }: { portas: readonly Porta[]; mapaLargura: number; mapaAltura: number; aoAtualizar: (portas: readonly Porta[]) => void; }) {
-    function adicionar(): void {
-        const geometria = geometriaPortaDaParede('norte', 1000, mapaLargura, mapaAltura);
-        aoAtualizar([...portas, { chave: `porta_${crypto.randomUUID()}`, nome: `Porta ${portas.length + 1}`, posicao: geometria.posicao, orientacaoGraus: geometria.orientacaoGraus, larguraMilimetros: 1200, alturaMilimetros: 2200 }]);
-    };
-    function atualiza(indice: number, porta: Porta): void { aoAtualizar(portas.map((atual, i) => i === indice ? porta : atual)); };
-    function remove(indice: number): void { aoAtualizar(portas.filter((_, i) => i !== indice)); };
-
-    return (
-        <fieldset className={styles.secao}>
-            <legend>Portas do Mapa</legend>
-            {portas.map((porta, indice) => <LinhaPortaMapa key={porta.chave} porta={porta} mapaLargura={mapaLargura} mapaAltura={mapaAltura} aoAtualizar={atualizada => atualiza(indice, atualizada)} aoRemover={() => remove(indice)} />)}
-            <button type="button" onClick={adicionar}>+ Porta</button>
-        </fieldset>
-    );
-};
-
-function LinhaPortaMapa({ porta, mapaLargura, mapaAltura, aoAtualizar, aoRemover }: { porta: Porta; mapaLargura: number; mapaAltura: number; aoAtualizar: (porta: Porta) => void; aoRemover: () => void; }) {
-    const paredeDeslocamento = paredeDaPorta(porta, mapaAltura);
-    function aplicaParedeDeslocamento(parede: ParedeMapa, deslocamento: number): void {
-        const geometria = geometriaPortaDaParede(parede, deslocamento, mapaLargura, mapaAltura);
-        aoAtualizar({ ...porta, posicao: geometria.posicao, orientacaoGraus: geometria.orientacaoGraus });
-    };
-    return (
-        <div className={styles.linha}>
-            <InputComRotulo rotulo="Nome">
-                <input type="text" value={porta.nome} onChange={evento => aoAtualizar({ ...porta, nome: evento.target.value })} />
-            </InputComRotulo>
-            <InputComRotulo rotulo="Parede">
-                <SelecionadorOpcoes opcoes={PAREDES_MAPA.map(parede => ({ value: parede.value, label: parede.label }))} valor={paredeDeslocamento.parede} onChange={valor => { if (valor) aplicaParedeDeslocamento(valor as ParedeMapa, paredeDeslocamento.deslocamento); }} isClearable={false} />
-            </InputComRotulo>
-            <InputComRotulo rotulo="Deslocamento (mm)">
-                <InputNumerico value={paredeDeslocamento.deslocamento} onChange={valor => aplicaParedeDeslocamento(paredeDeslocamento.parede, valor)} />
-            </InputComRotulo>
-            <InputComRotulo rotulo="Largura (mm)">
-                <InputNumerico value={porta.larguraMilimetros} onChange={valor => aoAtualizar({ ...porta, larguraMilimetros: valor })} />
-            </InputComRotulo>
-            <InputComRotulo rotulo="Altura (mm)">
-                <InputNumerico value={porta.alturaMilimetros} onChange={valor => aoAtualizar({ ...porta, alturaMilimetros: valor })} />
-            </InputComRotulo>
-            <button type="button" data-variante="perigo" onClick={aoRemover}>Remover</button>
-        </div>
     );
 };
 
@@ -163,18 +114,6 @@ function CamposCondicaoVitoria({ condicaoVitoria, seresSistema, objetos, nomesPo
                 </InputComRotulo>
                 <InputComRotulo rotulo="Distância máx. (m)">
                     <InputNumerico value={condicaoVitoria.distanciaMaximaMilimetros} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'proximidade_ser_alcancada', keySerEmSala: condicaoVitoria.keySerEmSala, distanciaMaximaMilimetros: valor } })} />
-                </InputComRotulo>
-            </div>
-        );
-    }
-    if (condicaoVitoria.tipo === 'saida_pela_porta') {
-        return (
-            <div className={styles.linha}>
-                <InputComRotulo rotulo="Porta (objeto de saída)">
-                    <SelecionadorOpcoes opcoes={opcoesObjetos} valor={condicaoVitoria.keyInteragivel || null} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'saida_pela_porta', keyInteragivel: valor ?? '', distanciaMaximaMilimetros: condicaoVitoria.distanciaMaximaMilimetros } })} placeholder="Selecione…" isClearable={false} />
-                </InputComRotulo>
-                <InputComRotulo rotulo="Distância máx. (mm)">
-                    <InputNumerico value={condicaoVitoria.distanciaMaximaMilimetros} onChange={valor => aoAtualizar({ condicaoVitoria: { tipo: 'saida_pela_porta', keyInteragivel: condicaoVitoria.keyInteragivel, distanciaMaximaMilimetros: valor } })} />
                 </InputComRotulo>
             </div>
         );

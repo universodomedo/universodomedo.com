@@ -9,7 +9,8 @@ import { useContexto__PaginaGameDesignerConfiguracaoPartida__Editor } from '../C
 import SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala/SPA__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala';
 
 // Subfluxo Configuração do Ser: edita o Ser (Nome em jogo, Percepção inicial, Posição) + as Descobertas que MORAM nele.
-// O controlador (jogador/sistema) é definido na criação, não aqui. Buffer local → Salvar commita no config e volta.
+// O controlador (jogador/sistema) é definido na criação, não aqui. Buffer local → Aplicar commita no RASCUNHO do config e volta
+// (persistir é o "Salvar Configuração" do formulário — por isso o vocabulário aqui nunca é "salvar").
 export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerEmSala__Provider = () => {
     const { config, nomesPorIdSer, chaveEmEdicao, atualizaSer, voltarParaFormulario } = useContexto__PaginaGameDesignerConfiguracaoPartida__Editor();
     const interagivel = config.interagiveis.find(interagivelAtual => interagivelAtual.chave === chaveEmEdicao) ?? null;
@@ -36,9 +37,9 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerE
     const opcoesCapacidades = capacidades.registros.map(capacidade => ({ value: String(capacidade.id), label: `${capacidade.nome} (${capacidade.nomeInteracao})` }));
     const opcoesInteragiveis = config.interagiveis.filter(interagivelAtual => interagivelAtual.chave !== ativo.chave).map(interagivelAtual => ({ value: interagivelAtual.chave, label: rotuloInteragivel(interagivelAtual, nomesPorIdSer) }));
 
-    function salvar(): void {
+    function aplicar(): void {
         atualizaSer(ativo.chave, { nome, posicao, estadoPercepcaoInicial: percepcaoInicial, descobertas });
-        void toast.sucesso('Ser salvo');
+        void toast.sucesso('Ser aplicado à configuração', 'Persiste ao Salvar Configuração.');
         voltarParaFormulario();
     };
 
@@ -52,13 +53,14 @@ export const Contexto__PaginaGameDesignerConfiguracaoPartida__Editor__ConfigSerE
             aoMudarPercepcao={setPercepcaoInicial}
             larguraMilimetros={mapaLogico.larguraMilimetros}
             alturaMilimetros={mapaLogico.alturaMilimetros}
+            idProjetoMapa={mapaLogico.idProjetoMapa ?? null}
             rotuloAtivo={rotuloAtivo}
             marcadoresContexto={marcadoresContexto}
             descobertas={descobertas}
             aoMudarDescobertas={setDescobertas}
             opcoesCapacidades={opcoesCapacidades}
             opcoesInteragiveis={opcoesInteragiveis}
-            salvar={salvar}
+            aplicar={aplicar}
         />
     );
 };

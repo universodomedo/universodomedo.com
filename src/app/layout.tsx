@@ -34,6 +34,7 @@ import MenuSwiperEsquerda from 'Componentes/Elementos/MenuSwiperEsquerda/MenuSwi
 
 import { Provider as RadixTooltip } from "@radix-ui/react-tooltip";
 import ControladorAudioGlobal from 'Componentes/Elementos/ControladorAudioGlobal/ControladorAudioGlobal';
+import ControladorPalcoAudioGlobal from 'Componentes/Elementos/ControladorPalcoAudioGlobal/ControladorPalcoAudioGlobal';
 import BarraAcoesFlutuante from 'Componentes/Elementos/BarraAcoesFlutuante/BarraAcoesFlutuante';
 import { BarraAcoesFlutuante__ProviderGlobal } from 'Componentes/Elementos/BarraAcoesFlutuante/BarraAcoesFlutuante__ProviderGlobal';
 import InicializadorCache from 'Componentes/Elementos/InicializadorCache/InicializadorCache';
@@ -102,6 +103,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                                 </ContextoCopiarParaClipboardProvider>
                               </ConteinerEscalavel>
                               <ControladorAudioGlobal />
+                              <ControladorPalcoAudioGlobal />
                             </ConteudoContextualizado>
                           </InicializadorCache>
                           </ContextoNavegacaoRuntimeProvider>

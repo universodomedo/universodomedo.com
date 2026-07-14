@@ -4,3 +4,9 @@
     gap: 1em;
     max-width: 34em;
 }
+
+.dica {
+    margin: 0;
+    font-size: 0.82em;
+    opacity: 0.7;
+}

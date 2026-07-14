@@ -1,0 +1,17 @@
+.item_elemento {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4em;
+    width: 100%;
+    padding: 1em 0.6em;
+}
+
+.nome {
+    font-weight: 600;
+    text-align: center;
+}
+
+.dimensoes {
+    color: rgba(240, 210, 138, 0.75);
+}

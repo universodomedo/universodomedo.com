@@ -24,51 +24,11 @@
     font-size: 0.88em;
 }
 
-.acoes {
+.cabecalho {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 0.75em;
-    margin-bottom: 2em;
-}
-
-.botao_abrir {
-    padding: 0.45em 1.1em;
-    background: rgba(107, 33, 200, 0.2);
-    border: 0.1em solid #6b21c8;
-    border-radius: 0.35em;
-    color: #c4a0ff;
-    cursor: pointer;
-    font-family: 'Cinzel', serif;
-    font-size: 0.82em;
-    letter-spacing: 0.04em;
-    transition: background 0.15s, border-color 0.15s;
-}
-
-.botao_abrir:disabled {
-    background: rgba(45, 26, 80, 0.3);
-    border-color: #2d1a50;
-    color: #4a3a6a;
-    cursor: not-allowed;
-}
-
-.botao_encerrar {
-    padding: 0.45em 1.1em;
-    background: rgba(192, 64, 64, 0.12);
-    border: 0.1em solid rgba(192, 64, 64, 0.45);
-    border-radius: 0.35em;
-    color: #f08080;
-    cursor: pointer;
-    font-family: 'Cinzel', serif;
-    font-size: 0.82em;
-    letter-spacing: 0.04em;
-    transition: background 0.15s, border-color 0.15s;
-}
-
-.botao_encerrar:disabled {
-    background: rgba(45, 26, 80, 0.3);
-    border-color: #2d1a50;
-    color: #4a3a6a;
-    cursor: not-allowed;
+    margin-bottom: 1.5em;
 }
 
 .indicador_status {
@@ -156,4 +116,17 @@
 
 .transcricao {
     margin-top: 0.85em;
+}
+
+/* Fluxo de Música do palco (editor reutilizável em Componentes/ElementosDeMusica/FluxoDeMusica). */
+.secao_musica {
+    margin-top: 0.85em;
+}
+
+/* O Componente_Selecionador (ConteudoForm height:100%) EXIGE pai flex-column com altura definida —
+   sem isto o corpo colapsa e o rodapé "Usar esta música" some. */
+.selecionador_musica {
+    height: 34em;
+    display: flex;
+    flex-direction: column;
 }

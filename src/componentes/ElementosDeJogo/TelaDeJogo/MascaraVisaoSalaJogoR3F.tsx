@@ -143,8 +143,7 @@ function preencheOclusores(interagiveis: readonly InteragivelPercebidoSalaJogoWs
     let quantidade = 0;
     for (const interagivel of interagiveis) {
         if (quantidade >= MAX_OCLUSORES) break;
-        // Interagivel vinculado a uma Porta do mapa NAO e caixa solida — nao oclui a visao (senao ocluiria a propria folha da porta no mesmo ponto -> fica preta).
-        if (interagivel.tipo !== 'objeto' || interagivel.posicao === null || interagivel.vinculoElementoMapa) continue;
+        if (interagivel.tipo !== 'objeto' || interagivel.posicao === null) continue;
         const dims = dimensoesInteragivelCena(interagivel);
         const centroX = mundoX(interagivel.posicao.x, largura);
         const centroZ = mundoZ(interagivel.posicao.y, altura);
