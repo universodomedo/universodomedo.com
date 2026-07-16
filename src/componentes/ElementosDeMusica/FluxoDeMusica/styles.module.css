@@ -4,6 +4,9 @@
     display: flex;
     flex-direction: column;
     gap: 0.5em;
+    /* Largura ESTÁVEL: a dica muda de texto ao armar/desarmar a ligação e a largura do editor NÃO pode
+       derivar do conteúdo — senão o pai recentraliza, o canvas desloca e o alvo foge do clique do usuário. */
+    width: 100%;
 }
 
 .barra {
@@ -41,10 +44,17 @@
 }
 
 .dica {
-    flex: 1;
+    /* flex-basis 0 + min-width 0: o TEXTO da dica não contribui para a largura intrínseca da barra —
+       a dica muda ao armar a ligação e o layout NÃO pode pular (o alvo foge do clique no meio do gesto).
+       Mesma razão do min-height (2 linhas reservadas). */
+    flex: 1 1 0;
+    min-width: 0;
     font-size: 0.68em;
     color: rgba(235, 224, 201, 0.4);
     letter-spacing: 0.04em;
+    min-height: 2.6em;
+    display: flex;
+    align-items: center;
 }
 
 .transporte {
@@ -52,6 +62,10 @@
     color: #ffd98a;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
+    /* Teto de largura: o texto muda com a música do pulso e não pode redimensionar a barra. */
+    max-width: 18em;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* ── Espaço aberto ────────────────────────────────────── */
@@ -91,6 +105,10 @@
     position: absolute;
     left: 0;
     top: 0;
+    /* Dimensão explícita OBRIGATÓRIA: o reset global do app zera SVG sem tamanho, e SVG 0x0 não pinta NADA
+       (nem com overflow visible) — arestas e pulso sumiriam. O overflow visible cobre coordenadas fora disto. */
+    width: 250em;
+    height: 190em;
     overflow: visible;
     pointer-events: none;
 }
@@ -108,15 +126,31 @@
 .lig_linha {
     fill: none;
     stroke-width: 2;
+    transition: stroke 0.2s, opacity 0.2s;
 }
 
-.lig_conectada {
-    stroke: #d9a441;
+/* Conectada mas fora de qualquer caminho: fluxo INATIVO (acinzentado, mas legível). */
+.lig_inativa {
+    stroke: rgba(235, 224, 201, 0.45);
     opacity: 0.9;
 }
 
+/* Caminho PREVISTO sob o mouse: dourado claro ("se iniciar aqui, o fluxo segue por este caminho"). */
+.lig_preview {
+    stroke: #ffe9bd;
+    opacity: 0.95;
+    filter: drop-shadow(0 0 0.2em rgba(255, 233, 189, 0.45));
+}
+
+/* Caminho do fluxo TOCANDO: acende inteiro em dourado. */
+.lig_acesa {
+    stroke: #ffd98a;
+    stroke-width: 2.5;
+    filter: drop-shadow(0 0 0.35em rgba(255, 217, 138, 0.7));
+}
+
 .lig_desconectada {
-    stroke: rgba(235, 224, 201, 0.22);
+    stroke: rgba(235, 224, 201, 0.16);
     stroke-dasharray: 4 6;
 }
 
@@ -130,14 +164,50 @@
 
 .lig_chip {
     font-size: 0.6em;
-    fill: rgba(235, 224, 201, 0.35);
+    fill: rgba(235, 224, 201, 0.3);
     text-anchor: middle;
     pointer-events: none;
 }
 
-.lig_chip_conectada {
-    fill: #d9a441;
+.lig_chip_preview {
+    fill: #ffe9bd;
 }
+
+.lig_chip_acesa {
+    fill: #ffd98a;
+}
+
+/* Setas de DIREÇÃO ao longo da ligação: a primeira marca a saída do bloco de origem, as demais seguem em
+   intervalo pelo caminho (a seta de chegada é o markerEnd da linha). Cor acompanha o estado da ligação. */
+.seta {
+    pointer-events: none;
+    transition: fill 0.2s;
+}
+
+.seta_inativa {
+    fill: rgba(235, 224, 201, 0.5);
+}
+
+.seta_desconectada {
+    fill: rgba(235, 224, 201, 0.22);
+}
+
+.seta_preview {
+    fill: #ffe9bd;
+    filter: drop-shadow(0 0 0.15em rgba(255, 233, 189, 0.4));
+}
+
+.seta_acesa {
+    fill: #ffd98a;
+    filter: drop-shadow(0 0 0.25em rgba(255, 217, 138, 0.6));
+}
+
+/* Término do fluxo (bloco sem saída conectada): barra + quadrado na saída, na cor do estado do caminho. */
+.fim_preview line { stroke: #ffe9bd; stroke-width: 2; }
+.fim_preview rect { fill: rgba(255, 233, 189, 0.85); }
+
+.fim_aceso line { stroke: #ffd98a; stroke-width: 2.5; }
+.fim_aceso rect { fill: #ffd98a; filter: drop-shadow(0 0 0.3em rgba(255, 217, 138, 0.7)); }
 
 /* ── Pulso ────────────────────────────────────────────── */
 
@@ -164,19 +234,31 @@
 
 /* ── Nó de música ─────────────────────────────────────── */
 
+/* Estado BASE = fluxo inativo (acinzentado); preview/aceso restauram a cor. */
 .no {
     position: absolute;
     width: 16em;
-    border: 0.09em solid #2d1a50;
+    border: 0.09em solid rgba(45, 26, 80, 0.9);
     border-radius: 0.6em;
     background: rgba(16, 8, 32, 0.92);
     box-shadow: 0 0.4em 1.2em rgba(0, 0, 0, 0.5);
     user-select: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.no_preview {
+    border-color: rgba(255, 233, 189, 0.55);
+    box-shadow: 0 0 0.9em rgba(255, 233, 189, 0.16), 0 0.4em 1.2em rgba(0, 0, 0, 0.5);
+}
+
+.no_aceso {
+    border-color: #B79051;
+    box-shadow: 0 0 1em rgba(183, 144, 81, 0.24), 0 0.4em 1.2em rgba(0, 0, 0, 0.5);
 }
 
 .no_tocando {
-    border-color: #B79051;
-    box-shadow: 0 0 1.2em rgba(183, 144, 81, 0.28), 0 0.4em 1.2em rgba(0, 0, 0, 0.5);
+    border-color: #ffd98a;
+    box-shadow: 0 0 1.4em rgba(255, 217, 138, 0.35), 0 0.4em 1.2em rgba(0, 0, 0, 0.5);
 }
 
 .no_colapsado {
@@ -198,14 +280,20 @@
     font-weight: 700;
     font-size: 0.85em;
     letter-spacing: 0.05em;
-    color: #EBE0C9;
+    color: rgba(235, 224, 201, 0.45);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: color 0.2s;
 }
 
+.no_preview .no_nome {
+    color: #ffe9bd;
+}
+
+.no_aceso .no_nome,
 .no_tocando .no_nome {
-    color: #d9b87e;
+    color: #ffd98a;
 }
 
 .no_botao {
@@ -257,28 +345,48 @@
     align-items: center;
     gap: 0.45em;
     padding: 0.45em 0.6em;
-    border: 0.09em solid rgba(183, 144, 81, 0.28);
+    border: 0.09em solid rgba(183, 144, 81, 0.16);
     border-radius: 0.4em;
     background: rgba(28, 15, 42, 0.9);
     font-size: 0.78em;
     cursor: pointer;
     overflow: hidden;
+    transition: border-color 0.2s, background 0.2s;
 
     &:hover {
-        border-color: #B79051;
+        border-color: #ffe9bd;
     }
+}
+
+/* No caminho PREVISTO (hover): dourado claro. */
+.bloco_preview {
+    border-color: rgba(255, 233, 189, 0.7);
+    background: rgba(255, 233, 189, 0.05);
+}
+
+/* No caminho TOCANDO: aceso em dourado (o bloco do pulso ganha o destaque mais forte via .bloco_ativo). */
+.bloco_aceso {
+    border-color: rgba(255, 217, 138, 0.65);
+    background: rgba(255, 217, 138, 0.06);
 }
 
 .bloco_ativo {
     border-color: #ffd98a;
-    background: rgba(255, 217, 138, 0.09);
+    background: rgba(255, 217, 138, 0.11);
 }
 
 .bloco_nome {
     position: relative;
     z-index: 1;
-    color: #EBE0C9;
+    color: rgba(235, 224, 201, 0.5);
     letter-spacing: 0.02em;
+    transition: color 0.2s;
+}
+
+.bloco_preview .bloco_nome,
+.bloco_aceso .bloco_nome,
+.bloco_ativo .bloco_nome {
+    color: #EBE0C9;
 }
 
 .bloco_dur {

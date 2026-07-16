@@ -1,0 +1,26 @@
+.aviso {
+    color: #D9D9D9;
+    font-size: 0.95em;
+    margin: 0;
+}
+
+.aviso strong {
+    color: #EBE0C9;
+    font-family: var(--fonte-cinzel);
+}
+
+.bloqueio {
+    color: #e0a0a0;
+    font-size: 0.88em;
+    margin: 0.6em 0 0;
+}
+
+.bloqueio strong {
+    color: #EBE0C9;
+}
+
+.detalhe {
+    color: #9b958a;
+    font-size: 0.88em;
+    margin: 0.6em 0 0;
+}

@@ -1,48 +1,44 @@
 'use client';
 
-import { useState } from 'react';
-
 import styles from './styles.module.css';
 
-import { useContexto__PaginaColaboradorPainelDoMedo } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo/contexto';
+import { CAPACIDADES } from 'types-nora-api';
 
+import ListagemComposta, { ListagemCompostaModoExibicao } from 'Componentes/Listagens/ListagemComposta/ListagemComposta';
+import { useContexto__PaginaColaboradorPainelDoMedo, Contexto__PaginaColaboradorPainelDoMedo__Props } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo/contexto';
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
+
+type RegistroObjetivo = Contexto__PaginaColaboradorPainelDoMedo__Props['objetivos']['registros'][number];
+
+// Listagem de VISUALIZACAO: o item so apresenta e navega. Editar/excluir objetivo vivem na AreaBotoes do quadro do objetivo, em SPAs proprias.
 export default function SPA__PaginaColaboradorPainelDoMedo__ListagemObjetivos() {
-    const { objetivos, todosCards, salvando, irParaObjetivo, irParaCadastroObjetivo, atualizaObjetivo, deletaObjetivo } = useContexto__PaginaColaboradorPainelDoMedo();
+    const { objetivos, todosCards, irParaObjetivo, irParaCadastroObjetivo } = useContexto__PaginaColaboradorPainelDoMedo();
+    const { verificarCapacidade } = useContextoAutenticacao();
 
-    const [editandoId, setEditandoId] = useState<number | null>(null);
-    const [nomeEdit, setNomeEdit] = useState('');
-
-    const contaCards = (objetivoId: number) => todosCards.registros.filter(c => c.fkObjetivosId === objetivoId).length;
-    const confirma = (id: number) => { const o = objetivos.registros.find(x => x.id === id); if (nomeEdit.trim() && o && nomeEdit.trim() !== o.nome) atualizaObjetivo(id, nomeEdit); setEditandoId(null); };
+    const contaCards = (objetivoId: number) => todosCards.registros.filter(card => card.fkObjetivosId === objetivoId).length;
+    const podeCriarObjetivo = verificarCapacidade(CAPACIDADES.COLABORADOR__PAINEL_DO_MEDO__CRIA_OBJETIVO);
 
     return (
-        <section className={styles.listagem}>
-            <header className={styles.cabecalho}>
-                <h2 className={styles.titulo}>Objetivos atuais</h2>
-            </header>
+        <ListagemComposta
+            listagem={objetivos}
+            modoExibicao={ListagemCompostaModoExibicao.GRADE}
+            itensPorLinha={4}
+            obterIdRegistro={objetivo => objetivo.id}
+            renderizarItem={objetivo => <RenderizaRegistroObjetivo objetivo={objetivo} contagemCards={contaCards(objetivo.id)} aoAbrir={() => irParaObjetivo(objetivo.id)} />}
+            novoRegistro={podeCriarObjetivo ? { estaEmProcessoCriacao: false, aoIniciarCriacao: irParaCadastroObjetivo, textoBotao: 'Novo Objetivo' } : undefined}
+        />
+    );
+};
 
-            {objetivos.carregando && <p className={styles.estado}>{objetivos.carregando}</p>}
-            {objetivos.erro && <p className={styles.erro}>{objetivos.erro}</p>}
-
-            <div className={styles.grade}>
-                {objetivos.registros.map(objetivo => (
-                    <div key={objetivo.id} className={styles.cardObjetivo} onClick={() => { if (editandoId !== objetivo.id) irParaObjetivo(objetivo.id); }}>
-                        {editandoId === objetivo.id ? (
-                            <input className={styles.entradaNome} value={nomeEdit} autoFocus onClick={evento => evento.stopPropagation()} onChange={evento => setNomeEdit(evento.target.value)} onKeyDown={evento => { if (evento.key === 'Enter') confirma(objetivo.id); if (evento.key === 'Escape') setEditandoId(null); }} onBlur={() => confirma(objetivo.id)} />
-                        ) : (
-                            <span className={styles.objetivoNome}>{objetivo.nome}</span>
-                        )}
-                        <div className={styles.objetivoRodape}>
-                            <span className={styles.objetivoContagem}>{contaCards(objetivo.id)} cards</span>
-                            <span className={styles.objetivoAcoes}>
-                                <button className={styles.acaoMini} onClick={evento => { evento.stopPropagation(); setEditandoId(objetivo.id); setNomeEdit(objetivo.nome); }} title="Renomear objetivo">✎</button>
-                                <button className={styles.acaoMini} onClick={evento => { evento.stopPropagation(); deletaObjetivo(objetivo.id); }} disabled={salvando} title="Excluir objetivo (precisa estar sem cards)">✕</button>
-                            </span>
-                        </div>
-                    </div>
-                ))}
-                <button className={styles.cardNovo} onClick={irParaCadastroObjetivo}>+ Novo objetivo</button>
+function RenderizaRegistroObjetivo({ objetivo, contagemCards, aoAbrir }: { objetivo: RegistroObjetivo; contagemCards: number; aoAbrir: () => void }) {
+    const trancado = objetivo.motivoTranca !== null;
+    return (
+        <article className={styles.cardObjetivo} onClick={aoAbrir}>
+            {trancado && <span className={`${styles.seloTranca} ${objetivo.motivoTranca === 'CONCLUIDO' ? styles.seloTrancaConcluido : styles.seloTrancaInterrompido}`}>🔒 {objetivo.motivoTranca === 'CONCLUIDO' ? 'Concluído' : 'Interrompido'}</span>}
+            <strong className={styles.objetivoNome}>{objetivo.nome}</strong>
+            <div className={styles.objetivoRodape}>
+                <span className={styles.objetivoContagem}>{contagemCards} cards</span>
             </div>
-        </section>
+        </article>
     );
 };

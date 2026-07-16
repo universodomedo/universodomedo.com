@@ -1,50 +1,28 @@
-.tabela_sessoes_container {
-    width: fit-content;
-    overflow-y: auto;
+.item_sessao {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0.08em solid #e9c3ff82;
+    border-radius: 0.4em;
+    overflow: hidden;
+    cursor: pointer;
+
+    &:hover {
+        border-color: #B79051;
+        box-shadow: 0 0 0.55em 0 #ffffff;
+    }
 }
 
-.tabela_sessoes {
-    border-collapse: collapse;
-    text-align: center;
-
-    & tbody {
-        color: black;
-    }
-
-    & thead th {
-        color: black;
-        background-color: #f3f4f6;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 1.2em;
-        letter-spacing: 0.05em;
-        position: sticky;
-        top: 0;
-        z-index: 2;
-    }
-
-    & th,
-    & td {
-        padding: 8px 12px;
-        border-bottom: 1px solid #e5e7eb;
-        white-space: nowrap;
-    }
-
-    & tbody {
-        & tr {
-            cursor: pointer;
-
-            &:nth-child(odd) {
-                background-color: #ffffff;
-            }
-            
-            &:nth-child(even) {
-                background-color: #f9fafb;
-            }
-
-            &:hover {
-                background-color: #e5e7eb;
-            }
-        }
-    }
+.avatar_narrador {
+    position: absolute;
+    bottom: 4%;
+    left: 4%;
+    width: 26%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 0.12em solid rgba(183, 144, 81, 0.85);
+    background-color: #392D58;
+    box-shadow: 0 0.1em 0.4em rgba(0, 0, 0, 0.6);
+    z-index: 1;
 }

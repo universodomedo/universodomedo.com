@@ -1,0 +1,37 @@
+.lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    margin-top: 0.6em;
+}
+
+.candidato {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    background: #16121f;
+    border: 0.1em solid #352E4C;
+    border-left: 0.3em solid #d98a3c;
+    color: #D9D9D9;
+    text-align: left;
+    font-family: inherit;
+    font-size: 0.9em;
+    padding: 0.45em 0.6em;
+    border-radius: 0.4em;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        border-color: #B79051;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+}
+
+.estado {
+    color: #7c7565;
+    font-size: 0.85em;
+    margin: 0;
+}

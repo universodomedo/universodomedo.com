@@ -1,0 +1,23 @@
+.efeito {
+    color: #9b958a;
+    font-size: 0.85em;
+    line-height: 1.5;
+    margin: 0.8em 0 0;
+    max-width: 36em;
+}
+
+.efeito strong {
+    color: #EBE0C9;
+}
+
+.avisoEvidencias {
+    color: #e0a0a0;
+    font-size: 0.85em;
+    line-height: 1.5;
+    margin: 0.6em 0 0;
+    max-width: 36em;
+}
+
+.avisoEvidencias strong {
+    color: #EBE0C9;
+}

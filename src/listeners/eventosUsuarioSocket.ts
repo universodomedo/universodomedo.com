@@ -30,6 +30,7 @@ export function useEventosUsuarioSocket() {
                 ],
             });
         }
+        // Marcação/atividade em card NÃO têm botão de ação: a mensagem cita "cartão #N" e o próprio trecho é clicável (RefsDeCartao no Toast/Central), navegando até o cartão.
         else if (n.tipo === 'sucesso') toast.sucesso(n.titulo, n.mensagem);
         else if (n.tipo === 'erro') toast.erro(n.titulo, n.mensagem);
         else if (n.tipo === 'aviso') toast.aviso(n.titulo, n.mensagem);

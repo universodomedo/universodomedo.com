@@ -89,6 +89,8 @@ export type UseNoraGraphQLListagemParams<TNome extends GraphqlLeituraNome, TSele
     readonly mensagemListaVazia: string;
     readonly mensagemListaVaziaComFiltro: string;
     readonly carregamento?: UseNoraGraphQLListagemCarregamento;
+    // Opt-in: recarregar() mantém os registros atuais na tela e troca a lista in-place quando a nova página chegar (sem "Carregando..." nem lista vazia transitória). Indicado para listagens sincronizadas por WebSocket.
+    readonly recarregamentoSuave?: boolean;
     readonly montaParametrosConsulta: (params: UseNoraGraphQLListagemConsultaParams<TNome>) => UseNoraGraphQLListagemParametrosConsulta<TNome>;
     readonly montaParametrosTotalDeRegistros?: (where: UseNoraGraphQLListagemWhereGraphql<TNome>) => UseNoraGraphQLListagemParametrosTotalDeRegistros<TNome>;
     readonly contador?: ReactNode;
@@ -527,14 +529,18 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
 
     const recarregar = useCallback(() => {
         setOffsetConsulta(0);
-        setRegistrosAcumulados([]);
-        setQuantidadeUltimaPaginaRecebida(0);
+
+        if (!params.recarregamentoSuave) {
+            setRegistrosAcumulados([]);
+            setQuantidadeUltimaPaginaRecebida(0);
+        }
+
         ultimaDataRegistrosProcessadaRef.current = null;
         setVersaoRequisicaoRegistros(versaoAtual => versaoAtual + 1);
         setVersaoRequisicaoTotalDeRegistros(versaoAtual => versaoAtual + 1);
 
         if (assinaturaCamposOpcoesFiltrosConsulta.length > 0) recarregarOpcoesFiltrosConsultaRef.current().catch(() => undefined);
-    }, [assinaturaCamposOpcoesFiltrosConsulta]);
+    }, [assinaturaCamposOpcoesFiltrosConsulta, params.recarregamentoSuave]);
 
     const filtrosConsultaValor = useMemo<ContextoFiltrosConsultaValor<object>>(() => ({
         campos: camposFiltroConsulta,

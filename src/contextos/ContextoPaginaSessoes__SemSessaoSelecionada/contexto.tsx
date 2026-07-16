@@ -4,10 +4,10 @@ import { createContext, useContext } from 'react';
 
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
 import SPA__PaginaSessoes__SemSessaoSelecionada from 'Conteineres/PaginaVisualizacaoSessoes/paginas/SPA__PaginaSessoes__SemSessaoSelecionada/SPA__PaginaSessoes__SemSessaoSelecionada';
-import { ListaSessoesListagemContexto } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
+import { ListagemSessoesResultado } from 'Contextos/ContextoPaginasListagemSessoes/contexto';
 
 interface ContextoPaginaSessoes__SemSessaoSelecionadaProps {
-    sessoes: ListaSessoesListagemContexto;
+    listagemSessoes: ListagemSessoesResultado;
     selecionaSessao: (idSessao: number) => void;
 };
 
@@ -19,11 +19,11 @@ export const useContextoPaginaSessoes__SemSessaoSelecionada = (): ContextoPagina
     return context;
 };
 
-export const ContextoPaginaSessoes__SemSessaoSelecionadaProvider = ({ sessoes, selecionaSessao }: { sessoes: ListaSessoesListagemContexto; selecionaSessao: (idSessao: number) => void; }) => {
-    useConfigurarLayoutContextualizado({ titulo: 'Lista de Sessões', fecharProps: undefined }, 'patch');
+export const ContextoPaginaSessoes__SemSessaoSelecionadaProvider = ({ listagemSessoes, selecionaSessao }: ContextoPaginaSessoes__SemSessaoSelecionadaProps) => {
+    useConfigurarLayoutContextualizado({ subtitulo: undefined, fecharProps: undefined }, 'patch');
 
     return (
-        <ContextoPaginaSessoes__SemSessaoSelecionada.Provider value={{ sessoes, selecionaSessao }}>
+        <ContextoPaginaSessoes__SemSessaoSelecionada.Provider value={{ listagemSessoes, selecionaSessao }}>
             <SPA__PaginaSessoes__SemSessaoSelecionada />
         </ContextoPaginaSessoes__SemSessaoSelecionada.Provider>
     );

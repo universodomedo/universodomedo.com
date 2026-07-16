@@ -137,3 +137,33 @@
     border-top: 0.1em solid #2a2536;
     padding-top: 0.7em;
 }
+
+.seloTranca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25em;
+    border-radius: 0.35em;
+    padding: 0.1em 0.45em;
+    font-size: 0.72em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.seloTrancaConcluido {
+    background: rgba(79, 122, 90, 0.2);
+    border: 0.1em solid #4f7a5a;
+    color: #8fc9a0;
+}
+
+.seloTrancaInterrompido {
+    background: rgba(201, 95, 95, 0.15);
+    border: 0.1em solid #c95f5f;
+    color: #e0a0a0;
+}
+
+.acoesTranca {
+    display: flex;
+    gap: 0.5em;
+    border-top: 0.1em solid #2a2536;
+    padding-top: 0.7em;
+}

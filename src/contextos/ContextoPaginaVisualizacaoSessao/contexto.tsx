@@ -20,7 +20,7 @@ export const useContextoPaginaVisualizacaoSessao = (): ContextoPaginaVisualizaca
 };
 
 export const ContextoPaginaVisualizacaoSessaoProvider = ({ sessao, deselecionaSessao }: { sessao: SessaoCompletaDto; deselecionaSessao: () => void; }) => {
-    useConfigurarLayoutContextualizado({ titulo: `Sessão - ${sessao.tituloInteligente.tituloCompleto} [#${sessao.id}]`, fecharProps: { tipo: 'acao', executar: deselecionaSessao, tituloTooltip: 'Voltar para Listagem' } }, 'patch');
+    useConfigurarLayoutContextualizado({ subtitulo: `${sessao.tituloInteligente.tituloCompleto} [#${sessao.id}]`, fecharProps: { tipo: 'acao', executar: deselecionaSessao, tituloTooltip: 'Voltar para Listagem' } }, 'patch');
 
     return (
         <ContextoPaginaVisualizacaoSessao.Provider value={{ sessao, deselecionaSessao }}>

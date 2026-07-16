@@ -1,4 +1,4 @@
-import { PAYLOAD__CriarObjetivo, PAYLOAD__CriarColuna, PAYLOAD__CriarCard, PAYLOAD__CriarComentario, PAYLOAD__AtualizarCard, PAYLOAD__ReordenarCards, PAYLOAD__CriarDependenciaCard, PAYLOAD__AtualizarDependenciaCard, PAYLOAD__DeletarDependenciaCard, PAYLOAD__DefinirPosicaoFluxogramaCard, PAYLOAD__DeletarCard, PAYLOAD__AtualizarColuna, PAYLOAD__DeletarColuna, PAYLOAD__ReordenarColunas, PAYLOAD__AtualizarObjetivo, PAYLOAD__DeletarObjetivo, PAYLOAD__SalvarDesenhoFluxograma, PAYLOAD__AtualizarObjetivoFicha, PAYLOAD__CriarItemChecklist, PAYLOAD__MarcarItemChecklist, PAYLOAD__AtualizarItemChecklist, PAYLOAD__DeletarItemChecklist } from 'types-nora-api';
+import { PAYLOAD__CriarObjetivo, PAYLOAD__CriarColuna, PAYLOAD__CriarCard, PAYLOAD__CriarComentario, PAYLOAD__AtualizarCard, PAYLOAD__ReordenarCards, PAYLOAD__CriarDependenciaCard, PAYLOAD__AtualizarDependenciaCard, PAYLOAD__DeletarDependenciaCard, PAYLOAD__DefinirPosicaoFluxogramaCard, PAYLOAD__DeletarCard, PAYLOAD__AtualizarColuna, PAYLOAD__DeletarColuna, PAYLOAD__ReordenarColunas, PAYLOAD__AtualizarObjetivo, PAYLOAD__DeletarObjetivo, PAYLOAD__SalvarDesenhoFluxograma, PAYLOAD__AtualizarObjetivoFicha, PAYLOAD__CriarItemChecklist, PAYLOAD__MarcarItemChecklist, PAYLOAD__AtualizarItemChecklist, PAYLOAD__DeletarItemChecklist, PAYLOAD__AdicionarMembroCard, PAYLOAD__RemoverMembroCard, PAYLOAD__CriarEtiqueta, PAYLOAD__AtualizarEtiqueta, PAYLOAD__DeletarEtiqueta, PAYLOAD__AplicarEtiquetaCard, PAYLOAD__RemoverEtiquetaCard, PAYLOAD__TrancarCard, PAYLOAD__TrancarObjetivo, PAYLOAD__AtualizarDescricaoCard, PAYLOAD__ListarAnexosCard, AnexoCardDto, PAYLOAD__ConcederPermissaoObjetivo, PAYLOAD__RevogarPermissaoObjetivo } from 'types-nora-api';
 
 import useApi from 'Uteis/ApiConsumer/Consumer.tsx';
 
@@ -88,4 +88,57 @@ export async function atualizaItemChecklist(payload: PAYLOAD__AtualizarItemCheck
 
 export async function deletaItemChecklist(payload: PAYLOAD__DeletarItemChecklist): Promise<void> {
     await useApi<void>({ uri: '/itensChecklist/deletaItem', method: 'POST', data: payload });
+};
+
+export async function adicionaMembroCard(payload: PAYLOAD__AdicionarMembroCard): Promise<void> {
+    await useApi<void>({ uri: '/membrosCards/adicionaMembro', method: 'POST', data: payload });
+};
+
+export async function removeMembroCard(payload: PAYLOAD__RemoverMembroCard): Promise<void> {
+    await useApi<void>({ uri: '/membrosCards/removeMembro', method: 'POST', data: payload });
+};
+
+export async function criaEtiqueta(payload: PAYLOAD__CriarEtiqueta): Promise<void> {
+    await useApi<void>({ uri: '/etiquetas/criaEtiqueta', method: 'POST', data: payload });
+};
+
+export async function atualizaEtiqueta(payload: PAYLOAD__AtualizarEtiqueta): Promise<void> {
+    await useApi<void>({ uri: '/etiquetas/atualizaEtiqueta', method: 'POST', data: payload });
+};
+
+export async function deletaEtiqueta(payload: PAYLOAD__DeletarEtiqueta): Promise<void> {
+    await useApi<void>({ uri: '/etiquetas/deletaEtiqueta', method: 'POST', data: payload });
+};
+
+export async function concedePermissaoObjetivo(payload: PAYLOAD__ConcederPermissaoObjetivo): Promise<void> {
+    await useApi<void>({ uri: '/permissoesObjetivos/concedePermissao', method: 'POST', data: payload });
+};
+
+export async function revogaPermissaoObjetivo(payload: PAYLOAD__RevogarPermissaoObjetivo): Promise<void> {
+    await useApi<void>({ uri: '/permissoesObjetivos/revogaPermissao', method: 'POST', data: payload });
+};
+
+export async function listaAnexosDoCard(payload: PAYLOAD__ListarAnexosCard): Promise<AnexoCardDto[]> {
+    const resposta = await useApi<AnexoCardDto[]>({ uri: '/anexosCards/listaDoCard', method: 'POST', data: payload });
+    return resposta ?? [];
+};
+
+export async function atualizaDescricaoCard(payload: PAYLOAD__AtualizarDescricaoCard): Promise<void> {
+    await useApi<void>({ uri: '/cards/atualizaDescricao', method: 'POST', data: payload });
+};
+
+export async function trancaCard(payload: PAYLOAD__TrancarCard): Promise<void> {
+    await useApi<void>({ uri: '/cards/trancaCard', method: 'POST', data: payload });
+};
+
+export async function trancaObjetivo(payload: PAYLOAD__TrancarObjetivo): Promise<void> {
+    await useApi<void>({ uri: '/objetivos/trancaObjetivo', method: 'POST', data: payload });
+};
+
+export async function aplicaEtiquetaCard(payload: PAYLOAD__AplicarEtiquetaCard): Promise<void> {
+    await useApi<void>({ uri: '/etiquetasCards/aplicaEtiqueta', method: 'POST', data: payload });
+};
+
+export async function removeEtiquetaCard(payload: PAYLOAD__RemoverEtiquetaCard): Promise<void> {
+    await useApi<void>({ uri: '/etiquetasCards/removeEtiqueta', method: 'POST', data: payload });
 };

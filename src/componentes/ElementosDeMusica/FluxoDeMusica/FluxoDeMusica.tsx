@@ -34,6 +34,82 @@ function rotuloFades(ligacao: FluxoMusicaLigacaoDto): string {
     return ligacao.fadeOutMs === 0 && ligacao.fadeInMs === 0 ? 'emenda' : `${ligacao.fadeOutMs}→${ligacao.fadeInMs} ms`;
 };
 
+// Caminho PREVISTO a partir de um bloco: segue as ligações CONECTADAS até o término (sem saída) ou fechar ciclo (loop).
+// terminal = chave do bloco onde o fluxo PARA (null quando o caminho fecha em loop e não termina).
+type CaminhoFluxo = { blocos: Set<string>; ligacoes: Set<string>; terminal: string | null };
+
+function caminhoAPartirDe(fluxo: FluxoMusicaDto, deMusica: number, deBloco: string): CaminhoFluxo {
+    const blocos = new Set<string>();
+    const ligacoes = new Set<string>();
+    let terminal: string | null = null;
+    let atual: { m: number; b: string } | null = { m: deMusica, b: deBloco };
+    while (atual) {
+        const passo: { m: number; b: string } = atual;
+        const chave = `${passo.m}:${passo.b}`;
+        if (blocos.has(chave)) break;
+        blocos.add(chave);
+        const saida: FluxoMusicaLigacaoDto | undefined = fluxo.ligacoes.find(l => l.conectada && l.deMusica === passo.m && l.deBloco === passo.b);
+        if (!saida) { terminal = chave; break; }
+        ligacoes.add(saida.id);
+        atual = { m: saida.paraMusica, b: saida.paraBloco };
+    }
+    return { blocos, ligacoes, terminal };
+};
+
+// ── Geometria da ligação: bezier cúbica compartilhada entre a linha e as setas de direção ──
+type Controles = [Ponto, Ponto, Ponto, Ponto];
+type SetaDirecao = { x: number; y: number; angulo: number };
+
+function controlesLigacao(a: Ponto, b: Ponto, recursiva: boolean): Controles {
+    if (recursiva) return [a, { x: a.x + 70, y: a.y - 55 }, { x: b.x - 170, y: b.y - 55 }, b];
+    const dx = Math.max(45, Math.abs(b.x - a.x) * 0.45);
+    return [a, { x: a.x + dx, y: a.y }, { x: b.x - dx, y: b.y }, b];
+};
+
+function caminhoDe([a, c1, c2, b]: Controles): string {
+    return `M ${a.x} ${a.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${b.x} ${b.y}`;
+};
+
+function pontoBezier([a, c1, c2, b]: Controles, t: number): Ponto {
+    const u = 1 - t;
+    return {
+        x: u * u * u * a.x + 3 * u * u * t * c1.x + 3 * u * t * t * c2.x + t * t * t * b.x,
+        y: u * u * u * a.y + 3 * u * u * t * c1.y + 3 * u * t * t * c2.y + t * t * t * b.y,
+    };
+};
+
+function anguloBezier([a, c1, c2, b]: Controles, t: number): number {
+    const u = 1 - t;
+    const dx = 3 * u * u * (c1.x - a.x) + 6 * u * t * (c2.x - c1.x) + 3 * t * t * (b.x - c2.x);
+    const dy = 3 * u * u * (c1.y - a.y) + 6 * u * t * (c2.y - c1.y) + 3 * t * t * (b.y - c2.y);
+    return Math.atan2(dy, dx) * 180 / Math.PI;
+};
+
+// Setas de DIREÇÃO ao longo da ligação: a primeira marca a SAÍDA (logo após o bloco de origem) e as demais
+// seguem em intervalo regular até perto da chegada (a seta de ENTRADA é o markerEnd da própria linha).
+// Pula a vizinhança do chip ◈ para não cobrir o rótulo.
+function setasDaLigacao(cp: Controles, chip: Ponto): SetaDirecao[] {
+    const passos = 32;
+    const acumulado = [0];
+    let anterior = pontoBezier(cp, 0);
+    for (let i = 1; i <= passos; i++) {
+        const p = pontoBezier(cp, i / passos);
+        acumulado.push(acumulado[i - 1] + Math.hypot(p.x - anterior.x, p.y - anterior.y));
+        anterior = p;
+    }
+    const total = acumulado[passos];
+    if (total < 42) return [];
+    const setas: SetaDirecao[] = [];
+    for (let s = 16; s <= total - 24; s += 64) {
+        const indice = acumulado.findIndex(v => v >= s);
+        const t = (indice - 1 + (s - acumulado[indice - 1]) / ((acumulado[indice] - acumulado[indice - 1]) || 1)) / passos;
+        const p = pontoBezier(cp, t);
+        if (Math.hypot(p.x - chip.x, p.y - chip.y) < 32) continue;
+        setas.push({ x: p.x, y: p.y, angulo: anguloBezier(cp, t) });
+    }
+    return setas;
+};
+
 export default function FluxoDeMusica({ fluxo, processando, aoTrazerMusica, aoRemoverMusica, aoMoverMusica, aoCriarLigacao, aoAlternarLigacao, aoMoverPulso, aoSilenciar }: FluxoDeMusicaProps) {
     const espacoRef = useRef<HTMLDivElement | null>(null);
     const blocosRef = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -46,6 +122,8 @@ export default function FluxoDeMusica({ fluxo, processando, aoTrazerMusica, aoRe
     const [ligando, setLigando] = useState<Ligando>(null);
     const [mouseMundo, setMouseMundo] = useState<Ponto>({ x: 0, y: 0 });
     const [colapsadas, setColapsadas] = useState<Set<number>>(new Set());
+    // Hover = preview do caminho previsto a partir do bloco sob o mouse ("se eu iniciar aqui, o fluxo segue por onde?").
+    const [hover, setHover] = useState<{ idMusica: number; idBloco: string } | null>(null);
     // Posição local durante o arrasto do nó (o envio ao dono acontece só no soltar).
     const [posicaoLocal, setPosicaoLocal] = useState<Map<number, Ponto>>(new Map());
     const [versaoLayout, setVersaoLayout] = useState(0);
@@ -84,12 +162,6 @@ export default function FluxoDeMusica({ fluxo, processando, aoTrazerMusica, aoRe
         for (let atual: HTMLElement | null = bloco; atual && atual !== no; atual = atual.offsetParent as HTMLElement | null) { x += atual.offsetLeft; y += atual.offsetTop; };
         return { x: pos.x + x + (lado === 'saida' ? bloco.offsetWidth : 0), y: pos.y + y + bloco.offsetHeight / 2 };
     }, [posicaoDe, colapsadas]);
-
-    const caminho = useCallback((a: Ponto, b: Ponto, recursiva: boolean): string => {
-        if (recursiva) return `M ${a.x} ${a.y} C ${a.x + 70} ${a.y - 55}, ${b.x - 170} ${b.y - 55}, ${b.x} ${b.y}`;
-        const dx = Math.max(45, Math.abs(b.x - a.x) * 0.45);
-        return `M ${a.x} ${a.y} C ${a.x + dx} ${a.y}, ${b.x - dx} ${b.y}, ${b.x} ${b.y}`;
-    }, []);
 
     // Layout das arestas depende de medidas DOM: recalcula após o primeiro paint e a cada mudança do grafo/colapso.
     useEffect(() => { setVersaoLayout(v => v + 1); }, [fluxo.musicas.length, colapsadas]);
@@ -159,7 +231,8 @@ export default function FluxoDeMusica({ fluxo, processando, aoTrazerMusica, aoRe
         aoMoverPulso(idMusica, idBloco);
     }, [ligando, aoCriarLigacao, aoMoverPulso]);
 
-    const aoClicarNoColapsado = useCallback((idMusica: number) => {
+    // Ligando, o NÓ inteiro é alvo válido (colapsado ou não): destino = primeiro bloco da música — alvo grande, gesto fácil.
+    const aoClicarNo = useCallback((idMusica: number) => {
         if (!ligando) return;
         const primeiro = fluxo.musicas.find(m => m.idMusica === idMusica)?.blocos[0];
         if (primeiro) aoCriarLigacao(ligando.deMusica, ligando.deBloco, idMusica, primeiro.id);
@@ -215,14 +288,48 @@ export default function FluxoDeMusica({ fluxo, processando, aoTrazerMusica, aoRe
             const b = ancora(l.paraMusica, l.paraBloco, 'entrada');
             if (!a || !b) return null;
             const recursiva = l.deMusica === l.paraMusica && l.deBloco === l.paraBloco;
-            return { ligacao: l, d: caminho(a, b, recursiva), meio: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 - (recursiva ? 46 : 0) } };
+            const cp = controlesLigacao(a, b, recursiva);
+            const meio = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 - (recursiva ? 46 : 0) };
+            return { ligacao: l, d: caminhoDe(cp), meio, setas: setasDaLigacao(cp, meio) };
         }).filter((aresta): aresta is NonNullable<typeof aresta> => aresta !== null);
-    }, [fluxo.ligacoes, ancora, caminho, versaoLayout]);
+    }, [fluxo.ligacoes, ancora, versaoLayout]);
 
-    const provisoria = ligando ? (() => { const a = ancora(ligando.deMusica, ligando.deBloco, 'saida'); return a ? caminho(a, mouseMundo, false) : null; })() : null;
+    const provisoria = ligando ? (() => { const a = ancora(ligando.deMusica, ligando.deBloco, 'saida'); return a ? caminhoDe(controlesLigacao(a, mouseMundo, false)) : null; })() : null;
     const pulso = fluxo.pulso;
     const musicaDoPulso = pulso ? fluxo.musicas.find(m => m.idMusica === pulso.idMusica) : null;
     const blocoDoPulso = musicaDoPulso && pulso ? musicaDoPulso.blocos.find(b => b.id === pulso.idBloco) : null;
+
+    // Estados do grafo: ACESO = caminho do pulso (fluxo inteiro em dourado); PREVIEW = caminho previsto do hover
+    // (dourado claro); todo o resto fica INATIVO (acinzentado). Ligação desconectada nunca entra em caminho.
+    const caminhoAceso = useMemo(() => pulso ? caminhoAPartirDe(fluxo, pulso.idMusica, pulso.idBloco) : null, [fluxo, pulso]);
+    const caminhoPreview = useMemo(() => hover ? caminhoAPartirDe(fluxo, hover.idMusica, hover.idBloco) : null, [fluxo, hover]);
+
+    const estadoLigacao = useCallback((l: FluxoMusicaLigacaoDto): 'desconectada' | 'acesa' | 'preview' | 'inativa' => {
+        if (!l.conectada) return 'desconectada';
+        if (caminhoAceso?.ligacoes.has(l.id)) return 'acesa';
+        if (caminhoPreview?.ligacoes.has(l.id)) return 'preview';
+        return 'inativa';
+    }, [caminhoAceso, caminhoPreview]);
+
+    const estadoBloco = useCallback((idMusica: number, idBloco: string): 'aceso' | 'preview' | 'inativo' => {
+        const chave = `${idMusica}:${idBloco}`;
+        if (caminhoAceso?.blocos.has(chave)) return 'aceso';
+        if (caminhoPreview?.blocos.has(chave)) return 'preview';
+        return 'inativo';
+    }, [caminhoAceso, caminhoPreview]);
+
+    // Marcadores de TÉRMINO (onde o fluxo PARA): quadradinho na âncora de saída do bloco terminal do caminho.
+    const terminais = useMemo(() => {
+        void versaoLayout;
+        const lista: { chave: string; ponto: Ponto; estado: 'aceso' | 'preview' }[] = [];
+        for (const [caminhoAtual, estado] of [[caminhoAceso, 'aceso'], [caminhoPreview, 'preview']] as const) {
+            if (!caminhoAtual?.terminal) continue;
+            const [m, b] = caminhoAtual.terminal.split(':');
+            const ponto = ancora(Number(m), b, 'saida');
+            if (ponto) lista.push({ chave: `${estado}:${caminhoAtual.terminal}`, ponto, estado });
+        }
+        return lista;
+    }, [caminhoAceso, caminhoPreview, ancora, versaoLayout]);
 
     return (
         <div className={styles.raiz}>
@@ -236,14 +343,36 @@ export default function FluxoDeMusica({ fluxo, processando, aoTrazerMusica, aoRe
             <div ref={espacoRef} className={cn(styles.espaco, ligando && styles.espaco_ligando)} data-fundo="1" onPointerDown={aoPointerDown} onPointerMove={aoPointerMove} onPointerUp={aoPointerUp} onWheel={aoWheel}>
                 <div className={styles.mundo} data-fundo="1" style={{ transform: `translate(${vista.x}px, ${vista.y}px) scale(${vista.escala})` }}>
                     <svg className={styles.plano}>
-                        {arestas.map(({ ligacao, d, meio }) => (
-                            <g key={ligacao.id}>
-                                <path className={styles.lig_hit} d={d} onClick={() => { aoAlternarLigacao(ligacao.id); }} />
-                                <path className={cn(styles.lig_linha, ligacao.conectada ? styles.lig_conectada : styles.lig_desconectada)} d={d} />
-                                <text className={cn(styles.lig_chip, ligacao.conectada && styles.lig_chip_conectada)} x={meio.x} y={meio.y - 7}>◈ {rotuloFades(ligacao)}</text>
+                        <defs>
+                            <marker id="fluxoMusicaSetaInativa" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(235, 224, 201, 0.5)" /></marker>
+                            <marker id="fluxoMusicaSetaDesconectada" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(235, 224, 201, 0.22)" /></marker>
+                            <marker id="fluxoMusicaSetaPreview" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ffe9bd" /></marker>
+                            <marker id="fluxoMusicaSetaAcesa" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8.5" markerHeight="8.5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ffd98a" /></marker>
+                        </defs>
+                        {arestas.map(({ ligacao, d, meio, setas }) => {
+                            const estado = estadoLigacao(ligacao);
+                            return (
+                                <g key={ligacao.id}>
+                                    <path className={styles.lig_hit} d={d} onClick={() => { aoAlternarLigacao(ligacao.id); }} />
+                                    <path
+                                        className={cn(styles.lig_linha, estado === 'desconectada' && styles.lig_desconectada, estado === 'inativa' && styles.lig_inativa, estado === 'preview' && styles.lig_preview, estado === 'acesa' && styles.lig_acesa)}
+                                        d={d}
+                                        markerEnd={`url(#fluxoMusicaSeta${estado === 'desconectada' ? 'Desconectada' : estado === 'acesa' ? 'Acesa' : estado === 'preview' ? 'Preview' : 'Inativa'})`}
+                                    />
+                                    {setas.map((seta, indice) => (
+                                        <path key={indice} className={cn(styles.seta, estado === 'desconectada' ? styles.seta_desconectada : estado === 'acesa' ? styles.seta_acesa : estado === 'preview' ? styles.seta_preview : styles.seta_inativa)} d="M -4.5 -3.5 L 4.5 0 L -4.5 3.5 z" transform={`translate(${seta.x} ${seta.y}) rotate(${seta.angulo})`} />
+                                    ))}
+                                    <text className={cn(styles.lig_chip, estado === 'preview' && styles.lig_chip_preview, estado === 'acesa' && styles.lig_chip_acesa)} x={meio.x} y={meio.y - 7}>◈ {rotuloFades(ligacao)}</text>
+                                </g>
+                            );
+                        })}
+                        {provisoria && <path className={styles.lig_provisoria} d={provisoria} />}
+                        {terminais.map(({ chave, ponto, estado }) => (
+                            <g key={chave} className={estado === 'aceso' ? styles.fim_aceso : styles.fim_preview}>
+                                <line x1={ponto.x + 6} y1={ponto.y - 7} x2={ponto.x + 6} y2={ponto.y + 7} />
+                                <rect x={ponto.x + 9} y={ponto.y - 4.5} width="9" height="9" />
                             </g>
                         ))}
-                        {provisoria && <path className={styles.lig_provisoria} d={provisoria} />}
                         <circle ref={pulsoHaloRef} className={styles.pulso_halo} r="9" cx="-9999" cy="-9999" />
                         <circle ref={pulsoDotRef} className={styles.pulso_dot} r="5" cx="-9999" cy="-9999" />
                     </svg>
@@ -252,23 +381,29 @@ export default function FluxoDeMusica({ fluxo, processando, aoTrazerMusica, aoRe
                         const pos = posicaoDe(musica.idMusica);
                         const colapsada = colapsadas.has(musica.idMusica);
                         const tocandoAqui = pulso?.idMusica === musica.idMusica;
+                        // O nó acende/preveja quando QUALQUER bloco dele participa do caminho correspondente.
+                        const noAceso = musica.blocos.some(b => estadoBloco(musica.idMusica, b.id) === 'aceso');
+                        const noPreview = !noAceso && musica.blocos.some(b => estadoBloco(musica.idMusica, b.id) === 'preview');
                         return (
-                            <section key={musica.idMusica} ref={el => { if (el) nosRef.current.set(musica.idMusica, el); else nosRef.current.delete(musica.idMusica); }} className={cn(styles.no, tocandoAqui && styles.no_tocando, colapsada && styles.no_colapsado)} style={{ left: `${pos.x}px`, top: `${pos.y}px` }} data-musica={musica.idMusica} onClick={() => { if (colapsada) aoClicarNoColapsado(musica.idMusica); }}>
-                                <div className={styles.no_cabecalho}>
+                            <section key={musica.idMusica} ref={el => { if (el) nosRef.current.set(musica.idMusica, el); else nosRef.current.delete(musica.idMusica); }} className={cn(styles.no, noAceso && styles.no_aceso, noPreview && styles.no_preview, tocandoAqui && styles.no_tocando, colapsada && styles.no_colapsado)} style={{ left: `${pos.x}px`, top: `${pos.y}px` }} data-musica={musica.idMusica} onClick={() => { aoClicarNo(musica.idMusica); }} onMouseEnter={() => { if (colapsada && musica.blocos[0]) setHover({ idMusica: musica.idMusica, idBloco: musica.blocos[0].id }); }} onMouseLeave={() => { setHover(null); }}>
+                                <div className={styles.no_cabecalho} onMouseEnter={() => { if (musica.blocos[0]) setHover({ idMusica: musica.idMusica, idBloco: musica.blocos[0].id }); }}>
                                     <span className={styles.no_nome}>{musica.nome}</span>
                                     <button type="button" className={styles.no_botao} title={colapsada ? 'Expandir' : 'Colapsar'} onClick={evento => { evento.stopPropagation(); alternarColapso(musica.idMusica); }}>{colapsada ? '+' : '−'}</button>
                                     <button type="button" className={cn(styles.no_botao, styles.no_botao_perigo)} title="Remover do fluxo" disabled={processando} onClick={evento => { evento.stopPropagation(); aoRemoverMusica(musica.idMusica); }}>✕</button>
                                 </div>
                                 {!colapsada && (
                                     <div className={styles.blocos}>
-                                        {musica.blocos.map(bloco => (
-                                            <div key={bloco.id} ref={el => { const chave = `${musica.idMusica}:${bloco.id}`; if (el) blocosRef.current.set(chave, el); else blocosRef.current.delete(chave); }} className={cn(styles.bloco, tocandoAqui && pulso?.idBloco === bloco.id && styles.bloco_ativo)} onClick={evento => { evento.stopPropagation(); aoClicarBloco(musica.idMusica, bloco.id); }}>
-                                                <span ref={el => { const chave = `${musica.idMusica}:${bloco.id}`; if (el) progressoRef.current.set(chave, el); else progressoRef.current.delete(chave); }} className={styles.bloco_progresso} />
-                                                <span className={styles.bloco_nome}>{bloco.nome}</span>
-                                                <span className={styles.bloco_dur}>{seg(bloco.fimMs - bloco.inicioMs)}</span>
-                                                <button type="button" className={styles.porto} title="Criar ligação a partir deste bloco" onClick={evento => { evento.stopPropagation(); setLigando({ deMusica: musica.idMusica, deBloco: bloco.id }); }}>⊕</button>
-                                            </div>
-                                        ))}
+                                        {musica.blocos.map(bloco => {
+                                            const estado = estadoBloco(musica.idMusica, bloco.id);
+                                            return (
+                                                <div key={bloco.id} ref={el => { const chave = `${musica.idMusica}:${bloco.id}`; if (el) blocosRef.current.set(chave, el); else blocosRef.current.delete(chave); }} className={cn(styles.bloco, estado === 'aceso' && styles.bloco_aceso, estado === 'preview' && styles.bloco_preview, tocandoAqui && pulso?.idBloco === bloco.id && styles.bloco_ativo)} onClick={evento => { evento.stopPropagation(); aoClicarBloco(musica.idMusica, bloco.id); }} onMouseEnter={() => { setHover({ idMusica: musica.idMusica, idBloco: bloco.id }); }} onMouseLeave={() => { setHover(null); }}>
+                                                    <span ref={el => { const chave = `${musica.idMusica}:${bloco.id}`; if (el) progressoRef.current.set(chave, el); else progressoRef.current.delete(chave); }} className={styles.bloco_progresso} />
+                                                    <span className={styles.bloco_nome}>{bloco.nome}</span>
+                                                    <span className={styles.bloco_dur}>{seg(bloco.fimMs - bloco.inicioMs)}</span>
+                                                    <button type="button" className={styles.porto} title="Criar ligação a partir deste bloco" onClick={evento => { evento.stopPropagation(); setLigando({ deMusica: musica.idMusica, deBloco: bloco.id }); }}>⊕</button>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
                                 )}
                             </section>

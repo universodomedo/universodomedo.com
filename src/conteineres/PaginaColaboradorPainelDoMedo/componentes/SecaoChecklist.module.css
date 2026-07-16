@@ -93,6 +93,29 @@
     color: #DB4747;
 }
 
+.adicionarLinha {
+    align-self: flex-start;
+    background: transparent;
+    border: 0.1em dashed #5a4f7a;
+    color: #B79051;
+    border-radius: 0.4em;
+    padding: 0.35em 0.6em;
+    margin-top: 0.2em;
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.78em;
+}
+
+.adicionarLinha:hover:not(:disabled) {
+    border-color: #B79051;
+    background: rgba(183, 144, 81, 0.1);
+}
+
+.adicionarLinha:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
 .novo {
     display: flex;
     gap: 0.4em;

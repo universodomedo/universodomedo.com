@@ -23,6 +23,8 @@ function rotuloFormato(formato: EventoUsuarioRegistro['formato']): string {
         case 'convite_sessao': return 'Convite';
         case 'sistema': return 'Sistema';
         case 'tutorial': return 'Tutorial';
+        case 'marcacao_card': return 'Marcação';
+        case 'atividade_card': return 'Atividade';
         default: return 'Evento';
     }
 };

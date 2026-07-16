@@ -1,0 +1,67 @@
+.topoCentralizado {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2em;
+    width: 100%;
+    padding-top: 1em;
+}
+
+.campo {
+    width: min(92%, 30em);
+}
+
+.linhaChips {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35em;
+    flex-wrap: wrap;
+    width: min(92%, 40em);
+}
+
+.estado {
+    color: #7c7565;
+    font-size: 0.85em;
+    text-align: center;
+}
+
+.permitido {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+    background: #16121f;
+    border: 0.1em solid #352E4C;
+    color: #EBE0C9;
+    border-radius: 1em;
+    padding: 0.2em 0.55em 0.2em 0.25em;
+    font-size: 0.85em;
+}
+
+.avatarPermitido {
+    flex: 0 0 auto;
+    width: 1.8em;
+    height: 1.8em;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.nomePermitido {
+    font-family: var(--fonte-cinzel);
+    line-height: 1;
+    align-self: center;
+}
+
+.removerChip {
+    background: transparent;
+    border: 0;
+    color: inherit;
+    cursor: pointer;
+    font-size: 0.8em;
+    opacity: 0.65;
+    padding: 0;
+
+    &:hover:not(:disabled) {
+        opacity: 1;
+    }
+}

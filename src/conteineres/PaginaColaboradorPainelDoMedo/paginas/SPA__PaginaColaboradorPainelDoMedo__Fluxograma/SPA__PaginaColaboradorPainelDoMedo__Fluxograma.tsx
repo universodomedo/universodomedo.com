@@ -6,7 +6,6 @@ import styles from './styles.module.css';
 
 import { useContexto__PaginaColaboradorPainelDoMedo, Contexto__PaginaColaboradorPainelDoMedo__Props } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo/contexto';
 import BarraView from 'Conteineres/PaginaColaboradorPainelDoMedo/componentes/BarraView';
-import ModalCard from '../SPA__PaginaColaboradorPainelDoMedo__Quadro/ModalCard';
 import FichaObjetivo from 'Conteineres/PaginaColaboradorPainelDoMedo/componentes/FichaObjetivo';
 
 type Card = Contexto__PaginaColaboradorPainelDoMedo__Props['cards']['registros'][number];
@@ -91,7 +90,7 @@ function pontoBorda(cx: number, cy: number, w: number, h: number, alvoX: number,
 };
 
 export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
-    const { pagina, setPagina, irParaListagem, objetivos, objetivoAtualId, setObjetivoAtualId, cards, statusCards, colunas, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, atualizaCard, criaComentario, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, desenhoConteudo, registraDesenho, flushDesenho, objetivoFichaAbertaId, abrirFichaObjetivo } = useContexto__PaginaColaboradorPainelDoMedo();
+    const { pagina, setPagina, objetivos, objetivoAtualId, setObjetivoAtualId, cards, colunas, abrirCard, salvando, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, desenhoConteudo, registraDesenho, flushDesenho, objetivoFichaAbertaId, abrirFichaObjetivo } = useContexto__PaginaColaboradorPainelDoMedo();
 
     const [vista, setVista] = useState({ x: 40, y: 30, z: 1 });
     const [posLocal, setPosLocal] = useState<Record<number, { x: number; y: number }>>({});
@@ -111,6 +110,10 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
 
     const vistaRef = useRef(vista); vistaRef.current = vista;
     const posLocalRef = useRef(posLocal); posLocalRef.current = posLocal;
+    // Objetivo trancado = fluxograma somente-leitura: sem mover nos, sem criar/editar dependencias, sem desenhar. Abrir card/ficha continua funcionando.
+    const travado = (objetivos.registros.find(objetivo => objetivo.id === objetivoAtualId)?.motivoTranca ?? null) !== null;
+    const travadoRef = useRef(travado); travadoRef.current = travado;
+
     const definePosRef = useRef(definePosicaoFluxogramaCard); definePosRef.current = definePosicaoFluxogramaCard;
     const abrirCardRef = useRef(abrirCard); abrirCardRef.current = abrirCard;
     const criaDepRef = useRef(criaDependenciaCard); criaDepRef.current = criaDependenciaCard;
@@ -133,10 +136,9 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
     const objetivoNome = (id: number) => objetivos.registros.find(o => o.id === id)?.nome ?? 'Outro objetivo';
 
     const depSel = depSelId !== null ? dependenciasCards.registros.find(d => d.id === depSelId) ?? null : null;
-    const cardAberto = cardAbertoId !== null ? registros.find(c => c.id === cardAbertoId) ?? null : null;
 
-    const statusDe = (card: Card) => statusCards.registros.find(s => s.id === card.fkTiposStatusCardId) ?? null;
-    const corDe = (card: Card) => statusDe(card)?.cor ?? '#9aa0a6';
+    // Cor do no pelo estado REAL do workflow (a tranca): dourado = ativo, verde = Concluido, vermelho = Interrompido.
+    const corDe = (card: Card) => card.motivoTranca === 'CONCLUIDO' ? '#4f7a5a' : card.motivoTranca === 'INTERROMPIDO' ? '#c95f5f' : '#B79051';
     const nomeColuna = (card: Card) => colunas.registros.find(c => c.id === card.fkColunasId)?.nome ?? '';
 
     const indiceColuna = useMemo(() => { const m = new Map<number, number>(); [...colunas.registros].sort((a, b) => a.ordem - b.ordem).forEach((c, i) => m.set(c.id, i)); return m; }, [colunas.registros]);
@@ -228,7 +230,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
             const dx = e.clientX - a.sx, dy = e.clientY - a.sy;
             if (Math.abs(dx) > 3 || Math.abs(dy) > 3) a.moveu = true;
             if (a.tipo === 'pan') { const s = escalaTela(); setVista(v => ({ ...v, x: a.ox + dx / s, y: a.oy + dy / s })); }
-            else if (a.tipo === 'card') { const m = cursorMundo(e.clientX, e.clientY); setPosLocal(p => ({ ...p, [a.id]: { x: m.x + a.ox, y: m.y + a.oy } })); }
+            else if (a.tipo === 'card' && !travadoRef.current) { const m = cursorMundo(e.clientX, e.clientY); setPosLocal(p => ({ ...p, [a.id]: { x: m.x + a.ox, y: m.y + a.oy } })); }
             else if (a.tipo === 'conectar') { const m = cursorMundo(e.clientX, e.clientY); setConectando({ deCardId: a.id, cx: m.x, cy: m.y }); }
         };
         const aoSoltar = (e: MouseEvent) => {
@@ -253,7 +255,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
                 return;
             }
             const a = arrasteRef.current; if (!a) return;
-            if (a.tipo === 'card' && a.moveu) { const pos = posLocalRef.current[a.id]; if (pos) definePosRef.current(a.id, Math.round(pos.x), Math.round(pos.y)); }
+            if (a.tipo === 'card' && a.moveu && !travadoRef.current) { const pos = posLocalRef.current[a.id]; if (pos) definePosRef.current(a.id, Math.round(pos.x), Math.round(pos.y)); }
             else if (a.tipo === 'card' && !a.moveu) abrirCardRef.current(a.id);
             else if (a.tipo === 'pan' && !a.moveu) setDepSelId(null);
             else if (a.tipo === 'conectar') {
@@ -293,6 +295,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
         arrasteRef.current = { tipo: 'card', id: card.id, sx: e.clientX, sy: e.clientY, ox: pos.x - m.x, oy: pos.y - m.y, moveu: false };
     };
     const aoMouseDownHandle = (e: ReactMouseEvent, card: Card) => {
+        if (travado) return;
         if (e.button !== 0 || ferramenta !== 'selecionar') return;
         e.stopPropagation();
         const m = cursorMundo(e.clientX, e.clientY);
@@ -300,6 +303,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
         setConectando({ deCardId: card.id, cx: m.x, cy: m.y });
     };
     const aoMouseDownElemento = (e: ReactMouseEvent, el: Elemento) => {
+        if (travado) return;
         if (e.button !== 0 || ferramenta !== 'selecionar') return;
         e.stopPropagation();
         const jaSel = selIds.includes(el.id);
@@ -366,23 +370,22 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
 
     return (
         <section className={styles.fluxograma}>
-            <header className={styles.barra}>
-                <BarraView pagina={pagina} setPagina={setPagina} />
-                <button className={styles.botao} onClick={irParaListagem}>← Objetivos</button>
-                <span className={styles.nomeObjetivo}>{objetivoAtual?.nome ?? ''}</span>
-                <span className={styles.divisor} />
+            <div className={styles.ferramentas}>
+                {travado && <span className={styles.faixaTranca}>🔒 Objetivo trancado — somente leitura</span>}
+                {!travado && <>
+                    {FERRAMENTAS.map(f => <button key={f.id} className={`${styles.ferramenta} ${ferramenta === f.id ? styles.ferramentaAtiva : ''}`} title={f.dica} onClick={() => { setFerramenta(f.id); if (f.id !== 'selecionar') setSelIds([]); }}>{f.rotulo}</button>)}
+                    <span className={styles.separador} />
+                    {CORES.map(c => <button key={c} className={`${styles.swatch} ${corAtiva === c ? styles.swatchAtivo : ''}`} style={{ background: c }} title="Cor" onClick={() => aplicaCor(c)} />)}
+                    {selIds.length > 0 && <><span className={styles.separador} /><button className={styles.ferramenta} title="Excluir selecionado (Del)" onClick={excluiSelecionado}>🗑</button></>}
+                </>}
+                <span className={styles.dicaMouse}>esquerdo: selecionar · botão do meio: mover canvas</span>
+                <span className={styles.espacador} />
                 <button className={styles.botao} onClick={() => alteraZoom(-0.15)}>−</button>
                 <span className={styles.zoomTxt}>{Math.round(vista.z * 100)}%</span>
                 <button className={styles.botao} onClick={() => alteraZoom(0.15)}>+</button>
                 <button className={styles.botao} onClick={() => setVista({ x: 40, y: 30, z: 1 })} title="Resetar vista">⟲</button>
-            </header>
-
-            <div className={styles.ferramentas}>
-                {FERRAMENTAS.map(f => <button key={f.id} className={`${styles.ferramenta} ${ferramenta === f.id ? styles.ferramentaAtiva : ''}`} title={f.dica} onClick={() => { setFerramenta(f.id); if (f.id !== 'selecionar') setSelIds([]); }}>{f.rotulo}</button>)}
-                <span className={styles.separador} />
-                {CORES.map(c => <button key={c} className={`${styles.swatch} ${corAtiva === c ? styles.swatchAtivo : ''}`} style={{ background: c }} title="Cor" onClick={() => aplicaCor(c)} />)}
-                {selIds.length > 0 && <><span className={styles.separador} /><button className={styles.ferramenta} title="Excluir selecionado (Del)" onClick={excluiSelecionado}>🗑</button></>}
-                <span className={styles.dicaMouse}>esquerdo: selecionar · botão do meio: mover canvas</span>
+                <span className={styles.divisor} />
+                <BarraView pagina={pagina} setPagina={setPagina} />
             </div>
 
             {cards.erro && <p className={styles.erro}>{cards.erro}</p>}
@@ -435,13 +438,14 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
 
                             {objetivoAtual && (() => {
                                 const ox = 30, oy = 24, ow = 340, oh = 96;
-                                const st = statusCards.registros.find(s => s.id === objetivoAtual.fkTiposStatusCardId) ?? null;
+                                const corTranca = objetivoAtual.motivoTranca === 'CONCLUIDO' ? '#8fc9a0' : objetivoAtual.motivoTranca === 'INTERROMPIDO' ? '#e0a0a0' : '#8a8474';
+                                const rotuloTranca = objetivoAtual.motivoTranca === 'CONCLUIDO' ? '🔒 Concluído' : objetivoAtual.motivoTranca === 'INTERROMPIDO' ? '🔒 Interrompido' : 'Ativo';
                                 return (
                                     <g style={{ cursor: 'pointer' }} onMouseDown={e => { if (e.button !== 0 || ferramenta !== 'selecionar') return; e.stopPropagation(); abrirFichaObjetivo(objetivoAtual.id); }}>
                                         <rect x={ox} y={oy} width={ow} height={oh} rx={16} fill="#B79051" fillOpacity={0.12} stroke="#B79051" strokeWidth={2.6} />
                                         <circle cx={ox + 18} cy={oy + 22} r={6} fill="#B79051" stroke="rgba(0,0,0,.4)" strokeWidth={1} />
                                         <text className={styles.tCinzel} x={ox + 34} y={oy + 28} fontSize={16} fill="#EBE0C9">{objetivoAtual.nome}</text>
-                                        <text className={styles.tJunge} x={ox + 16} y={oy + 54} fontSize={11.5} fill={st ? st.cor : '#8a8474'}>{st ? st.nome : 'sem status'}</text>
+                                        <text className={styles.tJunge} x={ox + 16} y={oy + 54} fontSize={11.5} fill={corTranca}>{rotuloTranca}</text>
                                         <text className={styles.tJunge} x={ox + 16} y={oy + 78} fontSize={10.5} fill="#7c7565">Clique para abrir a ficha (descrição + pendências)</text>
                                     </g>
                                 );
@@ -458,9 +462,10 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
                                         <text className={styles.tJunge} x={p.x + DIM.w - 11} y={p.y + 17} textAnchor="end" fontSize={9.5} fill="#8a8474">{nomeColuna(card).toUpperCase()}</text>
                                         {linhas.map((ln, i) => <text key={i} className={styles.tJunge} x={p.x + DIM.w / 2} y={startY + i * 16} textAnchor="middle" fontSize={13.5} fill="#EBE0C9">{ln}</text>)}
                                         <rect className={styles.alvo} data-card-id={card.id} x={p.x} y={p.y} width={DIM.w} height={DIM.h} rx={13} fill="transparent" />
-                                        <circle className={styles.handle} cx={p.x + DIM.w / 2} cy={p.y + DIM.h} r={6} fill="#16121f" stroke="#B79051" strokeWidth={1.6} onMouseDown={e => aoMouseDownHandle(e, card)}>
+                                        {card.motivoTranca !== null && <text className={styles.tJunge} x={p.x + 11} y={p.y + DIM.h - 9} fontSize={9.5} fill={card.motivoTranca === 'CONCLUIDO' ? '#8fc9a0' : '#e0a0a0'}>🔒 {card.motivoTranca === 'CONCLUIDO' ? 'CONCLUÍDO' : 'INTERROMPIDO'}</text>}
+                                        {!travado && <circle className={styles.handle} cx={p.x + DIM.w / 2} cy={p.y + DIM.h} r={6} fill="#16121f" stroke="#B79051" strokeWidth={1.6} onMouseDown={e => aoMouseDownHandle(e, card)}>
                                             <title>Arraste para criar uma dependência</title>
-                                        </circle>
+                                        </circle>}
                                     </g>
                                 );
                             })}
@@ -506,12 +511,11 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
                             </div>
                         </div>
                     )}
-                    {!picker && depSel && <PainelDependencia key={depSel.id} dependencia={depSel} tituloPorId={tituloPorId} salvando={salvando} onSalvar={atualizaDependenciaCard} onExcluir={deletaDependenciaCard} onFechar={() => setDepSelId(null)} />}
+                    {!travado && !picker && depSel && <PainelDependencia key={depSel.id} dependencia={depSel} tituloPorId={tituloPorId} salvando={salvando} onSalvar={atualizaDependenciaCard} onExcluir={deletaDependenciaCard} onFechar={() => setDepSelId(null)} />}
                     {!picker && !depSel && <p className={styles.aviso} style={{ position: 'static' }}>Cada card é um nó. Clique pra abrir; arraste o corpo pra reposicionar. Arraste o <b>ponto dourado</b> de um card até outro pra criar dependência — ou solte no vazio pra buscar um card de <b>outro objetivo</b>. Botão <b>esquerdo</b> seleciona (clique ou arraste uma área); botão do <b>meio</b> move o canvas. Use as <b>ferramentas</b> acima (texto, formas, seta, caneta) pra desenhar o passo-a-passo.</p>}
                 </aside>
             </div>
 
-            {cardAberto && <ModalCard key={cardAberto.id} card={cardAberto} status={statusCards.registros} comentarios={comentarios} salvando={salvando} onSalvar={atualizaCard} onComentar={criaComentario} onFechar={fecharCard} />}
             {objetivoFichaAbertaId !== null && <FichaObjetivo key={objetivoFichaAbertaId} objetivoId={objetivoFichaAbertaId} />}
         </section>
     );

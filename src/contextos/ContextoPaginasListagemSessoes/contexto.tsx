@@ -1,30 +1,19 @@
 'use client';
 
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { GraphqlOrderDirecao, GraphqlTypesSessao } from 'types-nora-api';
+import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 
-import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
-import { FiltrosConsultaProvider, useContextoFiltrosConsulta } from 'Contextos/Contexto__FiltrosConsulta/contexto';
-import { FiltrosVisualizacaoProvider, useContextoFiltrosVisualizacao } from 'Contextos/Contexto__Filtros/contexto';
-import useNoraGraphQLConsulta from 'Hooks/useNoraGraphQLConsulta';
-import { filtraCamposFiltroVisualizacaoPorSelect } from 'Hooks/useNoraGraphQLFiltroVisualizacao';
-import { NoraGraphQLFiltroConsultaWhere } from 'Hooks/useNoraGraphQLFiltroConsulta';
+import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { useSincronizarQueryParamSPA } from 'Hooks/useSincronizarQueryParamSPA';
 import { QUERY_PARAMS } from 'Constantes/parametros_query';
 
-const SELECT_LISTAGEM_SESSOES = GraphqlTypesSessao.select('id', 'dataCriacao', 'detalheData', 'tipoPorExtenso', 'usuarioMestre');
+export type ListagemSessoesResultado = ReturnType<typeof obtemListagemSessoes>;
 
-const CAMPOS_FILTRO_VISUALIZACAO_LISTAGEM_SESSOES = filtraCamposFiltroVisualizacaoPorSelect(SELECT_LISTAGEM_SESSOES, GraphqlTypesSessao.CamposFiltroVisualizacao);
-
-export type SessaoListagemContextoRegistro = GraphqlTypesSessao.Item<typeof SELECT_LISTAGEM_SESSOES>;
-
-export type ListaSessoesListagemContexto = readonly SessaoListagemContextoRegistro[];
+export type SessaoListagemContextoRegistro = ListagemSessoesResultado['registros'][number];
 
 export interface ContextoPaginasListagemSessoesProps {
-    sessoes: ListaSessoesListagemContexto;
-    sessoesSemFiltroVisualizacao: ListaSessoesListagemContexto;
+    listagemSessoes: ListagemSessoesResultado;
     idSessaoSelecionada: number | null;
-    setIdSessaoSelecionada: (idSessao: number) => void;
+    setIdSessaoSelecionada: (idSessao: number | null) => void;
     deselecionaSessao: () => void;
 };
 
@@ -36,69 +25,38 @@ export const useContextoPaginasListagemSessoes = (): ContextoPaginasListagemSess
     return context;
 };
 
-function montaParametrosConsultaListagemSessoes(where: NoraGraphQLFiltroConsultaWhere | null): GraphqlTypesSessao.ObtemVariosParametros {
-    return {
-        where: where as GraphqlTypesSessao.ObtemVariosParametros['where'],
-        order: { dataCriacao: GraphqlOrderDirecao.DESC },
-    };
-};
-
-export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInicial }: { children: React.ReactNode; idSessaoInicial: number | null; }) => {
-    return (
-        <FiltrosConsultaProvider campos={GraphqlTypesSessao.CamposFiltroConsulta}>
-            {/* <ContextoPaginasListagemSessoesProviderComConsulta idSessaoInicial={idSessaoInicial}> */}
-                {children}
-            {/* </ContextoPaginasListagemSessoesProviderComConsulta> */}
-        </FiltrosConsultaProvider>
-    );
-};
-
-function ContextoPaginasListagemSessoesProviderComConsulta({ children, idSessaoInicial }: { children: React.ReactNode; idSessaoInicial: number | null; }) {
-    const { where, versaoAplicacao } = useContextoFiltrosConsulta<object>();
-    const versaoAplicacaoAnteriorRef = useRef(versaoAplicacao);
-
-    // const consultaListagemSessoes = useNoraGraphQLConsulta(obtem => obtem.Sessao.varios({
-    //     parametros: montaParametrosConsultaListagemSessoes(where),
-    //     select: SELECT_LISTAGEM_SESSOES,
-    // }), { valorInicial: [], carregando: 'Buscando Sessões', mensagemErro: 'Houve um erro recuperando as Sessões à serem listadas', carregamento: NoraApiCarregamento.BLOQUEIA_INTERFACE });
-
-    // const recarregarListagemSessoes = consultaListagemSessoes.recarregar;
-
-    // useEffect(() => {
-    //     if (versaoAplicacaoAnteriorRef.current === versaoAplicacao) return;
-
-    //     versaoAplicacaoAnteriorRef.current = versaoAplicacao;
-    //     recarregarListagemSessoes().catch(() => undefined);
-    // }, [recarregarListagemSessoes, versaoAplicacao]);
-
-    return (
-        // <FiltrosVisualizacaoProvider registros={consultaListagemSessoes.data} campos={CAMPOS_FILTRO_VISUALIZACAO_LISTAGEM_SESSOES}>
-            // <ContextoPaginasListagemSessoesProviderInterno idSessaoInicial={idSessaoInicial} carregando={consultaListagemSessoes.carregando}>
-                {children}
-            // </ContextoPaginasListagemSessoesProviderInterno>
-        // </FiltrosVisualizacaoProvider>
-    );
-};
-
-function ContextoPaginasListagemSessoesProviderInterno({ children, idSessaoInicial, carregando }: { children: React.ReactNode; idSessaoInicial: number | null; carregando: string | null; }) {
-    const resultadoFiltroVisualizacao = useContextoFiltrosVisualizacao<SessaoListagemContextoRegistro>();
+export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInicial }: { children: ReactNode; idSessaoInicial: number | null; }) => {
+    const listagemSessoes = obtemListagemSessoes();
     const [idSessaoSelecionada, setIdSessaoSelecionada] = useState<number | null>(idSessaoInicial ?? null);
 
-    function deselecionaSessao() { setIdSessaoSelecionada(null); };
+    const deselecionaSessao = useCallback(() => { setIdSessaoSelecionada(null); }, []);
 
     useSincronizarQueryParamSPA(QUERY_PARAMS.SESSAO, idSessaoSelecionada);
 
-    if (carregando) return <div>{carregando}</div>;
-
     return (
-        <ContextoPaginasListagemSessoes.Provider value={{
-            sessoes: resultadoFiltroVisualizacao.registrosFiltrados,
-            sessoesSemFiltroVisualizacao: resultadoFiltroVisualizacao.registrosOriginais,
-            idSessaoSelecionada,
-            setIdSessaoSelecionada,
-            deselecionaSessao,
-        }}>
+        <ContextoPaginasListagemSessoes.Provider value={{ listagemSessoes, idSessaoSelecionada, setIdSessaoSelecionada, deselecionaSessao }}>
             {children}
         </ContextoPaginasListagemSessoes.Provider>
     );
+};
+
+//
+
+function obtemListagemSessoes() {
+    return useNoraGraphQLListagem('Sessao', {
+        select: ['id', 'dataCriacao', 'dataInicio', 'tituloInteligente', 'dadosArteCapa', 'usuarioMestre'],
+        itensPorPagina: 24,
+        carregando: 'Buscando Sessões',
+        mensagemErro: 'Houve um erro recuperando as Sessões à serem listadas',
+        mensagemListaVazia: 'Nenhuma sessão encontrada.',
+        mensagemListaVaziaComFiltro: 'Nenhuma sessão encontrada com os filtros atuais.',
+        carregamento: 'BLOQUEIA_INTERFACE',
+        montaParametrosConsulta: params => ({
+            where: params.where,
+            order: { dataCriacao: 'DESC' },
+            limit: params.limit,
+            offset: params.offset,
+        }),
+        montaParametrosTotalDeRegistros: where => ({ where }),
+    });
 };

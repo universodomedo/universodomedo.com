@@ -1,6 +1,7 @@
 /* Bancada do protótipo do Controle de Música (o editor traz o próprio espaço). */
 
 .bancada {
+    width: 100%;
     max-width: 70em;
     margin: 1em auto;
     padding: 0 1em;

@@ -7,34 +7,6 @@
     padding: 0.8em 1em;
 }
 
-.barra {
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
-    flex-wrap: wrap;
-}
-
-.rotulo {
-    color: #aba9a1;
-    font-size: 0.9em;
-}
-
-.nomeObjetivo {
-    font-family: var(--fonte-cinzel);
-    color: #EBE0C9;
-    font-size: 1em;
-    margin-left: 0.2em;
-}
-
-.seletor {
-    background: #0d0b14;
-    border: 0.1em solid #352E4C;
-    color: #D9D9D9;
-    border-radius: 0.4em;
-    padding: 0.3em 0.6em;
-    font-family: inherit;
-}
-
 .divisor {
     width: 0.1em;
     height: 1.4em;
@@ -221,6 +193,19 @@
     opacity: 1;
 }
 
+.faixaTranca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    background: rgba(183, 144, 81, 0.12);
+    border: 0.1em solid #B79051;
+    color: #EBE0C9;
+    border-radius: 0.5em;
+    padding: 0.3em 0.8em;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.82em;
+}
+
 .busca {
     width: 100%;
     background: #0d0b14;
@@ -344,7 +329,11 @@
     color: #6f6857;
     font-size: 0.72em;
     font-style: italic;
-    margin-left: auto;
+    margin-left: 0.5em;
+}
+
+.espacador {
+    flex: 1;
 }
 
 .ferramenta {

@@ -21,7 +21,7 @@ type PropsConteiner__PaginaVisualizacaoSessoes = ContextoPaginasListagemSessoesP
 function resolveSaida(props: PropsConteiner__PaginaVisualizacaoSessoes): SaidaConteiner {
     if (props.idSessaoSelecionada) return criaSaidaConteiner(ContextoPaginaSessoes__ComSessaoSelecionadaProvider, { idSessaoSelecionada: props.idSessaoSelecionada, deselecionaSessao: props.deselecionaSessao });
 
-    return criaSaidaConteiner(ContextoPaginaSessoes__SemSessaoSelecionadaProvider, { sessoes: props.sessoes, selecionaSessao: props.setIdSessaoSelecionada });
+    return criaSaidaConteiner(ContextoPaginaSessoes__SemSessaoSelecionadaProvider, { listagemSessoes: props.listagemSessoes, selecionaSessao: props.setIdSessaoSelecionada });
 };
 
 function useEstado(): PropsConteiner__PaginaVisualizacaoSessoes { return useContextoPaginasListagemSessoes(); };

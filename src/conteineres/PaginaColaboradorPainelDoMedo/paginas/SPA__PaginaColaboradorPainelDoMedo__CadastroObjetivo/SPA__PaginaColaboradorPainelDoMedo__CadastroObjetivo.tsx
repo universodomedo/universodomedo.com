@@ -1,35 +1,27 @@
 'use client';
 
-import { useState } from 'react';
-
 import styles from './styles.module.css';
 
-import { useContexto__PaginaColaboradorPainelDoMedo } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo/contexto';
+import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
+import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
+import { useContexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo/contexto';
 
 export default function SPA__PaginaColaboradorPainelDoMedo__CadastroObjetivo() {
-    const { salvando, criaObjetivo, irParaListagem } = useContexto__PaginaColaboradorPainelDoMedo();
-
-    const [nome, setNome] = useState('');
-
-    const criar = async () => { if (!nome.trim()) return; await criaObjetivo(nome); irParaListagem(); };
+    const { formularioNovoObjetivo, salvar, cancelar } = useContexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo();
 
     return (
-        <section className={styles.cadastro}>
-            <header className={styles.cabecalho}>
-                <button className={styles.voltar} onClick={irParaListagem}>← Objetivos</button>
-                <h2 className={styles.titulo}>Novo objetivo</h2>
-            </header>
+        <ConteudoForm>
+            <ConteudoForm.AreaCorpo>
+                <InputComRotulo rotulo="Nome">
+                    <input type="text" autoFocus {...formularioNovoObjetivo.input('nome')} />
+                    {formularioNovoObjetivo.erro('nome') && <small className={styles.erro_campo}>{formularioNovoObjetivo.erro('nome')}</small>}
+                </InputComRotulo>
+            </ConteudoForm.AreaCorpo>
 
-            <div className={styles.form}>
-                <label className={styles.campo}>
-                    <span>Nome do objetivo</span>
-                    <input value={nome} autoFocus onChange={evento => setNome(evento.target.value)} onKeyDown={evento => { if (evento.key === 'Enter') criar(); }} placeholder="Ex.: Modelos 3D em Sala de Jogo" />
-                </label>
-                <div className={styles.acoes}>
-                    <button className={styles.criar} onClick={criar} disabled={salvando || !nome.trim()}>{salvando ? 'Criando…' : 'Criar objetivo'}</button>
-                    <button className={styles.cancelar} onClick={irParaListagem} disabled={salvando}>Cancelar</button>
-                </div>
-            </div>
-        </section>
+            <ConteudoForm.AreaBotoes>
+                <button type="button" onClick={salvar} disabled={!formularioNovoObjetivo.podeSalvar}>{formularioNovoObjetivo.salvando ? 'Criando...' : 'Criar Objetivo'}</button>
+                <button type="button" data-variante="secundario" onClick={cancelar} disabled={formularioNovoObjetivo.salvando}>Cancelar</button>
+            </ConteudoForm.AreaBotoes>
+        </ConteudoForm>
     );
 };
