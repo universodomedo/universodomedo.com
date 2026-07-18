@@ -1,0 +1,21 @@
+/* Layout do esqueleto da /v2. Responsivo (sem --scale): preenche a viewport em
+   qualquer orientação/tamanho. Cores são placeholder — a identidade é do designer. */
+
+.tela {
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 4rem);
+    background: #0a0a0c;
+    color: #e7e7ea;
+}
+
+.marca {
+    font-size: clamp(2rem, 12vw, 8rem);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.35;
+    user-select: none;
+}

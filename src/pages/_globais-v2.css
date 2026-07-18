@@ -1,0 +1,51 @@
+/*
+ * Base responsiva da v2.
+ *
+ * Diferente do globals.css do app atual (App Router), aqui NÃO existe:
+ *   - ConteinerEscalavel / variável --scale (canvas fixo 1920x1080);
+ *   - trava de orientação (forçar paisagem);
+ *   - qualquer wrapper ou estilização herdada do app/layout.tsx.
+ *
+ * O layout se adapta à viewport: retrato/paisagem, mobile/desktop.
+ * Global CSS no Pages Router só pode ser importado em _app.tsx.
+ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    min-height: 100dvh;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+    color: inherit;
+}
