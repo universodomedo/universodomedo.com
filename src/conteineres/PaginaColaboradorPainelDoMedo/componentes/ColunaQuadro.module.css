@@ -52,6 +52,7 @@
 }
 
 .card {
+    position: relative;
     background: #120f1c;
     border: 0.1em solid #352E4C;
     border-left: 0.3em solid #B79051;
@@ -136,6 +137,36 @@
     color: #0a0810;
     background: #5aa9a3;
     border-color: #5aa9a3;
+}
+
+/* Indicador de insercao do arraste: barra dourada ABSOLUTA no vao entre cartoes (fora do fluxo — em fluxo ela deslocava os cartoes sob o cursor e criava loop de flicker). */
+.indicadorInsercao,
+.indicadorInsercaoFim {
+    position: absolute;
+    left: 0.1em;
+    right: 0.1em;
+    height: 0.3em;
+    border-radius: 0.3em;
+    background: #B79051;
+    box-shadow: 0 0 0.55em rgba(183, 144, 81, 0.55);
+    pointer-events: none;
+}
+
+.indicadorInsercao {
+    top: -0.4em;
+}
+
+.indicadorInsercaoFim {
+    bottom: -0.4em;
+}
+
+/* Coluna vazia: sem cartoes nao ha loop de layout — barra em fluxo simples. */
+.indicadorInsercaoVazia {
+    height: 0.3em;
+    border-radius: 0.3em;
+    background: #B79051;
+    box-shadow: 0 0 0.55em rgba(183, 144, 81, 0.55);
+    pointer-events: none;
 }
 
 .avatarsMini {

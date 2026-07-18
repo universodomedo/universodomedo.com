@@ -13,7 +13,6 @@ interface Contexto__PaginaColaboradorPainelDoMedo__EdicaoCard__Props {
     setTitulo: (titulo: string) => void;
     salvando: boolean;
     salvar: () => Promise<void>;
-    cancelar: () => void;
 };
 
 const Contexto__PaginaColaboradorPainelDoMedo__EdicaoCard = createContext<Contexto__PaginaColaboradorPainelDoMedo__EdicaoCard__Props | undefined>(undefined);
@@ -43,7 +42,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__EdicaoCard__Provider = () 
     };
 
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo__EdicaoCard.Provider value={{ card, titulo, setTitulo, salvando, salvar, cancelar: fecharOperacaoCard }}>
+        <Contexto__PaginaColaboradorPainelDoMedo__EdicaoCard.Provider value={{ card, titulo, setTitulo, salvando, salvar }}>
             <SPA__PaginaColaboradorPainelDoMedo__EdicaoCard />
         </Contexto__PaginaColaboradorPainelDoMedo__EdicaoCard.Provider>
     );

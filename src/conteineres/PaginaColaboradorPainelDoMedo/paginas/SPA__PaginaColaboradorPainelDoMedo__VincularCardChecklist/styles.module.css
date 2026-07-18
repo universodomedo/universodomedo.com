@@ -1,3 +1,10 @@
+.dica {
+    color: #9b958a;
+    font-size: 0.85em;
+    margin: 0.6em 0 0;
+    max-width: 34em;
+}
+
 .lista {
     display: flex;
     flex-direction: column;
@@ -11,7 +18,7 @@
     gap: 0.4em;
     background: #16121f;
     border: 0.1em solid #352E4C;
-    border-left: 0.3em solid #d98a3c;
+    border-left: 0.3em solid #B79051;
     color: #D9D9D9;
     text-align: left;
     font-family: inherit;

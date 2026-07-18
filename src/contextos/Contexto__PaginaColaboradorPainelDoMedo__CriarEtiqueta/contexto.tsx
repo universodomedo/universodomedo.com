@@ -19,7 +19,6 @@ interface Contexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta__Props {
     setBordaTransparente: (transparente: boolean) => void;
     salvando: boolean;
     criar: () => Promise<void>;
-    cancelar: () => void;
 };
 
 const Contexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta = createContext<Contexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta__Props | undefined>(undefined);
@@ -45,7 +44,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta__Provider = 
     const criar = async () => { if (!nome.trim()) return; await criaEtiqueta(nome, cor, bordaTransparente ? 'transparent' : corBorda); fecharOperacaoCard(); };
 
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta.Provider value={{ card, nome, setNome, cor, setCor, corBorda, setCorBorda, bordaTransparente, setBordaTransparente, salvando, criar, cancelar: fecharOperacaoCard }}>
+        <Contexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta.Provider value={{ card, nome, setNome, cor, setCor, corBorda, setCorBorda, bordaTransparente, setBordaTransparente, salvando, criar }}>
             <SPA__PaginaColaboradorPainelDoMedo__CriarEtiqueta />
         </Contexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta.Provider>
     );

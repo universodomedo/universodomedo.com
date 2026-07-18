@@ -5,12 +5,11 @@ import { useState, useRef, useEffect, useMemo, type MouseEvent as ReactMouseEven
 import styles from './styles.module.css';
 
 import { useContexto__PaginaColaboradorPainelDoMedo, Contexto__PaginaColaboradorPainelDoMedo__Props } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo/contexto';
+import { AvatarUsuarioEmVisualizacao_CACHED } from 'Componentes/ElementosVisuais/ElementosIndividuaisEmListaDeVisualizacao/AvatarUsuarioEmVisualizacao/AvatarUsuarioEmVisualizacao';
 import BarraView from 'Conteineres/PaginaColaboradorPainelDoMedo/componentes/BarraView';
 import FichaObjetivo from 'Conteineres/PaginaColaboradorPainelDoMedo/componentes/FichaObjetivo';
 
 type Card = Contexto__PaginaColaboradorPainelDoMedo__Props['cards']['registros'][number];
-type Dependencia = Contexto__PaginaColaboradorPainelDoMedo__Props['dependenciasCards']['registros'][number];
-type CardLeve = Contexto__PaginaColaboradorPainelDoMedo__Props['todosCards']['registros'][number];
 
 const DIM = { w: 214, h: 80 };
 
@@ -33,6 +32,8 @@ type Elemento = {
 };
 
 const CORES = ['#EBE0C9', '#B79051', '#d98a3c', '#5aa9a3', '#c95f5f', '#6f6896'];
+// Cor estavel por usuario pros cursores ao vivo (indexada pelo id do usuario).
+const CORES_CURSOR = ['#B79051', '#5aa9a3', '#c95f5f', '#6f6896', '#d98a3c', '#8fc9a0'];
 const FERRAMENTAS: { id: Ferramenta; rotulo: string; dica: string }[] = [
     { id: 'selecionar', rotulo: '⤢', dica: 'Selecionar / mover (esquerdo). Pan = botão do meio' },
     { id: 'texto', rotulo: 'T', dica: 'Texto' },
@@ -81,6 +82,7 @@ function quebraTexto(texto: string, max: number): string[] {
     return linhas.slice(0, 3);
 };
 
+// Ponto na borda do retangulo do no (centro cx/cy, dimensoes w/h) na direcao do alvo: ancora as arestas de vinculo na borda, nao no centro.
 function pontoBorda(cx: number, cy: number, w: number, h: number, alvoX: number, alvoY: number): { x: number; y: number } {
     const dx = alvoX - cx, dy = alvoY - cy;
     if (dx === 0 && dy === 0) return { x: cx, y: cy };
@@ -90,33 +92,36 @@ function pontoBorda(cx: number, cy: number, w: number, h: number, alvoX: number,
 };
 
 export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
-    const { pagina, setPagina, objetivos, objetivoAtualId, setObjetivoAtualId, cards, colunas, abrirCard, salvando, dependenciasCards, posicoesFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, desenhoConteudo, registraDesenho, flushDesenho, objetivoFichaAbertaId, abrirFichaObjetivo } = useContexto__PaginaColaboradorPainelDoMedo();
+    const { pagina, setPagina, objetivos, objetivoAtualId, cards, colunas, abrirCard, abrirCardPorId, salvando, posicoesFluxograma, definePosicaoFluxogramaCard, transmitePosicaoCardAoVivo, posicoesCardsAoVivo, presencaObjetivo, transmiteCursorFluxograma, cursoresFluxograma, transmiteDesenhoAoVivo, desenhoConteudo, registraDesenho, flushDesenho, objetivoFichaAbertaId, abrirFichaObjetivo, itensChecklistQuadro, membrosCards, todosCards } = useContexto__PaginaColaboradorPainelDoMedo();
 
     const [vista, setVista] = useState({ x: 40, y: 30, z: 1 });
     const [posLocal, setPosLocal] = useState<Record<number, { x: number; y: number }>>({});
-    const [depSelId, setDepSelId] = useState<number | null>(null);
-    const [conectando, setConectando] = useState<null | { deCardId: number; cx: number; cy: number }>(null);
-    const [picker, setPicker] = useState<null | { dependenteId: number }>(null);
-    const [buscaPicker, setBuscaPicker] = useState('');
 
     const [ferramenta, setFerramenta] = useState<Ferramenta>('selecionar');
     const [corAtiva, setCorAtiva] = useState<string>(CORES[0]);
     const [elementos, setElementos] = useState<Elemento[]>([]);
     const [selIds, setSelIds] = useState<string[]>([]);
+    // Cartoes selecionados pelo marquee (junto com os desenhos): arrastar qualquer item selecionado move o grupo inteiro.
+    const [selCardIds, setSelCardIds] = useState<number[]>([]);
     const [rascunho, setRascunho] = useState<Elemento | null>(null);
     const [marquee, setMarquee] = useState<Retangulo | null>(null);
     const [editTextoId, setEditTextoId] = useState<string | null>(null);
     const [panning, setPanning] = useState(false);
+    // Painel lateral com a descricao do objetivo: colapsavel pra devolver a largura ao canvas.
+    const [painelAberto, setPainelAberto] = useState(true);
 
     const vistaRef = useRef(vista); vistaRef.current = vista;
     const posLocalRef = useRef(posLocal); posLocalRef.current = posLocal;
-    // Objetivo trancado = fluxograma somente-leitura: sem mover nos, sem criar/editar dependencias, sem desenhar. Abrir card/ficha continua funcionando.
+    // Objetivo trancado = fluxograma somente-leitura: sem mover nos, sem desenhar. Abrir card/ficha continua funcionando.
     const travado = (objetivos.registros.find(objetivo => objetivo.id === objetivoAtualId)?.motivoTranca ?? null) !== null;
     const travadoRef = useRef(travado); travadoRef.current = travado;
 
     const definePosRef = useRef(definePosicaoFluxogramaCard); definePosRef.current = definePosicaoFluxogramaCard;
+    const transmiteAoVivoRef = useRef(transmitePosicaoCardAoVivo); transmiteAoVivoRef.current = transmitePosicaoCardAoVivo;
+    const ultimoAoVivoRef = useRef(0);
+    const transmiteCursorRef = useRef(transmiteCursorFluxograma); transmiteCursorRef.current = transmiteCursorFluxograma;
+    const ultimoCursorRef = useRef(0);
     const abrirCardRef = useRef(abrirCard); abrirCardRef.current = abrirCard;
-    const criaDepRef = useRef(criaDependenciaCard); criaDepRef.current = criaDependenciaCard;
     const ferramentaRef = useRef(ferramenta); ferramentaRef.current = ferramenta;
     const elementosRef = useRef(elementos); elementosRef.current = elementos;
     const rascunhoRef = useRef(rascunho); rascunhoRef.current = rascunho;
@@ -126,40 +131,71 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
     const ultimoSerialRef = useRef<string>('');
     const svgRef = useRef<SVGSVGElement | null>(null);
     const grupoRef = useRef<SVGGElement | null>(null);
-    const arrasteRef = useRef<null | { tipo: 'card' | 'pan' | 'conectar'; id: number; sx: number; sy: number; ox: number; oy: number; moveu: boolean }>(null);
+    const arrasteRef = useRef<null | { tipo: 'card' | 'pan'; id: number; sx: number; sy: number; ox: number; oy: number; moveu: boolean }>(null);
     const desenhoArrasteRef = useRef<null | { modo: 'desenhar' | 'mover' | 'resize' | 'marcar'; tipo: ElementoTipo; sx: number; sy: number; origens: Elemento[]; moveu: boolean }>(null);
+    // Arraste de GRUPO (cartoes + desenhos selecionados pelo marquee): coordenadas de mundo, origens congeladas no mousedown.
+    const grupoArrasteRef = useRef<null | { sx: number; sy: number; idClicado: number; origensCards: { id: number; x: number; y: number }[]; origensElementos: Elemento[]; moveu: boolean }>(null);
+    const selCardIdsRef = useRef(selCardIds); selCardIdsRef.current = selCardIds;
+    // Posicao atual (pos-merge) de cada no, atualizada a cada render: usada pelo marquee e pelo arraste de grupo dentro dos handlers globais.
+    const posCardsAtuaisRef = useRef<{ id: number; x: number; y: number }[]>([]);
 
     const registros = cards.registros;
     const objetivoAtual = objetivos.registros.find(o => o.id === objetivoAtualId) ?? null;
-    const idsVisiveis = useMemo(() => new Set(registros.map(c => c.id)), [registros]);
-    const cardLevePorId = useMemo(() => { const m = new Map<number, CardLeve>(); todosCards.registros.forEach(c => m.set(c.id, c)); return m; }, [todosCards.registros]);
-    const objetivoNome = (id: number) => objetivos.registros.find(o => o.id === id)?.nome ?? 'Outro objetivo';
-
-    const depSel = depSelId !== null ? dependenciasCards.registros.find(d => d.id === depSelId) ?? null : null;
 
     // Cor do no pelo estado REAL do workflow (a tranca): dourado = ativo, verde = Concluido, vermelho = Interrompido.
     const corDe = (card: Card) => card.motivoTranca === 'CONCLUIDO' ? '#4f7a5a' : card.motivoTranca === 'INTERROMPIDO' ? '#c95f5f' : '#B79051';
     const nomeColuna = (card: Card) => colunas.registros.find(c => c.id === card.fkColunasId)?.nome ?? '';
 
     const indiceColuna = useMemo(() => { const m = new Map<number, number>(); [...colunas.registros].sort((a, b) => a.ordem - b.ordem).forEach((c, i) => m.set(c.id, i)); return m; }, [colunas.registros]);
+
+    // Vinculos checklist-referencia (cartao pai contem outro cartao como item): arestas pai -> filho entre nos do objetivo atual.
+    const vinculosVisiveis = useMemo(() => {
+        const idsNoObjetivo = new Set(cards.registros.map(c => c.id));
+        return itensChecklistQuadro.registros
+            .filter(item => item.fkCardsId !== null && item.fkCardsReferenciaId !== null && idsNoObjetivo.has(item.fkCardsId) && idsNoObjetivo.has(item.fkCardsReferenciaId))
+            .map(item => ({ id: item.id, paiId: item.fkCardsId as number, filhoId: item.fkCardsReferenciaId as number }));
+    }, [itensChecklistQuadro.registros, cards.registros]);
+
+    // Mesmo padrao do Quadro: criador primeiro (membro obrigatorio derivado do card); vinculos de membros_cards em seguida, sem duplicar o criador.
+    const membrosPorCard = useMemo(() => {
+        const mapa = new Map<number, { id: number; username: string }[]>();
+        cards.registros.forEach(card => mapa.set(card.id, [{ id: card.fkUsuariosCriacaoId, username: card.usuarioCriacao?.username ?? '?' }]));
+        membrosCards.registros.forEach(membro => {
+            const lista = mapa.get(membro.fkCardsId);
+            if (!lista || lista.some(m => m.id === membro.fkUsuariosId)) return;
+            lista.push({ id: membro.fkUsuariosId, username: membro.usuario.username });
+        });
+        return mapa;
+    }, [cards.registros, membrosCards.registros]);
+
+    // Progresso do checklist por card (mesma derivacao do Quadro): item-referencia deriva "feito" da tranca CONCLUIDO do cartao referenciado.
+    const checklistPorCard = useMemo(() => {
+        const trancaPorCard = new Map(todosCards.registros.map(card => [card.id, card.motivoTranca]));
+        const mapa = new Map<number, { feitos: number; total: number }>();
+        itensChecklistQuadro.registros.forEach(item => {
+            if (item.fkCardsId === null) return;
+            const feito = item.fkCardsReferenciaId !== null ? trancaPorCard.get(item.fkCardsReferenciaId) === 'CONCLUIDO' : item.concluido;
+            const atual = mapa.get(item.fkCardsId) ?? { feitos: 0, total: 0 };
+            mapa.set(item.fkCardsId, { feitos: atual.feitos + (feito ? 1 : 0), total: atual.total + 1 });
+        });
+        return mapa;
+    }, [itensChecklistQuadro.registros, todosCards.registros]);
+
+    // Vinculos com UMA ponta fora do objetivo atual: a ponta de fora vira no-fantasma ancorado no no visivel (clique abre a ficha do cartao de fora).
+    const vinculosCruzados = useMemo(() => {
+        const idsNoObjetivo = new Set(cards.registros.map(c => c.id));
+        return itensChecklistQuadro.registros
+            .filter(item => item.fkCardsId !== null && item.fkCardsReferenciaId !== null && idsNoObjetivo.has(item.fkCardsId as number) !== idsNoObjetivo.has(item.fkCardsReferenciaId as number))
+            .map(item => {
+                const paiDentro = idsNoObjetivo.has(item.fkCardsId as number);
+                return { id: item.id, dentroId: paiDentro ? item.fkCardsId as number : item.fkCardsReferenciaId as number, foraId: paiDentro ? item.fkCardsReferenciaId as number : item.fkCardsId as number, paiDentro };
+            });
+    }, [itensChecklistQuadro.registros, cards.registros]);
     const posPadrao = (card: Card) => ({ x: (indiceColuna.get(card.fkColunasId) ?? 0) * 260 + 30, y: ((card.ordem ?? 1) - 1) * 110 + 170 });
     const posServidor = (cardId: number) => { const p = posicoesFluxograma.registros.find(x => x.fkCardsId === cardId); return p ? { x: p.posicaoX, y: p.posicaoY } : null; };
-    const posCard = (card: Card) => posLocal[card.id] ?? posServidor(card.id) ?? posPadrao(card);
-
-    const depsTocandoVisivel = dependenciasCards.registros.filter(d => idsVisiveis.has(d.fkCardsDependenteId) || idsVisiveis.has(d.fkCardsRequisitoId));
-    const fantasmas = useMemo(() => {
-        const m = new Map<number, { x: number; y: number }>(); let stagger = 0;
-        for (const d of depsTocandoVisivel) {
-            const dV = idsVisiveis.has(d.fkCardsDependenteId), rV = idsVisiveis.has(d.fkCardsRequisitoId);
-            if (dV && !rV && !m.has(d.fkCardsRequisitoId)) { const base = registros.find(c => c.id === d.fkCardsDependenteId); if (base) { const p = posCard(base); m.set(d.fkCardsRequisitoId, { x: p.x - 300, y: p.y + stagger }); stagger += 96; } }
-            else if (rV && !dV && !m.has(d.fkCardsDependenteId)) { const base = registros.find(c => c.id === d.fkCardsRequisitoId); if (base) { const p = posCard(base); m.set(d.fkCardsDependenteId, { x: p.x + 300, y: p.y + stagger }); stagger += 96; } }
-        }
-        return m;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dependenciasCards.registros, registros, posLocal, posicoesFluxograma.registros, colunas.registros]);
-
-    const posPorId = (cardId: number) => { const c = registros.find(x => x.id === cardId); if (c) return posCard(c); return fantasmas.get(cardId) ?? null; };
-    const tituloPorId = (cardId: number) => { const c = registros.find(x => x.id === cardId); if (c) return c.titulo; return cardLevePorId.get(cardId)?.titulo ?? '?'; };
+    // Merge de posicao: arraste proprio (posLocal) > arraste ao vivo de outro cliente > persistida > padrao por coluna.
+    const posCard = (card: Card) => posLocal[card.id] ?? posicoesCardsAoVivo.get(card.id) ?? posServidor(card.id) ?? posPadrao(card);
+    posCardsAtuaisRef.current = registros.map(card => { const p = posCard(card); return { id: card.id, x: p.x, y: p.y }; });
 
     const serializaDesenho = (elems: Elemento[]) => elems.length ? JSON.stringify(elems) : null;
     const persisteDesenho = () => { const serial = serializaDesenho(elementosRef.current); ultimoSerialRef.current = serial ?? ''; registraDesenhoRef.current(serial); };
@@ -176,6 +212,18 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
     const comitaRef = useRef(comita); comitaRef.current = comita;
     const aplicaLiveRef = useRef(aplicaLive); aplicaLiveRef.current = aplicaLive;
     const persisteDesenhoRef = useRef(persisteDesenho); persisteDesenhoRef.current = persisteDesenho;
+
+    // Stream do desenho ao vivo (mesma mecanica dos cartoes): serializa elementos + rascunho em andamento e transmite com throttle; chamado em todo ponto que muda o desenho durante a interacao.
+    const transmiteDesenhoAoVivoRef = useRef(transmiteDesenhoAoVivo); transmiteDesenhoAoVivoRef.current = transmiteDesenhoAoVivo;
+    const ultimoDesenhoAoVivoRef = useRef(0);
+    const transmiteDesenhoAoVivoAgora = () => {
+        const agora = Date.now();
+        if (agora - ultimoDesenhoAoVivoRef.current < 90) return;
+        ultimoDesenhoAoVivoRef.current = agora;
+        const rascunhoAtual = rascunhoRef.current;
+        transmiteDesenhoAoVivoRef.current(serializaDesenho(rascunhoAtual ? [...elementosRef.current, rascunhoAtual] : elementosRef.current));
+    };
+    const transmiteDesenhoAgoraRef = useRef(transmiteDesenhoAoVivoAgora); transmiteDesenhoAgoraRef.current = transmiteDesenhoAoVivoAgora;
 
     useEffect(() => {
         if (desenhoArrasteRef.current || editTextoId !== null) return;
@@ -194,7 +242,8 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
     useEffect(() => {
         setPosLocal(prev => {
             const next = { ...prev }; let mudou = false;
-            for (const card of registros) { const ov = next[card.id]; const sp = posServidor(card.id); if (ov && sp && ov.x === sp.x && ov.y === sp.y) { delete next[card.id]; mudou = true; } }
+            // Compara ARREDONDADO: o servidor persiste inteiros; igualdade estrita com o float local nunca batia e o override ficava preso (cegando este cliente pros movimentos dos outros neste card).
+            for (const card of registros) { const ov = next[card.id]; const sp = posServidor(card.id); if (ov && sp && Math.round(ov.x) === sp.x && Math.round(ov.y) === sp.y) { delete next[card.id]; mudou = true; } }
             return mudou ? next : prev;
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -208,6 +257,20 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
 
     useEffect(() => {
         const aoMover = (e: MouseEvent) => {
+            // Mouseup perdido (soltou fora da janela, drag nativo, alt-tab): mousemove sem o botao do arraste ativo = encerra como soltar. Sem isso o arraste fica grudado no cursor. O pan usa o botao do MEIO (bit 4); os demais arrastes, o esquerdo (bit 1).
+            const botaoDoArraste = arrasteRef.current?.tipo === 'pan' ? 4 : 1;
+            if ((e.buttons & botaoDoArraste) === 0 && (grupoArrasteRef.current || desenhoArrasteRef.current || arrasteRef.current)) { aoSoltar(e); return; }
+            const g = grupoArrasteRef.current;
+            if (g) {
+                const m = cursorMundo(e.clientX, e.clientY);
+                const dx = m.x - g.sx, dy = m.y - g.sy;
+                if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) g.moveu = true;
+                if (g.origensCards.length) setPosLocal(p => { const next = { ...p }; g.origensCards.forEach(origem => { next[origem.id] = { x: origem.x + dx, y: origem.y + dy }; }); return next; });
+                if (g.origensElementos.length) { const mapa = new Map(g.origensElementos.map(origem => [origem.id, origem])); aplicaLiveRef.current(prev => prev.map(el => mapa.has(el.id) ? moveElemento(mapa.get(el.id) as Elemento, dx, dy) : el)); transmiteDesenhoAgoraRef.current(); }
+                const agora = Date.now();
+                if (agora - ultimoAoVivoRef.current >= 90) { ultimoAoVivoRef.current = agora; g.origensCards.forEach(origem => transmiteAoVivoRef.current(origem.id, Math.round(origem.x + dx), Math.round(origem.y + dy))); }
+                return;
+            }
             const da = desenhoArrasteRef.current;
             if (da) {
                 const m = cursorMundo(e.clientX, e.clientY);
@@ -216,11 +279,13 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
                     if (da.tipo === 'caneta') setRascunho(r => r ? { ...r, pontos: [...(r.pontos ?? []), { x: m.x, y: m.y }] } : r);
                     else if (da.tipo === 'seta') setRascunho(r => r ? { ...r, x2: m.x, y2: m.y } : r);
                     else setRascunho(r => r ? { ...r, x: Math.min(da.sx, m.x), y: Math.min(da.sy, m.y), w: Math.abs(m.x - da.sx), h: Math.abs(m.y - da.sy) } : r);
+                    transmiteDesenhoAgoraRef.current();
                 } else if (da.modo === 'mover') {
                     const dx = m.x - da.sx, dy = m.y - da.sy, mapa = new Map(da.origens.map(o => [o.id, o]));
                     aplicaLiveRef.current(prev => prev.map(el => mapa.has(el.id) ? moveElemento(mapa.get(el.id) as Elemento, dx, dy) : el));
+                    transmiteDesenhoAgoraRef.current();
                 } else if (da.modo === 'resize') {
-                    const origem = da.origens[0]; if (origem) { const w = Math.max(8, m.x - origem.x), h = Math.max(8, m.y - origem.y); aplicaLiveRef.current(prev => prev.map(el => el.id === origem.id ? { ...origem, w, h } : el)); }
+                    const origem = da.origens[0]; if (origem) { const w = Math.max(8, m.x - origem.x), h = Math.max(8, m.y - origem.y); aplicaLiveRef.current(prev => prev.map(el => el.id === origem.id ? { ...origem, w, h } : el)); transmiteDesenhoAgoraRef.current(); }
                 } else if (da.modo === 'marcar') {
                     setMarquee({ x: Math.min(da.sx, m.x), y: Math.min(da.sy, m.y), w: Math.abs(m.x - da.sx), h: Math.abs(m.y - da.sy) });
                 }
@@ -230,11 +295,28 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
             const dx = e.clientX - a.sx, dy = e.clientY - a.sy;
             if (Math.abs(dx) > 3 || Math.abs(dy) > 3) a.moveu = true;
             if (a.tipo === 'pan') { const s = escalaTela(); setVista(v => ({ ...v, x: a.ox + dx / s, y: a.oy + dy / s })); }
-            else if (a.tipo === 'card' && !travadoRef.current) { const m = cursorMundo(e.clientX, e.clientY); setPosLocal(p => ({ ...p, [a.id]: { x: m.x + a.ox, y: m.y + a.oy } })); }
-            else if (a.tipo === 'conectar') { const m = cursorMundo(e.clientX, e.clientY); setConectando({ deCardId: a.id, cx: m.x, cy: m.y }); }
+            else if (a.tipo === 'card' && !travadoRef.current) {
+                const m = cursorMundo(e.clientX, e.clientY);
+                const pos = { x: m.x + a.ox, y: m.y + a.oy };
+                setPosLocal(p => ({ ...p, [a.id]: pos }));
+                // Arraste ao vivo: transmite a posicao efemera (throttle) pros outros clientes verem o no se movendo; o commit continua no soltar.
+                const agora = Date.now();
+                if (agora - ultimoAoVivoRef.current >= 90) { ultimoAoVivoRef.current = agora; transmiteAoVivoRef.current(a.id, Math.round(pos.x), Math.round(pos.y)); }
+            }
         };
         const aoSoltar = (e: MouseEvent) => {
             setPanning(false);
+            const g = grupoArrasteRef.current;
+            if (g) {
+                grupoArrasteRef.current = null;
+                if (!g.moveu) { if (g.idClicado > 0) abrirCardRef.current(g.idClicado); return; }
+                // Persiste cada cartao do grupo em INTEIROS e alinha o override local (mesma regra do arraste individual: igualdade estrita na reconciliacao).
+                const posAtual = posLocalRef.current;
+                setPosLocal(p => { const next = { ...p }; g.origensCards.forEach(origem => { const pos = next[origem.id]; if (pos) next[origem.id] = { x: Math.round(pos.x), y: Math.round(pos.y) }; }); return next; });
+                g.origensCards.forEach(origem => { const pos = posAtual[origem.id]; if (pos) definePosRef.current(origem.id, Math.round(pos.x), Math.round(pos.y)); });
+                if (g.origensElementos.length) persisteDesenhoRef.current();
+                return;
+            }
             const da = desenhoArrasteRef.current;
             if (da) {
                 desenhoArrasteRef.current = null;
@@ -248,24 +330,22 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
                 } else if (da.modo === 'marcar') {
                     const mq = marqueeRef.current;
                     setMarquee(null);
-                    if (da.moveu && mq && (mq.w > 2 || mq.h > 2)) setSelIds(elementosRef.current.filter(el => intersecta(mq, bbox(el))).map(el => el.id));
-                    else setSelIds([]);
-                    setDepSelId(null);
+                    if (da.moveu && mq && (mq.w > 2 || mq.h > 2)) {
+                        setSelIds(elementosRef.current.filter(el => intersecta(mq, bbox(el))).map(el => el.id));
+                        // O marquee tambem seleciona CARTOES: qualquer no tocado pela area entra no grupo.
+                        setSelCardIds(posCardsAtuaisRef.current.filter(p => intersecta(mq, { x: p.x, y: p.y, w: DIM.w, h: DIM.h })).map(p => p.id));
+                    }
+                    else { setSelIds([]); setSelCardIds([]); }
                 } else if (da.moveu) persisteDesenhoRef.current();
                 return;
             }
             const a = arrasteRef.current; if (!a) return;
-            if (a.tipo === 'card' && a.moveu && !travadoRef.current) { const pos = posLocalRef.current[a.id]; if (pos) definePosRef.current(a.id, Math.round(pos.x), Math.round(pos.y)); }
-            else if (a.tipo === 'card' && !a.moveu) abrirCardRef.current(a.id);
-            else if (a.tipo === 'pan' && !a.moveu) setDepSelId(null);
-            else if (a.tipo === 'conectar') {
-                const alvo = document.elementFromPoint(e.clientX, e.clientY) as Element | null;
-                const elCard = alvo?.closest('[data-card-id]');
-                const alvoId = elCard ? Number(elCard.getAttribute('data-card-id')) : 0;
-                if (alvoId && alvoId !== a.id) criaDepRef.current(a.id, alvoId, null, true);
-                else { setPicker({ dependenteId: a.id }); setBuscaPicker(''); }
-                setConectando(null);
+            if (a.tipo === 'card' && a.moveu && !travadoRef.current) {
+                const pos = posLocalRef.current[a.id];
+                // Alinha o override local ao INTEIRO persistido: a reconciliacao limpa o override por igualdade com o servidor — float local vs int salvo deixava o override preso, e este cliente parava de ver movimentos deste card feitos por outros.
+                if (pos) { const px = Math.round(pos.x), py = Math.round(pos.y); setPosLocal(p => ({ ...p, [a.id]: { x: px, y: py } })); definePosRef.current(a.id, px, py); }
             }
+            else if (a.tipo === 'card' && !a.moveu) abrirCardRef.current(a.id);
             arrasteRef.current = null;
         };
         window.addEventListener('mousemove', aoMover); window.addEventListener('mouseup', aoSoltar);
@@ -278,7 +358,7 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
             const alvo = e.target as HTMLElement | null;
             if (alvo && (alvo.tagName === 'INPUT' || alvo.tagName === 'TEXTAREA')) return;
             if ((e.key === 'Delete' || e.key === 'Backspace') && selIds.length) { e.preventDefault(); const ids = new Set(selIds); setSelIds([]); comita(prev => prev.filter(el => !ids.has(el.id))); }
-            else if (e.key === 'Escape') { setSelIds([]); setFerramenta('selecionar'); }
+            else if (e.key === 'Escape') { setSelIds([]); setSelCardIds([]); setFerramenta('selecionar'); }
         };
         window.addEventListener('keydown', aoTecla);
         return () => window.removeEventListener('keydown', aoTecla);
@@ -291,24 +371,32 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
         if (e.button === 1) { e.preventDefault(); return; }
         if (e.button !== 0 || ferramenta !== 'selecionar') return;
         e.stopPropagation();
+        // Cartao dentro da selecao de grupo: arrasta o grupo inteiro (cartoes + desenhos selecionados). Clique sem mover continua abrindo a ficha. preventDefault mata drag nativo/selecao de texto que engoliriam o mouseup.
+        if (!travado && selCardIds.includes(card.id)) {
+            e.preventDefault();
+            const m = cursorMundo(e.clientX, e.clientY);
+            grupoArrasteRef.current = { sx: m.x, sy: m.y, idClicado: card.id, origensCards: posCardsAtuaisRef.current.filter(p => selCardIds.includes(p.id)), origensElementos: elementos.filter(el => selIds.includes(el.id)), moveu: false };
+            return;
+        }
+        if (selCardIds.length) setSelCardIds([]);
         const pos = posCard(card), m = cursorMundo(e.clientX, e.clientY);
         arrasteRef.current = { tipo: 'card', id: card.id, sx: e.clientX, sy: e.clientY, ox: pos.x - m.x, oy: pos.y - m.y, moveu: false };
-    };
-    const aoMouseDownHandle = (e: ReactMouseEvent, card: Card) => {
-        if (travado) return;
-        if (e.button !== 0 || ferramenta !== 'selecionar') return;
-        e.stopPropagation();
-        const m = cursorMundo(e.clientX, e.clientY);
-        arrasteRef.current = { tipo: 'conectar', id: card.id, sx: e.clientX, sy: e.clientY, ox: 0, oy: 0, moveu: false };
-        setConectando({ deCardId: card.id, cx: m.x, cy: m.y });
     };
     const aoMouseDownElemento = (e: ReactMouseEvent, el: Elemento) => {
         if (travado) return;
         if (e.button !== 0 || ferramenta !== 'selecionar') return;
         e.stopPropagation();
         const jaSel = selIds.includes(el.id);
+        // Desenho dentro de uma selecao mista (com cartoes): arrasta o grupo inteiro. preventDefault mata drag nativo/selecao de texto que engoliriam o mouseup.
+        if (jaSel && selCardIds.length > 0 && !e.shiftKey) {
+            e.preventDefault();
+            const m = cursorMundo(e.clientX, e.clientY);
+            grupoArrasteRef.current = { sx: m.x, sy: m.y, idClicado: 0, origensCards: posCardsAtuaisRef.current.filter(p => selCardIds.includes(p.id)), origensElementos: elementos.filter(x => selIds.includes(x.id)), moveu: false };
+            return;
+        }
+        if (!jaSel && !e.shiftKey && selCardIds.length) setSelCardIds([]);
         const nova = e.shiftKey ? (jaSel ? selIds.filter(i => i !== el.id) : [...selIds, el.id]) : (jaSel ? selIds : [el.id]);
-        setSelIds(nova); setDepSelId(null);
+        setSelIds(nova);
         if (e.shiftKey && jaSel) return;
         const m = cursorMundo(e.clientX, e.clientY);
         const origens = elementos.filter(x => nova.includes(x.id));
@@ -320,6 +408,15 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
         const m = cursorMundo(e.clientX, e.clientY);
         desenhoArrasteRef.current = { modo: 'resize', tipo: el.tipo, sx: m.x, sy: m.y, origens: [el], moveu: false };
     };
+    // Cursor ao vivo: transmite o ponteiro em coordenadas de MUNDO (throttle) pra sala do objetivo; os outros clientes desenham o cursor com o username.
+    const aoMoverCursor = (e: ReactMouseEvent) => {
+        const agora = Date.now();
+        if (agora - ultimoCursorRef.current < 80) return;
+        ultimoCursorRef.current = agora;
+        const m = cursorMundo(e.clientX, e.clientY);
+        transmiteCursorRef.current(Math.round(m.x), Math.round(m.y));
+    };
+
     const aoMouseDownFundo = (e: ReactMouseEvent) => {
         if (e.button === 1) { iniciaPan(e); return; }
         if (e.button !== 0) return;
@@ -337,17 +434,8 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
 
     const alteraZoom = (delta: number) => setVista(v => ({ ...v, z: Math.max(0.4, Math.min(2, Number((v.z + delta).toFixed(2)))) }));
 
-    const escolhePickerRequisito = (requisitoId: number) => { if (picker) criaDependenciaCard(picker.dependenteId, requisitoId, null, true); setPicker(null); };
-
     const aplicaCor = (c: string) => { setCorAtiva(c); if (selIds.length) { const ids = new Set(selIds); comita(prev => prev.map(el => ids.has(el.id) ? { ...el, cor: c } : el)); } };
     const excluiSelecionado = () => { if (!selIds.length) return; const ids = new Set(selIds); setSelIds([]); comita(prev => prev.filter(el => !ids.has(el.id))); };
-
-    const candidatosPicker = useMemo(() => {
-        if (!picker) return [];
-        const jaRequisitos = new Set(dependenciasCards.registros.filter(d => d.fkCardsDependenteId === picker.dependenteId).map(d => d.fkCardsRequisitoId));
-        const busca = buscaPicker.trim().toLowerCase();
-        return todosCards.registros.filter(c => c.id !== picker.dependenteId && !jaRequisitos.has(c.id) && (!busca || c.titulo.toLowerCase().includes(busca)));
-    }, [picker, dependenciasCards.registros, todosCards.registros, buscaPicker]);
 
     const corpoVisual = (el: Elemento) => {
         if (el.tipo === 'retangulo') return <rect x={el.x} y={el.y} width={el.w ?? 0} height={el.h ?? 0} rx={6} fill="none" stroke={el.cor} strokeWidth={2} />;
@@ -391,62 +479,63 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
             {cards.erro && <p className={styles.erro}>{cards.erro}</p>}
 
             <div className={styles.corpo}>
-                <div className={`${styles.palco} ${ferramenta !== 'selecionar' ? styles.desenhando : ''} ${panning ? styles.movendoCanvas : ''}`} onMouseDown={aoMouseDownFundo} onContextMenu={e => e.preventDefault()}>
+                <div className={`${styles.palco} ${ferramenta !== 'selecionar' ? styles.desenhando : ''} ${panning ? styles.movendoCanvas : ''}`} onMouseDown={aoMouseDownFundo} onMouseMove={aoMoverCursor} onContextMenu={e => e.preventDefault()}>
                     {objetivoAtualId === null && <p className={styles.aviso}>Selecione um objetivo.</p>}
                     {objetivoAtualId !== null && !cards.carregando && registros.length === 0 && <p className={styles.aviso}>Nenhum card neste objetivo. Crie cards no Quadro — aqui eles viram nós. Use as ferramentas acima pra anotar o fluxo.</p>}
-                    {conectando && <p className={styles.aviso}>Solte sobre o card que é o <b>requisito</b> (a seta aponta de volta pro card que depende), ou solte no vazio pra buscar em outro objetivo.</p>}
                     <svg ref={svgRef} className={styles.svg} xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <marker id="setaFx" markerWidth="11" markerHeight="11" refX="8" refY="5" orient="auto">
-                                <path d="M1,1 L9,5 L1,9" fill="none" stroke="#b8a67a" strokeWidth={1.6} />
+                            <marker id="setaVinculo" markerWidth="11" markerHeight="11" refX="9" refY="5" orient="auto">
+                                <path d="M1,1 L9,5 L1,9" fill="none" stroke="#B79051" strokeWidth={1.6} />
                             </marker>
                         </defs>
                         <g ref={grupoRef} transform={`translate(${vista.x},${vista.y}) scale(${vista.z})`}>
-                            {depsTocandoVisivel.map(d => {
-                                const pr = posPorId(d.fkCardsRequisitoId), pd = posPorId(d.fkCardsDependenteId);
-                                if (!pr || !pd) return null;
-                                const cr = { x: pr.x + DIM.w / 2, y: pr.y + DIM.h / 2 }, cd = { x: pd.x + DIM.w / 2, y: pd.y + DIM.h / 2 };
-                                const p1 = pontoBorda(cr.x, cr.y, DIM.w, DIM.h, cd.x, cd.y), p2 = pontoBorda(cd.x, cd.y, DIM.w, DIM.h, cr.x, cr.y);
-                                const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
-                                const sel = depSelId === d.id, cor = sel ? '#EBE0C9' : d.bloqueante ? '#d98a3c' : '#6f6896';
-                                const caminho = `M${p1.x},${p1.y} Q ${mx},${my} ${p2.x},${p2.y}`;
-                                const rotulo = (d.descricao || '').trim();
-                                const selecionaDep = (e: ReactMouseEvent) => { if (e.button !== 0) return; e.stopPropagation(); setDepSelId(d.id); setSelIds([]); };
-                                return (
-                                    <g key={d.id}>
-                                        <path d={caminho} fill="none" stroke={cor} strokeWidth={sel ? 3 : 2} strokeDasharray={d.bloqueante ? undefined : '5 5'} markerEnd="url(#setaFx)" opacity={0.92} />
-                                        <path d={caminho} fill="none" stroke="transparent" strokeWidth={16} style={{ cursor: 'pointer' }} onMouseDown={selecionaDep} />
-                                        {rotulo && <text x={mx} y={my - 4} textAnchor="middle" fontSize={10} fill={cor} style={{ cursor: 'pointer' }} onMouseDown={selecionaDep}>{rotulo.length > 26 ? rotulo.slice(0, 25) + '…' : rotulo}</text>}
-                                    </g>
-                                );
+                            {vinculosVisiveis.map(vinculo => {
+                                const cardPai = registros.find(c => c.id === vinculo.paiId), cardFilho = registros.find(c => c.id === vinculo.filhoId);
+                                if (!cardPai || !cardFilho) return null;
+                                const pp = posCard(cardPai), pf = posCard(cardFilho);
+                                const centroPai = { x: pp.x + DIM.w / 2, y: pp.y + DIM.h / 2 }, centroFilho = { x: pf.x + DIM.w / 2, y: pf.y + DIM.h / 2 };
+                                const p1 = pontoBorda(centroPai.x, centroPai.y, DIM.w, DIM.h, centroFilho.x, centroFilho.y);
+                                const p2 = pontoBorda(centroFilho.x, centroFilho.y, DIM.w, DIM.h, centroPai.x, centroPai.y);
+                                return <line key={`v${vinculo.id}`} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="#B79051" strokeWidth={2} markerEnd="url(#setaVinculo)" opacity={0.75} style={{ pointerEvents: 'none' }} />;
                             })}
 
-                            {[...fantasmas.entries()].map(([cardId, p]) => {
-                                const leve = cardLevePorId.get(cardId);
-                                const objId = leve?.fkObjetivosId;
-                                const linhas = quebraTexto(tituloPorId(cardId), 24);
+                            {(() => {
+                                // No-fantasma por cartao de fora do objetivo (um por cartao), ancorado a direita do primeiro no visivel vinculado; segue o no ao arrastar.
+                                const posFantasma = new Map<number, { x: number; y: number }>();
+                                let ordem = 0;
+                                vinculosCruzados.forEach(vinculo => {
+                                    if (posFantasma.has(vinculo.foraId)) return;
+                                    const ancora = registros.find(c => c.id === vinculo.dentroId);
+                                    if (!ancora) return;
+                                    const p = posCard(ancora);
+                                    posFantasma.set(vinculo.foraId, { x: p.x + DIM.w + 80, y: p.y + (ordem++ % 3) * (DIM.h + 24) });
+                                });
                                 return (
-                                    <g key={'g' + cardId} style={{ cursor: 'pointer' }} onMouseDown={e => { if (e.button !== 0) return; e.stopPropagation(); if (objId) setObjetivoAtualId(objId); }}>
-                                        <rect x={p.x} y={p.y} width={DIM.w} height={DIM.h} rx={13} fill="#0d0b14" fillOpacity={0.6} stroke="#5a5468" strokeWidth={1.6} strokeDasharray="5 4" />
-                                        {linhas.map((ln, i) => <text key={i} className={styles.tJunge} x={p.x + DIM.w / 2} y={p.y + DIM.h / 2 - (linhas.length - 1) * 8 + i * 16} textAnchor="middle" fontSize={12.5} fill="#aba6b8">{ln}</text>)}
-                                        <text className={styles.tJunge} x={p.x + DIM.w / 2} y={p.y + DIM.h - 8} textAnchor="middle" fontSize={9.5} fill="#7a6f9c">↗ {objId ? objetivoNome(objId) : 'outro objetivo'}</text>
-                                    </g>
-                                );
-                            })}
-
-                            {conectando && (() => { const de = registros.find(c => c.id === conectando.deCardId); if (!de) return null; const p = posCard(de); return <line x1={p.x + DIM.w / 2} y1={p.y + DIM.h} x2={conectando.cx} y2={conectando.cy} stroke="#EBE0C9" strokeWidth={2} strokeDasharray="4 4" style={{ pointerEvents: 'none' }} />; })()}
-
-                            {objetivoAtual && (() => {
-                                const ox = 30, oy = 24, ow = 340, oh = 96;
-                                const corTranca = objetivoAtual.motivoTranca === 'CONCLUIDO' ? '#8fc9a0' : objetivoAtual.motivoTranca === 'INTERROMPIDO' ? '#e0a0a0' : '#8a8474';
-                                const rotuloTranca = objetivoAtual.motivoTranca === 'CONCLUIDO' ? '🔒 Concluído' : objetivoAtual.motivoTranca === 'INTERROMPIDO' ? '🔒 Interrompido' : 'Ativo';
-                                return (
-                                    <g style={{ cursor: 'pointer' }} onMouseDown={e => { if (e.button !== 0 || ferramenta !== 'selecionar') return; e.stopPropagation(); abrirFichaObjetivo(objetivoAtual.id); }}>
-                                        <rect x={ox} y={oy} width={ow} height={oh} rx={16} fill="#B79051" fillOpacity={0.12} stroke="#B79051" strokeWidth={2.6} />
-                                        <circle cx={ox + 18} cy={oy + 22} r={6} fill="#B79051" stroke="rgba(0,0,0,.4)" strokeWidth={1} />
-                                        <text className={styles.tCinzel} x={ox + 34} y={oy + 28} fontSize={16} fill="#EBE0C9">{objetivoAtual.nome}</text>
-                                        <text className={styles.tJunge} x={ox + 16} y={oy + 54} fontSize={11.5} fill={corTranca}>{rotuloTranca}</text>
-                                        <text className={styles.tJunge} x={ox + 16} y={oy + 78} fontSize={10.5} fill="#7c7565">Clique para abrir a ficha (descrição + pendências)</text>
+                                    <g>
+                                        {vinculosCruzados.map(vinculo => {
+                                            const ancora = registros.find(c => c.id === vinculo.dentroId);
+                                            const pf = posFantasma.get(vinculo.foraId);
+                                            if (!ancora || !pf) return null;
+                                            const pa = posCard(ancora);
+                                            const centroAncora = { x: pa.x + DIM.w / 2, y: pa.y + DIM.h / 2 }, centroFantasma = { x: pf.x + DIM.w / 2, y: pf.y + DIM.h / 2 };
+                                            const p1 = pontoBorda(centroAncora.x, centroAncora.y, DIM.w, DIM.h, centroFantasma.x, centroFantasma.y);
+                                            const p2 = pontoBorda(centroFantasma.x, centroFantasma.y, DIM.w, DIM.h, centroAncora.x, centroAncora.y);
+                                            // Direcao pai -> filho preservada: se o pai e o de fora, a seta sai do fantasma.
+                                            const [de, para] = vinculo.paiDentro ? [p1, p2] : [p2, p1];
+                                            return <line key={`vc${vinculo.id}`} x1={de.x} y1={de.y} x2={para.x} y2={para.y} stroke="#B79051" strokeWidth={1.6} strokeDasharray="6 5" markerEnd="url(#setaVinculo)" opacity={0.55} style={{ pointerEvents: 'none' }} />;
+                                        })}
+                                        {[...posFantasma.entries()].map(([foraId, p]) => {
+                                            const cardFora = todosCards.registros.find(c => c.id === foraId);
+                                            const nomeObjetivo = objetivos.registros.find(o => o.id === cardFora?.fkObjetivosId)?.nome ?? 'outro objetivo';
+                                            const linhas = quebraTexto(cardFora?.titulo ?? `#${foraId}`, 24);
+                                            return (
+                                                <g key={`f${foraId}`} style={{ cursor: 'pointer' }} onMouseDown={e => { if (e.button !== 0 || ferramenta !== 'selecionar') return; e.stopPropagation(); abrirCardPorId(foraId); }}>
+                                                    <rect x={p.x} y={p.y} width={DIM.w} height={DIM.h} rx={13} fill="#0d0b14" fillOpacity={0.6} stroke="#5a5468" strokeWidth={1.6} strokeDasharray="5 4" />
+                                                    {linhas.map((ln, i) => <text key={i} className={styles.tJunge} x={p.x + DIM.w / 2} y={p.y + DIM.h / 2 - (linhas.length - 1) * 8 + i * 16 - 4} textAnchor="middle" fontSize={12.5} fill="#aba6b8">{ln}</text>)}
+                                                    <text className={styles.tJunge} x={p.x + DIM.w / 2} y={p.y + DIM.h - 9} textAnchor="middle" fontSize={9.5} fill="#7a6f9c">↗ {nomeObjetivo}</text>
+                                                </g>
+                                            );
+                                        })}
                                     </g>
                                 );
                             })()}
@@ -462,10 +551,17 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
                                         <text className={styles.tJunge} x={p.x + DIM.w - 11} y={p.y + 17} textAnchor="end" fontSize={9.5} fill="#8a8474">{nomeColuna(card).toUpperCase()}</text>
                                         {linhas.map((ln, i) => <text key={i} className={styles.tJunge} x={p.x + DIM.w / 2} y={startY + i * 16} textAnchor="middle" fontSize={13.5} fill="#EBE0C9">{ln}</text>)}
                                         <rect className={styles.alvo} data-card-id={card.id} x={p.x} y={p.y} width={DIM.w} height={DIM.h} rx={13} fill="transparent" />
-                                        {card.motivoTranca !== null && <text className={styles.tJunge} x={p.x + 11} y={p.y + DIM.h - 9} fontSize={9.5} fill={card.motivoTranca === 'CONCLUIDO' ? '#8fc9a0' : '#e0a0a0'}>🔒 {card.motivoTranca === 'CONCLUIDO' ? 'CONCLUÍDO' : 'INTERROMPIDO'}</text>}
-                                        {!travado && <circle className={styles.handle} cx={p.x + DIM.w / 2} cy={p.y + DIM.h} r={6} fill="#16121f" stroke="#B79051" strokeWidth={1.6} onMouseDown={e => aoMouseDownHandle(e, card)}>
-                                            <title>Arraste para criar uma dependência</title>
-                                        </circle>}
+                                        {card.motivoTranca !== null
+                                            ? <text className={styles.tJunge} x={p.x + 11} y={p.y + DIM.h - 9} fontSize={9.5} fill={card.motivoTranca === 'CONCLUIDO' ? '#8fc9a0' : '#e0a0a0'}>🔒 {card.motivoTranca === 'CONCLUIDO' ? 'CONCLUÍDO' : 'INTERROMPIDO'}</text>
+                                            : (() => { const progresso = checklistPorCard.get(card.id); return progresso && progresso.total > 0 ? <text className={styles.tJunge} x={p.x + 11} y={p.y + DIM.h - 9} fontSize={9.5} fill={progresso.feitos === progresso.total ? '#8fc9a0' : '#8a8474'}>☑ {progresso.feitos}/{progresso.total}</text> : null; })()}
+                                        {(membrosPorCard.get(card.id) ?? []).length > 0 && (
+                                            <foreignObject x={p.x + 8} y={p.y + DIM.h - 32} width={DIM.w - 16} height={26} style={{ pointerEvents: 'none' }}>
+                                                <div className={styles.avataresNo}>
+                                                    {(membrosPorCard.get(card.id) ?? []).map(membro => <span key={membro.id} className={styles.avatarNo} title={membro.username}><AvatarUsuarioEmVisualizacao_CACHED idUsuario={membro.id} /></span>)}
+                                                </div>
+                                            </foreignObject>
+                                        )}
+                                        {selCardIds.includes(card.id) && <rect x={p.x - 4} y={p.y - 4} width={DIM.w + 8} height={DIM.h + 8} rx={15} fill="none" stroke="#B79051" strokeWidth={1.4} strokeDasharray="5 4" pointerEvents="none" />}
                                     </g>
                                 );
                             })}
@@ -485,58 +581,47 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Fluxograma() {
 
                             {rascunho && <g opacity={0.85} pointerEvents="none">{corpoVisual(rascunho)}</g>}
                             {marquee && <rect x={marquee.x} y={marquee.y} width={marquee.w} height={marquee.h} fill="rgba(183,144,81,0.10)" stroke="#B79051" strokeWidth={1} strokeDasharray="4 3" pointerEvents="none" />}
+
+                            {[...cursoresFluxograma.entries()].map(([idUsuario, cursor]) => {
+                                const cor = CORES_CURSOR[idUsuario % CORES_CURSOR.length];
+                                // Escala inversa ao zoom: o cursor mantem tamanho de tela constante, como no Figma.
+                                return (
+                                    <g key={`cur${idUsuario}`} transform={`translate(${cursor.x},${cursor.y}) scale(${1 / vista.z})`} pointerEvents="none" opacity={0.95}>
+                                        <path d="M0,0 L0,14 L4,10.5 L7,16 L9,15 L6.2,9.6 L11,9 Z" fill={cor} stroke="#0a0810" strokeWidth={0.8} />
+                                        <text className={styles.tJunge} x={13} y={19} fontSize={10.5} fill={cor} stroke="#0a0810" strokeWidth={0.25} paintOrder="stroke">{cursor.username}</text>
+                                    </g>
+                                );
+                            })}
                         </g>
                     </svg>
 
-                    {editandoEl && (() => { const tela = mundoParaTela(editandoEl.x, editandoEl.y); return <textarea className={styles.editorTexto} style={{ left: tela.x, top: tela.y - 16, transform: `scale(${vista.z})`, color: editandoEl.cor, fontSize: 16, lineHeight: '20px' }} value={editandoEl.texto ?? ''} autoFocus onChange={e => aplicaLive(prev => prev.map(x => x.id === editandoEl.id ? { ...x, texto: e.target.value } : x))} onBlur={() => finalizaTexto(editandoEl.id)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); finalizaTexto(editandoEl.id); } if (e.key === 'Escape') finalizaTexto(editandoEl.id); }} />; })()}
+                    {editandoEl && (() => { const tela = mundoParaTela(editandoEl.x, editandoEl.y); return <textarea className={styles.editorTexto} style={{ left: tela.x, top: tela.y - 16, transform: `scale(${vista.z})`, color: editandoEl.cor, fontSize: 16, lineHeight: '20px' }} value={editandoEl.texto ?? ''} autoFocus onChange={e => { aplicaLive(prev => prev.map(x => x.id === editandoEl.id ? { ...x, texto: e.target.value } : x)); transmiteDesenhoAoVivoAgora(); }} onBlur={() => finalizaTexto(editandoEl.id)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); finalizaTexto(editandoEl.id); } if (e.key === 'Escape') finalizaTexto(editandoEl.id); }} />; })()}
+
+                    {presencaObjetivo.length > 0 && (
+                        <span className={styles.presenca} title={`Vendo agora: ${presencaObjetivo.map(usuario => usuario.username).join(', ')}`} onMouseDown={e => e.stopPropagation()}>
+                            {presencaObjetivo.map(usuario => <span key={usuario.id} className={styles.avatarPresenca}><AvatarUsuarioEmVisualizacao_CACHED idUsuario={usuario.id} /></span>)}
+                        </span>
+                    )}
                 </div>
 
-                <aside className={styles.painel}>
-                    {picker && (
-                        <div className={styles.detalhe}>
-                            <header className={styles.detalheCabecalho}>
-                                <span className={styles.chipPrincipal} style={{ borderColor: '#B79051', color: '#B79051' }}>Adicionar dependência</span>
-                                <button className={styles.fechar} onClick={() => setPicker(null)} title="Fechar">✕</button>
-                            </header>
-                            <p className={styles.ligacaoTexto}><b style={{ color: '#EBE0C9' }}>{tituloPorId(picker.dependenteId)}</b> depende de…</p>
-                            <input className={styles.busca} value={buscaPicker} onChange={e => setBuscaPicker(e.target.value)} placeholder="Buscar card (qualquer objetivo)…" autoFocus />
-                            <div className={styles.listaPicker}>
-                                {candidatosPicker.length === 0 && <p className={styles.aviso} style={{ position: 'static' }}>Nenhum card.</p>}
-                                {candidatosPicker.map(c => (
-                                    <button key={c.id} className={styles.itemPicker} onClick={() => escolhePickerRequisito(c.id)} disabled={salvando}>
-                                        <span>{c.titulo}</span>
-                                        {c.fkObjetivosId !== objetivoAtualId && <span className={styles.itemObjetivo}>↗ {objetivoNome(c.fkObjetivosId)}</span>}
-                                    </button>
-                                ))}
-                            </div>
+                {objetivoAtual && (painelAberto ? (
+                    <aside className={styles.painel}>
+                        <div className={styles.painelCabecalho}>
+                            <span className={styles.painelTitulo}>{objetivoAtual.nome}</span>
+                            <button className={styles.painelToggle} title="Recolher descrição" onClick={() => setPainelAberto(false)}>»</button>
                         </div>
-                    )}
-                    {!travado && !picker && depSel && <PainelDependencia key={depSel.id} dependencia={depSel} tituloPorId={tituloPorId} salvando={salvando} onSalvar={atualizaDependenciaCard} onExcluir={deletaDependenciaCard} onFechar={() => setDepSelId(null)} />}
-                    {!picker && !depSel && <p className={styles.aviso} style={{ position: 'static' }}>Cada card é um nó. Clique pra abrir; arraste o corpo pra reposicionar. Arraste o <b>ponto dourado</b> de um card até outro pra criar dependência — ou solte no vazio pra buscar um card de <b>outro objetivo</b>. Botão <b>esquerdo</b> seleciona (clique ou arraste uma área); botão do <b>meio</b> move o canvas. Use as <b>ferramentas</b> acima (texto, formas, seta, caneta) pra desenhar o passo-a-passo.</p>}
-                </aside>
+                        <span className={styles.painelStatus} style={{ color: objetivoAtual.motivoTranca === 'CONCLUIDO' ? '#8fc9a0' : objetivoAtual.motivoTranca === 'INTERROMPIDO' ? '#e0a0a0' : '#8a8474' }}>
+                            {objetivoAtual.motivoTranca === 'CONCLUIDO' ? '🔒 Concluído' : objetivoAtual.motivoTranca === 'INTERROMPIDO' ? '🔒 Interrompido' : 'Ativo'}
+                        </span>
+                        {objetivoAtual.descricao ? <p className={styles.painelDescricao}>{objetivoAtual.descricao}</p> : <p className={styles.painelVazio}>Sem descrição ainda.</p>}
+                        <button className={styles.botao} onClick={() => abrirFichaObjetivo(objetivoAtual.id)}>Ficha do objetivo</button>
+                    </aside>
+                ) : (
+                    <button className={styles.painelRecolhido} title="Expandir descrição do objetivo" onClick={() => setPainelAberto(true)}>«</button>
+                ))}
             </div>
 
             {objetivoFichaAbertaId !== null && <FichaObjetivo key={objetivoFichaAbertaId} objetivoId={objetivoFichaAbertaId} />}
         </section>
-    );
-};
-
-function PainelDependencia({ dependencia, tituloPorId, salvando, onSalvar, onExcluir, onFechar }: { dependencia: Dependencia; tituloPorId: (id: number) => string; salvando: boolean; onSalvar: (id: number, descricao: string | null, bloqueante: boolean) => Promise<void>; onExcluir: (id: number) => Promise<void>; onFechar: () => void; }) {
-    const [descricao, setDescricao] = useState<string>(dependencia.descricao ?? '');
-    const [bloqueante, setBloqueante] = useState<boolean>(dependencia.bloqueante);
-    return (
-        <div className={styles.detalhe}>
-            <header className={styles.detalheCabecalho}>
-                <span className={styles.chipPrincipal} style={{ borderColor: '#6f6896', color: '#b8b2c6' }}>Dependência</span>
-                <button className={styles.fechar} onClick={onFechar} title="Fechar">✕</button>
-            </header>
-            <p className={styles.ligacaoTexto}><b style={{ color: '#EBE0C9' }}>{tituloPorId(dependencia.fkCardsDependenteId)}</b> depende de <b style={{ color: '#EBE0C9' }}>{tituloPorId(dependencia.fkCardsRequisitoId)}</b></p>
-            <label className={styles.campo}><span>Por quê / nota (texto livre)</span><textarea value={descricao} onChange={e => setDescricao(e.target.value)} placeholder="Antes de A, B precisa ter X cumprido porque…" /></label>
-            <label className={styles.checkbox}><input type="checkbox" checked={bloqueante} onChange={e => setBloqueante(e.target.checked)} /> Bloqueante (trava o desenvolvimento do dependente)</label>
-            <div className={styles.acoes}>
-                <button className={styles.salvar} onClick={() => onSalvar(dependencia.id, descricao.trim() ? descricao.trim() : null, bloqueante)} disabled={salvando}>{salvando ? 'Salvando…' : 'Salvar'}</button>
-                <button className={styles.excluir} onClick={() => { onExcluir(dependencia.id); onFechar(); }} disabled={salvando}>Excluir</button>
-            </div>
-        </div>
     );
 };

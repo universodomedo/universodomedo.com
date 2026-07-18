@@ -19,6 +19,8 @@ import { RegistradorAcaoCentralAudio } from 'Componentes/Elementos/CentralAudio/
 import PainelCentralAudio from 'Componentes/Elementos/CentralAudio/PainelCentralAudio';
 import { RegistradorAcaoControlePalco } from 'Componentes/Elementos/ControlePalco/RegistradorAcaoControlePalco';
 import PainelControlePalco from 'Componentes/Elementos/ControlePalco/PainelControlePalco';
+import { RegistradorAcaoResumoPainelDoMedo } from 'Componentes/Elementos/ResumoPainelDoMedo/RegistradorAcaoResumoPainelDoMedo';
+import PainelResumoPainelDoMedo from 'Componentes/Elementos/ResumoPainelDoMedo/PainelResumoPainelDoMedo';
 
 export interface ModuloAcao {
     id: string;
@@ -50,5 +52,10 @@ export const MODULOS_ACOES: ModuloAcao[] = [
         id: 'controle-palco',
         Registrador: RegistradorAcaoControlePalco,
         Painel: PainelControlePalco,
+    },
+    {
+        id: 'resumo-painel-do-medo',
+        Registrador: RegistradorAcaoResumoPainelDoMedo,
+        Painel: PainelResumoPainelDoMedo,
     },
 ];

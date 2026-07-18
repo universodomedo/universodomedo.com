@@ -14,7 +14,6 @@ interface Contexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta__Props {
     salvando: boolean;
     aplicar: (etiquetaId: number) => Promise<void>;
     irParaCriar: () => void;
-    cancelar: () => void;
 };
 
 const Contexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta = createContext<Contexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta__Props | undefined>(undefined);
@@ -43,7 +42,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta__Provider 
     const irParaCriar = () => abrirOperacaoCard('criar-etiqueta', card.id);
 
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta.Provider value={{ card, disponiveis, salvando, aplicar, irParaCriar, cancelar: fecharOperacaoCard }}>
+        <Contexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta.Provider value={{ card, disponiveis, salvando, aplicar, irParaCriar }}>
             <SPA__PaginaColaboradorPainelDoMedo__AplicarEtiqueta />
         </Contexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta.Provider>
     );

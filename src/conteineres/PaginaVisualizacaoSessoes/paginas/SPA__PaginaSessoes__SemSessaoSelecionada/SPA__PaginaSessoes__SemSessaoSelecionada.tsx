@@ -16,7 +16,7 @@ export default function SPA__PaginaSessoes__SemSessaoSelecionada() {
         <ListagemComposta
             listagem={listagemSessoes}
             modoExibicao={ListagemCompostaModoExibicao.GRADE}
-            itensPorLinha={8}
+            itensPorLinha={5}
             obterIdRegistro={sessao => sessao.id}
             renderizarItem={sessao => <ItemSessao sessao={sessao} aoSelecionar={selecionaSessao} />}
         />
@@ -30,6 +30,7 @@ function ItemSessao({ sessao, aoSelecionar }: { sessao: SessaoListagemContextoRe
             <div className={styles.avatar_narrador}>
                 <AvatarUsuarioEmVisualizacao_CACHED idUsuario={sessao.usuarioMestre.id} />
             </div>
+            <div className={styles.detalhe_data}>{sessao.detalheData}</div>
         </DivClicavel>
     );
 };

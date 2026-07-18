@@ -1,4 +1,4 @@
-import { PAYLOAD__CriarObjetivo, PAYLOAD__CriarColuna, PAYLOAD__CriarCard, PAYLOAD__CriarComentario, PAYLOAD__AtualizarCard, PAYLOAD__ReordenarCards, PAYLOAD__CriarDependenciaCard, PAYLOAD__AtualizarDependenciaCard, PAYLOAD__DeletarDependenciaCard, PAYLOAD__DefinirPosicaoFluxogramaCard, PAYLOAD__DeletarCard, PAYLOAD__AtualizarColuna, PAYLOAD__DeletarColuna, PAYLOAD__ReordenarColunas, PAYLOAD__AtualizarObjetivo, PAYLOAD__DeletarObjetivo, PAYLOAD__SalvarDesenhoFluxograma, PAYLOAD__AtualizarObjetivoFicha, PAYLOAD__CriarItemChecklist, PAYLOAD__MarcarItemChecklist, PAYLOAD__AtualizarItemChecklist, PAYLOAD__DeletarItemChecklist, PAYLOAD__AdicionarMembroCard, PAYLOAD__RemoverMembroCard, PAYLOAD__CriarEtiqueta, PAYLOAD__AtualizarEtiqueta, PAYLOAD__DeletarEtiqueta, PAYLOAD__AplicarEtiquetaCard, PAYLOAD__RemoverEtiquetaCard, PAYLOAD__TrancarCard, PAYLOAD__TrancarObjetivo, PAYLOAD__AtualizarDescricaoCard, PAYLOAD__ListarAnexosCard, AnexoCardDto, PAYLOAD__ConcederPermissaoObjetivo, PAYLOAD__RevogarPermissaoObjetivo } from 'types-nora-api';
+import { PAYLOAD__CriarObjetivo, PAYLOAD__CriarColuna, PAYLOAD__CriarCard, PAYLOAD__CriarComentario, PAYLOAD__AtualizarCard, PAYLOAD__ReordenarCards, PAYLOAD__DefinirPosicaoFluxogramaCard, PAYLOAD__AtualizarColuna, PAYLOAD__DeletarColuna, PAYLOAD__ReordenarColunas, PAYLOAD__AtualizarObjetivo, PAYLOAD__SalvarDesenhoFluxograma, PAYLOAD__AtualizarObjetivoFicha, PAYLOAD__CriarItemChecklist, PAYLOAD__MarcarItemChecklist, PAYLOAD__AtualizarItemChecklist, PAYLOAD__DeletarItemChecklist, PAYLOAD__AdicionarMembroCard, PAYLOAD__RemoverMembroCard, PAYLOAD__CriarEtiqueta, PAYLOAD__AtualizarEtiqueta, PAYLOAD__DeletarEtiqueta, PAYLOAD__AplicarEtiquetaCard, PAYLOAD__RemoverEtiquetaCard, PAYLOAD__TrancarCard, PAYLOAD__TrancarObjetivo, PAYLOAD__AtualizarDescricaoCard, PAYLOAD__ListarAnexosCard, AnexoCardDto, RESPONSE__ResumoPainelDoMedoUsuario, PAYLOAD__ConcederPermissaoObjetivo, PAYLOAD__RevogarPermissaoObjetivo, PAYLOAD__TransformarItemEmCard, PAYLOAD__VincularCardChecklist } from 'types-nora-api';
 
 import useApi from 'Uteis/ApiConsumer/Consumer.tsx';
 
@@ -26,24 +26,8 @@ export async function reordenaCards(payload: PAYLOAD__ReordenarCards): Promise<v
     await useApi<void>({ uri: '/cards/reordenaCards', method: 'POST', data: payload });
 };
 
-export async function criaDependenciaCard(payload: PAYLOAD__CriarDependenciaCard): Promise<void> {
-    await useApi<void>({ uri: '/dependenciasCards/criaDependencia', method: 'POST', data: payload });
-};
-
-export async function atualizaDependenciaCard(payload: PAYLOAD__AtualizarDependenciaCard): Promise<void> {
-    await useApi<void>({ uri: '/dependenciasCards/atualizaDependencia', method: 'POST', data: payload });
-};
-
-export async function deletaDependenciaCard(payload: PAYLOAD__DeletarDependenciaCard): Promise<void> {
-    await useApi<void>({ uri: '/dependenciasCards/deletaDependencia', method: 'POST', data: payload });
-};
-
 export async function definePosicaoFluxogramaCard(payload: PAYLOAD__DefinirPosicaoFluxogramaCard): Promise<void> {
     await useApi<void>({ uri: '/posicoesFluxogramaCards/definePosicao', method: 'POST', data: payload });
-};
-
-export async function deletaCard(payload: PAYLOAD__DeletarCard): Promise<void> {
-    await useApi<void>({ uri: '/cards/deletaCard', method: 'POST', data: payload });
 };
 
 export async function atualizaColuna(payload: PAYLOAD__AtualizarColuna): Promise<void> {
@@ -60,10 +44,6 @@ export async function reordenaColunas(payload: PAYLOAD__ReordenarColunas): Promi
 
 export async function atualizaObjetivo(payload: PAYLOAD__AtualizarObjetivo): Promise<void> {
     await useApi<void>({ uri: '/objetivos/atualizaObjetivo', method: 'POST', data: payload });
-};
-
-export async function deletaObjetivo(payload: PAYLOAD__DeletarObjetivo): Promise<void> {
-    await useApi<void>({ uri: '/objetivos/deletaObjetivo', method: 'POST', data: payload });
 };
 
 export async function salvaDesenhoFluxograma(payload: PAYLOAD__SalvarDesenhoFluxograma): Promise<void> {
@@ -88,6 +68,14 @@ export async function atualizaItemChecklist(payload: PAYLOAD__AtualizarItemCheck
 
 export async function deletaItemChecklist(payload: PAYLOAD__DeletarItemChecklist): Promise<void> {
     await useApi<void>({ uri: '/itensChecklist/deletaItem', method: 'POST', data: payload });
+};
+
+export async function transformaItemChecklistEmCard(payload: PAYLOAD__TransformarItemEmCard): Promise<void> {
+    await useApi<void>({ uri: '/itensChecklist/transformaEmCard', method: 'POST', data: payload });
+};
+
+export async function vinculaCardChecklist(payload: PAYLOAD__VincularCardChecklist): Promise<void> {
+    await useApi<void>({ uri: '/itensChecklist/vinculaCard', method: 'POST', data: payload });
 };
 
 export async function adicionaMembroCard(payload: PAYLOAD__AdicionarMembroCard): Promise<void> {
@@ -121,6 +109,10 @@ export async function revogaPermissaoObjetivo(payload: PAYLOAD__RevogarPermissao
 export async function listaAnexosDoCard(payload: PAYLOAD__ListarAnexosCard): Promise<AnexoCardDto[]> {
     const resposta = await useApi<AnexoCardDto[]>({ uri: '/anexosCards/listaDoCard', method: 'POST', data: payload });
     return resposta ?? [];
+};
+
+export async function resumoPainelDoMedo(): Promise<RESPONSE__ResumoPainelDoMedoUsuario | null> {
+    return await useApi<RESPONSE__ResumoPainelDoMedoUsuario>({ uri: '/cards/resumoDoUsuario', method: 'POST', data: {} });
 };
 
 export async function atualizaDescricaoCard(payload: PAYLOAD__AtualizarDescricaoCard): Promise<void> {

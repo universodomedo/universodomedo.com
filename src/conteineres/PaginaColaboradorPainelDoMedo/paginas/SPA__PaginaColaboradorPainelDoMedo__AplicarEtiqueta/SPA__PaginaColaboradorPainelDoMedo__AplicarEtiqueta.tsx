@@ -6,7 +6,7 @@ import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 import { useContexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta/contexto';
 
 export default function SPA__PaginaColaboradorPainelDoMedo__AplicarEtiqueta() {
-    const { disponiveis, salvando, aplicar, irParaCriar, cancelar } = useContexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta();
+    const { disponiveis, salvando, aplicar, irParaCriar } = useContexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta();
 
     return (
         <ConteudoForm>
@@ -23,7 +23,6 @@ export default function SPA__PaginaColaboradorPainelDoMedo__AplicarEtiqueta() {
 
             <ConteudoForm.AreaBotoes>
                 <button type="button" onClick={irParaCriar} disabled={salvando}>Criar nova etiqueta</button>
-                <button type="button" data-variante="secundario" onClick={cancelar} disabled={salvando}>Cancelar</button>
             </ConteudoForm.AreaBotoes>
         </ConteudoForm>
     );

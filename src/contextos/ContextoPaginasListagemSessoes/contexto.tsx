@@ -44,7 +44,7 @@ export const ContextoPaginasListagemSessoesProvider = ({ children, idSessaoInici
 
 function obtemListagemSessoes() {
     return useNoraGraphQLListagem('Sessao', {
-        select: ['id', 'dataCriacao', 'dataInicio', 'tituloInteligente', 'dadosArteCapa', 'usuarioMestre'],
+        select: ['id', 'dataCriacao', 'dataInicio', 'estadoAtual', 'detalheData', 'tituloInteligente', 'dadosArteCapa', 'usuarioMestre'],
         itensPorPagina: 24,
         carregando: 'Buscando Sessões',
         mensagemErro: 'Houve um erro recuperando as Sessões à serem listadas',

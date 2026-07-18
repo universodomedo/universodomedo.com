@@ -7,7 +7,7 @@ import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputCom
 import { useContexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo/contexto';
 
 export default function SPA__PaginaColaboradorPainelDoMedo__CadastroObjetivo() {
-    const { formularioNovoObjetivo, salvar, cancelar } = useContexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo();
+    const { formularioNovoObjetivo, salvar } = useContexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo();
 
     return (
         <ConteudoForm>
@@ -20,7 +20,6 @@ export default function SPA__PaginaColaboradorPainelDoMedo__CadastroObjetivo() {
 
             <ConteudoForm.AreaBotoes>
                 <button type="button" onClick={salvar} disabled={!formularioNovoObjetivo.podeSalvar}>{formularioNovoObjetivo.salvando ? 'Criando...' : 'Criar Objetivo'}</button>
-                <button type="button" data-variante="secundario" onClick={cancelar} disabled={formularioNovoObjetivo.salvando}>Cancelar</button>
             </ConteudoForm.AreaBotoes>
         </ConteudoForm>
     );

@@ -19,17 +19,24 @@ import { comprimeImagemEvidencia } from 'Uteis/ImagemEvidencia/comprimeImagemEvi
 import { useContexto__PaginaColaboradorPainelDoMedo__FichaCard } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__FichaCard/contexto';
 
 export default function SPA__PaginaColaboradorPainelDoMedo__FichaCard() {
-    const { card, salvando, podeIncluir, podeRemover, motivoTrancaCard, motivoTrancaObjetivo, podeTrancar, abrirTrancarCartao, destrancar, editarTitulo, atualizarDescricao, abrirAplicarEtiqueta, abrirAdicionarItemChecklist, abrirAdicionarDependencia, excluir, abrirCardPorId, cardsMencionaveis, membros, adicionarMembro, removerMembro, etiquetasDoCard, removerEtiqueta, feed, comentar, anexosPorComentario, checklist, marcaItemChecklist, deletaItemChecklist, requisitos, removeDependencia, tituloCard, rotuloObjetivoDoCard } = useContexto__PaginaColaboradorPainelDoMedo__FichaCard();
+    const { card, salvando, podeIncluir, podeRemover, motivoTrancaCard, motivoTrancaObjetivo, podeTrancar, abrirTrancarCartao, destrancar, editarTitulo, atualizarDescricao, abrirAplicarEtiqueta, abrirAdicionarItemChecklist, abrirCardPorId, cardsMencionaveis, membros, adicionarMembro, removerMembro, etiquetasDoCard, removerEtiqueta, feed, comentar, anexosPorComentario, checklist, marcaItemChecklist, deletaItemChecklist, resolveReferenciaChecklist, transformarItemEmCard, abrirVincularCard, cardsQueReferenciam, tituloCard, defineDadosNaoSalvos } = useContexto__PaginaColaboradorPainelDoMedo__FichaCard();
 
     const [novoComentario, setNovoComentario] = useState('');
-    const [confirmandoExcluir, setConfirmandoExcluir] = useState(false);
     const [descricaoDraft, setDescricaoDraft] = useState<JSONContent | null>(null);
     const [anexosPendentes, setAnexosPendentes] = useState<readonly AnexoEvidencia[]>([]);
     const [imagemAmpliada, setImagemAmpliada] = useState<string | null>(null);
     const arquivoRef = useRef<HTMLInputElement | null>(null);
 
     // Pulo entre cards por referência (#id) não remonta a SPA: ressincroniza os estados locais do composer/descrição.
-    useEffect(() => { setNovoComentario(''); setConfirmandoExcluir(false); setDescricaoDraft(null); setAnexosPendentes([]); setImagemAmpliada(null); }, [card.id]);
+    useEffect(() => { setNovoComentario(''); setDescricaoDraft(null); setAnexosPendentes([]); setImagemAmpliada(null); }, [card.id]);
+
+    // Rascunhos da ficha registrados no guard global: qualquer navegação que descartaria comentário/evidência/descrição em edição pede confirmação (fechar, trocar de card, abrir operação); beforeunload cobre fechar/atualizar a aba.
+    const temRascunho = novoComentario.trim() !== '' || anexosPendentes.length > 0 || descricaoDraft !== null;
+    useEffect(() => {
+        defineDadosNaoSalvos(temRascunho ? 'comentário, evidência ou descrição em edição' : null);
+        return () => defineDadosNaoSalvos(null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [temRascunho]);
 
     // Evidencias: compressao obrigatoria no cliente (max 1600px, WebP) antes de entrar na fila; max 5 por comentário.
     const adicionaEvidencias = async (arquivos: File[]) => {
@@ -52,6 +59,14 @@ export default function SPA__PaginaColaboradorPainelDoMedo__FichaCard() {
         setAnexosPendentes([]);
     };
     const enviaDescricao = async () => { if (descricaoDraft === null) return; await atualizarDescricao(JSON.stringify(descricaoDraft)); setDescricaoDraft(null); };
+
+    // Feed em BLOCOS de grupo (autor consecutivo): avatar no topo + linha vertical continua ao lado das mensagens — segmento por linha quebrava no gap da lista.
+    const gruposFeed: { chave: string; usuarioId: number; username: string; itens: typeof feed }[] = [];
+    feed.forEach(item => {
+        const ultimo = gruposFeed[gruposFeed.length - 1];
+        if (ultimo && ultimo.usuarioId === item.usuarioId) ultimo.itens.push(item);
+        else gruposFeed.push({ chave: item.chave, usuarioId: item.usuarioId, username: item.username, itens: [item] });
+    });
 
     return (
         <ConteudoForm>
@@ -112,21 +127,23 @@ export default function SPA__PaginaColaboradorPainelDoMedo__FichaCard() {
                         </section>
 
                         <section className={styles.painelSecao}>
-                            <SecaoChecklist itens={checklist.registros} carregando={checklist.carregando} salvando={salvando} onAdicionar={podeIncluir ? abrirAdicionarItemChecklist : undefined} onMarcar={podeIncluir ? marcaItemChecklist : undefined} onExcluir={podeRemover ? deletaItemChecklist : undefined} />
+                            <SecaoChecklist itens={checklist.registros} carregando={checklist.carregando} salvando={salvando} onAdicionar={podeIncluir ? abrirAdicionarItemChecklist : undefined} onMarcar={podeIncluir ? marcaItemChecklist : undefined} onExcluir={podeRemover ? deletaItemChecklist : undefined} resolveReferencia={resolveReferenciaChecklist} onTransformarEmCard={podeIncluir ? transformarItemEmCard : undefined} onVincular={podeIncluir ? abrirVincularCard : undefined} aoAbrirCardReferencia={abrirCardPorId} />
                         </section>
 
-                        <section className={styles.painelSecao}>
-                            <span className={styles.rotuloSecao}>Dependências</span>
-                            <span className={styles.dicaGestao}>Este card precisa de:</span>
-                            {requisitos.length === 0 && <p className={styles.estado}>Nenhuma dependência.</p>}
-                            {requisitos.map(dependencia => (
-                                <div key={dependencia.id} className={styles.itemDependencia}>
-                                    <span>{dependencia.bloqueante ? '🔒 ' : ''}{tituloCard(dependencia.fkCardsRequisitoId)}{rotuloObjetivoDoCard(dependencia.fkCardsRequisitoId) ? ` ↗ ${rotuloObjetivoDoCard(dependencia.fkCardsRequisitoId)}` : ''}</span>
-                                    {podeRemover && <button className={styles.removerChip} onClick={() => removeDependencia(dependencia.id)} disabled={salvando} title="Remover dependência">✕</button>}
-                                </div>
-                            ))}
-                            {podeIncluir && <button className={styles.adicionarLinha} onClick={abrirAdicionarDependencia}>+ Adicionar dependência</button>}
-                        </section>
+                        {cardsQueReferenciam.length > 0 && (
+                            <section className={styles.painelSecao}>
+                                <span className={styles.rotuloSecao}>Faz parte de</span>
+                                <span className={styles.dicaGestao}>Este cartão é item de checklist de:</span>
+                                {cardsQueReferenciam.map(pai => (
+                                    <button key={pai.cardId} className={styles.itemCardPai} onClick={() => abrirCardPorId(pai.cardId)} title={`Abrir cartão #${pai.cardId}`}>
+                                        <span className={styles.chipCartaoPai}>Cartão</span>
+                                        <span className={styles.textoCardPai}>{pai.titulo}{pai.rotuloObjetivo ? ` ↗ ${pai.rotuloObjetivo}` : ''}</span>
+                                        <span className={styles.setaCardPai}>↗</span>
+                                    </button>
+                                ))}
+                            </section>
+                        )}
+
                     </div>
 
                     <aside className={styles.colunaFeed}>
@@ -153,28 +170,37 @@ export default function SPA__PaginaColaboradorPainelDoMedo__FichaCard() {
                         )}
                         <div className={styles.listaFeed}>
                             {feed.length === 0 && <p className={styles.estado}>Nenhuma atividade ainda.</p>}
-                            {feed.map((item, indice) => {
-                                // Agrupamento estilo Chat: sequencia do mesmo usuario mostra o avatar so na entrada mais atual (a lista e mais-novo-primeiro).
-                                const mostraAvatar = indice === 0 || feed[indice - 1].usuarioId !== item.usuarioId;
-                                return (
-                                <div key={item.chave} className={item.tipo === 'comentario' ? styles.feedComentario : styles.feedEvento}>
-                                    {mostraAvatar
-                                        ? <span className={styles.avatarFeed} title={item.username}><AvatarUsuarioEmVisualizacao_CACHED idUsuario={item.usuarioId} /></span>
-                                        : <span className={styles.avatarFeedVazio} />}
-                                    <div className={styles.feedCorpo}>
-                                        <div><strong>{item.username}</strong>{item.tipo === 'comentario' ? ': ' : ' '}<TextoComReferencias texto={item.texto} aoAbrirCard={abrirCardPorId} tituloCard={tituloCard} /></div>
-                                        {item.comentarioId !== null && (anexosPorComentario.get(item.comentarioId)?.length ?? 0) > 0 && (
-                                            <div className={styles.galeriaEvidencias}>
-                                                {(anexosPorComentario.get(item.comentarioId) ?? []).map(anexo => (
-                                                    <img key={anexo.id} className={styles.thumbFeed} src={`data:${anexo.mime};base64,${anexo.dadosBase64}`} alt="Evidência" onClick={() => setImagemAmpliada(`data:${anexo.mime};base64,${anexo.dadosBase64}`)} />
-                                                ))}
+                            {gruposFeed.map(grupo => (
+                                <div key={grupo.chave} className={styles.grupoFeed}>
+                                    <div className={styles.colunaGrupoFeed}>
+                                        <span className={styles.avatarFeed} title={grupo.username}><AvatarUsuarioEmVisualizacao_CACHED idUsuario={grupo.usuarioId} /></span>
+                                        <span className={styles.linhaGrupoFeed} />
+                                    </div>
+                                    <div className={styles.mensagensGrupoFeed}>
+                                        {grupo.itens.map(item => {
+                                            const anexos = item.comentarioId !== null ? (anexosPorComentario.get(item.comentarioId) ?? []) : [];
+                                            // Comentario sem texto e sem anexos = era so-imagem e as evidencias foram descartadas no trancamento (o composer nao deixa enviar comentario vazio).
+                                            const imagemRemovida = item.tipo === 'comentario' && !item.texto.trim() && anexos.length === 0;
+                                            return (
+                                            <div key={item.chave} className={item.tipo === 'comentario' ? styles.feedComentario : styles.feedEvento} title={`${item.username} · ${new Date(item.data).toLocaleString('pt-BR')}`}>
+                                                <div className={styles.feedCorpo}>
+                                                    {imagemRemovida
+                                                        ? <div className={styles.imagemRemovida}>Imagem removida após o trancamento do cartão</div>
+                                                        : <div><TextoComReferencias texto={item.texto} aoAbrirCard={abrirCardPorId} tituloCard={tituloCard} /></div>}
+                                                    {anexos.length > 0 && (
+                                                        <div className={styles.galeriaEvidencias}>
+                                                            {anexos.map(anexo => (
+                                                                <img key={anexo.id} className={styles.thumbFeed} src={`data:${anexo.mime};base64,${anexo.dadosBase64}`} alt="Evidência" onClick={() => setImagemAmpliada(`data:${anexo.mime};base64,${anexo.dadosBase64}`)} />
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             </div>
-                                        )}
-                                        <div className={styles.feedData}>{new Date(item.data).toLocaleString('pt-BR')}</div>
+                                            );
+                                        })}
                                     </div>
                                 </div>
-                                );
-                            })}
+                            ))}
                         </div>
                     </aside>
                 </div>
@@ -194,9 +220,6 @@ export default function SPA__PaginaColaboradorPainelDoMedo__FichaCard() {
                 <ConteudoForm.AreaBotoes>
                     <button type="button" onClick={editarTitulo} disabled={salvando}>Editar Título</button>
                     <button type="button" onClick={abrirTrancarCartao} disabled={salvando}>Trancar Cartão</button>
-                    {!confirmandoExcluir && <button type="button" data-variante="perigo" onClick={() => setConfirmandoExcluir(true)} disabled={salvando}>Excluir card</button>}
-                    {confirmandoExcluir && <button type="button" data-variante="perigo" onClick={excluir} disabled={salvando}>Confirmar exclusão</button>}
-                    {confirmandoExcluir && <button type="button" data-variante="secundario" onClick={() => setConfirmandoExcluir(false)} disabled={salvando}>Cancelar</button>}
                 </ConteudoForm.AreaBotoes>
             )}
         </ConteudoForm>

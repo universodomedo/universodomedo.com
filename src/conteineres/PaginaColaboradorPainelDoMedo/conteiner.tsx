@@ -9,10 +9,9 @@ import { Contexto__PaginaColaboradorPainelDoMedo__EdicaoCard__Provider } from 'C
 import { Contexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta__Provider } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta/contexto';
 import { Contexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta__Provider } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta/contexto';
 import { Contexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist__Provider } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist/contexto';
-import { Contexto__PaginaColaboradorPainelDoMedo__AdicionarDependencia__Provider } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__AdicionarDependencia/contexto';
+import { Contexto__PaginaColaboradorPainelDoMedo__VincularCardChecklist__Provider } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__VincularCardChecklist/contexto';
 import { Contexto__PaginaColaboradorPainelDoMedo__TrancarCartao__Provider } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__TrancarCartao/contexto';
 import { Contexto__PaginaColaboradorPainelDoMedo__EdicaoObjetivo__Provider } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__EdicaoObjetivo/contexto';
-import { Contexto__PaginaColaboradorPainelDoMedo__ExcluirObjetivo__Provider } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__ExcluirObjetivo/contexto';
 import { Contexto__PaginaColaboradorPainelDoMedo__PermissoesObjetivo__Provider } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__PermissoesObjetivo/contexto';
 import SPA__PaginaColaboradorPainelDoMedo__ListagemObjetivos from 'Conteineres/PaginaColaboradorPainelDoMedo/paginas/SPA__PaginaColaboradorPainelDoMedo__ListagemObjetivos/SPA__PaginaColaboradorPainelDoMedo__ListagemObjetivos';
 import SPA__PaginaColaboradorPainelDoMedo__Quadro from 'Conteineres/PaginaColaboradorPainelDoMedo/paginas/SPA__PaginaColaboradorPainelDoMedo__Quadro/SPA__PaginaColaboradorPainelDoMedo__Quadro';
@@ -38,7 +37,7 @@ function resolveSaida(props: PropsConteiner__PaginaColaboradorPainelDoMedo): Sai
             case 'aplicar-etiqueta': return criaSaidaConteiner(Contexto__PaginaColaboradorPainelDoMedo__AplicarEtiqueta__Provider, {});
             case 'criar-etiqueta': return criaSaidaConteiner(Contexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta__Provider, {});
             case 'adicionar-item-checklist': return criaSaidaConteiner(Contexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist__Provider, {});
-            case 'adicionar-dependencia': return criaSaidaConteiner(Contexto__PaginaColaboradorPainelDoMedo__AdicionarDependencia__Provider, {});
+            case 'vincular-card-checklist': return criaSaidaConteiner(Contexto__PaginaColaboradorPainelDoMedo__VincularCardChecklist__Provider, {});
             case 'trancar-cartao': return criaSaidaConteiner(Contexto__PaginaColaboradorPainelDoMedo__TrancarCartao__Provider, {});
         }
     }
@@ -47,7 +46,6 @@ function resolveSaida(props: PropsConteiner__PaginaColaboradorPainelDoMedo): Sai
         // Operacoes do objetivo (acionadas pela AreaBotoes do quadro): cada processo em SPA propria, foco unico.
         switch (props.operacaoObjetivo.tipo) {
             case 'editar-objetivo': return criaSaidaConteiner(Contexto__PaginaColaboradorPainelDoMedo__EdicaoObjetivo__Provider, {});
-            case 'excluir-objetivo': return criaSaidaConteiner(Contexto__PaginaColaboradorPainelDoMedo__ExcluirObjetivo__Provider, {});
             case 'permissoes-objetivo': return criaSaidaConteiner(Contexto__PaginaColaboradorPainelDoMedo__PermissoesObjetivo__Provider, {});
         }
     }

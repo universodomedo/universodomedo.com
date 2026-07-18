@@ -21,3 +21,20 @@
 .avisoEvidencias strong {
     color: #EBE0C9;
 }
+
+/* Bloqueio de processo: coluna atual nao permite trancar — o aviso explica a circunstancia e nao ha acao alem do fechar do cabecalho. */
+.avisoBloqueio {
+    color: #e0a0a0;
+    background: rgba(201, 95, 95, 0.08);
+    border: 0.1em solid #6e2b2b;
+    border-radius: 0.5em;
+    padding: 0.9em 1.1em;
+    font-size: 0.9em;
+    line-height: 1.6;
+    margin: 0.8em auto 0;
+    max-width: 40em;
+}
+
+.avisoBloqueio strong {
+    color: #EBE0C9;
+}

@@ -13,7 +13,6 @@ interface Contexto__PaginaColaboradorPainelDoMedo__EdicaoObjetivo__Props {
     setNome: (nome: string) => void;
     salvando: boolean;
     salvar: () => Promise<void>;
-    cancelar: () => void;
 };
 
 const Contexto__PaginaColaboradorPainelDoMedo__EdicaoObjetivo = createContext<Contexto__PaginaColaboradorPainelDoMedo__EdicaoObjetivo__Props | undefined>(undefined);
@@ -40,7 +39,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__EdicaoObjetivo__Provider =
     };
 
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo__EdicaoObjetivo.Provider value={{ objetivo, nome, setNome, salvando, salvar, cancelar: fecharOperacaoObjetivo }}>
+        <Contexto__PaginaColaboradorPainelDoMedo__EdicaoObjetivo.Provider value={{ objetivo, nome, setNome, salvando, salvar }}>
             <SPA__PaginaColaboradorPainelDoMedo__EdicaoObjetivo />
         </Contexto__PaginaColaboradorPainelDoMedo__EdicaoObjetivo.Provider>
     );

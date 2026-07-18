@@ -13,11 +13,13 @@ import BarraView from 'Conteineres/PaginaColaboradorPainelDoMedo/componentes/Bar
 import ColunaQuadro from 'Conteineres/PaginaColaboradorPainelDoMedo/componentes/ColunaQuadro';
 
 export default function SPA__PaginaColaboradorPainelDoMedo__Quadro() {
-    const { pagina, setPagina, objetivos, objetivoAtualId, colunas, cards, abrirCard, salvando, criaColuna, criaCard, reordenaCards, reordenaColunas, etiquetas, etiquetasCards, membrosCards, itensChecklistQuadro, permissoesObjetivos, abrirOperacaoObjetivo } = useContexto__PaginaColaboradorPainelDoMedo();
+    const { pagina, setPagina, objetivos, objetivoAtualId, colunas, cards, todosCards, abrirCard, salvando, criaColuna, criaCard, reordenaCards, reordenaColunas, etiquetas, etiquetasCards, membrosCards, itensChecklistQuadro, permissoesObjetivos, abrirOperacaoObjetivo } = useContexto__PaginaColaboradorPainelDoMedo();
     const { usuarioLogado, verificarCapacidade } = useContextoAutenticacao();
 
     const [cardArrastadoId, setCardArrastadoId] = useState<number | null>(null);
     const [colunaAlvoId, setColunaAlvoId] = useState<number | null>(null);
+    // Ponto exato de insercao do arraste (indicador visual + drop): antesDoCardId = cartao diante do qual o arrastado entra; null = fim da coluna.
+    const [alvoInsercao, setAlvoInsercao] = useState<{ colunaId: number; antesDoCardId: number | null } | null>(null);
     const [colunaArrastadaId, setColunaArrastadaId] = useState<number | null>(null);
     const [adicionandoColuna, setAdicionandoColuna] = useState(false);
     const [nomeNovaColuna, setNomeNovaColuna] = useState('');
@@ -32,10 +34,17 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Quadro() {
     }, [etiquetas.registros, etiquetasCards.registros]);
 
     const checklistPorCard = useMemo(() => {
+        // Item que referencia um cartao: "feito" deriva do cartao referenciado estar CONCLUIDO (cross-objetivo via todosCards); os demais usam o concluido manual.
+        const trancaPorCard = new Map(todosCards.registros.map(card => [card.id, card.motivoTranca]));
         const mapa = new Map<number, { feitos: number; total: number }>();
-        itensChecklistQuadro.registros.forEach(item => { if (item.fkCardsId === null) return; const atual = mapa.get(item.fkCardsId) ?? { feitos: 0, total: 0 }; mapa.set(item.fkCardsId, { feitos: atual.feitos + (item.concluido ? 1 : 0), total: atual.total + 1 }); });
+        itensChecklistQuadro.registros.forEach(item => {
+            if (item.fkCardsId === null) return;
+            const feito = item.fkCardsReferenciaId !== null ? trancaPorCard.get(item.fkCardsReferenciaId) === 'CONCLUIDO' : item.concluido;
+            const atual = mapa.get(item.fkCardsId) ?? { feitos: 0, total: 0 };
+            mapa.set(item.fkCardsId, { feitos: atual.feitos + (feito ? 1 : 0), total: atual.total + 1 });
+        });
         return mapa;
-    }, [itensChecklistQuadro.registros]);
+    }, [itensChecklistQuadro.registros, todosCards.registros]);
 
     const membrosPorCard = useMemo(() => {
         // Criador primeiro (membro obrigatorio derivado do card); vinculos de membros_cards em seguida, sem duplicar o criador.
@@ -49,23 +58,27 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Quadro() {
         return mapa;
     }, [cards.registros, membrosCards.registros]);
 
-    const encerraArraste = () => { setCardArrastadoId(null); setColunaAlvoId(null); };
+    const encerraArraste = () => { setCardArrastadoId(null); setColunaAlvoId(null); setAlvoInsercao(null); };
     const idsDaColuna = (colunaId: number) => cards.registros.filter(card => card.fkColunasId === colunaId && card.id !== cardArrastadoId).map(card => card.id);
 
-    const soltaNoCard = (colunaId: number, cardAlvoId: number) => {
-        if (cardArrastadoId === null || cardAlvoId === cardArrastadoId) return encerraArraste();
-        const ids = idsDaColuna(colunaId);
-        const indice = ids.indexOf(cardAlvoId);
-        ids.splice(indice === -1 ? ids.length : indice, 0, cardArrastadoId);
-        reordenaCards(colunaId, ids);
-        encerraArraste();
+    // Ponto de insercao reportado pelo dragover da lista (calculo estavel por meio-de-cartao no ColunaQuadro). Preserva identidade do estado (dragover dispara em rajada).
+    const arrastaSobre = (colunaId: number, antesDoCardId: number | null) => {
+        if (cardArrastadoId === null) return;
+        if (colunaAlvoId !== colunaId) setColunaAlvoId(colunaId);
+        setAlvoInsercao(atual => atual?.colunaId === colunaId && atual?.antesDoCardId === antesDoCardId ? atual : { colunaId, antesDoCardId });
     };
 
-    const soltaNaColuna = (colunaId: number) => {
+    // Drop unificado: usa o ponto de insercao rastreado pelo indicador (fallback: fim da coluna).
+    const soltaCard = (colunaId: number) => {
         if (cardArrastadoId === null) return encerraArraste();
         const ids = idsDaColuna(colunaId);
-        ids.push(cardArrastadoId);
-        reordenaCards(colunaId, ids);
+        const antesDoCardId = alvoInsercao?.colunaId === colunaId ? alvoInsercao.antesDoCardId : null;
+        const indice = antesDoCardId === null ? ids.length : ids.indexOf(antesDoCardId);
+        ids.splice(indice === -1 ? ids.length : indice, 0, cardArrastadoId);
+        // Soltar sem mudar nada (mesma coluna, mesma posicao) NAO deve chamar a API: reordenaCards emitiria painelAtualizado (refetch geral) por um no-op. Compara com a ordem atual da coluna.
+        const ordemAtual = cards.registros.filter(card => card.fkColunasId === colunaId).map(card => card.id);
+        const mudou = ids.length !== ordemAtual.length || ids.some((id, i) => id !== ordemAtual[i]);
+        if (mudou) reordenaCards(colunaId, ids);
         encerraArraste();
     };
 
@@ -120,8 +133,10 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Quadro() {
                         aoTerminarArrasteColuna={() => setColunaArrastadaId(null)}
                         aoSoltarColuna={() => soltaColuna(coluna.id)}
                         aoEntrarNaLista={() => { if (colunaAlvoId !== coluna.id) setColunaAlvoId(coluna.id); }}
-                        aoSoltarNaLista={() => soltaNaColuna(coluna.id)}
-                        aoSoltarNoCard={cardId => soltaNoCard(coluna.id, cardId)}
+                        aoSoltarNaLista={() => soltaCard(coluna.id)}
+                        aoSoltarNoCard={() => soltaCard(coluna.id)}
+                        aoArrastarSobreLista={antesDoCardId => arrastaSobre(coluna.id, antesDoCardId)}
+                        insercaoAntesDoCardId={alvoInsercao?.colunaId === coluna.id && cardArrastadoId !== null ? alvoInsercao.antesDoCardId : undefined}
                         aoIniciarArrasteCard={setCardArrastadoId}
                         aoTerminarArrasteCard={encerraArraste}
                         aoAbrirCard={abrirCard}
@@ -150,7 +165,6 @@ export default function SPA__PaginaColaboradorPainelDoMedo__Quadro() {
                 <ConteudoForm.AreaBotoes>
                     <button type="button" onClick={() => abrirOperacaoObjetivo('editar-objetivo', objetivoAtualId)} disabled={salvando}>Editar Objetivo</button>
                     <button type="button" onClick={() => abrirOperacaoObjetivo('permissoes-objetivo', objetivoAtualId)} disabled={salvando}>Permissões</button>
-                    <button type="button" data-variante="perigo" onClick={() => abrirOperacaoObjetivo('excluir-objetivo', objetivoAtualId)} disabled={salvando}>Excluir Objetivo</button>
                 </ConteudoForm.AreaBotoes>
             )}
         </ConteudoForm>

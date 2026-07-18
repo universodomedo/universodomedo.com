@@ -16,13 +16,30 @@
 .avatar_narrador {
     position: absolute;
     bottom: 4%;
-    left: 4%;
-    width: 26%;
+    left: 2%;
+    width: 17%;
     aspect-ratio: 1;
     border-radius: 50%;
     overflow: hidden;
-    border: 0.12em solid rgba(183, 144, 81, 0.85);
-    background-color: #392D58;
-    box-shadow: 0 0.1em 0.4em rgba(0, 0, 0, 0.6);
+    /* border: 0.12em solid rgba(183, 144, 81, 0.85); */
+    /* background-color: #392D58; */
+    /* box-shadow: 0 0.1em 0.4em rgba(0, 0, 0, 0.6); */
     z-index: 1;
+}
+
+.detalhe_data {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.4em 0.6em;
+    background-color: rgba(9, 7, 12, 0.82);
+    color: #EBE0C9;
+    /* font-size: 0.72em; */
+    /* line-height: 1.25; */
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 0;
 }

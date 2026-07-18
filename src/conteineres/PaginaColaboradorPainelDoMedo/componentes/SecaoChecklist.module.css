@@ -47,14 +47,13 @@
     gap: 0.2em;
 }
 
+/* Item comum: LINHA discreta de checklist (sem cara de card) — o contraste com o mini-card de cartao vinculado e proposital. */
 .item {
     display: flex;
     align-items: center;
     gap: 0.4em;
-    padding: 0.25em 0.3em;
-    border-radius: 0.4em;
-    background: #120f1c;
-    border: 0.1em solid #2a2536;
+    padding: 0.3em 0.3em;
+    border-bottom: 0.1em solid #1d1828;
 }
 
 .itemFeito .texto {
@@ -63,6 +62,9 @@
 }
 
 .check {
+    flex: 0 0 auto;
+    width: 1.3em;
+    text-align: center;
     background: transparent;
     border: 0;
     color: #B79051;
@@ -72,11 +74,131 @@
     padding: 0;
 }
 
+/* Leitura (sem permissao de marcar): so o check PREENCHIDO aparece, sem quadrado — nada que pareca clicavel. */
+.checkLeitura {
+    flex: 0 0 auto;
+    width: 1.3em;
+    text-align: center;
+    color: #8fc9a0;
+    font-size: 1.05em;
+    line-height: 1;
+}
+
+.checkVazio {
+    flex: 0 0 auto;
+    width: 1.3em;
+}
+
+/* Item de checklist que E um cartao: MINI-CARD com a MESMA linguagem visual do card do quadro (fundo, borda-esquerda grossa dourada, radius, hover) + chip "CARTÃO". */
+.itemCard {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    background: #120f1c;
+    border: 0.1em solid #352E4C;
+    border-left: 0.3em solid #B79051;
+    border-radius: 0.5em;
+    padding: 0.45em 0.55em;
+
+    &:hover {
+        border-color: #5a4f7a;
+        border-left-color: #B79051;
+    }
+}
+
+.itemCardFeito {
+    border-left-color: #4f7a5a;
+    opacity: 0.85;
+
+    &:hover {
+        border-left-color: #4f7a5a;
+    }
+}
+
+.chipCartao {
+    flex: 0 0 auto;
+    font-family: var(--fonte-cinzel);
+    text-transform: uppercase;
+    font-size: 0.62em;
+    letter-spacing: 0.08em;
+    color: #B79051;
+    background: rgba(183, 144, 81, 0.08);
+    border: 0.1em solid rgba(183, 144, 81, 0.45);
+    border-radius: 0.3em;
+    padding: 0.2em 0.45em;
+    line-height: 1;
+}
+
+.itemCardFeito .chipCartao {
+    color: #8fc9a0;
+    background: rgba(79, 122, 90, 0.12);
+    border-color: rgba(79, 122, 90, 0.5);
+}
+
+.tagConcluido {
+    flex: 0 0 auto;
+    background: rgba(79, 122, 90, 0.2);
+    border: 0.1em solid #4f7a5a;
+    color: #8fc9a0;
+    border-radius: 0.35em;
+    padding: 0.05em 0.4em;
+    font-size: 0.72em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
 .texto {
     flex: 1;
     color: #D9D9D9;
     font-size: 0.88em;
     word-break: break-word;
+}
+
+.textoLink {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    text-align: center;
+    padding: 0;
+    color: #EBE0C9;
+    font-family: inherit;
+    font-size: 0.88em;
+    word-break: break-word;
+    cursor: pointer;
+
+    &:hover {
+        color: #B79051;
+    }
+}
+
+.setaLink {
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+.acaoItem {
+    background: transparent;
+    border: 0;
+    color: #6f6857;
+    cursor: pointer;
+    font-size: 0.9em;
+    opacity: 0.7;
+
+    &:hover:not(:disabled) {
+        opacity: 1;
+        color: #B79051;
+    }
+
+    &:disabled {
+        opacity: 0.3;
+        cursor: default;
+    }
+}
+
+.acoesAdicionar {
+    display: flex;
+    gap: 0.4em;
+    flex-wrap: wrap;
 }
 
 .remover {

@@ -5,7 +5,7 @@ import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputCom
 import { useContexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist/contexto';
 
 export default function SPA__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist() {
-    const { texto, setTexto, salvando, adicionar, cancelar } = useContexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist();
+    const { texto, setTexto, salvando, adicionar } = useContexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist();
 
     return (
         <ConteudoForm>
@@ -17,7 +17,6 @@ export default function SPA__PaginaColaboradorPainelDoMedo__AdicionarItemCheckli
 
             <ConteudoForm.AreaBotoes>
                 <button type="button" onClick={adicionar} disabled={salvando || !texto.trim()}>{salvando ? 'Adicionando...' : 'Adicionar item'}</button>
-                <button type="button" data-variante="secundario" onClick={cancelar} disabled={salvando}>Cancelar</button>
             </ConteudoForm.AreaBotoes>
         </ConteudoForm>
     );

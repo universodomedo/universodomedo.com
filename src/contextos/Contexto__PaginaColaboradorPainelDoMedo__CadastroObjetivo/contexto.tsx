@@ -19,7 +19,6 @@ const FORMULARIO_CREATE_OBJETIVO = defineFormularioCreate<FormularioNovoObjetivo
 interface Contexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo__Props {
     formularioNovoObjetivo: FormularioCreateEstado<FormularioNovoObjetivo>;
     salvar: () => Promise<void>;
-    cancelar: () => void;
 };
 
 const Contexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo = createContext<Contexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo__Props | undefined>(undefined);
@@ -42,7 +41,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo__Provider
     async function salvar(): Promise<void> { await formularioNovoObjetivo.salvar(); };
 
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo.Provider value={{ formularioNovoObjetivo, salvar, cancelar: irParaListagem }}>
+        <Contexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo.Provider value={{ formularioNovoObjetivo, salvar }}>
             <SPA__PaginaColaboradorPainelDoMedo__CadastroObjetivo />
         </Contexto__PaginaColaboradorPainelDoMedo__CadastroObjetivo.Provider>
     );

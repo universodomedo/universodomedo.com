@@ -7,7 +7,7 @@ import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputCom
 import { useContexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta/contexto';
 
 export default function SPA__PaginaColaboradorPainelDoMedo__CriarEtiqueta() {
-    const { nome, setNome, cor, setCor, corBorda, setCorBorda, bordaTransparente, setBordaTransparente, salvando, criar, cancelar } = useContexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta();
+    const { nome, setNome, cor, setCor, corBorda, setCorBorda, bordaTransparente, setBordaTransparente, salvando, criar } = useContexto__PaginaColaboradorPainelDoMedo__CriarEtiqueta();
 
     return (
         <ConteudoForm>
@@ -36,7 +36,6 @@ export default function SPA__PaginaColaboradorPainelDoMedo__CriarEtiqueta() {
 
             <ConteudoForm.AreaBotoes>
                 <button type="button" onClick={criar} disabled={salvando || !nome.trim()}>{salvando ? 'Criando...' : 'Criar etiqueta'}</button>
-                <button type="button" data-variante="secundario" onClick={cancelar} disabled={salvando}>Voltar</button>
             </ConteudoForm.AreaBotoes>
         </ConteudoForm>
     );

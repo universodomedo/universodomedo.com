@@ -2,15 +2,16 @@
 
 import { createContext, useContext, useState, useEffect, useMemo, useRef, type ReactNode } from 'react';
 
-import { Eventos_Emite, type MotivoTranca, type AnexoCardDto, type AnexoEvidencia } from 'types-nora-api';
+import { Eventos_Emite, Eventos_Envia, type MotivoTranca, type AnexoCardDto, type AnexoEvidencia } from 'types-nora-api';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
-import { useRecebeEmitWs } from 'Hooks/useEventoWs';
+import { useRecebeEmitWs, eventoWs, useSocketEpoch } from 'Hooks/useEventoWs';
+import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
-import { criaObjetivo as apiCriaObjetivo, criaColuna as apiCriaColuna, criaCard as apiCriaCard, criaComentario as apiCriaComentario, atualizaCard as apiAtualizaCard, reordenaCards as apiReordenaCards, criaDependenciaCard as apiCriaDependencia, atualizaDependenciaCard as apiAtualizaDependencia, deletaDependenciaCard as apiDeletaDependencia, definePosicaoFluxogramaCard as apiDefinePosicao, deletaCard as apiDeletaCard, atualizaColuna as apiAtualizaColuna, deletaColuna as apiDeletaColuna, reordenaColunas as apiReordenaColunas, atualizaObjetivo as apiAtualizaObjetivo, deletaObjetivo as apiDeletaObjetivo, salvaDesenhoFluxograma as apiSalvaDesenhoFluxograma, atualizaObjetivoFicha as apiAtualizaObjetivoFicha, criaItemChecklist as apiCriaItemChecklist, marcaItemChecklist as apiMarcaItemChecklist, atualizaItemChecklist as apiAtualizaItemChecklist, deletaItemChecklist as apiDeletaItemChecklist, adicionaMembroCard as apiAdicionaMembroCard, removeMembroCard as apiRemoveMembroCard, criaEtiqueta as apiCriaEtiqueta, aplicaEtiquetaCard as apiAplicaEtiquetaCard, removeEtiquetaCard as apiRemoveEtiquetaCard, trancaCard as apiTrancaCard, trancaObjetivo as apiTrancaObjetivo, atualizaDescricaoCard as apiAtualizaDescricaoCard, listaAnexosDoCard as apiListaAnexosDoCard, concedePermissaoObjetivo as apiConcedePermissaoObjetivo, revogaPermissaoObjetivo as apiRevogaPermissaoObjetivo } from 'Uteis/ApiConsumer/PainelDoMedoMiddleware';
+import { criaObjetivo as apiCriaObjetivo, criaColuna as apiCriaColuna, criaCard as apiCriaCard, criaComentario as apiCriaComentario, atualizaCard as apiAtualizaCard, reordenaCards as apiReordenaCards, definePosicaoFluxogramaCard as apiDefinePosicao, atualizaColuna as apiAtualizaColuna, deletaColuna as apiDeletaColuna, reordenaColunas as apiReordenaColunas, atualizaObjetivo as apiAtualizaObjetivo, salvaDesenhoFluxograma as apiSalvaDesenhoFluxograma, atualizaObjetivoFicha as apiAtualizaObjetivoFicha, criaItemChecklist as apiCriaItemChecklist, marcaItemChecklist as apiMarcaItemChecklist, atualizaItemChecklist as apiAtualizaItemChecklist, deletaItemChecklist as apiDeletaItemChecklist, adicionaMembroCard as apiAdicionaMembroCard, removeMembroCard as apiRemoveMembroCard, criaEtiqueta as apiCriaEtiqueta, aplicaEtiquetaCard as apiAplicaEtiquetaCard, removeEtiquetaCard as apiRemoveEtiquetaCard, trancaCard as apiTrancaCard, trancaObjetivo as apiTrancaObjetivo, atualizaDescricaoCard as apiAtualizaDescricaoCard, listaAnexosDoCard as apiListaAnexosDoCard, concedePermissaoObjetivo as apiConcedePermissaoObjetivo, revogaPermissaoObjetivo as apiRevogaPermissaoObjetivo, transformaItemChecklistEmCard as apiTransformaItemChecklistEmCard, vinculaCardChecklist as apiVinculaCardChecklist } from 'Uteis/ApiConsumer/PainelDoMedoMiddleware';
 
 // Sub-fluxos operacionais do card: cada tipo abre uma SPA/Conteiner/Contexto proprios (foco unico), sem mutar a ficha inline.
-export type OperacaoCardTipo = 'editar-titulo' | 'aplicar-etiqueta' | 'criar-etiqueta' | 'adicionar-item-checklist' | 'adicionar-dependencia' | 'trancar-cartao';
+export type OperacaoCardTipo = 'editar-titulo' | 'aplicar-etiqueta' | 'criar-etiqueta' | 'adicionar-item-checklist' | 'vincular-card-checklist' | 'trancar-cartao';
 export type OperacaoCard = { tipo: OperacaoCardTipo; cardId: number };
 
 const ROTULO_OPERACAO_CARD: Record<OperacaoCardTipo, string> = {
@@ -19,16 +20,15 @@ const ROTULO_OPERACAO_CARD: Record<OperacaoCardTipo, string> = {
     'aplicar-etiqueta': 'Aplicar etiqueta',
     'criar-etiqueta': 'Criar etiqueta',
     'adicionar-item-checklist': 'Adicionar item ao checklist',
-    'adicionar-dependencia': 'Adicionar dependência',
+    'vincular-card-checklist': 'Vincular cartão ao checklist',
 };
 
 // Sub-fluxos operacionais do OBJETIVO (mesmo molde do card): cada processo em SPA propria, acionado pela AreaBotoes do quadro.
-export type OperacaoObjetivoTipo = 'editar-objetivo' | 'excluir-objetivo' | 'permissoes-objetivo';
+export type OperacaoObjetivoTipo = 'editar-objetivo' | 'permissoes-objetivo';
 export type OperacaoObjetivo = { tipo: OperacaoObjetivoTipo; objetivoId: number };
 
 const ROTULO_OPERACAO_OBJETIVO: Record<OperacaoObjetivoTipo, string> = {
     'editar-objetivo': 'Editar objetivo',
-    'excluir-objetivo': 'Excluir objetivo',
     'permissoes-objetivo': 'Permissões',
 };
 
@@ -54,20 +54,21 @@ export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     irParaObjetivo: (id: number) => void;
     irParaListagem: () => void;
     irParaCadastroObjetivo: () => void;
-    dependenciasCards: ReturnType<typeof obtemDependenciasCards>;
     posicoesFluxograma: ReturnType<typeof obtemPosicoesFluxograma>;
     desenhoFluxograma: ReturnType<typeof obtemDesenhoFluxograma>;
     todosCards: ReturnType<typeof obtemTodosCards>;
-    criaDependenciaCard: (fkCardsDependenteId: number, fkCardsRequisitoId: number, descricao: string | null, bloqueante: boolean) => Promise<void>;
-    atualizaDependenciaCard: (id: number, descricao: string | null, bloqueante: boolean) => Promise<void>;
-    deletaDependenciaCard: (id: number) => Promise<void>;
     definePosicaoFluxogramaCard: (fkCardsId: number, posicaoX: number, posicaoY: number) => Promise<void>;
-    deletaCard: (id: number) => Promise<void>;
+    transmitePosicaoCardAoVivo: (fkCardsId: number, posicaoX: number, posicaoY: number) => void;
+    posicoesCardsAoVivo: ReadonlyMap<number, { x: number; y: number }>;
+    presencaObjetivo: readonly { id: number; username: string }[];
+    transmiteCursorFluxograma: (posicaoX: number, posicaoY: number) => void;
+    cursoresFluxograma: ReadonlyMap<number, { username: string; x: number; y: number }>;
+    transmiteDesenhoAoVivo: (conteudo: string | null) => void;
+    defineDadosNaoSalvos: (descricao: string | null) => void;
     atualizaColuna: (id: number, nome: string) => Promise<void>;
     deletaColuna: (id: number) => Promise<void>;
     reordenaColunas: (idsOrdenados: number[]) => Promise<void>;
     atualizaObjetivo: (id: number, nome: string) => Promise<void>;
-    deletaObjetivo: (id: number) => Promise<void>;
     desenhoConteudo: string | null;
     registraDesenho: (conteudo: string | null) => void;
     flushDesenho: () => void;
@@ -77,9 +78,11 @@ export interface Contexto__PaginaColaboradorPainelDoMedo__Props {
     fecharFichaObjetivo: () => void;
     atualizaObjetivoFicha: (id: number, descricao: string | null) => Promise<void>;
     criaItemChecklist: (texto: string) => Promise<void>;
-    marcaItemChecklist: (id: number, concluido: boolean) => Promise<void>;
+    marcaItemChecklist: (id: number, concluido: boolean) => Promise<boolean>;
     atualizaItemChecklist: (id: number, texto: string) => Promise<void>;
     deletaItemChecklist: (id: number) => Promise<void>;
+    transformaItemChecklistEmCard: (id: number) => Promise<void>;
+    vinculaCardChecklist: (fkCardsId: number, fkCardsReferenciaId: number) => Promise<void>;
     membrosCards: ReturnType<typeof obtemMembrosCards>;
     etiquetas: ReturnType<typeof obtemEtiquetas>;
     etiquetasCards: ReturnType<typeof obtemEtiquetasCards>;
@@ -139,10 +142,18 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     }, [cardAbertoId]);
     const [salvando, setSalvando] = useState<boolean>(false);
     const [desenhoConteudo, setDesenhoConteudo] = useState<string | null>(null);
+    // Posicoes efemeras do arraste ao vivo de OUTROS clientes (cardId -> posicao); entrada limpa quando a posicao persistida chega (posicaoCardAtualizada) ou em qualquer painelAtualizado.
+    const [posicoesCardsAoVivo, setPosicoesCardsAoVivo] = useState<ReadonlyMap<number, { x: number; y: number }>>(new Map());
+    // Quem esta com o objetivo em exibicao aberto agora (dedup por usuario, vindo da sala de presenca do WS).
+    const [presencaObjetivo, setPresencaObjetivo] = useState<readonly { id: number; username: string }[]>([]);
+    // Cursores ao vivo dos OUTROS usuarios no Fluxograma do objetivo (idUsuario -> ponteiro em coordenadas de mundo); some quando o usuario sai da presenca.
+    const [cursoresFluxograma, setCursoresFluxograma] = useState<ReadonlyMap<number, { username: string; x: number; y: number }>>(new Map());
+    const { usuarioLogado } = useContextoAutenticacao();
     const desenhoTimerRef = useRef<number | null>(null);
+    // Descricao dos rascunhos nao salvos da tela ativa (null = nada pendente); consultado pelos guards de navegacao e pelo beforeunload.
+    const dadosNaoSalvosRef = useRef<string | null>(null);
     const cards = obtemCards(objetivoAtualId);
     const comentarios = obtemComentarios(cardAbertoId);
-    const dependenciasCards = obtemDependenciasCards();
     const posicoesFluxograma = obtemPosicoesFluxograma();
     const desenhoFluxograma = obtemDesenhoFluxograma(objetivoAtualId);
     const todosCards = obtemTodosCards();
@@ -183,7 +194,6 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
             objetivos.recarregar();
             colunas.recarregar();
             cards.recarregar();
-            dependenciasCards.recarregar();
             todosCards.recarregar();
             membrosCards.recarregar();
             etiquetas.recarregar();
@@ -198,10 +208,86 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
         onSuccess: ({ fkObjetivosId, conteudo }) => { if (fkObjetivosId === objetivoAtualId) setDesenhoConteudo(conteudo); },
     });
 
+    // Posicao de no do Fluxograma movida por outro cliente: o payload ja traz a posicao FINAL persistida — o fantasma assume esse valor na hora (apagar antes do refetch fazia o no voltar a posicao antiga por um instante, o "flick") e a listagem e recarregada em fundo; a entrada e encerrada pelo efeito de reconciliacao quando a listagem bate.
+    useRecebeEmitWs(Eventos_Emite.PainelDoMedo.eventos.posicaoCardAtualizada, {
+        onSuccess: ({ fkCardsId, posicaoX, posicaoY }) => {
+            setPosicoesCardsAoVivo(atual => { const mapa = new Map(atual); mapa.set(fkCardsId, { x: posicaoX, y: posicaoY }); return mapa; });
+            posicoesFluxograma.recarregar();
+        },
+    });
+
+    // Encerra o fantasma quando a listagem persistida ja reflete a MESMA posicao (ambos inteiros): a partir dai o posServidor assume sem salto.
+    useEffect(() => {
+        setPosicoesCardsAoVivo(atual => {
+            if (atual.size === 0) return atual;
+            let mudou = false;
+            const mapa = new Map(atual);
+            posicoesFluxograma.registros.forEach(registro => {
+                const vivo = mapa.get(registro.fkCardsId);
+                if (vivo && vivo.x === registro.posicaoX && vivo.y === registro.posicaoY) { mapa.delete(registro.fkCardsId); mudou = true; }
+            });
+            return mudou ? mapa : atual;
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [posicoesFluxograma.registros]);
+
+    // Arraste ao vivo de outro cliente: posicao efemera do no enquanto o arraste acontece la. O proprio arrastador tambem recebe o broadcast, mas o posLocal dele vence no merge da SPA.
+    useRecebeEmitWs(Eventos_Emite.PainelDoMedo.eventos.posicaoCardAoVivo, {
+        onSuccess: ({ fkCardsId, posicaoX, posicaoY }) => setPosicoesCardsAoVivo(atual => { const mapa = new Map(atual); mapa.set(fkCardsId, { x: posicaoX, y: posicaoY }); return mapa; }),
+    });
+
+    // Presenca: entra na sala do objetivo em exibicao e sai ao trocar/sair. Depende do epoch do socket: rooms nao sobrevivem a reconexao, entao cada reconexao re-entra (idempotente no servidor).
+    const epochSocket = useSocketEpoch();
+    useEffect(() => {
+        setPresencaObjetivo([]);
+        setCursoresFluxograma(new Map());
+        if (objetivoAtualId === null) return;
+        eventoWs(Eventos_Envia.PainelDoMedo.eventos.entrarPresencaObjetivo, { fkObjetivosId: objetivoAtualId });
+        return () => { eventoWs(Eventos_Envia.PainelDoMedo.eventos.sairPresencaObjetivo, {}); };
+    }, [objetivoAtualId, epochSocket]);
+
+    useRecebeEmitWs(Eventos_Emite.PainelDoMedo.eventos.presencaObjetivoAtualizada, {
+        onSuccess: ({ fkObjetivosId, usuarios }) => {
+            if (fkObjetivosId !== objetivoAtualId) return;
+            setPresencaObjetivo(usuarios);
+            // Quem saiu da presenca leva o cursor junto.
+            const idsPresentes = new Set(usuarios.map(usuario => usuario.id));
+            setCursoresFluxograma(atual => {
+                if (atual.size === 0) return atual;
+                const mapa = new Map(atual);
+                let mudou = false;
+                for (const idUsuario of mapa.keys()) { if (!idsPresentes.has(idUsuario)) { mapa.delete(idUsuario); mudou = true; } }
+                return mudou ? mapa : atual;
+            });
+        },
+    });
+
+    // Cursor de outro usuario no Fluxograma deste objetivo (o proprio e ignorado — cada cliente desenha so os alheios).
+    useRecebeEmitWs(Eventos_Emite.PainelDoMedo.eventos.cursorFluxogramaAtualizado, {
+        onSuccess: ({ fkObjetivosId, idUsuario, username, posicaoX, posicaoY }) => {
+            if (fkObjetivosId !== objetivoAtualId || idUsuario === (usuarioLogado?.id ?? null)) return;
+            setCursoresFluxograma(atual => { const mapa = new Map(atual); mapa.set(idUsuario, { username, x: posicaoX, y: posicaoY }); return mapa; });
+        },
+    });
+
+    // Guard de dados nao salvos: a SPA ativa registra seus rascunhos (descricao/comentario/evidencias) e QUALQUER navegacao que desmonte a tela (fechar da ficha, abrir operacao, trocar de card) pede confirmacao antes de descartar. beforeunload cobre fechar/atualizar a aba.
+    const defineDadosNaoSalvos = (descricao: string | null) => { dadosNaoSalvosRef.current = descricao; };
+    const confirmaDescarteDadosNaoSalvos = () => {
+        if (dadosNaoSalvosRef.current === null) return true;
+        const confirmado = window.confirm(`Há dados não salvos (${dadosNaoSalvosRef.current}). Deseja continuar e descartá-los?`);
+        if (confirmado) dadosNaoSalvosRef.current = null;
+        return confirmado;
+    };
+    useEffect(() => {
+        const aoSairDaPagina = (evento: BeforeUnloadEvent) => { if (dadosNaoSalvosRef.current !== null) evento.preventDefault(); };
+        window.addEventListener('beforeunload', aoSairDaPagina);
+        return () => window.removeEventListener('beforeunload', aoSairDaPagina);
+    }, []);
+
     const abrirCard = (id: number) => setCardAbertoId(id);
-    const fecharCard = () => { setCardAbertoId(null); setOperacaoCard(null); };
+    const fecharCard = () => { if (!confirmaDescarteDadosNaoSalvos()) return; setCardAbertoId(null); setOperacaoCard(null); };
     // Sub-fluxo de operacao do card: cada acao que muda a composicao da ficha (adiciona elemento / da input) roda em SPA propria. Fechar volta para a ficha — exceto criar-etiqueta, que volta para aplicar-etiqueta (o fluxo natural: criei, agora aplico).
-    const abrirOperacaoCard = (tipo: OperacaoCardTipo, cardId: number) => setOperacaoCard({ tipo, cardId });
+    const abrirOperacaoCard = (tipo: OperacaoCardTipo, cardId: number) => { if (!confirmaDescarteDadosNaoSalvos()) return; setOperacaoCard({ tipo, cardId }); };
     const fecharOperacaoCard = () => setOperacaoCard(atual => atual?.tipo === 'criar-etiqueta' ? { tipo: 'aplicar-etiqueta', cardId: atual.cardId } : null);
     const abrirOperacaoObjetivo = (tipo: OperacaoObjetivoTipo, objetivoId: number) => setOperacaoObjetivo({ tipo, objetivoId });
     const fecharOperacaoObjetivo = () => setOperacaoObjetivo(null);
@@ -213,6 +299,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     // Referencia GLOBAL de card por id (mencao "#123", deep-link, notificacao): resolve o objetivo sozinho via todosCards; se a listagem ainda nao chegou, fica pendente e o efeito abaixo conclui.
     const abrirCardPorId = (cardId: number) => {
         if (!Number.isInteger(cardId) || cardId <= 0) return;
+        if (cardId !== cardAbertoId && !confirmaDescarteDadosNaoSalvos()) return;
         const card = todosCards.registros.find(item => item.id === cardId);
         if (!card) { setCardDeepLinkPendente(cardId); return; }
         setObjetivoAtualId(card.fkObjetivosId);
@@ -314,27 +401,18 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
         try { await apiReordenaCards({ fkColunasId, idsOrdenados }); cards.recarregar(); } finally { setSalvando(false); }
     };
 
-    const criaDependenciaCard = async (fkCardsDependenteId: number, fkCardsRequisitoId: number, descricao: string | null, bloqueante: boolean) => {
-        if (fkCardsDependenteId === fkCardsRequisitoId || salvando) return;
-        setSalvando(true);
-        try { await apiCriaDependencia({ fkCardsDependenteId, fkCardsRequisitoId, descricao, bloqueante }); dependenciasCards.recarregar(); } finally { setSalvando(false); }
-    };
-
-    const atualizaDependenciaCard = async (id: number, descricao: string | null, bloqueante: boolean) => {
-        if (salvando) return;
-        setSalvando(true);
-        try { await apiAtualizaDependencia({ id, descricao, bloqueante }); dependenciasCards.recarregar(); } finally { setSalvando(false); }
-    };
-
-    const deletaDependenciaCard = async (id: number) => {
-        if (salvando) return;
-        setSalvando(true);
-        try { await apiDeletaDependencia({ id }); dependenciasCards.recarregar(); } finally { setSalvando(false); }
-    };
-
     const definePosicaoFluxogramaCard = async (fkCardsId: number, posicaoX: number, posicaoY: number) => {
         try { await apiDefinePosicao({ fkCardsId, posicaoX, posicaoY }); } catch { /* posicao otimista no estado local; reconciliada no proximo carregamento do objetivo */ }
     };
+
+    // Arraste ao vivo (efemero): transmitido DURANTE o arraste (throttle na SPA); nada persiste — o commit e o definePosicao no soltar.
+    const transmitePosicaoCardAoVivo = (fkCardsId: number, posicaoX: number, posicaoY: number) => eventoWs(Eventos_Envia.PainelDoMedo.eventos.moverCardAoVivo, { fkCardsId, posicaoX, posicaoY });
+
+    // Cursor ao vivo (efemero, coordenadas de mundo do canvas): transmitido no mousemove do Fluxograma (throttle na SPA).
+    const transmiteCursorFluxograma = (posicaoX: number, posicaoY: number) => { if (objetivoAtualId === null) return; eventoWs(Eventos_Envia.PainelDoMedo.eventos.moverCursorFluxograma, { fkObjetivosId: objetivoAtualId, posicaoX, posicaoY }); };
+
+    // Desenho ao vivo (efemero): conteudo transmitido DURANTE criar/mover/redimensionar/digitar (throttle na SPA); o servidor reemite como desenhoAtualizado pra sala do objetivo. O commit continua no salvar debounced.
+    const transmiteDesenhoAoVivo = (conteudo: string | null) => { if (objetivoAtualId === null) return; eventoWs(Eventos_Envia.PainelDoMedo.eventos.moverDesenhoAoVivo, { fkObjetivosId: objetivoAtualId, conteudo }); };
 
     const registraDesenho = (conteudo: string | null) => {
         setDesenhoConteudo(conteudo);
@@ -348,12 +426,6 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
         if (desenhoTimerRef.current === null || objetivoAtualId === null) return;
         window.clearTimeout(desenhoTimerRef.current); desenhoTimerRef.current = null;
         apiSalvaDesenhoFluxograma({ fkObjetivosId: objetivoAtualId, conteudo: desenhoConteudo }).catch(() => { /* reconciliado no proximo carregamento do objetivo */ });
-    };
-
-    const deletaCard = async (id: number) => {
-        if (salvando) return;
-        setSalvando(true);
-        try { await apiDeletaCard({ id }); if (cardAbertoId === id) setCardAbertoId(null); cards.recarregar(); dependenciasCards.recarregar(); posicoesFluxograma.recarregar(); } finally { setSalvando(false); }
     };
 
     const atualizaColuna = async (id: number, nome: string) => {
@@ -380,12 +452,6 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
         try { await apiAtualizaObjetivo({ id, nome: nome.trim() }); objetivos.recarregar(); } finally { setSalvando(false); }
     };
 
-    const deletaObjetivo = async (id: number) => {
-        if (salvando) return;
-        setSalvando(true);
-        try { await apiDeletaObjetivo({ id }); if (objetivoAtualId === id) setObjetivoAtualId(null); objetivos.recarregar(); } finally { setSalvando(false); }
-    };
-
     const abrirFichaObjetivo = (id: number) => setObjetivoFichaAbertaId(id);
     const fecharFichaObjetivo = () => setObjetivoFichaAbertaId(null);
 
@@ -403,8 +469,9 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
         try { await apiCriaItemChecklist({ fkCardsId, fkObjetivosId, texto: texto.trim() }); checklist.recarregar(); } catch { /* reconciliado ao reabrir */ }
     };
 
-    const marcaItemChecklist = async (id: number, concluido: boolean) => {
-        try { await apiMarcaItemChecklist({ id, concluido }); } catch { /* otimista no componente; reconciliado ao reabrir */ }
+    // Devolve sucesso: o componente aplica o check otimista e REVERTE quando false (bloqueio de processo ou erro da API) — o visual nunca pode divergir do banco.
+    const marcaItemChecklist = async (id: number, concluido: boolean): Promise<boolean> => {
+        try { await apiMarcaItemChecklist({ id, concluido }); return true; } catch { return false; }
     };
 
     const atualizaItemChecklist = async (id: number, texto: string) => {
@@ -414,6 +481,14 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
 
     const deletaItemChecklist = async (id: number) => {
         try { await apiDeletaItemChecklist({ id }); checklist.recarregar(); } catch { /* reconciliado ao reabrir */ }
+    };
+
+    const transformaItemChecklistEmCard = async (id: number) => {
+        try { await apiTransformaItemChecklistEmCard({ id }); checklist.recarregar(); cards.recarregar(); todosCards.recarregar(); if (cardAbertoId !== null) eventosCards.recarregar(); } catch { /* reconciliado no proximo painelAtualizado */ }
+    };
+
+    const vinculaCardChecklist = async (fkCardsId: number, fkCardsReferenciaId: number) => {
+        try { await apiVinculaCardChecklist({ fkCardsId, fkCardsReferenciaId }); checklist.recarregar(); if (cardAbertoId !== null) eventosCards.recarregar(); } catch { /* reconciliado no proximo painelAtualizado */ }
     };
 
     const adicionaMembroCard = async (fkCardsId: number, fkUsuariosId: number) => {
@@ -464,7 +539,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__Provider = ({ children }: 
     };
 
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, pagina, setPagina, irParaObjetivo, irParaListagem, irParaCadastroObjetivo, dependenciasCards, posicoesFluxograma, desenhoFluxograma, todosCards, criaDependenciaCard, atualizaDependenciaCard, deletaDependenciaCard, definePosicaoFluxogramaCard, desenhoConteudo, registraDesenho, flushDesenho, deletaCard, atualizaColuna, deletaColuna, reordenaColunas, atualizaObjetivo, deletaObjetivo, checklist, objetivoFichaAbertaId, abrirFichaObjetivo, fecharFichaObjetivo, atualizaObjetivoFicha, criaItemChecklist, marcaItemChecklist, atualizaItemChecklist, deletaItemChecklist, membrosCards, etiquetas, etiquetasCards, eventosCards, itensChecklistQuadro, adicionaMembroCard, removeMembroCard, criaEtiqueta, aplicaEtiquetaCard, removeEtiquetaCard, atualizaDescricaoCard, anexosCard, permissoesObjetivos, concedePermissaoObjetivo, revogaPermissaoObjetivo, trancaCard, trancaObjetivo, abrirCardPorId, operacaoCard, abrirOperacaoCard, fecharOperacaoCard, operacaoObjetivo, abrirOperacaoObjetivo, fecharOperacaoObjetivo }}>
+        <Contexto__PaginaColaboradorPainelDoMedo.Provider value={{ objetivos, objetivoAtualId, setObjetivoAtualId, colunas, cards, comentarios, cardAbertoId, abrirCard, fecharCard, salvando, criaObjetivo, criaColuna, criaCard, atualizaCard, criaComentario, reordenaCards, pagina, setPagina, irParaObjetivo, irParaListagem, irParaCadastroObjetivo, posicoesFluxograma, desenhoFluxograma, todosCards, definePosicaoFluxogramaCard, transmitePosicaoCardAoVivo, posicoesCardsAoVivo, presencaObjetivo, transmiteCursorFluxograma, cursoresFluxograma, transmiteDesenhoAoVivo, defineDadosNaoSalvos, desenhoConteudo, registraDesenho, flushDesenho, atualizaColuna, deletaColuna, reordenaColunas, atualizaObjetivo, checklist, objetivoFichaAbertaId, abrirFichaObjetivo, fecharFichaObjetivo, atualizaObjetivoFicha, criaItemChecklist, marcaItemChecklist, atualizaItemChecklist, deletaItemChecklist, transformaItemChecklistEmCard, vinculaCardChecklist, membrosCards, etiquetas, etiquetasCards, eventosCards, itensChecklistQuadro, adicionaMembroCard, removeMembroCard, criaEtiqueta, aplicaEtiquetaCard, removeEtiquetaCard, atualizaDescricaoCard, anexosCard, permissoesObjetivos, concedePermissaoObjetivo, revogaPermissaoObjetivo, trancaCard, trancaObjetivo, abrirCardPorId, operacaoCard, abrirOperacaoCard, fecharOperacaoCard, operacaoObjetivo, abrirOperacaoObjetivo, fecharOperacaoObjetivo }}>
             {children}
         </Contexto__PaginaColaboradorPainelDoMedo.Provider>
     );
@@ -532,20 +607,6 @@ function obtemComentarios(cardId: number | null) {
     });
 };
 
-function obtemDependenciasCards() {
-    return useNoraGraphQLListagem('DependenciaCard', {
-        select: ['id', 'fkCardsDependenteId', 'fkCardsRequisitoId', 'descricao', 'bloqueante'],
-        itensPorPagina: 100,
-        carregamento: 'BARRA',
-        recarregamentoSuave: true,
-        carregando: 'Carregando dependências',
-        mensagemErro: 'Houve um erro recuperando as dependências',
-        mensagemListaVazia: 'Nenhuma dependência ainda.',
-        mensagemListaVaziaComFiltro: 'Nenhuma dependência com os filtros atuais.',
-        montaParametrosConsulta: params => ({ where: params.where, order: { id: 'ASC' }, limit: params.limit, offset: params.offset }),
-    });
-};
-
 function obtemPosicoesFluxograma() {
     return useNoraGraphQLListagem('PosicaoFluxogramaCard', {
         select: ['id', 'fkCardsId', 'posicaoX', 'posicaoY'],
@@ -579,7 +640,7 @@ function obtemDesenhoFluxograma(objetivoId: number | null) {
 function obtemChecklist(cardId: number | null, objetivoId: number | null) {
     const whereFixo = useMemo(() => cardId !== null ? { fkCardsId: cardId } : objetivoId !== null ? { fkObjetivosId: objetivoId } : { id: -1 }, [cardId, objetivoId]);
     return useNoraGraphQLListagem('ItemChecklist', {
-        select: ['id', 'fkCardsId', 'fkObjetivosId', 'texto', 'concluido', 'ordem'],
+        select: ['id', 'fkCardsId', 'fkObjetivosId', 'fkCardsReferenciaId', 'texto', 'concluido', 'ordem'],
         whereFixo,
         itensPorPagina: 100,
         carregamento: 'BARRA',
@@ -666,7 +727,7 @@ function obtemEventosCards(cardId: number | null) {
 
 function obtemItensChecklistQuadro() {
     return useNoraGraphQLListagem('ItemChecklist', {
-        select: ['id', 'fkCardsId', 'concluido'],
+        select: ['id', 'fkCardsId', 'fkCardsReferenciaId', 'concluido'],
         itensPorPagina: 100,
         carregamento: 'BARRA',
         recarregamentoSuave: true,
@@ -680,7 +741,7 @@ function obtemItensChecklistQuadro() {
 
 function obtemTodosCards() {
     return useNoraGraphQLListagem('Card', {
-        select: ['id', 'titulo', 'fkObjetivosId', 'fkColunasId'],
+        select: ['id', 'titulo', 'fkObjetivosId', 'fkColunasId', 'motivoTranca'],
         itensPorPagina: 100,
         carregamento: 'BARRA',
         recarregamentoSuave: true,

@@ -6,6 +6,7 @@ import { ContextoBarraAcoesFlutuante__Provider } from 'Contextos/ContextoBarraAc
 import { ContextoUsuariosOnline__Provider } from 'Contextos/ContextoUsuariosOnline/contexto';
 import { ContextoCentralAudio__Provider } from 'Contextos/ContextoCentralAudio/contexto';
 import { ContextoControlePalco__Provider } from 'Contextos/ContextoControlePalco/contexto';
+import { ContextoResumoPainelDoMedo__Provider } from 'Contextos/ContextoResumoPainelDoMedo/contexto';
 
 // Wrapper Client Component que conecta o ContextoBarraAcoesFlutuante__Provider
 // às ações globais da aplicação.
@@ -22,7 +23,9 @@ export function BarraAcoesFlutuante__ProviderGlobal({ children }: { children: Re
             <ContextoUsuariosOnline__Provider>
                 <ContextoCentralAudio__Provider>
                     <ContextoControlePalco__Provider>
-                        {children}
+                        <ContextoResumoPainelDoMedo__Provider>
+                            {children}
+                        </ContextoResumoPainelDoMedo__Provider>
                     </ContextoControlePalco__Provider>
                 </ContextoCentralAudio__Provider>
             </ContextoUsuariosOnline__Provider>

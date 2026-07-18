@@ -1,0 +1,204 @@
+/* PainelResumoPainelDoMedo
+   Slide-in do canto direito (mesmo posicionamento do PainelUsuariosOnline),
+   com a identidade do Painel do Medo (ouro velho + pergaminho sobre fundo quase-preto). */
+
+@keyframes slide_in_resumo_painel {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+}
+
+.painelResumo {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 24em;
+    display: flex;
+    flex-direction: column;
+    background-color: #080208fc;
+    border-left: 0.05em solid #B7905155;
+    z-index: var(--zindex-final-barraAcoesFlutuante);
+    animation: slide_in_resumo_painel .25s ease;
+}
+
+.cabecalho {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7em 0.9em;
+    border-bottom: 0.1em solid #2a2536;
+}
+
+.titulo {
+    font-family: var(--fonte-cinzel);
+    color: #B79051;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+.fechar {
+    background: transparent;
+    border: 0;
+    color: #aba9a1;
+    cursor: pointer;
+    font-size: 1em;
+
+    &:hover {
+        color: #DB4747;
+    }
+}
+
+.corpo {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+    padding: 0.8em 0.9em;
+}
+
+.linhaTotais {
+    display: flex;
+    gap: 0.4em;
+}
+
+.chipTotal {
+    font-family: var(--fonte-cinzel);
+    font-size: 0.72em;
+    color: #B79051;
+    border: 0.1em solid #B7905166;
+    border-radius: 1em;
+    padding: 0.15em 0.7em;
+}
+
+.chipTotalConcluido {
+    color: #8fc9a0;
+    border-color: #4f7a5a;
+}
+
+.secao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+}
+
+.rotuloSecao {
+    font-family: var(--fonte-cinzel);
+    color: #B79051;
+    font-size: 0.78em;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-bottom: 0.1em solid #2a2536;
+    padding-bottom: 0.3em;
+}
+
+.estado {
+    color: #7c7565;
+    font-size: 0.82em;
+    margin: 0;
+}
+
+.itemCartao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    text-align: left;
+    background: #120f1c;
+    border: 0.1em solid #352E4C;
+    border-left: 0.3em solid #B79051;
+    border-radius: 0.5em;
+    padding: 0.4em 0.55em;
+    color: #EBE0C9;
+    cursor: pointer;
+    font-family: inherit;
+
+    &:hover {
+        border-color: #5a4f7a;
+        border-left-color: #B79051;
+    }
+}
+
+.tituloCartao {
+    font-size: 0.88em;
+}
+
+.detalheCartao {
+    color: #8a8474;
+    font-size: 0.74em;
+}
+
+.itemAtividade {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    border-bottom: 0.1em solid #1c1826;
+    padding-bottom: 0.35em;
+}
+
+.linhaAtividade {
+    color: #9b958a;
+    font-size: 0.8em;
+    line-height: 1.35;
+    word-break: break-word;
+}
+
+.linhaAtividade strong {
+    color: #EBE0C9;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.95em;
+}
+
+.refCartao {
+    align-self: flex-start;
+    background: transparent;
+    border: 0;
+    color: #B79051;
+    cursor: pointer;
+    font-size: 0.74em;
+    padding: 0;
+    text-decoration: underline dotted;
+
+    &:hover {
+        color: #EBE0C9;
+    }
+}
+
+.itemMarcacao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    border-bottom: 0.1em solid #1c1826;
+    padding-bottom: 0.35em;
+}
+
+.tituloMarcacao {
+    font-family: var(--fonte-cinzel);
+    color: #EBE0C9;
+    font-size: 0.76em;
+}
+
+.mensagemMarcacao {
+    color: #9b958a;
+    font-size: 0.8em;
+    line-height: 1.35;
+    word-break: break-word;
+}
+
+.abrirPainel {
+    background: #16121f;
+    border: 0.1em solid #B79051;
+    color: #B79051;
+    border-radius: 0.4em;
+    padding: 0.5em 0.9em;
+    cursor: pointer;
+    font-family: var(--fonte-cinzel);
+    font-size: 0.8em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    &:hover {
+        background: rgba(183, 144, 81, 0.12);
+    }
+}

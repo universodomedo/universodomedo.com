@@ -15,11 +15,12 @@
     cursor: pointer;
 }
 
-.toggle button:hover {
+.toggle button:hover:not(.ativo) {
     color: #B79051;
 }
 
-.ativo {
-    background: #16121f;
-    color: #B79051;
+/* Aba atual: ouro solido com texto escuro (mesma linguagem da ferramenta ativa do Fluxograma) — precisa ser legivel de relance, nao so no hover. `.toggle button.ativo` porque `.toggle button` acima empata/vence `.ativo` sozinho em especificidade. */
+.toggle button.ativo {
+    background: #B79051;
+    color: #16121f;
 }

@@ -2,7 +2,7 @@
 
 import styles from './styles.module.css';
 
-import type { MotivoTranca } from 'types-nora-api';
+import { COLUNAS_PROCESSO_PAINEL_DO_MEDO, type MotivoTranca } from 'types-nora-api';
 
 import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
@@ -15,7 +15,22 @@ const OPCOES_MOTIVO = [
 ] as const;
 
 export default function SPA__PaginaColaboradorPainelDoMedo__TrancarCartao() {
-    const { motivo, setMotivo, salvando, trancar, cancelar, totalEvidencias } = useContexto__PaginaColaboradorPainelDoMedo__TrancarCartao();
+    const { motivo, setMotivo, salvando, trancar, totalEvidencias, colunaBloqueante } = useContexto__PaginaColaboradorPainelDoMedo__TrancarCartao();
+
+    // Coluna fora do processo: o aviso explica e BLOQUEIA — sem formulario nem acoes (o fechar do cabecalho e a saida).
+    if (colunaBloqueante !== null) {
+        return (
+            <ConteudoForm>
+                <ConteudoForm.AreaCorpo>
+                    <p className={styles.avisoBloqueio}>
+                        🔒 <strong>Trancar está bloqueado nesta coluna.</strong><br />
+                        Trancado, o cartão <strong>não pode mais ser movido entre colunas</strong> — por isso a tranca só é permitida com o cartão em <strong>"{COLUNAS_PROCESSO_PAINEL_DO_MEDO.EM_LEVANTAMENTO.nome}"</strong> (interrupção antes do trabalho começar) ou <strong>"{COLUNAS_PROCESSO_PAINEL_DO_MEDO.CONCLUIDO.nome}"</strong> (fim do fluxo).
+                        Este cartão está em <strong>"{colunaBloqueante}"</strong>: mova-o no Quadro para a coluna adequada antes de trancar.
+                    </p>
+                </ConteudoForm.AreaCorpo>
+            </ConteudoForm>
+        );
+    }
 
     return (
         <ConteudoForm>
@@ -29,7 +44,6 @@ export default function SPA__PaginaColaboradorPainelDoMedo__TrancarCartao() {
 
             <ConteudoForm.AreaBotoes>
                 <button type="button" onClick={trancar} disabled={salvando || motivo === null}>{salvando ? 'Trancando...' : 'Trancar Cartão'}</button>
-                <button type="button" data-variante="secundario" onClick={cancelar} disabled={salvando}>Cancelar</button>
             </ConteudoForm.AreaBotoes>
         </ConteudoForm>
     );

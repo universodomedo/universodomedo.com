@@ -13,7 +13,6 @@ interface Contexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist__Props
     setTexto: (texto: string) => void;
     salvando: boolean;
     adicionar: () => Promise<void>;
-    cancelar: () => void;
 };
 
 const Contexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist = createContext<Contexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist__Props | undefined>(undefined);
@@ -36,7 +35,7 @@ export const Contexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist__Pr
     const adicionar = async () => { if (!texto.trim()) return; await criaItemChecklist(texto); fecharOperacaoCard(); };
 
     return (
-        <Contexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist.Provider value={{ card, texto, setTexto, salvando, adicionar, cancelar: fecharOperacaoCard }}>
+        <Contexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist.Provider value={{ card, texto, setTexto, salvando, adicionar }}>
             <SPA__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist />
         </Contexto__PaginaColaboradorPainelDoMedo__AdicionarItemChecklist.Provider>
     );

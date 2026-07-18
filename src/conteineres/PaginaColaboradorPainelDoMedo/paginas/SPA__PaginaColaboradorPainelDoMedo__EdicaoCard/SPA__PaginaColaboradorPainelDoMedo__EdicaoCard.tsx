@@ -5,7 +5,7 @@ import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputCom
 import { useContexto__PaginaColaboradorPainelDoMedo__EdicaoCard } from 'Contextos/Contexto__PaginaColaboradorPainelDoMedo__EdicaoCard/contexto';
 
 export default function SPA__PaginaColaboradorPainelDoMedo__EdicaoCard() {
-    const { titulo, setTitulo, salvando, salvar, cancelar } = useContexto__PaginaColaboradorPainelDoMedo__EdicaoCard();
+    const { titulo, setTitulo, salvando, salvar } = useContexto__PaginaColaboradorPainelDoMedo__EdicaoCard();
 
     return (
         <ConteudoForm>
@@ -17,7 +17,6 @@ export default function SPA__PaginaColaboradorPainelDoMedo__EdicaoCard() {
 
             <ConteudoForm.AreaBotoes>
                 <button type="button" onClick={salvar} disabled={salvando || !titulo.trim()}>{salvando ? 'Salvando...' : 'Salvar Título'}</button>
-                <button type="button" data-variante="secundario" onClick={cancelar} disabled={salvando}>Cancelar</button>
             </ConteudoForm.AreaBotoes>
         </ConteudoForm>
     );
