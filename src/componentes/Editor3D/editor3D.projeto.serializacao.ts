@@ -11,7 +11,7 @@ export type TransformEditor3D = { readonly posicao: [number, number, number]; re
 export type CameraEditor3D = { readonly posicao: [number, number, number]; readonly alvo: [number, number, number]; readonly fov: number; };
 export const PERTO_CAMERA_CAPA_ARTE_EDITOR3D = 0.1;
 export const LONGE_CAMERA_CAPA_ARTE_EDITOR3D = 200;
-export const CAMERA_PADRAO_CAPA_ARTE_EDITOR3D: CameraEditor3D = { posicao: [5, 3.5, 6], alvo: [0, 1, 0], fov: 40 };
+export const CAMERA_PADRAO_CAPA_ARTE_EDITOR3D: CameraEditor3D = { posicao: [6, -6, 4], alvo: [0, 0, 1], fov: 40 };
 
 // Texto da Capa de Arte: objeto 3D filho da câmera-output (transform em espaço da câmera + cor de material), editável como qualquer objeto. Renderizado em camada separada para poder ser exibido/ocultado.
 export type TextoCapaArteEditor3D = { readonly texto: string; readonly posicao: [number, number, number]; readonly rotacao: [number, number, number]; readonly escala: [number, number, number]; readonly cor: string; };

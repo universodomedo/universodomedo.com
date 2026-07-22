@@ -5,7 +5,7 @@ import { PAGINAS } from 'types-nora-api';
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 import RedirecionadorInterno from 'Componentes/Elementos/RedirecionadorInterno/RedirecionadorInterno';
 import { ControladorSlot } from 'Layouts/ControladorSlot';
-import ModalPrimeiroAcesso from "Componentes/ElementosDeJogo/ModalPrimeiroAcesso/page";
+import { Conteiner__PaginaCadastrar } from 'Conteineres/PaginaCadastrar/conteiner';
 
 export function PaginaAcessar_Client() {
     const { estaAutenticado } = useContextoAutenticacao();
@@ -14,7 +14,7 @@ export function PaginaAcessar_Client() {
 
     return (
         <ControladorSlot pagina={PAGINAS.cadastrar}>
-            <ModalPrimeiroAcesso />
+            <Conteiner__PaginaCadastrar />
         </ControladorSlot>
     );
 };

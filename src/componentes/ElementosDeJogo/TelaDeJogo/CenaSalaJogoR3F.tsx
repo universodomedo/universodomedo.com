@@ -4,19 +4,24 @@ import styles from './CenaSalaJogoR3F.module.css';
 
 import { useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
+import { Object3D } from 'three';
 import type { CenaCanonicaEditor3D, EstadoTemporalSalaDeJogoRuntime, MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto } from 'types-nora-api';
 
 import { ControlesCameraJogo } from 'Componentes/ElementosDeJogo/Cena3D/ControlesCameraJogo';
 import { PERFIL_CAMERA_TATICA } from 'Componentes/ElementosDeJogo/Cena3D/cena3D.controles';
 import { ControladorPrimeiraPessoaJogo } from 'Componentes/ElementosDeJogo/Cena3D/ControladorPrimeiraPessoaJogo';
 import type { DestinoMovimentacaoSalaJogo } from './ContextoMovimentacaoSalaJogo';
-import { ALTURA_OLHOS, mundoX, mundoZ, paraUnidadeCena, useReforcaRedimensionamentoCanvas } from './cenaSalaJogo.helpers';
+import { ALTURA_OLHOS, mundoX, mundoY, paraUnidadeCena, useReforcaRedimensionamentoCanvas } from './cenaSalaJogo.helpers';
 import { ChaoSemMapaR3F, MapaProjetoR3F } from './MapaProjetoR3F';
 import { useProjetoMapa } from 'Funcionalidades/MapaJogavel/useProjetoMapa';
 import { InteragivelR3F, MarcadorControladoR3F, OcupanteR3F } from './AtoresSalaJogoR3F';
 import { CaminhoMovimentacaoR3F, OverlayMovimentacao, PlanoSelecaoMovimentacao } from './MovimentacaoSalaJogoR3F';
 import { MascaraVisaoControlador, obtemAlcanceLinhaVisaoMilimetros, obtemDependenciaIluminacaoPercentual } from './MascaraVisaoSalaJogoR3F';
 import { LuzesSalaJogoR3F } from './LuzesSalaJogoR3F';
+
+// Z-up (Blender) para todo o render do jogo: define o "para cima" global do Three.js (câmeras, órbita, novos objetos).
+// TODO(z-up): unificar num init único do app (hoje o editor também seta isso no seu próprio módulo).
+Object3D.DEFAULT_UP.set(0, 0, 1);
 
 // Ambiente base da "visao no escuro": um Ser dep 0% ve o cenario achatado neste nivel; dep 100% (humano) -> 0 (sala preta, so luzes-objeto).
 const AMBIENTE_VISAO_BASE = 0.9;
@@ -108,9 +113,9 @@ function VistaTaticaSalaJogo({ className, payload, cenaMapa, keysNovos, keyOcupa
 
     return (
         <div className={className}>
-            <Canvas shadows="soft" dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [distancia * 0.62, distancia * 0.8, distancia * 0.62], fov: 34, near: 0.1, far: distancia * 8 }} onPointerMissed={aoErrarClique}>
+            <Canvas shadows="soft" dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [distancia * 0.62, -distancia * 0.62, distancia * 0.8], up: [0, 0, 1], fov: 34, near: 0.1, far: distancia * 8 }} onPointerMissed={aoErrarClique}>
                 <ConteudoCena3DSalaJogo payload={payload} cenaMapa={cenaMapa} keysNovos={keysNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} estadoTemporalSalaJogo={estadoTemporalSalaJogo} modoMovimentacaoAtivo={modoMovimentacaoAtivo} celulaHoverDestino={celulaHoverDestino} aoMoverDestino={setCelulaHoverDestino} aoConfirmarDestino={aoConfirmarMovimentacao} aoSelecionarOcupante={aoSelecionarOcupante} aoSelecionarInteragivel={aoSelecionarInteragivel} />
-                <ControlesCameraJogo perfil={PERFIL_CAMERA_TATICA} alvo={[0, 0.6, 0]} distanciaMin={Math.max(4, extensao * 0.35)} distanciaMax={extensao * 1.9} />
+                <ControlesCameraJogo perfil={PERFIL_CAMERA_TATICA} alvo={[0, 0, 0.6]} distanciaMin={Math.max(4, extensao * 0.35)} distanciaMax={extensao * 1.9} />
             </Canvas>
             {modoMovimentacaoAtivo && <OverlayMovimentacao ocupanteControlado={ocupanteControlado} celulaHoverDestino={celulaHoverDestino} />}
         </div>
@@ -133,13 +138,13 @@ function VistaPrimeiraPessoaSalaJogo({ className, payload, cenaMapa, keysNovos, 
     const altura = payload.mapaLogico.alturaMilimetros;
     const extensao = paraUnidadeCena(Math.max(largura, altura));
     const cabecaX = ocupanteJogador === null ? 0 : mundoX(ocupanteJogador.posicao.x, largura);
-    const cabecaZ = ocupanteJogador === null ? 0 : mundoZ(ocupanteJogador.posicao.y, altura);
+    const cabecaY = ocupanteJogador === null ? 0 : mundoY(ocupanteJogador.posicao.y, altura);
 
     return (
         <div className={className}>
-            <Canvas shadows="soft" dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [cabecaX, ALTURA_OLHOS, cabecaZ], fov: 72, near: 0.05, far: Math.max(120, extensao * 6) }}>
+            <Canvas shadows="soft" dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [cabecaX, cabecaY, ALTURA_OLHOS], up: [0, 0, 1], fov: 72, near: 0.05, far: Math.max(120, extensao * 6) }}>
                 <ConteudoCena3DSalaJogo payload={payload} cenaMapa={cenaMapa} keysNovos={keysNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} ocultarKeyOcupante={ocupanteJogador?.keySer ?? null} seguirCameraNaVisao />
-                <ControladorPrimeiraPessoaJogo cabecaX={cabecaX} cabecaY={ALTURA_OLHOS} cabecaZ={cabecaZ} />
+                <ControladorPrimeiraPessoaJogo cabecaX={cabecaX} cabecaY={cabecaY} cabecaZ={ALTURA_OLHOS} />
             </Canvas>
         </div>
     );

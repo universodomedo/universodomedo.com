@@ -1587,6 +1587,66 @@
     outline-offset: 0;
 }
 
+/* ---- Trava de eixo do painel Transform (rótulo = toggle; linha travada = rebaixo) ---- */
+.rotulo_travavel {
+    position: relative;
+    cursor: pointer;
+    transition: color 0.12s;
+}
+
+.rotulo_travavel:hover {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+/* Cadeado revelado só no hover (afordância de clicável sem ocupar espaço permanente). */
+.rotulo_travavel::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 0.85em;
+    height: 0.85em;
+    transform: translateY(-50%);
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round'%3E%3Crect x='5' y='11' width='14' height='9' rx='2'/%3E%3Cpath d='M8 11V7a4 4 0 0 1 8 0v4'/%3E%3C/svg%3E") center / contain no-repeat;
+    opacity: 0;
+    transition: opacity 0.12s;
+}
+
+.rotulo_travavel:hover::after {
+    opacity: 0.75;
+}
+
+/* Linha travada: rebaixada ("pressionada"), tudo esmaecido junto. As sombras verticais ficam SÓ nas bordas da série
+   contígua (inicio/fim), pra linhas travadas vizinhas renderem como UM poço afundado — não sombras empilhadas. */
+.campo_numero_travado {
+    background: rgba(0, 0, 0, 0.34);
+    border-bottom-color: rgba(0, 0, 0, 0.3);
+}
+
+.campo_numero_travado span {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.campo_numero_travado input {
+    color: rgba(255, 255, 255, 0.38);
+    background: #121212;
+    border-color: rgba(255, 255, 255, 0.06);
+}
+
+.campo_numero_travado_inicio {
+    box-shadow: inset 0 0.5em 0.5em -0.42em rgba(0, 0, 0, 0.85);
+}
+
+/* Borda de baixo mais clara no fim do poço = o "lábio" do relevo, vendendo a profundidade. */
+.campo_numero_travado_fim {
+    box-shadow: inset 0 -0.34em 0.4em -0.3em rgba(0, 0, 0, 0.55);
+    border-bottom-color: rgba(255, 255, 255, 0.11);
+}
+
+.campo_numero_travado_inicio.campo_numero_travado_fim {
+    box-shadow: inset 0 0.5em 0.5em -0.42em rgba(0, 0, 0, 0.85), inset 0 -0.34em 0.4em -0.3em rgba(0, 0, 0, 0.55);
+}
+
 /* ---- Painel Objeto (nome/cor/ações do objeto selecionado) ---- */
 .painel_objeto {
     display: flex;

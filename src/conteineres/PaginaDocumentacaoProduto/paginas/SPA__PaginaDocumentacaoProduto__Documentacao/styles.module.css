@@ -1,0 +1,26 @@
+.grade {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.grade > * {
+    flex: 1 1 40%;
+}
+
+.grade > .campo_largo {
+    flex-basis: 100%;
+}
+
+.aviso {
+    margin-top: 1em;
+    font-size: 0.85em;
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.erro {
+    margin-top: 1em;
+    color: #DB4747;
+    font-size: 0.85em;
+}

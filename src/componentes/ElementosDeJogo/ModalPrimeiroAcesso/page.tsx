@@ -142,7 +142,7 @@ export default function ModalPrimeiroAcesso() {
     );
 };
 
-function ConteudoTermoAceite({ checkTopicosSensiveis, termo1, termo2, setCheckTopicosSensiveis, setTermo1, setTermo2, onVoltar }: any) {
+export function ConteudoTermoAceite({ checkTopicosSensiveis, termo1, termo2, setCheckTopicosSensiveis, setTermo1, setTermo2, onVoltar }: any) {
     return (
         <div className={styles.conteudo_modal_primeiro_acesso_termos}>
             <div className={styles.conteudo_modal_primeiro_acesso_termos_section}>

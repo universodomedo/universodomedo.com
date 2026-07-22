@@ -26,13 +26,13 @@ export function criaMalhaCubo(): MalhaEditavelLocal {
     return { vertices, faces, proximoIdFace: 7 };
 };
 
-// Cilindro raio 0.5, altura 1: anel inferior (0..n-1) + anel superior (n..2n-1), N quads laterais + 2 tampas n-gon.
+// Cilindro raio 0.5, altura 1 ao longo de Z (Z-up): anel inferior (z=-h) + anel superior (z=+h), N quads laterais + 2 tampas n-gon.
 export function criaMalhaCilindro(segmentos = 24): MalhaEditavelLocal {
     const r = 0.5;
     const h = 0.5;
     const vertices: Vetor3Malha[] = [];
-    for (let i = 0; i < segmentos; i++) { const a = (i / segmentos) * Math.PI * 2; vertices.push([Math.cos(a) * r, -h, Math.sin(a) * r]); }
-    for (let i = 0; i < segmentos; i++) { const a = (i / segmentos) * Math.PI * 2; vertices.push([Math.cos(a) * r, h, Math.sin(a) * r]); }
+    for (let i = 0; i < segmentos; i++) { const a = (i / segmentos) * Math.PI * 2; vertices.push([Math.cos(a) * r, -Math.sin(a) * r, -h]); }
+    for (let i = 0; i < segmentos; i++) { const a = (i / segmentos) * Math.PI * 2; vertices.push([Math.cos(a) * r, -Math.sin(a) * r, h]); }
 
     const faces: FaceMalhaLocal[] = [];
     let idFace = 0;

@@ -1,0 +1,69 @@
+.telaAcessar {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 3em;
+}
+
+.cartaoArte {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 80%;
+}
+
+.areaAcesso {
+    display: flex;
+    flex-direction: column;
+    width: 24em;
+    height: 34em;
+    max-height: 90%;
+    text-align: center;
+    gap: 1em;
+}
+
+.areaAcesso h1 {
+    font-family: var(--fonte-cinzel-decorative);
+}
+
+.camposLogin {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.bannerVerificacao {
+    padding: 0.8em;
+    border: 0.1em solid #B79051;
+    color: #EBE0C9;
+
+    &.falha {
+        border-color: #DB4747;
+    }
+}
+
+.erroLogin {
+    color: #DB4747;
+}
+
+.acessoDiscord {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4em;
+    margin-top: 1em;
+}
+
+.botaoDiscord {
+    width: 3em;
+    height: 3em;
+    color: #7289DA;
+    cursor: pointer;
+    transition: filter 0.3s ease;
+
+    &:hover {
+        filter: saturate(2);
+    }
+}

@@ -4,6 +4,18 @@ import styles from './Editor3D.module.css';
 
 import { useEffect, useState, type ChangeEvent, type KeyboardEvent } from 'react';
 
+// Mecânica de trava de eixo (linhas do painel Transform): o RÓTULO é o toggle (o input segue editável — a trava governa
+// só o gesto). `emModo` acende a barrinha da cor do eixo DENTRO do input (sombra interna: zero deslocamento de layout);
+// `inicioPoco`/`fimPoco` delimitam a série contígua de linhas travadas, que rende como UM poço rebaixado só.
+interface TravaCampoNumeroEditor3D {
+    readonly ativa: boolean;
+    readonly corEixo: string;
+    readonly emModo: boolean;
+    readonly inicioPoco: boolean;
+    readonly fimPoco: boolean;
+    readonly aoAlternar: () => void;
+};
+
 interface CampoNumeroEditor3DProps {
     readonly rotulo: string;
     readonly valor: number;
@@ -13,6 +25,15 @@ interface CampoNumeroEditor3DProps {
     readonly maximo?: number;
     readonly inteiro?: boolean;
     readonly desabilitado?: boolean;
+    readonly trava?: TravaCampoNumeroEditor3D;
+};
+
+// Barrinha esmaecida do eixo travado: mesma cor com alpha (esmaece junto com a linha, sem sumir).
+function corEixoEsmaecida(corHex: string): string {
+    const r = parseInt(corHex.slice(1, 3), 16);
+    const g = parseInt(corHex.slice(3, 5), 16);
+    const b = parseInt(corHex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, 0.32)`;
 };
 
 function obtemCasasDecimais(passo: number): number { return String(passo).split('.')[1]?.length ?? 0; };
@@ -33,7 +54,7 @@ function converteTextoNumero(valorTexto: string): number | null {
     return Number.isFinite(valor) ? valor : null;
 };
 
-export function CampoNumeroEditor3D({ rotulo, valor, passo, atualizaValor, minimo, maximo, inteiro = false, desabilitado = false }: CampoNumeroEditor3DProps) {
+export function CampoNumeroEditor3D({ rotulo, valor, passo, atualizaValor, minimo, maximo, inteiro = false, desabilitado = false, trava }: CampoNumeroEditor3DProps) {
     const [valorTexto, setValorTexto] = useState(() => formataValor(valor, passo, inteiro, minimo, maximo));
     const [editando, setEditando] = useState(false);
 
@@ -82,10 +103,30 @@ export function CampoNumeroEditor3D({ rotulo, valor, passo, atualizaValor, minim
         }
     };
 
+    const classesLinha = [styles.campo_numero];
+    if (trava?.ativa) {
+        classesLinha.push(styles.campo_numero_travado);
+        if (trava.inicioPoco) classesLinha.push(styles.campo_numero_travado_inicio);
+        if (trava.fimPoco) classesLinha.push(styles.campo_numero_travado_fim);
+    }
+    // Barrinha do eixo dentro do input (borda esquerda, via sombra interna): acesa no modo que edita este grupo; travada = esmaecida junto com a linha.
+    const estiloInput = trava?.emModo ? { boxShadow: `inset 0.28em 0 0 ${trava.ativa ? corEixoEsmaecida(trava.corEixo) : trava.corEixo}` } : undefined;
+
+    // preventDefault: cancela o comportamento padrão do <label> (focar o input) — clicar no RÓTULO tranca/destranca; clicar no INPUT edita.
+    function alternaTrava(evento: { preventDefault: () => void; stopPropagation: () => void }): void {
+        evento.preventDefault();
+        evento.stopPropagation();
+        trava?.aoAlternar();
+    };
+
     return (
-        <label className={styles.campo_numero}>
-            <span>{rotulo}</span>
-            <input type="text" inputMode={inteiro ? 'numeric' : 'decimal'} value={valorTexto} disabled={desabilitado} onFocus={() => setEditando(true)} onChange={alteraTexto} onBlur={finalizaEdicao} onKeyDown={aplicaTecla} />
+        <label className={classesLinha.join(' ')}>
+            {trava !== undefined ? (
+                <span className={styles.rotulo_travavel} title={trava.ativa ? 'Destravar: o gesto volta a alterar este eixo' : 'Travar: o gesto não altera este eixo'} onClick={alternaTrava}>{rotulo}</span>
+            ) : (
+                <span>{rotulo}</span>
+            )}
+            <input type="text" inputMode={inteiro ? 'numeric' : 'decimal'} value={valorTexto} disabled={desabilitado} style={estiloInput} onFocus={() => setEditando(true)} onChange={alteraTexto} onBlur={finalizaEdicao} onKeyDown={aplicaTecla} />
         </label>
     );
 };

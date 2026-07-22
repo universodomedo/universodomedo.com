@@ -37,7 +37,7 @@ function calculaArestasFrustumCapa(camera: CameraEditor3D): ArestaFrustumCapa[] 
     const frente = alvo.clone().sub(pos);
     const distancia = Math.max(2, frente.length());
     frente.normalize();
-    const cima = Math.abs(frente.y) > 0.99 ? new Vector3(0, 0, 1) : new Vector3(0, 1, 0);
+    const cima = Math.abs(frente.z) > 0.99 ? new Vector3(0, 1, 0) : new Vector3(0, 0, 1);
     const direita = new Vector3().crossVectors(frente, cima).normalize();
     const topo = new Vector3().crossVectors(direita, frente).normalize();
     const meiaAltura = distancia * Math.tan((camera.fov * Math.PI / 180) / 2);
@@ -128,6 +128,7 @@ export function CameraCapaArteEditor3D({ camera, selecionada, ocultarGizmo, povA
 
 function montaCameraOutputCapaArte(camera: CameraEditor3D): PerspectiveCamera {
     const cam = new PerspectiveCamera(camera.fov, ASPECTO_CAPA_ARTE_EDITOR3D, PERTO_CAMERA_CAPA_ARTE_EDITOR3D, LONGE_CAMERA_CAPA_ARTE_EDITOR3D);
+    cam.up.set(0, 0, 1);
     cam.position.set(camera.posicao[0], camera.posicao[1], camera.posicao[2]);
     cam.lookAt(camera.alvo[0], camera.alvo[1], camera.alvo[2]);
     cam.updateMatrixWorld(true);

@@ -65,7 +65,7 @@ function canOpenSocket(): boolean {
 
 function redirectToLogin() {
     if (typeof window === "undefined") return;
-    if (window.location.pathname === "/acessar" || window.location.pathname === "/login") return;
+    if (window.location.pathname === "/acessar" || window.location.pathname === "/login" || window.location.pathname === "/cadastrar") return;
 
     const next = window.location.pathname + window.location.search + window.location.hash;
     window.location.assign(`/acessar?next=${encodeURIComponent(next)}`);
@@ -76,10 +76,8 @@ export function getSocket(): Socket | null {
 
     if (socketMode === "auth-only") {
         if (!socketAuthKnown) return null;
-        if (!socketAuthAllowed) {
-            redirectToLogin();
-            return null;
-        }
+        // Visitante conhecido não ganha socket e NÃO é expulso da página: acesso a página protegida é decidido pelo ControladorSlot (decidirAcessoRuntime), e expulsar daqui quebrava as páginas públicas (home, /assistir, /doar...). Sessão que morre em uso continua coberta pelo redirect do connect_error.
+        if (!socketAuthAllowed) return null;
     }
 
     if (!canOpenSocket()) return null;

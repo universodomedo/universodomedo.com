@@ -1,0 +1,219 @@
+/* Estilo compartilhado dos blocos por-página do verbete (CTAs, Seções, Públicos): mesma linguagem do NecessidadesVinculadas. */
+.secao {
+    margin-top: 1.5em;
+    padding-top: 1em;
+    border-top: 0.09em solid rgba(235, 224, 201, 0.2);
+}
+
+.titulo_secao {
+    margin: 0 0 0.75em;
+    color: #B79051;
+    font-size: 0.9em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.titulo_sub {
+    margin: 0.5em 0 0.4em;
+    color: #B79051;
+    font-size: 0.75em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.85;
+}
+
+.vazio {
+    font-size: 0.85em;
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.lista {
+    list-style: none;
+    margin: 0 0 1em;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+}
+
+.item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7em;
+    padding: 0.75em 1em;
+    border: 0.09em solid rgba(235, 224, 201, 0.2);
+    border-radius: 0.4em;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.item_corpo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+    min-width: 0;
+}
+
+.numero {
+    min-width: 1.6em;
+    height: 1.6em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.09em solid #B79051;
+    border-radius: 50%;
+    color: #B79051;
+    font-size: 0.85em;
+}
+
+.nome {
+    color: #EBE0C9;
+}
+
+.meta {
+    font-size: 0.75em;
+    color: #B79051;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.nota {
+    margin: 0.3em 0 0;
+    font-size: 0.82em;
+    opacity: 0.82;
+}
+
+.publicos {
+    font-size: 0.78em;
+    color: #B79051;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+}
+
+.linha {
+    display: flex;
+    gap: 0.75em;
+}
+
+.linha > * {
+    flex: 1;
+    min-width: 0;
+}
+
+.acoes,
+.acoes_item {
+    display: flex;
+    gap: 0.4em;
+}
+
+.acoes {
+    margin-top: 0.2em;
+}
+
+.botao_leve {
+    padding: 0.3em 0.8em;
+    border: 0.09em solid rgba(235, 224, 201, 0.4);
+    border-radius: 0.3em;
+    background: transparent;
+    color: #EBE0C9;
+    font-size: 0.8em;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:hover:not(:disabled) {
+        border-color: #B79051;
+        color: #B79051;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+}
+
+.linha_toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+}
+
+.rotulo_toggle {
+    font-size: 0.78em;
+    opacity: 0.8;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.publicos_secao {
+    margin-top: 0.4em;
+    padding-top: 0.5em;
+    border-top: 0.09em dashed rgba(235, 224, 201, 0.15);
+}
+
+.lista_publicos {
+    list-style: none;
+    margin: 0 0 0.4em;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+}
+
+.publico_tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.15em 0.55em;
+    border: 0.09em solid rgba(183, 144, 81, 0.5);
+    border-radius: 1em;
+    font-size: 0.78em;
+    color: #EBE0C9;
+}
+
+.remover_tag {
+    background: transparent;
+    border: 0;
+    color: #8a8474;
+    cursor: pointer;
+    font-size: 0.9em;
+    line-height: 1;
+
+    &:hover {
+        color: #DB4747;
+    }
+}
+
+.mensagens {
+    list-style: none;
+    margin: 0.3em 0 0.4em;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.mensagem_item {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.83em;
+    color: #EBE0C9;
+}
+
+.mensagem_texto {
+    flex: 1;
+    min-width: 0;
+}
+
+.erro {
+    color: #DB4747;
+    font-size: 0.85em;
+}

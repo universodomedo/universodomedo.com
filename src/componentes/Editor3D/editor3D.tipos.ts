@@ -12,6 +12,17 @@ export const CURSOR_MODO_TRANSFORM_EDITOR3D: Record<ModoTransformEditor3D, strin
 
 export type CampoTransformEditor3D = 'posicao' | 'rotacao' | 'escala';
 
+// Cores canônicas dos eixos (X vermelho, Y verde, Z azul) — as mesmas do gizmo de navegação e do painel Transform.
+export const CORES_EIXOS_EDITOR3D: readonly [string, string, string] = ['#c0392b', '#27ae60', '#2980b9'];
+
+// Travas de eixo do gesto (mecânica de lock do painel Transform): eixo travado NÃO é alterado pela manipulação direta
+// (mover/rotacionar/escalar). Estado do EDITOR (não do projeto): não serializa; a digitação no campo numérico segue livre.
+export type TravasTransformEditor3D = Record<CampoTransformEditor3D, readonly [boolean, boolean, boolean]>;
+export const TRAVAS_TRANSFORM_INICIAL_EDITOR3D: TravasTransformEditor3D = { posicao: [false, false, false], rotacao: [false, false, false], escala: [false, false, false] };
+
+// Grupo do painel que o modo atual edita (barrinha de cor acesa nessas linhas). 'select' não edita nenhum.
+export const CAMPO_DO_MODO_TRANSFORM_EDITOR3D: Record<ModoTransformEditor3D, CampoTransformEditor3D | null> = { select: null, translate: 'posicao', rotate: 'rotacao', scale: 'escala' };
+
 // Seleção de nós de primeira classe reusa o estado único `idSelecionado` (não são objetos com id próprio). Origem usa -1; câmera usa -2; título da Capa de Arte usa -3; corpo do Personagem usa -4.
 export const SELECAO_CAMERA_EDITOR3D = -2;
 export const SELECAO_TITULO_CAPA_ARTE_EDITOR3D = -3;

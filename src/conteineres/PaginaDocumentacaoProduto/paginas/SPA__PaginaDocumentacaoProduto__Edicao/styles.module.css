@@ -1,0 +1,161 @@
+.moldura {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    padding: 1.5em 0;
+}
+
+/* Design de documento (print-first): folha pergaminho clara, tipografia da marca, acentos em ouro velho. */
+.documento {
+    width: 52em;
+    max-width: 95%;
+    background: #F3ECDB;
+    color: #241F1A;
+    padding: 3em 3.5em;
+    border-radius: 0.25em;
+    box-shadow: 0 0.4em 2em rgba(0, 0, 0, 0.55);
+    height: fit-content;
+}
+
+.capa {
+    text-align: center;
+    padding-bottom: 1.5em;
+    margin-bottom: 1.5em;
+    border-bottom: 0.14em solid #B79051;
+}
+
+.selo {
+    margin: 0;
+    font-size: 0.8em;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #8A6A33;
+}
+
+.titulo_doc {
+    margin: 0.3em 0 0.2em;
+    font-size: 1.9em;
+    color: #241F1A;
+}
+
+.edicao_data {
+    margin: 0;
+    font-size: 0.9em;
+    color: #6B5D4A;
+    text-transform: capitalize;
+}
+
+.resumo_capa {
+    margin: 0.8em 0 0;
+    font-size: 0.8em;
+    color: #6B5D4A;
+}
+
+.secao {
+    margin-bottom: 1.8em;
+}
+
+.titulo_secao {
+    font-size: 1.15em;
+    color: #8A6A33;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 0.08em solid rgba(138, 106, 51, 0.4);
+    padding-bottom: 0.25em;
+    margin: 0 0 0.9em;
+}
+
+.bloco {
+    margin-bottom: 1.1em;
+    break-inside: avoid;
+}
+
+.titulo_bloco {
+    margin: 0 0 0.25em;
+    font-size: 1em;
+    color: #241F1A;
+}
+
+.tag_inativa,
+.tag_persona {
+    font-weight: normal;
+    font-size: 0.85em;
+    color: #6B5D4A;
+}
+
+.tag_estado {
+    font-weight: normal;
+    font-size: 0.8em;
+    color: #8A6A33;
+}
+
+.rota_doc {
+    margin: 0 0 0.4em;
+    font-size: 0.78em;
+    color: #6B5D4A;
+    word-break: break-all;
+}
+
+.texto {
+    margin: 0.25em 0;
+    font-size: 0.88em;
+    line-height: 1.5;
+}
+
+.texto_vazio {
+    margin: 0.25em 0;
+    font-size: 0.85em;
+    font-style: italic;
+    color: #6B5D4A;
+}
+
+.lista_doc,
+.lista_passos_doc {
+    margin: 0.4em 0 0;
+    padding-left: 1.4em;
+    font-size: 0.88em;
+    line-height: 1.55;
+}
+
+.rodape_doc {
+    margin-top: 2em;
+    padding-top: 0.8em;
+    border-top: 0.08em solid rgba(138, 106, 51, 0.4);
+    font-size: 0.75em;
+    color: #6B5D4A;
+    text-align: center;
+}
+
+/* Exportar para PDF: no print, só o documento existe — o app inteiro some e a escala global é neutralizada. */
+@media print {
+    :global(:root) {
+        --scale: 1 !important;
+    }
+
+    :global(body *) {
+        visibility: hidden;
+    }
+
+    .documento,
+    .documento * {
+        visibility: visible;
+    }
+
+    .documento {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: none;
+        padding: 0;
+        background: #FFFFFF;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .secao {
+        break-inside: auto;
+    }
+}

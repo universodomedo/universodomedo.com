@@ -96,14 +96,17 @@ export function FiguraSerR3F({ position, corPrimaria, selecionado = false, aoCli
 
     return (
         <group position={position} onClick={aoClicar}>
-            {selecionado && <AnelSelecaoFigura />}
+            {/* Z-up: o gabarito de metaballs é Y-up (pés em y=0); orientamos o bloco inteiro (corpo + hit-target + anel) para Z-up com +90° em X. */}
+            <group rotation={[Math.PI / 2, 0, 0]}>
+                {selecionado && <AnelSelecaoFigura />}
 
-            <mesh position={[0, 0.9, 0]}>
-                <cylinderGeometry args={[0.5, 0.5, 1.8, 8]} />
-                <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-            </mesh>
+                <mesh position={[0, 0.9, 0]}>
+                    <cylinderGeometry args={[0.5, 0.5, 1.8, 8]} />
+                    <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+                </mesh>
 
-            <mesh geometry={geometria} material={material} position={[0, DESLOCAMENTO_Y, 0]} scale={ESCALA_FIGURA} castShadow receiveShadow />
+                <mesh geometry={geometria} material={material} position={[0, DESLOCAMENTO_Y, 0]} scale={ESCALA_FIGURA} castShadow receiveShadow />
+            </group>
         </group>
     );
 };

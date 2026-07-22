@@ -3,7 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { Vector3, type Material, type Mesh, type MeshStandardMaterial } from 'three';
 import { TIPOS_INTERACAO, type EstadoTemporalSalaDeJogoRuntime, type InteragivelPercebidoSalaJogoWsDto, type OcupanteMapaLogicoSalaJogoWsDto, type SerNaSalaJogoWsDto } from 'types-nora-api';
 
-import { ALTURA_OLHOS, dimensoesInteragivelCena, encontraMovimentoAtivoControlado, mundoX, mundoZ, paraUnidadeCena, posicaoLogicaControladoFiccional, type ReferenciaTempoFiccionalControlado } from './cenaSalaJogo.helpers';
+import { ALTURA_OLHOS, dimensoesInteragivelCena, encontraMovimentoAtivoControlado, mundoX, mundoY, paraUnidadeCena, posicaoLogicaControladoFiccional, type ReferenciaTempoFiccionalControlado } from './cenaSalaJogo.helpers';
 
 // Alcance "infinito" em unidade de cena: sem Percepcao Visual autorada nao mascaramos (ve tudo). O estado logico de nao-ver e responsabilidade da camada de percepcao, nao do render.
 const ALCANCE_SEM_MASCARA = 100000;
@@ -146,9 +146,10 @@ function preencheOclusores(interagiveis: readonly InteragivelPercebidoSalaJogoWs
         if (interagivel.tipo !== 'objeto' || interagivel.posicao === null) continue;
         const dims = dimensoesInteragivelCena(interagivel);
         const centroX = mundoX(interagivel.posicao.x, largura);
-        const centroZ = mundoZ(interagivel.posicao.y, altura);
-        uniformes.uOclusorMin.value[quantidade].set(centroX - dims.largura / 2, 0, centroZ - dims.profundidade / 2);
-        uniformes.uOclusorMax.value[quantidade].set(centroX + dims.largura / 2, dims.altura, centroZ + dims.profundidade / 2);
+        const centroY = mundoY(interagivel.posicao.y, altura);
+        // Z-up: AABB no plano XY + altura em Z. vPosicaoMundoVisao (shader) já é posição-mundo nativa, então bate direto.
+        uniformes.uOclusorMin.value[quantidade].set(centroX - dims.largura / 2, centroY - dims.profundidade / 2, 0);
+        uniformes.uOclusorMax.value[quantidade].set(centroX + dims.largura / 2, centroY + dims.profundidade / 2, dims.altura);
         quantidade++;
     }
     uniformes.uOclusorQtd.value = quantidade;
@@ -184,7 +185,7 @@ export function MascaraVisaoControlador({ alcanceLinhaVisaoMilimetros, ocupanteC
         if (!ocupanteControlado) { uniformes.uAlcanceVisao.value = ALCANCE_SEM_MASCARA; uniformes.uOclusorQtd.value = 0; return; }
         const movimentoAtivo = encontraMovimentoAtivoControlado(estadoTemporal);
         const posicao = posicaoLogicaControladoFiccional(ocupanteControlado.posicao, movimentoAtivo, referencia);
-        uniformes.uCabecaVisao.value.set(mundoX(posicao.x, largura), ALTURA_OLHOS, mundoZ(posicao.y, altura));
+        uniformes.uCabecaVisao.value.set(mundoX(posicao.x, largura), mundoY(posicao.y, altura), ALTURA_OLHOS);
     });
 
     return null;

@@ -1,0 +1,33 @@
+.telaEmailEnviado {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.areaMensagem {
+    display: flex;
+    flex-direction: column;
+    width: 26em;
+    height: 20em;
+    max-height: 90%;
+    text-align: center;
+    gap: 1em;
+}
+
+.areaMensagem h1 {
+    font-family: var(--fonte-cinzel-decorative);
+}
+
+.mensagem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    color: #EBE0C9;
+}
+
+.emailDestacado {
+    color: #B79051;
+    font-weight: bold;
+}

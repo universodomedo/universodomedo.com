@@ -8,7 +8,7 @@ import type { ConfiguracaoPartida } from 'types-nora-api';
 
 import { MapaProjetoR3F, useAlturaApoioNoMapa } from 'Componentes/ElementosDeJogo/TelaDeJogo/MapaProjetoR3F';
 import { FiguraSerR3F } from 'Componentes/ElementosDeJogo/TelaDeJogo/FiguraSerR3F';
-import { mundoX, mundoZ, useReforcaRedimensionamentoCanvas } from 'Componentes/ElementosDeJogo/TelaDeJogo/cenaSalaJogo.helpers';
+import { mundoX, mundoY, useReforcaRedimensionamentoCanvas } from 'Componentes/ElementosDeJogo/TelaDeJogo/cenaSalaJogo.helpers';
 import { useProjetoMapa } from 'Funcionalidades/MapaJogavel/useProjetoMapa';
 
 type Interagivel = ConfiguracaoPartida['interagiveis'][number];
@@ -32,18 +32,18 @@ export function PreviewRuntimePartida({ configuracao }: { configuracao: Configur
 
     return (
         <div className={styles.preview}>
-            <Canvas className={styles.cena} shadows dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [0.5 + distancia * 0.62, distancia * 0.8, 0.5 + distancia * 0.62], fov: 38, near: 0.1, far: distancia * 8 }}>
+            <Canvas className={styles.cena} shadows dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [0.5 + distancia * 0.62, 0.5 - distancia * 0.62, distancia * 0.8], up: [0, 0, 1], fov: 38, near: 0.1, far: distancia * 8 }}>
                 <color attach="background" args={['#0e0c14']} />
                 <ambientLight intensity={0.65} color="#eef2f6" />
-                <hemisphereLight intensity={0.45} color="#f4f7fb" groundColor="#9aa1ad" />
-                <directionalLight castShadow position={[8, 12, 6]} intensity={1.0} color="#fff4e2" />
+                <hemisphereLight intensity={0.45} color="#f4f7fb" groundColor="#9aa1ad" position={[0, 0, 1]} />
+                <directionalLight castShadow position={[8, 6, 12]} intensity={1.0} color="#fff4e2" />
 
                 <MapaProjetoR3F cena={cenaMapa} largura={largura} altura={altura} />
 
                 {configuracao.interagiveis.map(interagivel => <InteragivelPreviewR3F key={interagivel.chave} interagivel={interagivel} largura={largura} altura={altura} />)}
                 {(configuracao.luzes ?? []).map(luz => <MarcadorLuzPreviewR3F key={luz.chave} luz={luz} largura={largura} altura={altura} />)}
 
-                <OrbitControls makeDefault enablePan enableZoom enableRotate enableDamping target={[0.5, 0.6, 0.5]} minDistance={1.5} maxDistance={distancia * 4} />
+                <OrbitControls makeDefault enablePan enableZoom enableRotate enableDamping target={[0.5, 0.5, 0.6]} minDistance={1.5} maxDistance={distancia * 4} />
             </Canvas>
             <p className={styles.leitura}>Preview local do Runtime — mapa e interagíveis nas posições configuradas, sem iniciar Partida. Câmera livre (orbitar/zoom/pan).</p>
         </div>
@@ -55,10 +55,10 @@ export function PreviewRuntimePartida({ configuracao }: { configuracao: Configur
 function InteragivelPreviewR3F({ interagivel, largura, altura }: { interagivel: Interagivel; largura: number; altura: number }) {
     const posicao = interagivel.posicao ?? { x: 0, y: 0 };
     const x = mundoX(posicao.x, largura);
-    const z = mundoZ(posicao.y, altura);
-    const alturaApoio = useAlturaApoioNoMapa(x, z);
+    const y = mundoY(posicao.y, altura);
+    const alturaApoio = useAlturaApoioNoMapa(x, y);
 
-    if (interagivel.tipo === 'ser') return <FiguraSerR3F position={[x, alturaApoio, z]} corPrimaria={interagivel.controlador.tipo === 'jogador' ? '#2f6f86' : '#7484b4'} corPele="#d8b48c" />;
+    if (interagivel.tipo === 'ser') return <FiguraSerR3F position={[x, y, alturaApoio]} corPrimaria={interagivel.controlador.tipo === 'jogador' ? '#2f6f86' : '#7484b4'} corPele="#d8b48c" />;
 
     // Objeto vindo do MAPA: o corpo já está desenhado pela malha do próprio mapa — nada a acrescentar no preview.
     if (interagivel.idElementoMapa != null) return null;
@@ -67,9 +67,10 @@ function InteragivelPreviewR3F({ interagivel, largura, altura }: { interagivel: 
     const dimAltura = (interagivel.alturaMilimetros ?? 900) / 1000;
     const dimProfundidade = (interagivel.profundidadeMilimetros ?? 800) / 1000;
 
+    // Z-up: altura no eixo Z; caixa com dimensões [X=largura, Y=profundidade, Z=altura].
     return (
-        <mesh castShadow position={[x, alturaApoio + dimAltura / 2, z]}>
-            <boxGeometry args={[dimLargura, dimAltura, dimProfundidade]} />
+        <mesh castShadow position={[x, y, alturaApoio + dimAltura / 2]}>
+            <boxGeometry args={[dimLargura, dimProfundidade, dimAltura]} />
             <meshStandardMaterial color="#8aa0d0" roughness={0.5} metalness={0.1} />
         </mesh>
     );
@@ -78,12 +79,12 @@ function InteragivelPreviewR3F({ interagivel, largura, altura }: { interagivel: 
 // Luz da config como MARCADOR (esfera âmbar emissiva) — o preview usa iluminação neutra de autoria, não a iluminação do jogo.
 function MarcadorLuzPreviewR3F({ luz, largura, altura }: { luz: Luz; largura: number; altura: number }) {
     const x = mundoX(luz.posicao?.x ?? 0, largura);
-    const z = mundoZ(luz.posicao?.y ?? 0, altura);
-    const alturaApoio = useAlturaApoioNoMapa(x, z);
+    const y = mundoY(luz.posicao?.y ?? 0, altura);
+    const alturaApoio = useAlturaApoioNoMapa(x, y);
     if (luz.posicao === null) return null;
 
     return (
-        <mesh position={[x, alturaApoio + 0.35, z]}>
+        <mesh position={[x, y, alturaApoio + 0.35]}>
             <sphereGeometry args={[0.14, 14, 14]} />
             <meshStandardMaterial color="#ffd98a" emissive="#ffb347" emissiveIntensity={0.9} roughness={0.35} />
         </mesh>

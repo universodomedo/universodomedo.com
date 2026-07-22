@@ -1,0 +1,341 @@
+.moldura {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 1.2em 1.6em;
+    text-align: left;
+}
+
+.verbete {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+/* Cabeçalho: identidade da página + selos. Sem card — respira sobre o ambiente. */
+.cabecalho {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.rota {
+    font-family: var(--fonte-B612Mono), monospace;
+    font-size: 0.72em;
+    color: #6E6A60;
+    word-break: break-all;
+}
+
+.selos {
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+    flex-shrink: 0;
+}
+
+.selo_composicao {
+    font-size: 0.72em;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #B79051;
+    border: 0.09em solid rgba(183, 144, 81, 0.55);
+    border-radius: 0.3em;
+    padding: 0.3em 0.8em;
+}
+
+.data {
+    font-family: var(--fonte-B612Mono), monospace;
+    font-size: 0.7em;
+    color: #6E6A60;
+}
+
+/* Zona-destaque do objetivo: a única frase longa em evidência. */
+.zona_objetivo {
+    border-left: 0.18em solid #B79051;
+    padding: 0.2em 0 0.2em 1em;
+}
+
+.objetivo {
+    margin: 0.3em 0 0;
+    font-size: 0.95em;
+    line-height: 1.55;
+    color: #D9D9D9;
+}
+
+/* Zonas em card (padrão do Painel): só existe card com conteúdo; o fluxo denso preenche os buracos e o esqueleto (zona_alta) ocupa duas fileiras quando há segunda fileira. */
+.grade {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-flow: dense;
+    gap: 1em;
+}
+
+.zona_alta {
+    grid-row: span 2;
+}
+
+.zona {
+    background: linear-gradient(180deg, #140f1f, #0a0810);
+    border: 0.1em solid #352E4C;
+    border-radius: 0.6em;
+    padding: 0.9em 1.1em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    text-align: left;
+}
+
+.zona_apagada {
+    opacity: 0.82;
+}
+
+/* Cada zona é a PERGUNTA que ela responde. */
+.pergunta {
+    margin: 0;
+    font-size: 0.78em;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #B79051;
+    display: flex;
+    align-items: center;
+    gap: 0.8em;
+}
+
+.contador {
+    font-family: var(--fonte-B612Mono), monospace;
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: #aba9a1;
+    border: 0.09em solid #352E4C;
+    border-radius: 0.9em;
+    padding: 0.15em 0.7em;
+}
+
+.nome_forte {
+    font-size: 0.92em;
+    color: #EBE0C9;
+}
+
+.chip_principal,
+.chip_secundaria {
+    font-size: 0.68em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 0.9em;
+    padding: 0.2em 0.7em;
+    white-space: nowrap;
+}
+
+.chip_principal {
+    color: #EBE0C9;
+    background: rgba(183, 144, 81, 0.22);
+    border: 0.09em solid #B79051;
+}
+
+.chip_secundaria {
+    color: #aba9a1;
+    border: 0.09em solid #352E4C;
+}
+
+.publico {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+}
+
+.publico_cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+}
+
+.mensagens {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+}
+
+.mensagem {
+    font-size: 0.8em;
+    line-height: 1.4;
+    color: #aba9a1;
+    padding-left: 0.9em;
+    border-left: 0.14em solid #352E4C;
+}
+
+/* CTAs e seções: ranking numerado — o olho lê os nomes, o resto é suave. */
+.lista_ctas,
+.lista_secoes,
+.lista_necessidades {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55em;
+}
+
+.cta,
+.secao_item,
+.necessidade {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7em;
+}
+
+.posicao {
+    font-family: var(--fonte-B612Mono), monospace;
+    font-size: 0.8em;
+    color: #B79051;
+    border: 0.09em solid rgba(183, 144, 81, 0.45);
+    border-radius: 0.3em;
+    width: 1.6em;
+    height: 1.6em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.1em;
+}
+
+.cta_corpo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15em;
+    min-width: 0;
+}
+
+.cta_linha {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    flex-wrap: wrap;
+}
+
+.destino {
+    font-size: 0.75em;
+    color: #aba9a1;
+}
+
+/* Destino navegável: referência viva — sublinhado como affordância, brass no hover. */
+.destino_link {
+    background: none;
+    border: none;
+    padding: 0;
+    text-align: left;
+    align-self: flex-start;
+    font-family: inherit;
+    font-size: 0.75em;
+    color: #aba9a1;
+    text-decoration: underline;
+    text-decoration-color: rgba(183, 144, 81, 0.5);
+    text-underline-offset: 0.25em;
+    cursor: pointer;
+
+    &:hover {
+        color: #B79051;
+        text-decoration-color: #B79051;
+    }
+}
+
+.detalhe {
+    margin: 0;
+    font-size: 0.72em;
+    line-height: 1.4;
+    color: #6E6A60;
+}
+
+.detalhe_arquitetura {
+    margin: 0;
+    font-size: 0.75em;
+    line-height: 1.45;
+    color: #aba9a1;
+}
+
+/* Estado por luz/material: atendida = brasa acesa; pendente = aro apagado. */
+.farol_atendida,
+.farol_pendente {
+    width: 0.55em;
+    height: 0.55em;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.35em;
+}
+
+.farol_atendida {
+    background: #B79051;
+    box-shadow: 0 0 0.45em rgba(183, 144, 81, 0.75);
+}
+
+.farol_pendente {
+    border: 0.12em solid #6E6A60;
+}
+
+.estado_atendida {
+    font-size: 0.7em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #B79051;
+}
+
+.estado_pendente {
+    font-size: 0.7em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6E6A60;
+}
+
+.tag_persona {
+    font-size: 0.72em;
+    color: #aba9a1;
+}
+
+.texto_suave {
+    margin: 0;
+    font-size: 0.78em;
+    line-height: 1.5;
+    color: #aba9a1;
+}
+
+.rotulo_inline {
+    color: #B79051;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    margin-right: 0.4em;
+}
+
+/* Faixa única de lacunas: gap visível sem monumentalizar cards vazios. */
+.lacunas {
+    margin: 0;
+    font-size: 0.75em;
+    color: #6E6A60;
+}
+
+/* Página sem documentação. */
+.vazio_pagina {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6em;
+}
+
+.titulo_vazio {
+    margin: 0;
+    font-size: 1.5em;
+    color: #EBE0C9;
+}
+
+.aviso_vazio {
+    margin: 0;
+    font-size: 0.85em;
+    font-style: italic;
+    color: #6E6A60;
+}

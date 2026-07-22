@@ -26,11 +26,11 @@ export function MiniaturaMapa3D({ idProjeto }: { idProjeto: number }) {
     const distancia = Math.max(8, extensao * 1.4);
 
     return (
-        <Canvas className={styles.cena} frameloop="demand" dpr={[1, 1.5]} resize={{ offsetSize: true }} camera={{ position: [0.5 + distancia * 0.62, distancia * 0.8, 0.5 + distancia * 0.62], fov: 38, near: 0.1, far: distancia * 8 }}>
+        <Canvas className={styles.cena} frameloop="demand" dpr={[1, 1.5]} resize={{ offsetSize: true }} camera={{ position: [0.5 + distancia * 0.62, 0.5 - distancia * 0.62, distancia * 0.8], up: [0, 0, 1], fov: 38, near: 0.1, far: distancia * 8 }}>
             <color attach="background" args={['#0e0c14']} />
             <ambientLight intensity={0.65} color="#eef2f6" />
-            <hemisphereLight intensity={0.45} color="#f4f7fb" groundColor="#9aa1ad" />
-            <directionalLight position={[8, 12, 6]} intensity={1.0} color="#fff4e2" />
+            <hemisphereLight intensity={0.45} color="#f4f7fb" groundColor="#9aa1ad" position={[0, 0, 1]} />
+            <directionalLight position={[8, 6, 12]} intensity={1.0} color="#fff4e2" />
 
             <MapaProjetoR3F cena={cenaMapa} largura={largura} altura={altura} />
         </Canvas>

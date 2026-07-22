@@ -11,7 +11,7 @@ import { PainelTransformEditor3D } from './PainelTransformEditor3D';
 import { PainelCameraCapaArteEditor3D, type CampoVetorCameraCapaArteEditor3D } from './PainelCameraCapaArteEditor3D';
 import { PainelTituloCapaArteEditor3D } from './PainelTituloCapaArteEditor3D';
 import { ArvoreCenaEditor3D, type ColecaoArvoreEditor3D, type ObjetoResumoEditor3D } from './ArvoreCenaEditor3D';
-import { SELECAO_CAMERA_EDITOR3D, SELECAO_CORPO_PERSONAGEM_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D, type CampoTransformEditor3D } from './editor3D.tipos';
+import { SELECAO_CAMERA_EDITOR3D, SELECAO_CORPO_PERSONAGEM_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D, type CampoTransformEditor3D, type ModoTransformEditor3D, type TravasTransformEditor3D } from './editor3D.tipos';
 import type { CameraEditor3D, CapaArteEditor3D, TransformEditor3D } from './editor3D.projeto.serializacao';
 import type { Vetor3Malha } from './editor3D.malha';
 import type { CorpoPersonagemCenaCanonicaEditor3D, MembroPersonagemEditor3D } from 'types-nora-api';
@@ -27,6 +27,9 @@ interface PainelLateralEditor3DProps {
     readonly temFacesSelecionadas: boolean;
     readonly transformSelecionado: TransformEditor3D | null;
     readonly dimensoesBaseSelecionado: Vetor3Malha | null;
+    readonly modoTransform: ModoTransformEditor3D;
+    readonly travasTransform: TravasTransformEditor3D;
+    readonly aoAlternarTravaTransform: (campo: CampoTransformEditor3D, indice: number) => void;
     readonly camera: CameraEditor3D | null;
     readonly capaArte: CapaArteEditor3D;
     readonly corpoPersonagem: CorpoPersonagemCenaCanonicaEditor3D | null;
@@ -109,7 +112,7 @@ export function PainelLateralEditor3D(props: PainelLateralEditor3DProps) {
                         </PainelColapsavelEditor3D>
                     )}
                     <PainelColapsavelEditor3D titulo="Transform" valor={props.transformSelecionado !== null ? '1' : '0'}>
-                        <PainelTransformEditor3D transform={props.transformSelecionado} dimensoesBase={props.dimensoesBaseSelecionado} aoAtualizar={props.aoAtualizarTransform} aoAssentarNoChao={props.aoAssentarObjetoNoChao} />
+                        <PainelTransformEditor3D transform={props.transformSelecionado} dimensoesBase={props.dimensoesBaseSelecionado} modo={props.modoTransform} travas={props.travasTransform} aoAlternarTrava={props.aoAlternarTravaTransform} aoAtualizar={props.aoAtualizarTransform} aoAssentarNoChao={props.aoAssentarObjetoNoChao} />
                     </PainelColapsavelEditor3D>
                 </>
             )}

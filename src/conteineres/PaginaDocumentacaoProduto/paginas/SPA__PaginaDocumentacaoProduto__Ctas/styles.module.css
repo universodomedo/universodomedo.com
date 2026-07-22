@@ -1,0 +1,192 @@
+.colunas {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.5em;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+    min-width: 0;
+}
+
+.titulo_secao {
+    margin: 0;
+    color: #B79051;
+    font-size: 0.9em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.titulo_sub {
+    margin: 0 0 0.4em;
+    color: #B79051;
+    font-size: 0.78em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.vazio {
+    font-size: 0.85em;
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+/* Item clicável (carrega no formulário) no padrão do Painel do Medo. */
+.item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    padding: 0.6em 0.9em;
+    border: 0.1em solid #352E4C;
+    border-radius: 0.6em;
+    background: linear-gradient(180deg, #140f1f, #0a0810);
+    cursor: pointer;
+
+    &:hover {
+        border-color: #B79051;
+    }
+
+    &.inativo {
+        opacity: 0.5;
+        border-style: dashed;
+    }
+
+    &.em_edicao {
+        border-color: #B79051;
+    }
+}
+
+.item_topo {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6em;
+}
+
+.nome_item {
+    font-family: var(--fonte-cinzel);
+    color: #EBE0C9;
+    word-break: break-word;
+}
+
+.tipo_tag {
+    font-size: 0.72em;
+    color: #B79051;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.destino {
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+.publicos {
+    font-size: 0.75em;
+    color: #B79051;
+    letter-spacing: 0.03em;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+    margin-top: 0.5em;
+    padding-top: 0.75em;
+    border-top: 0.09em solid rgba(235, 224, 201, 0.2);
+}
+
+.linha_destino {
+    display: flex;
+    gap: 0.75em;
+}
+
+.linha_destino > * {
+    flex: 1;
+    min-width: 0;
+}
+
+.linha_toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+}
+
+.rotulo_toggle {
+    font-size: 0.78em;
+    opacity: 0.8;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.erro {
+    color: #DB4747;
+    font-size: 0.85em;
+}
+
+.acoes_form {
+    display: flex;
+    gap: 0.6em;
+}
+
+.publicos_edicao {
+    margin-top: 0.5em;
+    padding-top: 0.75em;
+    border-top: 0.09em dashed rgba(235, 224, 201, 0.2);
+}
+
+.lista_publicos {
+    list-style: none;
+    margin: 0 0 0.5em;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+}
+
+.publico_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6em;
+    font-size: 0.85em;
+    color: #EBE0C9;
+}
+
+.botao_leve {
+    padding: 0.3em 0.8em;
+    border: 0.09em solid rgba(235, 224, 201, 0.4);
+    border-radius: 0.3em;
+    background: transparent;
+    color: #EBE0C9;
+    font-size: 0.8em;
+    letter-spacing: 0.04em;
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:hover:not(:disabled) {
+        border-color: #B79051;
+        color: #B79051;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+}

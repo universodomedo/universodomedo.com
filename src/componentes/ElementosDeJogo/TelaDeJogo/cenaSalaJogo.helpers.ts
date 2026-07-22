@@ -25,10 +25,11 @@ export const MILIMETROS_POR_UNIDADE_CENA = 1000;
 export function paraUnidadeCena(valorMilimetros: number): number { return valorMilimetros / MILIMETROS_POR_UNIDADE_CENA; };
 
 export function mundoX(x: number, largura: number): number { return paraUnidadeCena(x - largura / 2) + 0.5; };
-export function mundoZ(y: number, altura: number): number { return paraUnidadeCena(y - altura / 2) + 0.5; };
-export function celulaDoMundo(pontoX: number, pontoZ: number, largura: number, altura: number): DestinoMovimentacaoSalaJogo {
+// Z-up: o plano do chão é XY e a altura é Z. A 1ª coordenada lógica (x) vai pro eixo X do mundo; a 2ª (y) vai pro eixo Y do mundo (era Z no Y-up antigo).
+export function mundoY(y: number, altura: number): number { return paraUnidadeCena(y - altura / 2) + 0.5; };
+export function celulaDoMundo(pontoX: number, pontoY: number, largura: number, altura: number): DestinoMovimentacaoSalaJogo {
     const x = Math.min(Math.max(Math.round((pontoX - 0.5) * MILIMETROS_POR_UNIDADE_CENA + largura / 2), 0), largura);
-    const y = Math.min(Math.max(Math.round((pontoZ - 0.5) * MILIMETROS_POR_UNIDADE_CENA + altura / 2), 0), altura);
+    const y = Math.min(Math.max(Math.round((pontoY - 0.5) * MILIMETROS_POR_UNIDADE_CENA + altura / 2), 0), altura);
     return { x, y };
 };
 export function projetaMomentoFiccional(momentoMs: number, momentoLimiteMs: number | null): number { return momentoLimiteMs === null ? momentoMs : Math.min(momentoMs, momentoLimiteMs); };

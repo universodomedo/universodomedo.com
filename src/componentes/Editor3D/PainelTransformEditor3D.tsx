@@ -3,7 +3,7 @@
 import styles from './Editor3D.module.css';
 
 import { CampoNumeroEditor3D } from './CampoNumeroEditor3D';
-import type { CampoTransformEditor3D } from './editor3D.tipos';
+import { CAMPO_DO_MODO_TRANSFORM_EDITOR3D, CORES_EIXOS_EDITOR3D, type CampoTransformEditor3D, type ModoTransformEditor3D, type TravasTransformEditor3D } from './editor3D.tipos';
 import type { TransformEditor3D } from './editor3D.projeto.serializacao';
 import type { Vetor3Malha } from './editor3D.malha';
 
@@ -14,6 +14,9 @@ interface PainelTransformEditor3DProps {
     readonly transform: TransformEditor3D | null;
     // Caixa envolvente LOCAL da malha do objeto (sem escala): dimensão exibida = base × escala; editar a dimensão ajusta a escala. null = seleção sem malha (câmera/título).
     readonly dimensoesBase: Vetor3Malha | null;
+    readonly modo: ModoTransformEditor3D;
+    readonly travas: TravasTransformEditor3D;
+    readonly aoAlternarTrava: (campo: CampoTransformEditor3D, indice: number) => void;
     readonly aoAtualizar: (campo: CampoTransformEditor3D, indice: number, valor: number) => void;
     readonly aoAssentarNoChao: () => void;
 };
@@ -21,24 +24,36 @@ interface PainelTransformEditor3DProps {
 // Um eixo com base ~zero (malha achatada) não tem como derivar escala a partir da dimensão — o campo trava.
 const MINIMO_BASE_DIMENSAO_EDITOR3D = 0.000001;
 
-export function PainelTransformEditor3D({ transform, dimensoesBase, aoAtualizar, aoAssentarNoChao }: PainelTransformEditor3DProps) {
+export function PainelTransformEditor3D({ transform, dimensoesBase, modo, travas, aoAlternarTrava, aoAtualizar, aoAssentarNoChao }: PainelTransformEditor3DProps) {
     if (transform === null) return <p className={styles.vazio_painel}>Selecione um objeto na Coleção da Cena para editar suas propriedades.</p>;
 
     // 1 unidade de cena = 1 m (mesma convenção do jogo: 1 unidade = 1000 mm).
     const dimensao = (eixo: number): number => dimensoesBase === null ? 0 : dimensoesBase[eixo] * transform.escala[eixo];
     const atualizaDimensao = (eixo: number, valor: number): void => { if (dimensoesBase !== null && dimensoesBase[eixo] > MINIMO_BASE_DIMENSAO_EDITOR3D) aoAtualizar('escala', eixo, valor / dimensoesBase[eixo]); };
 
+    // Trava da linha: barrinha acesa no grupo que o modo atual edita; inicio/fim delimitam a série contígua de travadas
+    // DENTRO do trio (linhas travadas vizinhas rendem como um poço rebaixado só, em vez de sombras empilhadas).
+    const campoAtivo = CAMPO_DO_MODO_TRANSFORM_EDITOR3D[modo];
+    const trava = (campo: CampoTransformEditor3D, eixo: 0 | 1 | 2) => ({
+        ativa: travas[campo][eixo],
+        corEixo: CORES_EIXOS_EDITOR3D[eixo],
+        emModo: campoAtivo === campo,
+        inicioPoco: eixo === 0 || !travas[campo][eixo - 1],
+        fimPoco: eixo === 2 || !travas[campo][eixo + 1],
+        aoAlternar: () => aoAlternarTrava(campo, eixo),
+    });
+
     return (
         <div className={styles.grupo_propriedades}>
-            <CampoNumeroEditor3D rotulo="Posição X" valor={transform.posicao[0]} passo={0.1} atualizaValor={valor => aoAtualizar('posicao', 0, valor)} />
-            <CampoNumeroEditor3D rotulo="Posição Y" valor={transform.posicao[1]} passo={0.1} atualizaValor={valor => aoAtualizar('posicao', 1, valor)} />
-            <CampoNumeroEditor3D rotulo="Posição Z" valor={transform.posicao[2]} passo={0.1} atualizaValor={valor => aoAtualizar('posicao', 2, valor)} />
-            <CampoNumeroEditor3D rotulo="Rotação X" valor={radianosParaGraus(transform.rotacao[0])} passo={1} atualizaValor={valor => aoAtualizar('rotacao', 0, grausParaRadianos(valor))} />
-            <CampoNumeroEditor3D rotulo="Rotação Y" valor={radianosParaGraus(transform.rotacao[1])} passo={1} atualizaValor={valor => aoAtualizar('rotacao', 1, grausParaRadianos(valor))} />
-            <CampoNumeroEditor3D rotulo="Rotação Z" valor={radianosParaGraus(transform.rotacao[2])} passo={1} atualizaValor={valor => aoAtualizar('rotacao', 2, grausParaRadianos(valor))} />
-            <CampoNumeroEditor3D rotulo="Escala X" valor={transform.escala[0]} passo={0.05} minimo={0.05} atualizaValor={valor => aoAtualizar('escala', 0, valor)} />
-            <CampoNumeroEditor3D rotulo="Escala Y" valor={transform.escala[1]} passo={0.05} minimo={0.05} atualizaValor={valor => aoAtualizar('escala', 1, valor)} />
-            <CampoNumeroEditor3D rotulo="Escala Z" valor={transform.escala[2]} passo={0.05} minimo={0.05} atualizaValor={valor => aoAtualizar('escala', 2, valor)} />
+            <CampoNumeroEditor3D rotulo="Posição X" valor={transform.posicao[0]} passo={0.1} trava={trava('posicao', 0)} atualizaValor={valor => aoAtualizar('posicao', 0, valor)} />
+            <CampoNumeroEditor3D rotulo="Posição Y" valor={transform.posicao[1]} passo={0.1} trava={trava('posicao', 1)} atualizaValor={valor => aoAtualizar('posicao', 1, valor)} />
+            <CampoNumeroEditor3D rotulo="Posição Z" valor={transform.posicao[2]} passo={0.1} trava={trava('posicao', 2)} atualizaValor={valor => aoAtualizar('posicao', 2, valor)} />
+            <CampoNumeroEditor3D rotulo="Rotação X" valor={radianosParaGraus(transform.rotacao[0])} passo={1} trava={trava('rotacao', 0)} atualizaValor={valor => aoAtualizar('rotacao', 0, grausParaRadianos(valor))} />
+            <CampoNumeroEditor3D rotulo="Rotação Y" valor={radianosParaGraus(transform.rotacao[1])} passo={1} trava={trava('rotacao', 1)} atualizaValor={valor => aoAtualizar('rotacao', 1, grausParaRadianos(valor))} />
+            <CampoNumeroEditor3D rotulo="Rotação Z" valor={radianosParaGraus(transform.rotacao[2])} passo={1} trava={trava('rotacao', 2)} atualizaValor={valor => aoAtualizar('rotacao', 2, grausParaRadianos(valor))} />
+            <CampoNumeroEditor3D rotulo="Escala X" valor={transform.escala[0]} passo={0.05} minimo={0.05} trava={trava('escala', 0)} atualizaValor={valor => aoAtualizar('escala', 0, valor)} />
+            <CampoNumeroEditor3D rotulo="Escala Y" valor={transform.escala[1]} passo={0.05} minimo={0.05} trava={trava('escala', 1)} atualizaValor={valor => aoAtualizar('escala', 1, valor)} />
+            <CampoNumeroEditor3D rotulo="Escala Z" valor={transform.escala[2]} passo={0.05} minimo={0.05} trava={trava('escala', 2)} atualizaValor={valor => aoAtualizar('escala', 2, valor)} />
             {dimensoesBase !== null && (
                 <>
                     <CampoNumeroEditor3D rotulo="Dimensão X (m)" valor={dimensao(0)} passo={0.01} minimo={0.01} desabilitado={dimensoesBase[0] <= MINIMO_BASE_DIMENSAO_EDITOR3D} atualizaValor={valor => atualizaDimensao(0, valor)} />

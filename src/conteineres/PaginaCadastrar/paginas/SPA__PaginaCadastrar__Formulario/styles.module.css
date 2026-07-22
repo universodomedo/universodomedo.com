@@ -1,0 +1,61 @@
+.telaCadastrar {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.areaCadastro {
+    display: flex;
+    flex-direction: column;
+    width: 26em;
+    height: 42em;
+    max-height: 92%;
+    text-align: center;
+    gap: 1em;
+}
+
+.areaCadastro h1 {
+    font-family: var(--fonte-cinzel-decorative);
+}
+
+.camposCadastro {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.linkTermos {
+    cursor: pointer;
+    color: #B79051;
+    text-decoration: underline;
+
+    &.pendente {
+        color: #EBE0C9;
+    }
+}
+
+.erroCadastro {
+    color: #DB4747;
+}
+
+.telaTermos {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    padding: 1em;
+    gap: 1em;
+}
+
+.telaTermos h1 {
+    font-family: var(--fonte-cinzel-decorative);
+}
+
+.corpoTermos {
+    display: flex;
+    max-width: 60em;
+    overflow-y: auto;
+}

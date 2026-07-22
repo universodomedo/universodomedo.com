@@ -1,0 +1,105 @@
+.mapa {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+.ferramentas {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.4em 0.6em;
+    border-bottom: 0.09em solid rgba(235, 224, 201, 0.2);
+}
+
+.ferramenta {
+    padding: 0.3em 0.8em;
+    border: 0.09em solid rgba(235, 224, 201, 0.4);
+    border-radius: 0.3em;
+    background: transparent;
+    color: #EBE0C9;
+    font-size: 0.8em;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+
+    &:hover {
+        border-color: #B79051;
+        color: #B79051;
+    }
+
+    &.ferramentaAtiva {
+        border-color: #B79051;
+        color: #B79051;
+        background: rgba(183, 144, 81, 0.12);
+    }
+}
+
+.botao {
+    padding: 0.2em 0.6em;
+    border: 0.09em solid rgba(235, 224, 201, 0.3);
+    border-radius: 0.3em;
+    background: transparent;
+    color: #EBE0C9;
+    font-size: 0.85em;
+    cursor: pointer;
+
+    &:hover {
+        border-color: #B79051;
+    }
+}
+
+.zoomTxt {
+    font-size: 0.75em;
+    opacity: 0.8;
+    min-width: 3em;
+    text-align: center;
+}
+
+.dicaMouse {
+    font-size: 0.7em;
+    opacity: 0.55;
+    letter-spacing: 0.03em;
+}
+
+.espacador {
+    flex: 1;
+}
+
+.erro {
+    margin: 0.5em 0.6em 0;
+    color: #DB4747;
+    font-size: 0.85em;
+}
+
+.palco {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+
+    &.movendoCanvas {
+        cursor: grabbing;
+    }
+
+    &.ligando {
+        cursor: crosshair;
+    }
+}
+
+.svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.nodo {
+    cursor: pointer;
+}
+
+.tJunge {
+    user-select: none;
+    pointer-events: none;
+}

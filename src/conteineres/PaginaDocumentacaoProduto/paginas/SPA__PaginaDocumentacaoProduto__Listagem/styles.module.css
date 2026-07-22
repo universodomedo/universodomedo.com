@@ -1,0 +1,57 @@
+/* Cartão clicável no padrão do Painel do Medo: fundo em gradiente, borda que acende em ouro no hover, cursor de ação. */
+/* white-space normal + min-width 0: a GRADE da listagem impõe nowrap no cartão, o que estica label/rota longos além do cartão; aqui devolvemos a quebra dentro dele. */
+.cartao_pagina {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    padding: 0.8em 0.9em;
+    min-height: 5.5em;
+    min-width: 0;
+    white-space: normal;
+    background: linear-gradient(180deg, #140f1f, #0a0810);
+    border: 0.1em solid #352E4C;
+    border-radius: 0.6em;
+    cursor: pointer;
+
+    &:hover {
+        border-color: #B79051;
+    }
+
+    &.inativa {
+        opacity: 0.5;
+        border-style: dashed;
+    }
+}
+
+/* A grade da listagem impõe white-space: nowrap; label e rota longos precisam voltar a quebrar dentro do cartão. */
+.nome {
+    font-family: var(--fonte-cinzel);
+    color: #EBE0C9;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.rota {
+    font-size: 0.8em;
+    opacity: 0.7;
+    white-space: normal;
+    word-break: break-all;
+}
+
+.estado {
+    align-self: flex-start;
+    margin-top: auto;
+    padding: 0.15em 0.6em;
+    border: 0.09em solid rgba(235, 224, 201, 0.35);
+    border-radius: 1em;
+    font-size: 0.72em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.75;
+
+    &.documentada {
+        border-color: #B79051;
+        color: #B79051;
+        opacity: 1;
+    }
+}

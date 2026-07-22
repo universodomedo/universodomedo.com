@@ -19,10 +19,11 @@ export function ControladorPrimeiraPessoaJogo({ cabecaX, cabecaY, cabecaZ }: Con
 
     useEffect(() => {
         const estado = estadoRef.current;
-        if (!estado.iniciado) { estado.yaw = Math.atan2(-cabecaX, -cabecaZ); estado.iniciado = true; }
+        // Z-up: o plano horizontal do olhar é XY (yaw gira em XY) e a componente vertical (pitch) vai no eixo Z.
+        if (!estado.iniciado) { estado.yaw = Math.atan2(-cabecaX, -cabecaY); estado.iniciado = true; }
         const dom = gl.domElement;
         const aplica = () => {
-            DIR_PRIMEIRA_PESSOA.set(Math.sin(estado.yaw) * Math.cos(estado.pitch), Math.sin(estado.pitch), Math.cos(estado.yaw) * Math.cos(estado.pitch));
+            DIR_PRIMEIRA_PESSOA.set(Math.sin(estado.yaw) * Math.cos(estado.pitch), Math.cos(estado.yaw) * Math.cos(estado.pitch), Math.sin(estado.pitch));
             camera.position.set(cabecaX + DIR_PRIMEIRA_PESSOA.x * estado.zoom, cabecaY + DIR_PRIMEIRA_PESSOA.y * estado.zoom, cabecaZ + DIR_PRIMEIRA_PESSOA.z * estado.zoom);
             camera.lookAt(camera.position.x + DIR_PRIMEIRA_PESSOA.x, camera.position.y + DIR_PRIMEIRA_PESSOA.y, camera.position.z + DIR_PRIMEIRA_PESSOA.z);
         };

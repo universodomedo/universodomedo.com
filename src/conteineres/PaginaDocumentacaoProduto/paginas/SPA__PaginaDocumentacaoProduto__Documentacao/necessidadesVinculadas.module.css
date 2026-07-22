@@ -1,0 +1,112 @@
+.secao {
+    margin-top: 1.5em;
+    padding-top: 1em;
+    border-top: 0.09em solid rgba(235, 224, 201, 0.2);
+}
+
+.titulo_secao {
+    margin: 0 0 0.75em;
+    color: #B79051;
+    font-size: 0.9em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.vazio {
+    font-size: 0.85em;
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.lista {
+    list-style: none;
+    margin: 0 0 1em;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+}
+
+.vinculo {
+    padding: 0.75em 1em;
+    border: 0.09em solid rgba(235, 224, 201, 0.2);
+    border-radius: 0.4em;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.identidade {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75em;
+}
+
+.titulo {
+    color: #EBE0C9;
+}
+
+.persona {
+    font-size: 0.75em;
+    color: #B79051;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.motivo {
+    margin: 0.4em 0 0.6em;
+    font-size: 0.85em;
+    opacity: 0.85;
+}
+
+.acoes_vinculo {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+}
+
+.rotulo_atendida {
+    font-size: 0.78em;
+    opacity: 0.8;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.botao_leve {
+    padding: 0.3em 0.8em;
+    border: 0.09em solid rgba(235, 224, 201, 0.4);
+    border-radius: 0.3em;
+    background: transparent;
+    color: #EBE0C9;
+    font-size: 0.8em;
+    letter-spacing: 0.04em;
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+
+    &:hover:not(:disabled) {
+        border-color: #B79051;
+        color: #B79051;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+    }
+}
+
+.form_vinculo {
+    margin-top: 0.75em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75em;
+}
+
+.linha_atendida {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+}
+
+.acoes_form {
+    display: flex;
+    gap: 0.6em;
+}

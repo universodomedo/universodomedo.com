@@ -1,8 +1,8 @@
 import type { LuzSalaJogoWsDto } from 'types-nora-api';
 
-import { mundoX, mundoZ, paraUnidadeCena } from './cenaSalaJogo.helpers';
+import { mundoX, mundoY, paraUnidadeCena } from './cenaSalaJogo.helpers';
 
-// Altura fixa (unidade de cena) da fonte de luz — perto do teto (parede = 3.6). Formato/altura autoravel e futuro.
+// Altura fixa (unidade de cena) da fonte de luz — perto do teto (parede = 3.6). Formato/altura autoravel e futuro. Z-up: altura = eixo Z.
 const ALTURA_LUZ = 2.6;
 
 interface LuzesSalaJogoR3FProps { luzes: readonly LuzSalaJogoWsDto[]; largura: number; altura: number; };
@@ -22,11 +22,11 @@ function LuzR3F({ luz, largura, altura }: LuzR3FProps) {
     if (luz.posicao === null) return null;
 
     const x = mundoX(luz.posicao.x, largura);
-    const z = mundoZ(luz.posicao.y, altura);
+    const y = mundoY(luz.posicao.y, altura);
     const distancia = paraUnidadeCena(luz.alcanceMilimetros);
 
     return (
-        <group position={[x, ALTURA_LUZ, z]}>
+        <group position={[x, y, ALTURA_LUZ]}>
             <pointLight intensity={luz.intensidade} distance={distancia} decay={2} color="#ffe8c0" castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} shadow-bias={-0.0008} shadow-radius={5} shadow-camera-near={0.1} shadow-camera-far={distancia} />
             <mesh>
                 <sphereGeometry args={[0.1, 16, 16]} />
