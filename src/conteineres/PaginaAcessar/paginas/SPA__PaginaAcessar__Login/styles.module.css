@@ -48,6 +48,16 @@
     color: #DB4747;
 }
 
+.linkAcao {
+    cursor: pointer;
+    color: #B79051;
+    text-decoration: underline;
+}
+
+.reenvioConfirmado {
+    color: #EBE0C9;
+}
+
 .acessoDiscord {
     display: flex;
     flex-direction: column;

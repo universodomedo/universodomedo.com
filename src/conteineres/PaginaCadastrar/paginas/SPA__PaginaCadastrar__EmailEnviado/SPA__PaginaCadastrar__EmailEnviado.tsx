@@ -6,7 +6,7 @@ import { useContexto__PaginaCadastrar__EmailEnviado } from 'Contextos/Contexto__
 import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 
 export default function SPA__PaginaCadastrar__EmailEnviado() {
-    const { email, aoIrParaAcessar } = useContexto__PaginaCadastrar__EmailEnviado();
+    const { email, reenvioSolicitado, aoReenviar, aoIrParaAcessar } = useContexto__PaginaCadastrar__EmailEnviado();
 
     return (
         <div className={styles.telaEmailEnviado}>
@@ -19,6 +19,8 @@ export default function SPA__PaginaCadastrar__EmailEnviado() {
                             <span>Enviamos um link de verificação para</span>
                             <span className={styles.emailDestacado}>{email}</span>
                             <span>A conta é ativada ao abrir o link, que expira em 24 horas</span>
+                            {!reenvioSolicitado && <span className={styles.linkAcao} onClick={() => { void aoReenviar(); }}>Não chegou? Reenviar email</span>}
+                            {reenvioSolicitado && <span>Email reenviado</span>}
                         </div>
                     </ConteudoForm.AreaCorpo>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, createElement, useCallback, useContext, useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
-import { ApiOperacaoGraphqlGet, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemUmParametrosEntidadeRestrita, GraphqlResultado, GraphqlSelect } from 'types-nora-api';
+import { ApiOperacaoGraphqlGet, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemUmParametrosEntidadeRestrita, GraphqlResultado, GraphqlSelect, GraphqlSelectExato } from 'types-nora-api';
 
 import { montaMensagemErroNoraApiParaUsuario, NoraApi } from 'Api/NoraApi';
 import { NORA_API_CARREGAMENTO_VISUAL } from 'Api/NoraApiCarregamentoVisual.const';
@@ -304,7 +304,9 @@ export default function useNoraGraphQLConsulta<const TOperacao extends NoraGraph
     return { data, carregando, erro, recarregar };
 };
 
-export function useNoraGraphQLRegistro<const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object>(nomeLeitura: TNome, params: UseNoraGraphQLConsultaRegistroParams<TNome, TSelect, TProviderProps>): UseNoraGraphQLConsultaRegistroResultado<TNome, TSelect> {
+// Miolo SEM a guarda exata: repasses GENÉRICOS (criaContexto → registro) não conseguem provar o Exato (ele é para call
+// sites com select literal); a guarda vive nas assinaturas PÚBLICAS, que delegam para cá.
+function useNoraGraphQLRegistroInterno<const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object>(nomeLeitura: TNome, params: UseNoraGraphQLConsultaRegistroParams<TNome, TSelect, TProviderProps>): UseNoraGraphQLConsultaRegistroResultado<TNome, TSelect> {
     type TResultado = UseNoraGraphQLConsultaRegistro<TNome, TSelect> | null;
 
     const graphql = GraphqlLeituras[nomeLeitura] as UseNoraGraphQLConsultaContratoComEventos<TNome, TSelect>;
@@ -322,7 +324,12 @@ export function useNoraGraphQLRegistro<const TNome extends GraphqlLeituraNome, c
     }) as UseNoraGraphQLConsultaRegistroResultado<TNome, TSelect>;
 };
 
-export function criaContextoNoraGraphQLConsulta<const TNomeConsulta extends string, const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object, TExtras extends object = Record<string, never>>(params: { readonly nomeLeitura: TNome; readonly nomeConsulta: TNomeConsulta; readonly mensagemErroContexto: string; readonly renderiza: ComponentType; readonly mensagemRegistroNaoEncontrado?: string; readonly consulta: UseNoraGraphQLConsultaRegistroDef<TNome, TSelect, TProviderProps>; readonly useExtras?: (params: UseNoraGraphQLConsultaExtrasParams<UseNoraGraphQLConsultaRegistro<TNome, TSelect> | null, TProviderProps>) => TExtras; }) {
+// Select EXATO na posição do parâmetro (padrão "Exact"; auto-referência na constraint é TS2313): chave que não existe no objeto da leitura vira `never` e ERRA NO TSC — sem isso, select pré-declarado com campo órfão só explodia na validação do servidor GraphQL.
+export function useNoraGraphQLRegistro<const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object>(nomeLeitura: TNome, params: UseNoraGraphQLConsultaRegistroParams<TNome, TSelect & GraphqlSelectExato<UseNoraGraphQLConsultaObjeto<TNome>, TSelect>, TProviderProps>): UseNoraGraphQLConsultaRegistroResultado<TNome, TSelect> {
+    return useNoraGraphQLRegistroInterno<TNome, TSelect, TProviderProps>(nomeLeitura, params);
+};
+
+export function criaContextoNoraGraphQLConsulta<const TNomeConsulta extends string, const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLConsultaObjeto<TNome>>, TProviderProps extends object, TExtras extends object = Record<string, never>>(params: { readonly nomeLeitura: TNome; readonly nomeConsulta: TNomeConsulta; readonly mensagemErroContexto: string; readonly renderiza: ComponentType; readonly mensagemRegistroNaoEncontrado?: string; readonly consulta: UseNoraGraphQLConsultaRegistroDef<TNome, TSelect & GraphqlSelectExato<UseNoraGraphQLConsultaObjeto<TNome>, TSelect>, TProviderProps>; readonly useExtras?: (params: UseNoraGraphQLConsultaExtrasParams<UseNoraGraphQLConsultaRegistro<TNome, TSelect> | null, TProviderProps>) => TExtras; }) {
     type TResultado = UseNoraGraphQLConsultaRegistro<TNome, TSelect>;
     type TConsulta = UseNoraGraphQLConsultaResultado<TResultado | null>;
     type TContextoBase = { readonly [TChave in TNomeConsulta]: TResultado };
@@ -340,7 +347,7 @@ export function criaContextoNoraGraphQLConsulta<const TNomeConsulta extends stri
 
     const Provider = (props: TProviderProps) => {
         const consultaParams = montaRegistroParamsPorDef(params.consulta, props);
-        const consulta: TConsulta = useNoraGraphQLRegistro(params.nomeLeitura, consultaParams);
+        const consulta: TConsulta = useNoraGraphQLRegistroInterno(params.nomeLeitura, consultaParams);
         const extras = useExtras({ consulta, props });
         const value = useMemo<TContexto>(() => ({ [params.nomeConsulta]: consulta.data as TResultado, ...extras } as TContexto), [consulta.data, extras]);
 

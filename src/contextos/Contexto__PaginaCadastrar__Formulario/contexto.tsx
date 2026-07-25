@@ -23,6 +23,7 @@ const FORMULARIO_CADASTRO = defineFormularioCreate<DTO__Cadastro>({
 interface Contexto__PaginaCadastrar__Formulario__Props {
     formularioCadastro: FormularioCreateEstado<DTO__Cadastro>;
     erroCadastro: string | null;
+    setTokenCaptcha: (token: string | null) => void;
     mostrarTermos: boolean;
     setMostrarTermos: (mostrar: boolean) => void;
     checkTopicosSensiveis: boolean;
@@ -47,6 +48,7 @@ export const useContexto__PaginaCadastrar__Formulario = (): Contexto__PaginaCada
 export const Contexto__PaginaCadastrar__Formulario__Provider = ({ aoCadastrar }: { aoCadastrar: (payload: PAYLOAD__CadastrarAcesso) => Promise<void>; }) => {
     const router = useRouter();
     const [erroCadastro, setErroCadastro] = useState<string | null>(null);
+    const [tokenCaptcha, setTokenCaptcha] = useState<string | null>(null);
     const [mostrarTermos, setMostrarTermos] = useState(false);
     const [checkTopicosSensiveis, setCheckTopicosSensiveis] = useState(false);
     const [termo1, setTermo1] = useState(false);
@@ -60,17 +62,19 @@ export const Contexto__PaginaCadastrar__Formulario__Provider = ({ aoCadastrar }:
         if (!termosAceitos) { setErroCadastro('Os Termos de Aceite precisam ser aceitos'); return; }
 
         try {
-            await aoCadastrar({ apelido: payload.apelido, email: payload.email, senha: payload.senha });
+            await aoCadastrar({ apelido: payload.apelido, email: payload.email, senha: payload.senha, tokenCaptcha });
         } catch (erroCapturado) {
             setErroCadastro(extraiMotivoErroAcesso(erroCapturado instanceof Error ? erroCapturado : null, 'Não foi possível concluir o cadastro'));
         }
     });
 
-    const podeProsseguir = formularioCadastro.podeSalvar && termosAceitos;
+    // Com a site key presente, o token do Turnstile é pré-requisito do envio (o backend do mesmo ambiente valida com a secret correspondente).
+    const captchaPendente = (process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '') !== '' && tokenCaptcha === null;
+    const podeProsseguir = formularioCadastro.podeSalvar && termosAceitos && !captchaPendente;
     const aoVoltarParaAcessar = () => { router.push(PAGINAS.acessar.template); };
 
     return (
-        <Contexto__PaginaCadastrar__Formulario.Provider value={{ formularioCadastro, erroCadastro, mostrarTermos, setMostrarTermos, checkTopicosSensiveis, setCheckTopicosSensiveis, termo1, setTermo1, termo2, setTermo2, termosAceitos, podeProsseguir, aoVoltarParaAcessar }}>
+        <Contexto__PaginaCadastrar__Formulario.Provider value={{ formularioCadastro, erroCadastro, setTokenCaptcha, mostrarTermos, setMostrarTermos, checkTopicosSensiveis, setCheckTopicosSensiveis, termo1, setTermo1, termo2, setTermo2, termosAceitos, podeProsseguir, aoVoltarParaAcessar }}>
             <SPA__PaginaCadastrar__Formulario />
         </Contexto__PaginaCadastrar__Formulario.Provider>
     );

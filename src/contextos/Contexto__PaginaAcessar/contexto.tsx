@@ -6,10 +6,15 @@ import { loginAcesso, verificarEmailAcesso, extraiMotivoErroAcesso } from 'Funci
 import { useContextoAutenticacao } from 'Contextos/ContextoAutenticacao/contexto';
 
 export type EstadoVerificacaoEmail = { situacao: 'NENHUMA' | 'VERIFICANDO' | 'SUCESSO' | 'FALHA'; mensagem: string | null };
+export type EtapaAcessar = 'LOGIN' | 'RECUPERAR' | 'REDEFINIR';
 
 export interface Contexto__PaginaAcessar__Props {
+    etapa: EtapaAcessar;
     verificacaoEmail: EstadoVerificacaoEmail;
+    tokenRecuperacao: string | null;
     aoEntrar: (identificador: string, senha: string) => Promise<void>;
+    irParaRecuperar: () => void;
+    voltarParaLogin: () => void;
 };
 
 const Contexto__PaginaAcessar = createContext<Contexto__PaginaAcessar__Props | undefined>(undefined);
@@ -22,11 +27,22 @@ export const useContexto__PaginaAcessar = (): Contexto__PaginaAcessar__Props => 
 
 export const Contexto__PaginaAcessar__Provider = ({ children }: { children: ReactNode }) => {
     const { checkAuth } = useContextoAutenticacao();
+    const [etapa, setEtapa] = useState<EtapaAcessar>('LOGIN');
+    const [tokenRecuperacao, setTokenRecuperacao] = useState<string | null>(null);
     const [verificacaoEmail, setVerificacaoEmail] = useState<EstadoVerificacaoEmail>({ situacao: 'NENHUMA', mensagem: null });
 
-    // O link do email de verificação aponta para /acessar?token=...; a verificação acontece aqui e o resultado vira banner na tela de login.
+    // Os links dos emails apontam para /acessar: ?token=... (verificação, vira banner no login) e ?recuperacao=... (abre o subfluxo de redefinição).
     useEffect(() => {
-        const token = new URLSearchParams(window.location.search).get('token');
+        const parametros = new URLSearchParams(window.location.search);
+
+        const recuperacao = parametros.get('recuperacao');
+        if (recuperacao !== null && recuperacao !== '') {
+            setTokenRecuperacao(recuperacao);
+            setEtapa('REDEFINIR');
+            return;
+        }
+
+        const token = parametros.get('token');
         if (token === null || token === '') return;
 
         setVerificacaoEmail({ situacao: 'VERIFICANDO', mensagem: null });
@@ -40,8 +56,11 @@ export const Contexto__PaginaAcessar__Provider = ({ children }: { children: Reac
         await checkAuth();
     };
 
+    const irParaRecuperar = () => { setEtapa('RECUPERAR'); };
+    const voltarParaLogin = () => { window.history.replaceState(null, '', '/acessar'); setTokenRecuperacao(null); setEtapa('LOGIN'); };
+
     return (
-        <Contexto__PaginaAcessar.Provider value={{ verificacaoEmail, aoEntrar }}>
+        <Contexto__PaginaAcessar.Provider value={{ etapa, verificacaoEmail, tokenRecuperacao, aoEntrar, irParaRecuperar, voltarParaLogin }}>
             {children}
         </Contexto__PaginaAcessar.Provider>
     );

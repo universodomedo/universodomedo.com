@@ -11,7 +11,7 @@ import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputCom
 import RecipienteArquivoInterno from 'Uteis/ImagemLoader/RecipienteArquivoInterno';
 
 export default function SPA__PaginaAcessar__Login() {
-    const { formularioLogin, erroLogin, verificacaoEmail, aoEntrarComDiscord, aoCriarConta } = useContexto__PaginaAcessar__Login();
+    const { formularioLogin, erroLogin, loginPendenteDeVerificacao, reenvioSolicitado, verificacaoEmail, aoReenviarVerificacao, aoEntrarComDiscord, aoCriarConta, irParaRecuperar } = useContexto__PaginaAcessar__Login();
 
     return (
         <div className={styles.telaAcessar}>
@@ -39,7 +39,11 @@ export default function SPA__PaginaAcessar__Login() {
                                 <input type="password" {...formularioLogin.input('senha')} />
                             </InputComRotulo>
 
+                            <span className={styles.linkAcao} onClick={irParaRecuperar}>Esqueci minha senha</span>
+
                             {erroLogin && <span className={styles.erroLogin}>{erroLogin}</span>}
+                            {loginPendenteDeVerificacao && !reenvioSolicitado && <span className={styles.linkAcao} onClick={() => { void aoReenviarVerificacao(); }}>Reenviar email de verificação</span>}
+                            {reenvioSolicitado && <span className={styles.reenvioConfirmado}>Se a conta existir, reenviamos o email de verificação</span>}
 
                             <div className={styles.acessoDiscord}>
                                 <span>Já tem conta pelo Discord?</span>

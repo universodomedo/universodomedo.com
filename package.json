@@ -76,6 +76,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.62.0",
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^22.14.1",
     "@types/react": "^19.1.2",

@@ -1,4 +1,4 @@
-.telaEmailEnviado {
+.telaRedefinir {
     display: flex;
     width: 100%;
     height: 100%;
@@ -6,34 +6,33 @@
     justify-content: center;
 }
 
-.areaMensagem {
+.areaRedefinir {
     display: flex;
     flex-direction: column;
-    width: 26em;
-    height: 20em;
+    width: 24em;
+    height: 26em;
     max-height: 90%;
     text-align: center;
     gap: 1em;
 }
 
-.areaMensagem h1 {
+.areaRedefinir h1 {
     font-family: var(--fonte-cinzel-decorative);
 }
 
-.mensagem {
+.camposRedefinir {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.mensagemRedefinida {
     display: flex;
     flex-direction: column;
     gap: 0.6em;
     color: #EBE0C9;
 }
 
-.emailDestacado {
-    color: #B79051;
-    font-weight: bold;
-}
-
-.linkAcao {
-    cursor: pointer;
-    color: #B79051;
-    text-decoration: underline;
+.erroRedefinir {
+    color: #DB4747;
 }

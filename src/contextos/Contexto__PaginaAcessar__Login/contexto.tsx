@@ -6,7 +6,7 @@ import { PAGINAS } from 'types-nora-api';
 
 import SPA__PaginaAcessar__Login from 'Conteineres/PaginaAcessar/paginas/SPA__PaginaAcessar__Login/SPA__PaginaAcessar__Login';
 import useFormularioCreate, { defineFormularioCreate, type FormularioCreateEstado } from 'Hooks/useFormularioCreate';
-import { extraiMotivoErroAcesso } from 'Funcionalidades/Acessos/acessos.api';
+import { extraiMotivoErroAcesso, reenviarVerificacaoAcesso } from 'Funcionalidades/Acessos/acessos.api';
 import type { EstadoVerificacaoEmail } from 'Contextos/Contexto__PaginaAcessar/contexto';
 
 type DTO__Login = { identificador: string; senha: string };
@@ -22,9 +22,13 @@ const FORMULARIO_LOGIN = defineFormularioCreate<DTO__Login>({
 interface Contexto__PaginaAcessar__Login__Props {
     formularioLogin: FormularioCreateEstado<DTO__Login>;
     erroLogin: string | null;
+    loginPendenteDeVerificacao: boolean;
+    reenvioSolicitado: boolean;
     verificacaoEmail: EstadoVerificacaoEmail;
+    aoReenviarVerificacao: () => Promise<void>;
     aoEntrarComDiscord: () => void;
     aoCriarConta: () => void;
+    irParaRecuperar: () => void;
 };
 
 const Contexto__PaginaAcessar__Login = createContext<Contexto__PaginaAcessar__Login__Props | undefined>(undefined);
@@ -35,12 +39,14 @@ export const useContexto__PaginaAcessar__Login = (): Contexto__PaginaAcessar__Lo
     return context;
 };
 
-export const Contexto__PaginaAcessar__Login__Provider = ({ verificacaoEmail, aoEntrar }: { verificacaoEmail: EstadoVerificacaoEmail; aoEntrar: (identificador: string, senha: string) => Promise<void>; }) => {
+export const Contexto__PaginaAcessar__Login__Provider = ({ verificacaoEmail, aoEntrar, irParaRecuperar }: { verificacaoEmail: EstadoVerificacaoEmail; aoEntrar: (identificador: string, senha: string) => Promise<void>; irParaRecuperar: () => void; }) => {
     const router = useRouter();
     const [erroLogin, setErroLogin] = useState<string | null>(null);
+    const [reenvioSolicitado, setReenvioSolicitado] = useState(false);
 
     const formularioLogin = useFormularioCreate(FORMULARIO_LOGIN, async payload => {
         setErroLogin(null);
+        setReenvioSolicitado(false);
         try {
             await aoEntrar(payload.identificador, payload.senha);
         } catch (erroCapturado) {
@@ -48,11 +54,19 @@ export const Contexto__PaginaAcessar__Login__Provider = ({ verificacaoEmail, aoE
         }
     });
 
+    const loginPendenteDeVerificacao = erroLogin !== null && erroLogin.includes('verificado');
+
+    async function aoReenviarVerificacao(): Promise<void> {
+        if (formularioLogin.valores.identificador.trim() === '') return;
+        await reenviarVerificacaoAcesso(formularioLogin.valores.identificador);
+        setReenvioSolicitado(true);
+    };
+
     const aoEntrarComDiscord = () => { window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`; };
     const aoCriarConta = () => { router.push(PAGINAS.cadastrar.template); };
 
     return (
-        <Contexto__PaginaAcessar__Login.Provider value={{ formularioLogin, erroLogin, verificacaoEmail, aoEntrarComDiscord, aoCriarConta }}>
+        <Contexto__PaginaAcessar__Login.Provider value={{ formularioLogin, erroLogin, loginPendenteDeVerificacao, reenvioSolicitado, verificacaoEmail, aoReenviarVerificacao, aoEntrarComDiscord, aoCriarConta, irParaRecuperar }}>
             <SPA__PaginaAcessar__Login />
         </Contexto__PaginaAcessar__Login.Provider>
     );

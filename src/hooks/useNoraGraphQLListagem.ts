@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, createElement, useCallback, useEffect, useMemo, useRef, useState, useContext, type ReactNode } from 'react';
-import { ApiOperacaoGraphqlGet, GraphqlFiltroConsultaCampoDef, GraphqlFiltroControleVisualizacao, GraphqlFiltroVisualizacaoCampoDef, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemVariosParametrosEntidadeRestrita, GraphqlOpcoesFiltroConsultaCampo, GraphqlOpcoesFiltrosConsultaParametros, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime, GraphqlSelectNormalizadoObjeto, GraphqlSelectRuntime, GraphqlTotalDeRegistrosParametrosEntidadeRestrita, normalizaSelectGraphql } from 'types-nora-api';
+import { ApiOperacaoGraphqlGet, GraphqlFiltroConsultaCampoDef, GraphqlFiltroControleVisualizacao, GraphqlFiltroVisualizacaoCampoDef, GraphqlLeituraNome, GraphqlLeituraPorNome, GraphqlLeituras, GraphqlObjetoDeSelectDef, GraphqlObtemVariosParametrosEntidadeRestrita, GraphqlOpcoesFiltroConsultaCampo, GraphqlOpcoesFiltrosConsultaParametros, GraphqlResultado, GraphqlSelect, GraphqlSelectEntradaRuntime, GraphqlSelectExato, GraphqlSelectNormalizadoObjeto, GraphqlSelectRuntime, GraphqlTotalDeRegistrosParametrosEntidadeRestrita, normalizaSelectGraphql } from 'types-nora-api';
 
 import { NoraApiCarregamento } from 'Api/NoraApiRequisicoesStore';
 import type { ContextoFiltrosConsultaValor } from 'Contextos/Contexto__FiltrosConsulta/contexto';
@@ -363,7 +363,9 @@ function combinaWhereListagem(whereFixo: WhereListagemInput, whereDinamico: Wher
     return wheresCombinados;
 };
 
-export default function useNoraGraphQLListagem<const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>>(nomeLeitura: TNome, params: UseNoraGraphQLListagemParams<TNome, TSelect>): UseNoraGraphQLListagemResultado<UseNoraGraphQLListagemRegistro<TNome, TSelect>> {
+// Miolo SEM a guarda exata: repasses GENÉRICOS (criaContexto → listagem) não conseguem provar o Exato (ele é para call
+// sites com select literal); a guarda vive na assinatura PÚBLICA, que delega para cá.
+function useNoraGraphQLListagemInterno<const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>>(nomeLeitura: TNome, params: UseNoraGraphQLListagemParams<TNome, TSelect>): UseNoraGraphQLListagemResultado<UseNoraGraphQLListagemRegistro<TNome, TSelect>> {
     type TObjeto = UseNoraGraphQLListagemObjeto<TNome>;
     type TRegistro = UseNoraGraphQLListagemRegistro<TNome, TSelect>;
 
@@ -661,7 +663,12 @@ export default function useNoraGraphQLListagem<const TNome extends GraphqlLeitur
     };
 };
 
-export function criaContextoNoraGraphQLListagem<const TNomeListagem extends string, const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>>(params: { readonly nomeLeitura: TNome; readonly nomeListagem: TNomeListagem; readonly mensagemErroContexto: string; readonly listagem: UseNoraGraphQLListagemParams<TNome, TSelect>; readonly useExtras?: (params: UseNoraGraphQLListagemExtrasParams<UseNoraGraphQLListagemRegistro<TNome, TSelect>>) => object; }) {
+// Select EXATO na posição do parâmetro (padrão "Exact"; auto-referência na constraint é TS2313): chave que não existe no objeto da leitura vira `never` e ERRA NO TSC — sem isso, select pré-declarado com campo órfão só explodia na validação do servidor GraphQL.
+export default function useNoraGraphQLListagem<const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>>(nomeLeitura: TNome, params: UseNoraGraphQLListagemParams<TNome, TSelect & GraphqlSelectExato<UseNoraGraphQLListagemObjeto<TNome>, TSelect>>): UseNoraGraphQLListagemResultado<UseNoraGraphQLListagemRegistro<TNome, TSelect>> {
+    return useNoraGraphQLListagemInterno<TNome, TSelect>(nomeLeitura, params);
+};
+
+export function criaContextoNoraGraphQLListagem<const TNomeListagem extends string, const TNome extends GraphqlLeituraNome, const TSelect extends GraphqlSelect<UseNoraGraphQLListagemObjeto<TNome>>>(params: { readonly nomeLeitura: TNome; readonly nomeListagem: TNomeListagem; readonly mensagemErroContexto: string; readonly listagem: UseNoraGraphQLListagemParams<TNome, TSelect & GraphqlSelectExato<UseNoraGraphQLListagemObjeto<TNome>, TSelect>>; readonly useExtras?: (params: UseNoraGraphQLListagemExtrasParams<UseNoraGraphQLListagemRegistro<TNome, TSelect>>) => object; }) {
     type TRegistro = UseNoraGraphQLListagemRegistro<TNome, TSelect>;
     type TResultado = UseNoraGraphQLListagemResultado<TRegistro>;
     type TContextoBase = { readonly [TChave in TNomeListagem]: TResultado };
@@ -678,7 +685,7 @@ export function criaContextoNoraGraphQLListagem<const TNomeListagem extends stri
     };
 
     const Provider = ({ children }: { readonly children: ReactNode; }) => {
-        const listagem = useNoraGraphQLListagem(params.nomeLeitura, params.listagem);
+        const listagem = useNoraGraphQLListagemInterno(params.nomeLeitura, params.listagem);
         const extras = useExtras({ listagem });
         const value = useMemo<TContexto>(() => ({ [params.nomeListagem]: listagem, ...extras } as TContexto), [extras, listagem]);
 

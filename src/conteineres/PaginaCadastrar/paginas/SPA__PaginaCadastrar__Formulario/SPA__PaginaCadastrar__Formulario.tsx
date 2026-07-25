@@ -5,10 +5,11 @@ import styles from './styles.module.css';
 import { useContexto__PaginaCadastrar__Formulario } from 'Contextos/Contexto__PaginaCadastrar__Formulario/contexto';
 import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
+import CampoTurnstile from 'Componentes/Elementos/Inputs/CampoTurnstile/CampoTurnstile';
 import { ConteudoTermoAceite } from 'Componentes/ElementosDeJogo/ModalPrimeiroAcesso/page';
 
 export default function SPA__PaginaCadastrar__Formulario() {
-    const { formularioCadastro, erroCadastro, mostrarTermos, setMostrarTermos, checkTopicosSensiveis, setCheckTopicosSensiveis, termo1, setTermo1, termo2, setTermo2, termosAceitos, podeProsseguir, aoVoltarParaAcessar } = useContexto__PaginaCadastrar__Formulario();
+    const { formularioCadastro, erroCadastro, setTokenCaptcha, mostrarTermos, setMostrarTermos, checkTopicosSensiveis, setCheckTopicosSensiveis, termo1, setTermo1, termo2, setTermo2, termosAceitos, podeProsseguir, aoVoltarParaAcessar } = useContexto__PaginaCadastrar__Formulario();
 
     if (mostrarTermos) {
         return (
@@ -44,6 +45,8 @@ export default function SPA__PaginaCadastrar__Formulario() {
                             <InputComRotulo rotulo={'Confirmação da Senha'}>
                                 <input type="password" {...formularioCadastro.input('confirmarSenha')} />
                             </InputComRotulo>
+
+                            <CampoTurnstile aoMudarToken={setTokenCaptcha} />
 
                             <span className={`${styles.linkTermos} ${!termosAceitos ? styles.pendente : ''}`} onClick={() => setMostrarTermos(true)}>{termosAceitos ? 'Termos de Aceite aceitos' : 'Ler e aceitar os Termos de Aceite'}</span>
 
