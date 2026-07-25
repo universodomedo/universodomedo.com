@@ -13,6 +13,10 @@
 # testing
 /coverage
 
+# playwright (artefatos de execução do E2E — a suíte em /e2e é versionada)
+/test-results/
+/playwright-report/
+
 # next.js
 /.next/
 /out/
