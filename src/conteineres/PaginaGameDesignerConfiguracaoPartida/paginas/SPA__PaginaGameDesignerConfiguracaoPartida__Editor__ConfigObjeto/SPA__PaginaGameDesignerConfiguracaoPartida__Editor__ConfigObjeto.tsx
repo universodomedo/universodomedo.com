@@ -8,7 +8,7 @@ import InputNumerico from 'Componentes/Elementos/Inputs/InputNumerico/InputNumer
 import SelecionadorOpcoes from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorOpcoes/SelecionadorOpcoes';
 import { SeletorPosicaoMapa } from 'Componentes/ElementosDeJogo/SeletorPosicaoMapa/SeletorPosicaoMapa';
 import { EditorDescobertasInteragivel } from 'Conteineres/PaginaGameDesignerConfiguracaoPartida/paginas/SPA__PaginaGameDesignerConfiguracaoPartida__Editor/EditorDescobertasInteragivel';
-import { ACAO_OBJETO_VITORIA_PADRAO, type AcaoObjeto, type Descoberta } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
+import { ACAO_OBJETO_SAIR_DA_SALA_PADRAO, ACAO_OBJETO_VITORIA_PADRAO, type AcaoObjeto, type Descoberta } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 
 type Percepcao = 'DESPERCEBIDO' | 'PERCEBIDO';
 type OpcaoSelecionador = { value: string; label: string };
@@ -55,6 +55,8 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__Conf
     const vemDoMapa = idElementoMapa !== null;
     const temAcaoVitoria = acoes.some(acao => acao.tipo === 'vitoria');
     const alcanceAcaoVitoria = acoes.find(acao => acao.tipo === 'vitoria')?.alcanceMilimetros ?? ACAO_OBJETO_VITORIA_PADRAO.alcanceMilimetros;
+    const temAcaoSairDaSala = acoes.some(acao => acao.tipo === 'sair_da_sala');
+    const alcanceAcaoSairDaSala = acoes.find(acao => acao.tipo === 'sair_da_sala')?.alcanceMilimetros ?? ACAO_OBJETO_SAIR_DA_SALA_PADRAO.alcanceMilimetros;
     return (
         <ConteudoForm>
             <ConteudoForm.AreaCorpo>
@@ -112,6 +114,17 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor__Conf
                             </InputComRotulo>
                         )}
                     </div>
+                    <div className={styles.linha}>
+                        <button type="button" data-variante={temAcaoSairDaSala ? undefined : 'secundario'} onClick={() => aoMudarAcoes(temAcaoSairDaSala ? acoes.filter(acao => acao.tipo !== 'sair_da_sala') : [...acoes, { tipo: 'sair_da_sala', alcanceMilimetros: ACAO_OBJETO_SAIR_DA_SALA_PADRAO.alcanceMilimetros }])}>
+                            {temAcaoSairDaSala ? 'Remover Ação Sair da Sala' : 'Adicionar Ação Sair da Sala'}
+                        </button>
+                        {temAcaoSairDaSala && (
+                            <InputComRotulo rotulo="Alcance da ação (mm)">
+                                <InputNumerico value={alcanceAcaoSairDaSala} onChange={valor => aoMudarAcoes(acoes.map(acao => acao.tipo === 'sair_da_sala' ? { tipo: 'sair_da_sala', alcanceMilimetros: valor } : acao))} />
+                            </InputComRotulo>
+                        )}
+                    </div>
+                    <p className={styles.dica}>Interruptor não se autora aqui: é função física da sala, autorada uma vez no Mapa (Editor 3D). Toda Partida que usa este mapa já herda a fiação.</p>
                 </InputComRotulo>
 
                 <EditorDescobertasInteragivel descobertas={descobertas} aoMudarDescobertas={aoMudarDescobertas} opcoesCapacidades={opcoesCapacidades} opcoesInteragiveis={opcoesInteragiveis} />

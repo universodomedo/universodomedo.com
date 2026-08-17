@@ -1,0 +1,16 @@
+schema_version: 1
+name: "testes-e2e-autodocumentados"
+description: "Aplicar o padrão de teste E2E autodocumentado do frontend UDM ao criar ou alterar specs do Playwright em e2e/ — todo caso usa casoDeTesteE2E() com titulo, esperado e porque, produzindo testes que se explicam, logam seus resultados e registram as propriedades no relatório do Playwright."
+selection:
+    requirement: "required"
+    rules:
+        - id: "arquivo-de-spec-e2e"
+          match:
+              path_glob:
+                  - "e2e/**/*.ts"
+                  - "playwright.config.ts"
+        - id: "helpers-do-playwright"
+          match:
+              identifier:
+                  - "casoDeTesteE2E"
+                  - "@playwright/test"

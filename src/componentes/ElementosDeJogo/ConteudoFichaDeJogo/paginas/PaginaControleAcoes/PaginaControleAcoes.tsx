@@ -1,7 +1,7 @@
 import styles from './styles.module.css';
 
 import { useEffect, useState, type CSSProperties } from 'react';
-import type { AcaoDisponivel, AcaoTemporalSalaDeJogoRuntime, EstadoTemporalSalaDeJogoRuntime, InteragivelPercebidoSalaJogoWsDto, KeyCombatenteMissaoFuncionalSalaDeJogoRuntime, SerNaSalaJogoWsDto } from 'types-nora-api';
+import type { AcaoDisponivel, AcaoInteragivelSalaJogoWsDto, AcaoTemporalSalaDeJogoRuntime, EstadoTemporalSalaDeJogoRuntime, InteragivelPercebidoSalaJogoWsDto, KeyCombatenteMissaoFuncionalSalaDeJogoRuntime, SerNaSalaJogoWsDto } from 'types-nora-api';
 
 import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonagem/contexto';
 import type { GrupoAcoesPorCapacidadeFicha } from 'Contextos/ContextoFichaDePersonagem/contexto';
@@ -68,7 +68,7 @@ export default function PaginaControleAcoes() {
         <div className={styles.painel_acoes}>
             {acoesPorStatusECapacidade.realizaveis.length > 0 && <SecaoAcoesFicha titulo="Ações Realizáveis" grupos={acoesPorStatusECapacidade.realizaveis} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
             {estadoTemporalSalaJogo && <SecaoAcaoTemporalEsperar estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} executaEsperar={executaEsperar} />}
-            {interagiveisComAcao.length > 0 && <SecaoAcoesInteragiveis interagiveis={interagiveisComAcao} desativarAcoes={desativarAcoes} executaPressionar={executaPressionarInteragivel} />}
+            {interagiveisComAcao.length > 0 && <SecaoAcoesInteragiveis interagiveis={interagiveisComAcao} desativarAcoes={desativarAcoes} luzesApagadas={mapaLogico?.mapaLogicoSalaJogo?.luzesApagadas ?? []} executaPressionar={executaPressionarInteragivel} />}
             {acoesPorStatusECapacidade.bloqueadas.length > 0 && <SecaoAcoesFicha titulo="Ações Bloqueadas" grupos={acoesPorStatusECapacidade.bloqueadas} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
             {acaoComSelecaoAlvo && <ModalSelecaoAlvoAcao acao={acaoComSelecaoAlvo} seresNaSala={seresNaSala} interagiveisPercebidos={interagiveisPercebidos} cancelar={() => setAcaoComSelecaoAlvo(null)} confirmar={executaAcaoComAlvo} />}
         </div>
@@ -123,32 +123,49 @@ function SecaoAcaoTemporalEsperar({ estadoTemporalSalaJogo, desativarAcoes, exec
     );
 };
 
-// Interagiveis com acao autorada: um botao "Pressionar" por interagivel. Afordancia derivada do tipo da acao; a disponibilidade
-// (percebido + dentro do alcance) vem PRONTA do servidor na projecao — o cliente so habilita/desabilita.
-function SecaoAcoesInteragiveis({ interagiveis, desativarAcoes, executaPressionar }: { interagiveis: readonly InteragivelPercebidoSalaJogoWsDto[]; desativarAcoes: boolean; executaPressionar: (keyInteragivel: string) => void; }) {
+// Afordancia derivada do TIPO da acao autorada (sem if-por-string espalhado): rotulo, glifo e dica de indisponibilidade.
+const AFORDANCIA_ACAO_INTERAGIVEL: Record<AcaoInteragivelSalaJogoWsDto['tipo'], { rotulo: string; glifo: string; dicaIndisponivel: string }> = {
+    vitoria: { rotulo: 'Pressionar', glifo: 'P', dicaIndisponivel: 'Aproxime-se para pressionar' },
+    sair_da_sala: { rotulo: 'Sair da Sala', glifo: 'S', dicaIndisponivel: 'Aproxime-se da saída' },
+    alternar_luz: { rotulo: 'Desligar Lâmpada', glifo: 'L', dicaIndisponivel: 'Aproxime-se do interruptor' },
+};
+
+// Interruptor é a única afordância com rótulo de MÃO DUPLA: ele espelha o estado atual da luz alvo (apagada → "Ligar").
+// Continua DERIVADO — do tipo da ação mais o estado projetado pelo servidor, nunca do nome do objeto.
+function rotuloAcaoInteragivel(acao: AcaoInteragivelSalaJogoWsDto, luzesApagadas: readonly string[]): string {
+    if (acao.tipo !== 'alternar_luz' || acao.idsFontesDeLuz.length === 0) return AFORDANCIA_ACAO_INTERAGIVEL[acao.tipo].rotulo;
+    return acao.idsFontesDeLuz.every(idFonte => luzesApagadas.includes(idFonte)) ? 'Ligar Lâmpada' : 'Desligar Lâmpada';
+};
+
+// Interagiveis com acao autorada: um botao POR ACAO de cada interagivel. Afordancia derivada do tipo da acao; a disponibilidade
+// (percebido + dentro do alcance DAQUELA acao) vem PRONTA do servidor na projecao — o cliente so habilita/desabilita.
+function SecaoAcoesInteragiveis({ interagiveis, desativarAcoes, luzesApagadas, executaPressionar }: { interagiveis: readonly InteragivelPercebidoSalaJogoWsDto[]; desativarAcoes: boolean; luzesApagadas: readonly string[]; executaPressionar: (keyInteragivel: string, tipoAcao: AcaoInteragivelSalaJogoWsDto['tipo']) => void; }) {
     return (
         <section className={styles.secao_acoes}>
             <h3 className={styles.titulo_secao}>Interagíveis</h3>
-            {interagiveis.map(interagivel => {
-                const disponivel = (interagivel.acoes ?? []).some(acao => acao.disponivel);
-                const acaoPodeExecutar = disponivel && !desativarAcoes;
-                return (
-                    <div key={interagivel.key} className={styles.grupo_capacidade}>
-                        <h4 className={styles.titulo_capacidade}>{interagivel.nome}</h4>
-                        <div className={styles.lista_acoes}>
-                            <button type="button" className={`${styles.acao} ${acaoPodeExecutar ? styles.acao_realizavel : styles.acao_bloqueada} ${!acaoPodeExecutar ? styles.acao_sem_interacao : ''}`} aria-disabled={!acaoPodeExecutar} aria-label={`Pressionar ${interagivel.nome}`} onClick={() => { if (acaoPodeExecutar) executaPressionar(interagivel.key); }}>
-                                <span className={styles.icone_acao} aria-hidden="true">P</span>
-                                <span className={styles.resumo_acao} role="tooltip">
-                                    <strong>Pressionar</strong>
-                                    <span>{interagivel.nome}</span>
-                                    <span>{disponivel ? 'Realizável' : 'Aproxime-se para pressionar'}</span>
-                                    <small>{interagivel.key}</small>
-                                </span>
-                            </button>
-                        </div>
+            {interagiveis.map(interagivel => (
+                <div key={interagivel.key} className={styles.grupo_capacidade}>
+                    <h4 className={styles.titulo_capacidade}>{interagivel.nome}</h4>
+                    <div className={styles.lista_acoes}>
+                        {(interagivel.acoes ?? []).map(acao => {
+                            const afordancia = { ...AFORDANCIA_ACAO_INTERAGIVEL[acao.tipo], rotulo: rotuloAcaoInteragivel(acao, luzesApagadas) };
+                            const disponivel = acao.disponivel === true;
+                            const acaoPodeExecutar = disponivel && !desativarAcoes;
+                            return (
+                                <button key={acao.tipo} type="button" className={`${styles.acao} ${acaoPodeExecutar ? styles.acao_realizavel : styles.acao_bloqueada} ${!acaoPodeExecutar ? styles.acao_sem_interacao : ''}`} aria-disabled={!acaoPodeExecutar} aria-label={`${afordancia.rotulo} ${interagivel.nome}`} onClick={() => { if (acaoPodeExecutar) executaPressionar(interagivel.key, acao.tipo); }}>
+                                    <span className={styles.icone_acao} aria-hidden="true">{afordancia.glifo}</span>
+                                    <span className={styles.resumo_acao} role="tooltip">
+                                        <strong>{afordancia.rotulo}</strong>
+                                        <span>{interagivel.nome}</span>
+                                        <span>{disponivel ? 'Realizável' : afordancia.dicaIndisponivel}</span>
+                                        <small>{interagivel.key}</small>
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
-                );
-            })}
+                </div>
+            ))}
         </section>
     );
 };

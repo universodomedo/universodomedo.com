@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import { Eventos_Envia, type CodigoRecuperarFichaRuntime, type EstadoTemporalSalaDeJogoRuntime, type KeyCombatenteMissaoFuncionalSalaDeJogoRuntime, type SalaDeJogo_Codigo } from 'types-nora-api';
+import { Eventos_Envia, type CodigoRecuperarFichaRuntime, type EstadoTemporalSalaDeJogoRuntime, type KeyCombatenteMissaoFuncionalSalaDeJogoRuntime, type SalaDeJogo_Codigo, type TipoAcaoInteragivelSalaDeJogoRuntime } from 'types-nora-api';
 
 import { eventoWs } from 'Hooks/useEventoWs';
 import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonagem/contexto';
@@ -9,7 +9,7 @@ import { useContextoFichaDePersonagem } from 'Contextos/ContextoFichaDePersonage
 interface ContextoControleAcoesRuntimeProps {
     executaAcao: (keyAcao: string, keyCombatenteAlvo?: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime) => void;
     executaEsperar: () => void;
-    executaPressionarInteragivel: (keyInteragivel: string) => void;
+    executaPressionarInteragivel: (keyInteragivel: string, tipoAcao: TipoAcaoInteragivelSalaDeJogoRuntime) => void;
     executaSaqueItem: (keyItem: string) => void;
     estadoTemporalSalaJogo: EstadoTemporalSalaDeJogoRuntime | null;
 };
@@ -49,12 +49,12 @@ export const ContextoControleAcoesRuntimeProvider = ({ children, codigoRecuperar
         eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.jogadorSacaItemSalaJogo, { codigoSala, keyItem });
     };
 
-    // Pressionar um interagivel com acao autorada (v1: vitoria) — o servidor revalida percepcao+alcance e conclui. Sem gate de tempo: pressionar nao e acao temporizada.
-    function executaPressionarInteragivel(keyInteragivel: string): void {
+    // Executar uma acao autorada de interagivel ('vitoria' = Pressionar; 'sair_da_sala' = Sair) — o servidor revalida percepcao+alcance e roteia pelo tipo. Sem gate de tempo: nao e acao temporizada.
+    function executaPressionarInteragivel(keyInteragivel: string, tipoAcao: TipoAcaoInteragivelSalaDeJogoRuntime): void {
         if (desativarAcoes) return;
         if (!codigoSala) return;
 
-        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.jogadorPressionaInteragivelSalaJogo, { codigoSala, keyInteragivel });
+        eventoWs(Eventos_Envia.ExecucaoDeJogo.eventos.jogadorPressionaInteragivelSalaJogo, { codigoSala, keyInteragivel, tipoAcao });
     };
 
     return (
@@ -67,7 +67,7 @@ export const ContextoControleAcoesRuntimeProvider = ({ children, codigoRecuperar
 export const ContextoControleAcoesRuntimeSomenteLeituraProvider = ({ children }: { children: React.ReactNode; }) => {
     function executaAcao(keyAcao: string, keyCombatenteAlvo?: KeyCombatenteMissaoFuncionalSalaDeJogoRuntime): void { void keyAcao; void keyCombatenteAlvo; return; };
     function executaEsperar(): void { return; };
-    function executaPressionarInteragivel(keyInteragivel: string): void { void keyInteragivel; return; };
+    function executaPressionarInteragivel(keyInteragivel: string, tipoAcao: TipoAcaoInteragivelSalaDeJogoRuntime): void { void keyInteragivel; void tipoAcao; return; };
     function executaSaqueItem(keyItem: string): void { void keyItem; return; };
 
     return (

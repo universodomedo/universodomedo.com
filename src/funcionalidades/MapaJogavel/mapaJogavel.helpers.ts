@@ -8,6 +8,13 @@ import type { CenaCanonicaEditor3D, ObjetoCenaCanonicaEditor3D } from 'types-nor
 // pousa no chão lógico. Nunca realinhar pelo Z do bbox (fazia objeto pousado no grid flutuar em jogo).
 export const MILIMETROS_POR_METRO_MAPA = 1000;
 
+// A INTENSIDADE da fonte PONTO no contrato é PERCENTUAL do alcance (0–100): 100% ilumina até o corte. A física do motor
+// (candela do pointLight, queda quadrática decay 2, limiar de percepção 1) é DERIVADA aqui, pelos dois consumidores
+// (Editor 3D e sala de jogo), para autoria e jogo nunca divergirem: fisica = (alcance × pct/100)².
+export function intensidadeFisicaFonteDeLuzPontoMapa(alcanceMetros: number, intensidadePercentual: number): number {
+    return ((alcanceMetros * intensidadePercentual) / 100) ** 2;
+};
+
 export type DimensoesMapaJogavel = {
     larguraMilimetros: number;
     alturaMilimetros: number;

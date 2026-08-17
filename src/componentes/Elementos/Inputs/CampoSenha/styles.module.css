@@ -1,0 +1,25 @@
+.recipienteCampoSenha {
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+
+.recipienteCampoSenha input {
+    width: 100%;
+    padding-right: 2.6em;
+}
+
+.botaoOlho {
+    position: absolute;
+    right: 0.9em;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1.1em;
+    color: #B79051;
+    cursor: pointer;
+    transition: filter 160ms ease;
+
+    &:hover {
+        filter: brightness(1.3);
+    }
+}

@@ -905,6 +905,23 @@
     background: rgba(20, 16, 28, 0.82);
 }
 
+/* Modo armado de fiação (Definir interruptor): aviso fixo na base do viewport enquanto o editor espera o clique no objeto. */
+.aviso_definindo_interruptor {
+    position: absolute;
+    bottom: 1.2em;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    padding: 0.35em 1em;
+    border-radius: 1em;
+    border: 0.08em solid rgba(183, 144, 81, 0.65);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.78em;
+    background: rgba(20, 16, 28, 0.88);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
 /* ---- Botão de comando (CMD, dir. inferior) ---- */
 .canto_comando {
     position: absolute;
@@ -1043,6 +1060,108 @@
     width: 1em;
     place-items: center;
     color: rgba(255, 255, 255, 0.58);
+}
+
+/* Com título interativo (seletor de Coleção): a setinha de colapsar encolhe pra 1ª coluna e o seletor ocupa o meio. */
+.cabecalho_painel_interativo {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.cabecalho_painel_interativo .botao_cabecalho_painel {
+    padding-right: 0;
+}
+
+/* Rótulo de grupo dentro da árvore (Coleção de Iluminação: Fontes de Luz / Comandos). */
+.grupo_arvore {
+    padding: 0.5em 0.75em 0.15em;
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 0.62em;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+/* Seletor de Coleção de Sistema no título do painel da árvore. */
+.seletor_colecao_sistema {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.rotulo_colecao_sistema {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.82em;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.botao_colecao_sistema {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+    min-width: 0;
+    padding: 0.2em 0.45em;
+    border: 0.08em solid transparent;
+    border-radius: 0.3em;
+    color: rgba(255, 255, 255, 0.88);
+    font: inherit;
+    font-size: 0.82em;
+    font-weight: 700;
+    background: transparent;
+    cursor: pointer;
+
+    &:hover {
+        border-color: rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.05);
+    }
+}
+
+.seta_colecao_sistema {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.85em;
+}
+
+.menu_colecao_sistema {
+    position: absolute;
+    z-index: 6;
+    top: calc(100% + 0.3em);
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 12em;
+    padding: 0.25em;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.3em;
+    background: #2b2b2b;
+    box-shadow: 0 0.6em 1.6em rgba(0, 0, 0, 0.5);
+}
+
+.item_colecao_sistema {
+    padding: 0.4em 0.6em;
+    border: 0;
+    border-radius: 0.25em;
+    color: rgba(255, 255, 255, 0.85);
+    font: inherit;
+    font-size: 0.78em;
+    text-align: left;
+    background: transparent;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    &[aria-selected="true"] {
+        color: #f0d28a;
+        box-shadow: inset 0.16em 0 0 #b79051;
+    }
 }
 
 .acoes_cabecalho_painel {

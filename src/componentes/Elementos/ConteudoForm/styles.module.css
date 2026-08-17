@@ -23,7 +23,6 @@
     justify-content: center;
     gap: 1.5em;
     padding-top: 1.1em;
-    border-top: 0.08em solid rgba(235, 224, 201, 0.14);
 
     & button {
         min-height: 3em;

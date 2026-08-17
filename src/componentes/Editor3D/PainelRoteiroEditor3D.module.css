@@ -1,0 +1,340 @@
+/* Painel Roteiro — coluna sobreposta à esquerda do viewport, no chrome do editor (VS Code). */
+.painel_roteiro {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 6;
+    width: 21em;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: rgba(24, 24, 24, 0.97);
+    border-right: 0.08em solid rgba(255, 255, 255, 0.12);
+    font-size: 0.95em;
+}
+
+.cabeca_roteiro {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5em;
+    padding: 0.7em 0.8em 0.5em;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.1);
+}
+
+.rotulo_painel {
+    font-size: 0.72em;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #8a8a8a;
+}
+
+.nome_roteiro {
+    font-weight: 600;
+    color: #e8e8e8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fechar_painel {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #8a8a8a;
+    cursor: pointer;
+    font-size: 1em;
+    padding: 0 0.3em;
+
+    &:hover {
+        color: #e8e8e8;
+    }
+}
+
+.objetivo_roteiro {
+    padding: 0.5em 0.9em;
+    font-size: 0.85em;
+    line-height: 1.45;
+    color: #9a9a9a;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.06);
+}
+
+.motivo_bloqueio {
+    margin: 0 0.9em 0.5em;
+    padding: 0.45em 0.6em;
+    font-size: 0.8em;
+    line-height: 1.45;
+    color: #c4aee3;
+    border-left: 0.2em solid rgba(169, 142, 214, 0.7);
+    background: rgba(169, 142, 214, 0.08);
+}
+
+.selos_roteiro {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    padding: 0.55em 0.9em;
+}
+
+.selo {
+    font-size: 0.72em;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.2em 0.8em;
+    border-radius: 1em;
+    border: 0.08em solid;
+}
+
+.selo_aprovado { color: #6fbe8d; border-color: rgba(111, 190, 141, 0.5); }
+.selo_montagem { color: #8d97a4; border-color: rgba(141, 151, 164, 0.5); }
+.selo_bloqueado { color: #a98ed6; border-color: rgba(169, 142, 214, 0.5); }
+.selo_pendencia { color: #d9a441; border-color: rgba(217, 164, 65, 0.5); }
+.selo_valido { color: #6fbe8d; border-color: rgba(111, 190, 141, 0.5); }
+.selo_divergente { color: #d9a441; border-color: rgba(217, 164, 65, 0.5); }
+.selo_falhou { color: #d06666; border-color: rgba(208, 102, 102, 0.5); }
+
+.modos_roteiro {
+    display: flex;
+    gap: 0.4em;
+    padding: 0 0.9em 0.55em;
+}
+
+.botao_modo {
+    flex: 1;
+    background: #2a2a2a;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.3em;
+    color: #9a9a9a;
+    font-size: 0.72em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.45em 0;
+    cursor: pointer;
+
+    &.ativo {
+        color: #d8b25e;
+        border-color: rgba(216, 178, 94, 0.55);
+        background: rgba(216, 178, 94, 0.08);
+    }
+}
+
+.aviso_gravacao {
+    margin: 0 0.9em 0.5em;
+    padding: 0.45em 0.6em;
+    font-size: 0.8em;
+    line-height: 1.4;
+    color: #d9a441;
+    border: 0.08em solid rgba(217, 164, 65, 0.45);
+    border-radius: 0.35em;
+    background: rgba(217, 164, 65, 0.07);
+}
+
+.lista_passos {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0.3em 0;
+}
+
+.passo {
+    display: grid;
+    gap: 0.15em;
+    padding: 0.45em 0.9em 0.45em 0.65em;
+    border-left: 0.25em solid transparent;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    &.atual {
+        border-left-color: #d8b25e;
+        background: rgba(216, 178, 94, 0.08);
+    }
+
+    &.futuro {
+        opacity: 0.42;
+    }
+
+    &.com_falha {
+        border-left-color: #d06666;
+        background: rgba(208, 102, 102, 0.08);
+    }
+}
+
+.linha_passo {
+    display: flex;
+    gap: 0.5em;
+    align-items: baseline;
+    color: #d8d8d8;
+    font-size: 0.9em;
+}
+
+.numero_passo {
+    min-width: 1.2em;
+    text-align: right;
+    font-size: 0.82em;
+    color: #8a8a8a;
+    font-variant-numeric: tabular-nums;
+}
+
+.comentario_passo {
+    padding-left: 1.9em;
+    font-size: 0.8em;
+    font-style: italic;
+    color: #9a9a9a;
+    line-height: 1.35;
+}
+
+.motivo_falha_passo {
+    padding-left: 1.9em;
+    font-size: 0.8em;
+    color: #d06666;
+    line-height: 1.35;
+}
+
+.campo_comentario_passo {
+    margin-left: 1.9em;
+    background: #202020;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.3em;
+    color: #d8d8d8;
+    font-size: 0.8em;
+    padding: 0.3em 0.45em;
+}
+
+.lista_vazia_passos {
+    padding: 1em 0.9em;
+    font-size: 0.85em;
+    color: #8a8a8a;
+    line-height: 1.5;
+}
+
+.rodape_roteiro {
+    display: grid;
+    gap: 0.55em;
+    padding: 0.6em 0.9em 0.8em;
+    border-top: 0.08em solid rgba(255, 255, 255, 0.1);
+}
+
+.transporte {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
+}
+
+.botao_transporte {
+    width: 2.2em;
+    height: 1.9em;
+    background: #2a2a2a;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.3em;
+    color: #d8d8d8;
+    cursor: pointer;
+    font-size: 0.85em;
+
+    &:disabled {
+        opacity: 0.35;
+        cursor: default;
+    }
+}
+
+.posicao_roteiro {
+    margin-left: auto;
+    font-size: 0.85em;
+    color: #8a8a8a;
+    font-variant-numeric: tabular-nums;
+}
+
+.bloco_bloqueio {
+    display: grid;
+    gap: 0.45em;
+}
+
+.campo_motivo_bloqueio {
+    background: #202020;
+    border: 0.08em solid rgba(169, 142, 214, 0.45);
+    border-radius: 0.3em;
+    color: #d8d8d8;
+    font-size: 0.82em;
+    padding: 0.45em 0.55em;
+}
+
+.botao_acao_roteiro {
+    background: #2f2b22;
+    border: 0.08em solid rgba(216, 178, 94, 0.5);
+    border-radius: 0.3em;
+    color: #d8b25e;
+    font-weight: 600;
+    font-size: 0.82em;
+    letter-spacing: 0.04em;
+    padding: 0.55em 0;
+    cursor: pointer;
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+
+    &.secundario {
+        background: #2a2a2a;
+        border-color: rgba(255, 255, 255, 0.14);
+        color: #d8d8d8;
+    }
+}
+
+/* ---- Seleção de roteiro (sem sessão aberta) ---- */
+.lista_roteiros {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0.4em 0;
+}
+
+.item_roteiro {
+    display: grid;
+    gap: 0.2em;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    border-left: 0.25em solid transparent;
+    color: #d8d8d8;
+    padding: 0.5em 0.9em 0.5em 0.65em;
+    cursor: pointer;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+}
+
+.nome_item_roteiro {
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.detalhe_item_roteiro {
+    display: flex;
+    gap: 0.6em;
+    align-items: baseline;
+    font-size: 0.78em;
+    color: #8a8a8a;
+}
+
+.erro_lista_roteiros {
+    margin: 0.6em 0.9em;
+    padding: 0.55em 0.7em;
+    font-size: 0.85em;
+    line-height: 1.45;
+    color: #d06666;
+    border: 0.08em solid rgba(208, 102, 102, 0.45);
+    border-radius: 0.35em;
+    background: rgba(208, 102, 102, 0.07);
+}
+
+.carregando_roteiros {
+    padding: 1em 0.9em;
+    font-size: 0.85em;
+    color: #8a8a8a;
+}

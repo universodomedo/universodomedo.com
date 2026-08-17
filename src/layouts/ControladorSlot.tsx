@@ -6,6 +6,7 @@ import { decidirAcessoRuntime, type PaginaFolha, type MenuLeafRuntime } from 'ty
 
 import Cabecalho from 'Componentes/ElementosVisuais/PaginaAterrissagem/Cabecalho/Cabecalho';
 import RedirecionadorHref from 'Componentes/Elementos/RedirecionadorHref/RedirecionadorHref';
+import { montaHrefAcessarComDestino } from 'Funcionalidades/Acessos/destinoPosLogin';
 
 import LayoutContextualizado from 'Componentes/ElementosVisuais/LayoutContextualizado/LayoutContextualizado';
 import MenuInterno from 'Componentes/ElementosDeMenu/componentes';
@@ -88,6 +89,10 @@ export function ControladorSlot({ pagina, children, embrulho: Embrulho }: { pagi
     if (!decisao.permitido) {
         // Página inativa (para não-SUDO) responde igual a uma rota que não existe: o 404 real do Next.
         if (decisao.motivo === 'INEXISTENTE') notFound();
+
+        // Quem foi barrado por não estar autenticado volta para onde estava indo assim que logar.
+        if (decisao.motivo === 'NAO_AUTENTICADO' && typeof window !== 'undefined') return (<RedirecionadorHref href={montaHrefAcessarComDestino(window.location.pathname + window.location.search)} />);
+
         return (<RedirecionadorHref href={decisao.redirecionarPara} />);
     }
 

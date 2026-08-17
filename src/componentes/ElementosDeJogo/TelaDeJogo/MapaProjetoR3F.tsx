@@ -3,15 +3,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useThree } from '@react-three/fiber';
 import { Color, MeshStandardMaterial, Object3D, Raycaster, Vector3 } from 'three';
-import type { CenaCanonicaEditor3D, ObjetoCenaCanonicaEditor3D } from 'types-nora-api';
+import type { CamadaJogoMapa, CenaCanonicaEditor3D, ObjetoCenaCanonicaEditor3D } from 'types-nora-api';
 
 import { criaGeometriaDeMalha, solidificaMalha, subdivideMalhaCatmullClark, type MalhaEditavelLocal } from 'Componentes/Editor3D/editor3D.malha';
 import { MILIMETROS_POR_METRO_MAPA, dimensoesMapaDaCena } from 'Funcionalidades/MapaJogavel/mapaJogavel.helpers';
+import { LuzesMapaR3F } from './LuzesMapaR3F';
 
 // Cenário AUTORADO da sala: renderiza a cena do Projeto 3D (tipo MAPA) alinhada ao espaço lógico do jogo. Z-up: o chão é
 // o plano XY e a altura é Z. A origem lógica (0,0) é o canto mínimo do bbox XY do mapa; o alinhamento segue a MESMA
 // convenção dos atores (mundoX/mundoY, com o +0.5). A geometria reusa os helpers PUROS do Editor 3D (gaiola + subdiv + espessura + slots).
-export function MapaProjetoR3F({ cena, largura, altura }: { cena: CenaCanonicaEditor3D; largura: number; altura: number }) {
+export function MapaProjetoR3F({ cena, camadaJogo = null, largura, altura, luzesApagadas = [] }: { cena: CenaCanonicaEditor3D; camadaJogo?: CamadaJogoMapa | null; largura: number; altura: number; luzesApagadas?: readonly string[] }) {
     const dimensoes = useMemo(() => dimensoesMapaDaCena(cena), [cena]);
     if (dimensoes === null) return null;
 
@@ -20,9 +21,11 @@ export function MapaProjetoR3F({ cena, largura, altura }: { cena: CenaCanonicaEd
     // Z-up: o plano do chão é XY; alinhamos nos eixos X e Y. Z (a altura) NÃO desloca — o grid do Editor 3D (z=0) É o chão
     // do jogo — o que o autor pousa no grid, pousa no chão lógico. Realinhar pelo Z mínimo do bbox faria objetos pousados
     // no grid flutuarem em jogo (bug real: cubo no grid do editor aparecia acima do piso da sala enterrada no preview/partida).
+    // As luzes autoradas moram DENTRO deste grupo: posição de luz e de objeto vêm do mesmo espaço do mapa, então o alinhamento é o mesmo.
     return (
         <group position={[offsetX, offsetY, 0]} userData={{ superficieMapa: true }}>
             {cena.objetos.map(objeto => <ObjetoMapaR3F key={objeto.idLocal} objeto={objeto} />)}
+            <LuzesMapaR3F luzes={camadaJogo?.fontesDeLuz ?? []} luzesApagadas={luzesApagadas} />
         </group>
     );
 };

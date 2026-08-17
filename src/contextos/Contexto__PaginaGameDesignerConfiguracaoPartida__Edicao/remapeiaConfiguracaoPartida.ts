@@ -1,5 +1,5 @@
 import type { ConfiguracaoPartida, KeySerEmSala, PartidaGraphqlDto } from 'types-nora-api';
-import { TAMANHO_OBJETO_PADRAO_MILIMETROS, type Controlador, type Descoberta, type Interagivel, type Luz } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
+import { TAMANHO_OBJETO_PADRAO_MILIMETROS, type AcaoObjeto, type Controlador, type Descoberta, type Interagivel } from '../Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 
 // A leitura GraphQL da Partida entrega o configuracao "achatado": o interagivel vem com os campos de ambas as variantes (objeto|ser) opcionais + tipo,
 // condicaoVitoria com os campos de todas as variantes opcionais, e os tipos de marca (KeySerEmSala, enums) alargados como string. O Editor trabalha no
@@ -18,8 +18,13 @@ function remapeiaControlador(controlador: InteragivelGraphql['controlador']): Co
     return { tipo: 'sistema' };
 };
 
-function remapeiaLuz(luz: NonNullable<ConfiguracaoPartidaGraphql['luzes']>[number]): Luz {
-    return { chave: luz.chave, nome: luz.nome, posicao: luz.posicao === null ? null : { x: luz.posicao.x, y: luz.posicao.y }, alcanceMilimetros: luz.alcanceMilimetros, intensidade: luz.intensidade };
+// A leitura entrega a acao ACHATADA (tipo + campos de todas as variantes nullable); aqui ela volta a ser uniao discriminada.
+// Tipo DESCONHECIDO (ex.: acao aposentada que ficou no jsonb) e DESCARTADO, nunca convertido pra outra variante: degradar
+// um interruptor legado em 'vitoria' transformaria o objeto num botao que ganha a Partida.
+function remapeiaAcaoObjeto(acao: NonNullable<InteragivelGraphql['acoes']>[number]): AcaoObjeto | null {
+    if (acao.tipo === 'vitoria') return { tipo: 'vitoria', alcanceMilimetros: acao.alcanceMilimetros };
+    if (acao.tipo === 'sair_da_sala') return { tipo: 'sair_da_sala', alcanceMilimetros: acao.alcanceMilimetros };
+    return null;
 };
 
 function remapeiaInteragivel(interagivel: InteragivelGraphql): Interagivel {
@@ -32,7 +37,7 @@ function remapeiaInteragivel(interagivel: InteragivelGraphql): Interagivel {
         descobertas: interagivel.descobertas.map(remapeiaDescoberta),
     };
     if (interagivel.tipo === 'ser') return { ...base, tipo: 'ser', idSer: interagivel.idSer ?? 0, controlador: remapeiaControlador(interagivel.controlador) };
-    return { ...base, tipo: 'objeto', pontosDurabilidadeMaximo: interagivel.pontosDurabilidadeMaximo ?? 1, larguraMilimetros: interagivel.larguraMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.largura, alturaMilimetros: interagivel.alturaMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.altura, profundidadeMilimetros: interagivel.profundidadeMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.profundidade, idElementoMapa: interagivel.idElementoMapa ?? null, acoes: (interagivel.acoes ?? []).map(acao => ({ tipo: 'vitoria' as const, alcanceMilimetros: acao.alcanceMilimetros })) };
+    return { ...base, tipo: 'objeto', pontosDurabilidadeMaximo: interagivel.pontosDurabilidadeMaximo ?? 1, larguraMilimetros: interagivel.larguraMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.largura, alturaMilimetros: interagivel.alturaMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.altura, profundidadeMilimetros: interagivel.profundidadeMilimetros ?? TAMANHO_OBJETO_PADRAO_MILIMETROS.profundidade, idElementoMapa: interagivel.idElementoMapa ?? null, acoes: (interagivel.acoes ?? []).map(remapeiaAcaoObjeto).filter((acao): acao is AcaoObjeto => acao !== null) };
 };
 
 function remapeiaCondicaoVitoria(condicao: CondicaoVitoriaGraphql): ConfiguracaoPartida['condicaoVitoria'] {
@@ -40,6 +45,7 @@ function remapeiaCondicaoVitoria(condicao: CondicaoVitoriaGraphql): Configuracao
     if (condicao.tipo === 'inimigo_derrotado') return { tipo: 'inimigo_derrotado', keySerEmSala: (condicao.keySerEmSala ?? '') as KeySerEmSala, idEstatisticaDanificavel: condicao.idEstatisticaDanificavel ?? 0 };
     if (condicao.tipo === 'tempo_jogo_alcancado') return { tipo: 'tempo_jogo_alcancado', tempoAlvoMs: condicao.tempoAlvoMs ?? 0 };
     if (condicao.tipo === 'proximidade_ser_alcancada') return { tipo: 'proximidade_ser_alcancada', keySerEmSala: (condicao.keySerEmSala ?? '') as KeySerEmSala, distanciaMaximaMilimetros: condicao.distanciaMaximaMilimetros ?? 0 };
+    if (condicao.tipo === 'sala_deixada') return { tipo: 'sala_deixada' };
     // 'saida_pela_porta' foi aposentada (acao 'vitoria' no objeto encerra direto); config antiga com ela degrada pro default.
     return { tipo: 'qualquer_acao_executada' };
 };
@@ -51,7 +57,6 @@ export function remapeiaConfiguracaoPartidaGraphql(configuracao: ConfiguracaoPar
         narracaoInicial: configuracao.narracaoInicial,
         cenario: { nome: configuracao.cenario.nome, mapaLogico: { larguraMilimetros: configuracao.cenario.mapaLogico.larguraMilimetros, alturaMilimetros: configuracao.cenario.mapaLogico.alturaMilimetros, idProjetoMapa: configuracao.cenario.mapaLogico.idProjetoMapa ?? null } },
         interagiveis: configuracao.interagiveis.map(remapeiaInteragivel),
-        luzes: (configuracao.luzes ?? []).map(remapeiaLuz),
         condicaoVitoria: remapeiaCondicaoVitoria(configuracao.condicaoVitoria),
         temporal: configuracao.temporal === null ? undefined : { momentoInicialMs: configuracao.temporal.momentoInicialMs },
     };

@@ -61,6 +61,7 @@ function textoCondicaoVitoria(condicao: CondicaoVitoriaGraphql): string {
         case 'tempo_jogo_alcancado': return `Sobreviver por ${formataDuracao(condicao.tempoAlvoMs)}.`;
         case 'proximidade_ser_alcancada': return `Alcançar o alvo (até ${condicao.distanciaMaximaMilimetros ?? 0} mm).`;
         case 'qualquer_acao_executada': return 'Executar qualquer ação.';
+        case 'sala_deixada': return 'Sair da Sala.';
         default: return 'Condição de vitória não definida.';
     }
 };

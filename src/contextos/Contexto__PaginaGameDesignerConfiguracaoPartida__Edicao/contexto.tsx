@@ -21,7 +21,6 @@ const SELECT_CONFIGURACAO_PARTIDA = {
         narracaoInicial: true,
         cenario: { nome: true, mapaLogico: { larguraMilimetros: true, alturaMilimetros: true, idProjetoMapa: true } },
         interagiveis: { chave: true, nome: true, descricao: true, tipo: true, posicao: { x: true, y: true }, estadoPercepcaoInicial: true, pontosDurabilidadeMaximo: true, larguraMilimetros: true, alturaMilimetros: true, profundidadeMilimetros: true, idElementoMapa: true, acoes: { tipo: true, alcanceMilimetros: true }, idSer: true, controlador: { tipo: true, slotJogador: true }, descobertas: { nome: true, descricaoInterna: true, idCapacidadeInata: true, recompensas: { dificuldadeMinima: true, chavesReveladas: true } } },
-        luzes: { chave: true, nome: true, posicao: { x: true, y: true }, alcanceMilimetros: true, intensidade: true },
         temporal: { momentoInicialMs: true },
         condicaoVitoria: { tipo: true, keySerEmSala: true, idEstatisticaDanificavel: true, tempoAlvoMs: true, distanciaMaximaMilimetros: true },
     },

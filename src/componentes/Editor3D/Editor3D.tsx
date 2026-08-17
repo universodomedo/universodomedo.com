@@ -5,9 +5,9 @@ import styles from './Editor3D.module.css';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useThree, type ThreeEvent } from '@react-three/fiber';
 import { Grid, OrbitControls, TransformControls } from '@react-three/drei';
-import { BufferAttribute, BufferGeometry, Color, Mesh, MeshStandardMaterial, Object3D, Plane, Raycaster, Vector2, Vector3 } from 'three';
+import { Box3, BufferAttribute, BufferGeometry, Color, EdgesGeometry, Mesh, MeshStandardMaterial, Object3D, Plane, Raycaster, Vector2, Vector3 } from 'three';
 import type { EventDispatcher } from 'three';
-import type { CorpoPersonagemCenaCanonicaEditor3D, MembroPersonagemEditor3D, PecaPersonagemCenaCanonicaEditor3D, Projeto3DResumoPersistido, TipoProjetoEditor3D } from 'types-nora-api';
+import type { CorpoPersonagemCenaCanonicaEditor3D, MembroPersonagemEditor3D, OperacaoRoteiroEditor3D, PassoRoteiroEditor3D, PecaPersonagemCenaCanonicaEditor3D, Projeto3DResumoPersistido, RoteiroEditor3DPersistido, RoteiroEditor3DResumoPersistido, TipoFonteDeLuzMapa, TipoProjetoEditor3D } from 'types-nora-api';
 
 import { CORPO_PERSONAGEM_PADRAO_EDITOR3D, ancoraPunhoCorpoPersonagem, ancoraRegiaoCorpoPersonagem, escalaMaoCorpoPersonagem, geraGeometriaCorpoPersonagem } from 'Funcionalidades/CorpoPersonagem/corpoPersonagem.gerador';
 import { criaMalhaMaoSuavizadaCorpoPersonagem } from './corpoPersonagem.maos';
@@ -33,13 +33,23 @@ import { CameraCapaArteEditor3D, CameraPovEditor3D, PreviewVivoCapaArteEditor3D,
 import { TituloCapaArteEditor3D } from './TituloCapaArteEditor3D';
 import type { CampoVetorCameraCapaArteEditor3D } from './PainelCameraCapaArteEditor3D';
 import { HomeEditor3D } from './HomeEditor3D';
+import { LuzesViewportEditor3D } from './LuzesViewportEditor3D';
+import { EsquemaEletricoEditor3D } from './EsquemaEletricoEditor3D';
+import { INTENSIDADE_PADRAO_POR_TIPO_FONTE_EDITOR3D, ROTULO_CURTO_TIPO_FONTE_DE_LUZ_EDITOR3D, alternaVinculoLuzInterruptorEditor3D, aplicaCampoLuzEditor3D, camadaJogoDoProjeto, criaFonteDeLuzEditor3D, serializaCamadaJogoEditor3D, vinculaLuzInterruptorEditor3D, type ComandoEditor3D, type FonteDeLuzEditor3D } from './editor3D.camadaJogo';
+import { COLECAO_SISTEMA_INICIAL_EDITOR3D, colecaoMostraFiacao, colecaoMostraGeometria, colecaoPermiteComandoMenu, colecaoSistemaInicialDoTipoProjeto, colecaoUsaIluminacaoDeJogo, colecoesSistemaDoTipoProjeto, type TipoColecaoSistemaEditor3D } from './editor3D.colecoesSistema';
+import type { CampoLuzEditor3D } from './PainelLuzEditor3D';
+import { PainelRoteiroEditor3D } from './PainelRoteiroEditor3D';
+import { ESTADO_INICIAL_ROTEIRO_EDITOR3D, executaPassosRoteiroEditor3D, rotuloOperacaoRoteiroEditor3D, type EstadoRoteiroEditor3D } from './editor3D.operacoes';
+import { acrescentaPassoComCoalescenciaRoteiroEditor3D, montaGoldenRoteiroEditor3D, validaRoteiroContraGoldenEditor3D, type ModoRoteiroEditor3D, type ResultadoValidacaoRoteiroEditor3D } from './editor3D.roteiro';
+import { aprovaRoteiroEditor3D, atualizaPassosRoteiroEditor3D, bloqueiaRoteiroEditor3D, consultaRoteiroEditor3D, listaRoteirosEditor3D } from './editor3D.roteiro.api';
 
 type ModoOperacaoEditor3D = 'OBJETO' | 'EDICAO';
 // Raycast no-op estável (X-Ray): o mesh deixa de interceptar cliques sem recriar função a cada render.
 const raycastNuloEditor3D = (): null => null;
 // Slot de material adicional do objeto (slot 0 = base = `cor`; extras são slots 1..N). Faces apontam o slot via `slotMaterial`.
-type MaterialExtraEditor3D = { nome: string; cor: string; };
-type ObjetoEditor3D = { id: number; tipo: TipoPrimitivaEditor3D; nome: string; cor: string; materiaisExtras: readonly MaterialExtraEditor3D[]; idPeca: string | null; visivel: boolean; malha: MalhaEditavelLocal; subdivisao: number; espessura: number; transformInicial: TransformEditor3D; };
+// Exportados como TIPO para a camada de operações de Roteiro (editor3D.operacoes) manipular o mesmo shape sem duplicá-lo.
+export type MaterialExtraEditor3D = { nome: string; cor: string; };
+export type ObjetoEditor3D = { id: number; tipo: TipoPrimitivaEditor3D; nome: string; cor: string; materiaisExtras: readonly MaterialExtraEditor3D[]; idPeca: string | null; visivel: boolean; malha: MalhaEditavelLocal; subdivisao: number; espessura: number; transformInicial: TransformEditor3D; };
 
 // Convenção de eixos do editor: Z para cima (Blender), -Y para frente. Mudança GLOBAL do Three.js — afeta gizmo, órbita e todo objeto novo.
 // TODO(z-up): a stack inteira é Z-up; mover este set para um init único do app quando o render do jogo migrar.
@@ -104,13 +114,13 @@ const REGIOES_CORPO_EDITOR3D: readonly MembroPersonagemEditor3D[] = ['CABECA', '
 function criaMalhaPrimitiva(tipo: TipoPrimitivaEditor3D, segmentos = 24): MalhaEditavelLocal { return tipo === 'CUBO' ? criaMalhaCubo() : tipo === 'CILINDRO' ? criaMalhaCilindro(segmentos) : criaMalhaEsfera(segmentos); };
 type ColecaoEditor3D = { id: number; nome: string; idsObjetos: readonly number[]; visivel: boolean; };
 type ProjetoAbertoEditor3D = { id: number; nome: string; };
-type CenaArmazenadaEditor3D = { readonly objetos: readonly ObjetoEditor3D[]; readonly colecoes: readonly ColecaoEditor3D[]; readonly pecas: readonly PecaPersonagemCenaCanonicaEditor3D[]; readonly corpoPersonagem: CorpoPersonagemCenaCanonicaEditor3D | null; readonly idSelecionado: number | null; readonly projetoAberto: ProjetoAbertoEditor3D | null; readonly alterado: boolean; readonly ehInicio: boolean; readonly tipoProjeto: TipoProjetoEditor3D; readonly camera: CameraEditor3D | null; readonly capaArte: CapaArteEditor3D; };
+type CenaArmazenadaEditor3D = { readonly objetos: readonly ObjetoEditor3D[]; readonly colecoes: readonly ColecaoEditor3D[]; readonly pecas: readonly PecaPersonagemCenaCanonicaEditor3D[]; readonly corpoPersonagem: CorpoPersonagemCenaCanonicaEditor3D | null; readonly idSelecionado: number | null; readonly projetoAberto: ProjetoAbertoEditor3D | null; readonly alterado: boolean; readonly ehInicio: boolean; readonly tipoProjeto: TipoProjetoEditor3D; readonly camera: CameraEditor3D | null; readonly capaArte: CapaArteEditor3D; readonly luzes: readonly FonteDeLuzEditor3D[]; readonly idLuzSelecionada: string | null; readonly comandos: readonly ComandoEditor3D[]; };
 type AbaEditor3D = { readonly idAba: number; readonly nomePadrao: string; readonly cenaInativa: CenaArmazenadaEditor3D | null; };
 
 // Cena ativa vive no estado plano; abas inativas guardam sua cena (com transforms já capturados das meshes). Coleções são organização de sessão (não vão para a CenaCanonica do banco). `ehInicio` = aba mostra a tela inicial (Home), ainda sem projeto/editor. `tipoProjeto`/`camera`/`capaArte`: projetos Capa de Arte carregam a câmera-output e os textos de overlay (título/assinatura).
-const CENA_VAZIA_EDITOR3D: CenaArmazenadaEditor3D = { objetos: [], colecoes: [], pecas: [], corpoPersonagem: null, idSelecionado: null, projetoAberto: null, alterado: false, ehInicio: false, tipoProjeto: 'PADRAO', camera: null, capaArte: CAPA_ARTE_PADRAO_EDITOR3D };
-const CENA_INICIO_EDITOR3D: CenaArmazenadaEditor3D = { objetos: [], colecoes: [], pecas: [], corpoPersonagem: null, idSelecionado: null, projetoAberto: null, alterado: false, ehInicio: true, tipoProjeto: 'PADRAO', camera: null, capaArte: CAPA_ARTE_PADRAO_EDITOR3D };
-const CENA_CAPA_ARTE_EDITOR3D: CenaArmazenadaEditor3D = { objetos: [], colecoes: [], pecas: [], corpoPersonagem: null, idSelecionado: null, projetoAberto: null, alterado: false, ehInicio: false, tipoProjeto: 'CAPA_ARTE', camera: CAMERA_PADRAO_CAPA_ARTE_EDITOR3D, capaArte: CAPA_ARTE_PADRAO_EDITOR3D };
+const CENA_VAZIA_EDITOR3D: CenaArmazenadaEditor3D = { objetos: [], colecoes: [], pecas: [], corpoPersonagem: null, idSelecionado: null, projetoAberto: null, alterado: false, ehInicio: false, tipoProjeto: 'PADRAO', camera: null, capaArte: CAPA_ARTE_PADRAO_EDITOR3D, luzes: [], idLuzSelecionada: null, comandos: [] };
+const CENA_INICIO_EDITOR3D: CenaArmazenadaEditor3D = { objetos: [], colecoes: [], pecas: [], corpoPersonagem: null, idSelecionado: null, projetoAberto: null, alterado: false, ehInicio: true, tipoProjeto: 'PADRAO', camera: null, capaArte: CAPA_ARTE_PADRAO_EDITOR3D, luzes: [], idLuzSelecionada: null, comandos: [] };
+const CENA_CAPA_ARTE_EDITOR3D: CenaArmazenadaEditor3D = { objetos: [], colecoes: [], pecas: [], corpoPersonagem: null, idSelecionado: null, projetoAberto: null, alterado: false, ehInicio: false, tipoProjeto: 'CAPA_ARTE', camera: CAMERA_PADRAO_CAPA_ARTE_EDITOR3D, capaArte: CAPA_ARTE_PADRAO_EDITOR3D, luzes: [], idLuzSelecionada: null, comandos: [] };
 // Mapa: cena de autoria de MAPAS jogáveis (a sala do jogo nasce aqui). Estruturalmente igual ao projeto vazio — a diferença é o tipoProjeto persistido, que gateia o consumo (Partida referencia projetos MAPA).
 const CENA_MAPA_EDITOR3D: CenaArmazenadaEditor3D = { ...CENA_VAZIA_EDITOR3D, tipoProjeto: 'MAPA' };
 
@@ -195,6 +205,15 @@ export function Editor3D() {
     const [projetosListados, setProjetosListados] = useState<readonly Projeto3DResumoPersistido[]>([]);
     const [carregandoLista, setCarregandoLista] = useState(false);
     const [colecoes, setColecoes] = useState<readonly ColecaoEditor3D[]>([]);
+    // Fontes de Luz do MAPA: nós de primeira classe da cena, com seleção PRÓPRIA (id string) — não entram na numeração dos objetos.
+    const [luzes, setLuzes] = useState<readonly FonteDeLuzEditor3D[]>([]);
+    const [idLuzSelecionada, setIdLuzSelecionada] = useState<string | null>(null);
+    // Comandos (a fiação): quem aciona o quê. Domínio LÓGICO do mapa — não entra na cena canônica.
+    const [comandos, setComandos] = useState<readonly ComandoEditor3D[]>([]);
+    const [idComandoSelecionado, setIdComandoSelecionado] = useState<string | null>(null);
+    // COLEÇÃO DE SISTEMA ativa: a lente que escopa árvore, menus, seleção e visualização (domínio em editor3D.colecoesSistema).
+    // A visualização não tem toggles próprios: a Iluminação É o modo de jogo, e o esquema elétrico segue a luz selecionada.
+    const [colecaoSistema, setColecaoSistema] = useState<TipoColecaoSistemaEditor3D>(COLECAO_SISTEMA_INICIAL_EDITOR3D);
     const contadorRef = useRef(0);
     const contadorColecaoRef = useRef(0);
     const contadorAbaRef = useRef(1);
@@ -232,8 +251,8 @@ export function Editor3D() {
             if (!mesh) return objeto;
             return { ...objeto, transformInicial: { posicao: [mesh.position.x, mesh.position.y, mesh.position.z], rotacao: [mesh.rotation.x, mesh.rotation.y, mesh.rotation.z], escala: [mesh.scale.x, mesh.scale.y, mesh.scale.z] } };
         }),
-        colecoes, pecas, corpoPersonagem, idSelecionado, projetoAberto, alterado, ehInicio, tipoProjeto, camera, capaArte,
-    }), [objetos, colecoes, pecas, corpoPersonagem, idSelecionado, projetoAberto, alterado, ehInicio, tipoProjeto, camera, capaArte]);
+        colecoes, pecas, corpoPersonagem, idSelecionado, projetoAberto, alterado, ehInicio, tipoProjeto, camera, capaArte, luzes, idLuzSelecionada, comandos,
+    }), [objetos, colecoes, pecas, corpoPersonagem, idSelecionado, projetoAberto, alterado, ehInicio, tipoProjeto, camera, capaArte, luzes, idLuzSelecionada, comandos]);
 
     const aplicaCenaAtiva = useCallback((cena: CenaArmazenadaEditor3D) => {
         setObjetos(cena.objetos);
@@ -248,6 +267,9 @@ export function Editor3D() {
         setTipoProjeto(cena.tipoProjeto);
         setCamera(cena.camera);
         setCapaArte(cena.capaArte);
+        setLuzes(cena.luzes);
+        setIdLuzSelecionada(cena.idLuzSelecionada);
+        setComandos(cena.comandos);
         // O painel Transform lê da mesh viva, mas ao repor uma cena (undo/redo/troca de aba) a mesh só assenta no effect do
         // objeto — sincroniza pelo transform gravado na própria cena (o mesmo que a mesh vai receber) p/ não exibir valor velho.
         const objetoSelecionadoCena = cena.idSelecionado !== null && cena.idSelecionado > 0 ? (cena.objetos.find(objeto => objeto.id === cena.idSelecionado) ?? null) : null;
@@ -271,6 +293,74 @@ export function Editor3D() {
     // Arrasto de gizmo (objeto ou vértices): cada arrasto é UM registro, capturado no mouseDown (antes da primeira mutação).
     const registraHistoricoArrasto = useCallback(() => { registraHistorico(); }, [registraHistorico]);
 
+    // ---- ROTEIRO (Painel Roteiro): sessão de montagem/validação amarrada a UMA aba. Em montagem, o editor é a VIEW
+    // da reexecução: cada operação gravada reexecuta o prefixo na camada pura e repõe a cena — o que não entra no
+    // roteiro não fica na cena, e o golden reflete exatamente o que a validação vai reexecutar. ----
+    const [painelRoteiroAberto, setPainelRoteiroAberto] = useState(false);
+    const [idAbaRoteiro, setIdAbaRoteiro] = useState<number | null>(null);
+    const [roteirosListados, setRoteirosListados] = useState<readonly RoteiroEditor3DResumoPersistido[]>([]);
+    const [carregandoRoteiros, setCarregandoRoteiros] = useState(false);
+    // Falha ao listar NÃO pode virar "nenhum roteiro cadastrado": lista vazia por erro é mentira sobre o estado.
+    const [erroListaRoteiros, setErroListaRoteiros] = useState<string | null>(null);
+    const [roteiroAtivo, setRoteiroAtivo] = useState<RoteiroEditor3DPersistido | null>(null);
+    const [passosRoteiro, setPassosRoteiro] = useState<readonly PassoRoteiroEditor3D[]>([]);
+    const [posicaoRoteiro, setPosicaoRoteiro] = useState(0);
+    const [modoRoteiro, setModoRoteiro] = useState<ModoRoteiroEditor3D>('VISUALIZACAO');
+    const [pendenciaRoteiro, setPendenciaRoteiro] = useState(false);
+    const [salvandoRoteiro, setSalvandoRoteiro] = useState(false);
+    const [avisoGravacaoRoteiro, setAvisoGravacaoRoteiro] = useState<string | null>(null);
+    const [resultadoValidacaoRoteiro, setResultadoValidacaoRoteiro] = useState<ResultadoValidacaoRoteiroEditor3D | null>(null);
+
+    // Execução DERIVADA dos passos atuais: estados incrementais para stepping/rótulos + a eventual falha de execução.
+    const execucaoRoteiro = useMemo(() => executaPassosRoteiroEditor3D(passosRoteiro), [passosRoteiro]);
+    const rotulosPassosRoteiro = useMemo(() => passosRoteiro.map((passo, indice) => rotuloOperacaoRoteiroEditor3D(passo.operacao, indice === 0 ? ESTADO_INICIAL_ROTEIRO_EDITOR3D : (execucaoRoteiro.estados[indice - 1] ?? ESTADO_INICIAL_ROTEIRO_EDITOR3D))), [passosRoteiro, execucaoRoteiro]);
+    const sessaoRoteiroNaAba = painelRoteiroAberto && idAbaAtiva === idAbaRoteiro;
+
+    // Repõe no editor o estado PURO de uma posição do roteiro. O contadorRef global NÃO é rebaixado: os ids que a cena
+    // reposta exibe vêm sempre da reexecução (densos a partir de 1); ids vivos de rajada são descartados na reposição.
+    // A seleção de OBJETO sobrevive quando o objeto continua existindo — sem isso a operadora reselecionaria o alvo a
+    // cada operação gravada. Subelementos (faces/vértices) sempre limpam: a seleção deles é da sessão de edição.
+    const aplicaEstadoRoteiroNoEditor = useCallback((estado: EstadoRoteiroEditor3D, marcaProjetoAlterado: boolean) => {
+        const objetoPreservado = idSelecionado !== null && idSelecionado > 0 ? (estado.objetos.find(objeto => objeto.id === idSelecionado) ?? null) : null;
+        setObjetos(estado.objetos);
+        setIdSelecionado(objetoPreservado?.id ?? null);
+        setTransformSelecionado(objetoPreservado?.transformInicial ?? null);
+        setVerticesSelecionados([]);
+        setFacesSelecionadas([]);
+        // Navegar/carregar é LEITURA: só a gravação de passo marca o projeto da aba como alterado.
+        if (marcaProjetoAlterado) setAlterado(true);
+    }, [idSelecionado]);
+
+    const irParaPosicaoRoteiro = useCallback((posicao: number) => {
+        const maximo = execucaoRoteiro.falha !== null ? execucaoRoteiro.falha.indicePasso : passosRoteiro.length;
+        const alvo = Math.max(0, Math.min(maximo, posicao));
+        setPosicaoRoteiro(alvo);
+        aplicaEstadoRoteiroNoEditor(alvo === 0 ? ESTADO_INICIAL_ROTEIRO_EDITOR3D : execucaoRoteiro.estados[alvo - 1], false);
+    }, [execucaoRoteiro, passosRoteiro.length, aplicaEstadoRoteiroNoEditor]);
+
+    // GRAVAÇÃO: operação do vocabulário executada no editor vira passo — truncando os passos à frente da posição
+    // (inserir no meio descarta o resto) e coalescendo rajadas sobre o mesmo alvo. A cena é reposta pela reexecução.
+    const gravaOperacaoRoteiro = useCallback((operacao: OperacaoRoteiroEditor3D) => {
+        if (!sessaoRoteiroNaAba || roteiroAtivo === null || modoRoteiro !== 'MONTAGEM') return;
+        const novosPassos = acrescentaPassoComCoalescenciaRoteiroEditor3D(passosRoteiro.slice(0, posicaoRoteiro), operacao);
+        const execucao = executaPassosRoteiroEditor3D(novosPassos);
+        if (execucao.falha !== null) { setAvisoGravacaoRoteiro(`Operação não entrou no roteiro: ${execucao.falha.motivo}`); return; }
+        setPassosRoteiro(novosPassos);
+        setPosicaoRoteiro(novosPassos.length);
+        setPendenciaRoteiro(true);
+        setResultadoValidacaoRoteiro(null);
+        setAvisoGravacaoRoteiro(null);
+        aplicaEstadoRoteiroNoEditor(execucao.estados[execucao.estados.length - 1], true);
+    }, [sessaoRoteiroNaAba, roteiroAtivo, modoRoteiro, passosRoteiro, posicaoRoteiro, aplicaEstadoRoteiroNoEditor]);
+
+    // Pendência de passos não salvos segura o unload (mesma proteção do padrão de rascunho).
+    useEffect(() => {
+        if (!pendenciaRoteiro) return;
+        function aoSair(evento: BeforeUnloadEvent): void { evento.preventDefault(); };
+        window.addEventListener('beforeunload', aoSair);
+        return () => window.removeEventListener('beforeunload', aoSair);
+    }, [pendenciaRoteiro]);
+
     // Arrasto de OBJETO com CANCELAMENTO (botão direito): o snapshot pré-arrasto é capturado no 1º move, mas só entra no
     // Desfazer no COMMIT (soltar). Cancelar descarta o snapshot → nada no histórico e o mesh é restaurado (é cancelar, não undo).
     const snapshotArrastoObjetoRef = useRef<CenaArmazenadaEditor3D | null>(null);
@@ -283,7 +373,10 @@ export function Editor3D() {
         snapshotArrastoObjetoRef.current = null;
         setPilhaDesfazer(atuais => atuais.length >= LIMITE_HISTORICO_EDITOR3D ? [...atuais.slice(1), snap] : [...atuais, snap]);
         setPilhaRefazer([]);
-    }, []);
+        // Commit do gesto de ESCALA em montagem de roteiro: grava o vetor final (a escala é o resultado; o assentamento só mexe no Z da posição).
+        const mesh = refMeshSelecionada.current;
+        if (modo === 'scale' && mesh && idSelecionado !== null && idSelecionado > 0) gravaOperacaoRoteiro({ tipo: 'ESCALAR', idObjeto: idSelecionado, escala: [mesh.scale.x, mesh.scale.y, mesh.scale.z] });
+    }, [modo, idSelecionado, gravaOperacaoRoteiro]);
     const cancelaArrastoObjeto = useCallback(() => { snapshotArrastoObjetoRef.current = null; }, []);
 
     const limpaHistorico = useCallback(() => {
@@ -334,7 +427,9 @@ export function Editor3D() {
         assentaMeshNaCamada(mesh);
         setTransformSelecionado(lerTransformDaMeshSelecionada());
         setAlterado(true);
-    }, [lerTransformDaMeshSelecionada, registraHistorico, assentaMeshNaCamada]);
+        // Digitação de ESCALA no painel em montagem de roteiro: grava o vetor completo resultante (rajada por eixo coalesce).
+        if (campo === 'escala' && idSelecionado !== null && idSelecionado > 0) gravaOperacaoRoteiro({ tipo: 'ESCALAR', idObjeto: idSelecionado, escala: [mesh.scale.x, mesh.scale.y, mesh.scale.z] });
+    }, [lerTransformDaMeshSelecionada, registraHistorico, assentaMeshNaCamada, idSelecionado, gravaOperacaoRoteiro]);
 
     // Affordance "Assentar": reaplica o assentamento em camadas ao selecionado (útil após mover o APOIO de baixo —
     // o empilhado de cima não re-cai sozinho quando o apoio sai; esta é a limitação conhecida do assentamento sem física).
@@ -418,7 +513,9 @@ export function Editor3D() {
         setObjetos(atuais => [...atuais, { id, tipo, nome: `${rotuloTipoPrimitivaEditor3D(tipo)} ${id}`, cor: COR_OBJETO_PADRAO_EDITOR3D, materiaisExtras: [], idPeca: null, visivel: true, malha: criaMalhaPrimitiva(tipo), subdivisao: 0, espessura: 0, transformInicial: { posicao: [0, 0, 0], rotacao: [0, 0, 0], escala: [1, 1, 1] } }]);
         setIdSelecionado(id);
         setAlterado(true);
-    }, [registraHistorico]);
+        // Em montagem de roteiro a reposição da reexecução substitui este estado vivo (ids do roteiro são os da reexecução).
+        if (tipo === 'CUBO') gravaOperacaoRoteiro({ tipo: 'ADD_CUBO' });
+    }, [registraHistorico, gravaOperacaoRoteiro]);
 
     const alternaVisibilidade = useCallback((id: number) => {
         registraHistorico();
@@ -467,7 +564,8 @@ export function Editor3D() {
         registraHistorico(`cor-objeto-${id}`);
         setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, cor } : objeto));
         setAlterado(true);
-    }, [registraHistorico]);
+        gravaOperacaoRoteiro({ tipo: 'DEFINIR_COR_BASE', idObjeto: id, cor });
+    }, [registraHistorico, gravaOperacaoRoteiro]);
 
     // Nível de subdivisão Catmull-Clark de EXIBIÇÃO do objeto: a gaiola (malha) segue sendo o que se edita; o viewport mostra a superfície subdividida.
     const mudaSubdivisaoObjeto = useCallback((id: number, subdivisao: number) => {
@@ -482,7 +580,8 @@ export function Editor3D() {
         registraHistorico();
         setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, materiaisExtras: [...objeto.materiaisExtras, { nome: `Material ${objeto.materiaisExtras.length + 2}`, cor: '#ede8d0' }] } : objeto));
         setAlterado(true);
-    }, [registraHistorico]);
+        gravaOperacaoRoteiro({ tipo: 'NOVO_MATERIAL', idObjeto: id });
+    }, [registraHistorico, gravaOperacaoRoteiro]);
 
     const mudaCorMaterialObjeto = useCallback((id: number, slot: number, cor: string) => {
         if (slot <= 0) { mudaCorObjeto(id, cor); return; }
@@ -509,7 +608,9 @@ export function Editor3D() {
         const faces = objeto.malha.faces.map(face => alvo.has(face.id) ? { ...face, slotMaterial: slot <= 0 ? undefined : slot } : face);
         setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: { ...item.malha, faces } } : item));
         setAlterado(true);
-    }, [idSelecionado, facesSelecionadas, objetos, registraHistorico]);
+        // Roteiro grava a atribuição por ID ESTÁVEL de face (a seleção é estado do editor, não do projeto).
+        gravaOperacaoRoteiro({ tipo: 'ATRIBUIR_MATERIAL', idObjeto: idSelecionado, slot, idsFaces: [...facesSelecionadas] });
+    }, [idSelecionado, facesSelecionadas, objetos, registraHistorico, gravaOperacaoRoteiro]);
 
     // Espessura de parede (Solidify) de EXIBIÇÃO do objeto, em metros: 0 = desligado; a gaiola segue original (não-destrutivo, padrão da subdivisão).
     const mudaEspessuraObjeto = useCallback((id: number, espessura: number) => {
@@ -517,7 +618,9 @@ export function Editor3D() {
         registraHistorico(`espessura-objeto-${id}`);
         setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, espessura: valor } : objeto));
         setAlterado(true);
-    }, [registraHistorico]);
+        // Grava o valor JÁ clampado (rajada do slider coalesce).
+        gravaOperacaoRoteiro({ tipo: 'SOLIDIFICAR', idObjeto: id, espessura: valor });
+    }, [registraHistorico, gravaOperacaoRoteiro]);
 
     const abrirModalAnexarPeca = useCallback(async () => {
         setModalAnexarPecaAberto(true);
@@ -840,7 +943,11 @@ export function Editor3D() {
         }
         setSalvando(true);
         try {
-            const persistido = await salvaProjeto3D(nome, serializaCenaCanonicaEditor3D(entradas, tipoProjeto, camera, capaArte, corpoPersonagem, pecas), idProjeto, imagemCapaBase64, imagemCapaTituloBase64);
+            const cenaCanonica = serializaCenaCanonicaEditor3D(entradas, tipoProjeto, camera, capaArte, corpoPersonagem, pecas);
+            // MAPA salva geometria + camada de jogo no MESMO save: os corpos dos comandos são rederivados da cena agora,
+            // então mover o interruptor no Editor já regrava a posição que o runtime usa pra validar alcance.
+            const camadaJogoMapa = tipoProjeto === 'MAPA' ? serializaCamadaJogoEditor3D({ fontesDeLuz: luzes, comandos }, cenaCanonica) : undefined;
+            const persistido = await salvaProjeto3D(nome, cenaCanonica, idProjeto, imagemCapaBase64, imagemCapaTituloBase64, camadaJogoMapa);
             setProjetoAberto({ id: persistido.id, nome: persistido.nome });
             setAlterado(false);
             setModalSalvarAberto(false);
@@ -849,7 +956,230 @@ export function Editor3D() {
         } finally {
             setSalvando(false);
         }
-    }, [construirEntradasSerializacao, tipoProjeto, camera, capaArte, corpoPersonagem, pecas]);
+    }, [construirEntradasSerializacao, tipoProjeto, camera, capaArte, corpoPersonagem, pecas, luzes, comandos]);
+
+    // Modo ARMADO de fiação ("Definir interruptor"): só enquanto armado o clique num objeto do cenário vincula — clique
+    // de câmera/seleção NUNCA cria fiação. Qualquer troca de seleção/coleção, ESC ou clique no vazio desarma.
+    const [definindoInterruptor, setDefinindoInterruptor] = useState(false);
+
+    // Fonte de Luz: nó novo da cena do MAPA. Selecionar uma luz LIMPA a seleção de objeto (e vice-versa) — painel de um
+    // só nó por vez. Mover segue o padrão modal do editor: o MODO (Mover) é escolhido à parte, selecionar não o muda.
+    const selecionaLuz = useCallback((idLocal: string) => {
+        setIdSelecionado(null);
+        setRegiaoCorpoSelecionada(null);
+        setIdComandoSelecionado(null);
+        setIdLuzSelecionada(idLocal);
+        setDefinindoInterruptor(false);
+    }, []);
+
+    const adicionaLuz = useCallback(() => {
+        registraHistorico();
+        const nova = criaFonteDeLuzEditor3D(luzes);
+        setLuzes(atuais => [...atuais, nova]);
+        setAlterado(true);
+        selecionaLuz(nova.idLocal);
+    }, [luzes, registraHistorico, selecionaLuz]);
+
+    // Toda mutação de luz passa por aqui: um só ponto de histórico + marcação de alterado.
+    const atualizaLuz = useCallback((idLocal: string, muda: (luz: FonteDeLuzEditor3D) => FonteDeLuzEditor3D, tagHistorico?: string) => {
+        registraHistorico(tagHistorico);
+        setLuzes(atuais => atuais.map(luz => luz.idLocal === idLocal ? muda(luz) : luz));
+        setAlterado(true);
+    }, [registraHistorico]);
+
+    // Trocar o TIPO troca junto a intensidade padrão: PONTO (candela, dezenas) e AMBIENTE (banho, 0–1) medem em escalas
+    // diferentes — herdar o valor do outro tipo entrega uma cena estourada ou apagada. O alcance re-amarra à intensidade nova.
+    const mudaTipoLuz = useCallback((tipo: TipoFonteDeLuzMapa) => {
+        if (idLuzSelecionada === null) return;
+        atualizaLuz(idLuzSelecionada, luz => aplicaCampoLuzEditor3D({ ...luz, tipo }, 'intensidade', INTENSIDADE_PADRAO_POR_TIPO_FONTE_EDITOR3D[tipo]));
+    }, [idLuzSelecionada, atualizaLuz]);
+
+    const mudaCorLuz = useCallback((cor: string) => {
+        if (idLuzSelecionada === null) return;
+        atualizaLuz(idLuzSelecionada, luz => ({ ...luz, cor }), `luz-cor-${idLuzSelecionada}`);
+    }, [idLuzSelecionada, atualizaLuz]);
+
+    // Intensidade e alcance passam pelo AMARRAMENTO do domínio: o corte nunca promete além do que a intensidade entrega.
+    const mudaCampoLuz = useCallback((campo: CampoLuzEditor3D, valor: number) => {
+        if (idLuzSelecionada === null) return;
+        atualizaLuz(idLuzSelecionada, luz => aplicaCampoLuzEditor3D(luz, campo, valor), `luz-${campo}-${idLuzSelecionada}`);
+    }, [idLuzSelecionada, atualizaLuz]);
+
+    const mudaPosicaoLuz = useCallback((indice: number, valor: number) => {
+        if (idLuzSelecionada === null) return;
+        atualizaLuz(idLuzSelecionada, luz => ({ ...luz, posicao: luz.posicao.map((atual, i) => i === indice ? valor : atual) as [number, number, number] }), `luz-posicao-${idLuzSelecionada}`);
+    }, [idLuzSelecionada, atualizaLuz]);
+
+    const renomeiaLuz = useCallback((idLocal: string, nome: string) => {
+        atualizaLuz(idLocal, luz => ({ ...luz, nome: nome.trim().length > 0 ? nome : luz.nome }));
+    }, [atualizaLuz]);
+
+    // COMANDOS (fiação): mesmo trilho da luz — seleção própria, exclusiva com objeto e luz.
+    const selecionaComando = useCallback((idLocal: string) => {
+        setIdSelecionado(null);
+        setRegiaoCorpoSelecionada(null);
+        setIdLuzSelecionada(null);
+        setIdComandoSelecionado(idLocal);
+        setDefinindoInterruptor(false);
+    }, []);
+
+    // O GESTO DE FIAÇÃO: alterna a ARESTA objeto↔luz. Criação do interruptor no primeiro vínculo, agrupamento em
+    // circuito e dissolução no último moram no domínio; aqui ficam histórico, estado e a limpeza da seleção de um
+    // interruptor que se dissolveu.
+    const alternaVinculoLuzObjeto = useCallback((idElementoCena: string, nomeElemento: string, idFonte: string) => {
+        registraHistorico();
+        const proximos = alternaVinculoLuzInterruptorEditor3D(comandos, idElementoCena, nomeElemento, idFonte);
+        setComandos(proximos);
+        setIdComandoSelecionado(atual => atual !== null && !proximos.some(comando => comando.idLocal === atual) ? null : atual);
+        setAlterado(true);
+    }, [comandos, registraHistorico]);
+
+    const atualizaComando = useCallback((idLocal: string, muda: (comando: ComandoEditor3D) => ComandoEditor3D, tagHistorico?: string) => {
+        registraHistorico(tagHistorico);
+        setComandos(atuais => atuais.map(comando => comando.idLocal === idLocal ? muda(comando) : comando));
+        setAlterado(true);
+    }, [registraHistorico]);
+
+    const excluiComando = useCallback((idLocal: string) => {
+        registraHistorico();
+        setComandos(atuais => atuais.filter(comando => comando.idLocal !== idLocal));
+        setIdComandoSelecionado(atual => atual === idLocal ? null : atual);
+        setAlterado(true);
+    }, [registraHistorico]);
+
+    const mudaDescricaoComando = useCallback((descricao: string) => {
+        if (idComandoSelecionado === null) return;
+        atualizaComando(idComandoSelecionado, comando => ({ ...comando, descricao }));
+    }, [idComandoSelecionado, atualizaComando]);
+
+    const mudaAlcanceComando = useCallback((valor: number) => {
+        if (idComandoSelecionado === null) return;
+        atualizaComando(idComandoSelecionado, comando => ({ ...comando, alcanceMilimetros: valor }), `comando-alcance-${idComandoSelecionado}`);
+    }, [idComandoSelecionado, atualizaComando]);
+
+    const renomeiaComando = useCallback((idLocal: string, nome: string) => {
+        atualizaComando(idLocal, comando => ({ ...comando, nome: nome.trim().length > 0 ? nome : comando.nome }));
+    }, [atualizaComando]);
+
+    // Desvincular pelo painel da LUZ (o ◉ da lista de interruptores): remove esta luz do circuito daquele interruptor.
+    // A LUZ é o sujeito da fiação — o painel do interruptor não lista fontes (não escala e inverteria o domínio).
+    const alternaInterruptorDaLuz = useCallback((idComando: string) => {
+        const comando = comandos.find(comandoAtual => comandoAtual.idLocal === idComando);
+        if (comando === undefined || idLuzSelecionada === null) return;
+        alternaVinculoLuzObjeto(comando.idElementoCena, comando.nome, idLuzSelecionada);
+    }, [comandos, idLuzSelecionada, alternaVinculoLuzObjeto]);
+
+    const comandoSelecionado = useMemo(() => comandos.find(comando => comando.idLocal === idComandoSelecionado) ?? null, [comandos, idComandoSelecionado]);
+    const comandosArvore = useMemo(() => comandos.map(comando => ({ idLocal: comando.idLocal, nome: comando.nome, tipoRotulo: `${comando.idsFontesDeLuz.length} luz(es)` })), [comandos]);
+    const nomeElementoVinculadoComando = useMemo(() => (comandoSelecionado === null ? null : objetos.find(objeto => String(objeto.id) === comandoSelecionado.idElementoCena)?.nome ?? null), [comandoSelecionado, objetos]);
+
+    // Objetos que SÃO interruptores: na Coleção de Iluminação eles se demarcam no viewport (senão somem no breu) e o
+    // clique neles (fora do modo armado) seleciona o INTERRUPTOR — o objeto passa a compor a coleção, só que read-only.
+    const idsElementosInterruptores = useMemo(() => new Set(comandos.map(comando => Number(comando.idElementoCena))), [comandos]);
+
+    // PREVIEW do acionamento (botão ⏻ do interruptor): replica a regra do jogo — alguma luz do circuito acesa → apagam
+    // todas; todas apagadas → acendem. Estado do EDITOR: não persiste, não suja o projeto, zera ao trocar de coleção.
+    const [idsLuzesApagadasPreview, setIdsLuzesApagadasPreview] = useState<ReadonlySet<string>>(new Set());
+    const acionaInterruptorPreview = useCallback((idComando: string) => {
+        const comando = comandos.find(comandoAtual => comandoAtual.idLocal === idComando);
+        if (comando === undefined) return;
+        setIdsLuzesApagadasPreview(atuais => {
+            const algumaAcesa = comando.idsFontesDeLuz.some(idFonte => !atuais.has(idFonte));
+            const proximo = new Set(atuais);
+            for (const idFonte of comando.idsFontesDeLuz) { if (algumaAcesa) proximo.add(idFonte); else proximo.delete(idFonte); }
+            return proximo;
+        });
+    }, [comandos]);
+
+    // Trocar de coleção troca o MODO DE TRABALHO, não só o filtro da árvore: seleção que a lente não mostra não pode ficar
+    // viva (painel e gizmo de um nó invisível). A LUZ atravessa as lentes — ela existe no Cenário e na Iluminação — então
+    // a seleção dela sobrevive à troca; só geometria (na Iluminação) e fiação (fora dela) se limpam.
+    const selecionaColecaoSistema = useCallback((colecao: TipoColecaoSistemaEditor3D) => {
+        setColecaoSistema(colecao);
+        setDefinindoInterruptor(false);
+        setIdsLuzesApagadasPreview(new Set());
+        if (!colecaoMostraGeometria(colecao)) { setIdSelecionado(null); setRegiaoCorpoSelecionada(null); setModo('select'); }
+        if (!colecaoMostraFiacao(colecao)) setIdComandoSelecionado(null);
+    }, []);
+
+    // A coleção é estado do EDITOR e as abas trocam o projeto por baixo dela: cair numa aba cujo tipo não oferece a coleção
+    // ativa entra na coleção inicial DELE (Mapa entra no Cenário; os demais tipos, na lente única da cena).
+    useEffect(() => {
+        if (!colecoesSistemaDoTipoProjeto(tipoProjeto).includes(colecaoSistema)) selecionaColecaoSistema(colecaoSistemaInicialDoTipoProjeto(tipoProjeto));
+    }, [tipoProjeto, colecaoSistema, selecionaColecaoSistema]);
+
+    // Clique em objeto no viewport passa por aqui: na Coleção de Iluminação geometria NÃO se seleciona — no modo ARMADO
+    // ("Definir interruptor") o clique é o gesto de fiação (só ADICIONA: objeto já vinculado = nada acontece; remover é o
+    // ◉ dos painéis; vincula UM e desarma). Fora do armado, clique num objeto que É interruptor seleciona o INTERRUPTOR
+    // (ele compõe a coleção, read-only — a fiação dele aparece); nos demais objetos o clique é inerte.
+    const aoSelecionarObjetoViewport = useCallback((id: number) => {
+        if (colecaoMostraGeometria(colecaoSistema)) { setIdSelecionado(id); return; }
+        if (!definindoInterruptor) {
+            const comandoDoObjeto = comandos.find(comando => comando.idElementoCena === String(id));
+            if (comandoDoObjeto !== undefined) selecionaComando(comandoDoObjeto.idLocal);
+            return;
+        }
+        const luz = luzes.find(luzAtual => luzAtual.idLocal === idLuzSelecionada);
+        if (luz === undefined) return;
+        const objeto = objetos.find(objetoAtual => objetoAtual.id === id);
+        if (objeto === undefined) return;
+        setDefinindoInterruptor(false);
+        const proximos = vinculaLuzInterruptorEditor3D(comandos, String(objeto.id), objeto.nome, luz.idLocal);
+        if (proximos === comandos) return;
+        registraHistorico();
+        setComandos([...proximos]);
+        setIdComandoSelecionado(atual => atual !== null && !proximos.some(comando => comando.idLocal === atual) ? null : atual);
+        setAlterado(true);
+    }, [colecaoSistema, definindoInterruptor, luzes, idLuzSelecionada, objetos, comandos, registraHistorico, selecionaComando]);
+
+    // Saídas do modo armado que não passam por clique: ESC, e a luz deixar de existir por qualquer via.
+    useEffect(() => {
+        if (!definindoInterruptor) return;
+        if (!luzes.some(luzAtual => luzAtual.idLocal === idLuzSelecionada)) { setDefinindoInterruptor(false); return; }
+        function aoTeclar(evento: KeyboardEvent): void { if (evento.key === 'Escape') setDefinindoInterruptor(false); };
+        window.addEventListener('keydown', aoTeclar);
+        return () => window.removeEventListener('keydown', aoTeclar);
+    }, [definindoInterruptor, luzes, idLuzSelecionada]);
+
+    // Badge da árvore conta o que a coleção ATIVA mostra — a luz conta em toda lente; geometria e fiação, só nas delas.
+    const totalColecao = (colecaoMostraGeometria(colecaoSistema) ? objetos.length : 0) + luzes.length + (colecaoMostraFiacao(colecaoSistema) ? comandos.length : 0);
+
+    // A Iluminação É o modo de jogo (sem toggle): entrar nela apaga estúdio e grid; sair devolve a bancada de modelagem.
+    const iluminacaoDeJogoAtiva = colecaoUsaIluminacaoDeJogo(colecaoSistema);
+
+    // Posição VIVA do objeto: o CENTRO DO BBOX da mesh, não o pivot — malha editada pode estar deslocada do pivot, e o
+    // corpo do comando em jogo deriva do bbox no salvamento; a fiação precisa apontar para o mesmo lugar que o jogo usa.
+    // Lida da mesh (não do transform salvo) para a linha acompanhar o gizmo enquanto o autor arrasta o interruptor.
+    const obtemPosicaoElemento = useCallback((idElementoCena: string): [number, number, number] | null => {
+        const mesh = registroMeshes.current.get(Number(idElementoCena));
+        if (mesh === undefined) return null;
+        const centro = new Box3().setFromObject(mesh).getCenter(new Vector3());
+        return [centro.x, centro.y, centro.z];
+    }, []);
+
+    const luzSelecionada = useMemo(() => luzes.find(luz => luz.idLocal === idLuzSelecionada) ?? null, [luzes, idLuzSelecionada]);
+    const comandosDaLuzSelecionada = useMemo(() => (luzSelecionada === null ? [] : comandos.filter(comando => comando.idsFontesDeLuz.includes(luzSelecionada.idLocal))), [comandos, luzSelecionada]);
+
+    // O esquema elétrico segue a SELEÇÃO, dos DOIS lados da aresta: luz selecionada → alcance dela + interruptores que
+    // a acionam; interruptor selecionado → luzes do circuito dele.
+    const fontesDoEsquema = luzSelecionada !== null ? [luzSelecionada] : comandoSelecionado !== null ? luzes.filter(luz => comandoSelecionado.idsFontesDeLuz.includes(luz.idLocal)) : [];
+    const comandosDoEsquema = luzSelecionada !== null ? comandosDaLuzSelecionada : comandoSelecionado !== null ? [comandoSelecionado] : [];
+    const luzesArvore = useMemo(() => luzes.map(luz => ({ idLocal: luz.idLocal, nome: luz.nome, tipoRotulo: ROTULO_CURTO_TIPO_FONTE_DE_LUZ_EDITOR3D[luz.tipo] })), [luzes]);
+
+    // Seleção de nó é EXCLUSIVA: escolher um objeto (árvore ou viewport) desfaz a seleção de luz e de comando; o inverso mora nos selecionaLuz/selecionaComando.
+    useEffect(() => { if (idSelecionado !== null) { setIdLuzSelecionada(null); setIdComandoSelecionado(null); } }, [idSelecionado]);
+
+    // Arrasto do gizmo da luz: coalesce num único registro de histórico enquanto o arrasto dura (mesma janela do gizmo de objeto).
+    const moveLuz = useCallback((idLocal: string, posicao: [number, number, number]) => {
+        atualizaLuz(idLocal, luz => ({ ...luz, posicao }), `luz-posicao-${idLocal}`);
+    }, [atualizaLuz]);
+
+    const excluiLuz = useCallback((idLocal: string) => {
+        registraHistorico();
+        setLuzes(atuais => atuais.filter(luz => luz.idLocal !== idLocal));
+        setIdLuzSelecionada(atual => atual === idLocal ? null : atual);
+        setAlterado(true);
+    }, [registraHistorico]);
 
     const salvarProjetoAtual = useCallback(() => {
         if (projetoAberto) void salvar(projetoAberto.nome, projetoAberto.id);
@@ -882,6 +1212,141 @@ export function Editor3D() {
             abreNovaAba(CENA_MAPA_EDITOR3D);
         }
     }, [ehInicio, idAbaAtiva, aplicaCenaNova, abreNovaAba]);
+
+    // ---- Sessão do Painel Roteiro (abrir/carregar/salvar/aprovar/validar) ----
+    // Falha de carga vira ERRO explícito, não lista vazia: "nenhum roteiro cadastrado" quando na verdade a chamada
+    // falhou é uma afirmação falsa sobre o estado — justamente o que este sistema existe para não fazer.
+    const recarregaListaRoteiros = useCallback(() => {
+        setCarregandoRoteiros(true);
+        setErroListaRoteiros(null);
+        void listaRoteirosEditor3D()
+            .then(lista => setRoteirosListados(lista ?? []))
+            .catch(() => { setRoteirosListados([]); setErroListaRoteiros('Não foi possível carregar os roteiros.'); })
+            .finally(() => setCarregandoRoteiros(false));
+    }, []);
+
+    // O painel abre numa cena de projeto vazio: roteiro SEMPRE parte do projeto em branco, e a sessão fica amarrada à aba.
+    const abrePainelRoteiros = useCallback(() => {
+        // Abrir aqui SUBSTITUI uma sessão viva em outra aba; passos não salvos de lá se perderiam sem aviso.
+        if (painelRoteiroAberto && pendenciaRoteiro && !window.confirm('O Painel de Roteiros está aberto em outra aba, com passos não salvos. Abrir aqui descarta esses passos?')) return;
+        if (ehInicio) {
+            setAbas(atuais => atuais.map(aba => aba.idAba === idAbaAtiva ? { ...aba, nomePadrao: `Roteiros ${aba.idAba}` } : aba));
+            aplicaCenaNova(CENA_VAZIA_EDITOR3D);
+            setIdAbaRoteiro(idAbaAtiva);
+        } else {
+            abreNovaAba(CENA_VAZIA_EDITOR3D);
+            // abreNovaAba incrementa o contador sincronamente: o valor atual É o id da aba recém-criada.
+            setIdAbaRoteiro(contadorAbaRef.current);
+        }
+        setPainelRoteiroAberto(true);
+        setRoteiroAtivo(null);
+        setPassosRoteiro([]);
+        setPosicaoRoteiro(0);
+        setPendenciaRoteiro(false);
+        setResultadoValidacaoRoteiro(null);
+        setAvisoGravacaoRoteiro(null);
+        recarregaListaRoteiros();
+    }, [ehInicio, idAbaAtiva, aplicaCenaNova, abreNovaAba, painelRoteiroAberto, pendenciaRoteiro, recarregaListaRoteiros]);
+
+    const carregaRoteiroNoPainel = useCallback(async (idRoteiro: number) => {
+        const persistido = await consultaRoteiroEditor3D(idRoteiro);
+        if (!persistido) return;
+        setRoteiroAtivo(persistido);
+        setPassosRoteiro(persistido.passos);
+        // Sem golden ainda = veio pra montar; com golden = veio pra conferir/validar.
+        setModoRoteiro(persistido.golden === null ? 'MONTAGEM' : 'VISUALIZACAO');
+        setPendenciaRoteiro(false);
+        setResultadoValidacaoRoteiro(null);
+        setAvisoGravacaoRoteiro(null);
+        const execucao = executaPassosRoteiroEditor3D(persistido.passos);
+        setPosicaoRoteiro(execucao.estados.length);
+        aplicaEstadoRoteiroNoEditor(execucao.estados.length === 0 ? ESTADO_INICIAL_ROTEIRO_EDITOR3D : execucao.estados[execucao.estados.length - 1], false);
+    }, [aplicaEstadoRoteiroNoEditor]);
+
+    // Fechar com roteiro aberto volta pra lista (recarregada — os selos podem ter mudado); sem roteiro, fecha o painel.
+    const fechaRoteiroOuPainel = useCallback(() => {
+        if (roteiroAtivo !== null) {
+            if (pendenciaRoteiro && !window.confirm('Há passos não salvos. Fechar o roteiro mesmo assim?')) return;
+            setRoteiroAtivo(null);
+            setPassosRoteiro([]);
+            setPosicaoRoteiro(0);
+            setPendenciaRoteiro(false);
+            setResultadoValidacaoRoteiro(null);
+            setAvisoGravacaoRoteiro(null);
+            recarregaListaRoteiros();
+            return;
+        }
+        setPainelRoteiroAberto(false);
+        setIdAbaRoteiro(null);
+    }, [roteiroAtivo, pendenciaRoteiro, recarregaListaRoteiros]);
+
+    const trocaModoRoteiro = useCallback((modoNovo: ModoRoteiroEditor3D) => {
+        setModoRoteiro(modoNovo);
+        setAvisoGravacaoRoteiro(null);
+    }, []);
+
+    const mudaComentarioPassoRoteiro = useCallback((indice: number, comentario: string) => {
+        const texto = comentario.trim();
+        setPassosRoteiro(atuais => atuais.map((passo, posicao) => posicao === indice ? (texto.length === 0 ? { operacao: passo.operacao } : { ...passo, comentario: texto }) : passo));
+        setPendenciaRoteiro(true);
+    }, []);
+
+    // Save falho NÃO limpa a pendência (o selo continua até o servidor confirmar). O que passa a valer localmente é o que
+    // o SERVIDOR gravou (ele normaliza os passos) — assim o painel nunca mostra uma sequência diferente da persistida.
+    const salvaPassosRoteiro = useCallback(async () => {
+        if (roteiroAtivo === null) return;
+        setSalvandoRoteiro(true);
+        try {
+            const atualizado = await atualizaPassosRoteiroEditor3D(roteiroAtivo.id, passosRoteiro);
+            if (!atualizado) return;
+            setRoteiroAtivo(atualizado);
+            setPassosRoteiro(atualizado.passos);
+            setPendenciaRoteiro(false);
+        } finally { setSalvandoRoteiro(false); }
+    }, [roteiroAtivo, passosRoteiro]);
+
+    // Aprovar = salvar os passos (se pendentes) + reexecutar do zero na camada pura + gravar o golden (estados por passo).
+    const aprovaRoteiroAtual = useCallback(async () => {
+        if (roteiroAtivo === null) return;
+        const montagem = montaGoldenRoteiroEditor3D(passosRoteiro);
+        if (!montagem.ok) { setAvisoGravacaoRoteiro(`Não dá para aprovar: o passo ${montagem.indicePasso + 1} não executa (${montagem.motivo}).`); return; }
+        setSalvandoRoteiro(true);
+        try {
+            const comPassos = pendenciaRoteiro ? await atualizaPassosRoteiroEditor3D(roteiroAtivo.id, passosRoteiro) : roteiroAtivo;
+            if (!comPassos) return;
+            const aprovado = await aprovaRoteiroEditor3D(comPassos.id, montagem.golden);
+            if (!aprovado) return;
+            setRoteiroAtivo(aprovado);
+            setPassosRoteiro(aprovado.passos);
+            setPendenciaRoteiro(false);
+            // NÃO afirmamos "válido": validamos de verdade o que o servidor gravou. Se o backend normalizar um passo de
+            // um jeito que o golden não previa, o desfecho aparece aqui — em vez de mentir verde até a próxima validação.
+            setResultadoValidacaoRoteiro(aprovado.golden === null ? null : validaRoteiroContraGoldenEditor3D(aprovado.passos, aprovado.golden));
+        } finally { setSalvandoRoteiro(false); }
+    }, [roteiroAtivo, passosRoteiro, pendenciaRoteiro]);
+
+    // Validar RECARREGA antes de comparar: o desfecho é sobre o que está no servidor AGORA, não sobre o que foi lido ao
+    // abrir o painel. Compara passos PERSISTIDOS com golden PERSISTIDO — pendência local não participa (nem existe aqui:
+    // o modo Visualização é bloqueado enquanto houver passos não salvos).
+    const validaRoteiroAtual = useCallback(async () => {
+        if (roteiroAtivo === null) return;
+        setSalvandoRoteiro(true);
+        try {
+            const persistido = await consultaRoteiroEditor3D(roteiroAtivo.id);
+            if (!persistido || persistido.golden === null) return;
+            setRoteiroAtivo(persistido);
+            setPassosRoteiro(persistido.passos);
+            setResultadoValidacaoRoteiro(validaRoteiroContraGoldenEditor3D(persistido.passos, persistido.golden));
+        } finally { setSalvandoRoteiro(false); }
+    }, [roteiroAtivo]);
+
+    // Bloqueio = "a ferramenta ainda não permite completar este roteiro" (backlog visível). Não mexe em passos/golden.
+    const defineBloqueioRoteiro = useCallback(async (motivo: string | null): Promise<void> => {
+        if (roteiroAtivo === null) return;
+        const atualizado = await bloqueiaRoteiroEditor3D(roteiroAtivo.id, motivo);
+        if (!atualizado) return;
+        setRoteiroAtivo(atualizado);
+    }, [roteiroAtivo]);
 
     // Personagem nasce COMPLETO (modelo Hero Forge): o corpo contínuo já vem inteiro; a customização é por região, via sliders.
     const iniciaPersonagem = useCallback(() => {
@@ -937,23 +1402,32 @@ export function Editor3D() {
         if (abaComProjeto) { trocaAba(abaComProjeto.idAba); return; }
         const persistido = await consultaProjeto3D(id);
         if (!persistido) return;
-        const cena: CenaArmazenadaEditor3D = { objetos: montaObjetosCarregados(desserializaCenaCanonicaEditor3D(persistido.cenaCanonica)), colecoes: [], pecas: pecasDaCena(persistido.cenaCanonica), corpoPersonagem: corpoPersonagemDaCena(persistido.cenaCanonica), idSelecionado: null, projetoAberto: { id: persistido.id, nome: persistido.nome }, alterado: false, ehInicio: false, tipoProjeto: tipoProjetoDaCena(persistido.cenaCanonica), camera: cameraDaCena(persistido.cenaCanonica), capaArte: capaArteDaCena(persistido.cenaCanonica) };
+        const cena: CenaArmazenadaEditor3D = { objetos: montaObjetosCarregados(desserializaCenaCanonicaEditor3D(persistido.cenaCanonica)), colecoes: [], pecas: pecasDaCena(persistido.cenaCanonica), corpoPersonagem: corpoPersonagemDaCena(persistido.cenaCanonica), idSelecionado: null, projetoAberto: { id: persistido.id, nome: persistido.nome }, alterado: false, ehInicio: false, tipoProjeto: tipoProjetoDaCena(persistido.cenaCanonica), camera: cameraDaCena(persistido.cenaCanonica), capaArte: capaArteDaCena(persistido.cenaCanonica), luzes: camadaJogoDoProjeto(persistido.camadaJogoMapa).fontesDeLuz, idLuzSelecionada: null, comandos: camadaJogoDoProjeto(persistido.camadaJogoMapa).comandos };
         if (ehInicio) aplicaCenaNova(cena);
         else abreNovaAba(cena);
     }, [projetoAberto, abas, ehInicio, trocaAba, aplicaCenaNova, abreNovaAba, montaObjetosCarregados]);
 
     const comandoDesabilitado = useCallback((comando: ComandoMenuEditor3D): boolean => {
         if (salvando) return true;
+        // O Painel de Roteiros abre de qualquer lugar (do Início ele já cria a cena vazia); só não reabre por cima de SI
+        // MESMO — se a sessão vive em OUTRA aba, o painel está invisível aqui e o comando precisa continuar disponível,
+        // senão trocar de aba tranca o menu e a operadora fica sem caminho de volta.
+        if (comando === 'ABRIR_ROTEIROS') return sessaoRoteiroNaAba;
         if (ehInicio) return comando !== 'NOVO_PROJETO' && comando !== 'ABRIR_PROJETO' && comando !== 'CRIAR_CAPA_ARTE' && comando !== 'CRIAR_PERSONAGEM' && comando !== 'CRIAR_MAPA';
         if (comando === 'SALVAR_PROJETO_ATUAL' || comando === 'SALVAR_NOVO_PROJETO') return objetos.length === 0 && tipoProjeto !== 'CAPA_ARTE' && tipoProjeto !== 'PERSONAGEM';
         if (comando === 'CAPTURAR_ARTE_CAPA') return objetos.length === 0 && tipoProjeto !== 'PERSONAGEM';
+        // A coleção ativa é uma LENTE de domínio: comando de menu fora dela (geometria na Iluminação, luz/fiação no Cenário) desabilita.
+        if (!colecaoPermiteComandoMenu(colecaoSistema, comando)) return true;
+        // Iluminação é domínio do MAPA: em qualquer outro tipo de projeto a Fonte de Luz nem é oferecida (e o backend recusaria).
+        if (comando === 'ADD_LUZ') return tipoProjeto !== 'MAPA';
         return false;
-    }, [salvando, ehInicio, objetos.length, tipoProjeto]);
+    }, [salvando, ehInicio, objetos.length, tipoProjeto, sessaoRoteiroNaAba, colecaoSistema]);
 
     const aoComando = useCallback((comando: ComandoMenuEditor3D) => {
         if (comando === 'ADD_CUBO') adicionaObjeto('CUBO');
         else if (comando === 'ADD_CILINDRO') adicionaObjeto('CILINDRO');
         else if (comando === 'ADD_ESFERA') adicionaObjeto('ESFERA');
+        else if (comando === 'ADD_LUZ') adicionaLuz();
         else if (comando === 'NOVO_MESH') abreCriacaoMalha();
         else if (comando === 'NOVO_PROJETO') iniciaProjetoVazio();
         else if (comando === 'CRIAR_CAPA_ARTE') iniciaCapaArte();
@@ -963,7 +1437,8 @@ export function Editor3D() {
         else if (comando === 'SALVAR_NOVO_PROJETO') setModalSalvarAberto(true);
         else if (comando === 'ABRIR_PROJETO') void abrirModalAbrirProjeto();
         else if (comando === 'CAPTURAR_ARTE_CAPA') iniciaCaptura();
-    }, [adicionaObjeto, abreCriacaoMalha, iniciaProjetoVazio, iniciaCapaArte, iniciaPersonagem, iniciaMapa, salvarProjetoAtual, abrirModalAbrirProjeto, iniciaCaptura]);
+        else if (comando === 'ABRIR_ROTEIROS') abrePainelRoteiros();
+    }, [adicionaObjeto, adicionaLuz, abreCriacaoMalha, iniciaProjetoVazio, iniciaCapaArte, iniciaPersonagem, iniciaMapa, salvarProjetoAtual, abrirModalAbrirProjeto, iniciaCaptura, abrePainelRoteiros]);
 
     const aoCapturar = useCallback((dataUrl: string) => {
         const arte: ArteDeCapa = { id: crypto.randomUUID(), tipo: 'ARTE_CAPA', largura: LARGURA_ARTE_DE_CAPA, altura: ALTURA_ARTE_DE_CAPA, imagem: dataUrl, origem: 'SNAPSHOT_3D', criadoEmMs: Date.now() };
@@ -982,13 +1457,15 @@ export function Editor3D() {
         return () => window.removeEventListener('keydown', aoTeclar);
     }, [idSelecionado]);
 
-    // Modos de transform (Mover/Rotacionar/Escalar) SÓ existem com um OBJETO (mesh) selecionado — transformar "o quê" sem seleção não faz sentido.
-    // G/R/S são ignorados sem seleção; Q/Esc (voltar a Selecionar) valem sempre. Atalhos da Modal Comandos.
+    // Modos de transform (Mover/Rotacionar/Escalar) SÓ existem com algo selecionado — transformar "o quê" sem seleção não
+    // faz sentido. MOVER vale para objeto (mesh) OU Fonte de Luz PONTO (o mesmo "grab": G + arrastar o corpo/marcador);
+    // Rotacionar/Escalar são só de objeto — luz não tem rotação nem escala. Q/Esc (voltar a Selecionar) valem sempre.
     const temObjetoSelecionado = idSelecionado !== null && idSelecionado > 0;
+    const temLuzPontoSelecionada = luzSelecionada !== null && luzSelecionada.tipo === 'PONTO';
     useEffect(() => {
         function aoTeclar(evento: KeyboardEvent): void {
             if (alvoEhCampoEditavelEditor3D(evento.target)) return;
-            if (evento.key === 'g' || evento.key === 'G') { if (temObjetoSelecionado) setModo('translate'); }
+            if (evento.key === 'g' || evento.key === 'G') { if (temObjetoSelecionado || temLuzPontoSelecionada) setModo('translate'); }
             else if (evento.key === 'r' || evento.key === 'R') { if (temObjetoSelecionado) setModo('rotate'); }
             else if (evento.key === 's' || evento.key === 'S') { if (temObjetoSelecionado) setModo('scale'); }
             else if (evento.key === 'q' || evento.key === 'Q' || evento.key === 'Escape') setModo('select');
@@ -1003,12 +1480,16 @@ export function Editor3D() {
         };
         window.addEventListener('keydown', aoTeclar);
         return () => window.removeEventListener('keydown', aoTeclar);
-    }, [temObjetoSelecionado, modo, alternaTravaTransform]);
+    }, [temObjetoSelecionado, temLuzPontoSelecionada, modo, alternaTravaTransform]);
 
-    // Perdeu a seleção (deselecionou, excluiu, ou selecionou câmera/corpo/título) estando num modo de transform → cai p/ Selecionar.
+    // Perdeu a seleção (deselecionou, excluiu, ou selecionou câmera/corpo/título) estando num modo de transform → cai p/
+    // Selecionar. Luz PONTO sustenta apenas o Mover.
     useEffect(() => {
-        if (modo !== 'select' && !temObjetoSelecionado) setModo('select');
-    }, [temObjetoSelecionado, modo]);
+        if (modo === 'select') return;
+        if (temObjetoSelecionado) return;
+        if (modo === 'translate' && temLuzPontoSelecionada) return;
+        setModo('select');
+    }, [temObjetoSelecionado, temLuzPontoSelecionada, modo]);
 
     useEffect(() => { setVerticesSelecionados([]); setFacesSelecionadas([]); setModoSelecaoEdicao('VERTICE'); }, [modoOperacao, idSelecionado]);
 
@@ -1096,24 +1577,39 @@ export function Editor3D() {
                 <HomeEditor3D aoProjetoVazio={iniciaProjetoVazio} aoCapaArte={iniciaCapaArte} aoPersonagem={iniciaPersonagem} aoMapa={iniciaMapa} aoAbrirProjeto={abreProjetoEmAba} aoAbrirModal={() => void abrirModalAbrirProjeto()} />
             ) : (
                 <div className={styles.area_editor}>
-                <div className={styles.viewport} style={{ cursor: CURSOR_MODO_TRANSFORM_EDITOR3D[modo] }}>
+                <div className={styles.viewport} style={{ cursor: definindoInterruptor ? 'crosshair' : CURSOR_MODO_TRANSFORM_EDITOR3D[modo] }}>
                     <IndicadorModoEditor3D modo={modo} />
+                    {definindoInterruptor && luzSelecionada !== null && <div className={styles.aviso_definindo_interruptor}>Definindo interruptor de {luzSelecionada.nome}: clique no objeto do cenário · ESC cancela</div>}
                     {modoOperacao === 'EDICAO' && <BarraEdicaoMalhaEditor3D modoSelecao={modoSelecaoEdicao} xRayAtivo={xRayAtivo} aoAlternarXRay={() => setXRayAtivo(atual => !atual)} podeExtrudar={modoSelecaoEdicao === 'FACE' && facesSelecionadas.length === 1} podeChanfrar={modoSelecaoEdicao === 'ARESTA' && verticesSelecionados.length === 2} podeCortarAnel={modoSelecaoEdicao === 'ARESTA' && verticesSelecionados.length === 2} podeInsetar={modoSelecaoEdicao === 'FACE' && facesSelecionadas.length > 0} podeExcluir={(modoSelecaoEdicao === 'FACE' && facesSelecionadas.length > 0) || (modoSelecaoEdicao === 'VERTICE' && verticesSelecionados.length > 0)} podeFundir={modoSelecaoEdicao === 'VERTICE' && verticesSelecionados.length >= 2} quantidadeBevel={quantidadeBevel} distanciaInset={distanciaInset} aoTrocarModoSelecao={setModoSelecaoEdicao} aoExtrudar={extrudaFaceSelecionada} aoChanfrar={chanframaArestaSelecionada} aoCortarAnel={cortaAnelSelecionado} aoInsetar={insetaFacesSelecionadas} aoExcluir={excluiSelecaoEdicao} aoFundir={fundeVerticesSelecionadosEdicao} aoMudarQuantidadeBevel={setQuantidadeBevel} aoMudarDistanciaInset={setDistanciaInset} />}
                     <BotaoComandoEditor3D />
 
-                    <Canvas shadows dpr={[1, 2]} gl={{ preserveDrawingBuffer: true }} resize={{ offsetSize: true }} camera={{ position: [6, -6, 5], up: [0, 0, 1], fov: 38, near: 0.1, far: 200 }} onPointerMissed={evento => { if (arrastoObjetoAtivoRef.current) return; if (evento.shiftKey) return; if (modoOperacao === 'EDICAO') { setVerticesSelecionados([]); setFacesSelecionadas([]); } else { setIdSelecionado(null); setRegiaoCorpoSelecionada(null); setModo('select'); } }}>
-                        <color attach="background" args={['#0e0c14']} />
-                        <ambientLight intensity={0.6} color="#eef2f6" />
-                        <hemisphereLight intensity={0.5} color="#f4f7fb" groundColor="#9aa1ad" position={[0, 0, 1]} />
-                        <directionalLight castShadow position={[8, 6, 12]} intensity={1.1} color="#fff4e2" />
+                    {sessaoRoteiroNaAba && <PainelRoteiroEditor3D roteiros={roteirosListados} carregandoLista={carregandoRoteiros} erroLista={erroListaRoteiros} roteiro={roteiroAtivo} passos={passosRoteiro} rotulos={rotulosPassosRoteiro} posicao={posicaoRoteiro} modo={modoRoteiro} pendenciaSalvar={pendenciaRoteiro} salvando={salvandoRoteiro} avisoGravacao={avisoGravacaoRoteiro} falhaExecucao={execucaoRoteiro.falha} resultadoValidacao={resultadoValidacaoRoteiro} aoFechar={fechaRoteiroOuPainel} aoCarregarRoteiro={idRoteiro => void carregaRoteiroNoPainel(idRoteiro)} aoTrocarModo={trocaModoRoteiro} aoIrPara={irParaPosicaoRoteiro} aoMudarComentario={mudaComentarioPassoRoteiro} aoSalvarPassos={() => void salvaPassosRoteiro()} aoAprovar={() => void aprovaRoteiroAtual()} aoValidar={() => void validaRoteiroAtual()} aoDefinirBloqueio={motivo => void defineBloqueioRoteiro(motivo)} />}
 
-                        {!capturando && <ChaoEditor3D />}
+                    <Canvas shadows dpr={[1, 2]} gl={{ preserveDrawingBuffer: true }} resize={{ offsetSize: true }} camera={{ position: [6, -6, 5], up: [0, 0, 1], fov: 38, near: 0.1, far: 200 }} onPointerMissed={evento => { if (arrastoObjetoAtivoRef.current) return; if (evento.shiftKey) return; if (definindoInterruptor) { setDefinindoInterruptor(false); return; } if (modoOperacao === 'EDICAO') { setVerticesSelecionados([]); setFacesSelecionadas([]); } else { setIdSelecionado(null); setRegiaoCorpoSelecionada(null); setIdLuzSelecionada(null); setIdComandoSelecionado(null); setModo('select'); } }}>
+                        {/* Iluminação de jogo: o estúdio SAI e o fundo vira preto — o autor vê a sala como o jogo mostra, sem
+                            precisar abrir uma Partida. Fora dela, o estúdio garante que dá pra modelar mesmo com a sala apagada. */}
+                        <color attach="background" args={[iluminacaoDeJogoAtiva ? '#000000' : '#0e0c14']} />
+                        {!iluminacaoDeJogoAtiva && (
+                            <>
+                                <ambientLight intensity={0.6} color="#eef2f6" />
+                                <hemisphereLight intensity={0.5} color="#f4f7fb" groundColor="#9aa1ad" position={[0, 0, 1]} />
+                                <directionalLight castShadow position={[8, 6, 12]} intensity={1.1} color="#fff4e2" />
+                            </>
+                        )}
+
+                        {/* O grid é chão que o jogo não tem: na visualização de jogo ele vazaria "existe piso aqui" onde não existe. */}
+                        {!capturando && !iluminacaoDeJogoAtiva && <ChaoEditor3D />}
 
                         {tipoProjeto === 'PERSONAGEM' && corpoPersonagem && <CorpoPersonagemViewportEditor3D corpo={corpoPersonagem} selecionado={idSelecionado === SELECAO_CORPO_PERSONAGEM_EDITOR3D} aoSelecionar={() => selecionaCorpo(null)} />}
 
-                        {objetos.map(objeto => <ObjetoEditavelEditor3D key={objeto.id} objeto={objeto} visivelEfetivo={objeto.visivel && !colecaoOcultaPorObjeto.has(objeto.id)} selecionado={objeto.id === idSelecionado} edicaoAtiva={modoOperacao === 'EDICAO' && objeto.id === idSelecionado} modoSelecaoEdicao={modoSelecaoEdicao} verticesSelecionados={verticesSelecionados} facesSelecionadas={facesSelecionadas} xRayAtivo={xRayAtivo} modo={modo} travas={travasTransform} ocultarGizmo={capturando} aoSelecionar={setIdSelecionado} aoSelecionarSubElemento={selecionaSubElemento} aoMoverVertices={moveVerticesSelecionados} aoIniciarArrasto={registraHistoricoArrasto} aoIniciarArrastoObjeto={iniciaArrastoObjeto} aoConfirmarArrastoObjeto={confirmaArrastoObjeto} aoCancelarArrastoObjeto={cancelaArrastoObjeto} arrastoAtivoRef={arrastoObjetoAtivoRef} registraMeshSelecionada={registraMeshSelecionada} registraMesh={registraMesh} aoTransformar={sincronizaTransformSelecionado} assentaNaCamada={assentaMeshNaCamada} aoSairDoModo={() => setModo('select')} />)}
+                        {objetos.map(objeto => <ObjetoEditavelEditor3D key={objeto.id} objeto={objeto} visivelEfetivo={objeto.visivel && !colecaoOcultaPorObjeto.has(objeto.id)} selecionado={objeto.id === idSelecionado} demarcadoInterruptor={colecaoSistema === 'ILUMINACAO' && idsElementosInterruptores.has(objeto.id)} interruptorSelecionado={colecaoSistema === 'ILUMINACAO' && comandoSelecionado !== null && comandoSelecionado.idElementoCena === String(objeto.id)} destacaHover={definindoInterruptor} edicaoAtiva={modoOperacao === 'EDICAO' && objeto.id === idSelecionado} modoSelecaoEdicao={modoSelecaoEdicao} verticesSelecionados={verticesSelecionados} facesSelecionadas={facesSelecionadas} xRayAtivo={xRayAtivo} modo={modo} travas={travasTransform} ocultarGizmo={capturando} aoSelecionar={aoSelecionarObjetoViewport} aoSelecionarSubElemento={selecionaSubElemento} aoMoverVertices={moveVerticesSelecionados} aoIniciarArrasto={registraHistoricoArrasto} aoIniciarArrastoObjeto={iniciaArrastoObjeto} aoConfirmarArrastoObjeto={confirmaArrastoObjeto} aoCancelarArrastoObjeto={cancelaArrastoObjeto} arrastoAtivoRef={arrastoObjetoAtivoRef} registraMeshSelecionada={registraMeshSelecionada} registraMesh={registraMesh} aoTransformar={sincronizaTransformSelecionado} assentaNaCamada={assentaMeshNaCamada} aoSairDoModo={() => setModo('select')} />)}
 
                         {paramsCriacao && <PreviewMalhaEditor3D params={paramsCriacao} />}
+
+                        {/* Fontes de Luz do MAPA: a luz REAL da cena autorada — o autor vê o que está acendendo, não um ícone. */}
+                        {tipoProjeto === 'MAPA' && <LuzesViewportEditor3D luzes={luzes} idLuzSelecionada={idLuzSelecionada} modoMover={modo === 'translate'} idsApagadas={idsLuzesApagadasPreview} aoSelecionar={selecionaLuz} aoMover={moveLuz} />}
+                        {/* Esquema elétrico: na Iluminação, a seleção mostra o SEU lado da fiação — luz ou interruptor. */}
+                        {colecaoMostraFiacao(colecaoSistema) && (luzSelecionada !== null || comandoSelecionado !== null) && <EsquemaEletricoEditor3D fontesDeLuz={fontesDoEsquema} comandos={comandosDoEsquema} obtemPosicaoElemento={obtemPosicaoElemento} />}
 
                         {tipoProjeto === 'CAPA_ARTE' && camera && <CameraCapaArteEditor3D camera={camera} selecionada={idSelecionado === SELECAO_CAMERA_EDITOR3D} ocultarGizmo={capturando} povAtiva={camPovAtiva} aoSelecionarCamera={() => setIdSelecionado(SELECAO_CAMERA_EDITOR3D)} aoMoverPosicao={moveCameraPosicao} aoMoverAlvo={moveCameraAlvo} />}
                         {tipoProjeto === 'CAPA_ARTE' && camera && <TituloCapaArteEditor3D camera={camera} titulo={capaArte.titulo} mostrarGizmo={idSelecionado === SELECAO_TITULO_CAPA_ARTE_EDITOR3D && !camPovAtiva && !capturando} aoSelecionar={() => setIdSelecionado(SELECAO_TITULO_CAPA_ARTE_EDITOR3D)} aoMover={moveTituloPosicao} />}
@@ -1139,7 +1635,7 @@ export function Editor3D() {
                     )}
                 </div>
 
-                <PainelLateralEditor3D objetosRaiz={objetosRaizResumo} colecoes={colecoesArvore} totalObjetos={objetos.length} idSelecionado={idSelecionado} objetoSelecionado={objetoSelecionadoResumo} aoRenomearObjeto={renomeiaObjeto} aoMudarCorObjeto={cor => idSelecionado !== null && mudaCorObjeto(idSelecionado, cor)} aoMudarSubdivisaoObjeto={subdivisao => idSelecionado !== null && mudaSubdivisaoObjeto(idSelecionado, subdivisao)} aoMudarEspessuraObjeto={espessura => idSelecionado !== null && mudaEspessuraObjeto(idSelecionado, espessura)} temFacesSelecionadas={modoOperacao === 'EDICAO' && modoSelecaoEdicao === 'FACE' && facesSelecionadas.length > 0} aoAdicionarMaterialObjeto={() => idSelecionado !== null && adicionaMaterialObjeto(idSelecionado)} aoMudarCorMaterialObjeto={(slot, cor) => idSelecionado !== null && mudaCorMaterialObjeto(idSelecionado, slot, cor)} aoRenomearMaterialObjeto={(slot, nome) => idSelecionado !== null && renomeiaMaterialObjeto(idSelecionado, slot, nome)} aoAtribuirMaterialObjeto={atribuiMaterialAsFacesSelecionadas} aoEspelharObjetoX={espelhaObjetoSelecionadoX} aoAplicarTransformacoesObjeto={aplicaTransformacoesObjetoSelecionado} aoDuplicarObjeto={duplicaObjeto} aoExcluirObjeto={removeObjeto} corpoPersonagem={corpoPersonagem} regioesCorpo={regioesCorpo} regiaoCorpoSelecionada={regiaoCorpoSelecionada} rotuloRegiaoSelecionada={regiaoCorpoSelecionada !== null ? ROTULO_REGIAO_CORPO_EDITOR3D[regiaoCorpoSelecionada] : 'Corpo'} pecasDaRegiao={pecasDaRegiaoSelecionada} aoSelecionarCorpo={selecionaCorpo} aoAtualizarParametroCorpo={atualizaParametroCorpo} aoMudarCorCorpo={mudaCorCorpo} aoAnexarPeca={() => void abrirModalAnexarPeca()} aoRemoverPeca={removePeca} transformSelecionado={transformSelecionado} dimensoesBaseSelecionado={dimensoesBaseSelecionado} modoTransform={modo} travasTransform={travasTransform} aoAlternarTravaTransform={alternaTravaTransform} camera={camera} capaArte={capaArte} refPreviewCamera={refCanvasPreviewCapa} povCameraAtiva={camPovAtiva} alvoTravado={alvoTravado} capturando={capturando} capaSalva={capaSalva} aoSelecionar={id => { setRegiaoCorpoSelecionada(null); setIdSelecionado(id === SELECAO_CAMERA_EDITOR3D || id === SELECAO_TITULO_CAPA_ARTE_EDITOR3D ? id : id < 0 ? null : id); }} aoAlternarVisibilidade={alternaVisibilidade} aoAtualizarTransform={atualizaTransformObjeto} aoAssentarObjetoNoChao={assentaObjetoSelecionadoNoChao} aoAtualizarCameraVetor={atualizaCameraVetor} aoAtualizarCameraFov={atualizaCameraFov} aoAtualizarTituloTexto={atualizaTituloTexto} aoAtualizarTituloTransform={atualizaTituloTransform} aoAtualizarTituloCor={atualizaTituloCor} aoAlternarPovCamera={alternaPovCamera} aoAlternarAlvoTravado={alternaAlvoTravado} aoCapturar={iniciaCaptura} aoCriarColecao={criaColecao} aoAlternarVisibilidadeColecao={alternaVisibilidadeColecao} aoRenomearColecao={renomeiaColecao} aoRemoverColecao={removeColecao} aoMoverObjeto={moveObjetoParaColecao} />
+                <PainelLateralEditor3D objetosRaiz={objetosRaizResumo} colecoes={colecoesArvore} tipoProjeto={tipoProjeto} colecaoSistema={colecaoSistema} aoSelecionarColecaoSistema={selecionaColecaoSistema} totalColecao={totalColecao} idSelecionado={idSelecionado} objetoSelecionado={objetoSelecionadoResumo} aoRenomearObjeto={renomeiaObjeto} aoMudarCorObjeto={cor => idSelecionado !== null && mudaCorObjeto(idSelecionado, cor)} aoMudarSubdivisaoObjeto={subdivisao => idSelecionado !== null && mudaSubdivisaoObjeto(idSelecionado, subdivisao)} aoMudarEspessuraObjeto={espessura => idSelecionado !== null && mudaEspessuraObjeto(idSelecionado, espessura)} temFacesSelecionadas={modoOperacao === 'EDICAO' && modoSelecaoEdicao === 'FACE' && facesSelecionadas.length > 0} aoAdicionarMaterialObjeto={() => idSelecionado !== null && adicionaMaterialObjeto(idSelecionado)} aoMudarCorMaterialObjeto={(slot, cor) => idSelecionado !== null && mudaCorMaterialObjeto(idSelecionado, slot, cor)} aoRenomearMaterialObjeto={(slot, nome) => idSelecionado !== null && renomeiaMaterialObjeto(idSelecionado, slot, nome)} aoAtribuirMaterialObjeto={atribuiMaterialAsFacesSelecionadas} aoEspelharObjetoX={espelhaObjetoSelecionadoX} aoAplicarTransformacoesObjeto={aplicaTransformacoesObjetoSelecionado} aoDuplicarObjeto={duplicaObjeto} aoExcluirObjeto={removeObjeto} corpoPersonagem={corpoPersonagem} regioesCorpo={regioesCorpo} regiaoCorpoSelecionada={regiaoCorpoSelecionada} rotuloRegiaoSelecionada={regiaoCorpoSelecionada !== null ? ROTULO_REGIAO_CORPO_EDITOR3D[regiaoCorpoSelecionada] : 'Corpo'} pecasDaRegiao={pecasDaRegiaoSelecionada} aoSelecionarCorpo={selecionaCorpo} aoAtualizarParametroCorpo={atualizaParametroCorpo} aoMudarCorCorpo={mudaCorCorpo} aoAnexarPeca={() => void abrirModalAnexarPeca()} aoRemoverPeca={removePeca} transformSelecionado={transformSelecionado} dimensoesBaseSelecionado={dimensoesBaseSelecionado} modoTransform={modo} travasTransform={travasTransform} aoAlternarTravaTransform={alternaTravaTransform} camera={camera} capaArte={capaArte} refPreviewCamera={refCanvasPreviewCapa} povCameraAtiva={camPovAtiva} alvoTravado={alvoTravado} capturando={capturando} capaSalva={capaSalva} aoSelecionar={id => { setRegiaoCorpoSelecionada(null); setIdSelecionado(id === SELECAO_CAMERA_EDITOR3D || id === SELECAO_TITULO_CAPA_ARTE_EDITOR3D ? id : id < 0 ? null : id); }} aoAlternarVisibilidade={alternaVisibilidade} aoAtualizarTransform={atualizaTransformObjeto} aoAssentarObjetoNoChao={assentaObjetoSelecionadoNoChao} aoAtualizarCameraVetor={atualizaCameraVetor} aoAtualizarCameraFov={atualizaCameraFov} aoAtualizarTituloTexto={atualizaTituloTexto} aoAtualizarTituloTransform={atualizaTituloTransform} aoAtualizarTituloCor={atualizaTituloCor} aoAlternarPovCamera={alternaPovCamera} aoAlternarAlvoTravado={alternaAlvoTravado} aoCapturar={iniciaCaptura} aoCriarColecao={criaColecao} aoAlternarVisibilidadeColecao={alternaVisibilidadeColecao} aoRenomearColecao={renomeiaColecao} aoRemoverColecao={removeColecao} aoMoverObjeto={moveObjetoParaColecao} luzes={luzes} luzesArvore={luzesArvore} luzSelecionada={luzSelecionada} aoSelecionarLuz={selecionaLuz} aoRenomearLuz={renomeiaLuz} aoExcluirLuz={excluiLuz} aoMudarTipoLuz={mudaTipoLuz} aoMudarCorLuz={mudaCorLuz} aoMudarCampoLuz={mudaCampoLuz} aoMudarPosicaoLuz={mudaPosicaoLuz} comandosArvore={comandosArvore} comandoSelecionado={comandoSelecionado} nomeElementoVinculadoComando={nomeElementoVinculadoComando} interruptoresDaLuz={comandosDaLuzSelecionada} definindoInterruptor={definindoInterruptor} aoAlternarInterruptorDaLuz={alternaInterruptorDaLuz} aoAlternarDefinicaoInterruptor={() => setDefinindoInterruptor(atual => !atual)} aoSelecionarComando={selecionaComando} aoRenomearComando={renomeiaComando} aoExcluirComando={excluiComando} aoMudarDescricaoComando={mudaDescricaoComando} aoMudarAlcanceComando={mudaAlcanceComando} aoAcionarInterruptor={acionaInterruptorPreview} />
                 </div>
             )}
 
@@ -1175,6 +1671,15 @@ interface ObjetoEditavelEditor3DProps {
     readonly objeto: ObjetoEditor3D;
     readonly visivelEfetivo: boolean;
     readonly selecionado: boolean;
+    // Objeto que É interruptor, visto pela Coleção de Iluminação: contorno de arestas na COR DA FIAÇÃO (a linguagem do
+    // esquema elétrico, "energizado") — próprio, para nunca se confundir com o preenchimento dourado da SELEÇÃO; e com
+    // luz própria, para não sumir no breu do modo de jogo.
+    readonly demarcadoInterruptor: boolean;
+    // O INTERRUPTOR deste objeto está selecionado: o corpo recebe o preenchimento de seleção (além do contorno) — o
+    // clique que seleciona o interruptor precisa acender o elemento como qualquer seleção.
+    readonly interruptorSelecionado: boolean;
+    // Modo armado de fiação: passar o mouse destaca o objeto sob o cursor — no breu é difícil saber onde há elemento.
+    readonly destacaHover: boolean;
     readonly edicaoAtiva: boolean;
     readonly modoSelecaoEdicao: ModoSelecaoEdicaoEditor3D;
     readonly verticesSelecionados: readonly number[];
@@ -1198,7 +1703,7 @@ interface ObjetoEditavelEditor3DProps {
     readonly aoSairDoModo: () => void;
 };
 
-function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAtiva, modoSelecaoEdicao, verticesSelecionados, facesSelecionadas, xRayAtivo, modo, travas, ocultarGizmo, aoSelecionar, aoSelecionarSubElemento, aoMoverVertices, aoIniciarArrasto, aoIniciarArrastoObjeto, aoConfirmarArrastoObjeto, aoCancelarArrastoObjeto, arrastoAtivoRef, registraMeshSelecionada, registraMesh, aoTransformar, assentaNaCamada, aoSairDoModo }: ObjetoEditavelEditor3DProps) {
+function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, demarcadoInterruptor, interruptorSelecionado, destacaHover, edicaoAtiva, modoSelecaoEdicao, verticesSelecionados, facesSelecionadas, xRayAtivo, modo, travas, ocultarGizmo, aoSelecionar, aoSelecionarSubElemento, aoMoverVertices, aoIniciarArrasto, aoIniciarArrastoObjeto, aoConfirmarArrastoObjeto, aoCancelarArrastoObjeto, arrastoAtivoRef, registraMeshSelecionada, registraMesh, aoTransformar, assentaNaCamada, aoSairDoModo }: ObjetoEditavelEditor3DProps) {
     const meshRef = useRef<Mesh>(null);
     const camera = useThree((estado) => estado.camera);
     const gl = useThree((estado) => estado.gl);
@@ -1236,12 +1741,23 @@ function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAti
         return criaGeometriaDeMalha(malhaExibicao, 1 + objeto.materiaisExtras.length);
     }, [objeto.malha, objeto.subdivisao, objeto.espessura, objeto.materiaisExtras.length]);
 
+    // Hover do modo armado de fiação: estado LOCAL (não sobe ao pai) — só o objeto sob o cursor re-renderiza.
+    const [hoverFiacao, setHoverFiacao] = useState(false);
+
+    // Contorno "energizado" do interruptor: as arestas da geometria de exibição na cor da fiação do esquema elétrico.
+    const geometriaArestasInterruptor = useMemo(() => (demarcadoInterruptor ? new EdgesGeometry(geometria, 15) : null), [demarcadoInterruptor, geometria]);
+    useEffect(() => () => { geometriaArestasInterruptor?.dispose(); }, [geometriaArestasInterruptor]);
+
     // Materiais por slot (0 = base, 1.. = extras): o mesh recebe o ARRAY e os groups da geometria escolhem o slot por face.
     const materiais = useMemo(() => {
         const emXRay = edicaoAtiva && xRayAtivo;
         const slots = [{ nome: 'Base', cor: objeto.cor }, ...objeto.materiaisExtras];
-        return slots.map(slot => new MeshStandardMaterial({ color: new Color(slot.cor), emissive: new Color(selecionado ? '#e8c074' : '#000000'), emissiveIntensity: selecionado ? 0.35 : 0, roughness: 0.55, metalness: 0.1, flatShading: objeto.subdivisao === 0, transparent: emXRay, opacity: emXRay ? 0.45 : 1, depthWrite: !emXRay }));
-    }, [objeto.cor, objeto.materiaisExtras, objeto.subdivisao, selecionado, edicaoAtiva, xRayAtivo]);
+        // Seleção acende o corpo — vale para a seleção da GEOMETRIA e para a do INTERRUPTOR do objeto; o hover do modo
+        // armado de fiação usa um brilho mais suave (emissive não depende de luz — funciona no breu).
+        const selecaoAtiva = selecionado || interruptorSelecionado;
+        const destacado = selecaoAtiva || (destacaHover && hoverFiacao);
+        return slots.map(slot => new MeshStandardMaterial({ color: new Color(slot.cor), emissive: new Color(destacado ? '#e8c074' : '#000000'), emissiveIntensity: selecaoAtiva ? 0.35 : destacado ? 0.2 : 0, roughness: 0.55, metalness: 0.1, flatShading: objeto.subdivisao === 0, transparent: emXRay, opacity: emXRay ? 0.45 : 1, depthWrite: !emXRay }));
+    }, [objeto.cor, objeto.materiaisExtras, objeto.subdivisao, selecionado, interruptorSelecionado, destacaHover, hoverFiacao, edicaoAtiva, xRayAtivo]);
 
     useEffect(() => () => { for (const material of materiais) material.dispose(); }, [materiais]);
     const proxyVertices = useMemo(() => new Object3D(), []);
@@ -1487,7 +2003,12 @@ function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, edicaoAti
     return (
         <>
             {/* X-Ray (na edição): malha translúcida e SEM raycast — o clique atravessa e alcança os handles atrás da geometria. Fora do X-Ray o raycast PADRÃO do Mesh é reposto explicitamente (passar undefined apagaria o método). O material é um ARRAY (slots) casando com os groups da geometria. */}
-            <mesh ref={meshRef} geometry={geometria} material={materiais.length === 1 ? materiais[0] : materiais} visible={visivelEfetivo} castShadow receiveShadow raycast={edicaoAtiva && xRayAtivo ? raycastNuloEditor3D : Mesh.prototype.raycast} onClick={aoClicar} onPointerDown={aoDescerParaTransformar}>
+            <mesh ref={meshRef} geometry={geometria} material={materiais.length === 1 ? materiais[0] : materiais} visible={visivelEfetivo} castShadow receiveShadow raycast={edicaoAtiva && xRayAtivo ? raycastNuloEditor3D : Mesh.prototype.raycast} onClick={aoClicar} onPointerDown={aoDescerParaTransformar} onPointerOver={destacaHover ? evento => { evento.stopPropagation(); setHoverFiacao(true); } : undefined} onPointerOut={destacaHover ? () => setHoverFiacao(false) : undefined}>
+                {geometriaArestasInterruptor !== null && (
+                    <lineSegments geometry={geometriaArestasInterruptor} raycast={raycastNuloEditor3D} userData={{ naoExibirNaCapa: true }}>
+                        <lineBasicMaterial color="#ffcf6e" toneMapped={false} />
+                    </lineSegments>
+                )}
                 {edicaoAtiva && modoSelecaoEdicao === 'VERTICE' && objeto.malha.vertices.map((vertice, indice) => (
                     <mesh key={`v${indice}`} position={vertice} onClick={evento => aoClicarHandle(evento, [indice], null)}>
                         <sphereGeometry args={[0.05, 10, 10]} />

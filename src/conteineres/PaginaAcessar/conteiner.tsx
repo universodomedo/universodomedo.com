@@ -22,7 +22,7 @@ type PropsConteiner__PaginaAcessar = Contexto__PaginaAcessar__Props;
 function resolveSaida(props: PropsConteiner__PaginaAcessar): SaidaConteiner {
     if (props.etapa === 'RECUPERAR') return criaSaidaConteiner(Contexto__PaginaAcessar__Recuperar__Provider, { voltarParaLogin: props.voltarParaLogin });
     if (props.etapa === 'REDEFINIR') return criaSaidaConteiner(Contexto__PaginaAcessar__Redefinir__Provider, { tokenRecuperacao: props.tokenRecuperacao ?? '', voltarParaLogin: props.voltarParaLogin });
-    return criaSaidaConteiner(Contexto__PaginaAcessar__Login__Provider, { verificacaoEmail: props.verificacaoEmail, aoEntrar: props.aoEntrar, irParaRecuperar: props.irParaRecuperar });
+    return criaSaidaConteiner(Contexto__PaginaAcessar__Login__Provider, { verificacaoEmail: props.verificacaoEmail, recusaDiscord: props.recusaDiscord, aoEntrar: props.aoEntrar, irParaRecuperar: props.irParaRecuperar });
 };
 
 function useEstado(): PropsConteiner__PaginaAcessar { return useContexto__PaginaAcessar(); };

@@ -5,7 +5,6 @@ export type TipoCondicaoVitoria = CondicaoVitoria['tipo'];
 export type Interagivel = ConfiguracaoPartida['interagiveis'][number];
 export type InteragivelObjeto = Extract<Interagivel, { tipo: 'objeto' }>;
 export type InteragivelSer = Extract<Interagivel, { tipo: 'ser' }>;
-export type Luz = NonNullable<ConfiguracaoPartida['luzes']>[number];
 export type Controlador = InteragivelSer['controlador'];
 export type Descoberta = Interagivel['descobertas'][number];
 export type Recompensa = Descoberta['recompensas'][number];
@@ -17,18 +16,14 @@ export const SLOT_JOGADOR_PADRAO = 1;
 // Tamanho fisico padrao (mm) de um objeto novo. Espelha TAMANHO_OBJETO_PADRAO_MILIMETROS do backend (codegen exporta tipos, nao consts).
 export const TAMANHO_OBJETO_PADRAO_MILIMETROS = { largura: 800, altura: 900, profundidade: 800 };
 
-// Valores padrao de uma luz nova. Espelha LUZ_PADRAO do backend.
-export const LUZ_PADRAO = { alcanceMilimetros: 4000, intensidade: 3 };
-
 // Acao 'vitoria' nova de um objeto. Espelha ACAO_OBJETO_VITORIA_PADRAO do backend (codegen exporta tipos, nao consts).
 export const ACAO_OBJETO_VITORIA_PADRAO = { alcanceMilimetros: 1500 };
+// Acao 'sair_da_sala' nova de um objeto (a saida autorada — vence quando a condicao e 'sala_deixada'). Espelha ACAO_OBJETO_SAIR_DA_SALA_PADRAO do backend.
+export const ACAO_OBJETO_SAIR_DA_SALA_PADRAO = { alcanceMilimetros: 3000 };
+// Interruptor NAO e acao da Partida: e funcao fisica da sala, autorada na camada de jogo do Projeto MAPA.
 export type AcaoObjeto = NonNullable<InteragivelObjeto['acoes']>[number];
 
-export function luzesDaConfig(config: ConfiguracaoPartida): Luz[] {
-    return [...(config.luzes ?? [])];
-};
-
-export const ROTULOS_TIPO_CONDICAO_VITORIA: Record<TipoCondicaoVitoria, string> = { qualquer_acao_executada: 'Executar qualquer ação', refem_percebido: 'Perceber um refém (Ser)', inimigo_derrotado: 'Derrotar um Ser do Sistema', tempo_jogo_alcancado: 'Alcançar um marco de tempo', proximidade_ser_alcancada: 'Chegar perto de um Ser (locomoção)' };
+export const ROTULOS_TIPO_CONDICAO_VITORIA: Record<TipoCondicaoVitoria, string> = { qualquer_acao_executada: 'Executar qualquer ação', refem_percebido: 'Perceber um refém (Ser)', inimigo_derrotado: 'Derrotar um Ser do Sistema', tempo_jogo_alcancado: 'Alcançar um marco de tempo', proximidade_ser_alcancada: 'Chegar perto de um Ser (locomoção)', sala_deixada: 'Sair da Sala' };
 
 export const KEY_SER_EM_SALA_VAZIA = 'SER_EM_SALA:' as KeySerEmSala;
 
@@ -59,7 +54,7 @@ export function controladorDoGrupo(grupo: GrupoControle): Controlador {
 
 // O cenário nasce SEM mapa: nome e dimensões lógicas derivam do Projeto 3D (tipo MAPA) quando ele é selecionado — nada é digitado à mão.
 export function criaConfiguracaoVazia(): ConfiguracaoPartida {
-    return { narracaoInicial: '', cenario: { nome: '', mapaLogico: { larguraMilimetros: 0, alturaMilimetros: 0, idProjetoMapa: null } }, interagiveis: [], luzes: [], condicaoVitoria: { tipo: 'qualquer_acao_executada' }, temporal: { momentoInicialMs: 0 } };
+    return { narracaoInicial: '', cenario: { nome: '', mapaLogico: { larguraMilimetros: 0, alturaMilimetros: 0, idProjetoMapa: null } }, interagiveis: [], condicaoVitoria: { tipo: 'qualquer_acao_executada' }, temporal: { momentoInicialMs: 0 } };
 };
 
 // Tempo real e base do jogo (nao e configuravel): toda configuracao nasce com o sistema temporal ativo.
@@ -73,6 +68,7 @@ export function criaCondicaoVitoria(tipo: TipoCondicaoVitoria): CondicaoVitoria 
     if (tipo === 'inimigo_derrotado') return { tipo, keySerEmSala: KEY_SER_EM_SALA_VAZIA, idEstatisticaDanificavel: 0 };
     if (tipo === 'tempo_jogo_alcancado') return { tipo, tempoAlvoMs: 0 };
     if (tipo === 'proximidade_ser_alcancada') return { tipo, keySerEmSala: KEY_SER_EM_SALA_VAZIA, distanciaMaximaMilimetros: 1000 };
+    if (tipo === 'sala_deixada') return { tipo: 'sala_deixada' };
     return { tipo: 'qualquer_acao_executada' };
 };
 
@@ -89,12 +85,6 @@ export function rotuloObjeto(objeto: InteragivelObjeto | null): string {
     if (!objeto) return 'objeto';
     if (objeto.nome && objeto.nome.trim().length > 0) return objeto.nome;
     return 'novo objeto';
-};
-
-export function rotuloLuz(luz: Luz | null): string {
-    if (!luz) return 'luz';
-    if (luz.nome && luz.nome.trim().length > 0) return luz.nome;
-    return 'nova luz';
 };
 
 export function rotuloInteragivel(interagivel: Interagivel | null, nomesPorIdSer: Record<number, string>): string {

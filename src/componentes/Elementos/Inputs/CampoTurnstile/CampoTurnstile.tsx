@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-type TurnstileGlobal = { render: (elemento: HTMLElement, opcoes: { sitekey: string; callback: (token: string) => void; 'expired-callback': () => void; theme: 'dark' | 'light' | 'auto' }) => string };
+type TurnstileGlobal = { render: (elemento: HTMLElement, opcoes: { sitekey: string; callback: (token: string) => void; 'expired-callback': () => void; theme: 'dark' | 'light' | 'auto'; appearance: 'always' | 'execute' | 'interaction-only' }) => string };
 
 type JanelaComTurnstile = Window & { turnstile?: TurnstileGlobal; __aoCarregarTurnstile?: () => void };
 
@@ -23,7 +23,8 @@ export default function CampoTurnstile({ aoMudarToken }: { aoMudarToken: (token:
         const renderiza = () => {
             if (!janela.turnstile || recipienteRef.current === null || jaRenderizouRef.current) return;
             jaRenderizouRef.current = true;
-            janela.turnstile.render(recipienteRef.current, { sitekey: siteKey, callback: token => aoMudarToken(token), 'expired-callback': () => aoMudarToken(null), theme: 'dark' });
+            // appearance interaction-only: o widget só ocupa espaço na tela quando o desafio exige interação humana; no caso normal resolve invisível e não empurra o layout.
+            janela.turnstile.render(recipienteRef.current, { sitekey: siteKey, callback: token => aoMudarToken(token), 'expired-callback': () => aoMudarToken(null), theme: 'dark', appearance: 'interaction-only' });
         };
 
         if (janela.turnstile) { renderiza(); return; }

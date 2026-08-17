@@ -1,0 +1,120 @@
+.recipiente {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+}
+
+.cartao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45em;
+    height: 100%;
+    /* min-width/overflow: item de flex não encolhe abaixo do conteúdo por padrão — sem isso texto longo vaza do cartão. */
+    min-width: 0;
+    overflow: hidden;
+    padding: 0.9em 1em;
+    border: 0.08em solid rgba(183, 144, 81, 0.35);
+    border-radius: 0.5em;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.nome {
+    color: #EBE0C9;
+    font-size: 1.05em;
+}
+
+/* O contêiner da listagem impõe white-space: nowrap; sem desfazer isso aqui o texto vira uma linha só cortada
+   (line-clamp não tem efeito nesse estado). Altura máxima em em = corte previsível em ~3 linhas. */
+.objetivo {
+    flex: 1;
+    color: rgba(235, 224, 201, 0.65);
+    font-size: 0.85em;
+    line-height: 1.45;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    max-height: 4.4em;
+    overflow: hidden;
+}
+
+.nome {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.motivo_bloqueio {
+    color: #c4aee3;
+    font-size: 0.8em;
+    line-height: 1.4;
+    padding-left: 0.6em;
+    border-left: 0.2em solid rgba(179, 157, 219, 0.7);
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    max-height: 4.2em;
+    overflow: hidden;
+}
+
+.detalhes {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7em;
+}
+
+.selo {
+    font-size: 0.72em;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2em 0.8em;
+    border-radius: 1em;
+    border: 0.08em solid;
+}
+
+.selo_aprovado {
+    color: #7fbf8f;
+    border-color: rgba(127, 191, 143, 0.5);
+}
+
+.selo_montagem {
+    color: #a7a294;
+    border-color: rgba(167, 162, 148, 0.5);
+}
+
+.selo_bloqueado {
+    color: #b39ddb;
+    border-color: rgba(179, 157, 219, 0.5);
+}
+
+.selo_valido {
+    color: #7fbf8f;
+    border-color: rgba(127, 191, 143, 0.5);
+}
+
+.selo_divergente {
+    color: #d9a441;
+    border-color: rgba(217, 164, 65, 0.5);
+}
+
+.selo_falhou {
+    color: #db6b6b;
+    border-color: rgba(219, 107, 107, 0.5);
+}
+
+.selo_validando {
+    color: #B79051;
+    border-color: rgba(183, 144, 81, 0.5);
+}
+
+.resumo_validacao {
+    color: rgba(235, 224, 201, 0.75);
+    font-size: 0.9em;
+    padding: 0 0 0.6em;
+}
+
+.passos {
+    color: rgba(235, 224, 201, 0.55);
+    font-size: 0.8em;
+}

@@ -1,8 +1,9 @@
-import { Color } from 'three';
+import { Color, Euler, Matrix4, Quaternion, Vector3 } from 'three';
 import type { Mesh } from 'three';
 import type { CameraCenaCanonicaEditor3D, CapaArteCenaCanonicaEditor3D, CenaCanonicaEditor3D, CorpoPersonagemCenaCanonicaEditor3D, ObjetoCenaCanonicaEditor3D, PecaPersonagemCenaCanonicaEditor3D, TextoCapaArteCenaCanonicaEditor3D, TipoMalhaCenaCanonicaEditor3D, TipoProjetoEditor3D, Vetor3CenaCanonicaEditor3D } from 'types-nora-api';
 
 import type { MalhaEditavelLocal, Vetor3Malha } from './editor3D.malha';
+import { corHexParaVetor3Editor3D, vetor3ParaCorHexEditor3D } from './editor3D.cor';
 
 export type TipoPrimitivaEditor3D = 'CUBO' | 'CILINDRO' | 'ESFERA';
 export type TransformEditor3D = { readonly posicao: [number, number, number]; readonly rotacao: [number, number, number]; readonly escala: [number, number, number]; };
@@ -35,8 +36,6 @@ export function restringeTextoNaCameraEditor3D(posicao: [number, number, number]
 
 const TIPO_MALHA_POR_PRIMITIVA: Record<TipoPrimitivaEditor3D, TipoMalhaCenaCanonicaEditor3D> = { CUBO: 'CUBO_3D', CILINDRO: 'CILINDRO_3D', ESFERA: 'ESFERA_3D' };
 const PRIMITIVA_POR_TIPO_MALHA: Partial<Record<TipoMalhaCenaCanonicaEditor3D, TipoPrimitivaEditor3D>> = { CUBO_3D: 'CUBO', CILINDRO_3D: 'CILINDRO', ESFERA_3D: 'ESFERA' };
-
-function corHexParaVetor3Editor3D(hex: string): Vetor3CenaCanonicaEditor3D { const cor = new Color(hex); return [cor.r, cor.g, cor.b]; };
 
 // Cor base é editável por objeto (persiste em corBase); luz neutra e shader padrão seguem fixos.
 export const COR_OBJETO_PADRAO_EDITOR3D = '#7484b4';
@@ -100,6 +99,55 @@ function serializaCapaArteEditor3D(capaArte: CapaArteEditor3D): CapaArteCenaCano
     return { titulo: serializaTextoCapaArteEditor3D(capaArte.titulo), assinatura: serializaTextoCapaArteEditor3D(capaArte.assinatura) };
 };
 
+// Entrada de serialização a partir do ESTADO PURO (execução de Roteiro): mesmo shape da entrada por mesh, com o
+// transform vindo do estado (transformInicial já assentado) e a visibilidade explícita — sem mesh viva envolvida.
+export interface EntradaSerializacaoObjetoEstadoEditor3D {
+    readonly id: number;
+    readonly nome: string;
+    readonly tipo: TipoPrimitivaEditor3D;
+    readonly cor: string;
+    readonly materiaisExtras: readonly { readonly nome: string; readonly cor: string }[];
+    readonly idPeca: string | null;
+    readonly malha: MalhaEditavelLocal;
+    readonly subdivisao: number;
+    readonly espessura: number;
+    readonly transform: TransformEditor3D;
+    readonly visivel: boolean;
+};
+
+// Espelho do serializaObjetoEditor3D para estado puro: a matriz é composta com a MESMA aritmética do updateMatrix da
+// mesh (compose de posição/quaternion-de-Euler-XYZ/escala), para o serializado da reexecução bater byte a byte com o vivo.
+function serializaObjetoEstadoEditor3D(entrada: EntradaSerializacaoObjetoEstadoEditor3D): ObjetoCenaCanonicaEditor3D {
+    const matriz = new Matrix4().compose(new Vector3(entrada.transform.posicao[0], entrada.transform.posicao[1], entrada.transform.posicao[2]), new Quaternion().setFromEuler(new Euler(entrada.transform.rotacao[0], entrada.transform.rotacao[1], entrada.transform.rotacao[2], 'XYZ')), new Vector3(entrada.transform.escala[0], entrada.transform.escala[1], entrada.transform.escala[2]));
+    return {
+        idLocal: String(entrada.id),
+        nome: entrada.nome,
+        tipo: TIPO_MALHA_POR_PRIMITIVA[entrada.tipo],
+        quantidadeVertices: entrada.malha.vertices.length,
+        posicao: [entrada.transform.posicao[0], entrada.transform.posicao[1], entrada.transform.posicao[2]],
+        rotacao: [entrada.transform.rotacao[0], entrada.transform.rotacao[1], entrada.transform.rotacao[2]],
+        escala: [entrada.transform.escala[0], entrada.transform.escala[1], entrada.transform.escala[2]],
+        matrizBase: Array.from(matriz.elements),
+        corBase: corHexParaVetor3Editor3D(entrada.cor),
+        corLuz: COR_LUZ_PADRAO_EDITOR_3D,
+        materialVisual: null,
+        shader: 'PADRAO',
+        visivel: entrada.visivel,
+        idPeca: entrada.idPeca,
+        malhaEditavel: serializaMalhaEditavel(entrada.malha),
+        subdivisao: entrada.subdivisao,
+        ...(entrada.espessura > 0 ? { espessura: entrada.espessura } : {}),
+        ...(entrada.materiaisExtras.length > 0 ? { materiaisExtras: entrada.materiaisExtras.map(material => ({ nome: material.nome, cor: corHexParaVetor3Editor3D(material.cor) })) } : {}),
+    };
+};
+
+// Serialização da cena a partir do estado puro. Roteiros produzem projetos comuns (sem câmera/capa/personagem) — o
+// ramo simples basta; os ramos especiais seguem exclusivos da serialização por mesh.
+export function serializaCenaCanonicaDeEstadoEditor3D(entradas: readonly EntradaSerializacaoObjetoEstadoEditor3D[], tipoProjeto: TipoProjetoEditor3D): CenaCanonicaEditor3D {
+    return { versao: 1, tipoProjeto, objetos: entradas.map(serializaObjetoEstadoEditor3D) };
+};
+
+// A cena é só geometria e material. Iluminação e fiação do MAPA vão na CAMADA DE JOGO, serializada à parte (editor3D.camadaJogo).
 export function serializaCenaCanonicaEditor3D(entradas: readonly EntradaSerializacaoObjetoEditor3D[], tipoProjeto: TipoProjetoEditor3D, camera: CameraEditor3D | null, capaArte: CapaArteEditor3D | null, corpoPersonagem: CorpoPersonagemCenaCanonicaEditor3D | null, pecas: readonly PecaPersonagemCenaCanonicaEditor3D[]): CenaCanonicaEditor3D {
     const objetos = entradas.map(serializaObjetoEditor3D);
     if (tipoProjeto === 'CAPA_ARTE' && camera) return { versao: 1, tipoProjeto, objetos, camera: serializaCameraEditor3D(camera), capaArte: serializaCapaArteEditor3D(capaArte ?? CAPA_ARTE_PADRAO_EDITOR3D) };
@@ -159,8 +207,6 @@ export function cameraDaCena(cena: CenaCanonicaEditor3D): CameraEditor3D | null 
     if (!cena.camera) return null;
     return { posicao: [cena.camera.posicao[0], cena.camera.posicao[1], cena.camera.posicao[2]], alvo: [cena.camera.alvo[0], cena.camera.alvo[1], cena.camera.alvo[2]], fov: cena.camera.fov };
 };
-
-function vetor3ParaCorHexEditor3D(cor: Vetor3CenaCanonicaEditor3D): string { return `#${new Color(cor[0], cor[1], cor[2]).getHexString()}`; };
 
 // Tolerante ao formato antigo (título era string) e a campos ausentes.
 function desserializaTextoCapaArteEditor3D(texto: TextoCapaArteCenaCanonicaEditor3D | string | null | undefined): TextoCapaArteEditor3D {

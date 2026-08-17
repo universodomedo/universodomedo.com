@@ -1,0 +1,116 @@
+.recipiente {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0.5em 0.2em;
+}
+
+.objetivo {
+    color: rgba(235, 224, 201, 0.7);
+    font-size: 0.95em;
+    line-height: 1.5;
+    max-width: 60em;
+}
+
+.cabeca_resultado {
+    display: flex;
+    gap: 0.6em;
+}
+
+.selo {
+    font-size: 0.78em;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.25em 0.9em;
+    border-radius: 1em;
+    border: 0.08em solid;
+}
+
+.selo_valido { color: #7fbf8f; border-color: rgba(127, 191, 143, 0.5); }
+.selo_montagem { color: #a7a294; border-color: rgba(167, 162, 148, 0.5); }
+
+.motivo_bloqueio {
+    color: #c4aee3;
+    font-size: 0.9em;
+    line-height: 1.5;
+    max-width: 60em;
+    padding-left: 0.8em;
+    border-left: 0.2em solid rgba(179, 157, 219, 0.7);
+}
+
+.sem_passos {
+    color: rgba(235, 224, 201, 0.6);
+    font-size: 0.9em;
+    max-width: 60em;
+}
+.selo_divergente { color: #d9a441; border-color: rgba(217, 164, 65, 0.5); }
+.selo_falhou { color: #db6b6b; border-color: rgba(219, 107, 107, 0.5); }
+
+.lista_passos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    max-width: 60em;
+}
+
+.passo {
+    display: flex;
+    gap: 0.8em;
+    align-items: baseline;
+    padding: 0.55em 0.9em;
+    border: 0.08em solid rgba(183, 144, 81, 0.25);
+    border-radius: 0.45em;
+    background: rgba(0, 0, 0, 0.3);
+
+    &.acusado {
+        border-color: rgba(219, 107, 107, 0.55);
+        background: rgba(219, 71, 71, 0.08);
+    }
+
+    &.nao_comparado {
+        opacity: 0.45;
+    }
+}
+
+.icone_passo {
+    min-width: 1.1em;
+    text-align: center;
+    color: #7fbf8f;
+    font-size: 0.9em;
+}
+
+.passo.acusado .icone_passo {
+    color: #db6b6b;
+}
+
+.passo.nao_comparado .icone_passo {
+    color: rgba(235, 224, 201, 0.5);
+}
+
+.corpo_passo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+}
+
+.rotulo_passo {
+    color: #EBE0C9;
+    font-size: 0.95em;
+}
+
+.motivo_passo {
+    color: #db6b6b;
+    font-size: 0.82em;
+    line-height: 1.4;
+}
+
+.comentario_passo {
+    color: rgba(235, 224, 201, 0.55);
+    font-size: 0.82em;
+    font-style: italic;
+    line-height: 1.4;
+}

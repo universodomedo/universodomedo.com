@@ -9,10 +9,9 @@ import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputCom
 import InputNumerico from 'Componentes/Elementos/Inputs/InputNumerico/InputNumerico';
 import SelecionadorOpcoes from 'Componentes/Elementos/Inputs/Selecionadores/SelecionadorOpcoes/SelecionadorOpcoes';
 import { useContexto__PaginaGameDesignerConfiguracaoPartida__Editor } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/contexto';
-import { KEY_SER_EM_SALA_VAZIA, ROTULOS_TIPO_CONDICAO_VITORIA, keySerEmSalaDaChave, luzesDaConfig, objetosDaConfig, rotuloObjeto, rotuloSer, seresDoGrupo, type CondicaoVitoria, type InteragivelObjeto, type InteragivelSer, type TipoCondicaoVitoria } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
+import { KEY_SER_EM_SALA_VAZIA, ROTULOS_TIPO_CONDICAO_VITORIA, keySerEmSalaDaChave, objetosDaConfig, rotuloObjeto, rotuloSer, seresDoGrupo, type CondicaoVitoria, type InteragivelObjeto, type InteragivelSer, type TipoCondicaoVitoria } from 'Contextos/Contexto__PaginaGameDesignerConfiguracaoPartida__Editor/editorConfiguracao.compartilhado';
 import { SecaoSeresEmSala } from './SecaoSeresEmSala';
 import { SecaoObjetos } from './SecaoObjetos';
-import { SecaoLuzes } from './SecaoLuzes';
 
 const OPCOES_TIPO_CONDICAO_VITORIA = (Object.keys(ROTULOS_TIPO_CONDICAO_VITORIA) as TipoCondicaoVitoria[]).map(tipo => ({ value: tipo, label: ROTULOS_TIPO_CONDICAO_VITORIA[tipo] }));
 
@@ -55,7 +54,7 @@ export default function SPA__PaginaGameDesignerConfiguracaoPartida__Editor() {
 
                     <SecaoObjetos objetos={objetosDaConfig(config)} aoAdicionar={editor.adicionaEConfiguraObjeto} aoAdicionarDoMapa={editor.irParaSelecaoElementoMapa} aoEditar={chave => editor.irParaConfigObjeto(chave)} aoRemover={chave => editor.removeInteragivel(chave)} />
 
-                    <SecaoLuzes luzes={luzesDaConfig(config)} aoAdicionar={editor.adicionaEConfiguraLuz} aoEditar={chave => editor.irParaConfigLuz(chave)} aoRemover={chave => editor.removeLuz(chave)} />
+                    {/* Iluminação NÃO é autorada aqui: é domínio do Mapa (Editor 3D). A mesma sala serve N Partidas e chega acesa em todas. */}
 
                     <fieldset className={styles.secao}>
                         <legend>Condição de vitória</legend>
@@ -117,6 +116,9 @@ function CamposCondicaoVitoria({ condicaoVitoria, seresSistema, objetos, nomesPo
                 </InputComRotulo>
             </div>
         );
+    }
+    if (condicaoVitoria.tipo === 'sala_deixada') {
+        return <p className={styles.dica}>A Partida vence quando o jogador executa a ação Sair da Sala em um objeto que possui essa ação.</p>;
     }
     return <p className={styles.dica}>A Partida vence assim que o jogador executa qualquer ação.</p>;
 };

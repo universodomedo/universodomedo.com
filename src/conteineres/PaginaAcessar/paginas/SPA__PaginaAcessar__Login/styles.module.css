@@ -1,79 +1,67 @@
-.telaAcessar {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    gap: 3em;
-}
-
-.cartaoArte {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    max-height: 80%;
-}
-
-.areaAcesso {
+/* Ocupa o corpo e centraliza: o painel tem altura fixa, e os campos ficam no meio em vez de colados no título. */
+.campos {
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    width: 24em;
-    height: 34em;
-    max-height: 90%;
-    text-align: center;
+    justify-content: center;
     gap: 1em;
+    /* Rede de segurança: em tela baixa o excedente rola aqui dentro, nunca por cima do rodapé de ações. */
+    overflow-y: auto;
 }
 
-.areaAcesso h1 {
-    font-family: var(--fonte-cinzel-decorative);
-}
-
-.camposLogin {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-}
-
-.bannerVerificacao {
-    padding: 0.8em;
-    border: 0.1em solid #B79051;
+.avisoSucesso,
+.avisoFalha {
+    padding: 0.7em 1.1em;
+    border-radius: 0.7em;
+    border: 0.08em solid rgba(183, 144, 81, 0.55);
+    background: rgba(28, 20, 38, 0.92);
     color: #EBE0C9;
-
-    &.falha {
-        border-color: #DB4747;
-    }
+    font-size: 0.95em;
+    line-height: 1.35;
+    box-shadow: 0 0.6em 1.6em rgba(0, 0, 0, 0.4);
 }
 
-.erroLogin {
-    color: #DB4747;
+.avisoFalha {
+    border-color: rgba(219, 71, 71, 0.6);
+    color: #F0A8A8;
+}
+
+.textoNeutro {
+    color: #EBE0C9;
+    text-align: center;
 }
 
 .linkAcao {
+    align-self: center;
     cursor: pointer;
     color: #B79051;
     text-decoration: underline;
+    transition: color 160ms ease;
+
+    &:hover {
+        color: #D4AF37;
+    }
 }
 
-.reenvioConfirmado {
-    color: #EBE0C9;
-}
-
-.acessoDiscord {
+.migracaoDiscord {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.4em;
-    margin-top: 1em;
+    gap: 0.5em;
+    padding-top: 1.2em;
+    border-top: 0.08em solid rgba(235, 224, 201, 0.14);
+    font-size: 0.9em;
 }
 
 .botaoDiscord {
-    width: 3em;
-    height: 3em;
+    width: 2em;
+    height: 2em;
     color: #7289DA;
     cursor: pointer;
-    transition: filter 0.3s ease;
+    transition: filter 160ms ease, transform 160ms ease;
 
     &:hover {
-        filter: saturate(2);
+        filter: saturate(1.6);
+        transform: translateY(-0.1em);
     }
 }

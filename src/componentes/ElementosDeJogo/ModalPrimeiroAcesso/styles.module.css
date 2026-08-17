@@ -12,9 +12,9 @@
     text-align: center;
     flex: 1;
 
-    & p, span, a{
+    /* & p, span, a{
         color: black;
-    }
+    } */
 }
 
 .conteudo_modal_primeiro_acesso_termos {
@@ -24,9 +24,9 @@
     text-align: start;
     gap: 3vh;
 
-    & p, span, a {
+    /* & p, span, a {
         color: black;
-    }
+    } */
 
     & .recipiente_checkbox {
         display: flex;

@@ -1,0 +1,86 @@
+.telaPerfil {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+}
+
+.areaPerfil {
+    display: flex;
+    flex-direction: column;
+    width: 26em;
+    height: 30em;
+    max-height: 92%;
+    text-align: center;
+    gap: 1em;
+}
+
+.areaPerfil h1 {
+    font-family: var(--fonte-cinzel-decorative);
+}
+
+.camposPerfil {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8em;
+}
+
+.explicacao {
+    color: #EBE0C9;
+}
+
+.textoNeutro {
+    color: #EBE0C9;
+}
+
+.apelidoLivre {
+    color: #B79051;
+}
+
+.erroPerfil {
+    color: #DB4747;
+}
+
+/* Saída da tela: discreta de propósito, para não competir com a ação que conclui a etapa. */
+.linkSair {
+    cursor: pointer;
+    color: #EBE0C9;
+    text-decoration: underline;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+        opacity: 1;
+    }
+}
+
+.linkTermos {
+    cursor: pointer;
+    color: #B79051;
+    text-decoration: underline;
+
+    &.pendente {
+        color: #EBE0C9;
+    }
+}
+
+.areaTermos {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    padding: 1em;
+    gap: 1em;
+}
+
+.areaTermos h1 {
+    font-family: var(--fonte-cinzel-decorative);
+}
+
+.corpoTermos {
+    display: flex;
+    max-width: 60em;
+    overflow-y: auto;
+}

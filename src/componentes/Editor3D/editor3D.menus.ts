@@ -1,4 +1,4 @@
-export type ComandoMenuEditor3D = 'NOVO_PROJETO' | 'SALVAR_PROJETO_ATUAL' | 'SALVAR_NOVO_PROJETO' | 'ABRIR_PROJETO' | 'CRIAR_CAPA_ARTE' | 'CRIAR_PERSONAGEM' | 'CRIAR_MAPA' | 'ADD_CUBO' | 'ADD_CILINDRO' | 'ADD_ESFERA' | 'NOVO_MESH' | 'CAPTURAR_ARTE_CAPA';
+export type ComandoMenuEditor3D = 'NOVO_PROJETO' | 'SALVAR_PROJETO_ATUAL' | 'SALVAR_NOVO_PROJETO' | 'ABRIR_PROJETO' | 'CRIAR_CAPA_ARTE' | 'CRIAR_PERSONAGEM' | 'CRIAR_MAPA' | 'ADD_CUBO' | 'ADD_CILINDRO' | 'ADD_ESFERA' | 'ADD_LUZ' | 'NOVO_MESH' | 'CAPTURAR_ARTE_CAPA' | 'ABRIR_ROTEIROS';
 
 export interface ItemMenuEditor3D {
     readonly rotulo: string;
@@ -30,12 +30,20 @@ export const MENUS_EDITOR_3D: readonly MenuEditor3D[] = [
             { rotulo: 'Cilindro', comando: 'ADD_CILINDRO' },
             { rotulo: 'Esfera', comando: 'ADD_ESFERA' },
             { rotulo: 'Novo Mesh', comando: 'NOVO_MESH' },
+            // Interruptor NÃO se adiciona por menu: ele é o VÍNCULO objeto↔luz, nasce do clique no objeto com uma luz alternável selecionada.
+            { rotulo: 'Fonte de Luz', comando: 'ADD_LUZ' },
         ],
     },
     {
         rotulo: 'Exibir',
         itens: [
             { rotulo: 'Capturar Arte de Capa', comando: 'CAPTURAR_ARTE_CAPA' },
+        ],
+    },
+    {
+        rotulo: 'Roteiros',
+        itens: [
+            { rotulo: 'Painel de Roteiros', comando: 'ABRIR_ROTEIROS' },
         ],
     },
 ];

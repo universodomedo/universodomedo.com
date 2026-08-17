@@ -6,60 +6,38 @@ import { useContexto__PaginaCadastrar__Formulario } from 'Contextos/Contexto__Pa
 import { ConteudoForm } from 'Componentes/Elementos/ConteudoForm/ConteudoForm';
 import InputComRotulo from 'Componentes/Elementos/Inputs/InputComRotulo/InputComRotulo';
 import CampoTurnstile from 'Componentes/Elementos/Inputs/CampoTurnstile/CampoTurnstile';
-import { ConteudoTermoAceite } from 'Componentes/ElementosDeJogo/ModalPrimeiroAcesso/page';
+import CampoSenha from 'Componentes/Elementos/Inputs/CampoSenha/CampoSenha';
+import PainelAcesso from 'Componentes/ElementosVisuais/PainelAcesso/PainelAcesso';
 
 export default function SPA__PaginaCadastrar__Formulario() {
-    const { formularioCadastro, erroCadastro, setTokenCaptcha, mostrarTermos, setMostrarTermos, checkTopicosSensiveis, setCheckTopicosSensiveis, termo1, setTermo1, termo2, setTermo2, termosAceitos, podeProsseguir, aoVoltarParaAcessar } = useContexto__PaginaCadastrar__Formulario();
-
-    if (mostrarTermos) {
-        return (
-            <div className={styles.telaTermos}>
-                <h1>Termos de Aceite</h1>
-                <div className={styles.corpoTermos}>
-                    <ConteudoTermoAceite checkTopicosSensiveis={checkTopicosSensiveis} termo1={termo1} termo2={termo2} setCheckTopicosSensiveis={setCheckTopicosSensiveis} setTermo1={setTermo1} setTermo2={setTermo2} onVoltar={() => setMostrarTermos(false)} />
-                </div>
-            </div>
-        );
-    }
+    const { formularioCadastro, erroCadastro, setTokenCaptcha, podeProsseguir, aoVoltarParaAcessar } = useContexto__PaginaCadastrar__Formulario();
 
     return (
-        <div className={styles.telaCadastrar}>
-            <div className={styles.areaCadastro}>
-                <h1>Criar Conta</h1>
+        <PainelAcesso titulo={'Criar Conta'} avisos={erroCadastro ? <span className={styles.avisoFalha}>{erroCadastro}</span> : null}>
+            <ConteudoForm>
+                <ConteudoForm.AreaCorpo>
+                    <div className={styles.campos}>
+                        <InputComRotulo rotulo={'Email'}>
+                            <input type="text" autoComplete="email" {...formularioCadastro.input('email')} />
+                        </InputComRotulo>
 
-                <ConteudoForm>
-                    <ConteudoForm.AreaCorpo>
-                        <div className={styles.camposCadastro}>
-                            <InputComRotulo rotulo={'Apelido'}>
-                                <input type="text" {...formularioCadastro.input('apelido')} />
-                            </InputComRotulo>
+                        <InputComRotulo rotulo={'Senha'}>
+                            <CampoSenha autoComplete="new-password" {...formularioCadastro.input('senha')} />
+                        </InputComRotulo>
 
-                            <InputComRotulo rotulo={'Email'}>
-                                <input type="text" {...formularioCadastro.input('email')} />
-                            </InputComRotulo>
+                        <InputComRotulo rotulo={'Confirmação da Senha'}>
+                            <CampoSenha autoComplete="new-password" {...formularioCadastro.input('confirmarSenha')} />
+                        </InputComRotulo>
 
-                            <InputComRotulo rotulo={'Senha'}>
-                                <input type="password" {...formularioCadastro.input('senha')} />
-                            </InputComRotulo>
+                        <CampoTurnstile aoMudarToken={setTokenCaptcha} />
+                    </div>
+                </ConteudoForm.AreaCorpo>
 
-                            <InputComRotulo rotulo={'Confirmação da Senha'}>
-                                <input type="password" {...formularioCadastro.input('confirmarSenha')} />
-                            </InputComRotulo>
-
-                            <CampoTurnstile aoMudarToken={setTokenCaptcha} />
-
-                            <span className={`${styles.linkTermos} ${!termosAceitos ? styles.pendente : ''}`} onClick={() => setMostrarTermos(true)}>{termosAceitos ? 'Termos de Aceite aceitos' : 'Ler e aceitar os Termos de Aceite'}</span>
-
-                            {erroCadastro && <span className={styles.erroCadastro}>{erroCadastro}</span>}
-                        </div>
-                    </ConteudoForm.AreaCorpo>
-
-                    <ConteudoForm.AreaBotoes>
-                        <button onClick={formularioCadastro.salvar} disabled={!podeProsseguir || formularioCadastro.salvando}>{formularioCadastro.salvando ? 'Cadastrando…' : 'Prosseguir'}</button>
-                        <button data-variante="secundario" onClick={aoVoltarParaAcessar}>Voltar</button>
-                    </ConteudoForm.AreaBotoes>
-                </ConteudoForm>
-            </div>
-        </div>
+                <ConteudoForm.AreaBotoes>
+                    <button onClick={formularioCadastro.salvar} disabled={!podeProsseguir || formularioCadastro.salvando}>{formularioCadastro.salvando ? 'Cadastrando…' : 'Prosseguir'}</button>
+                    <button data-variante="secundario" onClick={aoVoltarParaAcessar}>Voltar</button>
+                </ConteudoForm.AreaBotoes>
+            </ConteudoForm>
+        </PainelAcesso>
     );
 };

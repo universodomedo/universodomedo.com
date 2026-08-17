@@ -12,7 +12,6 @@ import { mundoX, mundoY, useReforcaRedimensionamentoCanvas } from 'Componentes/E
 import { useProjetoMapa } from 'Funcionalidades/MapaJogavel/useProjetoMapa';
 
 type Interagivel = ConfiguracaoPartida['interagiveis'][number];
-type Luz = NonNullable<ConfiguracaoPartida['luzes']>[number];
 
 // Preview do Runtime 100% CLIENTE: carrega o mapa autorado e monta os interagíveis da CONFIG em seus lugares — sem
 // iniciar Partida, sem sala, sem Ser/ficha, sem nada de servidor (a única consulta é o Projeto 3D do mapa, com cache).
@@ -38,10 +37,10 @@ export function PreviewRuntimePartida({ configuracao }: { configuracao: Configur
                 <hemisphereLight intensity={0.45} color="#f4f7fb" groundColor="#9aa1ad" position={[0, 0, 1]} />
                 <directionalLight castShadow position={[8, 6, 12]} intensity={1.0} color="#fff4e2" />
 
+                {/* O mapa traz as próprias Fontes de Luz autoradas; a iluminação neutra acima é só o estúdio de autoria do preview. */}
                 <MapaProjetoR3F cena={cenaMapa} largura={largura} altura={altura} />
 
                 {configuracao.interagiveis.map(interagivel => <InteragivelPreviewR3F key={interagivel.chave} interagivel={interagivel} largura={largura} altura={altura} />)}
-                {(configuracao.luzes ?? []).map(luz => <MarcadorLuzPreviewR3F key={luz.chave} luz={luz} largura={largura} altura={altura} />)}
 
                 <OrbitControls makeDefault enablePan enableZoom enableRotate enableDamping target={[0.5, 0.5, 0.6]} minDistance={1.5} maxDistance={distancia * 4} />
             </Canvas>
@@ -72,21 +71,6 @@ function InteragivelPreviewR3F({ interagivel, largura, altura }: { interagivel: 
         <mesh castShadow position={[x, y, alturaApoio + dimAltura / 2]}>
             <boxGeometry args={[dimLargura, dimProfundidade, dimAltura]} />
             <meshStandardMaterial color="#8aa0d0" roughness={0.5} metalness={0.1} />
-        </mesh>
-    );
-};
-
-// Luz da config como MARCADOR (esfera âmbar emissiva) — o preview usa iluminação neutra de autoria, não a iluminação do jogo.
-function MarcadorLuzPreviewR3F({ luz, largura, altura }: { luz: Luz; largura: number; altura: number }) {
-    const x = mundoX(luz.posicao?.x ?? 0, largura);
-    const y = mundoY(luz.posicao?.y ?? 0, altura);
-    const alturaApoio = useAlturaApoioNoMapa(x, y);
-    if (luz.posicao === null) return null;
-
-    return (
-        <mesh position={[x, y, alturaApoio + 0.35]}>
-            <sphereGeometry args={[0.14, 14, 14]} />
-            <meshStandardMaterial color="#ffd98a" emissive="#ffb347" emissiveIntensity={0.9} roughness={0.35} />
         </mesh>
     );
 };

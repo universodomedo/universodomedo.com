@@ -1,0 +1,15 @@
+.grade {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    align-content: flex-start;
+}
+
+.campo_largo {
+    flex-basis: 100%;
+}
+
+.erro_campo {
+    color: #DB4747;
+    font-size: 0.8em;
+}
