@@ -2,19 +2,21 @@
 
 import styles from './Editor3D.module.css';
 
-import type { TipoFonteDeLuzMapa } from 'types-nora-api';
+import type { CorrenteMapa, TipoFonteDeLuzMapa } from 'types-nora-api';
 
 import { CampoNumeroEditor3D } from './CampoNumeroEditor3D';
-import { ALCANCE_MAXIMO_AUTORAVEL_METROS_EDITOR3D, MAXIMO_INTENSIDADE_POR_TIPO_FONTE_EDITOR3D, ROTULO_TIPO_FONTE_DE_LUZ_EDITOR3D, TIPOS_FONTE_DE_LUZ_EDITOR3D, type FonteDeLuzEditor3D } from './editor3D.camadaJogo';
+import { PainelCorrenteEditor3D } from './PainelCorrenteEditor3D';
+import { ALCANCE_MAXIMO_AUTORAVEL_METROS_EDITOR3D, MAXIMO_INTENSIDADE_POR_TIPO_FONTE_EDITOR3D, ROTULO_TIPO_FONTE_DE_LUZ_EDITOR3D, TIPOS_FONTE_DE_LUZ_EDITOR3D, type CircuitoEditor3D, type FonteDeLuzEditor3D } from './editor3D.camadaJogo';
 
 export type CampoLuzEditor3D = 'intensidade' | 'alcanceMetros';
 
 interface PainelLuzEditor3DProps {
     readonly luz: FonteDeLuzEditor3D;
     // No Cenário a luz só se POSICIONA (colocar o objeto de iluminação faz parte de construir a sala); tipo, cor,
-    // intensidade, alcance, alternável e a fiação são domínio de jogo — editáveis apenas na Coleção de Iluminação.
+    // intensidade, alcance e a fiação são domínio de jogo — editáveis apenas na Coleção de Iluminação.
     readonly edicaoDeJogo: boolean;
-    // O outro lado da ARESTA objeto↔luz: os interruptores que acionam ESTA luz (lista derivada dos vínculos).
+    // O CIRCUITO de que esta luz pende (null = alimentação direta) e os interruptores que o alternam.
+    readonly circuito: CircuitoEditor3D | null;
     readonly interruptores: readonly { readonly idLocal: string; readonly nome: string }[];
     // Modo ARMADO de fiação: "Definir interruptor" liga a espera pelo clique no objeto — só nesse modo o viewport vincula.
     readonly definindoInterruptor: boolean;
@@ -22,14 +24,16 @@ interface PainelLuzEditor3DProps {
     readonly aoMudarCor: (cor: string) => void;
     readonly aoMudarCampo: (campo: CampoLuzEditor3D, valor: number) => void;
     readonly aoMudarPosicao: (indice: number, valor: number) => void;
-    readonly aoAlternarInterruptor: (idComando: string) => void;
+    readonly aoMudarCorrenteEntrega: (corrente: CorrenteMapa) => void;
+    readonly aoRemoverInterruptor: (idInterruptor: string) => void;
+    readonly aoRemoverDoCircuito: () => void;
     readonly aoAlternarDefinicaoInterruptor: () => void;
 };
 
-// Propriedades da Fonte de Luz selecionada. "Alternável" NÃO se autora: é derivado — a luz alterna se, e somente se,
-// algum interruptor a aciona; sem interruptor ela é fixa. RENOMEAR e EXCLUIR não moram aqui — seguem a convenção do
-// objeto: duplo clique no nome e ícone inline, na árvore da cena.
-export function PainelLuzEditor3D({ luz, edicaoDeJogo, interruptores, definindoInterruptor, aoMudarTipo, aoMudarCor, aoMudarCampo, aoMudarPosicao, aoAlternarInterruptor, aoAlternarDefinicaoInterruptor }: PainelLuzEditor3DProps) {
+// Propriedades da Fonte de Luz selecionada. A luz NÃO tem estado aceso/apagado: ela REFLETE a corrente que chega pela
+// entrega dela (circuito → entrega). RENOMEAR e EXCLUIR não moram aqui — seguem a convenção do objeto: duplo clique no
+// nome e ícone inline, na árvore da cena.
+export function PainelLuzEditor3D({ luz, edicaoDeJogo, circuito, interruptores, definindoInterruptor, aoMudarTipo, aoMudarCor, aoMudarCampo, aoMudarPosicao, aoMudarCorrenteEntrega, aoRemoverInterruptor, aoRemoverDoCircuito, aoAlternarDefinicaoInterruptor }: PainelLuzEditor3DProps) {
     const ehPonto = luz.tipo === 'PONTO';
     return (
         <div className={styles.painel_objeto}>
@@ -51,21 +55,24 @@ export function PainelLuzEditor3D({ luz, edicaoDeJogo, interruptores, definindoI
                     </label>
 
                     {/* A fiação nasce AQUI, por ação EXPLÍCITA: "Definir interruptor" arma o modo e só então o clique no
-                        objeto do cenário vincula — clique de câmera/seleção nunca cria fiação. Desvincular é pelo ◉.
-                        O estado "alternável" é consequência: aparece aqui como leitura, nunca como checkbox. */}
+                        objeto do cenário vincula — clique de câmera/seleção nunca cria fiação. O ◉ remove o CORPO do
+                        circuito (vale para todas as luzes dele); "Remover do circuito" solta só ESTA luz. */}
                     <div className={styles.campo_subdivisao}>
-                        <span>Interruptores ({interruptores.length})</span>
-                        <p className={styles.dica_subdivisao}>{interruptores.length > 0 ? 'Luz alternável em jogo: os interruptores abaixo ligam e desligam o circuito.' : 'Sem interruptor: a luz é fixa, sempre acesa em jogo.'}</p>
+                        <span>Circuito{circuito !== null ? ` (${interruptores.length} interruptor${interruptores.length === 1 ? '' : 'es'})` : ''}</span>
+                        <p className={styles.dica_subdivisao}>{circuito === null ? 'Sem circuito: a luz liga direto na alimentação — sempre energizada em jogo (a corrente da entrega ainda vale).' : interruptores.length > 0 ? 'Luz alternável em jogo: qualquer interruptor abaixo alterna o circuito inteiro.' : 'Circuito sem interruptor: o regime de corrente dele governa as luzes, sem acionamento comum.'}</p>
                         {interruptores.map(interruptor => (
                             <div key={interruptor.idLocal} className={styles.acoes_objeto_painel}>
-                                <button type="button" className={styles.botao_acao_objeto} aria-pressed onClick={() => aoAlternarInterruptor(interruptor.idLocal)} title={`Desvincular ${interruptor.nome} desta luz`}>◉ {interruptor.nome}</button>
+                                <button type="button" className={styles.botao_acao_objeto} aria-pressed onClick={() => aoRemoverInterruptor(interruptor.idLocal)} title={`Remover ${interruptor.nome} do circuito (vale para todas as luzes dele)`}>◉ {interruptor.nome}</button>
                             </div>
                         ))}
                         <div className={styles.acoes_objeto_painel}>
                             <button type="button" className={styles.botao_acao_objeto} aria-pressed={definindoInterruptor} onClick={aoAlternarDefinicaoInterruptor} title={definindoInterruptor ? 'Cancelar a definição de interruptor' : 'Escolher no viewport o objeto que aciona esta luz'}>{definindoInterruptor ? '✕ Cancelar' : '+ Definir interruptor'}</button>
+                            {circuito !== null && <button type="button" className={styles.botao_acao_objeto} onClick={aoRemoverDoCircuito} title="Soltar esta luz do circuito (ela volta a ligar direto na alimentação)">⌀ Remover do circuito</button>}
                         </div>
                         {definindoInterruptor && <p className={styles.dica_subdivisao}>Clique no objeto do cenário que aciona esta luz. ESC ou Cancelar sai sem vincular.</p>}
                     </div>
+
+                    <PainelCorrenteEditor3D titulo="Corrente da entrega" ajuda="A derivação que mora junto DESTA lâmpada: dano ou regime daqui afeta só ela. O viewport anima o resultado ao vivo." corrente={luz.correnteEntrega} aoMudar={aoMudarCorrenteEntrega} />
 
                     <div className={styles.campo_subdivisao}>
                         <span>{ehPonto ? 'Intensidade (%)' : 'Intensidade'}</span>
@@ -82,7 +89,7 @@ export function PainelLuzEditor3D({ luz, edicaoDeJogo, interruptores, definindoI
                     )}
                 </>
             ) : (
-                <p className={styles.dica_subdivisao}>{ROTULO_TIPO_FONTE_DE_LUZ_EDITOR3D[luz.tipo]}. As propriedades de jogo (tipo, cor, intensidade, alcance, interruptor) se editam na Coleção de Iluminação.</p>
+                <p className={styles.dica_subdivisao}>{ROTULO_TIPO_FONTE_DE_LUZ_EDITOR3D[luz.tipo]}. As propriedades de jogo (tipo, cor, intensidade, alcance, corrente, circuito) se editam na Coleção de Iluminação.</p>
             )}
 
             {ehPonto && (

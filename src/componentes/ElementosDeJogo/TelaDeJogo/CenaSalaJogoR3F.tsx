@@ -2,9 +2,10 @@
 
 import styles from './CenaSalaJogoR3F.module.css';
 
-import { useEffect, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Object3D } from 'three';
+import type { HemisphereLight } from 'three';
 import type { CamadaJogoMapa, CenaCanonicaEditor3D, EstadoTemporalSalaDeJogoRuntime, MapaLogicoSalaJogoPayloadWsDto, OcupanteMapaLogicoSalaJogoWsDto } from 'types-nora-api';
 
 import { ControlesCameraJogo } from 'Componentes/ElementosDeJogo/Cena3D/ControlesCameraJogo';
@@ -17,7 +18,8 @@ import { useProjetoMapa } from 'Funcionalidades/MapaJogavel/useProjetoMapa';
 import { InteragivelR3F, MarcadorControladoR3F, OcupanteR3F } from './AtoresSalaJogoR3F';
 import { CaminhoMovimentacaoR3F, OverlayMovimentacao, PlanoSelecaoMovimentacao } from './MovimentacaoSalaJogoR3F';
 import { MascaraVisaoControlador, obtemAlcanceLinhaVisaoMilimetros, obtemDependenciaIluminacaoPercentual } from './MascaraVisaoSalaJogoR3F';
-import { intensidadeTotalLuzesMapa } from './LuzesMapaR3F';
+import { intensidadeTotalLuzesMapaNoInstante, useInstanteJogoCorrenteMapa, type InstanteCorrenteMapa } from './LuzesMapaR3F';
+import { caminhosCorrentePorFonteMapa, normalizaCamadaJogoMapaPersistidaMapa, type NoCorrenteAvaliacao } from 'Funcionalidades/MapaJogavel/mapaJogavel.corrente';
 
 // Z-up (Blender) para todo o render do jogo: define o "para cima" global do Three.js (câmeras, órbita, novos objetos).
 // TODO(z-up): unificar num init único do app (hoje o editor também seta isso no seu próprio módulo).
@@ -48,7 +50,9 @@ export function CenaSalaJogoR3F({ payload, keysInteragiveisPercebidosNovos, keyO
     // O cenário É o Projeto 3D (tipo MAPA) apontado pela config; consultado UMA vez (cache) e compartilhado pelas duas vistas.
     const { projetoMapa } = useProjetoMapa(payload.mapaLogico.idProjetoMapa);
     const cenaMapa = projetoMapa?.cenaCanonica ?? null;
-    const camadaJogoMapa = projetoMapa?.camadaJogoMapa ?? null;
+    // O banco pode ter camada v1 (legado) ou v2 (árvore): o jogo consome SEMPRE v2 — migra na leitura, com os MESMOS ids
+    // derivados do normalizador do servidor (os gates de `nosDesligados` precisam casar).
+    const camadaJogoMapa = useMemo(() => normalizaCamadaJogoMapaPersistidaMapa(projetoMapa?.camadaJogoMapa), [projetoMapa]);
 
     // Modo Solo: o jogador é o único ocupante (o primeiro). Quando houver multiplayer/identidade, casar por idFicha da ficha do jogador.
     const ocupanteJogador = payload.ocupantesMapaLogico[0] ?? null;
@@ -59,7 +63,7 @@ export function CenaSalaJogoR3F({ payload, keysInteragiveisPercebidosNovos, keyO
     return (
         <div className={styles.recipiente_cena_r3f}>
             <VistaTaticaSalaJogo className={classeTatica} payload={payload} cenaMapa={cenaMapa} camadaJogoMapa={camadaJogoMapa} keysNovos={keysInteragiveisPercebidosNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} estadoTemporalSalaJogo={estadoTemporalSalaJogo} modoMovimentacaoAtivo={modoMovimentacaoAtivo} aoSelecionarOcupante={aoSelecionarOcupante} aoSelecionarInteragivel={aoSelecionarInteragivel} aoLimparSelecao={aoLimparSelecao} aoConfirmarMovimentacao={aoConfirmarMovimentacao} aoCancelarMovimentacao={aoCancelarMovimentacao} />
-            <VistaPrimeiraPessoaSalaJogo className={classeFp} payload={payload} cenaMapa={cenaMapa} camadaJogoMapa={camadaJogoMapa} keysNovos={keysInteragiveisPercebidosNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} ocupanteJogador={ocupanteJogador} />
+            <VistaPrimeiraPessoaSalaJogo className={classeFp} payload={payload} cenaMapa={cenaMapa} camadaJogoMapa={camadaJogoMapa} keysNovos={keysInteragiveisPercebidosNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} estadoTemporalSalaJogo={estadoTemporalSalaJogo} ocupanteJogador={ocupanteJogador} />
 
             <div className={styles.moldura_secundaria}>
                 <button type="button" className={styles.botao_troca_visao} onClick={() => setPrincipal(p => (p === 'tatico' ? 'fp' : 'tatico'))} title="Trocar visão principal" aria-label="Trocar visão principal">
@@ -132,10 +136,12 @@ interface VistaPrimeiraPessoaSalaJogoProps {
     readonly keysNovos: readonly string[];
     readonly keyOcupanteSelecionado: string | null;
     readonly keyInteragivelSelecionado: string | null;
+    // O relógio da corrente é o tempo de jogo: a vista FP também precisa dele para as luzes congelarem com a pausa.
+    readonly estadoTemporalSalaJogo: EstadoTemporalSalaDeJogoRuntime | null;
     readonly ocupanteJogador: OcupanteMapaLogicoSalaJogoWsDto | null;
 };
 
-function VistaPrimeiraPessoaSalaJogo({ className, payload, cenaMapa, camadaJogoMapa, keysNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, ocupanteJogador }: VistaPrimeiraPessoaSalaJogoProps) {
+function VistaPrimeiraPessoaSalaJogo({ className, payload, cenaMapa, camadaJogoMapa, keysNovos, keyOcupanteSelecionado, keyInteragivelSelecionado, estadoTemporalSalaJogo, ocupanteJogador }: VistaPrimeiraPessoaSalaJogoProps) {
     useReforcaRedimensionamentoCanvas();
     const largura = payload.mapaLogico.larguraMilimetros;
     const altura = payload.mapaLogico.alturaMilimetros;
@@ -146,7 +152,7 @@ function VistaPrimeiraPessoaSalaJogo({ className, payload, cenaMapa, camadaJogoM
     return (
         <div className={className}>
             <Canvas shadows="soft" dpr={[1, 2]} resize={{ offsetSize: true }} camera={{ position: [cabecaX, cabecaY, ALTURA_OLHOS], up: [0, 0, 1], fov: 72, near: 0.05, far: Math.max(120, extensao * 6) }}>
-                <ConteudoCena3DSalaJogo payload={payload} cenaMapa={cenaMapa} camadaJogoMapa={camadaJogoMapa} keysNovos={keysNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} ocultarKeyOcupante={ocupanteJogador?.keySer ?? null} seguirCameraNaVisao />
+                <ConteudoCena3DSalaJogo payload={payload} cenaMapa={cenaMapa} camadaJogoMapa={camadaJogoMapa} keysNovos={keysNovos} keyOcupanteSelecionado={keyOcupanteSelecionado} keyInteragivelSelecionado={keyInteragivelSelecionado} estadoTemporalSalaJogo={estadoTemporalSalaJogo} ocultarKeyOcupante={ocupanteJogador?.keySer ?? null} seguirCameraNaVisao />
                 <ControladorPrimeiraPessoaJogo cabecaX={cabecaX} cabecaY={cabecaY} cabecaZ={ALTURA_OLHOS} />
             </Canvas>
         </div>
@@ -181,9 +187,10 @@ function ConteudoCena3DSalaJogo({ payload, cenaMapa, camadaJogoMapa, keysNovos, 
     const alcanceLinhaVisaoMilimetros = obtemAlcanceLinhaVisaoMilimetros(serControlado);
     const dependenciaIluminacao = obtemDependenciaIluminacaoPercentual(serControlado);
     const ambienteVisao = dependenciaIluminacao === null ? AMBIENTE_VISAO_BASE : (1 - dependenciaIluminacao / 100) * AMBIENTE_VISAO_BASE;
-    // Rebatimento (luz indireta FINGIDA): fill suave escalado pela luz real presente na sala — sem GI, custo ~nulo. Sala sem luz -> 0 (segue preta).
-    // A luz vem do MAPA (autorada no Editor 3D), não da Partida: mapa sem luz autorada = sala preta, e isso é correto.
-    const rebatimento = Math.min(REBATIMENTO_MAXIMO, intensidadeTotalLuzesMapa(camadaJogoMapa?.fontesDeLuz ?? [], payload.luzesApagadas) * REBATIMENTO_POR_INTENSIDADE);
+    // A CORRENTE que chega a cada luz: caminhos da árvore de distribuição com os gates da Sala (`nosDesligados`) aplicados,
+    // avaliados por frame no TEMPO DE JOGO — pausa congela o flicker; a Espera acelera as crises junto.
+    const caminhosCorrente = useMemo(() => caminhosCorrentePorFonteMapa(camadaJogoMapa?.nosDistribuicao ?? [], payload.nosDesligados), [camadaJogoMapa, payload.nosDesligados]);
+    const instanteCorrente = useInstanteJogoCorrenteMapa(estadoTemporalSalaJogo);
 
     return (
         <>
@@ -191,12 +198,12 @@ function ConteudoCena3DSalaJogo({ payload, cenaMapa, camadaJogoMapa, keysNovos, 
             <color attach="background" args={['#000000']} />
             <fog attach="fog" args={['#000000', extensao * 1.7, extensao * 4.2]} />
 
-            {/* Iluminacao OBJETIVA em 2 termos: (1) rebatimento — fill quente e suave escalado pelas luzes do MAPA (a luz que "quica"; mapa sem luz -> 0); (2) visao-no-escuro — ambiente frio derivado da dependencia (dep 100% -> 0). As Fontes de Luz autoradas no mapa dao os destaques diretos + sombra macia por cima, e sao desenhadas dentro do proprio grupo do mapa. */}
-            <hemisphereLight intensity={rebatimento} color="#ffe8c0" groundColor="#2a2418" />
+            {/* Iluminacao OBJETIVA em 2 termos: (1) rebatimento — fill quente e suave escalado pelas luzes do MAPA (a luz que "quica"; mapa sem luz -> 0), acompanhando a CORRENTE instante a instante; (2) visao-no-escuro — ambiente frio derivado da dependencia (dep 100% -> 0). As Fontes de Luz autoradas no mapa dao os destaques diretos + sombra macia por cima, e sao desenhadas dentro do proprio grupo do mapa. */}
+            <RebatimentoLuzesMapaR3F camadaJogoMapa={camadaJogoMapa} caminhosCorrente={caminhosCorrente} instanteCorrente={instanteCorrente} />
             <ambientLight intensity={ambienteVisao} color="#e8ecf2" />
 
             {/* Cenário = o Projeto 3D (tipo MAPA) da config, alinhado ao espaço lógico; config legada sem mapa cai num chão neutro (protótipo procedural aposentado). */}
-            {cenaMapa !== null ? <MapaProjetoR3F cena={cenaMapa} camadaJogo={camadaJogoMapa} largura={largura} altura={altura} luzesApagadas={payload.luzesApagadas} /> : <ChaoSemMapaR3F largura={largura} altura={altura} />}
+            {cenaMapa !== null ? <MapaProjetoR3F cena={cenaMapa} camadaJogo={camadaJogoMapa} largura={largura} altura={altura} caminhosCorrente={caminhosCorrente} instanteCorrente={instanteCorrente} /> : <ChaoSemMapaR3F largura={largura} altura={altura} />}
 
             {payload.ocupantesMapaLogico.map((ocupante, indice) => {
                 if (ocupante.keySer === ocultarKeyOcupante) return null;
@@ -211,4 +218,16 @@ function ConteudoCena3DSalaJogo({ payload, cenaMapa, camadaJogoMapa, keysNovos, 
             <MascaraVisaoControlador alcanceLinhaVisaoMilimetros={alcanceLinhaVisaoMilimetros} ocupanteControlado={ocupanteControlado} interagiveisPercebidos={payload.interagiveisPercebidos} estadoTemporal={estadoTemporalSalaJogo ?? null} largura={largura} altura={altura} seguirCamera={seguirCameraNaVisao ?? false} />
         </>
     );
+};
+
+// Rebatimento (luz indireta FINGIDA): fill suave escalado pela luz que as fontes ENTREGAM no instante de JOGO — corredor em
+// queda escurece o rebatimento junto (por ref no frame, sem re-render). Sala sem luz -> 0 (segue preta). A luz vem do MAPA
+// (autorada no Editor 3D), não da Partida: mapa sem luz autorada = sala preta, e isso é correto.
+function RebatimentoLuzesMapaR3F({ camadaJogoMapa, caminhosCorrente, instanteCorrente }: { camadaJogoMapa: CamadaJogoMapa | null; caminhosCorrente: ReadonlyMap<string, readonly NoCorrenteAvaliacao[]>; instanteCorrente: InstanteCorrenteMapa }) {
+    const luzRef = useRef<HemisphereLight>(null);
+    useFrame(() => {
+        if (luzRef.current === null) return;
+        luzRef.current.intensity = Math.min(REBATIMENTO_MAXIMO, intensidadeTotalLuzesMapaNoInstante(camadaJogoMapa?.fontesDeLuz ?? [], caminhosCorrente, instanteCorrente()) * REBATIMENTO_POR_INTENSIDADE);
+    });
+    return <hemisphereLight ref={luzRef} intensity={0} color="#ffe8c0" groundColor="#2a2418" />;
 };

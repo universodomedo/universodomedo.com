@@ -16,8 +16,8 @@ import { colecaoEditaGeometria, colecaoEditaJogoDaLuz, type TipoColecaoSistemaEd
 import type { TipoProjetoEditor3D } from 'types-nora-api';
 import { PainelLuzEditor3D, type CampoLuzEditor3D } from './PainelLuzEditor3D';
 import { PainelComandoEditor3D } from './PainelComandoEditor3D';
-import { ROTULO_CURTO_TIPO_FONTE_DE_LUZ_EDITOR3D, type ComandoEditor3D, type FonteDeLuzEditor3D } from './editor3D.camadaJogo';
-import type { TipoFonteDeLuzMapa } from 'types-nora-api';
+import { ROTULO_CURTO_TIPO_FONTE_DE_LUZ_EDITOR3D, type CircuitoEditor3D, type FonteDeLuzEditor3D, type InterruptorEditor3D } from './editor3D.camadaJogo';
+import type { CorrenteMapa, TipoFonteDeLuzMapa } from 'types-nora-api';
 import { SELECAO_CAMERA_EDITOR3D, SELECAO_CORPO_PERSONAGEM_EDITOR3D, SELECAO_TITULO_CAPA_ARTE_EDITOR3D, type CampoTransformEditor3D, type ModoTransformEditor3D, type TravasTransformEditor3D } from './editor3D.tipos';
 import type { CameraEditor3D, CapaArteEditor3D, TransformEditor3D } from './editor3D.projeto.serializacao';
 import type { Vetor3Malha } from './editor3D.malha';
@@ -92,20 +92,25 @@ interface PainelLateralEditor3DProps {
     readonly aoMudarCorLuz: (cor: string) => void;
     readonly aoMudarCampoLuz: (campo: CampoLuzEditor3D, valor: number) => void;
     readonly aoMudarPosicaoLuz: (indice: number, valor: number) => void;
-    readonly aoAcionarInterruptor: (idComando: string) => void;
-    readonly comandosArvore: readonly ComandoArvoreEditor3D[];
-    readonly comandoSelecionado: ComandoEditor3D | null;
-    readonly nomeElementoVinculadoComando: string | null;
-    // O outro lado da aresta, para o painel da luz: interruptores que acionam a luz selecionada (derivado dos vínculos).
+    readonly aoAcionarInterruptor: (idInterruptor: string) => void;
+    readonly interruptoresArvore: readonly ComandoArvoreEditor3D[];
+    readonly interruptorSelecionado: InterruptorEditor3D | null;
+    readonly circuitoDoInterruptorSelecionado: CircuitoEditor3D | null;
+    readonly nomeElementoVinculadoInterruptor: string | null;
+    // O lado da LUZ na fiação: o circuito de que ela pende e os interruptores dele.
+    readonly circuitoDaLuz: CircuitoEditor3D | null;
     readonly interruptoresDaLuz: readonly { readonly idLocal: string; readonly nome: string }[];
     readonly definindoInterruptor: boolean;
-    readonly aoAlternarInterruptorDaLuz: (idComando: string) => void;
+    readonly aoRemoverInterruptor: (idInterruptor: string) => void;
+    readonly aoRemoverLuzDoCircuito: () => void;
+    readonly aoMudarCorrenteEntregaLuz: (corrente: CorrenteMapa) => void;
+    readonly aoMudarCorrenteCircuito: (corrente: CorrenteMapa) => void;
+    readonly aoAlternarLigadoInicialmenteCircuito: () => void;
     readonly aoAlternarDefinicaoInterruptor: () => void;
-    readonly aoSelecionarComando: (idLocal: string) => void;
-    readonly aoRenomearComando: (idLocal: string, nome: string) => void;
-    readonly aoExcluirComando: (idLocal: string) => void;
-    readonly aoMudarDescricaoComando: (descricao: string) => void;
-    readonly aoMudarAlcanceComando: (valor: number) => void;
+    readonly aoSelecionarInterruptor: (idLocal: string) => void;
+    readonly aoRenomearInterruptor: (idLocal: string, nome: string) => void;
+    readonly aoMudarDescricaoInterruptor: (descricao: string) => void;
+    readonly aoMudarAlcanceInterruptor: (valor: number) => void;
     readonly tipoProjeto: TipoProjetoEditor3D;
     readonly colecaoSistema: TipoColecaoSistemaEditor3D;
     readonly aoSelecionarColecaoSistema: (colecao: TipoColecaoSistemaEditor3D) => void;
@@ -124,16 +129,16 @@ export function PainelLateralEditor3D(props: PainelLateralEditor3DProps) {
             </div>
 
             <PainelColapsavelEditor3D titulo="Coleção" tituloInterativo={<SeletorColecaoSistemaEditor3D tipoProjeto={props.tipoProjeto} colecao={props.colecaoSistema} aoSelecionar={props.aoSelecionarColecaoSistema} />} valor={String(props.totalColecao)} acoes={colecaoEditaGeometria(props.colecaoSistema) ? <button type="button" className={styles.botao_add_colecao} onClick={() => props.aoCriarColecao()} title="Nova coleção" aria-label="Nova coleção">+</button> : null}>
-                <ArvoreCenaEditor3D colecaoSistema={props.colecaoSistema} objetosRaiz={props.objetosRaiz} colecoes={props.colecoes} idSelecionado={props.idSelecionado} temCamera={props.camera !== null} povCameraAtiva={props.povCameraAtiva} regioesCorpo={props.regioesCorpo} regiaoCorpoSelecionada={props.regiaoCorpoSelecionada} aoSelecionarCorpo={props.aoSelecionarCorpo} aoSelecionar={props.aoSelecionar} aoAlternarVisibilidadeObjeto={props.aoAlternarVisibilidade} aoDuplicarObjeto={props.aoDuplicarObjeto} aoExcluirObjeto={props.aoExcluirObjeto} aoAlternarVisibilidadeColecao={props.aoAlternarVisibilidadeColecao} aoRenomearColecao={props.aoRenomearColecao} aoRenomearObjeto={props.aoRenomearObjeto} aoRemoverColecao={props.aoRemoverColecao} aoMoverObjeto={props.aoMoverObjeto} aoAlternarPovCamera={props.aoAlternarPovCamera} luzes={props.luzesArvore} idLuzSelecionada={props.luzSelecionada?.idLocal ?? null} aoSelecionarLuz={props.aoSelecionarLuz} aoRenomearLuz={props.aoRenomearLuz} aoExcluirLuz={props.aoExcluirLuz} comandos={props.comandosArvore} idComandoSelecionado={props.comandoSelecionado?.idLocal ?? null} aoSelecionarComando={props.aoSelecionarComando} aoRenomearComando={props.aoRenomearComando} aoExcluirComando={props.aoExcluirComando} />
+                <ArvoreCenaEditor3D colecaoSistema={props.colecaoSistema} objetosRaiz={props.objetosRaiz} colecoes={props.colecoes} idSelecionado={props.idSelecionado} temCamera={props.camera !== null} povCameraAtiva={props.povCameraAtiva} regioesCorpo={props.regioesCorpo} regiaoCorpoSelecionada={props.regiaoCorpoSelecionada} aoSelecionarCorpo={props.aoSelecionarCorpo} aoSelecionar={props.aoSelecionar} aoAlternarVisibilidadeObjeto={props.aoAlternarVisibilidade} aoDuplicarObjeto={props.aoDuplicarObjeto} aoExcluirObjeto={props.aoExcluirObjeto} aoAlternarVisibilidadeColecao={props.aoAlternarVisibilidadeColecao} aoRenomearColecao={props.aoRenomearColecao} aoRenomearObjeto={props.aoRenomearObjeto} aoRemoverColecao={props.aoRemoverColecao} aoMoverObjeto={props.aoMoverObjeto} aoAlternarPovCamera={props.aoAlternarPovCamera} luzes={props.luzesArvore} idLuzSelecionada={props.luzSelecionada?.idLocal ?? null} aoSelecionarLuz={props.aoSelecionarLuz} aoRenomearLuz={props.aoRenomearLuz} aoExcluirLuz={props.aoExcluirLuz} comandos={props.interruptoresArvore} idComandoSelecionado={props.interruptorSelecionado?.idLocal ?? null} aoSelecionarComando={props.aoSelecionarInterruptor} aoRenomearComando={props.aoRenomearInterruptor} aoExcluirComando={props.aoRemoverInterruptor} />
             </PainelColapsavelEditor3D>
 
-            {props.comandoSelecionado !== null ? (
-                <PainelColapsavelEditor3D titulo="Interruptor" valor={`${props.comandoSelecionado.idsFontesDeLuz.length} luz(es)`}>
-                    <PainelComandoEditor3D comando={props.comandoSelecionado} nomeElementoVinculado={props.nomeElementoVinculadoComando} aoMudarDescricao={props.aoMudarDescricaoComando} aoMudarAlcance={props.aoMudarAlcanceComando} aoAcionar={() => props.comandoSelecionado !== null && props.aoAcionarInterruptor(props.comandoSelecionado.idLocal)} />
+            {props.interruptorSelecionado !== null ? (
+                <PainelColapsavelEditor3D titulo="Interruptor" valor={`${props.luzes.filter(luz => luz.idCircuito === props.interruptorSelecionado?.idCircuito).length} luz(es)`}>
+                    <PainelComandoEditor3D interruptor={props.interruptorSelecionado} circuito={props.circuitoDoInterruptorSelecionado} nomeElementoVinculado={props.nomeElementoVinculadoInterruptor} aoMudarDescricao={props.aoMudarDescricaoInterruptor} aoMudarAlcance={props.aoMudarAlcanceInterruptor} aoMudarCorrenteCircuito={props.aoMudarCorrenteCircuito} aoAlternarLigadoInicialmente={props.aoAlternarLigadoInicialmenteCircuito} aoAcionar={() => props.interruptorSelecionado !== null && props.aoAcionarInterruptor(props.interruptorSelecionado.idLocal)} />
                 </PainelColapsavelEditor3D>
             ) : props.luzSelecionada !== null ? (
                 <PainelColapsavelEditor3D titulo="Luz" valor={ROTULO_CURTO_TIPO_FONTE_DE_LUZ_EDITOR3D[props.luzSelecionada.tipo]}>
-                    <PainelLuzEditor3D luz={props.luzSelecionada} edicaoDeJogo={colecaoEditaJogoDaLuz(props.colecaoSistema)} interruptores={props.interruptoresDaLuz} definindoInterruptor={props.definindoInterruptor} aoMudarTipo={props.aoMudarTipoLuz} aoMudarCor={props.aoMudarCorLuz} aoMudarCampo={props.aoMudarCampoLuz} aoMudarPosicao={props.aoMudarPosicaoLuz} aoAlternarInterruptor={props.aoAlternarInterruptorDaLuz} aoAlternarDefinicaoInterruptor={props.aoAlternarDefinicaoInterruptor} />
+                    <PainelLuzEditor3D luz={props.luzSelecionada} edicaoDeJogo={colecaoEditaJogoDaLuz(props.colecaoSistema)} circuito={props.circuitoDaLuz} interruptores={props.interruptoresDaLuz} definindoInterruptor={props.definindoInterruptor} aoMudarTipo={props.aoMudarTipoLuz} aoMudarCor={props.aoMudarCorLuz} aoMudarCampo={props.aoMudarCampoLuz} aoMudarPosicao={props.aoMudarPosicaoLuz} aoMudarCorrenteEntrega={props.aoMudarCorrenteEntregaLuz} aoRemoverInterruptor={props.aoRemoverInterruptor} aoRemoverDoCircuito={props.aoRemoverLuzDoCircuito} aoAlternarDefinicaoInterruptor={props.aoAlternarDefinicaoInterruptor} />
                 </PainelColapsavelEditor3D>
             ) : props.idSelecionado === SELECAO_CAMERA_EDITOR3D && props.camera !== null ? (
                 <PainelColapsavelEditor3D titulo="Câmera" valor="Output">

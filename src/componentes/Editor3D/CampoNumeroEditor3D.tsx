@@ -2,7 +2,7 @@
 
 import styles from './Editor3D.module.css';
 
-import { useEffect, useState, type ChangeEvent, type KeyboardEvent } from 'react';
+import { useEffect, useState, type ChangeEvent, type CSSProperties, type KeyboardEvent } from 'react';
 
 // Mecânica de trava de eixo (linhas do painel Transform): o RÓTULO é o toggle (o input segue editável — a trava governa
 // só o gesto). `emModo` acende a barrinha da cor do eixo DENTRO do input (sombra interna: zero deslocamento de layout);
@@ -25,6 +25,8 @@ interface CampoNumeroEditor3DProps {
     readonly maximo?: number;
     readonly inteiro?: boolean;
     readonly desabilitado?: boolean;
+    // Explicação do campo no "?" ao lado do rótulo — o inspetor é estreito: texto corrido vira ruído, tooltip só aparece quando pedido.
+    readonly ajuda?: string;
     readonly trava?: TravaCampoNumeroEditor3D;
 };
 
@@ -54,7 +56,22 @@ function converteTextoNumero(valorTexto: string): number | null {
     return Number.isFinite(valor) ? valor : null;
 };
 
-export function CampoNumeroEditor3D({ rotulo, valor, passo, atualizaValor, minimo, maximo, inteiro = false, desabilitado = false, trava }: CampoNumeroEditor3DProps) {
+interface InputNumeroEditor3DProps {
+    readonly valor: number;
+    readonly passo: number;
+    readonly atualizaValor: (valor: number) => void;
+    readonly minimo?: number;
+    readonly maximo?: number;
+    readonly inteiro?: boolean;
+    readonly desabilitado?: boolean;
+    readonly estilo?: CSSProperties;
+    readonly titulo?: string;
+};
+
+// O INPUT numérico em si (digitação livre + setas com passo, ×10 no Shift, Esc restaura): extraído para ser reusado por
+// quem monta outras formas de campo — a linha rótulo+valor (`CampoNumeroEditor3D`) e a linha de FAIXA mín–máx
+// (`CampoFaixaEditor3D`), sem duplicar a normalização.
+export function InputNumeroEditor3D({ valor, passo, atualizaValor, minimo, maximo, inteiro = false, desabilitado = false, estilo, titulo }: InputNumeroEditor3DProps) {
     const [valorTexto, setValorTexto] = useState(() => formataValor(valor, passo, inteiro, minimo, maximo));
     const [editando, setEditando] = useState(false);
 
@@ -103,6 +120,10 @@ export function CampoNumeroEditor3D({ rotulo, valor, passo, atualizaValor, minim
         }
     };
 
+    return <input type="text" inputMode={inteiro ? 'numeric' : 'decimal'} value={valorTexto} disabled={desabilitado} style={estilo} title={titulo} onFocus={() => setEditando(true)} onChange={alteraTexto} onBlur={finalizaEdicao} onKeyDown={aplicaTecla} />;
+};
+
+export function CampoNumeroEditor3D({ rotulo, valor, passo, atualizaValor, minimo, maximo, inteiro = false, desabilitado = false, ajuda, trava }: CampoNumeroEditor3DProps) {
     const classesLinha = [styles.campo_numero];
     if (trava?.ativa) {
         classesLinha.push(styles.campo_numero_travado);
@@ -124,9 +145,9 @@ export function CampoNumeroEditor3D({ rotulo, valor, passo, atualizaValor, minim
             {trava !== undefined ? (
                 <span className={styles.rotulo_travavel} title={trava.ativa ? 'Destravar: o gesto volta a alterar este eixo' : 'Travar: o gesto não altera este eixo'} onClick={alternaTrava}>{rotulo}</span>
             ) : (
-                <span>{rotulo}</span>
+                <span>{rotulo}{ajuda !== undefined && <button type="button" className={styles.ajuda_campo} title={ajuda} aria-label={ajuda} onClick={evento => evento.preventDefault()}>?</button>}</span>
             )}
-            <input type="text" inputMode={inteiro ? 'numeric' : 'decimal'} value={valorTexto} disabled={desabilitado} style={estiloInput} onFocus={() => setEditando(true)} onChange={alteraTexto} onBlur={finalizaEdicao} onKeyDown={aplicaTecla} />
+            <InputNumeroEditor3D valor={valor} passo={passo} atualizaValor={atualizaValor} minimo={minimo} maximo={maximo} inteiro={inteiro} desabilitado={desabilitado} estilo={estiloInput} />
         </label>
     );
 };

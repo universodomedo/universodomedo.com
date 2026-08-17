@@ -1,14 +1,14 @@
-import type { CamadaJogoMapa, ComandoMapa, FonteDeLuzMapa, TipoFonteDeLuzMapa } from 'types-nora-api';
+import type { CamadaJogoMapa, CamadaJogoMapaPersistida, CorrenteMapa, FonteDeLuzMapa, IntermitenciaCorrenteMapa, InterruptorMapa, NoDistribuicaoMapa, PadraoCriseCorrenteMapa, TipoFonteDeLuzMapa } from 'types-nora-api';
 
 import { corHexParaVetor3Editor3D, vetor3ParaCorHexEditor3D } from './editor3D.cor';
 import { elementosDoMapa } from 'Funcionalidades/MapaJogavel/mapaJogavel.helpers';
+import { normalizaCamadaJogoMapaPersistidaMapa } from 'Funcionalidades/MapaJogavel/mapaJogavel.corrente';
 import type { CenaCanonicaEditor3D } from 'types-nora-api';
 
-// CAMADA DE JOGO do mapa no ESTADO do editor. Espelha o contrato trocando a cor por hex (o `<input type="color">` fala hex,
-// o contrato fala Vetor3) e SEM `alternavel`: no editor isso não se autora — luz é alternável se, e somente se, algum
-// interruptor a aciona, e o flag do contrato é DERIVADO dos vínculos na serialização. Sem interruptor, a luz é fixa
-// (sempre acesa em jogo): não há o que alternar. O domínio LÓGICO vive aqui, separado da cena 3D — que segue sendo só
-// geometria e material.
+// CAMADA DE JOGO do mapa no ESTADO do editor. Espelha o contrato v2 (árvore de distribuição) ACHATADO para a autoria da
+// fase 1: a ENTREGA de cada luz vira campos da própria luz (correnteEntrega + idCircuito) e os nós de tronco são os
+// CIRCUITOS (raízes com corrente própria, alternados por interruptores). A cor vira hex (o `<input type="color">` fala hex,
+// o contrato fala Vetor3). O domínio LÓGICO vive aqui, separado da cena 3D — que segue sendo só geometria e material.
 export type FonteDeLuzEditor3D = {
     readonly idLocal: string;
     readonly nome: string;
@@ -17,25 +17,45 @@ export type FonteDeLuzEditor3D = {
     readonly cor: string;
     readonly intensidade: number;
     readonly alcanceMetros: number;
+    // ENTREGA da luz na distribuição — a derivação que mora FISICAMENTE junto da lâmpada: corrente própria (o dano/regime
+    // de UMA lâmpada) e o circuito de que ela pende (null = ligada direto na alimentação, sempre energizada).
+    readonly correnteEntrega: CorrenteMapa;
+    readonly idCircuito: string | null;
 };
 
-// Comando no estado do editor: o corpo físico (posição/dimensões) NÃO mora aqui — é derivado do elemento da cena a cada
-// salvamento, para nunca ficar velho quando o artista mover o interruptor.
-export type ComandoEditor3D = {
+// Circuito: nó de TRONCO da distribuição — a corrente que ele entrega vale para todas as luzes penduradas nele, e o gate
+// dele é o que os interruptores alternam. Vários interruptores no mesmo circuito = paralelo (three-way).
+export type CircuitoEditor3D = {
+    readonly idLocal: string;
+    readonly nome: string;
+    readonly corrente: CorrenteMapa;
+    readonly ligadoInicialmente: boolean;
+};
+
+// Interruptor no estado do editor: corpo físico que alterna UM circuito. Posição/dimensões NÃO moram aqui — derivadas do
+// elemento da cena a cada salvamento, para nunca ficarem velhas quando o artista mover o interruptor.
+export type InterruptorEditor3D = {
     readonly idLocal: string;
     readonly nome: string;
     readonly descricao: string;
     readonly idElementoCena: string;
-    readonly idsFontesDeLuz: readonly string[];
+    readonly idCircuito: string;
     readonly alcanceMilimetros: number;
+};
+
+export type FiacaoEditor3D = {
+    readonly circuitos: readonly CircuitoEditor3D[];
+    readonly interruptores: readonly InterruptorEditor3D[];
 };
 
 export type CamadaJogoEditor3D = {
     readonly fontesDeLuz: readonly FonteDeLuzEditor3D[];
-    readonly comandos: readonly ComandoEditor3D[];
+    readonly fiacao: FiacaoEditor3D;
 };
 
-export const CAMADA_JOGO_VAZIA_EDITOR3D: CamadaJogoEditor3D = { fontesDeLuz: [], comandos: [] };
+export const CORRENTE_PLENA_EDITOR3D: CorrenteMapa = { nivelPercentual: 100, intermitencia: null };
+export const FIACAO_VAZIA_EDITOR3D: FiacaoEditor3D = { circuitos: [], interruptores: [] };
+export const CAMADA_JOGO_VAZIA_EDITOR3D: CamadaJogoEditor3D = { fontesDeLuz: [], fiacao: FIACAO_VAZIA_EDITOR3D };
 
 export const TIPOS_FONTE_DE_LUZ_EDITOR3D: readonly TipoFonteDeLuzMapa[] = ['PONTO', 'AMBIENTE'];
 export const ROTULO_TIPO_FONTE_DE_LUZ_EDITOR3D: Record<TipoFonteDeLuzMapa, string> = { PONTO: 'Ponto (lâmpada, abajur, LED)', AMBIENTE: 'Ambiente iluminado (sem objeto)' };
@@ -44,10 +64,20 @@ export const ROTULO_CURTO_TIPO_FONTE_DE_LUZ_EDITOR3D: Record<TipoFonteDeLuzMapa,
 export const INTENSIDADE_PADRAO_POR_TIPO_FONTE_EDITOR3D: Record<TipoFonteDeLuzMapa, number> = { PONTO: 100, AMBIENTE: 0.6 };
 export const MAXIMO_INTENSIDADE_POR_TIPO_FONTE_EDITOR3D: Record<TipoFonteDeLuzMapa, number> = { PONTO: 100, AMBIENTE: 3 };
 
+// Limites das faixas de intermitência (MS, como o contrato) — os MESMOS do validador da Nora-Api, para o save nunca ser recusado.
+export const LIMITES_INTERMITENCIA_EDITOR3D = { cicloMs: { minimo: 500, maximo: 3600000 }, flicks: { minimo: 1, maximo: 20 }, duracaoFlickMs: { minimo: 10, maximo: 3600000 }, intervaloEntreFlicksMs: { minimo: 1, maximo: 60000 }, maximoPadroes: 8 } as const;
+
+// A corrente NÃO tem modos prontos: os cenários (rajada de corredor, apagão, temporizador, lâmpada fraca) são
+// COMBINAÇÕES dos mesmos parâmetros — nível entregue + ciclo + PADRÕES de crise, que o funcionamento mescla ao acaso.
+// O ponto de partida do "+ Intermitência" (e do "+ Padrão") é a rajada característica de fiação danificada: a cada
+// 5–12s, 3–5 flicks de 30–150ms com pausas acesas de 5–30ms — o autor ajusta a partir daqui.
+export const PADRAO_CRISE_PADRAO_EDITOR3D: PadraoCriseCorrenteMapa = { ativo: true, flicks: { minimo: 3, maximo: 5 }, duracaoFlickMs: { minimo: 30, maximo: 150 }, intervaloEntreFlicksMs: { minimo: 5, maximo: 30 } };
+export const INTERMITENCIA_PADRAO_EDITOR3D: IntermitenciaCorrenteMapa = { cicloMs: { minimo: 5000, maximo: 12000 }, padroes: [PADRAO_CRISE_PADRAO_EDITOR3D] };
+
 const COR_FONTE_PADRAO_EDITOR3D = '#ffe8c0';
 const ALTURA_FONTE_PADRAO_EDITOR3D = 2.6;
 const ALCANCE_FONTE_PADRAO_METROS_EDITOR3D = 6;
-const ALCANCE_COMANDO_PADRAO_MILIMETROS_EDITOR3D = 1500;
+const ALCANCE_INTERRUPTOR_PADRAO_MILIMETROS_EDITOR3D = 1500;
 
 // idLocal estável e legível, derivado dos existentes — sem relógio nem aleatório, para o mesmo mapa reabrir igual.
 function proximoIdLocal(existentes: readonly { readonly idLocal: string }[], prefixo: string): string {
@@ -60,7 +90,7 @@ function proximoIdLocal(existentes: readonly { readonly idLocal: string }[], pre
 // dele, completando a "fiação elétrica" do mapa (objeto-corpo → luz → interruptor).
 export function criaFonteDeLuzEditor3D(fontes: readonly FonteDeLuzEditor3D[]): FonteDeLuzEditor3D {
     const idLocal = proximoIdLocal(fontes, 'LUZ');
-    return { idLocal, nome: `Luz ${idLocal.replace('LUZ_', '')}`, tipo: 'PONTO', posicao: [0, 0, ALTURA_FONTE_PADRAO_EDITOR3D], cor: COR_FONTE_PADRAO_EDITOR3D, intensidade: INTENSIDADE_PADRAO_POR_TIPO_FONTE_EDITOR3D.PONTO, alcanceMetros: Math.min(ALCANCE_FONTE_PADRAO_METROS_EDITOR3D, ALCANCE_MAXIMO_AUTORAVEL_METROS_EDITOR3D) };
+    return { idLocal, nome: `Luz ${idLocal.replace('LUZ_', '')}`, tipo: 'PONTO', posicao: [0, 0, ALTURA_FONTE_PADRAO_EDITOR3D], cor: COR_FONTE_PADRAO_EDITOR3D, intensidade: INTENSIDADE_PADRAO_POR_TIPO_FONTE_EDITOR3D.PONTO, alcanceMetros: Math.min(ALCANCE_FONTE_PADRAO_METROS_EDITOR3D, ALCANCE_MAXIMO_AUTORAVEL_METROS_EDITOR3D), correnteEntrega: CORRENTE_PLENA_EDITOR3D, idCircuito: null };
 };
 
 // DUAS esferas de alcance regem a fonte PONTO, e nenhuma mente:
@@ -82,55 +112,133 @@ export function aplicaCampoLuzEditor3D(luz: FonteDeLuzEditor3D, campo: 'intensid
     return { ...luz, alcanceMetros: Math.min(valor, ALCANCE_MAXIMO_AUTORAVEL_METROS_EDITOR3D) };
 };
 
-function descricaoPadraoComandoEditor3D(nomeElemento: string): string { return `${nomeElemento}. Aproxime-se para acionar.`; };
+function clampFaixaEditor3D(valor: number, minimo: number, maximo: number): number { return Math.min(maximo, Math.max(minimo, valor)); };
 
-function criaComandoEditor3D(comandos: readonly ComandoEditor3D[], idElementoCena: string, nomeElemento: string, idFonte: string): ComandoEditor3D {
-    const idLocal = proximoIdLocal(comandos, 'COMANDO');
-    return { idLocal, nome: nomeElemento, descricao: descricaoPadraoComandoEditor3D(nomeElemento), idElementoCena, idsFontesDeLuz: [idFonte], alcanceMilimetros: ALCANCE_COMANDO_PADRAO_MILIMETROS_EDITOR3D };
+// Toda mutação de corrente passa por aqui: níveis em 0-100, faixas dentro dos limites do validador e mínimo <= máximo —
+// o save nunca é recusado por corrente fora da régua.
+export function sanitizaCorrenteEditor3D(corrente: CorrenteMapa): CorrenteMapa {
+    const nivelPercentual = clampFaixaEditor3D(corrente.nivelPercentual, 0, 100);
+    if (corrente.intermitencia === null) return { nivelPercentual, intermitencia: null };
+
+    const limites = LIMITES_INTERMITENCIA_EDITOR3D;
+    const cicloMinimo = clampFaixaEditor3D(corrente.intermitencia.cicloMs.minimo, limites.cicloMs.minimo, limites.cicloMs.maximo);
+    const padroes = corrente.intermitencia.padroes.slice(0, limites.maximoPadroes).map(sanitizaPadraoCriseEditor3D);
+    return {
+        nivelPercentual,
+        intermitencia: {
+            cicloMs: { minimo: cicloMinimo, maximo: clampFaixaEditor3D(corrente.intermitencia.cicloMs.maximo, cicloMinimo, limites.cicloMs.maximo) },
+            padroes: padroes.length > 0 ? padroes : [PADRAO_CRISE_PADRAO_EDITOR3D],
+        },
+    };
 };
 
-// O Interruptor não é entidade autorada solta: é a ARESTA objeto↔luz vista do lado do objeto. Alternar um vínculo cria
-// o interruptor no PRIMEIRO vínculo (nome/descrição derivados do objeto), agrupa vínculos seguintes no mesmo objeto
-// (circuito) e o DISSOLVE quando o último vínculo sai — a lista de interruptores é derivada, nunca se cria vazia.
-export function alternaVinculoLuzInterruptorEditor3D(comandos: readonly ComandoEditor3D[], idElementoCena: string, nomeElemento: string, idFonte: string): ComandoEditor3D[] {
-    const existente = comandos.find(comando => comando.idElementoCena === idElementoCena);
-    if (existente === undefined) return [...comandos, criaComandoEditor3D(comandos, idElementoCena, nomeElemento, idFonte)];
-
-    const idsFontesDeLuz = existente.idsFontesDeLuz.includes(idFonte) ? existente.idsFontesDeLuz.filter(id => id !== idFonte) : [...existente.idsFontesDeLuz, idFonte];
-    if (idsFontesDeLuz.length === 0) return comandos.filter(comando => comando.idLocal !== existente.idLocal);
-
-    return comandos.map(comando => comando.idLocal === existente.idLocal ? { ...comando, idsFontesDeLuz } : comando);
+function sanitizaPadraoCriseEditor3D(padrao: PadraoCriseCorrenteMapa): PadraoCriseCorrenteMapa {
+    const limites = LIMITES_INTERMITENCIA_EDITOR3D;
+    const flicksMinimo = Math.round(clampFaixaEditor3D(padrao.flicks.minimo, limites.flicks.minimo, limites.flicks.maximo));
+    const duracaoMinimo = clampFaixaEditor3D(padrao.duracaoFlickMs.minimo, limites.duracaoFlickMs.minimo, limites.duracaoFlickMs.maximo);
+    const intervaloMinimo = clampFaixaEditor3D(padrao.intervaloEntreFlicksMs.minimo, limites.intervaloEntreFlicksMs.minimo, limites.intervaloEntreFlicksMs.maximo);
+    return {
+        ativo: padrao.ativo,
+        flicks: { minimo: flicksMinimo, maximo: Math.round(clampFaixaEditor3D(padrao.flicks.maximo, flicksMinimo, limites.flicks.maximo)) },
+        duracaoFlickMs: { minimo: duracaoMinimo, maximo: clampFaixaEditor3D(padrao.duracaoFlickMs.maximo, duracaoMinimo, limites.duracaoFlickMs.maximo) },
+        intervaloEntreFlicksMs: { minimo: intervaloMinimo, maximo: clampFaixaEditor3D(padrao.intervaloEntreFlicksMs.maximo, intervaloMinimo, limites.intervaloEntreFlicksMs.maximo) },
+    };
 };
 
-// "Definir interruptor" (o gesto armado) só ADICIONA: clicar num objeto que já aciona a luz não desfaz nada — remover
-// vínculo é sempre ação explícita (o ◉ nos painéis). Devolve a MESMA referência quando nada muda, para o chamador não
-// registrar histórico nem sujar o projeto à toa.
-export function vinculaLuzInterruptorEditor3D(comandos: readonly ComandoEditor3D[], idElementoCena: string, nomeElemento: string, idFonte: string): readonly ComandoEditor3D[] {
-    const existente = comandos.find(comando => comando.idElementoCena === idElementoCena);
-    if (existente !== undefined && existente.idsFontesDeLuz.includes(idFonte)) return comandos;
+function descricaoPadraoInterruptorEditor3D(nomeElemento: string): string { return `${nomeElemento}. Aproxime-se para acionar.`; };
 
-    return alternaVinculoLuzInterruptorEditor3D(comandos, idElementoCena, nomeElemento, idFonte);
+function criaInterruptorEditor3D(interruptores: readonly InterruptorEditor3D[], idElementoCena: string, nomeElemento: string, idCircuito: string): InterruptorEditor3D {
+    const idLocal = proximoIdLocal(interruptores, 'INTERRUPTOR');
+    return { idLocal, nome: nomeElemento, descricao: descricaoPadraoInterruptorEditor3D(nomeElemento), idElementoCena, idCircuito, alcanceMilimetros: ALCANCE_INTERRUPTOR_PADRAO_MILIMETROS_EDITOR3D };
 };
 
-// Serialização: o corpo físico do comando é DERIVADO do bbox do elemento AGORA — assim mover o interruptor no Editor e salvar
-// já regrava a posição que o runtime usa para validar alcance. Comando cujo elemento sumiu da cena é descartado.
+// "Definir interruptor" (o gesto armado) só ADICIONA na árvore — remover é sempre ação explícita (◉ nos painéis).
+// As quatro saídas do gesto, todas fiéis à física de residência:
+// - objeto sem interruptor + luz sem circuito → nasce circuito novo com o interruptor, e a luz pendura nele;
+// - objeto sem interruptor + luz com circuito → o objeto vira MAIS um interruptor do circuito da luz (three-way);
+// - objeto já interruptor + luz sem circuito → a luz pendura no circuito dele;
+// - objeto já interruptor + luz em OUTRO circuito → os circuitos se FUNDEM (a fiação agora é uma só).
+// Devolve null quando nada muda (luz já no circuito do objeto), para o chamador não registrar histórico à toa.
+export function vinculaLuzInterruptorEditor3D(fiacao: FiacaoEditor3D, luzes: readonly FonteDeLuzEditor3D[], idElementoCena: string, nomeElemento: string, idFonte: string): { fiacao: FiacaoEditor3D; luzes: readonly FonteDeLuzEditor3D[] } | null {
+    const luz = luzes.find(fonte => fonte.idLocal === idFonte);
+    if (luz === undefined) return null;
+
+    const existente = fiacao.interruptores.find(interruptor => interruptor.idElementoCena === idElementoCena);
+    if (existente !== undefined) {
+        if (luz.idCircuito === existente.idCircuito) return null;
+        if (luz.idCircuito === null) return { fiacao, luzes: luzes.map(fonte => fonte.idLocal === idFonte ? { ...fonte, idCircuito: existente.idCircuito } : fonte) };
+
+        const idCircuitoMorto = luz.idCircuito;
+        return {
+            fiacao: { circuitos: fiacao.circuitos.filter(circuito => circuito.idLocal !== idCircuitoMorto), interruptores: fiacao.interruptores.map(interruptor => interruptor.idCircuito === idCircuitoMorto ? { ...interruptor, idCircuito: existente.idCircuito } : interruptor) },
+            luzes: luzes.map(fonte => fonte.idCircuito === idCircuitoMorto ? { ...fonte, idCircuito: existente.idCircuito } : fonte),
+        };
+    }
+
+    if (luz.idCircuito !== null) return { fiacao: { circuitos: fiacao.circuitos, interruptores: [...fiacao.interruptores, criaInterruptorEditor3D(fiacao.interruptores, idElementoCena, nomeElemento, luz.idCircuito)] }, luzes };
+
+    const idCircuito = proximoIdLocal(fiacao.circuitos, 'CIRCUITO');
+    const circuito: CircuitoEditor3D = { idLocal: idCircuito, nome: nomeElemento, corrente: CORRENTE_PLENA_EDITOR3D, ligadoInicialmente: true };
+    return {
+        fiacao: { circuitos: [...fiacao.circuitos, circuito], interruptores: [...fiacao.interruptores, criaInterruptorEditor3D(fiacao.interruptores, idElementoCena, nomeElemento, idCircuito)] },
+        luzes: luzes.map(fonte => fonte.idLocal === idFonte ? { ...fonte, idCircuito } : fonte),
+    };
+};
+
+// Remove o CORPO do circuito (o ◉ na lista da luz / excluir na árvore). O circuito só dissolve se ficou sem interruptor E
+// com corrente trivial — regime autorado sustenta o circuito mesmo sem corpo (a alimentação com dano do hospital).
+export function removeInterruptorEditor3D(fiacao: FiacaoEditor3D, luzes: readonly FonteDeLuzEditor3D[], idInterruptor: string): { fiacao: FiacaoEditor3D; luzes: readonly FonteDeLuzEditor3D[] } {
+    const interruptor = fiacao.interruptores.find(atual => atual.idLocal === idInterruptor);
+    if (interruptor === undefined) return { fiacao, luzes };
+
+    const interruptores = fiacao.interruptores.filter(atual => atual.idLocal !== idInterruptor);
+    const circuito = fiacao.circuitos.find(atual => atual.idLocal === interruptor.idCircuito);
+    const circuitoSustentado = interruptores.some(atual => atual.idCircuito === interruptor.idCircuito) || (circuito !== undefined && !(circuito.corrente.nivelPercentual === 100 && circuito.corrente.intermitencia === null && circuito.ligadoInicialmente));
+    if (circuitoSustentado) return { fiacao: { circuitos: fiacao.circuitos, interruptores }, luzes };
+
+    return {
+        fiacao: { circuitos: fiacao.circuitos.filter(atual => atual.idLocal !== interruptor.idCircuito), interruptores },
+        luzes: luzes.map(fonte => fonte.idCircuito === interruptor.idCircuito ? { ...fonte, idCircuito: null } : fonte),
+    };
+};
+
+// Solta a ENTREGA da luz do circuito ("Remover do circuito" no painel dela). Circuito sem nenhuma luz dissolve — e leva os
+// interruptores junto: interruptor de circuito vazio não aciona nada.
+export function removeLuzDoCircuitoEditor3D(fiacao: FiacaoEditor3D, luzes: readonly FonteDeLuzEditor3D[], idFonte: string): { fiacao: FiacaoEditor3D; luzes: readonly FonteDeLuzEditor3D[] } {
+    const luz = luzes.find(fonte => fonte.idLocal === idFonte);
+    if (luz === undefined || luz.idCircuito === null) return { fiacao, luzes };
+
+    const idCircuito = luz.idCircuito;
+    const luzesNovas = luzes.map(fonte => fonte.idLocal === idFonte ? { ...fonte, idCircuito: null } : fonte);
+    if (luzesNovas.some(fonte => fonte.idCircuito === idCircuito)) return { fiacao, luzes: luzesNovas };
+
+    return { fiacao: { circuitos: fiacao.circuitos.filter(circuito => circuito.idLocal !== idCircuito), interruptores: fiacao.interruptores.filter(interruptor => interruptor.idCircuito !== idCircuito) }, luzes: luzesNovas };
+};
+
+// id do nó de ENTREGA no contrato, derivado da luz — estável entre salvamentos (o cronograma determinístico usa o id).
+export function idNoEntregaDaLuzEditor3D(idFonte: string): string { return `ENTREGA_${idFonte}`; };
+
+// Serialização v2: circuitos viram nós-raiz, cada luz ganha seu nó de ENTREGA, interruptores apontam o circuito. O corpo
+// físico do interruptor é DERIVADO do bbox do elemento AGORA — mover o interruptor no Editor e salvar já regrava a posição
+// que o runtime usa. Interruptor cujo elemento sumiu e circuito que ficou sem luz são descartados.
 export function serializaCamadaJogoEditor3D(camadaJogo: CamadaJogoEditor3D, cena: CenaCanonicaEditor3D): CamadaJogoMapa {
     const elementosPorId = new Map(elementosDoMapa(cena).map(elemento => [elemento.idLocal, elemento]));
-    const idsFontesExistentes = new Set(camadaJogo.fontesDeLuz.map(fonte => fonte.idLocal));
-    const comandos: ComandoMapa[] = [];
+    const idsCircuitosComLuz = new Set(camadaJogo.fontesDeLuz.map(fonte => fonte.idCircuito).filter((id): id is string => id !== null));
+    const circuitosVivos = camadaJogo.fiacao.circuitos.filter(circuito => idsCircuitosComLuz.has(circuito.idLocal));
+    const idsCircuitosVivos = new Set(circuitosVivos.map(circuito => circuito.idLocal));
 
-    for (const comando of camadaJogo.comandos) {
-        const elemento = elementosPorId.get(comando.idElementoCena);
-        const idsFontesDeLuz = comando.idsFontesDeLuz.filter(idFonte => idsFontesExistentes.has(idFonte));
-        if (elemento === undefined || idsFontesDeLuz.length === 0) continue;
+    const interruptores: InterruptorMapa[] = [];
+    for (const interruptor of camadaJogo.fiacao.interruptores) {
+        const elemento = elementosPorId.get(interruptor.idElementoCena);
+        if (elemento === undefined || !idsCircuitosVivos.has(interruptor.idCircuito)) continue;
 
-        comandos.push({
-            idLocal: comando.idLocal,
-            nome: comando.nome.trim().length > 0 ? comando.nome.trim() : elemento.nome,
-            descricao: comando.descricao.trim().length > 0 ? comando.descricao.trim() : `${elemento.nome}. Aproxime-se para acionar.`,
-            idElementoCena: comando.idElementoCena,
-            idsFontesDeLuz,
-            alcanceMilimetros: comando.alcanceMilimetros,
+        interruptores.push({
+            idLocal: interruptor.idLocal,
+            nome: interruptor.nome.trim().length > 0 ? interruptor.nome.trim() : elemento.nome,
+            descricao: interruptor.descricao.trim().length > 0 ? interruptor.descricao.trim() : descricaoPadraoInterruptorEditor3D(elemento.nome),
+            idElementoCena: interruptor.idElementoCena,
+            idNo: interruptor.idCircuito,
+            alcanceMilimetros: interruptor.alcanceMilimetros,
             posicao: { x: elemento.posicao.x, y: elemento.posicao.y },
             larguraMilimetros: elemento.larguraMilimetros,
             alturaMilimetros: elemento.alturaMilimetros,
@@ -138,9 +246,11 @@ export function serializaCamadaJogoEditor3D(camadaJogo: CamadaJogoEditor3D, cena
         });
     }
 
-    // `alternavel` do contrato é DERIVADO da fiação: luz é alternável ⟺ algum interruptor a aciona. Sem interruptor,
-    // não há o que alternar — a luz vai fixa (sempre acesa em jogo).
-    const idsAlternaveis = new Set(comandos.flatMap(comando => comando.idsFontesDeLuz));
+    const nosDistribuicao: NoDistribuicaoMapa[] = [
+        ...circuitosVivos.map(circuito => ({ idLocal: circuito.idLocal, nome: circuito.nome, idNoPai: null, corrente: sanitizaCorrenteEditor3D(circuito.corrente), ligadoInicialmente: circuito.ligadoInicialmente, idFonteDeLuz: null })),
+        ...camadaJogo.fontesDeLuz.map(fonte => ({ idLocal: idNoEntregaDaLuzEditor3D(fonte.idLocal), nome: fonte.nome.trim().length > 0 ? fonte.nome.trim() : fonte.idLocal, idNoPai: fonte.idCircuito !== null && idsCircuitosVivos.has(fonte.idCircuito) ? fonte.idCircuito : null, corrente: sanitizaCorrenteEditor3D(fonte.correnteEntrega), ligadoInicialmente: true, idFonteDeLuz: fonte.idLocal })),
+    ];
+
     const fontesDeLuz: FonteDeLuzMapa[] = camadaJogo.fontesDeLuz.map(fonte => ({
         idLocal: fonte.idLocal,
         nome: fonte.nome.trim().length > 0 ? fonte.nome.trim() : fonte.idLocal,
@@ -149,19 +259,35 @@ export function serializaCamadaJogoEditor3D(camadaJogo: CamadaJogoEditor3D, cena
         cor: corHexParaVetor3Editor3D(fonte.cor),
         intensidade: fonte.intensidade,
         alcanceMetros: fonte.alcanceMetros,
-        alternavel: idsAlternaveis.has(fonte.idLocal),
     }));
 
-    return { versao: 1, fontesDeLuz, comandos };
+    return { versao: 2, fontesDeLuz, nosDistribuicao, interruptores };
 };
 
-export function camadaJogoDoProjeto(camadaJogo: CamadaJogoMapa | null | undefined): CamadaJogoEditor3D {
-    if (!camadaJogo) return CAMADA_JOGO_VAZIA_EDITOR3D;
+function fonteDoContratoEditor3D(fonte: FonteDeLuzMapa, correnteEntrega: CorrenteMapa, idCircuito: string | null): FonteDeLuzEditor3D {
+    // Intensidade (percentual) e alcance salvos entram clampados aos limites autoráveis; corrente passa pela mesma régua.
+    return { idLocal: fonte.idLocal, nome: fonte.nome, tipo: fonte.tipo, posicao: [fonte.posicao[0], fonte.posicao[1], fonte.posicao[2]], cor: vetor3ParaCorHexEditor3D(fonte.cor), intensidade: Math.min(fonte.intensidade, MAXIMO_INTENSIDADE_POR_TIPO_FONTE_EDITOR3D[fonte.tipo]), alcanceMetros: fonte.tipo === 'PONTO' ? Math.min(fonte.alcanceMetros, ALCANCE_MAXIMO_AUTORAVEL_METROS_EDITOR3D) : fonte.alcanceMetros, correnteEntrega: sanitizaCorrenteEditor3D(correnteEntrega), idCircuito };
+};
 
-    // O `alternavel` salvo não entra no estado do editor: ele é derivado dos vínculos e regravado a cada salvamento.
-    // Intensidade (percentual) e alcance salvos entram clampados aos limites autoráveis.
+export function camadaJogoDoProjeto(camadaJogo: CamadaJogoMapaPersistida | null | undefined): CamadaJogoEditor3D {
+    // A migração v1→v2 mora no normalizador COMPARTILHADO do front (mapaJogavel.corrente) — o mesmo do jogo, que espelha
+    // o do runtime da Partida: um só algoritmo de leitura do legado em toda a plataforma.
+    const normalizada = normalizaCamadaJogoMapaPersistidaMapa(camadaJogo);
+    if (normalizada === null) return CAMADA_JOGO_VAZIA_EDITOR3D;
+
+    // A árvore ACHATA para a autoria — nós de entrega viram campos da luz; os demais nós são os circuitos. Entrega
+    // apontando pai que não é circuito (forma da fase 2) cai para solta — o editor da fase 1 só autora dois níveis.
+    const entregaPorFonte = new Map(normalizada.nosDistribuicao.filter(no => no.idFonteDeLuz !== null).map(no => [no.idFonteDeLuz, no]));
+    const circuitos = normalizada.nosDistribuicao.filter(no => no.idFonteDeLuz === null);
+    const idsCircuitos = new Set(circuitos.map(no => no.idLocal));
     return {
-        fontesDeLuz: camadaJogo.fontesDeLuz.map(fonte => ({ idLocal: fonte.idLocal, nome: fonte.nome, tipo: fonte.tipo, posicao: [fonte.posicao[0], fonte.posicao[1], fonte.posicao[2]], cor: vetor3ParaCorHexEditor3D(fonte.cor), intensidade: Math.min(fonte.intensidade, MAXIMO_INTENSIDADE_POR_TIPO_FONTE_EDITOR3D[fonte.tipo]), alcanceMetros: fonte.tipo === 'PONTO' ? Math.min(fonte.alcanceMetros, ALCANCE_MAXIMO_AUTORAVEL_METROS_EDITOR3D) : fonte.alcanceMetros })),
-        comandos: camadaJogo.comandos.map(comando => ({ idLocal: comando.idLocal, nome: comando.nome, descricao: comando.descricao, idElementoCena: comando.idElementoCena, idsFontesDeLuz: [...comando.idsFontesDeLuz], alcanceMilimetros: comando.alcanceMilimetros })),
+        fontesDeLuz: normalizada.fontesDeLuz.map(fonte => {
+            const entrega = entregaPorFonte.get(fonte.idLocal);
+            return fonteDoContratoEditor3D(fonte, entrega?.corrente ?? CORRENTE_PLENA_EDITOR3D, entrega !== undefined && entrega.idNoPai !== null && idsCircuitos.has(entrega.idNoPai) ? entrega.idNoPai : null);
+        }),
+        fiacao: {
+            circuitos: circuitos.map(no => ({ idLocal: no.idLocal, nome: no.nome, corrente: sanitizaCorrenteEditor3D(no.corrente), ligadoInicialmente: no.ligadoInicialmente })),
+            interruptores: normalizada.interruptores.filter(interruptor => idsCircuitos.has(interruptor.idNo)).map(interruptor => ({ idLocal: interruptor.idLocal, nome: interruptor.nome, descricao: interruptor.descricao, idElementoCena: interruptor.idElementoCena, idCircuito: interruptor.idNo, alcanceMilimetros: interruptor.alcanceMilimetros })),
+        },
     };
 };

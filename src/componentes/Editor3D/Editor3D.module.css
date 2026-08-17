@@ -1830,6 +1830,204 @@
     color: rgba(255, 255, 255, 0.42);
 }
 
+/* ---- Ajuda em "?" : a explicação do campo só aparece quando pedida (o inspetor é estreito; texto corrido vira ruído) ---- */
+.ajuda_campo {
+    width: 1.15em;
+    height: 1.15em;
+    margin-left: 0.35em;
+    padding: 0;
+    border: 0.08em solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.45);
+    font: inherit;
+    font-size: 0.9em;
+    line-height: 1;
+    vertical-align: middle;
+    cursor: help;
+}
+
+.ajuda_campo:hover {
+    border-color: rgba(255, 180, 60, 0.6);
+    color: rgba(255, 205, 130, 0.95);
+}
+
+/* ---- Linha de FAIXA (mín – máx na MESMA linha): faixa é UM parâmetro, não dois campos empilhados ---- */
+.campo_faixa {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5em;
+    align-items: center;
+    min-height: 2.25em;
+    padding: 0.3em 0.7em;
+    border-bottom: 0.08em solid rgba(255, 255, 255, 0.07);
+    font-size: 0.82em;
+}
+
+.rotulo_faixa {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.valores_faixa {
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+}
+
+.valores_faixa input {
+    box-sizing: border-box;
+    width: 3.6em;
+    min-height: 1.9em;
+    padding: 0 0.4em;
+    border: 0.08em solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.24em;
+    color: rgba(255, 255, 255, 0.9);
+    font: inherit;
+    text-align: right;
+    background: #191919;
+}
+
+.valores_faixa input:focus {
+    outline: 0.08em solid rgba(92, 148, 255, 0.72);
+    outline-offset: 0;
+}
+
+.separador_faixa {
+    color: rgba(255, 255, 255, 0.32);
+}
+
+/* Largura fixa: a unidade não pode empurrar os inputs de lugar quando muda entre linhas (ms/s). */
+.sufixo_faixa {
+    width: 1.4em;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.9em;
+}
+
+/* ---- Padrões de crise da corrente (fiação): lista de blocos colapsáveis com toggle ativo ---- */
+.cabecalho_lista_padroes {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4em;
+    margin-top: 0.5em;
+}
+
+.cabecalho_lista_padroes > span {
+    display: flex;
+    align-items: center;
+    font-size: 0.72em;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.botao_add_padrao {
+    width: 1.6em;
+    height: 1.6em;
+    padding: 0;
+    border: 0.08em solid rgba(255, 255, 255, 0.14);
+    border-radius: 0.28em;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.85);
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.botao_add_padrao:hover {
+    border-color: rgba(255, 180, 60, 0.6);
+    background: rgba(255, 180, 60, 0.08);
+}
+
+.bloco_padrao_crise {
+    margin-top: 0.3em;
+    border: 0.08em solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.32em;
+    background: rgba(255, 255, 255, 0.02);
+    overflow: hidden;
+}
+
+/* Inativo: continua legível (segue gravado e editável), mas sai visualmente da mescla. */
+.bloco_padrao_crise_inativo {
+    opacity: 0.5;
+}
+
+.cabecalho_padrao_crise {
+    display: flex;
+    align-items: center;
+    gap: 0.25em;
+    padding: 0.2em 0.35em;
+}
+
+.botao_colapsar_padrao {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    min-width: 0;
+    min-height: 1.9em;
+    padding: 0 0.2em;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.85);
+    font: inherit;
+    font-size: 0.78em;
+    text-align: left;
+    cursor: pointer;
+}
+
+.icone_padrao_crise {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.nome_padrao_crise {
+    white-space: nowrap;
+}
+
+/* O resumo é o que distingue um padrão do outro fechado — encolhe antes do nome quando falta espaço. */
+.resumo_padrao_crise {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: rgba(255, 205, 130, 0.62);
+    font-size: 0.92em;
+    text-align: right;
+}
+
+.botao_icone_padrao {
+    width: 1.7em;
+    height: 1.7em;
+    padding: 0;
+    border: 0.08em solid transparent;
+    border-radius: 0.28em;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    font: inherit;
+    font-size: 0.82em;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.botao_icone_padrao:hover {
+    border-color: rgba(255, 180, 60, 0.5);
+    background: rgba(255, 180, 60, 0.08);
+    color: rgba(255, 205, 130, 0.95);
+}
+
+.botao_icone_padrao[aria-pressed='true'] {
+    color: rgba(255, 205, 130, 0.95);
+}
+
+.corpo_padrao_crise {
+    border-top: 0.08em solid rgba(255, 255, 255, 0.07);
+}
+
+.corpo_padrao_crise .campo_faixa:last-child {
+    border-bottom: none;
+}
+
 .botao_acao_objeto {
     flex: 1;
     display: flex;

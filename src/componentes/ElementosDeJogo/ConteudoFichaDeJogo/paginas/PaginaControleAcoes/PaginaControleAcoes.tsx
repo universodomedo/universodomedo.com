@@ -68,7 +68,7 @@ export default function PaginaControleAcoes() {
         <div className={styles.painel_acoes}>
             {acoesPorStatusECapacidade.realizaveis.length > 0 && <SecaoAcoesFicha titulo="Ações Realizáveis" grupos={acoesPorStatusECapacidade.realizaveis} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
             {estadoTemporalSalaJogo && <SecaoAcaoTemporalEsperar estadoTemporalSalaJogo={estadoTemporalSalaJogo} desativarAcoes={desativarAcoes} executaEsperar={executaEsperar} />}
-            {interagiveisComAcao.length > 0 && <SecaoAcoesInteragiveis interagiveis={interagiveisComAcao} desativarAcoes={desativarAcoes} luzesApagadas={mapaLogico?.mapaLogicoSalaJogo?.luzesApagadas ?? []} executaPressionar={executaPressionarInteragivel} />}
+            {interagiveisComAcao.length > 0 && <SecaoAcoesInteragiveis interagiveis={interagiveisComAcao} desativarAcoes={desativarAcoes} nosDesligados={mapaLogico?.mapaLogicoSalaJogo?.nosDesligados ?? []} executaPressionar={executaPressionarInteragivel} />}
             {acoesPorStatusECapacidade.bloqueadas.length > 0 && <SecaoAcoesFicha titulo="Ações Bloqueadas" grupos={acoesPorStatusECapacidade.bloqueadas} desativarAcoes={acoesFichaDesativadas} cooldownAcaoExecutando={cooldownAcaoExecutando} executaAcao={solicitaExecucaoAcao} />}
             {acaoComSelecaoAlvo && <ModalSelecaoAlvoAcao acao={acaoComSelecaoAlvo} seresNaSala={seresNaSala} interagiveisPercebidos={interagiveisPercebidos} cancelar={() => setAcaoComSelecaoAlvo(null)} confirmar={executaAcaoComAlvo} />}
         </div>
@@ -130,16 +130,16 @@ const AFORDANCIA_ACAO_INTERAGIVEL: Record<AcaoInteragivelSalaJogoWsDto['tipo'], 
     alternar_luz: { rotulo: 'Desligar Lâmpada', glifo: 'L', dicaIndisponivel: 'Aproxime-se do interruptor' },
 };
 
-// Interruptor é a única afordância com rótulo de MÃO DUPLA: ele espelha o estado atual da luz alvo (apagada → "Ligar").
-// Continua DERIVADO — do tipo da ação mais o estado projetado pelo servidor, nunca do nome do objeto.
-function rotuloAcaoInteragivel(acao: AcaoInteragivelSalaJogoWsDto, luzesApagadas: readonly string[]): string {
-    if (acao.tipo !== 'alternar_luz' || acao.idsFontesDeLuz.length === 0) return AFORDANCIA_ACAO_INTERAGIVEL[acao.tipo].rotulo;
-    return acao.idsFontesDeLuz.every(idFonte => luzesApagadas.includes(idFonte)) ? 'Ligar Lâmpada' : 'Desligar Lâmpada';
+// Interruptor é a única afordância com rótulo de MÃO DUPLA: ele espelha o estado atual do GATE que alterna (nó desligado
+// → "Ligar"). Continua DERIVADO — do tipo da ação mais o estado projetado pelo servidor, nunca do nome do objeto.
+function rotuloAcaoInteragivel(acao: AcaoInteragivelSalaJogoWsDto, nosDesligados: readonly string[]): string {
+    if (acao.tipo !== 'alternar_luz' || acao.idNo === null) return AFORDANCIA_ACAO_INTERAGIVEL[acao.tipo].rotulo;
+    return nosDesligados.includes(acao.idNo) ? 'Ligar Lâmpada' : 'Desligar Lâmpada';
 };
 
 // Interagiveis com acao autorada: um botao POR ACAO de cada interagivel. Afordancia derivada do tipo da acao; a disponibilidade
 // (percebido + dentro do alcance DAQUELA acao) vem PRONTA do servidor na projecao — o cliente so habilita/desabilita.
-function SecaoAcoesInteragiveis({ interagiveis, desativarAcoes, luzesApagadas, executaPressionar }: { interagiveis: readonly InteragivelPercebidoSalaJogoWsDto[]; desativarAcoes: boolean; luzesApagadas: readonly string[]; executaPressionar: (keyInteragivel: string, tipoAcao: AcaoInteragivelSalaJogoWsDto['tipo']) => void; }) {
+function SecaoAcoesInteragiveis({ interagiveis, desativarAcoes, nosDesligados, executaPressionar }: { interagiveis: readonly InteragivelPercebidoSalaJogoWsDto[]; desativarAcoes: boolean; nosDesligados: readonly string[]; executaPressionar: (keyInteragivel: string, tipoAcao: AcaoInteragivelSalaJogoWsDto['tipo']) => void; }) {
     return (
         <section className={styles.secao_acoes}>
             <h3 className={styles.titulo_secao}>Interagíveis</h3>
@@ -148,7 +148,7 @@ function SecaoAcoesInteragiveis({ interagiveis, desativarAcoes, luzesApagadas, e
                     <h4 className={styles.titulo_capacidade}>{interagivel.nome}</h4>
                     <div className={styles.lista_acoes}>
                         {(interagivel.acoes ?? []).map(acao => {
-                            const afordancia = { ...AFORDANCIA_ACAO_INTERAGIVEL[acao.tipo], rotulo: rotuloAcaoInteragivel(acao, luzesApagadas) };
+                            const afordancia = { ...AFORDANCIA_ACAO_INTERAGIVEL[acao.tipo], rotulo: rotuloAcaoInteragivel(acao, nosDesligados) };
                             const disponivel = acao.disponivel === true;
                             const acaoPodeExecutar = disponivel && !desativarAcoes;
                             return (

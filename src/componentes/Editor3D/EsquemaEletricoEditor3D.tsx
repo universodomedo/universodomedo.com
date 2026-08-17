@@ -4,14 +4,21 @@ import { useMemo } from 'react';
 import { Line } from '@react-three/drei';
 import { Vector3 } from 'three';
 
-import { alcanceEfetivoMetrosFonteEditor3D, type ComandoEditor3D, type FonteDeLuzEditor3D } from './editor3D.camadaJogo';
+import { alcanceEfetivoMetrosFonteEditor3D, type FonteDeLuzEditor3D } from './editor3D.camadaJogo';
 
-// Esquema elétrico do mapa: o que cada fonte ALCANÇA e o que cada comando ACIONA — as duas perguntas que hoje só se
+// Interruptor já RESOLVIDO para o esquema: o corpo e as luzes do circuito dele (derivado no Editor3D — aqui só se desenha).
+export type InterruptorEsquemaEditor3D = {
+    readonly idLocal: string;
+    readonly idElementoCena: string;
+    readonly idsFontesDeLuz: readonly string[];
+};
+
+// Esquema elétrico do mapa: o que cada fonte ALCANÇA e o que cada interruptor ACIONA — as duas perguntas que hoje só se
 // responde entrando numa Partida. É diagnóstico de autoria (não é o que o jogador vê), por isso vive num toggle próprio,
 // independente da fidelidade de iluminação.
 interface EsquemaEletricoEditor3DProps {
     readonly fontesDeLuz: readonly FonteDeLuzEditor3D[];
-    readonly comandos: readonly ComandoEditor3D[];
+    readonly interruptores: readonly InterruptorEsquemaEditor3D[];
     // Posição VIVA do objeto na cena (lida das meshes), para a linha da fiação acompanhar o gizmo enquanto o autor arrasta.
     readonly obtemPosicaoElemento: (idElementoCena: string) => [number, number, number] | null;
 };
@@ -21,21 +28,21 @@ const OPACIDADE_ALCANCE_EFETIVO = 0.16;
 const COR_ALCANCE_EFETIVO = '#ff8a3d';
 const COR_FIACAO = '#ffcf6e';
 
-export function EsquemaEletricoEditor3D({ fontesDeLuz, comandos, obtemPosicaoElemento }: EsquemaEletricoEditor3DProps) {
+export function EsquemaEletricoEditor3D({ fontesDeLuz, interruptores, obtemPosicaoElemento }: EsquemaEletricoEditor3DProps) {
     const fontesPorId = useMemo(() => new Map(fontesDeLuz.map(fonte => [fonte.idLocal, fonte])), [fontesDeLuz]);
 
-    // Um segmento por par (comando, fonte acionada). Fonte AMBIENTE não tem posição: a linha vai até a origem do comando
-    // mesmo assim seria mentira, então ela é omitida — o painel do comando já lista o circuito por nome.
+    // Um segmento por par (interruptor, luz do circuito). Fonte AMBIENTE não tem posição: a linha até a origem do corpo
+    // seria mentira, então ela é omitida — o painel já conta as luzes do circuito.
     // SEM memo de propósito: a origem sai da MESH viva, que muda sem alterar nenhuma prop — memoizar deixava a fiação
     // parada enquanto o autor arrastava o interruptor. O custo é desprezível (poucos segmentos por mapa).
     const ligacoes: { readonly chave: string; readonly de: Vector3; readonly para: Vector3 }[] = [];
-    for (const comando of comandos) {
-        const origem = obtemPosicaoElemento(comando.idElementoCena);
+    for (const interruptor of interruptores) {
+        const origem = obtemPosicaoElemento(interruptor.idElementoCena);
         if (origem === null) continue;
-        for (const idFonte of comando.idsFontesDeLuz) {
+        for (const idFonte of interruptor.idsFontesDeLuz) {
             const fonte = fontesPorId.get(idFonte);
             if (fonte === undefined || fonte.tipo !== 'PONTO') continue;
-            ligacoes.push({ chave: `${comando.idLocal}:${idFonte}`, de: new Vector3(origem[0], origem[1], origem[2]), para: new Vector3(fonte.posicao[0], fonte.posicao[1], fonte.posicao[2]) });
+            ligacoes.push({ chave: `${interruptor.idLocal}:${idFonte}`, de: new Vector3(origem[0], origem[1], origem[2]), para: new Vector3(fonte.posicao[0], fonte.posicao[1], fonte.posicao[2]) });
         }
     }
 

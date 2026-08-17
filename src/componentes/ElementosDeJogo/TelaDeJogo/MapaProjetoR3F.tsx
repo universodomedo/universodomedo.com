@@ -7,12 +7,15 @@ import type { CamadaJogoMapa, CenaCanonicaEditor3D, ObjetoCenaCanonicaEditor3D }
 
 import { criaGeometriaDeMalha, solidificaMalha, subdivideMalhaCatmullClark, type MalhaEditavelLocal } from 'Componentes/Editor3D/editor3D.malha';
 import { MILIMETROS_POR_METRO_MAPA, dimensoesMapaDaCena } from 'Funcionalidades/MapaJogavel/mapaJogavel.helpers';
-import { LuzesMapaR3F } from './LuzesMapaR3F';
+import type { NoCorrenteAvaliacao } from 'Funcionalidades/MapaJogavel/mapaJogavel.corrente';
+import { INSTANTE_CORRENTE_PARADO_MAPA, LuzesMapaR3F, type InstanteCorrenteMapa } from './LuzesMapaR3F';
+
+const SEM_CAMINHOS_CORRENTE_MAPA: ReadonlyMap<string, readonly NoCorrenteAvaliacao[]> = new Map();
 
 // Cenário AUTORADO da sala: renderiza a cena do Projeto 3D (tipo MAPA) alinhada ao espaço lógico do jogo. Z-up: o chão é
 // o plano XY e a altura é Z. A origem lógica (0,0) é o canto mínimo do bbox XY do mapa; o alinhamento segue a MESMA
 // convenção dos atores (mundoX/mundoY, com o +0.5). A geometria reusa os helpers PUROS do Editor 3D (gaiola + subdiv + espessura + slots).
-export function MapaProjetoR3F({ cena, camadaJogo = null, largura, altura, luzesApagadas = [] }: { cena: CenaCanonicaEditor3D; camadaJogo?: CamadaJogoMapa | null; largura: number; altura: number; luzesApagadas?: readonly string[] }) {
+export function MapaProjetoR3F({ cena, camadaJogo = null, largura, altura, caminhosCorrente = SEM_CAMINHOS_CORRENTE_MAPA, instanteCorrente = INSTANTE_CORRENTE_PARADO_MAPA }: { cena: CenaCanonicaEditor3D; camadaJogo?: CamadaJogoMapa | null; largura: number; altura: number; caminhosCorrente?: ReadonlyMap<string, readonly NoCorrenteAvaliacao[]>; instanteCorrente?: InstanteCorrenteMapa }) {
     const dimensoes = useMemo(() => dimensoesMapaDaCena(cena), [cena]);
     if (dimensoes === null) return null;
 
@@ -25,7 +28,7 @@ export function MapaProjetoR3F({ cena, camadaJogo = null, largura, altura, luzes
     return (
         <group position={[offsetX, offsetY, 0]} userData={{ superficieMapa: true }}>
             {cena.objetos.map(objeto => <ObjetoMapaR3F key={objeto.idLocal} objeto={objeto} />)}
-            <LuzesMapaR3F luzes={camadaJogo?.fontesDeLuz ?? []} luzesApagadas={luzesApagadas} />
+            <LuzesMapaR3F luzes={camadaJogo?.fontesDeLuz ?? []} caminhosCorrente={caminhosCorrente} instanteCorrente={instanteCorrente} />
         </group>
     );
 };
