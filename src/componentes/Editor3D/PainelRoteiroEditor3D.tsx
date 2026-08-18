@@ -2,10 +2,13 @@
 
 import styles from './PainelRoteiroEditor3D.module.css';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { PassoRoteiroEditor3D, RoteiroEditor3DPersistido, RoteiroEditor3DResumoPersistido } from 'types-nora-api';
 import type { ModoRoteiroEditor3D, ResultadoValidacaoRoteiroEditor3D } from './editor3D.roteiro';
+
+// Cadência da reprodução automática: lenta o bastante para o olho acompanhar cada passo aplicando na cena.
+const INTERVALO_REPRODUCAO_ROTEIRO_MS = 1200;
 
 interface PainelRoteiroEditor3DProps {
     readonly roteiros: readonly RoteiroEditor3DResumoPersistido[];
@@ -51,6 +54,19 @@ export function PainelRoteiroEditor3D(props: PainelRoteiroEditor3DProps) {
     // Rascunho do motivo de bloqueio (UI local): null = campo fechado.
     const [motivoBloqueioRascunho, setMotivoBloqueioRascunho] = useState<string | null>(null);
 
+    // Reprodução automática (só VISUALIZACAO): o transporte avançando sozinho em cadência — cada batida reexecuta o
+    // prefixo até a posição seguinte, exatamente como o Avançar manual. Pausa ao chegar no fim ou ao sair do modo.
+    const [reproduzindo, setReproduzindo] = useState(false);
+    const totalExecutavel = props.falhaExecucao !== null ? props.falhaExecucao.indicePasso : props.passos.length;
+    const roteiroAberto = props.roteiro !== null;
+    const { aoIrPara, modo, posicao } = props;
+    useEffect(() => {
+        if (!reproduzindo) return;
+        if (!roteiroAberto || modo !== 'VISUALIZACAO' || posicao >= totalExecutavel) { setReproduzindo(false); return; }
+        const temporizador = setTimeout(() => aoIrPara(posicao + 1), INTERVALO_REPRODUCAO_ROTEIRO_MS);
+        return () => clearTimeout(temporizador);
+    }, [reproduzindo, roteiroAberto, modo, posicao, totalExecutavel, aoIrPara]);
+
     if (props.roteiro === null) {
         return (
             <div className={styles.painel_roteiro}>
@@ -81,7 +97,6 @@ export function PainelRoteiroEditor3D(props: PainelRoteiroEditor3DProps) {
     }
 
     const roteiro = props.roteiro;
-    const totalExecutavel = props.falhaExecucao !== null ? props.falhaExecucao.indicePasso : props.passos.length;
     const emMontagem = props.modo === 'MONTAGEM';
 
     return (
@@ -162,7 +177,12 @@ export function PainelRoteiroEditor3D(props: PainelRoteiroEditor3DProps) {
                             <button type="button" className={styles.botao_acao_roteiro} disabled={props.passos.length === 0 || props.falhaExecucao !== null || props.salvando} onClick={props.aoAprovar} title="Reexecuta do zero e grava o resultado aprovado">Aprovar resultado</button>
                         </>
                     )
-                    : <button type="button" className={styles.botao_acao_roteiro} disabled={roteiro.golden === null || props.salvando} onClick={props.aoValidar} title={roteiro.golden === null ? 'Sem resultado aprovado para comparar' : 'Reexecuta do zero e compara com o aprovado'}>Validar</button>}
+                    : (
+                        <>
+                            <button type="button" className={`${styles.botao_acao_roteiro} ${styles.secundario}`} disabled={totalExecutavel === 0} title="Reexecuta os passos em cadência, como demonstração ao vivo" onClick={() => { if (reproduzindo) { setReproduzindo(false); return; } if (props.posicao >= totalExecutavel) props.aoIrPara(0); setReproduzindo(true); }}>{reproduzindo ? 'Pausar' : 'Reproduzir'}</button>
+                            <button type="button" className={styles.botao_acao_roteiro} disabled={roteiro.golden === null || props.salvando} onClick={props.aoValidar} title={roteiro.golden === null ? 'Sem resultado aprovado para comparar' : 'Reexecuta do zero e compara com o aprovado'}>Validar</button>
+                        </>
+                    )}
             </div>
         </div>
     );

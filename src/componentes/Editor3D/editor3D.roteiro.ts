@@ -1,4 +1,4 @@
-import { executaPassosRoteiroEditor3D } from './editor3D.operacoes';
+import { caminhoMenuDaOperacaoEditor3D, executaPassosRoteiroEditor3D, operacaoNasceDeMenuEditor3D } from './editor3D.operacoes';
 import { serializaCenaCanonicaDeEstadoEditor3D } from './editor3D.projeto.serializacao';
 import type { EstadoRoteiroEditor3D } from './editor3D.operacoes';
 import type { CenaCanonicaEditor3D, GoldenRoteiroEditor3D, OperacaoRoteiroEditor3D, PassoRoteiroEditor3D } from 'types-nora-api';
@@ -50,16 +50,102 @@ export function montaGoldenRoteiroEditor3D(passos: readonly PassoRoteiroEditor3D
     return { ok: true, golden: { versao: 1, estadosPorPasso: execucao.estados.map(serializaEstadoRoteiroEditor3D) } };
 };
 
-// Os três desfechos: completa e bate (VALIDO) / completa e diverge (DIVERGENTE, apontando o passo) / não completa
-// (FALHOU — operação sumiu da camada ou recusou os parâmetros).
-export function validaRoteiroContraGoldenEditor3D(passos: readonly PassoRoteiroEditor3D[], golden: GoldenRoteiroEditor3D): ResultadoValidacaoRoteiroEditor3D {
+// -------------------------------------------------------------------------------------------------------------------
+// VALIDAÇÃO POR ETAPA — cada passo responde por si (especificação do Caio): "aplicar a operação atual sobre a malha de
+// ENTRADA gravada tem que produzir EXATAMENTE a malha de SAÍDA gravada". Como o golden guarda o estado APÓS cada passo,
+// a entrada gravada da etapa i é golden[i-1] (e o estado inicial vazio para a primeira).
+//
+// A etapa só é um teste legítimo quando a entrada REAL bate com a entrada GRAVADA — aí comparar a saída isola de fato
+// aquela operação. Quando a entrada já vem diferente (uma etapa anterior regrediu), a etapa é declarada CONTAMINADA em
+// vez de acusada: culpar quem herdou lixo é ruído, e some a informação de quem realmente quebrou.
+// Limite honesto: depois de uma quebra, as etapas seguintes não têm como ser avaliadas — a entrada gravada é uma cena
+// canônica (lossy: cor vira vetor, contador não é serializado), não um estado reconstruível. Avaliá-las exigiria o
+// golden guardar estado reidratável, o que muda o contrato — decisão em aberto.
+// -------------------------------------------------------------------------------------------------------------------
+
+export type DesfechoEtapaRoteiroEditor3D =
+    // A entrada bateu e a saída bateu: a operação continua produzindo exatamente o resultado aprovado.
+    | 'CONFERE'
+    // A entrada bateu e a saída NÃO bateu: esta operação regrediu. É a culpada.
+    | 'REGREDIU'
+    // A operação não executou (sumiu da camada, recusou parâmetros) ou perdeu a afordância na interface.
+    | 'NAO_EXECUTOU'
+    // Uma etapa anterior quebrou: esta partiu de entrada diferente da gravada e não pôde ser avaliada.
+    | 'CONTAMINADA';
+
+export type EtapaValidadaRoteiroEditor3D = {
+    readonly indice: number;
+    readonly desfecho: DesfechoEtapaRoteiroEditor3D;
+    readonly motivo: string | null;
+};
+
+export type RelatorioValidacaoRoteiroEditor3D = {
+    readonly resultado: ResultadoValidacaoRoteiroEditor3D;
+    readonly etapas: readonly EtapaValidadaRoteiroEditor3D[];
+};
+
+function canonicoDoEstadoRoteiroEditor3D(estado: EstadoRoteiroEditor3D): string {
+    return stringifyCanonicoRoteiroEditor3D(serializaEstadoRoteiroEditor3D(estado));
+};
+
+// Fonte ÚNICA da validação: o desfecho do roteiro inteiro é derivado deste relatório (não há segunda travessia).
+export function relatorioValidacaoRoteiroEditor3D(passos: readonly PassoRoteiroEditor3D[], golden: GoldenRoteiroEditor3D): RelatorioValidacaoRoteiroEditor3D {
     const execucao = executaPassosRoteiroEditor3D(passos);
-    if (execucao.falha !== null) return { desfecho: 'FALHOU', indicePasso: execucao.falha.indicePasso, motivo: execucao.falha.motivo };
-    if (golden.estadosPorPasso.length !== execucao.estados.length) return { desfecho: 'DIVERGENTE', indicePasso: Math.min(golden.estadosPorPasso.length, execucao.estados.length) };
-    for (let indice = 0; indice < execucao.estados.length; indice++) {
-        if (stringifyCanonicoRoteiroEditor3D(serializaEstadoRoteiroEditor3D(execucao.estados[indice])) !== stringifyCanonicoRoteiroEditor3D(golden.estadosPorPasso[indice])) return { desfecho: 'DIVERGENTE', indicePasso: indice };
+    const etapas: EtapaValidadaRoteiroEditor3D[] = [];
+    // Enquanto verdadeiro, o executado ainda é idêntico ao gravado — só aí a etapa é avaliável isoladamente.
+    let cadeiaIntegra = true;
+    let primeiroProblema: { indice: number; desfecho: DesfechoEtapaRoteiroEditor3D; motivo: string | null } | null = null;
+
+    for (let indice = 0; indice < passos.length; indice++) {
+        const tipo = passos[indice].operacao.tipo;
+        // Só quem nasce de menu tem porta a conferir: o passo era alcançável quando foi gravado (o golden prova), então
+        // a entrada ter sumido do menu significa que a operação deixou de ser executável por um humano.
+        const semAfordancia = operacaoNasceDeMenuEditor3D(tipo) && caminhoMenuDaOperacaoEditor3D(tipo) === null;
+        const falhouAqui = execucao.falha !== null && execucao.falha.indicePasso === indice;
+        const naoExecutou = semAfordancia || falhouAqui;
+
+        if (!cadeiaIntegra && !naoExecutou) { etapas.push({ indice, desfecho: 'CONTAMINADA', motivo: 'Etapa anterior regrediu: a entrada desta etapa já veio diferente do resultado aprovado' }); continue; }
+
+        if (naoExecutou) {
+            const motivo = semAfordancia
+                ? `Operação ${tipo} sem entrada no menu do editor: o passo deixou de ser alcançável pela interface`
+                : (execucao.falha?.motivo ?? 'Operação não executou');
+            etapas.push({ indice, desfecho: 'NAO_EXECUTOU', motivo });
+            if (primeiroProblema === null) primeiroProblema = { indice, desfecho: 'NAO_EXECUTOU', motivo };
+            cadeiaIntegra = false;
+            continue;
+        }
+
+        const executado = execucao.estados[indice];
+        const gravado = golden.estadosPorPasso[indice];
+        // Passo sem saída gravada: o golden é de uma sequência mais curta — o roteiro cresceu sem reaprovar.
+        if (executado === undefined || gravado === undefined) {
+            const motivo = 'Passo sem resultado aprovado correspondente (o roteiro mudou de tamanho desde a aprovação)';
+            etapas.push({ indice, desfecho: 'REGREDIU', motivo });
+            if (primeiroProblema === null) primeiroProblema = { indice, desfecho: 'REGREDIU', motivo };
+            cadeiaIntegra = false;
+            continue;
+        }
+
+        if (canonicoDoEstadoRoteiroEditor3D(executado) === stringifyCanonicoRoteiroEditor3D(gravado)) { etapas.push({ indice, desfecho: 'CONFERE', motivo: null }); continue; }
+
+        const motivo = 'Aplicar esta operação sobre a entrada aprovada produziu um resultado diferente do aprovado';
+        etapas.push({ indice, desfecho: 'REGREDIU', motivo });
+        if (primeiroProblema === null) primeiroProblema = { indice, desfecho: 'REGREDIU', motivo };
+        cadeiaIntegra = false;
     }
-    return { desfecho: 'VALIDO' };
+
+    // Golden com MAIS estados que passos: a sequência encolheu sem reaprovar — divergência no primeiro passo ausente.
+    if (primeiroProblema === null && golden.estadosPorPasso.length !== passos.length) return { resultado: { desfecho: 'DIVERGENTE', indicePasso: Math.min(golden.estadosPorPasso.length, passos.length) }, etapas };
+    if (primeiroProblema === null) return { resultado: { desfecho: 'VALIDO' }, etapas };
+    if (primeiroProblema.desfecho === 'NAO_EXECUTOU') return { resultado: { desfecho: 'FALHOU', indicePasso: primeiroProblema.indice, motivo: primeiroProblema.motivo ?? 'Operação não executou' }, etapas };
+    return { resultado: { desfecho: 'DIVERGENTE', indicePasso: primeiroProblema.indice }, etapas };
+};
+
+// Os três desfechos do roteiro inteiro: completa e bate (VALIDO) / completa e diverge (DIVERGENTE, apontando o passo) /
+// não completa (FALHOU). Derivado do relatório por etapa — uma travessia só, um veredito só.
+export function validaRoteiroContraGoldenEditor3D(passos: readonly PassoRoteiroEditor3D[], golden: GoldenRoteiroEditor3D): ResultadoValidacaoRoteiroEditor3D {
+    return relatorioValidacaoRoteiroEditor3D(passos, golden).resultado;
 };
 
 // Coalescência de gravação: SÓ para operações de VALOR em rajada (color picker, digitação por eixo, slider) — a

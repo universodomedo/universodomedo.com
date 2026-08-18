@@ -191,7 +191,10 @@ async function executaRestPost<TCorpo extends object, TResposta>(operacao: ApiOp
         throw new NoraApiErro({ mensagem: mensagemErro, mensagemServidor: textoErro });
     }
 
-    return await resposta.json() as TResposta;
+    // Endpoints de comando sem corpo de resposta (contrato `void`, ex.: remoções) respondem 2xx vazio — espelho do
+    // tratamento de corpo vazio que o GET nullable já faz acima.
+    const textoResposta = await resposta.text();
+    return (textoResposta.length === 0 ? null : JSON.parse(textoResposta)) as TResposta;
 };
 
 async function executaGraphql<TVariaveis extends object, TResposta extends object>(operacao: ApiOperacaoGraphqlGet<Record<string, never>, TVariaveis, TResposta>): Promise<TResposta> {

@@ -26,3 +26,8 @@ export function aprovaRoteiroEditor3D(idRoteiro: number, golden: GoldenRoteiroEd
 export function bloqueiaRoteiroEditor3D(idRoteiro: number, motivo: string | null): Promise<RoteiroEditor3DPersistido> {
     return NoraApi.RestPOST(EventosApiRest.POST.RoteiroEditor3D.bloquear, { idRoteiro, motivo }, { mensagemErro: 'Não foi possível atualizar o bloqueio do roteiro.' });
 };
+
+// Exclusão DEFINITIVA (curadoria do catálogo): leva passos e golden juntos — não há lixeira.
+export function removeRoteiroEditor3D(idRoteiro: number): Promise<void> {
+    return NoraApi.RestPOST(EventosApiRest.POST.RoteiroEditor3D.remover, { idRoteiro }, { mensagemErro: 'Não foi possível remover o roteiro.' });
+};

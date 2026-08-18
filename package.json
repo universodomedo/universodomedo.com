@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test:simulador-distribuicao": "node --experimental-strip-types src/funcionalidades/simuladorDistribuicaoTeste/validacao.ts",
+    "verifica:vocabulario-editor3d": "node scripts/verificaVocabularioEditor3D.mjs",
     "skills:select": "node .agents/skill-system/selector/select-skills.mjs",
     "test:skills": "node --test .agents/skill-system/tests/select-skills.test.mjs"
   },

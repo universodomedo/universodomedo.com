@@ -1,6 +1,7 @@
 import type { TipoProjetoEditor3D } from 'types-nora-api';
 
 import type { ComandoMenuEditor3D } from './editor3D.menus';
+import type { TipoOperacaoEditor3D } from './editor3D.operadores';
 
 // ---------------------------------------------------------------------------------------------------------------------
 // COLEÇÕES DE SISTEMA — o domínio de "em que parte do projeto estou trabalhando".
@@ -69,9 +70,18 @@ export function colecaoUsaIluminacaoDeJogo(colecao: TipoColecaoSistemaEditor3D):
 // ADD_LUZ fica fora das listas de propósito: colocar o OBJETO de iluminação é permitido em qualquer lente do MAPA.
 // O Interruptor não tem comando de menu — é o vínculo objeto↔luz, nasce do gesto de fiação na Iluminação.
 // Comandos que não mexem em conteúdo da cena (salvar/abrir/criar/capturar) não passam por aqui.
-const COMANDOS_MENU_DE_GEOMETRIA: readonly ComandoMenuEditor3D[] = ['ADD_CUBO', 'ADD_CILINDRO', 'ADD_ESFERA', 'NOVO_MESH'];
+const COMANDOS_MENU_DE_GEOMETRIA: readonly ComandoMenuEditor3D[] = ['NOVO_MESH'];
 
 export function colecaoPermiteComandoMenu(colecao: TipoColecaoSistemaEditor3D, comando: ComandoMenuEditor3D): boolean {
     if (COMANDOS_MENU_DE_GEOMETRIA.includes(comando)) return colecaoEditaGeometria(colecao);
+    return true;
+};
+
+// Mesma regra para as OPERAÇÕES do vocabulário: as que criam ou alteram geometria só valem na lente que edita
+// geometria (Cenário). As demais — visibilidade, nome, material — seguem disponíveis em qualquer lente.
+const OPERACOES_DE_GEOMETRIA: readonly TipoOperacaoEditor3D[] = ['ADD_CUBO', 'ADD_CILINDRO', 'ADD_ESFERA', 'DUPLICAR_OBJETO', 'REMOVER_OBJETO', 'POSICIONAR', 'ROTACIONAR', 'ESCALAR', 'ASSENTAR', 'APLICAR_TRANSFORMACOES', 'SOLIDIFICAR', 'DEFINIR_SUBDIVISAO'];
+
+export function colecaoPermiteOperacao(colecao: TipoColecaoSistemaEditor3D, tipo: TipoOperacaoEditor3D): boolean {
+    if (OPERACOES_DE_GEOMETRIA.includes(tipo)) return colecaoEditaGeometria(colecao);
     return true;
 };

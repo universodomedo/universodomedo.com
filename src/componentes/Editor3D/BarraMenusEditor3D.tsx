@@ -5,23 +5,33 @@ import styles from './Editor3D.module.css';
 import { useState } from 'react';
 
 import { MENUS_EDITOR_3D, type ComandoMenuEditor3D, type ItemMenuEditor3D } from './editor3D.menus';
+import type { TipoOperacaoEditor3D } from './editor3D.operadores';
 
 interface BarraMenusEditor3DProps {
     readonly comandoDesabilitado: (comando: ComandoMenuEditor3D) => boolean;
     readonly aoComando: (comando: ComandoMenuEditor3D) => void;
+    // Item que aponta para uma OPERAÇÃO despacha o operador — a barra não conhece a implementação, só o id.
+    readonly aoOperacao: (tipo: TipoOperacaoEditor3D) => void;
+    readonly operacaoDesabilitada: (tipo: TipoOperacaoEditor3D) => boolean;
     readonly podeDesfazer: boolean;
     readonly podeRefazer: boolean;
     readonly aoDesfazer: () => void;
     readonly aoRefazer: () => void;
 };
 
-export function BarraMenusEditor3D({ comandoDesabilitado, aoComando, podeDesfazer, podeRefazer, aoDesfazer, aoRefazer }: BarraMenusEditor3DProps) {
+export function BarraMenusEditor3D({ comandoDesabilitado, aoComando, aoOperacao, operacaoDesabilitada, podeDesfazer, podeRefazer, aoDesfazer, aoRefazer }: BarraMenusEditor3DProps) {
     const [menuAberto, setMenuAberto] = useState<string | null>(null);
 
     function acionaComando(comando: ComandoMenuEditor3D): void {
         if (comandoDesabilitado(comando)) return;
         setMenuAberto(null);
         aoComando(comando);
+    };
+
+    function acionaOperacao(tipo: TipoOperacaoEditor3D): void {
+        if (operacaoDesabilitada(tipo)) return;
+        setMenuAberto(null);
+        aoOperacao(tipo);
     };
 
     function renderizaItem(item: ItemMenuEditor3D) {
@@ -33,6 +43,9 @@ export function BarraMenusEditor3D({ comandoDesabilitado, aoComando, podeDesfaze
                 </div>
             );
         }
+        const operacao = item.operacao;
+        if (operacao !== undefined) return <button key={item.rotulo} type="button" className={styles.item_dropdown} disabled={operacaoDesabilitada(operacao)} onClick={() => acionaOperacao(operacao)}>{item.rotulo}</button>;
+
         const comando = item.comando;
         return <button key={item.rotulo} type="button" className={styles.item_dropdown} disabled={comando === undefined || comandoDesabilitado(comando)} onClick={() => comando !== undefined && acionaComando(comando)}>{item.rotulo}</button>;
     };

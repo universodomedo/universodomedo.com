@@ -6,6 +6,8 @@
 }
 
 .cartao {
+    /* position: âncora do botão de remover (canto superior direito do cartão). */
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.45em;
@@ -17,6 +19,25 @@
     border: 0.08em solid rgba(183, 144, 81, 0.35);
     border-radius: 0.5em;
     background: rgba(0, 0, 0, 0.35);
+}
+
+.remover_roteiro {
+    position: absolute;
+    top: 0.4em;
+    right: 0.4em;
+    padding: 0.1em 0.4em;
+    border: none;
+    border-radius: 0.3em;
+    background: transparent;
+    color: rgba(235, 224, 201, 0.35);
+    font-size: 0.9em;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.remover_roteiro:hover {
+    color: #db6b6b;
+    background: rgba(219, 107, 107, 0.12);
 }
 
 .nome {
@@ -42,6 +63,8 @@
     min-width: 0;
     white-space: normal;
     overflow-wrap: anywhere;
+    /* Folga para o ✕ de remover não cobrir o fim de nomes longos. */
+    padding-right: 1.6em;
 }
 
 .motivo_bloqueio {

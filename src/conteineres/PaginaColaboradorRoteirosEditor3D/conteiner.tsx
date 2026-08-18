@@ -24,7 +24,7 @@ type PropsConteiner__PaginaColaboradorRoteirosEditor3D = Contexto__PaginaColabor
 function resolveSaida(props: PropsConteiner__PaginaColaboradorRoteirosEditor3D): SaidaConteiner {
     if (props.detalheValidacao !== null) return criaSaidaConteiner(Contexto__PaginaColaboradorRoteirosEditor3D__DetalheValidacao__Provider, { detalhe: props.detalheValidacao });
     if (props.estaEmCadastro) return criaSaidaConteiner(Contexto__PaginaColaboradorRoteirosEditor3D__Cadastro__Provider, { criarRoteiro: props.criarRoteiro });
-    return criaSaidaConteiner(Contexto__PaginaColaboradorRoteirosEditor3D__Listagem__Provider, { listagemRoteiros: props.listagemRoteiros, estaEmCadastro: props.estaEmCadastro, iniciarCadastro: props.iniciarCadastro, resultadosValidacao: props.resultadosValidacao, resumoValidacao: props.resumoValidacao, validandoTodos: props.validandoTodos, validarTodos: props.validarTodos, abrirDetalheValidacao: props.abrirDetalheValidacao });
+    return criaSaidaConteiner(Contexto__PaginaColaboradorRoteirosEditor3D__Listagem__Provider, { listagemRoteiros: props.listagemRoteiros, estaEmCadastro: props.estaEmCadastro, iniciarCadastro: props.iniciarCadastro, removerRoteiro: props.removerRoteiro, resultadosValidacao: props.resultadosValidacao, resumoValidacao: props.resumoValidacao, validandoTodos: props.validandoTodos, validarTodos: props.validarTodos, abrirDetalheValidacao: props.abrirDetalheValidacao });
 };
 
 function useEstado(): PropsConteiner__PaginaColaboradorRoteirosEditor3D { return useContexto__PaginaColaboradorRoteirosEditor3D(); };

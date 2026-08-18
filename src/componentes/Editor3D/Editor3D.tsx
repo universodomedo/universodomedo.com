@@ -38,10 +38,11 @@ import { EsquemaEletricoEditor3D } from './EsquemaEletricoEditor3D';
 import { FIACAO_VAZIA_EDITOR3D, INTENSIDADE_PADRAO_POR_TIPO_FONTE_EDITOR3D, ROTULO_CURTO_TIPO_FONTE_DE_LUZ_EDITOR3D, aplicaCampoLuzEditor3D, camadaJogoDoProjeto, criaFonteDeLuzEditor3D, idNoEntregaDaLuzEditor3D, removeInterruptorEditor3D, removeLuzDoCircuitoEditor3D, sanitizaCorrenteEditor3D, serializaCamadaJogoEditor3D, vinculaLuzInterruptorEditor3D, type CircuitoEditor3D, type FiacaoEditor3D, type FonteDeLuzEditor3D, type InterruptorEditor3D } from './editor3D.camadaJogo';
 import type { CorrenteMapa } from 'types-nora-api';
 import type { NoCorrenteAvaliacao } from 'Funcionalidades/MapaJogavel/mapaJogavel.corrente';
-import { COLECAO_SISTEMA_INICIAL_EDITOR3D, colecaoMostraFiacao, colecaoMostraGeometria, colecaoPermiteComandoMenu, colecaoSistemaInicialDoTipoProjeto, colecaoUsaIluminacaoDeJogo, colecoesSistemaDoTipoProjeto, type TipoColecaoSistemaEditor3D } from './editor3D.colecoesSistema';
+import { COLECAO_SISTEMA_INICIAL_EDITOR3D, colecaoMostraFiacao, colecaoMostraGeometria, colecaoPermiteComandoMenu, colecaoPermiteOperacao, colecaoSistemaInicialDoTipoProjeto, colecaoUsaIluminacaoDeJogo, colecoesSistemaDoTipoProjeto, type TipoColecaoSistemaEditor3D } from './editor3D.colecoesSistema';
 import type { CampoLuzEditor3D } from './PainelLuzEditor3D';
 import { PainelRoteiroEditor3D } from './PainelRoteiroEditor3D';
-import { ESTADO_INICIAL_ROTEIRO_EDITOR3D, executaPassosRoteiroEditor3D, rotuloOperacaoRoteiroEditor3D, type EstadoRoteiroEditor3D } from './editor3D.operacoes';
+import { assentaMeshNaCamadaEditor3D } from './editor3D.assentamento';
+import { aplicaOperacaoRoteiroEditor3D, criaMalhaPrimitivaEditor3D, ESTADO_INICIAL_ROTEIRO_EDITOR3D, executaPassosRoteiroEditor3D, rotuloOperacaoRoteiroEditor3D, rotuloTipoPrimitivaEditor3D, type EstadoRoteiroEditor3D, type TipoOperacaoEditor3D } from './editor3D.operacoes';
 import { acrescentaPassoComCoalescenciaRoteiroEditor3D, montaGoldenRoteiroEditor3D, validaRoteiroContraGoldenEditor3D, type ModoRoteiroEditor3D, type ResultadoValidacaoRoteiroEditor3D } from './editor3D.roteiro';
 import { aprovaRoteiroEditor3D, atualizaPassosRoteiroEditor3D, bloqueiaRoteiroEditor3D, consultaRoteiroEditor3D, listaRoteirosEditor3D } from './editor3D.roteiro.api';
 
@@ -57,67 +58,22 @@ export type ObjetoEditor3D = { id: number; tipo: TipoPrimitivaEditor3D; nome: st
 // TODO(z-up): a stack inteira é Z-up; mover este set para um init único do app quando o render do jogo migrar.
 Object3D.DEFAULT_UP.set(0, 0, 1);
 
-const EPSILON_CHAO_EDITOR3D = 0.0001;
-const TOLERANCIA_PENETRACAO_ASSENTAMENTO_EDITOR3D = 0.25;
-
-// Z mínimo MUNDIAL da geometria de EXIBIÇÃO (pós-subdivisão/espessura) do mesh — só a geometria do objeto, sem os filhos (alças de edição). Z-up: o "para baixo" é -Z.
-function minimoMundialZMesh(mesh: Mesh): number | null {
-    mesh.updateMatrixWorld(true);
-    mesh.geometry.computeBoundingBox();
-    const caixa = mesh.geometry.boundingBox;
-    if (caixa === null) return null;
-    const minZ = caixa.clone().applyMatrix4(mesh.matrixWorld).min.z;
-    return Number.isFinite(minZ) ? minZ : null;
-};
-
-// ASSENTAMENTO EM CAMADAS ("mapa tem gravidade") — Z-up: o piso vive no z=0 e todo objeto assenta na superfície mais alta
-// abaixo da sua base — outro objeto (empilhamento) ou o chão. Sem física (R3F não tem gravidade nativa): raycast
-// determinístico em 5 pontos da base (cantos + centro do bbox XY) — uma viga apoiada em duas paredes assenta nelas,
-// não no vão. Também elimina o subsolo (apoio nunca fica abaixo de 0 — bug real da Cena 3D do Site afundada a -1.5).
-function assentaMeshNaCamadaEditor3D(mesh: Mesh, apoios: readonly Mesh[]): boolean {
-    const minZ = minimoMundialZMesh(mesh);
-    if (minZ === null) return false;
-    const caixa = mesh.geometry.boundingBox;
-    if (caixa === null) return false;
-    const caixaMundo = caixa.clone().applyMatrix4(mesh.matrixWorld);
-    // O raio parte de POUCO ACIMA DA BASE (não do topo): apoio mais alto que a tolerância não eleva o objeto — senão
-    // um contêiner (a sala) pularia para cima do próprio conteúdo (o cubo). A tolerância ainda des-interpenetra cascas
-    // finas (base enfiada num piso de até 25cm sobe para o topo dele).
-    const origemZ = minZ + TOLERANCIA_PENETRACAO_ASSENTAMENTO_EDITOR3D;
-    const pontosBase: readonly [number, number][] = [
-        [caixaMundo.min.x, caixaMundo.min.y],
-        [caixaMundo.min.x, caixaMundo.max.y],
-        [caixaMundo.max.x, caixaMundo.min.y],
-        [caixaMundo.max.x, caixaMundo.max.y],
-        [(caixaMundo.min.x + caixaMundo.max.x) / 2, (caixaMundo.min.y + caixaMundo.max.y) / 2],
-    ];
-    const raycaster = new Raycaster();
-    const direcaoBaixo = new Vector3(0, 0, -1);
-    let apoioZ = 0;
-    for (const [x, y] of pontosBase) {
-        raycaster.set(new Vector3(x, y, origemZ), direcaoBaixo);
-        for (const alvo of apoios) {
-            const impacto = raycaster.intersectObject(alvo, false)[0];
-            if (impacto && impacto.point.z > apoioZ) apoioZ = impacto.point.z;
-        }
-    }
-    const deslocamento = apoioZ - minZ;
-    if (Math.abs(deslocamento) <= EPSILON_CHAO_EDITOR3D) return false;
-    mesh.position.z += deslocamento;
-    mesh.updateMatrix();
-    return true;
-};
+// O assentamento em camadas vive em editor3D.assentamento — definição ÚNICA compartilhada com a camada de operações
+// (o viewport assenta meshes vivas; a reexecução assenta o estado puro, com o mesmo cálculo).
 // O `state.controls` do R3F é tipado como EventDispatcher; o OrbitControls do drei acrescenta `enabled` — estreitamos p/ togglar durante o drag.
 type ControleOrbitaEditor3D = EventDispatcher & { enabled: boolean };
 
 const ROTULO_REGIAO_CORPO_EDITOR3D: Record<MembroPersonagemEditor3D, string> = { CABECA: 'Cabeça', TRONCO: 'Tronco', BRACO_ESQUERDO: 'Braço Esquerdo', BRACO_DIREITO: 'Braço Direito', PERNA_ESQUERDA: 'Perna Esquerda', PERNA_DIREITA: 'Perna Direita' };
 const REGIOES_CORPO_EDITOR3D: readonly MembroPersonagemEditor3D[] = ['CABECA', 'TRONCO', 'BRACO_ESQUERDO', 'BRACO_DIREITO', 'PERNA_ESQUERDA', 'PERNA_DIREITA'];
 
-function criaMalhaPrimitiva(tipo: TipoPrimitivaEditor3D, segmentos = 24): MalhaEditavelLocal { return tipo === 'CUBO' ? criaMalhaCubo() : tipo === 'CILINDRO' ? criaMalhaCilindro(segmentos) : criaMalhaEsfera(segmentos); };
+// A criação de primitiva (malha + rótulo de nascimento) mora na camada de operações: é parte da RECEITA, não da tela.
 type ColecaoEditor3D = { id: number; nome: string; idsObjetos: readonly number[]; visivel: boolean; };
 type ProjetoAbertoEditor3D = { id: number; nome: string; };
 type CenaArmazenadaEditor3D = { readonly objetos: readonly ObjetoEditor3D[]; readonly colecoes: readonly ColecaoEditor3D[]; readonly pecas: readonly PecaPersonagemCenaCanonicaEditor3D[]; readonly corpoPersonagem: CorpoPersonagemCenaCanonicaEditor3D | null; readonly idSelecionado: number | null; readonly projetoAberto: ProjetoAbertoEditor3D | null; readonly alterado: boolean; readonly ehInicio: boolean; readonly tipoProjeto: TipoProjetoEditor3D; readonly camera: CameraEditor3D | null; readonly capaArte: CapaArteEditor3D; readonly luzes: readonly FonteDeLuzEditor3D[]; readonly idLuzSelecionada: string | null; readonly fiacao: FiacaoEditor3D; };
 type AbaEditor3D = { readonly idAba: number; readonly nomePadrao: string; readonly cenaInativa: CenaArmazenadaEditor3D | null; };
+// `tagHistorico` coalesce rajadas (digitação por eixo); `registraNoHistorico: false` é para quem já registrou o
+// snapshot por conta própria (commit de arrasto do gizmo).
+type OpcoesExecucaoOperacaoEditor3D = { readonly tagHistorico?: string; readonly registraNoHistorico?: boolean; };
 
 // Cena ativa vive no estado plano; abas inativas guardam sua cena (com transforms já capturados das meshes). Coleções são organização de sessão (não vão para a CenaCanonica do banco). `ehInicio` = aba mostra a tela inicial (Home), ainda sem projeto/editor. `tipoProjeto`/`camera`/`capaArte`: projetos Capa de Arte carregam a câmera-output e os textos de overlay (título/assinatura).
 const CENA_VAZIA_EDITOR3D: CenaArmazenadaEditor3D = { objetos: [], colecoes: [], pecas: [], corpoPersonagem: null, idSelecionado: null, projetoAberto: null, alterado: false, ehInicio: false, tipoProjeto: 'PADRAO', camera: null, capaArte: CAPA_ARTE_PADRAO_EDITOR3D, luzes: [], idLuzSelecionada: null, fiacao: FIACAO_VAZIA_EDITOR3D };
@@ -131,9 +87,7 @@ const LIMITE_HISTORICO_EDITOR3D = 50;
 // Janela de coalescência de operações contínuas (arrasto de slider/gizmo/digitação): só o primeiro evento da rajada registra histórico.
 const JANELA_COALESCENCIA_HISTORICO_MS = 900;
 
-const ROTULO_PRIMITIVA_EDITOR3D: Record<TipoPrimitivaEditor3D, string> = { CUBO: 'Cubo', CILINDRO: 'Cilindro', ESFERA: 'Esfera' };
 const ICONE_PRIMITIVA_EDITOR3D: Record<TipoPrimitivaEditor3D, string> = { CUBO: '□', CILINDRO: '◉', ESFERA: '●' };
-function rotuloTipoPrimitivaEditor3D(tipo: TipoPrimitivaEditor3D): string { return ROTULO_PRIMITIVA_EDITOR3D[tipo]; };
 function iconeTipoPrimitivaEditor3D(tipo: TipoPrimitivaEditor3D): string { return ICONE_PRIMITIVA_EDITOR3D[tipo]; };
 
 // Atalhos de modo (g/r/s) não devem disparar enquanto o usuário digita num campo (ex.: nome do projeto no modal).
@@ -356,6 +310,32 @@ export function Editor3D() {
         aplicaEstadoRoteiroNoEditor(execucao.estados[execucao.estados.length - 1], true);
     }, [sessaoRoteiroNaAba, roteiroAtivo, modoRoteiro, passosRoteiro, posicaoRoteiro, aplicaEstadoRoteiroNoEditor]);
 
+    // RECEITA ÚNICA (MF-U1): executa uma operação do vocabulário NO EDITOR — o mesmo aplicador da validação produz o
+    // estado (assentamento incluso), a view só desenha o resultado, e o passo é gravado se houver sessão de montagem.
+    // Operação recusada não muda nada (mesma regra da reexecução) — nem entra no histórico. Devolve se aplicou, para o
+    // chamador encadear efeitos que ainda não são do vocabulário (ex.: tirar o objeto removido das coleções).
+    // Os ajustes de seleção são DERIVADOS do efeito no estado (nasceu objeto / o selecionado sumiu), não de uma lista
+    // de tipos de operação — assim cada lote migrado entra sem tocar aqui.
+    const executaOperacaoNoEditor = useCallback((operacao: OperacaoRoteiroEditor3D, opcoes?: OpcoesExecucaoOperacaoEditor3D): boolean => {
+        const contadorAntes = contadorRef.current;
+        const resultado = aplicaOperacaoRoteiroEditor3D({ objetos, contadorObjetos: contadorAntes }, operacao);
+        if (!resultado.ok) return false;
+        // Gesto de arrasto já registrou o snapshot pré-arrasto no commit — registrar de novo criaria dois undos.
+        if (opcoes?.registraNoHistorico !== false) registraHistorico(opcoes?.tagHistorico);
+        contadorRef.current = resultado.estado.contadorObjetos;
+        setObjetos(resultado.estado.objetos);
+        const idNovo = resultado.estado.contadorObjetos > contadorAntes ? resultado.estado.contadorObjetos : null;
+        if (idNovo !== null) setIdSelecionado(idNovo);
+        else setIdSelecionado(atual => atual !== null && atual > 0 && !resultado.estado.objetos.some(objeto => objeto.id === atual) ? null : atual);
+        // O inspetor lê do estado (não da mesh) depois da operação: é o estado que a operação acabou de decidir, com
+        // o assentamento já aplicado. A mesh é sincronizada pelo effect do objeto.
+        const idParaInspetor = idNovo ?? idSelecionado;
+        if (idParaInspetor !== null && idParaInspetor > 0) setTransformSelecionado(resultado.estado.objetos.find(objeto => objeto.id === idParaInspetor)?.transformInicial ?? null);
+        setAlterado(true);
+        gravaOperacaoRoteiro(operacao);
+        return true;
+    }, [objetos, idSelecionado, registraHistorico, gravaOperacaoRoteiro]);
+
     // Pendência de passos não salvos segura o unload (mesma proteção do padrão de rascunho).
     useEffect(() => {
         if (!pendenciaRoteiro) return;
@@ -370,16 +350,24 @@ export function Editor3D() {
     // Verdadeiro enquanto um transform modal está em andamento: suprime o onPointerMissed (o clique de confirmar/cancelar não deve deselecionar nem cair p/ Selecionar).
     const arrastoObjetoAtivoRef = useRef(false);
     const iniciaArrastoObjeto = useCallback(() => { snapshotArrastoObjetoRef.current = capturaCenaAtiva(); }, [capturaCenaAtiva]);
+    // COMMIT do gesto: durante o arrasto a mesh é a fonte (60 fps, sem passar por estado); ao soltar, o valor final vira
+    // a OPERAÇÃO absoluta correspondente ao modo, que aplica, assenta e grava no estado. O histórico já foi tratado
+    // acima (snapshot pré-arrasto), então a operação não registra de novo.
     const confirmaArrastoObjeto = useCallback(() => {
         const snap = snapshotArrastoObjetoRef.current;
         if (!snap) return;
         snapshotArrastoObjetoRef.current = null;
         setPilhaDesfazer(atuais => atuais.length >= LIMITE_HISTORICO_EDITOR3D ? [...atuais.slice(1), snap] : [...atuais, snap]);
         setPilhaRefazer([]);
-        // Commit do gesto de ESCALA em montagem de roteiro: grava o vetor final (a escala é o resultado; o assentamento só mexe no Z da posição).
         const mesh = refMeshSelecionada.current;
-        if (modo === 'scale' && mesh && idSelecionado !== null && idSelecionado > 0) gravaOperacaoRoteiro({ tipo: 'ESCALAR', idObjeto: idSelecionado, escala: [mesh.scale.x, mesh.scale.y, mesh.scale.z] });
-    }, [modo, idSelecionado, gravaOperacaoRoteiro]);
+        if (!mesh || idSelecionado === null || idSelecionado <= 0) return;
+        const operacao: OperacaoRoteiroEditor3D | null = modo === 'translate'
+            ? { tipo: 'POSICIONAR', idObjeto: idSelecionado, posicao: [mesh.position.x, mesh.position.y, mesh.position.z] }
+            : modo === 'rotate'
+                ? { tipo: 'ROTACIONAR', idObjeto: idSelecionado, rotacao: [mesh.rotation.x, mesh.rotation.y, mesh.rotation.z] }
+                : modo === 'scale' ? { tipo: 'ESCALAR', idObjeto: idSelecionado, escala: [mesh.scale.x, mesh.scale.y, mesh.scale.z] } : null;
+        if (operacao !== null) executaOperacaoNoEditor(operacao, { registraNoHistorico: false });
+    }, [modo, idSelecionado, executaOperacaoNoEditor]);
     const cancelaArrastoObjeto = useCallback(() => { snapshotArrastoObjetoRef.current = null; }, []);
 
     const limpaHistorico = useCallback(() => {
@@ -419,31 +407,27 @@ export function Editor3D() {
         aplicaCenaAtiva(alvo);
     }, [pilhaRefazer, capturaCenaAtiva, aplicaCenaAtiva]);
 
+    // Digitação no inspetor: o vetor completo do eixo editado vira uma operação ABSOLUTA (a mesh viva é a leitura de
+    // partida; a operação aplica, assenta e grava no estado — o effect do objeto sincroniza a mesh de volta).
     const atualizaTransformObjeto = useCallback((campo: CampoTransformEditor3D, indice: number, valor: number) => {
         const mesh = refMeshSelecionada.current;
-        if (!mesh) return;
-        registraHistorico(`transform-painel-${campo}-${indice}`);
-        if (campo === 'posicao') mesh.position.setComponent(indice, valor);
-        else if (campo === 'escala') mesh.scale.setComponent(indice, valor);
-        else { const rotacao: [number, number, number] = [mesh.rotation.x, mesh.rotation.y, mesh.rotation.z]; rotacao[indice] = valor; mesh.rotation.set(rotacao[0], rotacao[1], rotacao[2]); }
-        mesh.updateMatrix();
-        assentaMeshNaCamada(mesh);
-        setTransformSelecionado(lerTransformDaMeshSelecionada());
-        setAlterado(true);
-        // Digitação de ESCALA no painel em montagem de roteiro: grava o vetor completo resultante (rajada por eixo coalesce).
-        if (campo === 'escala' && idSelecionado !== null && idSelecionado > 0) gravaOperacaoRoteiro({ tipo: 'ESCALAR', idObjeto: idSelecionado, escala: [mesh.scale.x, mesh.scale.y, mesh.scale.z] });
-    }, [lerTransformDaMeshSelecionada, registraHistorico, assentaMeshNaCamada, idSelecionado, gravaOperacaoRoteiro]);
+        if (!mesh || idSelecionado === null || idSelecionado <= 0) return;
+        const vetor: [number, number, number] = campo === 'posicao'
+            ? [mesh.position.x, mesh.position.y, mesh.position.z]
+            : campo === 'escala' ? [mesh.scale.x, mesh.scale.y, mesh.scale.z] : [mesh.rotation.x, mesh.rotation.y, mesh.rotation.z];
+        vetor[indice] = valor;
+        const operacao: OperacaoRoteiroEditor3D = campo === 'posicao'
+            ? { tipo: 'POSICIONAR', idObjeto: idSelecionado, posicao: vetor }
+            : campo === 'escala' ? { tipo: 'ESCALAR', idObjeto: idSelecionado, escala: vetor } : { tipo: 'ROTACIONAR', idObjeto: idSelecionado, rotacao: vetor };
+        executaOperacaoNoEditor(operacao, { tagHistorico: `transform-painel-${campo}-${indice}` });
+    }, [idSelecionado, executaOperacaoNoEditor]);
 
     // Affordance "Assentar": reaplica o assentamento em camadas ao selecionado (útil após mover o APOIO de baixo —
     // o empilhado de cima não re-cai sozinho quando o apoio sai; esta é a limitação conhecida do assentamento sem física).
     const assentaObjetoSelecionadoNoChao = useCallback(() => {
-        const mesh = refMeshSelecionada.current;
-        if (!mesh) return;
-        registraHistorico();
-        if (!assentaMeshNaCamada(mesh)) return;
-        setTransformSelecionado(lerTransformDaMeshSelecionada());
-        setAlterado(true);
-    }, [registraHistorico, assentaMeshNaCamada, lerTransformDaMeshSelecionada]);
+        if (idSelecionado === null || idSelecionado <= 0) return;
+        executaOperacaoNoEditor({ tipo: 'ASSENTAR', idObjeto: idSelecionado });
+    }, [idSelecionado, executaOperacaoNoEditor]);
 
     const atualizaCameraVetor = useCallback((campo: CampoVetorCameraCapaArteEditor3D, indice: number, valor: number) => {
         registraHistorico(`camera-vetor-${campo}-${indice}`);
@@ -507,84 +491,47 @@ export function Editor3D() {
         setAlterado(true);
     }, [camera, registraHistorico]);
 
-    const adicionaObjeto = useCallback((tipo: TipoPrimitivaEditor3D) => {
-        registraHistorico();
-        contadorRef.current += 1;
-        const id = contadorRef.current;
-        // Objeto novo nasce na ORIGEM do mundo (0,0,0), como no Blender — sem escalonamento anti-sobreposição (decisão
-        // §6.1; quando houver Cursor 3D, nasce nele). O assentamento de camadas ainda ajusta o Z (base no apoio).
-        setObjetos(atuais => [...atuais, { id, tipo, nome: `${rotuloTipoPrimitivaEditor3D(tipo)} ${id}`, cor: COR_OBJETO_PADRAO_EDITOR3D, materiaisExtras: [], idPeca: null, visivel: true, malha: criaMalhaPrimitiva(tipo), subdivisao: 0, espessura: 0, transformInicial: { posicao: [0, 0, 0], rotacao: [0, 0, 0], escala: [1, 1, 1] } }]);
-        setIdSelecionado(id);
-        setAlterado(true);
-        // Em montagem de roteiro a reposição da reexecução substitui este estado vivo (ids do roteiro são os da reexecução).
-        if (tipo === 'CUBO') gravaOperacaoRoteiro({ tipo: 'ADD_CUBO' });
-    }, [registraHistorico, gravaOperacaoRoteiro]);
-
+    // Alternância é decidida AQUI e o passo grava o valor absoluto: reexecutar um roteiro tem que dar sempre o mesmo
+    // resultado, e "alternar" depende do estado anterior.
     const alternaVisibilidade = useCallback((id: number) => {
-        registraHistorico();
-        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, visivel: !objeto.visivel } : objeto));
-        setAlterado(true);
-    }, [registraHistorico]);
+        const objeto = objetos.find(item => item.id === id);
+        if (!objeto) return;
+        executaOperacaoNoEditor({ tipo: 'DEFINIR_VISIBILIDADE', idObjeto: id, visivel: !objeto.visivel });
+    }, [objetos, executaOperacaoNoEditor]);
 
-    // Partes de peça não podem ser excluídas/duplicadas individualmente (remove-se a peça inteira).
+    // Coleções ainda não estão no vocabulário: a operação remove o objeto e o efeito colateral de organização
+    // (tirar da coleção) fica aqui até o lote de coleções migrar.
     const removeObjeto = useCallback((id: number) => {
-        const objeto = objetos.find(item => item.id === id);
-        if (!objeto || objeto.idPeca !== null) return;
-        registraHistorico();
-        setObjetos(atuais => atuais.filter(item => item.id !== id));
+        if (!executaOperacaoNoEditor({ tipo: 'REMOVER_OBJETO', idObjeto: id })) return;
         setColecoes(atuais => atuais.map(colecao => colecao.idsObjetos.includes(id) ? { ...colecao, idsObjetos: colecao.idsObjetos.filter(idObjeto => idObjeto !== id) } : colecao));
-        setIdSelecionado(atual => atual === id ? null : atual);
-        setAlterado(true);
-    }, [objetos, registraHistorico]);
+    }, [executaOperacaoNoEditor]);
 
-    // Duplica com o transform VIVO da mesh (não o inicial), deslocado para a cópia não nascer sobreposta; entra na mesma coleção do original.
+    // A cópia entra na mesma coleção do original — organização ainda fora do vocabulário, então fica aqui.
     const duplicaObjeto = useCallback((id: number) => {
-        const objeto = objetos.find(item => item.id === id);
-        if (!objeto || objeto.idPeca !== null) return;
-        registraHistorico();
-        const mesh = registroMeshes.current.get(id);
-        const transformAtual: TransformEditor3D = mesh
-            ? { posicao: [mesh.position.x + 0.4, mesh.position.y, mesh.position.z + 0.4], rotacao: [mesh.rotation.x, mesh.rotation.y, mesh.rotation.z], escala: [mesh.scale.x, mesh.scale.y, mesh.scale.z] }
-            : { ...objeto.transformInicial, posicao: [objeto.transformInicial.posicao[0] + 0.4, objeto.transformInicial.posicao[1], objeto.transformInicial.posicao[2] + 0.4] };
-        contadorRef.current += 1;
-        const novoId = contadorRef.current;
-        const malhaCopiada: MalhaEditavelLocal = { vertices: objeto.malha.vertices.map(vertice => [vertice[0], vertice[1], vertice[2]] as Vetor3Malha), faces: objeto.malha.faces.map(face => ({ ...face, indicesVertices: [...face.indicesVertices] })), proximoIdFace: objeto.malha.proximoIdFace };
-        setObjetos(atuais => [...atuais, { ...objeto, id: novoId, nome: `${objeto.nome} (cópia)`, materiaisExtras: objeto.materiaisExtras.map(material => ({ ...material })), malha: malhaCopiada, transformInicial: transformAtual }]);
-        setColecoes(atuais => atuais.map(colecao => colecao.idsObjetos.includes(id) ? { ...colecao, idsObjetos: [...colecao.idsObjetos, novoId] } : colecao));
-        setIdSelecionado(novoId);
-        setAlterado(true);
-    }, [objetos, registraHistorico]);
+        const idCopia = contadorRef.current + 1;
+        if (!executaOperacaoNoEditor({ tipo: 'DUPLICAR_OBJETO', idObjeto: id })) return;
+        setColecoes(atuais => atuais.map(colecao => colecao.idsObjetos.includes(id) ? { ...colecao, idsObjetos: [...colecao.idsObjetos, idCopia] } : colecao));
+    }, [executaOperacaoNoEditor]);
 
     const renomeiaObjeto = useCallback((id: number, nome: string) => {
-        const nomeLimpo = nome.trim();
-        if (nomeLimpo.length === 0) return;
-        registraHistorico();
-        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, nome: nomeLimpo } : objeto));
-        setAlterado(true);
-    }, [registraHistorico]);
+        executaOperacaoNoEditor({ tipo: 'RENOMEAR_OBJETO', idObjeto: id, nome });
+    }, [executaOperacaoNoEditor]);
 
     const mudaCorObjeto = useCallback((id: number, cor: string) => {
-        registraHistorico(`cor-objeto-${id}`);
-        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, cor } : objeto));
-        setAlterado(true);
-        gravaOperacaoRoteiro({ tipo: 'DEFINIR_COR_BASE', idObjeto: id, cor });
-    }, [registraHistorico, gravaOperacaoRoteiro]);
+        executaOperacaoNoEditor({ tipo: 'DEFINIR_COR_BASE', idObjeto: id, cor }, { tagHistorico: `cor-objeto-${id}` });
+    }, [executaOperacaoNoEditor]);
 
     // Nível de subdivisão Catmull-Clark de EXIBIÇÃO do objeto: a gaiola (malha) segue sendo o que se edita; o viewport mostra a superfície subdividida.
+    // O clamp mora aqui (a interface manda +1/-1 livremente); a operação recebe o nível já resolvido e recusa fora da faixa.
     const mudaSubdivisaoObjeto = useCallback((id: number, subdivisao: number) => {
         const nivel = Math.max(0, Math.min(MAXIMO_SUBDIVISAO_MALHA_EDITOR3D, Math.round(subdivisao)));
-        registraHistorico();
-        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, subdivisao: nivel } : objeto));
-        setAlterado(true);
-    }, [registraHistorico]);
+        executaOperacaoNoEditor({ tipo: 'DEFINIR_SUBDIVISAO', idObjeto: id, subdivisao: nivel });
+    }, [executaOperacaoNoEditor]);
 
     // Materiais do objeto: slot 0 = base (a Cor); extras = slots 1..N. Novo material nasce claro (o interior da sala do roteiro).
     const adicionaMaterialObjeto = useCallback((id: number) => {
-        registraHistorico();
-        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, materiaisExtras: [...objeto.materiaisExtras, { nome: `Material ${objeto.materiaisExtras.length + 2}`, cor: '#ede8d0' }] } : objeto));
-        setAlterado(true);
-        gravaOperacaoRoteiro({ tipo: 'NOVO_MATERIAL', idObjeto: id });
-    }, [registraHistorico, gravaOperacaoRoteiro]);
+        executaOperacaoNoEditor({ tipo: 'NOVO_MATERIAL', idObjeto: id });
+    }, [executaOperacaoNoEditor]);
 
     const mudaCorMaterialObjeto = useCallback((id: number, slot: number, cor: string) => {
         if (slot <= 0) { mudaCorObjeto(id, cor); return; }
@@ -602,28 +549,19 @@ export function Editor3D() {
     }, [registraHistorico]);
 
     // Atribuir (Assign): grava o slot do material nas faces SELECIONADAS da gaiola — o render agrupa os triângulos por slot.
+    // Atribuir (Assign): grava o slot do material nas faces SELECIONADAS da gaiola — o render agrupa os triângulos por slot.
+    // A operação carrega os IDs ESTÁVEIS das faces (a seleção é estado do editor, não do projeto).
     const atribuiMaterialAsFacesSelecionadas = useCallback((slot: number) => {
-        if (idSelecionado === null || facesSelecionadas.length === 0) return;
-        const objeto = objetos.find(item => item.id === idSelecionado);
-        if (!objeto) return;
-        registraHistorico();
-        const alvo = new Set(facesSelecionadas);
-        const faces = objeto.malha.faces.map(face => alvo.has(face.id) ? { ...face, slotMaterial: slot <= 0 ? undefined : slot } : face);
-        setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: { ...item.malha, faces } } : item));
-        setAlterado(true);
-        // Roteiro grava a atribuição por ID ESTÁVEL de face (a seleção é estado do editor, não do projeto).
-        gravaOperacaoRoteiro({ tipo: 'ATRIBUIR_MATERIAL', idObjeto: idSelecionado, slot, idsFaces: [...facesSelecionadas] });
-    }, [idSelecionado, facesSelecionadas, objetos, registraHistorico, gravaOperacaoRoteiro]);
+        if (idSelecionado === null || idSelecionado <= 0 || facesSelecionadas.length === 0) return;
+        executaOperacaoNoEditor({ tipo: 'ATRIBUIR_MATERIAL', idObjeto: idSelecionado, slot, idsFaces: [...facesSelecionadas] });
+    }, [idSelecionado, facesSelecionadas, executaOperacaoNoEditor]);
 
     // Espessura de parede (Solidify) de EXIBIÇÃO do objeto, em metros: 0 = desligado; a gaiola segue original (não-destrutivo, padrão da subdivisão).
+    // O clamp mora aqui (o slider manda valor livre); a operação recebe o valor já resolvido — e é ele que vira passo.
     const mudaEspessuraObjeto = useCallback((id: number, espessura: number) => {
         const valor = Math.max(0, Math.min(MAXIMO_ESPESSURA_MALHA_EDITOR3D, espessura));
-        registraHistorico(`espessura-objeto-${id}`);
-        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, espessura: valor } : objeto));
-        setAlterado(true);
-        // Grava o valor JÁ clampado (rajada do slider coalesce).
-        gravaOperacaoRoteiro({ tipo: 'SOLIDIFICAR', idObjeto: id, espessura: valor });
-    }, [registraHistorico, gravaOperacaoRoteiro]);
+        executaOperacaoNoEditor({ tipo: 'SOLIDIFICAR', idObjeto: id, espessura: valor }, { tagHistorico: `espessura-objeto-${id}` });
+    }, [executaOperacaoNoEditor]);
 
     const abrirModalAnexarPeca = useCallback(async () => {
         setModalAnexarPecaAberto(true);
@@ -650,7 +588,7 @@ export function Editor3D() {
         const base = ancoraRegiaoCorpoPersonagem(corpoPersonagem, regiaoCorpoSelecionada);
         const novos: ObjetoEditor3D[] = carregados.map(carregado => {
             contadorRef.current += 1;
-            return { id: contadorRef.current, tipo: carregado.tipo, nome: carregado.nome, cor: carregado.cor, materiaisExtras: [], idPeca, visivel: true, malha: carregado.malha ?? criaMalhaPrimitiva(carregado.tipo), subdivisao: carregado.subdivisao, espessura: 0, transformInicial: { posicao: [carregado.transform.posicao[0] + base[0], carregado.transform.posicao[1] + base[1], carregado.transform.posicao[2] + base[2]], rotacao: carregado.transform.rotacao, escala: carregado.transform.escala } };
+            return { id: contadorRef.current, tipo: carregado.tipo, nome: carregado.nome, cor: carregado.cor, materiaisExtras: [], idPeca, visivel: true, malha: carregado.malha ?? criaMalhaPrimitivaEditor3D(carregado.tipo), subdivisao: carregado.subdivisao, espessura: 0, transformInicial: { posicao: [carregado.transform.posicao[0] + base[0], carregado.transform.posicao[1] + base[1], carregado.transform.posicao[2] + base[2]], rotacao: carregado.transform.rotacao, escala: carregado.transform.escala } };
         });
         setObjetos(atuais => [...atuais, ...novos]);
         setPecas(atuais => [...atuais, { idPeca, membro: regiaoCorpoSelecionada, nome: nomeProjeto, idProjetoOrigem: persistido.id }]);
@@ -681,7 +619,7 @@ export function Editor3D() {
         registraHistorico();
         contadorRef.current += 1;
         const id = contadorRef.current;
-        const malha = criaMalhaPrimitiva(paramsCriacao.tipo, paramsCriacao.segmentos);
+        const malha = criaMalhaPrimitivaEditor3D(paramsCriacao.tipo, paramsCriacao.segmentos);
         setObjetos(atuais => [...atuais, { id, tipo: paramsCriacao.tipo, nome: `${rotuloTipoPrimitivaEditor3D(paramsCriacao.tipo)} ${id}`, cor: COR_OBJETO_PADRAO_EDITOR3D, materiaisExtras: [], idPeca: null, visivel: true, malha, subdivisao: 0, espessura: 0, transformInicial: { posicao: paramsCriacao.posicao, rotacao: paramsCriacao.rotacao, escala: paramsCriacao.escala } }]);
         setIdSelecionado(id);
         setAlterado(true);
@@ -705,119 +643,95 @@ export function Editor3D() {
     }, []);
 
     // Extrude segue operação de UMA face (o fluxo com gizmo é por face); com várias selecionadas o botão desabilita.
+    // A operação altera a MALHA; a seleção resultante é estado de sessão e continua sendo decidida aqui.
     const extrudaFaceSelecionada = useCallback(() => {
-        if (idSelecionado === null || facesSelecionadas.length !== 1) return;
+        if (idSelecionado === null || idSelecionado <= 0 || facesSelecionadas.length !== 1) return;
         const objeto = objetos.find(item => item.id === idSelecionado);
         if (!objeto) return;
-        registraHistorico();
-        const resultado = extrudaFace(objeto.malha, facesSelecionadas[0]);
-        setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado.malha } : item));
-        setVerticesSelecionados(resultado.indicesNovaFace);
-        setFacesSelecionadas([resultado.idNovaFace]);
-        setAlterado(true);
-    }, [idSelecionado, facesSelecionadas, objetos, registraHistorico]);
+        const previa = extrudaFace(objeto.malha, facesSelecionadas[0]);
+        if (!executaOperacaoNoEditor({ tipo: 'EXTRUDAR_FACE', idObjeto: idSelecionado, idFace: facesSelecionadas[0] })) return;
+        setVerticesSelecionados(previa.indicesNovaFace);
+        setFacesSelecionadas([previa.idNovaFace]);
+    }, [idSelecionado, facesSelecionadas, objetos, executaOperacaoNoEditor]);
 
     const chanframaArestaSelecionada = useCallback(() => {
         if (idSelecionado === null || modoSelecaoEdicao !== 'ARESTA' || verticesSelecionados.length !== 2) return;
         const objeto = objetos.find(item => item.id === idSelecionado);
         if (!objeto) return;
-        const resultado = chanframaAresta(objeto.malha, verticesSelecionados[0], verticesSelecionados[1], quantidadeBevel);
-        if (resultado.indicesChanfro.length === 0) return;
-        registraHistorico();
-        setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado.malha } : item));
-        setVerticesSelecionados(resultado.indicesChanfro);
+        const previa = chanframaAresta(objeto.malha, verticesSelecionados[0], verticesSelecionados[1], quantidadeBevel);
+        if (previa.indicesChanfro.length === 0) return;
+        if (!executaOperacaoNoEditor({ tipo: 'CHANFRAR_ARESTA', idObjeto: idSelecionado, indicesVertices: [verticesSelecionados[0], verticesSelecionados[1]], quantidade: quantidadeBevel })) return;
+        setVerticesSelecionados(previa.indicesChanfro);
         setFacesSelecionadas([]);
-        setAlterado(true);
-    }, [idSelecionado, modoSelecaoEdicao, verticesSelecionados, objetos, quantidadeBevel, registraHistorico]);
+    }, [idSelecionado, modoSelecaoEdicao, verticesSelecionados, objetos, quantidadeBevel, executaOperacaoNoEditor]);
 
     // Corte de anel: perpendicular à aresta selecionada; a seleção passa a ser o anel novo inteiro (todos os pontos médios).
     const cortaAnelSelecionado = useCallback(() => {
         if (idSelecionado === null || modoSelecaoEdicao !== 'ARESTA' || verticesSelecionados.length !== 2) return;
         const objeto = objetos.find(item => item.id === idSelecionado);
         if (!objeto) return;
-        const resultado = cortaAnelAresta(objeto.malha, verticesSelecionados[0], verticesSelecionados[1]);
-        if (!resultado) return;
-        registraHistorico();
-        setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado.malha } : item));
-        setVerticesSelecionados(resultado.indicesNovoAnel);
+        const previa = cortaAnelAresta(objeto.malha, verticesSelecionados[0], verticesSelecionados[1]);
+        if (!previa) return;
+        if (!executaOperacaoNoEditor({ tipo: 'CORTAR_ANEL', idObjeto: idSelecionado, indicesVertices: [verticesSelecionados[0], verticesSelecionados[1]] })) return;
+        setVerticesSelecionados(previa.indicesNovoAnel);
         setFacesSelecionadas([]);
-        setAlterado(true);
-    }, [idSelecionado, modoSelecaoEdicao, verticesSelecionados, objetos, registraHistorico]);
+    }, [idSelecionado, modoSelecaoEdicao, verticesSelecionados, objetos, executaOperacaoNoEditor]);
 
     // Inset varre TODAS as faces selecionadas, cada uma individualmente, com largura de moldura absoluta em metros.
     const insetaFacesSelecionadas = useCallback(() => {
         if (idSelecionado === null || facesSelecionadas.length === 0) return;
         const objeto = objetos.find(item => item.id === idSelecionado);
         if (!objeto) return;
-        const resultado = insetaFacesDaMalha(objeto.malha, facesSelecionadas, distanciaInset);
-        if (resultado.idsNovasFaces.length === 0) return;
-        registraHistorico();
-        setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado.malha } : item));
-        setVerticesSelecionados(resultado.indicesNovasFaces);
-        setFacesSelecionadas(resultado.idsNovasFaces);
-        setAlterado(true);
-    }, [idSelecionado, facesSelecionadas, objetos, distanciaInset, registraHistorico]);
+        const previa = insetaFacesDaMalha(objeto.malha, facesSelecionadas, distanciaInset);
+        if (previa.idsNovasFaces.length === 0) return;
+        if (!executaOperacaoNoEditor({ tipo: 'INSETAR_FACES', idObjeto: idSelecionado, idsFaces: [...facesSelecionadas], distancia: distanciaInset })) return;
+        setVerticesSelecionados(previa.indicesNovasFaces);
+        setFacesSelecionadas(previa.idsNovasFaces);
+    }, [idSelecionado, facesSelecionadas, objetos, distanciaInset, executaOperacaoNoEditor]);
 
     // Espelhar X: opera na malha inteira do objeto selecionado (plano X=0 local; modele metade e espelhe).
     const espelhaObjetoSelecionadoX = useCallback(() => {
-        if (idSelecionado === null || idSelecionado < 0) return;
-        const objeto = objetos.find(item => item.id === idSelecionado);
-        if (!objeto) return;
-        registraHistorico();
-        const malhaEspelhada = espelhaMalhaX(objeto.malha);
-        setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: malhaEspelhada } : item));
+        if (idSelecionado === null || idSelecionado <= 0) return;
+        if (!executaOperacaoNoEditor({ tipo: 'ESPELHAR_X', idObjeto: idSelecionado })) return;
         setVerticesSelecionados([]);
         setFacesSelecionadas([]);
-        setAlterado(true);
-    }, [idSelecionado, objetos, registraHistorico]);
+    }, [idSelecionado, executaOperacaoNoEditor]);
 
     // Aplicar Transformações (bake): grava o transform vivo da mesh nos vértices da gaiola e zera o transform (pos/rot 0, escala 1)
     // sem mudança visual — as medidas reais viram a condição inicial do objeto (operações absolutas passam a valer sobre elas).
     const aplicaTransformacoesObjetoSelecionado = useCallback(() => {
-        if (idSelecionado === null || idSelecionado < 0) return;
-        const objeto = objetos.find(item => item.id === idSelecionado);
-        const mesh = registroMeshes.current.get(idSelecionado);
-        if (!objeto || !mesh) return;
-        registraHistorico();
-        mesh.updateMatrix();
-        const malhaAplicada = aplicaTransformNaMalha(objeto.malha, mesh.matrix);
-        setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: malhaAplicada, transformInicial: { posicao: [0, 0, 0], rotacao: [0, 0, 0], escala: [1, 1, 1] } } : item));
+        if (idSelecionado === null || idSelecionado <= 0) return;
+        if (!executaOperacaoNoEditor({ tipo: 'APLICAR_TRANSFORMACOES', idObjeto: idSelecionado })) return;
+        // A gaiola mudou de coordenadas: a seleção de subelementos da sessão de edição deixa de fazer sentido.
         setVerticesSelecionados([]);
         setFacesSelecionadas([]);
-        setTransformSelecionado({ posicao: [0, 0, 0], rotacao: [0, 0, 0], escala: [1, 1, 1] });
-        setAlterado(true);
-    }, [idSelecionado, objetos, registraHistorico]);
+    }, [idSelecionado, executaOperacaoNoEditor]);
 
     // Excluir contextual: no modo FACE remove as faces selecionadas; no modo VÉRTICE remove as faces que tocam os vértices selecionados.
+    // O MODO de seleção é contexto da sessão; a operação gravada é específica (faces ou vértices), para o roteiro
+    // reproduzir a exclusão certa sem depender de em que modo a operadora estava.
     const excluiSelecaoEdicao = useCallback(() => {
-        if (idSelecionado === null) return;
-        const objeto = objetos.find(item => item.id === idSelecionado);
-        if (!objeto) return;
-        const resultado = modoSelecaoEdicao === 'FACE' && facesSelecionadas.length > 0
-            ? excluiFacesDaMalha(objeto.malha, facesSelecionadas)
+        if (idSelecionado === null || idSelecionado <= 0) return;
+        const operacao: OperacaoRoteiroEditor3D | null = modoSelecaoEdicao === 'FACE' && facesSelecionadas.length > 0
+            ? { tipo: 'EXCLUIR_FACES', idObjeto: idSelecionado, idsFaces: [...facesSelecionadas] }
             : modoSelecaoEdicao === 'VERTICE' && verticesSelecionados.length > 0
-                ? excluiVerticesDaMalha(objeto.malha, verticesSelecionados)
+                ? { tipo: 'EXCLUIR_VERTICES', idObjeto: idSelecionado, indicesVertices: [...verticesSelecionados] }
                 : null;
-        if (!resultado) return;
-        registraHistorico();
-        setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado } : item));
+        if (operacao === null || !executaOperacaoNoEditor(operacao)) return;
         setVerticesSelecionados([]);
         setFacesSelecionadas([]);
-        setAlterado(true);
-    }, [idSelecionado, modoSelecaoEdicao, facesSelecionadas, verticesSelecionados, objetos, registraHistorico]);
+    }, [idSelecionado, modoSelecaoEdicao, facesSelecionadas, verticesSelecionados, executaOperacaoNoEditor]);
 
     const fundeVerticesSelecionadosEdicao = useCallback(() => {
-        if (idSelecionado === null || modoSelecaoEdicao !== 'VERTICE' || verticesSelecionados.length < 2) return;
+        if (idSelecionado === null || idSelecionado <= 0 || modoSelecaoEdicao !== 'VERTICE' || verticesSelecionados.length < 2) return;
         const objeto = objetos.find(item => item.id === idSelecionado);
         if (!objeto) return;
-        const resultado = fundeVerticesDaMalha(objeto.malha, verticesSelecionados);
-        if (!resultado) return;
-        registraHistorico();
-        setObjetos(atuais => atuais.map(item => item.id === idSelecionado ? { ...item, malha: resultado.malha } : item));
-        setVerticesSelecionados([resultado.indiceFundido]);
+        const previa = fundeVerticesDaMalha(objeto.malha, verticesSelecionados);
+        if (!previa) return;
+        if (!executaOperacaoNoEditor({ tipo: 'FUNDIR_VERTICES', idObjeto: idSelecionado, indicesVertices: [...verticesSelecionados] })) return;
+        setVerticesSelecionados([previa.indiceFundido]);
         setFacesSelecionadas([]);
-        setAlterado(true);
-    }, [idSelecionado, modoSelecaoEdicao, verticesSelecionados, objetos, registraHistorico]);
+    }, [idSelecionado, modoSelecaoEdicao, verticesSelecionados, objetos, executaOperacaoNoEditor]);
 
     const moveVerticesSelecionados = useCallback((delta: [number, number, number]) => {
         if (idSelecionado === null || verticesSelecionados.length === 0) return;
@@ -843,7 +757,7 @@ export function Editor3D() {
         setCapturando(true);
     }, [tipoProjeto, camera]);
 
-    const montaObjetosCarregados = useCallback((carregados: readonly ObjetoCarregadoEditor3D[]): ObjetoEditor3D[] => carregados.map(carregado => { contadorRef.current += 1; return { id: contadorRef.current, tipo: carregado.tipo, nome: carregado.nome, cor: carregado.cor, materiaisExtras: carregado.materiaisExtras.map(material => ({ ...material })), idPeca: carregado.idPeca, visivel: true, malha: carregado.malha ?? criaMalhaPrimitiva(carregado.tipo), subdivisao: carregado.subdivisao, espessura: carregado.espessura, transformInicial: carregado.transform }; }), []);
+    const montaObjetosCarregados = useCallback((carregados: readonly ObjetoCarregadoEditor3D[]): ObjetoEditor3D[] => carregados.map(carregado => { contadorRef.current += 1; return { id: contadorRef.current, tipo: carregado.tipo, nome: carregado.nome, cor: carregado.cor, materiaisExtras: carregado.materiaisExtras.map(material => ({ ...material })), idPeca: carregado.idPeca, visivel: true, malha: carregado.malha ?? criaMalhaPrimitivaEditor3D(carregado.tipo), subdivisao: carregado.subdivisao, espessura: carregado.espessura, transformInicial: carregado.transform }; }), []);
 
     const criaColecao = useCallback(() => {
         registraHistorico();
@@ -1462,11 +1376,18 @@ export function Editor3D() {
         return false;
     }, [salvando, ehInicio, objetos.length, tipoProjeto, sessaoRoteiroNaAba, colecaoSistema]);
 
+    // Item de menu que aponta para uma OPERAÇÃO: o clique despacha o operador direto (sem tradução no meio). As
+    // operações de menu do vocabulário atual não têm parâmetros — quando tiverem, o item carrega os valores.
+    const aoOperacaoDoMenu = useCallback((tipo: TipoOperacaoEditor3D) => {
+        executaOperacaoNoEditor({ tipo } as OperacaoRoteiroEditor3D);
+    }, [executaOperacaoNoEditor]);
+
+    // A pergunta "dá para executar isto agora?" (o poll do operador): sem projeto aberto não há cena, e a lente ativa
+    // do MAPA decide o que se pode alterar nela. Mesma regra que a validação usa para dizer se a etapa é realizável.
+    const operacaoDesabilitada = useCallback((tipo: TipoOperacaoEditor3D) => ehInicio || salvando || !colecaoPermiteOperacao(colecaoSistema, tipo), [ehInicio, salvando, colecaoSistema]);
+
     const aoComando = useCallback((comando: ComandoMenuEditor3D) => {
-        if (comando === 'ADD_CUBO') adicionaObjeto('CUBO');
-        else if (comando === 'ADD_CILINDRO') adicionaObjeto('CILINDRO');
-        else if (comando === 'ADD_ESFERA') adicionaObjeto('ESFERA');
-        else if (comando === 'ADD_LUZ') adicionaLuz();
+        if (comando === 'ADD_LUZ') adicionaLuz();
         else if (comando === 'NOVO_MESH') abreCriacaoMalha();
         else if (comando === 'NOVO_PROJETO') iniciaProjetoVazio();
         else if (comando === 'CRIAR_CAPA_ARTE') iniciaCapaArte();
@@ -1477,7 +1398,7 @@ export function Editor3D() {
         else if (comando === 'ABRIR_PROJETO') void abrirModalAbrirProjeto();
         else if (comando === 'CAPTURAR_ARTE_CAPA') iniciaCaptura();
         else if (comando === 'ABRIR_ROTEIROS') abrePainelRoteiros();
-    }, [adicionaObjeto, adicionaLuz, abreCriacaoMalha, iniciaProjetoVazio, iniciaCapaArte, iniciaPersonagem, iniciaMapa, salvarProjetoAtual, abrirModalAbrirProjeto, iniciaCaptura, abrePainelRoteiros]);
+    }, [executaOperacaoNoEditor, adicionaLuz, abreCriacaoMalha, iniciaProjetoVazio, iniciaCapaArte, iniciaPersonagem, iniciaMapa, salvarProjetoAtual, abrirModalAbrirProjeto, iniciaCaptura, abrePainelRoteiros]);
 
     const aoCapturar = useCallback((dataUrl: string) => {
         const arte: ArteDeCapa = { id: crypto.randomUUID(), tipo: 'ARTE_CAPA', largura: LARGURA_ARTE_DE_CAPA, altura: ALTURA_ARTE_DE_CAPA, imagem: dataUrl, origem: 'SNAPSHOT_3D', criadoEmMs: Date.now() };
@@ -1609,7 +1530,7 @@ export function Editor3D() {
 
     return (
         <div className={styles.recipiente_editor_3d}>
-            <BarraMenusEditor3D comandoDesabilitado={comandoDesabilitado} aoComando={aoComando} podeDesfazer={!ehInicio && pilhaDesfazer.length > 0} podeRefazer={!ehInicio && pilhaRefazer.length > 0} aoDesfazer={desfazer} aoRefazer={refazer} />
+            <BarraMenusEditor3D comandoDesabilitado={comandoDesabilitado} aoComando={aoComando} aoOperacao={aoOperacaoDoMenu} operacaoDesabilitada={operacaoDesabilitada} podeDesfazer={!ehInicio && pilhaDesfazer.length > 0} podeRefazer={!ehInicio && pilhaRefazer.length > 0} aoDesfazer={desfazer} aoRefazer={refazer} />
             <BarraAbasEditor3D abas={abasResumo} aoSelecionar={trocaAba} aoFechar={fechaAba} aoNovaAba={() => abreNovaAba(CENA_INICIO_EDITOR3D)} />
 
             {ehInicio ? (
@@ -2119,7 +2040,7 @@ function CorpoPersonagemViewportEditor3D({ corpo, selecionado, aoSelecionar }: C
 };
 
 function PreviewMalhaEditor3D({ params }: { readonly params: ParamCriacaoMalhaEditor3D }) {
-    const geometria = useMemo(() => criaGeometriaDeMalha(criaMalhaPrimitiva(params.tipo, params.segmentos)), [params.tipo, params.segmentos]);
+    const geometria = useMemo(() => criaGeometriaDeMalha(criaMalhaPrimitivaEditor3D(params.tipo, params.segmentos)), [params.tipo, params.segmentos]);
 
     useEffect(() => () => geometria.dispose(), [geometria]);
 

@@ -1,103 +1,16 @@
-import { Box3, Euler, Matrix4, Quaternion, Vector3 } from 'three';
-
-import { criaMalhaCubo } from './editor3D.malha';
-import { COR_OBJETO_PADRAO_EDITOR3D } from './editor3D.projeto.serializacao';
-import type { MalhaEditavelLocal } from './editor3D.malha';
-import type { TransformEditor3D } from './editor3D.projeto.serializacao';
-import type { ObjetoEditor3D } from './Editor3D';
+import { aplicaOperacaoRoteiroEditor3D, ESTADO_INICIAL_ROTEIRO_EDITOR3D, rotuloDoOperadorEditor3D } from './editor3D.operadores';
+import { MENUS_EDITOR_3D, type ItemMenuEditor3D } from './editor3D.menus';
+import type { EstadoRoteiroEditor3D, TipoOperacaoEditor3D } from './editor3D.operadores';
 import type { OperacaoRoteiroEditor3D, PassoRoteiroEditor3D } from 'types-nora-api';
 
 // -------------------------------------------------------------------------------------------------------------------
-// CAMADA DE OPERAÇÕES DE ROTEIRO — execução PURA (sem mesh, sem React, sem WebGL) das operações semânticas gravadas
-// num Roteiro. É o que a validação reexecuta e compara com o golden; é também o que o stepping do Painel Roteiro
-// repõe no editor. Cada operação nova do vocabulário entra AQUI e no ponto de gravação correspondente do Editor3D
-// (de-mock reativo: só quando um roteiro precisar dela).
+// ROTEIRO SOBRE O REGISTRO — este módulo NÃO implementa operação nenhuma: ele executa sequências delas (reexecução do
+// roteiro) e responde as duas perguntas de cada etapa. A implementação vive no registro de operadores, que é o mesmo
+// que a tela invoca. Cada operação nova nasce lá e chega aqui de graça.
 // -------------------------------------------------------------------------------------------------------------------
 
-const EPSILON_CHAO_ROTEIRO_EDITOR3D = 0.0001;
-
-// Estado puro da execução: o subconjunto da cena que o vocabulário manipula. `contadorObjetos` espelha a regra do
-// contadorRef do editor (incrementa a cada criação, NUNCA reusa id) — é o que mantém os ids do roteiro determinísticos.
-export type EstadoRoteiroEditor3D = {
-    readonly objetos: readonly ObjetoEditor3D[];
-    readonly contadorObjetos: number;
-};
-
-export const ESTADO_INICIAL_ROTEIRO_EDITOR3D: EstadoRoteiroEditor3D = { objetos: [], contadorObjetos: 0 };
-
-export type ResultadoOperacaoRoteiroEditor3D = { readonly ok: true; readonly estado: EstadoRoteiroEditor3D } | { readonly ok: false; readonly motivo: string };
-
-// Réplica ANALÍTICA do assentamento em camadas para execução headless, limitada ao CHÃO (sem apoios em outros objetos —
-// empilhamento entra no vocabulário quando um roteiro precisar). Mesma aritmética do assentaMeshNaCamadaEditor3D:
-// bbox local em float32 (como o computeBoundingBox da BufferGeometry), matriz composta como o updateMatrix da mesh,
-// deslocamento = 0 - minZ mundial — para o estado reexecutado bater byte a byte com o editor vivo.
-// Válida enquanto a geometria de EXIBIÇÃO é a própria gaiola (subdivisão 0 e espessura 0 — o vocabulário atual não as altera).
-function transformAssentadoNoChaoRoteiroEditor3D(malha: MalhaEditavelLocal, transform: TransformEditor3D): TransformEditor3D {
-    if (malha.vertices.length === 0) return transform;
-    const caixa = new Box3();
-    for (const vertice of malha.vertices) caixa.expandByPoint(new Vector3(Math.fround(vertice[0]), Math.fround(vertice[1]), Math.fround(vertice[2])));
-    const matriz = new Matrix4().compose(new Vector3(transform.posicao[0], transform.posicao[1], transform.posicao[2]), new Quaternion().setFromEuler(new Euler(transform.rotacao[0], transform.rotacao[1], transform.rotacao[2], 'XYZ')), new Vector3(transform.escala[0], transform.escala[1], transform.escala[2]));
-    const minZ = caixa.applyMatrix4(matriz).min.z;
-    if (!Number.isFinite(minZ)) return transform;
-    const deslocamento = 0 - minZ;
-    if (Math.abs(deslocamento) <= EPSILON_CHAO_ROTEIRO_EDITOR3D) return transform;
-    return { ...transform, posicao: [transform.posicao[0], transform.posicao[1], transform.posicao[2] + deslocamento] };
-};
-
-function objetoDaOperacao(estado: EstadoRoteiroEditor3D, idObjeto: number): ObjetoEditor3D | null { return estado.objetos.find(objeto => objeto.id === idObjeto) ?? null; };
-
-export function aplicaOperacaoRoteiroEditor3D(estado: EstadoRoteiroEditor3D, operacao: OperacaoRoteiroEditor3D): ResultadoOperacaoRoteiroEditor3D {
-    if (operacao.tipo === 'ADD_CUBO') {
-        const id = estado.contadorObjetos + 1;
-        const malha = criaMalhaCubo();
-        // Mesmo nascimento do adicionaObjeto: origem do mundo, cor padrão, sem escalonamento — o assentamento ajusta o Z.
-        const transformInicial = transformAssentadoNoChaoRoteiroEditor3D(malha, { posicao: [0, 0, 0], rotacao: [0, 0, 0], escala: [1, 1, 1] });
-        const objeto: ObjetoEditor3D = { id, tipo: 'CUBO', nome: `Cubo ${id}`, cor: COR_OBJETO_PADRAO_EDITOR3D, materiaisExtras: [], idPeca: null, visivel: true, malha, subdivisao: 0, espessura: 0, transformInicial };
-        return { ok: true, estado: { objetos: [...estado.objetos, objeto], contadorObjetos: id } };
-    }
-
-    if (operacao.tipo === 'DEFINIR_COR_BASE') {
-        const objeto = objetoDaOperacao(estado, operacao.idObjeto);
-        if (objeto === null) return { ok: false, motivo: `Objeto ${operacao.idObjeto} não existe na cena` };
-        return { ok: true, estado: { ...estado, objetos: estado.objetos.map(atual => atual.id === operacao.idObjeto ? { ...atual, cor: operacao.cor } : atual) } };
-    }
-
-    if (operacao.tipo === 'ESCALAR') {
-        const objeto = objetoDaOperacao(estado, operacao.idObjeto);
-        if (objeto === null) return { ok: false, motivo: `Objeto ${operacao.idObjeto} não existe na cena` };
-        const transformEscalado: TransformEditor3D = { ...objeto.transformInicial, escala: [operacao.escala[0], operacao.escala[1], operacao.escala[2]] };
-        const transformFinal = transformAssentadoNoChaoRoteiroEditor3D(objeto.malha, transformEscalado);
-        return { ok: true, estado: { ...estado, objetos: estado.objetos.map(atual => atual.id === operacao.idObjeto ? { ...atual, transformInicial: transformFinal } : atual) } };
-    }
-
-    if (operacao.tipo === 'SOLIDIFICAR') {
-        const objeto = objetoDaOperacao(estado, operacao.idObjeto);
-        if (objeto === null) return { ok: false, motivo: `Objeto ${operacao.idObjeto} não existe na cena` };
-        // Solidify é de EXIBIÇÃO e cresce para dentro: a gaiola (e o bbox do assentamento) não muda — sem re-assentar.
-        return { ok: true, estado: { ...estado, objetos: estado.objetos.map(atual => atual.id === operacao.idObjeto ? { ...atual, espessura: operacao.espessura } : atual) } };
-    }
-
-    if (operacao.tipo === 'NOVO_MATERIAL') {
-        const objeto = objetoDaOperacao(estado, operacao.idObjeto);
-        if (objeto === null) return { ok: false, motivo: `Objeto ${operacao.idObjeto} não existe na cena` };
-        // Mesmo nascimento do adicionaMaterialObjeto: nome sequencial (base é o 1) e cor clara padrão.
-        return { ok: true, estado: { ...estado, objetos: estado.objetos.map(atual => atual.id === operacao.idObjeto ? { ...atual, materiaisExtras: [...atual.materiaisExtras, { nome: `Material ${atual.materiaisExtras.length + 2}`, cor: '#ede8d0' }] } : atual) } };
-    }
-
-    if (operacao.tipo === 'ATRIBUIR_MATERIAL') {
-        const objeto = objetoDaOperacao(estado, operacao.idObjeto);
-        if (objeto === null) return { ok: false, motivo: `Objeto ${operacao.idObjeto} não existe na cena` };
-        const idsExistentes = new Set(objeto.malha.faces.map(face => face.id));
-        const faceInexistente = operacao.idsFaces.find(idFace => !idsExistentes.has(idFace));
-        if (faceInexistente !== undefined) return { ok: false, motivo: `Face ${faceInexistente} não existe em "${objeto.nome}"` };
-        if (operacao.slot > objeto.materiaisExtras.length) return { ok: false, motivo: `Material ${operacao.slot} não existe em "${objeto.nome}"` };
-        const alvo = new Set(operacao.idsFaces);
-        const faces = objeto.malha.faces.map(face => alvo.has(face.id) ? { ...face, slotMaterial: operacao.slot <= 0 ? undefined : operacao.slot } : face);
-        return { ok: true, estado: { ...estado, objetos: estado.objetos.map(atual => atual.id === operacao.idObjeto ? { ...atual, malha: { ...atual.malha, faces } } : atual) } };
-    }
-
-    return { ok: false, motivo: 'Operação não registrada na camada de operações' };
-};
+export { aplicaOperacaoRoteiroEditor3D, criaMalhaPrimitivaEditor3D, ESTADO_INICIAL_ROTEIRO_EDITOR3D, rotuloTipoPrimitivaEditor3D } from './editor3D.operadores';
+export type { EstadoRoteiroEditor3D, ResultadoOperacaoRoteiroEditor3D, TipoOperacaoEditor3D } from './editor3D.operadores';
 
 // Execução completa a partir do projeto em branco: estados[i] = estado após o passo i+1. Para no primeiro passo que
 // falha — os três desfechos da validação saem daqui (completa e bate / completa e diverge / não completa).
@@ -115,17 +28,46 @@ export function executaPassosRoteiroEditor3D(passos: readonly PassoRoteiroEditor
         atual = resultado.estado;
         estados.push(atual);
     }
+
     return { estados, falha: null };
 };
 
-// Rótulo humano DERIVADO da operação (o roteiro não guarda rótulo): resolve o nome do objeto no estado ANTERIOR ao passo.
+// -------------------------------------------------------------------------------------------------------------------
+// AFORDÂNCIA — "esta etapa é realizável agora?". O menu declara qual OPERAÇÃO cada item dispara (como o
+// `layout.operator(bl_idname)` do Blender), então o despacho do clique e a checagem da validação leem a MESMA
+// declaração: mover de menu ou renomear o item não quebra nada; remover a entrada torna o passo inalcançável e a
+// validação acusa. Operações de painel (cor, escala, materiais) não têm entrada de menu — não são checadas por aqui.
+// -------------------------------------------------------------------------------------------------------------------
+
+function trilhaItemPorOperacaoEditor3D(itens: readonly ItemMenuEditor3D[], tipo: TipoOperacaoEditor3D): string[] | null {
+    for (const item of itens) {
+        if (item.operacao === tipo) return [item.rotulo];
+        if (item.itens) { const trilha = trilhaItemPorOperacaoEditor3D(item.itens, tipo); if (trilha !== null) return [item.rotulo, ...trilha]; }
+    }
+
+    return null;
+};
+
+// Caminho legível ATUAL da afordância ("Adicionar › Cubo"), derivado do menu declarativo: renomear ou mover o item
+// atualiza o tutorial sozinho, sem tocar no roteiro. null quando a operação não tem (ou não tem mais) entrada de menu.
+export function caminhoMenuDaOperacaoEditor3D(tipo: TipoOperacaoEditor3D): string | null {
+    for (const menu of MENUS_EDITOR_3D) {
+        const trilha = trilhaItemPorOperacaoEditor3D(menu.itens, tipo);
+        if (trilha !== null) return [menu.rotulo, ...trilha].join(' › ');
+    }
+
+    return null;
+};
+
+// A operação nasce de menu? A resposta vem da DECLARAÇÃO do operador (afordancia), nunca de procurar no menu: se
+// viesse do menu, remover a entrada faria as duas perguntas responderem "não existe" e a falta de porta jamais seria
+// acusada. Reexportado do registro para haver um caminho só.
+export { operacaoNasceDeMenuEditor3D } from './editor3D.operadores';
+
+// Rótulo do passo: quando a operação tem entrada de menu, o caminho ATUAL dela é o rótulo (o tutorial acompanha a
+// interface); senão, o rótulo declarado pelo próprio operador.
 export function rotuloOperacaoRoteiroEditor3D(operacao: OperacaoRoteiroEditor3D, estadoAntes: EstadoRoteiroEditor3D): string {
-    if (operacao.tipo === 'ADD_CUBO') return 'Adicionar cubo';
-    const objeto = objetoDaOperacao(estadoAntes, operacao.idObjeto);
-    const nome = objeto === null ? `objeto ${operacao.idObjeto}` : `"${objeto.nome}"`;
-    if (operacao.tipo === 'DEFINIR_COR_BASE') return `Cor base de ${nome} → ${operacao.cor}`;
-    if (operacao.tipo === 'ESCALAR') return `Escalar ${nome} → ${operacao.escala[0]} × ${operacao.escala[1]} × ${operacao.escala[2]}`;
-    if (operacao.tipo === 'SOLIDIFICAR') return operacao.espessura === 0 ? `Paredes desligadas em ${nome}` : `Paredes de ${operacao.espessura} m em ${nome}`;
-    if (operacao.tipo === 'NOVO_MATERIAL') return `Novo material em ${nome}`;
-    return `${operacao.slot === 0 ? 'Material base' : `Material ${operacao.slot}`} → ${operacao.idsFaces.length} ${operacao.idsFaces.length === 1 ? 'face' : 'faces'} de ${nome}`;
+    const caminho = caminhoMenuDaOperacaoEditor3D(operacao.tipo);
+
+    return caminho !== null ? caminho : rotuloDoOperadorEditor3D(operacao, estadoAntes);
 };

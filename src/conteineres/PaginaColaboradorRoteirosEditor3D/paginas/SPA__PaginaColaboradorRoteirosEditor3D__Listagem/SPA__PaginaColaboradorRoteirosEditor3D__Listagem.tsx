@@ -19,7 +19,7 @@ export default function SPA__PaginaColaboradorRoteirosEditor3D__Listagem() {
                         modoExibicao={ListagemCompostaModoExibicao.GRADE}
                         itensPorLinha={4}
                         obterIdRegistro={roteiro => roteiro.id}
-                        renderizarItem={roteiro => <CartaoRoteiro roteiro={roteiro} validacao={ctx.resultadosValidacao[roteiro.id]} aoAbrirDetalhe={idRoteiro => void ctx.abrirDetalheValidacao(idRoteiro)} />}
+                        renderizarItem={roteiro => <CartaoRoteiro roteiro={roteiro} validacao={ctx.resultadosValidacao[roteiro.id]} aoAbrirDetalhe={idRoteiro => void ctx.abrirDetalheValidacao(idRoteiro)} aoRemover={idRoteiro => void ctx.removerRoteiro(idRoteiro)} />}
                         novoRegistro={{ estaEmProcessoCriacao: ctx.estaEmCadastro, aoIniciarCriacao: ctx.iniciarCadastro, textoBotao: 'Novo Roteiro' }}
                     />
                 </div>
@@ -47,12 +47,14 @@ function seloValidacao(validacao: EstadoValidacaoRoteiroEditor3D): { rotulo: str
 
 // Qualquer roteiro COM passos abre o detalhe: aprovado mostra o desfecho da validação, em montagem mostra só o passo a
 // passo — que é a resposta a "como se faz isso mesmo?". Roteiro sem passo nenhum não tem o que abrir.
-function CartaoRoteiro({ roteiro, validacao, aoAbrirDetalhe }: { roteiro: RegistroRoteiroEditor3D; validacao: EstadoValidacaoRoteiroEditor3D | undefined; aoAbrirDetalhe: (idRoteiro: number) => void; }) {
+function CartaoRoteiro({ roteiro, validacao, aoAbrirDetalhe, aoRemover }: { roteiro: RegistroRoteiroEditor3D; validacao: EstadoValidacaoRoteiroEditor3D | undefined; aoAbrirDetalhe: (idRoteiro: number) => void; aoRemover: (idRoteiro: number) => void; }) {
     const estado = estadoRoteiro(roteiro);
     const seloResultado = validacao !== undefined ? seloValidacao(validacao) : null;
 
     const conteudo = (
         <>
+            {/* stopPropagation: o cartão inteiro abre o detalhe — o ✕ não pode disparar os dois. */}
+            <button type="button" className={styles.remover_roteiro} title="Remover roteiro (definitivo)" onClick={evento => { evento.stopPropagation(); if (confirm(`Remover o roteiro "${roteiro.nome}"?\n\nA remoção é definitiva e leva junto os passos e o resultado aprovado.`)) aoRemover(roteiro.id); }}>✕</button>
             <strong className={styles.nome}>{roteiro.nome}</strong>
             <span className={styles.objetivo}>{roteiro.objetivo}</span>
             {/* O motivo do bloqueio é o backlog da ferramenta falando: fica legível no cartão, não escondido num title. */}

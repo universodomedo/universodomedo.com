@@ -5,8 +5,8 @@ import type { RoteiroEditor3DPersistido } from 'types-nora-api';
 
 import useNoraGraphQLListagem from 'Hooks/useNoraGraphQLListagem';
 import { useConfigurarLayoutContextualizado } from 'Redux/hooks/useLayoutContextualizado';
-import { consultaRoteiroEditor3D, criaRoteiroEditor3D } from 'Componentes/Editor3D/editor3D.roteiro.api';
-import { validaRoteiroContraGoldenEditor3D, type ResultadoValidacaoRoteiroEditor3D } from 'Componentes/Editor3D/editor3D.roteiro';
+import { consultaRoteiroEditor3D, criaRoteiroEditor3D, removeRoteiroEditor3D } from 'Componentes/Editor3D/editor3D.roteiro.api';
+import { relatorioValidacaoRoteiroEditor3D, validaRoteiroContraGoldenEditor3D, type EtapaValidadaRoteiroEditor3D, type ResultadoValidacaoRoteiroEditor3D } from 'Componentes/Editor3D/editor3D.roteiro';
 
 export type RegistroRoteiroEditor3D = ReturnType<typeof obtemListagemRoteirosEditor3D>['registros'][number];
 
@@ -18,6 +18,8 @@ export type EstadoValidacaoRoteiroEditor3D = ResultadoValidacaoRoteiroEditor3D |
 export type DetalheValidacaoRoteiroEditor3D = {
     readonly roteiro: RoteiroEditor3DPersistido;
     readonly resultado: ResultadoValidacaoRoteiroEditor3D | null;
+    // Etapa a etapa: confere / regrediu / não executou / contaminada. Vazio quando não há golden para comparar.
+    readonly etapas: readonly EtapaValidadaRoteiroEditor3D[];
 };
 
 export interface Contexto__PaginaColaboradorRoteirosEditor3D__Props {
@@ -26,6 +28,7 @@ export interface Contexto__PaginaColaboradorRoteirosEditor3D__Props {
     iniciarCadastro: () => void;
     irParaListagem: () => void;
     criarRoteiro: (nome: string, objetivo: string) => Promise<void>;
+    removerRoteiro: (idRoteiro: number) => Promise<void>;
     resultadosValidacao: Readonly<Record<number, EstadoValidacaoRoteiroEditor3D>>;
     resumoValidacao: string | null;
     validandoTodos: boolean;
@@ -95,12 +98,21 @@ export const Contexto__PaginaColaboradorRoteirosEditor3D__Provider = ({ children
     const abrirDetalheValidacao = useCallback(async (idRoteiro: number): Promise<void> => {
         const persistido = await consultaRoteiroEditor3D(idRoteiro);
         if (!persistido) return;
-        const resultado = persistido.golden === null ? null : validaRoteiroContraGoldenEditor3D(persistido.passos, persistido.golden);
-        if (resultado !== null) setResultadosValidacao(atuais => ({ ...atuais, [idRoteiro]: resultado }));
-        setDetalheValidacao({ roteiro: persistido, resultado });
+        const relatorio = persistido.golden === null ? null : relatorioValidacaoRoteiroEditor3D(persistido.passos, persistido.golden);
+        if (relatorio !== null) setResultadosValidacao(atuais => ({ ...atuais, [idRoteiro]: relatorio.resultado }));
+        setDetalheValidacao({ roteiro: persistido, resultado: relatorio?.resultado ?? null, etapas: relatorio?.etapas ?? [] });
     }, []);
 
     const fecharDetalheValidacao = useCallback(() => setDetalheValidacao(null), []);
+
+    // Exclusão DEFINITIVA (curadoria do catálogo): leva passos e golden juntos — não há lixeira. O resumo da validação
+    // em massa cai junto: os números dele falavam de um catálogo que não existe mais.
+    const removerRoteiro = useCallback(async (idRoteiro: number): Promise<void> => {
+        await removeRoteiroEditor3D(idRoteiro);
+        setResultadosValidacao(atuais => { const proximos = { ...atuais }; delete proximos[idRoteiro]; return proximos; });
+        setResumoValidacao(null);
+        recarregarRoteiros();
+    }, [recarregarRoteiros]);
 
     // Layout contextual dirigido AQUI (dono único): subfluxos só apresentam.
     useConfigurarLayoutContextualizado(
@@ -112,7 +124,7 @@ export const Contexto__PaginaColaboradorRoteirosEditor3D__Provider = ({ children
     );
 
     return (
-        <Contexto__PaginaColaboradorRoteirosEditor3D.Provider value={{ listagemRoteiros, estaEmCadastro, iniciarCadastro, irParaListagem, criarRoteiro, resultadosValidacao, resumoValidacao, validandoTodos, validarTodos, detalheValidacao, abrirDetalheValidacao, fecharDetalheValidacao }}>
+        <Contexto__PaginaColaboradorRoteirosEditor3D.Provider value={{ listagemRoteiros, estaEmCadastro, iniciarCadastro, irParaListagem, criarRoteiro, removerRoteiro, resultadosValidacao, resumoValidacao, validandoTodos, validarTodos, detalheValidacao, abrirDetalheValidacao, fecharDetalheValidacao }}>
             {children}
         </Contexto__PaginaColaboradorRoteirosEditor3D.Provider>
     );
