@@ -9,7 +9,7 @@ import type { OperacaoRoteiroEditor3D, PassoRoteiroEditor3D } from 'types-nora-a
 // que a tela invoca. Cada operação nova nasce lá e chega aqui de graça.
 // -------------------------------------------------------------------------------------------------------------------
 
-export { aplicaOperacaoRoteiroEditor3D, criaMalhaPrimitivaEditor3D, ESTADO_INICIAL_ROTEIRO_EDITOR3D, rotuloTipoPrimitivaEditor3D } from './editor3D.operadores';
+export { aplicaOperacaoRoteiroEditor3D, chaveCoalescenciaDaOperacaoEditor3D, criaMalhaPrimitivaEditor3D, ESTADO_INICIAL_ROTEIRO_EDITOR3D, rotuloTipoPrimitivaEditor3D } from './editor3D.operadores';
 export type { EstadoRoteiroEditor3D, ResultadoOperacaoRoteiroEditor3D, TipoOperacaoEditor3D } from './editor3D.operadores';
 
 // Execução completa a partir do projeto em branco: estados[i] = estado após o passo i+1. Para no primeiro passo que

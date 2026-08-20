@@ -26,13 +26,34 @@ const SETTERS_DE_PRODUTO = ['setObjetos', 'setColecoes', 'setLuzes', 'setFiacao'
 // falharia todo dia até a migração terminar, e sinal sempre vermelho ninguém olha. Falha se o número SUBIR: aí alguém
 // acrescentou mutação nova fora do vocabulário, e o roteiro nasceu cego para ela. Este número só desce; ao migrar um
 // lote, baixe-o junto (a própria saída do comando diz o valor).
-const DIVIDA_ESPERADA_VOCABULARIO = 30;
+const DIVIDA_ESPERADA_VOCABULARIO = 0;
 
 const PONTOS_AUTORIZADOS = {
     executaOperacaoNoEditor: 'É o despacho de operação — o caminho único pelo qual o produto muda por ação do usuário.',
+    // ------------------------------------------------------------------------------------------------------------------
+    // COBERTURA ATUAL DOS ROTEIROS (decisão do Caio, 18/08/2026): um roteiro é sobre QUALQUER tipo de projeto, cada
+    // um com seus próprios escopos/regras/elementos — mas Capa de Arte e Personagem ainda não estão completos e não
+    // participam AGORA. Entram futuramente: quando um deles entrar, REMOVER suas entradas daqui — o comando volta a
+    // acusá-las e o lote é migrado (incluindo a sessão de roteiro nascer com o tipo de projeto do roteiro).
+    // Capa de Arte (câmera + título):
+    atualizaCameraVetor: 'Capa de Arte ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    atualizaCameraFov: 'Capa de Arte ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    moveCameraPosicao: 'Capa de Arte ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    moveCameraAlvo: 'Capa de Arte ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    navegaCameraPov: 'Capa de Arte ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    atualizaTituloTexto: 'Capa de Arte ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    atualizaTituloCor: 'Capa de Arte ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    atualizaTituloTransform: 'Capa de Arte ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    moveTituloPosicao: 'Capa de Arte ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    // Personagem (peças + corpo):
+    anexaPeca: 'Personagem ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    removePeca: 'Personagem ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    atualizaParametroCorpo: 'Personagem ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
+    mudaCorCorpo: 'Personagem ainda não participa dos roteiros — entra futuramente (decisão 18/08/2026).',
     aplicaCenaAtiva: 'Reposição de cena inteira (abrir projeto, trocar de aba, desfazer/refazer): não é ação sobre o produto, é troca do produto inteiro.',
     aplicaCenaNova: 'Idem, com histórico zerado.',
     aplicaEstadoRoteiroNoEditor: 'Reposição do estado vindo da reexecução do roteiro (stepping): o produto é o resultado das operações, não de uma ação nova.',
+    moveVerticesSelecionados: 'Fonte CONTÍNUA do arrasto de vértices (60 fps na tela); o produto final é do COMMIT do gesto, que é a operação MOVER_VERTICES — mesma regra do arrasto de objeto.',
 };
 
 function arquivosDoEditor() {

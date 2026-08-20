@@ -2,7 +2,7 @@ import type { TipoOperacaoEditor3D } from './editor3D.operadores';
 
 // Comandos de TELA: abrem modal, salvam, trocam de contexto. Não alteram o produto e por isso não são operações do
 // vocabulário (não entram em roteiro). Alterar o produto é sempre `operacao`.
-export type ComandoMenuEditor3D = 'NOVO_PROJETO' | 'SALVAR_PROJETO_ATUAL' | 'SALVAR_NOVO_PROJETO' | 'ABRIR_PROJETO' | 'CRIAR_CAPA_ARTE' | 'CRIAR_PERSONAGEM' | 'CRIAR_MAPA' | 'ADD_LUZ' | 'NOVO_MESH' | 'CAPTURAR_ARTE_CAPA' | 'ABRIR_ROTEIROS';
+export type ComandoMenuEditor3D = 'NOVO_PROJETO' | 'SALVAR_PROJETO_ATUAL' | 'SALVAR_NOVO_PROJETO' | 'ABRIR_PROJETO' | 'CRIAR_CAPA_ARTE' | 'CRIAR_PERSONAGEM' | 'CRIAR_MAPA' | 'NOVO_MESH' | 'CAPTURAR_ARTE_CAPA' | 'ABRIR_ROTEIROS';
 
 // Um item dispara OU uma operação do vocabulário (equivalente ao `layout.operator(bl_idname)` do Blender: o item
 // aponta para o operador, não reimplementa nada) OU um comando de tela, OU abre um submenu.
@@ -38,7 +38,7 @@ export const MENUS_EDITOR_3D: readonly MenuEditor3D[] = [
             { rotulo: 'Esfera', operacao: 'ADD_ESFERA' },
             { rotulo: 'Novo Mesh', comando: 'NOVO_MESH' },
             // Interruptor NÃO se adiciona por menu: ele é o VÍNCULO objeto↔luz, nasce do clique no objeto com uma luz alternável selecionada.
-            { rotulo: 'Fonte de Luz', comando: 'ADD_LUZ' },
+            { rotulo: 'Fonte de Luz', operacao: 'ADD_LUZ' },
         ],
     },
     {

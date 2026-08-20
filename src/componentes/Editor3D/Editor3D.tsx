@@ -35,7 +35,7 @@ import type { CampoVetorCameraCapaArteEditor3D } from './PainelCameraCapaArteEdi
 import { HomeEditor3D } from './HomeEditor3D';
 import { LuzesViewportEditor3D } from './LuzesViewportEditor3D';
 import { EsquemaEletricoEditor3D } from './EsquemaEletricoEditor3D';
-import { FIACAO_VAZIA_EDITOR3D, INTENSIDADE_PADRAO_POR_TIPO_FONTE_EDITOR3D, ROTULO_CURTO_TIPO_FONTE_DE_LUZ_EDITOR3D, aplicaCampoLuzEditor3D, camadaJogoDoProjeto, criaFonteDeLuzEditor3D, idNoEntregaDaLuzEditor3D, removeInterruptorEditor3D, removeLuzDoCircuitoEditor3D, sanitizaCorrenteEditor3D, serializaCamadaJogoEditor3D, vinculaLuzInterruptorEditor3D, type CircuitoEditor3D, type FiacaoEditor3D, type FonteDeLuzEditor3D, type InterruptorEditor3D } from './editor3D.camadaJogo';
+import { FIACAO_VAZIA_EDITOR3D, INTENSIDADE_PADRAO_POR_TIPO_FONTE_EDITOR3D, ROTULO_CURTO_TIPO_FONTE_DE_LUZ_EDITOR3D, aplicaCampoLuzEditor3D, camadaJogoDoProjeto, criaFonteDeLuzEditor3D, idNoEntregaDaLuzEditor3D, removeLuzDoCircuitoEditor3D, sanitizaCorrenteEditor3D, serializaCamadaJogoEditor3D, type CircuitoEditor3D, type FiacaoEditor3D, type FonteDeLuzEditor3D, type InterruptorEditor3D } from './editor3D.camadaJogo';
 import type { CorrenteMapa } from 'types-nora-api';
 import type { NoCorrenteAvaliacao } from 'Funcionalidades/MapaJogavel/mapaJogavel.corrente';
 import { COLECAO_SISTEMA_INICIAL_EDITOR3D, colecaoMostraFiacao, colecaoMostraGeometria, colecaoPermiteComandoMenu, colecaoPermiteOperacao, colecaoSistemaInicialDoTipoProjeto, colecaoUsaIluminacaoDeJogo, colecoesSistemaDoTipoProjeto, type TipoColecaoSistemaEditor3D } from './editor3D.colecoesSistema';
@@ -280,6 +280,10 @@ export function Editor3D() {
     const aplicaEstadoRoteiroNoEditor = useCallback((estado: EstadoRoteiroEditor3D, marcaProjetoAlterado: boolean) => {
         const objetoPreservado = idSelecionado !== null && idSelecionado > 0 ? (estado.objetos.find(objeto => objeto.id === idSelecionado) ?? null) : null;
         setObjetos(estado.objetos);
+        // A camada de jogo e as coleções são parte do estado do roteiro: o stepping repõe tudo junto com os objetos.
+        setLuzes(estado.camadaJogo.fontesDeLuz);
+        setFiacao(estado.camadaJogo.fiacao);
+        setColecoes(estado.colecoes);
         setIdSelecionado(objetoPreservado?.id ?? null);
         setTransformSelecionado(objetoPreservado?.transformInicial ?? null);
         setVerticesSelecionados([]);
@@ -318,12 +322,18 @@ export function Editor3D() {
     // de tipos de operação — assim cada lote migrado entra sem tocar aqui.
     const executaOperacaoNoEditor = useCallback((operacao: OperacaoRoteiroEditor3D, opcoes?: OpcoesExecucaoOperacaoEditor3D): boolean => {
         const contadorAntes = contadorRef.current;
-        const resultado = aplicaOperacaoRoteiroEditor3D({ objetos, contadorObjetos: contadorAntes }, operacao);
+        const resultado = aplicaOperacaoRoteiroEditor3D({ objetos, contadorObjetos: contadorAntes, camadaJogo: { fontesDeLuz: luzes, fiacao }, colecoes, contadorColecoes: contadorColecaoRef.current }, operacao);
         if (!resultado.ok) return false;
         // Gesto de arrasto já registrou o snapshot pré-arrasto no commit — registrar de novo criaria dois undos.
         if (opcoes?.registraNoHistorico !== false) registraHistorico(opcoes?.tagHistorico);
         contadorRef.current = resultado.estado.contadorObjetos;
+        contadorColecaoRef.current = resultado.estado.contadorColecoes;
         setObjetos(resultado.estado.objetos);
+        // A camada de jogo e as coleções são parte do produto: a operação pode alterá-las e o resultado volta para o
+        // editor pelo mesmo caminho dos objetos.
+        setLuzes(resultado.estado.camadaJogo.fontesDeLuz);
+        setFiacao(resultado.estado.camadaJogo.fiacao);
+        setColecoes(resultado.estado.colecoes);
         const idNovo = resultado.estado.contadorObjetos > contadorAntes ? resultado.estado.contadorObjetos : null;
         if (idNovo !== null) setIdSelecionado(idNovo);
         else setIdSelecionado(atual => atual !== null && atual > 0 && !resultado.estado.objetos.some(objeto => objeto.id === atual) ? null : atual);
@@ -334,7 +344,7 @@ export function Editor3D() {
         setAlterado(true);
         gravaOperacaoRoteiro(operacao);
         return true;
-    }, [objetos, idSelecionado, registraHistorico, gravaOperacaoRoteiro]);
+    }, [objetos, luzes, fiacao, colecoes, idSelecionado, registraHistorico, gravaOperacaoRoteiro]);
 
     // Pendência de passos não salvos segura o unload (mesma proteção do padrão de rascunho).
     useEffect(() => {
@@ -499,18 +509,13 @@ export function Editor3D() {
         executaOperacaoNoEditor({ tipo: 'DEFINIR_VISIBILIDADE', idObjeto: id, visivel: !objeto.visivel });
     }, [objetos, executaOperacaoNoEditor]);
 
-    // Coleções ainda não estão no vocabulário: a operação remove o objeto e o efeito colateral de organização
-    // (tirar da coleção) fica aqui até o lote de coleções migrar.
+    // O efeito de organização (sair/entrar em coleção) é da PRÓPRIA operação — o handler só despacha.
     const removeObjeto = useCallback((id: number) => {
-        if (!executaOperacaoNoEditor({ tipo: 'REMOVER_OBJETO', idObjeto: id })) return;
-        setColecoes(atuais => atuais.map(colecao => colecao.idsObjetos.includes(id) ? { ...colecao, idsObjetos: colecao.idsObjetos.filter(idObjeto => idObjeto !== id) } : colecao));
+        executaOperacaoNoEditor({ tipo: 'REMOVER_OBJETO', idObjeto: id });
     }, [executaOperacaoNoEditor]);
 
-    // A cópia entra na mesma coleção do original — organização ainda fora do vocabulário, então fica aqui.
     const duplicaObjeto = useCallback((id: number) => {
-        const idCopia = contadorRef.current + 1;
-        if (!executaOperacaoNoEditor({ tipo: 'DUPLICAR_OBJETO', idObjeto: id })) return;
-        setColecoes(atuais => atuais.map(colecao => colecao.idsObjetos.includes(id) ? { ...colecao, idsObjetos: [...colecao.idsObjetos, idCopia] } : colecao));
+        executaOperacaoNoEditor({ tipo: 'DUPLICAR_OBJETO', idObjeto: id });
     }, [executaOperacaoNoEditor]);
 
     const renomeiaObjeto = useCallback((id: number, nome: string) => {
@@ -533,20 +538,15 @@ export function Editor3D() {
         executaOperacaoNoEditor({ tipo: 'NOVO_MATERIAL', idObjeto: id });
     }, [executaOperacaoNoEditor]);
 
+    // Slot 0 é a cor base (operação própria); os extras são despacho de DEFINIR_COR_MATERIAL/RENOMEAR_MATERIAL.
     const mudaCorMaterialObjeto = useCallback((id: number, slot: number, cor: string) => {
         if (slot <= 0) { mudaCorObjeto(id, cor); return; }
-        registraHistorico(`cor-material-${id}-${slot}`);
-        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, materiaisExtras: objeto.materiaisExtras.map((material, indice) => indice === slot - 1 ? { ...material, cor } : material) } : objeto));
-        setAlterado(true);
-    }, [mudaCorObjeto, registraHistorico]);
+        executaOperacaoNoEditor({ tipo: 'DEFINIR_COR_MATERIAL', idObjeto: id, slot, cor }, { tagHistorico: `cor-material-${id}-${slot}` });
+    }, [mudaCorObjeto, executaOperacaoNoEditor]);
 
     const renomeiaMaterialObjeto = useCallback((id: number, slot: number, nome: string) => {
-        const nomeLimpo = nome.trim();
-        if (nomeLimpo.length === 0 || slot <= 0) return;
-        registraHistorico();
-        setObjetos(atuais => atuais.map(objeto => objeto.id === id ? { ...objeto, materiaisExtras: objeto.materiaisExtras.map((material, indice) => indice === slot - 1 ? { ...material, nome: nomeLimpo } : material) } : objeto));
-        setAlterado(true);
-    }, [registraHistorico]);
+        executaOperacaoNoEditor({ tipo: 'RENOMEAR_MATERIAL', idObjeto: id, slot, nome });
+    }, [executaOperacaoNoEditor]);
 
     // Atribuir (Assign): grava o slot do material nas faces SELECIONADAS da gaiola — o render agrupa os triângulos por slot.
     // Atribuir (Assign): grava o slot do material nas faces SELECIONADAS da gaiola — o render agrupa os triângulos por slot.
@@ -616,15 +616,9 @@ export function Editor3D() {
 
     const confirmaCriacaoMalha = useCallback(() => {
         if (!paramsCriacao) return;
-        registraHistorico();
-        contadorRef.current += 1;
-        const id = contadorRef.current;
-        const malha = criaMalhaPrimitivaEditor3D(paramsCriacao.tipo, paramsCriacao.segmentos);
-        setObjetos(atuais => [...atuais, { id, tipo: paramsCriacao.tipo, nome: `${rotuloTipoPrimitivaEditor3D(paramsCriacao.tipo)} ${id}`, cor: COR_OBJETO_PADRAO_EDITOR3D, materiaisExtras: [], idPeca: null, visivel: true, malha, subdivisao: 0, espessura: 0, transformInicial: { posicao: paramsCriacao.posicao, rotacao: paramsCriacao.rotacao, escala: paramsCriacao.escala } }]);
-        setIdSelecionado(id);
-        setAlterado(true);
+        executaOperacaoNoEditor({ tipo: 'ADD_MALHA', primitiva: paramsCriacao.tipo, segmentos: paramsCriacao.segmentos, posicao: paramsCriacao.posicao, rotacao: paramsCriacao.rotacao, escala: paramsCriacao.escala });
         setParamsCriacao(null);
-    }, [paramsCriacao, registraHistorico]);
+    }, [paramsCriacao, executaOperacaoNoEditor]);
 
     const selecionaSubElemento = useCallback((vertices: readonly number[], faceId: string | null, aditivo: boolean) => {
         // Faces: clique simples substitui a seleção; shift alterna a face no conjunto (mesma semântica dos vértices).
@@ -733,6 +727,8 @@ export function Editor3D() {
         setFacesSelecionadas([]);
     }, [idSelecionado, modoSelecaoEdicao, verticesSelecionados, objetos, executaOperacaoNoEditor]);
 
+    // Fonte CONTÍNUA do gesto (60 fps): aplica o delta na malha enquanto o arrasto acontece. O produto final é do
+    // COMMIT (confirmaArrastoVertices → MOVER_VERTICES); o histórico foi registrado no início do arrasto.
     const moveVerticesSelecionados = useCallback((delta: [number, number, number]) => {
         if (idSelecionado === null || verticesSelecionados.length === 0) return;
         const selecionados = new Set(verticesSelecionados);
@@ -743,6 +739,17 @@ export function Editor3D() {
         }));
         setAlterado(true);
     }, [idSelecionado, verticesSelecionados]);
+
+    // COMMIT do arrasto de vértices: o valor final do gesto vira a operação absoluta (posições finais, par a par com
+    // os índices) — o histórico já foi tratado no início do arrasto, então a operação não registra de novo.
+    const confirmaArrastoVertices = useCallback(() => {
+        if (idSelecionado === null || idSelecionado <= 0 || verticesSelecionados.length === 0) return;
+        const objeto = objetos.find(item => item.id === idSelecionado);
+        if (!objeto) return;
+        const posicoes = verticesSelecionados.map(indice => objeto.malha.vertices[indice]).filter((vertice): vertice is Vetor3Malha => vertice !== undefined);
+        if (posicoes.length !== verticesSelecionados.length) return;
+        executaOperacaoNoEditor({ tipo: 'MOVER_VERTICES', idObjeto: idSelecionado, indicesVertices: [...verticesSelecionados], posicoes }, { registraNoHistorico: false });
+    }, [idSelecionado, verticesSelecionados, objetos, executaOperacaoNoEditor]);
 
     const iniciaCaptura = useCallback(() => {
         // Capa de Arte: captura direto o render da câmera-output (1280x720) e publica no armazenamento que o /teste-assets consome.
@@ -760,38 +767,27 @@ export function Editor3D() {
     const montaObjetosCarregados = useCallback((carregados: readonly ObjetoCarregadoEditor3D[]): ObjetoEditor3D[] => carregados.map(carregado => { contadorRef.current += 1; return { id: contadorRef.current, tipo: carregado.tipo, nome: carregado.nome, cor: carregado.cor, materiaisExtras: carregado.materiaisExtras.map(material => ({ ...material })), idPeca: carregado.idPeca, visivel: true, malha: carregado.malha ?? criaMalhaPrimitivaEditor3D(carregado.tipo), subdivisao: carregado.subdivisao, espessura: carregado.espessura, transformInicial: carregado.transform }; }), []);
 
     const criaColecao = useCallback(() => {
-        registraHistorico();
-        contadorColecaoRef.current += 1;
-        const id = contadorColecaoRef.current;
-        setColecoes(atuais => [...atuais, { id, nome: `Coleção ${id}`, idsObjetos: [], visivel: true }]);
-        setAlterado(true);
-    }, [registraHistorico]);
+        executaOperacaoNoEditor({ tipo: 'CRIAR_COLECAO' });
+    }, [executaOperacaoNoEditor]);
 
     const moveObjetoParaColecao = useCallback((idObjeto: number, idColecaoDestino: number | null) => {
-        registraHistorico();
-        setColecoes(atuais => atuais.map(colecao => ({ ...colecao, idsObjetos: colecao.idsObjetos.filter(id => id !== idObjeto) })).map(colecao => colecao.id === idColecaoDestino ? { ...colecao, idsObjetos: [...colecao.idsObjetos, idObjeto] } : colecao));
-        setAlterado(true);
-    }, [registraHistorico]);
+        executaOperacaoNoEditor({ tipo: 'MOVER_PARA_COLECAO', idObjeto, idColecao: idColecaoDestino });
+    }, [executaOperacaoNoEditor]);
 
+    // Alternância é decidida AQUI e o passo grava o valor absoluto (mesma regra da visibilidade de objeto).
     const alternaVisibilidadeColecao = useCallback((idColecao: number) => {
-        registraHistorico();
-        setColecoes(atuais => atuais.map(colecao => colecao.id === idColecao ? { ...colecao, visivel: !colecao.visivel } : colecao));
-        setAlterado(true);
-    }, [registraHistorico]);
+        const colecao = colecoes.find(atual => atual.id === idColecao);
+        if (!colecao) return;
+        executaOperacaoNoEditor({ tipo: 'DEFINIR_VISIBILIDADE_COLECAO', idColecao, visivel: !colecao.visivel });
+    }, [colecoes, executaOperacaoNoEditor]);
 
     const renomeiaColecao = useCallback((idColecao: number, nome: string) => {
-        const nomeLimpo = nome.trim();
-        if (nomeLimpo.length === 0) return;
-        registraHistorico();
-        setColecoes(atuais => atuais.map(colecao => colecao.id === idColecao ? { ...colecao, nome: nomeLimpo } : colecao));
-        setAlterado(true);
-    }, [registraHistorico]);
+        executaOperacaoNoEditor({ tipo: 'RENOMEAR_COLECAO', idColecao, nome });
+    }, [executaOperacaoNoEditor]);
 
     const removeColecao = useCallback((idColecao: number) => {
-        registraHistorico();
-        setColecoes(atuais => atuais.filter(colecao => colecao.id !== idColecao));
-        setAlterado(true);
-    }, [registraHistorico]);
+        executaOperacaoNoEditor({ tipo: 'REMOVER_COLECAO', idColecao });
+    }, [executaOperacaoNoEditor]);
 
     const trocaAba = useCallback((idAlvo: number) => {
         if (idAlvo === idAbaAtiva) return;
@@ -889,20 +885,21 @@ export function Editor3D() {
         setDefinindoInterruptor(false);
     }, []);
 
+    // A seleção da luz nova é view (a operação não seleciona): o id é determinístico, dá para prevê-lo antes.
     const adicionaLuz = useCallback(() => {
-        registraHistorico();
-        const nova = criaFonteDeLuzEditor3D(luzes);
-        setLuzes(atuais => [...atuais, nova]);
-        setAlterado(true);
-        selecionaLuz(nova.idLocal);
-    }, [luzes, registraHistorico, selecionaLuz]);
+        const idNova = criaFonteDeLuzEditor3D(luzes).idLocal;
+        if (!executaOperacaoNoEditor({ tipo: 'ADD_LUZ' })) return;
+        selecionaLuz(idNova);
+    }, [luzes, executaOperacaoNoEditor, selecionaLuz]);
 
     // Toda mutação de luz passa por aqui: um só ponto de histórico + marcação de alterado.
+    // Assinatura preservada (os call sites não mudam): o resultado do `muda` vira o registro ABSOLUTO da operação.
     const atualizaLuz = useCallback((idLocal: string, muda: (luz: FonteDeLuzEditor3D) => FonteDeLuzEditor3D, tagHistorico?: string) => {
-        registraHistorico(tagHistorico);
-        setLuzes(atuais => atuais.map(luz => luz.idLocal === idLocal ? muda(luz) : luz));
-        setAlterado(true);
-    }, [registraHistorico]);
+        const atual = luzes.find(luz => luz.idLocal === idLocal);
+        if (atual === undefined) return;
+        const nova = muda(atual);
+        executaOperacaoNoEditor({ tipo: 'DEFINIR_LUZ', luz: { idLocal: nova.idLocal, nome: nova.nome, tipo: nova.tipo, posicao: nova.posicao, cor: nova.cor, intensidade: nova.intensidade, alcanceMetros: nova.alcanceMetros, correnteEntrega: nova.correnteEntrega } }, { tagHistorico });
+    }, [luzes, executaOperacaoNoEditor]);
 
     // Trocar o TIPO troca junto a intensidade padrão: PONTO (candela, dezenas) e AMBIENTE (banho, 0–1) medem em escalas
     // diferentes — herdar o valor do outro tipo entrega uma cena estourada ou apagada. O alcance re-amarra à intensidade nova.
@@ -942,24 +939,19 @@ export function Editor3D() {
 
     // Aplica um resultado de gesto do domínio da fiação (vincular/remover): fiação e luzes mudam JUNTAS (a entrega da luz
     // mora nela), num único registro de histórico; interruptor selecionado que morreu sai da seleção.
-    const aplicaGestoFiacao = useCallback((resultado: { fiacao: FiacaoEditor3D; luzes: readonly FonteDeLuzEditor3D[] }) => {
-        registraHistorico();
-        setFiacao(resultado.fiacao);
-        setLuzes(resultado.luzes);
-        setIdInterruptorSelecionado(atual => atual !== null && !resultado.fiacao.interruptores.some(interruptor => interruptor.idLocal === atual) ? null : atual);
-        setAlterado(true);
-    }, [registraHistorico]);
 
     const atualizaInterruptor = useCallback((idLocal: string, muda: (interruptor: InterruptorEditor3D) => InterruptorEditor3D, tagHistorico?: string) => {
-        registraHistorico(tagHistorico);
-        setFiacao(atual => ({ circuitos: atual.circuitos, interruptores: atual.interruptores.map(interruptor => interruptor.idLocal === idLocal ? muda(interruptor) : interruptor) }));
-        setAlterado(true);
-    }, [registraHistorico]);
+        const atual = fiacao.interruptores.find(interruptor => interruptor.idLocal === idLocal);
+        if (atual === undefined) return;
+        const novo = muda(atual);
+        executaOperacaoNoEditor({ tipo: 'DEFINIR_INTERRUPTOR', interruptor: { idLocal: novo.idLocal, nome: novo.nome, descricao: novo.descricao, alcanceMilimetros: novo.alcanceMilimetros } }, { tagHistorico });
+    }, [fiacao, executaOperacaoNoEditor]);
 
     // Excluir/◉: remove o CORPO do circuito — a dissolução (circuito trivial sem interruptor) mora no domínio.
     const excluiInterruptor = useCallback((idLocal: string) => {
-        aplicaGestoFiacao(removeInterruptorEditor3D(fiacao, luzes, idLocal));
-    }, [fiacao, luzes, aplicaGestoFiacao]);
+        if (!executaOperacaoNoEditor({ tipo: 'REMOVER_INTERRUPTOR', idInterruptor: idLocal })) return;
+        setIdInterruptorSelecionado(atual => atual === idLocal ? null : atual);
+    }, [executaOperacaoNoEditor]);
 
     const mudaDescricaoInterruptor = useCallback((descricao: string) => {
         if (idInterruptorSelecionado === null) return;
@@ -978,8 +970,11 @@ export function Editor3D() {
     // "Remover do circuito" no painel da LUZ: solta a ENTREGA dela — a luz volta a ser fixa (alimentação direta).
     const removeLuzSelecionadaDoCircuito = useCallback(() => {
         if (idLuzSelecionada === null) return;
-        aplicaGestoFiacao(removeLuzDoCircuitoEditor3D(fiacao, luzes, idLuzSelecionada));
-    }, [idLuzSelecionada, fiacao, luzes, aplicaGestoFiacao]);
+        // Desvincular pode dissolver o circuito e levar interruptores junto: a prévia diz quem sobrevive.
+        const previa = removeLuzDoCircuitoEditor3D(fiacao, luzes, idLuzSelecionada);
+        if (!executaOperacaoNoEditor({ tipo: 'DESVINCULAR_LUZ', idLuz: idLuzSelecionada })) return;
+        setIdInterruptorSelecionado(atual => atual !== null && !previa.fiacao.interruptores.some(interruptor => interruptor.idLocal === atual) ? null : atual);
+    }, [idLuzSelecionada, fiacao, luzes, executaOperacaoNoEditor]);
 
     // Corrente da ENTREGA da luz selecionada (o dano/regime de UMA lâmpada) — sanitizada pela régua do domínio.
     const mudaCorrenteEntregaLuz = useCallback((corrente: CorrenteMapa) => {
@@ -988,10 +983,11 @@ export function Editor3D() {
     }, [idLuzSelecionada, atualizaLuz]);
 
     const atualizaCircuito = useCallback((idCircuito: string, muda: (circuito: CircuitoEditor3D) => CircuitoEditor3D, tagHistorico?: string) => {
-        registraHistorico(tagHistorico);
-        setFiacao(atual => ({ circuitos: atual.circuitos.map(circuito => circuito.idLocal === idCircuito ? muda(circuito) : circuito), interruptores: atual.interruptores }));
-        setAlterado(true);
-    }, [registraHistorico]);
+        const atual = fiacao.circuitos.find(circuito => circuito.idLocal === idCircuito);
+        if (atual === undefined) return;
+        const novo = muda(atual);
+        executaOperacaoNoEditor({ tipo: 'DEFINIR_CIRCUITO', circuito: { idLocal: novo.idLocal, nome: novo.nome, corrente: novo.corrente, ligadoInicialmente: novo.ligadoInicialmente } }, { tagHistorico });
+    }, [fiacao, executaOperacaoNoEditor]);
 
     const interruptorSelecionado = useMemo(() => fiacao.interruptores.find(interruptor => interruptor.idLocal === idInterruptorSelecionado) ?? null, [fiacao, idInterruptorSelecionado]);
     const circuitoDoInterruptorSelecionado = useMemo(() => (interruptorSelecionado === null ? null : fiacao.circuitos.find(circuito => circuito.idLocal === interruptorSelecionado.idCircuito) ?? null), [fiacao, interruptorSelecionado]);
@@ -1073,10 +1069,9 @@ export function Editor3D() {
         const objeto = objetos.find(objetoAtual => objetoAtual.id === id);
         if (objeto === undefined) return;
         setDefinindoInterruptor(false);
-        const resultado = vinculaLuzInterruptorEditor3D(fiacao, luzes, String(objeto.id), objeto.nome, luz.idLocal);
-        if (resultado === null) return;
-        aplicaGestoFiacao(resultado);
-    }, [colecaoSistema, definindoInterruptor, luzes, idLuzSelecionada, objetos, fiacao, aplicaGestoFiacao, selecionaInterruptor]);
+        // O gesto vira a operação SEMÂNTICA: quem sabe montar circuito/interruptor é o operador (mesmo helper de sempre).
+        executaOperacaoNoEditor({ tipo: 'VINCULAR_LUZ_INTERRUPTOR', idLuz: luz.idLocal, idElementoCena: String(objeto.id) });
+    }, [colecaoSistema, definindoInterruptor, luzes, idLuzSelecionada, objetos, executaOperacaoNoEditor, selecionaInterruptor]);
 
     // Saídas do modo armado que não passam por clique: ESC, e a luz deixar de existir por qualquer via.
     useEffect(() => {
@@ -1124,15 +1119,11 @@ export function Editor3D() {
     }, [atualizaLuz]);
 
     const excluiLuz = useCallback((idLocal: string) => {
-        registraHistorico();
-        // Excluir a luz solta a ENTREGA dela primeiro: circuito que ficou sem luz dissolve (leva os interruptores junto).
-        const solto = removeLuzDoCircuitoEditor3D(fiacao, luzes, idLocal);
-        setFiacao(solto.fiacao);
-        setIdInterruptorSelecionado(atual => atual !== null && !solto.fiacao.interruptores.some(interruptor => interruptor.idLocal === atual) ? null : atual);
-        setLuzes(solto.luzes.filter(luz => luz.idLocal !== idLocal));
+        const previa = removeLuzDoCircuitoEditor3D(fiacao, luzes, idLocal);
+        if (!executaOperacaoNoEditor({ tipo: 'EXCLUIR_LUZ', idLuz: idLocal })) return;
+        setIdInterruptorSelecionado(atual => atual !== null && !previa.fiacao.interruptores.some(interruptor => interruptor.idLocal === atual) ? null : atual);
         setIdLuzSelecionada(atual => atual === idLocal ? null : atual);
-        setAlterado(true);
-    }, [fiacao, luzes, registraHistorico]);
+    }, [fiacao, luzes, executaOperacaoNoEditor]);
 
     const salvarProjetoAtual = useCallback(() => {
         if (projetoAberto) void salvar(projetoAberto.nome, projetoAberto.id);
@@ -1182,12 +1173,14 @@ export function Editor3D() {
     const abrePainelRoteiros = useCallback(() => {
         // Abrir aqui SUBSTITUI uma sessão viva em outra aba; passos não salvos de lá se perderiam sem aviso.
         if (painelRoteiroAberto && pendenciaRoteiro && !window.confirm('O Painel de Roteiros está aberto em outra aba, com passos não salvos. Abrir aqui descarta esses passos?')) return;
+        // A sessão de roteiro é a bancada da FERRAMENTA inteira, e nasce como MAPA vazio: é o tipo de projeto que
+        // aceita todo o vocabulário (geometria E luz/fiação) — numa cena PADRAO, roteiro de iluminação seria inmontável.
         if (ehInicio) {
             setAbas(atuais => atuais.map(aba => aba.idAba === idAbaAtiva ? { ...aba, nomePadrao: `Roteiros ${aba.idAba}` } : aba));
-            aplicaCenaNova(CENA_VAZIA_EDITOR3D);
+            aplicaCenaNova(CENA_MAPA_EDITOR3D);
             setIdAbaRoteiro(idAbaAtiva);
         } else {
-            abreNovaAba(CENA_VAZIA_EDITOR3D);
+            abreNovaAba(CENA_MAPA_EDITOR3D);
             // abreNovaAba incrementa o contador sincronamente: o valor atual É o id da aba recém-criada.
             setIdAbaRoteiro(contadorAbaRef.current);
         }
@@ -1371,24 +1364,27 @@ export function Editor3D() {
         if (comando === 'CAPTURAR_ARTE_CAPA') return objetos.length === 0 && tipoProjeto !== 'PERSONAGEM';
         // A coleção ativa é uma LENTE de domínio: comando de menu fora dela (geometria na Iluminação, luz/fiação no Cenário) desabilita.
         if (!colecaoPermiteComandoMenu(colecaoSistema, comando)) return true;
-        // Iluminação é domínio do MAPA: em qualquer outro tipo de projeto a Fonte de Luz nem é oferecida (e o backend recusaria).
-        if (comando === 'ADD_LUZ') return tipoProjeto !== 'MAPA';
         return false;
     }, [salvando, ehInicio, objetos.length, tipoProjeto, sessaoRoteiroNaAba, colecaoSistema]);
 
     // Item de menu que aponta para uma OPERAÇÃO: o clique despacha o operador direto (sem tradução no meio). As
     // operações de menu do vocabulário atual não têm parâmetros — quando tiverem, o item carrega os valores.
     const aoOperacaoDoMenu = useCallback((tipo: TipoOperacaoEditor3D) => {
+        // ADD_LUZ despacha a MESMA operação, via handler que ainda seleciona a luz nova (seleção é view, não receita).
+        if (tipo === 'ADD_LUZ') { adicionaLuz(); return; }
         executaOperacaoNoEditor({ tipo } as OperacaoRoteiroEditor3D);
-    }, [executaOperacaoNoEditor]);
+    }, [adicionaLuz, executaOperacaoNoEditor]);
 
     // A pergunta "dá para executar isto agora?" (o poll do operador): sem projeto aberto não há cena, e a lente ativa
     // do MAPA decide o que se pode alterar nela. Mesma regra que a validação usa para dizer se a etapa é realizável.
-    const operacaoDesabilitada = useCallback((tipo: TipoOperacaoEditor3D) => ehInicio || salvando || !colecaoPermiteOperacao(colecaoSistema, tipo), [ehInicio, salvando, colecaoSistema]);
+    const operacaoDesabilitada = useCallback((tipo: TipoOperacaoEditor3D) => {
+        if (ehInicio || salvando || !colecaoPermiteOperacao(colecaoSistema, tipo)) return true;
+        // Iluminação é domínio do MAPA: em qualquer outro tipo de projeto a Fonte de Luz nem é oferecida.
+        return tipo === 'ADD_LUZ' && tipoProjeto !== 'MAPA';
+    }, [ehInicio, salvando, colecaoSistema, tipoProjeto]);
 
     const aoComando = useCallback((comando: ComandoMenuEditor3D) => {
-        if (comando === 'ADD_LUZ') adicionaLuz();
-        else if (comando === 'NOVO_MESH') abreCriacaoMalha();
+        if (comando === 'NOVO_MESH') abreCriacaoMalha();
         else if (comando === 'NOVO_PROJETO') iniciaProjetoVazio();
         else if (comando === 'CRIAR_CAPA_ARTE') iniciaCapaArte();
         else if (comando === 'CRIAR_PERSONAGEM') iniciaPersonagem();
@@ -1398,7 +1394,7 @@ export function Editor3D() {
         else if (comando === 'ABRIR_PROJETO') void abrirModalAbrirProjeto();
         else if (comando === 'CAPTURAR_ARTE_CAPA') iniciaCaptura();
         else if (comando === 'ABRIR_ROTEIROS') abrePainelRoteiros();
-    }, [executaOperacaoNoEditor, adicionaLuz, abreCriacaoMalha, iniciaProjetoVazio, iniciaCapaArte, iniciaPersonagem, iniciaMapa, salvarProjetoAtual, abrirModalAbrirProjeto, iniciaCaptura, abrePainelRoteiros]);
+    }, [abreCriacaoMalha, iniciaProjetoVazio, iniciaCapaArte, iniciaPersonagem, iniciaMapa, salvarProjetoAtual, abrirModalAbrirProjeto, iniciaCaptura, abrePainelRoteiros]);
 
     const aoCapturar = useCallback((dataUrl: string) => {
         const arte: ArteDeCapa = { id: crypto.randomUUID(), tipo: 'ARTE_CAPA', largura: LARGURA_ARTE_DE_CAPA, altura: ALTURA_ARTE_DE_CAPA, imagem: dataUrl, origem: 'SNAPSHOT_3D', criadoEmMs: Date.now() };
@@ -1562,7 +1558,7 @@ export function Editor3D() {
 
                         {tipoProjeto === 'PERSONAGEM' && corpoPersonagem && <CorpoPersonagemViewportEditor3D corpo={corpoPersonagem} selecionado={idSelecionado === SELECAO_CORPO_PERSONAGEM_EDITOR3D} aoSelecionar={() => selecionaCorpo(null)} />}
 
-                        {objetos.map(objeto => <ObjetoEditavelEditor3D key={objeto.id} objeto={objeto} visivelEfetivo={objeto.visivel && !colecaoOcultaPorObjeto.has(objeto.id)} selecionado={objeto.id === idSelecionado} demarcadoInterruptor={colecaoSistema === 'ILUMINACAO' && idsElementosInterruptores.has(objeto.id)} interruptorSelecionado={colecaoSistema === 'ILUMINACAO' && interruptorSelecionado !== null && interruptorSelecionado.idElementoCena === String(objeto.id)} destacaHover={definindoInterruptor} edicaoAtiva={modoOperacao === 'EDICAO' && objeto.id === idSelecionado} modoSelecaoEdicao={modoSelecaoEdicao} verticesSelecionados={verticesSelecionados} facesSelecionadas={facesSelecionadas} xRayAtivo={xRayAtivo} modo={modo} travas={travasTransform} ocultarGizmo={capturando} aoSelecionar={aoSelecionarObjetoViewport} aoSelecionarSubElemento={selecionaSubElemento} aoMoverVertices={moveVerticesSelecionados} aoIniciarArrasto={registraHistoricoArrasto} aoIniciarArrastoObjeto={iniciaArrastoObjeto} aoConfirmarArrastoObjeto={confirmaArrastoObjeto} aoCancelarArrastoObjeto={cancelaArrastoObjeto} arrastoAtivoRef={arrastoObjetoAtivoRef} registraMeshSelecionada={registraMeshSelecionada} registraMesh={registraMesh} aoTransformar={sincronizaTransformSelecionado} assentaNaCamada={assentaMeshNaCamada} aoSairDoModo={() => setModo('select')} />)}
+                        {objetos.map(objeto => <ObjetoEditavelEditor3D key={objeto.id} objeto={objeto} visivelEfetivo={objeto.visivel && !colecaoOcultaPorObjeto.has(objeto.id)} selecionado={objeto.id === idSelecionado} demarcadoInterruptor={colecaoSistema === 'ILUMINACAO' && idsElementosInterruptores.has(objeto.id)} interruptorSelecionado={colecaoSistema === 'ILUMINACAO' && interruptorSelecionado !== null && interruptorSelecionado.idElementoCena === String(objeto.id)} destacaHover={definindoInterruptor} edicaoAtiva={modoOperacao === 'EDICAO' && objeto.id === idSelecionado} modoSelecaoEdicao={modoSelecaoEdicao} verticesSelecionados={verticesSelecionados} facesSelecionadas={facesSelecionadas} xRayAtivo={xRayAtivo} modo={modo} travas={travasTransform} ocultarGizmo={capturando} aoSelecionar={aoSelecionarObjetoViewport} aoSelecionarSubElemento={selecionaSubElemento} aoMoverVertices={moveVerticesSelecionados} aoConfirmarArrastoVertices={confirmaArrastoVertices} aoIniciarArrasto={registraHistoricoArrasto} aoIniciarArrastoObjeto={iniciaArrastoObjeto} aoConfirmarArrastoObjeto={confirmaArrastoObjeto} aoCancelarArrastoObjeto={cancelaArrastoObjeto} arrastoAtivoRef={arrastoObjetoAtivoRef} registraMeshSelecionada={registraMeshSelecionada} registraMesh={registraMesh} aoTransformar={sincronizaTransformSelecionado} assentaNaCamada={assentaMeshNaCamada} aoSairDoModo={() => setModo('select')} />)}
 
                         {paramsCriacao && <PreviewMalhaEditor3D params={paramsCriacao} />}
 
@@ -1651,6 +1647,7 @@ interface ObjetoEditavelEditor3DProps {
     readonly aoSelecionar: (id: number) => void;
     readonly aoSelecionarSubElemento: (vertices: readonly number[], faceId: string | null, aditivo: boolean) => void;
     readonly aoMoverVertices: (delta: [number, number, number]) => void;
+    readonly aoConfirmarArrastoVertices: () => void;
     readonly aoIniciarArrasto: () => void;
     readonly aoIniciarArrastoObjeto: () => void;
     readonly aoConfirmarArrastoObjeto: () => void;
@@ -1663,7 +1660,7 @@ interface ObjetoEditavelEditor3DProps {
     readonly aoSairDoModo: () => void;
 };
 
-function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, demarcadoInterruptor, interruptorSelecionado, destacaHover, edicaoAtiva, modoSelecaoEdicao, verticesSelecionados, facesSelecionadas, xRayAtivo, modo, travas, ocultarGizmo, aoSelecionar, aoSelecionarSubElemento, aoMoverVertices, aoIniciarArrasto, aoIniciarArrastoObjeto, aoConfirmarArrastoObjeto, aoCancelarArrastoObjeto, arrastoAtivoRef, registraMeshSelecionada, registraMesh, aoTransformar, assentaNaCamada, aoSairDoModo }: ObjetoEditavelEditor3DProps) {
+function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, demarcadoInterruptor, interruptorSelecionado, destacaHover, edicaoAtiva, modoSelecaoEdicao, verticesSelecionados, facesSelecionadas, xRayAtivo, modo, travas, ocultarGizmo, aoSelecionar, aoSelecionarSubElemento, aoMoverVertices, aoConfirmarArrastoVertices, aoIniciarArrasto, aoIniciarArrastoObjeto, aoConfirmarArrastoObjeto, aoCancelarArrastoObjeto, arrastoAtivoRef, registraMeshSelecionada, registraMesh, aoTransformar, assentaNaCamada, aoSairDoModo }: ObjetoEditavelEditor3DProps) {
     const meshRef = useRef<Mesh>(null);
     const camera = useThree((estado) => estado.camera);
     const gl = useThree((estado) => estado.gl);
@@ -1951,13 +1948,21 @@ function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, demarcado
         arraste.arrastando = true;
     };
 
+    // Marca se o arrasto de vértices realmente moveu algo: clique sem movimento não vira operação no commit.
+    const gestoVerticesMoveuRef = useRef(false);
     function aoMoverProxy(): void {
         const delta = proxyVertices.position.clone().sub(centroidRef.current);
         // Delta não-finito (estado de arrasto corrompido) contaminaria a malha com NaN — e NaN persiste no projeto.
         if (!Number.isFinite(delta.x) || !Number.isFinite(delta.y) || !Number.isFinite(delta.z)) return;
         if (delta.lengthSq() === 0) return;
         centroidRef.current.copy(proxyVertices.position);
+        gestoVerticesMoveuRef.current = true;
         aoMoverVertices([delta.x, delta.y, delta.z]);
+    };
+    function aoSoltarProxy(): void {
+        if (!gestoVerticesMoveuRef.current) return;
+        gestoVerticesMoveuRef.current = false;
+        aoConfirmarArrastoVertices();
     };
 
     return (
@@ -2000,7 +2005,7 @@ function ObjetoEditavelEditor3D({ objeto, visivelEfetivo, selecionado, demarcado
                 {temSelecaoVertices && <primitive object={proxyVertices} />}
             </mesh>
             {/* Transform de objeto é por manipulação DIRETA (arrastar o corpo no modo atual); o gizmo de eixos foi removido por interceptar o arrasto. A edição de vértices mantém o próprio gizmo. */}
-            {temSelecaoVertices && !ocultarGizmo && <TransformControls object={proxyVertices} mode="translate" space="local" onMouseDown={aoIniciarArrasto} onObjectChange={aoMoverProxy} />}
+            {temSelecaoVertices && !ocultarGizmo && <TransformControls object={proxyVertices} mode="translate" space="local" onMouseDown={aoIniciarArrasto} onObjectChange={aoMoverProxy} onMouseUp={aoSoltarProxy} />}
         </>
     );
 };

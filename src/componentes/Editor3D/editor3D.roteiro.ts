@@ -1,7 +1,8 @@
-import { caminhoMenuDaOperacaoEditor3D, executaPassosRoteiroEditor3D, operacaoNasceDeMenuEditor3D } from './editor3D.operacoes';
+import { caminhoMenuDaOperacaoEditor3D, chaveCoalescenciaDaOperacaoEditor3D, executaPassosRoteiroEditor3D, operacaoNasceDeMenuEditor3D } from './editor3D.operacoes';
+import { serializaCamadaJogoEditor3D } from './editor3D.camadaJogo';
 import { serializaCenaCanonicaDeEstadoEditor3D } from './editor3D.projeto.serializacao';
 import type { EstadoRoteiroEditor3D } from './editor3D.operacoes';
-import type { CenaCanonicaEditor3D, GoldenRoteiroEditor3D, OperacaoRoteiroEditor3D, PassoRoteiroEditor3D } from 'types-nora-api';
+import type { CamadaJogoMapa, CenaCanonicaEditor3D, ColecaoRoteiroEditor3D, GoldenRoteiroEditor3D, OperacaoRoteiroEditor3D, PassoRoteiroEditor3D } from 'types-nora-api';
 
 // -------------------------------------------------------------------------------------------------------------------
 // ROTEIRO — helpers PUROS de golden e validação. A aprovação e a validação usam SEMPRE a reexecução na camada de
@@ -18,6 +19,17 @@ export type ResultadoValidacaoRoteiroEditor3D =
 export function serializaEstadoRoteiroEditor3D(estado: EstadoRoteiroEditor3D): CenaCanonicaEditor3D {
     const entradas = estado.objetos.map(objeto => ({ id: objeto.id, nome: objeto.nome, tipo: objeto.tipo, cor: objeto.cor, materiaisExtras: objeto.materiaisExtras, idPeca: objeto.idPeca, malha: objeto.malha, subdivisao: objeto.subdivisao, espessura: objeto.espessura, transform: objeto.transformInicial, visivel: objeto.visivel }));
     return serializaCenaCanonicaDeEstadoEditor3D(entradas, 'PADRAO');
+};
+
+// A camada de jogo serializada usa a MESMA função do salvamento de projeto (posição do interruptor derivada do elemento
+// da cena) — sem réplica, pelo mesmo motivo de todo o resto.
+export function serializaCamadaJogoDoEstadoRoteiroEditor3D(estado: EstadoRoteiroEditor3D): CamadaJogoMapa {
+    return serializaCamadaJogoEditor3D(estado.camadaJogo, serializaEstadoRoteiroEditor3D(estado));
+};
+
+// Coleções canônicas do estado: ordenadas por id (a ordem de exibição é da view; o produto é o conjunto).
+export function serializaColecoesDoEstadoRoteiroEditor3D(estado: EstadoRoteiroEditor3D): readonly ColecaoRoteiroEditor3D[] {
+    return [...estado.colecoes].sort((a, b) => a.id - b.id).map(colecao => ({ id: colecao.id, nome: colecao.nome, idsObjetos: colecao.idsObjetos, visivel: colecao.visivel }));
 };
 
 type JsonValorRoteiroEditor3D = string | number | boolean | null | undefined | readonly JsonValorRoteiroEditor3D[] | { readonly [chave: string]: JsonValorRoteiroEditor3D };
@@ -44,10 +56,25 @@ export type MontagemGoldenRoteiroEditor3D =
     | { readonly ok: true; readonly golden: GoldenRoteiroEditor3D }
     | { readonly ok: false; readonly indicePasso: number; readonly motivo: string };
 
+// A camada de jogo só entra no golden quando o roteiro realmente mexe em luz/fiação: roteiro de geometria pura grava o
+// mesmo golden de antes desta ampliação, e golden aprovado antes dela continua válido sem regravação.
+function camadaJogoVaziaRoteiroEditor3D(camada: CamadaJogoMapa): boolean {
+    return camada.fontesDeLuz.length === 0 && camada.nosDistribuicao.length === 0 && camada.interruptores.length === 0;
+};
+
 export function montaGoldenRoteiroEditor3D(passos: readonly PassoRoteiroEditor3D[]): MontagemGoldenRoteiroEditor3D {
     const execucao = executaPassosRoteiroEditor3D(passos);
     if (execucao.falha !== null) return { ok: false, indicePasso: execucao.falha.indicePasso, motivo: execucao.falha.motivo };
-    return { ok: true, golden: { versao: 1, estadosPorPasso: execucao.estados.map(serializaEstadoRoteiroEditor3D) } };
+
+    const estadosPorPasso = execucao.estados.map(serializaEstadoRoteiroEditor3D);
+    const camadaJogoPorPasso = execucao.estados.map(serializaCamadaJogoDoEstadoRoteiroEditor3D);
+    const colecoesPorPasso = execucao.estados.map(serializaColecoesDoEstadoRoteiroEditor3D);
+    // Cada anexo do golden entra só quando o roteiro realmente o toca — o golden de sempre continua igual a si mesmo.
+    const golden: { versao: 1; estadosPorPasso: typeof estadosPorPasso; camadaJogoPorPasso?: typeof camadaJogoPorPasso; colecoesPorPasso?: typeof colecoesPorPasso } = { versao: 1, estadosPorPasso };
+    if (!camadaJogoPorPasso.every(camadaJogoVaziaRoteiroEditor3D)) golden.camadaJogoPorPasso = camadaJogoPorPasso;
+    if (!colecoesPorPasso.every(colecoes => colecoes.length === 0)) golden.colecoesPorPasso = colecoesPorPasso;
+
+    return { ok: true, golden };
 };
 
 // -------------------------------------------------------------------------------------------------------------------
@@ -84,13 +111,31 @@ export type RelatorioValidacaoRoteiroEditor3D = {
     readonly etapas: readonly EtapaValidadaRoteiroEditor3D[];
 };
 
-function canonicoDoEstadoRoteiroEditor3D(estado: EstadoRoteiroEditor3D): string {
-    return stringifyCanonicoRoteiroEditor3D(serializaEstadoRoteiroEditor3D(estado));
+// O canônico comparado abraça o PRODUTO inteiro: cena (geometria e material) e camada de jogo (luz, distribuição,
+// interruptores). A camada só entra quando o golden a tem — golden aprovado antes desta ampliação compara só a cena,
+// exatamente como quando foi gravado, e segue válido.
+function canonicoDoEstadoRoteiroEditor3D(estado: EstadoRoteiroEditor3D, comCamadaJogo: boolean, comColecoes: boolean): string {
+    const partes = [stringifyCanonicoRoteiroEditor3D(serializaEstadoRoteiroEditor3D(estado))];
+    if (comCamadaJogo) partes.push(stringifyCanonicoRoteiroEditor3D(serializaCamadaJogoDoEstadoRoteiroEditor3D(estado) as unknown as CenaCanonicaEditor3D));
+    if (comColecoes) partes.push(stringifyCanonicoRoteiroEditor3D(serializaColecoesDoEstadoRoteiroEditor3D(estado) as unknown as CenaCanonicaEditor3D));
+
+    return partes.join('|');
+};
+
+function canonicoDoGoldenRoteiroEditor3D(golden: GoldenRoteiroEditor3D, indice: number, comCamadaJogo: boolean, comColecoes: boolean): string {
+    const partes = [stringifyCanonicoRoteiroEditor3D(golden.estadosPorPasso[indice])];
+    if (comCamadaJogo) partes.push(stringifyCanonicoRoteiroEditor3D((golden.camadaJogoPorPasso ?? [])[indice] as unknown as CenaCanonicaEditor3D));
+    if (comColecoes) partes.push(stringifyCanonicoRoteiroEditor3D((golden.colecoesPorPasso ?? [])[indice] as unknown as CenaCanonicaEditor3D));
+
+    return partes.join('|');
 };
 
 // Fonte ÚNICA da validação: o desfecho do roteiro inteiro é derivado deste relatório (não há segunda travessia).
 export function relatorioValidacaoRoteiroEditor3D(passos: readonly PassoRoteiroEditor3D[], golden: GoldenRoteiroEditor3D): RelatorioValidacaoRoteiroEditor3D {
     const execucao = executaPassosRoteiroEditor3D(passos);
+    // Golden com camada de jogo (ou coleções) cobra o anexo; golden sem ele compara só a cena, como no dia em que foi gravado.
+    const comCamadaJogo = golden.camadaJogoPorPasso !== undefined;
+    const comColecoes = golden.colecoesPorPasso !== undefined;
     const etapas: EtapaValidadaRoteiroEditor3D[] = [];
     // Enquanto verdadeiro, o executado ainda é idêntico ao gravado — só aí a etapa é avaliável isoladamente.
     let cadeiaIntegra = true;
@@ -127,7 +172,7 @@ export function relatorioValidacaoRoteiroEditor3D(passos: readonly PassoRoteiroE
             continue;
         }
 
-        if (canonicoDoEstadoRoteiroEditor3D(executado) === stringifyCanonicoRoteiroEditor3D(gravado)) { etapas.push({ indice, desfecho: 'CONFERE', motivo: null }); continue; }
+        if (canonicoDoEstadoRoteiroEditor3D(executado, comCamadaJogo, comColecoes) === canonicoDoGoldenRoteiroEditor3D(golden, indice, comCamadaJogo, comColecoes)) { etapas.push({ indice, desfecho: 'CONFERE', motivo: null }); continue; }
 
         const motivo = 'Aplicar esta operação sobre a entrada aprovada produziu um resultado diferente do aprovado';
         etapas.push({ indice, desfecho: 'REGREDIU', motivo });
@@ -148,14 +193,15 @@ export function validaRoteiroContraGoldenEditor3D(passos: readonly PassoRoteiroE
     return relatorioValidacaoRoteiroEditor3D(passos, golden).resultado;
 };
 
-// Coalescência de gravação: SÓ para operações de VALOR em rajada (color picker, digitação por eixo, slider) — a
-// consecutiva do mesmo tipo sobre o mesmo alvo substitui o último passo pelo valor resultante (como na janela de
-// coalescência do histórico). Criação e atribuição NUNCA coalescem: duas seguidas são passos distintos de verdade.
-// O comentário do passo substituído é preservado.
+// Coalescência de gravação: quem decide é o OPERADOR (chaveCoalescencia declarada no registro) — operações de VALOR
+// em rajada (color picker, digitação por eixo, slider) substituem o último passo do mesmo tipo sobre o mesmo alvo.
+// Criação e atribuição não declaram chave e nunca coalescem. O comentário do passo substituído é preservado.
 export function acrescentaPassoComCoalescenciaRoteiroEditor3D(passos: readonly PassoRoteiroEditor3D[], operacao: OperacaoRoteiroEditor3D): readonly PassoRoteiroEditor3D[] {
-    if ((operacao.tipo === 'DEFINIR_COR_BASE' || operacao.tipo === 'ESCALAR' || operacao.tipo === 'SOLIDIFICAR') && passos.length > 0) {
+    const chave = chaveCoalescenciaDaOperacaoEditor3D(operacao);
+    if (chave !== null && passos.length > 0) {
         const ultimo = passos[passos.length - 1];
-        if ((ultimo.operacao.tipo === 'DEFINIR_COR_BASE' || ultimo.operacao.tipo === 'ESCALAR' || ultimo.operacao.tipo === 'SOLIDIFICAR') && ultimo.operacao.tipo === operacao.tipo && ultimo.operacao.idObjeto === operacao.idObjeto) return [...passos.slice(0, -1), { ...ultimo, operacao }];
+        if (ultimo.operacao.tipo === operacao.tipo && chaveCoalescenciaDaOperacaoEditor3D(ultimo.operacao) === chave) return [...passos.slice(0, -1), { ...ultimo, operacao }];
     }
+
     return [...passos, { operacao }];
 };
